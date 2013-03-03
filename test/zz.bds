@@ -1,0 +1,19 @@
+
+// This will fail the first time, but it will 
+// run OK after recovering from checkpoint
+
+string tmp = "tmp_file.txt"
+
+string tid1 = task rm $tmp
+string tid2 = task sleep 1 ; touch $tmp
+
+string s = "before"
+
+checkpoint
+wait
+
+s = "after"
+
+int e1 = tid1.exitCode()
+int e2 = tid2.exitCode()
+

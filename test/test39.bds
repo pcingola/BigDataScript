@@ -1,0 +1,7 @@
+
+int[] listi = [ 2, 3, 4 ]
+
+listi[1] = 1;
+
+listi[2] = "hi";
+

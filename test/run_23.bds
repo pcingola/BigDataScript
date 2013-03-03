@@ -1,0 +1,11 @@
+
+string[] l = ["one", "two", "three"]
+
+string lh = l.head()
+string[] lt = l.tail()
+
+int ltsize = lt.size()
+string lt0 = lt[0]
+string lt1 = lt[1]
+
+

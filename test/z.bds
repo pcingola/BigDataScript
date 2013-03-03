@@ -1,0 +1,8 @@
+#!/usr/bin/bds
+
+string dir = "test"
+string file = "test/z.bds"
+
+if( dir.isEmpty() )	{ 
+	print("EMPTY!") 
+}

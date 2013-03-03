@@ -1,0 +1,11 @@
+
+
+int i = 1
+
+int f(int j) {
+	int i = 2			// Change should not be seen outside this function
+	return i * j;
+}
+
+f(3)					// i = 1 after f()
+

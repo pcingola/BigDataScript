@@ -1,0 +1,13 @@
+
+
+string mem
+int cpu
+int numC = 2
+
+task (cpu= 2 * numC + 3 , mem="4g") {
+  sys ls -al
+  sys du -sm
+  sys bwa aln ... -456
+  if( cpu < 4 ) return 1
+}
+

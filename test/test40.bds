@@ -1,0 +1,8 @@
+
+
+int[] list = [ 1, 2, 3 ]
+
+list.push( 4 )             // OK
+list.push( "hello" )       // Error: Addin string to a list of ints
+
+

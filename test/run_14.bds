@@ -1,0 +1,5 @@
+
+int i = 42
+string str = "hi"
+string s = "this is string interpolation: int i = $i and str = \"$str\" and both $str$i"
+

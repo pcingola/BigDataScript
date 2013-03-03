@@ -1,0 +1,3 @@
+
+string s = "Hi", s2 = s + "you!";
+

@@ -1,0 +1,12 @@
+
+// This task should fail
+task ( canFail=true ) {
+	sys mkdir a/b/c/d/e/f/g
+}
+
+string s = "before"
+
+wait
+
+s = "after"		// Checkpoint and exit before this
+

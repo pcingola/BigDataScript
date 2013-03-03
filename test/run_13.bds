@@ -1,0 +1,9 @@
+
+int i = 1
+
+int f(int j) {
+	int i = 2
+	return i * j;
+}
+
+int h = f(4)

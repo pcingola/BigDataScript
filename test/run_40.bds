@@ -1,0 +1,13 @@
+
+
+string file = "default_file.txt"
+bool opt = false
+int num = 1
+real rnum = 1.23
+
+print("file = '$file'\n")
+print("opt  = '$opt'\n")
+print("num  = '$num'\n")
+print("rnum = '$rnum'\n")
+print("args = " + args + "\n")
+

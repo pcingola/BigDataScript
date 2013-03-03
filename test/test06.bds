@@ -1,0 +1,6 @@
+
+string s = "Hello";
+
+string s2 = s + " world";
+
+string s3 = s * 3;

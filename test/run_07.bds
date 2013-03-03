@@ -1,0 +1,11 @@
+
+int f( bool x ) {
+	return 5;
+}
+
+
+int f( int x ) {
+	return 2 * x;
+}
+
+int j = f(2)

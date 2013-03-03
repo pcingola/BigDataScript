@@ -1,0 +1,12 @@
+
+
+int[] list = [ 1, 2, 3 ]
+
+int p = list.pop()		// Now list = [1, 2]
+
+list.push( 4 )			// Now list = [1, 2, 4]
+int s = list.size()
+
+int l0 = list[0]
+int l1 = list[1]
+int l2 = list[2]

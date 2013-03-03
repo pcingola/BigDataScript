@@ -1,0 +1,4 @@
+
+int i;
+
+int i;		// Error: Duplicate name i

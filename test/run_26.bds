@@ -1,0 +1,13 @@
+
+
+int[] list = [ 1, 3, 5, 2, 4 ]
+
+int[] ls = list.sort()
+
+int l0 = ls[0]
+int l1 = ls[1]
+int l2 = ls[2]
+int l3 = ls[3]
+int l4 = ls[4]
+
+int s = list.size()

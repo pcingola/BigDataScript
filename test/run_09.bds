@@ -1,0 +1,9 @@
+
+
+int f( int x ) {
+	return 5 * x;
+	return 2 * x;	// This should never be executed!
+}
+
+int i = f(1)
+

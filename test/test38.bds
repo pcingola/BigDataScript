@@ -1,0 +1,8 @@
+
+
+string[] list = [ "one", "two", "three" ]
+//int[] list = [ 1, 2, 3, 5, 7, 11, 13]
+
+for( int s : list ) {
+	string ss = s + s
+}

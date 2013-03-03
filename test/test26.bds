@@ -1,0 +1,36 @@
+
+
+// After 'sys' everything is a literal
+sys ls -al
+
+// Escaped strings remain exactly the same '\t' -> '\t'
+sys echo "Hi there \t how is it going?" " well " well ;
+
+// Quote and spapces
+sys echo "Hi2 there \" how is it going?" "i'm fine and you?"
+
+// Multiple spaces get collapsed (there are 2 arguments)
+sys echo Hi3 	 there
+
+// Passing an empty string
+sys echo Hi4 "" there
+
+// Passing a quote
+sys echo Hi5 "\"" there
+
+// Passing an escaped quote
+sys echo Hi6 "\\\"" there
+
+// Muti-line string
+sys echo hi \
+	there
+
+// Multiple lines 
+sys echo hello ;\
+	ls -al ;\
+	du -sm ;\
+	echo good \
+		bye
+
+
+

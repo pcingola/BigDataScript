@@ -1,0 +1,10 @@
+
+// Test STDERR capture
+
+string tid = task echo Hi 1>&2
+print("Task ID: '$tid'\n")
+
+wait
+
+string err = tid.stderr()
+

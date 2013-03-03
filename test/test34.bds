@@ -1,0 +1,5 @@
+
+
+int g(int h)	return 3 * h
+
+int h = f(4)

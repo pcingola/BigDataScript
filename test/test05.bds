@@ -1,0 +1,6 @@
+
+real a = 1 + 2;
+real b = 3 * 4;
+real c = 5 - 6;
+real d = 10 / 2;
+

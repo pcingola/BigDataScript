@@ -1,0 +1,26 @@
+
+// Literal after 'task'
+task  	 	 ls -al
+
+// Multi-line literal after 'task'
+task  ls -al \
+	; echo "hi"
+
+// task using 'sys'
+task {
+	sys 	 	 ls -al
+}
+
+// Task using options and 'sys'
+task (cpus=4) {
+	sys ls -al
+}
+
+// Same as before without spaces
+task{
+	sys ls -al
+}
+
+task(cpus=4){
+	sys ls -al
+}

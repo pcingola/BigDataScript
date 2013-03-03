@@ -1,0 +1,28 @@
+
+string s = " HEllo "
+
+string s1 = s.trim()
+string s2 = s.toLower()
+string s3 = s.toUpper()
+string s4 = s.substr(1+1,100)
+string s5 = s.substr(2,5)
+string s6 = s.substr(-2,15)
+string s7 = s.substr(2,1)
+string s8 = s.replace("ll","z")
+
+int i1 = s.length()
+
+int i2 = s.indexOf("l")
+int i3 = s.lastIndexOf("l")
+
+int i4 = s.indexOf("t")
+int i5 = s.lastIndexOf("t")
+
+string ss = s.trim().toLower();
+
+bool b1 = ss.startsWith("he");
+bool b2 = ss.startsWith("ha");
+
+bool b3 = ss.endsWith("lo");
+bool b4 = ss.endsWith("lz");
+

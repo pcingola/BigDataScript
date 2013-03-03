@@ -1,0 +1,5 @@
+
+string[] ss= ["one", "two", "three"]
+
+string h = ss.head()
+

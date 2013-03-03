@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project BigDataScript">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="${user.home}/.bds/BigDataScript.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${user.home}/workspace/BigDataScript/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="${user.home}/workspace/BigDataScript/lib/commons-lang3-3.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${user.home}/workspace/BigDataScript/lib/jsch-0.1.49.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${user.home}/workspace/BigDataScript/lib/antlr-runtime-4.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${user.home}/workspace/BigDataScript/lib/junit-4.10.jar"/>
+        </jar>
+    </target>
+</project>

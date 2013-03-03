@@ -1,0 +1,17 @@
+
+string[] events
+
+string tid = task sleep 60 ; echo hi
+print("Task ID: '$tid'\n")
+
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+// Kill task
+events.add("kill")
+kill tid
+
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+print("Events: " + events) 

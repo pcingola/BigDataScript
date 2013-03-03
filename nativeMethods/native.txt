@@ -1,0 +1,48 @@
+#retType	classType	methodName	argNames	argTypes	methodBody
+#---
+# String methods
+#---
+int	string	length	this	string	return (long) objThis.toString().length();
+string	string	toUpper	this	string	return objThis.toString().toUpperCase();
+string	string	toLower	this	string	return objThis.toString().toLowerCase();
+string	string	trim	this	string	return objThis.toString().trim();
+string	string	substr	this,start,end	string,int,int	String s = objThis.toString(); int start = (int) csThread.getInt("start"), end = (int) csThread.getInt("end") ; start=Math.max(0,start); end=Math.min(end,s.length()); return (start>=end? "" : s.substring(start,end));
+TypeList.get(Type.STRING)	string	split	this,regex	string,string	return array2list( objThis.toString().split( csThread.getString("regex") ) );
+TypeList.get(Type.STRING)	string	lines	this	string	return array2list( objThis.toString().split( "\n" ) );
+bool	string	isEmpty	this	string	return objThis.toString().isEmpty();
+bool	string	startsWith	this,str	string,string	return objThis.toString().startsWith( csThread.getString("str") );
+bool	string	endsWith	this,str	string,string	return objThis.toString().endsWith( csThread.getString("str") );
+int	string	indexOf	this,str	string,string	return (long) objThis.toString().indexOf( csThread.getString("str") );
+int	string	lastIndexOf	this,str	string,string	return (long) objThis.toString().lastIndexOf( csThread.getString("str") );
+string	string	replace	this,str1,str2	string,string,string	return objThis.toString().replace( csThread.getString("str1"), csThread.getString("str2") );
+#---
+# String: File related methods
+#---
+string	string	path	this	string	try { return (new File(objThis.toString())).getCanonicalPath(); } catch (Exception e) { return ""; }
+string	string	baseName	this	string	return (new File(objThis.toString())).getName();
+string	string	baseName	this,ext	string,string	String ext = csThread.getString("ext"); String b = (new File(objThis.toString())).getName(); if( b.endsWith(ext) ) return b.substring(0, b.length() - ext.length()); return b;
+string	string	dirName	this	string	return (new File(objThis.toString())).getParent();
+string	string	extName	this	string	String base = (new File(objThis.toString())).getName(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(idx + 1) : "";
+bool	string	canRead	this	string	return (new File(objThis.toString())).canRead();
+bool	string	canWrite	this	string	return (new File(objThis.toString())).canWrite();
+bool	string	canExec	this	string	return (new File(objThis.toString())).canExecute();
+bool	string	exists	this	string	return (new File(objThis.toString())).exists();
+bool	string	isDir	this	string	return (new File(objThis.toString())).isDirectory();
+bool	string	isFile	this	string	return (new File(objThis.toString())).isFile();
+bool	string	delete	this	string	return (new File(objThis.toString())).delete();
+bool	string	mkdir	this	string	return (new File(objThis.toString())).mkdirs();
+string	string	read	this	string	return Gpr.readFile(objThis.toString());
+TypeList.get(Type.STRING)	string	readLines	this	string	return array2list( Gpr.readFile( objThis.toString() ).split("\n") ); 
+TypeList.get(Type.STRING)	string	dir	this	string	return array2listSorted( ( new File( objThis.toString() ) ).list() );
+TypeList.get(Type.STRING)	string	dir	this,regex	string,string	String regex = csThread.getString("regex"); ArrayList<String> list = new ArrayList<String>(); for (String s : new File(objThis.toString()).list()) if (s.matches(regex)) list.add(s); Collections.sort(list); return list;
+TypeList.get(Type.STRING)	string	dirPath	this	string	ArrayList<String> list = new ArrayList<String>(); for (File f : ( new File( objThis.toString() ) ).listFiles()) try { list.add(f.getCanonicalPath()); } catch (Exception e) {;} Collections.sort(list); return list;
+TypeList.get(Type.STRING)	string	dirPath	this,regex	string,string	String regex = csThread.getString("regex"); ArrayList<String> list = new ArrayList<String>(); for (File f : ( new File( objThis.toString() ) ).listFiles()) try { String c = f.getCanonicalPath(); if(c.matches(regex)) list.add(c); } catch (Exception e) {;} Collections.sort(list); return list;
+int	string	size	this	string	return (long) (new File(objThis.toString())).length();
+#---
+# String: Task related methods
+#---
+bool	string	isDone	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return false; return task.isDone();
+bool	string	isDoneOk	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return false; return task.isDoneOk();
+string	string	stdout	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStdoutFile());
+string	string	stderr	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStderrFile());
+int	string	exitCode	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return 0; return (long) task.getExitValue();

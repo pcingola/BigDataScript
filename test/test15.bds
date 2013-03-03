@@ -1,0 +1,5 @@
+
+for( int i=0 ; i < 10 ; i++ ) {
+    int h = i;
+    h = j; // Error: 'j' undefined
+}

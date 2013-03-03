@@ -1,0 +1,10 @@
+
+
+string s = "hello";
+string si = "$s world";
+string su = '$s world \n';
+
+print(s + "\n");
+print(si + "\n");
+print(su + "\n");
+

@@ -1,0 +1,10 @@
+
+int f( int i ) {
+
+	int g( int j ) {		// OK to declare a function in a function
+		return 2*j;
+	}
+
+	int h = g( i );
+	return h;
+}

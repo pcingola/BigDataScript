@@ -1,0 +1,10 @@
+
+
+// ERROR: No 'return' statement
+int f(int j) {
+	for( int i=0 ; i < 10 ; i++ ) {
+		if( i > j )	break
+	}
+}
+
+int i = f(3);

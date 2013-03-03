@@ -1,0 +1,17 @@
+
+int i = 10
+
+string s = "hi"
+
+string[] li1
+
+string[] li2 = [ "apple", "orange", "bannana" ]
+
+string[] li3 = [ "apple", "orange",  1 ]
+
+string[] li4 = [ "apple", "orange",  3.14 ]
+
+string[] li5 = [ "apple", "orange",  false ]
+
+string[] li6 = [ "apple", "orange",  "i=$i" + 3 * s ]
+

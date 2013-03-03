@@ -1,0 +1,10 @@
+
+string str = "one\ntwo\nthree"
+
+string[] l = str.lines()
+
+checkpoint
+
+// List method followed by string method
+string l0 = l.head().toUpper()
+

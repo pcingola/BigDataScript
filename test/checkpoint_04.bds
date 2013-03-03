@@ -1,0 +1,8 @@
+
+string[] ls = ["one\teins", "two", "three", "four", "five"]
+int[] li = [1, 2, 3, 4, 5]
+
+checkpoint
+
+string s = ls[0]
+int i = li[2]

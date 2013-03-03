@@ -1,0 +1,174 @@
+
+
+Problem:
+	qsub -I does merges STDOUT and STDERR
+
+Diagnose:
+	Create a script
+
+	---------- Begin: std.sh ----------
+	#!/bin/sh
+	echo STDOUT ; 
+	echo STDERR >&2
+	---------- End  : std.sh ----------
+
+	Run in local host (expected behaviour)
+
+	# We should ony see 'STDERR': OK
+	$ ./std.sh > /dev/null
+	STDERR
+
+	# We should ony see 'STDOUT': OK
+	$ ./std.sh 2> /dev/null
+	STDOUT
+
+
+	Now run it as a cluster process:
+
+	# We should ony see 'STDERR'
+	$ qsub -I -x /sb/home/pcingola/std.sh > /dev/null
+	$ 															<--- Problem: No output
+
+	# We should ony see 'STDOUT'
+	$ qsub -I -x /sb/home/pcingola/std.sh
+	qsub: waiting for job 121096.abacus2 to start
+	qsub: job 121096.abacus2 ready
+
+	----------------------------------------
+	Begin PBS Prologue Sun Feb 10 11:15:35 EST 2013 1360512935
+	Job ID:		121096.abacus2
+	Username:	pcingola
+	Group:		diabetes_analysis
+	Nodes:		f3lm1
+	End PBS Prologue Sun Feb 10 11:15:35 EST 2013 1360512935
+	----------------------------------------
+	STDOUT														<--- We see both of them: Not the expected behaviour
+	STDERR
+
+----------------------------------------------------------------------------------------------------
+
+Problem:
+	qsub -I ,
+	Program exits status is not reported
+
+Diagnose:
+
+	Create two scripts, one that runs OK, one that fails
+	
+	---------- Begin: ok.sh ----------
+	#!/bin/sh -e
+	echo Hello
+	---------- End  : ok.sh ----------
+
+	---------- Begin: fail.sh ----------
+	#!/bin/sh -e
+	# Try to create a sub-directory int a directory that does not exits
+	mkdir a/b/c/d/
+	---------- End  : fail.sh ----------
+
+	Run in local host (expected behaviour)
+
+	$ ./ok.sh ; echo EXIT : $?
+	Hello
+	EXIT : 0
+
+	$ ./fail.sh ; echo EXIT : $?
+	mkdir: cannot create directory `a/b/c/d/': No such file or directory
+	EXIT : 1
+
+
+	Run in cluster
+
+	$ qsub -I -x /sb/home/pcingola/ok.sh ; echo EXIT : $?
+	qsub: waiting for job 121101.abacus2 to start
+	qsub: job 121101.abacus2 ready
+
+	----------------------------------------
+	Begin PBS Prologue Sun Feb 10 11:23:55 EST 2013 1360513435
+	Job ID:		121101.abacus2
+	Username:	pcingola
+	Group:		diabetes_analysis
+	Nodes:		f3lm1
+	End PBS Prologue Sun Feb 10 11:23:55 EST 2013 1360513435
+	----------------------------------------
+	Hello															<-- Program runs OK
+
+	qsub: job 121101.abacus2 completed
+	EXIT : 0														<--- Exit code is 0 (OK)
+
+
+	$ qsub -I -x /sb/home/pcingola/fail.sh ; echo EXIT : $?
+	qsub: waiting for job 121103.abacus2 to start
+	qsub: job 121103.abacus2 ready
+
+	----------------------------------------
+	Begin PBS Prologue Sun Feb 10 11:26:00 EST 2013 1360513560
+	Job ID:		121103.abacus2
+	Username:	pcingola
+	Group:		diabetes_analysis
+	Nodes:		f3lm1
+	End PBS Prologue Sun Feb 10 11:26:00 EST 2013 1360513560
+	----------------------------------------
+	mkdir: cannot create directory `a/b/c/d/': No such file or directory	<--- Program fails
+
+	qsub: job 121103.abacus2 completed
+	EXIT : 0																<--- Exit code is zero (wrong!)
+
+
+----------------------------------------------------------------------------------------------------
+
+Problem:
+  There is no way to retrieve a job's exit code
+
+  # Create a failing script
+
+    $ cat ./fail.sh
+    #!/bin/sh
+    echo HELLO
+    exit 1
+
+  # Test it
+
+    $ ./fail.sh ; echo EXIT CODE : $?
+    HELLO
+    EXIT CODE : 1
+
+  # Run it on abacus
+
+    $ qsub /sb/home/pcingola/fail.sh
+    121222.abacus2
+
+  # Check exit code
+
+    $ checkjob 121222
+    job 121222
+
+    AName: fail.sh
+    State: Completed 
+    Completion Code: 0  Time: Sun Feb 10 13:00:06
+                    ^^^ Exit code is zero!?
+
+
+  # Interactive mode doesn't wor either
+
+
+    $ qsub -I -x /sb/home/pcingola/fail.sh ; echo EXIT CODE : $?
+    qsub: waiting for job 121246.abacus2 to start
+    qsub: job 121246.abacus2 ready
+
+    ----------------------------------------
+    Begin PBS Prologue Sun Feb 10 13:04:07 EST 2013 1360519447
+    Job ID:    121246.abacus2
+    Username:  pcingola
+    Group:    diabetes_analysis
+    Nodes:    f3lm1
+    End PBS Prologue Sun Feb 10 13:04:07 EST 2013 1360519447
+    ----------------------------------------
+    HELLO
+
+    qsub: job 121246.abacus2 completed
+    EXIT CODE : 0
+               ^^^ Exit code zero!!?!?
+
+
+

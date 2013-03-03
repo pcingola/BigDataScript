@@ -1,0 +1,9 @@
+
+
+int[] list = [ 1, 2 ]
+
+list.add( 3 )
+
+int l0 = list[0]
+int l1 = list[1]
+int l2 = list[2]

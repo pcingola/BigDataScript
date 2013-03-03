@@ -1,0 +1,13 @@
+
+string[] s= ["one", "two", "three"]
+
+string s1
+for( int i=0 ; i < 3 ; i++ ) {
+	s1 = s[i]
+}
+
+string s3
+for( string s2 : s ) {
+	s3 = s2
+}
+

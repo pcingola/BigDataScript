@@ -1,0 +1,7 @@
+
+string[] s= ["one", "two", "three"]
+
+s[1] = "dos"
+
+string h = s[1]
+

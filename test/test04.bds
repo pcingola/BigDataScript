@@ -1,0 +1,15 @@
+
+// Arithmetic operations
+int i1 = 1 + 2;
+int i2 = 3 * 4;
+int i3 = 5 - 6;
+int i4 = 10 / 2;
+int i5 = 10 % 3;
+
+// Bitwise operations
+int i6 = 0xff;
+int i7 = 0xff & 0xff0f;
+int i8 = 0xff | 0xff0f;
+int i9 = 0xff00 ^ 0xff0f;
+int i10 = ~ 0x0f;
+

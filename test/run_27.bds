@@ -1,0 +1,10 @@
+
+
+system="local"
+
+task ( timeout=1 ) {
+	sys echo GOING TO SLEEP...
+	sys sleep 60
+	sys echo DONE
+}
+

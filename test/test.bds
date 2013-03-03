@@ -1,0 +1,16 @@
+
+
+string str , s2 = "hello";
+int a, b, c;
+int h = 5 + k;
+
+k = 2 * k / 3;
+
+system.print("asdfasd", k, 6*x);
+
+for( int k = 1 ; k < 10 ; k = k+1, i = i+2 ) {
+  print( "hello" );
+  f( 2, 5 );
+}
+
+

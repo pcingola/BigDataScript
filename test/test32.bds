@@ -1,0 +1,11 @@
+
+
+string mem
+int cpu
+int numC = 2
+
+task (cpu= 2 * numC + 3 , mem="4g", 5 + 9) {
+  sys ls -al
+  sys du -sm
+  sys bwa aln ... -456
+}

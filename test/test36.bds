@@ -1,0 +1,4 @@
+
+int i = 6
+string s = "this is string interpolation: int i = $i and another one j = $j\n"	// Error: j doesn't exist
+

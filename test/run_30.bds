@@ -1,0 +1,18 @@
+
+string[] events
+
+string tid = task sleep 1 ; echo hi
+print("Task ID: '$tid'\n")
+
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+// Wait for one task
+wait tid
+
+events.add("wait")
+
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+print("Events: " + events) 

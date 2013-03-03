@@ -1,0 +1,9 @@
+
+int j = 5
+int i
+
+for( i = 0 ; i < 10 ; i++ ) {
+	int h = i + i
+	if( i == j ) checkpoint "test/checkpoint_01.bds.chp"
+}
+
