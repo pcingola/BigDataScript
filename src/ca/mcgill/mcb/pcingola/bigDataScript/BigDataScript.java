@@ -76,6 +76,7 @@ public class BigDataScript {
 		// Create BigDataScript object and run it
 		BigDataScript bigDataScript = new BigDataScript(args);
 		bigDataScript.run();
+		System.exit(0);
 	}
 
 	public BigDataScript(String args[]) {
@@ -237,7 +238,7 @@ public class BigDataScript {
 			if (arg.startsWith("-")) {
 				// Get variable name and value
 				String varName = arg.substring(1);
-				String val = null;
+				String val = "";
 				if (argNum < programArgs.size()) val = programArgs.get(++argNum);
 
 				// Find all variable declarations that match this command line argument
@@ -281,7 +282,6 @@ public class BigDataScript {
 	 * @param val : Value to assign
 	 */
 	boolean initializeArgs(Type varType, VariableInit varInit, String val) {
-
 		boolean usedVal = true;
 
 		try {
@@ -496,6 +496,8 @@ public class BigDataScript {
 		//---
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
+
+		if (debug) System.out.println("Finished running.\n");
 	}
 
 	/**

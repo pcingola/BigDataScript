@@ -31,6 +31,6 @@ public class MethodNative_string_dirName extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return (new File(objThis.toString())).getParent();
+		{ String d = (new File(objThis.toString())).getParent(); return d != null ? d : "."; }
 	}
 }
