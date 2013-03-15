@@ -17,9 +17,31 @@
 						, "wolrd"
 					]
 
+- Task: Rethink parsing. Anything within curly brakets is a 'SYS'. E.g.
+
+		task( $out <- $in ) {
+			ls -al $HOME
+			for f in `ls -al *.txt`
+			do
+				echo \$f
+			done
+		}
+
+	Is this vialble? Is it better than the next snippet?:
+	
+		task( $out <- $in ) {
+			sys ls -al $HOME \
+			for f in `ls -al *.txt` \
+			do \
+				echo \$f \
+			done \
+		}
+
+
+
 - BUG:  string l = [ "sadf" ]		(l is a string, not a list, but assigned a list => Breaks compilation)
 
-- task( out <- in ): Throw an error if output does not exists or has zero length!
+- task( out <- in ): It is an Execution error if output does not exists or has zero length!
 
 - task : "emptyOut = true" option to allow zero length out as "success"
 
