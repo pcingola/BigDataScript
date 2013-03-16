@@ -48,9 +48,7 @@ public class BigDataScriptNodeFactory {
 		String className = tree.getClass().getSimpleName();
 		String end = "Context";
 		if (className.endsWith(end)) className = className.substring(0, className.length() - end.length());
-
 		if (className.equals("TypeArray")) return TypeList.class.getSimpleName();
-
 		return className;
 	}
 
@@ -93,8 +91,7 @@ public class BigDataScriptNodeFactory {
 		if (className.startsWith(packageName())) className = className.substring(packageName().length());
 
 		// This node doesn't do anything, it should not be created (it is a sub-product of the grammar)
-		if (className.equals("Eol")) return null;
-		if (className.equals("StatmentEol")) return null;
+		if ((tree != null) && isIgnore(tree)) return null;
 
 		// Types: Get instace nodes (singletons)
 		if (className.equals("TypePrimitiveBool")) return Type.BOOL;
@@ -180,6 +177,13 @@ public class BigDataScriptNodeFactory {
 
 	public boolean isCreateFakeIds() {
 		return createFakeIds;
+	}
+
+	public boolean isIgnore(ParseTree tree) {
+		String className = className(tree);
+		if (className.equals("Eol")) return true;
+		if (className.equals("StatmentEol")) return true;
+		return false;
 	}
 
 	/**

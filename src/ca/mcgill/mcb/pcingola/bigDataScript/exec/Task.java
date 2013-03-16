@@ -15,6 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 public abstract class Task implements BigDataScriptSerialize, TaskStats {
 
 	protected String id; // Task ID
+	protected boolean verbose, debug;
 	protected boolean canFail; // Allow execution to fail
 	protected boolean done; // Is this task finished
 	protected int exitValue; // Exit (error) code
@@ -148,6 +149,10 @@ public abstract class Task implements BigDataScriptSerialize, TaskStats {
 		this.canFail = canFail;
 	}
 
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
 	@Override
 	public void setDone(boolean done) {
 		this.done = done;
@@ -164,6 +169,10 @@ public abstract class Task implements BigDataScriptSerialize, TaskStats {
 
 	public void setQueue(String queue) {
 		this.queue = queue;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 }

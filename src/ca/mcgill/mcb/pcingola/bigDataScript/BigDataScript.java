@@ -75,8 +75,8 @@ public class BigDataScript {
 	public static void main(String[] args) {
 		// Create BigDataScript object and run it
 		BigDataScript bigDataScript = new BigDataScript(args);
-		bigDataScript.run();
-		System.exit(0);
+		int exitValue = bigDataScript.run();
+		System.exit(exitValue);
 	}
 
 	public BigDataScript(String args[]) {
@@ -474,7 +474,7 @@ public class BigDataScript {
 	/**
 	 * Run script
 	 */
-	public void run() {
+	public int run() {
 		// Startup message
 		if (verbose) System.out.println(VERSION + "\n");
 
@@ -488,8 +488,9 @@ public class BigDataScript {
 		//---
 		// Run
 		//---
-		if (chekcpointRestoreFile != null) runCheckpoint(); // Are we recovering (or loading) from a checkpoint?
-		else runCompile(); // Compile & run
+		int exitValue = 0;
+		if (chekcpointRestoreFile != null) exitValue = runCheckpoint(); // Are we recovering (or loading) from a checkpoint?
+		else exitValue = runCompile(); // Compile & run
 
 		//---
 		// Kill all Executioners
@@ -498,20 +499,20 @@ public class BigDataScript {
 			executioner.kill();
 
 		if (debug) System.out.println("Finished running.\n");
+		return exitValue;
 	}
 
 	/**
 	 * Restore from checkpoint and run
 	 */
-	void runCheckpoint() {
+	int runCheckpoint() {
 		// Load checkpoint file
 		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile);
 		List<BigDataScriptThread> csthreads = csSerializer.load();
 
 		// Show
+		int exitValue = 0;
 		for (BigDataScriptThread csthread : csthreads) {
-			//			if (debug) System.err.println("Checkpoint data:\n" + csthread);
-
 			// Set run state, program 
 			csthread.setRunState(RunState.CHECKPOINT_RECOVER);
 			programUnit = (ProgramUnit) csthread.getProgramUnit();
@@ -522,29 +523,32 @@ public class BigDataScript {
 				programUnit.setScope(scope);
 
 			// All set, run thread
-			runThread(csthread);
+			int exitVal = runThread(csthread);
+			exitValue = Math.max(exitValue, exitVal);
 		}
+
+		return exitValue;
 	}
 
 	/**
 	 * Compile and run
 	 */
-	void runCompile() {
+	int runCompile() {
 		// Compile, abort on errors
-		if (!compile()) return;
+		if (!compile()) return 1;
 
 		initializeArgs();
 
 		// Run the program
-		BigDataScriptThread csthread = new BigDataScriptThread(programUnit);
-		runThread(csthread);
+		BigDataScriptThread csthread = new BigDataScriptThread(programUnit, config);
+		return runThread(csthread);
 	}
 
 	/**
 	 * Run a thread
 	 * @param csthread
 	 */
-	void runThread(BigDataScriptThread csthread) {
+	int runThread(BigDataScriptThread csthread) {
 		bigDataScriptThread = csthread;
 		csthread.start();
 
@@ -553,8 +557,10 @@ public class BigDataScript {
 		} catch (InterruptedException e) {
 			// Nothing to do?
 			// May be checkpoint?
-			Gpr.debug("Interrupted!");
+			return 1;
 		}
+
+		return csthread.getExitValue();
 	}
 
 	void usage(String err) {

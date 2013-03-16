@@ -65,6 +65,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		Task task = executioner.task(execId, sys.getSysFileName(), sys.getCommands(csThread));
 
 		// Configure Task parameters
+		task.setVerbose(csThread.getConfig().isVerbose());
+		task.setDebug(csThread.getConfig().isDebug());
 		task.setCanFail(csThread.getBool(TASK_OPTION_CAN_FAIL));
 		task.setNode(csThread.getString(TASK_OPTION_NODE));
 		task.setQueue(csThread.getString(TASK_OPTION_QUEUE));

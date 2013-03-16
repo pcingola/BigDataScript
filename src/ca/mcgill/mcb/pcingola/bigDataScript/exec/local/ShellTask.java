@@ -48,7 +48,7 @@ public class ShellTask extends Task {
 		save(programFileName);
 
 		// Create command 
-		Timer.showStdErr("Creating shell script '" + programFileName + "'");
+		if (verbose) Timer.showStdErr("Creating shell script '" + programFileName + "'");
 		ArrayList<String> osCmdList = new ArrayList<String>();
 
 		if (invokeCmd != null) {

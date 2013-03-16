@@ -47,6 +47,7 @@ public class Wait extends Statement {
 	@SuppressWarnings("rawtypes")
 	protected RunState runStepOk(BigDataScriptThread csThread) {
 		boolean ok = false;
+
 		// No arguments? Wait for all tasks
 		if (taskId == null) {
 			ok = csThread.waitTasksAll();
@@ -66,7 +67,7 @@ public class Wait extends Statement {
 			System.err.println("Task failed. Creating checkpoint file '" + checkpointFileName + "'");
 
 			// Exit 
-			csThread.setReturnValue(1L);
+			csThread.setExitValue(1L);
 			return RunState.EXIT;
 		}
 

@@ -143,14 +143,17 @@ public class ExpressionSys extends Expression {
 		execId = execId("sys", csThread);
 
 		// Create a bash file
-		ShellTask shellExec = new ShellTask(execId, getSysFileName(), getCommands(csThread));
-		boolean runOk = shellExec.run();
+		ShellTask shellTask = new ShellTask(execId, getSysFileName(), getCommands(csThread));
+		shellTask.setVerbose(csThread.getConfig().isVerbose());
+		shellTask.setDebug(csThread.getConfig().isDebug());
+		boolean runOk = shellTask.run();
 
 		// Error running the program? 
 		if (!runOk) {
 			// Execution failed!
 			// Save checkpoint and exit
 			csThread.checkpoint(null);
+			csThread.setExitValue(shellTask.getExitValue()); // Set return value and exit
 			return RunState.EXIT;
 		}
 

@@ -6,11 +6,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Wait;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -35,12 +36,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	String bigDataScriptThreadId;
 	int bigDataScriptThreadNum;
 	int checkPointRecoverNodeIdx;
+	int exitValue;
 	ProgramCounter pc;
 	Scope scope;
 	ProgramUnit programUnit;
 	RunState runState;
 	Object returnValue;
 	HashMap<String, Task> tasks;
+	Config config;
 
 	/**
 	 * Get an ID for a node
@@ -58,13 +61,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		tasks = new HashMap<String, Task>();
 	}
 
-	public BigDataScriptThread(ProgramUnit programUnit) {
+	public BigDataScriptThread(ProgramUnit programUnit, Config config) {
 		super();
 		bigDataScriptThreadNum = bigDataScriptThreadId();
 		pc = new ProgramCounter();
 		scope = Scope.getGlobalScope();
 		runState = RunState.OK;
 		tasks = new HashMap<String, Task>();
+		this.config = config;
 		setProgram(programUnit);
 	}
 
@@ -120,6 +124,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (!logdir.exists()) logdir.mkdirs();
 	}
 
+	public String getBigDataScriptThreadId() {
+		return bigDataScriptThreadId;
+	}
+
 	/**
 	 * Get variable's value as a bool
 	 * @param varName
@@ -129,8 +137,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return (Boolean) getScope().getSymbol(varName).getValue();
 	}
 
-	public String getBigDataScriptThreadId() {
-		return bigDataScriptThreadId;
+	public Config getConfig() {
+		return config;
+	}
+
+	public int getExitValue() {
+		return exitValue;
 	}
 
 	/**
@@ -256,6 +268,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		programUnit.run(this); // Run program
 
 		waitTasksAll(); // Implicit 'wait' statement at the end of the program
+
+		// Set exit value as the latest 'int' result
+		Object ev = getReturnValue();
+		if (ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
 	}
 
 	@Override
@@ -286,6 +302,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			out.append(task.serializeSave(serializer));
 
 		return out.toString();
+	}
+
+	public void setExitValue(long exitValue) {
+		this.exitValue = (int) exitValue;
 	}
 
 	public void setPc(ProgramCounter pc) {
@@ -377,7 +397,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 
 		// Either finished OK or it was allowed to fail
-		return task.isDoneOk() || task.isCanFail();
+		boolean ok = task.isDoneOk() || task.isCanFail();
+		if (!ok) exitValue = task.getExitValue(); // Set exit value
+		return ok;
 	}
 
 	/**

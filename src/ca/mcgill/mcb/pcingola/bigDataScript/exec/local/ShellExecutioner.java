@@ -22,7 +22,7 @@ public class ShellExecutioner extends Executioner {
 	public ShellExecutioner(Cluster cluster) {
 		super(cluster);
 		taskQueue = new TaskQueue(cluster);
-		taskQueue.setVerbose(true);
+		taskQueue.setVerbose(verbose);
 	}
 
 	@Override

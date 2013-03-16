@@ -38,14 +38,14 @@ statement : '{' statement* '}'                                                  
             | 'for' '(' ( forInit )? 
                           ';' ( forCondition )? 
                           ';' ( end=forEnd )? 
-                    ')' eol* statement eol*                                                # forLoop
-            | 'for' '(' varDeclaration ':' expression ')' eol* statement eol*              # forLoopList
-            | 'if' '(' expression ')' eol* statement eol* ( 'else' eol* statement eol* )?  # if
+                    ')' statement eol*                                                     # forLoop
+            | 'for' '(' varDeclaration ':' expression ')' statement eol*                   # forLoopList
+            | 'if' '(' expression ')' statement eol* ( 'else' statement eol* )?            # if
             | 'kill' expression  eol*                                                      # kill
             | 'return' expression?  eol*                                                   # return
             | 'wait' (expression (',' expression)* )?  eol*                                # wait
-            | 'while' '(' expression ')'  eol* statement  eol*                             # while
-            | type ID '(' varDeclaration* ')'  eol* statement  eol*                        # functionDeclaration
+            | 'while' '(' expression ')' statement  eol*                                   # while
+            | type ID '(' varDeclaration* ')' statement  eol*                              # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
             | expression  eol*                                                             # statmentExpr
             | eol                                                                          # statmentEol

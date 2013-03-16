@@ -1,0 +1,22 @@
+
+// Some command using different "syntax"
+
+int i=0;
+
+if( true )   { i++; }
+
+if( true )   {
+	i++;
+}
+
+if( true )   i++
+
+
+if( true )   { i++ }
+
+if( true )   {
+	i++
+}
+
+if( true )   i++
+

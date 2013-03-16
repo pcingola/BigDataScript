@@ -1,5 +1,4 @@
 // Generated from BigDataScript.g4 by ANTLR 4.0
-package ca.mcgill.mcb.pcingola.bigDataScript.antlr;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

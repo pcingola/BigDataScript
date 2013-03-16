@@ -71,7 +71,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 * @return
 	 */
 	BigDataScriptNode factory(ParseTree tree, int childNum) {
-		return BigDataScriptNodeFactory.get().factory(this, tree.getChild(childNum));
+		ParseTree child = tree.getChild(childNum);
+		return BigDataScriptNodeFactory.get().factory(this, child);
 	}
 
 	/**
@@ -207,13 +208,13 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return fields;
 	}
 
-	public int getCharPosInLine() {
-		return charPosInLine;
-	}
-
 	public BigDataScriptThread getBigDataScriptThread() {
 		if (parent != null) return parent.getBigDataScriptThread();
 		return null;
+	}
+
+	public int getCharPosInLine() {
+		return charPosInLine;
 	}
 
 	/**
