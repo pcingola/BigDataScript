@@ -7,5 +7,5 @@ git push origin gh-pages
 echo
 echo
 echo
-echo "Pages:"
+echo "Commit done."
 echo "   http://pcingola.github.com/BigDataScript/"
