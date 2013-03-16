@@ -45,10 +45,6 @@ fragment SysMultiLine : ( EscapedNewLine | ~( '\r' | '\n') )*;
 // Lexer tokens
 //---
 
-// Newline and white space
-NEWLINE : ( '\r' | '\n' | '\r\n' );
-WS : ( ' ' | '\t' | '\u000C' ) { skip(); } ;
-
 // Number literals
 BOOL_LITERAL : 'true' | 'false' ;
 INT_LITERAL : IntegerNumber ;
@@ -74,3 +70,7 @@ COMMENT_LINE_HASH : '#' ~('\n'|'\r')* { skip(); };
 
 // Identifier
 ID :    ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
+
+// Newline and white space
+// WS : ( ' ' | '\t' | '\n' | '\r' | '\u000C' ) { skip(); } ;
+WS : ( ' ' | '\t' | '\r' | '\u000C' ) { skip(); } ;

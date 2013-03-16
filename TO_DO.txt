@@ -1,3 +1,7 @@
+- Return exit code on error
+
+- Silent mode: do not show anything
+
 - Parsing. All these should work the same:
 
 	if( true )	 { print("Hi\n"); }

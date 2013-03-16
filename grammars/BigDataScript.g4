@@ -10,7 +10,7 @@ import BigDataScriptLexerRules;
 programUnit : (statement)+;
 
 // End of line (semicolons are optional)
-eol : (';' | NEWLINE)+;
+eol : (';' | '\n' )+;
 
 // Types
 typeList : type (',' type)* ;
@@ -30,25 +30,25 @@ varDeclaration      : type variableInit (',' variableInit)*;
 variableInit        : ID ('=' expression)?;
 
 // Statements
-statement : eol                                                                     # statmentEol
-          | '{' statement* '}'                                                      # block
-          | 'break' eol                                                             # break
-          | 'checkpoint' expression? eol                                            # checkpoint
-          | 'continue' eol                                                          # continue
-          | 'exit' expression? eol                                                  # exit
-          | 'for' '(' ( forInit )? 
-                        ';' ( forCondition )? 
-                        ';' ( end=forEnd )? 
-                  ')' statement                                                     # forLoop
-          | 'for' '(' varDeclaration ':' expression ')' statement                   # forLoopList
-          | 'if' '(' expression ')' statement ( 'else' statement )?                 # if
-          | 'kill' expression eol                                                   # kill
-          | 'return' expression? eol                                                # return
-          | 'wait' (expression (',' expression)* )? eol                             # wait
-          | 'while' '(' expression ')' statement                                    # while
-          | type ID '(' varDeclaration* ')' statement                               # functionDeclaration
-          | varDeclaration eol                                                      # statementVarDeclaration
-          | expression eol                                                          # statmentExpr
+statement : '{' statement* '}'                                                             # block
+            | 'break' eol*                                                                 # break
+            | 'checkpoint' expression? eol*                                                # checkpoint
+            | 'continue' eol*                                                              # continue
+            | 'exit' expression? eol*                                                      # exit
+            | 'for' '(' ( forInit )? 
+                          ';' ( forCondition )? 
+                          ';' ( end=forEnd )? 
+                    ')' eol* statement eol*                                                # forLoop
+            | 'for' '(' varDeclaration ':' expression ')' eol* statement eol*              # forLoopList
+            | 'if' '(' expression ')' eol* statement eol* ( 'else' eol* statement eol* )?  # if
+            | 'kill' expression  eol*                                                      # kill
+            | 'return' expression?  eol*                                                   # return
+            | 'wait' (expression (',' expression)* )?  eol*                                # wait
+            | 'while' '(' expression ')'  eol* statement  eol*                             # while
+            | type ID '(' varDeclaration* ')'  eol* statement  eol*                        # functionDeclaration
+            | varDeclaration  eol*                                                         # statementVarDeclaration
+            | expression  eol*                                                             # statmentExpr
+            | eol                                                                          # statmentEol
           ;
 
 forInit : varDeclaration | expressionList;

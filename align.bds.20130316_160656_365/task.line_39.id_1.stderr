@@ -1,0 +1,2 @@
+[bwa_index] fail to open file 'BDGP5.69.fa'. Abort!
+/data/pcingola/Documents/workspace/BigDataScript/align.bds.20130316_160656_365/task.line_39.id_1.sh: line 6: 13504 Aborted                 (core dumped) bwa index BDGP5.69.fa
