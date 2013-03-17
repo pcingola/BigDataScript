@@ -498,7 +498,7 @@ public class BigDataScript {
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
 
-		if (debug) System.out.println("Finished running.\n");
+		if (verbose) System.out.println("Finished running. Exit value : " + exitValue);
 		return exitValue;
 	}
 

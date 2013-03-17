@@ -401,4 +401,9 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_42.bds", "i", 6L);
 	}
 
+	@Test
+	public void test43() {
+		runAndCheck("test/run_43.bds", "finished", 0L);
+	}
+
 }

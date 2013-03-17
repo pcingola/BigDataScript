@@ -116,6 +116,8 @@ public class ShellTask extends Task {
 		exitValue = cmdRunner.getExitValue();
 		boolean ok = exitValue <= 0;
 
+		if (ok) ok &= checkOutputFiles();
+
 		// Finished OK
 		return ok;
 	}

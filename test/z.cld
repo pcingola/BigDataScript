@@ -1,0 +1,8 @@
+
+string out = "$HOME/zero_length_file.txt"
+
+print("File: $out\n");
+
+task( out <- ) {
+	sys echo Hi ; touch $out
+}

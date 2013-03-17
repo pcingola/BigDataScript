@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
+import java.util.ArrayList;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
@@ -36,6 +38,23 @@ public class TaskOptions extends ExpressionList {
 		}
 
 		return sat;
+	}
+
+	/**
+	 * Calculate all dependent files
+	 * @return
+	 */
+	ArrayList<String> outputFiles() {
+		ArrayList<String> outputFiles = new ArrayList<String>();
+
+		for (Expression expr : expressions) {
+			if (expr instanceof ExpressionDep) {
+				ExpressionDep dep = ((ExpressionDep) expr);
+				outputFiles.addAll(dep.getOutputFiles());
+			}
+		}
+
+		return outputFiles;
 	}
 
 	@Override

@@ -23,6 +23,8 @@ public class ExpressionDep extends Expression {
 
 	Expression left[];
 	Expression right[];
+	List<String> leftEval;
+	List<String> rightEval;
 
 	public ExpressionDep(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -34,8 +36,8 @@ public class ExpressionDep extends Expression {
 	@Override
 	public Object eval(BigDataScriptThread csThread) {
 		// All expressions are evaluated
-		List<String> leftEval = eval(csThread, left);
-		List<String> rightEval = eval(csThread, right);
+		leftEval = eval(csThread, left);
+		rightEval = eval(csThread, right);
 
 		// Left hand side
 		// Calculate minimum modification time
@@ -45,7 +47,7 @@ public class ExpressionDep extends Expression {
 
 			// Any 'left' file does not exists? => We need to build this dependency
 			if (!file.exists()) return true;
-
+			if (file.length() <= 0) return true; // File is empty? => We need to build this dependency
 			minModifiedLeft = Math.min(minModifiedLeft, file.lastModified());
 		}
 
@@ -86,6 +88,14 @@ public class ExpressionDep extends Expression {
 		}
 
 		return resList;
+	}
+
+	public List<String> getInputFiles() {
+		return rightEval;
+	}
+
+	public List<String> getOutputFiles() {
+		return leftEval;
 	}
 
 	@Override

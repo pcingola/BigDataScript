@@ -1,11 +1,15 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.exec;
 
+import java.io.File;
+import java.util.List;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners.ExecutionerType;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunner;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.TaskStats;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * A task to be executed by an Executioner
@@ -25,6 +29,8 @@ public abstract class Task implements BigDataScriptSerialize, TaskStats {
 	protected String queue; // Preferred execution queue
 	protected String stdoutFile, stderrFile; // STDOUT & STDERR Files
 	protected HostResources resources;
+	List<String> outputFiles;
+	Boolean checkOutputFiles;
 
 	public Task() {
 		resources = new HostResources();
@@ -39,6 +45,31 @@ public abstract class Task implements BigDataScriptSerialize, TaskStats {
 	}
 
 	/**
+	 * Check if output files are OK
+	 * @return true if OK, false there is an error (output file does not exist or has zero length)
+	 */
+	protected boolean checkOutputFiles() {
+		if (checkOutputFiles != null) return checkOutputFiles;
+		if (!done || outputFiles == null) return true; // Nothing to check
+
+		boolean check = true;
+		for (String fileName : outputFiles) {
+			File file = new File(fileName);
+
+			if (!file.exists()) {
+				if (verbose) Timer.showStdErr("Error: Task " + id + " failed. Output file '" + fileName + "' does not exist");
+				check = false;
+			} else if (file.length() <= 0) {
+				if (verbose) Timer.showStdErr("Error: Task " + id + " failed. Output file '" + fileName + "' has zero length");
+				check = false;
+			}
+		}
+
+		checkOutputFiles = check; // Cache result, don't check each file again
+		return checkOutputFiles;
+	}
+
+	/**
 	 * Create a CmdRunner
 	 * @return
 	 */
@@ -47,6 +78,7 @@ public abstract class Task implements BigDataScriptSerialize, TaskStats {
 	public abstract ExecutionerType getExecutionerType();
 
 	public int getExitValue() {
+		if (!checkOutputFiles()) return 1; // Any output file failed?
 		return exitValue;
 	}
 
@@ -91,7 +123,7 @@ public abstract class Task implements BigDataScriptSerialize, TaskStats {
 	 * @return
 	 */
 	public boolean isDoneOk() {
-		return done && (exitValue == 0);
+		return done && (exitValue == 0) && checkOutputFiles();
 	}
 
 	/**
@@ -99,7 +131,7 @@ public abstract class Task implements BigDataScriptSerialize, TaskStats {
 	 * @return
 	 */
 	public boolean isFailed() {
-		return done && (exitValue != 0);
+		return done && ((exitValue != 0) || !checkOutputFiles());
 	}
 
 	/**
@@ -108,6 +140,7 @@ public abstract class Task implements BigDataScriptSerialize, TaskStats {
 	public void reset() {
 		done = false;
 		exitValue = 0;
+		outputFiles = null;
 	}
 
 	@Override
@@ -165,6 +198,10 @@ public abstract class Task implements BigDataScriptSerialize, TaskStats {
 
 	public void setNode(String node) {
 		this.node = node;
+	}
+
+	public void setOutputFiles(List<String> outputFiles) {
+		this.outputFiles = outputFiles;
 	}
 
 	public void setQueue(String queue) {

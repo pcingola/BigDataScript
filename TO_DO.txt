@@ -29,10 +29,6 @@
 
 - BUG:  string l = [ "sadf" ]		(l is a string, not a list, but assigned a list => Breaks compilation)
 
-- task( out <- in ): It is an Execution error if output does not exists or has zero length!
-
-- task : "emptyOut = true" option to allow zero length out as "success"
-
 - String operator +=
 
 - List operator +=
@@ -53,9 +49,7 @@
 
 - Command line option to show variables and PC (program counter) in checkpoint file
 
-- Command line option: -noTask (does not execute any task)
-
-- Comman line options : debug, verbose (now is way too verbose). By default it should not print anything
+- Command line option: -noTask (does not execute any task 'dryrun')
 
 - Cluster: Moab vs GridEngine
 
