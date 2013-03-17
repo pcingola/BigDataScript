@@ -540,8 +540,9 @@ public class BigDataScript {
 		initializeArgs();
 
 		// Run the program
-		BigDataScriptThread csthread = new BigDataScriptThread(programUnit, config);
-		return runThread(csthread);
+		BigDataScriptThread csThread = new BigDataScriptThread(programUnit, config);
+		if (verbose) Timer.showStdErr("Process ID: " + csThread.getBigDataScriptThreadId());
+		return runThread(csThread);
 	}
 
 	/**

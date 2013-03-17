@@ -13,6 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * A 'task' statement (to execute a command line in a node)
@@ -130,12 +131,13 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Execute statements
 		//---
 		ExpressionSys sys = null;
+		StringBuilder allCmds = new StringBuilder();
 
 		if (statement instanceof ExpressionSys) sys = (ExpressionSys) statement;
 		else if (statement instanceof LiteralString) {
 			LiteralString lstr = (LiteralString) statement;
+			allCmds.append(lstr.getValue() + "\n");
 			sys = ExpressionSys.get(parent, lstr.getValue(), lineNum, charPosInLine);
-
 		} else if (statement instanceof Block) {
 			// Create one sys statement for all sys statements in the block
 			StringBuilder syssb = new StringBuilder();
@@ -144,7 +146,9 @@ public class ExpressionTask extends ExpressionWithScope {
 			for (Statement st : block.getStatements()) {
 				ExpressionSys sysst = (ExpressionSys) st;
 				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
-				syssb.append(sysst.getCommands(csThread));
+				String commands = sysst.getCommands(csThread);
+				syssb.append(commands);
+				allCmds.append(commands + "\n");
 				syssb.append("\n");
 			}
 
@@ -152,6 +156,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		}
 
 		// Execute
+		if (csThread.getConfig().isVerbose()) Timer.showStdErr("Task, line " + getLineNum() + "\n" + allCmds);
 		exec(csThread, sys);
 
 		return RunState.OK;
