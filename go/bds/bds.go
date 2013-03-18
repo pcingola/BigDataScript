@@ -29,6 +29,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -83,7 +84,6 @@ func ExecuteCommand() int {
 		usage()
 	}
 
-	fmt.Printf("Exec!\n")
 	timeStr := os.Args[2]
 	outFile := os.Args[3]
 	errFile := os.Args[4]
@@ -97,13 +97,13 @@ func ExecuteCommand() int {
 	}
 
 	// Parse time argument
-	time, err := strconv.Atoi(timeStr)
+	timeSecs, err := strconv.Atoi(timeStr)
 	if err != nil {
 		log.Fatalf("Invalid time: '%s'\n", timeStr)
 	}
 
 	// Execute command
-	return executeCommand(command, args, time, outFile, errFile, exitFile)
+	return executeCommand(command, args, timeSecs, outFile, errFile, exitFile)
 }
 
 /*
@@ -113,9 +113,7 @@ func ExecuteCommand() int {
 	Write exit code to exitFile (unless file name is empty)
 	Timeout after timeout seconds (unless time is zero)
 */
-func executeCommand(command string, args []string, time int, outFile, errFile, exitFile string) int {
-	fmt.Printf("Execute: %s > %s 2> %s  exit> %s\n", command, outFile, errFile, exitFile)
-
+func executeCommand(command string, args []string, timeSecs int, outFile, errFile, exitFile string) int {
 	// Create command
 	cmd := exec.Command(command)
 	cmd.Args = args
@@ -160,31 +158,55 @@ func executeCommand(command string, args []string, time int, outFile, errFile, e
 		go io.Copy(stderrFile, stderr)
 	}
 
-	fmt.Printf("cmd type %T\n", cmd)
-	return executeCommandTimeout(cmd, time, exitFile)
+	return executeCommandTimeout(cmd, timeSecs, exitFile)
 }
 
 /*
 	Execute a command enforcing a timeout and writing exit status to 'exitFile'
 */
-func executeCommandTimeout(cmd *exec.Cmd, time int, exitFile string) int {
-	// Wait for command to finish
-	if err := cmd.Wait(); err != nil {
-		if (exitFile == "") || (exitFile == "-") {
-			// No exitFile? Log to console and exit
-			log.Fatal(err)
-		} else {
-			// Dump error to 'exitFile'
-			writeFile(exitFile, err.Error())
-			return 1
-		}
+func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string) int {
+
+	// Create a timeout process
+	// References: http://blog.golang.org/2010/09/go-concurrency-patterns-timing-out-and.html
+	exitCode := make(chan string, 1)
+	go execute(cmd, exitCode)
+
+	// Wait for execution to finish or timeout
+	exitStr := ""
+	select {
+	case exitStr = <-exitCode:
+
+	case <-time.After(time.Duration(timeSecs) * time.Second):
+		exitStr = "Time out!"
 	}
 
-	// Write to exitFile?
-	if (exitFile != "") && (exitFile != "-") {
-		writeFile(exitFile, "0") // OK, exit code is 0
+	// Write exitCode to file or show as log message
+	if (exitFile == "") || (exitFile == "-") {
+		if exitStr != "0" {
+			log.Fatal(exitStr) // No exitFile? Log to console and exit
+		}
+	} else {
+		writeFile(exitFile, exitStr) // Dump error to 'exitFile'
 	}
-	return 0
+
+	// OK? exit value should be zero
+	if exitStr == "0" {
+		return 0
+	}
+	return 1
+}
+
+/*
+	Execute a command and writing exit status to 'exitCode'
+*/
+func execute(cmd *exec.Cmd, exitCode chan string) {
+
+	// Wait for command to finish
+	if err := cmd.Wait(); err != nil {
+		exitCode <- err.Error()
+	}
+
+	exitCode <- "0"
 }
 
 /* 
