@@ -7,11 +7,11 @@ rm -vf $HOME/.bds/BigDataScript.jar
 echo Building JAR file
 ant 
 
-# Build C program
+# Build go program
 echo
 echo Building bds wrapper
-cd c
-rm -vf bds
-gcc -o bds bds.c
+cd go/bds/
+go clean
+go build
 cd -
 
