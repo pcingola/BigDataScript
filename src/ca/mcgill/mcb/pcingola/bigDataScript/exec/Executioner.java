@@ -47,7 +47,11 @@ public abstract class Executioner extends Thread {
 			if (debug) Timer.showStdErr("Finished task: ERROR, cannot find task '" + id + "'");
 			return false;
 		}
+
+		// Move from 'running' to 'done'
 		tasksRunning.remove(task);
+		tasksDone.put(id, task);
+
 		return true;
 	}
 
@@ -94,16 +98,21 @@ public abstract class Executioner extends Thread {
 	 */
 	public boolean kill(String id) {
 		if (verbose) Timer.showStdErr("Killing task '" + id + "'");
+
 		Task task = tasksRunning.get(id);
 		if (task == null) {
 			// Try tasks to run
 			if (remove(id)) return true;
 
+			// No such task
 			if (verbose) Timer.showStdErr("Killing task: ERROR, cannot find task '" + id + "'");
 			return false;
 		}
+
+		// Running task? Kill and move to 'done' 
 		boolean ok = killTask(task);
-		if (ok) finished(id);
+		finished(id);
+
 		return ok;
 	}
 
