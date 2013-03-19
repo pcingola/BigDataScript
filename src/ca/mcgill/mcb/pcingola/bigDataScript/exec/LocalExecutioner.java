@@ -27,35 +27,15 @@ public class LocalExecutioner extends Executioner {
 	@Override
 	public void add(Task task) {
 		super.add(task);
-		run(task, null); // Run task right away
-	}
-
-	@Override
-	public synchronized boolean finished(String id) {
-		cmdById.remove(id);
-		return super.finished(id);
-	}
-
-	@Override
-	protected boolean killTask(Task task) {
-		CmdRunner cmd = cmdById.get(task.getId());
-		if (cmd == null) return false;
-		cmd.kill();
-		return true;
-	}
-
-	@Override
-	protected boolean runLoop() {
-		// Nothing to do
-		return false;
 	}
 
 	/**
-	 * Execute on local computer. 
-	 * Host parameter is ignored
+	 * Create a CmdRunner to execute the script
+	 * @param task
+	 * @param host
+	 * @return
 	 */
-	@Override
-	protected boolean runTask(Task task, Host host) {
+	CmdRunner createCmdRunner(Task task) {
 		task.createProgramFile(); // We must create a program file
 
 		ArrayList<String> args = new ArrayList<String>();
@@ -79,9 +59,58 @@ public class LocalExecutioner extends Executioner {
 		cmd.setCmdStats(task);
 		cmd.setExecutioner(this);
 		cmdById.put(task.getId(), cmd);
-		cmd.start();
+		return cmd;
+	}
+
+	@Override
+	public synchronized boolean finished(String id) {
+		cmdById.remove(id);
+		return super.finished(id);
+	}
+
+	@Override
+	protected boolean killTask(Task task) {
+		CmdRunner cmd = cmdById.get(task.getId());
+		if (cmd == null) return false;
+		cmd.kill();
+		return true;
+	}
+
+	@Override
+	protected boolean runLoop() {
+		if (tasksToRun.isEmpty()) return false; // Nothing to do
+
+		// Create a new collection to avoid 'concurrent modification error'
+		ArrayList<Task> run = new ArrayList<Task>();
+		run.addAll(tasksToRun);
+
+		// Run all tasks
+		for (Task task : run) {
+			// Run each task
+			run(task, null);
+
+			// Wait for task to finish
+			CmdRunner cmd = cmdById.get(task.getId());
+			try {
+				cmd.join();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
 
 		return true;
 	}
 
+	/**
+	 * Execute on local computer. 
+	 * Host parameter is ignored
+	 */
+	@Override
+	protected boolean runTask(Task task, Host host) {
+		// Create and start a thread
+		CmdRunner cmd = createCmdRunner(task);
+		cmdById.put(task.getId(), cmd);
+		cmd.start();
+		return true;
+	}
 }

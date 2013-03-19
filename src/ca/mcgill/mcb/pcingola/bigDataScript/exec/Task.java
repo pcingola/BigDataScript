@@ -17,6 +17,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class Task implements BigDataScriptSerialize, CmdStats {
 
+	public static final String SHE_BANG = "#!/bin/sh\n\n";
+
 	protected String id; // Task ID
 	protected boolean verbose, debug;
 	protected boolean canFail; // Allow execution to fail
@@ -72,7 +74,7 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 	 * Create a program file
 	 */
 	public void createProgramFile() {
-		Gpr.toFile(programFileName, programTxt);
+		Gpr.toFile(programFileName, SHE_BANG + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution onf this file
 
 		// Set default file names

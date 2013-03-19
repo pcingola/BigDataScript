@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners.ExecutionerType;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
@@ -21,9 +24,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
  * 
  * Create a shell file, then invoke a shell to execute it.
  *
- * TODO: We could just invoke the program/s if there are 
- * 		 no 'shell hacks' (which include redirections, pipes, etc.)
- * 
  * @author pcingola
  */
 public class ExpressionSys extends Expression {
@@ -142,24 +142,30 @@ public class ExpressionSys extends Expression {
 		// Get an ID
 		execId = execId("sys", csThread);
 
+		// Create a 
+
 		// SYS expressions are always executed locally
-		// Create a shell task
+		// Create a task
 		Task task = new Task(execId, getSysFileName(), getCommands(csThread));
 		task.setVerbose(csThread.getConfig().isVerbose());
 		task.setDebug(csThread.getConfig().isDebug());
-		throw new RuntimeException("Unimplemented!!!");
-		//		boolean runOk = task.run();
-		//
-		//		// Error running the program? 
-		//		if (!runOk) {
-		//			// Execution failed!
-		//			// Save checkpoint and exit
-		//			csThread.checkpoint(null);
-		//			csThread.setExitValue(task.getExitValue()); // Set return value and exit
-		//			return RunState.EXIT;
-		//		}
-		//
-		//		return RunState.OK;
+		csThread.add(task); // Add task to thread
+
+		// Execute
+		Executioner executioner = Executioners.getInstance().get(ExecutionerType.LOCAL_SYS); // Get executioner
+		executioner.add(task); // Execute task and wait for command to finish
+
+		boolean runOk = true;
+
+		// Error running the program? 
+		if (!runOk) {
+			// Execution failed! Save checkpoint and exit
+			csThread.checkpoint(null);
+			csThread.setExitValue(task.getExitValue()); // Set return value and exit
+			return RunState.EXIT;
+		}
+
+		return RunState.OK;
 	}
 
 	@Override

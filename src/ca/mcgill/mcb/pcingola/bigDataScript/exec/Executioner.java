@@ -50,7 +50,14 @@ public abstract class Executioner extends Thread {
 	public boolean finished(String id) {
 		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
 		Task task = tasksRunning.get(id);
+
+		// Remove from 'tail' thread
+		tail.remove(task.getStdoutFile());
+		tail.remove(task.getStderrFile());
+
+		// Move to 'done' 
 		finished(task);
+
 		return true;
 	}
 
@@ -191,6 +198,9 @@ public abstract class Executioner extends Thread {
 		return true;
 	}
 
+	/**
+	 * Run task queues
+	 */
 	@Override
 	public void run() {
 		if (debug) Timer.showStdErr("Starting " + this.getClass().getSimpleName());

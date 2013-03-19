@@ -40,7 +40,7 @@ public class Tail extends Thread {
 	 * @param fileName : File to be followed (if null, it is ignored)
 	 * @param showStderr : If true, print to STDERR
 	 */
-	public void add(String fileName, boolean showStderr) {
+	public synchronized void add(String fileName, boolean showStderr) {
 		if (fileName == null) return;
 		fileNames.add(fileName);
 		if (showStderr) isStderr.add(fileName);
@@ -56,7 +56,7 @@ public class Tail extends Thread {
 	/**
 	 * Attempt to open all files in 'fileNames'
 	 */
-	void open() {
+	synchronized void open() {
 		if (fileNames.isEmpty()) return;
 
 		// Try to open all files
@@ -74,7 +74,7 @@ public class Tail extends Thread {
 	 * @param fileName
 	 * @return
 	 */
-	boolean open(String fileName) {
+	synchronized boolean open(String fileName) {
 		if (!Gpr.exists(fileName)) return false; // File does not exists yet, it may be created later 
 
 		BufferedInputStream buffer = null;
@@ -87,6 +87,31 @@ public class Tail extends Thread {
 
 		buffers.put(fileName, buffer);
 		return true;
+	}
+
+	/**
+	 * Remove 'fileName' (do not 'follow' any more)
+	 * @param fileName
+	 * @param showStderr
+	 */
+	public synchronized void remove(String fileName) {
+		try {
+			// Remove from isStderr
+			isStderr.remove(fileName);
+
+			// Not opened => Only remove here
+			if (fileNames.remove(fileName)) return;
+
+			// Is it already open?
+			BufferedInputStream bis = buffers.get(fileName);
+			if (bis != null) {
+				buffers.remove(fileName);
+				bis.close();
+			}
+
+		} catch (Exception e) {
+			// Nothing to do
+		}
 	}
 
 	@Override
@@ -115,7 +140,7 @@ public class Tail extends Thread {
 	/**
 	 * Check if there is output available on any file
 	 */
-	boolean tail() {
+	synchronized boolean tail() {
 		open(); // Any files pending to be opened?
 
 		// Try to read form all buffers

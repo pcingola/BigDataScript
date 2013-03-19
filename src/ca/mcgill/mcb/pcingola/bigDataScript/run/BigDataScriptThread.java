@@ -397,9 +397,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 
 		// Either finished OK or it was allowed to fail
-		boolean ok = task.isDoneOk() || task.isCanFail();
-		if (!ok) exitValue = task.getExitValue(); // Set exit value
-		return ok;
+		return task.isDoneOk() || task.isCanFail();
 	}
 
 	/**
