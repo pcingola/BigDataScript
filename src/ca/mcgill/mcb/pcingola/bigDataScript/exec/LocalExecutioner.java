@@ -59,6 +59,7 @@ public class LocalExecutioner extends Executioner {
 
 		CmdRunner cmd = new CmdRunner(task.getId(), args.toArray(ARGS_ARRAY_TYPE));
 		cmd.setCmdStats(task);
+		cmd.setExecutioner(this);
 		cmd.start();
 
 		return true;

@@ -130,7 +130,6 @@ public class CmdRunner extends Thread {
 
 	@Override
 	public void run() {
-		if (debug) Gpr.debug("Running ExecOsCommand thread");
 		exec();
 	}
 
@@ -140,6 +139,10 @@ public class CmdRunner extends Thread {
 
 	public void setCommandArgs(String[] commandArgs) {
 		this.commandArgs = commandArgs;
+	}
+
+	public void setExecutioner(Executioner executioner) {
+		this.executioner = executioner;
 	}
 
 	public void setHost(Host host) {
