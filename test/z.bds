@@ -1,6 +1,18 @@
 
+string[] events
 
-for( int i=0 ; i < 30 ; i++ ) {
-	task echo Hello $i ; sleep 1 ; echo Bye
-}
+string tid = task sleep 60 ; echo hi
+print("TASK ID: '$tid'\n")
 
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+// Kill task
+print("KILL $tid\n")
+events.add("kill")
+kill tid
+
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+print("Events: " + events) 

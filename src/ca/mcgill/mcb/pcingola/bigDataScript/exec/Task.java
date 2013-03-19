@@ -84,6 +84,14 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 		if (exitCodeFile == null) exitCodeFile = base + ".exitCode";
 	}
 
+	/**
+	 * Mark this task as failed
+	 */
+	public void failed() {
+		exitValue = 1;
+		done = true;
+	}
+
 	public String getExitCodeFile() {
 		return exitCodeFile;
 	}

@@ -50,6 +50,7 @@ public abstract class Executioner extends Thread {
 	public boolean finished(String id) {
 		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
 		Task task = tasksRunning.get(id);
+		if (task == null) return false;
 
 		// Remove from 'tail' thread
 		tail.remove(task.getStdoutFile());
@@ -134,7 +135,7 @@ public abstract class Executioner extends Thread {
 		tokill.addAll(tasksToRun);
 		for (Task t : tokill) {
 			running(t);
-			t.setExitValue(1); // Failed
+			t.failed();
 			finished(t);
 		}
 
@@ -151,17 +152,25 @@ public abstract class Executioner extends Thread {
 	 * @param id : Task id
 	 * @return true if it was killed
 	 */
-	public boolean kill(String id) {
+	public synchronized boolean kill(String id) {
 		if (verbose) Timer.showStdErr("Killing task '" + id + "'");
 
-		Task task = getTask(id);
-		if (task == null) {
-			// No such task
-			if (verbose) Timer.showStdErr("Killing task: ERROR, cannot find task '" + id + "'");
-			return false;
+		// Running?
+		Task task = tasksRunning.get(id);
+		if (task != null) return kill(task);
+
+		// To run?
+		for (int i = 0; i < tasksToRun.size(); i++) {
+			Task t = tasksToRun.get(i);
+			if (t.getId().equals(id)) {
+				running(t);
+				t.failed();
+				finished(t);
+				return true;
+			}
 		}
 
-		return kill(task);
+		return false;
 	}
 
 	/**
@@ -189,12 +198,14 @@ public abstract class Executioner extends Thread {
 		// Find task number
 		int delete = -1;
 		for (int i = 0; (i < tasksToRun.size()) && (delete < 0); i++)
-			if (tasksToRun.get(i).getId().equals(id)) delete = i;
+			if (tasksToRun.get(i).getId().equals(id)) {
+				delete = i;
+				tasksToRun.remove(delete);
+			}
 
 		// Not found
 		if (delete < 0) return false;
 
-		tasksToRun.remove(delete);
 		return true;
 	}
 
