@@ -1,7 +1,8 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.exec;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdQueue;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
 
 /**
  * Execute tasks in local computer.
@@ -15,56 +16,27 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class LocalQueueExecutioner extends Executioner {
 
-	protected CmdQueue taskQueue;
 	protected int sleepTime = 250; // Default sleep time
+	Host host; // This computer
 
 	public LocalQueueExecutioner() {
 		super();
-		taskQueue = new CmdQueue(null);
-		taskQueue.setVerbose(verbose);
+
+		// Create localHost
+		Cluster cluster = new Cluster();
+		host = new HostLocal(cluster);
 	}
 
 	@Override
-	public synchronized void add(Task task) {
-		throw new RuntimeException("UNIMPLEMENTED!!");
+	protected boolean killTask(Task task) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
-	public synchronized boolean isValid() {
-		return taskQueue.isRunning() || taskQueue.hasTaskToRun();
+	protected boolean runTask(Task task) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
-	@Override
-	public synchronized void kill() {
-		super.kill();
-
-		// Kill queue
-		taskQueue.kill();
-	}
-
-	@Override
-	public synchronized boolean kill(String id) {
-		if (debug) Gpr.debug("Killing task: " + id);
-		taskQueue.kill(id);
-		return true;
-	}
-
-	@Override
-	public void run() {
-		running = true;
-
-		while (running) {
-			taskQueue.run();
-
-			// Wait a bit before running it again
-			try {
-				if (running) Thread.sleep(sleepTime);
-			} catch (InterruptedException e) {
-				running = false;
-				e.printStackTrace();
-			}
-		}
-
-		running = false;
-	}
 }
