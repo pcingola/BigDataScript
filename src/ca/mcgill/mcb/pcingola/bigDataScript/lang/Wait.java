@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
@@ -100,9 +98,10 @@ public class Wait extends Statement {
 			// TODO: 	Select proper executioner if not available
 			// 			E.g: We are running a task in a cluster, we checkpoint and the copy files to a laptop
 			//			We should be able to downgrade executioners (probably not to upgrade)
-			Executioner executioner = Executioners.getInstance().get(t.getExecutionerType());
-			t.reset();
-			executioner.queue(t);
+			throw new RuntimeException("Unnimplemented!");
+			//			Executioner executioner = Executioners.getInstance().get(t.getExecutionerType());
+			//			t.reset();
+			//			executioner.queue(t);
 		}
 
 		return runStepOk(csThread);

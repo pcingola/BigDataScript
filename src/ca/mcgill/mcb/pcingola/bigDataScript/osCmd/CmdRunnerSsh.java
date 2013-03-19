@@ -2,7 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -123,7 +122,7 @@ public class CmdRunnerSsh extends CmdRunner {
 	@Override
 	public int exec() {
 		try {
-			createTimeoutCommand(); // Handle timeout requirement here (if possible)
+			//			createTimeoutCommand(); // Handle timeout requirement here (if possible)
 
 			executing = true;
 
@@ -139,7 +138,7 @@ public class CmdRunnerSsh extends CmdRunner {
 		} catch (Exception e) {
 			error = e.getMessage();
 			exitValue = -1;
-			if (showExceptions) e.printStackTrace();
+			if (debug) e.printStackTrace();
 			disconnect(false);
 		} finally {
 			// Disconnect and set exit value
@@ -153,7 +152,6 @@ public class CmdRunnerSsh extends CmdRunner {
 				cmdStats.setExitValue(exitValue);
 				cmdStats.setDone(true);
 			}
-
 		}
 
 		return exitValue;
@@ -163,6 +161,13 @@ public class CmdRunnerSsh extends CmdRunner {
 	public void kill() {
 		executing = false;
 		disconnect(true);
+
+		// Update task stats
+		if (cmdStats != null) {
+			if (debug) Gpr.debug("Killed: Setting stats " + cmdStats);
+			cmdStats.setExitValue(-1);
+			cmdStats.setDone(true);
+		}
 	}
 
 	/**
@@ -187,7 +192,7 @@ public class CmdRunnerSsh extends CmdRunner {
 		channel.connect();
 		if (checkAck(null, out, in) != 0) throw new Exception("Error in SCP (connect command was not acknoledged)");
 
-		// Send "C0644 filesize filename", where filename should not include '/'
+		// Send "C0644 fileSize fileName", where filename should not include '/'
 		long filesize = lfile.length();
 		scpcommand = "C0644 " + filesize + " " + Gpr.baseName(localFileName) + "\n";
 		if (checkAck(scpcommand, out, in) != 0) throw new Exception("Error in SCP ('C' command was not acknoledged)");
@@ -270,33 +275,34 @@ public class CmdRunnerSsh extends CmdRunner {
 		//---
 		InputStream in = null;
 
-		if (redirectStderr != null) {
-			TeeOutputStream teeStderr = new TeeOutputStream(System.err, new FileOutputStream(redirectStderr));
-			channel.setErrStream(teeStderr);
-		} else channel.setErrStream(System.err);
-
-		if (redirectStdout != null) {
-			TeeOutputStream teeStdout = new TeeOutputStream(System.out, new FileOutputStream(redirectStdout));
-			channel.setOutputStream(teeStdout);
-		} else {
-			channel.setOutputStream(System.out);
-
-			// Read input
-			if (debug) Gpr.debug("Read channel input");
-			in = channel.getInputStream();
-		}
-
-		// Connect channel
-		channel.connect();
-		if (debug) Gpr.debug("Ssh channel contected");
-
-		if (redirectStdout == null) {
-			String resultStr = Gpr.read(in);
-			if (debug) Gpr.debug("Ssh results (length: " + resultStr.length() + ")\n" + resultStr);
-		}
-
-		// Diconnect
-		disconnect(false);
+		throw new RuntimeException("Unimplemented!!!");
+		//		if (redirectStderr != null) {
+		//			TeeOutputStream teeStderr = new TeeOutputStream(System.err, new FileOutputStream(redirectStderr));
+		//			channel.setErrStream(teeStderr);
+		//		} else channel.setErrStream(System.err);
+		//
+		//		if (redirectStdout != null) {
+		//			TeeOutputStream teeStdout = new TeeOutputStream(System.out, new FileOutputStream(redirectStdout));
+		//			channel.setOutputStream(teeStdout);
+		//		} else {
+		//			channel.setOutputStream(System.out);
+		//
+		//			// Read input
+		//			if (debug) Gpr.debug("Read channel input");
+		//			in = channel.getInputStream();
+		//		}
+		//
+		//		// Connect channel
+		//		channel.connect();
+		//		if (debug) Gpr.debug("Ssh channel contected");
+		//
+		//		if (redirectStdout == null) {
+		//			String resultStr = Gpr.read(in);
+		//			if (debug) Gpr.debug("Ssh results (length: " + resultStr.length() + ")\n" + resultStr);
+		//		}
+		//
+		//		// Diconnect
+		//		disconnect(false);
 	}
 }
 

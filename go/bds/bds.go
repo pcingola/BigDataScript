@@ -173,11 +173,16 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string) int {
 
 	// Wait for execution to finish or timeout
 	exitStr := ""
-	select {
-	case exitStr = <-exitCode:
+	if timeSecs > 0 {
+		select {
+		case exitStr = <-exitCode:
 
-	case <-time.After(time.Duration(timeSecs) * time.Second):
-		exitStr = "Time out!"
+		case <-time.After(time.Duration(timeSecs) * time.Second):
+			exitStr = "Time out!"
+		}
+	} else {
+		// No timeout
+		exitStr = <-exitCode
 	}
 
 	// Write exitCode to file or show as log message

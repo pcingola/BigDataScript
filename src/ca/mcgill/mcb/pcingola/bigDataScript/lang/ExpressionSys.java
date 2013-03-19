@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.local.ShellTask;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -142,22 +142,24 @@ public class ExpressionSys extends Expression {
 		// Get an ID
 		execId = execId("sys", csThread);
 
-		// Create a bash file
-		ShellTask shellTask = new ShellTask(execId, getSysFileName(), getCommands(csThread));
-		shellTask.setVerbose(csThread.getConfig().isVerbose());
-		shellTask.setDebug(csThread.getConfig().isDebug());
-		boolean runOk = shellTask.run();
-
-		// Error running the program? 
-		if (!runOk) {
-			// Execution failed!
-			// Save checkpoint and exit
-			csThread.checkpoint(null);
-			csThread.setExitValue(shellTask.getExitValue()); // Set return value and exit
-			return RunState.EXIT;
-		}
-
-		return RunState.OK;
+		// SYS expressions are always executed locally
+		// Create a shell task
+		Task task = new Task(execId, getSysFileName(), getCommands(csThread));
+		task.setVerbose(csThread.getConfig().isVerbose());
+		task.setDebug(csThread.getConfig().isDebug());
+		throw new RuntimeException("Unimplemented!!!");
+		//		boolean runOk = task.run();
+		//
+		//		// Error running the program? 
+		//		if (!runOk) {
+		//			// Execution failed!
+		//			// Save checkpoint and exit
+		//			csThread.checkpoint(null);
+		//			csThread.setExitValue(task.getExitValue()); // Set return value and exit
+		//			return RunState.EXIT;
+		//		}
+		//
+		//		return RunState.OK;
 	}
 
 	@Override

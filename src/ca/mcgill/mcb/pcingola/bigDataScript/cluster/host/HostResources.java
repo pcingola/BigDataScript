@@ -23,13 +23,13 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	public HostResources() {
 		cpus = 1; // One cpu
 		mem = -1; // No mem insfo
-		timeout = -1;
+		timeout = 0; // No timeout
 	}
 
 	public HostResources(HostResources hr) {
 		cpus = hr.cpus;
 		mem = hr.mem;
-		timeout = -1;
+		timeout = 0;
 	}
 
 	@Override

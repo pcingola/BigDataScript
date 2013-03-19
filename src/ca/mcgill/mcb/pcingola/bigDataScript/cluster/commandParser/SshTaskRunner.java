@@ -41,18 +41,18 @@ public class SshTaskRunner extends Thread {
 
 	@Override
 	public void run() {
-		try {
-			run = true;
-			ssh.open();
-			started = true;
-			ssh.resetBuffers(); // Clear all buffers before proceeding
-			ssh.send(task, 0); // Send command and collect results
-		} catch(Throwable t) {
-			t.printStackTrace(); // Something happened? => Stop this thread
-		} finally {
-			ssh.close();
-			run = false;
-		}
+		//		try {
+		//			run = true;
+		//			ssh.open();
+		//			started = true;
+		//			ssh.resetBuffers(); // Clear all buffers before proceeding
+		//			ssh.send(task, 0); // Send command and collect results
+		//		} catch(Throwable t) {
+		//			t.printStackTrace(); // Something happened? => Stop this thread
+		//		} finally {
+		//			ssh.close();
+		//			run = false;
+		//		}
 	}
 
 	public void setRun(boolean run) {

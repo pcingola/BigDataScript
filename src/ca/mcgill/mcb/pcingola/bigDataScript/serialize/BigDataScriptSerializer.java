@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.local.ShellTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrePostOperation;
@@ -303,9 +302,9 @@ public class BigDataScriptSerializer {
 				} else if (clazz.equals(ScopeSymbol.class.getSimpleName())) {
 					// Parse ScopeSymbol
 					bigDataScriptSerialize = new ScopeSymbol();
-				} else if (clazz.equals(ShellTask.class.getSimpleName())) {
+				} else if (clazz.equals(Task.class.getSimpleName())) {
 					// Parse Task
-					bigDataScriptSerialize = new ShellTask();
+					bigDataScriptSerialize = new Task();
 				} else {
 					// Everything else has been parsed, this must be a BigDataScriptNode
 					String className = BigDataScriptNodeFactory.get().packageName() + clazz;
@@ -332,7 +331,7 @@ public class BigDataScriptSerializer {
 							Scope scope = (Scope) bigDataScriptSerialize;
 							currCsThread.setScope(scope);
 						}
-					} else if (clazz.equals(ShellTask.class.getSimpleName())) {
+					} else if (clazz.equals(Task.class.getSimpleName())) {
 						currCsThread.add((Task) bigDataScriptSerialize);
 					} else if (bigDataScriptSerialize instanceof BigDataScriptNode) {
 						// UnSerialize 

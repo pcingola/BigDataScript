@@ -5,7 +5,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
  * @author pcingola
  *
  */
-public interface TaskStats {
+public interface CmdStats {
 
 	/**
 	 * Is this task finished?

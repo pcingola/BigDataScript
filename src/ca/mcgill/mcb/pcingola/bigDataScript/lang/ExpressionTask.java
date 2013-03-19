@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -65,21 +64,22 @@ public class ExpressionTask extends ExpressionWithScope {
 		Executioner executioner = Executioners.getInstance().get(runSystem);
 
 		// Create Task
-		Task task = executioner.task(execId, sys.getSysFileName(), sys.getCommands(csThread));
-
-		// Configure Task parameters
-		task.setVerbose(csThread.getConfig().isVerbose());
-		task.setDebug(csThread.getConfig().isDebug());
-		task.setCanFail(csThread.getBool(TASK_OPTION_CAN_FAIL));
-		task.setNode(csThread.getString(TASK_OPTION_NODE));
-		task.setQueue(csThread.getString(TASK_OPTION_QUEUE));
-		task.getResources().setCpus((int) csThread.getInt(TASK_OPTION_CPUS));
-		task.getResources().setTimeout((int) csThread.getInt(TASK_OPTION_TIMEOUT));
-		task.setOutputFiles(outputFiles);
-
-		// Queue exec
-		csThread.add(task);
-		executioner.queue(task);
+		throw new RuntimeException("Unimplemented!");
+		//		Task task = executioner.task(execId, sys.getSysFileName(), sys.getCommands(csThread));
+		//
+		//		// Configure Task parameters
+		//		task.setVerbose(csThread.getConfig().isVerbose());
+		//		task.setDebug(csThread.getConfig().isDebug());
+		//		task.setCanFail(csThread.getBool(TASK_OPTION_CAN_FAIL));
+		//		task.setNode(csThread.getString(TASK_OPTION_NODE));
+		//		task.setQueue(csThread.getString(TASK_OPTION_QUEUE));
+		//		task.getResources().setCpus((int) csThread.getInt(TASK_OPTION_CPUS));
+		//		task.getResources().setTimeout((int) csThread.getInt(TASK_OPTION_TIMEOUT));
+		//		task.setOutputFiles(outputFiles);
+		//
+		//		// Queue exec
+		//		csThread.add(task);
+		//		executioner.queue(task);
 	}
 
 	@Override

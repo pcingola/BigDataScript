@@ -1,9 +1,9 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.exec;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * A system that can execute an Exec
@@ -12,35 +12,47 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
  */
 public abstract class Executioner extends Thread {
 
-	protected boolean debug = false;
-	protected boolean verbose = false;
+	protected boolean debug = true;
+	protected boolean verbose = true;
 	protected boolean running;
 	protected int hostIdx = 0;
-	protected Cluster cluster;
+	ArrayList<Task> tasksToRun;
+	HashMap<String, Task> tasksDone, tasksRunning;
 
-	public Executioner(Cluster cluster) {
+	public Executioner() {
 		super();
-		this.cluster = cluster;
+		tasksToRun = new ArrayList<Task>();
+		tasksDone = new HashMap<String, Task>();
+		tasksRunning = new HashMap<String, Task>();
 	}
 
 	/**
-	 * Get next host for a given task
-	 * 
-	 * TODO: Hosts should be configured in a config file
-	 * TODO: We have to match capabilities required and hosts available.
-	 * 
-	 * @return Next available host
+	 * Queue an Exec and return a the id
+	 * @return
 	 */
-	public Host getNextHost() {
-		List<Host> hosts = cluster.getHosts();
+	public void add(Task task) {
+		if (verbose) Timer.showStdErr("Queuing task '" + task.getId() + "'");
+		tasksToRun.add(task);
+	}
 
-		// Any host ready?
-		for (int i = 0; i < hosts.size(); i++) {
-			Host host = hosts.get((hostIdx++) % hosts.size());
-			if (host.getHealth().isAlive()) return host;
+	/**
+	 * Task finished executing
+	 * @param id
+	 * @return
+	 */
+	public synchronized boolean finished(String id) {
+		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
+		Task task = tasksRunning.get(id);
+		if (task == null) {
+			if (debug) Timer.showStdErr("Finished task: ERROR, cannot find task '" + id + "'");
+			return false;
 		}
+		tasksRunning.remove(task);
+		return true;
+	}
 
-		return null;
+	public synchronized boolean hasTaskToRun() {
+		return !tasksToRun.isEmpty() || !tasksRunning.isEmpty();
 	}
 
 	/**
@@ -57,30 +69,66 @@ public abstract class Executioner extends Thread {
 	 * 
 	 * @return
 	 */
-	public abstract boolean isValid();
+	public boolean isValid() {
+		return isRunning();
+	}
 
 	/**
 	 * Stop executioner and kill all tasks
 	 */
 	public void kill() {
 		running = false;
+
+		// Kill all tasks
+		ArrayList<Task> tokill = new ArrayList<Task>();
+		tokill.addAll(tasksRunning.values());
+		for (Task t : tokill)
+			kill(t.getId());
 	}
 
 	/**
-	 * Kill exec if it is already executing or
-	 * delete a task from execution queue (if 
-	 * it is not already running)
+	 * Kill a task 
 	 * 
-	 * @param id
-	 * @return
+	 * @param id : Task id
+	 * @return true if it was killed
 	 */
-	public abstract boolean kill(String id);
+	public boolean kill(String id) {
+		if (verbose) Timer.showStdErr("Killing task '" + id + "'");
+		Task task = tasksRunning.get(id);
+		if (task == null) {
+			if (verbose) Timer.showStdErr("Killing task: ERROR, cannot find task '" + id + "'");
+			return false;
+		}
+		boolean ok = killTask(task);
+		if (ok) finished(id);
+		return ok;
+	}
 
 	/**
-	 * Queue an Exec and return a the id
+	 * Kill a task
+	 */
+	protected abstract boolean killTask(Task task);
+
+	/**
+	 * Run a task
+	 * @param task
 	 * @return
 	 */
-	public abstract String queue(Task exec);
+	public synchronized boolean run(Task task) {
+		if (verbose) Timer.showStdErr("Running task '" + task.getId() + "'");
+		boolean ok = runTask(task);
+		if (ok) {
+			tasksRunning.put(task.getId(), task);
+		} else if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");
+		return ok;
+	}
+
+	/**
+	 * Run a task
+	 * @param task
+	 * @return
+	 */
+	protected abstract boolean runTask(Task task);
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
@@ -89,14 +137,5 @@ public abstract class Executioner extends Thread {
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
-
-	/**
-	 * Create an exec for this executioner
-	 * @param execId
-	 * @param sysFileName
-	 * @param commands
-	 * @return
-	 */
-	public abstract Task task(String execId, String sysFileName, String commands);
 
 }

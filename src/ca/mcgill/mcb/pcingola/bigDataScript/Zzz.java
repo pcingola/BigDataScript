@@ -1,9 +1,8 @@
 package ca.mcgill.mcb.pcingola.bigDataScript;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.LocalExecutioner;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class Zzz {
 
@@ -11,19 +10,13 @@ public class Zzz {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String fileName = "test/z.bds";
+		Gpr.debug("Begin");
 
-		File dir = new File("test");
-		dir.listFiles();
+		LocalExecutioner localSysExecutioner = new LocalExecutioner();
+		Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\nls -al");
+		localSysExecutioner.run();
+		localSysExecutioner.add(task);
 
-		ArrayList<String> list = new ArrayList<String>();
-		for (File f : dir.listFiles())
-			try {
-				list.add(f.getCanonicalPath());
-			} catch (IOException e) {
-				;
-			}
-		Collections.sort(list);
-		System.out.println("END");
+		Gpr.debug("End");
 	}
 }

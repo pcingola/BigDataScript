@@ -1,15 +1,9 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.host;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserCpuInfo;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserDf;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserMemInfo;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserSystemProfiler;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserTop;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserUname;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserUptime;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserWho;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.Ssh;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Update host's info every now and then (in a separate thread)
@@ -60,29 +54,29 @@ public class HostHealthUpdater extends Thread {
 
 	@Override
 	public void run() {
-		try {
-			ssh.open();
-			info();
-
-			while (run) {
-				try {
-					// I'd rather sleep this way in order to allow for notifications (i.e. 'wake up call')
-					synchronized (this) {
-						wait(host.getCluster().getRefreshTime() * 1000);
-					}
-					update();
-				} catch (Exception e) {
-					Gpr.debug(e);
-					run = false;
-				}
-			}
-		} catch (Throwable t) {
-			Gpr.debug(t);
-			t.printStackTrace(); // Something happened? => Stop this thread
-		} finally {
-			ssh.close();
-			run = false;
-		}
+		//		try {
+		//			ssh.open();
+		//			info();
+		//
+		//			while (run) {
+		//				try {
+		//					// I'd rather sleep this way in order to allow for notifications (i.e. 'wake up call')
+		//					synchronized (this) {
+		//						wait(host.getCluster().getRefreshTime() * 1000);
+		//					}
+		//					update();
+		//				} catch (Exception e) {
+		//					Gpr.debug(e);
+		//					run = false;
+		//				}
+		//			}
+		//		} catch (Throwable t) {
+		//			Gpr.debug(t);
+		//			t.printStackTrace(); // Something happened? => Stop this thread
+		//		} finally {
+		//			ssh.close();
+		//			run = false;
+		//		}
 	}
 
 	public void setRun(boolean run) {
@@ -94,24 +88,24 @@ public class HostHealthUpdater extends Thread {
 	 * (e.g. cpu information does not usually change, so it's not obtained)
 	 */
 	void update() {
-		String systemType = host.getHealth().getSystemType();
-
-		host.getHealth().setAlive(ssh.isRunning());
-		if (debug) Gpr.debug("Host: " + host + "\talive: " + host.getHealth().isAlive());
-
-		if (systemType.equalsIgnoreCase("Linux")) {
-			new CommandParserUptime(host, ssh).parse();
-			new CommandParserMemInfo(host, ssh).parse();
-			new CommandParserWho(host, ssh).parse();
-			new CommandParserDf(host, ssh).parse();
-		} else if (systemType.equalsIgnoreCase("Darwin")) {
-			new CommandParserUptime(host, ssh).parse();
-			new CommandParserTop(host, ssh).parse();
-			new CommandParserWho(host, ssh).parse();
-			new CommandParserDf(host, ssh).parse();
-		}
-
-		if (debug) Gpr.debug("Host info updated: " + host + "\n\t" + host.getResources() + "\n" + host.getHealth());
+		//		String systemType = host.getHealth().getSystemType();
+		//
+		//		host.getHealth().setAlive(ssh.isRunning());
+		//		if (debug) Gpr.debug("Host: " + host + "\talive: " + host.getHealth().isAlive());
+		//
+		//		if (systemType.equalsIgnoreCase("Linux")) {
+		//			new CommandParserUptime(host, ssh).parse();
+		//			new CommandParserMemInfo(host, ssh).parse();
+		//			new CommandParserWho(host, ssh).parse();
+		//			new CommandParserDf(host, ssh).parse();
+		//		} else if (systemType.equalsIgnoreCase("Darwin")) {
+		//			new CommandParserUptime(host, ssh).parse();
+		//			new CommandParserTop(host, ssh).parse();
+		//			new CommandParserWho(host, ssh).parse();
+		//			new CommandParserDf(host, ssh).parse();
+		//		}
+		//
+		//		if (debug) Gpr.debug("Host info updated: " + host + "\n\t" + host.getResources() + "\n" + host.getHealth());
 	}
 
 }

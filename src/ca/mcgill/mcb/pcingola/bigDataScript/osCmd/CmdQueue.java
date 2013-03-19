@@ -14,12 +14,12 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * A queue of task to be run.
+ * A queue of commands to run.
  * They are run in multiple threads (default number of threads = number of CPUs in the computer)
  * 
  * @author pcingola
  */
-public class TaskQueue implements Iterable<CmdRunner> {
+public class CmdQueue implements Iterable<CmdRunner> {
 
 	Cluster cluster;
 	ArrayList<CmdRunner> tasksToRun;
@@ -35,7 +35,7 @@ public class TaskQueue implements Iterable<CmdRunner> {
 	long totalMem = 0;
 	int sleepTime = 100; // Default sleep time
 
-	public TaskQueue(Cluster cluster) {
+	public CmdQueue(Cluster cluster) {
 		this.cluster = cluster;
 		outputFiles = new HashMap<CmdRunner, String>();
 		tasksToRun = new ArrayList<CmdRunner>(); // These must be ordered, so we use a list
@@ -240,12 +240,10 @@ public class TaskQueue implements Iterable<CmdRunner> {
 			if (!Gpr.exists(outputFile)) {
 				tasksRunning.add(cmd);
 
-				if (redirectToOutput) {
-					cmd.setBinaryStdout(true);
-					cmd.setRedirectStdout(outputFile);
-				}
-
-				cmd.start();
+				throw new RuntimeException("Unimplemented!!!");
+				//				if (redirectToOutput) cmd.setRedirectStdout(outputFile);
+				//
+				//				cmd.start();
 			} else tasksDone.add(cmd); // Otherwise, we are already done
 		}
 	}

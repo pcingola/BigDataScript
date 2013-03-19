@@ -7,9 +7,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.cluster.ClusterExecutioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.local.ShellExecutioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.ssh.SshExecutioner;
 
 /**
  * Systems that can execute tasks
@@ -26,7 +23,7 @@ public class Executioners {
 	 *
 	 */
 	public enum ExecutionerType {
-		LOCAL, SSH, CLUSTER, CLOUD;
+		LOCAL_SYS, LOCAL_QUEUE, SSH, CLUSTER, CLOUD;
 
 		/**
 		 * Parse an executioner name
@@ -38,7 +35,7 @@ public class Executioners {
 			try {
 				return ExecutionerType.valueOf(exName.toUpperCase());
 			} catch (Exception e) {
-				return LOCAL;
+				return LOCAL_QUEUE;
 			}
 		}
 
@@ -79,7 +76,18 @@ public class Executioners {
 		Cluster cluster;
 
 		switch (exType) {
-		case LOCAL:
+		case LOCAL_SYS:
+
+			//---
+			// Create local 'sys' executioner
+			//---
+
+			// Create 'local'
+			cluster = new Cluster();
+			cluster.add(new HostLocal(cluster));
+			executioner = new LocalExecutioner();
+			break;
+		case LOCAL_QUEUE:
 
 			//---
 			// Create local executioner
@@ -88,7 +96,7 @@ public class Executioners {
 			// Create 'local' cluster' (a cluster having only this computer)
 			cluster = new Cluster();
 			cluster.add(new HostLocal(cluster));
-			executioner = new ShellExecutioner(cluster);
+			executioner = new LocalQueueExecutioner();
 			break;
 
 		case SSH:
