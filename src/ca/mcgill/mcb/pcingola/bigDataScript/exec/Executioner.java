@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.exec;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -12,18 +13,24 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public abstract class Executioner extends Thread {
 
+	public static final int SLEEP_TIME_DEFAULT = 100;
+	public static final int SLEEP_TIME_LONG = 500;
+
 	protected boolean debug = true;
 	protected boolean verbose = true;
 	protected boolean running;
 	protected int hostIdx = 0;
-	ArrayList<Task> tasksToRun;
-	HashMap<String, Task> tasksDone, tasksRunning;
+	protected int sleepTime = SLEEP_TIME_DEFAULT; // Default sleep time
+	protected ArrayList<Task> tasksToRun;
+	protected HashMap<String, Task> tasksDone, tasksRunning;
+	protected Tail tail;
 
 	public Executioner() {
 		super();
 		tasksToRun = new ArrayList<Task>();
 		tasksDone = new HashMap<String, Task>();
 		tasksRunning = new HashMap<String, Task>();
+		tail = new Tail();
 	}
 
 	/**
@@ -40,23 +47,57 @@ public abstract class Executioner extends Thread {
 	 * @param id
 	 * @return
 	 */
-	public synchronized boolean finished(String id) {
+	public boolean finished(String id) {
 		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
 		Task task = tasksRunning.get(id);
-		if (task == null) {
-			if (debug) Timer.showStdErr("Finished task: ERROR, cannot find task '" + id + "'");
-			return false;
-		}
-
-		// Move from 'running' to 'done'
-		tasksRunning.remove(task);
-		tasksDone.put(id, task);
-
+		finished(task);
 		return true;
 	}
 
+	/**
+	 * Move a task from 'tasksRunning' to 'tasksDone'
+	 * @param task
+	 */
+	protected synchronized void finished(Task task) {
+		if (task == null) return;
+		tasksRunning.remove(task.getId());
+		tasksDone.put(task.getId(), task);
+	}
+
+	/**
+	 * Get a task
+	 * @param id
+	 * @return
+	 */
+	public synchronized Task getTask(String id) {
+		Task t = tasksRunning.get(id);
+		if (t != null) return t;
+
+		t = tasksDone.get(id);
+		if (t != null) return t;
+
+		for (Task tt : tasksToRun)
+			if (tt.getId().equals(id)) return tt;
+
+		return null;
+	}
+
+	/**
+	 * Are there any tasks either running or to be run?
+	 * @return
+	 */
 	public synchronized boolean hasTaskToRun() {
 		return !tasksToRun.isEmpty() || !tasksRunning.isEmpty();
+	}
+
+	/**
+	 * Has any task failed?
+	 * @return
+	 */
+	public boolean isFailed() {
+		for (Task t : tasksDone.values())
+			if (!t.isCanFail() && t.isFailed()) return true; // A task that cannot fail, failed!
+		return false;
 	}
 
 	/**
@@ -80,14 +121,21 @@ public abstract class Executioner extends Thread {
 	/**
 	 * Stop executioner and kill all tasks
 	 */
-	public void kill() {
-		running = false;
-
-		// Kill all tasks
+	public synchronized void kill() {
+		// Kill all 'tasksToRun': Move them to 'tasksDone' and set exitCode to 1
 		ArrayList<Task> tokill = new ArrayList<Task>();
+		tokill.addAll(tasksToRun);
+		for (Task t : tokill) {
+			running(t);
+			t.setExitValue(1); // Failed
+			finished(t);
+		}
+
+		// Kill all running tasks
+		tokill = new ArrayList<Task>();
 		tokill.addAll(tasksRunning.values());
 		for (Task t : tokill)
-			kill(t.getId());
+			kill(t);
 	}
 
 	/**
@@ -99,20 +147,24 @@ public abstract class Executioner extends Thread {
 	public boolean kill(String id) {
 		if (verbose) Timer.showStdErr("Killing task '" + id + "'");
 
-		Task task = tasksRunning.get(id);
+		Task task = getTask(id);
 		if (task == null) {
-			// Try tasks to run
-			if (remove(id)) return true;
-
 			// No such task
 			if (verbose) Timer.showStdErr("Killing task: ERROR, cannot find task '" + id + "'");
 			return false;
 		}
 
-		// Running task? Kill and move to 'done' 
-		boolean ok = killTask(task);
-		finished(id);
+		return kill(task);
+	}
 
+	/**
+	 * Kill a task and move it from 'taskRunning' to 'tasksDone'
+	 * @param task
+	 * @return
+	 */
+	public boolean kill(Task task) {
+		boolean ok = killTask(task);
+		finished(task);
 		return ok;
 	}
 
@@ -132,34 +184,97 @@ public abstract class Executioner extends Thread {
 		for (int i = 0; (i < tasksToRun.size()) && (delete < 0); i++)
 			if (tasksToRun.get(i).getId().equals(id)) delete = i;
 
-		// Remove task number
-		if (delete > 0) {
-			tasksToRun.remove(delete);
-			return true;
+		// Not found
+		if (delete < 0) return false;
+
+		tasksToRun.remove(delete);
+		return true;
+	}
+
+	@Override
+	public void run() {
+		if (debug) Timer.showStdErr("Starting " + this.getClass().getSimpleName());
+		running = true;
+
+		// Create a 'tail' process (to show STDOUT & STDERR from all processes)
+		tail.start();
+
+		try {
+			// Run until killed
+			while (running) {
+				// Run loop
+				if (runLoop()) {
+					if (debug) Timer.showStdErr("Queue: All tasks finished.");
+				}
+
+				sleepLong();
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw new RuntimeException(t);
+		} finally {
+			// Kill tail process
+			tail.kill();
 		}
-		return false;
 	}
 
 	/**
-	 * Run a task
-	 * @param task
+	 * Run a task on a given host
+	 * @param task : Task to run
+	 * @param host : Host to run task (can be null)
 	 * @return
 	 */
-	public synchronized boolean run(Task task) {
+	public synchronized boolean run(Task task, Host host) {
 		if (verbose) Timer.showStdErr("Running task '" + task.getId() + "'");
-		boolean ok = runTask(task);
+
+		boolean ok = runTask(task, host);
 		if (ok) {
-			tasksRunning.put(task.getId(), task);
-		} else if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");
+			// Set task to running state
+			running(task);
+
+			// Add STDOUT & STDERR to tail
+			tail.add(task.getStdoutFile(), false);
+			tail.add(task.getStderrFile(), true);
+		} else {
+			// Error running
+			if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");
+		}
+
 		return ok;
 	}
 
 	/**
+	 * Run loop 
+	 * @return true if all processes have finished executing
+	 */
+	protected abstract boolean runLoop();
+
+	/**
+	 * Get next task to run and run it (on 'host')
+	 * @param host : Host where this task should be run (can be null)
+	 * @return True if run 
+	 */
+	protected synchronized boolean runNext(Host host) {
+		if (tasksToRun.isEmpty()) return false;
+		return run(tasksToRun.get(0), host); // Run first task on the list
+	}
+
+	/**
+	 * Move a task from 'tasksToRun' to 'tasksRunning'
+	 * @param task
+	 */
+	protected synchronized void running(Task task) {
+		if (task == null) return;
+		tasksToRun.remove(task);
+		tasksRunning.put(task.getId(), task);
+	}
+
+	/**
 	 * Run a task
 	 * @param task
 	 * @return
 	 */
-	protected abstract boolean runTask(Task task);
+	protected abstract boolean runTask(Task task, Host host);
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
@@ -167,6 +282,27 @@ public abstract class Executioner extends Thread {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+	}
+
+	void sleepLong() {
+		try {
+			sleep(SLEEP_TIME_LONG);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	void sleepShort() {
+		try {
+			sleep(sleepTime);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "Queue type: " + this.getClass().getSimpleName() + "\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size();
 	}
 
 }

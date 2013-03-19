@@ -22,6 +22,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class Cluster implements Iterable<Host> {
 
+	public static final Cluster FAKE_CLUSTER = new Cluster();
+
 	// Reference values for alarms
 	public HostHealth healthRed = new HostHealth(null);
 	public HostHealth healthYellow = new HostHealth(null);

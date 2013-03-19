@@ -84,7 +84,7 @@ public class Executioners {
 
 			// Create 'local'
 			cluster = new Cluster();
-			cluster.add(new HostLocal(cluster));
+			cluster.add(new HostLocal());
 			executioner = new LocalExecutioner();
 			break;
 		case LOCAL_QUEUE:
@@ -95,7 +95,7 @@ public class Executioners {
 
 			// Create 'local' cluster' (a cluster having only this computer)
 			cluster = new Cluster();
-			cluster.add(new HostLocal(cluster));
+			cluster.add(new HostLocal());
 			executioner = new LocalQueueExecutioner();
 			break;
 
@@ -123,7 +123,7 @@ public class Executioners {
 			cluster = new Cluster();
 
 			// No limits on number of cpus and memory (those are imposed by the scheduler, not by the master node parameters)
-			HostLocal host = new HostLocal(cluster);
+			HostLocal host = new HostLocal();
 			host.getResources().setCpus(Integer.MAX_VALUE);
 			cluster.add(host);
 

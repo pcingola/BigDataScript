@@ -14,7 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * 
  * @author pcingola
  */
-public class HostResources implements Comparable<HostResources>, BigDataScriptSerialize {
+public class HostResources implements Comparable<HostResources>, BigDataScriptSerialize, Cloneable {
 
 	int cpus; // Number of CPUs 
 	long mem; // Total memory (in Bytes)
@@ -33,8 +33,16 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	}
 
 	@Override
-	public int compareTo(HostResources o) {
+	public HostResources clone() {
+		try {
+			return (HostResources) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
+	@Override
+	public int compareTo(HostResources o) {
 		if (cpus >= 0) {
 			int cmp = cpus - o.cpus;
 			if (cmp < 0) return -1;
@@ -46,6 +54,15 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Consume resources (subtract resources)
+	 * @param hr
+	 */
+	public void consume(HostResources hr) {
+		if ((cpus >= 0) && (hr.cpus >= 0)) cpus = Math.max(0, cpus - hr.cpus);
+		if ((mem >= 0) && (hr.mem >= 0)) mem = Math.max(0, mem - hr.mem);
 	}
 
 	public int getCpus() {
@@ -60,13 +77,10 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 		return timeout;
 	}
 
-	/**
-	 * Subtract resources
-	 * @param hr
-	 */
-	public void minus(HostResources hr) {
-		if ((cpus >= 0) && (hr.cpus >= 0)) cpus = Math.max(0, cpus - hr.cpus);
-		if ((mem >= 0) && (hr.mem >= 0)) mem = Math.max(0, mem - hr.mem);
+	public boolean isValid() {
+		if (cpus == 0) return false;
+		if (mem == 0) return false;
+		return true;
 	}
 
 	@Override

@@ -10,9 +10,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class HostLocal extends Host {
 
-	public HostLocal(Cluster cluster) {
-		super(cluster, "localhost");
-		this.cluster = cluster;
+	public HostLocal() {
+		super(Cluster.FAKE_CLUSTER, "localhost");
 
 		// Set basic parameters
 		health.setAlive(true);

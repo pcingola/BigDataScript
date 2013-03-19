@@ -267,7 +267,7 @@ public class CmdQueue implements Iterable<CmdRunner> {
 			}
 
 			// Account for this taks' resources
-			hr.minus(task.getResources());
+			hr.consume(task.getResources());
 		}
 
 		// Which host can we use?
