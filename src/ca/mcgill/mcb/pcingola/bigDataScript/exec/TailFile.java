@@ -39,12 +39,19 @@ public class TailFile extends Thread {
 		this.showStderr = showStderr;
 	}
 
+	public synchronized void close() {
+		close(true);
+	}
+
 	/**
 	 * Close files
 	 */
-	public synchronized void close() {
+	protected synchronized void close(boolean attemptTail) {
 		try {
 			Gpr.debug("CLOSE: " + inputFileName + "\t" + outputFileName);
+
+			if (attemptTail) tail();
+
 			// Is it already open?
 			if (input != null) input.close();
 			if (output != null) output.close();
@@ -105,7 +112,7 @@ public class TailFile extends Thread {
 		} catch (Exception e) {
 			// Problems with this buffer? Remove it from the list
 			Timer.showStdErr("ERROR: Tail on file '" + inputFileName + "' / '" + outputFileName + "' failed.\n" + e);
-			close();
+			close(false);
 		}
 
 		return false;

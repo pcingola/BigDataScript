@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
+import java.io.InputStream;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
@@ -92,6 +94,14 @@ public class CmdRunner extends Thread {
 
 	public HostResources getResources() {
 		return resources;
+	}
+
+	public InputStream getStderr() {
+		return process.getErrorStream();
+	}
+
+	public InputStream getStdout() {
+		return process.getInputStream();
 	}
 
 	public boolean isDone() {

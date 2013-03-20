@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class LocalExecutioner extends Executioner {
 
-	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
+	// public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
 	private static final String[] ARGS_ARRAY_TYPE = new String[0];
 	HashMap<String, CmdRunner> cmdById;
 
@@ -29,6 +29,20 @@ public class LocalExecutioner extends Executioner {
 		super.add(task);
 	}
 
+	@Override
+	protected void addTail(Task task) {
+		// We need to feed the InputStreams from the process, instead of file names
+		CmdRunner cmd = cmdById.get(task.getId());
+
+		// Wait for cmd thread to start, STDOUT and STDERR to became available
+		while (!cmd.isStarted() || (cmd.getStdout() == null) || (cmd.getStderr() == null))
+			sleepShort();
+
+		// Add to tail
+		tail.add(cmd.getStdout(), task.getStdoutFile(), false);
+		tail.add(cmd.getStderr(), task.getStderrFile(), true);
+	}
+
 	/**
 	 * Create a CmdRunner to execute the script
 	 * @param task
@@ -39,14 +53,14 @@ public class LocalExecutioner extends Executioner {
 		task.createProgramFile(); // We must create a program file
 
 		ArrayList<String> args = new ArrayList<String>();
-		for (String arg : LOCAL_EXEC_COMMAND)
-			args.add(arg);
-
-		// Add 'bds exec' parameters
-		args.add(task.getResources().getTimeout() + "");
-		args.add(task.getStdoutFile());
-		args.add(task.getStderrFile());
-		args.add(task.getExitCodeFile());
+		//		for (String arg : LOCAL_EXEC_COMMAND)
+		//			args.add(arg);
+		//
+		//		// Add 'bds exec' parameters
+		//		args.add(task.getResources().getTimeout() + "");
+		//		args.add(task.getStdoutFile());
+		//		args.add(task.getStderrFile());
+		//		args.add(task.getExitCodeFile());
 		args.add(task.getProgramFileName());
 
 		String cmdStr = "";
