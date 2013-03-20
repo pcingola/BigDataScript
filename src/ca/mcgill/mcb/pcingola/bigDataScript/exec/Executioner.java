@@ -24,6 +24,7 @@ public abstract class Executioner extends Thread {
 	protected ArrayList<Task> tasksToRun;
 	protected HashMap<String, Task> tasksDone, tasksRunning;
 	protected Tail tail;
+	protected TaskTimer taskTimer;
 
 	public Executioner() {
 		super();
@@ -31,6 +32,7 @@ public abstract class Executioner extends Thread {
 		tasksDone = new HashMap<String, Task>();
 		tasksRunning = new HashMap<String, Task>();
 		tail = new Tail();
+		taskTimer = new TaskTimer();
 	}
 
 	/**
@@ -61,6 +63,7 @@ public abstract class Executioner extends Thread {
 		Task task = tasksRunning.get(id);
 		if (task == null) return false;
 
+		taskTimer.remove(task); // Remove from timer
 		removeTail(task); // Remove from 'tail' thread
 		finished(task); // Move to 'done' 
 
@@ -264,10 +267,9 @@ public abstract class Executioner extends Thread {
 
 		boolean ok = runTask(task, host);
 		if (ok) {
-			// Set task to running state
-			running(task);
-
-			addTail(task);
+			running(task); // Set task to running state
+			addTail(task); // Follow STDOUT and STDERR 
+			taskTimer.add(this, task); // Add to task timer
 		} else {
 			// Error running
 			if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");

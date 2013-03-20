@@ -126,7 +126,7 @@ public class CmdRunner extends Thread {
 
 		// Update task stats
 		if (cmdStats != null) {
-			if (debug) Gpr.debug("Killed: Setting stats " + cmdStats);
+			if (debug) Gpr.debug("Killed: Setting stats for " + id);
 			cmdStats.setExitValue(-1);
 			cmdStats.setDone(true);
 		}

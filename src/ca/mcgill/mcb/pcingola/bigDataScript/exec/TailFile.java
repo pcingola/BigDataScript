@@ -48,8 +48,6 @@ public class TailFile extends Thread {
 	 */
 	protected synchronized void close(boolean attemptTail) {
 		try {
-			Gpr.debug("CLOSE: " + inputFileName + "\t" + outputFileName);
-
 			if (attemptTail) tail();
 
 			// Is it already open?

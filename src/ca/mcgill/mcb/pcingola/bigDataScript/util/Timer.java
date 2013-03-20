@@ -8,6 +8,7 @@ public class Timer {
 
 	Date start;
 	Date end;
+	long timeOut;
 
 	/**
 	 * Show absolute timer value and a message
@@ -27,6 +28,10 @@ public class Timer {
 
 	public Timer() {
 		start = new Date();
+	}
+
+	public Timer(long timeOutMiliSec) {
+		this.timeOut = timeOutMiliSec;
 	}
 
 	/**
@@ -50,6 +55,23 @@ public class Timer {
 
 	public void end() {
 		end = new Date();
+	}
+
+	/**
+	 * Has this timer expired?
+	 * @return
+	 */
+	public boolean isExpired() {
+		return timeOut <= elapsed();
+	}
+
+	/**
+	 * Remaining time until timeout
+	 * @return
+	 */
+	public long remaining() {
+		long remaining = timeOut - elapsed();
+		return remaining > 0 ? remaining : 0;
 	}
 
 	public void start() {

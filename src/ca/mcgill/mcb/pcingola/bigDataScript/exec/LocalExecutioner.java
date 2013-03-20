@@ -52,15 +52,9 @@ public class LocalExecutioner extends Executioner {
 	CmdRunner createCmdRunner(Task task) {
 		task.createProgramFile(); // We must create a program file
 
+		if (Math.random() < 2) throw new RuntimeException("IMPLEMENT CALL TO 'bds' OR '/bin/sh -e '(otherwise child processes are not killed");
+
 		ArrayList<String> args = new ArrayList<String>();
-		//		for (String arg : LOCAL_EXEC_COMMAND)
-		//			args.add(arg);
-		//
-		//		// Add 'bds exec' parameters
-		//		args.add(task.getResources().getTimeout() + "");
-		//		args.add(task.getStdoutFile());
-		//		args.add(task.getStderrFile());
-		//		args.add(task.getExitCodeFile());
 		args.add(task.getProgramFileName());
 
 		String cmdStr = "";
