@@ -43,6 +43,15 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
+	 * Add to 'Tail'. Follow STDOUT & STDERR
+	 * @param task
+	 */
+	protected void addTail(Task task) {
+		tail.add(task.getStdoutFile(), null, false);
+		tail.add(task.getStderrFile(), null, true);
+	}
+
+	/**
 	 * Task finished executing
 	 * @param id
 	 * @return
@@ -52,12 +61,8 @@ public abstract class Executioner extends Thread {
 		Task task = tasksRunning.get(id);
 		if (task == null) return false;
 
-		// Remove from 'tail' thread
-		tail.remove(task.getStdoutFile());
-		tail.remove(task.getStderrFile());
-
-		// Move to 'done' 
-		finished(task);
+		removeTail(task); // Remove from 'tail' thread
+		finished(task); // Move to 'done' 
 
 		return true;
 	}
@@ -210,6 +215,15 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
+	 * Remove from 'Tail'. Stop following STDOUT & STDERR
+	 * @param task
+	 */
+	protected void removeTail(Task task) {
+		tail.remove(task.getStdoutFile());
+		tail.remove(task.getStderrFile());
+	}
+
+	/**
 	 * Run task queues
 	 */
 	@Override
@@ -253,9 +267,7 @@ public abstract class Executioner extends Thread {
 			// Set task to running state
 			running(task);
 
-			// Add STDOUT & STDERR to tail
-			tail.add(task.getStdoutFile(), false);
-			tail.add(task.getStderrFile(), true);
+			addTail(task);
 		} else {
 			// Error running
 			if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");
