@@ -28,11 +28,15 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strconv"
+	"syscall"
 	"time"
 )
 
 func main() {
+	fmt.Printf("PID\t%d\n", syscall.Getpid())
+
 	// Are we requested to execute a command?
 	if len(os.Args) > 1 {
 		if os.Args[1] == "exec" {
@@ -171,24 +175,45 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string) int {
 	exitCode := make(chan string, 1)
 	go execute(cmd, exitCode)
 
+	// Redirect all signals to channel (e.g. Ctrl-C)
+	osSignal := make(chan os.Signal, 1)
+	signal.Notify(osSignal) // , os.Interrupt)
+
 	// Wait for execution to finish or timeout
 	exitStr := ""
-	if timeSecs > 0 {
-		select {
-		case exitStr = <-exitCode:
+	if timeSecs <= 0 {
+		timeSecs = 31536000 // One year
+	}
 
-		case <-time.After(time.Duration(timeSecs) * time.Second):
-			exitStr = "Time out!"
+	// Wait until executions ends, timeout or OS signal
+	kill := false
+	select {
+	case exitStr = <-exitCode:
+
+	case <-time.After(time.Duration(timeSecs) * time.Second):
+		kill = true
+		exitStr = "Time out"
+
+	case <-osSignal:
+		kill = true
+		exitStr = "Signal received"
+	}
+
+	// Should we kill child process?
+	if kill {
+		if err := cmd.Process.Kill(); err != nil {
+			log.Println("Failed to kill process: ", err)
 		}
-	} else {
-		// No timeout
-		exitStr = <-exitCode
+		cmd.Process.Wait() // Reap their souls
+
+		// Send a SIGKILL to the process group (just in case any child process is still executing)
+		syscall.Kill(0, syscall.SIGKILL)
 	}
 
 	// Write exitCode to file or show as log message
 	if (exitFile == "") || (exitFile == "-") {
 		if exitStr != "0" {
-			log.Fatal(exitStr) // No exitFile? Log to console and exit
+			log.Println(exitStr) // No exitFile? Log to console and exit
 		}
 	} else {
 		writeFile(exitFile, exitStr) // Dump error to 'exitFile'

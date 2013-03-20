@@ -8,8 +8,15 @@ echo Building JAR file
 ant 
 
 # Build go program
+cd c
+echo Building bds wrapper: Compiling C program
+rm -rvf bds
+gcc -o bds bds.c
+cd -
+
+# Build go program
 echo
-echo Building bds wrapper
+echo Building bds wrapper: Compiling GO program
 cd go/bds/
 go clean
 go build

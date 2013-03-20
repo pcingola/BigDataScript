@@ -7,6 +7,11 @@ print("TASK ID: '$tid'\n")
 if( tid.isDone() ) events.add("done")
 else events.add("runnning")
 
+print("Sleep\n");
+sleep(3)
+print("After Sleep\n");
+
+
 // Kill task
 print("KILL $tid\n")
 events.add("kill")

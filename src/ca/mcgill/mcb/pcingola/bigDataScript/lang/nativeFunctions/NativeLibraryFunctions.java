@@ -13,6 +13,7 @@ public class NativeLibraryFunctions {
 	public static Class classes[] = { //
 	FunctionNativePrint.class //
 			, FunctionNativePrintErr.class //
+			, FunctionNativeSleep.class //
 	};
 
 	ArrayList<FunctionNative> functions;

@@ -111,7 +111,6 @@ public class CmdRunner extends Thread {
 	 */
 	public void kill() {
 		if (process != null) {
-			process.destroy();
 			error += "Killed!\n";
 		}
 
