@@ -15,6 +15,7 @@ public class TaskTimer extends TimerTask {
 
 	public static boolean debug = false;
 
+	boolean verbose = false;
 	HashMap<Task, Timer> timerByTask;
 	HashMap<Task, Executioner> execByTask;
 	java.util.Timer shortestTimer;
@@ -91,11 +92,16 @@ public class TaskTimer extends TimerTask {
 	public void run() {
 		if (!shortesTask.isDone()) {
 			Executioner executioner = execByTask.get(shortesTask);
+			if (verbose) Timer.showStdErr("Task '" + shortesTask.getId() + "' timed out. Killing it");
 			executioner.kill(shortesTask);
 		}
 
 		remove(shortesTask); // This should be removed by executioner, but just in case...
 		createShrotestTimer(); // Need a new timer
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 }

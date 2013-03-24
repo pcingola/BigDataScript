@@ -15,8 +15,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class LocalExecutioner extends Executioner {
 
-	// public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
+	public static String LOCAL_EXEC_COMMAND[] = { "/bin/sh", "-e" }; // TODO: We should be able to configure this
 	private static final String[] ARGS_ARRAY_TYPE = new String[0];
+
 	HashMap<String, CmdRunner> cmdById;
 
 	public LocalExecutioner() {
@@ -52,9 +53,9 @@ public class LocalExecutioner extends Executioner {
 	CmdRunner createCmdRunner(Task task) {
 		task.createProgramFile(); // We must create a program file
 
-		if (Math.random() < 2) throw new RuntimeException("IMPLEMENT CALL TO 'bds' OR '/bin/sh -e '(otherwise child processes are not killed");
-
 		ArrayList<String> args = new ArrayList<String>();
+		for (String arg : LOCAL_EXEC_COMMAND)
+			args.add(arg);
 		args.add(task.getProgramFileName());
 
 		String cmdStr = "";

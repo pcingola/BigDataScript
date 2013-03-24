@@ -122,6 +122,7 @@ public class CmdRunner extends Thread {
 	public void kill() {
 		if (process != null) {
 			error += "Killed!\n";
+			process.destroy();
 		}
 
 		// Update task stats

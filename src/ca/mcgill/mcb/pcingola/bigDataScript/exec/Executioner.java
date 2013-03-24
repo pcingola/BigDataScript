@@ -16,8 +16,8 @@ public abstract class Executioner extends Thread {
 	public static final int SLEEP_TIME_DEFAULT = 100;
 	public static final int SLEEP_TIME_LONG = 500;
 
-	protected boolean debug = true;
-	protected boolean verbose = true;
+	protected boolean debug;
+	protected boolean verbose;
 	protected boolean running;
 	protected int hostIdx = 0;
 	protected int sleepTime = SLEEP_TIME_DEFAULT; // Default sleep time
@@ -317,6 +317,7 @@ public abstract class Executioner extends Thread {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+		taskTimer.setVerbose(verbose);
 	}
 
 	void sleepLong() {
