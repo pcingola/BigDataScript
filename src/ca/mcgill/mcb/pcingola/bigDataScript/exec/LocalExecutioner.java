@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class LocalExecutioner extends Executioner {
 
-	public static String LOCAL_EXEC_COMMAND[] = { "/bin/sh", "-e" }; // TODO: We should be able to configure this
+	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" }; // TODO: We should be able to configure this
 	private static final String[] ARGS_ARRAY_TYPE = new String[0];
 
 	HashMap<String, CmdRunner> cmdById;

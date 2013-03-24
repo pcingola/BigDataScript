@@ -48,6 +48,7 @@ void execute(int argc, char *argv[]) {
 		exit(1);
 	}
 }
+
 /**
  * Execute java process
  */
@@ -75,10 +76,11 @@ void executeJavaBds(int argc, char *argv[]) {
 
 /*
  * Signal handler function
- * Send a SIGKILL signal to all process in current group, then exit
  */
-void signalHandler(int dummy) {
-	kill(0, SIGKILL);
+void signalHandler(int signum) {
+	/* printf("Captured signal %d!\n", signum); */
+	kill( - getpid(), SIGKILL );		/* Send a kill signal to process group */
+	/* kill(0, SIGKILL); */				/* Send a SIGKILL signal to all process in current process group, then exit. This is probably a little bit too extreme since it will send kill signals to all parent processes as well */
 	exit(1);
 }
 
@@ -86,13 +88,18 @@ void signalHandler(int dummy) {
  * Main
  */
 int main(int argc, char *argv[]){
-	pid_t pid;
 	int retval;
+	pid_t pid;
 
 	/* Set up signal handlers */
 	signal(SIGABRT, &signalHandler);
 	signal(SIGTERM, &signalHandler);
 	signal(SIGINT,  &signalHandler);
+	signal(SIGHUP,  &signalHandler);
+	signal(SIGQUIT,  &signalHandler);
+	signal(SIGALRM,  &signalHandler);
+	signal(SIGVTALRM,  &signalHandler);
+	signal(SIGPROF,  &signalHandler);
 
 	/* Attempt to fork and check for errors */
 	if( (pid=fork()) == -1){
@@ -101,6 +108,7 @@ int main(int argc, char *argv[]){
 	}
 
 	if(pid){
+		/* printf("PID: %d\n", pid); */
 		/* A positive (non-negative) PID indicates the parent process */
 		wait(&retval);				/* Wait for child process to end */
 		kill( - pid, SIGKILL );		/* Send a kill signal to process group */
