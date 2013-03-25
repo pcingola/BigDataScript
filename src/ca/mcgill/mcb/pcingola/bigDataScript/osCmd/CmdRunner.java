@@ -26,7 +26,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class CmdRunner extends Thread {
 
-	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
+	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec", "0", "-", "-", "-" };
 	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
 	public static final String[] ARGS_ARRAY_TYPE = new String[0];
 

@@ -7,7 +7,7 @@ go build
 touch ls.out ls.err ls.exit
 rm ls.{out,err,exit} 
 
-./bds exec 3 ls.out ls.err ls.exit ./ls.sh -a -l -h 
+./bds exec 30 ls.out ls.err ls.exit ./ls.sh -a -l -h 
 echo bds exit code: $?
 
 echo

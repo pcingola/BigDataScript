@@ -1,1 +1,15 @@
 SLEEP
+total 1.7M
+drwxrwxr-x. 2 pcingola pcingola 4.0K Mar 25 19:51 .
+drwxrwxr-x. 3 pcingola pcingola 4.0K Mar 17 18:57 ..
+-rwxrwxr-x. 1 pcingola pcingola 1.6M Mar 25 19:51 bds
+-rw-rw-r--. 1 pcingola pcingola 8.7K Mar 25 19:51 bds.go
+-rw-r--r--. 1 pcingola pcingola  24K Mar 25 19:51 .bds.go.swp
+-rw-rw-r--. 1 pcingola pcingola    0 Mar 25 19:51 ls.err
+-rw-rw-r--. 1 pcingola pcingola    6 Mar 25 19:51 ls.out
+-rwxrwxr-x. 1 pcingola pcingola   70 Mar 25 16:49 ls.sh
+-rw-r--r--. 1 pcingola pcingola  12K Mar 25 19:16 .ls.sh.swp
+-rwxrwxr-x. 1 pcingola pcingola  354 Mar 25 19:29 make.sh
+-rw-r--r--. 1 pcingola pcingola  12K Mar 25 19:29 .make.sh.swp
+-rw-rw-r--. 1 pcingola pcingola  565 Mar 25 18:05 z
+-rw-r--r--. 1 pcingola pcingola  12K Mar 25 18:05 .z.swp

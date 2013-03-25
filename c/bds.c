@@ -89,7 +89,7 @@ int isKill(int argc, char *argv[]) {
  */
 void signalHandler(int signum) {
 	printf("Captured signal %d!\n", signum);
-	kill( - getpgid(), SIGKILL );		/* Send a kill signal to process group */
+	kill( - getpgrp(), SIGKILL );		/* Send a kill signal to process group */
 	/* kill(0, SIGKILL); */				/* Send a SIGKILL signal to all process in current process group, then exit. This is probably a little bit too extreme since it will send kill signals to all parent processes as well */
 	exit(1);
 }
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]){
 	signal(SIGPROF,  &signalHandler);
 
 	if( isExec(argc, argv) ){
-		setpgid(0, 0);	/** Create a new process group */
+		// setpgid(0, 0);	/** Create a new process group */
 		showPid();
 	}
 

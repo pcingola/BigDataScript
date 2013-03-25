@@ -1,0 +1,23 @@
+
+  PID	PPID  PGPID
+  646   633   646 pts/3    00:00:00 ./bds exec 50 ls.out ls.err ls.exit ./ls.sh
+  649   646   633 pts/3    00:00:00 /bin/sh -e ./ls.sh -a -l -h
+  659   649   633 pts/3    00:00:00 sleep 60
+26280 17883 26280 pts/2    00:00:02 vim bds.go
+29247 29163 29247 pts/7    00:00:00 vim bds.c
+
+---bds-+-ls.sh---sleep
+       `-5*[{bds}]
+
+
+
+
+
+
+ 5281  5270  5270 pts/7    00:00:00 ./bds exec ./ls.sh -a -l -h
+ 5282  5281  5270 pts/7    00:00:00 /bin/sh -e ./ls.sh -a -l -h
+ 5289  5282  5270 pts/7    00:00:00 sleep 60
+|-bash---make.sh---bds---ls.sh---sleep
+
+
+
