@@ -1,10 +1,11 @@
 
-
-system="local"
-
-task ( timeout=3 ) {
-	sys echo GOING TO SLEEP...
-	sys sleep 60
-	sys echo DONE
+// This task should fail
+string tid = task( canFail=true ) {
+	sys mkdir a/b/c/d/e/f/g
 }
+print("Task ID: '$tid'\n")
 
+wait
+
+int exitStat = tid.exitCode();
+print("exitStat: $exitStat\n");
