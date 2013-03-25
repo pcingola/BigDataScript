@@ -1,6 +1,8 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
@@ -24,12 +26,18 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class CmdRunner extends Thread {
 
-	public static boolean debug = true;
+	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
+	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
+	public static final String[] ARGS_ARRAY_TYPE = new String[0];
+
+	public static boolean debug = false;
 
 	String id;
 	String commandArgs[]; // Command and arguments
 	String error = ""; // Errors
+	boolean readPid;
 	boolean executing = false, started = false; // Command states
+	int pid; // Only if child process reports PID and readPid is true
 	int exitValue = 0; // Command exit value
 	CmdStats cmdStats = null; // Notify this object when we are done
 	Host host; // Host to execute command (in case it's ssh)
@@ -47,7 +55,16 @@ public class CmdRunner extends Thread {
 		try {
 			executing = true;
 			ProcessBuilder pb = new ProcessBuilder(commandArgs);
+			if (debug) {
+				StringBuilder cmdsb = new StringBuilder();
+				for (String arg : commandArgs)
+					cmdsb.append(" " + arg);
+				Gpr.debug("Executing: " + cmdsb);
+			}
 			process = pb.start();
+
+			if (readPid) pid = readPid();
+
 			started = true;
 			exitValue = process.waitFor(); // Wait for the process to finish and store exit value
 			if (debug && (exitValue != 0)) Gpr.debug("Exit value: " + exitValue);
@@ -121,7 +138,11 @@ public class CmdRunner extends Thread {
 	 */
 	public void kill() {
 		if (process != null) {
+			// Do we have a PID number? Kill using that number
+			if (pid > 0) killBds(pid);
+
 			error += "Killed!\n";
+			if (debug) Gpr.debug("Killing process " + id);
 			process.destroy();
 		}
 
@@ -136,6 +157,56 @@ public class CmdRunner extends Thread {
 		if (executioner != null) executioner.finished(id);
 
 		if (debug) Gpr.debug("Process was killed");
+	}
+
+	/**
+	 * Send a kill signal using 'bds kill'
+	 * @param pid
+	 */
+	void killBds(int pid) {
+		// Create arguments
+		ArrayList<String> args = new ArrayList<String>();
+		for (String arg : LOCAL_KILL_COMMAND)
+			args.add(arg);
+		args.add("" + pid);
+
+		try {
+			// Execute 'bds kill pid'
+			Process proc = Runtime.getRuntime().exec(args.toArray(ARGS_ARRAY_TYPE));
+			if (debug) Gpr.debug("Executing kill process for pid " + pid);
+			int exitVal = proc.waitFor();
+			if (exitVal != 0) System.err.println("Error killing process " + pid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Read child process pid
+	 * @return
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	int readPid() throws InterruptedException, IOException {
+		// Read PID from first line of child process
+
+		// Wait for STDOUT to become available
+		while (getStdout() == null)
+			sleep(1);
+
+		// Read one line
+		StringBuilder sb = new StringBuilder();
+		while (true) {
+			char ch = (char) getStdout().read();
+			if (ch == '\n') break;
+			sb.append(ch);
+		}
+
+		// Parse line. Format "PID \t pidNum \t childPidNum"
+		if (debug) Gpr.debug("Got line: '" + sb + "'");
+		String fields[] = sb.toString().split("\t");
+		if (!fields[0].equals("PID")) throw new RuntimeException("Expecting 'PID', received: '" + sb + "'");
+		return Gpr.parseIntSafe(fields[1]);
 	}
 
 	@Override
@@ -157,6 +228,10 @@ public class CmdRunner extends Thread {
 
 	public void setHost(Host host) {
 		this.host = host;
+	}
+
+	public void setReadPid(boolean readPid) {
+		this.readPid = readPid;
 	}
 
 	public void setResources(HostResources resources) {

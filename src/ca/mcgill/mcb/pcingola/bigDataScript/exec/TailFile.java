@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * A file to use with 'Tail'
@@ -109,7 +108,7 @@ public class TailFile extends Thread {
 			return true;
 		} catch (Exception e) {
 			// Problems with this buffer? Remove it from the list
-			Timer.showStdErr("ERROR: Tail on file '" + inputFileName + "' / '" + outputFileName + "' failed.\n" + e);
+			// Timer.showStdErr("ERROR: Tail on file '" + inputFileName + "' / '" + outputFileName + "' failed.\n" + e);
 			close(false);
 		}
 

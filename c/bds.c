@@ -44,7 +44,7 @@ void execute(int argc, char *argv[]) {
 
 	/* Replace the child fork with a new process */
 	if(execvp(args[0], args) == -1){
-		fprintf(stderr,"Error: Cannot execute program.");
+		fprintf(stderr,"Error: Cannot execute program\n");
 		exit(1);
 	}
 }
@@ -69,16 +69,26 @@ void executeJavaBds(int argc, char *argv[]) {
 
 	/* Replace the child fork with a new process */
 	if(execvp(JAVA, args) == -1){
-		fprintf(stderr,"Error: Cannot execute java program.");
+		fprintf(stderr,"Error: Cannot execute java program\n");
 		exit(1);
 	}
+}
+
+int isExec(int argc, char *argv[]) {
+	if(( argc > 1 ) && (strcmp(argv[1],"exec") == 0)) return 1;
+	return 0;
+}
+
+int isKill(int argc, char *argv[]) {
+	if(( argc > 1 ) && (strcmp(argv[1],"kill") == 0)) return 1;
+	return 0;
 }
 
 /*
  * Signal handler function
  */
 void signalHandler(int signum) {
-	/* printf("Captured signal %d!\n", signum); */
+	printf("Captured signal %d!\n", signum);
 	kill( - getpid(), SIGKILL );		/* Send a kill signal to process group */
 	/* kill(0, SIGKILL); */				/* Send a SIGKILL signal to all process in current process group, then exit. This is probably a little bit too extreme since it will send kill signals to all parent processes as well */
 	exit(1);
@@ -90,6 +100,17 @@ void signalHandler(int signum) {
 int main(int argc, char *argv[]){
 	int retval;
 	pid_t pid;
+
+	/* Send a group kill signal and exit */
+	if( isKill(argc, argv) ) {
+		int pidToKill = atoi( argv[2] );
+		printf("Killing group %d\n", pidToKill);
+		kill( - pidToKill, SIGTERM );
+		kill( - pidToKill, SIGHUP );
+		exit(0);
+	}
+
+	/* Execute a child process */
 
 	/* Set up signal handlers */
 	signal(SIGABRT, &signalHandler);
@@ -108,14 +129,18 @@ int main(int argc, char *argv[]){
 	}
 
 	if(pid){
-		/* printf("PID: %d\n", pid); */
 		/* A positive (non-negative) PID indicates the parent process */
 		wait(&retval);				/* Wait for child process to end */
 		kill( - pid, SIGKILL );		/* Send a kill signal to process group */
-	}
-	else{
-		/* A zero PID indicates that this is the child process: Execute java program */
-		if(( argc > 1 ) && (strcmp(argv[1],"exec") == 0)) {
+	} else{
+
+		/* A zero PID indicates that this is the child process: Execute program */
+		if( isExec(argc, argv) ) {
+			/* Report PID, as first line, so that the group can be killed later */
+			pid_t sid = setsid();	/* Create new process group */
+			printf("PID\t%d\t%d\t%d\n", getpid(), getsid( getpid() ), sid); /* Show PID and process group. Three numbers should be the same */
+			fflush(stdout); /** Flush, otherwise STDOUT from child process may output first line and this line gets printed later*/
+
 			execute(argc, argv);
 		} else {
 			executeJavaBds(argc, argv);

@@ -59,9 +59,9 @@ public abstract class Executioner extends Thread {
 	 * @return
 	 */
 	public boolean finished(String id) {
-		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
 		Task task = tasksRunning.get(id);
 		if (task == null) return false;
+		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
 
 		taskTimer.remove(task); // Remove from timer
 		removeTail(task); // Remove from 'tail' thread

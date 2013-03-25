@@ -15,9 +15,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class LocalExecutioner extends Executioner {
 
-	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" }; // TODO: We should be able to configure this
-	private static final String[] ARGS_ARRAY_TYPE = new String[0];
-
 	HashMap<String, CmdRunner> cmdById;
 
 	public LocalExecutioner() {
@@ -54,7 +51,7 @@ public class LocalExecutioner extends Executioner {
 		task.createProgramFile(); // We must create a program file
 
 		ArrayList<String> args = new ArrayList<String>();
-		for (String arg : LOCAL_EXEC_COMMAND)
+		for (String arg : CmdRunner.LOCAL_EXEC_COMMAND)
 			args.add(arg);
 		args.add(task.getProgramFileName());
 
@@ -64,9 +61,10 @@ public class LocalExecutioner extends Executioner {
 
 		// Run command
 		if (debug) Timer.showStdErr("Running command: " + cmdStr);
-		CmdRunner cmd = new CmdRunner(task.getId(), args.toArray(ARGS_ARRAY_TYPE));
+		CmdRunner cmd = new CmdRunner(task.getId(), args.toArray(CmdRunner.ARGS_ARRAY_TYPE));
 		cmd.setCmdStats(task);
 		cmd.setExecutioner(this);
+		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
 		cmdById.put(task.getId(), cmd);
 		return cmd;
 	}

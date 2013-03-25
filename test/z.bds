@@ -2,7 +2,7 @@
 
 system="local"
 
-task ( timeout=1 ) {
+task ( timeout=3 ) {
 	sys echo GOING TO SLEEP...
 	sys sleep 60
 	sys echo DONE
