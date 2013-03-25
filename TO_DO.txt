@@ -1,3 +1,18 @@
+- local exec
+	- Show stdout & stderr
+	- Log stdout & stderr to files
+	- get exit value
+	- timeout
+	- killing:
+											sid child process
+		- timeout in bds script	(eclipse) 	ok
+		- timeout in bds script	(terminal)	ok
+		- Ctrl-C parent bds					no
+		- kill parent bds					no
+		- kill java (jar)					?
+		- kill child bds exec				ok
+		- kill child process				no
+
 
 - Multi-line list definition
 	string[] list = [ "hi"

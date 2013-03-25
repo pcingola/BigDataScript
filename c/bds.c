@@ -89,9 +89,14 @@ int isKill(int argc, char *argv[]) {
  */
 void signalHandler(int signum) {
 	printf("Captured signal %d!\n", signum);
-	kill( - getpid(), SIGKILL );		/* Send a kill signal to process group */
+	kill( - getpgid(), SIGKILL );		/* Send a kill signal to process group */
 	/* kill(0, SIGKILL); */				/* Send a SIGKILL signal to all process in current process group, then exit. This is probably a little bit too extreme since it will send kill signals to all parent processes as well */
 	exit(1);
+}
+
+void showPid() {
+	printf("PID\t%d\t%d\t%d\t\n", getpid(), getpgrp(), getsid( getpid() ) );
+	fflush( stdout ); /* Make sure this gets to stdout right away (other process might expect this as first line */
 }
 
 /*
@@ -122,6 +127,11 @@ int main(int argc, char *argv[]){
 	signal(SIGVTALRM,  &signalHandler);
 	signal(SIGPROF,  &signalHandler);
 
+	if( isExec(argc, argv) ){
+		setpgid(0, 0);	/** Create a new process group */
+		showPid();
+	}
+
 	/* Attempt to fork and check for errors */
 	if( (pid=fork()) == -1){
 		fprintf(stderr,"Fork error!\n");  /* something went wrong */
@@ -133,16 +143,13 @@ int main(int argc, char *argv[]){
 		wait(&retval);				/* Wait for child process to end */
 		kill( - pid, SIGKILL );		/* Send a kill signal to process group */
 	} else{
-
 		/* A zero PID indicates that this is the child process: Execute program */
 		if( isExec(argc, argv) ) {
-			/* Report PID, as first line, so that the group can be killed later */
-			pid_t sid = setsid();	/* Create new process group */
-			printf("PID\t%d\t%d\t%d\n", getpid(), getsid( getpid() ), sid); /* Show PID and process group. Three numbers should be the same */
-			fflush(stdout); /** Flush, otherwise STDOUT from child process may output first line and this line gets printed later*/
-
-			execute(argc, argv);
+			execute(argc, argv);	/* Execute program from command line */
 		} else {
+			/* Execute java code */
+			pid_t sid = setsid();	/* Create new session */
+			showPid();
 			executeJavaBds(argc, argv);
 		}
 	}
