@@ -8,6 +8,7 @@
 		2) exec					:	Execute shell scripts, set maimum execution time, redirect STDOUT and STDERR, write exit code to a file
 									bds exec timeout file.stdout file.stderr file.exit command arguments...
 		3) help					: 	Show command usage and exit
+		4) kill pid             :   Send a kill signal to a process group (same as shell command "kill -- -pid")
 
 	Examples:
 
@@ -140,7 +141,7 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 
 	// Redirect all signals to channel (e.g. Ctrl-C)
 	osSignal := make(chan os.Signal, 1)
-	signal.Notify(osSignal)
+	signal.Notify(osSignal, os.Interrupt)
 
 	// Create command
 	cmd := exec.Command(command)
@@ -209,6 +210,7 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 	kill := false
 	select {
 	case exitStr = <-exitCode:
+		kill = false
 
 	case <-time.After(time.Duration(timeSecs) * time.Second):
 		kill = true
@@ -222,16 +224,14 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 	// Should we kill child process?
 	if kill {
 		fmt.Printf("Killing cmd\n")
-		if err := cmd.Process.Kill(); err != nil {
-			log.Println("Failed to kill process: ", err)
-		}
+		cmd.Process.Kill()
 		cmd.Process.Wait() // Reap their souls
 	}
 
 	// Write exitCode to file or show as log message
 	if (exitFile == "") || (exitFile == "-") {
 		if exitStr != "0" {
-			log.Println(exitStr) // No exitFile? Log to console and exit
+			fmt.Printf("Exit value: %s\n", exitStr) // No exitFile? Log to console and exit
 		}
 	} else {
 		writeFile(exitFile, exitStr) // Dump error to 'exitFile'
@@ -258,9 +258,11 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 	// Wait for command to finish
 	if err := cmd.Wait(); err != nil {
 		exitCode <- err.Error()
+		fmt.Printf("Cmd finished error: %s\n", exitCode);
 	}
 
 	exitCode <- "0"
+	fmt.Printf("Cmd finished OK\n");
 }
 
 /*

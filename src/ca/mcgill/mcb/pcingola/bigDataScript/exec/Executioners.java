@@ -85,7 +85,7 @@ public class Executioners {
 			// Create 'local'
 			cluster = new Cluster();
 			cluster.add(new HostLocal());
-			executioner = new LocalExecutioner();
+			executioner = new LocalExecutioner(config.getPidFile());
 			break;
 		case LOCAL_QUEUE:
 

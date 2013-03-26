@@ -25,6 +25,7 @@ public class Config {
 	boolean debug = false; // Debug mode?
 	boolean verbose = false; // Verbose mode?
 	String configDirName;
+	String pidFile;
 	Properties properties;
 	ArrayList<String> sshNodes;
 
@@ -68,6 +69,10 @@ public class Config {
 		String val = getString(propertyName);
 		if (val == null) return defaultValue;
 		return Gpr.parseLongSafe(val);
+	}
+
+	public String getPidFile() {
+		return pidFile;
 	}
 
 	public ArrayList<String> getSshNodes() {
@@ -149,6 +154,10 @@ public class Config {
 				if (!sshNode.isEmpty()) sshNodes.add(sshNode);
 			}
 		}
+	}
+
+	public void setPidFile(String pidFile) {
+		this.pidFile = pidFile;
 	}
 
 	public void setVerbose(boolean verbose) {

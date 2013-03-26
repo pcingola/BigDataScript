@@ -20,13 +20,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * 		http://kylecartmell.com/?p=9
  * 		http://www.kylecartmell.com/public_files/ProcessTimeoutExample.java
  * 
- * WARNING: In this case, we assume the child process takes care of redirections and we DO NOT take care of STDIN, STDOUT or timeout
+ * WARNING: In this case, we assume the child process takes care of redirections and we DO NOT take care of STDIN and STDOUT
  * 
  * @author pcingola
  */
-public class CmdRunner extends Thread {
+public class CmdRunnerOri extends Thread {
 
-	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
+	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec", "0", "-", "-", "-" };
 	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
 	public static final String[] ARGS_ARRAY_TYPE = new String[0];
 
@@ -45,7 +45,7 @@ public class CmdRunner extends Thread {
 	Process process; // Java process (the one that actually executes our command)
 	Executioner executioner; // Notify when a process finishes
 
-	public CmdRunner(String id, String args[]) {
+	public CmdRunnerOri(String id, String args[]) {
 		this.id = id;
 		commandArgs = args;
 		resources = new HostResources();
@@ -63,12 +63,11 @@ public class CmdRunner extends Thread {
 			}
 			process = pb.start();
 
-			// Child process prints PID to stdout: Read it
 			if (readPid) pid = readPid();
 
 			started = true;
 			exitValue = process.waitFor(); // Wait for the process to finish and store exit value
-			if (debug) Gpr.debug("Exit value: " + exitValue);
+			if (debug && (exitValue != 0)) Gpr.debug("Exit value: " + exitValue);
 		} catch (Exception e) {
 			error = e.getMessage() + "\n";
 			exitValue = -1;

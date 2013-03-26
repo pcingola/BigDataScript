@@ -1,6 +1,6 @@
 
 print( "Hi\n" )
-#task( timeout = 5 ) {
+# task( timeout = 5 ) {
 task {
 	sys echo GOING TO SLEEP
 	sys sleep 60

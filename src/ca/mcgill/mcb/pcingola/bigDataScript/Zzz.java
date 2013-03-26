@@ -15,11 +15,14 @@ public class Zzz {
 	public static void main(String[] args) {
 		Gpr.debug("Begin");
 
+		String pidFile = Gpr.HOME + "/zzz.pid";
+
 		int test = 2;
 
 		if (test == 1) {
-			LocalExecutioner localSysExecutioner = new LocalExecutioner();
-			Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\nls -al");
+			LocalExecutioner localSysExecutioner = new LocalExecutioner(pidFile);
+			Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\necho hi ; sleep 1; ls -al; sleep 60; echo done\n");
+			task.getResources().setTimeout(5);
 			localSysExecutioner.start();
 			localSysExecutioner.add(task);
 		} else if (test == 2) {

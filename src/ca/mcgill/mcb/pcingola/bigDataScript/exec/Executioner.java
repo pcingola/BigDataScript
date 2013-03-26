@@ -23,8 +23,10 @@ public abstract class Executioner extends Thread {
 	protected int sleepTime = SLEEP_TIME_DEFAULT; // Default sleep time
 	protected ArrayList<Task> tasksToRun;
 	protected HashMap<String, Task> tasksDone, tasksRunning;
+
 	protected Tail tail;
-	protected TaskTimer taskTimer;
+
+	//	protected TaskTimer taskTimer;
 
 	public Executioner() {
 		super();
@@ -32,7 +34,7 @@ public abstract class Executioner extends Thread {
 		tasksDone = new HashMap<String, Task>();
 		tasksRunning = new HashMap<String, Task>();
 		tail = new Tail();
-		taskTimer = new TaskTimer();
+		//		taskTimer = new TaskTimer();
 	}
 
 	/**
@@ -63,7 +65,7 @@ public abstract class Executioner extends Thread {
 		if (task == null) return false;
 		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
 
-		taskTimer.remove(task); // Remove from timer
+		//		taskTimer.remove(task); // Remove from timer
 		removeTail(task); // Remove from 'tail' thread
 		finished(task); // Move to 'done' 
 
@@ -269,7 +271,7 @@ public abstract class Executioner extends Thread {
 		if (ok) {
 			running(task); // Set task to running state
 			addTail(task); // Follow STDOUT and STDERR 
-			taskTimer.add(this, task); // Add to task timer
+			//			taskTimer.add(this, task); // Add to task timer
 		} else {
 			// Error running
 			if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");
@@ -317,7 +319,7 @@ public abstract class Executioner extends Thread {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
-		taskTimer.setVerbose(verbose);
+		//		taskTimer.setVerbose(verbose);
 	}
 
 	void sleepLong() {

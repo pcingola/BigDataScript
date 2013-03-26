@@ -4,6 +4,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
+
 //import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -19,7 +20,7 @@ public class LocalQueueExecutioner extends LocalExecutioner {
 	Host host; // Local computer is the 'server' (localhost)
 
 	public LocalQueueExecutioner() {
-		super();
+		super(null);
 		host = new HostLocal();
 	}
 

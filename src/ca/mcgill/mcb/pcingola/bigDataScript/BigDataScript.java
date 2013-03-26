@@ -63,6 +63,7 @@ public class BigDataScript {
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
 	String programFileName; // Program file name
+	String pidFile;
 	Config config;
 	ProgramUnit programUnit; // Program (parsed nodes)
 	BigDataScriptThread bigDataScriptThread;
@@ -458,6 +459,10 @@ public class BigDataScript {
 				// Checkpoint restore
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 				else usage("Option '-r' without restore file argument");
+			} else if (args[i].equals("-pid")) {
+				// PID file
+				if ((i + 1) < args.length) pidFile = args[++i];
+				else usage("Option '-pid' without file argument");
 
 			} else if (args[i].equals("-c") || args[i].equalsIgnoreCase("-config")) {
 				// Checkpoint restore
@@ -483,6 +488,7 @@ public class BigDataScript {
 		//---
 		config = new Config(configFile, verbose);
 		config.setDebug(debug);
+		if (pidFile != null) config.setPidFile(pidFile);
 		Executioners executioners = Executioners.getInstance(config); // Initialize executioners
 
 		//---
@@ -572,9 +578,10 @@ public class BigDataScript {
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config] file    : Config file. Default : " + configFile);
 		System.err.println("  [-d | -debug]          : Debug mode.");
-		System.err.println("  -noLog                 : Do not log stats.");
 		System.err.println("  [-r | -restore] file   : Restore from checkpoint file.");
 		System.err.println("  [-v | -verbose]        : Be verbose.");
+		System.err.println("  [-pid] <file>          : Write local processes PIDs to 'file'");
+		System.err.println("  -noLog                 : Do not log stats.");
 		if (err != null) System.exit(1);
 		System.exit(0);
 	}

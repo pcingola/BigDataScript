@@ -16,9 +16,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class LocalExecutioner extends Executioner {
 
 	HashMap<String, CmdRunner> cmdById;
+	String pidFile;
 
-	public LocalExecutioner() {
+	public LocalExecutioner(String pidFile) {
 		super();
+		this.pidFile = pidFile;
 		cmdById = new HashMap<String, CmdRunner>();
 	}
 
@@ -50,9 +52,15 @@ public class LocalExecutioner extends Executioner {
 	CmdRunner createCmdRunner(Task task) {
 		task.createProgramFile(); // We must create a program file
 
+		// Create command line
 		ArrayList<String> args = new ArrayList<String>();
 		for (String arg : CmdRunner.LOCAL_EXEC_COMMAND)
 			args.add(arg);
+		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
+		args.add(timeout + "");
+		args.add(task.getStdoutFile());
+		args.add(task.getStderrFile());
+		args.add(task.getExitCodeFile());
 		args.add(task.getProgramFileName());
 
 		String cmdStr = "";
