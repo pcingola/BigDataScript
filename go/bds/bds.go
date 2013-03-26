@@ -131,7 +131,6 @@ func executeCommandArgs() int {
 */
 func executeCommand(command string, args []string, timeSecs int, outFile, errFile, exitFile string) int {
 
-
 	// Set a new process group.
 	// Since we want to killall child processes, we'll send a kill signal to this process group.
 	// But we don't want to kill the calling program...
@@ -228,11 +227,7 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 	}
 
 	// Write exitCode to file or show as log message
-	if (exitFile == "") || (exitFile == "-") {
-		if exitStr != "0" {
-			fmt.Printf("Exit value: %s\n", exitStr) // No exitFile? Log to console and exit
-		}
-	} else {
+	if (exitFile != "") && (exitFile != "-") {
 		writeFile(exitFile, exitStr) // Dump error to 'exitFile'
 	}
 
