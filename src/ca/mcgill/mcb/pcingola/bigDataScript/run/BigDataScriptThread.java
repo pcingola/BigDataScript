@@ -267,11 +267,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		programUnit.run(this); // Run program
 
-		waitTasksAll(); // Implicit 'wait' statement at the end of the program
+		boolean ok = waitTasksAll(); // Implicit 'wait' statement at the end of the program
 
-		// Set exit value as the latest 'int' result
-		Object ev = getReturnValue();
-		if (ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
+		if (!ok) exitValue = 1; // All tasks in wait finished OK?
+		else {
+			// Set exit value as the latest 'int' result
+			Object ev = getReturnValue();
+			if (ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
+		}
 	}
 
 	@Override
