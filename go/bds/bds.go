@@ -223,7 +223,6 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 
 	// Should we kill child process?
 	if kill {
-		fmt.Printf("Killing cmd\n")
 		cmd.Process.Kill()
 		cmd.Process.Wait() // Reap their souls
 	}
@@ -239,7 +238,6 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 
 	if kill {
 		// Send a SIGKILL to the process group (just in case any child process is still executing)
-		fmt.Printf("Killing process group 0\n")
 		syscall.Kill(0, syscall.SIGHUP) // Other options: -syscall.Getpgrp() , syscall.SIGKILL
 	}
 
@@ -258,18 +256,15 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 	// Wait for command to finish
 	if err := cmd.Wait(); err != nil {
 		exitCode <- err.Error()
-		fmt.Printf("Cmd finished error: %s\n", exitCode);
 	}
 
 	exitCode <- "0"
-	fmt.Printf("Cmd finished OK\n");
 }
 
 /*
 	Kill a process group
 */
 func killProcessGroup(pid int) {
-	fmt.Printf("Kill process group %d\n", pid)
 	syscall.Kill(-pid, syscall.SIGHUP)
 }
 

@@ -30,7 +30,7 @@ public class CmdRunner extends Thread {
 	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
 	public static final String[] ARGS_ARRAY_TYPE = new String[0];
 
-	public static boolean debug = true;
+	public static boolean debug = false;
 
 	String id;
 	String commandArgs[]; // Command and arguments
