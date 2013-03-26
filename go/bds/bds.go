@@ -37,6 +37,10 @@ import (
 
 func main() {
 
+
+!!!!!!!!!! WRITE ALL PROCESSES TO FILE AND KILL THEM ON EXIT
+
+
 	// Are we requested to execute a command?
 	if len(os.Args) > 1 {
 		if os.Args[1] == "exec" {
