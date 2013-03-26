@@ -35,11 +35,13 @@ import (
 	"time"
 )
 
+// Store all PID in this file
+var pidFile string = ""
+
+/*
+	Main
+*/
 func main() {
-
-
-!!!!!!!!!! WRITE ALL PROCESSES TO FILE AND KILL THEM ON EXIT
-
 
 	// Are we requested to execute a command?
 	if len(os.Args) > 1 {
@@ -76,6 +78,14 @@ func main() {
 	WARNING: It is assumed that BigDataScript.jar is in the CLASSPATH
 */
 func bigDataScript() int {
+	// Create a tempFile
+	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid()) + "."
+	pidTmpFile, err := tempFile(prefix)
+	if err != nil {
+		log.Fatal(err)
+	}
+	pidFile = pidTmpFile
+
 	// Append all arguments from command line
 	args := []string{"java", "-Xmx1G", "ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
 	for _, arg := range os.Args[1:] {
@@ -341,6 +351,58 @@ func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error
 		}
 	}
 	return written, err
+}
+
+//
+// Create a temp file. Retun file name instead of file descriptor
+//
+// Code adapted from ioutil.TempFile 
+// Ref: http://golang.org/src/pkg/io/ioutil/tempfile.go
+//
+// TempFile creates a new temporary file in the directory dir
+// with a name beginning with prefix, opens the file for reading
+// and writing, and returns the resulting *os.File.
+// If dir is the empty string, TempFile uses the default directory
+// for temporary files (see os.TempDir).
+// Multiple programs calling TempFile simultaneously
+// will not choose the same file.  The caller can use f.Name()
+// to find the name of the file.  It is the caller's responsibility to
+// remove the file when no longer needed.
+func tempFile(prefix string) (name string, err error) {
+	name = ""
+	nconflict := 0
+	for i := 0; i < 10000; i++ {
+		name = prefix + nextSuffix()
+		f, err := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
+		defer f.Close()
+		if os.IsExist(err) {
+			if nconflict++; nconflict > 10 {
+				randTempFile = reseed()
+			}
+			continue
+		}
+		break
+	}
+	return
+}
+
+// Code from ioutil
+var randTempFile uint32
+
+// Code from ioutil
+func reseed() uint32 {
+	return uint32(time.Now().UnixNano() + int64(os.Getpid()))
+}
+
+// Code from ioutil
+func nextSuffix() string {
+	r := randTempFile
+	if r == 0 {
+		r = reseed()
+	}
+	r = r*1664525 + 1013904223 // constants from Numerical Recipes
+	randTempFile = r
+	return strconv.Itoa(int(1e9 + r%1e9))[1:]
 }
 
 /* 

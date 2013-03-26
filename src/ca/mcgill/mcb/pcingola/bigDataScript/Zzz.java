@@ -17,16 +17,16 @@ public class Zzz {
 
 		String pidFile = Gpr.HOME + "/zzz.pid";
 
-		int test = 2;
+		int test = 1;
 
 		if (test == 1) {
 			LocalExecutioner localSysExecutioner = new LocalExecutioner(pidFile);
-			Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\necho hi ; sleep 1; ls -al; sleep 60; echo done\n");
+			Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\necho hi ; sleep 1; ls -al; sleep 1; echo done\n");
 			task.getResources().setTimeout(5);
 			localSysExecutioner.start();
 			localSysExecutioner.add(task);
 		} else if (test == 2) {
-			LocalQueueExecutioner executioner = new LocalQueueExecutioner();
+			LocalQueueExecutioner executioner = new LocalQueueExecutioner(pidFile);
 			executioner.start();
 
 			Random rand = new Random(20130319);

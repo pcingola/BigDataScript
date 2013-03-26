@@ -14,7 +14,7 @@ public class SshExecutioner extends LocalQueueExecutioner {
 	Cluster cluster;
 
 	public SshExecutioner(Cluster cluster) {
-		super();
+		super(null);
 		this.cluster = cluster;
 	}
 

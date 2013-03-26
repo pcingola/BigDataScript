@@ -1,29 +1,10 @@
 #!/bin/sh
 
-clear; 
-go clean
-go build 
+while true
+do
+	clear; 
+	go clean
+	go build 
+	sleep 3;
+done
 
-touch ls.out ls.err ls.exit
-rm ls.{out,err,exit} 
-
-./bds exec 30 ls.out ls.err ls.exit ./ls.sh -a -l -h 
-echo bds exit code: $?
-
-echo
-echo
-echo "---------- LS.OUT ----------"
-cat ls.out
-
-echo
-echo
-echo "---------- LS.ERR ----------"
-cat ls.err
-
-echo
-echo
-echo "---------- LS.EXIT ----------"
-cat ls.exit
-
-echo
-echo

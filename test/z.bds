@@ -1,15 +1,17 @@
 
-print( "Hi\n" )
+print("Hi\n")
 
-// This task will timeout
-task( timeout = 60 ) {
-	sys echo GOING TO SLEEP; sleep 60 ; echo DONE
-}
+#// This task will timeout
+#task( timeout = 60 ) {
+#	sys echo GOING TO SLEEP; sleep 60 ; echo DONE
+#}
+#
+#// This task will run OK, but takes longer than the previous one
+#task( timeout = 5 ) {
+#	sys echo GOING TO SLEEP 2; sleep 1 ; echo DONE 2
+#}
 
-// This task will run OK, but takes longer than the previous one
-task( timeout = 5 ) {
-	sys echo GOING TO SLEEP 2; sleep 1 ; echo DONE 2
-}
+sys ls -al
 
 print("Done!\n");
 

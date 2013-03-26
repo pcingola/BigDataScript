@@ -96,7 +96,7 @@ public class Executioners {
 			// Create 'local' cluster' (a cluster having only this computer)
 			cluster = new Cluster();
 			cluster.add(new HostLocal());
-			executioner = new LocalQueueExecutioner();
+			executioner = new LocalQueueExecutioner(config.getPidFile());
 			break;
 
 		case SSH:

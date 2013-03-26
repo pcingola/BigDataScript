@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners.ExecutionerType;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.LocalExecutioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
@@ -152,13 +152,12 @@ public class ExpressionSys extends Expression {
 		csThread.add(task); // Add task to thread
 
 		// Execute
-		Executioner executioner = Executioners.getInstance().get(ExecutionerType.LOCAL_SYS); // Get executioner
+		LocalExecutioner executioner = (LocalExecutioner) Executioners.getInstance().get(ExecutionerType.LOCAL_SYS); // Get executioner
 		executioner.add(task); // Execute task and wait for command to finish
-
-		boolean runOk = true;
+		executioner.wait(task.getId()); // Execute task and wait for command to finish
 
 		// Error running the program? 
-		if (!runOk) {
+		if (!task.isDoneOk()) {
 			// Execution failed! Save checkpoint and exit
 			csThread.checkpoint(null);
 			csThread.setExitValue(task.getExitValue()); // Set return value and exit

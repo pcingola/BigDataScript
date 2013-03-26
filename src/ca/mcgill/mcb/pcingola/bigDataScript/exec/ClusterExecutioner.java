@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 public class ClusterExecutioner extends LocalQueueExecutioner {
 
 	public ClusterExecutioner(Cluster cluster) {
-		super();
+		super(null);
 	}
 
 }

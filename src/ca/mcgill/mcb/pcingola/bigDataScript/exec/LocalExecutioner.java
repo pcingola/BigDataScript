@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunner;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -22,11 +23,6 @@ public class LocalExecutioner extends Executioner {
 		super();
 		this.pidFile = pidFile;
 		cmdById = new HashMap<String, CmdRunner>();
-	}
-
-	@Override
-	public void add(Task task) {
-		super.add(task);
 	}
 
 	@Override
@@ -127,5 +123,28 @@ public class LocalExecutioner extends Executioner {
 		cmdById.put(task.getId(), cmd);
 		cmd.start();
 		return true;
+	}
+
+	/**
+	 * Wait until a task finishes
+	 * @param taskId
+	 * @return
+	 */
+	public int wait(String taskId) {
+		CmdRunner cmd = cmdById.get(taskId);
+		if (cmd == null) return 1;
+
+		Gpr.debug("WAIT FOR TASK : " + taskId);
+		try {
+			cmd.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		// Now the task is 'done'
+		Task task = tasksDone.get(taskId);
+		Gpr.debug("DONE : " + task.getExitValue() + "\t" + task.isDone() + "\t" + task.isDoneOk());
+		return task.getExitValue();
+
 	}
 }

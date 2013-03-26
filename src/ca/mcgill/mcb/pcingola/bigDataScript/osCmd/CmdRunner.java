@@ -115,10 +115,12 @@ public class CmdRunner extends Thread {
 	}
 
 	public InputStream getStderr() {
+		if (process == null) return null;
 		return process.getErrorStream();
 	}
 
 	public InputStream getStdout() {
+		if (process == null) return null;
 		return process.getInputStream();
 	}
 

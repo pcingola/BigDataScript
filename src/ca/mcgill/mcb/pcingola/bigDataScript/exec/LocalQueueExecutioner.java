@@ -19,18 +19,9 @@ public class LocalQueueExecutioner extends LocalExecutioner {
 
 	Host host; // Local computer is the 'server' (localhost)
 
-	public LocalQueueExecutioner() {
-		super(null);
+	public LocalQueueExecutioner(String pidFile) {
+		super(pidFile);
 		host = new HostLocal();
-	}
-
-	/**
-	 * We want the same behaviour as Executioner.add
-	 */
-	@Override
-	public void add(Task task) {
-		if (verbose) Timer.showStdErr("Queuing task '" + task.getId() + "'");
-		tasksToRun.add(task);
 	}
 
 	/**
@@ -42,10 +33,8 @@ public class LocalQueueExecutioner extends LocalExecutioner {
 
 		// Are running tasks are consuming all resources?
 		HostResources res = host.getResources().clone();
-		for (Task t : tasksRunning.values()) {
-			// Gpr.debug("Task resources: " + t.getResources() + "\tLeft: " + res);
+		for (Task t : tasksRunning.values())
 			res.consume(t.getResources());
-		}
 
 		return res.isValid();
 	}
