@@ -1,0 +1,10 @@
+
+print( "Hi\n" )
+
+// This task will run OK
+task( timeout = 5 ) {
+	sys echo GOING TO SLEEP 2; sleep 1 ; echo DONE 2
+}
+
+print("Done!\n");
+

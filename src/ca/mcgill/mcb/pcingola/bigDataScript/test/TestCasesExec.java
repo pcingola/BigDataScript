@@ -36,6 +36,18 @@ public class TestCasesExec extends TestCase {
 		Assert.assertEquals(expectedValue.toString(), ssym.getValue().toString());
 	}
 
+	void runAndCheckExit(String fileName, int expectedExitValue) {
+		// Compile
+		String args[] = { fileName };
+		BigDataScript bigDataScript = new BigDataScript(args);
+		bigDataScript.compile();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+
+		// Run
+		int exitValue = bigDataScript.run();
+		Assert.assertEquals(expectedExitValue, exitValue);
+	}
+
 	void runAndCheckMultiple(String fileName, HashMap<String, Object> expectedValues) {
 		runAndCheckMultiple(fileName, expectedValues, new ArrayList<String>());
 	}
@@ -404,6 +416,14 @@ public class TestCasesExec extends TestCase {
 	@Test
 	public void test43() {
 		runAndCheck("test/run_43.bds", "finished", 0L);
+	}
+
+	public void test44() {
+		runAndCheckExit("test/run_44.bds", 0);
+	}
+
+	public void test45() {
+		runAndCheckExit("test/run_45.bds", 1);
 	}
 
 }

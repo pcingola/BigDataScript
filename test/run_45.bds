@@ -1,0 +1,15 @@
+
+print( "Hi\n" )
+
+// This task will timeout
+task( timeout = 1 ) {
+	sys echo GOING TO SLEEP; sleep 10 ; echo DONE
+}
+
+// This task will run OK, but takes longer than the previous one
+task( timeout = 5 ) {
+	sys echo GOING TO SLEEP 2; sleep 1 ; echo DONE 2
+}
+
+print("Done!\n");
+
