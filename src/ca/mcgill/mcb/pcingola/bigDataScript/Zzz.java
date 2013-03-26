@@ -20,11 +20,11 @@ public class Zzz {
 		int test = 1;
 
 		if (test == 1) {
-			LocalExecutioner localSysExecutioner = new LocalExecutioner(pidFile);
+			LocalExecutioner localExecutioner = new LocalExecutioner(pidFile);
 			Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\necho hi ; sleep 1; ls -al; sleep 1; echo done\n");
 			task.getResources().setTimeout(5);
-			localSysExecutioner.start();
-			localSysExecutioner.add(task);
+			localExecutioner.start();
+			localExecutioner.add(task);
 		} else if (test == 2) {
 			LocalQueueExecutioner executioner = new LocalQueueExecutioner(pidFile);
 			executioner.start();

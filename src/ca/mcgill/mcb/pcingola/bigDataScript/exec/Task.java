@@ -22,6 +22,7 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 	protected String id; // Task ID
 	protected boolean verbose, debug;
 	protected boolean canFail; // Allow execution to fail
+	protected boolean started; // Has this task started running?
 	protected boolean done; // Is this task finished
 	protected int exitValue; // Exit (error) code
 	protected String programFileName; // Program file name
@@ -88,6 +89,7 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 	 * Mark this task as failed
 	 */
 	public void failed() {
+		started = true;
 		exitValue = 1;
 		done = true;
 	}
@@ -155,6 +157,10 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 	 */
 	public boolean isFailed() {
 		return done && ((exitValue != 0) || !checkOutputFiles());
+	}
+
+	public boolean isStarted() {
+		return started;
 	}
 
 	/**
@@ -231,6 +237,10 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 
 	public void setQueue(String queue) {
 		this.queue = queue;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
 	}
 
 	public void setVerbose(boolean verbose) {

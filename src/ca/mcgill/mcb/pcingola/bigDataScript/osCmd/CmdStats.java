@@ -19,4 +19,10 @@ public interface CmdStats {
 	 */
 	public void setExitValue(int exitValue);
 
+	/**
+	 * Has this task started running?
+	 * @param done
+	 */
+	public void setStarted(boolean started);
+
 }

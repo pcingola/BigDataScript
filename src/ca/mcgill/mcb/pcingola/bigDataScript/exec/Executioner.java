@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -13,14 +14,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public abstract class Executioner extends Thread {
 
-	public static final int SLEEP_TIME_DEFAULT = 100;
 	public static final int SLEEP_TIME_LONG = 500;
+	public static final int SLEEP_TIME_SHORT = 10;
 
 	protected boolean debug;
 	protected boolean verbose;
 	protected boolean running;
 	protected int hostIdx = 0;
-	protected int sleepTime = SLEEP_TIME_DEFAULT; // Default sleep time
 	protected ArrayList<Task> tasksToRun;
 	protected HashMap<String, Task> tasksDone, tasksRunning;
 	protected Tail tail;
@@ -264,8 +264,16 @@ public abstract class Executioner extends Thread {
 
 		boolean ok = runTask(task, host);
 		if (ok) {
-			running(task); // Set task to running state
-			addTail(task); // Follow STDOUT and STDERR 
+			waitStart(task); // Wait until task started. Otherwise we might get race conditions ('tail' starts reading stdout before readPid)
+			if (task.isFailed()) {
+				if (debug) Gpr.debug("Task failed to initialize " + task.getId());
+				// Task failed
+				running(task);
+				finished(task);
+			} else {
+				running(task); // Set task to running state
+				addTail(task); // Follow STDOUT and STDERR
+			}
 		} else {
 			// Error running
 			if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");
@@ -326,7 +334,7 @@ public abstract class Executioner extends Thread {
 
 	void sleepShort() {
 		try {
-			sleep(sleepTime);
+			sleep(SLEEP_TIME_SHORT);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
@@ -335,6 +343,18 @@ public abstract class Executioner extends Thread {
 	@Override
 	public String toString() {
 		return "Queue type: " + this.getClass().getSimpleName() + "\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size();
+	}
+
+	/**
+	 * Wait for a task to start
+	 * @param task
+	 */
+	protected void waitStart(Task task) {
+		// Busy wait
+		while (!task.isStarted()) {
+			sleepShort();
+			Gpr.debug("Waiting for task to start");
+		}
 	}
 
 }

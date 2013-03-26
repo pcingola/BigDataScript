@@ -26,11 +26,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class CmdRunner extends Thread {
 
-	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
-	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
+	public static final int MAX_PID_LINE_LENGTH = 10240; // A 'PID line' is not longer than this...
+
+	public static String DIR = "/Users/pablocingolani/workspace/BigDataScript/go/bds";
+	public static String LOCAL_EXEC_COMMAND[] = { DIR + "/bds", "exec" };
+	public static String LOCAL_KILL_COMMAND[] = { DIR + "/bds", "kill" };
 	public static final String[] ARGS_ARRAY_TYPE = new String[0];
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 
 	String id;
 	String commandArgs[]; // Command and arguments
@@ -67,6 +70,7 @@ public class CmdRunner extends Thread {
 			if (readPid) pid = readPid();
 
 			started = true;
+			cmdStats.setStarted(true); // Set as started
 			exitValue = process.waitFor(); // Wait for the process to finish and store exit value
 			if (debug) Gpr.debug("Exit value: " + exitValue);
 		} catch (Exception e) {
@@ -80,6 +84,7 @@ public class CmdRunner extends Thread {
 
 			// Inform command stats 
 			if (cmdStats != null) {
+				cmdStats.setStarted(true);
 				cmdStats.setExitValue(exitValue);
 				cmdStats.setDone(true);
 			}
@@ -199,10 +204,12 @@ public class CmdRunner extends Thread {
 
 		// Read one line
 		StringBuilder sb = new StringBuilder();
-		while (true) {
+		for (int i = 0; true; i++) {
 			char ch = (char) getStdout().read();
 			if (ch == '\n') break;
 			sb.append(ch);
+			if (i >= MAX_PID_LINE_LENGTH) //
+				throw new RuntimeException("PID line too long!\n" + sb.toString());
 		}
 
 		// Parse line. Format "PID \t pidNum \t childPidNum"
