@@ -46,6 +46,7 @@ public class Executioners {
 
 	Config config;
 	HashMap<ExecutionerType, Executioner> executioners = new HashMap<ExecutionerType, Executioner>();
+	PidLogger pidLogger;
 
 	/**
 	 * Get instance
@@ -85,7 +86,7 @@ public class Executioners {
 			// Create 'local'
 			cluster = new Cluster();
 			cluster.add(new HostLocal());
-			executioner = new LocalExecutioner(config.getPidFile());
+			executioner = new LocalExecutioner(getPidLogger());
 			break;
 		case LOCAL_QUEUE:
 
@@ -96,7 +97,7 @@ public class Executioners {
 			// Create 'local' cluster' (a cluster having only this computer)
 			cluster = new Cluster();
 			cluster.add(new HostLocal());
-			executioner = new LocalQueueExecutioner(config.getPidFile());
+			executioner = new LocalQueueExecutioner(getPidLogger());
 			break;
 
 		case SSH:
@@ -176,6 +177,13 @@ public class Executioners {
 	 */
 	public Collection<Executioner> getAll() {
 		return executioners.values();
+	}
+
+	public PidLogger getPidLogger() {
+		if (pidLogger == null) {
+			pidLogger = new PidLogger(config.getPidFile());
+		}
+		return pidLogger;
 	}
 
 }

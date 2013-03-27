@@ -1,4 +1,4 @@
 
-for( int i=0 ; i < 1000 ; i++ ) {
-	task echo hi $i
+task (timeout = 100 ) {
+	sys echo hi; sleep 60; echo bye
 }

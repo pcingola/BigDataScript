@@ -147,10 +147,10 @@ public class CmdRunnerSsh extends CmdRunner {
 			// We are done. Either process finished or an exception was raised.
 			started = true;
 			executing = false;
-			if (cmdStats != null) {
+			if (task != null) {
 				// Add command stats (now we only have exitValue)
-				cmdStats.setExitValue(exitValue);
-				cmdStats.setDone(true);
+				task.setExitValue(exitValue);
+				task.setDone(true);
 			}
 		}
 
@@ -163,10 +163,10 @@ public class CmdRunnerSsh extends CmdRunner {
 		disconnect(true);
 
 		// Update task stats
-		if (cmdStats != null) {
-			if (debug) Gpr.debug("Killed: Setting stats " + cmdStats);
-			cmdStats.setExitValue(-1);
-			cmdStats.setDone(true);
+		if (task != null) {
+			if (debug) Gpr.debug("Killed: Setting stats " + task);
+			task.setExitValue(-1);
+			task.setDone(true);
 		}
 	}
 

@@ -24,6 +24,8 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -31,6 +33,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -78,8 +81,8 @@ func main() {
 	WARNING: It is assumed that BigDataScript.jar is in the CLASSPATH
 */
 func bigDataScript() int {
-	// Create a tempFile
-	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid()) + "."
+	// Create a pidFile (temp file based on pid number)
+	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid())
 	pidTmpFile, err := tempFile(prefix)
 	if err != nil {
 		log.Fatal(err)
@@ -88,11 +91,19 @@ func bigDataScript() int {
 
 	// Append all arguments from command line
 	args := []string{"java", "-Xmx1G", "ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
+	args = append(args, "-pid")
+	args = append(args, pidFile)
 	for _, arg := range os.Args[1:] {
 		args = append(args, arg)
 	}
 
-	return executeCommand("java", args, 0, "", "", "")
+	// Execute command
+	exitCode := executeCommand("java", args, 0, "", "", "")
+
+	// Kill all pending processes
+	killAll(pidFile)
+
+	return exitCode
 }
 
 /*
@@ -246,6 +257,11 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 	}
 
 	if kill {
+		// Should we kill all process groups from pidFile?
+		if pidFile != "" {
+			killAll(pidFile)
+		}
+
 		// Send a SIGKILL to the process group (just in case any child process is still executing)
 		syscall.Kill(0, syscall.SIGHUP) // Other options: -syscall.Getpgrp() , syscall.SIGKILL
 	}
@@ -261,7 +277,6 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 	Execute a command and writing exit status to 'exitCode'
 */
 func execute(cmd *exec.Cmd, exitCode chan string) {
-
 	// Wait for command to finish
 	if err := cmd.Wait(); err != nil {
 		exitCode <- err.Error()
@@ -271,10 +286,89 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 }
 
 /*
+	Parse pidFile and send kill signal to all process groups that have not been marked as 'finished'
+	File format: 
+		"pid \t {+,-} \n"
+
+	where '+' inidicates the process was started and '-' that 
+	the process finished. So all pid that do not have a '-' entry 
+	must be killed.
+*/
+func killAll(pidFile string) {
+	var (
+		pid  int
+		err  error
+		line string
+		pids map[int]bool
+		file *os.File
+	)
+
+	fmt.Printf("KillAll: Reading file %s\n", pidFile)
+
+	//---
+	// Open file and parse it
+	//---
+	pids = make(map[int]bool)
+
+	if file, err = os.Open(pidFile); err != nil {
+		return
+	}
+	defer file.Close()
+
+	// Read line by line
+	reader := bufio.NewReader(file)
+	for {
+		if line, err = readLine(reader); err != nil {
+			break
+		}
+		recs := strings.Split(line, "\t")
+
+		pid, _ = strconv.Atoi(recs[0])
+		fmt.Printf("LINE\t%s\t=>\t%d\n", line, pid)
+
+		// Add or remove from map
+		if recs[0] == "-" {
+			delete(pids, pid)
+		} else {
+			pids[pid] = true
+		}
+	}
+
+	// Kill all pending processes
+	for pid, running := range pids {
+		if running {
+			killProcessGroup(pid)
+		}
+	}
+}
+
+/*
 	Kill a process group
 */
 func killProcessGroup(pid int) {
+	fmt.Printf("Killing process group %d\n", pid)
 	syscall.Kill(-pid, syscall.SIGHUP)
+}
+
+/*
+	Read a line from a file
+*/
+func readLine(reader *bufio.Reader) (line string, err error) {
+	var part []byte
+	var prefix bool
+
+	buffer := bytes.NewBuffer(make([]byte, 0))
+	for {
+		if part, prefix, err = reader.ReadLine(); err != nil {
+			break
+		}
+		buffer.Write(part)
+		if !prefix {
+			line = buffer.String()
+			return
+		}
+	}
+	return
 }
 
 /* 
@@ -369,13 +463,17 @@ func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error
 // to find the name of the file.  It is the caller's responsibility to
 // remove the file when no longer needed.
 func tempFile(prefix string) (name string, err error) {
-	name = ""
+	name = prefix
+
+	// Is just the prefix OK?
+	if !fileExists(prefix) {
+		return
+	}
+
 	nconflict := 0
 	for i := 0; i < 10000; i++ {
-		name = prefix + nextSuffix()
-		f, err := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
-		defer f.Close()
-		if os.IsExist(err) {
+		name = prefix + "." + nextSuffix()
+		if fileExists(name) {
 			if nconflict++; nconflict > 10 {
 				randTempFile = reseed()
 			}
@@ -384,6 +482,13 @@ func tempFile(prefix string) (name string, err error) {
 		break
 	}
 	return
+}
+
+// Does the file exist?
+func fileExists(name string) bool {
+	f, err := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
+	defer f.Close()
+	return os.IsExist(err)
 }
 
 // Code from ioutil

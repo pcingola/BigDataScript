@@ -24,9 +24,11 @@ public abstract class Executioner extends Thread {
 	protected ArrayList<Task> tasksToRun;
 	protected HashMap<String, Task> tasksDone, tasksRunning;
 	protected Tail tail;
+	PidLogger pidLogger;
 
-	public Executioner() {
+	public Executioner(PidLogger pidLogger) {
 		super();
+		this.pidLogger = pidLogger;
 		tasksToRun = new ArrayList<Task>();
 		tasksDone = new HashMap<String, Task>();
 		tasksRunning = new HashMap<String, Task>();
@@ -62,7 +64,8 @@ public abstract class Executioner extends Thread {
 		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
 
 		removeTail(task); // Remove from 'tail' thread
-		finished(task); // Move to 'done' 
+		finished(task); // Move to 'done'
+		pidLogger.remove(task);
 
 		return true;
 	}
@@ -273,6 +276,7 @@ public abstract class Executioner extends Thread {
 			} else {
 				running(task); // Set task to running state
 				addTail(task); // Follow STDOUT and STDERR
+				pidLogger.add(task); // Log PID (if any)
 			}
 		} else {
 			// Error running

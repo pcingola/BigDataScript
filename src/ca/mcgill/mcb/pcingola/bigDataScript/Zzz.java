@@ -4,6 +4,7 @@ import java.util.Random;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.LocalExecutioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.LocalQueueExecutioner;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.PidLogger;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -16,17 +17,18 @@ public class Zzz {
 		Gpr.debug("Begin");
 
 		String pidFile = Gpr.HOME + "/zzz.pid";
+		PidLogger pidLogger = new PidLogger(pidFile);
 
 		int test = 1;
 
 		if (test == 1) {
-			LocalExecutioner localExecutioner = new LocalExecutioner(pidFile);
+			LocalExecutioner localExecutioner = new LocalExecutioner(pidLogger);
 			Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\necho hi ; sleep 1; ls -al; sleep 1; echo done\n");
 			task.getResources().setTimeout(5);
 			localExecutioner.start();
 			localExecutioner.add(task);
 		} else if (test == 2) {
-			LocalQueueExecutioner executioner = new LocalQueueExecutioner(pidFile);
+			LocalQueueExecutioner executioner = new LocalQueueExecutioner(pidLogger);
 			executioner.start();
 
 			Random rand = new Random(20130319);

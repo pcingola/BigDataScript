@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
-import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdStats;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -15,7 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  * 
  * @author pcingola
  */
-public class Task implements BigDataScriptSerialize, CmdStats {
+public class Task implements BigDataScriptSerialize {
 
 	public static final String SHE_BANG = "#!/bin/sh\n\n";
 
@@ -25,6 +24,7 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 	protected boolean started; // Has this task started running?
 	protected boolean done; // Is this task finished
 	protected int exitValue; // Exit (error) code
+	protected int pid; // PID (if any)
 	protected String programFileName; // Program file name
 	protected String programTxt; // Program's text (program's code)
 	protected String node; // Preferred execution node (or hostname)
@@ -109,6 +109,10 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 
 	public String getNode() {
 		return node;
+	}
+
+	public int getPid() {
+		return pid;
 	}
 
 	public String getProgramFileName() {
@@ -217,12 +221,10 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 		this.debug = debug;
 	}
 
-	@Override
 	public void setDone(boolean done) {
 		this.done = done;
 	}
 
-	@Override
 	public void setExitValue(int exitValue) {
 		this.exitValue = exitValue;
 	}
@@ -233,6 +235,10 @@ public class Task implements BigDataScriptSerialize, CmdStats {
 
 	public void setOutputFiles(List<String> outputFiles) {
 		this.outputFiles = outputFiles;
+	}
+
+	public void setPid(int pid) {
+		this.pid = pid;
 	}
 
 	public void setQueue(String queue) {

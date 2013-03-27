@@ -473,7 +473,8 @@ public class BigDataScript {
 		}
 
 		// Sanity checks
-		if ((programFileName == null) && (chekcpointRestoreFile == null)) usage("Missing program file name");
+		if ((programFileName == null) && (chekcpointRestoreFile == null)) usage("Missing program file name.");
+		if (pidFile == null) usage("Missing pidFile.");
 	}
 
 	/**

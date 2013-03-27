@@ -19,8 +19,8 @@ public class LocalQueueExecutioner extends LocalExecutioner {
 
 	Host host; // Local computer is the 'server' (localhost)
 
-	public LocalQueueExecutioner(String pidFile) {
-		super(pidFile);
+	public LocalQueueExecutioner(PidLogger pidLogger) {
+		super(pidLogger);
 		host = new HostLocal();
 	}
 

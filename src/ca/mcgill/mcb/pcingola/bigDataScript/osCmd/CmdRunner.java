@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -42,7 +43,7 @@ public class CmdRunner extends Thread {
 	boolean executing = false, started = false; // Command states
 	int pid; // Only if child process reports PID and readPid is true
 	int exitValue = 0; // Command exit value
-	CmdStats cmdStats = null; // Notify this object when we are done
+	Task task = null; // Task corresponding to this cmd
 	Host host; // Host to execute command (in case it's ssh)
 	HostResources resources; // Resources required by this command
 	Process process; // Java process (the one that actually executes our command)
@@ -67,10 +68,13 @@ public class CmdRunner extends Thread {
 			process = pb.start();
 
 			// Child process prints PID to stdout: Read it
-			if (readPid) pid = readPid();
+			if (readPid) {
+				pid = readPid();
+				task.setPid(pid);
+			}
 
 			started = true;
-			cmdStats.setStarted(true); // Set as started
+			task.setStarted(true); // Set as started
 			exitValue = process.waitFor(); // Wait for the process to finish and store exit value
 			if (debug) Gpr.debug("Exit value: " + exitValue);
 		} catch (Exception e) {
@@ -83,10 +87,10 @@ public class CmdRunner extends Thread {
 			executing = false;
 
 			// Inform command stats 
-			if (cmdStats != null) {
-				cmdStats.setStarted(true);
-				cmdStats.setExitValue(exitValue);
-				cmdStats.setDone(true);
+			if (task != null) {
+				task.setStarted(true);
+				task.setExitValue(exitValue);
+				task.setDone(true);
 			}
 
 			// Notify end of execution
@@ -155,10 +159,10 @@ public class CmdRunner extends Thread {
 		}
 
 		// Update task stats
-		if (cmdStats != null) {
+		if (task != null) {
 			if (debug) Gpr.debug("Killed: Setting stats for " + id);
-			cmdStats.setExitValue(-1);
-			cmdStats.setDone(true);
+			task.setExitValue(-1);
+			task.setDone(true);
 		}
 
 		// Notify end of execution
@@ -224,10 +228,6 @@ public class CmdRunner extends Thread {
 		exec();
 	}
 
-	public void setCmdStats(CmdStats cmdStats) {
-		this.cmdStats = cmdStats;
-	}
-
 	public void setCommandArgs(String[] commandArgs) {
 		this.commandArgs = commandArgs;
 	}
@@ -246,6 +246,10 @@ public class CmdRunner extends Thread {
 
 	public void setResources(HostResources resources) {
 		this.resources = resources;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
 	}
 
 	@Override
