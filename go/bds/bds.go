@@ -140,7 +140,7 @@ func executeCommandArgs() int {
 	}
 
 	// Show PID info (parent process is expecting this line first)
-	fmt.Printf("%d\n", syscall.Getpid() )
+	fmt.Printf("%d\n", syscall.Getpid())
 	os.Stdout.Sync()
 
 	// Execute command
@@ -303,8 +303,6 @@ func killAll(pidFile string) {
 		file *os.File
 	)
 
-	fmt.Printf("KillAll: Reading file %s\n", pidFile)
-
 	//---
 	// Open file and parse it
 	//---
@@ -324,7 +322,6 @@ func killAll(pidFile string) {
 		recs := strings.Split(line, "\t")
 
 		pid, _ = strconv.Atoi(recs[0])
-		fmt.Printf("LINE\t%s\t=>\t%d\n", line, pid)
 
 		// Add or remove from map
 		if recs[0] == "-" {
@@ -346,7 +343,6 @@ func killAll(pidFile string) {
 	Kill a process group
 */
 func killProcessGroup(pid int) {
-	fmt.Printf("Killing process group %d\n", pid)
 	syscall.Kill(-pid, syscall.SIGHUP)
 }
 
