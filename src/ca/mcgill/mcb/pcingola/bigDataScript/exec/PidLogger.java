@@ -18,11 +18,11 @@ public class PidLogger {
 	public static boolean debug = true;
 
 	String pidFile;
-	HashSet<Integer> pids;
+	HashSet<String> pids;
 
 	public PidLogger(String pidFile) {
 		this.pidFile = pidFile;
-		pids = new HashSet<Integer>();
+		pids = new HashSet<String>();
 		if (debug) Gpr.debug("Creating PID logger " + pidFile);
 	}
 
@@ -30,8 +30,8 @@ public class PidLogger {
 	 * Add entry 'pid' to pidFile
 	 * @param pid
 	 */
-	public void add(int pid) {
-		if (pid == 0) return;
+	public void add(String pid) {
+		if (pid == null) return;
 		pids.add(pid);
 		append(pid + "\t+");
 	}
@@ -51,7 +51,7 @@ public class PidLogger {
 		}
 	}
 
-	public HashSet<Integer> getPids() {
+	public HashSet<String> getPids() {
 		return pids;
 	}
 
@@ -59,8 +59,8 @@ public class PidLogger {
 	 * Add 'remove' entry to pidFile
 	 * @param pid
 	 */
-	public void remove(int pid) {
-		if (pid == 0) return;
+	public void remove(String pid) {
+		if (pid == null) return;
 		pids.remove(pid);
 		append(pid + "\t-");
 	}
