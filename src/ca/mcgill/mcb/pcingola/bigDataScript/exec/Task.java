@@ -24,7 +24,7 @@ public class Task implements BigDataScriptSerialize {
 	protected boolean started; // Has this task started running?
 	protected boolean done; // Is this task finished
 	protected int exitValue; // Exit (error) code
-	protected int pid; // PID (if any)
+	protected String pid; // PID (if any)
 	protected String programFileName; // Program file name
 	protected String programTxt; // Program's text (program's code)
 	protected String node; // Preferred execution node (or hostname)
@@ -111,7 +111,7 @@ public class Task implements BigDataScriptSerialize {
 		return node;
 	}
 
-	public int getPid() {
+	public String getPid() {
 		return pid;
 	}
 
@@ -237,7 +237,7 @@ public class Task implements BigDataScriptSerialize {
 		this.outputFiles = outputFiles;
 	}
 
-	public void setPid(int pid) {
+	public void setPid(String pid) {
 		this.pid = pid;
 	}
 

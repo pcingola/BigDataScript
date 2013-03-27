@@ -139,8 +139,8 @@ func executeCommandArgs() int {
 		log.Fatalf("Invalid time: '%s'\n", timeStr)
 	}
 
-	// Show PID info (parent process is expecting this line first
-	fmt.Printf("PID\t%d\t%d\n", syscall.Getpid(), syscall.Getpgrp())
+	// Show PID info (parent process is expecting this line first)
+	fmt.Printf("%d\n", syscall.Getpid() )
 	os.Stdout.Sync()
 
 	// Execute command

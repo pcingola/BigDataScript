@@ -27,11 +27,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class CmdRunner extends Thread {
 
-	public static final int MAX_PID_LINE_LENGTH = 10240; // A 'PID line' is not longer than this...
+	public static final int MAX_PID_LINE_LENGTH = 1024; // A 'PID line' should not be longer than this...
 
-	public static String DIR = "/Users/pablocingolani/workspace/BigDataScript/go/bds";
-	public static String LOCAL_EXEC_COMMAND[] = { DIR + "/bds", "exec" };
-	public static String LOCAL_KILL_COMMAND[] = { DIR + "/bds", "kill" };
+	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
+	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
 	public static final String[] ARGS_ARRAY_TYPE = new String[0];
 
 	public static boolean debug = true;
@@ -41,7 +40,7 @@ public class CmdRunner extends Thread {
 	String error = ""; // Errors
 	boolean readPid;
 	boolean executing = false, started = false; // Command states
-	int pid; // Only if child process reports PID and readPid is true
+	String pid; // Only if child process reports PID and readPid is true
 	int exitValue = 0; // Command exit value
 	Task task = null; // Task corresponding to this cmd
 	Host host; // Host to execute command (in case it's ssh)
@@ -151,7 +150,8 @@ public class CmdRunner extends Thread {
 	public void kill() {
 		if (process != null) {
 			// Do we have a PID number? Kill using that number
-			if (pid > 0) killBds(pid);
+			int pidNum = Gpr.parseIntSafe(pid);
+			if (pidNum > 0) killBds(pidNum);
 
 			error += "Killed!\n";
 			if (debug) Gpr.debug("Killing process " + id);
@@ -199,7 +199,7 @@ public class CmdRunner extends Thread {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	int readPid() throws InterruptedException, IOException {
+	String readPid() throws InterruptedException, IOException {
 		// Read PID from first line of child process
 
 		// Wait for STDOUT to become available
@@ -218,9 +218,7 @@ public class CmdRunner extends Thread {
 
 		// Parse line. Format "PID \t pidNum \t childPidNum"
 		if (debug) Gpr.debug("Got line: '" + sb + "'");
-		String fields[] = sb.toString().split("\t");
-		if (!fields[0].equals("PID")) throw new RuntimeException("Expecting 'PID', received: '" + sb + "'");
-		return Gpr.parseIntSafe(fields[1]);
+		return sb.toString();
 	}
 
 	@Override

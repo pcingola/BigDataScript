@@ -44,9 +44,6 @@ public class LocalExecutioner extends Executioner {
 	 * @return
 	 */
 	CmdRunner createCmdRunner(Task task) {
-
-		// TODO : All this code should be moved to CmdRunner
-
 		task.createProgramFile(); // We must create a program file
 
 		// Create command line
