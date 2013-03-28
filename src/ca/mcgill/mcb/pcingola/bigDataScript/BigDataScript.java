@@ -474,7 +474,6 @@ public class BigDataScript {
 
 		// Sanity checks
 		if ((programFileName == null) && (chekcpointRestoreFile == null)) usage("Missing program file name.");
-		if (pidFile == null) usage("Missing pidFile.");
 	}
 
 	/**
@@ -489,7 +488,11 @@ public class BigDataScript {
 		//---
 		config = new Config(configFile, verbose);
 		config.setDebug(debug);
-		if (pidFile != null) config.setPidFile(pidFile);
+		if (pidFile == null) {
+			if (programFileName != null) pidFile = programFileName + ".pid";
+			else pidFile = chekcpointRestoreFile + ".pid";
+		}
+		config.setPidFile(pidFile);
 		Executioners executioners = Executioners.getInstance(config); // Initialize executioners
 
 		//---
