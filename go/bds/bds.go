@@ -368,7 +368,6 @@ func killAll(pidFile string) {
 		if line, err = readLine(reader); err != nil {
 			break
 		}
-		fmt.Printf("bds kill : '%s'\n", line)
 		recs := strings.Split(line, "\t")
 
 		pid := recs[0]
