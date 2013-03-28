@@ -12,10 +12,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TaskDone extends Thread {
 
-	public static boolean debug = false;
 	public static final int SLEEP_TIME = 200;
 
-	boolean verbose = false;
+	boolean debug, verbose;
 	HashMap<Task, Executioner> execByTask;
 	boolean running;
 
@@ -50,6 +49,10 @@ public class TaskDone extends Thread {
 			update();
 			sleep();
 		}
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 
 	public void setVerbose(boolean verbose) {

@@ -366,11 +366,9 @@ public abstract class Executioner extends Thread {
 	 * @param task
 	 */
 	protected void waitStart(Task task) {
-		// Busy wait
-		while (!task.isStarted()) {
+		// Busy wait, probably not the smartest thinsg to do...
+		while (!task.isStarted())
 			sleepShort();
-			Gpr.debug("Waiting for task to start");
-		}
 	}
 
 }

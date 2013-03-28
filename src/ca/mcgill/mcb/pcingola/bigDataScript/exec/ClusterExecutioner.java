@@ -118,4 +118,10 @@ public class ClusterExecutioner extends LocalExecutioner {
 		taskDone.start(); // Create a 'taskDone' process (get information when a process finishes)
 		super.runBefore();
 	}
+
+	@Override
+	public void setDebug(boolean debug) {
+		super.setDebug(debug);
+		taskDone.setDebug(debug);
+	}
 }
