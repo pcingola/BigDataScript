@@ -398,7 +398,7 @@ func killAll(pidFile string) {
 				if _, ok = runCmds[cmd]; ok {
 					runCmds[cmd] = runCmds[cmd] + "\t" + pid
 				} else {
-					runCmds[cmd] = pid
+					runCmds[cmd] = cmd + "\t" + pid
 				}
 			}
 		}
@@ -407,7 +407,8 @@ func killAll(pidFile string) {
 	// Run all commands
 	for cmd, args := range runCmds {
 		fmt.Printf("RUN:\t%s\t%s\n", cmd, args)
-		cmdExec := exec.Command("touch", args)
+		cmdExec := exec.Command("touch")
+		cmdExec.Args = strings.Split(args,"\t")
 		err := cmdExec.Run()
 		if err != nil {
 			log.Fatal(err)
