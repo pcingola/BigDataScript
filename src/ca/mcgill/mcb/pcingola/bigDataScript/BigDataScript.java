@@ -16,6 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptLexer;
 import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptParser;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners.ExecutionerType;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Literal;
@@ -379,8 +380,11 @@ public class BigDataScript {
 		//---
 		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, "")); // Task fail triggers checkpoint & exit (a task cannot fail)
 
+		// Command line parameters override defaults
+		if (system == null) system = ExecutionerType.LOCAL.toString().toLowerCase();
+
 		// Task related variables: Default values
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, "local")); // System type: "local", "ssh", "cluster", "aws", etc.
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system)); // System type: "local", "ssh", "cluster", "aws", etc.
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Type.INT, 1L)); // Default number of cpus
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS_LOCAL, Type.INT, Gpr.NUM_CORES)); // Default number of local cpus
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, "")); // Default queue: none
@@ -397,9 +401,6 @@ public class BigDataScript {
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT, 1024L * 1024L * 1024L));
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Type.INT, 1024L * 1024L * 1024L * 1024L));
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
-
-		// Command line parameters override defaults
-		if (system != null) globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system));
 
 		// Set "physical" path 
 		String path;
