@@ -50,7 +50,6 @@ public class TaskDone extends Thread {
 
 	@Override
 	public void run() {
-		Gpr.debug("RUN LOOP");
 		for (running = true; running;) {
 			update();
 			sleep();

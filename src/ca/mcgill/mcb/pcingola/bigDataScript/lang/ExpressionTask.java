@@ -74,7 +74,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setNode(csThread.getString(TASK_OPTION_NODE));
 		task.setQueue(csThread.getString(TASK_OPTION_QUEUE));
 		task.getResources().setCpus((int) csThread.getInt(TASK_OPTION_CPUS));
-		task.getResources().setTimeout((int) csThread.getInt(TASK_OPTION_TIMEOUT));
+		task.getResources().setTimeout(csThread.getInt(TASK_OPTION_TIMEOUT));
 		task.setOutputFiles(outputFiles);
 
 		// Queue exec
