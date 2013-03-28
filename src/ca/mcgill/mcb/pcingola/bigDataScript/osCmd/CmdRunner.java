@@ -72,34 +72,26 @@ public class CmdRunner extends Thread {
 			}
 			process = pb.start();
 
-			// Feed something to STDIN?
-			feedStdin();
-
-			// Child process prints PID to STDOUT? Read it
-			if (readPid) {
-				pid = readPid();
-				task.setPid(pid);
-			}
-
-			// Now we are really done and the process is started
-			started = true;
-			task.setStarted(true); // Set as started
+			feedStdin(); // Feed something to STDIN?
+			readPid(); // Child process prints PID to STDOUT? Read it
+			started(); // Now we are really done and the process is started. Update states
 
 			// Wait for the process to finish and store exit value
 			exitValue = process.waitFor();
 			if (debug) Gpr.debug("Exit value: " + exitValue);
 
 		} catch (Exception e) {
-			error = e.getMessage() + "\n";
-			exitValue = -1;
-			if (debug) e.printStackTrace();
+			execError(e);
 		} finally {
 			execDone();
 		}
 		return exitValue;
 	}
-	
-	void execDone() {
+
+	/**
+	 * Finished 'exec' of a command, update states
+	 */
+	protected void execDone() {
 		// We are done. Either process finished or an exception was raised.
 		started = true;
 		executing = false;
@@ -116,11 +108,20 @@ public class CmdRunner extends Thread {
 	}
 
 	/**
+	 * Error while trying to 'exec' of a command, update states
+	 */
+	protected void execError(Exception e) {
+		error = e.getMessage() + "\n";
+		exitValue = -1;
+		if (debug) e.printStackTrace();
+	}
+
+	/**
 	 * Feed a string to process' STDIN
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	void feedStdin() throws InterruptedException, IOException {
+	protected void feedStdin() throws InterruptedException, IOException {
 		if ((stdin == null) || stdin.isEmpty()) return; // Nothing to do
 
 		// Wait for STDOUT to become available
@@ -216,7 +217,7 @@ public class CmdRunner extends Thread {
 	 * Send a kill signal using 'bds kill'
 	 * @param pid
 	 */
-	void killBds(int pid) {
+	protected void killBds(int pid) {
 		// Create arguments
 		ArrayList<String> args = new ArrayList<String>();
 		for (String arg : LOCAL_KILL_COMMAND)
@@ -235,31 +236,39 @@ public class CmdRunner extends Thread {
 	}
 
 	/**
-	 * Read child process pid
+	 * Read child process pid (or cluster job id)
 	 * @return
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	String readPid() throws InterruptedException, IOException {
-		// Read PID from first line of child process
+	protected void readPid() throws InterruptedException, IOException {
+		// Nothing to do?
+		pid = "";
+		if (!readPid) return;
 
 		// Wait for STDOUT to become available
 		while (getStdout() == null)
 			sleep(1);
 
-		// Read one line
+		// Read one line.
+		// Note: We want to limit the damage if something goes wrong, so we use a small buffer...
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; true; i++) {
-			char ch = (char) getStdout().read();
-			if (ch == '\n') break;
-			sb.append(ch);
-			if (i >= MAX_PID_LINE_LENGTH) //
-				throw new RuntimeException("PID line too long!\n" + sb.toString());
+		while (pid.isEmpty()) {
+			for (int i = 0; true; i++) {
+				char ch = (char) getStdout().read();
+				if (ch == '\n') break;
+				sb.append(ch);
+				if (i >= MAX_PID_LINE_LENGTH) //
+					throw new RuntimeException("PID line too long!\n" + sb.toString());
+			}
+
+			// Parse line. Format "PID \t pidNum \t childPidNum"
+			if (debug) Gpr.debug("Got line: '" + sb + "'");
+
+			pid = sb.toString().trim(); // Ignore empty lines
 		}
 
-		// Parse line. Format "PID \t pidNum \t childPidNum"
-		if (debug) Gpr.debug("Got line: '" + sb + "'");
-		return sb.toString();
+		task.setPid(pid); // Update task's pid
 	}
 
 	@Override
@@ -293,6 +302,11 @@ public class CmdRunner extends Thread {
 
 	public void setTask(Task task) {
 		this.task = task;
+	}
+
+	protected void started() {
+		started = true;
+		task.setStarted(true); // Set as started
 	}
 
 	@Override

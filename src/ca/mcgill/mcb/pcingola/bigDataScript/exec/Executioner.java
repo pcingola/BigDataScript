@@ -234,8 +234,7 @@ public abstract class Executioner extends Thread {
 		if (debug) Timer.showStdErr("Starting " + this.getClass().getSimpleName());
 		running = true;
 
-		// Create a 'tail' process (to show STDOUT & STDERR from all processes)
-		tail.start();
+		runBefore(); // Initialize, before run loop
 
 		try {
 			// Run until killed
@@ -251,8 +250,7 @@ public abstract class Executioner extends Thread {
 			t.printStackTrace();
 			throw new RuntimeException(t);
 		} finally {
-			// Kill tail process
-			tail.kill();
+			runAfter(); // Clean up
 		}
 	}
 
@@ -284,6 +282,20 @@ public abstract class Executioner extends Thread {
 		}
 
 		return ok;
+	}
+
+	/**
+	 * Clean up after run loop
+	 */
+	protected void runAfter() {
+		tail.kill(); // Kill tail process
+	}
+
+	/**
+	 * Initialize before run loop
+	 */
+	protected void runBefore() {
+		tail.start(); // Create a 'tail' process (to show STDOUT & STDERR from all processes)
 	}
 
 	/**

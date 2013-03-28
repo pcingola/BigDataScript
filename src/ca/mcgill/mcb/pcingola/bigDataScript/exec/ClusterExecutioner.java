@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunner;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunnerCluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -16,18 +17,21 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ClusterExecutioner extends LocalExecutioner {
 
-	public static String FAKEL_CLUSTER = "";
-	// public static String FAKEL_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
-
-	public static String CLUSTER_EXEC_COMMAND[] = { FAKEL_CLUSTER + "msub" };
-	public static String CLUSTER_KILL_COMMAND[] = { FAKEL_CLUSTER + "canceljob" };
+	public static String FAKE_CLUSTER = "";
+	// public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
+	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "msub" };
+	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "canceljob" };
 	public static String CLUSTER_BDS_COMMAND = "bds exec ";
 
 	public static final int MIN_EXTRA_TIME = 15;
 	public static final int MAX_EXTRA_TIME = 120;
 
+	TaskDone taskDone;
+
 	public ClusterExecutioner(Cluster cluster) {
 		super(null);
+		taskDone = new TaskDone();
+
 	}
 
 	@Override
@@ -88,12 +92,30 @@ public class ClusterExecutioner extends LocalExecutioner {
 		// Run command
 		if (debug) Timer.showStdErr("Running command: echo \"" + cmdStdin + "\" | " + cmdStr);
 
-		CmdRunner cmd = new CmdRunner(task.getId(), args.toArray(CmdRunner.ARGS_ARRAY_TYPE));
+		CmdRunnerCluster cmd = new CmdRunnerCluster(task.getId(), args.toArray(CmdRunner.ARGS_ARRAY_TYPE));
 		cmd.setTask(task);
 		cmd.setExecutioner(this);
 		cmd.setStdin(cmdStdin.toString());
 		cmd.setReadPid(true); // We execute using "qsub" which prints a jobID to stdout
 		cmdById.put(task.getId(), cmd);
 		return cmd;
+	}
+
+	/**
+	 * Clean up after run loop
+	 */
+	@Override
+	protected void runAfter() {
+		super.runAfter();
+		taskDone.kill(); // Kill taskDone process
+	}
+
+	/**
+	 * Initialize before run loop
+	 */
+	@Override
+	protected void runBefore() {
+		taskDone.start(); // Create a 'taskDone' process (get information when a process finishes)
+		super.runBefore();
 	}
 }
