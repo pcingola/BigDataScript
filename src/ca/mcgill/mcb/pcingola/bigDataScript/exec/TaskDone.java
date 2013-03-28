@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.exec;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -78,10 +79,23 @@ public class TaskDone extends Thread {
 	 * Check is an exist file exists, update states
 	 */
 	void update() {
+		ArrayList<Task> toDelete = null;
+
 		for (Task task : execByTask.keySet()) {
 			String exitFile = task.getExitCodeFile();
-			if (Gpr.exists(exitFile)) update(task);
+			if (Gpr.exists(exitFile)) {
+				update(task);
 
+				// Create (or add) to tasks to delete
+				if (toDelete == null) toDelete = new ArrayList<Task>();
+				toDelete.add(task);
+			}
+		}
+
+		// An task to delete?
+		if (toDelete != null) {
+			for (Task task : toDelete)
+				remove(task); // We don't need to monitor this task any more
 		}
 	}
 
@@ -90,9 +104,6 @@ public class TaskDone extends Thread {
 	 */
 	synchronized void update(Task task) {
 		if (debug) Gpr.debug("Found exit file " + task.getExitCodeFile());
-
-		Executioner executioner = execByTask.get(task);
-		remove(task); // We don't need this any more
 
 		// Parse exit file
 		sleep();
@@ -106,6 +117,7 @@ public class TaskDone extends Thread {
 		task.setDone(true);
 
 		// Inform executioner that task has finished
+		Executioner executioner = execByTask.get(task);
 		executioner.finished(task.getId());
 
 	}
