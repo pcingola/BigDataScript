@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunner;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -17,8 +16,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ClusterExecutioner extends LocalExecutioner {
 
-	// public static String FAKEL_CLUSTER = "";
-	public static String FAKEL_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
+	public static String FAKEL_CLUSTER = "";
+	// public static String FAKEL_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
 	public static String CLUSTER_EXEC_COMMAND[] = { FAKEL_CLUSTER + "qsub" };
 	public static String CLUSTER_KILL_COMMAND[] = { FAKEL_CLUSTER + "qdel" };
