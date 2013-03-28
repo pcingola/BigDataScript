@@ -54,7 +54,7 @@ func main() {
 		} else if os.Args[1] == "kill" {
 			// Kill a process group
 			if len(os.Args) != 3 {
-				usage()
+				usage("Invalid number of parameters for 'kill' command")
 			}
 
 			// Parse pid
@@ -68,7 +68,7 @@ func main() {
 			killProcessGroup(pid)
 			os.Exit(0)
 		} else if os.Args[1] == "help" {
-			usage()
+			usage("")
 		}
 	}
 
@@ -111,7 +111,7 @@ func bigDataScript() int {
 */
 func executeCommandArgs() int {
 	if len(os.Args) < 7 {
-		usage()
+		usage("Invalid numeber of parameters for 'exec' command")
 	}
 
 	// Parse command line args
@@ -509,7 +509,15 @@ func nextSuffix() string {
 /* 
 	Show usage message and exit
 */
-func usage() {
+func usage(msg string) {
+	if( msg != "" ) {
+		fmt.Printf("Error: %s\n", msg)
+		fmt.Printf("Arguments:\n", msg)
+		for n, arg := range os.Args[1:] {
+			fmt.Printf("\t%d : %s\n", n, arg );
+		}
+	}
+
 	// Show help and exit
 	fmt.Printf("Usage: bds command\n\n")
 	fmt.Printf("Commands:\n\n")
