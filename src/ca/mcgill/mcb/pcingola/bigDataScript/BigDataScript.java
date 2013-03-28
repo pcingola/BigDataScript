@@ -63,7 +63,8 @@ public class BigDataScript {
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
 	String programFileName; // Program file name
-	String pidFile;
+	String pidFile; // File to store PIDs
+	String system; // System type
 	Config config;
 	ProgramUnit programUnit; // Program (parsed nodes)
 	BigDataScriptThread bigDataScriptThread;
@@ -390,12 +391,15 @@ public class BigDataScript {
 		// Number of local CPUs
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, (long) Gpr.NUM_CORES));
 
-		// Kile, Mega, Giga, Tera, Peta.
+		// Kilo, Mega, Giga, Tera, Peta.
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT, 1024L * 1024L * 1024L));
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Type.INT, 1024L * 1024L * 1024L * 1024L));
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
+
+		// Command line parameters override defaults
+		if (system != null) globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system));
 
 		// Set "physical" path 
 		String path;
@@ -463,7 +467,10 @@ public class BigDataScript {
 				// PID file
 				if ((i + 1) < args.length) pidFile = args[++i];
 				else usage("Option '-pid' without file argument");
-
+			} else if (args[i].equals("-s") || args[i].equalsIgnoreCase("-system")) {
+				// System type
+				if ((i + 1) < args.length) system = args[++i];
+				else usage("Option '-pid' without file argument");
 			} else if (args[i].equals("-c") || args[i].equalsIgnoreCase("-config")) {
 				// Checkpoint restore
 				if ((i + 1) < args.length) configFile = args[++i];
@@ -583,8 +590,9 @@ public class BigDataScript {
 		System.err.println("  [-c | -config] file    : Config file. Default : " + configFile);
 		System.err.println("  [-d | -debug]          : Debug mode.");
 		System.err.println("  [-r | -restore] file   : Restore from checkpoint file.");
+		System.err.println("  [-s |-system] type     : Set system type.");
 		System.err.println("  [-v | -verbose]        : Be verbose.");
-		System.err.println("  [-pid] <file>          : Write local processes PIDs to 'file'");
+		System.err.println("  -pid <file>            : Write local processes PIDs to 'file'");
 		System.err.println("  -noLog                 : Do not log stats.");
 		if (err != null) System.exit(1);
 		System.exit(0);
