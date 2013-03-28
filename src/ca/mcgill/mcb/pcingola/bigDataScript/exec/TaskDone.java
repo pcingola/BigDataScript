@@ -79,9 +79,7 @@ public class TaskDone extends Thread {
 	 * Check is an exist file exists, update states
 	 */
 	void update() {
-		Gpr.debug("UPDATE");
 		for (Task task : execByTask.keySet()) {
-			Gpr.debug("Check file " + task.getExitCodeFile());
 			String exitFile = task.getExitCodeFile();
 			if (Gpr.exists(exitFile)) update(task);
 
