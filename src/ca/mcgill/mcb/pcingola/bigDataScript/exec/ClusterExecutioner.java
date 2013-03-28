@@ -20,7 +20,7 @@ public class ClusterExecutioner extends LocalExecutioner {
 	public static String FAKE_CLUSTER = "";
 	// public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
-	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
+	public static String CLUSTER_KILL_COMMAND = FAKE_CLUSTER + "qdel";
 	public static String CLUSTER_BDS_COMMAND = "bds qexec ";
 
 	public static final int MIN_EXTRA_TIME = 15;
@@ -115,10 +115,7 @@ public class ClusterExecutioner extends LocalExecutioner {
 	 */
 	@Override
 	public String killCommand(Task task) {
-		StringBuilder kcmd = new StringBuilder();
-		for (String k : CLUSTER_KILL_COMMAND)
-			kcmd.append(k + " ");
-		return kcmd.toString().trim();
+		return CLUSTER_KILL_COMMAND;
 	}
 
 	/**

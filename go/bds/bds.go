@@ -396,17 +396,18 @@ func killAll(pidFile string) {
 			} else {
 				// Create command to be executed
 				if _, ok = runCmds[cmd]; ok {
-					runCmds[cmd] = runCmds[cmd] + " " + pid
+					runCmds[cmd] = runCmds[cmd] + "\t" + pid
 				} else {
-					runCmds[cmd] = cmd + " " + pid
+					runCmds[cmd] = pid
 				}
 			}
 		}
 	}
 
 	// Run all commands
-	for _, cmdToRun := range runCmds {
-		fmt.Printf("RUN:\t%s\n", cmdToRun)
+	for cmd, args := range runCmds {
+		fmt.Printf("RUN:\t%s\t%s\n", cmd, args)
+		exec.Command(cmd, args).Run()
 	}
 }
 
