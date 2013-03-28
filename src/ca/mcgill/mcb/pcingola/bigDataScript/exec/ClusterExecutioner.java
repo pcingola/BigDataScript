@@ -40,8 +40,8 @@ public class ClusterExecutioner extends LocalExecutioner {
 		HostResources res = task.getResources();
 		StringBuilder resSb = new StringBuilder();
 		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? ":" : "") + "ppn=" + res.getCpus());
-		if (res.getMem() > 0) resSb.append("mem=" + res.getMem());
-		if (res.getTimeout() > 0) resSb.append("walltime=" + res.getTimeout());
+		if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? ":" : "") + "mem=" + res.getMem());
+		if (res.getTimeout() > 0) resSb.append((resSb.length() > 0 ? ":" : "") + "walltime=" + res.getTimeout());
 
 		// Any resources requested? Add command line
 		if (resSb.length() > 0) {
