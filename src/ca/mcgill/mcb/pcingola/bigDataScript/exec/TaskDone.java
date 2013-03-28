@@ -31,7 +31,6 @@ public class TaskDone extends Thread {
 	 */
 	public synchronized void add(Executioner executioner, Task task) {
 		if (debug) Gpr.debug("TaskDone: Adding task " + task.getId());
-		// Sanity check
 		if (task == null) return;
 		execByTask.put(task, executioner);
 	}
@@ -95,6 +94,7 @@ public class TaskDone extends Thread {
 	synchronized void update(Task task) {
 		if (debug) Gpr.debug("Found exit file " + task.getExitCodeFile());
 
+		Executioner executioner = execByTask.get(task);
 		remove(task); // We don't need this any more
 
 		// Parse exit file
@@ -109,7 +109,6 @@ public class TaskDone extends Thread {
 		task.setDone(true);
 
 		// Inform executioner that task has finished
-		Executioner executioner = execByTask.get(task);
 		executioner.finished(task.getId());
 
 	}
