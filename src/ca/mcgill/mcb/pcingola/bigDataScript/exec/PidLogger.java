@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class PidLogger {
 
-	public static boolean debug = true;
+	public static boolean debug = false;
 
 	String pidFile;
 	HashSet<String> pids;
