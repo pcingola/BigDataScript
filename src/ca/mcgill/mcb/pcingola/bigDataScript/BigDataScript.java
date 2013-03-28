@@ -399,7 +399,10 @@ public class BigDataScript {
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
 
 		// Command line parameters override defaults
-		if (system != null) globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system));
+		if (system != null) {
+			Gpr.debug("SET SYSTEM TO " + system);
+			globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system));
+		}
 
 		// Set "physical" path 
 		String path;

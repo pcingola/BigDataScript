@@ -152,7 +152,7 @@ public class ExpressionSys extends Expression {
 		csThread.add(task); // Add task to thread
 
 		// Execute
-		LocalExecutioner executioner = (LocalExecutioner) Executioners.getInstance().get(ExecutionerType.LOCAL_SYS); // Get executioner
+		LocalExecutioner executioner = (LocalExecutioner) Executioners.getInstance().get(ExecutionerType.SYS); // Get executioner
 		executioner.add(task); // Execute task and wait for command to finish
 		executioner.wait(task.getId()); // Execute task and wait for command to finish
 

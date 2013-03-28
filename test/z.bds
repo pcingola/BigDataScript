@@ -1,6 +1,4 @@
 
-system = "cluster"
-
 for( int i=0 ; i < 2 ; i++ ) {
 	task echo hi $i
 }

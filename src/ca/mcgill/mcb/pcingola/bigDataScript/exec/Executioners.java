@@ -23,7 +23,7 @@ public class Executioners {
 	 *
 	 */
 	public enum ExecutionerType {
-		LOCAL_SYS, LOCAL_QUEUE, SSH, CLUSTER, CLOUD;
+		SYS, LOCAL, SSH, CLUSTER, CLOUD;
 
 		/**
 		 * Parse an executioner name
@@ -35,7 +35,7 @@ public class Executioners {
 			try {
 				return ExecutionerType.valueOf(exName.toUpperCase());
 			} catch (Exception e) {
-				return LOCAL_QUEUE;
+				return LOCAL;
 			}
 		}
 
@@ -77,7 +77,7 @@ public class Executioners {
 		Cluster cluster;
 
 		switch (exType) {
-		case LOCAL_SYS:
+		case SYS:
 
 			//---
 			// Create local 'sys' executioner
@@ -88,7 +88,7 @@ public class Executioners {
 			cluster.add(new HostLocal());
 			executioner = new LocalExecutioner(getPidLogger());
 			break;
-		case LOCAL_QUEUE:
+		case LOCAL:
 
 			//---
 			// Create local executioner
