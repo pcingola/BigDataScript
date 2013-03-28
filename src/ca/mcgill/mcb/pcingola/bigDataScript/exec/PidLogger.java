@@ -30,14 +30,14 @@ public class PidLogger {
 	 * Add entry 'pid' to pidFile
 	 * @param pid
 	 */
-	public void add(String pid) {
+	public void add(String pid, String cmd) {
 		if (pid == null) return;
 		pids.add(pid);
-		append(pid + "\t+");
+		append(pid + "\t+\t" + cmd);
 	}
 
-	public void add(Task t) {
-		add(t.getPid());
+	public void add(Task t, Executioner executioner) {
+		add(t.getPid(), executioner.killCommand(t));
 	}
 
 	void append(String str) {

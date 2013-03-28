@@ -109,6 +109,19 @@ public class ClusterExecutioner extends LocalExecutioner {
 	}
 
 	/**
+	 * An OS command to kill this task
+	 * @param task
+	 * @return
+	 */
+	@Override
+	public String killCommand(Task task) {
+		StringBuilder kcmd = new StringBuilder();
+		for (String k : CLUSTER_KILL_COMMAND)
+			kcmd.append(k + " ");
+		return kcmd.toString().trim();
+	}
+
+	/**
 	 * Clean up after run loop
 	 */
 	@Override

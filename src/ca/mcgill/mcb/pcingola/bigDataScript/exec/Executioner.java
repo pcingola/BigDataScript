@@ -193,6 +193,15 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
+	 * An OS command to kill this task
+	 * @param task
+	 * @return
+	 */
+	public String killCommand(Task task) {
+		return "";
+	}
+
+	/**
 	 * Kill a task
 	 */
 	protected abstract boolean killTask(Task task);
@@ -343,7 +352,7 @@ public abstract class Executioner extends Thread {
 	protected void runTaskStarted(Task task) {
 		running(task); // Set task to running state
 		addTail(task); // Follow STDOUT and STDERR
-		if (pidLogger != null) pidLogger.add(task); // Log PID (if any)
+		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
 	}
 
 	public void setDebug(boolean debug) {
