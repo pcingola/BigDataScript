@@ -35,6 +35,12 @@ public class ClusterExecutioner extends LocalExecutioner {
 	}
 
 	@Override
+	protected void addTail(Task task) {
+		tail.add(task.getStdoutFile(), null, false);
+		tail.add(task.getStderrFile(), null, true);
+	}
+
+	@Override
 	CmdRunner createCmdRunner(Task task) {
 		task.createProgramFile(); // We must create a program file
 
