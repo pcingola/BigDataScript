@@ -16,7 +16,7 @@
         </jar>
     </target>
 
-	<target name="compile">
+	<target name="compile" debug="true">
 		<javac srcdir="src" destdir="bin"/>
 	</target>
 </project>
