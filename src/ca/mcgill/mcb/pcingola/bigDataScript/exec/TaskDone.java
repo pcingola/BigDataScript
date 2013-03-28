@@ -14,7 +14,8 @@ public class TaskDone extends Thread {
 
 	public static final int SLEEP_TIME = 200;
 
-	boolean debug, verbose;
+	boolean debug = true;
+	boolean verbose;
 	HashMap<Task, Executioner> execByTask;
 	boolean running;
 
@@ -40,6 +41,7 @@ public class TaskDone extends Thread {
 	}
 
 	public synchronized void remove(Task task) {
+		if (debug) Gpr.debug("TaskDone: Removing task " + task.getId());
 		execByTask.remove(task);
 	}
 
@@ -85,6 +87,8 @@ public class TaskDone extends Thread {
 	 */
 	synchronized void update(Task task) {
 		if (debug) Gpr.debug("Found exit file " + task.getExitCodeFile());
+
+		remove(task); // We don't need this any more
 
 		// Parse exit file
 		String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
