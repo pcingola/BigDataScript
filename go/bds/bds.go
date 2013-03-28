@@ -349,7 +349,7 @@ func killAll(pidFile string) {
 		file *os.File
 	)
 
-	defer os.Remove(pidFile); // Make sure the PID file is removed
+	defer os.Remove(pidFile) // Make sure the PID file is removed
 
 	//---
 	// Open file and parse it
@@ -368,7 +368,7 @@ func killAll(pidFile string) {
 		if line, err = readLine(reader); err != nil {
 			break
 		}
-		fmt.Printf("bds kill : '%s'\n", line )
+		fmt.Printf("bds kill : '%s'\n", line)
 		recs := strings.Split(line, "\t")
 
 		pid := recs[0]
@@ -379,7 +379,7 @@ func killAll(pidFile string) {
 			delete(pids, pid)
 		} else {
 			pids[pid] = true
-			if( len(recs) > 2 ) {
+			if len(recs) > 2 {
 				cmds[pid] = recs[2]
 			}
 		}
@@ -390,12 +390,12 @@ func killAll(pidFile string) {
 	for pid, running := range pids {
 		// Is it marked as running? Kill it
 		if running {
-			if cmd, ok := cmds[pid] ; !ok {
-				pidInt, _ := strconv.Atoi( pid )
-				killProcessGroup(pidInt)	// No need to run a command, just kill local porcess group
+			if cmd, ok := cmds[pid]; !ok {
+				pidInt, _ := strconv.Atoi(pid)
+				killProcessGroup(pidInt) // No need to run a command, just kill local porcess group
 			} else {
 				// Create command to be executed
-				if _, ok = runCmds[cmd] ; ok {
+				if _, ok = runCmds[cmd]; ok {
 					runCmds[cmd] = runCmds[cmd] + " " + pid
 				} else {
 					runCmds[cmd] = cmd + " " + pid
@@ -405,8 +405,8 @@ func killAll(pidFile string) {
 	}
 
 	// Run all commands
-	for cmd, cmdToRun := range runCmds {
-		fmt.Printf("RUN:\t%s\t%s\n", cmd, cmdToRun )
+	for _, cmdToRun := range runCmds {
+		fmt.Printf("RUN:\t%s\n", cmdToRun)
 	}
 }
 
@@ -581,33 +581,33 @@ func nextSuffix() string {
 	Show usage message and exit
 */
 func usage(msg string) {
-	if( msg != "" ) {
-		fmt.Fprintf(os.Stderr,"Error: %s\n", msg)
-		fmt.Fprintf(os.Stderr,"Arguments:\n")
+	if msg != "" {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", msg)
+		fmt.Fprintf(os.Stderr, "Arguments:\n")
 		for n, arg := range os.Args[1:] {
-			fmt.Fprintf(os.Stderr,"\t%d : %s\n", n, arg );
+			fmt.Fprintf(os.Stderr, "\t%d : %s\n", n, arg)
 		}
 	}
 
 	// Show help and exit
-	fmt.Fprintf(os.Stderr,"Usage: bds command\n\n")
-	fmt.Fprintf(os.Stderr,"Commands:\n\n")
-	fmt.Fprintf(os.Stderr,"  default :  Execute BigDataScript Java program (compiler and interpreter)\n")
-	fmt.Fprintf(os.Stderr,"             Syntax:\n")
-	fmt.Fprintf(os.Stderr,"                 bds [options] program.bds\n\n")
-	fmt.Fprintf(os.Stderr,"  exec    :  Execute shell scripts.\n")
-	fmt.Fprintf(os.Stderr,"             Show pid.\n")
-	fmt.Fprintf(os.Stderr,"             Enforce maimum execution time.\n")
-	fmt.Fprintf(os.Stderr,"             Redirect STDOUT and STDERR to files.\n")
-	fmt.Fprintf(os.Stderr,"             If any file name is '-' it is ignored (not redirected).\n")
-	fmt.Fprintf(os.Stderr,"             Syntax:\n")
-	fmt.Fprintf(os.Stderr,"                 bds exec timeout file.stdout file.stderr command arguments...\n\n")
-	fmt.Fprintf(os.Stderr,"  qexec   :  Execute shell scripts.\n")
-	fmt.Fprintf(os.Stderr,"             Enforce maimum execution time.\n")
-	fmt.Fprintf(os.Stderr,"             Redirect exit value to a file.\n")
-	fmt.Fprintf(os.Stderr,"             If any file name is '-' it is ignored (not redirected).\n")
-	fmt.Fprintf(os.Stderr,"             Syntax:\n")
-	fmt.Fprintf(os.Stderr,"                 bds qexec timeout file.exit command arguments...\n\n")
-	fmt.Fprintf(os.Stderr,"  kill pid :  Kill process group 'pid'.\n")
+	fmt.Fprintf(os.Stderr, "Usage: bds command\n\n")
+	fmt.Fprintf(os.Stderr, "Commands:\n\n")
+	fmt.Fprintf(os.Stderr, "  default :  Execute BigDataScript Java program (compiler and interpreter)\n")
+	fmt.Fprintf(os.Stderr, "             Syntax:\n")
+	fmt.Fprintf(os.Stderr, "                 bds [options] program.bds\n\n")
+	fmt.Fprintf(os.Stderr, "  exec    :  Execute shell scripts.\n")
+	fmt.Fprintf(os.Stderr, "             Show pid.\n")
+	fmt.Fprintf(os.Stderr, "             Enforce maimum execution time.\n")
+	fmt.Fprintf(os.Stderr, "             Redirect STDOUT and STDERR to files.\n")
+	fmt.Fprintf(os.Stderr, "             If any file name is '-' it is ignored (not redirected).\n")
+	fmt.Fprintf(os.Stderr, "             Syntax:\n")
+	fmt.Fprintf(os.Stderr, "                 bds exec timeout file.stdout file.stderr command arguments...\n\n")
+	fmt.Fprintf(os.Stderr, "  qexec   :  Execute shell scripts.\n")
+	fmt.Fprintf(os.Stderr, "             Enforce maimum execution time.\n")
+	fmt.Fprintf(os.Stderr, "             Redirect exit value to a file.\n")
+	fmt.Fprintf(os.Stderr, "             If any file name is '-' it is ignored (not redirected).\n")
+	fmt.Fprintf(os.Stderr, "             Syntax:\n")
+	fmt.Fprintf(os.Stderr, "                 bds qexec timeout file.exit command arguments...\n\n")
+	fmt.Fprintf(os.Stderr, "  kill pid :  Kill process group 'pid'.\n")
 	os.Exit(1)
 }
