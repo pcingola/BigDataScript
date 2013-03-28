@@ -1,6 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
-
 /**
  * A command that runs a script in a cluster
  * 
@@ -18,8 +17,7 @@ public class CmdRunnerCluster extends CmdRunner {
 	@Override
 	protected void execDone() {
 		started = true; // We started.
-		if (task != null) task.setStarted(true); // Inform command stats 
-
+		task.setStarted(true);
 	}
 
 	@Override

@@ -40,6 +40,10 @@ public class TaskDone extends Thread {
 		running = false;
 	}
 
+	/**
+	 * Remove task (do not monitor)
+	 * @param task
+	 */
 	public synchronized void remove(Task task) {
 		if (debug) Gpr.debug("TaskDone: Removing task " + task.getId());
 		execByTask.remove(task);

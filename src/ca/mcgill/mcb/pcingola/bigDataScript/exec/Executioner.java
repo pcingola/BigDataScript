@@ -54,6 +54,24 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
+	 * Get a task
+	 * @param id
+	 * @return
+	 */
+	public synchronized Task findTask(String id) {
+		Task t = tasksRunning.get(id);
+		if (t != null) return t;
+
+		t = tasksDone.get(id);
+		if (t != null) return t;
+
+		for (Task tt : tasksToRun)
+			if (tt.getId().equals(id)) return tt;
+
+		return null;
+	}
+
+	/**
 	 * Task finished executing
 	 * @param id
 	 * @return
@@ -78,24 +96,6 @@ public abstract class Executioner extends Thread {
 		if (task == null) return;
 		tasksRunning.remove(task.getId());
 		tasksDone.put(task.getId(), task);
-	}
-
-	/**
-	 * Get a task
-	 * @param id
-	 * @return
-	 */
-	public synchronized Task getTask(String id) {
-		Task t = tasksRunning.get(id);
-		if (t != null) return t;
-
-		t = tasksDone.get(id);
-		if (t != null) return t;
-
-		for (Task tt : tasksToRun)
-			if (tt.getId().equals(id)) return tt;
-
-		return null;
 	}
 
 	/**
@@ -234,7 +234,7 @@ public abstract class Executioner extends Thread {
 		if (debug) Timer.showStdErr("Starting " + this.getClass().getSimpleName());
 		running = true;
 
-		runBefore(); // Initialize, before run loop
+		runLoopBefore(); // Initialize, before run loop
 
 		try {
 			// Run until killed
@@ -250,52 +250,8 @@ public abstract class Executioner extends Thread {
 			t.printStackTrace();
 			throw new RuntimeException(t);
 		} finally {
-			runAfter(); // Clean up
+			runLoopAfter(); // Clean up
 		}
-	}
-
-	/**
-	 * Run a task on a given host
-	 * @param task : Task to run
-	 * @param host : Host to run task (can be null)
-	 * @return
-	 */
-	public synchronized boolean run(Task task, Host host) {
-		if (verbose) Timer.showStdErr("Running task '" + task.getId() + "'");
-
-		boolean ok = runTask(task, host);
-		if (ok) {
-			waitStart(task); // Wait until task started. Otherwise we might get race conditions ('tail' starts reading stdout before readPid)
-			if (task.isFailed()) {
-				if (debug) Gpr.debug("Task failed to initialize " + task.getId());
-				// Task failed
-				running(task);
-				finished(task);
-			} else {
-				running(task); // Set task to running state
-				addTail(task); // Follow STDOUT and STDERR
-				if (pidLogger != null) pidLogger.add(task); // Log PID (if any)
-			}
-		} else {
-			// Error running
-			if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");
-		}
-
-		return ok;
-	}
-
-	/**
-	 * Clean up after run loop
-	 */
-	protected void runAfter() {
-		tail.kill(); // Kill tail process
-	}
-
-	/**
-	 * Initialize before run loop
-	 */
-	protected void runBefore() {
-		tail.start(); // Create a 'tail' process (to show STDOUT & STDERR from all processes)
 	}
 
 	/**
@@ -305,13 +261,17 @@ public abstract class Executioner extends Thread {
 	protected abstract boolean runLoop();
 
 	/**
-	 * Get next task to run and run it (on 'host')
-	 * @param host : Host where this task should be run (can be null)
-	 * @return True if run 
+	 * Clean up after run loop
 	 */
-	protected synchronized boolean runNext(Host host) {
-		if (tasksToRun.isEmpty()) return false;
-		return run(tasksToRun.get(0), host); // Run first task on the list
+	protected void runLoopAfter() {
+		tail.kill(); // Kill tail process
+	}
+
+	/**
+	 * Initialize before run loop
+	 */
+	protected void runLoopBefore() {
+		tail.start(); // Create a 'tail' process (to show STDOUT & STDERR from all processes)
 	}
 
 	/**
@@ -325,11 +285,67 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
-	 * Run a task
+	 * Run a task on a given host
+	 * @param task : Task to run
+	 * @param host : Host to run task (can be null)
+	 * @return
+	 */
+	public synchronized boolean runTask(Task task, Host host) {
+		if (verbose) Timer.showStdErr("Running task '" + task.getId() + "'");
+
+		boolean ok = runTaskCommand(task, host);
+		if (ok) {
+			waitStart(task); // Wait until task started. Otherwise we might get race conditions ('tail' starts reading stdout before readPid)
+
+			if (task.isFailed()) runTaskFailed(task);
+			else runTaskStarted(task);
+
+		} else {
+			// Error running
+			if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");
+		}
+
+		return ok;
+	}
+
+	/**
+	 * Run a task (execute commands)
 	 * @param task
 	 * @return
 	 */
-	protected abstract boolean runTask(Task task, Host host);
+	protected abstract boolean runTaskCommand(Task task, Host host);
+
+	/**
+	 * This method is called when a task failed starting
+	 * @param task
+	 */
+	protected void runTaskFailed(Task task) {
+		if (debug) Gpr.debug("Task failed to initialize " + task.getId());
+		// Switch task to finished state
+		running(task);
+		finished(task);
+	}
+
+	/**
+	 * Get next task to run and run it (on 'host')
+	 * @param host : Host where this task should be run (can be null)
+	 * @return True if run 
+	 */
+	protected synchronized boolean runTaskNext(Host host) {
+		if (tasksToRun.isEmpty()) return false;
+		return runTask(tasksToRun.get(0), host); // Run first task on the list
+	}
+
+	/**
+	 * This method is called after a task was successfully started 
+	 * @param task
+	 */
+	protected void runTaskStarted(Task task) {
+		running(task); // Set task to running state
+		addTail(task); // Follow STDOUT and STDERR
+		if (pidLogger != null) pidLogger.add(task); // Log PID (if any)
+
+	}
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;

@@ -92,12 +92,15 @@ public class ClusterExecutioner extends LocalExecutioner {
 		// Run command
 		if (debug) Timer.showStdErr("Running command: echo \"" + cmdStdin + "\" | " + cmdStr);
 
+		// Create command 
 		CmdRunnerCluster cmd = new CmdRunnerCluster(task.getId(), args.toArray(CmdRunner.ARGS_ARRAY_TYPE));
 		cmd.setTask(task);
 		cmd.setExecutioner(this);
 		cmd.setStdin(cmdStdin.toString());
 		cmd.setReadPid(true); // We execute using "qsub" which prints a jobID to stdout
-		cmdById.put(task.getId(), cmd);
+
+		cmdById.put(task.getId(), cmd); // Add to map
+
 		return cmd;
 	}
 
@@ -105,8 +108,8 @@ public class ClusterExecutioner extends LocalExecutioner {
 	 * Clean up after run loop
 	 */
 	@Override
-	protected void runAfter() {
-		super.runAfter();
+	protected void runLoopAfter() {
+		super.runLoopAfter();
 		taskDone.kill(); // Kill taskDone process
 	}
 
@@ -114,9 +117,19 @@ public class ClusterExecutioner extends LocalExecutioner {
 	 * Initialize before run loop
 	 */
 	@Override
-	protected void runBefore() {
+	protected void runLoopBefore() {
 		taskDone.start(); // Create a 'taskDone' process (get information when a process finishes)
-		super.runBefore();
+		super.runLoopBefore();
+	}
+
+	/**
+	 * This method is called after a task was successfully started 
+	 * @param task
+	 */
+	@Override
+	protected void runTaskStarted(Task task) {
+		super.runTaskStarted(task);
+		taskDone.add(this, task);
 	}
 
 	@Override

@@ -96,7 +96,7 @@ public class LocalExecutioner extends Executioner {
 		// Run all tasks
 		for (Task task : run) {
 			// Run each task
-			run(task, null);
+			runTask(task, null);
 
 			// Wait for task to finish
 			CmdRunner cmd = cmdById.get(task.getId());
@@ -115,7 +115,7 @@ public class LocalExecutioner extends Executioner {
 	 * Host parameter is ignored
 	 */
 	@Override
-	protected boolean runTask(Task task, Host host) {
+	protected boolean runTaskCommand(Task task, Host host) {
 		// Create and start a thread
 		CmdRunner cmd = createCmdRunner(task);
 		cmdById.put(task.getId(), cmd);

@@ -52,7 +52,7 @@ public class LocalQueueExecutioner extends LocalExecutioner {
 			// Can we run the next task?
 			if (canRunNextCmd()) {
 				// Get next task and run it
-				runNext(host);
+				runTaskNext(host);
 			} else {
 				sleepShort();
 				if (debug) Timer.showStdErr("Queue tasks:\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
