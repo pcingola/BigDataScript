@@ -60,7 +60,7 @@
 <header class="jumbotron subhead" id="overview">
   <div class="container">
     <h1>BigDataScript</h1>
-    <p class="lead">Documentation</p>
+    <p class="lead">Description and basic information.</p>
   </div>
 </header>
 
@@ -73,21 +73,405 @@
       <div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav">
           <li><a href="#intro"><i class="icon-chevron-right"></i> Introduction</a></li>
+          <li><a href="#myfirst"><i class="icon-chevron-right"></i> My first bds script</a></li>
+          <li><a href="#task"><i class="icon-chevron-right"></i> Scheduling tasks</a></li>
+          <li><a href="#taskCluster"><i class="icon-chevron-right"></i> Scheduling tasks on a cluster</a></li>
+          <li><a href="#taskDep"><i class="icon-chevron-right"></i> Creating pipelines: Task dependencies</a></li>
+          <li><a href="#taskDep2"><i class="icon-chevron-right"></i> More on task dependencies </a></li>
+          <li><a href="#cool"><i class="icon-chevron-right"></i> Some cool features </a></li>
         </ul>
       </div>
       <div class="span9">
 
 
-        <!-- ================================================== -->
+        <!-- Introduction
+        ================================================== -->
         <section id="intro">
           <div class="page-header">
             <h1>1. Introduction</h1>
           </div>
 				<p class="lead">
-				Comming soon....
+				BigDataScript is intended as a scripting language for big data pipeline. 
+				</p>
+				<p>
+				You can think about BigDataScript (or <code>bds</code> for short) as a "shell scripting on steroids".
+				</p>
+				<p>
+				If you have to run a sequence of multiple programs on your computer, you usually create a simple shell script.
+				This does not scale for big computers such as clusters or many cloud instances.
+				Creating scripts becomes complicated and platform dependent.
+				<br>
+				So the problem with current programming models for big data pipelines, is that they are just a pain. 
+				You have very efficienet programs to solve particular problems, but as soon as you need to integrate them into a pipeline it's a nighmare.
+				</p>
+				<p>
+				The main idea behind BigDataScript is quite simple, creating a script for big data should be as easy as creating a shell script.
+				Furthermore, the same script should run without any changes no matter how big the computer is.
+				It doesn't matter if you are programming and debugging it on your laptop, running it on a cluster or deploying it on a Cloud (Amazon or whatever you use).
+				The same "data pipeline" (or script) should run without any changes.
+				</p>
+
+				<i class="icon-warning-sign"></i> BigDataScript is experimental and under heavy development. 
+				At this time this is not for the faint of heart.
+				
+				<p class="lead">
+				<b> Benefis of BigDataScript </b>
+				</p>
+				<ul>
+					<li> <b>Reduced development time</b> 
+					<p>
+					The benefits are mainly to reduce development and debugging time.
+					If you've spent time waiting for a process to run on a cluster, just to get an error in your code, you know what I mean.
+					You should be able to run a small version on your laptop, debug immediatly, deploy when it's done.
+					Shorter development cycles means better software.
+					</p>
+
+					<li> <b>System independent</b> 
+					<p>
+					As we just mentioned, the same program runs on a laptop, server, server farm, cluster or cloud.
+					No changes to the program required.
+					</p>
+
+					<li> <b>Easy to learn</b> 
+					<p>
+					If you have experience programming any language, the syntax should be fairly familiar to you.
+					It should be a no-brainer to read and write code.
+					</p>
+
+					<li> <b>Automatic Checkpointing</b> 
+					<p>
+					If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program.
+					What to re-start were it left? No problem, just run from the checkpoint.
+					</p>
+
+					<li> <b>Automatic logging</b> 
+					<p>
+					Everything is logged by default, no explicit actions required.
+					Every time you execute a system command or a task, a set of files log which commands were executed, stdout &amp; stderr and exit codes.
+					</p>
+
+					<li> <b>Task scheduling and cancelation is done for you</b> 
+					<p>
+					You have a BigDataScript running on a terminal, then you realized there is something you don't like...just hit Ctrl-C.
+					All tasks will be terminated, removed from the queue, deallocated from the cluster, etc.
+					</p>
+
+					<li> <b>Task dependencies</b> 
+					<p>
+					In complex pipelines tasks usually depend on each other.
+					BigDataScript provides ways to easily manage task dependecies.
+					</p>
+
+					<li> <b>Avoid re-work</b> 
+					<p>
+					This concept has been arround since "make" program was created for compiling. 
+					If we spend time processing to create a results file, we don't need to do the job again just bcause we are re-sunnig the pipeline.
+					Task dependency using timestamps is provided at basic language level to make this easy.
+					</p>
+				</ul>
 				</p>
         </section>
 
+        <!-- ================================================== -->
+        <section id="myfirst">
+          <div class="page-header">
+            <h1>2. My first bds script </h1>
+          </div>
+				<p class="lead">
+				Here we show an introduction to BigDataScript (<code>bds</code>) command line.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/WnwBIa4G-mE" frameborder="0" allowfullscreen></iframe>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> Running the command line without arguments, shows a small help
+<pre>
+$ bds
+Error: Missing program file name.
+Usage: BigDataScript [options] file.bds
+BigDataScript 0.7 (build 2013-03-08), by Pablo Cingolani
+
+
+Available options: 
+  [-c | -config] file    : Config file. Default : /home/pcingola/.bds/bigdatascript.config
+  [-d | -debug]          : Debug mode.
+  [-r | -restore] file   : Restore from checkpoint file.
+  [-v | -verbose]        : Be verbose.
+  [-pid] <file>          : Write local processes PIDs to 'file'
+  -noLog                 : Do not log stats.
+</pre>
+
+					<li> Create a simple program to print "Hi", and execute the script
+<pre>
+$ cat z.bds 
+print("Hi\n")
+$ bds z.bds 
+Hi
+</pre>
+
+					<li> Running system command is done using a <code>sys</code> expression. 
+					A sys command is sequencial, so the program does not continue until the system command returns.
+<pre>
+$ cat z.bds
+sys echo Hi
+$ bds z.bds
+Hi
+</pre>
+
+					<li> Running complex tasks can be done using a <code>task</code> expression.
+					A <code>task</code> command is queued for execution. 
+					So the program can continue even if the task has not finished (or has not even started) execution.
+					<br>
+					<i class="icon-warning-sign"></i> Task execution order is not waranteed (e.g. a cluster scheduler can decide to run task_2 before task_1).
+					We'll see how to coordinate tasks later.
+<pre>
+$ cat z.bds
+sys echo Hi
+$ bds z.bds
+Hi
+</pre>
+				</ul>
+				</p>
+        </section>
+
+        <!-- ================================================== -->
+        <section id="task">
+          <div class="page-header">
+            <h1>3. Scheduling tasks </h1>
+          </div>
+				<p class="lead">
+				Task are scheduled according to available resources.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/ehFfU8vLwi8" frameborder="0" allowfullscreen></iframe>
+				</p>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> Schedule 10 tasks to be executed
+<pre>
+$ cat z.bds
+for( int i=0 ; i < 10 ; i++ ) {
+	task echo Hi $i ; sleep 1 ; echo Done $i ; sleep 1
+}
+$ bds z.bds
+Hi 1
+Hi 6
+Hi 2
+Hi 4
+Hi 3
+Hi 7
+Hi 0
+Hi 5
+Done 1
+Done 6
+Done 2
+Done 4
+Done 3
+Done 7
+Done 0
+Done 5
+Hi 9
+Hi 8
+Done 9
+Done 8
+</pre>
+
+        <!-- ================================================== -->
+        <section id="taskCluster">
+          <div class="page-header">
+            <h1>4. Scheduling tasks on a cluster </h1>
+          </div>
+				<p class="lead">
+				Here we show how exactly the same script is run on a cluser...not a single line of code changed.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/o47wxUdYzvk" frameborder="0" allowfullscreen></iframe>
+				</p>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> We copy tha same script (used in the previous section) to a cluster. 
+					We execute it, but now the tasks are schedules using MOAB, Torque or Grid Engine.
+					<br>
+					The only change we made is to add <code>-s cluster</code> to the command line. 
+<pre>
+$ bds -s cluster z.bds
+</pre>
+
+					<li> Typing <code>-s cluster</code> can also be avoided just using a config file.
+
+				</ul>
+        </section>
+
+        <!-- ================================================== -->
+        <section id="taskDep">
+          <div class="page-header">
+            <h1>5. Creating pipelines: Task dependencies</h1>
+          </div>
+				<p class="lead">
+				In a tipical pipeline tasks are not just scheduled for execution.
+				We need to be able to control task based on previously executed tasks.
+				Here we show how.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/vTekXn3sKzs" frameborder="0" allowfullscreen></iframe>
+				</p>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> 
+					We run a set of tasks (<code>echo Hi $i</code>) and after all the tasks finished, we run another set of tasks (<code>echo Bye $i</code>)
+					<br>
+					The only change we made is to add <code>-s cluster</code> to the command line. 
+<pre>
+$ bds z.bds
+Before wait
+Hi 7
+Hi 1
+Hi 3
+Hi 6
+Hi 4
+Hi 2
+Hi 5
+Hi 0
+Hi 9
+Hi 8
+After wait
+Bye 2
+Bye 1
+Bye 3
+Bye 0
+Bye 5
+Bye 7
+Bye 6
+Bye 4
+Bye 8
+Bye 9
+</pre>
+
+					<li> The <code>wait</code> statement is like a barrier. Untill all tasks are finished, the program does not continue.
+					If any task fails, a checkpoint file is created, where all program data is serialized.
+					We can correct the problem and re-start the pipeline were it left.
+
+					<li> The <code>wait</code> statement can wait for all tasks, for single tasks or for a list of tasks.
+
+					<li> We then run the same script on a cluster. 
+					Again, this is done simply by using <code>-s cluster</code> command line.
+					The video shows how tasks are scheduled and on the cluster, always honoring the <code>wait</code> statement
+
+					<li> Finally we show that the exit code of a <code>bds</code> script is 0 if all tasks executed without any problems, and non-zero if there were probelms.
+
+				</ul>
+        </section>
+
+        <!-- ================================================== -->
+        <section id="taskDep2">
+          <div class="page-header">
+            <h1>6. More on task dependencies </h1>
+          </div>
+				<p class="lead">
+				If we already processed a file and have the results, we may choose to save some work if the input has not changed.
+				We show how to execute tasks depending on file creation times (think "make").
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
+				</p>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> We introduce the dependency operator <code>&lt;-</code> (pronounced 'dep') which is a "make" style operator.
+
+					<li> The expression <code>out &lt;- in</code> is true if 'out' file needs to be updated.
+					More formally, the expression is true if the file name represented by the variable 'out' does not exists, is empty (zero length) or has a creation date before 'in'.<br>
+					E.g.:
+<pre>
+$ cat z.bds
+string inFile = "in.txt"
+string outFile = "out.txt"
+
+tash echo Creating $inFile; echo Hello > $inFile
+
+wait
+
+if( outFile <- inFile ) {
+	task echo Creating $outFile; cat $inFile > $outFile
+}
+
+$ bds z.bds
+Creating in.txt
+Creating out.txt
+
+$ cat out.txt
+Hello
+</pre>
+
+					<li> If the file 'out.txt' is up to date, the the following code will not execute
+<pre>
+if( outFile <- inFile ) {
+	task echo Creating $outFile; cat $inFile > $outFile
+}
+</pre>
+
+					<li> This construction is so common, that we allow for some sintactic sugar. 
+					So you can write it the following way:
+<pre>
+task( outFile <- inFile ) { 
+	sys echo Creating $outFile; cat $inFile > $outFile
+}
+</pre>
+				</ul>
+        </section>
+
+        <!-- ================================================== -->
+        <section id="cool">
+          <div class="page-header">
+            <h1>7. Some cool features </h1>
+          </div>
+				<p class="lead">
+				BigDataScript has some useful features, like automatic command line parsing.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
+				</p>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> We show how automatic command line parsing works.
+					We use the same script as shown in the previous section for processing another input file without changing a single line of code.
+					
+					<li> Automatic command line parsing parses any command line argument that starts with "-" and assigns the value to the corresponding variable.
+					E.g.:
+<pre>
+$ cat z.bds 
+string in = "in.txt"
+print("In file is '$in'\n")
+
+$ bds z.bds
+In file is 'in.txt'
+
+$ bds z.bds -in anotherFile.txt
+In file is 'anotherFile.txt'
+</pre>
+
+				<li> This feature also works for other data types (int, real, bool). 
+				In case of bool if the option is present, the variable is set to 'true'.
+<pre>
+$ cat z.bds
+bool flag
+print("Variable flag is $flag\n")
+
+$ bds z.bds
+Variable flag is false
+
+$ bds z.bds -flag
+Variable flag is true
+
+</pre>
+
+				</ul>
+        </section>
       </div>
     </div>
 
