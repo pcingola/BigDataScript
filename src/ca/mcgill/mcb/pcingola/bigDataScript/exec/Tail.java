@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-
 /**
  * A "tail -f" for java
  * 
@@ -45,7 +43,6 @@ public class Tail extends Thread {
 	 * @param showStderr : If true, print to STDERR
 	 */
 	public synchronized void add(String inputFileName, String outputFileName, boolean showStderr) {
-		Gpr.debug("ADD TAIL (" + (showStderr ? "stderr" : "stdout") + "): " + inputFileName);
 		TailFile tf = new TailFile(inputFileName, outputFileName, showStderr);
 		files.put(inputFileName, tf);
 	}
