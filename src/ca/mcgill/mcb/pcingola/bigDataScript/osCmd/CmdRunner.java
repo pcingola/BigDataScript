@@ -94,21 +94,25 @@ public class CmdRunner extends Thread {
 			exitValue = -1;
 			if (debug) e.printStackTrace();
 		} finally {
-			// We are done. Either process finished or an exception was raised.
-			started = true;
-			executing = false;
-
-			// Inform command stats 
-			if (task != null) {
-				task.setStarted(true);
-				task.setExitValue(exitValue);
-				task.setDone(true);
-			}
-
-			// Notify end of execution
-			if (executioner != null) executioner.finished(id);
+			execDone();
 		}
 		return exitValue;
+	}
+	
+	void execDone() {
+		// We are done. Either process finished or an exception was raised.
+		started = true;
+		executing = false;
+
+		// Inform command stats 
+		if (task != null) {
+			task.setStarted(true);
+			task.setExitValue(exitValue);
+			task.setDone(true);
+		}
+
+		// Notify end of execution
+		if (executioner != null) executioner.finished(id);
 	}
 
 	/**
