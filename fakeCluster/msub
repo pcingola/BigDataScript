@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Show PID
+echo $$
+
+echo "COMMAND: $*"
+cat 
+

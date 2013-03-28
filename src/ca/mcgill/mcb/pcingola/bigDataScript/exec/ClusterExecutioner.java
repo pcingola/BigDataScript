@@ -19,9 +19,12 @@ public class ClusterExecutioner extends LocalExecutioner {
 	public static String FAKEL_CLUSTER = "";
 	// public static String FAKEL_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
-	public static String CLUSTER_EXEC_COMMAND[] = { FAKEL_CLUSTER + "qsub" };
-	public static String CLUSTER_KILL_COMMAND[] = { FAKEL_CLUSTER + "qdel" };
-	public static String CLUSTER_BDS_COMMAND = "bds exec 0 - - ";
+	public static String CLUSTER_EXEC_COMMAND[] = { FAKEL_CLUSTER + "msub" };
+	public static String CLUSTER_KILL_COMMAND[] = { FAKEL_CLUSTER + "canceljob" };
+	public static String CLUSTER_BDS_COMMAND = "bds exec ";
+
+	public static final int MIN_EXTRA_TIME = 15;
+	public static final int MAX_EXTRA_TIME = 120;
 
 	public ClusterExecutioner(Cluster cluster) {
 		super(null);
@@ -41,7 +44,18 @@ public class ClusterExecutioner extends LocalExecutioner {
 		StringBuilder resSb = new StringBuilder();
 		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "nodes=1:ppn=" + res.getCpus());
 		if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "mem=" + res.getMem());
-		if (res.getTimeout() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "walltime=" + res.getTimeout());
+
+		// Timeout 
+		// We want to assign slightly larger timeout to the cluster (qsub/msub), because 
+		// we prefer bds to kill the process (it's cleaner and we get exitCode file)
+		int realTimeout = (int) res.getTimeout();
+		if (realTimeout < 0) realTimeout = 0;
+		int extraTime = (int) (realTimeout * 0.1);
+		if (extraTime < MIN_EXTRA_TIME) extraTime = MIN_EXTRA_TIME;
+		if (extraTime > MAX_EXTRA_TIME) extraTime = MAX_EXTRA_TIME;
+		int clusterTimeout = realTimeout + extraTime;
+
+		if (realTimeout > 0) resSb.append((resSb.length() > 0 ? "," : "") + "walltime=" + clusterTimeout);
 
 		// Any resources requested? Add command line
 		if (resSb.length() > 0) {
@@ -65,7 +79,9 @@ public class ClusterExecutioner extends LocalExecutioner {
 		// Create command to run (it feed to qsub via stdin)
 		StringBuilder cmdStdin = new StringBuilder();
 		cmdStdin.append(CLUSTER_BDS_COMMAND);
-		cmdStdin.append(task.getExitCodeFile() + " ");
+		cmdStdin.append(realTimeout + " ");
+		cmdStdin.append("- "); // Stdout
+		cmdStdin.append("- "); // Stderr
 		cmdStdin.append(task.getProgramFileName());
 
 		// Run command
