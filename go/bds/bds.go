@@ -404,11 +404,10 @@ func killAll(pidFile string) {
 		}
 	}
 
-	// Run all commands
+	// Run all commands (usually it's only one command)
 	for cmd, args := range runCmds {
-		fmt.Printf("RUN:\t%s\t%s\n", cmd, args)
-		cmdExec := exec.Command("touch")
-		cmdExec.Args = strings.Split(args,"\t")
+		cmdExec := exec.Command(cmd)
+		cmdExec.Args = strings.Split(args, "\t")
 		err := cmdExec.Run()
 		if err != nil {
 			log.Fatal(err)
