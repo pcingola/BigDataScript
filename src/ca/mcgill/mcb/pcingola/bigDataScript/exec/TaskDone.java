@@ -98,6 +98,7 @@ public class TaskDone extends Thread {
 		remove(task); // We don't need this any more
 
 		// Parse exit file
+		sleep();
 		String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
 		int exitVal = (exitFileStr.equals("0") ? 0 : 1);
 		if (debug) Gpr.debug("Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
