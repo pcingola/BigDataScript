@@ -46,8 +46,8 @@
             </p>
             <ul class="nav">
               <li class="active"><a href="index.html">Home</a></li>
-              <li><a href="download.html">Download</a></li>
-              <li><a href="BigDataScript_manual.html">Documentation</a></li>
+              <li><a href="https://github.com/pcingola/BigDataScript">Download</a></li>
+              <li><a href="bigDataScript_manual.html">Documentation</a></li>
               <li><a href="about.html">About</a></li>
             </ul>
           </div><!--/.nav-collapse -->
@@ -73,10 +73,12 @@
       <div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav">
           <li><a href="#intro"><i class="icon-chevron-right"></i> Introduction</a></li>
-          <li><a href="#citing"><i class="icon-chevron-right"></i> Paper & Citations</a></li>
-          <li><a href="#1kg"><i class="icon-chevron-right"></i> Usage example</a></li>
-          <li><a href="#who"><i class="icon-chevron-right"></i> Who uses BigDataScript?</a></li>
-          <li><a href="#integrate"><i class="icon-chevron-right"></i> Integration</a></li>
+          <li><a href="#myfirst"><i class="icon-chevron-right"></i> My first bds script</a></li>
+          <li><a href="#task"><i class="icon-chevron-right"></i> Scheduling tasks</a></li>
+          <li><a href="#taskCluster"><i class="icon-chevron-right"></i> Scheduling tasks on a cluster</a></li>
+          <li><a href="#taskDep"><i class="icon-chevron-right"></i> Creating pipelines: Task dependencies</a></li>
+          <li><a href="#taskDep2"><i class="icon-chevron-right"></i> More on task dependencies </a></li>
+          <li><a href="#cool"><i class="icon-chevron-right"></i> Some cool features </a></li>
         </ul>
       </div>
       <div class="span9">
@@ -89,211 +91,387 @@
             <h1>1. Introduction</h1>
           </div>
 				<p class="lead">
-				BigDataScript is a variant annotation and effect prediction tool.
-				It annotates and predicts the effects of variants on genes (such as amino acid changes).
+				BigDataScript is intended as a scripting language for big data pipeline. 
+				</p>
+				<p>
+				You can think about BigDataScript (or <code>bds</code> for short) as a "shell scripting on steroids".
+				</p>
+				<p>
+				If you have to run a sequence of multiple programs on your computer, you usually create a simple shell script.
+				This does not scale for big computers such as clusters or many cloud instances.
+				Creating scripts becomes complicated and platform dependent.
+				<br>
+				So the problem with current programming models for big data pipelines, is that they are just a pain. 
+				You have very efficienet programs to solve particular problems, but as soon as you need to integrate them into a pipeline it's a nighmare.
+				</p>
+				<p>
+				The main idea behind BigDataScript is quite simple, creating a script for big data should be as easy as creating a shell script.
+				Furthermore, the same script should run without any changes no matter how big the computer is.
+				It doesn't matter if you are programming and debugging it on your laptop, running it on a cluster or deploying it on a Cloud (Amazon or whatever you use).
+				The same "data pipeline" (or script) should run without any changes.
 				</p>
 
+				<i class="icon-warning-sign"></i> BigDataScript is experimental and under heavy development. 
+				At this time this is not for the faint of heart.
+				
 				<p class="lead">
-				<b> Typical usage :</b>
+				<b> Benefis of BigDataScript </b>
+				</p>
 				<ul>
-					<li> <b>Input:</b> 
-					The inputs are predicted variants (SNPs, insertions, deletions and MNPs). 
-					The input file is usually obtained as a result of a sequencing experiment, and it is usually in variant call format (VCF).
+					<li> <b>Reduced development time</b> 
 					<p>
+					The benefits are mainly to reduce development and debugging time.
+					If you've spent time waiting for a process to run on a cluster, just to get an error in your code, you know what I mean.
+					You should be able to run a small version on your laptop, debug immediatly, deploy when it's done.
+					Shorter development cycles means better software.
+					</p>
 
-					<li> <b>Output:</b> 
-					BigDataScript analyzes the input variants. 
-					It annotates the variants and calculates the effects they produce on known genes (e.g. amino acid changes).
-					A list of effects and annotations that BigDataScript can calculate can be found <a class="body" href="faq.html#What_effects_are_predicted?">here</a>.
+					<li> <b>System independent</b> 
+					<p>
+					As we just mentioned, the same program runs on a laptop, server, server farm, cluster or cloud.
+					No changes to the program required.
+					</p>
+
+					<li> <b>Easy to learn</b> 
+					<p>
+					If you have experience programming any language, the syntax should be fairly familiar to you.
+					It should be a no-brainer to read and write code.
+					</p>
+
+					<li> <b>Automatic Checkpointing</b> 
+					<p>
+					If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program.
+					What to re-start were it left? No problem, just run from the checkpoint.
+					</p>
+
+					<li> <b>Automatic logging</b> 
+					<p>
+					Everything is logged by default, no explicit actions required.
+					Every time you execute a system command or a task, a set of files log which commands were executed, stdout &amp; stderr and exit codes.
+					</p>
+
+					<li> <b>Task scheduling and cancelation is done for you</b> 
+					<p>
+					You have a BigDataScript running on a terminal, then you realized there is something you don't like...just hit Ctrl-C.
+					All tasks will be terminated, removed from the queue, deallocated from the cluster, etc.
+					</p>
+
+					<li> <b>Task dependencies</b> 
+					<p>
+					In complex pipelines tasks usually depend on each other.
+					BigDataScript provides ways to easily manage task dependecies.
+					</p>
+
+					<li> <b>Avoid re-work</b> 
+					<p>
+					This concept has been arround since "make" program was created for compiling. 
+					If we spend time processing to create a results file, we don't need to do the job again just bcause we are re-sunnig the pipeline.
+					Task dependency using timestamps is provided at basic language level to make this easy.
+					</p>
 				</ul>
 				</p>
         </section>
 
-        <!-- Citing
-        ================================================== -->
-        <section id="citing">
+        <!-- ================================================== -->
+        <section id="myfirst">
           <div class="page-header">
-            <h1>2. Paper & Citations</h1>
+            <h1>2. My first bds script </h1>
           </div>
 				<p class="lead">
-				If you are using BigDataScript or SnpSift, please cite our work.<p>
-
+				Here we show an introduction to BigDataScript (<code>bds</code>) command line.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/WnwBIa4G-mE" frameborder="0" allowfullscreen></iframe>
+				
+				<p class="lead"> In this video <p>
 				<ul>
-				<li>Citing BigDataScript (you can find the paper <a class="body" href="BigDataScript_paper.pdf">here</a>):
-					<blockquote> 
-					"A program for annotating and predicting the effects of single nucleotide polymorphisms, BigDataScript: SNPs in the genome of Drosophila melanogaster strain w1118; iso-2; iso-3.", Cingolani P, Platts A, Wang le L, Coon M, Nguyen T, Wang L, Land SJ, Lu X, Ruden DM. Fly (Austin). 2012 Apr-Jun;6(2):80-92.  PMID: 22728672 [PubMed - in process]
-					</blockquote> 
-				<p>
-				BibTex entry: 
+					<li> Running the command line without arguments, shows a small help
 <pre>
-@article{cingolani2012program,
-  title={A program for annotating and predicting the effects of single nucleotide polymorphisms, BigDataScript: SNPs in the genome of Drosophila melanogaster strain w1118; iso-2; iso-3},
-  author={Cingolani, P. and Platts, A. and Coon, M. and Nguyen, T. and Wang, L. and Land, S.J. and Lu, X. and Ruden, D.M.},
-  journal={Fly},
-  volume={6},
-  number={2},
-  pages={80-92},
-  year={2012}
-}
-</pre>
-				<p>
-				<li>Citing SnpSift (you can find the paper <a class="body" href="SnpSift_paper.pdf">here</a>): 
-				<blockquote>
-				"Using Drosophila melanogaster as a model for genotoxic chemical mutational studies with a new program, SnpSift", Cingolani, P., et. al., Frontiers in Genetics, 3, 2012.
-				</blockquote>
+$ bds
+Error: Missing program file name.
+Usage: BigDataScript [options] file.bds
+BigDataScript 0.7 (build 2013-03-08), by Pablo Cingolani
 
-				BibTex entry: 
+
+Available options: 
+  [-c | -config] file    : Config file. Default : /home/pcingola/.bds/bigdatascript.config
+  [-d | -debug]          : Debug mode.
+  [-r | -restore] file   : Restore from checkpoint file.
+  [-v | -verbose]        : Be verbose.
+  [-pid] <file>          : Write local processes PIDs to 'file'
+  -noLog                 : Do not log stats.
+</pre>
+
+					<li> Create a simple program to print "Hi", and execute the script
 <pre>
-@article{cingolani2012using,
-  title={Using Drosophila melanogaster as a model for genotoxic chemical mutational studies with a new program, SnpSift},
-  author={Cingolani, P. and Patel, V.M. and Coon, M. and Nguyen, T. and Land, S.J. and Ruden, D.M. and Lu, X.},
-  journal={Frontiers in Genetics},
-  volume={3},
-  year={2012},
-  publisher={Frontiers Media SA}
-}
+$ cat z.bds 
+print("Hi\n")
+$ bds z.bds 
+Hi
+</pre>
+
+					<li> Running system command is done using a <code>sys</code> expression. 
+					A sys command is sequencial, so the program does not continue until the system command returns.
+<pre>
+$ cat z.bds
+sys echo Hi
+$ bds z.bds
+Hi
+</pre>
+
+					<li> Running complex tasks can be done using a <code>task</code> expression.
+					A <code>task</code> command is queued for execution. 
+					So the program can continue even if the task has not finished (or has not even started) execution.
+					<br>
+					<i class="icon-warning-sign"></i> Task execution order is not waranteed (e.g. a cluster scheduler can decide to run task_2 before task_1).
+					We'll see how to coordinate tasks later.
+<pre>
+$ cat z.bds
+sys echo Hi
+$ bds z.bds
+Hi
 </pre>
 				</ul>
 				</p>
         </section>
 
-
-        <!-- 1Kg example
-        ================================================== -->
-        <section id="1kg">
+        <!-- ================================================== -->
+        <section id="task">
           <div class="page-header">
-            <h1>3. Usage example</h1>
+            <h1>3. Scheduling tasks </h1>
           </div>
 				<p class="lead">
-				BigDataScript is really fast, it can calculate predictions for all the SNPs in the <a class="body" href="http://www.1000genomes.org/">1000 Genomes</a> project in less than 15 minutes.
-				A summary page can be found <a class="body" href="1kg.html">here</a>. Effect preditions in <a class="body" href="http://sourceforge.net/projects/snpeff/files/1kg.snpeff.vcf.gz/download">VCF</a> and <a class="body" href="http://sourceforge.net/projects/snpeff/files/1kg.snpeff.txt.gz/download">TXT</a> formats.<br>
+				Task are scheduled according to available resources.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/ehFfU8vLwi8" frameborder="0" allowfullscreen></iframe>
 				</p>
-        </section>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> Schedule 10 tasks to be executed
+<pre>
+$ cat z.bds
+for( int i=0 ; i < 10 ; i++ ) {
+	task echo Hi $i ; sleep 1 ; echo Done $i ; sleep 1
+}
+$ bds z.bds
+Hi 1
+Hi 6
+Hi 2
+Hi 4
+Hi 3
+Hi 7
+Hi 0
+Hi 5
+Done 1
+Done 6
+Done 2
+Done 4
+Done 3
+Done 7
+Done 0
+Done 5
+Hi 9
+Hi 8
+Done 9
+Done 8
+</pre>
 
-
-        <!-- Who uses BigDataScript?
-        ================================================== -->
-        <section id="who">
+        <!-- ================================================== -->
+        <section id="taskCluster">
           <div class="page-header">
-            <h1>4. Who uses BigDataScript?</h1>
+            <h1>4. Scheduling tasks on a cluster </h1>
           </div>
-          <p class="lead"> Users of BigDataScript include most mayor research and academic institutions, as well as pharmaceutical companies and clinical sequencing projects.
-			Here is a sample of some institutions that use BigDataScript:
-					<ul>
-					<li> Broad Institute (MIT &amp; Harvard)
-					<li> NIH (US)
-					<li> Harvard University
-					<li> Princeton University
-					<li> BGI (China)
-					<li> Massachusetts General Hospital
-					<li> Whitehead Institute, MIT
-					<li> Wellcome Trust Sanger Institute (UK)
-					<li> UC Berkeley
-					<li> Illumina
-					<li> Wellcome Trust Centre for Human Genetics (UK)
-					<li> University of Cambridge (UK)
-					<li> Duke University
-					<li> Max Planck (Germany)
-					<li> Cold Spring Harbor Laboratory (CSHL)
-					<li> Institut Pasteur (France)
-					<li> NCI / NIH (National Cancer Institute, US)
-					<li> McGill University (Canada)
-					<li> EMBL (Cambridge, UK)
-					<li> University of Toronto (Canada)
-					<li> Bayer
-					<li> University of Cambridge (UK)
-					<li> Novartis
-					<li> Yale University
-					<li> Columbia University
-					<li> Stanford University
-					<li> Brown University
-					<li> Genome Quebec (Canada)
-					<li> Centre national de la recherche scientifique (CNRS, France)
-					<li> University of Michigan
-					<li> Kyoto University (Japan)
-					<li> Institut National de la Recherche Agronomique (INRA, France)
-					<li> University of Wisconsin-Madison
-					<li> UT Southwestern Medical Center
-					<li> University of Southern California
-					<li> Bologna University (Italy)
-					<li> Casa Sollievo della Sofferenza - Mendel (Italy)
-					<li> Universitat Wien (Vienna, Austria)
-					<li> Ottawa University (Canada)
-					<li> Peter MacCallum Cancer Centre (Australia)
-					<li> University of Alabama Birmigham
-					<li> University of Bristol (UK)
-					<li> UC-Davis (California)
-					<li> Winsconsin University
-					<li> TUM University (Germany)
-					<li> The Translational Genomics Institute (Tgen)
-					<li> Rutgers University (New Jersey)
-					<li> Nagasaki University (Japan)
-					<li> Washington University
-					<li> Netherlands Cancer Institute (NKI)
-					<li> Novocraft 
-					<li> Centro Nacional de Biotecnolog&iacute;a, (National Center for Biotecnology) CNB-CSIC, Madrid, Spain
-					<li> University of California-Riverside
-					<li> Carleton University (Canada)
-					<li> Memorial Sloan-Kettering Cancer Center
-					<li> Boston University 
-					<li> AstraZeneca
-					<li> University of California, San Francisco (UCSF) 
-					<li> Accelrys
-					<li> Johnson &amp; Johnson
-					<li> Institute of Cancer Research (ICR), UK
-					<li> University of Virginia
-					<li> University of British Columbia (Canada)
-					<li> Seoul National University (Korea)
-					<li> University of Southern California (USC)
-					<li> Arizona State University (ASU)
-					<li> Bio-Prodict (Netherlands)
-					<li> NeuroTexas Institute at St. David's HealthCare
-					<li> University of Otago (New Zealand)
-					<li> Sanofi (France)
-					<li> Queensland Institute of Medical Research (Australia)
-					<li> National University of Singapore (NUS)
-					<li> Children's Hospital of Philadelphia
-					<li> Queensland UNiversity (Australia)
-					<li> Vall d'Hebron Research Institute: VHIR (Barcelona. Catalonia. Spain)
-					<li> University of Pretoria (South Africa).
-					<li> Centrum Wiskunde &amp; Informatica (Amsterdam, Netherlands)
-					<li> Technical University of Denmark: DTU (Denmark)
-					<li> Spanish National Research Council (CSIC, Spain)
-					<li> Swedish University of Agricultural Sciences: SLU (Sweden)
-					<li> University of Iowa
-					<li> Bilkent University (Turkey)
-					<li> The Hebrew University of Jerusalem (Israel)
-					<li> Laboratory of Malaria and Vector Research NIH/NIAID
-					<li> Max F. Perutz Laboratories: MFPL (Vienna, Austria)
-					<li> Animal Health Trust: AHT (UK)
-					<li> BC Cancer Agency (Canada)
-					<li> University of California, Irvine
-					<li> Eisai (Japan)
-					<li> Covance 
-					<li> University College London (London, UK)
-					<li> Centro Nacional de Análisis Genómico: CNAG (Barcelona, Spain)
-					</ul>
+				<p class="lead">
+				Here we show how exactly the same script is run on a cluser...not a single line of code changed.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/o47wxUdYzvk" frameborder="0" allowfullscreen></iframe>
 				</p>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> We copy tha same script (used in the previous section) to a cluster. 
+					We execute it, but now the tasks are schedules using MOAB, Torque or Grid Engine.
+					<br>
+					The only change we made is to add <code>-s cluster</code> to the command line. 
+<pre>
+$ bds -s cluster z.bds
+</pre>
+
+					<li> Typing <code>-s cluster</code> can also be avoided just using a config file.
+
+				</ul>
         </section>
 
-
-        <!-- Integration
-        ================================================== -->
-        <section id="integrate">
+        <!-- ================================================== -->
+        <section id="taskDep">
           <div class="page-header">
-            <h1>5. Integration</h1>
+            <h1>5. Creating pipelines: Task dependencies</h1>
           </div>
-			<p class="lead"> 
-            BigDataScript is integrated with other tools commonly used in sequencing data analysis pipelines. 
-			Most notably <a href="http://galaxyproject.org/">Galaxy</a> and <a href="http://www.broadinstitute.org/gatk/">GATK</a> projects support BigDataScript.
-			By using standards, such as VCF, BigDataScript makes it easy to integrate with other programs.
-			</p>
-          	<p> 
- 			This is a screen capture from a Galaxy server (click to enlarge) <p>
-			<center> <a href="images/snpEff_galaxy.png"><img src="images/snpEff_galaxy_small.png"></a> </center>
-			</p>
+				<p class="lead">
+				In a tipical pipeline tasks are not just scheduled for execution.
+				We need to be able to control task based on previously executed tasks.
+				Here we show how.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/vTekXn3sKzs" frameborder="0" allowfullscreen></iframe>
+				</p>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> 
+					We run a set of tasks (<code>echo Hi $i</code>) and after all the tasks finished, we run another set of tasks (<code>echo Bye $i</code>)
+					<br>
+					The only change we made is to add <code>-s cluster</code> to the command line. 
+<pre>
+$ bds z.bds
+Before wait
+Hi 7
+Hi 1
+Hi 3
+Hi 6
+Hi 4
+Hi 2
+Hi 5
+Hi 0
+Hi 9
+Hi 8
+After wait
+Bye 2
+Bye 1
+Bye 3
+Bye 0
+Bye 5
+Bye 7
+Bye 6
+Bye 4
+Bye 8
+Bye 9
+</pre>
+
+					<li> The <code>wait</code> statement is like a barrier. Untill all tasks are finished, the program does not continue.
+					If any task fails, a checkpoint file is created, where all program data is serialized.
+					We can correct the problem and re-start the pipeline were it left.
+
+					<li> The <code>wait</code> statement can wait for all tasks, for single tasks or for a list of tasks.
+
+					<li> We then run the same script on a cluster. 
+					Again, this is done simply by using <code>-s cluster</code> command line.
+					The video shows how tasks are scheduled and on the cluster, always honoring the <code>wait</code> statement
+
+					<li> Finally we show that the exit code of a <code>bds</code> script is 0 if all tasks executed without any problems, and non-zero if there were probelms.
+
+				</ul>
         </section>
 
+        <!-- ================================================== -->
+        <section id="taskDep2">
+          <div class="page-header">
+            <h1>6. More on task dependencies </h1>
+          </div>
+				<p class="lead">
+				If we already processed a file and have the results, we may choose to save some work if the input has not changed.
+				We show how to execute tasks depending on file creation times (think "make").
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
+				</p>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> We introduce the dependency operator <code>&lt;-</code> (pronounced 'dep') which is a "make" style operator.
+
+					<li> The expression <code>out &lt;- in</code> is true if 'out' file needs to be updated.
+					More formally, the expression is true if the file name represented by the variable 'out' does not exists, is empty (zero length) or has a creation date before 'in'.<br>
+					E.g.:
+<pre>
+$ cat z.bds
+string inFile = "in.txt"
+string outFile = "out.txt"
+
+tash echo Creating $inFile; echo Hello > $inFile
+
+wait
+
+if( outFile <- inFile ) {
+	task echo Creating $outFile; cat $inFile > $outFile
+}
+
+$ bds z.bds
+Creating in.txt
+Creating out.txt
+
+$ cat out.txt
+Hello
+</pre>
+
+					<li> If the file 'out.txt' is up to date, the the following code will not execute
+<pre>
+if( outFile <- inFile ) {
+	task echo Creating $outFile; cat $inFile > $outFile
+}
+</pre>
+
+					<li> This construction is so common, that we allow for some sintactic sugar. 
+					So you can write it the following way:
+<pre>
+task( outFile <- inFile ) { 
+	sys echo Creating $outFile; cat $inFile > $outFile
+}
+</pre>
+				</ul>
+        </section>
+
+        <!-- ================================================== -->
+        <section id="cool">
+          <div class="page-header">
+            <h1>7. Some cool features </h1>
+          </div>
+				<p class="lead">
+				BigDataScript has some useful features, like automatic command line parsing.
+				<p>
+				
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
+				</p>
+				
+				<p class="lead"> In this video <p>
+				<ul>
+					<li> We show how automatic command line parsing works.
+					We use the same script as shown in the previous section for processing another input file without changing a single line of code.
+					
+					<li> Automatic command line parsing parses any command line argument that starts with "-" and assigns the value to the corresponding variable.
+					E.g.:
+<pre>
+$ cat z.bds 
+string in = "in.txt"
+print("In file is '$in'\n")
+
+$ bds z.bds
+In file is 'in.txt'
+
+$ bds z.bds -in anotherFile.txt
+In file is 'anotherFile.txt'
+</pre>
+
+				<li> This feature also works for other data types (int, real, bool). 
+				In case of bool if the option is present, the variable is set to 'true'.
+<pre>
+$ cat z.bds
+bool flag
+print("Variable flag is $flag\n")
+
+$ bds z.bds
+Variable flag is false
+
+$ bds z.bds -flag
+Variable flag is true
+
+</pre>
+
+				</ul>
+        </section>
       </div>
     </div>
 
