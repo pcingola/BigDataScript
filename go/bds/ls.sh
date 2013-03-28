@@ -2,9 +2,9 @@
 
 echo SLEEP
 #sleep 60
-sleep 2
+sleep 1
 ls $*
-sleep 60
+sleep 1
 echo DONE
 
 

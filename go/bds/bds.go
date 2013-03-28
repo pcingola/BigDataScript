@@ -5,10 +5,16 @@
 
 	Commands:
 		1) default (no command)	:	Execute main Java package (compiler and interpreter)
-		2) exec					:	Execute shell scripts, set maimum execution time, redirect STDOUT and STDERR, write exit code to a file
-									bds exec timeout file.stdout file.stderr file.exit command arguments...
-		3) help					: 	Show command usage and exit
-		4) kill pid             :   Send a kill signal to a process group (same as shell command "kill -- -pid")
+
+		2) exec					:	Execute shell command, set max execution time, redirect STDOUT and STDERR, show PID to stdout
+										bds exec timeout file.stdout file.stderr file.exit command arguments...
+
+		3) qexec				:	Execute shell command, set max execution time, write exit code to a file
+										bds exec timeout file.exit command arguments...
+
+		4) help					: 	Show command usage and exit
+
+		5) kill pid             :   Send a kill signal to a process group (same as shell command "kill -- -pid")
 
 	Examples:
 
@@ -51,6 +57,9 @@ func main() {
 		if os.Args[1] == "exec" {
 			// Execute command and exit
 			os.Exit(executeCommandArgs())
+		} else if os.Args[1] == "qexec" {
+			// Execute command and exit
+			os.Exit(executeQCommandArgs())
 		} else if os.Args[1] == "kill" {
 			// Kill a process group
 			if len(os.Args) != 3 {
@@ -108,9 +117,13 @@ func bigDataScript() int {
 
 /*
 	Execute a command
+	Enforce execution time limit
+	Redirect stdout and stderr to files
 */
 func executeCommandArgs() int {
-	if len(os.Args) < 7 {
+	minArgs := 6
+
+	if len(os.Args) < minArgs {
 		usage("Invalid numeber of parameters for 'exec' command")
 	}
 
@@ -122,14 +135,12 @@ func executeCommandArgs() int {
 	cmdIdx = cmdIdx + 1
 	errFile := os.Args[cmdIdx]
 	cmdIdx = cmdIdx + 1
-	exitFile := os.Args[cmdIdx]
-	cmdIdx = cmdIdx + 1
 	command := os.Args[cmdIdx]
 	cmdIdx = cmdIdx + 1
 
 	// Append other arguments
 	args := []string{command}
-	for _, arg := range os.Args[7:] {
+	for _, arg := range os.Args[minArgs:] {
 		args = append(args, arg)
 	}
 
@@ -144,7 +155,48 @@ func executeCommandArgs() int {
 	os.Stdout.Sync()
 
 	// Execute command
-	return executeCommand(command, args, timeSecs, outFile, errFile, exitFile)
+	return executeCommand(command, args, timeSecs, outFile, errFile, "")
+}
+
+/*
+	Execute a command
+	Enforce execution time limit
+	Redirect exitCode to a file
+*/
+func executeQCommandArgs() int {
+	minArgs := 5
+
+	if len(os.Args) < minArgs {
+		usage("Invalid numeber of parameters for 'exec' command")
+	}
+
+	// Parse command line args
+	cmdIdx := 2
+	timeStr := os.Args[cmdIdx]
+	cmdIdx = cmdIdx + 1
+	exitFile := os.Args[cmdIdx]
+	cmdIdx = cmdIdx + 1
+	command := os.Args[cmdIdx]
+	cmdIdx = cmdIdx + 1
+
+	// Append other arguments
+	args := []string{command}
+	for _, arg := range os.Args[minArgs:] {
+		args = append(args, arg)
+	}
+
+	// Parse time argument
+	timeSecs, err := strconv.Atoi(timeStr)
+	if err != nil {
+		log.Fatalf("Invalid time: '%s'\n", timeStr)
+	}
+
+	// Show PID info (parent process is expecting this line first)
+	fmt.Printf("%d\n", syscall.Getpid())
+	os.Stdout.Sync()
+
+	// Execute command
+	return executeCommand(command, args, timeSecs, "", "", exitFile)
 }
 
 /*
@@ -526,10 +578,19 @@ func usage(msg string) {
 	fmt.Fprintf(os.Stderr,"  default :  Execute BigDataScript Java program (compiler and interpreter)\n")
 	fmt.Fprintf(os.Stderr,"             Syntax:\n")
 	fmt.Fprintf(os.Stderr,"                 bds [options] program.bds\n\n")
-	fmt.Fprintf(os.Stderr,"  exec    :  Execute shell scripts. Set maimum execution time.\n")
-	fmt.Fprintf(os.Stderr,"             Redirect STDOUT and STDERR to files and write exit code to a file.\n")
+	fmt.Fprintf(os.Stderr,"  exec    :  Execute shell scripts.\n")
+	fmt.Fprintf(os.Stderr,"             Show pid.\n")
+	fmt.Fprintf(os.Stderr,"             Enforce maimum execution time.\n")
+	fmt.Fprintf(os.Stderr,"             Redirect STDOUT and STDERR to files.\n")
 	fmt.Fprintf(os.Stderr,"             If any file name is '-' it is ignored (not redirected).\n")
 	fmt.Fprintf(os.Stderr,"             Syntax:\n")
-	fmt.Fprintf(os.Stderr,"                 bds exec timeout file.stdout file.stderr file.exit command arguments...\n\n")
+	fmt.Fprintf(os.Stderr,"                 bds exec timeout file.stdout file.stderr command arguments...\n\n")
+	fmt.Fprintf(os.Stderr,"  qexec   :  Execute shell scripts.\n")
+	fmt.Fprintf(os.Stderr,"             Enforce maimum execution time.\n")
+	fmt.Fprintf(os.Stderr,"             Redirect exit value to a file.\n")
+	fmt.Fprintf(os.Stderr,"             If any file name is '-' it is ignored (not redirected).\n")
+	fmt.Fprintf(os.Stderr,"             Syntax:\n")
+	fmt.Fprintf(os.Stderr,"                 bds qexec timeout file.exit command arguments...\n\n")
+	fmt.Fprintf(os.Stderr,"  kill pid :  Kill process group 'pid'.\n")
 	os.Exit(1)
 }

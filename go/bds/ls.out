@@ -1,12 +1,12 @@
 SLEEP
-total 1.7M
-drwxrwxr-x. 2 pcingola pcingola 4.0K Mar 25 19:54 .
-drwxrwxr-x. 3 pcingola pcingola 4.0K Mar 17 18:57 ..
--rwxrwxr-x. 1 pcingola pcingola 1.6M Mar 25 19:54 bds
--rw-rw-r--. 1 pcingola pcingola 8.8K Mar 25 19:54 bds.go
--rw-rw-r--. 1 pcingola pcingola    0 Mar 25 19:54 ls.err
--rw-rw-r--. 1 pcingola pcingola    6 Mar 25 19:54 ls.out
--rwxrwxr-x. 1 pcingola pcingola   70 Mar 25 16:49 ls.sh
--rwxrwxr-x. 1 pcingola pcingola  354 Mar 25 19:29 make.sh
--rw-rw-r--. 1 pcingola pcingola  565 Mar 25 18:05 z
--rw-r--r--. 1 pcingola pcingola  12K Mar 25 18:05 .z.swp
+total 1680
+-rwxrwxr-x. 1 pcingola pcingola 1676257 Mar 28 00:57 bds
+-rw-rw-r--. 1 pcingola pcingola   14322 Mar 28 00:57 bds.go
+-rw-rw-r--. 1 pcingola pcingola       0 Mar 28 00:57 ls.err
+-rw-rw-r--. 1 pcingola pcingola       1 Mar 28 00:55 ls.exit
+-rw-rw-r--. 1 pcingola pcingola       6 Mar 28 00:57 ls.out
+-rwxrwxr-x. 1 pcingola pcingola      69 Mar 28 00:52 ls.sh
+-rwxrwxr-x. 1 pcingola pcingola     354 Mar 27 08:39 make_run.sh
+-rwxrwxr-x. 1 pcingola pcingola      71 Mar 27 08:39 make.sh
+-rw-rw-r--. 1 pcingola pcingola     565 Mar 25 18:05 z
+DONE

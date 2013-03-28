@@ -54,7 +54,6 @@ public class LocalExecutioner extends Executioner {
 		args.add(timeout + "");
 		args.add(task.getStdoutFile());
 		args.add(task.getStderrFile());
-		args.add(task.getExitCodeFile());
 		args.add(task.getProgramFileName());
 
 		String cmdStr = "";
