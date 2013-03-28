@@ -28,8 +28,8 @@ public class ClusterExecutioner extends LocalExecutioner {
 
 	TaskDone taskDone;
 
-	public ClusterExecutioner(Cluster cluster) {
-		super(null);
+	public ClusterExecutioner(PidLogger pidLogger, Cluster cluster) {
+		super(pidLogger);
 		taskDone = new TaskDone();
 
 	}

@@ -128,7 +128,7 @@ public class Executioners {
 			host.getResources().setCpus(Integer.MAX_VALUE);
 			cluster.add(host);
 
-			executioner = new ClusterExecutioner(cluster);
+			executioner = new ClusterExecutioner(getPidLogger(), cluster);
 			break;
 
 		default:

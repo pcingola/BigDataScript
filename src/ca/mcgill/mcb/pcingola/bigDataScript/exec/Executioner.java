@@ -344,7 +344,6 @@ public abstract class Executioner extends Thread {
 		running(task); // Set task to running state
 		addTail(task); // Follow STDOUT and STDERR
 		if (pidLogger != null) pidLogger.add(task); // Log PID (if any)
-
 	}
 
 	public void setDebug(boolean debug) {
