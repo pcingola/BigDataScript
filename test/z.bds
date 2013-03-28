@@ -1,10 +1,6 @@
 
-#system = "cluster"
+system = "cluster"
 
-task (timeout = 2 ) {
-	sys echo hi; sleep 60; echo bye
-}
-
-for( int i=0 ; i < 10 ; i++ ) {
+for( int i=0 ; i < 2 ; i++ ) {
 	task echo hi $i
 }

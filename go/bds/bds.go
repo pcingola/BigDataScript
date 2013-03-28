@@ -97,7 +97,6 @@ func bigDataScript() int {
 		log.Fatal(err)
 	}
 	pidFile = pidTmpFile
-	fmt.Printf("pidFile %s\n", pidFile)
 
 	// Append all arguments from command line
 	args := []string{"java", "-Xmx1G", "ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
@@ -345,19 +344,18 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 */
 func killAll(pidFile string) {
 	var (
-		pid  int
 		err  error
 		line string
-		pids map[int]bool
 		file *os.File
 	)
 
-	//defer os.Remove(pidFile); // Make sure the PID file is removed
+	defer os.Remove(pidFile); // Make sure the PID file is removed
 
 	//---
 	// Open file and parse it
 	//---
-	pids = make(map[int]bool)
+	pids := make(map[string]bool)
+	cmds := make(map[string]string)
 
 	if file, err = os.Open(pidFile); err != nil {
 		return
@@ -373,21 +371,42 @@ func killAll(pidFile string) {
 		fmt.Printf("bds kill : '%s'\n", line )
 		recs := strings.Split(line, "\t")
 
-		pid, _ = strconv.Atoi(recs[0])
+		pid := recs[0]
+		addDel := recs[1]
 
 		// Add or remove from map
-		if recs[0] == "-" {
+		if addDel == "-" {
 			delete(pids, pid)
 		} else {
 			pids[pid] = true
+			if( len(recs) > 2 ) {
+				cmds[pid] = recs[2]
+			}
 		}
 	}
 
 	// Kill all pending processes
+	runCmds := make(map[string]string)
 	for pid, running := range pids {
+		// Is it marked as running? Kill it
 		if running {
-			killProcessGroup(pid)
+			if cmd, ok := cmds[pid] ; !ok {
+				pidInt, _ := strconv.Atoi( pid )
+				killProcessGroup(pidInt)	// No need to run a command, just kill local porcess group
+			} else {
+				// Create command to be executed
+				if _, ok = runCmds[cmd] ; ok {
+					runCmds[cmd] = runCmds[cmd] + " " + pid
+				} else {
+					runCmds[cmd] = cmd + " " + pid
+				}
+			}
 		}
+	}
+
+	// Run all commands
+	for cmd, cmdToRun := range runCmds {
+		fmt.Printf("RUN:\t%s\t%s\n", cmd, cmdToRun )
 	}
 }
 

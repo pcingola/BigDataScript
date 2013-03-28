@@ -20,7 +20,7 @@ public class ClusterExecutioner extends LocalExecutioner {
 	public static String FAKE_CLUSTER = "";
 	// public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "msub" };
-	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "canceljob" };
+	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
 	public static String CLUSTER_BDS_COMMAND = "bds qexec ";
 
 	public static final int MIN_EXTRA_TIME = 15;
