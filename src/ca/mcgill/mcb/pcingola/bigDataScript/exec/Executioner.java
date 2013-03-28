@@ -65,7 +65,7 @@ public abstract class Executioner extends Thread {
 
 		removeTail(task); // Remove from 'tail' thread
 		finished(task); // Move to 'done'
-		pidLogger.remove(task);
+		if (pidLogger != null) pidLogger.remove(task);
 
 		return true;
 	}
@@ -276,7 +276,7 @@ public abstract class Executioner extends Thread {
 			} else {
 				running(task); // Set task to running state
 				addTail(task); // Follow STDOUT and STDERR
-				pidLogger.add(task); // Log PID (if any)
+				if (pidLogger != null) pidLogger.add(task); // Log PID (if any)
 			}
 		} else {
 			// Error running

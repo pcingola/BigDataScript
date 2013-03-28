@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# Execute a command in background (output to dev/null just to make sure we get PID value as first only
-( $* > /dev/null 2>&1 ) & 
-
 # Show PID
-echo $!
+echo $$
+
+echo "COMMAND: $*"
+cat 
 

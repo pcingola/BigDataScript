@@ -1,7 +1,10 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
@@ -38,6 +41,7 @@ public class CmdRunner extends Thread {
 	String id;
 	String commandArgs[]; // Command and arguments
 	String error = ""; // Errors
+	String stdin = ""; // Feed this to process' STDIN
 	boolean readPid;
 	boolean executing = false, started = false; // Command states
 	String pid; // Only if child process reports PID and readPid is true
@@ -57,6 +61,8 @@ public class CmdRunner extends Thread {
 	public int exec() {
 		try {
 			executing = true;
+
+			// Build process and start it
 			ProcessBuilder pb = new ProcessBuilder(commandArgs);
 			if (debug) {
 				StringBuilder cmdsb = new StringBuilder();
@@ -66,16 +72,23 @@ public class CmdRunner extends Thread {
 			}
 			process = pb.start();
 
-			// Child process prints PID to stdout: Read it
+			// Feed something to STDIN?
+			feedStdin();
+
+			// Child process prints PID to STDOUT? Read it
 			if (readPid) {
 				pid = readPid();
 				task.setPid(pid);
 			}
 
+			// Now we are really done and the process is started
 			started = true;
 			task.setStarted(true); // Set as started
-			exitValue = process.waitFor(); // Wait for the process to finish and store exit value
+
+			// Wait for the process to finish and store exit value
+			exitValue = process.waitFor();
 			if (debug) Gpr.debug("Exit value: " + exitValue);
+
 		} catch (Exception e) {
 			error = e.getMessage() + "\n";
 			exitValue = -1;
@@ -96,6 +109,25 @@ public class CmdRunner extends Thread {
 			if (executioner != null) executioner.finished(id);
 		}
 		return exitValue;
+	}
+
+	/**
+	 * Feed a string to process' STDIN
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	void feedStdin() throws InterruptedException, IOException {
+		if ((stdin == null) || stdin.isEmpty()) return; // Nothing to do
+
+		// Wait for STDOUT to become available
+		while (getStdin() == null)
+			sleep(1);
+
+		// Write and close STDIN
+		BufferedWriter bos = new BufferedWriter(new OutputStreamWriter(getStdin()));
+		bos.write(stdin);
+		bos.flush();
+		bos.close();
 	}
 
 	public String getCmdId() {
@@ -125,6 +157,11 @@ public class CmdRunner extends Thread {
 	public InputStream getStderr() {
 		if (process == null) return null;
 		return process.getErrorStream();
+	}
+
+	public OutputStream getStdin() {
+		if (process == null) return null;
+		return process.getOutputStream();
 	}
 
 	public InputStream getStdout() {
@@ -244,6 +281,10 @@ public class CmdRunner extends Thread {
 
 	public void setResources(HostResources resources) {
 		this.resources = resources;
+	}
+
+	public void setStdin(String stdin) {
+		this.stdin = stdin;
 	}
 
 	public void setTask(Task task) {

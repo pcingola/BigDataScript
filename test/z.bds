@@ -1,4 +1,6 @@
 
+system = "cluster"
+
 task (timeout = 2 ) {
 	sys echo hi; sleep 60; echo bye
 }
