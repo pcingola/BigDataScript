@@ -303,6 +303,8 @@ func killAll(pidFile string) {
 		file *os.File
 	)
 
+	defer os.Remove(pidFile); // Make sure the PID file is removed
+
 	//---
 	// Open file and parse it
 	//---
@@ -511,23 +513,23 @@ func nextSuffix() string {
 */
 func usage(msg string) {
 	if( msg != "" ) {
-		fmt.Printf("Error: %s\n", msg)
-		fmt.Printf("Arguments:\n")
+		fmt.Fprintf(os.Stderr,"Error: %s\n", msg)
+		fmt.Fprintf(os.Stderr,"Arguments:\n")
 		for n, arg := range os.Args[1:] {
-			fmt.Printf("\t%d : %s\n", n, arg );
+			fmt.Fprintf(os.Stderr,"\t%d : %s\n", n, arg );
 		}
 	}
 
 	// Show help and exit
-	fmt.Printf("Usage: bds command\n\n")
-	fmt.Printf("Commands:\n\n")
-	fmt.Printf("  default :  Execute BigDataScript Java program (compiler and interpreter)\n")
-	fmt.Printf("             Syntax:\n")
-	fmt.Printf("                 bds [options] program.bds\n\n")
-	fmt.Printf("  exec    :  Execute shell scripts. Set maimum execution time.\n")
-	fmt.Printf("             Redirect STDOUT and STDERR to files and write exit code to a file.\n")
-	fmt.Printf("             If any file name is '-' it is ignored (not redirected).\n")
-	fmt.Printf("             Syntax:\n")
-	fmt.Printf("                 bds exec timeout file.stdout file.stderr file.exit command arguments...\n\n")
+	fmt.Fprintf(os.Stderr,"Usage: bds command\n\n")
+	fmt.Fprintf(os.Stderr,"Commands:\n\n")
+	fmt.Fprintf(os.Stderr,"  default :  Execute BigDataScript Java program (compiler and interpreter)\n")
+	fmt.Fprintf(os.Stderr,"             Syntax:\n")
+	fmt.Fprintf(os.Stderr,"                 bds [options] program.bds\n\n")
+	fmt.Fprintf(os.Stderr,"  exec    :  Execute shell scripts. Set maimum execution time.\n")
+	fmt.Fprintf(os.Stderr,"             Redirect STDOUT and STDERR to files and write exit code to a file.\n")
+	fmt.Fprintf(os.Stderr,"             If any file name is '-' it is ignored (not redirected).\n")
+	fmt.Fprintf(os.Stderr,"             Syntax:\n")
+	fmt.Fprintf(os.Stderr,"                 bds exec timeout file.stdout file.stderr file.exit command arguments...\n\n")
 	os.Exit(1)
 }
