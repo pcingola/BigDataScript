@@ -97,6 +97,7 @@ func bigDataScript() int {
 		log.Fatal(err)
 	}
 	pidFile = pidTmpFile
+	fmt.Printf("pidFile %s\n", pidFile)
 
 	// Append all arguments from command line
 	args := []string{"java", "-Xmx1G", "ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
@@ -351,7 +352,7 @@ func killAll(pidFile string) {
 		file *os.File
 	)
 
-	defer os.Remove(pidFile); // Make sure the PID file is removed
+	//defer os.Remove(pidFile); // Make sure the PID file is removed
 
 	//---
 	// Open file and parse it
