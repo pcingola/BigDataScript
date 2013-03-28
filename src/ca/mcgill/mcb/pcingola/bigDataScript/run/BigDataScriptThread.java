@@ -275,6 +275,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			Object ev = getReturnValue();
 			if (ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
 		}
+
+		try {
+			// Small sleep to collect latest outputs
+			sleep(SLEEP_TIME);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	@Override
@@ -425,6 +431,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public boolean waitTasksAll() {
 		// Wait for all tasks to finish
 		boolean ok = true;
+
 		for (String tid : tasks.keySet())
 			ok &= waitTask(tid);
 
