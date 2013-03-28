@@ -512,7 +512,7 @@ func nextSuffix() string {
 func usage(msg string) {
 	if( msg != "" ) {
 		fmt.Printf("Error: %s\n", msg)
-		fmt.Printf("Arguments:\n", msg)
+		fmt.Printf("Arguments:\n")
 		for n, arg := range os.Args[1:] {
 			fmt.Printf("\t%d : %s\n", n, arg );
 		}

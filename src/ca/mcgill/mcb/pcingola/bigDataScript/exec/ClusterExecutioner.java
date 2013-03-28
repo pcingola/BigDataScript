@@ -82,6 +82,7 @@ public class ClusterExecutioner extends LocalExecutioner {
 		cmdStdin.append(realTimeout + " ");
 		cmdStdin.append("- "); // Stdout
 		cmdStdin.append("- "); // Stderr
+		cmdStdin.append(task.getExitCodeFile() + " ");
 		cmdStdin.append(task.getProgramFileName());
 
 		// Run command
