@@ -158,101 +158,113 @@ $ su -
 				<p class="lead">
 				BigDataScript is intended as a scripting language for big data pipeline. 
 				</p>
+				<h3>What?</h3>
 				<p>
-				You can think about BigDataScript (or <code>bds</code> for short) as a "shell scripting on steroids".
+				BigDataScript is a cross-system scripting language for working with big data pipelines in computer systems of different sizes and capabilities.
 				</p>
-				<p>
-				If you have to run a sequence of multiple programs on your computer, you usually create a simple shell script.
-				This does not scale for big computers such as clusters or many cloud instances.
-				Creating scripts becomes complicated and platform dependent.
+				<h3>Why?</h3>
+				Working with heavyweight computation and big data pipelines involves making use of several specialized programs. 
+				Those specialized routines need to be scheduled, called and coordinated; their progress need to be tracked and their results logged. 
+				That is the job of another script or program. This is when BigDataScript becomes extremely handy.
 				<br>
-				So the problem with current programming models for big data pipelines, is that they are just a pain. 
-				You have very efficienet programs to solve particular problems, but as soon as you need to integrate them into a pipeline it's a nighmare.
-				</p>
-				<p>
-				The main idea behind BigDataScript is quite simple, creating a script for big data should be as easy as creating a shell script.
-				Furthermore, the same script should run without any changes no matter how big the computer is.
-				It doesn't matter if you are programming and debugging it on your laptop, running it on a cluster or deploying it on a Cloud (Amazon or whatever you use).
-				The same "data pipeline" (or script) should run without any changes.
-				</p>
+				<br>
+				Developing traditional shell scripts or small programs to coordinate data pipelines presents a fundamental dilemma. 
+				It is not cross-platform, it simply does not work on all environments or it needs adaptations and re-work for the same thing to work on a laptop, server, server farm, cluster and cloud. 
+				Often it is simply not possible. 
+				Because of that, developing big data pipelines for a different environment is time consuming. 
+				The behaviour on the target environment cannot be assumed to be an exact extrapolation of the results obtained on the development environment. 
+				This not only is a waste of time, money and energy, it is also reliable source of frustration.
+				<br>
+				<br>
+				BigDataScript is the solution to the problem.
+				<br>
+				<br>
+				With BigDataScript, creating a jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. 
+				If you normaly use of specialized programs to perform heavyweight computations, then BigDataScript is the glue to those commands you need to create a reliable pipeline.
+				<h3>How?</h3>
 
-				<i class="icon-warning-sign"></i> BigDataScript is experimental and under heavy development. 
-				At this time this is not for the faint of heart.
-				
 				<p class="lead">
 				<b> Benefis of BigDataScript </b>
 				</p>
 				<ul>
 					<li> <b>Reduced development time</b> 
 					<p>
-					The benefits are mainly to reduce development and debugging time.
-					If you've spent time waiting for a process to run on a cluster, just to get an error in your code, you know what I mean.
-					You should be able to run a small version on your laptop, debug immediatly, deploy when it's done.
+					Spend less time debugging your work on big systems with a huge data volumes. 
+					Now you can debug the same jobs using a smaller sample on your computer. 
+					Get immediate feedback, debug, fix and deploy when it's done. 
 					Shorter development cycles means better software.
 					</p>
 
 					<li> <b>System independent</b> 
 					<p>
-					As we just mentioned, the same program runs on a laptop, server, server farm, cluster or cloud.
-					No changes to the program required.
+					Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud. 
+					No changes to the program required. 
+					Work once.
 					</p>
 
 					<li> <b>Easy to learn</b> 
 					<p>
-					If you have experience programming any language, the syntax should be fairly familiar to you.
-					It should be a no-brainer to read and write code.
+					The syntax is intuitive and it resembles the syntax of most commonly used programming languages. 
+					Reading the code is easy as pi.
 					</p>
 
 					<li> <b>Automatic Checkpointing</b> 
 					<p>
-					If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program.
-					What to re-start were it left? No problem, just run from the checkpoint.
+					If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. 
+					Want to re-start were it stopped? 
+					No problem, just resume the execution from the checkpoint.
 					</p>
 
 					<li> <b>Automatic logging</b> 
 					<p>
-					Everything is logged by default, no explicit actions required.
-					Every time you execute a system command or a task, a set of files log which commands were executed, stdout &amp; stderr and exit codes.
+					Everything is logged by default, no explicit actions required. 
+					Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout &amp; stderr and exit codes.
 					</p>
 
-					<li> <b>Task scheduling and cancelation is done for you</b> 
+					<li> <b>Clean stop with no mess behind</b> 
 					<p>
-					You have a BigDataScript running on a terminal, then you realized there is something you don't like...just hit Ctrl-C.
-					All tasks will be terminated, removed from the queue, deallocated from the cluster, etc.
+					You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... 
+					Just hit Ctrl-C. 
+					All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. 
+					A clean stop allows you to focus not he problem at hand without having to worry about restoring a clean state.
 					</p>
 
 					<li> <b>Task dependencies</b> 
 					<p>
-					In complex pipelines tasks usually depend on each other.
-					BigDataScript provides ways to easily manage task dependecies.
+					In complex pipelines, tasks usually depend on each other. 
+					BigDataScript provides ways to easily manage task dependencies.
 					</p>
 
 					<li> <b>Avoid re-work</b> 
 					<p>
-					This concept has been arround since "make" program was created for compiling. 
-					If we spend time processing to create a results file, we don't need to do the job again just bcause we are re-sunnig the pipeline.
-					Task dependency using timestamps is provided at basic language level to make this easy.
+					Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming. 
+					Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.
 					</p>
 				</ul>
 
-				<h3> What BigDataScript is not</h3>
+				<h3> A word about performance</h3>
 				<p>
-				BigDataScript is a language to create pipelines and it is, in many ways, analogous to "shell scripting". 
-				You use it to "glue" programs toghether, but you would never use shell scripting to perform heavyweight computations.
-				You don't care if <code>bash</code> takes a few miliseconds more to invoke a program, just because the running time of the program is usually much longer.
-				Similarly you don't really care about performance characteristics of <code>bds</code>.
+				BigDataScript is meant to be used in the context or heavyweight computations.
+				Potential delays incurred by BigDataScript should not affect the overall time.
 				<br>
-				Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours (or sometimes days) to run.
-				The fact that bds takes a few miliseconds more to invoke the program, or to schedule the program in a cluster queue, really doesn't make any difference.
-				<p>
-				<b>Bottom line:</b> You use specialized programs to perform heavy weight computations and use <code>BigDataScript</code> to glue thos programs toghether.
+				Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.
+				The fact that BigDataScript takes a few miliseconds more to invoke those programs, really doesn't make any difference.
 				</p>
+
+				<h3> Disclaimer </h3>
+				BigDataScript is experimental and under heavy development. 
+				At this time this is not for the faint of heart.
+				<br>
+				<br>
+				<i class="icon-warning-sign"></i> Use at your own risk!
+				<br>
+				<br>
         </section>
 
         <!-- ================================================== -->
         <section id="myfirst">
           <div class="page-header">
-            <h1>3. Video: My first bds script </h1>
+            <h1>3. Video: My first BigDataScript </h1>
           </div>
 				<p class="lead">
 				Here we show an introduction to BigDataScript (<code>bds</code>) command line.
