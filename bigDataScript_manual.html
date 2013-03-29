@@ -80,6 +80,9 @@
           <li><a href="#taskDep"><i class="icon-chevron-right"></i> Video: Creating pipelines: Task dependencies</a></li>
           <li><a href="#taskDep2"><i class="icon-chevron-right"></i> Video: More on task dependencies </a></li>
           <li><a href="#cool"><i class="icon-chevron-right"></i> Video: Some cool features </a></li>
+          <li><a href="#language"><i class="icon-chevron-right"></i> Language definition </a></li>
+          <li><a href="#dataTypes"><i class="icon-chevron-right"></i> Data type </a></li>
+          <li><a href="#sys"><i class="icon-chevron-right"></i> Sys &amp; Task </a></li>
         </ul>
       </div>
       <div class="span9">
@@ -218,6 +221,18 @@ $ su -
 					Task dependency using timestamps is provided at basic language level to make this easy.
 					</p>
 				</ul>
+
+				<h3> What BigDataScript is not</h3>
+				<p>
+				BigDataScript is a language to create pipelines and it is, in many ways, analogous to "shell scripting". 
+				You use it to "glue" programs toghether, but you would never use shell scripting to perform heavyweight computations.
+				You don't care if <code>bash</code> takes a few miliseconds more to invoke a program, just because the running time of the program is usually much longer.
+				Similarly you don't really care about performance characteristics of <code>bds</code>.
+				<br>
+				Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours (or sometimes days) to run.
+				The fact that bds takes a few miliseconds more to invoke the program, or to schedule the program in a cluster queue, really doesn't make any difference.
+				<p>
+				<b>Bottom line:</b> You use specialized programs to perform heavy weight computations and use <code>BigDataScript</code> to glue thos programs toghether.
 				</p>
         </section>
 
@@ -522,6 +537,246 @@ Variable flag is true
 				</ul>
         </section>
 
+        <!-- ================================================== -->
+        <section id="language">
+          <div class="page-header">
+            <h1>9. Language definition </h1>
+          </div>
+				<p class="lead">
+				BigDataScript language is almost trivial, here are some basic definitions in case you are curious.
+				</p>
+				<p>
+				Statements can be terminated either by semicolon or by a new line.
+				<br>
+				All the usual statements are available:
+				<ul>
+					<li> Comments
+<pre>
+// Single line comment
+
+# Another single line comment
+
+/*
+   Multi-line comment
+*/
+</pre>
+					<li> <code>if / else</code> It does exactly what you expect
+<pre>
+if( i < 10 )	print("Less than ten\n")
+</pre>
+					or
+<pre>
+if( i < 10 ) {
+	print("Less than ten\n")
+} else {
+	print("More than ten\n")
+}
+</pre>
+
+					<li> <code>for</code> C or Java like for statement
+<pre>
+for( int i=0 ; i < 10 ; i++ ) print("$i\n")
+</pre>
+					or
+<pre>
+for( int i=0 ; i < 10 ; i++ ) {
+	print("$i\n")
+}
+</pre>
+
+					<li> <code>for</code> Java like for iterator on lists
+<pre>
+string[] mylist
+// Some code to populate the list
+for( string s : mylist ) print("$s\n")
+</pre>
+
+					<li> <code>while</code> typical while iterator
+<pre>
+while( i < 10 ) i++
+</pre>
+
+					<li> <code> break </code>: Breaks from current loop
+					<li> <code> continue </code>: Continue at the end of the current loop
+					<li> <code> exit expression?</code>: Exit program, optional expression calculates an exit value.
+					<li> <code> kill </code> Kill a task
+					<li> <code> wait expression?</code> Wait for task/s to finish. It can be one task, a list of tasks or all tasks (if no expression)
+					<li> <code> checkpoint expression?</code> Create a checkpoint. Optional expresion is a file name
+					<li> <code> return expression?</code> Return from a function. Optional expression is a return value.
+				</ul>
+
+				<br>
+				<br>
+				A simple, and useless, example:
+<pre>
+// Define a function
+int sumPositive(int n) {
+    if( n <= 0 )    return 0
+
+    int sum = 0
+    for( int i=0 ; i <= n ; i++ ) sum = sum + i
+    return sum
+}
+
+
+// Main
+int N = 10
+print("The sum is : " + sumPositive(N) + "\n" )
+</pre>
+				Obviously, if you run it
+<pre>
+$ bds z.bds 
+The sum is : 55
+</pre>
+				</p>
+
+				
+        </section>
+
+        <!-- ================================================== -->
+        <section id="dataTypes">
+          <div class="page-header">
+            <h1>10. Data types </h1>
+          </div>
+				<p class="lead">
+				Statically typed language.
+				<p>
+
+				<h3> Only a few simple types</h3>
+				The language is statically typed. 
+				The intention is to avoid runtime errors.
+				<br>
+				<br>
+				There are only a few basic types :
+
+				<table class="table table-striped">
+					<tr> <th> Type   </th> <th> Meaning </th> </tr>
+					<tr> <td> string </td> <td> A string (same a Java's String) </td> </tr>
+					<tr> <td> int    </td> <td> A 64 bit integer number (same a Java's long) </td> </tr>
+					<tr> <td> real   </td> <td> A 64 bit IEEE 754 number (same as Java's double) </td> </tr>
+					<tr> <td> bool   </td> <td> A boolean value, can be 'true' or 'false' (same as Java's boolean)</td> </tr>
+					<tr> <td> Arrays, List, Stacks   </td> <td> These are all the same, just a different way to call a list of elements</td> </tr>
+					<tr> <td> Maps   </td> <td> Maps are not currently supported. They will be implemented soon </td> </tr>
+				</table>
+
+				There is no "null" element. Again, the idea is to minimize points of failura.
+
+				
+				<h3> Strings </h3>
+				There are several basic methods defined for strings:
+
+				<table class="table table-striped">
+					<tr> <th>Return type</th><th> Method / Operator</th> <th> Meaning </th> </tr>
+					<tr> <td> string   </td><td> s = s1 + s2							</td> <td> Concatenate strings.</td> </tr>
+					<tr> <td> string   </td><td> string.toUpper()						</td> <td> Return an upper case version of the string</td> </tr>
+					<tr> <td> string   </td><td> string.toLower()						</td> <td> Return a lower case version of the string</td> </tr>
+					<tr> <td> string   </td><td> string.trim()							</td> <td> Trim spaces at the beginnig and at the end</td> </tr>
+					<tr> <td> string   </td><td> string.substr(int start,int end)       </td> <td> Substring from start to end</td> </tr>
+					<tr> <td> string[] </td><td> string.split(string regex)				</td> <td> Split using a regular expression </td> </tr>
+					<tr> <td> string[] </td><td> string.lines()							</td> <td> Split a string into lines </td> </tr>
+					<tr> <td> bool     </td><td> string.isEmpty()                       </td> <td> True if the string is empty</td> </tr>
+					<tr> <td> bool     </td><td> string.startsWith(string str)			</td> <td> True if string starts with str</td> </tr>
+					<tr> <td> bool     </td><td> string.endsWith(string str)			</td> <td> True if string ends with str</td> </tr>
+					<tr> <td> bool     </td><td> string.indexOf(string str)				</td> <td> Index of th first occurrence of str in string</td> </tr>
+					<tr> <td> int      </td><td> string.lastIndexOf(string str)			</td> <td> Index of th last occurrence of str in string</td> </tr>
+					<tr> <td> string   </td><td> string.replace(string str1,string str2)</td> <td> A new string replacing 'str1' with 'str2'</td> </tr>
+				</table>
+
+				<h3> Strings as file names </h3>
+				Strings can be used in several different ways.
+				For instance, it is common that a string can represent a file name in a script.
+				So you can use 'file' related methods on string.
+				E.g.:
+<pre>
+string f = "in.txt"
+if( f.canRead() ) {
+	print (" Can read file $f\n" )
+}
+</pre>
+				Here <code>f</code> is a string, but it has a method <code>canRead()</code> which retuurns true if f is a file and it can be read.
+				<br>
+				<br>
+				More file related methods:
+
+				<table class="table table-striped">
+					<tr> <th>Return type</th><th> Method</th> <th> Meaning </th> </tr>
+					<tr><td>string        </td> <td>string.path()                      </td> <td> Canonical path to file    </td> </tr>
+					<tr><td>string        </td> <td>string.baseName()                  </td> <td> File's base name    </td> </tr>
+					<tr><td>string        </td> <td>string.baseName(string ext)        </td> <td> File's base name, remove extention 'ext'    </td> </tr>
+					<tr><td>string        </td> <td>string.dirName()                   </td> <td> File's directory name    </td> </tr>
+					<tr><td>string        </td> <td>string.extName()                   </td> <td> File's extension    </td> </tr>
+					<tr><td>bool          </td> <td>string.canRead()                   </td> <td> True if file has read permission    </td> </tr>
+					<tr><td>bool          </td> <td>string.canWrite()                  </td> <td> True if file has write permission   </td> </tr>
+					<tr><td>bool          </td> <td>string.canExec()                   </td> <td> True if file has execution permission    </td> </tr>
+					<tr><td>bool          </td> <td>string.exists()                    </td> <td> True if file exists    </td> </tr>
+					<tr><td>bool          </td> <td>string.isDir()                     </td> <td> True if it's a directory    </td> </tr>
+					<tr><td>bool          </td> <td>string.isFile()                    </td> <td> True if it's a file    </td> </tr>
+					<tr><td>bool          </td> <td>string.delete()                    </td> <td> Delete file    </td> </tr>
+					<tr><td>bool          </td> <td>string.mkdir()                     </td> <td> Create dir ('mkdir -p')   </td> </tr>
+					<tr><td>string        </td> <td>string.read()                      </td> <td> Read the whole file into a string    </td> </tr>
+					<tr><td>string[]      </td> <td>string.readLines()                 </td> <td> Read the whole file and split the lines    </td> </tr>
+					<tr><td>string[]      </td> <td>string.dir()                       </td> <td> List files in a directory ('ls')   </td> </tr>
+					<tr><td>string[]      </td> <td>string.dir(string regex)           </td> <td> List files matching a regular expression </td> </tr>
+					<tr><td>string[]      </td> <td>string.dirPath()                   </td> <td> List files using canonical paths    </td> </tr>
+					<tr><td>string[]      </td> <td>string.dirPath(string regex)       </td> <td> List files, matching a regular expresion, using canonical paths    </td> </tr>
+					<tr><td>int           </td> <td>string.size()                      </td> <td> File size in bytes  </td> </tr>
+				</table>
+				
+				<h3> Strings as task IDs </h3>
+				Strings can also be used to refer to tasks.
+				When a task is created, the <code>task</code> expression returns a task ID, which is a string.
+				This task ID can be used for task operations, for instance:
+<pre>
+string tid = task echo Hello
+wait tid
+</pre>
+				Here the <code>wait</code> statement will wait until the task "echo Hello" finishes executing.
+				<br>
+				<br>
+				More task related methods:
+				<table class="table table-striped">
+					<tr> <th>Return type</th><th> Method</th> <th> Meaning </th> </tr>
+					<tr> <td> bool    </td> <td> string.isDone()   </td> <td> True if the task finished</td> </tr>
+					<tr> <td> bool    </td> <td> string.isDoneOk() </td> <td> True if the task finished without errors </td> </tr>
+					<tr> <td> string  </td> <td> string.stdout()   </td> <td> A string with all the STDOUT generated from this task </td> </tr>
+					<tr> <td> string  </td> <td> string.stderr()   </td> <td> A string with all the STDERR generated from this task </td> </tr>
+					<tr> <td> int     </td> <td> string.exitCode() </td> <td> Exit code</td> </tr>
+				</table>
+
+				<h3> Arrays, List, Stacks </h3>
+				Arrays, list and stacks are all the same thing.
+				You can create a list of strings simply by declaring <code> string[] myStringList </code>. 
+				Similarly, a list of ints is just <code> int[] myIntList </code>. 
+				<br>
+				<br>
+				Methods:
+				<table class="table table-striped">
+					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
+					<tr> <td> Element added  </td> <td> add </td> <td> Add at the end og the list </td> </tr>
+					<tr> <td> First element  </td> <td> head </td> <td> Get first element </td> </tr>
+					<tr> <td> Last element  </td> <td> pop </td> <td> Get last element and remove it from the list </td> </tr>
+					<tr> <td> Element pushed  </td> <td> push </td> <td> Add at the end of the list </td> </tr>
+					<tr> <td> int </td> <td> size() </td> <td> Return the number of elements in the list </td> </tr>
+					<tr> <td> New sorted list </td> <td> sort() </td> <td> Create a new list sorting the elements of this list</td> </tr>
+					<tr> <td> List  </td> <td> tail() </td> <td> Create a new list with all but the first element</td> </tr>
+				</table>
+				</p>
+        </section>
+
+        <!-- ================================================== -->
+        <section id="sys">
+          <div class="page-header">
+            <h1>11. Data types </h1>
+          </div>
+				<p class="lead">
+				Statically typed language.
+				<p>
+
+				<h3> Only a few simple types</h3>
+				The language is statically typed. 
+				The intention is to avoid runtime errors.
+				<br>
+				<br>
       </div>
     </div>
 
