@@ -82,7 +82,10 @@
           <li><a href="#cool"><i class="icon-chevron-right"></i> Video: Some cool features </a></li>
           <li><a href="#language"><i class="icon-chevron-right"></i> Language definition </a></li>
           <li><a href="#dataTypes"><i class="icon-chevron-right"></i> Data types </a></li>
-          <li><a href="#sys"><i class="icon-chevron-right"></i> Sys, Task &amp; Wait </a></li>
+          <li><a href="#sys"><i class="icon-chevron-right"></i> Sys </a></li>
+          <li><a href="#task"><i class="icon-chevron-right"></i> Task </a></li>
+          <li><a href="#log"><i class="icon-chevron-right"></i> Logging </a></li>
+          <li><a href="#wait"><i class="icon-chevron-right"></i> Wait </a></li>
           <li><a href="#check"><i class="icon-chevron-right"></i> Checkpoints </a></li>
         </ul>
       </div>
@@ -774,11 +777,10 @@ wait tid
         <!-- ================================================== -->
         <section id="sys">
           <div class="page-header">
-            <h1>11. Sys, Task &amp; Wait </h1>
+            <h1>11. Sys </h1>
           </div>
-				<p class="lead"> Command execution and coordination.  <p>
+				<p class="lead"> Local, immediate command execution.  <p>
 
-				<h3> Sys </h3>
 				A <code>sys</code> statement immediately executes a command (an OS command) in the local machine.
 				BigDataScript executions is suspended until the command terminates.
 				If the command exits with an error condition, the bds program creates a checkpoint, and exits with a non-zero exit code.
@@ -812,59 +814,17 @@ sys echo HeLLo \
     | tr [A-Z] [a-z]
 </pre>
 				This program prints <code>hello</code> (all lower case)
-				<br>
-				<br>
-				<h3> Logging </h3>
-				Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
-				This gives you an automatic log of everything that was executed, as well as the detials of the outputs from each execution.
-				<br>
-				For example, let's create a simple program and run it
-<pre>
-string name = "Pablo"
+				</p>
+        </section>
 
-sys echo Hello $name
-</pre>
 
-				Now let's run this script, we use <code>-v</code> command line option to make the output verbose:
-<pre>
-[pcingola@localhost zzz]$ bds -v z.bds
-00:00:00.169	Process ID: z.bds.20130328_224825_685
-00:00:00.174	Queuing task 'z.bds.20130328_224825_685/sys.line_4.id_1'
-00:00:00.674	Running task 'z.bds.20130328_224825_685/sys.line_4.id_1'
-00:00:00.689	Finished task 'z.bds.20130328_224825_685/sys.line_4.id_1'
-Hello Pablo
-00:00:00.692	Finished running. Exit value : 0
-</pre>
-				What happened?
-				<ol>
-					<li> bds parses the <code>sys</code> statement and interpolates "echo Hello $name" to "echo Hello Pablo"
+        <!-- ================================================== -->
+        <section id="task">
+          <div class="page-header">
+            <h1>12. Task </h1>
+          </div>
+				<p class="lead"> Queued command execution with resource management. </p>
 
-					<li> Creates a taks and assigns a task ID <code>z.bds.20130328_224825_685/sys.line_4.id_1</code>
-
-					<li> It creates a shell script file <code>z.bds.20130328_224825_685/sys.line_4.id_1.sh</code> with the code:
-<pre>
-$ cat z.bds.20130328_224825_685/sys.line_4.id_1.sh 
-#!/bin/sh
-
-echo Hello Pablo
-</pre>
-
-					<li> Then executes this shell script and saves stdout and stderr to z.bds.20130328_224825_685/sys.line_4.id_1.stdout and z.bds.20130328_224825_685/sys.line_4.id_1.stderr respectively
-<pre>
-$ cat z.bds.20130328_224825_685/sys.line_4.id_1.stdout
-Hello Pablo
-$ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
-</pre>
-					Notice that there was no output on stderr (it's empty)
-
-					<li> Command finished without proglems, so it continues with the res of the program
-				
-				</ol>
-				So at the end of the run, we have the file with the script, plus the stdout and stderr files.
-				All the information is logged automatically.
-				<br>
-
-				<h3> Task </h3>
 				A <code>task</code>expression, just like <code>sys</code> expression, also executes a command.
 				The main difference is that a <code>task</code> is "scheduled for execution" instead of executed immediately.
 				Task execution order is not warranteed, but <code>bds</code> provides mechanism for task dependencies by means of <code>wait</code> statements.
@@ -933,9 +893,79 @@ $ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
         </section>
 
         <!-- ================================================== -->
+        <section id="log">
+          <div class="page-header">
+            <h1>13. Logging </h1>
+          </div>
+				<p class="lead"> By default all command execution is logged.  <p>
+
+				Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
+				This gives you an automatic log of everything that was executed, as well as the detials of the outputs from each execution.
+				<br>
+				For example, let's create a simple program and run it
+<pre>
+string name = "Pablo"
+
+sys echo Hello $name
+</pre>
+
+				Now let's run this script, we use <code>-v</code> command line option to make the output verbose:
+<pre>
+[pcingola@localhost zzz]$ bds -v z.bds
+00:00:00.169	Process ID: z.bds.20130328_224825_685
+00:00:00.174	Queuing task 'z.bds.20130328_224825_685/sys.line_4.id_1'
+00:00:00.674	Running task 'z.bds.20130328_224825_685/sys.line_4.id_1'
+00:00:00.689	Finished task 'z.bds.20130328_224825_685/sys.line_4.id_1'
+Hello Pablo
+00:00:00.692	Finished running. Exit value : 0
+</pre>
+				What happened?
+				<ol>
+					<li> bds parses the <code>sys</code> statement and interpolates "echo Hello $name" to "echo Hello Pablo"
+
+					<li> Creates a taks and assigns a task ID <code>z.bds.20130328_224825_685/sys.line_4.id_1</code>
+
+					<li> It creates a shell script file <code>z.bds.20130328_224825_685/sys.line_4.id_1.sh</code> with the code:
+<pre>
+$ cat z.bds.20130328_224825_685/sys.line_4.id_1.sh 
+#!/bin/sh
+
+echo Hello Pablo
+</pre>
+
+					<li> Then executes this shell script and saves stdout and stderr to z.bds.20130328_224825_685/sys.line_4.id_1.stdout and z.bds.20130328_224825_685/sys.line_4.id_1.stderr respectively
+<pre>
+$ cat z.bds.20130328_224825_685/sys.line_4.id_1.stdout
+Hello Pablo
+$ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
+</pre>
+					Notice that there was no output on stderr (it's empty)
+
+					<li> Command finished without proglems, so it continues with the res of the program
+				
+				</ol>
+				So at the end of the run, we have the file with the script, plus the stdout and stderr files.
+				All the information is logged automatically.
+				<br>
+
+				</p>
+        </section>
+
+
+        <!-- ================================================== -->
+        <section id="wait">
+          <div class="page-header">
+            <h1>14. Wait </h1>
+          </div>
+				<p class="lead"> Task coordination mechanisms rely havily on wait statements.</p>
+				<br>
+				<br>
+        </section>
+
+        <!-- ================================================== -->
         <section id="check">
           <div class="page-header">
-            <h1>12. Checkpoints </h1>
+            <h1>15. Checkpoints </h1>
           </div>
 				<p class="lead"> BigDataScript is intended have absolute serialization, which is achieved using checkpoint commands.</p>
 				Fully serializable program states and checkpoints help to recover from failures in complex pipelines.<p>
