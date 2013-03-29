@@ -83,10 +83,12 @@
           <li><a href="#language"><i class="icon-chevron-right"></i> Language definition </a></li>
           <li><a href="#dataTypes"><i class="icon-chevron-right"></i> Data types </a></li>
           <li><a href="#sys"><i class="icon-chevron-right"></i> Sys </a></li>
-          <li><a href="#task"><i class="icon-chevron-right"></i> Task </a></li>
+          <li><a href="#taskExpr"><i class="icon-chevron-right"></i> Task </a></li>
           <li><a href="#log"><i class="icon-chevron-right"></i> Logging </a></li>
-          <li><a href="#wait"><i class="icon-chevron-right"></i> Wait </a></li>
+          <li><a href="#waitExpr"><i class="icon-chevron-right"></i> Wait </a></li>
+          <li><a href="#dep"><i class="icon-chevron-right"></i> Dependency operator </a></li>
           <li><a href="#check"><i class="icon-chevron-right"></i> Checkpoints </a></li>
+          <li><a href="#vars"><i class="icon-chevron-right"></i> Predefined variables </a></li>
         </ul>
       </div>
       <div class="span9">
@@ -819,7 +821,7 @@ sys echo HeLLo \
 
 
         <!-- ================================================== -->
-        <section id="task">
+        <section id="taskExpr">
           <div class="page-header">
             <h1>12. Task </h1>
           </div>
@@ -887,8 +889,138 @@ sys echo HeLLo \
 				You must closely monitor your processes and instances to avoid charges due to software bugs.
 				<br>
 				<br>
-				
+				<h3> Scheduling tasks </h3>
+				A task is scheduled by means of a <code>task</code> expression.
+				A <code>task</code> expression returns a task ID, a string representing a task.
+				E.g.:
+<pre>
+$ cat z.bds
+string tid = task echo Hello 
+print("Task is $tid\n")
 
+$ bds z.bds
+Task is z.bds.20130329_130235_269/task.line_1.id_1
+Hello
+</pre>
+
+				Many tasks can be scheduled by simply invoking a task statement many times. 
+				Execution order depends on underliying system and there is absolutely no warrantees about execution order (unless you use a <code>wait</code> statement).
+				<br>
+				E.g., clearly all the tasks are NOT executed in order:
+<pre>
+$ cat z.bds
+for( int i=0 ; i < 10 ; i++ ) task echo Hi $i
+
+$ bds z.bds
+Hi 0
+Hi 5
+Hi 4
+Hi 3
+Hi 2
+Hi 1
+Hi 7
+Hi 6
+Hi 9
+Hi 8
+</pre>
+
+			<h3> Resource consumption and task options</h3>
+			It is not uncommon to have a task that requires many CPUs.
+			In such case, we should inform the resource management system in order to get an efficient allocation of resources (plus many cluster systems kill tasks that fail to report this).
+			<br>
+			E.g., In this example we allocate 4 CPUs per task and run it on an 8-core computer, so obviously only 2 tasks can run at the same time:
+<pre>
+$ cat z.bds
+for( int i=0 ; i < 10 ; i++ ) {
+	# Inform resource management that we need 4 core on each of these tasks
+	task ( cpus=4 ) {
+		sys echo Hi $i ; sleep 2; echo Done $i
+	}
+}
+
+$ bds z.bds
+Hi 0
+Hi 1
+Done 0
+Done 1
+Hi 3
+Hi 2
+Done 2
+Done 3
+Hi 4
+Hi 5
+Done 4
+Done 5
+Hi 6
+Hi 7
+Done 6
+Done 7
+Hi 9
+Hi 8
+Done 8
+Done 9
+</pre>
+				<br>
+				List of resources or task options
+				<table class="table table-striped">
+					<tr>
+						<th> Variable name </th>
+						<th> Default value </th>
+						<th> Resource / Task options </th>
+					</tr>
+					<tr>
+						<td> <code>cpus</code> </td>	
+						<td> 1 </td> 
+						<td> Number of CPU (cores) used by the process. </td> 
+					</tr>
+					<tr>
+						<td> <code>canFail</code> </td>	
+						<td> false </td> 
+						<td> If true, a task is allowed to fail. This means that a failed task execution does not result in program termination and checkpointing. </td> 
+					</tr>
+					<tr>
+						<td> <code>timeout</code> </td>	
+						<td> 0 </td> 
+						<td> Number of seconds that a process is allowed to execute. Ignored if zero or less. If process runs more than <code>timeout</code> seconds, it is killed. </td> 
+					</tr>
+					<tr>
+						<td> <code>node</code> </td>	
+						<td>  </td> 
+						<td> If possible this task should be executed on a partucilar cluster node. This option is ony used for cluster systems and ignored on any other systems. </td> 
+					</tr>
+					<tr>
+						<td> <code>queue</code> </td>	
+						<td>  </td> 
+						<td> Queue name of preferred execution queue (only for cluster systems). </td> 
+					</tr>
+				</table>
+
+				<h3> Conditional execution </h3>
+				Conditiona execution of task can, obviously, be achieved using an <code>if</code> statement.
+				Since conditional execution is so common, we allow for some syntatic sugar by <code> task( experession1, experession2, ... ) { ... } </code>.
+				where <code>experession1</code>, <code>experession2</code>, etc. are bool expressions.
+				The task is executed only if all <code>bool</code> expressions are <code>true</code>.
+				<br>
+				So the following programs are equivalent
+<pre>
+bool shouldExec = true
+if( shouldExec ) {
+	task( cpus = 4 ) {
+		sys echo RUNNING
+	}
+}
+</pre>
+				Is the same as:
+<pre>
+bool shouldExec = true
+
+task( shouldExec, cpus = 4 ) {
+	sys echo RUNNING
+}
+
+</pre>
+
+				<i class="icon-warning-sign"></i> This feature is particularly useful when combined with the dependency operator <code>&lt;-</code>
 				</p>
         </section>
 
@@ -953,11 +1085,21 @@ $ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
 
 
         <!-- ================================================== -->
-        <section id="wait">
+        <section id="waitExpr">
           <div class="page-header">
             <h1>14. Wait </h1>
           </div>
 				<p class="lead"> Task coordination mechanisms rely havily on wait statements.</p>
+				<br>
+				<br>
+        </section>
+
+        <!-- ================================================== -->
+        <section id="dep">
+          <div class="page-header">
+            <h1>14. Dependency operator </h1>
+          </div>
+				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps (like "make" command).  </p>
 				<br>
 				<br>
         </section>
@@ -969,6 +1111,17 @@ $ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
           </div>
 				<p class="lead"> BigDataScript is intended have absolute serialization, which is achieved using checkpoint commands.</p>
 				Fully serializable program states and checkpoints help to recover from failures in complex pipelines.<p>
+				<br>
+				<br>
+        </section>
+
+        <!-- ================================================== -->
+        <section id="vars">
+          <div class="page-header">
+            <h1>16. Predefined variables </h1>
+          </div>
+				<p class="lead"> BigDataScript provides some predefined variables.</p>
+
 				<br>
 				<br>
         </section>
