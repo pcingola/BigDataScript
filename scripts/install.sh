@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Delete old jar
+# Create 'bds' dir
 mkdir $HOME/.bds
 
 # Build Jar file
