@@ -19,11 +19,11 @@ public class Zzz {
 		String pidFile = Gpr.HOME + "/zzz.pid";
 		PidLogger pidLogger = new PidLogger(pidFile);
 
-		int test = 1;
+		int test = 2;
 
 		if (test == 1) {
 			LocalExecutioner localExecutioner = new LocalExecutioner(pidLogger);
-			Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\necho hi ; sleep 1; ls -al; sleep 1; echo done\n");
+			Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\necho hi ; sleep 1; ls -al; echo done\n");
 			task.getResources().setTimeout(5);
 			localExecutioner.start();
 			localExecutioner.add(task);

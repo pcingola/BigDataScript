@@ -307,7 +307,7 @@ public class TestCasesExec extends TestCase {
 		Timer timer = new Timer();
 		timer.start();
 		runAndCheck("test/run_27.bds", "timeout", "1"); // 2 seconds timeout
-		Assert.assertTrue(timer.elapsed() < 2 * 1000); // We should finish in less than 3 secs (the program waits 60secs)
+		Assert.assertTrue(timer.elapsed() < 3 * 1000); // We should finish in less than 3 secs (the program waits 60secs)
 	}
 
 	@Test
@@ -424,6 +424,10 @@ public class TestCasesExec extends TestCase {
 
 	public void test45() {
 		runAndCheckExit("test/run_45.bds", 1);
+	}
+
+	public void test46() {
+		runAndCheck("test/run_46.bds", "i", 2L);
 	}
 
 }

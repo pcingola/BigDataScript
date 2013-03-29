@@ -147,11 +147,7 @@ public class CmdRunnerSsh extends CmdRunner {
 			// We are done. Either process finished or an exception was raised.
 			started = true;
 			executing = false;
-			if (task != null) {
-				// Add command stats (now we only have exitValue)
-				task.setExitValue(exitValue);
-				task.setDone(true);
-			}
+			if (task != null) task.setExitValue(exitValue);
 		}
 
 		return exitValue;
@@ -165,8 +161,7 @@ public class CmdRunnerSsh extends CmdRunner {
 		// Update task stats
 		if (task != null) {
 			if (debug) Gpr.debug("Killed: Setting stats " + task);
-			task.setExitValue(-1);
-			task.setDone(true);
+			task.stateKilled();
 		}
 	}
 
@@ -269,11 +264,6 @@ public class CmdRunnerSsh extends CmdRunner {
 		channel = sshConnect(cmdStr.toString());
 		channel.setInputStream(null);
 		channel.setPty(true); // Allocate pseudo-tty (same as "ssh -t"?)
-
-		//---
-		// Redirect?
-		//---
-		InputStream in = null;
 
 		throw new RuntimeException("Unimplemented!!!");
 		//		if (redirectStderr != null) {

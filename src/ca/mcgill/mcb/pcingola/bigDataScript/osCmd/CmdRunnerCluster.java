@@ -17,7 +17,7 @@ public class CmdRunnerCluster extends CmdRunner {
 	@Override
 	protected void execDone() {
 		started = true; // We started.
-		task.setStarted(true);
+		if (task != null) task.setExitValue(exitValue); // Update task
 	}
 
 	@Override

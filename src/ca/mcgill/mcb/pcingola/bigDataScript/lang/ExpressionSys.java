@@ -154,7 +154,7 @@ public class ExpressionSys extends Expression {
 		// Execute
 		LocalExecutioner executioner = (LocalExecutioner) Executioners.getInstance().get(ExecutionerType.SYS); // Get executioner
 		executioner.add(task); // Execute task and wait for command to finish
-		executioner.wait(task.getId()); // Execute task and wait for command to finish
+		executioner.wait(task); // Execute task and wait for command to finish
 
 		// Error running the program? 
 		if (!task.isDoneOk()) {

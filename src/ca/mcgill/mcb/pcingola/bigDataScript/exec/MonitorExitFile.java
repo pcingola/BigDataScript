@@ -6,12 +6,11 @@ import java.util.HashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * Task done.
  * Check if a task finished, by checking if 'exitFile' exists
  * 
  * @author pcingola
  */
-public class TaskDone extends Thread {
+public class MonitorExitFile extends Thread {
 
 	public static final int SLEEP_TIME = 200;
 
@@ -20,7 +19,7 @@ public class TaskDone extends Thread {
 	HashMap<Task, Executioner> execByTask;
 	boolean running;
 
-	public TaskDone() {
+	public MonitorExitFile() {
 		execByTask = new HashMap<Task, Executioner>();
 	}
 
@@ -112,9 +111,7 @@ public class TaskDone extends Thread {
 		if (debug) Gpr.debug("Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
 
 		// Set task
-		task.setStarted(true);
 		task.setExitValue(exitVal);
-		task.setDone(true);
 
 		// Inform executioner that task has finished
 		Executioner executioner = execByTask.get(task);

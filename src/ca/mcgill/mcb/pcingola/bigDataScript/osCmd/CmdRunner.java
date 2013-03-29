@@ -96,15 +96,8 @@ public class CmdRunner extends Thread {
 		started = true;
 		executing = false;
 
-		// Inform command stats 
-		if (task != null) {
-			task.setStarted(true);
-			task.setExitValue(exitValue);
-			task.setDone(true);
-		}
-
-		// Notify end of execution
-		if (executioner != null) executioner.finished(id);
+		if (task != null) task.setExitValue(exitValue); // Update task
+		if (executioner != null) executioner.finished(id); // Notify end of execution
 	}
 
 	/**
@@ -203,8 +196,7 @@ public class CmdRunner extends Thread {
 		// Update task stats
 		if (task != null) {
 			if (debug) Gpr.debug("Killed: Setting stats for " + id);
-			task.setExitValue(-1);
-			task.setDone(true);
+			task.stateKilled();
 		}
 
 		// Notify end of execution
@@ -306,7 +298,7 @@ public class CmdRunner extends Thread {
 
 	protected void started() {
 		started = true;
-		task.setStarted(true); // Set as started
+		task.stateStarted();
 	}
 
 	@Override

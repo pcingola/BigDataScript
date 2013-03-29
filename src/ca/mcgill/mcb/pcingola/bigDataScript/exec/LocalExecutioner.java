@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunner;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -127,11 +126,17 @@ public class LocalExecutioner extends Executioner {
 	 * @param taskId
 	 * @return
 	 */
-	public int wait(String taskId) {
-		CmdRunner cmd = cmdById.get(taskId);
-		if (cmd == null) return 1;
+	public int wait(Task task) {
+		String taskId = task.getId();
+		CmdRunner cmd = null;
 
-		Gpr.debug("WAIT FOR TASK : " + taskId);
+		// Wait for command to appear
+		while (cmd == null) {
+			cmd = cmdById.get(taskId);
+			sleepShort();
+		}
+
+		// Joind the thread (wait until execution ends)
 		try {
 			cmd.join();
 		} catch (InterruptedException e) {
@@ -139,8 +144,6 @@ public class LocalExecutioner extends Executioner {
 		}
 
 		// Now the task is 'done'
-		Task task = tasksDone.get(taskId);
-		Gpr.debug("DONE : " + task.getExitValue() + "\t" + task.isDone() + "\t" + task.isDoneOk());
 		return task.getExitValue();
 
 	}

@@ -143,7 +143,7 @@ public abstract class Executioner extends Thread {
 		tokill.addAll(tasksToRun);
 		for (Task t : tokill) {
 			running(t);
-			t.failed();
+			t.stateError();
 			finished(t);
 		}
 
@@ -172,7 +172,7 @@ public abstract class Executioner extends Thread {
 			Task t = tasksToRun.get(i);
 			if (t.getId().equals(id)) {
 				running(t);
-				t.failed();
+				t.stateError();
 				finished(t);
 				return true;
 			}
@@ -390,7 +390,7 @@ public abstract class Executioner extends Thread {
 	 * @param task
 	 */
 	protected void waitStart(Task task) {
-		// Busy wait, probably not the smartest thinsg to do...
+		// Busy wait, probably not the smartest thing to do...
 		while (!task.isStarted())
 			sleepShort();
 	}

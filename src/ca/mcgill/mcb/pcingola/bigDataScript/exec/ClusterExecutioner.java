@@ -26,11 +26,11 @@ public class ClusterExecutioner extends LocalExecutioner {
 	public static final int MIN_EXTRA_TIME = 15;
 	public static final int MAX_EXTRA_TIME = 120;
 
-	TaskDone taskDone;
+	MonitorExitFile taskDone;
 
 	public ClusterExecutioner(PidLogger pidLogger, Cluster cluster) {
 		super(pidLogger);
-		taskDone = new TaskDone();
+		taskDone = new MonitorExitFile();
 
 	}
 

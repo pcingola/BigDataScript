@@ -16,13 +16,22 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class Task implements BigDataScriptSerialize {
 
-	public static final String SHE_BANG = "#!/bin/sh\n\n";
+	public enum TaskState {
+		NONE // Task created, nothing happened so far
+		, STARTED // Process started
+		, START_FAILED // Process failed to start
+		, RUNNING // Running OK
+		, ERROR // Filed while running
+		, KILLED // Task was killed  
+		, FINISHED // Finished OK  
+	}
+
+	public static final String SHE_BANG = "#!/bin/sh\n\n";;
 
 	protected String id; // Task ID
 	protected boolean verbose, debug;
 	protected boolean canFail; // Allow execution to fail
-	protected boolean started; // Has this task started running?
-	protected boolean done; // Is this task finished
+	TaskState taskState;
 	protected int exitValue; // Exit (error) code
 	protected String pid; // PID (if any)
 	protected String programFileName; // Program file name
@@ -44,6 +53,7 @@ public class Task implements BigDataScriptSerialize {
 		this.programFileName = programFileName;
 		this.programTxt = programTxt;
 		resources = new HostResources();
+		reset();
 	}
 
 	/**
@@ -52,7 +62,7 @@ public class Task implements BigDataScriptSerialize {
 	 */
 	protected boolean checkOutputFiles() {
 		if (checkOutputFiles != null) return checkOutputFiles;
-		if (!done || outputFiles == null) return true; // Nothing to check
+		if (!isStateFinished() || outputFiles == null) return true; // Nothing to check
 
 		boolean check = true;
 		for (String fileName : outputFiles) {
@@ -85,20 +95,11 @@ public class Task implements BigDataScriptSerialize {
 		if (exitCodeFile == null) exitCodeFile = base + ".exitCode";
 	}
 
-	/**
-	 * Mark this task as failed
-	 */
-	public void failed() {
-		started = true;
-		exitValue = 1;
-		done = true;
-	}
-
 	public String getExitCodeFile() {
 		return exitCodeFile;
 	}
 
-	public int getExitValue() {
+	public synchronized int getExitValue() {
 		if (!checkOutputFiles()) return 1; // Any output file failed?
 		return exitValue;
 	}
@@ -111,7 +112,7 @@ public class Task implements BigDataScriptSerialize {
 		return node;
 	}
 
-	public String getPid() {
+	public synchronized String getPid() {
 		return pid;
 	}
 
@@ -140,38 +141,73 @@ public class Task implements BigDataScriptSerialize {
 	}
 
 	/**
-	 * Has this task finished?
+	 * Has this task finished? Either finished OK or finished because of errors.
 	 * @return
 	 */
-	public boolean isDone() {
-		return done;
+	public synchronized boolean isDone() {
+		return isError() || isStateFinished();
 	}
 
 	/**
 	 * Has this task been executed successfully?
+	 * The task has finished, exit code is zero and all output files have been created
+	 * 
 	 * @return
 	 */
-	public boolean isDoneOk() {
-		return done && (exitValue == 0) && checkOutputFiles();
+	public synchronized boolean isDoneOk() {
+		return isStateFinished() && (exitValue == 0) && checkOutputFiles();
+	}
+
+	/**
+	 * Is this task in any error or killed state?
+	 * @return
+	 */
+	public synchronized boolean isError() {
+		return (taskState == TaskState.START_FAILED) //
+				|| (taskState == TaskState.ERROR) //
+				|| (taskState == TaskState.KILLED) //
+		;
 	}
 
 	/**
 	 * Has this task been executed and failed?
+	 * 
+	 * This is true if:
+	 * 		- The task has finished execution and it is in an error state 
+	 * 		- OR exitValue is non-zero 
+	 * 		- OR any of the output files was not created
+	 * 
 	 * @return
 	 */
-	public boolean isFailed() {
-		return done && ((exitValue != 0) || !checkOutputFiles());
+	public synchronized boolean isFailed() {
+		return isError() || (exitValue != 0) || !checkOutputFiles();
 	}
 
-	public boolean isStarted() {
-		return started;
+	/**
+	 * Has the task been started?
+	 * @return
+	 */
+	public synchronized boolean isStarted() {
+		return taskState != TaskState.NONE;
+	}
+
+	public synchronized boolean isStateFinished() {
+		return taskState == TaskState.FINISHED;
+	}
+
+	public synchronized boolean isStateRunning() {
+		return taskState == TaskState.RUNNING;
+	}
+
+	public synchronized boolean isStateStarted() {
+		return taskState == TaskState.STARTED;
 	}
 
 	/**
 	 * Reset parameters and allow a task to be re-executed
 	 */
 	public void reset() {
-		done = false;
+		taskState = TaskState.NONE;
 		exitValue = 0;
 		outputFiles = null;
 	}
@@ -181,7 +217,7 @@ public class Task implements BigDataScriptSerialize {
 		// Note that "Task classname" field has been consumed at this point
 		id = serializer.getNextField();
 		canFail = serializer.getNextFieldBool();
-		done = serializer.getNextFieldBool();
+		taskState = TaskState.valueOf(serializer.getNextFieldString());
 		exitValue = (int) serializer.getNextFieldInt();
 		node = serializer.getNextField();
 		queue = serializer.getNextField();
@@ -200,7 +236,7 @@ public class Task implements BigDataScriptSerialize {
 		return getClass().getSimpleName() //
 				+ "\t" + id // 
 				+ "\t" + canFail // 
-				+ "\t" + done // 
+				+ "\t" + taskState // 
 				+ "\t" + exitValue // 
 				+ "\t" + node // 
 				+ "\t" + queue // 
@@ -221,12 +257,14 @@ public class Task implements BigDataScriptSerialize {
 		this.debug = debug;
 	}
 
-	public void setDone(boolean done) {
-		this.done = done;
-	}
-
-	public void setExitValue(int exitValue) {
+	/**
+	 * Set program's exit value and update state accordingly
+	 * @param exitValue
+	 */
+	public synchronized void setExitValue(int exitValue) {
 		this.exitValue = exitValue;
+		if (exitValue == 0) taskState = TaskState.FINISHED;
+		else taskState = TaskState.ERROR;
 	}
 
 	public void setNode(String node) {
@@ -245,12 +283,46 @@ public class Task implements BigDataScriptSerialize {
 		this.queue = queue;
 	}
 
-	public void setStarted(boolean started) {
-		this.started = started;
-	}
-
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+	}
+
+	protected synchronized void state(TaskState taskState) {
+		this.taskState = taskState;
+	}
+
+	/**
+	 * Change state to ERROR or START_FAILED
+	 */
+	public synchronized void stateError() {
+		if (isStarted()) taskState = TaskState.START_FAILED;
+		else taskState = TaskState.ERROR;
+	}
+
+	/**
+	 * Change state to FINISHED
+	 */
+	public synchronized void stateFinished() {
+		taskState = TaskState.FINISHED;
+	}
+
+	/**
+	 * Change state to FINISHED
+	 */
+	public synchronized void stateKilled() {
+		taskState = TaskState.KILLED;
+		exitValue = -1;
+	}
+
+	public synchronized void stateRunning() {
+		taskState = TaskState.RUNNING;
+	}
+
+	/**
+	 * Change state to STARTED
+	 */
+	public synchronized void stateStarted() {
+		taskState = TaskState.STARTED;
 	}
 
 }
