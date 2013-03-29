@@ -81,8 +81,9 @@
           <li><a href="#taskDep2"><i class="icon-chevron-right"></i> Video: More on task dependencies </a></li>
           <li><a href="#cool"><i class="icon-chevron-right"></i> Video: Some cool features </a></li>
           <li><a href="#language"><i class="icon-chevron-right"></i> Language definition </a></li>
-          <li><a href="#dataTypes"><i class="icon-chevron-right"></i> Data type </a></li>
-          <li><a href="#sys"><i class="icon-chevron-right"></i> Sys &amp; Task </a></li>
+          <li><a href="#dataTypes"><i class="icon-chevron-right"></i> Data types </a></li>
+          <li><a href="#sys"><i class="icon-chevron-right"></i> Sys, Task &amp; Wait </a></li>
+          <li><a href="#sys"><i class="icon-chevron-right"></i> Checkpoints </a></li>
         </ul>
       </div>
       <div class="span9">
@@ -773,7 +774,7 @@ wait tid
         <!-- ================================================== -->
         <section id="sys">
           <div class="page-header">
-            <h1>12. Sys &amp; Task types </h1>
+            <h1>11. Sys, Task &amp; Wait </h1>
           </div>
 				<p class="lead"> Command execution and coordination.  <p>
 
@@ -864,6 +865,10 @@ $ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
 				<br>
 
 				<h3> Task </h3>
+				A task also executes a command.
+				The main difference is that a task is "scheduled for execution" instead of executed immediately.
+				Task execution order is not warranteed, but bds provides mechanism for task dependencies by means of the <code>wait</code> statement.
+				
 
 				</p>
         </section>
@@ -871,10 +876,10 @@ $ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
         <!-- ================================================== -->
         <section id="check">
           <div class="page-header">
-            <h1>13. Checkpoints </h1>
+            <h1>12. Checkpoints </h1>
           </div>
-				<p class="lead"> Fully serializable program states and checkpoints help to recover complex pipelines.  <p>
-
+				<p class="lead"> BigDataScript is intended have absolute serialization, which is achieved using checkpoint commands.</p>
+				Fully serializable program states and checkpoints help to recover from failures in complex pipelines.<p>
 				<br>
 				<br>
         </section>
