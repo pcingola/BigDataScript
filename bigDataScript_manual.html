@@ -1221,7 +1221,7 @@ DONE 9
         <!-- ================================================== -->
         <section id="dep">
           <div class="page-header">
-            <h1>14. Dependency operator </h1>
+            <h1>15. Dependency operator </h1>
           </div>
 				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps (like "make" command).  </p>
 
@@ -1275,7 +1275,7 @@ task( out <- in ) {
         <!-- ================================================== -->
         <section id="check">
           <div class="page-header">
-            <h1>15. Checkpoints </h1>
+            <h1>16. Checkpoints </h1>
           </div>
 				<p class="lead"> BigDataScript is intended have absolute serialization, which is achieved using checkpoint commands.</p>
 
@@ -1328,11 +1328,45 @@ Counting 9
         <!-- ================================================== -->
         <section id="vars">
           <div class="page-header">
-            <h1>16. Predefined variables </h1>
+            <h1>17. Predefined variables </h1>
           </div>
 				<p class="lead"> BigDataScript provides some predefined variables.</p>
-
 				<br>
+				Whenever you run a BigDataScript program you have several predefined variables:
+				<table class="table table-striped">
+					<tr>
+						<th> Variable name </th>
+						<th> Meaning </th>
+					</tr>
+					<tr>
+						<td> <code>cpus</code>, <code>canFail</code> <code>timeout</code> <code>node</code> <code>queue</code>  </td>	
+						<td> These are the defula valies for <code>task</code> the meaning is explained in Task section of this handbook. </td> 
+					</tr>
+					<tr>
+						<td> string <code>programName</code> </td>	
+						<td> The program's name </td> 
+					</tr>
+					<tr>
+						<td> string[] <code>args</code> </td>	
+						<td> Arguments used to invoke the program, i.e. all command line options after program name (<code>bds [options] prog.bds args ...</code>). </td> 
+					</tr>
+					<tr>
+						<td> string <code>ppwd</code> </td>	
+						<td> Canonical (physical) path to directory where the program is being executed. </td> 
+					</tr>
+					<tr>
+						<td> int <code>cpusLocal</code> </td>	
+						<td> Number of cores in the computer running the script </td> 
+					</tr>
+					<tr>
+						<td> All shell variables </td>	
+						<td> All shell variables at the moment of invokation (e.g. <code>HOME</code>, <code>PWD</code>, etc.)</td> 
+					</tr>
+					<tr>
+						<td> K, M, G, T, P </td>	
+						<td> Kile, Mega, Giga, Tera, Peta (2^10, 2^20, 2^30, 2^40 and 2^50 respectively)</td> 
+					</tr>
+				</table>
 				<br>
         </section>
       </div>
