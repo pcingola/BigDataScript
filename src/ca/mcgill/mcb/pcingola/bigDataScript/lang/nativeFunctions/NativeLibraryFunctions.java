@@ -14,6 +14,9 @@ public class NativeLibraryFunctions {
 	FunctionNativePrint.class //
 			, FunctionNativePrintErr.class //
 			, FunctionNativeSleep.class //
+			, FunctionNativeRand.class //
+			, FunctionNativeRandInt.class //
+			, FunctionNativeRandIntRange.class //
 	};
 
 	ArrayList<FunctionNative> functions;

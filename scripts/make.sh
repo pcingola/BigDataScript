@@ -1,8 +1,7 @@
 #!/bin/sh
 
 # Delete old jar
-mkdir $HOME/.bds
-rm -f $HOME/.bds/BigDataScript.jar $HOME/.bds/bds
+rm -f $HOME/.bds/BigDataScript.jar
 
 # Build Jar file
 echo Building JAR file

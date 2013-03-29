@@ -378,7 +378,7 @@ public class BigDataScript {
 		//---
 		// Add global symbols
 		//---
-		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, "")); // Task fail triggers checkpoint & exit (a task cannot fail)
+		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, "")); // Program name, now is empty, but it is filled later
 
 		// Command line parameters override defaults
 		if (system == null) system = ExecutionerType.LOCAL.toString().toLowerCase();

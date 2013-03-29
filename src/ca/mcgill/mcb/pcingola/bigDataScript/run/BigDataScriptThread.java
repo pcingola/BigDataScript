@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
@@ -44,6 +45,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	Object returnValue;
 	HashMap<String, Task> tasks;
 	Config config;
+	Random random;
 
 	/**
 	 * Get an ID for a node
@@ -59,6 +61,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		scope = Scope.getGlobalScope();
 		runState = RunState.OK;
 		tasks = new HashMap<String, Task>();
+		random = new Random();
 	}
 
 	public BigDataScriptThread(ProgramUnit programUnit, Config config) {
@@ -70,6 +73,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		tasks = new HashMap<String, Task>();
 		this.config = config;
 		setProgram(programUnit);
+		random = new Random();
 	}
 
 	/**
@@ -170,6 +174,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public BigDataScriptNode getProgramUnit() {
 		return programUnit;
+	}
+
+	public Random getRandom() {
+		return random;
 	}
 
 	/**
