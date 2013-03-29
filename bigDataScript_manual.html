@@ -1261,6 +1261,15 @@ We should update out.txt	# Logically, out needs updating
 				The same rules apply: The operator is true if any out file is missing, zero length or the minimum of modification times in <code>out</code> is less than the maximum modificaton times in <code>in</code>
 				<br>
 				<br>
+				A typical usage of <code>&lt;-</code> is in conjunction with <code>task</code>.
+				E.g.
+<pre>
+task( out <- in ) {
+	sys cat $in > $out
+}
+</pre>
+				The command is executed only if <code>out</code> need updating
+
         </section>
 
         <!-- ================================================== -->
@@ -1269,7 +1278,49 @@ We should update out.txt	# Logically, out needs updating
             <h1>15. Checkpoints </h1>
           </div>
 				<p class="lead"> BigDataScript is intended have absolute serialization, which is achieved using checkpoint commands.</p>
+
 				Fully serializable program states and checkpoints help to recover from failures in complex pipelines.<p>
+				<br>
+				A checkpoint is created either when a task fails or when an explicit <code>checkpopint</code> command is invoked.
+				E.g.: The following program counts from 0 to 9, creating a checkpoint when the counter gets to 5
+<pre>
+for( int i=0 ; i < 10 ; i++ ) {
+    if( i == 5 ) {
+        print("Checkpoint\n")
+        checkpoint
+    }
+    print("Counting $i\n")
+}
+</pre>
+
+				If we execute it, we get
+<pre>
+$ bds z.bds
+Counting 0
+Counting 1
+Counting 2
+Counting 3
+Counting 4
+Checkpoint
+Counting 5
+Counting 6
+Counting 7
+Counting 8
+Counting 9
+</pre>
+				And there is also a checkpoint file <code>z.bds.chp</code> created.
+				We can re-start execution from this checkpoint file, by using the <code>bds -r</code> command line option
+<pre>
+$ bds -r z.bds.chp		# Restart execution from checkpoint file
+Counting 5
+Counting 6
+Counting 7
+Counting 8
+Counting 9
+</pre>
+
+				<i class="icon-hand-right"></i> You can even copy the file/s to another computer and restart execution there
+				
 				<br>
 				<br>
         </section>
