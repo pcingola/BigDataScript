@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Create 'bds' dir
-mkdir $HOME/.bds
+mkdir $HOME/.bds 2> /dev/null
 
 # Build Jar file
 echo Building JAR file
