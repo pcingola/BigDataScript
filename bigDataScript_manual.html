@@ -60,7 +60,7 @@
 <header class="jumbotron subhead" id="overview">
   <div class="container">
     <h1>BigDataScript</h1>
-    <p class="lead">Description and basic information.</p>
+    <p class="lead">Documentation</p>
   </div>
 </header>
 
@@ -72,23 +72,72 @@
     <div class="row">
       <div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav">
+          <li><a href="#install"><i class="icon-chevron-right"></i> Download &amp; Install</a></li>
           <li><a href="#intro"><i class="icon-chevron-right"></i> Introduction</a></li>
-          <li><a href="#myfirst"><i class="icon-chevron-right"></i> My first bds script</a></li>
-          <li><a href="#task"><i class="icon-chevron-right"></i> Scheduling tasks</a></li>
-          <li><a href="#taskCluster"><i class="icon-chevron-right"></i> Scheduling tasks on a cluster</a></li>
-          <li><a href="#taskDep"><i class="icon-chevron-right"></i> Creating pipelines: Task dependencies</a></li>
-          <li><a href="#taskDep2"><i class="icon-chevron-right"></i> More on task dependencies </a></li>
-          <li><a href="#cool"><i class="icon-chevron-right"></i> Some cool features </a></li>
+          <li><a href="#myfirst"><i class="icon-chevron-right"></i> Video: My first bds script</a></li>
+          <li><a href="#task"><i class="icon-chevron-right"></i> Video: Scheduling tasks</a></li>
+          <li><a href="#taskCluster"><i class="icon-chevron-right"></i> Video: Scheduling tasks on a cluster</a></li>
+          <li><a href="#taskDep"><i class="icon-chevron-right"></i> Video: Creating pipelines: Task dependencies</a></li>
+          <li><a href="#taskDep2"><i class="icon-chevron-right"></i> Video: More on task dependencies </a></li>
+          <li><a href="#cool"><i class="icon-chevron-right"></i> Video: Some cool features </a></li>
         </ul>
       </div>
       <div class="span9">
 
 
-        <!-- Introduction
-        ================================================== -->
+        <!-- ================================================== -->
+        <section id="install">
+          <div class="page-header">
+            <h1>1. Download &amp; Install</h1>
+          </div>
+				<p class="lead"> BigDataScript a scripting language for big data pipelines.  </p>
+				<p>
+				The source code is available on <a href="https://github.com/pcingola/BigDataScript">GitHub </a>.
+				How to install:
+<pre>
+# Clone repository
+$ git clone https://github.com/pcingola/BigDataScript.git
+
+# Run 'install script
+$ cd BigDataScript
+$ ./script/install.sh
+</pre>
+
+				Then edit your <code>.bashrc</code> (or <code>.bash_profile</code>) and add the following lines
+<pre>
+# BigDataScript
+export CLASSPATH=$CLASSPATH:$HOME/.bds/BigDataScript.jar
+export PATH=$PATH:$HOME/.bds/
+</pre>
+
+				Optionally, if you have root access, you can do the following (to get <code>bds</code> available everywhere in your system
+<pre>
+$ su -
+# cd /usr/bin/
+# ln -s /home/your_user/.bds/bds
+</pre>
+
+				</p>
+				<h3> Licencing </h3>
+				<p>
+				Open source.
+				</p>
+				<h3> Source code</h3>
+				<p>
+				The source code is available on <a href="https://github.com/pcingola/BigDataScript">GitHub </a>.
+				</p>
+				<h3> Software archtecture </h3>
+				<p>
+				The source code is mostly written in Java and it has some parts in Go. We use ANTLR 4 as Lexer &amp; parser.
+				<br>
+				</p>
+			
+        </section>
+
+        <!-- ================================================== -->
         <section id="intro">
           <div class="page-header">
-            <h1>1. Introduction</h1>
+            <h1>2. Introduction</h1>
           </div>
 				<p class="lead">
 				BigDataScript is intended as a scripting language for big data pipeline. 
@@ -175,7 +224,7 @@
         <!-- ================================================== -->
         <section id="myfirst">
           <div class="page-header">
-            <h1>2. My first bds script </h1>
+            <h1>3. Video: My first bds script </h1>
           </div>
 				<p class="lead">
 				Here we show an introduction to BigDataScript (<code>bds</code>) command line.
@@ -238,7 +287,7 @@ Hi
         <!-- ================================================== -->
         <section id="task">
           <div class="page-header">
-            <h1>3. Scheduling tasks </h1>
+            <h1>4. Video: Scheduling tasks </h1>
           </div>
 				<p class="lead">
 				Task are scheduled according to available resources.
@@ -281,7 +330,7 @@ Done 8
         <!-- ================================================== -->
         <section id="taskCluster">
           <div class="page-header">
-            <h1>4. Scheduling tasks on a cluster </h1>
+            <h1>5. Video: Scheduling tasks on a cluster </h1>
           </div>
 				<p class="lead">
 				Here we show how exactly the same script is run on a cluser...not a single line of code changed.
@@ -308,7 +357,7 @@ $ bds -s cluster z.bds
         <!-- ================================================== -->
         <section id="taskDep">
           <div class="page-header">
-            <h1>5. Creating pipelines: Task dependencies</h1>
+            <h1>6. Creating pipelines: Task dependencies</h1>
           </div>
 				<p class="lead">
 				In a tipical pipeline tasks are not just scheduled for execution.
@@ -369,7 +418,7 @@ Bye 9
         <!-- ================================================== -->
         <section id="taskDep2">
           <div class="page-header">
-            <h1>6. More on task dependencies </h1>
+            <h1>7. Video: More on task dependencies </h1>
           </div>
 				<p class="lead">
 				If we already processed a file and have the results, we may choose to save some work if the input has not changed.
@@ -427,7 +476,7 @@ task( outFile <- inFile ) {
         <!-- ================================================== -->
         <section id="cool">
           <div class="page-header">
-            <h1>7. Some cool features </h1>
+            <h1>8. Video: Some cool features </h1>
           </div>
 				<p class="lead">
 				BigDataScript has some useful features, like automatic command line parsing.
@@ -472,6 +521,7 @@ Variable flag is true
 
 				</ul>
         </section>
+
       </div>
     </div>
 
