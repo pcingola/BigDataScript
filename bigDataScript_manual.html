@@ -179,7 +179,7 @@ $ su -
 				BigDataScript is the solution to the problem.
 				<br>
 				<br>
-				With BigDataScript, creating a jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. 
+				With BigDataScript, creating jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. 
 				If you normaly use of specialized programs to perform heavyweight computations, then BigDataScript is the glue to those commands you need to create a reliable pipeline.
 				<h3>How?</h3>
 
@@ -1224,6 +1224,41 @@ DONE 9
             <h1>14. Dependency operator </h1>
           </div>
 				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps (like "make" command).  </p>
+
+				The dependecy operator is written as <code> out &lt;- in</code>.
+				It is true if <code>out</code> file need to be created or updated.
+				This means that the operator is true if any of the following is satisfied:
+				<ul>
+					<li> <code>out</code> file does not exits
+					<li> <code>out</code> file is empty (has zero length)
+					<li> <code>out</code> latest modification time is earlier than <code>in</code> latest modification time
+				</ul>
+				E.g.:
+<pre>
+$ cat z.bds
+string in = "in.txt"
+string out = "out.txt"
+if( out <- in ) print("We should update $out\n")
+
+$ touch in.txt				# Create in.txt
+$ bds z.bds
+We should update out.txt
+
+$ touch out.txt				# Create zero length out.txt
+$ bds z.bds
+We should update out.txt
+
+$ ls > out.txt				# Create a non-empty out.txt
+$ bds z.bds
+$							# No message
+
+$ echo hi > in.txt			# Update in.txt
+$ bds z.bds
+We should update out.txt	# Logically, out needs updating
+</pre>
+				<br>
+				<i class="icon-hand-right"></i> In the dependency operator, <code>in</code> and <code>out</code> can be lists of files. 
+				The same rules apply: The operator is true if any out file is missing, zero length or the minimum of modification times in <code>out</code> is less than the maximum modificaton times in <code>in</code>
 				<br>
 				<br>
         </section>
