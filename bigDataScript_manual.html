@@ -1055,7 +1055,7 @@ sys echo Hello $name
 
 				Now let's run this script, we use <code>-v</code> command line option to make the output verbose:
 <pre>
-[pcingola@localhost zzz]$ bds -v z.bds
+$ bds -v z.bds
 00:00:00.169	Process ID: z.bds.20130328_224825_685
 00:00:00.174	Queuing task 'z.bds.20130328_224825_685/sys.line_4.id_1'
 00:00:00.674	Running task 'z.bds.20130328_224825_685/sys.line_4.id_1'
@@ -1102,7 +1102,119 @@ $ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
             <h1>14. Wait </h1>
           </div>
 				<p class="lead"> Task coordination mechanisms rely havily on wait statements.</p>
+				As we mentioend several times, task execution order is not waranteed.
+<pre>
+$ cat z.bds
+for( int i=0 ; i < 10 ; i++ ) task echo BEFORE $i
+for( int i=0 ; i < 10 ; i++ ) task echo AFTER $i
+
+$ bds z.bds
+BEFORE 0
+BEFORE 4
+BEFORE 3
+BEFORE 2
+BEFORE 1
+BEFORE 5
+BEFORE 7
+BEFORE 6
+BEFORE 8
+AFTER 1
+AFTER 0
+BEFORE 9	<-- !!!
+AFTER 6
+AFTER 5
+AFTER 4
+AFTER 3
+AFTER 2
+AFTER 7
+AFTER 8
+AFTER 9
+</pre>
+				If a task must be executed after another task finished, we can introduce a wait statement.
+<pre>
+$ cat z.bds
+for( int i=0 ; i < 10 ; i++ ) task echo BEFORE $i
+wait	# Wait until ALL scheduled tasks finish
+for( int i=0 ; i < 10 ; i++ ) task echo AFTER $i
+
+$ bds z.bds
+BEFORE 0
+BEFORE 1
+BEFORE 2
+BEFORE 4
+BEFORE 3
+BEFORE 5
+BEFORE 6
+BEFORE 7
+BEFORE 9
+BEFORE 8
+AFTER 2
+AFTER 1
+AFTER 3
+AFTER 5
+AFTER 6
+AFTER 0
+AFTER 4
+AFTER 7
+AFTER 8
+AFTER 9
+</pre>
+				We can also wait for a specific task to finish by providins a task ID <code>wait taskId</code>, e.g.:
+<pre>
+string tid = task echo Hi
+wait tid	# Wait only for one task
+</pre>
+
+				Or you can wait for a list of tasks. 
+				For instance, in this program, we create a list of two task IDs and <code>wait</code> on the list:
+<pre>
+string[] tids
+
+for( int i=0 ; i < 10 ; i++ ) {
+	# Tasks that wait a random amount of time
+    int sleepTime = randInt( 5 )
+    string tid = task echo BEFORE $i ; sleep $sleepTime ; echo DONE $i
+
+	# We only want to wait for the firs two tasks
+    if( i < 2 ) tids.add(tid)
+}
+
+# Wait for all tasks in the lists (only the first two tasks)
+wait tids
+print("End of wait\n")
+</pre>
+
+			When we run it, we get:
+<pre>
+$ bds z.bds
+BEFORE 2
+BEFORE 0
+BEFORE 7
+BEFORE 5
+BEFORE 6
+BEFORE 4
+BEFORE 3
+BEFORE 1
+DONE 0
+DONE 3
+DONE 4
+DONE 5
+DONE 6
+DONE 7
+BEFORE 8
+BEFORE 9
+DONE 1
+End of wait		<- Wait finished here
+DONE 2
+DONE 8
+DONE 9
+</pre>
+
+
+				<i class="icon-warning-sign"></i> There is an implicit <code>wait</code> statement at the end of the program. 
+				So a program does not exit untill all tasks have finished runnig.
 				<br>
+
 				<br>
         </section>
 
