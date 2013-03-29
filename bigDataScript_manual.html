@@ -865,9 +865,68 @@ $ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
 				<br>
 
 				<h3> Task </h3>
-				A task also executes a command.
-				The main difference is that a task is "scheduled for execution" instead of executed immediately.
-				Task execution order is not warranteed, but bds provides mechanism for task dependencies by means of the <code>wait</code> statement.
+				A <code>task</code>expression, just like <code>sys</code> expression, also executes a command.
+				The main difference is that a <code>task</code> is "scheduled for execution" instead of executed immediately.
+				Task execution order is not warranteed, but <code>bds</code> provides mechanism for task dependencies by means of <code>wait</code> statements.
+				<br>
+				<br>
+				A task expression either performs basic resource management or delegates resource management to cluster management tools.
+				The idea is that if you schedule a hundred tasks, but you are executing on your laptop which only has 4 CPUs, then <code>bds</code> will only execute 4 tasks at a time.
+				The rest of the tasks are queued for later execution.
+				As executing tasks finish and CPUs become available, the reamining tasks are executed.
+				<br>
+				Similarly, if you schedule 10,000 tasks for execution, but your cluster only has 1,000 cores, then only 1,000 tasks will be executed as a given time.
+				Again, other tasks are queued for later execution, but in this case all the resource management is done by your cluster's workload management system (e.g. GridEngine, PBS, Torque, etc.).
+				<br>
+				<br>
+				<i class="icon-warning-sign"></i> Most cluster resource management do not warantee that tasks are executed in the same order as queued.
+				Even if they do or if they are executed in the same host, a task can start execution and immediately be preempted. 
+				So the next task in the queue can efectively start before the previous one.
+				<br>
+				<br>
+				There are different ways to execute tasks<br>
+				<table class="table table-striped">
+					<tr>
+						<th> System type </th>
+						<th> Typical usage </th>
+						<th> How it is done </th>
+					</tr>
+					<tr>
+						<td> <code>local</code> </td>	
+						<td> Running on a single computer. E.g. programming and debugging on your laptop or running stuff on a server </td> 
+						<td> A local queue is created, the total number of CPUs used by all tasks running is less or equal then the number of CPU cores available </td> 
+					</tr>
+					<tr>
+						<td> <code>ssh</code> </td>	
+						<td> A server farm or a bunsh of desktops or servers without a workload management system (e.g. computers in a University campus) </td>
+						<td> Basic resource management is performed by logging into all computers in the 'cluster' an monitoring resource usage. </td>
+					</tr>
+					<tr> 
+						<td> <code>cluster</code> </td>
+						<td> Running on a cluster (GridEngine, Torque) </td>
+						<td> Tasks are scheduled for execution (using 'qsub' or equivalent command). Resource management is delegated to cluster workload management. </td>
+					</tr>
+					<tr> 
+						<td> cloud <code>cluster</code> </td>
+						<td> Running on a Amazon via <a href="http://star.mit.edu/cluster/">StarCluster</a> </td>
+						<td> This is the same as 'cluster', the only difference is that the cluster runs on a Cloud via MIT's StarCluster. </td>
+					</tr>
+					<tr> 
+						<td> <code>cloud</code> </td>
+						<td> Running on a Amazon <a href="http://aws.amazon.com/swf/">Simple Workflow Service (SWF)</a> </td>
+						<td> A basic resource management is layered on top of Amazon Simple Workflow Service (SWF). Processing capacity can be increased or decrease on demand. Price optimization using spot instances can be added. </td>
+					</tr>
+				</table>
+
+				<br>
+				<i class="icon-warning-sign"></i> Using cloud based services, you can incurr in extra charges due to software bugs.
+				Use at your own risk!
+				<br>
+				<br>
+				<i class="icon-warning-sign"></i>  Amazon Simple Workflow Service (SWF), on demand capacity and spot instance pricing is experimental.
+				You must closely monitor your processes and instances to avoid charges due to software bugs.
+				<br>
+				<br>
 				
 
 				</p>
