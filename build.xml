@@ -8,11 +8,11 @@
                 <attribute name="Main-Class" value="ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="${user.home}/workspace/BigDataScript/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="${user.home}/workspace/BigDataScript/lib/commons-lang3-3.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${user.home}/workspace/BigDataScript/lib/jsch-0.1.49.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${user.home}/workspace/BigDataScript/lib/antlr-runtime-4.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${user.home}/workspace/BigDataScript/lib/junit-4.10.jar"/>
+            <fileset dir="./bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="./lib/commons-lang3-3.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="./lib/jsch-0.1.49.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="./lib/antlr-runtime-4.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="./lib/junit-4.10.jar"/>
         </jar>
     </target>
 
