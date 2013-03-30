@@ -91,7 +91,7 @@ expression : BOOL_LITERAL                                                       
            | '+' expression                                                         # expressionUnaryPlus
            | '(' expression ')'                                                     # expressionParen
            | expression '?' expression ':' expression                               # expressionCond
-           |  expression (',' expression)* '<-' expression (',' expression)*        # expressionDep
+           |  expression '<-' expression                                            # expressionDep
            | '[' expression (',' expression)* ']'                                   # literalList
            | '{' expression '=>' expression (',' expression '=>' expression)* '}'   # literalMap
            | SYS_LITERAL                                                            # expressionSys

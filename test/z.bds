@@ -1,7 +1,10 @@
 
-int f( int i, int j ) {
-	return i+j
-}
+string out = "out.txt"
+string in = "in.txt"
 
-int h = f(2,3)
-print("Result : $h\n")
+bool should = false
+
+print("task?\n")
+task( out <- in ) {
+	sys echo hi
+}
