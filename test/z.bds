@@ -1,5 +1,7 @@
 
-int i=1
-sys echo hi
-print("Done\n")
-i=2
+int f( int i, int j ) {
+	return i+j
+}
+
+int h = f(2,3)
+print("Result : $h\n")

@@ -45,7 +45,7 @@ statement : '{' statement* '}'                                                  
             | 'return' expression?  eol*                                                   # return
             | 'wait' (expression (',' expression)* )?  eol*                                # wait
             | 'while' '(' expression ')' statement  eol*                                   # while
-            | type ID '(' varDeclaration* ')' statement  eol*                              # functionDeclaration
+            | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*                              # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
             | expression  eol*                                                             # statmentExpr
             | eol                                                                          # statmentEol
