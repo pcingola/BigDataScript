@@ -1,0 +1,119 @@
+#-------------------------------------------------------------------------------
+# Map reads to a genome
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# Parameters
+#-------------------------------------------------------------------------------
+
+string fq1 = ""							# Reads (single-end or pair-end 1)
+string fq2 = ""							# Reads pair-end 2 (empty if single end)
+string genome = ""						# Genome name
+int minQ = 20							# Minimum align quality (we could use '1' to filter unmapped reads or '0' if we don't want to filter anything)
+
+int sortMem = 10*G						# Memory used in sorting stage
+int alignCpus = cpusLocal				# Number of CPUs to use 
+
+#-------------------------------------------------------------------------------
+# Main
+#-------------------------------------------------------------------------------
+
+#---
+# Sanity check: Command line arguments
+#---
+if( fq1.isEmpty() || genome.isEmpty() ) {
+	print("Usage: align.cld -genome genome.fasta -fq1 file1.fastq [-fq2 file2.fastq]\n")
+	exit(1)
+}
+
+# Check that fq1 exists
+if( !fq1.exists() ) {
+	print("File '$fq1' does not exists!\n");
+	exit(1)
+}
+
+# Check that fq2 exists
+if( (!fq2.isEmpty()) && (!fq2.exists()) ) {
+	print("File '$fq2' does not exists!\n");
+	exit(1)
+}
+
+#---
+# Map using BWA
+#---
+
+# Is this pair end?
+bool pairEnd = !fq2.isEmpty()
+
+string base1 = fq1.dirName() + "/" + fq1.baseName()
+string base2 = fq2.dirName() + "/" + fq2.baseName()
+string sai1 = base1 + ".sai"
+string sai2 = base2 + ".sai"
+string bam = base1 + ".bam"
+string sortBase = base1 + ".sort"
+string sort = sortBase + ".bam"
+string report = sortBase + ".flagstat.txt"
+string filtered = sortBase + ".filtered.bam"
+
+if( filtered <- [fq1, fq2] ) {
+	print("Nothing to do, file $filtered is up to date\n");
+	exit(0);
+}
+
+# Do we need to create index?
+string index = genome +".bwt"
+
+task( index <- genome ) {
+	sys bwa index $genome
+}
+wait
+
+# Create SAI files
+
+# We don't want to overload 
+if( pairEnd  && (alignCpus > 1)) {
+	alignCpus = alignCpus / 2
+}
+
+task( sai1 <- fq1 ) {
+	sys bwa aln -t $alignCpus $genome $fq1 > $sai1
+}
+
+task( sai2 <- fq2, pairEnd ) {
+	sys bwa aln -t $alignCpus $genome $fq2 > $sai2
+}
+
+wait
+
+# Create BAM
+if( pairEnd ) {
+	task( bam <- [sai1, sai2] ) {
+		sys bwa sampe $genome $sai1 $sai2 $fq1 $fq2 | samtools view -S -b - > $bam
+	}
+} else {
+	task( bam <- sai1 ) {
+		sys bwa samse $genome $sai1 $fq1 | samtools view -S -b - > $bam
+	}
+}
+
+wait
+
+# Sort BAM file
+task( sort <- bam ) {
+	sys samtools sort -m $sortMem $bam $sortBase
+}
+
+wait
+
+# Filter low quality mapping reads
+# Note: We filter out reads with mapping quality less than minQ instead of "unamapped" or "multiple-mapped" reads
+#		References: http://sourceforge.net/apps/mediawiki/samtools/index.php?title=SAM_FAQ#I_want_to_get_.60unique.27_alignments_from_SAM.2FBAM.
+task( bam <- sort ) {
+	sys samtools view -b -bq $minQ $sort > $filtered
+}
+
+# Calculate some statistics
+task (report <- bam ) {
+	sys samtools flagstat $bam > $report
+}
+
