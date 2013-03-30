@@ -1,10 +1,9 @@
 
 string out = "out.txt"
-string in = "in.txt"
+string str = "hello
+world"
 
-bool should = false
 
-print("task?\n")
-task( out <- in ) {
-	sys echo hi
-}
+out.write(str)
+print("Written to $out\n")
+

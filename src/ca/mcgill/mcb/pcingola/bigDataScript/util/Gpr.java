@@ -668,8 +668,8 @@ public class Gpr {
 	 * @param fileName: File to write
 	 * @param obj: Object 
 	 */
-	public static void toFile(String fileName, Object obj) {
-		toFile(fileName, obj, false);
+	public static String toFile(String fileName, Object obj) {
+		return toFile(fileName, obj, false);
 	}
 
 	/**
@@ -677,12 +677,14 @@ public class Gpr {
 	 * @param fileName: File to write
 	 * @param obj: Object 
 	 */
-	public static void toFile(String fileName, Object obj, boolean append) {
+	public static String toFile(String fileName, Object obj, boolean append) {
 		BufferedWriter outFile;
 		try {
+			String str = obj.toString();
 			outFile = new BufferedWriter(new FileWriter(fileName, append));
-			outFile.write(obj.toString());
+			outFile.write(str);
 			outFile.close();
+			return str;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
