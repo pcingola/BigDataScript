@@ -6,11 +6,12 @@
 # Parameters
 #-------------------------------------------------------------------------------
 
-string genome	# Genome name
-string[] bam 	# List of bam files
-string out		# VCF output file
+string genome				# Genome name
+string[] bam 				# List of bam files
+string out					# VCF output file
 
 int maxVcfHeadeLen = 2000	# We expect vec headers to be less than this many lines
+int basesPerTask = 1000000	# Number of bases to assign to each task
 
 #-------------------------------------------------------------------------------
 # Main
@@ -53,6 +54,7 @@ if( out <- bam ) {
 # Index files
 #---
 # Fasta index of reference genome
+string faidx = fastaIndexName(genome)
 string[] chrs = fastaIndex(genome)
 
 # Index all bam files
@@ -68,18 +70,32 @@ wait
 string bams
 for( string b : bam ) bams = bams + "$b "
 
-# Invoke bcftools
-print("Creating VCF file $out from files: $bams\n")
+# Create a tmp dir
+string vcfTmpDir = "$out.split"
+vcfTmpDir.mkdir()
+
+# Split each chromosome into small intervals and create one task per interval
+# Invoke samtools + bcftools on each interval
+print("Creating VCF file $out\n\ttmp dir: $vcfTmpDir\n\tBAM files: $bams\n")
 string[] outChrs
 for( string chr : chrs ) {
-	# One base calling task per chromosome
-	string outChr = "$out.$chr"
-	outChrs.add( outChr )
-	print("Creating output for chromosome $chr in file $outChr\n")
+	# Get chromosome length
+	int len = chromoLength( faidx, chr )
 
-	# Create output VCF for this chromosome
-	task ( outChr <- bam ) {
-		sys samtools mpileup -r $chr -uf $genome $bams | bcftools view -vcg - > $outChr
+	# Split chromosome into small intervals (basesPerTask bases)
+	for( int start = 1 ; start < len ; start = start + basesPerTask ) {
+		int end = start + basesPerTask - 1
+		if( end > len )	end = len
+
+		# VCF tmp file name (add to list)
+		string outChr = "$vcfTmpDir/$chr.$start.$end.vcf"
+		outChrs.add( outChr )
+
+		# Create task 
+		print("Creating output for interval $chr:$start-$end in file $outChr\n")
+		task ( outChr <- bam ) {
+			sys samtools mpileup -r $chr:$start-$end -uf $genome $bams | bcftools view -vcg - > $outChr
+		}
 	}
 }
 
@@ -100,12 +116,28 @@ for( string outChr : outChrs ) {
 exit 0
 
 #-------------------------------------------------------------------------------
+# Extract chromosome length from fasta index file
+# Return a list of chromosomes
+#-------------------------------------------------------------------------------
+int chromoLength(string faidx, string chr) {
+	for( string line : faidx.readLines() ) {
+		string[] recs = line.split("\\t")
+		if( recs[0] == chr )	{
+			return recs[1].parseInt()
+		}
+	}
+
+	# Not found
+	return 0
+}
+
+#-------------------------------------------------------------------------------
 # Index genome fasta file
 # Return a list of chromosomes
 #-------------------------------------------------------------------------------
 string[] fastaIndex(string gen) {
 	# Index fasta
-	string faidx = gen.dirName() + "/" + gen.baseName() + ".fai"
+	string faidx = fastaIndexName(gen)
 	print("Creating index file $faidx\n")
 	task( faidx <- genome ) {
 		sys samtools faidx $genome
@@ -117,6 +149,13 @@ string[] fastaIndex(string gen) {
 	string[] chromos = tid.stdout().lines()
 
 	return chromos
+}
+
+#-------------------------------------------------------------------------------
+# Name of fasta index file name
+#-------------------------------------------------------------------------------
+string fastaIndexName(string gen) {
+	return gen.dirName() + "/" + gen.baseName() + ".fai"
 }
 
 #-------------------------------------------------------------------------------

@@ -122,13 +122,6 @@ int chromoLength(string faidx, string chr) {
 }
 
 #-------------------------------------------------------------------------------
-# Name of fasta index file name
-#-------------------------------------------------------------------------------
-string fastaIndexName(string gen) {
-	return gen.dirName() + "/" + gen.baseName() + ".fai"
-}
-
-#-------------------------------------------------------------------------------
 # Index genome fasta file
 # Return a list of chromosomes
 #-------------------------------------------------------------------------------
@@ -146,6 +139,13 @@ string[] fastaIndex(string gen) {
 	string[] chromos = tid.stdout().lines()
 
 	return chromos
+}
+
+#-------------------------------------------------------------------------------
+# Name of fasta index file name
+#-------------------------------------------------------------------------------
+string fastaIndexName(string gen) {
+	return gen.dirName() + "/" + gen.baseName() + ".fai"
 }
 
 #-------------------------------------------------------------------------------
