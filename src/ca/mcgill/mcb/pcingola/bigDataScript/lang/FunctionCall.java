@@ -94,7 +94,7 @@ public class FunctionCall extends Expression {
 					Type funcType = sstype.getParameters().getType(i);
 
 					// Same argument?
-					if (!argType.equals(funcType)) {
+					if ((argType != null) && !argType.equals(funcType)) {
 						// Can we cast?
 						if (argType.canCast(funcType)) score++; // Add a point if we can cast
 						else ok = false;
