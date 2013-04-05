@@ -22,7 +22,7 @@ public class LiteralList extends Literal {
 		super(parent, tree);
 	}
 
-	Type baseType() {
+	public Type baseType() {
 		return ((TypeList) returnType).baseType;
 	}
 

@@ -1,9 +1,9 @@
 
+string[] in = ["in1.txt", "in2.txt"]
 string out = "out.txt"
-string str = "hello
-world"
+bool ok = false
 
-
-out.write(str)
-print("Written to $out\n")
+print("In : $in\n")
+print("Out: $out\n")
+print("OK : $ok\n")
 

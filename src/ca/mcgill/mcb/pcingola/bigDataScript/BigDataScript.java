@@ -22,6 +22,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Literal;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralBool;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralInt;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralListString;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralReal;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralString;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
@@ -229,20 +230,14 @@ public class BigDataScript {
 	 *  	- Note: Unprocessed arguments will be available to the program as an 'args' list
 	 */
 	void initializeArgs() {
-		ArrayList<String> args = new ArrayList<String>();
-
 		// Set program arguments as global variables
 		for (int argNum = 0; argNum < programArgs.size(); argNum++) {
 			String arg = programArgs.get(argNum);
 
-			boolean usedArgument = false;
-
-			// Parse '-XXX' option
+			// Parse '-OPT' option
 			if (arg.startsWith("-")) {
 				// Get variable name and value
 				String varName = arg.substring(1);
-				String val = "";
-				if (argNum < programArgs.size()) val = programArgs.get(++argNum);
 
 				// Find all variable declarations that match this command line argument
 				for (Statement s : programUnit.getStatements()) {
@@ -251,26 +246,39 @@ public class BigDataScript {
 						VarDeclaration varDecl = (VarDeclaration) s;
 						Type varType = varDecl.getType();
 
-						// We can only set primitive types
-						if (varType.isPrimitiveType()) {
+						// Is is a primitive variable or a primitive list?
+						if (varType.isPrimitiveType() || varType.isList()) {
+							// Find an initialization that matches the command line argument
 							for (VariableInit varInit : varDecl.getVarInit())
-								if (varInit.getVarName().equals(varName)) {
-									usedArgument = initializeArgs(varType, varInit, val); // Found variable, try to replace or add LITERAL to this VarInit
-									if (!usedArgument) arg = val; // We did not use this argument
+								if (varInit.getVarName().equals(varName)) { // Name matches?
+									int argNumOri = argNum;
+									boolean useVal = false;
+
+									if (varType.isList()) {
+										// Create a list of arguments and use them to initialize the variable (list)
+										ArrayList<String> vals = new ArrayList<String>();
+										for (int i = argNum + 1; i < programArgs.size(); i++)
+											if (programArgs.get(i).startsWith("-")) break;
+											else vals.add(programArgs.get(i));
+
+										useVal = initializeArgs(varType, varInit, vals); // Found variable, try to replace or add LITERAL to this VarInit										
+									} else {
+										String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
+										useVal = initializeArgs(varType, varInit, val); // Found variable, try to replace or add LITERAL to this VarInit
+									}
+
+									if (!useVal) argNum = argNumOri; // We did not use the arguments
 								}
 						}
 					}
 				}
 			}
-
-			// Argument not used? Add to 'args' 
-			if (!usedArgument) args.add(arg);
 		}
 
 		// Make all unprocessed arguments available for the program (in 'args' list) 
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING), args));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING), programArgs));
 
-		// Initialie program name
+		// Initialize program name
 		String progName = Gpr.baseName(programUnit.getFileName());
 		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, progName));
 	}
@@ -282,9 +290,41 @@ public class BigDataScript {
 	 * 
 	 * @param varType : Variable type
 	 * @param varInit : Variable initialization
-	 * @param val : Value to assign
+	 * @param vals : Value to assign
 	 */
-	boolean initializeArgs(Type varType, VariableInit varInit, String val) {
+	boolean initializeArgs(Type varType, VariableInit varInit, ArrayList<String> vals) {
+		boolean usedVal = true;
+
+		try {
+			Literal literal = null;
+
+			if (varType.isList(Type.STRING)) {
+				// Create literal
+				LiteralListString lit = new LiteralListString(varInit, null);
+				literal = lit;
+				lit.setValue(vals); // Set literal value
+			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
+
+			// Set varInit to literal
+			varInit.setExpression(literal);
+		} catch (Exception e) {
+			// Error parsing 'val'?
+			throw new RuntimeException("Cannot convert argument '" + vals + "' to type " + varType);
+		}
+
+		return usedVal;
+	}
+
+	/**
+	 * Add or replace initialization statement in this VarInit
+	 * 
+	 * Note: We create a Literal node (of the appropriate type) and add it to "varInit.expression" 
+	 * 
+	 * @param varType : Variable type
+	 * @param varInit : Variable initialization
+	 * @param valStr : Value to assign
+	 */
+	boolean initializeArgs(Type varType, VariableInit varInit, String valStr) {
 		boolean usedVal = true;
 
 		try {
@@ -298,11 +338,11 @@ public class BigDataScript {
 
 				// Set literal value
 				boolean valBool = true; // Default value is 'true'
-				if (val != null) {
+				if (valStr != null) {
 					// Parse boolean 
-					val = val.toLowerCase();
-					if (val.equals("true") || val.equals("t")) valBool = true;
-					else if (val.equals("false") || val.equals("f")) valBool = false;
+					valStr = valStr.toLowerCase();
+					if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) valBool = true;
+					else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) valBool = false;
 					else usedVal = false; // Not any valid value? => This argument is not used
 				}
 
@@ -313,7 +353,7 @@ public class BigDataScript {
 				literal = lit;
 
 				// Set literal value
-				long valInt = Long.parseLong(val);
+				long valInt = Long.parseLong(valStr);
 				lit.setValue(valInt);
 			} else if (varType.isReal()) {
 				// Create literal
@@ -321,7 +361,7 @@ public class BigDataScript {
 				literal = lit;
 
 				// Set literal value
-				double valReal = Double.parseDouble(val);
+				double valReal = Double.parseDouble(valStr);
 				lit.setValue(valReal);
 			} else if (varType.isString()) {
 				// Create literal
@@ -329,15 +369,15 @@ public class BigDataScript {
 				literal = lit;
 
 				// Set literal value
-				if (val == null) val = ""; // We should never have 'null' values
-				lit.setValue(val);
+				if (valStr == null) valStr = ""; // We should never have 'null' values
+				lit.setValue(valStr);
 			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
 
 			// Set varInit to literal
 			varInit.setExpression(literal);
 		} catch (Exception e) {
 			// Error parsing 'val'?
-			throw new RuntimeException("Cannot convert argument '" + val + "' to type " + varType);
+			throw new RuntimeException("Cannot convert argument '" + valStr + "' to type " + varType);
 		}
 
 		return usedVal;
