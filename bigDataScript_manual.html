@@ -89,6 +89,7 @@
           <li><a href="#dep"><i class="icon-chevron-right"></i> Dependency operator </a></li>
           <li><a href="#check"><i class="icon-chevron-right"></i> Checkpoints </a></li>
           <li><a href="#vars"><i class="icon-chevron-right"></i> Predefined variables </a></li>
+          <li><a href="#args"><i class="icon-chevron-right"></i> Command line arguments </a></li>
         </ul>
       </div>
       <div class="span9">
@@ -1367,6 +1368,75 @@ Counting 9
 				</table>
 				<br>
         </section>
+
+        <!-- ================================================== -->
+        <section id="args">
+          <div class="page-header">
+            <h1>18. Command line arguments </h1>
+          </div>
+				<p class="lead"> BigDataScript automatically parses command line variables for your program.</p>
+				<p>
+				Parsing command line variables is a mundane and boring task, so BigDataScript does it for you.
+				Basically it matches any command line argument that starts with '-' (a minus sign) and injects the value in a variable having the same name.
+				For instance if your program has a variable declaration <code>string file</code> and your command line is <code>bds myprog.bds -file input.txt</code>, the value "input.txt" will be injected into variable <code>file</code>.
+				<br>
+					E.g.:
+<pre>
+$ cat z.bds 
+string file = "in.txt"
+print("File is '$file'\n")
+
+$ bds z.bds
+File is 'in.txt'
+
+$ bds z.bds -file anotherFile.txt
+File is 'anotherFile.txt'
+</pre>
+
+				<br>
+				This feature also works for other data types (int, real, bool).  
+				In case of bool if the option is present, the variable is set to 'true'.
+<pre>
+$ cat z.bds
+bool flag
+print("Variable flag is $flag\n")
+
+$ bds z.bds
+Variable flag is false
+
+$ bds z.bds -flag
+Variable flag is true
+</pre>
+
+				You can also apply this to a list of strings.
+				In this case, all command line arguments following the <code>-listName</code> will be included in the list (up to the next argument starting with '-').
+				<br>
+				E.g.: Note that list <code>in</code> is populated using 'in1.txt in2.txt in3.txt' and <code>out</code> is set to 'zzz.txt'
+<pre>
+$ cat z.bds
+string[] in = ["in.txt"]
+string out  = "out.txt"
+bool ok     = false
+
+print("In : $in\n")
+print("Out: $out\n")
+print("OK : $ok\n")
+
+$ bds z.bds -ok -in in1.txt in2.txt in3.txt -out zzz.txt
+In : [in1.txt, in2.txt, in3.txt]
+Out: zzz.txt
+OK : true
+</pre>
+				</p>
+
+
+        </section>
+
+
+
+
+
+
       </div>
     </div>
 
