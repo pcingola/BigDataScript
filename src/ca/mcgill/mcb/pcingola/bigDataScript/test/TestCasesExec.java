@@ -381,7 +381,7 @@ public class TestCasesExec extends TestCase {
 		expectedValues.put("opt", "true");
 		expectedValues.put("num", "42");
 		expectedValues.put("rnum", "3.1415");
-		expectedValues.put("args", "[-notProcessed, more, arguments]");
+		expectedValues.put("args", "[-file, zzz.txt, -num, 42, -rnum, 3.1415, -opt, -notProcessed, more, arguments]");
 
 		ArrayList<String> args = new ArrayList<String>();
 
@@ -428,6 +428,28 @@ public class TestCasesExec extends TestCase {
 
 	public void test46() {
 		runAndCheck("test/run_46.bds", "i", 2L);
+	}
+
+	@Test
+	public void test47() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("in", "[in1.txt, in2.txt, in3.txt]");
+		expectedValues.put("out", "zzz.txt");
+		expectedValues.put("ok", "true");
+
+		ArrayList<String> args = new ArrayList<String>();
+
+		args.add("-ok");
+
+		args.add("-in");
+		args.add("in1.txt");
+		args.add("in2.txt");
+		args.add("in3.txt");
+
+		args.add("-out");
+		args.add("zzz.txt");
+
+		runAndCheckMultiple("test/run_47.bds", expectedValues, args);
 	}
 
 }

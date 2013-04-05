@@ -1,0 +1,9 @@
+
+string[] in = ["in.txt"]
+string out = "out.txt"
+bool ok = false
+
+print("In : $in\n")
+print("Out: $out\n")
+print("OK : $ok\n")
+
