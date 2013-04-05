@@ -102,12 +102,17 @@ public class Tail extends Thread {
 	 * Check if there is output available on any file
 	 */
 	synchronized boolean tail() {
+		boolean anyOutput = false;
+
 		// Try to read form all buffers
 		for (String name : files.keySet()) {
 			TailFile tf = files.get(name);
 
 			// Try to 'tail'. Any problems? => Remove the entry
-			if (!tf.tail()) toRemove.add(name);
+			int bytes = tf.tail();
+
+			if (bytes < 0) toRemove.add(name); // Problems? Remove the file from this list 
+			else if (bytes > 0) anyOutput = true; // There was an output of 'bytes' number of bytes
 		}
 
 		// Remove problematic entries (if any)
@@ -117,6 +122,6 @@ public class Tail extends Thread {
 			toRemove = new HashSet<String>();
 		}
 
-		return false;
+		return anyOutput;
 	}
 }

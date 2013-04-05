@@ -6,14 +6,11 @@
 # Parameters
 #-------------------------------------------------------------------------------
 
-string genome = ""						# Genome name
-int minQ = 20							# Minimum align quality (we could use '1' to filter unmapped reads or '0' if we don't want to filter anything)
+string genome	# Genome name
+string[] bam 	# List of bam files
+string out		# VCF output file
 
-int sortMem = 1*G						# Memory used in sorting stage
-int alignCpus = cpusLocal				# Number of CPUs to use 
-int readsPerSplit = 1000000				# Split fastq files to use processing capabilities better
-
-string fastqSplit = "$HOME/snpEff/scripts/fastqSplit.pl"
+int maxVcfHeadeLen = 2000	# We expect vec headers to be less than this many lines
 
 #-------------------------------------------------------------------------------
 # Main
@@ -22,173 +19,114 @@ string fastqSplit = "$HOME/snpEff/scripts/fastqSplit.pl"
 #---
 # Sanity check: Command line arguments
 #---
-if( fq1.isEmpty() || genome.isEmpty() ) {
-	print("Usage: align.cld -genome genome.fasta -fq1 file1.fastq [-fq2 file2.fastq]\n")
+if( genome.isEmpty() || (bam.size() < 1)) {
+	print("Usage: baseCalling.bds -genome genome.fasta -out out.vcf -bam file_1.bam file_2.bam ... file_N.bam\n")
 	exit 1
 }
 
-# Check that fq1 exists
-if( !fq1.exists() ) {
-	print("File '$fq1' does not exists!\n");
+# Check that genome files exist
+if( !genome.exists() ) {
+	print("File '$genome' does not exists!\n");
 	exit 1
 }
 
-# Check that fq2 exists
-if( (!fq2.isEmpty()) && (!fq2.exists()) ) {
-	print("File '$fq2' does not exists!\n");
-	exit 1
-}
-
-#-------------------------------------------------------------------------------
-# Map reads
-#-------------------------------------------------------------------------------
-
-bool pairEnd = !fq2.isEmpty()
-string tmpDir = fq1.dirName() + "/" + baseNoExt(fq1)
-string bam = tmpDir + ".bam"
-
-#---
-# Do we need to create an index? Most of the time this is already done
-#---
-index(genome)
-
-#---
-# Split fastq files
-#---
-
-# Split files in tmp dir
-if( ! tmpDir.exists() )	tmpDir.mkdir()
-
-string[] fq1s = splitFastq(fq1, "$tmpDir/fq1" )
-string[] fq2s
-if( pairEnd )	fq2s = splitFastq(fq2, "$tmpDir/fq2" )
-
-#---
-# Map each file / file pair to the genome
-#---
-string[] bams 
-
-if( pairEnd ) {
-	# Map each pair of fastq and get a list of sorted BAMs
-	for( int i=0 ; i < fq1s.size() ; i++ ) {
-		string bam = mapBwa(fq1s[i], fq2s[i], genome)
-		bams.add( bam )
+# Check that each bam exists
+for( string b : bam ) {
+	if( ! b.exists() ) {
+		print("File '$b' does not exists!\n");
+		exit 1
 	}
+}
+
+#-------------------------------------------------------------------------------
+# Base calling
+#-------------------------------------------------------------------------------
+
+if( out <- bam ) {
+	print("Base calling: Creating $out from $bam\n")
 } else {
-	# Map each fastq and get a list of sorted BAMs
-	for( int i=0 ; i < fq1s.size() ; i++ ) {
-		string bam = mapBwa(fq1s[i], genome)
-		bams.add( bam )
+	print("Base calling: Nothing to do, file '$out' is up to date\n")
+	exit 0
+}
+
+#---
+# Index files
+#---
+# Fasta index of reference genome
+string[] chrs = fastaIndex(genome)
+
+# Index all bam files
+for( string b : bam ) bamIndex(b)
+
+wait
+
+#---
+# Base calling
+#---
+
+# Create a list fo bam files as a single string
+string bams
+for( string b : bam ) bams = bams + "$b "
+
+# Invoke bcftools
+print("Creating VCF file $out from files: $bams\n")
+string[] outChrs
+for( string chr : chrs ) {
+	# One base calling task per chromosome
+	string outChr = "$out.$chr"
+	outChrs.add( outChr )
+	print("Creating output for chromosome $chr in file $outChr\n")
+
+	# Create output VCF for this chromosome
+	task ( outChr <- bam ) {
+		sys samtools mpileup -r $chr -uf $genome $bams | bcftools view -vcg - > $outChr
 	}
 }
 
-wait
-
 #---
-# Merge all BAMs
+# Join all VCF files
 #---
+print("Creating output VCF file $out\n")
+# Add header
+string firstVcf = outChrs.head()
+sys head -n $maxVcfHeadeLen $firstVcf | grep "^#" > $out
 
-string inBam = ""
-for( string b : bams ) inBam = inBam + " " + b
-print("Merging bams : $inBam\n")
-task( bam <- bams ) {
-	sys samtools merge -f $bam $inBam
+# Concatenate all VCF files
+for( string outChr : outChrs ) {
+	print("\tAppend $outChr\n")
+	sys grep -v "^#" $outChr >> $out
 }
 
-wait
-
-# Done!
-print("Done\n")
 exit 0
 
 #-------------------------------------------------------------------------------
-# Get base file name and no file extentions
+# Index genome fasta file
+# Return a list of chromosomes
 #-------------------------------------------------------------------------------
-string baseNoExt(string file) {
-	file = file.baseName()
-	while( file.extName() != "" ) {
-		file = file.baseName( "." + file.extName() )
+string[] fastaIndex(string gen) {
+	# Index fasta
+	string faidx = gen.dirName() + "/" + gen.baseName() + ".fai"
+	print("Creating index file $faidx\n")
+	task( faidx <- genome ) {
+		sys samtools faidx $genome
 	}
-	return file
+
+	# Get a list of chromosomes
+	print("Chromosomes:\n");
+	string tid = sys cut -f 1 $faidx
+	string[] chromos = tid.stdout().lines()
+
+	return chromos
 }
 
 #-------------------------------------------------------------------------------
-# Create genome index
+# Index a BAM file
 #-------------------------------------------------------------------------------
-bool index( string genome ) {
-	# Do we need to create index?
-	string index = genome +".bwt"
-
-	task( index <- genome ) {
-		sys bwa index $genome
+string bamIndex(string bam) {
+	string bamidx = "$bam.bai"
+	print("Indexing BAM file $bam\n")
+	task( bamidx <- bam ) {
+		sys samtools index $bam
 	}
-	wait
-
-	return true
+	return bamidx
 }
-
-#-------------------------------------------------------------------------------
-# Map (single end) fastq files using BWA
-#-------------------------------------------------------------------------------
-string mapBwa(string fq1, string genome) {
-	print("Mapping $fq1 to $genome\n")
-	string base1 = fq1.dirName() + "/" + fq1.baseName()
-	string sai1 = base1 + ".sai"
-	string bam = base1 + ".bam"
-	string sortBase = base1 + ".sort"
-	string sort = sortBase + ".bam"
-
-	# Create BAM from fastq
-	task( sort <- fq1 ) {
-		sys bwa aln $genome $fq1 > $sai1
-		sys bwa samse $genome $sai1 $fq1 | samtools view -S -b - > $bam
-		sys samtools sort -m $sortMem $bam $sortBase
-	}
-
-	return sort
-}
-
-#-------------------------------------------------------------------------------
-# Map (pair end) fastq files using BWA
-#-------------------------------------------------------------------------------
-string mapBwa(string fq1, string fq2, string genome) {
-	print("Mapping $fq1 and $fq2 to $genome\n")
-	string base1 = fq1.dirName() + "/" + fq1.baseName()
-	string base2 = fq2.dirName() + "/" + fq2.baseName()
-	string sai1 = base1 + ".sai"
-	string sai2 = base2 + ".sai"
-	string bam = base1 + ".bam"
-	string sortBase = base1 + ".sort"
-	string sort = sortBase + ".bam"
-
-	# Create BAM from fastq
-	task( sort <- [fq1, fq2] ) {
-		sys bwa aln $genome $fq1 > $sai1
-		sys bwa aln $genome $fq2 > $sai2
-		sys bwa sampe $genome $sai1 $sai2 $fq1 $fq2 | samtools view -S -b - > $bam
-		sys samtools sort -m $sortMem $bam $sortBase
-	}
-
-	return sort
-}
-
-#-------------------------------------------------------------------------------
-# Split fastq files
-# Return list of files
-#-------------------------------------------------------------------------------
-string[] splitFastq(string fq, string prefix) {
-	print("Splitting $fq\n")
-	string fileList = "$prefix.list"
-
-	# List file exists? We don't need to split 
-	if( fileList <- fq ) {
-		string tid = task $fastqSplit $readsPerSplit $fq $prefix 
-		wait
-
-		# Create a file listing all fastq 
-		fileList.write( tid.stdout() )
-	}
-
-	return fileList.readLines()
-}
-

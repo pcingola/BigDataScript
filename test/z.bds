@@ -1,9 +1,12 @@
 
-string[] in = ["in1.txt", "in2.txt"]
-string out = "out.txt"
-bool ok = false
+string str = "42"
+int i = str.parseInt()
+print("str = $str\t->\ti = $i\n")
 
-print("In : $in\n")
-print("Out: $out\n")
-print("OK : $ok\n")
+str = "1.234"
+real r = str.parseReal()
+print("str = $str\t->\tr = $r\n")
 
+str = "true"
+bool b = str.parseBool()
+print("str = $str\t->\tb = $b\n")

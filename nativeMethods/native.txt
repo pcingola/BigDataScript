@@ -15,6 +15,9 @@ bool	string	endsWith	this,str	string,string	return objThis.toString().endsWith( 
 int	string	indexOf	this,str	string,string	return (long) objThis.toString().indexOf( csThread.getString("str") );
 int	string	lastIndexOf	this,str	string,string	return (long) objThis.toString().lastIndexOf( csThread.getString("str") );
 string	string	replace	this,str1,str2	string,string,string	return objThis.toString().replace( csThread.getString("str1"), csThread.getString("str2") );
+int	string	parseInt	this	string	return Gpr.parseLongSafe( objThis.toString() );
+real	string	parseReal	this	string	return Gpr.parseDoubleSafe( objThis.toString() );
+bool	string	parseBool	this	string	return Gpr.parseBoolSafe( objThis.toString() );
 #---
 # String: File related methods
 #---

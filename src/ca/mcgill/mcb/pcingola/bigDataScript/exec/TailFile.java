@@ -84,11 +84,14 @@ public class TailFile extends Thread {
 
 	/**
 	 * Check if there is output available on any file
+	 * @returns Number of bytes read. Negative number of there were problems
 	 */
-	protected boolean tail() {
-		if (!open()) return true; // Files not opened yet (may be input file does not exists). OK, nothing to do...
+	protected int tail() {
+		if (!open()) return 0; // Files not opened yet (may be input file does not exists). OK, nothing to do...
 
 		try {
+			int count = 0;
+
 			// Any bytes available on this buffer?
 			int avail = input.available();
 			if (avail > 0) {
@@ -103,15 +106,16 @@ public class TailFile extends Thread {
 
 				// Write to output
 				if (output != null) output.write(bytes);
+
+				count = bytes.length;
 			}
 
-			return true;
+			return count;
 		} catch (Exception e) {
 			// Problems with this buffer? Remove it from the list
 			// Timer.showStdErr("ERROR: Tail on file '" + inputFileName + "' / '" + outputFileName + "' failed.\n" + e);
 			close(false);
+			return -1;
 		}
-
-		return false;
 	}
 }

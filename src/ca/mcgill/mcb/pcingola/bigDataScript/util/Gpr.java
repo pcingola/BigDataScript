@@ -321,7 +321,11 @@ public class Gpr {
 	 */
 	public static boolean parseBoolSafe(String s) {
 		try {
-			return Boolean.parseBoolean(s);
+			if (s == null) return false;
+			if (s.equalsIgnoreCase("true")) return true; // 'true'
+			if (s.equalsIgnoreCase("t")) return true; // Abreviation of 'true'
+			if (Gpr.parseIntSafe(s) != 0) return true; // A non-zero number
+			return false;
 		} catch (Exception e) {
 			return false;
 		}
