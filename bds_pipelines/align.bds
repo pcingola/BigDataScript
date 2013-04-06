@@ -1,18 +1,23 @@
 #-------------------------------------------------------------------------------
-# Map reads to a genome
+#
+# Map reads to a genome using BWA
+#
+#
+#																Pablo Cingolani
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 # Parameters
 #-------------------------------------------------------------------------------
 
-string fq1 = ""							# Reads (single-end or pair-end 1)
-string fq2 = ""							# Reads pair-end 2 (empty if single end)
-string genome = ""						# Genome name
-int minQ = 20							# Minimum align quality (we could use '1' to filter unmapped reads or '0' if we don't want to filter anything)
+string fq1 							# Reads (single-end or pair-end 1)
+string fq2 							# Reads pair-end 2 (empty if single end)
+string genome 						# Genome name
 
-int sortMem = 1*G						# Memory used in sorting stage
-int readsPerSplit = 1000000				# Split fastq files to use processing capabilities better. This should be roughly one hour of processing time in a single core.
+int trimQ         = 20				# BWA's parameter for read trimming
+int mapQ          = 20				# Minimum align quality (we could use '1' to filter unmapped reads or '0' if we don't want to filter anything)
+int sortMem       = 1*G				# Memory used in sorting stage
+int readsPerSplit = 1000000			# Split fastq files to use processing capabilities better. This should be roughly one hour of processing time in a single core.
 
 string fastqSplit = "$HOME/snpEff/scripts/fastqSplit.pl"
 
@@ -93,7 +98,8 @@ string inBam = ""
 for( string b : bams ) inBam = inBam + " " + b
 print("Merging bams : $inBam\n")
 task( bam <- bams ) {
-	sys samtools merge -f $bam $inBam
+	# Merge all files and apply mapping quality filter
+	sys samtools merge - $inBam | samtools view -bq $mapQ - > $bam
 }
 
 wait
@@ -141,7 +147,7 @@ string mapBwa(string fq1, string genome) {
 
 	# Create BAM from fastq
 	task( sort <- fq1 ) {
-		sys bwa aln $genome $fq1 > $sai1
+		sys bwa aln -q $trimQ $genome $fq1 > $sai1
 		sys bwa samse $genome $sai1 $fq1 | samtools view -S -b - > $bam
 		sys samtools sort -m $sortMem $bam $sortBase
 	}
@@ -164,8 +170,8 @@ string mapBwa(string fq1, string fq2, string genome) {
 
 	# Create BAM from fastq
 	task( sort <- [fq1, fq2] ) {
-		sys bwa aln $genome $fq1 > $sai1
-		sys bwa aln $genome $fq2 > $sai2
+		sys bwa aln -q $trimQ $genome $fq1 > $sai1
+		sys bwa aln -q $trimQ $genome $fq2 > $sai2
 		sys bwa sampe $genome $sai1 $sai2 $fq1 $fq2 | samtools view -S -b - > $bam
 		sys samtools sort -m $sortMem $bam $sortBase
 	}

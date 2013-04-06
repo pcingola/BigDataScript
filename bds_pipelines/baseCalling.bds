@@ -76,7 +76,7 @@ vcfTmpDir.mkdir()
 
 # Split each chromosome into small intervals and create one task per interval
 # Invoke samtools + bcftools on each interval
-print("Creating VCF file $out\n\ttmp dir: $vcfTmpDir\n\tBAM files: $bams\n")
+print("Creating VCF file $out\n\tTmp dir   : $vcfTmpDir\n\tBAM files : $bams\n")
 string[] outChrs
 for( string chr : chrs ) {
 	# Get chromosome length
@@ -92,13 +92,13 @@ for( string chr : chrs ) {
 		outChrs.add( outChr )
 
 		# Create task 
-		print("Creating output for interval $chr:$start-$end in file $outChr\n")
+		print("\tBase calling interval $chr:$start-$end, file $outChr\n")
 		task ( outChr <- bam ) {
 			sys samtools mpileup -r $chr:$start-$end -uf $genome $bams | bcftools view -vcg - > $outChr
 		}
 	}
 }
-wait
+wait	# Wait until all base calling tasks finish
 
 #---
 # Join all VCF files
