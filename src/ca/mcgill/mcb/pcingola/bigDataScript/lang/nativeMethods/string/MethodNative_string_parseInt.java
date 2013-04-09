@@ -31,6 +31,6 @@ public class MethodNative_string_parseInt extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return Gpr.parseLongSafe( objThis.toString() );
+		return Gpr.parseLongSafe( objThis.toString().trim() );
 	}
 }

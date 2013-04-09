@@ -31,6 +31,6 @@ public class MethodNative_string_parseReal extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return Gpr.parseDoubleSafe( objThis.toString() );
+		return Gpr.parseDoubleSafe( objThis.toString().trim() );
 	}
 }

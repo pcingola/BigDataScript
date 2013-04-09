@@ -31,6 +31,6 @@ public class MethodNative_string_parseBool extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return Gpr.parseBoolSafe( objThis.toString() );
+		return Gpr.parseBoolSafe( objThis.toString().trim() );
 	}
 }
