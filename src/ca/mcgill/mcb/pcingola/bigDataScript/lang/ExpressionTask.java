@@ -34,7 +34,7 @@ public class ExpressionTask extends ExpressionWithScope {
 
 	TaskOptions taskOptions;
 	Statement statement;
-	private String execId;
+	private String execId = "";
 	ArrayList<String> outputFiles;
 
 	public ExpressionTask(BigDataScriptNode parent, ParseTree tree) {
@@ -56,7 +56,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * @param csThread
 	 * @param sys
 	 */
-	void exec(BigDataScriptThread csThread, ExpressionSys sys) {
+	Task exec(BigDataScriptThread csThread, ExpressionSys sys) {
 		// Get an ID
 		execId = sys.execId("task", csThread);
 
@@ -80,6 +80,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Queue exec
 		csThread.add(task);
 		executioner.add(task);
+
+		return task;
 	}
 
 	@Override
@@ -124,7 +126,10 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (taskOptions != null) {
 			boolean ok = (Boolean) taskOptions.eval(csThread);
 			outputFiles = taskOptions.outputFiles(); // This has to be done AFTER evaluation
-			if (!ok) return RunState.OK; // Task options clause not satisfied. Do not execute task 
+			if (!ok) {
+				// Return empty task ID
+				return RunState.OK; // Task options clause not satisfied. Do not execute task 
+			}
 		}
 
 		//---
