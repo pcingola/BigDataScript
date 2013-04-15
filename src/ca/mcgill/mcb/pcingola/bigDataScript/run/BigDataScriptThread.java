@@ -400,6 +400,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @return true if task finished OK or it was allowed to fail (i.e. canFail = true)  
 	 */
 	public boolean waitTask(String taskId) {
+		if ((taskId == null) || taskId.isEmpty()) return true;
+
 		Task task = getTask(taskId);
 		if (task == null) return false; // No task? We are done!
 

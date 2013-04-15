@@ -7,4 +7,7 @@ string tid = task( out <- in ) {
 	sys echo Hi
 }
 
+print("TID: '$tid'\n")
+wait tid
+
 print("Done!\n")
