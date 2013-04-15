@@ -169,6 +169,9 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	@Override public void enterExpressionBitOr(BigDataScriptParser.ExpressionBitOrContext ctx) { }
 	@Override public void exitExpressionBitOr(BigDataScriptParser.ExpressionBitOrContext ctx) { }
 
+	@Override public void enterError(BigDataScriptParser.ErrorContext ctx) { }
+	@Override public void exitError(BigDataScriptParser.ErrorContext ctx) { }
+
 	@Override public void enterForEnd(BigDataScriptParser.ForEndContext ctx) { }
 	@Override public void exitForEnd(BigDataScriptParser.ForEndContext ctx) { }
 
@@ -222,6 +225,9 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 
 	@Override public void enterExpressionTimes(BigDataScriptParser.ExpressionTimesContext ctx) { }
 	@Override public void exitExpressionTimes(BigDataScriptParser.ExpressionTimesContext ctx) { }
+
+	@Override public void enterWarning(BigDataScriptParser.WarningContext ctx) { }
+	@Override public void exitWarning(BigDataScriptParser.WarningContext ctx) { }
 
 	@Override public void enterEveryRule(ParserRuleContext ctx) { }
 	@Override public void exitEveryRule(ParserRuleContext ctx) { }

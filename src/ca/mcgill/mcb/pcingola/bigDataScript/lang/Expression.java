@@ -81,7 +81,7 @@ public class Expression extends Statement {
 	}
 
 	/**
-	 * Evaluate an expression
+	 * Evaluate an expression, return result
 	 */
 	public Object eval(BigDataScriptThread csThread) {
 		throw new RuntimeException("Unplemented method for class " + getClass().getSimpleName());

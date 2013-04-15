@@ -113,6 +113,8 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 
 	@Override public T visitExpressionBitOr(BigDataScriptParser.ExpressionBitOrContext ctx) { return visitChildren(ctx); }
 
+	@Override public T visitError(BigDataScriptParser.ErrorContext ctx) { return visitChildren(ctx); }
+
 	@Override public T visitForEnd(BigDataScriptParser.ForEndContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitVarReference(BigDataScriptParser.VarReferenceContext ctx) { return visitChildren(ctx); }
@@ -148,4 +150,6 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	@Override public T visitForInit(BigDataScriptParser.ForInitContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitExpressionTimes(BigDataScriptParser.ExpressionTimesContext ctx) { return visitChildren(ctx); }
+
+	@Override public T visitWarning(BigDataScriptParser.WarningContext ctx) { return visitChildren(ctx); }
 }

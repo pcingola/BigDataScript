@@ -112,6 +112,8 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitExpressionBitOr(BigDataScriptParser.ExpressionBitOrContext ctx);
 
+	T visitError(BigDataScriptParser.ErrorContext ctx);
+
 	T visitForEnd(BigDataScriptParser.ForEndContext ctx);
 
 	T visitVarReference(BigDataScriptParser.VarReferenceContext ctx);
@@ -147,4 +149,6 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitForInit(BigDataScriptParser.ForInitContext ctx);
 
 	T visitExpressionTimes(BigDataScriptParser.ExpressionTimesContext ctx);
+
+	T visitWarning(BigDataScriptParser.WarningContext ctx);
 }

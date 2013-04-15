@@ -166,6 +166,9 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void enterExpressionBitOr(BigDataScriptParser.ExpressionBitOrContext ctx);
 	void exitExpressionBitOr(BigDataScriptParser.ExpressionBitOrContext ctx);
 
+	void enterError(BigDataScriptParser.ErrorContext ctx);
+	void exitError(BigDataScriptParser.ErrorContext ctx);
+
 	void enterForEnd(BigDataScriptParser.ForEndContext ctx);
 	void exitForEnd(BigDataScriptParser.ForEndContext ctx);
 
@@ -219,4 +222,7 @@ public interface BigDataScriptListener extends ParseTreeListener {
 
 	void enterExpressionTimes(BigDataScriptParser.ExpressionTimesContext ctx);
 	void exitExpressionTimes(BigDataScriptParser.ExpressionTimesContext ctx);
+
+	void enterWarning(BigDataScriptParser.WarningContext ctx);
+	void exitWarning(BigDataScriptParser.WarningContext ctx);
 }

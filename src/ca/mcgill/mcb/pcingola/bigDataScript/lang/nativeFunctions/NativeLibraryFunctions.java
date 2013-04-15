@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class NativeLibraryFunctions {
 
+	@SuppressWarnings("rawtypes")
 	public static Class classes[] = { //
 	FunctionNativePrint.class //
 			, FunctionNativePrintErr.class //
