@@ -1,12 +1,5 @@
 
-int step = 1
-print("Step : $step\n")
-warning "..something bad happened"
-
-step = 2
-print("Step : $step\n")
-error "..something VERY bad happened"
-
-step = 3
-print("Step : $step\n")
-
+string f = "/data/pcingola/Documents/workspace/BigDataScript/test.ext1.fastq.gz.bam"
+print("File : $f\n")
+print("Ext : " + f.extName() + "\n")
+print("Ext : " + f.removeExt() + "\n")
