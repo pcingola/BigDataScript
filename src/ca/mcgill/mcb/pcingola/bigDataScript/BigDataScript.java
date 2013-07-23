@@ -53,9 +53,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class BigDataScript {
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2013-03-08";
+	public static final String BUILD = "2013-07-23";
 	public static final String REVISION = "";
-	public static final String VERSION_MAJOR = "0.0000000001";
+	public static final String VERSION_MAJOR = "0.01";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
@@ -501,6 +501,7 @@ public class BigDataScript {
 			else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
 			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = true;
 			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
+			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) usage(null);
 			else if (args[i].equals("-loop")) {
 				// Perform a 'busy loop' and exit
 				Timer t = new Timer();
