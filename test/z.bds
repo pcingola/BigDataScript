@@ -2,9 +2,7 @@
 print("Start\n")
 
 for( int i=0 ; i < 4 ; i++ ) {
-	#task echo "Start:$i" ; sleep 10 ; echo "Done:$i"
-	sys sleep 5;
+	print("Hi $i\n");
 }
 
-wait
 print("Done!\n")

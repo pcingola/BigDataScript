@@ -212,8 +212,8 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 
 	// Redirect all signals to channel (e.g. Ctrl-C)
 	osSignal := make(chan os.Signal, 1)
-	if( pidFile != "") {
-		fmt.Fprintf(os.Stderr, "bds: creating os.Signal channel\n");
+	if pidFile != "" {
+		fmt.Fprintf(os.Stderr, "bds: creating os.Signal channel\n")
 		signal.Notify(osSignal, os.Interrupt, os.Kill)
 	}
 
