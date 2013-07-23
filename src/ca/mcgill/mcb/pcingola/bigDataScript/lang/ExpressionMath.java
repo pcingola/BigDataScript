@@ -15,6 +15,10 @@ public class ExpressionMath extends ExpressionBinary {
 		super(parent, tree);
 	}
 
+	public ExpressionMath(Expression left, Expression right) {
+		super(left, right);
+	}
+
 	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;

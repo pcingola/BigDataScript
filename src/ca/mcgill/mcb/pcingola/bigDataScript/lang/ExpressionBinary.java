@@ -18,6 +18,12 @@ public class ExpressionBinary extends Expression {
 		super(parent, tree);
 	}
 
+	public ExpressionBinary(Expression left, Expression right) {
+		super(null, null);
+		this.left = left;
+		this.right = right;
+	}
+
 	@Override
 	protected boolean isReturnTypesNotNull() {
 		if (right == null) return (left.getReturnType() != null);

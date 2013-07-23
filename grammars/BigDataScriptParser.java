@@ -2351,25 +2351,6 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class PostContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public PostContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterPost(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPost(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPost(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class ExpressionCondContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -2389,6 +2370,25 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionCond(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class PostContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public PostContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterPost(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPost(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPost(this);
 			else return visitor.visitChildren(this);
 		}
 	}
