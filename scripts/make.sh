@@ -12,7 +12,7 @@ echo
 echo Building bds wrapper: Compiling GO program
 cd go/bds/
 go clean
-go build
+go build bds.go
 go fmt
 cd -
 
