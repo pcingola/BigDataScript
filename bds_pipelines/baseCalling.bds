@@ -1,5 +1,8 @@
 #-------------------------------------------------------------------------------
-# Perform base calling
+#
+# Perform base calling on several BAM files
+#
+#																Pablo Cingolani
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -10,7 +13,7 @@ string genome				# Genome name
 string[] bam 				# List of bam files
 string out					# VCF output file
 
-int maxVcfHeadeLen = 2000	# We expect vec headers to be less than this many lines
+int maxVcfHeadeLen = 2000	# We expect VCF headers to be less than this many lines
 int basesPerTask = 1000000	# Number of bases to assign to each task
 
 #-------------------------------------------------------------------------------

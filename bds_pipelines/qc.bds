@@ -1,0 +1,71 @@
+#-------------------------------------------------------------------------------
+#
+# Perform Quality control using a FASTQ (raw reads) and 
+# a BAM file (mapped and may be filtered reads)
+#
+#																Pablo Cingolani
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# Parameters
+#-------------------------------------------------------------------------------
+
+string[] fastq 								# Raw reads in FASTQ format (may be more than one file)
+string bam 									# Mapped (and filtered) reads in BAM format
+string fastQcPath = "$HOME/tools/fastqc"	# Path to fastQc program
+
+#-------------------------------------------------------------------------------
+# Main
+#-------------------------------------------------------------------------------
+
+#---
+# Sanity check: Command line arguments
+#---
+if( bam.isEmpty() || (fastq.size() <= 0) )	error "Usage: qc.bds -bam file.bam -fastq file_1.fq file_2.fq ... file_N.fq"
+
+# Check that each fastq exists
+for( string fq : fastq ) {
+	if( ! fq.exists() )	error "File '$fq' does not exists!"
+}
+
+# Check that each bam exists
+if( ! bam.exists() )	error "File '$bam' does not exists!"
+
+#-------------------------------------------------------------------------------
+# Quality control
+#-------------------------------------------------------------------------------
+
+#---
+# Run fastQc
+#---
+for( string fq : fastq ) {
+	print("QC: $fq\n")
+	string fastqcOut = fq.dirName() + "/" + fq.removeExt() + "_fastqc.zip"
+	task ( fastqcOut <- fastq ) {
+		sys $fastQcPath/fastqc --noextract --contaminants $fastQcPath/Contaminants/contaminant_list.txt $fq
+	}
+}
+
+#---
+# Run samtools on BAM file
+#---
+
+# Index file
+string bamIdx = "$bam.bai"
+string tid = task( bamIdx <- bam ) {
+	sys samtools index $bam
+}
+wait tid
+
+# Stats using samtools
+string bamStats = "$bam.txt"
+task( bamStats <- bam ) {
+	sys echo "# Samtools idxstats" > $bamStats   
+	sys echo "# chr    chrLen   reads_mapped    reads_unmapped" >> $bamStats   
+	sys samtools idxstats $bam >> $bamStats
+	sys echo "#" >> $bamStats   
+	sys echo "# Samtools flagstat" >> $bamStats   
+	sys echo "# reads_QCpassed   reads_QCfailed  type" >> $bamStats   
+	sys samtools flagstat $bam >> $bamStats
+}
+
