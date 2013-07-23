@@ -54,10 +54,10 @@ func main() {
 	// Are we requested to execute a command?
 	if len(os.Args) > 1 {
 		if os.Args[1] == "exec" {
-			// Execute command and exit
+			// Execute 'exec' command and exit
 			os.Exit(executeCommandArgs())
 		} else if os.Args[1] == "qexec" {
-			// Execute command and exit
+			// Execute 'queue' command and exit
 			os.Exit(executeQCommandArgs())
 		} else if os.Args[1] == "kill" {
 			// Kill a process group
@@ -203,18 +203,19 @@ func executeQCommandArgs() int {
 */
 func executeCommand(command string, args []string, timeSecs int, outFile, errFile, exitFile string) int {
 
-	// Set a new process group.
-	// Since we want to killall child processes, we'll send a kill signal to this process group.
-	// But we don't want to kill the calling program...
-	if err := syscall.Setpgid(0, 0); err != nil {
-		log.Fatal(err)
-	}
-
 	// Redirect all signals to channel (e.g. Ctrl-C)
 	osSignal := make(chan os.Signal, 1)
 	if pidFile != "" {
-		fmt.Fprintf(os.Stderr, "bds: creating os.Signal channel\n")
+		// fmt.Fprintf(os.Stderr, "bds: creating os.Signal channel\n")
 		signal.Notify(osSignal, os.Interrupt, os.Kill)
+	} else {
+		// Set a new process group.
+		// Since we want to killall child processes, we'll send a kill signal to this process group.
+		// But we don't want to kill the calling program...
+		// fmt.Fprintf(os.Stderr, "bds: setting new process group\n")
+		if err := syscall.Setpgid(0, 0); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	// Create command
@@ -282,19 +283,19 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 
 	// Wait until executions ends, timeout or OS signal
 	kill := false
-	fmt.Fprintf(os.Stderr, "bds: waiting for process to finish\n")
+	// fmt.Fprintf(os.Stderr, "bds: waiting for process to finish\n")
 	select {
 	case exitStr = <-exitCode:
 		kill = false
 
 	case <-time.After(time.Duration(timeSecs) * time.Second):
 		kill = true
-		fmt.Fprintf(os.Stderr, "bds: timed out!\n")
+		// fmt.Fprintf(os.Stderr, "bds: timed out!\n")
 		exitStr = "Time out"
 
 	case <-osSignal:
 		kill = true
-		fmt.Fprintf(os.Stderr, "bds: killed by OS signal!\n")
+		// fmt.Fprintf(os.Stderr, "bds: killed by OS signal!\n")
 		exitStr = "Signal received"
 	}
 
@@ -323,6 +324,7 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 	if exitStr == "0" {
 		return 0
 	}
+
 	return 1
 }
 
@@ -354,7 +356,7 @@ func killAll(pidFile string) {
 		file *os.File
 	)
 
-	fmt.Fprintf(os.Stderr, "bds: killing all processes in pid file '%s'\n", pidFile)
+	// fmt.Fprintf(os.Stderr, "bds: killing all processes in pid file '%s'\n", pidFile)
 	defer os.Remove(pidFile) // Make sure the PID file is removed
 
 	//---
@@ -364,13 +366,13 @@ func killAll(pidFile string) {
 	cmds := make(map[string]string)
 
 	if file, err = os.Open(pidFile); err != nil {
-		fmt.Fprintf(os.Stderr, "bds: cannot open PID file '%s'\n", pidFile)
+		// fmt.Fprintf(os.Stderr, "bds: cannot open PID file '%s'\n", pidFile)
 		return
 	}
 	defer file.Close()
 
 	// Read line by line
-	fmt.Fprintf(os.Stderr, "bds: parsing process pid file '%s'\n", pidFile)
+	// fmt.Fprintf(os.Stderr, "bds: parsing process pid file '%s'\n", pidFile)
 	reader := bufio.NewReader(file)
 	for {
 		if line, err = readLine(reader); err != nil {
@@ -380,19 +382,19 @@ func killAll(pidFile string) {
 
 		pid := recs[0]
 		addDel := recs[1]
-		fmt.Fprintf(os.Stderr, "\t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
+		// fmt.Fprintf(os.Stderr, "\t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
 
 		// Add or remove from map
 		if addDel == "-" {
-			fmt.Fprintf(os.Stderr, "\t\tdelete PID '%s'\n", pid)
+			// fmt.Fprintf(os.Stderr, "\t\tdelete PID '%s'\n", pid)
 			delete(pids, pid)
 		} else {
 			pids[pid] = true
 			if len(recs) > 2 && len(recs[2]) > 0 {
 				cmds[pid] = recs[2]
-				fmt.Fprintf(os.Stderr, "\t\tadd PID '%s' command '%s'\n", pid, cmds[pid])
+				// fmt.Fprintf(os.Stderr, "\t\tadd PID '%s' command '%s'\n", pid, cmds[pid])
 			} else {
-				fmt.Fprintf(os.Stderr, "\t\tadd PID '%s'\n", pid)
+				// fmt.Fprintf(os.Stderr, "\t\tadd PID '%s'\n", pid)
 			}
 		}
 	}
@@ -404,11 +406,11 @@ func killAll(pidFile string) {
 		// Is it marked as running? Kill it
 		if running {
 			if cmd, ok := cmds[pid]; !ok {
-				fmt.Fprintf(os.Stderr, "\t\tkilling PID '%s'\n", pid)
+				// fmt.Fprintf(os.Stderr, "\t\tkilling PID '%s'\n", pid)
 				pidInt, _ := strconv.Atoi(pid)
 				killProcessGroup(pidInt) // No need to run a command, just kill local porcess group
 			} else {
-				fmt.Fprintf(os.Stderr, "\t\tkilling PID '%s' using command '%s'\n", pid, runCmds[cmd])
+				// fmt.Fprintf(os.Stderr, "\t\tkilling PID '%s' using command '%s'\n", pid, runCmds[cmd])
 				// Create command to be executed
 				if _, ok = runCmds[cmd]; ok {
 					runCmds[cmd] = runCmds[cmd] + "\t" + pid
@@ -417,14 +419,14 @@ func killAll(pidFile string) {
 				}
 			}
 		} else {
-			fmt.Fprintf(os.Stderr, "\t\tnot killing PID '%s' (not running)\n", pid)
+			// fmt.Fprintf(os.Stderr, "\t\tnot killing PID '%s' (not running)\n", pid)
 		}
 	}
 
 	// Run all commands (usually it's only one command)
 	for cmd, args := range runCmds {
 		if len(cmd) > 0 {
-			fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
+			// fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
 			cmdExec := exec.Command(cmd)
 			cmdExec.Args = strings.Split(args, "\t")
 			err := cmdExec.Run()
@@ -439,7 +441,7 @@ func killAll(pidFile string) {
 	Kill a process group
 */
 func killProcessGroup(pid int) {
-	fmt.Fprintf(os.Stderr, "bds:killing process group %d\n", pid)
+	// fmt.Fprintf(os.Stderr, "bds: killing process group %d\n", pid)
 	syscall.Kill(-pid, syscall.SIGHUP)
 }
 

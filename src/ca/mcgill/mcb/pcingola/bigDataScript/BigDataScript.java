@@ -501,7 +501,18 @@ public class BigDataScript {
 			else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
 			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = true;
 			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
-			else if (args[i].equals("-r") || args[i].equalsIgnoreCase("-restore")) {
+			else if (args[i].equals("-loop")) {
+				// Perform a 'busy loop' and exit
+				Timer t = new Timer();
+				t.start();
+				if (verbose) Gpr.debug("Looping");
+				for (long j = 0; true; j++) {
+					if (t.elapsed() > 10000) {
+						if (verbose) Gpr.debug("Done: " + j);
+						System.exit(0);
+					}
+				}
+			} else if (args[i].equals("-r") || args[i].equalsIgnoreCase("-restore")) {
 				// Checkpoint restore
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 				else usage("Option '-r' without restore file argument");

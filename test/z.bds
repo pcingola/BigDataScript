@@ -1,8 +1,8 @@
 
 print("Start\n")
 
-for( int i=0 ; i < 100000 ; i++ ) {
-	print("Hi $i\n");
+for( int i=0 ; i < 10 ; i++ ) {
+	task echo "Start $i"; sleep 10 ; echo "Done $i"
 }
 
 print("Done!\n")
