@@ -95,6 +95,16 @@ public class Task implements BigDataScriptSerialize {
 		if (exitCodeFile == null) exitCodeFile = base + ".exitCode";
 	}
 
+	/**
+	 * Remove tmp files on exit
+	 */
+	public void deleteOnExit() {
+		if (stdoutFile != null) (new File(stdoutFile)).deleteOnExit();
+		if (stderrFile != null) (new File(stderrFile)).deleteOnExit();
+		if (exitCodeFile != null) (new File(exitCodeFile)).deleteOnExit();
+		if (programFileName != null) (new File(programFileName)).deleteOnExit();
+	}
+
 	public String getExitCodeFile() {
 		return exitCodeFile;
 	}

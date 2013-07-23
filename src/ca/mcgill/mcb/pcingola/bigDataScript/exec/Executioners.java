@@ -138,6 +138,7 @@ public class Executioners {
 		// Set flags
 		executioner.setVerbose(config.isVerbose());
 		executioner.setDebug(config.isDebug());
+		executioner.setLog(config.isLog());
 
 		// Start thread
 		executioner.start();

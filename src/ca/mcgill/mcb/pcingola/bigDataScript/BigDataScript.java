@@ -500,6 +500,7 @@ public class BigDataScript {
 			else if (args[i].equalsIgnoreCase("-noLog")) log = false;
 			else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
 			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = true;
+			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
 			else if (args[i].equals("-r") || args[i].equalsIgnoreCase("-restore")) {
 				// Checkpoint restore
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
@@ -534,8 +535,10 @@ public class BigDataScript {
 		//---
 		// Config
 		//---
-		config = new Config(configFile, verbose);
+		config = new Config(configFile);
+		config.setVerbose(verbose);
 		config.setDebug(debug);
+		config.setLog(log);
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
 			else pidFile = chekcpointRestoreFile + ".pid";
@@ -630,8 +633,9 @@ public class BigDataScript {
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config] file    : Config file. Default : " + configFile);
 		System.err.println("  [-d | -debug]          : Debug mode.");
+		System.err.println("  [-l | -log]            : Log all actions (do not delete tmp files).");
 		System.err.println("  [-r | -restore] file   : Restore from checkpoint file.");
-		System.err.println("  [-s |-system] type     : Set system type.");
+		System.err.println("  [-s | -system] type    : Set system type.");
 		System.err.println("  [-v | -verbose]        : Be verbose.");
 		System.err.println("  -pid <file>            : Write local processes PIDs to 'file'");
 		System.err.println("  -noLog                 : Do not log stats.");

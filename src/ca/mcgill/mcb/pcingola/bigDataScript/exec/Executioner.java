@@ -19,6 +19,7 @@ public abstract class Executioner extends Thread {
 
 	protected boolean debug;
 	protected boolean verbose;
+	protected boolean log;
 	protected boolean running;
 	protected int hostIdx = 0;
 	protected ArrayList<Task> tasksToRun;
@@ -96,6 +97,9 @@ public abstract class Executioner extends Thread {
 		if (task == null) return;
 		tasksRunning.remove(task.getId());
 		tasksDone.put(task.getId(), task);
+
+		// Schedule removal of TMP files (if not logging)
+		if (!log) task.deleteOnExit();
 	}
 
 	/**
@@ -357,6 +361,10 @@ public abstract class Executioner extends Thread {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public void setLog(boolean log) {
+		this.log = log;
 	}
 
 	public void setVerbose(boolean verbose) {

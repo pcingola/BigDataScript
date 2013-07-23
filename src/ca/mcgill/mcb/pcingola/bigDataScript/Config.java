@@ -24,6 +24,7 @@ public class Config {
 
 	boolean debug = false; // Debug mode?
 	boolean verbose = false; // Verbose mode?
+	boolean log = false; // Log all commands?
 	String configDirName;
 	String pidFile;
 	Properties properties;
@@ -43,8 +44,7 @@ public class Config {
 	 * @param genomeVersion
 	 * @param configFileName
 	 */
-	public Config(String configFileName, boolean verbose) {
-		this.verbose = verbose;
+	public Config(String configFileName) {
 		read(configFileName); // Read config file 
 		configInstance = this;
 	}
@@ -90,6 +90,10 @@ public class Config {
 
 	public boolean isDebug() {
 		return debug;
+	}
+
+	public boolean isLog() {
+		return log;
 	}
 
 	public boolean isVerbose() {
@@ -154,6 +158,10 @@ public class Config {
 				if (!sshNode.isEmpty()) sshNodes.add(sshNode);
 			}
 		}
+	}
+
+	public void setLog(boolean log) {
+		this.log = log;
 	}
 
 	public void setPidFile(String pidFile) {

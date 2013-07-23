@@ -1,8 +1,7 @@
-/* 
+/*
 	Execute BigDataScript:
 
-	This command line program allow two execution types
-
+	This program allows different "commands"
 	Commands:
 		1) default (no command)	:	Execute main Java package (compiler and interpreter)
 
@@ -21,8 +20,8 @@
 	This will load, compile and execute 'myprogram.bds' (BigDataScript program)
 		$ bds myprogram.bds
 
-	This will execute "ls -al", redirect standard output and standard error 
-	to "out.stdout" and "out.stderr" respectively. When the command finishes, the 
+	This will execute "ls -al", redirect standard output and standard error
+	to "out.stdout" and "out.stderr" respectively. When the command finishes, the
 	exit code will be written to "out.exit"
 
 		$ bds exec 10 out.stdout out.stderr out.exit ls -al
@@ -197,9 +196,9 @@ func executeQCommandArgs() int {
 
 /*
 	Execute a command (using arguments 'args')
-	Redirect stdout to outFile (unless file name is empty)
-	Redirect stderr to errFile (unless file name is empty)
-	Write exit code to exitFile (unless file name is empty)
+	Redirect stdout to outFile    (unless file name is empty)
+	Redirect stderr to errFile    (unless file name is empty)
+	Write exit code to exitFile   (unless file name is empty)
 	Timeout after timeout seconds (unless time is zero)
 */
 func executeCommand(command string, args []string, timeSecs int, outFile, errFile, exitFile string) int {
@@ -335,11 +334,11 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 
 /*
 	Parse pidFile and send kill signal to all process groups that have not been marked as 'finished'
-	File format: 
+	File format:
 		"pid \t {+,-} \n"
 
-	where '+' inidicates the process was started and '-' that 
-	the process finished. So all pid that do not have a '-' entry 
+	where '+' inidicates the process was started and '-' that
+	the process finished. So all pid that do not have a '-' entry
 	must be killed.
 */
 func killAll(pidFile string) {
@@ -444,8 +443,8 @@ func readLine(reader *bufio.Reader) (line string, err error) {
 	return
 }
 
-/* 
-	Write a string to a file 
+/*
+	Write a string to a file
 */
 func writeFile(fileName, message string) {
 	file, err := os.Create(fileName)
@@ -456,9 +455,9 @@ func writeFile(fileName, message string) {
 	file.WriteString(message)
 }
 
-// 
+//
 // tee: Copy to file AND stdout (or stderr)
-// 
+//
 // This code adapted from io.Copy function
 //		http://golang.org/src/pkg/io/io.go?s=11569:11629#L338
 //
@@ -523,7 +522,7 @@ func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error
 //
 // Create a temp file. Retun file name instead of file descriptor
 //
-// Code adapted from ioutil.TempFile 
+// Code adapted from ioutil.TempFile
 // Ref: http://golang.org/src/pkg/io/ioutil/tempfile.go
 //
 // TempFile creates a new temporary file in the directory dir
@@ -583,7 +582,7 @@ func nextSuffix() string {
 	return strconv.Itoa(int(1e9 + r%1e9))[1:]
 }
 
-/* 
+/*
 	Show usage message and exit
 */
 func usage(msg string) {
