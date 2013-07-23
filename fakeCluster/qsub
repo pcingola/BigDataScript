@@ -1,8 +1,14 @@
 #!/bin/sh
 
-# Show PID
+# Show PID (this is expected by the executing program)
 echo $$
 
-echo "COMMAND: $*"
-cat 
+# Create an executable script on "fakeCluster" queue
+out=$HOME/.bds/fakeClusterTasks/task.$$.sh
+
+echo "#!/bin/sh" >> $out
+echo >> $out
+cat >> $out
+
+chmod a+x $out
 

@@ -1,4 +1,6 @@
 
-int i = 0
-i = 2
-print("i=$i\n");
+system = "cluster"
+
+for( int i=0 ; i < 10 ; i++ ) {
+	task echo "Start: $i"; sleep $i ; echo "Done: $i"
+}

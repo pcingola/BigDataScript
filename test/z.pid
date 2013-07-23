@@ -54,3 +54,163 @@
 5672	-
 5682	+	
 5682	-
+3732	+	
+3744	+	
+3756	+	
+3768	+	
+3780	+	
+3792	+	
+3804	+	
+3816	+	
+3732	-
+3744	-
+3834	+	
+3846	+	
+3756	-
+3768	-
+3780	-
+3792	-
+3804	-
+3816	-
+3834	-
+3846	-
+3903	+	
+3915	+	
+3927	+	
+3939	+	
+3903	-
+3951	+	
+3963	+	
+3975	+	
+3987	+	
+3999	+	
+3915	-
+4011	+	
+3927	-
+3939	-
+3951	-
+3963	-
+3975	-
+3987	-
+3999	-
+4011	-
+4191	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4195	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4199	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4203	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4207	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4211	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4215	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4219	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4223	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4227	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4203	-
+4199	-
+4227	-
+4195	-
+4191	-
+4219	-
+4215	-
+4211	-
+4207	-
+4223	-
+4294	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4298	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4302	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4306	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4310	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4314	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4318	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4322	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4326	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4330	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4306	-
+4298	-
+4310	-
+4302	-
+4314	-
+4318	-
+4294	-
+4322	-
+4326	-
+4330	-
+4408	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4412	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4416	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4420	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4424	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4428	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4432	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4436	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4440	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4444	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4432	-
+4436	-
+4444	-
+4440	-
+4416	-
+4420	-
+4424	-
+4428	-
+4412	-
+4408	-
+4723	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4727	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4731	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4735	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4739	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4743	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4747	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4751	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4755	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4759	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4723	-
+4727	-
+4731	-
+4735	-
+4739	-
+4759	-
+4743	-
+4747	-
+4751	-
+4755	-
+4890	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4895	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4900	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4905	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4910	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4915	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4920	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4925	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4930	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4935	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+4895	-
+4890	-
+4905	-
+4900	-
+4915	-
+4910	-
+4930	-
+4935	-
+4920	-
+4925	-
+5084	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5089	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5094	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5099	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5104	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5109	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5114	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5119	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5124	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5129	+	/home/pcingola/workspace/BigDataScript/fakeCluster/qdel
+5084	-
+5089	-
+5094	-
+5099	-
+5104	-
+5109	-
+5114	-
+5119	-
+5124	-
+5129	-

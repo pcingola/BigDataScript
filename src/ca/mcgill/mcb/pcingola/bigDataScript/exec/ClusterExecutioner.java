@@ -6,6 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunner;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunnerCluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -17,8 +18,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ClusterExecutioner extends LocalExecutioner {
 
-	public static String FAKE_CLUSTER = "";
-	// public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
+	//public static String FAKE_CLUSTER = "";
+	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
 	public static String CLUSTER_KILL_COMMAND = FAKE_CLUSTER + "qdel";
 	public static String CLUSTER_BDS_COMMAND = "bds qexec ";
@@ -26,11 +27,11 @@ public class ClusterExecutioner extends LocalExecutioner {
 	public static final int MIN_EXTRA_TIME = 15;
 	public static final int MAX_EXTRA_TIME = 120;
 
-	MonitorExitFile taskDone;
+	MonitorExitFile monitorExitFile;
 
 	public ClusterExecutioner(PidLogger pidLogger, Cluster cluster) {
 		super(pidLogger);
-		taskDone = new MonitorExitFile();
+		monitorExitFile = new MonitorExitFile();
 
 	}
 
@@ -124,7 +125,7 @@ public class ClusterExecutioner extends LocalExecutioner {
 	@Override
 	protected void runLoopAfter() {
 		super.runLoopAfter();
-		taskDone.kill(); // Kill taskDone process
+		monitorExitFile.kill(); // Kill taskDone process
 	}
 
 	/**
@@ -132,7 +133,7 @@ public class ClusterExecutioner extends LocalExecutioner {
 	 */
 	@Override
 	protected void runLoopBefore() {
-		taskDone.start(); // Create a 'taskDone' process (get information when a process finishes)
+		monitorExitFile.start(); // Create a 'taskDone' process (get information when a process finishes)
 		super.runLoopBefore();
 	}
 
@@ -143,12 +144,12 @@ public class ClusterExecutioner extends LocalExecutioner {
 	@Override
 	protected void runTaskStarted(Task task) {
 		super.runTaskStarted(task);
-		taskDone.add(this, task);
+		monitorExitFile.add(this, task);
 	}
 
 	@Override
 	public void setDebug(boolean debug) {
 		super.setDebug(debug);
-		taskDone.setDebug(debug);
+		monitorExitFile.setDebug(debug);
 	}
 }
