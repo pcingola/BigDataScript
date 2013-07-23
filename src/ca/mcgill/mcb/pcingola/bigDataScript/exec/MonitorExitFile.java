@@ -30,7 +30,7 @@ public class MonitorExitFile extends Thread {
 	 * @param task : Task (timeout is inferred from task.resources)
 	 */
 	public synchronized void add(Executioner executioner, Task task) {
-		if (debug) Gpr.debug("TaskDone: Adding task " + task.getId());
+		if (debug) Gpr.debug("MonitorExitFile: Adding task " + task.getId());
 		if (task == null) return;
 		execByTask.put(task, executioner);
 	}
@@ -44,7 +44,7 @@ public class MonitorExitFile extends Thread {
 	 * @param task
 	 */
 	public synchronized void remove(Task task) {
-		if (debug) Gpr.debug("TaskDone: Removing task " + task.getId());
+		if (debug) Gpr.debug("MonitorExitFile: Removing task " + task.getId());
 		execByTask.remove(task);
 	}
 
@@ -102,13 +102,13 @@ public class MonitorExitFile extends Thread {
 	 * Exit file exists: update states
 	 */
 	synchronized void update(Task task) {
-		if (debug) Gpr.debug("Found exit file " + task.getExitCodeFile());
+		if (debug) Gpr.debug("MonitorExitFile: Found exit file " + task.getExitCodeFile());
 
 		// Parse exit file
 		sleep();
 		String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
 		int exitVal = (exitFileStr.equals("0") ? 0 : 1);
-		if (debug) Gpr.debug("Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
+		if (debug) Gpr.debug("MonitorExitFile: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
 
 		// Set task
 		task.setExitValue(exitVal);

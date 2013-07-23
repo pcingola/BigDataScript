@@ -2,7 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.exec;
 
 import java.util.ArrayList;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunner;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunnerCluster;
@@ -18,7 +17,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ClusterExecutioner extends LocalExecutioner {
 
-	//public static String FAKE_CLUSTER = "";
+	// public static String FAKE_CLUSTER = "";
 	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
 	public static String CLUSTER_KILL_COMMAND = FAKE_CLUSTER + "qdel";
@@ -29,10 +28,9 @@ public class ClusterExecutioner extends LocalExecutioner {
 
 	MonitorExitFile monitorExitFile;
 
-	public ClusterExecutioner(PidLogger pidLogger, Cluster cluster) {
+	public ClusterExecutioner(PidLogger pidLogger) {
 		super(pidLogger);
 		monitorExitFile = new MonitorExitFile();
-
 	}
 
 	@Override
@@ -99,12 +97,10 @@ public class ClusterExecutioner extends LocalExecutioner {
 
 		// Create command 
 		CmdRunnerCluster cmd = new CmdRunnerCluster(task.getId(), args.toArray(CmdRunner.ARGS_ARRAY_TYPE));
-		cmd.setTask(task);
-		cmd.setExecutioner(this);
+		//		cmd.setTask(task);
+		//		cmd.setExecutioner(this);
 		cmd.setStdin(cmdStdin.toString());
 		cmd.setReadPid(true); // We execute using "qsub" which prints a jobID to stdout
-
-		cmdById.put(task.getId(), cmd); // Add to map
 
 		return cmd;
 	}
@@ -117,6 +113,37 @@ public class ClusterExecutioner extends LocalExecutioner {
 	@Override
 	public String killCommand(Task task) {
 		return CLUSTER_KILL_COMMAND;
+	}
+
+	@Override
+	protected boolean runLoop() {
+		// Nothing to do?
+		if (!hasTaskToRun()) return false;
+
+		// Create a new collection to avoid 'concurrent modification error'
+		ArrayList<Task> run = new ArrayList<Task>();
+		run.addAll(tasksToRun);
+
+		// Run all tasks
+		for (Task task : run) {
+
+			// Wait for queuing command to finish
+			try {
+				// Send task to cluster
+				CmdRunner cmd = createCmdRunner(task);
+				if (debug) Gpr.debug("Waiting for queuing command to finish");
+				cmd.run(); // Start queuing command
+
+				// Queued OK?
+				if (cmd.getExitValue() == 0) runTaskStarted(task);
+				else runTaskFailed(task);
+
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		return true;
 	}
 
 	/**

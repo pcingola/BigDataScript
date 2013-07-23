@@ -119,16 +119,7 @@ public class Executioners {
 			//---
 			// Create cluster executioner
 			//---
-
-			// Create a cluster of one local node. This is because the local node is the cluster's 'head' node and we run all qsub commands here.
-			cluster = new Cluster();
-
-			// No limits on number of cpus and memory (those are imposed by the scheduler, not by the master node parameters)
-			HostLocal host = new HostLocal();
-			host.getResources().setCpus(Integer.MAX_VALUE);
-			cluster.add(host);
-
-			executioner = new ClusterExecutioner(getPidLogger(), cluster);
+			executioner = new ClusterExecutioner(getPidLogger());
 			break;
 
 		default:

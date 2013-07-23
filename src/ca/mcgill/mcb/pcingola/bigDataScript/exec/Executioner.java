@@ -254,7 +254,7 @@ public abstract class Executioner extends Thread {
 			while (running) {
 				// Run loop
 				if (runLoop()) {
-					if (debug) Timer.showStdErr("Queue: All tasks finished.");
+					if (debug) Timer.showStdErr("Queue: No task to run.");
 				}
 
 				sleepLong();

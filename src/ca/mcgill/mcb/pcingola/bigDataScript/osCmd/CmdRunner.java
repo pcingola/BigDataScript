@@ -260,7 +260,7 @@ public class CmdRunner extends Thread {
 			pid = sb.toString().trim(); // Ignore empty lines
 		}
 
-		task.setPid(pid); // Update task's pid
+		if (task != null) task.setPid(pid); // Update task's pid
 	}
 
 	@Override
@@ -298,7 +298,7 @@ public class CmdRunner extends Thread {
 
 	protected void started() {
 		started = true;
-		task.stateStarted();
+		if (task != null) task.stateStarted();
 	}
 
 	@Override

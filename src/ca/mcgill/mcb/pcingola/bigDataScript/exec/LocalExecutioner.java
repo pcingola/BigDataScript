@@ -85,7 +85,8 @@ public class LocalExecutioner extends Executioner {
 
 	@Override
 	protected boolean runLoop() {
-		if (tasksToRun.isEmpty()) return false; // Nothing to do
+		// Nothing to do?
+		if (!hasTaskToRun()) return false;
 
 		// Create a new collection to avoid 'concurrent modification error'
 		ArrayList<Task> run = new ArrayList<Task>();
@@ -99,7 +100,7 @@ public class LocalExecutioner extends Executioner {
 			// Wait for task to finish
 			CmdRunner cmd = cmdById.get(task.getId());
 			try {
-				cmd.join();
+				if (cmd != null) cmd.join(); // cmd can be null, since it can finish before "cmdById.get(...)" thus there is no command in the hash
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -145,6 +146,5 @@ public class LocalExecutioner extends Executioner {
 
 		// Now the task is 'done'
 		return task.getExitValue();
-
 	}
 }
