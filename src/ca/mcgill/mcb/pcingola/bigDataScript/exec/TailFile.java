@@ -15,6 +15,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TailFile {
 
+	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
+
 	String inputFileName; // Read (tail -f) frmo this file
 	String outputFileName; // Write to this file 
 	BufferedInputStream input; // Input buffer 
@@ -95,6 +97,8 @@ public class TailFile {
 			// Any bytes available on this buffer?
 			int avail = input.available();
 			if (avail > 0) {
+				avail = Math.min(avail, MAX_BUFFER_SIZE); // Limit buffer size (some systems return MAX_INT when the file is growing)
+
 				// Read all available bytes
 				byte[] bytes = new byte[avail];
 				input.read(bytes);
