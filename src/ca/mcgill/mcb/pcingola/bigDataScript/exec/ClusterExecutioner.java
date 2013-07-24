@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.exec;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
@@ -123,6 +124,22 @@ public class ClusterExecutioner extends LocalExecutioner {
 		return cmd;
 	}
 
+	@Override
+	public synchronized boolean finished(String id) {
+		boolean ok = super.finished(id);
+
+		if (!log) {
+			// Make sure 'cluster' files are also removed if we are not logging
+			Task task = tasksRunning.get(id);
+			if (task != null) {
+				new File(clusterStdFile(task.getStdoutFile())).deleteOnExit();
+				new File(clusterStdFile(task.getStderrFile())).deleteOnExit();
+			}
+		}
+
+		return ok;
+	}
+
 	/**
 	 * An OS command to kill this task
 	 * @param task
@@ -204,4 +221,5 @@ public class ClusterExecutioner extends LocalExecutioner {
 		super.setDebug(debug);
 		monitorExitFile.setDebug(debug);
 	}
+
 }
