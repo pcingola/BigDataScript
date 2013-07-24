@@ -1,11 +1,8 @@
 
-system = "cluster"
-print("Start: $system\n");
+print("Start Z.BDS\n")
 
-for( int i=0 ; i < 2 ; i++ ) {
-	task echo "Start: $i"; sleep 2 ; echo "Done: $i"
+for( int i=0 ; i < 10 ; i++ ) {
+	sys echo "Hi: $i"; sleep 1 ; echo "Done: $i"
 }
-print("Finished scheduling tasks\n");
 
-wait
-print("Done\n");
+print("Done Z.BDS\n")

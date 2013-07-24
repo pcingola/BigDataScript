@@ -86,7 +86,7 @@ public class LocalExecutioner extends Executioner {
 	@Override
 	protected boolean runLoop() {
 		// Nothing to do?
-		if (!hasTaskToRun()) return false;
+		if (tasksToRun.isEmpty()) return false;
 
 		// Create a new collection to avoid 'concurrent modification error'
 		ArrayList<Task> run = new ArrayList<Task>();
