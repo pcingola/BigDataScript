@@ -1,6 +1,11 @@
 
 system = "cluster"
+print("Start: $system\n");
 
 for( int i=0 ; i < 2 ; i++ ) {
-	task echo "Start: $i"; sleep 10 ; echo "Done: $i"
+	task echo "Start: $i"; sleep 2 ; echo "Done: $i"
 }
+print("Finished scheduling tasks\n");
+
+wait
+print("Done\n");

@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+
 /**
  * A "tail -f" for java
  * 
@@ -43,6 +45,7 @@ public class Tail extends Thread {
 	 * @param showStderr : If true, print to STDERR
 	 */
 	public synchronized void add(String inputFileName, String outputFileName, boolean showStderr) {
+		Gpr.debug("TAIL  Adding:" + inputFileName);
 		TailFile tf = new TailFile(inputFileName, outputFileName, showStderr);
 		files.put(inputFileName, tf);
 	}
@@ -61,6 +64,7 @@ public class Tail extends Thread {
 	 * Kill this thread, stop 'following files'
 	 */
 	public void kill() {
+		close();
 		running = false;
 	}
 
@@ -70,6 +74,7 @@ public class Tail extends Thread {
 	 * @param showStderr
 	 */
 	public synchronized void remove(String fileName) {
+		Gpr.debug("TAIL: Removing " + fileName);
 		try {
 			TailFile tf = files.get(fileName);
 			if (tf != null) {
@@ -88,7 +93,8 @@ public class Tail extends Thread {
 
 			// Loop until kill()
 			while (running) {
-				if (!tail()) sleep(SLEEP_TIME_DEFAULT); // No output? sleep a bit
+				tail();
+				sleep(SLEEP_TIME_DEFAULT);
 			}
 
 		} catch (Exception e) {
@@ -117,8 +123,11 @@ public class Tail extends Thread {
 
 		// Remove problematic entries (if any)
 		if (!toRemove.isEmpty()) {
-			for (String fileName : toRemove)
+			for (String fileName : toRemove) {
+				TailFile tf = files.get(fileName);
+				tf.close();
 				files.remove(fileName);
+			}
 			toRemove = new HashSet<String>();
 		}
 

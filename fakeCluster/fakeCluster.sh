@@ -1,16 +1,19 @@
 #!/bin/sh
 
+taskDir="$HOME/.bds/fakeClusterTasks/"
+doneDir="$HOME/.bds/fakeClusterTasks/done/"
+
 while true
 do
-	next=`ls $HOME/.bds/fakeClusterTasks/task.* 2> /dev/null | head -n 1`
+	next=`ls $taskDir/task.* 2> /dev/null | head -n 1`
 
 	if [ ! -z "$next" ]
 	then
 		echo "Executing task $next"
 		$next
 
-		echo "Deleting file $next"
-		rm -f $next
+		echo "Moving file $next to 'done'"
+		mv $next $doneDir
 	fi
 
 	sleep 1
