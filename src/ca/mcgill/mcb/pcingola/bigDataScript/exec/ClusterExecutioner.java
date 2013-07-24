@@ -126,15 +126,13 @@ public class ClusterExecutioner extends LocalExecutioner {
 
 	@Override
 	public synchronized boolean finished(String id) {
+		Task task = tasksRunning.get(id);
 		boolean ok = super.finished(id);
 
-		if (!log) {
-			// Make sure 'cluster' files are also removed if we are not logging
-			Task task = tasksRunning.get(id);
-			if (task != null) {
-				new File(clusterStdFile(task.getStdoutFile())).deleteOnExit();
-				new File(clusterStdFile(task.getStderrFile())).deleteOnExit();
-			}
+		// Make sure 'cluster' files are also removed if we are not logging
+		if (!log && (task != null)) {
+			new File(clusterStdFile(task.getStdoutFile())).deleteOnExit();
+			new File(clusterStdFile(task.getStderrFile())).deleteOnExit();
 		}
 
 		return ok;
