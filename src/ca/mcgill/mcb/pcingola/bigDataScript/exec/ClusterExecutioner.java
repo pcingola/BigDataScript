@@ -138,7 +138,6 @@ public class ClusterExecutioner extends LocalExecutioner {
 
 				// Queued OK?
 				if (cmd.getExitValue() == 0) {
-					Gpr.debug("PID: " + cmd.getPid());
 					task.setPid(cmd.getPid());
 					runTaskStarted(task);
 				} else {
