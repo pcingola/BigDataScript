@@ -148,6 +148,10 @@ public class CmdRunner extends Thread {
 		return host;
 	}
 
+	public String getPid() {
+		return pid;
+	}
+
 	public HostResources getResources() {
 		return resources;
 	}

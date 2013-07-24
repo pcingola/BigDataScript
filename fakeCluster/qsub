@@ -4,11 +4,11 @@
 echo $$
 
 # Create an executable script on "fakeCluster" queue
-out=$HOME/.bds/fakeClusterTasks/task.$$.sh
+taskFile=$HOME/.bds/fakeClusterTasks/task.$$.sh
 
-echo "#!/bin/sh" >> $out
-echo >> $out
-cat >> $out
+echo "#!/bin/sh" >> $taskFile
+echo >> $taskFile
+cat >> $taskFile
 
-chmod a+x $out
+chmod a+x $taskFile
 

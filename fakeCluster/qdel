@@ -1,4 +1,10 @@
 #!/bin/sh -e
 
-kill $1
+# Create an executable script on "fakeCluster" queue
+taskDir=$HOME/.bds/fakeClusterTasks/
+
+for pid in $*
+do
+	rm -rvf $taskDir/task.$pid.sh
+done
 

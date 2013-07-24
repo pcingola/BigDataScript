@@ -17,8 +17,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ClusterExecutioner extends LocalExecutioner {
 
-	// public static String FAKE_CLUSTER = "";
-	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
+	public static String FAKE_CLUSTER = "";
+	// public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
 	public static String CLUSTER_KILL_COMMAND = FAKE_CLUSTER + "qdel";
 	public static String CLUSTER_BDS_COMMAND = "bds exec ";
@@ -137,8 +137,11 @@ public class ClusterExecutioner extends LocalExecutioner {
 				task.stateStarted(); // Mark as 'started'
 
 				// Queued OK?
-				if (cmd.getExitValue() == 0) runTaskStarted(task);
-				else {
+				if (cmd.getExitValue() == 0) {
+					Gpr.debug("PID: " + cmd.getPid());
+					task.setPid(cmd.getPid());
+					runTaskStarted(task);
+				} else {
 					task.stateError();
 					runTaskFailed(task);
 				}
