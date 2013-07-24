@@ -72,13 +72,13 @@ public class ClusterExecutioner extends LocalExecutioner {
 			args.add(resSb.toString());
 		}
 
-		// Stdout 
-		args.add("-o");
-		args.add(task.getStdoutFile());
-
-		// Stderr 
-		args.add("-e");
-		args.add(task.getStderrFile());
+		//		// Stdout 
+		//		args.add("-o");
+		//		args.add(task.getStdoutFile());
+		//
+		//		// Stderr 
+		//		args.add("-e");
+		//		args.add(task.getStderrFile());
 
 		// Show command string
 		String cmdStr = "";
