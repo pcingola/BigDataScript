@@ -128,7 +128,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (!logdir.exists()) logdir.mkdirs();
 
 		// No logging? Delete on exit
-		if (!config.isLog()) logdir.deleteOnExit();
+		if ((config != null) && !config.isLog()) logdir.deleteOnExit();
 	}
 
 	public String getBigDataScriptThreadId() {

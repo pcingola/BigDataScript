@@ -1,8 +1,9 @@
 
-print("Start Z.BDS\n")
+int j = 5
+int i
 
-for( int i=0 ; i < 10 ; i++ ) {
-	sys echo "Hi: $i"; sleep 1 ; echo "Done: $i"
+for( i = 0 ; i < 10 ; i++ ) {
+	int h = i + i
+	if( i == j ) checkpoint "test/checkpoint_01.bds.chp"
 }
 
-print("Done Z.BDS\n")
