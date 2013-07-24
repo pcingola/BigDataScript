@@ -99,8 +99,6 @@ public class ClusterExecutioner extends LocalExecutioner {
 
 		// Create command 
 		CmdRunnerCluster cmd = new CmdRunnerCluster(task.getId(), args.toArray(CmdRunner.ARGS_ARRAY_TYPE));
-		//		cmd.setTask(task);
-		//		cmd.setExecutioner(this);
 		cmd.setStdin(cmdStdin.toString());
 		cmd.setReadPid(true); // We execute using "qsub" which prints a jobID to stdout
 
@@ -129,16 +127,21 @@ public class ClusterExecutioner extends LocalExecutioner {
 		// Run all tasks
 		for (Task task : run) {
 
-			// Wait for queuing command to finish
 			try {
-				// Send task to cluster
+				//---
+				// Run a command to queue script in the cluster (e.g. qsub)
+				//---
 				CmdRunner cmd = createCmdRunner(task);
 				if (debug) Gpr.debug("Waiting for queuing command to finish");
-				cmd.run(); // Start queuing command
+				cmd.run();
+				task.stateStarted(); // Mark as 'started'
 
 				// Queued OK?
 				if (cmd.getExitValue() == 0) runTaskStarted(task);
-				else runTaskFailed(task);
+				else {
+					task.stateError();
+					runTaskFailed(task);
+				}
 
 			} catch (Exception e) {
 				throw new RuntimeException(e);

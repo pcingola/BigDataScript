@@ -18,8 +18,8 @@ public class Task implements BigDataScriptSerialize {
 
 	public enum TaskState {
 		NONE // Task created, nothing happened so far
-		, STARTED // Process started
-		, START_FAILED // Process failed to start
+		, STARTED // Process started (or queued for execution)
+		, START_FAILED // Process failed to start (or failed to queue)
 		, RUNNING // Running OK
 		, ERROR // Filed while running
 		, KILLED // Task was killed  
