@@ -331,13 +331,13 @@ func killAll(pidFile string) {
 	cmds := make(map[string]string)
 
 	if file, err = os.Open(pidFile); err != nil {
-		// fmt.Fprintf(os.Stderr, "bds: cannot open PID file '%s'\n", pidFile)
+		fmt.Fprintf(os.Stderr, "bds: cannot open PID file '%s'\n", pidFile)
 		return
 	}
 	defer file.Close()
 
 	// Read line by line
-	// fmt.Fprintf(os.Stderr, "bds: parsing process pid file '%s'\n", pidFile)
+	fmt.Fprintf(os.Stderr, "bds: parsing process pid file '%s'\n", pidFile)
 	reader := bufio.NewReader(file)
 	for {
 		if line, err = readLine(reader); err != nil {
@@ -347,19 +347,19 @@ func killAll(pidFile string) {
 
 		pid := recs[0]
 		addDel := recs[1]
-		// fmt.Fprintf(os.Stderr, "\t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
+		fmt.Fprintf(os.Stderr, "\t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
 
 		// Add or remove from map
 		if addDel == "-" {
-			// fmt.Fprintf(os.Stderr, "\t\tdelete PID '%s'\n", pid)
+			fmt.Fprintf(os.Stderr, "\t\tdelete PID '%s'\n", pid)
 			delete(pids, pid)
 		} else {
 			pids[pid] = true
 			if len(recs) > 2 && len(recs[2]) > 0 {
 				cmds[pid] = recs[2]
-				// fmt.Fprintf(os.Stderr, "\t\tadd PID '%s' command '%s'\n", pid, cmds[pid])
+				fmt.Fprintf(os.Stderr, "\t\tadd PID '%s' command '%s'\n", pid, cmds[pid])
 			} else {
-				// fmt.Fprintf(os.Stderr, "\t\tadd PID '%s'\n", pid)
+				fmt.Fprintf(os.Stderr, "\t\tadd PID '%s'\n", pid)
 			}
 		}
 	}
@@ -371,11 +371,11 @@ func killAll(pidFile string) {
 		// Is it marked as running? Kill it
 		if running {
 			if cmd, ok := cmds[pid]; !ok {
-				// fmt.Fprintf(os.Stderr, "\t\tkilling PID '%s'\n", pid)
+				fmt.Fprintf(os.Stderr, "\t\tkilling PID '%s'\n", pid)
 				pidInt, _ := strconv.Atoi(pid)
 				killProcessGroup(pidInt) // No need to run a command, just kill local porcess group
 			} else {
-				// fmt.Fprintf(os.Stderr, "\t\tkilling PID '%s' using command '%s'\n", pid, runCmds[cmd])
+				fmt.Fprintf(os.Stderr, "\t\tkilling PID '%s' using command '%s'\n", pid, runCmds[cmd])
 				// Create command to be executed
 				if _, ok = runCmds[cmd]; ok {
 					runCmds[cmd] = runCmds[cmd] + "\t" + pid
@@ -384,14 +384,14 @@ func killAll(pidFile string) {
 				}
 			}
 		} else {
-			// fmt.Fprintf(os.Stderr, "\t\tnot killing PID '%s' (not running)\n", pid)
+			fmt.Fprintf(os.Stderr, "\t\tnot killing PID '%s' (not running)\n", pid)
 		}
 	}
 
 	// Run all commands (usually it's only one command)
 	for cmd, args := range runCmds {
 		if len(cmd) > 0 {
-			// fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
+			fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
 			cmdExec := exec.Command(cmd)
 			cmdExec.Args = strings.Split(args, "\t")
 			err := cmdExec.Run()
@@ -406,7 +406,7 @@ func killAll(pidFile string) {
 	Kill a process group
 */
 func killProcessGroup(pid int) {
-	// fmt.Fprintf(os.Stderr, "bds: killing process group %d\n", pid)
+	fmt.Fprintf(os.Stderr, "bds: killing process group %d\n", pid)
 	syscall.Kill(-pid, syscall.SIGHUP)
 }
 
