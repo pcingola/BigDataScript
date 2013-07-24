@@ -50,10 +50,13 @@ public class LocalExecutioner extends Executioner {
 		for (String arg : CmdRunner.LOCAL_EXEC_COMMAND)
 			args.add(arg);
 		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
-		args.add(timeout + "");
-		args.add(task.getStdoutFile());
-		args.add(task.getStderrFile());
-		args.add(task.getProgramFileName());
+
+		// Add command line parameters for "bds exec"
+		args.add(timeout + ""); // Enforce timeout
+		args.add(task.getStdoutFile()); // Redirect STDOUT to this file
+		args.add(task.getStderrFile()); // Redirect STDERR to this file
+		args.add("-"); // No need to create exitCode file in local execution
+		args.add(task.getProgramFileName()); // Program to execute
 
 		String cmdStr = "";
 		for (String arg : args)
