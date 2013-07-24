@@ -13,7 +13,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * 
  * @author pcingola
  */
-// public class TailFile extends Thread {
 public class TailFile {
 
 	String inputFileName; // Read (tail -f) frmo this file
