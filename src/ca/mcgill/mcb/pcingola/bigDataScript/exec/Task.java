@@ -26,7 +26,7 @@ public class Task implements BigDataScriptSerialize {
 		, FINISHED // Finished OK  
 	}
 
-	public static final String SHE_BANG = "#!/bin/sh\n\n";;
+	public static final String SHE_BANG = "#!/bin/sh -e\n\n"; // Use '-e' so that shell script stops after first error
 
 	protected String id; // Task ID
 	protected boolean verbose, debug;
