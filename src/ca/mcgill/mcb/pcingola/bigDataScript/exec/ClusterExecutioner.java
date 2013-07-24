@@ -35,8 +35,26 @@ public class ClusterExecutioner extends LocalExecutioner {
 
 	@Override
 	protected void addTail(Task task) {
-		tail.add(task.getStdoutFile(), null, false);
-		tail.add(task.getStderrFile(), null, true);
+		tail.add(clusterStdFile(task.getStdoutFile()), null, false);
+		tail.add(clusterStdFile(task.getStderrFile()), null, true);
+	}
+
+	/**
+	 * Usually cluster management systems write STDOUT 
+	 * & STDERR to files. We don't want the names to 
+	 * be the same as the one we use, otherwise program's 
+	 * output may be written twice.
+	 *   On the other hand, we cannot trust the cluster 
+	 * system to write those files, because sometimes 
+	 * they don't do it properly, sometimes they add 
+	 * headers & footers, sometimes they mixed STDOUT 
+	 * and STDERR in a single file, etc.
+	 *   
+	 * @param fileName
+	 * @return
+	 */
+	String clusterStdFile(String fileName) {
+		return fileName + ".cluster";
 	}
 
 	@Override
@@ -72,13 +90,13 @@ public class ClusterExecutioner extends LocalExecutioner {
 			args.add(resSb.toString());
 		}
 
-		//		// Stdout 
-		//		args.add("-o");
-		//		args.add(task.getStdoutFile());
-		//
-		//		// Stderr 
-		//		args.add("-e");
-		//		args.add(task.getStderrFile());
+		// Stdout 
+		args.add("-o");
+		args.add(clusterStdFile(task.getStdoutFile()));
+
+		// Stderr 
+		args.add("-e");
+		args.add(clusterStdFile(task.getStderrFile()));
 
 		// Show command string
 		String cmdStr = "";
@@ -89,10 +107,10 @@ public class ClusterExecutioner extends LocalExecutioner {
 		StringBuilder cmdStdin = new StringBuilder();
 		cmdStdin.append(CLUSTER_BDS_COMMAND);
 		cmdStdin.append(realTimeout + " ");
-		cmdStdin.append(task.getStdoutFile() + " ");
-		cmdStdin.append(task.getStderrFile() + " ");
-		cmdStdin.append(task.getExitCodeFile() + " ");
-		cmdStdin.append(task.getProgramFileName());
+		cmdStdin.append("'" + task.getStdoutFile() + "' ");
+		cmdStdin.append("'" + task.getStderrFile() + "' ");
+		cmdStdin.append("'" + task.getExitCodeFile() + "' ");
+		cmdStdin.append("'" + task.getProgramFileName() + "' ");
 
 		// Run command
 		if (debug) Timer.showStdErr("Running command: echo \"" + cmdStdin + "\" | " + cmdStr);
