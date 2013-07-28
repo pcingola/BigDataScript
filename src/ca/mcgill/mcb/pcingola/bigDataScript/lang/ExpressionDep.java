@@ -47,7 +47,12 @@ public class ExpressionDep extends Expression {
 
 			// Any 'left' file does not exists? => We need to build this dependency
 			if (!file.exists()) return true;
-			if (file.length() <= 0) return true; // File is empty? => We need to build this dependency
+			if (file.isFile() && file.length() <= 0) return true; // File is empty? => We need to build this dependency. 
+			else if (file.isDirectory()) {
+				// Notice: If it is a directory, we must rebuild if it is empty
+				File dirList[] = file.listFiles();
+				if ((dirList == null) || dirList.length <= 0) return true;
+			}
 			minModifiedLeft = Math.min(minModifiedLeft, file.lastModified());
 		}
 
