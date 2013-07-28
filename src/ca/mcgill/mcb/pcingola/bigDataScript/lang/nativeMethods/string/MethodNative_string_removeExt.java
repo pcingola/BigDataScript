@@ -31,6 +31,6 @@ public class MethodNative_string_removeExt extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		String base = (new File(objThis.toString())).getName(); int idx = base.indexOf('.'); return idx >= 0 ? base.substring(0, idx) : "";
+		String base = (new File(objThis.toString())).getName(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(0, idx) : "";
 	}
 }
