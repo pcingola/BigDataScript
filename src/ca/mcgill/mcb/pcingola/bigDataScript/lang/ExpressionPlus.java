@@ -17,10 +17,6 @@ public class ExpressionPlus extends ExpressionMath {
 		super(parent, tree);
 	}
 
-	public ExpressionPlus(Expression left, Expression right) {
-		super(left, right);
-	}
-
 	/**
 	 * Evaluate an expression
 	 */
