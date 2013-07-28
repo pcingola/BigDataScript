@@ -414,7 +414,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 			if (csThread.shouldRun(this)) rstate = runStep(csThread); // Run 
 			else rstate = RunState.CHECKPOINT_RECOVER;
 		} catch (Throwable t) {
-			System.err.println("Fatal error: " + getFileName() + "[" + getLineNum() + ":" + getCharPosInLine() + "]" + "\n");
+			System.err.println("Fatal error: " + getFileName() + "[" + getLineNum() + ":" + getCharPosInLine() + "]");
 			throw new RuntimeException(t);
 		}
 
