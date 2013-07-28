@@ -31,6 +31,6 @@ public class MethodNative_string_dirPath extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		ArrayList<String> list = new ArrayList<String>(); for (File f : ( new File( objThis.toString() ) ).listFiles()) try { list.add(f.getCanonicalPath()); } catch (Exception e) {;} Collections.sort(list); return list;
+		ArrayList<String> list = new ArrayList<String>(); File dir[] = (new File(objThis.toString())).listFiles(); if (dir == null) return list; for (File f : dir) try { list.add(f.getCanonicalPath()); } catch (Exception e) {;} Collections.sort(list); return list;
 	}
 }
