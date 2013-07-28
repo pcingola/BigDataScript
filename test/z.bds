@@ -1,8 +1,15 @@
 
-for( int i = 0 ; i < 10 ; i++ ) {
-	task echo "Hi $i"; sleep 5; echo "Done $i"
+system = "cluster"
+string bamDir = "$ppwd/chipSeq/bam"
+
+for( string bam : bamDir.dirPath(".*\.bam") ) {
+    if( bam.endsWith(".sorted.bam") ) {
+        print("Soring BAM file : $bam\n")
+
+        string sortedBamPrefix = "zzz" +  bam.dirName() + "zzz"
+        string sortedBam = "$sortedBamPrefix.bam"
+
+        print("Soring BAM file : $bam => $sortedBam\n")
+    }
 }
 
-print("Wait\n");
-wait
-print("OK\n");

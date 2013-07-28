@@ -608,13 +608,17 @@ public class BigDataScript {
 	 */
 	int runCompile() {
 		// Compile, abort on errors
+		if (verbose) System.out.println("Parsing\n");
 		if (!compile()) return 1;
 
+		if (verbose) System.out.println("Initializing");
 		initializeArgs();
 
 		// Run the program
 		BigDataScriptThread csThread = new BigDataScriptThread(programUnit, config);
 		if (verbose) Timer.showStdErr("Process ID: " + csThread.getBigDataScriptThreadId());
+
+		if (verbose) System.out.println("Running");
 		return runThread(csThread);
 	}
 
