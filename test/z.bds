@@ -1,11 +1,10 @@
 
 string[] l = ["a", "b", "c"]
+string[] ll = ["x", "y", "z"]
+
 print("List: $l\n")
+print("List: $ll\n")
 
-string j = l.join()
-print("List to string: |$j|\n")
-
-string j2 = l.join("\t")
-print("List to string: |$j2|\n")
-
+l.add(ll)
+print("List: $l\n")
 
