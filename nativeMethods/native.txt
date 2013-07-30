@@ -26,7 +26,7 @@ string	string	baseName	this	string	return (new File(objThis.toString())).getName
 string	string	baseName	this,ext	string,string	String ext = csThread.getString("ext"); String b = (new File(objThis.toString())).getName(); if( b.endsWith(ext) ) return b.substring(0, b.length() - ext.length()); return b;
 string	string	dirName	this	string	try { String d = (new File(objThis.toString())).getParent(); return d != null ? d : "."; } catch (Exception e) { return ""; }
 string	string	pathName	this	string	try { return new File(objThis.toString()).getParentFile().getCanonicalPath(); } catch (Exception e) { return ""; }
-string	string	extName	this	string	String base = (new File(objThis.toString())).getName(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(idx + 1) : "";
+string	string	extName	this	string	String base = objThis.toString(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(idx + 1) : "";
 string	string	removeExt	this	string	String base = objThis.toString(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(0, idx) : "";
 bool	string	canRead	this	string	return (new File(objThis.toString())).canRead();
 bool	string	canWrite	this	string	return (new File(objThis.toString())).canWrite();
