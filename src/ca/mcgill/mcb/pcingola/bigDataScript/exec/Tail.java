@@ -32,7 +32,7 @@ public class Tail extends Thread {
 	 * @param showStderr : If true, print to STDERR
 	 */
 	public synchronized void add(InputStream input, String outputFileName, boolean showStderr) {
-		TailFile tf = new TailFile(input, outputFileName, showStderr);
+		TailFile tf = new TailFileLocal(input, outputFileName, showStderr);
 		files.put(outputFileName, tf);
 	}
 
@@ -43,7 +43,7 @@ public class Tail extends Thread {
 	 * @param showStderr : If true, print to STDERR
 	 */
 	public synchronized void add(String inputFileName, String outputFileName, boolean showStderr) {
-		TailFile tf = new TailFile(inputFileName, outputFileName, showStderr);
+		TailFile tf = new TailFileMulti(inputFileName, outputFileName, showStderr);
 		files.put(inputFileName, tf);
 	}
 

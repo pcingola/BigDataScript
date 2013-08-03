@@ -1,51 +1,31 @@
 package ca.mcgill.mcb.pcingola.bigDataScript;
 
-import java.util.Random;
-
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.LocalExecutioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.LocalQueueExecutioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.PidLogger;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class Zzz {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Gpr.debug("Begin");
+		String tailDir = Gpr.HOME + "/tail";
 
-		String pidFile = Gpr.HOME + "/zzz.pid";
-		PidLogger pidLogger = new PidLogger(pidFile);
+		int maxFiles = 1000;
 
-		int test = 2;
+		Tail tail = new Tail();
+		tail.start();
 
-		if (test == 1) {
-			LocalExecutioner localExecutioner = new LocalExecutioner(pidLogger);
-			Task task = new Task("ID_ZZZ", Gpr.HOME + "/zzz.sh", "#!/bin/sh\n\necho hi ; sleep 1; ls -al; echo done\n");
-			task.getResources().setTimeout(5);
-			localExecutioner.start();
-			localExecutioner.add(task);
-		} else if (test == 2) {
-			LocalQueueExecutioner executioner = new LocalQueueExecutioner(pidLogger);
-			executioner.start();
+		Thread.sleep(1000);
 
-			Random rand = new Random(20130319);
+		for (int i = 0; i < maxFiles; i++) {
+			String file = tailDir + "/" + i + ".txt";
 
-			for (int i = 0; i < 10; i++) {
-				int randTime = rand.nextInt(5) + 1;
-
-				String script = "";
-				script += "#!/bin/sh\n\n";
-				script += "echo Hello\n";
-				script += "sleep " + randTime + "\n";
-				script += "echo Bye 1>&2\n";
-
-				Task task = new Task("ID_ZZZ_" + i, Gpr.HOME + "/zzz_" + i + ".sh", script);
-				executioner.add(task);
+			if (file.endsWith(".txt")) {
+				Gpr.debug("Adding file : " + file);
+				tail.add(file, null, false);
 			}
 		}
-		Gpr.debug("End");
+
+		while (true)
+			Thread.sleep(1000);
 	}
 }
