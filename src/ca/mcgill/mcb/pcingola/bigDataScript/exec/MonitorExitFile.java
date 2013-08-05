@@ -77,7 +77,7 @@ public class MonitorExitFile extends Thread {
 	/**
 	 * Check is an exist file exists, update states
 	 */
-	void update() {
+	synchronized void update() {
 		ArrayList<Task> toDelete = null;
 
 		for (Task task : execByTask.keySet()) {
