@@ -18,6 +18,9 @@ public class NativeLibraryFunctions {
 			, FunctionNativeRand.class //
 			, FunctionNativeRandInt.class //
 			, FunctionNativeRandIntRange.class //
+			, FunctionNativeToIntFromBool.class //
+			, FunctionNativeToIntFromReal.class //
+
 	};
 
 	ArrayList<FunctionNative> functions;

@@ -1,10 +1,5 @@
 
-string[] l = ["a", "b", "c"]
-string[] ll = ["x", "y", "z"]
-
-print("List: $l\n")
-print("List: $ll\n")
-
-l.add(ll)
-print("List: $l\n")
+real r = 0.8
+int i = toInt( r * 100 )
+print("i = $i\n");
 
