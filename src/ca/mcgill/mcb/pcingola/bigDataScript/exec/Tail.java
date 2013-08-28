@@ -23,6 +23,7 @@ public class Tail extends Thread {
 	public Tail() {
 		files = new HashMap<String, TailFile>();
 		toRemove = new HashSet<String>();
+		setDaemon(true);  
 	}
 
 	/**

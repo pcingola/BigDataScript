@@ -156,6 +156,7 @@ public abstract class Executioner extends Thread {
 		tokill.addAll(tasksRunning.values());
 		for (Task t : tokill)
 			kill(t);
+		running = false;
 	}
 
 	/**
@@ -256,13 +257,13 @@ public abstract class Executioner extends Thread {
 				if (runLoop()) {
 					if (debug) Timer.showStdErr("Queue: No task to run.");
 				}
-
 				sleepLong();
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new RuntimeException(t);
 		} finally {
+			
 			runLoopAfter(); // Clean up
 		}
 	}
