@@ -1,7 +1,12 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.IntStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
@@ -14,8 +19,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
  */
 public class Block extends StatementWithScope {
 
+	File file;
+	
 	Statement statements[];
-
+	
+	
 	public Block(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -26,7 +34,6 @@ public class Block extends StatementWithScope {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		// Add all statements
 		ArrayList<Statement> stats = new ArrayList<Statement>();
 		for (int i = 0; i < tree.getChildCount(); i++) {
 			BigDataScriptNode node = factory(tree, i);
@@ -66,4 +73,15 @@ public class Block extends StatementWithScope {
 
 		return RunState.OK;
 	}
+
+	@Override
+	public File getFile() {
+		if(file != null) return file;
+		else return super.getFile();
+	}
+	
+	public void setFile(File file) {
+		this.file = file;
+	}
+	
 }

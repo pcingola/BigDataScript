@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -42,7 +43,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	public BigDataScriptNode(BigDataScriptNode parent, ParseTree tree) {
 		id = BigDataScriptNodeFactory.get().getNextNodeId(this);
 		this.parent = parent;
-
+		
 		if (debug) Gpr.debug("NEW BigDataScriptNode:\t" + id + "\t" + getClass().getSimpleName());
 
 		// Initialize some defaults
@@ -217,13 +218,17 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return charPosInLine;
 	}
 
+	public final String getFileName() {
+		File f = getFile();
+		return f==null? null : f.toString();
+	}
+
 	/**
-	 * Find file name (this information is stored in 'ProgrmaUnit' node)
+	 * Find file (this information is stored in 'ProgramUnit', or in 'Block' node)
 	 * @return
 	 */
-	public String getFileName() {
-		if (parent != null) return parent.getFileName();
-		return null;
+	public File getFile() {
+		return parent != null ? parent.getFile() : null;
 	}
 
 	public int getId() {

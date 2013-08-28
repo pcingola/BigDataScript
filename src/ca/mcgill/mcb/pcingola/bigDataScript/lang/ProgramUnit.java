@@ -17,7 +17,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
 public class ProgramUnit extends Block {
 
 	BigDataScriptThread bigDataScriptThread;
-	String fileName; // Source code info
 	Scope scope; // Keep track of the scope. mostly for debugging and testing
 
 	public ProgramUnit(BigDataScriptNode parent, ParseTree tree) {
@@ -29,11 +28,6 @@ public class ProgramUnit extends Block {
 		return bigDataScriptThread;
 	}
 
-	@Override
-	public String getFileName() {
-		return fileName;
-	}
-
 	public Scope getScope() {
 		return scope;
 	}
@@ -41,9 +35,6 @@ public class ProgramUnit extends Block {
 	@Override
 	protected void parse(ParseTree tree) {
 		super.parse(tree);
-
-		// Get current fileName from CompileMessages. 
-		fileName = CompilerMessages.get().getFileName();
 	}
 
 	/**

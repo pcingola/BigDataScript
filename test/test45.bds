@@ -1,0 +1,11 @@
+// include
+
+include 'test45-int.bds';
+
+int i = f2(3);
+//int j = f3(3);
+
+int f2(int j) {
+	return j+2;
+}
+
