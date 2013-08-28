@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
@@ -79,6 +81,7 @@ public class BigDataScript {
 	ArrayList<String> programArgs; // Command line arguments for BigDataScript
 									// program
 
+	
 	/**
 	 * Main
 	 * 
@@ -108,14 +111,19 @@ public class BigDataScript {
 		// ---
 		if (debug)
 			System.out.println("Creating AST.");
-		ParseTree tree = createAst();
-		if(tree == null) return false;
+		ParseTree tree =null;
+		try {
+		tree = createAst();
+		} catch(Exception e) {
+			System.err.println("Fatal error cannot continue - " + e.getMessage());
+		}
+		if (tree == null)
+			return false;
 		if (debug)
 			System.out.println("Creating BigDataScript tree.");
 		CompilerMessages.reset();
 		// CompilerMessages.setFileName(programFileName); // not more used?
-		programUnit = (ProgramUnit) BigDataScriptNodeFactory.get().factory(
-				null, tree); // Transform AST to BigDataScript tree
+		programUnit = (ProgramUnit) BigDataScriptNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
 		// Any error messages?
 		if (!CompilerMessages.get().isEmpty())
 			System.err.println("Compiler messages:\n" + CompilerMessages.get());
@@ -143,7 +151,7 @@ public class BigDataScript {
 	ParseTree createAst() {
 		File file = new File(programFileName);
 		try {
-			file=file.getCanonicalFile();
+			file = file.getCanonicalFile();
 		} catch (IOException e) {
 		}
 		return createAst(file, debug, new HashSet<File>());
@@ -158,7 +166,7 @@ public class BigDataScript {
 		try {
 			// Input stream
 			// FileInputStream fis = new FileInputStream(programFileName);
-			if(! file.canRead()) {
+			if (!file.canRead()) {
 				System.err.println("Can't read file '" + file + "'");
 				return null;
 			}
@@ -166,11 +174,17 @@ public class BigDataScript {
 			ANTLRFileStream input = new ANTLRFileStream(file.toString());
 
 			// Create a lexer that feeds off of input CharStream
-			BigDataScriptLexer lexer = new BigDataScriptLexer(input);
+			BigDataScriptLexer lexer = new BigDataScriptLexer(input) {
+				@Override
+				public void recover(LexerNoViableAltException e) {
+					throw new RuntimeException(e); // Bail out
+				}
+			};
 
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			BigDataScriptParser parser = new BigDataScriptParser(tokens);
-
+			parser.setErrorHandler(new BailErrorStrategy()); // bail out with exception if errors in parser
+			
 			ParseTree tree = parser.programUnit(); // Begin parsing at main rule
 
 			// Error loading file?
@@ -221,10 +235,12 @@ public class BigDataScript {
 			if (!includedFile.canRead())
 				throw new RuntimeException("Included file not found: '"
 						+ includedFile + "'");
-			//Gpr.debug("resolving include: " + parentName + "->"	+ includedFile);
+			// Gpr.debug("resolving include: " + parentName + "->" +
+			// includedFile);
 			ParseTree treeinc = createAst(includedFile, debug, alreadyIncluded);
+			if(treeinc ==null) throw new RuntimeException("Fatal error, cannot continue");
 			// is a child always a RuleContext?
-			for (int i = 0; i < treeinc.getChildCount(); i++) { 
+			for (int i = 0; i < treeinc.getChildCount(); i++) {
 				((IncludeFContext) tree).addChild((RuleContext) treeinc
 						.getChild(i));
 			}
