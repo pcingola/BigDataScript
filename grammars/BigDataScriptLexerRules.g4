@@ -56,7 +56,7 @@ REAL_LITERAL : NonIntegerNumber ;
 STRING_LITERAL : '"' ( (~( '"' | '\\' ) | ('\\' .) )* ) '"' ;
 
 // Single quote string literal (un-interpolated)
-STRING_LITERAL_SINGLE: '\'' ~( '\'' )*  '\'' ;
+STRING_LITERAL_SINGLE: '\'' (~( '\'' ))*  '\'' ;
 
 // 'sys' literal. Everything after a sys statement.
 // Note: It can be multi-line by escaping before the end of line

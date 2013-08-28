@@ -7,7 +7,7 @@ import BigDataScriptLexerRules;
 //------------------------------------------------------------------------------
 
 // Main program
-programUnit : (statement)+;
+programUnit : eol* statement+;
 
 // End of line (semicolons are optional)
 eol : (';' | '\n' )+;
@@ -28,6 +28,9 @@ type : 'bool'                                                                   
 // Variable declaration
 varDeclaration      : type variableInit (',' variableInit)*;
 variableInit        : ID ('=' expression)?;
+
+
+includeF : 'include' STRING_LITERAL_SINGLE eol;
 
 // Statements
 statement : '{' statement* '}'                                                             # block
@@ -50,6 +53,7 @@ statement : '{' statement* '}'                                                  
             | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*                              # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
             | expression  eol*                                                             # statmentExpr
+	    | includeF eol*                                                                # statementInclude
             | eol                                                                          # statmentEol
           ;
 
