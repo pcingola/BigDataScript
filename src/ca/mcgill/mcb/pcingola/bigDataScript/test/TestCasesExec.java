@@ -452,12 +452,16 @@ public class TestCasesExec extends TestCase {
 		runAndCheckMultiple("test/run_47.bds", expectedValues, args);
 	}
 
+	@Test
 	public void test48() {
 		runAndCheck("test/run_48.bds", "step", 2L);
 	}
 	
+	@Test
 	public void test50() {
-		runAndCheck("test/run_50.bds", "step", 2L);
+		runAndCheck("test/run_50.bds", "j", 302);
+		runAndCheck("test/run_50.bds", "i", 32);
+		runAndCheck("test/run_50.bds", "jx", 44);
 	}
 
 }

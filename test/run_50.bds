@@ -2,9 +2,9 @@
 
 include 'dirTest/test-inc.bds';
 
-int i = f2(3);
-int jx = f4(3);
-int jy = f41(3);
+int i = f2(30);
+int jx = f4(40);
+int jy = f41(50);
 
 int f2(int j) {
 	return j+2;
