@@ -1,7 +1,11 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
+import java.io.File;
 import java.util.List;
 
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
@@ -21,6 +25,12 @@ public class ProgramUnit extends Block {
 
 	public ProgramUnit(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+		try {
+			CharStream x = ((ParserRuleContext)tree).getStart().getInputStream();
+			setFile(new File(((ANTLRFileStream)x).getSourceName()));
+		} catch(Exception e) { 
+			setFile(new File("?"));
+		}
 	}
 
 	@Override

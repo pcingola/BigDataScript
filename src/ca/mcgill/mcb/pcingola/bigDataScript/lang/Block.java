@@ -3,10 +3,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.IntStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;

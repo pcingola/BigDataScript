@@ -33,7 +33,7 @@ public class TestCasesExec extends TestCase {
 		ScopeSymbol ssym = bigDataScript.getProgramUnit().getScope().getSymbol(varname);
 
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
-		Assert.assertEquals(expectedValue.toString(), ssym.getValue().toString());
+		Assert.assertEquals(expectedValue.toString(), ssym ==null? "" : ssym.getValue().toString());
 	}
 
 	void runAndCheckExit(String fileName, int expectedExitValue) {
@@ -456,5 +456,8 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_48.bds", "step", 2L);
 	}
 	
+	public void test50() {
+		runAndCheck("test/run_50.bds", "step", 2L);
+	}
 
 }

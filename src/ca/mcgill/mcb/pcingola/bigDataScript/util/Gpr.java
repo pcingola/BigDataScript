@@ -110,6 +110,7 @@ public class Gpr {
 	 * @return
 	 */
 	public static String baseName(String file) {
+		if(file==null) return "";
 		File f = new File(file);
 		return f.getName();
 	}
