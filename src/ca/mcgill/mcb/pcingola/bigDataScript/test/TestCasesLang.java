@@ -270,5 +270,11 @@ public class TestCasesLang extends TestCase {
 	public void test41() {
 		compileOk("test/test41.bds");
 	}
+	
+
+	@Test
+	public void test42() {
+		compileOk("test/test42.bds");
+	}
 
 }

@@ -1,0 +1,16 @@
+
+
+// used for include test cases, dont remove
+// includes test-inc2.bds, defines f4() , uses f2()  
+
+include 'test-inc2.bds'
+
+
+int j = f2(3);
+
+int f4(int j) {
+	return j+2;
+}
+
+
+

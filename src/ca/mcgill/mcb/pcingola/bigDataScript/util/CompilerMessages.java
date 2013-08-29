@@ -60,6 +60,12 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 		String key = cm.toString();
 		if (!messages.containsKey(key)) messages.put(key, cm);
 	}
+	
+	/** only for special cases, returns false */
+	public boolean addError(String msg) {
+		add(null,msg,MessageType.ERROR);
+		return false;
+	}
 
 	public String getFileName() {
 		return fileName;

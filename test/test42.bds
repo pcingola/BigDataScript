@@ -1,6 +1,6 @@
 // include
 
-include 'test45-int.bds';
+include 'dirTest/test42-inc.bds';
 
 int i = f2(3);
 //int j = f3(3);

@@ -45,6 +45,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
@@ -103,6 +104,7 @@ public class BigDataScript {
 	 * Compile program
 	 */
 	public boolean compile() {
+		
 		if (debug)
 			System.out.println("Loading file: '" + programFileName + "'");
 
@@ -117,7 +119,11 @@ public class BigDataScript {
 		} catch(Exception e) {
 			System.err.println("Fatal error cannot continue - " + e.getMessage());
 		}
-		if (tree == null)
+		if (tree == null) {
+			if(CompilerMessages.get().isEmpty())
+				CompilerMessages.get().addError("Could not compile");
+		}
+		if(!CompilerMessages.get().isEmpty())
 			return false;
 		if (debug)
 			System.out.println("Creating BigDataScript tree.");
@@ -143,7 +149,6 @@ public class BigDataScript {
 			System.err.println("Compiler messages:\n" + CompilerMessages.get());
 		if (CompilerMessages.get().hasErrors())
 			return false;
-
 		// OK
 		return true;
 	}
@@ -159,6 +164,7 @@ public class BigDataScript {
 
 	/**
 	 * Create an AST from a program (using ANTLR lexer & parser)
+	 * Returns null if error
 	 */
 	public static ParseTree createAst(File file, boolean debug,
 			Set<File> alreadyIncluded) {
@@ -167,7 +173,7 @@ public class BigDataScript {
 			// Input stream
 			// FileInputStream fis = new FileInputStream(programFileName);
 			if (!file.canRead()) {
-				System.err.println("Can't read file '" + file + "'");
+				CompilerMessages.get().addError("Can't read file '" + file + "'");
 				return null;
 			}
 			// Create a CharStream that reads from standard input
@@ -208,7 +214,8 @@ public class BigDataScript {
 						alreadyIncluded);
 			return tree;
 		} catch (Exception e) {
-			throw new RuntimeException("Error parsing input.", e);
+			CompilerMessages.get().addError("Could not compile " + file + " :" + e.getMessage());
+			return null;
 		}
 	}
 
