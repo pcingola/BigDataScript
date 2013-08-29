@@ -3,7 +3,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
@@ -59,14 +57,12 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class BigDataScript {
 
-	public static final String SOFTWARE_NAME = BigDataScript.class
-			.getSimpleName();
+	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
 	public static final String BUILD = "2013-07-24";
 	public static final String REVISION = "";
 	public static final String VERSION_MAJOR = "0.1";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
-	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT
-			+ " (build " + BUILD + "), by " + Pcingola.BY;
+	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
 	boolean verbose;
 	boolean debug;
@@ -82,7 +78,6 @@ public class BigDataScript {
 	ArrayList<String> programArgs; // Command line arguments for BigDataScript
 									// program
 
-	
 	/**
 	 * Main
 	 * 
@@ -104,51 +99,41 @@ public class BigDataScript {
 	 * Compile program
 	 */
 	public boolean compile() {
-		
-		if (debug)
-			System.out.println("Loading file: '" + programFileName + "'");
+
+		if (debug) System.out.println("Loading file: '" + programFileName + "'");
 
 		// ---
 		// Convert to AST / csTree
 		// ---
-		if (debug)
-			System.out.println("Creating AST.");
-		ParseTree tree =null;
+		if (debug) System.out.println("Creating AST.");
+		ParseTree tree = null;
 		try {
-		tree = createAst();
-		} catch(Exception e) {
+			tree = createAst();
+		} catch (Exception e) {
 			System.err.println("Fatal error cannot continue - " + e.getMessage());
 		}
 		if (tree == null) {
-			if(CompilerMessages.get().isEmpty())
-				CompilerMessages.get().addError("Could not compile");
+			if (CompilerMessages.get().isEmpty()) CompilerMessages.get().addError("Could not compile");
 		}
-		if(!CompilerMessages.get().isEmpty())
-			return false;
-		if (debug)
-			System.out.println("Creating BigDataScript tree.");
+		if (!CompilerMessages.get().isEmpty()) return false;
+		if (debug) System.out.println("Creating BigDataScript tree.");
 		CompilerMessages.reset();
 		// CompilerMessages.setFileName(programFileName); // not more used?
 		programUnit = (ProgramUnit) BigDataScriptNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
 		// Any error messages?
-		if (!CompilerMessages.get().isEmpty())
-			System.err.println("Compiler messages:\n" + CompilerMessages.get());
-		if (CompilerMessages.get().hasErrors())
-			return false;
+		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+		if (CompilerMessages.get().hasErrors()) return false;
 
 		// ---
 		// Type-checking
 		// ---
-		if (debug)
-			System.out.println("Type checking.");
+		if (debug) System.out.println("Type checking.");
 		Scope programScope = new Scope();
 		programUnit.typeChecking(programScope, CompilerMessages.get());
 
 		// Any error messages?
-		if (!CompilerMessages.get().isEmpty())
-			System.err.println("Compiler messages:\n" + CompilerMessages.get());
-		if (CompilerMessages.get().hasErrors())
-			return false;
+		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+		if (CompilerMessages.get().hasErrors()) return false;
 		// OK
 		return true;
 	}
@@ -166,8 +151,7 @@ public class BigDataScript {
 	 * Create an AST from a program (using ANTLR lexer & parser)
 	 * Returns null if error
 	 */
-	public static ParseTree createAst(File file, boolean debug,
-			Set<File> alreadyIncluded) {
+	public static ParseTree createAst(File file, boolean debug, Set<File> alreadyIncluded) {
 		alreadyIncluded.add(file);
 		try {
 			// Input stream
@@ -190,7 +174,7 @@ public class BigDataScript {
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			BigDataScriptParser parser = new BigDataScriptParser(tokens);
 			parser.setErrorHandler(new BailErrorStrategy()); // bail out with exception if errors in parser
-			
+
 			ParseTree tree = parser.programUnit(); // Begin parsing at main rule
 
 			// Error loading file?
@@ -203,15 +187,13 @@ public class BigDataScript {
 			if (debug) {
 				for (int childNum = 0; childNum < tree.getChildCount(); childNum++) {
 					Tree child = tree.getChild(childNum);
-					System.out.println("\tChild " + childNum + ":\t" + child
-							+ "\tTree:'" + child.toStringTree() + "'");
+					System.out.println("\tChild " + childNum + ":\t" + child + "\tTree:'" + child.toStringTree() + "'");
 				}
 			}
 			// included files:
 			boolean resolveIncludePending = true;
 			while (resolveIncludePending)
-				resolveIncludePending = resolveIncludes(tree, debug,
-						alreadyIncluded);
+				resolveIncludePending = resolveIncludes(tree, debug, alreadyIncluded);
 			return tree;
 		} catch (Exception e) {
 			CompilerMessages.get().addError("Could not compile " + file + " :" + e.getMessage());
@@ -219,42 +201,31 @@ public class BigDataScript {
 		}
 	}
 
-	private static boolean resolveIncludes(ParseTree tree, boolean debug,
-			Set<File> alreadyIncluded) {
+	private static boolean resolveIncludes(ParseTree tree, boolean debug, Set<File> alreadyIncluded) {
 		boolean changed = false;
 		if (tree instanceof IncludeFContext) {
-			File parentName = new File(((IncludeFContext) tree).getStart()
-					.getInputStream().getSourceName());
+			File parentName = new File(((IncludeFContext) tree).getStart().getInputStream().getSourceName());
 			String includedFilename = tree.getChild(1).getText();
-			includedFilename = includedFilename.substring(1,
-					includedFilename.length() - 1).trim();
+			includedFilename = includedFilename.substring(1, includedFilename.length() - 1).trim();
 			File includedFile = new File(includedFilename);
-			if (parentName != null && parentName.exists()
-					&& !includedFile.isAbsolute())
-				includedFile = new File(parentName.getParent(),
-						includedFilename);
+			if (parentName != null && parentName.exists() && !includedFile.isAbsolute()) includedFile = new File(parentName.getParent(), includedFilename);
 			try {
 				includedFile = includedFile.getCanonicalFile();
 			} catch (IOException e) {
 			}
-			if (alreadyIncluded.contains(includedFile))
-				return false;
-			if (!includedFile.canRead())
-				throw new RuntimeException("Included file not found: '"
-						+ includedFile + "'");
+			if (alreadyIncluded.contains(includedFile)) return false;
+			if (!includedFile.canRead()) throw new RuntimeException("Included file not found: '" + includedFile + "'");
 			// Gpr.debug("resolving include: " + parentName + "->" +
 			// includedFile);
 			ParseTree treeinc = createAst(includedFile, debug, alreadyIncluded);
-			if(treeinc ==null) throw new RuntimeException("Fatal error, cannot continue");
+			if (treeinc == null) throw new RuntimeException("Fatal error, cannot continue");
 			// is a child always a RuleContext?
 			for (int i = 0; i < treeinc.getChildCount(); i++) {
-				((IncludeFContext) tree).addChild((RuleContext) treeinc
-						.getChild(i));
+				((IncludeFContext) tree).addChild((RuleContext) treeinc.getChild(i));
 			}
 		} else {
 			for (int i = 0; i < tree.getChildCount(); i++)
-				changed |= resolveIncludes(tree.getChild(i), debug,
-						alreadyIncluded);
+				changed |= resolveIncludes(tree.getChild(i), debug, alreadyIncluded);
 		}
 		return changed;
 	}
@@ -358,44 +329,35 @@ public class BigDataScript {
 										// them to initialize the variable
 										// (list)
 										ArrayList<String> vals = new ArrayList<String>();
-										for (int i = argNum + 1; i < programArgs
-												.size(); i++)
-											if (programArgs.get(i).startsWith(
-													"-"))
-												break;
-											else
-												vals.add(programArgs.get(i));
+										for (int i = argNum + 1; i < programArgs.size(); i++)
+											if (programArgs.get(i).startsWith("-")) break;
+											else vals.add(programArgs.get(i));
 
-										useVal = initializeArgs(varType,
-												varInit, vals); // Found
-																// variable, try
-																// to replace or
-																// add LITERAL
-																// to this
-																// VarInit
+										useVal = initializeArgs(varType, varInit, vals); // Found
+																							// variable, try
+																							// to replace or
+																							// add LITERAL
+																							// to this
+																							// VarInit
 									} else {
-										String val = (argNum < programArgs
-												.size() ? programArgs
-												.get(++argNum) : ""); // Get one
-																		// argument
-																		// and
-																		// use
-																		// it to
-																		// initialize
-																		// the
-																		// variable
-										useVal = initializeArgs(varType,
-												varInit, val); // Found
-																// variable, try
-																// to replace or
-																// add LITERAL
-																// to this
-																// VarInit
+										String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one
+																														// argument
+																														// and
+																														// use
+																														// it to
+																														// initialize
+																														// the
+																														// variable
+										useVal = initializeArgs(varType, varInit, val); // Found
+																						// variable, try
+																						// to replace or
+																						// add LITERAL
+																						// to this
+																						// VarInit
 									}
 
-									if (!useVal)
-										argNum = argNumOri; // We did not use
-															// the arguments
+									if (!useVal) argNum = argNumOri; // We did not use
+																		// the arguments
 								}
 						}
 					}
@@ -405,14 +367,11 @@ public class BigDataScript {
 
 		// Make all unprocessed arguments available for the program (in 'args'
 		// list)
-		Scope.getGlobalScope().add(
-				new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING),
-						programArgs));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING), programArgs));
 
 		// Initialize program name
 		String progName = Gpr.baseName(programUnit.getFileName());
-		Scope.getGlobalScope().add(
-				new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, progName));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, progName));
 	}
 
 	/**
@@ -428,8 +387,7 @@ public class BigDataScript {
 	 * @param vals
 	 *            : Value to assign
 	 */
-	boolean initializeArgs(Type varType, VariableInit varInit,
-			ArrayList<String> vals) {
+	boolean initializeArgs(Type varType, VariableInit varInit, ArrayList<String> vals) {
 		boolean usedVal = true;
 
 		try {
@@ -440,17 +398,13 @@ public class BigDataScript {
 				LiteralListString lit = new LiteralListString(varInit, null);
 				literal = lit;
 				lit.setValue(vals); // Set literal value
-			} else
-				throw new RuntimeException(
-						"Cannot convert command line argument to variable type '"
-								+ varType + "'");
+			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
 
 			// Set varInit to literal
 			varInit.setExpression(literal);
 		} catch (Exception e) {
 			// Error parsing 'val'?
-			throw new RuntimeException("Cannot convert argument '" + vals
-					+ "' to type " + varType);
+			throw new RuntimeException("Cannot convert argument '" + vals + "' to type " + varType);
 		}
 
 		return usedVal;
@@ -486,14 +440,9 @@ public class BigDataScript {
 				if (valStr != null) {
 					// Parse boolean
 					valStr = valStr.toLowerCase();
-					if (valStr.equals("true") || valStr.equals("t")
-							|| valStr.equals("1"))
-						valBool = true;
-					else if (valStr.equals("false") || valStr.equals("f")
-							|| valStr.equals("0"))
-						valBool = false;
-					else
-						usedVal = false; // Not any valid value? => This
+					if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) valBool = true;
+					else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) valBool = false;
+					else usedVal = false; // Not any valid value? => This
 											// argument is not used
 				}
 
@@ -520,20 +469,15 @@ public class BigDataScript {
 				literal = lit;
 
 				// Set literal value
-				if (valStr == null)
-					valStr = ""; // We should never have 'null' values
+				if (valStr == null) valStr = ""; // We should never have 'null' values
 				lit.setValue(valStr);
-			} else
-				throw new RuntimeException(
-						"Cannot convert command line argument to variable type '"
-								+ varType + "'");
+			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
 
 			// Set varInit to literal
 			varInit.setExpression(literal);
 		} catch (Exception e) {
 			// Error parsing 'val'?
-			throw new RuntimeException("Cannot convert argument '" + valStr
-					+ "' to type " + varType);
+			throw new RuntimeException("Cannot convert argument '" + valStr + "' to type " + varType);
 		}
 
 		return usedVal;
@@ -565,8 +509,7 @@ public class BigDataScript {
 	 * Add symbols to global scope
 	 */
 	void initilaizeGlobalScope() {
-		if (debug)
-			System.out.println("Initialize global scope.");
+		if (debug) System.out.println("Initialize global scope.");
 
 		// Reset Global scope
 		Scope.resetGlobalScope();
@@ -575,65 +518,49 @@ public class BigDataScript {
 		// ---
 		// Add global symbols
 		// ---
-		globalScope
-				.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, "")); // Program
-																				// name,
-																				// now
-																				// is
-																				// empty,
-																				// but
-																				// it
-																				// is
-																				// filled
-																				// later
+		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, "")); // Program
+																					// name,
+																					// now
+																					// is
+																					// empty,
+																					// but
+																					// it
+																					// is
+																					// filled
+																					// later
 
 		// Command line parameters override defaults
-		if (system == null)
-			system = ExecutionerType.LOCAL.toString().toLowerCase();
+		if (system == null) system = ExecutionerType.LOCAL.toString().toLowerCase();
 
 		// Task related variables: Default values
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM,
-				Type.STRING, system)); // System type: "local", "ssh",
-										// "cluster", "aws", etc.
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS,
-				Type.INT, 1L)); // Default number of cpus
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS_LOCAL,
-				Type.INT, Gpr.NUM_CORES)); // Default number of local cpus
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE,
-				Type.STRING, "")); // Default queue: none
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE,
-				Type.STRING, "")); // Default node: none
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL,
-				Type.BOOL, false)); // Task fail triggers checkpoint & exit (a
-									// task cannot fail)
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT,
-				Type.INT, 1L * 24 * 60 * 60)); // Task default timeout(1 day)
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system)); // System type: "local", "ssh",
+																									// "cluster", "aws", etc.
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Type.INT, 1L)); // Default number of cpus
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS_LOCAL, Type.INT, Gpr.NUM_CORES)); // Default number of local cpus
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, "")); // Default queue: none
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Type.STRING, "")); // Default node: none
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Type.BOOL, false)); // Task fail triggers checkpoint & exit (a
+																									// task cannot fail)
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Type.INT, 1L * 24 * 60 * 60)); // Task default timeout(1 day)
 
 		// Number of local CPUs
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT,
-				(long) Gpr.NUM_CORES));
+		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, (long) Gpr.NUM_CORES));
 
 		// Kilo, Mega, Giga, Tera, Peta.
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT,
-				1024L * 1024L));
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT,
-				1024L * 1024L * 1024L));
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Type.INT,
-				1024L * 1024L * 1024L * 1024L));
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L
-				* 1024L * 1024L * 1024L * 1024L));
+		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));
+		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT, 1024L * 1024L * 1024L));
+		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Type.INT, 1024L * 1024L * 1024L * 1024L));
+		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
 
 		// Set "physical" path
 		String path;
 		try {
 			path = new File(".").getCanonicalPath();
 		} catch (IOException e) {
-			throw new RuntimeException(
-					"Cannot get cannonical path for current dir");
+			throw new RuntimeException("Cannot get cannonical path for current dir");
 		}
-		globalScope.add(new ScopeSymbol(
-				ExpressionTask.TASK_OPTION_PHYSICAL_PATH, Type.STRING, path));
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_PHYSICAL_PATH, Type.STRING, path));
 
 		// Set all environment variables
 		Map<String, String> envMap = System.getenv();
@@ -647,32 +574,26 @@ public class BigDataScript {
 		// we have to set something now, otherwise we'll get a "variable
 		// not found" error at compiler time, if the program attempts
 		// to use 'args'.
-		Scope.getGlobalScope().add(
-				new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING),
-						new ArrayList<String>()));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING), new ArrayList<String>()));
 	}
 
 	/**
 	 * Initialize standard libraries
 	 */
 	void initilaizeLibraries() {
-		if (debug)
-			System.out.println("Initialize standard libraries.");
+		if (debug) System.out.println("Initialize standard libraries.");
 
 		// Native functions
 		NativeLibraryFunctions nativeLibraryFunctions = new NativeLibraryFunctions();
-		if (debug)
-			Timer.showStdErr("Native library:\n" + nativeLibraryFunctions);
+		if (debug) Timer.showStdErr("Native library:\n" + nativeLibraryFunctions);
 
 		// Native library: String
 		NativeLibraryString nativeLibraryString = new NativeLibraryString();
-		if (debug)
-			Timer.showStdErr("Native library:\n" + nativeLibraryString);
+		if (debug) Timer.showStdErr("Native library:\n" + nativeLibraryString);
 
 		// Load test native methods
 		MethodNativeZzz nmz = new MethodNativeZzz();
-		if (debug)
-			Timer.showStdErr("Native test method:\n" + nmz.signature());
+		if (debug) Timer.showStdErr("Native test method:\n" + nmz.signature());
 	}
 
 	/**
@@ -682,76 +603,52 @@ public class BigDataScript {
 	 */
 	public void parse(String[] args) {
 		// Nothing? Show command line options
-		if (args.length <= 0)
-			usage(null);
+		if (args.length <= 0) usage(null);
 
 		programArgs = new ArrayList<String>();
 
 		for (int i = 0; i < args.length; i++) {
-			if (programFileName != null)
-				programArgs.add(args[i]); // Everything after 'programFileName'
-											// is an command line argument for
-											// the BigDataScript program
-			else if (args[i].equalsIgnoreCase("-noLog"))
-				log = false;
-			else if (args[i].equals("-v")
-					|| args[i].equalsIgnoreCase("-verbose"))
-				verbose = true;
-			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug"))
-				debug = true;
-			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log"))
-				log = true;
-			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help")
-					|| args[i].equalsIgnoreCase("--help"))
-				usage(null);
+			if (programFileName != null) programArgs.add(args[i]); // Everything after 'programFileName'
+																	// is an command line argument for
+																	// the BigDataScript program
+			else if (args[i].equalsIgnoreCase("-noLog")) log = false;
+			else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
+			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = true;
+			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
+			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) usage(null);
 			else if (args[i].equals("-loop")) {
 				// Perform a 'busy loop' and exit
 				Timer t = new Timer();
 				t.start();
-				if (verbose)
-					Gpr.debug("Looping");
+				if (verbose) Gpr.debug("Looping");
 				for (long j = 0; true; j++) {
 					if (t.elapsed() > 10000) {
-						if (verbose)
-							Gpr.debug("Done: " + j);
+						if (verbose) Gpr.debug("Done: " + j);
 						System.exit(0);
 					}
 				}
-			} else if (args[i].equals("-r")
-					|| args[i].equalsIgnoreCase("-restore")) {
+			} else if (args[i].equals("-r") || args[i].equalsIgnoreCase("-restore")) {
 				// Checkpoint restore
-				if ((i + 1) < args.length)
-					chekcpointRestoreFile = args[++i];
-				else
-					usage("Option '-r' without restore file argument");
+				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
+				else usage("Option '-r' without restore file argument");
 			} else if (args[i].equals("-pid")) {
 				// PID file
-				if ((i + 1) < args.length)
-					pidFile = args[++i];
-				else
-					usage("Option '-pid' without file argument");
-			} else if (args[i].equals("-s")
-					|| args[i].equalsIgnoreCase("-system")) {
+				if ((i + 1) < args.length) pidFile = args[++i];
+				else usage("Option '-pid' without file argument");
+			} else if (args[i].equals("-s") || args[i].equalsIgnoreCase("-system")) {
 				// System type
-				if ((i + 1) < args.length)
-					system = args[++i];
-				else
-					usage("Option '-pid' without file argument");
-			} else if (args[i].equals("-c")
-					|| args[i].equalsIgnoreCase("-config")) {
+				if ((i + 1) < args.length) system = args[++i];
+				else usage("Option '-pid' without file argument");
+			} else if (args[i].equals("-c") || args[i].equalsIgnoreCase("-config")) {
 				// Checkpoint restore
-				if ((i + 1) < args.length)
-					configFile = args[++i];
-				else
-					usage("Option '-c' without restore file argument");
+				if ((i + 1) < args.length) configFile = args[++i];
+				else usage("Option '-c' without restore file argument");
 
-			} else if (programFileName == null)
-				programFileName = args[i]; // Get program file name
+			} else if (programFileName == null) programFileName = args[i]; // Get program file name
 		}
 
 		// Sanity checks
-		if ((programFileName == null) && (chekcpointRestoreFile == null))
-			usage("Missing program file name.");
+		if ((programFileName == null) && (chekcpointRestoreFile == null)) usage("Missing program file name.");
 	}
 
 	/**
@@ -759,8 +656,7 @@ public class BigDataScript {
 	 */
 	public int run() {
 		// Startup message
-		if (verbose)
-			System.out.println(VERSION + "\n");
+		if (verbose) System.out.println(VERSION + "\n");
 
 		// ---
 		// Config
@@ -770,10 +666,8 @@ public class BigDataScript {
 		config.setDebug(debug);
 		config.setLog(log);
 		if (pidFile == null) {
-			if (programFileName != null)
-				pidFile = programFileName + ".pid";
-			else
-				pidFile = chekcpointRestoreFile + ".pid";
+			if (programFileName != null) pidFile = programFileName + ".pid";
+			else pidFile = chekcpointRestoreFile + ".pid";
 		}
 		config.setPidFile(pidFile);
 		Executioners executioners = Executioners.getInstance(config); // Initialize
@@ -783,11 +677,9 @@ public class BigDataScript {
 		// Run
 		// ---
 		int exitValue = 0;
-		if (chekcpointRestoreFile != null)
-			exitValue = runCheckpoint(); // Are we recovering (or loading) from
-											// a checkpoint?
-		else
-			exitValue = runCompile(); // Compile & run
+		if (chekcpointRestoreFile != null) exitValue = runCheckpoint(); // Are we recovering (or loading) from
+																		// a checkpoint?
+		else exitValue = runCompile(); // Compile & run
 
 		// ---
 		// Kill all executioners
@@ -795,8 +687,7 @@ public class BigDataScript {
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
 
-		if (verbose)
-			Timer.showStdErr("Finished running. Exit value : " + exitValue);
+		if (verbose) Timer.showStdErr("Finished running. Exit value : " + exitValue);
 		return exitValue;
 	}
 
@@ -805,8 +696,7 @@ public class BigDataScript {
 	 */
 	int runCheckpoint() {
 		// Load checkpoint file
-		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(
-				chekcpointRestoreFile);
+		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile);
 		List<BigDataScriptThread> csthreads = csSerializer.load();
 
 		// Show
@@ -818,9 +708,7 @@ public class BigDataScript {
 
 			// Set programUnit's scope (mostly for debugging and test cases)
 			// ProgramUnit's scope it the one before 'global'
-			for (Scope scope = csthread.getScope(); (scope != null)
-					&& (scope.getParent() != Scope.getGlobalScope()); scope = scope
-					.getParent())
+			for (Scope scope = csthread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent())
 				programUnit.setScope(scope);
 
 			// All set, run thread
@@ -836,28 +724,20 @@ public class BigDataScript {
 	 */
 	int runCompile() {
 		// Compile, abort on errors
-		if (verbose)
-			Timer.showStdErr("Parsing");
-		if (!compile())
-			return 1;
+		if (verbose) Timer.showStdErr("Parsing");
+		if (!compile()) return 1;
 
-		if (verbose)
-			Timer.showStdErr("Initializing");
+		if (verbose) Timer.showStdErr("Initializing");
 		initializeArgs();
 
 		// Run the program
-		BigDataScriptThread csThread = new BigDataScriptThread(programUnit,
-				config);
-		if (verbose)
-			Timer.showStdErr("Process ID: "
-					+ csThread.getBigDataScriptThreadId());
+		BigDataScriptThread csThread = new BigDataScriptThread(programUnit, config);
+		if (verbose) Timer.showStdErr("Process ID: " + csThread.getBigDataScriptThreadId());
 
-		if (verbose)
-			Timer.showStdErr("Running");
+		if (verbose) Timer.showStdErr("Running");
 		int exitCode = runThread(csThread);
 
-		if (verbose)
-			Timer.showStdErr("Finished. Exit code: " + exitCode);
+		if (verbose) Timer.showStdErr("Finished. Exit code: " + exitCode);
 		return exitCode;
 	}
 
@@ -882,27 +762,20 @@ public class BigDataScript {
 	}
 
 	void usage(String err) {
-		if (err != null)
-			System.err.println("Error: " + err);
+		if (err != null) System.err.println("Error: " + err);
 
 		System.out.println(VERSION + "\n");
-		System.err.println("Usage: " + BigDataScript.class.getSimpleName()
-				+ " [options] file.bds");
+		System.err.println("Usage: " + BigDataScript.class.getSimpleName() + " [options] file.bds");
 		System.err.println("\nAvailable options: ");
-		System.err.println("  [-c | -config] file    : Config file. Default : "
-				+ configFile);
+		System.err.println("  [-c | -config] file    : Config file. Default : " + configFile);
 		System.err.println("  [-d | -debug]          : Debug mode.");
-		System.err
-				.println("  [-l | -log]            : Log all actions (do not delete tmp files).");
-		System.err
-				.println("  [-r | -restore] file   : Restore from checkpoint file.");
+		System.err.println("  [-l | -log]            : Log all actions (do not delete tmp files).");
+		System.err.println("  [-r | -restore] file   : Restore from checkpoint file.");
 		System.err.println("  [-s | -system] type    : Set system type.");
 		System.err.println("  [-v | -verbose]        : Be verbose.");
-		System.err
-				.println("  -pid <file>            : Write local processes PIDs to 'file'");
+		System.err.println("  -pid <file>            : Write local processes PIDs to 'file'");
 		System.err.println("  -noLog                 : Do not log stats.");
-		if (err != null)
-			System.exit(1);
+		if (err != null) System.exit(1);
 		System.exit(0);
 	}
 
