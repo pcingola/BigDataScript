@@ -12,7 +12,7 @@ echo
 echo Building GO program
 cd go/bds/
 go clean
-go build
+go build bds.go
 
 # Copy binary
 cp -vf bds $HOME/.bds/

@@ -7,3 +7,5 @@ bin
 *.chp
 *.pid
 t.bds*
+tmp
+

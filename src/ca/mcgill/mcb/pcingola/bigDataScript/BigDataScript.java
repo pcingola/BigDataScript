@@ -101,7 +101,7 @@ public class BigDataScript {
 	public boolean compile() {
 
 		if (debug) System.out.println("Loading file: '" + programFileName + "'");
-
+		CompilerMessages.reset();
 		// ---
 		// Convert to AST / csTree
 		// ---
@@ -140,10 +140,6 @@ public class BigDataScript {
 
 	ParseTree createAst() {
 		File file = new File(programFileName);
-		try {
-			file = file.getCanonicalFile();
-		} catch (IOException e) {
-		}
 		return createAst(file, debug, new HashSet<File>());
 	}
 
@@ -152,7 +148,7 @@ public class BigDataScript {
 	 * Returns null if error
 	 */
 	public static ParseTree createAst(File file, boolean debug, Set<File> alreadyIncluded) {
-		alreadyIncluded.add(file);
+		alreadyIncluded.add(Gpr.getCanonicalFile(file));
 		try {
 			// Input stream
 			// FileInputStream fis = new FileInputStream(programFileName);
@@ -209,14 +205,8 @@ public class BigDataScript {
 			includedFilename = includedFilename.substring(1, includedFilename.length() - 1).trim();
 			File includedFile = new File(includedFilename);
 			if (parentName != null && parentName.exists() && !includedFile.isAbsolute()) includedFile = new File(parentName.getParent(), includedFilename);
-			try {
-				includedFile = includedFile.getCanonicalFile();
-			} catch (IOException e) {
-			}
-			if (alreadyIncluded.contains(includedFile)) return false;
+			if (alreadyIncluded.contains(Gpr.getCanonicalFile(includedFile))) return false;
 			if (!includedFile.canRead()) throw new RuntimeException("Included file not found: '" + includedFile + "'");
-			// Gpr.debug("resolving include: " + parentName + "->" +
-			// includedFile);
 			ParseTree treeinc = createAst(includedFile, debug, alreadyIncluded);
 			if (treeinc == null) throw new RuntimeException("Fatal error, cannot continue");
 			// is a child always a RuleContext?
@@ -518,16 +508,8 @@ public class BigDataScript {
 		// ---
 		// Add global symbols
 		// ---
-		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, "")); // Program
-																					// name,
-																					// now
-																					// is
-																					// empty,
-																					// but
-																					// it
-																					// is
-																					// filled
-																					// later
+		// Program name, now is empty, but it	is	filled	 later
+		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, ""));
 
 		// Command line parameters override defaults
 		if (system == null) system = ExecutionerType.LOCAL.toString().toLowerCase();

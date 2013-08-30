@@ -772,4 +772,11 @@ public class Gpr {
 		return String.format("%.1f %s", mem, unit);
 	}
 
+	public static File getCanonicalFile(File f) {
+		try {
+			return f.getCanonicalFile();
+		} catch (Exception e) {
+			return f;
+		}
+	}
 }

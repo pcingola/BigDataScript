@@ -1,4 +1,4 @@
-
+print("ignore errors (begin) ============= \n")
 
 bool b = false
 
@@ -9,3 +9,4 @@ wait
 
 b = true
 
+print("ignore errors (end) ============= \n")
