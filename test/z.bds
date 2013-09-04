@@ -1,5 +1,13 @@
+// include
 
-real r = 0.8
-int i = toInt( r * 100 )
-print("i = $i\n");
+include 'inc/test-inc.bds';
+
+int i = f2(30);
+int jx = f4(40);
+int jy = f41(50);
+
+int f2(int j) {
+	return j+2;
+}
+
 

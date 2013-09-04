@@ -2,7 +2,7 @@
 // used for include test cases, dont remove
 // defines f41()   
 
-// to test double inclusion
+// Test circular inclusion
 include 'test-inc.bds'
 
 int f41(int j) {
