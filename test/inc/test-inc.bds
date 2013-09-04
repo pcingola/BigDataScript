@@ -5,12 +5,10 @@
 
 include 'test-inc2.bds'
 
-
-int j;
-j = f2(300); // 302
+int j = f2(300) // 302
 
 int f4(int j) {
-	return j+4;
+	return j+4
 }
 
 

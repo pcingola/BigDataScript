@@ -16,12 +16,16 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 public class Block extends StatementWithScope {
 
 	File file;
-	
 	Statement statements[];
-	
-	
+
 	public Block(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	public File getFile() {
+		if (file != null) return file;
+		else return super.getFile();
 	}
 
 	public Statement[] getStatements() {
@@ -70,14 +74,8 @@ public class Block extends StatementWithScope {
 		return RunState.OK;
 	}
 
-	@Override
-	public File getFile() {
-		if(file != null) return file;
-		else return super.getFile();
-	}
-	
 	public void setFile(File file) {
 		this.file = file;
 	}
-	
+
 }

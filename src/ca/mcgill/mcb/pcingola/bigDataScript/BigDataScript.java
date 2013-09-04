@@ -32,6 +32,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralReal;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralString;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Statement;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.StatementInclude;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.VarDeclaration;
@@ -44,14 +45,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * BigDataScript command line parser
- * 
- * TODO: Command line to see variables, scopes and stack-trace for a checkpoint
  * 
  * @author pcingola
  */
@@ -79,85 +79,24 @@ public class BigDataScript {
 									// program
 
 	/**
-	 * Main
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// Create BigDataScript object and run it
-		BigDataScript bigDataScript = new BigDataScript(args);
-		int exitValue = bigDataScript.run();
-		System.exit(exitValue);
-	}
-
-	public BigDataScript(String args[]) {
-		parse(args);
-		initialize();
-	}
-
-	/**
-	 * Compile program
-	 */
-	public boolean compile() {
-
-		if (debug) System.out.println("Loading file: '" + programFileName + "'");
-		CompilerMessages.reset();
-		// ---
-		// Convert to AST / csTree
-		// ---
-		if (debug) System.out.println("Creating AST.");
-		ParseTree tree = null;
-		try {
-			tree = createAst();
-		} catch (Exception e) {
-			System.err.println("Fatal error cannot continue - " + e.getMessage());
-		}
-		if (tree == null) {
-			if (CompilerMessages.get().isEmpty()) CompilerMessages.get().addError("Could not compile");
-		}
-		if (!CompilerMessages.get().isEmpty()) return false;
-		if (debug) System.out.println("Creating BigDataScript tree.");
-		CompilerMessages.reset();
-		// CompilerMessages.setFileName(programFileName); // not more used?
-		programUnit = (ProgramUnit) BigDataScriptNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
-		// Any error messages?
-		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
-		if (CompilerMessages.get().hasErrors()) return false;
-
-		// ---
-		// Type-checking
-		// ---
-		if (debug) System.out.println("Type checking.");
-		Scope programScope = new Scope();
-		programUnit.typeChecking(programScope, CompilerMessages.get());
-
-		// Any error messages?
-		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
-		if (CompilerMessages.get().hasErrors()) return false;
-		// OK
-		return true;
-	}
-
-	ParseTree createAst() {
-		File file = new File(programFileName);
-		return createAst(file, debug, new HashSet<File>());
-	}
-
-	/**
 	 * Create an AST from a program (using ANTLR lexer & parser)
 	 * Returns null if error
+	 * Use 'alreadyIncluded' to keep track of from 'include' statements
 	 */
 	public static ParseTree createAst(File file, boolean debug, Set<File> alreadyIncluded) {
 		alreadyIncluded.add(Gpr.getCanonicalFile(file));
+		String filePath = file.toString();
 		try {
+			filePath = file.getCanonicalPath();
+
 			// Input stream
-			// FileInputStream fis = new FileInputStream(programFileName);
-			if (!file.canRead()) {
-				CompilerMessages.get().addError("Can't read file '" + file + "'");
+			if (!Gpr.canRead(filePath)) {
+				CompilerMessages.get().addError("Can't read file '" + filePath + "'");
 				return null;
 			}
+
 			// Create a CharStream that reads from standard input
-			ANTLRFileStream input = new ANTLRFileStream(file.toString());
+			ANTLRFileStream input = new ANTLRFileStream(filePath);
 
 			// Create a lexer that feeds off of input CharStream
 			BigDataScriptLexer lexer = new BigDataScriptLexer(input) {
@@ -175,7 +114,7 @@ public class BigDataScript {
 
 			// Error loading file?
 			if (tree == null) {
-				System.err.println("Can't parse file '" + file + "'");
+				System.err.println("Can't parse file '" + filePath + "'");
 				return null;
 			}
 
@@ -186,30 +125,69 @@ public class BigDataScript {
 					System.out.println("\tChild " + childNum + ":\t" + child + "\tTree:'" + child.toStringTree() + "'");
 				}
 			}
-			// included files:
+
+			// Included files
 			boolean resolveIncludePending = true;
 			while (resolveIncludePending)
 				resolveIncludePending = resolveIncludes(tree, debug, alreadyIncluded);
+
 			return tree;
 		} catch (Exception e) {
-			CompilerMessages.get().addError("Could not compile " + file + " :" + e.getMessage());
+			CompilerMessages.get().addError("Could not compile " + filePath + " :" + e.getMessage());
 			return null;
 		}
 	}
 
+	/**
+	 * Main
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// Create BigDataScript object and run it
+		BigDataScript bigDataScript = new BigDataScript(args);
+		int exitValue = bigDataScript.run();
+		System.exit(exitValue);
+	}
+
+	/**
+	 * Resolve include statements
+	 * @param tree
+	 * @param debug
+	 * @param alreadyIncluded
+	 * @return
+	 */
 	private static boolean resolveIncludes(ParseTree tree, boolean debug, Set<File> alreadyIncluded) {
 		boolean changed = false;
 		if (tree instanceof IncludeFContext) {
-			File parentName = new File(((IncludeFContext) tree).getStart().getInputStream().getSourceName());
-			String includedFilename = tree.getChild(1).getText();
-			includedFilename = includedFilename.substring(1, includedFilename.length() - 1).trim();
-			File includedFile = new File(includedFilename);
-			if (parentName != null && parentName.exists() && !includedFile.isAbsolute()) includedFile = new File(parentName.getParent(), includedFilename);
+			// Parent file: The one that is including the other file
+			File parentFile = new File(((IncludeFContext) tree).getStart().getInputStream().getSourceName());
+
+			// Included file name
+			String includedFilename = StatementInclude.includedFileName(tree.getChild(1).getText());
+
+			// Find file (look into all include paths)
+			File includedFile = StatementInclude.includedFile(includedFilename, parentFile);
+			if (includedFile == null) {
+				CompilerMessages.get().add(tree, parentFile, "\n\tIncluded file not found: '" + includedFilename + "'\n\tSearch path: " + Config.get().getIncludePath(), MessageType.ERROR);
+				return false;
+			}
+
+			// Already included? don't bother
 			if (alreadyIncluded.contains(Gpr.getCanonicalFile(includedFile))) return false;
-			if (!includedFile.canRead()) throw new RuntimeException("Included file not found: '" + includedFile + "'");
+			if (!includedFile.canRead()) {
+				CompilerMessages.get().add(tree, parentFile, "\n\tCannot read included file: '" + includedFilename + "'", MessageType.ERROR);
+				return false;
+			}
+
+			// Parse
 			ParseTree treeinc = createAst(includedFile, debug, alreadyIncluded);
-			if (treeinc == null) throw new RuntimeException("Fatal error, cannot continue");
-			// is a child always a RuleContext?
+			if (treeinc == null) {
+				CompilerMessages.get().add(tree, parentFile, "\n\tFatal error including file '" + includedFilename + "'", MessageType.ERROR);
+				return false;
+			}
+
+			// Is a child always a RuleContext?
 			for (int i = 0; i < treeinc.getChildCount(); i++) {
 				((IncludeFContext) tree).addChild((RuleContext) treeinc.getChild(i));
 			}
@@ -218,6 +196,76 @@ public class BigDataScript {
 				changed |= resolveIncludes(tree.getChild(i), debug, alreadyIncluded);
 		}
 		return changed;
+	}
+
+	public BigDataScript(String args[]) {
+		parse(args);
+		initialize();
+	}
+
+	/**
+	 * Compile program
+	 */
+	public boolean compile() {
+		if (debug) System.out.println("Loading file: '" + programFileName + "'");
+
+		//---
+		// Convert to AST 
+		//---
+		if (debug) System.out.println("Creating AST.");
+		CompilerMessages.reset();
+		ParseTree tree = null;
+
+		try {
+			tree = createAst();
+		} catch (Exception e) {
+			System.err.println("Fatal error cannot continue - " + e.getMessage());
+			return false;
+		}
+
+		// No tree produced? Fatal error
+		if (tree == null) {
+			if (CompilerMessages.get().isEmpty()) CompilerMessages.get().addError("Fatal error: Could not compile");
+			return false;
+		}
+
+		// Any error? Do not continue
+		if (!CompilerMessages.get().isEmpty()) return false;
+
+		//---
+		// Convert to BigDataScriptNodes 
+		//---
+		if (debug) System.out.println("Creating BigDataScript tree.");
+		CompilerMessages.reset();
+		programUnit = (ProgramUnit) BigDataScriptNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
+
+		// Any error messages?
+		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+		if (CompilerMessages.get().hasErrors()) return false;
+
+		//---
+		// Type-checking
+		//---
+		if (debug) System.out.println("Type checking.");
+		CompilerMessages.reset();
+
+		Scope programScope = new Scope();
+		programUnit.typeChecking(programScope, CompilerMessages.get());
+
+		// Any error messages?
+		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+		if (CompilerMessages.get().hasErrors()) return false;
+		// OK
+		return true;
+	}
+
+	/**
+	 * Create an AST from a program file
+	 * @return A parsed tree
+	 */
+	ParseTree createAst() {
+		File file = new File(programFileName);
+		return createAst(file, debug, new HashSet<File>());
 	}
 
 	public BigDataScriptThread getBigDataScriptThread() {
@@ -237,6 +285,28 @@ public class BigDataScript {
 	 */
 	void initDefaults() {
 		log = true;
+	}
+
+	/**
+	 * Initialize before running or type-checking
+	 */
+	void initialize() {
+		// ---
+		// This is just to make sure we create primitive Types first
+		// This is important for serialization process
+		// ---
+		@SuppressWarnings("unused")
+		Type type = Type.INT;
+		Type.reset();
+
+		// Reset node factory
+		BigDataScriptNodeFactory.reset();
+
+		// Global scope
+		initilaizeGlobalScope();
+
+		// Libraries
+		initilaizeLibraries();
 	}
 
 	/**
@@ -296,8 +366,7 @@ public class BigDataScript {
 				// Get variable name and value
 				String varName = arg.substring(1);
 
-				// Find all variable declarations that match this command line
-				// argument
+				// Find all variable declarations that match this command line argument
 				for (Statement s : programUnit.getStatements()) {
 					// Is it a variable declaration?
 					if (s instanceof VarDeclaration) {
@@ -306,48 +375,26 @@ public class BigDataScript {
 
 						// Is is a primitive variable or a primitive list?
 						if (varType.isPrimitiveType() || varType.isList()) {
-							// Find an initialization that matches the command
-							// line argument
+							// Find an initialization that matches the command line argument
 							for (VariableInit varInit : varDecl.getVarInit())
-								if (varInit.getVarName().equals(varName)) { // Name
-																			// matches?
+								if (varInit.getVarName().equals(varName)) { // Name matches?
 									int argNumOri = argNum;
 									boolean useVal = false;
 
 									if (varType.isList()) {
-										// Create a list of arguments and use
-										// them to initialize the variable
-										// (list)
+										// Create a list of arguments and use them to initialize the variable (list)
 										ArrayList<String> vals = new ArrayList<String>();
 										for (int i = argNum + 1; i < programArgs.size(); i++)
 											if (programArgs.get(i).startsWith("-")) break;
 											else vals.add(programArgs.get(i));
 
-										useVal = initializeArgs(varType, varInit, vals); // Found
-																							// variable, try
-																							// to replace or
-																							// add LITERAL
-																							// to this
-																							// VarInit
+										useVal = initializeArgs(varType, varInit, vals); // Found variable, try to replace or add LITERAL to this VarInit
 									} else {
-										String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one
-																														// argument
-																														// and
-																														// use
-																														// it to
-																														// initialize
-																														// the
-																														// variable
-										useVal = initializeArgs(varType, varInit, val); // Found
-																						// variable, try
-																						// to replace or
-																						// add LITERAL
-																						// to this
-																						// VarInit
+										String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
+										useVal = initializeArgs(varType, varInit, val); // Found variable, try to replace or add LITERAL to this VarInit
 									}
 
-									if (!useVal) argNum = argNumOri; // We did not use
-																		// the arguments
+									if (!useVal) argNum = argNumOri; // We did not use the arguments
 								}
 						}
 					}
@@ -355,8 +402,7 @@ public class BigDataScript {
 			}
 		}
 
-		// Make all unprocessed arguments available for the program (in 'args'
-		// list)
+		// Make all unprocessed arguments available for the program (in 'args' list)
 		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING), programArgs));
 
 		// Initialize program name
@@ -471,28 +517,6 @@ public class BigDataScript {
 		}
 
 		return usedVal;
-	}
-
-	/**
-	 * Initialize before running or type-checking
-	 */
-	void initialize() {
-		// ---
-		// This is just to make sure we create primitive Types first
-		// This is important for serialization process
-		// ---
-		@SuppressWarnings("unused")
-		Type type = Type.INT;
-		Type.reset();
-
-		// Reset node factory
-		BigDataScriptNodeFactory.reset();
-
-		// Global scope
-		initilaizeGlobalScope();
-
-		// Libraries
-		initilaizeLibraries();
 	}
 
 	/**
@@ -707,7 +731,11 @@ public class BigDataScript {
 	int runCompile() {
 		// Compile, abort on errors
 		if (verbose) Timer.showStdErr("Parsing");
-		if (!compile()) return 1;
+		if (!compile()) {
+			// Show errors and warnings, if any
+			if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+			return 1;
+		}
 
 		if (verbose) Timer.showStdErr("Initializing");
 		initializeArgs();

@@ -1,13 +1,23 @@
-// include
+// Include test cases
 
-include 'inc/test-inc.bds';
-
-int i = f2(30);
-int jx = f4(40);
-int jy = f41(50);
+include 'inc/test-inc.bds'
+//include 'inc/test-inc.NOT_FOUND.bds'
 
 int f2(int j) {
-	return j+2;
+	return j+2
 }
 
+#---
+# Main
+#---
+
+int i = f2(30)
+int jx = f4(40)
+int jy = f41(50)
+
+print("Start\n")
+print("\ti : $i\n")
+print("\tjx: $jx\n")
+print("\tjy: $jy\n")
+print("End\n")
 

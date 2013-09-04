@@ -110,7 +110,7 @@ public class Gpr {
 	 * @return
 	 */
 	public static String baseName(String file) {
-		if(file==null) return "";
+		if (file == null) return "";
 		File f = new File(file);
 		return f.getName();
 	}
@@ -143,10 +143,10 @@ public class Gpr {
 	 */
 	public static boolean canRead(String fileName) {
 		File inputFile = new File(fileName);
-		if (inputFile.exists()) return true;
+		if (inputFile.exists() && inputFile.canRead()) return true;
 
 		inputFile = new File(fileName + ".gz");
-		if (inputFile.exists()) return true;
+		if (inputFile.exists() && inputFile.canRead()) return true;
 
 		return false;
 	}
@@ -222,6 +222,28 @@ public class Gpr {
 		int idx = base.lastIndexOf('.');
 		if (idx >= 0) return base.substring(idx + 1);
 		return "";
+	}
+
+	public static File getCanonicalFile(File f) {
+		try {
+			return f.getCanonicalFile();
+		} catch (Exception e) {
+			return f;
+		}
+	}
+
+	/**
+	 * Canonical path as a string
+	 * @param f
+	 * @return
+	 */
+	public static String getCanonicalFileName(String f) {
+		try {
+			File ff = new File(f);
+			return ff.getCanonicalPath();
+		} catch (Exception e) {
+			return f;
+		}
 	}
 
 	/** 
@@ -770,13 +792,5 @@ public class Gpr {
 			unit = "KB";
 		}
 		return String.format("%.1f %s", mem, unit);
-	}
-
-	public static File getCanonicalFile(File f) {
-		try {
-			return f.getCanonicalFile();
-		} catch (Exception e) {
-			return f;
-		}
 	}
 }

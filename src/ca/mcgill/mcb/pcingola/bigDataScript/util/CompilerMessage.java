@@ -18,22 +18,21 @@ public class CompilerMessage implements Comparable<CompilerMessage> {
 	String message;
 	MessageType type;
 
-	
-	
 	public CompilerMessage(BigDataScriptNode node, String message, MessageType type) {
 		this.node = node; // can be null
-		if(node ==null) this.node = new GenericNode(null, null);
+		if (node == null) this.node = new GenericNode(null, null);
 		this.message = message;
 		this.type = type;
 	}
 
 	@Override
 	public int compareTo(CompilerMessage o) {
-		if(o==null) return 1;
-		if (node !=null && o.node != null && (node.getFileName() != null) && (o.node.getFileName() != null)) {
+		if (o == null) return 1;
+		if (node != null && o.node != null && (node.getFileName() != null) && (o.node.getFileName() != null)) {
 			int cmp = node.getFileName().compareTo(o.node.getFileName());
 			if (cmp != 0) return cmp;
 		}
+
 		if (node.getLineNum() != o.node.getLineNum()) return node.getLineNum() - o.node.getLineNum();
 
 		if (node.getCharPosInLine() != o.node.getCharPosInLine()) return node.getCharPosInLine() - o.node.getCharPosInLine();

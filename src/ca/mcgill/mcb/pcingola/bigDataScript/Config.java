@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -18,7 +19,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class Config {
 
-	public static final String DEFAULT_CONFIG_FILE = Gpr.HOME + "/.bds/" + BigDataScript.class.getSimpleName().toLowerCase() + ".config";
+	public static final String DEFAULT_CONFIG_DIR = Gpr.HOME + "/.bds";
+	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + "/" + BigDataScript.class.getSimpleName().toLowerCase() + ".config";
+	public static final String DEFAULT_INCLUDE_DIR = DEFAULT_CONFIG_DIR + "/include";
+
+	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
 
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
@@ -29,6 +34,7 @@ public class Config {
 	String pidFile;
 	Properties properties;
 	ArrayList<String> sshNodes;
+	ArrayList<String> includePath;
 
 	public static Config get() {
 		return configInstance;
@@ -58,6 +64,36 @@ public class Config {
 		String val = getString(propertyName);
 		if (val == null) return defaultValue;
 		return Gpr.parseDoubleSafe(val);
+	}
+
+	/**
+	 * A collection of strings showing where to search for include files
+	 * 
+	 * TODO: Add path from config file
+	 * TODO: Add default system-wide include path ("/usr/local/bds/include")
+	 * 
+	 * @return
+	 */
+	public Collection<String> getIncludePath() {
+		// Create array if needed
+		if (includePath == null) {
+			includePath = new ArrayList<String>();
+
+			// Add by search order
+			includePath.add("."); // Current dir (obviously)
+			includePath.add(DEFAULT_INCLUDE_DIR); // Default include path ($HOME/.bds/include)
+
+			// Add BDS_PATH environment variable
+			String bdsPath = System.getenv(BDS_INCLUDE_PATH);
+			if ((bdsPath != null) && !bdsPath.isEmpty()) {
+				String incPaths[] = bdsPath.split(":");
+				for (String incPath : incPaths) {
+					if (!incPath.isEmpty()) includePath.add(incPath);
+				}
+			}
+		}
+
+		return includePath;
 	}
 
 	/**

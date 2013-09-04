@@ -1,12 +1,12 @@
 
-// used for include test cases, dont remove
+// Used for include test cases, do not remove
 // defines f41()   
 
 // Test circular inclusion
 include 'test-inc.bds'
 
 int f41(int j) {
-	return j+41;
+	return j+41
 }
 
 

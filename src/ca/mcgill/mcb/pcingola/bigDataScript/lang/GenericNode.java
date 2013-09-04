@@ -1,32 +1,35 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
+import java.io.File;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
- * A general pourpose node
+ * A general purpose node
  * 
  * @author pcingola
  */
 public class GenericNode extends BigDataScriptNode {
 
+	File file;
 	BigDataScriptNode nodes[];
 
 	public GenericNode(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
-	//	public BigDataScriptNode[] getNodes() {
-	//		return nodes;
-	//	}
+	@Override
+	public File getFile() {
+		return file;
+	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		throw new RuntimeException("Deprecated node type " + getClass().getSimpleName());
+		// Nothing to do
+	}
 
-		//		int num = tree.getChildCount();
-		//		nodes = new BigDataScriptNode[num];
-		//		for (int i = 0; i < num; i++)
-		//			nodes[i] = factory(tree, i);
+	public void setFile(File file) {
+		this.file = file;
 	}
 
 }

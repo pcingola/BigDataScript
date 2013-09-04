@@ -1,12 +1,16 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.v4.runtime.tree.ParseTree;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.GenericNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
 
 /**
@@ -60,10 +64,23 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 		String key = cm.toString();
 		if (!messages.containsKey(key)) messages.put(key, cm);
 	}
-	
+
+	/**
+	 * Create a compiler error message when everything we have to far is a parse tree
+	 * @param tree
+	 * @param parentFile
+	 * @param message
+	 * @param type
+	 */
+	public void add(ParseTree tree, File parentFile, String message, MessageType type) {
+		GenericNode genericNode = new GenericNode(null, tree);
+		genericNode.setFile(parentFile);
+		add(genericNode, message, type);
+	}
+
 	/** only for special cases, returns false */
 	public boolean addError(String msg) {
-		add(null,msg,MessageType.ERROR);
+		add((BigDataScriptNode) null, msg, MessageType.ERROR);
 		return false;
 	}
 
