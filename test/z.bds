@@ -1,23 +1,18 @@
-// Include test cases
+#!/usr/bin/env bds
 
-include 'inc/test-inc.bds'
-//include 'inc/test-inc.NOT_FOUND.bds'
+string str = "world"
+print("String: $str\n")
 
-int f2(int j) {
-	return j+2
-}
+string[] arr = ['one', 'two', "three $str"]
+print("Array: $arr\n")
 
-#---
-# Main
-#---
+arr[9] = "Hello"
 
-int i = f2(30)
-int jx = f4(40)
-int jy = f41(50)
+#string{} hash
+#hash{"hi"} = "bye" 
 
-print("Start\n")
-print("\ti : $i\n")
-print("\tjx: $jx\n")
-print("\tjy: $jy\n")
-print("End\n")
+print("Array: $arr\n")
+
+
+print("Done!\n")
 

@@ -9,6 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Expression
@@ -24,7 +25,6 @@ public class ExpressionAssignment extends ExpressionBinary {
 	/**
 	 * Evaluate an expression
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public Object eval(BigDataScriptThread csThread) {
 
@@ -40,9 +40,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 			ssym.setValue(value);
 		} else if (left instanceof VarReferenceList) {
 			VarReferenceList listIndex = (VarReferenceList) left;
-			int idx = listIndex.evalIndex(csThread);
-			ArrayList list = listIndex.getList(csThread.getScope());
-			list.set(idx, value);
+			listIndex.setValue(csThread,value);
 		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 
 		return value;

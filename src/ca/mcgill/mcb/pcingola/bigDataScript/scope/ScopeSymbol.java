@@ -28,7 +28,7 @@ public class ScopeSymbol implements BigDataScriptSerialize {
 		this.name = name;
 		this.type = type;
 		// Set default value
-		if (!type.isFunction()) value = defaultValue();
+		if (!type.isFunction()) value = type.defaultValue();
 	}
 
 	public ScopeSymbol(String name, Type type, Object value) {
@@ -37,29 +37,28 @@ public class ScopeSymbol implements BigDataScriptSerialize {
 		this.value = value;
 	}
 
-	/**
-	 * Get default initialization value
-	 * @return
-	 */
-	@SuppressWarnings("rawtypes")
-	protected Object defaultValue() {
-		// Set default value
-		switch (type.getPrimitiveType()) {
-		case BOOL:
-			return Type.BOOL_FALSE;
-		case INT:
-			return Type.INT_ZERO;
-		case REAL:
-			return Type.REAL_ZERO;
-		case STRING:
-			return Type.STRING_EMPTY;
-		case LIST:
-			return new ArrayList();
-		default:
-			throw new RuntimeException("Cannot find default value for type " + type);
-		}
-
-	}
+//	/**
+//	 * Get default initialization value
+//	 * @return
+//	 */
+//	@SuppressWarnings("rawtypes")
+//	protected Object defaultValue() {
+//		// Set default value
+//		switch (type.getPrimitiveType()) {
+//		case BOOL:
+//			return Type.BOOL_FALSE;
+//		case INT:
+//			return Type.INT_ZERO;
+//		case REAL:
+//			return Type.REAL_ZERO;
+//		case STRING:
+//			return Type.STRING_EMPTY;
+//		case LIST:
+//			return new ArrayList();
+//		default:
+//			throw new RuntimeException("Cannot find default value for type " + type);
+//		}
+//	}
 
 	public String getName() {
 		return name;

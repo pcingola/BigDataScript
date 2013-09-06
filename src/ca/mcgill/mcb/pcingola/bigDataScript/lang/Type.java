@@ -40,6 +40,29 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	Scope classScope; // A scope defining all class variables and methods
 
 	/**
+	 * Get default initialization value
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public Object defaultValue() {
+		// Set default value
+		switch (getPrimitiveType()) {
+		case BOOL:
+			return Type.BOOL_FALSE;
+		case INT:
+			return Type.INT_ZERO;
+		case REAL:
+			return Type.REAL_ZERO;
+		case STRING:
+			return Type.STRING_EMPTY;
+		case LIST:
+			return new ArrayList();
+		default:
+			throw new RuntimeException("Cannot find default value for type " + this);
+		}
+	}
+
+	/**
 	 * Get a type
 	 * @param primitiveType
 	 * @return

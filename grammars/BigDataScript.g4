@@ -29,7 +29,7 @@ type : 'bool'                                                                   
 varDeclaration      : type variableInit (',' variableInit)*;
 variableInit        : ID ('=' expression)?;
 
-
+// Include statement
 includeF : 'include' STRING_LITERAL_SINGLE eol;
 
 // Statements
