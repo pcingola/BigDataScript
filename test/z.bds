@@ -6,13 +6,19 @@ print("String: $str\n")
 string[] arr = ['one', 'two', "three $str"]
 print("Array: $arr\n")
 
-arr[9] = "Hello"
+string{} hash
+hash{"hi"} = "bye" 
+hash{"hola"} = "chau" 
+print("Hash: $hash\n")
 
-#string{} hash
-#hash{"hi"} = "bye" 
+hash{"hola"} = "adios" 
+print("Hash: $hash\n")
 
-print("Array: $arr\n")
+int{} hashInt
 
+hashInt{'one'} = 1
+hashInt{'two'} = 2
+print("Hash Int: $hashInt\n")
 
 print("Done!\n")
 

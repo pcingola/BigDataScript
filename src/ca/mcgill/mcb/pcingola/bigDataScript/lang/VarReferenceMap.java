@@ -1,6 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -18,7 +18,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
 public class VarReferenceMap extends Expression {
 
 	VarReference name;
-	Expression expressionIdx;
+	Expression expressionKey;
 
 	public VarReferenceMap(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -30,9 +30,9 @@ public class VarReferenceMap extends Expression {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object eval(BigDataScriptThread csThread) {
-		int idx = evalIndex(csThread);
-		ArrayList list = getList(csThread.getScope());
-		return list.get(idx);
+		String key = evalKey(csThread);
+		HashMap list = getMap(csThread.getScope());
+		return list.get(key);
 	}
 
 	/**
@@ -40,14 +40,14 @@ public class VarReferenceMap extends Expression {
 	 * @param csThread
 	 * @return
 	 */
-	public int evalIndex(BigDataScriptThread csThread) {
-		return (int) expressionIdx.evalInt(csThread);
+	public String evalKey(BigDataScriptThread csThread) {
+		return expressionKey.evalString(csThread);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public ArrayList getList(Scope scope) {
+	public HashMap getMap(Scope scope) {
 		ScopeSymbol ss = getScopeSymbol(scope);
-		return (ArrayList) ss.getValue();
+		return (HashMap) ss.getValue();
 	}
 
 	/**
@@ -59,6 +59,11 @@ public class VarReferenceMap extends Expression {
 		return name.getScopeSymbol(scope);
 	}
 
+	public Type getType(Scope scope) {
+		ScopeSymbol ss = getScopeSymbol(scope);
+		return ss.getType();
+	}
+
 	@Override
 	protected boolean isReturnTypesNotNull() {
 		return returnType != null;
@@ -67,21 +72,28 @@ public class VarReferenceMap extends Expression {
 	@Override
 	protected void parse(ParseTree tree) {
 		name = (VarReference) factory(tree, 0);
-		// child[1] = '['
-		expressionIdx = (Expression) factory(tree, 2);
-		// child[3] = ']'
+		// child[1] = '{'
+		expressionKey = (Expression) factory(tree, 2);
+		// child[3] = '}'
 	}
 
 	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
-		expressionIdx.returnType(scope);
+		expressionKey.returnType(scope);
 		Type nameType = name.returnType(scope);
 
-		if (nameType.isList()) returnType = ((TypeList) nameType).getBaseType();
+		if (nameType.isMap()) returnType = ((TypeMap) nameType).getBaseType();
 
 		return returnType;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setValue(BigDataScriptThread csThread, Object value) {
+		String key = evalKey(csThread);
+		HashMap map = getMap(csThread.getScope());
+		map.put(key, value);
 	}
 
 	@Override
@@ -89,8 +101,8 @@ public class VarReferenceMap extends Expression {
 		// Calculate return type
 		returnType(scope);
 
-		if ((name.getReturnType() != null) && !name.getReturnType().isList()) compilerMessages.add(this, "Symbol '" + name + "' is not a list/array", MessageType.ERROR);
-		if (expressionIdx != null) expressionIdx.checkCanCastInt(compilerMessages);
+		// Note: We do not perform type checking on 'key' since everything can be cast to a string
+		if ((name.getReturnType() != null) && !name.getReturnType().isMap()) compilerMessages.add(this, "Symbol '" + name + "' is not a map", MessageType.ERROR);
 	}
 
 	@Override

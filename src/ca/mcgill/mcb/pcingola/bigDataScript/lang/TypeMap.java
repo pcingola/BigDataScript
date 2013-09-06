@@ -5,17 +5,6 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListAdd;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListAddList;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListHead;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListIsEmpty;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListJoin;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListJoinStr;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListPop;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListPush;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListSize;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListSort;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListTail;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -26,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TypeMap extends TypeList {
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 
 	/**
 	 * Get a list type
@@ -36,13 +25,13 @@ public class TypeMap extends TypeList {
 	 */
 	public static TypeMap get(Type baseType) {
 		// Get type from hash
-		String key = PrimitiveType.LIST + ":" + baseType;
+		String key = PrimitiveType.MAP + ":" + baseType;
 		TypeMap type = (TypeMap) types.get(key);
 
 		// No type available? Create & add
 		if (type == null) {
 			type = new TypeMap(null, null);
-			type.primitiveType = PrimitiveType.LIST;
+			type.primitiveType = PrimitiveType.MAP;
 			type.baseType = baseType;
 			put(type);
 
@@ -65,22 +54,23 @@ public class TypeMap extends TypeList {
 	/**
 	 * Add all library methods here
 	 */
+	@Override
 	protected void addNativeMethods() {
 		if (classScope == null) classScope = new Scope(null);
 
 		// Add libarary methods
 		ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
-		methods.add(new MethodNativeListAdd(baseType));
-		methods.add(new MethodNativeListAddList(baseType));
-		methods.add(new MethodNativeListHead(baseType));
-		methods.add(new MethodNativeListIsEmpty(baseType));
-		methods.add(new MethodNativeListJoin(baseType));
-		methods.add(new MethodNativeListJoinStr(baseType));
-		methods.add(new MethodNativeListPop(baseType));
-		methods.add(new MethodNativeListPush(baseType));
-		methods.add(new MethodNativeListSize(baseType));
-		methods.add(new MethodNativeListSort(baseType));
-		methods.add(new MethodNativeListTail(baseType));
+		//		methods.add(new MethodNativeListAdd(baseType));
+		//		methods.add(new MethodNativeListAddList(baseType));
+		//		methods.add(new MethodNativeListHead(baseType));
+		//		methods.add(new MethodNativeListIsEmpty(baseType));
+		//		methods.add(new MethodNativeListJoin(baseType));
+		//		methods.add(new MethodNativeListJoinStr(baseType));
+		//		methods.add(new MethodNativeListPop(baseType));
+		//		methods.add(new MethodNativeListPush(baseType));
+		//		methods.add(new MethodNativeListSize(baseType));
+		//		methods.add(new MethodNativeListSort(baseType));
+		//		methods.add(new MethodNativeListTail(baseType));
 
 		// Show
 		if (debug) {
@@ -105,12 +95,12 @@ public class TypeMap extends TypeList {
 	}
 
 	@Override
-	public boolean isList() {
-		return false;
+	public boolean isMap() {
+		return true;
 	}
 
 	@Override
-	public boolean isList(Type baseType) {
+	public boolean isMap(Type baseType) {
 		return this.baseType.equals(baseType);
 	}
 
@@ -118,7 +108,7 @@ public class TypeMap extends TypeList {
 	protected void parse(ParseTree tree) {
 		// TODO: We are only allowing to build lists of primitive types. We should change this!
 		String listTypeName = tree.getChild(0).getChild(0).getText();
-		primitiveType = PrimitiveType.LIST;
+		primitiveType = PrimitiveType.MAP;
 		baseType = Type.get(listTypeName.toUpperCase());
 
 		put(this);

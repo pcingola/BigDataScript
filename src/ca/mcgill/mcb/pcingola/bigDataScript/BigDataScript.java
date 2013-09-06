@@ -64,20 +64,6 @@ public class BigDataScript {
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
-	boolean verbose;
-	boolean debug;
-	boolean log;
-	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
-	String chekcpointRestoreFile; // Restore file
-	String programFileName; // Program file name
-	String pidFile; // File to store PIDs
-	String system; // System type
-	Config config;
-	ProgramUnit programUnit; // Program (parsed nodes)
-	BigDataScriptThread bigDataScriptThread;
-	ArrayList<String> programArgs; // Command line arguments for BigDataScript
-									// program
-
 	/**
 	 * Create an AST from a program (using ANTLR lexer & parser)
 	 * Returns null if error
@@ -198,6 +184,23 @@ public class BigDataScript {
 		return changed;
 	}
 
+	boolean verbose;
+	boolean debug;
+	boolean log;
+	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
+	String chekcpointRestoreFile; // Restore file
+	String programFileName; // Program file name
+	String pidFile; // File to store PIDs
+	String system; // System type
+	Config config;
+
+	ProgramUnit programUnit; // Program (parsed nodes)
+
+	BigDataScriptThread bigDataScriptThread;
+
+	ArrayList<String> programArgs; // Command line arguments for BigDataScript
+									// program
+
 	public BigDataScript(String args[]) {
 		parse(args);
 		initialize();
@@ -291,12 +294,6 @@ public class BigDataScript {
 	 * Initialize before running or type-checking
 	 */
 	void initialize() {
-		// ---
-		// This is just to make sure we create primitive Types first
-		// This is important for serialization process
-		// ---
-		@SuppressWarnings("unused")
-		Type type = Type.INT;
 		Type.reset();
 
 		// Reset node factory

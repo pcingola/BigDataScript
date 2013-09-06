@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import java.util.ArrayList;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
@@ -9,7 +7,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Expression
@@ -40,7 +37,10 @@ public class ExpressionAssignment extends ExpressionBinary {
 			ssym.setValue(value);
 		} else if (left instanceof VarReferenceList) {
 			VarReferenceList listIndex = (VarReferenceList) left;
-			listIndex.setValue(csThread,value);
+			listIndex.setValue(csThread, value);
+		} else if (left instanceof VarReferenceMap) {
+			VarReferenceMap listIndex = (VarReferenceMap) left;
+			listIndex.setValue(csThread, value);
 		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 
 		return value;
@@ -64,7 +64,10 @@ public class ExpressionAssignment extends ExpressionBinary {
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
 		// Is 'left' a variable?
-		if (!(left instanceof VarReference) && (!(left instanceof VarReferenceList))) compilerMessages.add(this, "Assignment to non variable", MessageType.ERROR);
+		if (!(left instanceof VarReference) //
+				&& (!(left instanceof VarReferenceList)) //
+				&& (!(left instanceof VarReferenceMap)) //
+		) compilerMessages.add(this, "Assignment to non variable", MessageType.ERROR);
 	}
 
 	@Override
