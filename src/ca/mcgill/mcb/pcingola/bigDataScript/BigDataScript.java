@@ -58,7 +58,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class BigDataScript {
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2013-09-04";
+	public static final String BUILD = "2013-09-05";
 	public static final String REVISION = "";
 	public static final String VERSION_MAJOR = "0.2";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
