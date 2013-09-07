@@ -1,18 +1,18 @@
 #!/usr/bin/env bds
 
 string{} hash
-hash{"hi"} = "bye" 
-hash{"hola"} = "chau" 
-print("Hash: $hash\n")
+hash{"hi"} = "bye"
+hash{"hola"} = "chau"
 
-# Test iteration on a hash (iterates on values)
-# Add all values from hash
-string[] vals
-for( string v : hash.keys() ) {
-        print("Value : $v\n")
-	vals.add(v)
-}
+int size = hash.size()
 
-vals = vals.sort()
-print("List: $vals\n")
+bool hk1 = hash.hasKey("hi")
+bool hk2 = hash.hasKey("bonjour")
+
+bool hv1 = hash.hasValue("bye")
+bool hv2 = hash.hasValue("au revoir")
+
+hash.remove("hi")
+bool hk3 = hash.hasKey("hi")
+
 

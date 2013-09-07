@@ -5,7 +5,12 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapHasKey;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapHasValue;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapKeys;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapRemove;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapSize;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapValues;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -62,6 +67,11 @@ public class TypeMap extends TypeList {
 		// Add libarary methods
 		ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
 		methods.add(new MethodNativeMapKeys(baseType));
+		methods.add(new MethodNativeMapValues(baseType));
+		methods.add(new MethodNativeMapSize(baseType));
+		methods.add(new MethodNativeMapHasKey(baseType));
+		methods.add(new MethodNativeMapHasValue(baseType));
+		methods.add(new MethodNativeMapRemove(baseType));
 
 		// Show
 		if (debug) {

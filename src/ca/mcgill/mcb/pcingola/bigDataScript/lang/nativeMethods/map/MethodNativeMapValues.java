@@ -10,21 +10,21 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 
 /**
- * Return a list of keys
+ * Return a list of values
  * 
  * @author pcingola
  */
-public class MethodNativeMapKeys extends MethodNativeMap {
+public class MethodNativeMapValues extends MethodNativeMap {
 
-	public MethodNativeMapKeys(Type baseType) {
+	public MethodNativeMapValues(Type baseType) {
 		super(baseType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
-		functionName = "keys";
+		functionName = "values";
 		classType = TypeMap.get(baseType);
-		returnType = TypeList.get(Type.STRING);
+		returnType = TypeList.get(baseType);
 
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };
@@ -38,7 +38,7 @@ public class MethodNativeMapKeys extends MethodNativeMap {
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
 		HashMap map = (HashMap) objThis;
 		ArrayList list = new ArrayList();
-		list.addAll(map.keySet());
+		list.addAll(map.values());
 		return list;
 	}
 }

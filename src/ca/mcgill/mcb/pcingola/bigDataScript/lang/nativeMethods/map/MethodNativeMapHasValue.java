@@ -1,11 +1,9 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 
@@ -14,31 +12,30 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
  * 
  * @author pcingola
  */
-public class MethodNativeMapKeys extends MethodNativeMap {
+public class MethodNativeMapHasValue extends MethodNativeMap {
 
-	public MethodNativeMapKeys(Type baseType) {
+	public MethodNativeMapHasValue(Type baseType) {
 		super(baseType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
-		functionName = "keys";
+		functionName = "hasValue";
 		classType = TypeMap.get(baseType);
-		returnType = TypeList.get(Type.STRING);
+		returnType = Type.BOOL;
 
-		String argNames[] = { "this" };
-		Type argTypes[] = { classType };
+		String argNames[] = { "this", "val" };
+		Type argTypes[] = { classType, baseType }; // null: don't check argument (anything can be converted to 'string')
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
 		HashMap map = (HashMap) objThis;
-		ArrayList list = new ArrayList();
-		list.addAll(map.keySet());
-		return list;
+		Object val = csThread.getObject("val");
+		return map.containsValue(val);
 	}
 }

@@ -503,4 +503,13 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_54.bds", "vals", "[hi, hola]");
 	}
 
+	@Test
+	public void test55() {
+		runAndCheck("test/run_55.bds", "hk1", "true");
+		runAndCheck("test/run_55.bds", "hk2", "false");
+		runAndCheck("test/run_55.bds", "hv1", "true");
+		runAndCheck("test/run_55.bds", "hv2", "false");
+		runAndCheck("test/run_55.bds", "hk3", "false");
+	}
+
 }
