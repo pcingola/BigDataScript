@@ -20,11 +20,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
  */
 public class CompilerMessages implements Iterable<CompilerMessage> {
 
-	// Store error messages by thread (we may want to paralelize compilation at some point)
+	// Store error messages by thread (we may want to parallelize compilation at some point)
 	private static HashMap<Thread, CompilerMessages> compilerMessagesByThread = new HashMap<Thread, CompilerMessages>();
-
-	String fileName;
-	HashMap<String, CompilerMessage> messages;
 
 	/**
 	 * Get CompilerMessages (for this thread)
@@ -49,6 +46,10 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 	public static void setFileName(String fileName) {
 		get().fileName = fileName;
 	}
+
+	String fileName;
+
+	HashMap<String, CompilerMessage> messages;
 
 	private CompilerMessages() {
 		messages = new HashMap<String, CompilerMessage>();

@@ -71,7 +71,8 @@ public class BigDataScript {
 	 */
 	public static ParseTree createAst(File file, boolean debug, Set<File> alreadyIncluded) {
 		alreadyIncluded.add(Gpr.getCanonicalFile(file));
-		String filePath = file.toString();
+		String fileName = file.toString();
+		String filePath = fileName;
 		try {
 			filePath = file.getCanonicalPath();
 
@@ -82,7 +83,7 @@ public class BigDataScript {
 			}
 
 			// Create a CharStream that reads from standard input
-			ANTLRFileStream input = new ANTLRFileStream(filePath);
+			ANTLRFileStream input = new ANTLRFileStream(fileName);
 
 			// Create a lexer that feeds off of input CharStream
 			BigDataScriptLexer lexer = new BigDataScriptLexer(input) {
@@ -193,11 +194,8 @@ public class BigDataScript {
 	String pidFile; // File to store PIDs
 	String system; // System type
 	Config config;
-
 	ProgramUnit programUnit; // Program (parsed nodes)
-
 	BigDataScriptThread bigDataScriptThread;
-
 	ArrayList<String> programArgs; // Command line arguments for BigDataScript
 									// program
 
