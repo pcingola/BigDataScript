@@ -498,4 +498,9 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_53.bds", "vals", "[bye, chau]");
 	}
 
+	@Test
+	public void test54() {
+		runAndCheck("test/run_54.bds", "vals", "[hi, hola]");
+	}
+
 }

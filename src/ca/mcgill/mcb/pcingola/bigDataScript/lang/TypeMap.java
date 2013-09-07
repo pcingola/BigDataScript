@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapKeys;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -15,7 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TypeMap extends TypeList {
 
-	public static boolean debug = true;
+	public static boolean debug = false;
 
 	/**
 	 * Get a list type
@@ -60,17 +61,7 @@ public class TypeMap extends TypeList {
 
 		// Add libarary methods
 		ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
-		//		methods.add(new MethodNativeListAdd(baseType));
-		//		methods.add(new MethodNativeListAddList(baseType));
-		//		methods.add(new MethodNativeListHead(baseType));
-		//		methods.add(new MethodNativeListIsEmpty(baseType));
-		//		methods.add(new MethodNativeListJoin(baseType));
-		//		methods.add(new MethodNativeListJoinStr(baseType));
-		//		methods.add(new MethodNativeListPop(baseType));
-		//		methods.add(new MethodNativeListPush(baseType));
-		//		methods.add(new MethodNativeListSize(baseType));
-		//		methods.add(new MethodNativeListSort(baseType));
-		//		methods.add(new MethodNativeListTail(baseType));
+		methods.add(new MethodNativeMapKeys(baseType));
 
 		// Show
 		if (debug) {
@@ -92,6 +83,11 @@ public class TypeMap extends TypeList {
 	@Override
 	public boolean equals(Type type) {
 		return (primitiveType == type.primitiveType) && (baseType.equals(((TypeMap) type).baseType));
+	}
+
+	@Override
+	public boolean isList() {
+		return false;
 	}
 
 	@Override

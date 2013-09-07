@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list;
+package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map;
 
 import java.util.ArrayList;
 
@@ -7,13 +7,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 
 /**
- * Methods for list/array/stack
- *  
+ * Methods for Maps
+ * 
  * @author pcingola
  */
-public abstract class MethodNativeList extends MethodNative {
+public abstract class MethodNativeMap extends MethodNative {
 
-	public MethodNativeList(Type baseType) {
+	public MethodNativeMap(Type baseType) {
 		super();
 		initMethod(baseType);
 	}

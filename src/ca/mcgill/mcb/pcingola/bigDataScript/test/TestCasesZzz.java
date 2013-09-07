@@ -52,7 +52,7 @@ public class TestCasesZzz extends TestCase {
 
 	@Test
 	public void test53() {
-		runAndCheck("test/run_53.bds", "vals", "[bye, chau]");
+		runAndCheck("test/run_54.bds", "vals", "[hi, hola]");
 	}
 
 }

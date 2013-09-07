@@ -105,7 +105,7 @@ public class ForLoopList extends StatementWithScope {
 	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		Type exprType = returnType(scope);
 		if (exprType != null) {
-			if (!exprType.isList()) compilerMessages.add(this, "Expression should return a list", MessageType.ERROR);
+			if (!exprType.isList() && !exprType.isMap()) compilerMessages.add(this, "Expression should return a list or a map", MessageType.ERROR);
 			else if (beginVarDecl != null) {
 				TypeList exprListType = (TypeList) exprType;
 				Type baseType = exprListType.getBaseType();

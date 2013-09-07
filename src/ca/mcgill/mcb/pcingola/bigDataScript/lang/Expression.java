@@ -159,6 +159,14 @@ public class Expression extends Statement {
 		return (returnType != null) && returnType.isList(baseType);
 	}
 
+	protected boolean isMap() {
+		return (returnType != null) && returnType.isMap();
+	}
+
+	protected boolean isMap(Type baseType) {
+		return (returnType != null) && returnType.isMap(baseType);
+	}
+
 	/**
 	 * Is return type real?
 	 * @return

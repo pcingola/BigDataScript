@@ -6,7 +6,7 @@ hash{"hi"} = "bye"
 hash{"hola"} = "chau" 
 print("Hash: $hash\n")
 
-for( string v : hash ) {
+for( string v : hash.keys() ) {
 	print("Value : $v\n")
 }
 
