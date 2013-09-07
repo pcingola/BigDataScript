@@ -1,0 +1,5 @@
+#!/usr/bin/env bds
+
+int{} hash
+hash{'one'} = 1
+

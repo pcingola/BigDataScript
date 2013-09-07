@@ -1,6 +1,9 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -49,7 +52,7 @@ public class ForLoopList extends StatementWithScope {
 	/**
 	 * Run 
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected RunState runStep(BigDataScriptThread csThread) {
 		// Loop initialization
@@ -58,9 +61,19 @@ public class ForLoopList extends StatementWithScope {
 		ScopeSymbol varSym = csThread.getScope().getSymbol(varName);
 
 		// Evaluate list
-		ArrayList list = (ArrayList) expression.eval(csThread);
+		Object res = expression.eval(csThread);
 
-		for (Object o : list) {
+		// Find (or create) a collection we can iterate on
+		Collection values = null;
+		if (res instanceof List) values = (List) res;
+		else if (res instanceof Map) values = ((Map) res).values();
+		else {
+			values = new LinkedList<Object>();
+			values.add(res);
+		}
+
+		// Iterate on collection
+		for (Object o : values) {
 			varSym.setValue(varSym.getType().cast(o));
 
 			RunState rstate = statement.run(csThread); // Loop statement

@@ -7,6 +7,14 @@ import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 
+/**
+ * Test cases for language & compilation
+ * 
+ * Note: These test cases just check language parsing and compilation (what is supposed to compile OK, and what is not).
+ * 
+ * @author pcingola
+ *
+ */
 public class TestCasesLang extends TestCase {
 
 	/**
@@ -270,7 +278,6 @@ public class TestCasesLang extends TestCase {
 	public void test41() {
 		compileOk("test/test41.bds");
 	}
-	
 
 	@Test
 	public void test42() {

@@ -13,20 +13,15 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
+/**
+ * Test cases that require BDS code execution and check results
+ * 
+ * Note: These test cases requires that the BDS code is correctly parsed, compiled and executes. 
+ * 
+ * @author pcingola
+ *
+ */
 public class TestCasesExec extends TestCase {
-	
-
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		// TODO Auto-generated method stub
-		super.tearDown();
-	}
 
 	public static boolean debug = false;
 
@@ -46,7 +41,7 @@ public class TestCasesExec extends TestCase {
 		ScopeSymbol ssym = bigDataScript.getProgramUnit().getScope().getSymbol(varname);
 
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
-		Assert.assertEquals(expectedValue.toString(), ssym ==null? "" : ssym.getValue().toString());
+		Assert.assertEquals(expectedValue.toString(), ssym == null ? "" : ssym.getValue().toString());
 	}
 
 	void runAndCheckExit(String fileName, int expectedExitValue) {
@@ -91,6 +86,17 @@ public class TestCasesExec extends TestCase {
 			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 			Assert.assertEquals(expectedValue.toString(), ssym.getValue().toString());
 		}
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		// TODO Auto-generated method stub
+		super.tearDown();
 	}
 
 	@Test
@@ -469,12 +475,27 @@ public class TestCasesExec extends TestCase {
 	public void test48() {
 		runAndCheck("test/run_48.bds", "step", 2L);
 	}
-	
+
 	@Test
 	public void test50() {
 		runAndCheck("test/run_50.bds", "j", 302);
 		runAndCheck("test/run_50.bds", "i", 32);
 		runAndCheck("test/run_50.bds", "jx", 44);
+	}
+
+	@Test
+	public void test51() {
+		runAndCheck("test/run_51.bds", "hash", "{hi=bye}");
+	}
+
+	@Test
+	public void test52() {
+		runAndCheck("test/run_52.bds", "hash", "{one=1}");
+	}
+
+	@Test
+	public void test53() {
+		runAndCheck("test/run_53.bds", "vals", "[bye, chau]");
 	}
 
 }

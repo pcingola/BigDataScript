@@ -1,24 +1,14 @@
 #!/usr/bin/env bds
 
-string str = "world"
-print("String: $str\n")
-
-string[] arr = ['one', 'two', "three $str"]
-print("Array: $arr\n")
 
 string{} hash
 hash{"hi"} = "bye" 
 hash{"hola"} = "chau" 
 print("Hash: $hash\n")
 
-hash{"hola"} = "adios" 
-print("Hash: $hash\n")
-
-int{} hashInt
-
-hashInt{'one'} = 1
-hashInt{'two'} = 2
-print("Hash Int: $hashInt\n")
+for( string v : hash ) {
+	print("Value : $v\n")
+}
 
 print("Done!\n")
 

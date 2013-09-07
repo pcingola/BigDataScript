@@ -1,0 +1,6 @@
+#!/usr/bin/env bds
+
+string{} hash
+hash{"hi"} = "bye" 
+print("Hash: $hash\n")
+
