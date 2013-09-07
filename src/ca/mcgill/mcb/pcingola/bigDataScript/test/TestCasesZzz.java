@@ -20,6 +20,38 @@ public class TestCasesZzz extends TestCase {
 	public static boolean debug = false;
 
 	/**
+	 * Check that a file compiles with expected errors
+	 * @param fileName
+	 */
+	void compileErrors(String fileName, String expectedErrors) {
+		BigDataScript bigDataScript = compileTest(fileName);
+		if (bigDataScript.getCompilerMessages().isEmpty()) fail("Expecting compilation errors in file '" + fileName + "', but none found!\n");
+		Assert.assertEquals(expectedErrors, bigDataScript.getCompilerMessages().toString());
+	}
+
+	/**
+	 * Check that a file compiles without any errors
+	 * @param fileName
+	 */
+	void compileOk(String fileName) {
+		BigDataScript bigDataScript = compileTest(fileName);
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+	}
+
+	/**
+	 * 
+	 * Compile a file
+	 * @param fileName
+	 * @return
+	 */
+	BigDataScript compileTest(String fileName) {
+		String args[] = { fileName };
+		BigDataScript bigDataScript = new BigDataScript(args);
+		bigDataScript.compile();
+		return bigDataScript;
+	}
+
+	/**
 	 * Check that a file compiles without any errors, runs and a variable have its expected value
 	 * @param fileName
 	 */
@@ -51,12 +83,8 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	@Test
-	public void test53() {
-		runAndCheck("test/run_55.bds", "hk1", "true");
-		runAndCheck("test/run_55.bds", "hk2", "false");
-		runAndCheck("test/run_55.bds", "hv1", "true");
-		runAndCheck("test/run_55.bds", "hv2", "false");
-		runAndCheck("test/run_55.bds", "hk3", "false");
+	public void test42() {
+		compileOk("test/test42.bds");
 	}
 
 }

@@ -1,20 +1,15 @@
-#!/usr/bin/env bds
+// include
+
+include 'inc/test-inc.bds';
+
+int i = f2(3);
+int jx = f4(3);
+int jy = f41(3);
+
+int f2(int j) {
+	return j+2;
+}
 
 
-string{} hash
-hash{"hi"} = "bye" 
-hash{"hola"} = "chau" 
-
-print("Size: " + hash.size() + "\n")
-
-print("Has key: " + hash.hasKey("hi") + "\n")
-print("Has key: " + hash.hasKey("bonjour") + "\n")
-
-print("Has value: " + hash.hasValue("bye") + "\n")
-print("Has value: " + hash.hasValue("au revoir") + "\n")
-
-hash.remove("hi")
-print("Has key: " + hash.hasKey("hi") + "\n")
-
-print("Done!\n")
+print("Hi");
 
