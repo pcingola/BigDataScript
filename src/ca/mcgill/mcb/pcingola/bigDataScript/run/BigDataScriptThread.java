@@ -34,6 +34,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	private static int threadNumber = 1;
 
+	/**
+	 * Get an ID for a node
+	 * @return
+	 */
+	protected synchronized static int bigDataScriptThreadId() {
+		return threadNumber++;
+	}
+
 	String bigDataScriptThreadId;
 	int bigDataScriptThreadNum;
 	int checkPointRecoverNodeIdx;
@@ -45,15 +53,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	Object returnValue;
 	HashMap<String, Task> tasks;
 	Config config;
-	Random random;
 
-	/**
-	 * Get an ID for a node
-	 * @return
-	 */
-	protected synchronized static int bigDataScriptThreadId() {
-		return threadNumber++;
-	}
+	Random random;
 
 	public BigDataScriptThread() {
 		bigDataScriptThreadNum = bigDataScriptThreadId();

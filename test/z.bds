@@ -1,12 +1,14 @@
+// include
 
-int i = 1;
+include 'inc/test-inc.bds';
 
-i++;
-i--;
+int i = f2(3);
+int jx = f4(3);
+int jy = f41(3);
 
+int f2(int j) {
+	return j+2;
+}
 
-++i;
---i;
-
- ++ (i + 1);		// Error: Only variable reference allowed here
+print("Hi\n");
 
