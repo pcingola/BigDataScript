@@ -1,0 +1,16 @@
+#!/usr/bin/env bds
+
+# Use only 2 core when perforiming garvage collection
+# Otherwise it may saturate the number of threads in a machine
+#
+# E.g. When running a java process in a 64 core machine, since 
+#      each java process will use 64 garbage collection 
+#      threads (one per core), if you run 64 processes you'll 
+#      end up with 4096 threads. Usually the cluster will kill 
+#      your processes because you are using too many resources.
+
+string java="java -XX:ParallelGCThreads=2 "
+
+# Use up to 4G of memory
+string java4g="java -XX:ParallelGCThreads=2 -Xmx4G"
+
