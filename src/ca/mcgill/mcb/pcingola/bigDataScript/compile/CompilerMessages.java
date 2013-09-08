@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.util;
+package ca.mcgill.mcb.pcingola.bigDataScript.compile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.GenericNode;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
 
 /**
  * A list of compilation messages
@@ -56,7 +56,7 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 	}
 
 	public void add(BigDataScriptNode node, String message, MessageType type) {
-		CompilerMessage cm = new CompilerMessage(node, message, type);
+		CompilerMessageBdsNode cm = new CompilerMessageBdsNode(node, message, type);
 		String key = cm.toString();
 		if (!messages.containsKey(key)) messages.put(key, cm);
 	}
@@ -75,8 +75,20 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 	 */
 	public void add(ParseTree tree, File parentFile, String message, MessageType type) {
 		GenericNode genericNode = new GenericNode(null, tree);
-		genericNode.setFile(parentFile);
-		add(genericNode, message, type);
+		CompilerMessage cm = new CompilerMessage(parentFile.toString(), genericNode.getLineNum(), -1, message, type);
+		add(cm);
+	}
+
+	/**
+	 * Create a compiler error message
+	 * @param tree
+	 * @param parentFile
+	 * @param message
+	 * @param type
+	 */
+	public void add(String fileName, int line, int linePos, String message, MessageType type) {
+		CompilerMessage cm = new CompilerMessage(fileName, line, linePos, message, type);
+		add(cm);
 	}
 
 	/** only for special cases, returns false */

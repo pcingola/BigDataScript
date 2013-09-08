@@ -5,9 +5,9 @@ import java.io.File;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
 
 /**
  * Include statement: Get source from another file

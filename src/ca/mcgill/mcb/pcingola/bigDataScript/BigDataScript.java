@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
-import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.RuleContext;
@@ -19,6 +18,9 @@ import org.antlr.v4.runtime.tree.Tree;
 import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptLexer;
 import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptParser;
 import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptParser.IncludeFContext;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompileErrorStrategy;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners.ExecutionerType;
@@ -45,8 +47,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -73,6 +73,10 @@ public class BigDataScript {
 		alreadyIncluded.add(Gpr.getCanonicalFile(file));
 		String fileName = file.toString();
 		String filePath = fileName;
+
+		BigDataScriptLexer lexer = null;
+		BigDataScriptParser parser = null;
+
 		try {
 			filePath = file.getCanonicalPath();
 
@@ -86,7 +90,7 @@ public class BigDataScript {
 			ANTLRFileStream input = new ANTLRFileStream(fileName);
 
 			// Create a lexer that feeds off of input CharStream
-			BigDataScriptLexer lexer = new BigDataScriptLexer(input) {
+			lexer = new BigDataScriptLexer(input) {
 				@Override
 				public void recover(LexerNoViableAltException e) {
 					throw new RuntimeException(e); // Bail out
@@ -94,8 +98,8 @@ public class BigDataScript {
 			};
 
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			BigDataScriptParser parser = new BigDataScriptParser(tokens);
-			parser.setErrorHandler(new BailErrorStrategy()); // bail out with exception if errors in parser
+			parser = new BigDataScriptParser(tokens);
+			parser.setErrorHandler(new CompileErrorStrategy()); // bail out with exception if errors in parser
 
 			ParseTree tree = parser.programUnit(); // Begin parsing at main rule
 
@@ -120,7 +124,10 @@ public class BigDataScript {
 
 			return tree;
 		} catch (Exception e) {
-			CompilerMessages.get().addError("Could not compile " + filePath + " :" + e.getMessage());
+			String msg = e.getMessage();
+			CompilerMessages.get().addError("Could not compile " + filePath //
+					+ (msg != null ? " :" + e.getMessage() : "") //
+			);
 			return null;
 		}
 	}
@@ -226,7 +233,9 @@ public class BigDataScript {
 
 		// No tree produced? Fatal error
 		if (tree == null) {
-			if (CompilerMessages.get().isEmpty()) CompilerMessages.get().addError("Fatal error: Could not compile");
+			if (CompilerMessages.get().isEmpty()) {
+				CompilerMessages.get().addError("Fatal error: Could not compile");
+			}
 			return false;
 		}
 

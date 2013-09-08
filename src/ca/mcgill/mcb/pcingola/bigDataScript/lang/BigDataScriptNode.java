@@ -15,12 +15,12 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -43,7 +43,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	public BigDataScriptNode(BigDataScriptNode parent, ParseTree tree) {
 		id = BigDataScriptNodeFactory.get().getNextNodeId(this);
 		this.parent = parent;
-		
+
 		if (debug) Gpr.debug("NEW BigDataScriptNode:\t" + id + "\t" + getClass().getSimpleName());
 
 		// Initialize some defaults
@@ -218,17 +218,17 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return charPosInLine;
 	}
 
-	public final String getFileName() {
-		File f = getFile();
-		return f==null? null : f.toString();
-	}
-
 	/**
 	 * Find file (this information is stored in 'ProgramUnit', or in 'Block' node)
 	 * @return
 	 */
 	public File getFile() {
 		return parent != null ? parent.getFile() : null;
+	}
+
+	public final String getFileName() {
+		File f = getFile();
+		return f == null ? null : f.toString();
 	}
 
 	public int getId() {
@@ -319,7 +319,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 			if (lineAndPos(tree.getChild(i))) return true;
 
 		// Cannot set 
-		Gpr.debug("CANNOT SET LINE & POS!");
 		return false;
 	}
 

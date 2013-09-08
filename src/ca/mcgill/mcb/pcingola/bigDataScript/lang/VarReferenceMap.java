@@ -4,11 +4,11 @@ import java.util.HashMap;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessage.MessageType;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.CompilerMessages;
 
 /**
  * A reference to a list/array variable. E.g. list[3]
