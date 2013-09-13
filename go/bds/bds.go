@@ -43,16 +43,20 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"path"
+	"regexp"
 )
 
 // Store all PID in this file
 var pidFile string = ""
+// store full path of this executable
+var execName string = ""
 
 /*
 	Main
 */
 func main() {
-
+	execName = discoverExecName()
 	// Are we requested to execute a command?
 	if len(os.Args) > 1 {
 		if os.Args[1] == "exec" {
@@ -74,6 +78,9 @@ func main() {
 			// Kill and exit
 			killProcessGroup(pid)
 			os.Exit(0)
+		} else if os.Args[1] == "test" {
+            // placeholder for tests, not to be used
+			testx()
 		} else if os.Args[1] == "help" {
 			// Show usage and exit
 			usage("")
@@ -98,7 +105,10 @@ func bigDataScript() int {
 	pidFile = pidTmpFile
 
 	// Append all arguments from command line
-	args := []string{"java", "-Xmx1G", "ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
+	args := []string{"java", 
+          "-Xmx1G", 
+          "-cp", execName, 
+          "ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
 	args = append(args, "-pid")
 	args = append(args, pidFile)
 	for _, arg := range os.Args[1:] {
@@ -599,4 +609,73 @@ func usage(msg string) {
 	fmt.Fprintf(os.Stderr, "                 bds exec timeout file.stdout file.stderr file.exit command arguments...\n\n")
 	fmt.Fprintf(os.Stderr, "  kill pid :  Kill process group 'pid'.\n")
 	os.Exit(1)
+}
+
+/* returns absolute path of executing file. 
+WARNING: this must be called before  changing the current directory */
+func discoverExecName() string {
+    f := os.Args[0]
+    if path.IsAbs(f) {
+        return f
+    }
+    wd, err := os.Getwd()
+    if err != nil {
+        panic(fmt.Sprintf("Getwd failed: %s", err))
+    }
+    _, err = os.Stat(f)
+    if err == nil { // relative file exists
+      return path.Clean(path.Join(wd,f))
+    } // not exists? lookup in path
+    f2,err := exec.LookPath(f);
+    if err != nil {
+      panic(fmt.Sprintf("lookpath failed: %s", err))
+    }
+    if path.IsAbs(f2) {
+        return f2
+    }
+    return path.Clean(path.Join(wd,f2 ))
+}
+
+func testx() {
+	fmt.Printf("?? \n")
+	os.Exit(1)
+}
+
+// Loads configuration as map, expects key=val syntax.  
+// Blank lines, and lines beggining with # are ignored.
+func LoadConfig(filename string, dest map[string]string) {
+	re, _ := regexp.Compile("[#].*\\n|\\s+\\n|\\S+[=]|.*\n")
+	fi, err := os.Stat(filename)
+	if err != nil {
+		return 
+	}
+	f, err := os.Open(filename)
+	if err != nil {
+		return 
+	}
+	buff := make([]byte, fi.Size())
+	f.Read(buff)
+	f.Close()
+	str := string(buff) + "\n"
+	s2 := re.FindAllString(str, -1)
+	for i := 0; i < len(s2); {
+		if strings.HasPrefix(s2[i], "#") {
+			i++
+		} else if strings.HasSuffix(s2[i], "=") {
+			key := strings.ToLower(s2[i])[0 : len(s2[i])-1]
+			i++
+			if strings.HasSuffix(s2[i], "\n") {
+				val := s2[i][0 : len(s2[i])-1]
+				if strings.HasSuffix(val, "\r") {
+					val = val[0 : len(val)-1]
+				}
+				i++
+				dest[key] = val
+			}
+		} else if strings.Index(" \t\r\n", s2[i][0:1]) > -1 {
+			i++
+		} else {
+			//
+		}
+	}
 }
