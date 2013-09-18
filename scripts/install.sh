@@ -1,7 +1,8 @@
 #!/bin/sh
 set -e
 
-echo "changing dir" `dirname $0`
+echo "Changing dir" `dirname $0`
+
 # This script must be run from the parent directory 
 cd `dirname $0` &&  cd ..
 
@@ -19,7 +20,13 @@ cd go/bds/
 go clean
 go build bds.go
 
-# Copy binary
-cat bds $HOME/.bds/BigDataScript.jar  > $HOME/.bds/bds
-echo "binary created: $HOME/.bds/bds"
+# Build binay (go executable + JAR file)
+cat bds $HOME/.bds/BigDataScript.jar > bds.bin
+mv bds.bin bds
+
+# Remove JAR file
+rm $HOME/.bds/BigDataScript.jar
+
+# Done
+echo "Binary created: $HOME/.bds/bds"
 

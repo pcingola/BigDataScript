@@ -14,5 +14,12 @@ cd go/bds/
 go clean
 go build bds.go
 go fmt
-cd -
 
+# Build binay (go executable + JAR file)
+cat bds $HOME/.bds/BigDataScript.jar > bds.bin
+mv bds.bin bds
+
+# Remove JAR file
+rm $HOME/.bds/BigDataScript.jar
+
+cd -

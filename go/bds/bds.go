@@ -39,16 +39,17 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path"
+	"regexp"
 	"strconv"
 	"strings"
 	"syscall"
 	"time"
-	"path"
-	"regexp"
 )
 
 // Store all PID in this file
 var pidFile string = ""
+
 // store full path of this executable
 var execName string = ""
 
@@ -79,7 +80,7 @@ func main() {
 			killProcessGroup(pid)
 			os.Exit(0)
 		} else if os.Args[1] == "test" {
-            // placeholder for tests, not to be used
+			// placeholder for tests, not to be used
 			testx()
 		} else if os.Args[1] == "help" {
 			// Show usage and exit
@@ -105,10 +106,10 @@ func bigDataScript() int {
 	pidFile = pidTmpFile
 
 	// Append all arguments from command line
-	args := []string{"java", 
-          "-Xmx1G", 
-          "-cp", execName, 
-          "ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
+	args := []string{"java",
+		"-Xmx1G",
+		"-cp", execName,
+		"ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
 	args = append(args, "-pid")
 	args = append(args, pidFile)
 	for _, arg := range os.Args[1:] {
@@ -611,29 +612,29 @@ func usage(msg string) {
 	os.Exit(1)
 }
 
-/* returns absolute path of executing file. 
+/* returns absolute path of executing file.
 WARNING: this must be called before  changing the current directory */
 func discoverExecName() string {
-    f := os.Args[0]
-    if path.IsAbs(f) {
-        return f
-    }
-    wd, err := os.Getwd()
-    if err != nil {
-        panic(fmt.Sprintf("Getwd failed: %s", err))
-    }
-    _, err = os.Stat(f)
-    if err == nil { // relative file exists
-      return path.Clean(path.Join(wd,f))
-    } // not exists? lookup in path
-    f2,err := exec.LookPath(f);
-    if err != nil {
-      panic(fmt.Sprintf("lookpath failed: %s", err))
-    }
-    if path.IsAbs(f2) {
-        return f2
-    }
-    return path.Clean(path.Join(wd,f2 ))
+	f := os.Args[0]
+	if path.IsAbs(f) {
+		return f
+	}
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(fmt.Sprintf("Getwd failed: %s", err))
+	}
+	_, err = os.Stat(f)
+	if err == nil { // relative file exists
+		return path.Clean(path.Join(wd, f))
+	} // not exists? lookup in path
+	f2, err := exec.LookPath(f)
+	if err != nil {
+		panic(fmt.Sprintf("lookpath failed: %s", err))
+	}
+	if path.IsAbs(f2) {
+		return f2
+	}
+	return path.Clean(path.Join(wd, f2))
 }
 
 func testx() {
@@ -641,17 +642,17 @@ func testx() {
 	os.Exit(1)
 }
 
-// Loads configuration as map, expects key=val syntax.  
+// Loads configuration as map, expects key=val syntax.
 // Blank lines, and lines beggining with # are ignored.
 func LoadConfig(filename string, dest map[string]string) {
 	re, _ := regexp.Compile("[#].*\\n|\\s+\\n|\\S+[=]|.*\n")
 	fi, err := os.Stat(filename)
 	if err != nil {
-		return 
+		return
 	}
 	f, err := os.Open(filename)
 	if err != nil {
-		return 
+		return
 	}
 	buff := make([]byte, fi.Size())
 	f.Read(buff)
