@@ -8,4 +8,5 @@ bin
 *.pid
 t.bds*
 tmp
+go/bds/bds
 
