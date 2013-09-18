@@ -4,5 +4,5 @@
 ./scripts/make.sh
 
 # Copy to cluster
-scp $HOME/.bds/bds $HOME/.bds/BigDataScript.jar eq8302@ehs.grid.wayne.edu:.bds/
+scp -C -r $HOME/.bds/bds $HOME/.bds/include eq8302@ehs.grid.wayne.edu:.bds/
 
