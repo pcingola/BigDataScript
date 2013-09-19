@@ -24,15 +24,20 @@ public class ProgramUnit extends Block {
 	Scope scope; // Keep track of the scope. mostly for debugging and testing
 
 	public ProgramUnit(BigDataScriptNode parent, ParseTree tree) {
-		super(parent, tree);
-		try {
-			CharStream x = ((ParserRuleContext)tree).getStart().getInputStream();
-			setFile(new File(((ANTLRFileStream)x).getSourceName()));
-		} catch(Exception e) { 
-			setFile(new File("?"));
-		}
+		super(parent, null); // little hack begin: parse is done later
+		setFile(discoverFileFromTree(tree));
+		doParse(tree); // little hack end
 	}
 
+	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
+		try {
+			CharStream x = ((ParserRuleContext)tree).getStart().getInputStream();
+			return new File(((ANTLRFileStream)x).getSourceName());
+		} catch(Exception e) { 
+			return new File("?");
+		}
+	}
+	
 	@Override
 	public BigDataScriptThread getBigDataScriptThread() {
 		return bigDataScriptThread;

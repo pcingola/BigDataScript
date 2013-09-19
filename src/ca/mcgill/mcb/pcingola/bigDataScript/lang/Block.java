@@ -22,6 +22,7 @@ public class Block extends StatementWithScope {
 		super(parent, tree);
 	}
 
+
 	@Override
 	public File getFile() {
 		if (fileName != null) return new File(fileName);

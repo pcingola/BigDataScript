@@ -35,12 +35,14 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	protected BigDataScriptNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
 
+	
+	
 	/**
 	 * Constructor
 	 * @param parent
-	 * @param tree
+	 * @param tree Not null if you want the parsing to be performed now
 	 */
-	public BigDataScriptNode(BigDataScriptNode parent, ParseTree tree) {
+	public BigDataScriptNode(BigDataScriptNode parent,ParseTree tree) {
 		id = BigDataScriptNodeFactory.get().getNextNodeId(this);
 		this.parent = parent;
 
@@ -48,7 +50,14 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 		// Initialize some defaults
 		initialize();
+		doParse(tree);
+	}
 
+	/**
+	 * This should only be called from the outside if tree not passed in the constructor 
+	 * @param tree
+	 */
+	protected void doParse(ParseTree tree) {
 		if (tree != null) {
 			// TODO: Add line and char info
 			lineAndPos(tree);
@@ -63,15 +72,17 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 			// Sanity checks
 			sanityCheck(CompilerMessages.get());
 		}
-	}
 
+	}
+	
+	
 	/**
 	 * Create a BigDataScriptNode
 	 * @param tree
 	 * @param childNum
 	 * @return
 	 */
-	BigDataScriptNode factory(ParseTree tree, int childNum) {
+	final BigDataScriptNode factory(ParseTree tree, int childNum) {
 		ParseTree child = tree.getChild(childNum);
 		return BigDataScriptNodeFactory.get().factory(this, child);
 	}
@@ -263,7 +274,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	}
 
 	/**
-	 * Is this a fake node (created suring serialization)
+	 * Is this a fake node (created during serialization)
 	 * @return
 	 */
 	public boolean isFake() {

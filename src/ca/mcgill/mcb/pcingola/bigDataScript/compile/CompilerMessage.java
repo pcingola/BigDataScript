@@ -11,13 +11,14 @@ public class CompilerMessage implements Comparable<CompilerMessage> {
 		ERROR, WARNING, INFO
 	};
 
-	protected String fileName;
-	protected int lineNum, charPosInLine;
-	protected String message;
-	protected MessageType type;
+	protected final String fileName;
+	protected final int lineNum, charPosInLine;
+	protected final String message;
+	protected final MessageType type;
 
 	public CompilerMessage(String fileName, int lineNum, int charPosInLine, String message, MessageType type) {
-		this.fileName = fileName;
+		this.fileName = fileName != null ? fileName.replace('\\', '/') : ""; 
+		// hack to make windows filenames coincide with linuxes, to ease testing
 		this.lineNum = lineNum;
 		this.charPosInLine = charPosInLine;
 		this.message = message;

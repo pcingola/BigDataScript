@@ -53,7 +53,7 @@ statement : '{' statement* '}'                                                  
             | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*                              # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
             | expression  eol*                                                             # statmentExpr
-	    | includeF eol*                                                                # statementInclude
+	        | includeF eol*                                                                # statementInclude
             | eol                                                                          # statmentEol
           ;
 
