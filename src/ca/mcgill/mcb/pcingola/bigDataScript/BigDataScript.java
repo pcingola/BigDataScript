@@ -248,7 +248,6 @@ public class BigDataScript {
 		if (debug) System.out.println("Creating BigDataScript tree.");
 		CompilerMessages.reset();
 		programUnit = (ProgramUnit) BigDataScriptNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
-
 		// Any error messages?
 		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
 		if (CompilerMessages.get().hasErrors()) return false;

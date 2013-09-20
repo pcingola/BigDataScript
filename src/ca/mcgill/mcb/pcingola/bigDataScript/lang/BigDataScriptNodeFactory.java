@@ -58,7 +58,7 @@ public class BigDataScriptNodeFactory {
 	 * @param tree
 	 * @return
 	 */
-	public BigDataScriptNode factory(BigDataScriptNode parent, ParseTree tree) {
+	public final BigDataScriptNode factory(BigDataScriptNode parent, ParseTree tree) {
 		if (tree == null) return null;
 		if (tree instanceof TerminalNode) {
 			if (debug) Gpr.debug("Terminal node: " + tree.getClass().getCanonicalName() + "\n\t\tText: '" + tree.getText() + "'" + "\n\t\tSymbol: " + ((TerminalNode) tree).getSymbol() + "\n\t\tPayload: " + ((TerminalNode) tree).getPayload());
@@ -77,7 +77,8 @@ public class BigDataScriptNodeFactory {
 		String className = className(tree);
 
 		// Create
-		return factory(className, parent, tree);
+		BigDataScriptNode node = factory(className, parent, tree);
+		return node;
 	}
 
 	/**

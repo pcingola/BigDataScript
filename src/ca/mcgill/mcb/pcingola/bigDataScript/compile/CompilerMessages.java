@@ -56,7 +56,7 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 	}
 
 	public void add(BigDataScriptNode node, String message, MessageType type) {
-		CompilerMessageBdsNode cm = new CompilerMessageBdsNode(node, message, type);
+		CompilerMessageBdsNode cm =  CompilerMessageBdsNode.createCompilerMessageBdsNode(node, message, type);
 		String key = cm.toString();
 		if (!messages.containsKey(key)) messages.put(key, cm);
 	}

@@ -10,25 +10,24 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.GenericNode;
  */
 public class CompilerMessageBdsNode extends CompilerMessage {
 
-	BigDataScriptNode node;
 
-	public CompilerMessageBdsNode(BigDataScriptNode node, String message, MessageType type) {
-		super(null, -1, -1, message, type);
-		this.node = node; // can be null
-		this.message = message;
-		this.type = type;
+	final BigDataScriptNode node;
 
-		if (node == null) this.node = new GenericNode(null, null);
-		else {
-			fileName = node.getFileName();
-			lineNum = node.getLineNum();
-			charPosInLine = node.getCharPosInLine() + 1;
-		}
+	private CompilerMessageBdsNode(BigDataScriptNode node,String fileName, int lineNum, int charPosInLine, String message, MessageType type) {
+		super(fileName, lineNum, charPosInLine, message, type);
+		this.node = node;
+	}
+
+	public static CompilerMessageBdsNode createCompilerMessageBdsNode(BigDataScriptNode node,String message,MessageType type) {
+		if(node==null)
+			return new CompilerMessageBdsNode(new GenericNode(null, null),null,-1,-1,message,type);
+		else 
+			return new CompilerMessageBdsNode(node,node.getFileName(),node.getLineNum(),node.getCharPosInLine()+1,
+				message,type);
 	}
 
 	@Override
 	public String getFileName() {
-		if (fileName == null) fileName = node.getFileName();
 		return fileName;
 	}
 
