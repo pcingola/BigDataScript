@@ -58,11 +58,25 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class BigDataScript {
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2013-09-05";
+	public static final String BUILD = "2013-09-21";
 	public static final String REVISION = "";
 	public static final String VERSION_MAJOR = "0.2";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
+
+	boolean verbose;
+	boolean debug;
+	boolean log;
+	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
+	String chekcpointRestoreFile; // Restore file
+	String programFileName; // Program file name
+	String pidFile; // File to store PIDs
+	String system; // System type
+	Config config;
+	ProgramUnit programUnit; // Program (parsed nodes)
+	BigDataScriptThread bigDataScriptThread;
+	ArrayList<String> programArgs; // Command line arguments for BigDataScript
+									// program
 
 	/**
 	 * Create an AST from a program (using ANTLR lexer & parser)
@@ -191,20 +205,6 @@ public class BigDataScript {
 		}
 		return changed;
 	}
-
-	boolean verbose;
-	boolean debug;
-	boolean log;
-	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
-	String chekcpointRestoreFile; // Restore file
-	String programFileName; // Program file name
-	String pidFile; // File to store PIDs
-	String system; // System type
-	Config config;
-	ProgramUnit programUnit; // Program (parsed nodes)
-	BigDataScriptThread bigDataScriptThread;
-	ArrayList<String> programArgs; // Command line arguments for BigDataScript
-									// program
 
 	public BigDataScript(String args[]) {
 		parse(args);
