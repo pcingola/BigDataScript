@@ -680,7 +680,7 @@ The sum is : 55
 					<tr> <td> real   </td> <td> A 64 bit IEEE 754 number (same as Java's double) </td> </tr>
 					<tr> <td> bool   </td> <td> A boolean value, can be 'true' or 'false' (same as Java's boolean)</td> </tr>
 					<tr> <td> Arrays, List, Stacks   </td> <td> These are all the same, just a different way to call a list of elements</td> </tr>
-					<tr> <td> Maps   </td> <td> Maps are not currently supported. They will be implemented soon </td> </tr>
+					<tr> <td> Maps   </td> <td> Maps are hashes that have <code>string</code> keys.</td> </tr>
 				</table>
 
 				There is no "null" element. Again, the idea is to minimize points of failura.
@@ -769,11 +769,18 @@ wait tid
 
 				<h3> Arrays, List, Stacks </h3>
 				Arrays, list and stacks are all the same thing.
-				You can create a list of strings simply by declaring <code> string[] myStringList </code>. 
-				Similarly, a list of ints is just <code> int[] myIntList </code>. 
+				You can create a list of strings simply by declaring:
+<pre>
+string[] arrayEmpty
+string[] array = ["one", "two", "three"]
+</pre>
+				Similarly, a list of ints is just
+<pre>
+int[] listIntEmpty
+int[] primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+</pre>
 				<br>
-				<br>
-				Methods:
+				<b> Methods </b>
 				<table class="table table-striped">
 					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
 					<tr> <td> Element added  </td> <td> add </td> <td> Add at the end og the list </td> </tr>
@@ -784,6 +791,87 @@ wait tid
 					<tr> <td> New sorted list </td> <td> sort() </td> <td> Create a new list sorting the elements of this list</td> </tr>
 					<tr> <td> List  </td> <td> tail() </td> <td> Create a new list with all but the first element</td> </tr>
 				</table>
+				<br>
+
+				<b>Iterating on an array/list</b><br>
+				You can iterate on an array simply bo doing
+<pre>
+$ cat z.bds 
+string[] array = ["one", "two", "three"]
+
+for( string val : array ) { print("Value: $val\n") }
+
+$ bds /z.bds
+Value: one
+Value: two
+Value: three
+</pre>
+				</p>
+
+				<h3> Maps </h3>
+				Maps are hashses that have <code>string</code> as keys.
+				You can create a map simply by declaring:
+<pre>
+string{} mstr	# This maps string keys to string values
+
+mstr{"Hello"} = "Bye"
+mstr{"Bonjour"} = "Au revoir"
+mstr{"Hola"} = "Adios"
+</pre>
+
+				or a map of real numbers
+<pre>
+real{} mre      # This maps string keys to real values
+mre{"one"}   = 1.0
+mre{"two"}   = 2.0
+mre{"e"}     = 2.7182818
+mre{"three"} = 3.0
+mre{"pi"}    = 3.1415927
+</pre>
+				<br>
+				<b> Methods </b>
+				<table class="table table-striped">
+					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
+					<tr> <td> bool </td> <td> hasKey(string key) </td> <td> True if the key is in the map </td> </tr>
+					<tr> <td> bool </td> <td> hasValue(value) </td> <td> True if 'value' is in the map </td> </tr>
+					<tr> <td> list </td> <td> keys() </td> <td> A sorted list of all keys in the map</td> </tr>
+					<tr> <td> bool </td> <td> remove(key) </td> <td> Remove <code>key</code> from this map</td> </tr>
+					<tr> <td> int </td> <td> size() </td> <td> Number of elements in this map</td> </tr>
+					<tr> <td> list </td> <td> values() </td> <td> A sorted list of all values in the map</td> </tr>
+				</table>
+				<br>
+				<b>Iterating on a map</b><br>
+				You can iterate over all values in a map, simply by doing
+<pre>
+$ cat z.bds 
+string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
+
+for(string v : mstr ) { 
+	print("Values : $v\n") 
+}
+
+$ bds z.bds
+Values : Adios
+Values : Au revoir
+Values : Bye
+
+</pre>
+
+				If you want to iterate on keys instead of values, you can do this:
+<pre>
+$ cat z.bds 
+string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
+
+for(string k : mstr.keys() ) { 
+	print("Key : $k\tValue : " + mstr{k} + "\n") 
+}
+
+$ bds z.bds
+Key : Bonjour	Value : Au revoir
+Key : Hello	Value : Bye
+Key : Hola	Value : Adios
+</pre>
+
 				</p>
         </section>
 
