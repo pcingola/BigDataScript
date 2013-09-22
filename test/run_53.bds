@@ -9,7 +9,7 @@ print("Hash: $hash\n")
 # Add all values from hash
 string[] vals
 for( string v : hash ) {
-        print("Value : $v\n")
+	print("Value : $v\n")
 	vals.add(v)
 }
 
