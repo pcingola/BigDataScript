@@ -14,10 +14,14 @@ public class NativeLibraryFunctions {
 	public static Class classes[] = { //
 	FunctionNativePrint.class //
 			, FunctionNativePrintErr.class //
-			, FunctionNativeSleep.class //
+			, FunctionNativeMinInt.class //
+			, FunctionNativeMaxInt.class //
+			, FunctionNativeMinReal.class //
+			, FunctionNativeMaxReal.class //
 			, FunctionNativeRand.class //
 			, FunctionNativeRandInt.class //
 			, FunctionNativeRandIntRange.class //
+			, FunctionNativeSleep.class //
 			, FunctionNativeToIntFromBool.class //
 			, FunctionNativeToIntFromReal.class //
 
