@@ -31,8 +31,8 @@ public class VarReferenceMap extends Expression {
 	@Override
 	public Object eval(BigDataScriptThread csThread) {
 		String key = evalKey(csThread);
-		HashMap list = getMap(csThread.getScope());
-		return list.get(key);
+		HashMap map = getMap(csThread.getScope());
+		return map.get(key);
 	}
 
 	/**

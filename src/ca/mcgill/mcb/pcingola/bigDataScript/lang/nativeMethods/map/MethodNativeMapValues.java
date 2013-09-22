@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
@@ -39,6 +40,7 @@ public class MethodNativeMapValues extends MethodNativeMap {
 		HashMap map = (HashMap) objThis;
 		ArrayList list = new ArrayList();
 		list.addAll(map.values());
+		Collections.sort(list);
 		return list;
 	}
 }

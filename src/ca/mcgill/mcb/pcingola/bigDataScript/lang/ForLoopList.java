@@ -1,14 +1,16 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -66,8 +68,13 @@ public class ForLoopList extends StatementWithScope {
 		// Find (or create) a collection we can iterate on
 		Collection values = null;
 		if (res instanceof List) values = (List) res;
-		else if (res instanceof Map) values = ((Map) res).values();
-		else {
+		else if (res instanceof Map) {
+			// Create a sorted list of values
+			ArrayList list = new ArrayList();
+			list.addAll(((Map) res).values());
+			Collections.sort(list);
+			values = list;
+		} else {
 			values = new LinkedList<Object>();
 			values.add(res);
 		}

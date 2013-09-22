@@ -36,6 +36,10 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 
 	public final static String STRING_EMPTY = "";
 
+	PrimitiveType primitiveType;
+
+	Scope classScope; // A scope defining all class variables and methods
+
 	/**
 	 * Get a type
 	 * @param primitiveType
@@ -92,10 +96,6 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 		put(FAKE);
 		put(ANY);
 	}
-
-	PrimitiveType primitiveType;
-
-	Scope classScope; // A scope defining all class variables and methods
 
 	public Type() {
 		super(null, null);
@@ -157,7 +157,9 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 		} else if (isList()) {
 			if (obj instanceof ArrayList) return obj;
 		} else if (isMap()) {
-			if (obj instanceof HashMap) return obj;
+			if (obj instanceof HashMap) { //
+				return obj; //
+			}
 		} else if (isString()) return obj.toString();
 
 		throw new RuntimeException("Cannot convert '" + (obj == null ? "null" : obj.getClass().getSimpleName()) + "' to " + this);

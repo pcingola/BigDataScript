@@ -1,8 +1,10 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.scope;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
@@ -139,11 +141,44 @@ public class Scope implements BigDataScriptSerialize {
 			String varName = variables.get(i);
 			if (!varName.isEmpty()) {
 				ScopeSymbol ssym = getSymbol(varName);
-				sb.append(ssym.getValue().toString());
+
+				Object val = ssym.getValue();
+				sb.append(interpolate(val));
+
 			}
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * How to show objects in interpolation
+	 * @param val
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public String interpolate(Object val) {
+		if (val instanceof Map) {
+			StringBuilder sb = new StringBuilder();
+
+			// We sort keys in maps, so that contents are always the same
+			Map map = (Map) val;
+			ArrayList keys = new ArrayList();
+			keys.addAll(map.keySet());
+			Collections.sort(keys);
+
+			int count = 0;
+			sb.append("{ ");
+			for (Object k : keys) {
+				sb.append((count > 0 ? ", " : "") + k + " => " + map.get(k));
+				count++;
+			}
+			sb.append(" }");
+
+			return sb.toString();
+		}
+
+		return val.toString();
 	}
 
 	/**

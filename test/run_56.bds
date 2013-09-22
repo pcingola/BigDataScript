@@ -1,13 +1,12 @@
 
 string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
 
-# string out 
-# for(string v : mstr ) { 
-# 	print("Values : '$v'\n") 
-# 	out = out + v + ";"
-# }
-# print("Out : '$out'\n")
+string out 
+for(string v : mstr ) { 
+	print("Values : '$v'\n") 
+	out = out + v + ";"
+}
+print("Out : '$out'\n")
 
 string str = "map = $mstr"
 print("$str\n")
-
