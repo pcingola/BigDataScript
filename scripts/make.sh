@@ -3,6 +3,9 @@
 # Delete old jar
 rm -f $HOME/.bds/BigDataScript.jar
 
+# Make sure 'bin' dir exists
+mkdir bin
+
 # Build Jar file
 echo Building JAR file
 ant 

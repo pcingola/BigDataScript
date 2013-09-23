@@ -788,6 +788,7 @@ public class BigDataScript {
 		System.err.println("  [-v | -verbose]        : Be verbose.");
 		System.err.println("  -pid <file>            : Write local processes PIDs to 'file'");
 		System.err.println("  -noLog                 : Do not log stats.");
+
 		if (err != null) System.exit(1);
 		System.exit(0);
 	}
