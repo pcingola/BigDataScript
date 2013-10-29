@@ -38,6 +38,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected ArrayList array2list(Object objects[]) {
+		if (objects == null) return new ArrayList();
 		ArrayList list = new ArrayList(objects.length);
 		Collections.addAll(list, objects);
 		return list;
@@ -50,6 +51,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected ArrayList array2listSorted(Object objects[]) {
+		if (objects == null) return new ArrayList();
 		ArrayList list = new ArrayList(objects.length);
 		Collections.addAll(list, objects);
 		Collections.sort(list);

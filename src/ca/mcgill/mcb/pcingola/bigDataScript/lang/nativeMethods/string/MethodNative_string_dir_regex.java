@@ -4,11 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class MethodNative_string_dir_regex extends MethodNative {
 	public MethodNative_string_dir_regex() {
@@ -29,6 +31,6 @@ public class MethodNative_string_dir_regex extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		String regex = csThread.getString("regex"); ArrayList<String> list = new ArrayList<String>(); for (String s : new File(objThis.toString()).list()) if (s.matches(regex)) list.add(s); Collections.sort(list); return list;
+		String regex = csThread.getString("regex"); ArrayList<String> list = new ArrayList<String>(); String files[] = new File(objThis.toString()).list(); if (files == null) return list; for (String s : files) if (s.matches(regex)) list.add(s); Collections.sort(list); return list;
 	}
 }

@@ -1,13 +1,7 @@
 
-string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
+string dir="$HOME/snpEff/data/zzz"
 
-# string out 
-# for(string v : mstr ) { 
-# 	print("Values : '$v'\n") 
-# 	out = out + v + ";"
-# }
-# print("Out : '$out'\n")
-
-string str = "map = $mstr"
-print("$str\n")
-
+string[] gs = dir.dir("gene.*")
+for( string g : gs ) {
+	print("\t$g\n")
+}
