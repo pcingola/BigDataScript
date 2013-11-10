@@ -1,5 +1,6 @@
 
 string dir="$HOME/snpEff/data/zzz"
+print("dir=$dir\n")
 
 string[] gs = dir.dir("gene.*")
 for( string g : gs ) {
