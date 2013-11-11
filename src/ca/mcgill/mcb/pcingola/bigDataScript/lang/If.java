@@ -30,8 +30,9 @@ public class If extends Statement {
 		condition = (Expression) factory(tree, 2);
 		//child[3] = ')'
 		statement = (Statement) factory(tree, 4);
-		//child[5] = 'else'
-		elseStatement = (Statement) factory(tree, 6);
+		//child[5] = 'else' 
+		int idx = findIndex(tree, "else", 5);
+		if (idx > 0) elseStatement = (Statement) factory(tree, idx + 1);
 	}
 
 	/**

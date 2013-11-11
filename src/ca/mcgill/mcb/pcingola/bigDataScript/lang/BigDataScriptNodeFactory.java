@@ -44,7 +44,7 @@ public class BigDataScriptNodeFactory {
 	 * @param nodeType
 	 * @return
 	 */
-	String className(ParseTree tree) {
+	public String className(ParseTree tree) {
 		String className = tree.getClass().getSimpleName();
 		String end = "Context";
 		if (className.endsWith(end)) className = className.substring(0, className.length() - end.length());

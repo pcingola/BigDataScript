@@ -528,4 +528,9 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_58.bds", "z", 0L);
 	}
 
+	@Test
+	public void test59() {
+		runAndCheck("test/run_59.bds", "z", -1L);
+	}
+
 }

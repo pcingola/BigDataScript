@@ -69,7 +69,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 			// Sanity checks
 			sanityCheck(CompilerMessages.get());
 		}
-
 	}
 
 	/**
@@ -81,6 +80,20 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	final BigDataScriptNode factory(ParseTree tree, int childNum) {
 		ParseTree child = tree.getChild(childNum);
 		return BigDataScriptNodeFactory.get().factory(this, child);
+	}
+
+	/**
+	 * Finds a terminal node in the tree (by name)
+	 * @param tree
+	 * @param name
+	 * @param start
+	 * @return
+	 */
+	protected int findIndex(ParseTree tree, String name, int start) {
+		for (int i = start; i < tree.getChildCount(); i++)
+			if (tree.getChild(i).toString().equals(name)) return i;
+
+		return -1;
 	}
 
 	/**
