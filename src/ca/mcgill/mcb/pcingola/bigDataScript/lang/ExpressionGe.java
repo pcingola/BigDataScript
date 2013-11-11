@@ -28,4 +28,9 @@ public class ExpressionGe extends ExpressionCompare {
 		return a.compareTo(b) >= 0;
 	}
 
+	@Override
+	protected String op() {
+		return ">=";
+	}
+
 }

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
@@ -96,6 +96,11 @@ public class LiteralString extends Literal {
 	public void setValueInterpolate(String valueStr) {
 		value = valueStr;
 		interpolateVars(value); // Find interpolated vars		
+	}
+
+	@Override
+	public String toString() {
+		return "\"" + GprString.escape(value) + "\"";
 	}
 
 	@Override

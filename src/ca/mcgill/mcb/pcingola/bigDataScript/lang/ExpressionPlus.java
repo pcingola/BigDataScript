@@ -53,4 +53,9 @@ public class ExpressionPlus extends ExpressionMath {
 		}
 	}
 
+	@Override
+	protected String op() {
+		return "+";
+	}
+
 }

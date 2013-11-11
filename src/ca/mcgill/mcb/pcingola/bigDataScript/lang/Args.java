@@ -2,8 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -95,6 +95,16 @@ public class Args extends BigDataScriptNode {
 
 	public int size() {
 		return (arguments != null ? arguments.length : 0);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < arguments.length; i++) {
+			sb.append(arguments[i]);
+			if (i < arguments.length - 1) sb.append(",");
+		}
+		return sb.toString();
 	}
 
 }

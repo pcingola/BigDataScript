@@ -78,4 +78,17 @@ public class ExpressionList extends Expression {
 			expr.typeCheck(scope, compilerMessages);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("( ");
+		for (int i = 0; i < expressions.length; i++) {
+			sb.append(expressions[i]);
+			if (i < expressions.length) sb.append(", ");
+		}
+		sb.append(" )");
+
+		return sb.toString();
+	}
 }

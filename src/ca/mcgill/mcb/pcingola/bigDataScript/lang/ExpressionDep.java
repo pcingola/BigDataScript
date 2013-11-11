@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
@@ -155,4 +155,36 @@ public class ExpressionDep extends Expression {
 			else compilerMessages.add(e, "Expression should be string or string[]", MessageType.ERROR);
 
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		if (left.length == 1) {
+			sb.append(left[0]);
+		} else {
+			sb.append("[ ");
+			for (int i = 0; i < left.length; i++) {
+				sb.append(left[i]);
+				if (i < left.length) sb.append(",");
+			}
+			sb.append(" ]");
+		}
+
+		sb.append(" <- ");
+
+		if (right.length == 1) {
+			sb.append(right[0]);
+		} else {
+			sb.append("[ ");
+			for (int i = 0; i < right.length; i++) {
+				sb.append(right[i]);
+				if (i < right.length) sb.append(",");
+			}
+			sb.append(" ]");
+		}
+
+		return sb.toString();
+	}
+
 }

@@ -23,4 +23,9 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 		return left.evalBool(csThread) && right.evalBool(csThread);
 	}
 
+	@Override
+	protected String op() {
+		return "&&";
+	}
+
 }

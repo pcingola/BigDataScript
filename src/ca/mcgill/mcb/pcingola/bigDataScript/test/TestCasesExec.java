@@ -518,4 +518,14 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_56.bds", "str", "map = { Bonjour => Au revoir, Hello => Bye, Hola => Adios }");
 	}
 
+	@Test
+	public void test57() {
+		runAndCheck("test/run_57.bds", "z", 0L);
+	}
+
+	@Test
+	public void test58() {
+		runAndCheck("test/run_58.bds", "z", 0L);
+	}
+
 }

@@ -2,8 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -45,10 +45,25 @@ public class If extends Statement {
 	}
 
 	@Override
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		condition.returnType(scope);
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
 
-		if ((condition != null) && !condition.isBool()) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
+		sb.append("if( ");
+		sb.append(condition);
+		sb.append(" ) {\n");
+		sb.append(statement);
+		if (elseStatement != null) {
+			sb.append("\n} else {\n");
+			sb.append(elseStatement);
+		}
+		sb.append("\n}\n");
+
+		return sb.toString();
 	}
 
+	@Override
+	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+		condition.returnType(scope);
+		if ((condition != null) && !condition.isBool()) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
+	}
 }

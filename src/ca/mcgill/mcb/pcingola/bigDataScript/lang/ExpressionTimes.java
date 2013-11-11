@@ -72,4 +72,10 @@ public class ExpressionTimes extends ExpressionMath {
 			right.checkCanCastIntOrReal(compilerMessages);
 		}
 	}
+
+	@Override
+	protected String op() {
+		return "*";
+	}
+
 }

@@ -96,6 +96,17 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < keys.length; i++) {
+			sb.append(keys[i] + " = " + values[i]);
+			if (i < keys.length) sb.append(", ");
+		}
+		return sb.toString();
+
+	}
+
+	@Override
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		Type baseType = ((TypeMap) returnType).baseType;
 
@@ -106,6 +117,6 @@ public class LiteralMap extends Literal {
 			// Can we cast ?
 			if ((typeExpr != null) && !typeExpr.canCast(baseType)) compilerMessages.add(this, "Map types are not consistent. Expecting " + baseType, MessageType.ERROR);
 		}
-
 	}
+
 }

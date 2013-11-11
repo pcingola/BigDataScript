@@ -1,0 +1,12 @@
+
+int f1(int i) {
+	print("F1: $i\n")
+	if( i > 0 ) { 
+		return( f1(i-1) ) 
+	} 
+	return( 0 )
+}
+
+int z = 10
+z = f1(z)
+print("z=$z\n")

@@ -24,6 +24,14 @@ public class ExpressionBinary extends Expression {
 		return (left.getReturnType() != null) && (right.getReturnType() != null);
 	}
 
+	/**
+	 * Operator to show when printing this expression
+	 * @return
+	 */
+	protected String op() {
+		return this.getClass().getSimpleName().toLowerCase();
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		left = (Expression) factory(tree, 0);
@@ -38,6 +46,11 @@ public class ExpressionBinary extends Expression {
 		if (right != null) right.returnType(scope); // Only assign this to show that calculation was already performed
 
 		return returnType;
+	}
+
+	@Override
+	public String toString() {
+		return left + " " + op() + " " + right;
 	}
 
 }

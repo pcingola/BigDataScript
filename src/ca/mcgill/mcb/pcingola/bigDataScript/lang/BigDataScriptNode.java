@@ -12,10 +12,9 @@ import java.util.List;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.TypeCheckedNodes;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -35,14 +34,12 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	protected BigDataScriptNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
 
-	
-	
 	/**
 	 * Constructor
 	 * @param parent
 	 * @param tree Not null if you want the parsing to be performed now
 	 */
-	public BigDataScriptNode(BigDataScriptNode parent,ParseTree tree) {
+	public BigDataScriptNode(BigDataScriptNode parent, ParseTree tree) {
 		id = BigDataScriptNodeFactory.get().getNextNodeId(this);
 		this.parent = parent;
 
@@ -74,8 +71,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		}
 
 	}
-	
-	
+
 	/**
 	 * Create a BigDataScriptNode
 	 * @param tree
@@ -252,6 +248,19 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	public BigDataScriptNode getParent() {
 		return parent;
+	}
+
+	/**
+	 * Recurse unti top node is found.
+	 * Top node is always a 'ProgramUnit' node.
+	 * 
+	 * @return
+	 */
+	public ProgramUnit getProgramUnit() {
+		BigDataScriptNode n = this;
+		while (n.getParent() != null)
+			n = n.getParent();
+		return (ProgramUnit) n;
 	}
 
 	/**
@@ -584,8 +593,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	@Override
 	public String toString() {
-		// return toStringTree("", "");
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		return "Program: " + getFileName() + "\n";
 	}
 
 	/**
@@ -639,12 +647,18 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return out.toString();
 	}
 
+	/**
+	 * Perform a typecheck
+	 * @param scope
+	 * @param compilerMessages
+	 */
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Default: Nothing to do
 	}
 
 	/**
-	 * Perform several basic type checking
+	 * Perform several basic type checking tasks.
+	 * Invoke 'typeCheck()' method on all sub-nodes
 	 */
 	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
 		// Create a new scope?
@@ -659,9 +673,16 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		// Get all sub-nodes (first level, do not recurse)
 		List<BigDataScriptNode> nodes = findNodes(null, false);
 
+		// Add this node as 'type-checked' to avoid infinite recursion
+		TypeCheckedNodes.get().add(this);
+
 		// Check all sub-nodes
-		for (BigDataScriptNode node : nodes)
-			node.typeChecking(scope, compilerMessages);
+		for (BigDataScriptNode node : nodes) {
+			// Not already type-checked? Go ahead
+			if (!TypeCheckedNodes.get().isTypeChecked(node)) {
+				node.typeChecking(scope, compilerMessages);
+			}
+		}
 
 		// Scope processing
 		if (isNeedsScope()) {

@@ -33,4 +33,9 @@ public class ExpressionDivide extends ExpressionMath {
 		right.checkCanCastIntOrReal(compilerMessages);
 	}
 
+	@Override
+	protected String op() {
+		return "/";
+	}
+
 }

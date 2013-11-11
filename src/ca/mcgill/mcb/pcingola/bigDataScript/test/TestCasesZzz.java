@@ -83,8 +83,8 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	@Test
-	public void test42() {
-		compileOk("test/test42.bds");
+	public void test29() {
+		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");
 	}
 
 }

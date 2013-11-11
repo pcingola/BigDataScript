@@ -28,4 +28,9 @@ public class ExpressionEq extends ExpressionCompare {
 		return a.equals(b);
 	}
 
+	@Override
+	protected String op() {
+		return "==";
+	}
+
 }

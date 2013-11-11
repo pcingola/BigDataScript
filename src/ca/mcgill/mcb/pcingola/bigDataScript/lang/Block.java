@@ -22,7 +22,6 @@ public class Block extends StatementWithScope {
 		super(parent, tree);
 	}
 
-
 	@Override
 	public File getFile() {
 		if (fileName != null) return new File(fileName);
@@ -77,7 +76,15 @@ public class Block extends StatementWithScope {
 
 	public void setFile(File file) {
 		if (file == null) fileName = null;
-		else this.fileName = file.toString();
+		else fileName = file.toString();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < statements.length; i++)
+			sb.append(statements[i] + "\n");
+		return sb.toString();
 	}
 
 }

@@ -47,4 +47,9 @@ public class LiteralBool extends Literal {
 	public void setValue(boolean value) {
 		this.value = value;
 	}
+
+	@Override
+	public String toString() {
+		return "" + value;
+	}
 }

@@ -18,4 +18,8 @@ public class Statement extends BigDataScriptNode {
 		throw new RuntimeException("This method should never be invoked!");
 	}
 
+	public String toString() {
+		return this.getClass().getSimpleName().toLowerCase() + "\n";
+	}
+
 }

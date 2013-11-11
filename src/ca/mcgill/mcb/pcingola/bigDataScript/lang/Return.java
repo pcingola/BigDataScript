@@ -2,8 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -51,6 +51,11 @@ public class Return extends Statement {
 		if (expr != null) csThread.setReturnValue(expr.eval(csThread)); // Set return value to scope
 		else csThread.setReturnValue(null);
 		return RunState.RETURN;
+	}
+
+	@Override
+	public String toString() {
+		return "return( " + expr + " )";
 	}
 
 	@Override

@@ -31,4 +31,9 @@ public class ExpressionModulo extends ExpressionMath {
 		right.checkCanCastInt(compilerMessages);
 	}
 
+	@Override
+	protected String op() {
+		return "%";
+	}
+
 }

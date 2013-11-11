@@ -30,4 +30,9 @@ public class Warning extends Error {
 		return RunState.OK;
 	}
 
+	@Override
+	public String toString() {
+		return "warning( " + expr + " )\n";
+	}
+
 }

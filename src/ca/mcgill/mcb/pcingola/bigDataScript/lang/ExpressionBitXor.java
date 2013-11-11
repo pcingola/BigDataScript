@@ -23,4 +23,9 @@ public class ExpressionBitXor extends ExpressionBit {
 		return left.evalInt(csThread) ^ right.evalInt(csThread);
 	}
 
+	@Override
+	protected String op() {
+		return "^";
+	}
+
 }

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
@@ -85,6 +85,11 @@ public class LiteralList extends Literal {
 	}
 
 	@Override
+	public String toString() {
+		return "" + values;
+	}
+
+	@Override
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		Type baseType = ((TypeList) returnType).baseType;
 
@@ -95,6 +100,6 @@ public class LiteralList extends Literal {
 			// Can we cast ?
 			if ((typeExpr != null) && !typeExpr.canCast(baseType)) compilerMessages.add(this, "List types are not consistent. Expecting " + baseType, MessageType.ERROR);
 		}
-
 	}
+
 }

@@ -138,13 +138,27 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	}
 
 	/**
+	 * Can we cast an object to 'this' type?
+	 * @param obj
+	 * @return
+	 */
+	public boolean canCastObject(Object obj) {
+		if (isBool()) return (obj instanceof Boolean);
+		else if (isInt()) return (obj instanceof Long) || (obj instanceof Boolean);
+		else if (isReal()) return (obj instanceof Boolean) || (obj instanceof Long) || (obj instanceof Double);
+		else if (isList()) return (obj instanceof ArrayList);
+		else if (isMap()) return (obj instanceof HashMap);
+		else if (isString()) return true;
+		return false;
+	}
+
+	/**
 	 * Cast an object t another
 	 * @param toType : Final type for object 'obj'
 	 * @param obj : Object
 	 * @return
 	 */
 	public Object cast(Object obj) {
-
 		if (isBool()) {
 			if (obj instanceof Boolean) return obj;
 		} else if (isInt()) {

@@ -37,4 +37,9 @@ public class ExpressionMinus extends ExpressionMath {
 		if (right != null) right.checkCanCastIntOrReal(compilerMessages);
 	}
 
+	@Override
+	protected String op() {
+		return "-";
+	}
+
 }

@@ -64,4 +64,14 @@ public class Parameters extends BigDataScriptNode {
 		return varDecl.length;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < varDecl.length; i++) {
+			sb.append(varDecl[i]);
+			if (i < varDecl.length - 1) sb.append(",");
+		}
+		return sb.toString();
+	}
+
 }

@@ -24,16 +24,14 @@ public class Scope implements BigDataScriptSerialize {
 	public static final String GLOBAL_VAR_P = "P";
 	public static final String GLOBAL_VAR_LOCAL_CPUS = "cpusLocal";
 
-	// Command line arguments are avaialble sing this list
+	// Command line arguments are available in this list
 	public static final String VAR_ARGS_LIST = "args";
 
 	// Program name
 	public static final String VAR_PROGRAM_NAME = "programName";
 
+	// Global scope
 	private static Scope globalScope = new Scope(null);
-
-	Scope parent;
-	HashMap<String, ScopeSymbol> symbols;
 
 	/**
 	 * Global scope
@@ -49,6 +47,10 @@ public class Scope implements BigDataScriptSerialize {
 	public static void resetGlobalScope() {
 		globalScope = new Scope(null);
 	}
+
+	Scope parent;
+
+	HashMap<String, ScopeSymbol> symbols;
 
 	public Scope() {
 		parent = getGlobalScope();

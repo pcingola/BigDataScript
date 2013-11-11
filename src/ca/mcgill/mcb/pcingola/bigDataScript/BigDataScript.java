@@ -21,6 +21,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptParser.IncludeFCo
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompileErrorStrategy;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.TypeCheckedNodes;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners.ExecutionerType;
@@ -248,6 +249,7 @@ public class BigDataScript {
 		if (debug) System.out.println("Creating BigDataScript tree.");
 		CompilerMessages.reset();
 		programUnit = (ProgramUnit) BigDataScriptNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
+		if (debug) System.err.println("AST:\n" + programUnit.toString());
 		// Any error messages?
 		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
 		if (CompilerMessages.get().hasErrors()) return false;
@@ -264,6 +266,10 @@ public class BigDataScript {
 		// Any error messages?
 		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
 		if (CompilerMessages.get().hasErrors()) return false;
+
+		// Free some memory by reseting structure we won't use any more
+		TypeCheckedNodes.get().reset();
+
 		// OK
 		return true;
 	}

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 
@@ -67,7 +67,15 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * @return
 	 */
 	protected RunState runFunction(BigDataScriptThread csThread) {
-		return statement.run(csThread);
+		RunState runState = statement.run(csThread);
+
+		// Not a standard 'return' statement? Make sure we are returning the right type.
+		if ((runState != RunState.RETURN) && !returnType.canCastObject(csThread.getReturnValue())) {
+			// Not the right type? Force a default value of the right type
+			csThread.setReturnValue(returnType.defaultValue());
+		}
+
+		return runState;
 	}
 
 	/**
@@ -107,5 +115,14 @@ public class FunctionDeclaration extends StatementWithScope {
 		signature = sb.toString();
 
 		return signature;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(returnType + " " + functionName + "( " + parameters + " )\t{\n");
+		sb.append(statement);
+		sb.append("}\n");
+		return sb.toString();
 	}
 }

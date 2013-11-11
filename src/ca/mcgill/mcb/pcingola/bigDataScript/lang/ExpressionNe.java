@@ -28,4 +28,9 @@ public class ExpressionNe extends ExpressionCompare {
 		return !a.equals(b);
 	}
 
+	@Override
+	protected String op() {
+		return "!=";
+	}
+
 }
