@@ -23,7 +23,7 @@ public class Tail extends Thread {
 	public Tail() {
 		files = new HashMap<String, TailFile>();
 		toRemove = new HashSet<String>();
-		setDaemon(true);  
+		setDaemon(true);
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class Tail extends Thread {
 			TailFile tf = files.get(name);
 
 			// Try to 'tail'. Any problems? => Remove the entry
-			int bytes = tf.tail();
+			int bytes = (tf != null ? tf.tail() : -1);
 
 			if (bytes < 0) toRemove.add(name); // Problems? Remove the file from this list 
 			else if (bytes > 0) anyOutput = true; // There was an output of 'bytes' number of bytes
