@@ -122,7 +122,7 @@ public class Tail extends Thread {
 		if (!toRemove.isEmpty()) {
 			for (String fileName : toRemove) {
 				TailFile tf = files.get(fileName);
-				tf.close();
+				if (tf != null) tf.close();
 				files.remove(fileName);
 			}
 			toRemove = new HashSet<String>();
