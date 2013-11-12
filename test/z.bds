@@ -1,10 +1,17 @@
 
-int f1(int i) {
-	print("F1: $i\n")
-	if( i > 0 ) { return ( f1(i-1) ) } 
-	else { return -1 }
-}
+string[] events
 
-int z = 10
-z = f1(z)
-print("z=$z\n")
+string tid = task sleep 1 ; echo hi
+print("Task ID: '$tid'\n")
+
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+wait
+
+events.add("wait")
+
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+print("Events: " + events) 
