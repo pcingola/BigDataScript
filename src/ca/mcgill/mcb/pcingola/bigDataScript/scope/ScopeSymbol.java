@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.scope;
 
-import java.util.ArrayList;
-
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
@@ -20,6 +18,7 @@ public class ScopeSymbol implements BigDataScriptSerialize {
 	Type type;
 	String name;
 	Object value;
+	boolean constant = false;
 
 	public ScopeSymbol() {
 	}
@@ -37,29 +36,6 @@ public class ScopeSymbol implements BigDataScriptSerialize {
 		this.value = value;
 	}
 
-//	/**
-//	 * Get default initialization value
-//	 * @return
-//	 */
-//	@SuppressWarnings("rawtypes")
-//	protected Object defaultValue() {
-//		// Set default value
-//		switch (type.getPrimitiveType()) {
-//		case BOOL:
-//			return Type.BOOL_FALSE;
-//		case INT:
-//			return Type.INT_ZERO;
-//		case REAL:
-//			return Type.REAL_ZERO;
-//		case STRING:
-//			return Type.STRING_EMPTY;
-//		case LIST:
-//			return new ArrayList();
-//		default:
-//			throw new RuntimeException("Cannot find default value for type " + type);
-//		}
-//	}
-
 	public String getName() {
 		return name;
 	}
@@ -70,6 +46,10 @@ public class ScopeSymbol implements BigDataScriptSerialize {
 
 	public Object getValue() {
 		return value;
+	}
+
+	public boolean isConstant() {
+		return constant;
 	}
 
 	@Override
@@ -89,6 +69,10 @@ public class ScopeSymbol implements BigDataScriptSerialize {
 				+ "\t" + BigDataScriptSerializer.TYPE_IDENTIFIER + type.toStringSerializer() //
 				+ "\t" + serializer.serializeSaveValue(value) //
 				+ "\n";
+	}
+
+	public void setConstant(boolean constant) {
+		this.constant = constant;
 	}
 
 	public void setValue(Object value) {

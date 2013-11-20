@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -541,32 +542,35 @@ public class BigDataScript {
 		// ---
 		// Add global symbols
 		// ---
-		// Program name, now is empty, but it	is	filled	 later
 		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, ""));
 
 		// Command line parameters override defaults
 		if (system == null) system = ExecutionerType.LOCAL.toString().toLowerCase();
 
 		// Task related variables: Default values
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system)); // System type: "local", "ssh",
-																									// "cluster", "aws", etc.
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system)); // System type: "local", "ssh", "cluster", "aws", etc.
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Type.INT, 1L)); // Default number of cpus
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS_LOCAL, Type.INT, Gpr.NUM_CORES)); // Default number of local cpus
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, "")); // Default queue: none
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Type.STRING, "")); // Default node: none
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Type.BOOL, false)); // Task fail triggers checkpoint & exit (a
-																									// task cannot fail)
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Type.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Type.INT, 1L * 24 * 60 * 60)); // Task default timeout(1 day)
 
 		// Number of local CPUs
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, (long) Gpr.NUM_CORES));
-
 		// Kilo, Mega, Giga, Tera, Peta.
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT, 1024L * 1024L * 1024L));
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Type.INT, 1024L * 1024L * 1024L * 1024L));
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
+		LinkedList<ScopeSymbol> constants = new LinkedList<ScopeSymbol>();
+		constants.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, "")); // Program name, now is empty, but it is filled later
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, (long) Gpr.NUM_CORES));
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT, 1024L * 1024L * 1024L));
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Type.INT, 1024L * 1024L * 1024L * 1024L));
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
+
+		// Add all constants
+		for (ScopeSymbol ss : constants) {
+			ss.setConstant(true);
+			globalScope.add(ss);
+		}
 
 		// Set "physical" path
 		String path;

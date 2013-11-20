@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  * 
  * @author pcingola
  */
-public class VarReference extends Expression {
+public class VarReference extends Reference {
 
 	String name;
 
@@ -35,8 +35,14 @@ public class VarReference extends Expression {
 	 * @param scope
 	 * @return
 	 */
+	@Override
 	public ScopeSymbol getScopeSymbol(Scope scope) {
 		return scope.getSymbol(name);
+	}
+
+	@Override
+	public String getVariableName() {
+		return name;
 	}
 
 	@Override
@@ -58,6 +64,18 @@ public class VarReference extends Expression {
 
 		returnType = ss.getType();
 		return returnType;
+	}
+
+	/**
+	 * Set value to scope symbol
+	 * @param csThread
+	 * @param value
+	 */
+	@Override
+	public void setValue(BigDataScriptThread csThread, Object value) {
+		ScopeSymbol ssym = getScopeSymbol(csThread.getScope()); // Get scope symbol
+		value = getReturnType().cast(value); // Cast to destination type
+		ssym.setValue(value); // Assign
 	}
 
 	@Override

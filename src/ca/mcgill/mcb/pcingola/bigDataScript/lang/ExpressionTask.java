@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
@@ -24,7 +24,6 @@ public class ExpressionTask extends ExpressionWithScope {
 
 	// Variable names
 	public static final String TASK_OPTION_CPUS = "cpus";
-	public static final String TASK_OPTION_CPUS_LOCAL = "cpusLocal";
 	public static final String TASK_OPTION_CAN_FAIL = "canFail";
 	public static final String TASK_OPTION_NODE = "node";
 	public static final String TASK_OPTION_QUEUE = "queue";

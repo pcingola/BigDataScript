@@ -6,7 +6,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
-import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * Expression
@@ -29,12 +28,14 @@ public class ExpressionAssignment extends ExpressionBinary {
 		Object value = right.eval(csThread);
 
 		if (left instanceof VarReference) {
+			((VarReference) left).setValue(csThread, value);;
+
 			// Get symbol
-			VarReference varName = (VarReference) left;
-			ScopeSymbol ssym = varName.getScopeSymbol(csThread.getScope());
-			// Cast to destination type
-			value = right.getReturnType().cast(value);
-			ssym.setValue(value);
+			//			VarReference varName = (VarReference) left)setValue(BigDataScriptThread csThread, Object value);
+			//			ScopeSymbol ssym = varName.getScopeSymbol(csThread.getScope());
+			//			// Cast to destination type
+			//			value = right.getReturnType().cast(value);
+			//			ssym.setValue(value);
 		} else if (left instanceof VarReferenceList) {
 			VarReferenceList listIndex = (VarReferenceList) left;
 			listIndex.setValue(csThread, value);
@@ -69,18 +70,17 @@ public class ExpressionAssignment extends ExpressionBinary {
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
 		// Is 'left' a variable?
-		if (!(left instanceof VarReference) //
-				&& (!(left instanceof VarReferenceList)) //
-				&& (!(left instanceof VarReferenceMap)) //
-		) compilerMessages.add(this, "Assignment to non variable", MessageType.ERROR);
+		if (!(left instanceof Reference)) compilerMessages.add(this, "Assignment to non variable", MessageType.ERROR);
 	}
 
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		if (!right.getReturnType().canCast(left.getReturnType())) {
-			// Can we cast 'right type' into 'left type'?
-			compilerMessages.add(this, "Cannot cast " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
-		}
+		// Trying to assign to a constant?
+		if (((Reference) left).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + ((Reference) left).getVariableName() + "'", MessageType.ERROR);
+
+		// Can we cast 'right type' into 'left type'?
+		if (!right.getReturnType().canCast(left.getReturnType())) compilerMessages.add(this, "Cannot cast " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
+
 	}
 
 }
