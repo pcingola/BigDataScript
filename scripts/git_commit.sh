@@ -2,7 +2,7 @@
 
 ./scripts/clean.sh
 
-git add .
+git add -A .
 git commit -a -m "Project updated"
 git push origin
 
