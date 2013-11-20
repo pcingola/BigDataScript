@@ -5,8 +5,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
-//import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-
 /**
  * Execute tasks in local computer.
  *  
@@ -55,7 +53,7 @@ public class LocalQueueExecutioner extends LocalExecutioner {
 				runTaskNext(host);
 			} else {
 				sleepShort();
-				if (debug) Timer.showStdErr("Queue tasks:\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
+				if (verbose) Timer.showStdErr("Queue tasks:\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
 			}
 		}
 
