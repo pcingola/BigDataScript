@@ -93,8 +93,10 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
-		List<BigDataScriptNode> returnStatements = findNodes(Return.class, true);
-		if (returnStatements.isEmpty()) compilerMessages.add(this, "Function has no return statement", MessageType.ERROR);
+		if (!returnType.isVoid()) {
+			List<BigDataScriptNode> returnStatements = findNodes(Return.class, true);
+			if (returnStatements.isEmpty()) compilerMessages.add(this, "Function has no return statement", MessageType.ERROR);
+		}
 	}
 
 	@SuppressWarnings("unused")

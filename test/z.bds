@@ -1,5 +1,7 @@
 
 
-bool b = false
+void f() {
+	print("Function\n")
+}
 
-print("Value: $b\n")
+f()

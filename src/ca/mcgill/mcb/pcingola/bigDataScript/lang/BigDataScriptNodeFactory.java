@@ -99,6 +99,7 @@ public class BigDataScriptNodeFactory {
 		if (className.equals("TypePrimitiveInt")) return Type.INT;
 		if (className.equals("TypePrimitiveReal")) return Type.REAL;
 		if (className.equals("TypePrimitiveString")) return Type.STRING;
+		if (className.equals("TypePrimitiveVoid")) return Type.VOID;
 
 		// Create object
 		try {

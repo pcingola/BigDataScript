@@ -144,6 +144,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	 */
 	public boolean canCastObject(Object obj) {
 		if (isBool()) return (obj instanceof Boolean);
+		else if (isVoid()) return true;
 		else if (isInt()) return (obj instanceof Long) || (obj instanceof Boolean);
 		else if (isReal()) return (obj instanceof Boolean) || (obj instanceof Long) || (obj instanceof Double);
 		else if (isList()) return (obj instanceof ArrayList);
