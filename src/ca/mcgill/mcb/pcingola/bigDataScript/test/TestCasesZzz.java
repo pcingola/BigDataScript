@@ -56,8 +56,16 @@ public class TestCasesZzz extends TestCase {
 	 * @param fileName
 	 */
 	void runAndCheck(String fileName, String varname, Object expectedValue) {
-		// Compile
 		String args[] = { fileName };
+		runAndCheck(fileName, args, varname, expectedValue);
+	}
+
+	/**
+	 * Check that a file compiles without any errors, runs and a variable have its expected value
+	 * @param fileName
+	 */
+	void runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
+		// Compile
 		BigDataScript bigDataScript = new BigDataScript(args);
 		bigDataScript.compile();
 		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
@@ -83,8 +91,24 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	@Test
-	public void test29() {
-		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");
+	public void test60() {
+		String fileName = "test/run_60.bds";
+		String args[] = { fileName, "-b" };
+		runAndCheck(fileName, args, "b", true);
+	}
+
+	@Test
+	public void test61() {
+		String fileName = "test/run_60.bds";
+		String args[] = { fileName, "-b", "true" };
+		runAndCheck(fileName, args, "b", true);
+	}
+
+	@Test
+	public void test62() {
+		String fileName = "test/run_60.bds";
+		String args[] = { fileName, "-b", "false" };
+		runAndCheck(fileName, args, "b", false);
 	}
 
 }

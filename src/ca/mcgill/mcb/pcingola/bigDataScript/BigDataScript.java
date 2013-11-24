@@ -399,6 +399,17 @@ public class BigDataScript {
 											else vals.add(programArgs.get(i));
 
 										useVal = initializeArgs(varType, varInit, vals); // Found variable, try to replace or add LITERAL to this VarInit
+									} else if (varType.isBool()) {
+										String valStr = "true";
+
+										// Booleans may not have a value (just '-varName' sets them to 'true')
+										if (programArgs.size() > (argNum + 1)) {
+											// Is the next argument 'true' or 'false'? => Set argument
+											String boolVal = programArgs.get(argNum + 1);
+											if (valStr.equalsIgnoreCase("true") || valStr.equalsIgnoreCase("false")) valStr = boolVal;
+										}
+
+										initializeArgs(varType, varInit, valStr);
 									} else {
 										String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
 										useVal = initializeArgs(varType, varInit, val); // Found variable, try to replace or add LITERAL to this VarInit
