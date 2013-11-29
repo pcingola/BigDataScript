@@ -30,7 +30,7 @@ varDeclaration      : type variableInit (',' variableInit)*;
 variableInit        : ID ('=' expression)?;
 
 // Include statement
-includeF : 'include' STRING_LITERAL_SINGLE eol;
+includeF : 'include' (STRING_LITERAL | STRING_LITERAL_SINGLE) eol;
 
 // Statements
 statement : '{' statement* '}'                                                             # block
