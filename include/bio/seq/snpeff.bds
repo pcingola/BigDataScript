@@ -14,7 +14,7 @@ string snpEffDir="$HOME/snpEff"
 
 # Comands
 string snpEff="$snpEffJava -Xmx4g -jar $snpEffDir/snpEff.jar"
-string snpsift="$snpEffJava -Xmx2g -jar $snpEffDir/SnpSift.jar"
+string snpSift="$snpEffJava -Xmx2g -jar $snpEffDir/SnpSift.jar"
 
 # Additional databases
 
