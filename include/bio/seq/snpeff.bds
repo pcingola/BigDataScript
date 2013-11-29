@@ -32,7 +32,7 @@ string correctionBfMax10   = "$snpEffDir/scripts/gsa/bayesFactor_correction_scor
 string annotateAllVcf(string vcfDir) {
 
 	# Find all vcf files that have not been annotated yet
-	string findId = sys find $dir -iname "*.vcf" | grep -v "eff.vcf" 
+	string findId = sys find $vcfDir -iname "*.vcf" | grep -v "eff.vcf" 
 	string[] vcfsAll = findId.stdout().lines()
 
 	# Create a list of VCF file that have to be annotates (i.e. there is no corresponding "*.eff.vcf" file)
