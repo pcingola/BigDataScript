@@ -64,7 +64,11 @@ public class If extends Statement {
 
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		condition.returnType(scope);
-		if ((condition != null) && !condition.isBool()) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
+		Type retType = condition.returnType(scope);
+		if ((condition != null) //
+				&& !condition.isBool() //
+				&& (retType != null) //
+				&& !retType.canCast(Type.BOOL)//
+		) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
 	}
 }

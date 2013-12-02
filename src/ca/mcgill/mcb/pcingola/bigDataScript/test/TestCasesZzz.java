@@ -128,18 +128,13 @@ public class TestCasesZzz extends TestCase {
 		}
 	}
 
-	public void test06() {
-		runAndCheck("test/run_06.bds", "i", 1L);
-	}
-
 	@Test
-	public void test06_2() {
-		runAndCheck("test/run_06.bds", "r1", 1.0);
-	}
-
-	@Test
-	public void test06_3() {
-		runAndCheck("test/run_06.bds", "r2", 5.0);
+	public void test66() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("sif", "String 'hi' is NOT empty");
+		expectedValues.put("lif", "List '[hi, bye]' is NOT empty");
+		expectedValues.put("mif", "Map '{  }' IS empty");
+		runAndCheckMultiple("test/run_66.bds", expectedValues);
 	}
 
 }

@@ -591,4 +591,13 @@ public class TestCasesExec extends TestCase {
 		runAndCheckMultiple("test/run_65.bds", expectedValues);
 	}
 
+	@Test
+	public void test66() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("sif", "String 'hi' is NOT empty");
+		expectedValues.put("lif", "List '[hi, bye]' is NOT empty");
+		expectedValues.put("mif", "Map '{  }' IS empty");
+		runAndCheckMultiple("test/run_66.bds", expectedValues);
+	}
+
 }
