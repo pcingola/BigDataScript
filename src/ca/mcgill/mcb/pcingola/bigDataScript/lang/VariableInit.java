@@ -87,8 +87,6 @@ public class VariableInit extends BigDataScriptNode {
 				// OK, Empty list literal can be assigned to any list
 			} else if (varSym.getType().isMap() && exprRetType.isMap() && (expression instanceof LiteralMapEmpty)) {
 				// OK, Empty map literal can be assigned to any map
-			} else if (varSym.getType().isMap() && exprRetType.isMap() && (expression instanceof LiteralMapEmpty)) {
-				// OK, Empty map literal can be assigned to any map
 			} else if (!exprRetType.canCast(varType)) {
 				// We cannot cast expression's type to variable's type: Error
 				compilerMessages.add(this, "Cannot cast " + exprRetType + " to " + varType, MessageType.ERROR);

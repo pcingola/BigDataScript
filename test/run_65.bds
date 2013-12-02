@@ -1,5 +1,4 @@
 
-
 print("Hi\n")
 
 string sfalse = ""
@@ -29,4 +28,14 @@ bool bltrue  = ltrue
 bool bmfalse =  mfalse
 bool bmtrue  =  mtrue
 
+print(" bsfalse = $bsfalse\n")
+print(" bstrue  = $bstrue \n")
+print(" bifalse = $bifalse\n")
+print(" bitrue  = $bitrue \n")
+print(" brfalse = $brfalse\n")
+print(" brtrue  = $brtrue \n")
+print(" blfalse = $blfalse\n")
+print(" bltrue  = $bltrue \n")
+print(" bmfalse =  $bmfalse\n")
+print(" bmtrue  =  $bmtrue \n")
 print("End\n")

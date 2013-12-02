@@ -68,17 +68,20 @@ public class LiteralMap extends Literal {
 		//---
 		// Calculate baseType
 		//---
-		Type baseType = Type.BOOL;
+		Type baseType = null;
 		for (BigDataScriptNode node : values) {
 			Expression expr = (Expression) node;
 			Type typeExpr = expr.returnType(scope);
 
-			// Can we cast ?
-			if ((typeExpr != null) && !typeExpr.canCast(baseType)) {
-				// Can we cast the other way?
-				if (baseType.canCast(typeExpr)) baseType = typeExpr;
-				else {
-					// We have a problem...we'll report it in typeCheck.
+			if (typeExpr != null) {
+				if (baseType == null) {
+					baseType = typeExpr;
+				} else if (!typeExpr.canCast(baseType)) { // Can we cast ?
+					if (baseType.canCast(typeExpr)) { // Can we cast the other way?
+						baseType = typeExpr;
+					} else {
+						// We have a problem...we'll report it in typeCheck.
+					}
 				}
 			}
 		}

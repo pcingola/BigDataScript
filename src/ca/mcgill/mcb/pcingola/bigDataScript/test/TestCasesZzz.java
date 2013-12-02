@@ -1,5 +1,8 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -90,8 +93,53 @@ public class TestCasesZzz extends TestCase {
 		Assert.assertEquals(expectedExitValue, exitValue);
 	}
 
-	@Test
-	public void test64() {
-		runAndCheck("test/run_64.bds", "m", "{}");
+	void runAndCheckMultiple(String fileName, HashMap<String, Object> expectedValues) {
+		runAndCheckMultiple(fileName, expectedValues, new ArrayList<String>());
 	}
+
+	/**
+	 * Check that a file compiles without any errors, runs and all variables have their expected values
+	 * @param fileName
+	 */
+	void runAndCheckMultiple(String fileName, HashMap<String, Object> expectedValues, ArrayList<String> args) {
+		// Prepare command line arguments
+		args.add(0, fileName);
+		String argsArray[] = args.toArray(new String[0]);
+
+		// Compile
+		BigDataScript bigDataScript = new BigDataScript(argsArray);
+		bigDataScript.compile();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+
+		// Run
+		bigDataScript.run();
+
+		// Check all values
+		for (String varName : expectedValues.keySet()) {
+			Object expectedValue = expectedValues.get(varName);
+
+			ScopeSymbol ssym = bigDataScript.getProgramUnit().getScope().getSymbol(varName);
+
+			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
+			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
+					+ "\tExpected : '" + expectedValue.toString() + "'" //
+					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
+			);
+		}
+	}
+
+	public void test06() {
+		runAndCheck("test/run_06.bds", "i", 1L);
+	}
+
+	@Test
+	public void test06_2() {
+		runAndCheck("test/run_06.bds", "r1", 1.0);
+	}
+
+	@Test
+	public void test06_3() {
+		runAndCheck("test/run_06.bds", "r2", 5.0);
+	}
+
 }

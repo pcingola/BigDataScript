@@ -92,7 +92,10 @@ public class TestCasesExec extends TestCase {
 			ScopeSymbol ssym = bigDataScript.getProgramUnit().getScope().getSymbol(varName);
 
 			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
-			Assert.assertEquals(expectedValue.toString(), ssym.getValue().toString());
+			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
+					+ "\tExpected : '" + expectedValue.toString() + "'" //
+					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
+			);
 		}
 	}
 
@@ -570,6 +573,22 @@ public class TestCasesExec extends TestCase {
 	@Test
 	public void test64() {
 		runAndCheck("test/run_64.bds", "m", "{}");
+	}
+
+	@Test
+	public void test65() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("bsfalse", false);
+		expectedValues.put("bstrue", true);
+		expectedValues.put("bifalse", false);
+		expectedValues.put("bitrue", true);
+		expectedValues.put("brfalse", false);
+		expectedValues.put("brtrue", true);
+		expectedValues.put("blfalse", false);
+		expectedValues.put("bltrue", true);
+		expectedValues.put("bmfalse", false);
+		expectedValues.put("bmtrue", true);
+		runAndCheckMultiple("test/run_65.bds", expectedValues);
 	}
 
 }

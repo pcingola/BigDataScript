@@ -3,6 +3,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -122,6 +124,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	public boolean canCast(Type type) {
 		if (equals(type)) return true; // Same class? OK
 		if (type.equals(Type.STRING)) return true; // Anything can be converted to string
+		if (type.equals(Type.BOOL)) return true; // Almost anything can be converted to 
 
 		// Both of them are primitive?
 		if (this.isPrimitiveType() && type.isPrimitiveType()) {
@@ -159,9 +162,15 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	 * @param obj : Object
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public Object cast(Object obj) {
 		if (isBool()) {
 			if (obj instanceof Boolean) return obj;
+			if (obj instanceof Long) return ((Long) obj) != 0;
+			if (obj instanceof Double) return ((Double) obj) != 0.0;
+			if (obj instanceof String) return !((String) obj).isEmpty();
+			if (obj instanceof List) return !((List) obj).isEmpty();
+			if (obj instanceof Map) return !((Map) obj).isEmpty();
 		} else if (isInt()) {
 			if (obj instanceof Long) return obj;
 			if (obj instanceof Boolean) return ((Boolean) obj) ? Type.INT_ONE : Type.INT_ZERO;
