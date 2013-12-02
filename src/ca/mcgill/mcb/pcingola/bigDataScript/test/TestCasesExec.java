@@ -562,4 +562,14 @@ public class TestCasesExec extends TestCase {
 		runAndCheck(fileName, args, "b", false);
 	}
 
+	@Test
+	public void test63() {
+		runAndCheck("test/run_63.bds", "l", "[]");
+	}
+
+	@Test
+	public void test64() {
+		runAndCheck("test/run_64.bds", "m", "{}");
+	}
+
 }

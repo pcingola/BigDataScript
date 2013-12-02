@@ -29,13 +29,6 @@ public class ExpressionAssignment extends ExpressionBinary {
 
 		if (left instanceof VarReference) {
 			((VarReference) left).setValue(csThread, value);;
-
-			// Get symbol
-			//			VarReference varName = (VarReference) left)setValue(BigDataScriptThread csThread, Object value);
-			//			ScopeSymbol ssym = varName.getScopeSymbol(csThread.getScope());
-			//			// Cast to destination type
-			//			value = right.getReturnType().cast(value);
-			//			ssym.setValue(value);
 		} else if (left instanceof VarReferenceList) {
 			VarReferenceList listIndex = (VarReferenceList) left;
 			listIndex.setValue(csThread, value);
@@ -79,7 +72,13 @@ public class ExpressionAssignment extends ExpressionBinary {
 		if (((Reference) left).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + ((Reference) left).getVariableName() + "'", MessageType.ERROR);
 
 		// Can we cast 'right type' into 'left type'?
-		if (!right.getReturnType().canCast(left.getReturnType())) compilerMessages.add(this, "Cannot cast " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
+		if (left.isList() && right.isList() && right instanceof LiteralListEmpty) {
+			// OK, empty list can be assigned to any list
+		} else if (left.isMap() && right.isMap() && right instanceof LiteralMapEmpty) {
+			// OK, empty map can be assigned to any map
+		} else if (!right.getReturnType().canCast(left.getReturnType())) {
+			compilerMessages.add(this, "Cannot cast " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
+		}
 
 	}
 

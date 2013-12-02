@@ -1,0 +1,24 @@
+
+
+print("Hi\n")
+
+print("OK 1\n")
+string sfalse = ""
+string strue = "hi"
+
+print("OK 2\n")
+int ifalse = 0
+int itrue = 2
+
+print("OK 3\n")
+real rfalse = 0.0
+real rtrue = 0.1
+
+print("OK 4\n")
+string[] lfalse = []
+print("OK 5 $lfalse\n")
+string[] ltrue = ['hi', 'bye']
+print("OK 5 $ltrue\n")
+#bool bsfalse = sfalse
+
+print("End\n")

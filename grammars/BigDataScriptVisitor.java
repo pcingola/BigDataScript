@@ -61,18 +61,18 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitLiteralMap(@NotNull BigDataScriptParser.LiteralMapContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#wait}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitWait(@NotNull BigDataScriptParser.WaitContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#literalList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitLiteralList(@NotNull BigDataScriptParser.LiteralListContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#wait}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWait(@NotNull BigDataScriptParser.WaitContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionLe}.
@@ -271,6 +271,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionBitXor(@NotNull BigDataScriptParser.ExpressionBitXorContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#literalMapEmpty}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLiteralMapEmpty(@NotNull BigDataScriptParser.LiteralMapEmptyContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#typeList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -325,6 +332,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitWhile(@NotNull BigDataScriptParser.WhileContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#literalListEmpty}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#typePrimitiveVoid}.

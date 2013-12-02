@@ -91,24 +91,7 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	@Test
-	public void test60() {
-		String fileName = "test/run_60.bds";
-		String args[] = { fileName, "-b" };
-		runAndCheck(fileName, args, "b", true);
+	public void test64() {
+		runAndCheck("test/run_64.bds", "m", "{}");
 	}
-
-	@Test
-	public void test61() {
-		String fileName = "test/run_60.bds";
-		String args[] = { fileName, "-b", "true" };
-		runAndCheck(fileName, args, "b", true);
-	}
-
-	@Test
-	public void test62() {
-		String fileName = "test/run_60.bds";
-		String args[] = { fileName, "-b", "false" };
-		runAndCheck(fileName, args, "b", false);
-	}
-
 }

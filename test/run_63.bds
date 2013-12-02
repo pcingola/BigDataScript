@@ -1,0 +1,15 @@
+#!/usr/bin.enbv bds
+
+print("Hi\n")
+
+string[] l = []
+print("L: $l\n")
+
+l = ['hi']
+print("L: $l\n")
+
+l = ['hi', 'bye']
+print("L: $l\n")
+
+l = []
+print("L: $l\n")

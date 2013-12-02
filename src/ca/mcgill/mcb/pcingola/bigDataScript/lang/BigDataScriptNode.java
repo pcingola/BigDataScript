@@ -43,8 +43,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		id = BigDataScriptNodeFactory.get().getNextNodeId(this);
 		this.parent = parent;
 
-		if (debug) Gpr.debug("NEW BigDataScriptNode:\t" + id + "\t" + getClass().getSimpleName());
-
 		// Initialize some defaults
 		initialize();
 		doParse(tree);

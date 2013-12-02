@@ -98,7 +98,9 @@ expression : BOOL_LITERAL                                                       
            | '(' expression ')'                                                     # expressionParen
            | expression '?' expression ':' expression                               # expressionCond
            |  expression '<-' expression                                            # expressionDep
+           | '[' ']'                                                                # literalListEmpty
            | '[' expression (',' expression)* ']'                                   # literalList
+           | '{' '}'                                                                # literalMapEmpty
            | '{' expression '=>' expression (',' expression '=>' expression)* '}'   # literalMap
            | SYS_LITERAL                                                            # expressionSys
            | TASK_LITERAL                                                           # expressionTaskLiteral

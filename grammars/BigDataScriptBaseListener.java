@@ -108,19 +108,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterWait(@NotNull BigDataScriptParser.WaitContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitWait(@NotNull BigDataScriptParser.WaitContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterLiteralList(@NotNull BigDataScriptParser.LiteralListContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -128,6 +115,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitLiteralList(@NotNull BigDataScriptParser.LiteralListContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterWait(@NotNull BigDataScriptParser.WaitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitWait(@NotNull BigDataScriptParser.WaitContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -498,6 +498,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterLiteralMapEmpty(@NotNull BigDataScriptParser.LiteralMapEmptyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitLiteralMapEmpty(@NotNull BigDataScriptParser.LiteralMapEmptyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterTypeList(@NotNull BigDataScriptParser.TypeListContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -596,6 +609,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitWhile(@NotNull BigDataScriptParser.WhileContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -44,8 +44,9 @@ public class LiteralList extends Literal {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		values = new Expression[tree.getChildCount() / 2];
-		for (int i = 1, j = 0; i < tree.getChildCount(); i += 2, j++) { // Skip first '[' and comma separator
+		int listSize = (tree.getChildCount() - 1) / 2;
+		values = new Expression[listSize];
+		for (int i = 1, j = 0; j < listSize; i += 2, j++) { // Skip first '[' and comma separators
 			values[j] = (Expression) factory(tree, i);
 		}
 	}

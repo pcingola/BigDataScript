@@ -50,11 +50,11 @@ public class LiteralMap extends Literal {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		int size = tree.getChildCount() / 4;
+		int size = (tree.getChildCount() - 1) / 4;
 		keys = new Expression[size];
 		values = new Expression[size];
 
-		for (int i = 1, j = 0; i < tree.getChildCount(); i += 2, j++) { // Skip first '[' and comma separator
+		for (int i = 1, j = 0; j < size; i += 2, j++) { // Skip first '[' and comma separator
 			keys[j] = (Expression) factory(tree, i);
 			i += 2;
 			values[j] = (Expression) factory(tree, i);

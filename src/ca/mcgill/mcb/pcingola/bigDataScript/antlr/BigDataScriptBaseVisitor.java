@@ -74,7 +74,7 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitWait(@NotNull BigDataScriptParser.WaitContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralList(@NotNull BigDataScriptParser.LiteralListContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -82,7 +82,7 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitLiteralList(@NotNull BigDataScriptParser.LiteralListContext ctx) { return visitChildren(ctx); }
+	@Override public T visitWait(@NotNull BigDataScriptParser.WaitContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -314,6 +314,14 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitLiteralMapEmpty(@NotNull BigDataScriptParser.LiteralMapEmptyContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitTypeList(@NotNull BigDataScriptParser.TypeListContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -371,6 +379,14 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitWhile(@NotNull BigDataScriptParser.WhileContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}

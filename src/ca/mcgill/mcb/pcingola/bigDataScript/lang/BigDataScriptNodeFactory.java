@@ -94,7 +94,7 @@ public class BigDataScriptNodeFactory {
 		// This node doesn't do anything, it should not be created (it is a sub-product of the grammar)
 		if ((tree != null) && isIgnore(tree)) return null;
 
-		// Types: Get instace nodes (singletons)
+		// Types: Get instance nodes (singletons)
 		if (className.equals("TypePrimitiveBool")) return Type.BOOL;
 		if (className.equals("TypePrimitiveInt")) return Type.INT;
 		if (className.equals("TypePrimitiveReal")) return Type.REAL;

@@ -86,17 +86,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitLiteralMap(@NotNull BigDataScriptParser.LiteralMapContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#wait}.
-	 * @param ctx the parse tree
-	 */
-	void enterWait(@NotNull BigDataScriptParser.WaitContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#wait}.
-	 * @param ctx the parse tree
-	 */
-	void exitWait(@NotNull BigDataScriptParser.WaitContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#literalList}.
 	 * @param ctx the parse tree
 	 */
@@ -106,6 +95,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLiteralList(@NotNull BigDataScriptParser.LiteralListContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#wait}.
+	 * @param ctx the parse tree
+	 */
+	void enterWait(@NotNull BigDataScriptParser.WaitContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#wait}.
+	 * @param ctx the parse tree
+	 */
+	void exitWait(@NotNull BigDataScriptParser.WaitContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionLe}.
@@ -416,6 +416,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionBitXor(@NotNull BigDataScriptParser.ExpressionBitXorContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#literalMapEmpty}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiteralMapEmpty(@NotNull BigDataScriptParser.LiteralMapEmptyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#literalMapEmpty}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiteralMapEmpty(@NotNull BigDataScriptParser.LiteralMapEmptyContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#typeList}.
 	 * @param ctx the parse tree
 	 */
@@ -502,6 +513,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitWhile(@NotNull BigDataScriptParser.WhileContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#literalListEmpty}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#literalListEmpty}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#typePrimitiveVoid}.
