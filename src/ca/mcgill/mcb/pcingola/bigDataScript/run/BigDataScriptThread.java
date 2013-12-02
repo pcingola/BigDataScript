@@ -34,15 +34,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	private static int threadNumber = 1;
 
-	/**
-	 * Get an ID for a node
-	 * @return
-	 */
-	protected synchronized static int bigDataScriptThreadId() {
-		return threadNumber++;
-	}
-
 	String bigDataScriptThreadId;
+
 	int bigDataScriptThreadNum;
 	int checkPointRecoverNodeIdx;
 	int exitValue;
@@ -53,8 +46,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	Object returnValue;
 	HashMap<String, Task> tasks;
 	Config config;
-
 	Random random;
+
+	/**
+	 * Get an ID for a node
+	 * @return
+	 */
+	protected synchronized static int bigDataScriptThreadId() {
+		return threadNumber++;
+	}
 
 	public BigDataScriptThread() {
 		bigDataScriptThreadNum = bigDataScriptThreadId();
@@ -240,6 +240,24 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
+	 * Have all tasks finished executing?
+	 * @return
+	 */
+	public boolean isTasksDone() {
+		for (String taskId : tasks.keySet()) {
+			if ((taskId == null) || taskId.isEmpty()) continue;
+
+			Task task = getTask(taskId);
+			if (task == null) continue;
+
+			if (!task.isDone()) return false;
+		}
+
+		return true;
+
+	}
+
+	/**
 	 * Kill one task 
 	 */
 	public void killTask(String taskId) {
@@ -277,12 +295,19 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public void run() {
 		createLogDir(); // Create log dir 
 
-		programUnit.run(this); // Run program
+		// Run program
+		RunState runState = programUnit.run(this);
+		if (config.isVerbose()) System.err.println("Program execution finished (runState: '" + runState + "' )");
 
-		boolean ok = waitTasksAll(); // Implicit 'wait' statement at the end of the program
+		// Implicit 'wait' statement at the end of the program
+		if (!isTasksDone()) System.err.println("Waiting for tasks to finish.");
+		boolean ok = waitTasksAll();
 
-		if (!ok) exitValue = 1; // All tasks in wait finished OK?
-		else {
+		// All tasks in wait finished OK?
+		if (!ok) {
+			// Errors? Then set exit status appropriately
+			exitValue = 1;
+		} else {
 			// Set exit value as the latest 'int' result
 			Object ev = getReturnValue();
 			if (ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
@@ -420,7 +445,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 
 		// Either finished OK or it was allowed to fail
-		return task.isDoneOk() || task.isCanFail();
+		boolean ok = task.isDoneOk() || task.isCanFail();
+
+		// If task failed, show task information and failure reason.
+		if (!ok) {
+			if (config.isVerbose()) System.err.println("Task failed:\n" + task);
+			else System.err.println("Task failed: " + task);
+		}
+
+		return ok;
 	}
 
 	/**

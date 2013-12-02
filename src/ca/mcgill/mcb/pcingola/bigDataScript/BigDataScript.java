@@ -643,7 +643,7 @@ public class BigDataScript {
 																	// the BigDataScript program
 			else if (args[i].equalsIgnoreCase("-noLog")) log = false;
 			else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
-			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = true;
+			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
 			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
 			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) usage(null);
 			else if (args[i].equals("-loop")) {

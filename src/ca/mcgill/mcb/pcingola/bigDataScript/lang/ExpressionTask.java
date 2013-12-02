@@ -64,7 +64,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		Executioner executioner = Executioners.getInstance().get(runSystem);
 
 		// Create Task
-		Task task = new Task(execId, sys.getSysFileName(), sys.getCommands(csThread));
+		Task task = new Task(execId, sys.getSysFileName(), sys.getCommands(csThread), getFileName(), getLineNum());
 
 		// Configure Task parameters
 		task.setVerbose(csThread.getConfig().isVerbose());

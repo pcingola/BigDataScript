@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners.ExecutionerType;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.LocalExecutioner;
@@ -146,7 +146,7 @@ public class ExpressionSys extends Expression {
 
 		// SYS expressions are always executed locally
 		// Create a task
-		Task task = new Task(execId, getSysFileName(), getCommands(csThread));
+		Task task = new Task(execId, getSysFileName(), getCommands(csThread), getFileName(), getLineNum());
 		task.setVerbose(csThread.getConfig().isVerbose());
 		task.setDebug(csThread.getConfig().isDebug());
 		csThread.add(task); // Add task to thread

@@ -63,8 +63,9 @@ public class Wait extends Statement {
 		// Any task failed?
 		if (!ok) {
 			// Create a checkpoint 
+			System.err.println("Task '" + ok + "' failed.");
 			String checkpointFileName = csThread.checkpoint(null);
-			System.err.println("Task failed. Creating checkpoint file '" + checkpointFileName + "'");
+			System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
 
 			// Exit 
 			csThread.setExitValue(1L);

@@ -27,20 +27,20 @@ public class Config {
 
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
-	public static Config get() {
-		if (configInstance == null) configInstance = new Config();
-		return configInstance;
-	}
-
 	boolean debug = false; // Debug mode?
+
 	boolean verbose = false; // Verbose mode?
 	boolean log = false; // Log all commands?
 	String configDirName;
 	String pidFile;
 	Properties properties;
 	ArrayList<String> sshNodes;
-
 	ArrayList<String> includePath;
+
+	public static Config get() {
+		if (configInstance == null) configInstance = new Config();
+		return configInstance;
+	}
 
 	public Config() {
 		read(DEFAULT_CONFIG_FILE); // Read config file 
