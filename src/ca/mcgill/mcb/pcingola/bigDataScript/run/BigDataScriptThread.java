@@ -297,7 +297,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Run program
 		RunState runState = programUnit.run(this);
-		if (config.isVerbose()) System.err.println("Program execution finished (runState: '" + runState + "' )");
+		if (config != null && config.isVerbose()) System.err.println("Program execution finished (runState: '" + runState + "' )");
 
 		// Implicit 'wait' statement at the end of the program
 		if (!isTasksDone()) System.err.println("Waiting for tasks to finish.");
