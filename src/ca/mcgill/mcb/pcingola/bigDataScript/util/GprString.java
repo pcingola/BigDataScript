@@ -28,12 +28,16 @@ public class GprString {
 		for (char c : str.toCharArray()) {
 
 			// End of variable name
+			// TODO: Add lists and maps
 			if (isVar && (!(Character.isLetterOrDigit(c) || (c == '_')))) {
 				// End of variable name
 				isVar = false;
 				String varName = sbVar.toString().substring(1); // Add variable name (without leading '$')
+
+				if (varName.isEmpty()) listVars.add("$$"); // Just a dollar sign
+				else listVars.add(varName);
+
 				listStr.add(sbStr.toString());
-				listVars.add(varName);
 
 				sbStr = new StringBuilder();
 				sbVar = new StringBuilder();

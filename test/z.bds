@@ -1,3 +1,4 @@
 
-string s = "Hi '$'"
+string s = "Hi '\$'"
 print("s=$s\n")
+print("DOLAR='$'\n")
