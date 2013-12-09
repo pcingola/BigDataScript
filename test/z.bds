@@ -1,12 +1,3 @@
 
-string s = "Hi"
-
-int f(int x) {
-	string s = "Bye"
-	print("\ts=$s\n")
-	return 1;
-}
-
-print("s=$s\n")
-int i = f(2)
+string s = "Hi '$'"
 print("s=$s\n")
