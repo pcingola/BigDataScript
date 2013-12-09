@@ -7,6 +7,7 @@ string	string	toUpper	this	string	return objThis.toString().toUpperCase();
 string	string	toLower	this	string	return objThis.toString().toLowerCase();
 string	string	trim	this	string	return objThis.toString().trim();
 string	string	substr	this,start,end	string,int,int	String s = objThis.toString(); int start = (int) csThread.getInt("start"), end = (int) csThread.getInt("end") ; start=Math.max(0,start); end=Math.min(end,s.length()); return (start>=end? "" : s.substring(start,end));
+string	string	substr	this,start	string,int	String s = objThis.toString(); int start = (int) csThread.getInt("start") ; start=Math.max(0,start); return s.substring(start);
 TypeList.get(Type.STRING)	string	split	this,regex	string,string	return array2list( objThis.toString().split( csThread.getString("regex") ) );
 TypeList.get(Type.STRING)	string	lines	this	string	return array2list( objThis.toString().split( "\n" ) );
 bool	string	isEmpty	this	string	return objThis.toString().isEmpty();

@@ -1,19 +1,12 @@
 
+string s = "Hi"
 
-print("Hi\n")
+int f(int x) {
+	string s = "Bye"
+	print("\ts=$s\n")
+	return 1;
+}
 
-string s = "hi"
-string[] l = ['hi', 'bye']
-string{} m = {}
-string sif, lif, mif
-
-if( s )	sif = "String '$s' is NOT empty"
-else	sif = "String '$s' IS empty"
-
-if( l )	lif = "List '$l' is NOT empty"
-else	lif = "List '$l' IS empty"
-
-if( m )	mif = "Map '$m' is NOT empty"
-else	mif = "Map '$m' IS empty"
-
-print("End\n")
+print("s=$s\n")
+int i = f(2)
+print("s=$s\n")
