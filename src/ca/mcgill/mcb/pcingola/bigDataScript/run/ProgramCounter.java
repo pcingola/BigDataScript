@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.run;
 
+import java.util.Iterator;
 import java.util.Stack;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
@@ -12,9 +13,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * 
  * @author pcingola
  */
-public class ProgramCounter implements BigDataScriptSerialize {
+public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer> {
 
-	// TODO: Use int[] instead of Stack<Integer>
 	Stack<Integer> nodeIds;
 
 	public ProgramCounter() {
@@ -28,6 +28,11 @@ public class ProgramCounter implements BigDataScriptSerialize {
 
 	boolean isEmpty() {
 		return nodeIds.isEmpty();
+	}
+
+	@Override
+	public Iterator<Integer> iterator() {
+		return nodeIds.iterator();
 	}
 
 	/**
@@ -47,7 +52,12 @@ public class ProgramCounter implements BigDataScriptSerialize {
 		int nodeId = nodeIds.pop();
 
 		// Sanity check
-		if (nodeId != csnode.getId()) Gpr.debug("WTF!");
+		if (nodeId != csnode.getId()) {
+			Gpr.debug("Node ID does not math!" //
+					+ "\n\tNode id    : " + nodeId //
+					+ "\n\tCS_Node id : " + csnode.getId() //
+			);
+		}
 	}
 
 	/**

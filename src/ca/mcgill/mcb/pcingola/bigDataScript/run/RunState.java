@@ -14,4 +14,5 @@ public enum RunState {
 	, CHECKPOINT_RECOVER // Recovering from a checkpoint
 	, WAIT_RECOVER // Recovering from a checkpoint, in a "wait" instruction
 	, TASK_END // Finished executing a 'task' statement
+	, FATAL_ERROR // Finished executing due to a fatal error
 }

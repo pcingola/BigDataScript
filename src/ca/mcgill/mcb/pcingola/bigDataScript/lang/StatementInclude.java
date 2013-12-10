@@ -5,17 +5,16 @@ import java.io.File;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * Include statement: Get source from another file
  */
-public class StatementInclude extends Block {
+public class StatementInclude extends BlockWithFile {
 
-	String includedFilename;
-	File includedFile;
+	protected String parentFileName;
 
 	/**
 	 * Find the appropriate file
@@ -63,24 +62,25 @@ public class StatementInclude extends Block {
 		super(parent, tree);
 	}
 
+	public String getParentFileName() {
+		return parentFileName;
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		setNeedsScope(false);
 
-		// File name: this is merely informational
-		includedFilename = includedFileName(tree.getChild(0).getChild(1).getText());
-
-		// Fill up data only ofr tracking pourposes
+		// File name & parent file name: this is merely informational
 		File parentFile = getFile();
-		File includedFile = includedFile(includedFilename, parentFile);
-		setFile(includedFile);
+		parentFileName = (parentFile != null ? parentFile.toString() : null);
+		fileName = includedFileName(tree.getChild(0).getChild(1).getText());
 
 		super.parse(tree.getChild(0)); // Block parses statement
 	}
 
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		if (!isValidFileName(includedFilename)) compilerMessages.add(this, "include: Invalid file name '" + includedFilename + "'", MessageType.ERROR);
+		if (!isValidFileName(fileName)) compilerMessages.add(this, "include: Invalid file name '" + fileName + "'", MessageType.ERROR);
 		super.typeCheck(scope, compilerMessages);
 	}
 

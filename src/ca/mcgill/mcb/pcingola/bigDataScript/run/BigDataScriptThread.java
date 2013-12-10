@@ -12,6 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Wait;
@@ -130,6 +131,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// No logging? Delete on exit
 		if ((config != null) && !config.isLog()) logdir.deleteOnExit();
+	}
+
+	/**
+	 * Show a fatal error
+	 * @param bdsnode
+	 */
+	public void fatalError(BigDataScriptNode bdsnode, Throwable t) {
+		System.err.println("Fatal error: " + bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + bdsnode.getCharPosInLine() + ".");
+
+		// Show BDS stack trace
+		System.err.println(stackTrace());
+
+		// Show java stack trace
+		if (config.isVerbose()) t.printStackTrace();
 	}
 
 	public String getBigDataScriptThreadId() {
@@ -296,7 +311,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		createLogDir(); // Create log dir 
 
 		// Run program
-		RunState runState = programUnit.run(this);
+		RunState runState = null;
+		try {
+			runState = programUnit.run(this);
+		} catch (Throwable t) {
+			if (config.isVerbose()) throw new RuntimeException(t);
+			else System.err.println("Fatal error: Program execution finished");
+			return;
+		}
+
 		if (config != null && config.isVerbose()) System.err.println("Program execution finished (runState: '" + runState + "' )");
 
 		// Implicit 'wait' statement at the end of the program
@@ -388,7 +411,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @return
 	 */
 	public boolean shouldRun(BigDataScriptNode node) {
-		// Not int checkpoint recovery mode? => Run 
+		// Not in checkpoint recovery mode? => Run 
 		if (!isCheckpointRecover()) return true;
 
 		// Which node are we looking for?
@@ -411,6 +434,55 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 
 		return false;
+	}
+
+	/**
+	 * Show BDS calling stack
+	 * @return
+	 */
+	public String stackTrace() {
+
+		// Get all nodes and hash them by ID
+		List<BigDataScriptNode> nodes = programUnit.findNodes(null, true);
+		HashMap<Integer, BigDataScriptNode> nodesById = new HashMap<Integer, BigDataScriptNode>();
+		for (BigDataScriptNode node : nodes) {
+			nodesById.put(node.getId(), node);
+		}
+		nodesById.put(programUnit.getId(), programUnit);
+
+		// Collect source code
+		HashMap<String, String[]> fileName2codeLines = new HashMap<String, String[]>();
+		for (BigDataScriptNode node : nodesById.values()) {
+			if (node instanceof BlockWithFile) {
+				BlockWithFile bwf = (BlockWithFile) node;
+				String fileName = node.getFileName();
+				String code = bwf.getFileText();
+				if (fileName != null && code != null) fileName2codeLines.put(fileName, code.split("\n"));
+			}
+		}
+
+		// Show stack
+		StringBuilder sb = new StringBuilder();
+		String linePrev = "";
+		for (int nodeId : pc) {
+			BigDataScriptNode node = nodesById.get(nodeId);
+			if (node == null) continue;
+
+			String fileName = node.getFileName();
+			if (fileName == null) continue;
+
+			String[] codeLines = fileName2codeLines.get(fileName);
+			if (codeLines == null) continue;
+
+			int lineNum = node.getLineNum() - 1;
+			if (lineNum <= 0 || lineNum >= codeLines.length) continue;
+
+			String line = node.getFileName() + ", line " + node.getLineNum() + " :\t" + codeLines[lineNum] + "\n";
+			if (!line.equals(linePrev)) sb.append(line);
+			linePrev = line;
+		}
+
+		return sb.toString();
 	}
 
 	@Override

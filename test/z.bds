@@ -1,8 +1,12 @@
 
+string f(string[] l) {
+	string h = l.head()
+	return h
+}
+
+string[] list
+
 print("Start\n")
-
-sys echo hi ;
-sys zzz hi ;
-
+f(list)
 print("End\n")
 

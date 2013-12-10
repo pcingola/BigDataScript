@@ -5,6 +5,9 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Test;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -123,6 +126,18 @@ public class TestCasesZzz extends TestCase {
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
 			);
 		}
+	}
+
+	@Test
+	public void test42() {
+		compileOk("test/test42.bds");
+	}
+
+	@Test
+	public void test50() {
+		runAndCheck("test/run_50.bds", "j", 302);
+		runAndCheck("test/run_50.bds", "i", 32);
+		runAndCheck("test/run_50.bds", "jx", 44);
 	}
 
 }

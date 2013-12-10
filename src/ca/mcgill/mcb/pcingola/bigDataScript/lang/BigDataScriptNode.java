@@ -244,7 +244,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return parent != null ? parent.getFile() : null;
 	}
 
-	public final String getFileName() {
+	public String getFileName() {
 		File f = getFile();
 		return f == null ? null : f.toString();
 	}
@@ -449,11 +449,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 			if (csThread.shouldRun(this)) rstate = runStep(csThread); // Run 
 			else rstate = RunState.CHECKPOINT_RECOVER;
 		} catch (Throwable t) {
-			System.err.println("Fatal error: " + getFileName() + "[" + getLineNum() + ":" + getCharPosInLine() + "]");
-
-			// Re-throw the exception if possible
-			if (t instanceof RuntimeException) throw ((RuntimeException) t);
-			else throw new RuntimeException(t);
+			csThread.fatalError(this, t);
+			rstate = RunState.FATAL_ERROR;
 		}
 
 		if (!recover) runEnd(csThread); // After node execution
