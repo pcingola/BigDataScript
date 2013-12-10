@@ -1,7 +1,8 @@
 
+print("Start\n")
 
-sys echo hi \
-	bye \
-	end
+sys echo hi ;
+sys zzz hi ;
 
+print("End\n")
 
