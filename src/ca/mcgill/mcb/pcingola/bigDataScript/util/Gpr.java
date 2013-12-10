@@ -407,6 +407,23 @@ public class Gpr {
 	}
 
 	/**
+	 * Add 'preLine' to each line in 'str'
+	 * @param num
+	 * @param str
+	 * @return
+	 */
+	public static String prependEachLine(String preLine, String str) {
+		if (preLine == null || str == null) return null;
+
+		StringBuilder sb = new StringBuilder();
+		for (String line : str.split("\n"))
+			sb.append(preLine + line + "\n");
+
+		return sb.toString();
+
+	}
+
+	/**
 	 * Read a file as a String.
 	 * Note: the file can be compressed using gzip (file name must have a ".gz" extension).
 	 * 

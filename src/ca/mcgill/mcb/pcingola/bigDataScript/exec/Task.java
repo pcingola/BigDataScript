@@ -349,6 +349,10 @@ public class Task implements BigDataScriptSerialize {
 
 	@Override
 	public String toString() {
+		return toString(verbose);
+	}
+
+	public String toString(boolean verbose) {
 		StringBuilder sb = new StringBuilder();
 
 		if (verbose) {
@@ -358,6 +362,8 @@ public class Task implements BigDataScriptSerialize {
 			sb.append("\tTask program file: '" + programFileName + "'\n");
 			sb.append("\tTask state       : '" + taskState + "'\n");
 			sb.append("\tTask exit status : '" + exitValue + "'\n");
+			sb.append("\tStdErr (10 lines):\n" + Gpr.prependEachLine("\t\t", TailFile.tail(stderrFile)));
+			sb.append("\tStdOut (10 lines):\n" + Gpr.prependEachLine("\t\t", TailFile.tail(stdoutFile)));
 
 			if (debug) {
 				sb.append("\tTask raw code:\n");
@@ -369,4 +375,5 @@ public class Task implements BigDataScriptSerialize {
 
 		return sb.toString();
 	}
+
 }

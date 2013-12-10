@@ -448,10 +448,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		boolean ok = task.isDoneOk() || task.isCanFail();
 
 		// If task failed, show task information and failure reason.
-		if (!ok) {
-			if (config.isVerbose()) System.err.println("Task failed:\n" + task);
-			else System.err.println("Task failed: " + task);
-		}
+		if (!ok) System.err.println("Task failed:\n" + task.toString(true));
 
 		return ok;
 	}
