@@ -47,31 +47,40 @@ public class GprString {
 			if (cprev == '\\') {
 
 				// Convert other characters
-				switch (c) {
-				case 'b':
-					c = '\b';
-					break;
-				case 'f':
-					c = '\f';
-					break;
-				case 'n':
-					c = '\n';
-					break;
-				case 'r':
-					c = '\r';
-					break;
-				case 't':
-					c = '\t';
-					break;
-				case '0':
-					c = '\0';
-					break;
+				if (c == '\n') {
+					// End of line, continues in the next one
+				} else {
+					switch (c) {
+					case 'b':
+						c = '\b';
+						break;
 
-				default:
-					break;
+					case 'f':
+						c = '\f';
+						break;
+
+					case 'n':
+						c = '\n';
+						break;
+
+					case 'r':
+						c = '\r';
+						break;
+
+					case 't':
+						c = '\t';
+						break;
+
+					case '0':
+						c = '\0';
+						break;
+
+					default:
+						break;
+					}
+
+					(isVar ? sbVar : sbStr).append(c);
 				}
-
-				(isVar ? sbVar : sbStr).append(c);
 			} else if (c == '$') {
 				isVar = true;
 				sbVar.append(c);
