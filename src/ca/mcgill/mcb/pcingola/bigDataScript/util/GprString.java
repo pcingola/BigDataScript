@@ -34,9 +34,8 @@ public class GprString {
 				isVar = false;
 				String varName = sbVar.toString().substring(1); // Add variable name (without leading '$')
 
-				if (varName.isEmpty()) listVars.add("$$"); // Just a dollar sign
-				else listVars.add(varName);
-
+				listVars.add(varName);
+				if (varName.isEmpty()) sbStr.append('$'); // This was just an isolated '$'
 				listStr.add(sbStr.toString());
 
 				sbStr = new StringBuilder();
@@ -45,21 +44,54 @@ public class GprString {
 
 			// New variable name?
 			// Note that we can have "some string $var1$var2 ..."
-			if ((c == '$') && (cprev != '\\')) isVar = true;
+			if (cprev == '\\') {
 
-			(isVar ? sbVar : sbStr).append(c);
+				// Convert other characters
+				switch (c) {
+				case 'b':
+					c = '\b';
+					break;
+				case 'f':
+					c = '\f';
+					break;
+				case 'n':
+					c = '\n';
+					break;
+				case 'r':
+					c = '\r';
+					break;
+				case 't':
+					c = '\t';
+					break;
+				case '0':
+					c = '\0';
+					break;
+
+				default:
+					break;
+				}
+
+				(isVar ? sbVar : sbStr).append(c);
+			} else if (c == '$') {
+				isVar = true;
+				sbVar.append(c);
+			} else if (c != '\\') {
+				(isVar ? sbVar : sbStr).append(c);
+			}
 
 			cprev = c;
 		}
 
 		// Add last one
 		if ((sbVar.length() > 0) || (sbStr.length() > 0)) {
-			listStr.add(sbStr.toString());
-
 			String varName = "";
-			if (sbVar.length() > 0) varName = sbVar.toString().substring(1);
+			if (isVar) {
+				if (sbVar.length() > 0) varName = sbVar.toString().substring(1);
+				if (varName.isEmpty()) sbStr.append('$'); // This was just an ending '$'
+			}
 
 			listVars.add(varName);
+			listStr.add(sbStr.toString());
 		}
 
 		return new Tuple<List<String>, List<String>>(listStr, listVars);

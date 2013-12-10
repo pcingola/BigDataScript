@@ -600,4 +600,14 @@ public class TestCasesExec extends TestCase {
 		runAndCheckMultiple("test/run_66.bds", expectedValues);
 	}
 
+	@Test
+	public void test67() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("s", "varS");
+		expectedValues.put("s1", "Hi '$'");
+		expectedValues.put("s2", "Hi $");
+		expectedValues.put("s3", "Hi $ bye");
+		runAndCheckMultiple("test/run_67.bds", expectedValues);
+	}
+
 }

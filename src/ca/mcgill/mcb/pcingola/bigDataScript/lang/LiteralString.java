@@ -60,9 +60,8 @@ public class LiteralString extends Literal {
 			// Remove quotes: No unescaping, no interpolation
 			value = valueStr.substring(1, valueStr.length() - 1);
 		} else {
-			// Remove quotes, unescape, interpolate
+			// Remove quotes and interpolate string
 			valueStr = valueStr.substring(1, valueStr.length() - 1);
-			valueStr = GprString.unescape(valueStr); // Parse escaped chars
 			setValueInterpolate(valueStr);
 		}
 	}
