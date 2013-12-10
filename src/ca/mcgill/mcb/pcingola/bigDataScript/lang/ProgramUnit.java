@@ -34,7 +34,7 @@ public class ProgramUnit extends BlockWithFile {
 
 	public ProgramUnit(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, null); // little hack begin: parse is done later
-		setFile(discoverFileFromTree(tree));
+		if (tree != null) setFile(discoverFileFromTree(tree));
 		doParse(tree); // little hack end
 	}
 
