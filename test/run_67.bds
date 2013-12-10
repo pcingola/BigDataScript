@@ -1,0 +1,11 @@
+
+
+string s = "varS"
+string s1 = "Hi '\$'"
+string s2 = "Hi $"
+string s3 = "Hi $ bye"
+print("s1=$s1\n")
+print("s2=$s2\n")
+print("s3=$s3\n")
+print("$s")
+

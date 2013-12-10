@@ -1,0 +1,9 @@
+
+
+string id = sys echo hi \
+					 bye \
+					 end \
+
+string out = id.stdout()
+
+

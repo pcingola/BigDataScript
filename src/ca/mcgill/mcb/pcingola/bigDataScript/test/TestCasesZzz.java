@@ -5,9 +5,6 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.junit.Test;
-
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -126,15 +123,6 @@ public class TestCasesZzz extends TestCase {
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
 			);
 		}
-	}
-
-	@Test
-	public void test66() {
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
-		expectedValues.put("sif", "String 'hi' is NOT empty");
-		expectedValues.put("lif", "List '[hi, bye]' is NOT empty");
-		expectedValues.put("mif", "Map '{  }' IS empty");
-		runAndCheckMultiple("test/run_66.bds", expectedValues);
 	}
 
 }

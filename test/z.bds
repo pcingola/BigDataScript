@@ -1,3 +1,8 @@
 
-string s = "Hi '$'"
-print("s=$s\n")
+print("Start\n")
+
+sys echo hi ;
+sys zzz hi ;
+
+print("End\n")
+
