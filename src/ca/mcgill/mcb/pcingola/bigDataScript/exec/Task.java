@@ -362,8 +362,8 @@ public class Task implements BigDataScriptSerialize {
 			sb.append("\tTask program file: '" + programFileName + "'\n");
 			sb.append("\tTask state       : '" + taskState + "'\n");
 			sb.append("\tTask exit status : '" + exitValue + "'\n");
-			sb.append("\tStdErr:\n" + Gpr.prependEachLine("\t\t", TailFile.tail(stderrFile)));
-			sb.append("\tStdOut:\n" + Gpr.prependEachLine("\t\t", TailFile.tail(stdoutFile)));
+			sb.append("\tStdErr (10 lines):\n" + Gpr.prependEachLine("\t\t", TailFile.tail(stderrFile)));
+			sb.append("\tStdOut (10 lines):\n" + Gpr.prependEachLine("\t\t", TailFile.tail(stdoutFile)));
 
 			if (debug) {
 				sb.append("\tTask raw code:\n");
