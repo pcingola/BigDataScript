@@ -17,6 +17,7 @@ public class TestSuiteAll {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
+		suite.addTestSuite(TestCasesTail.class);
 		suite.addTestSuite(TestCasesLang.class);
 		suite.addTestSuite(TestCasesExec.class);
 		suite.addTestSuite(TestCasesCheckpoint.class);
