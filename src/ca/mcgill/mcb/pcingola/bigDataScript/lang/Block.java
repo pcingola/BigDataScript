@@ -1,6 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -15,17 +14,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
  */
 public class Block extends StatementWithScope {
 
-	String fileName;
-	Statement statements[];
+	protected Statement statements[];
 
 	public Block(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	@Override
-	public File getFile() {
-		if (fileName != null) return new File(fileName);
-		else return super.getFile();
 	}
 
 	public Statement[] getStatements() {
@@ -65,6 +57,9 @@ public class Block extends StatementWithScope {
 				case EXIT:
 					return rstate;
 
+				case FATAL_ERROR:
+					return RunState.FATAL_ERROR;
+
 				default:
 					throw new RuntimeException("Unhandled RunState: " + rstate);
 				}
@@ -72,11 +67,6 @@ public class Block extends StatementWithScope {
 		}
 
 		return RunState.OK;
-	}
-
-	public void setFile(File file) {
-		if (file == null) fileName = null;
-		else fileName = file.toString();
 	}
 
 	@Override

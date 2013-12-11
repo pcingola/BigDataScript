@@ -18,7 +18,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  * 
  * @author pcingola
  */
-public class ProgramUnit extends Block {
+public class ProgramUnit extends BlockWithFile {
+
+	BigDataScriptThread bigDataScriptThread;
+	Scope scope; // Keep track of the scope. mostly for debugging and testing
 
 	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
 		try {
@@ -29,12 +32,9 @@ public class ProgramUnit extends Block {
 		}
 	}
 
-	BigDataScriptThread bigDataScriptThread;
-	Scope scope; // Keep track of the scope. mostly for debugging and testing
-
 	public ProgramUnit(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, null); // little hack begin: parse is done later
-		setFile(discoverFileFromTree(tree));
+		if (tree != null) setFile(discoverFileFromTree(tree));
 		doParse(tree); // little hack end
 	}
 

@@ -5,6 +5,9 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Test;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -123,6 +126,55 @@ public class TestCasesZzz extends TestCase {
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
 			);
 		}
+	}
+
+	/**
+	 * Check that a file recovers from a checkpoint and runs without errors
+	 */
+	void runAndCheckpoint(String fileName, String varname, Object expectedValue) {
+		runAndCheckpoint(fileName, varname, expectedValue, null);
+	}
+
+	/**
+	 * Check that a file recovers from a checkpoint and runs without errors
+	 */
+	void runAndCheckpoint(String fileName, String varname, Object expectedValue, Runnable runBeforeRecover) {
+		// Compile
+		String args[] = { fileName };
+		BigDataScript bigDataScript = new BigDataScript(args);
+		bigDataScript.compile();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+
+		// Run
+		bigDataScript.run();
+
+		// Run something before checkpoint recovery?
+		if (runBeforeRecover != null) runBeforeRecover.run();
+		else {
+			// Check that values match
+			ScopeSymbol ssym = bigDataScript.getProgramUnit().getScope().getSymbol(varname);
+			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
+			Assert.assertEquals(expectedValue, ssym.getValue().toString());
+		}
+
+		//---
+		// Recover from checkpoint
+		//---
+		String chpFileName = fileName + ".chp";
+		if (debug) Gpr.debug("CheckPoint file name : " + chpFileName);
+		String args2[] = { "-r", chpFileName };
+		BigDataScript bigDataScript2 = new BigDataScript(args2);
+		bigDataScript2.run();
+
+		// Check that values match
+		ScopeSymbol ssym = bigDataScript2.getProgramUnit().getScope().getSymbol(varname);
+		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
+		Assert.assertEquals(expectedValue, ssym.getValue().toString());
+	}
+
+	@Test
+	public void test01() {
+		runAndCheckpoint("test/checkpoint_01.bds", "i", "10");
 	}
 
 }

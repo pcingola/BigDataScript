@@ -700,15 +700,13 @@ public class BigDataScript {
 			else pidFile = chekcpointRestoreFile + ".pid";
 		}
 		config.setPidFile(pidFile);
-		Executioners executioners = Executioners.getInstance(config); // Initialize
-																		// executioners
+		Executioners executioners = Executioners.getInstance(config); // Initialize executioners
 
 		// ---
 		// Run
 		// ---
 		int exitValue = 0;
-		if (chekcpointRestoreFile != null) exitValue = runCheckpoint(); // Are we recovering (or loading) from
-																		// a checkpoint?
+		if (chekcpointRestoreFile != null) exitValue = runCheckpoint(); // Are we recovering (or loading) from a checkpoint?
 		else exitValue = runCompile(); // Compile & run
 
 		// ---
