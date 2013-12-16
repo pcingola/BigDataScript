@@ -615,4 +615,12 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_68.bds", "out", "hi bye end\n");
 	}
 
+	@Test
+	public void test69() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("bgz", "path/to/file.txt");
+		expectedValues.put("btxt", "path/to/file");
+		runAndCheckMultiple("test/run_69.bds", expectedValues);
+	}
+
 }

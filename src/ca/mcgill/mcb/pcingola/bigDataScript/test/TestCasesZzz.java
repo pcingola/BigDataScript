@@ -173,8 +173,11 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	@Test
-	public void test01() {
-		runAndCheckpoint("test/checkpoint_01.bds", "i", "10");
+	public void test69() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("bgz", "path/to/file.txt");
+		expectedValues.put("btxt", "path/to/file");
+		runAndCheckMultiple("test/run_69.bds", expectedValues);
 	}
 
 }
