@@ -60,8 +60,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class BigDataScript {
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2013-12-10";
-	public static final String REVISION = "b";
+	public static final String BUILD = "2013-12-16";
+	public static final String REVISION = "c";
 	public static final String VERSION_MAJOR = "0.3";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
