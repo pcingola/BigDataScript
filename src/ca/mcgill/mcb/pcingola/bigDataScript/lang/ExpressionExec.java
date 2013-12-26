@@ -1,12 +1,13 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import java.lang.ProcessBuilder.Redirect;
 import java.util.LinkedList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.StreamGobbler;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * An 'exec' expression (to execute a command line in a local computer, return STDOUT)
@@ -16,6 +17,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 public class ExpressionExec extends ExpressionSys {
 
 	public static String SHELL_COMMAND[] = { "/bin/bash", "-c" };
+	String output;
 
 	public ExpressionExec(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -28,7 +30,14 @@ public class ExpressionExec extends ExpressionSys {
 	public Object eval(BigDataScriptThread csThread) {
 		// Run like a statement and return task ID
 		run(csThread);
-		return execId;
+		return (output != null ? output : "");
+	}
+
+	@Override
+	protected void parse(ParseTree tree) {
+		commands = tree.getChild(0).getText();
+		commands = commands.substring("exec".length()).trim(); // Remove leading 'sys' part and trim spaces
+		interpolateVars(commands); // Find interpolated variables
 	}
 
 	@Override
@@ -42,30 +51,43 @@ public class ExpressionExec extends ExpressionSys {
 		LinkedList<String> args = new LinkedList<String>();
 		for (String arg : SHELL_COMMAND)
 			args.add(arg);
-		args.add(commands);
 
-		ProcessBuilder pb = new ProcessBuilder(args);
-		pb.redirectError(stderr);
-		pb.redirectOutput(stdout);
+		// Interpolated variables
+		String cmds = getCommands(csThread);
+		args.add(cmds);
 
-		//		// Error running the program? 
-		//		if (!task.isDoneOk()) {
-		//			// Execution failed! Save checkpoint and exit
-		//			csThread.checkpoint(null);
-		//			csThread.setExitValue(task.getExitValue()); // Set return value and exit
-		//			return RunState.EXIT;
-		//		}
+		// Run commands line
+		int exitValue = -1;
+		StreamGobbler stdout = null, stderr = null;
+		try {
+			ProcessBuilder pb = new ProcessBuilder(args);
+			Process process = pb.start();
+
+			// Make sure we read STDOUT and STDERR, so that process does not block
+			stdout = new StreamGobbler(process.getInputStream(), false);
+			stderr = new StreamGobbler(process.getErrorStream(), true);
+			stdout.setSaveLinesInMemory(true);
+			stdout.start();
+			stderr.start();
+
+			// Wait for process to finish
+			exitValue = process.waitFor();
+			if (debug) Gpr.debug("Exit value: " + exitValue);
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot execute commnads: '" + commands + "'");
+		}
+
+		// Error running process? 
+		if (exitValue != 0) {
+			// Execution failed! Save checkpoint and exit
+			csThread.checkpoint(null);
+			csThread.setExitValue(exitValue); // Set return value and exit
+			return RunState.EXIT;
+		}
+
+		// Collect output
+		if (stdout != null) output = stdout.getAllLines();
 
 		return RunState.OK;
 	}
-}
-
-class RedirectSdt extends Redirect {
-
-	@Override
-	public Type type() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

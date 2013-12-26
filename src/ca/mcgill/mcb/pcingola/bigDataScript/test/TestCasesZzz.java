@@ -11,7 +11,6 @@ import org.junit.Test;
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Quick test cases when creating a new feature...
@@ -174,10 +173,7 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	@Test
-	public void test31() {
-		Timer timer = new Timer();
-		timer.start();
-		runAndCheck("test/run_31.bds", "events", "[runnning, kill, done]");
-		Assert.assertTrue(timer.elapsed() < 1 * 1000); // We should finish in much less than 1 secs (the program waits 60secs)
+	public void test75() {
+		runAndCheck("test/run_75.bds", "ls", "EXEC\ntest/run_75.bds\nDONE\n");
 	}
 }

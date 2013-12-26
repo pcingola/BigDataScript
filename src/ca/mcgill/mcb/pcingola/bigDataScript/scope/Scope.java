@@ -29,9 +29,14 @@ public class Scope implements BigDataScriptSerialize {
 
 	// Program name
 	public static final String VAR_PROGRAM_NAME = "programName";
+	public static final String VAR_PROGRAM_PATH = "programPath";
 
 	// Global scope
 	private static Scope globalScope = new Scope(null);
+
+	Scope parent;
+
+	HashMap<String, ScopeSymbol> symbols;
 
 	/**
 	 * Global scope
@@ -47,10 +52,6 @@ public class Scope implements BigDataScriptSerialize {
 	public static void resetGlobalScope() {
 		globalScope = new Scope(null);
 	}
-
-	Scope parent;
-
-	HashMap<String, ScopeSymbol> symbols;
 
 	public Scope() {
 		parent = getGlobalScope();

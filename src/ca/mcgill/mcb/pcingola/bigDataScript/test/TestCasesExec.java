@@ -648,4 +648,9 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_74.bds", "i", 10L);
 	}
 
+	@Test
+	public void test75() {
+		runAndCheck("test/run_75.bds", "ls", "EXEC\ntest/run_75.bds\nDONE\n");
+	}
+
 }
