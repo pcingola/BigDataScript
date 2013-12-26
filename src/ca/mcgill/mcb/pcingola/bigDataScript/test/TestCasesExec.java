@@ -623,4 +623,19 @@ public class TestCasesExec extends TestCase {
 		runAndCheckMultiple("test/run_69.bds", expectedValues);
 	}
 
+	@Test
+	public void test70() {
+		runAndCheck("test/run_70.bds", "i", 10L);
+	}
+
+	@Test
+	public void test71() {
+		runAndCheck("test/run_71.bds", "i", 10L);
+	}
+
+	@Test
+	public void test72() {
+		runAndCheck("test/run_72.bds", "i", 10L);
+	}
+
 }

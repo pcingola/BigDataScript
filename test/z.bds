@@ -1,12 +1,23 @@
 
-string f(string[] l) {
-	string h = l.head()
-	return h
+
+int i=0
+
+# Empty clause
+for( ; i < 10 ; i = i+1 ) {
+	print("$i\n")
 }
 
-string[] list
+# Empty end clause
+for( ; i < 20 ; ) {
+	print("$i\n")
+	i = i + 1
+}
 
-print("Start\n")
-f(list)
-print("End\n")
+# Empty conditional clause
+for(;;) {
+	print("$i\n")
+	i = i + 1
+	if( i >= 30 ) break
+}
 
+print("End: i = $i\n")

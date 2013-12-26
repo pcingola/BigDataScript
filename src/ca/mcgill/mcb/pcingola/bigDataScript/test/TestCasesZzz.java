@@ -5,9 +5,6 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.junit.Test;
-
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -170,14 +167,6 @@ public class TestCasesZzz extends TestCase {
 		ScopeSymbol ssym = bigDataScript2.getProgramUnit().getScope().getSymbol(varname);
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 		Assert.assertEquals(expectedValue, ssym.getValue().toString());
-	}
-
-	@Test
-	public void test69() {
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
-		expectedValues.put("bgz", "path/to/file.txt");
-		expectedValues.put("btxt", "path/to/file");
-		runAndCheckMultiple("test/run_69.bds", expectedValues);
 	}
 
 }
