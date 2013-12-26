@@ -28,12 +28,12 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
  */
 public class ExpressionSys extends Expression {
 
-	private static int sysId = 1;
+	protected static int sysId = 1;
 
-	String commands;
-	private String execId;
-	private List<String> strings; // This is used in case of interpolated string literal
-	private List<String> variables; // This is used in case of interpolated string literal
+	protected String commands;
+	protected String execId;
+	protected List<String> strings; // This is used in case of interpolated string literal
+	protected List<String> variables; // This is used in case of interpolated string literal
 
 	/**
 	 * Create a new sys command
@@ -49,7 +49,6 @@ public class ExpressionSys extends Expression {
 		sys.commands = commands;
 		sys.lineNum = lineNum;
 		sys.charPosInLine = charPosInLine;
-
 		sys.interpolateVars(commands);
 
 		return sys;
