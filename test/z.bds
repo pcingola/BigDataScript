@@ -1,18 +1,17 @@
 
+string[] events
 
-int i=0
+string tid = task sleep 60 ; echo hi
+print("Task ID: '$tid'\n")
 
-# Empty end clause
-while( i < 10 ) {
-	print("i = $i\n")
-	i = i + 1
-}
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
 
-# # Empty conditional clause
-# for(;;) {
-# 	print("$i\n")
-# 	i = i + 1
-# 	if( i >= 30 ) break
-# }
-# 
-print("End: i = $i\n")
+// Kill task
+events.add("kill")
+kill tid
+
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+print("Events: " + events) 

@@ -34,8 +34,9 @@ public abstract class TailFile {
 	public static String tail(String fileName, int linesToRead) {
 		if (linesToRead < 1) return "";
 
+		if (fileName == null) return null;
 		File f = new File(fileName);
-		if (!f.exists()) return null;
+		if (f == null || !f.exists()) return null;
 		if (f.length() <= 0) return "";
 
 		// Read file
