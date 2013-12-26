@@ -16,6 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  */
 public class VarDeclaration extends Statement {
 
+	boolean implicit;
 	Type type;
 	VariableInit varInit[];
 
@@ -41,16 +42,32 @@ public class VarDeclaration extends Statement {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		type = (Type) factory(tree, 0);
+		int idx = 0;
 
-		// Create VarInit nodes
-		int num = tree.getChildCount() / 2;
-		varInit = new VariableInit[num];
+		String classname = tree.getChild(0).getClass().getSimpleName();
+		if (classname.equals("VariableInitImplicitContext")) {
+			// Variable 'short' declaration 
+			// Format : varMame := initValue
+			// E.g.   : i := 2
+			implicit = true;
+			varInit = new VariableInit[1];
+			varInit[0] = (VariableInit) factory(tree, idx);
+		} else {
+			// Variable 'classic' declaration 
+			// Format : type varMame = initValue
+			// E.g.   : int i = 2
+			implicit = false;
+			type = (Type) factory(tree, idx++);
 
-		// Parse all VarInit nodes
-		for (int i = 1, j = 0; i < tree.getChildCount(); i++) {
-			varInit[j++] = (VariableInit) factory(tree, i);
-			i++; // ',' 
+			// Create VarInit nodes
+			int num = tree.getChildCount() / 2;
+			varInit = new VariableInit[num];
+
+			// Parse all VarInit nodes
+			for (int i = idx, j = 0; i < tree.getChildCount(); i++) {
+				varInit[j++] = (VariableInit) factory(tree, i);
+				i++; // ',' 
+			}
 		}
 	}
 
@@ -87,8 +104,11 @@ public class VarDeclaration extends Statement {
 			// Already declared?
 			if (scope.hasSymbol(varName, true)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
 
-			scope.add(new ScopeSymbol(varName, type)); // Add variable
+			// Calculate implicit data type
+			if (implicit && type == null) type = vi.getExpression().returnType(scope);
+
+			// Add variable to scope
+			scope.add(new ScopeSymbol(varName, type));
 		}
 	}
-
 }

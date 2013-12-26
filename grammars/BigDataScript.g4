@@ -26,8 +26,9 @@ type : 'bool'                                                                   
      ;
 
 // Variable declaration
-varDeclaration      : type variableInit (',' variableInit)*;
-variableInit        : ID ('=' expression)?;
+varDeclaration       : type variableInit (',' variableInit)* | variableInitImplicit;
+variableInit         : ID ('=' expression)?;
+variableInitImplicit : ID ':=' expression;
 
 // Include statement
 includeF : 'include' (STRING_LITERAL | STRING_LITERAL_SINGLE) eol;
@@ -49,11 +50,11 @@ statement : '{' statement* '}'                                                  
             | 'kill' expression  eol*                                                      # kill
             | 'return' expression?  eol*                                                   # return
             | 'wait' (expression (',' expression)* )?  eol*                                # wait
-            | 'while' '(' expression? ')' statement  eol*                                   # while
-            | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*                              # functionDeclaration
+            | 'while' '(' expression? ')' statement  eol*                                  # while
+            | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*        # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
             | expression  eol*                                                             # statmentExpr
-	        | includeF eol*                                                                # statementInclude
+            | includeF eol*                                                                # statementInclude
             | eol                                                                          # statmentEol
           ;
 

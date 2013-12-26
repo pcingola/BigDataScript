@@ -616,14 +616,6 @@ public class TestCasesExec extends TestCase {
 	}
 
 	@Test
-	public void test69() {
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
-		expectedValues.put("bgz", "path/to/file.txt");
-		expectedValues.put("btxt", "path/to/file");
-		runAndCheckMultiple("test/run_69.bds", expectedValues);
-	}
-
-	@Test
 	public void test70() {
 		runAndCheck("test/run_70.bds", "i", 10L);
 	}
@@ -680,6 +672,16 @@ public class TestCasesExec extends TestCase {
 
 	public void test82() {
 		runAndCheck("test/run_82.bds", "s", "Hi.Bye.");
+	}
+
+	@Test
+	public void test83() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("i", 3L);
+		expectedValues.put("f", 5.85);
+		expectedValues.put("s", "hibye");
+		expectedValues.put("l", "[hi, bye, world]");
+		runAndCheckMultiple("test/run_83.bds", expectedValues);
 	}
 
 }

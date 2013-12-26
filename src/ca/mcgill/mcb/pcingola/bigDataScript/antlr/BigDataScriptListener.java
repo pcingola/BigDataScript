@@ -449,6 +449,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionUnaryPlus(@NotNull BigDataScriptParser.ExpressionUnaryPlusContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#variableInitImplicit}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#variableInitImplicit}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionBitXor}.
 	 * @param ctx the parse tree
 	 */
@@ -559,17 +570,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionUnaryMinus(@NotNull BigDataScriptParser.ExpressionUnaryMinusContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#while}.
-	 * @param ctx the parse tree
-	 */
-	void enterWhile(@NotNull BigDataScriptParser.WhileContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#while}.
-	 * @param ctx the parse tree
-	 */
-	void exitWhile(@NotNull BigDataScriptParser.WhileContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#literalListEmpty}.
 	 * @param ctx the parse tree
 	 */
@@ -579,6 +579,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#while}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhile(@NotNull BigDataScriptParser.WhileContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#while}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhile(@NotNull BigDataScriptParser.WhileContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#typePrimitiveVoid}.

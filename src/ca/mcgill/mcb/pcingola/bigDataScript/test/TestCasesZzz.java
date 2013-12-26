@@ -5,6 +5,9 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Test;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -169,7 +172,13 @@ public class TestCasesZzz extends TestCase {
 		Assert.assertEquals(expectedValue, ssym.getValue().toString());
 	}
 
-	public void test82() {
-		runAndCheck("test/run_82.bds", "s", "Hi.Bye.");
+	@Test
+	public void test83() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("i", 3L);
+		expectedValues.put("f", 5.85);
+		expectedValues.put("s", "hibye");
+		expectedValues.put("l", "[hi, bye, world]");
+		runAndCheckMultiple("test/run_83.bds", expectedValues);
 	}
 }

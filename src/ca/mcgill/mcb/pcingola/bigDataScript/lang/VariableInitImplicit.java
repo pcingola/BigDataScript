@@ -4,72 +4,37 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
- * Variable initialization
- * E.g.: 
- * 			i = 3
+ * Variable declaration
  * 
  * @author pcingola
  */
-public class VariableInit extends BigDataScriptNode {
+public class VariableInitImplicit extends VariableInit {
 
-	String varName;
-	Expression expression;
-
-	public static VariableInit get(String name) {
-		VariableInit vi = new VariableInit(null, null);
+	public static VariableInitImplicit get(String name) {
+		VariableInitImplicit vi = new VariableInitImplicit(null, null);
 		vi.varName = name;
 		return vi;
 	}
 
-	public VariableInit(BigDataScriptNode parent, ParseTree tree) {
+	public VariableInitImplicit(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	public Expression getExpression() {
-		return expression;
-	}
-
-	public String getVarName() {
-		return varName;
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
 		int idx = 0;
 		varName = tree.getChild(idx).getText();
-		if (isTerminal(tree, idx, "=")) idx++;
+		if (isTerminal(tree, idx, ":=")) idx++;
 		expression = (Expression) factory(tree, 2); // Node 1 is '=', we need node 2
-	}
-
-	/**
-	 * Run 
-	 */
-	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		if (expression != null) {
-			Scope scope = csThread.getScope();
-			ScopeSymbol ssym = scope.getSymbol(varName);
-			Object value = expression.eval(csThread);
-			value = ssym.getType().cast(value);
-			ssym.setValue(value);
-		}
-
-		return RunState.OK;
-	}
-
-	public void setExpression(Expression expression) {
-		this.expression = expression;
 	}
 
 	@Override
 	public String toString() {
-		return varName + (expression != null ? " = " + expression : "");
+		return varName + (expression != null ? " := " + expression : "");
 	}
 
 	@Override
@@ -96,4 +61,5 @@ public class VariableInit extends BigDataScriptNode {
 			}
 		}
 	}
+
 }

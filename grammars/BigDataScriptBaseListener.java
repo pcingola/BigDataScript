@@ -537,6 +537,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterExpressionBitXor(@NotNull BigDataScriptParser.ExpressionBitXorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -667,19 +680,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterWhile(@NotNull BigDataScriptParser.WhileContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitWhile(@NotNull BigDataScriptParser.WhileContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -687,6 +687,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterWhile(@NotNull BigDataScriptParser.WhileContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitWhile(@NotNull BigDataScriptParser.WhileContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

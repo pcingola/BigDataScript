@@ -338,6 +338,14 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitExpressionBitXor(@NotNull BigDataScriptParser.ExpressionBitXorContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -418,7 +426,7 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitWhile(@NotNull BigDataScriptParser.WhileContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -426,7 +434,7 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { return visitChildren(ctx); }
+	@Override public T visitWhile(@NotNull BigDataScriptParser.WhileContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
