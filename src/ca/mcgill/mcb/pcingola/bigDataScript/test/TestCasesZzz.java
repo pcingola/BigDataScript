@@ -169,11 +169,7 @@ public class TestCasesZzz extends TestCase {
 		Assert.assertEquals(expectedValue, ssym.getValue().toString());
 	}
 
-	public void test80() {
-		runAndCheck("test/run_80.bds", "j", 2L);
-	}
-
-	public void test81() {
-		runAndCheck("test/run_81.bds", "j", 19L);
+	public void test82() {
+		runAndCheck("test/run_82.bds", "s", "Hi.Bye.");
 	}
 }

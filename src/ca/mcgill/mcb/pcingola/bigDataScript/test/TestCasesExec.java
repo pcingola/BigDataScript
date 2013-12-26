@@ -678,4 +678,8 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_81.bds", "j", 19L);
 	}
 
+	public void test82() {
+		runAndCheck("test/run_82.bds", "s", "Hi.Bye.");
+	}
+
 }
