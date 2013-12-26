@@ -102,6 +102,7 @@ expression : BOOL_LITERAL                                                       
            | '[' expression (',' expression)* ']'                                   # literalList
            | '{' '}'                                                                # literalMapEmpty
            | '{' expression '=>' expression (',' expression '=>' expression)* '}'   # literalMap
+           | EXEC_LITERAL                                                           # expressionExec
            | SYS_LITERAL                                                            # expressionSys
            | TASK_LITERAL                                                           # expressionTaskLiteral
            | 'task' ( '(' expression (',' expression)* ')' )? statement             # expressionTask
