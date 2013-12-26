@@ -5,6 +5,9 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Test;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -167,6 +170,16 @@ public class TestCasesZzz extends TestCase {
 		ScopeSymbol ssym = bigDataScript2.getProgramUnit().getScope().getSymbol(varname);
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 		Assert.assertEquals(expectedValue, ssym.getValue().toString());
+	}
+
+	@Test
+	public void test73() {
+		runAndCheck("test/run_73.bds", "i", 10L);
+	}
+
+	@Test
+	public void test74() {
+		runAndCheck("test/run_74.bds", "i", 10L);
 	}
 
 }

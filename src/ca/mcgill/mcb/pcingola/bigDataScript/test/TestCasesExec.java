@@ -638,4 +638,14 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_72.bds", "i", 10L);
 	}
 
+	@Test
+	public void test73() {
+		runAndCheck("test/run_73.bds", "i", 10L);
+	}
+
+	@Test
+	public void test74() {
+		runAndCheck("test/run_74.bds", "i", 10L);
+	}
+
 }

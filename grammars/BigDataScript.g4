@@ -49,7 +49,7 @@ statement : '{' statement* '}'                                                  
             | 'kill' expression  eol*                                                      # kill
             | 'return' expression?  eol*                                                   # return
             | 'wait' (expression (',' expression)* )?  eol*                                # wait
-            | 'while' '(' expression ')' statement  eol*                                   # while
+            | 'while' '(' expression? ')' statement  eol*                                   # while
             | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*                              # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
             | expression  eol*                                                             # statmentExpr
