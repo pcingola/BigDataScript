@@ -25,13 +25,15 @@ public class If extends Statement {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		//child[0] = 'if'
-		//child[1] = '('
-		condition = (Expression) factory(tree, 2);
-		//child[3] = ')'
-		statement = (Statement) factory(tree, 4);
-		//child[5] = 'else' 
-		int idx = findIndex(tree, "else", 5);
+		int idx = 0;
+		if (isTerminal(tree, idx, "if")) idx++; // 'if'
+		if (isTerminal(tree, idx, "(")) idx++; // '('
+		if (!isTerminal(tree, idx, ")")) condition = (Expression) factory(tree, idx++);
+		if (isTerminal(tree, idx, ")")) idx++; // ')'
+		statement = (Statement) factory(tree, idx++);
+
+		// Do we have an 'else' statement?
+		idx = findIndex(tree, "else", idx);
 		if (idx > 0) elseStatement = (Statement) factory(tree, idx + 1);
 	}
 
@@ -40,7 +42,7 @@ public class If extends Statement {
 	 */
 	@Override
 	protected RunState runStep(BigDataScriptThread csThread) {
-		if (condition.evalBool(csThread)) return statement.run(csThread);
+		if (condition == null || condition.evalBool(csThread)) return statement.run(csThread);
 		if (elseStatement != null) return elseStatement.run(csThread);
 		return RunState.OK;
 	}
@@ -50,7 +52,7 @@ public class If extends Statement {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("if( ");
-		sb.append(condition);
+		if (condition != null) sb.append(condition);
 		sb.append(" ) {\n");
 		sb.append(statement);
 		if (elseStatement != null) {
