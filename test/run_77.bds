@@ -1,0 +1,7 @@
+
+
+int[] list 
+for( int i=10 ; i >= 0 ; i -= 2 ) {
+	list.add(i)
+}
+print("list=$list\n")

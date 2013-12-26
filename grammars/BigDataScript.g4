@@ -106,6 +106,12 @@ expression : BOOL_LITERAL                                                       
            | SYS_LITERAL                                                            # expressionSys
            | TASK_LITERAL                                                           # expressionTaskLiteral
            | 'task' ( '(' expression (',' expression)* ')' )? statement             # expressionTask
+           | expression '|=' expression                                             # expressionAssignmentBitOr
+           | expression '&=' expression                                             # expressionAssignmentBitAnd
+           | expression '/=' expression                                             # expressionAssignmentDiv
+           | expression '*=' expression                                             # expressionAssignmentMult
+           | expression '-=' expression                                             # expressionAssignmentMinus
+           | expression '+=' expression                                             # expressionAssignmentPlus
            | expression '=' expression                                              # expressionAssignment
            ;
 

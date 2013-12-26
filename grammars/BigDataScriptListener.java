@@ -119,6 +119,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionLe(@NotNull BigDataScriptParser.ExpressionLeContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionAssignmentDiv}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionAssignmentDiv(@NotNull BigDataScriptParser.ExpressionAssignmentDivContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentDiv}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionAssignmentDiv(@NotNull BigDataScriptParser.ExpressionAssignmentDivContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionLogicAnd}.
 	 * @param ctx the parse tree
 	 */
@@ -128,6 +139,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionLogicAnd(@NotNull BigDataScriptParser.ExpressionLogicAndContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionAssignmentBitOr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionAssignmentBitOr(@NotNull BigDataScriptParser.ExpressionAssignmentBitOrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentBitOr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionAssignmentBitOr(@NotNull BigDataScriptParser.ExpressionAssignmentBitOrContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionDivide}.
@@ -306,6 +328,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionLogicOr(@NotNull BigDataScriptParser.ExpressionLogicOrContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionAssignmentPlus}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionAssignmentPlus(@NotNull BigDataScriptParser.ExpressionAssignmentPlusContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentPlus}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionAssignmentPlus(@NotNull BigDataScriptParser.ExpressionAssignmentPlusContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#typeMap}.
 	 * @param ctx the parse tree
 	 */
@@ -370,6 +403,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypePrimitiveInt(@NotNull BigDataScriptParser.TypePrimitiveIntContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionAssignmentMult}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionAssignmentMult(@NotNull BigDataScriptParser.ExpressionAssignmentMultContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentMult}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionAssignmentMult(@NotNull BigDataScriptParser.ExpressionAssignmentMultContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#exit}.
@@ -458,6 +502,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVarReferenceList(@NotNull BigDataScriptParser.VarReferenceListContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionAssignmentBitAnd}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentBitAnd}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionSys}.
@@ -799,6 +854,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitContinue(@NotNull BigDataScriptParser.ContinueContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionAssignmentMinus}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentMinus}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionLt}.

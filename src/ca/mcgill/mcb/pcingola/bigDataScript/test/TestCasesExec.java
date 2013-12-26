@@ -653,4 +653,29 @@ public class TestCasesExec extends TestCase {
 		runAndCheck("test/run_75.bds", "ls", "EXEC\ntest/run_75.bds\nDONE\n");
 	}
 
+	@Test
+	public void test76() {
+		runAndCheck("test/run_76.bds", "list", "[0, 2, 4, 6, 8, 10]");
+	}
+
+	public void test77() {
+		runAndCheck("test/run_77.bds", "list", "[10, 8, 6, 4, 2, 0]");
+	}
+
+	public void test78() {
+		runAndCheck("test/run_78.bds", "list", "[1, 2, 4, 8, 16, 32, 64]");
+	}
+
+	public void test79() {
+		runAndCheck("test/run_79.bds", "list", "[128, 64, 32, 16, 8, 4, 2, 1]");
+	}
+
+	public void test80() {
+		runAndCheck("test/run_80.bds", "j", 2L);
+	}
+
+	public void test81() {
+		runAndCheck("test/run_81.bds", "j", 19L);
+	}
+
 }

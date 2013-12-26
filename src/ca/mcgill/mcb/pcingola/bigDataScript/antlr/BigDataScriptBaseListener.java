@@ -147,6 +147,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterExpressionAssignmentDiv(@NotNull BigDataScriptParser.ExpressionAssignmentDivContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitExpressionAssignmentDiv(@NotNull BigDataScriptParser.ExpressionAssignmentDivContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterExpressionLogicAnd(@NotNull BigDataScriptParser.ExpressionLogicAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -154,6 +167,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitExpressionLogicAnd(@NotNull BigDataScriptParser.ExpressionLogicAndContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterExpressionAssignmentBitOr(@NotNull BigDataScriptParser.ExpressionAssignmentBitOrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitExpressionAssignmentBitOr(@NotNull BigDataScriptParser.ExpressionAssignmentBitOrContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -368,6 +394,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterExpressionAssignmentPlus(@NotNull BigDataScriptParser.ExpressionAssignmentPlusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitExpressionAssignmentPlus(@NotNull BigDataScriptParser.ExpressionAssignmentPlusContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterTypeMap(@NotNull BigDataScriptParser.TypeMapContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -440,6 +479,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitTypePrimitiveInt(@NotNull BigDataScriptParser.TypePrimitiveIntContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterExpressionAssignmentMult(@NotNull BigDataScriptParser.ExpressionAssignmentMultContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitExpressionAssignmentMult(@NotNull BigDataScriptParser.ExpressionAssignmentMultContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -544,6 +596,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitVarReferenceList(@NotNull BigDataScriptParser.VarReferenceListContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -947,6 +1012,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitContinue(@NotNull BigDataScriptParser.ContinueContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
