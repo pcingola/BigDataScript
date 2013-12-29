@@ -178,7 +178,7 @@ func executeCommandArgs() int {
 	Timeout after timeout seconds (unless time is zero)
 */
 func executeCommand(command string, args []string, timeSecs int, outFile, errFile, exitFile string) int {
-	//log.Printf("executing command %s\n", command)
+	// log.Printf("Executing command %s\n", command)
 	// Redirect all signals to channel (e.g. Ctrl-C)
 	osSignal := make(chan os.Signal, 1)
 	if pidFile != "" {

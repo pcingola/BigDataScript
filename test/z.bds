@@ -1,16 +1,9 @@
+#!/usr/bin/env bds
 
+print("This should timeout\n")
 
-i := 2
-f := 3.14
-s := 'hi'
-l := ['hi', 'bye']
+task( timeout = 1 ) {
+	sys echo Start ; sleep 1 ; echo 1 sec; sleep 1 ; echo 2 sec; sleep 1 ; echo 3 sec;
+} 
 
-i++
-f += 2.71
-s += 'bye'
-l.add('world')
-
-print("s='$s'\n")
-print("i='$i'\n")
-print("f='$f'\n")
-print("l='$l'\n")
+print("We should never reach this point...\n")
