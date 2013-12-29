@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -97,6 +99,40 @@ public class TestCasesExec extends TestCase {
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
 			);
 		}
+	}
+
+	/**
+	 * Check that StdErr has a string
+	 * @param fileName
+	 * @param expectedStderr
+	 */
+	void runAndCheckStderr(String fileName, String expectedStderr) {
+		String args[] = { fileName };
+
+		// Compile
+		BigDataScript bigDataScript = new BigDataScript(args);
+		bigDataScript.compile();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+
+		PrintStream stderr = System.err;
+		ByteArrayOutputStream captureStderr = new ByteArrayOutputStream();
+		try {
+			// Capture STDERR
+			System.setErr(new PrintStream(captureStderr));
+
+			// Run
+			bigDataScript.run();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		} finally {
+			// Restore STDERR
+			System.setErr(stderr);
+		}
+
+		// Check that the expected string is in STDERR
+		if (debug) Gpr.debug("Program's stderr: '" + captureStderr + "'");
+		int index = captureStderr.toString().indexOf(expectedStderr);
+		if (index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStderr + "' in STDERR not found.\nSTDERR:\n" + captureStderr + "\n");
 	}
 
 	@Override
@@ -682,6 +718,16 @@ public class TestCasesExec extends TestCase {
 		expectedValues.put("s", "hibye");
 		expectedValues.put("l", "[hi, bye, world]");
 		runAndCheckMultiple("test/run_83.bds", expectedValues);
+	}
+
+	@Test
+	public void test84() {
+		runAndCheck("test/run_84.bds", "taskOk", "false");
+	}
+
+	@Test
+	public void test85() {
+		runAndCheckStderr("test/run_84.bds", "ERROR_TIMEOUT");
 	}
 
 }

@@ -2,12 +2,13 @@
 
 print("This should timeout\n")
 
-bool taskFailed = true
+bool taskOk = false
 
 task( timeout = 1 ) {
 	sys echo Start ; sleep 1 ; echo 1 sec; sleep 1 ; echo 2 sec; sleep 1 ; echo 3 sec;
 } 
 
-taskFailed = false
+wait 
 
+taskOk = true
 print("We should never reach this point...\n")
