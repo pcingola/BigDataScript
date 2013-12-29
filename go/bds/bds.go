@@ -47,6 +47,11 @@ import (
 	"time"
 )
 
+// Exit codes
+const EXITCODE_OK = 0
+const EXITCODE_ERROR = 1
+const EXITCODE_TIMEOUT = 2
+
 // Store all PID in this file
 var pidFile string = ""
 
@@ -298,10 +303,15 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 
 	// OK? exit value should be zero
 	if exitStr == "0" {
-		return 0
+		return EXITCODE_OK
 	}
 
-	return 1
+	// Timeout?
+	if exitStr == "Time out" {
+		return EXITCODE_TIMEOUT
+	}
+
+	return EXITCODE_ERROR
 }
 
 /*

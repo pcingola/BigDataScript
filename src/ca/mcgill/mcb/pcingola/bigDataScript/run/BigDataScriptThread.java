@@ -32,11 +32,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class BigDataScriptThread extends Thread implements BigDataScriptSerialize {
 
 	public static final int SLEEP_TIME = 250;
-
 	private static int threadNumber = 1;
 
 	String bigDataScriptThreadId;
-
 	int bigDataScriptThreadNum;
 	int checkPointRecoverNodeIdx;
 	int exitValue;

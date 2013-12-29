@@ -22,11 +22,18 @@ public class Task implements BigDataScriptSerialize {
 		, START_FAILED // Process failed to start (or failed to queue)
 		, RUNNING // Running OK
 		, ERROR // Filed while running
+		, ERROR_TIMEOUT // Filed due to timeout
 		, KILLED // Task was killed  
 		, FINISHED // Finished OK  
 	}
 
+	// TODO: This should be a variable (SHEBANG?)
 	public static final String SHE_BANG = "#!/bin/sh -e\n\n"; // Use '-e' so that shell script stops after first error
+
+	// Exit codes (see bds.go)
+	public static final int EXITCODE_OK = 0;
+	public static final int EXITCODE_ERROR = 1;
+	public static final int EXITCODE_TIMEOUT = 2;
 
 	protected boolean verbose, debug;
 	protected boolean canFail; // Allow execution to fail
@@ -187,6 +194,7 @@ public class Task implements BigDataScriptSerialize {
 	public synchronized boolean isError() {
 		return (taskState == TaskState.START_FAILED) //
 				|| (taskState == TaskState.ERROR) //
+				|| (taskState == TaskState.ERROR_TIMEOUT) //
 				|| (taskState == TaskState.KILLED) //
 		;
 	}
@@ -285,7 +293,8 @@ public class Task implements BigDataScriptSerialize {
 	 */
 	public synchronized void setExitValue(int exitValue) {
 		this.exitValue = exitValue;
-		if (exitValue == 0) taskState = TaskState.FINISHED;
+		if (exitValue == EXITCODE_OK) taskState = TaskState.FINISHED;
+		else if (exitValue == EXITCODE_TIMEOUT) taskState = TaskState.ERROR_TIMEOUT;
 		else taskState = TaskState.ERROR;
 	}
 
@@ -317,7 +326,7 @@ public class Task implements BigDataScriptSerialize {
 	 * Change state to ERROR or START_FAILED
 	 */
 	public synchronized void stateError() {
-		if (isStarted()) taskState = TaskState.START_FAILED;
+		if (!isStarted()) taskState = TaskState.START_FAILED;
 		else taskState = TaskState.ERROR;
 	}
 
