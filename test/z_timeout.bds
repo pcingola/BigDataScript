@@ -1,5 +1,0 @@
-#!/usr/bin/env
-
-task( timeout = 10 ) {
-	sys echo Start ; sleep 1 ; echo 1 sec; sleep 1 ; echo 2 sec; sleep 1 ; echo 2 sec;
-}
