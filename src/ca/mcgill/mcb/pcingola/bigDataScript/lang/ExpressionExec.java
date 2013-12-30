@@ -80,9 +80,11 @@ public class ExpressionExec extends ExpressionSys {
 		// Error running process? 
 		if (exitValue != 0) {
 			// Execution failed! Save checkpoint and exit
-			csThread.checkpoint(null);
-			csThread.setExitValue(exitValue); // Set return value and exit
-			return RunState.EXIT;
+			csThread.fatalError(this, "Exec failed." //
+					+ "\n\tExit value : " + exitValue //
+					+ "\n\tCommand    : " + cmds //
+			);
+			return RunState.FATAL_ERROR;
 		}
 
 		// Collect output

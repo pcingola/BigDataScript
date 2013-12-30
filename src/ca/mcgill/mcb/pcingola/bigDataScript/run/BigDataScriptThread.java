@@ -135,11 +135,27 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Show a fatal error
 	 * @param bdsnode
 	 */
-	public void fatalError(BigDataScriptNode bdsnode, Throwable t) {
-		System.err.println("Fatal error: " + bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + bdsnode.getCharPosInLine() + ".");
+	public void fatalError(BigDataScriptNode bdsnode, String message) {
+		runState = RunState.FATAL_ERROR;
+		System.err.println("Fatal error: " + bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + bdsnode.getCharPosInLine() + ". " + message);
 
 		// Show BDS stack trace
 		System.err.println(stackTrace());
+
+		// Create checkpoint
+		String checkpointFileName = checkpoint(null);
+		System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
+
+		// Set exit value
+		setExitValue(1L);
+	}
+
+	/**
+	 * Show a fatal error
+	 * @param bdsnode
+	 */
+	public void fatalError(BigDataScriptNode bdsnode, Throwable t) {
+		fatalError(bdsnode, t.getMessage());
 
 		// Show java stack trace
 		if (config.isVerbose()) t.printStackTrace();
@@ -409,8 +425,24 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @return
 	 */
 	public boolean shouldRun(BigDataScriptNode node) {
-		// Not in checkpoint recovery mode? => Run 
-		if (!isCheckpointRecover()) return true;
+		// Should we run?
+		switch (runState) {
+		case OK:
+		case BREAK:
+		case CONTINUE:
+		case RETURN:
+			return true;
+
+		case EXIT:
+		case FATAL_ERROR:
+			return false;
+
+		case CHECKPOINT_RECOVER:
+			break;
+
+		default:
+			throw new RuntimeException("Unhandled RunState: " + runState);
+		}
 
 		// Which node are we looking for?
 		int nodeNum = checkpointRecoverNextNode();

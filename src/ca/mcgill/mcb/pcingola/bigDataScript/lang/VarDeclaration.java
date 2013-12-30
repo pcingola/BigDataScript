@@ -78,7 +78,24 @@ public class VarDeclaration extends Statement {
 	protected RunState runStep(BigDataScriptThread csThread) {
 		for (VariableInit vi : varInit) {
 			csThread.getScope().add(new ScopeSymbol(vi.varName, type)); // Add variable to scope
-			vi.run(csThread); // Run varInit
+			RunState rstate = vi.run(csThread); // Run varInit
+
+			// Act based on run state
+			switch (rstate) {
+			case OK: // OK do nothing
+			case CHECKPOINT_RECOVER:
+				break;
+
+			case BREAK: // Break form this block immediately
+			case CONTINUE:
+			case RETURN:
+			case EXIT:
+			case FATAL_ERROR:
+				return rstate;
+
+			default:
+				throw new RuntimeException("Unhandled RunState: " + rstate);
+			}
 		}
 
 		return RunState.OK;

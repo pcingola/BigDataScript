@@ -49,8 +49,6 @@ public class While extends Statement {
 				return RunState.OK;
 
 			case FATAL_ERROR:
-				return RunState.FATAL_ERROR;
-
 			case RETURN:
 			case EXIT:
 				return rstate;

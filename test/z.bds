@@ -1,13 +1,13 @@
 #!/usr/bin/env bds
 
-print("This should timeout\n")
+string[] f
+#string s0 = "hi" + f[1] 
+print("OK f[1]!\n")
+#string sh = f.head()
+print("OK HEAD!\n")
+#string sp = f.pop()
+print("OK POP!\n")
 
-bool taskFailed = true
 
-task( timeout = 1 ) {
-	sys echo Start ; sleep 1 ; echo 1 sec; sleep 1 ; echo 2 sec; sleep 1 ; echo 3 sec;
-} 
-
-taskFailed = false
-
-print("We should never reach this point...\n")
+string ls = exec ls *.zxzxzx
+print("OK exec\n")

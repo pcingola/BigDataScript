@@ -55,10 +55,8 @@ public class Block extends StatementWithScope {
 				case CONTINUE:
 				case RETURN:
 				case EXIT:
-					return rstate;
-
 				case FATAL_ERROR:
-					return RunState.FATAL_ERROR;
+					return rstate;
 
 				default:
 					throw new RuntimeException("Unhandled RunState: " + rstate);

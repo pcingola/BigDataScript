@@ -62,8 +62,6 @@ public class ForLoop extends StatementWithScope {
 				return RunState.OK;
 
 			case FATAL_ERROR:
-				return RunState.FATAL_ERROR;
-
 			case RETURN: // Return
 			case EXIT: // Exit program
 				return rstate;

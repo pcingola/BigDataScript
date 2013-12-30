@@ -442,12 +442,12 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	public RunState run(BigDataScriptThread csThread) {
 		boolean recover = csThread.isCheckpointRecover();
 
+		RunState rstate = RunState.OK;
 		if (!recover) runBegin(csThread); // Before node execution
+		else rstate = RunState.CHECKPOINT_RECOVER;
 
-		RunState rstate = null;
 		try {
 			if (csThread.shouldRun(this)) rstate = runStep(csThread); // Run 
-			else rstate = RunState.CHECKPOINT_RECOVER;
 		} catch (Throwable t) {
 			csThread.fatalError(this, t);
 			rstate = RunState.FATAL_ERROR;
