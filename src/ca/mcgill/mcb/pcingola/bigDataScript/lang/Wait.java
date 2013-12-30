@@ -63,7 +63,7 @@ public class Wait extends Statement {
 		// Any task failed?
 		if (!ok) {
 			// Create a checkpoint 
-			csThread.fatalError(this, "Task '" + ok + "' failed.");
+			csThread.fatalError(this, "Task/s failed.");
 			return RunState.FATAL_ERROR;
 		}
 
