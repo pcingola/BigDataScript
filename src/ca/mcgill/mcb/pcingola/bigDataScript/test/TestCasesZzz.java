@@ -209,12 +209,7 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	@Test
-	public void test84() {
-		runAndCheck("test/run_84.bds", "taskOk", "false");
-	}
-
-	@Test
-	public void test85() {
-		runAndCheckStderr("test/run_84.bds", "ERROR_TIMEOUT");
+	public void test75() {
+		runAndCheck("test/run_75.bds", "ls", "EXEC\ntest/run_75.bds\nDONE\n");
 	}
 }

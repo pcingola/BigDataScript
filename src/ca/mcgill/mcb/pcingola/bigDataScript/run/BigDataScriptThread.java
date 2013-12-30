@@ -158,7 +158,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		fatalError(bdsnode, t.getMessage());
 
 		// Show java stack trace
-		if (config.isVerbose()) t.printStackTrace();
+		if ((config == null) || config.isVerbose()) t.printStackTrace();
 	}
 
 	public String getBigDataScriptThreadId() {
@@ -329,7 +329,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		try {
 			runState = programUnit.run(this);
 		} catch (Throwable t) {
-			if (config.isVerbose()) throw new RuntimeException(t);
+			if ((config == null) || config.isVerbose()) throw new RuntimeException(t);
 			else System.err.println("Fatal error: Program execution finished");
 			return;
 		}
@@ -437,6 +437,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		case FATAL_ERROR:
 			return false;
 
+		case WAIT_RECOVER:
 		case CHECKPOINT_RECOVER:
 			break;
 
@@ -456,7 +457,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			// Last node found!
 			runState = RunState.OK; // Switch to 'normal' run state
 			if (node instanceof Wait) {
-				runState = RunState.WAIT_RECOVER; // We want to recover all tasks that failed in wat instructions
+				runState = RunState.WAIT_RECOVER; // We want to recover all tasks that failed in wait statement
 			}
 
 			if (node instanceof Checkpoint) return false; // We want to recover AFTER the checkpoint
