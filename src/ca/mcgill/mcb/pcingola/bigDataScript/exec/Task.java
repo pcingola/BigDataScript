@@ -110,6 +110,18 @@ public class Task implements BigDataScriptSerialize {
 		if (programFileName != null) (new File(programFileName)).deleteOnExit();
 	}
 
+	/**
+	 * Mark output files to be deleted on exit
+	 */
+	public void deleteOutputFilesOnExit() {
+		if (outputFiles == null) return; // Nothing to check
+
+		for (String fileName : outputFiles) {
+			File file = new File(fileName);
+			if (file.exists()) file.deleteOnExit();
+		}
+	}
+
 	public String getBdsFileName() {
 		return bdsFileName;
 	}
@@ -287,9 +299,9 @@ public class Task implements BigDataScriptSerialize {
 	 */
 	public synchronized void setExitValue(int exitValue) {
 		this.exitValue = exitValue;
-		if (exitValue == EXITCODE_OK) taskState = TaskState.FINISHED;
-		else if (exitValue == EXITCODE_TIMEOUT) taskState = TaskState.ERROR_TIMEOUT;
-		else taskState = TaskState.ERROR;
+		if (exitValue == EXITCODE_OK) state(TaskState.FINISHED);
+		else if (exitValue == EXITCODE_TIMEOUT) state(TaskState.ERROR_TIMEOUT);
+		else state(TaskState.ERROR);
 	}
 
 	public void setNode(String node) {
@@ -320,34 +332,34 @@ public class Task implements BigDataScriptSerialize {
 	 * Change state to ERROR or START_FAILED
 	 */
 	public synchronized void stateError() {
-		if (!isStarted()) taskState = TaskState.START_FAILED;
-		else taskState = TaskState.ERROR;
+		if (!isStarted()) state(TaskState.START_FAILED);
+		else state(TaskState.ERROR);
 	}
 
 	/**
 	 * Change state to FINISHED
 	 */
 	public synchronized void stateFinished() {
-		taskState = TaskState.FINISHED;
+		state(TaskState.FINISHED);
 	}
 
 	/**
 	 * Change state to FINISHED
 	 */
 	public synchronized void stateKilled() {
-		taskState = TaskState.KILLED;
+		state(TaskState.KILLED);
 		exitValue = -1;
 	}
 
 	public synchronized void stateRunning() {
-		taskState = TaskState.RUNNING;
+		state(TaskState.RUNNING);
 	}
 
 	/**
 	 * Change state to STARTED
 	 */
 	public synchronized void stateStarted() {
-		taskState = TaskState.STARTED;
+		state(TaskState.STARTED);
 	}
 
 	@Override
