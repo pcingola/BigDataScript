@@ -378,13 +378,13 @@ public class Task implements BigDataScriptSerialize {
 			sb.append("\tExit status        : '" + exitValue + "'\n");
 
 			String ch = checkOutputFiles();
-			if (!ch.isEmpty()) sb.append("\tOutput file errors :\n" + Gpr.prependEachLine("\t\t", ch));
+			if ((ch != null) && !ch.isEmpty()) sb.append("\tOutput file errors :\n" + Gpr.prependEachLine("\t\t", ch));
 
 			String tailErr = TailFile.tail(stderrFile);
-			if (!tailErr.isEmpty()) sb.append("\tStdErr (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailErr));
+			if ((tailErr != null) && !tailErr.isEmpty()) sb.append("\tStdErr (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailErr));
 
 			String tailOut = TailFile.tail(stdoutFile);
-			if (!tailOut.isEmpty()) sb.append("\tStdOut (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailOut));
+			if ((tailOut != null) && !tailOut.isEmpty()) sb.append("\tStdOut (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailOut));
 
 			if (debug) {
 				sb.append("\tTask raw code:\n");
