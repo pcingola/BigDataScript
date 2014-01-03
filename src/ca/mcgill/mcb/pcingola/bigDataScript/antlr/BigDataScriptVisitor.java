@@ -82,11 +82,25 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionLe(@NotNull BigDataScriptParser.ExpressionLeContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentDiv}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionAssignmentDiv(@NotNull BigDataScriptParser.ExpressionAssignmentDivContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionLogicAnd}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExpressionLogicAnd(@NotNull BigDataScriptParser.ExpressionLogicAndContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentBitOr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionAssignmentBitOr(@NotNull BigDataScriptParser.ExpressionAssignmentBitOrContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionDivide}.
@@ -201,6 +215,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionLogicOr(@NotNull BigDataScriptParser.ExpressionLogicOrContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentPlus}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionAssignmentPlus(@NotNull BigDataScriptParser.ExpressionAssignmentPlusContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#typeMap}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -243,6 +264,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitTypePrimitiveInt(@NotNull BigDataScriptParser.TypePrimitiveIntContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentMult}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionAssignmentMult(@NotNull BigDataScriptParser.ExpressionAssignmentMultContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#exit}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -262,6 +290,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpressionUnaryPlus(@NotNull BigDataScriptParser.ExpressionUnaryPlusContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#variableInitImplicit}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionBitXor}.
@@ -299,6 +334,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitVarReferenceList(@NotNull BigDataScriptParser.VarReferenceListContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentBitAnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionSys}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -327,18 +369,18 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionUnaryMinus(@NotNull BigDataScriptParser.ExpressionUnaryMinusContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#while}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitWhile(@NotNull BigDataScriptParser.WhileContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#literalListEmpty}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#while}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhile(@NotNull BigDataScriptParser.WhileContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#typePrimitiveVoid}.
@@ -516,6 +558,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitContinue(@NotNull BigDataScriptParser.ContinueContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentMinus}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionLt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -549,6 +598,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpressionTimes(@NotNull BigDataScriptParser.ExpressionTimesContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionExec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionExec(@NotNull BigDataScriptParser.ExpressionExecContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#warning}.

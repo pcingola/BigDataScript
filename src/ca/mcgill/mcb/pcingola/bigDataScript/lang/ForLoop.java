@@ -29,18 +29,15 @@ public class ForLoop extends StatementWithScope {
 	@Override
 	protected void parse(ParseTree tree) {
 		int idx = 0;
-		idx++; // 'for'
 
-		idx++; // '('
-
-		begin = (ForInit) factory(tree, idx++);
-		idx++; // ';'
-
-		condition = (ForCondition) factory(tree, idx++);
-		idx++; // ';'
-
-		end = (ForEnd) factory(tree, idx++);
-		idx++; // ')'
+		if (isTerminal(tree, idx, "for")) idx++; // 'for'
+		if (isTerminal(tree, idx, "(")) idx++; // '('
+		if (!isTerminal(tree, idx, ";")) begin = (ForInit) factory(tree, idx++); // Is this a 'for:begin'? (could be empty)
+		if (isTerminal(tree, idx, ";")) idx++; // ';'
+		if (!isTerminal(tree, idx, ";")) condition = (ForCondition) factory(tree, idx++); // Is this a 'for:condition'? (could be empty)
+		if (isTerminal(tree, idx, ";")) idx++; // ';'
+		if (!isTerminal(tree, idx, ")")) end = (ForEnd) factory(tree, idx++); // Is this a 'for:end'? (could be empty)
+		if (isTerminal(tree, idx, ")")) idx++; // ')'
 
 		statement = (Statement) factory(tree, idx++);
 	}
@@ -51,9 +48,9 @@ public class ForLoop extends StatementWithScope {
 	@Override
 	protected RunState runStep(BigDataScriptThread csThread) {
 		// Loop initialization
-		begin.run(csThread);
+		if (begin != null) begin.run(csThread);
 
-		while (condition.evalBool(csThread)) { // Loop condition
+		while (condition != null ? condition.evalBool(csThread) : true) { // Loop condition
 			RunState rstate = statement.run(csThread); // Loop statement
 
 			switch (rstate) {
@@ -65,8 +62,6 @@ public class ForLoop extends StatementWithScope {
 				return RunState.OK;
 
 			case FATAL_ERROR:
-				return RunState.FATAL_ERROR;
-
 			case RETURN: // Return
 			case EXIT: // Exit program
 				return rstate;
@@ -78,7 +73,7 @@ public class ForLoop extends StatementWithScope {
 				throw new RuntimeException("Unhandled RunState: " + rstate);
 			}
 
-			end.run(csThread); // End of loop
+			if (end != null) end.run(csThread); // End of loop
 		}
 
 		return RunState.OK;

@@ -60,9 +60,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class BigDataScript {
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2013-12-10";
-	public static final String REVISION = "b";
-	public static final String VERSION_MAJOR = "0.3";
+	public static final String BUILD = "2013-12-26";
+	public static final String REVISION = "";
+	public static final String VERSION_MAJOR = "0.4";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
@@ -77,8 +77,7 @@ public class BigDataScript {
 	Config config;
 	ProgramUnit programUnit; // Program (parsed nodes)
 	BigDataScriptThread bigDataScriptThread;
-	ArrayList<String> programArgs; // Command line arguments for BigDataScript
-									// program
+	ArrayList<String> programArgs; // Command line arguments for BigDataScript program
 
 	/**
 	 * Create an AST from a program (using ANTLR lexer & parser)
@@ -427,8 +426,10 @@ public class BigDataScript {
 		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING), programArgs));
 
 		// Initialize program name
-		String progName = Gpr.baseName(programUnit.getFileName());
+		String programPath = programUnit.getFileName();
+		String progName = Gpr.baseName(programPath);
 		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, progName));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_PROGRAM_PATH, Type.STRING, programPath));
 	}
 
 	/**
@@ -554,6 +555,7 @@ public class BigDataScript {
 		// Add global symbols
 		// ---
 		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, ""));
+		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_PATH, Type.STRING, ""));
 
 		// Command line parameters override defaults
 		if (system == null) system = ExecutionerType.LOCAL.toString().toLowerCase();

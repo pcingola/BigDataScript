@@ -1,0 +1,7 @@
+#!/usr/bin/env bds
+
+string file = "path/to/file.txt"
+string bgz = file.removeExt(".gz")
+string btxt = file.removeExt(".txt")
+print("Base gz: $bgz\n")
+print("Base txt: $btxt\n")

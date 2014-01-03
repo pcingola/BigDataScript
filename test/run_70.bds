@@ -1,0 +1,10 @@
+
+
+int i=0
+
+# Empty clause
+for( ; i < 10 ; i = i+1 ) {
+	print("$i\n")
+}
+
+print("End: i = $i\n")

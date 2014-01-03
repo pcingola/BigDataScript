@@ -1,12 +1,11 @@
+#!/usr/bin/env bds
 
-string f(string[] l) {
-	string h = l.head()
-	return h
+in  := "in.txt"
+out := "out.txt"
+
+task( out <- in ) {
+	sys echo START > $out ; ls *.zzz >> $out ; echo END >> $out
 }
 
-string[] list
-
-print("Start\n")
-f(list)
-print("End\n")
-
+wait
+print("OK!\n")

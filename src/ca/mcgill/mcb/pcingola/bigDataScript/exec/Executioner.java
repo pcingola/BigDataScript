@@ -263,7 +263,7 @@ public abstract class Executioner extends Thread {
 			t.printStackTrace();
 			throw new RuntimeException(t);
 		} finally {
-			
+
 			runLoopAfter(); // Clean up
 		}
 	}

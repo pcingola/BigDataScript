@@ -32,6 +32,7 @@ public class VarReferenceList extends Reference {
 	public Object eval(BigDataScriptThread csThread) {
 		int idx = evalIndex(csThread);
 		ArrayList list = getList(csThread.getScope());
+		if ((idx < 0) || (idx >= list.size())) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + list.size() + ").");
 		return list.get(idx);
 	}
 

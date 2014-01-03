@@ -1,0 +1,12 @@
+
+
+int i=0
+
+# Empty conditional clause
+while() {
+	print("$i\n")
+	i = i + 1
+	if( i >= 10 ) break
+}
+
+print("End: i = $i\n")

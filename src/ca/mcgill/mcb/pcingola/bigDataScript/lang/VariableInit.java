@@ -10,7 +10,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
- * Variable declaration
+ * Variable initialization
+ * E.g.: 
+ * 			i = 3
  * 
  * @author pcingola
  */
@@ -39,7 +41,9 @@ public class VariableInit extends BigDataScriptNode {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		varName = tree.getChild(0).getText();
+		int idx = 0;
+		varName = tree.getChild(idx).getText();
+		if (isTerminal(tree, idx, "=")) idx++;
 		expression = (Expression) factory(tree, 2); // Node 1 is '=', we need node 2
 	}
 
@@ -77,7 +81,6 @@ public class VariableInit extends BigDataScriptNode {
 
 		// Calculate expression type
 		if (expression != null) {
-
 			Type exprRetType = expression.returnType(scope);
 
 			// Compare types

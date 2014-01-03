@@ -1,0 +1,14 @@
+#!/usr/bin/env bds
+
+print("This should timeout\n")
+
+bool taskOk = false
+
+task( timeout = 1 ) {
+	sys echo Start ; sleep 1 ; echo 1 sec; sleep 1 ; echo 2 sec; sleep 1 ; echo 3 sec;
+} 
+
+wait 
+
+taskOk = true
+print("We should never reach this point...\n")

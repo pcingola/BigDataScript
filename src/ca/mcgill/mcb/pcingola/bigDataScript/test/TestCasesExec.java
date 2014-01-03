@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -97,6 +99,40 @@ public class TestCasesExec extends TestCase {
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
 			);
 		}
+	}
+
+	/**
+	 * Check that StdErr has a string
+	 * @param fileName
+	 * @param expectedStderr
+	 */
+	void runAndCheckStderr(String fileName, String expectedStderr) {
+		String args[] = { fileName };
+
+		// Compile
+		BigDataScript bigDataScript = new BigDataScript(args);
+		bigDataScript.compile();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+
+		PrintStream stderr = System.err;
+		ByteArrayOutputStream captureStderr = new ByteArrayOutputStream();
+		try {
+			// Capture STDERR
+			System.setErr(new PrintStream(captureStderr));
+
+			// Run
+			bigDataScript.run();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		} finally {
+			// Restore STDERR
+			System.setErr(stderr);
+		}
+
+		// Check that the expected string is in STDERR
+		if (debug) Gpr.debug("Program's stderr: '" + captureStderr + "'");
+		int index = captureStderr.toString().indexOf(expectedStderr);
+		if (index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStderr + "' in STDERR not found.\nSTDERR:\n" + captureStderr + "\n");
 	}
 
 	@Override
@@ -613,6 +649,85 @@ public class TestCasesExec extends TestCase {
 	@Test
 	public void test68() {
 		runAndCheck("test/run_68.bds", "out", "hi bye end\n");
+	}
+
+	@Test
+	public void test70() {
+		runAndCheck("test/run_70.bds", "i", 10L);
+	}
+
+	@Test
+	public void test71() {
+		runAndCheck("test/run_71.bds", "i", 10L);
+	}
+
+	@Test
+	public void test72() {
+		runAndCheck("test/run_72.bds", "i", 10L);
+	}
+
+	@Test
+	public void test73() {
+		runAndCheck("test/run_73.bds", "i", 10L);
+	}
+
+	@Test
+	public void test74() {
+		runAndCheck("test/run_74.bds", "i", 10L);
+	}
+
+	@Test
+	public void test75() {
+		runAndCheck("test/run_75.bds", "ls", "EXEC\ntest/run_75.bds\nDONE\n");
+	}
+
+	@Test
+	public void test76() {
+		runAndCheck("test/run_76.bds", "list", "[0, 2, 4, 6, 8, 10]");
+	}
+
+	public void test77() {
+		runAndCheck("test/run_77.bds", "list", "[10, 8, 6, 4, 2, 0]");
+	}
+
+	public void test78() {
+		runAndCheck("test/run_78.bds", "list", "[1, 2, 4, 8, 16, 32, 64]");
+	}
+
+	public void test79() {
+		runAndCheck("test/run_79.bds", "list", "[128, 64, 32, 16, 8, 4, 2, 1]");
+	}
+
+	public void test80() {
+		runAndCheck("test/run_80.bds", "j", 2L);
+	}
+
+	public void test81() {
+		runAndCheck("test/run_81.bds", "j", 19L);
+	}
+
+	public void test82() {
+		runAndCheck("test/run_82.bds", "s", "Hi.Bye.");
+	}
+
+	@Test
+	public void test83() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("i", 3L);
+		expectedValues.put("f", 5.85);
+		expectedValues.put("s", "hibye");
+		expectedValues.put("l", "[hi, bye, world]");
+		runAndCheckMultiple("test/run_83.bds", expectedValues);
+	}
+
+	@Test
+	public void test84() {
+		runAndCheck("test/run_84.bds", "taskOk", "false");
+	}
+
+	@Test
+	public void test85() {
+		runAndCheckStderr("test/run_84.bds", "ERROR_TIMEOUT");
 	}
 
 }

@@ -1,0 +1,16 @@
+
+
+i := 2
+f := 3.14
+s := 'hi'
+l := ['hi', 'bye']
+
+i++
+f += 2.71
+s += 'bye'
+l.add('world')
+
+print("s='$s'\n")
+print("i='$i'\n")
+print("f='$f'\n")
+print("l='$l'\n")

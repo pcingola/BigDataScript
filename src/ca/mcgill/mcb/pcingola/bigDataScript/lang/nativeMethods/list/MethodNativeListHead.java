@@ -34,6 +34,8 @@ public class MethodNativeListHead extends MethodNativeList {
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+		ArrayList list = ((ArrayList) objThis);
+		if (list.isEmpty()) throw new RuntimeException("Invoking 'head' on an empty list.");
 		return ((ArrayList) objThis).get(0);
 	}
 }

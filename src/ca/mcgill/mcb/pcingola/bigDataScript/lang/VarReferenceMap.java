@@ -32,7 +32,9 @@ public class VarReferenceMap extends Reference {
 	public Object eval(BigDataScriptThread csThread) {
 		String key = evalKey(csThread);
 		HashMap map = getMap(csThread.getScope());
-		return map.get(key);
+		Object ret = map.get(key);
+		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + key + "'.");
+		return ret;
 	}
 
 	/**

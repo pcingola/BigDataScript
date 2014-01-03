@@ -26,8 +26,9 @@ type : 'bool'                                                                   
      ;
 
 // Variable declaration
-varDeclaration      : type variableInit (',' variableInit)*;
-variableInit        : ID ('=' expression)?;
+varDeclaration       : type variableInit (',' variableInit)* | variableInitImplicit;
+variableInit         : ID ('=' expression)?;
+variableInitImplicit : ID ':=' expression;
 
 // Include statement
 includeF : 'include' (STRING_LITERAL | STRING_LITERAL_SINGLE) eol;
@@ -49,11 +50,11 @@ statement : '{' statement* '}'                                                  
             | 'kill' expression  eol*                                                      # kill
             | 'return' expression?  eol*                                                   # return
             | 'wait' (expression (',' expression)* )?  eol*                                # wait
-            | 'while' '(' expression ')' statement  eol*                                   # while
-            | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*                              # functionDeclaration
+            | 'while' '(' expression? ')' statement  eol*                                  # while
+            | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*        # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
             | expression  eol*                                                             # statmentExpr
-	        | includeF eol*                                                                # statementInclude
+            | includeF eol*                                                                # statementInclude
             | eol                                                                          # statmentEol
           ;
 
@@ -102,9 +103,16 @@ expression : BOOL_LITERAL                                                       
            | '[' expression (',' expression)* ']'                                   # literalList
            | '{' '}'                                                                # literalMapEmpty
            | '{' expression '=>' expression (',' expression '=>' expression)* '}'   # literalMap
+           | EXEC_LITERAL                                                           # expressionExec
            | SYS_LITERAL                                                            # expressionSys
            | TASK_LITERAL                                                           # expressionTaskLiteral
            | 'task' ( '(' expression (',' expression)* ')' )? statement             # expressionTask
+           | expression '|=' expression                                             # expressionAssignmentBitOr
+           | expression '&=' expression                                             # expressionAssignmentBitAnd
+           | expression '/=' expression                                             # expressionAssignmentDiv
+           | expression '*=' expression                                             # expressionAssignmentMult
+           | expression '-=' expression                                             # expressionAssignmentMinus
+           | expression '+=' expression                                             # expressionAssignmentPlus
            | expression '=' expression                                              # expressionAssignment
            ;
 

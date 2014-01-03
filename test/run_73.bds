@@ -1,0 +1,18 @@
+
+
+int i=0
+
+# Empty end clause
+while( i < 10 ) {
+	print("i = $i\n")
+	i = i + 1
+}
+
+# # Empty conditional clause
+# for(;;) {
+# 	print("$i\n")
+# 	i = i + 1
+# 	if( i >= 30 ) break
+# }
+# 
+print("End: i = $i\n")

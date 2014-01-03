@@ -18,6 +18,14 @@ public class ExpressionBinary extends Expression {
 		super(parent, tree);
 	}
 
+	public Expression getLeft() {
+		return left;
+	}
+
+	public Expression getRight() {
+		return right;
+	}
+
 	@Override
 	protected boolean isReturnTypesNotNull() {
 		if (right == null) return (left.getReturnType() != null);
@@ -46,6 +54,14 @@ public class ExpressionBinary extends Expression {
 		if (right != null) right.returnType(scope); // Only assign this to show that calculation was already performed
 
 		return returnType;
+	}
+
+	public void setLeft(Expression left) {
+		this.left = left;
+	}
+
+	public void setRight(Expression right) {
+		this.right = right;
 	}
 
 	@Override

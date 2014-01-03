@@ -2,8 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -23,8 +23,9 @@ public class Checkpoint extends Statement {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		// child[0] = 'checkpoint'
-		if (tree.getChildCount() > 1) expr = (Expression) factory(tree, 1);
+		int idx = 0;
+		if (isTerminal(tree, idx, "checkpoint")) idx++; // 'checkpoint'
+		if (tree.getChildCount() > idx) expr = (Expression) factory(tree, idx);
 	}
 
 	/**

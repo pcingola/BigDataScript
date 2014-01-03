@@ -1,0 +1,6 @@
+
+string s = "Hi."
+print("s='$s'\n")
+s += "Bye."
+print("s='$s'\n")
+
