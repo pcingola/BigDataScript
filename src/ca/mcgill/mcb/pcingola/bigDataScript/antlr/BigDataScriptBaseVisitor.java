@@ -210,14 +210,6 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitIncludeF(@NotNull BigDataScriptParser.IncludeFContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
 	@Override public T visitTypePrimitiveString(@NotNull BigDataScriptParser.TypePrimitiveStringContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -426,6 +418,14 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitIncludeFile(@NotNull BigDataScriptParser.IncludeFileContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -603,6 +603,14 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitTypePrimitiveBool(@NotNull BigDataScriptParser.TypePrimitiveBoolContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitExpressionVariableInitImplicit(@NotNull BigDataScriptParser.ExpressionVariableInitImplicitContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}

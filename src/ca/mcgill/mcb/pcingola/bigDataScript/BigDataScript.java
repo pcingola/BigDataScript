@@ -18,7 +18,7 @@ import org.antlr.v4.runtime.tree.Tree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptLexer;
 import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptParser;
-import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptParser.IncludeFContext;
+import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptParser.IncludeFileContext;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompileErrorStrategy;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
@@ -168,9 +168,9 @@ public class BigDataScript {
 	 */
 	private static boolean resolveIncludes(ParseTree tree, boolean debug, Set<File> alreadyIncluded) {
 		boolean changed = false;
-		if (tree instanceof IncludeFContext) {
+		if (tree instanceof IncludeFileContext) {
 			// Parent file: The one that is including the other file
-			File parentFile = new File(((IncludeFContext) tree).getStart().getInputStream().getSourceName());
+			File parentFile = new File(((IncludeFileContext) tree).getStart().getInputStream().getSourceName());
 
 			// Included file name
 			String includedFilename = StatementInclude.includedFileName(tree.getChild(1).getText());
@@ -198,7 +198,7 @@ public class BigDataScript {
 
 			// Is a child always a RuleContext?
 			for (int i = 0; i < treeinc.getChildCount(); i++) {
-				((IncludeFContext) tree).addChild((RuleContext) treeinc.getChild(i));
+				((IncludeFileContext) tree).addChild((RuleContext) treeinc.getChild(i));
 			}
 		} else {
 			for (int i = 0; i < tree.getChildCount(); i++)

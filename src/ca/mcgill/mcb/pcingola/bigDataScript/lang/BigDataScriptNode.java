@@ -54,8 +54,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	protected void doParse(ParseTree tree) {
 		if (tree != null) {
-			// TODO: Add line and char info
-			lineAndPos(tree);
+			lineAndPos(tree); // Add line and char info
 
 			// Parse ANTLR tree
 			try {
@@ -76,7 +75,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 * @return
 	 */
 	final BigDataScriptNode factory(ParseTree tree, int childNum) {
-		ParseTree child = tree.getChild(childNum);
+		ParseTree child = childNum >= 0 ? tree.getChild(childNum) : tree;
 		return BigDataScriptNodeFactory.get().factory(this, child);
 	}
 

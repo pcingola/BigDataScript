@@ -27,9 +27,9 @@ public class VariableInitImplicit extends VariableInit {
 	@Override
 	protected void parse(ParseTree tree) {
 		int idx = 0;
-		varName = tree.getChild(idx).getText();
+		varName = tree.getChild(idx++).getText();
 		if (isTerminal(tree, idx, ":=")) idx++;
-		expression = (Expression) factory(tree, 2); // Node 1 is '=', we need node 2
+		expression = (Expression) factory(tree, idx); // Initialization expression
 	}
 
 	@Override

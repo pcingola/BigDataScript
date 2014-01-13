@@ -743,4 +743,9 @@ public class TestCasesExec extends TestCase {
 		runAndCheckMultiple("test/run_85.bds", expectedValues);
 	}
 
+	@Test
+	public void test87() {
+		runAndCheck("test/run_87.bds", "cpus", "1");
+	}
+
 }

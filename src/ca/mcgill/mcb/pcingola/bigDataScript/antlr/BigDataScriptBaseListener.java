@@ -329,19 +329,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterIncludeF(@NotNull BigDataScriptParser.IncludeFContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitIncludeF(@NotNull BigDataScriptParser.IncludeFContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterTypePrimitiveString(@NotNull BigDataScriptParser.TypePrimitiveStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -680,6 +667,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterIncludeFile(@NotNull BigDataScriptParser.IncludeFileContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitIncludeFile(@NotNull BigDataScriptParser.IncludeFileContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -973,6 +973,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitTypePrimitiveBool(@NotNull BigDataScriptParser.TypePrimitiveBoolContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterExpressionVariableInitImplicit(@NotNull BigDataScriptParser.ExpressionVariableInitImplicitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitExpressionVariableInitImplicit(@NotNull BigDataScriptParser.ExpressionVariableInitImplicitContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

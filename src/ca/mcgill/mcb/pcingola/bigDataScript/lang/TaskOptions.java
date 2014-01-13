@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
@@ -34,7 +34,9 @@ public class TaskOptions extends ExpressionList {
 			Object value = expr.eval(csThread);
 
 			// All boolean expressions must be "true"
-			if (expr.getReturnType().isBool()) sat &= (Boolean) value;
+			if (expr instanceof ExpressionAssignment) ; // Nothing to do
+			else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
+			else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean 
 		}
 
 		return sat;
@@ -60,9 +62,9 @@ public class TaskOptions extends ExpressionList {
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		for (Expression e : expressions)
-			if (!(e instanceof ExpressionAssignment)) {
-				if (!e.getReturnType().isBool()) compilerMessages.add(this, "Only assignment or boolean expressions are allowed in task options", MessageType.ERROR);
+			if (!(e instanceof ExpressionAssignment) && !(e instanceof ExpressionVariableInitImplicit)) {
+				// Cannot convert to bool? => We cannot use the expression
+				if (!e.getReturnType().canCast(Type.BOOL)) compilerMessages.add(this, "Only assignment, implicit variable declarations or boolean expressions are allowed in task options", MessageType.ERROR);
 			}
 	}
-
 }

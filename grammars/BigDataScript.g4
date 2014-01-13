@@ -31,7 +31,7 @@ variableInit         : ID ('=' expression)?;
 variableInitImplicit : ID ':=' expression;
 
 // Include statement
-includeF : 'include' (STRING_LITERAL | STRING_LITERAL_SINGLE) eol;
+includeFile : 'include' (STRING_LITERAL | STRING_LITERAL_SINGLE) eol;
 
 // Statements
 statement : '{' statement* '}'                                                             # block
@@ -54,7 +54,7 @@ statement : '{' statement* '}'                                                  
             | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*        # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
             | expression  eol*                                                             # statmentExpr
-            | includeF eol*                                                                # statementInclude
+            | includeFile eol*                                                             # statementInclude
             | eol                                                                          # statmentEol
           ;
 
@@ -113,6 +113,7 @@ expression : BOOL_LITERAL                                                       
            | expression '*=' expression                                             # expressionAssignmentMult
            | expression '-=' expression                                             # expressionAssignmentMinus
            | expression '+=' expression                                             # expressionAssignmentPlus
+           | ID ':=' expression                                                     # expressionVariableInitImplicit
            | expression '=' expression                                              # expressionAssignment
            ;
 

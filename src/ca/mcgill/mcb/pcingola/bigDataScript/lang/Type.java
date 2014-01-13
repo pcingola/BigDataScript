@@ -124,7 +124,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	public boolean canCast(Type type) {
 		if (equals(type)) return true; // Same class? OK
 		if (type.equals(Type.STRING)) return true; // Anything can be converted to string
-		if (type.equals(Type.BOOL)) return true; // Almost anything can be converted to 
+		if (type.equals(Type.BOOL)) return true; // Anything can be converted to bool
 
 		// Both of them are primitive?
 		if (this.isPrimitiveType() && type.isPrimitiveType()) {
