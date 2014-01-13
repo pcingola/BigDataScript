@@ -1,4 +1,9 @@
 #!/usr/bin/env bds
 
-print("system: $system\n")
+strs := ['hi', 'bye']
+s := 'zzz'
+
+for( string s : strs ) {
+	print("s = $s\n")
+}
 
