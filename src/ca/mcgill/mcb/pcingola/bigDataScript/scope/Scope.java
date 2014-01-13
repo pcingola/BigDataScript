@@ -22,6 +22,9 @@ public class Scope implements BigDataScriptSerialize {
 	public static final String GLOBAL_VAR_G = "G";
 	public static final String GLOBAL_VAR_T = "T";
 	public static final String GLOBAL_VAR_P = "P";
+	public static final String GLOBAL_VAR_MINUTE = "MINUTE";
+	public static final String GLOBAL_VAR_HOUR = "HOUR";
+	public static final String GLOBAL_VAR_DAY = "DAY";
 	public static final String GLOBAL_VAR_LOCAL_CPUS = "cpusLocal";
 
 	// Command line arguments are available in this list

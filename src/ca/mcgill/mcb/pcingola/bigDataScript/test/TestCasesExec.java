@@ -730,4 +730,17 @@ public class TestCasesExec extends TestCase {
 		runAndCheckStderr("test/run_84.bds", "ERROR_TIMEOUT");
 	}
 
+	public void test86() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("minute", 60L);
+		expectedValues.put("hour", 3600L);
+		expectedValues.put("day", 86400L);
+		expectedValues.put("oneK", 1024L);
+		expectedValues.put("oneM", 1048576L);
+		expectedValues.put("oneG", 1073741824L);
+		expectedValues.put("oneT", 1099511627776L);
+		expectedValues.put("oneP", 1125899906842624L);
+		runAndCheckMultiple("test/run_85.bds", expectedValues);
+	}
+
 }
