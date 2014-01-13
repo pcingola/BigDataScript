@@ -1,16 +1,4 @@
 #!/usr/bin/env bds
 
-# hi := "HI!"
-# print("hi: $hi\n")
+print("system: $system\n")
 
-cpus = 1
-print("Before:\tcpus=$cpus\n")
-
-# Note: Local variable definition using ':=' operator
-task( cpus := 2 ) {
-	sys echo During:   cpus=$cpus
-}
-wait
-
-# Original value should not be changed
-print("After:\tcpus=$cpus\n")
