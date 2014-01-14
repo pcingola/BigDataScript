@@ -2,26 +2,23 @@
 
 include "bio/seq/wgs.bds"
 
-fq1 := "ERR262996_1.1M.fastq.gz"
-fq2 := "ERR262996_2.1M.fastq.gz"
+cpus = 8
 
-# Split files into 
-print("Splitting fastq files\n")
-fq1names := splitFatsq(fq1, splitNumReads)
-fq2names := splitFatsq(fq2, splitNumReads)
-wait
+#-------------------------------------------------------------------------------
+# Command line parameters
+#-------------------------------------------------------------------------------
 
-# Get split files
-fq1split := splitFatsqNames( fq1 )
-fq2split := splitFatsqNames( fq2 )
-print("Fastq splits:\n\t$fq1split\n\t$fq2split\n")
+fq1 := "ERR262996_1.1M.fastq.gz"	# Fastq file
+fq2 := "ERR262996_2.1M.fastq.gz"	# Fastq file, pair end reads. Empty if single-end
+referenceFasta := "hg19.fa"			# Reference genome Fasta file
 
-for( int i=0 ; i < fq1split.size() ; i++ ) {
-	fqs1 := fq1split[i]
-	fqs2 := ""
-	if( fq2split )	fqs2 = fq2split[i]
-	print("Mapping:\t$fqs1\t$fqs2\n")
-}
+#-------------------------------------------------------------------------------
+# Main
+#-------------------------------------------------------------------------------
+
+mapIndex(referenceFasta)
+map(referenceFasta, fq1, fq2)
+
 # OK, wait for all tasks to finish
 wait
 print("Done!\n")

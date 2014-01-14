@@ -9,6 +9,7 @@
 # Dependencies:
 #	- SAMtools : http://samtools.sourceforge.net/
 #	- BWA      : http://bio-bwa.sourceforge.net/
+#	- tabix    : http://samtools.sourceforge.net/
 #
 #															Pablo Cingolani 2014
 #-------------------------------------------------------------------------------
@@ -17,15 +18,9 @@
 # Command line parameters
 #-------------------------------------------------------------------------------
 
-# Required options
-#fq1				:= ""				# Fastq file 
-#fq2				:= ""				# Fastq file, pair end reads. Empty if single-end
-#referenceFasta	:= ""				# Reference genome Fasta file
-
 # Other options
 splitNumReads	:= 100 * 1000		# Split fastq files to 'splitNumReads'
 mapSortMemory	:= 1 * G			# Memory used while sorting BAM file (samtools sort)
-javaGCThreads	:= 2				# Limit number of cores to use for garbage collection
 
 #-------------------------------------------------------------------------------
 # Common variables
@@ -46,16 +41,41 @@ string removeExtFastq(string fq) {
 }
 
 #-------------------------------------------------------------------------------
-# Map reads to genome
+# Map reads to genome (split into smaller files)
 #-------------------------------------------------------------------------------
-void map(string referenceFasta, string fq1, string fq2) {
-	bamNoExt := removeExtFastq(fq1)
-	bam := bamNoExt + ".bam"
+string map(string referenceFasta, string fq1, string fq2) {
+	# Split files into 
+	print("Splitting fastq files\n")
+	fq1names := splitFatsq(fq1, splitNumReads)
+	fq2names := splitFatsq(fq2, splitNumReads)
+	wait
 
-	task( bam <- [fq1, fq2] ) {
-		sys bwa -mem -t $cpus $fq1 $fq2 \
-			| samtools sort -@ $cpus -m $mapSortMemory -f - $bamNoExt
+	# Get split files
+	fq1split := splitFatsqNames( fq1 )
+	fq2split := splitFatsqNames( fq2 )
+	print("Fastq splits:\n\t$fq1split\n\t$fq2split\n")
+
+	# Map each pair of files
+	string[] bams
+	for( int i=0 ; i < fq1split.size() ; i++ ) {
+		fqs1 := fq1split[i]
+		fqs2 := ""
+		if( fq2split )  fqs2 = fq2split[i]
+
+		print("Mapping:\t$fqs1\t$fqs2\n")
+		bam := mapSingle(referenceFasta, fqs1, fqs2)
+		bams.add( bam )
 	}
+	wait
+
+	# Merge all sorted BAM files
+	bam := removeExtFastq(fq1) + ".bam"
+	bamsStr := bams.join(" ")
+	task( bam <- bams ) {
+		sys samtools merge -f -@ $cpus $bam $bamsStr
+	}
+
+	return( bam )
 }
 
 #-------------------------------------------------------------------------------
@@ -67,6 +87,21 @@ void mapIndex(string fasta) {
 		sys bwa index fasta
 	}
 	wait
+}
+
+#-------------------------------------------------------------------------------
+# Map reads to genome (single file, no splitting)
+# Note: It does not wait
+#-------------------------------------------------------------------------------
+string mapSingle(string referenceFasta, string fq1, string fq2) {
+	bam := removeExtFastq(fq1) + ".bam"
+	task( bam <- [fq1, fq2] ) {
+		sys bwa mem -t $cpus $referenceFasta $fq1 $fq2 \
+			| samtools view -S -u - \
+			| samtools sort -@ $cpus -m $mapSortMemory -f - $bam
+	}
+
+	return( bam )
 }
 
 #-------------------------------------------------------------------------------
@@ -106,10 +141,4 @@ string[] splitFatsqNames(string fq) {
 	# Get all lines matching base name in fq's directory
 	return( dir.dirPath(".*/$base..") )
 }
-
-#-------------------------------------------------------------------------------
-# Usage example
-#-------------------------------------------------------------------------------
-#mapIndex(referenceFasta)
-#map(referenceFasta, fq1, fq2)
 
