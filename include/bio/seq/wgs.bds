@@ -3,7 +3,14 @@
 #-------------------------------------------------------------------------------
 #
 # Genome sequencing functions
+# References:
 #
+#
+# Dependencies:
+#	- SAMtools : http://samtools.sourceforge.net/
+#	- BWA      : http://bio-bwa.sourceforge.net/
+#
+#															Pablo Cingolani 2014
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -26,7 +33,6 @@ javaGCThreads	:= 2				# Limit number of cores to use for garbage collection
 
 # Extensions used in FASTQ files
 fastqExtentions	:= [".gz", ".fq", ".fastq"]
-java			:= "java -XX:ParallelGCThreads=$javaGCThreads "		# Java
 
 #-------------------------------------------------------------------------------
 # Base name, remove all common extensions
@@ -67,7 +73,7 @@ void mapIndex(string fasta) {
 # Run task  to split a fastq file into 'splitNumReads' reads (does not wait)
 # Return file names
 #-------------------------------------------------------------------------------
-string splitFatsq(string fq) {
+string splitFatsq(string fq,int splitNumReads) {
 	# Empty name? Nothing to do
 	if( ! fq )	return("")
 
@@ -77,11 +83,28 @@ string splitFatsq(string fq) {
 
 	names := removeExtFastq( fq ) + "."
 	numLines := 4 * splitNumReads
-	firstName := names + "xaa"
+	firstName := names + "aa"
 	task( firstName <- fq ) {
 		sys $cat $fq | split -l $numLines - $names
 	}
 	return( names )
+}
+
+#-------------------------------------------------------------------------------
+# Get names form split fastq files
+#-------------------------------------------------------------------------------
+string[] splitFatsqNames(string fq) {
+	string[] empty
+
+	# Empty name? Nothing to do
+	if( ! fq )	return(empty)
+
+	names := removeExtFastq( fq ) + "."
+	dir := fq.dirName()
+	base := removeExtFastq( fq ).baseName() + "."
+
+	# Get all lines matching base name in fq's directory
+	return( dir.dirPath(".*/$base..") )
 }
 
 #-------------------------------------------------------------------------------
