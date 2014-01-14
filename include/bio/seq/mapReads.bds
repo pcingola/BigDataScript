@@ -1,0 +1,25 @@
+#!/usr/bin/env bds
+
+include "bio/seq/wgs.bds"
+
+cpus = 8
+
+#-------------------------------------------------------------------------------
+# Command line parameters
+#-------------------------------------------------------------------------------
+
+fq1 := "ERR262996_1.1M.fastq.gz"	# Fastq file
+fq2 := "ERR262996_2.1M.fastq.gz"	# Fastq file, pair end reads. Empty if single-end
+referenceFasta := "hg19.fa"			# Reference genome Fasta file
+
+#-------------------------------------------------------------------------------
+# Main
+#-------------------------------------------------------------------------------
+
+mapIndex(referenceFasta)
+map(referenceFasta, fq1, fq2)
+
+# OK, wait for all tasks to finish
+wait
+print("Done!\n")
+

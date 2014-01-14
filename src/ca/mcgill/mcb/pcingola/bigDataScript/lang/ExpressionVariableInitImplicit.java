@@ -64,8 +64,7 @@ public class ExpressionVariableInitImplicit extends Expression {
 		Type type = vInit.getExpression().returnType(scope);
 
 		// Add variable to scope
-		scope.add(new ScopeSymbol(varName, type));
-
+		if ((varName != null) && (type != null)) scope.add(new ScopeSymbol(varName, type));
 	}
 
 }

@@ -125,7 +125,7 @@ public class VarDeclaration extends Statement {
 			if (implicit && type == null) type = vi.getExpression().returnType(scope);
 
 			// Add variable to scope
-			scope.add(new ScopeSymbol(varName, type));
+			if ((varName != null) && (type != null)) scope.add(new ScopeSymbol(varName, type));
 		}
 	}
 }
