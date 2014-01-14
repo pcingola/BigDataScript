@@ -32,7 +32,7 @@ java			:= "java -XX:ParallelGCThreads=$javaGCThreads "		# Java
 # Base name, remove all common extensions
 #-------------------------------------------------------------------------------
 string removeExtFastq(string fq) {
-	rmExt := fq1
+	rmExt := fq
 	for( string ext : fastqExtentions ) {
 		rmExt = rmExt.removeExt(ext)
 	}
