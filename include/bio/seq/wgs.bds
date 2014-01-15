@@ -10,6 +10,7 @@
 #	- SAMtools : http://samtools.sourceforge.net/
 #	- BWA      : http://bio-bwa.sourceforge.net/
 #	- tabix    : http://samtools.sourceforge.net/
+#	- GATK     : http://www.broadinstitute.org/gatk/
 #
 #															Pablo Cingolani 2014
 #-------------------------------------------------------------------------------
