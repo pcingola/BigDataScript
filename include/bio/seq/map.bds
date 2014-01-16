@@ -18,12 +18,8 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Command line parameters
+# Parameters
 #-------------------------------------------------------------------------------
-
-# Other options
-splitNumReads	:= 100 * 1000		# Split fastq files to 'splitNumReads'
-mapSortMemory	:= 1 * G			# Memory used while sorting BAM file (samtools sort)
 
 # Program paths and command line options
 java            := "java -Xmx4G -XX:ParallelGCThreads=2 "
@@ -39,7 +35,7 @@ sampleId        := "SampleId"
 readGroupString := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
 
 #-------------------------------------------------------------------------------
-# Common variables
+# Module variables
 #-------------------------------------------------------------------------------
 
 # Extensions used in FASTQ files
@@ -171,7 +167,7 @@ void joinVcf(string vcf, string[] vcfs ) {
 #-------------------------------------------------------------------------------
 # Map reads to genome (split into smaller files)
 #-------------------------------------------------------------------------------
-void map(string referenceFasta, string fq1, string fq2, string bam) {
+void map(string referenceFasta, string fq1, string fq2, string bam, int splitNumReads, int mapSortMemory) {
 	# Split files into 
 	print("Splitting fastq files\n")
 	splitFatsq(fq1, splitNumReads)
@@ -190,7 +186,7 @@ void map(string referenceFasta, string fq1, string fq2, string bam) {
 		fqs2 := ""
 		if( fq2split )  fqs2 = fq2split[i]
 
-		bam := mapSingle(referenceFasta, fqs1, fqs2)
+		bam := mapSingle(referenceFasta, fqs1, fqs2, mapSortMemory)
 		bams.add( bam )
 	}
 	wait
@@ -206,14 +202,14 @@ void map(string referenceFasta, string fq1, string fq2, string bam) {
 #-------------------------------------------------------------------------------
 # Map reads, call variants and annotate them
 #-------------------------------------------------------------------------------
-string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string genome, int numCallers) {
+string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string genome, int splitNumReads, int mapSortMemory, int numCallers) {
 	bam := removeExtFastq(fq1) + ".bam"
 	vcf := removeExtFastq(fq1) + ".vcf"
 
 	# Create BAM file from reads
 	if( bam <- [fq1, fq2] ) {
 		mapIndex(referenceFasta)
-		map(referenceFasta, fq1, fq2, bam)
+		map(referenceFasta, fq1, fq2, bam, splitNumReads, mapSortMemory)
 	}
 
 	# Create VCF file from BAM
@@ -244,7 +240,7 @@ void mapIndex(string fasta) {
 # Map reads to genome (single file, no splitting)
 # Note: It does not wait
 #-------------------------------------------------------------------------------
-string mapSingle(string referenceFasta, string fq1, string fq2) {
+string mapSingle(string referenceFasta, string fq1, string fq2, int mapSortMemory) {
 	bam := removeExtFastq(fq1) + ".bam"
 	print("Mapping:\t$fqs1\t$fqs2\t=>\t$bam\n")
 	task( bam <- [fq1, fq2] ) {
@@ -287,7 +283,7 @@ string[] splitCallableRegions(string bed, int num) {
 # Run task  to split a fastq file into 'splitNumReads' reads (does not wait)
 # Return file names
 #-------------------------------------------------------------------------------
-string splitFatsq(string fq,int splitNumReads) {
+string splitFatsq(string fq, int splitNumReads) {
 	# Empty name? Nothing to do
 	if( ! fq )	return("")
 
@@ -298,7 +294,7 @@ string splitFatsq(string fq,int splitNumReads) {
 	names := removeExtFastq( fq ) + "."
 	numLines := 4 * splitNumReads
 	firstName := names + "aa"
-	task( firstName <- fq ) {
+	task( firstName <- fq, cpus := 1 ) {
 		sys $cat $fq | split -l $numLines - $names
 	}
 	return( names )
