@@ -56,6 +56,7 @@ string annotate(string vcf, string genome) {
 					$vcf \
 					> $eff
 	}
+	wait
 
 	return( eff )
 }
@@ -79,6 +80,7 @@ string callableRegions(string referenceFasta, string bam) {
 				-summary $summary \
 				-o $bed
 	}
+	wait
 
 	return( bed )
 }
@@ -147,6 +149,7 @@ string[] haplotypeCaller( string referenceFasta, string bam, string[] callableRe
 				-o $callableRegionVcf
 		}
 	}
+	wait
 
 	return( vcfs ) 
 }
@@ -162,6 +165,7 @@ void joinVcf(string vcf, string[] vcfs ) {
 	task( vcf <- vcfs ) {
 		sys $java -jar $snpEffDir/SnpSift.jar split -j $vcfsStr > $vcf
 	}
+	wait
 }
 
 #-------------------------------------------------------------------------------
@@ -197,6 +201,7 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int splitNum
 	task( bam <- bams ) {
 		sys samtools merge -f -@ $cpus $bam $bamsStr
 	}
+	wait
 }
 
 #-------------------------------------------------------------------------------
@@ -321,6 +326,7 @@ string[] splitFatsqNames(string fq) {
 # Base name, remove all common extensions
 #-------------------------------------------------------------------------------
 string removeExtFastq(string fq) { return( removeExt( fq, fastqExtentions ) ) }
+
 string removeExtFasta(string fq) { return( removeExt( fq, fastaExtentions ) ) }
 
 string removeExt(string name, string[] exts) {
