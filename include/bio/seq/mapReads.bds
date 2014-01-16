@@ -2,9 +2,10 @@
 
 include "bio/seq/map.bds"
 
-cpus        = 8				# Numner of CPUs to use in each process (note, this is a predefined varialbe)
-numCallers := 8				# Number of caller processes to use
-genome     := "GRCh37.71"	# Genome used for annotations
+cpus             = 8				# Numner of CPUs to use in each process (note, this is a predefined varialbe)
+numCallers      := 8				# Number of caller processes to use
+genome          := "GRCh37.71"		# Genome used for annotations
+
 splitNumReads   := 100 * 1000       # Split fastq files to 'splitNumReads'
 mapSortMemory   := 1 * G            # Memory used while sorting BAM file (samtools sort)
 
