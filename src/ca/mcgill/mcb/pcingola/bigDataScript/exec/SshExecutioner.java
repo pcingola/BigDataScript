@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.exec;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Execute tasks in a remote computer, using ssh
@@ -19,11 +20,6 @@ public class SshExecutioner extends LocalQueueExecutioner {
 	}
 
 	@Override
-	public synchronized void add(Task task) {
-		throw new RuntimeException("Unimplemented!");
-	}
-
-	@Override
 	public synchronized void kill() {
 		cluster.stopHostInfoUpdaters();
 		super.kill();
@@ -31,6 +27,7 @@ public class SshExecutioner extends LocalQueueExecutioner {
 
 	@Override
 	public void run() {
+		Gpr.debug("SshExecutioner: Starting.");
 		cluster.startHostInfoUpdaters();
 		super.run();
 		cluster.stopHostInfoUpdaters();

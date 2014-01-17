@@ -1,3 +1,8 @@
 #!/usr/bin/env bds
 
-print("Hi\n")
+system = "ssh"
+
+for( int i=0 ; i < 2 ; i++ ) {
+	print("Hi\n")
+	task echo Hello $i; hostname
+}

@@ -37,7 +37,7 @@ public class CmdRunnerSsh extends CmdRunner {
 	public static int WAIT_DISCONNECT = 100;
 	static int BUFFER_SIZE = 100 * 1024;
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 	JSch jsch;
 	Session session;
 	ChannelExec channel;
@@ -121,9 +121,10 @@ public class CmdRunnerSsh extends CmdRunner {
 
 	@Override
 	public int exec() {
+		Gpr.debug("EXEC: " + host);
+
 		try {
 			//			createTimeoutCommand(); // Handle timeout requirement here (if possible)
-
 			executing = true;
 
 			// Copy file to remote host
@@ -231,7 +232,7 @@ public class CmdRunnerSsh extends CmdRunner {
 		started = true;
 
 		// Create session and connect
-		if (debug) Gpr.debug("Create conection");
+		if (debug) Gpr.debug("Create conection:\n\tuser: '" + host.getUserName() + "'\n\thost : '" + host.getHostName() + "'\n\tport : " + host.getPort());
 		session = jsch.getSession(host.getUserName(), host.getHostName(), host.getPort());
 		session.setUserInfo(new SshUserInfo());
 		session.connect();
@@ -265,7 +266,16 @@ public class CmdRunnerSsh extends CmdRunner {
 		channel.setInputStream(null);
 		channel.setPty(true); // Allocate pseudo-tty (same as "ssh -t"?)
 
-		throw new RuntimeException("Unimplemented!!!");
+		channel.setErrStream(System.err);
+		channel.setOutputStream(System.out);
+		InputStream in = channel.getInputStream();
+
+		channel.connect(); // Connect channel
+		if (debug) Gpr.debug("Ssh channel contected");
+		String resultStr = Gpr.read(in);
+		Gpr.debug("IN (resultStr):" + resultStr);
+		disconnect(false); // Diconnect
+
 		//		if (redirectStderr != null) {
 		//			TeeOutputStream teeStderr = new TeeOutputStream(System.err, new FileOutputStream(redirectStderr));
 		//			channel.setErrStream(teeStderr);

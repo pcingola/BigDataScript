@@ -114,6 +114,7 @@ public class Config {
 	}
 
 	public ArrayList<String> getSshNodes() {
+		if (sshNodes == null) sshNodes = new ArrayList<String>();
 		return sshNodes;
 	}
 
