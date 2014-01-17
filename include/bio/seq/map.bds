@@ -120,7 +120,7 @@ string[] gatkPrepare(string fasta, string bam) {
 }
 
 #-------------------------------------------------------------------------------
-# HaplotypeCaller
+# Call variants using GATK’s Haplotype Caller
 #-------------------------------------------------------------------------------
 string[] haplotypeCaller( string referenceFasta, string bam, string[] callableRegions ) {
 	string[] vcfs
