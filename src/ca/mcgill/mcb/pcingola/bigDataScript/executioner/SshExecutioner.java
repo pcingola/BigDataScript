@@ -14,23 +14,25 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class SshExecutioner extends LocalQueueExecutioner {
 
-	Cluster cluster;
+	public static final String CONFIG_SSH_NODES = "ssh.nodes";
+
+	protected Cluster cluster;
 
 	public SshExecutioner(Config config) {
 		super(config);
 		createCluster();
 	}
 
-	void createCluster() {
+	protected void createCluster() {
 		// Create a cluster 
 		cluster = new Cluster();
 
 		// Add nodes from config file
-		String nodes = config.getString("ssh.nodes", "");
-		Gpr.debug("SSH NODES: " + nodes);
+		String nodes = config.getString(CONFIG_SSH_NODES, "");
+		if (config.isDebug()) System.err.println("Ssh nodes string (config): '" + nodes + "'");
 		String sshNodes[] = nodes.split(",");
 		for (String sshNode : sshNodes) {
-			Gpr.debug("ssh node : " + sshNode);
+			if (config.isDebug()) System.err.println("\tAdding ssh node : '" + sshNode + "'");
 			cluster.add(new Host(cluster, sshNode.trim()));
 		}
 	}

@@ -35,13 +35,20 @@ public class CmdRunnerSsh extends CmdRunner {
 
 	public static int MAX_ITER_DISCONNECT = 600;
 	public static int WAIT_DISCONNECT = 100;
+	public static int WAIT_READ = 100;
+	public static int EXIT_CODE_DISCONNECT = 1;
 	static int BUFFER_SIZE = 100 * 1024;
 
 	public static boolean debug = true;
+	String programFile;
 	JSch jsch;
 	Session session;
 	ChannelExec channel;
-	String programFile;
+
+	public CmdRunnerSsh(String cmdId, String commandArgs[]) {
+		super(cmdId, commandArgs);
+		programFile = null;
+	}
 
 	public CmdRunnerSsh(String cmdId, String programFile, String commandArgs[]) {
 		super(cmdId, commandArgs);
@@ -86,9 +93,10 @@ public class CmdRunnerSsh extends CmdRunner {
 	}
 
 	/** 
-	 * Diconect, clear objects and set exit value
+	 * Diconnect, clear objects and set exit value
 	 */
 	void disconnect(boolean force) {
+		// Close channel
 		if (channel != null) {
 
 			// Wait until channel is finished (otherwise redirections will not work)
@@ -100,18 +108,19 @@ public class CmdRunnerSsh extends CmdRunner {
 					throw new RuntimeException(e);
 				}
 			}
-			if (debug) Gpr.debug("\t\tDisconnect:\tclosed: " + channel.isClosed() + "\teof: " + channel.isEOF() + "\tconnected: " + channel.isConnected());
+			if (debug) Gpr.debug("\t\tSSH disconnect:\tclosed: " + channel.isClosed() + "\teof: " + channel.isEOF() + "\tconnected: " + channel.isConnected());
 
 			// Channel is closed, now we can get exit status
 			if (!force && channel.isClosed()) exitValue = channel.getExitStatus();
+			else exitValue = EXIT_CODE_DISCONNECT; // There was an error and we were forced to close the channel
 
 			// OK, we can disconnect now
 			channel.disconnect();
 			channel = null;
 		}
 
+		// Close session
 		if (session != null) {
-			// Close session
 			session.disconnect();
 			session = null;
 		}
@@ -121,26 +130,23 @@ public class CmdRunnerSsh extends CmdRunner {
 
 	@Override
 	public int exec() {
-		Gpr.debug("EXEC: " + host);
-
 		try {
-			//			createTimeoutCommand(); // Handle timeout requirement here (if possible)
 			executing = true;
 
 			// Copy file to remote host
 			started = true;
-			String remotefileName = Gpr.baseName(programFile);
-			scpTo(programFile, remotefileName);
-
-			// Execute remote file
-			if (executing) sshExec(remotefileName);
+			if (programFile != null) {
+				String remotefileName = Gpr.baseName(programFile);
+				scpTo(programFile, remotefileName);
+				sshExec(remotefileName);
+			} else sshExec(null); // Just execute a command
 
 			executing = false;
 		} catch (Exception e) {
 			error = e.getMessage();
 			exitValue = -1;
 			if (debug) e.printStackTrace();
-			disconnect(false);
+			disconnect(true);
 		} finally {
 			// Disconnect and set exit value
 			disconnect(true);
@@ -164,6 +170,47 @@ public class CmdRunnerSsh extends CmdRunner {
 			if (debug) Gpr.debug("Killed: Setting stats " + task);
 			task.stateKilled();
 		}
+	}
+
+	/**
+	 * Read an input stream while data is available
+	 * @param in
+	 * @param sb
+	 * @param tmp
+	 * @throws IOException
+	 */
+	void readAvailable(InputStream in, StringBuilder sb, byte tmp[]) throws IOException {
+		while (in.available() > 0) {
+			int i = in.read(tmp, 0, BUFFER_SIZE);
+			if (i < 0) break;
+			String recv = new String(tmp, 0, i);
+			sb.append(recv);
+			System.out.print(recv);
+		}
+	}
+
+	/**
+	 * Read channle's input
+	 * @return
+	 */
+	String readChannel() {
+		byte[] tmp = new byte[BUFFER_SIZE];
+		StringBuilder stdout = new StringBuilder();
+
+		try {
+			InputStream in = channel.getInputStream();
+
+			while (!channel.isClosed()) {
+				readAvailable(in, stdout, tmp);
+				Thread.sleep(WAIT_READ);
+			}
+
+			readAvailable(in, stdout, tmp);
+		} catch (Exception e) {
+			if (debug) Gpr.debug("Exception: " + e);
+		}
+
+		return stdout.toString();
 	}
 
 	/**
@@ -238,12 +285,8 @@ public class CmdRunnerSsh extends CmdRunner {
 		session.connect();
 
 		// Create channel
-		if (debug) Gpr.debug("Create channel");
 		channel = (ChannelExec) session.openChannel("exec");
-		if (sshCommand != null) {
-			if (debug) Gpr.debug("Channel command: " + sshCommand);
-			channel.setCommand(sshCommand);
-		}
+		if (sshCommand != null) channel.setCommand(sshCommand);
 
 		return channel;
 	}
@@ -261,48 +304,26 @@ public class CmdRunnerSsh extends CmdRunner {
 		for (String arg : commandArgs)
 			cmdStr.append((cmdStr.length() > 0 ? " " : "") + arg);
 
-		Gpr.debug("CMDSTR: " + cmdStr);
+		// Add remote program file name?
+		if (programFile != null) cmdStr.append((cmdStr.length() > 0 ? " " : "") + programFile);
+
+		// Open ssh session
 		channel = sshConnect(cmdStr.toString());
 		channel.setInputStream(null);
-		channel.setPty(true); // Allocate pseudo-tty (same as "ssh -t"?)
+		channel.setPty(true); // Allocate pseudo-tty (same as "ssh -t")
 
+		// These don't seem to work
 		channel.setErrStream(System.err);
 		channel.setOutputStream(System.out);
-		InputStream in = channel.getInputStream();
 
-		channel.connect(); // Connect channel
-		if (debug) Gpr.debug("Ssh channel contected");
-		String resultStr = Gpr.read(in);
-		Gpr.debug("IN (resultStr):" + resultStr);
+		// Connect channel
+		channel.connect();
+
+		// Read input
+		String resultStr = readChannel();
+		Gpr.debug("Ssh results (length: " + resultStr.length() + ")\n" + resultStr);
+
 		disconnect(false); // Diconnect
-
-		//		if (redirectStderr != null) {
-		//			TeeOutputStream teeStderr = new TeeOutputStream(System.err, new FileOutputStream(redirectStderr));
-		//			channel.setErrStream(teeStderr);
-		//		} else channel.setErrStream(System.err);
-		//
-		//		if (redirectStdout != null) {
-		//			TeeOutputStream teeStdout = new TeeOutputStream(System.out, new FileOutputStream(redirectStdout));
-		//			channel.setOutputStream(teeStdout);
-		//		} else {
-		//			channel.setOutputStream(System.out);
-		//
-		//			// Read input
-		//			if (debug) Gpr.debug("Read channel input");
-		//			in = channel.getInputStream();
-		//		}
-		//
-		//		// Connect channel
-		//		channel.connect();
-		//		if (debug) Gpr.debug("Ssh channel contected");
-		//
-		//		if (redirectStdout == null) {
-		//			String resultStr = Gpr.read(in);
-		//			if (debug) Gpr.debug("Ssh results (length: " + resultStr.length() + ")\n" + resultStr);
-		//		}
-		//
-		//		// Diconnect
-		//		disconnect(false);
 	}
 }
 

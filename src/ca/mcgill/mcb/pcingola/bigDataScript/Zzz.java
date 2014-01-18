@@ -11,15 +11,15 @@ public class Zzz {
 		Gpr.debug("Zzz: Start");
 
 		Cluster cluster = new Cluster();
-		Host host = new Host(cluster, "pablocingolani@localhost");
+		Host host = new Host(cluster, "eq8302@ehs.grid.wayne.edu");
 
-		String programFile = Gpr.HOME + "/z.sh";
-		String commandArgs[] = { "ls", "-alh" };
+		// String programFile = Gpr.HOME + "/z.sh";
+		String commandArgs[] = { "echo Hello; hostname ; ls -al zxzxzx ; echo Done" };
 
-		CmdRunnerSsh cssh = new CmdRunnerSsh("CMDID", programFile, commandArgs);
+		CmdRunnerSsh cssh = new CmdRunnerSsh("CMDID", commandArgs);
 		cssh.setHost(host);
 		cssh.start();
-		//		cssh.wait();
+		cssh.join();
 
 		Gpr.debug("Zzz: End");
 	}

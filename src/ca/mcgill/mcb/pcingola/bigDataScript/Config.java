@@ -21,7 +21,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class Config {
 
 	public static final String DEFAULT_CONFIG_DIR = Gpr.HOME + "/.bds";
-	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + "/" + BigDataScript.class.getSimpleName().toLowerCase() + ".config";
+	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + "/" + BigDataScript.class.getSimpleName().substring(0, 1).toLowerCase() + BigDataScript.class.getSimpleName().substring(1) + ".config";
 	public static final String DEFAULT_INCLUDE_DIR = DEFAULT_CONFIG_DIR + "/include";
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
@@ -167,6 +167,7 @@ public class Config {
 	 * @return
 	 */
 	private void read(String configFileName) {
+		properties = new Properties();
 
 		if (!Gpr.exists(configFileName)) {
 			if (verbose) Timer.showStdErr("Config file '" + configFileName + "' not found");
@@ -176,7 +177,6 @@ public class Config {
 		//---
 		// Read properties file
 		//---
-		properties = new Properties();
 		try {
 			properties.load(new FileReader(new File(configFileName)));
 		} catch (FileNotFoundException e) {
@@ -191,6 +191,7 @@ public class Config {
 			File configDir = new File(configFileName).getAbsoluteFile().getParentFile();
 			configDirName = configDir.getCanonicalPath();
 		} catch (IOException e1) {
+			// OK: May be there is no config file.
 		}
 	}
 

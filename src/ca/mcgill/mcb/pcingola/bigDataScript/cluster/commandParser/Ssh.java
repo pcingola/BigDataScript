@@ -55,7 +55,7 @@ public class Ssh {
 	}
 
 	public boolean isRunning() {
-		return sshCmd.isExecuting();
+		return sshCmd != null ? sshCmd.isExecuting() : false;
 	}
 
 	public boolean isStarted() {

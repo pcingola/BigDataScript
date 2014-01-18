@@ -1,8 +1,9 @@
 #!/usr/bin/env bds
 
-#system = "ssh"
+system = "ssh"
 
-for( int i=0 ; i < 20 ; i++ ) {
-	print("Hi\n")
-	task echo Hello $i; hostname
-}
+print("Executing task: $system\n")
+task echo Hello; hostname ; echo Bye
+
+#for( int i=0 ; i < 2 ; i++ ) {
+#}

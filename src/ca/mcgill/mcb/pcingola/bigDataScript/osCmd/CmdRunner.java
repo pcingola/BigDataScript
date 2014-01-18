@@ -28,7 +28,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * 
  * @author pcingola
  */
-public class CmdRunner extends Thread {
+public class CmdRunner extends Cmd {
 
 	public static final int MAX_PID_LINE_LENGTH = 1024; // A 'PID line' should not be longer than this...
 
@@ -38,26 +38,14 @@ public class CmdRunner extends Thread {
 
 	public static boolean debug = false;
 
-	String id;
-	String commandArgs[]; // Command and arguments
-	String error = ""; // Errors
-	String stdin = ""; // Feed this to process' STDIN
 	boolean readPid;
-	boolean executing = false, started = false; // Command states
 	String pid; // Only if child process reports PID and readPid is true
-	int exitValue = 0; // Command exit value
-	Task task = null; // Task corresponding to this cmd
-	Host host; // Host to execute command (in case it's ssh)
-	HostResources resources; // Resources required by this command
-	Process process; // Java process (the one that actually executes our command)
-	Executioner executioner; // Notify when a process finishes
 
 	public CmdRunner(String id, String args[]) {
-		this.id = id;
-		commandArgs = args;
-		resources = new HostResources();
+		super(id, args);
 	}
 
+	@Override
 	public int exec() {
 		try {
 			executing = true;
@@ -91,6 +79,7 @@ public class CmdRunner extends Thread {
 	/**
 	 * Finished 'exec' of a command, update states
 	 */
+	@Override
 	protected void execDone() {
 		// We are done. Either process finished or an exception was raised.
 		started = true;
@@ -103,6 +92,7 @@ public class CmdRunner extends Thread {
 	/**
 	 * Error while trying to 'exec' of a command, update states
 	 */
+	@Override
 	protected void execError(Exception e) {
 		error = e.getMessage() + "\n";
 		exitValue = -1;
@@ -114,6 +104,7 @@ public class CmdRunner extends Thread {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
+	@Override
 	protected void feedStdin() throws InterruptedException, IOException {
 		if ((stdin == null) || stdin.isEmpty()) return; // Nothing to do
 
@@ -128,57 +119,70 @@ public class CmdRunner extends Thread {
 		bos.close();
 	}
 
+	@Override
 	public String getCmdId() {
 		return id;
 	}
 
+	@Override
 	public String[] getCommandArgs() {
 		return commandArgs;
 	}
 
+	@Override
 	public String getError() {
 		return error;
 	}
 
+	@Override
 	public int getExitValue() {
 		return exitValue;
 	}
 
+	@Override
 	public Host getHost() {
 		return host;
 	}
 
+	@Override
 	public String getPid() {
 		return pid;
 	}
 
+	@Override
 	public HostResources getResources() {
 		return resources;
 	}
 
+	@Override
 	public InputStream getStderr() {
 		if (process == null) return null;
 		return process.getErrorStream();
 	}
 
+	@Override
 	public OutputStream getStdin() {
 		if (process == null) return null;
 		return process.getOutputStream();
 	}
 
+	@Override
 	public InputStream getStdout() {
 		if (process == null) return null;
 		return process.getInputStream();
 	}
 
+	@Override
 	public boolean isDone() {
 		return started && !executing;
 	}
 
+	@Override
 	public boolean isExecuting() {
 		return executing;
 	}
 
+	@Override
 	public boolean isStarted() {
 		return started;
 	}
@@ -186,6 +190,7 @@ public class CmdRunner extends Thread {
 	/**
 	 * Kill a process
 	 */
+	@Override
 	public void kill() {
 		if (process != null) {
 			// Do we have a PID number? Kill using that number
@@ -213,6 +218,7 @@ public class CmdRunner extends Thread {
 	 * Send a kill signal using 'bds kill'
 	 * @param pid
 	 */
+	@Override
 	protected void killBds(int pid) {
 		// Create arguments
 		ArrayList<String> args = new ArrayList<String>();
@@ -237,6 +243,7 @@ public class CmdRunner extends Thread {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
+	@Override
 	protected void readPid() throws InterruptedException, IOException {
 		// Nothing to do?
 		pid = "";
@@ -272,34 +279,42 @@ public class CmdRunner extends Thread {
 		exec();
 	}
 
+	@Override
 	public void setCommandArgs(String[] commandArgs) {
 		this.commandArgs = commandArgs;
 	}
 
+	@Override
 	public void setExecutioner(Executioner executioner) {
 		this.executioner = executioner;
 	}
 
+	@Override
 	public void setHost(Host host) {
 		this.host = host;
 	}
 
+	@Override
 	public void setReadPid(boolean readPid) {
 		this.readPid = readPid;
 	}
 
+	@Override
 	public void setResources(HostResources resources) {
 		this.resources = resources;
 	}
 
+	@Override
 	public void setStdin(String stdin) {
 		this.stdin = stdin;
 	}
 
+	@Override
 	public void setTask(Task task) {
 		this.task = task;
 	}
 
+	@Override
 	protected void started() {
 		started = true;
 		if (task != null) task.stateStarted();
