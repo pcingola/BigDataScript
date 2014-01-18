@@ -1,11 +1,13 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.exec;
+package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunner;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunnerCluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -29,8 +31,8 @@ public class ClusterExecutioner extends LocalExecutioner {
 
 	MonitorExitFile monitorExitFile;
 
-	public ClusterExecutioner(PidLogger pidLogger) {
-		super(pidLogger);
+	public ClusterExecutioner(Config config) {
+		super(config);
 		monitorExitFile = new MonitorExitFile();
 	}
 

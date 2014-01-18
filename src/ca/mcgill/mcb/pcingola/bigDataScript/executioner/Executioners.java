@@ -1,11 +1,10 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.exec;
+package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.util.Collection;
 import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
 
 /**
@@ -46,7 +45,6 @@ public class Executioners {
 
 	Config config;
 	HashMap<ExecutionerType, Executioner> executioners = new HashMap<ExecutionerType, Executioner>();
-	PidLogger pidLogger;
 
 	/**
 	 * Get instance
@@ -86,7 +84,7 @@ public class Executioners {
 			// Create 'local'
 			cluster = new Cluster();
 			cluster.add(new HostLocal());
-			executioner = new LocalExecutioner(getPidLogger());
+			executioner = new LocalExecutioner(config);
 			break;
 		case LOCAL:
 
@@ -97,7 +95,7 @@ public class Executioners {
 			// Create 'local' cluster' (a cluster having only this computer)
 			cluster = new Cluster();
 			cluster.add(new HostLocal());
-			executioner = new LocalQueueExecutioner(getPidLogger());
+			executioner = new LocalQueueExecutioner(config);
 			break;
 
 		case SSH:
@@ -105,21 +103,14 @@ public class Executioners {
 			// Create ssh executioner
 			//---
 
-			// Create a cluster 
-			cluster = new Cluster();
-
-			// Add nodes from config file
-			for (String sshNode : executionersInstance.config.getSshNodes())
-				cluster.add(new Host(cluster, sshNode));
-
-			executioner = new SshExecutioner(cluster);
+			executioner = new SshExecutioner(config);
 
 			break;
 		case CLUSTER:
 			//---
 			// Create cluster executioner
 			//---
-			executioner = new ClusterExecutioner(getPidLogger());
+			executioner = new ClusterExecutioner(config);
 			break;
 
 		default:
@@ -169,13 +160,6 @@ public class Executioners {
 	 */
 	public Collection<Executioner> getAll() {
 		return executioners.values();
-	}
-
-	public PidLogger getPidLogger() {
-		if (pidLogger == null) {
-			pidLogger = new PidLogger(config.getPidFile());
-		}
-		return pidLogger;
 	}
 
 }

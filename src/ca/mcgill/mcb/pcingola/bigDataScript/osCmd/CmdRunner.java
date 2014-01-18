@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**

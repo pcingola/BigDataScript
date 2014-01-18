@@ -1,8 +1,9 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.exec;
+package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**

@@ -1,14 +1,17 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.exec;
+package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * A system that can execute an Exec
+ * A system that can execute a command line or a shell script
  * 
  * @author pcingola
  */
@@ -25,15 +28,17 @@ public abstract class Executioner extends Thread {
 	protected ArrayList<Task> tasksToRun;
 	protected HashMap<String, Task> tasksDone, tasksRunning;
 	protected Tail tail;
-	PidLogger pidLogger;
+	protected PidLogger pidLogger;
+	protected Config config;
 
-	public Executioner(PidLogger pidLogger) {
+	public Executioner(Config config) {
 		super();
-		this.pidLogger = pidLogger;
+		this.config = config;
 		tasksToRun = new ArrayList<Task>();
 		tasksDone = new HashMap<String, Task>();
 		tasksRunning = new HashMap<String, Task>();
-		tail = new Tail();
+		tail = config.getTail();
+		pidLogger = config.getPidLogger();
 	}
 
 	/**
@@ -278,14 +283,12 @@ public abstract class Executioner extends Thread {
 	 * Clean up after run loop
 	 */
 	protected void runLoopAfter() {
-		tail.kill(); // Kill tail process
 	}
 
 	/**
 	 * Initialize before run loop
 	 */
 	protected void runLoopBefore() {
-		tail.start(); // Create a 'tail' process (to show STDOUT & STDERR from all processes)
 	}
 
 	/**

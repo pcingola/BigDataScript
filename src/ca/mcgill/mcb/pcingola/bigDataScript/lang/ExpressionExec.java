@@ -36,7 +36,7 @@ public class ExpressionExec extends ExpressionSys {
 	@Override
 	protected void parse(ParseTree tree) {
 		commands = tree.getChild(0).getText();
-		commands = commands.substring("exec".length()).trim(); // Remove leading 'sys' part and trim spaces
+		commands = commands.substring("exec".length()).trim(); // Remove leading 'exec' part and trim spaces
 		interpolateVars(commands); // Find interpolated variables
 	}
 

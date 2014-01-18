@@ -1,10 +1,12 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.exec;
+package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunner;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -17,8 +19,8 @@ public class LocalExecutioner extends Executioner {
 
 	HashMap<String, CmdRunner> cmdById;
 
-	public LocalExecutioner(PidLogger pidLogger) {
-		super(pidLogger);
+	public LocalExecutioner(Config config) {
+		super(config);
 		cmdById = new HashMap<String, CmdRunner>();
 	}
 

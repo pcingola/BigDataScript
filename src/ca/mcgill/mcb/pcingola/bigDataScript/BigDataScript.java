@@ -23,9 +23,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompileErrorStrategy;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.TypeCheckedNodes;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners.ExecutionerType;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners.ExecutionerType;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Literal;
@@ -719,6 +719,8 @@ public class BigDataScript {
 		// ---
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
+
+		config.kill(); // Kill 'tail' and 'monitor' threads
 
 		if (verbose) Timer.showStdErr("Finished running. Exit value : " + exitValue);
 		return exitValue;

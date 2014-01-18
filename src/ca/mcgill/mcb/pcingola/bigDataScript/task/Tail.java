@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.exec;
+package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -74,10 +74,8 @@ public class Tail extends Thread {
 	public synchronized void remove(String fileName) {
 		try {
 			TailFile tf = files.get(fileName);
-			if (tf != null) {
-				tf.close();
-				files.remove(fileName);
-			}
+			if (tf != null) tf.close();
+			files.remove(fileName);
 		} catch (Exception e) {
 			// Nothing to do
 		}
@@ -118,13 +116,10 @@ public class Tail extends Thread {
 			else if (bytes > 0) anyOutput = true; // There was an output of 'bytes' number of bytes
 		}
 
-		// Remove problematic entries (if any)
+		// Remove  entries (if any)
 		if (!toRemove.isEmpty()) {
-			for (String fileName : toRemove) {
-				TailFile tf = files.get(fileName);
-				if (tf != null) tf.close();
-				files.remove(fileName);
-			}
+			for (String fileName : toRemove)
+				remove(fileName);
 			toRemove = new HashSet<String>();
 		}
 

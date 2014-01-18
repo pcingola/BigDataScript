@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.exec;
+package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
 import java.io.File;
 import java.util.List;

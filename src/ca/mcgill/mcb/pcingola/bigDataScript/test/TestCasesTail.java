@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.TailFile;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TailFile;
 
 /**
  * Test cases for 'Tail'  file 

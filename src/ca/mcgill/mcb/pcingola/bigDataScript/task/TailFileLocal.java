@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.exec;
+package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A file to use with 'Tail'
- * Opens files, so it has limitations depending on the number of opened file descriptors allowed by the ssystem.
+ * Opens files, so it has limitations depending on the number of opened file descriptors allowed by the system.
  * 
  * @author pcingola
  */

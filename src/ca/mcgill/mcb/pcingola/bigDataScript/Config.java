@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.PidLogger;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -15,7 +17,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  * Config file
  * 
  * @author pcingola
-
  */
 public class Config {
 
@@ -28,14 +29,14 @@ public class Config {
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
 	boolean debug = false; // Debug mode?
-
 	boolean verbose = false; // Verbose mode?
 	boolean log = false; // Log all commands?
 	String configDirName;
 	String pidFile;
 	Properties properties;
-	ArrayList<String> sshNodes;
 	ArrayList<String> includePath;
+	PidLogger pidLogger;
+	Tail tail;
 
 	public static Config get() {
 		if (configInstance == null) configInstance = new Config();
@@ -103,7 +104,7 @@ public class Config {
 	 * @param propertyName
 	 * @return
 	 */
-	protected long getLong(String propertyName, long defaultValue) {
+	public long getLong(String propertyName, long defaultValue) {
 		String val = getString(propertyName);
 		if (val == null) return defaultValue;
 		return Gpr.parseLongSafe(val);
@@ -113,9 +114,11 @@ public class Config {
 		return pidFile;
 	}
 
-	public ArrayList<String> getSshNodes() {
-		if (sshNodes == null) sshNodes = new ArrayList<String>();
-		return sshNodes;
+	public PidLogger getPidLogger() {
+		if (pidLogger == null) {
+			pidLogger = new PidLogger(getPidFile());
+		}
+		return pidLogger;
 	}
 
 	/**
@@ -125,6 +128,19 @@ public class Config {
 	 */
 	protected String getString(String propertyName) {
 		return properties.getProperty(propertyName);
+	}
+
+	public String getString(String propertyName, String defaultValue) {
+		String val = getString(propertyName);
+		return val != null ? val : defaultValue;
+	}
+
+	public Tail getTail() {
+		if (tail == null) {
+			tail = new Tail();
+			tail.start(); // Create a 'tail' process (to show STDOUT & STDERR from all processes)
+		}
+		return tail;
 	}
 
 	public boolean isDebug() {
@@ -137,6 +153,13 @@ public class Config {
 
 	public boolean isVerbose() {
 		return verbose;
+	}
+
+	public void kill() {
+		if (tail != null) {
+			tail.kill(); // Kill tail process
+			tail = null;
+		}
 	}
 
 	/**
@@ -169,34 +192,10 @@ public class Config {
 			configDirName = configDir.getCanonicalPath();
 		} catch (IOException e1) {
 		}
-
-		//---
-		// Set attributes
-		//---
-
-		// Set properties
-		setFromProperties();
 	}
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
-	}
-
-	/**
-	 * Set from parameter properties
-	 */
-	void setFromProperties() {
-		//---
-		// Parse Ssh nodes option
-		//---
-		sshNodes = new ArrayList<String>();
-		String sshNodesStr = getString("ssh.nodes");
-		if (sshNodesStr != null) {
-			for (String sshNode : sshNodesStr.split(",")) {
-				sshNode = sshNode.trim();
-				if (!sshNode.isEmpty()) sshNodes.add(sshNode);
-			}
-		}
 	}
 
 	public void setLog(boolean log) {

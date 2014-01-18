@@ -8,14 +8,14 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners.ExecutionerType;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.LocalExecutioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.LocalExecutioner;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners.ExecutionerType;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 

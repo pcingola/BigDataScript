@@ -12,7 +12,6 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrePostOperation;
@@ -24,6 +23,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.ProgramCounter;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**

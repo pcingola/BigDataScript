@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Executioners;
-import ca.mcgill.mcb.pcingola.bigDataScript.exec.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 
 /**
  * A "wait" statement
