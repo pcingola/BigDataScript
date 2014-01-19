@@ -7,10 +7,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -34,69 +30,37 @@ public class CmdRunner extends Cmd {
 
 	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
 	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
-	public static final String[] ARGS_ARRAY_TYPE = new String[0];
 
-	public static boolean debug = false;
-
-	boolean readPid;
-	String pid; // Only if child process reports PID and readPid is true
+	protected Process process; // Java process (the one that actually executes our command)
+	protected boolean readPid;
+	protected String pid; // Only if child process reports PID and readPid is true
+	protected String feedStdin; // Feed this string to stdin when the process starts 
 
 	public CmdRunner(String id, String args[]) {
 		super(id, args);
 	}
 
 	@Override
-	public int exec() {
-		try {
-			executing = true;
+	protected void execCmd() throws Exception {
+		// Wait for the process to finish and store exit value
+		exitValue = process.waitFor();
+		if (debug) Gpr.debug("Exit value: " + exitValue);
+	}
 
-			// Build process and start it
-			ProcessBuilder pb = new ProcessBuilder(commandArgs);
-			if (debug) {
-				StringBuilder cmdsb = new StringBuilder();
-				for (String arg : commandArgs)
-					cmdsb.append(" " + arg);
-				Gpr.debug("Executing: " + cmdsb);
-			}
-			process = pb.start();
-
-			feedStdin(); // Feed something to STDIN?
-			readPid(); // Child process prints PID to STDOUT? Read it
-			started(); // Now we are really done and the process is started. Update states
-
-			// Wait for the process to finish and store exit value
-			exitValue = process.waitFor();
-			if (debug) Gpr.debug("Exit value: " + exitValue);
-
-		} catch (Exception e) {
-			execError(e);
-		} finally {
-			execDone();
+	@Override
+	protected void execPrepare() throws Exception {
+		// Build process and start it
+		ProcessBuilder pb = new ProcessBuilder(commandArgs);
+		if (debug) {
+			StringBuilder cmdsb = new StringBuilder();
+			for (String arg : commandArgs)
+				cmdsb.append(" " + arg);
+			Gpr.debug("Executing: " + cmdsb);
 		}
-		return exitValue;
-	}
+		process = pb.start();
 
-	/**
-	 * Finished 'exec' of a command, update states
-	 */
-	@Override
-	protected void execDone() {
-		// We are done. Either process finished or an exception was raised.
-		started = true;
-		executing = false;
-
-		if (task != null) task.setExitValue(exitValue); // Update task
-		if (executioner != null) executioner.finished(id); // Notify end of execution
-	}
-
-	/**
-	 * Error while trying to 'exec' of a command, update states
-	 */
-	@Override
-	protected void execError(Exception e) {
-		error = e.getMessage() + "\n";
-		exitValue = -1;
-		if (debug) e.printStackTrace();
+		feedStdin(); // Feed something to STDIN?
+		readPid(); // Child process prints PID to STDOUT? Read it
 	}
 
 	/**
@@ -104,9 +68,8 @@ public class CmdRunner extends Cmd {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	@Override
 	protected void feedStdin() throws InterruptedException, IOException {
-		if ((stdin == null) || stdin.isEmpty()) return; // Nothing to do
+		if ((feedStdin == null) || feedStdin.isEmpty()) return; // Nothing to do
 
 		// Wait for STDOUT to become available
 		while (getStdin() == null)
@@ -114,111 +77,34 @@ public class CmdRunner extends Cmd {
 
 		// Write and close STDIN
 		BufferedWriter bos = new BufferedWriter(new OutputStreamWriter(getStdin()));
-		bos.write(stdin);
+		bos.write(feedStdin);
 		bos.flush();
 		bos.close();
 	}
 
-	@Override
-	public String getCmdId() {
-		return id;
-	}
-
-	@Override
-	public String[] getCommandArgs() {
-		return commandArgs;
-	}
-
-	@Override
-	public String getError() {
-		return error;
-	}
-
-	@Override
-	public int getExitValue() {
-		return exitValue;
-	}
-
-	@Override
-	public Host getHost() {
-		return host;
-	}
-
-	@Override
 	public String getPid() {
 		return pid;
 	}
 
-	@Override
-	public HostResources getResources() {
-		return resources;
-	}
-
-	@Override
 	public InputStream getStderr() {
 		if (process == null) return null;
 		return process.getErrorStream();
 	}
 
-	@Override
 	public OutputStream getStdin() {
 		if (process == null) return null;
 		return process.getOutputStream();
 	}
 
-	@Override
 	public InputStream getStdout() {
 		if (process == null) return null;
 		return process.getInputStream();
-	}
-
-	@Override
-	public boolean isDone() {
-		return started && !executing;
-	}
-
-	@Override
-	public boolean isExecuting() {
-		return executing;
-	}
-
-	@Override
-	public boolean isStarted() {
-		return started;
-	}
-
-	/**
-	 * Kill a process
-	 */
-	@Override
-	public void kill() {
-		if (process != null) {
-			// Do we have a PID number? Kill using that number
-			int pidNum = Gpr.parseIntSafe(pid);
-			if (pidNum > 0) killBds(pidNum);
-
-			error += "Killed!\n";
-			if (debug) Gpr.debug("Killing process " + id);
-			process.destroy();
-		}
-
-		// Update task stats
-		if (task != null) {
-			if (debug) Gpr.debug("Killed: Setting stats for " + id);
-			task.stateKilled();
-		}
-
-		// Notify end of execution
-		if (executioner != null) executioner.finished(id);
-
-		if (debug) Gpr.debug("Process was killed");
 	}
 
 	/**
 	 * Send a kill signal using 'bds kill'
 	 * @param pid
 	 */
-	@Override
 	protected void killBds(int pid) {
 		// Create arguments
 		ArrayList<String> args = new ArrayList<String>();
@@ -237,13 +123,25 @@ public class CmdRunner extends Cmd {
 		}
 	}
 
+	@Override
+	protected void killCmd() {
+		if (process != null) {
+			// Do we have a PID number? Kill using that number
+			int pidNum = Gpr.parseIntSafe(pid);
+			if (pidNum > 0) killBds(pidNum);
+
+			error += "Killed!\n";
+			if (debug) Gpr.debug("Killing process " + id);
+			process.destroy();
+		}
+	}
+
 	/**
 	 * Read child process pid (or cluster job id)
 	 * @return
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	@Override
 	protected void readPid() throws InterruptedException, IOException {
 		// Nothing to do?
 		pid = "";
@@ -274,58 +172,11 @@ public class CmdRunner extends Cmd {
 		if (task != null) task.setPid(pid); // Update task's pid
 	}
 
-	@Override
-	public void run() {
-		exec();
-	}
-
-	@Override
-	public void setCommandArgs(String[] commandArgs) {
-		this.commandArgs = commandArgs;
-	}
-
-	@Override
-	public void setExecutioner(Executioner executioner) {
-		this.executioner = executioner;
-	}
-
-	@Override
-	public void setHost(Host host) {
-		this.host = host;
-	}
-
-	@Override
 	public void setReadPid(boolean readPid) {
 		this.readPid = readPid;
 	}
 
-	@Override
-	public void setResources(HostResources resources) {
-		this.resources = resources;
-	}
-
-	@Override
 	public void setStdin(String stdin) {
-		this.stdin = stdin;
+		feedStdin = stdin;
 	}
-
-	@Override
-	public void setTask(Task task) {
-		this.task = task;
-	}
-
-	@Override
-	protected void started() {
-		started = true;
-		if (task != null) task.stateStarted();
-	}
-
-	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		for (String c : commandArgs)
-			sb.append(c + " ");
-		return sb.toString();
-	}
-
 }

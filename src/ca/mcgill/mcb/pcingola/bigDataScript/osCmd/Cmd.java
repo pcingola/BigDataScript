@@ -1,8 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
@@ -17,6 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public abstract class Cmd extends Thread {
 
 	public static final String[] ARGS_ARRAY_TYPE = new String[0];
+	public static final int ERROR_EXECUTING = -1;
 
 	public static boolean debug = false;
 
@@ -29,8 +27,7 @@ public abstract class Cmd extends Thread {
 	protected Task task = null; // Task corresponding to this cmd
 	protected Host host; // Host to execute command (in case it's ssh)
 	protected HostResources resources; // Resources required by this command
-	protected Process process; // Java process (the one that actually executes our command)
-	protected Executioner executioner; // Notify when a process finishes
+	protected Executioner executioner; // Notify executioner when this command finishes executing
 
 	public Cmd(String id, String args[]) {
 		this.id = id;
@@ -38,17 +35,20 @@ public abstract class Cmd extends Thread {
 		resources = new HostResources();
 	}
 
+	/**
+	 * Execute command
+	 * @return
+	 */
 	public int exec() {
 		try {
 			executing = true;
-			execPrepare();
+			execPrepare(); // Prepare to execute
 			started(); // Now we are really done and the process is started. Update states
-			execCmd();
-
+			execCmd(); // Execute command or wait for execution to finish
 		} catch (Exception e) {
 			execError(e);
 		} finally {
-			execDone();
+			execDone(); // OK, we are done. Clean up and notify.
 		}
 		return exitValue;
 	}
@@ -56,10 +56,10 @@ public abstract class Cmd extends Thread {
 	/**
 	 * Execute command
 	 */
-	protected abstract void execCmd();
+	protected abstract void execCmd() throws Exception;
 
 	/**
-	 * Finished 'exec' of a command, update states
+	 * Finished executing a command, update states, notify
 	 */
 	protected void execDone() {
 		// We are done. Either process finished or an exception was raised.
@@ -75,14 +75,14 @@ public abstract class Cmd extends Thread {
 	 */
 	protected void execError(Exception e) {
 		error = e.getMessage() + "\n";
-		exitValue = -1;
+		exitValue = ERROR_EXECUTING;
 		if (debug) e.printStackTrace();
 	}
 
 	/**
 	 * Prepare to execute
 	 */
-	protected abstract void execPrepare();
+	protected abstract void execPrepare() throws Exception;
 
 	public String getCmdId() {
 		return id;
@@ -106,21 +106,6 @@ public abstract class Cmd extends Thread {
 
 	public HostResources getResources() {
 		return resources;
-	}
-
-	public InputStream getStderr() {
-		if (process == null) return null;
-		return process.getErrorStream();
-	}
-
-	public OutputStream getStdin() {
-		if (process == null) return null;
-		return process.getOutputStream();
-	}
-
-	public InputStream getStdout() {
-		if (process == null) return null;
-		return process.getInputStream();
 	}
 
 	public boolean isDone() {
@@ -188,6 +173,7 @@ public abstract class Cmd extends Thread {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		sb.append(this.getClass().getSimpleName() + ": ");
 		for (String c : commandArgs)
 			sb.append(c + " ");
 		return sb.toString();

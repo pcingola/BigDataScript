@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-system = "ssh"
+#system = "ssh"
 
 print("Executing task: $system\n")
 task echo Hello; hostname ; echo Bye
