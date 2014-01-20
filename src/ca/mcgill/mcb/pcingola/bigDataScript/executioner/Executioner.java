@@ -56,7 +56,7 @@ public abstract class Executioner extends Thread {
 
 		// Create a cluster having only one host (this computer)
 		cluster = new Cluster();
-		cluster.add(new HostLocal());
+		new HostLocal(cluster);
 	}
 
 	/**
@@ -297,6 +297,11 @@ public abstract class Executioner extends Thread {
 		Cmd cmd = createCmd(task);
 		cmd.setHost(host);
 		cmd.setExecutioner(this);
+		cmd.setTask(task);
+		cmd.setDebug(debug);
+
+		cmdById.put(task.getId(), cmd);
+
 		host.add(task);
 		cmd.start();
 	}

@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
-import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdRunnerSsh;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdSsh;
 
 /**
  * A representation of an ssh connection (executes 'ssh' command
@@ -15,7 +15,7 @@ public class Ssh {
 
 	Host host;
 	String error; // Latest error message
-	CmdRunnerSsh sshCmd = null;
+	CmdSsh sshCmd = null;
 	String jobId = "";
 	String head = "";
 

@@ -21,7 +21,7 @@ import com.jcraft.jsch.Session;
  * 
  * @author pcingola
  */
-public class CmdRunnerSsh extends CmdLocal {
+public class CmdSsh extends CmdLocal {
 
 	public static String defaultKnownHosts = Gpr.HOME + "/.ssh/known_hosts";
 	public static String defaultKnownIdentity[] = { Gpr.HOME + "/.ssh/id_dsa", Gpr.HOME + "/.ssh/id_rsa" };
@@ -38,12 +38,12 @@ public class CmdRunnerSsh extends CmdLocal {
 	Session session;
 	ChannelExec channel;
 
-	public CmdRunnerSsh(String cmdId, String commandArgs[]) {
+	public CmdSsh(String cmdId, String commandArgs[]) {
 		super(cmdId, commandArgs);
 		programFile = null;
 	}
 
-	public CmdRunnerSsh(String cmdId, String programFile, String commandArgs[]) {
+	public CmdSsh(String cmdId, String programFile, String commandArgs[]) {
 		super(cmdId, commandArgs);
 		this.programFile = programFile;
 	}

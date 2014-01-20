@@ -44,6 +44,11 @@ public class Host implements Comparable<Host> {
 		} else userName = "";
 
 		tasksRunning = new HashSet<Task>();
+		cluster.add(this);
+	}
+
+	public boolean canUpdateSsh() {
+		return true;
 	}
 
 	/**

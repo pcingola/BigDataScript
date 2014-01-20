@@ -11,7 +11,6 @@ import java.util.Map;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostHealth;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostHealthUpdater;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -61,7 +60,7 @@ public class Cluster implements Iterable<Host> {
 		hosts.put(hostName, host);
 
 		// Create a host info updater (except for local host)
-		if (!(host instanceof HostLocal)) {
+		if (host.canUpdateSsh()) {
 			HostHealthUpdater hostInfoUpdater = new HostHealthUpdater(host);
 			hostHealthUpdaters.put(hostName, hostInfoUpdater);
 		}

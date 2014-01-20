@@ -15,7 +15,7 @@ public class MonitorExitFile extends Thread {
 
 	public static final int SLEEP_TIME = 200;
 
-	boolean debug = true;
+	boolean debug = false;
 	boolean verbose;
 	HashMap<Task, Executioner> execByTask;
 	boolean running;
@@ -79,23 +79,23 @@ public class MonitorExitFile extends Thread {
 	 * Check is an exist file exists, update states
 	 */
 	synchronized void update() {
-		ArrayList<Task> toDelete = null;
+		ArrayList<Task> toUpdate = null;
 
 		for (Task task : execByTask.keySet()) {
 			String exitFile = task.getExitCodeFile();
 			if (Gpr.exists(exitFile)) {
-				update(task);
-
 				// Create (or add) to tasks to delete
-				if (toDelete == null) toDelete = new ArrayList<Task>();
-				toDelete.add(task);
+				if (toUpdate == null) toUpdate = new ArrayList<Task>();
+				toUpdate.add(task);
 			}
 		}
 
 		// An task to delete?
-		if (toDelete != null) {
-			for (Task task : toDelete)
+		if (toUpdate != null) {
+			for (Task task : toUpdate) {
+				update(task);
 				remove(task); // We don't need to monitor this task any more
+			}
 		}
 	}
 
@@ -111,12 +111,8 @@ public class MonitorExitFile extends Thread {
 		int exitVal = (exitFileStr.equals("0") ? 0 : 1);
 		if (debug) Gpr.debug("MonitorExitFile: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
 
-		// Set task
-		task.setExitValue(exitVal);
-
 		// Inform executioner that task has finished
 		Executioner executioner = execByTask.get(task);
 		executioner.taskFinished(task, null, exitVal);
-
 	}
 }

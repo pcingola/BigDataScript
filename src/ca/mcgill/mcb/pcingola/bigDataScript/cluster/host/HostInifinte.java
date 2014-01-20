@@ -1,21 +1,19 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.host;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * Local host information
+ * A host with infinite capacity
  * 
  * @author pcingola@mcgill.ca
  */
-public class HostLocal extends Host {
+public class HostInifinte extends Host {
 
-	public HostLocal(Cluster cluster) {
+	public HostInifinte(Cluster cluster) {
 		super(cluster, "localhost");
 
-		// Set basic parameters
-		health.setAlive(true);
-		resources.setCpus(Gpr.NUM_CORES);
+		health.setAlive(true); // This host is up
+		// Note: We don't set resources => Unlimited
 	}
 
 	@Override

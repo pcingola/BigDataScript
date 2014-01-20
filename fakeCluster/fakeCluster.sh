@@ -10,11 +10,9 @@ do
 	if [ ! -z "$next" ]
 	then
 		echo "Executing task $next"
-		$next
-
-		echo "Moving file $next to 'done'"
-		mv $next $doneDir
+		( $next ; mv $next $doneDir )&
+	else
+		sleep 1
 	fi
 
-	sleep 1
 done
