@@ -71,9 +71,6 @@ public class Executioners {
 	public Executioner factory(ExecutionerType exType) {
 		Executioner executioner;
 		switch (exType) {
-		case SYS:
-			executioner = new ExecutionerSys(config);
-			break;
 		case LOCAL:
 			executioner = new ExecutionerLocal(config);
 			break;

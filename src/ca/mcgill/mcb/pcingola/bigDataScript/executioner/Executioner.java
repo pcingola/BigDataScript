@@ -11,7 +11,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
@@ -31,8 +30,10 @@ public abstract class Executioner extends Thread {
 	protected boolean log;
 	protected boolean running;
 	protected int hostIdx = 0;
-	protected ArrayList<Task> tasksToRun;
-	protected HashMap<String, Task> tasksDone, tasksRunning;
+	protected ArrayList<Task> tasksToRun; // Tasks queued for execution
+	protected HashMap<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host 
+	protected HashMap<String, Task> tasksRunning; // Tasks running
+	protected HashMap<String, Task> tasksDone; // Tasks that fin
 	protected HashMap<String, Cmd> cmdById;
 	protected Tail tail;
 	protected PidLogger pidLogger;
@@ -43,8 +44,9 @@ public abstract class Executioner extends Thread {
 		super();
 		this.config = config;
 		tasksToRun = new ArrayList<Task>();
-		tasksDone = new HashMap<String, Task>();
+		tasksSelected = new HashMap<Task, Host>();
 		tasksRunning = new HashMap<String, Task>();
+		tasksDone = new HashMap<String, Task>();
 		tail = config.getTail();
 		pidLogger = config.getPidLogger();
 		cmdById = new HashMap<String, Cmd>();
@@ -62,8 +64,13 @@ public abstract class Executioner extends Thread {
 	 * @return
 	 */
 	public void add(Task task) {
-		if (verbose) Timer.showStdErr("Queuing task '" + task.getId() + "'");
+		if (debug) Timer.showStdErr("Queuing task '" + task.getId() + "'");
 		tasksToRun.add(task);
+	}
+
+	protected void add(Task task, Host host) {
+		tasksSelected.put(task, host);
+		host.add(task);
 	}
 
 	/**
@@ -119,7 +126,7 @@ public abstract class Executioner extends Thread {
 	 * @return
 	 */
 	public synchronized boolean hasTaskToRun() {
-		return !tasksToRun.isEmpty() || !tasksRunning.isEmpty();
+		return tasksToRun.size() - tasksSelected.size() > 0;
 	}
 
 	/**
@@ -180,7 +187,7 @@ public abstract class Executioner extends Thread {
 	 * @return
 	 */
 	public void kill(Task task) {
-		if (verbose) Timer.showStdErr("Killing task '" + task.getId() + "'");
+		if (debug) Timer.showStdErr("Killing task '" + task.getId() + "'");
 
 		// Kill command
 		Cmd cmd = cmdById.get(task.getId());
@@ -199,6 +206,11 @@ public abstract class Executioner extends Thread {
 	 * @return
 	 */
 	public abstract String osKillCommand(Task task);
+
+	protected void remove(Task task, Host host) {
+		tasksSelected.remove(task);
+		host.remove(task);
+	}
 
 	/**
 	 * Run thread: Run executioner's main loop
@@ -254,7 +266,7 @@ public abstract class Executioner extends Thread {
 				runTask(taskHostPair.first, taskHostPair.second);
 			} else {
 				sleepShort();
-				if (verbose) Timer.showStdErr("Queue tasks:\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
+				if (debug) Timer.showStdErr("Queue tasks:\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
 			}
 		}
 
@@ -280,13 +292,13 @@ public abstract class Executioner extends Thread {
 	 * @return
 	 */
 	protected void runTask(Task task, Host host) {
-		if (verbose) Timer.showStdErr("Running task '" + task.getId() + "' on host " + host.getHostName());
+		if (debug) Timer.showStdErr("Running task '" + task.getId() + "' on host " + host.getHostName());
 
 		Cmd cmd = createCmd(task);
 		cmd.setHost(host);
 		cmd.setExecutioner(this);
 		host.add(task);
-		cmd.run();
+		cmd.start();
 	}
 
 	/**
@@ -298,15 +310,20 @@ public abstract class Executioner extends Thread {
 		if (tasksToRun.isEmpty()) return null;
 
 		for (Task task : tasksToRun) {
+			// Already selected? Skip
+			if (tasksSelected.containsKey(task)) continue;
+
 			// Can we run this task? 
 			if (task.canRun()) {
 				// Select host (we only have one)
 				for (Host host : cluster) {
 
 					// Do we have enough resources to run this task in this host?
-					if (host.getResources().hasResources(task.getResources())) ;
-					Tuple<Task, Host> taskHostPair = new Tuple<Task, Host>(task, host);
-					return taskHostPair;
+					if (host.getResources().hasResources(task.getResources())) {
+						// OK, execute this task in this host						
+						add(task, host); // Add task to host (make sure resources are reserved)
+						return new Tuple<Task, Host>(task, host);
+					}
 				}
 			}
 		}
@@ -352,7 +369,7 @@ public abstract class Executioner extends Thread {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
 
 		String id = task.getId();
-		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
+		if (debug) Timer.showStdErr("Finished task '" + id + "'");
 
 		// Set exit status 
 		task.setExitValue(exitValue);
@@ -361,7 +378,7 @@ public abstract class Executioner extends Thread {
 		Cmd cmd = cmdById.get(id);
 		if (cmd != null) {
 			Host host = cmd.getHost();
-			host.remove(task); // Remove task form host
+			remove(task, host); // Remove task form host
 			cmdById.remove(id); // Remove command
 		}
 
@@ -386,7 +403,7 @@ public abstract class Executioner extends Thread {
 	 * @param task
 	 */
 	public synchronized void taskRunning(Task task) {
-		if (verbose) Timer.showStdErr("Task running '" + task.getId() + "'");
+		if (debug) Timer.showStdErr("Task running '" + task.getId() + "'");
 
 		// Change state
 		task.state(TaskState.RUNNING);
@@ -396,10 +413,11 @@ public abstract class Executioner extends Thread {
 	}
 
 	public synchronized void taskStarted(Task task) {
-		if (verbose) Timer.showStdErr("Task started '" + task.getId() + "'");
+		if (debug) Timer.showStdErr("Task started '" + task.getId() + "'");
 
 		// Move from 'tasksToRun' to 'tasksRunning'
 		tasksToRun.remove(task);
+		tasksSelected.remove(task);
 		tasksRunning.put(task.getId(), task);
 
 		// Change state
@@ -408,40 +426,7 @@ public abstract class Executioner extends Thread {
 
 	@Override
 	public String toString() {
-		return "Queue type: " + this.getClass().getSimpleName() + "\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size();
-	}
-
-	/**
-	 * Wait until a task finishes
-	 * @param taskId
-	 * @return
-	 */
-	public int waitFinish(Task task) {
-		if (verbose) Timer.showStdErr("Wating for task '" + task.getId() + "'");
-
-		String taskId = task.getId();
-
-		// Wait for command to appear
-		Cmd cmd = null;
-		while (cmd == null) {
-			cmd = cmdById.get(taskId);
-			sleepShort();
-		}
-
-		// Joined the thread (wait until execution ends)
-		try {
-			cmd.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		// Wait until task is finished
-		while (!task.isDone())
-			sleepShort();
-
-		Gpr.debug("Exits value: " + task.getExitValue() + "\ttask state:" + task.getTaskState());
-		// Now the task is 'done'
-		return task.getExitValue();
+		return "Queue type: '" + this.getClass().getSimpleName() + "'\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size();
 	}
 
 	/**

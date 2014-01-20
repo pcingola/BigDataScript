@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
  * 
  * @author pcingola
  */
-public class ExecutionerCluster extends ExecutionerSys {
+public class ExecutionerCluster extends ExecutionerLocal {
 
 	public static String FAKE_CLUSTER = "";
 	// public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";

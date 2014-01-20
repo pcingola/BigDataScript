@@ -62,7 +62,6 @@ public abstract class Cmd extends Thread {
 
 		// OK, we are done. Clean up and notify.
 		execDone();
-		Gpr.debug("CMD DONE!");
 		return exitValue;
 	}
 

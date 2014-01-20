@@ -202,38 +202,6 @@ public class ExpressionSys extends Expression {
 		return RunState.OK;
 	}
 
-	//	@Override
-	//	protected RunState runStep(BigDataScriptThread csThread) {
-	//		if (csThread.isCheckpointRecover()) return RunState.CHECKPOINT_RECOVER;
-	//
-	//		// Get an ID
-	//		execId = execId("sys", csThread);
-	//
-	//		// Create a 
-	//
-	//		// SYS expressions are always executed locally
-	//		// Create a task
-	//		Task task = new Task(execId, getSysFileName(), getCommands(csThread), getFileName(), getLineNum());
-	//		task.setVerbose(csThread.getConfig().isVerbose());
-	//		task.setDebug(csThread.getConfig().isDebug());
-	//		csThread.add(task); // Add task to thread
-	//
-	//		// Execute
-	//		ExecutionerSys executioner = (ExecutionerSys) Executioners.getInstance().get(ExecutionerType.SYS); // Get executioner
-	//		executioner.add(task); // Execute task and wait for command to finish
-	//		executioner.waitFinish(task); // Execute task and wait for command to finish
-	//
-	//		// Error running the program? 
-	//		if (!task.isDoneOk()) {
-	//			// Execution failed! Save checkpoint and exit
-	//			csThread.checkpoint(null);
-	//			csThread.setExitValue(task.getExitValue()); // Set return value and exit
-	//			return RunState.EXIT;
-	//		}
-	//
-	//		return RunState.OK;
-	//	}
-
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		super.serializeParse(serializer);

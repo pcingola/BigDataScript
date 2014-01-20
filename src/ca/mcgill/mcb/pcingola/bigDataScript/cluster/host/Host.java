@@ -51,8 +51,7 @@ public class Host implements Comparable<Host> {
 	 * @param task
 	 */
 	public synchronized void add(Task task) {
-		tasksRunning.add(task);
-		updateRsources();
+		if (tasksRunning.add(task)) updateRsources();
 	}
 
 	@Override
@@ -89,8 +88,7 @@ public class Host implements Comparable<Host> {
 	 * @param task
 	 */
 	public synchronized void remove(Task task) {
-		tasksRunning.remove(task);
-		updateRsources();
+		if (tasksRunning.remove(task)) updateRsources();
 	}
 
 	@Override
