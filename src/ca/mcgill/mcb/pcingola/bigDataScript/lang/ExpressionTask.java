@@ -55,7 +55,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * @param csThread
 	 * @param sys
 	 */
-	Task exec(BigDataScriptThread csThread, ExpressionSysOld sys) {
+	Task exec(BigDataScriptThread csThread, ExpressionSys sys) {
 		// Get an ID
 		execId = sys.execId("task", csThread);
 
@@ -134,21 +134,21 @@ public class ExpressionTask extends ExpressionWithScope {
 		//---
 		// Execute statements
 		//---
-		ExpressionSysOld sys = null;
+		ExpressionSys sys = null;
 		StringBuilder allCmds = new StringBuilder();
 
-		if (statement instanceof ExpressionSysOld) sys = (ExpressionSysOld) statement;
+		if (statement instanceof ExpressionSys) sys = (ExpressionSys) statement;
 		else if (statement instanceof LiteralString) {
 			LiteralString lstr = (LiteralString) statement;
 			allCmds.append(lstr.getValue() + "\n");
-			sys = ExpressionSysOld.get(parent, lstr.getValue(), lineNum, charPosInLine);
+			sys = ExpressionSys.get(parent, lstr.getValue(), lineNum, charPosInLine);
 		} else if (statement instanceof Block) {
 			// Create one sys statement for all sys statements in the block
 			StringBuilder syssb = new StringBuilder();
 
 			Block block = (Block) statement;
 			for (Statement st : block.getStatements()) {
-				ExpressionSysOld sysst = (ExpressionSysOld) st;
+				ExpressionSys sysst = (ExpressionSys) st;
 				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
 				String commands = sysst.getCommands(csThread);
 				syssb.append(commands);
@@ -156,7 +156,7 @@ public class ExpressionTask extends ExpressionWithScope {
 				syssb.append("\n");
 			}
 
-			sys = ExpressionSysOld.get(parent, syssb.toString(), lineNum, charPosInLine);
+			sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
 		}
 
 		// Execute
@@ -183,7 +183,7 @@ public class ExpressionTask extends ExpressionWithScope {
 
 		for (BigDataScriptNode node : statements) {
 			if (node instanceof Statement) {
-				if (!(node instanceof ExpressionSysOld) //
+				if (!(node instanceof ExpressionSys) //
 						&& !(node instanceof Block) //
 						&& !(node instanceof LiteralString) //
 				) {
