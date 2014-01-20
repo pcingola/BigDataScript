@@ -42,18 +42,21 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	}
 
 	@Override
-	public int compareTo(HostResources o) {
+	public int compareTo(HostResources hr) {
+		int cmpCpu = 0;
 		if (cpus >= 0) {
-			int cmp = cpus - o.cpus;
-			if (cmp < 0) return -1;
+			cmpCpu = cpus - hr.cpus;
+			if (cmpCpu < 0) return -1;
 		}
 
+		long cmpMem = 0;
 		if (mem >= 0) {
-			long cmp = mem - o.mem;
-			if (cmp < 0) return -1;
+			cmpMem = mem - hr.mem;
+			if (cmpMem < 0) return -1;
 		}
 
-		return 1;
+		if ((cmpCpu > 0) || (cmpMem > 0)) return 1;
+		return 0;
 	}
 
 	/**
@@ -61,6 +64,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	 * @param hr
 	 */
 	public void consume(HostResources hr) {
+		if (hr == null) return;
 		if ((cpus >= 0) && (hr.cpus >= 0)) cpus = Math.max(0, cpus - hr.cpus);
 		if ((mem >= 0) && (hr.mem >= 0)) mem = Math.max(0, mem - hr.mem);
 	}
@@ -75,6 +79,15 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 
 	public long getTimeout() {
 		return timeout;
+	}
+
+	/**
+	 * Does this resource have at least 'hr' resources?
+	 * @param hr
+	 * @return
+	 */
+	public boolean hasResources(HostResources hr) {
+		return compareTo(hr) >= 0;
 	}
 
 	public boolean isValid() {

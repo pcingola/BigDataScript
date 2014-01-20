@@ -12,13 +12,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * 
  * @author pcingola
  */
-public class SshExecutioner extends LocalQueueExecutioner {
+public class ExecutionerSsh extends ExecutionerLocal {
 
 	public static final String CONFIG_SSH_NODES = "ssh.nodes";
 
 	protected Cluster cluster;
 
-	public SshExecutioner(Config config) {
+	public ExecutionerSsh(Config config) {
 		super(config);
 		createCluster();
 	}
@@ -39,6 +39,7 @@ public class SshExecutioner extends LocalQueueExecutioner {
 
 	@Override
 	public synchronized void kill() {
+		Gpr.debug("Killing ssh cluster");
 		cluster.stopHostInfoUpdaters();
 		super.kill();
 	}

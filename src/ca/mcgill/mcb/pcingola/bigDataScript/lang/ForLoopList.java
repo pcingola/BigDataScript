@@ -38,13 +38,16 @@ public class ForLoopList extends StatementWithScope {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		// child[0] = 'for'
-		// child[1] = '('
-		beginVarDecl = (VarDeclaration) factory(tree, 2);
-		// child[3] = ':'
-		expression = (Expression) factory(tree, 4);
-		// child[5] = ')'
-		statement = (Statement) factory(tree, 6);
+		int idx = 0;
+
+		if (isTerminal(tree, idx, "for")) idx++; // 'for'
+		if (isTerminal(tree, idx, "(")) idx++; // '('
+		if (!isTerminal(tree, idx, ":")) beginVarDecl = (VarDeclaration) factory(tree, idx++); // Is this a 'for:beginVarDecl'? 
+		if (isTerminal(tree, idx, ":")) idx++; // ':'
+		if (!isTerminal(tree, idx, ";")) expression = (Expression) factory(tree, idx++); // Is this a 'for:expression'?
+		if (isTerminal(tree, idx, ")")) idx++; // ')'
+
+		statement = (Statement) factory(tree, idx++);
 	}
 
 	public Type returnType(Scope scope) {
@@ -112,6 +115,9 @@ public class ForLoopList extends StatementWithScope {
 	@Override
 	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		Type exprType = returnType(scope);
+
+		if (statement == null) compilerMessages.add(this, "Empty for statement", MessageType.ERROR);
+
 		if (exprType != null) {
 			if (!exprType.isList() && !exprType.isMap()) compilerMessages.add(this, "Expression should return a list or a map", MessageType.ERROR);
 			else if (beginVarDecl != null) {

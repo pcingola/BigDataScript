@@ -2,8 +2,11 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
+import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
@@ -79,4 +82,9 @@ public class ForLoop extends StatementWithScope {
 		return RunState.OK;
 	}
 
+	@Override
+	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+		super.typeCheck(scope, compilerMessages);
+		if (statement == null) compilerMessages.add(this, "Empty for statement", MessageType.ERROR);
+	}
 }

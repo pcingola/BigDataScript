@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
 
 /**
  * Systems that can execute tasks
@@ -72,47 +70,19 @@ public class Executioners {
 	 */
 	public Executioner factory(ExecutionerType exType) {
 		Executioner executioner;
-		Cluster cluster;
-
 		switch (exType) {
 		case SYS:
-
-			//---
-			// Create local 'sys' executioner
-			//---
-
-			// Create 'local'
-			cluster = new Cluster();
-			cluster.add(new HostLocal());
-			executioner = new LocalExecutioner(config);
+			executioner = new ExecutionerSys(config);
 			break;
 		case LOCAL:
-
-			//---
-			// Create local executioner
-			//---
-
-			// Create 'local' cluster' (a cluster having only this computer)
-			cluster = new Cluster();
-			cluster.add(new HostLocal());
-			executioner = new LocalQueueExecutioner(config);
+			executioner = new ExecutionerLocal(config);
 			break;
-
 		case SSH:
-			//---
-			// Create ssh executioner
-			//---
-
-			executioner = new SshExecutioner(config);
-
+			executioner = new ExecutionerSsh(config);
 			break;
 		case CLUSTER:
-			//---
-			// Create cluster executioner
-			//---
-			executioner = new ClusterExecutioner(config);
+			executioner = new ExecutionerCluster(config);
 			break;
-
 		default:
 			throw new RuntimeException("Unknown executioner type '" + exType + "'");
 		}

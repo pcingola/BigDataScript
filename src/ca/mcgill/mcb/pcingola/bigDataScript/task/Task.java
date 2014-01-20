@@ -25,6 +25,27 @@ public class Task implements BigDataScriptSerialize {
 		, ERROR_TIMEOUT // Filed due to timeout
 		, KILLED // Task was killed  
 		, FINISHED // Finished OK  
+		;
+
+		public static TaskState exitCode2taskState(int exitCode) {
+			switch (exitCode) {
+			case EXITCODE_OK:
+				return FINISHED;
+
+			case EXITCODE_ERROR:
+				return ERROR;
+
+			case EXITCODE_TIMEOUT:
+				return ERROR_TIMEOUT;
+
+			case EXITCODE_KILLED:
+				return KILLED;
+
+			default:
+				return ERROR;
+			}
+
+		}
 	}
 
 	// TODO: This should be a variable (SHEBANG?)
@@ -34,6 +55,7 @@ public class Task implements BigDataScriptSerialize {
 	public static final int EXITCODE_OK = 0;
 	public static final int EXITCODE_ERROR = 1;
 	public static final int EXITCODE_TIMEOUT = 2;
+	public static final int EXITCODE_KILLED = 3;
 
 	protected boolean verbose, debug;
 	protected boolean canFail; // Allow execution to fail
@@ -65,6 +87,15 @@ public class Task implements BigDataScriptSerialize {
 		this.bdsLineNum = bdsLineNum;
 		resources = new HostResources();
 		reset();
+	}
+
+	/**
+	 * Can this task run?
+	 * I.e.: It has not been started yet and all dependencies are satisfied
+	 * @return true if we are ready to run this task
+	 */
+	public boolean canRun() {
+		return taskState == TaskState.NONE;
 	}
 
 	/**
@@ -169,6 +200,10 @@ public class Task implements BigDataScriptSerialize {
 
 	public String getStdoutFile() {
 		return stdoutFile;
+	}
+
+	public TaskState getTaskState() {
+		return taskState;
 	}
 
 	public boolean isCanFail() {
@@ -299,9 +334,10 @@ public class Task implements BigDataScriptSerialize {
 	 */
 	public synchronized void setExitValue(int exitValue) {
 		this.exitValue = exitValue;
-		if (exitValue == EXITCODE_OK) state(TaskState.FINISHED);
-		else if (exitValue == EXITCODE_TIMEOUT) state(TaskState.ERROR_TIMEOUT);
-		else state(TaskState.ERROR);
+		if (exitValue == EXITCODE_OK) setState(TaskState.FINISHED);
+		else if (exitValue == EXITCODE_TIMEOUT) setState(TaskState.ERROR_TIMEOUT);
+		else if (exitValue == EXITCODE_KILLED) setState(TaskState.KILLED);
+		else setState(TaskState.ERROR);
 	}
 
 	public void setNode(String node) {
@@ -320,46 +356,52 @@ public class Task implements BigDataScriptSerialize {
 		this.queue = queue;
 	}
 
+	private void setState(TaskState taskState) {
+		this.taskState = taskState;
+	}
+
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
 
-	protected synchronized void state(TaskState taskState) {
-		this.taskState = taskState;
-	}
-
 	/**
-	 * Change state to ERROR or START_FAILED
+	 * Change state: Make sure state changes are valid
+	 * @param taskState
 	 */
-	public synchronized void stateError() {
-		if (!isStarted()) state(TaskState.START_FAILED);
-		else state(TaskState.ERROR);
-	}
+	public synchronized void state(TaskState taskState) {
+		if (taskState == null) throw new RuntimeException("Cannot change to 'null' state.\n" + this);
+		if (taskState == this.taskState) return; // Nothing to do
 
-	/**
-	 * Change state to FINISHED
-	 */
-	public synchronized void stateFinished() {
-		state(TaskState.FINISHED);
-	}
+		switch (taskState) {
+		case STARTED:
+		case START_FAILED:
+			if (this.taskState == TaskState.NONE) setState(taskState);
+			else throw new RuntimeException("Task: Cannot jump from state '" + this.taskState + "' to state '" + taskState + "'\n" + this);
+			break;
 
-	/**
-	 * Change state to FINISHED
-	 */
-	public synchronized void stateKilled() {
-		state(TaskState.KILLED);
-		exitValue = -1;
-	}
+		case RUNNING:
+			if (this.taskState == TaskState.STARTED) setState(taskState);
+			else throw new RuntimeException("Task: Cannot jump from state '" + this.taskState + "' to state '" + taskState + "'\n" + this);
+			break;
 
-	public synchronized void stateRunning() {
-		state(TaskState.RUNNING);
-	}
+		case FINISHED:
+		case ERROR:
+		case ERROR_TIMEOUT:
+			if (this.taskState == TaskState.RUNNING) setState(taskState);
+			else throw new RuntimeException("Task: Cannot jump from state '" + this.taskState + "' to state '" + taskState + "'\n" + this);
+			break;
 
-	/**
-	 * Change state to STARTED
-	 */
-	public synchronized void stateStarted() {
-		state(TaskState.STARTED);
+		case KILLED:
+			if ((this.taskState == TaskState.RUNNING) // A task can be killed while running...
+					|| (this.taskState == TaskState.STARTED) // or right after it started
+					|| (this.taskState == TaskState.NONE) // or even if it was not started
+			) setState(taskState);
+			else throw new RuntimeException("Task: Cannot jump from state '" + this.taskState + "' to state '" + taskState + "'\n" + this);
+			break;
+
+		default:
+			throw new RuntimeException("Unimplemented state: '" + taskState + "'");
+		}
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.host;
 
+import java.util.HashSet;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -12,12 +15,14 @@ public class Host implements Comparable<Host> {
 
 	public static final int DEFAULT_PORT = 22;
 
-	Cluster cluster;
+	Cluster cluster; // Is this host part of a 'cluster'
 	String userName; // Username
 	String hostName; // Host name (or IP address)
-	int port = DEFAULT_PORT; // ssh port
-	HostResources resources;
+	int port = DEFAULT_PORT; // Ssh port
+	HostResources resources; // Host resources (all cpus, memory, etc) 
+	HostResources resourcesAvaialble; // Available resources
 	HostHealth health;
+	HashSet<Task> tasksRunning; // A list of tasks running in this host 
 
 	public Host(Cluster cluster, String hostName) {
 		this.cluster = cluster;
@@ -37,6 +42,17 @@ public class Host implements Comparable<Host> {
 			userName = this.hostName.substring(0, idx);
 			this.hostName = this.hostName.substring(idx + 1);
 		} else userName = "";
+
+		tasksRunning = new HashSet<Task>();
+	}
+
+	/**
+	 * Add task to this host
+	 * @param task
+	 */
+	public synchronized void add(Task task) {
+		tasksRunning.add(task);
+		updateRsources();
 	}
 
 	@Override
@@ -68,8 +84,28 @@ public class Host implements Comparable<Host> {
 		return userName;
 	}
 
+	/**
+	 * Remove task from this host
+	 * @param task
+	 */
+	public synchronized void remove(Task task) {
+		tasksRunning.remove(task);
+		updateRsources();
+	}
+
 	@Override
 	public String toString() {
 		return (userName.isEmpty() ? "" : userName + "@") + hostName + ((port > 0) && (port != DEFAULT_PORT) ? ":" + port : "");
+	}
+
+	/**
+	 * Update 'resources avaialbe'
+	 */
+	protected synchronized void updateRsources() {
+		HostResources res = resources.clone();
+		for (Task t : tasksRunning) {
+			res.consume(t.getResources());
+		}
+		resourcesAvaialble = res;
 	}
 }

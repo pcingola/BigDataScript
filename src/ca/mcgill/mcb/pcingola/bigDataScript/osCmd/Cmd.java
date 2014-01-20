@@ -4,6 +4,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -16,7 +17,7 @@ public abstract class Cmd extends Thread {
 	public static final String[] ARGS_ARRAY_TYPE = new String[0];
 	public static final int ERROR_EXECUTING = -1;
 
-	public static boolean debug = false;
+	protected boolean debug = false;
 
 	protected String id;
 	protected String commandArgs[]; // Command and arguments
@@ -40,16 +41,28 @@ public abstract class Cmd extends Thread {
 	 * @return
 	 */
 	public int exec() {
+		// Prepare to execute task
 		try {
 			executing = true;
 			execPrepare(); // Prepare to execute
-			started(); // Now we are really done and the process is started. Update states
-			execCmd(); // Execute command or wait for execution to finish
+			stateStarted(); // Now we are really done and the process is started. Update states
 		} catch (Exception e) {
-			execError(e);
-		} finally {
-			execDone(); // OK, we are done. Clean up and notify.
+			execError(e, TaskState.START_FAILED, Task.EXITCODE_ERROR);
+			return exitValue;
 		}
+
+		// Execute command or wait for execution to finish
+		try {
+			stateRunning(); // Now we are really done and the process is started. Update states
+			execCmd();
+		} catch (Exception e) {
+			execError(e, TaskState.ERROR, Task.EXITCODE_ERROR);
+			return exitValue;
+		}
+
+		// OK, we are done. Clean up and notify.
+		execDone();
+		Gpr.debug("CMD DONE!");
 		return exitValue;
 	}
 
@@ -62,21 +75,20 @@ public abstract class Cmd extends Thread {
 	 * Finished executing a command, update states, notify
 	 */
 	protected void execDone() {
-		// We are done. Either process finished or an exception was raised.
-		started = true;
-		executing = false;
-
-		if (task != null) task.setExitValue(exitValue); // Update task
-		if (executioner != null) executioner.finished(id); // Notify end of execution
+		stateDone();
+		if (executioner != null) executioner.taskFinished(task, TaskState.FINISHED, exitValue); // Notify end of execution
 	}
 
 	/**
 	 * Error while trying to 'exec' of a command, update states
 	 */
-	protected void execError(Exception e) {
+	protected void execError(Exception e, TaskState taskState, int exitCode) {
+		stateDone();
+
 		error = e.getMessage() + "\n";
-		exitValue = ERROR_EXECUTING;
+		exitValue = exitCode;
 		if (debug) e.printStackTrace();
+		if (executioner != null) executioner.taskFinished(task, taskState, exitCode);
 	}
 
 	/**
@@ -126,18 +138,15 @@ public abstract class Cmd extends Thread {
 	public void kill() {
 		killCmd();
 
-		// Update task stats
-		if (task != null) {
-			if (debug) Gpr.debug("Killed: Setting stats for " + id);
-			task.stateKilled();
-		}
-
 		// Notify end of execution
-		if (executioner != null) executioner.finished(id);
+		if ((executioner != null) && (task != null)) executioner.taskFinished(task, TaskState.KILLED, Task.EXITCODE_KILLED);
 
 		if (debug) Gpr.debug("Process was killed");
 	}
 
+	/**
+	 * Cmd-specfic implementation: How to kill the process.
+	 */
 	protected abstract void killCmd();
 
 	@Override
@@ -147,6 +156,10 @@ public abstract class Cmd extends Thread {
 
 	public void setCommandArgs(String[] commandArgs) {
 		this.commandArgs = commandArgs;
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 
 	public void setExecutioner(Executioner executioner) {
@@ -165,9 +178,22 @@ public abstract class Cmd extends Thread {
 		this.task = task;
 	}
 
-	protected void started() {
+	/**
+	 * We are done. Either process finished or an exception was raised.
+	 */
+	protected void stateDone() {
 		started = true;
-		if (task != null) task.stateStarted();
+		executing = false;
+	}
+
+	protected void stateRunning() {
+		started = true;
+		if (executioner != null) executioner.taskRunning(task);
+	}
+
+	protected void stateStarted() {
+		started = true;
+		if (executioner != null) executioner.taskStarted(task);
 	}
 
 	@Override

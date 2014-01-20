@@ -317,8 +317,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	protected boolean isTerminal(ParseTree tree, int idx, String str) {
 		ParseTree node = tree.getChild(idx);
-		if ((node instanceof TerminalNode) && node.getText().equals(str)) return true;
-		return false;
+		return ((node instanceof TerminalNode) && node.getText().equals(str));
 	}
 
 	/**

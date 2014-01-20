@@ -116,7 +116,7 @@ public class MonitorExitFile extends Thread {
 
 		// Inform executioner that task has finished
 		Executioner executioner = execByTask.get(task);
-		executioner.finished(task.getId());
+		executioner.taskFinished(task, null, exitVal);
 
 	}
 }

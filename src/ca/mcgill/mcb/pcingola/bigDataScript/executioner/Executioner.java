@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
 /**
- * A system that can execute a command line or a shell script
+ * An Executioner is an abstract system that executes several Tasks.
+ * It can represent a computer, cluster, cloud, etc.
  * 
  * @author pcingola
  */
@@ -27,9 +33,11 @@ public abstract class Executioner extends Thread {
 	protected int hostIdx = 0;
 	protected ArrayList<Task> tasksToRun;
 	protected HashMap<String, Task> tasksDone, tasksRunning;
+	protected HashMap<String, Cmd> cmdById;
 	protected Tail tail;
 	protected PidLogger pidLogger;
 	protected Config config;
+	protected Cluster cluster; // Local computer is the 'server' (localhost)
 
 	public Executioner(Config config) {
 		super();
@@ -39,6 +47,14 @@ public abstract class Executioner extends Thread {
 		tasksRunning = new HashMap<String, Task>();
 		tail = config.getTail();
 		pidLogger = config.getPidLogger();
+		cmdById = new HashMap<String, Cmd>();
+
+		debug = config.isDebug();
+		verbose = config.isVerbose();
+
+		// Create a cluster having only one host (this computer)
+		cluster = new Cluster();
+		cluster.add(new HostLocal());
 	}
 
 	/**
@@ -51,16 +67,14 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
-	 * Add to 'Tail'. Follow STDOUT & STDERR
+	 * Create a command form a task
 	 * @param task
+	 * @return
 	 */
-	protected void addTail(Task task) {
-		tail.add(task.getStdoutFile(), null, false);
-		tail.add(task.getStderrFile(), null, true);
-	}
+	protected abstract Cmd createCmd(Task task);
 
 	/**
-	 * Get a task
+	 * Find a task by ID
 	 * @param id
 	 * @return
 	 */
@@ -78,33 +92,26 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
-	 * Task finished executing
-	 * @param id
-	 * @return
+	 * Start following a running task (e.g. tail STDOUT & STDERR)
+	 * @param task
 	 */
-	public boolean finished(String id) {
-		Task task = tasksRunning.get(id);
-		if (task == null) return false;
-		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
+	protected void follow(Task task) {
+		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
 
-		removeTail(task); // Remove from 'tail' thread
-		finished(task); // Move to 'done'
-		if (pidLogger != null) pidLogger.remove(task);
-
-		return true;
+		tail.add(task.getStdoutFile(), null, false);
+		tail.add(task.getStderrFile(), null, true);
 	}
 
 	/**
-	 * Move a task from 'tasksRunning' to 'tasksDone'
+	 * Stop following a running task (e.g. tail STDOUT & STDERR)
 	 * @param task
 	 */
-	protected synchronized void finished(Task task) {
-		if (task == null) return;
-		tasksRunning.remove(task.getId());
-		tasksDone.put(task.getId(), task);
+	protected void followStop(Task task) {
+		tail.remove(task.getStdoutFile());
+		tail.remove(task.getStderrFile());
 
-		// Schedule removal of TMP files (if not logging)
-		if (!log) task.deleteOnExit();
+		// Remove from loggers
+		if (pidLogger != null) pidLogger.remove(task);
 	}
 
 	/**
@@ -147,48 +154,24 @@ public abstract class Executioner extends Thread {
 	 * Stop executioner and kill all tasks
 	 */
 	public synchronized void kill() {
-		// Kill all 'tasksToRun': Move them to 'tasksDone' and set exitCode to 1
+		// Kill all 'tasksToRun'.
+		// Note: We need to create a new list to avoid concurrent modification exceptions 
 		ArrayList<Task> tokill = new ArrayList<Task>();
 		tokill.addAll(tasksToRun);
-		for (Task t : tokill) {
-			running(t);
-			t.stateError();
-			finished(t);
-		}
-
-		// Kill all running tasks
-		tokill = new ArrayList<Task>();
 		tokill.addAll(tasksRunning.values());
 		for (Task t : tokill)
 			kill(t);
+
 		running = false;
 	}
 
 	/**
-	 * Kill a task 
-	 * 
-	 * @param id : Task id
-	 * @return true if it was killed
+	 * Kill task by ID
+	 * @param taskId
 	 */
-	public synchronized boolean kill(String id) {
-		if (verbose) Timer.showStdErr("Killing task '" + id + "'");
-
-		// Running?
-		Task task = tasksRunning.get(id);
-		if (task != null) return kill(task);
-
-		// To run?
-		for (int i = 0; i < tasksToRun.size(); i++) {
-			Task t = tasksToRun.get(i);
-			if (t.getId().equals(id)) {
-				running(t);
-				t.stateError();
-				finished(t);
-				return true;
-			}
-		}
-
-		return false;
+	public void kill(String taskId) {
+		Task t = findTask(taskId);
+		if (t != null) kill(t);
 	}
 
 	/**
@@ -196,70 +179,49 @@ public abstract class Executioner extends Thread {
 	 * @param task
 	 * @return
 	 */
-	public boolean kill(Task task) {
-		boolean ok = killTask(task);
-		finished(task);
-		return ok;
+	public void kill(Task task) {
+		if (verbose) Timer.showStdErr("Killing task '" + task.getId() + "'");
+
+		// Kill command
+		Cmd cmd = cmdById.get(task.getId());
+		if (cmd != null) cmd.kill();
+
+		// Mark task as finished
+		// Note: This will also be invoked by Cmd, so it will be redundant)
+		taskFinished(task, TaskState.KILLED, Task.EXITCODE_KILLED);
 	}
 
 	/**
-	 * An OS command to kill this task
+	 * Return the appropriate 'kill' command to be used by the OS
+	 * E.g.: For a local task it would be 'kill' whereas for a cluster task it would be 'qdel'
+	 * 
 	 * @param task
 	 * @return
 	 */
-	public String killCommand(Task task) {
-		return "";
-	}
+	public abstract String osKillCommand(Task task);
 
 	/**
-	 * Kill a task
+	 * Run thread: Run executioner's main loop
 	 */
-	protected abstract boolean killTask(Task task);
-
-	/**
-	 * Remove a task from the list of tasks to run
-	 * @param id
-	 * @return
-	 */
-	public synchronized boolean remove(String id) {
-		// Find task number
-		int delete = -1;
-		for (int i = 0; (i < tasksToRun.size()) && (delete < 0); i++)
-			if (tasksToRun.get(i).getId().equals(id)) {
-				delete = i;
-				tasksToRun.remove(delete);
-			}
-
-		// Not found
-		if (delete < 0) return false;
-
-		return true;
-	}
-
-	/**
-	 * Remove from 'Tail'. Stop following STDOUT & STDERR
-	 * @param task
-	 */
-	protected void removeTail(Task task) {
-		tail.remove(task.getStdoutFile());
-		tail.remove(task.getStderrFile());
+	@Override
+	public void run() {
+		runExecutioner();
 	}
 
 	/**
 	 * Run task queues
 	 */
-	@Override
-	public void run() {
+	public void runExecutioner() {
 		if (debug) Timer.showStdErr("Starting " + this.getClass().getSimpleName());
 		running = true;
 
-		runLoopBefore(); // Initialize, before run loop
+		runExecutionerLoopBefore(); // Initialize, before run loop
 
 		try {
 			// Run until killed
 			while (running) {
 				// Run loop
-				if (runLoop()) {
+				if (runExecutionerLoop()) {
 					if (debug) Timer.showStdErr("Queue: No task to run.");
 				}
 				sleepLong();
@@ -269,7 +231,7 @@ public abstract class Executioner extends Thread {
 			throw new RuntimeException(t);
 		} finally {
 
-			runLoopAfter(); // Clean up
+			runExecutionerLoopAfter(); // Clean up
 		}
 	}
 
@@ -277,90 +239,80 @@ public abstract class Executioner extends Thread {
 	 * Run loop 
 	 * @return true if all processes have finished executing
 	 */
-	protected abstract boolean runLoop();
+	protected boolean runExecutionerLoop() {
+		// Nothing to run?
+		if (!hasTaskToRun()) return false;
+
+		// Are there any more task to run?
+		while (running && hasTaskToRun()) {
+			// Select a task to run
+			Tuple<Task, Host> taskHostPair = selectTask();
+
+			// Any task selected?
+			if (taskHostPair != null) {
+				// Get next task and run it
+				runTask(taskHostPair.first, taskHostPair.second);
+			} else {
+				sleepShort();
+				if (verbose) Timer.showStdErr("Queue tasks:\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
+			}
+		}
+
+		return true;
+	}
 
 	/**
 	 * Clean up after run loop
 	 */
-	protected void runLoopAfter() {
+	protected void runExecutionerLoopAfter() {
 	}
 
 	/**
 	 * Initialize before run loop
 	 */
-	protected void runLoopBefore() {
+	protected void runExecutionerLoopBefore() {
 	}
 
 	/**
-	 * Move a task from 'tasksToRun' to 'tasksRunning'
-	 * @param task
-	 */
-	protected synchronized void running(Task task) {
-		if (task == null) return;
-		tasksToRun.remove(task);
-		tasksRunning.put(task.getId(), task);
-	}
-
-	/**
-	 * Run a task on a given host
+	 * Run a task on a given host. I.e. execute command
 	 * @param task : Task to run
 	 * @param host : Host to run task (can be null)
 	 * @return
 	 */
-	public synchronized boolean runTask(Task task, Host host) {
-		if (verbose) Timer.showStdErr("Running task '" + task.getId() + "'");
+	protected void runTask(Task task, Host host) {
+		if (verbose) Timer.showStdErr("Running task '" + task.getId() + "' on host " + host.getHostName());
 
-		boolean ok = runTaskCommand(task, host);
-		if (ok) {
-			waitStart(task); // Wait until task started. Otherwise we might get race conditions ('tail' starts reading stdout before readPid)
-
-			if (task.isFailed()) runTaskFailed(task);
-			else runTaskStarted(task);
-
-		} else {
-			// Error running
-			if (verbose) Timer.showStdErr("Running task: ERROR, could not run task '" + task.getId() + "'");
-		}
-
-		return ok;
+		Cmd cmd = createCmd(task);
+		cmd.setHost(host);
+		cmd.setExecutioner(this);
+		host.add(task);
+		cmd.run();
 	}
 
 	/**
-	 * Run a task (execute commands)
-	 * @param task
+	 * Select next task to run and which host it should run into
 	 * @return
 	 */
-	protected abstract boolean runTaskCommand(Task task, Host host);
+	protected Tuple<Task, Host> selectTask() {
+		// Nothing to run?
+		if (tasksToRun.isEmpty()) return null;
 
-	/**
-	 * This method is called when a task failed starting
-	 * @param task
-	 */
-	protected void runTaskFailed(Task task) {
-		if (debug) Gpr.debug("Task failed to initialize " + task.getId());
-		// Switch task to finished state
-		running(task);
-		finished(task);
-	}
+		for (Task task : tasksToRun) {
+			// Can we run this task? 
+			if (task.canRun()) {
+				// Select host (we only have one)
+				for (Host host : cluster) {
 
-	/**
-	 * Get next task to run and run it (on 'host')
-	 * @param host : Host where this task should be run (can be null)
-	 * @return True if run 
-	 */
-	protected synchronized boolean runTaskNext(Host host) {
-		if (tasksToRun.isEmpty()) return false;
-		return runTask(tasksToRun.get(0), host); // Run first task on the list
-	}
+					// Do we have enough resources to run this task in this host?
+					if (host.getResources().hasResources(task.getResources())) ;
+					Tuple<Task, Host> taskHostPair = new Tuple<Task, Host>(task, host);
+					return taskHostPair;
+				}
+			}
+		}
 
-	/**
-	 * This method is called after a task was successfully started 
-	 * @param task
-	 */
-	protected void runTaskStarted(Task task) {
-		running(task); // Set task to running state
-		addTail(task); // Follow STDOUT and STDERR
-		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
+		// Cannot run any task in any host
+		return null;
 	}
 
 	public void setDebug(boolean debug) {
@@ -373,7 +325,6 @@ public abstract class Executioner extends Thread {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
-		//		taskTimer.setVerbose(verbose);
 	}
 
 	void sleepLong() {
@@ -392,9 +343,105 @@ public abstract class Executioner extends Thread {
 		}
 	}
 
+	/**
+	 * Task finished executing
+	 * @param id
+	 * @return
+	 */
+	public synchronized void taskFinished(Task task, TaskState taskState, int exitValue) {
+		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
+
+		String id = task.getId();
+		if (verbose) Timer.showStdErr("Finished task '" + id + "'");
+
+		// Set exit status 
+		task.setExitValue(exitValue);
+
+		// Find command
+		Cmd cmd = cmdById.get(id);
+		if (cmd != null) {
+			Host host = cmd.getHost();
+			host.remove(task); // Remove task form host
+			cmdById.remove(id); // Remove command
+		}
+
+		followStop(task); // Remove from 'tail' thread
+
+		// Move from 'running' (or 'toRun') to 'done'
+		tasksToRun.remove(task.getId());
+		tasksRunning.remove(task.getId());
+		tasksDone.put(task.getId(), task);
+
+		// Schedule removal of TMP files (if not logging)
+		if (!log) task.deleteOnExit();
+
+		// Set task state. Infer form exit code if no state is available.
+		// Note: This is the last thing we do in order for wait() methods to be sure that task has finished and all data has finished updating.
+		if (taskState == null) taskState = TaskState.exitCode2taskState(exitValue);
+		task.state(taskState);
+	}
+
+	/**
+	 * Move a task from 'tasksToRun' to 'tasksRunning'
+	 * @param task
+	 */
+	public synchronized void taskRunning(Task task) {
+		if (verbose) Timer.showStdErr("Task running '" + task.getId() + "'");
+
+		// Change state
+		task.state(TaskState.RUNNING);
+
+		// Follow STDOUT and STDERR
+		follow(task);
+	}
+
+	public synchronized void taskStarted(Task task) {
+		if (verbose) Timer.showStdErr("Task started '" + task.getId() + "'");
+
+		// Move from 'tasksToRun' to 'tasksRunning'
+		tasksToRun.remove(task);
+		tasksRunning.put(task.getId(), task);
+
+		// Change state
+		task.state(TaskState.STARTED);
+	}
+
 	@Override
 	public String toString() {
 		return "Queue type: " + this.getClass().getSimpleName() + "\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size();
+	}
+
+	/**
+	 * Wait until a task finishes
+	 * @param taskId
+	 * @return
+	 */
+	public int waitFinish(Task task) {
+		if (verbose) Timer.showStdErr("Wating for task '" + task.getId() + "'");
+
+		String taskId = task.getId();
+
+		// Wait for command to appear
+		Cmd cmd = null;
+		while (cmd == null) {
+			cmd = cmdById.get(taskId);
+			sleepShort();
+		}
+
+		// Joined the thread (wait until execution ends)
+		try {
+			cmd.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		// Wait until task is finished
+		while (!task.isDone())
+			sleepShort();
+
+		Gpr.debug("Exits value: " + task.getExitValue() + "\ttask state:" + task.getTaskState());
+		// Now the task is 'done'
+		return task.getExitValue();
 	}
 
 	/**

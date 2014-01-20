@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * Launches an 'OS command' (e.g. "ls", "dir")
+ * Execute a command in a local computer.
+ * I.e.: Launches an 'OS command' (e.g. "ls", "dir")
  * 
  * Note: Launching a system command in Java is not trivial, we need to start 2 threads that read STDOUT and STDERR of
  * the process, otherwise it will block (actually it may even cause a deadlock)
@@ -24,7 +25,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * 
  * @author pcingola
  */
-public class CmdRunner extends Cmd {
+public class CmdLocal extends Cmd {
 
 	public static final int MAX_PID_LINE_LENGTH = 1024; // A 'PID line' should not be longer than this...
 
@@ -36,7 +37,7 @@ public class CmdRunner extends Cmd {
 	protected String pid; // Only if child process reports PID and readPid is true
 	protected String feedStdin; // Feed this string to stdin when the process starts 
 
-	public CmdRunner(String id, String args[]) {
+	public CmdLocal(String id, String args[]) {
 		super(id, args);
 	}
 

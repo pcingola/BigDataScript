@@ -38,7 +38,7 @@ public class PidLogger {
 	}
 
 	public void add(Task t, Executioner executioner) {
-		add(t.getPid(), executioner.killCommand(t));
+		add(t.getPid(), executioner.osKillCommand(t));
 	}
 
 	void append(String str) {

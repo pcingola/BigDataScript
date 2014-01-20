@@ -2,8 +2,8 @@
 
 #system = "ssh"
 
-print("Executing task: $system\n")
-task echo Hello; hostname ; echo Bye
-
-#for( int i=0 ; i < 2 ; i++ ) {
-#}
+print("Start: $system\n")
+for( int i=0 ; i < 10 ; i++ ) {
+	sys echo Hello $i
+}
+print("Done!\n")
