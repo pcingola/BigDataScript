@@ -75,7 +75,7 @@ public abstract class Cmd extends Thread {
 	 */
 	protected void execDone() {
 		stateDone();
-		if (executioner != null) executioner.taskFinished(task, TaskState.FINISHED, exitValue); // Notify end of execution
+		if (executioner != null) executioner.taskFinished(task, null, exitValue); // Notify end of execution
 	}
 
 	/**

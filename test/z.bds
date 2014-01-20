@@ -3,11 +3,11 @@
 #system = "cluster"
 
 print("Start: $system\n")
-#task echo Hi; sleep 1; echo Bye
+task echo Hi; sleep 1; echo Bye
 
-for( int i=0 ; i < 10; i++ ) {
-	task echo Hello $i; echo Bye $i
-}
+#for( int i=0 ; i < 10; i++ ) {
+#	task echo Hello $i; echo Bye $i
+#}
 
 wait
 print("Done!\n")

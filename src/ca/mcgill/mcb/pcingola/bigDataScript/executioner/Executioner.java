@@ -376,9 +376,6 @@ public abstract class Executioner extends Thread {
 		String id = task.getId();
 		if (debug) Timer.showStdErr("Finished task '" + id + "'");
 
-		// Set exit status 
-		task.setExitValue(exitValue);
-
 		// Find command
 		Cmd cmd = cmdById.get(id);
 		if (cmd != null) {
@@ -399,6 +396,8 @@ public abstract class Executioner extends Thread {
 
 		// Set task state. Infer form exit code if no state is available.
 		// Note: This is the last thing we do in order for wait() methods to be sure that task has finished and all data has finished updating.
+		// Set exit status 
+		task.setExitValue(exitValue);
 		if (taskState == null) taskState = TaskState.exitCode2taskState(exitValue);
 		task.state(taskState);
 	}

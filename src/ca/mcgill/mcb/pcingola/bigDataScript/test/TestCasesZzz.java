@@ -209,8 +209,8 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	@Test
-	public void test87() {
-		runAndCheck("test/run_87.bds", "cpus", "1");
+	public void test68() {
+		runAndCheck("test/run_68.bds", "out", "hi bye end\n");
 	}
 
 }

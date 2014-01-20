@@ -19,7 +19,7 @@ public class TestSuiteAll {
 
 		suite.addTestSuite(TestCasesTail.class);
 		suite.addTestSuite(TestCasesLang.class);
-		suite.addTestSuite(TestCasesExec.class);
+		suite.addTestSuite(TestCasesRun.class);
 		suite.addTestSuite(TestCasesCheckpoint.class);
 
 		return suite;

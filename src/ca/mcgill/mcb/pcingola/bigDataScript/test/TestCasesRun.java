@@ -23,7 +23,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  * @author pcingola
  *
  */
-public class TestCasesExec extends TestCase {
+public class TestCasesRun extends TestCase {
 
 	public static boolean debug = false;
 

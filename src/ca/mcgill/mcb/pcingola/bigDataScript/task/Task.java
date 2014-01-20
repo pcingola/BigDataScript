@@ -328,16 +328,8 @@ public class Task implements BigDataScriptSerialize {
 		this.debug = debug;
 	}
 
-	/**
-	 * Set program's exit value and update state accordingly
-	 * @param exitValue
-	 */
 	public synchronized void setExitValue(int exitValue) {
 		this.exitValue = exitValue;
-		if (exitValue == EXITCODE_OK) setState(TaskState.FINISHED);
-		else if (exitValue == EXITCODE_TIMEOUT) setState(TaskState.ERROR_TIMEOUT);
-		else if (exitValue == EXITCODE_KILLED) setState(TaskState.KILLED);
-		else setState(TaskState.ERROR);
 	}
 
 	public void setNode(String node) {
@@ -400,6 +392,7 @@ public class Task implements BigDataScriptSerialize {
 			break;
 
 		default:
+			// Ignore other state changes
 			throw new RuntimeException("Unimplemented state: '" + taskState + "'");
 		}
 	}
