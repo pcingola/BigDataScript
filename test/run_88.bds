@@ -1,0 +1,7 @@
+#!/usr/bin/env bds
+
+# Use 1024 cpus, task should due to insuficient resources...
+task( cpus=1024 ) {
+	sys echo Hi; sleep 1; echo Bye
+}
+

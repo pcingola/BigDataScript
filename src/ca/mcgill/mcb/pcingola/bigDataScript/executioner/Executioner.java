@@ -187,6 +187,8 @@ public abstract class Executioner extends Thread {
 	 * @return
 	 */
 	public void kill(Task task) {
+		if (task.isDone()) return; // Nothing to do
+
 		if (debug) Timer.showStdErr("Killing task '" + task.getId() + "'");
 
 		// Kill command
@@ -318,17 +320,27 @@ public abstract class Executioner extends Thread {
 			// Already selected? Skip
 			if (tasksSelected.containsKey(task)) continue;
 
+			boolean canBeExecuted = false;
+
 			// Can we run this task? 
 			if (task.canRun()) {
 				// Select host (we only have one)
 				for (Host host : cluster) {
-
 					// Do we have enough resources to run this task in this host?
-					if (host.getResources().hasResources(task.getResources())) {
+					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 						// OK, execute this task in this host						
 						add(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);
+					} else if (!canBeExecuted) {
+						// Can any host actually run this task?
+						canBeExecuted = host.getResources().hasResources(task.getResources());
 					}
+				}
+
+				// There is no host that can execute this task?
+				if (!canBeExecuted) {
+					task.setErrorMsg("Not enough resources to execute task: " + task.getResources());
+					taskFinished(task, TaskState.START_FAILED, Task.EXITCODE_ERROR);
 				}
 			}
 		}

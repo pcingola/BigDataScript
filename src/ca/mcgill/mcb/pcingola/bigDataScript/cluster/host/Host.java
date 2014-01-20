@@ -56,7 +56,7 @@ public class Host implements Comparable<Host> {
 	 * @param task
 	 */
 	public synchronized void add(Task task) {
-		if (tasksRunning.add(task)) updateRsources();
+		if (tasksRunning.add(task)) updateResources();
 	}
 
 	@Override
@@ -84,6 +84,11 @@ public class Host implements Comparable<Host> {
 		return resources;
 	}
 
+	public HostResources getResourcesAvaialble() {
+		if (resourcesAvaialble == null) updateResources();
+		return resourcesAvaialble;
+	}
+
 	public String getUserName() {
 		return userName;
 	}
@@ -93,7 +98,7 @@ public class Host implements Comparable<Host> {
 	 * @param task
 	 */
 	public synchronized void remove(Task task) {
-		if (tasksRunning.remove(task)) updateRsources();
+		if (tasksRunning.remove(task)) updateResources();
 	}
 
 	@Override
@@ -104,11 +109,9 @@ public class Host implements Comparable<Host> {
 	/**
 	 * Update 'resources avaialbe'
 	 */
-	protected synchronized void updateRsources() {
-		HostResources res = resources.clone();
-		for (Task t : tasksRunning) {
-			res.consume(t.getResources());
-		}
-		resourcesAvaialble = res;
+	protected synchronized void updateResources() {
+		resourcesAvaialble = resources.clone();
+		for (Task t : tasksRunning)
+			resourcesAvaialble.consume(t.getResources());
 	}
 }

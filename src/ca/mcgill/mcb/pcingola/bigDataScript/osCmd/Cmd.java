@@ -85,6 +85,7 @@ public abstract class Cmd extends Thread {
 		stateDone();
 
 		error = e.getMessage() + "\n";
+		task.setErrorMsg(error);
 		exitValue = exitCode;
 		if (debug) e.printStackTrace();
 		if (executioner != null) executioner.taskFinished(task, taskState, exitCode);

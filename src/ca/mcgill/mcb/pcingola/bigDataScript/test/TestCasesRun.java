@@ -748,4 +748,9 @@ public class TestCasesRun extends TestCase {
 		runAndCheck("test/run_87.bds", "cpus", "1");
 	}
 
+	@Test
+	public void test88() {
+		runAndCheckStderr("test/run_88.bds", "Not enough resources to execute task:");
+	}
+
 }

@@ -209,8 +209,8 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	@Test
-	public void test68() {
-		runAndCheck("test/run_68.bds", "out", "hi bye end\n");
+	public void test88() {
+		runAndCheckStderr("test/run_88.bds", "Not enough resources to execute task:");
 	}
 
 }
