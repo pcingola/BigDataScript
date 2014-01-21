@@ -5,6 +5,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Execute tasks in a remote computer, using ssh
@@ -36,6 +37,8 @@ public class ExecutionerSsh extends Executioner {
 			if (config.isDebug()) System.err.println("\tAdding ssh node : '" + sshNode + "'");
 			cluster.add(new Host(cluster, sshNode.trim()));
 		}
+
+		Gpr.debug("Cluster: " + cluster);
 	}
 
 	@Override

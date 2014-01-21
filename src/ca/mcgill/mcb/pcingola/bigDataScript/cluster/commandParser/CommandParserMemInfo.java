@@ -12,8 +12,8 @@ public class CommandParserMemInfo extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserMemInfo(Host host, SshOld ssh) {
-		super(host, ssh, "cat /proc/meminfo");
+	public CommandParserMemInfo(Host host) {
+		super(host, "cat /proc/meminfo");
 	}
 
 	@Override

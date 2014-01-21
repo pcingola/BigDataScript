@@ -1,14 +1,10 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.host;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserCpuInfo;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserDf;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserMemInfo;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserSystemProfiler;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserTop;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserUname;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserUptime;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserWho;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.SshOld;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -22,12 +18,10 @@ public class HostHealthUpdater extends Thread {
 
 	Host host;
 	boolean run = true;
-	SshOld ssh;
 
 	public HostHealthUpdater(Host host) {
 		super();
 		this.host = host;
-		ssh = new SshOld(host);
 	}
 
 	/**
@@ -35,34 +29,26 @@ public class HostHealthUpdater extends Thread {
 	 */
 	void info() {
 		// Information that is obtained only once
-		new CommandParserUname(host, ssh).parse(); // System type
+		new CommandParserUname(host).parse(); // System type
 		String systemType = host.getHealth().getSystemType();
 
-		if (systemType.equalsIgnoreCase("Linux")) new CommandParserCpuInfo(host, ssh).parse();
-		else if (systemType.equalsIgnoreCase("Darwin")) new CommandParserSystemProfiler(host, ssh).parse();
+		if (systemType.equalsIgnoreCase("Linux")) new CommandParserCpuInfo(host).parse();
+		else if (systemType.equalsIgnoreCase("Darwin")) new CommandParserSystemProfiler(host).parse();
 
 		update(); // This information is refreshed every now and then
-	}
-
-	public boolean isRun() {
-		return run;
 	}
 
 	/**
 	 * Stop execution of this thread
 	 */
-	public void kill() {
-		synchronized (this) {
-			setRun(false); // Set run to false and wake up from 'wait'. See run() method
-			notify();
-		}
+	public synchronized void kill() {
+		setRun(false); // Set run to false and wake up from 'wait'. See run() method
+		notify();
 	}
 
 	@Override
 	public void run() {
-		Gpr.debug("Info updater " + this + ": Run");
 		try {
-			ssh.open();
 			info();
 
 			while (run) {
@@ -71,7 +57,9 @@ public class HostHealthUpdater extends Thread {
 					synchronized (this) {
 						wait(host.getCluster().getRefreshTime() * 1000);
 					}
-					update();
+
+					if (run) update();
+
 				} catch (Exception e) {
 					Gpr.debug(e);
 					run = false;
@@ -81,10 +69,8 @@ public class HostHealthUpdater extends Thread {
 			Gpr.debug(t);
 			t.printStackTrace(); // Something happened? => Stop this thread
 		} finally {
-			ssh.close();
 			run = false;
 		}
-		Gpr.debug("Info updater " + this + ": End");
 	}
 
 	public void setRun(boolean run) {
@@ -96,24 +82,22 @@ public class HostHealthUpdater extends Thread {
 	 * (e.g. cpu information does not usually change, so it's not obtained)
 	 */
 	void update() {
-		String systemType = host.getHealth().getSystemType();
-
-		host.getHealth().setAlive(ssh.isRunning());
+		// host.getHealth().setAlive(ssh.isRunning());
 		if (debug) Gpr.debug("Host: " + host + "\talive: " + host.getHealth().isAlive());
 
-		if (systemType.equalsIgnoreCase("Linux")) {
-			new CommandParserUptime(host, ssh).parse();
-			new CommandParserMemInfo(host, ssh).parse();
-			new CommandParserWho(host, ssh).parse();
-			new CommandParserDf(host, ssh).parse();
-		} else if (systemType.equalsIgnoreCase("Darwin")) {
-			new CommandParserUptime(host, ssh).parse();
-			new CommandParserTop(host, ssh).parse();
-			new CommandParserWho(host, ssh).parse();
-			new CommandParserDf(host, ssh).parse();
-		}
+		new CommandParserUptime(host).parse();
+		new CommandParserWho(host).parse();
+		//		new CommandParserDf(host).parse();
+
+		//		String systemType = host.getHealth().getSystemType();
+		//		if (systemType.equalsIgnoreCase("Linux")) {
+		//			new CommandParserMemInfo(host).parse();
+		//		} else if (systemType.equalsIgnoreCase("Darwin")) {
+		//			new CommandParserTop(host).parse();
+		//		}
 
 		if (debug) Gpr.debug("Host info updated: " + host + "\n\t" + host.getResources() + "\n" + host.getHealth());
+		Gpr.debug("Host info updated: " + host + "\nResources: " + host.getResources() + "\nHeath:\n" + host.getHealth());
 	}
 
 }

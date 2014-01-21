@@ -181,7 +181,8 @@ public class HostHealth {
 		StringBuffer sb = new StringBuffer();
 		sb.append("\tMax number of processes : " + maxNumberOfProcs + "\n");
 		if (systemType.length() > 0) {
-			double fsusage = 100 * fsAvail / fsTotal;
+			double fsusage = 0;
+			if (fsTotal > 0) fsusage = 100 * fsAvail / fsTotal;
 			sb.append("\tSystem type             : " + systemType + "\n");
 			sb.append("\tCpus type               : " + cpuInfo + "\n");
 			sb.append("\tLoad average            : " + loadAvg + "\n");

@@ -15,41 +15,6 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
-//class CommandInputStream extends InputStream {
-//
-//	StringBuilder sb = new StringBuilder();
-//	int pos = 0;
-//
-//	public synchronized void append(String line) {
-//		sb.append(line);
-//		notify();
-//	}
-//
-//	@Override
-//	public int read() throws IOException {
-//		do {
-//			// Is there anything in the buffer?
-//			if (pos < sb.length()) {
-//				char c = sb.charAt(pos++);
-//				System.err.print(c);
-//				return c;
-//			}
-//
-//			if (waitInput()) return -1;
-//		} while (true);
-//	}
-//
-//	synchronized boolean waitInput() {
-//		try {
-//			wait();
-//			return false;
-//		} catch (InterruptedException e) {
-//			return true;
-//		}
-//
-//	}
-//}
-
 /**
  * Executes an command in a remote host, via ssh
  * 
@@ -65,7 +30,7 @@ import com.jcraft.jsch.UserInfo;
  * 
  * @author pcingola
  */
-public class Ssh { // extends Thread {
+public class Ssh {
 
 	public static String defaultKnownHosts = Gpr.HOME + "/.ssh/known_hosts";
 	public static String defaultKnownIdentity[] = { Gpr.HOME + "/.ssh/id_dsa", Gpr.HOME + "/.ssh/id_rsa" };
@@ -76,14 +41,13 @@ public class Ssh { // extends Thread {
 	public static int EXIT_CODE_DISCONNECT = 1;
 	static int BUFFER_SIZE = 100 * 1024;
 
-	boolean debug = true;
-	//	boolean running;
+	boolean debug = false;
+	boolean showStdout = false;
 	int exitValue;
 	JSch jsch;
 	Session session;
 	Channel channel;
 	Host host;
-	//	CommandInputStream stdin;
 	byte[] tmp = new byte[BUFFER_SIZE];
 
 	public Ssh(Host host) {
@@ -187,42 +151,32 @@ public class Ssh { // extends Thread {
 	 * 
 	 * @throws Exception
 	 */
-	public int exec(String command) throws Exception {
+	public String exec(String command) {
 		// Open ssh session
-		channel = connect("exec", command);
-		ChannelExec chexec = (ChannelExec) channel;
-		chexec.setInputStream(null);
-		chexec.setPty(true); // Allocate pseudo-tty (same as "ssh -t")
+		try {
+			channel = connect("exec", command);
+			ChannelExec chexec = (ChannelExec) channel;
+			chexec.setInputStream(null);
+			chexec.setPty(true); // Allocate pseudo-tty (same as "ssh -t")
 
-		// These don't seem to work
-		chexec.setErrStream(System.err);
-		chexec.setOutputStream(System.out);
+			// We don't need these
+			//chexec.setErrStream(System.err);
+			//chexec.setOutputStream(System.out);
 
-		// Connect channel
-		chexec.connect();
+			// Connect channel
+			chexec.connect();
 
-		// Read input
-		String resultStr = readChannel(true);
-		Gpr.debug("Ssh results (length: " + resultStr.length() + ")\n" + resultStr);
+			// Read input
+			String result = readChannel(true);
 
-		return disconnect(false); // Diconnect
+			disconnect(true);
+
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
-
-	//	/**
-	//	 * Append to stdin
-	//	 * @param str
-	//	 */
-	//	public void input(String str) {
-	//		stdin.append(str + "\n");
-	//	}
-
-	//	public boolean isRunning() {
-	//		return running;
-	//	}
-
-	//	public void kill() {
-	//		running = false;
-	//	}
 
 	/**
 	 * Read an input stream while data is available
@@ -237,7 +191,7 @@ public class Ssh { // extends Thread {
 			if (i < 0) return null;
 
 			String recv = new String(tmp, 0, i);
-			System.out.print(recv);
+			if (showStdout) System.out.print(recv);
 			return recv;
 		}
 
@@ -268,34 +222,6 @@ public class Ssh { // extends Thread {
 
 		return stdout.toString();
 	}
-
-	//	/**
-	//	 * Run as a thread
-	//	 */
-	//	@Override
-	//	public void run() {
-	//
-	//		try {
-	//			stdin = new CommandInputStream();
-	//			stdin.append("ls -al\n");
-	//			shellOpen();
-	//			InputStream in = channel.getInputStream();
-	//			running = true;
-	//
-	//			while (running) {
-	//				// Read input
-	//				String recv = readAvailable(in);
-	//				Gpr.debug("READ: '" + recv + "'");
-	//				if (recv != null) System.out.print(recv);
-	//				Thread.sleep(WAIT_READ);
-	//			}
-	//
-	//		} catch (Exception e) {
-	//			e.printStackTrace();
-	//		} finally {
-	//			disconnect(true); // Diconnect
-	//		}
-	//	}
 
 	/**
 	 * Copy a local file to a remote file
@@ -344,29 +270,6 @@ public class Ssh { // extends Thread {
 
 		disconnect(false);
 	}
-
-	//	/**
-	//	 * Connect via ssh and execute a shell 
-	//	 * 
-	//	 * Reference: http://www.jcraft.com/jsch/examples/Shell.java.html
-	//	 * 
-	//	 * @throws Exception
-	//	 */
-	//	public void shellOpen() throws Exception {
-	//		// Open ssh session
-	//		channel = connect("shell", null);
-	//		ChannelShell chexec = (ChannelShell) channel;
-	//
-	//		chexec.setInputStream(stdin);
-	//		chexec.setPty(true); // Allocate pseudo-tty (same as "ssh -t")
-	//
-	//		// These don't seem to work
-	//		//		chexec.setErrStream(System.err);
-	//		chexec.setOutputStream(System.out);
-	//
-	//		// Connect channel
-	//		chexec.connect();
-	//	}
 
 	/**
 	 * Wait for channel

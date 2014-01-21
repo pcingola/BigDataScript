@@ -12,8 +12,8 @@ public class CommandParserCpuInfo extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserCpuInfo(Host host, SshOld ssh) {
-		super(host, ssh, "cat /proc/cpuinfo");
+	public CommandParserCpuInfo(Host host) {
+		super(host, "cat /proc/cpuinfo");
 	}
 
 	@Override

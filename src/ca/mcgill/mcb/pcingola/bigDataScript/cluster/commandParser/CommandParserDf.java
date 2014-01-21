@@ -12,8 +12,8 @@ public class CommandParserDf extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserDf(Host host, SshOld ssh) {
-		super(host, ssh, "df -kl"); // Show only local file systems ("-l") in KBytes ("-k")
+	public CommandParserDf(Host host) {
+		super(host, "df -kl"); // Show only local file systems ("-l") in KBytes ("-k")
 	}
 
 	@Override

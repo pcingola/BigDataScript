@@ -168,17 +168,19 @@ public class Cluster implements Iterable<Host> {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("Ssh command : " + sshComand + "\n");
-		sb.append("Connect timeout: " + connectTimeout + "\n");
-		sb.append("Refresh time: " + refreshTime + "\n");
-		sb.append("Default wait time: " + defaultWaitTime + "\n");
+		sb.append("Number of host    : " + hosts.size() + "\n");
+		sb.append("Ssh command       : " + sshComand + "\n");
+		sb.append("Connect timeout   : " + connectTimeout + "\n");
+		sb.append("Refresh time      : " + refreshTime + "\n");
+		sb.append("Default wait time : " + defaultWaitTime + "\n");
 
 		// Show all host's infos (sorted by host name)
+		sb.append("Hosts             : \n");
 		List<String> hostNames = new LinkedList<String>();
 		hostNames.addAll(hosts.keySet());
 		Collections.sort(hostNames);
 		for (String hname : hostNames)
-			sb.append(hosts.get(hname) + "\n");
+			sb.append("\t" + hosts.get(hname) + "\n");
 
 		return sb.toString();
 	}
