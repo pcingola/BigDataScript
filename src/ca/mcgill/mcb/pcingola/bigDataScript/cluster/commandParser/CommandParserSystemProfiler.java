@@ -12,7 +12,7 @@ public class CommandParserSystemProfiler extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserSystemProfiler(Host host, Ssh ssh) {
+	public CommandParserSystemProfiler(Host host, SshOld ssh) {
 		super(host, ssh, "system_profiler");
 	}
 

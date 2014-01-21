@@ -7,12 +7,12 @@ package ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser;
  */
 public class SshTaskRunner extends Thread {
 
-	Ssh ssh;
+	SshOld ssh;
 	boolean run = false, started = false;
 	String task;
 	int taskNum;
 
-	public SshTaskRunner(Ssh ssh, String task, int taskNum) {
+	public SshTaskRunner(SshOld ssh, String task, int taskNum) {
 		super();
 		this.ssh = ssh;
 		this.task = task;

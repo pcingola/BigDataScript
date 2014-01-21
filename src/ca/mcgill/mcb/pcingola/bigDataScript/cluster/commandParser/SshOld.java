@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdSsh;
  * 
  * @author pcingola@mcgill.ca
  */
-public class Ssh {
+public class SshOld {
 
 	public static final long DEFAULT_CMD_WAIT = 10000; // How much to wait when we send a command to the ssh connection. Default:10 seconds
 
@@ -19,7 +19,7 @@ public class Ssh {
 	String jobId = "";
 	String head = "";
 
-	public Ssh(Host host) {
+	public SshOld(Host host) {
 		this.host = host;
 	}
 

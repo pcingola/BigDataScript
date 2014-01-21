@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserT
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserUname;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserUptime;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserWho;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.Ssh;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.SshOld;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -22,12 +22,12 @@ public class HostHealthUpdater extends Thread {
 
 	Host host;
 	boolean run = true;
-	Ssh ssh;
+	SshOld ssh;
 
 	public HostHealthUpdater(Host host) {
 		super();
 		this.host = host;
-		ssh = new Ssh(host);
+		ssh = new SshOld(host);
 	}
 
 	/**

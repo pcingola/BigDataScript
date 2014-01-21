@@ -1,8 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
-import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdSsh;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerCluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class Zzz {
@@ -10,16 +8,11 @@ public class Zzz {
 	public static void main(String[] args) throws Exception {
 		Gpr.debug("Zzz: Start");
 
-		Cluster cluster = new Cluster();
-		Host host = new Host(cluster, "eq8302@ehs.grid.wayne.edu");
+		Config config = Config.get();
+		ExecutionerCluster executionerCluster = new ExecutionerCluster(config);
 
-		// String programFile = Gpr.HOME + "/z.sh";
-		String commandArgs[] = { "echo Hello; hostname ; ls -al zxzxzx ; echo Done" };
-
-		CmdSsh cssh = new CmdSsh("CMDID", commandArgs);
-		cssh.setHost(host);
-		cssh.start();
-		cssh.join();
+		//		Cluster cluster = new Cluster();
+		//		Host host = new Host(cluster, "pcingola@localhost");
 
 		Gpr.debug("Zzz: End");
 	}

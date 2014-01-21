@@ -12,7 +12,7 @@ public class CommandParserCpuInfo extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserCpuInfo(Host host, Ssh ssh) {
+	public CommandParserCpuInfo(Host host, SshOld ssh) {
 		super(host, ssh, "cat /proc/cpuinfo");
 	}
 

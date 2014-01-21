@@ -83,11 +83,10 @@ public abstract class Cmd extends Thread {
 	 */
 	protected void execError(Exception e, TaskState taskState, int exitCode) {
 		stateDone();
-
 		error = e.getMessage() + "\n";
-		task.setErrorMsg(error);
 		exitValue = exitCode;
 		if (debug) e.printStackTrace();
+		if (task != null) task.setErrorMsg(error);
 		if (executioner != null) executioner.taskFinished(task, taskState, exitCode);
 	}
 

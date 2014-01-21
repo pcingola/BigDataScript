@@ -3,7 +3,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 
 /**
  * Execute tasks in a remote computer, using ssh
@@ -12,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * 
  * @author pcingola
  */
-public class ExecutionerSsh extends ExecutionerLocal {
+public class ExecutionerSsh extends Executioner {
 
 	public static final String CONFIG_SSH_NODES = "ssh.nodes";
 
@@ -39,17 +40,27 @@ public class ExecutionerSsh extends ExecutionerLocal {
 
 	@Override
 	public synchronized void kill() {
-		Gpr.debug("Killing ssh cluster");
 		cluster.stopHostInfoUpdaters();
 		super.kill();
 	}
 
 	@Override
 	public void run() {
-		Gpr.debug("SshExecutioner: Starting.");
 		cluster.startHostInfoUpdaters();
 		super.run();
 		cluster.stopHostInfoUpdaters();
+	}
+
+	@Override
+	protected Cmd createCmd(Task task) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String osKillCommand(Task task) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -12,7 +12,7 @@ public class CommandParserMemInfo extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserMemInfo(Host host, Ssh ssh) {
+	public CommandParserMemInfo(Host host, SshOld ssh) {
 		super(host, ssh, "cat /proc/meminfo");
 	}
 

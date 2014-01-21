@@ -14,10 +14,10 @@ public abstract class CommandParser {
 	public static int MAX_LINE_LEN = 80;
 
 	Host host;
-	Ssh ssh;
+	SshOld ssh;
 	String cmd;
 
-	public CommandParser(Host host, Ssh ssh, String cmd) {
+	public CommandParser(Host host, SshOld ssh, String cmd) {
 		this.host = host;
 		this.cmd = cmd;
 		this.ssh = ssh;

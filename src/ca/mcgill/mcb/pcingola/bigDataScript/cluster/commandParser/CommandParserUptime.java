@@ -12,7 +12,7 @@ public class CommandParserUptime extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserUptime(Host host, Ssh ssh) {
+	public CommandParserUptime(Host host, SshOld ssh) {
 		super(host, ssh, "uptime");
 	}
 

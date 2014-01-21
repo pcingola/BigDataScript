@@ -15,7 +15,7 @@ public class CommandParserWho extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserWho(Host host, Ssh ssh) {
+	public CommandParserWho(Host host, SshOld ssh) {
 		super(host, ssh, "who");
 	}
 

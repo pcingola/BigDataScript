@@ -12,7 +12,7 @@ public class CommandParserTop extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserTop(Host host, Ssh ssh) {
+	public CommandParserTop(Host host, SshOld ssh) {
 		super(host, ssh, "top -l 1");
 	}
 

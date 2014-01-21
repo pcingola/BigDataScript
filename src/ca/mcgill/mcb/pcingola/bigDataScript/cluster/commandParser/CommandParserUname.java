@@ -12,7 +12,7 @@ public class CommandParserUname extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserUname(Host host, Ssh ssh) {
+	public CommandParserUname(Host host, SshOld ssh) {
 		super(host, ssh, "uname");
 	}
 
