@@ -182,6 +182,7 @@ public class HostHealth {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		sb.append("\tAlive                   : " + alive + "\n");
 		sb.append("\tMax number of processes : " + maxNumberOfProcs + "\n");
 		if (systemType.length() > 0) {
 			double fsusage = 0;

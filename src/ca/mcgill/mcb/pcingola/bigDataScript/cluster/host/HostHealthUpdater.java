@@ -1,10 +1,9 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.host;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParser;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserCpuInfo;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserSystemProfiler;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserUname;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserUptime;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserWho;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -18,6 +17,7 @@ public class HostHealthUpdater extends Thread {
 
 	Host host;
 	boolean run = true;
+	String systemType;
 
 	public HostHealthUpdater(Host host) {
 		super();
@@ -28,45 +28,41 @@ public class HostHealthUpdater extends Thread {
 	 * Connect to host (via ssh) and execute several commands in order to obtain host's information
 	 */
 	void info() {
+		if (debug) Gpr.debug("Info\tHost: " + host);
+
 		// Information that is obtained only once
 		new CommandParserUname(host).parse(); // System type
-		String systemType = host.getHealth().getSystemType();
+		systemType = host.getHealth().getSystemType();
 
+		// Run next command
 		if (systemType.equalsIgnoreCase("Linux")) new CommandParserCpuInfo(host).parse();
 		else if (systemType.equalsIgnoreCase("Darwin")) new CommandParserSystemProfiler(host).parse();
-
-		update(); // This information is refreshed every now and then
 	}
 
 	/**
 	 * Stop execution of this thread
 	 */
-	public synchronized void kill() {
+	public void kill() {
 		setRun(false); // Set run to false and wake up from 'wait'. See run() method
-		notify();
+		synchronized (this) {
+			notifyAll();
+		}
 	}
 
 	@Override
 	public void run() {
 		try {
-			info();
-
 			while (run) {
-				try {
-					// I'd rather sleep this way in order to allow for notifications (i.e. 'wake up call')
-					synchronized (this) {
-						wait(host.getCluster().getRefreshTime() * 1000);
-					}
+				// This should be run only once
+				if (systemType == null) info();
+				if (run) update();
 
-					if (run) update();
-
-				} catch (Exception e) {
-					Gpr.debug(e);
-					run = false;
+				// I'd rather sleep this way in order to allow for notifications (i.e. 'wake up call')
+				synchronized (this) {
+					wait(host.getCluster().getRefreshTime() * 1000);
 				}
 			}
-		} catch (Throwable t) {
-			Gpr.debug(t);
+		} catch (Exception t) {
 			t.printStackTrace(); // Something happened? => Stop this thread
 		} finally {
 			run = false;
@@ -82,20 +78,19 @@ public class HostHealthUpdater extends Thread {
 	 * (e.g. cpu information does not usually change, so it's not obtained)
 	 */
 	void update() {
-		// host.getHealth().setAlive(ssh.isRunning());
+		// We don't have system info yet?
+		if (systemType == null) return;
 
-		if (debug) Gpr.debug("Host: " + host + "\talive: " + host.getHealth().isAlive());
+		if (debug) Gpr.debug("Update: Start\tHost: " + host + "\talive: " + host.getHealth().isAlive());
 
-		new CommandParserUptime(host).parse();
-		new CommandParserWho(host).parse();
+		// Select which command parsers to run depending on system type
+		CommandParser commandParser = null;
+		if (systemType.equalsIgnoreCase("Linux")) commandParser = new CommandParser(host, "uptime;df;who;uname -a;cat /proc/meminfo");
+		else if (systemType.equalsIgnoreCase("Darwin")) commandParser = new CommandParser(host, "uptime;df;who;uname -a;top -l 1");
+		else return;
 
-		//		new CommandParserDf(host).parse();
-		//		String systemType = host.getHealth().getSystemType();
-		//		if (systemType.equalsIgnoreCase("Linux")) {
-		//			new CommandParserMemInfo(host).parse();
-		//		} else if (systemType.equalsIgnoreCase("Darwin")) {
-		//			new CommandParserTop(host).parse();
-		//		}
+		// Run command parser (updates host health)
+		commandParser.parse();
 
 		if (debug) Gpr.debug("Host info updated: " + host + "\n\t" + host.getResources() + "\n" + host.getHealth());
 		Gpr.debug("Host info updated: " + host //
@@ -103,6 +98,7 @@ public class HostHealthUpdater extends Thread {
 				+ "\nHeath:\n" + host.getHealth() //
 				+ "\nCondition: " + host.getHealth().condition() //
 		);
-	}
 
+		if (debug) Gpr.debug("Update: End\tHost: " + host + "\talive: " + host.getHealth().isAlive());
+	}
 }

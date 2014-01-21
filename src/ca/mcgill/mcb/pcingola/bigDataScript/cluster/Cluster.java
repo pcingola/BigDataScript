@@ -41,11 +41,11 @@ public class Cluster implements Iterable<Host> {
 		hostHealthUpdaters = new HashMap<String, HostHealthUpdater>();
 
 		// Set default values for 'condition thresholds'
-		healthRed.setLoadAvg(0.95);
+		healthRed.setLoadAvg(1.5);
 		healthRed.setLoggedInUsersCount(2);
 		healthRed.setMemUsage(0.90);
 
-		healthYellow.setLoadAvg(0.70);
+		healthYellow.setLoadAvg(1.00);
 		healthYellow.setLoggedInUsersCount(1);
 		healthYellow.setMemUsage(0.70);
 	}
