@@ -6,6 +6,9 @@ import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthCondition;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthCondition.Light;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthConditionLoadAvg;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthConditionLoggedInUsers;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthConditionMem;
 
 /**
  * Host 'health' parameters (e.g. load average, available disk space, etc.) 
@@ -38,9 +41,9 @@ public class HostHealth {
 
 		// Create and add conditions
 		conditions = new ArrayList<HealthCondition>();
-		//		conditions.add(new ConditionMem(this));
-		//		conditions.add(new ConditionLoggedInUsers(this));
-		//		conditions.add(new ConditionLoadAvg(this));
+		conditions.add(new HealthConditionMem(host));
+		conditions.add(new HealthConditionLoggedInUsers(host));
+		conditions.add(new HealthConditionLoadAvg(host));
 		//		conditions.add(new ConditionLoadAvgByCpu(this));
 	}
 

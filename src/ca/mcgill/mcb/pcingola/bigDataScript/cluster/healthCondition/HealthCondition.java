@@ -20,8 +20,10 @@ public abstract class HealthCondition {
 
 	public HealthCondition(Host host) {
 		this.host = host;
-		healthYellow = host.getCluster().getHealthYellow();
-		healthRed = host.getCluster().getHealthRed();
+		if (host != null) {
+			healthYellow = host.getCluster().getHealthYellow();
+			healthRed = host.getCluster().getHealthRed();
+		}
 	}
 
 	public abstract Light test();

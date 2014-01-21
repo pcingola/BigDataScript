@@ -83,12 +83,13 @@ public class HostHealthUpdater extends Thread {
 	 */
 	void update() {
 		// host.getHealth().setAlive(ssh.isRunning());
+
 		if (debug) Gpr.debug("Host: " + host + "\talive: " + host.getHealth().isAlive());
 
 		new CommandParserUptime(host).parse();
 		new CommandParserWho(host).parse();
-		//		new CommandParserDf(host).parse();
 
+		//		new CommandParserDf(host).parse();
 		//		String systemType = host.getHealth().getSystemType();
 		//		if (systemType.equalsIgnoreCase("Linux")) {
 		//			new CommandParserMemInfo(host).parse();
@@ -97,7 +98,11 @@ public class HostHealthUpdater extends Thread {
 		//		}
 
 		if (debug) Gpr.debug("Host info updated: " + host + "\n\t" + host.getResources() + "\n" + host.getHealth());
-		Gpr.debug("Host info updated: " + host + "\nResources: " + host.getResources() + "\nHeath:\n" + host.getHealth());
+		Gpr.debug("Host info updated: " + host //
+				+ "\nResources: " + host.getResources() //
+				+ "\nHeath:\n" + host.getHealth() //
+				+ "\nCondition: " + host.getHealth().condition() //
+		);
 	}
 
 }
