@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
@@ -11,6 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
@@ -316,6 +318,9 @@ public abstract class Executioner extends Thread {
 		// Nothing to run?
 		if (tasksToRun.isEmpty()) return null;
 
+		LinkedList<Task> finishTask = null;
+
+		// Try to find a task matching a host
 		for (Task task : tasksToRun) {
 			// Already selected? Skip
 			if (tasksSelected.containsKey(task)) continue;
@@ -326,10 +331,18 @@ public abstract class Executioner extends Thread {
 			if (task.canRun()) {
 				// Select host (we only have one)
 				for (Host host : cluster) {
+
+					// Host is not alive?
+					if (!host.getHealth().isAlive()) {
+						canBeExecuted = true; // May be this host can actually execute this task, we don't know.
+						continue;
+					}
+
 					// Do we have enough resources to run this task in this host?
 					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 						// OK, execute this task in this host						
 						add(task, host); // Add task to host (make sure resources are reserved)
+						Gpr.debug("Selected task: " + task.getId() + "\tHost: " + host);
 						return new Tuple<Task, Host>(task, host);
 					} else if (!canBeExecuted) {
 						// Can any host actually run this task?
@@ -340,9 +353,19 @@ public abstract class Executioner extends Thread {
 				// There is no host that can execute this task?
 				if (!canBeExecuted) {
 					task.setErrorMsg("Not enough resources to execute task: " + task.getResources());
-					taskFinished(task, TaskState.START_FAILED, Task.EXITCODE_ERROR);
+
+					// Mark the task to be finished (cannot be done here due to concurrent modification)
+					if (finishTask == null) finishTask = new LinkedList<Task>();
+					finishTask.add(task);
 				}
 			}
+		}
+
+		// Finish these tasks. Cannot be executed: failed due to resources issues.
+		if (finishTask != null) {
+			for (Task task : finishTask)
+				taskFinished(task, TaskState.START_FAILED, Task.EXITCODE_ERROR);
+			finishTask = null;
 		}
 
 		// Cannot run any task in any host
@@ -399,7 +422,8 @@ public abstract class Executioner extends Thread {
 		followStop(task); // Remove from 'tail' thread
 
 		// Move from 'running' (or 'toRun') to 'done'
-		tasksToRun.remove(task.getId());
+		tasksToRun.remove(task);
+		tasksSelected.remove(task);
 		tasksRunning.remove(task.getId());
 		tasksDone.put(task.getId(), task);
 

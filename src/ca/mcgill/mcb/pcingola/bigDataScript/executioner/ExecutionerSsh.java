@@ -4,8 +4,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Execute tasks in a remote computer, using ssh
@@ -17,8 +17,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class ExecutionerSsh extends Executioner {
 
 	public static final String CONFIG_SSH_NODES = "ssh.nodes";
-
-	protected Cluster cluster;
 
 	public ExecutionerSsh(Config config) {
 		super(config);
@@ -37,8 +35,6 @@ public class ExecutionerSsh extends Executioner {
 			if (config.isDebug()) System.err.println("\tAdding ssh node : '" + sshNode + "'");
 			cluster.add(new Host(cluster, sshNode.trim()));
 		}
-
-		Gpr.debug("Cluster: " + cluster);
 	}
 
 	@Override
@@ -56,14 +52,17 @@ public class ExecutionerSsh extends Executioner {
 
 	@Override
 	protected Cmd createCmd(Task task) {
-		// TODO Auto-generated method stub
-		return null;
+		task.createProgramFile(); // We must create a program file
+
+		String localFileName = task.getProgramFileName();
+		String remoteFileName = task.getProgramFileName();
+
+		return new CmdSsh(task.getId(), localFileName, remoteFileName);
 	}
 
 	@Override
 	public String osKillCommand(Task task) {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

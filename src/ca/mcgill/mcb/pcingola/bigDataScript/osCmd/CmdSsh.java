@@ -1,357 +1,59 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
-
 /**
  * Executes an command in a remote host, via ssh
  * 
- * Most of this code is copied from JSch 
- * examples (http://www.jcraft.com/jsch/examples/)
- * 
- * Important: We force the allocation of a pseudo-tty (see channel.setPty(true) )
- * in order to get the commands killed if the SSH connection is lost (e.g. local 
- * command killed). By doing this, we don't have to worry about leaving 
- * commands running on a server when our script died. Otherwise we should
- * have a mechanism to log into the server and kill the processes (which may not
- * be feasible if the network is down).
- * 
  * @author pcingola
  */
-public class CmdSsh extends CmdLocal {
-
-	public static String defaultKnownHosts = Gpr.HOME + "/.ssh/known_hosts";
-	public static String defaultKnownIdentity[] = { Gpr.HOME + "/.ssh/id_dsa", Gpr.HOME + "/.ssh/id_rsa" };
-
-	public static int MAX_ITER_DISCONNECT = 600;
-	public static int WAIT_DISCONNECT = 100;
-	public static int WAIT_READ = 100;
-	public static int EXIT_CODE_DISCONNECT = 1;
-	static int BUFFER_SIZE = 100 * 1024;
+public class CmdSsh extends Cmd {
 
 	public static boolean debug = true;
-	String programFile;
-	JSch jsch;
-	Session session;
-	ChannelExec channel;
+	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-	public CmdSsh(String cmdId, String commandArgs[]) {
-		super(cmdId, commandArgs);
-		programFile = null;
+	Ssh ssh;
+	String localFileName;
+	String remoteFileName;
+
+	public CmdSsh(String cmdId, String args[]) {
+		super(cmdId, args);
 	}
 
-	public CmdSsh(String cmdId, String programFile, String commandArgs[]) {
-		super(cmdId, commandArgs);
-		this.programFile = programFile;
+	public CmdSsh(String cmdId, String localFileName, String remoteFileName) {
+		super(cmdId, EMPTY_STRING_ARRAY);
+		this.localFileName = localFileName;
+		this.remoteFileName = remoteFileName;
 	}
 
-	//	/**
-	//	 * Send a command and check for an acknowledge
-	//	 * @param in
-	//	 * @return
-	//	 * @throws IOException
-	//	 */
-	//	int checkAck(String scpCommand, OutputStream out, InputStream in) throws Exception {
-	//		if (debug) Gpr.debug("SCP: Sending: '" + scpCommand + "'");
-	//		if (scpCommand != null) {
-	//			out.write(scpCommand.getBytes());
-	//			out.flush();
-	//		}
-	//
-	//		if (debug) Gpr.debug("SCP: Waiting for acknowledge.");
-	//		int b = in.read();
-	//		// Values are
-	//		//          0 for success,
-	//		//          1 for error,
-	//		//          2 for fatal error,
-	//		//          -1
-	//		if (b <= 0) return b;
-	//
-	//		if (b == 1 || b == 2) {
-	//			StringBuffer sb = new StringBuffer();
-	//			int c;
-	//			do {
-	//				c = in.read();
-	//				sb.append((char) c);
-	//			} while (c != '\n');
-	//
-	//			if (b == 1) throw new Exception("SCP command error: " + sb.toString());
-	//			if (b == 2) throw new Exception("SCP command fatal error: " + sb.toString());
-	//		}
-	//
-	//		return b;
-	//	}
-	//
-	//	/** 
-	//	 * Diconnect, clear objects and set exit value
-	//	 */
-	//	void disconnect(boolean force) {
-	//		// Close channel
-	//		if (channel != null) {
-	//
-	//			// Wait until channel is finished (otherwise redirections will not work)
-	//			for (int i = 0; !force && (i < MAX_ITER_DISCONNECT) && !channel.isClosed(); i++) {
-	//				if (debug) Gpr.debug(i + "\t\tDisconnect:\tclosed: " + channel.isClosed() + "\teof: " + channel.isEOF() + "\tconnected: " + channel.isConnected());
-	//				try {
-	//					Thread.sleep(WAIT_DISCONNECT);
-	//				} catch (InterruptedException e) {
-	//					throw new RuntimeException(e);
-	//				}
-	//			}
-	//			if (debug) Gpr.debug("\t\tSSH disconnect:\tclosed: " + channel.isClosed() + "\teof: " + channel.isEOF() + "\tconnected: " + channel.isConnected());
-	//
-	//			// Channel is closed, now we can get exit status
-	//			if (!force && channel.isClosed()) exitValue = channel.getExitStatus();
-	//			else exitValue = EXIT_CODE_DISCONNECT; // There was an error and we were forced to close the channel
-	//
-	//			// OK, we can disconnect now
-	//			channel.disconnect();
-	//			channel = null;
-	//		}
-	//
-	//		// Close session
-	//		if (session != null) {
-	//			session.disconnect();
-	//			session = null;
-	//		}
-	//
-	//		if (jsch != null) jsch = null;
-	//	}
-	//
-	//	@Override
-	//	public int exec() {
-	//		try {
-	//			executing = true;
-	//
-	//			// Copy file to remote host
-	//			started = true;
-	//			if (programFile != null) {
-	//				String remotefileName = Gpr.baseName(programFile);
-	//				scpTo(programFile, remotefileName);
-	//				sshExec(remotefileName);
-	//			} else sshExec(null); // Just execute a command
-	//
-	//			executing = false;
-	//		} catch (Exception e) {
-	//			error = e.getMessage();
-	//			exitValue = -1;
-	//			if (debug) e.printStackTrace();
-	//			disconnect(true);
-	//		} finally {
-	//			// Disconnect and set exit value
-	//			disconnect(true);
-	//
-	//			// We are done. Either process finished or an exception was raised.
-	//			started = true;
-	//			executing = false;
-	//			if (task != null) task.setExitValue(exitValue);
-	//		}
-	//
-	//		return exitValue;
-	//	}
-	//
-	//	@Override
-	//	public void kill() {
-	//		executing = false;
-	//		disconnect(true);
-	//
-	//		// Update task stats
-	//		if (task != null) {
-	//			if (debug) Gpr.debug("Killed: Setting stats " + task);
-	//			task.stateKilled();
-	//		}
-	//	}
-	//
-	//	/**
-	//	 * Read an input stream while data is available
-	//	 * @param in
-	//	 * @param sb
-	//	 * @param tmp
-	//	 * @throws IOException
-	//	 */
-	//	void readAvailable(InputStream in, StringBuilder sb, byte tmp[]) throws IOException {
-	//		while (in.available() > 0) {
-	//			int i = in.read(tmp, 0, BUFFER_SIZE);
-	//			if (i < 0) break;
-	//			String recv = new String(tmp, 0, i);
-	//			sb.append(recv);
-	//			System.out.print(recv);
-	//		}
-	//	}
-	//
-	//	/**
-	//	 * Read channle's input
-	//	 * @return
-	//	 */
-	//	String readChannel() {
-	//		byte[] tmp = new byte[BUFFER_SIZE];
-	//		StringBuilder stdout = new StringBuilder();
-	//
-	//		try {
-	//			InputStream in = channel.getInputStream();
-	//
-	//			while (!channel.isClosed()) {
-	//				readAvailable(in, stdout, tmp);
-	//				Thread.sleep(WAIT_READ);
-	//			}
-	//
-	//			readAvailable(in, stdout, tmp);
-	//		} catch (Exception e) {
-	//			if (debug) Gpr.debug("Exception: " + e);
-	//		}
-	//
-	//		return stdout.toString();
-	//	}
-	//
-	//	/**
-	//	 * Copy a local file to a remote file
-	//	 * 
-	//	 * Reference: http://www.jcraft.com/jsch/examples/ScpTo.java.html
-	//	 * 
-	//	 * @param localFileName : Local file name
-	//	 * @param remoteFileName : Remote file name
-	//	 */
-	//	void scpTo(String localFileName, String remoteFileName) throws Exception {
-	//		if (debug) Gpr.debug("SCP " + localFileName + " " + remoteFileName);
-	//		String scpcommand = "scp -t " + remoteFileName;
-	//		channel = sshConnect(scpcommand);
-	//		File lfile = new File(localFileName);
-	//
-	//		// Get I/O streams for remote scp
-	//		OutputStream out = channel.getOutputStream();
-	//		InputStream in = channel.getInputStream();
-	//
-	//		// Connect
-	//		channel.connect();
-	//		if (checkAck(null, out, in) != 0) throw new Exception("Error in SCP (connect command was not acknoledged)");
-	//
-	//		// Send "C0644 fileSize fileName", where filename should not include '/'
-	//		long filesize = lfile.length();
-	//		scpcommand = "C0644 " + filesize + " " + Gpr.baseName(localFileName) + "\n";
-	//		if (checkAck(scpcommand, out, in) != 0) throw new Exception("Error in SCP ('C' command was not acknoledged)");
-	//
-	//		// Send a contents of localFileName
-	//		FileInputStream fis = new FileInputStream(localFileName);
-	//		byte[] buf = new byte[BUFFER_SIZE];
-	//		while (true) {
-	//			int len = fis.read(buf, 0, buf.length);
-	//			if (len <= 0) break;
-	//			out.write(buf, 0, len); //out.flush();
-	//		}
-	//		fis.close();
-	//		fis = null;
-	//		// send '\0'
-	//		buf[0] = 0;
-	//		out.write(buf, 0, 1);
-	//		out.flush();
-	//
-	//		if (checkAck(null, out, in) != 0) throw new Exception("Error in SCP ('C' command was not acknoledged)");
-	//		out.close();
-	//
-	//		disconnect(false);
-	//	}
-	//
-	//	/**
-	//	 * Connect to a remote host and return a channel (session and jsch are set)
-	//	 */
-	//	ChannelExec sshConnect(String sshCommand) throws Exception {
-	//		JSch.setConfig("StrictHostKeyChecking", "no"); // Not recommended, but useful
-	//		jsch = new JSch();
-	//
-	//		// Some "reasonable" defaults
-	//		if (Gpr.exists(defaultKnownHosts)) jsch.setKnownHosts(defaultKnownHosts);
-	//		for (String identity : defaultKnownIdentity)
-	//			if (Gpr.exists(identity)) jsch.addIdentity(identity);
-	//
-	//		//---
-	//		// Start process & wait until completion
-	//		//---
-	//		started = true;
-	//
-	//		// Create session and connect
-	//		if (debug) Gpr.debug("Create conection:\n\tuser: '" + host.getUserName() + "'\n\thost : '" + host.getHostName() + "'\n\tport : " + host.getPort());
-	//		session = jsch.getSession(host.getUserName(), host.getHostName(), host.getPort());
-	//		session.setUserInfo(new SshUserInfo());
-	//		session.connect();
-	//
-	//		// Create channel
-	//		channel = (ChannelExec) session.openChannel("exec");
-	//		if (sshCommand != null) channel.setCommand(sshCommand);
-	//
-	//		return channel;
-	//	}
-	//
-	//	/**
-	//	 * Connect via ssh and execute a script (execute "/bin/sh -e program" in remote host)
-	//	 * 
-	//	 * Reference: http://www.jcraft.com/jsch/examples/Exec.java.html
-	//	 * 
-	//	 * @throws Exception
-	//	 */
-	//	void sshExec(String programFile) throws Exception {
-	//		// Build command string
-	//		StringBuilder cmdStr = new StringBuilder();
-	//		for (String arg : commandArgs)
-	//			cmdStr.append((cmdStr.length() > 0 ? " " : "") + arg);
-	//
-	//		// Add remote program file name?
-	//		if (programFile != null) cmdStr.append((cmdStr.length() > 0 ? " " : "") + programFile);
-	//
-	//		// Open ssh session
-	//		channel = sshConnect(cmdStr.toString());
-	//		channel.setInputStream(null);
-	//		channel.setPty(true); // Allocate pseudo-tty (same as "ssh -t")
-	//
-	//		// These don't seem to work
-	//		channel.setErrStream(System.err);
-	//		channel.setOutputStream(System.out);
-	//
-	//		// Connect channel
-	//		channel.connect();
-	//
-	//		// Read input
-	//		String resultStr = readChannel();
-	//		Gpr.debug("Ssh results (length: " + resultStr.length() + ")\n" + resultStr);
-	//
-	//		disconnect(false); // Diconnect
-	//	}
-	//}
-	//
-	//class SshUserInfo implements UserInfo {
-	//
-	//	@Override
-	//	public String getPassphrase() {
-	//		return null;
-	//	}
-	//
-	//	@Override
-	//	public String getPassword() {
-	//		return null;
-	//	}
-	//
-	//	@Override
-	//	public boolean promptPassphrase(String arg0) {
-	//		Gpr.debug("SSH Message: " + arg0);
-	//		return false;
-	//	}
-	//
-	//	@Override
-	//	public boolean promptPassword(String arg0) {
-	//		Gpr.debug("SSH Message: " + arg0);
-	//		return true;
-	//	}
-	//
-	//	@Override
-	//	public boolean promptYesNo(String arg0) {
-	//		Gpr.debug("SSH Message: " + arg0);
-	//		return true;
-	//	}
-	//
-	//	@Override
-	//	public void showMessage(String arg0) {
-	//		System.err.println("SSH Message: " + arg0);
-	//	}
+	@Override
+	protected void execCmd() throws Exception {
+		// Build command 
+		StringBuilder cmdsb = new StringBuilder();
+		for (String arg : commandArgs)
+			cmdsb.append(" " + arg);
+		String command = cmdsb.toString().trim();
+
+		// Nothing in the command line? Just execute remote file
+		if (command.isEmpty()) command = remoteFileName;
+
+		// Execute ssh
+		ssh = new Ssh(host);
+		ssh.setShowStdout(true);
+		ssh.exec(command);
+	}
+
+	@Override
+	protected void execPrepare() throws Exception {
+		// Should we copy these files?
+		if ((localFileName != null) && (remoteFileName != null)) {
+			// Copy local file to remote destination 
+			ssh = new Ssh(host);
+			ssh.scpTo(localFileName, remoteFileName);
+		}
+	}
+
+	@Override
+	protected void killCmd() {
+		ssh.kill();
+	}
+
 }

@@ -9,6 +9,11 @@ public class Zzz {
 	public static void main(String[] args) throws Exception {
 		Gpr.debug("Zzz: Start");
 
+		//		Host h = new Host("pablocingolani@localhost");
+		//		Ssh ssh = new Ssh(h);
+		//		ssh.setShowStdout(true);
+		//		ssh.exec("ls -al");
+
 		// Create a task
 		String id = "task_zzz";
 		String programFileName = Gpr.HOME + "/z.sh";
@@ -21,9 +26,10 @@ public class Zzz {
 		Config config = Config.get();
 		ExecutionerSsh essh = new ExecutionerSsh(config);
 		essh.start();
-		//		essh.add(task);
 
-		Thread.sleep(10000);
+		essh.add(task);
+
+		Thread.sleep(60000);
 		Gpr.debug("Kill");
 		essh.kill();
 

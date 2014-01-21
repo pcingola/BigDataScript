@@ -44,7 +44,7 @@ public class HostHealth {
 		conditions.add(new HealthConditionMem(host));
 		conditions.add(new HealthConditionLoggedInUsers(host));
 		conditions.add(new HealthConditionLoadAvg(host));
-		//		conditions.add(new ConditionLoadAvgByCpu(this));
+		//		conditions.add(new ConditionLoadAvgByCpu(host));
 	}
 
 	/**

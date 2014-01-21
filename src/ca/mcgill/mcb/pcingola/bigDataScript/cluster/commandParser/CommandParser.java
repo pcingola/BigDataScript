@@ -84,6 +84,7 @@ public class CommandParser {
 				// Parse last command
 				if (command != null) parse(command, lines);
 			} else {
+				if (debug) Gpr.debug("Error trying to connect: Empty result string");
 				// Could not connect
 				host.getHealth().setAlive(false);
 			}
@@ -92,6 +93,7 @@ public class CommandParser {
 			String key = this.getClass().getSimpleName().substring("CommandParser".length()); // Command parser name (minus the 'CommandParser' prefix)
 			host.getHealth().setNote(key, result);
 		} catch (Exception e) {
+			if (debug) Gpr.debug("Error trying to connect:\n" + e);
 			// Could not connect
 			host.getHealth().setAlive(false);
 		}

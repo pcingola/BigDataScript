@@ -178,6 +178,17 @@ public class Ssh {
 		}
 	}
 
+	public int getExitValue() {
+		return exitValue;
+	}
+
+	/**
+	 * Force disconnection
+	 */
+	public void kill() {
+		disconnect(true);
+	}
+
 	/**
 	 * Read an input stream while data is available
 	 * @param in
@@ -269,6 +280,14 @@ public class Ssh {
 		out.close();
 
 		disconnect(false);
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setShowStdout(boolean showStdout) {
+		this.showStdout = showStdout;
 	}
 
 	/**

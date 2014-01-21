@@ -26,29 +26,12 @@ public class Host implements Comparable<Host> {
 
 	public Host(Cluster cluster, String hostName) {
 		this.cluster = cluster;
-		resources = new HostResources();
-		health = new HostHealth(this);
-
-		// Parse "user@hostname:port"
-		this.hostName = hostName;
-		int idx = hostName.indexOf(':');
-		if (idx > 0) {
-			port = Gpr.parseIntSafe(hostName.substring(idx + 1));
-			this.hostName = hostName.substring(0, idx);
-		}
-
-		idx = this.hostName.indexOf('@');
-		if (idx > 0) {
-			userName = this.hostName.substring(0, idx);
-			this.hostName = this.hostName.substring(idx + 1);
-		} else userName = "";
-
-		tasksRunning = new HashSet<Task>();
-		cluster.add(this);
+		init(cluster, hostName);
 	}
 
-	public boolean canUpdateSsh() {
-		return true;
+	public Host(String hostName) {
+		cluster = new Cluster();
+		init(cluster, hostName);
 	}
 
 	/**
@@ -57,6 +40,10 @@ public class Host implements Comparable<Host> {
 	 */
 	public synchronized void add(Task task) {
 		if (tasksRunning.add(task)) updateResources();
+	}
+
+	public boolean canUpdateSsh() {
+		return true;
 	}
 
 	@Override
@@ -91,6 +78,28 @@ public class Host implements Comparable<Host> {
 
 	public String getUserName() {
 		return userName;
+	}
+
+	void init(Cluster cluster, String hostName) {
+		resources = new HostResources();
+		health = new HostHealth(this);
+
+		// Parse "user@hostname:port"
+		this.hostName = hostName;
+		int idx = hostName.indexOf(':');
+		if (idx > 0) {
+			port = Gpr.parseIntSafe(hostName.substring(idx + 1));
+			this.hostName = hostName.substring(0, idx);
+		}
+
+		idx = this.hostName.indexOf('@');
+		if (idx > 0) {
+			userName = this.hostName.substring(0, idx);
+			this.hostName = this.hostName.substring(idx + 1);
+		} else userName = "";
+
+		tasksRunning = new HashSet<Task>();
+		cluster.add(this);
 	}
 
 	/**
