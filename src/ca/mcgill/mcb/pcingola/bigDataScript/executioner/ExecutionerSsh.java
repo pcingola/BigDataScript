@@ -6,6 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Execute tasks in a remote computer, using ssh
@@ -17,6 +18,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 public class ExecutionerSsh extends Executioner {
 
 	public static final String CONFIG_SSH_NODES = "ssh.nodes";
+	public static String SSH_EXEC_COMMAND[] = { "/bin/bash", "-e" };
 
 	public ExecutionerSsh(Config config) {
 		super(config);
@@ -55,9 +57,9 @@ public class ExecutionerSsh extends Executioner {
 		task.createProgramFile(); // We must create a program file
 
 		String localFileName = task.getProgramFileName();
-		String remoteFileName = task.getProgramFileName();
+		String remoteFileName = Gpr.baseName(task.getProgramFileName());
 
-		return new CmdSsh(task.getId(), localFileName, remoteFileName);
+		return new CmdSsh(task.getId(), SSH_EXEC_COMMAND, localFileName, remoteFileName);
 	}
 
 	@Override

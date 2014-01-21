@@ -92,12 +92,13 @@ public class HostHealthUpdater extends Thread {
 		// Run command parser (updates host health)
 		commandParser.parse();
 
-		if (debug) Gpr.debug("Host info updated: " + host + "\n\t" + host.getResources() + "\n" + host.getHealth());
-		Gpr.debug("Host info updated: " + host //
-				+ "\nResources: " + host.getResources() //
-				+ "\nHeath:\n" + host.getHealth() //
-				+ "\nCondition: " + host.getHealth().condition() //
-		);
+		if (debug) {
+			Gpr.debug("Host info updated: " + host //
+					+ "\nResources: " + host.getResources() //
+					+ "\nHeath:\n" + host.getHealth() //
+					+ "\nCondition: " + host.getHealth().condition() //
+			);
+		}
 
 		if (debug) Gpr.debug("Update: End\tHost: " + host + "\talive: " + host.getHealth().isAlive());
 	}

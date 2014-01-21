@@ -173,7 +173,7 @@ public class Ssh {
 
 			return result;
 		} catch (Exception e) {
-			e.printStackTrace();
+			if (debug) e.printStackTrace();
 			return null;
 		}
 	}
@@ -228,7 +228,7 @@ public class Ssh {
 			String recv = readAvailable(in);
 			if (recv != null) stdout.append(recv);
 		} catch (Exception e) {
-			if (debug) Gpr.debug("Exception: " + e);
+			if (debug) e.printStackTrace();
 		}
 
 		return stdout.toString();

@@ -12,7 +12,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
@@ -342,7 +341,6 @@ public abstract class Executioner extends Thread {
 					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 						// OK, execute this task in this host						
 						add(task, host); // Add task to host (make sure resources are reserved)
-						Gpr.debug("Selected task: " + task.getId() + "\tHost: " + host);
 						return new Tuple<Task, Host>(task, host);
 					} else if (!canBeExecuted) {
 						// Can any host actually run this task?

@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
+
 /**
  * Executes an command in a remote host, via ssh
  * 
@@ -18,8 +19,8 @@ public class CmdSsh extends Cmd {
 		super(cmdId, args);
 	}
 
-	public CmdSsh(String cmdId, String localFileName, String remoteFileName) {
-		super(cmdId, EMPTY_STRING_ARRAY);
+	public CmdSsh(String cmdId, String args[], String localFileName, String remoteFileName) {
+		super(cmdId, args);
 		this.localFileName = localFileName;
 		this.remoteFileName = remoteFileName;
 	}
@@ -28,12 +29,15 @@ public class CmdSsh extends Cmd {
 	protected void execCmd() throws Exception {
 		// Build command 
 		StringBuilder cmdsb = new StringBuilder();
-		for (String arg : commandArgs)
-			cmdsb.append(" " + arg);
-		String command = cmdsb.toString().trim();
+		if (commandArgs != null) {
+			for (String arg : commandArgs)
+				cmdsb.append(" " + arg);
+		}
 
-		// Nothing in the command line? Just execute remote file
-		if (command.isEmpty()) command = remoteFileName;
+		// Add remote file?
+		if (remoteFileName != null) cmdsb.append(" " + remoteFileName);
+
+		String command = cmdsb.toString().trim();
 
 		// Execute ssh
 		ssh = new Ssh(host);
