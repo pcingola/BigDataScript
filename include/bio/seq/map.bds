@@ -172,16 +172,25 @@ void joinVcf(string vcf, string[] vcfs ) {
 # Map reads to genome (split into smaller files)
 #-------------------------------------------------------------------------------
 void map(string referenceFasta, string fq1, string fq2, string bam, int splitNumReads, int mapSortMemory) {
-	# Split files into 
-	print("Splitting fastq files\n")
-	splitFatsq(fq1, splitNumReads)
-	splitFatsq(fq2, splitNumReads)
-	wait
+	string[] fq1split, fq2split
 
-	# Get split files (we can only get names after split is finished)
-	fq1split := splitFatsqNames( fq1 )
-	fq2split := splitFatsqNames( fq2 )
-	print("Fastq splits:\n\t$fq1split\n\t$fq2split\n")
+	# Split files 
+	if( splitNumReads > 0 ) {
+		print("Splitting fastq files\n")
+		splitFatsq(fq1, splitNumReads)
+		splitFatsq(fq2, splitNumReads)
+		wait
+
+		# Get split files (we can only get names after split is finished)
+		fq1split = splitFatsqNames( fq1 )
+		fq2split = splitFatsqNames( fq2 )
+		print("Fastq splits:\n\t$fq1split\n\t$fq2split\n")
+	} else {
+		# Do not split files (e.g. if we are running on a local computer)
+		fq1split = [ fq1 ]
+		fq2split = [ fq2 ]
+	}
+
 
 	# Map each pair of files
 	string[] bams
@@ -214,6 +223,7 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 	# Create BAM file from reads
 	if( bam <- [fq1, fq2] ) {
 		mapIndex(referenceFasta)
+		if( system == "local" )	splitNumReads = 0
 		map(referenceFasta, fq1, fq2, bam, splitNumReads, mapSortMemory)
 	}
 
