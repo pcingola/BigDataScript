@@ -28,7 +28,7 @@ public class ExecutionerCluster extends Executioner {
 	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
 	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
-	public static String CLUSTER_KILL_COMMAND = FAKE_CLUSTER + "qdel";
+	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
 	public static String CLUSTER_BDS_COMMAND = "bds exec ";
 
 	public static final int MIN_EXTRA_TIME = 15;
@@ -154,27 +154,13 @@ public class ExecutionerCluster extends Executioner {
 		}
 	}
 
-	public synchronized void taskRunning(Task task) {
-		super.taskRunning(task);
-
-		// Cmd invoking 'qsub' finished execution => the task is in the cluster now
-		String id = task.getId();
-		Cmd cmd = cmdById.get(id);
-		if (cmd != null) {
-			Host host = cmd.getHost();
-			remove(task, host); // Remove task form host
-			cmdById.remove(id); // Remove command
-		}
-
-	}
-
 	/**
 	 * An OS command to kill this task
 	 * @param task
 	 * @return
 	 */
 	@Override
-	public String osKillCommand(Task task) {
+	public String[] osKillCommand(Task task) {
 		return CLUSTER_KILL_COMMAND;
 	}
 
@@ -227,6 +213,21 @@ public class ExecutionerCluster extends Executioner {
 
 		// Cannot run any task in any host
 		return null;
+	}
+
+	@Override
+	public synchronized void taskRunning(Task task) {
+		super.taskRunning(task);
+
+		// Cmd invoking 'qsub' finished execution => the task is in the cluster now
+		String id = task.getId();
+		Cmd cmd = cmdById.get(id);
+		if (cmd != null) {
+			Host host = cmd.getHost();
+			remove(task, host); // Remove task form host
+			cmdById.remove(id); // Remove command
+		}
+
 	}
 
 }

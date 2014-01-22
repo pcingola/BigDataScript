@@ -18,6 +18,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ExecutionerLocal extends Executioner {
 
+	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
+	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
+
 	public ExecutionerLocal(Config config) {
 		super(config);
 	}
@@ -34,7 +37,7 @@ public class ExecutionerLocal extends Executioner {
 
 		// Create command line
 		ArrayList<String> args = new ArrayList<String>();
-		for (String arg : CmdLocal.LOCAL_EXEC_COMMAND)
+		for (String arg : LOCAL_EXEC_COMMAND)
 			args.add(arg);
 		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
 
@@ -72,8 +75,13 @@ public class ExecutionerLocal extends Executioner {
 	}
 
 	@Override
-	public String osKillCommand(Task task) {
-		return "kill";
+	public String[] osKillCommand(Task task) {
+		ArrayList<String> args = new ArrayList<String>();
+		for (String arg : LOCAL_KILL_COMMAND)
+			args.add(arg);
+		args.add("" + task.getPid());
+
+		return args.toArray(Cmd.ARGS_ARRAY_TYPE);
 	}
 
 }

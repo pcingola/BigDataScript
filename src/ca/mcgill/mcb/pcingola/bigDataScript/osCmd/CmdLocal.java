@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -28,9 +29,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class CmdLocal extends Cmd {
 
 	public static final int MAX_PID_LINE_LENGTH = 1024; // A 'PID line' should not be longer than this...
-
-	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
-	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
 
 	protected Process process; // Java process (the one that actually executes our command)
 	protected boolean readPid;
@@ -108,10 +106,22 @@ public class CmdLocal extends Cmd {
 	protected void killBds(int pid) {
 		// Create arguments
 		ArrayList<String> args = new ArrayList<String>();
-		for (String arg : LOCAL_KILL_COMMAND)
-			args.add(arg);
-		args.add("" + pid);
 
+		// Add command and arguments
+		if ((executioner != null) && (task != null)) {
+			for (String arg : executioner.osKillCommand(task))
+				args.add(arg);
+		} else {
+			for (String arg : ExecutionerLocal.LOCAL_KILL_COMMAND)
+				args.add(arg);
+			args.add("" + pid);
+		}
+
+		// Add tasks's pis
+		if (task != null) args.add(task.getPid());
+		else args.add("" + pid);
+
+		// Execute kill command
 		try {
 			// Execute 'bds kill pid'
 			Process proc = Runtime.getRuntime().exec(args.toArray(ARGS_ARRAY_TYPE));

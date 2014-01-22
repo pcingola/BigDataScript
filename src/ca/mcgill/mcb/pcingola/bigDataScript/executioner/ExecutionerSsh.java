@@ -1,17 +1,27 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
+import java.util.ArrayList;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Execute tasks in a remote computer, using ssh
  * 
- * It is implemented by running a local queue (OsCmdQueue)
+ * Note: Even though the command is executed via ssh, it 
+ *       is assumed that the underlying file system is visible 
+ *       across all codes.
+ *       Otherwise it would bee to time consuming to synchronize 
+ *       tasks and files.
+ *       This is a 'common' set up, typically in a university network
+ *       where the user has a shared home directory across all 
+ *       computer, but there is no "cluster" software to coordinate 
+ *       jobs
  * 
  * @author pcingola
  */
@@ -39,6 +49,41 @@ public class ExecutionerSsh extends Executioner {
 		}
 	}
 
+	protected void follow(Task task) {
+		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
+
+		// No need to 'tail', Ssh class show output to StdOut directly
+		//		tail.add(task.getStdoutFile(), null, false);
+		//		tail.add(task.getStderrFile(), null, true);
+	}
+
+	@Override
+	protected Cmd createCmd(Task task) {
+		task.createProgramFile(); // We must create a program file
+
+		// Create command line
+		ArrayList<String> args = new ArrayList<String>();
+		for (String arg : ExecutionerLocal.LOCAL_EXEC_COMMAND)
+			args.add(arg);
+		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
+
+		// Add command line parameters for "bds exec"
+		args.add(timeout + ""); // Enforce timeout
+		args.add(task.getStdoutFile()); // Redirect STDOUT to this file
+		args.add(task.getStderrFile()); // Redirect STDERR to this file
+		args.add("-"); // No need to create exitCode file in local execution
+		args.add(task.getProgramFileName()); // Program to execute
+
+		String cmdStr = "";
+		for (String arg : args)
+			cmdStr += arg + " ";
+
+		// Run command
+		if (debug) Timer.showStdErr("Running command: " + cmdStr);
+		CmdSsh cmd = new CmdSsh(task.getId(), args.toArray(Cmd.ARGS_ARRAY_TYPE));
+		return cmd;
+	}
+
 	@Override
 	public synchronized void kill() {
 		cluster.stopHostInfoUpdaters();
@@ -46,25 +91,15 @@ public class ExecutionerSsh extends Executioner {
 	}
 
 	@Override
+	public String[] osKillCommand(Task task) {
+		return Cmd.ARGS_ARRAY_TYPE;
+	}
+
+	@Override
 	public void run() {
 		cluster.startHostInfoUpdaters();
 		super.run();
 		cluster.stopHostInfoUpdaters();
-	}
-
-	@Override
-	protected Cmd createCmd(Task task) {
-		task.createProgramFile(); // We must create a program file
-
-		String localFileName = task.getProgramFileName();
-		String remoteFileName = Gpr.baseName(task.getProgramFileName());
-
-		return new CmdSsh(task.getId(), SSH_EXEC_COMMAND, localFileName, remoteFileName);
-	}
-
-	@Override
-	public String osKillCommand(Task task) {
-		return "";
 	}
 
 }

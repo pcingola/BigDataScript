@@ -208,7 +208,7 @@ public abstract class Executioner extends Thread {
 	 * @param task
 	 * @return
 	 */
-	public abstract String osKillCommand(Task task);
+	public abstract String[] osKillCommand(Task task);
 
 	protected void remove(Task task, Host host) {
 		tasksSelected.remove(task);

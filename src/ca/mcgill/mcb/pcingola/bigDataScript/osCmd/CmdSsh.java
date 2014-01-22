@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Executes an command in a remote host, via ssh
@@ -12,17 +13,9 @@ public class CmdSsh extends Cmd {
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	Ssh ssh;
-	String localFileName;
-	String remoteFileName;
 
 	public CmdSsh(String cmdId, String args[]) {
 		super(cmdId, args);
-	}
-
-	public CmdSsh(String cmdId, String args[], String localFileName, String remoteFileName) {
-		super(cmdId, args);
-		this.localFileName = localFileName;
-		this.remoteFileName = remoteFileName;
 	}
 
 	@Override
@@ -34,25 +27,18 @@ public class CmdSsh extends Cmd {
 				cmdsb.append(" " + arg);
 		}
 
-		// Add remote file?
-		if (remoteFileName != null) cmdsb.append(" " + remoteFileName);
-
 		String command = cmdsb.toString().trim();
 
 		// Execute ssh
 		ssh = new Ssh(host);
 		ssh.setShowStdout(true);
+		Gpr.debug("Command: " + command);
 		ssh.exec(command);
 	}
 
 	@Override
 	protected void execPrepare() throws Exception {
-		// Should we copy these files?
-		if ((localFileName != null) && (remoteFileName != null)) {
-			// Copy local file to remote destination 
-			ssh = new Ssh(host);
-			ssh.scpTo(localFileName, remoteFileName);
-		}
+		// Nothing to do
 	}
 
 	@Override
