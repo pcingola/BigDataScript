@@ -135,7 +135,7 @@ string[] haplotypeCaller( string referenceFasta, string bam, string[] callableRe
 		vcfs.add( callableRegionVcf )
 
 		# This file must have a BED extension
-		exec cp $callableRegion $callableRegionBed
+		sys cp $callableRegion $callableRegionBed
 
 		# Invoke GATK's HaplotypeCaller
 		task( callableRegionVcf <- callableRegion ) {
@@ -267,7 +267,7 @@ string[] splitCallableRegions(string bed, int num) {
 
 	if( bedOk <- bed ) {
 		# Get only callable regions and count resulting lines
-		countLines := exec grep CALLABLE $bed | tee $bedOk | wc -l
+		countLines := sys grep CALLABLE $bed | tee $bedOk | wc -l
 
 		# How many lines do we have in each chunk?
 		count := countLines.parseInt()
