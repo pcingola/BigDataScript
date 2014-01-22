@@ -27,7 +27,7 @@ public class CmdSsh extends Cmd {
 				cmdsb.append(" " + arg);
 		}
 
-		String command = cmdsb.toString().trim();
+		String command = "/Users/pcingola/.bds/" + cmdsb.toString().trim();
 
 		// Execute ssh
 		ssh = new Ssh(host);

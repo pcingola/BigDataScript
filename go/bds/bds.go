@@ -52,6 +52,9 @@ const EXITCODE_OK = 0
 const EXITCODE_ERROR = 1
 const EXITCODE_TIMEOUT = 2
 
+// Debug mode
+const DEBUG = false
+
 // Store all PID in this file
 var pidFile string = ""
 
@@ -136,6 +139,10 @@ func bigDataScript() int {
 	Redirect stdout and stderr to files
 */
 func executeCommandArgs() int {
+	if( DEBUG ) {
+		log.Print("Debug: executeCommandArgs\n")
+	}
+
 	minArgs := 6
 
 	if len(os.Args) < minArgs {
@@ -183,7 +190,10 @@ func executeCommandArgs() int {
 	Timeout after timeout seconds (unless time is zero)
 */
 func executeCommand(command string, args []string, timeSecs int, outFile, errFile, exitFile string) int {
-	// log.Printf("Executing command %s\n", command)
+	if( DEBUG ) {
+		log.Printf("Debug: executeCommand %s\n", command)
+	}
+
 	// Redirect all signals to channel (e.g. Ctrl-C)
 	osSignal := make(chan os.Signal, 1)
 	if pidFile != "" {
@@ -195,7 +205,12 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 		// But we don't want to kill the calling program...
 		// fmt.Fprintf(os.Stderr, "bds: setting new process group\n")
 		if err := syscall.Setpgid(0, 0); err != nil {
-			log.Fatal(err)
+			// During an ssh remote execution we will no be albe to do this.
+			// In this case, we assume that the SSH daemon will catch the sinals 
+			// and kill al child processes.
+			if( DEBUG ) {
+				log.Printf("Error redirecting signals: %s", err)
+			}
 		}
 	}
 
@@ -250,6 +265,9 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 	Execute a command enforcing a timeout and writing exit status to 'exitFile'
 */
 func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSignal chan os.Signal) int {
+	if( DEBUG ) {
+		log.Printf("Debug: executeCommandTimeout\n")
+	}
 
 	// Wait for execution to finish or timeout
 	exitStr := ""
@@ -318,6 +336,10 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 	Execute a command and writing exit status to 'exitCode'
 */
 func execute(cmd *exec.Cmd, exitCode chan string) {
+	if( DEBUG ) {
+		log.Printf("Debug: execute\n")
+	}
+
 	// Wait for command to finish
 	if err := cmd.Wait(); err != nil {
 		exitCode <- err.Error()
@@ -336,6 +358,10 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 	must be killed.
 */
 func killAll(pidFile string) {
+	if( DEBUG ) {
+		log.Printf("Debug: killAll\n")
+	}
+
 	var (
 		err  error
 		line string
@@ -427,6 +453,10 @@ func killAll(pidFile string) {
 	Kill a process group
 */
 func killProcessGroup(pid int) {
+	if( DEBUG ) {
+		log.Printf("Debug: killProcessGroup( %d )\n", pid)
+	}
+
 	// fmt.Fprintf(os.Stderr, "bds: killing process group %d\n", pid)
 	syscall.Kill(-pid, syscall.SIGHUP)
 }
@@ -489,6 +519,10 @@ func writeFile(fileName, message string) {
 // Otherwise, if src implements the WriterTo interface,
 // the copy is implemented by calling src.WriteTo(dst).
 func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error) {
+	if( DEBUG ) {
+		log.Printf("Debug: tee\n")
+	}
+
 	buf := make([]byte, 32*1024)
 	for {
 		nr, er := src.Read(buf)
@@ -544,6 +578,10 @@ func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error
 // to find the name of the file.  It is the caller's responsibility to
 // remove the file when no longer needed.
 func tempFile(prefix string) (name string, err error) {
+	if( DEBUG ) {
+		log.Printf("Debug: tempFile\n")
+	}
+
 	name = prefix
 
 	// Is just the prefix OK?
@@ -622,8 +660,11 @@ func usage(msg string) {
 	os.Exit(1)
 }
 
-/* returns absolute path of executing file.
-WARNING: this must be called before  changing the current directory */
+/*
+  Returns absolute path of executing file.
+  WARNING: this must be called before
+  changing the current directory 
+*/
 func discoverExecName() string {
 	f := os.Args[0]
 	if path.IsAbs(f) {
@@ -655,6 +696,10 @@ func testx() {
 // Loads configuration as map, expects key=val syntax.
 // Blank lines, and lines beggining with # are ignored.
 func LoadConfig(filename string, dest map[string]string) {
+	if( DEBUG ) {
+		log.Printf("Debug: LoadConfig(%s)\n", filename)
+	}
+
 	re, _ := regexp.Compile("[#].*\\n|\\s+\\n|\\S+[=]|.*\n")
 	fi, err := os.Stat(filename)
 	if err != nil {
