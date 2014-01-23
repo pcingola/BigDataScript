@@ -1,9 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,21 +67,23 @@ public class ForLoopList extends StatementWithScope {
 		Object res = expression.eval(csThread);
 
 		// Find (or create) a collection we can iterate on
-		Collection values = null;
-		if (res instanceof List) values = (List) res;
+		Object[] values = null;
+		if (res instanceof List) values = ((List) res).toArray();
 		else if (res instanceof Map) {
 			// Create a sorted list of values
 			ArrayList list = new ArrayList();
 			list.addAll(((Map) res).values());
 			Collections.sort(list);
-			values = list;
+			values = list.toArray();
 		} else {
-			values = new LinkedList<Object>();
-			values.add(res);
+			// Single object
+			values = new Object[1];
+			values[0] = res;
 		}
 
 		// Iterate on collection
-		for (Object o : values) {
+		for (int i = 0; i < values.length; i++) {
+			Object o = values[i];
 			varSym.setValue(varSym.getType().cast(o));
 
 			RunState rstate = statement.run(csThread); // Loop statement

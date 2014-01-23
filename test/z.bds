@@ -2,27 +2,12 @@
 
 print("Start\n")
 
-print("Loop 1:\n")
-for( int i=0 ; i < 5 ; i++ ) {
-	print("\ti : $i\n")
-	if( i == 2 ) {
-		checkpoint
-		print("\t--- checkpoint ---\n")
-	}
-}
-
-print("Loop 2:\n")
-for( int i=0 ; i < 5 ; i++ ) {
-	print("\ti : $i\n")
-	if( i == 3 ) {
-		checkpoint
-		print("\t--- checkpoint ---\n")
-	}
-}
-
-print("Loop 3:\n")
+print("Loop:\n")
 for( string s : ['one', 'two', 'three'] ) {
 	print("\ts : $s\n")
-	#if( s == 'two' )	checkpoint
+	if( s == 'two' ) {
+		checkpoint
+		print("\t--- checkpoint ---\n")
+	}
 }
 print("Done!\n")

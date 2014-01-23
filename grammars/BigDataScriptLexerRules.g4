@@ -62,7 +62,6 @@ STRING_LITERAL_SINGLE
 // 'sys' literal. Everything after a sys statement.
 // Note: It can be multi-line by escaping before the end of line
 SYS_LITERAL       : 'sys'  ( ' ' | '\t' )+ SysMultiLine;
-EXEC_LITERAL      : 'exec'  ( ' ' | '\t' )+ SysMultiLine;
 TASK_LITERAL      : 'task' ( ' ' | '\t' )+ ~('(' | '{' | '\r' | '\n' ) SysMultiLine;
 
 // Comments

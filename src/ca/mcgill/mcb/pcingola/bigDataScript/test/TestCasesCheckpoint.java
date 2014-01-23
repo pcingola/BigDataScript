@@ -18,14 +18,14 @@ public class TestCasesCheckpoint extends TestCase {
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	void runAndCheckpoint(String fileName, String varname, Object expectedValue) {
-		runAndCheckpoint(fileName, varname, expectedValue, null);
+	void runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue) {
+		runAndCheckpoint(fileName, checkpointFileName, varname, expectedValue, null);
 	}
 
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	void runAndCheckpoint(String fileName, String varname, Object expectedValue, Runnable runBeforeRecover) {
+	void runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue, Runnable runBeforeRecover) {
 		// Compile
 		String args[] = { fileName };
 		BigDataScript bigDataScript = new BigDataScript(args);
@@ -47,7 +47,8 @@ public class TestCasesCheckpoint extends TestCase {
 		//---
 		// Recover from checkpoint
 		//---
-		String chpFileName = fileName + ".chp";
+		String chpFileName = checkpointFileName;
+		if (checkpointFileName == null) chpFileName = fileName + ".chp";
 		if (debug) Gpr.debug("CheckPoint file name : " + chpFileName);
 		String args2[] = { "-r", chpFileName };
 		BigDataScript bigDataScript2 = new BigDataScript(args2);
@@ -61,27 +62,27 @@ public class TestCasesCheckpoint extends TestCase {
 
 	@Test
 	public void test01() {
-		runAndCheckpoint("test/checkpoint_01.bds", "i", "10");
+		runAndCheckpoint("test/checkpoint_01.bds", null, "i", "10");
 	}
 
 	@Test
 	public void test02() {
-		runAndCheckpoint("test/checkpoint_02.bds", "l", "15");
+		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
 	}
 
 	@Test
 	public void test03() {
-		runAndCheckpoint("test/checkpoint_03.bds", "s2", "After checkpoint 42");
+		runAndCheckpoint("test/checkpoint_03.bds", null, "s2", "After checkpoint 42");
 	}
 
 	@Test
 	public void test04() {
-		runAndCheckpoint("test/checkpoint_04.bds", "s", "one\teins");
+		runAndCheckpoint("test/checkpoint_04.bds", null, "s", "one\teins");
 	}
 
 	@Test
 	public void test05() {
-		runAndCheckpoint("test/checkpoint_05.bds", "l0", "ONE");
+		runAndCheckpoint("test/checkpoint_05.bds", null, "l0", "ONE");
 	}
 
 	/**
@@ -108,6 +109,6 @@ public class TestCasesCheckpoint extends TestCase {
 		(new File(fileToDelete)).delete();
 
 		// Run test
-		runAndCheckpoint("test/checkpoint_06.bds", "b", "true", createFile);
+		runAndCheckpoint("test/checkpoint_06.bds", "test/checkpoint_06.bds.line_8.chp", "b", "true", createFile);
 	}
 }

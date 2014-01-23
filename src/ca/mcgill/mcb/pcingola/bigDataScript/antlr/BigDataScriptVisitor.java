@@ -607,13 +607,6 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionTimes(@NotNull BigDataScriptParser.ExpressionTimesContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionExec}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpressionExec(@NotNull BigDataScriptParser.ExpressionExecContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#warning}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

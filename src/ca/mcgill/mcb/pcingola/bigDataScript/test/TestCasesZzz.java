@@ -7,9 +7,6 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.junit.Test;
-
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -206,11 +203,6 @@ public class TestCasesZzz extends TestCase {
 		if (debug) Gpr.debug("Program's stderr: '" + captureStderr + "'");
 		int index = captureStderr.toString().indexOf(expectedStderr);
 		if (index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStderr + "' in STDERR not found.\nSTDERR:\n" + captureStderr + "\n");
-	}
-
-	@Test
-	public void test88() {
-		runAndCheckStderr("test/run_88.bds", "Not enough resources to execute task:");
 	}
 
 }

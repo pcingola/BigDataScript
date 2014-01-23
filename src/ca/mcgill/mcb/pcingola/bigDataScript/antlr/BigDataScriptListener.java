@@ -944,17 +944,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionTimes(@NotNull BigDataScriptParser.ExpressionTimesContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionExec}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpressionExec(@NotNull BigDataScriptParser.ExpressionExecContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionExec}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpressionExec(@NotNull BigDataScriptParser.ExpressionExecContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#warning}.
 	 * @param ctx the parse tree
 	 */
