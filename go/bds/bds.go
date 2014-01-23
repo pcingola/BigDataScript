@@ -61,16 +61,28 @@ var pidFile string = ""
 // store full path of this executable
 var execName string = ""
 
+// Code from ioutil
+var randTempFile uint32
+
 /*
 	Main
 */
 func main() {
 	execName = discoverExecName()
+	if( DEBUG ) {
+		log.Printf("Debug: execName:%s\n", execName)
+	}
+
+
 	// Are we requested to execute a command?
 	if len(os.Args) > 1 {
 		if os.Args[1] == "exec" {
 			// Execute 'exec' command and exit
-			os.Exit(executeCommandArgs())
+			exitCode := executeCommandArgs()
+			if( DEBUG ) {
+				log.Printf("Debug: Exit code:%d\n", exitCode)
+			}			
+			os.Exit(exitCode)
 		} else if os.Args[1] == "kill" {
 			// Kill a process group
 			if len(os.Args) != 3 {
@@ -88,8 +100,8 @@ func main() {
 			killProcessGroup(pid)
 			os.Exit(0)
 		} else if os.Args[1] == "test" {
-			// placeholder for tests, not to be used
-			testx()
+			// Placeholder for tests, not to be used
+			zzz()
 		} else if os.Args[1] == "help" {
 			// Show usage and exit
 			usage("")
@@ -102,7 +114,16 @@ func main() {
 
 /*
 	Invoke BigDataScript java program
-	WARNING: It is assumed that BigDataScript.jar is in the CLASSPATH
+
+	WARNING: 
+		It is assumed that BigDataScript.jar is in the same executable binary as 'bds'
+
+		This is actually a nice hack used to distribute only one file. Since JAR files 
+		are actually ZIP files and ZIP files are indexed from the end of the file, you can 
+		append the JAR to the go binary (cat binary jar > new_binary) and you encapsulate 
+		both in the same file. 
+
+		Idea and implementation of this hack: Hernan Gonzalez
 */
 func bigDataScript() int {
 	// Create a pidFile (temp file based on pid number)
@@ -131,6 +152,43 @@ func bigDataScript() int {
 	killAll(pidFile)
 
 	return exitCode
+}
+
+/*
+  Returns absolute path of executing file.
+  WARNING: this must be called before
+  changing the current directory 
+*/
+func discoverExecName() string {
+	if( DEBUG ) {
+		log.Print("Debug: discoverExecName\n")
+	}
+
+	f := os.Args[0]
+	if path.IsAbs(f) {
+		return f
+	}
+
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(fmt.Sprintf("Getwd failed: %s", err))
+	}
+
+	_, err = os.Stat(f)
+	if err == nil { // relative file exists
+		return path.Clean(path.Join(wd, f))
+	} // not exists? lookup in path
+
+	f2, err := exec.LookPath(f)
+	if err != nil {
+		panic(fmt.Sprintf("lookpath failed: %s", err))
+	}
+
+	if path.IsAbs(f2) {
+		return f2
+	}
+
+	return path.Clean(path.Join(wd, f2))
 }
 
 /*
@@ -289,13 +347,18 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 
 	case <-time.After(time.Duration(timeSecs) * time.Second):
 		kill = true
-		// fmt.Fprintf(os.Stderr, "bds: timed out!\n")
 		exitStr = "Time out"
+		if( DEBUG ) {
+			log.Printf("Debug: Timeout!\n")
+		}
 
 	case <-osSignal:
 		kill = true
 		// fmt.Fprintf(os.Stderr, "bds: killed by OS signal!\n")
 		exitStr = "Signal received"
+		if( DEBUG ) {
+			log.Printf("Debug: Os Signal!\n")
+		}
 	}
 
 	// Should we kill child process?
@@ -346,6 +409,56 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 	}
 
 	exitCode <- "0"
+}
+
+// Does the file exist?
+func fileExists(name string) bool {
+	f, err := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
+	defer f.Close()
+	return os.IsExist(err)
+}
+
+// Loads configuration as map, expects key=val syntax.
+// Blank lines, and lines beggining with # are ignored.
+func LoadConfig(filename string, dest map[string]string) {
+	if( DEBUG ) {
+		log.Printf("Debug: LoadConfig(%s)\n", filename)
+	}
+
+	re, _ := regexp.Compile("[#].*\\n|\\s+\\n|\\S+[=]|.*\n")
+	fi, err := os.Stat(filename)
+	if err != nil {
+		return
+	}
+	f, err := os.Open(filename)
+	if err != nil {
+		return
+	}
+	buff := make([]byte, fi.Size())
+	f.Read(buff)
+	f.Close()
+	str := string(buff) + "\n"
+	s2 := re.FindAllString(str, -1)
+	for i := 0; i < len(s2); {
+		if strings.HasPrefix(s2[i], "#") {
+			i++
+		} else if strings.HasSuffix(s2[i], "=") {
+			key := strings.ToLower(s2[i])[0 : len(s2[i])-1]
+			i++
+			if strings.HasSuffix(s2[i], "\n") {
+				val := s2[i][0 : len(s2[i])-1]
+				if strings.HasSuffix(val, "\r") {
+					val = val[0 : len(val)-1]
+				}
+				i++
+				dest[key] = val
+			}
+		} else if strings.Index(" \t\r\n", s2[i][0:1]) > -1 {
+			i++
+		} else {
+			//
+		}
+	}
 }
 
 /*
@@ -461,6 +574,12 @@ func killProcessGroup(pid int) {
 	syscall.Kill(-pid, syscall.SIGHUP)
 }
 
+// Create a new seed for random numbers
+// Code from ioutil
+func randSeed() uint32 {
+	return uint32(time.Now().UnixNano() + int64(os.Getpid()))
+}
+
 /*
 	Read a line from a file
 */
@@ -480,18 +599,6 @@ func readLine(reader *bufio.Reader) (line string, err error) {
 		}
 	}
 	return
-}
-
-/*
-	Write a string to a file
-*/
-func writeFile(fileName, message string) {
-	file, err := os.Create(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-	file.WriteString(message)
 }
 
 //
@@ -591,10 +698,10 @@ func tempFile(prefix string) (name string, err error) {
 
 	nconflict := 0
 	for i := 0; i < 10000; i++ {
-		name = prefix + "." + nextSuffix()
+		name = prefix + "." + tempFileNextSuffix()
 		if fileExists(name) {
 			if nconflict++; nconflict > 10 {
-				randTempFile = reseed()
+				randTempFile = randSeed()
 			}
 			continue
 		}
@@ -603,26 +710,11 @@ func tempFile(prefix string) (name string, err error) {
 	return
 }
 
-// Does the file exist?
-func fileExists(name string) bool {
-	f, err := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
-	defer f.Close()
-	return os.IsExist(err)
-}
-
-// Code from ioutil
-var randTempFile uint32
-
-// Code from ioutil
-func reseed() uint32 {
-	return uint32(time.Now().UnixNano() + int64(os.Getpid()))
-}
-
-// Code from ioutil
-func nextSuffix() string {
+//  from ioutil
+func tempFileNextSuffix() string {
 	r := randTempFile
 	if r == 0 {
-		r = reseed()
+		r = randSeed()
 	}
 	r = r*1664525 + 1013904223 // constants from Numerical Recipes
 	randTempFile = r
@@ -661,77 +753,19 @@ func usage(msg string) {
 }
 
 /*
-  Returns absolute path of executing file.
-  WARNING: this must be called before
-  changing the current directory 
+	Write a string to a file
 */
-func discoverExecName() string {
-	f := os.Args[0]
-	if path.IsAbs(f) {
-		return f
-	}
-	wd, err := os.Getwd()
+func writeFile(fileName, message string) {
+	file, err := os.Create(fileName)
 	if err != nil {
-		panic(fmt.Sprintf("Getwd failed: %s", err))
+		log.Fatal(err)
 	}
-	_, err = os.Stat(f)
-	if err == nil { // relative file exists
-		return path.Clean(path.Join(wd, f))
-	} // not exists? lookup in path
-	f2, err := exec.LookPath(f)
-	if err != nil {
-		panic(fmt.Sprintf("lookpath failed: %s", err))
-	}
-	if path.IsAbs(f2) {
-		return f2
-	}
-	return path.Clean(path.Join(wd, f2))
+	defer file.Close()
+	file.WriteString(message)
 }
 
-func testx() {
-	fmt.Printf("?? \n")
+// A function used for testing
+func zzz() {
+	fmt.Printf("Test function: Zzz\n")
 	os.Exit(1)
-}
-
-// Loads configuration as map, expects key=val syntax.
-// Blank lines, and lines beggining with # are ignored.
-func LoadConfig(filename string, dest map[string]string) {
-	if( DEBUG ) {
-		log.Printf("Debug: LoadConfig(%s)\n", filename)
-	}
-
-	re, _ := regexp.Compile("[#].*\\n|\\s+\\n|\\S+[=]|.*\n")
-	fi, err := os.Stat(filename)
-	if err != nil {
-		return
-	}
-	f, err := os.Open(filename)
-	if err != nil {
-		return
-	}
-	buff := make([]byte, fi.Size())
-	f.Read(buff)
-	f.Close()
-	str := string(buff) + "\n"
-	s2 := re.FindAllString(str, -1)
-	for i := 0; i < len(s2); {
-		if strings.HasPrefix(s2[i], "#") {
-			i++
-		} else if strings.HasSuffix(s2[i], "=") {
-			key := strings.ToLower(s2[i])[0 : len(s2[i])-1]
-			i++
-			if strings.HasSuffix(s2[i], "\n") {
-				val := s2[i][0 : len(s2[i])-1]
-				if strings.HasSuffix(val, "\r") {
-					val = val[0 : len(val)-1]
-				}
-				i++
-				dest[key] = val
-			}
-		} else if strings.Index(" \t\r\n", s2[i][0:1]) > -1 {
-			i++
-		} else {
-			//
-		}
-	}
 }

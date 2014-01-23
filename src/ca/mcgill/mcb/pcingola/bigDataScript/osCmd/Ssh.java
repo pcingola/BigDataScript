@@ -120,6 +120,7 @@ public class Ssh {
 	 * Diconnect, clear objects and set exit value
 	 */
 	int disconnect(boolean force) {
+
 		// Close channel
 		if (channel != null) {
 			if (!force) waitChannel();
@@ -169,8 +170,7 @@ public class Ssh {
 			// Read input
 			String result = readChannel(true);
 
-			disconnect(true);
-
+			disconnect(false); // Disconnect and get exit code 
 			return result;
 		} catch (Exception e) {
 			if (debug) e.printStackTrace();

@@ -1,6 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Executes an command in a remote host, via ssh
@@ -27,13 +26,13 @@ public class CmdSsh extends Cmd {
 				cmdsb.append(" " + arg);
 		}
 
-		String command = "/Users/pcingola/.bds/" + cmdsb.toString().trim();
+		String command = cmdsb.toString().trim();
 
 		// Execute ssh
 		ssh = new Ssh(host);
 		ssh.setShowStdout(true);
-		Gpr.debug("Command: " + command);
 		ssh.exec(command);
+		exitValue = ssh.getExitValue();
 	}
 
 	@Override

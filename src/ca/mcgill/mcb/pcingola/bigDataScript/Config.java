@@ -21,7 +21,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class Config {
 
 	public static final String DEFAULT_CONFIG_DIR = Gpr.HOME + "/.bds";
-	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + "/" + BigDataScript.class.getSimpleName().substring(0, 1).toLowerCase() + BigDataScript.class.getSimpleName().substring(1) + ".config";
+	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + "/bds.config";
 	public static final String DEFAULT_INCLUDE_DIR = DEFAULT_CONFIG_DIR + "/include";
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
