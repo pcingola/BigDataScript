@@ -731,7 +731,7 @@ public class BigDataScript {
 	 */
 	int runCheckpoint() {
 		// Load checkpoint file
-		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile);
+		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
 		List<BigDataScriptThread> csthreads = csSerializer.load();
 
 		// Show

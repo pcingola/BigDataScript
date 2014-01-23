@@ -94,16 +94,6 @@ public class ExpressionSys extends Expression {
 		return csThread.getScope().interpolate(strings, variables);
 	}
 
-	//	/**
-	//	 * Evaluate an expression
-	//	 */
-	//	@Override
-	//	public Object eval(BigDataScriptThread csThread) {
-	//		// Run like a statement and return task ID
-	//		run(csThread);
-	//		return execId;
-	//	}
-
 	public String getSysFileName() {
 		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
 

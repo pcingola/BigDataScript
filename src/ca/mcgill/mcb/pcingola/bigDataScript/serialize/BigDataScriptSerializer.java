@@ -12,6 +12,7 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrePostOperation;
@@ -42,10 +43,12 @@ public class BigDataScriptSerializer {
 	String line;
 	int parsedField;
 	String fields[];
+	Config config;
 	HashSet<BigDataScriptNode> serializedNodes;
 
-	public BigDataScriptSerializer(String fileName) {
+	public BigDataScriptSerializer(String fileName, Config config) {
 		this.fileName = fileName;
+		this.config = config;
 		serializedNodes = new HashSet<BigDataScriptNode>();
 	}
 
@@ -282,7 +285,7 @@ public class BigDataScriptSerializer {
 					bigDataScriptSerialize = null; // Nothing to parse
 				} else if (clazz.equals(BigDataScriptThread.class.getSimpleName())) {
 					// Parse BigDataScriptThread
-					BigDataScriptThread bigDataScriptThread = new BigDataScriptThread();
+					BigDataScriptThread bigDataScriptThread = new BigDataScriptThread(null, config);
 					bigDataScriptThreads.add(bigDataScriptThread);
 					currCsThread = bigDataScriptThread;
 					currCsThread.setScope(null);

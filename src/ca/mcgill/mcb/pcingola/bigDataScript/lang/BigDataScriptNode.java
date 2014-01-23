@@ -497,6 +497,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		// Use ID from file
 		updateId((int) serializer.getNextFieldInt());
+		lineNum = (int) serializer.getNextFieldInt();
+		charPosInLine = (int) serializer.getNextFieldInt();
 
 		// Set parent node
 		int parentId = serializer.getNextFieldNodeId();
@@ -529,7 +531,13 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		StringBuilder out = new StringBuilder();
 
 		// Not an array: Single field. Show 
-		out.append(getClass().getSimpleName() + "\t" + id + "\t" + serializer.serializeSaveValue(parent) + "\t");
+		out.append(getClass().getSimpleName() //
+				+ "\t" + id //
+				+ "\t" + lineNum //
+				+ "\t" + charPosInLine //
+				+ "\t" + serializer.serializeSaveValue(parent) //
+				+ "\t" //
+		);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields

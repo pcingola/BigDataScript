@@ -170,6 +170,11 @@ public class Config {
 			tail.kill(); // Kill tail process
 			tail = null;
 		}
+
+		if (monitorTask != null) {
+			monitorTask.kill();
+			monitorTask = null;
+		}
 	}
 
 	/**

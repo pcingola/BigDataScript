@@ -37,8 +37,8 @@ public class Checkpoint extends Statement {
 		String file = null;
 		if (expr != null) file = expr.evalString(csThread);
 
-		// Save checkpoint
-		csThread.checkpoint(file);
+		if (file != null) csThread.checkpoint(file);
+		else csThread.checkpoint(this);
 
 		return RunState.OK;
 	}

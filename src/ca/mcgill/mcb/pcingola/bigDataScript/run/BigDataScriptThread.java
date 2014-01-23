@@ -55,14 +55,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return threadNumber++;
 	}
 
-	public BigDataScriptThread() {
-		bigDataScriptThreadNum = bigDataScriptThreadId();
-		pc = new ProgramCounter();
-		scope = Scope.getGlobalScope();
-		runState = RunState.OK;
-		tasks = new HashMap<String, Task>();
-		random = new Random();
-	}
+	//	public BigDataScriptThread() {
+	//		bigDataScriptThreadNum = bigDataScriptThreadId();
+	//		pc = new ProgramCounter();
+	//		scope = Scope.getGlobalScope();
+	//		runState = RunState.OK;
+	//		tasks = new HashMap<String, Task>();
+	//		random = new Random();
+	//	}
 
 	public BigDataScriptThread(ProgramUnit programUnit, Config config) {
 		super();
@@ -72,8 +72,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		runState = RunState.OK;
 		tasks = new HashMap<String, Task>();
 		this.config = config;
-		setProgram(programUnit);
 		random = new Random();
+
+		if (programUnit != null) setProgram(programUnit);
 	}
 
 	/**
@@ -85,6 +86,16 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
+	 * Create a checkpoint file
+	 * @param node
+	 * @return
+	 */
+	public String checkpoint(BigDataScriptNode node) {
+		String checkpointFileName = node.getFileName() + ".line_" + node.getLineNum() + ".chp";
+		return checkpoint(checkpointFileName);
+	}
+
+	/**
 	 * Create a checkpoint
 	 * @param checkpointFileName
 	 */
@@ -92,7 +103,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Default file name
 		if (checkpointFileName == null) checkpointFileName = programUnit.getFileName() + ".chp";
 
-		BigDataScriptSerializer bdsSer = new BigDataScriptSerializer(checkpointFileName);
+		if (config.isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
+		BigDataScriptSerializer bdsSer = new BigDataScriptSerializer(checkpointFileName, config);
 		bdsSer.save(this);
 
 		return checkpointFileName;
@@ -143,7 +155,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		System.err.println(stackTrace());
 
 		// Create checkpoint
-		String checkpointFileName = checkpoint(null);
+		String checkpointFileName = checkpoint(bdsnode);
 		System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
 
 		// Set exit value
