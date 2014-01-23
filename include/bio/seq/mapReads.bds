@@ -11,7 +11,7 @@ fq2 := "ERR262996_1.chr20.2.fastq.gz"	# Fastq file, pair end reads. Empty if sin
 referenceFasta := "hg19_chr20.fa"		# Reference genome Fasta file
 
 # performance parameters
-cpus             = 4				# Numner of CPUs to use in each process (note, this is a predefined variable)
+cpus             = 2				# Numner of CPUs to use in each process (note, this is a predefined variable)
 numCallers      := 4				# Number of caller processes to use
 genome          := "GRCh37.71"		# Genome used for annotations
 

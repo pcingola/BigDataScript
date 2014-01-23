@@ -18,10 +18,6 @@ public class LiteralList extends Literal {
 
 	Expression values[];
 
-	public LiteralList(BigDataScriptNode parent, Expression values[]) {
-		super(parent, null);
-	}
-
 	public LiteralList(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
