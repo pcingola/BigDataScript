@@ -12,10 +12,7 @@ do
 	if [ ! -z "$next" ]
 	then
 		echo "Executing task $next"
-		# ( $next ; mv $next $doneDir )&
-
-		echo "EXECUTION FAILED: NODE DOWN SIMULATION"
-		( mv $next $doneDir )&
+		( $next ; mv $next $doneDir )&
 	else
 		sleep 1
 	fi
