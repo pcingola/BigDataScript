@@ -13,6 +13,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
  */
 public class ScopeSymbol implements BigDataScriptSerialize {
 
+	// Internal variables use this symbol at the beginning to make sure programmers don't collide with their names 
+	// Important: This must be an invalid symbol in variable names
+	public static final String INTERNAL_SYMBOL_START = "$";
+
 	public static boolean debug = false;
 
 	Type type;
@@ -55,7 +59,7 @@ public class ScopeSymbol implements BigDataScriptSerialize {
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		// Parse type
-		name = serializer.getNextField();
+		name = serializer.getNextFieldString();
 		type = serializer.getNextFieldType();
 
 		// Parse value
@@ -65,7 +69,7 @@ public class ScopeSymbol implements BigDataScriptSerialize {
 	@Override
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		return getClass().getSimpleName() //
-				+ "\t" + name //
+				+ "\t" + serializer.serializeSaveValue(name) //
 				+ "\t" + BigDataScriptSerializer.TYPE_IDENTIFIER + type.toStringSerializer() //
 				+ "\t" + serializer.serializeSaveValue(value) //
 				+ "\n";

@@ -7,9 +7,13 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Test;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Quick test cases when creating a new feature...
@@ -130,14 +134,14 @@ public class TestCasesZzz extends TestCase {
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	void runAndCheckpoint(String fileName, String varname, Object expectedValue) {
-		runAndCheckpoint(fileName, varname, expectedValue, null);
+	void runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue) {
+		runAndCheckpoint(fileName, checkpointFileName, varname, expectedValue, null);
 	}
 
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	void runAndCheckpoint(String fileName, String varname, Object expectedValue, Runnable runBeforeRecover) {
+	void runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue, Runnable runBeforeRecover) {
 		// Compile
 		String args[] = { fileName };
 		BigDataScript bigDataScript = new BigDataScript(args);
@@ -159,7 +163,8 @@ public class TestCasesZzz extends TestCase {
 		//---
 		// Recover from checkpoint
 		//---
-		String chpFileName = fileName + ".chp";
+		String chpFileName = checkpointFileName;
+		if (checkpointFileName == null) chpFileName = fileName + ".chp";
 		if (debug) Gpr.debug("CheckPoint file name : " + chpFileName);
 		String args2[] = { "-r", chpFileName };
 		BigDataScript bigDataScript2 = new BigDataScript(args2);
@@ -203,6 +208,34 @@ public class TestCasesZzz extends TestCase {
 		if (debug) Gpr.debug("Program's stderr: '" + captureStderr + "'");
 		int index = captureStderr.toString().indexOf(expectedStderr);
 		if (index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStderr + "' in STDERR not found.\nSTDERR:\n" + captureStderr + "\n");
+	}
+
+	@Test
+	public void test28() {
+		runAndCheck("test/run_28.bds", "events", "[done]");
+	}
+
+	@Test
+	public void test29() {
+		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");
+	}
+
+	@Test
+	public void test30() {
+		runAndCheck("test/run_30.bds", "events", "[runnning, wait, done]");
+	}
+
+	@Test
+	public void test31() {
+		Timer timer = new Timer();
+		timer.start();
+		runAndCheck("test/run_31.bds", "events", "[runnning, kill, done]");
+		Assert.assertTrue(timer.elapsed() < 1 * 1000); // We should finish in much less than 1 secs (the program waits 60secs)
+	}
+
+	@Test
+	public void test32() {
+		runAndCheck("test/run_32.bds", "out", "Hi\n");
 	}
 
 }

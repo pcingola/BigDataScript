@@ -55,15 +55,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return threadNumber++;
 	}
 
-	//	public BigDataScriptThread() {
-	//		bigDataScriptThreadNum = bigDataScriptThreadId();
-	//		pc = new ProgramCounter();
-	//		scope = Scope.getGlobalScope();
-	//		runState = RunState.OK;
-	//		tasks = new HashMap<String, Task>();
-	//		random = new Random();
-	//	}
-
 	public BigDataScriptThread(ProgramUnit programUnit, Config config) {
 		super();
 		bigDataScriptThreadNum = bigDataScriptThreadId();

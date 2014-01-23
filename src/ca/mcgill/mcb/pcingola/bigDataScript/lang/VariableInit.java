@@ -21,9 +21,24 @@ public class VariableInit extends BigDataScriptNode {
 	String varName;
 	Expression expression;
 
+	public static VariableInit get(BigDataScriptNode parent, String name, Expression expression) {
+		VariableInit vi = new VariableInit(null, null);
+		vi.parent = parent;
+		vi.varName = name;
+		vi.expression = expression;
+		return vi;
+	}
+
 	public static VariableInit get(String name) {
 		VariableInit vi = new VariableInit(null, null);
 		vi.varName = name;
+		return vi;
+	}
+
+	public static VariableInit get(String name, Expression expression) {
+		VariableInit vi = new VariableInit(null, null);
+		vi.varName = name;
+		vi.expression = expression;
 		return vi;
 	}
 

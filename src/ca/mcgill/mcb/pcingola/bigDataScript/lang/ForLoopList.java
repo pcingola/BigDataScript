@@ -29,9 +29,85 @@ public class ForLoopList extends StatementWithScope {
 	VarDeclaration beginVarDecl;
 	Expression expression;
 	Statement statement;
+	String iterableListName;
+	String iterableCountName;
 
 	public ForLoopList(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Variable declaration (Loop initialization)
+	 * @param csThread
+	 * @return
+	 */
+	protected ScopeSymbol initBeginDecl(BigDataScriptThread csThread) {
+		beginVarDecl.run(csThread);
+		String varName = beginVarDecl.getVarInit()[0].getVarName();
+		ScopeSymbol varSym = csThread.getScope().getSymbol(varName);
+		return varSym;
+	}
+
+	/**
+	 * Iterable counter (current position in iterator)
+	 * @param csThread
+	 * @return
+	 */
+	protected ScopeSymbol initIterableCounter(BigDataScriptThread csThread) {
+		// Are we recovering state from a checkpoint file?
+		if (csThread.isCheckpointRecover()) {
+			ScopeSymbol ssIterableCount = csThread.getScope().getSymbol(iterableCountName);
+			return ssIterableCount;
+		}
+
+		// Create counter
+		iterableCountName = ScopeSymbol.INTERNAL_SYMBOL_START + "iterableCount." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
+		Type iterableCountType = Type.INT;
+		ScopeSymbol ssIterableCount = new ScopeSymbol(iterableCountName, iterableCountType, 0L);
+		csThread.getScope().add(ssIterableCount);
+		return ssIterableCount;
+	}
+
+	/**
+	 * Iterable values (list of elements to iterate)
+	 * @param csThread
+	 * @param varSym
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected ArrayList initIterableValues(BigDataScriptThread csThread, ScopeSymbol varSym) {
+		// Are we recovering state from a checkpoint file?
+		if (csThread.isCheckpointRecover()) {
+			ScopeSymbol ssIterableList = csThread.getScope().getSymbol(iterableListName);
+			return (ArrayList) ssIterableList.getValue();
+		}
+
+		// Evaluate list
+		Object res = expression.eval(csThread);
+
+		//---
+		// Find (or create) a collection we can iterate on
+		//---
+		ArrayList iterableValues = new ArrayList();
+		if (res instanceof List) iterableValues.addAll((List) res);
+		else if (res instanceof Map) {
+			// Create a sorted list of values
+			iterableValues.addAll(((Map) res).values());
+			Collections.sort(iterableValues);
+		} else {
+			// Single object
+			iterableValues.add(res);
+		}
+
+		//---
+		// Iterable list
+		//---
+		iterableListName = ScopeSymbol.INTERNAL_SYMBOL_START + "iterableList." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
+		Type iterableListType = TypeList.get(varSym.getType());
+		ScopeSymbol ssIterableList = new ScopeSymbol(iterableListName, iterableListType, iterableValues);
+		csThread.getScope().add(ssIterableList);
+
+		return iterableValues;
 	}
 
 	@Override
@@ -55,35 +131,23 @@ public class ForLoopList extends StatementWithScope {
 	/**
 	 * Run 
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	protected RunState runStep(BigDataScriptThread csThread) {
-		// Loop initialization
-		beginVarDecl.run(csThread);
-		String varName = beginVarDecl.getVarInit()[0].getVarName();
-		ScopeSymbol varSym = csThread.getScope().getSymbol(varName);
+		ScopeSymbol varSym = initBeginDecl(csThread);
+		ArrayList iterableValues = initIterableValues(csThread, varSym);
+		ScopeSymbol iterableCount = initIterableCounter(csThread);
 
-		// Evaluate list
-		Object res = expression.eval(csThread);
-
-		// Find (or create) a collection we can iterate on
-		Object[] values = null;
-		if (res instanceof List) values = ((List) res).toArray();
-		else if (res instanceof Map) {
-			// Create a sorted list of values
-			ArrayList list = new ArrayList();
-			list.addAll(((Map) res).values());
-			Collections.sort(list);
-			values = list.toArray();
-		} else {
-			// Single object
-			values = new Object[1];
-			values[0] = res;
-		}
+		// First element to iterate.
+		// Note: This could be set by a checkpoint recovery, so we have to read it from the scope
+		long interStart = (Long) iterableCount.getValue(); // 
 
 		// Iterate on collection
-		for (int i = 0; i < values.length; i++) {
-			Object o = values[i];
+		for (int iter = (int) interStart; iter < iterableValues.size(); iter++) {
+			iterableCount.setValue(iter); // Update scope symbol (so that checkpoints can save state)
+
+			// Get the element we are iterating on
+			Object o = iterableValues.get(iter);
 			varSym.setValue(varSym.getType().cast(o));
 
 			RunState rstate = statement.run(csThread); // Loop statement
