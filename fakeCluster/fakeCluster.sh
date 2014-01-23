@@ -3,6 +3,8 @@
 taskDir="$HOME/.bds/fakeClusterTasks/"
 doneDir="$HOME/.bds/fakeClusterTasks/done/"
 
+mkdir -p $doneDir
+
 while true
 do
 	next=`ls $taskDir/task.* 2> /dev/null | head -n 1`
@@ -10,7 +12,10 @@ do
 	if [ ! -z "$next" ]
 	then
 		echo "Executing task $next"
-		( $next ; mv $next $doneDir )&
+		# ( $next ; mv $next $doneDir )&
+
+		echo "EXECUTION FAILED: NODE DOWN SIMULATION"
+		( mv $next $doneDir )&
 	else
 		sleep 1
 	fi

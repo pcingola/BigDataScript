@@ -34,17 +34,15 @@ public class ExecutionerCluster extends Executioner {
 	public static final int MIN_EXTRA_TIME = 15;
 	public static final int MAX_EXTRA_TIME = 120;
 
-	MonitorExitFile monitorExitFile;
-
 	public ExecutionerCluster(Config config) {
 		super(config);
+
+		// Cluster task need monitoring
+		monitorTask = config.getMonitorTask();
 
 		// Create a cluster having only one host with 'inifinite' capacity
 		cluster = new Cluster();
 		new HostInifinte(cluster);
-
-		monitorExitFile = new MonitorExitFile();
-		monitorExitFile.setDebug(config.isDebug());
 	}
 
 	/**
@@ -131,21 +129,9 @@ public class ExecutionerCluster extends Executioner {
 		return cmd;
 	}
 
-	/**
-	 * This method is called after a task was successfully started 
-	 * @param task
-	 */
-	@Override
-	protected void follow(Task task) {
-		super.follow(task);
-		monitorExitFile.add(this, task); // Start monitoring exit file
-	}
-
 	@Override
 	protected void followStop(Task task) {
 		super.followStop(task);
-
-		monitorExitFile.remove(task);
 
 		// Make sure 'cluster' files are also removed if we are not logging
 		if (!log && (task != null)) {
@@ -170,7 +156,7 @@ public class ExecutionerCluster extends Executioner {
 	@Override
 	protected void runExecutionerLoopAfter() {
 		super.runExecutionerLoopAfter();
-		monitorExitFile.kill(); // Kill taskDone process
+		monitorTask.kill(); // Kill taskDone process
 	}
 
 	/**
@@ -178,7 +164,7 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	@Override
 	protected void runExecutionerLoopBefore() {
-		monitorExitFile.start(); // Create a 'taskDone' process (get information when a process finishes)
+		monitorTask.start(); // Create a 'taskDone' process (get information when a process finishes)
 		super.runExecutionerLoopBefore();
 	}
 

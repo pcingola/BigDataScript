@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.MonitorTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.PidLogger;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -36,6 +37,7 @@ public class Config {
 	Properties properties;
 	ArrayList<String> includePath;
 	PidLogger pidLogger;
+	MonitorTask monitorTask;
 	Tail tail;
 
 	public static Config get() {
@@ -108,6 +110,14 @@ public class Config {
 		String val = getString(propertyName);
 		if (val == null) return defaultValue;
 		return Gpr.parseLongSafe(val);
+	}
+
+	public MonitorTask getMonitorTask() {
+		if (monitorTask == null) {
+			monitorTask = new MonitorTask();
+			monitorTask.setDebug(isDebug());
+		}
+		return monitorTask;
 	}
 
 	public String getPidFile() {

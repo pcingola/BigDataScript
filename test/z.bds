@@ -1,11 +1,9 @@
 #!/usr/bin/env bds
 
-system = "ssh"
-max := 1
-
+system = "cluster"
 print("Start: $system\n")
 
-task( timeout = 1 ) {
+task( timeout=1 ) {
 	sys ls -al zxzxzx
 }
 

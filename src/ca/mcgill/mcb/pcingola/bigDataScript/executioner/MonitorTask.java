@@ -4,23 +4,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * Check if a task finished, by checking if 'exitFile' exists
+ * Monitor a task:
+ * 	- Check if it is still alive (e.g. it was running on a node that went down)
+ * 	- Check if a task finished (e.g. by checking if 'exitFile' exists)
  * 
  * @author pcingola
  */
-public class MonitorExitFile extends Thread {
+public class MonitorTask extends Thread {
 
-	public static final int SLEEP_TIME = 200;
+	// Cluster scheduling is usually quite slow, so we don't need a short monitoring interval.
+	// Reducing this sleep time adds processing and probably has not many benefits. 
+	public static final int SLEEP_TIME = 500;
 
 	boolean debug = false;
 	boolean verbose;
 	HashMap<Task, Executioner> execByTask;
 	boolean running;
 
-	public MonitorExitFile() {
+	public MonitorTask() {
 		execByTask = new HashMap<Task, Executioner>();
 	}
 
@@ -83,7 +88,8 @@ public class MonitorExitFile extends Thread {
 
 		for (Task task : execByTask.keySet()) {
 			String exitFile = task.getExitCodeFile();
-			if (Gpr.exists(exitFile)) {
+
+			if (Gpr.exists(exitFile) || task.isTimedOut()) {
 				// Create (or add) to tasks to delete
 				if (toUpdate == null) toUpdate = new ArrayList<Task>();
 				toUpdate.add(task);
@@ -105,14 +111,24 @@ public class MonitorExitFile extends Thread {
 	synchronized void update(Task task) {
 		if (debug) Gpr.debug("MonitorExitFile: Found exit file " + task.getExitCodeFile());
 
-		// Parse exit file
-		sleep();
-		String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
-		int exitVal = (exitFileStr.equals("0") ? 0 : 1);
-		if (debug) Gpr.debug("MonitorExitFile: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
+		int exitVal = 0;
+		TaskState taskState = null;
+
+		if (task.isTimedOut()) {
+			// Timed out
+			exitVal = Task.EXITCODE_TIMEOUT;
+			taskState = TaskState.ERROR_TIMEOUT;
+		} else {
+			// Exit file found: Parse exit file
+			sleep();
+			String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
+			exitVal = (exitFileStr.equals("0") ? 0 : 1); // Anything else than OK is error condition
+			taskState = null; // Automatic: let taskFinished decide
+			if (debug) Gpr.debug("MonitorExitFile: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
+		}
 
 		// Inform executioner that task has finished
 		Executioner executioner = execByTask.get(task);
-		executioner.taskFinished(task, null, exitVal);
+		executioner.taskFinished(task, taskState, exitVal);
 	}
 }

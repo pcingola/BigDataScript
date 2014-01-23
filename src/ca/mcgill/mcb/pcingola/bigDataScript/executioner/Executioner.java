@@ -37,8 +37,9 @@ public abstract class Executioner extends Thread {
 	protected HashMap<String, Task> tasksDone; // Tasks that fin
 	protected HashMap<String, Cmd> cmdById;
 	protected Tail tail;
-	protected PidLogger pidLogger;
 	protected Config config;
+	protected PidLogger pidLogger;
+	protected MonitorTask monitorTask;
 	protected Cluster cluster; // Local computer is the 'server' (localhost)
 
 	public Executioner(Config config) {
@@ -108,6 +109,8 @@ public abstract class Executioner extends Thread {
 
 		tail.add(task.getStdoutFile(), null, false);
 		tail.add(task.getStderrFile(), null, true);
+
+		if (monitorTask != null) monitorTask.add(this, task); // Start monitoring exit file
 	}
 
 	/**
@@ -120,6 +123,7 @@ public abstract class Executioner extends Thread {
 
 		// Remove from loggers
 		if (pidLogger != null) pidLogger.remove(task);
+		if (monitorTask != null) monitorTask.remove(task);
 	}
 
 	/**
