@@ -11,7 +11,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdCluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
@@ -24,8 +23,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
  */
 public class ExecutionerCluster extends Executioner {
 
-	// public static String FAKE_CLUSTER = "";
-	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
+	public static String FAKE_CLUSTER = "";
+	// public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
 	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
 	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };

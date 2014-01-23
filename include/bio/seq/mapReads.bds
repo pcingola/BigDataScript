@@ -8,21 +8,22 @@ include "bio/seq/map.bds"
 
 fq1 := "ERR262996_1.chr20.1.fastq.gz"	# Fastq file
 fq2 := "ERR262996_1.chr20.2.fastq.gz"	# Fastq file, pair end reads. Empty if single-end
-referenceFasta := "hg19_chr20.fa"		# Reference genome Fasta file
+
+referenceFasta  := "hg19_chr20.fa"		# Reference genome Fasta file
+genome          := "GRCh37.71"			# Genome used for annotations
 
 # performance parameters
-cpus             = 2				# Numner of CPUs to use in each process (note, this is a predefined variable)
-numCallers      := 4				# Number of caller processes to use
-genome          := "GRCh37.71"		# Genome used for annotations
-
-splitNumReads   := 500 * 1000       # Split fastq files to 'splitNumReads' lines
-mapSortMemory   := 1 * G            # Memory used while sorting BAM file (samtools sort)
+cpusMapping     := 4					# Numner of CPUs to use in each mapping process
+cpusCalling     := 2					# Numner of CPUs to use in each calling process
+numCallers      := 4					# Number of caller processes to use
+splitNumReads   := 500 * 1000           # Split fastq files to 'splitNumReads' lines
+mapSortMemory   := 1 * G                # Memory used while sorting BAM file (samtools sort)
 
 #-------------------------------------------------------------------------------
 # Main
 #-------------------------------------------------------------------------------
 
-string[] outFiles = mapCallAnnotate(referenceFasta, fq1, fq2, genome, splitNumReads, mapSortMemory, numCallers)
+string[] outFiles = mapCallAnnotate(referenceFasta, fq1, fq2, genome, splitNumReads, cpusMapping, cpusCalling, mapSortMemory, numCallers)
 
 # OK, wait for all tasks to finish
 wait
