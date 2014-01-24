@@ -216,16 +216,7 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 #-------------------------------------------------------------------------------
 # Map reads, call variants and annotate them
 #-------------------------------------------------------------------------------
-string[] mapCallAnnotate(string referenceFasta
-						, string fq1
-						, string fq2
-						, string genome
-						, int splitNumReads
-						, int cpusMapping
-						, int cpusCalling
-						, int mapSortMemory
-						, int numCallers
-						) {
+string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string genome, int splitNumReads, int cpusMapping, int cpusCalling, int mapSortMemory, int numCallers ) {
 	bam := removeExtFastq(fq1) + ".bam"
 	vcf := removeExtFastq(fq1) + ".vcf"
 
