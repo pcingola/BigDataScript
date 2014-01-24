@@ -38,7 +38,7 @@ public abstract class Executioner extends Thread {
 	protected HashMap<String, Cmd> cmdById;
 	protected Tail tail;
 	protected Config config;
-	protected PidLogger pidLogger;
+	protected TaskLogger pidLogger;
 	protected MonitorTask monitorTask;
 	protected Cluster cluster; // Local computer is the 'server' (localhost)
 

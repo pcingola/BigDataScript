@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.MonitorTask;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.PidLogger;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.TaskLogger;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
@@ -36,7 +36,7 @@ public class Config {
 	String pidFile;
 	Properties properties;
 	ArrayList<String> includePath;
-	PidLogger pidLogger;
+	TaskLogger pidLogger;
 	MonitorTask monitorTask;
 	Tail tail;
 
@@ -124,9 +124,9 @@ public class Config {
 		return pidFile;
 	}
 
-	public PidLogger getPidLogger() {
+	public TaskLogger getPidLogger() {
 		if (pidLogger == null) {
-			pidLogger = new PidLogger(getPidFile());
+			pidLogger = new TaskLogger(getPidFile());
 			pidLogger.setDebug(isDebug());
 		}
 		return pidLogger;

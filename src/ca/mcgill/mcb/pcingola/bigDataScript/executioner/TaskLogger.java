@@ -14,13 +14,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * 
  * @author pcingola
  */
-public class PidLogger {
+public class TaskLogger {
 
 	boolean debug = false;
 	String pidFile;
 	HashSet<String> pids;
 
-	public PidLogger(String pidFile) {
+	public TaskLogger(String pidFile) {
 		this.pidFile = pidFile;
 		pids = new HashSet<String>();
 		if (debug) Gpr.debug("Creating PID logger " + pidFile);

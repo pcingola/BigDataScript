@@ -9,15 +9,15 @@ include "bio/seq/map.bds"
 fq1 := "$ppwd/ERR262996_1.chr20.1.fastq.gz"	# Fastq file
 fq2 := "$ppwd/ERR262996_1.chr20.2.fastq.gz"	# Fastq file, pair end reads. Empty if single-end
 
-referenceFasta  := "hg19_chr20.fa"		# Reference genome Fasta file
-genome          := "GRCh37.71"			# Genome used for annotations
+referenceFasta  := "$ppwd/hg19_chr20.fa"	# Reference genome Fasta file
+genome          := "GRCh37.71"				# Genome used for annotations
 
 # performance parameters
-cpusMapping     := 8					# Numner of CPUs to use in each mapping process
-cpusCalling     := 2					# Numner of CPUs to use in each calling process
-numCallers      := 250					# Number of caller processes to use. This number is high to optimize paralelization
-splitNumReads   := 500 * 1000           # Split fastq files to 'splitNumReads' lines
-mapSortMemory   := 1 * G                # Memory used while sorting BAM file (samtools sort)
+cpusMapping     := 8						# Numner of CPUs to use in each mapping process
+cpusCalling     := 2						# Numner of CPUs to use in each calling process
+numCallers      := 250						# Number of caller processes to use. This number is high to optimize paralelization
+splitNumReads   := 500 * 1000               # Split fastq files to 'splitNumReads' lines
+mapSortMemory   := 1 * G                    # Memory used while sorting BAM file (samtools sort)
 
 #-------------------------------------------------------------------------------
 # Main
