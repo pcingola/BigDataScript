@@ -25,6 +25,7 @@ public abstract class Executioner extends Thread {
 
 	public static final int SLEEP_TIME_LONG = 500;
 	public static final int SLEEP_TIME_SHORT = 10;
+	public static final int REPORT_TIME = 60;
 
 	protected boolean debug;
 	protected boolean verbose;
@@ -41,6 +42,7 @@ public abstract class Executioner extends Thread {
 	protected TaskLogger taskLogger;
 	protected MonitorTask monitorTask;
 	protected Cluster cluster; // Local computer is the 'server' (localhost)
+	protected Timer timer;
 
 	public Executioner(Config config) {
 		super();
@@ -127,6 +129,14 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
+	 * Any task running?
+	 * @return
+	 */
+	public synchronized boolean hasTaskRunning() {
+		return tasksRunning.size() > 0;
+	}
+
+	/**
 	 * Are there any tasks either running or to be run?
 	 * @return
 	 */
@@ -141,6 +151,19 @@ public abstract class Executioner extends Thread {
 	public boolean isFailed() {
 		for (Task t : tasksDone.values())
 			if (!t.isCanFail() && t.isFailed()) return true; // A task that cannot fail, failed!
+		return false;
+	}
+
+	/**
+	 * Should we show a report?
+	 * @return
+	 */
+	protected boolean isReportTime() {
+		if (timer == null) timer = new Timer();
+		if (timer.elapsedSecs() > REPORT_TIME) {
+			timer.start(); // Restart timer
+			return true;
+		}
 		return false;
 	}
 
@@ -259,6 +282,9 @@ public abstract class Executioner extends Thread {
 	 * @return true if all processes have finished executing
 	 */
 	protected boolean runExecutionerLoop() {
+		// Report pending tasks
+		if (verbose && hasTaskRunning() && isReportTime()) Timer.showStdErr("Tasks " + (verbose ? this.getClass().getSimpleName() : "") + "\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
+
 		// Nothing to run?
 		if (!hasTaskToRun()) return false;
 
@@ -273,7 +299,6 @@ public abstract class Executioner extends Thread {
 				runTask(taskHostPair.first, taskHostPair.second);
 			} else {
 				sleepShort();
-				// if (debug) Timer.showStdErr("Queue tasks:\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
 			}
 		}
 

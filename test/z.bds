@@ -2,14 +2,6 @@
 
 print("Start\n")
 
-sys rm /tmp/z.*.out || true
-
-for( int i=0 ; i < 3 ; i++ ) {
-	in := "/tmp/z.$i.in"
-	out := "/tmp/z.$i.out"
-	task( out <- in ) {
-		sys echo Hi; date > $out; sleep 60; echo Bye; date >> $out
-	}
-}
+task echo hi; sleep 120; echo bye
 
 print("Done!\n")
