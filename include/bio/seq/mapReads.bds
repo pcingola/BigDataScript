@@ -6,8 +6,8 @@ include "bio/seq/map.bds"
 # Command line parameters
 #-------------------------------------------------------------------------------
 
-fq1 := "ERR262996_1.chr20.1.fastq.gz"	# Fastq file
-fq2 := "ERR262996_1.chr20.2.fastq.gz"	# Fastq file, pair end reads. Empty if single-end
+fq1 := "$ppwd/ERR262996_1.chr20.1.fastq.gz"	# Fastq file
+fq2 := "$ppwd/ERR262996_1.chr20.2.fastq.gz"	# Fastq file, pair end reads. Empty if single-end
 
 referenceFasta  := "hg19_chr20.fa"		# Reference genome Fasta file
 genome          := "GRCh37.71"			# Genome used for annotations
