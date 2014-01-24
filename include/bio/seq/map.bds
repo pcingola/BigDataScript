@@ -129,25 +129,25 @@ string[] haplotypeCaller( string referenceFasta, string bam, string[] callableRe
 	# Invoke HaplotypeCaller on each split of callable regions
 	print("HaplotypeCaller:\n")
 	for( string callableRegion : callableRegions ) {
-		print("\t$callableRegion\n")
+		# Note: Ther might less callable region files than we expect
+		# If the file exists, we call in it
+		if( callableRegion.exists() && (callableRegion.size() > 0)) {
+			print("\t$callableRegion\n")
 
-		callableRegionBed := callableRegion + ".bed"
-		callableRegionVcf := callableRegion + ".vcf"
-		vcfs.add( callableRegionVcf )
+			callableRegionVcf := callableRegion.removeExt(".bed") + ".vcf"
+			vcfs.add( callableRegionVcf )
 
-		# This file must have a BED extension
-		sys cp $callableRegion $callableRegionBed
-
-		# Invoke GATK's HaplotypeCaller
-		task( callableRegionVcf <- callableRegion, cpus := cpusCalling ) {
-			sys $java -jar $gatkJar \
-				-T HaplotypeCaller \
-				-R $referenceFasta \
-				-I $bam \
-				-stand_call_conf 50.0 \
-				-stand_emit_conf 10.0 \
-				-L $callableRegionBed \
-				-o $callableRegionVcf
+			# Invoke GATK's HaplotypeCaller
+			task( callableRegionVcf <- callableRegion, cpus := cpusCalling ) {
+				sys $java -jar $gatkJar \
+					-T HaplotypeCaller \
+					-R $referenceFasta \
+					-I $bam \
+					-stand_call_conf 50.0 \
+					-stand_emit_conf 10.0 \
+					-L $callableRegion \
+					-o $callableRegionVcf
+			}
 		}
 	}
 	wait
@@ -273,13 +273,17 @@ string mapSingle(string referenceFasta, string fq1, string fq2, int cpusMapping,
 # Split callable regions BED file into equal 'num' equal parts
 #-------------------------------------------------------------------------------
 string[] splitCallableRegions(string bed, int num) {
-
+	print("Split callable regions: $bed\n")
 	bedOk := bed.removeExt(".bed") + ".ok.bed"
 	bedSplit := bed.removeExt(".bed") + ".ok.split"
 
 	# Create a list of names for split bed files
 	string[] bedSplits
-	for( int i=0 ; i < num ; i++ ) bedSplits.add( bedSplit + ".$i.bed" )
+	for( int i=0 ; i < num ; i++ ) {
+		b :=  bedSplit + ".$i.bed"
+		print("\t$b\n")
+		bedSplits.add( b )
+	}
 	bedSplitsStr := bedSplits.join(' ')
 
 	if( bedSplits <- bed ) {

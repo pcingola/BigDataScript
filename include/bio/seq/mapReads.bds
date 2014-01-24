@@ -15,7 +15,7 @@ genome          := "GRCh37.71"			# Genome used for annotations
 # performance parameters
 cpusMapping     := 8					# Numner of CPUs to use in each mapping process
 cpusCalling     := 2					# Numner of CPUs to use in each calling process
-numCallers      := 4					# Number of caller processes to use
+numCallers      := 250					# Number of caller processes to use. This number is high to optimize paralelization
 splitNumReads   := 500 * 1000           # Split fastq files to 'splitNumReads' lines
 mapSortMemory   := 1 * G                # Memory used while sorting BAM file (samtools sort)
 

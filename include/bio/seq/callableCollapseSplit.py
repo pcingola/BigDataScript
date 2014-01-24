@@ -103,9 +103,11 @@ totalBases = readBedCollapse(maxDistance)
 
 # OK, write output files. Try to have a similar number of bases in each file
 avgBases = totalBases / numberOfSplits + 1
+avgLines = len(outLines) / numberOfSplits + 1
 print "Total bases         :", totalBases
 print 'Split into          :', numberOfSplits
 print 'Avg bases per split :', avgBases
+print 'Avg lines per split :', avgLines
 
 writeBedFiles( outFiles, avgBases )
 
