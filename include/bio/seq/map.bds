@@ -208,7 +208,8 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 	bamsStr := bams.join(" ")
 	print("Merging BAM file: $bam\n")
 	task( bam <- bams ) {
-		sys samtools merge -f -@ $cpus $bam $bamsStr
+		sys samtools merge -f -@ $cpus - $bamsStr \
+				| samtools rmdup - $bam
 	}
 	wait
 }
@@ -250,7 +251,6 @@ void mapIndex(string fasta) {
 	}
 	wait
 }
-
 
 #-------------------------------------------------------------------------------
 # Map reads to genome (single file, no splitting)
