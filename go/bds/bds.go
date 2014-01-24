@@ -151,8 +151,8 @@ func bigDataScript() int {
 	// Execute command
 	exitCode := executeCommand("java", args, 0, "", "", "")
 
-	// Kill all pending processes and remove stale files
-	taskLoggerCleanUpAll(taskLoggerFile)
+	// // Kill all pending processes and remove stale files
+	// taskLoggerCleanUpAll(taskLoggerFile)
 
 	return exitCode
 }
@@ -495,10 +495,10 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 	cmds := make(map[string]string)
 
 	if file, err = os.Open(taskLoggerFile); err != nil {
-		fmt.Fprintf(os.Stderr, "bds: cannot open PID file '%s'\n", taskLoggerFile)
+		fmt.Fprintf(os.Stderr, "bds: cannot open TaskLogger file '%s' (%d)\n", taskLoggerFile, syscall.Getpid())
 		return
 	}
-	defer file.Close()
+	defer file.Close() // Make sure the file is deleted
 
 	// Read line by line
 	if( DEBUG ) {
