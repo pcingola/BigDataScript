@@ -13,7 +13,7 @@ public class HostInifinte extends Host {
 		super(cluster, "localhost");
 
 		health.setAlive(true); // This host is up
-		// Note: We don't set resources => Unlimited
+		resources = new HostResourcesInf();
 	}
 
 	@Override
