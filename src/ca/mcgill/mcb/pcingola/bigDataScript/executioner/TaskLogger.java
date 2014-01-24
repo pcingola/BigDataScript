@@ -34,14 +34,14 @@ public class TaskLogger {
 
 	/**
 	 * Add a task and the corresponding executioner
-	 * @param t
+	 * @param task
 	 * @param executioner
 	 */
-	public synchronized void add(Task t, Executioner executioner) {
+	public synchronized void add(Task task, Executioner executioner) {
 		StringBuilder lines = new StringBuilder();
 
 		// Add pid
-		String pid = t.getPid();
+		String pid = task.getPid();
 		pids.add(pid);
 
 		//---
@@ -50,23 +50,25 @@ public class TaskLogger {
 
 		// Prepare kill command
 		StringBuilder cmdsb = new StringBuilder();
-		String[] osKillCommand = executioner.osKillCommand(t);
+		String[] osKillCommand = executioner.osKillCommand(task);
 		if (osKillCommand != null) {
-			for (String c : executioner.osKillCommand(t))
+			for (String c : executioner.osKillCommand(task))
 				cmdsb.append(" " + c);
 		}
 		String cmd = cmdsb.toString().trim();
 
 		// Append process entry
-		lines.append(t.getPid() + "\t+\t" + cmd + "\n");
+		lines.append(task.getPid() + "\t+\t" + cmd + "\n");
 
 		//---
 		// Append task output files. 
 		// Note: If this task does not finish (e.g. Ctrl-C), we have to remove these files.
 		//       If the task finished OK, we mark them not to be removed
 		//---
-		for (String file : t.getOutputFiles())
-			lines.append(file + "\t+\t" + CMD_REMOVE_FILE + "\n");
+		if (task.getOutputFiles() != null) {
+			for (String file : task.getOutputFiles())
+				lines.append(file + "\t+\t" + CMD_REMOVE_FILE + "\n");
+		}
 
 		//---
 		// Append all lines to file
@@ -95,21 +97,23 @@ public class TaskLogger {
 
 	/**
 	 * Remove a task
-	 * @param t
+	 * @param task
 	 */
-	public synchronized void remove(Task t) {
+	public synchronized void remove(Task task) {
 		// Remove PID
-		String pid = t.getPid();
+		String pid = task.getPid();
 		pids.remove(pid);
 
 		StringBuilder lines = new StringBuilder();
 
 		// Append process PID
-		lines.append(t.getPid() + "\t-\n");
+		lines.append(task.getPid() + "\t-\n");
 
-		// Append task output files. 
-		for (String file : t.getOutputFiles())
-			lines.append(file + "\t-\n");
+		// Append task output files.
+		if (task.getOutputFiles() != null) {
+			for (String file : task.getOutputFiles())
+				lines.append(file + "\t-\n");
+		}
 
 		// Append all lines to file
 		append(lines.toString());
