@@ -251,6 +251,7 @@ void mapIndex(string fasta) {
 	wait
 }
 
+
 #-------------------------------------------------------------------------------
 # Map reads to genome (single file, no splitting)
 # Note: It does not wait
