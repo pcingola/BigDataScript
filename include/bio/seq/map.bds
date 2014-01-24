@@ -22,17 +22,18 @@
 #-------------------------------------------------------------------------------
 
 # Program paths and command line options
-java            := "java -Xmx4G -XX:ParallelGCThreads=2 "
-gatkJar         := "$HOME/tools/gatk/GenomeAnalysisTK.jar"
-picardPath      := "$HOME/tools/picard"
-snpEffDir       := "$HOME/snpEff"
+java                  := "java -Xmx4G -XX:ParallelGCThreads=2 "
+gatkJar               := "$HOME/tools/gatk/GenomeAnalysisTK.jar"
+picardPath            := "$HOME/tools/picard"
+snpEffDir             := "$HOME/snpEff"
+callableCollapseSplit := "$HOME/.bds/include/bio/seq/callableCollapseSplit.py"	# Note: This script is in bds include's directory
 
 # Paramters used to identify these reads (read group)
-readGroupId     := "ReadGroupId"
-libraryId       := "LibraryId"
-platform        := "illumina"
-sampleId        := "SampleId"
-readGroupString := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
+readGroupId           := "ReadGroupId"
+libraryId             := "LibraryId"
+platform              := "illumina"
+sampleId              := "SampleId"
+readGroupString       := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
 
 #-------------------------------------------------------------------------------
 # Module variables
@@ -274,24 +275,18 @@ string mapSingle(string referenceFasta, string fq1, string fq2, int cpusMapping,
 string[] splitCallableRegions(string bed, int num) {
 
 	bedOk := bed.removeExt(".bed") + ".ok.bed"
-	bedSplit := bed.removeExt(".bed") + ".ok.split."
+	bedSplit := bed.removeExt(".bed") + ".ok.split"
 
-	if( bedOk <- bed ) {
-		# Get only callable regions and count resulting lines
-		countLines := sys grep CALLABLE $bed | tee $bedOk | wc -l
+	# Create a list of names for split bed files
+	string[] bedSplits
+	for( int i=0 ; i < num ; i++ ) bedSplits.add( bedSplit + ".$i.bed" )
+	bedSplitsStr := bedSplits.join(' ')
 
-		# How many lines do we have in each chunk?
-		count := countLines.parseInt()
-		linesPerCaller := count / num + 1
-
-		# Split callable regions into numCallers parts
-		print("Splitting callable regions:\tLines : $count. Lines per caller: $linesPerCaller\n")
-		sys split -l $linesPerCaller $bedOk $bedSplit
+	if( bedSplits <- bed ) {
+		sys grep CALLABLE $bed | $callableCollapseSplit $bedSplitsStr
 	}
 
 	# Report all file names after split
-	bedSplitBase := bedSplit.baseName()
-	bedSplits := bedSplit.dirName().dirPath(".*/$bedSplitBase..")
 	return( bedSplits )
 }
 
