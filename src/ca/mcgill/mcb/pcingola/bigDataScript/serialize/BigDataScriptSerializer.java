@@ -280,7 +280,7 @@ public class BigDataScriptSerializer {
 				if (clazz.equals(BigDataScript.class.getSimpleName())) {
 					// Check version number
 					double version = Gpr.parseDoubleSafe(fields[1]);
-					double versionThis = Gpr.parseDoubleSafe(BigDataScript.VERSION_SHORT);
+					double versionThis = Gpr.parseDoubleSafe(BigDataScript.VERSION_MAJOR);
 					if (versionThis < version) throw new RuntimeException("Version numbers do not match.\n\tThis version: " + versionThis + "\n\tFile's version: " + version);
 					bigDataScriptSerialize = null; // Nothing to parse
 				} else if (clazz.equals(BigDataScriptThread.class.getSimpleName())) {

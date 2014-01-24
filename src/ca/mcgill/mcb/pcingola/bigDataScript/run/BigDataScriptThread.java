@@ -82,7 +82,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @return
 	 */
 	public String checkpoint(BigDataScriptNode node) {
-		String checkpointFileName = node.getFileName() + ".line_" + node.getLineNum() + ".chp";
+		String programFile = programUnit.getFileName();
+		String nodeFile = node.getFileName();
+
+		String checkpointFileName = programFile;
+		if (!programFile.equals(nodeFile)) checkpointFileName += "." + Gpr.baseName(node.getFileName(), ".bds");
+		checkpointFileName += ".line_" + node.getLineNum() + ".chp";
+
 		return checkpoint(checkpointFileName);
 	}
 

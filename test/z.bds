@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-include zz.bds
+include "zz.bds"
 
 print("Start\n")
 

@@ -53,7 +53,7 @@ const EXITCODE_ERROR = 1
 const EXITCODE_TIMEOUT = 2
 
 // Debug mode
-const DEBUG = false
+const DEBUG = true
 
 // Store all PID in this file
 var pidFile string = ""
@@ -255,7 +255,6 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 	// Redirect all signals to channel (e.g. Ctrl-C)
 	osSignal := make(chan os.Signal, 1)
 	if pidFile != "" {
-		// fmt.Fprintf(os.Stderr, "bds: creating os.Signal channel\n")
 		signal.Notify(osSignal, os.Interrupt, os.Kill)
 	} else {
 		// Set a new process group.
@@ -340,7 +339,6 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 
 	// Wait until executions ends, timeout or OS signal
 	kill := false
-	// fmt.Fprintf(os.Stderr, "bds: waiting for process to finish\n")
 	select {
 	case exitStr = <-exitCode:
 		kill = false
