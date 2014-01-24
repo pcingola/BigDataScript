@@ -1,13 +1,13 @@
 #!/usr/bin/env bds
 
+include zz.bds
+
 print("Start\n")
 
-print("Loop:\n")
-for( string s : ['one', 'two', 'three'] ) {
-	print("\ts : $s\n")
-	if( s == 'two' ) {
-		checkpoint
-		print("\t--- checkpoint ---\n")
-	}
-}
+# Create a checkpoint
+# WARNING: The name of the checkpoint file 
+# should be the nname of THIS script (z.bds)
+# and NOT the name of the INCLUDE file (zz.bds)
+f(2)
+
 print("Done!\n")
