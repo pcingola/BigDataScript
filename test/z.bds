@@ -1,13 +1,9 @@
 #!/usr/bin/env bds
 
-include "zz.bds"
-
 print("Start\n")
 
-# Create a checkpoint
-# WARNING: The name of the checkpoint file 
-# should be the nname of THIS script (z.bds)
-# and NOT the name of the INCLUDE file (zz.bds)
-f(2)
+for( int i=0 ; i < 3 ; i++ ) {
+	task echo Hi; sleep 60; echo Bye
+}
 
 print("Done!\n")

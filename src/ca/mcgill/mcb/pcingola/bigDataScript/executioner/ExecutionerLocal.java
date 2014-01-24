@@ -62,6 +62,8 @@ public class ExecutionerLocal extends Executioner {
 
 	@Override
 	protected void follow(Task task) {
+		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
+
 		// We need to feed the InputStreams from the process, instead of file names
 		CmdLocal cmd = (CmdLocal) cmdById.get(task.getId());
 
@@ -72,16 +74,22 @@ public class ExecutionerLocal extends Executioner {
 		// Add to tail
 		tail.add(cmd.getStdout(), task.getStdoutFile(), false);
 		tail.add(cmd.getStderr(), task.getStderrFile(), true);
+
+		if (monitorTask != null) monitorTask.add(this, task); // Start monitoring exit file
 	}
 
 	@Override
 	public String[] osKillCommand(Task task) {
-		ArrayList<String> args = new ArrayList<String>();
-		for (String arg : LOCAL_KILL_COMMAND)
-			args.add(arg);
-		args.add("" + task.getPid());
+		// This is killed internally by 'bds' (see GO program)
+		// So, there is no need for special commands
+		return null;
 
-		return args.toArray(Cmd.ARGS_ARRAY_TYPE);
+		//		ArrayList<String> args = new ArrayList<String>();
+		//		for (String arg : LOCAL_KILL_COMMAND)
+		//			args.add(arg);
+		//		args.add("" + task.getPid());
+		//
+		//		return args.toArray(Cmd.ARGS_ARRAY_TYPE);
 	}
 
 }

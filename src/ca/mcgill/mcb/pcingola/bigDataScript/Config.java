@@ -127,6 +127,7 @@ public class Config {
 	public PidLogger getPidLogger() {
 		if (pidLogger == null) {
 			pidLogger = new PidLogger(getPidFile());
+			pidLogger.setDebug(isDebug());
 		}
 		return pidLogger;
 	}

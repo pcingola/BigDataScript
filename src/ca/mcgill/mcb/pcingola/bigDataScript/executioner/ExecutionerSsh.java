@@ -49,14 +49,6 @@ public class ExecutionerSsh extends Executioner {
 		}
 	}
 
-	protected void follow(Task task) {
-		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
-
-		// No need to 'tail', Ssh class show output to StdOut directly
-		//		tail.add(task.getStdoutFile(), null, false);
-		//		tail.add(task.getStderrFile(), null, true);
-	}
-
 	@Override
 	protected Cmd createCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
@@ -82,6 +74,17 @@ public class ExecutionerSsh extends Executioner {
 		if (debug) Timer.showStdErr("Running command: " + cmdStr);
 		CmdSsh cmd = new CmdSsh(task.getId(), args.toArray(Cmd.ARGS_ARRAY_TYPE));
 		return cmd;
+	}
+
+	@Override
+	protected void follow(Task task) {
+		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
+
+		// No need to 'tail', Ssh class show output to StdOut directly
+		//		tail.add(task.getStdoutFile(), null, false);
+		//		tail.add(task.getStderrFile(), null, true);
+
+		if (monitorTask != null) monitorTask.remove(task);
 	}
 
 	@Override

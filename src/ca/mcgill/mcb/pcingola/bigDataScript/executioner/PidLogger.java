@@ -16,8 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class PidLogger {
 
-	public static boolean debug = false;
-
+	boolean debug = false;
 	String pidFile;
 	HashSet<String> pids;
 
@@ -31,22 +30,37 @@ public class PidLogger {
 	 * Add entry 'pid' to pidFile
 	 * @param pid
 	 */
-	public void add(String pid, String cmd) {
+	protected void add(String pid, String cmd) {
 		if (pid == null) return;
 		pids.add(pid);
-		append(pid + "\t+\t" + cmd);
+		append(pid + "\t\t" + cmd);
 	}
 
-	public void add(Task t, Executioner executioner) {
+	/**
+	 * Add a task and the corresponding executioner
+	 * @param t
+	 * @param executioner
+	 */
+	public synchronized void add(Task t, Executioner executioner) {
 		StringBuilder sb = new StringBuilder();
-		for (String c : executioner.osKillCommand(t))
-			sb.append(" " + c);
+
+		// Prepare kill command
+		String[] osKillCommand = executioner.osKillCommand(t);
+		if (osKillCommand != null) {
+			for (String c : executioner.osKillCommand(t))
+				sb.append(" " + c);
+		}
+
 		add(t.getPid(), sb.toString().trim());
 	}
 
-	void append(String str) {
+	/**
+	 * Append a string to the pidFile
+	 * @param str
+	 */
+	protected void append(String str) {
 		try {
-			if (debug) Gpr.debug("Appending to pidLogger: '" + str + "'");
+			if (debug) Gpr.debug("Appending string to pidLogger:\tString: '" + str + "'\t\tPidFile: '" + pidFile + "'");
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(pidFile, true)));
 			out.println(str);
 			out.close(); // We need to flush this as fast as possible to avoid missing PID values in the file
@@ -63,14 +77,22 @@ public class PidLogger {
 	 * Add 'remove' entry to pidFile
 	 * @param pid
 	 */
-	public void remove(String pid) {
+	void remove(String pid) {
 		if (pid == null) return;
 		pids.remove(pid);
 		append(pid + "\t-");
 	}
 
-	public void remove(Task t) {
+	/**
+	 * Remove a task
+	 * @param t
+	 */
+	public synchronized void remove(Task t) {
 		remove(t.getPid());
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 
 }
