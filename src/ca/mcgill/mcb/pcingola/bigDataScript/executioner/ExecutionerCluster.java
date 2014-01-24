@@ -12,7 +12,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdCluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
 /**
  * Execute tasks in a cluster.
@@ -167,38 +166,38 @@ public class ExecutionerCluster extends Executioner {
 		super.runExecutionerLoopBefore();
 	}
 
-	/**
-	 * Select next task to run and which host it should run into
-	 * For a cluster system, we rely on the cluster management to do this, so here we just schedule the task 
-	 * @return
-	 */
-	@Override
-	protected Tuple<Task, Host> selectTask() {
-		// Nothing to run?
-		if (tasksToRun.isEmpty()) return null;
-
-		for (Task task : tasksToRun) {
-			// Already selected? Skip
-			if (tasksSelected.containsKey(task)) continue;
-
-			// Can we run this task? 
-			if (task.canRun()) {
-				// Select host (we only have one)
-				for (Host host : cluster) {
-
-					// Do we have enough resources to run this task in this host?
-					if (host.getResources().hasResources(task.getResources())) {
-						// OK, execute this task in this host						
-						add(task, host); // Add task to host (make sure resources are reserved)
-						return new Tuple<Task, Host>(task, host);
-					}
-				}
-			}
-		}
-
-		// Cannot run any task in any host
-		return null;
-	}
+	//	/**
+	//	 * Select next task to run and which host it should run into
+	//	 * For a cluster system, we rely on the cluster management to do this, so here we just schedule the task 
+	//	 * @return
+	//	 */
+	//	@Override
+	//	protected Tuple<Task, Host> selectTask() {
+	//		// Nothing to run?
+	//		if (tasksToRun.isEmpty()) return null;
+	//
+	//		for (Task task : tasksToRun) {
+	//			// Already selected? Skip
+	//			if (tasksSelected.containsKey(task)) continue;
+	//
+	//			// Can we run this task? 
+	//			if (task.canRun()) {
+	//				// Select host (we only have one)
+	//				for (Host host : cluster) {
+	//
+	//					// Do we have enough resources to run this task in this host?
+	//					if (host.getResources().hasResources(task.getResources())) {
+	//						// OK, execute this task in this host						
+	//						add(task, host); // Add task to host (make sure resources are reserved)
+	//						return new Tuple<Task, Host>(task, host);
+	//					}
+	//				}
+	//			}
+	//		}
+	//
+	//		// Cannot run any task in any host
+	//		return null;
+	//	}
 
 	@Override
 	public synchronized void taskRunning(Task task) {
