@@ -273,7 +273,7 @@ public abstract class Executioner extends Thread {
 				runTask(taskHostPair.first, taskHostPair.second);
 			} else {
 				sleepShort();
-				if (debug) Timer.showStdErr("Queue tasks:\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
+				// if (debug) Timer.showStdErr("Queue tasks:\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
 			}
 		}
 

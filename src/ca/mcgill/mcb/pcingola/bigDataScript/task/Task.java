@@ -124,8 +124,9 @@ public class Task implements BigDataScriptSerialize {
 	 * Create a program file
 	 */
 	public void createProgramFile() {
+		if (debug) Gpr.debug("Saving file '" + programFileName + "'");
 		Gpr.toFile(programFileName, SHE_BANG + programTxt);
-		(new File(programFileName)).setExecutable(true); // Allow execution onf this file
+		(new File(programFileName)).setExecutable(true); // Allow execution 
 
 		// Set default file names
 		String base = Gpr.removeExt(programFileName);
