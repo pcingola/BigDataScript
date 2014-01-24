@@ -78,7 +78,7 @@ public class ExecutionerSsh extends Executioner {
 
 	@Override
 	protected void follow(Task task) {
-		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
+		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
 
 		// No need to 'tail', Ssh class show output to StdOut directly
 		//		tail.add(task.getStdoutFile(), null, false);

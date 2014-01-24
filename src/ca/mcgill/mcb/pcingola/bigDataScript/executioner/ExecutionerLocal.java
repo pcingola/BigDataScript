@@ -62,7 +62,7 @@ public class ExecutionerLocal extends Executioner {
 
 	@Override
 	protected void follow(Task task) {
-		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
+		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
 
 		// We need to feed the InputStreams from the process, instead of file names
 		CmdLocal cmd = (CmdLocal) cmdById.get(task.getId());

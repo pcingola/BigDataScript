@@ -182,6 +182,10 @@ public class Task implements BigDataScriptSerialize {
 		return node;
 	}
 
+	public List<String> getOutputFiles() {
+		return outputFiles;
+	}
+
 	public synchronized String getPid() {
 		return pid;
 	}

@@ -38,7 +38,7 @@ public abstract class Executioner extends Thread {
 	protected HashMap<String, Cmd> cmdById;
 	protected Tail tail;
 	protected Config config;
-	protected TaskLogger pidLogger;
+	protected TaskLogger taskLogger;
 	protected MonitorTask monitorTask;
 	protected Cluster cluster; // Local computer is the 'server' (localhost)
 
@@ -50,7 +50,7 @@ public abstract class Executioner extends Thread {
 		tasksRunning = new HashMap<String, Task>();
 		tasksDone = new HashMap<String, Task>();
 		tail = config.getTail();
-		pidLogger = config.getPidLogger();
+		taskLogger = config.getTaskLogger();
 		cmdById = new HashMap<String, Cmd>();
 
 		debug = config.isDebug();
@@ -105,7 +105,7 @@ public abstract class Executioner extends Thread {
 	 * @param task
 	 */
 	protected void follow(Task task) {
-		if (pidLogger != null) pidLogger.add(task, this); // Log PID (if any)
+		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
 
 		tail.add(task.getStdoutFile(), null, false);
 		tail.add(task.getStderrFile(), null, true);
@@ -122,7 +122,7 @@ public abstract class Executioner extends Thread {
 		tail.remove(task.getStderrFile());
 
 		// Remove from loggers
-		if (pidLogger != null) pidLogger.remove(task);
+		if (taskLogger != null) taskLogger.remove(task);
 		if (monitorTask != null) monitorTask.remove(task);
 	}
 

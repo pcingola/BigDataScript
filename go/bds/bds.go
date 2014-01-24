@@ -55,8 +55,11 @@ const EXITCODE_TIMEOUT = 2
 // Debug mode
 const DEBUG = false
 
+// Command indicatinf to remove file (taskLogger file)
+const CMD_REMOVE_FILE = "rm"
+
 // Store all PID in this file
-var pidFile string = ""
+var taskLoggerFile string = ""
 
 // store full path of this executable
 var execName string = ""
@@ -126,13 +129,13 @@ func main() {
 		Idea and implementation of this hack: Hernan Gonzalez
 */
 func bigDataScript() int {
-	// Create a pidFile (temp file based on pid number)
+	// Create a taskLoggerFile (temp file based on pid number)
 	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid())
 	pidTmpFile, err := tempFile(prefix)
 	if err != nil {
 		log.Fatal(err)
 	}
-	pidFile = pidTmpFile
+	taskLoggerFile = pidTmpFile
 
 	// Append all arguments from command line
 	args := []string{"java",
@@ -140,7 +143,7 @@ func bigDataScript() int {
 		"-cp", execName,
 		"ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
 	args = append(args, "-pid")
-	args = append(args, pidFile)
+	args = append(args, taskLoggerFile)
 	for _, arg := range os.Args[1:] {
 		args = append(args, arg)
 	}
@@ -148,8 +151,8 @@ func bigDataScript() int {
 	// Execute command
 	exitCode := executeCommand("java", args, 0, "", "", "")
 
-	// Kill all pending processes
-	killAll(pidFile)
+	// Kill all pending processes and remove stale files
+	taskLoggerCleanUpAll(taskLoggerFile)
 
 	return exitCode
 }
@@ -254,11 +257,11 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 
 	// Redirect all signals to channel (e.g. Ctrl-C)
 	osSignal := make(chan os.Signal, 1)
-	if pidFile != "" {
+	if taskLoggerFile != "" {
 		signal.Notify(osSignal, os.Interrupt, os.Kill)
 	} else {
 		// Set a new process group.
-		// Since we want to killall child processes, we'll send a kill signal to this process group.
+		// Since we want to kill all child processes, we'll send a kill signal to this process group.
 		// But we don't want to kill the calling program...
 		// fmt.Fprintf(os.Stderr, "bds: setting new process group\n")
 		if err := syscall.Setpgid(0, 0); err != nil {
@@ -371,9 +374,9 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 	}
 
 	if kill {
-		// Should we kill all process groups from pidFile?
-		if pidFile != "" {
-			killAll(pidFile)
+		// Should we kill all process groups from taskLoggerFile?
+		if taskLoggerFile != "" {
+			taskLoggerCleanUpAll(taskLoggerFile)
 		}
 
 		// Send a SIGKILL to the process group (just in case any child process is still executing)
@@ -460,7 +463,11 @@ func LoadConfig(filename string, dest map[string]string) {
 }
 
 /*
-	Parse pidFile and send kill signal to all process groups that have not been marked as 'finished'
+	Perform final clean up: Parse taskLoggerFile
+		i) Send kill signal to all process groups that have not been marked as 'finished'
+		ii) Run commands neede to deallocate processes (e.g. cluster)
+		iii) Remove stale output files form unfinshed tasks
+
 	File format:
 		"pid \t {+,-} \n"
 
@@ -468,9 +475,9 @@ func LoadConfig(filename string, dest map[string]string) {
 	the process finished. So all pid that do not have a '-' entry
 	must be killed.
 */
-func killAll(pidFile string) {
+func taskLoggerCleanUpAll(taskLoggerFile string) {
 	if( DEBUG ) {
-		log.Printf("Debug: killAll\n")
+		log.Printf("Debug: taskLoggerCleanUpAll\n")
 	}
 
 	var (
@@ -479,7 +486,7 @@ func killAll(pidFile string) {
 		file *os.File
 	)
 
-	defer os.Remove(pidFile) // Make sure the PID file is removed
+	defer os.Remove(taskLoggerFile) // Make sure the PID file is removed
 
 	//---
 	// Open file and parse it
@@ -487,15 +494,15 @@ func killAll(pidFile string) {
 	pids := make(map[string]bool)
 	cmds := make(map[string]string)
 
-	if file, err = os.Open(pidFile); err != nil {
-		fmt.Fprintf(os.Stderr, "bds: cannot open PID file '%s'\n", pidFile)
+	if file, err = os.Open(taskLoggerFile); err != nil {
+		fmt.Fprintf(os.Stderr, "bds: cannot open PID file '%s'\n", taskLoggerFile)
 		return
 	}
 	defer file.Close()
 
 	// Read line by line
 	if( DEBUG ) {
-		log.Printf("Debug: Parsing process pid file '%s'\n", pidFile)
+		log.Printf("Debug: taskLoggerCleanUpAll. Parsing process pid file '%s'\n", taskLoggerFile)
 	}
 	reader := bufio.NewReader(file)
 	for {
@@ -507,7 +514,7 @@ func killAll(pidFile string) {
 		pid := recs[0]
 		addDel := recs[1]
 		if( DEBUG ) {
-			log.Printf("Debug: \t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
+			log.Printf("Debug: taskLoggerCleanUpAll. \t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
 		}
 
 		// Add or remove from map
@@ -529,13 +536,19 @@ func killAll(pidFile string) {
 		if running {
 			if cmd, ok := cmds[pid]; !ok {
 				if( DEBUG ) {
-					log.Printf("Debug: Killing PID '%s'\n", pid)
+					log.Printf("Debug: taskLoggerCleanUpAll. Killing PID '%s'\n", pid)
 				}
 				pidInt, _ := strconv.Atoi(pid)
 				killProcessGroup(pidInt) // No need to run a command, just kill local porcess group
+			} else if cmd == CMD_REMOVE_FILE {
+				// This is a file to be removed, not a command
+				if( DEBUG ) {
+					log.Printf("Debug: taskLoggerCleanUpAll. Deleting file '%s'\n", pid)
+				}
+				os.Remove(pid)
 			} else {
 				if( DEBUG ) {
-					log.Printf("Debug: Killing PID '%s' using command '%s'\n", pid, runCmds[cmd])
+					log.Printf("Debug: taskLoggerCleanUpAll. Killing PID '%s' using command '%s'\n", pid, runCmds[cmd])
 				}
 
 				// Create command to be executed
@@ -547,7 +560,7 @@ func killAll(pidFile string) {
 			}
 		} else {
 			if( DEBUG ) {
-				log.Printf("Debug: Not killing PID '%s' (finishde running)\n", pid)
+				log.Printf("Debug: taskLoggerCleanUpAll. Not killing PID '%s' (finishde running)\n", pid)
 			}
 		}
 	}
@@ -556,6 +569,9 @@ func killAll(pidFile string) {
 	for cmd, args := range runCmds {
 		if len(cmd) > 0 {
 			// fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
+			if( DEBUG ) {
+				log.Printf("Debug: taskLoggerCleanUpAll. Running command '%s'\n", cmd)
+			}
 			cmdExec := exec.Command(cmd)
 			cmdExec.Args = strings.Split(args, "\t")
 			err := cmdExec.Run()

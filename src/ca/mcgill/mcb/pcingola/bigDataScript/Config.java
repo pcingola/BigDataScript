@@ -36,7 +36,7 @@ public class Config {
 	String pidFile;
 	Properties properties;
 	ArrayList<String> includePath;
-	TaskLogger pidLogger;
+	TaskLogger taskLogger;
 	MonitorTask monitorTask;
 	Tail tail;
 
@@ -124,14 +124,6 @@ public class Config {
 		return pidFile;
 	}
 
-	public TaskLogger getPidLogger() {
-		if (pidLogger == null) {
-			pidLogger = new TaskLogger(getPidFile());
-			pidLogger.setDebug(isDebug());
-		}
-		return pidLogger;
-	}
-
 	/**
 	 * Get a property as a string
 	 * @param propertyName
@@ -152,6 +144,14 @@ public class Config {
 			tail.start(); // Create a 'tail' process (to show STDOUT & STDERR from all processes)
 		}
 		return tail;
+	}
+
+	public TaskLogger getTaskLogger() {
+		if (taskLogger == null) {
+			taskLogger = new TaskLogger(getPidFile());
+			taskLogger.setDebug(isDebug());
+		}
+		return taskLogger;
 	}
 
 	public boolean isDebug() {
