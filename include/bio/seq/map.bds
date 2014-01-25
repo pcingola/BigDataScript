@@ -206,12 +206,20 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 	}
 	wait
 
-	# Merge all sorted BAM files
 	bamsStr := bams.join(" ")
-	print("Merging BAM file: $bam\n")
-	task( bam <- bams, cpus := cpusMapping ) {
-		sys samtools merge -f -@ $cpusMapping, - $bamsStr \
-				| samtools rmdup - $bam
+	if( splitNumReads > 1 ) {
+		# Merge sorted BAM files and remove duplicates
+		print("Merging BAM file: $bam\n")
+		task( bam <- bams, cpus := cpusMapping ) {
+			sys samtools merge -f -@ $cpusMapping, - $bamsStr \
+					| samtools rmdup - $bam
+		}
+	} else {
+		# Only one bam (no need to merge). Just remove duplicates
+		print("Removing duplicates: $bam\n")
+		task( bam <- bams, cpus := cpusMapping ) {
+			sys samtools rmdup $bamsStr $bam
+		}
 	}
 	wait
 }
