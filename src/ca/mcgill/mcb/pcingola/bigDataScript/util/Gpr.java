@@ -727,6 +727,7 @@ public class Gpr {
 			String str = obj.toString();
 			outFile = new BufferedWriter(new FileWriter(fileName, append));
 			outFile.write(str);
+			outFile.flush();
 			outFile.close();
 			return str;
 		} catch (IOException e) {

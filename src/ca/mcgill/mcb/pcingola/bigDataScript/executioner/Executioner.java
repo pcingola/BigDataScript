@@ -68,7 +68,7 @@ public abstract class Executioner extends Thread {
 	 * Queue an Exec and return a the id
 	 * @return
 	 */
-	public void add(Task task) {
+	public synchronized void add(Task task) {
 		if (debug) Timer.showStdErr("Queuing task '" + task.getId() + "'");
 		tasksToRun.add(task);
 	}

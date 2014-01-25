@@ -4,6 +4,8 @@
 
 print("Start\n")
 
-task echo hi; sleep 60; echo bye
+for( int i=0 ; i < 10000 ; i++ ) {
+	task echo hi $i
+}
 
 print("Done!\n")
