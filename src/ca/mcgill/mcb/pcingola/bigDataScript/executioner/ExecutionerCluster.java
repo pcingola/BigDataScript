@@ -3,8 +3,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
@@ -13,10 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdCluster;
-import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
-import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -31,10 +26,10 @@ public class ExecutionerCluster extends Executioner {
 	public static String FAKE_CLUSTER = "";
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
-	public String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
-	public String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
-	public String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
-	public String CLUSTER_BDS_COMMAND = "bds exec ";
+	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
+	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
+	public static String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
+	public static String CLUSTER_BDS_COMMAND = "bds exec ";
 
 	public int MIN_EXTRA_TIME = 15;
 	public int MAX_EXTRA_TIME = 120;
@@ -143,21 +138,6 @@ public class ExecutionerCluster extends Executioner {
 		return cmd;
 	}
 
-	/**
-	 * Find a running task given a PID
-	 * @param pid
-	 * @param state
-	 */
-	protected Task findRunningTaskByPid(String pid) {
-		String pidPart = pid.split("\\.")[0]; // Use only the first part before '.'
-
-		// Find task by PID
-		for (Task t : tasksRunning.values())
-			if (t.getPid().equals(pid) || t.getPid().equals(pidPart)) return t;
-
-		return null;
-	}
-
 	@Override
 	protected void followStop(Task task) {
 		super.followStop(task);
@@ -166,81 +146,6 @@ public class ExecutionerCluster extends Executioner {
 		if (!log && (task != null)) {
 			new File(clusterStdFile(task.getStdoutFile())).deleteOnExit();
 			new File(clusterStdFile(task.getStderrFile())).deleteOnExit();
-		}
-	}
-
-	/**
-	 * Check that task are still scheduled in the cluster system
-	 * 
-	 * TODO: We should try to implement an XML parsing. Unfortunately, some 
-	 * 		 clusters do not have 'qstat -xml' option (yikes!) 
-	 */
-	protected void monitorTask() {
-		//---
-		// Run command (qstat)
-		//---
-
-		// Prepare command line arguments
-		ArrayList<String> args = new ArrayList<String>();
-		StringBuilder cmdsb = new StringBuilder();
-		for (String arg : CLUSTER_STAT_COMMAND) {
-			args.add(arg);
-			cmdsb.append(" " + arg);
-		}
-
-		// Execute command
-		ExecResult execResult = Exec.exec(args, true);
-
-		// Any problems? Report
-		if (execResult.exitValue > 0) {
-			Timer.showStdErr("WARNING: There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'");
-			return;
-		}
-
-		//---
-		// Parse command's output
-		//---
-		String stdout = execResult.stdOut;
-
-		HashSet<String> taskFoundId = new HashSet<String>();
-		for (String line : stdout.split("\n")) {
-			// Parse fields
-			String fields[] = line.split("\\s+");
-
-			if (fields.length > 1) {
-				String pid = fields[0]; // We only obtain the PID (first field)
-				Task task = findRunningTaskByPid(pid);
-				if (task != null) taskFoundId.add(task.getId());
-			}
-		}
-
-		// Update tasks 
-		monitorTaskClusterUpdate(taskFoundId);
-	}
-
-	/**
-	 * Update tasks according to 'qstat' command
-	 * @param taskFoundId
-	 */
-	protected synchronized void monitorTaskClusterUpdate(HashSet<String> taskFoundId) {
-		// Any 'running' task that was not found should be marked asMark tasks as failed
-		LinkedList<Task> finished = null;
-		for (Task task : tasksRunning.values())
-			if (!taskFoundId.contains(task.getId()) // Task not found in cluster's queue?
-					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
-			) {
-				if (finished == null) finished = new LinkedList<Task>();
-				finished.add(task);
-			}
-
-		// Remove task that has been running for while, but is no longer in the cluster's queue
-		if (finished != null) {
-			for (Task task : finished) {
-				if (!task.isDone()) {
-					task.setErrorMsg("Task dissapeared from cluster's queue. Task or node failure?");
-					taskFinished(task, TaskState.ERROR, Task.EXITCODE_ERROR);
-				}
-			}
 		}
 	}
 

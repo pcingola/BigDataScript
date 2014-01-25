@@ -26,8 +26,6 @@ public abstract class Executioner extends Thread {
 	public static final int SLEEP_TIME_LONG = 500;
 	public static final int SLEEP_TIME_SHORT = 10;
 	public static final int REPORT_INTERVAL = 60;
-	public int TASK_STATE_INTERVAL = 60;
-	public int TASK_STATE_MIN_START_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
 
 	protected boolean debug;
 	protected boolean verbose;
@@ -45,7 +43,7 @@ public abstract class Executioner extends Thread {
 	protected MonitorTask monitorTask;
 	protected Cluster cluster; // Local computer is the 'server' (localhost)
 	protected Timer timer; // Task timer (when was the task started)
-	protected Timer timeTaskState; // Timer for querying task states
+	protected CheckTasksRunning checkTasksRunning;
 
 	public Executioner(Config config) {
 		super();
@@ -131,6 +129,10 @@ public abstract class Executioner extends Thread {
 		if (monitorTask != null) monitorTask.remove(task);
 	}
 
+	public HashMap<String, Task> getTasksRunning() {
+		return tasksRunning;
+	}
+
 	/**
 	 * Any task running?
 	 * @return
@@ -176,19 +178,6 @@ public abstract class Executioner extends Thread {
 	 */
 	public boolean isRunning() {
 		return running;
-	}
-
-	/**
-	 * Should we query task states? (i.e. run a command to see if tasks are still alive)
-	 * @return
-	 */
-	protected boolean isTaskStateTime() {
-		if (timeTaskState == null) timeTaskState = new Timer();
-		if (timeTaskState.elapsedSecs() > TASK_STATE_INTERVAL) {
-			timeTaskState.start(); // Restart timer
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -244,10 +233,6 @@ public abstract class Executioner extends Thread {
 		taskFinished(task, TaskState.KILLED, Task.EXITCODE_KILLED);
 	}
 
-	protected void monitorTask() {
-		// Default: Do nothing
-	}
-
 	/**
 	 * Return the appropriate 'kill' command to be used by the OS
 	 * E.g.: For a local task it would be 'kill' whereas for a cluster task it would be 'qdel'
@@ -286,6 +271,10 @@ public abstract class Executioner extends Thread {
 				if (runExecutionerLoop()) {
 					if (debug) Timer.showStdErr("Queue: No task to run.");
 				}
+
+				// Check that task are still running
+				if (checkTasksRunning != null) checkTasksRunning.check();
+
 				sleepLong();
 			}
 		} catch (Throwable t) {
@@ -321,8 +310,6 @@ public abstract class Executioner extends Thread {
 				sleepShort();
 			}
 		}
-
-		if (isTaskStateTime()) monitorTask(); // Check that task are still scheduled in the cluster system
 
 		return true;
 	}

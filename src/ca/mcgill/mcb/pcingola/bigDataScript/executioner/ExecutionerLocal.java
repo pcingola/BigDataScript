@@ -20,9 +20,11 @@ public class ExecutionerLocal extends Executioner {
 
 	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
 	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
+	public static String LOCAL_STAT_COMMAND[] = { "ps" };
 
 	public ExecutionerLocal(Config config) {
 		super(config);
+		checkTasksRunning = new CheckTasksRunningLocal(this);
 	}
 
 	/**
@@ -83,13 +85,6 @@ public class ExecutionerLocal extends Executioner {
 		// This is killed internally by 'bds' (see GO program)
 		// So, there is no need for special commands
 		return null;
-
-		//		ArrayList<String> args = new ArrayList<String>();
-		//		for (String arg : LOCAL_KILL_COMMAND)
-		//			args.add(arg);
-		//		args.add("" + task.getPid());
-		//
-		//		return args.toArray(Cmd.ARGS_ARRAY_TYPE);
 	}
 
 }
