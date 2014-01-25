@@ -6,7 +6,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.util;
 import java.awt.Color;
 import java.awt.Paint;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -722,10 +721,9 @@ public class Gpr {
 	 * @param obj: Object 
 	 */
 	public static String toFile(String fileName, Object obj, boolean append) {
-		BufferedWriter outFile;
 		try {
 			String str = obj.toString();
-			outFile = new BufferedWriter(new FileWriter(fileName, append));
+			FileWriter outFile = new FileWriter(fileName, append);
 			outFile.write(str);
 			outFile.flush();
 			outFile.close();
