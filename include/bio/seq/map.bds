@@ -190,6 +190,7 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 		# Do not split files (e.g. if we are running on a local computer)
 		fq1split = [ fq1 ]
 		fq2split = [ fq2 ]
+		cpusMapping := cpusLocal	# Use all available cpus
 	}
 
 
