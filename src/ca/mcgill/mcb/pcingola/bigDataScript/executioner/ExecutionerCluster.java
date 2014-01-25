@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
@@ -225,14 +226,24 @@ public class ExecutionerCluster extends Executioner {
 		}
 
 		// Any 'running' task that was not found should be marked asMark tasks as failed
+		LinkedList<Task> finished = null;
 		for (Task task : tasksRunning.values())
 			if (!taskFoundId.contains(task.getId()) // Task not found in cluster's queue?
 					&& (task.elapsedSecs() > MIN_QUEUE_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 			) {
+				if (finished == null) finished = new LinkedList<Task>();
+				finished.add(task);
+			}
+
+		// Remove task that have been running for while, but are no longer in the cluster's queue
+		if (finished != null) {
+			for (Task task : finished) {
 				Gpr.debug("TASK NOT FOUND:\tID '" + task.getId() + "'\tPID '" + task.getPid() + "'");
 				task.setErrorMsg("Task dissapeared from cluster's queue. Task or node failure?");
 				taskFinished(task, TaskState.ERROR, Task.EXITCODE_ERROR);
 			}
+		}
+
 	}
 
 	/**
