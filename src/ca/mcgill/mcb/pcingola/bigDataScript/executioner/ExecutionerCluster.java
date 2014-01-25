@@ -17,7 +17,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -33,7 +32,7 @@ public class ExecutionerCluster extends Executioner {
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
 	public int MIN_QUEUE_TIME = 60; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
-	public int CLUSTER_STAT_INTERVAL = 5;
+	public int CLUSTER_STAT_INTERVAL = 60;
 
 	public String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
 	public String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
@@ -182,8 +181,6 @@ public class ExecutionerCluster extends Executioner {
 	 * 		 clusters do not have 'qstat -xml' option (yikes!) 
 	 */
 	protected void monitorTaskCluster() {
-		Gpr.debug("QSTAT");
-
 		//---
 		// Run command (qstat)
 		//---
@@ -218,10 +215,7 @@ public class ExecutionerCluster extends Executioner {
 			if (fields.length > 1) {
 				String pid = fields[0]; // We only obtain the PID
 				Task task = findRunningTaskByPid(pid);
-				if (task != null) {
-					taskFoundId.add(task.getId());
-					Gpr.debug("FOUND: " + task.getPid());
-				}
+				if (task != null) taskFoundId.add(task.getId());
 			}
 		}
 
@@ -238,12 +232,10 @@ public class ExecutionerCluster extends Executioner {
 		// Remove task that have been running for while, but are no longer in the cluster's queue
 		if (finished != null) {
 			for (Task task : finished) {
-				Gpr.debug("TASK NOT FOUND:\tID '" + task.getId() + "'\tPID '" + task.getPid() + "'");
 				task.setErrorMsg("Task dissapeared from cluster's queue. Task or node failure?");
 				taskFinished(task, TaskState.ERROR, Task.EXITCODE_ERROR);
 			}
 		}
-
 	}
 
 	/**
