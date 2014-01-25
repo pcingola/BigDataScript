@@ -1,15 +1,12 @@
 #!/usr/bin/env bds
 
-#system="cluster"
+include "zz.bds"
 
 print("Start\n")
 
-# Before 'avoidTextFileBusyError()'
-#     time ./test/z.bds > z.out
-#     real	0m22.903s
-#     user	1m27.356s
-#     sys	0m22.284s
-
-for( int i=0 ; i < 10000 ; i++ ) task echo hi $i
+for( int i=0 ; i < 10 ; i++ ) {
+	str := "Hello: $i"
+	f( str, 5 )
+}
 
 print("Done!\n")
