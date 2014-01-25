@@ -194,6 +194,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 		// Get all fields for each parent class
 		ArrayList<Field> fields = new ArrayList<Field>();
+
 		for (Class clazz = this.getClass(); clazz != topClass; clazz = clazz.getSuperclass()) {
 			for (Field f : clazz.getDeclaredFields()) {
 				// Add field?
@@ -462,7 +463,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	protected void runBegin(BigDataScriptThread csThread) {
 		// Need a new scope?
-		if (isNeedsScope()) csThread.newScope();
+		if (isNeedsScope()) csThread.newScope(this);
 		csThread.getPc().push(this);
 	}
 
@@ -677,7 +678,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
 		// Create a new scope?
 		if (isNeedsScope()) {
-			Scope newScope = new Scope(scope);
+			Scope newScope = new Scope(scope, this);
 			scope = newScope;
 		}
 

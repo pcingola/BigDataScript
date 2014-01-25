@@ -102,7 +102,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	public Type() {
 		super(null, null);
 		primitiveType = PrimitiveType.FAKE;
-		classScope = new Scope(null);
+		classScope = new Scope(null, null);
 	}
 
 	protected Type(BigDataScriptNode parent, ParseTree tree) {

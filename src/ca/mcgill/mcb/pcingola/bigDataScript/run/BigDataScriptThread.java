@@ -14,6 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.StatementInclude;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Wait;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
@@ -318,8 +319,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Create a new scope
 	 */
-	public void newScope() {
-		scope = new Scope(scope);
+	public void newScope(BigDataScriptNode node) {
+		scope = new Scope(scope, node);
 	}
 
 	/**
@@ -327,6 +328,41 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public void oldScope() {
 		scope = scope.getParent();
+	}
+
+	void prinntCode(String code) {
+		// Show file contents
+		int lineNum = 1;
+		for (String line : code.split("\n"))
+			System.out.println(String.format("%6d |%s", lineNum++, line));
+		System.out.println("");
+	}
+
+	public void print() {
+		// Create a list with program file and all included files
+		List<BigDataScriptNode> nodeWithFiles = programUnit.findNodes(StatementInclude.class, true);
+		nodeWithFiles.add(0, programUnit);
+
+		// Show code
+		for (BigDataScriptNode bwf : nodeWithFiles) {
+			System.out.println("Program file: '" + bwf.getFileName() + "'");
+			prinntCode(((BlockWithFile) bwf).getFileText());
+		}
+
+		// Show stack trace
+		System.out.println("Stack trace:");
+		System.out.println(stackTrace());
+
+		// Show scopes
+		for (Scope scope = getScope(); scope != null; scope = scope.getParent()) {
+			if (!scope.isEmpty()) {
+				//				System.out.println("--- Scope: " + scope.get + " ---");
+				for (String varName : scope) {
+					System.out.println(scope.getSymbol(varName));
+				}
+				System.out.println("--- End of scope ---");
+			}
+		}
 	}
 
 	@Override
@@ -517,7 +553,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			int lineNum = node.getLineNum() - 1;
 			if (lineNum <= 0 || lineNum >= codeLines.length) continue;
 
-			String line = node.getFileName() + ", line " + node.getLineNum() + " :\t" + codeLines[lineNum] + "\n";
+			String line = Gpr.baseName(node.getFileName()) + ", line " + node.getLineNum() + " :\t" + codeLines[lineNum] + "\n";
 			if (!line.equals(linePrev)) sb.append(line);
 			linePrev = line;
 		}

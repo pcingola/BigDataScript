@@ -42,7 +42,7 @@ public class FunctionCall extends Expression {
 		}
 
 		// Create new scope
-		csThread.newScope();
+		csThread.newScope(this);
 
 		// Add arguments to scope
 		Scope scope = csThread.getScope();

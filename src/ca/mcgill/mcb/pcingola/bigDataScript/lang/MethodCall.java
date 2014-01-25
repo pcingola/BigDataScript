@@ -2,8 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
@@ -40,7 +40,7 @@ public class MethodCall extends FunctionCall {
 
 		// Create new scope
 		// TODO: Add class scope? (class variables & methods)
-		csThread.newScope();
+		csThread.newScope(this);
 
 		// Add arguments to scope
 		Scope scope = csThread.getScope();

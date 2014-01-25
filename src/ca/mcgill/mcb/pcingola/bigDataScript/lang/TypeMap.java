@@ -62,7 +62,7 @@ public class TypeMap extends TypeList {
 	 */
 	@Override
 	protected void addNativeMethods() {
-		if (classScope == null) classScope = new Scope(null);
+		if (classScope == null) classScope = new Scope(null, null);
 
 		// Add libarary methods
 		ArrayList<MethodNative> methods = new ArrayList<MethodNative>();

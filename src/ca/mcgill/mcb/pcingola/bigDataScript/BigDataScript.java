@@ -59,12 +59,17 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class BigDataScript {
 
+	enum BigDataScriptAction {
+		RUN, RUN_CHECKPOINT, INFO_CHECKPOINT
+	}
+
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
 	public static final String BUILD = "2014-01-24";
 	public static final String REVISION = "b";
 	public static final String VERSION_MAJOR = "0.6";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
-	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
+
+	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;;
 
 	boolean verbose;
 	boolean debug;
@@ -74,6 +79,7 @@ public class BigDataScript {
 	String programFileName; // Program file name
 	String pidFile; // File to store PIDs
 	String system; // System type
+	BigDataScriptAction bigDataScriptAction;
 	Config config;
 	ProgramUnit programUnit; // Program (parsed nodes)
 	BigDataScriptThread bigDataScriptThread;
@@ -204,6 +210,7 @@ public class BigDataScript {
 			for (int i = 0; i < tree.getChildCount(); i++)
 				changed |= resolveIncludes(tree.getChild(i), debug, alreadyIncluded);
 		}
+
 		return changed;
 	}
 
@@ -293,6 +300,22 @@ public class BigDataScript {
 
 	public ProgramUnit getProgramUnit() {
 		return programUnit;
+	}
+
+	/**
+	 * Show information from a checkpoint file
+	 * @return
+	 */
+	int infoCheckpoint() {
+		// Load checkpoint file
+		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
+		List<BigDataScriptThread> csthreads = csSerializer.load();
+
+		Gpr.debug("INFO CHECKPOINT:");
+		for (BigDataScriptThread bdsThread : csthreads)
+			bdsThread.print();
+
+		return 0;
 	}
 
 	/**
@@ -641,6 +664,7 @@ public class BigDataScript {
 		if (args.length <= 0) usage(null);
 
 		programArgs = new ArrayList<String>();
+		bigDataScriptAction = BigDataScriptAction.RUN;
 
 		for (int i = 0; i < args.length; i++) {
 			if (programFileName != null) programArgs.add(args[i]); // Everything after 'programFileName'
@@ -662,10 +686,16 @@ public class BigDataScript {
 						System.exit(0);
 					}
 				}
+			} else if (args[i].equals("-i") || args[i].equalsIgnoreCase("-info")) {
+				// Checkpoint info
+				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
+				else usage("Option '-i' without checkpoint file argument");
+				bigDataScriptAction = BigDataScriptAction.INFO_CHECKPOINT;
 			} else if (args[i].equals("-r") || args[i].equalsIgnoreCase("-restore")) {
 				// Checkpoint restore
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
-				else usage("Option '-r' without restore file argument");
+				else usage("Option '-r' without checkpoint file argument");
+				bigDataScriptAction = BigDataScriptAction.RUN_CHECKPOINT;
 			} else if (args[i].equals("-pid")) {
 				// PID file
 				if ((i + 1) < args.length) pidFile = args[++i];
@@ -711,8 +741,18 @@ public class BigDataScript {
 		// Run
 		// ---
 		int exitValue = 0;
-		if (chekcpointRestoreFile != null) exitValue = runCheckpoint(); // Are we recovering (or loading) from a checkpoint?
-		else exitValue = runCompile(); // Compile & run
+		switch (bigDataScriptAction) {
+		case RUN_CHECKPOINT:
+			exitValue = runCheckpoint();
+			break;
+
+		case INFO_CHECKPOINT:
+			exitValue = infoCheckpoint();
+			break;
+
+		default:
+			exitValue = runCompile(); // Compile & run
+		}
 
 		// ---
 		// Kill all executioners
@@ -806,14 +846,15 @@ public class BigDataScript {
 		System.out.println(VERSION + "\n");
 		System.err.println("Usage: " + BigDataScript.class.getSimpleName() + " [options] file.bds");
 		System.err.println("\nAvailable options: ");
-		System.err.println("  [-c | -config] file    : Config file. Default : " + configFile);
-		System.err.println("  [-d | -debug]          : Debug mode.");
-		System.err.println("  [-l | -log]            : Log all actions (do not delete tmp files).");
-		System.err.println("  [-r | -restore] file   : Restore from checkpoint file.");
-		System.err.println("  [-s | -system] type    : Set system type.");
-		System.err.println("  [-v | -verbose]        : Be verbose.");
-		System.err.println("  -pid <file>            : Write local processes PIDs to 'file'");
-		System.err.println("  -noLog                 : Do not log stats.");
+		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
+		System.err.println("  [-d | -debug]                  : Debug mode.");
+		System.err.println("  [-l | -log]                    : Log all actions (do not delete tmp files).");
+		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
+		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
+		System.err.println("  [-s | -system ] type           : Set system type.");
+		System.err.println("  [-v | -verbose]                : Be verbose.");
+		System.err.println("  -pid <file>                    : Write local processes PIDs to 'file'");
+		System.err.println("  -noLog                         : Do not log stats.");
 
 		if (err != null) System.exit(1);
 		System.exit(0);

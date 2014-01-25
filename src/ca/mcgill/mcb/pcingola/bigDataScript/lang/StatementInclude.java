@@ -71,9 +71,13 @@ public class StatementInclude extends BlockWithFile {
 		setNeedsScope(false);
 
 		// File name & parent file name: this is merely informational
-		File parentFile = getFile();
+		File parentFile = getParent().getFile();
 		parentFileName = (parentFile != null ? parentFile.toString() : null);
 		fileName = includedFileName(tree.getChild(0).getChild(1).getText());
+
+		// Resolve file and read program text
+		File includedFile = StatementInclude.includedFile(fileName, parentFile);
+		setFile(includedFile);
 
 		super.parse(tree.getChild(0)); // Block parses statement
 	}

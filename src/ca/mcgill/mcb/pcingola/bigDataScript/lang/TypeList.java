@@ -68,7 +68,7 @@ public class TypeList extends Type {
 	 * Add all library methods here
 	 */
 	protected void addNativeMethods() {
-		if (classScope == null) classScope = new Scope(null);
+		if (classScope == null) classScope = new Scope(null, null);
 
 		// Add libarary methods
 		ArrayList<MethodNative> methods = new ArrayList<MethodNative>();

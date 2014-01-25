@@ -3,9 +3,11 @@ package ca.mcgill.mcb.pcingola.bigDataScript.scope;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
@@ -15,7 +17,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
  * 
  * @author pcingola
  */
-public class Scope implements BigDataScriptSerialize {
+public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	public static final String GLOBAL_VAR_K = "K";
 	public static final String GLOBAL_VAR_M = "M";
@@ -35,11 +37,11 @@ public class Scope implements BigDataScriptSerialize {
 	public static final String VAR_PROGRAM_PATH = "programPath";
 
 	// Global scope
-	private static Scope globalScope = new Scope(null);
+	private static Scope globalScope = new Scope(null, null);
 
 	Scope parent;
-
 	HashMap<String, ScopeSymbol> symbols;
+	BigDataScriptNode node;
 
 	/**
 	 * Global scope
@@ -53,7 +55,7 @@ public class Scope implements BigDataScriptSerialize {
 	 * Reset Global Scope
 	 */
 	public static void resetGlobalScope() {
-		globalScope = new Scope(null);
+		globalScope = new Scope(null, null);
 	}
 
 	public Scope() {
@@ -65,8 +67,9 @@ public class Scope implements BigDataScriptSerialize {
 	 * Constructor
 	 * @param parent : If null => use global Scope
 	 */
-	public Scope(Scope parent) {
+	public Scope(Scope parent, BigDataScriptNode node) {
 		this.parent = parent;
+		this.node = node;
 		symbols = new HashMap<String, ScopeSymbol>();
 	}
 
@@ -193,6 +196,11 @@ public class Scope implements BigDataScriptSerialize {
 	 */
 	public boolean isEmpty() {
 		return symbols.size() <= 0;
+	}
+
+	@Override
+	public Iterator<String> iterator() {
+		return symbols.keySet().iterator();
 	}
 
 	@Override
