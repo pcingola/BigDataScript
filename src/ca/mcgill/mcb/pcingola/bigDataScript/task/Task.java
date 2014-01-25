@@ -398,54 +398,55 @@ public class Task implements BigDataScriptSerialize {
 
 	/**
 	 * Change state: Make sure state changes are valid
-	 * @param taskState
+	 * @param newState
 	 */
-	public synchronized void state(TaskState taskState) {
-		if (taskState == null) throw new RuntimeException("Cannot change to 'null' state.\n" + this);
-		if (taskState == this.taskState) return; // Nothing to do
+	public synchronized void state(TaskState newState) {
+		if (newState == null) throw new RuntimeException("Cannot change to 'null' state.\n" + this);
+		if (newState == taskState) return; // Nothing to do
 
-		switch (taskState) {
+		switch (newState) {
 		case STARTED:
-			if (this.taskState == TaskState.NONE) setState(taskState);
-			else throw new RuntimeException("Task: Cannot jump from state '" + this.taskState + "' to state '" + taskState + "'\n" + this);
+			if (taskState == TaskState.NONE) setState(newState);
+			else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
 		case START_FAILED:
-			if (this.taskState == TaskState.NONE) {
-				setState(taskState);
+			if (taskState == TaskState.NONE) {
+				setState(newState);
 				runningStartTime = runningEndTime = new Date();
-			} else throw new RuntimeException("Task: Cannot jump from state '" + this.taskState + "' to state '" + taskState + "'\n" + this);
+			} else if (taskState == TaskState.KILLED) ; // OK, don't change state
+			else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
 		case RUNNING:
-			if (this.taskState == TaskState.STARTED) {
-				setState(taskState);
+			if (taskState == TaskState.STARTED) {
+				setState(newState);
 				runningStartTime = new Date();
-			} else throw new RuntimeException("Task: Cannot jump from state '" + this.taskState + "' to state '" + taskState + "'\n" + this);
+			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
 		case FINISHED:
 		case ERROR:
 		case ERROR_TIMEOUT:
-			if (this.taskState == TaskState.RUNNING) {
-				setState(taskState);
+			if (taskState == TaskState.RUNNING) {
+				setState(newState);
 				runningEndTime = new Date();
-			} else throw new RuntimeException("Task: Cannot jump from state '" + this.taskState + "' to state '" + taskState + "'\n" + this);
+			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
 		case KILLED:
-			if ((this.taskState == TaskState.RUNNING) // A task can be killed while running...
-					|| (this.taskState == TaskState.STARTED) // or right after it started
-					|| (this.taskState == TaskState.NONE) // or even if it was not started
+			if ((taskState == TaskState.RUNNING) // A task can be killed while running...
+					|| (taskState == TaskState.STARTED) // or right after it started
+					|| (taskState == TaskState.NONE) // or even if it was not started
 			) {
-				setState(taskState);
+				setState(newState);
 				runningEndTime = new Date();
-			} else throw new RuntimeException("Task: Cannot jump from state '" + this.taskState + "' to state '" + taskState + "'\n" + this);
+			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
 		default:
 			// Ignore other state changes
-			throw new RuntimeException("Unimplemented state: '" + taskState + "'");
+			throw new RuntimeException("Unimplemented state: '" + newState + "'");
 		}
 	}
 
