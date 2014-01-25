@@ -175,6 +175,19 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	/**
+	 * Should we show a report?
+	 * @return
+	 */
+	protected boolean isClusterStatTime() {
+		if (timeClusterStat == null) timeClusterStat = new Timer();
+		if (timeClusterStat.elapsedSecs() > CLUSTER_STAT_INTERVAL) {
+			timeClusterStat.start(); // Restart timer
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Check that task are still scheduled in the cluster system
 	 * 
 	 * TODO: We should try to implement an XML parsing. Unfortunately, some 
@@ -213,12 +226,21 @@ public class ExecutionerCluster extends Executioner {
 			String fields[] = line.split("\\s+");
 
 			if (fields.length > 1) {
-				String pid = fields[0]; // We only obtain the PID
+				String pid = fields[0]; // We only obtain the PID (first field)
 				Task task = findRunningTaskByPid(pid);
 				if (task != null) taskFoundId.add(task.getId());
 			}
 		}
 
+		// Update tasks 
+		monitorTaskClusterUpdate(taskFoundId);
+	}
+
+	/**
+	 * Update tasks according to 'qstat' command
+	 * @param taskFoundId
+	 */
+	protected synchronized void monitorTaskClusterUpdate(HashSet<String> taskFoundId) {
 		// Any 'running' task that was not found should be marked asMark tasks as failed
 		LinkedList<Task> finished = null;
 		for (Task task : tasksRunning.values())
@@ -229,11 +251,13 @@ public class ExecutionerCluster extends Executioner {
 				finished.add(task);
 			}
 
-		// Remove task that have been running for while, but are no longer in the cluster's queue
+		// Remove task that has been running for while, but is no longer in the cluster's queue
 		if (finished != null) {
 			for (Task task : finished) {
-				task.setErrorMsg("Task dissapeared from cluster's queue. Task or node failure?");
-				taskFinished(task, TaskState.ERROR, Task.EXITCODE_ERROR);
+				if (!task.isDone()) {
+					task.setErrorMsg("Task dissapeared from cluster's queue. Task or node failure?");
+					taskFinished(task, TaskState.ERROR, Task.EXITCODE_ERROR);
+				}
 			}
 		}
 	}
@@ -253,19 +277,6 @@ public class ExecutionerCluster extends Executioner {
 		boolean ret = super.runExecutionerLoop();
 		if (isClusterStatTime()) monitorTaskCluster(); // Check that task are still scheduled in the cluster system
 		return ret;
-	}
-
-	/**
-	 * Should we show a report?
-	 * @return
-	 */
-	protected boolean isClusterStatTime() {
-		if (timeClusterStat == null) timeClusterStat = new Timer();
-		if (timeClusterStat.elapsedSecs() > CLUSTER_STAT_INTERVAL) {
-			timeClusterStat.start(); // Restart timer
-			return true;
-		}
-		return false;
 	}
 
 	/**
