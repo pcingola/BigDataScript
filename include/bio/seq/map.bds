@@ -208,8 +208,8 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 	# Merge all sorted BAM files
 	bamsStr := bams.join(" ")
 	print("Merging BAM file: $bam\n")
-	task( bam <- bams ) {
-		sys samtools merge -f -@ $cpus - $bamsStr \
+	task( bam <- bams, cpus := cpusMapping ) {
+		sys samtools merge -f -@ $cpusMapping, - $bamsStr \
 				| samtools rmdup - $bam
 	}
 	wait
