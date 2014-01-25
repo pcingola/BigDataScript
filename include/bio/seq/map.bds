@@ -286,7 +286,8 @@ string[] splitCallableRegions(string bed, int num) {
 	}
 	bedSplitsStr := bedSplits.join(' ')
 
-	if( bedSplits <- bed ) {
+	# We may get less splits than intended, that's why I only check against the first one
+	if( bedSplits[0] <- bed ) {
 		sys grep CALLABLE $bed | $callableCollapseSplit $bedSplitsStr
 	}
 
