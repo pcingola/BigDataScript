@@ -31,9 +31,6 @@ public class ExecutionerCluster extends Executioner {
 	public static String FAKE_CLUSTER = "";
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
-	public int MIN_QUEUE_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
-	public int CLUSTER_STAT_INTERVAL = 60;
-
 	public String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
 	public String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
 	public String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
@@ -41,8 +38,6 @@ public class ExecutionerCluster extends Executioner {
 
 	public int MIN_EXTRA_TIME = 15;
 	public int MAX_EXTRA_TIME = 120;
-
-	protected Timer timeClusterStat;
 
 	public ExecutionerCluster(Config config) {
 		super(config);
@@ -175,25 +170,12 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	/**
-	 * Should we show a report?
-	 * @return
-	 */
-	protected boolean isClusterStatTime() {
-		if (timeClusterStat == null) timeClusterStat = new Timer();
-		if (timeClusterStat.elapsedSecs() > CLUSTER_STAT_INTERVAL) {
-			timeClusterStat.start(); // Restart timer
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Check that task are still scheduled in the cluster system
 	 * 
 	 * TODO: We should try to implement an XML parsing. Unfortunately, some 
 	 * 		 clusters do not have 'qstat -xml' option (yikes!) 
 	 */
-	protected void monitorTaskCluster() {
+	protected void monitorTask() {
 		//---
 		// Run command (qstat)
 		//---
@@ -245,7 +227,7 @@ public class ExecutionerCluster extends Executioner {
 		LinkedList<Task> finished = null;
 		for (Task task : tasksRunning.values())
 			if (!taskFoundId.contains(task.getId()) // Task not found in cluster's queue?
-					&& (task.elapsedSecs() > MIN_QUEUE_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
+					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 			) {
 				if (finished == null) finished = new LinkedList<Task>();
 				finished.add(task);
@@ -270,13 +252,6 @@ public class ExecutionerCluster extends Executioner {
 	@Override
 	public String[] osKillCommand(Task task) {
 		return CLUSTER_KILL_COMMAND;
-	}
-
-	@Override
-	protected boolean runExecutionerLoop() {
-		boolean ret = super.runExecutionerLoop();
-		if (isClusterStatTime()) monitorTaskCluster(); // Check that task are still scheduled in the cluster system
-		return ret;
 	}
 
 	/**

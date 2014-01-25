@@ -160,7 +160,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		}
 
 		// Execute
-		if (csThread.getConfig().isVerbose()) Timer.showStdErr("Task, line " + getLineNum() + "\n" + allCmds);
+		if (csThread.getConfig().isVerbose()) Timer.showStdErr("Task, file '" + getFileName() + "', line " + getLineNum() + "\n" + allCmds);
 		exec(csThread, sys);
 
 		return RunState.OK;

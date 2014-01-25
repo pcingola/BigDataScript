@@ -193,7 +193,6 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 		cpusMapping := cpusLocal	# Use all available cpus
 	}
 
-
 	# Map each pair of files
 	string[] bams
 	for( int i=0 ; i < fq1split.size() ; i++ ) {
@@ -216,7 +215,7 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 		}
 	} else {
 		# Only one bam (no need to merge). Just remove duplicates
-		print("Removing duplicates: $bam\n")
+		print("Removing duplicates: $bam <- $bams\n")
 		task( bam <- bams, cpus := cpusMapping ) {
 			sys samtools rmdup $bamsStr $bam
 		}
@@ -228,7 +227,7 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 # Map reads, call variants and annotate them
 #-------------------------------------------------------------------------------
 string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string genome, int splitNumReads, int cpusMapping, int cpusCalling, int mapSortMemory, int numCallers ) {
-	bam := removeExtFastq(fq1) + ".bam"
+	bam := removeExtFastq(fq1) + ".rmdup.bam"
 	vcf := removeExtFastq(fq1) + ".vcf"
 
 	# Create BAM file from reads

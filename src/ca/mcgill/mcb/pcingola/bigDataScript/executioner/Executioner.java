@@ -26,6 +26,8 @@ public abstract class Executioner extends Thread {
 	public static final int SLEEP_TIME_LONG = 500;
 	public static final int SLEEP_TIME_SHORT = 10;
 	public static final int REPORT_INTERVAL = 60;
+	public int TASK_STATE_INTERVAL = 60;
+	public int TASK_STATE_MIN_START_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
 
 	protected boolean debug;
 	protected boolean verbose;
@@ -42,7 +44,8 @@ public abstract class Executioner extends Thread {
 	protected TaskLogger taskLogger;
 	protected MonitorTask monitorTask;
 	protected Cluster cluster; // Local computer is the 'server' (localhost)
-	protected Timer timer;
+	protected Timer timer; // Task timer (when was the task started)
+	protected Timer timeTaskState; // Timer for querying task states
 
 	public Executioner(Config config) {
 		super();
@@ -176,6 +179,19 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
+	 * Should we query task states? (i.e. run a command to see if tasks are still alive)
+	 * @return
+	 */
+	protected boolean isTaskStateTime() {
+		if (timeTaskState == null) timeTaskState = new Timer();
+		if (timeTaskState.elapsedSecs() > TASK_STATE_INTERVAL) {
+			timeTaskState.start(); // Restart timer
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Is this executioner valid?
 	 * An Executioner may expire or become otherwise invalid
 	 * 
@@ -226,6 +242,10 @@ public abstract class Executioner extends Thread {
 		// Mark task as finished
 		// Note: This will also be invoked by Cmd, so it will be redundant)
 		taskFinished(task, TaskState.KILLED, Task.EXITCODE_KILLED);
+	}
+
+	protected void monitorTask() {
+		// Default: Do nothing
 	}
 
 	/**
@@ -301,6 +321,8 @@ public abstract class Executioner extends Thread {
 				sleepShort();
 			}
 		}
+
+		if (isTaskStateTime()) monitorTask(); // Check that task are still scheduled in the cluster system
 
 		return true;
 	}
