@@ -342,7 +342,7 @@ public abstract class Executioner extends Thread {
 	 * Select next task to run and which host it should run into
 	 * @return
 	 */
-	protected Tuple<Task, Host> selectTask() {
+	protected synchronized Tuple<Task, Host> selectTask() {
 		// Nothing to run?
 		if (tasksToRun.isEmpty()) return null;
 
