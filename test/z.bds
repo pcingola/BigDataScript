@@ -4,8 +4,12 @@
 
 print("Start\n")
 
-for( int i=0 ; i < 10000 ; i++ ) {
-	task echo hi $i
-}
+# Before 'avoidTextFileBusyError()'
+#     time ./test/z.bds > z.out
+#     real	0m22.903s
+#     user	1m27.356s
+#     sys	0m22.284s
+
+for( int i=0 ; i < 10000 ; i++ ) task echo hi $i
 
 print("Done!\n")
