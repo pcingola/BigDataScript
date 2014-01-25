@@ -9,12 +9,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.StreamGobbler;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
@@ -150,33 +150,11 @@ public class ExpressionSys extends Expression {
 		String cmds = getCommands(csThread);
 		args.add(cmds);
 
-		// Run commands line
-		int exitValue = -1;
-		StreamGobbler stdout = null, stderr = null;
-		try {
-			ProcessBuilder pb = new ProcessBuilder(args);
-			Process process = pb.start();
-
-			// Make sure we read STDOUT and STDERR, so that process does not block
-			stdout = new StreamGobbler(process.getInputStream(), false);
-			stderr = new StreamGobbler(process.getErrorStream(), true);
-			stdout.setSaveLinesInMemory(true);
-			stdout.start();
-			stderr.start();
-
-			// Wait for process to finish
-			exitValue = process.waitFor();
-
-			// Wait for Gobblers to finish (otherwise we may have an incomplete stdout/stderr)
-			stdout.join();
-			stderr.join();
-
-			if (debug) Gpr.debug("Exit value: " + exitValue);
-		} catch (Exception e) {
-			throw new RuntimeException("Cannot execute commnads: '" + commands + "'");
-		}
+		// Run command line
+		ExecResult execResult = Exec.exec(args, false);
 
 		// Error running process? 
+		int exitValue = execResult.exitValue;
 		if (exitValue != 0) {
 			// Execution failed! Save checkpoint and exit
 			csThread.fatalError(this, "Exec failed." //
@@ -187,7 +165,7 @@ public class ExpressionSys extends Expression {
 		}
 
 		// Collect output
-		if (stdout != null) output = stdout.getAllLines();
+		if (execResult.stdOut != null) output = execResult.stdOut;
 
 		return RunState.OK;
 	}

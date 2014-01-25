@@ -1,0 +1,19 @@
+#!/bin/sh
+
+
+# Example of output format
+#
+# $ qstat
+# Job id                    Name             User            Time Use S Queue
+# ------------------------- ---------------- --------------- -------- - -----
+# 1352661.abacus2            STDIN            pcingola        00:00:00 C sw             
+
+echo "Job id                    Name             User            Time Use S Queue"
+echo "------------------------- ---------------- --------------- -------- - -----"
+
+for t in `ls $HOME/.bds/fakeClusterTasks/*.sh`
+do
+	id=`basename $t .sh`
+	echo "$id.abacus            STDIN            pcingola        00:00:00 Q sw             "
+done
+

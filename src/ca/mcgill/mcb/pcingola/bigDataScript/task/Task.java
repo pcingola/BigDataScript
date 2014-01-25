@@ -157,6 +157,21 @@ public class Task implements BigDataScriptSerialize {
 		}
 	}
 
+	/**
+	 * Elapsed number of seconds this task has been executing
+	 * @return
+	 */
+	public int elapsedSecs() {
+		if (runningStartTime == null) return -1; // Not started?
+		if (getResources() == null) return -1; // No resources?
+
+		// Calculate elapsed processing time
+		long end = (runningEndTime != null ? runningEndTime : new Date()).getTime();
+		long start = runningStartTime.getTime();
+		int elapsedSecs = (int) ((end - start) / 1000);
+		return elapsedSecs;
+	}
+
 	public String getBdsFileName() {
 		return bdsFileName;
 	}
@@ -287,16 +302,11 @@ public class Task implements BigDataScriptSerialize {
 	 * @return
 	 */
 	public boolean isTimedOut() {
-		if (runningStartTime == null) return false; // Not started?
-		if (getResources() == null) return false; // No resources?
-
-		// Calculate elapsed processing time
-		long end = (runningEndTime != null ? runningEndTime : new Date()).getTime();
-		long start = runningStartTime.getTime();
-		long elapsedSecs = (end - start) / 1000;
-		long timeout = getResources().getTimeout();
+		int elapsedSecs = elapsedSecs();
+		if (elapsedSecs < 0) return false;
 
 		// Run out of time?
+		int timeout = (int) getResources().getTimeout();
 		return elapsedSecs > timeout;
 	}
 

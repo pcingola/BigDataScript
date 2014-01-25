@@ -25,7 +25,7 @@ public abstract class Executioner extends Thread {
 
 	public static final int SLEEP_TIME_LONG = 500;
 	public static final int SLEEP_TIME_SHORT = 10;
-	public static final int REPORT_TIME = 60;
+	public static final int REPORT_INTERVAL = 60;
 
 	protected boolean debug;
 	protected boolean verbose;
@@ -160,7 +160,7 @@ public abstract class Executioner extends Thread {
 	 */
 	protected boolean isReportTime() {
 		if (timer == null) timer = new Timer();
-		if (timer.elapsedSecs() > REPORT_TIME) {
+		if (timer.elapsedSecs() > REPORT_INTERVAL) {
 			timer.start(); // Restart timer
 			return true;
 		}

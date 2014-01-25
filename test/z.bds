@@ -1,7 +1,9 @@
 #!/usr/bin/env bds
 
+system="cluster"
+
 print("Start\n")
 
-task echo hi; sleep 120; echo bye
+task echo hi; sleep 180; echo bye
 
 print("Done!\n")

@@ -4,7 +4,7 @@
 echo $$
 
 # Create an executable script on "fakeCluster" queue
-taskFile=$HOME/.bds/fakeClusterTasks/task.$$.sh
+taskFile=$HOME/.bds/fakeClusterTasks/$$.sh
 
 echo "#!/bin/sh" >> $taskFile
 echo >> $taskFile

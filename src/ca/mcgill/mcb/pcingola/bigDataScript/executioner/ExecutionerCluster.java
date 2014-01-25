@@ -2,6 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
@@ -10,7 +12,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdCluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -22,15 +28,21 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ExecutionerCluster extends Executioner {
 
-	public static String FAKE_CLUSTER = "";
-	// public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
+	// public static String FAKE_CLUSTER = "";
+	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
-	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
-	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
-	public static String CLUSTER_BDS_COMMAND = "bds exec ";
+	public int MIN_QUEUE_TIME = 3; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
+	public int CLUSTER_STAT_INTERVAL = 5;
 
-	public static final int MIN_EXTRA_TIME = 15;
-	public static final int MAX_EXTRA_TIME = 120;
+	public String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
+	public String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
+	public String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
+	public String CLUSTER_BDS_COMMAND = "bds exec ";
+
+	public int MIN_EXTRA_TIME = 15;
+	public int MAX_EXTRA_TIME = 120;
+
+	protected Timer timeClusterStat;
 
 	public ExecutionerCluster(Config config) {
 		super(config);
@@ -41,6 +53,15 @@ public class ExecutionerCluster extends Executioner {
 		// Create a cluster having only one host with 'inifinite' capacity
 		cluster = new Cluster();
 		new HostInifinte(cluster);
+	}
+
+	/**
+	 * Get states for all tasks running in the cluster
+	 * @return
+	 */
+	HashMap<String, String> clusterStat() {
+		HashMap<String, String> stats = new HashMap<String, String>();
+		return stats;
 	}
 
 	/**
@@ -127,6 +148,21 @@ public class ExecutionerCluster extends Executioner {
 		return cmd;
 	}
 
+	/**
+	 * Find a running task given a PID
+	 * @param pid
+	 * @param state
+	 */
+	protected Task findRunningTaskByPid(String pid) {
+		String pidPart = pid.split("\\.")[0]; // Use only the first part before '.'
+
+		// Find task by PID
+		for (Task t : tasksRunning.values())
+			if (t.getPid().equals(pid) || t.getPid().equals(pidPart)) return t;
+
+		return null;
+	}
+
 	@Override
 	protected void followStop(Task task) {
 		super.followStop(task);
@@ -139,6 +175,67 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	/**
+	 * Check that task are still scheduled in the cluster system
+	 * 
+	 * TODO: We should try to implement an XML parsing. Unfortunately, some 
+	 * 		 clusters do not have 'qstat -xml' option (yikes!) 
+	 */
+	protected void monitorTaskCluster() {
+		Gpr.debug("QSTAT");
+
+		//---
+		// Run command (qstat)
+		//---
+
+		// Prepare command line arguments
+		ArrayList<String> args = new ArrayList<String>();
+		StringBuilder cmdsb = new StringBuilder();
+		for (String arg : CLUSTER_STAT_COMMAND) {
+			args.add(arg);
+			cmdsb.append(" " + arg);
+		}
+
+		// Execute command
+		ExecResult execResult = Exec.exec(args, true);
+
+		// Any problems? Report
+		if (execResult.exitValue > 0) {
+			Timer.showStdErr("WARNING: There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'");
+			return;
+		}
+
+		//---
+		// Parse command's output
+		//---
+		String stdout = execResult.stdOut;
+
+		HashSet<String> taskFoundId = new HashSet<String>();
+		for (String line : stdout.split("\n")) {
+			// Parse fields
+			String fields[] = line.split("\\s+");
+
+			if (fields.length > 1) {
+				String pid = fields[0]; // We only obtain the PID
+				Task task = findRunningTaskByPid(pid);
+				if (task != null) {
+					taskFoundId.add(task.getId());
+					Gpr.debug("FOUND: " + task.getPid());
+				}
+			}
+		}
+
+		// Any 'running' task that was not found should be marked asMark tasks as failed
+		for (Task task : tasksRunning.values())
+			if (!taskFoundId.contains(task.getId()) // Task not found in cluster's queue?
+					&& (task.elapsedSecs() > MIN_QUEUE_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
+			) {
+				Gpr.debug("TASK NOT FOUND:\tID '" + task.getId() + "'\tPID '" + task.getPid() + "'");
+				task.setErrorMsg("Task dissapeared from cluster's queue. Task or node failure?");
+				taskFinished(task, TaskState.ERROR, Task.EXITCODE_ERROR);
+			}
+	}
+
+	/**
 	 * An OS command to kill this task
 	 * @param task
 	 * @return
@@ -146,6 +243,26 @@ public class ExecutionerCluster extends Executioner {
 	@Override
 	public String[] osKillCommand(Task task) {
 		return CLUSTER_KILL_COMMAND;
+	}
+
+	@Override
+	protected boolean runExecutionerLoop() {
+		boolean ret = super.runExecutionerLoop();
+		if (isClusterStatTime()) monitorTaskCluster(); // Check that task are still scheduled in the cluster system
+		return ret;
+	}
+
+	/**
+	 * Should we show a report?
+	 * @return
+	 */
+	protected boolean isClusterStatTime() {
+		if (timeClusterStat == null) timeClusterStat = new Timer();
+		if (timeClusterStat.elapsedSecs() > CLUSTER_STAT_INTERVAL) {
+			timeClusterStat.start(); // Restart timer
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -165,39 +282,6 @@ public class ExecutionerCluster extends Executioner {
 		monitorTask.start(); // Create a 'taskDone' process (get information when a process finishes)
 		super.runExecutionerLoopBefore();
 	}
-
-	//	/**
-	//	 * Select next task to run and which host it should run into
-	//	 * For a cluster system, we rely on the cluster management to do this, so here we just schedule the task 
-	//	 * @return
-	//	 */
-	//	@Override
-	//	protected Tuple<Task, Host> selectTask() {
-	//		// Nothing to run?
-	//		if (tasksToRun.isEmpty()) return null;
-	//
-	//		for (Task task : tasksToRun) {
-	//			// Already selected? Skip
-	//			if (tasksSelected.containsKey(task)) continue;
-	//
-	//			// Can we run this task? 
-	//			if (task.canRun()) {
-	//				// Select host (we only have one)
-	//				for (Host host : cluster) {
-	//
-	//					// Do we have enough resources to run this task in this host?
-	//					if (host.getResources().hasResources(task.getResources())) {
-	//						// OK, execute this task in this host						
-	//						add(task, host); // Add task to host (make sure resources are reserved)
-	//						return new Tuple<Task, Host>(task, host);
-	//					}
-	//				}
-	//			}
-	//		}
-	//
-	//		// Cannot run any task in any host
-	//		return null;
-	//	}
 
 	@Override
 	public synchronized void taskRunning(Task task) {
