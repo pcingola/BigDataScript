@@ -17,7 +17,7 @@ cpusMapping     := 4						# Numner of CPUs to use in each mapping process
 cpusCalling     := 2						# Numner of CPUs to use in each calling process
 numCallers      := 250						# Number of variant caller processes to use. This number is high to improve paralelization
 splitNumReads   := 500 * 1000               # Split fastq files to 'splitNumReads' lines.
-mapSortMemory   := 1 * M                    # Memory used while sorting BAM file (samtools sort)
+mapSortMemory   := 1 * G                    # Memory used while sorting BAM file (samtools sort)
 
 #-------------------------------------------------------------------------------
 # Main
