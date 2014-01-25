@@ -99,6 +99,10 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		return funcs;
 	}
 
+	public BigDataScriptNode getNode() {
+		return node;
+	}
+
 	public Scope getParent() {
 		return parent;
 	}

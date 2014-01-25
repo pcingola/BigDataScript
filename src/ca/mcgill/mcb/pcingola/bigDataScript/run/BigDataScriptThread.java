@@ -356,7 +356,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Show scopes
 		for (Scope scope = getScope(); scope != null; scope = scope.getParent()) {
 			if (!scope.isEmpty()) {
-				//				System.out.println("--- Scope: " + scope.get + " ---");
+				BigDataScriptNode node = scope.getNode();
+
+				String scopeInfo = "";
+				if ((node != null) && (scope.getNode().getFileName() != null)) scopeInfo = scope.getNode().getFileName() + ":" + scope.getNode().getLineNum();
+				System.out.println("--- Scope: " + scopeInfo + " ---");
+
 				for (String varName : scope) {
 					System.out.println(scope.getSymbol(varName));
 				}
