@@ -29,8 +29,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ExecutionerCluster extends Executioner {
 
-	// public static String FAKE_CLUSTER = "";
-	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
+	public static String FAKE_CLUSTER = "";
+	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
 	public int MIN_QUEUE_TIME = 60; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
 	public int CLUSTER_STAT_INTERVAL = 5;
