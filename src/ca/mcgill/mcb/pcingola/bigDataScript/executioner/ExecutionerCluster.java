@@ -23,6 +23,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ExecutionerCluster extends Executioner {
 
+	public enum ClusterType {
+		SGE, MOAB
+	};
+
 	public static String FAKE_CLUSTER = "";
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
@@ -33,6 +37,8 @@ public class ExecutionerCluster extends Executioner {
 
 	public int MIN_EXTRA_TIME = 15;
 	public int MAX_EXTRA_TIME = 120;
+
+	ClusterType clusterType = ClusterType.SGE;
 
 	public ExecutionerCluster(Config config) {
 		super(config);
@@ -85,13 +91,6 @@ public class ExecutionerCluster extends Executioner {
 		HostResources res = task.getResources();
 		StringBuilder resSb = new StringBuilder();
 
-		//		// MOAB style
-		//		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "nodes=1:ppn=" + res.getCpus());
-		//		if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "mem=" + res.getMem());
-
-		// SGE style
-		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "-pe orte" + res.getCpus());
-
 		// Timeout 
 		// We want to assign slightly larger timeout to the cluster (qsub/msub), because 
 		// we prefer bds to kill the process (it's cleaner and we get exitCode file)
@@ -102,12 +101,33 @@ public class ExecutionerCluster extends Executioner {
 		if (extraTime > MAX_EXTRA_TIME) extraTime = MAX_EXTRA_TIME;
 		int clusterTimeout = realTimeout + extraTime;
 
-		if (realTimeout > 0) resSb.append((resSb.length() > 0 ? "," : "") + "walltime=" + clusterTimeout);
+		// Add command line parameters
+		switch (clusterType) {
+		case MOAB:
+			// MOAB style
+			if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "nodes=1:ppn=" + res.getCpus());
+			if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "mem=" + res.getMem());
+			if (realTimeout > 0) resSb.append((resSb.length() > 0 ? "," : "") + "walltime=" + clusterTimeout);
 
-		// Any resources requested? Add command line
-		if (resSb.length() > 0) {
-			args.add("-l");
-			args.add(resSb.toString());
+			// Any resources requested? Add command line
+			if (resSb.length() > 0) {
+				args.add("-l");
+				args.add(resSb.toString());
+			}
+
+			break;
+
+		case SGE:
+			// SGE style
+			if (res.getCpus() > 0) {
+				args.add("-pe");
+				args.add("orte");
+				args.add("" + res.getCpus());
+			}
+			break;
+
+		default:
+			throw new RuntimeException("Unknown cluster type '" + clusterType + "'");
 		}
 
 		// Stdout 
