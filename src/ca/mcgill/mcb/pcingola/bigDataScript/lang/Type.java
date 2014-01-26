@@ -25,6 +25,8 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	public final static Type INT = Type.get(PrimitiveType.INT);
 	public final static Type REAL = Type.get(PrimitiveType.REAL);
 	public final static Type STRING = Type.get(PrimitiveType.STRING);
+	public final static Type LIST = Type.get(PrimitiveType.LIST);
+	public final static Type MAP = Type.get(PrimitiveType.MAP);
 	public final static Type FAKE = Type.get(PrimitiveType.FAKE); // Fake type (for serialization)
 	public final static Type ANY = Type.get(PrimitiveType.ANY); // ANY type (wildcard type)
 
@@ -95,6 +97,8 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 		put(INT);
 		put(REAL);
 		put(STRING);
+		put(LIST);
+		put(MAP);
 		put(FAKE);
 		put(ANY);
 	}
@@ -325,7 +329,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 
 	@Override
 	public String serializeSave(BigDataScriptSerializer serializer) {
-		return "";
+		return ""; // We don't save data type nodes
 	}
 
 	@Override

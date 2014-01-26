@@ -81,6 +81,16 @@ public class TestCasesCheckpoint extends TestCase {
 	}
 
 	@Test
+	public void test04_2() {
+		runAndCheckpoint("test/checkpoint_04.bds", null, "i", "3");
+	}
+
+	@Test
+	public void test04_3() {
+		runAndCheckpoint("test/checkpoint_04.bds", null, "ss", "one\ttwo");
+	}
+
+	@Test
 	public void test05() {
 		runAndCheckpoint("test/checkpoint_05.bds", null, "l0", "ONE");
 	}

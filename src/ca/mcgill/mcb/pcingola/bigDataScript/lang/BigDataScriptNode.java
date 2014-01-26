@@ -491,6 +491,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
+
 		// Use ID from file
 		updateId((int) serializer.getNextFieldInt());
 		lineNum = (int) serializer.getNextFieldInt();

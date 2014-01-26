@@ -220,17 +220,25 @@ public class BigDataScriptNodeFactory {
 	 * @return
 	 */
 	public BigDataScriptNode realNode(BigDataScriptNode fakeNode) {
-		if (fakeNode == null) return null;
+		if (fakeNode == null) return null; // Nothing to do
+		if (!fakeNode.isFake()) return fakeNode; // Real node? don't replace
+
+		// Type nodes are not replaced, just ID is updated
+		if (fakeNode instanceof Type) {
+			int newId = getNextNodeId(fakeNode);
+			fakeNode.updateId(newId);
+			return fakeNode;
+		}
 
 		// Is it a fake node? => Replace by real node
-		if (fakeNode.isFake()) {
-			// Find real node based on fake ID
-			int nodeId = -fakeNode.getId(); // Fake IDs are the negative values of real IDs
-			BigDataScriptNode realNode = BigDataScriptNodeFactory.get().getNode(nodeId);
-			if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node :" + nodeId);
-			return realNode;
-		}
-		return null;
+		// Find real node based on fake ID
+		int nodeId = -fakeNode.getId(); // Fake IDs are the negative values of real IDs
+		BigDataScriptNode realNode = BigDataScriptNodeFactory.get().getNode(nodeId);
+
+		// Check that node was replaced 
+		if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node :" + nodeId);
+
+		return realNode;
 	}
 
 	public void setCreateFakeIds(boolean createFakeIds) {
@@ -241,5 +249,6 @@ public class BigDataScriptNodeFactory {
 		if (debug) Gpr.debug("Update node ID: " + oldId + " -> " + newId + "\t" + node.getClass().getSimpleName());
 		nodesById.remove(oldId);
 		if (newId != 0) nodesById.put(newId, node);
+		if (nodeNumber <= newId) nodeNumber = newId + 1;
 	}
 }

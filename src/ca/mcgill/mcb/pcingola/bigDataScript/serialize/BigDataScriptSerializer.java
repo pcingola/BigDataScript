@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -20,6 +22,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrimitiveType;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.ProgramCounter;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -35,6 +38,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class BigDataScriptSerializer {
 
 	public static final String LIST_IDENTIFIER = "list:";
+	public static final String MAP_IDENTIFIER = "map:";
 	public static final String NODE_IDENTIFIER = "node:";
 	public static final String TYPE_IDENTIFIER = "type:";
 
@@ -95,6 +99,9 @@ public class BigDataScriptSerializer {
 		case LIST:
 			return getNextFieldList((TypeList) type);
 
+		case MAP:
+			return getNextFieldMap((TypeMap) type);
+
 		default:
 			throw new RuntimeException("Cannot parse type '" + type + "'");
 		}
@@ -126,6 +133,27 @@ public class BigDataScriptSerializer {
 		}
 
 		return list;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public HashMap getNextFieldMap(TypeMap type) {
+		HashMap map = new HashMap();
+
+		// Sanity check: Is it a list?
+		String nextField = getNextField();
+		if (!nextField.startsWith(MAP_IDENTIFIER)) throw new RuntimeException("Serialization error: '" + MAP_IDENTIFIER + "' expected instead of '" + nextField + "'");
+
+		// Parse list size
+		String sizeStr = nextField.substring(MAP_IDENTIFIER.length());
+		int size = Gpr.parseIntSafe(sizeStr);
+
+		for (int i = 0; i < size; i++) {
+			Object key = getNextFieldString();
+			Object value = getNextField(type.getBaseType());
+			map.put(key, value);
+		}
+
+		return map;
 	}
 
 	/**
@@ -164,6 +192,9 @@ public class BigDataScriptSerializer {
 		if (fields[0].equals(PrimitiveType.LIST.toString())) {
 			Type baseType = Type.get(fields[1]);
 			return TypeList.get(baseType);
+		} else if (fields[0].equals(PrimitiveType.MAP.toString())) {
+			Type baseType = Type.get(fields[1]);
+			return TypeMap.get(baseType);
 		}
 
 		// Error
@@ -198,9 +229,7 @@ public class BigDataScriptSerializer {
 		// Parse everything else
 		Scope.resetGlobalScope();
 
-		BigDataScriptNodeFactory.get().setCreateFakeIds(true);
 		List<BigDataScriptThread> list = parseLines(lines, null);
-		BigDataScriptNodeFactory.get().setCreateFakeIds(false);
 
 		return list;
 	}
@@ -214,7 +243,6 @@ public class BigDataScriptSerializer {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object parse(Class fieldClass, Class componentType) {
-
 		if (fieldClass.isArray()) {
 			// Create a list
 			ArrayList list = new ArrayList();
@@ -232,8 +260,9 @@ public class BigDataScriptSerializer {
 			return list.toArray(array);
 		} else if (fieldClass == PrePostOperation.class) return PrePostOperation.valueOf(getNextField());
 		else if (fieldClass == PrimitiveType.class) return PrimitiveType.valueOf(getNextField());
-		else if (fieldClass.getCanonicalName().startsWith(Type.class.getCanonicalName())) return getNextFieldType();
-		else if (fieldClass.getCanonicalName().startsWith(BigDataScriptNodeFactory.get().packageName())) {
+		else if (fieldClass.getCanonicalName().startsWith(Type.class.getCanonicalName())) {
+			return getNextFieldType();
+		} else if (fieldClass.getCanonicalName().startsWith(BigDataScriptNodeFactory.get().packageName())) {
 			BigDataScriptNode csnode = BigDataScriptNodeFactory.get().factory(fieldClass.getCanonicalName(), null, null);
 			csnode.setFakeId(getNextFieldNodeId());
 			return csnode;
@@ -254,13 +283,16 @@ public class BigDataScriptSerializer {
 	 * @param classNameFilter : If not null, only parse lines matching this className
 	 */
 	List<BigDataScriptThread> parseLines(String lines[], String classNameFilter) {
-		ArrayList<BigDataScriptThread> bigDataScriptThreads = new ArrayList<BigDataScriptThread>();
+		// Set fake IDs on
+		BigDataScriptNodeFactory.get().setCreateFakeIds(true);
 
+		// Initialize
+		ArrayList<BigDataScriptThread> bigDataScriptThreads = new ArrayList<BigDataScriptThread>();
 		Scope currScope = null;
 		ArrayList<Scope> scopes = new ArrayList<Scope>();
 		BigDataScriptThread currCsThread = null;
 
-		// Parse each line
+		// Parse lines
 		for (int i = 0; i < lines.length; i++) {
 			// Update line info
 			lineNum = i + 1;
@@ -350,6 +382,9 @@ public class BigDataScriptSerializer {
 			}
 		}
 
+		// Set fake IDs off
+		BigDataScriptNodeFactory.get().setCreateFakeIds(false);
+
 		//---
 		// Replace fake nodes by real nodes
 		//---
@@ -409,9 +444,20 @@ public class BigDataScriptSerializer {
 
 		if (value instanceof List) {
 			List list = (List) value;
-			StringBuilder sb = new StringBuilder("list:" + list.size());
+			StringBuilder sb = new StringBuilder(LIST_IDENTIFIER + list.size());
 			for (Object o : list)
 				sb.append("\t" + serializeSaveValue(o));
+
+			return sb.toString();
+		}
+
+		if (value instanceof Map) {
+			Map map = (Map) value;
+			StringBuilder sb = new StringBuilder(MAP_IDENTIFIER + map.size());
+			for (Object o : map.keySet()) {
+				sb.append("\t" + serializeSaveValue(o));
+				sb.append("\t" + serializeSaveValue(map.get(o)));
+			}
 
 			return sb.toString();
 		}
