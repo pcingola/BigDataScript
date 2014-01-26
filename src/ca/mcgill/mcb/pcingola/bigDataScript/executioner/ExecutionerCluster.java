@@ -84,8 +84,13 @@ public class ExecutionerCluster extends Executioner {
 		// Add resources request
 		HostResources res = task.getResources();
 		StringBuilder resSb = new StringBuilder();
-		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "nodes=1:ppn=" + res.getCpus());
-		if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "mem=" + res.getMem());
+
+		//		// MOAB style
+		//		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "nodes=1:ppn=" + res.getCpus());
+		//		if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "mem=" + res.getMem());
+
+		// SGE style
+		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "-pe orte" + res.getCpus());
 
 		// Timeout 
 		// We want to assign slightly larger timeout to the cluster (qsub/msub), because 
