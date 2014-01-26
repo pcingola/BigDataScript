@@ -375,7 +375,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	}
 
 	/**
-	 * Replace fake nodes by real nodes
+	 * Replace fake nodes by real nodes (serialization)
 	 */
 	public void replaceFake() {
 
@@ -395,13 +395,11 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 								// Is it a fake node? => Replace by real node
 								if (csnode.isFake()) {
-									// Find real node based on fake ID
-									int nodeId = -csnode.getId(); // Fake IDs are the negative values of real IDs
-									BigDataScriptNode trueCsnode = BigDataScriptNodeFactory.get().getNode(nodeId);
-									if ((nodeId > 0) && (trueCsnode == null)) throw new RuntimeException("Cannot replace fake node :" + nodeId);
+									// Find real node based on fake one
+									BigDataScriptNode trueCsnode = BigDataScriptNodeFactory.get().realNode(csnode);
 
 									// Replace this array element 
-									if (debug) Gpr.debug(getClass().getSimpleName() + "." + field.getName() + "[" + idx + "] = \tNode id:" + nodeId + "\t" + (trueCsnode != null ? trueCsnode.getClass().getSimpleName() : "null"));
+									if (debug) Gpr.debug(getClass().getSimpleName() + "." + field.getName() + "[" + idx + "] = \tNode id:" + trueCsnode.getId() + "\t" + (trueCsnode != null ? trueCsnode.getClass().getSimpleName() : "null"));
 									Array.set(fieldObj, idx, trueCsnode);
 								}
 							}
@@ -413,14 +411,11 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 							// Is it a fake node? => Replace by real node
 							if (csnode.isFake()) {
-								// Find real node based on fake ID
-								int nodeId = -csnode.getId(); // Fake IDs are the negative values of real IDs
-								BigDataScriptNode trueCsnode = BigDataScriptNodeFactory.get().getNode(nodeId);
-								if ((nodeId > 0) && (trueCsnode == null)) //
-									throw new RuntimeException("Cannot replace fake node :" + nodeId);
+								// Find real node based on fake one
+								BigDataScriptNode trueCsnode = BigDataScriptNodeFactory.get().realNode(csnode);
 
 								// Set field to real node
-								if (debug) Gpr.debug(getClass().getSimpleName() + "." + field.getName() + " = \tNode id:" + nodeId + "\t" + (trueCsnode != null ? trueCsnode.getClass().getSimpleName() : "null"));
+								if (debug) Gpr.debug(getClass().getSimpleName() + "." + field.getName() + " = \tNode id:" + trueCsnode.getId() + "\t" + (trueCsnode != null ? trueCsnode.getClass().getSimpleName() : "null"));
 								field.set(this, trueCsnode);
 							}
 						}

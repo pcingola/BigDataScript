@@ -257,6 +257,7 @@ public class BigDataScriptSerializer {
 		ArrayList<BigDataScriptThread> bigDataScriptThreads = new ArrayList<BigDataScriptThread>();
 
 		Scope currScope = null;
+		ArrayList<Scope> scopes = new ArrayList<Scope>();
 		BigDataScriptThread currCsThread = null;
 
 		// Parse each line
@@ -300,8 +301,8 @@ public class BigDataScriptSerializer {
 					Scope scope = new Scope();
 					if (currScope != null) currScope.setParent(scope);
 					currScope = scope;
+					scopes.add(scope);
 					bigDataScriptSerialize = currScope;
-
 				} else if (clazz.equals(ScopeSymbol.class.getSimpleName())) {
 					// Parse ScopeSymbol
 					bigDataScriptSerialize = new ScopeSymbol();
@@ -354,6 +355,9 @@ public class BigDataScriptSerializer {
 		//---
 		for (BigDataScriptNode csnode : serializedNodes)
 			if (csnode != null) csnode.replaceFake();
+
+		for (Scope scope : scopes)
+			scope.replaceFake();
 
 		return bigDataScriptThreads;
 	}

@@ -214,6 +214,25 @@ public class BigDataScriptNodeFactory {
 		return packageName; // Add package name
 	}
 
+	/**
+	 * Get the 'real node' corresponding to this 'fake node' (this is used during serialization)
+	 * @param fakeNode
+	 * @return
+	 */
+	public BigDataScriptNode realNode(BigDataScriptNode fakeNode) {
+		if (fakeNode == null) return null;
+
+		// Is it a fake node? => Replace by real node
+		if (fakeNode.isFake()) {
+			// Find real node based on fake ID
+			int nodeId = -fakeNode.getId(); // Fake IDs are the negative values of real IDs
+			BigDataScriptNode realNode = BigDataScriptNodeFactory.get().getNode(nodeId);
+			if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node :" + nodeId);
+			return realNode;
+		}
+		return null;
+	}
+
 	public void setCreateFakeIds(boolean createFakeIds) {
 		this.createFakeIds = createFakeIds;
 	}

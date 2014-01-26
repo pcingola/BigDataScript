@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.ParentNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
@@ -207,15 +209,28 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		return symbols.keySet().iterator();
 	}
 
+	/**
+	 * Replace fake nodes by real nodes (serialization)
+	 */
+	public void replaceFake() {
+		node = BigDataScriptNodeFactory.get().realNode(node);
+	}
+
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		// Nothing to do
+		int nodeId = serializer.getNextFieldNodeId();
+		if (nodeId != 0) {
+			// Node is not null
+			node = new ParentNode();
+			node.setFakeId(nodeId);
+		}
 	}
 
 	@Override
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		StringBuilder out = new StringBuilder();
-		out.append("Scope\n");
+		out.append("Scope\t" + serializer.serializeSaveValue(node) + "\n");
 
 		for (ScopeSymbol ss : symbols.values()) {
 			if (ss.getType().isNative()) {
@@ -251,5 +266,4 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 		return sb.toString();
 	}
-
 }
