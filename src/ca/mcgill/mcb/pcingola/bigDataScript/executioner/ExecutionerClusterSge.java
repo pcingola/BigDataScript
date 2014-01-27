@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ExecutionerClusterSge extends ExecutionerCluster {
 
-	public static final String CONFIG_SGE_CPUS = "sge.cpus";
+	public static final String CONFIG_SGE_PE = "sge.pe";
 	public static final String CONFIG_SGE_MEM = "sge.mem";
 	public static final String CONFIG_SGE_TIMEOUT = "sge.timeout";
 
@@ -33,8 +33,8 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 		pidPattern = Pattern.compile("Your job (\\S+)");
 
 		// SGE parameters from config file
-		sgePe = config.getString(CONFIG_SGE_CPUS, "");
-		if (sgePe.isEmpty()) throw new RuntimeException("Missing config file entry '" + CONFIG_SGE_CPUS + "'.");
+		sgePe = config.getString(CONFIG_SGE_PE, "");
+		if (sgePe.isEmpty()) throw new RuntimeException("Missing config file entry '" + CONFIG_SGE_PE + "'.");
 
 		sgeMem = config.getString(CONFIG_SGE_MEM, "");
 		if (sgeMem.isEmpty()) throw new RuntimeException("Missing config file entry '" + CONFIG_SGE_MEM + "'.");
@@ -63,7 +63,7 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 
 		// Memory
 		if (res.getMem() > 0) {
-			if (sgeMem.isEmpty()) throw new RuntimeException("Missing config file entry '" + CONFIG_SGE_CPUS + "'.");
+			if (sgeMem.isEmpty()) throw new RuntimeException("Missing config file entry '" + CONFIG_SGE_PE + "'.");
 			args.add("-l");
 			args.add(sgeMem + "=" + res.getMem());
 		}

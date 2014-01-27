@@ -15,7 +15,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdCluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -27,6 +26,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ExecutionerCluster extends Executioner {
 
+	// FAKE_CLUSTER: Only used for debugging when you don't have a cluster (or don't want to wait for cluster's respose)
 	public static String FAKE_CLUSTER = "";
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 
@@ -35,8 +35,8 @@ public class ExecutionerCluster extends Executioner {
 	public static String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
 	public static String CLUSTER_BDS_COMMAND = "bds exec ";
 
-	public int MIN_EXTRA_TIME = 15;
-	public int MAX_EXTRA_TIME = 120;
+	public int MIN_EXTRA_TIMEOUT = 15;
+	public int MAX_EXTRA_TIMEOUT = 120;
 
 	Pattern pidPattern;
 
@@ -90,8 +90,8 @@ public class ExecutionerCluster extends Executioner {
 		if (realTimeout < 0) return 0;
 
 		int extraTime = (int) (realTimeout * 0.1);
-		if (extraTime < MIN_EXTRA_TIME) extraTime = MIN_EXTRA_TIME;
-		if (extraTime > MAX_EXTRA_TIME) extraTime = MAX_EXTRA_TIME;
+		if (extraTime < MIN_EXTRA_TIMEOUT) extraTime = MIN_EXTRA_TIMEOUT;
+		if (extraTime > MAX_EXTRA_TIMEOUT) extraTime = MAX_EXTRA_TIMEOUT;
 		int clusterTimeout = realTimeout + extraTime;
 
 		return clusterTimeout;
@@ -208,7 +208,6 @@ public class ExecutionerCluster extends Executioner {
 			Matcher matcher = pidPattern.matcher(line);
 			if (matcher.find()) {
 				String pid = matcher.group(1);
-				Gpr.debug("Match PID: '" + pid + "'");
 				return pid;
 			}
 		}
