@@ -47,7 +47,7 @@ done
 #---
 # Build bds
 #---
-cd
+cd /bdsdata
 mkdir workspace
 cd workspace
 git clone https://github.com/pcingola/BigDataScript.git
@@ -56,6 +56,9 @@ cd BigDataScript/
 
 cp -rvf $HOME/.bds /home/sgeadmin/
 chown -Rvf sgeadmin: /home/sgeadmin/.bds
+
+cd /home/sgeadmin/.bds
+ln -s /home/sgeadmin/workspace/BigDataScript/bds.config
 
 #---
 # Add PATH to bash_profile
@@ -76,6 +79,7 @@ cd /home/sgeadmin/
 ln -s /bdsdata/bds_pipeline
 ln -s /bdsdata/snpEff
 ln -s /bdsdata/tools
+ln -s /bdsdata/workspace
 
 #---
 # Change owner

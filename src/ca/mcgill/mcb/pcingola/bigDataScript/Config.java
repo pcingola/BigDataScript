@@ -116,6 +116,7 @@ public class Config {
 		if (monitorTask == null) {
 			monitorTask = new MonitorTask();
 			monitorTask.setDebug(isDebug());
+			monitorTask.start();
 		}
 		return monitorTask;
 	}

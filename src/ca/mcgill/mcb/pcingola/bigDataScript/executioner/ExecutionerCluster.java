@@ -216,24 +216,6 @@ public class ExecutionerCluster extends Executioner {
 		return line;
 	}
 
-	/**
-	 * Clean up after run loop
-	 */
-	@Override
-	protected void runExecutionerLoopAfter() {
-		super.runExecutionerLoopAfter();
-		monitorTask.kill(); // Kill taskDone process
-	}
-
-	/**
-	 * Initialize before run loop
-	 */
-	@Override
-	protected void runExecutionerLoopBefore() {
-		monitorTask.start(); // Create a 'taskDone' process (get information when a process finishes)
-		super.runExecutionerLoopBefore();
-	}
-
 	@Override
 	public synchronized void taskRunning(Task task) {
 		super.taskRunning(task);
