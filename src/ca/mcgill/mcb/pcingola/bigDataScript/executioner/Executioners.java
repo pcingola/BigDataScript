@@ -77,7 +77,7 @@ public class Executioners {
 		case SSH:
 			executioner = new ExecutionerSsh(config);
 			break;
-		case CLUSTER:
+		case CLUSTER: // Cluster defaults to MOAB (probably not a wise default)
 		case MOAB:
 			executioner = new ExecutionerCluster(config);
 			break;
