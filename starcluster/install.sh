@@ -63,14 +63,14 @@ ln -s /home/sgeadmin/workspace/BigDataScript/bds.config
 #---
 # Add PATH to bash_profile
 #---
-echo 'export PATH=$PATH:$HOME/tools/samtools'            >> $HOME/.bash_profile
-echo 'export PATH=$PATH:$HOME/tools/samtools/bcftools/'  >> $HOME/.bash_profile
-echo 'export PATH=$PATH:$HOME/tools/bwa'                 >> $HOME/.bash_profile
-echo 'export PATH=$PATH:$HOME/tools/tabix'               >> $HOME/.bash_profile
-echo 'export PATH=$PATH:$HOME/.bds/'                     >> $HOME/.bash_profile
+echo 'export PATH=$PATH:$HOME/tools/samtools'            >> $HOME/.bashrc
+echo 'export PATH=$PATH:$HOME/tools/samtools/bcftools/'  >> $HOME/.bashrc
+echo 'export PATH=$PATH:$HOME/tools/bwa'                 >> $HOME/.bashrc
+echo 'export PATH=$PATH:$HOME/tools/tabix'               >> $HOME/.bashrc
+echo 'export PATH=$PATH:$HOME/.bds/'                     >> $HOME/.bashrc
 
-cp .bash_profile /home/sgeadmin/
-chown sgeadmin: /home/sgeadmin/.bash_profile
+cp .bashrc /home/sgeadmin/
+chown sgeadmin: /home/sgeadmin/.bashrc
 
 #---
 # Create links

@@ -12,6 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
@@ -400,6 +401,8 @@ public abstract class Executioner extends Thread {
 
 				// There is no host that can execute this task?
 				if (!canBeExecuted) {
+					Gpr.debug("Cluster info: " + cluster.info());
+					Gpr.debug("Cluster: " + cluster);
 					task.setErrorMsg("Not enough resources to execute task: " + task.getResources());
 
 					// Mark the task to be finished (cannot be done here due to concurrent modification)

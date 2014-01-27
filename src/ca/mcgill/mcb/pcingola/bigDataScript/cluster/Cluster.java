@@ -112,6 +112,7 @@ public class Cluster implements Iterable<Host> {
 
 			HostHealth hh = h.getHealth();
 			HostResources hr = h.getResources();
+			HostResources hra = h.getResourcesAvaialble();
 
 			totHosts++;
 			if (hr.getCpus() > 0) {
@@ -121,8 +122,8 @@ public class Cluster implements Iterable<Host> {
 
 				if (hh.isAvailable()) {
 					availHosts++;
-					availCpus += hr.getCpus();
-					availMem += hr.getMem() * (1.0 - hh.getMemUsage());
+					availCpus += hra.getCpus();
+					availMem += hra.getMem() * (1.0 - hh.getMemUsage());
 					availFs += hh.getFsAvail();
 				}
 			}
@@ -179,8 +180,10 @@ public class Cluster implements Iterable<Host> {
 		List<String> hostNames = new LinkedList<String>();
 		hostNames.addAll(hosts.keySet());
 		Collections.sort(hostNames);
-		for (String hname : hostNames)
-			sb.append("\t" + hosts.get(hname) + "\n");
+		for (String hname : hostNames) {
+			Host h = hosts.get(hname);
+			sb.append("\t" + h + "\tResources: " + h.getResources() + "\tAvailable: " + h.getResourcesAvaialble());
+		}
 
 		return sb.toString();
 	}
