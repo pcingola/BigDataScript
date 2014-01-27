@@ -58,9 +58,6 @@ public class CommandParser {
 
 			// Parse results (if any)
 			if ((result != null) && (result.length() > 0)) {
-				// We were able to connect and got some results, so probably the host is alive.
-				host.getHealth().setAlive(true);
-
 				//---
 				// Parse the results. Split each command and parse separately
 				//---
@@ -83,6 +80,9 @@ public class CommandParser {
 
 				// Parse last command
 				if (command != null) parse(command, lines);
+
+				// We were able to connect and got some results, so probably the host is alive.
+				host.getHealth().setAlive(true);
 			} else {
 				if (debug) Gpr.debug("Error trying to connect: Empty result string");
 				// Could not connect
