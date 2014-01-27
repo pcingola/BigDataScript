@@ -208,7 +208,7 @@ public class ExecutionerCluster extends Executioner {
 			Matcher matcher = pidPattern.matcher(line);
 			if (matcher.find()) {
 				String pid = matcher.group(1);
-				Gpr.debug("Match: |" + pid + "|");
+				Gpr.debug("Match PID: '" + pid + "'");
 				return pid;
 			}
 		}

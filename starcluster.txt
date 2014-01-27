@@ -98,7 +98,6 @@
 	$ cd
 	$ mkdir workspace
 	$ git clone https://github.com/pcingola/BigDataScript.git
-	$ mkdir bin
 	$ ./scripts/install.sh
 	
 - Terminate cluster
