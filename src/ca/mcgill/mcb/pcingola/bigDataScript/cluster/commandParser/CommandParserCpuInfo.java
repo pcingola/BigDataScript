@@ -21,6 +21,7 @@ public class CommandParserCpuInfo extends CommandParser {
 		int countCpus = 0;
 
 		for (int line = 0; line < cmdResult.length; line++) {
+			Gpr.debug(line + "\t" + cmdResult[line]);
 			String fields[] = cmdResult[line].replace(':', ' ').split("\\s+");
 
 			if (fields[0].equalsIgnoreCase("processor")) {
