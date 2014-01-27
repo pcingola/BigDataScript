@@ -3,6 +3,9 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
@@ -12,20 +15,17 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdCluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * Execute tasks in a cluster.
+ * Execute tasks in a MOAB cluster.
  * 
  * All commands are run using 'qsub' (or equivalent) commands
  * 
  * @author pcingola
  */
 public class ExecutionerCluster extends Executioner {
-
-	public enum ClusterType {
-		SGE, MOAB
-	};
 
 	public static String FAKE_CLUSTER = "";
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
@@ -38,7 +38,7 @@ public class ExecutionerCluster extends Executioner {
 	public int MIN_EXTRA_TIME = 15;
 	public int MAX_EXTRA_TIME = 120;
 
-	ClusterType clusterType = ClusterType.SGE;
+	Pattern pidPattern;
 
 	public ExecutionerCluster(Config config) {
 		super(config);
@@ -49,6 +49,52 @@ public class ExecutionerCluster extends Executioner {
 		// Create a cluster having only one host with 'inifinite' capacity
 		cluster = new Cluster();
 		new HostInifinte(cluster);
+	}
+
+	/**
+	 * Add resource options to command line parameters
+	 * 
+	 * @param task
+	 * @param args
+	 */
+	protected void addResources(Task task, List<String> args) {
+		StringBuilder resSb = new StringBuilder();
+
+		// Add resources request
+		HostResources res = task.getResources();
+
+		int clusterTimeout = calcTimeOut(res);
+
+		// MOAB style
+		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "nodes=1:ppn=" + res.getCpus());
+		if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "mem=" + res.getMem());
+		if (clusterTimeout > 0) resSb.append((resSb.length() > 0 ? "," : "") + "walltime=" + clusterTimeout);
+
+		// Any resources requested? Add command line
+		if (resSb.length() > 0) {
+			args.add("-l");
+			args.add(resSb.toString());
+		}
+	}
+
+	/**
+	 * Calculate timeout parameter. We want to assign slightly larger timeout 
+	 * to the cluster (qsub/msub), because we prefer bds to kill the process (it's 
+	 * cleaner and we get exitCode file)
+	 * 
+	 * @param res
+	 * @return
+	 */
+	protected int calcTimeOut(HostResources res) {
+		int realTimeout = (int) res.getTimeout();
+		if (realTimeout < 0) return 0;
+
+		int extraTime = (int) (realTimeout * 0.1);
+		if (extraTime < MIN_EXTRA_TIME) extraTime = MIN_EXTRA_TIME;
+		if (extraTime > MAX_EXTRA_TIME) extraTime = MAX_EXTRA_TIME;
+		int clusterTimeout = realTimeout + extraTime;
+
+		return clusterTimeout;
 	}
 
 	/**
@@ -89,46 +135,10 @@ public class ExecutionerCluster extends Executioner {
 
 		// Add resources request
 		HostResources res = task.getResources();
-		StringBuilder resSb = new StringBuilder();
-
-		// Timeout 
-		// We want to assign slightly larger timeout to the cluster (qsub/msub), because 
-		// we prefer bds to kill the process (it's cleaner and we get exitCode file)
 		int realTimeout = (int) res.getTimeout();
-		if (realTimeout < 0) realTimeout = 0;
-		int extraTime = (int) (realTimeout * 0.1);
-		if (extraTime < MIN_EXTRA_TIME) extraTime = MIN_EXTRA_TIME;
-		if (extraTime > MAX_EXTRA_TIME) extraTime = MAX_EXTRA_TIME;
-		int clusterTimeout = realTimeout + extraTime;
 
-		// Add command line parameters
-		switch (clusterType) {
-		case MOAB:
-			// MOAB style
-			if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "nodes=1:ppn=" + res.getCpus());
-			if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "mem=" + res.getMem());
-			if (realTimeout > 0) resSb.append((resSb.length() > 0 ? "," : "") + "walltime=" + clusterTimeout);
-
-			// Any resources requested? Add command line
-			if (resSb.length() > 0) {
-				args.add("-l");
-				args.add(resSb.toString());
-			}
-
-			break;
-
-		case SGE:
-			// SGE style
-			if (res.getCpus() > 0) {
-				args.add("-pe");
-				args.add("orte");
-				args.add("" + res.getCpus());
-			}
-			break;
-
-		default:
-			throw new RuntimeException("Unknown cluster type '" + clusterType + "'");
-		}
+		// Add resources to command line parameters
+		addResources(task, args);
 
 		// Stdout 
 		args.add("-o");
@@ -182,6 +192,28 @@ public class ExecutionerCluster extends Executioner {
 	@Override
 	public String[] osKillCommand(Task task) {
 		return CLUSTER_KILL_COMMAND;
+	}
+
+	/**
+	 * Parse PID line from 'qsub' (Cmd)
+	 * @param line
+	 * @return
+	 */
+	@Override
+	public String parsePidLine(String line) {
+		line = line.trim();
+
+		if (pidPattern != null) {
+			// Pattern pattern = Pattern.compile("Your job (\\S+)");
+			Matcher matcher = pidPattern.matcher(line);
+			if (matcher.find()) {
+				String pid = matcher.group(1);
+				Gpr.debug("Match: |" + pid + "|");
+				return pid;
+			}
+		}
+
+		return line;
 	}
 
 	/**

@@ -20,7 +20,7 @@ public class Executioners {
 	 *
 	 */
 	public enum ExecutionerType {
-		SYS, LOCAL, SSH, CLUSTER, CLOUD;
+		SYS, LOCAL, SSH, CLUSTER, MOAB, SGE, CLOUD;
 
 		/**
 		 * Parse an executioner name
@@ -78,7 +78,11 @@ public class Executioners {
 			executioner = new ExecutionerSsh(config);
 			break;
 		case CLUSTER:
+		case MOAB:
 			executioner = new ExecutionerCluster(config);
+			break;
+		case SGE:
+			executioner = new ExecutionerClusterSge(config);
 			break;
 		default:
 			throw new RuntimeException("Unknown executioner type '" + exType + "'");

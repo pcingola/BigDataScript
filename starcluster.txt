@@ -1,0 +1,93 @@
+
+- Install starcluster
+	$ sudo easy_install StarCluster
+	
+- Create key-pair
+	$ starcluster createkey ec2keypair -o ~/.ssh/ec2keypair.rsa
+
+- Coonfigure StarCluster
+
+	- Configure starcluster AWS keys
+		AWS_ACCESS_KEY_ID
+		AWS_SECRET_ACCESS_KEY
+		AWS_USER_ID
+
+	- COnfigure keypair
+		[key ec2keypair]
+		KEY_LOCATION=~/.ssh/ec2keypair.rsa
+
+	- Configure cluster
+		DEFAULT_TEMPLATE=bdsDemo
+
+		[cluster bdsDemo]
+		KEYNAME = ec2keypair
+		CLUSTER_SIZE = 8
+		CLUSTER_USER = sgeadmin
+		CLUSTER_SHELL = bash
+		NODE_IMAGE_ID = ami-765b3e1f
+		NODE_INSTANCE_TYPE = m1.large
+
+- Start cluster
+
+	$ starcluster start bds
+
+- Log into master node (as root)
+
+	$ starcluster sshmaster bds
+
+- Install go
+
+	apt-get install golang
+
+- Install java 7 in all nodes
+
+		#!/bin/sh
+
+		# Head node
+		add-apt-repository ppa:webupd8team/java
+		apt-get update
+		apt-get install oracle-java7-installer
+
+		# Other nodes
+		for n in node001 node002 node003 node004 node005 node006 node007
+		do
+				yes | ssh $n add-apt-repository ppa:webupd8team/java
+				yes | ssh $n apt-get update
+				yes | ssh $n apt-get install oracle-java7-installer
+		done
+
+- Log into master node (as sgeasmin)
+
+	$ starcluster sshmaster --user sgeadmin bds
+
+- Install bds_pipeline data and tools
+
+	$ wget http://www.mcb.mcgill.ca/~pcingola/bds_pipeline.tgz
+
+	$ tar -xvzf bds_pipeline.tgz
+
+- Add PATH 
+
+	$ vi .bash_profile 
+
+		# User specific aliases and functions
+		alias l='ls -alh --color=auto'
+		alias psg='ps auxww | grep '
+		alias df='df -h'
+		alias less='less -S'
+		alias vi='vim'
+
+		# Tools
+		export PATH=$PATH:$HOME/tools/samtools
+		export PATH=$PATH:$HOME/tools/samtools/bcftools/
+		export PATH=$PATH:$HOME/tools/bwa
+		export PATH=$PATH:$HOME/tools/tabix
+
+		# BigDataScript
+		export PATH=$PATH:$HOME/.bds/
+
+- Terminate cluster
+
+	 $ starcluster terminate bds
+
+

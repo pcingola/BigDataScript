@@ -176,7 +176,9 @@ public class CmdLocal extends Cmd {
 			// Parse line. Format "PID \t pidNum \t childPidNum"
 			if (debug) Gpr.debug("Got line: '" + sb + "'");
 
-			pid = sb.toString().trim(); // Ignore empty lines
+			// Parse pid?
+			if (executioner != null) pid = executioner.parsePidLine(sb.toString());
+			else pid = sb.toString().trim(); // Ignore spaces
 		}
 
 		if (task != null) task.setPid(pid); // Update task's pid

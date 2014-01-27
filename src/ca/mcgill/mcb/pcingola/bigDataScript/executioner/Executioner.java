@@ -242,6 +242,15 @@ public abstract class Executioner extends Thread {
 	 */
 	public abstract String[] osKillCommand(Task task);
 
+	/**
+	 * Parse PID line from 'bds exec' (Cmd)
+	 * @param line
+	 * @return
+	 */
+	public String parsePidLine(String line) {
+		return line.trim();
+	}
+
 	protected void remove(Task task, Host host) {
 		tasksSelected.remove(task);
 		host.remove(task);
@@ -517,5 +526,4 @@ public abstract class Executioner extends Thread {
 		while (!task.isStarted())
 			sleepShort();
 	}
-
 }
