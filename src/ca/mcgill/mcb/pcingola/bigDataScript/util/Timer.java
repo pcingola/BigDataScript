@@ -26,12 +26,24 @@ public class Timer {
 		System.err.println(timer + "\t" + msg);
 	}
 
+	/**
+	 * Transform miliseconds to HH:MM:SS
+	 * @param millisecs
+	 * @return
+	 */
+	public static String toHHMMSS(long millisecs) {
+		long hours = (millisecs) / (60 * 60 * 1000);
+		long mins = (millisecs % (60 * 60 * 1000)) / (60 * 1000);
+		long secs = (millisecs % (60 * 1000)) / (1000);
+		return String.format("%02d:%02d:%02d", hours, mins, secs);
+	}
+
 	public Timer() {
 		start = new Date();
 	}
 
 	public Timer(long timeOutMiliSec) {
-		this.timeOut = timeOutMiliSec;
+		timeOut = timeOutMiliSec;
 	}
 
 	/**
