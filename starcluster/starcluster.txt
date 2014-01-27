@@ -42,7 +42,13 @@
 
 	$ starcluster sshmaster bds
 
+- Create a new volume and attach it (management console)
+
 - Mount and export /bdsdata
+
+	mkdir /bdsdata
+	mkfs.ext4 /dev/xvdf
+	mount /dev/xvdf /bdsdata
 
 	echo "/bdsdata node001(async,no_root_squash,no_subtree_check,rw)" >> /etc/exports 
 	exportfs -a
