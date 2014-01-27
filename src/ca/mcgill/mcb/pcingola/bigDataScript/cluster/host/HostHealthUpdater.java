@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class HostHealthUpdater extends Thread {
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 
 	Host host;
 	boolean run = true;
