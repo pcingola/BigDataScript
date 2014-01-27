@@ -68,7 +68,6 @@ public class CommandParser {
 				String command = null;
 
 				result.replace('\r', ' ');
-				Gpr.debug("Result:\n" + result);
 				String res[] = result.split("\n");
 				ArrayList<String> lines = new ArrayList<String>();
 

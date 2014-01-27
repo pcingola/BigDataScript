@@ -21,13 +21,9 @@ public class CommandParserCpuInfo extends CommandParser {
 		int countCpus = 0;
 
 		for (int line = 0; line < cmdResult.length; line++) {
-			Gpr.debug(line + "\t" + cmdResult[line]);
 			String fields[] = cmdResult[line].trim().replace(':', ' ').split("\\s+");
 
-			if (fields[0].equalsIgnoreCase("processor")) {
-				countCpus++;
-				Gpr.debug("CPUS: " + countCpus + "\t" + host.getHostName() + "\t" + cmdResult[line]);
-			}
+			if (fields[0].equalsIgnoreCase("processor")) countCpus++;
 
 			if (fields[0].equalsIgnoreCase("model")) {
 				String cpuInfo[] = cmdResult[line].split(":");
