@@ -106,7 +106,7 @@ public class Cluster implements Iterable<Host> {
 	}
 
 	public String info() {
-		int totMem = 0, totCpus = 0, totHosts = 0, availHosts = 0, availMem = 0, availCpus = 0;
+		long totMem = 0, totCpus = 0, totHosts = 0, availHosts = 0, availMem = 0, availCpus = 0;
 		long totFs = 0, availFs = 0;
 		for (Host h : hosts.values()) {
 
@@ -117,13 +117,13 @@ public class Cluster implements Iterable<Host> {
 			totHosts++;
 			if (hr.getCpus() > 0) {
 				totCpus += hr.getCpus();
-				totMem += hr.getMem();
+				if (hr.getMem() > 0) totMem += hr.getMem();
 				totFs += hh.getFsTotal();
 
 				if (hh.isAvailable()) {
 					availHosts++;
 					availCpus += hra.getCpus();
-					availMem += hra.getMem() * (1.0 - hh.getMemUsage());
+					if (hra.getMem() > 0) availMem += hra.getMem() * (1.0 - hh.getMemUsage());
 					availFs += hh.getFsAvail();
 				}
 			}
