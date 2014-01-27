@@ -303,7 +303,7 @@ public abstract class Executioner extends Thread {
 	protected boolean runExecutionerLoop() {
 		// Report pending tasks
 		if (verbose && hasTaskRunning() && isReportTime()) {
-			String executionerName = this.getClass().getSimpleName().substring(Executioner.class.getSimpleName().length() - 1).toLowerCase();
+			String executionerName = this.getClass().getSimpleName().substring(Executioner.class.getSimpleName().length()).toLowerCase();
 			Timer.showStdErr("Tasks [" + executionerName + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
 		}
 
