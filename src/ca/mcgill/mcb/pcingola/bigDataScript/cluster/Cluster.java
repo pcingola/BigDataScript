@@ -182,7 +182,7 @@ public class Cluster implements Iterable<Host> {
 		Collections.sort(hostNames);
 		for (String hname : hostNames) {
 			Host h = hosts.get(hname);
-			sb.append("\t" + h + "\tResources: " + h.getResources() + "\tAvailable: " + h.getResourcesAvaialble());
+			sb.append("\t" + h + "\tResources: " + h.getResources() + "\tAvailable: " + h.getResourcesAvaialble() + "\n");
 		}
 
 		return sb.toString();
