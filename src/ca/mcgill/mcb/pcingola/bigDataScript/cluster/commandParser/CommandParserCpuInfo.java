@@ -25,7 +25,7 @@ public class CommandParserCpuInfo extends CommandParser {
 
 			if (fields[0].equalsIgnoreCase("processor")) {
 				countCpus++;
-				Gpr.debug("CPUS: " + countCpus + "\t" + host.getHostName());
+				Gpr.debug("CPUS: " + countCpus + "\t" + host.getHostName() + "\t" + line);
 			}
 
 			if (fields[0].equalsIgnoreCase("model")) {
