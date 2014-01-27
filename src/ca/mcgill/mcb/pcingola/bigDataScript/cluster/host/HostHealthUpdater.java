@@ -31,12 +31,12 @@ public class HostHealthUpdater extends Thread {
 		if (debug) Gpr.debug("Info\tHost: " + host);
 
 		// Information that is obtained only once
-		new CommandParserUname(host).parse(); // System type
+		new CommandParserUname(host).parse(false); // System type
 		systemType = host.getHealth().getSystemType();
 
 		// Run next command
-		if (systemType.equalsIgnoreCase("Linux")) new CommandParserCpuInfo(host).parse();
-		else if (systemType.equalsIgnoreCase("Darwin")) new CommandParserSystemProfiler(host).parse();
+		if (systemType.equalsIgnoreCase("Linux")) new CommandParserCpuInfo(host).parse(false);
+		else if (systemType.equalsIgnoreCase("Darwin")) new CommandParserSystemProfiler(host).parse(false);
 	}
 
 	/**

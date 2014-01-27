@@ -44,10 +44,14 @@ public class CommandParser {
 		return sb.toString();
 	}
 
+	public void parse() {
+		parse(true);
+	}
+
 	/**
 	 * Parse command's output
 	 */
-	public void parse() {
+	public void parse(boolean updateAlive) {
 		try {
 			//---
 			// Connect and get answer from server
@@ -82,7 +86,7 @@ public class CommandParser {
 				if (command != null) parse(command, lines);
 
 				// We were able to connect and got some results, so probably the host is alive.
-				host.getHealth().setAlive(true);
+				if (updateAlive) host.getHealth().setAlive(true);
 			} else {
 				if (debug) Gpr.debug("Error trying to connect: Empty result string");
 				// Could not connect
