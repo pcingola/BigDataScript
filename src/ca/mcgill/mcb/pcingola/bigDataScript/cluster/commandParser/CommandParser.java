@@ -66,7 +66,9 @@ public class CommandParser {
 				// Parse the results. Split each command and parse separately
 				//---
 				String command = null;
+
 				result.replace('\r', ' ');
+				Gpr.debug("Result:\n" + result);
 				String res[] = result.split("\n");
 				ArrayList<String> lines = new ArrayList<String>();
 
