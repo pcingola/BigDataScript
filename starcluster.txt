@@ -93,8 +93,15 @@
 		# BigDataScript
 		export PATH=$PATH:$HOME/.bds/
 
+- Download and compile bds
+
+	$ cd
+	$ mkdir workspace
+	$ git clone https://github.com/pcingola/BigDataScript.git
+	$ mkdir bin
+	$ ./scripts/install.sh
+	
 - Terminate cluster
 
 	 $ starcluster terminate bds
-
 

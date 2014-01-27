@@ -11,6 +11,7 @@ cd `dirname $0` &&  cd ..
 mkdir -p "$BDS_HOME" 2> /dev/null
 
 # Build Jar file
+mkdir bin 2> /dev/null || true
 echo Building JAR file
 ant 
 
