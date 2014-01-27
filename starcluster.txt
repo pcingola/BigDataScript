@@ -26,6 +26,13 @@
 		CLUSTER_SHELL = bash
 		NODE_IMAGE_ID = ami-765b3e1f
 		NODE_INSTANCE_TYPE = m1.large
+		VOLUMES = bdsdata
+
+	- Configure EBS volume
+
+		[volume bdsdata]
+		VOLUME_ID = vol-2185a46e
+		MOUNT_PATH = /bdsdata
 
 - Start cluster
 
