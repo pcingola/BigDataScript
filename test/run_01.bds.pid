@@ -2172,3 +2172,67 @@ out1.txt	-
 out2.txt	+	rm
 2854	-
 out2.txt	-
+3496	+	
+3496	-
+3500	+	
+3500	-
+3504	+	
+3504	-
+null	-
+3507	+	
+3507	-
+3509	+	
+3509	-
+3511	+	
+3511	-
+3514	+	
+3514	-
+3517	+	
+3517	-
+3520	+	
+3520	-
+3525	+	
+/Users/pablocingolani/zero_length_file_out.txt	+	rm
+3526	+	
+3525	-
+/Users/pablocingolani/zero_length_file_out.txt	-
+3526	-
+3532	+	
+3532	-
+3535	+	
+3536	+	
+3535	-
+3536	-
+3553	+	
+3553	-
+3556	+	
+3556	-
+3560	+	
+3560	-
+null	-
+3562	+	
+3563	+	
+3562	-
+3563	-
+3568	+	
+3568	-
+3574	+	
+out1.txt	+	rm
+3574	-
+out1.txt	-
+3579	+	
+out2.txt	+	rm
+3579	-
+out2.txt	-
+3585	+	
+out1.txt	+	rm
+3585	-
+out1.txt	-
+3590	+	
+out2.txt	+	rm
+3590	-
+out2.txt	-
+3594	+	
+out1.txt	+	rm
+3594	-
+out1.txt	-
