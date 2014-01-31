@@ -1,11 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.junit.Test;
-
-import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 
 /**
  * Test cases for language & compilation
@@ -15,39 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
  * @author pcingola
  *
  */
-public class TestCasesLang extends TestCase {
-
-	/**
-	 * Check that a file compiles with expected errors
-	 * @param fileName
-	 */
-	void compileErrors(String fileName, String expectedErrors) {
-		BigDataScript bigDataScript = compileTest(fileName);
-		if (bigDataScript.getCompilerMessages().isEmpty()) fail("Expecting compilation errors in file '" + fileName + "', but none found!\n");
-		Assert.assertEquals(expectedErrors, bigDataScript.getCompilerMessages().toString());
-	}
-
-	/**
-	 * Check that a file compiles without any errors
-	 * @param fileName
-	 */
-	void compileOk(String fileName) {
-		BigDataScript bigDataScript = compileTest(fileName);
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
-	}
-
-	/**
-	 * 
-	 * Compile a file
-	 * @param fileName
-	 * @return
-	 */
-	BigDataScript compileTest(String fileName) {
-		String args[] = { fileName };
-		BigDataScript bigDataScript = new BigDataScript(args);
-		bigDataScript.compile();
-		return bigDataScript;
-	}
+public class TestCasesLang extends TestCasesBase {
 
 	@Test
 	public void test00() {

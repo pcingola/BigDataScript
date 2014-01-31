@@ -1,7 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.junit.Test;
 
@@ -13,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.task.TailFile;
  * @author pcingola
  *
  */
-public class TestCasesTail extends TestCase {
+public class TestCasesTail extends TestCasesBase {
 
 	public static boolean debug = false;
 
