@@ -80,16 +80,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public void add(Task task) {
 		tasksById.put(task.getId(), task);
 
-		// Add output file
-		for (String outFile : task.getOutputFiles())
-			tasksByOutput.getOrCreate(outFile).add(task);
+		// Add output files
+		if (task.getOutputFiles() != null) {
+			for (String outFile : task.getOutputFiles())
+				tasksByOutput.getOrCreate(outFile).add(task);
+		}
 
-		// Add input files (dependencies)
-		for (String inFile : task.getInputFiles()) {
-			List<Task> taskDeps = tasksByOutput.get(inFile);
-			if (taskDeps != null) {
-				for (Task taskDep : taskDeps)
-					if (!taskDep.isDone()) task.addDependency(taskDep); // Task not finished? Add it to dependency list
+		// Add input dependencies based on input files
+		if (task.getInputFiles() != null) {
+			for (String inFile : task.getInputFiles()) {
+				List<Task> taskDeps = tasksByOutput.get(inFile);
+				if (taskDeps != null) {
+					for (Task taskDep : taskDeps)
+						if (!taskDep.isDone()) task.addDependency(taskDep); // Task not finished? Add it to dependency list
+				}
 			}
 		}
 	}

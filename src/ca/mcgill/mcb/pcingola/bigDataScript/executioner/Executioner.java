@@ -260,6 +260,32 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
+	 * Report tasks to running, to run and done 
+	 */
+	protected void reportTasks() {
+		// if (verbose && 
+		if ((hasTaskRunning() || hasTaskToRun()) && isReportTime()) {
+			String executionerName = this.getClass().getSimpleName().substring(Executioner.class.getSimpleName().length()).toLowerCase();
+			StringBuilder sb = new StringBuilder();
+			sb.append("Tasks [" + executionerName + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
+
+			// Pending
+			for (Task t : tasksToRun) {
+				sb.append("\n\tPending: '" + t.getId() + "', state " + t.getTaskState() + ", dependency state " + t.dependencyState() + ", dependencies: ");
+				// Show dependent tasks
+				for (Task td : t.getDependency())
+					sb.append(td.getId() + "[" + td.dependencyState() + "] ");
+			}
+
+			// Running
+			for (Task t : tasksRunning.values())
+				sb.append("\n\tRunning: '" + t.getId() + "', state " + t.getTaskState() + ", dependency state " + t.dependencyState());
+
+			Timer.showStdErr(sb.toString());
+		}
+	}
+
+	/**
 	 * Run thread: Run executioner's main loop
 	 */
 	@Override
@@ -303,14 +329,11 @@ public abstract class Executioner extends Thread {
 	 * @return true if all processes have finished executing
 	 */
 	protected boolean runExecutionerLoop() {
-		// Report pending tasks
-		if (verbose && hasTaskRunning() && isReportTime()) {
-			String executionerName = this.getClass().getSimpleName().substring(Executioner.class.getSimpleName().length()).toLowerCase();
-			Timer.showStdErr("Tasks [" + executionerName + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
-		}
-
 		// Nothing to run?
-		if (!hasTaskToRun()) return false;
+		if (!hasTaskToRun()) {
+			reportTasks();
+			return false;
+		}
 
 		// Are there any more task to run?
 		while (running && hasTaskToRun()) {
@@ -324,6 +347,8 @@ public abstract class Executioner extends Thread {
 			} else {
 				sleepMid();
 			}
+
+			reportTasks();
 		}
 
 		return true;

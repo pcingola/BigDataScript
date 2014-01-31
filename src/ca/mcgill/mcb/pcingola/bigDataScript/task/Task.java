@@ -234,6 +234,10 @@ public class Task implements BigDataScriptSerialize {
 		return bdsLineNum;
 	}
 
+	public List<Task> getDependency() {
+		return dependency;
+	}
+
 	public String getExitCodeFile() {
 		return exitCodeFile;
 	}
