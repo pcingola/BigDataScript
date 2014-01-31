@@ -15,4 +15,9 @@ public class TestCasesGraph extends TestCasesBase {
 		runAndCheck("test/graph_01.bds", "output", "IN\nTASK 1\nTASK 2\n");
 	}
 
+	@Test
+	public void test02() {
+		runAndCheck("test/graph_02.bds", "output", "IN\nTASK 1\nTASK 2\nTASK 3\n");
+	}
+
 }
