@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -21,6 +22,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -44,7 +46,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	ProgramUnit programUnit;
 	RunState runState;
 	Object returnValue;
-	HashMap<String, Task> tasks;
+	HashMap<String, Task> tasksById;
+	AutoHashMap<String, List<Task>> tasksByOutput;
 	Config config;
 	Random random;
 
@@ -62,7 +65,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		pc = new ProgramCounter();
 		scope = Scope.getGlobalScope();
 		runState = RunState.OK;
-		tasks = new HashMap<String, Task>();
+		tasksById = new HashMap<String, Task>();
+		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
 		this.config = config;
 		random = new Random();
 
@@ -74,7 +78,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @param task
 	 */
 	public void add(Task task) {
-		tasks.put(task.getId(), task);
+		tasksById.put(task.getId(), task);
+
+		// Add output file
+		for (String outFile : task.getOutputFiles())
+			tasksByOutput.getOrCreate(outFile).add(task);
+
+		// Add input files (dependencies)
+		for (String inFile : task.getInputFiles()) {
+			List<Task> taskDeps = tasksByOutput.get(inFile);
+			if (taskDeps != null) {
+				for (Task taskDep : taskDeps)
+					if (!taskDep.isDone()) task.addDependency(taskDep); // Task not finished? Add it to dependency list
+			}
+		}
 	}
 
 	/**
@@ -259,7 +276,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @return
 	 */
 	public Task getTask(String taskId) {
-		return tasks.get(taskId);
+		return tasksById.get(taskId);
 	}
 
 	/**
@@ -267,7 +284,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @return
 	 */
 	public Collection<Task> getTasks() {
-		return tasks.values();
+		return tasksById.values();
 	}
 
 	/**
@@ -283,7 +300,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @return
 	 */
 	public boolean isTasksDone() {
-		for (String taskId : tasks.keySet()) {
+		for (String taskId : tasksById.keySet()) {
 			if ((taskId == null) || taskId.isEmpty()) continue;
 
 			Task task = getTask(taskId);
@@ -431,7 +448,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		out.append(programUnit.serializeSave(serializer));
 
 		// Save all task nodes
-		for (Task task : tasks.values())
+		for (Task task : tasksById.values())
 			out.append(task.serializeSave(serializer));
 
 		return out.toString();
@@ -633,7 +650,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Wait for all tasks to finish
 		boolean ok = true;
 
-		for (String tid : tasks.keySet())
+		for (String tid : tasksById.keySet())
 			ok &= waitTask(tid);
 
 		return ok;

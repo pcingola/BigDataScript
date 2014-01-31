@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -16,8 +17,27 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class TaskOptions extends ExpressionList {
 
+	List<String> outputFiles, inputFiles;
+
 	public TaskOptions(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Get input and output files
+	 */
+	void calcInOutFiles() {
+		outputFiles = new ArrayList<String>();
+		inputFiles = new ArrayList<String>();
+
+		for (Expression expr : expressions) {
+			if (expr instanceof ExpressionDep) {
+				ExpressionDep dep = ((ExpressionDep) expr);
+
+				outputFiles.addAll(dep.getOutputFiles());
+				inputFiles.addAll(dep.getInputFiles());
+			}
+		}
 	}
 
 	/**
@@ -43,20 +63,22 @@ public class TaskOptions extends ExpressionList {
 	}
 
 	/**
-	 * Calculate all dependent files
+	 * Calculate input files
 	 * @return
 	 */
-	ArrayList<String> outputFiles() {
-		ArrayList<String> outputFiles = new ArrayList<String>();
+	List<String> inputFiles() {
+		if (inputFiles == null) calcInOutFiles();
+		return inputFiles;
+	}
 
-		for (Expression expr : expressions) {
-			if (expr instanceof ExpressionDep) {
-				ExpressionDep dep = ((ExpressionDep) expr);
-				outputFiles.addAll(dep.getOutputFiles());
-			}
-		}
-
+	/**
+	 * Calculate output files
+	 * @return
+	 */
+	List<String> outputFiles() {
+		if (outputFiles == null) calcInOutFiles();
 		return outputFiles;
+
 	}
 
 	@Override

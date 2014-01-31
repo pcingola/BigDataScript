@@ -1,6 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -34,7 +33,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	TaskOptions taskOptions;
 	Statement statement;
 	private String execId = "";
-	ArrayList<String> outputFiles;
+	List<String> outputFiles, inputFiles;
 
 	public ExpressionTask(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -74,6 +73,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setQueue(csThread.getString(TASK_OPTION_QUEUE));
 		task.getResources().setCpus((int) csThread.getInt(TASK_OPTION_CPUS));
 		task.getResources().setTimeout(csThread.getInt(TASK_OPTION_TIMEOUT));
+		task.setInputFiles(inputFiles);
 		task.setOutputFiles(outputFiles);
 
 		// Queue exec
@@ -125,6 +125,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (taskOptions != null) {
 			boolean ok = (Boolean) taskOptions.eval(csThread);
 			outputFiles = taskOptions.outputFiles(); // This has to be done AFTER evaluation
+			inputFiles = taskOptions.inputFiles(); // This has to be done AFTER evaluation
 			if (!ok) {
 				// Return empty task ID
 				return RunState.OK; // Task options clause not satisfied. Do not execute task 

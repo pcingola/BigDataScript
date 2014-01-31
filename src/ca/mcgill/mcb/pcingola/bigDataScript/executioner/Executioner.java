@@ -11,6 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.DependencyState;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
@@ -25,6 +26,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 public abstract class Executioner extends Thread {
 
 	public static final int SLEEP_TIME_LONG = 500;
+	public static final int SLEEP_TIME_MID = 200;
 	public static final int SLEEP_TIME_SHORT = 10;
 	public static final int REPORT_INTERVAL = 60;
 
@@ -320,7 +322,7 @@ public abstract class Executioner extends Thread {
 				// Get next task and run it
 				runTask(taskHostPair.first, taskHostPair.second);
 			} else {
-				sleepShort();
+				sleepMid();
 			}
 		}
 
@@ -379,9 +381,32 @@ public abstract class Executioner extends Thread {
 
 			// Can we run this task? 
 			if (task.canRun()) {
-				// Select host (we only have one)
-				for (Host host : cluster) {
+				//---
+				// Are dependencies satisfied?
+				//---
+				DependencyState dep = task.dependencyState();
+				switch (dep) {
+				case OK:
+					break;
 
+				case WAIT:
+					continue;
+
+				case ERROR:
+					// Dependency error => Finish this task
+					if (finishTask == null) finishTask = new LinkedList<Task>();
+					finishTask.add(task);
+					break;
+
+				default:
+					throw new RuntimeException("Unimplemented dependency state '" + dep + "'");
+
+				}
+
+				//---
+				// Select host (we only have one)
+				//---
+				for (Host host : cluster) {
 					// Host is not alive?
 					if (!host.getHealth().isAlive()) {
 						canBeExecuted = true; // May be this host can actually execute this task, we don't know.
@@ -399,7 +424,9 @@ public abstract class Executioner extends Thread {
 					}
 				}
 
+				//---
 				// There is no host that can execute this task?
+				//---
 				if (!canBeExecuted) {
 					Gpr.debug("Cluster info: " + cluster.info());
 					Gpr.debug("Cluster: " + cluster);
@@ -438,6 +465,14 @@ public abstract class Executioner extends Thread {
 	void sleepLong() {
 		try {
 			sleep(SLEEP_TIME_LONG);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	void sleepMid() {
+		try {
+			sleep(SLEEP_TIME_SHORT);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
