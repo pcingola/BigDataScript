@@ -37,6 +37,34 @@ public class ExpressionTask extends ExpressionWithScope {
 	private String execId = "";
 	List<String> outputFiles, inputFiles;
 
+	/**
+	 * Execute a task (schedule it into excutioner)
+	 * 
+	 * @param csThread
+	 * @param task
+	 */
+	public static void execute(BigDataScriptThread csThread, Task task) {
+		// Make sure the task in in initial state
+		task.reset();
+
+		// Select executioner and queue for execution
+		String runSystem = csThread.getString(TASK_OPTION_SYSTEM);
+		Executioner executioner = Executioners.getInstance().get(runSystem);
+
+		// Queue exec
+		if (Config.get().isDryRun()) {
+			// Dry run: Don't run the task, just show what would be run
+			System.out.println("Dry run task:\n" + task.toString(true, true));
+			task.state(TaskState.STARTED);
+			task.state(TaskState.RUNNING);
+			task.state(TaskState.FINISHED);
+			task.setExitValue(0);
+		} else {
+			csThread.add(task);
+			executioner.add(task);
+		}
+	}
+
 	public ExpressionTask(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -60,10 +88,6 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Get an ID
 		execId = sys.execId("task", csThread);
 
-		// Select executioner and queue for execution
-		String runSystem = csThread.getString(TASK_OPTION_SYSTEM);
-		Executioner executioner = Executioners.getInstance().get(runSystem);
-
 		// Create Task
 		Task task = new Task(execId, sys.getSysFileName(), sys.getCommands(csThread), getFileName(), getLineNum());
 
@@ -78,18 +102,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setInputFiles(inputFiles);
 		task.setOutputFiles(outputFiles);
 
-		// Queue exec
-		if (Config.get().isDryRun()) {
-			// Dry run: Don't run the task, just show what would be run
-			System.out.println("Dry run task:\n" + task.toString(true, true));
-			task.state(TaskState.STARTED);
-			task.state(TaskState.RUNNING);
-			task.state(TaskState.FINISHED);
-			task.setExitValue(0);
-		} else {
-			csThread.add(task);
-			executioner.add(task);
-		}
+		// Schedule task for execution
+		execute(csThread, task);
 
 		return task;
 	}

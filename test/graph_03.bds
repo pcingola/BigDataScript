@@ -1,0 +1,14 @@
+#!/usr/bin/env bds
+
+tid := task echo Task start; sleep 2; echo Task end
+print("Task id: $tid\n")
+
+checkpoint "test/graph_03.chp"
+print("After checkpoint\n")
+
+print("Waiting\n")
+wait
+print("After wait\n")
+
+out := tid.stdout()
+print("Output: $out\n")

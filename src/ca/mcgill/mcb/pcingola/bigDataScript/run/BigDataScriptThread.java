@@ -16,6 +16,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.StatementInclude;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Wait;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
@@ -457,9 +459,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		bigDataScriptThreadNum = (int) serializer.getNextFieldInt();
+		removeOnExit = serializer.getNextFieldList(TypeList.get(Type.STRING));
 
 		// Update global thread number?
 		if (threadNumber < bigDataScriptThreadNum) threadNumber = bigDataScriptThreadNum + 1;
@@ -469,7 +473,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 
-		out.append(getClass().getSimpleName() + "\t" + bigDataScriptThreadNum + "\n");
+		out.append(getClass().getSimpleName());
+		out.append("\t" + bigDataScriptThreadNum);
+		out.append("\t" + serializer.serializeSaveValue(removeOnExit));
+		out.append("\n");
 
 		// Save program counter
 		out.append(pc.serializeSave(serializer));

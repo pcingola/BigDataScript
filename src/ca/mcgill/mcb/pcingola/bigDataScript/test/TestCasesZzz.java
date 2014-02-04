@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import java.util.HashMap;
-
 import org.junit.Test;
 
 /**
@@ -13,13 +11,16 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test89() {
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
-		expectedValues.put("f", "file.txt");
-		expectedValues.put("f2", "file.vcf");
-		expectedValues.put("f3", "file.vcf");
-		expectedValues.put("f4", "file.txt.vcf");
-		runAndCheckMultiple("test/run_89.bds", expectedValues);
+	public void test07() {
+
+		// TO CHECK:
+		// 		i) 2 Tasks created
+		//		ii) checkpoint saved
+		//		iii) run from checkpoint
+		//		iv) make sure task dependencies remains unchanged (executed one after the other)
+
+		// runAndCheckpoint("test/checkpoint_07.bds", null, "l0", "ONE");
+		runAndCheckpoint("test/graph_03.bds", "test/graph_03.chp", "out", "Task start\nTask end\n");
 	}
 
 }
