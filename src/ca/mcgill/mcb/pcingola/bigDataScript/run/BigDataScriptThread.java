@@ -50,6 +50,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	AutoHashMap<String, List<Task>> tasksByOutput;
 	Config config;
 	Random random;
+	List<String> removeOnExit;
 
 	/**
 	 * Get an ID for a node
@@ -69,6 +70,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
 		this.config = config;
 		random = new Random();
+		removeOnExit = new LinkedList<String>();
 
 		if (programUnit != null) setProgram(programUnit);
 	}
@@ -317,6 +319,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	}
 
+	boolean isVerbose() {
+		return config != null && config.isVerbose();
+	}
+
 	/**
 	 * Kill one task 
 	 */
@@ -391,6 +397,16 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
+	public void rmOnExit(List files) {
+		for (Object o : files)
+			removeOnExit.add(o.toString());
+	}
+
+	public void rmOnExit(String file) {
+		removeOnExit.add(file);
+	}
+
 	@Override
 	public void run() {
 		createLogDir(); // Create log dir 
@@ -400,12 +416,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		try {
 			runState = programUnit.run(this);
 		} catch (Throwable t) {
-			if ((config == null) || config.isVerbose()) throw new RuntimeException(t);
+			if (isVerbose()) throw new RuntimeException(t);
 			else System.err.println("Fatal error: Program execution finished");
 			return;
 		}
 
-		if (config != null && config.isVerbose()) System.err.println("Program execution finished (runState: '" + runState + "' )");
+		if (isVerbose()) System.err.println("Program execution finished (runState: '" + runState + "' )");
 
 		// Implicit 'wait' statement at the end of the program
 		if (!isTasksDone()) System.err.println("Waiting for tasks to finish.");
@@ -419,6 +435,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			// Set exit value as the latest 'int' result
 			Object ev = getReturnValue();
 			if (ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
+
+			// Remove all pending files
+			if (!removeOnExit.isEmpty()) {
+				if (isVerbose()) System.err.println("Deleting files (rmOnExit):");
+				for (String fileName : removeOnExit) {
+					if (isVerbose()) System.err.println("\t" + fileName);
+					(new File(fileName)).delete();
+				}
+			}
 		}
 
 		try {

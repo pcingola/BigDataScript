@@ -4,6 +4,10 @@ in := "in.txt"
 out1 := "out1.txt"
 out2 := "out2.txt"
 
+in.rmOnExit()
+out1.rmOnExit()
+out2.rmOnExit()
+
 # Create 'in' file
 sys touch $out1 $out2; rm $out1 $out2; echo IN > $in
 

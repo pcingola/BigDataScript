@@ -39,6 +39,7 @@ bool	string	mkdir	this	string	return (new File(objThis.toString())).mkdirs();
 string	string	read	this	string	return Gpr.readFile(objThis.toString(), false);
 string	string	removeExt	this	string	String base = objThis.toString(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(0, idx) : "";
 string	string	removeExt	this,ext	string,string	String ext = csThread.getString("ext"); String b = objThis.toString(); if (b.endsWith(ext)) return b.substring(0, b.length() - ext.length()); return b;
+void	string	rmOnExit	this	string	csThread.rmOnExit(objThis.toString()); return objThis;
 string	string	swapExt	this,extNew	string,string	String base = objThis.toString(); String extNew = csThread.getString("extNew"); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(0, idx) + "." + extNew : base + "." + extNew;
 string	string	swapExt	this,extOld,extNew	string,string,string	String extNew = csThread.getString("extNew"); String extOld = csThread.getString("extOld"); String b = objThis.toString(); if (b.endsWith(extOld)) return b.substring(0, b.length() - extOld.length()) + extNew; return b + extNew;
 string	string	write	this,str	string,string	return Gpr.toFile(objThis.toString(), csThread.getString("str"));

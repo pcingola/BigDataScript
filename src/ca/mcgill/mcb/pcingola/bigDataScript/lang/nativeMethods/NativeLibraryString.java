@@ -46,6 +46,7 @@ public class NativeLibraryString {
 	, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_read" // 
 	, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_removeExt" // 
 	, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_removeExt_ext" // 
+	, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_rmOnExit" // 
 	, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_swapExt_extNew" // 
 	, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_swapExt_extOld_extNew" // 
 	, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_write_str" // 
