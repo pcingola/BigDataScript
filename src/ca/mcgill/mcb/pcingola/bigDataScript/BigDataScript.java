@@ -49,6 +49,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -772,6 +773,10 @@ public class BigDataScript {
 		// Show
 		int exitValue = 0;
 		for (BigDataScriptThread csthread : csthreads) {
+			//---
+			// Run (traverse tree in 'CHECKPOINT_RECOVER' mode) until we find exactly the instruction where we left
+			//---
+
 			// Set run state, program
 			csthread.setRunState(RunState.CHECKPOINT_RECOVER);
 			programUnit = (ProgramUnit) csthread.getProgramUnit();
@@ -781,7 +786,18 @@ public class BigDataScript {
 			for (Scope scope = csthread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent())
 				programUnit.setScope(scope);
 
+			//---
+			// Add pending or failed tasks
+			//---
+			for (Task task : csthread.getTasks())
+				if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
+					ExpressionTask.execute(csthread, task);
+					Gpr.debug("Adding task: " + task.getId());
+				}
+
+			//---
 			// All set, run thread
+			//---
 			int exitVal = runThread(csthread);
 			exitValue = Math.max(exitValue, exitVal);
 		}

@@ -15,6 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.StatementInclude;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
@@ -55,6 +56,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	Config config;
 	Random random;
 	List<String> removeOnExit;
+	ArrayList<Task> restoredTasks; // Unserialized tasks.
 
 	/**
 	 * Get an ID for a node
@@ -104,6 +106,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				}
 			}
 		}
+	}
+
+	/**
+	 * Add tasks form un-serialization
+	 * @param task
+	 */
+	public void addUnserialized(Task task) {
+		if (restoredTasks == null) restoredTasks = new ArrayList<Task>();
+		restoredTasks.add(task);
 	}
 
 	/**
@@ -401,6 +412,18 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				System.out.println("--- End of scope ---");
 			}
 		}
+	}
+
+	/**
+	 * Send task from un-serialization to execution list
+	 */
+	public void restoreUnserializedTasks() {
+		if (restoredTasks == null) return;
+		for (Task task : restoredTasks)
+			if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
+				ExpressionTask.execute(this, task);
+				Gpr.debug("Adding task: " + task.getId());
+			}
 	}
 
 	@SuppressWarnings("rawtypes")

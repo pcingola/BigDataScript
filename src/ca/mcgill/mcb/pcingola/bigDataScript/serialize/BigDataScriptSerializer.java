@@ -7,7 +7,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
@@ -18,7 +17,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrePostOperation;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrimitiveType;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
@@ -293,7 +291,7 @@ public class BigDataScriptSerializer {
 		Scope currScope = null;
 		ArrayList<Scope> scopes = new ArrayList<Scope>();
 		BigDataScriptThread currCsThread = null;
-		List<Task> tasks = new LinkedList<Task>();
+		//		List<Task> tasks = new LinkedList<Task>();
 
 		// Parse lines
 		for (int i = 0; i < lines.length; i++) {
@@ -371,7 +369,8 @@ public class BigDataScriptSerializer {
 							currCsThread.setScope(scope);
 						}
 					} else if (bigDataScriptSerialize instanceof Task) {
-						tasks.add((Task) bigDataScriptSerialize);
+						Task task = (Task) bigDataScriptSerialize;
+						currCsThread.addUnserialized(task);
 					} else if (bigDataScriptSerialize instanceof BigDataScriptNode) {
 						// UnSerialize 
 						BigDataScriptNode csnode = (BigDataScriptNode) bigDataScriptSerialize;
@@ -396,16 +395,6 @@ public class BigDataScriptSerializer {
 
 		for (Scope scope : scopes)
 			scope.replaceFake();
-
-		//---
-		// Add tasks
-		//---
-		for (Task task : tasks) {
-			if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
-				ExpressionTask.execute(currCsThread, task);
-				Gpr.debug("Adding task:" + task.toString(true, true));
-			}
-		}
 
 		return bigDataScriptThreads;
 	}

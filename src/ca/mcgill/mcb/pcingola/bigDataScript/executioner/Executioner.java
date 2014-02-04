@@ -412,6 +412,7 @@ public abstract class Executioner extends Thread {
 				DependencyState dep = task.dependencyState();
 				switch (dep) {
 				case OK:
+					Gpr.debug("SELCT TASK: " + task.getId());
 					break;
 
 				case WAIT:
