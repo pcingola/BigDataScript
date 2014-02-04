@@ -32,6 +32,7 @@ public class Config {
 	boolean debug = false; // Debug mode?
 	boolean verbose = false; // Verbose mode?
 	boolean log = false; // Log all commands?
+	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	String configDirName;
 	String pidFile;
 	Properties properties;

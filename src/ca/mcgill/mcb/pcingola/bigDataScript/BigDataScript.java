@@ -848,6 +848,8 @@ public class BigDataScript {
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
 		System.err.println("  [-d | -debug]                  : Debug mode.");
+		System.err.println("  --dryRun                       : Do not run any task, just show what would be run.");
+		!!!!!!!!!!!!!
 		System.err.println("  [-l | -log]                    : Log all actions (do not delete tmp files).");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
@@ -859,5 +861,4 @@ public class BigDataScript {
 		if (err != null) System.exit(1);
 		System.exit(0);
 	}
-
 }
