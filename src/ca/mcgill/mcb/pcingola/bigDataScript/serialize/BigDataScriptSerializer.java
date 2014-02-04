@@ -403,6 +403,7 @@ public class BigDataScriptSerializer {
 		for (Task task : tasks) {
 			if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
 				ExpressionTask.execute(currCsThread, task);
+				Gpr.debug("Adding task:" + task.toString(true, true));
 			}
 		}
 

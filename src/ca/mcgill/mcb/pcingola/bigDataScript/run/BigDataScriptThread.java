@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.run;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	ProgramUnit programUnit;
 	RunState runState;
 	Object returnValue;
+	ArrayList<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
 	HashMap<String, Task> tasksById;
 	AutoHashMap<String, List<Task>> tasksByOutput;
 	Config config;
@@ -68,6 +70,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		pc = new ProgramCounter();
 		scope = Scope.getGlobalScope();
 		runState = RunState.OK;
+		tasks = new ArrayList<Task>();
 		tasksById = new HashMap<String, Task>();
 		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
 		this.config = config;
@@ -82,6 +85,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @param task
 	 */
 	public void add(Task task) {
+		tasks.add(task);
 		tasksById.put(task.getId(), task);
 
 		// Add output files
@@ -292,7 +296,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @return
 	 */
 	public Collection<Task> getTasks() {
-		return tasksById.values();
+		return tasks;
 	}
 
 	/**
@@ -487,8 +491,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Save program nodes
 		out.append(programUnit.serializeSave(serializer));
 
-		// Save all task nodes
-		for (Task task : tasksById.values())
+		// Save all tasks (in the same order that they were added)
+		for (Task task : tasks)
 			out.append(task.serializeSave(serializer));
 
 		return out.toString();

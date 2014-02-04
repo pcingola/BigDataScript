@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -380,10 +382,13 @@ public class Task implements BigDataScriptSerialize {
 		exitValue = 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		// Note that "Task classname" field has been consumed at this point
 		id = serializer.getNextField();
+		bdsFileName = serializer.getNextFieldString();
+		bdsLineNum = (int) serializer.getNextFieldInt();
 		canFail = serializer.getNextFieldBool();
 		taskState = TaskState.valueOf(serializer.getNextFieldString());
 		exitValue = (int) serializer.getNextFieldInt();
@@ -395,6 +400,9 @@ public class Task implements BigDataScriptSerialize {
 		stderrFile = serializer.getNextFieldString();
 		exitCodeFile = serializer.getNextFieldString();
 
+		inputFiles = serializer.getNextFieldList(TypeList.get(Type.STRING));
+		outputFiles = serializer.getNextFieldList(TypeList.get(Type.STRING));
+
 		resources = new HostResources();
 		resources.serializeParse(serializer);
 	}
@@ -403,6 +411,8 @@ public class Task implements BigDataScriptSerialize {
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		return getClass().getSimpleName() //
 				+ "\t" + id // 
+				+ "\t" + serializer.serializeSaveValue(bdsFileName) //
+				+ "\t" + bdsLineNum //
 				+ "\t" + canFail // 
 				+ "\t" + taskState // 
 				+ "\t" + exitValue // 
@@ -413,6 +423,8 @@ public class Task implements BigDataScriptSerialize {
 				+ "\t" + serializer.serializeSaveValue(stdoutFile) //
 				+ "\t" + serializer.serializeSaveValue(stderrFile) //
 				+ "\t" + serializer.serializeSaveValue(exitCodeFile) //
+				+ "\t" + serializer.serializeSaveValue(inputFiles) //
+				+ "\t" + serializer.serializeSaveValue(outputFiles) //
 				+ "\t" + resources.serializeSave(serializer) //
 				+ "\n";
 	}
@@ -539,7 +551,7 @@ public class Task implements BigDataScriptSerialize {
 				sb.append(" [ ");
 				boolean comma = false;
 				for (Task t : dependency) {
-					sb.append((comma ? ", " : "") + t.getId());
+					sb.append((comma ? ", " : "") + "'" + t.getId() + "'");
 					comma = true;
 				}
 				sb.append(" ]\n");

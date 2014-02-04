@@ -21,11 +21,14 @@ task( out2 <- out1 ) {
 }
 
 print("Before checkpoint\n")
-checkpoint "test/graph_03.chp"
+checkpoint "test/graph_04.chp"
 print("After checkpoint\n")
+
+out2.delete()
 
 wait
 print("After wait\n")
 
 out := out2.read()
 print("Output:\n$out")
+print("Finished!\n\n\n")

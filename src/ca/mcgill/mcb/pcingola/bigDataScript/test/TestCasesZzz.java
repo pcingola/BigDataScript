@@ -19,8 +19,7 @@ public class TestCasesZzz extends TestCasesBase {
 		//		iii) run from checkpoint
 		//		iv) make sure task dependencies remains unchanged (executed one after the other)
 
-		//runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "Task start\nTask end\n");
-		runAndCheck("test/z.bds", "output", "Task start\nTask end\n");
+		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
 	}
 
 }
