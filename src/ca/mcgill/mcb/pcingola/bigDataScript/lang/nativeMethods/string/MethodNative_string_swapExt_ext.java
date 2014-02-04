@@ -12,25 +12,25 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
-public class MethodNative_string_extName extends MethodNative {
-	public MethodNative_string_extName() {
+public class MethodNative_string_swapExt_ext extends MethodNative {
+	public MethodNative_string_swapExt_ext() {
 		super();
 	}
 
 	@Override
 	protected void initMethod() {
-		functionName = "extName";
+		functionName = "swapExt";
 		classType = Type.STRING;
 		returnType = Type.STRING;
 
-		String argNames[] = { "this" };
-		Type argTypes[] = { Type.STRING };
+		String argNames[] = { "this", "ext" };
+		Type argTypes[] = { Type.STRING, Type.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToScope();
 	}
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		String base = objThis.toString(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(idx + 1) : "";
+		String ext = csThread.getString("ext"); String b = objThis.toString(); if (b.endsWith(ext)) return b.substring(0, b.length() - ext.length()); return b;
 	}
 }
