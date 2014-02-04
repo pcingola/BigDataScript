@@ -1,15 +1,11 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 
 /**
  * A "wait" statement
@@ -78,29 +74,28 @@ public class Wait extends Statement {
 	 * @return
 	 */
 	protected RunState runStepWaitRecover(BigDataScriptThread csThread) {
-		//---
-		// Find all tasks that need to be restarted
-		//---
-		ArrayList<Task> failedTasks = new ArrayList<Task>();
-		for (Task t : csThread.getTasks()) {
-			// Add all tasks that failed and are not supposed to fail
-			if (t.isFailed() && !t.isCanFail()) failedTasks.add(t);
-		}
 
-		//---
-		// Restarts each task  
-		//---
-		for (Task t : failedTasks) {
-			System.err.println("Re-executing failed task '" + t.getId() + "'");
+		// We moved this funtionality to BigDataScriptThread
 
-			// Select proper executioner if not available
-			// E.g: We are running a task in a cluster, we checkpoint and the copy files to a laptop
-			// We should be able to downgrade executioners (probably not to upgrade)
-			String runSystem = csThread.getString(ExpressionTask.TASK_OPTION_SYSTEM);
-			Executioner executioner = Executioners.getInstance().get(runSystem);
-			t.reset();
-			executioner.add(t);
-		}
+		//		//---
+		//		// Find all tasks that need to be restarted
+		//		//---
+		//		ArrayList<Task> failedTasks = new ArrayList<Task>();
+		//		for (Task t : csThread.getTasks()) {
+		//			// Add all tasks that failed and are not supposed to fail
+		//			if (t.isFailed() && !t.isCanFail()) failedTasks.add(t);
+		//		}
+		//
+		//		//---
+		//		// Restarts each task  
+		//		//---
+		//		if (!failedTasks.isEmpty()) {
+		//			System.err.println("Re-executing " + failedTasks.size() + " failed tasks:");
+		//			for (Task t : failedTasks) {
+		//				System.err.println(t);
+		//				ExpressionTask.execute(csThread, t);
+		//			}
+		//		}
 
 		return runStepOk(csThread);
 	}

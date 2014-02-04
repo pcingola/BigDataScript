@@ -82,6 +82,45 @@ public class TaskOptions extends ExpressionList {
 	}
 
 	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("( ");
+
+		if (expressions != null) {
+			int i = 0;
+			for (Expression exp : expressions) {
+				if (i > 0) sb.append(", ");
+				sb.append(exp);
+				i++;
+			}
+		}
+
+		if ((outputFiles != null && !outputFiles.isEmpty()) || (inputFiles != null && !inputFiles.isEmpty())) {
+
+			if (outputFiles != null && !outputFiles.isEmpty()) {
+				boolean comma = false;
+				for (String f : outputFiles) {
+					sb.append((comma ? ", " : "") + "'" + f + "'");
+					comma = true;
+				}
+			}
+
+			sb.append(" <- ");
+
+			if (inputFiles != null && !inputFiles.isEmpty()) {
+				boolean comma = false;
+				for (String f : inputFiles) {
+					sb.append((comma ? ", " : "") + "'" + f + "'");
+					comma = true;
+				}
+			}
+		}
+		sb.append(" )");
+
+		return sb.toString();
+	}
+
+	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		for (Expression e : expressions)
 			if (!(e instanceof ExpressionAssignment) && !(e instanceof ExpressionVariableInitImplicit)) {

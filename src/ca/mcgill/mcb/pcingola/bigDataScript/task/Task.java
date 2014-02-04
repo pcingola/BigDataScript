@@ -378,7 +378,6 @@ public class Task implements BigDataScriptSerialize {
 	public void reset() {
 		taskState = TaskState.NONE;
 		exitValue = 0;
-		outputFiles = null;
 	}
 
 	@Override
@@ -534,6 +533,18 @@ public class Task implements BigDataScriptSerialize {
 			sb.append("\tTask state         : '" + taskState + "'\n");
 			sb.append("\tInput files        : '" + inputFiles + "'\n");
 			sb.append("\tOutput files       : '" + outputFiles + "'\n");
+
+			if (dependency != null && !dependency.isEmpty()) {
+				sb.append("\tTask dependencies  : ");
+				sb.append(" [ ");
+				boolean comma = false;
+				for (Task t : dependency) {
+					sb.append((comma ? ", " : "") + t.getId());
+					comma = true;
+				}
+				sb.append(" ]\n");
+			}
+
 			sb.append("\tScript file        : '" + programFileName + "'\n");
 			if (errorMsg != null) sb.append("\tError message      : '" + errorMsg + "'\n");
 			sb.append("\tExit status        : '" + exitValue + "'\n");
