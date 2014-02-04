@@ -31,6 +31,6 @@ public class MethodNative_string_readLines extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return array2list( Gpr.readFile( objThis.toString() ).split("\n") ); 
+		return array2list( Gpr.readFile( objThis.toString(), false ).split("\n") ); 
 	}
 }

@@ -473,7 +473,11 @@ public class Gpr {
 	 * @return
 	 */
 	public static BufferedReader reader(String fileName) {
-		return reader(fileName, false);
+		return reader(fileName, false, true);
+	}
+
+	public static BufferedReader reader(String fileName, boolean gzip) {
+		return reader(fileName, gzip, true);
 	}
 
 	/**
@@ -482,7 +486,7 @@ public class Gpr {
 	 * @param gzip : If true, file is assumed to be gzipped
 	 * @return
 	 */
-	public static BufferedReader reader(String fileName, boolean gzip) {
+	public static BufferedReader reader(String fileName, boolean gzip, boolean showExceptions) {
 		BufferedReader reader = null;
 
 		try {
@@ -502,7 +506,14 @@ public class Gpr {
 					String fileNameGz = fileName + ".gz";
 					inputFile = new File(fileNameGz);
 					if (inputFile.exists()) return new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(new File(fileNameGz)))));
-					else throw new RuntimeException("File not found '" + fileName + "'");
+					else {
+						if (!showExceptions) {
+							Gpr.debug("File not found '" + fileName + "'");
+							return null;
+						}
+						throw new RuntimeException("File not found '" + fileName + "'");
+
+					}
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -516,6 +527,10 @@ public class Gpr {
 		return reader;
 	}
 
+	public static String readFile(String fileName) {
+		return readFile(fileName, true);
+	}
+
 	/**
 	 * Read a file as a String.
 	 * Note: the file can be compressed using gzip (file name must have a ".gz" extension).
@@ -523,19 +538,23 @@ public class Gpr {
 	 * @param fileName : File to read (null on error)
 	 * @param showExceptions : show exceptions if true 
 	 */
-	public static String readFile(String fileName) {
+	public static String readFile(String fileName, boolean showExceptions) {
 		BufferedReader inFile;
 		StringBuffer strb = new StringBuffer();
 		char buff[] = new char[10240];
 		int len = 0;
 		try {
-			// inFile = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-			inFile = reader(fileName);
+			// Open
+			inFile = reader(fileName, false, showExceptions);
+			if (inFile == null) return "";
+
+			// Read
 			while ((len = inFile.read(buff)) >= 0)
 				strb.append(buff, 0, len);
 			inFile.close();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			if (showExceptions) throw new RuntimeException(e);
+			else return "";
 		}
 		return strb.toString();
 	}

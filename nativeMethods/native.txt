@@ -36,13 +36,13 @@ bool	string	isDir	this	string	return (new File(objThis.toString())).isDirectory(
 bool	string	isFile	this	string	return (new File(objThis.toString())).isFile();
 bool	string	delete	this	string	return (new File(objThis.toString())).delete();
 bool	string	mkdir	this	string	return (new File(objThis.toString())).mkdirs();
-string	string	read	this	string	return Gpr.readFile(objThis.toString());
+string	string	read	this	string	return Gpr.readFile(objThis.toString(), false);
 string	string	removeExt	this	string	String base = objThis.toString(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(0, idx) : "";
 string	string	removeExt	this,ext	string,string	String ext = csThread.getString("ext"); String b = objThis.toString(); if (b.endsWith(ext)) return b.substring(0, b.length() - ext.length()); return b;
 string	string	swapExt	this,extNew	string,string	String base = objThis.toString(); String extNew = csThread.getString("extNew"); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(0, idx) + "." + extNew : base + "." + extNew;
 string	string	swapExt	this,extOld,extNew	string,string,string	String extNew = csThread.getString("extNew"); String extOld = csThread.getString("extOld"); String b = objThis.toString(); if (b.endsWith(extOld)) return b.substring(0, b.length() - extOld.length()) + extNew; return b + extNew;
 string	string	write	this,str	string,string	return Gpr.toFile(objThis.toString(), csThread.getString("str"));
-TypeList.get(Type.STRING)	string	readLines	this	string	return array2list( Gpr.readFile( objThis.toString() ).split("\n") ); 
+TypeList.get(Type.STRING)	string	readLines	this	string	return array2list( Gpr.readFile( objThis.toString(), false ).split("\n") ); 
 TypeList.get(Type.STRING)	string	dir	this	string	return array2listSorted( ( new File( objThis.toString() ) ).list() );
 TypeList.get(Type.STRING)	string	dir	this,regex	string,string	String regex = csThread.getString("regex"); ArrayList<String> list = new ArrayList<String>(); String files[] = new File(objThis.toString()).list(); if (files == null) return list; for (String s : files) if (s.matches(regex)) list.add(s); Collections.sort(list); return list;
 TypeList.get(Type.STRING)	string	dirPath	this	string	ArrayList<String> list = new ArrayList<String>(); File dir[] = (new File(objThis.toString())).listFiles(); if (dir == null) return list; for (File f : dir) try { list.add(f.getCanonicalPath()); } catch (Exception e) {;} Collections.sort(list); return list;
@@ -53,6 +53,6 @@ int	string	size	this	string	return (long) (new File(objThis.toString())).length(
 #---
 bool	string	isDone	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return false; return task.isDone();
 bool	string	isDoneOk	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return false; return task.isDoneOk();
-string	string	stdout	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStdoutFile());
-string	string	stderr	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStderrFile());
+string	string	stdout	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStdoutFile(), false);
+string	string	stderr	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStderrFile(), false);
 int	string	exitCode	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return 0; return (long) task.getExitValue();

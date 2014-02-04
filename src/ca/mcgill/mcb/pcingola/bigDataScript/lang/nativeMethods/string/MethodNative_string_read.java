@@ -31,6 +31,6 @@ public class MethodNative_string_read extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return Gpr.readFile(objThis.toString());
+		return Gpr.readFile(objThis.toString(), false);
 	}
 }

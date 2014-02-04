@@ -31,6 +31,6 @@ public class MethodNative_string_stdout extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStdoutFile());
+		String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStdoutFile(), false);
 	}
 }
