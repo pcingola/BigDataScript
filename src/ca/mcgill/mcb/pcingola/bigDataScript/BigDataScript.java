@@ -675,8 +675,10 @@ public class BigDataScript {
 			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
 			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
 			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) usage(null);
-			else if (args[i].equalsIgnoreCase("-dryRun")) dryRun = true;
-			else if (args[i].equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
+			else if (args[i].equalsIgnoreCase("-dryRun")) {
+				dryRun = true;
+				noRmOnExit = true; // Not running, so don't delete files
+			} else if (args[i].equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
 			else if (args[i].equals("-i") || args[i].equalsIgnoreCase("-info")) {
 				// Checkpoint info
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
