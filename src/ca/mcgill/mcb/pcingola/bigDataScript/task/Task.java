@@ -518,10 +518,14 @@ public class Task implements BigDataScriptSerialize {
 
 	@Override
 	public String toString() {
-		return toString(verbose);
+		return toString(verbose, debug);
 	}
 
 	public String toString(boolean verbose) {
+		return toString(verbose, debug);
+	}
+
+	public String toString(boolean verbose, boolean showCode) {
 		StringBuilder sb = new StringBuilder();
 
 		if (verbose) {
@@ -543,7 +547,7 @@ public class Task implements BigDataScriptSerialize {
 			String tailOut = TailFile.tail(stdoutFile);
 			if ((tailOut != null) && !tailOut.isEmpty()) sb.append("\tStdOut (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailOut));
 
-			if (debug) {
+			if (showCode) {
 				sb.append("\tTask raw code:\n");
 				sb.append("-------------------- Task code: Start --------------------\n");
 				sb.append(programTxt + "\n");

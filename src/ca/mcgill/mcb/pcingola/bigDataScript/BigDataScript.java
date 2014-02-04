@@ -74,6 +74,7 @@ public class BigDataScript {
 	boolean verbose;
 	boolean debug;
 	boolean log;
+	boolean dryRun;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
 	String programFileName; // Program file name
@@ -323,6 +324,7 @@ public class BigDataScript {
 	 */
 	void initDefaults() {
 		log = true;
+		dryRun = false;
 	}
 
 	/**
@@ -667,26 +669,13 @@ public class BigDataScript {
 		bigDataScriptAction = BigDataScriptAction.RUN;
 
 		for (int i = 0; i < args.length; i++) {
-			if (programFileName != null) programArgs.add(args[i]); // Everything after 'programFileName'
-																	// is an command line argument for
-																	// the BigDataScript program
-			else if (args[i].equalsIgnoreCase("-noLog")) log = false;
+			if (programFileName != null) programArgs.add(args[i]); // Everything after 'programFileName' is an command line argument for the BigDataScript program
 			else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
 			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
 			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
 			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) usage(null);
-			else if (args[i].equals("-loop")) {
-				// Perform a 'busy loop' and exit
-				Timer t = new Timer();
-				t.start();
-				if (verbose) Gpr.debug("Looping");
-				for (long j = 0; true; j++) {
-					if (t.elapsed() > 10000) {
-						if (verbose) Gpr.debug("Done: " + j);
-						System.exit(0);
-					}
-				}
-			} else if (args[i].equals("-i") || args[i].equalsIgnoreCase("-info")) {
+			else if (args[i].equalsIgnoreCase("-dryRun")) dryRun = true;
+			else if (args[i].equals("-i") || args[i].equalsIgnoreCase("-info")) {
 				// Checkpoint info
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 				else usage("Option '-i' without checkpoint file argument");
@@ -730,6 +719,7 @@ public class BigDataScript {
 		config.setVerbose(verbose);
 		config.setDebug(debug);
 		config.setLog(log);
+		config.setDryRun(dryRun);
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
 			else pidFile = chekcpointRestoreFile + ".pid";
@@ -849,7 +839,6 @@ public class BigDataScript {
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
 		System.err.println("  [-d | -debug]                  : Debug mode.");
 		System.err.println("  --dryRun                       : Do not run any task, just show what would be run.");
-		!!!!!!!!!!!!!
 		System.err.println("  [-l | -log]                    : Log all actions (do not delete tmp files).");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");

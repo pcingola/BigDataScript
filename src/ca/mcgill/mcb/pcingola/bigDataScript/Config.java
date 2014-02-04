@@ -51,6 +51,14 @@ public class Config {
 		configInstance = this;
 	}
 
+	public boolean isDryRun() {
+		return dryRun;
+	}
+
+	public void setDryRun(boolean dryRun) {
+		this.dryRun = dryRun;
+	}
+
 	/**
 	 * Create a configuration from 'configFileName'
 	 * @param genomeVersion

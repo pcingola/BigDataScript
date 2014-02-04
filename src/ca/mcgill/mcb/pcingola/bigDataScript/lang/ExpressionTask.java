@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
@@ -12,6 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -77,8 +79,17 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setOutputFiles(outputFiles);
 
 		// Queue exec
-		csThread.add(task);
-		executioner.add(task);
+		if (Config.get().isDryRun()) {
+			// Dry run: Don't run the task, just show what would be run
+			System.out.println("Dry run task:\n" + task.toString(true, true));
+			task.state(TaskState.STARTED);
+			task.state(TaskState.RUNNING);
+			task.state(TaskState.FINISHED);
+			task.setExitValue(0);
+		} else {
+			csThread.add(task);
+			executioner.add(task);
+		}
 
 		return task;
 	}
