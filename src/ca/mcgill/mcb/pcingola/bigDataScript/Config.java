@@ -33,6 +33,7 @@ public class Config {
 	boolean verbose = false; // Verbose mode?
 	boolean log = false; // Log all commands?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
+	boolean noRmOnExit = false; // Avoid removing files on exit
 	String configDirName;
 	String pidFile;
 	Properties properties;
@@ -49,14 +50,6 @@ public class Config {
 	public Config() {
 		read(DEFAULT_CONFIG_FILE); // Read config file 
 		configInstance = this;
-	}
-
-	public boolean isDryRun() {
-		return dryRun;
-	}
-
-	public void setDryRun(boolean dryRun) {
-		this.dryRun = dryRun;
 	}
 
 	/**
@@ -168,8 +161,16 @@ public class Config {
 		return debug;
 	}
 
+	public boolean isDryRun() {
+		return dryRun;
+	}
+
 	public boolean isLog() {
 		return log;
+	}
+
+	public boolean isNoRmOnExit() {
+		return noRmOnExit;
 	}
 
 	public boolean isVerbose() {
@@ -225,8 +226,16 @@ public class Config {
 		this.debug = debug;
 	}
 
+	public void setDryRun(boolean dryRun) {
+		this.dryRun = dryRun;
+	}
+
 	public void setLog(boolean log) {
 		this.log = log;
+	}
+
+	public void setNoRmOnExit(boolean noRmOnExit) {
+		this.noRmOnExit = noRmOnExit;
 	}
 
 	public void setPidFile(String pidFile) {

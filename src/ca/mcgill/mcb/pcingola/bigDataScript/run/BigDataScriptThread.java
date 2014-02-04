@@ -439,9 +439,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			// Remove all pending files
 			if (!removeOnExit.isEmpty()) {
 				if (isVerbose()) System.err.println("Deleting files (rmOnExit):");
-				for (String fileName : removeOnExit) {
-					if (isVerbose()) System.err.println("\t" + fileName);
-					(new File(fileName)).delete();
+				if (config != null && config.isNoRmOnExit()) {
+					if (isVerbose()) System.err.println("\tNothing done: 'noRmOnExit' is active");
+				} else {
+					for (String fileName : removeOnExit) {
+						if (isVerbose()) System.err.println("\t" + fileName);
+						(new File(fileName)).delete();
+					}
 				}
 			}
 		}

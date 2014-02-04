@@ -75,6 +75,7 @@ public class BigDataScript {
 	boolean debug;
 	boolean log;
 	boolean dryRun;
+	boolean noRmOnExit;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
 	String programFileName; // Program file name
@@ -675,6 +676,7 @@ public class BigDataScript {
 			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
 			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) usage(null);
 			else if (args[i].equalsIgnoreCase("-dryRun")) dryRun = true;
+			else if (args[i].equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
 			else if (args[i].equals("-i") || args[i].equalsIgnoreCase("-info")) {
 				// Checkpoint info
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
@@ -720,6 +722,7 @@ public class BigDataScript {
 		config.setDebug(debug);
 		config.setLog(log);
 		config.setDryRun(dryRun);
+		config.setNoRmOnExit(noRmOnExit);
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
 			else pidFile = chekcpointRestoreFile + ".pid";
@@ -838,9 +841,10 @@ public class BigDataScript {
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
 		System.err.println("  [-d | -debug]                  : Debug mode.");
-		System.err.println("  --dryRun                       : Do not run any task, just show what would be run.");
-		System.err.println("  [-l | -log]                    : Log all actions (do not delete tmp files).");
+		System.err.println("  -dryRun                        : Do not run any task, just show what would be run.");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
+		System.err.println("  [-l | -log]                    : Log all actions (do not delete tmp files).");
+		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).");
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-s | -system ] type           : Set system type.");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
