@@ -20,4 +20,9 @@ public class TestCasesGraph extends TestCasesBase {
 		runAndCheck("test/graph_02.bds", "output", "IN\nTASK 1\nTASK 2\nTASK 3\n");
 	}
 
+	@Test
+	public void test03() {
+		runAndCheckpoint("test/graph_03.bds", "test/graph_03.chp", "out", "Task start\nTask end\n");
+	}
+
 }
