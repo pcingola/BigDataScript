@@ -121,6 +121,7 @@ public class BigDataScriptSerializer {
 
 		// Sanity check: Is it a list?
 		String nextField = getNextField();
+		if (nextField.equals("null")) return null;
 		if (!nextField.startsWith(LIST_IDENTIFIER)) throw new RuntimeException("Serialization error: '" + LIST_IDENTIFIER + "' expected instead of '" + nextField + "'");
 
 		// Parse list size
