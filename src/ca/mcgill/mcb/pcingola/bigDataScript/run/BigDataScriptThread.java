@@ -96,13 +96,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				tasksByOutput.getOrCreate(outFile).add(task);
 		}
 
-		// Add input dependencies based on input files
-		if (task.getInputFiles() != null) {
-			for (String inFile : task.getInputFiles()) {
-				List<Task> taskDeps = tasksByOutput.get(inFile);
-				if (taskDeps != null) {
-					for (Task taskDep : taskDeps)
-						if (!taskDep.isDone()) task.addDependency(taskDep); // Task not finished? Add it to dependency list
+		if (!task.isDone()) {
+			// Add input dependencies based on input files
+			if (task.getInputFiles() != null) {
+				for (String inFile : task.getInputFiles()) {
+					List<Task> taskDeps = tasksByOutput.get(inFile);
+					if (taskDeps != null) {
+						for (Task taskDep : taskDeps)
+							if (!taskDep.isDone()) task.addDependency(taskDep); // Task not finished? Add it to dependency list
+					}
 				}
 			}
 		}
@@ -421,9 +423,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (restoredTasks == null) return;
 		for (Task task : restoredTasks)
 			if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
+				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
-				Gpr.debug("Adding task: " + task.getId());
+			} else {
+				// Task finished? Just add it
+				add(task);
 			}
+
+		restoredTasks = null; // We don't need it any more (plus we want to make sure we don't schedule tasks more than once)
 	}
 
 	@SuppressWarnings("rawtypes")

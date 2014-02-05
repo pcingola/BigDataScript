@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -147,6 +148,17 @@ public class Task implements BigDataScriptSerialize {
 	 */
 	public void createProgramFile() {
 		if (debug) Gpr.debug("Saving file '" + programFileName + "'");
+
+		// Create dir
+		try {
+			File dir = new File(programFileName);
+			dir = dir.getCanonicalFile().getParentFile();
+			if (dir != null) dir.mkdirs();
+		} catch (IOException e) {
+			// Nothing to do
+		}
+
+		// Create file
 		Gpr.toFile(programFileName, SHE_BANG + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution 
 

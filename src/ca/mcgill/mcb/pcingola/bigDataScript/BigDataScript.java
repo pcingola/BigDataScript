@@ -42,14 +42,12 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.VarDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.VariableInit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.NativeLibraryFunctions;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNativeZzz;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.NativeLibraryString;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -652,10 +650,6 @@ public class BigDataScript {
 		// Native library: String
 		NativeLibraryString nativeLibraryString = new NativeLibraryString();
 		if (debug) Timer.showStdErr("Native library:\n" + nativeLibraryString);
-
-		// Load test native methods
-		MethodNativeZzz nmz = new MethodNativeZzz();
-		if (debug) Timer.showStdErr("Native test method:\n" + nmz.signature());
 	}
 
 	/**
@@ -789,11 +783,12 @@ public class BigDataScript {
 			//---
 			// Add pending or failed tasks
 			//---
-			for (Task task : csthread.getTasks())
-				if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
-					ExpressionTask.execute(csthread, task);
-					Gpr.debug("Adding task: " + task.getId());
-				}
+			csthread.restoreUnserializedTasks();
+			//			for (Task task : csthread.getTasks())
+			//				if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
+			//					ExpressionTask.execute(csthread, task);
+			//					Gpr.debug("Adding task: " + task.getId());
+			//				}
 
 			//---
 			// All set, run thread
