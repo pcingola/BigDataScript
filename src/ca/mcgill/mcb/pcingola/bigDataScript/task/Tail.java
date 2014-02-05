@@ -29,12 +29,12 @@ public class Tail extends Thread {
 	/**
 	 * Add a file to follow
 	 * @param inputFileName : Input stream to be followed
-	 * @param outputFileName : Copy input to this file (can be null)
+	 * @param tailId : Identifies this 'tail'
 	 * @param showStderr : If true, print to STDERR
 	 */
-	public synchronized void add(InputStream input, String outputFileName, boolean showStderr) {
-		TailFile tf = new TailFileLocal(input, outputFileName, showStderr);
-		files.put(outputFileName, tf);
+	public synchronized void add(InputStream input, String tailId, boolean showStderr) {
+		TailFile tf = new TailFileLocal(input, showStderr);
+		files.put(tailId, tf);
 	}
 
 	/**
@@ -43,8 +43,8 @@ public class Tail extends Thread {
 	 * @param outputFileName : Copy input to this file (can be null)
 	 * @param showStderr : If true, print to STDERR
 	 */
-	public synchronized void add(String inputFileName, String outputFileName, boolean showStderr) {
-		TailFile tf = new TailFileMulti(inputFileName, outputFileName, showStderr);
+	public synchronized void add(String inputFileName, boolean showStderr) {
+		TailFile tf = new TailFileMulti(inputFileName, showStderr);
 		files.put(inputFileName, tf);
 	}
 

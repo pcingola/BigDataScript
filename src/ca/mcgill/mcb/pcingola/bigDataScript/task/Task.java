@@ -77,6 +77,7 @@ public class Task implements BigDataScriptSerialize {
 	protected String id; // Task ID
 	protected String bdsFileName; // Program file that created this task (used for reporting errors)
 	protected String pid; // PID (if any)
+	protected String programFileDir; // Program file's dir
 	protected String programFileName; // Program file name
 	protected String programTxt; // Program's text (program's code)
 	protected String node; // Preferred execution node (or hostname)
@@ -153,7 +154,10 @@ public class Task implements BigDataScriptSerialize {
 		try {
 			File dir = new File(programFileName);
 			dir = dir.getCanonicalFile().getParentFile();
-			if (dir != null) dir.mkdirs();
+			if (dir != null) {
+				dir.mkdirs();
+				programFileDir = dir.getCanonicalPath();
+			}
 		} catch (IOException e) {
 			// Nothing to do
 		}
@@ -173,6 +177,7 @@ public class Task implements BigDataScriptSerialize {
 	 * Remove tmp files on exit
 	 */
 	public void deleteOnExit() {
+		if (programFileDir != null) (new File(programFileDir)).deleteOnExit(); // Files are deleted in reverse order. So dir has to be first to make sure it is empty when deleted (otherwise it will not be deleted)
 		if (stdoutFile != null) (new File(stdoutFile)).deleteOnExit();
 		if (stderrFile != null) (new File(stderrFile)).deleteOnExit();
 		if (exitCodeFile != null) (new File(exitCodeFile)).deleteOnExit();

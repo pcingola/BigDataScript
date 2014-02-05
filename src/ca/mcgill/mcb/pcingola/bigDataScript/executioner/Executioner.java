@@ -113,8 +113,8 @@ public abstract class Executioner extends Thread {
 	protected void follow(Task task) {
 		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
 
-		tail.add(task.getStdoutFile(), null, false);
-		tail.add(task.getStderrFile(), null, true);
+		tail.add(task.getStdoutFile(), false);
+		tail.add(task.getStderrFile(), true);
 
 		if (monitorTask != null) monitorTask.add(this, task); // Start monitoring exit file
 	}

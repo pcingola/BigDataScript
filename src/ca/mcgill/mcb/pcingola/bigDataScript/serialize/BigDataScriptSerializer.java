@@ -173,7 +173,8 @@ public class BigDataScriptSerializer {
 	}
 
 	public String getNextFieldString() {
-		return StringEscapeUtils.unescapeJava(getNextField());
+		String str = getNextField();
+		return parseString(str);
 	}
 
 	public Type getNextFieldType() {
@@ -406,6 +407,13 @@ public class BigDataScriptSerializer {
 		return Gpr.parseIntSafe(str[1]);
 	}
 
+	public String parseString(String str) {
+		if (str.equals("null")) return null;
+		str = StringEscapeUtils.unescapeJava(str); // Un-escape
+		str = str.substring(1, str.length() - 1); // Remove quotes
+		return str;
+	}
+
 	/**
 	 * Save data to file
 	 * @param shellFileName
@@ -442,7 +450,7 @@ public class BigDataScriptSerializer {
 
 		if (value instanceof String) {
 			String escapedStr = StringEscapeUtils.escapeJava(value.toString());
-			return escapedStr;
+			return "\"" + escapedStr + "\"";
 		}
 
 		if (value instanceof List) {
@@ -470,6 +478,8 @@ public class BigDataScriptSerializer {
 	}
 
 	public String serializeSaveValue(String str) {
-		return StringEscapeUtils.escapeJava(str);
+		if (str == null) return "null";
+		String escapedStr = StringEscapeUtils.escapeJava(str);
+		return "\"" + escapedStr + "\"";
 	}
 }

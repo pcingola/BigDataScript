@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 /**
  * A file to use with 'Tail'
@@ -20,8 +19,8 @@ public class TailFileMulti extends TailFile {
 	File inputFile;
 	boolean exists = false;
 
-	public TailFileMulti(String inputFileName, String outputFileName, boolean showStderr) {
-		super(inputFileName, outputFileName, showStderr);
+	public TailFileMulti(String inputFileName, boolean showStderr) {
+		super(inputFileName, showStderr);
 		inputFile = new File(inputFileName);
 	}
 
@@ -80,9 +79,6 @@ public class TailFileMulti extends TailFile {
 			avail = input.available();
 
 			while (avail > 0) {
-				// Open output
-				if ((output == null) && (outputFileName != null)) output = new BufferedOutputStream(new FileOutputStream(outputFileName));
-
 				// Read all available bytes
 				avail = Math.min(avail, MAX_BUFFER_SIZE); // Limit buffer size (some systems return MAX_INT when the file is growing)
 				byte[] bytes = new byte[avail];
@@ -101,7 +97,6 @@ public class TailFileMulti extends TailFile {
 
 			// Close input and output
 			input.close();
-			if (output != null) output.close();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

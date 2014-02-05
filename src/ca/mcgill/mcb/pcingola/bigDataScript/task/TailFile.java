@@ -15,7 +15,7 @@ public abstract class TailFile {
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 
 	String inputFileName; // Read (tail -f) frmo this file
-	String outputFileName; // Write to this file 
+	//	String outputFileName; // Write to this file 
 	boolean showStderr; // Do we show on STDERR? (default STDOUT)
 
 	public static String tail(String fileName) {
@@ -110,9 +110,9 @@ public abstract class TailFile {
 		return sb.toString();
 	}
 
-	public TailFile(String inputFileName, String outputFileName, boolean showStderr) {
+	public TailFile(String inputFileName, boolean showStderr) {
 		this.inputFileName = inputFileName;
-		this.outputFileName = outputFileName;
+		// this.outputFileName = outputFileName;
 		this.showStderr = showStderr;
 	}
 

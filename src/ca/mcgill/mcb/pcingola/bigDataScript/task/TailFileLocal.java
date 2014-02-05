@@ -1,16 +1,15 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A file to use with 'Tail'
- * Opens files, so it has limitations depending on the number of opened file descriptors allowed by the system.
+ * Opens files, so it has limitations depending on the number of 
+ * opened file descriptors allowed by the system.
  * 
  * @author pcingola
  */
@@ -19,20 +18,19 @@ public class TailFileLocal extends TailFile {
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 
 	BufferedInputStream input; // Input buffer 
-	BufferedOutputStream output; // Output buffer
 
 	/**
 	 * Provide an inputStream (instead of an input file)
 	 * @param input
 	 * @param outputFileName
 	 */
-	public TailFileLocal(InputStream input, String outputFileName, boolean showStderr) {
-		super(null, outputFileName, showStderr);
+	public TailFileLocal(InputStream input, boolean showStderr) {
+		super(null, showStderr);
 		this.input = new BufferedInputStream(input);
 	}
 
-	public TailFileLocal(String inputFileName, String outputFileName, boolean showStderr) {
-		super(inputFileName, outputFileName, showStderr);
+	public TailFileLocal(String inputFileName, boolean showStderr) {
+		super(inputFileName, showStderr);
 	}
 
 	/**
@@ -45,10 +43,8 @@ public class TailFileLocal extends TailFile {
 
 			// Is it already open?
 			if (input != null) input.close();
-			if (output != null) output.close();
 
 			input = null;
-			output = null;
 		} catch (Exception e) {
 			// Nothing to do
 		}
@@ -67,9 +63,6 @@ public class TailFileLocal extends TailFile {
 				if (!Gpr.exists(inputFileName)) return false; // File does not exists yet, it may be created later
 				input = new BufferedInputStream(new FileInputStream(inputFileName));
 			}
-
-			// We have to open output?
-			if ((outputFileName != null) && (output == null)) output = new BufferedOutputStream(new FileOutputStream(outputFileName));
 		} catch (Exception e) {
 			close(false);
 			throw new RuntimeException(e);
@@ -101,9 +94,6 @@ public class TailFileLocal extends TailFile {
 				// Show bytes
 				if (showStderr) System.err.write(bytes, 0, count);
 				else System.out.write(bytes, 0, count);
-
-				// Write to output
-				if (output != null) output.write(bytes, 0, count);
 			}
 
 			return count;

@@ -781,14 +781,9 @@ public class BigDataScript {
 				programUnit.setScope(scope);
 
 			//---
-			// Add pending or failed tasks
+			// Re-execute or add tasks
 			//---
 			csthread.restoreUnserializedTasks();
-			//			for (Task task : csthread.getTasks())
-			//				if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
-			//					ExpressionTask.execute(csthread, task);
-			//					Gpr.debug("Adding task: " + task.getId());
-			//				}
 
 			//---
 			// All set, run thread
