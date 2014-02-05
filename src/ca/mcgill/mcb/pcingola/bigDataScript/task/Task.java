@@ -409,8 +409,8 @@ public class Task implements BigDataScriptSerialize {
 		canFail = serializer.getNextFieldBool();
 		taskState = TaskState.valueOf(serializer.getNextFieldString());
 		exitValue = (int) serializer.getNextFieldInt();
-		node = serializer.getNextField();
-		queue = serializer.getNextField();
+		node = serializer.getNextFieldString();
+		queue = serializer.getNextFieldString();
 		programFileName = serializer.getNextFieldString();
 		programTxt = serializer.getNextFieldString();
 		stdoutFile = serializer.getNextFieldString();
@@ -431,10 +431,10 @@ public class Task implements BigDataScriptSerialize {
 				+ "\t" + serializer.serializeSaveValue(bdsFileName) //
 				+ "\t" + bdsLineNum //
 				+ "\t" + canFail // 
-				+ "\t" + taskState // 
+				+ "\t" + serializer.serializeSaveValue(taskState.toString()) // 
 				+ "\t" + exitValue // 
-				+ "\t" + node // 
-				+ "\t" + queue // 
+				+ "\t" + serializer.serializeSaveValue(node) // 
+				+ "\t" + serializer.serializeSaveValue(queue) // 
 				+ "\t" + serializer.serializeSaveValue(programFileName) //
 				+ "\t" + serializer.serializeSaveValue(programTxt) //
 				+ "\t" + serializer.serializeSaveValue(stdoutFile) //

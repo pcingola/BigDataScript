@@ -1,5 +1,10 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import java.io.File;
+
+import org.junit.Test;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Quick test cases when creating a new feature...
@@ -9,8 +14,41 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	public void test01() {
-		runAndCheckpoint("test/checkpoint_01.bds", null, "i", "10");
+	//	@Test
+	//	public void test03() {
+	//		runAndCheckpoint("test/graph_03.bds", "test/graph_03.chp", "out", "Task start\nTask end\n");
+	//	}
+	//
+	//	@Test
+	//	public void test04() {
+	//		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
+	//	}
+
+	/**
+	 * How this test works:
+	 * 		1) Try to delete a file that doesn't exits. Task fails, checkpoint is created and program finishes
+	 * 		2) createFile is run: This creates the file to be deleted
+	 * 		3) Checkpoint recovery, the task is re-executed. This time the file exists, so it runs OK. Variable 'b' is set to true
+	 */
+	@Test
+	public void test06() {
+		final String fileToDelete = "test/checkpoint_06.tmp";
+
+		Runnable createFile = new Runnable() {
+
+			@Override
+			public void run() {
+				// Create the file
+				Gpr.debug("Creating file: '" + fileToDelete + "'");
+				Gpr.toFile(fileToDelete, "Hello");
+			}
+		};
+
+		// Make sure that the file doesn't exits
+		(new File(fileToDelete)).delete();
+
+		// Run test
+		runAndCheckpoint("test/checkpoint_06.bds", "test/checkpoint_06.bds.line_8.chp", "b", "true", createFile);
 	}
 
 }
