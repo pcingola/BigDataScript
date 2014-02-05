@@ -11,15 +11,35 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test07() {
-
-		// TO CHECK:
-		// 		i) 2 Tasks created
-		//		ii) checkpoint saved
-		//		iii) run from checkpoint
-		//		iv) make sure task dependencies remains unchanged (executed one after the other)
-
-		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
+	public void test03() {
+		runAndCheckpoint("test/graph_03.bds", "test/graph_03.chp", "out", "Task start\nTask end\n");
 	}
+	//
+	//	/**
+	//	 * How this test works:
+	//	 * 		1) Try to delete a file that doesn't exits. Task fails, checkpoint is created and program finishes
+	//	 * 		2) createFile is run: This creates the file to be deleted
+	//	 * 		3) Checkpoint recovery, the task is re-executed. This time the file exists, so it runs OK. Variable 'b' is set to true
+	//	 */
+	//	@Test
+	//	public void test06() {
+	//		final String fileToDelete = "test/checkpoint_06.tmp";
+	//
+	//		Runnable createFile = new Runnable() {
+	//
+	//			@Override
+	//			public void run() {
+	//				// Create the file
+	//				Gpr.debug("Creating file: '" + fileToDelete + "'");
+	//				Gpr.toFile(fileToDelete, "Hello");
+	//			}
+	//		};
+	//
+	//		// Make sure that the file doesn't exits
+	//		(new File(fileToDelete)).delete();
+	//
+	//		// Run test
+	//		runAndCheckpoint("test/checkpoint_06.bds", "test/checkpoint_06.bds.line_8.chp", "b", "true", createFile);
+	//	}
 
 }
