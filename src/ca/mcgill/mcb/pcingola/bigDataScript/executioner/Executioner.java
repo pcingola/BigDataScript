@@ -273,8 +273,10 @@ public abstract class Executioner extends Thread {
 			for (Task t : tasksToRun) {
 				sb.append("\n\tPending: '" + t.getId() + "', state " + t.getTaskState() + ", dependency state " + t.dependencyState() + ", dependencies: ");
 				// Show dependent tasks
-				for (Task td : t.getDependency())
-					sb.append(td.getId() + "[" + td.dependencyState() + "] ");
+				if (t.getDependency() != null) {
+					for (Task td : t.getDependency())
+						sb.append(td.getId() + "[" + td.dependencyState() + "] ");
+				}
 			}
 
 			// Running
