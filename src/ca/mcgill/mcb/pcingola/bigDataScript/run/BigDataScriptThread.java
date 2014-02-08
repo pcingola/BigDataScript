@@ -229,7 +229,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskStart", outFormat.format(start));
 			rTemplate.add("taskStartCsv", csvFormat.format(start));
 
-			Date end = task.getRunningStartTime();
+			Date end = task.getRunningEndTime();
 			rTemplate.add("taskEnd", outFormat.format(end));
 			rTemplate.add("taskEndCsv", csvFormat.format(end));
 
