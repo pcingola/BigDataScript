@@ -1,128 +1,62 @@
 #!/usr/bin/env bds
 
 #-------------------------------------------------------------------------------
-#
-# Genome sequencing functions
-# References:
-#
-#
-# Dependencies:
-#	- SAMtools : http://samtools.sourceforge.net/
-#	- BWA      : http://bio-bwa.sourceforge.net/
-#	- tabix    : http://samtools.sourceforge.net/
-#	- GATK     : http://www.broadinstitute.org/gatk/
-#	- Picard   : http://picard.sourceforge.net/
-#	- SnpEff   : http://snpeff.sourceforge.net/
+# Pipeline for mapping reads and calling variants
 #
 #															Pablo Cingolani 2014
 #-------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
 # Parameters
-#-------------------------------------------------------------------------------
 
-# Program paths and command line options
 java                  := "java -Xmx4G -XX:ParallelGCThreads=2 "
 gatkJar               := "$HOME/tools/gatk/GenomeAnalysisTK.jar"
 picardPath            := "$HOME/tools/picard"
 snpEffDir             := "$HOME/snpEff"
 callableCollapseSplit := "$HOME/.bds/include/bio/seq/callableCollapseSplit.py"	# Note: This script is in bds include's directory
 
-# Paramters used to identify these reads (read group)
 readGroupId           := "ReadGroupId"
 libraryId             := "LibraryId"
 platform              := "illumina"
 sampleId              := "SampleId"
 readGroupString       := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
 
-#-------------------------------------------------------------------------------
-# Module variables
-#-------------------------------------------------------------------------------
+fastqExtentions       := [".gz", ".fq", ".fastq"] # Extensions used in FASTQ files
+fastaExtentions       := [".gz", ".fa", ".fasta"] # Extensions used in FASTA files
 
-# Extensions used in FASTQ files
-fastqExtentions	:= [".gz", ".fq", ".fastq"]
-fastaExtentions	:= [".gz", ".fa", ".fasta"]
-
-#-------------------------------------------------------------------------------
 # Annotate a VCF file
-#-------------------------------------------------------------------------------
 string annotate(string vcf, string genome) {
-	eff := vcf.removeExt(".vcf") + ".eff.vcf"
-	task( eff <- vcf ) {
-	 	sys $java -jar $snpEffDir/snpEff.jar eff \
-					-c $snpEffDir/snpEff.config \
-					-v \
-					-lof \
-					GRCh37.71 \
-					$vcf \
-					> $eff
-	}
-	wait
-
+	eff := vcf.swapExt(".vcf", ".eff.vcf")
+	task( eff <- vcf )	sys $java -jar $snpEffDir/snpEff.jar eff -c $snpEffDir/snpEff.config -v -lof GRCh37.71 $vcf > $eff
 	return( eff )
 }
 
-#-------------------------------------------------------------------------------
 # Calculate callable regions
-#-------------------------------------------------------------------------------
 string callableRegions(string referenceFasta, string bam) {
-	bed := bam.removeExt(".bam") + ".callable.bed" 
-	summary := bam.removeExt(".bam") + ".callable.txt" 
-
-	# Make sure we have all required files for GATK to run
-	gatkPrepare(referenceFasta, bam)
-
+	bed := bam.swapExt(".bam", ".callable.bed")
+	summary := bam.swapExt(".bam", ".callable.txt")
+	gatkPrepare(referenceFasta, bam) # Make sure we have all required files for GATK to run
 	print("Callable regions: $bed\n")
-	task( bed <- bam ) {
-		sys $java -jar $gatkJar \
-				-T CallableLoci \
-				-R $referenceFasta \
-				-I $bam \
-				-summary $summary \
-				-o $bed
-	}
-	wait
-
+	task( bed <- bam ) sys $java -jar $gatkJar -T CallableLoci -R $referenceFasta -I $bam -summary $summary -o $bed
 	return( bed )
 }
 
-#-------------------------------------------------------------------------------
 # In order to use GATK, we need to prepare the reference genome
-# http://gatkforums.broadinstitute.org/discussion/1601/how-can-i-prepare-a-fasta-file-to-use-as-reference
-# We have to:
-# 	- Create a dictionary (Picard)
-# 	- Index the fasta file (SamTools)
-# 	- Create an index of the BAM file
-#-------------------------------------------------------------------------------
 string[] gatkPrepare(string fasta, string bam) {
 	fai := fasta + ".fai"
 	dict := removeExtFasta(fasta) + ".dict"
+	bai := bam + ".bai"
 
 	print("Creating dictionary file: $dict\n")
-	task( dict <- fasta ) {
-		sys $java -jar $picardPath/CreateSequenceDictionary.jar \
-					R= $fasta \
-					O= $dict
-	}
-
+	task( dict <- fasta ) sys $java -jar $picardPath/CreateSequenceDictionary.jar R= $fasta O= $dict
 	print("Creating fasta idex: $fai\n")
-	task( fai <- fasta ) {
-		sys samtools faidx $fasta
-	}
-
-	bai := bam + ".bai"
+	task( fai <- fasta ) sys samtools faidx $fasta
 	print("Creating BAM idex: $bai\n")
-	task( bai <- bam ) {
-		sys samtools index $bam
-	}
-
+	task( bai <- bam ) sys samtools index $bam
 	wait
 	return( [fai, dict, bai] )
 }
 
-#-------------------------------------------------------------------------------
 # Call variants using GATK’s Haplotype Caller
-#-------------------------------------------------------------------------------
 string[] haplotypeCaller( string referenceFasta, string bam, string[] callableRegions, int cpusCalling ) {
 	string[] vcfs
 
@@ -138,40 +72,19 @@ string[] haplotypeCaller( string referenceFasta, string bam, string[] callableRe
 			vcfs.add( callableRegionVcf )
 
 			# Invoke GATK's HaplotypeCaller
-			task( callableRegionVcf <- callableRegion, cpus := cpusCalling ) {
-				sys $java -jar $gatkJar \
-					-T HaplotypeCaller \
-					-R $referenceFasta \
-					-I $bam \
-					-stand_call_conf 50.0 \
-					-stand_emit_conf 10.0 \
-					-L $callableRegion \
-					-o $callableRegionVcf
-			}
+			task( callableRegionVcf <- callableRegion, cpus := cpusCalling ) sys $java -jar $gatkJar -T HaplotypeCaller -R $referenceFasta -I $bam -stand_call_conf 50.0 -stand_emit_conf 10.0 -L $callableRegion -o $callableRegionVcf
 		}
 	}
-	wait
-
 	return( vcfs ) 
 }
 
-#-------------------------------------------------------------------------------
 # Join VCF files
-#-------------------------------------------------------------------------------
 void joinVcf(string vcf, string[] vcfs ) {
-
-	# File names separated by space
-	vcfsStr := vcfs.join(' ')
-
-	task( vcf <- vcfs ) {
-		sys $java -jar $snpEffDir/SnpSift.jar split -j $vcfsStr > $vcf
-	}
-	wait
+	vcfsStr := vcfs.join(' ') # File names separated by space
+	task( vcf <- vcfs ) sys $java -jar $snpEffDir/SnpSift.jar split -j $vcfsStr > $vcf
 }
 
-#-------------------------------------------------------------------------------
 # Map reads to genome (split into smaller files)
-#-------------------------------------------------------------------------------
 void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapping, int splitNumReads, int mapSortMemory) {
 	string[] fq1split, fq2split
 
@@ -204,29 +117,20 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 		bam := mapSingle(referenceFasta, fqs1, fqs2, cpusMapping, mapSortMemory)
 		bams.add( bam )
 	}
-	wait
 
 	bamsStr := bams.join(" ")
 	if( splitNumReads > 1 ) {
 		# Merge sorted BAM files and remove duplicates
 		print("Merging BAM file: $bam\n")
-		task( bam <- bams, cpus := cpusMapping ) {
-			sys samtools merge -f -@ $cpusMapping, - $bamsStr \
-					| samtools rmdup - $bam
-		}
+		task( bam <- bams, cpus := cpusMapping ) sys samtools merge -f -@ $cpusMapping, - $bamsStr | samtools rmdup - $bam
 	} else {
 		# Only one bam (no need to merge). Just remove duplicates
 		print("Removing duplicates: $bam <- $bams\n")
-		task( bam <- bams, cpus := cpusMapping ) {
-			sys samtools rmdup $bamsStr $bam
-		}
+		task( bam <- bams, cpus := cpusMapping ) sys samtools rmdup $bamsStr $bam
 	}
-	wait
 }
 
-#-------------------------------------------------------------------------------
 # Map reads, call variants and annotate them
-#-------------------------------------------------------------------------------
 string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string genome, int splitNumReads, int cpusMapping, int cpusCalling, int mapSortMemory, int numCallers ) {
 	bam := removeExtFastq(fq1) + ".rmdup.bam"
 	vcf := removeExtFastq(fq1) + ".vcf"
@@ -247,41 +151,26 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 	}
 
 	vcfEff := annotate( vcf, genome )
-
 	return( [bam, vcf, vcfEff] )
 }
 
-#-------------------------------------------------------------------------------
 # Index genome (prepare for mapping reads)
-#-------------------------------------------------------------------------------
 void mapIndex(string fasta) {
 	indexFile := fasta + ".bwt"
-	task( indexFile <- fasta ) {
-		sys bwa index $fasta
-	}
+	task( indexFile <- fasta ) sys bwa index $fasta
 	wait
 }
 
-#-------------------------------------------------------------------------------
 # Map reads to genome (single file, no splitting)
-# Note: It does not wait
-#-------------------------------------------------------------------------------
 string mapSingle(string referenceFasta, string fq1, string fq2, int cpusMapping, int mapSortMemory) {
 	bamBase := removeExtFastq(fq1) 
 	bam := bamBase + ".bam"
 	print("Mapping:\t$fqs1\t$fqs2\t=>\t$bam\n")
-	task( bam <- [fq1, fq2] , cpus := cpusMapping ) {
-		sys bwa mem -t $cpus -R '$readGroupString' $referenceFasta $fq1 $fq2 \
-			| samtools view -S -u - \
-			| samtools sort -@ $cpus -m $mapSortMemory - $bamBase
-	}
-
+	task( bam <- [fq1, fq2] , cpus := cpusMapping ) sys bwa mem -t $cpus -R '$readGroupString' $referenceFasta $fq1 $fq2 | samtools view -S -u - | samtools sort -@ $cpus -m $mapSortMemory - $bamBase
 	return( bam )
 }
 
-#-------------------------------------------------------------------------------
 # Split callable regions BED file into equal 'num' equal parts
-#-------------------------------------------------------------------------------
 string[] splitCallableRegions(string bed, int num) {
 	print("Split callable regions: $bed\n")
 	bedOk := bed.removeExt(".bed") + ".ok.bed"
@@ -298,18 +187,13 @@ string[] splitCallableRegions(string bed, int num) {
 
 	# We may get less splits than requested (e.g. request 1000, but we only get 50).
 	# This is why I only check against the first one
-	if( bedSplits[0] <- bed ) {
-		sys grep CALLABLE $bed | $callableCollapseSplit $bedSplitsStr
-	}
+	if( bedSplits[0] <- bed ) sys grep CALLABLE $bed | $callableCollapseSplit $bedSplitsStr
 
 	# Report all file names after split
 	return( bedSplits )
 }
 
-#-------------------------------------------------------------------------------
-# Run task  to split a fastq file into 'splitNumReads' reads (does not wait)
-# Return file names
-#-------------------------------------------------------------------------------
+# Run task  to split a fastq file into 'splitNumReads' reads
 string splitFatsq(string fq, int splitNumReads) {
 	# Empty name? Nothing to do
 	if( ! fq )	return("")
@@ -321,15 +205,11 @@ string splitFatsq(string fq, int splitNumReads) {
 	names := removeExtFastq( fq ) + "."
 	numLines := 4 * splitNumReads
 	firstName := names + "aa"
-	task( firstName <- fq, cpus := 1 ) {
-		sys $cat $fq | split -l $numLines - $names
-	}
+	task( firstName <- fq, cpus := 1 ) sys $cat $fq | split -l $numLines - $names
 	return( names )
 }
 
-#-------------------------------------------------------------------------------
 # Get names form split fastq files
-#-------------------------------------------------------------------------------
 string[] splitFatsqNames(string fq) {
 	string[] empty
 
@@ -344,18 +224,13 @@ string[] splitFatsqNames(string fq) {
 	return( dir.dirPath(".*/$base..") )
 }
 
-#-------------------------------------------------------------------------------
 # Base name, remove all common extensions
-#-------------------------------------------------------------------------------
 string removeExtFastq(string fq) { return( removeExt( fq, fastqExtentions ) ) }
-
 string removeExtFasta(string fq) { return( removeExt( fq, fastaExtentions ) ) }
 
 string removeExt(string name, string[] exts) {
 	rmExt := name
-	for( string ext : exts ) {
-		rmExt = rmExt.removeExt(ext)
-	}
+	for( string ext : exts ) rmExt = rmExt.removeExt(ext)
 	return( rmExt )
 }
 
