@@ -35,6 +35,8 @@ public class MethodNativeListJoin extends MethodNativeList {
 	String join(ArrayList list, String str) {
 		StringBuilder sb = new StringBuilder();
 
+		if (list.isEmpty()) return "";
+
 		int max = list.size() - 1;
 		for (int i = 0; i < max; i++)
 			sb.append(list.get(i) + str);

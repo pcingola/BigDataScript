@@ -7,19 +7,16 @@
 #-------------------------------------------------------------------------------
 
 # Parameters
-
 java                  := "java -Xmx4G -XX:ParallelGCThreads=2 "
 gatkJar               := "$HOME/tools/gatk/GenomeAnalysisTK.jar"
 picardPath            := "$HOME/tools/picard"
 snpEffDir             := "$HOME/snpEff"
 callableCollapseSplit := "$HOME/.bds/include/bio/seq/callableCollapseSplit.py"	# Note: This script is in bds include's directory
-
 readGroupId           := "ReadGroupId"
 libraryId             := "LibraryId"
 platform              := "illumina"
 sampleId              := "SampleId"
 readGroupString       := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
-
 fastqExtentions       := [".gz", ".fq", ".fastq"] # Extensions used in FASTQ files
 fastaExtentions       := [".gz", ".fa", ".fasta"] # Extensions used in FASTA files
 
@@ -173,8 +170,8 @@ string mapSingle(string referenceFasta, string fq1, string fq2, int cpusMapping,
 # Split callable regions BED file into equal 'num' equal parts
 string[] splitCallableRegions(string bed, int num) {
 	print("Split callable regions: $bed\n")
-	bedOk := bed.removeExt(".bed") + ".ok.bed"
-	bedSplit := bed.removeExt(".bed") + ".ok.split"
+	bedOk := bed.swapExt(".bed", ".ok.bed")
+	bedSplit := bed.swapExt(".bed", ".ok.split")
 
 	# Create a list of names for split bed files
 	string[] bedSplits
@@ -187,10 +184,9 @@ string[] splitCallableRegions(string bed, int num) {
 
 	# We may get less splits than requested (e.g. request 1000, but we only get 50).
 	# This is why I only check against the first one
-	if( bedSplits[0] <- bed ) sys grep CALLABLE $bed | $callableCollapseSplit $bedSplitsStr
+	task( bedSplits[0] <- bed ) sys grep CALLABLE $bed | $callableCollapseSplit $bedSplitsStr
 
-	# Report all file names after split
-	return( bedSplits )
+	return( bedSplits ) # Report all file names after split
 }
 
 # Run task  to split a fastq file into 'splitNumReads' reads
