@@ -59,13 +59,14 @@ string[] haplotypeCaller( string referenceFasta, string bam, string[] callableRe
 
 	# Invoke HaplotypeCaller on each split of callable regions
 	print("HaplotypeCaller:\n")
+	print("callableRegions: $callableRegions\n")
 	for( string callableRegion : callableRegions ) {
 		# Note: Ther might less callable region files than we expect
 		# If the file exists, we call in it
 		if( callableRegion.exists() && (callableRegion.size() > 0)) {
 			print("\t$callableRegion\n")
 
-			callableRegionVcf := callableRegion.removeExt(".bed") + ".vcf"
+			callableRegionVcf := callableRegion.swapExt(".bed", ".vcf")
 			vcfs.add( callableRegionVcf )
 
 			# Invoke GATK's HaplotypeCaller
@@ -185,6 +186,7 @@ string[] splitCallableRegions(string bed, int num) {
 	# We may get less splits than requested (e.g. request 1000, but we only get 50).
 	# This is why I only check against the first one
 	task( bedSplits[0] <- bed ) sys grep CALLABLE $bed | $callableCollapseSplit $bedSplitsStr
+	wait
 
 	return( bedSplits ) # Report all file names after split
 }
