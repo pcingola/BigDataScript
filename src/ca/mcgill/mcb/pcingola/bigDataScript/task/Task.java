@@ -298,6 +298,14 @@ public class Task implements BigDataScriptSerialize {
 		return resources;
 	}
 
+	public Date getRunningEndTime() {
+		return runningEndTime;
+	}
+
+	public Date getRunningStartTime() {
+		return runningStartTime;
+	}
+
 	public String getStderrFile() {
 		return stderrFile;
 	}

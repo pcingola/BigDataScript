@@ -838,6 +838,10 @@ public class BigDataScript {
 			return 1;
 		}
 
+		// Create report
+		csthread.createReport();
+
+		// OK, we are done
 		return csthread.getExitValue();
 	}
 

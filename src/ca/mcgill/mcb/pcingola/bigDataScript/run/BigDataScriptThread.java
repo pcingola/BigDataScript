@@ -1,17 +1,21 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.run;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
+import ca.mcgill.mcb.pcingola.bigDataScript.htmlTemplate.RTemplate;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
@@ -28,6 +32,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * A threads used in a bigDataScript program
@@ -40,6 +45,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public static final int SLEEP_TIME = 250;
 	private static int threadNumber = 1;
+	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
 
 	String bigDataScriptThreadId;
 	int bigDataScriptThreadNum;
@@ -57,6 +63,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	Random random;
 	List<String> removeOnExit;
 	ArrayList<Task> restoredTasks; // Unserialized tasks.
+	Timer timer;
 
 	/**
 	 * Get an ID for a node
@@ -181,6 +188,84 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// No logging? Delete on exit
 		if ((config != null) && !config.isLog()) logdir.deleteOnExit();
+	}
+
+	/**
+	 * Create a report (after execution finished)
+	 */
+	public void createReport() {
+		String outFile = bigDataScriptThreadId + ".report.html";
+		if (isVerbose()) System.err.println("Writing report file '" + outFile + "'");
+
+		// Create a template
+		RTemplate rTemplate = new RTemplate(BigDataScript.class, REPORT_TEMPLATE, outFile);
+
+		// Add values
+		rTemplate.add("fileName", "" + programUnit.getFileName());
+		rTemplate.add("exitValue", "" + exitValue);
+		rTemplate.add("runTime", "" + (timer != null ? timer.toString() : ""));
+
+		// Scope
+		rTemplate.add("scope", getScope().toString());
+		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.VAR_ARGS_LIST).toString());
+		rTemplate.add("scope.TASK_OPTION_SYSTEM", getScope().getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).toString());
+		rTemplate.add("scope.TASK_OPTION_CPUS", getScope().getSymbol(ExpressionTask.TASK_OPTION_CPUS).toString());
+
+		SimpleDateFormat csvFormat = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
+		SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		// Add task details
+		int taskNum = 0;
+		for (Task task : getTasks()) {
+			String name = Gpr.baseName(task.getBdsFileName()) + ", line " + task.getBdsLineNum();
+
+			rTemplate.add("taskNum", "" + taskNum);
+			rTemplate.add("taskId", task.getId());
+			rTemplate.add("taskName", name);
+			rTemplate.add("taskOk", "" + task.isDoneOk());
+			rTemplate.add("taskExitCode", "" + task.getExitValue());
+
+			Date start = task.getRunningStartTime();
+			rTemplate.add("taskStart", outFormat.format(start));
+			rTemplate.add("taskStartCsv", csvFormat.format(start));
+
+			Date end = task.getRunningStartTime();
+			rTemplate.add("taskEnd", outFormat.format(end));
+			rTemplate.add("taskEndCsv", csvFormat.format(end));
+
+			// Program file
+			String program = Gpr.readFile(task.getProgramFileName());
+			rTemplate.add("taskProgram", program);
+
+			// Dependencies
+			StringBuilder sbdep = new StringBuilder();
+			if (task.getDependency() != null) {
+				for (Task t : task.getDependency())
+					sbdep.append(t.getId() + "\n");
+			}
+			rTemplate.add("taskDep", sbdep.toString());
+
+			// Input files
+			StringBuilder sbinf = new StringBuilder();
+			if (task.getInputFiles() != null) {
+				for (String inFile : task.getInputFiles())
+					sbinf.append(inFile + "\n");
+			}
+			rTemplate.add("taskInFiles", sbinf.toString());
+
+			// Output files
+			StringBuilder sboutf = new StringBuilder();
+			if (task.getOutputFiles() != null) {
+				for (String outf : task.getOutputFiles())
+					sboutf.append(outf + "\n");
+			}
+			rTemplate.add("taskOutFiles", sboutf.toString());
+
+			taskNum++;
+		}
+
+		// Create output file
+		rTemplate.createOuptut();
 	}
 
 	/**
@@ -445,6 +530,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	@Override
 	public void run() {
+		timer = new Timer();
+
 		createLogDir(); // Create log dir 
 
 		// Run program
@@ -491,6 +578,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			sleep(SLEEP_TIME);
 		} catch (InterruptedException e) {
 		}
+
+		timer.end();
 	}
 
 	@SuppressWarnings("unchecked")
