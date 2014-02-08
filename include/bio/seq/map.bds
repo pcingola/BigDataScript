@@ -191,6 +191,7 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 		fq1split = [ fq1 ]
 		fq2split = [ fq2 ]
 		cpusMapping := cpusLocal	# Use all available cpus
+		print("Setting cpus for mapping to $cpusMapping\n")
 	}
 
 	# Map each pair of files
