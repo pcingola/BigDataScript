@@ -146,6 +146,8 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 		bedSplits := splitCallableRegions(bed, numCallers)
 		vcfs := haplotypeCaller( referenceFasta, bam, bedSplits, cpusCalling )
 		joinVcf(vcf, vcfs )
+		vcfs.rmOnExit()
+		bedSplits.rmOnExit()
 	}
 
 	vcfEff := annotate( vcf, genome )
