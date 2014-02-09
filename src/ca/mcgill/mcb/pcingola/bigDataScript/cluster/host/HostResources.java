@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.cluster.host;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Represents the resources in a host: Cpus, memory, etc.
@@ -124,4 +125,13 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	public String toString() {
 		return "cpus: " + cpus + "\tmem: " + Gpr.toStringMem(mem) + (timeout > 0 ? "\ttimeout: " + timeout : "");
 	}
+
+	public String toStringMultiline() {
+		StringBuilder sb = new StringBuilder();
+		if (cpus > 0) sb.append("cpus: " + cpus + "\n");
+		if (mem > 0) sb.append("mem: " + Gpr.toStringMem(mem) + "\n");
+		if (timeout > 0) sb.append("timeout: " + Timer.toDDHHMMSS(timeout * 1000) + "\n");
+		return sb.toString();
+	}
+
 }

@@ -276,6 +276,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			}
 			rTemplate.add("taskOutFiles", sboutf.toString());
 
+			// Resources
+			rTemplate.add("taskResources", (task.getResources() != null ? task.getResources().toStringMultiline() : ""));
+
 			taskNum++;
 		}
 

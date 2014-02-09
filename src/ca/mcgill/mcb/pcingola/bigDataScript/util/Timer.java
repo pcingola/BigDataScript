@@ -26,6 +26,43 @@ public class Timer {
 		System.err.println(timer + "\t" + msg);
 	}
 
+	public static String toDDHHMMSS(long delta) {
+		long days = delta / (24 * 60 * 60 * 1000);
+		long hours = (delta % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000);
+		long mins = (delta % (60 * 60 * 1000)) / (60 * 1000);
+		long secs = (delta % (60 * 1000)) / (1000);
+
+		if (days > 0) {
+			String s = "";
+			if (days > 1) s = "s"; // More than one day? Then it's plural
+
+			if ((hours + mins + secs) > 0) return String.format("%d day%s %02d:%02d:%02d", days, s, hours, mins, secs);
+			return String.format("%d day%s", days, s); // All others are zero? Just say "1 day" instead of "1 day 00:00:00"
+		}
+
+		// Just HH:MM:SS
+		return String.format("%02d:%02d:%02d", hours, mins, secs);
+	}
+
+	public static String toDDHHMMSSms(long delta) {
+		long days = delta / (24 * 60 * 60 * 1000);
+		long hours = (delta % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000);
+		long mins = (delta % (60 * 60 * 1000)) / (60 * 1000);
+		long secs = (delta % (60 * 1000)) / (1000);
+		long ms = (delta % 1000);
+
+		if (days > 0) {
+			String s = "";
+			if (days > 1) s = "s"; // More than one day? Then it's plural
+
+			if ((hours + mins + secs + ms) > 0) return String.format("%d day%s %02d:%02d:%02d.%03d", days, s, hours, mins, secs, ms);
+			return String.format("%d day%s", days, s); // All others are zero? Just say "1 day" instead of "1 day 00:00:00"
+		}
+
+		if (days > 0) return String.format("%d days %02d:%02d:%02d.%03d", days, hours, mins, secs, ms);
+		return String.format("%02d:%02d:%02d.%03d", hours, mins, secs, ms);
+	}
+
 	/**
 	 * Transform miliseconds to HH:MM:SS
 	 * @param millisecs
@@ -101,14 +138,6 @@ public class Timer {
 
 	@Override
 	public String toString() {
-		long delta = elapsed();
-		long days = delta / (24 * 60 * 60 * 1000);
-		long hours = (delta % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000);
-		long mins = (delta % (60 * 60 * 1000)) / (60 * 1000);
-		long secs = (delta % (60 * 1000)) / (1000);
-		long ms = (delta % 1000);
-
-		if (days > 0) return String.format("%d days %02d:%02d:%02d.%03d", days, hours, mins, secs, ms);
-		return String.format("%02d:%02d:%02d.%03d", hours, mins, secs, ms);
+		return toDDHHMMSSms(elapsed());
 	}
 }
