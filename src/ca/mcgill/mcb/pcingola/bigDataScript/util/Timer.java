@@ -69,6 +69,14 @@ public class Timer {
 		end = new Date();
 	}
 
+	public Date getEnd() {
+		return end;
+	}
+
+	public Date getStart() {
+		return start;
+	}
+
 	/**
 	 * Has this timer expired?
 	 * @return

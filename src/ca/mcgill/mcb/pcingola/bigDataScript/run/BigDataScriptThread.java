@@ -198,22 +198,24 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		String outFile = bigDataScriptThreadId + ".report.html";
 		if (isVerbose()) System.err.println("Writing report file '" + outFile + "'");
 
+		SimpleDateFormat csvFormat = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
+		SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 		// Create a template
 		RTemplate rTemplate = new RTemplate(BigDataScript.class, REPORT_TEMPLATE, outFile);
 
 		// Add values
 		rTemplate.add("fileName", "" + programUnit.getFileName());
+		rTemplate.add("progName", "" + Gpr.baseName(programUnit.getFileName()));
 		rTemplate.add("exitValue", "" + exitValue);
 		rTemplate.add("runTime", "" + (timer != null ? timer.toString() : ""));
+		rTemplate.add("startTime", "" + (timer != null ? outFormat.format(timer.getStart()) : ""));
 
 		// Scope
 		rTemplate.add("scope", getScope().toString());
 		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.VAR_ARGS_LIST).toString());
 		rTemplate.add("scope.TASK_OPTION_SYSTEM", getScope().getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).toString());
 		rTemplate.add("scope.TASK_OPTION_CPUS", getScope().getSymbol(ExpressionTask.TASK_OPTION_CPUS).toString());
-
-		SimpleDateFormat csvFormat = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
-		SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		// Add task details
 		int taskNum = 0;

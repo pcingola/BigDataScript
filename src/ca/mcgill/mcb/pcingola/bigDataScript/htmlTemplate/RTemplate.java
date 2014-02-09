@@ -110,7 +110,7 @@ public class RTemplate {
 			if (debug) Gpr.debug("\t\tpart: '" + linePart + "'");
 		}
 
-		if (!found) return line;
+		if (!found) return line + "\n";
 
 		// Replace values
 		return replaceValues(lineParts, keys, lineNum);
