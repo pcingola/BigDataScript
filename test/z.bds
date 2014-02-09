@@ -1,9 +1,7 @@
 #!/usr/bin/env bds
 
 max := 5
-for( int i=0 ; i < max ; i++ ) {
-	task(cpus = 1)	sys echo Start Hi $i; sleep 1;  echo End Hi $i
-}
+for( int i=0 ; i < max ; i++ )	task echo Start Hi $i; sleep 1;  echo End Hi $i
 wait
 for( int i=0 ; i < max ; i++ ) task echo Start Bye $i; sleep 1;  echo End Bye $i
 wait

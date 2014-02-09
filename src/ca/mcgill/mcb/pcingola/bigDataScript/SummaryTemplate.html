@@ -28,12 +28,12 @@ function drawChart() {
   var dataTable = new google.visualization.DataTable();
 
   dataTable.addColumn({ type: 'string', id: 'TaskName' });
-  dataTable.addColumn({ type: 'string', id: 'TaskId' });
+  dataTable.addColumn({ type: 'string', id: 'TaskHint' });
   dataTable.addColumn({ type: 'date', id: 'Start' });
   dataTable.addColumn({ type: 'date', id: 'End' });
 
   dataTable.addRows([
-    [ '{{taskName}}', '{{taskId}}', new Date({{taskStartCsv}}), new Date({{taskEndCsv}}) ],
+    [ '{{taskName}}', '{{taskHint}}', new Date({{taskStartCsv}}), new Date({{taskEndCsv}}) ],
     ]);
 
   var options = {
@@ -47,14 +47,8 @@ function drawChart() {
 
 <h3> Task details </h3>
 <table border=1>
-<tr> <th> Task Number </th><th> Task Name </th><th> Task ID </th><th> Exit Code </th><th> Finished OK </th><th> Start time </th><th> End time </th><th> Dependencies </th><th> Input files </th><th> Output files </th> </tr>
-<tr> <td> {{taskNum}} </td><td> {{taskName}} </td><td> {{taskId}} </td><td> {{taskExitCode}} </td><td> {{taskOk}} </td><td> {{taskStart}} </td><td> {{taskEnd}} </td><td> {{taskDep}} </td><td> {{taskInFiles}} </td><td> {{taskOutFiles}} </td></tr>
-</table>
-
-<h3> Task programs </h3>
-<table border=1>
-<tr> <th> Task Id </th><th> Task program </th></tr>
-<tr> <td> {{taskId}}</td><td> <pre> {{taskProgram}} </pre> </td></tr>
+<tr> <th> Task Number </th><th> Task Name </th><th> Task ID </th><th> Exit Code </th><th> Finished OK </th><th> Start time </th><th> End time </th><th> Dependencies </th><th> Input files </th><th> Output files </th><th> Task program </th> </tr>
+<tr> <td> {{taskNum}} </td><td> {{taskName}} </td><td> {{taskId}} </td><td> {{taskExitCode}} </td><td> {{taskOk}} </td><td> {{taskStart}} </td><td> {{taskEnd}} </td><td> {{taskDep}} </td><td> {{taskInFiles}} </td><td> {{taskOutFiles}} </td><td> <pre> {{taskProgram}} </pre> </td></tr>
 </table>
 
 <h3> Global scope </h3>

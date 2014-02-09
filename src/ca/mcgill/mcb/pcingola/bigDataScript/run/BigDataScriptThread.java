@@ -44,6 +44,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class BigDataScriptThread extends Thread implements BigDataScriptSerialize {
 
 	public static final int SLEEP_TIME = 250;
+	public static final int MAX_HINT_LEN = 100;
 	private static int threadNumber = 1;
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
 
@@ -217,7 +218,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Add task details
 		int taskNum = 0;
 		for (Task task : getTasks()) {
-			String name = Gpr.baseName(task.getBdsFileName()) + ", line " + task.getBdsLineNum();
+			String name = Gpr.baseName(task.getId());
 
 			rTemplate.add("taskNum", "" + taskNum);
 			rTemplate.add("taskId", task.getId());
@@ -234,8 +235,17 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskEndCsv", csvFormat.format(end));
 
 			// Program file
+			StringBuilder sbprog = new StringBuilder();
 			String program = Gpr.readFile(task.getProgramFileName());
+			String hint = "";
+			for (String line : program.split("\n"))
+				if (!(line.isEmpty() || line.startsWith("#"))) {
+					sbprog.append(line + "\n");
+					if (hint.isEmpty()) hint = line.length() > MAX_HINT_LEN ? line.substring(0, MAX_HINT_LEN) : line;
+				}
+			program = sbprog.toString();
 			rTemplate.add("taskProgram", program);
+			rTemplate.add("taskHint", hint);
 
 			// Dependencies
 			StringBuilder sbdep = new StringBuilder();
