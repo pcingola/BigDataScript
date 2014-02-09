@@ -17,8 +17,6 @@ libraryId             := "LibraryId"
 platform              := "illumina"
 sampleId              := "SampleId"
 readGroupString       := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
-fastqExtentions       := [".gz", ".fq", ".fastq"] # Extensions used in FASTQ files
-fastaExtentions       := [".gz", ".fa", ".fasta"] # Extensions used in FASTA files
 
 # Annotate a VCF file
 string annotate(string vcf, string genome) {
@@ -40,7 +38,7 @@ string callableRegions(string referenceFasta, string bam) {
 # In order to use GATK, we need to prepare the reference genome
 string[] gatkPrepare(string fasta, string bam) {
 	fai := fasta + ".fai"
-	dict := removeExtFasta(fasta) + ".dict"
+	dict := removeExtFastqa(fasta) + ".dict"
 	bai := bam + ".bai"
 
 	print("Creating dictionary file: $dict\n")
@@ -101,8 +99,7 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 		# Do not split files (e.g. if we are running on a local computer)
 		fq1split = [ fq1 ]
 		fq2split = [ fq2 ]
-		cpusMapping := cpusLocal	# Use all available cpus
-		print("Setting cpus for mapping to $cpusMapping\n")
+		cpusMapping = cpusLocal	# Use all available cpus
 	}
 
 	# Map each pair of files
@@ -130,8 +127,8 @@ void map(string referenceFasta, string fq1, string fq2, string bam, int cpusMapp
 
 # Map reads, call variants and annotate them
 string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string genome, int splitNumReads, int cpusMapping, int cpusCalling, int mapSortMemory, int numCallers ) {
-	bam := removeExtFastq(fq1) + ".rmdup.bam"
-	vcf := removeExtFastq(fq1) + ".vcf"
+	bam := removeExtFastqa(fq1) + ".rmdup.bam"
+	vcf := removeExtFastqa(fq1) + ".vcf"
 
 	# Create BAM file from reads
 	if( bam <- [fq1, fq2] ) {
@@ -163,7 +160,7 @@ void mapIndex(string fasta) {
 
 # Map reads to genome (single file, no splitting)
 string mapSingle(string referenceFasta, string fq1, string fq2, int cpusMapping, int mapSortMemory) {
-	bamBase := removeExtFastq(fq1) 
+	bamBase := removeExtFastqa(fq1) 
 	bam := bamBase + ".bam"
 	print("Mapping:\t$fqs1\t$fqs2\t=>\t$bam\n")
 	task( bam <- [fq1, fq2] , cpus := cpusMapping ) sys bwa mem -t $cpus -R '$readGroupString' $referenceFasta $fq1 $fq2 | samtools view -S -u - | samtools sort -@ $cpus -m $mapSortMemory - $bamBase
@@ -202,7 +199,7 @@ string splitFatsq(string fq, int splitNumReads) {
 	cat := "cat"
 	if( fq.endsWith('.gz') )	cat = "gunzip -c"	
 
-	names := removeExtFastq( fq ) + "."
+	names := removeExtFastqa( fq ) + "."
 	numLines := 4 * splitNumReads
 	firstName := names + "aa"
 	task( firstName <- fq, cpus := 1 ) sys $cat $fq | split -l $numLines - $names
@@ -216,21 +213,16 @@ string[] splitFatsqNames(string fq) {
 	# Empty name? Nothing to do
 	if( ! fq )	return(empty)
 
-	names := removeExtFastq( fq ) + "."
+	names := removeExtFastqa( fq ) + "."
 	dir := fq.dirName()
-	base := removeExtFastq( fq ).baseName() + "."
+	base := removeExtFastqa( fq ).baseName() + "."
 
 	# Get all lines matching base name in fq's directory
 	return( dir.dirPath(".*/$base..") )
 }
 
-# Base name, remove all common extensions
-string removeExtFastq(string fq) { return( removeExt( fq, fastqExtentions ) ) }
-string removeExtFasta(string fq) { return( removeExt( fq, fastaExtentions ) ) }
-
-string removeExt(string name, string[] exts) {
-	rmExt := name
-	for( string ext : exts ) rmExt = rmExt.removeExt(ext)
-	return( rmExt )
+# Base name, remove all common FASTA/FASTQ extensions
+string removeExtFastqa(string name) {
+	for( string ext : [".gz", ".fq", ".fastq", ".fa", ".fasta"] ) name = name.removeExt(ext)
+	return( name )
 }
-
