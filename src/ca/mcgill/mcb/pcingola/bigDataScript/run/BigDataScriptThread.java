@@ -243,7 +243,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			for (String line : program.split("\n"))
 				if (!(line.isEmpty() || line.startsWith("#"))) {
 					sbprog.append(line + "\n");
-					if (hint.isEmpty()) hint = line.length() > MAX_HINT_LEN ? line.substring(0, MAX_HINT_LEN) : line;
+					if (hint.isEmpty()) {
+						hint = line.length() > MAX_HINT_LEN ? line.substring(0, MAX_HINT_LEN) : line;
+						hint = hint.replace('\'', ' ');
+					}
 				}
 			program = sbprog.toString();
 			rTemplate.add("taskProgram", program);
