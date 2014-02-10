@@ -195,6 +195,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Create a report (after execution finished)
 	 */
 	public void createReport() {
+		if (getTasks().isEmpty()) {
+			if (isVerbose()) System.err.println("No tasks run: Report file not created (nothing to report).");
+			return;
+		}
+
 		String outFile = bigDataScriptThreadId + ".report.html";
 		if (isVerbose()) System.err.println("Writing report file '" + outFile + "'");
 
