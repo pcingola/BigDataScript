@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.scope;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -129,6 +130,10 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		return null;
 	}
 
+	public Collection<ScopeSymbol> getSymbols() {
+		return symbols.values();
+	}
+
 	/**
 	 * Is symbol available on this scope or any parent scope?
 	 * @param symbol
@@ -249,8 +254,10 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	@Override
 	public String toString() {
-		// if (symbols.isEmpty()) return "";
+		return toString(true);
+	}
 
+	public String toString(boolean showFunc) {
 		// Show parents
 		StringBuilder sb = new StringBuilder();
 		if (parent != null) {
@@ -260,8 +267,12 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 		// Show current
 		StringBuilder sbThis = new StringBuilder();
-		for (ScopeSymbol ss : symbols.values())
-			sbThis.append(ss + "\n");
+		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
+		ssyms.addAll(symbols.values());
+		Collections.sort(ssyms);
+		for (ScopeSymbol ss : ssyms)
+			if (!ss.getType().isFunction() || showFunc) sbThis.append(ss + "\n");
+
 		if (sbThis.length() > 0) sb.append("\n---------- Scope ----------\n" + sbThis.toString());
 
 		return sb.toString();

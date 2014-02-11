@@ -37,8 +37,9 @@ public class RTemplate {
 		keyValues = new AutoHashMap<String, List<String>>(new ArrayList<String>());
 	}
 
-	public void add(String key, String value) {
-		keyValues.getOrCreate(key).add(value);
+	public void add(String key, Object value) {
+		if (value == null) keyValues.getOrCreate(key).add("");
+		else keyValues.getOrCreate(key).add(value.toString());
 	}
 
 	/**

@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
  * 
  * @author pcingola
  */
-public class ScopeSymbol implements BigDataScriptSerialize {
+public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymbol> {
 
 	// Internal variables use this symbol at the beginning to make sure programmers don't collide with their names 
 	// Important: This must be an invalid symbol in variable names
@@ -38,6 +38,11 @@ public class ScopeSymbol implements BigDataScriptSerialize {
 		this.name = name;
 		this.type = type;
 		this.value = value;
+	}
+
+	@Override
+	public int compareTo(ScopeSymbol ss) {
+		return getName().toLowerCase().compareTo(ss.getName().toLowerCase());
 	}
 
 	public String getName() {

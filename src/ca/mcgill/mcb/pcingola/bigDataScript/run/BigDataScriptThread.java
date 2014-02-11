@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -49,6 +50,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	private static int threadNumber = 1;
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
 	public static final String RED_COLOR = "style=\"background-color: #ffc0c0\"";
+	public static final String LINE = "--------------------";
 
 	String bigDataScriptThreadId;
 	int bigDataScriptThreadNum;
@@ -220,10 +222,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		rTemplate.add("startTime", "" + (timer != null ? outFormat.format(timer.getStart()) : ""));
 
 		// Scope
-		rTemplate.add("scope", getScope().toString());
 		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.VAR_ARGS_LIST).toString());
 		rTemplate.add("scope.TASK_OPTION_SYSTEM", getScope().getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).toString());
 		rTemplate.add("scope.TASK_OPTION_CPUS", getScope().getSymbol(ExpressionTask.TASK_OPTION_CPUS).toString());
+
+		// Scoe symbols
+		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
+		ssyms.addAll(getScope().getSymbols());
+		Collections.sort(ssyms);
+		for (ScopeSymbol ss : ssyms)
+			if (!ss.getType().isFunction()) {
+				rTemplate.add("symType", ss.getType());
+				rTemplate.add("symName", ss.getName());
+				rTemplate.add("symValue", ss.getValue());
+			}
 
 		// Add task details
 		int taskNum = 0;
@@ -238,18 +250,17 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 			if (!task.isDoneOk()) {
 				rTemplate.add("taskColor", RED_COLOR);
-				rTemplate.add("taskStdout", task.getStdoutFile());
 
 				String ch = task.checkOutputFiles();
-				if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", "Check output files:\n" + ch + "\n");
+				if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", "\n" + LINE + "Check output files" + LINE + "\n" + ch + "\n");
 				else rTemplate.add("taskCheckOut", "");
 
 				String tailErr = TailFile.tail(task.getStderrFile());
-				if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", "\nStderr:\n" + tailErr + "\n");
+				if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", "\n" + LINE + "Stderr" + LINE + "\n" + tailErr + "\n");
 				else rTemplate.add("taskStderr", "");
 
 				String tailOut = TailFile.tail(task.getStdoutFile());
-				if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", "\nStdout:\n" + tailOut);
+				if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", "\n" + LINE + "Stdout" + LINE + "\n" + tailOut + "\n");
 				else rTemplate.add("taskStdout", "");
 
 			} else {
