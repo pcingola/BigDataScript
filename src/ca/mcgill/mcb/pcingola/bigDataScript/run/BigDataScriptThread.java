@@ -251,6 +251,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskName", name);
 			rTemplate.add("taskOk", "" + task.isDoneOk());
 			rTemplate.add("taskExitCode", "" + task.getExitValue());
+			rTemplate.add("taskState", "" + task.getTaskState());
+			rTemplate.add("taskDepState", "" + task.dependencyState());
 
 			if (!task.isDoneOk()) {
 				rTemplate.add("taskColor", RED_COLOR);
@@ -284,7 +286,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 			// Program file
 			StringBuilder sbprog = new StringBuilder();
-			String program = Gpr.readFile(task.getProgramFileName());
+			String program = Gpr.readFile(task.getProgramFileName(), false);
 			String hint = "";
 			for (String line : program.split("\n"))
 				if (!(line.isEmpty() || line.startsWith("#"))) {

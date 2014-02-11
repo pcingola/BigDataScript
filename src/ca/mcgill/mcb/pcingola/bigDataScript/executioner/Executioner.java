@@ -423,7 +423,7 @@ public abstract class Executioner extends Thread {
 					// Dependency error => Finish this task
 					if (finishTask == null) finishTask = new LinkedList<Task>();
 					finishTask.add(task);
-					break;
+					continue; // Do not schedule
 
 				default:
 					throw new RuntimeException("Unimplemented dependency state '" + dep + "'");
