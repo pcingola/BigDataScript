@@ -129,7 +129,7 @@ public class Task implements BigDataScriptSerialize {
 	 * Check if output files are OK
 	 * @return true if OK, false there is an error (output file does not exist or has zero length)
 	 */
-	protected String checkOutputFiles() {
+	public String checkOutputFiles() {
 		if (checkOutputFiles != null) return checkOutputFiles;
 		if (!isStateFinished() || outputFiles == null) return ""; // Nothing to check
 

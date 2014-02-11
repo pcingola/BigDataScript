@@ -29,6 +29,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TailFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -47,6 +48,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public static final int MAX_HINT_LEN = 100;
 	private static int threadNumber = 1;
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
+	public static final String RED_COLOR = "style=\"background-color: #ffc0c0\"";
 
 	String bigDataScriptThreadId;
 	int bigDataScriptThreadNum;
@@ -212,6 +214,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Add values
 		rTemplate.add("fileName", "" + programUnit.getFileName());
 		rTemplate.add("progName", "" + Gpr.baseName(programUnit.getFileName()));
+		rTemplate.add("threadId", bigDataScriptThreadId);
 		rTemplate.add("exitValue", "" + exitValue);
 		rTemplate.add("runTime", "" + (timer != null ? timer.toString() : ""));
 		rTemplate.add("startTime", "" + (timer != null ? outFormat.format(timer.getStart()) : ""));
@@ -232,6 +235,29 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskName", name);
 			rTemplate.add("taskOk", "" + task.isDoneOk());
 			rTemplate.add("taskExitCode", "" + task.getExitValue());
+
+			if (!task.isDoneOk()) {
+				rTemplate.add("taskColor", RED_COLOR);
+				rTemplate.add("taskStdout", task.getStdoutFile());
+
+				String ch = task.checkOutputFiles();
+				if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", "Check output files:\n" + ch + "\n");
+				else rTemplate.add("taskCheckOut", "");
+
+				String tailErr = TailFile.tail(task.getStderrFile());
+				if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", "\nStderr:\n" + tailErr + "\n");
+				else rTemplate.add("taskStderr", "");
+
+				String tailOut = TailFile.tail(task.getStdoutFile());
+				if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", "\nStdout:\n" + tailOut);
+				else rTemplate.add("taskStdout", "");
+
+			} else {
+				rTemplate.add("taskColor", "");
+				rTemplate.add("taskCheckOut", "");
+				rTemplate.add("taskStderr", "");
+				rTemplate.add("taskStdout", "");
+			}
 
 			Date start = task.getRunningStartTime();
 			rTemplate.add("taskStart", outFormat.format(start));
@@ -260,8 +286,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			// Dependencies
 			StringBuilder sbdep = new StringBuilder();
 			if (task.getDependency() != null) {
-				for (Task t : task.getDependency())
-					sbdep.append(t.getId() + "\n");
+				for (Task t : task.getDependency()) {
+					String nameDep = Gpr.baseName(t.getId());
+					sbdep.append(nameDep + "\n");
+				}
 			}
 			rTemplate.add("taskDep", sbdep.toString());
 

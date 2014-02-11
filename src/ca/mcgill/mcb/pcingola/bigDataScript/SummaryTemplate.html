@@ -10,6 +10,7 @@
 	
 	<table class="table table-striped">
 		<tr> <th> Script file </th><td> {{fileName}} </td></tr>
+		<tr> <th> Program ID </th><td> {{threadId}} </td></tr>
 		<tr> <th> Start time </th><td> {{startTime}} </td></tr>
 		<tr> <th> Run time </th><td> {{runTime}} </td></tr>
 		<tr> <th> Arguments* </th><td> {{scope.VAR_ARGS_LIST}} </td></tr>
@@ -57,8 +58,8 @@
 	<h2 class="bs-featurette-title"> Task details </h2>
 	<small>
 	<table class="table table-striped">
-	<tr> <th> Task Number </th><th> Task Name </th><th> Task ID </th><th> Exit Code </th><th> Finished OK </th><th> Resources </th><th> Start time </th><th> End time </th><th> Dependencies </th><th> Input files </th><th> Output files </th><th> Task program </th> </tr>
-	<tr> <td> {{taskNum}} </td><td> {{taskName}} </td><td> {{taskId}} </td><td> {{taskExitCode}} </td><td> {{taskOk}} </td><td> {{taskResources}} </td><td> {{taskStart}} </td><td> {{taskEnd}} </td><td> {{taskDep}} </td><td> {{taskInFiles}} </td><td> {{taskOutFiles}} </td><td> <pre> {{taskProgram}} </pre> </td></tr>
+	<tr> <th> Task Number </th><th> Task Name </th><th> Exit Code </th><th> Finished OK </th><th> Resources </th><th> Start time </th><th> End time </th><th> Dependencies </th><th> Input files </th><th> Output files </th><th> Task program </th> </tr>
+	<tr> <td> {{taskNum}} </td><td> {{taskName}} </td><td> {{taskExitCode}} </td><td {{taskColor}}> {{taskOk}} </td><td> {{taskResources}} </td><td> {{taskStart}} </td><td> {{taskEnd}} </td><td> {{taskDep}} </td><td> {{taskInFiles}} </td><td> {{taskOutFiles}} </td><td> <pre> {{taskProgram}} </pre> </td><td><pre> {{taskCheckOut}} {{taskStderr}} {{taskStdout}} </pre> </td></tr>
 	</small>
 	</table>
 </div>
