@@ -35,6 +35,7 @@ bool	string	exists	this	string	return (new File(objThis.toString())).exists();
 bool	string	isDir	this	string	return (new File(objThis.toString())).isDirectory();
 bool	string	isFile	this	string	return (new File(objThis.toString())).isFile();
 bool	string	delete	this	string	return (new File(objThis.toString())).delete();
+bool	string	rm	this	string	return (new File(objThis.toString())).delete();
 bool	string	mkdir	this	string	return (new File(objThis.toString())).mkdirs();
 string	string	read	this	string	return Gpr.readFile(objThis.toString(), false);
 string	string	removeExt	this	string	String base = objThis.toString(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(0, idx) : "";
