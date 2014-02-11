@@ -217,9 +217,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		rTemplate.add("fileName", "" + programUnit.getFileName());
 		rTemplate.add("progName", "" + Gpr.baseName(programUnit.getFileName()));
 		rTemplate.add("threadId", bigDataScriptThreadId);
-		rTemplate.add("exitValue", "" + exitValue);
 		rTemplate.add("runTime", "" + (timer != null ? timer.toString() : ""));
 		rTemplate.add("startTime", "" + (timer != null ? outFormat.format(timer.getStart()) : ""));
+
+		// Exit code
+		rTemplate.add("exitValue", "" + exitValue);
+		if (exitValue > 0) rTemplate.add("exitColor", RED_COLOR);
+		else rTemplate.add("exitColor", "");
 
 		// Scope
 		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.VAR_ARGS_LIST).toString());
