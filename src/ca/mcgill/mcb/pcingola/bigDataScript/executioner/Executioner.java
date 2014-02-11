@@ -14,6 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.DependencyState;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.TextTable;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
@@ -265,25 +266,40 @@ public abstract class Executioner extends Thread {
 	protected void reportTasks() {
 		// if (verbose && 
 		if ((hasTaskRunning() || hasTaskToRun()) && isReportTime()) {
-			String executionerName = this.getClass().getSimpleName().substring(Executioner.class.getSimpleName().length()).toLowerCase();
-			StringBuilder sb = new StringBuilder();
-			sb.append("Tasks [" + executionerName + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size());
+			// Create table
+			int rowNum = 0;
+			String table[][] = new String[tasksToRun.size() + tasksRunning.size()][4];
 
 			// Pending
 			for (Task t : tasksToRun) {
-				sb.append("\n\tPending: '" + t.getId() + "', state " + t.getTaskState() + ", dependency state " + t.dependencyState() + ", dependencies: ");
+				table[rowNum][0] = "pending (" + t.getTaskState() + ")";
+				table[rowNum][1] = t.getName();
+
 				// Show dependent tasks
+				StringBuilder sb = new StringBuilder();
 				if (t.getDependency() != null) {
 					for (Task td : t.getDependency())
-						sb.append(td.getId() + "[" + td.dependencyState() + "] ");
+						sb.append(td.getName() + " ");
 				}
+				table[rowNum][2] = sb.toString();
+				table[rowNum][3] = t.getProgramHint();
+				rowNum++;
 			}
 
 			// Running
-			for (Task t : tasksRunning.values())
-				sb.append("\n\tRunning: '" + t.getId() + "', state " + t.getTaskState() + ", dependency state " + t.dependencyState());
+			for (Task t : tasksRunning.values()) {
+				table[rowNum][0] = "running (" + t.getTaskState() + ")";
+				table[rowNum][1] = t.getName();
+				table[rowNum][2] = "";
+				table[rowNum][3] = t.getProgramHint();
+				rowNum++;
+			}
 
-			Timer.showStdErr(sb.toString());
+			// Show table
+			String columnNames[] = { "Task state", "Task name", "Dependencies", "Task definition" };
+			TextTable tt = new TextTable(columnNames, table, "\t\t");
+			String executionerName = this.getClass().getSimpleName().substring(Executioner.class.getSimpleName().length()).toLowerCase();
+			Timer.showStdErr("Tasks [" + executionerName + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size() + "\n" + tt.toString());
 		}
 	}
 

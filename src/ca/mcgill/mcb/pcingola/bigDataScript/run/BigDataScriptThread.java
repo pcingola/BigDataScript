@@ -46,7 +46,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class BigDataScriptThread extends Thread implements BigDataScriptSerialize {
 
 	public static final int SLEEP_TIME = 250;
-	public static final int MAX_HINT_LEN = 100;
 	private static int threadNumber = 1;
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
 	public static final String RED_COLOR = "style=\"background-color: #ffc0c0\"";
@@ -230,7 +229,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		rTemplate.add("scope.TASK_OPTION_SYSTEM", getScope().getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).toString());
 		rTemplate.add("scope.TASK_OPTION_CPUS", getScope().getSymbol(ExpressionTask.TASK_OPTION_CPUS).toString());
 
-		// Scoe symbols
+		// Scope symbols
 		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
 		ssyms.addAll(getScope().getSymbols());
 		Collections.sort(ssyms);
@@ -244,11 +243,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Add task details
 		int taskNum = 0;
 		for (Task task : getTasks()) {
-			String name = Gpr.baseName(task.getId());
-
 			rTemplate.add("taskNum", "" + taskNum);
 			rTemplate.add("taskId", task.getId());
-			rTemplate.add("taskName", name);
+			rTemplate.add("taskName", task.getName());
 			rTemplate.add("taskOk", "" + task.isDoneOk());
 			rTemplate.add("taskExitCode", "" + task.getExitValue());
 			rTemplate.add("taskState", "" + task.getTaskState());
@@ -284,29 +281,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskEnd", outFormat.format(end));
 			rTemplate.add("taskEndCsv", csvFormat.format(end));
 
-			// Program file
-			StringBuilder sbprog = new StringBuilder();
-			String program = Gpr.readFile(task.getProgramFileName(), false);
-			String hint = "";
-			for (String line : program.split("\n"))
-				if (!(line.isEmpty() || line.startsWith("#"))) {
-					sbprog.append(line + "\n");
-					if (hint.isEmpty()) {
-						hint = line.length() > MAX_HINT_LEN ? line.substring(0, MAX_HINT_LEN) : line;
-						hint = hint.replace('\'', ' ');
-					}
-				}
-			program = sbprog.toString();
-			rTemplate.add("taskProgram", program);
-			rTemplate.add("taskHint", hint);
+			// Program & hint
+			rTemplate.add("taskProgram", task.getProgramTxt());
+			rTemplate.add("taskHint", task.getProgramHint());
 
 			// Dependencies
 			StringBuilder sbdep = new StringBuilder();
 			if (task.getDependency() != null) {
-				for (Task t : task.getDependency()) {
-					String nameDep = Gpr.baseName(t.getId());
-					sbdep.append(nameDep + "\n");
-				}
+				for (Task t : task.getDependency())
+					sbdep.append(t.getName() + "\n");
 			}
 			rTemplate.add("taskDep", sbdep.toString());
 

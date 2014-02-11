@@ -61,6 +61,8 @@ public class Task implements BigDataScriptSerialize {
 		}
 	}
 
+	public static final int MAX_HINT_LEN = 100;
+
 	// TODO: This should be a variable (SHEBANG?)
 	public static final String SHE_BANG = "#!/bin/sh -e\n\n"; // Use '-e' so that shell script stops after first error
 
@@ -274,6 +276,10 @@ public class Task implements BigDataScriptSerialize {
 		return inputFiles;
 	}
 
+	public String getName() {
+		return Gpr.baseName(id);
+	}
+
 	public String getNode() {
 		return node;
 	}
@@ -288,6 +294,27 @@ public class Task implements BigDataScriptSerialize {
 
 	public String getProgramFileName() {
 		return programFileName;
+	}
+
+	/**
+	 * A short text describing the task (extracted from program text)
+	 * @return
+	 */
+	public String getProgramHint() {
+		if (programTxt == null) return "";
+
+		for (String line : programTxt.split("\n"))
+			if (!(line.isEmpty() || line.startsWith("#"))) {
+				String hint = line.length() > MAX_HINT_LEN ? line.substring(0, MAX_HINT_LEN) : line;
+				hint = hint.replace('\'', ' ');
+				return hint;
+			}
+
+		return "";
+	}
+
+	public String getProgramTxt() {
+		return programTxt;
 	}
 
 	public String getQueue() {
