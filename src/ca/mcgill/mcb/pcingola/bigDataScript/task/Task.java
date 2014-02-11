@@ -307,6 +307,7 @@ public class Task implements BigDataScriptSerialize {
 			if (!(line.isEmpty() || line.startsWith("#"))) {
 				String hint = line.length() > MAX_HINT_LEN ? line.substring(0, MAX_HINT_LEN) : line;
 				hint = hint.replace('\'', ' ');
+				hint = hint.replace('\t', ' ');
 				return hint;
 			}
 

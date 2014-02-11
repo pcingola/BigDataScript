@@ -68,7 +68,7 @@ public class Executioners {
 	 * @param exName
 	 * @return
 	 */
-	public Executioner factory(ExecutionerType exType) {
+	private Executioner factory(ExecutionerType exType) {
 		Executioner executioner;
 		switch (exType) {
 		case LOCAL:
@@ -104,7 +104,7 @@ public class Executioners {
 	 * @param exName
 	 * @return
 	 */
-	public Executioner get(ExecutionerType exType) {
+	public synchronized Executioner get(ExecutionerType exType) {
 		Executioner ex = executioners.get(exType);
 
 		// Invalid or null? Create a new one
