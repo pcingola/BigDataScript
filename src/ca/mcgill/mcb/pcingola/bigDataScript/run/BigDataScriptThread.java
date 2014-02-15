@@ -195,7 +195,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Create a report (after execution finished)
+	 * Create an HTML report (after execution finished)
 	 */
 	public void createReport() {
 		if (getTasks().isEmpty()) {
@@ -245,6 +245,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		for (Task task : getTasks()) {
 			rTemplate.add("taskNum", "" + taskNum);
 			rTemplate.add("taskId", task.getId());
+			rTemplate.add("taskPid", task.getPid());
 			rTemplate.add("taskName", task.getName());
 			rTemplate.add("taskOk", "" + task.isDoneOk());
 			rTemplate.add("taskExitCode", "" + task.getExitValue());
