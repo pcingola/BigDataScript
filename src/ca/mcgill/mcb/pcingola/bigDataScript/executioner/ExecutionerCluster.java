@@ -159,6 +159,7 @@ public class ExecutionerCluster extends Executioner {
 		CmdCluster cmd = new CmdCluster(task.getId(), args.toArray(Cmd.ARGS_ARRAY_TYPE));
 		cmd.setStdin(cmdStdin.toString());
 		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
+		if (debug) Timer.showStdErr("Command (CmdCluster): " + cmd);
 
 		return cmd;
 	}
