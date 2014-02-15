@@ -24,7 +24,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class CheckTasksRunning {
 
-	public static boolean debug = true;
+	public static boolean debug = false;
 
 	public static final int CHECK_TASK_RUNNING_INTERVAL = 60;
 	public static final int TASK_STATE_MIN_START_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
