@@ -4,19 +4,21 @@ in := "in.txt"
 out1 := "out1.txt"
 out2 := "out2.txt"
 out3 := "out3.txt"
+sleepTime := 1
 
 # Create input
 sys echo Hi > $in
 [out1, out2, out3].rm() # Delete outputs
 
 # Task 1
-task( out1 <- in ) sys echo TASK 1; sleep 10; cat $in > $out1 ; echo Task 1 >> $out1
+task( out1 <- in ) sys echo TASK 1; sleep $sleepTime; cat $in > $out1 ; echo Task 1 >> $out1
 
 # Task 2
-task( out2 <- out1 ) sys echo TASK 2; sleep 10; cat $out1 > $out2; echo Task 2 >> $out2; rm zxzxzxzxzx
+#task( out2 <- out1 ) sys echo TASK 2; sleep sleepTime; cat $out1 > $out2; echo Task 2 >> $out2; rm zxzxzxzxzx
+task( out2 <- out1 ) sys echo TASK 2; sleep $sleepTime; cat $out1 > $out2; echo Task 2 >> $out2
 
 # Task 3
-task( out3 <- out2 ) sys echo TASK 3; sleep 10; cat $out2 > $out3; echo Task 3 >> $out3
+task( out3 <- out2 ) sys echo TASK 3; sleep $sleepTime; cat $out2 > $out3; echo Task 3 >> $out3
 
 wait
 print("Done\n")
