@@ -20,7 +20,7 @@ public class Executioners {
 	 *
 	 */
 	public enum ExecutionerType {
-		SYS, LOCAL, SSH, CLUSTER, MOAB, SGE, CLOUD;
+		SYS, LOCAL, SSH, CLUSTER, MOAB, PBS, SGE, CLOUD;
 
 		/**
 		 * Parse an executioner name
@@ -80,6 +80,9 @@ public class Executioners {
 		case CLUSTER: // Cluster defaults to MOAB (probably not a wise default)
 		case MOAB:
 			executioner = new ExecutionerCluster(config);
+			break;
+		case PBS:
+			executioner = new ExecutionerClusterPbs(config);
 			break;
 		case SGE:
 			executioner = new ExecutionerClusterSge(config);
