@@ -118,6 +118,8 @@ public class ExecutionerCluster extends Executioner {
 	protected Cmd createCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
+		if (debug) Timer.showStdErr("Executioner: " + this.getClass().getSimpleName() + ", task " + task.getId());
+
 		// Create command line
 		ArrayList<String> args = new ArrayList<String>();
 		for (String arg : CLUSTER_EXEC_COMMAND)
