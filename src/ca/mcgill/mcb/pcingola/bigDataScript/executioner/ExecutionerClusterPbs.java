@@ -11,10 +11,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
  */
 public class ExecutionerClusterPbs extends ExecutionerCluster {
 
-	protected String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "msub" };
-	protected String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "canceljob" };
-	protected String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "showq" };
-	protected String CLUSTER_BDS_COMMAND = "bds exec ";
+	protected final String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "msub" };
+	protected final String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "canceljob" };
+	protected final String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "showq" };
+	protected final String CLUSTER_BDS_COMMAND = "bds exec ";
 
 	public ExecutionerClusterPbs(Config config) {
 		super(config);

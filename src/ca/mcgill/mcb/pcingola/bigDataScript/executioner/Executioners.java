@@ -74,19 +74,24 @@ public class Executioners {
 		case LOCAL:
 			executioner = new ExecutionerLocal(config);
 			break;
+
 		case SSH:
 			executioner = new ExecutionerSsh(config);
 			break;
+
 		case CLUSTER: // Cluster defaults to MOAB (probably not a wise default)
 		case MOAB:
 			executioner = new ExecutionerCluster(config);
 			break;
+
 		case PBS:
 			executioner = new ExecutionerClusterPbs(config);
 			break;
+
 		case SGE:
 			executioner = new ExecutionerClusterSge(config);
 			break;
+
 		default:
 			throw new RuntimeException("Unknown executioner type '" + exType + "'");
 		}

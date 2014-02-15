@@ -29,10 +29,10 @@ public class ExecutionerCluster extends Executioner {
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 	public static String FAKE_CLUSTER = "";
 
-	protected String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
-	protected String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
-	protected String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
-	protected String CLUSTER_BDS_COMMAND = "bds exec ";
+	protected final String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
+	protected final String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
+	protected final String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
+	protected final String CLUSTER_BDS_COMMAND = "bds exec ";
 
 	public int MIN_EXTRA_TIMEOUT = 15;
 	public int MAX_EXTRA_TIMEOUT = 120;

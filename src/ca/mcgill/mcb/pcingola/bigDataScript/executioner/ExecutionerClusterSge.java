@@ -15,9 +15,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ExecutionerClusterSge extends ExecutionerCluster {
 
-	public static final String CONFIG_SGE_PE = "sge.pe";
-	public static final String CONFIG_SGE_MEM = "sge.mem";
-	public static final String CONFIG_SGE_TIMEOUT = "sge.timeout";
+	protected final String CONFIG_SGE_PE = "sge.pe";
+	protected final String CONFIG_SGE_MEM = "sge.mem";
+	protected final String CONFIG_SGE_TIMEOUT = "sge.timeout";
 
 	String sgePe = "", sgeMem = "", sgeTimeOut = "";
 
