@@ -261,6 +261,16 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
+	 * Perform reports and checks evrey now and then
+	 */
+	protected void reportsAndChecks() {
+		reportTasks();
+
+		// Check that task are still running
+		if (checkTasksRunning != null) checkTasksRunning.check();
+	}
+
+	/**
 	 * Report tasks to running, to run and done 
 	 */
 	protected void reportTasks() {
@@ -268,12 +278,13 @@ public abstract class Executioner extends Thread {
 		if ((hasTaskRunning() || hasTaskToRun()) && isReportTime()) {
 			// Create table
 			int rowNum = 0;
-			String table[][] = new String[tasksToRun.size() + tasksRunning.size()][4];
+			String table[][] = new String[tasksToRun.size() + tasksRunning.size()][5];
 
 			// Pending
 			for (Task t : tasksToRun) {
-				table[rowNum][0] = "pending (" + t.getTaskState() + ")";
-				table[rowNum][1] = t.getName();
+				table[rowNum][0] = t.getPid() != null ? t.getPid() : "";
+				table[rowNum][1] = "pending (" + t.getTaskState() + ")";
+				table[rowNum][2] = t.getName();
 
 				// Show dependent tasks
 				StringBuilder sb = new StringBuilder();
@@ -281,22 +292,23 @@ public abstract class Executioner extends Thread {
 					for (Task td : t.getDependency())
 						sb.append(td.getName() + " ");
 				}
-				table[rowNum][2] = sb.toString();
-				table[rowNum][3] = t.getProgramHint();
+				table[rowNum][3] = sb.toString();
+				table[rowNum][4] = t.getProgramHint();
 				rowNum++;
 			}
 
 			// Running
 			for (Task t : tasksRunning.values()) {
-				table[rowNum][0] = "running (" + t.getTaskState() + ")";
-				table[rowNum][1] = t.getName();
-				table[rowNum][2] = "";
-				table[rowNum][3] = t.getProgramHint();
+				table[rowNum][0] = t.getPid() != null ? t.getPid() : "";
+				table[rowNum][1] = "running (" + t.getTaskState() + ")";
+				table[rowNum][2] = t.getName();
+				table[rowNum][3] = "";
+				table[rowNum][4] = t.getProgramHint();
 				rowNum++;
 			}
 
 			// Show table
-			String columnNames[] = { "Task state", "Task name", "Dependencies", "Task definition" };
+			String columnNames[] = { "PID", "Task state", "Task name", "Dependencies", "Task definition" };
 			TextTable tt = new TextTable(columnNames, table, "\t\t");
 			String executionerName = this.getClass().getSimpleName().substring(Executioner.class.getSimpleName().length()).toLowerCase();
 			Timer.showStdErr("Tasks [" + executionerName + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size() + "\n" + tt.toString());
@@ -328,9 +340,6 @@ public abstract class Executioner extends Thread {
 					if (debug) Timer.showStdErr("Queue: No task to run.");
 				}
 
-				// Check that task are still running
-				if (checkTasksRunning != null) checkTasksRunning.check();
-
 				sleepLong();
 			}
 		} catch (Throwable t) {
@@ -349,7 +358,7 @@ public abstract class Executioner extends Thread {
 	protected boolean runExecutionerLoop() {
 		// Nothing to run?
 		if (!hasTaskToRun()) {
-			reportTasks();
+			reportsAndChecks();
 			return false;
 		}
 
@@ -366,7 +375,7 @@ public abstract class Executioner extends Thread {
 				sleepMid();
 			}
 
-			reportTasks();
+			reportsAndChecks();
 		}
 
 		return true;

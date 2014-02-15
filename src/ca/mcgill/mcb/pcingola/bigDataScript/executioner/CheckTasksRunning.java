@@ -9,6 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -25,8 +26,8 @@ public class CheckTasksRunning {
 
 	public static boolean debug = true;
 
-	public static final int CHECK_TASK_RUNNING_INTERVAL = 3; //60;
-	public static final int TASK_STATE_MIN_START_TIME = 1; // 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
+	public static final int CHECK_TASK_RUNNING_INTERVAL = 60;
+	public static final int TASK_STATE_MIN_START_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
 
 	protected Timer time; // Timer for checking that tasks are still running
 	protected String[] defaultCmdArgs;
@@ -73,7 +74,10 @@ public class CheckTasksRunning {
 		// Find task by PID
 		for (Task t : executioner.getTasksRunning().values()) {
 			String pid = t.getPid();
-			if (pids.contains(pid)) tasks.add(t);
+			if (pid != null && pids.contains(pid)) {
+				if (debug) Gpr.debug("Found task PID '" + pid + "'");
+				tasks.add(t);
+			}
 		}
 
 		return tasks;
@@ -113,7 +117,6 @@ public class CheckTasksRunning {
 				String pidPart = pid.split("\\.")[0]; // Use only the first part before '.'
 				pids.add(pidPart);
 			}
-
 		}
 
 		// Find a tasks matching these PIDs
@@ -135,6 +138,7 @@ public class CheckTasksRunning {
 
 		// Execute command
 		cmdExecResult = Exec.exec(args, true);
+		if (debug) Gpr.debug("Check task running command: exit value " + cmdExecResult.exitValue + ", stdout len: " + cmdExecResult.stdOut.length());
 
 		// Any problems? Report
 		if (cmdExecResult.exitValue > 0) {
@@ -155,7 +159,7 @@ public class CheckTasksRunning {
 		// Any 'running' task that was not found should be marked as finished/ERROR
 		for (Task task : executioner.getTasksRunning().values()) {
 
-			if (!taskFoundId.contains(task) // Task not found by commad?
+			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
 			) {
@@ -167,7 +171,10 @@ public class CheckTasksRunning {
 		// Any task to mark as finished/ERROR?
 		if (finished != null) {
 			for (Task task : finished) {
-				if (!task.isDone()) { // Make sure the task is not finished (race conditions?)
+				String tpid = task.getPid() != null ? task.getPid() : "";
+
+				if (!tpid.isEmpty() && !task.isDone()) { // Make sure the task is not finished (race conditions?)
+					if (debug) Gpr.debug("Task PID '" + task.getPid() + "' not found. Marking it as finished.");
 					task.setErrorMsg("Task dissapeared from cluster's queue. Task or node failure?");
 					executioner.taskFinished(task, TaskState.ERROR, Task.EXITCODE_ERROR);
 				}

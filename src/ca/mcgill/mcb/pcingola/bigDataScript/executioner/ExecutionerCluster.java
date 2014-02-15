@@ -2,7 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,8 +26,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class ExecutionerCluster extends Executioner {
 
 	// FAKE_CLUSTER: Only used for debugging when you don't have a cluster (or don't want to wait for cluster's respose)
-	public static String FAKE_CLUSTER = "";
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
+	public static String FAKE_CLUSTER = "";
 
 	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
 	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
@@ -49,6 +48,8 @@ public class ExecutionerCluster extends Executioner {
 		// Create a cluster having only one host with 'inifinite' capacity
 		cluster = new Cluster();
 		new HostInifinte(cluster);
+
+		checkTasksRunning = new CheckTasksRunningCluster(this);
 	}
 
 	/**
@@ -95,15 +96,6 @@ public class ExecutionerCluster extends Executioner {
 		int clusterTimeout = realTimeout + extraTime;
 
 		return clusterTimeout;
-	}
-
-	/**
-	 * Get states for all tasks running in the cluster
-	 * @return
-	 */
-	HashMap<String, String> clusterStat() {
-		HashMap<String, String> stats = new HashMap<String, String>();
-		return stats;
 	}
 
 	/**
@@ -202,6 +194,7 @@ public class ExecutionerCluster extends Executioner {
 	@Override
 	public String parsePidLine(String line) {
 		line = line.trim();
+		if (line.isEmpty()) return "";
 
 		if (pidPattern != null) {
 			// Pattern pattern = Pattern.compile("Your job (\\S+)");

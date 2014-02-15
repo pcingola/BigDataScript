@@ -29,7 +29,8 @@ public class ExecutionerLocal extends Executioner {
 
 	/**
 	 * Sometimes a "text file busy" error may appear when we execute a task.
-	 * E.g.: The following script will produce "text file busy" error on some Linux systems:
+	 * E.g.: The following script will produce "text file busy" error on 
+	 *       some Linux systems (local execution):
 	 * 
 	 * 		$ cat z.bds
 	 * 		#!/usr/bin/env bds
@@ -39,8 +40,9 @@ public class ExecutionerLocal extends Executioner {
 	 * 		2014/01/25 16:52:36 fork/exec z.bds.20140125_165235_563/task.line_7.id_198.sh: text file busy
 	 * 
 	 * To avoid this, we must make sure that JVM actually has 
-	 * closed the file. Surprisingly, invoking flush() and close() is not 
-	 * enough to make sure the file is actually closed.
+	 * closed the file. Surprisingly, invoking flush() and 
+	 * close() is not enough to make sure the file is actually 
+	 * fully closed.
 	 * 
 	 * We need something like 'lsof' command in Java, which doesn't 
 	 * seem to exist.
@@ -49,7 +51,9 @@ public class ExecutionerLocal extends Executioner {
 	 * amount of time between file creation and execution. I use 
 	 * 1 millisecond, since it is the minimum for sleep() method.
 	 * 
-	 * This obviously penalizes execution performance.
+	 * There are two obvious problems:
+	 * 		i) This obviously penalizes execution performance.
+	 * 		ii) There is no warrantees that this will always work.
 	 * 
 	 */
 	void avoidTextFileBusyError() {

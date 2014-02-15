@@ -129,7 +129,7 @@ public class Executioners {
 	 * Get all available exectioners
 	 * @return
 	 */
-	public Collection<Executioner> getAll() {
+	public synchronized Collection<Executioner> getAll() {
 		return executioners.values();
 	}
 
