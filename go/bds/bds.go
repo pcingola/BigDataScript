@@ -136,6 +136,7 @@ func bigDataScript() int {
 		log.Fatal(err)
 	}
 	taskLoggerFile = pidTmpFile
+	defer os.Remove(taskLoggerFile) // Make sure the PID file is removed
 
 	// Append all arguments from command line
 	args := []string{"java",

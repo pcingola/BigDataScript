@@ -29,10 +29,11 @@ public class ExecutionerCluster extends Executioner {
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 	public static String FAKE_CLUSTER = "";
 
-	protected String CLUSTER_EXEC_COMMAND[];
-	protected String CLUSTER_KILL_COMMAND[];
-	protected String CLUSTER_STAT_COMMAND[];
-	protected String CLUSTER_BDS_COMMAND = "bds exec ";
+	protected String clusterExecCommand[];
+	protected String clusterKillCommand[];
+	protected String clusterStatCommand[];
+
+	protected String bdsCommand = "bds exec ";
 
 	public int MIN_EXTRA_TIMEOUT = 15;
 	public int MAX_EXTRA_TIMEOUT = 120;
@@ -43,13 +44,13 @@ public class ExecutionerCluster extends Executioner {
 		super(config);
 
 		// Define commnads
-		String EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
-		String KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
-		String STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
+		String execCommand[] = { FAKE_CLUSTER + "qsub" };
+		String killCommand[] = { FAKE_CLUSTER + "qdel" };
+		String statCommand[] = { FAKE_CLUSTER + "qstat" };
 
-		CLUSTER_EXEC_COMMAND = EXEC_COMMAND;
-		CLUSTER_KILL_COMMAND = KILL_COMMAND;
-		CLUSTER_STAT_COMMAND = STAT_COMMAND;
+		clusterExecCommand = execCommand;
+		clusterKillCommand = killCommand;
+		clusterStatCommand = statCommand;
 
 		// Cluster task need monitoring
 		monitorTask = config.getMonitorTask();
@@ -131,7 +132,7 @@ public class ExecutionerCluster extends Executioner {
 
 		// Create command line
 		ArrayList<String> args = new ArrayList<String>();
-		for (String arg : CLUSTER_EXEC_COMMAND)
+		for (String arg : clusterExecCommand)
 			args.add(arg);
 
 		// Add resources request
@@ -156,7 +157,7 @@ public class ExecutionerCluster extends Executioner {
 
 		// Create command to run (it feeds parameters to qsub via stdin)
 		StringBuilder cmdStdin = new StringBuilder();
-		cmdStdin.append(CLUSTER_BDS_COMMAND);
+		cmdStdin.append(bdsCommand);
 		cmdStdin.append(realTimeout + " ");
 		cmdStdin.append("'" + task.getStdoutFile() + "' ");
 		cmdStdin.append("'" + task.getStderrFile() + "' ");
@@ -188,12 +189,12 @@ public class ExecutionerCluster extends Executioner {
 
 	@Override
 	protected CheckTasksRunning getCheckTasksRunning() {
-		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, CLUSTER_STAT_COMMAND);
+		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, clusterStatCommand);
 		return checkTasksRunning;
 	}
 
 	public String[] getCommandStat() {
-		return CLUSTER_STAT_COMMAND;
+		return clusterStatCommand;
 	}
 
 	/**
@@ -203,7 +204,7 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	@Override
 	public String[] osKillCommand(Task task) {
-		return CLUSTER_KILL_COMMAND;
+		return clusterKillCommand;
 	}
 
 	/**
