@@ -133,6 +133,10 @@ public abstract class Executioner extends Thread {
 		if (monitorTask != null) monitorTask.remove(task);
 	}
 
+	protected CheckTasksRunning getCheckTasksRunning() {
+		return null;
+	}
+
 	public HashMap<String, Task> getTasksRunning() {
 		return tasksRunning;
 	}
@@ -267,7 +271,7 @@ public abstract class Executioner extends Thread {
 		reportTasks();
 
 		// Check that task are still running
-		if (checkTasksRunning != null) checkTasksRunning.check();
+		if (getCheckTasksRunning() != null) getCheckTasksRunning().check();
 	}
 
 	/**

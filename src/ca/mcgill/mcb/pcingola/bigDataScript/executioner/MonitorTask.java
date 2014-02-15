@@ -8,9 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * Monitor a task:
- * 	- Check if it is still alive (e.g. it was running on a node that went down)
- * 	- Check if a task finished (e.g. by checking if 'exitFile' exists)
+ * Monitor a task: Check if a task finished by checking if 'exitFile' exists
  * 
  * @author pcingola
  */

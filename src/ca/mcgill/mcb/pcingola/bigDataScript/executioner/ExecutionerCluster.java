@@ -29,10 +29,10 @@ public class ExecutionerCluster extends Executioner {
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 	public static String FAKE_CLUSTER = "";
 
-	public static String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
-	public static String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
-	public static String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
-	public static String CLUSTER_BDS_COMMAND = "bds exec ";
+	protected String CLUSTER_EXEC_COMMAND[] = { FAKE_CLUSTER + "qsub" };
+	protected String CLUSTER_KILL_COMMAND[] = { FAKE_CLUSTER + "qdel" };
+	protected String CLUSTER_STAT_COMMAND[] = { FAKE_CLUSTER + "qstat" };
+	protected String CLUSTER_BDS_COMMAND = "bds exec ";
 
 	public int MIN_EXTRA_TIMEOUT = 15;
 	public int MAX_EXTRA_TIMEOUT = 120;
@@ -48,8 +48,6 @@ public class ExecutionerCluster extends Executioner {
 		// Create a cluster having only one host with 'inifinite' capacity
 		cluster = new Cluster();
 		new HostInifinte(cluster);
-
-		checkTasksRunning = new CheckTasksRunningCluster(this);
 	}
 
 	/**
@@ -174,6 +172,16 @@ public class ExecutionerCluster extends Executioner {
 			new File(clusterStdFile(task.getStdoutFile())).deleteOnExit();
 			new File(clusterStdFile(task.getStderrFile())).deleteOnExit();
 		}
+	}
+
+	@Override
+	protected CheckTasksRunning getCheckTasksRunning() {
+		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, CLUSTER_STAT_COMMAND);
+		return checkTasksRunning;
+	}
+
+	public String[] getCommandStat() {
+		return CLUSTER_STAT_COMMAND;
 	}
 
 	/**

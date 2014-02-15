@@ -11,9 +11,9 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
  */
 public class CheckTasksRunningCluster extends CheckTasksRunning {
 
-	public CheckTasksRunningCluster(Executioner executioner) {
+	public CheckTasksRunningCluster(Executioner executioner, String cmdArgs[]) {
 		super(executioner);
-		defaultCmdArgs = ExecutionerCluster.CLUSTER_STAT_COMMAND;
+		defaultCmdArgs = cmdArgs;
 		cmdPidColumn = 0;
 	}
 
