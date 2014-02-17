@@ -279,12 +279,22 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			}
 
 			Date start = task.getRunningStartTime();
-			rTemplate.add("taskStart", outFormat.format(start));
-			rTemplate.add("taskStartCsv", csvFormat.format(start));
+			if (start != null) {
+				rTemplate.add("taskStart", outFormat.format(start));
+				rTemplate.add("taskStartCsv", csvFormat.format(start));
+			} else {
+				rTemplate.add("taskStart", "");
+				rTemplate.add("taskStartCsv", "");
+			}
 
 			Date end = task.getRunningEndTime();
-			rTemplate.add("taskEnd", outFormat.format(end));
-			rTemplate.add("taskEndCsv", csvFormat.format(end));
+			if (end != null) {
+				rTemplate.add("taskEnd", outFormat.format(end));
+				rTemplate.add("taskEndCsv", csvFormat.format(end));
+			} else {
+				rTemplate.add("taskEnd", "");
+				rTemplate.add("taskEndCsv", "");
+			}
 
 			// Program & hint
 			rTemplate.add("taskProgram", task.getProgramTxt());
