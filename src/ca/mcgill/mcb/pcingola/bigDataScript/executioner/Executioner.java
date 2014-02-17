@@ -261,6 +261,16 @@ public abstract class Executioner extends Thread {
 		return line.trim();
 	}
 
+	/**
+	 * Try to find some 'post-mortem' info about this 
+	 * task, in order to asses systematic errors.
+	 * 
+	 * @param task
+	 */
+	protected void postMortemInfo(Task task) {
+		// Nothing to do
+	}
+
 	protected void remove(Task task, Host host) {
 		tasksSelected.remove(task);
 		host.remove(task);
@@ -405,14 +415,17 @@ public abstract class Executioner extends Thread {
 	 * @return
 	 */
 	protected void runTask(Task task, Host host) {
-		if (debug) Timer.showStdErr("Running task '" + task.getId() + "' on host " + host.getHostName());
-
 		// Don't run too many threads at once
+		// The reason for this is that we can reach the maximum 
+		// number of threads available in the operating system.
+		// If that happens, well get an exception 
 		for (int numThreads = Exec.countRunningThreads(); numThreads >= Exec.MAX_NUMBER_OF_RUNNING_THREADS; numThreads = Exec.countRunningThreads()) {
+			// Too many threads running? Sleep for a while (block until some threads finish)
 			if (verbose) Timer.showStdErr("INFO: Too many threads running (" + numThreads + "). Waiting for some threads to finish.");
 			sleepLong();
 		}
 
+		// TODO: If an exception is thrown here, we should be able to either recover or mark the task as START_FAILED
 		Cmd cmd = createCmd(task);
 		cmd.setHost(host);
 		cmd.setExecutioner(this);
@@ -590,16 +603,6 @@ public abstract class Executioner extends Thread {
 		// Task finished in error condition?
 		// May be we can look for additional information to asses the error
 		if (task.isError()) postMortemInfo(task);
-	}
-
-	/**
-	 * Try to find some 'post-mortem' info about this 
-	 * task, in order to asses systematic errors.
-	 * 
-	 * @param task
-	 */
-	protected void postMortemInfo(Task task) {
-		// Nothing to do
 	}
 
 	/**
