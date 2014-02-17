@@ -603,7 +603,7 @@ public class Task implements BigDataScriptSerialize {
 
 		if (verbose) {
 			sb.append("\tProgram & line     : '" + bdsFileName + "', line " + bdsLineNum + "\n");
-			sb.append("\tTask hint          : '" + getProgramHint() + "'\n");
+			sb.append("\tTask hint          : " + getProgramHint() + "\n");
 			sb.append("\tTask ID            : '" + id + "'\n");
 			sb.append("\tTask PID           : '" + pid + "'\n");
 			sb.append("\tState              : '" + taskState + "'\n");

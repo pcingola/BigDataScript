@@ -243,7 +243,6 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	@Override
 	protected void postMortemInfo(Task task) {
-		Gpr.debug("CHECKING POST MORTEM INFO!!");
 		if (clusterPostMortemInfoCommand == null || clusterPostMortemInfoCommand.length < 1) return;
 		if (task.getPid() == null || task.getPid().isEmpty()) return;
 
@@ -258,7 +257,7 @@ public class ExecutionerCluster extends Executioner {
 
 		// Run command
 		ExecResult cmdExecResult = Exec.exec(args, true);
-		if (debug || true) Gpr.debug("Finding postMortemInfo for task " + task.getId() + ": Command executed. Exit value " + cmdExecResult.exitValue + ". Stdout len: " + cmdExecResult.stdOut.length());
+		if (debug) Gpr.debug("Finding postMortemInfo for task " + task.getId() + ": Command executed. Exit value " + cmdExecResult.exitValue + ". Stdout len: " + cmdExecResult.stdOut.length());
 
 		// Collect the data
 		if (cmdExecResult.exitValue == 0) task.setPostMortemInfo(cmdExecResult.stdOut);
