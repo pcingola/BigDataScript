@@ -22,11 +22,11 @@ public class Exec {
 		return new Exec().run(args, quiet);
 	}
 
-	public ExecResult run(List<String> args) {
-		return run(args, false);
-	}
+	//	protected ExecResult run(List<String> args) {
+	//		return run(args, false);
+	//	}
 
-	public ExecResult run(List<String> args, boolean quiet) {
+	protected ExecResult run(List<String> args, boolean quiet) {
 		// Create a command string
 		StringBuilder cmdsb = new StringBuilder();
 		for (String arg : args)

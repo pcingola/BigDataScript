@@ -416,6 +416,7 @@ public abstract class Executioner extends Thread {
 
 		host.add(task);
 		cmd.start();
+		Gpr.debug("Number of threads: " + java.lang.Thread.activeCount());
 	}
 
 	/**
