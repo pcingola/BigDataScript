@@ -10,6 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.DependencyState;
@@ -351,7 +352,6 @@ public abstract class Executioner extends Thread {
 			t.printStackTrace();
 			throw new RuntimeException(t);
 		} finally {
-
 			runExecutionerLoopAfter(); // Clean up
 		}
 	}
@@ -406,6 +406,12 @@ public abstract class Executioner extends Thread {
 	 */
 	protected void runTask(Task task, Host host) {
 		if (debug) Timer.showStdErr("Running task '" + task.getId() + "' on host " + host.getHostName());
+
+		// Don't run too many threads at once
+		for (int numThreads = Exec.countRunningThreads(); numThreads >= Exec.MAX_NUMBER_OF_RUNNING_THREADS; numThreads = Exec.countRunningThreads()) {
+			if (verbose) Timer.showStdErr("INFO: Too many threads running (" + numThreads + "). Waiting for some threads to finish.");
+			sleepLong();
+		}
 
 		Cmd cmd = createCmd(task);
 		cmd.setHost(host);

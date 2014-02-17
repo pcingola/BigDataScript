@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
+import java.lang.management.ManagementFactory;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -12,11 +13,20 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class Exec {
 
+	public static int MAX_NUMBER_OF_RUNNING_THREADS = 512;
 	public static boolean debug = false;
 
 	int exitValue;
 	String stdOutStr;
 	String stdErrStr;
+
+	/**
+	 * How many running threads do we have?
+	 * @return
+	 */
+	public static int countRunningThreads() {
+		return Math.max(java.lang.Thread.activeCount(), ManagementFactory.getThreadMXBean().getThreadCount());
+	}
 
 	public static ExecResult exec(List<String> args, boolean quiet) {
 		return new Exec().run(args, quiet);
