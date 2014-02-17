@@ -140,7 +140,7 @@ func bigDataScript() int {
 
 	// Append all arguments from command line
 	args := []string{"java",
-		"-Xmx1G",
+		"-Xmx2G",
 		"-cp", execName,
 		"ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
 	args = append(args, "-pid")
