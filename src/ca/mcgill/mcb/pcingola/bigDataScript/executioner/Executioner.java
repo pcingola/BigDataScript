@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -416,7 +417,7 @@ public abstract class Executioner extends Thread {
 
 		host.add(task);
 		cmd.start();
-		Gpr.debug("Number of threads: " + java.lang.Thread.activeCount());
+		Gpr.debug("Number of threads: \tActive counts:" + java.lang.Thread.activeCount() + "\tManagement factory: " + ManagementFactory.getThreadMXBean().getThreadCount());
 	}
 
 	/**
