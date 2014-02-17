@@ -58,7 +58,7 @@
 	<h2 class="bs-featurette-title"> Task details </h2>
 	<table class="table table-striped">
 	<tr> <th> Task Number </th><th> Task Name / Pid </th><th> State </th><th> Exit Code </th><th> Finished OK </th><th> Resources </th><th> Start time </th><th> End time </th><th> Dependencies / State </th><th> Input files </th><th> Output files </th><th> Task program </th> </tr>
-	<tr> <td> {{taskNum}} </td><td> {{taskName}} {{taskPid}} </td><td> {{taskState}} </td><td> {{taskExitCode}} </td><td {{taskColor}}> {{taskOk}} </td><td> {{taskResources}} </td><td> {{taskStart}} </td><td> {{taskEnd}} </td><td> {{taskDep}} {{taskDepState}} </td><td> {{taskInFiles}} </td><td> {{taskOutFiles}} </td><td> <pre> {{taskProgram}} {{taskCheckOut}} {{taskStdout}} {{taskStderr}} </pre></td></tr>
+	<tr> <td> {{taskNum}} </td><td> {{taskName}} {{taskPid}} </td><td> {{taskState}} </td><td> {{taskExitCode}} </td><td {{taskColor}}> {{taskOk}} </td><td> {{taskResources}} </td><td> {{taskStart}} </td><td> {{taskEnd}} </td><td> {{taskDep}} {{taskDepState}} </td><td> {{taskInFiles}} </td><td> {{taskOutFiles}} </td><td> <pre> {{taskProgram}} {{taskCheckOut}} {{taskStdout}} {{taskStderr}} {{taskPostMortemInfo}}</pre></td></tr>
 	</table>
 </div>
 

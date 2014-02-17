@@ -13,7 +13,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdCluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -32,6 +35,7 @@ public class ExecutionerCluster extends Executioner {
 	protected String clusterExecCommand[];
 	protected String clusterKillCommand[];
 	protected String clusterStatCommand[];
+	protected String clusterPostMortemInfoCommand[];
 
 	protected String bdsCommand = "bds exec ";
 
@@ -43,14 +47,16 @@ public class ExecutionerCluster extends Executioner {
 	public ExecutionerCluster(Config config) {
 		super(config);
 
-		// Define commnads
+		// Define commands
 		String execCommand[] = { FAKE_CLUSTER + "qsub" };
 		String killCommand[] = { FAKE_CLUSTER + "qdel" };
 		String statCommand[] = { FAKE_CLUSTER + "qstat" };
+		String postMortemInfoCommand[] = { FAKE_CLUSTER + "qstat", "-f" };
 
 		clusterExecCommand = execCommand;
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
+		clusterPostMortemInfoCommand = postMortemInfoCommand;
 
 		// Cluster task need monitoring
 		monitorTask = config.getMonitorTask();
@@ -227,6 +233,41 @@ public class ExecutionerCluster extends Executioner {
 		}
 
 		return line;
+	}
+
+	/**
+	 * Try to find some 'post-mortem' info about this 
+	 * task, in order to asses systematic errors.
+	 * 
+	 * @param task
+	 */
+	@Override
+	protected void postMortemInfo(Task task) {
+		Gpr.debug("CHECKING POST MORTEM INFO!!");
+		if (clusterPostMortemInfoCommand == null || clusterPostMortemInfoCommand.length < 1) return;
+		if (task.getPid() == null || task.getPid().isEmpty()) return;
+
+		// Prepare command line arguments
+		ArrayList<String> args = new ArrayList<String>();
+		StringBuilder cmdsb = new StringBuilder();
+		for (String arg : clusterPostMortemInfoCommand) {
+			args.add(arg);
+			cmdsb.append(" " + arg);
+		}
+		args.add(task.getPid());
+
+		// Run command
+		ExecResult cmdExecResult = Exec.exec(args, true);
+		if (debug || true) Gpr.debug("Finding postMortemInfo for task " + task.getId() + ": Command executed. Exit value " + cmdExecResult.exitValue + ". Stdout len: " + cmdExecResult.stdOut.length());
+
+		// Collect the data
+		if (cmdExecResult.exitValue == 0) task.setPostMortemInfo(cmdExecResult.stdOut);
+		else Timer.showStdErr("Error trying to find out post-mortem info on task (PID '" + task.getPid() + "')." //
+				+ "\n\tExit code : " + cmdExecResult.exitValue //
+				+ "\n\tStdout    : " + cmdExecResult.stdOut //
+				+ "\n\tStderr    : " + cmdExecResult.stdErr //
+		);
+
 	}
 
 	@Override

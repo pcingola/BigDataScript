@@ -259,6 +259,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", "\n" + LINE + "Check output files" + LINE + "\n" + ch + "\n");
 				else rTemplate.add("taskCheckOut", "");
 
+				if (task.getPostMortemInfo() != null && !task.getPostMortemInfo().isEmpty()) rTemplate.add("taskPostMortemInfo", "\n" + LINE + "Post mortem info" + LINE + "\n" + task.getPostMortemInfo() + "\n");
+				else rTemplate.add("taskPostMortemInfo", "");
+
 				String tailErr = TailFile.tail(task.getStderrFile());
 				if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", "\n" + LINE + "Stderr" + LINE + "\n" + tailErr + "\n");
 				else rTemplate.add("taskStderr", "");
@@ -270,6 +273,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			} else {
 				rTemplate.add("taskColor", "");
 				rTemplate.add("taskCheckOut", "");
+				rTemplate.add("taskPostMortemInfo", "");
 				rTemplate.add("taskStderr", "");
 				rTemplate.add("taskStdout", "");
 			}

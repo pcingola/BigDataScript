@@ -85,7 +85,8 @@ public class Task implements BigDataScriptSerialize {
 	protected String node; // Preferred execution node (or hostname)
 	protected String queue; // Preferred execution queue
 	protected String stdoutFile, stderrFile, exitCodeFile; // STDOUT, STDERR & exit code Files
-	protected String errorMsg;
+	protected String errorMsg; // Error messages
+	protected String postMortemInfo; // Error information about task that failed
 	protected Date runningStartTime, runningEndTime;
 	protected TaskState taskState;
 	protected HostResources resources; // Resources to be consumes when executing this task
@@ -290,6 +291,10 @@ public class Task implements BigDataScriptSerialize {
 
 	public synchronized String getPid() {
 		return pid;
+	}
+
+	public String getPostMortemInfo() {
+		return postMortemInfo;
 	}
 
 	public String getProgramFileName() {
@@ -514,6 +519,10 @@ public class Task implements BigDataScriptSerialize {
 		this.pid = pid;
 	}
 
+	public void setPostMortemInfo(String postMortemInfo) {
+		this.postMortemInfo = postMortemInfo;
+	}
+
 	public void setQueue(String queue) {
 		this.queue = queue;
 	}
@@ -595,8 +604,9 @@ public class Task implements BigDataScriptSerialize {
 		if (verbose) {
 			sb.append("\tProgram & line     : '" + bdsFileName + "', line " + bdsLineNum + "\n");
 			sb.append("\tTask ID            : '" + id + "'\n");
-			sb.append("\tTask state         : '" + taskState + "'\n");
-			sb.append("\tTask dependency    : '" + dependencyState() + "'\n");
+			sb.append("\tTask PID           : '" + pid + "'\n");
+			sb.append("\tState              : '" + taskState + "'\n");
+			sb.append("\tDependency state   : '" + dependencyState() + "'\n");
 			sb.append("\tInput files        : '" + inputFiles + "'\n");
 			sb.append("\tOutput files       : '" + outputFiles + "'\n");
 

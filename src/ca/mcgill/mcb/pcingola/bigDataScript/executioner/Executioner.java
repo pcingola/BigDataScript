@@ -578,6 +578,20 @@ public abstract class Executioner extends Thread {
 		task.setExitValue(exitValue);
 		if (taskState == null) taskState = TaskState.exitCode2taskState(exitValue);
 		task.state(taskState);
+
+		// Task finished in error condition?
+		// May be we can look for additional information to asses the error
+		if (task.isError()) postMortemInfo(task);
+	}
+
+	/**
+	 * Try to find some 'post-mortem' info about this 
+	 * task, in order to asses systematic errors.
+	 * 
+	 * @param task
+	 */
+	protected void postMortemInfo(Task task) {
+		// Nothing to do
 	}
 
 	/**

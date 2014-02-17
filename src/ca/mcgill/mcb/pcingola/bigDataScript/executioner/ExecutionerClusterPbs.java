@@ -14,14 +14,16 @@ public class ExecutionerClusterPbs extends ExecutionerCluster {
 	public ExecutionerClusterPbs(Config config) {
 		super(config);
 
-		// Define commnads
+		// Define commands
 		String execCommand[] = { FAKE_CLUSTER + "msub" };
 		String killCommand[] = { FAKE_CLUSTER + "canceljob" };
 		String statCommand[] = { FAKE_CLUSTER + "showq" };
+		String postMortemInfoCommand[] = { FAKE_CLUSTER + "checkjob" };
 
 		clusterExecCommand = execCommand;
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
+		clusterPostMortemInfoCommand = postMortemInfoCommand;
 
 	}
 
