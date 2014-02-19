@@ -448,13 +448,13 @@ public class BigDataScript {
 		}
 
 		// Make all unprocessed arguments available for the program (in 'args' list)
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING), programArgs));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Type.STRING), programArgs));
 
 		// Initialize program name
 		String programPath = programUnit.getFileName();
 		String progName = Gpr.baseName(programPath);
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, progName));
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_PROGRAM_PATH, Type.STRING, programPath));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, progName));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Type.STRING, programPath));
 	}
 
 	/**
@@ -579,8 +579,8 @@ public class BigDataScript {
 		// ---
 		// Add global symbols
 		// ---
-		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, ""));
-		globalScope.add(new ScopeSymbol(Scope.VAR_PROGRAM_PATH, Type.STRING, ""));
+		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, ""));
+		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Type.STRING, ""));
 
 		// Command line parameters override defaults
 		if (system == null) system = ExecutionerType.LOCAL.toString().toLowerCase();
@@ -596,7 +596,7 @@ public class BigDataScript {
 		// Number of local CPUs
 		// Kilo, Mega, Giga, Tera, Peta.
 		LinkedList<ScopeSymbol> constants = new LinkedList<ScopeSymbol>();
-		constants.add(new ScopeSymbol(Scope.VAR_PROGRAM_NAME, Type.STRING, "")); // Program name, now is empty, but it is filled later
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, "")); // Program name, now is empty, but it is filled later
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, (long) Gpr.NUM_CORES));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));
@@ -606,6 +606,7 @@ public class BigDataScript {
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_MINUTE, Type.INT, 60L));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_HOUR, Type.INT, (long) (60 * 60)));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_DAY, Type.INT, (long) (24 * 60 * 60)));
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_WEEK, Type.INT, (long) (7 * 24 * 60 * 60)));
 
 		// Add all constants
 		for (ScopeSymbol ss : constants) {
@@ -634,7 +635,7 @@ public class BigDataScript {
 		// we have to set something now, otherwise we'll get a "variable
 		// not found" error at compiler time, if the program attempts
 		// to use 'args'.
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.VAR_ARGS_LIST, TypeList.get(Type.STRING), new ArrayList<String>()));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Type.STRING), new ArrayList<String>()));
 	}
 
 	/**

@@ -225,7 +225,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		else rTemplate.add("exitColor", "");
 
 		// Scope
-		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.VAR_ARGS_LIST).toString());
+		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.GLOBAL_VAR_ARGS_LIST).toString());
 		rTemplate.add("scope.TASK_OPTION_SYSTEM", getScope().getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).toString());
 		rTemplate.add("scope.TASK_OPTION_CPUS", getScope().getSymbol(ExpressionTask.TASK_OPTION_CPUS).toString());
 

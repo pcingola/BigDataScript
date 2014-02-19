@@ -27,17 +27,18 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	public static final String GLOBAL_VAR_G = "G";
 	public static final String GLOBAL_VAR_T = "T";
 	public static final String GLOBAL_VAR_P = "P";
-	public static final String GLOBAL_VAR_MINUTE = "MINUTE";
-	public static final String GLOBAL_VAR_HOUR = "HOUR";
-	public static final String GLOBAL_VAR_DAY = "DAY";
+	public static final String GLOBAL_VAR_MINUTE = "minute";
+	public static final String GLOBAL_VAR_HOUR = "hour";
+	public static final String GLOBAL_VAR_DAY = "day";
+	public static final String GLOBAL_VAR_WEEK = "week";
 	public static final String GLOBAL_VAR_LOCAL_CPUS = "cpusLocal";
 
 	// Command line arguments are available in this list
-	public static final String VAR_ARGS_LIST = "args";
+	public static final String GLOBAL_VAR_ARGS_LIST = "args";
 
 	// Program name
-	public static final String VAR_PROGRAM_NAME = "programName";
-	public static final String VAR_PROGRAM_PATH = "programPath";
+	public static final String GLOBAL_VAR_PROGRAM_NAME = "programName";
+	public static final String GLOBAL_VAR_PROGRAM_PATH = "programPath";
 
 	// Global scope
 	private static Scope globalScope = new Scope(null, null);
