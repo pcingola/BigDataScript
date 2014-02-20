@@ -29,6 +29,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class CmdLocal extends Cmd {
 
 	public static final int MAX_PID_LINE_LENGTH = 1024; // A 'PID line' should not be longer than this...
+	public static final int MAX_STDOUT_WAIT = 1000; // Maximum wait until STDOUT becomes avaialble
 
 	protected Process process; // Java process (the one that actually executes our command)
 	protected boolean readPid;
@@ -166,11 +167,16 @@ public class CmdLocal extends Cmd {
 		StringBuilder sb = new StringBuilder();
 		while (pid.isEmpty()) {
 			for (int i = 0; true; i++) {
-				char ch = (char) getStdout().read();
+				int r;
+				for (int j = 0; (r = getStdout().read()) < 0 && j < MAX_STDOUT_WAIT; j++) {
+					sleep(1);
+					Gpr.debug("Reading StdOut: Returned EOF!");
+				}
+
+				char ch = (char) r;
 				if (ch == '\n') break;
 				sb.append(ch);
-				if (i >= MAX_PID_LINE_LENGTH) //
-					throw new RuntimeException("PID line too long!\n" + sb.toString());
+				if (i >= MAX_PID_LINE_LENGTH) throw new RuntimeException("PID line too long!\n" + sb.toString());
 			}
 
 			// Parse line. Format "PID \t pidNum \t childPidNum"
