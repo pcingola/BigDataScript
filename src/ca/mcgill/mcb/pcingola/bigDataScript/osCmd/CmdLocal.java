@@ -167,12 +167,11 @@ public class CmdLocal extends Cmd {
 		StringBuilder sb = new StringBuilder();
 		while (pid.isEmpty()) {
 			for (int i = 0; true; i++) {
-				int r;
-				for (int j = 0; (r = getStdout().read()) < 0 && j < MAX_STDOUT_WAIT; j++) {
-					sleep(1);
-					Gpr.debug("Reading StdOut: Returned EOF!");
+				int r = getStdout().read();
+				if (r < 0) {
+					Gpr.debug("WATNING: Process closed stdout prematurely. Could not read PID\n" + this);
+					return;
 				}
-
 				char ch = (char) r;
 				if (ch == '\n') break;
 				sb.append(ch);
