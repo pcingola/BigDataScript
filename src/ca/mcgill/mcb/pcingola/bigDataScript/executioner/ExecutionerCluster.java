@@ -80,7 +80,7 @@ public class ExecutionerCluster extends Executioner {
 
 		int clusterTimeout = calcTimeOut(res);
 
-		// MOAB style
+		// Cpu, memory and timeout
 		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "nodes=1:ppn=" + res.getCpus());
 		if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "mem=" + res.getMem());
 		if (clusterTimeout > 0) resSb.append((resSb.length() > 0 ? "," : "") + "walltime=" + clusterTimeout);
@@ -90,6 +90,14 @@ public class ExecutionerCluster extends Executioner {
 			args.add("-l");
 			args.add(resSb.toString());
 		}
+
+		// A particular queue was requested?
+		String queue = task.getQueue();
+		if (queue != null && !queue.isEmpty()) {
+			args.add("-q");
+			args.add(queue);
+		}
+
 	}
 
 	/**
