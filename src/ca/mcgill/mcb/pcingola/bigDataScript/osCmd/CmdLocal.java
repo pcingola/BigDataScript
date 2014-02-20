@@ -169,7 +169,7 @@ public class CmdLocal extends Cmd {
 			for (int i = 0; true; i++) {
 				int r = getStdout().read();
 				if (r < 0) {
-					Gpr.debug("WATNING: Process closed stdout prematurely. Could not read PID\n" + this);
+					System.err.println("WARNING: Process closed stdout prematurely. Could not read PID\n" + this);
 					return;
 				}
 				char ch = (char) r;
