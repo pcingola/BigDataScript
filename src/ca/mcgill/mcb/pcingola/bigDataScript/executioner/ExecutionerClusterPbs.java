@@ -18,7 +18,7 @@ public class ExecutionerClusterPbs extends ExecutionerCluster {
 		String execCommand[] = { FAKE_CLUSTER + "msub" };
 		String killCommand[] = { FAKE_CLUSTER + "canceljob" };
 		String statCommand[] = { FAKE_CLUSTER + "showq" };
-		String postMortemInfoCommand[] = { FAKE_CLUSTER + "checkjob" };
+		String postMortemInfoCommand[] = { FAKE_CLUSTER + "checkjob", "-v" };
 
 		clusterExecCommand = execCommand;
 		clusterKillCommand = killCommand;

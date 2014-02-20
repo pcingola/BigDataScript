@@ -830,7 +830,6 @@ public class BigDataScript {
 
 	/**
 	 * Run a thread
-	 * 
 	 * @param csthread
 	 */
 	int runThread(BigDataScriptThread csthread) {
