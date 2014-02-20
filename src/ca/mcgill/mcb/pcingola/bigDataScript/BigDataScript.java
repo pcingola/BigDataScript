@@ -80,6 +80,7 @@ public class BigDataScript {
 	String programFileName; // Program file name
 	String pidFile; // File to store PIDs
 	String system; // System type
+	String queue; // Queu name
 	BigDataScriptAction bigDataScriptAction;
 	Config config;
 	ProgramUnit programUnit; // Program (parsed nodes)
@@ -584,11 +585,12 @@ public class BigDataScript {
 
 		// Command line parameters override defaults
 		if (system == null) system = ExecutionerType.LOCAL.toString().toLowerCase();
+		if (queue == null) queue = "";
 
 		// Task related variables: Default values
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system)); // System type: "local", "ssh", "cluster", "aws", etc.
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Type.INT, 1L)); // Default number of cpus
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, "")); // Default queue: none
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, queue)); // Default queue: none
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Type.STRING, "")); // Default node: none
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Type.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Type.INT, 1L * 24 * 60 * 60)); // Task default timeout(1 day)
@@ -692,7 +694,11 @@ public class BigDataScript {
 			} else if (args[i].equals("-s") || args[i].equalsIgnoreCase("-system")) {
 				// System type
 				if ((i + 1) < args.length) system = args[++i];
-				else usage("Option '-pid' without file argument");
+				else usage("Option '-system' without file argument");
+			} else if (args[i].equals("-q") || args[i].equalsIgnoreCase("-queue")) {
+				// Queue name
+				if ((i + 1) < args.length) queue = args[++i];
+				else usage("Option '-queue' without file argument");
 			} else if (args[i].equals("-c") || args[i].equalsIgnoreCase("-config")) {
 				// Checkpoint restore
 				if ((i + 1) < args.length) configFile = args[++i];
@@ -859,6 +865,7 @@ public class BigDataScript {
 		System.err.println("  [-l | -log]                    : Log all actions (do not delete tmp files).");
 		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).");
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
+		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
 		System.err.println("  [-s | -system ] type           : Set system type.");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
 		System.err.println("  -pid <file>                    : Write local processes PIDs to 'file'");
