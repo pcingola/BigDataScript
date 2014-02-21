@@ -73,7 +73,7 @@ public class CmdLocal extends Cmd {
 				System.err.print((char) c);
 			}
 
-			if (errStr.length() > 0) error += errStr.toString();
+			if (errStr.length() > 0) addError(errStr.toString());
 
 			return false;
 		};
@@ -160,7 +160,7 @@ public class CmdLocal extends Cmd {
 			int pidNum = Gpr.parseIntSafe(pid);
 			if (pidNum > 0) killBds(pidNum);
 
-			error += "Killed!\n";
+			addError("Killed!\n");
 			if (debug) Gpr.debug("Killing process " + id);
 			process.destroy();
 		}
