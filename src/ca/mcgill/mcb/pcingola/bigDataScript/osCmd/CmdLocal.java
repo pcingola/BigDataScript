@@ -63,13 +63,19 @@ public class CmdLocal extends Cmd {
 
 		// Child process prints PID to STDOUT? Read it
 		if (!readPid()) {
+			StringBuilder errStr = new StringBuilder();
 			InputStream stderr = process.getErrorStream();
 			Gpr.debug("Trying to read STDERR: " + stderr);
 			// Error: Stdout was closed before we could read it
 			// Try reading sdterr and show it to console
 			int c;
-			while ((stderr != null) && ((c = stderr.read()) >= 0))
+			while ((stderr != null) && ((c = stderr.read()) >= 0)) {
+				errStr.append((char) c);
 				System.err.print((char) c);
+			}
+
+			if (errStr.length() > 0) error += errStr.toString();
+
 			return false;
 		};
 

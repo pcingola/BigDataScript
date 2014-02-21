@@ -1,6 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
-
 /**
  * Executes an command in a remote host, via ssh
  * 
@@ -36,8 +35,9 @@ public class CmdSsh extends Cmd {
 	}
 
 	@Override
-	protected void execPrepare() throws Exception {
+	protected boolean execPrepare() throws Exception {
 		// Nothing to do
+		return true;
 	}
 
 	@Override
