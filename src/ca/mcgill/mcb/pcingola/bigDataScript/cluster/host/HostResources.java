@@ -19,18 +19,21 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 
 	int cpus; // Number of CPUs 
 	long mem; // Total memory (in Bytes)
-	long timeout; // Time before the process is killed (in seconds)
+	long timeout; // Time before the process is killed (in seconds). Only processing time, it does not include the time the process is queued for execution by the cluster scheduler.
+	long wallTimeout; // Real time (wall time) before the process is killed (in seconds). This includes the time the process is waiting to be executed.
 
 	public HostResources() {
 		cpus = 1; // One cpu
 		mem = -1; // No mem insfo
 		timeout = 0; // No timeout
+		wallTimeout = 0; // No timeout
 	}
 
 	public HostResources(HostResources hr) {
 		cpus = hr.cpus;
 		mem = hr.mem;
 		timeout = 0;
+		wallTimeout = 0;
 	}
 
 	@Override
@@ -82,6 +85,10 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 		return timeout;
 	}
 
+	public long getWallTimeout() {
+		return wallTimeout;
+	}
+
 	/**
 	 * Does this resource have at least 'hr' resources?
 	 * @param hr
@@ -102,11 +109,12 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 		cpus = (int) serializer.getNextFieldInt();
 		mem = serializer.getNextFieldInt();
 		timeout = serializer.getNextFieldInt();
+		wallTimeout = serializer.getNextFieldInt();
 	}
 
 	@Override
 	public String serializeSave(BigDataScriptSerializer serializer) {
-		return cpus + "\t" + mem + "\t" + timeout;
+		return cpus + "\t" + mem + "\t" + timeout + "\t" + wallTimeout;
 	}
 
 	public void setCpus(int cpus) {
@@ -119,11 +127,22 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+
+		// Wall-timeout cannot be shorter than timeout
+		if (timeout > wallTimeout) wallTimeout = timeout;
+	}
+
+	public void setWallTimeout(long walltimeout) {
+		this.wallTimeout = walltimeout;
 	}
 
 	@Override
 	public String toString() {
-		return "cpus: " + cpus + "\tmem: " + Gpr.toStringMem(mem) + (timeout > 0 ? "\ttimeout: " + timeout : "");
+		return "cpus: " + cpus //
+				+ "\tmem: " + Gpr.toStringMem(mem) //
+				+ (timeout > 0 ? "\ttimeout: " + timeout : "") //
+				+ (wallTimeout > 0 ? "\twall-timeout: " + wallTimeout : "") //
+		;
 	}
 
 	public String toStringMultiline() {
@@ -131,6 +150,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 		if (cpus > 0) sb.append("cpus: " + cpus + "\n");
 		if (mem > 0) sb.append("mem: " + Gpr.toStringMem(mem) + "\n");
 		if (timeout > 0) sb.append("timeout: " + Timer.toDDHHMMSS(timeout * 1000) + "\n");
+		if (wallTimeout > 0) sb.append("walltimeout: " + Timer.toDDHHMMSS(wallTimeout * 1000) + "\n");
 		return sb.toString();
 	}
 

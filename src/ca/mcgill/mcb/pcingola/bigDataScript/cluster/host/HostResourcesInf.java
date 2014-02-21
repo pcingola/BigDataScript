@@ -16,6 +16,7 @@ public class HostResourcesInf extends HostResources {
 		cpus = Integer.MAX_VALUE; // Max cpus
 		mem = Long.MAX_VALUE; // Max memory
 		timeout = 0; // No timeout
+		wallTimeout = 0; // No timeout
 	}
 
 	@Override

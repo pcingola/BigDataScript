@@ -432,7 +432,10 @@ public class Task implements BigDataScriptSerialize {
 		if (elapsedSecs < 0) return false;
 
 		// Run out of time?
-		int timeout = (int) getResources().getTimeout();
+		// Note: We use wall-timeout instead of timeout, because we don't really know 
+		//       how long the task is being executed (the cluster scheduler can have 
+		//       the task in a queue for a long time).
+		int timeout = (int) getResources().getWallTimeout();
 		return elapsedSecs > timeout;
 	}
 

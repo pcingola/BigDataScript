@@ -30,6 +30,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_QUEUE = "queue";
 	public static final String TASK_OPTION_SYSTEM = "system";
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
+	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
 	public static final String TASK_OPTION_PHYSICAL_PATH = "ppwd";
 
 	TaskOptions taskOptions;
@@ -99,6 +100,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setQueue(csThread.getString(TASK_OPTION_QUEUE));
 		task.getResources().setCpus((int) csThread.getInt(TASK_OPTION_CPUS));
 		task.getResources().setTimeout(csThread.getInt(TASK_OPTION_TIMEOUT));
+		task.getResources().setWallTimeout(csThread.getInt(TASK_OPTION_WALL_TIMEOUT));
 		task.setInputFiles(inputFiles);
 		task.setOutputFiles(outputFiles);
 
