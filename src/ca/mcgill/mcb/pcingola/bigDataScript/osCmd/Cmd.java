@@ -37,6 +37,18 @@ public abstract class Cmd extends Thread {
 	}
 
 	/**
+	 * Append error message
+	 * @param errMsg
+	 */
+	protected void addError(String errMsg) {
+		if (errMsg != null) {
+			if (error == null) error = "";
+			error += errMsg;
+			if (task != null) task.setErrorMsg(error);
+		}
+	}
+
+	/**
 	 * Execute command
 	 * @return
 	 */
@@ -88,10 +100,9 @@ public abstract class Cmd extends Thread {
 	 */
 	protected void execError(Exception e, TaskState taskState, int exitCode) {
 		stateDone();
-		error += (e != null ? e.getMessage() + "\n" : "");
 		exitValue = exitCode;
+		addError(e != null ? e.getMessage() : null);
 		if (debug && e != null) e.printStackTrace();
-		if (task != null) task.setErrorMsg(error);
 		if (executioner != null) executioner.taskFinished(task, taskState, exitCode);
 	}
 
