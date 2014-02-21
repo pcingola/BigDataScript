@@ -270,12 +270,16 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", "\n" + LINE + "Stdout" + LINE + "\n" + tailOut + "\n");
 				else rTemplate.add("taskStdout", "");
 
+				if (task.getErrorMsg() != null) rTemplate.add("taskErrMsg", "\n" + LINE + "Error message" + LINE + "\n" + task.getErrorMsg() + "\n");
+				else rTemplate.add("taskErrMsg", "");
+
 			} else {
 				rTemplate.add("taskColor", "");
 				rTemplate.add("taskCheckOut", "");
 				rTemplate.add("taskPostMortemInfo", "");
 				rTemplate.add("taskStderr", "");
 				rTemplate.add("taskStdout", "");
+				rTemplate.add("taskErrMsg", "");
 			}
 
 			Date start = task.getRunningStartTime();

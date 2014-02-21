@@ -260,6 +260,10 @@ public class Task implements BigDataScriptSerialize {
 		return dependency;
 	}
 
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
 	public String getExitCodeFile() {
 		return exitCodeFile;
 	}
