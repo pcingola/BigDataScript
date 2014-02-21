@@ -44,8 +44,13 @@ public abstract class Cmd extends Thread {
 		// Prepare to execute task
 		try {
 			executing = true;
-			execPrepare(); // Prepare to execute
-			stateStarted(); // Now we are really done and the process is started. Update states
+
+			// Prepare to execute
+			if (execPrepare()) stateStarted(); // Now we are really done and the process is started. Update states
+			else {
+				execError(null, TaskState.START_FAILED, Task.EXITCODE_ERROR);
+				return exitValue;
+			}
 		} catch (Exception e) {
 			execError(e, TaskState.START_FAILED, Task.EXITCODE_ERROR);
 			return exitValue;
@@ -83,9 +88,9 @@ public abstract class Cmd extends Thread {
 	 */
 	protected void execError(Exception e, TaskState taskState, int exitCode) {
 		stateDone();
-		error = e.getMessage() + "\n";
+		error = e != null ? e.getMessage() + "\n" : "";
 		exitValue = exitCode;
-		if (debug) e.printStackTrace();
+		if (debug && e != null) e.printStackTrace();
 		if (task != null) task.setErrorMsg(error);
 		if (executioner != null) executioner.taskFinished(task, taskState, exitCode);
 	}
@@ -93,7 +98,7 @@ public abstract class Cmd extends Thread {
 	/**
 	 * Prepare to execute
 	 */
-	protected abstract void execPrepare() throws Exception;
+	protected abstract boolean execPrepare() throws Exception;
 
 	public String getCmdId() {
 		return id;

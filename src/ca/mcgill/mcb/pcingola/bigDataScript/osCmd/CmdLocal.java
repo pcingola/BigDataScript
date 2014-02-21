@@ -47,7 +47,7 @@ public class CmdLocal extends Cmd {
 	}
 
 	@Override
-	protected void execPrepare() throws Exception {
+	protected boolean execPrepare() throws Exception {
 		// Build process and start it
 		ProcessBuilder pb = new ProcessBuilder(commandArgs);
 		if (debug) {
@@ -58,8 +58,21 @@ public class CmdLocal extends Cmd {
 		}
 		process = pb.start();
 
-		feedStdin(); // Feed something to STDIN?
-		readPid(); // Child process prints PID to STDOUT? Read it
+		// Feed something to STDIN?
+		feedStdin();
+
+		// Child process prints PID to STDOUT? Read it
+		if (readPid()) {
+			// Error: Stdout was closed before we could read it
+			// Try reading sdterr and show it to console
+			InputStream stderr = process.getErrorStream();
+			int c;
+			while ((stderr != null) && ((c = stderr.read()) >= 0))
+				System.err.print((char) c);
+			return false;
+		};
+
+		return true;
 	}
 
 	/**
@@ -153,10 +166,11 @@ public class CmdLocal extends Cmd {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	protected void readPid() throws InterruptedException, IOException {
-		// Nothing to do?
+	protected boolean readPid() throws InterruptedException, IOException {
 		pid = "";
-		if (!readPid) return;
+
+		// Nothing to do?
+		if (!readPid) return true;
 
 		// Wait for STDOUT to become available
 		while (getStdout() == null)
@@ -170,7 +184,7 @@ public class CmdLocal extends Cmd {
 				int r = getStdout().read();
 				if (r < 0) {
 					System.err.println("WARNING: Process closed stdout prematurely. Could not read PID\n" + this);
-					return;
+					return false;
 				}
 				char ch = (char) r;
 				if (ch == '\n') break;
@@ -187,6 +201,7 @@ public class CmdLocal extends Cmd {
 		}
 
 		if (task != null) task.setPid(pid); // Update task's pid
+		return true;
 	}
 
 	public void setReadPid(boolean readPid) {
