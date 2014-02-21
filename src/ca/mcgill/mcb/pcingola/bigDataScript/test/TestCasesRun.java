@@ -605,9 +605,9 @@ public class TestCasesRun extends TestCasesBase {
 
 	public void test86() {
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
-		expectedValues.put("minute", 60L);
-		expectedValues.put("hour", 3600L);
-		expectedValues.put("day", 86400L);
+		expectedValues.put("m", 60L);
+		expectedValues.put("h", 3600L);
+		expectedValues.put("d", 86400L);
 		expectedValues.put("oneK", 1024L);
 		expectedValues.put("oneM", 1048576L);
 		expectedValues.put("oneG", 1073741824L);

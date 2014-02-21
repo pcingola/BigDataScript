@@ -1,8 +1,8 @@
 #!/usr/bin/env bds
 
-hour := 1 * HOUR
-minute := 1 * MINUTE
-day := 1 * DAY
+h := 1 * hour
+m := 1 * minute
+d := 1 * day
 
 oneK := 1 * K
 oneM := 1 * M
