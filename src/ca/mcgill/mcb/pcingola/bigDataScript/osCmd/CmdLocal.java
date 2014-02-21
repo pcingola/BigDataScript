@@ -65,9 +65,8 @@ public class CmdLocal extends Cmd {
 		if (!readPid()) {
 			StringBuilder errStr = new StringBuilder();
 			InputStream stderr = process.getErrorStream();
-			Gpr.debug("Trying to read STDERR: " + stderr);
 			// Error: Stdout was closed before we could read it
-			// Try reading sdterr and show it to console
+			// Try reading sdterr: show it to console and store it in 'error'
 			int c;
 			while ((stderr != null) && ((c = stderr.read()) >= 0)) {
 				errStr.append((char) c);
@@ -190,7 +189,7 @@ public class CmdLocal extends Cmd {
 			for (int i = 0; true; i++) {
 				int r = getStdout().read();
 				if (r < 0) {
-					System.err.println("WARNING: Process closed stdout prematurely. Could not read PID\n" + this);
+					if (debug) System.err.println("WARNING: Process closed stdout prematurely. Could not read PID\n" + this);
 					return false;
 				}
 				char ch = (char) r;
