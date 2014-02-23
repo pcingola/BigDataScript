@@ -163,7 +163,7 @@ string mapSingle(string referenceFasta, string fq1, string fq2, int cpusMapping,
 	bamBase := removeExtFastqa(fq1) 
 	bam := bamBase + ".bam"
 	print("Mapping:\t$fqs1\t$fqs2\t=>\t$bam\n")
-	task( bam <- [fq1, fq2] , cpus := cpusMapping ) sys bwa mem -t $cpus -R '$readGroupString' $referenceFasta $fq1 $fq2 | samtools view -S -u - | samtools sort -@ $cpus -m $mapSortMemory - $bamBase
+	task( bam <- [fq1, fq2] , cpus := cpusMapping ) sys bwa mem -t $cpus -R '$readGroupString' $referenceFasta $fq1 $fq2 | grep -v "^@PG" | samtools view -S -u - | samtools sort -@ $cpus -m $mapSortMemory - $bamBase
 	return( bam )
 }
 
