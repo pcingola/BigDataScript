@@ -92,6 +92,7 @@ public class VarReferenceMap extends Reference {
 		expressionKey.returnType(scope);
 		Type nameType = variable.returnType(scope);
 
+		if (nameType == null) return null;
 		if (nameType.isMap()) returnType = ((TypeMap) nameType).getBaseType();
 
 		return returnType;

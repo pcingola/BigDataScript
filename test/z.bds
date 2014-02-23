@@ -1,3 +1,4 @@
 #!/usr/bin/env bds
 
-print("Queue name : '$queue'\n")
+print("Test " + outFiles{0} + "\n")
+

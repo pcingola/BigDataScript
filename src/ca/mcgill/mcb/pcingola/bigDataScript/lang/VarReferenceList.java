@@ -92,6 +92,7 @@ public class VarReferenceList extends Reference {
 		expressionIdx.returnType(scope);
 		Type nameType = variable.returnType(scope);
 
+		if (nameType == null) return null;
 		if (nameType.isList()) returnType = ((TypeList) nameType).getBaseType();
 
 		return returnType;
