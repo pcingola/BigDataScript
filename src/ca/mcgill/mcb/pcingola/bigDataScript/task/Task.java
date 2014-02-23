@@ -613,6 +613,7 @@ public class Task implements BigDataScriptSerialize {
 			sb.append("\tTask hint          : " + getProgramHint() + "\n");
 			sb.append("\tTask ID            : '" + id + "'\n");
 			sb.append("\tTask PID           : '" + pid + "'\n");
+			sb.append("\tTask resources     : '" + getResources() + "'\n");
 			sb.append("\tState              : '" + taskState + "'\n");
 			sb.append("\tDependency state   : '" + dependencyState() + "'\n");
 			sb.append("\tInput files        : '" + inputFiles + "'\n");
