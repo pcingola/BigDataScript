@@ -14,7 +14,7 @@ sampleId              := "SampleId"
 readGroupString       := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
 
 # Performance parameters
-cpusMapping           := 4                        # Number of CPUs to use in each mapping process
+cpusMapping           := 6                        # Number of CPUs to use in each mapping process
 mapSortMemory         := 4 * G                    # Memory used while sorting BAM file (samtools sort)
 
 #-------------------------------------------------------------------------------
