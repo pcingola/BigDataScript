@@ -1,5 +1,8 @@
 #!/usr/bin/env bds
 
+include "bio/seq/annotate.bds"
+include "bio/seq/fastq.bds"
+include "bio/seq/gatk.bds"
 include "bio/seq/map.bds"
 
 #-------------------------------------------------------------------------------
@@ -13,22 +16,20 @@ referenceFasta  := "$ppwd/hg19_chr20.fa"	# Reference genome Fasta file
 genome          := "GRCh37.71"				# Genome used for annotations
 
 # performance parameters
-cpusMapping     := 4						# Number of CPUs to use in each mapping process
-cpusCalling     := 2						# Number of CPUs to use in each calling process
 numCallers      := 250						# Number of variant caller processes to use. This number is high to improve paralelization
 splitNumReads   := 500 * 1000               # Split fastq files to 'splitNumReads' lines.
-mapSortMemory   := 1 * G                    # Memory used while sorting BAM file (samtools sort)
 
 #-------------------------------------------------------------------------------
 # Main
 #-------------------------------------------------------------------------------
 
-string[] outFiles = mapCallAnnotate(referenceFasta, fq1, fq2, genome, splitNumReads, cpusMapping, cpusCalling, mapSortMemory, numCallers)
+string[] outFiles = mapCallAnnotate(referenceFasta, fq1, fq2, genome, splitNumReads, numCallers)
 
 # OK, wait for all tasks to finish
 wait
 print("Done!\n")
 print("\tBAM file           : " + outFiles[0] + "\n")
-print("\tVCF file           : " + outFiles[1] + "\n")
-print("\tVCF annotated file : " + outFiles[2] + "\n")
+print("\tBAM file (rmDup)   : " + outFiles[1] + "\n")
+print("\tVCF file           : " + outFiles[2] + "\n")
+print("\tVCF annotated file : " + outFiles[3] + "\n")
 
