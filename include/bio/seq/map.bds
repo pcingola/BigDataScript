@@ -134,23 +134,25 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 		beds.rmOnExit()
 		wait
 
-		# Join BEDs (sys command because it's really fast)
-		bed := beds.head().removeExt(".rmdup.callable.bed").removeExt() + ".all.rmdup.callable.bed"
-		bedsStr := beds.join(' ')
-		sys cat $bedsStr > $bed
-	
-		# Split BED by similar callable loci
-		bedSplits := splitCallableRegions(bed, numCallers)
-		bedSplits.rmOnExit()
-		wait
+		# Split each BED to call multiple callers on each chromosome
+		string[] vcfsAll
+		for(int i=0 ; i < rdbams.size() ; i++ ) {
+			rdbam := rdbams[i]
+			bed := beds[i]
 
-		# Call variants on each region
-		vcfs := haplotypeCaller( referenceFasta, bam, bedSplits)
-		vcfs.rmOnExit()
+			# Split BED by similar callable loci
+			bedSplits := splitCallableRegions(bed, numCallers)
+			bedSplits.rmOnExit()
+        
+			# Call variants on each region
+			vcfs := haplotypeCaller( referenceFasta, rdbam, bedSplits)
+			vcfs.rmOnExit()
+			vcfsAll.add( vcfs )
+		}
 		wait
 
 		# Join variants results
-		joinVcf(vcf, vcfs )
+		joinVcf(vcf, vcfsAll )
 	}
 	
 	# Annotate file

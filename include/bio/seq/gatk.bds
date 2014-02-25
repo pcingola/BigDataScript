@@ -69,7 +69,7 @@ string[] haplotypeCaller(string referenceFasta, string bam, string[] callableReg
 			vcfs.add( callableRegionVcf )
 
 			# Invoke GATK's HaplotypeCaller
-			task( callableRegionVcf <- callableRegion, cpus := cpusCalling ) sys $java -jar $gatkJar -T HaplotypeCaller -R $referenceFasta -I $bam -stand_call_conf 50.0 -stand_emit_conf 10.0 -L $callableRegion -o $callableRegionVcf
+			task( callableRegionVcf <- [bam, callableRegion] , cpus := cpusCalling ) sys $java -jar $gatkJar -T HaplotypeCaller -R $referenceFasta -I $bam -stand_call_conf 50.0 -stand_emit_conf 10.0 -L $callableRegion -o $callableRegionVcf
 		}
 	}
 	return( vcfs ) 
