@@ -76,6 +76,7 @@ public class Task implements BigDataScriptSerialize {
 	protected boolean canFail; // Allow execution to fail
 	protected int bdsLineNum; // Program's line number that created this task (used for reporting errors)
 	protected int exitValue; // Exit (error) code
+	protected int failCount; // Number of times that this task failed	
 	protected String id; // Task ID
 	protected String bdsFileName; // Program file that created this task (used for reporting errors)
 	protected String pid; // PID (if any)

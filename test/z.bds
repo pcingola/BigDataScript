@@ -1,4 +1,6 @@
 #!/usr/bin/env bds
 
-print("Test " + outFiles{0} + "\n")
+failOnceFile := "failOnce.txt"
+failOnceFile.delete()
 
+task ./test/failOnce.pl
