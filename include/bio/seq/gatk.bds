@@ -24,9 +24,12 @@ string[] callableRegions(string referenceFasta, string[] bams) {
 		summary := bam.swapExt(".bam", ".callable.txt")
 		beds.add( bed )
 
-		gatkPrepare(referenceFasta, bam) # Make sure we have all required files for GATK to run
+		# Make sure all GATK indeces are ready
+		deps := gatkPrepare(referenceFasta, bam) # Make sure we have all required files for GATK to run
+		deps.add( bam )
+
 		print("Callable regions: $bed\n")
-		task( bed <- bam ) sys $java -jar $gatkJar -T CallableLoci -R $referenceFasta -I $bam -summary $summary -o $bed
+		task( bed <- deps ) sys $java -jar $gatkJar -T CallableLoci -R $referenceFasta -I $bam -summary $summary -o $bed
 	}
 
 	return( beds )
@@ -42,11 +45,13 @@ string[] gatkPrepare(string fasta, string bam) {
 
 	print("Creating dictionary file: $dict\n")
 	task( dict <- fasta ) sys $java -jar $picardPath/CreateSequenceDictionary.jar R= $fasta O= $dict
+
 	print("Creating fasta idex: $fai\n")
 	task( fai <- fasta ) sys samtools faidx $fasta
+
 	print("Creating BAM idex: $bai\n")
 	task( bai <- bam ) sys samtools index $bam
-	wait
+
 	return( [fai, dict, bai] )
 }
 
