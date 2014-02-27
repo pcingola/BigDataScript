@@ -4,3 +4,6 @@ failOnceFile := "failOnce.txt"
 failOnceFile.delete()
 
 task ./test/failOnce.pl
+
+#task echo RM TASK; rm zxzxzxzx 
+

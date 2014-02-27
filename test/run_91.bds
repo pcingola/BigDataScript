@@ -1,0 +1,14 @@
+#!/usr/bin/env bds
+
+retry = 3
+ok := false
+
+# Task will fail every time is re-executed
+failOnceFile := "failOnce.txt"
+failOnceFile.delete()
+task rm zxzxzx93845092384058209850924
+wait
+
+# Only true if re-execution succeeds (i.e. never)
+ok = true
+

@@ -274,6 +274,10 @@ public class Task implements BigDataScriptSerialize {
 		return exitValue;
 	}
 
+	public int getFailCount() {
+		return failCount;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -446,6 +450,11 @@ public class Task implements BigDataScriptSerialize {
 	public void reset() {
 		taskState = TaskState.NONE;
 		exitValue = 0;
+		runningStartTime = null;
+		runningEndTime = null;
+		postMortemInfo = null;
+		errorMsg = null;
+		checkOutputFiles = null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -509,6 +518,10 @@ public class Task implements BigDataScriptSerialize {
 
 	public synchronized void setExitValue(int exitValue) {
 		this.exitValue = exitValue;
+	}
+
+	public void setFailCount(int failCount) {
+		this.failCount = failCount;
 	}
 
 	public void setInputFiles(List<String> inputFiles) {

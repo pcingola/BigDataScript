@@ -27,11 +27,12 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_CPUS = "cpus";
 	public static final String TASK_OPTION_CAN_FAIL = "canFail";
 	public static final String TASK_OPTION_NODE = "node";
+	public static final String TASK_OPTION_PHYSICAL_PATH = "ppwd";
 	public static final String TASK_OPTION_QUEUE = "queue";
+	public static final String TASK_OPTION_RETRY = "retry";
 	public static final String TASK_OPTION_SYSTEM = "system";
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
-	public static final String TASK_OPTION_PHYSICAL_PATH = "ppwd";
 
 	TaskOptions taskOptions;
 	Statement statement;
@@ -96,9 +97,10 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setVerbose(csThread.getConfig().isVerbose());
 		task.setDebug(csThread.getConfig().isDebug());
 		task.setCanFail(csThread.getBool(TASK_OPTION_CAN_FAIL));
+		task.getResources().setCpus((int) csThread.getInt(TASK_OPTION_CPUS));
 		task.setNode(csThread.getString(TASK_OPTION_NODE));
 		task.setQueue(csThread.getString(TASK_OPTION_QUEUE));
-		task.getResources().setCpus((int) csThread.getInt(TASK_OPTION_CPUS));
+		task.setFailCount((int) csThread.getInt(TASK_OPTION_RETRY));
 		task.getResources().setTimeout(csThread.getInt(TASK_OPTION_TIMEOUT));
 		task.getResources().setWallTimeout(csThread.getInt(TASK_OPTION_WALL_TIMEOUT));
 		task.setInputFiles(inputFiles);

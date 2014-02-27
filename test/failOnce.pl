@@ -2,10 +2,10 @@
 
 $file = "failOnce.txt";
 if( -e $file ) {
-	print "OK\n";
+	print "failOnce.pl: OK\n";
 	exit 0;
 }
 
 `touch $file`;
-print "FAIL\n";
+print "failOnce.pl: FAIL\n";
 exit 1;

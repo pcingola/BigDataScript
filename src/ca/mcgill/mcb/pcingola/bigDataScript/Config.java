@@ -34,6 +34,7 @@ public class Config {
 	boolean log = false; // Log all commands?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	boolean noRmOnExit = false; // Avoid removing files on exit
+	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	String configDirName;
 	String pidFile;
 	Properties properties;
@@ -149,6 +150,10 @@ public class Config {
 		return tail;
 	}
 
+	public int getTaskFailCount() {
+		return taskFailCount;
+	}
+
 	public TaskLogger getTaskLogger() {
 		if (taskLogger == null) {
 			taskLogger = new TaskLogger(getPidFile());
@@ -240,6 +245,10 @@ public class Config {
 
 	public void setPidFile(String pidFile) {
 		this.pidFile = pidFile;
+	}
+
+	public void setTaskFailCount(int taskFailCount) {
+		this.taskFailCount = taskFailCount;
 	}
 
 	public void setVerbose(boolean verbose) {

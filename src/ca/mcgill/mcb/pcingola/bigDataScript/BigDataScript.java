@@ -75,6 +75,7 @@ public class BigDataScript {
 	boolean log;
 	boolean dryRun;
 	boolean noRmOnExit;
+	int taskFailCount = 0;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
 	String programFileName; // Program file name
@@ -593,6 +594,7 @@ public class BigDataScript {
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, queue)); // Default queue: none
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Type.STRING, "")); // Default node: none
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Type.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_RETRY, Type.INT, (long) taskFailCount)); // Task fail can be re-tried (re-run) N times before considering failed.
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Type.INT, 1L * 24 * 60 * 60)); // Task default timeout(1 day)
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, Type.INT, 1L * 24 * 60 * 60)); // Task default wall-timeout(1 day)
 
@@ -670,8 +672,11 @@ public class BigDataScript {
 
 		for (int i = 0; i < args.length; i++) {
 			if (programFileName != null) programArgs.add(args[i]); // Everything after 'programFileName' is an command line argument for the BigDataScript program
-			else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
-			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
+			else if (args[i].equals("-c") || args[i].equalsIgnoreCase("-config")) {
+				// Checkpoint restore
+				if ((i + 1) < args.length) configFile = args[++i];
+				else usage("Option '-c' without restore file argument");
+			} else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
 			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
 			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) usage(null);
 			else if (args[i].equalsIgnoreCase("-dryRun")) {
@@ -683,29 +688,29 @@ public class BigDataScript {
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 				else usage("Option '-i' without checkpoint file argument");
 				bigDataScriptAction = BigDataScriptAction.INFO_CHECKPOINT;
+			} else if (args[i].equals("-pid")) {
+				// PID file
+				if ((i + 1) < args.length) pidFile = args[++i];
+				else usage("Option '-pid' without file argument");
+			} else if (args[i].equals("-q") || args[i].equalsIgnoreCase("-queue")) {
+				// Queue name
+				if ((i + 1) < args.length) queue = args[++i];
+				else usage("Option '-queue' without file argument");
 			} else if (args[i].equals("-r") || args[i].equalsIgnoreCase("-restore")) {
 				// Checkpoint restore
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 				else usage("Option '-r' without checkpoint file argument");
 				bigDataScriptAction = BigDataScriptAction.RUN_CHECKPOINT;
-			} else if (args[i].equals("-pid")) {
-				// PID file
-				if ((i + 1) < args.length) pidFile = args[++i];
-				else usage("Option '-pid' without file argument");
 			} else if (args[i].equals("-s") || args[i].equalsIgnoreCase("-system")) {
 				// System type
 				if ((i + 1) < args.length) system = args[++i];
 				else usage("Option '-system' without file argument");
-			} else if (args[i].equals("-q") || args[i].equalsIgnoreCase("-queue")) {
-				// Queue name
-				if ((i + 1) < args.length) queue = args[++i];
-				else usage("Option '-queue' without file argument");
-			} else if (args[i].equals("-c") || args[i].equalsIgnoreCase("-config")) {
-				// Checkpoint restore
-				if ((i + 1) < args.length) configFile = args[++i];
-				else usage("Option '-c' without restore file argument");
-
-			} else if (programFileName == null) programFileName = args[i]; // Get program file name
+			} else if (args[i].equals("-t") || args[i].equalsIgnoreCase("-retry")) {
+				// Number of retries
+				if ((i + 1) < args.length) taskFailCount = Gpr.parseIntSafe(args[++i]);
+				else usage("Option '-t' without number argument");
+			} else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
+			else if (programFileName == null) programFileName = args[i]; // Get program file name
 		}
 
 		// Sanity checks
@@ -727,6 +732,7 @@ public class BigDataScript {
 		config.setDebug(debug);
 		config.setLog(log);
 		config.setDryRun(dryRun);
+		config.setTaskFailCount(taskFailCount);
 		config.setNoRmOnExit(noRmOnExit);
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
@@ -864,9 +870,10 @@ public class BigDataScript {
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-l | -log]                    : Log all actions (do not delete tmp files).");
 		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).");
-		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
+		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-s | -system ] type           : Set system type.");
+		System.err.println("  [-t | -reTry  ] num            : Number of times to re-try a task that failed.");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
 		System.err.println("  -pid <file>                    : Write local processes PIDs to 'file'");
 		System.err.println("  -noLog                         : Do not log stats.");
