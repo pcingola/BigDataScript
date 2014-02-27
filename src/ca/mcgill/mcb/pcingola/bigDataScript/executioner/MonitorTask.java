@@ -24,8 +24,6 @@ public class MonitorTask {
 	HashMap<Task, Executioner> execByTask;
 	Timer latestUpdate;
 
-	//	boolean running;
-
 	public MonitorTask() {
 		execByTask = new HashMap<Task, Executioner>();
 		latestUpdate = new Timer();
@@ -43,10 +41,6 @@ public class MonitorTask {
 		execByTask.put(task, executioner);
 	}
 
-	//	public void kill() {
-	//		running = false;
-	//	}
-
 	/**
 	 * Run once every SLEEP_TIME
 	 */
@@ -57,14 +51,6 @@ public class MonitorTask {
 		update();
 		latestUpdate.start();
 	}
-
-	//	@Override
-	//	public void run() {
-	//		for (running = true; running;) {
-	//			update();
-	//			sleep();
-	//		}
-	//	}
 
 	/**
 	 * Remove task (do not monitor)
@@ -83,16 +69,6 @@ public class MonitorTask {
 		this.verbose = verbose;
 	}
 
-	//	/**
-	//	 * Sleep a short time
-	//	 */
-	//	void sleep() {
-	//		try {
-	//			sleep(SLEEP_TIME);
-	//		} catch (InterruptedException e) {
-	//		}
-	//	}
-
 	/**
 	 * Check is an exist file exists, update states
 	 */
@@ -108,8 +84,6 @@ public class MonitorTask {
 				toUpdate.add(task);
 			}
 		}
-
-		Gpr.debug("Update:" + (toUpdate == null ? 0 : toUpdate.size()));
 
 		// An task to delete?
 		if (toUpdate != null) {
