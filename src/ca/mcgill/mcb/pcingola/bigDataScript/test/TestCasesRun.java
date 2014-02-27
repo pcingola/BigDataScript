@@ -651,4 +651,9 @@ public class TestCasesRun extends TestCasesBase {
 		runAndCheck("test/run_92.bds", "outs", "TASK 1\nTASK 2\n");
 	}
 
+	@Test
+	public void test93() {
+		runAndCheck("test/run_93.bds", "outs", "TASK 1\nTASK 2\n");
+	}
+
 }
