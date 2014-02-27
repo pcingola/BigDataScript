@@ -50,7 +50,7 @@ public class MonitorTask {
 	/**
 	 * Run once every SLEEP_TIME
 	 */
-	public void check() {
+	public synchronized void check() {
 		// Is it time to update?
 		if (latestUpdate.elapsed() < SLEEP_TIME) return;
 
