@@ -112,21 +112,23 @@ public class MonitorTask extends Thread {
 		int exitVal = 0;
 		TaskState taskState = null;
 
-		if (task.isTimedOut()) {
-			// Timed out
-			exitVal = Task.EXITCODE_TIMEOUT;
-			taskState = TaskState.ERROR_TIMEOUT;
-		} else {
-			// Exit file found: Parse exit file
-			sleep();
-			String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
-			exitVal = (exitFileStr.equals("0") ? 0 : 1); // Anything else than OK is error condition
-			taskState = null; // Automatic: let taskFinished decide
-			if (debug) Gpr.debug("MonitorExitFile: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
-		}
+		synchronized (task) {
+			if (task.isTimedOut()) {
+				// Timed out
+				exitVal = Task.EXITCODE_TIMEOUT;
+				taskState = TaskState.ERROR_TIMEOUT;
+			} else {
+				// Exit file found: Parse exit file
+				sleep();
+				String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
+				exitVal = (exitFileStr.equals("0") ? 0 : 1); // Anything else than OK is error condition
+				taskState = null; // Automatic: let taskFinished decide
+				if (debug) Gpr.debug("MonitorExitFile: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
+			}
 
-		// Inform executioner that task has finished
-		Executioner executioner = execByTask.get(task);
-		executioner.taskFinished(task, taskState, exitVal);
+			// Inform executioner that task has finished
+			Executioner executioner = execByTask.get(task);
+			executioner.taskFinished(task, taskState, exitVal);
+		}
 	}
 }

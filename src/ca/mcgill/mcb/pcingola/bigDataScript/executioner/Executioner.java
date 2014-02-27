@@ -78,7 +78,7 @@ public abstract class Executioner extends Thread {
 		tasksToRun.add(task);
 	}
 
-	protected void add(Task task, Host host) {
+	protected synchronized void add(Task task, Host host) {
 		tasksSelected.put(task, host);
 		host.add(task);
 	}
@@ -88,7 +88,9 @@ public abstract class Executioner extends Thread {
 	 * @param task
 	 * @return
 	 */
-	protected abstract Cmd createCmd(Task task);
+	protected synchronized Cmd createCmd(Task task) {
+		throw new RuntimeException("Unimplemented method for class: " + this.getClass().getCanonicalName());
+	}
 
 	/**
 	 * Find a task by ID
@@ -112,7 +114,7 @@ public abstract class Executioner extends Thread {
 	 * Start following a running task (e.g. tail STDOUT & STDERR)
 	 * @param task
 	 */
-	protected void follow(Task task) {
+	protected synchronized void follow(Task task) {
 		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
 
 		tail.add(task.getStdoutFile(), false);
@@ -125,7 +127,7 @@ public abstract class Executioner extends Thread {
 	 * Stop following a running task (e.g. tail STDOUT & STDERR)
 	 * @param task
 	 */
-	protected void followStop(Task task) {
+	protected synchronized void followStop(Task task) {
 		tail.remove(task.getStdoutFile());
 		tail.remove(task.getStderrFile());
 
@@ -228,18 +230,20 @@ public abstract class Executioner extends Thread {
 	 * @param task
 	 * @return
 	 */
-	public void kill(Task task) {
-		if (task.isDone()) return; // Nothing to do
+	public synchronized void kill(Task task) {
+		synchronized (task) {
+			if (task.isDone()) return; // Nothing to do
 
-		if (debug) Timer.showStdErr("Killing task '" + task.getId() + "'");
+			if (debug) Timer.showStdErr("Killing task '" + task.getId() + "'");
 
-		// Kill command
-		Cmd cmd = cmdById.get(task.getId());
-		if (cmd != null) cmd.kill();
+			// Kill command
+			Cmd cmd = cmdById.get(task.getId());
+			if (cmd != null) cmd.kill();
 
-		// Mark task as finished
-		// Note: This will also be invoked by Cmd, so it will be redundant)
-		taskFinished(task, TaskState.KILLED, Task.EXITCODE_KILLED);
+			// Mark task as finished
+			// Note: This will also be invoked by Cmd, so it will be redundant)
+			taskFinished(task, TaskState.KILLED, Task.EXITCODE_KILLED);
+		}
 	}
 
 	/**
@@ -270,7 +274,7 @@ public abstract class Executioner extends Thread {
 		// Nothing to do
 	}
 
-	protected void remove(Task task, Host host) {
+	protected synchronized void remove(Task task, Host host) {
 		tasksSelected.remove(task);
 		host.remove(task);
 	}
@@ -569,50 +573,52 @@ public abstract class Executioner extends Thread {
 	public synchronized void taskFinished(Task task, TaskState taskState, int exitValue) {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
 
-		String id = task.getId();
-		if (debug) Timer.showStdErr("Finished task '" + id + "'");
+		synchronized (task) {
+			String id = task.getId();
+			if (debug) Timer.showStdErr("Finished task '" + id + "'");
 
-		// Find command
-		Cmd cmd = cmdById.get(id);
-		if (cmd != null) {
-			Host host = cmd.getHost();
-			remove(task, host); // Remove task form host
-			cmdById.remove(id); // Remove command
-		}
+			// Find command
+			Cmd cmd = cmdById.get(id);
+			if (cmd != null) {
+				Host host = cmd.getHost();
+				remove(task, host); // Remove task form host
+				cmdById.remove(id); // Remove command
+			}
 
-		followStop(task); // Remove from 'tail' thread
+			followStop(task); // Remove from 'tail' thread
 
-		// Move from 'running' (or 'toRun') to 'done'
-		tasksToRun.remove(task);
-		tasksSelected.remove(task);
-		tasksRunning.remove(task.getId());
-		tasksDone.put(task.getId(), task);
+			// Move from 'running' (or 'toRun') to 'done'
+			tasksToRun.remove(task);
+			tasksSelected.remove(task);
+			tasksRunning.remove(task.getId());
+			tasksDone.put(task.getId(), task);
 
-		// Schedule removal of TMP files (if not logging)
-		if (!log) task.deleteOnExit();
+			// Schedule removal of TMP files (if not logging)
+			if (!log) task.deleteOnExit();
 
-		// Set task state. Infer form exit code if no state is available.
-		// Note: This is the last thing we do in order for wait() methods to be sure that task has finished and all data has finished updating.
-		// Set exit status 
-		task.setExitValue(exitValue);
-		if (taskState == null) taskState = TaskState.exitCode2taskState(exitValue);
-		task.state(taskState);
+			// Set task state. Infer form exit code if no state is available.
+			// Note: This is the last thing we do in order for wait() methods to be sure that task has finished and all data has finished updating.
+			// Set exit status 
+			task.setExitValue(exitValue);
+			if (taskState == null) taskState = TaskState.exitCode2taskState(exitValue);
+			task.state(taskState);
 
-		// Task finished in error condition?
-		// May be we can look for additional information to asses the error
-		if (task.isError()) postMortemInfo(task);
+			// Task finished in error condition?
+			// May be we can look for additional information to asses the error
+			if (task.isError()) postMortemInfo(task);
 
-		// Task failed: Can we re-try?
-		if (task.isError() && !task.isCanFail() && (task.getFailCount() > 0)) {
-			// Retry task
-			Timer.showStdErr("Task failed, retrying ( " + task.getFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (verbose ? "\n" : ", ") + task.toString(verbose));
+			// Task failed: Can we re-try?
+			if (task.isError() && !task.isCanFail() && (task.getFailCount() > 0)) {
+				// Retry task
+				Timer.showStdErr("Task failed, retrying ( " + task.getFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (verbose ? "\n" : ", ") + task.toString(verbose));
 
-			task.setFailCount(task.getFailCount() - 1); // Update retry count
+				task.setFailCount(task.getFailCount() - 1); // Update retry count
 
-			// Move task form 'taskDone' back to 'tasksToRun' queue 
-			task.reset(); // Prepare to re-run task
-			tasksDone.remove(task.getId());
-			tasksToRun.add(task);
+				// Move task form 'taskDone' back to 'tasksToRun' queue 
+				task.reset(); // Prepare to re-run task
+				tasksDone.remove(task.getId());
+				tasksToRun.add(task);
+			}
 		}
 	}
 
@@ -623,23 +629,27 @@ public abstract class Executioner extends Thread {
 	public synchronized void taskRunning(Task task) {
 		if (debug) Timer.showStdErr("Task running '" + task.getId() + "'");
 
-		// Change state
-		task.state(TaskState.RUNNING);
+		synchronized (task) {
+			// Change state
+			task.state(TaskState.RUNNING);
 
-		// Follow STDOUT and STDERR
-		follow(task);
+			// Follow STDOUT and STDERR
+			follow(task);
+		}
 	}
 
 	public synchronized void taskStarted(Task task) {
 		if (debug) Timer.showStdErr("Task started '" + task.getId() + "'");
 
-		// Move from 'tasksToRun' to 'tasksRunning'
-		tasksToRun.remove(task);
-		tasksSelected.remove(task);
-		tasksRunning.put(task.getId(), task);
+		synchronized (task) {
+			// Move from 'tasksToRun' to 'tasksRunning'
+			tasksToRun.remove(task);
+			tasksSelected.remove(task);
+			tasksRunning.put(task.getId(), task);
 
-		// Change state
-		task.state(TaskState.STARTED);
+			// Change state
+			task.state(TaskState.STARTED);
+		}
 	}
 
 	@Override
