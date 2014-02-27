@@ -2359,3 +2359,124 @@ out2.txt	-
 out1.txt	+	rm
 20336	-
 out1.txt	-
+8322	+	
+8322	-
+8337	+	
+8337	-
+8350	+	
+8350	-
+null	-
+8363	-
+8376	+	
+8376	-
+8389	+	
+8389	-
+8401	+	
+8401	-
+8413	+	
+8413	-
+8426	+	
+8426	-
+8439	+	
+8439	-
+8472	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+8474	+	
+8472	-
+/home/pcingola/zero_length_file_out.txt	-
+8474	-
+8497	+	
+8497	-
+8526	+	
+8528	+	
+8526	-
+8528	-
+8603	+	
+8603	-
+8616	+	
+8616	-
+8630	+	
+8630	-
+null	-
+8645	+	
+8645	-
+8657	+	
+8657	-
+8670	+	
+8670	-
+8681	+	
+8681	-
+8692	+	
+8692	-
+8703	+	
+8703	-
+8719	+	
+failOnce.out1	+	rm
+8719	-
+failOnce.out1	-
+8732	+	
+failOnce.out1	+	rm
+8732	-
+failOnce.out1	-
+8744	+	
+failOnce.out2	+	rm
+8744	-
+failOnce.out2	-
+8764	+	
+failOnce.out1	+	rm
+8764	-
+failOnce.out1	-
+8777	+	
+failOnce.out1	+	rm
+8777	-
+failOnce.out1	-
+8789	+	
+failOnce.out2	+	rm
+8789	-
+failOnce.out2	-
+8814	+	
+8816	+	
+8814	-
+8816	-
+8837	+	
+8837	-
+8863	+	
+out1.txt	+	rm
+8863	-
+out1.txt	-
+8875	+	
+out2.txt	+	rm
+8875	-
+out2.txt	-
+8888	+	
+8888	-
+8901	+	
+8901	-
+8919	+	
+out1.txt	+	rm
+8919	-
+out1.txt	-
+8931	+	
+out2.txt	+	rm
+8931	-
+out2.txt	-
+8945	+	
+out1.txt	+	rm
+8945	-
+out1.txt	-
+8957	+	
+out2.txt	+	rm
+8957	-
+out2.txt	-
+8975	+	
+out1.txt	+	rm
+8975	-
+out1.txt	-
+8987	+	
+out2.txt	+	rm
+8987	-
+out2.txt	-
+8999	+	
+out1.txt	+	rm
+8999	-
+out1.txt	-
