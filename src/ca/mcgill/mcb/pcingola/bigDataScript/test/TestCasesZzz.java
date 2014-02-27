@@ -10,8 +10,8 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 	@Test
-	public void test90() {
-		runAndCheck("test/run_90.bds", "ok", "true");
+	public void test92() {
+		runAndCheck("test/run_92.bds", "outs", "TASK 1\nTASK 2\n");
 	}
 
 }

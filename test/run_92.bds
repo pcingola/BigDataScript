@@ -1,5 +1,7 @@
 #!/usr/bin/env bds
 
+retry = 1
+
 in   := "failOnce.in"
 out1 := "failOnce.out1"
 out2 := "failOnce.out2"
