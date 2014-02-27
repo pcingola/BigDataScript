@@ -119,7 +119,7 @@ public class Config {
 		if (monitorTask == null) {
 			monitorTask = new MonitorTask();
 			monitorTask.setDebug(isDebug());
-			monitorTask.start();
+			// monitorTask.start();
 		}
 		return monitorTask;
 	}
@@ -189,7 +189,7 @@ public class Config {
 		}
 
 		if (monitorTask != null) {
-			monitorTask.kill();
+			// monitorTask.kill();
 			monitorTask = null;
 		}
 	}

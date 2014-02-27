@@ -6,13 +6,14 @@ import java.util.HashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Monitor a task: Check if a task finished by checking if 'exitFile' exists
  * 
  * @author pcingola
  */
-public class MonitorTask extends Thread {
+public class MonitorTask {
 
 	// Cluster scheduling is usually quite slow, so we don't need a short monitoring interval.
 	// Reducing this sleep time adds processing and probably has not many benefits. 
@@ -21,10 +22,13 @@ public class MonitorTask extends Thread {
 	boolean debug = false;
 	boolean verbose;
 	HashMap<Task, Executioner> execByTask;
-	boolean running;
+	Timer latestUpdate;
+
+	//	boolean running;
 
 	public MonitorTask() {
 		execByTask = new HashMap<Task, Executioner>();
+		latestUpdate = new Timer();
 	}
 
 	/**
@@ -39,9 +43,28 @@ public class MonitorTask extends Thread {
 		execByTask.put(task, executioner);
 	}
 
-	public void kill() {
-		running = false;
+	//	public void kill() {
+	//		running = false;
+	//	}
+
+	/**
+	 * Run once every SLEEP_TIME
+	 */
+	public void check() {
+		// Is it time to update?
+		if (latestUpdate.elapsed() < SLEEP_TIME) return;
+
+		update();
+		latestUpdate.start();
 	}
+
+	//	@Override
+	//	public void run() {
+	//		for (running = true; running;) {
+	//			update();
+	//			sleep();
+	//		}
+	//	}
 
 	/**
 	 * Remove task (do not monitor)
@@ -52,14 +75,6 @@ public class MonitorTask extends Thread {
 		execByTask.remove(task);
 	}
 
-	@Override
-	public void run() {
-		for (running = true; running;) {
-			update();
-			sleep();
-		}
-	}
-
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
@@ -68,15 +83,15 @@ public class MonitorTask extends Thread {
 		this.verbose = verbose;
 	}
 
-	/**
-	 * Sleep a short time
-	 */
-	void sleep() {
-		try {
-			sleep(SLEEP_TIME);
-		} catch (InterruptedException e) {
-		}
-	}
+	//	/**
+	//	 * Sleep a short time
+	//	 */
+	//	void sleep() {
+	//		try {
+	//			sleep(SLEEP_TIME);
+	//		} catch (InterruptedException e) {
+	//		}
+	//	}
 
 	/**
 	 * Check is an exist file exists, update states
@@ -93,6 +108,8 @@ public class MonitorTask extends Thread {
 				toUpdate.add(task);
 			}
 		}
+
+		Gpr.debug("Update:" + (toUpdate == null ? 0 : toUpdate.size()));
 
 		// An task to delete?
 		if (toUpdate != null) {
@@ -112,23 +129,21 @@ public class MonitorTask extends Thread {
 		int exitVal = 0;
 		TaskState taskState = null;
 
-		synchronized (task) {
-			if (task.isTimedOut()) {
-				// Timed out
-				exitVal = Task.EXITCODE_TIMEOUT;
-				taskState = TaskState.ERROR_TIMEOUT;
-			} else {
-				// Exit file found: Parse exit file
-				sleep();
-				String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
-				exitVal = (exitFileStr.equals("0") ? 0 : 1); // Anything else than OK is error condition
-				taskState = null; // Automatic: let taskFinished decide
-				if (debug) Gpr.debug("MonitorExitFile: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
-			}
-
-			// Inform executioner that task has finished
-			Executioner executioner = execByTask.get(task);
-			executioner.taskFinished(task, taskState, exitVal);
+		if (task.isTimedOut()) {
+			// Timed out
+			exitVal = Task.EXITCODE_TIMEOUT;
+			taskState = TaskState.ERROR_TIMEOUT;
+		} else {
+			// Exit file found: Parse exit file
+			// sleep();
+			String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
+			exitVal = (exitFileStr.equals("0") ? 0 : 1); // Anything else than OK is error condition
+			taskState = null; // Automatic: let taskFinished decide
+			if (debug) Gpr.debug("MonitorExitFile: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
 		}
+
+		// Inform executioner that task has finished
+		Executioner executioner = execByTask.get(task);
+		executioner.taskFinished(task, taskState, exitVal);
 	}
 }
