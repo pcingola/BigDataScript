@@ -1,24 +1,100 @@
 package ca.mcgill.mcb.pcingola.bigDataScript;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.htmlTemplate.RTemplate;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+class T1 extends Thread {
+	Zzz zzz;
+
+	public T1(Zzz zzz) {
+		this.zzz = zzz;
+	}
+
+	@Override
+	public void run() {
+		while (true)
+			zzz.doSomething();
+	}
+}
+
+class T2 extends Thread {
+	final Zzz zzz;
+
+	public T2(Zzz zzz) {
+		this.zzz = zzz;
+	}
+
+	@Override
+	public void run() {
+		while (true)
+			zzz.doSomethingElse();
+	}
+}
 
 public class Zzz {
+	public static final int SLEEP = 10;
+	public static final int SLEEP_LONG = 500;
+
+	public static Object cacheLock = new Object();
+	public static Object tableLock = new Object();
+
+	public boolean wait = false;
 
 	public static void main(String[] args) throws Exception {
-		Gpr.debug("Zzz: Start");
+		Zzz zzz = new Zzz();
 
-		// RTemplate rTemplate = new RTemplate(BigDataScript.class, "resources/SummaryTemplate.html", Gpr.HOME + "/z.html");
-		RTemplate rTemplate = new RTemplate(BigDataScript.class, "SummaryTemplate.html", Gpr.HOME + "/z.html");
+		T1 t1 = new T1(zzz);
+		T2 t2 = new T2(zzz);
 
-		rTemplate.add("title", "Zzz");
-		rTemplate.add("title", "World");
+		t1.start();
+		t2.start();
+	}
 
-		rTemplate.add("subtitle", "SubZzz");
-		rTemplate.add("subtitle", "SubWorld");
+	public void anotherMethod() {
+		synchronized (tableLock) {
 
-		rTemplate.createOuptut();
+			while (!wait)
+				sleep();
 
-		Gpr.debug("Zzz: End");
+			synchronized (cacheLock) {
+				doSomethingElse();
+			}
+		}
+	}
+
+	void doSomething() {
+		System.out.println("Doing something: " + Thread.currentThread().getId());
+		sleep();
+	}
+
+	void doSomethingElse() {
+		System.out.println("Doing something else: " + Thread.currentThread().getId());
+		sleep();
+	}
+
+	public void oneMethod() {
+		synchronized (cacheLock) {
+			sleepLong();
+			wait = true;
+			synchronized (tableLock) {
+				doSomething();
+			}
+			wait = false;
+		}
+	}
+
+	void sleep() {
+		try {
+			Thread.sleep(SLEEP);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	void sleepLong() {
+		try {
+			Thread.sleep(SLEEP_LONG);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
