@@ -126,6 +126,8 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 	# Create BAM file from reads
 	if( vcf <- [fq1, fq2] ) {
 		mapIndex(referenceFasta)
+
+		# Split fastq files
 		if( system == "local" )	splitNumReads = 0
 		bams = mapSplit(referenceFasta, fq1, fq2, splitNumReads)
 		bams.rmOnExit()
@@ -174,7 +176,6 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 void mapIndex(string fasta) {
 	indexFile := fasta + ".bwt"
 	task( indexFile <- fasta ) sys bwa index $fasta
-	wait
 }
 
 #-------------------------------------------------------------------------------
