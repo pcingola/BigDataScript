@@ -62,7 +62,7 @@ public class Task implements BigDataScriptSerialize {
 		}
 	}
 
-	public static final int MAX_HINT_LEN = 100;
+	public static final int MAX_HINT_LEN = 150;
 
 	// TODO: This should be a variable (SHEBANG?)
 	public static final String SHE_BANG = "#!/bin/sh -e\n\n"; // Use '-e' so that shell script stops after first error
@@ -635,6 +635,7 @@ public class Task implements BigDataScriptSerialize {
 			sb.append("\tProgram & line     : '" + bdsFileName + "', line " + bdsLineNum + "\n");
 			sb.append("\tTask ID            : '" + id + "'\n");
 			sb.append("\tTask PID           : '" + pid + "'\n");
+			sb.append("\tTask hint          : '" + getProgramHint() + "'\n");
 			sb.append("\tTask resources     : '" + getResources() + "'\n");
 			sb.append("\tState              : '" + taskState + "'\n");
 			sb.append("\tDependency state   : '" + dependencyState() + "'\n");
