@@ -629,6 +629,12 @@ public class Task implements BigDataScriptSerialize {
 			// Ignore other state changes
 			throw new RuntimeException("Unimplemented state: '" + newState + "'");
 		}
+
+		// Finished OK? Check that output files are OK as well
+		if (isStateFinished()) {
+			// Update failCount if output files failed to be created
+			if (!isCanFail() && !checkOutputFiles().isEmpty()) failCount++;
+		}
 	}
 
 	@Override

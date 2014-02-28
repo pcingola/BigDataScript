@@ -11,8 +11,8 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test29() {
-		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");
+	public void test43() {
+		runAndCheck("test/run_43.bds", "finished", 0L);
 	}
 
 }
