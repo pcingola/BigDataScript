@@ -19,8 +19,10 @@ string splitFatsq(string fq, int splitNumReads) {
 
 	names := removeExtFastqa( fq ) + "."
 	numLines := 4 * splitNumReads
-	print("Splitting file '$fq' into $numLines lines: $names\n")
 	firstName := names + "aa"
+	print("Splitting file '$fq' into $numLines lines: $names\n")
+	print("\Input : $fq\n")
+	print("\Output: $firstName\n")
 	task( firstName <- fq, cpus := 1 ) sys $cat $fq | split -l $numLines - $names
 	return( names )
 }
