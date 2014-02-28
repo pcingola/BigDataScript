@@ -38,7 +38,8 @@ public class ExpressionTask extends ExpressionWithScope {
 	TaskOptions taskOptions;
 	Statement statement;
 	private String execId = "";
-	List<String> outputFiles, inputFiles;
+
+	//	List<String> outputFiles, inputFiles;
 
 	/**
 	 * Execute a task (schedule it into excutioner)
@@ -105,8 +106,11 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setFailCount((int) csThread.getInt(TASK_OPTION_RETRY));
 		task.getResources().setTimeout(csThread.getInt(TASK_OPTION_TIMEOUT));
 		task.getResources().setWallTimeout(csThread.getInt(TASK_OPTION_WALL_TIMEOUT));
-		task.setInputFiles(inputFiles);
-		task.setOutputFiles(outputFiles);
+
+		Gpr.debug("input files: " + taskOptions.inputFiles());
+		task.setInputFiles(taskOptions.inputFiles());
+		Gpr.debug("output files: " + taskOptions.outputFiles());
+		task.setOutputFiles(taskOptions.outputFiles());
 
 		// Schedule task for execution
 		execute(csThread, task);
@@ -155,15 +159,16 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Execute options assignments
 		if (taskOptions != null) {
 			boolean ok = (Boolean) taskOptions.eval(csThread);
-			outputFiles = taskOptions.outputFiles(); // This has to be done AFTER evaluation
-			inputFiles = taskOptions.inputFiles(); // This has to be done AFTER evaluation
+			//			outputFiles = taskOptions.outputFiles(); // This has to be done AFTER evaluation
+			//			inputFiles = taskOptions.inputFiles(); // This has to be done AFTER evaluation
 			if (!ok) {
 				// Return empty task ID
 				return RunState.OK; // Task options clause not satisfied. Do not execute task 
 			}
-		} else {
-			outputFiles = inputFiles = null;
 		}
+		//		else {
+		//			outputFiles = inputFiles = null;
+		//		}
 
 		//---
 		// Execute statements
