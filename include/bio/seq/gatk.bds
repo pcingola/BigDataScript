@@ -42,15 +42,28 @@ string[] gatkPrepare(string fasta, string bam) {
 	fai := fasta + ".fai"
 	dict := removeExtFastqa(fasta) + ".dict"
 	bai := bam + ".bai"
+	isWait := false
 
-	print("Creating dictionary file: $dict\n")
-	task( dict <- fasta ) sys $java -jar $picardPath/CreateSequenceDictionary.jar R= $fasta O= $dict
+	if( dict <- fasta ) {
+		print("Creating dictionary file: $dict\n")
+		task $java -jar $picardPath/CreateSequenceDictionary.jar R= $fasta O= $dict
+		isWait = true
+	}
 
-	print("Creating fasta idex: $fai\n")
-	task( fai <- fasta ) sys samtools faidx $fasta
+	if( fai <- fasta ) {
+		print("Creating fasta idex: $fai\n")
+		task samtools faidx $fasta
+		isWait = true
+	}
 
-	print("Creating BAM idex: $bai\n")
-	task( bai <- bam ) sys samtools index $bam
+	if( bai <- bam ) {
+		print("Creating BAM idex: $bai\n")
+		task samtools index $bam
+		isWait = true
+	}
+
+	# We should wait until all GATK indexing tasks finish
+	if( isWait ) wait
 
 	return( [fai, dict, bai] )
 }
