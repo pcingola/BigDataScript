@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -525,7 +526,11 @@ public class Task implements BigDataScriptSerialize {
 	}
 
 	public void setInputFiles(List<String> inputFiles) {
-		this.inputFiles = inputFiles;
+		if (inputFiles == null) this.inputFiles = inputFiles;
+		else {
+			this.inputFiles = new ArrayList<String>();
+			this.inputFiles.addAll(inputFiles);
+		}
 	}
 
 	public void setNode(String node) {
@@ -533,7 +538,11 @@ public class Task implements BigDataScriptSerialize {
 	}
 
 	public void setOutputFiles(List<String> outputFiles) {
-		this.outputFiles = outputFiles;
+		if (outputFiles == null) this.outputFiles = outputFiles;
+		else {
+			this.outputFiles = new ArrayList<String>();
+			this.outputFiles.addAll(outputFiles);
+		}
 	}
 
 	public void setPid(String pid) {

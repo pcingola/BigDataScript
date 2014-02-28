@@ -159,6 +159,8 @@ public class ExpressionTask extends ExpressionWithScope {
 				// Return empty task ID
 				return RunState.OK; // Task options clause not satisfied. Do not execute task 
 			}
+		} else {
+			outputFiles = inputFiles = null;
 		}
 
 		//---
