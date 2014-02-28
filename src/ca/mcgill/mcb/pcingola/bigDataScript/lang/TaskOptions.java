@@ -47,6 +47,8 @@ public class TaskOptions extends ExpressionList {
 				ExpressionDep dep = ((ExpressionDep) expr);
 				outputFiles.addAll(dep.getOutputFiles());
 				inputFiles.addAll(dep.getInputFiles());
+
+				sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean
 			} else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean
 
 			// Break expression evaluation if we already know it will not be executed
