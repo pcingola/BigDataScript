@@ -370,7 +370,7 @@ public class Task implements BigDataScriptSerialize {
 	 * @return
 	 */
 	public synchronized boolean isDone() {
-		return isError() || isStateFinished();
+		return isStateError() || isStateFinished();
 	}
 
 	/**
@@ -384,18 +384,6 @@ public class Task implements BigDataScriptSerialize {
 	}
 
 	/**
-	 * Is this task in any error or killed state?
-	 * @return
-	 */
-	public synchronized boolean isError() {
-		return (taskState == TaskState.START_FAILED) //
-				|| (taskState == TaskState.ERROR) //
-				|| (taskState == TaskState.ERROR_TIMEOUT) //
-				|| (taskState == TaskState.KILLED) //
-		;
-	}
-
-	/**
 	 * Has this task been executed and failed?
 	 * 
 	 * This is true if:
@@ -406,7 +394,7 @@ public class Task implements BigDataScriptSerialize {
 	 * @return
 	 */
 	public synchronized boolean isFailed() {
-		return isError() || (exitValue != 0) || !checkOutputFiles().isEmpty();
+		return isStateError() || (exitValue != 0) || !checkOutputFiles().isEmpty();
 	}
 
 	/**
@@ -415,6 +403,18 @@ public class Task implements BigDataScriptSerialize {
 	 */
 	public synchronized boolean isStarted() {
 		return taskState != TaskState.NONE;
+	}
+
+	/**
+	 * Is this task in any error or killed state?
+	 * @return
+	 */
+	public synchronized boolean isStateError() {
+		return (taskState == TaskState.START_FAILED) //
+				|| (taskState == TaskState.ERROR) //
+				|| (taskState == TaskState.ERROR_TIMEOUT) //
+				|| (taskState == TaskState.KILLED) //
+		;
 	}
 
 	public synchronized boolean isStateFinished() {

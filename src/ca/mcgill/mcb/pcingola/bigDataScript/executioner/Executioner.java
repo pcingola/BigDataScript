@@ -607,10 +607,10 @@ public abstract class Executioner extends Thread {
 
 		// Task finished in error condition?
 		// May be we can look for additional information to asses the error
-		if (task.isError()) postMortemInfo(task);
+		if (task.isStateError()) postMortemInfo(task);
 
 		// Task failed: Can we re-try?
-		if (task.isError() && !task.isCanFail() && (task.getFailCount() > 0)) {
+		if (task.isFailed() && !task.isCanFail() && (task.getFailCount() > 0)) {
 			// Retry task
 			Timer.showStdErr("Task failed, retrying ( " + task.getFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (verbose ? "\n" : ", ") + task.toString(verbose));
 
