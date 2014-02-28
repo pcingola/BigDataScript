@@ -49,7 +49,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static void execute(BigDataScriptThread csThread, Task task) {
 		// Make sure the task in in initial state
 		task.reset();
-		if (debug) Gpr.debug("Executing task: " + task.toString(true, debug));
+		if (Config.get().isDebug()) Gpr.debug("Executing task: " + task.toString(true, debug));
 
 		// Select executioner and queue for execution
 		String runSystem = csThread.getString(TASK_OPTION_SYSTEM);
