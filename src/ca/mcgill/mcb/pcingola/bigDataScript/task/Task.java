@@ -141,8 +141,8 @@ public class Task implements BigDataScriptSerialize {
 		checkOutputFiles = "";
 		for (String fileName : outputFiles) {
 			File file = new File(fileName);
-			if (!file.exists()) checkOutputFiles += "Error: Output file '" + fileName + "' does not exist";
-			else if (file.length() <= 0) checkOutputFiles += "Error: Output file '" + fileName + "' has zero length";
+			if (!file.exists()) checkOutputFiles += "Error: Output file '" + fileName + "' does not exist.";
+			else if (file.length() <= 0) checkOutputFiles += "Error: Output file '" + fileName + "' has zero length.";
 		}
 
 		if (verbose && !checkOutputFiles.isEmpty()) Timer.showStdErr(checkOutputFiles);
@@ -633,7 +633,6 @@ public class Task implements BigDataScriptSerialize {
 
 		if (verbose) {
 			sb.append("\tProgram & line     : '" + bdsFileName + "', line " + bdsLineNum + "\n");
-			sb.append("\tTask hint          : " + getProgramHint() + "\n");
 			sb.append("\tTask ID            : '" + id + "'\n");
 			sb.append("\tTask PID           : '" + pid + "'\n");
 			sb.append("\tTask resources     : '" + getResources() + "'\n");
@@ -658,7 +657,9 @@ public class Task implements BigDataScriptSerialize {
 			sb.append("\tExit status        : '" + exitValue + "'\n");
 
 			String ch = checkOutputFiles();
-			if ((ch != null) && !ch.isEmpty()) sb.append("\tOutput file errors :\n" + Gpr.prependEachLine("\t\t", ch));
+			if ((ch != null) && !ch.isEmpty()) sb.append("\tOutput file checks : '" + ch + "'");
+
+			if ((getProgramTxt() != null) && !getProgramTxt().isEmpty()) sb.append("\tProgram            : \n" + Gpr.prependEachLine("\t\t", getProgramTxt()));
 
 			String tailErr = TailFile.tail(stderrFile);
 			if ((tailErr != null) && !tailErr.isEmpty()) sb.append("\tStdErr (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailErr));
@@ -677,5 +678,4 @@ public class Task implements BigDataScriptSerialize {
 
 		return sb.toString();
 	}
-
 }
