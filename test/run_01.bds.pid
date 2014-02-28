@@ -2480,3 +2480,144 @@ out2.txt	-
 out1.txt	+	rm
 8999	-
 out1.txt	-
+1706	+	
+1706	-
+1710	+	
+1710	-
+1712	+	
+1712	-
+1715	+	
+1715	-
+1719	+	
+1719	-
+1723	+	
+1723	-
+1725	+	
+1725	-
+1728	+	
+1728	-
+1732	+	
+/Users/pablocingolani/zero_length_file_out.txt	+	rm
+1732	-
+/Users/pablocingolani/zero_length_file_out.txt	-
+1769	+	
+1769	-
+1773	+	
+1773	-
+1776	+	
+1776	-
+null	-
+1779	-
+1782	+	
+1782	-
+1784	+	
+1784	-
+1786	+	
+1786	-
+1788	+	
+1788	-
+1791	+	
+1791	-
+1794	+	
+1794	-
+1798	+	
+/Users/pablocingolani/zero_length_file_out.txt	+	rm
+1799	+	
+1798	-
+/Users/pablocingolani/zero_length_file_out.txt	-
+1799	-
+1804	+	
+1804	-
+1807	+	
+1808	+	
+1807	-
+1808	-
+1817	+	
+1817	-
+1820	+	
+1820	-
+1823	+	
+1823	-
+null	-
+1825	+	
+1825	-
+1829	+	
+1829	-
+1832	+	
+1832	-
+1835	+	
+1835	-
+1838	+	
+1838	-
+1841	+	
+1841	-
+1845	+	
+failOnce.out1	+	rm
+1845	-
+failOnce.out1	-
+1850	+	
+failOnce.out1	+	rm
+1850	-
+failOnce.out1	-
+1854	+	
+failOnce.out2	+	rm
+1854	-
+failOnce.out2	-
+1860	+	
+failOnce.out1	+	rm
+1860	-
+failOnce.out1	-
+1865	+	
+failOnce.out1	+	rm
+1865	-
+failOnce.out1	-
+1869	+	
+failOnce.out2	+	rm
+1869	-
+failOnce.out2	-
+1874	+	
+1874	-
+1875	+	
+1875	-
+1879	+	
+1879	-
+1885	+	
+out1.txt	+	rm
+1885	-
+out1.txt	-
+1889	+	
+out2.txt	+	rm
+1889	-
+out2.txt	-
+1895	+	
+out1.txt	+	rm
+1895	-
+out1.txt	-
+1899	+	
+out2.txt	+	rm
+1899	-
+out2.txt	-
+1903	+	
+out1.txt	+	rm
+1903	-
+out1.txt	-
+1907	+	
+1907	-
+1910	+	
+1910	-
+1916	+	
+out1.txt	+	rm
+1916	-
+out1.txt	-
+1920	+	
+out2.txt	+	rm
+1920	-
+out2.txt	-
+1923	+	
+out1.txt	+	rm
+1923	-
+out1.txt	-
+1927	+	
+out2.txt	+	rm
+1927	-
+out2.txt	-

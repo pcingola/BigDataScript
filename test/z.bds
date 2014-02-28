@@ -1,27 +1,17 @@
-#!/usr/bin/env bds
 
-in   := "failOnce.in"
-out1 := "failOnce.out1"
-out2 := "failOnce.out2"
+string[] events
 
-failOnceFile := "failOnce.txt"
-failOnceFile.delete()
+string tid = task sleep 1 ; echo hi
+print("Task ID: '$tid'\n")
 
-# Delete old files
-[ in, out1, out2 ].rm()
-
-# Create input file
-sys echo IN > $in
-
-# Create out1
-# Note: Task will fail once, then run OK
-task( out1 <- in ) sys echo TASK 1 ; sleep 1; ./test/failOnce.pl ; echo TASK 1 > $out1 ; echo TASK 1 END
-
-# Create out2 frmo out1
-task( out2 <- out1 ) sys echo TASK 2 START ; sleep 1; cat $out1 > $out2 ; echo TASK 2 >> $out2 ; echo TASK 2 END
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
 
 wait
 
-outs := sys cat $out2
+events.add("wait")
 
-print("Done:\n$outs\n")
+if( tid.isDone() ) events.add("done")
+else events.add("runnning")
+
+print("Events: " + events) 

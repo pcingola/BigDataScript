@@ -126,6 +126,7 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 	# Create BAM file from reads
 	if( vcf <- [fq1, fq2] ) {
 		mapIndex(referenceFasta)
+		wait
 
 		# Split fastq files
 		if( system == "local" )	splitNumReads = 0
