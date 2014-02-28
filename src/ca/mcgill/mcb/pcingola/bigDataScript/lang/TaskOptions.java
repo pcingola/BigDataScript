@@ -24,23 +24,6 @@ public class TaskOptions extends ExpressionList {
 	}
 
 	/**
-	 * Get input and output files
-	 */
-	void calcInOutFiles() {
-		outputFiles = new ArrayList<String>();
-		inputFiles = new ArrayList<String>();
-
-		for (Expression expr : expressions) {
-			if (expr instanceof ExpressionDep) {
-				ExpressionDep dep = ((ExpressionDep) expr);
-
-				outputFiles.addAll(dep.getOutputFiles());
-				inputFiles.addAll(dep.getInputFiles());
-			}
-		}
-	}
-
-	/**
 	 * Evaluate: Returns 'true' if all boolean expressions are 'true'.
 	 * 
 	 * Note: We only care about the value of bool expressions
@@ -50,33 +33,34 @@ public class TaskOptions extends ExpressionList {
 	public Object eval(BigDataScriptThread csThread) {
 		boolean sat = true;
 
+		outputFiles = new ArrayList<String>();
+		inputFiles = new ArrayList<String>();
+
 		for (Expression expr : expressions) {
 			Object value = expr.eval(csThread);
 
 			// All boolean expressions must be "true"
 			if (expr instanceof ExpressionAssignment) ; // Nothing to do
 			else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
-			else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean 
+			else if (expr instanceof ExpressionDep) {
+				// Calculate input & output files
+				ExpressionDep dep = ((ExpressionDep) expr);
+				outputFiles.addAll(dep.getOutputFiles());
+				inputFiles.addAll(dep.getInputFiles());
+			} else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean
+
+			// Break expression evaluation if we already know it will not be executed
+			if (!sat) return false;
 		}
 
 		return sat;
 	}
 
-	/**
-	 * Calculate input files
-	 * @return
-	 */
-	List<String> inputFiles() {
-		if (inputFiles == null) calcInOutFiles();
+	List<String> getInputFiles() {
 		return inputFiles;
 	}
 
-	/**
-	 * Calculate output files
-	 * @return
-	 */
-	List<String> outputFiles() {
-		if (outputFiles == null) calcInOutFiles();
+	List<String> getOutputFiles() {
 		return outputFiles;
 
 	}

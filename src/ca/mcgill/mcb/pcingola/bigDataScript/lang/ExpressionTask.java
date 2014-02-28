@@ -107,10 +107,10 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.getResources().setTimeout(csThread.getInt(TASK_OPTION_TIMEOUT));
 		task.getResources().setWallTimeout(csThread.getInt(TASK_OPTION_WALL_TIMEOUT));
 
-		Gpr.debug("input files: " + taskOptions.inputFiles());
-		task.setInputFiles(taskOptions.inputFiles());
-		Gpr.debug("output files: " + taskOptions.outputFiles());
-		task.setOutputFiles(taskOptions.outputFiles());
+		Gpr.debug("input files: " + taskOptions.getInputFiles());
+		task.setInputFiles(taskOptions.getInputFiles());
+		Gpr.debug("output files: " + taskOptions.getOutputFiles());
+		task.setOutputFiles(taskOptions.getOutputFiles());
 
 		// Schedule task for execution
 		execute(csThread, task);
