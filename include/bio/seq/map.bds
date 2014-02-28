@@ -59,10 +59,6 @@ string[] mapSplit(string referenceFasta, string fq1, string fq2, int splitNumRea
 		cpusMapping = cpusLocal	# Use all available cpus
 	}
 
-	#!!!!!!!!!!!!!!!!!
-	wait
-	exit(1)
-
 	#---
 	# Map each pair of FASTQ files
 	#---

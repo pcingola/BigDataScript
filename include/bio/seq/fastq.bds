@@ -21,8 +21,6 @@ string splitFatsq(string fq, int splitNumReads) {
 	numLines := 4 * splitNumReads
 	firstName := names + "aa"
 	print("Splitting file '$fq' into $numLines lines: $names\n")
-	print("\tInput : $fq\n")
-	print("\tOutput: $firstName\n")
 	task( firstName <- fq, cpus := 1 ) sys $cat $fq | split -l $numLines - $names
 	return( names )
 }

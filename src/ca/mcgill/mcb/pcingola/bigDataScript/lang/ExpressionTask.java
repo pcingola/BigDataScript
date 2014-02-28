@@ -14,7 +14,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -50,7 +49,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static void execute(BigDataScriptThread csThread, Task task) {
 		// Make sure the task in in initial state
 		task.reset();
-		if (Config.get().isDebug()) Gpr.debug("Executing task: " + task.toString(true, debug));
 
 		// Select executioner and queue for execution
 		String runSystem = csThread.getString(TASK_OPTION_SYSTEM);
@@ -108,8 +106,6 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.getResources().setWallTimeout(csThread.getInt(TASK_OPTION_WALL_TIMEOUT));
 
 		if (taskOptions != null) {
-			Gpr.debug("input files: " + taskOptions.getInputFiles());
-			Gpr.debug("output files: " + taskOptions.getOutputFiles());
 			task.setInputFiles(taskOptions.getInputFiles());
 			task.setOutputFiles(taskOptions.getOutputFiles());
 		}

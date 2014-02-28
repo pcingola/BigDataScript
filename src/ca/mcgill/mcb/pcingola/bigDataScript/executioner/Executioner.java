@@ -431,8 +431,6 @@ public abstract class Executioner extends Thread {
 			sleepLong();
 		}
 
-		if (debug) Gpr.debug("Running task:" + task.toString(true, true));
-
 		// TODO: If an exception is thrown here, we should be able to either recover or mark the task as START_FAILED
 		Cmd cmd = createCmd(task);
 		cmd.setHost(host);
