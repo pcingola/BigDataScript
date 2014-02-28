@@ -252,6 +252,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskState", "" + task.getTaskState());
 			rTemplate.add("taskDepState", "" + task.dependencyState());
 
+			if (task.getFailCount() > 1) rTemplate.add("taskRetry", "" + (task.getFailCount() - 1) + "/" + (task.getMaxFailCount() - 1));
+			else rTemplate.add("taskRetry", "");
+
 			if (!task.isDoneOk()) {
 				rTemplate.add("taskColor", RED_COLOR);
 

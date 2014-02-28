@@ -1,17 +1,14 @@
+#!/usr/bin/env bds
 
-string[] events
+retry = 3
+ok := false
 
-string tid = task sleep 1 ; echo hi
-print("Task ID: '$tid'\n")
-
-if( tid.isDone() ) events.add("done")
-else events.add("runnning")
-
+# Task will fail once, then re-executed and succeed
+failOnceFile := "failOnce.txt"
+failOnceFile.delete()
+task rm asdfasdfasdfasdfadsf
 wait
 
-events.add("wait")
+# Only true if re-execution succeeds
+ok = true
 
-if( tid.isDone() ) events.add("done")
-else events.add("runnning")
-
-print("Events: " + events) 

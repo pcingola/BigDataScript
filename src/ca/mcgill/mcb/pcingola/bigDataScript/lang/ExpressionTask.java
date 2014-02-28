@@ -101,7 +101,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.getResources().setCpus((int) csThread.getInt(TASK_OPTION_CPUS));
 		task.setNode(csThread.getString(TASK_OPTION_NODE));
 		task.setQueue(csThread.getString(TASK_OPTION_QUEUE));
-		task.setFailCount((int) csThread.getInt(TASK_OPTION_RETRY));
+		task.setMaxFailCount((int) csThread.getInt(TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
 		task.getResources().setTimeout(csThread.getInt(TASK_OPTION_TIMEOUT));
 		task.getResources().setWallTimeout(csThread.getInt(TASK_OPTION_WALL_TIMEOUT));
 

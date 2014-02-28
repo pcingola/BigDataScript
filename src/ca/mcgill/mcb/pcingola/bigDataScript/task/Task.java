@@ -77,7 +77,7 @@ public class Task implements BigDataScriptSerialize {
 	protected boolean canFail; // Allow execution to fail
 	protected int bdsLineNum; // Program's line number that created this task (used for reporting errors)
 	protected int exitValue; // Exit (error) code
-	protected int failCount; // Number of times that this task failed	
+	protected int failCount, maxFailCount; // Number of times that this task failed	
 	protected String id; // Task ID
 	protected String bdsFileName; // Program file that created this task (used for reporting errors)
 	protected String pid; // PID (if any)
@@ -119,6 +119,10 @@ public class Task implements BigDataScriptSerialize {
 	public void addDependency(Task taskDep) {
 		if (dependency == null) dependency = new LinkedList<Task>();
 		dependency.add(taskDep);
+	}
+
+	public boolean canRetry() {
+		return failCount < maxFailCount;
 	}
 
 	/**
@@ -285,6 +289,10 @@ public class Task implements BigDataScriptSerialize {
 
 	public List<String> getInputFiles() {
 		return inputFiles;
+	}
+
+	public int getMaxFailCount() {
+		return maxFailCount;
 	}
 
 	public String getName() {
@@ -521,16 +529,16 @@ public class Task implements BigDataScriptSerialize {
 		this.exitValue = exitValue;
 	}
 
-	public void setFailCount(int failCount) {
-		this.failCount = failCount;
-	}
-
 	public void setInputFiles(List<String> inputFiles) {
 		if (inputFiles == null) this.inputFiles = inputFiles;
 		else {
 			this.inputFiles = new ArrayList<String>();
 			this.inputFiles.addAll(inputFiles);
 		}
+	}
+
+	public void setMaxFailCount(int maxFailCount) {
+		this.maxFailCount = maxFailCount;
 	}
 
 	public void setNode(String node) {
@@ -583,6 +591,7 @@ public class Task implements BigDataScriptSerialize {
 			if (taskState == TaskState.NONE) {
 				setState(newState);
 				runningStartTime = runningEndTime = new Date();
+				failCount++;
 			} else if (taskState == TaskState.KILLED) ; // OK, don't change state
 			else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
@@ -594,9 +603,11 @@ public class Task implements BigDataScriptSerialize {
 			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
-		case FINISHED:
 		case ERROR:
 		case ERROR_TIMEOUT:
+			failCount++; // Count failed, proceed to 'FINISHED' state
+
+		case FINISHED:
 			if (taskState == TaskState.RUNNING) {
 				setState(newState);
 				runningEndTime = new Date();
@@ -610,6 +621,7 @@ public class Task implements BigDataScriptSerialize {
 			) {
 				setState(newState);
 				runningEndTime = new Date();
+				failCount++;
 			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 

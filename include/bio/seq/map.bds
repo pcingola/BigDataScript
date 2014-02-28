@@ -172,7 +172,7 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 #-------------------------------------------------------------------------------
 void mapIndex(string fasta) {
 	indexFile := fasta + ".bwt"
-	task( indexFile <- fasta ) sys bwa index $fasta
+	task( indexFile <- fasta, cpus := cpusMapping ) sys bwa index $fasta
 }
 
 #-------------------------------------------------------------------------------
