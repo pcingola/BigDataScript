@@ -1,23 +1,2 @@
 
-
-string in = "$HOME/zero_length_file_in.txt";
-string out = "$HOME/zero_length_file_out.txt";
-
-int finished = 0;
-
-sys touch $in
-
-# This task will be executed, but it will fail because it creates a zero length output
-task( out <- in ) {
-	sys touch $out ; echo First
-}
-
-# This will be executed
-task sleep 1; echo Second
-
-# Task 'First' execution fails at here. 
-# At 'wait' statement is when we check wether a task finished OK or not
-wait
-
-# This should never be exeted
-finished = 1;
+task echo hi
