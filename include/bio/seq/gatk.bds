@@ -113,7 +113,6 @@ string indexBam(string bam) {
 	if( bai <- bam ) {
 		print("Creating BAM index for $bam: $bai\n")
 		task samtools index $bam
-		isWait = true
 	}
 
 	return( bai )
