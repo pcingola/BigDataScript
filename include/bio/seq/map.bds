@@ -99,23 +99,22 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 	# Create BAM file from reads
 	if( vcf <- [fq1, fq2] ) {
 		mapIndex(referenceFasta)
-		wait
 
 		# Split fastq files
 		if( system == "local" )	splitNumReads = 0
 		bams = mapSplit(referenceFasta, fq1, fq2, splitNumReads)
 		bams.rmOnExit()
+
+		# Wait until genome index finished and fastq files are split
 		wait
 
 		# Remove duplicates: Return one BAM per chromosome
 		rdbams = rmDup( bams )
 		rdbams.rmOnExit()
-		wait
 	
 		# Callabla loci: Une BED per chromosome
 		beds := callableRegions(referenceFasta, rdbams )
 		beds.rmOnExit()
-		wait
 
 		# Split each BED to call multiple callers on each chromosome
 		string[] vcfsAll
@@ -132,7 +131,6 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 			vcfs.rmOnExit()
 			vcfsAll.add( vcfs )
 		}
-		wait
 
 		# Join variants results
 		joinVcf(vcf, vcfsAll )
