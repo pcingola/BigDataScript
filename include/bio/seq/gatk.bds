@@ -24,13 +24,8 @@ string[] callableRegions(string referenceFasta, string[] bams) {
 		summary := bam.swapExt(".bam", ".callable.txt")
 		beds.add( bed )
 
-		# Make sure GATK and BAM indeces are ready
-		deps := gatkPrepare(referenceFasta)
-		deps.add( indexBam(bam) )
-		deps.add( bam )
-
 		print("Callable regions: $bed\n")
-		task( bed <- deps ) sys $java -jar $gatkJar -T CallableLoci -R $referenceFasta -I $bam -summary $summary -o $bed
+		task( bed <- [ gatkPrepare(referenceFasta), bam ] ) sys $java -jar $gatkJar -T CallableLoci -R $referenceFasta -I $bam -summary $summary -o $bed
 	}
 
 	return( beds )

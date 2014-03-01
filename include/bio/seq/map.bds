@@ -48,6 +48,9 @@ string indexBam(string bam) {
 string[] mapSplit(string referenceFasta, string fq1, string fq2, int splitNumReads) {
 	string[] fq1split, fq2split
 
+	# Make sure GATK indeces are ready
+	gatkPrepare(referenceFasta)
+
 	#---
 	# Split files 
 	#---
