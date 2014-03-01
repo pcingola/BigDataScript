@@ -29,7 +29,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 
 	protected BigDataScriptNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
@@ -441,7 +441,10 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		else rstate = RunState.CHECKPOINT_RECOVER;
 
 		try {
-			if (csThread.shouldRun(this)) rstate = runStep(csThread); // Run 
+			if (csThread.shouldRun(this)) {
+				if (debug) Gpr.debug("Running: " + this);
+				rstate = runStep(csThread); // Run 
+			}
 		} catch (Throwable t) {
 			csThread.fatalError(this, t);
 			rstate = RunState.FATAL_ERROR;
