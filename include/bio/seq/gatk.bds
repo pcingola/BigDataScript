@@ -24,8 +24,9 @@ string[] callableRegions(string referenceFasta, string[] bams) {
 		summary := bam.swapExt(".bam", ".callable.txt")
 		beds.add( bed )
 
-		# Make sure all GATK indeces are ready
-		deps := gatkPrepare(referenceFasta, bam) # Make sure we have all required files for GATK to run
+		# Make sure GATK and BAM indeces are ready
+		deps := gatkPrepare(referenceFasta)
+		deps.add( indexBam(bam) )
 		deps.add( bam )
 
 		print("Callable regions: $bed\n")
@@ -38,34 +39,21 @@ string[] callableRegions(string referenceFasta, string[] bams) {
 #-------------------------------------------------------------------------------
 # In order to use GATK, we need to prepare the reference genome
 #-------------------------------------------------------------------------------
-string[] gatkPrepare(string fasta, string bam) {
+string[] gatkPrepare(string fasta) {
 	fai := fasta + ".fai"
 	dict := removeExtFastqa(fasta) + ".dict"
-	bai := bam + ".bai"
-	isWait := false
 
 	if( dict <- fasta ) {
 		print("Creating dictionary file: $dict\n")
 		task $java -jar $picardPath/CreateSequenceDictionary.jar R= $fasta O= $dict
-		isWait = true
 	}
 
 	if( fai <- fasta ) {
 		print("Creating fasta idex: $fai\n")
 		task samtools faidx $fasta
-		isWait = true
 	}
 
-	if( bai <- bam ) {
-		print("Creating BAM idex: $bai\n")
-		task samtools index $bam
-		isWait = true
-	}
-
-	# We should wait until all GATK indexing tasks finish
-	if( isWait ) wait
-
-	return( [fai, dict, bai] )
+	return( [fai, dict] )
 }
 
 #-------------------------------------------------------------------------------
@@ -115,5 +103,19 @@ string[] splitCallableRegions(string bed, int num) {
 	if( bedSplits[0] <- bed ) sys grep CALLABLE $bed | $callableCollapseSplit $bedSplitsStr
 
 	return( bedSplits ) # Report all file names after split
+}
+
+#-------------------------------------------------------------------------------
+# Index BAM file
+#-------------------------------------------------------------------------------
+string indexBam(string bam) {
+	bai := bam + ".bai"
+	if( bai <- bam ) {
+		print("Creating BAM index for $bam: $bai\n")
+		task samtools index $bam
+		isWait = true
+	}
+
+	return( bai )
 }
 
