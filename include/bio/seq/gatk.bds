@@ -25,7 +25,7 @@ string[] callableRegions(string referenceFasta, string[] bams) {
 		beds.add( bed )
 
 		print("Callable regions: $bed\n")
-		task( bed <- [ bam, indexBam(bam) ] ) sys $java -jar $gatkJar -T CallableLoci -R $referenceFasta -I $bam -summary $summary -o $bed
+		task( bed <- [ bam, indexBam(bam) ], cpus := cpusCalling ) sys $java -jar $gatkJar -T CallableLoci -R $referenceFasta -I $bam -summary $summary -o $bed
 	}
 
 	return( beds )
