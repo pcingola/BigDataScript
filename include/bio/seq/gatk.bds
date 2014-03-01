@@ -105,16 +105,3 @@ string[] splitCallableRegions(string bed, int num) {
 	return( bedSplits ) # Report all file names after split
 }
 
-#-------------------------------------------------------------------------------
-# Index BAM file
-#-------------------------------------------------------------------------------
-string indexBam(string bam) {
-	bai := bam + ".bai"
-	if( bai <- bam ) {
-		print("Creating BAM index for $bam: $bai\n")
-		task samtools index $bam
-	}
-
-	return( bai )
-}
-
