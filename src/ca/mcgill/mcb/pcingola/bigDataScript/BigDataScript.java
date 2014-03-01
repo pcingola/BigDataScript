@@ -758,9 +758,9 @@ public class BigDataScript {
 			exitValue = runCompile(); // Compile & run
 		}
 
-		// ---
+		//---
 		// Kill all executioners
-		// ---
+		//---
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
 

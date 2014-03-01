@@ -52,7 +52,7 @@ public class Executioners {
 		return executionersInstance;
 	}
 
-	public static Executioners getInstance(Config config) {
+	public static synchronized Executioners getInstance(Config config) {
 		if (executionersInstance == null) executionersInstance = new Executioners(config);
 		return executionersInstance;
 	}
