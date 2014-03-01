@@ -48,7 +48,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public static final int SLEEP_TIME = 250;
 	private static int threadNumber = 1;
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
-	public static final String RED_COLOR = "style=\"background-color: #ffc0c0\"";
+	public static final String REPORT_RED_COLOR = "style=\"background-color: #ffc0c0\"";
+	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
 	public static final String LINE = "--------------------";
 
 	String bigDataScriptThreadId;
@@ -212,36 +213,24 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Create a template
 		RTemplate rTemplate = new RTemplate(BigDataScript.class, REPORT_TEMPLATE, outFile);
 
-		// Add values
-		rTemplate.add("fileName", "" + programUnit.getFileName());
-		rTemplate.add("progName", "" + Gpr.baseName(programUnit.getFileName()));
+		//---
+		// Add summary table values
+		//---
+		rTemplate.add("fileName", programUnit.getFileName());
+		rTemplate.add("progName", Gpr.baseName(programUnit.getFileName()));
 		rTemplate.add("threadId", bigDataScriptThreadId);
-		rTemplate.add("runTime", "" + (timer != null ? timer.toString() : ""));
-		rTemplate.add("startTime", "" + (timer != null ? outFormat.format(timer.getStart()) : ""));
+		rTemplate.add("runTime", (timer != null ? timer.toString() : ""));
+		rTemplate.add("startTime", (timer != null ? outFormat.format(timer.getStart()) : ""));
 
 		// Exit code
 		rTemplate.add("exitValue", "" + exitValue);
-		if (exitValue > 0) rTemplate.add("exitColor", RED_COLOR);
+		if (exitValue > 0) rTemplate.add("exitColor", REPORT_RED_COLOR);
 		else rTemplate.add("exitColor", "");
 
-		// Scope
-		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.GLOBAL_VAR_ARGS_LIST).toString());
-		rTemplate.add("scope.TASK_OPTION_SYSTEM", getScope().getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).toString());
-		rTemplate.add("scope.TASK_OPTION_CPUS", getScope().getSymbol(ExpressionTask.TASK_OPTION_CPUS).toString());
-
-		// Scope symbols
-		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
-		ssyms.addAll(getScope().getSymbols());
-		Collections.sort(ssyms);
-		for (ScopeSymbol ss : ssyms)
-			if (!ss.getType().isFunction()) {
-				rTemplate.add("symType", ss.getType());
-				rTemplate.add("symName", ss.getName());
-				rTemplate.add("symValue", ss.getValue());
-			}
-
-		// Add task details
-		int taskNum = 0;
+		//---
+		// Add task details and time-line
+		//---
+		int taskNum = 1;
 		for (Task task : getTasks()) {
 			rTemplate.add("taskNum", "" + taskNum);
 			rTemplate.add("taskId", task.getId());
@@ -256,7 +245,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			else rTemplate.add("taskRetry", "");
 
 			if (!task.isDoneOk()) {
-				rTemplate.add("taskColor", RED_COLOR);
+				rTemplate.add("taskColor", REPORT_RED_COLOR);
 
 				String ch = task.checkOutputFiles();
 				if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", "\n" + LINE + "Check output files" + LINE + "\n" + ch + "\n");
@@ -303,6 +292,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				rTemplate.add("taskEndCsv", "");
 			}
 
+			if (start != null && end != null) rTemplate.add("taskElapsed", Timer.toDDHHMMSS(end.getTime() - start.getTime()));
+			else rTemplate.add("taskElapsed", "");
+
 			// Program & hint
 			rTemplate.add("taskProgram", task.getProgramTxt());
 			rTemplate.add("taskHint", task.getProgramHint());
@@ -337,7 +329,34 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			taskNum++;
 		}
 
+		// Number of tasks executed
+		rTemplate.add("taskCount", taskNum - 1);
+
+		// Timeline height
+		int timelineHeight = REPORT_TIMELINE_HEIGHT * (1 + taskNum);
+		rTemplate.add("timelineHeight", timelineHeight);
+
+		//---
+		// Show Scope
+		//---
+		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.GLOBAL_VAR_ARGS_LIST).toString());
+		rTemplate.add("scope.TASK_OPTION_SYSTEM", getScope().getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).toString());
+		rTemplate.add("scope.TASK_OPTION_CPUS", getScope().getSymbol(ExpressionTask.TASK_OPTION_CPUS).toString());
+
+		// Scope symbols
+		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
+		ssyms.addAll(getScope().getSymbols());
+		Collections.sort(ssyms);
+		for (ScopeSymbol ss : ssyms)
+			if (!ss.getType().isFunction()) {
+				rTemplate.add("symType", ss.getType());
+				rTemplate.add("symName", ss.getName());
+				rTemplate.add("symValue", ss.getValue());
+			}
+
+		//---
 		// Create output file
+		//---
 		rTemplate.createOuptut();
 	}
 

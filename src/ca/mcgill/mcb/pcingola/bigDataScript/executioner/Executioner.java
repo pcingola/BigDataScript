@@ -606,18 +606,21 @@ public abstract class Executioner extends Thread {
 		task.state(taskState);
 
 		// Task finished in error condition?
-		// May be we can look for additional information to asses the error
-		if (task.isStateError()) postMortemInfo(task);
+		if (task.isFailed()) {
 
-		// Task failed: Can we re-try?
-		if (task.isFailed() && !task.isCanFail() && task.canRetry()) {
-			// Retry task
-			Timer.showStdErr("Task failed, retrying ( " + task.getMaxFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (verbose ? "\n" : ", ") + task.toString(verbose));
+			// Can we re-try?
+			if (!task.isCanFail() && task.canRetry()) {
+				// Retry task
+				Timer.showStdErr("Task failed, retrying ( " + task.getMaxFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (verbose ? "\n" : ", ") + task.toString(verbose));
 
-			// Move task form 'taskDone' back to 'tasksToRun' queue 
-			task.reset(); // Prepare to re-run task
-			tasksDone.remove(task.getId());
-			tasksToRun.add(task);
+				// Move task form 'taskDone' back to 'tasksToRun' queue 
+				task.reset(); // Prepare to re-run task
+				tasksDone.remove(task.getId());
+				tasksToRun.add(task);
+			} else {
+				// May be we can look for additional information to asses the error
+				postMortemInfo(task);
+			}
 		}
 	}
 

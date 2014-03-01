@@ -13,6 +13,7 @@
 		<tr> <th> Program ID </th><td> {{threadId}} </td></tr>
 		<tr> <th> Start time </th><td> {{startTime}} </td></tr>
 		<tr> <th> Run time </th><td> {{runTime}} </td></tr>
+		<tr> <th> Tasks executed </th><td> {{taskCount}} </td></tr>
 		<tr> <th> Arguments* </th><td> {{scope.VAR_ARGS_LIST}} </td></tr>
 		<tr> <th> System* </th><td> {{scope.TASK_OPTION_SYSTEM}} </td></tr>
 		<tr> <th> Cpus* </th><td> {{scope.TASK_OPTION_CPUS}} </td></tr>
@@ -51,14 +52,14 @@
 	  chart.draw(dataTable, options);
 	}
 	</script>
-	<div id="bdsTimeline" style="width: 900px; height: 900px;"></div>
+	<div id="bdsTimeline" style="width: 900px; height: {{timelineHeight}}px;"></div>
 </div>
 
 <div class="container" id="taskDetails">
 	<h2 class="bs-featurette-title"> Task details </h2>
 	<table class="table table-striped">
-	<tr> <th> # </th><th> PID </th><th> Task Name </th><th> Finished OK </th><th> Exit Code </th><th> State </th><th> State: Dependencies </th><th> Retries </th><th> Resources </th><th> Time Start </th><th> Time End </th><th> Dependencies </th><th> Input files </th><th> Output files </th><th> Task program </th><th> Errors & StdOut / StdErr </th> </tr>
-	<tr> <td> {{taskNum}} </td><td> {{taskPid}} </td><td> {{taskName}} </td><td {{taskColor}}> {{taskOk}} </td><td> {{taskExitCode}} </td><td> {{taskState}} </td><td> {{taskDepState}} </td><td> {{taskRetry}} </td><td> {{taskResources}} </td><td> {{taskStart}} </td><td> {{taskEnd}} </td><td> {{taskDep}}  </td><td> {{taskInFiles}} </td><td> {{taskOutFiles}} </td><td> <pre> {{taskProgram}} </pre></td><td> <pre> {{taskErrMsg}} {{taskCheckOut}} {{taskStdout}} {{taskStderr}} {{taskPostMortemInfo}}</pre></td></tr>
+	<tr> <th> # </th><th> PID </th><th> Task Name </th><th> Finished OK </th><th> Exit Code </th><th> State </th><th> State: Dependencies </th><th> Retries </th><th> Resources </th><th> Time Start </th><th> Time End </th><th> Elapsed </th><th> Dependencies </th><th> Input files </th><th> Output files </th><th> Task program </th><th> Errors & StdOut / StdErr </th> </tr>
+	<tr> <td> {{taskNum}} </td><td> {{taskPid}} </td><td> {{taskName}} </td><td {{taskColor}}> {{taskOk}} </td><td> {{taskExitCode}} </td><td> {{taskState}} </td><td> {{taskDepState}} </td><td> {{taskRetry}} </td><td> {{taskResources}} </td><td> {{taskStart}} </td><td> {{taskEnd}} </td><td> {{taskElapsed}} </td><td> {{taskDep}}  </td><td> {{taskInFiles}} </td><td> {{taskOutFiles}} </td><td> <pre> {{taskProgram}} </pre></td><td> <pre> {{taskErrMsg}} {{taskCheckOut}} {{taskStdout}} {{taskStderr}} {{taskPostMortemInfo}}</pre></td></tr>
 	</table>
 </div>
 

@@ -26,11 +26,11 @@ public class Timer {
 		System.err.println(timer + "\t" + msg);
 	}
 
-	public static String toDDHHMMSS(long delta) {
-		long days = delta / (24 * 60 * 60 * 1000);
-		long hours = (delta % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000);
-		long mins = (delta % (60 * 60 * 1000)) / (60 * 1000);
-		long secs = (delta % (60 * 1000)) / (1000);
+	public static String toDDHHMMSS(long deltaMilliSecs) {
+		long days = deltaMilliSecs / (24 * 60 * 60 * 1000);
+		long hours = (deltaMilliSecs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000);
+		long mins = (deltaMilliSecs % (60 * 60 * 1000)) / (60 * 1000);
+		long secs = (deltaMilliSecs % (60 * 1000)) / (1000);
 
 		if (days > 0) {
 			String s = "";
