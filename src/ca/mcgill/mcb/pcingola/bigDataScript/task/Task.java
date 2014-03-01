@@ -60,6 +60,26 @@ public class Task implements BigDataScriptSerialize {
 			}
 
 		}
+
+		public boolean isError() {
+			return (this == TaskState.START_FAILED) //
+					|| (this == TaskState.ERROR) //
+					|| (this == TaskState.ERROR_TIMEOUT) //
+					|| (this == TaskState.KILLED) //
+			;
+		}
+
+		public boolean isFinished() {
+			return this == TaskState.FINISHED;
+		}
+
+		public boolean isRunning() {
+			return this == TaskState.RUNNING;
+		}
+
+		public boolean isStarted() {
+			return this == TaskState.STARTED;
+		}
 	}
 
 	public static final int MAX_HINT_LEN = 150;
@@ -409,7 +429,7 @@ public class Task implements BigDataScriptSerialize {
 	 * Has the task been started?
 	 * @return
 	 */
-	public synchronized boolean isStarted() {
+	public boolean isStarted() {
 		return taskState != TaskState.NONE;
 	}
 
@@ -417,24 +437,20 @@ public class Task implements BigDataScriptSerialize {
 	 * Is this task in any error or killed state?
 	 * @return
 	 */
-	public synchronized boolean isStateError() {
-		return (taskState == TaskState.START_FAILED) //
-				|| (taskState == TaskState.ERROR) //
-				|| (taskState == TaskState.ERROR_TIMEOUT) //
-				|| (taskState == TaskState.KILLED) //
-		;
+	public boolean isStateError() {
+		return taskState.isError();
 	}
 
-	public synchronized boolean isStateFinished() {
-		return taskState == TaskState.FINISHED;
+	public boolean isStateFinished() {
+		return taskState.isFinished();
 	}
 
-	public synchronized boolean isStateRunning() {
-		return taskState == TaskState.RUNNING;
+	public boolean isStateRunning() {
+		return taskState.isRunning();
 	}
 
 	public synchronized boolean isStateStarted() {
-		return taskState == TaskState.STARTED;
+		return taskState.isStarted();
 	}
 
 	/**

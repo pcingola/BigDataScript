@@ -278,8 +278,8 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	@Override
-	public synchronized void taskRunning(Task task) {
-		super.taskRunning(task);
+	protected synchronized void taskUpdateRunning(Task task) {
+		super.taskUpdateRunning(task);
 
 		// Cmd invoking 'qsub' finished execution => the task is in the cluster now
 		String id = task.getId();

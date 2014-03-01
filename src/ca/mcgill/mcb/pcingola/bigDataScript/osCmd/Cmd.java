@@ -92,7 +92,10 @@ public abstract class Cmd extends Thread {
 	 */
 	protected void execDone() {
 		stateDone();
-		if (executioner != null) executioner.taskFinished(task, null, exitValue); // Notify end of execution
+		if (task != null) {
+			task.setExitValue(exitValue);
+			if (executioner != null) executioner.taskFinished(task, null); // Notify end of execution
+		}
 	}
 
 	/**
@@ -103,7 +106,10 @@ public abstract class Cmd extends Thread {
 		exitValue = exitCode;
 		addError(e != null ? e.getMessage() : null);
 		if (debug && e != null) e.printStackTrace();
-		if (executioner != null) executioner.taskFinished(task, taskState, exitCode);
+		if (task != null) {
+			task.setExitValue(exitCode);
+			if (executioner != null) executioner.taskFinished(task, taskState);
+		}
 	}
 
 	/**
@@ -154,7 +160,10 @@ public abstract class Cmd extends Thread {
 		killCmd();
 
 		// Notify end of execution
-		if ((executioner != null) && (task != null)) executioner.taskFinished(task, TaskState.KILLED, Task.EXITCODE_KILLED);
+		if (task != null) {
+			task.setExitValue(Task.EXITCODE_KILLED);
+			if (executioner != null) executioner.taskFinished(task, TaskState.KILLED);
+		}
 
 		if (debug) Gpr.debug("Process was killed");
 	}

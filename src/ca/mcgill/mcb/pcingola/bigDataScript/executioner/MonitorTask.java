@@ -118,6 +118,8 @@ public class MonitorTask {
 
 		// Inform executioner that task has finished
 		Executioner executioner = execByTask.get(task);
-		executioner.taskFinished(task, taskState, exitVal);
+		task.setExitValue(exitVal);
+
+		executioner.taskFinished(task, taskState);
 	}
 }

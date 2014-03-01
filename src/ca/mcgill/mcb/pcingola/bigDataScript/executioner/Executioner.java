@@ -41,6 +41,7 @@ public abstract class Executioner extends Thread {
 	protected HashMap<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host 
 	protected HashMap<String, Task> tasksRunning; // Tasks running
 	protected HashMap<String, Task> tasksDone; // Tasks that fin
+	protected LinkedList<Tuple<Task, TaskState>> taskUpdateStates; // Tasks to be updated
 	protected HashMap<String, Cmd> cmdById;
 	protected Tail tail;
 	protected Config config;
@@ -57,6 +58,7 @@ public abstract class Executioner extends Thread {
 		tasksSelected = new HashMap<Task, Host>();
 		tasksRunning = new HashMap<String, Task>();
 		tasksDone = new HashMap<String, Task>();
+		taskUpdateStates = new LinkedList<Tuple<Task, TaskState>>();
 		tail = config.getTail();
 		taskLogger = config.getTaskLogger();
 		cmdById = new HashMap<String, Cmd>();
@@ -241,7 +243,8 @@ public abstract class Executioner extends Thread {
 
 		// Mark task as finished
 		// Note: This will also be invoked by Cmd, so it will be redundant)
-		taskFinished(task, TaskState.KILLED, Task.EXITCODE_KILLED);
+		task.setExitValue(Task.EXITCODE_KILLED);
+		taskFinished(task, TaskState.KILLED);
 	}
 
 	/**
@@ -278,9 +281,11 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
-	 * Perform reports and checks every now and then
+	 * Perform reports, checks and state updates
 	 */
-	protected void reportsAndChecks() {
+	protected void reportsChecksUpdates() {
+		taskUpdateStates();
+
 		// Check if tasks finished running
 		if (monitorTask != null) monitorTask.check();
 
@@ -379,7 +384,7 @@ public abstract class Executioner extends Thread {
 	protected boolean runExecutionerLoop() {
 		// Nothing to run?
 		if (!hasTaskToRun()) {
-			reportsAndChecks();
+			reportsChecksUpdates();
 			return false;
 		}
 
@@ -396,7 +401,7 @@ public abstract class Executioner extends Thread {
 				sleepMid();
 			}
 
-			reportsAndChecks();
+			reportsChecksUpdates();
 		}
 
 		return true;
@@ -406,6 +411,7 @@ public abstract class Executioner extends Thread {
 	 * Clean up after run loop
 	 */
 	protected void runExecutionerLoopAfter() {
+		reportsChecksUpdates(); // Make sure all tasks states are updated
 	}
 
 	/**
@@ -523,8 +529,10 @@ public abstract class Executioner extends Thread {
 
 		// Finish these tasks. Cannot be executed: failed due to resources issues.
 		if (finishTask != null) {
-			for (Task task : finishTask)
-				taskFinished(task, TaskState.START_FAILED, Task.EXITCODE_ERROR);
+			for (Task task : finishTask) {
+				task.setExitValue(Task.EXITCODE_ERROR);
+				taskFinished(task, TaskState.START_FAILED);
+			}
 			finishTask = null;
 		}
 
@@ -573,7 +581,31 @@ public abstract class Executioner extends Thread {
 	 * @param id
 	 * @return
 	 */
-	public synchronized void taskFinished(Task task, TaskState taskState, int exitValue) {
+	public synchronized void taskFinished(Task task, TaskState taskState) {
+		if (taskState == null) {
+			// Set task state. Infer form exit code if no state is available.
+			// Note: This is the last thing we do in order for wait() methods to be sure that task has finished and all data has finished updating.
+			// Set exit status 
+			taskState = TaskState.exitCode2taskState(task.getExitValue());
+		}
+
+		taskUpdateStates.add(new Tuple<Task, TaskState>(task, taskState));
+	}
+
+	/**
+	 * Move a task from 'tasksToRun' to 'tasksRunning'
+	 * @param task
+	 */
+	public synchronized void taskRunning(Task task) {
+		taskUpdateStates.add(new Tuple<Task, TaskState>(task, TaskState.RUNNING));
+
+	}
+
+	public synchronized void taskStarted(Task task) {
+		taskUpdateStates.add(new Tuple<Task, TaskState>(task, TaskState.STARTED));
+	}
+
+	protected synchronized void taskUpdateFinished(Task task, TaskState taskState) {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
 
 		String id = task.getId();
@@ -598,16 +630,11 @@ public abstract class Executioner extends Thread {
 		// Schedule removal of TMP files (if not logging)
 		if (!log) task.deleteOnExit();
 
-		// Set task state. Infer form exit code if no state is available.
-		// Note: This is the last thing we do in order for wait() methods to be sure that task has finished and all data has finished updating.
-		// Set exit status 
-		task.setExitValue(exitValue);
-		if (taskState == null) taskState = TaskState.exitCode2taskState(exitValue);
+		// Set task state
 		task.state(taskState);
 
 		// Task finished in error condition?
 		if (task.isFailed()) {
-
 			// Can we re-try?
 			if (!task.isCanFail() && task.canRetry()) {
 				// Retry task
@@ -624,12 +651,10 @@ public abstract class Executioner extends Thread {
 		}
 	}
 
-	/**
-	 * Move a task from 'tasksToRun' to 'tasksRunning'
-	 * @param task
-	 */
-	public synchronized void taskRunning(Task task) {
+	protected synchronized void taskUpdateRunning(Task task) {
 		if (debug) Timer.showStdErr("Task running '" + task.getId() + "'");
+
+		if (task.isDone()) return; // Already finished, nothing to do
 
 		// Change state
 		task.state(TaskState.RUNNING);
@@ -638,8 +663,14 @@ public abstract class Executioner extends Thread {
 		follow(task);
 	}
 
-	public synchronized void taskStarted(Task task) {
+	/**
+	 * Task has been started
+	 * @param task
+	 */
+	protected synchronized void taskUpdateStarted(Task task) {
 		if (debug) Timer.showStdErr("Task started '" + task.getId() + "'");
+
+		if (task.isStarted()) return; // Already started, nothing to do
 
 		// Move from 'tasksToRun' to 'tasksRunning'
 		tasksToRun.remove(task);
@@ -648,6 +679,25 @@ public abstract class Executioner extends Thread {
 
 		// Change state
 		task.state(TaskState.STARTED);
+	}
+
+	/**
+	 * Update task states
+	 */
+	protected synchronized void taskUpdateStates() {
+		if (taskUpdateStates.isEmpty()) return;
+
+		// Update each task sequentially, to avoid race conditions
+		for (Tuple<Task, TaskState> taskAndState : taskUpdateStates) {
+			Task task = taskAndState.first;
+			TaskState state = taskAndState.second;
+
+			if (state.isStarted()) taskUpdateStarted(task);
+			else if (state.isRunning()) taskUpdateRunning(task);
+			else taskUpdateFinished(task, state);
+		}
+
+		taskUpdateStates = new LinkedList<Tuple<Task, TaskState>>();
 	}
 
 	@Override
