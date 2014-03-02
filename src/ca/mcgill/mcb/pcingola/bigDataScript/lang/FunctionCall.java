@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
@@ -53,7 +54,8 @@ public class FunctionCall extends Expression {
 		}
 
 		// Run function body
-		functionDeclaration.runFunction(csThread);
+		RunState rstate = functionDeclaration.runFunction(csThread);
+		if (rstate == RunState.FATAL_ERROR) throw new RuntimeException("Fatal error");
 
 		// Get return value
 		Object retVal = csThread.getReturnValue();

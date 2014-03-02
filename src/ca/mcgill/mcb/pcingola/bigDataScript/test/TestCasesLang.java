@@ -250,4 +250,10 @@ public class TestCasesLang extends TestCasesBase {
 		compileOk("test/test42.bds");
 	}
 
+	@Test
+	public void test43() {
+		String errs = "ERROR [ file 'test/test43.bds', line 8 ] :	Cannot declare variable 'res' type 'void'";
+		compileErrors("test/test43.bds", errs);
+	}
+
 }

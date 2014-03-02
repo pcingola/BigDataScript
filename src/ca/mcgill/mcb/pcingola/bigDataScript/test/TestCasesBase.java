@@ -27,7 +27,7 @@ public class TestCasesBase extends TestCase {
 	void compileErrors(String fileName, String expectedErrors) {
 		BigDataScript bigDataScript = compileTest(fileName);
 		if (bigDataScript.getCompilerMessages().isEmpty()) fail("Expecting compilation errors in file '" + fileName + "', but none found!\n");
-		Assert.assertEquals(expectedErrors, bigDataScript.getCompilerMessages().toString());
+		Assert.assertEquals(expectedErrors.trim(), bigDataScript.getCompilerMessages().toString().trim());
 	}
 
 	/**

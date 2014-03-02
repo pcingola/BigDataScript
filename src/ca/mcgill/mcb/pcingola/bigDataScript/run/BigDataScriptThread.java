@@ -347,12 +347,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
 		ssyms.addAll(getScope().getSymbols());
 		Collections.sort(ssyms);
-		for (ScopeSymbol ss : ssyms)
-			if (!ss.getType().isFunction()) {
-				rTemplate.add("symType", ss.getType());
-				rTemplate.add("symName", ss.getName());
-				rTemplate.add("symValue", ss.getValue());
-			}
+
+		if (!ssyms.isEmpty()) {
+
+			for (ScopeSymbol ss : ssyms)
+				if (!ss.getType().isFunction()) {
+					rTemplate.add("symType", ss.getType());
+					rTemplate.add("symName", ss.getName());
+					rTemplate.add("symValue", ss.getValue());
+				}
+		} else {
+			rTemplate.add("symType", "");
+			rTemplate.add("symName", "");
+			rTemplate.add("symValue", "");
+		}
 
 		//---
 		// Create output file
@@ -384,6 +392,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @param bdsnode
 	 */
 	public void fatalError(BigDataScriptNode bdsnode, Throwable t) {
+		if (runState == RunState.FATAL_ERROR) return;
 		fatalError(bdsnode, t.getMessage());
 
 		// Show java stack trace
@@ -636,7 +645,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			return;
 		}
 
-		if (isVerbose()) System.err.println("Program execution finished (runState: '" + runState + "' )");
+		if (isVerbose()) System.err.println("Program execution finished (run state: '" + runState + "')");
 
 		// Implicit 'wait' statement at the end of the program
 		if (!isTasksDone()) System.err.println("Waiting for tasks to finish.");

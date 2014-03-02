@@ -71,6 +71,10 @@ public class VariableInit extends BigDataScriptNode {
 			Scope scope = csThread.getScope();
 			ScopeSymbol ssym = scope.getSymbol(varName);
 			Object value = expression.eval(csThread);
+
+			// Error running expression?
+			if (value == null) return RunState.FATAL_ERROR;
+
 			value = ssym.getType().cast(value);
 			ssym.setValue(value);
 		}

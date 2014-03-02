@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
@@ -206,7 +207,12 @@ public class Expression extends Statement {
 	 */
 	@Override
 	protected RunState runStep(BigDataScriptThread csThread) {
-		eval(csThread);
+		try {
+			eval(csThread);
+		} catch (Throwable t) {
+			if (Config.get().isDebug()) t.printStackTrace();
+			return RunState.FATAL_ERROR;
+		}
 		return RunState.OK;
 	}
 

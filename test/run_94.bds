@@ -1,0 +1,10 @@
+#!/usr/bin/env bds
+
+void fail() {
+	sys rm FAIL_zxzxzxzx
+}
+
+
+for( int i=0 ; i < 10 ; i++ ) {
+	fail()
+}

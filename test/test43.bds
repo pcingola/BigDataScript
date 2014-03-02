@@ -1,0 +1,8 @@
+#!/usr/bin/env bds
+
+void fail() {
+	print("FAIL!\n")
+}
+
+
+res := fail()

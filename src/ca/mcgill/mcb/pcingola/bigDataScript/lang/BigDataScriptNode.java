@@ -29,7 +29,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
-	public static boolean debug = true;
+	public static boolean debug = false;
 
 	protected BigDataScriptNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info

@@ -1,2 +1,22 @@
+#!/usr/bin/env bds
 
-task echo hi
+string f1() {
+	for( int i =0 ; i < 10 ; i++ ) {
+		h := fail()
+	}
+	return("hello")
+}
+
+string fail() {
+	for( int i =0 ; i < 10 ; i++ ) {
+		print("i = $i\n")
+		#if( 4 < 6 ) sys rm FAIL_zxzxzxzx
+		sys rm FAIL_zxzxzxzx
+	}
+	return("hi")
+}
+
+
+task echo TASK 1
+
+f1()

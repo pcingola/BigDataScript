@@ -124,12 +124,18 @@ public class VarDeclaration extends Statement {
 
 			// Already declared?
 			if (scope.hasSymbol(varName, true)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
+			else {
+				// Calculate implicit data type
+				if (implicit && type == null) type = vi.getExpression().returnType(scope);
 
-			// Calculate implicit data type
-			if (implicit && type == null) type = vi.getExpression().returnType(scope);
+				if (type != null && type.isVoid()) {
+					compilerMessages.add(this, "Cannot declare variable '" + varName + "' type 'void'", MessageType.ERROR);
+					type = null;
+				}
 
-			// Add variable to scope
-			if ((varName != null) && (type != null)) scope.add(new ScopeSymbol(varName, type));
+				// Add variable to scope
+				if ((varName != null) && (type != null)) scope.add(new ScopeSymbol(varName, type));
+			}
 		}
 	}
 }
