@@ -442,7 +442,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 		try {
 			if (csThread.shouldRun(this)) {
-				if (debug) Gpr.debug("Run: " + getFileName() + ", line " + getLineNum() + ": " + this);
+				// if (debug) Gpr.debug("Run: " + getFileName() + ", line " + getLineNum() + ": " + this);
 				rstate = runStep(csThread); // Run 
 			}
 		} catch (Throwable t) {
