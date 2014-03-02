@@ -7,6 +7,7 @@
 			overflow: auto;
 			word-wrap: normal;
 			white-space: pre;
+			background-color: #ff0000;
 		}
 	</style>    
 </head>
@@ -66,8 +67,8 @@
 <div class="container" id="taskDetails">
 	<h2 class="bs-featurette-title"> Task details </h2>
 	<table class="table table-striped">
-    <tr> <th> Task </th>            <th> Execution </th>            <th> Time </th> <th> Dependencies </th>     <th> Task program, Errors, StdOut / StdErr </th> </tr>
-    <tr> <td> <table class="table"> <tr> <th> Num </th> <td> {{taskNum}} </td> </tr> <tr> <th> Name </th> <td> {{taskName}} </td> </tr> <tr> <th> PID </th> <td> {{taskPid}} </td> </tr> </table>  </td> <td {{taskColor}}> <table class="table"> <tr> <th> OK </th> <td> {{taskOk}} </td>  </tr> <tr> <th> Exit Code </th> <td> {{taskExitCode}} </td>  </tr> <tr> <th> Retries </th> <td> {{taskRetry}} </td></tr> <tr> <th> State </th> <td> {{taskState}} </td> </tr> <tr> <th> Dep. </th> <td> {{taskDepState}} </td> </tr> <tr> <th> Cpus </th> <td>  {{taskCpus}} </td></tr> <tr> <th> Mem </th> <td> {{taskMem}} </td></tr> </table> </td> <td> <table class="table"> <tr> <th> Start </th> <td> {{taskStart}} </td> </tr> <tr> <th> End </th> <td> {{taskEnd}} </td> </tr> <tr> <th> Elapsed </th> <td> {{taskElapsed}} </td> </tr> <tr> <th> Timeout</th> <td> {{taskTimeout}} </td></tr> <tr> <th> Wall Timeout </th><td>  {{taskWallTimeout}} </td></tr> </table> </td> <td> <table class="table"> <tr> <th> Input files</th> <td> {{taskInFiles}} </td>  </tr> <tr> <th> Output files </th> <td> {{taskOutFiles}} </td> </tr> <tr> <th> Dependencies </th> <td> {{taskDep}} </td> </tr> </table> </td> <td> <pre> {{taskProgram}} </pre> <pre> {{taskErrMsg}} {{taskCheckOut}} {{taskStdout}} {{taskStderr}} {{taskPostMortemInfo}}</pre> </td> </tr>
+	<tr> <th> # </th>			<th> PID </th>			<th> Task Name </th>	<th> Finished OK </th>				<th> Exit Code </th>		<th> State </th>			<th> State: Dependencies </th>	<th> Retries </th>			<th> Resources </th>			<th> Time Start </th>		<th> Time End </th>		<th> Elapsed </th>			<th> Dependencies </th>	<th> Input files </th>		<th> Output files </th>		<th width="30%"> Task program </th>		<th> Errors & StdOut / StdErr </th> </tr>
+	<tr> <td> {{taskNum}} </td>	<td> {{taskPid}} </td>	<td> {{taskName}} </td>	<td {{taskColor}}> {{taskOk}} </td>	<td> {{taskExitCode}} </td>	<td> {{taskState}} </td>	<td> {{taskDepState}} </td>		<td> {{taskRetry}} </td>	<td> {{taskResources}} </td>	<td> {{taskStart}} </td>	<td> {{taskEnd}} </td>	<td> {{taskElapsed}} </td>	<td> {{taskDep}}  </td>	<td> {{taskInFiles}} </td>	<td> {{taskOutFiles}} </td>	<td width="30%"> {{taskProgram}} </td>	<td> <pre> {{taskErrMsg}} {{taskCheckOut}} {{taskStdout}} {{taskStderr}} {{taskPostMortemInfo}}</pre></td></tr>
 	</table>
 </div>
 

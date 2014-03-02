@@ -14,6 +14,7 @@ import java.util.Random;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.htmlTemplate.RTemplate;
@@ -324,7 +325,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskOutFiles", sboutf.toString());
 
 			// Resources
-			rTemplate.add("taskResources", (task.getResources() != null ? task.getResources().toStringMultiline() : ""));
+			if (task.getResources() != null) {
+				HostResources hr = task.getResources();
+				rTemplate.add("taskResources", hr.toStringMultiline());
+				rTemplate.add("taskTimeout", Timer.toDDHHMMSS(hr.getTimeout() * 1000));
+				rTemplate.add("taskWallTimeout", Timer.toDDHHMMSS(hr.getWallTimeout() * 1000));
+				rTemplate.add("taskCpus", (hr.getCpus() > 0 ? hr.getCpus() : ""));
+				rTemplate.add("taskMem", (hr.getMem() > 0 ? Gpr.toStringMem(hr.getMem()) : ""));
+			} else {
+				rTemplate.add("taskResources", "");
+				rTemplate.add("taskTimeout", "");
+				rTemplate.add("taskWallTimeout", "");
+				rTemplate.add("taskCpus", "");
+				rTemplate.add("taskMem", "");
+			}
 
 			taskNum++;
 		}
