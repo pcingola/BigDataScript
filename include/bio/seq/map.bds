@@ -112,9 +112,10 @@ string[] mapCallAnnotate(string referenceFasta, string fq1, string fq2, string g
 		rdbams = rmDup( bams )
 		rdbams.rmOnExit()
 	
-		# Callabla loci: Une BED per chromosome
+		# Callable loci: One BED per chromosome
 		beds := callableRegions(referenceFasta, rdbams )
 		beds.rmOnExit()
+		wait
 
 		# Split each BED to call multiple callers on each chromosome
 		string[] vcfsAll
