@@ -7,15 +7,16 @@
 #-------------------------------------------------------------------------------
 
 # Parameters
-readGroupId           := "ReadGroupId"
-libraryId             := "LibraryId"
-platform              := "illumina"
-sampleId              := "SampleId"
-readGroupString       := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
+readGroupId     := "ReadGroupId"
+libraryId       := "LibraryId"
+platform        := "illumina"
+sampleId        := "SampleId"
+readGroupString := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
 
 # Performance parameters
-cpusMapping           := 6                        # Number of CPUs to use in each mapping process
-mapSortMemory         := 4 * G                    # Memory used while sorting BAM file (samtools sort)
+cpusMapping     := 6        # Number of CPUs to use in each mapping process
+mapSortMemory   := 4 * G    # Memory used while sorting BAM file (samtools sort)
+minMapQ         := 1		# Minimum mapping quality filter (0 means no filter)
 
 #-------------------------------------------------------------------------------
 # Find all chromosome names (from BAM headers)
@@ -158,7 +159,7 @@ string mapSingle(string referenceFasta, string fq1, string fq2) {
 	bamBase := removeExtFastqa(fq1) 
 	bam := bamBase + ".bam"
 	print("Mapping:\t$fqs1\t$fqs2\t=>\t$bam\n")
-	task( bam <- [fq1, fq2] , cpus := cpusMapping ) sys bwa mem -R '$readGroupString' -t $cpusMapping $referenceFasta $fq1 $fq2 | grep -v "^@PG" | samtools view -S -u - | samtools sort -@ $cpus -m $mapSortMemory - $bamBase
+	task( bam <- [fq1, fq2] , cpus := cpusMapping ) sys bwa mem -R '$readGroupString' -t $cpusMapping $referenceFasta $fq1 $fq2 | grep -v "^@PG" | samtools view -S -q $minMapQ -u - | samtools sort -@ $cpus -m $mapSortMemory - $bamBase
 	return( bam )
 }
 
