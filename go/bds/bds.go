@@ -255,11 +255,12 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 	}
 
 	// Redirect all signals to channel (e.g. Ctrl-C)
-	osSignal := make(chan os.Signal, 1)
+	osSignal := make(chan os.Signal)
 
 	if taskLoggerFile != "" {
 		log.Printf("Capture signals")
-		signal.Notify(osSignal, os.Interrupt, os.Kill)
+		// signal.Notify(osSignal, os.Interrupt, os.Kill)
+		signal.Notify(osSignal)
 	} else {
 		// Set a new process group.
 		// Since we want to kill all child processes, we'll send a kill signal to this process group.
