@@ -53,7 +53,8 @@ const EXITCODE_ERROR = 1
 const EXITCODE_TIMEOUT = 2
 
 // Debug mode
-const DEBUG = false
+const DEBUG   = false
+const VERBOSE = true
 
 // Command indicatinf to remove file (taskLogger file)
 const CMD_REMOVE_FILE = "rm"
@@ -151,9 +152,6 @@ func bigDataScript() int {
 
 	// Execute command
 	exitCode := executeCommand("java", args, 0, "", "", "")
-
-	// // Kill all pending processes and remove stale files
-	// taskLoggerCleanUpAll(taskLoggerFile)
 
 	return exitCode
 }
@@ -258,7 +256,9 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 
 	// Redirect all signals to channel (e.g. Ctrl-C)
 	osSignal := make(chan os.Signal, 1)
+
 	if taskLoggerFile != "" {
+		log.Printf("Capture signals")
 		signal.Notify(osSignal, os.Interrupt, os.Kill)
 	} else {
 		// Set a new process group.
@@ -356,7 +356,7 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 
 	case <-osSignal:
 		kill = true
-		// fmt.Fprintf(os.Stderr, "bds: killed by OS signal!\n")
+		fmt.Fprintf(os.Stderr, "bds: OS signal: '%s'\n", osSignal)
 		exitStr = "Signal received"
 		if( DEBUG ) {
 			log.Printf("Debug: Os Signal!\n")
@@ -536,20 +536,20 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 		// Is it marked as running? Kill it
 		if running {
 			if cmd, ok := cmds[pid]; !ok {
-				if( DEBUG ) {
-					log.Printf("Debug: taskLoggerCleanUpAll. Killing PID '%s'\n", pid)
+				if( VERBOSE ) {
+					log.Printf("bds: killing PID '%s'\n", pid)
 				}
 				pidInt, _ := strconv.Atoi(pid)
 				killProcessGroup(pidInt) // No need to run a command, just kill local porcess group
 			} else if cmd == CMD_REMOVE_FILE {
 				// This is a file to be removed, not a command
-				if( DEBUG ) {
-					log.Printf("Debug: taskLoggerCleanUpAll. Deleting file '%s'\n", pid)
+				if( VERBOSE ) {
+					log.Printf("bds: deleting file '%s'\n", pid)
 				}
 				os.Remove(pid)
 			} else {
 				if( DEBUG ) {
-					log.Printf("Debug: taskLoggerCleanUpAll. Killing PID '%s' using command '%s'\n", pid, runCmds[cmd])
+					log.Printf("Killing PID '%s' using command '%s'\n", pid, runCmds[cmd])
 				}
 
 				// Create command to be executed
@@ -570,8 +570,8 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 	for cmd, args := range runCmds {
 		if len(cmd) > 0 {
 			// fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
-			if( DEBUG ) {
-				log.Printf("Debug: taskLoggerCleanUpAll. Running command '%s'\n", cmd)
+			if( VERBOSE ) {
+				log.Printf("bds: running command '%s'\n", cmd)
 			}
 			cmdExec := exec.Command(cmd)
 			cmdExec.Args = strings.Split(args, "\t")
