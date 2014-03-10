@@ -258,9 +258,7 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 	osSignal := make(chan os.Signal)
 
 	if taskLoggerFile != "" {
-		log.Printf("Capture signals")
-		// signal.Notify(osSignal, os.Interrupt, os.Kill)
-		signal.Notify(osSignal)
+		signal.Notify(osSignal) // Capture all signals
 	} else {
 		// Set a new process group.
 		// Since we want to kill all child processes, we'll send a kill signal to this process group.
@@ -355,12 +353,11 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 			log.Printf("Debug: Timeout!\n")
 		}
 
-	case <-osSignal:
+	case sig := <-osSignal:
 		kill = true
-		fmt.Fprintf(os.Stderr, "bds: OS signal: '%s'\n", osSignal)
 		exitStr = "Signal received"
-		if( DEBUG ) {
-			log.Printf("Debug: Os Signal!\n")
+		if( VERBOSE || DEBUG ) {
+			log.Printf("bds: Received OS signal '%s'\n", sig)
 		}
 	}
 
@@ -538,14 +535,14 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 		if running {
 			if cmd, ok := cmds[pid]; !ok {
 				if( VERBOSE ) {
-					log.Printf("bds: killing PID '%s'\n", pid)
+					log.Printf("bds: Killing PID '%s'\n", pid)
 				}
 				pidInt, _ := strconv.Atoi(pid)
 				killProcessGroup(pidInt) // No need to run a command, just kill local porcess group
 			} else if cmd == CMD_REMOVE_FILE {
 				// This is a file to be removed, not a command
 				if( VERBOSE ) {
-					log.Printf("bds: deleting file '%s'\n", pid)
+					log.Printf("bds: Deleting file '%s'\n", pid)
 				}
 				os.Remove(pid)
 			} else {
@@ -572,7 +569,7 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 		if len(cmd) > 0 {
 			// fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
 			if( VERBOSE ) {
-				log.Printf("bds: running command '%s'\n", cmd)
+				log.Printf("bds: Running command '%s'\n", cmd)
 			}
 			cmdExec := exec.Command(cmd)
 			cmdExec.Args = strings.Split(args, "\t")
