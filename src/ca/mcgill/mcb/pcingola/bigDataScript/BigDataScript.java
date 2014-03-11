@@ -63,9 +63,9 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2014-02-01";
+	public static final String BUILD = "2014-03-11";
 	public static final String REVISION = "";
-	public static final String VERSION_MAJOR = "0.95";
+	public static final String VERSION_MAJOR = "0.96";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
@@ -866,10 +866,10 @@ public class BigDataScript {
 		System.err.println("Usage: " + BigDataScript.class.getSimpleName() + " [options] file.bds");
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
-		System.err.println("  [-d | -debug]                  : Debug mode.");
+		System.err.println("  [-d | -debug  ]                : Debug mode.");
 		System.err.println("  -dryRun                        : Do not run any task, just show what would be run.");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
-		System.err.println("  [-l | -log]                    : Log all actions (do not delete tmp files).");
+		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files).");
 		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).");
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
