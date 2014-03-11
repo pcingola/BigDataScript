@@ -359,9 +359,10 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 
 		case sig := <-osSignal:
 			// Ignore some signals (e.g. "window changed")
-			if sig.String() != "window changed" {
+			sigStr := sig.String()
+			if sigStr != "window changed" && sigStr != "child exited" {
 				if( VERBOSE || DEBUG ) {
-					log.Printf("bds: Received OS signal '%s'\n", sig)
+					log.Printf("bds: Received OS signal '%s'\n", sigStr)
 				}
 
 				kill = true
