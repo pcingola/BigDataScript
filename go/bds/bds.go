@@ -342,22 +342,32 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 
 	// Wait until executions ends, timeout or OS signal
 	kill := false
-	select {
-	case exitStr = <-exitCode:
-		kill = false
+	run := true
+	for run {
+		select {
+		case exitStr = <-exitCode:
+			kill = false
+			run = false
 
-	case <-time.After(time.Duration(timeSecs) * time.Second):
-		kill = true
-		exitStr = "Time out"
-		if( DEBUG ) {
-			log.Printf("Debug: Timeout!\n")
-		}
+		case <-time.After(time.Duration(timeSecs) * time.Second):
+			run = false
+			kill = true
+			exitStr = "Time out"
+			if( DEBUG ) {
+				log.Printf("Debug: Timeout!\n")
+			}
 
-	case sig := <-osSignal:
-		kill = true
-		exitStr = "Signal received"
-		if( VERBOSE || DEBUG ) {
-			log.Printf("bds: Received OS signal '%s'\n", sig)
+		case sig := <-osSignal:
+			// Ignore some signals (e.g. "window changed")
+			if sig.String() != "window changed" {
+				if( VERBOSE || DEBUG ) {
+					log.Printf("bds: Received OS signal '%s'\n", sig)
+				}
+
+				kill = true
+				exitStr = "Signal received"
+				run = false
+			}
 		}
 	}
 
