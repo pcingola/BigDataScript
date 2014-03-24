@@ -661,4 +661,9 @@ public class TestCasesRun extends TestCasesBase {
 		runAndCheckExit("test/run_94.bds", 1);
 	}
 
+	@Test
+	public void test95() {
+		runAndCheck("test/run_95.bds", "ll", "[zero, one, two, three, four, 5]");
+	}
+
 }

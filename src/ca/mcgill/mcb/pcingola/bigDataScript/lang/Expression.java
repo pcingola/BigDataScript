@@ -77,7 +77,8 @@ public class Expression extends Statement {
 	 */
 	protected void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
 		if ((returnType != null) //
-				&& (!returnType.canCast(Type.INT) && !returnType.canCast(Type.REAL)) //
+				&& (!returnType.canCast(Type.INT) //
+				&& !returnType.canCast(Type.REAL)) //
 		) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
 	}
 

@@ -83,7 +83,6 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 		} else if (!right.getReturnType().canCast(left.getReturnType())) {
 			compilerMessages.add(this, "Cannot cast " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
 		}
-
 	}
 
 }

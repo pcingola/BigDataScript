@@ -3155,3 +3155,77 @@ null	-
 /home/pcingola/zero_length_file_out.txt	+	rm
 4976	-
 /home/pcingola/zero_length_file_out.txt	-
+7467	+	
+7467	-
+7478	+	
+7478	-
+7491	+	
+7491	-
+7512	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+7514	+	
+7512	-
+/home/pcingola/zero_length_file_out.txt	-
+7514	-
+7537	+	
+7537	-
+7567	+	
+7569	+	
+7567	-
+7569	-
+7636	+	
+7636	-
+7650	+	
+7650	-
+7663	+	
+7663	-
+null	-
+7689	+	
+7689	-
+7701	+	
+7701	-
+7713	+	
+7713	-
+7748	+	
+7748	-
+7761	+	
+7761	-
+7775	+	
+7775	-
+null	-
+7790	+	
+7790	-
+7802	+	
+7802	-
+7815	+	
+7815	-
+7826	+	
+7826	-
+7839	+	
+7839	-
+7850	+	
+7850	-
+7866	+	
+failOnce.out1	+	rm
+7866	-
+failOnce.out1	-
+7879	+	
+failOnce.out1	+	rm
+7879	-
+failOnce.out1	-
+7891	+	
+failOnce.out2	+	rm
+7891	-
+failOnce.out2	-
+7911	+	
+failOnce.out1	+	rm
+7911	-
+failOnce.out1	-
+7924	+	
+failOnce.out1	+	rm
+7924	-
+failOnce.out1	-
+7936	+	
+failOnce.out2	+	rm
+7936	-
+failOnce.out2	-
