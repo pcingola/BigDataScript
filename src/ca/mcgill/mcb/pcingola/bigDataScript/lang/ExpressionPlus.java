@@ -24,7 +24,7 @@ public class ExpressionPlus extends ExpressionMath {
 	/**
 	 * Evaluate an expression
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object eval(BigDataScriptThread csThread) {
 		if (isInt()) return left.evalInt(csThread) + right.evalInt(csThread);
