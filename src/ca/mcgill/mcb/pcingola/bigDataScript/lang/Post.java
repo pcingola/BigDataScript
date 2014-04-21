@@ -3,13 +3,12 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * Post increment / decrement operator
- * 
+ *
  * E.g. :  i++ or i--
- * 
+ *
  * @author pcingola
  */
 public class Post extends Pre {
@@ -23,12 +22,11 @@ public class Post extends Pre {
 	 */
 	@Override
 	public Object eval(BigDataScriptThread csThread) {
-		VarReference name = (VarReference) expr;
-		ScopeSymbol ssym = name.getScopeSymbol(csThread.getScope());
-		long value = (Long) ssym.getValue();
+		Reference ref = (Reference) expr;
+		long value = (Long) ref.eval(csThread);
 
-		if (operation == PrePostOperation.INCREMENT) ssym.setValue(value + 1);
-		else if (operation == PrePostOperation.DECREMENT) ssym.setValue(value - 1);
+		if (operation == PrePostOperation.INCREMENT) ref.setValue(csThread, value + 1);
+		else if (operation == PrePostOperation.DECREMENT) ref.setValue(csThread, value - 1);
 		else throw new RuntimeException("Unknown operator " + operation);
 
 		return value;
@@ -37,7 +35,7 @@ public class Post extends Pre {
 	@Override
 	protected void parse(ParseTree tree) {
 		BigDataScriptNode node = factory(tree, 0);
-		if ((node instanceof VarReference)) expr = (Expression) node;
+		if (node instanceof Reference) expr = (Expression) node;
 
 		operation = PrePostOperation.parse(tree.getChild(1).getText());
 	}

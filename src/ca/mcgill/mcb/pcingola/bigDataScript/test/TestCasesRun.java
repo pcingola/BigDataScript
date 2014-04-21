@@ -11,9 +11,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Test cases that require BDS code execution and check results
- * 
- * Note: These test cases requires that the BDS code is correctly parsed, compiled and executes. 
- * 
+ *
+ * Note: These test cases requires that the BDS code is correctly parsed, compiled and executes.
+ *
  * @author pcingola
  *
  */
@@ -670,4 +670,15 @@ public class TestCasesRun extends TestCasesBase {
 	public void test96() {
 		runAndCheck("test/run_96.bds", "l", "[one, two, three, four]");
 	}
+
+	@Test
+	public void test97() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("a", "file.txt");
+		expectedValues.put("b", "file.vcf");
+		expectedValues.put("c", "file.vcf");
+		expectedValues.put("d4", "file.txt.vcf");
+		runAndCheckMultiple("test/run_97.bds", expectedValues);
+	}
+
 }

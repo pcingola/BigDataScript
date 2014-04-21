@@ -1,0 +1,18 @@
+#!/usr/bin/env bds
+
+h := { 'hi' => 1 , 'bye' => 10, 'hi2' => 1 , 'bye2' => 10 }
+print("h = $h\n")
+
+h{'hi'}++
+h{'bye'}--
+++h{'hi2'}
+--h{'bye2'}
+
+print("h = $h\n")
+
+a := h{'hi'}
+b := h{'bye'}
+c := h{'hi2'}
+d := h{'bye2'}
+
+

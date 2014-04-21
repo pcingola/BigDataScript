@@ -11,12 +11,12 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A factory of nodes
- * 
+ *
  * @author pcingola
  */
 public class BigDataScriptNodeFactory {
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 	private static BigDataScriptNodeFactory bigDataScriptNodeFactory = new BigDataScriptNodeFactory();
 
 	boolean createFakeIds = false;
@@ -108,7 +108,7 @@ public class BigDataScriptNodeFactory {
 
 			// Is it a Type?
 			if (clazz == Type.class) {
-				if (tree == null) return new Type(); // No tree data? return a new FAKE node 
+				if (tree == null) return new Type(); // No tree data? return a new FAKE node
 
 				// No need to create a new node
 				String typeName = tree.getChild(0).getText().toUpperCase();
@@ -235,7 +235,7 @@ public class BigDataScriptNodeFactory {
 		int nodeId = -fakeNode.getId(); // Fake IDs are the negative values of real IDs
 		BigDataScriptNode realNode = BigDataScriptNodeFactory.get().getNode(nodeId);
 
-		// Check that node was replaced 
+		// Check that node was replaced
 		if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node :" + nodeId);
 
 		return realNode;

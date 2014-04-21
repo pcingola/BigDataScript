@@ -5,11 +5,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionAssignmentPlus extends ExpressionAssignmentBinary {
@@ -38,7 +37,6 @@ public class ExpressionAssignmentPlus extends ExpressionAssignmentBinary {
 			// OK, empty list can be assigned to any list
 		} else if (left.isList() && left.isList(right.getReturnType())) {
 			// OK, append
-			Gpr.debug("Can append: " + left.getReturnType() + "\t" + right.getReturnType());
 		} else if (left.isMap() && right.isMap() && right instanceof LiteralMapEmpty) {
 			// OK, empty map can be assigned to any map
 		} else if (!right.getReturnType().canCast(left.getReturnType())) {
