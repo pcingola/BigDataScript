@@ -53,7 +53,7 @@ const EXITCODE_ERROR = 1
 const EXITCODE_TIMEOUT = 2
 
 // Debug mode
-const DEBUG   = false
+const DEBUG = false
 const VERBOSE = true
 
 // Command indicatinf to remove file (taskLogger file)
@@ -73,19 +73,18 @@ var randTempFile uint32
 */
 func main() {
 	execName = discoverExecName()
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: execName:%s\n", execName)
 	}
-
 
 	// Are we requested to execute a command?
 	if len(os.Args) > 1 {
 		if os.Args[1] == "exec" {
 			// Execute 'exec' command and exit
 			exitCode := executeCommandArgs()
-			if( DEBUG ) {
+			if DEBUG {
 				log.Printf("Debug: Exit code:%d\n", exitCode)
-			}			
+			}
 			os.Exit(exitCode)
 		} else if os.Args[1] == "kill" {
 			// Kill a process group
@@ -119,13 +118,13 @@ func main() {
 /*
 	Invoke BigDataScript java program
 
-	WARNING: 
+	WARNING:
 		It is assumed that BigDataScript.jar is in the same executable binary as 'bds'
 
-		This is actually a nice hack used to distribute only one file. Since JAR files 
-		are actually ZIP files and ZIP files are indexed from the end of the file, you can 
-		append the JAR to the go binary (cat binary jar > new_binary) and you encapsulate 
-		both in the same file. 
+		This is actually a nice hack used to distribute only one file. Since JAR files
+		are actually ZIP files and ZIP files are indexed from the end of the file, you can
+		append the JAR to the go binary (cat binary jar > new_binary) and you encapsulate
+		both in the same file.
 
 		Idea and implementation of this hack: Hernan Gonzalez
 */
@@ -159,10 +158,10 @@ func bigDataScript() int {
 /*
   Returns absolute path of executing file.
   WARNING: this must be called before
-  changing the current directory 
+  changing the current directory
 */
 func discoverExecName() string {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Print("Debug: discoverExecName\n")
 	}
 
@@ -199,7 +198,7 @@ func discoverExecName() string {
 	Redirect stdout and stderr to files
 */
 func executeCommandArgs() int {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Print("Debug: executeCommandArgs\n")
 	}
 
@@ -250,7 +249,7 @@ func executeCommandArgs() int {
 	Timeout after timeout seconds (unless time is zero)
 */
 func executeCommand(command string, args []string, timeSecs int, outFile, errFile, exitFile string) int {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: executeCommand %s\n", command)
 	}
 
@@ -266,9 +265,9 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 		// fmt.Fprintf(os.Stderr, "bds: setting new process group\n")
 		if err := syscall.Setpgid(0, 0); err != nil {
 			// During an ssh remote execution we will no be albe to do this.
-			// In this case, we assume that the SSH daemon will catch the sinals 
+			// In this case, we assume that the SSH daemon will catch the sinals
 			// and kill al child processes.
-			if( DEBUG ) {
+			if DEBUG {
 				log.Printf("Error redirecting signals: %s", err)
 			}
 		}
@@ -325,7 +324,7 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 	Execute a command enforcing a timeout and writing exit status to 'exitFile'
 */
 func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSignal chan os.Signal) int {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: executeCommandTimeout\n")
 	}
 
@@ -353,7 +352,7 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 			run = false
 			kill = true
 			exitStr = "Time out"
-			if( DEBUG ) {
+			if DEBUG {
 				log.Printf("Debug: Timeout!\n")
 			}
 
@@ -361,7 +360,7 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 			// Ignore some signals (e.g. "window changed")
 			sigStr := sig.String()
 			if sigStr != "window changed" && sigStr != "child exited" {
-				if( VERBOSE || DEBUG ) {
+				if VERBOSE || DEBUG {
 					log.Printf("bds: Received OS signal '%s'\n", sigStr)
 				}
 
@@ -410,7 +409,7 @@ func executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSigna
 	Execute a command and writing exit status to 'exitCode'
 */
 func execute(cmd *exec.Cmd, exitCode chan string) {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: execute\n")
 	}
 
@@ -432,7 +431,7 @@ func fileExists(name string) bool {
 // Loads configuration as map, expects key=val syntax.
 // Blank lines, and lines beggining with # are ignored.
 func LoadConfig(filename string, dest map[string]string) {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: LoadConfig(%s)\n", filename)
 	}
 
@@ -486,7 +485,7 @@ func LoadConfig(filename string, dest map[string]string) {
 	must be killed.
 */
 func taskLoggerCleanUpAll(taskLoggerFile string) {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: taskLoggerCleanUpAll\n")
 	}
 
@@ -511,7 +510,7 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 	defer file.Close() // Make sure the file is deleted
 
 	// Read line by line
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: taskLoggerCleanUpAll. Parsing process pid file '%s'\n", taskLoggerFile)
 	}
 	reader := bufio.NewReader(file)
@@ -523,7 +522,7 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 
 		pid := recs[0]
 		addDel := recs[1]
-		if( DEBUG ) {
+		if DEBUG {
 			log.Printf("Debug: taskLoggerCleanUpAll. \t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
 		}
 
@@ -534,7 +533,7 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 			pids[pid] = true
 			if len(recs) > 2 && len(recs[2]) > 0 {
 				cmds[pid] = recs[2]
-			} 
+			}
 		}
 	}
 
@@ -545,19 +544,19 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 		// Is it marked as running? Kill it
 		if running {
 			if cmd, ok := cmds[pid]; !ok {
-				if( VERBOSE ) {
+				if VERBOSE {
 					log.Printf("bds: Killing PID '%s'\n", pid)
 				}
 				pidInt, _ := strconv.Atoi(pid)
 				killProcessGroup(pidInt) // No need to run a command, just kill local porcess group
 			} else if cmd == CMD_REMOVE_FILE {
 				// This is a file to be removed, not a command
-				if( VERBOSE ) {
+				if VERBOSE {
 					log.Printf("bds: Deleting file '%s'\n", pid)
 				}
 				os.Remove(pid)
 			} else {
-				if( DEBUG ) {
+				if DEBUG {
 					log.Printf("Killing PID '%s' using command '%s'\n", pid, runCmds[cmd])
 				}
 
@@ -569,7 +568,7 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 				}
 			}
 		} else {
-			if( DEBUG ) {
+			if DEBUG {
 				log.Printf("Debug: taskLoggerCleanUpAll. Not killing PID '%s' (finishde running)\n", pid)
 			}
 		}
@@ -579,7 +578,7 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 	for cmd, args := range runCmds {
 		if len(cmd) > 0 {
 			// fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
-			if( VERBOSE ) {
+			if VERBOSE {
 				log.Printf("bds: Running command '%s'\n", cmd)
 			}
 			cmdExec := exec.Command(cmd)
@@ -596,7 +595,7 @@ func taskLoggerCleanUpAll(taskLoggerFile string) {
 	Kill a process group
 */
 func killProcessGroup(pid int) {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: killProcessGroup( %d )\n", pid)
 	}
 
@@ -655,7 +654,7 @@ func readLine(reader *bufio.Reader) (line string, err error) {
 // Otherwise, if src implements the WriterTo interface,
 // the copy is implemented by calling src.WriteTo(dst).
 func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error) {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: tee\n")
 	}
 
@@ -714,7 +713,7 @@ func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error
 // to find the name of the file.  It is the caller's responsibility to
 // remove the file when no longer needed.
 func tempFile(prefix string) (name string, err error) {
-	if( DEBUG ) {
+	if DEBUG {
 		log.Printf("Debug: tempFile\n")
 	}
 
