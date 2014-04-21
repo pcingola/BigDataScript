@@ -671,4 +671,26 @@ public class TestCasesRun extends TestCasesBase {
 		runAndCheck("test/run_96.bds", "l", "[one, two, three, four]");
 	}
 
+	@Test
+	public void test97() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("h1", "1");
+		expectedValues.put("h2", "3");
+		expectedValues.put("h3", "2");
+		expectedValues.put("h4", "2");
+		expectedValues.put("h5", "1");
+		runAndCheckMultiple("test/run_97.bds", expectedValues);
+	}
+
+	@Test
+	public void test98() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("h1", "1");
+		expectedValues.put("h2", "3");
+		expectedValues.put("h3", "2");
+		expectedValues.put("h4", "2");
+		expectedValues.put("h5", "1");
+		runAndCheckMultiple("test/run_98.bds", expectedValues);
+	}
+
 }

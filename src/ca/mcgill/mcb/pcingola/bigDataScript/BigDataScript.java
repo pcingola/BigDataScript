@@ -53,7 +53,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * BigDataScript command line parser
- * 
+ *
  * @author pcingola
  */
 public class BigDataScript {
@@ -63,8 +63,8 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2014-03-11";
-	public static final String REVISION = "";
+	public static final String BUILD = "2014-04-21";
+	public static final String REVISION = "a";
 	public static final String VERSION_MAJOR = "0.96";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -81,7 +81,7 @@ public class BigDataScript {
 	String programFileName; // Program file name
 	String pidFile; // File to store PIDs
 	String system; // System type
-	String queue; // Queu name
+	String queue; // Queue name
 	BigDataScriptAction bigDataScriptAction;
 	Config config;
 	ProgramUnit programUnit; // Program (parsed nodes)
@@ -158,7 +158,7 @@ public class BigDataScript {
 
 	/**
 	 * Main
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -229,7 +229,7 @@ public class BigDataScript {
 		if (debug) System.out.println("Loading file: '" + programFileName + "'");
 
 		//---
-		// Convert to AST 
+		// Convert to AST
 		//---
 		if (debug) System.out.println("Creating AST.");
 		CompilerMessages.reset();
@@ -254,7 +254,7 @@ public class BigDataScript {
 		if (!CompilerMessages.get().isEmpty()) return false;
 
 		//---
-		// Convert to BigDataScriptNodes 
+		// Convert to BigDataScriptNodes
 		//---
 		if (debug) System.out.println("Creating BigDataScript tree.");
 		CompilerMessages.reset();
@@ -347,48 +347,48 @@ public class BigDataScript {
 
 	/**
 	 * Set command line arguments as global variables
-	 * 
+	 *
 	 * How it works: - Program is executes as something like:
-	 * 
+	 *
 	 * java -jar BigDataScript.jar [options] programFile.bds [programOptions]
-	 * 
+	 *
 	 * - Any command line argument AFTER "programFile.bds" is considered a
 	 * command line argument for the BigDataScript program. E.g.
-	 * 
+	 *
 	 * java -jar BigDataScript.jar -v program.bds -file myFile.txt -verbose -num
 	 * 7
-	 * 
+	 *
 	 * So our program "program.bds" has command line options: -file myFile.txt
 	 * -verbose -num 7 (notice that "-v" is a command line option for
 	 * loudScript.jar and not for "program.bds")
-	 * 
+	 *
 	 * - We look for variables in ProgramUnit that match the name of these
 	 * command line arguments
-	 * 
+	 *
 	 * - Then we add those values to the variable initialization. Thus
 	 * overriding any initialization values provided in the program. E.g.
-	 * 
+	 *
 	 * Our program has the following variable declarations: string file =
 	 * "default_file.txt" int num = 3 bool verbose = false
-	 * 
+	 *
 	 * We execute the program: java -jar BigDataScript.jar -v program.bds -file
 	 * myFile.txt -verbose -num 7
-	 * 
+	 *
 	 * The variable declarations are replaced as follows: string file =
 	 * "myFile.txt" int num = 7 bool verbose = true
-	 * 
+	 *
 	 * - Note: Only primitive types are supported (i.e.: string, bool, int &
 	 * real)
-	 * 
+	 *
 	 * - Note: Unmatched variables names will be silently ignored (same for
 	 * variables that match, but are non-primitive)
-	 * 
+	 *
 	 * - Note: If a variable is matched, is primitive, but cannot be converted.
 	 * An error is thrown. E.g.: Program: int num = 1
-	 * 
+	 *
 	 * Command line: java -jar BigDataScript.jar program.bds -num "hello" <-
 	 * This is an error because 'num' is an int
-	 * 
+	 *
 	 * - Note: Unprocessed arguments will be available to the program as an
 	 * 'args' list
 	 */
@@ -461,10 +461,10 @@ public class BigDataScript {
 
 	/**
 	 * Add or replace initialization statement in this VarInit
-	 * 
+	 *
 	 * Note: We create a Literal node (of the appropriate type) and add it to
 	 * "varInit.expression"
-	 * 
+	 *
 	 * @param varType
 	 *            : Variable type
 	 * @param varInit
@@ -497,10 +497,10 @@ public class BigDataScript {
 
 	/**
 	 * Add or replace initialization statement in this VarInit
-	 * 
+	 *
 	 * Note: We create a Literal node (of the appropriate type) and add it to
 	 * "varInit.expression"
-	 * 
+	 *
 	 * @param varType
 	 *            : Variable type
 	 * @param varInit
@@ -528,7 +528,7 @@ public class BigDataScript {
 					if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) valBool = true;
 					else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) valBool = false;
 					else usedVal = false; // Not any valid value? => This
-											// argument is not used
+					// argument is not used
 				}
 
 				lit.setValue(valBool);
@@ -661,7 +661,7 @@ public class BigDataScript {
 
 	/**
 	 * Parse command line arguments
-	 * 
+	 *
 	 * @param args
 	 */
 	public void parse(String[] args) {

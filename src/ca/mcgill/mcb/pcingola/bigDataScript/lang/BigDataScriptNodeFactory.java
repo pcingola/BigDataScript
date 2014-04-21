@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class BigDataScriptNodeFactory {
 
-	public static boolean debug = true;
+	public static boolean debug = false;
 	private static BigDataScriptNodeFactory bigDataScriptNodeFactory = new BigDataScriptNodeFactory();
 
 	boolean createFakeIds = false;

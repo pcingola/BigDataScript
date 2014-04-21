@@ -1,7 +1,10 @@
-#!/usr/bin/env bds
 
-h := { 'hi' => 1 }
+// Test STDOUT capture
 
-h{'hi'}++
-++h{'hi'}
+string tid = task echo Hi
+print("Task ID: '$tid'\n")
+
+wait
+
+string out = tid.stdout()
 

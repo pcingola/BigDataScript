@@ -1,4 +1,4 @@
-// Generated from BigDataScript.g4 by ANTLR 4.1
+// Generated from BigDataScript.g4 by ANTLR 4.2.2
 package ca.mcgill.mcb.pcingola.bigDataScript.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -27,17 +27,16 @@ public class BigDataScriptParser extends Parser {
 		STRING_LITERAL=66, STRING_LITERAL_SINGLE=67, SYS_LITERAL=68, TASK_LITERAL=69, 
 		COMMENT=70, COMMENT_LINE=71, COMMENT_LINE_HASH=72, ID=73, WS=74;
 	public static final String[] tokenNames = {
-		"<INVALID>", "'&'", "'*'", "'['", "'<'", "'--'", "'continue'", "'!='", 
-		"'kill'", "'<='", "'}'", "'%'", "'*='", "'bool'", "')'", "'='", "'|='", 
-		"'|'", "'!'", "'real'", "']'", "'-='", "','", "'\n'", "'-'", "'while'", 
-		"'exit'", "':'", "'('", "'if'", "'&='", "'int'", "'?'", "'void'", "'{'", 
-		"'wait'", "'break'", "'+='", "'else'", "'<-'", "'++'", "'checkpoint'", 
-		"'error'", "'^'", "'.'", "'=>'", "'+'", "'for'", "'return'", "'warning'", 
-		"';'", "'&&'", "'include'", "'||'", "'>'", "':='", "'string'", "'/='", 
-		"'/'", "'=='", "'~'", "'>='", "'task'", "BOOL_LITERAL", "INT_LITERAL", 
-		"REAL_LITERAL", "STRING_LITERAL", "STRING_LITERAL_SINGLE", "SYS_LITERAL", 
-		"TASK_LITERAL", "COMMENT", "COMMENT_LINE", "COMMENT_LINE_HASH", "ID", 
-		"WS"
+		"<INVALID>", "'+='", "'!='", "'while'", "'{'", "'void'", "'&&'", "'='", 
+		"'^'", "'for'", "'error'", "'|='", "'int'", "'include'", "'task'", "'('", 
+		"'-='", "','", "'/='", "'kill'", "'<-'", "'\n'", "'exit'", "'>='", "'<'", 
+		"'++'", "']'", "'~'", "'wait'", "'+'", "'*='", "'/'", "'continue'", "'&='", 
+		"'return'", "'||'", "';'", "'}'", "'if'", "'?'", "'warning'", "':='", 
+		"'<='", "'break'", "'&'", "'*'", "'.'", "':'", "'['", "'=='", "'--'", 
+		"'|'", "'>'", "'bool'", "'=>'", "'!'", "'string'", "'checkpoint'", "'%'", 
+		"'else'", "')'", "'-'", "'real'", "BOOL_LITERAL", "INT_LITERAL", "REAL_LITERAL", 
+		"STRING_LITERAL", "STRING_LITERAL_SINGLE", "SYS_LITERAL", "TASK_LITERAL", 
+		"COMMENT", "COMMENT_LINE", "COMMENT_LINE_HASH", "ID", "WS"
 	};
 	public static final int
 		RULE_programUnit = 0, RULE_eol = 1, RULE_typeList = 2, RULE_type = 3, 
@@ -60,6 +59,9 @@ public class BigDataScriptParser extends Parser {
 	public String[] getRuleNames() { return ruleNames; }
 
 	@Override
+	public String getSerializedATN() { return _serializedATN; }
+
+	@Override
 	public ATN getATN() { return _ATN; }
 
 	public BigDataScriptParser(TokenStream input) {
@@ -67,14 +69,14 @@ public class BigDataScriptParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class ProgramUnitContext extends ParserRuleContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
 		public EolContext eol(int i) {
 			return getRuleContext(EolContext.class,i);
 		}
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
+		}
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
 		}
 		public List<EolContext> eol() {
 			return getRuleContexts(EolContext.class);
@@ -109,7 +111,7 @@ public class BigDataScriptParser extends Parser {
 			setState(31);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,0,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
@@ -133,7 +135,7 @@ public class BigDataScriptParser extends Parser {
 				setState(37); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 5) | (1L << 6) | (1L << 8) | (1L << 13) | (1L << 18) | (1L << 19) | (1L << 23) | (1L << 24) | (1L << 25) | (1L << 26) | (1L << 28) | (1L << 29) | (1L << 31) | (1L << 33) | (1L << 34) | (1L << 35) | (1L << 36) | (1L << 40) | (1L << 41) | (1L << 42) | (1L << 46) | (1L << 47) | (1L << 48) | (1L << 49) | (1L << 50) | (1L << 52) | (1L << 56) | (1L << 60) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 9) | (1L << 10) | (1L << 12) | (1L << 13) | (1L << 14) | (1L << 15) | (1L << 19) | (1L << 21) | (1L << 22) | (1L << 25) | (1L << 27) | (1L << 28) | (1L << 29) | (1L << 32) | (1L << 34) | (1L << 36) | (1L << 38) | (1L << 40) | (1L << 43) | (1L << 48) | (1L << 50) | (1L << 53) | (1L << 55) | (1L << 56) | (1L << 57) | (1L << 61) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -177,7 +179,7 @@ public class BigDataScriptParser extends Parser {
 			{
 			setState(40); 
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
+			_alt = 1;
 			do {
 				switch (_alt) {
 				case 1:
@@ -185,7 +187,7 @@ public class BigDataScriptParser extends Parser {
 					{
 					setState(39);
 					_la = _input.LA(1);
-					if ( !(_la==23 || _la==50) ) {
+					if ( !(_la==21 || _la==36) ) {
 					_errHandler.recoverInline(this);
 					}
 					consume();
@@ -198,7 +200,7 @@ public class BigDataScriptParser extends Parser {
 				setState(42); 
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
-			} while ( _alt!=2 && _alt!=-1 );
+			} while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER );
 			}
 		}
 		catch (RecognitionException re) {
@@ -249,10 +251,10 @@ public class BigDataScriptParser extends Parser {
 			setState(49);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==22) {
+			while (_la==17) {
 				{
 				{
-				setState(45); match(22);
+				setState(45); match(17);
 				setState(46); type(0);
 				}
 				}
@@ -274,18 +276,49 @@ public class BigDataScriptParser extends Parser {
 	}
 
 	public static class TypeContext extends ParserRuleContext {
-		public int _p;
-		public TypeContext(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
-		public TypeContext(ParserRuleContext parent, int invokingState, int _p) {
+		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
-			this._p = _p;
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
 	 
 		public TypeContext() { }
 		public void copyFrom(TypeContext ctx) {
 			super.copyFrom(ctx);
-			this._p = ctx._p;
+		}
+	}
+	public static class TypePrimitiveStringContext extends TypeContext {
+		public TypePrimitiveStringContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveString(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveString(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveString(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class TypeArrayContext extends TypeContext {
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public TypeArrayContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypeArray(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeArray(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeArray(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	public static class TypePrimitiveVoidContext extends TypeContext {
@@ -326,38 +359,19 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class TypeArrayContext extends TypeContext {
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
-		}
-		public TypeArrayContext(TypeContext ctx) { copyFrom(ctx); }
+	public static class TypePrimitiveRealContext extends TypeContext {
+		public TypePrimitiveRealContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypeArray(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveReal(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeArray(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveReal(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeArray(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class TypePrimitiveIntContext extends TypeContext {
-		public TypePrimitiveIntContext(TypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveInt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveInt(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveInt(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveReal(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -377,75 +391,63 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class TypePrimitiveStringContext extends TypeContext {
-		public TypePrimitiveStringContext(TypeContext ctx) { copyFrom(ctx); }
+	public static class TypePrimitiveIntContext extends TypeContext {
+		public TypePrimitiveIntContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveString(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveInt(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveString(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveInt(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveString(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class TypePrimitiveRealContext extends TypeContext {
-		public TypePrimitiveRealContext(TypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveReal(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveReal(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveReal(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveInt(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final TypeContext type(int _p) throws RecognitionException {
+	public final TypeContext type() throws RecognitionException {
+		return type(0);
+	}
+
+	private TypeContext type(int _p) throws RecognitionException {
 		ParserRuleContext _parentctx = _ctx;
 		int _parentState = getState();
-		TypeContext _localctx = new TypeContext(_ctx, _parentState, _p);
+		TypeContext _localctx = new TypeContext(_ctx, _parentState);
 		TypeContext _prevctx = _localctx;
 		int _startState = 6;
-		enterRecursionRule(_localctx, RULE_type);
+		enterRecursionRule(_localctx, 6, RULE_type, _p);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(58);
 			switch (_input.LA(1)) {
-			case 13:
+			case 53:
 				{
 				_localctx = new TypePrimitiveBoolContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(53); match(13);
+				setState(53); match(53);
 				}
 				break;
-			case 31:
+			case 12:
 				{
 				_localctx = new TypePrimitiveIntContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(54); match(31);
+				setState(54); match(12);
 				}
 				break;
-			case 19:
+			case 62:
 				{
 				_localctx = new TypePrimitiveRealContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(55); match(19);
+				setState(55); match(62);
 				}
 				break;
 			case 56:
@@ -456,12 +458,12 @@ public class BigDataScriptParser extends Parser {
 				setState(56); match(56);
 				}
 				break;
-			case 33:
+			case 5:
 				{
 				_localctx = new TypePrimitiveVoidContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(57); match(33);
+				setState(57); match(5);
 				}
 				break;
 			default:
@@ -471,7 +473,7 @@ public class BigDataScriptParser extends Parser {
 			setState(73);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
@@ -480,35 +482,35 @@ public class BigDataScriptParser extends Parser {
 					switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
 					case 1:
 						{
-						_localctx = new TypeArrayContext(new TypeContext(_parentctx, _parentState, _p));
+						_localctx = new TypeArrayContext(new TypeContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_type);
 						setState(60);
-						if (!(3 >= _localctx._p)) throw new FailedPredicateException(this, "3 >= $_p");
-						setState(61); match(3);
-						setState(62); match(20);
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+						setState(61); match(48);
+						setState(62); match(26);
 						}
 						break;
 
 					case 2:
 						{
-						_localctx = new TypeMapContext(new TypeContext(_parentctx, _parentState, _p));
+						_localctx = new TypeMapContext(new TypeContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_type);
 						setState(63);
-						if (!(2 >= _localctx._p)) throw new FailedPredicateException(this, "2 >= $_p");
-						setState(64); match(34);
-						setState(65); match(10);
+						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+						setState(64); match(4);
+						setState(65); match(37);
 						}
 						break;
 
 					case 3:
 						{
-						_localctx = new TypeMapContext(new TypeContext(_parentctx, _parentState, _p));
+						_localctx = new TypeMapContext(new TypeContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_type);
 						setState(66);
-						if (!(1 >= _localctx._p)) throw new FailedPredicateException(this, "1 >= $_p");
-						setState(67); match(34);
+						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						setState(67); match(4);
 						setState(68); type(0);
-						setState(69); match(10);
+						setState(69); match(37);
 						}
 						break;
 					}
@@ -570,11 +572,11 @@ public class BigDataScriptParser extends Parser {
 			int _alt;
 			setState(86);
 			switch (_input.LA(1)) {
-			case 13:
-			case 19:
-			case 31:
-			case 33:
+			case 5:
+			case 12:
+			case 53:
 			case 56:
+			case 62:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(76); type(0);
@@ -582,11 +584,11 @@ public class BigDataScriptParser extends Parser {
 				setState(82);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(78); match(22);
+						setState(78); match(17);
 						setState(79); variableInit();
 						}
 						} 
@@ -653,7 +655,7 @@ public class BigDataScriptParser extends Parser {
 			switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
 			case 1:
 				{
-				setState(89); match(15);
+				setState(89); match(7);
 				setState(90); expression(0);
 				}
 				break;
@@ -702,7 +704,7 @@ public class BigDataScriptParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(93); match(ID);
-			setState(94); match(55);
+			setState(94); match(41);
 			setState(95); expression(0);
 			}
 		}
@@ -718,8 +720,8 @@ public class BigDataScriptParser extends Parser {
 	}
 
 	public static class IncludeFileContext extends ParserRuleContext {
-		public TerminalNode STRING_LITERAL() { return getToken(BigDataScriptParser.STRING_LITERAL, 0); }
 		public TerminalNode STRING_LITERAL_SINGLE() { return getToken(BigDataScriptParser.STRING_LITERAL_SINGLE, 0); }
+		public TerminalNode STRING_LITERAL() { return getToken(BigDataScriptParser.STRING_LITERAL, 0); }
 		public EolContext eol() {
 			return getRuleContext(EolContext.class,0);
 		}
@@ -749,7 +751,7 @@ public class BigDataScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(97); match(52);
+			setState(97); match(13);
 			setState(98);
 			_la = _input.LA(1);
 			if ( !(_la==STRING_LITERAL || _la==STRING_LITERAL_SINGLE) ) {
@@ -781,28 +783,28 @@ public class BigDataScriptParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class StatementIncludeContext extends StatementContext {
+	public static class CheckpointContext extends StatementContext {
 		public EolContext eol(int i) {
 			return getRuleContext(EolContext.class,i);
 		}
-		public IncludeFileContext includeFile() {
-			return getRuleContext(IncludeFileContext.class,0);
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
 		public List<EolContext> eol() {
 			return getRuleContexts(EolContext.class);
 		}
-		public StatementIncludeContext(StatementContext ctx) { copyFrom(ctx); }
+		public CheckpointContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterStatementInclude(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterCheckpoint(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatementInclude(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitCheckpoint(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatementInclude(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitCheckpoint(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -831,6 +833,81 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class WaitContext extends StatementContext {
+		public EolContext eol(int i) {
+			return getRuleContext(EolContext.class,i);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public List<EolContext> eol() {
+			return getRuleContexts(EolContext.class);
+		}
+		public WaitContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterWait(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitWait(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitWait(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementIncludeContext extends StatementContext {
+		public EolContext eol(int i) {
+			return getRuleContext(EolContext.class,i);
+		}
+		public IncludeFileContext includeFile() {
+			return getRuleContext(IncludeFileContext.class,0);
+		}
+		public List<EolContext> eol() {
+			return getRuleContexts(EolContext.class);
+		}
+		public StatementIncludeContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterStatementInclude(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatementInclude(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatementInclude(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BreakContext extends StatementContext {
+		public EolContext eol(int i) {
+			return getRuleContext(EolContext.class,i);
+		}
+		public List<EolContext> eol() {
+			return getRuleContexts(EolContext.class);
+		}
+		public BreakContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterBreak(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitBreak(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitBreak(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class ErrorContext extends StatementContext {
 		public EolContext eol(int i) {
 			return getRuleContext(EolContext.class,i);
@@ -853,78 +930,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitError(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ReturnContext extends StatementContext {
-		public EolContext eol(int i) {
-			return getRuleContext(EolContext.class,i);
-		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public List<EolContext> eol() {
-			return getRuleContexts(EolContext.class);
-		}
-		public ReturnContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterReturn(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReturn(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReturn(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class BlockContext extends StatementContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
-		public StatementContext statement(int i) {
-			return getRuleContext(StatementContext.class,i);
-		}
-		public BlockContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterBlock(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitBlock(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitBlock(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class CheckpointContext extends StatementContext {
-		public EolContext eol(int i) {
-			return getRuleContext(EolContext.class,i);
-		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public List<EolContext> eol() {
-			return getRuleContexts(EolContext.class);
-		}
-		public CheckpointContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterCheckpoint(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitCheckpoint(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitCheckpoint(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -953,31 +958,50 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class WaitContext extends StatementContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
+	public static class WhileContext extends StatementContext {
 		public EolContext eol(int i) {
 			return getRuleContext(EolContext.class,i);
 		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
 		public List<EolContext> eol() {
 			return getRuleContexts(EolContext.class);
 		}
-		public WaitContext(StatementContext ctx) { copyFrom(ctx); }
+		public WhileContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterWait(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterWhile(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitWait(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitWhile(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitWait(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitWhile(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatmentEolContext extends StatementContext {
+		public EolContext eol() {
+			return getRuleContext(EolContext.class,0);
+		}
+		public StatmentEolContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterStatmentEol(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatmentEol(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatmentEol(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1006,175 +1030,6 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class WhileContext extends StatementContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public EolContext eol(int i) {
-			return getRuleContext(EolContext.class,i);
-		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public List<EolContext> eol() {
-			return getRuleContexts(EolContext.class);
-		}
-		public WhileContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterWhile(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitWhile(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitWhile(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class BreakContext extends StatementContext {
-		public EolContext eol(int i) {
-			return getRuleContext(EolContext.class,i);
-		}
-		public List<EolContext> eol() {
-			return getRuleContexts(EolContext.class);
-		}
-		public BreakContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterBreak(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitBreak(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitBreak(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class IfContext extends StatementContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
-		public EolContext eol(int i) {
-			return getRuleContext(EolContext.class,i);
-		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public StatementContext statement(int i) {
-			return getRuleContext(StatementContext.class,i);
-		}
-		public List<EolContext> eol() {
-			return getRuleContexts(EolContext.class);
-		}
-		public IfContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterIf(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitIf(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitIf(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ContinueContext extends StatementContext {
-		public EolContext eol(int i) {
-			return getRuleContext(EolContext.class,i);
-		}
-		public List<EolContext> eol() {
-			return getRuleContexts(EolContext.class);
-		}
-		public ContinueContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterContinue(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitContinue(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitContinue(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ForLoopListContext extends StatementContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public VarDeclarationContext varDeclaration() {
-			return getRuleContext(VarDeclarationContext.class,0);
-		}
-		public EolContext eol(int i) {
-			return getRuleContext(EolContext.class,i);
-		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public List<EolContext> eol() {
-			return getRuleContexts(EolContext.class);
-		}
-		public ForLoopListContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterForLoopList(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitForLoopList(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitForLoopList(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class FunctionDeclarationContext extends StatementContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public List<VarDeclarationContext> varDeclaration() {
-			return getRuleContexts(VarDeclarationContext.class);
-		}
-		public EolContext eol(int i) {
-			return getRuleContext(EolContext.class,i);
-		}
-		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
-		}
-		public VarDeclarationContext varDeclaration(int i) {
-			return getRuleContext(VarDeclarationContext.class,i);
-		}
-		public List<EolContext> eol() {
-			return getRuleContexts(EolContext.class);
-		}
-		public FunctionDeclarationContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterFunctionDeclaration(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitFunctionDeclaration(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitFunctionDeclaration(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class StatmentExprContext extends StatementContext {
 		public EolContext eol(int i) {
 			return getRuleContext(EolContext.class,i);
@@ -1200,57 +1055,25 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class StatmentEolContext extends StatementContext {
-		public EolContext eol() {
-			return getRuleContext(EolContext.class,0);
-		}
-		public StatmentEolContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterStatmentEol(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatmentEol(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatmentEol(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ForLoopContext extends StatementContext {
-		public ForEndContext end;
-		public ForInitContext forInit() {
-			return getRuleContext(ForInitContext.class,0);
-		}
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public ForEndContext forEnd() {
-			return getRuleContext(ForEndContext.class,0);
-		}
+	public static class ContinueContext extends StatementContext {
 		public EolContext eol(int i) {
 			return getRuleContext(EolContext.class,i);
-		}
-		public ForConditionContext forCondition() {
-			return getRuleContext(ForConditionContext.class,0);
 		}
 		public List<EolContext> eol() {
 			return getRuleContexts(EolContext.class);
 		}
-		public ForLoopContext(StatementContext ctx) { copyFrom(ctx); }
+		public ContinueContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterForLoop(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterContinue(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitForLoop(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitContinue(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitForLoop(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitContinue(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1279,6 +1102,185 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class BlockContext extends StatementContext {
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
+		}
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public BlockContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterBlock(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitBlock(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitBlock(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ForLoopContext extends StatementContext {
+		public ForEndContext end;
+		public ForConditionContext forCondition() {
+			return getRuleContext(ForConditionContext.class,0);
+		}
+		public EolContext eol(int i) {
+			return getRuleContext(EolContext.class,i);
+		}
+		public ForInitContext forInit() {
+			return getRuleContext(ForInitContext.class,0);
+		}
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public List<EolContext> eol() {
+			return getRuleContexts(EolContext.class);
+		}
+		public ForEndContext forEnd() {
+			return getRuleContext(ForEndContext.class,0);
+		}
+		public ForLoopContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterForLoop(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitForLoop(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitForLoop(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ForLoopListContext extends StatementContext {
+		public VarDeclarationContext varDeclaration() {
+			return getRuleContext(VarDeclarationContext.class,0);
+		}
+		public EolContext eol(int i) {
+			return getRuleContext(EolContext.class,i);
+		}
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public List<EolContext> eol() {
+			return getRuleContexts(EolContext.class);
+		}
+		public ForLoopListContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterForLoopList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitForLoopList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitForLoopList(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class IfContext extends StatementContext {
+		public EolContext eol(int i) {
+			return getRuleContext(EolContext.class,i);
+		}
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
+		}
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public List<EolContext> eol() {
+			return getRuleContexts(EolContext.class);
+		}
+		public IfContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterIf(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitIf(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitIf(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FunctionDeclarationContext extends StatementContext {
+		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
+		public List<VarDeclarationContext> varDeclaration() {
+			return getRuleContexts(VarDeclarationContext.class);
+		}
+		public EolContext eol(int i) {
+			return getRuleContext(EolContext.class,i);
+		}
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public VarDeclarationContext varDeclaration(int i) {
+			return getRuleContext(VarDeclarationContext.class,i);
+		}
+		public List<EolContext> eol() {
+			return getRuleContexts(EolContext.class);
+		}
+		public FunctionDeclarationContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterFunctionDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitFunctionDeclaration(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitFunctionDeclaration(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ReturnContext extends StatementContext {
+		public EolContext eol(int i) {
+			return getRuleContext(EolContext.class,i);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public List<EolContext> eol() {
+			return getRuleContexts(EolContext.class);
+		}
+		public ReturnContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterReturn(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReturn(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReturn(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 
 	public final StatementContext statement() throws RecognitionException {
 		StatementContext _localctx = new StatementContext(_ctx, getState());
@@ -1292,11 +1294,11 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new BlockContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(101); match(34);
+				setState(101); match(4);
 				setState(105);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 5) | (1L << 6) | (1L << 8) | (1L << 13) | (1L << 18) | (1L << 19) | (1L << 23) | (1L << 24) | (1L << 25) | (1L << 26) | (1L << 28) | (1L << 29) | (1L << 31) | (1L << 33) | (1L << 34) | (1L << 35) | (1L << 36) | (1L << 40) | (1L << 41) | (1L << 42) | (1L << 46) | (1L << 47) | (1L << 48) | (1L << 49) | (1L << 50) | (1L << 52) | (1L << 56) | (1L << 60) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 9) | (1L << 10) | (1L << 12) | (1L << 13) | (1L << 14) | (1L << 15) | (1L << 19) | (1L << 21) | (1L << 22) | (1L << 25) | (1L << 27) | (1L << 28) | (1L << 29) | (1L << 32) | (1L << 34) | (1L << 36) | (1L << 38) | (1L << 40) | (1L << 43) | (1L << 48) | (1L << 50) | (1L << 53) | (1L << 55) | (1L << 56) | (1L << 57) | (1L << 61) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
 					{
 					{
 					setState(102); statement();
@@ -1306,7 +1308,7 @@ public class BigDataScriptParser extends Parser {
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(108); match(10);
+				setState(108); match(37);
 				}
 				break;
 
@@ -1314,11 +1316,11 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new BreakContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(109); match(36);
+				setState(109); match(43);
 				setState(113);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1337,7 +1339,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new CheckpointContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(116); match(41);
+				setState(116); match(57);
 				setState(118);
 				switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
 				case 1:
@@ -1349,7 +1351,7 @@ public class BigDataScriptParser extends Parser {
 				setState(123);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,13,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1368,11 +1370,11 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ContinueContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(126); match(6);
+				setState(126); match(32);
 				setState(130);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1391,7 +1393,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ExitContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(133); match(26);
+				setState(133); match(22);
 				setState(135);
 				switch ( getInterpreter().adaptivePredict(_input,15,_ctx) ) {
 				case 1:
@@ -1403,7 +1405,7 @@ public class BigDataScriptParser extends Parser {
 				setState(140);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,16,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1422,7 +1424,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new WarningContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(143); match(49);
+				setState(143); match(40);
 				setState(145);
 				switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
 				case 1:
@@ -1434,7 +1436,7 @@ public class BigDataScriptParser extends Parser {
 				setState(150);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1453,7 +1455,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ErrorContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(153); match(42);
+				setState(153); match(10);
 				setState(155);
 				switch ( getInterpreter().adaptivePredict(_input,19,_ctx) ) {
 				case 1:
@@ -1465,7 +1467,7 @@ public class BigDataScriptParser extends Parser {
 				setState(160);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,20,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1484,40 +1486,40 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ForLoopContext(_localctx);
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(163); match(47);
-				setState(164); match(28);
+				setState(163); match(9);
+				setState(164); match(15);
 				setState(166);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 5) | (1L << 13) | (1L << 18) | (1L << 19) | (1L << 24) | (1L << 28) | (1L << 31) | (1L << 33) | (1L << 34) | (1L << 40) | (1L << 46) | (1L << 56) | (1L << 60) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 5) | (1L << 12) | (1L << 14) | (1L << 15) | (1L << 25) | (1L << 27) | (1L << 29) | (1L << 48) | (1L << 50) | (1L << 53) | (1L << 55) | (1L << 56) | (1L << 61) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
 					{
 					setState(165); forInit();
 					}
 				}
 
-				setState(168); match(50);
+				setState(168); match(36);
 				setState(170);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 5) | (1L << 18) | (1L << 24) | (1L << 28) | (1L << 34) | (1L << 40) | (1L << 46) | (1L << 60) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 14) | (1L << 15) | (1L << 25) | (1L << 27) | (1L << 29) | (1L << 48) | (1L << 50) | (1L << 55) | (1L << 61) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
 					{
 					setState(169); forCondition();
 					}
 				}
 
-				setState(172); match(50);
+				setState(172); match(36);
 				setState(174);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 5) | (1L << 18) | (1L << 24) | (1L << 28) | (1L << 34) | (1L << 40) | (1L << 46) | (1L << 60) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 14) | (1L << 15) | (1L << 25) | (1L << 27) | (1L << 29) | (1L << 48) | (1L << 50) | (1L << 55) | (1L << 61) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
 					{
 					setState(173); ((ForLoopContext)_localctx).end = forEnd();
 					}
 				}
 
-				setState(176); match(14);
+				setState(176); match(60);
 				setState(177); statement();
 				setState(181);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,24,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1536,17 +1538,17 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ForLoopListContext(_localctx);
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(184); match(47);
-				setState(185); match(28);
+				setState(184); match(9);
+				setState(185); match(15);
 				setState(186); varDeclaration();
-				setState(187); match(27);
+				setState(187); match(47);
 				setState(188); expression(0);
-				setState(189); match(14);
+				setState(189); match(60);
 				setState(190); statement();
 				setState(194);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,25,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1565,15 +1567,15 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new IfContext(_localctx);
 				enterOuterAlt(_localctx, 10);
 				{
-				setState(197); match(29);
-				setState(198); match(28);
+				setState(197); match(38);
+				setState(198); match(15);
 				setState(199); expression(0);
-				setState(200); match(14);
+				setState(200); match(60);
 				setState(201); statement();
 				setState(205);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,26,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1589,12 +1591,12 @@ public class BigDataScriptParser extends Parser {
 				switch ( getInterpreter().adaptivePredict(_input,28,_ctx) ) {
 				case 1:
 					{
-					setState(208); match(38);
+					setState(208); match(59);
 					setState(209); statement();
 					setState(213);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,27,_ctx);
-					while ( _alt!=2 && _alt!=-1 ) {
+					while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 						if ( _alt==1 ) {
 							{
 							{
@@ -1616,12 +1618,12 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new KillContext(_localctx);
 				enterOuterAlt(_localctx, 11);
 				{
-				setState(218); match(8);
+				setState(218); match(19);
 				setState(219); expression(0);
 				setState(223);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,29,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1640,7 +1642,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ReturnContext(_localctx);
 				enterOuterAlt(_localctx, 12);
 				{
-				setState(226); match(48);
+				setState(226); match(34);
 				setState(228);
 				switch ( getInterpreter().adaptivePredict(_input,30,_ctx) ) {
 				case 1:
@@ -1652,7 +1654,7 @@ public class BigDataScriptParser extends Parser {
 				setState(233);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,31,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1671,7 +1673,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new WaitContext(_localctx);
 				enterOuterAlt(_localctx, 13);
 				{
-				setState(236); match(35);
+				setState(236); match(28);
 				setState(245);
 				switch ( getInterpreter().adaptivePredict(_input,33,_ctx) ) {
 				case 1:
@@ -1680,11 +1682,11 @@ public class BigDataScriptParser extends Parser {
 					setState(242);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,32,_ctx);
-					while ( _alt!=2 && _alt!=-1 ) {
+					while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 						if ( _alt==1 ) {
 							{
 							{
-							setState(238); match(22);
+							setState(238); match(17);
 							setState(239); expression(0);
 							}
 							} 
@@ -1699,7 +1701,7 @@ public class BigDataScriptParser extends Parser {
 				setState(250);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,34,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1718,22 +1720,22 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new WhileContext(_localctx);
 				enterOuterAlt(_localctx, 14);
 				{
-				setState(253); match(25);
-				setState(254); match(28);
+				setState(253); match(3);
+				setState(254); match(15);
 				setState(256);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 5) | (1L << 18) | (1L << 24) | (1L << 28) | (1L << 34) | (1L << 40) | (1L << 46) | (1L << 60) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 14) | (1L << 15) | (1L << 25) | (1L << 27) | (1L << 29) | (1L << 48) | (1L << 50) | (1L << 55) | (1L << 61) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
 					{
 					setState(255); expression(0);
 					}
 				}
 
-				setState(258); match(14);
+				setState(258); match(60);
 				setState(259); statement();
 				setState(263);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,36,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1754,10 +1756,10 @@ public class BigDataScriptParser extends Parser {
 				{
 				setState(266); type(0);
 				setState(267); match(ID);
-				setState(268); match(28);
+				setState(268); match(15);
 				setState(270);
 				_la = _input.LA(1);
-				if (((((_la - 13)) & ~0x3f) == 0 && ((1L << (_la - 13)) & ((1L << (13 - 13)) | (1L << (19 - 13)) | (1L << (31 - 13)) | (1L << (33 - 13)) | (1L << (56 - 13)) | (1L << (ID - 13)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 5) | (1L << 12) | (1L << 53) | (1L << 56) | (1L << 62))) != 0) || _la==ID) {
 					{
 					setState(269); varDeclaration();
 					}
@@ -1766,10 +1768,10 @@ public class BigDataScriptParser extends Parser {
 				setState(276);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==22) {
+				while (_la==17) {
 					{
 					{
-					setState(272); match(22);
+					setState(272); match(17);
 					setState(273); varDeclaration();
 					}
 					}
@@ -1777,12 +1779,12 @@ public class BigDataScriptParser extends Parser {
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(279); match(14);
+				setState(279); match(60);
 				setState(280); statement();
 				setState(284);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,39,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1805,7 +1807,7 @@ public class BigDataScriptParser extends Parser {
 				setState(291);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,40,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1828,7 +1830,7 @@ public class BigDataScriptParser extends Parser {
 				setState(298);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,41,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1851,7 +1853,7 @@ public class BigDataScriptParser extends Parser {
 				setState(305);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,42,_ctx);
-				while ( _alt!=2 && _alt!=-1 ) {
+				while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
@@ -1887,11 +1889,11 @@ public class BigDataScriptParser extends Parser {
 	}
 
 	public static class ForInitContext extends ParserRuleContext {
-		public ExpressionListContext expressionList() {
-			return getRuleContext(ExpressionListContext.class,0);
-		}
 		public VarDeclarationContext varDeclaration() {
 			return getRuleContext(VarDeclarationContext.class,0);
+		}
+		public ExpressionListContext expressionList() {
+			return getRuleContext(ExpressionListContext.class,0);
 		}
 		public ForInitContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2031,162 +2033,79 @@ public class BigDataScriptParser extends Parser {
 	}
 
 	public static class ExpressionContext extends ParserRuleContext {
-		public int _p;
-		public ExpressionContext(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
-		public ExpressionContext(ParserRuleContext parent, int invokingState, int _p) {
+		public ExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
-			this._p = _p;
 		}
 		@Override public int getRuleIndex() { return RULE_expression; }
 	 
 		public ExpressionContext() { }
 		public void copyFrom(ExpressionContext ctx) {
 			super.copyFrom(ctx);
-			this._p = ctx._p;
 		}
 	}
-	public static class ExpressionDepContext extends ExpressionContext {
+	public static class ExpressionLogicAndContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public ExpressionDepContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public ExpressionLogicAndContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionDep(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLogicAnd(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionDep(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLogicAnd(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionDep(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLogicAnd(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class VarReferenceListContext extends ExpressionContext {
+	public static class VarReferenceMapContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public VarReferenceListContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public VarReferenceMapContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterVarReferenceList(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterVarReferenceMap(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarReferenceList(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarReferenceMap(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarReferenceList(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarReferenceMap(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ExpressionAssignmentBitAndContext extends ExpressionContext {
+	public static class ExpressionEqContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public ExpressionAssignmentBitAndContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public ExpressionEqContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionAssignmentBitAnd(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionEq(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentBitAnd(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionEq(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentBitAnd(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionSysContext extends ExpressionContext {
-		public TerminalNode SYS_LITERAL() { return getToken(BigDataScriptParser.SYS_LITERAL, 0); }
-		public ExpressionSysContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionSys(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionSys(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionSys(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class MethodCallContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public MethodCallContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterMethodCall(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitMethodCall(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitMethodCall(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionBitAndContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionBitAndContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionBitAnd(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitAnd(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitAnd(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LiteralRealContext extends ExpressionContext {
-		public TerminalNode REAL_LITERAL() { return getToken(BigDataScriptParser.REAL_LITERAL, 0); }
-		public LiteralRealContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralReal(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralReal(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralReal(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionEq(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2212,88 +2131,234 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ExpressionUnaryMinusContext extends ExpressionContext {
+	public static class VarReferenceListContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public VarReferenceListContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterVarReferenceList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarReferenceList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarReferenceList(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionNeContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionNeContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionNe(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionNe(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionNe(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionBitXorContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionBitXorContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionBitXor(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitXor(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitXor(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionBitNegationContext extends ExpressionContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public ExpressionUnaryMinusContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public ExpressionBitNegationContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionUnaryMinus(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionBitNegation(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionUnaryMinus(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitNegation(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionUnaryMinus(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitNegation(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class LiteralMapContext extends ExpressionContext {
+	public static class ExpressionBitAndContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public LiteralMapContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public ExpressionBitAndContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralMap(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionBitAnd(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralMap(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitAnd(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralMap(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitAnd(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class LiteralListContext extends ExpressionContext {
+	public static class PostContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public PostContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterPost(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPost(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPost(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionLogicNotContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public ExpressionLogicNotContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLogicNot(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLogicNot(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLogicNot(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionVariableInitImplicitContext extends ExpressionContext {
+		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public ExpressionVariableInitImplicitContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionVariableInitImplicit(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionVariableInitImplicit(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionVariableInitImplicit(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionAssignmentMultContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public LiteralListContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public ExpressionAssignmentMultContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralList(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionAssignmentMult(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralList(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentMult(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralList(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentMult(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ExpressionLeContext extends ExpressionContext {
+	public static class ExpressionDepContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public ExpressionLeContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public ExpressionDepContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLe(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionDep(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLe(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionDep(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLe(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionDep(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionLtContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionLtContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLt(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2319,41 +2384,413 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ExpressionLogicAndContext extends ExpressionContext {
+	public static class PreContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public PreContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterPre(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPre(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPre(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionUnaryPlusContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public ExpressionUnaryPlusContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionUnaryPlus(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionUnaryPlus(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionUnaryPlus(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionLogicOrContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public ExpressionLogicAndContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public ExpressionLogicOrContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLogicAnd(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLogicOr(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLogicAnd(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLogicOr(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLogicAnd(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLogicOr(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class LiteralListEmptyContext extends ExpressionContext {
-		public LiteralListEmptyContext(ExpressionContext ctx) { copyFrom(ctx); }
+	public static class LiteralBoolContext extends ExpressionContext {
+		public TerminalNode BOOL_LITERAL() { return getToken(BigDataScriptParser.BOOL_LITERAL, 0); }
+		public LiteralBoolContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralListEmpty(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralBool(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralListEmpty(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralBool(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralListEmpty(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralBool(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionTimesContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionTimesContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionTimes(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionTimes(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionTimes(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionPlusContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionPlusContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionPlus(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionPlus(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionPlus(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FunctionCallContext extends ExpressionContext {
+		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public FunctionCallContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterFunctionCall(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitFunctionCall(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitFunctionCall(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionParenContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public ExpressionParenContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionParen(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionParen(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionParen(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionCondContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionCondContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionCond(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionCond(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionCond(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionUnaryMinusContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public ExpressionUnaryMinusContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionUnaryMinus(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionUnaryMinus(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionUnaryMinus(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionBitOrContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionBitOrContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionBitOr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitOr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitOr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class LiteralIntContext extends ExpressionContext {
+		public TerminalNode INT_LITERAL() { return getToken(BigDataScriptParser.INT_LITERAL, 0); }
+		public LiteralIntContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralInt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralInt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralInt(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class LiteralMapEmptyContext extends ExpressionContext {
+		public LiteralMapEmptyContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralMapEmpty(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralMapEmpty(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralMapEmpty(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class MethodCallContext extends ExpressionContext {
+		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public MethodCallContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterMethodCall(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitMethodCall(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitMethodCall(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class LiteralStringContext extends ExpressionContext {
+		public TerminalNode STRING_LITERAL_SINGLE() { return getToken(BigDataScriptParser.STRING_LITERAL_SINGLE, 0); }
+		public TerminalNode STRING_LITERAL() { return getToken(BigDataScriptParser.STRING_LITERAL, 0); }
+		public LiteralStringContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralString(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralString(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralString(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionGtContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionGtContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionGt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionGt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionGt(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionModuloContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionModuloContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionModulo(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionModulo(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionModulo(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionAssignmentBitAndContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionAssignmentBitAndContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionAssignmentBitAnd(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentBitAnd(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentBitAnd(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionLeContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionLeContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLe(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLe(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLe(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class LiteralMapContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public LiteralMapContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralMap(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralMap(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralMap(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2376,6 +2813,120 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentBitOr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionTaskContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionTaskContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionTask(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionTask(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionTask(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionSysContext extends ExpressionContext {
+		public TerminalNode SYS_LITERAL() { return getToken(BigDataScriptParser.SYS_LITERAL, 0); }
+		public ExpressionSysContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionSys(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionSys(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionSys(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionAssignmentMinusContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionAssignmentMinusContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionAssignmentMinus(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentMinus(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentMinus(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class LiteralListEmptyContext extends ExpressionContext {
+		public LiteralListEmptyContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralListEmpty(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralListEmpty(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralListEmpty(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class VarReferenceContext extends ExpressionContext {
+		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
+		public VarReferenceContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterVarReference(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarReference(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarReference(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpressionTaskLiteralContext extends ExpressionContext {
+		public TerminalNode TASK_LITERAL() { return getToken(BigDataScriptParser.TASK_LITERAL, 0); }
+		public ExpressionTaskLiteralContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionTaskLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionTaskLiteral(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionTaskLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2423,288 +2974,20 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class FunctionCallContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public FunctionCallContext(ExpressionContext ctx) { copyFrom(ctx); }
+	public static class LiteralRealContext extends ExpressionContext {
+		public TerminalNode REAL_LITERAL() { return getToken(BigDataScriptParser.REAL_LITERAL, 0); }
+		public LiteralRealContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterFunctionCall(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralReal(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitFunctionCall(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralReal(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitFunctionCall(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionPlusContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionPlusContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionPlus(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionPlus(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionPlus(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LiteralBoolContext extends ExpressionContext {
-		public TerminalNode BOOL_LITERAL() { return getToken(BigDataScriptParser.BOOL_LITERAL, 0); }
-		public LiteralBoolContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralBool(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralBool(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralBool(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionGeContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionGeContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionGe(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionGe(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionGe(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionBitNegationContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public ExpressionBitNegationContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionBitNegation(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitNegation(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitNegation(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionNeContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionNeContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionNe(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionNe(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionNe(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class VarReferenceMapContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public VarReferenceMapContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterVarReferenceMap(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarReferenceMap(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarReferenceMap(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionLogicOrContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionLogicOrContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLogicOr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLogicOr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLogicOr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionLogicNotContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public ExpressionLogicNotContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLogicNot(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLogicNot(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLogicNot(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionCondContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionCondContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionCond(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionCond(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionCond(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class PostContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public PostContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterPost(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPost(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPost(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LiteralIntContext extends ExpressionContext {
-		public TerminalNode INT_LITERAL() { return getToken(BigDataScriptParser.INT_LITERAL, 0); }
-		public LiteralIntContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralInt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralInt(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralInt(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class VarReferenceContext extends ExpressionContext {
-		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
-		public VarReferenceContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterVarReference(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarReference(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarReference(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionBitOrContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionBitOrContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionBitOr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitOr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitOr(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralReal(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2730,342 +3013,62 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ExpressionTaskLiteralContext extends ExpressionContext {
-		public TerminalNode TASK_LITERAL() { return getToken(BigDataScriptParser.TASK_LITERAL, 0); }
-		public ExpressionTaskLiteralContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionTaskLiteral(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionTaskLiteral(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionTaskLiteral(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionGtContext extends ExpressionContext {
+	public static class ExpressionGeContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public ExpressionGtContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public ExpressionGeContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionGt(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionGe(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionGt(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionGe(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionGt(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionGe(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ExpressionTaskContext extends ExpressionContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
+	public static class LiteralListContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public ExpressionTaskContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public LiteralListContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionTask(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralList(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionTask(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralList(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionTask(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionEqContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionEqContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionEq(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionEq(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionEq(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionModuloContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionModuloContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionModulo(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionModulo(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionModulo(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionAssignmentMultContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionAssignmentMultContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionAssignmentMult(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentMult(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentMult(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionUnaryPlusContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public ExpressionUnaryPlusContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionUnaryPlus(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionUnaryPlus(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionUnaryPlus(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionVariableInitImplicitContext extends ExpressionContext {
-		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public ExpressionVariableInitImplicitContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionVariableInitImplicit(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionVariableInitImplicit(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionVariableInitImplicit(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionParenContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public ExpressionParenContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionParen(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionParen(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionParen(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LiteralStringContext extends ExpressionContext {
-		public TerminalNode STRING_LITERAL_SINGLE() { return getToken(BigDataScriptParser.STRING_LITERAL_SINGLE, 0); }
-		public LiteralStringContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralString(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralString(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralString(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionBitXorContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionBitXorContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionBitXor(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitXor(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitXor(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class PreContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public PreContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterPre(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPre(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPre(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionAssignmentMinusContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionAssignmentMinusContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionAssignmentMinus(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentMinus(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentMinus(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionLtContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionLtContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionLt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLt(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLt(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LiteralMapEmptyContext extends ExpressionContext {
-		public LiteralMapEmptyContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterLiteralMapEmpty(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralMapEmpty(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralMapEmpty(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExpressionTimesContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionTimesContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterExpressionTimes(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionTimes(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionTimes(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralList(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ExpressionContext expression(int _p) throws RecognitionException {
+	public final ExpressionContext expression() throws RecognitionException {
+		return expression(0);
+	}
+
+	private ExpressionContext expression(int _p) throws RecognitionException {
 		ParserRuleContext _parentctx = _ctx;
 		int _parentState = getState();
-		ExpressionContext _localctx = new ExpressionContext(_ctx, _parentState, _p);
+		ExpressionContext _localctx = new ExpressionContext(_ctx, _parentState);
 		ExpressionContext _prevctx = _localctx;
 		int _startState = 24;
-		enterRecursionRule(_localctx, RULE_expression);
+		enterRecursionRule(_localctx, 24, RULE_expression, _p);
 		int _la;
 		try {
 			int _alt;
@@ -3081,11 +3084,11 @@ public class BigDataScriptParser extends Parser {
 
 				setState(320);
 				_la = _input.LA(1);
-				if ( !(_la==5 || _la==40) ) {
+				if ( !(_la==25 || _la==50) ) {
 				_errHandler.recoverInline(this);
 				}
 				consume();
-				setState(321); expression(38);
+				setState(321); expression(35);
 				}
 				break;
 
@@ -3094,7 +3097,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ExpressionBitNegationContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(322); match(60);
+				setState(322); match(27);
 				setState(323); expression(22);
 				}
 				break;
@@ -3104,7 +3107,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ExpressionLogicNotContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(324); match(18);
+				setState(324); match(55);
 				setState(325); expression(21);
 				}
 				break;
@@ -3114,7 +3117,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ExpressionUnaryMinusContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(326); match(24);
+				setState(326); match(61);
 				setState(327); expression(20);
 				}
 				break;
@@ -3124,7 +3127,7 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ExpressionUnaryPlusContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(328); match(46);
+				setState(328); match(29);
 				setState(329); expression(19);
 				}
 				break;
@@ -3135,7 +3138,7 @@ public class BigDataScriptParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(330); match(ID);
-				setState(331); match(55);
+				setState(331); match(41);
 				setState(332); expression(2);
 				}
 				break;
@@ -3191,19 +3194,19 @@ public class BigDataScriptParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(338); match(ID);
-				setState(339); match(28);
+				setState(339); match(15);
 				setState(348);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 5) | (1L << 18) | (1L << 24) | (1L << 28) | (1L << 34) | (1L << 40) | (1L << 46) | (1L << 60) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 14) | (1L << 15) | (1L << 25) | (1L << 27) | (1L << 29) | (1L << 48) | (1L << 50) | (1L << 55) | (1L << 61) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
 					{
 					setState(340); expression(0);
 					setState(345);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					while (_la==22) {
+					while (_la==17) {
 						{
 						{
-						setState(341); match(22);
+						setState(341); match(17);
 						setState(342); expression(0);
 						}
 						}
@@ -3214,7 +3217,7 @@ public class BigDataScriptParser extends Parser {
 					}
 				}
 
-				setState(350); match(14);
+				setState(350); match(60);
 				}
 				break;
 
@@ -3232,9 +3235,9 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ExpressionParenContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(352); match(28);
+				setState(352); match(15);
 				setState(353); expression(0);
-				setState(354); match(14);
+				setState(354); match(60);
 				}
 				break;
 
@@ -3243,8 +3246,8 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new LiteralListEmptyContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(356); match(3);
-				setState(357); match(20);
+				setState(356); match(48);
+				setState(357); match(26);
 				}
 				break;
 
@@ -3253,15 +3256,15 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new LiteralListContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(358); match(3);
+				setState(358); match(48);
 				setState(359); expression(0);
 				setState(364);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==22) {
+				while (_la==17) {
 					{
 					{
-					setState(360); match(22);
+					setState(360); match(17);
 					setState(361); expression(0);
 					}
 					}
@@ -3269,7 +3272,7 @@ public class BigDataScriptParser extends Parser {
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(367); match(20);
+				setState(367); match(26);
 				}
 				break;
 
@@ -3278,8 +3281,8 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new LiteralMapEmptyContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(369); match(34);
-				setState(370); match(10);
+				setState(369); match(4);
+				setState(370); match(37);
 				}
 				break;
 
@@ -3288,19 +3291,19 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new LiteralMapContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(371); match(34);
+				setState(371); match(4);
 				setState(372); expression(0);
-				setState(373); match(45);
+				setState(373); match(54);
 				setState(374); expression(0);
 				setState(382);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==22) {
+				while (_la==17) {
 					{
 					{
-					setState(375); match(22);
+					setState(375); match(17);
 					setState(376); expression(0);
-					setState(377); match(45);
+					setState(377); match(54);
 					setState(378); expression(0);
 					}
 					}
@@ -3308,7 +3311,7 @@ public class BigDataScriptParser extends Parser {
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(385); match(10);
+				setState(385); match(37);
 				}
 				break;
 
@@ -3335,20 +3338,20 @@ public class BigDataScriptParser extends Parser {
 				_localctx = new ExpressionTaskContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(389); match(62);
+				setState(389); match(14);
 				setState(401);
 				switch ( getInterpreter().adaptivePredict(_input,50,_ctx) ) {
 				case 1:
 					{
-					setState(390); match(28);
+					setState(390); match(15);
 					setState(391); expression(0);
 					setState(396);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					while (_la==22) {
+					while (_la==17) {
 						{
 						{
-						setState(392); match(22);
+						setState(392); match(17);
 						setState(393); expression(0);
 						}
 						}
@@ -3356,7 +3359,7 @@ public class BigDataScriptParser extends Parser {
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 					}
-					setState(399); match(14);
+					setState(399); match(60);
 					}
 					break;
 				}
@@ -3368,7 +3371,7 @@ public class BigDataScriptParser extends Parser {
 			setState(513);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,55,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
@@ -3377,302 +3380,302 @@ public class BigDataScriptParser extends Parser {
 					switch ( getInterpreter().adaptivePredict(_input,54,_ctx) ) {
 					case 1:
 						{
-						_localctx = new ExpressionLogicAndContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionLogicAndContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(406);
-						if (!(43 >= _localctx._p)) throw new FailedPredicateException(this, "43 >= $_p");
-						setState(407); match(51);
-						setState(408); expression(44);
+						if (!(precpred(_ctx, 40))) throw new FailedPredicateException(this, "precpred(_ctx, 40)");
+						setState(407); match(6);
+						setState(408); expression(41);
 						}
 						break;
 
 					case 2:
 						{
-						_localctx = new ExpressionLogicOrContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionLogicOrContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(409);
-						if (!(42 >= _localctx._p)) throw new FailedPredicateException(this, "42 >= $_p");
-						setState(410); match(53);
-						setState(411); expression(43);
+						if (!(precpred(_ctx, 39))) throw new FailedPredicateException(this, "precpred(_ctx, 39)");
+						setState(410); match(35);
+						setState(411); expression(40);
 						}
 						break;
 
 					case 3:
 						{
-						_localctx = new ExpressionBitAndContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionBitAndContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(412);
-						if (!(41 >= _localctx._p)) throw new FailedPredicateException(this, "41 >= $_p");
-						setState(413); match(1);
-						setState(414); expression(42);
+						if (!(precpred(_ctx, 38))) throw new FailedPredicateException(this, "precpred(_ctx, 38)");
+						setState(413); match(44);
+						setState(414); expression(39);
 						}
 						break;
 
 					case 4:
 						{
-						_localctx = new ExpressionBitXorContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionBitXorContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(415);
-						if (!(40 >= _localctx._p)) throw new FailedPredicateException(this, "40 >= $_p");
-						setState(416); match(43);
-						setState(417); expression(41);
+						if (!(precpred(_ctx, 37))) throw new FailedPredicateException(this, "precpred(_ctx, 37)");
+						setState(416); match(8);
+						setState(417); expression(38);
 						}
 						break;
 
 					case 5:
 						{
-						_localctx = new ExpressionBitOrContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionBitOrContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(418);
-						if (!(39 >= _localctx._p)) throw new FailedPredicateException(this, "39 >= $_p");
-						setState(419); match(17);
-						setState(420); expression(40);
+						if (!(precpred(_ctx, 36))) throw new FailedPredicateException(this, "precpred(_ctx, 36)");
+						setState(419); match(51);
+						setState(420); expression(37);
 						}
 						break;
 
 					case 6:
 						{
-						_localctx = new ExpressionNeContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionNeContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(421);
-						if (!(36 >= _localctx._p)) throw new FailedPredicateException(this, "36 >= $_p");
-						setState(422); match(7);
-						setState(423); expression(37);
+						if (!(precpred(_ctx, 33))) throw new FailedPredicateException(this, "precpred(_ctx, 33)");
+						setState(422); match(2);
+						setState(423); expression(34);
 						}
 						break;
 
 					case 7:
 						{
-						_localctx = new ExpressionEqContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionEqContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(424);
-						if (!(35 >= _localctx._p)) throw new FailedPredicateException(this, "35 >= $_p");
-						setState(425); match(59);
-						setState(426); expression(36);
+						if (!(precpred(_ctx, 32))) throw new FailedPredicateException(this, "precpred(_ctx, 32)");
+						setState(425); match(49);
+						setState(426); expression(33);
 						}
 						break;
 
 					case 8:
 						{
-						_localctx = new ExpressionModuloContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionModuloContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(427);
-						if (!(31 >= _localctx._p)) throw new FailedPredicateException(this, "31 >= $_p");
-						setState(428); match(11);
+						if (!(precpred(_ctx, 31))) throw new FailedPredicateException(this, "precpred(_ctx, 31)");
+						setState(428); match(58);
 						setState(429); expression(32);
 						}
 						break;
 
 					case 9:
 						{
-						_localctx = new ExpressionDivideContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionDivideContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(430);
-						if (!(30 >= _localctx._p)) throw new FailedPredicateException(this, "30 >= $_p");
-						setState(431); match(58);
+						if (!(precpred(_ctx, 30))) throw new FailedPredicateException(this, "precpred(_ctx, 30)");
+						setState(431); match(31);
 						setState(432); expression(31);
 						}
 						break;
 
 					case 10:
 						{
-						_localctx = new ExpressionTimesContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionTimesContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(433);
-						if (!(29 >= _localctx._p)) throw new FailedPredicateException(this, "29 >= $_p");
-						setState(434); match(2);
+						if (!(precpred(_ctx, 29))) throw new FailedPredicateException(this, "precpred(_ctx, 29)");
+						setState(434); match(45);
 						setState(435); expression(30);
 						}
 						break;
 
 					case 11:
 						{
-						_localctx = new ExpressionMinusContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionMinusContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(436);
-						if (!(28 >= _localctx._p)) throw new FailedPredicateException(this, "28 >= $_p");
-						setState(437); match(24);
+						if (!(precpred(_ctx, 28))) throw new FailedPredicateException(this, "precpred(_ctx, 28)");
+						setState(437); match(61);
 						setState(438); expression(29);
 						}
 						break;
 
 					case 12:
 						{
-						_localctx = new ExpressionPlusContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionPlusContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(439);
-						if (!(27 >= _localctx._p)) throw new FailedPredicateException(this, "27 >= $_p");
-						setState(440); match(46);
+						if (!(precpred(_ctx, 27))) throw new FailedPredicateException(this, "precpred(_ctx, 27)");
+						setState(440); match(29);
 						setState(441); expression(28);
 						}
 						break;
 
 					case 13:
 						{
-						_localctx = new ExpressionLtContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionLtContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(442);
-						if (!(26 >= _localctx._p)) throw new FailedPredicateException(this, "26 >= $_p");
-						setState(443); match(4);
+						if (!(precpred(_ctx, 26))) throw new FailedPredicateException(this, "precpred(_ctx, 26)");
+						setState(443); match(24);
 						setState(444); expression(27);
 						}
 						break;
 
 					case 14:
 						{
-						_localctx = new ExpressionGtContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionGtContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(445);
-						if (!(25 >= _localctx._p)) throw new FailedPredicateException(this, "25 >= $_p");
-						setState(446); match(54);
+						if (!(precpred(_ctx, 25))) throw new FailedPredicateException(this, "precpred(_ctx, 25)");
+						setState(446); match(52);
 						setState(447); expression(26);
 						}
 						break;
 
 					case 15:
 						{
-						_localctx = new ExpressionLeContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionLeContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(448);
-						if (!(24 >= _localctx._p)) throw new FailedPredicateException(this, "24 >= $_p");
-						setState(449); match(9);
+						if (!(precpred(_ctx, 24))) throw new FailedPredicateException(this, "precpred(_ctx, 24)");
+						setState(449); match(42);
 						setState(450); expression(25);
 						}
 						break;
 
 					case 16:
 						{
-						_localctx = new ExpressionGeContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionGeContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(451);
-						if (!(23 >= _localctx._p)) throw new FailedPredicateException(this, "23 >= $_p");
-						setState(452); match(61);
+						if (!(precpred(_ctx, 23))) throw new FailedPredicateException(this, "precpred(_ctx, 23)");
+						setState(452); match(23);
 						setState(453); expression(24);
 						}
 						break;
 
 					case 17:
 						{
-						_localctx = new ExpressionDepContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionCondContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(454);
-						if (!(16 >= _localctx._p)) throw new FailedPredicateException(this, "16 >= $_p");
+						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
 						setState(455); match(39);
-						setState(456); expression(17);
+						setState(456); expression(0);
+						setState(457); match(47);
+						setState(458); expression(18);
 						}
 						break;
 
 					case 18:
 						{
-						_localctx = new ExpressionAssignmentBitOrContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionDepContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(457);
-						if (!(8 >= _localctx._p)) throw new FailedPredicateException(this, "8 >= $_p");
-						setState(458); match(16);
-						setState(459); expression(9);
+						setState(460);
+						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
+						setState(461); match(20);
+						setState(462); expression(17);
 						}
 						break;
 
 					case 19:
 						{
-						_localctx = new ExpressionAssignmentBitAndContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionAssignmentBitOrContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(460);
-						if (!(7 >= _localctx._p)) throw new FailedPredicateException(this, "7 >= $_p");
-						setState(461); match(30);
-						setState(462); expression(8);
+						setState(463);
+						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
+						setState(464); match(11);
+						setState(465); expression(9);
 						}
 						break;
 
 					case 20:
 						{
-						_localctx = new ExpressionAssignmentDivContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionAssignmentBitAndContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(463);
-						if (!(6 >= _localctx._p)) throw new FailedPredicateException(this, "6 >= $_p");
-						setState(464); match(57);
-						setState(465); expression(7);
+						setState(466);
+						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+						setState(467); match(33);
+						setState(468); expression(8);
 						}
 						break;
 
 					case 21:
 						{
-						_localctx = new ExpressionAssignmentMultContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionAssignmentDivContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(466);
-						if (!(5 >= _localctx._p)) throw new FailedPredicateException(this, "5 >= $_p");
-						setState(467); match(12);
-						setState(468); expression(6);
+						setState(469);
+						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
+						setState(470); match(18);
+						setState(471); expression(7);
 						}
 						break;
 
 					case 22:
 						{
-						_localctx = new ExpressionAssignmentMinusContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionAssignmentMultContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(469);
-						if (!(4 >= _localctx._p)) throw new FailedPredicateException(this, "4 >= $_p");
-						setState(470); match(21);
-						setState(471); expression(5);
+						setState(472);
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
+						setState(473); match(30);
+						setState(474); expression(6);
 						}
 						break;
 
 					case 23:
 						{
-						_localctx = new ExpressionAssignmentPlusContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionAssignmentMinusContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(472);
-						if (!(3 >= _localctx._p)) throw new FailedPredicateException(this, "3 >= $_p");
-						setState(473); match(37);
-						setState(474); expression(4);
+						setState(475);
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						setState(476); match(16);
+						setState(477); expression(5);
 						}
 						break;
 
 					case 24:
 						{
-						_localctx = new ExpressionAssignmentContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionAssignmentPlusContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(475);
-						if (!(1 >= _localctx._p)) throw new FailedPredicateException(this, "1 >= $_p");
-						setState(476); match(15);
-						setState(477); expression(2);
+						setState(478);
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+						setState(479); match(1);
+						setState(480); expression(4);
 						}
 						break;
 
 					case 25:
 						{
-						_localctx = new ExpressionCondContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ExpressionAssignmentContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(478);
-						if (!(17 >= _localctx._p)) throw new FailedPredicateException(this, "17 >= $_p");
-						setState(479); match(32);
-						setState(480); expression(0);
-						setState(481); match(27);
-						setState(482); expression(18);
+						setState(481);
+						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						setState(482); match(7);
+						setState(483); expression(2);
 						}
 						break;
 
 					case 26:
 						{
-						_localctx = new MethodCallContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new MethodCallContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(484);
-						if (!(44 >= _localctx._p)) throw new FailedPredicateException(this, "44 >= $_p");
-						setState(485); match(44);
+						if (!(precpred(_ctx, 44))) throw new FailedPredicateException(this, "precpred(_ctx, 44)");
+						setState(485); match(46);
 						setState(486); match(ID);
-						setState(487); match(28);
+						setState(487); match(15);
 						setState(496);
 						_la = _input.LA(1);
-						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 5) | (1L << 18) | (1L << 24) | (1L << 28) | (1L << 34) | (1L << 40) | (1L << 46) | (1L << 60) | (1L << 62) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
+						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 14) | (1L << 15) | (1L << 25) | (1L << 27) | (1L << 29) | (1L << 48) | (1L << 50) | (1L << 55) | (1L << 61) | (1L << BOOL_LITERAL))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (INT_LITERAL - 64)) | (1L << (REAL_LITERAL - 64)) | (1L << (STRING_LITERAL - 64)) | (1L << (STRING_LITERAL_SINGLE - 64)) | (1L << (SYS_LITERAL - 64)) | (1L << (TASK_LITERAL - 64)) | (1L << (ID - 64)))) != 0)) {
 							{
 							setState(488); expression(0);
 							setState(493);
 							_errHandler.sync(this);
 							_la = _input.LA(1);
-							while (_la==22) {
+							while (_la==17) {
 								{
 								{
-								setState(489); match(22);
+								setState(489); match(17);
 								setState(490); expression(0);
 								}
 								}
@@ -3683,46 +3686,46 @@ public class BigDataScriptParser extends Parser {
 							}
 						}
 
-						setState(498); match(14);
+						setState(498); match(60);
 						}
 						break;
 
 					case 27:
 						{
-						_localctx = new PostContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new VarReferenceListContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(499);
-						if (!(37 >= _localctx._p)) throw new FailedPredicateException(this, "37 >= $_p");
-						setState(500);
-						_la = _input.LA(1);
-						if ( !(_la==5 || _la==40) ) {
-						_errHandler.recoverInline(this);
-						}
-						consume();
+						if (!(precpred(_ctx, 42))) throw new FailedPredicateException(this, "precpred(_ctx, 42)");
+						setState(500); match(48);
+						setState(501); expression(0);
+						setState(502); match(26);
 						}
 						break;
 
 					case 28:
 						{
-						_localctx = new VarReferenceListContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new VarReferenceMapContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(501);
-						if (!(33 >= _localctx._p)) throw new FailedPredicateException(this, "33 >= $_p");
-						setState(502); match(3);
-						setState(503); expression(0);
-						setState(504); match(20);
+						setState(504);
+						if (!(precpred(_ctx, 41))) throw new FailedPredicateException(this, "precpred(_ctx, 41)");
+						setState(505); match(4);
+						setState(506); expression(0);
+						setState(507); match(37);
 						}
 						break;
 
 					case 29:
 						{
-						_localctx = new VarReferenceMapContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new PostContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(506);
-						if (!(32 >= _localctx._p)) throw new FailedPredicateException(this, "32 >= $_p");
-						setState(507); match(34);
-						setState(508); expression(0);
-						setState(509); match(10);
+						setState(509);
+						if (!(precpred(_ctx, 34))) throw new FailedPredicateException(this, "precpred(_ctx, 34)");
+						setState(510);
+						_la = _input.LA(1);
+						if ( !(_la==25 || _la==50) ) {
+						_errHandler.recoverInline(this);
+						}
+						consume();
 						}
 						break;
 					}
@@ -3782,10 +3785,10 @@ public class BigDataScriptParser extends Parser {
 			setState(521);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==22) {
+			while (_la==17) {
 				{
 				{
-				setState(517); match(22);
+				setState(517); match(17);
 				setState(518); expression(0);
 				}
 				}
@@ -3816,79 +3819,79 @@ public class BigDataScriptParser extends Parser {
 	}
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 3: return 43 >= _localctx._p;
+		case 3: return precpred(_ctx, 40);
 
-		case 4: return 42 >= _localctx._p;
+		case 4: return precpred(_ctx, 39);
 
-		case 5: return 41 >= _localctx._p;
+		case 5: return precpred(_ctx, 38);
 
-		case 6: return 40 >= _localctx._p;
+		case 6: return precpred(_ctx, 37);
 
-		case 7: return 39 >= _localctx._p;
+		case 7: return precpred(_ctx, 36);
 
-		case 8: return 36 >= _localctx._p;
+		case 8: return precpred(_ctx, 33);
 
-		case 9: return 35 >= _localctx._p;
+		case 9: return precpred(_ctx, 32);
 
-		case 10: return 31 >= _localctx._p;
+		case 10: return precpred(_ctx, 31);
 
-		case 11: return 30 >= _localctx._p;
+		case 11: return precpred(_ctx, 30);
 
-		case 12: return 29 >= _localctx._p;
+		case 12: return precpred(_ctx, 29);
 
-		case 13: return 28 >= _localctx._p;
+		case 13: return precpred(_ctx, 28);
 
-		case 14: return 27 >= _localctx._p;
+		case 14: return precpred(_ctx, 27);
 
-		case 15: return 26 >= _localctx._p;
+		case 15: return precpred(_ctx, 26);
 
-		case 17: return 24 >= _localctx._p;
+		case 16: return precpred(_ctx, 25);
 
-		case 16: return 25 >= _localctx._p;
+		case 17: return precpred(_ctx, 24);
 
-		case 19: return 16 >= _localctx._p;
+		case 18: return precpred(_ctx, 23);
 
-		case 18: return 23 >= _localctx._p;
+		case 19: return precpred(_ctx, 17);
 
-		case 21: return 7 >= _localctx._p;
+		case 20: return precpred(_ctx, 16);
 
-		case 20: return 8 >= _localctx._p;
+		case 21: return precpred(_ctx, 8);
 
-		case 23: return 5 >= _localctx._p;
+		case 22: return precpred(_ctx, 7);
 
-		case 22: return 6 >= _localctx._p;
+		case 23: return precpred(_ctx, 6);
 
-		case 25: return 3 >= _localctx._p;
+		case 24: return precpred(_ctx, 5);
 
-		case 24: return 4 >= _localctx._p;
+		case 25: return precpred(_ctx, 4);
 
-		case 27: return 17 >= _localctx._p;
+		case 26: return precpred(_ctx, 3);
 
-		case 26: return 1 >= _localctx._p;
+		case 27: return precpred(_ctx, 1);
 
-		case 29: return 37 >= _localctx._p;
+		case 28: return precpred(_ctx, 44);
 
-		case 28: return 44 >= _localctx._p;
+		case 29: return precpred(_ctx, 42);
 
-		case 31: return 32 >= _localctx._p;
+		case 30: return precpred(_ctx, 41);
 
-		case 30: return 33 >= _localctx._p;
+		case 31: return precpred(_ctx, 34);
 		}
 		return true;
 	}
 	private boolean type_sempred(TypeContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return 3 >= _localctx._p;
+		case 0: return precpred(_ctx, 3);
 
-		case 1: return 2 >= _localctx._p;
+		case 1: return precpred(_ctx, 2);
 
-		case 2: return 1 >= _localctx._p;
+		case 2: return precpred(_ctx, 1);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3L\u020f\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3L\u020f\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\3\2\7\2 \n\2\f\2\16\2#\13\2\3"+
 		"\2\6\2&\n\2\r\2\16\2\'\3\3\6\3+\n\3\r\3\16\3,\3\4\3\4\3\4\7\4\62\n\4\f"+
@@ -3929,81 +3932,81 @@ public class BigDataScriptParser extends Parser {
 		"\7\16\u01ee\n\16\f\16\16\16\u01f1\13\16\5\16\u01f3\n\16\3\16\3\16\3\16"+
 		"\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\7\16\u0202\n\16\f\16"+
 		"\16\16\u0205\13\16\3\17\3\17\3\17\7\17\u020a\n\17\f\17\16\17\u020d\13"+
-		"\17\3\17\2\20\2\4\6\b\n\f\16\20\22\24\26\30\32\34\2\5\4\2\31\31\64\64"+
-		"\3\2DE\4\2\7\7**\u027c\2!\3\2\2\2\4*\3\2\2\2\6.\3\2\2\2\b<\3\2\2\2\nX"+
-		"\3\2\2\2\fZ\3\2\2\2\16_\3\2\2\2\20c\3\2\2\2\22\u0137\3\2\2\2\24\u013b"+
-		"\3\2\2\2\26\u013d\3\2\2\2\30\u013f\3\2\2\2\32\u0196\3\2\2\2\34\u0206\3"+
-		"\2\2\2\36 \5\4\3\2\37\36\3\2\2\2 #\3\2\2\2!\37\3\2\2\2!\"\3\2\2\2\"%\3"+
-		"\2\2\2#!\3\2\2\2$&\5\22\n\2%$\3\2\2\2&\'\3\2\2\2\'%\3\2\2\2\'(\3\2\2\2"+
-		"(\3\3\2\2\2)+\t\2\2\2*)\3\2\2\2+,\3\2\2\2,*\3\2\2\2,-\3\2\2\2-\5\3\2\2"+
-		"\2.\63\5\b\5\2/\60\7\30\2\2\60\62\5\b\5\2\61/\3\2\2\2\62\65\3\2\2\2\63"+
-		"\61\3\2\2\2\63\64\3\2\2\2\64\7\3\2\2\2\65\63\3\2\2\2\66\67\b\5\1\2\67"+
-		"=\7\17\2\28=\7!\2\29=\7\25\2\2:=\7:\2\2;=\7#\2\2<\66\3\2\2\2<8\3\2\2\2"+
-		"<9\3\2\2\2<:\3\2\2\2<;\3\2\2\2=K\3\2\2\2>?\6\5\2\3?@\7\5\2\2@J\7\26\2"+
-		"\2AB\6\5\3\3BC\7$\2\2CJ\7\f\2\2DE\6\5\4\3EF\7$\2\2FG\5\b\5\2GH\7\f\2\2"+
-		"HJ\3\2\2\2I>\3\2\2\2IA\3\2\2\2ID\3\2\2\2JM\3\2\2\2KI\3\2\2\2KL\3\2\2\2"+
-		"L\t\3\2\2\2MK\3\2\2\2NO\5\b\5\2OT\5\f\7\2PQ\7\30\2\2QS\5\f\7\2RP\3\2\2"+
-		"\2SV\3\2\2\2TR\3\2\2\2TU\3\2\2\2UY\3\2\2\2VT\3\2\2\2WY\5\16\b\2XN\3\2"+
-		"\2\2XW\3\2\2\2Y\13\3\2\2\2Z]\7K\2\2[\\\7\21\2\2\\^\5\32\16\2][\3\2\2\2"+
-		"]^\3\2\2\2^\r\3\2\2\2_`\7K\2\2`a\79\2\2ab\5\32\16\2b\17\3\2\2\2cd\7\66"+
-		"\2\2de\t\3\2\2ef\5\4\3\2f\21\3\2\2\2gk\7$\2\2hj\5\22\n\2ih\3\2\2\2jm\3"+
-		"\2\2\2ki\3\2\2\2kl\3\2\2\2ln\3\2\2\2mk\3\2\2\2n\u0138\7\f\2\2os\7&\2\2"+
-		"pr\5\4\3\2qp\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2t\u0138\3\2\2\2us\3"+
-		"\2\2\2vx\7+\2\2wy\5\32\16\2xw\3\2\2\2xy\3\2\2\2y}\3\2\2\2z|\5\4\3\2{z"+
-		"\3\2\2\2|\177\3\2\2\2}{\3\2\2\2}~\3\2\2\2~\u0138\3\2\2\2\177}\3\2\2\2"+
-		"\u0080\u0084\7\b\2\2\u0081\u0083\5\4\3\2\u0082\u0081\3\2\2\2\u0083\u0086"+
-		"\3\2\2\2\u0084\u0082\3\2\2\2\u0084\u0085\3\2\2\2\u0085\u0138\3\2\2\2\u0086"+
-		"\u0084\3\2\2\2\u0087\u0089\7\34\2\2\u0088\u008a\5\32\16\2\u0089\u0088"+
-		"\3\2\2\2\u0089\u008a\3\2\2\2\u008a\u008e\3\2\2\2\u008b\u008d\5\4\3\2\u008c"+
-		"\u008b\3\2\2\2\u008d\u0090\3\2\2\2\u008e\u008c\3\2\2\2\u008e\u008f\3\2"+
-		"\2\2\u008f\u0138\3\2\2\2\u0090\u008e\3\2\2\2\u0091\u0093\7\63\2\2\u0092"+
-		"\u0094\5\32\16\2\u0093\u0092\3\2\2\2\u0093\u0094\3\2\2\2\u0094\u0098\3"+
-		"\2\2\2\u0095\u0097\5\4\3\2\u0096\u0095\3\2\2\2\u0097\u009a\3\2\2\2\u0098"+
-		"\u0096\3\2\2\2\u0098\u0099\3\2\2\2\u0099\u0138\3\2\2\2\u009a\u0098\3\2"+
-		"\2\2\u009b\u009d\7,\2\2\u009c\u009e\5\32\16\2\u009d\u009c\3\2\2\2\u009d"+
-		"\u009e\3\2\2\2\u009e\u00a2\3\2\2\2\u009f\u00a1\5\4\3\2\u00a0\u009f\3\2"+
-		"\2\2\u00a1\u00a4\3\2\2\2\u00a2\u00a0\3\2\2\2\u00a2\u00a3\3\2\2\2\u00a3"+
-		"\u0138\3\2\2\2\u00a4\u00a2\3\2\2\2\u00a5\u00a6\7\61\2\2\u00a6\u00a8\7"+
-		"\36\2\2\u00a7\u00a9\5\24\13\2\u00a8\u00a7\3\2\2\2\u00a8\u00a9\3\2\2\2"+
-		"\u00a9\u00aa\3\2\2\2\u00aa\u00ac\7\64\2\2\u00ab\u00ad\5\26\f\2\u00ac\u00ab"+
-		"\3\2\2\2\u00ac\u00ad\3\2\2\2\u00ad\u00ae\3\2\2\2\u00ae\u00b0\7\64\2\2"+
-		"\u00af\u00b1\5\30\r\2\u00b0\u00af\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1\u00b2"+
-		"\3\2\2\2\u00b2\u00b3\7\20\2\2\u00b3\u00b7\5\22\n\2\u00b4\u00b6\5\4\3\2"+
-		"\u00b5\u00b4\3\2\2\2\u00b6\u00b9\3\2\2\2\u00b7\u00b5\3\2\2\2\u00b7\u00b8"+
-		"\3\2\2\2\u00b8\u0138\3\2\2\2\u00b9\u00b7\3\2\2\2\u00ba\u00bb\7\61\2\2"+
-		"\u00bb\u00bc\7\36\2\2\u00bc\u00bd\5\n\6\2\u00bd\u00be\7\35\2\2\u00be\u00bf"+
-		"\5\32\16\2\u00bf\u00c0\7\20\2\2\u00c0\u00c4\5\22\n\2\u00c1\u00c3\5\4\3"+
-		"\2\u00c2\u00c1\3\2\2\2\u00c3\u00c6\3\2\2\2\u00c4\u00c2\3\2\2\2\u00c4\u00c5"+
-		"\3\2\2\2\u00c5\u0138\3\2\2\2\u00c6\u00c4\3\2\2\2\u00c7\u00c8\7\37\2\2"+
-		"\u00c8\u00c9\7\36\2\2\u00c9\u00ca\5\32\16\2\u00ca\u00cb\7\20\2\2\u00cb"+
+		"\17\3\17\2\4\b\32\20\2\4\6\b\n\f\16\20\22\24\26\30\32\34\2\5\4\2\27\27"+
+		"&&\3\2DE\4\2\33\33\64\64\u027c\2!\3\2\2\2\4*\3\2\2\2\6.\3\2\2\2\b<\3\2"+
+		"\2\2\nX\3\2\2\2\fZ\3\2\2\2\16_\3\2\2\2\20c\3\2\2\2\22\u0137\3\2\2\2\24"+
+		"\u013b\3\2\2\2\26\u013d\3\2\2\2\30\u013f\3\2\2\2\32\u0196\3\2\2\2\34\u0206"+
+		"\3\2\2\2\36 \5\4\3\2\37\36\3\2\2\2 #\3\2\2\2!\37\3\2\2\2!\"\3\2\2\2\""+
+		"%\3\2\2\2#!\3\2\2\2$&\5\22\n\2%$\3\2\2\2&\'\3\2\2\2\'%\3\2\2\2\'(\3\2"+
+		"\2\2(\3\3\2\2\2)+\t\2\2\2*)\3\2\2\2+,\3\2\2\2,*\3\2\2\2,-\3\2\2\2-\5\3"+
+		"\2\2\2.\63\5\b\5\2/\60\7\23\2\2\60\62\5\b\5\2\61/\3\2\2\2\62\65\3\2\2"+
+		"\2\63\61\3\2\2\2\63\64\3\2\2\2\64\7\3\2\2\2\65\63\3\2\2\2\66\67\b\5\1"+
+		"\2\67=\7\67\2\28=\7\16\2\29=\7@\2\2:=\7:\2\2;=\7\7\2\2<\66\3\2\2\2<8\3"+
+		"\2\2\2<9\3\2\2\2<:\3\2\2\2<;\3\2\2\2=K\3\2\2\2>?\f\5\2\2?@\7\62\2\2@J"+
+		"\7\34\2\2AB\f\4\2\2BC\7\6\2\2CJ\7\'\2\2DE\f\3\2\2EF\7\6\2\2FG\5\b\5\2"+
+		"GH\7\'\2\2HJ\3\2\2\2I>\3\2\2\2IA\3\2\2\2ID\3\2\2\2JM\3\2\2\2KI\3\2\2\2"+
+		"KL\3\2\2\2L\t\3\2\2\2MK\3\2\2\2NO\5\b\5\2OT\5\f\7\2PQ\7\23\2\2QS\5\f\7"+
+		"\2RP\3\2\2\2SV\3\2\2\2TR\3\2\2\2TU\3\2\2\2UY\3\2\2\2VT\3\2\2\2WY\5\16"+
+		"\b\2XN\3\2\2\2XW\3\2\2\2Y\13\3\2\2\2Z]\7K\2\2[\\\7\t\2\2\\^\5\32\16\2"+
+		"][\3\2\2\2]^\3\2\2\2^\r\3\2\2\2_`\7K\2\2`a\7+\2\2ab\5\32\16\2b\17\3\2"+
+		"\2\2cd\7\17\2\2de\t\3\2\2ef\5\4\3\2f\21\3\2\2\2gk\7\6\2\2hj\5\22\n\2i"+
+		"h\3\2\2\2jm\3\2\2\2ki\3\2\2\2kl\3\2\2\2ln\3\2\2\2mk\3\2\2\2n\u0138\7\'"+
+		"\2\2os\7-\2\2pr\5\4\3\2qp\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2t\u0138"+
+		"\3\2\2\2us\3\2\2\2vx\7;\2\2wy\5\32\16\2xw\3\2\2\2xy\3\2\2\2y}\3\2\2\2"+
+		"z|\5\4\3\2{z\3\2\2\2|\177\3\2\2\2}{\3\2\2\2}~\3\2\2\2~\u0138\3\2\2\2\177"+
+		"}\3\2\2\2\u0080\u0084\7\"\2\2\u0081\u0083\5\4\3\2\u0082\u0081\3\2\2\2"+
+		"\u0083\u0086\3\2\2\2\u0084\u0082\3\2\2\2\u0084\u0085\3\2\2\2\u0085\u0138"+
+		"\3\2\2\2\u0086\u0084\3\2\2\2\u0087\u0089\7\30\2\2\u0088\u008a\5\32\16"+
+		"\2\u0089\u0088\3\2\2\2\u0089\u008a\3\2\2\2\u008a\u008e\3\2\2\2\u008b\u008d"+
+		"\5\4\3\2\u008c\u008b\3\2\2\2\u008d\u0090\3\2\2\2\u008e\u008c\3\2\2\2\u008e"+
+		"\u008f\3\2\2\2\u008f\u0138\3\2\2\2\u0090\u008e\3\2\2\2\u0091\u0093\7*"+
+		"\2\2\u0092\u0094\5\32\16\2\u0093\u0092\3\2\2\2\u0093\u0094\3\2\2\2\u0094"+
+		"\u0098\3\2\2\2\u0095\u0097\5\4\3\2\u0096\u0095\3\2\2\2\u0097\u009a\3\2"+
+		"\2\2\u0098\u0096\3\2\2\2\u0098\u0099\3\2\2\2\u0099\u0138\3\2\2\2\u009a"+
+		"\u0098\3\2\2\2\u009b\u009d\7\f\2\2\u009c\u009e\5\32\16\2\u009d\u009c\3"+
+		"\2\2\2\u009d\u009e\3\2\2\2\u009e\u00a2\3\2\2\2\u009f\u00a1\5\4\3\2\u00a0"+
+		"\u009f\3\2\2\2\u00a1\u00a4\3\2\2\2\u00a2\u00a0\3\2\2\2\u00a2\u00a3\3\2"+
+		"\2\2\u00a3\u0138\3\2\2\2\u00a4\u00a2\3\2\2\2\u00a5\u00a6\7\13\2\2\u00a6"+
+		"\u00a8\7\21\2\2\u00a7\u00a9\5\24\13\2\u00a8\u00a7\3\2\2\2\u00a8\u00a9"+
+		"\3\2\2\2\u00a9\u00aa\3\2\2\2\u00aa\u00ac\7&\2\2\u00ab\u00ad\5\26\f\2\u00ac"+
+		"\u00ab\3\2\2\2\u00ac\u00ad\3\2\2\2\u00ad\u00ae\3\2\2\2\u00ae\u00b0\7&"+
+		"\2\2\u00af\u00b1\5\30\r\2\u00b0\u00af\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1"+
+		"\u00b2\3\2\2\2\u00b2\u00b3\7>\2\2\u00b3\u00b7\5\22\n\2\u00b4\u00b6\5\4"+
+		"\3\2\u00b5\u00b4\3\2\2\2\u00b6\u00b9\3\2\2\2\u00b7\u00b5\3\2\2\2\u00b7"+
+		"\u00b8\3\2\2\2\u00b8\u0138\3\2\2\2\u00b9\u00b7\3\2\2\2\u00ba\u00bb\7\13"+
+		"\2\2\u00bb\u00bc\7\21\2\2\u00bc\u00bd\5\n\6\2\u00bd\u00be\7\61\2\2\u00be"+
+		"\u00bf\5\32\16\2\u00bf\u00c0\7>\2\2\u00c0\u00c4\5\22\n\2\u00c1\u00c3\5"+
+		"\4\3\2\u00c2\u00c1\3\2\2\2\u00c3\u00c6\3\2\2\2\u00c4\u00c2\3\2\2\2\u00c4"+
+		"\u00c5\3\2\2\2\u00c5\u0138\3\2\2\2\u00c6\u00c4\3\2\2\2\u00c7\u00c8\7("+
+		"\2\2\u00c8\u00c9\7\21\2\2\u00c9\u00ca\5\32\16\2\u00ca\u00cb\7>\2\2\u00cb"+
 		"\u00cf\5\22\n\2\u00cc\u00ce\5\4\3\2\u00cd\u00cc\3\2\2\2\u00ce\u00d1\3"+
 		"\2\2\2\u00cf\u00cd\3\2\2\2\u00cf\u00d0\3\2\2\2\u00d0\u00da\3\2\2\2\u00d1"+
-		"\u00cf\3\2\2\2\u00d2\u00d3\7(\2\2\u00d3\u00d7\5\22\n\2\u00d4\u00d6\5\4"+
+		"\u00cf\3\2\2\2\u00d2\u00d3\7=\2\2\u00d3\u00d7\5\22\n\2\u00d4\u00d6\5\4"+
 		"\3\2\u00d5\u00d4\3\2\2\2\u00d6\u00d9\3\2\2\2\u00d7\u00d5\3\2\2\2\u00d7"+
 		"\u00d8\3\2\2\2\u00d8\u00db\3\2\2\2\u00d9\u00d7\3\2\2\2\u00da\u00d2\3\2"+
-		"\2\2\u00da\u00db\3\2\2\2\u00db\u0138\3\2\2\2\u00dc\u00dd\7\n\2\2\u00dd"+
+		"\2\2\u00da\u00db\3\2\2\2\u00db\u0138\3\2\2\2\u00dc\u00dd\7\25\2\2\u00dd"+
 		"\u00e1\5\32\16\2\u00de\u00e0\5\4\3\2\u00df\u00de\3\2\2\2\u00e0\u00e3\3"+
 		"\2\2\2\u00e1\u00df\3\2\2\2\u00e1\u00e2\3\2\2\2\u00e2\u0138\3\2\2\2\u00e3"+
-		"\u00e1\3\2\2\2\u00e4\u00e6\7\62\2\2\u00e5\u00e7\5\32\16\2\u00e6\u00e5"+
-		"\3\2\2\2\u00e6\u00e7\3\2\2\2\u00e7\u00eb\3\2\2\2\u00e8\u00ea\5\4\3\2\u00e9"+
+		"\u00e1\3\2\2\2\u00e4\u00e6\7$\2\2\u00e5\u00e7\5\32\16\2\u00e6\u00e5\3"+
+		"\2\2\2\u00e6\u00e7\3\2\2\2\u00e7\u00eb\3\2\2\2\u00e8\u00ea\5\4\3\2\u00e9"+
 		"\u00e8\3\2\2\2\u00ea\u00ed\3\2\2\2\u00eb\u00e9\3\2\2\2\u00eb\u00ec\3\2"+
-		"\2\2\u00ec\u0138\3\2\2\2\u00ed\u00eb\3\2\2\2\u00ee\u00f7\7%\2\2\u00ef"+
-		"\u00f4\5\32\16\2\u00f0\u00f1\7\30\2\2\u00f1\u00f3\5\32\16\2\u00f2\u00f0"+
+		"\2\2\u00ec\u0138\3\2\2\2\u00ed\u00eb\3\2\2\2\u00ee\u00f7\7\36\2\2\u00ef"+
+		"\u00f4\5\32\16\2\u00f0\u00f1\7\23\2\2\u00f1\u00f3\5\32\16\2\u00f2\u00f0"+
 		"\3\2\2\2\u00f3\u00f6\3\2\2\2\u00f4\u00f2\3\2\2\2\u00f4\u00f5\3\2\2\2\u00f5"+
 		"\u00f8\3\2\2\2\u00f6\u00f4\3\2\2\2\u00f7\u00ef\3\2\2\2\u00f7\u00f8\3\2"+
 		"\2\2\u00f8\u00fc\3\2\2\2\u00f9\u00fb\5\4\3\2\u00fa\u00f9\3\2\2\2\u00fb"+
 		"\u00fe\3\2\2\2\u00fc\u00fa\3\2\2\2\u00fc\u00fd\3\2\2\2\u00fd\u0138\3\2"+
-		"\2\2\u00fe\u00fc\3\2\2\2\u00ff\u0100\7\33\2\2\u0100\u0102\7\36\2\2\u0101"+
+		"\2\2\u00fe\u00fc\3\2\2\2\u00ff\u0100\7\5\2\2\u0100\u0102\7\21\2\2\u0101"+
 		"\u0103\5\32\16\2\u0102\u0101\3\2\2\2\u0102\u0103\3\2\2\2\u0103\u0104\3"+
-		"\2\2\2\u0104\u0105\7\20\2\2\u0105\u0109\5\22\n\2\u0106\u0108\5\4\3\2\u0107"+
+		"\2\2\2\u0104\u0105\7>\2\2\u0105\u0109\5\22\n\2\u0106\u0108\5\4\3\2\u0107"+
 		"\u0106\3\2\2\2\u0108\u010b\3\2\2\2\u0109\u0107\3\2\2\2\u0109\u010a\3\2"+
 		"\2\2\u010a\u0138\3\2\2\2\u010b\u0109\3\2\2\2\u010c\u010d\5\b\5\2\u010d"+
-		"\u010e\7K\2\2\u010e\u0110\7\36\2\2\u010f\u0111\5\n\6\2\u0110\u010f\3\2"+
-		"\2\2\u0110\u0111\3\2\2\2\u0111\u0116\3\2\2\2\u0112\u0113\7\30\2\2\u0113"+
+		"\u010e\7K\2\2\u010e\u0110\7\21\2\2\u010f\u0111\5\n\6\2\u0110\u010f\3\2"+
+		"\2\2\u0110\u0111\3\2\2\2\u0111\u0116\3\2\2\2\u0112\u0113\7\23\2\2\u0113"+
 		"\u0115\5\n\6\2\u0114\u0112\3\2\2\2\u0115\u0118\3\2\2\2\u0116\u0114\3\2"+
 		"\2\2\u0116\u0117\3\2\2\2\u0117\u0119\3\2\2\2\u0118\u0116\3\2\2\2\u0119"+
-		"\u011a\7\20\2\2\u011a\u011e\5\22\n\2\u011b\u011d\5\4\3\2\u011c\u011b\3"+
-		"\2\2\2\u011d\u0120\3\2\2\2\u011e\u011c\3\2\2\2\u011e\u011f\3\2\2\2\u011f"+
+		"\u011a\7>\2\2\u011a\u011e\5\22\n\2\u011b\u011d\5\4\3\2\u011c\u011b\3\2"+
+		"\2\2\u011d\u0120\3\2\2\2\u011e\u011c\3\2\2\2\u011e\u011f\3\2\2\2\u011f"+
 		"\u0138\3\2\2\2\u0120\u011e\3\2\2\2\u0121\u0125\5\n\6\2\u0122\u0124\5\4"+
 		"\3\2\u0123\u0122\3\2\2\2\u0124\u0127\3\2\2\2\u0125\u0123\3\2\2\2\u0125"+
 		"\u0126\3\2\2\2\u0126\u0138\3\2\2\2\u0127\u0125\3\2\2\2\u0128\u012c\5\32"+
@@ -4020,88 +4023,88 @@ public class BigDataScriptParser extends Parser {
 		"\2\u0139\u013c\5\n\6\2\u013a\u013c\5\34\17\2\u013b\u0139\3\2\2\2\u013b"+
 		"\u013a\3\2\2\2\u013c\25\3\2\2\2\u013d\u013e\5\32\16\2\u013e\27\3\2\2\2"+
 		"\u013f\u0140\5\34\17\2\u0140\31\3\2\2\2\u0141\u0142\b\16\1\2\u0142\u0143"+
-		"\t\4\2\2\u0143\u0197\5\32\16\2\u0144\u0145\7>\2\2\u0145\u0197\5\32\16"+
-		"\2\u0146\u0147\7\24\2\2\u0147\u0197\5\32\16\2\u0148\u0149\7\32\2\2\u0149"+
-		"\u0197\5\32\16\2\u014a\u014b\7\60\2\2\u014b\u0197\5\32\16\2\u014c\u014d"+
-		"\7K\2\2\u014d\u014e\79\2\2\u014e\u0197\5\32\16\2\u014f\u0197\7A\2\2\u0150"+
+		"\t\4\2\2\u0143\u0197\5\32\16%\u0144\u0145\7\35\2\2\u0145\u0197\5\32\16"+
+		"\30\u0146\u0147\79\2\2\u0147\u0197\5\32\16\27\u0148\u0149\7?\2\2\u0149"+
+		"\u0197\5\32\16\26\u014a\u014b\7\37\2\2\u014b\u0197\5\32\16\25\u014c\u014d"+
+		"\7K\2\2\u014d\u014e\7+\2\2\u014e\u0197\5\32\16\4\u014f\u0197\7A\2\2\u0150"+
 		"\u0197\7B\2\2\u0151\u0197\7C\2\2\u0152\u0197\7D\2\2\u0153\u0197\7E\2\2"+
-		"\u0154\u0155\7K\2\2\u0155\u015e\7\36\2\2\u0156\u015b\5\32\16\2\u0157\u0158"+
-		"\7\30\2\2\u0158\u015a\5\32\16\2\u0159\u0157\3\2\2\2\u015a\u015d\3\2\2"+
+		"\u0154\u0155\7K\2\2\u0155\u015e\7\21\2\2\u0156\u015b\5\32\16\2\u0157\u0158"+
+		"\7\23\2\2\u0158\u015a\5\32\16\2\u0159\u0157\3\2\2\2\u015a\u015d\3\2\2"+
 		"\2\u015b\u0159\3\2\2\2\u015b\u015c\3\2\2\2\u015c\u015f\3\2\2\2\u015d\u015b"+
 		"\3\2\2\2\u015e\u0156\3\2\2\2\u015e\u015f\3\2\2\2\u015f\u0160\3\2\2\2\u0160"+
-		"\u0197\7\20\2\2\u0161\u0197\7K\2\2\u0162\u0163\7\36\2\2\u0163\u0164\5"+
-		"\32\16\2\u0164\u0165\7\20\2\2\u0165\u0197\3\2\2\2\u0166\u0167\7\5\2\2"+
-		"\u0167\u0197\7\26\2\2\u0168\u0169\7\5\2\2\u0169\u016e\5\32\16\2\u016a"+
-		"\u016b\7\30\2\2\u016b\u016d\5\32\16\2\u016c\u016a\3\2\2\2\u016d\u0170"+
-		"\3\2\2\2\u016e\u016c\3\2\2\2\u016e\u016f\3\2\2\2\u016f\u0171\3\2\2\2\u0170"+
-		"\u016e\3\2\2\2\u0171\u0172\7\26\2\2\u0172\u0197\3\2\2\2\u0173\u0174\7"+
-		"$\2\2\u0174\u0197\7\f\2\2\u0175\u0176\7$\2\2\u0176\u0177\5\32\16\2\u0177"+
-		"\u0178\7/\2\2\u0178\u0180\5\32\16\2\u0179\u017a\7\30\2\2\u017a\u017b\5"+
-		"\32\16\2\u017b\u017c\7/\2\2\u017c\u017d\5\32\16\2\u017d\u017f\3\2\2\2"+
-		"\u017e\u0179\3\2\2\2\u017f\u0182\3\2\2\2\u0180\u017e\3\2\2\2\u0180\u0181"+
-		"\3\2\2\2\u0181\u0183\3\2\2\2\u0182\u0180\3\2\2\2\u0183\u0184\7\f\2\2\u0184"+
-		"\u0197\3\2\2\2\u0185\u0197\7F\2\2\u0186\u0197\7G\2\2\u0187\u0193\7@\2"+
-		"\2\u0188\u0189\7\36\2\2\u0189\u018e\5\32\16\2\u018a\u018b\7\30\2\2\u018b"+
+		"\u0197\7>\2\2\u0161\u0197\7K\2\2\u0162\u0163\7\21\2\2\u0163\u0164\5\32"+
+		"\16\2\u0164\u0165\7>\2\2\u0165\u0197\3\2\2\2\u0166\u0167\7\62\2\2\u0167"+
+		"\u0197\7\34\2\2\u0168\u0169\7\62\2\2\u0169\u016e\5\32\16\2\u016a\u016b"+
+		"\7\23\2\2\u016b\u016d\5\32\16\2\u016c\u016a\3\2\2\2\u016d\u0170\3\2\2"+
+		"\2\u016e\u016c\3\2\2\2\u016e\u016f\3\2\2\2\u016f\u0171\3\2\2\2\u0170\u016e"+
+		"\3\2\2\2\u0171\u0172\7\34\2\2\u0172\u0197\3\2\2\2\u0173\u0174\7\6\2\2"+
+		"\u0174\u0197\7\'\2\2\u0175\u0176\7\6\2\2\u0176\u0177\5\32\16\2\u0177\u0178"+
+		"\78\2\2\u0178\u0180\5\32\16\2\u0179\u017a\7\23\2\2\u017a\u017b\5\32\16"+
+		"\2\u017b\u017c\78\2\2\u017c\u017d\5\32\16\2\u017d\u017f\3\2\2\2\u017e"+
+		"\u0179\3\2\2\2\u017f\u0182\3\2\2\2\u0180\u017e\3\2\2\2\u0180\u0181\3\2"+
+		"\2\2\u0181\u0183\3\2\2\2\u0182\u0180\3\2\2\2\u0183\u0184\7\'\2\2\u0184"+
+		"\u0197\3\2\2\2\u0185\u0197\7F\2\2\u0186\u0197\7G\2\2\u0187\u0193\7\20"+
+		"\2\2\u0188\u0189\7\21\2\2\u0189\u018e\5\32\16\2\u018a\u018b\7\23\2\2\u018b"+
 		"\u018d\5\32\16\2\u018c\u018a\3\2\2\2\u018d\u0190\3\2\2\2\u018e\u018c\3"+
 		"\2\2\2\u018e\u018f\3\2\2\2\u018f\u0191\3\2\2\2\u0190\u018e\3\2\2\2\u0191"+
-		"\u0192\7\20\2\2\u0192\u0194\3\2\2\2\u0193\u0188\3\2\2\2\u0193\u0194\3"+
-		"\2\2\2\u0194\u0195\3\2\2\2\u0195\u0197\5\22\n\2\u0196\u0141\3\2\2\2\u0196"+
+		"\u0192\7>\2\2\u0192\u0194\3\2\2\2\u0193\u0188\3\2\2\2\u0193\u0194\3\2"+
+		"\2\2\u0194\u0195\3\2\2\2\u0195\u0197\5\22\n\2\u0196\u0141\3\2\2\2\u0196"+
 		"\u0144\3\2\2\2\u0196\u0146\3\2\2\2\u0196\u0148\3\2\2\2\u0196\u014a\3\2"+
 		"\2\2\u0196\u014c\3\2\2\2\u0196\u014f\3\2\2\2\u0196\u0150\3\2\2\2\u0196"+
 		"\u0151\3\2\2\2\u0196\u0152\3\2\2\2\u0196\u0153\3\2\2\2\u0196\u0154\3\2"+
 		"\2\2\u0196\u0161\3\2\2\2\u0196\u0162\3\2\2\2\u0196\u0166\3\2\2\2\u0196"+
 		"\u0168\3\2\2\2\u0196\u0173\3\2\2\2\u0196\u0175\3\2\2\2\u0196\u0185\3\2"+
 		"\2\2\u0196\u0186\3\2\2\2\u0196\u0187\3\2\2\2\u0197\u0203\3\2\2\2\u0198"+
-		"\u0199\6\16\5\3\u0199\u019a\7\65\2\2\u019a\u0202\5\32\16\2\u019b\u019c"+
-		"\6\16\6\3\u019c\u019d\7\67\2\2\u019d\u0202\5\32\16\2\u019e\u019f\6\16"+
-		"\7\3\u019f\u01a0\7\3\2\2\u01a0\u0202\5\32\16\2\u01a1\u01a2\6\16\b\3\u01a2"+
-		"\u01a3\7-\2\2\u01a3\u0202\5\32\16\2\u01a4\u01a5\6\16\t\3\u01a5\u01a6\7"+
-		"\23\2\2\u01a6\u0202\5\32\16\2\u01a7\u01a8\6\16\n\3\u01a8\u01a9\7\t\2\2"+
-		"\u01a9\u0202\5\32\16\2\u01aa\u01ab\6\16\13\3\u01ab\u01ac\7=\2\2\u01ac"+
-		"\u0202\5\32\16\2\u01ad\u01ae\6\16\f\3\u01ae\u01af\7\r\2\2\u01af\u0202"+
-		"\5\32\16\2\u01b0\u01b1\6\16\r\3\u01b1\u01b2\7<\2\2\u01b2\u0202\5\32\16"+
-		"\2\u01b3\u01b4\6\16\16\3\u01b4\u01b5\7\4\2\2\u01b5\u0202\5\32\16\2\u01b6"+
-		"\u01b7\6\16\17\3\u01b7\u01b8\7\32\2\2\u01b8\u0202\5\32\16\2\u01b9\u01ba"+
-		"\6\16\20\3\u01ba\u01bb\7\60\2\2\u01bb\u0202\5\32\16\2\u01bc\u01bd\6\16"+
-		"\21\3\u01bd\u01be\7\6\2\2\u01be\u0202\5\32\16\2\u01bf\u01c0\6\16\22\3"+
-		"\u01c0\u01c1\78\2\2\u01c1\u0202\5\32\16\2\u01c2\u01c3\6\16\23\3\u01c3"+
-		"\u01c4\7\13\2\2\u01c4\u0202\5\32\16\2\u01c5\u01c6\6\16\24\3\u01c6\u01c7"+
-		"\7?\2\2\u01c7\u0202\5\32\16\2\u01c8\u01c9\6\16\25\3\u01c9\u01ca\7)\2\2"+
-		"\u01ca\u0202\5\32\16\2\u01cb\u01cc\6\16\26\3\u01cc\u01cd\7\22\2\2\u01cd"+
-		"\u0202\5\32\16\2\u01ce\u01cf\6\16\27\3\u01cf\u01d0\7 \2\2\u01d0\u0202"+
-		"\5\32\16\2\u01d1\u01d2\6\16\30\3\u01d2\u01d3\7;\2\2\u01d3\u0202\5\32\16"+
-		"\2\u01d4\u01d5\6\16\31\3\u01d5\u01d6\7\16\2\2\u01d6\u0202\5\32\16\2\u01d7"+
-		"\u01d8\6\16\32\3\u01d8\u01d9\7\27\2\2\u01d9\u0202\5\32\16\2\u01da\u01db"+
-		"\6\16\33\3\u01db\u01dc\7\'\2\2\u01dc\u0202\5\32\16\2\u01dd\u01de\6\16"+
-		"\34\3\u01de\u01df\7\21\2\2\u01df\u0202\5\32\16\2\u01e0\u01e1\6\16\35\3"+
-		"\u01e1\u01e2\7\"\2\2\u01e2\u01e3\5\32\16\2\u01e3\u01e4\7\35\2\2\u01e4"+
-		"\u01e5\5\32\16\2\u01e5\u0202\3\2\2\2\u01e6\u01e7\6\16\36\3\u01e7\u01e8"+
-		"\7.\2\2\u01e8\u01e9\7K\2\2\u01e9\u01f2\7\36\2\2\u01ea\u01ef\5\32\16\2"+
-		"\u01eb\u01ec\7\30\2\2\u01ec\u01ee\5\32\16\2\u01ed\u01eb\3\2\2\2\u01ee"+
-		"\u01f1\3\2\2\2\u01ef\u01ed\3\2\2\2\u01ef\u01f0\3\2\2\2\u01f0\u01f3\3\2"+
-		"\2\2\u01f1\u01ef\3\2\2\2\u01f2\u01ea\3\2\2\2\u01f2\u01f3\3\2\2\2\u01f3"+
-		"\u01f4\3\2\2\2\u01f4\u0202\7\20\2\2\u01f5\u01f6\6\16\37\3\u01f6\u0202"+
-		"\t\4\2\2\u01f7\u01f8\6\16 \3\u01f8\u01f9\7\5\2\2\u01f9\u01fa\5\32\16\2"+
-		"\u01fa\u01fb\7\26\2\2\u01fb\u0202\3\2\2\2\u01fc\u01fd\6\16!\3\u01fd\u01fe"+
-		"\7$\2\2\u01fe\u01ff\5\32\16\2\u01ff\u0200\7\f\2\2\u0200\u0202\3\2\2\2"+
-		"\u0201\u0198\3\2\2\2\u0201\u019b\3\2\2\2\u0201\u019e\3\2\2\2\u0201\u01a1"+
-		"\3\2\2\2\u0201\u01a4\3\2\2\2\u0201\u01a7\3\2\2\2\u0201\u01aa\3\2\2\2\u0201"+
-		"\u01ad\3\2\2\2\u0201\u01b0\3\2\2\2\u0201\u01b3\3\2\2\2\u0201\u01b6\3\2"+
-		"\2\2\u0201\u01b9\3\2\2\2\u0201\u01bc\3\2\2\2\u0201\u01bf\3\2\2\2\u0201"+
-		"\u01c2\3\2\2\2\u0201\u01c5\3\2\2\2\u0201\u01c8\3\2\2\2\u0201\u01cb\3\2"+
-		"\2\2\u0201\u01ce\3\2\2\2\u0201\u01d1\3\2\2\2\u0201\u01d4\3\2\2\2\u0201"+
-		"\u01d7\3\2\2\2\u0201\u01da\3\2\2\2\u0201\u01dd\3\2\2\2\u0201\u01e0\3\2"+
-		"\2\2\u0201\u01e6\3\2\2\2\u0201\u01f5\3\2\2\2\u0201\u01f7\3\2\2\2\u0201"+
-		"\u01fc\3\2\2\2\u0202\u0205\3\2\2\2\u0203\u0201\3\2\2\2\u0203\u0204\3\2"+
-		"\2\2\u0204\33\3\2\2\2\u0205\u0203\3\2\2\2\u0206\u020b\5\32\16\2\u0207"+
-		"\u0208\7\30\2\2\u0208\u020a\5\32\16\2\u0209\u0207\3\2\2\2\u020a\u020d"+
-		"\3\2\2\2\u020b\u0209\3\2\2\2\u020b\u020c\3\2\2\2\u020c\35\3\2\2\2\u020d"+
-		"\u020b\3\2\2\2;!\',\63<IKTX]ksx}\u0084\u0089\u008e\u0093\u0098\u009d\u00a2"+
-		"\u00a8\u00ac\u00b0\u00b7\u00c4\u00cf\u00d7\u00da\u00e1\u00e6\u00eb\u00f4"+
-		"\u00f7\u00fc\u0102\u0109\u0110\u0116\u011e\u0125\u012c\u0133\u0137\u013b"+
-		"\u015b\u015e\u016e\u0180\u018e\u0193\u0196\u01ef\u01f2\u0201\u0203\u020b";
+		"\u0199\f*\2\2\u0199\u019a\7\b\2\2\u019a\u0202\5\32\16+\u019b\u019c\f)"+
+		"\2\2\u019c\u019d\7%\2\2\u019d\u0202\5\32\16*\u019e\u019f\f(\2\2\u019f"+
+		"\u01a0\7.\2\2\u01a0\u0202\5\32\16)\u01a1\u01a2\f\'\2\2\u01a2\u01a3\7\n"+
+		"\2\2\u01a3\u0202\5\32\16(\u01a4\u01a5\f&\2\2\u01a5\u01a6\7\65\2\2\u01a6"+
+		"\u0202\5\32\16\'\u01a7\u01a8\f#\2\2\u01a8\u01a9\7\4\2\2\u01a9\u0202\5"+
+		"\32\16$\u01aa\u01ab\f\"\2\2\u01ab\u01ac\7\63\2\2\u01ac\u0202\5\32\16#"+
+		"\u01ad\u01ae\f!\2\2\u01ae\u01af\7<\2\2\u01af\u0202\5\32\16\"\u01b0\u01b1"+
+		"\f \2\2\u01b1\u01b2\7!\2\2\u01b2\u0202\5\32\16!\u01b3\u01b4\f\37\2\2\u01b4"+
+		"\u01b5\7/\2\2\u01b5\u0202\5\32\16 \u01b6\u01b7\f\36\2\2\u01b7\u01b8\7"+
+		"?\2\2\u01b8\u0202\5\32\16\37\u01b9\u01ba\f\35\2\2\u01ba\u01bb\7\37\2\2"+
+		"\u01bb\u0202\5\32\16\36\u01bc\u01bd\f\34\2\2\u01bd\u01be\7\32\2\2\u01be"+
+		"\u0202\5\32\16\35\u01bf\u01c0\f\33\2\2\u01c0\u01c1\7\66\2\2\u01c1\u0202"+
+		"\5\32\16\34\u01c2\u01c3\f\32\2\2\u01c3\u01c4\7,\2\2\u01c4\u0202\5\32\16"+
+		"\33\u01c5\u01c6\f\31\2\2\u01c6\u01c7\7\31\2\2\u01c7\u0202\5\32\16\32\u01c8"+
+		"\u01c9\f\23\2\2\u01c9\u01ca\7)\2\2\u01ca\u01cb\5\32\16\2\u01cb\u01cc\7"+
+		"\61\2\2\u01cc\u01cd\5\32\16\24\u01cd\u0202\3\2\2\2\u01ce\u01cf\f\22\2"+
+		"\2\u01cf\u01d0\7\26\2\2\u01d0\u0202\5\32\16\23\u01d1\u01d2\f\n\2\2\u01d2"+
+		"\u01d3\7\r\2\2\u01d3\u0202\5\32\16\13\u01d4\u01d5\f\t\2\2\u01d5\u01d6"+
+		"\7#\2\2\u01d6\u0202\5\32\16\n\u01d7\u01d8\f\b\2\2\u01d8\u01d9\7\24\2\2"+
+		"\u01d9\u0202\5\32\16\t\u01da\u01db\f\7\2\2\u01db\u01dc\7 \2\2\u01dc\u0202"+
+		"\5\32\16\b\u01dd\u01de\f\6\2\2\u01de\u01df\7\22\2\2\u01df\u0202\5\32\16"+
+		"\7\u01e0\u01e1\f\5\2\2\u01e1\u01e2\7\3\2\2\u01e2\u0202\5\32\16\6\u01e3"+
+		"\u01e4\f\3\2\2\u01e4\u01e5\7\t\2\2\u01e5\u0202\5\32\16\4\u01e6\u01e7\f"+
+		".\2\2\u01e7\u01e8\7\60\2\2\u01e8\u01e9\7K\2\2\u01e9\u01f2\7\21\2\2\u01ea"+
+		"\u01ef\5\32\16\2\u01eb\u01ec\7\23\2\2\u01ec\u01ee\5\32\16\2\u01ed\u01eb"+
+		"\3\2\2\2\u01ee\u01f1\3\2\2\2\u01ef\u01ed\3\2\2\2\u01ef\u01f0\3\2\2\2\u01f0"+
+		"\u01f3\3\2\2\2\u01f1\u01ef\3\2\2\2\u01f2\u01ea\3\2\2\2\u01f2\u01f3\3\2"+
+		"\2\2\u01f3\u01f4\3\2\2\2\u01f4\u0202\7>\2\2\u01f5\u01f6\f,\2\2\u01f6\u01f7"+
+		"\7\62\2\2\u01f7\u01f8\5\32\16\2\u01f8\u01f9\7\34\2\2\u01f9\u0202\3\2\2"+
+		"\2\u01fa\u01fb\f+\2\2\u01fb\u01fc\7\6\2\2\u01fc\u01fd\5\32\16\2\u01fd"+
+		"\u01fe\7\'\2\2\u01fe\u0202\3\2\2\2\u01ff\u0200\f$\2\2\u0200\u0202\t\4"+
+		"\2\2\u0201\u0198\3\2\2\2\u0201\u019b\3\2\2\2\u0201\u019e\3\2\2\2\u0201"+
+		"\u01a1\3\2\2\2\u0201\u01a4\3\2\2\2\u0201\u01a7\3\2\2\2\u0201\u01aa\3\2"+
+		"\2\2\u0201\u01ad\3\2\2\2\u0201\u01b0\3\2\2\2\u0201\u01b3\3\2\2\2\u0201"+
+		"\u01b6\3\2\2\2\u0201\u01b9\3\2\2\2\u0201\u01bc\3\2\2\2\u0201\u01bf\3\2"+
+		"\2\2\u0201\u01c2\3\2\2\2\u0201\u01c5\3\2\2\2\u0201\u01c8\3\2\2\2\u0201"+
+		"\u01ce\3\2\2\2\u0201\u01d1\3\2\2\2\u0201\u01d4\3\2\2\2\u0201\u01d7\3\2"+
+		"\2\2\u0201\u01da\3\2\2\2\u0201\u01dd\3\2\2\2\u0201\u01e0\3\2\2\2\u0201"+
+		"\u01e3\3\2\2\2\u0201\u01e6\3\2\2\2\u0201\u01f5\3\2\2\2\u0201\u01fa\3\2"+
+		"\2\2\u0201\u01ff\3\2\2\2\u0202\u0205\3\2\2\2\u0203\u0201\3\2\2\2\u0203"+
+		"\u0204\3\2\2\2\u0204\33\3\2\2\2\u0205\u0203\3\2\2\2\u0206\u020b\5\32\16"+
+		"\2\u0207\u0208\7\23\2\2\u0208\u020a\5\32\16\2\u0209\u0207\3\2\2\2\u020a"+
+		"\u020d\3\2\2\2\u020b\u0209\3\2\2\2\u020b\u020c\3\2\2\2\u020c\35\3\2\2"+
+		"\2\u020d\u020b\3\2\2\2;!\',\63<IKTX]ksx}\u0084\u0089\u008e\u0093\u0098"+
+		"\u009d\u00a2\u00a8\u00ac\u00b0\u00b7\u00c4\u00cf\u00d7\u00da\u00e1\u00e6"+
+		"\u00eb\u00f4\u00f7\u00fc\u0102\u0109\u0110\u0116\u011e\u0125\u012c\u0133"+
+		"\u0137\u013b\u015b\u015e\u016e\u0180\u018e\u0193\u0196\u01ef\u01f2\u0201"+
+		"\u0203\u020b";
 	public static final ATN _ATN =
-		ATNSimulator.deserialize(_serializedATN.toCharArray());
+		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
 		_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
 		for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {

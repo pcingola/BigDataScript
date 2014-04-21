@@ -71,6 +71,9 @@ expression : BOOL_LITERAL                                                       
            | STRING_LITERAL_SINGLE                                                  # literalString
            | ID '('(expression (',' expression )*)? ')'                             # functionCall
            | expression '.' ID '('(expression (',' expression )*)? ')'              # methodCall
+           | ID                                                                     # varReference
+           | expression '[' expression ']'                                          # varReferenceList
+           | expression '{' expression '}'                                          # varReferenceMap
            | expression '&&' expression                                             # expressionLogicAnd
            | expression '||' expression                                             # expressionLogicOr
            | expression '&' expression                                              # expressionBitAnd
@@ -80,9 +83,6 @@ expression : BOOL_LITERAL                                                       
            | expression ('++' | '--')                                               # post
            | expression '!=' expression                                             # expressionNe
            | expression '==' expression                                             # expressionEq
-           | ID                                                                     # varReference
-           | expression '[' expression ']'                                          # varReferenceList
-           | expression '{' expression '}'                                          # varReferenceMap
            | expression '%' expression                                              # expressionModulo
            | expression '/' expression                                              # expressionDivide
            | expression '*' expression                                              # expressionTimes

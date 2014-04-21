@@ -27,8 +27,10 @@
 			srcdir="src" 
 			destdir="bin" 
 			debug="true" 
+			source="7"
+			target="7"
 			includeantruntime="false" 
-			classpath="lib/antlr-runtime-4.1.jar:lib/commons-lang3-3.1.jar:lib/jsch-0.1.49.jar:lib/junit-4.10.jar"
+			classpath="lib/antlr-runtime-4.2.2.jar:lib/commons-lang3-3.1.jar:lib/jsch-0.1.49.jar:lib/junit-4.10.jar"
 		/>
 	</target>
 
