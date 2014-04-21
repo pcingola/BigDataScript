@@ -5,8 +5,9 @@ init="main"
 testFile="../test/z.bds"
 
 # Programs
-antlr4="java -Xmx1g -cp ../lib/antlr-4.1-complete.jar org.antlr.v4.Tool"
-grun="java -Xmx1g -cp ../lib/antlr-4.1-complete.jar org.antlr.v4.runtime.misc.TestRig"
+jar="../lib/antlr-4.2.2-complete.jar"
+antlr4="java -Xmx1g -cp $jar org.antlr.v4.Tool"
+grun="java -Xmx1g -cp .:$jar org.antlr.v4.runtime.misc.TestRig"
 
 # Delete old files
 touch tmp.java tmp.class
