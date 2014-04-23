@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A sum of two expressions
- * 
+ *
  * @author pcingola
  */
 public class ExpressionPlus extends ExpressionMath {
@@ -70,12 +70,15 @@ public class ExpressionPlus extends ExpressionMath {
 		if (left.canCastInt() && right.canCastInt()) returnType = Type.INT;
 		else if (left.canCastReal() && right.canCastReal()) returnType = Type.REAL;
 		else if (left.isList() && right.isList()) {
+			if (left.getReturnType() == null || right.getReturnType() == null) return null;
 			if (left.getReturnType().compareTo(right.getReturnType()) == 0) returnType = left.getReturnType(); // List plus List
 		} else if (left.isList() && !right.isList()) {
 			TypeList tlist = (TypeList) left.getReturnType();
+			if (left.getReturnType() == null || right.getReturnType() == null) return null;
 			if (right.getReturnType().compareTo(tlist.getBaseType()) == 0) returnType = left.getReturnType(); // List plus Item
 		} else if (!left.isList() && right.isList()) {
 			TypeList tlist = (TypeList) right.getReturnType();
+			if (left.getReturnType() == null || right.getReturnType() == null) return null;
 			if (left.getReturnType().compareTo(tlist.getBaseType()) == 0) returnType = right.getReturnType(); // Item plus List
 		} else if (right.isList() && left.getReturnType().canCast(right.getReturnType())) returnType = right.getReturnType(); // Item plus List
 		else if (left.isString() || right.isString()) returnType = Type.STRING;
