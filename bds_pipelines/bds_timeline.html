@@ -1,0 +1,67 @@
+<html lang="en">
+<head>
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container" id="bdsTimeLine">
+	<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization',
+	       'version':'1','packages':['timeline']}]}"></script>
+	<script type="text/javascript">
+	google.setOnLoadCallback(drawChart);
+	
+	function drawChart() {
+	  var container = document.getElementById('bdsTimeline');
+	
+	  var chart = new google.visualization.Timeline(container);
+	
+	  var dataTable = new google.visualization.DataTable();
+	
+	  dataTable.addColumn({ type: 'string', id: 'TaskName' });
+	  dataTable.addColumn({ type: 'string', id: 'TaskHint' });
+	  dataTable.addColumn({ type: 'date', id: 'Start' });
+	  dataTable.addColumn({ type: 'date', id: 'End' });
+	
+	  dataTable.addRows([
+	    [ 'task 1', 'Map reads', new Date(2014,02,12,05,50,49), new Date(2014,02,12,08,42,15) ],
+	    [ 'task 2', 'Map reads', new Date(2014,02,12,05,50,50), new Date(2014,02,12,08,45,08) ],
+	    [ 'task 3', 'Map reads', new Date(2014,02,12,05,50,50), new Date(2014,02,12,08,39,56) ],
+	    [ 'task 4', 'Map reads', new Date(2014,02,12,05,50,50), new Date(2014,02,12,08,45,08) ],
+	    [ 'task 5', 'Map reads', new Date(2014,02,12,05,50,50), new Date(2014,02,12,08,39,56) ],
+	    [ 'task 6', 'Merge BAMs', new Date(2014,02,12,08,45,09), new Date(2014,02,12,17,35,59) ],
+	    [ 'task 7', 'Index BAM', new Date(2014,02,12,17,36,00), new Date(2014,02,12,18,01,48) ],
+	    [ 'task 8', 'CallableLoci', new Date(2014,02,12,18,01,49), new Date(2014,02,13,00,18,07) ],
+	    [ 'task 9', 'Filter Callable loci', new Date(2014,02,13,00,18,08), new Date(2014,02,13,00,20,15) ],
+	    [ 'task 11', 'HaplotypeCaller', new Date(2014,02,13,00,20,23), new Date(2014,02,13,06,06,19) ],
+	    [ 'task 12', 'HaplotypeCaller', new Date(2014,02,13,00,20,38), new Date(2014,02,13,08,45,12) ],
+	    [ 'task 13', 'HaplotypeCaller', new Date(2014,02,13,00,20,36), new Date(2014,02,13,06,35,38) ],
+	    [ 'task 14', 'HaplotypeCaller', new Date(2014,02,13,00,20,23), new Date(2014,02,13,06,24,57) ],
+	    [ 'task 16', 'HaplotypeCaller', new Date(2014,02,13,00,20,33), new Date(2014,02,13,08,47,41) ],
+	    [ 'task 19', 'HaplotypeCaller', new Date(2014,02,13,00,20,37), new Date(2014,02,13,07,57,38) ],
+	    [ 'task 22', 'HaplotypeCaller', new Date(2014,02,13,00,20,32), new Date(2014,02,13,07,57,07) ],
+	    [ 'task 23', 'HaplotypeCaller', new Date(2014,02,13,00,20,31), new Date(2014,02,13,08,13,03) ],
+	    [ 'task 24', 'HaplotypeCaller', new Date(2014,02,13,00,20,35), new Date(2014,02,13,07,18,38) ],
+	    [ 'task 25', 'HaplotypeCaller', new Date(2014,02,13,00,20,35), new Date(2014,02,13,08,42,03) ],
+	    [ 'task 26', 'HaplotypeCaller', new Date(2014,02,13,00,20,35), new Date(2014,02,13,08,49,56) ],
+	    [ 'task 28', 'HaplotypeCaller', new Date(2014,02,13,00,20,36), new Date(2014,02,13,08,24,10) ],
+	    [ 'task 29', 'HaplotypeCaller', new Date(2014,02,13,00,20,38), new Date(2014,02,13,09,17,08) ],
+	    [ 'task 30', 'HaplotypeCaller', new Date(2014,02,13,00,20,32), new Date(2014,02,13,08,19,47) ],
+	    [ 'task 32', 'HaplotypeCaller', new Date(2014,02,13,00,20,36), new Date(2014,02,13,07,45,25) ],
+	    [ 'task 33', 'HaplotypeCaller', new Date(2014,02,13,00,20,32), new Date(2014,02,13,07,56,15) ],
+	    [ 'task 38', 'HaplotypeCaller', new Date(2014,02,13,00,20,36), new Date(2014,02,13,07,10,46) ],
+	    [ 'task 39', 'HaplotypeCaller', new Date(2014,02,13,00,20,34), new Date(2014,02,13,07,14,23) ],
+	    [ 'task 44', 'Merge VCFs',      new Date(2014,02,13,09,18,04), new Date(2014,02,13,09,19,05) ],
+	    [ 'task 45', 'Annotate',        new Date(2014,02,13,09,19,05), new Date(2014,02,13,09,23,06) ],
+	    ]);
+	
+	  var options = {
+	    timeline: { groupByRowLabel: false }
+	  };
+	  
+	  chart.draw(dataTable, options);
+	}
+	</script>
+	<div id="bdsTimeline" style="width: 900px; height: 1280px;"></div>
+</div>
+
+
+</body>
