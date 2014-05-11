@@ -6,10 +6,10 @@ import java.util.HashSet;
 
 /**
  * A "tail -f" for java
- * 
+ *
  * Can 'follow' several files
  * If a file does not exist, tail waits until the file is created
- * 
+ *
  * @author pcingola
  */
 public class Tail extends Thread {
@@ -44,6 +44,7 @@ public class Tail extends Thread {
 	 * @param showStderr : If true, print to STDERR
 	 */
 	public synchronized void add(String inputFileName, boolean showStderr) {
+		if (inputFileName == null) return;
 		TailFile tf = new TailFileMulti(inputFileName, showStderr);
 		files.put(inputFileName, tf);
 	}
@@ -112,7 +113,7 @@ public class Tail extends Thread {
 			// Try to 'tail'. Any problems? => Remove the entry
 			int bytes = (tf != null ? tf.tail() : -1);
 
-			if (bytes < 0) toRemove.add(name); // Problems? Remove the file from this list 
+			if (bytes < 0) toRemove.add(name); // Problems? Remove the file from this list
 			else if (bytes > 0) anyOutput = true; // There was an output of 'bytes' number of bytes
 		}
 

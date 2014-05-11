@@ -371,17 +371,7 @@ public abstract class Executioner extends Thread {
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
-
-			// Make sure all tasks fail
-			for (Task task : tasksToRun)
-				taskFinished(task, TaskState.START_FAILED);
-
-			for (Task task : tasksSelected.keySet())
-				taskFinished(task, TaskState.START_FAILED);
-
-			for (Task task : tasksRunning.values())
-				taskFinished(task, TaskState.ERROR);
-
+			kill(); // Make sure all tasks are either killed or marked as failed
 			throw new RuntimeException(t);
 		} finally {
 			runExecutionerLoopAfter(); // Clean up
@@ -450,15 +440,17 @@ public abstract class Executioner extends Thread {
 
 		// TODO: If an exception is thrown here, we should be able to either recover or mark the task as START_FAILED
 		Cmd cmd = createCmd(task);
-		cmd.setHost(host);
-		cmd.setExecutioner(this);
-		cmd.setTask(task);
-		cmd.setDebug(debug);
+		if (cmd != null) {
+			cmd.setHost(host);
+			cmd.setExecutioner(this);
+			cmd.setTask(task);
+			cmd.setDebug(debug);
+		}
 
 		cmdById.put(task.getId(), cmd);
 
 		host.add(task);
-		cmd.start();
+		if (cmd != null) cmd.start();
 	}
 
 	/**

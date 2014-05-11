@@ -27,7 +27,9 @@ import org.apache.mesos.Protos.ExecutorID;
 import org.apache.mesos.Protos.ExecutorInfo;
 import org.apache.mesos.Protos.FrameworkInfo;
 import org.apache.mesos.Protos.Status;
-import org.apache.mesos.Scheduler;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 
 import com.google.protobuf.ByteString;
 
@@ -51,9 +53,10 @@ public class BdsMesosFramework extends Thread {
 	CommandInfo executorCmdInfo;
 	ExecutorID executorId;
 	ExecutorInfo executorInfo;
-	Scheduler scheduler;
+	BdsMesosScheduler scheduler;
 	MesosSchedulerDriver driver;
 	FrameworkInfo frameworkInfo;
+	ExecutionerMesos executionerMesos;
 
 	public static void main(String[] args) throws Exception {
 		if (args.length < 1 || args.length > 2) {
@@ -61,7 +64,7 @@ public class BdsMesosFramework extends Thread {
 			System.exit(1);
 		}
 
-		BdsMesosFramework bdsMesosFramework = new BdsMesosFramework(args[0]);
+		BdsMesosFramework bdsMesosFramework = new BdsMesosFramework(null, args[0]);
 		bdsMesosFramework.run();
 
 		System.exit(bdsMesosFramework.status);
@@ -72,17 +75,42 @@ public class BdsMesosFramework extends Thread {
 		System.err.println("Usage: " + name + " master <tasks>");
 	}
 
-	public BdsMesosFramework(String master) {
+	public BdsMesosFramework(ExecutionerMesos executionerMesos, String master) {
 		super();
 		this.master = master;
+		this.executionerMesos = executionerMesos;
+	}
+
+	public void add(Task task) {
+		scheduler.add(task);
+	}
+
+	public MesosSchedulerDriver getDriver() {
+		return driver;
+	}
+
+	public FrameworkInfo getFrameworkInfo() {
+		return frameworkInfo;
+	}
+
+	public BdsMesosScheduler getScheduler() {
+		return scheduler;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public boolean isReady() {
+		return driver != null;
 	}
 
 	/**
 	 * Kill framework driver
 	 */
 	public void kill() {
+		// TODO: Should we use driver.abort() or driver.stop()? I'm not sure...
 		driver.abort();
-		// driver.stop();
 	}
 
 	@Override
@@ -108,7 +136,7 @@ public class BdsMesosFramework extends Thread {
 			//---
 			// Initialize scheduler
 			//---
-			scheduler = new BdsMesosScheduler(executorInfo);
+			scheduler = new BdsMesosScheduler(executionerMesos, executorInfo);
 
 			//---
 			// Initialize framework
@@ -159,4 +187,5 @@ public class BdsMesosFramework extends Thread {
 			if (driver != null) driver.stop(); // Ensure that the driver process terminates.
 		}
 	}
+
 }

@@ -19,9 +19,10 @@ package ca.mcgill.mcb.pcingola.bigDataScript.mesos;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.mesos.Protos.CommandInfo;
 import org.apache.mesos.Protos.ExecutorID;
 import org.apache.mesos.Protos.ExecutorInfo;
 import org.apache.mesos.Protos.Filters;
@@ -33,11 +34,14 @@ import org.apache.mesos.Protos.Resource;
 import org.apache.mesos.Protos.SlaveID;
 import org.apache.mesos.Protos.TaskID;
 import org.apache.mesos.Protos.TaskInfo;
-import org.apache.mesos.Protos.TaskState;
 import org.apache.mesos.Protos.TaskStatus;
 import org.apache.mesos.Protos.Value;
 import org.apache.mesos.Scheduler;
 import org.apache.mesos.SchedulerDriver;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 import com.google.protobuf.ByteString;
 
@@ -48,18 +52,26 @@ import com.google.protobuf.ByteString;
  */
 public class BdsMesosScheduler implements Scheduler {
 
-	private final ExecutorInfo executor;
-	private final int totalTasks;
-	private int launchedTasks = 0;
-	private int finishedTasks = 0;
+	static final long MB = 1024 * 1024;
 
-	public BdsMesosScheduler(ExecutorInfo executor) {
-		this(executor, 5);
+	private final ExecutorInfo executor;
+	List<Task> taskToLaunch;
+	HashMap<String, Task> taskById;
+	ExecutionerMesos executionerMesos;
+
+	public BdsMesosScheduler(ExecutionerMesos executionerMesos, ExecutorInfo executor) {
+		this.executionerMesos = executionerMesos;
+		this.executor = executor;
+		taskToLaunch = new LinkedList<Task>();
+		taskById = new HashMap<String, Task>();
 	}
 
-	public BdsMesosScheduler(ExecutorInfo executor, int totalTasks) {
-		this.executor = executor;
-		this.totalTasks = totalTasks;
+	/**
+	 * Add a task to be launched
+	 * @param task
+	 */
+	public void add(Task task) {
+		taskToLaunch.add(task);
 	}
 
 	/**
@@ -149,32 +161,34 @@ public class BdsMesosScheduler implements Scheduler {
 	@Override
 	public void resourceOffers(SchedulerDriver driver, List<Offer> offers) {
 		for (Offer offer : offers) {
-			List<TaskInfo> tasks = new ArrayList<TaskInfo>();
+			List<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
 
 			// Should we launch a task?
-			if (launchedTasks < totalTasks) {
+			if (!taskToLaunch.isEmpty()) {
+				// Get first task in the queue
+				Task task = taskToLaunch.remove(0); // TODO: We should not remove it completely until we are sure that it was started by Mesos (stateChange)
+				taskById.put(task.getId(), task);
+
 				// Assign a task ID and name
-				TaskID taskId = TaskID.newBuilder().setValue(Integer.toString(launchedTasks++)).build();
-				String taskName = "task " + taskId.getValue();
+				TaskID taskId = TaskID.newBuilder().setValue(task.getId()).build();
+				String taskName = task.getName();
 				System.out.println("Launching task " + taskId.getValue());
 
 				// Resources
-				Resource cpus = Resource.newBuilder().setName("cpus").setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(1)).build(); // Number of cores
-				Resource mem = Resource.newBuilder().setName("mem").setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(128)).build(); // Memory in MB
+				int numCpus = task.getResources().getCpus() > 0 ? task.getResources().getCpus() : 1;
+				Resource cpus = Resource.newBuilder().setName("cpus").setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(numCpus)).build(); // Number of CPUS
 
-				// Command
-				CommandInfo cmd = CommandInfo.newBuilder() //
-						.setValue("/bin/ls") //
-						.build();
+				long memSize = (task.getResources().getMem() / MB) > 0 ? task.getResources().getMem() : 64;
+				Resource mem = Resource.newBuilder().setName("mem").setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(memSize)).build(); // Memory in MB
 
 				// Executor
 				ExecutorInfo execInfo = ExecutorInfo.newBuilder(executor).build();
 
 				// Task's data: Command to execute
-				ByteString data = ByteString.copyFromUtf8("/bin/ls -al");
+				ByteString data = ByteString.copyFromUtf8(task.getProgramFileName());
 
 				// Create task
-				TaskInfo task = TaskInfo.newBuilder() //
+				TaskInfo taskInfo = TaskInfo.newBuilder() //
 						.setName(taskName)//
 						.setTaskId(taskId) //
 						.setSlaveId(offer.getSlaveId()) //
@@ -185,11 +199,14 @@ public class BdsMesosScheduler implements Scheduler {
 						.build();
 
 				// Add task to response
-				tasks.add(task);
+				taskInfos.add(taskInfo);
+
+				// Mark task as started
+				executionerMesos.taskStarted(task);
 			}
 
 			Filters filters = Filters.newBuilder().setRefuseSeconds(1).build();
-			driver.launchTasks(offer.getId(), tasks, filters);
+			driver.launchTasks(offer.getId(), taskInfos, filters);
 		}
 	}
 
@@ -214,20 +231,34 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void statusUpdate(SchedulerDriver driver, TaskStatus status) {
-		System.out.println("Status update: task " + status.getTaskId().getValue() + " is in state " + status.getState());
+		String taskId = status.getTaskId().getValue();
+		System.out.println("Status update: task " + taskId + " is in state " + status.getState());
 
-		if ((status.getState() == TaskState.TASK_FINISHED) //
-				|| (status.getState() == TaskState.TASK_FAILED) //
-				|| (status.getState() == TaskState.TASK_KILLED) //
-				|| (status.getState() == TaskState.TASK_LOST) //
-				) {
-			// TODO: Task finished, clean up
+		// Find task
+		Task task = taskById.get(taskId);
+		if (task == null) throw new RuntimeException("task ID '" + taskId + "' not found. This should never happen!");
 
-			finishedTasks++;
-			System.out.println("Finished tasks: " + finishedTasks);
-			if (finishedTasks == totalTasks) {
-				driver.stop();
-			}
+		// Update state
+		switch (status.getState()) {
+		case TASK_RUNNING:
+			executionerMesos.taskRunning(task);
+			break;
+
+		case TASK_FINISHED:
+			executionerMesos.taskFinished(task, Task.TaskState.FINISHED);
+			break;
+
+		case TASK_FAILED:
+			executionerMesos.taskFinished(task, Task.TaskState.ERROR);
+			break;
+
+		case TASK_KILLED:
+		case TASK_LOST:
+			executionerMesos.taskFinished(task, Task.TaskState.KILLED);
+			break;
+
+		default:
+			Gpr.debug("Unhandled Mesos task state: " + status.getState());
 		}
 	}
 }

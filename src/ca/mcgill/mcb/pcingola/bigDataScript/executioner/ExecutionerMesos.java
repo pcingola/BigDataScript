@@ -1,6 +1,8 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.mesos.BdsMesosFramework;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
@@ -20,9 +22,9 @@ public class ExecutionerMesos extends Executioner {
 	public ExecutionerMesos(Config config) {
 		super(config);
 
-		// Initialize framework
-		String master = config.getString(MESOS_MASTER_PROPERTY_NAME, DEFAULE_MESOS_MASTER);
-		mesosFramework = new BdsMesosFramework(master);
+		// Create a cluster having only one host with 'inifinite' capacity
+		cluster = new Cluster();
+		new HostInifinte(cluster);
 	}
 
 	/**
@@ -32,13 +34,47 @@ public class ExecutionerMesos extends Executioner {
 	 */
 	@Override
 	protected synchronized Cmd createCmd(Task task) {
-		throw new RuntimeException("Unimplemented method for class: " + this.getClass().getCanonicalName());
+		mesosFramework.add(task);
+		return null; // TODO: Can we actually return 'null'?
+	}
+
+	/**
+	 * Initialize Mesos framework
+	 */
+	void initMesos() {
+		// Initialize framework
+		String master = config.getString(MESOS_MASTER_PROPERTY_NAME, DEFAULE_MESOS_MASTER);
+		mesosFramework = new BdsMesosFramework(this, master);
+		mesosFramework.start();
+
+		// Wait for Mesos connection
+		try {
+			while (!mesosFramework.isReady())
+				Thread.sleep(SLEEP_TIME_MID);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public String[] osKillCommand(Task task) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Clean up after run loop
+	 */
+	@Override
+	protected void runExecutionerLoopAfter() {
+		super.runExecutionerLoopAfter();
+		if (mesosFramework != null) mesosFramework.kill();
+	}
+
+	@Override
+	protected void runExecutionerLoopBefore() {
+		super.runExecutionerLoopBefore();
+		initMesos();
 	}
 
 }
