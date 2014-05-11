@@ -36,7 +36,7 @@ test ! -e ${EXAMPLES_JAR} && \
 # framework is able to find the executor.
 cd `dirname ${0}`
 
-ECLIPSE_BIN=$HOME/workspace/ZzzMesos/bin
+ECLIPSE_BIN=$HOME/workspace/BigDataScript/bin
 
 exec ${JAVA} -cp ${PROTOBUF_JAR}:${MESOS_JAR}:${ECLIPSE_BIN} \
   -Djava.library.path=${MESOS_BUILD_DIR}/src/.libs \

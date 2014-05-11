@@ -32,7 +32,7 @@ test ! -e ${EXAMPLES_JAR} && \
   echo "${RED}Failed to find ${EXAMPLES_JAR}${NORMAL}" && \
   exit 1
 
-ECLIPSE_BIN=$HOME/workspace/ZzzMesos/bin
+ECLIPSE_BIN=$HOME/workspace/BigDataScript/bin
 
 exec ${JAVA} -cp ${PROTOBUF_JAR}:${MESOS_JAR}:${ECLIPSE_BIN} \
   -Djava.library.path=${MESOS_BUILD_DIR}/src/.libs \
