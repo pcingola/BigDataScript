@@ -43,17 +43,17 @@ import org.apache.mesos.Protos.TaskStatus;
  *
  * @author pcingola
  */
-public class BdsExecutor implements Executor {
+public class BdsMesosExecutor implements Executor {
 
 	// Script used to fire up BDS executor
 	// This is script invoked by Mesos when a task is executed
 	// The script invokes this class' main method
-	public static String BDS_EXECUTOR_SCRIPT = "bds_mesos_executor.sh";
+	public static String BDS_EXECUTOR_SCRIPT = "scripts/bds_mesos_executor.sh";
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("Starting executor: " + BdsExecutor.class.getSimpleName());
-		MesosExecutorDriver driver = new MesosExecutorDriver(new BdsExecutor());
-		System.out.println("Finished executor: " + BdsExecutor.class.getSimpleName());
+		System.out.println("Starting executor: " + BdsMesosExecutor.class.getSimpleName());
+		MesosExecutorDriver driver = new MesosExecutorDriver(new BdsMesosExecutor());
+		System.out.println("Finished executor: " + BdsMesosExecutor.class.getSimpleName());
 		System.exit(driver.run() == Status.DRIVER_STOPPED ? 0 : 1);
 	}
 

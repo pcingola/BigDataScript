@@ -46,18 +46,18 @@ import com.google.protobuf.ByteString;
  *
  * @author pcingola
  */
-public class BdsScheduler implements Scheduler {
+public class BdsMesosScheduler implements Scheduler {
 
 	private final ExecutorInfo executor;
 	private final int totalTasks;
 	private int launchedTasks = 0;
 	private int finishedTasks = 0;
 
-	public BdsScheduler(ExecutorInfo executor) {
+	public BdsMesosScheduler(ExecutorInfo executor) {
 		this(executor, 5);
 	}
 
-	public BdsScheduler(ExecutorInfo executor, int totalTasks) {
+	public BdsMesosScheduler(ExecutorInfo executor, int totalTasks) {
 		this.executor = executor;
 		this.totalTasks = totalTasks;
 	}

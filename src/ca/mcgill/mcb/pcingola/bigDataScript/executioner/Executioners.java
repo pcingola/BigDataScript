@@ -7,9 +7,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 
 /**
  * Systems that can execute tasks
- * 
+ *
  * This is a singleton
- * 
+ *
  * @author pcingola
  */
 public class Executioners {
@@ -20,7 +20,7 @@ public class Executioners {
 	 *
 	 */
 	public enum ExecutionerType {
-		SYS, LOCAL, SSH, CLUSTER, MOAB, PBS, SGE, CLOUD;
+		SYS, LOCAL, SSH, CLUSTER, MOAB, PBS, SGE, MESOS;
 
 		/**
 		 * Parse an executioner name
@@ -32,6 +32,7 @@ public class Executioners {
 			try {
 				return ExecutionerType.valueOf(exName.toUpperCase());
 			} catch (Exception e) {
+				System.out.println("UNknown system type '" + exName + "', using 'local'");
 				return LOCAL;
 			}
 		}
@@ -68,7 +69,7 @@ public class Executioners {
 	 * @param exName
 	 * @return
 	 */
-	private Executioner factory(ExecutionerType exType) {
+	private synchronized Executioner factory(ExecutionerType exType) {
 		Executioner executioner;
 		switch (exType) {
 		case LOCAL:
@@ -90,6 +91,10 @@ public class Executioners {
 
 		case SGE:
 			executioner = new ExecutionerClusterSge(config);
+			break;
+
+		case MESOS:
+			executioner = new ExecutionerMesos(config);
 			break;
 
 		default:
@@ -129,7 +134,7 @@ public class Executioners {
 	 * @param exName
 	 * @return
 	 */
-	public Executioner get(String exName) {
+	public synchronized Executioner get(String exName) {
 		return get(ExecutionerType.parseSafe(exName));
 	}
 

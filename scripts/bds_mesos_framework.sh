@@ -40,4 +40,4 @@ ECLIPSE_BIN=$HOME/workspace/BigDataScript/bin
 
 exec ${JAVA} -cp ${PROTOBUF_JAR}:${MESOS_JAR}:${ECLIPSE_BIN} \
   -Djava.library.path=${MESOS_BUILD_DIR}/src/.libs \
-  ca.mcgill.mcb.pcingola.bigDataScript.mesos.BdsFramework "${@}"
+  ca.mcgill.mcb.pcingola.bigDataScript.mesos.BdsMesosFramework "${@}"

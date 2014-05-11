@@ -1,6 +1,6 @@
 
-string[] vcfs
-vcf := "hi"
-vcfs += vcc
-print("vcfs = $vcfs\n")
 
+system = "mesos"
+
+i := 42
+task echo "Hello $system $i"
