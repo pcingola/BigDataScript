@@ -22,7 +22,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 /**
  * An Executioner is an abstract system that executes several Tasks.
  * It can represent a computer, cluster, cloud, etc.
- * 
+ *
  * @author pcingola
  */
 public abstract class Executioner extends Thread {
@@ -38,7 +38,7 @@ public abstract class Executioner extends Thread {
 	protected boolean running;
 	protected int hostIdx = 0;
 	protected ArrayList<Task> tasksToRun; // Tasks queued for execution
-	protected HashMap<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host 
+	protected HashMap<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host
 	protected HashMap<String, Task> tasksRunning; // Tasks running
 	protected HashMap<String, Task> tasksDone; // Tasks that fin
 	protected LinkedList<Tuple<Task, TaskState>> taskUpdateStates; // Tasks to be updated
@@ -196,7 +196,7 @@ public abstract class Executioner extends Thread {
 	/**
 	 * Is this executioner valid?
 	 * An Executioner may expire or become otherwise invalid
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isValid() {
@@ -208,7 +208,7 @@ public abstract class Executioner extends Thread {
 	 */
 	public synchronized void kill() {
 		// Kill all 'tasksToRun'.
-		// Note: We need to create a new list to avoid concurrent modification exceptions 
+		// Note: We need to create a new list to avoid concurrent modification exceptions
 		ArrayList<Task> tokill = new ArrayList<Task>();
 		tokill.addAll(tasksToRun);
 		tokill.addAll(tasksRunning.values());
@@ -250,7 +250,7 @@ public abstract class Executioner extends Thread {
 	/**
 	 * Return the appropriate 'kill' command to be used by the OS
 	 * E.g.: For a local task it would be 'kill' whereas for a cluster task it would be 'qdel'
-	 * 
+	 *
 	 * @param task
 	 * @return
 	 */
@@ -266,9 +266,9 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
-	 * Try to find some 'post-mortem' info about this 
+	 * Try to find some 'post-mortem' info about this
 	 * task, in order to asses systematic errors.
-	 * 
+	 *
 	 * @param task
 	 */
 	protected void postMortemInfo(Task task) {
@@ -298,10 +298,10 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
-	 * Report tasks to running, to run and done 
+	 * Report tasks to running, to run and done
 	 */
 	protected void reportTasks() {
-		// if (verbose && 
+		// if (verbose &&
 		if ((hasTaskRunning() || hasTaskToRun()) && isReportTime()) {
 			// Create table
 			int rowNum = 0;
@@ -371,6 +371,17 @@ public abstract class Executioner extends Thread {
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
+
+			// Make sure all tasks fail
+			for (Task task : tasksToRun)
+				taskFinished(task, TaskState.START_FAILED);
+
+			for (Task task : tasksSelected.keySet())
+				taskFinished(task, TaskState.START_FAILED);
+
+			for (Task task : tasksRunning.values())
+				taskFinished(task, TaskState.ERROR);
+
 			throw new RuntimeException(t);
 		} finally {
 			runExecutionerLoopAfter(); // Clean up
@@ -378,7 +389,7 @@ public abstract class Executioner extends Thread {
 	}
 
 	/**
-	 * Run loop 
+	 * Run loop
 	 * @return true if all processes have finished executing
 	 */
 	protected boolean runExecutionerLoop() {
@@ -428,9 +439,9 @@ public abstract class Executioner extends Thread {
 	 */
 	protected void runTask(Task task, Host host) {
 		// Don't run too many threads at once
-		// The reason for this is that we can reach the maximum 
+		// The reason for this is that we can reach the maximum
 		// number of threads available in the operating system.
-		// If that happens, well get an exception 
+		// If that happens, well get an exception
 		for (int numThreads = Exec.countRunningThreads(); numThreads >= Exec.MAX_NUMBER_OF_RUNNING_THREADS; numThreads = Exec.countRunningThreads()) {
 			// Too many threads running? Sleep for a while (block until some threads finish)
 			if (verbose) Timer.showStdErr("INFO: Too many threads running (" + numThreads + "). Waiting for some threads to finish.");
@@ -467,7 +478,7 @@ public abstract class Executioner extends Thread {
 
 			boolean canBeExecuted = false;
 
-			// Can we run this task? 
+			// Can we run this task?
 			if (task.canRun()) {
 				//---
 				// Are dependencies satisfied?
@@ -503,7 +514,7 @@ public abstract class Executioner extends Thread {
 
 					// Do we have enough resources to run this task in this host?
 					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
-						// OK, execute this task in this host						
+						// OK, execute this task in this host
 						add(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);
 					} else if (!canBeExecuted) {
@@ -585,7 +596,7 @@ public abstract class Executioner extends Thread {
 		if (taskState == null) {
 			// Set task state. Infer form exit code if no state is available.
 			// Note: This is the last thing we do in order for wait() methods to be sure that task has finished and all data has finished updating.
-			// Set exit status 
+			// Set exit status
 			taskState = TaskState.exitCode2taskState(task.getExitValue());
 		}
 
@@ -640,7 +651,7 @@ public abstract class Executioner extends Thread {
 				// Retry task
 				Timer.showStdErr("Task failed, retrying ( " + task.getMaxFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (verbose ? "\n" : ", ") + task.toString(verbose));
 
-				// Move task form 'taskDone' back to 'tasksToRun' queue 
+				// Move task form 'taskDone' back to 'tasksToRun' queue
 				task.reset(); // Prepare to re-run task
 				tasksDone.remove(task.getId());
 				tasksToRun.add(task);

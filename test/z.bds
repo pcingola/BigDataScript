@@ -2,5 +2,6 @@
 
 system = "mesos"
 
-i := 42
-task echo "Hello $system $i"
+for( int i=0 ; i < 10 ; i++ ) {
+	task echo "Hello $system $i"
+}
