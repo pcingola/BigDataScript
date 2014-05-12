@@ -7,23 +7,24 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Execute a command in a local computer.
  * I.e.: Launches an 'OS command' (e.g. "ls", "dir")
- * 
+ *
  * Note: Launching a system command in Java is not trivial, we need to start 2 threads that read STDOUT and STDERR of
  * the process, otherwise it will block (actually it may even cause a deadlock)
- * 
- * References: 
+ *
+ * References:
  * 		http://www.javaworld.com/javaworld/jw-12-2000/jw-1229-traps.html?page=1
  * 		http://kylecartmell.com/?p=9
  * 		http://www.kylecartmell.com/public_files/ProcessTimeoutExample.java
- * 
+ *
  * WARNING: In this case, we assume the child process takes care of redirections and we DO NOT take care of STDIN, STDOUT or timeout
- * 
+ *
  * @author pcingola
  */
 public class CmdLocal extends Cmd {
@@ -34,7 +35,7 @@ public class CmdLocal extends Cmd {
 	protected Process process; // Java process (the one that actually executes our command)
 	protected boolean readPid;
 	protected String pid; // Only if child process reports PID and readPid is true
-	protected String feedStdin; // Feed this string to stdin when the process starts 
+	protected String feedStdin; // Feed this string to stdin when the process starts
 
 	public CmdLocal(String id, String args[]) {
 		super(id, args);
@@ -128,8 +129,8 @@ public class CmdLocal extends Cmd {
 		ArrayList<String> args = new ArrayList<String>();
 
 		// Add command and arguments
-		if ((executioner != null) && (task != null)) {
-			for (String arg : executioner.osKillCommand(task))
+		if (notifyTaskState != null && (notifyTaskState instanceof Executioner) && (task != null)) {
+			for (String arg : ((Executioner) notifyTaskState).osKillCommand(task))
 				args.add(arg);
 		} else {
 			for (String arg : ExecutionerLocal.LOCAL_KILL_COMMAND)
@@ -202,7 +203,7 @@ public class CmdLocal extends Cmd {
 			if (debug) Gpr.debug("Got line: '" + sb + "'");
 
 			// Parse pid?
-			if (executioner != null) pid = executioner.parsePidLine(sb.toString());
+			if (pidParser != null) pid = pidParser.parsePidLine(sb.toString());
 			else pid = sb.toString().trim(); // Ignore spaces
 		}
 

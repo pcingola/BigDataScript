@@ -23,7 +23,7 @@ public class CmdCluster extends CmdLocal {
 	@Override
 	protected void execDone() {
 		stateDone();
-		if (executioner != null) executioner.taskRunning(task);
+		if (notifyTaskState != null) notifyTaskState.taskRunning(task);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class CmdCluster extends CmdLocal {
 	@Override
 	protected void stateRunning() {
 		started = true;
-		if (executioner != null) executioner.taskStarted(task);
+		if (notifyTaskState != null) notifyTaskState.taskStarted(task);
 	}
 
 	@Override

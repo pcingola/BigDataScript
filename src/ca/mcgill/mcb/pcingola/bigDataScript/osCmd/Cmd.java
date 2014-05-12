@@ -3,13 +3,15 @@ package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.NotifyTaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.PidParser;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Execute a command (shell command)
- * 
+ *
  * @author pcingola
  */
 public abstract class Cmd extends Thread {
@@ -28,7 +30,8 @@ public abstract class Cmd extends Thread {
 	protected Task task = null; // Task corresponding to this cmd
 	protected Host host; // Host to execute command (in case it's ssh)
 	protected HostResources resources; // Resources required by this command
-	protected Executioner executioner; // Notify executioner when this command finishes executing
+	protected NotifyTaskState notifyTaskState; // Notify executioner when command finishes executing
+	protected PidParser pidParser; // Parse PID from command line
 
 	public Cmd(String id, String args[]) {
 		this.id = id;
@@ -94,7 +97,7 @@ public abstract class Cmd extends Thread {
 		stateDone();
 		if (task != null) {
 			task.setExitValue(exitValue);
-			if (executioner != null) executioner.taskFinished(task, null); // Notify end of execution
+			if (notifyTaskState != null) notifyTaskState.taskFinished(task, null); // Notify end of execution
 		}
 	}
 
@@ -108,7 +111,7 @@ public abstract class Cmd extends Thread {
 		if (debug && e != null) e.printStackTrace();
 		if (task != null) {
 			task.setExitValue(exitCode);
-			if (executioner != null) executioner.taskFinished(task, taskState);
+			if (notifyTaskState != null) notifyTaskState.taskFinished(task, taskState);
 		}
 	}
 
@@ -162,7 +165,7 @@ public abstract class Cmd extends Thread {
 		// Notify end of execution
 		if (task != null) {
 			task.setExitValue(Task.EXITCODE_KILLED);
-			if (executioner != null) executioner.taskFinished(task, TaskState.KILLED);
+			if (notifyTaskState != null) notifyTaskState.taskFinished(task, TaskState.KILLED);
 		}
 
 		if (debug) Gpr.debug("Process was killed");
@@ -187,11 +190,20 @@ public abstract class Cmd extends Thread {
 	}
 
 	public void setExecutioner(Executioner executioner) {
-		this.executioner = executioner;
+		this.notifyTaskState = executioner;
+		this.pidParser = executioner;
 	}
 
 	public void setHost(Host host) {
 		this.host = host;
+	}
+
+	public void setNotifyTaskState(NotifyTaskState notifyTaskState) {
+		this.notifyTaskState = notifyTaskState;
+	}
+
+	public void setPidParser(PidParser pidParser) {
+		this.pidParser = pidParser;
 	}
 
 	public void setResources(HostResources resources) {
@@ -212,12 +224,12 @@ public abstract class Cmd extends Thread {
 
 	protected void stateRunning() {
 		started = true;
-		if (executioner != null) executioner.taskRunning(task);
+		if (notifyTaskState != null) notifyTaskState.taskRunning(task);
 	}
 
 	protected void stateStarted() {
 		started = true;
-		if (executioner != null) executioner.taskStarted(task);
+		if (notifyTaskState != null) notifyTaskState.taskStarted(task);
 	}
 
 	@Override

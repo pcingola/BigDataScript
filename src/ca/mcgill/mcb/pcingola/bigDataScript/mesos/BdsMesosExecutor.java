@@ -18,6 +18,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.mesos;
  * limitations under the License.
  */
 
+import java.util.HashMap;
+
 import org.apache.mesos.Executor;
 import org.apache.mesos.ExecutorDriver;
 import org.apache.mesos.MesosExecutorDriver;
@@ -29,6 +31,13 @@ import org.apache.mesos.Protos.TaskID;
 import org.apache.mesos.Protos.TaskInfo;
 import org.apache.mesos.Protos.TaskState;
 import org.apache.mesos.Protos.TaskStatus;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.NotifyTaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.PidParser;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdLocal;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * BDS executor for Mesos cluster framework
@@ -43,18 +52,42 @@ import org.apache.mesos.Protos.TaskStatus;
  *
  * @author pcingola
  */
-public class BdsMesosExecutor implements Executor {
+public class BdsMesosExecutor implements Executor, NotifyTaskState, PidParser {
+
+	class CmdInfo {
+		public final ExecutorDriver executorDriver;
+		public final TaskInfo taskInfo;
+		public final Task task;
+		public final Cmd cmd;
+
+		public CmdInfo(ExecutorDriver executorDriver, TaskInfo taskInfo, Task task, Cmd cmd) {
+			this.executorDriver = executorDriver;
+			this.taskInfo = taskInfo;
+			this.task = task;
+			this.cmd = cmd;
+		}
+	}
+
+	public static boolean debug = true;
+	HashMap<String, CmdInfo> cmdInfoById;
 
 	// Script used to fire up BDS executor
 	// This is script invoked by Mesos when a task is executed
 	// The script invokes this class' main method
 	public static String BDS_EXECUTOR_SCRIPT = "scripts/bds_mesos_executor.sh";
 
+	/**
+	 * Main: Entry point for executor, invoked by Mesos framework
+	 */
 	public static void main(String[] args) throws Exception {
 		System.out.println("Starting executor: " + BdsMesosExecutor.class.getSimpleName());
 		MesosExecutorDriver driver = new MesosExecutorDriver(new BdsMesosExecutor());
 		System.out.println("Finished executor: " + BdsMesosExecutor.class.getSimpleName());
 		System.exit(driver.run() == Status.DRIVER_STOPPED ? 0 : 1);
+	}
+
+	public BdsMesosExecutor() {
+		cmdInfoById = new HashMap<String, BdsMesosExecutor.CmdInfo>();
 	}
 
 	/**
@@ -63,7 +96,7 @@ public class BdsMesosExecutor implements Executor {
 	protected void changeTaskState(ExecutorDriver driver, TaskInfo task, TaskState state) {
 		TaskStatus status = TaskStatus.newBuilder().setTaskId(task.getTaskId()).setState(state).build();
 		driver.sendStatusUpdate(status);
-		System.out.println("Task " + task.getTaskId().getValue() + " is now '" + state + "'");
+		if (debug) Gpr.debug("Task " + task.getTaskId().getValue() + " is now '" + state + "'");
 	}
 
 	/**
@@ -72,6 +105,8 @@ public class BdsMesosExecutor implements Executor {
 	 */
 	@Override
 	public void disconnected(ExecutorDriver driver) {
+		if (debug) Gpr.debug("Executor: Disconnected");
+		killAll();
 	}
 
 	/**
@@ -81,6 +116,8 @@ public class BdsMesosExecutor implements Executor {
 	 */
 	@Override
 	public void error(ExecutorDriver driver, String message) {
+		if (debug) Gpr.debug("Executor: Error '" + message + "'");
+		killAll();
 	}
 
 	/**
@@ -90,6 +127,15 @@ public class BdsMesosExecutor implements Executor {
 	 */
 	@Override
 	public void frameworkMessage(ExecutorDriver driver, byte[] data) {
+		if (debug) Gpr.debug("Executor: Framework message '" + new String(data) + "'");
+	}
+
+	/**
+	 * Kill all pending tasks
+	 */
+	void killAll() {
+		for (CmdInfo ci : cmdInfoById.values())
+			ci.cmd.kill();
 	}
 
 	/**
@@ -101,6 +147,10 @@ public class BdsMesosExecutor implements Executor {
 	 */
 	@Override
 	public void killTask(ExecutorDriver driver, TaskID taskId) {
+		String tid = taskId.getValue();
+		CmdInfo cmdInfo = cmdInfoById.get(tid);
+		if (cmdInfo == null) return;
+		cmdInfo.cmd.kill();
 	}
 
 	/**
@@ -111,25 +161,44 @@ public class BdsMesosExecutor implements Executor {
 	 * callback has returned.
 	 */
 	@Override
-	public void launchTask(final ExecutorDriver driver, final TaskInfo task) {
-		// Create a thread that runs a task
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					// Change task status to RUNNING
-					changeTaskState(driver, task, TaskState.TASK_RUNNING);
+	public void launchTask(final ExecutorDriver driver, final TaskInfo taskInfo) {
+		try {
+			String tid = taskInfo.getTaskId().getValue();
+			if (debug) Gpr.debug("Executor: Launching task '" + tid + "'");
 
-					// This is where one would perform the requested task.
-					System.out.println("Executning commnad: '" + task.getData().toStringUtf8() + "'");
+			// Unpack command line arguments
+			String packedCmd = taskInfo.getData().toStringUtf8();
+			String cmdArgs[] = BdsMesosFramework.unpackArray(packedCmd);
 
-					// Change task status to FINISHED
-					changeTaskState(driver, task, TaskState.TASK_FINISHED);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			if (debug) {
+				System.out.println("Executning command:");
+				for (int i = 0; i < cmdArgs.length; i++)
+					System.out.println("\targs[" + i + "]:\t'" + cmdArgs[i] + "'");
 			}
-		}.start();
+
+			// Create a command, task
+			Task task = new Task(tid);
+			CmdLocal cmd = new CmdLocal(tid, cmdArgs);
+			cmd.setTask(task);
+			cmd.setNotifyTaskState(this);
+			cmd.setPidParser(this);
+			cmd.setDebug(debug);
+
+			// Store information
+			CmdInfo cmdInfo = new CmdInfo(driver, taskInfo, task, cmd);
+			cmdInfoById.put(tid, cmdInfo);
+
+			// Run command
+			if (debug) System.out.println("Running Cmd thread");
+			cmd.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public String parsePidLine(String line) {
+		return line.trim();
 	}
 
 	/**
@@ -140,14 +209,15 @@ public class BdsMesosExecutor implements Executor {
 	 */
 	@Override
 	public void registered(ExecutorDriver driver, ExecutorInfo executorInfo, FrameworkInfo frameworkInfo, SlaveInfo slaveInfo) {
-		System.out.println("Registered executor on " + slaveInfo.getHostname());
+		if (debug) Gpr.debug("Executor: Registered on " + slaveInfo.getHostname());
 	}
 
 	/**
 	 * Invoked when the executor re-registers with a restarted slave.
 	 */
 	@Override
-	public void reregistered(ExecutorDriver driver, SlaveInfo executorInfo) {
+	public void reregistered(ExecutorDriver driver, SlaveInfo slaveInfo) {
+		if (debug) Gpr.debug("Executor: Re-Registered on " + slaveInfo.getHostname());
 	}
 
 	/**
@@ -159,5 +229,45 @@ public class BdsMesosExecutor implements Executor {
 	 */
 	@Override
 	public void shutdown(ExecutorDriver driver) {
+		if (debug) Gpr.debug("Executor: Shutdown");
+		killAll();
 	}
+
+	@Override
+	public void taskFinished(Task task, Task.TaskState taskState) {
+		String tid = task.getId();
+		if (debug) Gpr.debug("Task " + tid + " finished");
+
+		CmdInfo cmdInfo = cmdInfoById.get(tid);
+		if (cmdInfo == null) {
+			if (debug) Gpr.debug("Task '" + tid + "' not found");
+			return;
+		}
+
+		// Change Mesos task status to FINISHED
+		changeTaskState(cmdInfo.executorDriver, cmdInfo.taskInfo, TaskState.TASK_FINISHED);
+
+	}
+
+	@Override
+	public void taskRunning(Task task) {
+		String tid = task.getId();
+		if (debug) Gpr.debug("Task " + tid + " running");
+
+		CmdInfo cmdInfo = cmdInfoById.get(tid);
+		if (cmdInfo == null) {
+			if (debug) Gpr.debug("Task '" + tid + "' not found");
+			return;
+		}
+
+		// Change Mesos task status to FINISHED
+		changeTaskState(cmdInfo.executorDriver, cmdInfo.taskInfo, TaskState.TASK_RUNNING);
+	}
+
+	@Override
+	public void taskStarted(Task task) {
+		String tid = task.getId();
+		if (debug) Gpr.debug("Task " + tid + " started");
+	}
+
 }

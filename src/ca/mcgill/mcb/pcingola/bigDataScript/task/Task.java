@@ -19,7 +19,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * A task to be executed by an Executioner
- * 
+ *
  * @author pcingola
  */
 public class Task implements BigDataScriptSerialize {
@@ -37,8 +37,8 @@ public class Task implements BigDataScriptSerialize {
 		, RUNNING // Running OK
 		, ERROR // Filed while running
 		, ERROR_TIMEOUT // Filed due to timeout
-		, KILLED // Task was killed  
-		, FINISHED // Finished OK  
+		, KILLED // Task was killed
+		, FINISHED // Finished OK
 		;
 
 		public static TaskState exitCode2taskState(int exitCode) {
@@ -97,7 +97,7 @@ public class Task implements BigDataScriptSerialize {
 	protected boolean canFail; // Allow execution to fail
 	protected int bdsLineNum; // Program's line number that created this task (used for reporting errors)
 	protected int exitValue; // Exit (error) code
-	protected int failCount, maxFailCount; // Number of times that this task failed	
+	protected int failCount, maxFailCount; // Number of times that this task failed
 	protected String id; // Task ID
 	protected String bdsFileName; // Program file that created this task (used for reporting errors)
 	protected String pid; // PID (if any)
@@ -118,8 +118,11 @@ public class Task implements BigDataScriptSerialize {
 	protected List<Task> dependency; // Task that need to finish before this one is executed
 
 	public Task() {
-		resources = new HostResources();
-		reset();
+		this(null, null, null, null, -1);
+	}
+
+	public Task(String id) {
+		this(id, null, null, null, -1);
 	}
 
 	public Task(String id, String programFileName, String programTxt, String bdsFileName, int bdsLineNum) {
@@ -193,7 +196,7 @@ public class Task implements BigDataScriptSerialize {
 
 		// Create file
 		Gpr.toFile(programFileName, SHE_BANG + programTxt);
-		(new File(programFileName)).setExecutable(true); // Allow execution 
+		(new File(programFileName)).setExecutable(true); // Allow execution
 
 		// Set default file names
 		String base = Gpr.removeExt(programFileName);
@@ -243,7 +246,7 @@ public class Task implements BigDataScriptSerialize {
 		if (isStarted()) return DependencyState.WAIT; // Already started but not finished? => Then you should wait;
 		if (dependency == null) return DependencyState.OK; // No dependencies? => we are ready to execute
 
-		// TODO: How do we deal with circular dependency 
+		// TODO: How do we deal with circular dependency
 		if (tasksVisited.contains(this)) throw new RuntimeException("Circular dependency on task:" + this);
 		tasksVisited.add(this);
 
@@ -404,7 +407,7 @@ public class Task implements BigDataScriptSerialize {
 	/**
 	 * Has this task been executed successfully?
 	 * The task has finished, exit code is zero and all output files have been created
-	 * 
+	 *
 	 * @return
 	 */
 	public synchronized boolean isDoneOk() {
@@ -413,12 +416,12 @@ public class Task implements BigDataScriptSerialize {
 
 	/**
 	 * Has this task been executed and failed?
-	 * 
+	 *
 	 * This is true if:
-	 * 		- The task has finished execution and it is in an error state 
-	 * 		- OR exitValue is non-zero 
+	 * 		- The task has finished execution and it is in an error state
+	 * 		- OR exitValue is non-zero
 	 * 		- OR any of the output files was not created
-	 * 
+	 *
 	 * @return
 	 */
 	public synchronized boolean isFailed() {
@@ -462,8 +465,8 @@ public class Task implements BigDataScriptSerialize {
 		if (elapsedSecs < 0) return false;
 
 		// Run out of time?
-		// Note: We use wall-timeout instead of timeout, because we don't really know 
-		//       how long the task is being executed (the cluster scheduler can have 
+		// Note: We use wall-timeout instead of timeout, because we don't really know
+		//       how long the task is being executed (the cluster scheduler can have
 		//       the task in a queue for a long time).
 		int timeout = (int) getResources().getWallTimeout();
 		return elapsedSecs > timeout;
@@ -510,14 +513,14 @@ public class Task implements BigDataScriptSerialize {
 	@Override
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		return getClass().getSimpleName() //
-				+ "\t" + id // 
+				+ "\t" + id //
 				+ "\t" + serializer.serializeSaveValue(bdsFileName) //
 				+ "\t" + bdsLineNum //
-				+ "\t" + canFail // 
-				+ "\t" + serializer.serializeSaveValue(taskState.toString()) // 
-				+ "\t" + exitValue // 
-				+ "\t" + serializer.serializeSaveValue(node) // 
-				+ "\t" + serializer.serializeSaveValue(queue) // 
+				+ "\t" + canFail //
+				+ "\t" + serializer.serializeSaveValue(taskState.toString()) //
+				+ "\t" + exitValue //
+				+ "\t" + serializer.serializeSaveValue(node) //
+				+ "\t" + serializer.serializeSaveValue(queue) //
 				+ "\t" + serializer.serializeSaveValue(programFileName) //
 				+ "\t" + serializer.serializeSaveValue(programTxt) //
 				+ "\t" + serializer.serializeSaveValue(stdoutFile) //

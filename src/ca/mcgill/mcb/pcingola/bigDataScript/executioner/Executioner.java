@@ -25,7 +25,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
  *
  * @author pcingola
  */
-public abstract class Executioner extends Thread {
+public abstract class Executioner extends Thread implements NotifyTaskState, PidParser {
 
 	public static final int SLEEP_TIME_LONG = 500;
 	public static final int SLEEP_TIME_MID = 200;
@@ -261,6 +261,7 @@ public abstract class Executioner extends Thread {
 	 * @param line
 	 * @return
 	 */
+	@Override
 	public String parsePidLine(String line) {
 		return line.trim();
 	}
@@ -584,6 +585,7 @@ public abstract class Executioner extends Thread {
 	 * @param id
 	 * @return
 	 */
+	@Override
 	public synchronized void taskFinished(Task task, TaskState taskState) {
 		if (taskState == null) {
 			// Set task state. Infer form exit code if no state is available.
@@ -599,11 +601,13 @@ public abstract class Executioner extends Thread {
 	 * Move a task from 'tasksToRun' to 'tasksRunning'
 	 * @param task
 	 */
+	@Override
 	public synchronized void taskRunning(Task task) {
 		taskUpdateStates.add(new Tuple<Task, TaskState>(task, TaskState.RUNNING));
 
 	}
 
+	@Override
 	public synchronized void taskStarted(Task task) {
 		taskUpdateStates.add(new Tuple<Task, TaskState>(task, TaskState.STARTED));
 	}

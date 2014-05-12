@@ -70,6 +70,29 @@ public class BdsMesosFramework extends Thread {
 		System.exit(bdsMesosFramework.status);
 	}
 
+	/**
+	 * Pack an array into a string
+	 * @param array
+	 * @return
+	 */
+	public static String packArray(String[] array) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < array.length; i++) {
+			if (i > 0) sb.append('\0');
+			sb.append(array[i]);
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Unpack an array from a string
+	 * @param string
+	 * @return
+	 */
+	public static String[] unpackArray(String string) {
+		return string.split("\0");
+	}
+
 	private static void usage() {
 		String name = BdsMesosFramework.class.getName();
 		System.err.println("Usage: " + name + " master <tasks>");
