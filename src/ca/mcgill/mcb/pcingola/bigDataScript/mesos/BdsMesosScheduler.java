@@ -55,6 +55,8 @@ public class BdsMesosScheduler implements Scheduler {
 
 	static final long MB = 1024 * 1024;
 
+	public static boolean debug = true;
+
 	private final ExecutorInfo executor;
 	List<Task> taskToLaunch;
 	HashMap<String, Task> taskById;
@@ -81,6 +83,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void disconnected(SchedulerDriver driver) {
+		if (debug) Gpr.debug("Scheduler: Disconnected");
 	}
 
 	/**
@@ -90,7 +93,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void error(SchedulerDriver driver, String message) {
-		System.out.println("Error: " + message);
+		if (debug) Gpr.debug("Scheduler: Error '" + message + "'");
 	}
 
 	/**
@@ -100,6 +103,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void executorLost(SchedulerDriver driver, ExecutorID executorId, SlaveID slaveId, int status) {
+		if (debug) Gpr.debug("Scheduler: Executor lost " + executorId.getValue());
 	}
 
 	/**
@@ -109,6 +113,11 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void frameworkMessage(SchedulerDriver driver, ExecutorID executorId, SlaveID slaveId, byte[] data) {
+		if (debug) Gpr.debug("Scheduler: Framework message" //
+				+ "\n\tExecutorId : " + executorId.getValue() //
+				+ "\n\tSlaveId    : " + slaveId.getValue() //
+				+ "\n\tMesssage   : '" + new String(data) + "'" //
+				);
 	}
 
 	/**
@@ -121,6 +130,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void offerRescinded(SchedulerDriver driver, OfferID offerId) {
+		if (debug) Gpr.debug("Scheduler: Offer Rescinded " + offerId.getValue());
 	}
 
 	/**
@@ -131,7 +141,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void registered(SchedulerDriver driver, FrameworkID frameworkId, MasterInfo masterInfo) {
-		System.out.println("Registered! ID = " + frameworkId.getValue());
+		if (debug) Gpr.debug("Scheduler: Registered framework " + frameworkId.getValue() + ", master " + masterInfo.getHostname());
 	}
 
 	/**
@@ -142,6 +152,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void reregistered(SchedulerDriver driver, MasterInfo masterInfo) {
+		if (debug) Gpr.debug("Scheduler: Re-Registered " + masterInfo.getHostname());
 	}
 
 	/**
@@ -219,6 +230,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void slaveLost(SchedulerDriver driver, SlaveID slaveId) {
+		if (debug) Gpr.debug("Scheduler: Slave Lost " + slaveId.getValue());
 	}
 
 	/**
@@ -234,7 +246,7 @@ public class BdsMesosScheduler implements Scheduler {
 	@Override
 	public void statusUpdate(SchedulerDriver driver, TaskStatus status) {
 		String taskId = status.getTaskId().getValue();
-		System.out.println("Status update: task " + taskId + " is in state " + status.getState());
+		if (debug) Gpr.debug("Scheduler: Status update, task " + taskId + ", state " + status.getState());
 
 		// Find task
 		Task task = taskById.get(taskId);

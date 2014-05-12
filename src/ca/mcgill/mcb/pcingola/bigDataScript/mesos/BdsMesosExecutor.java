@@ -134,8 +134,12 @@ public class BdsMesosExecutor implements Executor, NotifyTaskState, PidParser {
 	 * Kill all pending tasks
 	 */
 	void killAll() {
+		// Kill all tasks
 		for (CmdInfo ci : cmdInfoById.values())
 			ci.cmd.kill();
+
+		// Clean up
+		cmdInfoById = new HashMap<String, BdsMesosExecutor.CmdInfo>();
 	}
 
 	/**
@@ -247,6 +251,8 @@ public class BdsMesosExecutor implements Executor, NotifyTaskState, PidParser {
 		// Change Mesos task status to FINISHED
 		changeTaskState(cmdInfo.executorDriver, cmdInfo.taskInfo, TaskState.TASK_FINISHED);
 
+		// Clean up
+		cmdInfoById.remove(tid);
 	}
 
 	@Override
