@@ -77,7 +77,7 @@ public class CmdLocal extends Cmd {
 			if (errStr.length() > 0) addError(errStr.toString());
 
 			return false;
-		};
+		}
 
 		return true;
 	}
