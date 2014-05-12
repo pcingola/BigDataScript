@@ -27,6 +27,7 @@ import org.apache.mesos.Protos.ExecutorID;
 import org.apache.mesos.Protos.ExecutorInfo;
 import org.apache.mesos.Protos.FrameworkInfo;
 import org.apache.mesos.Protos.Status;
+import org.apache.mesos.Protos.TaskID;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
@@ -54,7 +55,7 @@ public class BdsMesosFramework extends Thread {
 	ExecutorID executorId;
 	ExecutorInfo executorInfo;
 	BdsMesosScheduler scheduler;
-	MesosSchedulerDriver driver;
+	MesosSchedulerDriver schedulerDriver;
 	FrameworkInfo frameworkInfo;
 	ExecutionerMesos executionerMesos;
 
@@ -109,7 +110,7 @@ public class BdsMesosFramework extends Thread {
 	}
 
 	public MesosSchedulerDriver getDriver() {
-		return driver;
+		return schedulerDriver;
 	}
 
 	public FrameworkInfo getFrameworkInfo() {
@@ -125,15 +126,21 @@ public class BdsMesosFramework extends Thread {
 	}
 
 	public boolean isReady() {
-		return driver != null;
+		return schedulerDriver != null;
 	}
 
 	/**
 	 * Kill framework driver
 	 */
 	public void kill() {
-		// TODO: Should we use driver.abort() or driver.stop()? I'm not sure...
-		driver.abort();
+		schedulerDriver.abort();
+	}
+
+	/**
+	 * Kill framework driver
+	 */
+	public void kill(Task task) {
+		if (schedulerDriver != null) schedulerDriver.killTask(TaskID.newBuilder().setValue(task.getId()).build());
 	}
 
 	@Override
@@ -195,19 +202,19 @@ public class BdsMesosFramework extends Thread {
 						.setSecret(ByteString.copyFrom(System.getenv("DEFAULT_SECRET").getBytes())) //
 						.build();
 
-				driver = new MesosSchedulerDriver(scheduler, frameworkInfo, master, credential);
+				schedulerDriver = new MesosSchedulerDriver(scheduler, frameworkInfo, master, credential);
 			} else {
-				driver = new MesosSchedulerDriver(scheduler, frameworkInfo, master);
+				schedulerDriver = new MesosSchedulerDriver(scheduler, frameworkInfo, master);
 			}
 
 			//---
 			// Run driver
 			//---
-			status = driver.run() == Status.DRIVER_STOPPED ? 0 : 1;
+			status = schedulerDriver.run() == Status.DRIVER_STOPPED ? 0 : 1;
 		} catch (Exception e) {
 			e.printStackTrace();
 			status = 1;
-			if (driver != null) driver.stop(); // Ensure that the driver process terminates.
+			if (schedulerDriver != null) schedulerDriver.stop(); // Ensure that the driver process terminates.
 		}
 	}
 

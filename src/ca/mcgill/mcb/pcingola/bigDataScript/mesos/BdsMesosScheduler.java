@@ -19,13 +19,13 @@ package ca.mcgill.mcb.pcingola.bigDataScript.mesos;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.mesos.Protos.ExecutorID;
 import org.apache.mesos.Protos.ExecutorInfo;
-import org.apache.mesos.Protos.Filters;
 import org.apache.mesos.Protos.FrameworkID;
 import org.apache.mesos.Protos.MasterInfo;
 import org.apache.mesos.Protos.Offer;
@@ -117,7 +117,7 @@ public class BdsMesosScheduler implements Scheduler {
 				+ "\n\tExecutorId : " + executorId.getValue() //
 				+ "\n\tSlaveId    : " + slaveId.getValue() //
 				+ "\n\tMesssage   : '" + new String(data) + "'" //
-				);
+		);
 	}
 
 	/**
@@ -172,11 +172,24 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void resourceOffers(SchedulerDriver driver, List<Offer> offers) {
+		if (debug) Gpr.debug("Scheduler: Resource Offers");
+		Collection<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
+		Collection<OfferID> offerIds = new ArrayList<OfferID>();
+
+		// TODO: Match offers with tasks by taking into account the number of resources requested
+		//		 Note that when invoking driver.launchTasks() all offers must belong to same slave
+
 		for (Offer offer : offers) {
-			List<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
+			// TODO: Match a task with this particular offer
+			//       Use the the offer that matches 'best' a task
+			//       In case of multiple matches, the 'first' offer / first 'task' wins
+
+			if (debug) Gpr.debug("\t\t" + offer.getHostname());
+
+			offerIds.add(offer.getId());
 
 			// Should we launch a task?
-			if (!taskToLaunch.isEmpty()) {
+			if (taskToLaunch.isEmpty()) {
 				// Get first task in the queue
 				Task task = taskToLaunch.remove(0); // TODO: We should not remove it completely until we are sure that it was started by Mesos (stateChange)
 				taskById.put(task.getId(), task);
@@ -218,9 +231,12 @@ public class BdsMesosScheduler implements Scheduler {
 				executionerMesos.taskStarted(task);
 			}
 
-			Filters filters = Filters.newBuilder().setRefuseSeconds(1).build();
-			driver.launchTasks(offer.getId(), taskInfos, filters);
 		}
+
+		// Filters filters = Filters.newBuilder().setRefuseSeconds(1).build();
+		// driver.launchTasks(offer.getId(), taskInfos, filters);
+
+		driver.launchTasks(offerIds, taskInfos);
 	}
 
 	/**

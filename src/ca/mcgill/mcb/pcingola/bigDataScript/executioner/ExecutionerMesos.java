@@ -6,6 +6,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.mesos.BdsMesosFramework;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Execute tasks on Mesos
@@ -55,6 +57,26 @@ public class ExecutionerMesos extends Executioner {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	/**
+	 * Kill a task and move it from 'taskRunning' to 'tasksDone'
+	 * @param task
+	 * @return
+	 */
+	@Override
+	public synchronized void kill(Task task) {
+		if (task.isDone()) return; // Nothing to do
+
+		if (debug) Timer.showStdErr("Killing task '" + task.getId() + "'");
+
+		// Tell Mesos to kill the task
+		mesosFramework.kill(task);
+
+		// Mark task as finished
+		// Note: This will also be invoked by Cmd, so it will be redundant)
+		task.setExitValue(Task.EXITCODE_KILLED);
+		taskFinished(task, TaskState.KILLED);
 	}
 
 	@Override
