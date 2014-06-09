@@ -1,0 +1,9 @@
+
+system = "mesos"
+
+for( int i=0 ; i < 10 ; i++ ) {
+	task echo "Hello $system $i\n"
+}
+
+wait
+print("Done!\n")

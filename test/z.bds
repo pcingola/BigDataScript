@@ -1,9 +1,9 @@
+#!/usr/bin/env bds
 
-system = "mesos"
 
-for( int i=0 ; i < 10 ; i++ ) {
-	task echo "Hello $system $i\n"
-}
+l := ['hi']
 
-wait
-print("Done!\n")
+print("hi\n")
+print("l=" + l[2] + "\t")
+print("bye\n")
+

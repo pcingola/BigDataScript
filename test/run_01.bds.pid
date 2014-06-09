@@ -3293,3 +3293,123 @@ null	-
 out2.txt	-
 null	-
 out1.txt	-
+19202	+	
+19202	-
+19217	+	
+19217	-
+19230	+	
+19230	-
+null	-
+19256	+	
+19256	-
+19267	+	
+19267	-
+19277	+	
+19277	-
+19287	+	
+19287	-
+19300	+	
+19300	-
+19313	+	
+19313	-
+19376	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+19381	+	
+19376	-
+/home/pcingola/zero_length_file_out.txt	-
+19381	-
+19401	+	
+19401	-
+19414	+	
+19419	+	
+19419	-
+19414	-
+19462	+	
+19462	-
+19475	+	
+19475	-
+19489	+	
+19489	-
+null	-
+19501	+	
+19501	-
+19513	+	
+19513	-
+19526	+	
+19526	-
+19537	+	
+19537	-
+19548	+	
+19548	-
+19559	+	
+19559	-
+19575	+	
+failOnce.out1	+	rm
+19575	-
+failOnce.out1	-
+19588	+	
+failOnce.out1	+	rm
+19588	-
+failOnce.out1	-
+19600	+	
+failOnce.out2	+	rm
+19600	-
+failOnce.out2	-
+19620	+	
+failOnce.out1	+	rm
+19620	-
+failOnce.out1	-
+19633	+	
+failOnce.out1	+	rm
+19633	-
+failOnce.out1	-
+19645	+	
+failOnce.out2	+	rm
+19645	-
+failOnce.out2	-
+19680	+	
+19685	+	
+19680	-
+19685	-
+19701	+	
+19701	-
+19725	+	
+out1.txt	+	rm
+19725	-
+out1.txt	-
+19737	+	
+out2.txt	+	rm
+19737	-
+out2.txt	-
+19755	+	
+out1.txt	+	rm
+19755	-
+out1.txt	-
+19767	+	
+out2.txt	+	rm
+19767	-
+out2.txt	-
+19779	+	
+out1.txt	+	rm
+19779	-
+out1.txt	-
+19793	+	
+19793	-
+19806	+	
+19806	-
+19824	+	
+out1.txt	+	rm
+19824	-
+out1.txt	-
+19836	+	
+out2.txt	+	rm
+19836	-
+out2.txt	-
+19850	+	
+out1.txt	+	rm
+19850	-
+out1.txt	-
+19862	+	
+out2.txt	+	rm
+19862	-
+out2.txt	-

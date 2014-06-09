@@ -10,10 +10,12 @@
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="./bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="./lib/commons-lang3-3.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="./lib/jsch-0.1.49.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="./lib/antlr-runtime-4.2.2.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="./lib/junit-4.10.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/antlr-runtime-4.2.2.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/commons-lang3-3.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/jsch-0.1.49.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/junit-4.10.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/mesos-0.18.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/protobuf-2.5.0.jar"/>
         </jar>
     </target>
 
@@ -30,7 +32,7 @@
 			source="7"
 			target="7"
 			includeantruntime="false" 
-			classpath="lib/antlr-runtime-4.2.2.jar:lib/commons-lang3-3.1.jar:lib/jsch-0.1.49.jar:lib/junit-4.10.jar"
+			classpath="lib/antlr-runtime-4.2.2.jar:lib/commons-lang3-3.1.jar:lib/jsch-0.1.49.jar:lib/junit-4.10.jar:lib/mesos-0.18.0.jar:lib/protobuf-2.5.0.jar"
 		/>
 	</target>
 
