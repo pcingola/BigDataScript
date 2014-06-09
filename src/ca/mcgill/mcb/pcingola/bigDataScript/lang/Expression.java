@@ -212,6 +212,7 @@ public class Expression extends Statement {
 			eval(csThread);
 		} catch (Throwable t) {
 			if (Config.get().isDebug()) t.printStackTrace();
+			csThread.fatalError(this, t);
 			return RunState.FATAL_ERROR;
 		}
 		return RunState.OK;
