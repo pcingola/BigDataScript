@@ -12,7 +12,7 @@ public class TestCasesZzz extends TestCasesBase {
 
 	@Test
 	public void test32() {
-		runAndCheck("test/run_32.bds", "out", "Hi\n");
+		runAndCheck("test/z.bds", "finished", "true");
 	}
 
 }

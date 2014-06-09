@@ -693,4 +693,9 @@ public class TestCasesRun extends TestCasesBase {
 		runAndCheckMultiple("test/run_98.bds", expectedValues);
 	}
 
+	@Test
+	public void test99() {
+		runAndCheck("test/run_99.bds", "finished", "true");
+	}
+
 }

@@ -3413,3 +3413,190 @@ out1.txt	-
 out2.txt	+	rm
 19862	-
 out2.txt	-
+21802	+	
+21802	-
+21817	+	
+21817	-
+21830	+	
+21830	-
+null	-
+21856	+	
+21856	-
+21866	+	
+21866	-
+21876	+	
+21876	-
+21886	+	
+21886	-
+21899	+	
+21899	-
+21912	+	
+21912	-
+21978	+	
+21978	-
+21991	+	
+21991	-
+22005	+	
+22005	-
+null	-
+22018	+	
+22018	-
+22030	+	
+22030	-
+22043	+	
+22043	-
+22054	+	
+22054	-
+22065	+	
+22065	-
+22076	+	
+22076	-
+22092	+	
+failOnce.out1	+	rm
+22092	-
+failOnce.out1	-
+22105	+	
+failOnce.out1	+	rm
+22105	-
+failOnce.out1	-
+22117	+	
+failOnce.out2	+	rm
+22117	-
+failOnce.out2	-
+22137	+	
+failOnce.out1	+	rm
+22137	-
+failOnce.out1	-
+22150	+	
+failOnce.out1	+	rm
+22150	-
+failOnce.out1	-
+22162	+	
+failOnce.out2	+	rm
+22162	-
+failOnce.out2	-
+22195	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+22200	+	
+22195	-
+/home/pcingola/zero_length_file_out.txt	-
+22305	+	
+22305	-
+22320	+	
+22320	-
+22333	+	
+22333	-
+null	-
+22359	+	
+22359	-
+22370	+	
+22370	-
+22380	+	
+22380	-
+22390	+	
+22390	-
+22403	+	
+22403	-
+22416	+	
+22416	-
+22483	+	
+22483	-
+22496	+	
+22496	-
+22510	+	
+22510	-
+null	-
+22523	+	
+22523	-
+22535	+	
+22535	-
+22548	+	
+22548	-
+22559	+	
+22559	-
+22570	+	
+22570	-
+22581	+	
+22581	-
+22597	+	
+failOnce.out1	+	rm
+22597	-
+failOnce.out1	-
+22610	+	
+failOnce.out1	+	rm
+22610	-
+failOnce.out1	-
+22622	+	
+failOnce.out2	+	rm
+22622	-
+failOnce.out2	-
+22642	+	
+failOnce.out1	+	rm
+22642	-
+failOnce.out1	-
+22655	+	
+failOnce.out1	+	rm
+22655	-
+failOnce.out1	-
+22668	+	
+failOnce.out2	+	rm
+22668	-
+failOnce.out2	-
+22701	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+22707	+	
+22701	-
+/home/pcingola/zero_length_file_out.txt	-
+22707	-
+22725	+	
+22725	-
+22738	+	
+22743	+	
+22738	-
+22743	-
+22783	+	
+22783	-
+22789	+	
+22789	-
+22804	+	
+22804	-
+22828	+	
+out1.txt	+	rm
+22828	-
+out1.txt	-
+22840	+	
+out2.txt	+	rm
+22840	-
+out2.txt	-
+22858	+	
+out1.txt	+	rm
+22858	-
+out1.txt	-
+22870	+	
+out2.txt	+	rm
+22870	-
+out2.txt	-
+22882	+	
+out1.txt	+	rm
+22882	-
+out1.txt	-
+22896	+	
+22896	-
+22909	+	
+22909	-
+22927	+	
+out1.txt	+	rm
+22927	-
+out1.txt	-
+22939	+	
+out2.txt	+	rm
+22939	-
+out2.txt	-
+22953	+	
+out1.txt	+	rm
+22953	-
+out1.txt	-
+22965	+	
+out2.txt	+	rm
+22965	-
+out2.txt	-

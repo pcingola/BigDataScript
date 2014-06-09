@@ -156,12 +156,17 @@ public class ExpressionSys extends Expression {
 		// Error running process? 
 		int exitValue = execResult.exitValue;
 		if (exitValue != 0) {
-			// Execution failed! Save checkpoint and exit
-			csThread.fatalError(this, "Exec failed." //
-					+ "\n\tExit value : " + exitValue //
-					+ "\n\tCommand    : " + cmds //
-			);
-			return RunState.FATAL_ERROR;
+			// Can this execution fail?
+			boolean canFail = csThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL);
+
+			// Execution failed on a 'sys' command that cannot fail. Save checkpoint and exit
+			if (!canFail) {
+				csThread.fatalError(this, "Exec failed." //
+						+ "\n\tExit value : " + exitValue //
+						+ "\n\tCommand    : " + cmds //
+				);
+				return RunState.FATAL_ERROR;
+			}
 		}
 
 		// Collect output
