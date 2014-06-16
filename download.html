@@ -73,82 +73,105 @@
     <div class="row">
       <div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav">
-          <li><a href="#about"><i class="icon-chevron-right"></i> About</a></li>
-          <li><a href="#ack"><i class="icon-chevron-right"></i> Acknowledgements</a></li>
-          <li><a href="#bugs"><i class="icon-chevron-right"></i> Bug reports</a></li>
-          <li><a href="#help"><i class="icon-chevron-right"></i> Asking for help</a></li>
+          <li><a href="#binary"><i class="icon-chevron-right"></i> Download &amp; Install</a></li>
+          <li><a href="#lic"><i class="icon-chevron-right"></i> License </a></li>
+          <li><a href="#source"><i class="icon-chevron-right"></i> Source code </a></li>
         </ul>
       </div>
       <div class="span9">
 
 
-        <!-- About
+        <!-- Binaries
         ================================================== -->
-        <section id="about">
+        <section id="binary">
           <div class="page-header">
-            <h1>1. About</h1>
+            <h1>1. Download &amp; Install</h1>
           </div>
 				<p class="lead">
-				This project is maintained by <b> <a class="body" href="http://www.linkedin.com/in/pablocingolani">Pablo Cingolani</a>.</b><p>
+				Binary distributions are available for Linux and OS.X.<p>
 				</p>
-				
-        </section>
-
-        <!-- Ack
-        ================================================== -->
-        <section id="ack">
-          <div class="page-header">
-            <h1>2. Acknowledgements</h1>
-          </div>
-				<p class="lead"> Acknowledgements and special thanks to (in order of appearance) </p>
-				<ul>
-					<li> Fernando Garcia Sanz (FGS): Writing a nice <a href="bigDataScript_manual.html#intro">introduction</a>, feedback and beta testing.
-					<li> Hernan Gonzalez: Bug fixes.
-				</ul>
-				
-        </section>
-
-        <!-- Bug reports
-        ================================================== -->
-        <section id="bugs">
-          <div class="page-header">
-            <h1>3. Bug reports</h1>
-          </div>
-				<p class="lead">
-				Please send any bug reports using <a href="https://github.com/pcingola/BigDataScript/issues">GitHub</a>
-				</p>
-
-				<p> <b>Important:</b> Try BigDataScript's latest version. BigDataScript is updated often, may be the bug has already been corrected. </p>
 
 				<p>
-				<b>Note:</b> A bug report should include at least
-				<ul>
-					<li> An explanation of the bug condition
-					<li> A minimal bug-demonstrating test case (i.e. include bds source file used to run the test case)
-					<li> The conditions for the bug to occur 
-					<li> BigDataScript version and sub-version numbers you are using
-				</ul>
+              	<a class="btn btn-large btn-primary" href="https://github.com/pcingola/BigDataScript/blob/master/distro/bds_Linux.tgz">Download Linux 64bit</a>
+              	<a class="btn btn-large btn-primary" href="https://github.com/pcingola/BigDataScript/blob/master/distro/bds_Darwin.tgz">Download OS.X.</a>
+				</p>
+
+				<p><h3>Install</h3>
+				Uncompress the binary at your <code>HOME</code> directory
+<pre>
+$ cd 
+$ tar -xvzf path/to/bds_linux.tgz 
+</pre>
+				<br>
+				<i class="icon-warning-sign"></i> BDS's directoy <code>.bds</code> is 'hidden', since the name starts with a dot.
+				<br>
+				<br>
+				Add BDS's directory to your <code>PATH</code>
+<pre>
+echo "export PATH=\$PATH:\$HOME/.bds" >> $HOME/.bashrc
+</pre>
+
+				</p>
+
+				<p><h3>Requirements</h3>
+				BigDataScript requires Java 7.
 				</p>
         </section>
 
-        <!-- help
+        <!-- Source code
         ================================================== -->
-        <section id="help">
+        <section id="lic">
           <div class="page-header">
-            <h1>4. Asking for help </h1>
+            <h1>2. License code</h1>
           </div>
-				<p class="lead">
-				I always try to help people, but sometimes I'm too busy and I won't be able to answer in due time and manner.
-				Apologies in advanced.<br>
-				Please send any requests using <a href="https://github.com/pcingola/BigDataScript/issues">GitHub</a>
-				</p>
+				<p class="lead"> BigDataScript is open source.</p>
+        </section>
+				
 
-				A few guidelines when asking for help:
+        <!-- Source code
+        ================================================== -->
+        <section id="source">
+          <div class="page-header">
+            <h1>3. Source code</h1>
+          </div>
+				<p class="lead"> The source code is available at GitHub, here we show how to compile and installe.</p>
+				
+				<p>
+				The source code is available on <a href="https://github.com/pcingola/BigDataScript">GitHub </a>.
+				Download the project as follows (you need to install <a href="http://git-scm.com/">Git</a> first):
+<pre>
+# Clone repository
+$ git clone https://github.com/pcingola/BigDataScript.git
+</pre>
+
+				BigDataScripts requires the following software:
 				<ul>
-					<li> <b>Read the documentation first.</b> Please make sure you've read the documentation before asking fo help. I know this is obvious, but ...
-					<li> <b>Be polite.</b> Again, it may be obvious, but ...
-					<li> <b>If I don't get back to you...</b> Do remind me if I don't get back to you within a few days. Sometimes I'm swamped with work or just out of town, a polite reminder helps.
+					<li> <a href="http://java.com">Java</a> (at least 1.6)
+					<li> <a href="http://golang.org/">Go</a> compiler (at least 1.0)
+					<li> <a href="http://ant.apache.org/">Ant</a> (at least 1.7)
 				</ul>
+
+				Once you downloaded the project, you can install:
+<pre>
+# Run 'install script
+$ cd BigDataScript
+$ ./scripts/install.sh
+</pre>
+
+				Then edit your <code>.bashrc</code> (or <code>.bash_profile</code>) and add the following lines
+<pre>
+# BigDataScript
+export CLASSPATH=$CLASSPATH:$HOME/.bds/BigDataScript.jar
+export PATH=$PATH:$HOME/.bds/
+</pre>
+
+				Optionally, if you have root access, you can do the following (to get <code>bds</code> available everywhere in your system
+<pre>
+$ su -
+# cd /usr/bin/
+# ln -s /home/your_user/.bds/bds
+</pre>
+
 				</p>
         </section>
 

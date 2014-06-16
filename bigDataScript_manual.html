@@ -46,7 +46,8 @@
             </p>
             <ul class="nav">
               <li class="active"><a href="index.html">Home</a></li>
-              <li><a href="https://github.com/pcingola/BigDataScript">Download</a></li>
+              <li><a href="download.html">Download</a></li>
+              <li><a href="https://github.com/pcingola/BigDataScript">Source</a></li>
               <li><a href="bigDataScript_manual.html">Documentation</a></li>
               <li><a href="about.html">About</a></li>
             </ul>
@@ -100,53 +101,7 @@
           <div class="page-header">
             <h1>1. Download &amp; Install</h1>
           </div>
-				<p class="lead"> BigDataScript a scripting language for big data pipelines.  </p>
-				<p>
-				The source code is available on <a href="https://github.com/pcingola/BigDataScript">GitHub </a>.
-				Download the project as follows (you need to install <a href="http://git-scm.com/">Git</a> first):
-<pre>
-# Clone repository
-$ git clone https://github.com/pcingola/BigDataScript.git
-</pre>
-
-				BigDataScripts requires the following software:
-				<ul>
-					<li> <a href="http://java.com">Java</a> (at least 1.6)
-					<li> <a href="http://golang.org/">Go</a> compiler (at least 1.0)
-					<li> <a href="http://ant.apache.org/">Ant</a> (at least 1.7)
-				</ul>
-
-				Once you downloaded the project, you can install:
-<pre>
-# Run 'install script
-$ cd BigDataScript
-$ ./scripts/install.sh
-</pre>
-
-				Then edit your <code>.bashrc</code> (or <code>.bash_profile</code>) and add the following lines
-<pre>
-# BigDataScript
-export CLASSPATH=$CLASSPATH:$HOME/.bds/BigDataScript.jar
-export PATH=$PATH:$HOME/.bds/
-</pre>
-
-				Optionally, if you have root access, you can do the following (to get <code>bds</code> available everywhere in your system
-<pre>
-$ su -
-# cd /usr/bin/
-# ln -s /home/your_user/.bds/bds
-</pre>
-
-				</p>
-				<h3> Licencing </h3>
-				<p>
-				Open source.
-				</p>
-				<h3> Source code</h3>
-				<p>
-				The source code is available on <a href="https://github.com/pcingola/BigDataScript">GitHub </a>.
-				</p>
-			
+				<p class="lead"> Please take a look at the <a href="download.html">download page</a>.  </p>
         </section>
 
         <!-- ================================================== -->
@@ -278,7 +233,7 @@ $ su -
 $ bds
 Error: Missing program file name.
 Usage: BigDataScript [options] file.bds
-BigDataScript 0.7 (build 2013-03-08), by Pablo Cingolani
+BigDataScript 0.7 (build 2014-03-08), by Pablo Cingolani
 
 
 Available options: 
@@ -998,7 +953,7 @@ string tid = task echo Hello
 print("Task is $tid\n")
 
 $ bds z.bds
-Task is z.bds.20130329_130235_269/task.line_1.id_1
+Task is z.bds.20140329_130235_269/task.line_1.id_1
 Hello
 </pre>
 
@@ -1079,7 +1034,7 @@ Done 9
 					</tr>
 					<tr>
 						<td> <code>timeout</code> </td>	
-						<td> 86400 (24hs) </td> 
+						<td> 0 </td> 
 						<td> Number of seconds that a process is allowed to execute. Ignored if zero or less. If process runs more than <code>timeout</code> seconds, it is killed. </td> 
 					</tr>
 					<tr>
@@ -1143,10 +1098,10 @@ sys echo Hello $name
 				Now let's run this script, we use <code>-v</code> command line option to make the output verbose:
 <pre>
 $ bds -v z.bds
-00:00:00.169	Process ID: z.bds.20130328_224825_685
-00:00:00.174	Queuing task 'z.bds.20130328_224825_685/sys.line_4.id_1'
-00:00:00.674	Running task 'z.bds.20130328_224825_685/sys.line_4.id_1'
-00:00:00.689	Finished task 'z.bds.20130328_224825_685/sys.line_4.id_1'
+00:00:00.169	Process ID: z.bds.20140328_224825_685
+00:00:00.174	Queuing task 'z.bds.20140328_224825_685/sys.line_4.id_1'
+00:00:00.674	Running task 'z.bds.20140328_224825_685/sys.line_4.id_1'
+00:00:00.689	Finished task 'z.bds.20140328_224825_685/sys.line_4.id_1'
 Hello Pablo
 00:00:00.692	Finished running. Exit value : 0
 </pre>
@@ -1154,21 +1109,21 @@ Hello Pablo
 				<ol>
 					<li> bds parses the <code>sys</code> statement and interpolates "echo Hello $name" to "echo Hello Pablo"
 
-					<li> Creates a taks and assigns a task ID <code>z.bds.20130328_224825_685/sys.line_4.id_1</code>
+					<li> Creates a taks and assigns a task ID <code>z.bds.20140328_224825_685/sys.line_4.id_1</code>
 
-					<li> It creates a shell script file <code>z.bds.20130328_224825_685/sys.line_4.id_1.sh</code> with the code:
+					<li> It creates a shell script file <code>z.bds.20140328_224825_685/sys.line_4.id_1.sh</code> with the code:
 <pre>
-$ cat z.bds.20130328_224825_685/sys.line_4.id_1.sh 
+$ cat z.bds.20140328_224825_685/sys.line_4.id_1.sh 
 #!/bin/sh
 
 echo Hello Pablo
 </pre>
 
-					<li> Then executes this shell script and saves stdout and stderr to z.bds.20130328_224825_685/sys.line_4.id_1.stdout and z.bds.20130328_224825_685/sys.line_4.id_1.stderr respectively
+					<li> Then executes this shell script and saves stdout and stderr to z.bds.20140328_224825_685/sys.line_4.id_1.stdout and z.bds.20140328_224825_685/sys.line_4.id_1.stderr respectively
 <pre>
-$ cat z.bds.20130328_224825_685/sys.line_4.id_1.stdout
+$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stdout
 Hello Pablo
-$ cat z.bds.20130328_224825_685/sys.line_4.id_1.stderr
+$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
 </pre>
 					Notice that there was no output on stderr (it's empty)
 
@@ -1535,7 +1490,7 @@ OK : true
     <!-- Footer
     ================================================== -->
       <footer>
-		<p class="text-center">&copy; <a class="body" href="http://www.linkedin.com/in/pablocingolani">Pablo Cingolani 2013</a></p>
+		<p class="text-center">&copy; <a class="body" href="http://www.linkedin.com/in/pablocingolani">Pablo Cingolani 2014</a></p>
       </footer>
 
 
