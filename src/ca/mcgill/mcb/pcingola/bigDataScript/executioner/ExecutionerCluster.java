@@ -21,9 +21,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Execute tasks in a MOAB cluster.
- * 
+ *
  * All commands are run using 'qsub' (or equivalent) commands
- * 
+ *
  * @author pcingola
  */
 public class ExecutionerCluster extends Executioner {
@@ -44,7 +44,7 @@ public class ExecutionerCluster extends Executioner {
 
 	Pattern pidPattern;
 
-	public ExecutionerCluster(Config config) {
+	protected ExecutionerCluster(Config config) {
 		super(config);
 
 		// Define commands
@@ -68,7 +68,7 @@ public class ExecutionerCluster extends Executioner {
 
 	/**
 	 * Add resource options to command line parameters
-	 * 
+	 *
 	 * @param task
 	 * @param args
 	 */
@@ -101,10 +101,10 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	/**
-	 * Calculate timeout parameter. We want to assign slightly larger timeout 
-	 * to the cluster (qsub/msub), because we prefer bds to kill the process (it's 
+	 * Calculate timeout parameter. We want to assign slightly larger timeout
+	 * to the cluster (qsub/msub), because we prefer bds to kill the process (it's
 	 * cleaner and we get exitCode file)
-	 * 
+	 *
 	 * @param res
 	 * @return
 	 */
@@ -121,16 +121,16 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	/**
-	 * Usually cluster management systems write STDOUT 
-	 * & STDERR to files. We don't want the names to 
-	 * be the same as the one we use, otherwise program's 
+	 * Usually cluster management systems write STDOUT
+	 * & STDERR to files. We don't want the names to
+	 * be the same as the one we use, otherwise program's
 	 * output may be written twice.
-	 *   On the other hand, we cannot trust the cluster 
-	 * system to write those files, because sometimes 
-	 * they don't do it properly, sometimes they add 
-	 * headers & footers, sometimes they mixed STDOUT 
+	 *   On the other hand, we cannot trust the cluster
+	 * system to write those files, because sometimes
+	 * they don't do it properly, sometimes they add
+	 * headers & footers, sometimes they mixed STDOUT
 	 * and STDERR in a single file, etc.
-	 *   
+	 *
 	 * @param fileName
 	 * @return
 	 */
@@ -156,11 +156,11 @@ public class ExecutionerCluster extends Executioner {
 		// Add resources to command line parameters
 		addResources(task, args);
 
-		// Stdout 
+		// Stdout
 		args.add("-o");
 		args.add(clusterStdFile(task.getStdoutFile()));
 
-		// Stderr 
+		// Stderr
 		args.add("-e");
 		args.add(clusterStdFile(task.getStderrFile()));
 
@@ -181,7 +181,7 @@ public class ExecutionerCluster extends Executioner {
 		// Run command
 		if (debug) Timer.showStdErr("Running command: echo \"" + cmdStdin + "\" | " + cmdStr);
 
-		// Create command 
+		// Create command
 		CmdCluster cmd = new CmdCluster(task.getId(), args.toArray(Cmd.ARGS_ARRAY_TYPE));
 		cmd.setStdin(cmdStdin.toString());
 		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
@@ -244,9 +244,9 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	/**
-	 * Try to find some 'post-mortem' info about this 
+	 * Try to find some 'post-mortem' info about this
 	 * task, in order to asses systematic errors.
-	 * 
+	 *
 	 * @param task
 	 */
 	@Override

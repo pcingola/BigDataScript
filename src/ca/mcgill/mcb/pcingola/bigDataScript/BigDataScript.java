@@ -63,8 +63,8 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2014-06-16";
-	public static final String REVISION = "";
+	public static final String BUILD = "2014-07-16";
+	public static final String REVISION = "b";
 	public static final String VERSION_MAJOR = "0.98";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -312,10 +312,10 @@ public class BigDataScript {
 	int infoCheckpoint() {
 		// Load checkpoint file
 		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
-		List<BigDataScriptThread> csthreads = csSerializer.load();
+		List<BigDataScriptThread> bdsThreads = csSerializer.load();
 
 		Gpr.debug("INFO CHECKPOINT:");
-		for (BigDataScriptThread bdsThread : csthreads)
+		for (BigDataScriptThread bdsThread : bdsThreads)
 			bdsThread.print();
 
 		return 0;
@@ -723,7 +723,7 @@ public class BigDataScript {
 	 */
 	public int run() {
 		// Startup message
-		if (verbose) System.out.println(VERSION + "\n");
+		if (verbose) Timer.showStdErr(VERSION);
 
 		// ---
 		// Config
@@ -767,7 +767,6 @@ public class BigDataScript {
 
 		config.kill(); // Kill 'tail' and 'monitor' threads
 
-		if (verbose) Timer.showStdErr("Finished running. Exit value : " + exitValue);
 		return exitValue;
 	}
 
@@ -777,33 +776,33 @@ public class BigDataScript {
 	int runCheckpoint() {
 		// Load checkpoint file
 		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
-		List<BigDataScriptThread> csthreads = csSerializer.load();
+		List<BigDataScriptThread> bdsThreads = csSerializer.load();
 
 		// Show
 		int exitValue = 0;
-		for (BigDataScriptThread csthread : csthreads) {
+		for (BigDataScriptThread bdsThread : bdsThreads) {
 			//---
 			// Run (traverse tree in 'CHECKPOINT_RECOVER' mode) until we find exactly the instruction where we left
 			//---
 
 			// Set run state, program
-			csthread.setRunState(RunState.CHECKPOINT_RECOVER);
-			programUnit = (ProgramUnit) csthread.getProgramUnit();
+			bdsThread.setRunState(RunState.CHECKPOINT_RECOVER);
+			programUnit = (ProgramUnit) bdsThread.getProgramUnit();
 
 			// Set programUnit's scope (mostly for debugging and test cases)
 			// ProgramUnit's scope it the one before 'global'
-			for (Scope scope = csthread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent())
+			for (Scope scope = bdsThread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent())
 				programUnit.setScope(scope);
 
 			//---
 			// Re-execute or add tasks
 			//---
-			csthread.restoreUnserializedTasks();
+			bdsThread.restoreUnserializedTasks();
 
 			//---
 			// All set, run thread
 			//---
-			int exitVal = runThread(csthread);
+			int exitVal = runThread(bdsThread);
 			exitValue = Math.max(exitValue, exitVal);
 		}
 
@@ -826,26 +825,26 @@ public class BigDataScript {
 		initializeArgs();
 
 		// Run the program
-		BigDataScriptThread csThread = new BigDataScriptThread(programUnit, config);
-		if (verbose) Timer.showStdErr("Process ID: " + csThread.getBigDataScriptThreadId());
+		BigDataScriptThread bdsThread = new BigDataScriptThread(programUnit, config);
+		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBigDataScriptThreadId());
 
 		if (verbose) Timer.showStdErr("Running");
-		int exitCode = runThread(csThread);
+		int exitCode = runThread(bdsThread);
 
-		if (verbose) Timer.showStdErr("Finished. Exit code: " + exitCode);
+		if (verbose) Timer.showStdErr("Finished running. Exit code: " + exitCode);
 		return exitCode;
 	}
 
 	/**
 	 * Run a thread
-	 * @param csthread
+	 * @param bdsThread
 	 */
-	int runThread(BigDataScriptThread csthread) {
-		bigDataScriptThread = csthread;
-		csthread.start();
+	int runThread(BigDataScriptThread bdsThread) {
+		bigDataScriptThread = bdsThread;
+		bdsThread.start();
 
 		try {
-			csthread.join();
+			bdsThread.join();
 		} catch (InterruptedException e) {
 			// Nothing to do?
 			// May be checkpoint?
@@ -853,10 +852,10 @@ public class BigDataScript {
 		}
 
 		// Create report
-		csthread.createReport();
+		bdsThread.createReport();
 
 		// OK, we are done
-		return csthread.getExitValue();
+		return bdsThread.getExitValue();
 	}
 
 	void usage(String err) {

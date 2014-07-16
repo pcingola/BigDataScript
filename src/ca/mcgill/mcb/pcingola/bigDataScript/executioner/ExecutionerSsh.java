@@ -12,17 +12,17 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Execute tasks in a remote computer, using ssh
- * 
- * Note: Even though the command is executed via ssh, it 
- *       is assumed that the underlying file system is visible 
+ *
+ * Note: Even though the command is executed via ssh, it
+ *       is assumed that the underlying file system is visible
  *       across all codes.
- *       Otherwise it would bee to time consuming to synchronize 
+ *       Otherwise it would bee to time consuming to synchronize
  *       tasks and files.
  *       This is a 'common' set up, typically in a university network
- *       where the user has a shared home directory across all 
- *       computer, but there is no "cluster" software to coordinate 
+ *       where the user has a shared home directory across all
+ *       computer, but there is no "cluster" software to coordinate
  *       jobs
- * 
+ *
  * @author pcingola
  */
 public class ExecutionerSsh extends Executioner {
@@ -30,13 +30,13 @@ public class ExecutionerSsh extends Executioner {
 	public static final String CONFIG_SSH_NODES = "ssh.nodes";
 	public static String SSH_EXEC_COMMAND[] = { "/bin/bash", "-e" };
 
-	public ExecutionerSsh(Config config) {
+	protected ExecutionerSsh(Config config) {
 		super(config);
 		createCluster();
 	}
 
 	protected void createCluster() {
-		// Create a cluster 
+		// Create a cluster
 		cluster = new Cluster();
 
 		// Add nodes from config file

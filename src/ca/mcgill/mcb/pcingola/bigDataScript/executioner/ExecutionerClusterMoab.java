@@ -3,15 +3,15 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 
 /**
- * Execute tasks in a PBS cluster.
- *
+ * Execute tasks in a MOAB cluster.
+ * 
  * All commands are run using 'qsub' (or equivalent) commands
- *
+ * 
  * @author pcingola
  */
-public class ExecutionerClusterPbs extends ExecutionerCluster {
+public class ExecutionerClusterMoab extends ExecutionerCluster {
 
-	public ExecutionerClusterPbs(Config config) {
+	public ExecutionerClusterMoab(Config config) {
 		super(config);
 
 		// Define commands

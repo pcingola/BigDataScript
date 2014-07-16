@@ -44,7 +44,7 @@ public class ExecutionerLocal extends Executioner {
 		return args.toArray(Cmd.ARGS_ARRAY_TYPE);
 	}
 
-	public ExecutionerLocal(Config config) {
+	protected ExecutionerLocal(Config config) {
 		super(config);
 		checkTasksRunning = new CheckTasksRunningLocal(this);
 	}
@@ -95,9 +95,6 @@ public class ExecutionerLocal extends Executioner {
 
 	/**
 	 * Create a CmdRunner to execute the script
-	 * @param task
-	 * @param host
-	 * @return
 	 */
 	@Override
 	protected Cmd createCmd(Task task) {
@@ -121,6 +118,9 @@ public class ExecutionerLocal extends Executioner {
 		return cmd;
 	}
 
+	/**
+	 * Follow a task's STDOUT and STDERR
+	 */
 	@Override
 	protected void follow(Task task) {
 		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)

@@ -35,7 +35,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected boolean debug;
 	protected boolean verbose;
 	protected boolean log;
-	protected boolean running;
+	protected boolean running, valid;
 	protected int hostIdx = 0;
 	protected ArrayList<Task> tasksToRun; // Tasks queued for execution
 	protected HashMap<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host
@@ -53,6 +53,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	public Executioner(Config config) {
 		super();
+		valid = true;
 		this.config = config;
 		tasksToRun = new ArrayList<Task>();
 		tasksSelected = new HashMap<Task, Host>();
@@ -62,7 +63,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		tail = config.getTail();
 		taskLogger = config.getTaskLogger();
 		cmdById = new HashMap<String, Cmd>();
-
 		debug = config.isDebug();
 		verbose = config.isVerbose();
 
@@ -76,13 +76,8 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * @return
 	 */
 	public synchronized void add(Task task) {
-		if (debug) Timer.showStdErr("Queuing task: " + task.toString(true, debug));
+		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Queuing task: " + task.getId());
 		tasksToRun.add(task);
-	}
-
-	protected synchronized void add(Task task, Host host) {
-		tasksSelected.put(task, host);
-		host.add(task);
 	}
 
 	/**
@@ -91,7 +86,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * @return
 	 */
 	protected synchronized Cmd createCmd(Task task) {
-		throw new RuntimeException("Unimplemented method for class: " + this.getClass().getCanonicalName());
+		throw new RuntimeException("Unimplemented method for class: " + getClass().getCanonicalName());
 	}
 
 	/**
@@ -140,6 +135,17 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	protected CheckTasksRunning getCheckTasksRunning() {
 		return null;
+	}
+
+	public String getExecutionerId() {
+		return getExecutionerName() + "[" + getId() + "]";
+	}
+
+	public String getExecutionerName() {
+		String execStr = Executioner.class.getSimpleName();
+		String exName = getClass().getSimpleName();
+		if (exName.startsWith(execStr)) exName = exName.substring(execStr.length());
+		return exName;
 	}
 
 	public HashMap<String, Task> getTasksRunning() {
@@ -196,17 +202,17 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	/**
 	 * Is this executioner valid?
 	 * An Executioner may expire or become otherwise invalid
-	 *
-	 * @return
 	 */
 	public boolean isValid() {
-		return isRunning();
+		return valid;
 	}
 
 	/**
 	 * Stop executioner and kill all tasks
 	 */
 	public synchronized void kill() {
+		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Killed ");
+
 		// Kill all 'tasksToRun'.
 		// Note: We need to create a new list to avoid concurrent modification exceptions
 		ArrayList<Task> tokill = new ArrayList<Task>();
@@ -215,7 +221,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		for (Task t : tokill)
 			kill(t);
 
-		running = false;
+		running = valid = false;
 	}
 
 	/**
@@ -235,7 +241,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	public synchronized void kill(Task task) {
 		if (task.isDone()) return; // Nothing to do
 
-		if (debug) Timer.showStdErr("Killing task '" + task.getId() + "'");
+		if (debug) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Killing task '" + task.getId() + "'");
 
 		// Kill command
 		Cmd cmd = cmdById.get(task.getId());
@@ -338,8 +344,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// Show table
 			String columnNames[] = { "PID", "Task state", "Task name", "Dependencies", "Task definition" };
 			TextTable tt = new TextTable(columnNames, table, "\t\t");
-			String executionerName = this.getClass().getSimpleName().substring(Executioner.class.getSimpleName().length()).toLowerCase();
-			Timer.showStdErr("Tasks [" + executionerName + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size() + "\n" + tt.toString());
+			Timer.showStdErr("Tasks [" + getExecutionerId() + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size() + "\n" + tt.toString());
 		}
 	}
 
@@ -348,14 +353,15 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 */
 	@Override
 	public void run() {
+		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Started running");
 		runExecutioner();
+		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Finished running");
 	}
 
 	/**
 	 * Run task queues
 	 */
 	public void runExecutioner() {
-		if (debug) Timer.showStdErr("Starting " + this.getClass().getSimpleName());
 		running = true;
 
 		runExecutionerLoopBefore(); // Initialize, before run loop
@@ -370,13 +376,20 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 				sleepLong();
 			}
+
+			Gpr.debug("FINISHED!!!");
 		} catch (Throwable t) {
+			Gpr.debug("EXCEPTION!!!");
+			running = valid = false;
 			t.printStackTrace();
 			kill(); // Make sure all tasks are either killed or marked as failed
 			throw new RuntimeException(t);
 		} finally {
+			Gpr.debug("FINALLY!!!");
+			running = valid = false;
 			runExecutionerLoopAfter(); // Clean up
 		}
+
 	}
 
 	/**
@@ -508,7 +521,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 					// Do we have enough resources to run this task in this host?
 					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 						// OK, execute this task in this host
-						add(task, host); // Add task to host (make sure resources are reserved)
+						selectTask(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);
 					} else if (!canBeExecuted) {
 						// Can any host actually run this task?
@@ -542,6 +555,15 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// Cannot run any task in any host
 		return null;
+	}
+
+	/**
+	 * Select task to be executed on a host
+	 */
+	protected synchronized void selectTask(Task task, Host host) {
+		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Selected task: " + task.getId() + " on host '" + host + "'");
+		tasksSelected.put(task, host);
+		host.add(task);
 	}
 
 	public void setDebug(boolean debug) {
@@ -709,7 +731,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	@Override
 	public String toString() {
-		return "Queue type: '" + this.getClass().getSimpleName() + "'\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size();
+		return "Executioner : '" + getExecutionerId() + "'\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size();
 	}
 
 	/**

@@ -39,9 +39,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * A threads used in a bigDataScript program
- * 
+ *
  * It has all information to run a program (scope, pc, run state, etc)
- * 
+ *
  * @author pcingola
  */
 public class BigDataScriptThread extends Thread implements BigDataScriptSerialize {
@@ -96,7 +96,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Add a task 
+	 * Add a task
 	 * @param task
 	 */
 	public void add(Task task) {
@@ -171,14 +171,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Is there a next node to find? (CHECKPOINT_RECOVER run state0 
+	 * Is there a next node to find? (CHECKPOINT_RECOVER run state0
 	 */
 	public boolean checkpointRecoverHasNextNode() {
 		return pc.size() > checkPointRecoverNodeIdx;
 	}
 
 	/**
-	 * Get next node to find (CHECKPOINT_RECOVER run state0 
+	 * Get next node to find (CHECKPOINT_RECOVER run state0
 	 */
 	public int checkpointRecoverNextNode() {
 		return pc.nodeId(checkPointRecoverNodeIdx);
@@ -201,12 +201,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public void createReport() {
 		if (getTasks().isEmpty()) {
-			if (isVerbose()) System.err.println("No tasks run: Report file not created (nothing to report).");
+			if (isVerbose()) Timer.showStdErr("No tasks run: Report file not created (nothing to report).");
 			return;
 		}
 
 		String outFile = bigDataScriptThreadId + ".report.html";
-		if (isVerbose()) System.err.println("Writing report file '" + outFile + "'");
+		if (isVerbose()) Timer.showStdErr("Writing report file '" + outFile + "'");
 
 		SimpleDateFormat csvFormat = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
 		SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -496,7 +496,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Get a task 
+	 * Get a task
 	 * @param taskId
 	 * @return
 	 */
@@ -514,7 +514,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Are we in CHECKPOINT_RECOVER mode?
-	 * @return
 	 */
 	public boolean isCheckpointRecover() {
 		return runState == RunState.CHECKPOINT_RECOVER;
@@ -522,7 +521,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Have all tasks finished executing?
-	 * @return
 	 */
 	public boolean isTasksDone() {
 		for (String taskId : tasksById.keySet()) {
@@ -543,7 +541,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Kill one task 
+	 * Kill one task
 	 */
 	public void killTask(String taskId) {
 		// Just send a kill to all Executioners
@@ -647,22 +645,22 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public void run() {
 		timer = new Timer();
 
-		createLogDir(); // Create log dir 
+		createLogDir(); // Create log dir
 
 		// Run program
 		RunState runState = null;
 		try {
 			runState = programUnit.run(this);
 		} catch (Throwable t) {
+			runState = RunState.FATAL_ERROR;
 			if (isVerbose()) throw new RuntimeException(t);
-			else System.err.println("Fatal error: Program execution finished");
+			else Timer.showStdErr("Fatal error: Program execution finished");
 			return;
 		}
 
-		if (isVerbose()) System.err.println("Program execution finished (run state: '" + runState + "')");
+		if (isVerbose()) Timer.showStdErr("Program execution finished (run state: '" + runState + "')");
 
 		// Implicit 'wait' statement at the end of the program
-		if (!isTasksDone()) System.err.println("Waiting for tasks to finish.");
 		boolean ok = waitTasksAll();
 
 		// All tasks in wait finished OK?
@@ -676,10 +674,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 			// Remove all pending files
 			if (!removeOnExit.isEmpty()) {
-				if (isVerbose()) System.err.println("Deleting files (rmOnExit):");
 				if (config != null && config.isNoRmOnExit()) {
-					if (isVerbose()) System.err.println("\tNothing done: 'noRmOnExit' is active");
+					if (isVerbose()) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
 				} else {
+					if (isVerbose()) Timer.showStdErr("Deleting stale files:");
 					for (String fileName : removeOnExit) {
 						if (isVerbose()) System.err.println("\t" + fileName);
 						(new File(fileName)).delete();
@@ -874,13 +872,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Wait for one task to finish
-	 * @return true if task finished OK or it was allowed to fail (i.e. canFail = true)  
+	 * @return true if task finished OK or it was allowed to fail (i.e. canFail = true)
 	 */
 	public boolean waitTask(String taskId) {
 		if ((taskId == null) || taskId.isEmpty()) return true;
 
 		Task task = getTask(taskId);
 		if (task == null) return false; // No task? We are done!
+
+		if (config.isVerbose()) Timer.showStdErr("Waiting for task to finish: " + task.getId());
 
 		// Wait
 		while (!task.isDone()) {
@@ -902,12 +902,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			task.deleteOutputFilesOnExit();
 		}
 
+		if (config.isVerbose()) Timer.showStdErr("Task finished: " + task.getId());
 		return ok;
 	}
 
 	/**
 	 * Wait for all tasks in the list to finish
-	 * @return true if all tasks finished OK or it were allowed to fail (i.e. canFail = true)  
+	 * @return true if all tasks finished OK or it were allowed to fail (i.e. canFail = true)
 	 */
 	@SuppressWarnings("rawtypes")
 	public boolean waitTasks(List taskIds) {
@@ -922,12 +923,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Wait for all tasks to finish
-	 * @return true if all tasks finished OK or it were allowed to fail (i.e. canFail = true)  
+	 * @return true if all tasks finished OK or it were allowed to fail (i.e. canFail = true)
 	 */
 	public boolean waitTasksAll() {
 		// Wait for all tasks to finish
 		boolean ok = true;
 
+		if (config.isVerbose() && !isTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
 		for (String tid : tasksById.keySet())
 			ok &= waitTask(tid);
 

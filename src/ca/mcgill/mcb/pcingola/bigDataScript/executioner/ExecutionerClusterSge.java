@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Execute tasks in an SGE cluster.
- * 
+ *
  * @author pcingola
  */
 public class ExecutionerClusterSge extends ExecutionerCluster {
@@ -28,7 +28,7 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 		//
 		//		$ echo ls | qsub
 		// 		Your job 33 ("STDIN") has been submitted
-		// 
+		//
 		// So, this is a pattern matcher to parse the PID
 		pidPattern = Pattern.compile("Your job (\\S+)");
 
@@ -45,9 +45,6 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 
 	/**
 	 * Add resource options to command line parameters
-	 * 
-	 * @param task
-	 * @param args
 	 */
 	@Override
 	protected void addResources(Task task, List<String> args) {

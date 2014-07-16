@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Systems that can execute tasks
@@ -40,10 +41,10 @@ public class Executioners {
 	}
 
 	// Singleton variable
-	private static Executioners executionersInstance = null;;
+	private static Executioners executionersInstance = null;
+	private static HashMap<ExecutionerType, Executioner> executioners = new HashMap<ExecutionerType, Executioner>();
 
 	Config config;
-	HashMap<ExecutionerType, Executioner> executioners = new HashMap<ExecutionerType, Executioner>();
 
 	/**
 	 * Get instance
@@ -71,6 +72,9 @@ public class Executioners {
 	 */
 	private synchronized Executioner factory(ExecutionerType exType) {
 		Executioner executioner;
+
+		if (config.isVerbose()) Timer.showStdErr("Executioner factory: Creating new executioner type '" + exType + "'");
+
 		switch (exType) {
 		case LOCAL:
 			executioner = new ExecutionerLocal(config);
@@ -82,7 +86,7 @@ public class Executioners {
 
 		case CLUSTER: // Cluster defaults to MOAB (probably not a wise default)
 		case MOAB:
-			executioner = new ExecutionerCluster(config);
+			executioner = new ExecutionerClusterMoab(config);
 			break;
 
 		case PBS:
@@ -113,9 +117,7 @@ public class Executioners {
 	}
 
 	/**
-	 * Get an executioner
-	 * @param exName
-	 * @return
+	 * Get an executioner by type
 	 */
 	public synchronized Executioner get(ExecutionerType exType) {
 		Executioner ex = executioners.get(exType);
@@ -130,17 +132,14 @@ public class Executioners {
 	}
 
 	/**
-	 * Get an executioner
-	 * @param exName
-	 * @return
+	 * Get an executioner by name
 	 */
 	public synchronized Executioner get(String exName) {
 		return get(ExecutionerType.parseSafe(exName));
 	}
 
 	/**
-	 * Get all available exectioners
-	 * @return
+	 * Get all available executioners
 	 */
 	public synchronized Collection<Executioner> getAll() {
 		return executioners.values();
