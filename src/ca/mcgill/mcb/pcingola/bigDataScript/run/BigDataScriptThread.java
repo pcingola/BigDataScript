@@ -689,12 +689,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			}
 		}
 
-		try {
-			// Small sleep to collect latest outputs
-			sleep(SLEEP_TIME);
-		} catch (InterruptedException e) {
-		}
-
 		timer.end();
 	}
 
@@ -813,6 +807,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return false;
 	}
 
+	void sleep() {
+		try {
+			Thread.sleep(SLEEP_TIME);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Show BDS calling stack
 	 * @return
@@ -885,15 +887,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		if (config.isVerbose()) Timer.showStdErr("Waiting for task to finish: " + task.getId());
 
-		// Wait
-		while (!task.isDone()) {
-			// Sleep a little bit
-			try {
-				Thread.sleep(SLEEP_TIME);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		// Wait for task to finish
+		while (!task.isDone())
+			sleep();
 
 		// Either finished OK or it was allowed to fail
 		boolean ok = task.isDoneOk() || task.isCanFail();
