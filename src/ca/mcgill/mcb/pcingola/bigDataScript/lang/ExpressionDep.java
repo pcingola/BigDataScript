@@ -49,18 +49,18 @@ public class ExpressionDep extends Expression {
 
 			// Any 'left' file does not exists? => We need to build this dependency
 			if (!file.exists()) {
-				if (debug) log("File '" + fileName + "' doesn't exist");
+				if (debug) log("Left file '" + fileName + "' doesn't exist");
 				return true;
 			}
 
 			if (file.isFile() && file.length() <= 0) {
-				if (debug) log("File '" + fileName + "' is empty");
+				if (debug) log("Left file '" + fileName + "' is empty");
 				return true; // File is empty? => We need to build this dependency.
 			} else if (file.isDirectory()) {
 				// Notice: If it is a directory, we must rebuild if it is empty
 				File dirList[] = file.listFiles();
 				if ((dirList == null) || dirList.length <= 0) {
-					if (debug) log("File '" + fileName + "' is empty");
+					if (debug) log("Left file '" + fileName + "' is empty");
 					return true;
 				}
 			}
@@ -81,7 +81,7 @@ public class ExpressionDep extends Expression {
 				// Make sure that we schedule the task if the input file doesn't exits
 				// The reason to do this, is that probably the input file was defined
 				// by some other task that is pending execution.
-				if (debug) log("File '" + fileName + "' doesn't exist");
+				if (debug) log("Right file '" + fileName + "' doesn't exist");
 				return true;
 			}
 		}
