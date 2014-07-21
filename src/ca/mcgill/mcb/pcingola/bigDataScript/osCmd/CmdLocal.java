@@ -147,9 +147,9 @@ public class CmdLocal extends Cmd {
 		try {
 			// Execute 'bds kill pid'
 			Process proc = Runtime.getRuntime().exec(args.toArray(ARGS_ARRAY_TYPE));
-			if (debug) Gpr.debug("Executing kill process for pid " + pid);
+			if (debug) log("Executing kill process for pid " + pid);
 			int exitVal = proc.waitFor();
-			if (exitVal != 0) System.err.println("Error killing process " + pid);
+			if (exitVal != 0) log("Error killing process " + pid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -158,12 +158,13 @@ public class CmdLocal extends Cmd {
 	@Override
 	protected void killCmd() {
 		if (process != null) {
+
 			// Do we have a PID number? Kill using that number
 			int pidNum = Gpr.parseIntSafe(pid);
 			if (pidNum > 0) killBds(pidNum);
+			if (debug) log("Killing process '" + pid + "'");
 
 			addError("Killed!\n");
-			if (debug) Gpr.debug("Killing process " + id);
 			process.destroy();
 		}
 	}
@@ -201,7 +202,7 @@ public class CmdLocal extends Cmd {
 			}
 
 			// Parse line. Format "PID \t pidNum \t childPidNum"
-			if (debug) Timer.showStdErr("CmdLocal: Reading PID line '" + sb + "'");
+			if (debug) log("Reading PID line '" + sb + "'");
 
 			// Parse pid?
 			if (pidParser != null) pid = pidParser.parsePidLine(sb.toString());

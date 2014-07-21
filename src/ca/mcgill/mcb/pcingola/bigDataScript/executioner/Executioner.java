@@ -260,16 +260,11 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	/**
 	 * Return the appropriate 'kill' command to be used by the OS
 	 * E.g.: For a local task it would be 'kill' whereas for a cluster task it would be 'qdel'
-	 *
-	 * @param task
-	 * @return
 	 */
 	public abstract String[] osKillCommand(Task task);
 
 	/**
 	 * Parse PID line from 'bds exec' (Cmd)
-	 * @param line
-	 * @return
 	 */
 	@Override
 	public String parsePidLine(String line) {
@@ -279,8 +274,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	/**
 	 * Try to find some 'post-mortem' info about this
 	 * task, in order to asses systematic errors.
-	 *
-	 * @param task
 	 */
 	protected void postMortemInfo(Task task) {
 		// Nothing to do

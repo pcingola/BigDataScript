@@ -151,7 +151,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
@@ -220,12 +220,12 @@ public class BigDataScript {
 	 * Compile program
 	 */
 	public boolean compile() {
-		if (debug) System.out.println("Loading file: '" + programFileName + "'");
+		if (debug) log("Loading file: '" + programFileName + "'");
 
 		//---
 		// Convert to AST
 		//---
-		if (debug) System.out.println("Creating AST.");
+		if (debug) log("Creating AST.");
 		CompilerMessages.reset();
 		ParseTree tree = null;
 
@@ -250,10 +250,10 @@ public class BigDataScript {
 		//---
 		// Convert to BigDataScriptNodes
 		//---
-		if (debug) System.out.println("Creating BigDataScript tree.");
+		if (debug) log("Creating BigDataScript tree.");
 		CompilerMessages.reset();
 		programUnit = (ProgramUnit) BigDataScriptNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
-		if (debug) System.err.println("AST:\n" + programUnit.toString());
+		if (debug) log("AST:\n" + programUnit.toString());
 		// Any error messages?
 		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
 		if (CompilerMessages.get().hasErrors()) return false;
@@ -261,7 +261,7 @@ public class BigDataScript {
 		//---
 		// Type-checking
 		//---
-		if (debug) System.out.println("Type checking.");
+		if (debug) log("Type checking.");
 		CompilerMessages.reset();
 
 		Scope programScope = new Scope();
@@ -308,7 +308,6 @@ public class BigDataScript {
 		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
 		List<BigDataScriptThread> bdsThreads = csSerializer.load();
 
-		Gpr.debug("INFO CHECKPOINT:");
 		for (BigDataScriptThread bdsThread : bdsThreads)
 			bdsThread.print();
 
@@ -566,7 +565,7 @@ public class BigDataScript {
 	 * Add symbols to global scope
 	 */
 	void initilaizeGlobalScope() {
-		if (debug) System.out.println("Initialize global scope.");
+		if (debug) log("Initialize global scope.");
 
 		// Reset Global scope
 		Scope.resetGlobalScope();
@@ -642,15 +641,19 @@ public class BigDataScript {
 	 * Initialize standard libraries
 	 */
 	void initilaizeLibraries() {
-		if (debug) System.out.println("Initialize standard libraries.");
+		if (debug) log("Initialize standard libraries.");
 
 		// Native functions
 		NativeLibraryFunctions nativeLibraryFunctions = new NativeLibraryFunctions();
-		if (debug) Timer.showStdErr("Native library:\n" + nativeLibraryFunctions);
+		if (debug) log("Native library:\n" + nativeLibraryFunctions);
 
 		// Native library: String
 		NativeLibraryString nativeLibraryString = new NativeLibraryString();
-		if (debug) Timer.showStdErr("Native library:\n" + nativeLibraryString);
+		if (debug) log("Native library:\n" + nativeLibraryString);
+	}
+
+	void log(String msg) {
+		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}
 
 	/**
