@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rm -vf test.txt test.csv test.xml *.html
+rm -vf test.txt test.csv test.xml test.1.out test.2.out *.html
 
 echo
 echo
@@ -19,9 +19,9 @@ bds -d test.bds 2>&1 | tee test.2.out
 echo
 echo
 echo Ouptut 1:
-cat test.2.out | grep ^copy
+grep ^copy test.1.out 
 echo
 echo
 echo Ouptut 2:
-cat test.2.out | grep ^copy
+grep ^copy test.2.out 
 

@@ -81,6 +81,7 @@ public class ExpressionDep extends Expression {
 				// Make sure that we schedule the task if the input file doesn't exits
 				// The reason to do this, is that probably the input file was defined
 				// by some other task that is pending execution.
+				if (debug) log("File '" + fileName + "' doesn't exist");
 				return true;
 			}
 		}
