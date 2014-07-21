@@ -137,7 +137,6 @@ public class Task implements BigDataScriptSerialize {
 
 	/**
 	 * Add a dependency task (i.e. taskDep must finish before this task starts)
-	 * @param taskDep
 	 */
 	public void addDependency(Task taskDep) {
 		if (dependency == null) dependency = new LinkedList<Task>();
@@ -180,7 +179,7 @@ public class Task implements BigDataScriptSerialize {
 	 * Create a program file
 	 */
 	public void createProgramFile() {
-		if (debug) Gpr.debug("Saving file '" + programFileName + "'");
+		if (debug) Timer.showStdErr("Task: Saving file '" + programFileName + "'");
 
 		// Create dir
 		try {

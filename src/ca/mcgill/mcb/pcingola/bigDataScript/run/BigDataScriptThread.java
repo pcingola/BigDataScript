@@ -97,7 +97,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Add a task
-	 * @param task
 	 */
 	public void add(Task task) {
 		tasks.add(task);
@@ -519,6 +518,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return runState == RunState.CHECKPOINT_RECOVER;
 	}
 
+	public boolean isDebug() {
+		return config != null && config.isDebug();
+	}
+
 	/**
 	 * Have all tasks finished executing?
 	 */
@@ -536,7 +539,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	}
 
-	boolean isVerbose() {
+	public boolean isVerbose() {
 		return config != null && config.isVerbose();
 	}
 

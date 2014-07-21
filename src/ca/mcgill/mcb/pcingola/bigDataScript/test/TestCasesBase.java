@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * All methods shared amongst test cases
- * 
+ *
  * @author pcingola
  */
 public class TestCasesBase extends TestCase {
@@ -22,7 +22,6 @@ public class TestCasesBase extends TestCase {
 
 	/**
 	 * Check that a file compiles with expected errors
-	 * @param fileName
 	 */
 	void compileErrors(String fileName, String expectedErrors) {
 		BigDataScript bigDataScript = compileTest(fileName);
@@ -32,7 +31,6 @@ public class TestCasesBase extends TestCase {
 
 	/**
 	 * Check that a file compiles without any errors
-	 * @param fileName
 	 */
 	void compileOk(String fileName) {
 		BigDataScript bigDataScript = compileTest(fileName);
@@ -40,10 +38,8 @@ public class TestCasesBase extends TestCase {
 	}
 
 	/**
-	 * 
+	 *
 	 * Compile a file
-	 * @param fileName
-	 * @return
 	 */
 	BigDataScript compileTest(String fileName) {
 		String args[] = { fileName };
@@ -54,7 +50,6 @@ public class TestCasesBase extends TestCase {
 
 	/**
 	 * Check that a file compiles without any errors, runs and a variable have its expected value
-	 * @param fileName
 	 */
 	void runAndCheck(String fileName, String varname, Object expectedValue) {
 		String args[] = { fileName };
@@ -63,7 +58,6 @@ public class TestCasesBase extends TestCase {
 
 	/**
 	 * Check that a file compiles without any errors, runs and a variable have its expected value
-	 * @param fileName
 	 */
 	void runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
 		// Compile
@@ -173,8 +167,6 @@ public class TestCasesBase extends TestCase {
 
 	/**
 	 * Check that StdErr has a string
-	 * @param fileName
-	 * @param expectedStderr
 	 */
 	void runAndCheckStderr(String fileName, String expectedStderr) {
 		String args[] = { fileName };
@@ -203,6 +195,38 @@ public class TestCasesBase extends TestCase {
 		if (debug) Gpr.debug("Program's stderr: '" + captureStderr + "'");
 		int index = captureStderr.toString().indexOf(expectedStderr);
 		if (index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStderr + "' in STDERR not found.\nSTDERR:\n" + captureStderr + "\n");
+	}
+
+	/**
+	 * Check that StdOut has a string
+	 */
+	void runAndCheckStdout(String fileName, String expectedStdout) {
+		String args[] = { fileName };
+
+		// Compile
+		BigDataScript bigDataScript = new BigDataScript(args);
+		bigDataScript.compile();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+
+		PrintStream stdout = System.out;
+		ByteArrayOutputStream captureStdout = new ByteArrayOutputStream();
+		try {
+			// Capture STDOUT
+			System.setOut(new PrintStream(captureStdout));
+
+			// Run
+			bigDataScript.run();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		} finally {
+			// Restore STDERR
+			System.setOut(stdout);
+		}
+
+		// Check that the expected string is in STDERR
+		if (debug) Gpr.debug("Program's stdout: '" + captureStdout + "'");
+		int index = captureStdout.toString().indexOf(expectedStdout);
+		if (index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in STDOUT not found.\nSTDERR:\n" + captureStdout + "\n");
 	}
 
 }

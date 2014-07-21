@@ -79,8 +79,6 @@ public class ExpressionTask extends ExpressionWithScope {
 
 	/**
 	 * Execute a sys command created by this task
-	 * @param bdsThread
-	 * @param sys
 	 */
 	Task exec(BigDataScriptThread bdsThread, ExpressionSys sys) {
 		// Get an ID
@@ -153,6 +151,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Execute options assignments
 		if (taskOptions != null) {
 			boolean ok = (Boolean) taskOptions.eval(bdsThread);
+			if (bdsThread.isDebug()) log("task-options check " + ok);
 			if (!ok) return RunState.OK; // Task options clause not satisfied. Do not execute task
 		}
 

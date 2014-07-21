@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * Options for 'task' command
- * 
+ *
  * @author pcingola
  */
 public class TaskOptions extends ExpressionList {
@@ -25,19 +25,19 @@ public class TaskOptions extends ExpressionList {
 
 	/**
 	 * Evaluate: Returns 'true' if all boolean expressions are 'true'.
-	 * 
+	 *
 	 * Note: We only care about the value of bool expressions
 	 * Note: All expressions in the list are evaluated, even if the first one is false
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public Object eval(BigDataScriptThread bdsThread) {
 		boolean sat = true;
 
 		outputFiles = new ArrayList<String>();
 		inputFiles = new ArrayList<String>();
 
 		for (Expression expr : expressions) {
-			Object value = expr.eval(csThread);
+			Object value = expr.eval(bdsThread);
 
 			// All boolean expressions must be "true"
 			if (expr instanceof ExpressionAssignment) ; // Nothing to do

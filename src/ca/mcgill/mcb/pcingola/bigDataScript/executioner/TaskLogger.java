@@ -8,14 +8,15 @@ import java.util.HashSet;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * TaskLogger log stale task processes (PID) and files into a file. 
- * A parent bds-exec process (i.e. the GO program that invokes BigDataScript 
+ * TaskLogger log stale task processes (PID) and files into a file.
+ * A parent bds-exec process (i.e. the GO program that invokes BigDataScript
  * Java class) will parse the file and:
  * 		i) Kill remaining processes invoking appropriate commands (kill, qdel, etc.)
  * 		ii) Remove stale file from unfinished tasks
- * 
+ *
  * @author pcingola
  */
 public class TaskLogger {
@@ -61,7 +62,7 @@ public class TaskLogger {
 		lines.append(task.getPid() + "\t+\t" + cmd + "\n");
 
 		//---
-		// Append task output files. 
+		// Append task output files.
 		// Note: If this task does not finish (e.g. Ctrl-C), we have to remove these files.
 		//       If the task finished OK, we mark them not to be removed
 		//---
@@ -82,7 +83,7 @@ public class TaskLogger {
 	 */
 	protected void append(String str) {
 		try {
-			if (debug) Gpr.debug("Appending string to pidLogger:\tPidFile: '" + pidFile + "'\tString: '" + str + "'");
+			if (debug) Timer.showStdErr("TaskLogger: Appending to PidFile '" + pidFile + "', lines:\n" + Gpr.prependEachLine("\t\t|", str));
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(pidFile, true)));
 			out.print(str);
 			out.close(); // We need to flush this as fast as possible to avoid missing PID values in the file

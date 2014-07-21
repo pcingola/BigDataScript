@@ -7,4 +7,5 @@ print("Task ID: '$tid'\n")
 wait
 
 string out = tid.stdout()
+print("\nout=|$out|")
 

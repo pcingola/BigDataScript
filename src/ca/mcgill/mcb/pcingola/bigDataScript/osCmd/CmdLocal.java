@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Execute a command in a local computer.
@@ -55,7 +56,7 @@ public class CmdLocal extends Cmd {
 			StringBuilder cmdsb = new StringBuilder();
 			for (String arg : commandArgs)
 				cmdsb.append(" " + arg);
-			Gpr.debug("Executing: " + cmdsb);
+			Timer.showStdErr("CmdLocal: Executing " + cmdsb);
 		}
 		process = pb.start();
 
@@ -200,7 +201,7 @@ public class CmdLocal extends Cmd {
 			}
 
 			// Parse line. Format "PID \t pidNum \t childPidNum"
-			if (debug) Gpr.debug("Got line: '" + sb + "'");
+			if (debug) Timer.showStdErr("CmdLocal: Reading PID line '" + sb + "'");
 
 			// Parse pid?
 			if (pidParser != null) pid = pidParser.parsePidLine(sb.toString());

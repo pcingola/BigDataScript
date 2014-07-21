@@ -151,15 +151,13 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
 
 	/**
 	 * Main
-	 *
-	 * @param args
 	 */
 	public static void main(String[] args) {
 		// Create BigDataScript object and run it
@@ -170,10 +168,6 @@ public class BigDataScript {
 
 	/**
 	 * Resolve include statements
-	 * @param tree
-	 * @param debug
-	 * @param alreadyIncluded
-	 * @return
 	 */
 	private static boolean resolveIncludes(ParseTree tree, boolean debug, Set<File> alreadyIncluded) {
 		boolean changed = false;

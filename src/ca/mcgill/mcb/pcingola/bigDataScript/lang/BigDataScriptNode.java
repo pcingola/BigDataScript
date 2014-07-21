@@ -20,16 +20,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Base AST node for BigDataScript language elements
- * 
+ *
  * @author pcingola
  */
 public abstract class BigDataScriptNode implements BigDataScriptSerialize {
-
-	public static boolean debug = false;
 
 	protected BigDataScriptNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
@@ -49,7 +47,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	}
 
 	/**
-	 * This should only be called from the outside if tree not passed in the constructor 
+	 * This should only be called from the outside if tree not passed in the constructor
 	 * @param tree
 	 */
 	protected void doParse(ParseTree tree) {
@@ -264,7 +262,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	/**
 	 * Recurse unti top node is found.
 	 * Top node is always a 'ProgramUnit' node.
-	 * 
+	 *
 	 * @return
 	 */
 	public ProgramUnit getProgramUnit() {
@@ -323,9 +321,9 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Try to get line number and character position
-	 * 
+	 *
 	 * Note: For some weird reason this info is only available at Token level.
-	 * 
+	 *
 	 * @param tree
 	 */
 	boolean lineAndPos(ParseTree tree) {
@@ -348,13 +346,20 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		for (int i = 0; i < tree.getChildCount(); i++)
 			if (lineAndPos(tree.getChild(i))) return true;
 
-		// Cannot set 
+		// Cannot set
 		return false;
 	}
 
 	void lineAndPos(Token token) {
 		lineNum = token.getLine();
 		charPosInLine = token.getCharPositionInLine();
+	}
+
+	/**
+	 * Log a message to console
+	 */
+	public void log(String msg) {
+		Timer.showStdErr(getClass().getSimpleName() + " (" + getFileName() + ":" + getLineNum() + ") : " + msg);
 	}
 
 	/**
@@ -398,8 +403,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 									// Find real node based on fake one
 									BigDataScriptNode trueCsnode = BigDataScriptNodeFactory.get().realNode(csnode);
 
-									// Replace this array element 
-									if (debug) Gpr.debug(getClass().getSimpleName() + "." + field.getName() + "[" + idx + "] = \tNode id:" + trueCsnode.getId() + "\t" + (trueCsnode != null ? trueCsnode.getClass().getSimpleName() : "null"));
+									// Replace this array element
 									Array.set(fieldObj, idx, trueCsnode);
 								}
 							}
@@ -415,7 +419,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 								BigDataScriptNode trueCsnode = BigDataScriptNodeFactory.get().realNode(csnode);
 
 								// Set field to real node
-								if (debug) Gpr.debug(getClass().getSimpleName() + "." + field.getName() + " = \tNode id:" + trueCsnode.getId() + "\t" + (trueCsnode != null ? trueCsnode.getClass().getSimpleName() : "null"));
 								field.set(this, trueCsnode);
 							}
 						}
@@ -443,7 +446,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		try {
 			if (csThread.shouldRun(this)) {
 				// if (debug) Gpr.debug("Run: " + getFileName() + ", line " + getLineNum() + ": " + this);
-				rstate = runStep(csThread); // Run 
+				rstate = runStep(csThread); // Run
 			}
 		} catch (Throwable t) {
 			csThread.fatalError(this, t);
@@ -530,7 +533,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 
-		// Not an array: Single field. Show 
+		// Not an array: Single field. Show
 		out.append(getClass().getSimpleName() //
 				+ "\t" + id //
 				+ "\t" + lineNum //
@@ -617,7 +620,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	public String toStringTree(String tabs, String fieldName) {
 		StringBuilder out = new StringBuilder();
 
-		// Not an array: Single field. Show 
+		// Not an array: Single field. Show
 		out.append(tabs + this.getClass().getSimpleName() + " " + fieldName + "\t[" + id + " | " + (parent != null ? parent.getId() : "") + "]\n");
 
 		// Iterate over fields

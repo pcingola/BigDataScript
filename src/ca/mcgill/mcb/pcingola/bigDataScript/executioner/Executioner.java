@@ -377,15 +377,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 				sleepLong();
 			}
 
-			Gpr.debug("FINISHED!!!");
 		} catch (Throwable t) {
-			Gpr.debug("EXCEPTION!!!");
 			running = valid = false;
 			t.printStackTrace();
 			kill(); // Make sure all tasks are either killed or marked as failed
 			throw new RuntimeException(t);
 		} finally {
-			Gpr.debug("FINALLY!!!");
 			running = valid = false;
 			runExecutionerLoopAfter(); // Clean up
 		}

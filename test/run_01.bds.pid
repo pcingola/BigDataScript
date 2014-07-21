@@ -3600,3 +3600,187 @@ out1.txt	-
 out2.txt	+	rm
 22965	-
 out2.txt	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+/home/pcingola/zero_length_file_out.txt	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+null	-
+failOnce.out1	-
+null	-
+failOnce.out1	-
+null	-
+failOnce.out2	-
+null	-
+failOnce.out2	-
+null	-
+failOnce.out1	-
+null	-
+failOnce.out1	-
+null	-
+failOnce.out2	-
+null	-
+failOnce.out2	-
+null	-
+null	-
+null	-
+null	-
+null	-
+out1.txt	-
+null	-
+out2.txt	-
+null	-
+out1.txt	-
+null	-
+out2.txt	-
+null	-
+out1.txt	-
+null	-
+null	-
+out1.txt	-
+null	-
+out2.txt	-
+10663	+	
+10663	-
+10679	+	
+10679	-
+10693	+	
+10693	-
+null	-
+10719	+	
+10719	-
+10730	+	
+10730	-
+10740	+	
+10740	-
+10749	+	
+10749	-
+10759	+	
+10759	-
+10772	+	
+10772	-
+10843	+	
+10843	-
+10856	+	
+10856	-
+10870	+	
+10870	-
+null	-
+10883	+	
+10883	-
+10895	+	
+10895	-
+10908	+	
+10908	-
+10919	+	
+10919	-
+10931	+	
+10931	-
+10942	+	
+10942	-
+10958	+	
+failOnce.out1	+	rm
+10958	-
+failOnce.out1	-
+10971	+	
+failOnce.out1	+	rm
+10971	-
+failOnce.out1	-
+10983	+	
+failOnce.out2	+	rm
+10983	-
+failOnce.out2	-
+11003	+	
+failOnce.out1	+	rm
+11003	-
+failOnce.out1	-
+11016	+	
+failOnce.out1	+	rm
+11016	-
+failOnce.out1	-
+11028	+	
+failOnce.out2	+	rm
+11028	-
+failOnce.out2	-
+11050	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+11055	+	
+11050	-
+/home/pcingola/zero_length_file_out.txt	-
+11055	-
+11075	+	
+11075	-
+11088	+	
+11095	+	
+11088	-
+11095	-
+11143	+	
+11148	+	
+11143	-
+11148	-
+11164	+	
+11164	-
+11186	+	
+out1.txt	+	rm
+11186	-
+out1.txt	-
+11198	+	
+out2.txt	+	rm
+11198	-
+out2.txt	-
+11215	+	
+out1.txt	+	rm
+11215	-
+out1.txt	-
+11227	+	
+out2.txt	+	rm
+11227	-
+out2.txt	-
+11239	+	
+out1.txt	+	rm
+11239	-
+out1.txt	-
+11253	+	
+11253	-
+11266	+	
+11266	-
+11284	+	
+out1.txt	+	rm
+11284	-
+out1.txt	-
+11296	+	
+out2.txt	+	rm
+11296	-
+out2.txt	-
+11309	+	
+out1.txt	+	rm
+11309	-
+out1.txt	-
+11321	+	
+out2.txt	+	rm
+11321	-
+out2.txt	-
