@@ -123,8 +123,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Stop following a running task (e.g. tail STDOUT & STDERR)
 	 */
 	protected synchronized void followStop(Task task) {
-		tail.remove(task.getStdoutFile());
-		tail.remove(task.getStderrFile());
+		Gpr.debug("TAIL NOT REMOVED!");
+		// tail.remove(task.getStdoutFile());
+		// tail.remove(task.getStderrFile());
 
 		// Remove from loggers
 		if (taskLogger != null) taskLogger.remove(task);
