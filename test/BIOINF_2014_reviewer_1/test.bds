@@ -1,0 +1,9 @@
+#!/usr/bin/env bds
+
+task ( "test.csv" <- "test.txt" ) {
+	sys cp test.txt test.csv; echo "copying to test.csv"
+}
+
+task ( "test.xml" <- "test.csv") {
+	sys cp test.csv test.xml; echo "copying to test.xml"
+}
