@@ -752,6 +752,7 @@ public class BigDataScript {
 		default:
 			exitValue = runCompile(); // Compile & run
 		}
+		if (verbose) Timer.showStdErr("Finished running. Exit code: " + exitValue);
 
 		//---
 		// Kill all executioners
@@ -825,7 +826,6 @@ public class BigDataScript {
 		if (verbose) Timer.showStdErr("Running");
 		int exitCode = runThread(bdsThread);
 
-		if (verbose) Timer.showStdErr("Finished running. Exit code: " + exitCode);
 		return exitCode;
 	}
 

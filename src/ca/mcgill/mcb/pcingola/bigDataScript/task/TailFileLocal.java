@@ -8,21 +8,19 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A file to use with 'Tail'
- * Opens files, so it has limitations depending on the number of 
+ * Opens files, so it has limitations depending on the number of
  * opened file descriptors allowed by the system.
- * 
+ *
  * @author pcingola
  */
 public class TailFileLocal extends TailFile {
 
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 
-	BufferedInputStream input; // Input buffer 
+	BufferedInputStream input; // Input buffer
 
 	/**
 	 * Provide an inputStream (instead of an input file)
-	 * @param input
-	 * @param outputFileName
 	 */
 	public TailFileLocal(InputStream input, boolean showStderr) {
 		super(null, showStderr);
@@ -52,8 +50,6 @@ public class TailFileLocal extends TailFile {
 
 	/**
 	 * Open a file and add buffer to 'buffers'
-	 * @param inputFileName
-	 * @return
 	 */
 	@Override
 	protected synchronized boolean open() {

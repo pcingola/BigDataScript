@@ -5,17 +5,18 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
+
 /**
- * A file to use with 'Tail -f' (i.e. follow file's grow) 
- * 
+ * A file to use with 'Tail -f' (i.e. follow file's grow)
+ *
  * @author pcingola
  */
 public abstract class TailFile {
 
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 
-	String inputFileName; // Read (tail -f) frmo this file
-	//	String outputFileName; // Write to this file 
+	String inputFileName; // Read (tail -f) from this file
 	boolean showStderr; // Do we show on STDERR? (default STDOUT)
 
 	public static String tail(String fileName) {
@@ -24,9 +25,9 @@ public abstract class TailFile {
 
 	/**
 	 * This is the typical 'tail' command behaviour: Show the last 'n' lines of a file
-	 * 
+	 *
 	 * References: http://stackoverflow.com/questions/6888001/java-code-for-tail-n-lines-of-file-equivalent-to-tail-commad-in-unix
-	 * 
+	 *
 	 * @param fileName
 	 * @param numLines
 	 * @return
@@ -117,6 +118,7 @@ public abstract class TailFile {
 	}
 
 	public synchronized void close() {
+		Timer.showStdErr("TailFile: Closing");
 		close(true);
 	}
 

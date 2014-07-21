@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Config file
- * 
+ *
  * @author pcingola
  */
 public class Config {
@@ -49,7 +49,7 @@ public class Config {
 	}
 
 	public Config() {
-		read(DEFAULT_CONFIG_FILE); // Read config file 
+		read(DEFAULT_CONFIG_FILE); // Read config file
 		configInstance = this;
 	}
 
@@ -59,7 +59,7 @@ public class Config {
 	 * @param configFileName
 	 */
 	public Config(String configFileName) {
-		read(configFileName); // Read config file 
+		read(configFileName); // Read config file
 		configInstance = this;
 	}
 
@@ -76,10 +76,10 @@ public class Config {
 
 	/**
 	 * A collection of strings showing where to search for include files
-	 * 
+	 *
 	 * TODO: Add path from config file
 	 * TODO: Add default system-wide include path ("/usr/local/bds/include")
-	 * 
+	 *
 	 * @return
 	 */
 	public Collection<String> getIncludePath() {
@@ -106,8 +106,6 @@ public class Config {
 
 	/**
 	 * Get a property as a long
-	 * @param propertyName
-	 * @return
 	 */
 	public long getLong(String propertyName, long defaultValue) {
 		String val = getString(propertyName);
@@ -119,7 +117,7 @@ public class Config {
 		if (monitorTask == null) {
 			monitorTask = new MonitorTask();
 			monitorTask.setDebug(isDebug());
-			// monitorTask.start();
+			monitorTask.setVerbose(isVerbose());
 		}
 		return monitorTask;
 	}
@@ -130,8 +128,6 @@ public class Config {
 
 	/**
 	 * Get a property as a string
-	 * @param propertyName
-	 * @return
 	 */
 	protected String getString(String propertyName) {
 		return properties.getProperty(propertyName);
@@ -195,8 +191,7 @@ public class Config {
 	}
 
 	/**
-	 * Read configuration file and create all 'genomes' 
-	 * @return
+	 * Read configuration file
 	 */
 	private void read(String configFileName) {
 		properties = new Properties();

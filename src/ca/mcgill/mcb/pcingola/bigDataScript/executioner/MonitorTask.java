@@ -10,13 +10,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Monitor a task: Check if a task finished by checking if 'exitFile' exists
- * 
+ *
  * @author pcingola
  */
 public class MonitorTask {
 
 	// Cluster scheduling is usually quite slow, so we don't need a short monitoring interval.
-	// Reducing this sleep time adds processing and probably has not many benefits. 
+	// Reducing this sleep time adds processing and probably has not many benefits.
 	public static final int SLEEP_TIME = 500;
 
 	boolean debug = false;
@@ -31,12 +31,12 @@ public class MonitorTask {
 
 	/**
 	 * Add a task to this 'timer'
-	 * 
+	 *
 	 * @param executioner : Executioner executing this task (we must be able to kill the task)
 	 * @param task : Task (timeout is inferred from task.resources)
 	 */
 	public synchronized void add(Executioner executioner, Task task) {
-		if (debug) Gpr.debug("MonitorExitFile: Adding task " + task.getId());
+		if (debug) Timer.showStdErr("MonitorTask: Adding task " + task.getId());
 		if (task == null) return;
 		execByTask.put(task, executioner);
 	}
@@ -57,7 +57,7 @@ public class MonitorTask {
 	 * @param task
 	 */
 	public synchronized void remove(Task task) {
-		if (debug) Gpr.debug("MonitorExitFile: Removing task " + task.getId());
+		if (debug) Timer.showStdErr("MonitorTask: Removing task " + task.getId());
 		execByTask.remove(task);
 	}
 
@@ -98,7 +98,7 @@ public class MonitorTask {
 	 * Exit file exists: update states
 	 */
 	synchronized void update(Task task) {
-		if (debug) Gpr.debug("MonitorExitFile: Found exit file " + task.getExitCodeFile());
+		if (debug) Timer.showStdErr("MonitorTask: Found exit file " + task.getExitCodeFile());
 
 		int exitVal = 0;
 		TaskState taskState = null;
@@ -113,7 +113,7 @@ public class MonitorTask {
 			String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
 			exitVal = (exitFileStr.equals("0") ? 0 : 1); // Anything else than OK is error condition
 			taskState = null; // Automatic: let taskFinished decide
-			if (debug) Gpr.debug("MonitorExitFile: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
+			if (debug) Timer.showStdErr("MonitorTask: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
 		}
 
 		// Inform executioner that task has finished
