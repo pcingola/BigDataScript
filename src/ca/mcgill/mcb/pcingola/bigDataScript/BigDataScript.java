@@ -135,9 +135,10 @@ public class BigDataScript {
 
 			// Show main nodes
 			if (debug) {
+				Timer.showStdErr("AST:");
 				for (int childNum = 0; childNum < tree.getChildCount(); childNum++) {
 					Tree child = tree.getChild(childNum);
-					System.out.println("\tChild " + childNum + ":\t" + child + "\tTree:'" + child.toStringTree() + "'");
+					System.err.println("\t\tChild " + childNum + ":\t" + child + "\tTree:'" + child.toStringTree() + "'");
 				}
 			}
 
@@ -151,7 +152,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-					);
+			);
 			return null;
 		}
 	}
