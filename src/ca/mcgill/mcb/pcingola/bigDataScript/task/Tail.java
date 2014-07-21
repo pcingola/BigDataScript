@@ -37,7 +37,7 @@ public class Tail extends Thread {
 	 */
 	public synchronized void add(InputStream input, String tailId, boolean showStderr) {
 		TailFile tf = new TailStream(input, showStderr, tailId);
-		if (debug) Timer.showStdErr("Tail: Adding (" + tf.getClass().getSimpleName() + ") '" + tailId + "'");
+		if (debug) log("Adding (" + tf.getClass().getSimpleName() + ") '" + tailId + "'");
 		tf.setDebug(debug);
 		tf.setVerbose(verbose);
 		files.put(tailId, tf);
@@ -52,7 +52,7 @@ public class Tail extends Thread {
 	public synchronized void add(String inputFileName, boolean showStderr) {
 		if (inputFileName == null) return;
 		TailFile tf = new TailFileMulti(inputFileName, showStderr);
-		if (debug) Timer.showStdErr("Tail: Adding (" + tf.getClass().getSimpleName() + ") '" + inputFileName + "'");
+		if (debug) log("Adding (" + tf.getClass().getSimpleName() + ") '" + inputFileName + "'");
 		tf.setDebug(debug);
 		tf.setVerbose(verbose);
 		files.put(inputFileName, tf);
@@ -62,7 +62,7 @@ public class Tail extends Thread {
 	 * Close all files
 	 */
 	void close() {
-		if (debug) Timer.showStdErr("Tail: Closing.");
+		if (debug) log("Closing.");
 
 		// Close all files
 		for (TailFile tf : files.values())
@@ -74,9 +74,13 @@ public class Tail extends Thread {
 	 * Kill this thread, stop 'following files'
 	 */
 	public void kill() {
-		if (debug) Timer.showStdErr("Tail: Killed");
+		if (debug) log("Killed");
 		close();
 		running = false;
+	}
+
+	public void log(String msg) {
+		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}
 
 	/**
@@ -88,7 +92,7 @@ public class Tail extends Thread {
 		try {
 			TailFile tf = files.get(fileName);
 			if (tf != null) {
-				if (debug) Timer.showStdErr("Tail: Removing (" + tf.getClass().getSimpleName() + ") '" + fileName + "'");
+				if (debug) log("Removing (" + tf.getClass().getSimpleName() + ") '" + fileName + "'");
 				tf.close();
 			}
 			files.remove(fileName);

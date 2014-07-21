@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Follow ("tail -f") a stream
@@ -38,7 +37,7 @@ public class TailStream extends TailFile {
 
 			// Is it already open?
 			if (input != null) {
-				if (debug) Timer.showStdErr(getClass().getSimpleName() + ": Closing '" + tailId + "'");
+				if (debug) log("Closing '" + tailId + "'");
 				input.close();
 			}
 
@@ -90,6 +89,8 @@ public class TailStream extends TailFile {
 				// Show bytes
 				if (showStderr) System.err.write(bytes, 0, count);
 				else System.out.write(bytes, 0, count);
+
+				if (debug) log("Reading '" + (new String(bytes, 0, count)) + "'");
 			}
 
 			return count;

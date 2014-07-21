@@ -5,6 +5,8 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
+
 /**
  * A file to use with 'Tail -f' (i.e. follow file's grow)
  *
@@ -123,6 +125,10 @@ public abstract class TailFile {
 	 * Close files
 	 */
 	protected abstract void close(boolean attemptTail);
+
+	public void log(String msg) {
+		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
+	}
 
 	/**
 	 * Open a file and add buffer to 'buffers'
