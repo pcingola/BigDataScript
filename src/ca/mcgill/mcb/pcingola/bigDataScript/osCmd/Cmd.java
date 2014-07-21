@@ -7,7 +7,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.executioner.NotifyTaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.PidParser;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Execute a command (shell command)
@@ -19,8 +19,7 @@ public abstract class Cmd extends Thread {
 	public static final String[] ARGS_ARRAY_TYPE = new String[0];
 	public static final int ERROR_EXECUTING = -1;
 
-	protected boolean debug = false;
-
+	protected boolean debug;
 	protected String id;
 	protected String commandArgs[]; // Command and arguments
 	protected String error = ""; // Errors
@@ -58,6 +57,7 @@ public abstract class Cmd extends Thread {
 	public int exec() {
 		// Prepare to execute task
 		try {
+			if (debug) log("Start");
 			executing = true;
 
 			// Prepare to execute
@@ -74,6 +74,7 @@ public abstract class Cmd extends Thread {
 		// Execute command or wait for execution to finish
 		try {
 			stateRunning(); // Now we are really done and the process is started. Update states
+			if (debug) log("Running");
 			execCmd();
 		} catch (Exception e) {
 			execError(e, TaskState.ERROR, Task.EXITCODE_ERROR);
@@ -81,6 +82,7 @@ public abstract class Cmd extends Thread {
 		}
 
 		// OK, we are done. Clean up and notify.
+		if (debug) log("Done");
 		execDone();
 		return exitValue;
 	}
@@ -160,6 +162,8 @@ public abstract class Cmd extends Thread {
 	 * Kill a process
 	 */
 	public void kill() {
+		if (debug) log("Process killed");
+
 		killCmd();
 
 		// Notify end of execution
@@ -168,13 +172,16 @@ public abstract class Cmd extends Thread {
 			if (notifyTaskState != null) notifyTaskState.taskFinished(task, TaskState.KILLED);
 		}
 
-		if (debug) Gpr.debug("Process was killed");
 	}
 
 	/**
 	 * Cmd-specfic implementation: How to kill the process.
 	 */
 	protected abstract void killCmd();
+
+	public void log(String msg) {
+		Timer.showStdErr(getClass().getSimpleName() + " '" + getCmdId() + "': " + msg);
+	}
 
 	@Override
 	public void run() {

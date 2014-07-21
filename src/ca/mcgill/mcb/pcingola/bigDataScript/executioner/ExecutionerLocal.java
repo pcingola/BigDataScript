@@ -113,6 +113,7 @@ public class ExecutionerLocal extends Executioner {
 		// Run command
 		if (debug) Timer.showStdErr("Running command: " + cmdStr);
 		CmdLocal cmd = new CmdLocal(task.getId(), args);
+		cmd.setDebug(debug);
 		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
 
 		return cmd;
