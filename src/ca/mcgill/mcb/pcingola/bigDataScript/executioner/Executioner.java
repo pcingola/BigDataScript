@@ -76,7 +76,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * @return
 	 */
 	public synchronized void add(Task task) {
-		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Queuing task: " + task.getId());
+		if (verbose) log("Queuing task: " + task.getId());
 		tasksToRun.add(task);
 	}
 
@@ -211,7 +211,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Stop executioner and kill all tasks
 	 */
 	public synchronized void kill() {
-		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Killed ");
+		if (verbose) log("Killed");
 
 		// Kill all 'tasksToRun'.
 		// Note: We need to create a new list to avoid concurrent modification exceptions
@@ -241,7 +241,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	public synchronized void kill(Task task) {
 		if (task.isDone()) return; // Nothing to do
 
-		if (debug) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Killing task '" + task.getId() + "'");
+		if (debug) log("Killing task '" + task.getId() + "'");
 
 		// Kill command
 		Cmd cmd = cmdById.get(task.getId());
@@ -251,6 +251,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		// Note: This will also be invoked by Cmd, so it will be redundant)
 		task.setExitValue(Task.EXITCODE_KILLED);
 		taskFinished(task, TaskState.KILLED);
+	}
+
+	public void log(String msg) {
+		Timer.showStdErr(getClass().getSimpleName() + " '" + getExecutionerId() + "': " + msg);
 	}
 
 	/**
@@ -353,9 +357,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 */
 	@Override
 	public void run() {
-		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Started running");
+		if (verbose) log("Started running");
 		runExecutioner();
-		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Finished running");
+		if (verbose) log("Finished running");
 	}
 
 	/**
@@ -371,7 +375,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			while (running) {
 				// Run loop
 				if (runExecutionerLoop()) {
-					if (debug) Timer.showStdErr("Queue: No task to run.");
+					if (debug) log("Queue: No task to run.");
 				}
 
 				sleepLong();
@@ -445,7 +449,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		// If that happens, well get an exception
 		for (int numThreads = Exec.countRunningThreads(); numThreads >= Exec.MAX_NUMBER_OF_RUNNING_THREADS; numThreads = Exec.countRunningThreads()) {
 			// Too many threads running? Sleep for a while (block until some threads finish)
-			if (verbose) Timer.showStdErr("INFO: Too many threads running (" + numThreads + "). Waiting for some threads to finish.");
+			if (verbose) log("INFO: Too many threads running (" + numThreads + "). Waiting for some threads to finish.");
 			sleepLong();
 		}
 
@@ -558,7 +562,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Select task to be executed on a host
 	 */
 	protected synchronized void selectTask(Task task, Host host) {
-		if (verbose) Timer.showStdErr("Executioner '" + getExecutionerId() + "': Selected task: " + task.getId() + " on host '" + host + "'");
+		if (verbose) log("Task selected '" + task.getId() + "' on host '" + host + "'");
 		tasksSelected.put(task, host);
 		host.add(task);
 	}
@@ -635,7 +639,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
 
 		String id = task.getId();
-		if (debug) Timer.showStdErr("Finished task '" + id + "'");
+		if (debug) log("Task finished '" + id + "'");
 
 		// Find command
 		Cmd cmd = cmdById.get(id);
@@ -664,7 +668,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// Can we re-try?
 			if (!task.isCanFail() && task.canRetry()) {
 				// Retry task
-				Timer.showStdErr("Task failed, retrying ( " + task.getMaxFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (verbose ? "\n" : ", ") + task.toString(verbose));
+				log("Task failed, retrying ( " + task.getMaxFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (verbose ? "\n" : ", ") + task.toString(verbose));
 
 				// Move task form 'taskDone' back to 'tasksToRun' queue
 				task.reset(); // Prepare to re-run task
@@ -678,7 +682,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	protected synchronized void taskUpdateRunning(Task task) {
-		if (debug) Timer.showStdErr("Task running '" + task.getId() + "'");
+		if (debug) log("Task running '" + task.getId() + "'");
 
 		if (task.isDone()) return; // Already finished, nothing to do
 
@@ -694,7 +698,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * @param task
 	 */
 	protected synchronized void taskUpdateStarted(Task task) {
-		if (debug) Timer.showStdErr("Task started '" + task.getId() + "'");
+		if (debug) log("Task started '" + task.getId() + "'");
 
 		if (task.isStarted()) return; // Already started, nothing to do
 

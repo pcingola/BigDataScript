@@ -5,8 +5,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
-
 /**
  * A file to use with 'Tail -f' (i.e. follow file's grow)
  *
@@ -18,13 +16,14 @@ public abstract class TailFile {
 
 	String inputFileName; // Read (tail -f) from this file
 	boolean showStderr; // Do we show on STDERR? (default STDOUT)
+	boolean debug, verbose;
 
 	public static String tail(String fileName) {
 		return tail(fileName, 10);
 	}
 
 	/**
-	 * This is the typical 'tail' command behaviour: Show the last 'n' lines of a file
+	 * This is the typical 'tail' command behavior: Show the last 'n' lines of a file
 	 *
 	 * References: http://stackoverflow.com/questions/6888001/java-code-for-tail-n-lines-of-file-equivalent-to-tail-commad-in-unix
 	 *
@@ -113,12 +112,10 @@ public abstract class TailFile {
 
 	public TailFile(String inputFileName, boolean showStderr) {
 		this.inputFileName = inputFileName;
-		// this.outputFileName = outputFileName;
 		this.showStderr = showStderr;
 	}
 
 	public synchronized void close() {
-		Timer.showStdErr("TailFile: Closing");
 		close(true);
 	}
 
@@ -133,6 +130,14 @@ public abstract class TailFile {
 	 * @return
 	 */
 	protected abstract boolean open();
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
 
 	/**
 	 * Check if there is output available on any file

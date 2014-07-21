@@ -141,6 +141,8 @@ public class Config {
 	public Tail getTail() {
 		if (tail == null) {
 			tail = new Tail();
+			tail.setDebug(isDebug());
+			tail.setVerbose(isVerbose());
 			tail.start(); // Create a 'tail' process (to show STDOUT & STDERR from all processes)
 		}
 		return tail;

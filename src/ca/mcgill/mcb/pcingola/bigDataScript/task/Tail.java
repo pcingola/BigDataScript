@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
+
 /**
  * A "tail -f" for java
  *
@@ -16,6 +18,7 @@ public class Tail extends Thread {
 
 	public static final int SLEEP_TIME_DEFAULT = 100;
 
+	boolean debug, verbose;
 	boolean running;
 	HashMap<String, TailFile> files;
 	HashSet<String> toRemove;
@@ -33,7 +36,10 @@ public class Tail extends Thread {
 	 * @param showStderr : If true, print to STDERR
 	 */
 	public synchronized void add(InputStream input, String tailId, boolean showStderr) {
-		TailFile tf = new TailFileLocal(input, showStderr);
+		TailFile tf = new TailStream(input, showStderr, tailId);
+		if (debug) Timer.showStdErr("Tail: Adding (" + tf.getClass().getSimpleName() + ") '" + tailId + "'");
+		tf.setDebug(debug);
+		tf.setVerbose(verbose);
 		files.put(tailId, tf);
 	}
 
@@ -46,6 +52,9 @@ public class Tail extends Thread {
 	public synchronized void add(String inputFileName, boolean showStderr) {
 		if (inputFileName == null) return;
 		TailFile tf = new TailFileMulti(inputFileName, showStderr);
+		if (debug) Timer.showStdErr("Tail: Adding (" + tf.getClass().getSimpleName() + ") '" + inputFileName + "'");
+		tf.setDebug(debug);
+		tf.setVerbose(verbose);
 		files.put(inputFileName, tf);
 	}
 
@@ -53,6 +62,8 @@ public class Tail extends Thread {
 	 * Close all files
 	 */
 	void close() {
+		if (debug) Timer.showStdErr("Tail: Closing.");
+
 		// Close all files
 		for (TailFile tf : files.values())
 			tf.close();
@@ -63,6 +74,7 @@ public class Tail extends Thread {
 	 * Kill this thread, stop 'following files'
 	 */
 	public void kill() {
+		if (debug) Timer.showStdErr("Tail: Killed");
 		close();
 		running = false;
 	}
@@ -75,7 +87,10 @@ public class Tail extends Thread {
 	public synchronized void remove(String fileName) {
 		try {
 			TailFile tf = files.get(fileName);
-			if (tf != null) tf.close();
+			if (tf != null) {
+				if (debug) Timer.showStdErr("Tail: Removing (" + tf.getClass().getSimpleName() + ") '" + fileName + "'");
+				tf.close();
+			}
 			files.remove(fileName);
 		} catch (Exception e) {
 			// Nothing to do
@@ -98,6 +113,14 @@ public class Tail extends Thread {
 		} finally {
 			close();
 		}
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 	/**

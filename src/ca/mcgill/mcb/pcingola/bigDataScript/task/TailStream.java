@@ -5,30 +5,27 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * A file to use with 'Tail'
- * Opens files, so it has limitations depending on the number of
- * opened file descriptors allowed by the system.
+ * Follow ("tail -f") a stream
  *
  * @author pcingola
  */
-public class TailFileLocal extends TailFile {
+public class TailStream extends TailFile {
 
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 
+	String tailId;
 	BufferedInputStream input; // Input buffer
 
 	/**
 	 * Provide an inputStream (instead of an input file)
 	 */
-	public TailFileLocal(InputStream input, boolean showStderr) {
+	public TailStream(InputStream input, boolean showStderr, String tailId) {
 		super(null, showStderr);
 		this.input = new BufferedInputStream(input);
-	}
-
-	public TailFileLocal(String inputFileName, boolean showStderr) {
-		super(inputFileName, showStderr);
+		this.tailId = tailId;
 	}
 
 	/**
@@ -40,7 +37,10 @@ public class TailFileLocal extends TailFile {
 			if (attemptTail) tail();
 
 			// Is it already open?
-			if (input != null) input.close();
+			if (input != null) {
+				if (debug) Timer.showStdErr(getClass().getSimpleName() + ": Closing '" + tailId + "'");
+				input.close();
+			}
 
 			input = null;
 		} catch (Exception e) {
