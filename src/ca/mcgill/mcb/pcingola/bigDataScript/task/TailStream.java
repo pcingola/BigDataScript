@@ -16,14 +16,16 @@ public class TailStream extends TailFile {
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 
 	String tailId;
-	BufferedInputStream input; // Input buffer
+	// BufferedInputStream input; // Input buffer
+	InputStream input; // Input buffer
 
 	/**
 	 * Provide an inputStream (instead of an input file)
 	 */
 	public TailStream(InputStream input, boolean showStderr, String tailId) {
 		super(null, showStderr);
-		this.input = new BufferedInputStream(input);
+		// this.input = new BufferedInputStream(input);
+		this.input = input;
 		this.tailId = tailId;
 	}
 

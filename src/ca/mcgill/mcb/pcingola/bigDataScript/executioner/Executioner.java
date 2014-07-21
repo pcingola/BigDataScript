@@ -109,7 +109,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Start following a running task (e.g. tail STDOUT & STDERR)
-	 * @param task
 	 */
 	protected synchronized void follow(Task task) {
 		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
@@ -122,7 +121,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Stop following a running task (e.g. tail STDOUT & STDERR)
-	 * @param task
 	 */
 	protected synchronized void followStop(Task task) {
 		tail.remove(task.getStdoutFile());
