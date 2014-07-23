@@ -32,10 +32,62 @@ const EXITCODE_TIMEOUT = 2
 const CMD_REMOVE_FILE = "rm"
 
 type BdsExec struct {
-	execName string
-	taskLoggerFile string
-	args []string
-	randTempFile uint32
+	args []string 			// Command line arguments invoking 'bds'
+	execName string 		// This binary's absolute path
+
+	taskLoggerFile string 	// Task logger file to be used by 'Bds (java)'
+
+	cmd *exec.Cmd 			// BdsExec: Command
+	cmdargs []string 		// BdsExec: Command arguments
+	command string 			// BdsExec: Command to execute (path to a shell script)
+	outFile string 			// BdsExec: Copy (tee) stdout to this file 
+	errFile string 			// BdsExec: Copy (tee) stderr to this file 
+	exitFile string 		// BdsExec: Write exit code to this file 
+	timeSecs int 			// BdsExec: Maximum execution time
+	exitCode int 			// Command's Exit code
+
+	randTempFile uint32 	// Random seed
+}
+
+/*
+	Invoke BigDataScript java program
+
+	WARNING:
+		It is assumed that BigDataScript.jar is in the same executable binary as 'bds'
+
+		This is actually a nice hack used to distribute only one file. Since JAR files
+		are actually ZIP files and ZIP files are indexed from the end of the file, you can
+		append the JAR to the go binary (cat binary jar > new_binary) and you encapsulate
+		both in the same file.
+
+		Idea and implementation of this hack: Hernan Gonzalez
+*/
+func (be *BdsExec) BigDataScript() int {
+	// Create a taskLoggerFile (temp file based on pid number)
+	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid())
+	pidTmpFile, err := tmpfile.TempFile(prefix)
+	if err != nil {
+		log.Fatal(err)
+	}
+	be.taskLoggerFile = pidTmpFile
+	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is removed
+
+	// Append all arguments from command line
+	be.cmdargs = []string{"java",
+		"-Xmx2G",
+		"-cp", be.execName,
+		"ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
+	be.cmdargs = append(be.cmdargs, "-pid")
+	be.cmdargs = append(be.cmdargs, be.taskLoggerFile)
+	for _, arg := range be.args[1:] {
+		be.cmdargs = append(be.cmdargs, arg)
+	}
+
+	// Execute command
+	be.command = "java"
+	exitCode := be.executeCommand()
+
+	return exitCode
 }
 
 /*
@@ -85,7 +137,14 @@ func (be *BdsExec) discoverExecName() string {
 */
 func NewBdsExec(args []string) *BdsExec {
 	be := &BdsExec{}
+
 	be.args = args
+	be.command = ""
+	be.outFile = ""
+	be.errFile = ""
+	be.exitFile = ""
+	be.timeSecs = 0
+
 	be.discoverExecName()
 
 	if DEBUG {
@@ -93,45 +152,6 @@ func NewBdsExec(args []string) *BdsExec {
 	}
 
 	return be
-}
-/*
-	Invoke BigDataScript java program
-
-	WARNING:
-		It is assumed that BigDataScript.jar is in the same executable binary as 'bds'
-
-		This is actually a nice hack used to distribute only one file. Since JAR files
-		are actually ZIP files and ZIP files are indexed from the end of the file, you can
-		append the JAR to the go binary (cat binary jar > new_binary) and you encapsulate
-		both in the same file.
-
-		Idea and implementation of this hack: Hernan Gonzalez
-*/
-func (be *BdsExec) BigDataScript() int {
-	// Create a taskLoggerFile (temp file based on pid number)
-	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid())
-	pidTmpFile, err := tmpfile.TempFile(prefix)
-	if err != nil {
-		log.Fatal(err)
-	}
-	be.taskLoggerFile = pidTmpFile
-	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is removed
-
-	// Append all arguments from command line
-	args := []string{"java",
-		"-Xmx2G",
-		"-cp", be.execName,
-		"ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
-	args = append(args, "-pid")
-	args = append(args, be.taskLoggerFile)
-	for _, arg := range be.args[1:] {
-		args = append(args, arg)
-	}
-
-	// Execute command
-	exitCode := be.executeCommand("java", args, 0, "", "", "")
-
-	return exitCode
 }
 
 /*
@@ -154,19 +174,19 @@ func (be *BdsExec) ExecuteCommandArgs() int {
 	cmdIdx := 2
 	timeStr := be.args[cmdIdx]
 	cmdIdx = cmdIdx + 1
-	outFile := be.args[cmdIdx]
+	be.outFile = be.args[cmdIdx]
 	cmdIdx = cmdIdx + 1
-	errFile := be.args[cmdIdx]
+	be.errFile = be.args[cmdIdx]
 	cmdIdx = cmdIdx + 1
-	exitFile := be.args[cmdIdx]
+	be.exitFile = be.args[cmdIdx]
 	cmdIdx = cmdIdx + 1
-	command := be.args[cmdIdx]
+	be.command = be.args[cmdIdx]
 	cmdIdx = cmdIdx + 1
 
 	// Append other arguments
-	args := []string{command}
+	be.cmdargs = []string{be.command}
 	for _, arg := range be.args[minArgs:] {
-		args = append(args, arg)
+		be.cmdargs = append(be.cmdargs, arg)
 	}
 
 	// Parse time argument
@@ -174,19 +194,20 @@ func (be *BdsExec) ExecuteCommandArgs() int {
 	if err != nil {
 		log.Fatalf("Invalid time: '%s'\n", timeStr)
 	}
+	be.timeSecs = timeSecs
 
 	// Show PID info (parent process is expecting this line first)
 	fmt.Printf("%d\n", syscall.Getpid())
 	os.Stdout.Sync()
 
 	// Execute command
-	exitCode := be.executeCommand(command, args, timeSecs, outFile, errFile, exitFile)
+	be.executeCommand()
 
 	if DEBUG {
-		log.Printf("Debug: Exit code:%d\n", exitCode)
+		log.Printf("Debug: Exit code:%d\n", be.exitCode)
 	}
 
-	return exitCode
+	return be.exitCode
 }
 
 /*
@@ -196,9 +217,9 @@ func (be *BdsExec) ExecuteCommandArgs() int {
 	Write exit code to exitFile   (unless file name is empty)
 	Timeout after timeout seconds (unless time is zero)
 */
-func (be *BdsExec) executeCommand(command string, args []string, timeSecs int, outFile, errFile, exitFile string) int {
+func (be *BdsExec) executeCommand() int {
 	if DEBUG {
-		log.Printf("Debug: executeCommand %s\n", command)
+		log.Printf("Debug: executeCommand %s\n", be.command)
 	}
 
 	// Redirect all signals to channel (e.g. Ctrl-C)
@@ -222,46 +243,46 @@ func (be *BdsExec) executeCommand(command string, args []string, timeSecs int, o
 	}
 
 	// Create command
-	cmd := exec.Command(command)
-	cmd.Args = args
+	be.cmd = exec.Command(be.command)
+	be.cmd.Args = be.cmdargs
 
 	// Copy stdout
-	stdout := tee.NewTee(outFile, false)
+	stdout := tee.NewTee(be.outFile, false)
 	defer stdout.Close()
-	cmd.Stdout = stdout
+	be.cmd.Stdout = stdout
 
 	// Copy stderr
-	stderr := tee.NewTee(errFile, false)
+	stderr := tee.NewTee(be.errFile, false)
 	defer stderr.Close()
-	cmd.Stderr = stderr
+	be.cmd.Stderr = stderr
 
 	// Start process
-	err := cmd.Start()
+	err := be.cmd.Start()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return be.executeCommandTimeout(cmd, timeSecs, exitFile, osSignal)
+	return be.executeCommandTimeout(osSignal)
 }
 
 /*
 	Execute a command enforcing a timeout and writing exit status to 'exitFile'
 */
-func (be *BdsExec) executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile string, osSignal chan os.Signal) int {
+func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 	if DEBUG {
 		log.Printf("Debug: executeCommandTimeout\n")
 	}
 
 	// Wait for execution to finish or timeout
 	exitStr := ""
-	if timeSecs <= 0 {
-		timeSecs = 31536000 // Default: One year
+	if be.timeSecs <= 0 {
+		be.timeSecs = 31536000 // Default: One year
 	}
 
 	// Create a timeout process
 	// References: http://blog.golang.org/2010/09/go-concurrency-patterns-timing-out-and.html
 	exitCode := make(chan string, 1)
-	go execute(cmd, exitCode)
+	go execute(be.cmd, exitCode)
 
 	// Wait until executions ends, timeout or OS signal
 	kill := false
@@ -272,7 +293,7 @@ func (be *BdsExec) executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile s
 			kill = false
 			run = false
 
-		case <-time.After(time.Duration(timeSecs) * time.Second):
+		case <-time.After(time.Duration(be.timeSecs) * time.Second):
 			run = false
 			kill = true
 			exitStr = "Time out"
@@ -297,13 +318,13 @@ func (be *BdsExec) executeCommandTimeout(cmd *exec.Cmd, timeSecs int, exitFile s
 
 	// Should we kill child process?
 	if kill {
-		cmd.Process.Kill()
-		cmd.Process.Wait() // Reap their souls
+		be.cmd.Process.Kill()
+		be.cmd.Process.Wait() // Reap their souls
 	}
 
 	// Write exitCode to file or show as log message
-	if (exitFile != "") && (exitFile != "-") {
-		fileutil.WriteFile(exitFile, exitStr) // Dump error to 'exitFile'
+	if (be.exitFile != "") && (be.exitFile != "-") {
+		fileutil.WriteFile(be.exitFile, exitStr) // Dump error to 'exitFile'
 	}
 
 	if kill {
@@ -339,10 +360,30 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 
 	// Wait for command to finish
 	if err := cmd.Wait(); err != nil {
+		if DEBUG {
+			log.Printf("Debug: execute, failed (%s)\n", err)
+		}
+
 		exitCode <- err.Error()
+		return
 	} 
 
+	if DEBUG {
+		log.Printf("Debug: execute, finished OK\n")
+	}
+
 	exitCode <- "0"
+}
+
+/*
+	Kill a process group
+*/
+func (be *BdsExec) KillProcessGroup(pid int) {
+	if DEBUG {
+		log.Printf("Debug: killProcessGroup( %d )\n", pid)
+	}
+
+	syscall.Kill(-pid, syscall.SIGHUP)
 }
 
 // Loads configuration as map, expects key=val syntax.
@@ -506,17 +547,6 @@ func (be *BdsExec) taskLoggerCleanUpAll() {
 			}
 		}
 	}
-}
-
-/*
-	Kill a process group
-*/
-func (be *BdsExec) KillProcessGroup(pid int) {
-	if DEBUG {
-		log.Printf("Debug: killProcessGroup( %d )\n", pid)
-	}
-
-	syscall.Kill(-pid, syscall.SIGHUP)
 }
 
 /*
