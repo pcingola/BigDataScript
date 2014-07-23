@@ -277,21 +277,11 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 	cmd := exec.Command(command)
 	cmd.Args = args
 
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Start process
-	err = cmd.Start()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// stdout, err := cmd.StdoutPipe()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	stdout := cmd.Stdout
 
 	// Copy to STDOUT to file (or to stdout)
 	if (outFile == "") || (outFile == "-") {
@@ -305,19 +295,32 @@ func executeCommand(command string, args []string, timeSecs int, outFile, errFil
 		go tee(stdoutFile, stdout, false)
 	}
 
-	// Copy to STDERR to file (or to stderr)
-	if (errFile == "") || (errFile == "-") {
-		go tee(os.Stderr, stderr, true)
-	} else {
-		stderrFile, err := os.Create(errFile)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer stderrFile.Close()
-		go tee(stderrFile, stderr, true)
+	// stderr, err := cmd.StderrPipe()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// 
+	// // Copy to STDERR to file (or to stderr)
+	// if (errFile == "") || (errFile == "-") {
+	// 	go tee(os.Stderr, stderr, true)
+	// } else {
+	// 	stderrFile, err := os.Create(errFile)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	defer stderrFile.Close()
+	// 	go tee(stderrFile, stderr, true)
+	// }
+
+	// Start process
+	err = cmd.Start()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	return executeCommandTimeout(cmd, timeSecs, exitFile, osSignal)
+	exitCode := executeCommandTimeout(cmd, timeSecs, exitFile, osSignal)
+
+	return exitCode
 }
 
 /*
@@ -416,7 +419,7 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 	// Wait for command to finish
 	if err := cmd.Wait(); err != nil {
 		exitCode <- err.Error()
-	}
+	} 
 
 	exitCode <- "0"
 }
@@ -658,10 +661,13 @@ func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error
 		log.Printf("Debug: tee\n")
 	}
 
+	log.Printf("Tee\n")
 	buf := make([]byte, 32*1024)
 	for {
 		nr, er := src.Read(buf)
+		log.Printf("Tee reading:\t err: %s\tstring: '%s'\n", er, buf[0:nr])
 		if nr > 0 {
+			log.Printf("Tee reading '%s'\n", buf[0:nr])
 			nw, ew := dst.Write(buf[0:nr])
 			if nw > 0 {
 				written += int64(nw)
@@ -678,18 +684,22 @@ func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error
 				}
 			}
 			if ew != nil {
+				log.Printf("Tee writing error: %s\n", ew)
 				err = ew
 				break
 			}
 			if nr != nw {
+				log.Printf("Tee writing error: ShortWrite!\n")
 				err = io.ErrShortWrite
 				break
 			}
 		}
 		if er == io.EOF {
+			log.Printf("Tee reading EOF\n")
 			break
 		}
 		if er != nil {
+			log.Printf("Tee reading error: %s\n", er)
 			err = er
 			break
 		}
