@@ -1,0 +1,164 @@
+00:00:00.000	BigDataScript: Initialize global scope.
+00:00:00.029	BigDataScript: Initialize standard libraries.
+00:00:00.036	BigDataScript: Native library:
+NativeLibraryFunctions:
+	FunctionNativePrint
+	FunctionNativePrintErr
+	FunctionNativeMinInt
+	FunctionNativeMaxInt
+	FunctionNativeMinReal
+	FunctionNativeMaxReal
+	FunctionNativeRand
+	FunctionNativeRandInt
+	FunctionNativeRandIntRange
+	FunctionNativeSleep
+	FunctionNativeToIntFromBool
+	FunctionNativeToIntFromReal
+
+00:00:00.060	BigDataScript: Native library:
+NativeLibraryString:
+	MethodNative_string_length
+	MethodNative_string_toUpper
+	MethodNative_string_toLower
+	MethodNative_string_trim
+	MethodNative_string_substr_start_end
+	MethodNative_string_substr_start
+	MethodNative_string_split_regex
+	MethodNative_string_lines
+	MethodNative_string_isEmpty
+	MethodNative_string_startsWith_str
+	MethodNative_string_endsWith_str
+	MethodNative_string_indexOf_str
+	MethodNative_string_lastIndexOf_str
+	MethodNative_string_replace_str1_str2
+	MethodNative_string_parseInt
+	MethodNative_string_parseReal
+	MethodNative_string_parseBool
+	MethodNative_string_path
+	MethodNative_string_baseName
+	MethodNative_string_baseName_ext
+	MethodNative_string_dirName
+	MethodNative_string_pathName
+	MethodNative_string_extName
+	MethodNative_string_canRead
+	MethodNative_string_canWrite
+	MethodNative_string_canExec
+	MethodNative_string_exists
+	MethodNative_string_isDir
+	MethodNative_string_isFile
+	MethodNative_string_delete
+	MethodNative_string_rm
+	MethodNative_string_mkdir
+	MethodNative_string_read
+	MethodNative_string_removeExt
+	MethodNative_string_removeExt_ext
+	MethodNative_string_rmOnExit
+	MethodNative_string_swapExt_extNew
+	MethodNative_string_swapExt_extOld_extNew
+	MethodNative_string_write_str
+	MethodNative_string_readLines
+	MethodNative_string_dir
+	MethodNative_string_dir_regex
+	MethodNative_string_dirPath
+	MethodNative_string_dirPath_regex
+	MethodNative_string_size
+	MethodNative_string_isDone
+	MethodNative_string_isDoneOk
+	MethodNative_string_stdout
+	MethodNative_string_stderr
+	MethodNative_string_exitCode
+
+00:00:00.061	BigDataScript 0.98c (build 2014-07-22), by Pablo Cingolani
+00:00:00.065	Parsing
+00:00:00.065	BigDataScript: Loading file: 'test.bds'
+00:00:00.066	BigDataScript: Creating AST.
+00:00:00.239	AST:
+		Child 0:	[28]	Tree:'([28] \n \n)'
+		Child 1:	[34]	Tree:'([34] ([294 34] task ( ([391 294 34] ([24 391 294 34] "test.csv") <- ([462 391 294 34] "test.txt")) ) ([403 294 34] { ([102 403 294 34] ([308 102 403 294 34] \n)) ([102 403 294 34] ([294 102 403 294 34] sys cp test.txt test.csv; echo "copying to test.csv") ([295 102 403 294 34] \n)) })) ([295 34] \n \n))'
+		Child 2:	[34]	Tree:'([34] ([294 34] task ( ([391 294 34] ([24 391 294 34] "test.xml") <- ([462 391 294 34] "test.csv")) ) ([403 294 34] { ([102 403 294 34] ([308 102 403 294 34] \n)) ([102 403 294 34] ([294 102 403 294 34] sys cp test.csv test.xml; echo "copying to test.xml") ([295 102 403 294 34] \n)) })) ([295 34] \n))'
+00:00:00.242	BigDataScript: Creating BigDataScript tree.
+00:00:00.250	BigDataScript: AST:
+expressiontask
+
+expressiontask
+
+
+00:00:00.251	BigDataScript: Type checking.
+00:00:00.255	Initializing
+00:00:00.268	Process ID: test.bds.20140723_011841_561
+00:00:00.268	Running
+00:00:00.271	ExpressionDep (test.bds:3) : Left file 'test.csv' doesn't exist
+00:00:00.271	ExpressionTask (test.bds:3) : task-options check true
+00:00:00.276	Executioner factory: Creating new executioner type 'LOCAL'
+00:00:00.288	ExecutionerLocal 'Local[11]': Started running
+00:00:00.288	ExecutionerLocal 'Local[11]': Queuing task: test.bds.20140723_011841_561/task.line_3.id_1
+00:00:00.289	ExpressionDep (test.bds:7) : Right file 'test.csv' doesn't exist
+00:00:00.290	ExecutionerLocal 'Local[11]': Task selected 'test.bds.20140723_011841_561/task.line_3.id_1' on host 'localhost'
+00:00:00.290	ExpressionTask (test.bds:7) : task-options check true
+00:00:00.290	ExecutionerLocal 'Local[11]': Queuing task: test.bds.20140723_011841_561/task.line_7.id_2
+00:00:00.291	Program execution finished (run state: 'OK')
+00:00:00.291	Waiting for all tasks to finish.
+00:00:00.291	Waiting for task to finish: test.bds.20140723_011841_561/task.line_7.id_2
+00:00:00.292	Task: Saving file '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.sh'
+00:00:00.294	Running command: bds exec 86400 /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stdout /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stderr /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.exitCode /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.sh 
+00:00:00.295	CmdLocal 'test.bds.20140723_011841_561/task.line_3.id_1': Start
+00:00:00.296	CmdLocal: Executing  bds exec 86400 /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stdout /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stderr /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.exitCode /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.sh
+00:00:00.302	CmdLocal 'test.bds.20140723_011841_561/task.line_3.id_1': Reading PID line '12320'
+00:00:00.302	CmdLocal 'test.bds.20140723_011841_561/task.line_3.id_1': Running
+00:00:00.305	ExecutionerLocal 'Local[11]': Task started 'test.bds.20140723_011841_561/task.line_3.id_1'
+00:00:00.305	CmdLocal 'test.bds.20140723_011841_561/task.line_3.id_1': Done
+00:00:00.306	ExecutionerLocal 'Local[11]': Task running 'test.bds.20140723_011841_561/task.line_3.id_1'
+00:00:00.306	TaskLogger: Appending to PidFile 'bds.pid.12287', lines:
+		|12320	+	
+		|test.csv	+	rm
+
+00:00:00.307	Tail: Adding (TailStream) '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stdout'
+00:00:00.308	Tail: Adding (TailStream) '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stderr'
+00:00:00.318	ExecutionerLocal 'Local[11]': Task finished 'test.bds.20140723_011841_561/task.line_3.id_1'
+00:00:00.318	Tail: Removing (TailStream) '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stdout'
+00:00:00.319	TailStream: Reading 'copying to test.csv
+'
+00:00:00.319	TailStream: Closing '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stdout'
+00:00:00.319	Tail: Removing (TailStream) '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stderr'
+00:00:00.319	TailStream: Closing '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_3.id_1.stderr'
+00:00:00.319	TaskLogger: Appending to PidFile 'bds.pid.12287', lines:
+		|12320	-
+		|test.csv	-
+
+00:00:00.320	ExecutionerLocal 'Local[11]': Task selected 'test.bds.20140723_011841_561/task.line_7.id_2' on host 'localhost'
+00:00:00.320	Task: Saving file '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.sh'
+00:00:00.322	Running command: bds exec 86400 /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stdout /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stderr /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.exitCode /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.sh 
+00:00:00.322	ExecutionerLocal 'Local[11]': Queue: No task to run.
+00:00:00.322	CmdLocal 'test.bds.20140723_011841_561/task.line_7.id_2': Start
+00:00:00.322	CmdLocal: Executing  bds exec 86400 /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stdout /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stderr /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.exitCode /data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.sh
+00:00:00.325	CmdLocal 'test.bds.20140723_011841_561/task.line_7.id_2': Reading PID line '12332'
+00:00:00.325	CmdLocal 'test.bds.20140723_011841_561/task.line_7.id_2': Running
+00:00:00.328	CmdLocal 'test.bds.20140723_011841_561/task.line_7.id_2': Done
+00:00:00.823	ExecutionerLocal 'Local[11]': Task started 'test.bds.20140723_011841_561/task.line_7.id_2'
+00:00:00.823	ExecutionerLocal 'Local[11]': Task running 'test.bds.20140723_011841_561/task.line_7.id_2'
+00:00:00.823	TaskLogger: Appending to PidFile 'bds.pid.12287', lines:
+		|12332	+	
+		|test.xml	+	rm
+
+00:00:00.823	Tail: Adding (TailStream) '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stdout'
+00:00:00.824	Tail: Adding (TailStream) '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stderr'
+00:00:00.824	ExecutionerLocal 'Local[11]': Task finished 'test.bds.20140723_011841_561/task.line_7.id_2'
+00:00:00.824	Tail: Removing (TailStream) '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stdout'
+00:00:00.824	TailStream: Reading 'copying to test.xml
+'
+00:00:00.824	TailStream: Closing '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stdout'
+00:00:00.825	Tail: Removing (TailStream) '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stderr'
+00:00:00.825	TailStream: Closing '/data/pcingola/Documents/workspace/BigDataScript/test/BIOINF_2014_reviewer_1/test.bds.20140723_011841_561/task.line_7.id_2.stderr'
+00:00:00.825	TaskLogger: Appending to PidFile 'bds.pid.12287', lines:
+		|12332	-
+		|test.xml	-
+
+00:00:01.042	Task finished: test.bds.20140723_011841_561/task.line_7.id_2
+00:00:01.042	Waiting for task to finish: test.bds.20140723_011841_561/task.line_3.id_1
+00:00:01.042	Task finished: test.bds.20140723_011841_561/task.line_3.id_1
+00:00:01.043	Writing report file 'test.bds.20140723_011841_561.report.html'
+00:00:01.074	Finished running. Exit code: 0
+00:00:01.074	ExecutionerLocal 'Local[11]': Killed
+00:00:01.326	ExecutionerLocal 'Local[11]': Finished running
+00:00:01.574	Tail: Killed
+00:00:01.574	Tail: Closing.

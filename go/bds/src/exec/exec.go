@@ -252,7 +252,7 @@ func (be *BdsExec) executeCommand() int {
 	be.cmd.Stdout = stdout
 
 	// Copy stderr
-	stderr := tee.NewTee(be.errFile, false)
+	stderr := tee.NewTee(be.errFile, true)
 	defer stderr.Close()
 	be.cmd.Stderr = stderr
 
