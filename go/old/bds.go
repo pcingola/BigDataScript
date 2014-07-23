@@ -34,6 +34,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -633,6 +634,81 @@ func readLine(reader *bufio.Reader) (line string, err error) {
 		}
 	}
 	return
+}
+
+//
+// tee: Copy to file AND stdout (or stderr)
+//
+// This code adapted from io.Copy function
+//		http://golang.org/src/pkg/io/io.go?s=11569:11629#L338
+//
+// Tee: Copies from one file to another, but also prints
+// to stdout/stderr
+//
+// ---
+//
+// Original comments:
+// Copy copies from src to dst until either EOF is reached
+// on src or an error occurs.  It returns the number of bytes
+// copied and the first error encountered while copying, if any.
+//
+// A successful Copy returns err == nil, not err == EOF.
+// Because Copy is defined to read from src until EOF, it does
+// not treat an EOF from Read as an error to be reported.
+//
+// If dst implements the ReaderFrom interface,
+// the copy is implemented by calling dst.ReadFrom(src).
+// Otherwise, if src implements the WriterTo interface,
+// the copy is implemented by calling src.WriteTo(dst).
+func tee(dst io.Writer, src io.Reader, useStdErr bool) (written int64, err error) {
+	if DEBUG {
+		log.Printf("Debug: tee\n")
+	}
+
+	log.Printf("Tee\n")
+	buf := make([]byte, 32*1024)
+	for {
+		nr, er := src.Read(buf)
+		log.Printf("Tee reading:\t err: %s\tstring: '%s'\n", er, buf[0:nr])
+		if nr > 0 {
+			log.Printf("Tee reading '%s'\n", buf[0:nr])
+			nw, ew := dst.Write(buf[0:nr])
+			if nw > 0 {
+				written += int64(nw)
+
+				// Also write to stdout / stderr
+				if useStdErr {
+					if dst != os.Stderr { // Don't copy twice
+						os.Stderr.Write(buf[0:nr])
+					}
+				} else {
+					if dst != os.Stdout { // Don't copy twice
+						os.Stdout.Write(buf[0:nr])
+					}
+				}
+			}
+			if ew != nil {
+				log.Printf("Tee writing error: %s\n", ew)
+				err = ew
+				break
+			}
+			if nr != nw {
+				log.Printf("Tee writing error: ShortWrite!\n")
+				err = io.ErrShortWrite
+				break
+			}
+		}
+		if er == io.EOF {
+			log.Printf("Tee reading EOF\n")
+			break
+		}
+		if er != nil {
+			log.Printf("Tee reading error: %s\n", er)
+			err = er
+			break
+		}
+	}
+	return written, err
 }
 
 //

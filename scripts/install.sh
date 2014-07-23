@@ -19,6 +19,7 @@ ant
 echo
 echo Building GO program
 cd go/bds/
+export GOPATH=$GOPATH:`pwd`
 go clean
 go build bds.go
 
