@@ -58,7 +58,8 @@ public class ExpressionAssignment extends ExpressionBinary {
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
 		// Is 'left' a variable?
-		if (!(left instanceof Reference)) compilerMessages.add(this, "Assignment to non variable", MessageType.ERROR);
+		if (left == null) compilerMessages.add(this, "Cannot parse left expresison.", MessageType.ERROR);
+		else if (!(left instanceof Reference)) compilerMessages.add(this, "Assignment to non variable ('" + left + "')", MessageType.ERROR);
 	}
 
 	@Override

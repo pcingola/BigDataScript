@@ -485,6 +485,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExpressionParallel(@NotNull BigDataScriptParser.ExpressionParallelContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpressionParallel(@NotNull BigDataScriptParser.ExpressionParallelContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTypePrimitiveReal(@NotNull BigDataScriptParser.TypePrimitiveRealContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -1,7 +1,9 @@
+#!/usr/bin/env bds
 
+int a,b,c
+(a, b, c) = [ 1, 3, 5 ]
+print("a:$a\nb:$b\nc:$c\n")
 
-is := range(1,10)
-print( "is : $is\n" )
+#task ( "test.csv" <- "test.txt" ) cp test.txt test.csv;  echo "copying to test.csv"
+#task ( "test.xml" <- "test.csv") cp test.csv test.xml; echo "copying to test.xml"
 
-rs := range(1.0, 10.0, 0.5)
-print( "rs : $rs\n" )

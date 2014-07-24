@@ -68,14 +68,15 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		int listSize = (tree.getChildCount() - 2) / 2 + 1;
+		int listSize = (tree.getChildCount() - 2) / 2;
 		lefts = new Expression[listSize];
 
-		int idx = 0;
+		int idx = 1;
 		for (int j = 0; j < listSize; idx += 2, j++) { // Skip comma separators
 			lefts[j] = (Expression) factory(tree, idx);
 		}
 
+		idx++;
 		right = (Expression) factory(tree, idx);
 	}
 
@@ -94,17 +95,22 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
 		for (Expression l : lefts)
-			if (!(l instanceof Reference)) compilerMessages.add(this, "Assignment to non variable", MessageType.ERROR);
+			if (l == null) compilerMessages.add(this, "Cannot parse left expresison.", MessageType.ERROR);
+			else if (!(l instanceof Reference)) compilerMessages.add(this, "Assignment to non variable (" + l + ")", MessageType.ERROR);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (Expression l : lefts) {
-			if (sb.length() > 0) sb.append(" , ");
-			sb.append(l);
+
+		sb.append("(");
+		for (int i = 0; i < lefts.length; i++) {
+			if (i > 0) sb.append(", ");
+			sb.append(lefts[i]);
 		}
-		sb.append(" = " + right);
+
+		sb.append(") = " + right);
+
 		return sb.toString();
 	}
 
@@ -112,7 +118,8 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		// Trying to assign to a constant?
 		for (Expression l : lefts) {
-			if (!(l instanceof Reference)) compilerMessages.add(this, "Left hand side expression is not a variable reference '" + l + "'", MessageType.ERROR);
+			if (l == null) compilerMessages.add(this, "Cannot parse left expresison.", MessageType.ERROR);
+			else if (!(l instanceof Reference)) compilerMessages.add(this, "Left hand side expression is not a variable reference '" + l + "'", MessageType.ERROR);
 			else if (!l.getReturnType().isPrimitiveType()) compilerMessages.add(this, "Variable '" + ((Reference) l).getVariableName() + "' is non-primitive type " + l.getReturnType(), MessageType.ERROR);
 			else if (((Reference) l).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + ((Reference) l).getVariableName() + "'", MessageType.ERROR);
 		}

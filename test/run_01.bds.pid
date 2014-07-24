@@ -3784,3 +3784,120 @@ out1.txt	-
 out2.txt	+	rm
 11321	-
 out2.txt	-
+21522	+	
+21522	-
+21537	+	
+21537	-
+21550	+	
+21550	-
+null	-
+21576	+	
+21576	-
+21587	+	
+21587	-
+21597	+	
+21597	-
+21608	+	
+21608	-
+21621	+	
+21621	-
+21633	+	
+21633	-
+21654	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+21659	+	
+21654	-
+/home/pcingola/zero_length_file_out.txt	-
+21659	-
+21679	+	
+21679	-
+21692	+	
+21697	+	
+21692	-
+21697	-
+21797	+	
+21797	-
+21810	+	
+21810	-
+21848	+	
+21848	-
+null	-
+21877	+	
+21877	-
+21900	+	
+21900	-
+21916	+	
+failOnce.out1	+	rm
+21916	-
+failOnce.out1	-
+21929	+	
+failOnce.out1	+	rm
+21929	-
+failOnce.out1	-
+21941	+	
+failOnce.out2	+	rm
+21941	-
+failOnce.out2	-
+21969	+	
+failOnce.out1	+	rm
+21969	-
+failOnce.out1	-
+21983	+	
+failOnce.out2	+	rm
+21983	-
+failOnce.out2	-
+22025	+	
+22030	+	
+22025	-
+22030	-
+22058	+	
+out1.txt	+	rm
+22058	-
+out1.txt	-
+22070	+	
+out2.txt	+	rm
+22070	-
+out2.txt	-
+22089	+	
+out1.txt	+	rm
+22089	-
+out1.txt	-
+22101	+	
+out2.txt	+	rm
+22101	-
+out2.txt	-
+22113	+	
+out1.txt	+	rm
+22113	-
+out1.txt	-
+22127	+	
+22127	-
+22141	+	
+22141	-
+23094	+	
+23094	-
+23109	+	
+23109	-
+23122	+	
+23122	-
+null	-
+23148	+	
+23148	-
+23159	+	
+23159	-
+23169	+	
+23169	-
+23179	+	
+23179	-
+23201	+	
+23201	-
+23214	+	
+23214	-
+23236	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+23241	+	
+23236	-
+/home/pcingola/zero_length_file_out.txt	-
+23241	-
+23261	+	
+23261	-

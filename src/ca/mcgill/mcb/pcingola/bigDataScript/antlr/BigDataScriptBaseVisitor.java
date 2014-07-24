@@ -306,6 +306,14 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitExpressionParallel(@NotNull BigDataScriptParser.ExpressionParallelContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitTypePrimitiveReal(@NotNull BigDataScriptParser.TypePrimitiveRealContext ctx) { return visitChildren(ctx); }
 
 	/**

@@ -264,6 +264,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionLogicOr(@NotNull BigDataScriptParser.ExpressionLogicOrContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionParallel}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionParallel(@NotNull BigDataScriptParser.ExpressionParallelContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#typePrimitiveReal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

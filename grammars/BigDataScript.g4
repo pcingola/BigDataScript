@@ -15,14 +15,14 @@ eol : (';' | '\n' )+;
 // Types
 typeList : type (',' type)* ;
 
-type : 'bool'                                                                       # typePrimitiveBool
-     | 'int'                                                                        # typePrimitiveInt
-     | 'real'                                                                       # typePrimitiveReal
-     | 'string'                                                                     # typePrimitiveString 
-     | 'void'                                                                       # typePrimitiveVoid
-     | type '[' ']'                                                                 # typeArray
-     | type '{' '}'                                                                 # typeMap
-     | type '{' type '}'                                                            # typeMap
+type : 'bool'                                                                              # typePrimitiveBool
+     | 'int'                                                                               # typePrimitiveInt
+     | 'real'                                                                              # typePrimitiveReal
+     | 'string'                                                                            # typePrimitiveString 
+     | 'void'                                                                              # typePrimitiveVoid
+     | type '[' ']'                                                                        # typeArray
+     | type '{' '}'                                                                        # typeMap
+     | type '{' type '}'                                                                   # typeMap
      ;
 
 // Variable declaration
@@ -64,57 +64,59 @@ forCondition : expression;
 
 forEnd : expressionList;
 
-expression : BOOL_LITERAL                                                           # literalBool
-           | INT_LITERAL                                                            # literalInt
-           | REAL_LITERAL                                                           # literalReal
-           | STRING_LITERAL                                                         # literalString
-           | STRING_LITERAL_SINGLE                                                  # literalString
-           | ID '('(expression (',' expression )*)? ')'                             # functionCall
-           | expression '.' ID '('(expression (',' expression )*)? ')'              # methodCall
-           | ID                                                                     # varReference
-           | expression '[' expression ']'                                          # varReferenceList
-           | expression '{' expression '}'                                          # varReferenceMap
-           | expression '&&' expression                                             # expressionLogicAnd
-           | expression '||' expression                                             # expressionLogicOr
-           | expression '&' expression                                              # expressionBitAnd
-           | expression '^' expression                                              # expressionBitXor
-           | expression '|' expression                                              # expressionBitOr
-           | ('++' | '--') expression                                               # pre
-           | expression ('++' | '--')                                               # post
-           | expression '!=' expression                                             # expressionNe
-           | expression '==' expression                                             # expressionEq
-           | expression '%' expression                                              # expressionModulo
-           | expression '/' expression                                              # expressionDivide
-           | expression '*' expression                                              # expressionTimes
-           | expression '-' expression                                              # expressionMinus
-           | expression '+' expression                                              # expressionPlus
-           | expression '<' expression                                              # expressionLt
-           | expression '>' expression                                              # expressionGt
-           | expression '<=' expression                                             # expressionLe
-           | expression '>=' expression                                             # expressionGe
-           | '~' expression                                                         # expressionBitNegation
-           | '!' expression                                                         # expressionLogicNot
-           | '-' expression                                                         # expressionUnaryMinus
-           | '+' expression                                                         # expressionUnaryPlus
-           | '(' expression ')'                                                     # expressionParen
-           | expression '?' expression ':' expression                               # expressionCond
-           |  expression '<-' expression                                            # expressionDep
-           | '[' ']'                                                                # literalListEmpty
-           | '[' expression (',' expression)* ']'                                   # literalList
-           | '{' '}'                                                                # literalMapEmpty
-           | '{' expression '=>' expression (',' expression '=>' expression)* '}'   # literalMap
-           | SYS_LITERAL                                                            # expressionSys
-           | TASK_LITERAL                                                           # expressionTaskLiteral
-           | 'task' ( '(' expression (',' expression)* ')' )? statement             # expressionTask
-           | expression '|=' expression                                             # expressionAssignmentBitOr
-           | expression '&=' expression                                             # expressionAssignmentBitAnd
-           | expression '/=' expression                                             # expressionAssignmentDiv
-           | expression '*=' expression                                             # expressionAssignmentMult
-           | expression '-=' expression                                             # expressionAssignmentMinus
-           | expression '+=' expression                                             # expressionAssignmentPlus
-           | ID ':=' expression                                                     # expressionVariableInitImplicit
-           | expression '=' expression                                              # expressionAssignment
-           | expression (',' expression )+ '=' expression                           # expressionAssignmentList
+expression : BOOL_LITERAL                                                                  # literalBool
+           | INT_LITERAL                                                                   # literalInt
+           | REAL_LITERAL                                                                  # literalReal
+           | STRING_LITERAL                                                                # literalString
+           | STRING_LITERAL_SINGLE                                                         # literalString
+           | ID '('(expression (',' expression )*)? ')'                                    # functionCall
+           | expression '.' ID '('(expression (',' expression )*)? ')'                     # methodCall
+           | ID                                                                            # varReference
+           | expression '[' expression ']'                                                 # varReferenceList
+           | expression '{' expression '}'                                                 # varReferenceMap
+           | expression '&&' expression                                                    # expressionLogicAnd
+           | expression '||' expression                                                    # expressionLogicOr
+           | expression '&' expression                                                     # expressionBitAnd
+           | expression '^' expression                                                     # expressionBitXor
+           | expression '|' expression                                                     # expressionBitOr
+           | ('++' | '--') expression                                                      # pre
+           | expression ('++' | '--')                                                      # post
+           | expression '!=' expression                                                    # expressionNe
+           | expression '==' expression                                                    # expressionEq
+           | expression '%' expression                                                     # expressionModulo
+           | expression '/' expression                                                     # expressionDivide
+           | expression '*' expression                                                     # expressionTimes
+           | expression '-' expression                                                     # expressionMinus
+           | expression '+' expression                                                     # expressionPlus
+           | expression '<' expression                                                     # expressionLt
+           | expression '>' expression                                                     # expressionGt
+           | expression '<=' expression                                                    # expressionLe
+           | expression '>=' expression                                                    # expressionGe
+           | '~' expression                                                                # expressionBitNegation
+           | '!' expression                                                                # expressionLogicNot
+           | '-' expression                                                                # expressionUnaryMinus
+           | '+' expression                                                                # expressionUnaryPlus
+           | '(' expression ')'                                                            # expressionParen
+           | expression '?' expression ':' expression                                      # expressionCond
+           |  expression '<-' expression                                                   # expressionDep
+           | '[' ']'                                                                       # literalListEmpty
+           | '[' expression (',' expression)* ']'                                          # literalList
+           | '{' '}'                                                                       # literalMapEmpty
+           | '{' expression '=>' expression (',' expression '=>' expression)* '}'          # literalMap
+           | SYS_LITERAL                                                                   # expressionSys
+           | TASK_LITERAL                                                                  # expressionTaskLiteral
+           | 'dep' ( '(' expression (',' expression)* ')' )? statement                     # expressionDep
+           | 'task' ( '(' expression (',' expression)* ')' )? statement                    # expressionTask
+           | ('par' | 'parallel') ( '(' expression (',' expression)* ')' )? statement      # expressionParallel
+           | expression '|=' expression                                                    # expressionAssignmentBitOr
+           | expression '&=' expression                                                    # expressionAssignmentBitAnd
+           | expression '/=' expression                                                    # expressionAssignmentDiv
+           | expression '*=' expression                                                    # expressionAssignmentMult
+           | expression '-=' expression                                                    # expressionAssignmentMinus
+           | expression '+=' expression                                                    # expressionAssignmentPlus
+           | ID ':=' expression                                                            # expressionVariableInitImplicit
+           | '(' expression (',' expression )+ ')' '=' expression                          # expressionAssignmentList
+           | expression '=' expression                                                     # expressionAssignment
            ;
 
 expressionList : expression ( ',' expression )* ;
