@@ -1,6 +1,10 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import java.io.File;
+
 import org.junit.Test;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Quick test cases when creating a new feature...
@@ -11,23 +15,31 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test35() {
-		runAndCheck("test/run_35.bds", "exitStat", "1");
-	}
+	public void test06() {
+		// Remove old entries
+		String prefix = "test/graph_06";
+		File txt = new File(prefix + ".txt");
+		File csv = new File(prefix + ".csv");
+		File xml = new File(prefix + ".xml");
+		txt.delete();
+		csv.delete();
+		xml.delete();
 
-	@Test
-	public void test36() {
-		runAndCheck("test/run_36.bds", "s", "before");
-	}
+		// Create file
+		Gpr.toFile(prefix + ".txt", "TEST");
 
-	@Test
-	public void test84() {
-		runAndCheck("test/run_84.bds", "taskOk", "false");
-	}
+		// Run pipeline first
+		System.out.println("Run first time:");
+		String out = runAndCheckStdout(prefix + ".bds", "copying to csv\ncopying to xml");
+		System.out.println(out);
 
-	@Test
-	public void test91() {
-		runAndCheck("test/run_91.bds", "ok", "false");
+		// Remove CSV file
+		csv.delete();
+
+		// Run pipeline again
+		System.out.println("Run second time:");
+		out = runAndCheckStdout(prefix + ".bds", "copying to csv\ncopying to xml");
+		System.out.println(out);
 	}
 
 }

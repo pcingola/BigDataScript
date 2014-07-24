@@ -764,12 +764,6 @@ public class BigDataScript {
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
 
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
 		config.kill(); // Kill 'tail' and 'monitor' threads
 
 		return exitValue;
