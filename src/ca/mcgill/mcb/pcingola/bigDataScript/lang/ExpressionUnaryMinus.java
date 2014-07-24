@@ -2,20 +2,21 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A arithmetic negation
- * 
+ *
  * @author pcingola
  */
 public class ExpressionUnaryMinus extends ExpressionUnary {
 
 	public ExpressionUnaryMinus(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+		op = "-";
 	}
 
 	/**

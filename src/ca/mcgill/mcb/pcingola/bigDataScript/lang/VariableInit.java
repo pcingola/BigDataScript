@@ -11,9 +11,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * Variable initialization
- * E.g.: 
+ * E.g.:
  * 			i = 3
- * 
+ *
  * @author pcingola
  */
 public class VariableInit extends BigDataScriptNode {
@@ -63,7 +63,7 @@ public class VariableInit extends BigDataScriptNode {
 	}
 
 	/**
-	 * Run 
+	 * Run
 	 */
 	@Override
 	protected RunState runStep(BigDataScriptThread csThread) {

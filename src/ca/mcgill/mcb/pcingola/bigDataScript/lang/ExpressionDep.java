@@ -207,7 +207,6 @@ public class ExpressionDep extends Expression {
 			if (e.isString()) ; // OK
 			else if (e.isList(Type.STRING)) ; //
 			else compilerMessages.add(e, "Expression should be string or string[]", MessageType.ERROR);
-
 	}
 
 }

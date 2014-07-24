@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * Variable declaration
- * 
+ *
  * @author pcingola
  */
 public class VarDeclaration extends Statement {
@@ -50,14 +50,14 @@ public class VarDeclaration extends Statement {
 
 		String classname = tree.getChild(0).getClass().getSimpleName();
 		if (classname.equals("VariableInitImplicitContext")) {
-			// Variable 'short' declaration 
+			// Variable 'short' declaration
 			// Format : varMame := initValue
 			// E.g.   : i := 2
 			implicit = true;
 			varInit = new VariableInit[1];
 			varInit[0] = (VariableInit) factory(tree, idx);
 		} else {
-			// Variable 'classic' declaration 
+			// Variable 'classic' declaration
 			// Format : type varMame = initValue
 			// E.g.   : int i = 2
 			implicit = false;
@@ -70,13 +70,13 @@ public class VarDeclaration extends Statement {
 			// Parse all VarInit nodes
 			for (int i = idx, j = 0; i < tree.getChildCount(); i++) {
 				varInit[j++] = (VariableInit) factory(tree, i);
-				i++; // ',' 
+				i++; // ','
 			}
 		}
 	}
 
 	/**
-	 * Run 
+	 * Run
 	 */
 	@Override
 	protected RunState runStep(BigDataScriptThread csThread) {
@@ -108,7 +108,7 @@ public class VarDeclaration extends Statement {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(type + " ");
+		if (type != null) sb.append(type + " ");
 		for (int i = 0; i < varInit.length; i++) {
 			sb.append(varInit[i]);
 			if (i < varInit.length - 1) sb.append(",");

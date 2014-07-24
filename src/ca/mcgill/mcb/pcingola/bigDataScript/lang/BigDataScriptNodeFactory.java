@@ -26,7 +26,6 @@ public class BigDataScriptNodeFactory {
 
 	/**
 	 * Get singleton
-	 * @return
 	 */
 	public static BigDataScriptNodeFactory get() {
 		return bigDataScriptNodeFactory;
@@ -41,8 +40,6 @@ public class BigDataScriptNodeFactory {
 
 	/**
 	 * Transform to a class name
-	 * @param nodeType
-	 * @return
 	 */
 	public String className(ParseTree tree) {
 		String className = tree.getClass().getSimpleName();
@@ -54,9 +51,6 @@ public class BigDataScriptNodeFactory {
 
 	/**
 	 * Create BigDataScriptNodes
-	 * @param parent
-	 * @param tree
-	 * @return
 	 */
 	public final BigDataScriptNode factory(BigDataScriptNode parent, ParseTree tree) {
 		if (tree == null) return null;
@@ -83,9 +77,6 @@ public class BigDataScriptNodeFactory {
 
 	/**
 	 * Create BigDataScriptNodes
-	 * @param parent
-	 * @param tree
-	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public BigDataScriptNode factory(String className, BigDataScriptNode parent, ParseTree tree) {
@@ -162,7 +153,6 @@ public class BigDataScriptNodeFactory {
 
 	/**
 	 * Get node by ID number
-	 * @param nodeId
 	 * @return Node or null if not found
 	 */
 	public synchronized BigDataScriptNode getNode(int nodeId) {
@@ -171,7 +161,6 @@ public class BigDataScriptNodeFactory {
 
 	/**
 	 * Get all nodes
-	 * @return
 	 */
 	public synchronized Collection<BigDataScriptNode> getNodes() {
 		return nodesById.values();
@@ -190,7 +179,6 @@ public class BigDataScriptNodeFactory {
 
 	/**
 	 * Is this node just a container that can be skipped?
-	 * @param tree
 	 * @return Node number to use in the child or negative if 'tree' node should not be skipped
 	 */
 	int isSkip(ParseTree tree) {
@@ -202,8 +190,7 @@ public class BigDataScriptNodeFactory {
 	}
 
 	/**
-	 * Get this calss' package name
-	 * @return
+	 * Get this class' package name
 	 */
 	public String packageName() {
 		if (packageName != null) return packageName;
@@ -216,8 +203,6 @@ public class BigDataScriptNodeFactory {
 
 	/**
 	 * Get the 'real node' corresponding to this 'fake node' (this is used during serialization)
-	 * @param fakeNode
-	 * @return
 	 */
 	public BigDataScriptNode realNode(BigDataScriptNode fakeNode) {
 		if (fakeNode == null) return null; // Nothing to do

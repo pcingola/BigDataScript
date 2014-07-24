@@ -6,13 +6,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 
 /**
  * A arithmetic 'plus'
- * 
+ *
  * @author pcingola
  */
 public class ExpressionUnaryPlus extends ExpressionUnaryMinus {
 
 	public ExpressionUnaryPlus(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+		op = "+";
 	}
 
 	/**

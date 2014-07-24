@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * Expression: A statement that returns a value
- * 
+ *
  * @author pcingola
  */
 public class Expression extends Statement {
@@ -24,8 +24,6 @@ public class Expression extends Statement {
 
 	/**
 	 * Can returnType be casted to bool?
-	 * @param expr
-	 * @param compilerMessages
 	 */
 	protected boolean canCastBool() {
 		return ((returnType != null) && returnType.canCast(Type.BOOL));
@@ -33,8 +31,6 @@ public class Expression extends Statement {
 
 	/**
 	 * Can returnType be casted to int?
-	 * @param expr
-	 * @param compilerMessages
 	 */
 	protected boolean canCastInt() {
 		return ((returnType != null) && returnType.canCast(Type.INT));
@@ -42,8 +38,6 @@ public class Expression extends Statement {
 
 	/**
 	 * Can returnType be casted to real?
-	 * @param expr
-	 * @param compilerMessages
 	 */
 	protected boolean canCastReal() {
 		return ((returnType != null) && returnType.canCast(Type.REAL));
@@ -52,18 +46,14 @@ public class Expression extends Statement {
 	/**
 	 * Check that this expression can be casted to bool
 	 * Add a compile error otherwise
-	 * @param expr
-	 * @param compilerMessages
 	 */
 	protected void checkCanCastBool(CompilerMessages compilerMessages) {
 		if ((returnType != null) && !returnType.canCast(Type.BOOL)) compilerMessages.add(this, "Cannot cast " + returnType + " to bool", MessageType.ERROR);
 	}
 
 	/**
-	 * Check that this expression can be casted to int 
+	 * Check that this expression can be casted to int
 	 * Add a compile error otherwise
-	 * @param expr
-	 * @param compilerMessages
 	 */
 	protected void checkCanCastInt(CompilerMessages compilerMessages) {
 		if ((returnType != null) && !returnType.canCast(Type.INT)) compilerMessages.add(this, "Cannot cast " + returnType + " to int", MessageType.ERROR);
@@ -72,8 +62,6 @@ public class Expression extends Statement {
 	/**
 	 * Check that this expression can be casted to either int or real
 	 * Add a compile error otherwise
-	 * @param expr
-	 * @param compilerMessages
 	 */
 	protected void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
 		if ((returnType != null) //
@@ -85,53 +73,44 @@ public class Expression extends Statement {
 	/**
 	 * Evaluate an expression, return result
 	 */
-	public Object eval(BigDataScriptThread csThread) {
+	public Object eval(BigDataScriptThread bdsThread) {
 		throw new RuntimeException("Unplemented method for class " + getClass().getSimpleName());
 	}
 
 	/**
 	 * Evaluate an expression as an 'bool'
-	 * @param scope
-	 * @return
 	 */
-	public boolean evalBool(BigDataScriptThread csThread) {
-		Object ret = eval(csThread);
+	public boolean evalBool(BigDataScriptThread bdsThread) {
+		Object ret = eval(bdsThread);
 		return (Boolean) Type.BOOL.cast(ret);
 	}
 
 	/**
 	 * Evaluate an expression as an 'int'
-	 * @param scope
-	 * @return
 	 */
-	public long evalInt(BigDataScriptThread csThread) {
-		Object ret = eval(csThread);
+	public long evalInt(BigDataScriptThread bdsThread) {
+		Object ret = eval(bdsThread);
 		return (Long) Type.INT.cast(ret);
 	}
 
 	/**
 	 * Evaluate an expression as an 'real'
-	 * @param scope
-	 * @return
 	 */
-	public double evalReal(BigDataScriptThread csThread) {
-		Object ret = eval(csThread);
+	public double evalReal(BigDataScriptThread bdsThread) {
+		Object ret = eval(bdsThread);
 		return (Double) Type.REAL.cast(ret);
 	}
 
 	/**
 	 * Evaluate an expression as an 'bool'
-	 * @param scope
-	 * @return
 	 */
-	public String evalString(BigDataScriptThread csThread) {
-		Object ret = eval(csThread);
+	public String evalString(BigDataScriptThread bdsThread) {
+		Object ret = eval(bdsThread);
 		return (String) Type.STRING.cast(ret);
 	}
 
 	/**
 	 * Which type does this expression return?
-	 * @return
 	 */
 	public Type getReturnType() {
 		return returnType;
@@ -139,7 +118,6 @@ public class Expression extends Statement {
 
 	/**
 	 * Is return type bool?
-	 * @return
 	 */
 	protected boolean isBool() {
 		return (returnType != null) && returnType.isBool();
@@ -147,7 +125,6 @@ public class Expression extends Statement {
 
 	/**
 	 * Is return type int?
-	 * @return
 	 */
 	protected boolean isInt() {
 		return (returnType != null) && returnType.isInt();
@@ -171,7 +148,6 @@ public class Expression extends Statement {
 
 	/**
 	 * Is return type real?
-	 * @return
 	 */
 	protected boolean isReal() {
 		return (returnType != null) && returnType.isReal();
@@ -179,7 +155,6 @@ public class Expression extends Statement {
 
 	/**
 	 * Do all subordinate expressions have a non-null return type?
-	 * @return
 	 */
 	protected boolean isReturnTypesNotNull() {
 		throw new RuntimeException("This method should never be invoked! Class: " + getClass().getSimpleName());
@@ -187,7 +162,6 @@ public class Expression extends Statement {
 
 	/**
 	 * Is return type string?
-	 * @return
 	 */
 	protected boolean isString() {
 		return (returnType != null) && returnType.isString();
@@ -195,9 +169,6 @@ public class Expression extends Statement {
 
 	/**
 	 * Calculate return type and assign it to 'returnType' variable.
-	 * 
-	 * @param scope
-	 * @return
 	 */
 	public Type returnType(Scope scope) {
 		throw new RuntimeException("This method should never be invoked! Missing implementation for class " + getClass().getSimpleName());
@@ -207,12 +178,12 @@ public class Expression extends Statement {
 	 * Run an expression: I.e. evaluate the expression
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected RunState runStep(BigDataScriptThread bdsThread) {
 		try {
-			eval(csThread);
+			eval(bdsThread);
 		} catch (Throwable t) {
 			if (Config.get().isDebug()) t.printStackTrace();
-			csThread.fatalError(this, t);
+			bdsThread.fatalError(this, t);
 			return RunState.FATAL_ERROR;
 		}
 		return RunState.OK;
@@ -231,10 +202,6 @@ public class Expression extends Statement {
 	/**
 	 * Type checking.
 	 * This is invoked once we made sure all return types are non null (so we don't have to check for null every time)
-	 * 
-	 * @param scope
-	 * @param compilerMessages
-	 * @return
 	 */
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		throw new RuntimeException("This method should never be invoked!");

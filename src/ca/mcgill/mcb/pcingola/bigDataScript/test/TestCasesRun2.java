@@ -5,12 +5,14 @@ import java.util.HashMap;
 import org.junit.Test;
 
 /**
- * Quick test cases when creating a new feature...
+ * Test cases that require BDS code execution and check results
+ *
+ * Note: These test cases requires that the BDS code is correctly parsed, compiled and executes.
  *
  * @author pcingola
  *
  */
-public class TestCasesZzz extends TestCasesBase {
+public class TestCasesRun2 extends TestCasesBase {
 
 	@Test
 	public void test100() {

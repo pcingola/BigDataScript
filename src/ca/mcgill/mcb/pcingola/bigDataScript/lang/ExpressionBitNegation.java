@@ -8,13 +8,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A bitwise negation
- * 
+ *
  * @author pcingola
  */
 public class ExpressionBitNegation extends ExpressionUnary {
 
 	public ExpressionBitNegation(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+		op = "~";
 	}
 
 	/**

@@ -7,14 +7,15 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
- * Logic negation 
- * 
+ * Logic negation
+ *
  * @author pcingola
  */
 public class ExpressionLogicNot extends ExpressionUnary {
 
 	public ExpressionLogicNot(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+		op = "!";
 	}
 
 	/**

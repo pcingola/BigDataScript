@@ -8,9 +8,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A list of expression
- * 
+ *
  * An expression list returns the type of the last expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionList extends Expression {
@@ -42,12 +42,8 @@ public class ExpressionList extends Expression {
 	}
 
 	/**
-	 * Parse child nodes between child[offset] and child[max] 
+	 * Parse child nodes between child[offset] and child[max]
 	 * Note:  child[max] is NOT parsed
-	 * 
-	 * @param tree
-	 * @param offset
-	 * @param max
 	 */
 	protected void parse(ParseTree tree, int offset, int max) {
 		int num = (max - offset + 1) / 2; // Comma separated list of expressions
@@ -73,12 +69,6 @@ public class ExpressionList extends Expression {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		for (Expression expr : expressions)
-			expr.typeCheck(scope, compilerMessages);
-	}
-
-	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
@@ -90,5 +80,11 @@ public class ExpressionList extends Expression {
 		sb.append(" )");
 
 		return sb.toString();
+	}
+
+	@Override
+	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+		for (Expression expr : expressions)
+			expr.typeCheck(scope, compilerMessages);
 	}
 }

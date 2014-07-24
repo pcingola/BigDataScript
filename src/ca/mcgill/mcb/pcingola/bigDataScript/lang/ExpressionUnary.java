@@ -7,12 +7,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * An unary expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionUnary extends Expression {
 
 	Expression expr;
+	protected String op;
 
 	public ExpressionUnary(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -38,6 +39,11 @@ public class ExpressionUnary extends Expression {
 
 		returnType = expr.returnType(scope);
 		return returnType;
+	}
+
+	@Override
+	public String toString() {
+		return op + " " + expr.toString();
 	}
 
 	@Override
