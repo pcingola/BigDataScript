@@ -46,6 +46,7 @@ public class CmdLocal extends Cmd {
 	protected void execCmd() throws Exception {
 		// Wait for the process to finish and store exit value
 		exitValue = process.waitFor();
+		Gpr.debug("Got exit code: " + exitValue);
 	}
 
 	@Override

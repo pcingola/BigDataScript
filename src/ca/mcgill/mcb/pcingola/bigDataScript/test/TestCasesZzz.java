@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import java.util.HashMap;
-
 import org.junit.Test;
 
 /**
@@ -13,13 +11,23 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test101() {
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
-		expectedValues.put("a", 1);
-		expectedValues.put("b", 3);
-		expectedValues.put("c", 5);
-
-		runAndCheckMultiple("test/run_101.bds", expectedValues);
+	public void test35() {
+		runAndCheck("test/run_35.bds", "exitStat", "1");
 	}
+
+	//	@Test
+	//	public void test36() {
+	//		runAndCheck("test/run_36.bds", "s", "before");
+	//	}
+	//
+	//	@Test
+	//	public void test84() {
+	//		runAndCheck("test/run_84.bds", "taskOk", "false");
+	//	}
+	//
+	//	@Test
+	//	public void test91() {
+	//		runAndCheck("test/run_91.bds", "ok", "false");
+	//	}
 
 }

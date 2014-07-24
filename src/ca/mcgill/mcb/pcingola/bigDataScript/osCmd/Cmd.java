@@ -7,6 +7,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.executioner.NotifyTaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.PidParser;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -52,7 +53,7 @@ public abstract class Cmd extends Thread {
 
 	/**
 	 * Execute command
-	 * @return
+	 * @return exitCode
 	 */
 	public int exec() {
 		// Prepare to execute task
@@ -98,6 +99,7 @@ public abstract class Cmd extends Thread {
 	protected void execDone() {
 		stateDone();
 		if (task != null) {
+			Gpr.debug("Setting exit value: " + exitValue);
 			task.setExitValue(exitValue);
 			if (notifyTaskState != null) notifyTaskState.taskFinished(task, null); // Notify end of execution
 		}

@@ -544,6 +544,7 @@ public class Task implements BigDataScriptSerialize {
 	}
 
 	public synchronized void setExitValue(int exitValue) {
+		Gpr.debug("Setting exit value: " + exitValue);
 		this.exitValue = exitValue;
 	}
 
