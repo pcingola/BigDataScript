@@ -47,6 +47,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitStatementInclude(@NotNull BigDataScriptParser.StatementIncludeContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionAssignmentList(@NotNull BigDataScriptParser.ExpressionAssignmentListContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#varReferenceMap}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

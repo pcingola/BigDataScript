@@ -114,6 +114,7 @@ expression : BOOL_LITERAL                                                       
            | expression '+=' expression                                             # expressionAssignmentPlus
            | ID ':=' expression                                                     # expressionVariableInitImplicit
            | expression '=' expression                                              # expressionAssignment
+           | expression (',' expression )+ '=' expression                           # expressionAssignmentList
            ;
 
 expressionList : expression ( ',' expression )* ;

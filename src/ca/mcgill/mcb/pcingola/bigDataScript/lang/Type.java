@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 
 /**
  * Variable type
- * 
+ *
  * @author pcingola
  */
 public class Type extends BigDataScriptNode implements Comparable<Type> {
@@ -46,8 +46,6 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 
 	/**
 	 * Get a type
-	 * @param primitiveType
-	 * @return
 	 */
 	public static Type get(PrimitiveType primitiveType) {
 		// Get type from hash
@@ -67,7 +65,6 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	/**
 	 * Get a primitive type
 	 * @param primitiveType as a string
-	 * @return
 	 */
 	public static Type get(String primitiveType) {
 		return get(PrimitiveType.valueOf(primitiveType));
@@ -75,7 +72,6 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 
 	/**
 	 * Get all available types
-	 * @return
 	 */
 	public static Collection<Type> getAll() {
 		return types.values();
@@ -115,15 +111,12 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 
 	/**
 	 * Can we cast "this type" to "type"?
-	 * 
+	 *
 	 * Allowed (automatic) conversions:
 	 * 	bool -> int, real
 	 * 	int -> real
 	 *	Anything -> string
-	 *	string -> list (list of characters) 	
-	 * 
-	 * @param type
-	 * @return
+	 *	string -> list (list of characters)
 	 */
 	public boolean canCast(Type type) {
 		if (equals(type)) return true; // Same class? OK
@@ -146,8 +139,6 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 
 	/**
 	 * Can we cast an object to 'this' type?
-	 * @param obj
-	 * @return
 	 */
 	public boolean canCastObject(Object obj) {
 		if (isBool()) return (obj instanceof Boolean);
@@ -193,11 +184,8 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 		throw new RuntimeException("Cannot convert '" + (obj == null ? "null" : obj.getClass().getSimpleName()) + "' to " + this);
 	}
 
-	/** 
+	/**
 	 * Compare types
-	 * 
-	 * @param type
-	 * @return
 	 */
 	@Override
 	public int compareTo(Type type) {

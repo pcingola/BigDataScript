@@ -48,7 +48,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * This should only be called from the outside if tree not passed in the constructor
-	 * @param tree
 	 */
 	protected void doParse(ParseTree tree) {
 		if (tree != null) {
@@ -68,9 +67,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Create a BigDataScriptNode
-	 * @param tree
-	 * @param childNum
-	 * @return
 	 */
 	final BigDataScriptNode factory(ParseTree tree, int childNum) {
 		ParseTree child = childNum >= 0 ? tree.getChild(childNum) : tree;
@@ -79,10 +75,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Finds a terminal node in the tree (by name)
-	 * @param tree
-	 * @param name
-	 * @param start
-	 * @return
 	 */
 	protected int findIndex(ParseTree tree, String name, int start) {
 		for (int i = start; i < tree.getChildCount(); i++)
@@ -149,8 +141,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Find a parent of type 'clazz'
-	 * @param clazz
-	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
 	protected BigDataScriptNode findParent(Class clazz) {
@@ -161,9 +151,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Find any parent node 'clazz' before any node 'stopAtClass'
-	 * @param clazz
-	 * @param stopAtClass
-	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
 	protected BigDataScriptNode findParent(Class clazz, Class stopAtClass) {
@@ -183,7 +170,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Get all fields from this class
-	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
 	ArrayList<Field> getAllClassFields(boolean addParent, boolean addNode, boolean addPrimitive, boolean addClass, boolean addArray, boolean addStatic, boolean addPrivate) {

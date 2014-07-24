@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * Expression 'Literal'
- * 
+ *
  * @author pcingola
  */
 public class LiteralList extends Literal {
@@ -93,7 +93,17 @@ public class LiteralList extends Literal {
 
 	@Override
 	public String toString() {
-		return "" + values;
+		StringBuilder sb = new StringBuilder();
+		sb.append("[ ");
+
+		for (int i = 0; i < values.length; i++) {
+			if (i > 0) sb.append(" , ");
+			sb.append(values[i]);
+		}
+
+		sb.append(" ]");
+
+		return sb.toString();
 	}
 
 	@Override

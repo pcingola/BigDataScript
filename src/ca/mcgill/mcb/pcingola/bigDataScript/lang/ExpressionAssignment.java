@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * Expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionAssignment extends ExpressionBinary {
@@ -22,19 +22,19 @@ public class ExpressionAssignment extends ExpressionBinary {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public Object eval(BigDataScriptThread bdsThread) {
 
 		// Get value
-		Object value = right.eval(csThread);
+		Object value = right.eval(bdsThread);
 
 		if (left instanceof VarReference) {
-			((VarReference) left).setValue(csThread, value);;
+			((VarReference) left).setValue(bdsThread, value);;
 		} else if (left instanceof VarReferenceList) {
 			VarReferenceList listIndex = (VarReferenceList) left;
-			listIndex.setValue(csThread, value);
+			listIndex.setValue(bdsThread, value);
 		} else if (left instanceof VarReferenceMap) {
 			VarReferenceMap listIndex = (VarReferenceMap) left;
-			listIndex.setValue(csThread, value);
+			listIndex.setValue(bdsThread, value);
 		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 
 		return value;
@@ -43,11 +43,6 @@ public class ExpressionAssignment extends ExpressionBinary {
 	@Override
 	protected String op() {
 		return "=";
-	}
-
-	@Override
-	protected void parse(ParseTree tree) {
-		super.parse(tree);
 	}
 
 	@Override

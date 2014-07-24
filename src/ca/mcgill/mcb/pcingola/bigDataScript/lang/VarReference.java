@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * A variable reference
- * 
+ *
  * @author pcingola
  */
 public class VarReference extends Reference {
@@ -25,15 +25,13 @@ public class VarReference extends Reference {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		ScopeSymbol ss = csThread.getScope().getSymbol(name);
+	public Object eval(BigDataScriptThread bdsThread) {
+		ScopeSymbol ss = bdsThread.getScope().getSymbol(name);
 		return ss.getValue();
 	}
 
 	/**
 	 * Get symbol from scope
-	 * @param scope
-	 * @return
 	 */
 	@Override
 	public ScopeSymbol getScopeSymbol(Scope scope) {
@@ -68,12 +66,10 @@ public class VarReference extends Reference {
 
 	/**
 	 * Set value to scope symbol
-	 * @param csThread
-	 * @param value
 	 */
 	@Override
-	public void setValue(BigDataScriptThread csThread, Object value) {
-		ScopeSymbol ssym = getScopeSymbol(csThread.getScope()); // Get scope symbol
+	public void setValue(BigDataScriptThread bdsThread, Object value) {
+		ScopeSymbol ssym = getScopeSymbol(bdsThread.getScope()); // Get scope symbol
 		value = getReturnType().cast(value); // Cast to destination type
 		ssym.setValue(value); // Assign
 	}
