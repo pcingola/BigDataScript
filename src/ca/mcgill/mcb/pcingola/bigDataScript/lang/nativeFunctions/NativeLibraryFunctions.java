@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Loads all classes used for native functions library
- * 
+ *
  * @author pcingola
  *
  */
@@ -21,6 +21,9 @@ public class NativeLibraryFunctions {
 			, FunctionNativeRand.class //
 			, FunctionNativeRandInt.class //
 			, FunctionNativeRandIntRange.class //
+			, FunctionNativeRangeInt.class //
+			, FunctionNativeRangeIntStep.class //
+			, FunctionNativeRangeReal.class //
 			, FunctionNativeSleep.class //
 			, FunctionNativeToIntFromBool.class //
 			, FunctionNativeToIntFromReal.class //

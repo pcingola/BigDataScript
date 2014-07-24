@@ -44,4 +44,14 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheckMultiple("test/run_102.bds", expectedValues);
 	}
 
+	@Test
+	public void test103() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("is", "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
+		expectedValues.put("is2", "[1, 3, 5, 7, 9]");
+		expectedValues.put("rs", "[1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]");
+
+		runAndCheckMultiple("test/run_103.bds", expectedValues);
+	}
+
 }
