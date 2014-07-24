@@ -108,6 +108,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionMinus(@NotNull BigDataScriptParser.ExpressionMinusContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionDepOperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionDepOperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#varReferenceList}.
 	 * @param ctx the parse tree
 	 */

@@ -134,6 +134,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterVarReferenceList(@NotNull BigDataScriptParser.VarReferenceListContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -1,4 +1,9 @@
 #!/usr/bin/env bds
 
-print("Hi\n")
+dep ( "test/graph_06.csv" <- "test/graph_06.txt" ) {
+	sys cp test/graph_06.txt test/graph_06.csv; echo "copying to csv"
+}
 
+# task ( "test/graph_06.xml" <- "test/graph_06.csv") {
+# 	sys cp test/graph_06.csv test/graph_06.xml; echo "copying to xml"
+# }

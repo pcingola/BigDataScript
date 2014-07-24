@@ -1,4 +1,5 @@
 // Generated from BigDataScript.g4 by ANTLR 4.2.2
+package ca.mcgill.mcb.pcingola.bigDataScript.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -127,6 +128,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpressionMinus(@NotNull BigDataScriptParser.ExpressionMinusContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

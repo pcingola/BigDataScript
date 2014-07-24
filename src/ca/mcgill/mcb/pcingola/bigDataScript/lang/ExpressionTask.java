@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * A 'task' statement (to execute a command line in a node)
+ * A 'task' expression
  *
  * @author pcingola
  */
@@ -205,6 +205,11 @@ public class ExpressionTask extends ExpressionWithScope {
 				) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "task " + (taskOptions != null ? taskOptions : "") + " " + statement;
 	}
 
 	@Override

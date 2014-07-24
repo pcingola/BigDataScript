@@ -1,4 +1,5 @@
 // Generated from BigDataScript.g4 by ANTLR 4.2.2
+package ca.mcgill.mcb.pcingola.bigDataScript.antlr;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -105,6 +106,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionMinus(@NotNull BigDataScriptParser.ExpressionMinusContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionDepOperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionDepOperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#varReferenceList}.

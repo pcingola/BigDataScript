@@ -20,7 +20,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
 /**
  * An 'exec' expression (to execute a command line in a local computer, return STDOUT)
- * 
+ *
  * @author pcingola
  */
 public class ExpressionSys extends Expression {
@@ -37,11 +37,6 @@ public class ExpressionSys extends Expression {
 
 	/**
 	 * Create a new sys command
-	 * @param parent
-	 * @param commands
-	 * @param lineNum
-	 * @param charPosInLine
-	 * @return
 	 */
 	public static ExpressionSys get(BigDataScriptNode parent, String commands, int lineNum, int charPosInLine) {
 		ExpressionSys sys = new ExpressionSys(parent, null);
@@ -56,7 +51,6 @@ public class ExpressionSys extends Expression {
 
 	/**
 	 * Get a sys ID
-	 * @return
 	 */
 	private static int nextId() {
 		return sysId++;
@@ -70,28 +64,28 @@ public class ExpressionSys extends Expression {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public Object eval(BigDataScriptThread bdsThread) {
 		// Run like a statement and return task ID
-		run(csThread);
+		run(bdsThread);
 		return (output != null ? output : "");
 	}
 
 	/**
 	 * Create an exec ID
-	 * @param csThread
+	 * @param bdsThread
 	 * @return
 	 */
-	public String execId(String name, BigDataScriptThread csThread) {
-		execId = csThread.getBigDataScriptThreadId() + "/" + name + ".line_" + getLineNum() + ".id_" + nextId();
+	public String execId(String name, BigDataScriptThread bdsThread) {
+		execId = bdsThread.getBigDataScriptThreadId() + "/" + name + ".line_" + getLineNum() + ".id_" + nextId();
 		return execId;
 	}
 
-	public String getCommands(BigDataScriptThread csThread) {
+	public String getCommands(BigDataScriptThread bdsThread) {
 		// No variable interpolation? => Literal
 		if (variables == null) return commands;
 
 		// Variable interpolation
-		return csThread.getScope().interpolate(strings, variables);
+		return bdsThread.getScope().interpolate(strings, variables);
 	}
 
 	public String getSysFileName() {
@@ -108,7 +102,6 @@ public class ExpressionSys extends Expression {
 
 	/**
 	 * Interpolate variables
-	 * @param value
 	 */
 	void interpolateVars(String value) {
 		Tuple<List<String>, List<String>> interpolated = GprString.findVariables(value);
@@ -121,7 +114,7 @@ public class ExpressionSys extends Expression {
 	@Override
 	protected void parse(ParseTree tree) {
 		commands = tree.getChild(0).getText();
-		commands = commands.substring("sys".length()).trim(); // Remove leading 'exec' part and trim spaces
+		commands = commands.substring("sys".length()).trim(); // Remove leading 'sys' part and trim spaces
 		interpolateVars(commands); // Find interpolated variables
 	}
 
@@ -135,11 +128,11 @@ public class ExpressionSys extends Expression {
 	}
 
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		if (csThread.isCheckpointRecover()) return RunState.CHECKPOINT_RECOVER;
+	protected RunState runStep(BigDataScriptThread bdsThread) {
+		if (bdsThread.isCheckpointRecover()) return RunState.CHECKPOINT_RECOVER;
 
 		// Get an ID
-		execId = execId("exec", csThread);
+		execId = execId("exec", bdsThread);
 
 		// EXEC expressions are always executed locally AND immediately
 		LinkedList<String> args = new LinkedList<String>();
@@ -147,24 +140,24 @@ public class ExpressionSys extends Expression {
 			args.add(arg);
 
 		// Interpolated variables
-		String cmds = getCommands(csThread);
+		String cmds = getCommands(bdsThread);
 		args.add(cmds);
 
 		// Run command line
 		ExecResult execResult = Exec.exec(args, false);
 
-		// Error running process? 
+		// Error running process?
 		int exitValue = execResult.exitValue;
 		if (exitValue != 0) {
 			// Can this execution fail?
-			boolean canFail = csThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL);
+			boolean canFail = bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL);
 
 			// Execution failed on a 'sys' command that cannot fail. Save checkpoint and exit
 			if (!canFail) {
-				csThread.fatalError(this, "Exec failed." //
+				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-				);
+						);
 				return RunState.FATAL_ERROR;
 			}
 		}
@@ -182,6 +175,11 @@ public class ExpressionSys extends Expression {
 	}
 
 	@Override
+	public String toString() {
+		return "sys " + commands;
+	}
+
+	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Do we have any interpolated variables? Make sure they are in scope
 		if (variables != null) //
@@ -189,5 +187,4 @@ public class ExpressionSys extends Expression {
 				if (!varName.isEmpty() && !scope.hasSymbol(varName, false)) //
 					compilerMessages.add(this, "Symbol '" + varName + "' cannot be resolved", MessageType.ERROR);
 	}
-
 }

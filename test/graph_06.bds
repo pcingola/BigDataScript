@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-task ( "test/graph_06.csv" <- "test/graph_06.txt" ) {
+dep ( "test/graph_06.csv" <- "test/graph_06.txt" ) {
 	sys cp test/graph_06.txt test/graph_06.csv; echo "copying to csv"
 }
 

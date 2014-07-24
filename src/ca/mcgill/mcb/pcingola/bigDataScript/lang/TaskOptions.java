@@ -42,9 +42,9 @@ public class TaskOptions extends ExpressionList {
 			// All boolean expressions must be "true"
 			if (expr instanceof ExpressionAssignment) ; // Nothing to do
 			else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
-			else if (expr instanceof ExpressionDep) {
+			else if (expr instanceof ExpressionDepOperator) {
 				// Calculate input & output files
-				ExpressionDep dep = ((ExpressionDep) expr);
+				ExpressionDepOperator dep = ((ExpressionDepOperator) expr);
 				outputFiles.addAll(dep.getOutputFiles());
 				inputFiles.addAll(dep.getInputFiles());
 

@@ -98,14 +98,14 @@ expression : BOOL_LITERAL                                                       
            | '+' expression                                                                # expressionUnaryPlus
            | '(' expression ')'                                                            # expressionParen
            | expression '?' expression ':' expression                                      # expressionCond
-           |  expression '<-' expression                                                   # expressionDep
+           |  expression '<-' expression                                                   # expressionDepOperator
            | '[' ']'                                                                       # literalListEmpty
            | '[' expression (',' expression)* ']'                                          # literalList
            | '{' '}'                                                                       # literalMapEmpty
            | '{' expression '=>' expression (',' expression '=>' expression)* '}'          # literalMap
            | SYS_LITERAL                                                                   # expressionSys
            | TASK_LITERAL                                                                  # expressionTaskLiteral
-           | 'dep' ( '(' expression (',' expression)* ')' )? statement                     # expressionDep
+           | 'dep'    '(' expression (',' expression)* ')'    statement                    # expressionDep
            | 'task' ( '(' expression (',' expression)* ')' )? statement                    # expressionTask
            | ('par' | 'parallel') ( '(' expression (',' expression)* ')' )? statement      # expressionParallel
            | expression '|=' expression                                                    # expressionAssignmentBitOr
