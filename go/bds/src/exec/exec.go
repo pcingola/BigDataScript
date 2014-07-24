@@ -161,7 +161,7 @@ func NewBdsExec(args []string) *BdsExec {
 */
 func (be *BdsExec) ExecuteCommandArgs() int {
 	if DEBUG {
-		log.Print("Debug: executeCommandArgs\n")
+		log.Print("Debug, ExecuteCommandArgs\n")
 	}
 
 	minArgs := 6
@@ -204,7 +204,7 @@ func (be *BdsExec) ExecuteCommandArgs() int {
 	be.executeCommand()
 
 	if DEBUG {
-		log.Printf("Debug: Exit code:%d\n", be.exitCode)
+		log.Printf("Debug, ExecuteCommandArgs: Exit code %d\n", be.exitCode)
 	}
 
 	return be.exitCode
@@ -262,7 +262,11 @@ func (be *BdsExec) executeCommand() int {
 		log.Fatal(err)
 	}
 
-	return be.executeCommandTimeout(osSignal)
+	be.exitCode = be.executeCommandTimeout(osSignal)
+	if DEBUG {
+		log.Printf("Debug, executeCommand: Exit code %d\n", be.exitCode)
+	}
+	return be.exitCode
 }
 
 /*
@@ -292,13 +296,16 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 		case exitStr = <-exitCode:
 			kill = false
 			run = false
+			if DEBUG {
+				log.Printf("Debug, executeCommandTimeout: Execution finished (%s)\n", exitStr)
+			}
 
 		case <-time.After(time.Duration(be.timeSecs) * time.Second):
 			run = false
 			kill = true
 			exitStr = "Time out"
 			if DEBUG {
-				log.Printf("Debug: Timeout!\n")
+				log.Printf("Debug, executeCommandTimeout: Timeout!\n")
 			}
 
 		case sig := <-osSignal:
@@ -355,13 +362,13 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 */
 func execute(cmd *exec.Cmd, exitCode chan string) {
 	if DEBUG {
-		log.Printf("Debug: execute\n")
+		log.Printf("Debug, execute.\n")
 	}
 
 	// Wait for command to finish
 	if err := cmd.Wait(); err != nil {
 		if DEBUG {
-			log.Printf("Debug: execute, failed (%s)\n", err)
+			log.Printf("Debug, execute: Failed (%s)\n", err)
 		}
 
 		exitCode <- err.Error()
@@ -369,7 +376,7 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 	} 
 
 	if DEBUG {
-		log.Printf("Debug: execute, finished OK\n")
+		log.Printf("Debug, execute: Finished OK\n")
 	}
 
 	exitCode <- "0"
@@ -380,7 +387,7 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 */
 func (be *BdsExec) KillProcessGroup(pid int) {
 	if DEBUG {
-		log.Printf("Debug: killProcessGroup( %d )\n", pid)
+		log.Printf("Debug, killProcessGroup( %d )\n", pid)
 	}
 
 	syscall.Kill(-pid, syscall.SIGHUP)
@@ -390,7 +397,7 @@ func (be *BdsExec) KillProcessGroup(pid int) {
 // Blank lines, and lines beggining with # are ignored.
 func LoadConfig(filename string, dest map[string]string) {
 	if DEBUG {
-		log.Printf("Debug: LoadConfig(%s)\n", filename)
+		log.Printf("Debug, LoadConfig(%s)\n", filename)
 	}
 
 	re, _ := regexp.Compile("[#].*\\n|\\s+\\n|\\S+[=]|.*\n")
@@ -444,7 +451,7 @@ func LoadConfig(filename string, dest map[string]string) {
 */
 func (be *BdsExec) taskLoggerCleanUpAll() {
 	if DEBUG {
-		log.Printf("Debug: taskLoggerCleanUpAll\n")
+		log.Printf("Debug, taskLoggerCleanUpAll\n")
 	}
 
 	var (
@@ -469,7 +476,7 @@ func (be *BdsExec) taskLoggerCleanUpAll() {
 
 	// Read line by line
 	if DEBUG {
-		log.Printf("Debug: taskLoggerCleanUpAll. Parsing process pid file '%s'\n", be.taskLoggerFile)
+		log.Printf("Debug, taskLoggerCleanUpAll: Parsing process pid file '%s'\n", be.taskLoggerFile)
 	}
 	reader := bufio.NewReader(file)
 	for {
@@ -481,7 +488,7 @@ func (be *BdsExec) taskLoggerCleanUpAll() {
 		pid := recs[0]
 		addDel := recs[1]
 		if DEBUG {
-			log.Printf("Debug: taskLoggerCleanUpAll. \t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
+			log.Printf("Debug, taskLoggerCleanUpAll: \t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
 		}
 
 		// Add or remove from map

@@ -15,19 +15,19 @@ public class TestCasesZzz extends TestCasesBase {
 		runAndCheck("test/run_35.bds", "exitStat", "1");
 	}
 
-	//	@Test
-	//	public void test36() {
-	//		runAndCheck("test/run_36.bds", "s", "before");
-	//	}
-	//
-	//	@Test
-	//	public void test84() {
-	//		runAndCheck("test/run_84.bds", "taskOk", "false");
-	//	}
-	//
-	//	@Test
-	//	public void test91() {
-	//		runAndCheck("test/run_91.bds", "ok", "false");
-	//	}
+	@Test
+	public void test36() {
+		runAndCheck("test/run_36.bds", "s", "before");
+	}
+
+	@Test
+	public void test84() {
+		runAndCheck("test/run_84.bds", "taskOk", "false");
+	}
+
+	@Test
+	public void test91() {
+		runAndCheck("test/run_91.bds", "ok", "false");
+	}
 
 }
