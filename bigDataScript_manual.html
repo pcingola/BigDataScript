@@ -583,6 +583,11 @@ while( i < 10 ) i++
 					<li> <code> checkpoint expression?</code> Create a checkpoint. Optional expresion is a file name
 					<li> <code> return expression?</code> Return from a function. Optional expression is a return value.
 					<li> <code> expr ? exprTrue : exprFalse</code> Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'
+					<li> <code> type varName </code> Declare varaible 'var' as type 'type'
+					<li> <code> type varName = expr </code> Declare varaible 'var' as type 'type', evaluate expression and assign result to initialize 'var'
+					<li> <code> varName := expr </code> Declare varaible 'var', use type inference, evaluate expression 'expr' and assign result to initialize 'var'
+					<li> <code> var = expr </code> Evaluate expression 'expr' and assign result to 'var'
+					<li> <code> var1, var2, var3 = expr </code> Evaluate expression 'expr' (which must return a list) and assign results to 'var1', 'var2', etc. If the list size is less than the number of variables, variables are assigned default values (e.g. '0' for int). If the list has more values, they are ignored.
 				</ul>
 
 				<br>
