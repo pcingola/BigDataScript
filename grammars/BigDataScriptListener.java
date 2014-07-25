@@ -449,6 +449,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitLiteralBool(@NotNull BigDataScriptParser.LiteralBoolContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionGoal}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionGoal(@NotNull BigDataScriptParser.ExpressionGoalContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#expressionGoal}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionGoal(@NotNull BigDataScriptParser.ExpressionGoalContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#varDeclaration}.
 	 * @param ctx the parse tree
 	 */

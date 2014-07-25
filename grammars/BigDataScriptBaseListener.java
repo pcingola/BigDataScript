@@ -537,6 +537,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExpressionGoal(@NotNull BigDataScriptParser.ExpressionGoalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpressionGoal(@NotNull BigDataScriptParser.ExpressionGoalContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterVarDeclaration(@NotNull BigDataScriptParser.VarDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}

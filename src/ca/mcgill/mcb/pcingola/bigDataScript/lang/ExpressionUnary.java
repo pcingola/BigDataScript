@@ -31,7 +31,6 @@ public class ExpressionUnary extends Expression {
 
 	/**
 	 * Which type does this expression return?
-	 * @return
 	 */
 	@Override
 	public Type returnType(Scope scope) {

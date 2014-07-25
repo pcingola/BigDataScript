@@ -1,9 +1,15 @@
 #!/usr/bin/env bds
 
-dep ( "test/graph_06.csv" <- "test/graph_06.txt" ) {
-	sys cp test/graph_06.txt test/graph_06.csv; echo "copying to csv"
-}
+prefix := "test/graph_06"
+txt := prefix + ".txt"
+csv := prefix + ".csv"
+xml := prefix + ".xml"
 
-# task ( "test/graph_06.xml" <- "test/graph_06.csv") {
-# 	sys cp test/graph_06.csv test/graph_06.xml; echo "copying to xml"
-# }
+d1 := dep ( csv <- txt ) sys cp $txt $xml; echo "copying to csv"
+print("Dep1: $d1\n")
+
+d2 := dep ( xml <- csv ) sys cp $csv $xml; echo "copying to xml"
+print("Dep2: $d2\n")
+
+goal xml
+

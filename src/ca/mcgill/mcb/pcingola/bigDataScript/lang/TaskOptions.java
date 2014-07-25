@@ -18,6 +18,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 public class TaskOptions extends ExpressionList {
 
 	List<String> outputFiles, inputFiles;
+	boolean evalAll; // Force to evaluate all expressions
 
 	public TaskOptions(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -52,7 +53,7 @@ public class TaskOptions extends ExpressionList {
 			} else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean
 
 			// Break expression evaluation if we already know it will not be executed
-			if (!sat) return false;
+			if (!sat && !evalAll) return false;
 		}
 
 		return sat;
@@ -65,6 +66,10 @@ public class TaskOptions extends ExpressionList {
 	List<String> getOutputFiles() {
 		return outputFiles;
 
+	}
+
+	public void setEvalAll(boolean evalAll) {
+		this.evalAll = evalAll;
 	}
 
 	@Override

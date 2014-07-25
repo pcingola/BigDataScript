@@ -550,7 +550,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 						out.append("\t");
 					} else {
 						// Serialize field value
-
 						if (fieldObj instanceof Scope) {
 							// Do not serialize scope here
 						} else out.append(serializer.serializeSaveValue(fieldObj) + "\t");
@@ -583,7 +582,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	/**
 	 * Set a fake ID number (this is a fake node created during serialization)
 	 * NOTE!: We set it to a negative number. This is a fake node
-	 * @param id
 	 */
 	public void setFakeId(int id) {
 		if (id < 0) return; // Is ID already 'fake' node? => Do nothing
@@ -601,7 +599,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Show the tree
-	 * @param tabs
 	 */
 	public String toStringTree(String tabs, String fieldName) {
 		StringBuilder out = new StringBuilder();

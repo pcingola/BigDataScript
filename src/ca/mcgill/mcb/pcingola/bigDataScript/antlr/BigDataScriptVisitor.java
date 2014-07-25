@@ -292,6 +292,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitLiteralBool(@NotNull BigDataScriptParser.LiteralBoolContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionGoal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionGoal(@NotNull BigDataScriptParser.ExpressionGoalContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#varDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

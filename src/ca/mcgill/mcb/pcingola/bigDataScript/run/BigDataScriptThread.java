@@ -73,7 +73,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Get an ID for a node
-	 * @return
 	 */
 	protected synchronized static int bigDataScriptThreadId() {
 		return threadNumber++;
@@ -124,7 +123,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Add tasks form un-serialization
-	 * @param task
 	 */
 	public void addUnserialized(Task task) {
 		if (restoredTasks == null) restoredTasks = new ArrayList<Task>();
@@ -133,8 +131,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Create a checkpoint file
-	 * @param node
-	 * @return
 	 */
 	public String checkpoint(BigDataScriptNode node) {
 		String programFile = programUnit.getFileName();
@@ -149,7 +145,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Create a checkpoint
-	 * @param checkpointFileName
 	 */
 	public String checkpoint(String checkpointFileName) {
 		// Default file name
@@ -383,7 +378,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Show a fatal error
-	 * @param bdsnode
 	 */
 	public void fatalError(BigDataScriptNode bdsnode, String message) {
 		runState = RunState.FATAL_ERROR;
@@ -402,7 +396,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Show a fatal error
-	 * @param bdsnode
 	 */
 	public void fatalError(BigDataScriptNode bdsnode, Throwable t) {
 		if (runState == RunState.FATAL_ERROR) return;
@@ -418,8 +411,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Get variable's value as a bool
-	 * @param varName
-	 * @return
 	 */
 	public boolean getBool(String varName) {
 		return (Boolean) getScope().getSymbol(varName).getValue();
@@ -435,8 +426,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Get variable's value as an int
-	 * @param varName
-	 * @return
 	 */
 	public long getInt(String varName) {
 		ScopeSymbol ssym = getScope().getSymbol(varName);
@@ -445,8 +434,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Get variable's value as a java object
-	 * @param varName
-	 * @return
 	 */
 	public Object getObject(String varName) {
 		return getScope().getSymbol(varName).getValue();
@@ -466,8 +453,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Get variable's value as a real
-	 * @param varName
-	 * @return
 	 */
 	public double getReal(String varName) {
 		return (Double) getScope().getSymbol(varName).getValue();
@@ -487,8 +472,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Get variable's value as a string
-	 * @param varName
-	 * @return
 	 */
 	public String getString(String varName) {
 		return getScope().getSymbol(varName).getValue().toString();
@@ -496,8 +479,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Get a task
-	 * @param taskId
-	 * @return
 	 */
 	public Task getTask(String taskId) {
 		return tasksById.get(taskId);
@@ -505,7 +486,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Get all tasks
-	 * @return
 	 */
 	public Collection<Task> getTasks() {
 		return tasks;
@@ -554,7 +534,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Kill all tasks in the list
-	 * @param taskIds
 	 */
 	@SuppressWarnings("rawtypes")
 	public void killTasks(List taskIds) {

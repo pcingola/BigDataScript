@@ -9,7 +9,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
@@ -68,19 +67,9 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	/**
-	 * Evaluate an expression
+	 * Create a task
 	 */
-	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-		// Run like a statement and return task ID
-		run(bdsThread);
-		return execId;
-	}
-
-	/**
-	 * Execute a sys command created by this task
-	 */
-	Task exec(BigDataScriptThread bdsThread, ExpressionSys sys) {
+	Task createTask(BigDataScriptThread bdsThread, ExpressionSys sys) {
 		// Get an ID
 		execId = sys.execId("task", bdsThread);
 
@@ -104,10 +93,66 @@ public class ExpressionTask extends ExpressionWithScope {
 			task.setOutputFiles(taskOptions.getOutputFiles());
 		}
 
-		// Schedule task for execution
-		execute(bdsThread, task);
-
 		return task;
+	}
+
+	/**
+	 * Dispatch task for execution
+	 */
+	void dispatchTask(BigDataScriptThread bdsThread, Task task) {
+		execute(bdsThread, task);
+	}
+
+	/**
+	 * Evaluate 'task' expression
+	 */
+	@Override
+	public Object eval(BigDataScriptThread bdsThread) {
+		// Execute options assignments
+		if (taskOptions != null) {
+			boolean ok = (Boolean) taskOptions.eval(bdsThread);
+			if (bdsThread.isDebug()) log("task-options check " + ok);
+			if (!ok) return execId; // Task options clause not satisfied. Do not execute task
+		}
+
+		// Evaluate 'sys' statements
+		ExpressionSys sys = evalSys(bdsThread);
+
+		// Create task
+		Task task = createTask(bdsThread, sys);
+
+		// Schedule task for execution
+		dispatchTask(bdsThread, task);
+
+		return execId;
+	}
+
+	/**
+	 * Evaluate 'sys' statements used to create task
+	 */
+	ExpressionSys evalSys(BigDataScriptThread bdsThread) {
+		ExpressionSys sys = null;
+
+		if (statement instanceof ExpressionSys) sys = (ExpressionSys) statement;
+		else if (statement instanceof LiteralString) {
+			LiteralString lstr = (LiteralString) statement;
+			sys = ExpressionSys.get(parent, lstr.getValue(), lineNum, charPosInLine);
+		} else if (statement instanceof Block) {
+			// Create one sys statement for all sys statements in the block
+			StringBuilder syssb = new StringBuilder();
+
+			Block block = (Block) statement;
+			for (Statement st : block.getStatements()) {
+				ExpressionSys sysst = (ExpressionSys) st;
+				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
+				String commands = sysst.getCommands(bdsThread);
+				syssb.append(commands);
+				syssb.append("\n");
+			}
+
+			sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
+		}
+		return sys;
 	}
 
 	@Override
@@ -143,47 +188,6 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Task expressions return a task ID (a string)
 		returnType = Type.STRING;
 		return returnType;
-	}
-
-	@Override
-	protected RunState runStep(BigDataScriptThread bdsThread) {
-
-		// Execute options assignments
-		if (taskOptions != null) {
-			boolean ok = (Boolean) taskOptions.eval(bdsThread);
-			if (bdsThread.isDebug()) log("task-options check " + ok);
-			if (!ok) return RunState.OK; // Task options clause not satisfied. Do not execute task
-		}
-
-		//---
-		// Execute statements
-		//---
-		ExpressionSys sys = null;
-
-		if (statement instanceof ExpressionSys) sys = (ExpressionSys) statement;
-		else if (statement instanceof LiteralString) {
-			LiteralString lstr = (LiteralString) statement;
-			sys = ExpressionSys.get(parent, lstr.getValue(), lineNum, charPosInLine);
-		} else if (statement instanceof Block) {
-			// Create one sys statement for all sys statements in the block
-			StringBuilder syssb = new StringBuilder();
-
-			Block block = (Block) statement;
-			for (Statement st : block.getStatements()) {
-				ExpressionSys sysst = (ExpressionSys) st;
-				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
-				String commands = sysst.getCommands(bdsThread);
-				syssb.append(commands);
-				syssb.append("\n");
-			}
-
-			sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
-		}
-
-		// Execute
-		exec(bdsThread, sys);
-
-		return RunState.OK;
 	}
 
 	@Override

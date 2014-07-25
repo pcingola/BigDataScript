@@ -4132,3 +4132,275 @@ test/graph_05.csv	-
 test/graph_05.xml	+	rm
 27229	-
 test/graph_05.xml	-
+804	+	
+804	-
+819	+	
+819	-
+832	+	
+832	-
+null	-
+858	+	
+858	-
+869	+	
+869	-
+886	+	
+886	-
+897	+	
+897	-
+912	+	
+912	-
+928	+	
+928	-
+950	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+955	+	
+950	-
+/home/pcingola/zero_length_file_out.txt	-
+955	-
+975	+	
+975	-
+988	+	
+993	+	
+988	-
+993	-
+1110	+	
+1110	-
+1126	+	
+1126	-
+1142	+	
+1142	-
+null	-
+1167	+	
+1167	-
+1180	+	
+1180	-
+1194	+	
+1194	-
+1205	+	
+1205	-
+1216	+	
+1216	-
+1227	+	
+1227	-
+1246	+	
+failOnce.out1	+	rm
+1246	-
+failOnce.out1	-
+1269	+	
+failOnce.out1	+	rm
+1269	-
+failOnce.out1	-
+1284	+	
+failOnce.out2	+	rm
+1284	-
+failOnce.out2	-
+1305	+	
+failOnce.out1	+	rm
+1305	-
+failOnce.out1	-
+1318	+	
+failOnce.out1	+	rm
+1318	-
+failOnce.out1	-
+1330	+	
+failOnce.out2	+	rm
+1330	-
+failOnce.out2	-
+1374	+	
+1374	-
+1379	+	
+1379	-
+1395	+	
+1395	-
+1425	+	
+out1.txt	+	rm
+1425	-
+out1.txt	-
+1437	+	
+out2.txt	+	rm
+1437	-
+out2.txt	-
+1455	+	
+out1.txt	+	rm
+1455	-
+out1.txt	-
+1477	+	
+out2.txt	+	rm
+1477	-
+out2.txt	-
+1489	+	
+out1.txt	+	rm
+1489	-
+out1.txt	-
+1504	+	
+1504	-
+1517	+	
+1517	-
+1535	+	
+out1.txt	+	rm
+1535	-
+out1.txt	-
+1547	+	
+out2.txt	+	rm
+1547	-
+out2.txt	-
+1560	+	
+out1.txt	+	rm
+1560	-
+out1.txt	-
+1572	+	
+out2.txt	+	rm
+1572	-
+out2.txt	-
+1585	+	
+test/graph_05.csv	+	rm
+1585	-
+test/graph_05.csv	-
+1596	+	
+test/graph_05.xml	+	rm
+1596	-
+test/graph_05.xml	-
+1609	+	
+test/graph_05.csv	+	rm
+1609	-
+test/graph_05.csv	-
+1620	+	
+test/graph_05.xml	+	rm
+1620	-
+test/graph_05.xml	-
+1995	+	
+1995	-
+2011	+	
+2011	-
+2024	+	
+2024	-
+null	-
+2050	+	
+2050	-
+2061	+	
+2061	-
+2071	+	
+2071	-
+2084	+	
+2084	-
+2099	+	
+2099	-
+2119	+	
+2119	-
+2158	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+2180	+	
+2158	-
+/home/pcingola/zero_length_file_out.txt	-
+2180	-
+2206	+	
+2206	-
+2240	+	
+2252	+	
+2240	-
+2252	-
+2359	+	
+2359	-
+2375	+	
+2375	-
+2399	+	
+2399	-
+null	-
+2432	+	
+2432	-
+2460	+	
+2460	-
+2474	+	
+2474	-
+2487	+	
+2487	-
+2501	+	
+2501	-
+2520	+	
+2520	-
+2560	+	
+failOnce.out1	+	rm
+2560	-
+failOnce.out1	-
+2574	+	
+failOnce.out1	+	rm
+2574	-
+failOnce.out1	-
+2617	+	
+failOnce.out2	+	rm
+2617	-
+failOnce.out2	-
+2655	+	
+failOnce.out1	+	rm
+2655	-
+failOnce.out1	-
+2668	+	
+failOnce.out1	+	rm
+2668	-
+failOnce.out1	-
+2680	+	
+failOnce.out2	+	rm
+2680	-
+failOnce.out2	-
+2727	+	
+2727	-
+2735	+	
+2735	-
+2751	+	
+2751	-
+2816	+	
+out1.txt	+	rm
+2816	-
+out1.txt	-
+2831	+	
+out2.txt	+	rm
+2831	-
+out2.txt	-
+2850	+	
+out1.txt	+	rm
+2850	-
+out1.txt	-
+2866	+	
+out2.txt	+	rm
+2866	-
+out2.txt	-
+2878	+	
+out1.txt	+	rm
+2878	-
+out1.txt	-
+2892	+	
+2892	-
+2908	+	
+2908	-
+2926	+	
+out1.txt	+	rm
+2926	-
+out1.txt	-
+2938	+	
+out2.txt	+	rm
+2938	-
+out2.txt	-
+2951	+	
+out1.txt	+	rm
+2951	-
+out1.txt	-
+2963	+	
+out2.txt	+	rm
+2963	-
+out2.txt	-
+2976	+	
+test/graph_05.csv	+	rm
+2976	-
+test/graph_05.csv	-
+2987	+	
+test/graph_05.xml	+	rm
+2987	-
+test/graph_05.xml	-
+3000	+	
+test/graph_05.csv	+	rm
+3000	-
+test/graph_05.csv	-
+3011	+	
+test/graph_05.xml	+	rm
+3011	-
+test/graph_05.xml	-

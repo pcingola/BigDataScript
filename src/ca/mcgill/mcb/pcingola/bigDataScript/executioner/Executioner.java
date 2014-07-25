@@ -73,7 +73,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Queue an Exec and return a the id
-	 * @return
 	 */
 	public synchronized void add(Task task) {
 		if (verbose) log("Queuing task: " + task.getId());
@@ -82,8 +81,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Create a command form a task
-	 * @param task
-	 * @return
 	 */
 	protected synchronized Cmd createCmd(Task task) {
 		throw new RuntimeException("Unimplemented method for class: " + getClass().getCanonicalName());
@@ -91,8 +88,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Find a task by ID
-	 * @param id
-	 * @return
 	 */
 	public synchronized Task findTask(String id) {
 		Task t = tasksRunning.get(id);
@@ -123,8 +118,8 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Stop following a running task (e.g. tail STDOUT & STDERR)
 	 */
 	protected synchronized void followStop(Task task) {
-		 tail.remove(task.getStdoutFile());
-		 tail.remove(task.getStderrFile());
+		tail.remove(task.getStdoutFile());
+		tail.remove(task.getStderrFile());
 
 		// Remove from loggers
 		if (taskLogger != null) taskLogger.remove(task);
@@ -152,7 +147,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Any task running?
-	 * @return
 	 */
 	public synchronized boolean hasTaskRunning() {
 		return tasksRunning.size() > 0;
@@ -160,7 +154,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Are there any tasks either running or to be run?
-	 * @return
 	 */
 	public synchronized boolean hasTaskToRun() {
 		return tasksToRun.size() - tasksSelected.size() > 0;
@@ -168,7 +161,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Has any task failed?
-	 * @return
 	 */
 	public boolean isFailed() {
 		for (Task t : tasksDone.values())
@@ -178,7 +170,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Should we show a report?
-	 * @return
 	 */
 	protected boolean isReportTime() {
 		if (timer == null) timer = new Timer();
@@ -191,7 +182,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Is this executioner running?
-	 * @return
 	 */
 	public boolean isRunning() {
 		return running;
@@ -233,8 +223,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Kill a task and move it from 'taskRunning' to 'tasksDone'
-	 * @param task
-	 * @return
 	 */
 	public synchronized void kill(Task task) {
 		if (task.isDone()) return; // Nothing to do

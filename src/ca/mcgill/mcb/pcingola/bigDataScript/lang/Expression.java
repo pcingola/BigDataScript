@@ -74,7 +74,7 @@ public class Expression extends Statement {
 	 * Evaluate an expression, return result
 	 */
 	public Object eval(BigDataScriptThread bdsThread) {
-		throw new RuntimeException("Unplemented method for class " + getClass().getSimpleName());
+		throw new RuntimeException("Unplemented method 'eval' for class " + getClass().getSimpleName());
 	}
 
 	/**

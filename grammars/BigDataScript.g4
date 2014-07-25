@@ -105,8 +105,9 @@ expression : BOOL_LITERAL                                                       
            | '{' expression '=>' expression (',' expression '=>' expression)* '}'          # literalMap
            | SYS_LITERAL                                                                   # expressionSys
            | TASK_LITERAL                                                                  # expressionTaskLiteral
-           | 'dep'    '(' expression (',' expression)* ')'    statement                    # expressionDep
            | 'task' ( '(' expression (',' expression)* ')' )? statement                    # expressionTask
+           | 'dep'    '(' expression (',' expression)* ')'    statement                    # expressionDep
+           | 'goal' expression                                                             # expressionGoal
            | ('par' | 'parallel') ( '(' expression (',' expression)* ')' )? statement      # expressionParallel
            | expression '|=' expression                                                    # expressionAssignmentBitOr
            | expression '&=' expression                                                    # expressionAssignmentBitAnd
