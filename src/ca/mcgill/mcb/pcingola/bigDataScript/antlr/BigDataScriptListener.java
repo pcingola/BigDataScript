@@ -196,12 +196,12 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitForCondition(@NotNull BigDataScriptParser.ForConditionContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#programUnit}.
+	 * Enter a parse tree produced by {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
 	void enterProgramUnit(@NotNull BigDataScriptParser.ProgramUnitContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#programUnit}.
+	 * Exit a parse tree produced by {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
 	void exitProgramUnit(@NotNull BigDataScriptParser.ProgramUnitContext ctx);

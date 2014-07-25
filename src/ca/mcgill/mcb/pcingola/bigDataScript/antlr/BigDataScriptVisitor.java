@@ -131,7 +131,7 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitForCondition(@NotNull BigDataScriptParser.ForConditionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#programUnit}.
+	 * Visit a parse tree produced by {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */

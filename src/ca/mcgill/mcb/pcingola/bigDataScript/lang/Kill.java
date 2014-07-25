@@ -9,9 +9,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 
 /**
  * A "Kill" statement.
- * 
- * Kill a taks (or a list of tasks) and wait untill all tasks finished (i.e. died)
- * 
+ *
+ * Kill a task/thread (or a list of tasks/threads) and
+ * wait until all tasks/threads finished (i.e. died)
+ *
  * @author pcingola
  */
 public class Kill extends Statement {
@@ -33,17 +34,17 @@ public class Kill extends Statement {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected RunState runStep(BigDataScriptThread bdsThread) {
 		// No arguments? Kill for all tasks
-		Object val = taskId.eval(csThread);
+		Object val = taskId.eval(bdsThread);
 
 		// Are we Killing for one task or a list of tasks?
 		if (val instanceof List) {
-			csThread.killTasks((List) val);
-			csThread.waitTasks((List) val);
+			bdsThread.kill((List) val);
+			bdsThread.wait((List) val);
 		} else {
-			csThread.killTask(val.toString());
-			csThread.waitTask(val.toString());
+			bdsThread.kill(val.toString());
+			bdsThread.wait(val.toString());
 		}
 
 		return RunState.OK;

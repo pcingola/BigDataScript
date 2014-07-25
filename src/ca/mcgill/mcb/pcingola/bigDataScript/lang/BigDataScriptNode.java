@@ -348,7 +348,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		Timer.showStdErr(getClass().getSimpleName() //
 				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
 				+ " : " + msg //
-		);
+				);
 	}
 
 	/**
@@ -422,52 +422,46 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Run this node
-	 * @param csThread
-	 * @return
 	 */
-	public RunState run(BigDataScriptThread csThread) {
-		boolean recover = csThread.isCheckpointRecover();
+	public RunState run(BigDataScriptThread bdsThread) {
+		boolean recover = bdsThread.isCheckpointRecover();
 
 		RunState rstate = RunState.OK;
-		if (!recover) runBegin(csThread); // Before node execution
+		if (!recover) runBegin(bdsThread); // Before node execution
 		else rstate = RunState.CHECKPOINT_RECOVER;
 
 		try {
-			if (csThread.shouldRun(this)) {
-				// if (debug) Gpr.debug("Run: " + getFileName() + ", line " + getLineNum() + ": " + this);
-				rstate = runStep(csThread); // Run
-			}
+			if (bdsThread.shouldRun(this)) rstate = runStep(bdsThread); // Run
 		} catch (Throwable t) {
-			csThread.fatalError(this, t);
+			bdsThread.fatalError(this, t);
 			rstate = RunState.FATAL_ERROR;
 		}
 
-		if (!recover) runEnd(csThread); // After node execution
+		if (!recover) runEnd(bdsThread); // After node execution
 
 		return rstate;
 	}
 
 	/**
 	 * Run before running the node
-	 * @param csThread
+	 * @param bdsThread
 	 */
-	protected void runBegin(BigDataScriptThread csThread) {
+	protected void runBegin(BigDataScriptThread bdsThread) {
 		// Need a new scope?
-		if (isNeedsScope()) csThread.newScope(this);
-		csThread.getPc().push(this);
+		if (isNeedsScope()) bdsThread.newScope(this);
+		bdsThread.getPc().push(this);
 	}
 
 	/**
 	 * Run after running the node
-	 * @param csThread
 	 */
-	protected void runEnd(BigDataScriptThread csThread) {
-		csThread.getPc().pop(this);
+	protected void runEnd(BigDataScriptThread bdsThread) {
+		bdsThread.getPc().pop(this);
 		// Restore old scope?
-		if (isNeedsScope()) csThread.oldScope();
+		if (isNeedsScope()) bdsThread.oldScope();
 	}
 
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected RunState runStep(BigDataScriptThread bdsThread) {
 		throw new RuntimeException("Unimplemented method for class " + getClass().getSimpleName() + ", id = " + id);
 	}
 
@@ -480,8 +474,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Parse a line from a serialized file
-	 * @param line
-	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -529,7 +521,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + charPosInLine //
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" //
-		);
+				);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields

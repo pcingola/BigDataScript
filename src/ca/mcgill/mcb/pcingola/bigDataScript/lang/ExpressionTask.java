@@ -33,9 +33,9 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
 
-	TaskOptions taskOptions;
-	Statement statement;
-	private String execId = "";
+	protected TaskOptions taskOptions;
+	protected Statement statement;
+	protected String execId = "";
 
 	/**
 	 * Execute a task (schedule it into executioner)

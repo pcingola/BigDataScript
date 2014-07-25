@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 
 /**
  * A "wait" statement
- * 
+ *
  * @author pcingola
  */
 public class Wait extends Statement {
@@ -30,36 +30,39 @@ public class Wait extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		if (csThread.getRunState() == RunState.WAIT_RECOVER) return runStepWaitRecover(csThread);
-		return runStepOk(csThread);
+	protected RunState runStep(BigDataScriptThread bdsThread) {
+		if (bdsThread.getRunState() == RunState.WAIT_RECOVER) return runStepWaitRecover(bdsThread);
+		return runStepOk(bdsThread);
 	}
 
 	/**
 	 * Run in 'OK' state
-	 * @param csThread
-	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	protected RunState runStepOk(BigDataScriptThread csThread) {
+	protected RunState runStepOk(BigDataScriptThread bdsThread) {
 		boolean ok = false;
+		String type = "Task";
 
 		// No arguments? Wait for all tasks
 		if (taskId == null) {
-			ok = csThread.waitTasksAll();
+			ok = bdsThread.waitAll();
 		} else {
 			// Wait for a specific task or list of tasks
-			Object val = taskId.eval(csThread);
+			Object val = taskId.eval(bdsThread);
 
-			// Are we waiting for one task or a list of tasks?
-			if (val instanceof List) ok = csThread.waitTasks((List) val);
-			else ok = csThread.waitTask(val.toString());
+			// Are we waiting for a single task/thread or a list?
+			if (val instanceof List) ok = bdsThread.wait((List) val);
+			else {
+				if (bdsThread.getThread(val.toString()) != null) type = "Thread";
+				ok = bdsThread.wait(val.toString());
+			}
 		}
 
-		// Any task failed?
+		// Any task/thread failed?
 		if (!ok) {
-			// Create a checkpoint 
-			csThread.fatalError(this, "Task/s failed.");
+
+			// Create a checkpoint
+			bdsThread.fatalError(this, type + "/s failed.");
 			return RunState.FATAL_ERROR;
 		}
 
@@ -69,34 +72,8 @@ public class Wait extends Statement {
 	/**
 	 * Run in 'WAIT_RECOVER' state.
 	 * This happens when recovering from a checkpoint.
-	 * 
-	 * @param csThread
-	 * @return
 	 */
-	protected RunState runStepWaitRecover(BigDataScriptThread csThread) {
-
-		// We moved this funtionality to BigDataScriptThread
-
-		//		//---
-		//		// Find all tasks that need to be restarted
-		//		//---
-		//		ArrayList<Task> failedTasks = new ArrayList<Task>();
-		//		for (Task t : csThread.getTasks()) {
-		//			// Add all tasks that failed and are not supposed to fail
-		//			if (t.isFailed() && !t.isCanFail()) failedTasks.add(t);
-		//		}
-		//
-		//		//---
-		//		// Restarts each task  
-		//		//---
-		//		if (!failedTasks.isEmpty()) {
-		//			System.err.println("Re-executing " + failedTasks.size() + " failed tasks:");
-		//			for (Task t : failedTasks) {
-		//				System.err.println(t);
-		//				ExpressionTask.execute(csThread, t);
-		//			}
-		//		}
-
-		return runStepOk(csThread);
+	protected RunState runStepWaitRecover(BigDataScriptThread bdsThread) {
+		return runStepOk(bdsThread);
 	}
 }

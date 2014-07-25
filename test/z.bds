@@ -1,16 +1,20 @@
 #!/usr/bin/env bds
 
-prefix := "test/graph_06"
-txt := prefix + ".txt"
-csv := prefix + ".csv"
-xml := prefix + ".xml"
 
-d1 := dep ( csv <- txt ) sys cp $txt $csv; echo "copying to csv"
-print("Dep1: $d1\n")
+par {
+	sleep( 1 )
+	for( int i : range(1, 10) ) {
+		print("PAR 1: $i\n")
+	}
+}
 
-d2 := dep ( xml <- csv ) sys cp $csv $xml; echo "copying to xml"
-print("Dep2: $d2\n")
+par {
+	sleep( 2 )
+	for( int i : range(1, 10) ) {
+		print("PAR 2: $i\n")
+	}
+}
 
-ids := goal xml
-print("Task IDs for goal $xml: $ids\n")
-
+for( int i : range(1, 10) ) {
+	print("MAIN: $i\n")
+}

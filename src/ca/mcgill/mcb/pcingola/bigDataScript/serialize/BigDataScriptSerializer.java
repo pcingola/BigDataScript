@@ -380,7 +380,7 @@ public class BigDataScriptSerializer {
 						serializedNodes.add(csnode);
 
 						// Set ProgramUnit
-						if (csnode instanceof ProgramUnit) currCsThread.setProgram((ProgramUnit) csnode);
+						if (csnode instanceof ProgramUnit) currCsThread.setStatement((ProgramUnit) csnode);
 					}
 				}
 			}
