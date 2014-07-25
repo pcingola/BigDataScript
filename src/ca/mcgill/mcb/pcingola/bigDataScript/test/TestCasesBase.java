@@ -116,7 +116,7 @@ public class TestCasesBase extends TestCase {
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-					);
+			);
 		}
 	}
 
@@ -201,6 +201,13 @@ public class TestCasesBase extends TestCase {
 	 * Check that StdOut has a string
 	 */
 	String runAndCheckStdout(String fileName, String expectedStdout) {
+		return runAndCheckStdout(fileName, expectedStdout, false);
+	}
+
+	/**
+	 * Check that StdOut has a string (or that the string is not present if 'reverse')
+	 */
+	String runAndCheckStdout(String fileName, String expectedStdout, boolean reverse) {
 		String args[] = { fileName };
 
 		// Compile
@@ -226,7 +233,8 @@ public class TestCasesBase extends TestCase {
 		// Check that the expected string is in STDERR
 		if (debug) Gpr.debug("Program's stdout: '" + captureStdout + "'");
 		int index = captureStdout.toString().indexOf(expectedStdout);
-		if (index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in STDOUT not found.\nSTDERR:\n" + captureStdout + "\n");
+		if (!reverse && index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in STDOUT not found.\nSTDOUT:\n" + captureStdout + "\n");
+		if (reverse && index >= 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in absent from STDOUT, but it was found.\nSTDOUT:\n" + captureStdout + "\n");
 		return captureStdout.toString();
 	}
 

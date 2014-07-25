@@ -63,7 +63,7 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2014-07-24";
+	public static final String BUILD = "2014-07-25";
 	public static final String REVISION = "d";
 	public static final String VERSION_MAJOR = "0.98";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
@@ -152,7 +152,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-					);
+			);
 			return null;
 		}
 	}
