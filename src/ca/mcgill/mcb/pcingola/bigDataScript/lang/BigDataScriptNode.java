@@ -526,7 +526,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + charPosInLine //
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" //
-		);
+				);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields

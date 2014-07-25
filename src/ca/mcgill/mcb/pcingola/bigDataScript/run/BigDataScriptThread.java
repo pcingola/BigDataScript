@@ -105,6 +105,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
+	 * Add dependency
+	 */
+	public void addDep(Task task) {
+		taskDependecies.addDep(task);
+	}
+
+	/**
 	 * Add tasks form un-serialization
 	 */
 	public void addUnserialized(Task task) {
@@ -472,6 +479,29 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public Collection<Task> getTasks() {
 		return tasks;
+	}
+
+	/**
+	 * Execute dependency tasks to achieve goal 'out'
+	 */
+	public synchronized List<String> goal(String out) {
+		List<String> taskIds = new ArrayList<String>();
+
+		// Find dependencies
+		List<Task> tasks = taskDependecies.goal(out);
+
+		// No update needed?
+		if (tasks == null) return taskIds;
+
+		// Run all tasks
+		for (Task t : tasks)
+			ExpressionTask.execute(this, t);
+
+		// Convert to task IDs
+		for (Task t : tasks)
+			taskIds.add(t.getId());
+
+		return taskIds;
 	}
 
 	/**

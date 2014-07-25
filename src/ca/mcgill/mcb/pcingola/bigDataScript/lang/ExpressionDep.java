@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A 'dep' expression
@@ -19,13 +18,7 @@ public class ExpressionDep extends ExpressionTask {
 
 	@Override
 	void dispatchTask(BigDataScriptThread bdsThread, Task task) {
-		Gpr.debug("DEP: " + task);
-
-		for (String in : task.getInputFiles())
-			Gpr.debug("IN: " + in);
-
-		for (String out : task.getOutputFiles())
-			Gpr.debug("OUT: " + out);
+		bdsThread.addDep(task);
 	}
 
 	/**

@@ -6,7 +6,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A 'goal' expression
@@ -23,13 +22,7 @@ public class ExpressionGoal extends ExpressionUnary {
 	@Override
 	public Object eval(BigDataScriptThread bdsThread) {
 		Object value = expr.eval(bdsThread);
-		Gpr.debug("GOAL: '" + value + "'");
-
-		// TODO
-		// Check if dependecies are met
-		// If goal needs to be updated, execute all dependecies
-		// Return a list of task IDs that were scheduled for execution
-		return "";
+		return bdsThread.goal(value.toString());
 	}
 
 	@Override

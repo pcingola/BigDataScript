@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -31,16 +32,9 @@ public class ExpressionDepOperator extends Expression {
 	}
 
 	/**
-	 * Evaluate an expression
+	 * Calculate the result of '<-' operator give two collections files (left hand side and right handside)
 	 */
-	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-		// All expressions are evaluated
-		leftEval = eval(bdsThread, left);
-		rightEval = eval(bdsThread, right);
-
-		boolean debug = bdsThread.isDebug();
-
+	public boolean depOperator(Collection<String> leftEval, Collection<String> rightEval, boolean debug) {
 		// Left hand side
 		// Calculate minimum modification time
 		long minModifiedLeft = Long.MAX_VALUE;
@@ -94,6 +88,19 @@ public class ExpressionDepOperator extends Expression {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@Override
+	public Object eval(BigDataScriptThread bdsThread) {
+		// All expressions are evaluated
+		leftEval = eval(bdsThread, left);
+		rightEval = eval(bdsThread, right);
+
+		boolean debug = bdsThread.isDebug();
+		return depOperator(leftEval, rightEval, debug);
 	}
 
 	/**

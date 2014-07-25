@@ -11,5 +11,6 @@ print("Dep1: $d1\n")
 d2 := dep ( xml <- csv ) sys cp $csv $xml; echo "copying to xml"
 print("Dep2: $d2\n")
 
-goal xml
+ids := goal xml
+print("Task IDs for goal $xml: $ids\n")
 
