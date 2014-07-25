@@ -6,6 +6,7 @@ par {
 	for( int i : range(1, 10) ) {
 		print("PAR 1: $i\n")
 	}
+	return 1
 }
 
 par {

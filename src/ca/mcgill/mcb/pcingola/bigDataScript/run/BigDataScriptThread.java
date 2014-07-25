@@ -704,6 +704,26 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
+	 * Remove stale files (controlled by '-noRmOnExit' command line option)
+	 */
+	void removeStaleFiles() {
+		if (!isRoot()) return;
+
+		// Remove all pending files
+		if (!removeOnExit.isEmpty()) {
+			if (config != null && config.isNoRmOnExit()) {
+				if (isVerbose()) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
+			} else {
+				if (isVerbose()) Timer.showStdErr("Deleting stale files:");
+				for (String fileName : removeOnExit) {
+					if (isVerbose()) System.err.println("\t" + fileName);
+					(new File(fileName)).delete();
+				}
+			}
+		}
+	}
+
+	/**
 	 * Send task from un-serialization to execution list
 	 */
 	public void restoreUnserializedTasks() {
@@ -747,10 +767,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			return;
 		}
 
-		if (isVerbose()) {
-			if (isRoot()) Timer.showStdErr("Program execution finished, run state: '" + runState + "', exit value: '" + getExitValue() + "'");
-			else Timer.showStdErr("Parallel execution finished, thread Id: '" + getBigDataScriptThreadId() + "', run state: '" + runState + "', exit value: '" + getExitValue() + "'");
-		}
+		// OK, we finished running
+		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + "execution finished, thread Id: '" + getBigDataScriptThreadId() + "', run state: '" + runState + "'");
 
 		// Implicit 'wait' statement at the end of the program
 		boolean ok = waitAll();
@@ -760,27 +778,37 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			// Errors? Then set exit status appropriately
 			exitValue = 1;
 		} else {
-			// Set exit value as the latest 'int' result
-			Object ev = getReturnValue();
-			if (ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
+			Object ev = null;
 
-			// Remove all pending files
-			if (!removeOnExit.isEmpty()) {
-				if (config != null && config.isNoRmOnExit()) {
-					if (isVerbose()) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
-				} else {
-					if (isVerbose()) Timer.showStdErr("Deleting stale files:");
-					for (String fileName : removeOnExit) {
-						if (isVerbose()) System.err.println("\t" + fileName);
-						(new File(fileName)).delete();
-					}
-				}
+			switch (runState) {
+			case EXIT:
+				ev = getExitValue();
+				break;
+
+			case RETURN:
+				ev = getReturnValue();
+				break;
+
+			case FATAL_ERROR:
+			case THREAD_KILLED:
+				ev = 1L;
+				break;
+
+			default:
+				ev = null;
+				break;
 			}
+
+			if (ev != null && ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
 		}
 
+		// Finish up
+		removeStaleFiles();
 		timer.end();
+		if (!isRoot()) parent.remove(this); // Remove from parent's threads
 
-		if (!isRoot()) parent.remove(this); // We are done, tell parent
+		// OK, we are done
+		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBigDataScriptThreadId() + "' finished, run state: '" + runState + "', exit value: '" + getExitValue() + "'");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1037,17 +1065,21 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Wait for one task to finish
-	 * @return true if task finished OK or it was allowed to fail (i.e. canFail = true)
+	 * Wait for one thread to finish
+	 * @return true if thread finished OK
 	 */
 	public boolean waitThread(String bdsThreadId) {
 		try {
 			BigDataScriptThread bdsThread = threadsById.get(bdsThreadId);
-			if (bdsThread != null) bdsThread.join();
+			if (bdsThread != null) {
+				bdsThread.join();
+				return bdsThread.getExitValue() == 0; // Finished OK?
+			}
 		} catch (InterruptedException e) {
 			if (isVerbose()) e.printStackTrace();
 			return false;
 		}
+
 		return true;
 	}
 
