@@ -75,6 +75,7 @@ public class BigDataScript {
 	boolean log;
 	boolean dryRun;
 	boolean noRmOnExit;
+	boolean createReport = true;
 	int taskFailCount = 0;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
@@ -681,7 +682,9 @@ public class BigDataScript {
 			else if (args[i].equalsIgnoreCase("-dryRun")) {
 				dryRun = true;
 				noRmOnExit = true; // Not running, so don't delete files
+				createReport = false;
 			} else if (args[i].equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
+			else if (args[i].equalsIgnoreCase("-noReport")) createReport = false;
 			else if (args[i].equals("-i") || args[i].equalsIgnoreCase("-info")) {
 				// Checkpoint info
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
@@ -850,7 +853,7 @@ public class BigDataScript {
 		}
 
 		// Create report
-		bdsThread.createReport();
+		if (createReport) bdsThread.createReport();
 
 		// OK, we are done
 		return bdsThread.getExitValue();
@@ -867,6 +870,7 @@ public class BigDataScript {
 		System.err.println("  -dryRun                        : Do not run any task, just show what would be run.");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files).");
+		System.err.println("  -noReport                      : Do not create report.");
 		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).");
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
@@ -874,7 +878,6 @@ public class BigDataScript {
 		System.err.println("  [-t | -reTry  ] num            : Number of times to re-try a task that failed.");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
 		System.err.println("  -pid <file>                    : Write local processes PIDs to 'file'");
-		System.err.println("  -noLog                         : Do not log stats.");
 
 		if (err != null) System.exit(1);
 		System.exit(0);
