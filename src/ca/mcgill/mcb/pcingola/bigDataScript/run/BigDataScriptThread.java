@@ -33,7 +33,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TailFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -64,12 +63,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	Object returnValue;
 	ArrayList<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
 	HashMap<String, Task> tasksById;
-	AutoHashMap<String, List<Task>> tasksByOutput;
 	Config config;
 	Random random;
 	List<String> removeOnExit;
 	ArrayList<Task> restoredTasks; // Unserialized tasks.
 	Timer timer;
+	TaskDependecies taskDependecies;
 
 	/**
 	 * Get an ID for a node
@@ -86,10 +85,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		runState = RunState.OK;
 		tasks = new ArrayList<Task>();
 		tasksById = new HashMap<String, Task>();
-		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
 		this.config = config;
 		random = new Random();
 		removeOnExit = new LinkedList<String>();
+		taskDependecies = new TaskDependecies();
 
 		if (programUnit != null) setProgram(programUnit);
 	}
@@ -98,27 +97,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Add a task
 	 */
 	public void add(Task task) {
+		if (tasksById.containsKey(task.getId())) return; // Don't add a task twice
+
 		tasks.add(task);
 		tasksById.put(task.getId(), task);
-
-		// Add output files
-		if (task.getOutputFiles() != null) {
-			for (String outFile : task.getOutputFiles())
-				tasksByOutput.getOrCreate(outFile).add(task);
-		}
-
-		if (!task.isDone()) {
-			// Add input dependencies based on input files
-			if (task.getInputFiles() != null) {
-				for (String inFile : task.getInputFiles()) {
-					List<Task> taskDeps = tasksByOutput.get(inFile);
-					if (taskDeps != null) {
-						for (Task taskDep : taskDeps)
-							if (!taskDep.isDone()) task.addDependency(taskDep); // Task not finished? Add it to dependency list
-					}
-				}
-			}
-		}
+		taskDependecies.add(task);
 	}
 
 	/**
