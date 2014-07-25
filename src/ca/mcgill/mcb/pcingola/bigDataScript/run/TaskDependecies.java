@@ -20,7 +20,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TaskDependecies {
 
-	boolean debug = true;
+	boolean debug = false;
 	AutoHashMap<String, List<Task>> tasksByOutput;
 	Set<Task> tasks;
 
@@ -58,8 +58,6 @@ public class TaskDependecies {
 			for (String outFile : task.getOutputFiles())
 				tasksByOutput.getOrCreate(outFile).add(task);
 		}
-
-		Gpr.debug("TaskDependecies\n" + this);
 	}
 
 	/**
@@ -98,10 +96,13 @@ public class TaskDependecies {
 	 * Find all leaf nodes required for goal 'out'
 	 */
 	List<String> findNodes(String out) {
-		Gpr.debug("FindNodes: " + out);
+		// A set of 'goal' nodes
 		Set<String> goals = new HashSet<String>();
-		List<String> nodesSorted = new ArrayList<String>();
 		goals.add(out);
+
+		// Nodes sorted (outputs first, inputs after)
+		List<String> nodesSorted = new ArrayList<String>();
+		nodesSorted.add(out);
 
 		// For each goal
 		for (boolean changed = true; changed;) {
@@ -166,7 +167,7 @@ public class TaskDependecies {
 					if (!tasks.contains(t) // Not already added?
 							&& !t.isDone() // task is not finished?
 							&& needsUpdate(t) // Task needs update?
-					) tasksSorted.add(t);
+							) tasksSorted.add(t);
 			}
 		}
 
