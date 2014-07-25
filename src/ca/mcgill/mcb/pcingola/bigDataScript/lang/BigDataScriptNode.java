@@ -345,7 +345,10 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 * Log a message to console
 	 */
 	public void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + " (" + getFileName() + ":" + getLineNum() + ") : " + msg);
+		Timer.showStdErr(getClass().getSimpleName() //
+				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
+				+ " : " + msg //
+		);
 	}
 
 	/**
@@ -526,7 +529,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + charPosInLine //
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" //
-				);
+		);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields

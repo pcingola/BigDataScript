@@ -491,11 +491,17 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		List<Task> tasks = taskDependecies.goal(out);
 
 		// No update needed?
-		if (tasks == null) return taskIds;
+		if (tasks == null) {
+			if (isDebug()) Gpr.debug("Goal '" + out + "' has no dependent tasks. Nothing to do.");
+			return taskIds;
+		}
 
 		// Run all tasks
-		for (Task t : tasks)
+		if (isDebug()) Gpr.debug("Goal '" + out + "', dependent tasks:");
+		for (Task t : tasks) {
+			if (isDebug()) System.err.println("\t\t" + t.getId());
 			ExpressionTask.execute(this, t);
+		}
 
 		// Convert to task IDs
 		for (Task t : tasks)

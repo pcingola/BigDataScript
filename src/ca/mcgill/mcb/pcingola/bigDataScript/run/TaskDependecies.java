@@ -22,9 +22,11 @@ public class TaskDependecies {
 
 	boolean debug = true;
 	AutoHashMap<String, List<Task>> tasksByOutput;
+	Set<Task> tasks;
 
 	public TaskDependecies() {
 		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
+		tasks = new HashSet<Task>();
 	}
 
 	/**
@@ -48,6 +50,9 @@ public class TaskDependecies {
 	 * Add a task
 	 */
 	synchronized void addTask(Task task) {
+		if (tasks.contains(task)) return; // Already added? Nothing to do
+		tasks.add(task);
+
 		// Add output files
 		if (task.getOutputFiles() != null) {
 			for (String outFile : task.getOutputFiles())
@@ -79,7 +84,7 @@ public class TaskDependecies {
 	 * Find 'leaf' nodes (i.e. nodes that do not have dependent tasks)
 	 */
 	Set<String> findLeafNodes(String out) {
-		Set<String> nodes = findNodes(out); // Find all nodes
+		List<String> nodes = findNodes(out); // Find all nodes
 
 		// Only add nodes that do not have dependent tasks (i.e. are leaves)
 		Set<String> leaves = new HashSet<String>();
@@ -92,8 +97,10 @@ public class TaskDependecies {
 	/**
 	 * Find all leaf nodes required for goal 'out'
 	 */
-	Set<String> findNodes(String out) {
+	List<String> findNodes(String out) {
+		Gpr.debug("FindNodes: " + out);
 		Set<String> goals = new HashSet<String>();
+		List<String> nodesSorted = new ArrayList<String>();
 		goals.add(out);
 
 		// For each goal
@@ -111,13 +118,20 @@ public class TaskDependecies {
 
 				if (tasks != null) // Add all task's input files
 					for (Task t : tasks)
-						if (t.getInputFiles() != null) changed |= newGoals.addAll(t.getInputFiles());
+						if (t.getInputFiles() != null) {
+							// Add each node
+							for (String in : t.getInputFiles()) {
+								boolean added = newGoals.add(in);
+								if (added) nodesSorted.add(in);
+								changed |= added;
+							}
+						}
 			}
 
 			goals = newGoals;
 		}
 
-		return goals;
+		return nodesSorted;
 	}
 
 	/**
@@ -144,13 +158,21 @@ public class TaskDependecies {
 
 		// Goal needs to be updated: Ad all tasks that need updating
 		Set<Task> tasks = new HashSet<Task>();
+		List<Task> tasksSorted = new ArrayList<>();
 		for (String n : findNodes(out)) {
 			List<Task> ntasks = tasksByOutput.get(n);
-			for (Task t : ntasks)
-				if (!t.isDone() && needsUpdate(t)) tasks.add(t);
+			if (ntasks != null) {
+				for (Task t : ntasks)
+					if (!tasks.contains(t) // Not already added?
+							&& !t.isDone() // task is not finished?
+							&& needsUpdate(t) // Task needs update?
+					) tasksSorted.add(t);
+			}
 		}
 
-		return sort(tasks);
+		// Reverse collection: First tasks are the closest to input files (leaf nodes)
+		Collections.reverse(tasksSorted);
+		return tasksSorted;
 	}
 
 	/**
@@ -178,10 +200,6 @@ public class TaskDependecies {
 		Collection<String> outs = task.getOutputFiles() != null ? task.getOutputFiles() : new LinkedList<String>();
 		Collection<String> ins = task.getInputFiles() != null ? task.getInputFiles() : new LinkedList<String>();
 		return needsUpdate(outs, ins);
-	}
-
-	List<Task> sort(Collection<Task> tasks) {
-
 	}
 
 	@Override

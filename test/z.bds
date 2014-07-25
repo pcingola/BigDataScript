@@ -5,7 +5,7 @@ txt := prefix + ".txt"
 csv := prefix + ".csv"
 xml := prefix + ".xml"
 
-d1 := dep ( csv <- txt ) sys cp $txt $xml; echo "copying to csv"
+d1 := dep ( csv <- txt ) sys cp $txt $csv; echo "copying to csv"
 print("Dep1: $d1\n")
 
 d2 := dep ( xml <- csv ) sys cp $csv $xml; echo "copying to xml"
