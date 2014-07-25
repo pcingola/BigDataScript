@@ -157,6 +157,18 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
+	 * Has this or any child thread created tasks?
+	 */
+	boolean anyTask() {
+		if (!getTasks().isEmpty()) return true;
+
+		for (BigDataScriptThread bdsThread : threadsById.values())
+			if (bdsThread.anyTask()) return true;
+
+		return false;
+	}
+
+	/**
 	 * Create a checkpoint file
 	 */
 	public String checkpoint(BigDataScriptNode node) {
@@ -205,6 +217,16 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return pc.nodeId(checkPointRecoverNodeIdx);
 	}
 
+	void createBdsThreadId() {
+		// Create ID
+		String name = Gpr.baseName(statement.getFileName());
+
+		if (isRoot()) bigDataScriptThreadId = String.format("%s.%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS_%2$tL", name, Calendar.getInstance());
+		else bigDataScriptThreadId = parent.bigDataScriptThreadId + "_parallelId_" + getId();
+
+		logBaseName = bigDataScriptThreadId;
+	}
+
 	/**
 	 * Create a dir for all log files
 	 */
@@ -221,12 +243,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Create an HTML report (after execution finished)
 	 */
 	public void createReport() {
-		if (getTasks().isEmpty()) {
+		if (!anyTask()) {
 			if (isVerbose()) Timer.showStdErr("No tasks run: Report file not created (nothing to report).");
 			return;
 		}
 
-		String outFile = logBaseName + ".report.html";
+		String outFile = getBigDataScriptThreadId() + ".report.html";
 		if (isVerbose()) Timer.showStdErr("Writing report file '" + outFile + "'");
 
 		SimpleDateFormat csvFormat = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
@@ -401,16 +423,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Create output file
 		//---
 		rTemplate.createOuptut();
-	}
-
-	void createThreadId() {
-		// Create ID
-		String name = Gpr.baseName(statement.getFileName());
-
-		if (isRoot()) bigDataScriptThreadId = String.format("%s.%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS_%2$tL", name, Calendar.getInstance());
-		else bigDataScriptThreadId = parent.bigDataScriptThreadId + "[par:" + getId() + "]";
-
-		logBaseName = bigDataScriptThreadId;
 	}
 
 	/**
@@ -805,6 +817,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Finish up
 		removeStaleFiles();
 		timer.end();
+		if (config != null && config.isNoRmOnExit()) createReport();
 		if (!isRoot()) parent.remove(this); // Remove from parent's threads
 
 		// OK, we are done
@@ -871,7 +884,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public void setStatement(Statement statement) {
 		this.statement = statement;
-		createThreadId(); // Create thread ID based on program's name
+		createBdsThreadId(); // Create thread ID based on program's name
 	}
 
 	/**

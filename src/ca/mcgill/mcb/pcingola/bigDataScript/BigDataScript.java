@@ -736,6 +736,7 @@ public class BigDataScript {
 		config.setDryRun(dryRun);
 		config.setTaskFailCount(taskFailCount);
 		config.setNoRmOnExit(noRmOnExit);
+		config.setCreateReport(createReport);
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
 			else pidFile = chekcpointRestoreFile + ".pid";
@@ -838,7 +839,6 @@ public class BigDataScript {
 
 	/**
 	 * Run a thread
-	 * @param bdsThread
 	 */
 	int runThread(BigDataScriptThread bdsThread) {
 		bigDataScriptThread = bdsThread;
@@ -851,9 +851,6 @@ public class BigDataScript {
 			// May be checkpoint?
 			return 1;
 		}
-
-		// Create report
-		if (createReport) bdsThread.createReport();
 
 		// OK, we are done
 		return bdsThread.getExitValue();

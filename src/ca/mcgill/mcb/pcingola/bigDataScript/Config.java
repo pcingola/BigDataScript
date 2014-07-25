@@ -34,6 +34,7 @@ public class Config {
 	boolean log = false; // Log all commands?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	boolean noRmOnExit = false; // Avoid removing files on exit
+	boolean createReport = true; // Create report when thread finishes
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	String configDirName;
 	String pidFile;
@@ -160,6 +161,10 @@ public class Config {
 		return taskLogger;
 	}
 
+	public boolean isCreateReport() {
+		return createReport;
+	}
+
 	public boolean isDebug() {
 		return debug;
 	}
@@ -222,6 +227,10 @@ public class Config {
 		} catch (IOException e1) {
 			// OK: May be there is no config file.
 		}
+	}
+
+	public void setCreateReport(boolean createReport) {
+		this.createReport = createReport;
 	}
 
 	public void setDebug(boolean debug) {
