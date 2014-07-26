@@ -123,7 +123,7 @@ public class VarDeclaration extends Statement {
 			String varName = vi.varName;
 
 			// Already declared?
-			if (scope.hasSymbol(varName, true)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
+			if (scope.hasSymbolLocal(varName)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
 			else {
 				// Calculate implicit data type
 				if (implicit && type == null) type = vi.getExpression().returnType(scope);

@@ -184,7 +184,7 @@ public class ExpressionSys extends Expression {
 		// Do we have any interpolated variables? Make sure they are in scope
 		if (variables != null) //
 			for (String varName : variables)
-				if (!varName.isEmpty() && !scope.hasSymbol(varName, false)) //
+				if (!varName.isEmpty() && !scope.hasSymbol(varName)) //
 					compilerMessages.add(this, "Symbol '" + varName + "' cannot be resolved", MessageType.ERROR);
 	}
 }

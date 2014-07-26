@@ -11,6 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNative
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListIsEmpty;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListJoin;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListJoinStr;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListPop;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListPush;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListRm;
@@ -80,6 +81,7 @@ public class TypeList extends Type {
 		methods.add(new MethodNativeListIsEmpty(baseType));
 		methods.add(new MethodNativeListJoin(baseType));
 		methods.add(new MethodNativeListJoinStr(baseType));
+		methods.add(new MethodNativeListMap(baseType));
 		methods.add(new MethodNativeListPop(baseType));
 		methods.add(new MethodNativeListPush(baseType));
 		methods.add(new MethodNativeListSize(baseType));

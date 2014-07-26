@@ -94,7 +94,7 @@ public class VariableInit extends BigDataScriptNode {
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Variable type
-		ScopeSymbol varSym = scope.getSymbol(varName, true);
+		ScopeSymbol varSym = scope.getSymbolLocal(varName);
 		Type varType = null;
 		if (varSym != null) varType = varSym.getType();
 

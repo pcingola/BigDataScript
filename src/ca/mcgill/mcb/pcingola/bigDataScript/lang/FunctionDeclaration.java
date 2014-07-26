@@ -10,14 +10,15 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 
 /**
- * Function declaration 
- * 
+ * Function declaration
+ *
  * @author pcingola
  */
 public class FunctionDeclaration extends StatementWithScope {
 
 	protected String functionName;
 	protected Type returnType;
+	protected Type funcType;
 	protected Parameters parameters;
 	protected Statement statement;
 	protected String signature;
@@ -40,10 +41,10 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	/**
 	 * Get this function's type
-	 * @return
 	 */
 	public Type getType() {
-		return TypeFunc.get(this);
+		if (funcType == null) funcType = TypeFunc.get(this);
+		return funcType;
 	}
 
 	@Override
@@ -63,30 +64,28 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	/**
 	 * Run this function's statement
-	 * @param csThread
-	 * @return
 	 */
-	protected RunState runFunction(BigDataScriptThread csThread) {
-		RunState runState = statement.run(csThread);
+	protected RunState runFunction(BigDataScriptThread bdsThread) {
+		RunState runState = statement.run(bdsThread);
 
 		// Not a standard 'return' statement? Make sure we are returning the right type.
-		if ((runState != RunState.RETURN) && !returnType.canCastObject(csThread.getReturnValue())) {
+		if ((runState != RunState.RETURN) && !returnType.canCastObject(bdsThread.getReturnValue())) {
 			// Not the right type? Force a default value of the right type
-			csThread.setReturnValue(returnType.defaultValue());
+			bdsThread.setReturnValue(returnType.defaultValue());
 		}
 
 		return runState;
 	}
 
 	/**
-	 * Run: Does nothing. A function declaration only declares 
+	 * Run: Does nothing. A function declaration only declares
 	 * a function, it doesn't do any real work.
-	 * A FunctionCall actually makes the function 'run'. This 
-	 * is done by evaluating the call, which invokes 
+	 * A FunctionCall actually makes the function 'run'. This
+	 * is done by evaluating the call, which invokes
 	 * 'FunctionDeclaration.runFunction()' method.
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected RunState runStep(BigDataScriptThread bdsThread) {
 		// Nothing to do (it's just a declaration)
 		return RunState.OK;
 	}
@@ -127,4 +126,13 @@ public class FunctionDeclaration extends StatementWithScope {
 		sb.append("}\n");
 		return sb.toString();
 	}
+
+	//	@Override
+	//	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	//		Type type = getType();
+	//		if (type != null) {
+	//			scope.add(new ScopeSymbol(functionName, type));
+	//			Gpr.debug("SCOPE ADD: " + functionName + "\t" + type);
+	//		}
+	//	}
 }

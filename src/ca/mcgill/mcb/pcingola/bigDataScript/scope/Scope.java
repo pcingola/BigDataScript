@@ -5,19 +5,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ParentNode;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * Scope: Variables, functions and classes 
- * 
+ * Scope: Variables, functions and classes
+ *
  * @author pcingola
  */
 public class Scope implements BigDataScriptSerialize, Iterable<String> {
@@ -45,11 +47,11 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	Scope parent;
 	HashMap<String, ScopeSymbol> symbols;
+	AutoHashMap<String, List<ScopeSymbol>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
 	BigDataScriptNode node;
 
 	/**
 	 * Global scope
-	 * @return
 	 */
 	public static Scope getGlobalScope() {
 		return globalScope;
@@ -78,29 +80,32 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	}
 
 	public synchronized void add(ScopeSymbol symbol) {
-		symbols.put(symbol.getName(), symbol);
+		if (symbol.isFunction()) {
+			// Create hash?
+			if (functions == null) functions = new AutoHashMap<String, List<ScopeSymbol>>(new LinkedList<ScopeSymbol>());
+
+			// Add function by name
+			functions.getOrCreate(symbol.getFunctionName()).add(symbol);
+		} else symbols.put(symbol.getName(), symbol);
 	}
 
 	/**
 	 * Find all functions whose names are 'functionName'
-	 * @param functionName
-	 * @return
 	 */
 	public List<ScopeSymbol> getFunctions(String functionName) {
-		ArrayList<ScopeSymbol> funcs = new ArrayList<ScopeSymbol>();
+		List<ScopeSymbol> funcs = new ArrayList<ScopeSymbol>();
 
-		// Find all functions
-		for (ScopeSymbol ss : symbols.values()) {
-			if (ss.getType().isFunction()) {
-				TypeFunc tf = (TypeFunc) ss.getType();
-				if (tf.getFunctionName().equals(functionName)) funcs.add(ss);
-			}
+		for (Scope scope = this; scope != null; scope = scope.parent) {
+			List<ScopeSymbol> fs = scope.getFunctionsLocal(functionName);
+			if (fs != null) funcs.addAll(fs);
 		}
 
-		// Recurse
-		if (parent != null) funcs.addAll(parent.getFunctions(functionName));
-
 		return funcs;
+	}
+
+	public List<ScopeSymbol> getFunctionsLocal(String functionName) {
+		if (functions == null) return null;
+		return functions.get(functionName);
 	}
 
 	public BigDataScriptNode getNode() {
@@ -113,21 +118,31 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	/**
 	 * Get symbol on this scope (or any parent scope)
-	 * @param symbol
-	 * @return
 	 */
 	public ScopeSymbol getSymbol(String symbol) {
-		return getSymbol(symbol, false);
+		// Find symbol on this or any parent scope
+		for (Scope scope = this; scope != null; scope = scope.parent) {
+			// Try to find a symbol
+			ScopeSymbol ssym = scope.getSymbolLocal(symbol);
+			if (ssym != null) return ssym;
+
+			// Try a function
+			List<ScopeSymbol> fs = scope.getFunctions(symbol);
+			// Since we are only matching by name, there has to be one
+			// and only one function with that name
+			// Note, this is limiting and very naive. A better approach is needed
+			if (fs != null && fs.size() == 1) return fs.get(0);
+		}
+
+		// Nothing found
+		return null;
 	}
 
 	/**
 	 * Get symbol on this scope (or any parent scope if not local)
-	 * @param symbol
-	 * @return
 	 */
-	public synchronized ScopeSymbol getSymbol(String symbol, boolean local) {
+	public synchronized ScopeSymbol getSymbolLocal(String symbol) {
 		if (symbols.containsKey(symbol)) return symbols.get(symbol);
-		if ((parent != null) && !local) return parent.getSymbol(symbol, local);
 		return null;
 	}
 
@@ -135,13 +150,16 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		return symbols.values();
 	}
 
+	public boolean hasSymbol(String symbol) {
+		Gpr.debug("hasSymbol: " + symbol + "\tlocal: " + getSymbol(symbol));
+		return getSymbol(symbol) != null;
+	}
+
 	/**
 	 * Is symbol available on this scope or any parent scope?
-	 * @param symbol
-	 * @return
 	 */
-	public boolean hasSymbol(String symbol, boolean local) {
-		return getSymbol(symbol, local) != null;
+	public boolean hasSymbolLocal(String symbol) {
+		return getSymbolLocal(symbol) != null;
 	}
 
 	/**
@@ -174,8 +192,6 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	/**
 	 * How to show objects in interpolation
-	 * @param val
-	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public String interpolate(Object val) {
@@ -263,7 +279,8 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		StringBuilder sb = new StringBuilder();
 		if (parent != null) {
 			String parentStr = parent.toString();
-			if (!parentStr.isEmpty()) sb.append("\n---------- Scope ----------\n" + parentStr);
+			// if (!parentStr.isEmpty()) sb.append("\n---------- Scope ----------\n" + parentStr);
+			if (!parentStr.isEmpty()) sb.append(parentStr);
 		}
 
 		// Show current

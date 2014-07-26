@@ -57,7 +57,7 @@ public class VarReference extends Reference {
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
-		ScopeSymbol ss = scope.getSymbol(name, false);
+		ScopeSymbol ss = scope.getSymbol(name);
 		if (ss == null) return null; // Symbol not found
 
 		returnType = ss.getType();
@@ -84,7 +84,7 @@ public class VarReference extends Reference {
 		// Calculate return type
 		returnType(scope);
 
-		if (!scope.hasSymbol(name, false)) compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
+		if (!scope.hasSymbol(name)) compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
 	}
 
 	@Override

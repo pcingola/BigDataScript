@@ -20,15 +20,16 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 
 	protected static HashMap<String, Type> types = new HashMap<String, Type>();
 
-	public final static Type VOID = Type.get(PrimitiveType.VOID);
+	public final static Type ANY = Type.get(PrimitiveType.ANY); // ANY type (wildcard type)
 	public final static Type BOOL = Type.get(PrimitiveType.BOOL);
+	public final static Type FAKE = Type.get(PrimitiveType.FAKE); // Fake type (for serialization)
+	public final static Type FUNC = Type.get(PrimitiveType.FUNC);
 	public final static Type INT = Type.get(PrimitiveType.INT);
-	public final static Type REAL = Type.get(PrimitiveType.REAL);
-	public final static Type STRING = Type.get(PrimitiveType.STRING);
 	public final static Type LIST = Type.get(PrimitiveType.LIST);
 	public final static Type MAP = Type.get(PrimitiveType.MAP);
-	public final static Type FAKE = Type.get(PrimitiveType.FAKE); // Fake type (for serialization)
-	public final static Type ANY = Type.get(PrimitiveType.ANY); // ANY type (wildcard type)
+	public final static Type REAL = Type.get(PrimitiveType.REAL);
+	public final static Type STRING = Type.get(PrimitiveType.STRING);
+	public final static Type VOID = Type.get(PrimitiveType.VOID);
 
 	public final static Boolean BOOL_FALSE = new Boolean(false);
 
@@ -39,6 +40,8 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	public final static Double REAL_ONE = new Double(1);
 
 	public final static String STRING_EMPTY = "";
+
+	public final static Object FUNC_EMTPY = new FunctionDeclaration(null, null);
 
 	PrimitiveType primitiveType;
 
@@ -208,6 +211,8 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 			return Type.REAL_ZERO;
 		case STRING:
 			return Type.STRING_EMPTY;
+		case FUNC:
+			return Type.FUNC_EMTPY;
 		case LIST:
 			return new ArrayList();
 		case MAP:

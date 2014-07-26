@@ -14,7 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
 /**
  * Expression 'Literal'
- * 
+ *
  * @author pcingola
  */
 public class LiteralString extends Literal {
@@ -94,7 +94,7 @@ public class LiteralString extends Literal {
 	 */
 	public void setValueInterpolate(String valueStr) {
 		value = valueStr;
-		interpolateVars(value); // Find interpolated vars		
+		interpolateVars(value); // Find interpolated vars
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class LiteralString extends Literal {
 		// Do we have any interpolated variables? Make sure they are in th scope
 		if (variables != null) //
 			for (String varName : variables)
-				if (!varName.isEmpty() && !scope.hasSymbol(varName, false)) //
+				if (!varName.isEmpty() && !scope.hasSymbol(varName)) //
 					compilerMessages.add(this, "Symbol '" + varName + "' cannot be resolved", MessageType.ERROR);
 	}
 }

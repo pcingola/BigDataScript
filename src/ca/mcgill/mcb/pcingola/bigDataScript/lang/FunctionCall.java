@@ -30,23 +30,23 @@ public class FunctionCall extends Expression {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public Object eval(BigDataScriptThread bdsThread) {
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
 
 		// Evaluate all expressions
 		Object values[] = new Object[fparam.length];
 		for (int i = 0; i < fparam.length; i++) {
-			Object value = arguments[i].eval(csThread);
+			Object value = arguments[i].eval(bdsThread);
 			value = fparam[i].type.cast(value);
 			values[i] = value;
 		}
 
 		// Create new scope
-		csThread.newScope(this);
+		bdsThread.newScope(this);
 
 		// Add arguments to scope
-		Scope scope = csThread.getScope();
+		Scope scope = bdsThread.getScope();
 		for (int i = 0; i < fparam.length; i++) {
 			Type argType = fparam[i].type;
 			String argName = fparam[i].getVarInit()[0].varName;
@@ -54,14 +54,14 @@ public class FunctionCall extends Expression {
 		}
 
 		// Run function body
-		RunState rstate = functionDeclaration.runFunction(csThread);
+		RunState rstate = functionDeclaration.runFunction(bdsThread);
 		if (rstate == RunState.FATAL_ERROR) throw new RuntimeException("Fatal error");
 
 		// Get return value
-		Object retVal = csThread.getReturnValue();
+		Object retVal = bdsThread.getReturnValue();
 
 		// Back to old scope
-		csThread.oldScope();
+		bdsThread.oldScope();
 
 		// Return result
 		return retVal;
@@ -69,14 +69,12 @@ public class FunctionCall extends Expression {
 
 	/**
 	 * Find a function that matches this call
-	 * @param scope
-	 * @return
 	 */
 	ScopeSymbol findFunction(Scope scope, String functionName, Args args) {
 		// Retrieve all functions with the same name
 		List<ScopeSymbol> ssfuncs = scope.getFunctions(functionName);
 
-		// For each function...
+		// Find best matching function...
 		ScopeSymbol bestSsfunc = null;
 		int bestScore = Integer.MAX_VALUE;
 		for (ScopeSymbol ssfunc : ssfuncs) {

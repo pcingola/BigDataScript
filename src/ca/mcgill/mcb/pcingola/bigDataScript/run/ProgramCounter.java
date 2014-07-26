@@ -37,8 +37,6 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 
 	/**
 	 * Get node ID for index 'idx'
-	 * @param idx
-	 * @return
 	 */
 	public int nodeId(int idx) {
 		return nodeIds.get(idx);
@@ -46,7 +44,6 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 
 	/**
 	 * Add to program counter
-	 * @param csnode
 	 */
 	public void pop(BigDataScriptNode csnode) {
 		int nodeId = nodeIds.pop();

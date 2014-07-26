@@ -15,8 +15,6 @@ public class TypeFunc extends Type {
 
 	/**
 	 * Get or create TypeFunc
-	 * @param function
-	 * @return
 	 */
 	public static TypeFunc get(FunctionDeclaration function) {
 		// Get type from hash
@@ -32,9 +30,6 @@ public class TypeFunc extends Type {
 
 	/**
 	 * Get a class type
-	 * @param primitiveType
-	 * @param typeName
-	 * @return
 	 */
 	public static TypeFunc get(String functionName) {
 		// Get type from hash

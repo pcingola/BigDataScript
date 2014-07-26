@@ -1,21 +1,12 @@
 #!/usr/bin/env bds
 
+int twice(int x) { return( 2 * x ) }
 
-par {
-	sleep( 1 )
-	for( int i : range(1, 10) ) {
-		print("PAR 1: $i\n")
-	}
-	return 1
-}
+print("Start\n")
 
-par {
-	sleep( 2 )
-	for( int i : range(1, 10) ) {
-		print("PAR 2: $i\n")
-	}
-}
+l := [1, 2, 3]
+print("l : $l\n")
 
-for( int i : range(1, 10) ) {
-	print("MAIN: $i\n")
-}
+tl := l.map( twice )
+print("tl: $tl\n")
+

@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.scope;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -8,12 +9,12 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
 
 /**
  * A symbol in the scope
- * 
+ *
  * @author pcingola
  */
 public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymbol> {
 
-	// Internal variables use this symbol at the beginning to make sure programmers don't collide with their names 
+	// Internal variables use this symbol at the beginning to make sure programmers don't collide with their names
 	// Important: This must be an invalid symbol in variable names
 	public static final String INTERNAL_SYMBOL_START = "$";
 
@@ -30,8 +31,10 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 	public ScopeSymbol(String name, Type type) {
 		this.name = name;
 		this.type = type;
+
 		// Set default value
-		if (!type.isFunction()) value = type.defaultValue();
+		//if (!type.isFunction())
+		value = type.defaultValue();
 	}
 
 	public ScopeSymbol(String name, Type type, Object value) {
@@ -43,6 +46,10 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 	@Override
 	public int compareTo(ScopeSymbol ss) {
 		return getName().toLowerCase().compareTo(ss.getName().toLowerCase());
+	}
+
+	public String getFunctionName() {
+		return ((TypeFunc) type).getFunctionName();
 	}
 
 	public String getName() {
@@ -59,6 +66,10 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 
 	public boolean isConstant() {
 		return constant;
+	}
+
+	public boolean isFunction() {
+		return type.isFunction();
 	}
 
 	@Override
@@ -97,7 +108,7 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 		else valStr = "" + value;
 
 		return type //
-				+ " : " + name //
+				+ " " + name //
 				+ " = " + valStr;
 	}
 

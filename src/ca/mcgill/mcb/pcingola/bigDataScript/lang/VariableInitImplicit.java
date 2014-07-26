@@ -40,7 +40,7 @@ public class VariableInitImplicit extends VariableInit {
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Variable type
-		ScopeSymbol varSym = scope.getSymbol(varName, true);
+		ScopeSymbol varSym = scope.getSymbolLocal(varName);
 		Type varType = null;
 		if (varSym != null) varType = varSym.getType();
 
@@ -51,9 +51,9 @@ public class VariableInitImplicit extends VariableInit {
 			// Compare types
 			if ((varType == null) || (exprRetType == null)) {
 				// Variable not found, nothing else to do
-			} else if (varSym.getType().isList() && exprRetType.isList() && (expression instanceof LiteralListEmpty)) {
+			} else if (varType.isList() && exprRetType.isList() && (expression instanceof LiteralListEmpty)) {
 				// OK, Empty list literal can be assigned to any list
-			} else if (varSym.getType().isMap() && exprRetType.isMap() && (expression instanceof LiteralMapEmpty)) {
+			} else if (varType.isMap() && exprRetType.isMap() && (expression instanceof LiteralMapEmpty)) {
 				// OK, Empty map literal can be assigned to any map
 			} else if (!exprRetType.canCast(varType)) {
 				// We cannot cast expression's type to variable's type: Error

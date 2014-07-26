@@ -348,7 +348,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		Timer.showStdErr(getClass().getSimpleName() //
 				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
 				+ " : " + msg //
-				);
+		);
 	}
 
 	/**
@@ -444,7 +444,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Run before running the node
-	 * @param bdsThread
 	 */
 	protected void runBegin(BigDataScriptThread bdsThread) {
 		// Need a new scope?
@@ -521,7 +520,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + charPosInLine //
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" //
-				);
+		);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields

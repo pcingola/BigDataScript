@@ -58,7 +58,7 @@ public class ExpressionVariableInitImplicit extends Expression {
 
 		// Already declared?
 		String varName = vInit.varName;
-		if (scope.hasSymbol(varName, true)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
+		if (scope.hasSymbolLocal(varName)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
 
 		// Calculate implicit data type
 		Type type = vInit.getExpression().returnType(scope);
