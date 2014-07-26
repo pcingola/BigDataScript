@@ -1,4 +1,4 @@
-print("ignore errors (begin) ============= \n")
+print("============= Ignore errors (begin) ============= \n")
 
 bool b = false
 
@@ -9,4 +9,4 @@ wait
 
 b = true
 
-print("ignore errors (end) ============= \n")
+print("============= Ignore errors (end) ============= \n")

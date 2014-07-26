@@ -7,7 +7,9 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -90,7 +92,13 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	@SuppressWarnings("rawtypes")
 	public List<BigDataScriptNode> findNodes(Class clazz, boolean recurse) {
-		ArrayList<BigDataScriptNode> list = new ArrayList<BigDataScriptNode>();
+		HashSet<Object> visited = new HashSet<Object>();
+		return findNodes(clazz, recurse, visited);
+	}
+
+	@SuppressWarnings("rawtypes")
+	List<BigDataScriptNode> findNodes(Class clazz, boolean recurse, Set<Object> visited) {
+		List<BigDataScriptNode> list = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields
 		for (Field field : getAllClassFields()) {
@@ -98,13 +106,16 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				Object fieldObj = field.get(this);
 
 				// Does the field have a value?
-				if (fieldObj != null) {
+				if (fieldObj != null && !visited.contains(fieldObj)) {
+					visited.add(fieldObj);
 
 					// If it's an array, iterate on all objects
 					if (fieldObj.getClass().isArray()) {
 						for (Object fieldObjSingle : (Object[]) fieldObj)
-							list.addAll(findNodes(clazz, fieldObjSingle, recurse));
-					} else list.addAll(findNodes(clazz, fieldObj, recurse));
+							list.addAll(findNodes(clazz, fieldObjSingle, recurse, visited));
+					} else {
+						list.addAll(findNodes(clazz, fieldObj, recurse, visited));
+					}
 
 				}
 			} catch (Exception e) {
@@ -121,8 +132,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 * @param fieldObj
 	 */
 	@SuppressWarnings("rawtypes")
-	List<BigDataScriptNode> findNodes(Class clazz, Object fieldObj, boolean recurse) {
-		ArrayList<BigDataScriptNode> list = new ArrayList<BigDataScriptNode>();
+	List<BigDataScriptNode> findNodes(Class clazz, Object fieldObj, boolean recurse, Set<Object> visited) {
+		List<BigDataScriptNode> list = new ArrayList<BigDataScriptNode>();
 
 		// If it is a BigDataScriptNode then we can recurse into it
 		if ((fieldObj != null) && (fieldObj instanceof BigDataScriptNode)) {
@@ -132,7 +143,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 			// We can recurse into this field
 			if (recurse) {
 				BigDataScriptNode csnode = ((BigDataScriptNode) fieldObj);
-				list.addAll(csnode.findNodes(clazz, recurse));
+				list.addAll(csnode.findNodes(clazz, recurse, visited));
 			}
 		}
 
@@ -160,11 +171,11 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return null;
 	}
 
-	ArrayList<Field> getAllClassFields() {
+	List<Field> getAllClassFields() {
 		return getAllClassFields(false, true, true, true, true, false, false);
 	}
 
-	ArrayList<Field> getAllClassFields(boolean addParent) {
+	List<Field> getAllClassFields(boolean addParent) {
 		return getAllClassFields(addParent, true, true, false, true, false, false);
 	}
 
@@ -172,7 +183,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 * Get all fields from this class
 	 */
 	@SuppressWarnings("rawtypes")
-	ArrayList<Field> getAllClassFields(boolean addParent, boolean addNode, boolean addPrimitive, boolean addClass, boolean addArray, boolean addStatic, boolean addPrivate) {
+	List<Field> getAllClassFields(boolean addParent, boolean addNode, boolean addPrimitive, boolean addClass, boolean addArray, boolean addStatic, boolean addPrivate) {
 		// Top class (if we are looking for 'parent' field, we need to include BigDataScriptNode, otherwise we don't
 		Class topClass = (addParent ? Object.class : BigDataScriptNode.class);
 

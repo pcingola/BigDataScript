@@ -430,10 +430,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public void fatalError(BigDataScriptNode bdsnode, String message) {
 		runState = RunState.FATAL_ERROR;
-		System.err.println("Fatal error: " + bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + bdsnode.getCharPosInLine() + ". " + message);
+		System.err.println("Fatal error: " + bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + (bdsnode.getCharPosInLine() + 1) + ". " + message);
 
 		// Show BDS stack trace
-		System.err.println(stackTrace());
+		try {
+			Gpr.debug("SHOW STACK:");
+			System.err.println(stackTrace());
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 
 		// Create checkpoint
 		String checkpointFileName = checkpoint(bdsnode);

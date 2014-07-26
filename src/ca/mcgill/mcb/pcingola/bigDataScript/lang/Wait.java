@@ -60,7 +60,6 @@ public class Wait extends Statement {
 
 		// Any task/thread failed?
 		if (!ok) {
-
 			// Create a checkpoint
 			bdsThread.fatalError(this, type + "/s failed.");
 			return RunState.FATAL_ERROR;

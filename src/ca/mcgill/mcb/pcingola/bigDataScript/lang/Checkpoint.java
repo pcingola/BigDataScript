@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A "checkpoint" statement
- * 
+ *
  * @author pcingola
  */
 public class Checkpoint extends Statement {
@@ -32,13 +32,13 @@ public class Checkpoint extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected RunState runStep(BigDataScriptThread bdsThread) {
 		// Get filename
 		String file = null;
-		if (expr != null) file = expr.evalString(csThread);
+		if (expr != null) file = expr.evalString(bdsThread);
 
-		if (file != null) csThread.checkpoint(file);
-		else csThread.checkpoint(this);
+		if (file != null) bdsThread.checkpoint(file);
+		else bdsThread.checkpoint(this);
 
 		return RunState.OK;
 	}

@@ -57,7 +57,6 @@ public class ProgramUnit extends BlockWithFile {
 	protected void runBegin(BigDataScriptThread bdsThread) {
 		super.runBegin(bdsThread);
 		runScope = bdsThread.getScope();
-		Gpr.debug("SETTING RUN SCOPE");
 	}
 
 	public void setBigDataScriptThread(BigDataScriptThread bigDataScriptThread) {
