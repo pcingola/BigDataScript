@@ -28,7 +28,7 @@ public class MethodNativeListSize extends MethodNativeList {
 		Type argTypes[] = { classType };
 		parameters = Parameters.get(argTypes, argNames);
 
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	@SuppressWarnings({ "rawtypes" })

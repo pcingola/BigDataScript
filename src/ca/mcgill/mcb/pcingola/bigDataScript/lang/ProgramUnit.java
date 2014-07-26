@@ -12,16 +12,17 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * A program unit 
- * 
+ * A program unit
+ *
  * @author pcingola
  */
 public class ProgramUnit extends BlockWithFile {
 
 	BigDataScriptThread bigDataScriptThread;
-	Scope scope; // Keep track of the scope. mostly for debugging and testing
+	Scope runScope; // Scope used when running this program. Used in test cases
 
 	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
 		try {
@@ -43,8 +44,8 @@ public class ProgramUnit extends BlockWithFile {
 		return bigDataScriptThread;
 	}
 
-	public Scope getScope() {
-		return scope;
+	public Scope getRunScope() {
+		return runScope;
 	}
 
 	@Override
@@ -52,22 +53,19 @@ public class ProgramUnit extends BlockWithFile {
 		super.parse(tree);
 	}
 
-	/**
-	 * Run before running the node
-	 * @param csThread
-	 */
 	@Override
-	protected void runBegin(BigDataScriptThread csThread) {
-		super.runBegin(csThread);
-		scope = csThread.getScope();
+	protected void runBegin(BigDataScriptThread bdsThread) {
+		super.runBegin(bdsThread);
+		runScope = bdsThread.getScope();
+		Gpr.debug("SETTING RUN SCOPE");
 	}
 
 	public void setBigDataScriptThread(BigDataScriptThread bigDataScriptThread) {
 		this.bigDataScriptThread = bigDataScriptThread;
 	}
 
-	public void setScope(Scope scope) {
-		this.scope = scope;
+	public void setRunScope(Scope runScope) {
+		this.runScope = runScope;
 	}
 
 	@Override
@@ -78,8 +76,8 @@ public class ProgramUnit extends BlockWithFile {
 			// Create scope symbol
 			FunctionDeclaration fd = (FunctionDeclaration) func;
 			TypeFunc typeFunc = new TypeFunc(fd);
-			//ScopeSymbol ssym = new ScopeSymbol(fd.signature(), typeFunc, fd);
 			ScopeSymbol ssym = new ScopeSymbol(fd.getFunctionName(), typeFunc, fd);
+			Gpr.debug("Adding function: '" + fd.getFunctionName() + "'");
 
 			// Add it to scope
 			scope.add(ssym);

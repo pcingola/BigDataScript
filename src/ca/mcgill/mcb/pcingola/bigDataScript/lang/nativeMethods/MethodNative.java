@@ -25,7 +25,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	/**
 	 * Add method to class scope
 	 */
-	protected void addNativeMethodToScope() {
+	protected void addNativeMethodToClassScope() {
 		Scope classScope = getClassType().getClassScope();
 		ScopeSymbol ssym = new ScopeSymbol(functionName, getType());
 		classScope.add(ssym);
@@ -62,7 +62,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	@Override
 	public RunState runFunction(BigDataScriptThread csThread) {
 		// Get object 'this'
-		ScopeSymbol symThis = csThread.getScope().getSymbol("this");
+		ScopeSymbol symThis = csThread.getScope().getSymbol(THIS_KEYWORD);
 		Object objThis = symThis.getValue();
 
 		// Run method

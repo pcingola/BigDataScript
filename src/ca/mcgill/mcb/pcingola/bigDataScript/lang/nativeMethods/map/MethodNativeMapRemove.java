@@ -28,7 +28,7 @@ public class MethodNativeMapRemove extends MethodNativeMap {
 		Type argTypes[] = { classType, Type.STRING }; // null: don't check argument (anything can be converted to 'string')
 		parameters = Parameters.get(argTypes, argNames);
 
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	@SuppressWarnings({ "rawtypes" })

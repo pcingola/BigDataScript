@@ -24,7 +24,7 @@ public class MethodNativeZzz extends MethodNative {
 		String argNames[] = { "this", "ext" };
 		Type argTypes[] = { classType, Type.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	@Override

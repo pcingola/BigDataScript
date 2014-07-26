@@ -206,7 +206,7 @@ public class ExpressionTask extends ExpressionWithScope {
 				if (!(node instanceof ExpressionSys) //
 						&& !(node instanceof Block) //
 						&& !(node instanceof LiteralString) //
-				) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
+						) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
 		}
 	}

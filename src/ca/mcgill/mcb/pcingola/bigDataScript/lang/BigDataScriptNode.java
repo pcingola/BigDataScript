@@ -222,7 +222,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Find file (this information is stored in 'ProgramUnit', or in 'Block' node)
-	 * @return
 	 */
 	public File getFile() {
 		return parent != null ? parent.getFile() : null;
@@ -258,11 +257,12 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return (ProgramUnit) n;
 	}
 
+	public Scope getScope() {
+		return null;
+	}
+
 	/**
 	 * Find a child terminal node having 'str' as text
-	 * @param tree
-	 * @param str
-	 * @return
 	 */
 	protected int indexOf(ParseTree tree, String str) {
 		for (int i = 0; i < tree.getChildCount(); i++)
@@ -279,7 +279,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Is this a fake node (created during serialization)
-	 * @return
 	 */
 	public boolean isFake() {
 		return id <= 0;
@@ -287,7 +286,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Does this node require a new scope
-	 * @return
 	 */
 	public boolean isNeedsScope() {
 		return false;
@@ -295,10 +293,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Is child 'idx' a terminal node with value 'str'?
-	 * @param tree
-	 * @param idx
-	 * @param str
-	 * @return
 	 */
 	protected boolean isTerminal(ParseTree tree, int idx, String str) {
 		ParseTree node = tree.getChild(idx);
@@ -586,6 +580,10 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		throw new RuntimeException("Cannot set 'needsScope' in this node:" + this.getClass().getSimpleName());
 	}
 
+	public void setScope(Scope scope) {
+		throw new RuntimeException("Cannot set scope to node " + this.getClass().getSimpleName());
+	}
+
 	@Override
 	public String toString() {
 		return "Program: " + getFileName() + "\n";
@@ -643,8 +641,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Perform a typecheck
-	 * @param scope
-	 * @param compilerMessages
 	 */
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Default: Nothing to do
@@ -681,7 +677,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		// Scope processing
 		if (isNeedsScope()) {
 			// Do we really need a scope? If the scope is empty, we don't really need it
-			setNeedsScope(!scope.isEmpty());
+			if (scope.isEmpty()) setNeedsScope(false);
+			else setScope(scope);
 
 			// Get back to previous scope
 			scope = scope.getParent();
@@ -690,7 +687,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Update ID field
-	 * @param newId
 	 */
 	protected void updateId(int newId) {
 		BigDataScriptNodeFactory.get().updateId(id, newId, this);

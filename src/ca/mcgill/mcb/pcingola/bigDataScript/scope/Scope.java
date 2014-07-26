@@ -78,7 +78,9 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	public Scope(Scope parent, BigDataScriptNode node) {
 		this.parent = parent;
 		this.node = node;
+
 		symbols = new HashMap<String, ScopeSymbol>();
+		if (node != null) copy(node.getScope()); // Copy symbols from other scope
 	}
 
 	public synchronized void add(ScopeSymbol symbol) {
@@ -89,6 +91,22 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 			// Add function by name
 			functions.getOrCreate(symbol.getName()).add(symbol);
 		} else symbols.put(symbol.getName(), symbol);
+	}
+
+	/**
+	 * Copy symbols from other scope
+	 */
+	void copy(Scope oscope) {
+		if (oscope == null) return;
+
+		// Note: Symbols are added at variable declaration time (i.e. when we evaluate a 'VarDeclaration')
+		//       So we should not copy them here (otherwise we'd get 'Duplicate symbol error')
+
+		// Copy functions
+		if (oscope.hasFunctions()) {
+			for (ScopeSymbol ss : oscope.getFunctions())
+				add(ss);
+		}
 	}
 
 	/**
@@ -142,6 +160,19 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	}
 
 	/**
+	 * Find all functions
+	 */
+	public List<ScopeSymbol> getFunctions() {
+		if (functions == null) return null;
+		List<ScopeSymbol> funcs = new ArrayList<ScopeSymbol>();
+
+		for (String fname : functions.keySet())
+			funcs.addAll(functions.get(fname));
+
+		return funcs;
+	}
+
+	/**
 	 * Find all functions whose names are 'functionName'
 	 */
 	public List<ScopeSymbol> getFunctions(String functionName) {
@@ -166,6 +197,11 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	public Scope getParent() {
 		return parent;
+	}
+
+	public String getScopeName() {
+		if (node == null) return "Global";
+		return (node.getFileName() != null ? node.getFileName() + ":" + node.getLineNum() + ":" : "") + node.getClass().getSimpleName();
 	}
 
 	/**
@@ -200,6 +236,10 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	public Collection<ScopeSymbol> getSymbols() {
 		return symbols.values();
+	}
+
+	public boolean hasFunctions() {
+		return functions != null && !functions.isEmpty();
 	}
 
 	public boolean hasSymbol(String symbol) {
@@ -271,10 +311,9 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	/**
 	 * Is this scope empty?
-	 * @return
 	 */
 	public boolean isEmpty() {
-		return symbols.size() <= 0;
+		return symbols.isEmpty() && (functions == null || functions.isEmpty());
 	}
 
 	@Override
@@ -349,9 +388,9 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 					sbThis.append(ss + "\n");
 		}
 
-		if (sbThis.length() > 0) sb.append("\n---------- Scope ----------\n" + sbThis.toString());
+		// Show header
+		if (sbThis.length() > 0) sb.append("\n---------- Scope " + getScopeName() + " ----------\n" + sbThis.toString());
 
 		return sb.toString();
 	}
-
 }

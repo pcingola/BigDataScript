@@ -60,14 +60,15 @@ public class TestCasesBase extends TestCase {
 	 * Check that a file compiles without any errors, runs and a variable have its expected value
 	 */
 	void runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
-		// Compile
+		// Compile and check for errors
 		BigDataScript bigDataScript = new BigDataScript(args);
 		bigDataScript.compile();
 		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
 		// Run
+		bigDataScript = new BigDataScript(args);
 		bigDataScript.run();
-		ScopeSymbol ssym = bigDataScript.getProgramUnit().getScope().getSymbol(varname);
+		ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varname);
 
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 		Assert.assertEquals(expectedValue.toString(), ssym == null ? "" : ssym.getValue().toString());
@@ -81,6 +82,7 @@ public class TestCasesBase extends TestCase {
 		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
 		// Run
+		bigDataScript = new BigDataScript(args);
 		int exitValue = bigDataScript.run();
 		Assert.assertEquals(expectedExitValue, exitValue);
 	}
@@ -104,13 +106,14 @@ public class TestCasesBase extends TestCase {
 		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
 		// Run
+		bigDataScript = new BigDataScript(argsArray);
 		bigDataScript.run();
 
 		// Check all values
 		for (String varName : expectedValues.keySet()) {
 			Object expectedValue = expectedValues.get(varName);
 
-			ScopeSymbol ssym = bigDataScript.getProgramUnit().getScope().getSymbol(varName);
+			ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varName);
 
 			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
@@ -138,13 +141,14 @@ public class TestCasesBase extends TestCase {
 		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
 		// Run
+		bigDataScript = new BigDataScript(args);
 		bigDataScript.run();
 
 		// Run something before checkpoint recovery?
 		if (runBeforeRecover != null) runBeforeRecover.run();
 		else {
 			// Check that values match
-			ScopeSymbol ssym = bigDataScript.getProgramUnit().getScope().getSymbol(varname);
+			ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varname);
 			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 			Assert.assertEquals(expectedValue, ssym.getValue().toString());
 		}
@@ -160,7 +164,7 @@ public class TestCasesBase extends TestCase {
 		bigDataScript2.run();
 
 		// Check that values match
-		ScopeSymbol ssym = bigDataScript2.getProgramUnit().getScope().getSymbol(varname);
+		ScopeSymbol ssym = bigDataScript2.getProgramUnit().getRunScope().getSymbol(varname);
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 		Assert.assertEquals(expectedValue, ssym.getValue().toString());
 	}
@@ -183,6 +187,7 @@ public class TestCasesBase extends TestCase {
 			System.setErr(new PrintStream(captureStderr));
 
 			// Run
+			bigDataScript = new BigDataScript(args);
 			bigDataScript.run();
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -222,6 +227,7 @@ public class TestCasesBase extends TestCase {
 			System.setOut(new PrintStream(captureStdout));
 
 			// Run
+			bigDataScript = new BigDataScript(args);
 			bigDataScript.run();
 		} catch (Throwable t) {
 			t.printStackTrace();

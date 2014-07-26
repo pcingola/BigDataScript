@@ -27,7 +27,7 @@ public class MethodNativeListTail extends MethodNativeList {
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

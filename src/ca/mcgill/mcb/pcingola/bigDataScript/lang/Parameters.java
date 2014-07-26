@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
  * Function / method parameters declaration
- * 
+ *
  * @author pcingola
  */
 public class Parameters extends BigDataScriptNode {
@@ -13,8 +13,6 @@ public class Parameters extends BigDataScriptNode {
 
 	/**
 	 * Create a list of 'num' parameters
-	 * @param num
-	 * @return
 	 */
 	public static Parameters get(Type types[], String names[]) {
 		Parameters params = new Parameters(null, null);
@@ -34,8 +32,6 @@ public class Parameters extends BigDataScriptNode {
 
 	/**
 	 * Get parameter 'i' type
-	 * @param i
-	 * @return
 	 */
 	public Type getType(int i) {
 		return varDecl[i].type;

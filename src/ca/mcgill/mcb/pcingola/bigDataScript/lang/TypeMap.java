@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A hash
- * 
+ *
  * @author pcingola
  */
 public class TypeMap extends TypeList {
@@ -25,9 +25,6 @@ public class TypeMap extends TypeList {
 
 	/**
 	 * Get a list type
-	 * @param primitiveType
-	 * @param typeName
-	 * @return
 	 */
 	public static TypeMap get(Type baseType) {
 		// Get type from hash
@@ -62,22 +59,28 @@ public class TypeMap extends TypeList {
 	 */
 	@Override
 	protected void addNativeMethods() {
-		if (classScope == null) classScope = new Scope(null, null);
+		try {
 
-		// Add libarary methods
-		ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
-		methods.add(new MethodNativeMapKeys(baseType));
-		methods.add(new MethodNativeMapValues(baseType));
-		methods.add(new MethodNativeMapSize(baseType));
-		methods.add(new MethodNativeMapHasKey(baseType));
-		methods.add(new MethodNativeMapHasValue(baseType));
-		methods.add(new MethodNativeMapRemove(baseType));
+			if (classScope == null) classScope = new Scope(null, null);
 
-		// Show
-		if (debug) {
-			Gpr.debug("Type " + this + ", library methods added: ");
-			for (MethodNative method : methods)
-				Gpr.debug("\t" + method.signature());
+			// Add libarary methods
+			ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
+			methods.add(new MethodNativeMapKeys(baseType));
+			methods.add(new MethodNativeMapValues(baseType));
+			methods.add(new MethodNativeMapSize(baseType));
+			methods.add(new MethodNativeMapHasKey(baseType));
+			methods.add(new MethodNativeMapHasValue(baseType));
+			methods.add(new MethodNativeMapRemove(baseType));
+
+			// Show
+			if (debug) {
+				Gpr.debug("Type " + this + ", library methods added: ");
+				for (MethodNative method : methods)
+					Gpr.debug("\t" + method.signature());
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw new RuntimeException("Erroe while adding native mehods for class '" + this + "'", t);
 		}
 	}
 

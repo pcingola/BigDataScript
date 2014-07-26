@@ -3,11 +3,13 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
- * Method declaration 
- * 
+ * Method declaration
+ *
  * @author pcingola
  */
 public class MethodDeclaration extends FunctionDeclaration {
+
+	public static final String THIS_KEYWORD = "this";
 
 	protected Type classType;
 

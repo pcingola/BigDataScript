@@ -24,7 +24,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A list/array/stack type
- * 
+ *
  * @author pcingola
  */
 public class TypeList extends Type {
@@ -35,9 +35,6 @@ public class TypeList extends Type {
 
 	/**
 	 * Get a list type
-	 * @param primitiveType
-	 * @param typeName
-	 * @return
 	 */
 	public static TypeList get(Type baseType) {
 		// Get type from hash
@@ -71,30 +68,35 @@ public class TypeList extends Type {
 	 * Add all library methods here
 	 */
 	protected void addNativeMethods() {
-		if (classScope == null) classScope = new Scope(null, null);
+		try {
+			if (classScope == null) classScope = new Scope(null, null);
 
-		// Add libarary methods
-		ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
-		methods.add(new MethodNativeListAdd(baseType));
-		methods.add(new MethodNativeListAddList(baseType));
-		methods.add(new MethodNativeListHead(baseType));
-		methods.add(new MethodNativeListIsEmpty(baseType));
-		methods.add(new MethodNativeListJoin(baseType));
-		methods.add(new MethodNativeListJoinStr(baseType));
-		methods.add(new MethodNativeListMap(baseType));
-		methods.add(new MethodNativeListPop(baseType));
-		methods.add(new MethodNativeListPush(baseType));
-		methods.add(new MethodNativeListSize(baseType));
-		methods.add(new MethodNativeListSort(baseType));
-		methods.add(new MethodNativeListTail(baseType));
-		methods.add(new MethodNativeListRmOnExit(baseType));
-		methods.add(new MethodNativeListRm(baseType));
+			// Add libarary methods
+			ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
+			methods.add(new MethodNativeListAdd(baseType));
+			methods.add(new MethodNativeListAddList(baseType));
+			methods.add(new MethodNativeListHead(baseType));
+			methods.add(new MethodNativeListIsEmpty(baseType));
+			methods.add(new MethodNativeListJoin(baseType));
+			methods.add(new MethodNativeListJoinStr(baseType));
+			methods.add(new MethodNativeListMap(baseType));
+			methods.add(new MethodNativeListPop(baseType));
+			methods.add(new MethodNativeListPush(baseType));
+			methods.add(new MethodNativeListSize(baseType));
+			methods.add(new MethodNativeListSort(baseType));
+			methods.add(new MethodNativeListTail(baseType));
+			methods.add(new MethodNativeListRmOnExit(baseType));
+			methods.add(new MethodNativeListRm(baseType));
 
-		// Show
-		if (debug) {
-			Gpr.debug("Type " + this + ", library methods added: ");
-			for (MethodNative method : methods)
-				Gpr.debug("\t" + method.signature());
+			// Show
+			if (debug) {
+				Gpr.debug("Type " + this + ", library methods added: ");
+				for (MethodNative method : methods)
+					Gpr.debug("\t" + method.signature());
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw new RuntimeException("Erroe while adding native mehods for class '" + this + "'", t);
 		}
 	}
 

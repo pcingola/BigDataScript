@@ -29,7 +29,7 @@ public class MethodNativeListPush extends MethodNativeList {
 		Type argTypes[] = { classType, baseType };
 		parameters = Parameters.get(argTypes, argNames);
 
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

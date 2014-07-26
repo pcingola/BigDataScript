@@ -28,7 +28,7 @@ public class MethodNativeListJoinStr extends MethodNativeListJoin {
 		Type argTypes[] = { classType, Type.STRING };
 
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	@SuppressWarnings("rawtypes")

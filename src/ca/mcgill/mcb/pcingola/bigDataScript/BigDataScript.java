@@ -153,7 +153,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
@@ -303,7 +303,6 @@ public class BigDataScript {
 
 	/**
 	 * Show information from a checkpoint file
-	 * @return
 	 */
 	int infoCheckpoint() {
 		// Load checkpoint file
@@ -795,7 +794,7 @@ public class BigDataScript {
 			// Set programUnit's scope (mostly for debugging and test cases)
 			// ProgramUnit's scope it the one before 'global'
 			for (Scope scope = bdsThread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent())
-				programUnit.setScope(scope);
+				programUnit.setRunScope(scope);
 
 			//---
 			// Re-execute or add tasks

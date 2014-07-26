@@ -28,7 +28,7 @@ public class MethodNativeListDelete extends MethodNativeList {
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	@SuppressWarnings({ "rawtypes" })

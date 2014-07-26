@@ -25,7 +25,7 @@ public class MethodCall extends FunctionCall {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public Object eval(BigDataScriptThread bdsThread) {
 
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
@@ -33,17 +33,17 @@ public class MethodCall extends FunctionCall {
 		// Evaluate all expressions
 		Object values[] = new Object[fparam.length];
 		for (int i = 0; i < fparam.length; i++) {
-			Object value = arguments[i].eval(csThread);
+			Object value = arguments[i].eval(bdsThread);
 			value = fparam[i].type.cast(value);
 			values[i] = value;
 		}
 
 		// Create new scope
 		// TODO: Add class scope? (class variables & methods)
-		csThread.newScope(this);
+		bdsThread.newScope(this);
 
 		// Add arguments to scope
-		Scope scope = csThread.getScope();
+		Scope scope = bdsThread.getScope();
 		for (int i = 0; i < fparam.length; i++) {
 			Type argType = fparam[i].type;
 			String argName = fparam[i].getVarInit()[0].varName;
@@ -51,13 +51,13 @@ public class MethodCall extends FunctionCall {
 		}
 
 		// Run function body
-		functionDeclaration.runFunction(csThread);
+		functionDeclaration.runFunction(bdsThread);
 
 		// Get return value
-		Object retVal = csThread.getReturnValue();
+		Object retVal = bdsThread.getReturnValue();
 
 		// Back to old scope
-		csThread.oldScope();
+		bdsThread.oldScope();
 
 		// Return result
 		return retVal;

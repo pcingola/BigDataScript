@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.GenericNode;
 
 /**
  * A list of compilation messages
- * 
+ *
  * @author pcingola
  */
 public class CompilerMessages implements Iterable<CompilerMessage> {
@@ -23,9 +23,12 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 	// Store error messages by thread (we may want to parallelize compilation at some point)
 	private static HashMap<Thread, CompilerMessages> compilerMessagesByThread = new HashMap<Thread, CompilerMessages>();
 
+	String fileName;
+
+	HashMap<String, CompilerMessage> messages;
+
 	/**
 	 * Get CompilerMessages (for this thread)
-	 * @return
 	 */
 	public static synchronized CompilerMessages get() {
 		CompilerMessages cms = compilerMessagesByThread.get(Thread.currentThread());
@@ -47,16 +50,12 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 		get().fileName = fileName;
 	}
 
-	String fileName;
-
-	HashMap<String, CompilerMessage> messages;
-
 	private CompilerMessages() {
 		messages = new HashMap<String, CompilerMessage>();
 	}
 
 	public void add(BigDataScriptNode node, String message, MessageType type) {
-		CompilerMessageBdsNode cm =  CompilerMessageBdsNode.createCompilerMessageBdsNode(node, message, type);
+		CompilerMessageBdsNode cm = CompilerMessageBdsNode.createCompilerMessageBdsNode(node, message, type);
 		String key = cm.toString();
 		if (!messages.containsKey(key)) messages.put(key, cm);
 	}
@@ -68,10 +67,6 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 
 	/**
 	 * Create a compiler error message when everything we have to far is a parse tree
-	 * @param tree
-	 * @param parentFile
-	 * @param message
-	 * @param type
 	 */
 	public void add(ParseTree tree, File parentFile, String message, MessageType type) {
 		GenericNode genericNode = new GenericNode(null, tree);
@@ -81,10 +76,6 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 
 	/**
 	 * Create a compiler error message
-	 * @param tree
-	 * @param parentFile
-	 * @param message
-	 * @param type
 	 */
 	public void add(String fileName, int line, int linePos, String message, MessageType type) {
 		CompilerMessage cm = new CompilerMessage(fileName, line, linePos, message, type);
@@ -118,7 +109,6 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 
 	/**
 	 * Get all messages (sort them first)
-	 * @return
 	 */
 	public List<CompilerMessage> messagesSorted() {
 		ArrayList<CompilerMessage> list = new ArrayList<CompilerMessage>();

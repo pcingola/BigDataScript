@@ -2,13 +2,16 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
+
 /**
  * A Statement that requires a new Scope
- * 
+ *
  * @author pcingola
  */
 public class StatementWithScope extends Statement {
 
+	protected Scope scope; // Scope required for this statement. Note: This is not a scope used at run-time, this is just a used to hold the symbols that will be required when running
 	protected boolean needsScope; // Do we really need a scope? If a scope is requested, but we don't add new symbols, then we don't really need it (e.g. while loop without any new variables)
 
 	public StatementWithScope(BigDataScriptNode parent, ParseTree tree) {
@@ -16,8 +19,13 @@ public class StatementWithScope extends Statement {
 	}
 
 	@Override
+	public Scope getScope() {
+		return scope;
+	}
+
+	@Override
 	void initialize() {
-		needsScope = true; // At priory, we think we need a scope. This may be changed at type-checking
+		needsScope = true; // A priory, we think we need a scope. This may be changed at type-checking
 	}
 
 	@Override
@@ -28,6 +36,11 @@ public class StatementWithScope extends Statement {
 	@Override
 	public void setNeedsScope(boolean needsScope) {
 		this.needsScope = needsScope;
+	}
+
+	@Override
+	public void setScope(Scope scope) {
+		this.scope = scope;
 	}
 
 }

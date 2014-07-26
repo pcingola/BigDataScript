@@ -1,16 +1,16 @@
 #!/usr/bin/env bds
 
-l := [1,2,3]
-h := l.head()
-print("h:$h\n")
+# hi := "HI!"
+# print("hi: $hi\n")
 
-#int twice(int x) { return( 2 * x ) }
-#
-#print("Start\n")
-#
-#l := [1, 2, 3]
-#print("l : $l\n")
-#
-#tl := l.map( twice )
-#print("tl: $tl\n")
+cpus = 1
+print("Before:\tcpus=$cpus\n")
 
+# Note: Local variable definition using ':=' operator
+task( cpus := 2 ) {
+	sys echo During:   cpus=$cpus
+}
+wait
+
+# Original value should not be changed
+print("After:\tcpus=$cpus\n")

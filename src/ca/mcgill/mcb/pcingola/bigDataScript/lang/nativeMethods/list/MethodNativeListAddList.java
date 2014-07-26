@@ -30,7 +30,7 @@ public class MethodNativeListAddList extends MethodNativeList {
 		Type argTypes[] = { classType, TypeList.get(baseType) };
 		parameters = Parameters.get(argTypes, argNames);
 
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

@@ -31,7 +31,7 @@ public class MethodNativeMapKeys extends MethodNativeMap {
 		Type argTypes[] = { classType };
 		parameters = Parameters.get(argTypes, argNames);
 
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
