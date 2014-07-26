@@ -10,6 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Program unit (usually a file)
@@ -73,6 +74,7 @@ public class FunctionCall extends Expression {
 	ScopeSymbol findFunction(Scope scope, String functionName, Args args) {
 		// Retrieve all functions with the same name
 		List<ScopeSymbol> ssfuncs = scope.getFunctions(functionName);
+		Gpr.debug("FIND FUNC: " + functionName);
 
 		// Find best matching function...
 		ScopeSymbol bestSsfunc = null;

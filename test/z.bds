@@ -3,10 +3,8 @@
 int twice(int x) { return( 2 * x ) }
 
 print("Start\n")
-
 l := [1, 2, 3]
 print("l : $l\n")
-
-tl := l.map( twice )
-print("tl: $tl\n")
+l.map( twice )
+#print("tl: $tl\n")
 

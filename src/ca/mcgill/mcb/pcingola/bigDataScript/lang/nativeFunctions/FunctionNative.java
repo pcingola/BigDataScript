@@ -27,7 +27,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	 */
 	protected void addNativeFunctionToScope() {
 		Scope classScope = Scope.getGlobalScope();
-		ScopeSymbol ssym = new ScopeSymbol(signature(), getType());
+		ScopeSymbol ssym = new ScopeSymbol(functionName, getType());
 		classScope.add(ssym);
 	}
 

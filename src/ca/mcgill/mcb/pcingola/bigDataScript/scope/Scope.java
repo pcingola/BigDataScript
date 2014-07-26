@@ -84,8 +84,10 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 			// Create hash?
 			if (functions == null) functions = new AutoHashMap<String, List<ScopeSymbol>>(new LinkedList<ScopeSymbol>());
 
+			Gpr.debug("ADDING FUNCTION\tname: '" + symbol.getName() + "'\tfunctionName: '" + symbol.getFunctionName() + "'");
+
 			// Add function by name
-			functions.getOrCreate(symbol.getFunctionName()).add(symbol);
+			functions.getOrCreate(symbol.getName()).add(symbol);
 		} else symbols.put(symbol.getName(), symbol);
 	}
 
@@ -151,7 +153,6 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	}
 
 	public boolean hasSymbol(String symbol) {
-		Gpr.debug("hasSymbol: " + symbol + "\tlocal: " + getSymbol(symbol));
 		return getSymbol(symbol) != null;
 	}
 

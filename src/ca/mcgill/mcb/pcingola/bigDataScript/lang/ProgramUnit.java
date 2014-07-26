@@ -74,11 +74,12 @@ public class ProgramUnit extends BlockWithFile {
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Add all functions
 		List<BigDataScriptNode> funcs = findNodes(FunctionDeclaration.class, true);
-		for (BigDataScriptNode node : funcs) {
+		for (BigDataScriptNode func : funcs) {
 			// Create scope symbol
-			FunctionDeclaration fd = (FunctionDeclaration) node;
+			FunctionDeclaration fd = (FunctionDeclaration) func;
 			TypeFunc typeFunc = new TypeFunc(fd);
-			ScopeSymbol ssym = new ScopeSymbol(fd.signature(), typeFunc);
+			//ScopeSymbol ssym = new ScopeSymbol(fd.signature(), typeFunc, fd);
+			ScopeSymbol ssym = new ScopeSymbol(fd.getFunctionName(), typeFunc, fd);
 
 			// Add it to scope
 			scope.add(ssym);
