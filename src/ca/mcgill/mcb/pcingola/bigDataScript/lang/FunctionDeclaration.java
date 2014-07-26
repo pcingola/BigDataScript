@@ -105,12 +105,14 @@ public class FunctionDeclaration extends StatementWithScope {
 		StringBuilder sb = new StringBuilder();
 		sb.append(functionName);
 		sb.append("(");
-		for (VarDeclaration vdecl : parameters.getVarDecl()) {
-			Type type = vdecl.type;
-			for (VariableInit vi : vdecl.getVarInit()) {
-				sb.append(type + ",");
+		if (parameters != null) {
+			for (VarDeclaration vdecl : parameters.getVarDecl()) {
+				Type type = vdecl.type;
+				for (VariableInit vi : vdecl.getVarInit()) {
+					sb.append(type + ",");
+				}
+				sb.deleteCharAt(sb.length() - 1);
 			}
-			sb.deleteCharAt(sb.length() - 1);
 		}
 		sb.append(")");
 		signature = sb.toString();

@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * Program unit (usually a file)
- * 
+ *
  * @author pcingola
  */
 public class MethodCall extends FunctionCall {
@@ -89,7 +89,7 @@ public class MethodCall extends FunctionCall {
 		// Find method
 		if (exprType != null) {
 			Scope classScope = exprType.getClassScope();
-			ScopeSymbol ssfunc = findFunction(classScope, functionName, args);
+			ScopeSymbol ssfunc = classScope.findFunction(functionName, args);
 			if (ssfunc != null) {
 				functionDeclaration = ((TypeFunc) ssfunc.getType()).getFunctionDeclaration();
 				returnType = functionDeclaration.getReturnType();

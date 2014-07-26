@@ -104,8 +104,11 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 	public String toString() {
 		String valStr = "null";
 
-		if ((type != null) && type.isString()) valStr = "\"" + GprString.escape(value.toString()) + "\"";
-		else valStr = "" + value;
+		if (type != null && value != null) {
+			if (type.isString()) valStr = "\"" + GprString.escape(value.toString()) + "\"";
+			else if (type.isFunction()) return name + " : " + type;
+			else valStr = "" + value;
+		}
 
 		return type //
 				+ " " + name //

@@ -11,8 +11,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 
 /**
- * A native method declaration 
- * 
+ * A native method declaration
+ *
  * @author pcingola
  */
 public abstract class MethodNative extends MethodDeclaration {
@@ -27,14 +27,12 @@ public abstract class MethodNative extends MethodDeclaration {
 	 */
 	protected void addNativeMethodToScope() {
 		Scope classScope = getClassType().getClassScope();
-		ScopeSymbol ssym = new ScopeSymbol(signature(), getType());
+		ScopeSymbol ssym = new ScopeSymbol(functionName, getType());
 		classScope.add(ssym);
 	}
 
 	/**
 	 * Convert an array to a list
-	 * @param strings
-	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected ArrayList array2list(Object objects[]) {
@@ -46,8 +44,6 @@ public abstract class MethodNative extends MethodDeclaration {
 
 	/**
 	 * Convert an array to a list and sort the list
-	 * @param strings
-	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected ArrayList array2listSorted(Object objects[]) {
@@ -80,8 +76,6 @@ public abstract class MethodNative extends MethodDeclaration {
 
 	/**
 	 * Run a method
-	 * @param csThread
-	 * @param objThis
 	 */
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
 		throw new RuntimeException("Unimplemented method for class " + this.getClass().getSimpleName());

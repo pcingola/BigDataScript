@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import java.util.List;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
@@ -10,11 +8,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Program unit (usually a file)
- * 
+ *
  * @author pcingola
  */
 public class FunctionCall extends Expression {
@@ -68,57 +65,6 @@ public class FunctionCall extends Expression {
 		return retVal;
 	}
 
-	/**
-	 * Find a function that matches this call
-	 */
-	ScopeSymbol findFunction(Scope scope, String functionName, Args args) {
-		// Retrieve all functions with the same name
-		List<ScopeSymbol> ssfuncs = scope.getFunctions(functionName);
-		Gpr.debug("FIND FUNC: " + functionName);
-
-		// Find best matching function...
-		ScopeSymbol bestSsfunc = null;
-		int bestScore = Integer.MAX_VALUE;
-		for (ScopeSymbol ssfunc : ssfuncs) {
-			boolean ok = false;
-			int score = 0;
-			TypeFunc sstype = (TypeFunc) ssfunc.getType();
-
-			// Find the ones with the same number of parameters
-			int argc = args.size();
-			if (argc == sstype.getParameters().size()) {
-				ok = true;
-
-				// Find the ones with matching exact parameters
-				for (int i = 0; i < args.size(); i++) {
-					Type argType = args.getArguments()[i].getReturnType();
-					Type funcType = sstype.getParameters().getType(i);
-
-					// Same argument?
-					if ((argType != null) && !argType.equals(funcType)) {
-						// Can we cast?
-						if (argType.canCast(funcType)) score++; // Add a point if we can cast
-						else ok = false;
-					}
-				}
-			}
-
-			// Found anything?
-			if (ok) {
-				// Perfect match? Don't look any further
-				if (score == 0) return ssfunc;
-
-				// Get the one with less argument casts
-				if (score < bestScore) {
-					bestScore = score;
-					bestSsfunc = ssfunc;
-				}
-			}
-		}
-
-		return bestSsfunc;
-	}
-
 	@Override
 	protected boolean isReturnTypesNotNull() {
 		return true;
@@ -141,7 +87,7 @@ public class FunctionCall extends Expression {
 
 		args.returnType(scope);
 
-		ScopeSymbol ssfunc = findFunction(scope, functionName, args);
+		ScopeSymbol ssfunc = scope.findFunction(functionName, args);
 		if (ssfunc != null) {
 			functionDeclaration = ((TypeFunc) ssfunc.getType()).getFunctionDeclaration();
 			returnType = functionDeclaration.getReturnType();

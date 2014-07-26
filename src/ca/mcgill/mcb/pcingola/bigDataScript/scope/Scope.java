@@ -9,13 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.Args;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ParentNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Scope: Variables, functions and classes
@@ -84,11 +86,59 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 			// Create hash?
 			if (functions == null) functions = new AutoHashMap<String, List<ScopeSymbol>>(new LinkedList<ScopeSymbol>());
 
-			Gpr.debug("ADDING FUNCTION\tname: '" + symbol.getName() + "'\tfunctionName: '" + symbol.getFunctionName() + "'");
-
 			// Add function by name
 			functions.getOrCreate(symbol.getName()).add(symbol);
 		} else symbols.put(symbol.getName(), symbol);
+	}
+
+	/**
+	 * Find a function that matches a function call
+	 */
+	public ScopeSymbol findFunction(String functionName, Args args) {
+		// Retrieve all functions with the same name
+		List<ScopeSymbol> ssfuncs = getFunctions(functionName);
+
+		// Find best matching function...
+		ScopeSymbol bestSsfunc = null;
+		int bestScore = Integer.MAX_VALUE;
+		for (ScopeSymbol ssfunc : ssfuncs) {
+			boolean ok = false;
+			int score = 0;
+			TypeFunc sstype = (TypeFunc) ssfunc.getType();
+
+			// Find the ones with the same number of parameters
+			int argc = args.size();
+			if (argc == sstype.getParameters().size()) {
+				ok = true;
+
+				// Find the ones with matching exact parameters
+				for (int i = 0; i < args.size(); i++) {
+					Type argType = args.getArguments()[i].getReturnType();
+					Type funcType = sstype.getParameters().getType(i);
+
+					// Same argument?
+					if ((argType != null) && !argType.equals(funcType)) {
+						// Can we cast?
+						if (argType.canCast(funcType)) score++; // Add a point if we can cast
+						else ok = false;
+					}
+				}
+			}
+
+			// Found anything?
+			if (ok) {
+				// Perfect match? Don't look any further
+				if (score == 0) return ssfunc;
+
+				// Get the one with less argument casts
+				if (score < bestScore) {
+					bestScore = score;
+					bestSsfunc = ssfunc;
+				}
+			}
+		}
+
+		return bestSsfunc;
 	}
 
 	/**
@@ -284,16 +334,24 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 			if (!parentStr.isEmpty()) sb.append(parentStr);
 		}
 
-		// Show current
+		// Show scope symbols
 		StringBuilder sbThis = new StringBuilder();
 		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
 		ssyms.addAll(symbols.values());
 		Collections.sort(ssyms);
 		for (ScopeSymbol ss : ssyms)
-			if (!ss.getType().isFunction() || showFunc) sbThis.append(ss + "\n");
+			sbThis.append(ss + "\n");
+
+		// Show scope functions
+		if (showFunc && functions != null) {
+			for (String fname : functions.keySet())
+				for (ScopeSymbol ss : functions.get(fname))
+					sbThis.append(ss + "\n");
+		}
 
 		if (sbThis.length() > 0) sb.append("\n---------- Scope ----------\n" + sbThis.toString());
 
 		return sb.toString();
 	}
+
 }

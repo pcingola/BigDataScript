@@ -1,10 +1,16 @@
 #!/usr/bin/env bds
 
-int twice(int x) { return( 2 * x ) }
+l := [1,2,3]
+h := l.head()
+print("h:$h\n")
 
-print("Start\n")
-l := [1, 2, 3]
-print("l : $l\n")
-l.map( twice )
+#int twice(int x) { return( 2 * x ) }
+#
+#print("Start\n")
+#
+#l := [1, 2, 3]
+#print("l : $l\n")
+#
+#tl := l.map( twice )
 #print("tl: $tl\n")
 

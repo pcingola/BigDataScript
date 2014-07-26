@@ -20,7 +20,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -431,7 +430,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		if (!recover) runBegin(bdsThread); // Before node execution
 		else rstate = RunState.CHECKPOINT_RECOVER;
 
-		Gpr.debug("Running: " + this);
 		try {
 			if (bdsThread.shouldRun(this)) rstate = runStep(bdsThread); // Run
 		} catch (Throwable t) {
