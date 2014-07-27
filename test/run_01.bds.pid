@@ -5775,3 +5775,171 @@ test/checkpoint_09.xml	+	rm
 test/checkpoint_09.csv	-
 18157	-
 test/checkpoint_09.xml	-
+31088	+	
+31088	-
+31103	+	
+31103	-
+31116	+	
+31116	-
+null	-
+31142	+	
+31142	-
+31153	+	
+31153	-
+31163	+	
+31163	-
+31173	+	
+31173	-
+31186	+	
+31186	-
+31198	+	
+31198	-
+31219	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+31224	+	
+31219	-
+/home/pcingola/zero_length_file_out.txt	-
+31224	-
+31244	+	
+31244	-
+31257	+	
+31263	+	
+31257	-
+31263	-
+31344	+	
+31344	-
+31357	+	
+31357	-
+31371	+	
+31371	-
+null	-
+31384	+	
+31384	-
+31396	+	
+31396	-
+31409	+	
+31409	-
+31420	+	
+31420	-
+31431	+	
+31431	-
+31442	+	
+31442	-
+31458	+	
+failOnce.out1	+	rm
+31458	-
+failOnce.out1	-
+31471	+	
+failOnce.out1	+	rm
+31471	-
+failOnce.out1	-
+31483	+	
+failOnce.out2	+	rm
+31483	-
+failOnce.out2	-
+31503	+	
+failOnce.out1	+	rm
+31503	-
+failOnce.out1	-
+31516	+	
+failOnce.out1	+	rm
+31516	-
+failOnce.out1	-
+31528	+	
+failOnce.out2	+	rm
+31528	-
+failOnce.out2	-
+31566	+	
+out1.txt	+	rm
+31566	-
+out1.txt	-
+31578	+	
+out2.txt	+	rm
+31578	-
+out2.txt	-
+31596	+	
+out1.txt	+	rm
+31596	-
+out1.txt	-
+31608	+	
+out2.txt	+	rm
+31608	-
+out2.txt	-
+31620	+	
+out1.txt	+	rm
+31620	-
+out1.txt	-
+31634	+	
+31634	-
+31647	+	
+31647	-
+31665	+	
+out1.txt	+	rm
+31665	-
+out1.txt	-
+31677	+	
+out2.txt	+	rm
+31677	-
+out2.txt	-
+31690	+	
+out1.txt	+	rm
+31690	-
+out1.txt	-
+31702	+	
+out2.txt	+	rm
+31702	-
+out2.txt	-
+31716	+	
+test/graph_05.csv	+	rm
+31716	-
+test/graph_05.csv	-
+31727	+	
+test/graph_05.xml	+	rm
+31727	-
+test/graph_05.xml	-
+31740	+	
+test/graph_05.csv	+	rm
+31740	-
+test/graph_05.csv	-
+31751	+	
+test/graph_05.xml	+	rm
+31751	-
+test/graph_05.xml	-
+31764	+	
+test/graph_06.csv	+	rm
+31769	+	
+test/graph_06.xml	+	rm
+31764	-
+test/graph_06.csv	-
+31769	-
+test/graph_06.xml	-
+31799	+	
+31799	-
+31805	+	
+31805	-
+31821	+	
+31821	-
+31836	+	
+test/checkpoint_08.csv	+	rm
+31841	+	
+test/checkpoint_08.xml	+	rm
+31836	-
+test/checkpoint_08.csv	-
+31841	-
+test/checkpoint_08.xml	-
+31860	+	
+test/checkpoint_08.csv	+	rm
+31865	+	
+test/checkpoint_08.xml	+	rm
+31860	-
+test/checkpoint_08.csv	-
+31865	-
+test/checkpoint_08.xml	-
+31884	+	
+test/checkpoint_09.csv	+	rm
+31889	+	
+test/checkpoint_09.xml	+	rm
+31884	-
+test/checkpoint_09.csv	-
+31889	-
+test/checkpoint_09.xml	-
