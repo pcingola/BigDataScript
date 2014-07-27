@@ -47,8 +47,6 @@ public class TaskDependecies {
 	protected synchronized void addTask(Task task) {
 		if (tasksById.containsKey(task.getId())) return; // Already added? Nothing to do
 
-		Gpr.debug("Adding task\tdep: " + task.isDependency() + "\tid: " + task.getId());
-
 		// Add task
 		tasksById.put(task.getId(), task);
 		tasks.add(task);

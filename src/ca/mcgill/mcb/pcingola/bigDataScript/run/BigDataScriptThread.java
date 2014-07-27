@@ -734,7 +734,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public void restoreUnserializedTasks() {
 		if (restoredTasks == null) return;
 		for (Task task : restoredTasks) {
-			Gpr.debug("RESTORING TASK: " + task);
 			add(task);
 
 			if ((!task.isDone() // Not finished?
@@ -850,10 +849,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		out.append(statement.serializeSave(serializer));
 
 		// Save all tasks (in the same order that they were added)
-		for (Task task : taskDependecies.getTasks()) {
-			Gpr.debug("SERIALIZING TASK : " + task.getId());
+		for (Task task : taskDependecies.getTasks())
 			out.append(task.serializeSave(serializer));
-		}
 
 		return out.toString();
 	}
