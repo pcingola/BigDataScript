@@ -1038,8 +1038,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (task == null) return false; // No task? We are done!
 
 		// Is task a dependency?
-		if (task.isDependency() && !task.isStarted()) {
-			if (isDebug()) Timer.showStdErr("Wait: Task '" + task.getId() + "' is dependency and has not been started. Not wating.");
+		if (task.isDependency() && !task.isScheduled()) {
+			if (isDebug()) Timer.showStdErr("Wait: Task '" + task.getId() + "' is dependency and has not been scheduled for execution. Not wating.");
 			return true;
 		}
 

@@ -32,6 +32,7 @@ public class Task implements BigDataScriptSerialize {
 
 	public enum TaskState {
 		NONE // Task created, nothing happened so far
+		, SCHEDULED // Process is scheduled to start
 		, STARTED // Process started (or queued for execution)
 		, START_FAILED // Process failed to start (or failed to queue)
 		, RUNNING // Running OK
@@ -58,7 +59,6 @@ public class Task implements BigDataScriptSerialize {
 			default:
 				return ERROR;
 			}
-
 		}
 
 		public boolean isError() {
@@ -66,7 +66,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (this == TaskState.ERROR) //
 					|| (this == TaskState.ERROR_TIMEOUT) //
 					|| (this == TaskState.KILLED) //
-					;
+			;
 		}
 
 		public boolean isFinished() {
@@ -150,11 +150,10 @@ public class Task implements BigDataScriptSerialize {
 
 	/**
 	 * Can this task run?
-	 * I.e.: It has not been started yet and all dependencies are satisfied
-	 * @return true if we are ready to run this task
+	 * I.e.: It has been scheduled, but not started.
 	 */
 	public boolean canRun() {
-		return taskState == TaskState.NONE;
+		return taskState == TaskState.SCHEDULED;
 	}
 
 	/**
@@ -411,8 +410,6 @@ public class Task implements BigDataScriptSerialize {
 	/**
 	 * Has this task been executed successfully?
 	 * The task has finished, exit code is zero and all output files have been created
-	 *
-	 * @return
 	 */
 	public synchronized boolean isDoneOk() {
 		return isStateFinished() && (exitValue == 0) && checkOutputFiles().isEmpty();
@@ -425,24 +422,27 @@ public class Task implements BigDataScriptSerialize {
 	 * 		- The task has finished execution and it is in an error state
 	 * 		- OR exitValue is non-zero
 	 * 		- OR any of the output files was not created
-	 *
-	 * @return
 	 */
 	public synchronized boolean isFailed() {
 		return isStateError() || (exitValue != 0) || !checkOutputFiles().isEmpty();
 	}
 
 	/**
-	 * Has the task been started?
-	 * @return
+	 * Has this task been scheduled to be started?
 	 */
-	public boolean isStarted() {
+	public boolean isScheduled() {
 		return taskState != TaskState.NONE;
 	}
 
 	/**
+	 * Has the task been started?
+	 */
+	public boolean isStarted() {
+		return taskState != TaskState.NONE && taskState != TaskState.SCHEDULED;
+	}
+
+	/**
 	 * Is this task in any error or killed state?
-	 * @return
 	 */
 	public boolean isStateError() {
 		return taskState.isError();
@@ -611,13 +611,18 @@ public class Task implements BigDataScriptSerialize {
 		if (newState == taskState) return; // Nothing to do
 
 		switch (newState) {
-		case STARTED:
+		case SCHEDULED:
 			if (taskState == TaskState.NONE) setState(newState);
 			else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
+		case STARTED:
+			if (taskState == TaskState.SCHEDULED) setState(newState);
+			else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
+			break;
+
 		case START_FAILED:
-			if (taskState == TaskState.NONE) {
+			if (taskState == TaskState.SCHEDULED) {
 				setState(newState);
 				runningStartTime = runningEndTime = new Date();
 				failCount++;
@@ -646,8 +651,9 @@ public class Task implements BigDataScriptSerialize {
 		case KILLED:
 			if ((taskState == TaskState.RUNNING) // A task can be killed while running...
 					|| (taskState == TaskState.STARTED) // or right after it started
-					|| (taskState == TaskState.NONE) // or even if it was not started
-					) {
+					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
+					|| (taskState == TaskState.NONE) // or even if it was not scheduled
+			) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;

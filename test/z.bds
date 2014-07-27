@@ -16,8 +16,8 @@ dep ( xml <- csv ) sys cp $csv $xml; echo "copying to xml"
 print("Checkpoint!\n")
 checkpoint prefix + ".chp"
 
-## Run goal
-#ids := goal xml
-#num := ids.size()
-#print("Task IDs for goal $xml ($num): $ids\n")
+# Run goal
+ids := goal xml
+num := ids.size()
+print("Task IDs for goal $xml ($num): $ids\n")
 

@@ -76,6 +76,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 */
 	public synchronized void add(Task task) {
 		if (verbose) log("Queuing task: " + task.getId());
+		task.state(TaskState.SCHEDULED);
 		tasksToRun.add(task);
 	}
 

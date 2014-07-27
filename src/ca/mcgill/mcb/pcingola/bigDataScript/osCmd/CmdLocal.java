@@ -126,6 +126,8 @@ public class CmdLocal extends Cmd {
 	 * @param pid
 	 */
 	protected void killBds(int pid) {
+		Gpr.debug("Kill pid: " + pid);
+
 		// Create arguments
 		ArrayList<String> args = new ArrayList<String>();
 

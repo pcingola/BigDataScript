@@ -52,6 +52,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (bdsThread.getConfig().isDryRun()) {
 			// Dry run: Don't run the task, just show what would be run
 			Timer.showStdErr("Dry run task:\n" + task.toString(true, true));
+			task.state(TaskState.SCHEDULED);
 			task.state(TaskState.STARTED);
 			task.state(TaskState.RUNNING);
 			task.state(TaskState.FINISHED);
@@ -206,7 +207,7 @@ public class ExpressionTask extends ExpressionWithScope {
 				if (!(node instanceof ExpressionSys) //
 						&& !(node instanceof Block) //
 						&& !(node instanceof LiteralString) //
-						) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
+				) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
 		}
 	}
