@@ -10,20 +10,34 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Program counter: A 'stack' of nodes that we are currently executing
- * 
+ *
  * @author pcingola
  */
 public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer> {
 
+	private static int programCounterNum = 0;
+
 	Stack<Integer> nodeIds;
+	int id;
+
+	protected static int nextId() {
+		return ++programCounterNum;
+	}
 
 	public ProgramCounter() {
 		nodeIds = new Stack<Integer>();
+		id = nextId();
 	}
 
 	public ProgramCounter(ProgramCounter pc) {
 		nodeIds = new Stack<Integer>();
 		nodeIds.addAll(pc.nodeIds);
+		id = nextId();
+	}
+
+	@Override
+	public String getNodeId() {
+		return getClass().getSimpleName() + ":" + id;
 	}
 
 	boolean isEmpty() {

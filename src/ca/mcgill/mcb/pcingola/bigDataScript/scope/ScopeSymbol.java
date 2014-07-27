@@ -16,23 +16,28 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 	// Internal variables use this symbol at the beginning to make sure programmers don't collide with their names
 	// Important: This must be an invalid symbol in variable names
 	public static final String INTERNAL_SYMBOL_START = "$";
-
 	public static boolean debug = false;
 
+	private static int scopeSymbolNum = 0;
+
+	int id;
 	Type type;
 	String name;
 	Object value;
 	boolean constant = false;
 
+	protected static int nextId() {
+		return ++scopeSymbolNum;
+	}
+
 	public ScopeSymbol() {
+		id = nextId();
 	}
 
 	public ScopeSymbol(String name, Type type) {
 		this.name = name;
 		this.type = type;
-
-		// Set default value
-		//if (!type.isFunction())
+		id = nextId();
 		value = type.defaultValue();
 	}
 
@@ -40,6 +45,7 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 		this.name = name;
 		this.type = type;
 		this.value = value;
+		id = nextId();
 	}
 
 	@Override
@@ -49,6 +55,11 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String getNodeId() {
+		return getClass().getSimpleName() + ":" + id;
 	}
 
 	public Type getType() {

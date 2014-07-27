@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -19,7 +20,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrePostOperation;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrimitiveType;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.Statement;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
@@ -48,16 +49,22 @@ public class BigDataScriptSerializer {
 	int parsedField;
 	String fields[];
 	Config config;
-	HashSet<BigDataScriptNode> serializedNodes;
+	Set<BigDataScriptSerialize> serializedNodes;
+	Map<String, BigDataScriptThread> threadsById;
 
 	public BigDataScriptSerializer(String fileName, Config config) {
 		this.fileName = fileName;
 		this.config = config;
-		serializedNodes = new HashSet<BigDataScriptNode>();
+		serializedNodes = new HashSet<BigDataScriptSerialize>();
+		threadsById = new HashMap<String, BigDataScriptThread>();
 	}
 
-	public boolean add(BigDataScriptNode node) {
+	public boolean add(BigDataScriptSerialize node) {
 		return serializedNodes.add(node);
+	}
+
+	public BigDataScriptThread getBdsThread(String bdsThreadId) {
+		return threadsById.get(bdsThreadId);
 	}
 
 	public String getCurrField() {
@@ -76,8 +83,6 @@ public class BigDataScriptSerializer {
 
 	/**
 	 * Get next field as a given 'type'
-	 * @param type
-	 * @return
 	 */
 	public Object getNextField(Type type) {
 		switch (type.getPrimitiveType()) {
@@ -161,8 +166,6 @@ public class BigDataScriptSerializer {
 	 * Get nodeId from next field.
 	 * Format : "node:ID_NUM"
 	 * E.g.   : "node:42"
-	 *
-	 * @return
 	 */
 	public int getNextFieldNodeId() {
 		return parseNodeId(getNextField());
@@ -205,7 +208,6 @@ public class BigDataScriptSerializer {
 
 	/**
 	 * Is the nexf field a node?
-	 * @return
 	 */
 	public boolean isNextFieldNode() {
 		String nextVal = "";
@@ -213,7 +215,7 @@ public class BigDataScriptSerializer {
 		return nextVal.startsWith(NODE_IDENTIFIER);
 	}
 
-	public boolean isSerialized(BigDataScriptNode node) {
+	public boolean isSerialized(BigDataScriptSerialize node) {
 		return serializedNodes.contains(node);
 	}
 
@@ -238,10 +240,8 @@ public class BigDataScriptSerializer {
 
 	/**
 	 * Parse a value
-	 *
 	 * @param fieldClass : Class of field to parse
 	 * @param componentType : Component class (in case of an array)
-	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object parse(Class fieldClass, Class componentType) {
@@ -289,11 +289,11 @@ public class BigDataScriptSerializer {
 		BigDataScriptNodeFactory.get().setCreateFakeIds(true);
 
 		// Initialize
-		ArrayList<BigDataScriptThread> bigDataScriptThreads = new ArrayList<BigDataScriptThread>();
+		ArrayList<BigDataScriptThread> bdsThreads = new ArrayList<BigDataScriptThread>();
+		BigDataScriptThread currBdsThread = null;
 		Scope currScope = null;
 		ArrayList<Scope> scopes = new ArrayList<Scope>();
-		BigDataScriptThread currCsThread = null;
-		//		List<Task> tasks = new LinkedList<Task>();
+		Map<String, BigDataScriptSerialize> nodesById = new HashMap<String, BigDataScriptSerialize>();
 
 		// Parse lines
 		for (int i = 0; i < lines.length; i++) {
@@ -308,79 +308,74 @@ public class BigDataScriptSerializer {
 
 			if ((classNameFilter == null) || (classNameFilter.equals(clazz))) {
 				// Object to un-serialize
-				BigDataScriptSerialize bigDataScriptSerialize = null;
+				BigDataScriptSerialize bdsSerialize = null;
 
 				//---
-				// Class selector
+				// Create class (before parsing it)
 				//---
 				if (clazz.equals(BigDataScript.class.getSimpleName())) {
 					// Check version number
 					double version = Gpr.parseDoubleSafe(fields[1]);
 					double versionThis = Gpr.parseDoubleSafe(BigDataScript.VERSION_MAJOR);
 					if (versionThis < version) throw new RuntimeException("Version numbers do not match.\n\tThis version: " + versionThis + "\n\tFile's version: " + version);
-					bigDataScriptSerialize = null; // Nothing to parse
+					bdsSerialize = null; // Nothing to parse
 				} else if (clazz.equals(BigDataScriptThread.class.getSimpleName())) {
 					// Parse BigDataScriptThread
-					BigDataScriptThread bigDataScriptThread = new BigDataScriptThread(null, config);
-					bigDataScriptThreads.add(bigDataScriptThread);
-					currCsThread = bigDataScriptThread;
-					currCsThread.setScope(null);
+					BigDataScriptThread bdsThread = new BigDataScriptThread(null, config);
+					currBdsThread = bdsThread;
+					currBdsThread.setScope(null);
 					currScope = null;
 
-					bigDataScriptSerialize = bigDataScriptThread;
+					bdsSerialize = bdsThread;
 				} else if (clazz.equals(ProgramCounter.class.getSimpleName())) {
 					// Parse ProgramCounter
-					bigDataScriptSerialize = new ProgramCounter();
+					bdsSerialize = new ProgramCounter();
 				} else if (clazz.equals(Scope.class.getSimpleName())) {
 					// Parse Scope
 					Scope scope = new Scope();
 					if (currScope != null) currScope.setParent(scope);
 					currScope = scope;
 					scopes.add(scope);
-					bigDataScriptSerialize = currScope;
+					bdsSerialize = currScope;
 				} else if (clazz.equals(ScopeSymbol.class.getSimpleName())) {
 					// Parse ScopeSymbol
-					bigDataScriptSerialize = new ScopeSymbol();
+					bdsSerialize = new ScopeSymbol();
 				} else if (clazz.equals(Task.class.getSimpleName())) {
 					// Parse Task
-					bigDataScriptSerialize = new Task();
+					bdsSerialize = new Task();
 				} else {
 					// Everything else has been parsed, this must be a BigDataScriptNode
 					String className = BigDataScriptNodeFactory.get().packageName() + clazz;
-					bigDataScriptSerialize = BigDataScriptNodeFactory.get().factory(className, null, null);
+					bdsSerialize = BigDataScriptNodeFactory.get().factory(className, null, null);
 				}
 
 				//---
-				// Parsing
+				// Parsing and additional tasks after parsing
 				//---
-				if (bigDataScriptSerialize != null) {
+				if (bdsSerialize != null) {
 					// De-serialize
-					bigDataScriptSerialize.serializeParse(this);
+					bdsSerialize.serializeParse(this);
+					nodesById.put(bdsSerialize.getNodeId(), bdsSerialize);
 
 					// Post processing
-					if (bigDataScriptSerialize instanceof ScopeSymbol) {
+					if (bdsSerialize instanceof BigDataScriptThread) {
+						// Restore a thread
+						BigDataScriptThread bdsThread = (BigDataScriptThread) bdsSerialize;
+						bdsThreads.add(bdsThread);
+						threadsById.put(bdsThread.getBdsThreadId(), bdsThread);
+					} else if (bdsSerialize instanceof ScopeSymbol) {
 						// Add symbol to current scope
-						currScope.add((ScopeSymbol) bigDataScriptSerialize);
-					} else if (bigDataScriptSerialize instanceof ProgramCounter) {
+						currScope.add((ScopeSymbol) bdsSerialize);
+					} else if (bdsSerialize instanceof ProgramCounter) {
 						// Set PC
-						currCsThread.setPc((ProgramCounter) bigDataScriptSerialize);
-					} else if (bigDataScriptSerialize instanceof Scope) {
-						// csThread's scope not set?
-						if (currCsThread.getScope() == null) {
-							Scope scope = (Scope) bigDataScriptSerialize;
-							currCsThread.setScope(scope);
-						}
-					} else if (bigDataScriptSerialize instanceof Task) {
-						Task task = (Task) bigDataScriptSerialize;
-						currCsThread.addUnserialized(task);
-					} else if (bigDataScriptSerialize instanceof BigDataScriptNode) {
+						currBdsThread.setPc((ProgramCounter) bdsSerialize);
+					} else if (bdsSerialize instanceof Task) {
+						Task task = (Task) bdsSerialize;
+						currBdsThread.addUnserialized(task);
+					} else if (bdsSerialize instanceof BigDataScriptNode) {
 						// UnSerialize
-						BigDataScriptNode csnode = (BigDataScriptNode) bigDataScriptSerialize;
-
+						BigDataScriptNode csnode = (BigDataScriptNode) bdsSerialize;
 						serializedNodes.add(csnode);
-
-						// Set ProgramUnit
-						if (csnode instanceof ProgramUnit) currCsThread.setStatement((ProgramUnit) csnode);
 					}
 				}
 			}
@@ -392,13 +387,40 @@ public class BigDataScriptSerializer {
 		//---
 		// Replace fake nodes by real nodes
 		//---
-		for (BigDataScriptNode csnode : serializedNodes)
-			if (csnode != null) csnode.replaceFake();
+		for (BigDataScriptSerialize csnode : serializedNodes)
+			if (csnode != null && csnode instanceof BigDataScriptNode) ((BigDataScriptNode) csnode).replaceFake();
 
 		for (Scope scope : scopes)
 			scope.replaceFake();
 
-		return bigDataScriptThreads;
+		// Set parent scopes
+		for (Scope scope : scopes) {
+			String parentScopeId = scope.getParentNodeId();
+			if (parentScopeId != null && !parentScopeId.isEmpty()) {
+				Scope parentScope = (Scope) nodesById.get(parentScopeId);
+				if (parentScope == null) throw new RuntimeException("Cannot find scope node '" + parentScope + "'");
+				scope.setParent(parentScope);
+			}
+		}
+
+		//---
+		// Set scope and statement for each bdsThread
+		//---
+		for (BigDataScriptThread bth : bdsThreads) {
+			// Set statement
+			String statId = bth.getStatementNodeId();
+			Statement statement = (Statement) nodesById.get(statId);
+			if (statement == null) throw new RuntimeException("Cannot find statement node '" + statId + "'");
+			bth.setStatement(statement);
+			bth.checkpointRecoverReset(); // Checkpoint starts recovering node form 'statement' (instead of 'programUnit')
+
+			String scopeId = bth.getScopeNodeId();
+			Scope scope = (Scope) nodesById.get(scopeId);
+			if (scope == null) throw new RuntimeException("Cannot find scope node '" + scopeId + "'");
+			bth.setScope(scope);
+		}
+
+		return bdsThreads;
 	}
 
 	public int parseNodeId(String fielsVal) {
@@ -416,9 +438,8 @@ public class BigDataScriptSerializer {
 
 	/**
 	 * Save data to file
-	 * @param shellFileName
 	 */
-	public void save(BigDataScriptThread csThread) {
+	public void save(BigDataScriptThread bdsThread) {
 		try {
 			// Open compressed output file
 			PrintStream outFile = new PrintStream(new GZIPOutputStream(new FileOutputStream(fileName)));
@@ -426,8 +447,11 @@ public class BigDataScriptSerializer {
 			// Save version
 			outFile.print(BigDataScript.class.getSimpleName() + "\t" + BigDataScript.VERSION_SHORT + "\n");
 
-			// Serialize thread
-			outFile.print(csThread.serializeSave(this));
+			// Serialize all threads
+			for (BigDataScriptThread bth : bdsThread.getBdsThreads()) {
+				Gpr.debug("Serializing thread: " + bth.getBdsThreadId());
+				outFile.print(this.serializeSave(bth));
+			}
 
 			outFile.close();
 		} catch (IOException e) {
@@ -436,9 +460,15 @@ public class BigDataScriptSerializer {
 	}
 
 	/**
+	 * Serialize a node
+	 */
+	public String serializeSave(BigDataScriptSerialize node) {
+		if (add(node)) return node.serializeSave(this);
+		return "";
+	}
+
+	/**
 	 * Serialize a value
-	 * @param value
-	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
 	public String serializeSaveValue(Object value) {

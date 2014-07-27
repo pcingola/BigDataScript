@@ -780,35 +780,21 @@ public class BigDataScript {
 		BigDataScriptSerializer bdsSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
 		List<BigDataScriptThread> bdsThreads = bdsSerializer.load();
 
-		// Show
-		int exitValue = 0;
+		// Set main thread's programUnit running scope (mostly for debugging and test cases)
+		// ProgramUnit's scope it the one before 'global'
+		BigDataScriptThread mainThread = bdsThreads.get(0);
+		programUnit = (ProgramUnit) mainThread.getProgramUnit();
+		for (Scope scope = mainThread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent())
+			programUnit.setRunScope(scope);
+
+		// Set state and recover tasks
 		for (BigDataScriptThread bdsThread : bdsThreads) {
-			//---
-			// Run (traverse tree in 'CHECKPOINT_RECOVER' mode) until we find exactly the instruction where we left
-			//---
-
-			// Set run state, program
-			bdsThread.setRunState(RunState.CHECKPOINT_RECOVER);
-			programUnit = (ProgramUnit) bdsThread.getProgramUnit();
-
-			// Set programUnit's scope (mostly for debugging and test cases)
-			// ProgramUnit's scope it the one before 'global'
-			for (Scope scope = bdsThread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent())
-				programUnit.setRunScope(scope);
-
-			//---
-			// Re-execute or add tasks
-			//---
-			bdsThread.restoreUnserializedTasks();
-
-			//---
-			// All set, run thread
-			//---
-			int exitVal = runThread(bdsThread);
-			exitValue = Math.max(exitValue, exitVal);
+			bdsThread.setRunState(RunState.CHECKPOINT_RECOVER); // Set run state to recovery
+			bdsThread.restoreUnserializedTasks(); // Re-execute or add tasks
 		}
 
-		return exitValue;
+		// All set, run main thread
+		return runThread(mainThread);
 	}
 
 	/**
@@ -828,7 +814,7 @@ public class BigDataScript {
 
 		// Run the program
 		BigDataScriptThread bdsThread = new BigDataScriptThread(programUnit, config);
-		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBigDataScriptThreadId());
+		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 
 		if (verbose) Timer.showStdErr("Running");
 		int exitCode = runThread(bdsThread);

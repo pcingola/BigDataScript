@@ -325,6 +325,11 @@ public class Task implements BigDataScriptSerialize {
 		return node;
 	}
 
+	@Override
+	public String getNodeId() {
+		return getId();
+	}
+
 	public List<String> getOutputFiles() {
 		return outputFiles;
 	}
@@ -534,7 +539,7 @@ public class Task implements BigDataScriptSerialize {
 				+ "\t" + serializer.serializeSaveValue(exitCodeFile) //
 				+ "\t" + serializer.serializeSaveValue(inputFiles) //
 				+ "\t" + serializer.serializeSaveValue(outputFiles) //
-				+ "\t" + resources.serializeSave(serializer) //
+				+ "\t" + serializer.serializeSave(resources) //
 				+ "\n";
 	}
 

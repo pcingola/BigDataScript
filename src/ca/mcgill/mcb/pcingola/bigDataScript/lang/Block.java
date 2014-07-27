@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 
 /**
  * A block of statements
- * 
+ *
  * @author pcingola
  */
 public class Block extends StatementWithScope {
@@ -40,10 +40,10 @@ public class Block extends StatementWithScope {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected RunState runStep(BigDataScriptThread bdsThread) {
 		for (Statement st : statements) {
 			if (st != null) {
-				RunState rstate = st.run(csThread);
+				RunState rstate = st.run(bdsThread);
 
 				// Act based on run state
 				switch (rstate) {

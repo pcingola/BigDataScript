@@ -76,7 +76,7 @@ public class ExpressionSys extends Expression {
 	 * @return
 	 */
 	public String execId(String name, BigDataScriptThread bdsThread) {
-		execId = bdsThread.getBigDataScriptThreadId() + "/" + name + ".line_" + getLineNum() + ".id_" + nextId();
+		execId = bdsThread.getBdsThreadId() + "/" + name + ".line_" + getLineNum() + ".id_" + nextId();
 		return execId;
 	}
 

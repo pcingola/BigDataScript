@@ -45,9 +45,12 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	public static final String GLOBAL_VAR_PROGRAM_PATH = "programPath";
 
 	// Global scope
+	private static int scopeNum = 0;
 	private static Scope globalScope = new Scope(null, null);
 
+	int id;
 	Scope parent;
+	String parentNodeId;
 	HashMap<String, ScopeSymbol> symbols;
 	AutoHashMap<String, List<ScopeSymbol>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
 	BigDataScriptNode node;
@@ -57,6 +60,10 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	 */
 	public static Scope getGlobalScope() {
 		return globalScope;
+	}
+
+	protected static int nextId() {
+		return ++scopeNum;
 	}
 
 	/**
@@ -78,6 +85,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	public Scope(Scope parent, BigDataScriptNode node) {
 		this.parent = parent;
 		this.node = node;
+		id = nextId();
 
 		symbols = new HashMap<String, ScopeSymbol>();
 		if (node != null) copy(node.getScope()); // Copy symbols from other scope
@@ -195,8 +203,17 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		return node;
 	}
 
+	@Override
+	public String getNodeId() {
+		return getClass().getSimpleName() + ":" + id;
+	}
+
 	public Scope getParent() {
 		return parent;
+	}
+
+	public String getParentNodeId() {
+		return parentNodeId;
 	}
 
 	public String getScopeName() {
@@ -331,26 +348,35 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		// Nothing to do
+		id = (int) serializer.getNextFieldInt();
+		parentNodeId = serializer.getNextFieldString();
 		int nodeId = serializer.getNextFieldNodeId();
+
 		if (nodeId != 0) {
 			// Node is not null
 			node = new ParentNode();
 			node.setFakeId(nodeId);
 		}
+
+		if (id > scopeNum) scopeNum = id + 1;
 	}
 
 	@Override
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		StringBuilder out = new StringBuilder();
-		out.append("Scope\t" + serializer.serializeSaveValue(node) + "\n");
+		out.append("Scope");
+		out.append("\t" + serializer.serializeSaveValue(id));
+		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getNodeId() : ""));
+		out.append("\t" + serializer.serializeSaveValue(node));
+		out.append("\n");
 
 		for (ScopeSymbol ss : symbols.values()) {
 			if (ss.getType().isNative()) {
 				; // Do not save native functions
-			} else out.append(ss.serializeSave(serializer));
+			} else out.append(serializer.serializeSave(ss));
 		}
 
-		if (parent != null) out.append(parent.serializeSave(serializer));
+		if (parent != null) out.append(serializer.serializeSave(parent));
 
 		return out.toString();
 	}

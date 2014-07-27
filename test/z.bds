@@ -1,14 +1,19 @@
 #!/usr/bin/env bds
 
-retry = 3
-ok := false
+sleepTime := 0.2
 
-# Task will fail once, then re-executed and succeed
-failOnceFile := "failOnce.txt"
-failOnceFile.delete()
-task ./test/failOnce.pl
-wait
+par {
+	for( int i : range(1,10) ) {
+		print("par $i\n")
+		sleep( sleepTime )
+	}
+}
 
-# Only true if re-execution succeeds
-ok = true
-
+for( int i : range(1,10) ) {
+	print("main $i\n")
+	sleep( sleepTime )
+	if( i == 3 ) { 
+		print("Checkpoint\n")
+		checkpoint "test/z.chp"
+	}
+}

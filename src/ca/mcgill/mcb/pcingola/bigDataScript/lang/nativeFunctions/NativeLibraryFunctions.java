@@ -25,6 +25,7 @@ public class NativeLibraryFunctions {
 			, FunctionNativeRangeIntStep.class //
 			, FunctionNativeRangeReal.class //
 			, FunctionNativeSleep.class //
+			, FunctionNativeSleepReal.class //
 			, FunctionNativeToIntFromBool.class //
 			, FunctionNativeToIntFromReal.class //
 

@@ -5607,3 +5607,171 @@ null	-
 null	-
 12560	+	
 12560	-
+17354	+	
+17354	-
+17369	+	
+17369	-
+17382	+	
+17382	-
+null	-
+17408	+	
+17408	-
+17419	+	
+17419	-
+17429	+	
+17429	-
+17439	+	
+17439	-
+17454	+	
+17454	-
+17467	+	
+17467	-
+17488	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+17493	+	
+17488	-
+/home/pcingola/zero_length_file_out.txt	-
+17493	-
+17513	+	
+17513	-
+17526	+	
+17531	+	
+17526	-
+17531	-
+17613	+	
+17613	-
+17626	+	
+17626	-
+17640	+	
+17640	-
+null	-
+17653	+	
+17653	-
+17665	+	
+17665	-
+17678	+	
+17678	-
+17689	+	
+17689	-
+17700	+	
+17700	-
+17711	+	
+17711	-
+17727	+	
+failOnce.out1	+	rm
+17727	-
+failOnce.out1	-
+17740	+	
+failOnce.out1	+	rm
+17740	-
+failOnce.out1	-
+17752	+	
+failOnce.out2	+	rm
+17752	-
+failOnce.out2	-
+17772	+	
+failOnce.out1	+	rm
+17772	-
+failOnce.out1	-
+17785	+	
+failOnce.out1	+	rm
+17785	-
+failOnce.out1	-
+17797	+	
+failOnce.out2	+	rm
+17797	-
+failOnce.out2	-
+17835	+	
+out1.txt	+	rm
+17835	-
+out1.txt	-
+17847	+	
+out2.txt	+	rm
+17847	-
+out2.txt	-
+17865	+	
+out1.txt	+	rm
+17865	-
+out1.txt	-
+17877	+	
+out2.txt	+	rm
+17877	-
+out2.txt	-
+17889	+	
+out1.txt	+	rm
+17889	-
+out1.txt	-
+17903	+	
+17903	-
+17916	+	
+17916	-
+17934	+	
+out1.txt	+	rm
+17934	-
+out1.txt	-
+17946	+	
+out2.txt	+	rm
+17946	-
+out2.txt	-
+17959	+	
+out1.txt	+	rm
+17959	-
+out1.txt	-
+17971	+	
+out2.txt	+	rm
+17971	-
+out2.txt	-
+17984	+	
+test/graph_05.csv	+	rm
+17984	-
+test/graph_05.csv	-
+17995	+	
+test/graph_05.xml	+	rm
+17995	-
+test/graph_05.xml	-
+18008	+	
+test/graph_05.csv	+	rm
+18008	-
+test/graph_05.csv	-
+18019	+	
+test/graph_05.xml	+	rm
+18019	-
+test/graph_05.xml	-
+18032	+	
+test/graph_06.csv	+	rm
+18037	+	
+test/graph_06.xml	+	rm
+18032	-
+test/graph_06.csv	-
+18037	-
+test/graph_06.xml	-
+18067	+	
+18072	+	
+18067	-
+18072	-
+18089	+	
+18089	-
+18104	+	
+test/checkpoint_08.csv	+	rm
+18109	+	
+test/checkpoint_08.xml	+	rm
+18104	-
+test/checkpoint_08.csv	-
+18109	-
+test/checkpoint_08.xml	-
+18128	+	
+test/checkpoint_08.csv	+	rm
+18133	+	
+test/checkpoint_08.xml	+	rm
+18128	-
+test/checkpoint_08.csv	-
+18133	-
+test/checkpoint_08.xml	-
+18152	+	
+test/checkpoint_09.csv	+	rm
+18157	+	
+test/checkpoint_09.xml	+	rm
+18152	-
+test/checkpoint_09.csv	-
+18157	-
+test/checkpoint_09.xml	-

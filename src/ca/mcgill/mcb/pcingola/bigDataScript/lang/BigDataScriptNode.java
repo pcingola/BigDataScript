@@ -251,6 +251,11 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return lineNum;
 	}
 
+	@Override
+	public String getNodeId() {
+		return getClass().getSimpleName() + ":" + id;
+	}
+
 	public BigDataScriptNode getParent() {
 		return parent;
 	}
@@ -573,7 +578,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 		// Recurse
 		for (BigDataScriptNode node : nodesToRecurse)
-			if (!serializer.isSerialized(node)) out.append(node.serializeSave(serializer));
+			if (!serializer.isSerialized(node)) out.append(serializer.serializeSave(node));
 
 		return out.toString();
 	}

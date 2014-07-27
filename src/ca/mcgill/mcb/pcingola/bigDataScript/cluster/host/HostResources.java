@@ -7,26 +7,34 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Represents the resources in a host: Cpus, memory, etc.
- * 
+ *
  * Can be either a host's resources (how many CPU it has) or a job
  * resources (how much time it needs)
- * 
+ *
  * Any negative number means "information not available"
- * 
+ *
  * @author pcingola
  */
 public class HostResources implements Comparable<HostResources>, BigDataScriptSerialize, Cloneable {
 
-	int cpus; // Number of CPUs 
+	private static int hostResourcesNum = 0;
+
+	int id;
+	int cpus; // Number of CPUs
 	long mem; // Total memory (in Bytes)
 	long timeout; // Time before the process is killed (in seconds). Only processing time, it does not include the time the process is queued for execution by the cluster scheduler.
 	long wallTimeout; // Real time (wall time) before the process is killed (in seconds). This includes the time the process is waiting to be executed.
+
+	protected static int nextId() {
+		return ++hostResourcesNum;
+	}
 
 	public HostResources() {
 		cpus = 1; // One cpu
 		mem = -1; // No mem insfo
 		timeout = 0; // No timeout
 		wallTimeout = 0; // No timeout
+		id = nextId();
 	}
 
 	public HostResources(HostResources hr) {
@@ -34,6 +42,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 		mem = hr.mem;
 		timeout = 0;
 		wallTimeout = 0;
+		id = nextId();
 	}
 
 	@Override
@@ -79,6 +88,11 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 
 	public long getMem() {
 		return mem;
+	}
+
+	@Override
+	public String getNodeId() {
+		return getClass().getSimpleName() + ":" + id;
 	}
 
 	public long getTimeout() {
@@ -133,7 +147,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	}
 
 	public void setWallTimeout(long walltimeout) {
-		this.wallTimeout = walltimeout;
+		wallTimeout = walltimeout;
 	}
 
 	@Override
@@ -142,7 +156,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 				+ "\tmem: " + Gpr.toStringMem(mem) //
 				+ (timeout > 0 ? "\ttimeout: " + timeout : "") //
 				+ (wallTimeout > 0 ? "\twall-timeout: " + wallTimeout : "") //
-		;
+				;
 	}
 
 	public String toStringMultiline() {

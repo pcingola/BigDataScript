@@ -39,7 +39,7 @@ public class ExpressionParallel extends ExpressionTask {
 
 		// Create new bds thread
 		BigDataScriptThread bdsNewThread = createParallel(bdsThread);
-		return bdsNewThread.getBigDataScriptThreadId(); // Return thread ID (so that we can 'wait' on it)
+		return bdsNewThread.getBdsThreadId(); // Return thread ID (so that we can 'wait' on it)
 	}
 
 	@Override
