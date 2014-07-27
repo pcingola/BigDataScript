@@ -54,4 +54,14 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheckMultiple("test/run_103.bds", expectedValues);
 	}
 
+	@Test
+	public void test104() {
+		runAndCheck("test/run_104.bds", "isRun", "true");
+	}
+
+	@Test
+	public void test105() {
+		runAndCheck("test/run_105.bds", "isRun", "false");
+	}
+
 }
