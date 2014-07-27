@@ -1,23 +1,14 @@
 #!/usr/bin/env bds
 
-prefix := "test/z"
-txt := prefix + ".txt"
-csv := prefix + ".csv"
-xml := prefix + ".xml"
+retry = 3
+ok := false
 
-# Force this to run
-sys rm -vf $txt $csv $xml
-sys date > $txt
+# Task will fail once, then re-executed and succeed
+failOnceFile := "failOnce.txt"
+failOnceFile.delete()
+task ./test/failOnce.pl
+wait
 
-# Dpendencies
-dep ( csv <- txt ) sys cp $txt $csv; echo "copying to csv"
-dep ( xml <- csv ) sys cp $csv $xml; echo "copying to xml"
-
-print("Checkpoint!\n")
-checkpoint prefix + ".chp"
-
-# Run goal
-ids := goal xml
-num := ids.size()
-print("Task IDs for goal $xml ($num): $ids\n")
+# Only true if re-execution succeeds
+ok = true
 

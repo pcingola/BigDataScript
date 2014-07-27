@@ -654,6 +654,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 				task.reset(); // Prepare to re-run task
 				tasksDone.remove(task.getId());
 				tasksToRun.add(task);
+				task.state(TaskState.SCHEDULED);
 			} else {
 				// May be we can look for additional information to asses the error
 				postMortemInfo(task);
