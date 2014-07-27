@@ -182,6 +182,10 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 			if (obj instanceof HashMap) { //
 				return obj; //
 			}
+		} else if (isFunction()) {
+			if (obj instanceof FunctionDeclaration) { //
+				return obj; //
+			}
 		} else if (isString()) return obj.toString();
 
 		throw new RuntimeException("Cannot convert '" + (obj == null ? "null" : obj.getClass().getSimpleName()) + "' to " + this);

@@ -434,7 +434,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Show BDS stack trace
 		try {
-			Gpr.debug("SHOW STACK:");
 			System.err.println(stackTrace());
 		} catch (Throwable t) {
 			t.printStackTrace();

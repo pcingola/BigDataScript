@@ -1,7 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.scope;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -46,10 +45,6 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 	@Override
 	public int compareTo(ScopeSymbol ss) {
 		return getName().toLowerCase().compareTo(ss.getName().toLowerCase());
-	}
-
-	public String getFunctionName() {
-		return ((TypeFunc) type).getFunctionName();
 	}
 
 	public String getName() {

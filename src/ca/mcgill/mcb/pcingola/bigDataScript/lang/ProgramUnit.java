@@ -12,7 +12,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A program unit
@@ -76,7 +75,6 @@ public class ProgramUnit extends BlockWithFile {
 			FunctionDeclaration fd = (FunctionDeclaration) func;
 			TypeFunc typeFunc = new TypeFunc(fd);
 			ScopeSymbol ssym = new ScopeSymbol(fd.getFunctionName(), typeFunc, fd);
-			Gpr.debug("Adding function: '" + fd.getFunctionName() + "'");
 
 			// Add it to scope
 			scope.add(ssym);

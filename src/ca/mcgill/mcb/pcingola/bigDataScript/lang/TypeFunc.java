@@ -6,12 +6,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 
 /**
  * Function type
- * 
+ *
  * @author pcingola
  */
 public class TypeFunc extends Type {
 
 	FunctionDeclaration functionDeclaration;
+	protected Type returnType;
+	protected Parameters parameters;
 
 	/**
 	 * Get or create TypeFunc
@@ -19,28 +21,66 @@ public class TypeFunc extends Type {
 	public static TypeFunc get(FunctionDeclaration function) {
 		// Get type from hash
 		String key = PrimitiveType.FUNC + ":" + function.signature();
+
 		TypeFunc type = (TypeFunc) types.get(key);
 		if (type == null) {
 			type = new TypeFunc(function);
 			types.put(key, type);
 		}
 
-		return type;
+		return (TypeFunc) types.get(key);
 	}
 
 	/**
-	 * Get a class type
+	 * Get or create TypeFunc
 	 */
-	public static TypeFunc get(String functionName) {
+	public static TypeFunc get(Parameters parameters, Type returnType) {
 		// Get type from hash
-		String key = PrimitiveType.FUNC + ":" + functionName;
+		String key = PrimitiveType.FUNC + ":" + signature(parameters, returnType);
+
+		TypeFunc type = (TypeFunc) types.get(key);
+		if (type == null) {
+			type = new TypeFunc(parameters, returnType);
+			types.put(key, type);
+		}
+
 		return (TypeFunc) types.get(key);
+	}
+
+	/**
+	 * Generic signature for a function
+	 */
+	public static String signature(Parameters parameters, Type returnType) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		if (parameters != null) {
+			for (VarDeclaration vdecl : parameters.getVarDecl()) {
+				Type type = vdecl.type;
+				for (VariableInit vi : vdecl.getVarInit())
+					sb.append(type + ",");
+
+				sb.deleteCharAt(sb.length() - 1);
+			}
+		}
+		sb.append(") -> ");
+		sb.append(returnType);
+
+		return sb.toString();
 	}
 
 	protected TypeFunc(FunctionDeclaration functionDeclaration) {
 		super();
 		primitiveType = PrimitiveType.FUNC;
 		this.functionDeclaration = functionDeclaration;
+		parameters = functionDeclaration.getParameters();
+		returnType = functionDeclaration.getReturnType();
+	}
+
+	protected TypeFunc(Parameters parameters, Type returnType) {
+		super();
+		primitiveType = PrimitiveType.FUNC;
+		this.parameters = parameters;
+		this.returnType = returnType;
 	}
 
 	public boolean canCast(TypeFunc type) {
@@ -68,16 +108,12 @@ public class TypeFunc extends Type {
 		return functionDeclaration;
 	}
 
-	public String getFunctionName() {
-		return functionDeclaration.getFunctionName();
-	}
-
 	public Parameters getParameters() {
-		return functionDeclaration.getParameters();
+		return parameters;
 	}
 
 	public Type getReturnType() {
-		return functionDeclaration.getReturnType();
+		return returnType;
 	}
 
 	@Override
@@ -113,7 +149,7 @@ public class TypeFunc extends Type {
 
 	@Override
 	public String toString() {
-		return functionDeclaration.signature();
+		return signature(parameters, returnType);
 	}
 
 }

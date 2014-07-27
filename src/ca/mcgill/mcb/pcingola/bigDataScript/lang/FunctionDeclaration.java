@@ -98,25 +98,9 @@ public class FunctionDeclaration extends StatementWithScope {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public String signature() {
 		if (signature != null) return signature;
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(functionName);
-		sb.append("(");
-		if (parameters != null) {
-			for (VarDeclaration vdecl : parameters.getVarDecl()) {
-				Type type = vdecl.type;
-				for (VariableInit vi : vdecl.getVarInit()) {
-					sb.append(type + ",");
-				}
-				sb.deleteCharAt(sb.length() - 1);
-			}
-		}
-		sb.append(")");
-		signature = sb.toString();
-
+		signature = TypeFunc.signature(parameters, returnType);
 		return signature;
 	}
 

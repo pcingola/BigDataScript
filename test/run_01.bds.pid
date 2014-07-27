@@ -5423,3 +5423,147 @@ test/graph_06.csv	-
 test/graph_06.xml	+	rm
 18193	-
 test/graph_06.xml	-
+6737	+	
+6737	-
+6752	+	
+6752	-
+6765	+	
+6765	-
+null	-
+6791	+	
+6791	-
+6815	+	
+6815	-
+6825	+	
+6825	-
+6834	+	
+6834	-
+6847	+	
+6847	-
+6860	+	
+6860	-
+6881	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+6887	+	
+6881	-
+/home/pcingola/zero_length_file_out.txt	-
+6887	-
+6906	+	
+6906	-
+6919	+	
+6924	+	
+6919	-
+6924	-
+7006	+	
+7006	-
+7019	+	
+7019	-
+7052	+	
+7052	-
+null	-
+7066	+	
+7066	-
+7078	+	
+7078	-
+7091	+	
+7091	-
+7102	+	
+7102	-
+7113	+	
+7113	-
+7124	+	
+7124	-
+7140	+	
+failOnce.out1	+	rm
+7140	-
+failOnce.out1	-
+7153	+	
+failOnce.out1	+	rm
+7153	-
+failOnce.out1	-
+7181	+	
+failOnce.out2	+	rm
+7181	-
+failOnce.out2	-
+7206	+	
+failOnce.out1	+	rm
+7206	-
+failOnce.out1	-
+7219	+	
+failOnce.out1	+	rm
+7219	-
+failOnce.out1	-
+7231	+	
+failOnce.out2	+	rm
+7231	-
+failOnce.out2	-
+7274	+	
+7274	-
+7279	+	
+7279	-
+7303	+	
+7303	-
+7328	+	
+out1.txt	+	rm
+7328	-
+out1.txt	-
+7340	+	
+out2.txt	+	rm
+7340	-
+out2.txt	-
+7358	+	
+out1.txt	+	rm
+7358	-
+out1.txt	-
+7370	+	
+out2.txt	+	rm
+7370	-
+out2.txt	-
+7392	+	
+out1.txt	+	rm
+7392	-
+out1.txt	-
+7406	+	
+7406	-
+7419	+	
+7419	-
+7438	+	
+out1.txt	+	rm
+7438	-
+out1.txt	-
+7450	+	
+out2.txt	+	rm
+7450	-
+out2.txt	-
+7460	+	
+out1.txt	+	rm
+7460	-
+out1.txt	-
+7482	+	
+out2.txt	+	rm
+7482	-
+out2.txt	-
+7495	+	
+test/graph_05.csv	+	rm
+7495	-
+test/graph_05.csv	-
+7506	+	
+test/graph_05.xml	+	rm
+7506	-
+test/graph_05.xml	-
+7519	+	
+test/graph_05.csv	+	rm
+7519	-
+test/graph_05.csv	-
+7530	+	
+test/graph_05.xml	+	rm
+7530	-
+test/graph_05.xml	-
+7543	+	
+test/graph_06.csv	+	rm
+7543	-
+test/graph_06.csv	-
+7554	+	
+test/graph_06.xml	+	rm
+7554	-
+test/graph_06.xml	-
