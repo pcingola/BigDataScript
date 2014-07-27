@@ -18,7 +18,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TestCasesBase extends TestCase {
 
-	public static boolean debug = true;
+	public static boolean debug = false;
 
 	/**
 	 * Check that a file compiles with expected errors

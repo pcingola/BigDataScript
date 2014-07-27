@@ -77,4 +77,63 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_07.bds", null, "sloop", "three");
 	}
 
+	@Test
+	public void test08() {
+		// Remove old entries
+		String prefix = "test/checkpoint_08";
+		File txt = new File(prefix + ".txt");
+		final File csv = new File(prefix + ".csv");
+		final File xml = new File(prefix + ".xml");
+		txt.delete();
+		csv.delete();
+		xml.delete();
+
+		// Create file
+		Gpr.toFile(prefix + ".txt", "TEST");
+
+		// Run this code before checkpoint recovery
+		Runnable runBeforeRecovery = new Runnable() {
+
+			@Override
+			public void run() {
+				// Create the file
+				Gpr.debug("Deleting files: " + csv + " and " + xml);
+				csv.delete();
+				xml.delete();
+			}
+		};
+
+		// Run pipeline and test checkpoint
+		runAndCheckpoint(prefix + ".bds", prefix + ".chp", "num", "2", runBeforeRecovery);
+	}
+
+	@Test
+	public void test09() {
+		// Remove old entries
+		String prefix = "test/checkpoint_09";
+		File txt = new File(prefix + ".txt");
+		final File csv = new File(prefix + ".csv");
+		final File xml = new File(prefix + ".xml");
+		txt.delete();
+		csv.delete();
+		xml.delete();
+
+		// Create file
+		Gpr.toFile(prefix + ".txt", "TEST");
+
+		// Run this code before checkpoint recovery
+		Runnable runBeforeRecovery = new Runnable() {
+
+			@Override
+			public void run() {
+				// Create the file
+				Gpr.debug("Deleting file: " + csv);
+				csv.delete();
+			}
+		};
+
+		// Run pipeline and test checkpoint
+		runAndCheckpoint(prefix + ".bds", prefix + ".chp", "num", "0", runBeforeRecovery);
+	}
+
 }
