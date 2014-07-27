@@ -178,7 +178,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Default file name
 		if (checkpointFileName == null) checkpointFileName = statement.getFileName() + ".chp";
 
-		if (config.isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
+		if (isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
 		BigDataScriptSerializer bdsSer = new BigDataScriptSerializer(checkpointFileName, config);
 		bdsSer.save(this);
 
@@ -444,7 +444,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		fatalError(bdsnode, t.getMessage());
 
 		// Show java stack trace
-		if ((config == null) || config.isVerbose()) t.printStackTrace();
+		if ((config == null) || isVerbose()) t.printStackTrace();
 	}
 
 	public String getBigDataScriptThreadId() {
@@ -734,13 +734,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public void restoreUnserializedTasks() {
 		if (restoredTasks == null) return;
 		for (Task task : restoredTasks) {
-			Gpr.debug("TASK: " + task);
-			if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
+			Gpr.debug("RESTORING TASK: " + task);
+			add(task);
+
+			if ((!task.isDone() // Not finished?
+					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
+					&& !task.isDependency() // Don't execute dependencies, unledd needed
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
-			} else {
-				// Task finished? Just add it
-				add(task);
 			}
 		}
 
@@ -1035,7 +1037,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		Task task = getTask(taskId);
 		if (task == null) return false; // No task? We are done!
 
-		if (config.isVerbose()) Timer.showStdErr("Waiting for task to finish: " + task.getId());
+		// Is task a dependency?
+		if (task.isDependency() && !task.isStarted()) {
+			if (isDebug()) Timer.showStdErr("Wait: Task '" + task.getId() + "' is dependency and has not been started. Not wating.");
+			return true;
+		}
+
+		if (isVerbose()) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId());
 
 		// Wait for task to finish
 		while (!task.isDone())
@@ -1051,7 +1059,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			task.deleteOutputFilesOnExit();
 		}
 
-		if (config.isVerbose()) Timer.showStdErr("Task finished: " + task.getId());
+		if (isVerbose()) Timer.showStdErr("Wait: Task '" + task.getId() + "' finished.");
 		return ok;
 	}
 
@@ -1063,7 +1071,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Wait for all tasks to finish
 		boolean ok = true;
 
-		if (config.isVerbose() && !isTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
+		if (isVerbose() && !isTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
 		for (String tid : taskDependecies.getTaskIds())
 			ok &= waitTask(tid);
 
@@ -1093,7 +1101,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Wait for all tasks to finish
 		boolean ok = true;
 
-		if (config.isVerbose() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
+		if (isVerbose() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
 		for (String bdsThreadId : threadsById.keySet())
 			ok &= waitThread(bdsThreadId);
 
