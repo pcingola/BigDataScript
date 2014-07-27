@@ -6,6 +6,7 @@ i := 2
 ii := twice( i )
 print("i: $i\tii: $ii\n")
 
-#l := [1, 2, 3]
-#l.map( twice )
+l := [1, 2, 3]
+ll := l.map( twice )
+print("l: $l\tll: $ll\n")
 

@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
@@ -40,29 +39,8 @@ public class FunctionCall extends Expression {
 			values[i] = value;
 		}
 
-		// Create new scope
-		bdsThread.newScope(this);
-
-		// Add arguments to scope
-		Scope scope = bdsThread.getScope();
-		for (int i = 0; i < fparam.length; i++) {
-			Type argType = fparam[i].type;
-			String argName = fparam[i].getVarInit()[0].varName;
-			scope.add(new ScopeSymbol(argName, argType, values[i]));
-		}
-
-		// Run function body
-		RunState rstate = functionDeclaration.runFunction(bdsThread);
-		if (rstate == RunState.FATAL_ERROR) throw new RuntimeException("Fatal error");
-
-		// Get return value
-		Object retVal = bdsThread.getReturnValue();
-
-		// Back to old scope
-		bdsThread.oldScope();
-
-		// Return result
-		return retVal;
+		// Apply function to values
+		return functionDeclaration.apply(bdsThread, values);
 	}
 
 	@Override

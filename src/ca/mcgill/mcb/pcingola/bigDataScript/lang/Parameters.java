@@ -26,6 +26,19 @@ public class Parameters extends BigDataScriptNode {
 		return params;
 	}
 
+	/**
+	 * Single parameter
+	 */
+	public static Parameters get(Type type, String name) {
+		Parameters params = new Parameters(null, null);
+		params.varDecl = new VarDeclaration[1];
+
+		VarDeclaration vd = VarDeclaration.get(type, name);
+		params.varDecl[0] = vd;
+
+		return params;
+	}
+
 	public Parameters(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}

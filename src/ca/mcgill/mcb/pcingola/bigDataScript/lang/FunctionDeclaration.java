@@ -8,6 +8,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
+import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
+import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * Function declaration
@@ -25,6 +27,37 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	public FunctionDeclaration(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Apply function to arguments, return function's result
+	 */
+	public Object apply(BigDataScriptThread bdsThread, Object values[]) {
+		VarDeclaration fparam[] = getParameters().getVarDecl();
+
+		// Create new scope
+		bdsThread.newScope(this);
+
+		// Add arguments to scope
+		Scope scope = bdsThread.getScope();
+		for (int i = 0; i < fparam.length; i++) {
+			Type argType = fparam[i].type;
+			String argName = fparam[i].getVarInit()[0].varName;
+			scope.add(new ScopeSymbol(argName, argType, values[i]));
+		}
+
+		// Run function body
+		RunState rstate = runFunction(bdsThread);
+		if (rstate == RunState.FATAL_ERROR) throw new RuntimeException("Fatal error");
+
+		// Get return value
+		Object retVal = bdsThread.getReturnValue();
+
+		// Back to old scope
+		bdsThread.oldScope();
+
+		// Return result
+		return retVal;
 	}
 
 	public String getFunctionName() {
@@ -104,6 +137,15 @@ public class FunctionDeclaration extends StatementWithScope {
 		return signature;
 	}
 
+	//	@Override
+	//	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	//		Type type = getType();
+	//		if (type != null) {
+	//			scope.add(new ScopeSymbol(functionName, type));
+	//			Gpr.debug("SCOPE ADD: " + functionName + "\t" + type);
+	//		}
+	//	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -113,12 +155,4 @@ public class FunctionDeclaration extends StatementWithScope {
 		return sb.toString();
 	}
 
-	//	@Override
-	//	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-	//		Type type = getType();
-	//		if (type != null) {
-	//			scope.add(new ScopeSymbol(functionName, type));
-	//			Gpr.debug("SCOPE ADD: " + functionName + "\t" + type);
-	//		}
-	//	}
 }
