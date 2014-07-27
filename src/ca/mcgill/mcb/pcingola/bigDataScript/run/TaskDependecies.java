@@ -3,9 +3,11 @@ package ca.mcgill.mcb.pcingola.bigDataScript.run;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionDepOperator;
@@ -21,12 +23,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class TaskDependecies {
 
 	boolean debug = false;
+	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
+	Map<String, Task> tasksById;
 	AutoHashMap<String, List<Task>> tasksByOutput;
-	Set<Task> tasks;
 
 	public TaskDependecies() {
 		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
-		tasks = new HashSet<Task>();
+		tasksById = new HashMap<String, Task>();
+		tasks = new ArrayList<Task>();
 	}
 
 	/**
@@ -34,26 +38,22 @@ public class TaskDependecies {
 	 */
 	public synchronized void add(Task task) {
 		addTask(task);
-
-		// Find and update task's immediate dependencies
-		findDirectDependencies(task);
-	}
-
-	/**
-	 * Add dependency
-	 */
-	public synchronized void addDep(Task task) {
-		addTask(task);
+		if (!task.isDependency()) findDirectDependencies(task); // Find and update task's immediate dependencies (only if the task is to be executed)
 	}
 
 	/**
 	 * Add a task
 	 */
 	synchronized void addTask(Task task) {
-		if (tasks.contains(task)) return; // Already added? Nothing to do
+		if (tasksById.containsKey(task.getId())) return; // Already added? Nothing to do
+
+		Gpr.debug("Adding task\tdep: " + task.isDependency() + "\tid: " + task.getId());
+
+		// Add task
+		tasksById.put(task.getId(), task);
 		tasks.add(task);
 
-		// Add output files
+		// Add task by output files
 		if (task.getOutputFiles() != null) {
 			for (String outFile : task.getOutputFiles())
 				tasksByOutput.getOrCreate(outFile).add(task);
@@ -135,6 +135,18 @@ public class TaskDependecies {
 		return nodesSorted;
 	}
 
+	public Task get(String taskId) {
+		return tasksById.get(taskId);
+	}
+
+	public Collection<String> getTaskIds() {
+		return tasksById.keySet();
+	}
+
+	public Collection<Task> getTasks() {
+		return tasks;
+	}
+
 	/**
 	 * Find tasks required to achieve goal 'out'
 	 */
@@ -167,13 +179,17 @@ public class TaskDependecies {
 					if (!tasks.contains(t) // Not already added?
 							&& !t.isDone() // task is not finished?
 							&& needsUpdate(t) // Task needs update?
-							) tasksSorted.add(t);
+					) tasksSorted.add(t);
 			}
 		}
 
 		// Reverse collection: First tasks are the closest to input files (leaf nodes)
 		Collections.reverse(tasksSorted);
 		return tasksSorted;
+	}
+
+	public boolean hasTask(String taskId) {
+		return tasksById.containsKey(taskId);
 	}
 
 	/**

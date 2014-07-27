@@ -32,7 +32,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Serialize elemnts to (and from) a file
- * 
+ *
  * @author pcingola
  */
 public class BigDataScriptSerializer {
@@ -159,9 +159,9 @@ public class BigDataScriptSerializer {
 
 	/**
 	 * Get nodeId from next field.
-	 * Format : "node:ID_NUM" 
+	 * Format : "node:ID_NUM"
 	 * E.g.   : "node:42"
-	 * 
+	 *
 	 * @return
 	 */
 	public int getNextFieldNodeId() {
@@ -236,9 +236,9 @@ public class BigDataScriptSerializer {
 		return list;
 	}
 
-	/** 
+	/**
 	 * Parse a value
-	 * 
+	 *
 	 * @param fieldClass : Class of field to parse
 	 * @param componentType : Component class (in case of an array)
 	 * @return
@@ -280,7 +280,7 @@ public class BigDataScriptSerializer {
 
 	/**
 	 * Parse lines
-	 * 
+	 *
 	 * @param lines
 	 * @param classNameFilter : If not null, only parse lines matching this className
 	 */
@@ -357,7 +357,7 @@ public class BigDataScriptSerializer {
 					// De-serialize
 					bigDataScriptSerialize.serializeParse(this);
 
-					// Post processing 
+					// Post processing
 					if (bigDataScriptSerialize instanceof ScopeSymbol) {
 						// Add symbol to current scope
 						currScope.add((ScopeSymbol) bigDataScriptSerialize);
@@ -374,7 +374,7 @@ public class BigDataScriptSerializer {
 						Task task = (Task) bigDataScriptSerialize;
 						currCsThread.addUnserialized(task);
 					} else if (bigDataScriptSerialize instanceof BigDataScriptNode) {
-						// UnSerialize 
+						// UnSerialize
 						BigDataScriptNode csnode = (BigDataScriptNode) bigDataScriptSerialize;
 
 						serializedNodes.add(csnode);

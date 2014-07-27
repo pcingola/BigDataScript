@@ -153,7 +153,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-					);
+			);
 			return null;
 		}
 	}
@@ -306,8 +306,8 @@ public class BigDataScript {
 	 */
 	int infoCheckpoint() {
 		// Load checkpoint file
-		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
-		List<BigDataScriptThread> bdsThreads = csSerializer.load();
+		BigDataScriptSerializer bdsSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
+		List<BigDataScriptThread> bdsThreads = bdsSerializer.load();
 
 		for (BigDataScriptThread bdsThread : bdsThreads)
 			bdsThread.print();
@@ -777,8 +777,8 @@ public class BigDataScript {
 	 */
 	int runCheckpoint() {
 		// Load checkpoint file
-		BigDataScriptSerializer csSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
-		List<BigDataScriptThread> bdsThreads = csSerializer.load();
+		BigDataScriptSerializer bdsSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
+		List<BigDataScriptThread> bdsThreads = bdsSerializer.load();
 
 		// Show
 		int exitValue = 0;

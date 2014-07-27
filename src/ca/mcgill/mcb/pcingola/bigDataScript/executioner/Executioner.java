@@ -305,8 +305,8 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 				// Show dependent tasks
 				StringBuilder sb = new StringBuilder();
-				if (t.getDependency() != null) {
-					for (Task td : t.getDependency())
+				if (t.getDependencies() != null) {
+					for (Task td : t.getDependencies())
 						sb.append(td.getName() + " ");
 				}
 				table[rowNum][3] = sb.toString();

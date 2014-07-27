@@ -1,22 +1,15 @@
 #!/usr/bin/env bds
 
-prefix := "test/z"
+prefix := "test/checkpoint_08"
 txt := prefix + ".txt"
 csv := prefix + ".csv"
 xml := prefix + ".xml"
 
-# Force this to run
-sys rm -vf $txt $csv $xml
-sys date > $txt
-
-# Dpendencies
 dep ( csv <- txt ) sys cp $txt $csv; echo "copying to csv"
 dep ( xml <- csv ) sys cp $csv $xml; echo "copying to xml"
 
-print("Checkpoint!\n")
 checkpoint prefix + ".chp"
 
-# Run goal
 ids := goal xml
 num := ids.size()
 print("Task IDs for goal $xml ($num): $ids\n")

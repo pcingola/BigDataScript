@@ -76,8 +76,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	// Task management
 	TaskDependecies taskDependecies;
-	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
-	Map<String, Task> tasksById; // Task by ID
+	//	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
+	//	Map<String, Task> tasksById; // Task by ID
 	List<Task> restoredTasks; // Unserialized tasks.
 
 	/**
@@ -94,8 +94,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		pc = new ProgramCounter(parent.getPc());
 		scope = parent.scope;
 		runState = RunState.OK;
-		tasks = new ArrayList<Task>();
-		tasksById = new HashMap<String, Task>();
+		//		tasks = new ArrayList<Task>();
+		//		tasksById = new HashMap<String, Task>();
 		config = parent.config;
 		random = parent.random;
 		removeOnExit = parent.removeOnExit;
@@ -112,8 +112,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		pc = new ProgramCounter();
 		scope = Scope.getGlobalScope();
 		runState = RunState.OK;
-		tasks = new ArrayList<Task>();
-		tasksById = new HashMap<String, Task>();
+		//		tasks = new ArrayList<Task>();
+		//		tasksById = new HashMap<String, Task>();
 		this.config = config;
 		random = new Random();
 		removeOnExit = new LinkedList<String>();
@@ -134,18 +134,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Add a task
 	 */
 	public void add(Task task) {
-		if (tasksById.containsKey(task.getId())) return; // Don't add a task twice
-
-		tasks.add(task);
-		tasksById.put(task.getId(), task);
 		taskDependecies.add(task);
-	}
-
-	/**
-	 * Add dependency
-	 */
-	public void addDep(Task task) {
-		taskDependecies.addDep(task);
 	}
 
 	/**
@@ -345,8 +334,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 			// Dependencies
 			StringBuilder sbdep = new StringBuilder();
-			if (task.getDependency() != null) {
-				for (Task t : task.getDependency())
+			if (task.getDependencies() != null) {
+				for (Task t : task.getDependencies())
 					sbdep.append(t.getName() + "\n");
 			}
 			rTemplate.add("taskDep", sbdep.toString());
@@ -538,14 +527,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Get a task
 	 */
 	public Task getTask(String taskId) {
-		return tasksById.get(taskId);
+		return taskDependecies.get(taskId);
 	}
 
 	/**
 	 * Get all tasks
 	 */
 	public Collection<Task> getTasks() {
-		return tasks;
+		return taskDependecies.getTasks();
 	}
 
 	/**
@@ -606,7 +595,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Have all tasks finished executing?
 	 */
 	public boolean isTasksDone() {
-		for (String taskId : tasksById.keySet()) {
+		for (String taskId : taskDependecies.getTaskIds()) {
 			if ((taskId == null) || taskId.isEmpty()) continue;
 
 			Task task = getTask(taskId);
@@ -744,7 +733,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public void restoreUnserializedTasks() {
 		if (restoredTasks == null) return;
-		for (Task task : restoredTasks)
+		for (Task task : restoredTasks) {
+			Gpr.debug("TASK: " + task);
 			if (!task.isDone() || (task.isFailed() && !task.isCanFail())) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
@@ -752,6 +742,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				// Task finished? Just add it
 				add(task);
 			}
+		}
 
 		restoredTasks = null; // We don't need it any more (plus we want to make sure we don't schedule tasks more than once)
 	}
@@ -857,8 +848,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		out.append(statement.serializeSave(serializer));
 
 		// Save all tasks (in the same order that they were added)
-		for (Task task : tasks)
+		for (Task task : taskDependecies.getTasks()) {
+			Gpr.debug("SERIALIZING TASK : " + task.getId());
 			out.append(task.serializeSave(serializer));
+		}
 
 		return out.toString();
 	}
@@ -927,10 +920,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 			// Last node found!
 			runState = RunState.OK; // Switch to 'normal' run state
-			if (node instanceof Wait) {
-				runState = RunState.WAIT_RECOVER; // We want to recover all tasks that failed in wait statement
-			}
-
+			if (node instanceof Wait) runState = RunState.WAIT_RECOVER; // We want to recover all tasks that failed in wait statement
 			if (node instanceof Checkpoint) return false; // We want to recover AFTER the checkpoint
 			return true;
 		}
@@ -948,7 +938,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	/**
 	 * Show BDS calling stack
-	 * @return
 	 */
 	public String stackTrace() {
 
@@ -1025,7 +1014,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Wait for one task/thread to finish
 	 */
 	public boolean wait(String id) {
-		if (tasksById.containsKey(id)) return waitTask(id);
+		if (taskDependecies.hasTask(id)) return waitTask(id);
 		if (threadsById.containsKey(id)) return waitThread(id);
 		return true; // Nothing to do (already finished)
 	}
@@ -1075,7 +1064,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		boolean ok = true;
 
 		if (config.isVerbose() && !isTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
-		for (String tid : tasksById.keySet())
+		for (String tid : taskDependecies.getTaskIds())
 			ok &= waitTask(tid);
 
 		return ok;

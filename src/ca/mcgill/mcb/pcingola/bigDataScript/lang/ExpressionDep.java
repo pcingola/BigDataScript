@@ -18,7 +18,8 @@ public class ExpressionDep extends ExpressionTask {
 
 	@Override
 	void dispatchTask(BigDataScriptThread bdsThread, Task task) {
-		bdsThread.addDep(task);
+		task.setDependency(true); // Mark this as a 'dependency'
+		bdsThread.add(task);
 	}
 
 	/**

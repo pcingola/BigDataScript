@@ -21,8 +21,8 @@ public class TestSuiteAll {
 		suite.addTestSuite(TestCasesLang.class);
 		suite.addTestSuite(TestCasesRun.class);
 		suite.addTestSuite(TestCasesRun2.class);
-		suite.addTestSuite(TestCasesCheckpoint.class);
 		suite.addTestSuite(TestCasesGraph.class);
+		suite.addTestSuite(TestCasesCheckpoint.class);
 
 		return suite;
 	}
