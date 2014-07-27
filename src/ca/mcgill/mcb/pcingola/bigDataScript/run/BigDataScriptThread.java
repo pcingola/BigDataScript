@@ -207,10 +207,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Make sure that the statement node is the first in the checkpoint recovery
 	 */
 	public void checkpointRecoverReset() {
-		for (checkPointRecoverNodeIdx = 0; checkPointRecoverNodeIdx < pc.size(); checkPointRecoverNodeIdx++) {
-			Gpr.debug("Ids: " + checkPointRecoverNodeIdx + "\tpc node:" + pc.nodeId(checkPointRecoverNodeIdx) + "\tstatement node:" + statement.getId());
+		for (checkPointRecoverNodeIdx = 0; checkPointRecoverNodeIdx < pc.size(); checkPointRecoverNodeIdx++)
 			if (pc.nodeId(checkPointRecoverNodeIdx) == statement.getId()) return;
-		}
+
 		throw new RuntimeException("Checkpoint statement not found in PC");
 	}
 
@@ -801,16 +800,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		createLogDir(); // Create log dir
 
-		Gpr.debug("Running thread: " + bdsThreadId //
-				+ "\n\tPC         : '" + pc //
-				+ "'\n\tState     : " + runState //
-				+ "'\n\tStatement : '" + statement.getNodeId() //
-				+ "'\n\tScope     : '" + scope.getNodeId() //
-		);
-
-		if (!isRoot()) //
-			Gpr.debug("CHECK!");
-
 		// Star child threads (e.g. when recovering)
 		for (BigDataScriptThread bth : bdsChildThreadsById.values())
 			if (!bth.isAlive()) bth.start();
@@ -885,9 +874,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Set parent thread
 		String parentBdsThreadId = serializer.getNextFieldString();
-		Gpr.debug("Parent Thread ID: " + parentBdsThreadId);
 		if (!parentBdsThreadId.isEmpty()) {
-			Gpr.debug("Setting parent to: " + parentBdsThreadId);
 			parent = serializer.getBdsThread(parentBdsThreadId);
 			parent.add(this);
 		}

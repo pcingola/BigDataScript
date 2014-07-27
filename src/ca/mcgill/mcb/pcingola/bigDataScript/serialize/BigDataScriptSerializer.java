@@ -448,10 +448,8 @@ public class BigDataScriptSerializer {
 			outFile.print(BigDataScript.class.getSimpleName() + "\t" + BigDataScript.VERSION_SHORT + "\n");
 
 			// Serialize all threads
-			for (BigDataScriptThread bth : bdsThread.getBdsThreads()) {
-				Gpr.debug("Serializing thread: " + bth.getBdsThreadId());
+			for (BigDataScriptThread bth : bdsThread.getBdsThreads())
 				outFile.print(this.serializeSave(bth));
-			}
 
 			outFile.close();
 		} catch (IOException e) {
