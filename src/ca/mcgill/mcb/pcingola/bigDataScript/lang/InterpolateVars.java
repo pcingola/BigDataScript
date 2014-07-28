@@ -10,7 +10,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
 public class InterpolateVars extends Literal {
@@ -118,7 +117,6 @@ public class InterpolateVars extends Literal {
 			//---
 			Tuple<String, String> tupStr = findString(str);
 			String strToAdd = unEscape(tupStr.first);
-			Gpr.debug("STR: " + str + "\n\tfirst : |" + tupStr.first + "|\n\tsecond: |" + tupStr.second + "|");
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed
 
@@ -126,7 +124,6 @@ public class InterpolateVars extends Literal {
 			// Parse variable reference part
 			//---
 			Tuple<String, String> tupVar = findVariableRef(str);
-			Gpr.debug("VAR: " + str + "\n\tfirst : |" + tupVar.first + "|\n\tsecond: |" + tupVar.second + "|");
 			listVars.add(tupVar.first); // Store variable reference
 			str = tupVar.second; // Remaining to be analyzed
 		}
@@ -177,6 +174,7 @@ public class InterpolateVars extends Literal {
 				break;
 
 			case '\'':
+				if (countBraces == 0 && countCurly == 0) return i; // End of variable
 				quote = true;
 				break;
 
@@ -185,7 +183,7 @@ public class InterpolateVars extends Literal {
 				break;
 
 			case '$':
-				if (i > 0 && countBraces == 0 && countCurly == 0) return i; // New variable?
+				if (i > 0 && countBraces == 0 && countCurly == 0) return i; // New variable
 				break;
 
 			default:
@@ -330,6 +328,8 @@ public class InterpolateVars extends Literal {
 			} else if (c != '\\') {
 				sb.append(c);
 			}
+
+			cprev = c;
 		}
 
 		return sb.toString();

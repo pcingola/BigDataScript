@@ -20,6 +20,12 @@ public class TestCasesInterpolate extends TestCasesBase {
 		System.out.println("String: " + str);
 		System.out.println("\tInterpolation result: |" + iv + "|");
 
+		// Special case: No variables to interpolate
+		if (strings.length == 1 && vars[0].isEmpty()) {
+			Assert.assertTrue(iv.isEmpty());
+			return;
+		}
+
 		// Check strings
 		for (int i = 0; i < strings.length; i++) {
 			System.out.print("\tIndex: " + i);
@@ -64,24 +70,24 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test04() {
-		String strings[] = { "Hello ", "" };
-		String vars[] = { "i", "j" };
+		String strings[] = { "l[1] : " };
+		String vars[] = { "l[1]" };
 
 		checkInterpolate("l[1] : $l[1]", strings, vars);
 	}
 
 	@Test
 	public void test05() {
-		String strings[] = { "Hello ", "" };
-		String vars[] = { "i", "j" };
+		String strings[] = { "m{'Helo'} : " };
+		String vars[] = { "m{\"Helo\"}" };
 
 		checkInterpolate("m{'Helo'} : $m{'Helo'}", strings, vars);
 	}
 
 	@Test
 	public void test06() {
-		String strings[] = { "Hello ", "" };
-		String vars[] = { "i", "j" };
+		String strings[] = { "m{'Helo'} : " };
+		String vars[] = { "m{l[i]}" };
 
 		checkInterpolate("m{'Helo'} : $m{$l[$i]}", strings, vars);
 	}

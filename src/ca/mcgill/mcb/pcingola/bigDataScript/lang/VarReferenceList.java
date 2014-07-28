@@ -95,7 +95,6 @@ public class VarReferenceList extends Reference {
 
 		// Create index expression
 		String idxStr = str.substring(idx1 + 1, idx2);
-		Gpr.debug("idxStr: " + idxStr);
 
 		if (idxStr.startsWith("$")) {
 			// We have to interpolate this string
