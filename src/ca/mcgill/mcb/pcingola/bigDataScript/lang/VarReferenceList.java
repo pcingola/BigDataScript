@@ -85,7 +85,7 @@ public class VarReferenceList extends Reference {
 	@Override
 	public void parse(String str) {
 		int idx1 = str.indexOf('[');
-		int idx2 = str.indexOf(']');
+		int idx2 = str.lastIndexOf(']');
 		if ((idx1 <= 0) || (idx2 <= idx1)) throw new RuntimeException("Cannot parse list reference '" + str + "'");
 
 		// Create VarReference
@@ -94,10 +94,18 @@ public class VarReferenceList extends Reference {
 		variable.parse(varName);
 
 		// Create index expression
-		LiteralInt exprIdx = new LiteralInt(this, null);
 		String idxStr = str.substring(idx1 + 1, idx2);
-		exprIdx.setValue(Gpr.parseLongSafe(idxStr));
-		expressionIdx = exprIdx;
+		Gpr.debug("idxStr: " + idxStr);
+
+		if (idxStr.startsWith("$")) {
+			// We have to interpolate this string
+			expressionIdx = InterpolateVars.factory(this, idxStr.substring(1));
+		} else {
+			// String literal
+			LiteralInt exprIdx = new LiteralInt(this, null);
+			exprIdx.setValue(Gpr.parseLongSafe(idxStr));
+			expressionIdx = exprIdx;
+		}
 	}
 
 	@Override

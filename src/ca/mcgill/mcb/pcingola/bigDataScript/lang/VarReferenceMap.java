@@ -84,7 +84,7 @@ public class VarReferenceMap extends Reference {
 	@Override
 	public void parse(String str) {
 		int idx1 = str.indexOf('{');
-		int idx2 = str.indexOf('}');
+		int idx2 = str.lastIndexOf('}');
 		if ((idx1 <= 0) || (idx2 <= idx1)) throw new RuntimeException("Cannot parse list reference '" + str + "'");
 
 		// Create VarReference
@@ -93,12 +93,19 @@ public class VarReferenceMap extends Reference {
 		variable.parse(varName);
 
 		// Create index expression
-		LiteralString exprIdx = new LiteralString(this, null);
 		String idxStr = str.substring(idx1 + 1, idx2);
-		if (idxStr.startsWith("'")) idxStr = idxStr.substring(1);
-		if (idxStr.endsWith("'")) idxStr = idxStr.substring(0, idxStr.length() - 1);
-		exprIdx.setValue(idxStr);
-		expressionKey = exprIdx;
+
+		if (idxStr.startsWith("$")) {
+			// We have to interpolate this string
+			expressionKey = InterpolateVars.factory(this, idxStr.substring(1));
+		} else {
+			// String literal
+			LiteralString exprIdx = new LiteralString(this, null);
+			if (idxStr.startsWith("'")) idxStr = idxStr.substring(1);
+			if (idxStr.endsWith("'")) idxStr = idxStr.substring(0, idxStr.length() - 1);
+			exprIdx.setValue(idxStr);
+			expressionKey = exprIdx;
+		}
 	}
 
 	@Override
