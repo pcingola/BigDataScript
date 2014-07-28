@@ -64,18 +64,26 @@ public class InterpolateVars extends Literal {
 	 * Find the next 'string' (until an interpolation is found
 	 */
 	Tuple<String, String> findString(String str) {
-		if (str.isEmpty()) return new Tuple<String, String>("", "");
+		// Empty? Nothing to do
+		if (str.isEmpty()) return new Tuple<String, String>(str, "");
 
 		// Find next '$'
 		int idx = str.indexOf('$');
 
 		// Skip escaped dollar characters ('\$')
-		while (idx > 0 && str.charAt(idx - 1) == '\\') {
-			idx = str.indexOf('$', idx + 1);
+		while (idx > 0 && // Found something?
+				(str.charAt(idx - 1) == '\\' // Escaped character, ignore
+				|| (idx < (str.length() - 1) && !Character.isLetter(str.charAt(idx + 1))) // First character in variable name has to be a letter
+				) //
+		) {
+			idx = str.indexOf('$', idx + 1); // Find next one
 		}
 
 		// Nothing found?
 		if (idx < 0) return new Tuple<String, String>(str, "");
+
+		// String that ends with a dollar sign is not a variable
+		if (idx == str.length() - 1) return new Tuple<String, String>(str, "");
 
 		return new Tuple<String, String>(str.substring(0, idx), str.substring(idx));
 	}
@@ -91,7 +99,7 @@ public class InterpolateVars extends Literal {
 		// Nothing found?
 		if (idx < 0) return new Tuple<String, String>(str, "");
 
-		return new Tuple<String, String>(str.substring(0, idx), str.substring(idx));
+		return new Tuple<String, String>(str.substring(1, idx), str.substring(idx)); // Note, subString starts at '1' to remove '$' character
 	}
 
 	/**
@@ -230,6 +238,9 @@ public class InterpolateVars extends Literal {
 	}
 
 	int indexRefEnd(String str) {
+		// Only a dollar sign? It's probably a string finishing with '$', not a variable
+		if (str.equals("$")) return -1;
+
 		char cprev = ' ';
 		char chars[] = str.toCharArray();
 
@@ -269,6 +280,7 @@ public class InterpolateVars extends Literal {
 				break;
 
 			case '$':
+				if (i > 0) return i; // New variable?
 				break;
 
 			default:
@@ -276,7 +288,7 @@ public class InterpolateVars extends Literal {
 			}
 		}
 
-		return -1;
+		return str.length();
 	}
 
 	/**

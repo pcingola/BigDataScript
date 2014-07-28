@@ -124,7 +124,7 @@ public class VarReferenceMap extends Reference {
 
 	@Override
 	public String toString() {
-		return variable + "{'" + expressionKey + "'}";
+		return variable + "{" + expressionKey + "}";
 	}
 
 	@Override

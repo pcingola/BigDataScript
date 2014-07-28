@@ -5,13 +5,18 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.InterpolateVars;
 public class Zzz {
 
 	public static void main(String[] args) throws Exception {
-		String strs[] = { "Hello $i$j$" //
-		//, "l[1] : $l[1]\n" //
-		//, "m{'Helo'} : $m{'Helo'}\n" //
+		String strs[] = { //
+		"Hello" //
+				, "Hello $" //
+				, "Hello $\n" //
+				, "Hello $i" //
+				, "Hello $i$j$" //
+				, "l[1] : $l[1]" //
+				, "m{'Helo'} : $m{'Helo'}" //
 		};
 
 		for (String str : strs) {
-			System.out.println("str:\t" + str);
+			System.out.println("str:\t|" + str + "|");
 
 			InterpolateVars iv = new InterpolateVars(null, null);
 			iv.parse(str);
@@ -20,5 +25,4 @@ public class Zzz {
 			System.out.println("\n\n");
 		}
 	}
-
 }
