@@ -163,6 +163,7 @@ public class InterpolateVars extends Literal {
 			switch (c) {
 			case ']':
 				countBraces--;
+				if (countBraces < 0) return i;
 				break;
 
 			case '[':
@@ -180,6 +181,7 @@ public class InterpolateVars extends Literal {
 
 			case '}':
 				countCurly--;
+				if (countCurly < 0) return i;
 				break;
 
 			case '$':

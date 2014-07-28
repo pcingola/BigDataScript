@@ -32,7 +32,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 			System.out.print("\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getStrings().get(i));
 			System.out.println("\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getVarRefs().get(i));
 			Assert.assertEquals(strings[i], iv.getStrings().get(i));
-			if (vars[i] != null) Assert.assertEquals(vars[i], iv.getVarRefs().get(i).toString());
+			if (vars[i] != null && !vars[i].isEmpty()) Assert.assertEquals(vars[i], iv.getVarRefs().get(i).toString());
 		}
 	}
 
@@ -90,6 +90,78 @@ public class TestCasesInterpolate extends TestCasesBase {
 		String vars[] = { "m{l[i]}" };
 
 		checkInterpolate("m{'Helo'} : $m{$l[$i]}", strings, vars);
+	}
+
+	@Test
+	public void test07() {
+		String strings[] = { "Hello $" };
+		String vars[] = { "" };
+
+		checkInterpolate("Hello $", strings, vars);
+	}
+
+	@Test
+	public void test08() {
+		String strings[] = { "Hello $\n" };
+		String vars[] = { "" };
+
+		checkInterpolate("Hello $\n", strings, vars);
+	}
+
+	@Test
+	public void test09() {
+		String strings[] = { "m{'Helo'} : " };
+		String vars[] = { "m{s}" };
+
+		checkInterpolate("m{'Helo'} : $m{$s}", strings, vars);
+	}
+
+	@Test
+	public void test10() {
+		String strings[] = { "l[1] : '", "'\n" };
+		String vars[] = { "l[1]", "" };
+
+		checkInterpolate("l[1] : '$l[1]'\n", strings, vars);
+	}
+
+	@Test
+	public void test11() {
+		String strings[] = { "List with variable index: '", "'\n" };
+		String vars[] = { "l[s]", "" };
+
+		checkInterpolate("List with variable index: '$l[$s]'\n", strings, vars);
+	}
+
+	@Test
+	public void test12() {
+		String strings[] = { "List with variable index: {", "}\n" };
+		String vars[] = { "l[s]", "" };
+
+		checkInterpolate("List with variable index: {$l[$s]}\n", strings, vars);
+	}
+
+	@Test
+	public void test13() {
+		String strings[] = { "List with variable index: [", "]\n" };
+		String vars[] = { "l[s]", "" };
+
+		checkInterpolate("List with variable index: [$l[$s]]\n", strings, vars);
+	}
+
+	@Test
+	public void test14() {
+		String strings[] = { "Map with list and variable index: ", };
+		String vars[] = { "m{l[s]}", "" };
+
+		checkInterpolate("Map with list and variable index: $m{$l[$s]}", strings, vars);
+	}
+
+	@Test
+	public void test15() {
+		String strings[] = { "Map with list and variable index: {", "}\n" };
+		String vars[] = { "m{l[s]}", "" };
+
+		checkInterpolate("Map with list and variable index: {$m{$l[$s]}}\n", strings, vars);
 	}
 
 }
