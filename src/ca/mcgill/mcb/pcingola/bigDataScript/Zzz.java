@@ -8,7 +8,7 @@ public class Zzz {
 
 		// String str = "m{'Helo'} : $m{'Helo'}\n";
 		// String str = "l[1] : $l[1]\n";
-		String str = "Hello";
+		String str = "Hello $i$j$";
 		System.out.println("str:\t" + str);
 
 		InterpolateVars iv = new InterpolateVars(null, null);

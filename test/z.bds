@@ -1,5 +1,9 @@
-#!/usr/bin/env bds
 
-task echo Hi
-#task echo Hi
+int i = 42
+
+string str = "hi"
+print("str: $str\n")
+
+string s = "this is string interpolation: int i = $i and str = \"$str\" and both $str$i"
+print("s: $s\n")
 

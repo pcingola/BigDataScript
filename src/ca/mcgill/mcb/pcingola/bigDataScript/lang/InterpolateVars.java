@@ -15,7 +15,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 public class InterpolateVars extends Literal {
 
 	enum Context {
-		STRING, VAR_NAME, LIST_INDEX, MAP_KEY;
+		STRING, VAR_NAME, NEW_VAR_NAME, LIST_INDEX, MAP_KEY;
+
+		boolean isNewVar() {
+			return this == NEW_VAR_NAME;
+		}
 
 		boolean isVar() {
 			return this != STRING;
@@ -69,7 +73,11 @@ public class InterpolateVars extends Literal {
 			// Update context for this char
 			context = isVarInterpolatedString(c, cprev, context);
 
-			if (!context.isVar() && sbVar.length() > 0) {
+			// Gpr.debug("char prev: " + cprev + "\tchar: " + c + "\tcontext: " + context);
+
+			if ((!context.isVar() || context.isNewVar()) // Finished with previous variable?
+					&& sbVar.length() > 0 //
+			) {
 				// End of variable name
 				String varName = sbVar.toString().substring(1); // Add variable name (without leading '$')
 
@@ -205,8 +213,6 @@ public class InterpolateVars extends Literal {
 	 * Is this a variable char in an interpolated string?
 	 */
 	Context isVarInterpolatedString(char c, char cprev, Context context) {
-		if (Character.isLetterOrDigit(c)) return context; // Nothing changed
-		if (c == '$' && context == Context.STRING) return Context.VAR_NAME;
 
 		switch (c) {
 		case ']':
@@ -229,10 +235,21 @@ public class InterpolateVars extends Literal {
 			if (context == Context.MAP_KEY) return Context.STRING; // Finished map reference, back to string context
 			return context; // Nothing changed
 
-		default:
-			if (context == Context.VAR_NAME && !Character.isLetterOrDigit(c)) return Context.STRING; // End of varName context
-			return context; // Nothing changed
+		case '$':
+			if (context == Context.STRING) return Context.VAR_NAME;
+			if (context == Context.VAR_NAME) return Context.NEW_VAR_NAME;
 		}
+
+		// Switch to 'VAR_NAME'
+		if (context == Context.NEW_VAR_NAME) {
+			if (Character.isLetterOrDigit(c)) return Context.VAR_NAME; // Continue
+			return Context.STRING;
+		}
+
+		// End of variable name
+		if (context == Context.VAR_NAME && !Character.isLetterOrDigit(c)) return Context.STRING;
+
+		return context; // Nothing changed
 	}
 
 	/**
@@ -243,7 +260,7 @@ public class InterpolateVars extends Literal {
 
 		if (interpolated.second.isEmpty() // No variables?
 				|| (interpolated.second.size() == 1 && interpolated.second.get(0).isEmpty()) // One empty variable?
-				) return false; // Nothing to do
+		) return false; // Nothing to do
 
 		// Something was found, we have to interpolate
 		strings = interpolated.first;

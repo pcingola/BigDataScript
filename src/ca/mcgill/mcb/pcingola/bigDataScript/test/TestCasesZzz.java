@@ -11,18 +11,8 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test32() {
-		runAndCheck("test/run_32.bds", "out", "Hi\n");
-	}
-
-	@Test
-	public void test33() {
-		runAndCheck("test/run_33.bds", "err", "Hi\n");
-	}
-
-	@Test
-	public void test34() {
-		runAndCheck("test/run_34.bds", "exitStat", "0");
+	public void test14() {
+		runAndCheck("test/run_14.bds", "s", "this is string interpolation: int i = 42 and str = \"hi\" and both hi42");
 	}
 
 }
