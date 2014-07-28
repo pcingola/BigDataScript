@@ -5947,3 +5947,153 @@ test/checkpoint_09.xml	-
 16615	-
 16626	+	
 16626	-
+22203	+	
+22203	-
+22218	+	
+22218	-
+22231	+	
+22231	-
+null	-
+22257	+	
+22257	-
+22268	+	
+22268	-
+22280	+	
+22280	-
+22290	+	
+22290	-
+22303	+	
+22303	-
+22316	+	
+22316	-
+22337	+	
+/home/pcingola/zero_length_file_out.txt	+	rm
+22342	+	
+22337	-
+/home/pcingola/zero_length_file_out.txt	-
+22342	-
+22360	+	
+22360	-
+22373	+	
+22378	+	
+22373	-
+22378	-
+22460	+	
+22460	-
+22473	+	
+22473	-
+22487	+	
+22487	-
+null	-
+22500	+	
+22500	-
+22512	+	
+22512	-
+22525	+	
+22525	-
+22536	+	
+22536	-
+22547	+	
+22547	-
+22556	+	
+22556	-
+22572	+	
+failOnce.out1	+	rm
+22572	-
+failOnce.out1	-
+22585	+	
+failOnce.out1	+	rm
+22585	-
+failOnce.out1	-
+22597	+	
+failOnce.out2	+	rm
+22597	-
+failOnce.out2	-
+22617	+	
+failOnce.out1	+	rm
+22617	-
+failOnce.out1	-
+22630	+	
+failOnce.out1	+	rm
+22630	-
+failOnce.out1	-
+22642	+	
+failOnce.out2	+	rm
+22642	-
+failOnce.out2	-
+22699	+	
+out1.txt	+	rm
+22699	-
+out1.txt	-
+22711	+	
+out2.txt	+	rm
+22711	-
+out2.txt	-
+22729	+	
+out1.txt	+	rm
+22729	-
+out1.txt	-
+22741	+	
+out2.txt	+	rm
+22741	-
+out2.txt	-
+22753	+	
+out1.txt	+	rm
+22753	-
+out1.txt	-
+22767	+	
+22767	-
+22785	+	
+out1.txt	+	rm
+22785	-
+out1.txt	-
+22797	+	
+out2.txt	+	rm
+22797	-
+out2.txt	-
+22810	+	
+test/graph_05.csv	+	rm
+22810	-
+test/graph_05.csv	-
+22821	+	
+test/graph_05.xml	+	rm
+22821	-
+test/graph_05.xml	-
+22834	+	
+test/graph_05.csv	+	rm
+22834	-
+test/graph_05.csv	-
+22845	+	
+test/graph_05.xml	+	rm
+22845	-
+test/graph_05.xml	-
+22858	+	
+test/graph_06.csv	+	rm
+22863	+	
+test/graph_06.xml	+	rm
+22858	-
+test/graph_06.csv	-
+22863	-
+test/graph_06.xml	-
+22890	+	
+22890	-
+22896	+	
+22896	-
+22911	+	
+22911	-
+22925	+	
+test/checkpoint_08.csv	+	rm
+22930	+	
+test/checkpoint_08.xml	+	rm
+22925	-
+test/checkpoint_08.csv	-
+22930	-
+test/checkpoint_08.xml	-
+22949	+	
+test/checkpoint_09.csv	+	rm
+22954	+	
+test/checkpoint_09.xml	+	rm
+22949	-
+test/checkpoint_09.csv	-
+22954	-
+test/checkpoint_09.xml	-

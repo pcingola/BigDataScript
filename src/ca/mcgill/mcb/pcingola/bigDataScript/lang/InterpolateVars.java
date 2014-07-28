@@ -10,12 +10,17 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
 public class InterpolateVars extends Literal {
 
 	enum Context {
-		STRING, VAR_NAME, NEW_VAR_NAME, LIST_INDEX, MAP_KEY;
+		STRING //
+		, VAR_NAME, NEW_VAR_NAME //
+		, LIST_INDEX //
+		, MAP_KEY //
+		;
 
 		boolean isNewVar() {
 			return this == NEW_VAR_NAME;
@@ -73,7 +78,7 @@ public class InterpolateVars extends Literal {
 			// Update context for this char
 			context = isVarInterpolatedString(c, cprev, context);
 
-			// Gpr.debug("char prev: " + cprev + "\tchar: " + c + "\tcontext: " + context);
+			Gpr.debug("char prev: " + cprev + "\tchar: " + c + "\tcontext: " + context);
 
 			if ((!context.isVar() || context.isNewVar()) // Finished with previous variable?
 					&& sbVar.length() > 0 //
@@ -150,6 +155,14 @@ public class InterpolateVars extends Literal {
 		}
 
 		return new Tuple<List<String>, List<String>>(listStr, listVars);
+	}
+
+	public List<String> getStrings() {
+		return strings;
+	}
+
+	public List<Reference> getVarRefs() {
+		return varRefs;
 	}
 
 	/**
