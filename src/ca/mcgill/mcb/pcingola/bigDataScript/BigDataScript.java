@@ -856,6 +856,7 @@ public class BigDataScript {
 		int exitCode = 0;
 		int testOk = 0, testError = 0;
 		for (FunctionDeclaration testFunc : testFuncs) {
+			System.out.println("");
 			BigDataScriptThread bdsTestThread = new BigDataScriptThread(testFunc.getStatement(), bdsThread); // Note: We execute the function's body (not the function declaration)
 			int exitValTest = runThread(bdsTestThread);
 
@@ -871,6 +872,7 @@ public class BigDataScript {
 		}
 
 		// Show results
+		System.out.println("");
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
