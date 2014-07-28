@@ -38,6 +38,64 @@ public class InterpolateVars extends Literal {
 		return varRef;
 	}
 
+	/**
+	 * Un-escape string
+	 */
+	public static String unEscape(String str) {
+		StringBuilder sb = new StringBuilder();
+		char cprev = ' ';
+		for (char c : str.toCharArray()) {
+
+			if (cprev == '\\') {
+				// Convert characters
+				if (c == '\n') {
+					// End of line, continues in the next one
+				} else {
+					switch (c) {
+					case 'b':
+						c = '\b';
+						break;
+
+					case 'f':
+						c = '\f';
+						break;
+
+					case 'n':
+						c = '\n';
+						break;
+
+					case 'r':
+						c = '\r';
+						break;
+
+					case 't':
+						c = '\t';
+						break;
+
+					case '0':
+						c = '\0';
+						break;
+
+					case '$':
+						c = '$';
+						break;
+
+					default:
+						break;
+					}
+
+					sb.append(c);
+				}
+			} else if (c != '\\') {
+				sb.append(c);
+			}
+
+			cprev = c;
+		}
+
+		return sb.toString();
+	}
+
 	public InterpolateVars(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -281,59 +339,5 @@ public class InterpolateVars extends Literal {
 		if (exprs != null) //
 			for (Expression expr : exprs)
 				if (expr != null) expr.typeCheck(scope, compilerMessages);
-	}
-
-	/**
-	 * Un-escape string
-	 */
-	String unEscape(String str) {
-		StringBuilder sb = new StringBuilder();
-		char cprev = ' ';
-		for (char c : str.toCharArray()) {
-
-			if (cprev == '\\') {
-				// Convert characters
-				if (c == '\n') {
-					// End of line, continues in the next one
-				} else {
-					switch (c) {
-					case 'b':
-						c = '\b';
-						break;
-
-					case 'f':
-						c = '\f';
-						break;
-
-					case 'n':
-						c = '\n';
-						break;
-
-					case 'r':
-						c = '\r';
-						break;
-
-					case 't':
-						c = '\t';
-						break;
-
-					case '0':
-						c = '\0';
-						break;
-
-					default:
-						break;
-					}
-
-					sb.append(c);
-				}
-			} else if (c != '\\') {
-				sb.append(c);
-			}
-
-			cprev = c;
-		}
-
-		return sb.toString();
 	}
 }

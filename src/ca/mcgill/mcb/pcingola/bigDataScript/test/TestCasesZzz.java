@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import java.util.HashMap;
+
 import org.junit.Test;
 
 /**
@@ -11,8 +13,13 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test01() {
-		runAndCheck("test/run_14.bds", "s", "this is string interpolation: int i = 42 and str = \"hi\" and both hi42");
+	public void test67() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("s", "varS");
+		expectedValues.put("s1", "Hi '$'");
+		expectedValues.put("s2", "Hi $");
+		expectedValues.put("s3", "Hi $ bye");
+		runAndCheckMultiple("test/run_67.bds", expectedValues);
 	}
 
 }

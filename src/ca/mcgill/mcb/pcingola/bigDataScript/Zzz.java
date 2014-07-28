@@ -6,12 +6,13 @@ public class Zzz {
 
 	public static void main(String[] args) throws Exception {
 		String strs[] = { //
+		"Hi '\\$'" //
 		//		"Hello" //
 		//				, "Hello $" //
 		//				, "Hello $\n" //
 		//				, "Hello $i" //
 		//				, "Hello $i$j$" //
-		"l[1] : $l[1]" //
+		// , "l[1] : $l[1]" //
 		//				, "m{'Helo'} : $m{'Helo'}" //
 		//				, "m{'Helo'} : $m{$s}" //
 		//				, "l[1] : '$l[1]'\n" //

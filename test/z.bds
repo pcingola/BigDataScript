@@ -1,7 +1,5 @@
-#!/usr/bin/env bds
 
-l := [1, 2, 3]
-print("l[1] : '$l[1]'\n")
 
-#m := {"Hello" => "Bye", "Hola" => "Adios"}
-#print("m{'Hello'} : '$m{'Hello'}'\n")
+string s1 = "Hi '\$'"
+print("s1=$s1\n")
+

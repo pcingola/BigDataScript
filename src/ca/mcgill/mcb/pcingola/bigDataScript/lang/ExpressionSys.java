@@ -138,7 +138,7 @@ public class ExpressionSys extends Expression {
 				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-				);
+						);
 				return RunState.FATAL_ERROR;
 			}
 		}
@@ -160,7 +160,10 @@ public class ExpressionSys extends Expression {
 
 		// Parse interpolated variables
 		interpolateVars = new InterpolateVars(this, null);
-		if (!interpolateVars.parse(commands)) interpolateVars = null; // Nothing found? don't bother to keep the object
+		if (!interpolateVars.parse(cmd)) {
+			interpolateVars = null; // Nothing found? don't bother to keep the object
+			commands = InterpolateVars.unEscape(cmd); // Just un-escape characters
+		}
 	}
 
 	@Override
