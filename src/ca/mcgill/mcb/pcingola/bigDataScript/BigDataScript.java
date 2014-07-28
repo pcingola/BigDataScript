@@ -862,10 +862,10 @@ public class BigDataScript {
 
 			// Show test result
 			if (exitValTest == 0) {
-				Timer.show("Test OK    : " + testFunc.getFunctionName());
+				Timer.show("Test '" + testFunc.getFunctionName() + "': OK");
 				testOk++;
 			} else {
-				Timer.show("Test ERROR : " + testFunc.getFunctionName());
+				Timer.show("Test '" + testFunc.getFunctionName() + "': FAIL");
 				exitCode = 1;
 				testError++;
 			}
