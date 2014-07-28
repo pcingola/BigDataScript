@@ -205,10 +205,13 @@ public class ExpressionTask extends ExpressionWithScope {
 
 		for (BigDataScriptNode node : statements) {
 			if (node instanceof Statement) {
-				if (!(node instanceof ExpressionSys) //
-						&& !(node instanceof Block) //
-						&& !(node instanceof LiteralString) //
-				) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
+				boolean ok = node instanceof ExpressionSys //
+						|| node instanceof Block //
+						|| node instanceof LiteralString //
+						|| node instanceof InterpolateVars //
+						;
+
+				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
 		}
 	}
