@@ -6,8 +6,8 @@ public class Zzz {
 
 	public static void main(String[] args) throws Exception {
 		String strs[] = { "Hello $i$j$" //
-				, "l[1] : $l[1]\n" //
-				, "m{'Helo'} : $m{'Helo'}\n" //
+		//, "l[1] : $l[1]\n" //
+		//, "m{'Helo'} : $m{'Helo'}\n" //
 		};
 
 		for (String str : strs) {

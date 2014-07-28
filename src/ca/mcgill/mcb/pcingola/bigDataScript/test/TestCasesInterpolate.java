@@ -31,6 +31,14 @@ public class TestCasesInterpolate extends TestCasesBase {
 	}
 
 	@Test
+	public void test00() {
+		String strings[] = { "Hello $i" };
+		String vars[] = { "" };
+
+		checkInterpolate("Hello \\$i", strings, vars);
+	}
+
+	@Test
 	public void test01() {
 		String strings[] = { "Hello " };
 		String vars[] = { "i" };
@@ -68,6 +76,14 @@ public class TestCasesInterpolate extends TestCasesBase {
 		String vars[] = { "i", "j" };
 
 		checkInterpolate("m{'Helo'} : $m{'Helo'}", strings, vars);
+	}
+
+	@Test
+	public void test06() {
+		String strings[] = { "Hello ", "" };
+		String vars[] = { "i", "j" };
+
+		checkInterpolate("m{'Helo'} : $m{$l[$i]}", strings, vars);
 	}
 
 }
