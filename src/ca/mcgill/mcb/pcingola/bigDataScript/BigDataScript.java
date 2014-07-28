@@ -28,6 +28,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners.ExecutionerType;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.FunctionDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Literal;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralBool;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralInt;
@@ -59,7 +60,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class BigDataScript {
 
 	enum BigDataScriptAction {
-		RUN, RUN_CHECKPOINT, INFO_CHECKPOINT
+		RUN, RUN_CHECKPOINT, INFO_CHECKPOINT, TEST
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
@@ -706,7 +707,9 @@ public class BigDataScript {
 				// System type
 				if ((i + 1) < args.length) system = args[++i];
 				else usage("Option '-system' without file argument");
-			} else if (args[i].equals("-t") || args[i].equalsIgnoreCase("-retry")) {
+			} else if (args[i].equals("-t") || args[i].equalsIgnoreCase("-test")) {
+				bigDataScriptAction = BigDataScriptAction.TEST;
+			} else if (args[i].equals("-y") || args[i].equalsIgnoreCase("-retry")) {
 				// Number of retries
 				if ((i + 1) < args.length) taskFailCount = Gpr.parseIntSafe(args[++i]);
 				else usage("Option '-t' without number argument");
@@ -756,6 +759,10 @@ public class BigDataScript {
 			exitValue = infoCheckpoint();
 			break;
 
+		case TEST:
+			exitValue = runTests();
+			break;
+
 		default:
 			exitValue = runCompile(); // Compile & run
 		}
@@ -783,7 +790,7 @@ public class BigDataScript {
 		// Set main thread's programUnit running scope (mostly for debugging and test cases)
 		// ProgramUnit's scope it the one before 'global'
 		BigDataScriptThread mainThread = bdsThreads.get(0);
-		programUnit = (ProgramUnit) mainThread.getProgramUnit();
+		programUnit = mainThread.getProgramUnit();
 		for (Scope scope = mainThread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent())
 			programUnit.setRunScope(scope);
 
@@ -823,6 +830,55 @@ public class BigDataScript {
 	}
 
 	/**
+	 * Compile and run
+	 */
+	int runTests() {
+		// Compile, abort on errors
+		if (verbose) Timer.showStdErr("Parsing");
+		if (!compile()) {
+			// Show errors and warnings, if any
+			if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+			return 1;
+		}
+
+		if (verbose) Timer.showStdErr("Initializing");
+		initializeArgs();
+
+		// Run the program
+		BigDataScriptThread bdsThread = new BigDataScriptThread(programUnit, config);
+		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
+
+		if (verbose) Timer.showStdErr("Running tests");
+		ProgramUnit pu = bdsThread.getProgramUnit();
+		List<FunctionDeclaration> testFuncs = pu.testsFunctions();
+
+		// For each test function, create a thread that executes the function's body
+		int exitCode = 0;
+		int testOk = 0, testError = 0;
+		for (FunctionDeclaration testFunc : testFuncs) {
+			BigDataScriptThread bdsTestThread = new BigDataScriptThread(testFunc.getStatement(), bdsThread); // Note: We execute the function's body (not the function declaration)
+			int exitValTest = runThread(bdsTestThread);
+
+			// Show test result
+			if (exitValTest == 0) {
+				Timer.show("Test OK    : " + testFunc.getFunctionName());
+				testOk++;
+			} else {
+				Timer.show("Test ERROR : " + testFunc.getFunctionName());
+				exitCode = 1;
+				testError++;
+			}
+		}
+
+		// Show results
+		Timer.show("Totals"//
+				+ "\n                  OK    : " + testOk //
+				+ "\n                  ERROR : " + testError //
+		);
+		return exitCode;
+	}
+
+	/**
 	 * Run a thread
 	 */
 	int runThread(BigDataScriptThread bdsThread) {
@@ -857,8 +913,9 @@ public class BigDataScript {
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-s | -system ] type           : Set system type.");
-		System.err.println("  [-t | -reTry  ] num            : Number of times to re-try a task that failed.");
+		System.err.println("  [-t | -test   ]                : Perform testing (run all test* functions).");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
+		System.err.println("  [-y | -retry  ] num            : Number of times to retry a failing tasks.");
 		System.err.println("  -pid <file>                    : Write local processes PIDs to 'file'");
 
 		if (err != null) System.exit(1);

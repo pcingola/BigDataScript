@@ -23,6 +23,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Statement;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.StatementInclude;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
@@ -513,8 +514,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return pc;
 	}
 
-	public BigDataScriptNode getProgramUnit() {
-		return statement;
+	public ProgramUnit getProgramUnit() {
+		return (ProgramUnit) statement;
 	}
 
 	public Random getRandom() {

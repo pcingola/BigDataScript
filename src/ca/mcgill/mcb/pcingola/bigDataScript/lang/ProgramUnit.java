@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
@@ -64,6 +65,27 @@ public class ProgramUnit extends BlockWithFile {
 
 	public void setRunScope(Scope runScope) {
 		this.runScope = runScope;
+	}
+
+	/**
+	 * Return all functions whose name starts with 'test'
+	 */
+	public List<FunctionDeclaration> testsFunctions() {
+		List<FunctionDeclaration> testFuncs = new ArrayList<FunctionDeclaration>();
+		List<BigDataScriptNode> allFuncs = findNodes(FunctionDeclaration.class, true);
+		for (BigDataScriptNode func : allFuncs) {
+			// Create scope symbol
+			FunctionDeclaration fd = (FunctionDeclaration) func;
+
+			String fname = fd.getFunctionName();
+			if (fname.length() > 4 //
+					&& fname.substring(0, 4).equalsIgnoreCase("test") // Starts with 'test'
+					&& fd.getParameters().getVarDecl() != null //
+					&& fd.getParameters().getVarDecl().length == 0 // There are no arguments to this function (e.g. 'test01()')
+			) testFuncs.add(fd);
+		}
+
+		return testFuncs;
 	}
 
 	@Override

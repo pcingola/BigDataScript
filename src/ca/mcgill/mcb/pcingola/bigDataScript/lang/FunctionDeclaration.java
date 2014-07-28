@@ -72,6 +72,10 @@ public class FunctionDeclaration extends StatementWithScope {
 		return returnType;
 	}
 
+	public Statement getStatement() {
+		return statement;
+	}
+
 	/**
 	 * Get this function's type
 	 */
@@ -136,15 +140,6 @@ public class FunctionDeclaration extends StatementWithScope {
 		signature = TypeFunc.signature(parameters, returnType);
 		return signature;
 	}
-
-	//	@Override
-	//	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-	//		Type type = getType();
-	//		if (type != null) {
-	//			scope.add(new ScopeSymbol(functionName, type));
-	//			Gpr.debug("SCOPE ADD: " + functionName + "\t" + type);
-	//		}
-	//	}
 
 	@Override
 	public String toString() {
