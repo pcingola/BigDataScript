@@ -4,9 +4,9 @@ import org.junit.Test;
 
 /**
  * Test cases for language & compilation
- * 
+ *
  * Note: These test cases just check language parsing and compilation (what is supposed to compile OK, and what is not).
- * 
+ *
  * @author pcingola
  *
  */

@@ -89,7 +89,8 @@ public class VarReference extends Reference {
 		// Calculate return type
 		returnType(scope);
 
-		if (!scope.hasSymbol(name)) compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
+		if (!scope.hasSymbol(name)) //
+			compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
 	}
 
 	@Override

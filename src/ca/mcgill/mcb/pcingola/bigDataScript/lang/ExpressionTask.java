@@ -137,7 +137,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (statement instanceof ExpressionSys) sys = (ExpressionSys) statement;
 		else if (statement instanceof LiteralString) {
 			LiteralString lstr = (LiteralString) statement;
-			sys = ExpressionSys.get(parent, lstr.getValue(), lineNum, charPosInLine);
+			String str = (String) lstr.eval(bdsThread); // Evaluate (e.g. interpolate variables)
+			sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);
 		} else if (statement instanceof Block) {
 			// Create one sys statement for all sys statements in the block
 			StringBuilder syssb = new StringBuilder();

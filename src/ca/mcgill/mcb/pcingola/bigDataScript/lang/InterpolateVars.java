@@ -22,7 +22,6 @@ public class InterpolateVars extends Literal {
 		}
 	}
 
-	BigDataScriptNode parent;
 	List<String> strings; // This is used in case of interpolated string literal
 	List<Reference> varRefs; // This is used in case of interpolated string literal;
 
@@ -244,7 +243,7 @@ public class InterpolateVars extends Literal {
 
 		if (interpolated.second.isEmpty() // No variables?
 				|| (interpolated.second.size() == 1 && interpolated.second.get(0).isEmpty()) // One empty variable?
-		) return false; // Nothing to do
+				) return false; // Nothing to do
 
 		// Something was found, we have to interpolate
 		strings = interpolated.first;

@@ -94,6 +94,8 @@ public class ExpressionSys extends Expression {
 	@Override
 	protected void parse(ParseTree tree) {
 		String cmd = tree.getChild(0).getText();
+
+		if (cmd.startsWith("sys")) cmd = cmd.substring("sys".length());
 		setCommands(cmd);
 	}
 
@@ -154,10 +156,9 @@ public class ExpressionSys extends Expression {
 	}
 
 	void setCommands(String cmd) {
-		commands = cmd;
-		commands = commands.substring("sys".length()).trim(); // Remove leading 'sys' part and trim spaces
+		commands = cmd.trim();
 
-		// Parse interpolated vars
+		// Parse interpolated variables
 		interpolateVars = new InterpolateVars(this, null);
 		if (!interpolateVars.parse(commands)) interpolateVars = null; // Nothing found? don't bother to keep the object
 	}

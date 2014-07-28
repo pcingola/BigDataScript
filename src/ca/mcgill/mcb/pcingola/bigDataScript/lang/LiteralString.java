@@ -28,10 +28,6 @@ public class LiteralString extends Literal {
 		return interpolateVars.eval(bdsThread); // Variable interpolation
 	}
 
-	public String getValue() {
-		return value;
-	}
-
 	@Override
 	protected void parse(ParseTree tree) {
 		String valueStr = tree.getChild(0).getText();
