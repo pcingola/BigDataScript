@@ -3,11 +3,9 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
@@ -15,8 +13,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
 /**
  * An 'exec' expression (to execute a command line in a local computer, return STDOUT)
@@ -31,9 +27,8 @@ public class ExpressionSys extends Expression {
 
 	protected String commands;
 	protected String execId;
-	protected List<String> strings; // This is used in case of interpolated string literal
-	protected List<String> variables; // This is used in case of interpolated string literal
 	protected String output;
+	InterpolateVars interpolateVars;
 
 	/**
 	 * Create a new sys command
@@ -41,10 +36,9 @@ public class ExpressionSys extends Expression {
 	public static ExpressionSys get(BigDataScriptNode parent, String commands, int lineNum, int charPosInLine) {
 		ExpressionSys sys = new ExpressionSys(parent, null);
 
-		sys.commands = commands;
 		sys.lineNum = lineNum;
 		sys.charPosInLine = charPosInLine;
-		sys.interpolateVars(commands);
+		sys.setCommands(commands);
 
 		return sys;
 	}
@@ -81,11 +75,8 @@ public class ExpressionSys extends Expression {
 	}
 
 	public String getCommands(BigDataScriptThread bdsThread) {
-		// No variable interpolation? => Literal
-		if (variables == null) return commands;
-
-		// Variable interpolation
-		return bdsThread.getScope().interpolate(strings, variables);
+		if (interpolateVars == null) return commands; // No variable interpolation? => Literal
+		return interpolateVars.eval(bdsThread).toString(); // Variable interpolation
 	}
 
 	public String getSysFileName() {
@@ -100,22 +91,10 @@ public class ExpressionSys extends Expression {
 		}
 	}
 
-	/**
-	 * Interpolate variables
-	 */
-	void interpolateVars(String value) {
-		Tuple<List<String>, List<String>> interpolated = GprString.findVariables(value);
-		if (!interpolated.second.isEmpty()) { // Anything found?
-			strings = interpolated.first;
-			variables = interpolated.second;
-		}
-	}
-
 	@Override
 	protected void parse(ParseTree tree) {
-		commands = tree.getChild(0).getText();
-		commands = commands.substring("sys".length()).trim(); // Remove leading 'sys' part and trim spaces
-		interpolateVars(commands); // Find interpolated variables
+		String cmd = tree.getChild(0).getText();
+		setCommands(cmd);
 	}
 
 	/**
@@ -157,7 +136,7 @@ public class ExpressionSys extends Expression {
 				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-						);
+				);
 				return RunState.FATAL_ERROR;
 			}
 		}
@@ -171,7 +150,16 @@ public class ExpressionSys extends Expression {
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		super.serializeParse(serializer);
-		interpolateVars(commands); // Need to re-build this
+		setCommands(commands); // Need to re-build this
+	}
+
+	void setCommands(String cmd) {
+		commands = cmd;
+		commands = commands.substring("sys".length()).trim(); // Remove leading 'sys' part and trim spaces
+
+		// Parse interpolated vars
+		interpolateVars = new InterpolateVars(this, null);
+		if (!interpolateVars.parse(commands)) interpolateVars = null; // Nothing found? don't bother to keep the object
 	}
 
 	@Override
@@ -181,10 +169,7 @@ public class ExpressionSys extends Expression {
 
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		// Do we have any interpolated variables? Make sure they are in scope
-		if (variables != null) //
-			for (String varName : variables)
-				if (!varName.isEmpty() && !scope.hasSymbol(varName)) //
-					compilerMessages.add(this, "Symbol '" + varName + "' cannot be resolved", MessageType.ERROR);
+		// Do we have any interpolated variables? Make sure they are in the scope
+		if (interpolateVars != null) interpolateVars.typeCheckNotNull(scope, compilerMessages);
 	}
 }

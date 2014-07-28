@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * An int literal
- * 
+ *
  * @author pcingola
  */
 public class LiteralInt extends Literal {

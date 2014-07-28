@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * A reference to a list/array variable. E.g. list[3]
- * 
+ *
  * @author pcingola
  */
 public class VarReferenceMap extends Reference {
@@ -29,9 +29,9 @@ public class VarReferenceMap extends Reference {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		String key = evalKey(csThread);
-		HashMap map = getMap(csThread.getScope());
+	public Object eval(BigDataScriptThread bdsThread) {
+		String key = evalKey(bdsThread);
+		HashMap map = getMap(bdsThread.getScope());
 		Object ret = map.get(key);
 		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + key + "'.");
 		return ret;
@@ -39,11 +39,9 @@ public class VarReferenceMap extends Reference {
 
 	/**
 	 * Return index evaluation
-	 * @param csThread
-	 * @return
 	 */
-	public String evalKey(BigDataScriptThread csThread) {
-		return expressionKey.evalString(csThread);
+	public String evalKey(BigDataScriptThread bdsThread) {
+		return expressionKey.evalString(bdsThread);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -54,8 +52,6 @@ public class VarReferenceMap extends Reference {
 
 	/**
 	 * Get symbol from scope
-	 * @param scope
-	 * @return
 	 */
 	@Override
 	public ScopeSymbol getScopeSymbol(Scope scope) {
@@ -86,6 +82,26 @@ public class VarReferenceMap extends Reference {
 	}
 
 	@Override
+	public void parse(String str) {
+		int idx1 = str.indexOf('{');
+		int idx2 = str.indexOf('}');
+		if ((idx1 <= 0) || (idx2 <= idx1)) throw new RuntimeException("Cannot parse list reference '" + str + "'");
+
+		// Create VarReference
+		String varName = str.substring(0, idx1);
+		variable = new VarReference(this, null);
+		variable.parse(varName);
+
+		// Create index expression
+		LiteralString exprIdx = new LiteralString(this, null);
+		String idxStr = str.substring(idx1 + 1, idx2);
+		if (idxStr.startsWith("'")) idxStr = idxStr.substring(1);
+		if (idxStr.endsWith("'")) idxStr = idxStr.substring(0, idxStr.length() - 1);
+		exprIdx.setValue(idxStr);
+		expressionKey = exprIdx;
+	}
+
+	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
@@ -100,10 +116,15 @@ public class VarReferenceMap extends Reference {
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void setValue(BigDataScriptThread csThread, Object value) {
-		String key = evalKey(csThread);
-		HashMap map = getMap(csThread.getScope());
+	public void setValue(BigDataScriptThread bdsThread, Object value) {
+		String key = evalKey(bdsThread);
+		HashMap map = getMap(bdsThread.getScope());
 		map.put(key, value);
+	}
+
+	@Override
+	public String toString() {
+		return variable + "{'" + expressionKey + "'}";
 	}
 
 	@Override

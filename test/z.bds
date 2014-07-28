@@ -1,12 +1,28 @@
 
-print("Hi\n")
+prefix := "test/run_105"
 
-void test01() { print("Testing 01\n") }
+# Prepare data ('par' should never run)
+in  := "$prefix.in"
+out := "$prefix.out"
 
-void test02() { print("Testing 02\n") }
+sys date > $in
+sleep(1)
+sys date > $out
 
-void test03() { error("Error   03\n") }
+# Parallel
+parId := par(false, out <- in) {
+	for(int i : range(1,9)) {
+		print("par: $i\n")
+		sleep(0.1)
+	}
 
-void test04() { print("Testing 04\n") }
+	sys cat $in > $out
+}
 
-void test05() { print("Testing 05\n") }
+isRun := !parId.isEmpty()
+print("parId : '$parId'\tisRun : $isRun\n")
+
+# Wait for process to finish
+wait parId
+print("Finished: '$parId'\n")
+

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Args;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
@@ -268,62 +267,6 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	 */
 	public boolean hasSymbolLocal(String symbol) {
 		return getSymbolLocal(symbol) != null;
-	}
-
-	/**
-	 * Interpolate a string
-	 * @param strings : List of string (from GprString.findVariables)
-	 * @param variables : A list of variable names (from GprString.findVariables)
-	 * @return An interpolated string
-	 */
-	public String interpolate(List<String> strings, List<String> variables) {
-		StringBuilder sb = new StringBuilder();
-
-		// Variable interpolation
-		for (int i = 0; i < strings.size(); i++) {
-			// String before variable
-			sb.append(strings.get(i));
-
-			// Variable's value
-			String varName = variables.get(i);
-			if (!varName.isEmpty()) {
-				ScopeSymbol ssym = getSymbol(varName);
-
-				Object val = ssym.getValue();
-				sb.append(interpolate(val));
-
-			}
-		}
-
-		return sb.toString();
-	}
-
-	/**
-	 * How to show objects in interpolation
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public String interpolate(Object val) {
-		if (val instanceof Map) {
-			StringBuilder sb = new StringBuilder();
-
-			// We sort keys in maps, so that contents are always the same
-			Map map = (Map) val;
-			ArrayList keys = new ArrayList();
-			keys.addAll(map.keySet());
-			Collections.sort(keys);
-
-			int count = 0;
-			sb.append("{ ");
-			for (Object k : keys) {
-				sb.append((count > 0 ? ", " : "") + k + " => " + map.get(k));
-				count++;
-			}
-			sb.append(" }");
-
-			return sb.toString();
-		}
-
-		return val.toString();
 	}
 
 	/**

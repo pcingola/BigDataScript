@@ -54,6 +54,11 @@ public class VarReference extends Reference {
 	}
 
 	@Override
+	public void parse(String str) {
+		name = str;
+	}
+
+	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 

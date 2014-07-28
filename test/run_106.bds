@@ -1,0 +1,7 @@
+#!/usr/bin/env bds
+
+l := [1, 2, 3]
+m := {"Hello" => "Bye", "Hola" => "Adios"}
+
+str1 := "l[1] : '$l[1]'"
+str2 := "m{'Hello'} : '$m{'Hello'}'"

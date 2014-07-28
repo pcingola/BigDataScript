@@ -1,100 +1,20 @@
 package ca.mcgill.mcb.pcingola.bigDataScript;
 
-class T1 extends Thread {
-	Zzz zzz;
-
-	public T1(Zzz zzz) {
-		this.zzz = zzz;
-	}
-
-	@Override
-	public void run() {
-		while (true)
-			zzz.doSomething();
-	}
-}
-
-class T2 extends Thread {
-	final Zzz zzz;
-
-	public T2(Zzz zzz) {
-		this.zzz = zzz;
-	}
-
-	@Override
-	public void run() {
-		while (true)
-			zzz.doSomethingElse();
-	}
-}
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.InterpolateVars;
 
 public class Zzz {
-	public static final int SLEEP = 10;
-	public static final int SLEEP_LONG = 500;
-
-	public static Object cacheLock = new Object();
-	public static Object tableLock = new Object();
-
-	public boolean wait = false;
 
 	public static void main(String[] args) throws Exception {
-		Zzz zzz = new Zzz();
 
-		T1 t1 = new T1(zzz);
-		T2 t2 = new T2(zzz);
+		// String str = "m{'Helo'} : $m{'Helo'}\n";
+		// String str = "l[1] : $l[1]\n";
+		String str = "Hello";
+		System.out.println("str:\t" + str);
 
-		t1.start();
-		t2.start();
+		InterpolateVars iv = new InterpolateVars(null, null);
+		iv.parse(str);
+		System.out.println("String : " + str);
+		System.out.println("Inter  : " + iv);
 	}
 
-	public void anotherMethod() {
-		synchronized (tableLock) {
-
-			while (!wait)
-				sleep();
-
-			synchronized (cacheLock) {
-				doSomethingElse();
-			}
-		}
-	}
-
-	void doSomething() {
-		System.out.println("Doing something: " + Thread.currentThread().getId());
-		sleep();
-	}
-
-	void doSomethingElse() {
-		System.out.println("Doing something else: " + Thread.currentThread().getId());
-		sleep();
-	}
-
-	public void oneMethod() {
-		synchronized (cacheLock) {
-			sleepLong();
-			wait = true;
-			synchronized (tableLock) {
-				doSomething();
-			}
-			wait = false;
-		}
-	}
-
-	void sleep() {
-		try {
-			Thread.sleep(SLEEP);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	void sleepLong() {
-		try {
-			Thread.sleep(SLEEP_LONG);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

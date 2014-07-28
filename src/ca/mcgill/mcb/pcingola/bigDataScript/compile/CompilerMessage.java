@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.compile;
 
 /**
  * Store compilation error / warning or just an info message
- * 
+ *
  * @author pcingola
  */
 public class CompilerMessage implements Comparable<CompilerMessage> {
@@ -17,7 +17,7 @@ public class CompilerMessage implements Comparable<CompilerMessage> {
 	protected final MessageType type;
 
 	public CompilerMessage(String fileName, int lineNum, int charPosInLine, String message, MessageType type) {
-		this.fileName = fileName != null ? fileName.replace('\\', '/') : ""; 
+		this.fileName = fileName != null ? fileName.replace('\\', '/') : "";
 		// hack to make windows filenames coincide with linuxes, to ease testing
 		this.lineNum = lineNum;
 		this.charPosInLine = charPosInLine;
@@ -65,7 +65,6 @@ public class CompilerMessage implements Comparable<CompilerMessage> {
 	public String toString() {
 		String coordinates = (getFileName() != null ? "file '" + getFileName() + "'" : "") //
 				+ (getLineNum() >= 0 ? ", line " + getLineNum() : "") //
-		// + (getCharPosInLine() >= 0 ? ", char " + (getCharPosInLine() + 1) : "") //
 		;
 
 		return type //

@@ -23,6 +23,11 @@ public abstract class Reference extends Expression {
 		return getScopeSymbol(scope).isConstant();
 	}
 
-	public abstract void setValue(BigDataScriptThread csThread, Object value);
+	/**
+	 * Parse a string (e.g. an interpolated string)
+	 */
+	public abstract void parse(String str);
+
+	public abstract void setValue(BigDataScriptThread bdsThread, Object value);
 
 }

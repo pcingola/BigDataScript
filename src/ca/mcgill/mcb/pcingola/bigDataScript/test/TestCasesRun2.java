@@ -64,4 +64,13 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheck("test/run_105.bds", "isRun", "false");
 	}
 
+	@Test
+	public void test106() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("str1", "l[1] : '2'");
+		expectedValues.put("str2", "m{'Hello'} : 'Bye'");
+
+		runAndCheckMultiple("test/run_106.bds", expectedValues);
+	}
+
 }

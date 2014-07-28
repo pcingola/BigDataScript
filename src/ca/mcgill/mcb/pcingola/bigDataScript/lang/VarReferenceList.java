@@ -9,10 +9,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A reference to a list/array variable. E.g. list[3]
- * 
+ *
  * @author pcingola
  */
 public class VarReferenceList extends Reference {
@@ -29,20 +30,18 @@ public class VarReferenceList extends Reference {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		int idx = evalIndex(csThread);
-		ArrayList list = getList(csThread.getScope());
+	public Object eval(BigDataScriptThread bdsThread) {
+		int idx = evalIndex(bdsThread);
+		ArrayList list = getList(bdsThread.getScope());
 		if ((idx < 0) || (idx >= list.size())) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + list.size() + ").");
 		return list.get(idx);
 	}
 
 	/**
 	 * Return index evaluation
-	 * @param csThread
-	 * @return
 	 */
-	public int evalIndex(BigDataScriptThread csThread) {
-		return (int) expressionIdx.evalInt(csThread);
+	public int evalIndex(BigDataScriptThread bdsThread) {
+		return (int) expressionIdx.evalInt(bdsThread);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -54,8 +53,6 @@ public class VarReferenceList extends Reference {
 
 	/**
 	 * Get symbol from scope
-	 * @param scope
-	 * @return
 	 */
 	@Override
 	public ScopeSymbol getScopeSymbol(Scope scope) {
@@ -86,6 +83,24 @@ public class VarReferenceList extends Reference {
 	}
 
 	@Override
+	public void parse(String str) {
+		int idx1 = str.indexOf('[');
+		int idx2 = str.indexOf(']');
+		if ((idx1 <= 0) || (idx2 <= idx1)) throw new RuntimeException("Cannot parse list reference '" + str + "'");
+
+		// Create VarReference
+		String varName = str.substring(0, idx1);
+		variable = new VarReference(this, null);
+		variable.parse(varName);
+
+		// Create index expression
+		LiteralInt exprIdx = new LiteralInt(this, null);
+		String idxStr = str.substring(idx1 + 1, idx2);
+		exprIdx.setValue(Gpr.parseLongSafe(idxStr));
+		expressionIdx = exprIdx;
+	}
+
+	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
@@ -100,13 +115,13 @@ public class VarReferenceList extends Reference {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void setValue(BigDataScriptThread csThread, Object value) {
-		int idx = evalIndex(csThread);
-		ArrayList<Object> list = getList(csThread.getScope());
+	public void setValue(BigDataScriptThread bdsThread, Object value) {
+		int idx = evalIndex(bdsThread);
+		ArrayList<Object> list = getList(bdsThread.getScope());
 
 		// Make sure the array is big enough to hold the data
 		if (idx >= list.size()) {
-			TypeList type = (TypeList) getType(csThread.getScope());
+			TypeList type = (TypeList) getType(bdsThread.getScope());
 			Type baseType = type.getBaseType();
 			list.ensureCapacity(idx + 1);
 
@@ -115,6 +130,11 @@ public class VarReferenceList extends Reference {
 		}
 
 		list.set(idx, value);
+	}
+
+	@Override
+	public String toString() {
+		return variable + "[" + expressionIdx + "]";
 	}
 
 	@Override
