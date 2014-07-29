@@ -43,4 +43,10 @@ public class TestCasesZzz extends TestCasesBase {
 		runAndCheckpoint(prefix + ".bds", prefix + ".chp", "num", "0", runBeforeRecovery);
 	}
 
+	@Test
+	public void test11() {
+		// Run pipeline and test checkpoint
+		runAndCheckpoint("test/checkpoint_10.bds", "test/checkpoint_10.chp", "sumPar", "110");
+	}
+
 }
