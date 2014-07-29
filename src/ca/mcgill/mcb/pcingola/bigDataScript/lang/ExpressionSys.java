@@ -66,8 +66,6 @@ public class ExpressionSys extends Expression {
 
 	/**
 	 * Create an exec ID
-	 * @param bdsThread
-	 * @return
 	 */
 	public String execId(String name, BigDataScriptThread bdsThread) {
 		execId = bdsThread.getBdsThreadId() + "/" + name + ".line_" + getLineNum() + ".id_" + nextId();
@@ -138,7 +136,7 @@ public class ExpressionSys extends Expression {
 				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-						);
+				);
 				return RunState.FATAL_ERROR;
 			}
 		}
@@ -152,7 +150,6 @@ public class ExpressionSys extends Expression {
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		super.serializeParse(serializer);
-		setCommands(commands); // Need to re-build this
 	}
 
 	void setCommands(String cmd) {

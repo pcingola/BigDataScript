@@ -1,6 +1,9 @@
 #!/usr/bin/env bds
 
-s := 'Hi'
-print("Hello $s\n")
+in := "in.txt"
+
+task {
+	sys echo $in
+}
+
 checkpoint "test/z.chp"
-print("After, \" ,checkpoint: $s\n")
