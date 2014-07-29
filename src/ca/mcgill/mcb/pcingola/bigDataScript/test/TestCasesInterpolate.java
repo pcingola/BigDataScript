@@ -29,10 +29,10 @@ public class TestCasesInterpolate extends TestCasesBase {
 		// Check strings
 		for (int i = 0; i < strings.length; i++) {
 			System.out.print("\tIndex: " + i);
-			System.out.print("\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getStrings().get(i));
-			System.out.println("\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getVarRefs().get(i));
-			Assert.assertEquals(strings[i], iv.getStrings().get(i));
-			if (vars[i] != null && !vars[i].isEmpty()) Assert.assertEquals(vars[i], iv.getVarRefs().get(i).toString());
+			System.out.print("\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getLiterals()[i]);
+			System.out.println("\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getExpressions()[i]);
+			Assert.assertEquals(strings[i], iv.getLiterals()[i]);
+			if (vars[i] != null && !vars[i].isEmpty()) Assert.assertEquals(vars[i], iv.getExpressions()[i].toString());
 		}
 	}
 

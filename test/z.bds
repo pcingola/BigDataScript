@@ -1,5 +1,6 @@
+#!/usr/bin/env bds
 
-
-string s1 = "Hi '\$'"
-print("s1=$s1\n")
-
+s := 'Hi'
+print("Hello $s\n")
+checkpoint "test/z.chp"
+print("After, \" ,checkpoint: $s\n")

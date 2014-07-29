@@ -14,8 +14,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
 public class InterpolateVars extends Literal {
 
-	List<String> strings; // This is used in case of interpolated string literal
-	List<Expression> exprs; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
+	String literals[]; // This is used in case of interpolated string literal
+	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
 
 	/**
 	 * Create a reference form a string
@@ -105,12 +105,12 @@ public class InterpolateVars extends Literal {
 		StringBuilder sb = new StringBuilder();
 
 		// Variable interpolation
-		for (int i = 0; i < strings.size(); i++) {
+		for (int i = 0; i < literals.length; i++) {
 			// String before variable
-			sb.append(strings.get(i));
+			sb.append(literals[i]);
 
 			// Variable's value
-			Expression ref = exprs.get(i);
+			Expression ref = exprs[i];
 			if (ref != null) {
 				Object val = ref.eval(bdsThread);
 				sb.append(interpolateValue(val));
@@ -189,12 +189,12 @@ public class InterpolateVars extends Literal {
 		return new Tuple<List<String>, List<String>>(listStr, listVars);
 	}
 
-	public List<String> getStrings() {
-		return strings;
+	public Expression[] getExpressions() {
+		return exprs;
 	}
 
-	public List<Expression> getVarRefs() {
-		return exprs;
+	public String[] getLiterals() {
+		return literals;
 	}
 
 	int indexRefEnd(String str) {
@@ -283,7 +283,7 @@ public class InterpolateVars extends Literal {
 	}
 
 	public boolean isEmpty() {
-		return exprs == null || exprs.isEmpty();
+		return exprs == null || exprs.length <= 0;
 	}
 
 	/**
@@ -297,9 +297,9 @@ public class InterpolateVars extends Literal {
 		) return false; // Nothing to do
 
 		// Something was found, we have to interpolate
-		strings = interpolated.first;
+		List<String> strings = interpolated.first;
 		List<String> variables = interpolated.second;
-		exprs = new ArrayList<Expression>();
+		List<Expression> exprs = new ArrayList<Expression>();
 
 		// Create and add reference
 		for (String var : variables) {
@@ -307,6 +307,9 @@ public class InterpolateVars extends Literal {
 			exprs.add(varRef);
 		}
 
+		// Convert to array
+		literals = strings.toArray(new String[0]);
+		this.exprs = exprs.toArray(new Expression[0]);
 		return !isEmpty();
 	}
 
@@ -324,10 +327,10 @@ public class InterpolateVars extends Literal {
 
 		StringBuilder sb = new StringBuilder();
 
-		for (int i = 0; i < strings.size(); i++) {
+		for (int i = 0; i < literals.length; i++) {
 			if (sb.length() > 0) sb.append(" + ");
-			sb.append("\"" + strings.get(i) + "\"");
-			if (exprs.get(i) != null) sb.append(" + " + exprs.get(i));
+			sb.append("\"" + literals[i] + "\"");
+			if (exprs[i] != null) sb.append(" + " + exprs[i]);
 		}
 
 		return sb.toString();

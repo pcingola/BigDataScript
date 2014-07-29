@@ -30,6 +30,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
 
 /**
  * Serialize elemnts to (and from) a file
@@ -180,6 +181,11 @@ public class BigDataScriptSerializer {
 		return parseString(str);
 	}
 
+	public String[] getNextFieldStringArray() {
+		String str = getNextField();
+		return parseStringArray(str);
+	}
+
 	public Type getNextFieldType() {
 		String typeStr = getNextField();
 
@@ -246,6 +252,9 @@ public class BigDataScriptSerializer {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object parse(Class fieldClass, Class componentType) {
 		if (fieldClass.isArray()) {
+
+			if (componentType == String.class) return getNextFieldStringArray();
+
 			// Create a list
 			ArrayList list = new ArrayList();
 
@@ -434,6 +443,17 @@ public class BigDataScriptSerializer {
 		str = StringEscapeUtils.unescapeJava(str); // Un-escape
 		str = str.substring(1, str.length() - 1); // Remove quotes
 		return str;
+	}
+
+	public String[] parseStringArray(String strArray) {
+		String splitted[] = GprString.splitCsv(strArray);
+
+		for (int i = 0; i < splitted.length; i++) {
+			if (splitted[i].equals("null")) splitted[i] = null;
+			else splitted[i] = StringEscapeUtils.unescapeJava(splitted[i]); // Un-escape
+		}
+
+		return splitted;
 	}
 
 	/**
