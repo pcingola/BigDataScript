@@ -1,0 +1,14 @@
+#!/usr/bin/env bds
+
+inFile       := "in.txt"
+intermediate := "inter.txt"
+outFile      := "out.txt"
+
+task( intermediate <- inFile) {
+	sys echo Creating $intermediate; cat $inFile > $intermediate; sleep 1 ; echo Done $intermediate
+}
+
+task( outFile <- intermediate ) {
+	sys echo Creating $outFile; cat $intermediate > $outFile; echo Done $outFile
+}
+

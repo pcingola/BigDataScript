@@ -1,0 +1,170 @@
+<html lang="en">
+<head>
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style type="text/css">
+		pre {
+			width:500px;
+			overflow: auto;
+			word-wrap: normal;
+			white-space: pre;
+		}
+	</style>    
+</head>
+<body>
+
+
+<div class="container" id="summary">
+	<h2 class="bs-featurette-title"> BigDataScript report: test_03.bds </h2>
+	
+	<table class="table table-striped">
+		<tr> <th> Script file </th><td> ./test_03.bds </td></tr>
+		<tr> <th> Program ID </th><td> test_03.bds.20140730_160020_575 </td></tr>
+		<tr> <th> Start time </th><td> 2014-07-30 16:00:20 </td></tr>
+		<tr> <th> Run time </th><td> 00:00:00.769 </td></tr>
+		<tr> <th> Tasks executed </th><td> 1 </td></tr>
+		<tr> <th> Arguments* </th><td> string[] args = [] </td></tr>
+		<tr> <th> System* </th><td> string system = "local" </td></tr>
+		<tr> <th> Cpus* </th><td> int cpus = 1 </td></tr>
+		<tr> <th> Exit value </th><td  > 0 </td></tr>
+	</table>
+	<b>*</b> Values in global scope when program finished execution.
+</div>
+
+<div class="container" id="bdsTimeLine">
+	<h2 class="bs-featurette-title"> Timeline </h2>
+	<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization',
+	       'version':'1','packages':['timeline']}]}"></script>
+	<script type="text/javascript">
+	google.setOnLoadCallback(drawChart);
+	
+	function drawChart() {
+	  var container = document.getElementById('bdsTimeline');
+	
+	  var chart = new google.visualization.Timeline(container);
+	
+	  var dataTable = new google.visualization.DataTable();
+	
+	  dataTable.addColumn({ type: 'string', id: 'TaskName' });
+	  dataTable.addColumn({ type: 'string', id: 'TaskHint' });
+	  dataTable.addColumn({ type: 'date', id: 'Start' });
+	  dataTable.addColumn({ type: 'date', id: 'End' });
+	
+	  dataTable.addRows([
+	    [ 'task.line_4.id_1', 'echo Hello world', new Date(2014,07,30,16,00,21), new Date(2014,07,30,16,00,21) ],
+	    ]);
+	
+	  var options = {
+	    timeline: { groupByRowLabel: false }
+	  };
+	  
+	  chart.draw(dataTable, options);
+	}
+	</script>
+	<div id="bdsTimeline" style="width: 900px; height: 126px;"></div>
+</div>
+
+<div class="container" id="taskDetails">
+	<h2 class="bs-featurette-title"> Task details </h2>
+	<table class="table table-striped">
+    <tr> <th> Task </th>            <th> Execution </th>            <th> Time </th> <th> Dependencies </th>     <th> Task program, Errors, StdOut / StdErr </th> </tr>
+    <tr> <td> <table class="table"> <tr> <th> Num </th> <td> 1 </td> </tr> <tr> <th> Name </th> <td> task.line_4.id_1 </td> </tr> <tr> <th> PID </th> <td> 9720 </td> </tr> </table>  </td> <td > <table class="table"> <tr> <th> OK </th> <td> true </td>  </tr> <tr> <th> Exit Code </th> <td> 0 </td>  </tr> <tr> <th> Retries </th> <td>  </td></tr> <tr> <th> State </th> <td> FINISHED </td> </tr> <tr> <th> Dep. </th> <td> OK </td> </tr> <tr> <th> Cpus </th> <td>  1 </td></tr> <tr> <th> Mem </th> <td>  </td></tr> </table> </td> <td> <table class="table"> <tr> <th> Start </th> <td> 2014-07-30 16:00:21 </td> </tr> <tr> <th> End </th> <td> 2014-07-30 16:00:21 </td> </tr> <tr> <th> Elapsed </th> <td> 00:00:00 </td> </tr> <tr> <th> Timeout</th> <td> 1 day </td></tr> <tr> <th> Wall Timeout </th><td>  1 day </td></tr> </table> </td> <td> <table class="table"> <tr> <th> Input files</th> <td>  </td>  </tr> <tr> <th> Output files </th> <td>  </td> </tr> <tr> <th> Dependencies </th> <td>  </td> </tr> </table> </td> <td> <pre> echo Hello world </pre> <pre>     </pre> </td> </tr>
+	</table>
+</div>
+
+<div class="container" id="scope">
+	<h2 class="bs-featurette-title"> Global scope </h2>
+	<b>Note:</b> Global scope when program finished execution.
+	<table class="table table-striped">
+	<tr> <th> Type </th><th> Name </th><th> Value </th> </tr>
+	<tr> <td> string </td><td> _ </td><td> ./test_03.bds </td> </tr>
+	<tr> <td> string[] </td><td> args </td><td> [] </td> </tr>
+	<tr> <td> bool </td><td> canFail </td><td> false </td> </tr>
+	<tr> <td> string </td><td> CLUTTER_IM_MODULE </td><td> xim </td> </tr>
+	<tr> <td> string </td><td> COLORTERM </td><td> gnome-terminal </td> </tr>
+	<tr> <td> string </td><td> COMPIZ_CONFIG_PROFILE </td><td> ubuntu </td> </tr>
+	<tr> <td> int </td><td> cpus </td><td> 1 </td> </tr>
+	<tr> <td> int </td><td> cpusLocal </td><td> 8 </td> </tr>
+	<tr> <td> int </td><td> day </td><td> 86400 </td> </tr>
+	<tr> <td> string </td><td> DBUS_SESSION_BUS_ADDRESS </td><td> unix:abstract=/tmp/dbus-3gEcSrndDR </td> </tr>
+	<tr> <td> string </td><td> DEFAULTS_PATH </td><td> /usr/share/gconf/ubuntu.default.path </td> </tr>
+	<tr> <td> string </td><td> DESKTOP_SESSION </td><td> ubuntu </td> </tr>
+	<tr> <td> string </td><td> DISPLAY </td><td> :0 </td> </tr>
+	<tr> <td> int </td><td> G </td><td> 1073741824 </td> </tr>
+	<tr> <td> string </td><td> GDM_LANG </td><td> en_US </td> </tr>
+	<tr> <td> string </td><td> GDMSESSION </td><td> ubuntu </td> </tr>
+	<tr> <td> string </td><td> GNOME_DESKTOP_SESSION_ID </td><td> this-is-deprecated </td> </tr>
+	<tr> <td> string </td><td> GNOME_KEYRING_CONTROL </td><td> /run/user/1000/keyring-OTJsYf </td> </tr>
+	<tr> <td> string </td><td> GNOME_KEYRING_PID </td><td> 2018 </td> </tr>
+	<tr> <td> string </td><td> GPG_AGENT_INFO </td><td> /run/user/1000/keyring-OTJsYf/gpg:0:1 </td> </tr>
+	<tr> <td> string </td><td> GTK_IM_MODULE </td><td> ibus </td> </tr>
+	<tr> <td> string </td><td> GTK_MODULES </td><td> overlay-scrollbar:unity-gtk-module </td> </tr>
+	<tr> <td> string </td><td> HOME </td><td> /home/pcingola </td> </tr>
+	<tr> <td> int </td><td> hour </td><td> 3600 </td> </tr>
+	<tr> <td> string </td><td> IM_CONFIG_PHASE </td><td> 1 </td> </tr>
+	<tr> <td> string </td><td> INSTANCE </td><td> Unity </td> </tr>
+	<tr> <td> string </td><td> JOB </td><td> gnome-session </td> </tr>
+	<tr> <td> int </td><td> K </td><td> 1024 </td> </tr>
+	<tr> <td> string </td><td> LANG </td><td> en_US.UTF-8 </td> </tr>
+	<tr> <td> string </td><td> LANGUAGE </td><td> en_US </td> </tr>
+	<tr> <td> string </td><td> LESSCLOSE </td><td> /usr/bin/lesspipe %s %s </td> </tr>
+	<tr> <td> string </td><td> LESSOPEN </td><td> | /usr/bin/lesspipe %s </td> </tr>
+	<tr> <td> string </td><td> LOGNAME </td><td> pcingola </td> </tr>
+	<tr> <td> string </td><td> LS_COLORS </td><td> rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36: </td> </tr>
+	<tr> <td> int </td><td> M </td><td> 1048576 </td> </tr>
+	<tr> <td> string </td><td> MANDATORY_PATH </td><td> /usr/share/gconf/ubuntu.mandatory.path </td> </tr>
+	<tr> <td> int </td><td> mem </td><td> -1 </td> </tr>
+	<tr> <td> int </td><td> minute </td><td> 60 </td> </tr>
+	<tr> <td> string </td><td> NLSPATH </td><td> /usr/dt/lib/nls/msg/%L/%N.cat </td> </tr>
+	<tr> <td> string </td><td> node </td><td>  </td> </tr>
+	<tr> <td> string </td><td> OLDPWD </td><td> /home/pcingola/workspace/GitHub_Pages/BigDataScript </td> </tr>
+	<tr> <td> int </td><td> P </td><td> 1125899906842624 </td> </tr>
+	<tr> <td> string </td><td> PATH </td><td> /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/pcingola/tools/ant/bin:/home/pcingola/tools/mvn/bin:/home/pcingola/tools/samtools:/home/pcingola/tools/samtools/bcftools/:/home/pcingola/tools/bwa:/home/pcingola/tools/bowtie:/home/pcingola/tools/bowtie2:/home/pcingola/tools/tophat:/home/pcingola/tools/tabix:/home/pcingola/tools/bedTools/bin/:/home/pcingola/tools/sbt/bin/:/usr/local/go/bin:/home/pcingola/tools/Sublime_Text_2:/home/pcingola/.bds </td> </tr>
+	<tr> <td> string </td><td> ppwd </td><td> /data/pcingola/Documents/workspace/GitHub_Pages/BigDataScript/bds </td> </tr>
+	<tr> <td> string </td><td> programName </td><td> test_03.bds </td> </tr>
+	<tr> <td> string </td><td> programPath </td><td> ./test_03.bds </td> </tr>
+	<tr> <td> string </td><td> PWD </td><td> /home/pcingola/workspace/GitHub_Pages/BigDataScript/bds </td> </tr>
+	<tr> <td> string </td><td> QT4_IM_MODULE </td><td> ibus </td> </tr>
+	<tr> <td> string </td><td> QT_IM_MODULE </td><td> ibus </td> </tr>
+	<tr> <td> string </td><td> QT_QPA_PLATFORMTHEME </td><td> appmenu-qt5 </td> </tr>
+	<tr> <td> string </td><td> queue </td><td>  </td> </tr>
+	<tr> <td> int </td><td> retry </td><td> 0 </td> </tr>
+	<tr> <td> string </td><td> SELINUX_INIT </td><td> YES </td> </tr>
+	<tr> <td> string </td><td> SESSIONTYPE </td><td> gnome-session </td> </tr>
+	<tr> <td> string </td><td> SHELL </td><td> /bin/bash </td> </tr>
+	<tr> <td> string </td><td> SHLVL </td><td> 1 </td> </tr>
+	<tr> <td> string </td><td> SSH_AGENT_LAUNCHER </td><td> upstart </td> </tr>
+	<tr> <td> string </td><td> SSH_AGENT_PID </td><td> 2096 </td> </tr>
+	<tr> <td> string </td><td> SSH_AUTH_SOCK </td><td> /run/user/1000/keyring-OTJsYf/ssh </td> </tr>
+	<tr> <td> string </td><td> system </td><td> local </td> </tr>
+	<tr> <td> int </td><td> T </td><td> 1099511627776 </td> </tr>
+	<tr> <td> string </td><td> TERM </td><td> xterm </td> </tr>
+	<tr> <td> string </td><td> TEXTDOMAIN </td><td> im-config </td> </tr>
+	<tr> <td> string </td><td> TEXTDOMAINDIR </td><td> /usr/share/locale/ </td> </tr>
+	<tr> <td> int </td><td> timeout </td><td> 86400 </td> </tr>
+	<tr> <td> string </td><td> UBUNTU_MENUPROXY </td><td> 1 </td> </tr>
+	<tr> <td> string </td><td> UPSTART_EVENTS </td><td> started starting </td> </tr>
+	<tr> <td> string </td><td> UPSTART_INSTANCE </td><td>  </td> </tr>
+	<tr> <td> string </td><td> UPSTART_JOB </td><td> unity-settings-daemon </td> </tr>
+	<tr> <td> string </td><td> UPSTART_SESSION </td><td> unix:abstract=/com/ubuntu/upstart-session/1000/2023 </td> </tr>
+	<tr> <td> string </td><td> USER </td><td> pcingola </td> </tr>
+	<tr> <td> string </td><td> VTE_VERSION </td><td> 3409 </td> </tr>
+	<tr> <td> int </td><td> walltimeout </td><td> 86400 </td> </tr>
+	<tr> <td> int </td><td> week </td><td> 604800 </td> </tr>
+	<tr> <td> string </td><td> WINDOWID </td><td> 56623116 </td> </tr>
+	<tr> <td> string </td><td> XAUTHORITY </td><td> /home/pcingola/.Xauthority </td> </tr>
+	<tr> <td> string </td><td> XDG_CONFIG_DIRS </td><td> /etc/xdg/xdg-ubuntu:/usr/share/upstart/xdg:/etc/xdg </td> </tr>
+	<tr> <td> string </td><td> XDG_CURRENT_DESKTOP </td><td> Unity </td> </tr>
+	<tr> <td> string </td><td> XDG_DATA_DIRS </td><td> /usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/ </td> </tr>
+	<tr> <td> string </td><td> XDG_GREETER_DATA_DIR </td><td> /var/lib/lightdm-data/pcingola </td> </tr>
+	<tr> <td> string </td><td> XDG_RUNTIME_DIR </td><td> /run/user/1000 </td> </tr>
+	<tr> <td> string </td><td> XDG_SEAT </td><td> seat0 </td> </tr>
+	<tr> <td> string </td><td> XDG_SEAT_PATH </td><td> /org/freedesktop/DisplayManager/Seat0 </td> </tr>
+	<tr> <td> string </td><td> XDG_SESSION_ID </td><td> c2 </td> </tr>
+	<tr> <td> string </td><td> XDG_SESSION_PATH </td><td> /org/freedesktop/DisplayManager/Session0 </td> </tr>
+	<tr> <td> string </td><td> XDG_VTNR </td><td> 7 </td> </tr>
+	<tr> <td> string </td><td> XFILESEARCHPATH </td><td> /usr/dt/app-defaults/%L/Dt </td> </tr>
+	<tr> <td> string </td><td> XMODIFIERS </td><td> @im=ibus </td> </tr>
+	</table>
+</div>
+
+</body>

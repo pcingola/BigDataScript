@@ -1,0 +1,4 @@
+#!/usr/bin/env bds
+
+# This task is scheduled for execution (by default locally, but it could be executed on a cluster, remote server, etc.)
+task echo Hello world

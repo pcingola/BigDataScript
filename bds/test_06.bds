@@ -1,0 +1,16 @@
+#!/usr/bin/env bds
+
+string inFile  = "in.txt"
+string outFile = "out.txt"
+
+# Create 'in.txt' if it doesn't exist
+if( !inFile.exists() ) {
+	task echo Creating $inFile; echo Hello > $inFile
+}
+
+wait
+
+# Create 'out.txt' only if needs to be updated resepct to 'in.txt'
+if( outFile <- inFile ) {
+	task echo Creating $outFile; cat $inFile > $outFile
+}

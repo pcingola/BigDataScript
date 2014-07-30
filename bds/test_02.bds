@@ -1,0 +1,3 @@
+#!/usr/bin/env bds
+
+sys echo Hello world
