@@ -1,0 +1,9 @@
+#!/usr/bin/env bds
+
+for( int i=0 ; i < 10 ; i++ ) {
+	# Inform resource management that we need 4 core on each of these tasks
+	task ( cpus := 4 ) {
+		sys echo Hi $i ; sleep 1; echo Done $i
+	}
+}
+

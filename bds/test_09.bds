@@ -1,0 +1,5 @@
+#!/usr/bin/env bds
+
+tid := task echo Hello 
+print("Task is $tid\n")
+

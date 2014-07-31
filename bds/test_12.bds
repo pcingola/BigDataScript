@@ -1,0 +1,5 @@
+#!/usr/bin/env bds
+
+dir := sys ls *.bds | head -n 3
+print("\nVariable dir is:\n$dir\n")
+
