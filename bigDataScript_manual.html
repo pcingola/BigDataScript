@@ -209,9 +209,7 @@ $ ./test_02.bds
 Hello world
 </pre>
 
-					<li> Now let's run the same in a cluster, we schedule the system command for execution using a <code>task</code> expression.
-					A <code>task</code> command is queued for execution. 
-					So the program can continue even if the task has not finished (or has not even started) execution.
+					<li> Now let's run the same in as a 'task'. Tasks schedule the system command for execution (either locally, on a cluster, etc.)
 					<br>
 					<br> File <a href="bds/test_03.bds">test_03.bds</a>
 <pre class="prettyprint">
@@ -220,11 +218,20 @@ Hello world
 task echo Hello world
 </pre>
 
-Note: If you don't have a cluster avialble, no worries, just run without the '-cluster' option and the tasks will be executed locally.
+					Just run the script to execute tasks locally
 <pre class="prettyprint">
-$ ./test_03.bds -cluster
+$ ./test_03.bds
 Hello world
 </pre>
+
+					You can also execute on a cluster, for instance, if you are on a cluster's head node, just run:
+<pre class="prettyprint">
+$ bds -cluster ./test_03.bds
+Hello world
+</pre>
+					Note that in order to execute on another architecture (cluster), we did not change the bds program, we just added a command line option.
+					Programs can be executed on different computer systems of different sizes without changing the code.
+
 				</ul>
 				</p>
 				<iframe width="640" height="390" src="http://www.youtube.com/embed/WnwBIa4G-mE" frameborder="0" allowfullscreen></iframe>
