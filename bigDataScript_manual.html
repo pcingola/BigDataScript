@@ -74,13 +74,13 @@
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="install">1. Download &amp; Install</h1>
+				<h1 class="page-header" id="install">Download &amp; Install</h1>
 				<p class="lead"> Please take a look at the <a href="download.html">download page</a>.  </p>
 			</div>
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="intro">2. Introduction</h1>
+				<h1 class="page-header" id="intro">Introduction</h1>
 				<p class="lead"> BigDataScript is intended as a scripting language for big data pipeline.  </p>
 				<h3>What?</h3>
 				<p> BigDataScript is a cross-system scripting language for working with big data pipelines in computer systems of different sizes and capabilities.  </p>
@@ -172,59 +172,12 @@
 				</p>
 
 				<h3> Disclaimer </h3>
-				BigDataScript is experimental and under heavy development. 
-				At this time this is not for the faint of heart.
-				<br>
-				<br>
-				<i class="icon-warning-sign"></i> Use at your own risk!
-				<br>
-				<br>
+				BigDataScript is experimental and under heavy development. Use at your own risk.
 			</div>
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="commandLine">3. Command line arguments </h1>
-				<p class="lead"> BigDataScript (<code>bds</code>) command line arguments. <p>
-					
-				Running the command line without any arguments, shows a help message
-<pre class="prettyprint">
-$ bds
-Usage: BigDataScript [options] file.bdsBigDataScript 0.99 (build 2014-07-28), by Pablo Cingolani
-
-Available options: 
-  [-c | -config ] bds.config     : Config file. Default : /home/pcingola/.bds/bds.config
-  [-d | -debug  ]                : Debug mode.
-  -dryRun                        : Do not run any task, just show what would be run.
-  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.
-  [-l | -log    ]                : Log all tasks (do not delete tmp files).
-  -noReport                      : Do not create report.
-  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).
-  [-q | -queue  ] queueName      : Set default queue name.
-  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.
-  [-s | -system ] type           : Set system type.
-  [-t | -test   ]                : Perform testing (run all test* functions).
-  [-v | -verbose]                : Be verbose.
-  [-y | -retry  ] num            : Number of times to retry a failing tasks.
-</pre>
-				<table class="table table-striped">
-					<tr> <th> Option short </th><th> Option long </th> <th> Meaning </th> </tr>
-					<tr> <td> -c </td> <td> -config </td> <td> Path to bds.config file (most of the times no config file is needed) </td> </tr>
-					<tr> <td> -d </td> <td> -debug </td> <td> Debug mode, shows detailed information for debugging scripts. </td> </tr>
-					<tr> <td> </td> <td> -dryRun  </td> <td> Do not run any task, just show what would be run. This mode is used when you just want to test your script's logic without executing any tasks. </td> </tr>
-					<tr> <td> -i </td> <td> -info </td> <td> Show state information in checkpoint file. Prints variables, scopes, etc.</td> </tr>
-					<tr> <td> </td> <td> -noReport </td> <td> Do not create HTML report when execution finishes. </td> </tr>
-					<tr> <td> -q </td> <td> -queue </td> <td> Set default cluster's queue name. </td> </tr>
-					<tr> <td> -r </td> <td> -restore </td> <td> Restore from a acheckpoiunt and continue execution.</td> </tr>
-					<tr> <td> -s </td> <td> -system </td> <td> Define the 'system' type the script is running on (e.g. cluster type) </td> </tr>
-					<tr> <td> -t </td> <td> -test </td> <td> Perform all tests in a script (i.e. run all functions that are called "test*") </td> </tr>
-					<tr> <td> -v </td> <td> -verbose </td> <td> Be verbose (show more information) </td> </tr>
-					<tr> <td> -y </td> <td> -retry </td> <td> Number of times to retry a failing tasks. </td> </tr>
-				</table>
-			</div>
-
-			<!-- ================================================== -->
-			<div class="bs-docs-section">
-				<h1 class="page-header" id="myfirst">4. Hello world </h1>
+				<h1 class="page-header" id="hello">Hello world </h1>
 				<p class="lead"> We absolutely must say "Hello world!".  <p>
 					
 				<ul>
@@ -279,7 +232,472 @@ Hello world
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="task">4. Running tasks </h1>
+				<h1 class="page-header" id="language">Language </h1>
+				<p class="lead"> Learning BigDataScript language is almost trivial, all the statements and expression and data types do what you expect. </p>
+				<p>
+				BigDataScript is simple and you should be able to code script within a few minutes.
+				<br>
+				<br>
+				<ul>
+					<li> Comments: The usual statements are available
+<pre class="prettyprint">
+// Single line comment
+
+# Another single line comment
+
+/*
+   Multi-line comment
+*/
+</pre>
+					<li> Statements can be terminated either by semicolon or by a new line.
+<pre class="prettyprint">
+# Two statements
+print("Hi\n"); print("Bye\n");
+
+# Two statements, same as before but using lines instead of semicolon
+print("Hi\n") 
+print("Bye\n")
+</pre>
+
+					<li> <code>if / else</code> It does exactly what you expect
+<pre class="prettyprint">
+if( i < 10 )	print("Less than ten\n")
+</pre>
+					or
+<pre class="prettyprint">
+if( i < 10 ) {
+    print("Less than ten\n")
+} else {
+    print("More than ten\n")
+}
+</pre>
+
+					<li> <code>for</code> C or Java like for statement
+<pre class="prettyprint">
+for( int i=0 ; i < 10 ; i++ ) print("$i\n")
+</pre>
+					or
+<pre class="prettyprint">
+for( int i=0 ; i < 10 ; i++ ) {
+    print("$i\n")
+}
+</pre>
+
+					<li> <code>for</code> Java like for iterator on lists
+<pre class="prettyprint">
+string[] mylist
+
+// ... some code to populate the list
+
+for( string s : mylist ) print("$s\n")
+</pre>
+
+					<li> <code>while</code> typical while iterator
+<pre class="prettyprint">
+while( i < 10 ) i++
+</pre>
+
+					<li> <code> break </code>: Breaks from current loop
+<pre class="prettyprint">
+for( int i=0 ; i < 10 ; i++ ) {
+    if( i == 5 ) break;	   // Finish when we reach 5
+}
+</pre>
+					<li> <code> continue </code>: Continue at the end of the current loop
+<pre class="prettyprint">
+for( int i=0 ; i < 10 ; i++ ) {
+    if( i == 5 ) continue;	// Skip value 5
+}
+</pre>
+					<li> <code> exit </code>: Exit program, optional expression calculates an exit value.
+<pre class="prettyprint">
+exit 1
+</pre>
+					<li> <code> kill </code> Kill a task
+<pre class="prettyprint">
+kill taskId
+</pre>
+					<li> <code> return </code> Return from a function. Optional expression is a return value.
+<pre class="prettyprint">
+// Define a function
+int twice(int n) {
+	return( 2 * n )
+}
+</pre>
+					<li> <code> expr ? exprTrue : exprFalse</code> Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'
+<pre class="prettyprint">
+sign = ( i >= 0 ? 1 : -1 )
+</pre>
+					<li> <code> type varName </code> Declare varaible 'var' as type 'type'
+<pre class="prettyprint">
+int i      # 'i' is an 64 bit int variable
+real r     # 'r' is a double-precision floating-point number
+string s   # 's' is a string
+</pre>
+					<li> <code> type varName = expr </code> Declare varaible 'var' as type 'type', evaluate expression and assign result to initialize 'var'
+<pre class="prettyprint">
+int i = 42
+real r = 3.1415927
+string s = "Hello!"
+</pre>
+					<li> <code> varName := expr </code> Declare varaible 'var', use type inference, evaluate expression 'expr' and assign result to initialize 'var'
+<pre class="prettyprint">
+i := 42
+r := 3.1415927
+s := "Hello!"
+</pre>
+					<li> <code> var = expr </code> Evaluate expression 'expr' and assign result to 'var'
+<pre class="prettyprint">
+i = j + 1
+s = "Hello " + world
+</pre>
+					<li> <code> ( var1, var2, ..., varN ) = expr </code> Evaluate expression 'expr' (which must return a list) and assign results to 'var1', 'var2', etc. If the list size is less than the number of variables, variables are assigned default values (e.g. '0' for int). If the list has more values, they are ignored.
+<pre class="prettyprint">
+(name, value) = line.split('\t')
+</pre>
+					<li> <code> include </code> Include source code from another file
+<pre class="prettyprint">
+include mymodule
+
+// ... use functions from 'mymodule.bds'
+</pre>
+				</ul>
+				<br>
+				<br>
+				Example: A simple, and useless, example:
+<pre class="prettyprint">
+// Define a function
+int sumPositive(int n) {
+    if( n <= 0 )	return 0
+
+    int sum = 0
+    for( int i=0 ; i <= n ; i++ ) sum = sum + i
+    return sum
+}
+
+// Function definition in one line
+int twice(int n)    return( 2 * n )
+
+// Main
+n := 5
+print("The sum is : " + sumPositive( twice(n) ) + "\n" )
+</pre>
+					Obviously, if you run it
+<pre class="prettyprint">
+$ bds z.bds 
+The sum is : 55
+</pre>
+				</p>
+
+				<h3 class="page-header" id="taskCluster">Special porupose statements, commands and operators </h3>
+
+				These are statments, operators and expressions that are unique to <code>bds</code>.
+				We just ennumerate them here, but we explain details on what they mean and how they work in the following sections. 
+				This list is intended as a reference for people that are already familiar with these concepts, so don't despair if you don't understand what they mean.
+				<br>
+				<br>
+				<ul>
+					<li> <code> &lt;- </code> Dependency operator. Return true if any left hand side file needs to be updated respect to any right hand side file
+<pre class="prettyprint">
+# Evaluate dependency 
+if( 'out.txt' <- 'in.txt' )    print("File out.txt needs to be updated\n")
+</pre>
+					<li> <code> checkpoint </code> Create a checkpoint. Optional expresion is a file name
+<pre class="prettyprint">
+# Wait for all tasks to finish
+checkpoint "program.chp"
+</pre>
+					<li> <code> dep </code> Define dependency tasks. Tasks are not scheduled for execution until <code>goal</code> decides which dependencies must be executed to satisfy an output.
+<pre class="prettyprint">
+# Execute bwa command (create an index of the human genome)
+task bwa index hg19.fasta
+</pre>
+					<li> <code> par </code> Execute code in parallel
+<pre class="prettyprint">
+par {
+    for( int i=0 ; i < 10 ; i++ ) {
+        print("This is executed in parallel: $i\n")
+    }
+}
+
+</pre>
+					<li> <code> sys </code> Execute an OS commnad. Execution is immediate and local (i.e. in the same computer as <code>bds</code> is running). It's intended for executing fast OS commands (not heavyweight processing).
+<pre class="prettyprint">
+# Execute an "ls" command
+sys ls -al
+</pre>
+					<li> <code> task </code> Schedule an OS commnad for execution. Depending on the value of <code>system</code>, the execution can be local, in a cluster, remote server, etc.
+<pre class="prettyprint">
+# Execute bwa command (create an index of the human genome)
+task bwa index hg19.fasta
+</pre>
+					<li> <code> wait </code> Wait for task/s to finish. It can be one task, a list of tasks or all tasks (if no expression)
+<pre class="prettyprint">
+# Wait for all tasks to finish
+wait
+
+# Wait for one task to finish
+wait taskId
+
+# Wait for several tasks to finish
+wait listOfTaksIDs
+</pre>
+				</ul>
+
+				<h3 class="page-header" id="dataTypes">Data types </h3>
+				<p class="lead"> BDS is a statically typed language that has simple data types. </p>
+
+				The language is statically typed. 
+				The intention is to avoid runtime errors.
+				<br>
+				<br>
+				There are only a few basic types and, for the moment, <code>bds</code> doesn't offer extensible data types (structs, or classes), but this might change soon.
+
+				<table class="table table-striped">
+					<tr> <th> Type   </th> <th> Meaning </th> </tr>
+					<tr> <td> string </td> <td> A string (same a Java's String) </td> </tr>
+					<tr> <td> int	</td> <td> A 64 bit integer number (same a Java's long) </td> </tr>
+					<tr> <td> real   </td> <td> A 64 bit IEEE 754 number (same as Java's double) </td> </tr>
+					<tr> <td> bool   </td> <td> A boolean value, can be 'true' or 'false' (same as Java's boolean)</td> </tr>
+					<tr> <td> Arrays, List, Stacks   </td> <td> These are all the same, just a different way to call a list of elements</td> </tr>
+					<tr> <td> Maps   </td> <td> Maps are hashes that have <code>string</code> keys.</td> </tr>
+				</table>
+
+				There is no "null" element. Again, the idea is to minimize points of failure.
+
+				
+				<h3> Strings </h3>
+				There are several basic methods defined for strings:
+
+				<table class="table table-striped">
+					<tr> <th>Return type</th><th> Method / Operator</th> <th> Meaning </th> </tr>
+					<tr> <td> string   </td><td> s = s1 + s2							</td> <td> Concatenate strings.</td> </tr>
+					<tr> <td> string   </td><td> string.toUpper()						</td> <td> Return an upper case version of the string</td> </tr>
+					<tr> <td> string   </td><td> string.toLower()						</td> <td> Return a lower case version of the string</td> </tr>
+					<tr> <td> string   </td><td> string.trim()							</td> <td> Trim spaces at the beginnig and at the end</td> </tr>
+					<tr> <td> string   </td><td> string.substr(int start,int end)	   </td> <td> Substring from start to end</td> </tr>
+					<tr> <td> string[] </td><td> string.split(string regex)				</td> <td> Split using a regular expression </td> </tr>
+					<tr> <td> string[] </td><td> string.lines()							</td> <td> Split a string into lines </td> </tr>
+					<tr> <td> bool	 </td><td> string.isEmpty()					   </td> <td> True if the string is empty</td> </tr>
+					<tr> <td> bool	 </td><td> string.startsWith(string str)			</td> <td> True if string starts with str</td> </tr>
+					<tr> <td> bool	 </td><td> string.endsWith(string str)			</td> <td> True if string ends with str</td> </tr>
+					<tr> <td> bool	 </td><td> string.indexOf(string str)				</td> <td> Index of th first occurrence of str in string</td> </tr>
+					<tr> <td> int	  </td><td> string.lastIndexOf(string str)			</td> <td> Index of th last occurrence of str in string</td> </tr>
+					<tr> <td> string   </td><td> string.replace(string str1,string str2)</td> <td> A new string replacing 'str1' with 'str2'</td> </tr>
+				</table>
+
+				<h3> Strings as file names </h3>
+				Strings can be used in several different ways.
+				For instance, it is common that a string can represent a file name in a script.
+				So you can use 'file' related methods on string.
+				E.g.:
+<pre class="prettyprint">
+string f = "in.txt"
+if( f.canRead() ) {
+    print (" Can read file $f\n" )
+}
+</pre>
+				Here <code>f</code> is a string, but it has a method <code>canRead()</code> which retuurns true if f is a file and it can be read.
+				<br>
+				<br>
+				More file related methods:
+
+				<table class="table table-striped">
+					<tr> <th>Return type</th><th> Method</th> <th> Meaning </th> </tr>
+					<tr><td>string		</td> <td>string.path()					  </td> <td> Canonical path to file	</td> </tr>
+					<tr><td>string		</td> <td>string.baseName()				  </td> <td> File's base name	</td> </tr>
+					<tr><td>string		</td> <td>string.baseName(string ext)		</td> <td> File's base name, remove extention 'ext'	</td> </tr>
+					<tr><td>string		</td> <td>string.dirName()				   </td> <td> File's directory name	</td> </tr>
+					<tr><td>string		</td> <td>string.extName()				   </td> <td> File's extension	</td> </tr>
+					<tr><td>bool		  </td> <td>string.canRead()				   </td> <td> True if file has read permission	</td> </tr>
+					<tr><td>bool		  </td> <td>string.canWrite()				  </td> <td> True if file has write permission   </td> </tr>
+					<tr><td>bool		  </td> <td>string.canExec()				   </td> <td> True if file has execution permission	</td> </tr>
+					<tr><td>bool		  </td> <td>string.exists()					</td> <td> True if file exists	</td> </tr>
+					<tr><td>bool		  </td> <td>string.isDir()					 </td> <td> True if it's a directory	</td> </tr>
+					<tr><td>bool		  </td> <td>string.isFile()					</td> <td> True if it's a file	</td> </tr>
+					<tr><td>bool		  </td> <td>string.delete()					</td> <td> Delete file	</td> </tr>
+					<tr><td>bool		  </td> <td>string.mkdir()					 </td> <td> Create dir ('mkdir -p')   </td> </tr>
+					<tr><td>string		</td> <td>string.read()					  </td> <td> Read the whole file into a string	</td> </tr>
+					<tr><td>string[]	  </td> <td>string.readLines()				 </td> <td> Read the whole file and split the lines	</td> </tr>
+					<tr><td>string[]	  </td> <td>string.dir()					   </td> <td> List files in a directory ('ls')   </td> </tr>
+					<tr><td>string[]	  </td> <td>string.dir(string regex)		   </td> <td> List files matching a regular expression </td> </tr>
+					<tr><td>string[]	  </td> <td>string.dirPath()				   </td> <td> List files using canonical paths	</td> </tr>
+					<tr><td>string[]	  </td> <td>string.dirPath(string regex)	   </td> <td> List files, matching a regular expresion, using canonical paths	</td> </tr>
+					<tr><td>int		   </td> <td>string.size()					  </td> <td> File size in bytes  </td> </tr>
+				</table>
+				
+				<h3> Strings as task IDs </h3>
+				Strings can also be used to refer to tasks.
+				When a task is created, the <code>task</code> expression returns a task ID, which is a string.
+				This task ID can be used for task operations, for instance:
+<pre class="prettyprint">
+tid := task echo Hello
+wait tid
+</pre>
+				Here the <code>wait</code> statement will wait until the task "echo Hello" finishes executing.
+				<br>
+				<br>
+				More task related methods:
+				<table class="table table-striped">
+					<tr> <th>Return type</th><th> Method</th> <th> Meaning </th> </tr>
+					<tr> <td> bool	</td> <td> string.isDone()   </td> <td> True if the task finished</td> </tr>
+					<tr> <td> bool	</td> <td> string.isDoneOk() </td> <td> True if the task finished without errors </td> </tr>
+					<tr> <td> string  </td> <td> string.stdout()   </td> <td> A string with all the STDOUT generated from this task </td> </tr>
+					<tr> <td> string  </td> <td> string.stderr()   </td> <td> A string with all the STDERR generated from this task </td> </tr>
+					<tr> <td> int	 </td> <td> string.exitCode() </td> <td> Exit code</td> </tr>
+				</table>
+
+				<h3> Arrays, List, Stacks </h3>
+				Arrays, list and stacks are all the same thing.
+				You can create a list of strings simply by declaring:
+<pre class="prettyprint">
+string[] arrayEmpty
+string[] array = ["one", "two", "three"]
+</pre>
+				Similarly, a list of ints is just
+<pre class="prettyprint">
+int[] listIntEmpty
+int[] primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+</pre>
+				<br>
+				<b> Methods </b>
+				<table class="table table-striped">
+					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
+					<tr> <td> Element added  </td> <td> add </td> <td> Add at the end og the list </td> </tr>
+					<tr> <td> First element  </td> <td> head </td> <td> Get first element </td> </tr>
+					<tr> <td> Last element  </td> <td> pop </td> <td> Get last element and remove it from the list </td> </tr>
+					<tr> <td> Element pushed  </td> <td> push </td> <td> Add at the end of the list </td> </tr>
+					<tr> <td> int </td> <td> size() </td> <td> Return the number of elements in the list </td> </tr>
+					<tr> <td> New sorted list </td> <td> sort() </td> <td> Create a new list sorting the elements of this list</td> </tr>
+					<tr> <td> List  </td> <td> tail() </td> <td> Create a new list with all but the first element</td> </tr>
+				</table>
+				<br>
+
+				<b>Iterating on an array/list</b><br>
+				You can iterate on an array simply bo doing
+<pre class="prettyprint">
+$ cat z.bds 
+string[] array = ["one", "two", "three"]
+
+for( string val : array ) { print("Value: $val\n") }
+
+$ bds /z.bds
+Value: one
+Value: two
+Value: three
+</pre>
+				</p>
+
+				<h3> Maps </h3>
+				Maps are hashses that have <code>string</code> as keys.
+				You can create a map simply by declaring:
+<pre class="prettyprint">
+string{} mstr	# This maps string keys to string values
+
+mstr{"Hello"} = "Bye"
+mstr{"Bonjour"} = "Au revoir"
+mstr{"Hola"} = "Adios"
+</pre>
+
+				or a map of real numbers
+<pre class="prettyprint">
+real{} mre	  # This maps string keys to real values
+mre{"one"}   = 1.0
+mre{"two"}   = 2.0
+mre{"e"}	 = 2.7182818
+mre{"three"} = 3.0
+mre{"pi"}	= 3.1415927
+</pre>
+				<br>
+				<b> Methods </b>
+				<table class="table table-striped">
+					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
+					<tr> <td> bool </td> <td> hasKey(string key) </td> <td> True if the key is in the map </td> </tr>
+					<tr> <td> bool </td> <td> hasValue(value) </td> <td> True if 'value' is in the map </td> </tr>
+					<tr> <td> list </td> <td> keys() </td> <td> A sorted list of all keys in the map</td> </tr>
+					<tr> <td> bool </td> <td> remove(key) </td> <td> Remove <code>key</code> from this map</td> </tr>
+					<tr> <td> int </td> <td> size() </td> <td> Number of elements in this map</td> </tr>
+					<tr> <td> list </td> <td> values() </td> <td> A sorted list of all values in the map</td> </tr>
+				</table>
+				<br>
+				<b>Iterating on a map</b><br>
+				You can iterate over all values in a map, simply by doing
+<pre class="prettyprint">
+$ cat z.bds 
+string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
+
+for(string v : mstr ) { 
+		print("Values : $v\n") 
+}
+
+$ bds z.bds
+Values : Adios
+Values : Au revoir
+Values : Bye
+
+</pre>
+
+				If you want to iterate on keys instead of values, you can do this:
+<pre class="prettyprint">
+$ cat z.bds 
+string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
+
+for(string k : mstr.keys() ) { 
+		print("Key : $k\tValue : " + mstr{k} + "\n") 
+}
+
+$ bds z.bds
+Key : Bonjour	Value : Au revoir
+Key : Hello	Value : Bye
+Key : Hola	Value : Adios
+</pre>
+
+				</p>
+
+				<h3 class="page-header" id="vars">Predefined global variables </h3>
+				<p class="lead"> BigDataScript provides some predefined variables.</p>
+				<br>
+				Whenever you run a BigDataScript program you have several predefined variables:
+				<table class="table table-striped">
+					<tr>
+						<th> Variable name </th>
+						<th> Meaning </th>
+					</tr>
+					<tr>
+						<td> <code>cpus</code>, <code>canFail</code> <code>timeout</code> <code>node</code> <code>queue</code>  </td>	
+						<td> These are the defula valies for <code>task</code> the meaning is explained in Task section of this handbook. </td> 
+					</tr>
+					<tr>
+						<td> string <code>programName</code> </td>	
+						<td> The program's name </td> 
+					</tr>
+					<tr>
+						<td> string[] <code>args</code> </td>	
+						<td> Arguments used to invoke the program, i.e. all command line options after program name (<code>bds [options] prog.bds args ...</code>). </td> 
+					</tr>
+					<tr>
+						<td> string <code>ppwd</code> </td>	
+						<td> Canonical (physical) path to directory where the program is being executed. </td> 
+					</tr>
+					<tr>
+						<td> int <code>cpusLocal</code> </td>	
+						<td> Number of cores in the computer running the script </td> 
+					</tr>
+					<tr>
+						<td> All shell variables </td>	
+						<td> All shell variables at the moment of invokation (e.g. <code>HOME</code>, <code>PWD</code>, etc.)</td> 
+					</tr>
+					<tr>
+						<td> K, M, G, T, P </td>	
+						<td> Kile, Mega, Giga, Tera, Peta (2^10, 2^20, 2^30, 2^40 and 2^50 respectively)</td> 
+					</tr>
+				</table>
+				<br>
+			</div>
+
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="task">Running tasks </h1>
 				<p class="lead"> Task are scheduled according to available resources. </p>
 					
 				</p>
@@ -353,7 +771,7 @@ $ bds -s cluster test_04.bds
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="taskDep">6. Task dependencies</h1>
+				<h1 class="page-header" id="taskDep">Task dependencies</h1>
 				<p class="lead">
 				In a tipical pipeline tasks are not just scheduled for execution.
 				We must be able to control task execution.
@@ -673,360 +1091,7 @@ $
 				
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="cool">8. Video: Some cool features </h1>
-				<p class="lead"> BigDataScript has some useful features, like automatic command line parsing. </p>
-					
-				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
-					
-				<p class="lead"> In this video </p>
-				<ul>
-					<li> We show how automatic command line parsing works.
-					We use the same script as shown in the previous section for processing another input file without changing a single line of code.
-						
-					<li> Automatic command line parsing parses any command line argument that starts with "-" and assigns the value to the corresponding variable.
-					E.g.:
-<pre class="prettyprint">
-$ cat z.bds 
-string in = "in.txt"
-print("In file is '$in'\n")
-
-$ bds z.bds
-In file is 'in.txt'
-
-$ bds z.bds -in anotherFile.txt
-In file is 'anotherFile.txt'
-</pre>
-
-					<li> This feature also works for other data types (int, real, bool). 
-					In case of bool if the option is present, the variable is set to 'true'.
-<pre class="prettyprint">
-$ cat z.bds
-bool flag
-print("Variable flag is $flag\n")
-
-$ bds z.bds
-Variable flag is false
-
-$ bds z.bds -flag
-Variable flag is true
-
-</pre>
-
-				</ul>
-			</div>
-
-			<!-- ================================================== -->
-			<div class="bs-docs-section">
-				<h1 class="page-header" id="language">9. Language definition </h1>
-				<p class="lead"> BigDataScript language is almost trivial, here are some basic definitions in case you are curious. </p>
-				<p>
-				Statements can be terminated either by semicolon or by a new line.
-				<br>
-				All the usual statements are available:
-				<ul>
-					<li> Comments
-<pre class="prettyprint">
-// Single line comment
-
-# Another single line comment
-
-/*
-   Multi-line comment
-*/
-</pre>
-					<li> <code>if / else</code> It does exactly what you expect
-<pre class="prettyprint">
-if( i < 10 )	print("Less than ten\n")
-</pre>
-					or
-<pre class="prettyprint">
-if( i < 10 ) {
-		print("Less than ten\n")
-} else {
-		print("More than ten\n")
-}
-</pre>
-
-					<li> <code>for</code> C or Java like for statement
-<pre class="prettyprint">
-for( int i=0 ; i < 10 ; i++ ) print("$i\n")
-</pre>
-					or
-<pre class="prettyprint">
-for( int i=0 ; i < 10 ; i++ ) {
-		print("$i\n")
-}
-</pre>
-
-					<li> <code>for</code> Java like for iterator on lists
-<pre class="prettyprint">
-string[] mylist
-// Some code to populate the list
-for( string s : mylist ) print("$s\n")
-</pre>
-
-					<li> <code>while</code> typical while iterator
-<pre class="prettyprint">
-while( i < 10 ) i++
-</pre>
-
-					<li> <code> break </code>: Breaks from current loop
-					<li> <code> continue </code>: Continue at the end of the current loop
-					<li> <code> exit expression?</code>: Exit program, optional expression calculates an exit value.
-					<li> <code> kill </code> Kill a task
-					<li> <code> wait expression?</code> Wait for task/s to finish. It can be one task, a list of tasks or all tasks (if no expression)
-					<li> <code> checkpoint expression?</code> Create a checkpoint. Optional expresion is a file name
-					<li> <code> return expression?</code> Return from a function. Optional expression is a return value.
-					<li> <code> expr ? exprTrue : exprFalse</code> Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'
-					<li> <code> type varName </code> Declare varaible 'var' as type 'type'
-					<li> <code> type varName = expr </code> Declare varaible 'var' as type 'type', evaluate expression and assign result to initialize 'var'
-					<li> <code> varName := expr </code> Declare varaible 'var', use type inference, evaluate expression 'expr' and assign result to initialize 'var'
-					<li> <code> var = expr </code> Evaluate expression 'expr' and assign result to 'var'
-					<li> <code> ( var1, var2, var3 ) = expr </code> Evaluate expression 'expr' (which must return a list) and assign results to 'var1', 'var2', etc. If the list size is less than the number of variables, variables are assigned default values (e.g. '0' for int). If the list has more values, they are ignored.
-				</ul>
-				<br>
-				<br>
-				A simple, and useless, example:
-<pre class="prettyprint">
-// Define a function
-int sumPositive(int n) {
-		if( n <= 0 )	return 0
-
-		int sum = 0
-		for( int i=0 ; i <= n ; i++ ) sum = sum + i
-		return sum
-}
-
-
-// Main
-int N = 10
-print("The sum is : " + sumPositive(N) + "\n" )
-</pre>
-					Obviously, if you run it
-<pre class="prettyprint">
-$ bds z.bds 
-The sum is : 55
-</pre>
-				</p>
-			</div>
-
-			<!-- ================================================== -->
-			<div class="bs-docs-section">
-				<h1 class="page-header" id="dataTypes">10. Data types </h1>
-				<p class="lead"> Statically typed language. </p>
-
-				<h3> Only a few simple types</h3>
-				The language is statically typed. 
-				The intention is to avoid runtime errors.
-				<br>
-				<br>
-				There are only a few basic types :
-
-				<table class="table table-striped">
-					<tr> <th> Type   </th> <th> Meaning </th> </tr>
-					<tr> <td> string </td> <td> A string (same a Java's String) </td> </tr>
-					<tr> <td> int	</td> <td> A 64 bit integer number (same a Java's long) </td> </tr>
-					<tr> <td> real   </td> <td> A 64 bit IEEE 754 number (same as Java's double) </td> </tr>
-					<tr> <td> bool   </td> <td> A boolean value, can be 'true' or 'false' (same as Java's boolean)</td> </tr>
-					<tr> <td> Arrays, List, Stacks   </td> <td> These are all the same, just a different way to call a list of elements</td> </tr>
-					<tr> <td> Maps   </td> <td> Maps are hashes that have <code>string</code> keys.</td> </tr>
-				</table>
-
-				There is no "null" element. Again, the idea is to minimize points of failura.
-
-				
-				<h3> Strings </h3>
-				There are several basic methods defined for strings:
-
-				<table class="table table-striped">
-					<tr> <th>Return type</th><th> Method / Operator</th> <th> Meaning </th> </tr>
-					<tr> <td> string   </td><td> s = s1 + s2							</td> <td> Concatenate strings.</td> </tr>
-					<tr> <td> string   </td><td> string.toUpper()						</td> <td> Return an upper case version of the string</td> </tr>
-					<tr> <td> string   </td><td> string.toLower()						</td> <td> Return a lower case version of the string</td> </tr>
-					<tr> <td> string   </td><td> string.trim()							</td> <td> Trim spaces at the beginnig and at the end</td> </tr>
-					<tr> <td> string   </td><td> string.substr(int start,int end)	   </td> <td> Substring from start to end</td> </tr>
-					<tr> <td> string[] </td><td> string.split(string regex)				</td> <td> Split using a regular expression </td> </tr>
-					<tr> <td> string[] </td><td> string.lines()							</td> <td> Split a string into lines </td> </tr>
-					<tr> <td> bool	 </td><td> string.isEmpty()					   </td> <td> True if the string is empty</td> </tr>
-					<tr> <td> bool	 </td><td> string.startsWith(string str)			</td> <td> True if string starts with str</td> </tr>
-					<tr> <td> bool	 </td><td> string.endsWith(string str)			</td> <td> True if string ends with str</td> </tr>
-					<tr> <td> bool	 </td><td> string.indexOf(string str)				</td> <td> Index of th first occurrence of str in string</td> </tr>
-					<tr> <td> int	  </td><td> string.lastIndexOf(string str)			</td> <td> Index of th last occurrence of str in string</td> </tr>
-					<tr> <td> string   </td><td> string.replace(string str1,string str2)</td> <td> A new string replacing 'str1' with 'str2'</td> </tr>
-				</table>
-
-				<h3> Strings as file names </h3>
-				Strings can be used in several different ways.
-				For instance, it is common that a string can represent a file name in a script.
-				So you can use 'file' related methods on string.
-				E.g.:
-<pre class="prettyprint">
-string f = "in.txt"
-if( f.canRead() ) {
-	print (" Can read file $f\n" )
-}
-</pre>
-				Here <code>f</code> is a string, but it has a method <code>canRead()</code> which retuurns true if f is a file and it can be read.
-				<br>
-				<br>
-				More file related methods:
-
-				<table class="table table-striped">
-					<tr> <th>Return type</th><th> Method</th> <th> Meaning </th> </tr>
-					<tr><td>string		</td> <td>string.path()					  </td> <td> Canonical path to file	</td> </tr>
-					<tr><td>string		</td> <td>string.baseName()				  </td> <td> File's base name	</td> </tr>
-					<tr><td>string		</td> <td>string.baseName(string ext)		</td> <td> File's base name, remove extention 'ext'	</td> </tr>
-					<tr><td>string		</td> <td>string.dirName()				   </td> <td> File's directory name	</td> </tr>
-					<tr><td>string		</td> <td>string.extName()				   </td> <td> File's extension	</td> </tr>
-					<tr><td>bool		  </td> <td>string.canRead()				   </td> <td> True if file has read permission	</td> </tr>
-					<tr><td>bool		  </td> <td>string.canWrite()				  </td> <td> True if file has write permission   </td> </tr>
-					<tr><td>bool		  </td> <td>string.canExec()				   </td> <td> True if file has execution permission	</td> </tr>
-					<tr><td>bool		  </td> <td>string.exists()					</td> <td> True if file exists	</td> </tr>
-					<tr><td>bool		  </td> <td>string.isDir()					 </td> <td> True if it's a directory	</td> </tr>
-					<tr><td>bool		  </td> <td>string.isFile()					</td> <td> True if it's a file	</td> </tr>
-					<tr><td>bool		  </td> <td>string.delete()					</td> <td> Delete file	</td> </tr>
-					<tr><td>bool		  </td> <td>string.mkdir()					 </td> <td> Create dir ('mkdir -p')   </td> </tr>
-					<tr><td>string		</td> <td>string.read()					  </td> <td> Read the whole file into a string	</td> </tr>
-					<tr><td>string[]	  </td> <td>string.readLines()				 </td> <td> Read the whole file and split the lines	</td> </tr>
-					<tr><td>string[]	  </td> <td>string.dir()					   </td> <td> List files in a directory ('ls')   </td> </tr>
-					<tr><td>string[]	  </td> <td>string.dir(string regex)		   </td> <td> List files matching a regular expression </td> </tr>
-					<tr><td>string[]	  </td> <td>string.dirPath()				   </td> <td> List files using canonical paths	</td> </tr>
-					<tr><td>string[]	  </td> <td>string.dirPath(string regex)	   </td> <td> List files, matching a regular expresion, using canonical paths	</td> </tr>
-					<tr><td>int		   </td> <td>string.size()					  </td> <td> File size in bytes  </td> </tr>
-				</table>
-				
-				<h3> Strings as task IDs </h3>
-				Strings can also be used to refer to tasks.
-				When a task is created, the <code>task</code> expression returns a task ID, which is a string.
-				This task ID can be used for task operations, for instance:
-<pre class="prettyprint">
-string tid = task echo Hello
-wait tid
-</pre>
-					Here the <code>wait</code> statement will wait until the task "echo Hello" finishes executing.
-				<br>
-				<br>
-				More task related methods:
-				<table class="table table-striped">
-					<tr> <th>Return type</th><th> Method</th> <th> Meaning </th> </tr>
-					<tr> <td> bool	</td> <td> string.isDone()   </td> <td> True if the task finished</td> </tr>
-					<tr> <td> bool	</td> <td> string.isDoneOk() </td> <td> True if the task finished without errors </td> </tr>
-					<tr> <td> string  </td> <td> string.stdout()   </td> <td> A string with all the STDOUT generated from this task </td> </tr>
-					<tr> <td> string  </td> <td> string.stderr()   </td> <td> A string with all the STDERR generated from this task </td> </tr>
-					<tr> <td> int	 </td> <td> string.exitCode() </td> <td> Exit code</td> </tr>
-				</table>
-
-				<h3> Arrays, List, Stacks </h3>
-				Arrays, list and stacks are all the same thing.
-				You can create a list of strings simply by declaring:
-<pre class="prettyprint">
-string[] arrayEmpty
-string[] array = ["one", "two", "three"]
-</pre>
-				Similarly, a list of ints is just
-<pre class="prettyprint">
-int[] listIntEmpty
-int[] primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-</pre>
-				<br>
-				<b> Methods </b>
-				<table class="table table-striped">
-					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
-					<tr> <td> Element added  </td> <td> add </td> <td> Add at the end og the list </td> </tr>
-					<tr> <td> First element  </td> <td> head </td> <td> Get first element </td> </tr>
-					<tr> <td> Last element  </td> <td> pop </td> <td> Get last element and remove it from the list </td> </tr>
-					<tr> <td> Element pushed  </td> <td> push </td> <td> Add at the end of the list </td> </tr>
-					<tr> <td> int </td> <td> size() </td> <td> Return the number of elements in the list </td> </tr>
-					<tr> <td> New sorted list </td> <td> sort() </td> <td> Create a new list sorting the elements of this list</td> </tr>
-					<tr> <td> List  </td> <td> tail() </td> <td> Create a new list with all but the first element</td> </tr>
-				</table>
-				<br>
-
-				<b>Iterating on an array/list</b><br>
-				You can iterate on an array simply bo doing
-<pre class="prettyprint">
-$ cat z.bds 
-string[] array = ["one", "two", "three"]
-
-for( string val : array ) { print("Value: $val\n") }
-
-$ bds /z.bds
-Value: one
-Value: two
-Value: three
-</pre>
-				</p>
-
-				<h3> Maps </h3>
-				Maps are hashses that have <code>string</code> as keys.
-				You can create a map simply by declaring:
-<pre class="prettyprint">
-string{} mstr	# This maps string keys to string values
-
-mstr{"Hello"} = "Bye"
-mstr{"Bonjour"} = "Au revoir"
-mstr{"Hola"} = "Adios"
-</pre>
-
-				or a map of real numbers
-<pre class="prettyprint">
-real{} mre	  # This maps string keys to real values
-mre{"one"}   = 1.0
-mre{"two"}   = 2.0
-mre{"e"}	 = 2.7182818
-mre{"three"} = 3.0
-mre{"pi"}	= 3.1415927
-</pre>
-				<br>
-				<b> Methods </b>
-				<table class="table table-striped">
-					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
-					<tr> <td> bool </td> <td> hasKey(string key) </td> <td> True if the key is in the map </td> </tr>
-					<tr> <td> bool </td> <td> hasValue(value) </td> <td> True if 'value' is in the map </td> </tr>
-					<tr> <td> list </td> <td> keys() </td> <td> A sorted list of all keys in the map</td> </tr>
-					<tr> <td> bool </td> <td> remove(key) </td> <td> Remove <code>key</code> from this map</td> </tr>
-					<tr> <td> int </td> <td> size() </td> <td> Number of elements in this map</td> </tr>
-					<tr> <td> list </td> <td> values() </td> <td> A sorted list of all values in the map</td> </tr>
-				</table>
-				<br>
-				<b>Iterating on a map</b><br>
-				You can iterate over all values in a map, simply by doing
-<pre class="prettyprint">
-$ cat z.bds 
-string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
-
-for(string v : mstr ) { 
-		print("Values : $v\n") 
-}
-
-$ bds z.bds
-Values : Adios
-Values : Au revoir
-Values : Bye
-
-</pre>
-
-				If you want to iterate on keys instead of values, you can do this:
-<pre class="prettyprint">
-$ cat z.bds 
-string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
-
-for(string k : mstr.keys() ) { 
-		print("Key : $k\tValue : " + mstr{k} + "\n") 
-}
-
-$ bds z.bds
-Key : Bonjour	Value : Au revoir
-Key : Hello	Value : Bye
-Key : Hola	Value : Adios
-</pre>
-
-				</p>
-			</div>
-
-			<!-- ================================================== -->
-			<div class="bs-docs-section">
-				<h1 class="page-header" id="sys">11. Sys </h1>
+				<h1 class="page-header" id="sys">Sys </h1>
 				<p class="lead"> Local, immediate command execution.  <p>
 
 				A few rules about <code>sys</code> expression:
@@ -1071,7 +1136,7 @@ sys echo HeLLo \
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="taskExpr">12. Task </h1>
+				<h1 class="page-header" id="taskExpr">Task </h1>
 				<p class="lead"> Queued command execution with resource management. </p>
 
 				A <code>task</code>expression, just like <code>sys</code> expression, also executes a command.
@@ -1273,64 +1338,7 @@ task( shouldExec, cpus = 4 ) {
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="log">13. Logging </h1>
-				<p class="lead"> By default all command execution is logged. </p>
-
-				Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
-				This gives you an automatic log of everything that was executed, as well as the detials of the outputs from each execution.
-				<br>
-				For example, let's create a simple program and run it
-<pre class="prettyprint">
-string name = "Pablo"
-
-sys echo Hello $name
-</pre>
-
-					Now let's run this script, we use <code>-v</code> command line option to make the output verbose:
-<pre class="prettyprint">
-$ bds -v z.bds
-00:00:00.169	Process ID: z.bds.20140328_224825_685
-00:00:00.174	Queuing task 'z.bds.20140328_224825_685/sys.line_4.id_1'
-00:00:00.674	Running task 'z.bds.20140328_224825_685/sys.line_4.id_1'
-00:00:00.689	Finished task 'z.bds.20140328_224825_685/sys.line_4.id_1'
-Hello Pablo
-00:00:00.692	Finished running. Exit value : 0
-</pre>
-				What happened?
-				<ol>
-					<li> bds parses the <code>sys</code> statement and interpolates "echo Hello $name" to "echo Hello Pablo"
-
-					<li> Creates a taks and assigns a task ID <code>z.bds.20140328_224825_685/sys.line_4.id_1</code>
-
-					<li> It creates a shell script file <code>z.bds.20140328_224825_685/sys.line_4.id_1.sh</code> with the code:
-<pre class="prettyprint">
-$ cat z.bds.20140328_224825_685/sys.line_4.id_1.sh 
-#!/bin/sh
-
-echo Hello Pablo
-</pre>
-
-						<li> Then executes this shell script and saves stdout and stderr to z.bds.20140328_224825_685/sys.line_4.id_1.stdout and z.bds.20140328_224825_685/sys.line_4.id_1.stderr respectively
-<pre class="prettyprint">
-$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stdout
-Hello Pablo
-$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
-</pre>
-					Notice that there was no output on stderr (it's empty)
-
-					<li> Command finished without proglems, so it continues with the res of the program
-				
-				</ol>
-				So at the end of the run, we have the file with the script, plus the stdout and stderr files.
-				All the information is logged automatically.
-				<br>
-
-				</p>
-			</div>
-
-			<!-- ================================================== -->
-			<div class="bs-docs-section">
-				<h1 class="page-header" id="waitExpr">14. Wait </h1>
+				<h1 class="page-header" id="waitExpr">Wait </h1>
 				<p class="lead"> Task coordination mechanisms rely havily on wait statements.</p>
 				As we mentioend several times, task execution order is not waranteed.
 <pre class="prettyprint">
@@ -1448,7 +1456,7 @@ DONE 9
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="dep">15. Dependency operator </h1>
+				<h1 class="page-header" id="dep">Dependency operator </h1>
 				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps (like "make" command).  </p>
 
 				The dependecy operator is written as <code> out &lt;- in</code>.
@@ -1499,7 +1507,26 @@ task( out <- in ) {
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="check">16. Checkpoints </h1>
+				<h1 class="page-header" id="par">Parallel execution <code>par</code> </h1>
+				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps (like "make" command).  </p>
+				<br>
+				Strings are also used for identifying parallels (<code>par</code> expression)
+<pre class="prettyprint">
+pid := par longRunningFunction()	// This function is executed in parallel 
+wait pid    // Wait for parallel to finish
+</pre>
+				Here <code>wait</code> statement waits until the function "longRunningFunction()" finishes.
+			</div>
+
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="goal">Goals </h1>
+				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps (like "make" command).  </p>
+			</div>
+
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="check">Checkpoints </h1>
 				<p class="lead"> BigDataScript is intended have absolute serialization, which is achieved using checkpoint commands.</p>
 
 				Fully serializable program states and checkpoints help to recover from failures in complex pipelines.<p>
@@ -1549,50 +1576,102 @@ Counting 9
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="vars">17. Predefined variables </h1>
-				<p class="lead"> BigDataScript provides some predefined variables.</p>
-				<br>
-				Whenever you run a BigDataScript program you have several predefined variables:
-				<table class="table table-striped">
-					<tr>
-						<th> Variable name </th>
-						<th> Meaning </th>
-					</tr>
-					<tr>
-						<td> <code>cpus</code>, <code>canFail</code> <code>timeout</code> <code>node</code> <code>queue</code>  </td>	
-						<td> These are the defula valies for <code>task</code> the meaning is explained in Task section of this handbook. </td> 
-					</tr>
-					<tr>
-						<td> string <code>programName</code> </td>	
-						<td> The program's name </td> 
-					</tr>
-					<tr>
-						<td> string[] <code>args</code> </td>	
-						<td> Arguments used to invoke the program, i.e. all command line options after program name (<code>bds [options] prog.bds args ...</code>). </td> 
-					</tr>
-					<tr>
-						<td> string <code>ppwd</code> </td>	
-						<td> Canonical (physical) path to directory where the program is being executed. </td> 
-					</tr>
-					<tr>
-						<td> int <code>cpusLocal</code> </td>	
-						<td> Number of cores in the computer running the script </td> 
-					</tr>
-					<tr>
-						<td> All shell variables </td>	
-						<td> All shell variables at the moment of invokation (e.g. <code>HOME</code>, <code>PWD</code>, etc.)</td> 
-					</tr>
-					<tr>
-						<td> K, M, G, T, P </td>	
-						<td> Kile, Mega, Giga, Tera, Peta (2^10, 2^20, 2^30, 2^40 and 2^50 respectively)</td> 
-					</tr>
-				</table>
-				<br>
-			</div>
+				<h1 class="page-header" id="cool">Some cool features </h1>
+				<p class="lead"> BigDataScript has some useful features, like automatic command line parsing. </p>
+					
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
+					
+				<p class="lead"> In this video </p>
+				<ul>
+					<li> We show how automatic command line parsing works.
+					We use the same script as shown in the previous section for processing another input file without changing a single line of code.
+						
+					<li> Automatic command line parsing parses any command line argument that starts with "-" and assigns the value to the corresponding variable.
+					E.g.:
+<pre class="prettyprint">
+$ cat z.bds 
+string in = "in.txt"
+print("In file is '$in'\n")
 
-			<!-- ================================================== -->
-			<div class="bs-docs-section">
-				<h1 class="page-header" id="args">18. Command line arguments </h1>
+$ bds z.bds
+In file is 'in.txt'
+
+$ bds z.bds -in anotherFile.txt
+In file is 'anotherFile.txt'
+</pre>
+
+					<li> This feature also works for other data types (int, real, bool). 
+					In case of bool if the option is present, the variable is set to 'true'.
+<pre class="prettyprint">
+$ cat z.bds
+bool flag
+print("Variable flag is $flag\n")
+
+$ bds z.bds
+Variable flag is false
+
+$ bds z.bds -flag
+Variable flag is true
+
+</pre>
+
+				</ul>
+
+				<h3 class="page-header" id="log">Logging </h3>
+				<p class="lead"> By default all command execution is logged. </p>
+
+				Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
+				This gives you an automatic log of everything that was executed, as well as the detials of the outputs from each execution.
+				<br>
+				For example, let's create a simple program and run it
+<pre class="prettyprint">
+string name = "Pablo"
+
+sys echo Hello $name
+</pre>
+
+					Now let's run this script, we use <code>-v</code> command line option to make the output verbose:
+<pre class="prettyprint">
+$ bds -v z.bds
+00:00:00.169	Process ID: z.bds.20140328_224825_685
+00:00:00.174	Queuing task 'z.bds.20140328_224825_685/sys.line_4.id_1'
+00:00:00.674	Running task 'z.bds.20140328_224825_685/sys.line_4.id_1'
+00:00:00.689	Finished task 'z.bds.20140328_224825_685/sys.line_4.id_1'
+Hello Pablo
+00:00:00.692	Finished running. Exit value : 0
+</pre>
+				What happened?
+				<ol>
+					<li> bds parses the <code>sys</code> statement and interpolates "echo Hello $name" to "echo Hello Pablo"
+
+					<li> Creates a taks and assigns a task ID <code>z.bds.20140328_224825_685/sys.line_4.id_1</code>
+
+					<li> It creates a shell script file <code>z.bds.20140328_224825_685/sys.line_4.id_1.sh</code> with the code:
+<pre class="prettyprint">
+$ cat z.bds.20140328_224825_685/sys.line_4.id_1.sh 
+#!/bin/sh
+
+echo Hello Pablo
+</pre>
+
+						<li> Then executes this shell script and saves stdout and stderr to z.bds.20140328_224825_685/sys.line_4.id_1.stdout and z.bds.20140328_224825_685/sys.line_4.id_1.stderr respectively
+<pre class="prettyprint">
+$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stdout
+Hello Pablo
+$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
+</pre>
+					Notice that there was no output on stderr (it's empty)
+
+					<li> Command finished without proglems, so it continues with the res of the program
+				
+				</ol>
+				So at the end of the run, we have the file with the script, plus the stdout and stderr files.
+				All the information is logged automatically.
+				<br>
+
+				</p>
+
+				<h3 class="page-header" id="args">18. Command line arguments </h3>
 				<p class="lead"> BigDataScript automatically parses command line variables for your program.</p>
 				<p>
 				Parsing command line variables is a mundane and boring task, so BigDataScript does it for you.
@@ -1647,12 +1726,51 @@ Out: zzz.txt
 OK : true
 </pre>
 				</p>
+
+				<h3 class="page-header" id="myfirst">3. Testing </h3>
+				<p class="lead"> BigDataScript provides a simple unity testing environmnet, using the <code>-test</code> command line option. <p>
+	
 			</div>
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="myfirst">3. Testing </h1>
-				<p class="lead"> BigDataScript provides a simple unity testing environmnet, using the <code>-test</code> command line option. <p>
+				<h1 class="page-header" id="commandLine">BDS Command line options </h1>
+				<p class="lead"> BigDataScript (<code>bds</code>) command line arguments. <p>
+					
+				Running the command line without any arguments, shows a help message
+<pre class="prettyprint">
+$ bds
+Usage: BigDataScript [options] file.bdsBigDataScript 0.99 (build 2014-07-28), by Pablo Cingolani
+
+Available options: 
+  [-c | -config ] bds.config     : Config file. Default : /home/pcingola/.bds/bds.config
+  [-d | -debug  ]                : Debug mode.
+  -dryRun                        : Do not run any task, just show what would be run.
+  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.
+  [-l | -log    ]                : Log all tasks (do not delete tmp files).
+  -noReport                      : Do not create report.
+  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).
+  [-q | -queue  ] queueName      : Set default queue name.
+  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.
+  [-s | -system ] type           : Set system type.
+  [-t | -test   ]                : Perform testing (run all test* functions).
+  [-v | -verbose]                : Be verbose.
+  [-y | -retry  ] num            : Number of times to retry a failing tasks.
+</pre>
+				<table class="table table-striped">
+					<tr> <th> Option short </th><th> Option long </th> <th> Meaning </th> </tr>
+					<tr> <td> -c </td> <td> -config </td> <td> Path to bds.config file (most of the times no config file is needed) </td> </tr>
+					<tr> <td> -d </td> <td> -debug </td> <td> Debug mode, shows detailed information for debugging scripts. </td> </tr>
+					<tr> <td> </td> <td> -dryRun  </td> <td> Do not run any task, just show what would be run. This mode is used when you just want to test your script's logic without executing any tasks. </td> </tr>
+					<tr> <td> -i </td> <td> -info </td> <td> Show state information in checkpoint file. Prints variables, scopes, etc.</td> </tr>
+					<tr> <td> </td> <td> -noReport </td> <td> Do not create HTML report when execution finishes. </td> </tr>
+					<tr> <td> -q </td> <td> -queue </td> <td> Set default cluster's queue name. </td> </tr>
+					<tr> <td> -r </td> <td> -restore </td> <td> Restore from a acheckpoiunt and continue execution.</td> </tr>
+					<tr> <td> -s </td> <td> -system </td> <td> Define the 'system' type the script is running on (e.g. cluster type) </td> </tr>
+					<tr> <td> -t </td> <td> -test </td> <td> Perform all tests in a script (i.e. run all functions that are called "test*") </td> </tr>
+					<tr> <td> -v </td> <td> -verbose </td> <td> Be verbose (show more information) </td> </tr>
+					<tr> <td> -y </td> <td> -retry </td> <td> Number of times to retry a failing tasks. </td> </tr>
+				</table>
 			</div>
 
 		</div>
@@ -1662,25 +1780,47 @@ OK : true
 		<div class="col-md-3">
 			<div class="bs-docs-sidebar hidden-print hidden-xs hidden-sm" role="complementary" data-spy="affix">
 				<ul class="nav bs-docs-sidenav" data-spy="affix">
-					<li><a href="#install"><i class="icon-chevron-right"></i> Download &amp; Install</a></li>
-					<li><a href="#intro"><i class="icon-chevron-right"></i> Introduction</a></li>
-					<li><a href="#commandLine"><i class="icon-chevron-right"></i> Command line options </a></li>
-					<li><a href="#myfirst"><i class="icon-chevron-right"></i> Hello world </a></li>
-					<li><a href="#task"><i class="icon-chevron-right"></i> Scheduling tasks</a></li>
-					<li><a href="#taskCluster"><i class="icon-chevron-right"></i> Scheduling tasks on a cluster</a></li>
-					<li><a href="#taskDep"><i class="icon-chevron-right"></i> Creating pipelines: Task dependencies</a></li>
-					<li><a href="#taskDep2"><i class="icon-chevron-right"></i> More on task dependencies </a></li>
-					<li><a href="#cool"><i class="icon-chevron-right"></i> Some cool features </a></li>
-					<li><a href="#language"><i class="icon-chevron-right"></i> Language definition </a></li>
-					<li><a href="#dataTypes"><i class="icon-chevron-right"></i> Data types </a></li>
-					<li><a href="#sys"><i class="icon-chevron-right"></i> Sys </a></li>
-					<li><a href="#taskExpr"><i class="icon-chevron-right"></i> Task </a></li>
-					<li><a href="#log"><i class="icon-chevron-right"></i> Logging </a></li>
-					<li><a href="#waitExpr"><i class="icon-chevron-right"></i> Wait </a></li>
-					<li><a href="#dep"><i class="icon-chevron-right"></i> Dependency operator </a></li>
-					<li><a href="#check"><i class="icon-chevron-right"></i> Checkpoints </a></li>
-					<li><a href="#vars"><i class="icon-chevron-right"></i> Predefined variables </a></li>
-					<li><a href="#args"><i class="icon-chevron-right"></i> Command line arguments </a></li>
+					<li><a href="#install"> Download &amp; Install</a></li>
+					<li><a href="#intro"> Introduction</a></li>
+					<li><a href="#hello"> Hello world </a></li>
+					<li><a href="#language"> Language </a>
+						<ul class="nav">
+							<li><a href="#language-special"> Special pourpose </a></li>
+							<li><a href="#language-type"> Data types </a></li>
+							<li><a href="#language-string"> String </a></li>
+							<li><a href="#language-array"> Array </a></li>
+							<li><a href="#language-map"> Map </a></li>
+							<li><a href="#vars"> Predefined variables </a></li>
+						</ul>
+					</li>
+
+					<li><a href="#task"> Running tasks</a>
+						<ul class="nav">
+							<li><a href="#task-depend"> Task dependencies</a></li>
+							<li><a href="#task-wait"> Wait </a></li>
+							<li><a href="#task-depop"> Dependency operator </a></li>
+							<li><a href="#task-autodep"> Automatic dependency </a></li>
+							<li><a href="#task-goal"> 'dep' and 'goal' </a></li>
+						</ul>
+					</li>
+
+					<li><a href="#sys"> Sys </a></li>
+					<li><a href="#taskExpr"> Task </a></li>
+					<li><a href="#waitExpr"> Wait </a></li>
+					<li><a href="#dep"> Dependency operator </a></li>
+					<li><a href="#par"> Parallel execution </a></li>
+					<li><a href="#goal"> Goals </a></li>
+					<li><a href="#check"> Checkpoints </a></li>
+
+					<li><a href="#cool"> Some cool features </a>
+						<ul class="nav">
+							<li><a href="#log"> Logging </a></li>
+							<li><a href="#args"> Command line arguments </a></li>
+							<li><a href="#test"> Teting </a></li>
+						</ul>
+					</li>
+
+					<li><a href="#commandLine"> BDS command line </a></li>
 				</ul>
 			</div>
 		</div>
