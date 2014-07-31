@@ -1652,6 +1652,63 @@ task( out <- in ) {
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
+				<h1 class="page-header" id="goal">Goals </h1>
+				<p class="lead"> Complex dependecies can be defined using <code>goal</code> and <code>dep</code> </p>
+
+				<code>goal</code> and <code>dep</code> are used to express dependencies in a declarative manner.
+				As opposed to <code>task</code> expression, which are evaluated immediately, <code>dep</code> can be used to define a dependency (using the same sintax as <code>task</code>). 
+				<code>dep</code> are not evaluated until a <code>goal</code> required a dependency to be triggered.
+				<br>
+				<br> E.g.: File <a href="bds/test_18.bds">test_18.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+in   := 'in.txt'
+mid1 := 'mid1.txt'
+mid2 := 'mid2.txt'
+out  := 'out.txt'
+
+stime := 3
+
+# Dependencies: There is no need declare them in order
+dep( out <- mid2 )     sys echo $mid2 > $out  ; echo OUT   ; sleep 1
+dep( mid2 <- mid1 )    sys echo $mid1 > $mid2 ; echo MID2  ; sleep 1
+dep( mid1 <- in )      sys echo $in   > $mid1 ; echo MID1  ; sleep 1
+
+goal out
+
+</pre>
+
+				Running the code, we get
+<pre class="prettyprint">
+# Remove old files (if any)
+$ rm *.txt
+
+# Create input
+$ date > in.txt
+
+$ ./test_18.bds
+MID1
+MID2
+OUT
+</pre>
+
+			In this case, <code>bds</code> create a directed acyclic graph of the dependencies needed to staisfy the goeal 'out.txt' and then executed the required 'dep' declarations.
+			<br>
+			<br>
+			If we delete the intermediate files 'mid1.txt' and or 'mid2.txt', and we re-execute the script, <code>bds</code> will notice that the output is still valid with resepect to the inputs 'in.txt' and will not execute any task.
+<pre class="prettyprint">
+# Remove intermediate files
+$ rm mid?.txt
+
+# Re-execute (out.txt is still valid because in.txt was not changed)
+$ ./test_18.bds
+$
+</pre>
+			</div>
+
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
 				<h1 class="page-header" id="par">Parallel execution <code>par</code> </h1>
 				<p class="lead"> <code>bds</code> can run parallel code as threads in the same program.</p>
 				<br>
@@ -1706,12 +1763,6 @@ wait pid                            // Wait for parallel to finish
 				We mentioned before that, by default, a <code>wait</code> statement with no arguments, would wait for 'all' tasks to finish.
 				Specifically, <code>wait</code> statement waits for all tasks scheduled by the same thread and for all 'parallels'.
 				So, <code>wait</code> statement with no arguments, will not restore execution until all threads and tasks trigered by the current thread have finished.
-			</div>
-
-			<!-- ================================================== -->
-			<div class="bs-docs-section">
-				<h1 class="page-header" id="goal">Goals </h1>
-				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps (like "make" command).  </p>
 			</div>
 
 			<!-- ================================================== -->
@@ -2003,8 +2054,8 @@ Available options:
 					<li><a href="#taskExpr"> Task </a></li>
 					<li><a href="#waitExpr"> Wait </a></li>
 					<li><a href="#dep"> Dependency operator </a></li>
-					<li><a href="#par"> Parallel execution </a></li>
 					<li><a href="#goal"> Goals </a></li>
+					<li><a href="#par"> Parallel execution </a></li>
 					<li><a href="#check"> Checkpoints </a></li>
 
 					<li><a href="#cool"> Some cool features </a>
