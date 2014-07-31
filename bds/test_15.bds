@@ -1,0 +1,6 @@
+#!/usr/bin/env bds
+
+in  := "in.txt"
+out := "out.txt"
+if( out <- in ) print("We should update $out\n")
+

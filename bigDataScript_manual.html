@@ -1582,7 +1582,7 @@ DONE 9
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="dep">Dependency operator </h1>
-				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps (like "make" command).  </p>
+				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps.  </p>
 
 				The dependecy operator is written as <code> out &lt;- in</code>.
 				It is true if <code>out</code> file need to be created or updated.
@@ -1592,39 +1592,59 @@ DONE 9
 					<li> <code>out</code> file is empty (has zero length)
 					<li> <code>out</code> latest modification time is earlier than <code>in</code> latest modification time
 				</ul>
-				E.g.:
+				<br> File <a href="bds/test_15.bds">test_15.bds</a>
 <pre class="prettyprint">
-$ cat z.bds
-string in = "in.txt"
-string out = "out.txt"
+in  := "in.txt"
+out := "out.txt"
 if( out <- in ) print("We should update $out\n")
+</pre>
 
-$ touch in.txt				# Create in.txt
-$ bds z.bds
+				Runnig the script:
+<pre class="prettyprint">
+$ touch in.txt              # Create in.txt
+$ ./test_15.bds
 We should update out.txt
 
-$ touch out.txt				# Create zero length out.txt
-$ bds z.bds
+$ touch out.txt             # Create zero length out.txt
+$ ./test_15.bds
 We should update out.txt
 
-$ ls > out.txt				# Create a non-empty out.txt
-$ bds z.bds
-$							# No message
+$ ls > out.txt              # Create a non-empty out.txt
+$ ./test_15.bds
+$                           # Nothing done
 
-$ echo hi > in.txt			# Update in.txt
-$ bds z.bds
-We should update out.txt	# Logically, out needs updating
+$ echo hi > in.txt          # Update in.txt
+$ ./test_15.bds
+We should update out.txt    # Logically, out needs updating
 </pre>
 				<br>
 				<i class="icon-hand-right"></i> In the dependency operator, <code>in</code> and <code>out</code> can be lists of files. 
 				The same rules apply: The operator is true if any out file is missing, zero length or the minimum of modification times in <code>out</code> is less than the maximum modificaton times in <code>in</code>
 				<br>
 				<br>
+				This can be also used on lists:
+<pre class="prettyprint">
+in  := "in.txt"
+in2 := "in2.txt"
+out := "out.txt"
+
+if( out <- [in, in2] ) print("We should update $out\n")
+</pre>
+				or even:
+<pre class="prettyprint">
+in  := "in.txt"
+in2 := "in2.txt"
+out := "out.txt"
+out2 := "out2.txt"
+
+if( [out, out2] <- [in, in2] ) print("We should update $out and $out2\n")
+</pre>
+				<br>
 				A typical usage of <code>&lt;-</code> is in conjunction with <code>task</code>.
 				E.g.
 <pre class="prettyprint">
 task( out <- in ) {
-		sys cat $in > $out
+    sys cat $in > $out
 }
 </pre>
 				The command is executed only if <code>out</code> need updating
@@ -1633,14 +1653,59 @@ task( out <- in ) {
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="par">Parallel execution <code>par</code> </h1>
-				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps (like "make" command).  </p>
+				<p class="lead"> <code>bds</code> can run parallel code as threads in the same program.</p>
 				<br>
-				Strings are also used for identifying parallels (<code>par</code> expression)
+				Sometimes multiple branches of an analysis pipeline must be run in parallel. 
+				<code>bds</code> provides a simple <code>par</code> expression to run code in parallel.
+				<br> 
+				<br> E.g.: File <a href="bds/test_16.bds">test_16.bds</a>
 <pre class="prettyprint">
-pid := par longRunningFunction()	// This function is executed in parallel 
-wait pid    // Wait for parallel to finish
+#!/usr/bin/env bds
+
+par {
+    # This block runs in parallel
+    for( int i : range(1, 5) ) {
+        print("Parallel $i\n")
+        sleep( 0.2 )
+    }
+}
+
+for( int i : range(1, 5) ) {
+    print("Main $i\n")
+    sleep( 0.2 )
+}
 </pre>
+
+				If we run this code:
+
+<pre class="prettyprint">
+$ ./test_16.bds
+Parallel 1
+Main 1
+Parallel 2
+Main 2
+Main 3
+Parallel 3
+Main 4
+Parallel 4
+Parallel 5
+Main 5
+</pre>
+
+				<h3> Wait in 'par' context </h3>
+				<code>par</code> expressions return a 'parallel ID' string that we can use in <code>wait</code> 
+<pre class="prettyprint">
+pid := par longRunningFunction()    // This function is executed in parallel 
+
+wait pid                            // Wait for parallel to finish
+</pre>
+
 				Here <code>wait</code> statement waits until the function "longRunningFunction()" finishes.
+				<br>
+				<br>
+				We mentioned before that, by default, a <code>wait</code> statement with no arguments, would wait for 'all' tasks to finish.
+				Specifically, <code>wait</code> statement waits for all tasks scheduled by the same thread and for all 'parallels'.
+				So, <code>wait</code> statement with no arguments, will not restore execution until all threads and tasks trigered by the current thread have finished.
 			</div>
 
 			<!-- ================================================== -->
