@@ -1,9 +1,15 @@
 #!/usr/bin/env bds
 
-in := "in.txt"
+in   := 'in.txt'
+mid1 := 'mid1.txt'
+mid2 := 'mid2.txt'
+out  := 'out.txt'
 
-task {
-	sys echo $in
-}
+sys touch $in $mid1 $mid2 $out; rm $in $mid1 $mid2 $out; date > $in
 
-checkpoint "test/z.chp"
+# Dependencies: There is no need declare them in order
+dep( mid1 <- in )	   sys echo $in   > $mid1 ; echo MID1  ; sleep 1
+dep( mid2 <- mid1 )    sys echo $mid1 > $mid2 ; echo MID2  ; sleep 1
+dep( out <- mid2 )     sys echo $mid2 > $out  ; echo OUT   ; sleep 1
+
+goal out
