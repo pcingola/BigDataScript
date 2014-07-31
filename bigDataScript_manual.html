@@ -1768,17 +1768,20 @@ wait pid                            // Wait for parallel to finish
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="check">Checkpoints </h1>
-				<p class="lead"> BigDataScript is intended have absolute serialization, which is achieved using checkpoint commands.</p>
+				<p class="lead"> BigDataScript can save the full state of a running script to a file and restart execution from that point </p>
 
-				Fully serializable program states and checkpoints help to recover from failures in complex pipelines.<p>
+				A <code>checkpoint</code> is the full serialization of the state of a program. 
+				This is a powerfull tool to create robust pipelines and to recover from several failure conditions.
 				<br>
-				A checkpoint is created either when a task fails or when an explicit <code>checkpopint</code> command is invoked.
+				<br>
+				A checkpoint is created either when a task fails or when an explicit <code>checkpopint</code> command is executed.
 				E.g.: The following program counts from 0 to 9, creating a checkpoint when the counter gets to 5
+				<br> File <a href="bds/test_19.bds">test_19.bds</a>
 <pre class="prettyprint">
 for( int i=0 ; i < 10 ; i++ ) {
 	if( i == 5 ) {
 		print("Checkpoint\n")
-		checkpoint
+		checkpoint "my.chp"
 	}
 	print("Counting $i\n")
 }
@@ -1799,10 +1802,10 @@ Counting 7
 Counting 8
 Counting 9
 </pre>
-				And there is also a checkpoint file <code>z.bds.chp</code> created.
+				A checkpoint file <code>my.chp</code> created.
 				We can re-start execution from this checkpoint file, by using the <code>bds -r</code> command line option
 <pre class="prettyprint">
-$ bds -r z.bds.chp		# Restart execution from checkpoint file
+$ bds -r my.chp		# Restart execution from checkpoint file
 Counting 5
 Counting 6
 Counting 7
@@ -1810,7 +1813,9 @@ Counting 8
 Counting 9
 </pre>
 
-				<i class="icon-hand-right"></i> You can even copy the file/s to another computer and restart execution there
+				<i class="icon-hand-right"></i> You can even copy the file/s to another computer and restart execution there, as shown in this video
+
+				<iframe width="640" height="390" src="https://www.youtube.com/watch?v=ah1XxWTYSLM" frameborder="0" allowfullscreen></iframe>
 				<br>
 				<br>
 			</div>
