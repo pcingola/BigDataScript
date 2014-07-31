@@ -1,0 +1,10 @@
+#!/usr/bin/env bds
+
+in   := ["in.txt"]
+out  := "out.txt"
+ok   := false
+
+print("In : $in\n")
+print("Out: $out\n")
+print("OK : $ok\n")
+

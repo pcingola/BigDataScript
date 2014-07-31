@@ -171,14 +171,18 @@
 				The fact that BigDataScript takes a few miliseconds more to invoke those programs, really doesn't make any difference.
 				</p>
 
+				<h3> Why s it called "BigDataScript" </h3>
+				Because that's the lamest name I could find.
+
 				<h3> Disclaimer </h3>
 				BigDataScript is experimental and under heavy development. Use at your own risk.
+				Know side effect include: computer explosions, instant decapitation, spontaneous human combustion, and dead kittens.
 			</div>
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="hello">Hello world </h1>
-				<p class="lead"> We absolutely must say "Hello world!".  <p>
+				<p class="lead"> As we all know, showing that we can print "Hello world" is more important than showing that the language is "Turing complete".  <p>
 					
 				<ul>
 					<li> Create a simple program and execute it
@@ -242,7 +246,7 @@ Hello world
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="language">Language </h1>
-				<p class="lead"> Learning BigDataScript language (<code>bds</code> for short) is almost trivial, all the statements and expression and data types do what you expect. </p>
+				<p class="lead"> Learning BigDataScript language (<code>bds</code>) is almost trivial, all the statements and expression and data types do what you expect. </p>
 				<p>
 				BigDataScript is really simple and you should be able to code within a few minutes.
 				This section is inteded as a reference, so just glance through it.
@@ -1714,6 +1718,7 @@ $
 				<br>
 				Sometimes multiple branches of an analysis pipeline must be run in parallel. 
 				<code>bds</code> provides a simple <code>par</code> expression to run code in parallel.
+				Originally this was called <code>parallel</code>, but then I realized I was too lazy to type all those leters, so I reduced it to <code>par</code> (both of them work if you choose to be more verbose).
 				<br> 
 				<br> E.g.: File <a href="bds/test_16.bds">test_16.bds</a>
 <pre class="prettyprint">
@@ -1749,6 +1754,22 @@ Parallel 5
 Main 5
 </pre>
 
+				<code>par</code> also works with optional expresions that must be all 'true' to evaluate the block.
+	
+<pre class="prettyprint">
+par( out <- in )  {
+    # This block runs in parallel if 'out' needs to be updated
+    for( int i : range(1, 5) ) {
+        tmp := "$in.$i.tmp"
+        task head -n $i $in | tail -n 1 > $tmp
+    }
+    wait
+    task cat $in.*.tmp > $out
+}
+</pre>
+
+				<br>
+				<br>
 				<h3> Wait in 'par' context </h3>
 				<code>par</code> expressions return a 'parallel ID' string that we can use in <code>wait</code> 
 <pre class="prettyprint">
@@ -1813,61 +1834,115 @@ Counting 8
 Counting 9
 </pre>
 
-				<i class="icon-hand-right"></i> You can even copy the file/s to another computer and restart execution there, as shown in this video
+				You can also see information on what was happening when the checkpoint was created:
+<pre class="prettyprint">
+$ bds -i my.chp
+Program file: './test_19.bds'
+     1 |#!/usr/bin/env bds
+     2 |
+     3 |for( int i=0 ; i < 10 ; i++ ) {
+     4 |	if( i == 5 ) {
+     5 |		print("Checkpoint\n")
+     6 |		checkpoint
+     7 |	}
+     8 |	print("Counting $i\n")
+     9 |}
 
-				<iframe width="640" height="390" src="https://www.youtube.com/watch?v=ah1XxWTYSLM" frameborder="0" allowfullscreen></iframe>
+Stack trace:
+test_19.bds, line 3 :	for( int i=0 ; i < 10 ; i++ ) {
+test_19.bds, line 4 :		if( i == 5 ) {
+test_19.bds, line 6 :			checkpoint
+
+--- Scope: ./test_19.bds:3 ---
+int i = 5
+...
+</pre>
 				<br>
+				You can even copy the file/s to another computer and restart execution there, as shown in this video
+				<br>
+				<iframe width="640" height="390" src="https://www.youtube.com/watch?v=ah1XxWTYSLM" frameborder="0" allowfullscreen></iframe>
 				<br>
 			</div>
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="cool">Some cool features </h1>
-				<p class="lead"> BigDataScript has some useful features, like automatic command line parsing. </p>
+				<p class="lead"> BigDataScript has some useful features... </p>
 					
-				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
-					
-				<p class="lead"> In this video </p>
-				<ul>
-					<li> We show how automatic command line parsing works.
-					We use the same script as shown in the previous section for processing another input file without changing a single line of code.
-						
-					<li> Automatic command line parsing parses any command line argument that starts with "-" and assigns the value to the corresponding variable.
-					E.g.:
+				<h3> Automatic command line parsing </h3>
+
+				No need to manually parse command line options for your scripts, <code>bds</code> does it for you:
+				Automatic command line parsing parses any command line argument that starts with "-" and assigns the value to the corresponding variable.
+				<br> File <a href="bds/test_20.bds">test_20.bds</a>
 <pre class="prettyprint">
-$ cat z.bds 
-string in = "in.txt"
+#!/usr/bin/env bds
+
+in := "in.txt"
 print("In file is '$in'\n")
-
-$ bds z.bds
-In file is 'in.txt'
-
-$ bds z.bds -in anotherFile.txt
-In file is 'anotherFile.txt'
 </pre>
 
-					<li> This feature also works for other data types (int, real, bool). 
-					In case of bool if the option is present, the variable is set to 'true'.
+				If we run this, we get
 <pre class="prettyprint">
-$ cat z.bds
+$ ./test_20.bds 
+In file is 'in.txt'
+</pre>
+
+				No we pass a command line argument <code>-in another_file.txt</code>, and <code>bds</code> automatically parses that command line option replacing the value of varialbe 'in'
+<pre class="prettyprint">
+$ ./test_20.bds -in another_file.txt
+In file is 'another_file.txt'
+</pre>
+				This feature also works for other data types (int, real, bool). 
+				In case of bool if the option is present, the variable is set to 'true'.
+				<br> File <a href="bds/test_21.bds">test_21.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
 bool flag
 print("Variable flag is $flag\n")
-
-$ bds z.bds
-Variable flag is false
-
-$ bds z.bds -flag
-Variable flag is true
-
 </pre>
 
-				</ul>
+<pre class="prettyprint">
+$ ./test_21.bds
+Variable flag is false
+</pre>
+
+<pre class="prettyprint">
+$ ./test_21.bds -flag
+Variable flag is true
+</pre>
+
+				You can also apply this to a list of strings.
+				In this case, all command line arguments following the <code>-listName</code> will be included in the list (up to the next argument starting with '-').
+				<br>
+				E.g.: Note that list <code>in</code> is populated using 'in1.txt in2.txt in3.txt' and <code>out</code> is set to 'zzz.txt'
+				<br> File <a href="bds/test_22.bds">test_22.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+in  := ["in.txt"]
+out := "out.txt"
+ok	:= false
+
+print("In : $in\n")
+print("Out: $out\n")
+print("OK : $ok\n")
+</pre>
+
+<pre class="prettyprint">
+$ ./test_22.bds  -ok -in in1.txt in2.txt in3.txt -out zzz.txt
+In : [in1.txt, in2.txt, in3.txt]
+Out: zzz.txt
+OK : true
+</pre>
+
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
 
 				<h3 class="page-header" id="log">Logging </h3>
-				<p class="lead"> By default all command execution is logged. </p>
+				<p class="lead"> By cal log all command execution. </p>
 
 				Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
-				This gives you an automatic log of everything that was executed, as well as the detials of the outputs from each execution.
+				This gives you an automatic log of everything that was executed, as well as the detials of the outputs and exit status from each execution.
 				<br>
 				For example, let's create a simple program and run it
 <pre class="prettyprint">
@@ -1878,7 +1953,7 @@ sys echo Hello $name
 
 					Now let's run this script, we use <code>-v</code> command line option to make the output verbose:
 <pre class="prettyprint">
-$ bds -v z.bds
+$ bds -v -log z.bds
 00:00:00.169	Process ID: z.bds.20140328_224825_685
 00:00:00.174	Queuing task 'z.bds.20140328_224825_685/sys.line_4.id_1'
 00:00:00.674	Running task 'z.bds.20140328_224825_685/sys.line_4.id_1'
@@ -1908,7 +1983,7 @@ $ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
 </pre>
 					Notice that there was no output on stderr (it's empty)
 
-					<li> Command finished without proglems, so it continues with the res of the program
+					<li> Command finished without problems, so it continues with the rest of the program
 				
 				</ol>
 				So at the end of the run, we have the file with the script, plus the stdout and stderr files.
@@ -1917,70 +1992,121 @@ $ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
 
 				</p>
 
-				<h3 class="page-header" id="args">18. Command line arguments </h3>
-				<p class="lead"> BigDataScript automatically parses command line variables for your program.</p>
-				<p>
-				Parsing command line variables is a mundane and boring task, so BigDataScript does it for you.
-				Basically it matches any command line argument that starts with '-' (a minus sign) and injects the value in a variable having the same name.
-				For instance if your program has a variable declaration <code>string file</code> and your command line is <code>bds myprog.bds -file input.txt</code>, the value "input.txt" will be injected into variable <code>file</code>.
-				<br>
-					E.g.:
-<pre class="prettyprint">
-$ cat z.bds 
-string file = "in.txt"
-print("File is '$file'\n")
-
-$ bds z.bds
-File is 'in.txt'
-
-$ bds z.bds -file anotherFile.txt
-File is 'anotherFile.txt'
-</pre>
-
-				<br>
-				This feature also works for other data types (int, real, bool).  
-				In case of bool if the option is present, the variable is set to 'true'.
-<pre class="prettyprint">
-$ cat z.bds
-bool flag
-print("Variable flag is $flag\n")
-
-$ bds z.bds
-Variable flag is false
-
-$ bds z.bds -flag
-Variable flag is true
-</pre>
-
-				You can also apply this to a list of strings.
-				In this case, all command line arguments following the <code>-listName</code> will be included in the list (up to the next argument starting with '-').
-				<br>
-				E.g.: Note that list <code>in</code> is populated using 'in1.txt in2.txt in3.txt' and <code>out</code> is set to 'zzz.txt'
-<pre class="prettyprint">
-$ cat z.bds
-string[] in = ["in.txt"]
-string out  = "out.txt"
-bool ok	 = false
-
-print("In : $in\n")
-print("Out: $out\n")
-print("OK : $ok\n")
-
-$ bds z.bds -ok -in in1.txt in2.txt in3.txt -out zzz.txt
-In : [in1.txt, in2.txt, in3.txt]
-Out: zzz.txt
-OK : true
-</pre>
-				</p>
-
 				<h3 class="page-header" id="myfirst">Cleanup </h3>
 				<p class="lead"> If a script fails, <code>bds</code> automatically cleans up stale files and kills pending tasks. <p>
 
-Tasks that disappear
+				In order to make sure that data pipelines are correctly re-executed after a failure, <code>bds</code> automatically cleans all dependent files from failed tasks.
+				This saves time because the user doesn't need to check for consistency on putative stale files.
+				<br>
+				<br>
+				Also, <code>bds</code> ensures that resources are not wasted, by killing all pending tasks.
+				In large pipelines, thousands of taks can be scheduled for execution in a cluster and it is quite difficult for the user to keep track of them and clean them if the pipeline fails.
+				Fortunately <code>bds</code> takes care of all these details and issues appropiate commands to kill all pending task.
+
+				<br> File <a href="bds/test_22.bds">test_22.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+for(int i : range(1,10) ) {
+    in  := "in_$i.txt"
+    sys date > $in
+
+    out := "out_$i.txt"
+    task( out <- in ) {
+        sys echo Task $i | tee $out; sleep $i; echo Done $i
+    }
+}
+</pre>
+
+				If I run this example and interrupt it (by pressing Ctrl-C) before it ends:
+<pre class="prettyprint">
+$ ./test_23.bds
+Task 4
+Task 5
+Task 2
+Task 3
+Task 8
+Task 1
+Task 7
+Task 6
+Done 1
+Task 9
+Done 2
+Task 10
+Done 3
+^C				# Here I pressed Ctr-C
+2014/07/31 00:43:46 bds: Received OS signal 'interrupt'
+2014/07/31 00:43:46 bds: Killing PID '32523'
+2014/07/31 00:43:46 bds: Killing PID '32534'
+2014/07/31 00:43:46 bds: Deleting file 'out_6.txt'
+2014/07/31 00:43:46 bds: Deleting file 'out_9.txt'
+2014/07/31 00:43:46 bds: Deleting file 'out_5.txt'
+2014/07/31 00:43:46 bds: Killing PID '32546'
+2014/07/31 00:43:46 bds: Deleting file 'out_4.txt'
+2014/07/31 00:43:46 bds: Deleting file 'out_8.txt'
+2014/07/31 00:43:46 bds: Killing PID '32597'
+2014/07/31 00:43:46 bds: Killing PID '32557'
+2014/07/31 00:43:46 bds: Deleting file 'out_7.txt'
+2014/07/31 00:43:46 bds: Killing PID '32575'
+2014/07/31 00:43:46 bds: Killing PID '32610'
+2014/07/31 00:43:46 bds: Deleting file 'out_10.txt'
+</pre>
+				You can see how <code>bds</code> cleans up all stale files and kills all processes.
+				When this is executed in a cluster, the appropriate <code>qdel</code>, <code>canceljob</code> or similar command is issued (depending on the type of cluster used).
 	
-				<h3 class="page-header" id="myfirst">3. Testing </h3>
-				<p class="lead"> BigDataScript provides a simple unity testing environmnet, using the <code>-test</code> command line option. <p>
+				<h3 class="page-header" id="myfirst">Disapearing tasks</h3>
+				<p class="lead"> Simetime tasks just disapear from clusters. </p>
+
+				Sometimes cluster fails in ways that the cluster management system is unable to detect a failure, let alone report the error.
+				It can happen that task dissapear without any trace from the cluster (this is not as rare as you may think, particularly when execitun thousands of task per pipeline).
+				For this reason, <code>bds</code> performs active monitoring, to ensure that tasks are still alive.
+				If any tasks "misteriouslt disapears", <code>bds</code> reports the problem and considers the task as failed.
 	
+				<h3 class="page-header" id="myfirst"> Unity Testing </h3>
+				<p class="lead"> Because nobody writes perfect code. </p>
+
+				<code>bds</code> provides a simple unity testing functionality. 
+				Simply use the <code>-t</code> command line option and <code>bds</code> will run all functions <code>test*()</code> (that is functions whose names start with 'test' and hace no arguments).
+	
+				<br> File <a href="bds/test_24.bds">test_24.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+int twice(int n)    return 3 * n    // Looks like I don't really know what "twice" means...
+
+void test01() {
+    print("Nice test code 01\n")
+}
+
+void test02() {
+    i := 1
+    i++
+    if( i != 2 )    error("I can't add")
+}
+
+void test03() {
+    i := twice( 1 )
+    if( i != 2 )    error("This is weird")
+}
+</pre>
+
+				When we execute the tests, we get
+<pre class="prettyprint">
+$ bds -t ./test_24.bds 
+
+Nice test code 01
+00:00:00.002	Test 'test01': OK
+
+00:00:00.003	Test 'test02': OK
+
+00:00:00.004	Error: This is weird
+00:00:00.004	Test 'test03': FAIL
+
+00:00:00.005	Totals
+                  OK    : 2
+                  ERROR : 1
+
+</pre>
 			</div>
 
 			<!-- ================================================== -->

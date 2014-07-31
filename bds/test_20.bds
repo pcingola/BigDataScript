@@ -1,0 +1,5 @@
+#!/usr/bin/env bds
+
+in := "in.txt"
+print("In file is '$in'\n")
+

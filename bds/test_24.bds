@@ -1,0 +1,18 @@
+#!/usr/bin/env bds
+
+int twice(int n)	return 3 * n	// I don't really know what "twice" means...
+
+void test01() {
+	print("Nice test code 01\n")
+}
+
+void test02() {
+	i := 1
+	i++
+	if( i != 2 )	error("I can't add")
+}
+
+void test03() {
+	i := twice( 1 )
+	if( i != 2 )    error("This is weird")
+}

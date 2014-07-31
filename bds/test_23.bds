@@ -1,0 +1,12 @@
+#!/usr/bin/env bds
+
+for(int i : range(1,10) ) {
+	in  := "in_$i.txt"
+	sys date > $in
+
+	out := "out_$i.txt"
+	task( out <- in ) {
+		sys echo Task $i | tee $out; sleep $i; echo Done $i
+	}
+}
+

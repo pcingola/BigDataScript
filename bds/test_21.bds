@@ -1,0 +1,5 @@
+#!/usr/bin/env bds
+
+bool flag
+print("Variable flag is $flag\n")
+
