@@ -1,28 +1,26 @@
 #!/usr/bin/env bds
 
-prefix := "graph_08"
-in1  := "$prefix.in1.txt"
-in2  := "$prefix.in2.txt"
-mid1 := "$prefix.mid1.txt"
-mid21:= "$prefix.mid21.txt"
-mid22:= "$prefix.mid22.txt"
-out  := "$prefix.out.txt"
+in := "in.txt"
+out1 := "out1.txt"
+out2 := "out2.txt"
 
-# Clean all files, create inputs
-sys touch $in1 $in2 $mid1 $mid21 $mid22 $out
-sys rm    $in1 $in2 $mid1 $mid21 $mid22 $out
-sys date > $in1 ; date > $in2
+# Create 'in' file
+sys touch $out1 $out2; rm $out1 $out2; echo IN > $in
 
-# Create 'mid22', so that the branch in2->mid21->mid22 should never be executed
-sleep(1)
-sys date > $mid22
+task( out1 <- in ) {
+	sys echo Task 1; sleep 1; cat $in > $out1 ; echo TASK 1 >> $out1; echo End task 1
+}
 
-# Dependencies: There is no need declare them in order
-dep( mid1 <- in1 )				sys echo $in1   > $mid1			; echo MID1		; sleep 1
-dep( mid21 <- in2 )				sys echo $in2   > $mid21		; echo MID21	; sleep 1
-dep( mid22 <- mid21 )			sys echo $mid21 > $mid22		; echo MID22	; sleep 1
-dep( out <- [mid1, mid22] )		sys echo $mid1 $mid22 > $out	; echo OUT		; sleep 1
+# This task should be executed AFTER the previous one finished
+task( out2 <- out1 ) {
+	sys echo Task 2; sleep 1; cat $out1 > $out2 ; echo TASK 2 >> $out2; echo End task 2
+}
 
-tids := goal out
-num := tids.size()
-print("Tasks to execute [$num]: $tids\n")
+# This task should be executed AFTER the previous one finished
+task( out1 <- out2 ) {
+	sys echo Task 3; sleep 1; cat $out2 > $out1 ; echo TASK 3 >> $out1; echo End task 3
+}
+
+wait
+output := out1.read()
+print("Output:\n$output")

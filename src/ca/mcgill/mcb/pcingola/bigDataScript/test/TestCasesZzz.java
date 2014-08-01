@@ -10,9 +10,14 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
+	//	@Test
+	//	public void test02() {
+	//		runAndCheck("test/graph_02.bds", "output", "IN\nTASK 1\nTASK 2\nTASK 3\n");
+	//	}
+
 	@Test
-	public void test10() {
-		runAndCheck("test/graph_10.bds", "num", "2");
+	public void test09() {
+		runAndCheckStderr("test/graph_09.bds", "Circular dependency");
 	}
 
 }

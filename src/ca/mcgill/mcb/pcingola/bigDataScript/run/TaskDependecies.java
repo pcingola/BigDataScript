@@ -40,6 +40,7 @@ public class TaskDependecies {
 	 * Add a task
 	 */
 	public synchronized void add(Task task) {
+		if (isCircular(task)) throw new RuntimeException("Circular dependency on task '" + task.getId() + "'");
 		addTask(task);
 		if (!task.isDependency()) findDirectDependencies(task); // Find and update task's immediate dependencies (only if the task is to be executed)
 	}
@@ -74,7 +75,7 @@ public class TaskDependecies {
 						for (Task taskDep : taskDeps)
 							if (!taskDep.isDone() // Don't add finished tasks
 									&& !taskDep.isDependency() // If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
-							) task.addDependency(taskDep); // Task not finished? Add it to dependency list
+							) task.addDependency(taskDep); // Add it to dependency list
 					}
 				}
 			}
@@ -199,6 +200,33 @@ public class TaskDependecies {
 
 	public boolean hasTask(String taskId) {
 		return tasksById.containsKey(taskId);
+	}
+
+	/**
+	 * Is there a circular dependency for this task?
+	 */
+	boolean isCircular(Task task) {
+		return isCircular(task, new HashSet<Task>());
+	}
+
+	/**
+	 * Is there a circular dependency for this task?
+	 */
+	boolean isCircular(Task task, HashSet<Task> tasks) {
+		if (!tasks.add(task)) return true;
+
+		// Get all input files, find corresponding tasks and recurse
+		if (task.getInputFiles() != null) {
+			for (String in : task.getInputFiles()) {
+				List<Task> depTasks = tasksByOutput.get(in);
+
+				if (depTasks != null) {
+					for (Task t : depTasks)
+						if (isCircular(t, tasks)) return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
