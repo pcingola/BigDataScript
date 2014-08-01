@@ -145,7 +145,7 @@ public class TestCasesCheckpoint extends TestCasesBase {
 	@Test
 	public void test11() {
 		// Run pipeline and test checkpoint
-		runAndCheckpoint("test/checkpoint_10.bds", "test/checkpoint_10.chp", "sumPar", "110");
+		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
 	}
 
 }

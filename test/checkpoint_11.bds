@@ -1,0 +1,29 @@
+#!/usr/bin/env bds
+
+sleepTime := 0.2
+sumPar := 0
+sumMain := 0
+
+# Parallel block
+par {
+	for( int j : range(1,10) ) {
+		print("par : $j\n")
+		sleep( sleepTime )
+		sumPar += 2 * j
+	}
+}
+
+# Main block
+for( int i : range(1,10) ) {
+	print("main: $i\n")
+	sleep( sleepTime )
+
+	if( i == 3 ) { 
+		print("Checkpoint\n")
+		checkpoint "test/checkpoint_11.chp"
+	}
+
+	sumMain += i
+}
+
+print("sumMain: $sumMain\nsumPar : $sumPar\n");
