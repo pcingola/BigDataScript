@@ -89,4 +89,14 @@ public class TestCasesGraph extends TestCasesBase {
 		System.out.println(out);
 	}
 
+	@Test
+	public void test08() {
+		runAndCheckStdout("test/graph_08.bds", "MID1\nMID2\nOUT");
+	}
+
+	@Test
+	public void test09() {
+		runAndCheckStdout("test/graph_09.bds", "ERROR: Cyclic dependence");
+	}
+
 }

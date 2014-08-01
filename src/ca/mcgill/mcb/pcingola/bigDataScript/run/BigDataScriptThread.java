@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
@@ -99,7 +100,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		config = parent.config;
 		random = parent.random;
 		removeOnExit = parent.removeOnExit;
-		taskDependecies = new TaskDependecies();
+		taskDependecies = new TaskDependecies(this);
 		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
 
 		setStatement(statement);
@@ -115,7 +116,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		this.config = config;
 		random = new Random();
 		removeOnExit = new LinkedList<String>();
-		taskDependecies = new TaskDependecies();
+		taskDependecies = new TaskDependecies(this);
 		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
 
 		if (statement != null) setStatement(statement);
@@ -588,7 +589,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		List<String> taskIds = new ArrayList<String>();
 
 		// Find dependencies
-		List<Task> tasks = taskDependecies.goal(out);
+		Set<Task> tasks = taskDependecies.goal(out);
 
 		// No update needed?
 		if (tasks == null) {
@@ -596,12 +597,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			return taskIds;
 		}
 
-		// Run all tasks
-		if (isDebug()) Gpr.debug("Goal '" + out + "', dependent tasks:");
-		for (Task t : tasks) {
-			if (isDebug()) System.err.println("\t\t" + t.getId());
-			ExpressionTask.execute(this, t);
-		}
+		//		// Run all tasks
+		//		if (isDebug()) Gpr.debug("Goal '" + out + "', dependent tasks:");
+		//		for (Task t : tasks) {
+		//			if (isDebug()) System.err.println("\t\t" + t.getId());
+		//			ExpressionTask.execute(this, t);
+		//		}
 
 		// Convert to task IDs
 		for (Task t : tasks)

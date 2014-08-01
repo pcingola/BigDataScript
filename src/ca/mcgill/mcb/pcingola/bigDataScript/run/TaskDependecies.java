@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionDepOperator;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -26,11 +27,13 @@ public class TaskDependecies {
 	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
 	Map<String, Task> tasksById;
 	AutoHashMap<String, List<Task>> tasksByOutput;
+	BigDataScriptThread bdsThread;
 
-	public TaskDependecies() {
+	public TaskDependecies(BigDataScriptThread bdsThread) {
 		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
 		tasksById = new HashMap<String, Task>();
 		tasks = new ArrayList<Task>();
+		this.bdsThread = bdsThread;
 	}
 
 	/**
@@ -148,42 +151,59 @@ public class TaskDependecies {
 	/**
 	 * Find tasks required to achieve goal 'out'
 	 */
-	public List<Task> goal(String out) {
-		//---
+	public Set<Task> goal(String out) {
+		// Check if goal needs to be updated respect to leaf nodes
+		if (!goalNeedsUpdate(out)) {
+			if (debug) Gpr.debug("Goal '" + out + "': No update needed.");
+			return null;
+		}
+
+		// Run all tasks
+		Set<Task> tasks = new HashSet<>();
+		goalRun(out, tasks);
+		return tasks;
+	}
+
+	/**
+	 * Does this goal need to be updated respect to the leaves
+	 */
+	boolean goalNeedsUpdate(String out) {
 		// Find all 'leaf nodes' (files) required for this goal
-		//---
 		Set<String> leaves = findLeafNodes(out);
+
 		if (debug) {
 			Gpr.debug("\n\tGoal: " + out + "\n\tLeaf nodes:");
 			for (String n : leaves)
 				System.err.println("\t\t'" + n + "'");
 		}
 
-		//---
-		// Check if goal needs to be updated respect to leaf nodes
-		//---
-		if (!needsUpdate(out, leaves)) {
-			if (debug) Gpr.debug("Goal '" + out + "': No update needed.");
-			return null; // No update needed
-		}
+		return needsUpdate(out, leaves);
+	}
 
-		// Goal needs to be updated: Ad all tasks that need updating
-		Set<Task> tasks = new HashSet<Task>();
-		List<Task> tasksSorted = new ArrayList<>();
-		for (String n : findNodes(out)) {
-			List<Task> ntasks = tasksByOutput.get(n);
-			if (ntasks != null) {
-				for (Task t : ntasks)
-					if (!tasks.contains(t) // Not already added?
-							&& !t.isDone() // task is not finished?
-							&& needsUpdate(t) // Task needs update?
-					) tasksSorted.add(t);
+	/**
+	 * Find all leaf nodes required for goal 'out'
+	 */
+	void goalRun(String goal, Set<Task> addedTasks) {
+		List<Task> tasks = tasksByOutput.get(goal);
+
+		// Recurse
+		if (tasks != null) {
+			// Satisfy all goals before running
+			for (Task t : tasks) {
+				if (addedTasks.contains(t)) throw new RuntimeException("Circular dependency task " + t);
+
+				if (t.getInputFiles() != null) //
+					for (String in : t.getInputFiles())
+						goalRun(in, addedTasks);
 			}
-		}
 
-		// Reverse collection: First tasks are the closest to input files (leaf nodes)
-		Collections.reverse(tasksSorted);
-		return tasksSorted;
+			// Run all tasks
+			for (Task t : tasks) {
+				t.setDependency(false); // We are executing this task, so it it no long a 'dep'
+				ExpressionTask.execute(bdsThread, t);
+			}
+
+		}
 	}
 
 	public boolean hasTask(String taskId) {
