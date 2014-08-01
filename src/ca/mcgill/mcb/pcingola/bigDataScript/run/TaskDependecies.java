@@ -190,7 +190,8 @@ public class TaskDependecies {
 		if (tasks != null) {
 			// Satisfy all goals before running
 			for (Task t : tasks) {
-				if (addedTasks.contains(t)) throw new RuntimeException("Circular dependency task " + t);
+				if (addedTasks.contains(t)) throw new RuntimeException("Circular dependency on task '" + t.getId() + "'");
+				addedTasks.add(t);
 
 				if (t.getInputFiles() != null) //
 					for (String in : t.getInputFiles())
@@ -202,7 +203,6 @@ public class TaskDependecies {
 				t.setDependency(false); // We are executing this task, so it it no long a 'dep'
 				ExpressionTask.execute(bdsThread, t);
 			}
-
 		}
 	}
 

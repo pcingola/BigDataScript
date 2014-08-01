@@ -194,6 +194,7 @@ public class TestCasesBase extends TestCase {
 		} finally {
 			// Restore STDERR
 			System.setErr(stderr);
+			System.err.println(captureStderr); // Show stderr
 		}
 
 		// Check that the expected string is in STDERR

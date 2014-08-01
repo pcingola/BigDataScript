@@ -96,7 +96,7 @@ public class TestCasesGraph extends TestCasesBase {
 
 	@Test
 	public void test09() {
-		runAndCheckStdout("test/graph_09.bds", "ERROR: Cyclic dependence");
+		runAndCheckStderr("test/graph_09.bds", "Circular dependency");
 	}
 
 }

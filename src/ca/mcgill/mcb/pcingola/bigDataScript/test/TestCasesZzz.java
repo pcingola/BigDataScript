@@ -11,8 +11,8 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test08() {
-		runAndCheckStdout("test/graph_08.bds", "MID1\nMID2\nOUT");
+	public void test09() {
+		runAndCheckStderr("test/graph_09.bds", "Circular dependency");
 	}
 
 }
