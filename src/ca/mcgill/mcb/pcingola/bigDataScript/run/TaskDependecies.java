@@ -72,7 +72,9 @@ public class TaskDependecies {
 					List<Task> taskDeps = tasksByOutput.get(inFile);
 					if (taskDeps != null) {
 						for (Task taskDep : taskDeps)
-							if (!taskDep.isDone()) task.addDependency(taskDep); // Task not finished? Add it to dependency list
+							if (!taskDep.isDone() // Don't add finished tasks
+									&& !taskDep.isDependency() // If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
+							) task.addDependency(taskDep); // Task not finished? Add it to dependency list
 					}
 				}
 			}
@@ -83,7 +85,7 @@ public class TaskDependecies {
 	 * Find 'leaf' nodes (i.e. nodes that do not have dependent tasks)
 	 */
 	Set<String> findLeafNodes(String out) {
-		List<String> nodes = findNodes(out); // Find all nodes
+		Set<String> nodes = findNodes(out); // Find all nodes
 
 		// Only add nodes that do not have dependent tasks (i.e. are leaves)
 		Set<String> leaves = new HashSet<String>();
@@ -96,20 +98,16 @@ public class TaskDependecies {
 	/**
 	 * Find all leaf nodes required for goal 'out'
 	 */
-	List<String> findNodes(String out) {
+	Set<String> findNodes(String out) {
 		// A set of 'goal' nodes
 		Set<String> goals = new HashSet<String>();
 		goals.add(out);
-
-		// Nodes sorted (outputs first, inputs after)
-		List<String> nodesSorted = new ArrayList<String>();
-		nodesSorted.add(out);
 
 		// For each goal
 		for (boolean changed = true; changed;) {
 			changed = false;
 
-			// Initialize
+			// We need a new set to avoid 'concurrent modification' exception
 			Set<String> newGoals = new HashSet<String>();
 			newGoals.addAll(goals);
 
@@ -121,19 +119,15 @@ public class TaskDependecies {
 				if (tasks != null) // Add all task's input files
 					for (Task t : tasks)
 						if (t.getInputFiles() != null) {
-							// Add each node
-							for (String in : t.getInputFiles()) {
-								boolean added = newGoals.add(in);
-								if (added) nodesSorted.add(in);
-								changed |= added;
-							}
+							for (String in : t.getInputFiles())
+								changed |= newGoals.add(in); // Add each node
 						}
 			}
 
 			goals = newGoals;
 		}
 
-		return nodesSorted;
+		return goals;
 	}
 
 	public Task get(String taskId) {
@@ -152,13 +146,6 @@ public class TaskDependecies {
 	 * Find tasks required to achieve goal 'out'
 	 */
 	public Set<Task> goal(String out) {
-		// Check if goal needs to be updated respect to leaf nodes
-		if (!goalNeedsUpdate(out)) {
-			if (debug) Gpr.debug("Goal '" + out + "': No update needed.");
-			return null;
-		}
-
-		// Run all tasks
 		Set<Task> tasks = new HashSet<>();
 		goalRun(out, tasks);
 		return tasks;
@@ -183,27 +170,31 @@ public class TaskDependecies {
 	/**
 	 * Find all leaf nodes required for goal 'out'
 	 */
-	void goalRun(String goal, Set<Task> addedTasks) {
+	boolean goalRun(String goal, Set<Task> addedTasks) {
+
+		// Check if we really need to update this goal (with respect to the leaf nodes)
+		if (!goalNeedsUpdate(goal)) return false;
+
 		List<Task> tasks = tasksByOutput.get(goal);
+		if (tasks == null) return false;
 
-		// Recurse
-		if (tasks != null) {
-			// Satisfy all goals before running
-			for (Task t : tasks) {
-				if (addedTasks.contains(t)) throw new RuntimeException("Circular dependency on task '" + t.getId() + "'");
-				addedTasks.add(t);
+		// Satisfy all goals before running
+		for (Task t : tasks) {
+			if (addedTasks.contains(t)) throw new RuntimeException("Circular dependency on task '" + t.getId() + "'");
+			addedTasks.add(t);
 
-				if (t.getInputFiles() != null) //
-					for (String in : t.getInputFiles())
-						goalRun(in, addedTasks);
-			}
-
-			// Run all tasks
-			for (Task t : tasks) {
-				t.setDependency(false); // We are executing this task, so it it no long a 'dep'
-				ExpressionTask.execute(bdsThread, t);
-			}
+			if (t.getInputFiles() != null) //
+				for (String in : t.getInputFiles())
+					goalRun(in, addedTasks);
 		}
+
+		// Run all tasks
+		for (Task t : tasks) {
+			t.setDependency(false); // We are executing this task, so it it no long a 'dep'
+			ExpressionTask.execute(bdsThread, t);
+		}
+
+		return true;
 	}
 
 	public boolean hasTask(String taskId) {
