@@ -272,18 +272,28 @@ print("Hi\n"); print("Bye\n");
 print("Hi\n") 
 print("Bye\n")
 </pre>
-
-					<li> <code>if / else</code> It does exactly what you expect
+					<li> <code> break </code>: Breaks from current loop
 <pre class="prettyprint">
-if( i < 10 )	print("Less than ten\n")
-</pre>
-					or
-<pre class="prettyprint">
-if( i < 10 ) {
-    print("Less than ten\n")
-} else {
-    print("More than ten\n")
+for( int i=0 ; i < 10 ; i++ ) {
+    if( i == 5 ) break;	   // Finish when we reach 5
 }
+</pre>
+
+					<li> <code> continue </code>: Continue at the end of the current loop
+<pre class="prettyprint">
+for( int i=0 ; i < 10 ; i++ ) {
+    if( i == 5 ) continue;	// Skip value 5
+}
+</pre>
+
+					<li> <code>error</code> Show an error mesasge and exit the program
+<pre class="prettyprint">
+if( num <= 0 )	warining "Number MUST be positive\n"
+</pre>
+
+					<li> <code> exit </code>: Exit program, optional expression calculates an exit value.
+<pre class="prettyprint">
+exit 1
 </pre>
 
 					<li> <code>for</code> C or Java like for statement
@@ -306,31 +316,37 @@ string[] mylist
 for( string s : mylist ) print("$s\n")
 </pre>
 
-					<li> <code>while</code> typical while iterator
+					<li> <code>if / else</code> It does exactly what you expect
 <pre class="prettyprint">
-while( i < 10 ) i++
+if( i < 10 )	print("Less than ten\n")
+</pre>
+					or
+<pre class="prettyprint">
+if( i < 10 ) {
+    print("Less than ten\n")
+} else {
+    print("More than ten\n")
+}
 </pre>
 
-					<li> <code> break </code>: Breaks from current loop
+					<li> <code> include </code> Include source code from another file
 <pre class="prettyprint">
-for( int i=0 ; i < 10 ; i++ ) {
-    if( i == 5 ) break;	   // Finish when we reach 5
-}
+include mymodule
+
+// ... use functions from 'mymodule.bds'
 </pre>
-					<li> <code> continue </code>: Continue at the end of the current loop
-<pre class="prettyprint">
-for( int i=0 ; i < 10 ; i++ ) {
-    if( i == 5 ) continue;	// Skip value 5
-}
-</pre>
-					<li> <code> exit </code>: Exit program, optional expression calculates an exit value.
-<pre class="prettyprint">
-exit 1
-</pre>
+
 					<li> <code> kill </code> Kill a task
 <pre class="prettyprint">
 kill taskId
 </pre>
+
+					<li> <code> print / println </code> Print to sdtout
+<pre class="prettyprint">
+print "Show this mesage without a new line at the end."
+println "This one gets a new line at the end."
+</pre>
+
 					<li> <code> return </code> Return from a function. Optional expression is a return value.
 <pre class="prettyprint">
 // Define a function
@@ -338,10 +354,17 @@ int twice(int n) {
 	return( 2 * n )
 }
 </pre>
-					<li> <code> expr ? exprTrue : exprFalse</code> Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'
+
+					<li> <code>warning</code> Show a warning message
 <pre class="prettyprint">
-sign = ( i >= 0 ? 1 : -1 )
+if( num <= 0 )	warining "Number should be positive\n"
 </pre>
+
+					<li> <code>while</code> typical while iterator
+<pre class="prettyprint">
+while( i < 10 ) i++
+</pre>
+
 					<li> <code> type varName </code> Declare varaible 'var' as type 'type'
 <pre class="prettyprint">
 int i      # 'i' is an 64 bit int variable
@@ -354,27 +377,30 @@ int i = 42
 real r = 3.1415927
 string s = "Hello!"
 </pre>
+
 					<li> <code> varName := expr </code> Declare varaible 'var', use type inference, evaluate expression 'expr' and assign result to initialize 'var'
 <pre class="prettyprint">
 i := 42
 r := 3.1415927
 s := "Hello!"
 </pre>
+
 					<li> <code> var = expr </code> Evaluate expression 'expr' and assign result to 'var'
 <pre class="prettyprint">
 i = j + 1
 s = "Hello " + world
 </pre>
+
 					<li> <code> ( var1, var2, ..., varN ) = expr </code> Evaluate expression 'expr' (which must return a list) and assign results to 'var1', 'var2', etc. If the list size is less than the number of variables, variables are assigned default values (e.g. '0' for int). If the list has more values, they are ignored.
 <pre class="prettyprint">
 (name, value) = line.split('\t')
 </pre>
-					<li> <code> include </code> Include source code from another file
-<pre class="prettyprint">
-include mymodule
 
-// ... use functions from 'mymodule.bds'
+					<li> <code> expr ? exprTrue : exprFalse</code> Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'
+<pre class="prettyprint">
+sign = ( i >= 0 ? 1 : -1 )
 </pre>
+
 				</ul>
 				<br>
 				<br>
@@ -590,7 +616,8 @@ int[] primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 				<b> Methods </b>
 				<table class="table table-striped">
 					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
-					<tr> <td> Element added  </td> <td> add </td> <td> Add at the end og the list </td> </tr>
+					<tr> <td> </td> <td> += </td> <td> Append element/s at the end of the list </td> </tr>
+					<tr> <td> Element added  </td> <td> add </td> <td> Add at the end of the list </td> </tr>
 					<tr> <td> First element  </td> <td> head </td> <td> Get first element </td> </tr>
 					<tr> <td> Last element  </td> <td> pop </td> <td> Get last element and remove it from the list </td> </tr>
 					<tr> <td> Element pushed  </td> <td> push </td> <td> Add at the end of the list </td> </tr>
