@@ -713,6 +713,29 @@ Key : Hola	Value : Adios
 
 				</p>
 
+				<h3 class="page-header" id="vars">Predefined functions </h3>
+				<p class="lead"> BigDataScript provides some predefined functions.</p>
+				<br>
+				<table class="table table-striped">
+					<tr> <th> Function </th> <th> Meaning </th> </tr>
+					<tr> <td> int max(int n1, int n2) 					</td> <td> Maximum of two numbers </td> </tr>
+					<tr> <td> real max(real n1, real n2) 				</td> <td> Maximum of two numbers </td> </tr>
+					<tr> <td> int min(int n1, int n2) 					</td> <td> Minimum of two numbers </td> </tr>
+					<tr> <td> real min(real n1, real n2) 				</td> <td> Minimum of two numbers </td> </tr>
+					<tr> <td> print( expr )								</td> <td> Show to stdout (same as 'print' statement) </td> </tr>
+					<tr> <td> printErr( expr )							</td> <td> Show to stderr </td> </tr>
+					<tr> <td> real rand() 								</td> <td> Random number [0, 1] inetrval </td> </tr>
+					<tr> <td> int rand() 								</td> <td> Random number (64 bits) </td> </tr>
+					<tr> <td> int rand(int range)						</td> <td> Random number [0, range] interval </td> </tr>
+					<tr> <td> int[] range(min, max)						</td> <td> A list of numbers between [min, max] inclusive </td> </tr>
+					<tr> <td> int[] range(min, max, step)				</td> <td> A list of numbers between [min, min+step, min+2*step, ... ]. Includes max if min+N*step = max </td> </tr>
+					<tr> <td> real[] range(min, max, step)				</td> <td> A list of numbers between [min, min+step, min+2*step, ... ]. Includes max if min+N*step = max </td> </tr>
+					<tr> <td> sleep( int seconds )						</td> <td> Sleep for 'seconds' </td> </tr>
+					<tr> <td> sleep( real seconds )						</td> <td> Sleep for '1000 * seconds' milliseconds. E.g. sleep(0.5) sleeps for half a second </td> </tr>
+					<tr> <td> int toInt(bool b)							</td> <td> Convert boolean to int </td> </tr>
+					<tr> <td> int toInt(real r)							</td> <td> Convert real to int </td> </tr>
+				</table>
+
 				<h3 class="page-header" id="vars">Predefined global variables </h3>
 				<p class="lead"> BigDataScript provides some predefined variables.</p>
 				<br>
