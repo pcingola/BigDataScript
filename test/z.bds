@@ -1,9 +1,6 @@
 #!/usr/bin/env bds
 
-conf := config("test/myfile.config")
+conf := config('test/myfile.config')
 
-println "OK"
-for( string name : conf.keys() )	{
-	println "$name : '$conf{$name}'"
-}
+for( string name : conf.keys() )	println "$name : $conf{$name}"
 
