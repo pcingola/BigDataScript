@@ -39,6 +39,8 @@ statement : '{' statement* '}'                                                  
             | 'checkpoint' expression? eol*                                                # checkpoint
             | 'continue' eol*                                                              # continue
             | 'exit' expression? eol*                                                      # exit
+            | 'print' expression? eol*                                                     # print
+            | 'println' expression? eol*                                                   # println
             | 'warning' expression? eol*                                                   # warning
             | 'error' expression? eol*                                                     # error
             | 'for' '(' ( forInit )? 

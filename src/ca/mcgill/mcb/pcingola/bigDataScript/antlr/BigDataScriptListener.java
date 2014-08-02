@@ -196,12 +196,12 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitForCondition(@NotNull BigDataScriptParser.ForConditionContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#statement}.
+	 * Enter a parse tree produced by {@link BigDataScriptParser#programUnit}.
 	 * @param ctx the parse tree
 	 */
 	void enterProgramUnit(@NotNull BigDataScriptParser.ProgramUnitContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#statement}.
+	 * Exit a parse tree produced by {@link BigDataScriptParser#programUnit}.
 	 * @param ctx the parse tree
 	 */
 	void exitProgramUnit(@NotNull BigDataScriptParser.ProgramUnitContext ctx);
@@ -724,6 +724,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitLiteralMap(@NotNull BigDataScriptParser.LiteralMapContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#println}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrintln(@NotNull BigDataScriptParser.PrintlnContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#println}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrintln(@NotNull BigDataScriptParser.PrintlnContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionAssignmentBitOr}.
 	 * @param ctx the parse tree
 	 */
@@ -909,6 +920,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeArray(@NotNull BigDataScriptParser.TypeArrayContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#print}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrint(@NotNull BigDataScriptParser.PrintContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#print}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrint(@NotNull BigDataScriptParser.PrintContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#statmentExpr}.

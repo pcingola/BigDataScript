@@ -131,7 +131,7 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitForCondition(@NotNull BigDataScriptParser.ForConditionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#statement}.
+	 * Visit a parse tree produced by {@link BigDataScriptParser#programUnit}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -467,6 +467,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitLiteralMap(@NotNull BigDataScriptParser.LiteralMapContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#println}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrintln(@NotNull BigDataScriptParser.PrintlnContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionAssignmentBitOr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -584,6 +591,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTypeArray(@NotNull BigDataScriptParser.TypeArrayContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#print}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrint(@NotNull BigDataScriptParser.PrintContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#statmentExpr}.
