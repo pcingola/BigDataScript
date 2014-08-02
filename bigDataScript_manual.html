@@ -718,6 +718,16 @@ Key : Hola	Value : Adios
 				<br>
 				<table class="table table-striped">
 					<tr> <th> Function </th> <th> Meaning </th> </tr>
+					<tr> <td> string{} config(string fileName)			</td> <td> Read and parse 'fileName', return &lt;name,value&gt; pairs in a map.<br>
+																					Parsing: Lines starting with '#' are ignored, so aer blank lines.<br>
+																					Name/Value delimiters can be any of ':', '=' or '\t' (the first one found in each line will be used).<br>
+																					The following are valid and equivalent:<br>
+<pre>
+name : value
+name = value
+name \t value
+</pre>
+					<tr> <td> string{} config(string fileName, string{} defaults)			</td> <td> Same as <code>string{} config(string fileName)</code>, but using <code>defaults</code> as default values (if not found in fileName) </td> </tr>
 					<tr> <td> int max(int n1, int n2) 					</td> <td> Maximum of two numbers </td> </tr>
 					<tr> <td> real max(real n1, real n2) 				</td> <td> Maximum of two numbers </td> </tr>
 					<tr> <td> int min(int n1, int n2) 					</td> <td> Minimum of two numbers </td> </tr>
