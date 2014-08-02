@@ -485,19 +485,24 @@ wait listOfTaksIDs
 
 				<table class="table table-striped">
 					<tr> <th>Return type</th><th> Method / Operator</th> <th> Meaning </th> </tr>
-					<tr> <td> string   </td><td> s = s1 + s2							</td> <td> Concatenate strings.</td> </tr>
-					<tr> <td> string   </td><td> string.toUpper()						</td> <td> Return an upper case version of the string</td> </tr>
-					<tr> <td> string   </td><td> string.toLower()						</td> <td> Return a lower case version of the string</td> </tr>
-					<tr> <td> string   </td><td> string.trim()							</td> <td> Trim spaces at the beginnig and at the end</td> </tr>
-					<tr> <td> string   </td><td> string.substr(int start,int end)	   </td> <td> Substring from start to end</td> </tr>
-					<tr> <td> string[] </td><td> string.split(string regex)				</td> <td> Split using a regular expression </td> </tr>
-					<tr> <td> string[] </td><td> string.lines()							</td> <td> Split a string into lines </td> </tr>
-					<tr> <td> bool	 </td><td> string.isEmpty()					   </td> <td> True if the string is empty</td> </tr>
-					<tr> <td> bool	 </td><td> string.startsWith(string str)			</td> <td> True if string starts with str</td> </tr>
-					<tr> <td> bool	 </td><td> string.endsWith(string str)			</td> <td> True if string ends with str</td> </tr>
-					<tr> <td> bool	 </td><td> string.indexOf(string str)				</td> <td> Index of th first occurrence of str in string</td> </tr>
-					<tr> <td> int	  </td><td> string.lastIndexOf(string str)			</td> <td> Index of th last occurrence of str in string</td> </tr>
-					<tr> <td> string   </td><td> string.replace(string str1,string str2)</td> <td> A new string replacing 'str1' with 'str2'</td> </tr>
+					<tr> <td> string	</td><td> s = s1 + s2							</td> <td> Concatenate strings.</td> </tr>
+					<tr> <td> string	</td><td> s += s2								</td> <td> Append to  string.</td> </tr>
+					<tr> <td> bool		</td><td> string.endsWith(string str)			</td> <td> True if string ends with str</td> </tr>
+					<tr> <td> bool		</td><td> string.isEmpty()					   </td> <td> True if the string is empty</td> </tr>
+					<tr> <td> bool		</td><td> string.indexOf(string str)				</td> <td> Index of th first occurrence of str in string</td> </tr>
+					<tr> <td> int		</td><td> string.lastIndexOf(string str)			</td> <td> Index of th last occurrence of str in string</td> </tr>
+					<tr> <td> int		</td><td> string.length()							</td> <td> String's length </td> </tr>
+					<tr> <td> string	</td><td> string.replace(string str1,string str2)	</td> <td> A new string replacing 'str1' with 'str2'</td> </tr>
+					<tr> <td> bool		</td><td> string.parseBool()						</td> <td> Parse a bool </td> </tr>
+					<tr> <td> int		</td><td> string.parseInt()							</td> <td> Parse an int number </td> </tr>
+					<tr> <td> real		</td><td> string.parseReal()						</td> <td> Parse a real number </td> </tr>
+					<tr> <td> string[]	</td><td> string.split(string regex)				</td> <td> Split using a regular expression </td> </tr>
+					<tr> <td> bool		</td><td> string.startsWith(string str)			</td> <td> True if string starts with str</td> </tr>
+					<tr> <td> string	</td><td> string.substr(int start)			   </td> <td> Substring from start to end of string</td> </tr>
+					<tr> <td> string	</td><td> string.substr(int start,int end)	   </td> <td> Substring from start to end</td> </tr>
+					<tr> <td> string	</td><td> string.toLower()						</td> <td> Return a lower case version of the string</td> </tr>
+					<tr> <td> string	</td><td> string.toUpper()						</td> <td> Return an upper case version of the string</td> </tr>
+					<tr> <td> string	</td><td> string.trim()							</td> <td> Trim spaces at the beginnig and at the end</td> </tr>
 				</table>
 
 				<h3> Strings as file names </h3>
@@ -514,30 +519,38 @@ if( f.canRead() ) {
 				Here <code>f</code> is a string, but it has a method <code>canRead()</code> which retuurns true if f is a file and it can be read.
 				<br>
 				<br>
-				More file related methods:
+# 				More file related methods:
 
 				<table class="table table-striped">
-					<tr> <th>Return type</th><th> Method</th> <th> Meaning </th> </tr>
-					<tr><td>string		</td> <td>string.path()					  </td> <td> Canonical path to file	</td> </tr>
-					<tr><td>string		</td> <td>string.baseName()				  </td> <td> File's base name	</td> </tr>
+					<tr> <th>Return type</th><th> Method</th> 								<th> Meaning </th> </tr>
+					<tr><td>string		</td> <td>string.baseName()					</td> <td> File's base name	</td> </tr>
 					<tr><td>string		</td> <td>string.baseName(string ext)		</td> <td> File's base name, remove extention 'ext'	</td> </tr>
-					<tr><td>string		</td> <td>string.dirName()				   </td> <td> File's directory name	</td> </tr>
-					<tr><td>string		</td> <td>string.extName()				   </td> <td> File's extension	</td> </tr>
-					<tr><td>bool		  </td> <td>string.canRead()				   </td> <td> True if file has read permission	</td> </tr>
-					<tr><td>bool		  </td> <td>string.canWrite()				  </td> <td> True if file has write permission   </td> </tr>
-					<tr><td>bool		  </td> <td>string.canExec()				   </td> <td> True if file has execution permission	</td> </tr>
-					<tr><td>bool		  </td> <td>string.exists()					</td> <td> True if file exists	</td> </tr>
-					<tr><td>bool		  </td> <td>string.isDir()					 </td> <td> True if it's a directory	</td> </tr>
-					<tr><td>bool		  </td> <td>string.isFile()					</td> <td> True if it's a file	</td> </tr>
-					<tr><td>bool		  </td> <td>string.delete()					</td> <td> Delete file	</td> </tr>
-					<tr><td>bool		  </td> <td>string.mkdir()					 </td> <td> Create dir ('mkdir -p')   </td> </tr>
-					<tr><td>string		</td> <td>string.read()					  </td> <td> Read the whole file into a string	</td> </tr>
-					<tr><td>string[]	  </td> <td>string.readLines()				 </td> <td> Read the whole file and split the lines	</td> </tr>
-					<tr><td>string[]	  </td> <td>string.dir()					   </td> <td> List files in a directory ('ls')   </td> </tr>
-					<tr><td>string[]	  </td> <td>string.dir(string regex)		   </td> <td> List files matching a regular expression </td> </tr>
-					<tr><td>string[]	  </td> <td>string.dirPath()				   </td> <td> List files using canonical paths	</td> </tr>
-					<tr><td>string[]	  </td> <td>string.dirPath(string regex)	   </td> <td> List files, matching a regular expresion, using canonical paths	</td> </tr>
-					<tr><td>int		   </td> <td>string.size()					  </td> <td> File size in bytes  </td> </tr>
+					<tr><td>bool		</td> <td>string.canRead()					</td> <td> True if file has read permission	</td> </tr>
+					<tr><td>bool		</td> <td>string.canWrite()					</td> <td> True if file has write permission   </td> </tr>
+					<tr><td>bool		</td> <td>string.canExec()					</td> <td> True if file has execution permission	</td> </tr>
+					<tr><td>bool		</td> <td>string.delete()					</td> <td> Delete file	</td> </tr>
+					<tr><td>string[]	</td> <td>string.dir()						</td> <td> List files in a directory ('ls')   </td> </tr>
+					<tr><td>string[]	</td> <td>string.dir(string regex)			</td> <td> List files matching a regular expression </td> </tr>
+					<tr><td>string		</td> <td>string.dirName()					</td> <td> File's directory name	</td> </tr>
+					<tr><td>string[]	</td> <td>string.dirPath()					</td> <td> List files using canonical paths	</td> </tr>
+					<tr><td>string[]	</td> <td>string.dirPath(string regex)		</td> <td> List files, matching a regular expresion, using canonical paths	</td> </tr>
+					<tr><td>string		</td> <td>string.extName()				  	</td> <td> File's extension	</td> </tr>
+					<tr><td>bool		</td> <td>string.exists()					</td> <td> True if file exists	</td> </tr>
+					<tr><td>bool		</td> <td>string.isDir()					</td> <td> True if it's a directory	</td> </tr>
+					<tr><td>bool		</td> <td>string.isFile()					</td> <td> True if it's a file	</td> </tr>
+					<tr><td>bool		</td> <td>string.mkdir()					</td> <td> Create dir ('mkdir -p')   </td> </tr>
+					<tr><td>string		</td> <td>string.path()						</td> <td> Canonical path to file	</td> </tr>
+					<tr><td>string		</td> <td>string.pathName()					</td> <td> Canonical dir to file	</td> </tr>
+					<tr><td>string		</td> <td>string.read()						</td> <td> Read the whole file into a string	</td> </tr>
+					<tr><td>string[]	</td> <td>string.readLines()				</td> <td> Read the whole file and split the lines	</td> </tr>
+					<tr><td>string		</td> <td>string.removeExt()				</td> <td> Remove file extension </td> </tr>
+					<tr><td>string		</td> <td>string.removeExt(string ext)		</td> <td> Remove file extension, only if it matches the provided one </td> </tr>
+					<tr><td>bool		</td> <td>string.rm()				 		</td> <td> Delete a file </td> </tr>
+					<tr><td>bool		</td> <td>string.rmExit()			 		</td> <td> Remove a file when execution finishes (thread execution).</td> </tr>
+					<tr><td>int			</td> <td>string.size()						</td> <td> File size in bytes  </td> </tr>
+					<tr><td>string		</td> <td>string.swapExt(string newExt)	</td> <td> Swap file extension </td> </tr>
+					<tr><td>string		</td> <td>string.swapExt(string oldExt,string newExt)		</td> <td> Swap file extension, only if extensio matches the provided 'oldExt'</td> </tr>
+					<tr><td>string		</td> <td>string.write(string file)			</td> <td> Write string to 'file' </td> </tr>
 				</table>
 				
 				<h3> Strings as task IDs </h3>
