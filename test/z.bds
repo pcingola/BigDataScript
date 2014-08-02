@@ -1,4 +1,9 @@
 #!/usr/bin/env bds
 
-print "print statemen rules\n"
-println "but ln is better"
+conf := config("test/myfile.config")
+
+println "OK"
+for( string name : conf.keys() )	{
+	println "$name : '$conf{$name}'"
+}
+

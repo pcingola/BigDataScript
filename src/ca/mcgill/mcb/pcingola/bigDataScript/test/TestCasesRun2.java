@@ -73,4 +73,32 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheckMultiple("test/run_106.bds", expectedValues);
 	}
 
+	@Test
+	public void test107() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("paramName", "parameter_value");
+		expectedValues.put("file1", "/path/to/file_1.txt");
+		expectedValues.put("file2", "/path/to/file_2.txt");
+		expectedValues.put("file3", "/path/to/file_3.txt");
+		expectedValues.put("file4", "/path/to/file_4.txt");
+		expectedValues.put("file5", "/path/to/file_5.txt");
+
+		debug = true;
+		runAndCheckMultiple("test/run_107.bds", expectedValues);
+	}
+
+	@Test
+	public void test108() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("paramName", "parameter_value");
+		expectedValues.put("file1", "/path/to/file_1.txt");
+		expectedValues.put("file2", "/path/to/file_2.txt");
+		expectedValues.put("file3", "/path/to/file_3.NEW.txt");
+		expectedValues.put("file4", "/path/to/file_4.txt");
+		expectedValues.put("file5", "/path/to/file_5.NEW.txt");
+
+		debug = true;
+		runAndCheckMultiple("test/run_108.bds", expectedValues);
+	}
+
 }

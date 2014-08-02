@@ -28,6 +28,8 @@ public class NativeLibraryFunctions {
 			, FunctionNativeSleepReal.class //
 			, FunctionNativeToIntFromBool.class //
 			, FunctionNativeToIntFromReal.class //
+			, FunctionNativeConfig.class //
+			, FunctionNativeConfigOri.class //
 
 	};
 

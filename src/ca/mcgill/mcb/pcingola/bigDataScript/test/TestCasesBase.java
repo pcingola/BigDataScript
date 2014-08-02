@@ -115,7 +115,7 @@ public class TestCasesBase extends TestCase {
 
 			ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varName);
 
-			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
+			if (debug) Gpr.debug("Program: " + fileName + "\tvarName: '" + varName + "'\tssym: " + ssym);
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
