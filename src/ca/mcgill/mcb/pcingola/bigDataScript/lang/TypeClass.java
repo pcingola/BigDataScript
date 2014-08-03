@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * Class type
- * 
+ *
  * @author pcingola
  */
 public class TypeClass extends Type {
@@ -15,9 +15,6 @@ public class TypeClass extends Type {
 
 	/**
 	 * Get a class type
-	 * @param primitiveType
-	 * @param typeName
-	 * @return
 	 */
 	public static TypeClass get(String className) {
 		// Get type from hash

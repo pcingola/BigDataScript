@@ -23,7 +23,7 @@ public class LiteralList extends Literal {
 	}
 
 	public Type baseType() {
-		return ((TypeList) returnType).baseType;
+		return ((TypeList) returnType).getBaseType();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -108,7 +108,7 @@ public class LiteralList extends Literal {
 
 	@Override
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		Type baseType = ((TypeList) returnType).baseType;
+		Type baseType = ((TypeList) returnType).getBaseType();
 
 		for (BigDataScriptNode node : values) {
 			Expression expr = (Expression) node;

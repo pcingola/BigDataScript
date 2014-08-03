@@ -1,21 +1,13 @@
 #!/usr/bin/env bds
 
-void foreach(string[] l) {
-	for( string s : l ) println s
-}
+#void foreach(string[] l) {
+#	for( string s : l ) println s
+#}
+#int f(string s)		return s.length()
 
-int f(string s)		return s.length()
-
-println "Hello!"
+println "Start"
 
 a := ['hi', 'bye', 'adios']
 
-a.foreach()
-int[] aa
-aa = a.map( f )
-println "aa: $aa"
-
-
-int[] map( string[] , string=>int ) 
-
-T2[] map( T1[], T1 => T2 )
+la := a.map( length )
+println "la: $la"

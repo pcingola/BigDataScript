@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * Expression 'Literal' of a map
- * 
+ *
  * @author pcingola
  */
 public class LiteralMap extends Literal {
@@ -24,7 +24,7 @@ public class LiteralMap extends Literal {
 	}
 
 	public Type baseType() {
-		return ((TypeMap) returnType).baseType;
+		return ((TypeMap) returnType).getBaseType();
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class LiteralMap extends Literal {
 
 	@Override
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		Type baseType = ((TypeMap) returnType).baseType;
+		Type baseType = ((TypeMap) returnType).getBaseType();
 
 		for (BigDataScriptNode node : values) {
 			Expression expr = (Expression) node;

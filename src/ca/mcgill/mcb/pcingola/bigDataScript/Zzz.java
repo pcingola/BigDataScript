@@ -1,16 +1,11 @@
 package ca.mcgill.mcb.pcingola.bigDataScript;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 
 public class Zzz {
 
 	public static void main(String[] args) throws Exception {
 
-		String str = "\"After, \\\" ,checkpoint: $s\", \"Another,string\"";
-		String split[] = GprString.splitCsv(str);
-
-		for (String s : split)
-			Gpr.debug("|" + s + "|");
+		TypeFunc tf1;
 	}
 }

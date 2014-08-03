@@ -55,7 +55,7 @@ public class TypeFunc extends Type {
 		sb.append("(");
 		if (parameters != null) {
 			for (VarDeclaration vdecl : parameters.getVarDecl()) {
-				Type type = vdecl.type;
+				Type type = vdecl.getType();
 				for (VariableInit vi : vdecl.getVarInit())
 					sb.append(type + ",");
 
@@ -68,7 +68,7 @@ public class TypeFunc extends Type {
 		return sb.toString();
 	}
 
-	protected TypeFunc(FunctionDeclaration functionDeclaration) {
+	public TypeFunc(FunctionDeclaration functionDeclaration) {
 		super();
 		primitiveType = PrimitiveType.FUNC;
 		this.functionDeclaration = functionDeclaration;
