@@ -1,6 +1,21 @@
 #!/usr/bin/env bds
 
-conf := config('test/myfile.config')
+void foreach(string[] l) {
+	for( string s : l ) println s
+}
 
-for( string name : conf.keys() )	println "$name : $conf{$name}"
+int f(string s)		return s.length()
 
+println "Hello!"
+
+a := ['hi', 'bye', 'adios']
+
+a.foreach()
+int[] aa
+aa = a.map( f )
+println "aa: $aa"
+
+
+int[] map( string[] , string=>int ) 
+
+T2[] map( T1[], T1 => T2 )

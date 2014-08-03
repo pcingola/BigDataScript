@@ -19,10 +19,6 @@ public class Args extends BigDataScriptNode {
 
 	/**
 	 * Create 'method' arguments by prepending 'this' argument expression
-	 *  
-	 * @param args
-	 * @param exprThis
-	 * @return
 	 */
 	public static Args getArgsThis(Args args, Expression exprThis) {
 		Args argsThis = new Args(null, null);
