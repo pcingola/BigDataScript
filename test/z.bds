@@ -3,11 +3,12 @@
 #void foreach(string[] l) {
 #	for( string s : l ) println s
 #}
-#int f(string s)		return s.length()
+
+string len(string s)		return 'hi:'+s
 
 println "Start"
 
 a := ['hi', 'bye', 'adios']
 
-la := a.map( length )
+la := a.mapToInt( len )
 println "la: $la"

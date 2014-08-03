@@ -93,15 +93,6 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 		// Add base types
 		for (PrimitiveType pt : PrimitiveType.values())
 			put(get(pt));
-		//		put(VOID);
-		//		put(BOOL);
-		//		put(INT);
-		//		put(REAL);
-		//		put(STRING);
-		//		put(LIST);
-		//		put(MAP);
-		//		put(FAKE);
-		//		put(ANY);
 	}
 
 	public Type() {

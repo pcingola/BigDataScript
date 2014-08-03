@@ -17,15 +17,41 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class MethodNativeListMap extends MethodNativeList {
 
+	public Type returnBaseType; // This is public because otherwise reflections in type checking won't be able to access it
+
 	public MethodNativeListMap(Type baseType) {
-		super(baseType);
+		super(null);
+		if (baseType != null) initMethod(baseType, baseType, "map");
+	}
+
+	public MethodNativeListMap(Type baseType, Type returnBaseType, String methodName) {
+		super(null);
+		initMethod(baseType, returnBaseType, methodName);
+	}
+
+	protected FunctionDeclaration findFunction(BigDataScriptThread bdsThread, String fname) {
+		FunctionDeclaration function = (FunctionDeclaration) bdsThread.getObject("f");
+		Gpr.debug("Return base type: " + returnBaseType + "\nFunction:" + function);
+
+		// Type checking
+		// TODO: This is awful to say the least!
+		//       Type checking should be done at compile time, not here
+		//       (this is supposed to be a statically typed language)
+		if (!function.getReturnType().canCast(returnBaseType)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + returnBaseType);
+
+		return function;
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
-		functionName = "map";
+		throw new RuntimeException("This method should not be invoked!");
+	}
+
+	protected void initMethod(Type baseType, Type returnBaseType, String functionName) {
+		this.functionName = functionName;
 		classType = TypeList.get(baseType);
-		returnType = TypeList.get(baseType);
+		this.returnBaseType = returnBaseType;
+		returnType = TypeList.get(returnBaseType);
 
 		TypeFunc typeFunc = TypeFunc.get(Parameters.get(baseType, ""), Type.ANY);
 		String argNames[] = { "this", "f" };
@@ -41,16 +67,16 @@ public class MethodNativeListMap extends MethodNativeList {
 		ArrayList list = (ArrayList) objThis;
 
 		// Get function
-		FunctionDeclaration function = (FunctionDeclaration) bdsThread.getObject("f");
-		Gpr.debug("Function: " + function);
+		FunctionDeclaration function = findFunction(bdsThread, "f");
 
 		// Map
 		ArrayList res = new ArrayList();
 		Object values[] = new Object[1];
 		for (Object o : list) {
 			values[0] = o;
-			Object r = function.apply(bdsThread, values);
-			res.add(r);
+			Object r = function.apply(bdsThread, values); // Get result
+			Object ret = returnBaseType.cast(r); // Cast to list's type
+			res.add(ret); // Add to list
 		}
 
 		return res;

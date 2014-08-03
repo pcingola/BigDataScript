@@ -8,14 +8,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 
 /**
  * Methods for list/array/stack
- *  
+ *
  * @author pcingola
  */
 public abstract class MethodNativeList extends MethodNative {
 
 	public MethodNativeList(Type baseType) {
 		super();
-		initMethod(baseType);
+		if (baseType != null) initMethod(baseType);
 	}
 
 	@Override
