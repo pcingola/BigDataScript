@@ -427,7 +427,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public void fatalError(BigDataScriptNode bdsnode, String message) {
 		runState = RunState.FATAL_ERROR;
-		System.err.println("Fatal error: " + bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + (bdsnode.getCharPosInLine() + 1) + ". " + message);
+		String filePos = "";
+		if (bdsnode.getFileName() != null) filePos = bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + (bdsnode.getCharPosInLine() + 1) + ". ";
+		System.err.println("Fatal error: " + filePos + message);
 
 		// Show BDS stack trace
 		try {
@@ -777,7 +779,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}

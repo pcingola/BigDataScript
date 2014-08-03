@@ -29,15 +29,21 @@ public class MethodNativeListMap extends MethodNativeList {
 		initMethod(baseType, returnBaseType, methodName);
 	}
 
+	/**
+	 * Find a function
+	 * TODO: Move this to Scope?
+	 */
 	protected FunctionDeclaration findFunction(BigDataScriptThread bdsThread, String fname) {
 		FunctionDeclaration function = (FunctionDeclaration) bdsThread.getObject("f");
-		Gpr.debug("Return base type: " + returnBaseType + "\nFunction:" + function);
 
 		// Type checking
 		// TODO: This is awful to say the least!
 		//       Type checking should be done at compile time, not here
 		//       (this is supposed to be a statically typed language)
 		if (!function.getReturnType().canCast(returnBaseType)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + returnBaseType);
+
+		Gpr.debug("Function should only have one argument");
+		Gpr.debug("List's elements should be 'castable' to function's argument");
 
 		return function;
 	}
