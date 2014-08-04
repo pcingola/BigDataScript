@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-prefix := "graph_08"
+prefix := "test/graph_08"
 in   := "$prefix.in.txt"
 mid1 := "$prefix.mid1.txt"
 mid2 := "$prefix.mid2.txt"
