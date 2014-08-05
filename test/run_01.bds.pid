@@ -6097,3 +6097,191 @@ test/checkpoint_09.xml	+	rm
 test/checkpoint_09.csv	-
 22954	-
 test/checkpoint_09.xml	-
+6810	+	
+6810	-
+6816	+	
+6816	-
+6819	+	
+6819	-
+null	-
+6825	+	
+6825	-
+6827	+	
+6827	-
+6829	+	
+6829	-
+6831	+	
+6831	-
+6834	+	
+6834	-
+6837	+	
+6837	-
+6841	+	
+/Users/pcingola/zero_length_file_out.txt	+	rm
+6841	-
+/Users/pcingola/zero_length_file_out.txt	-
+6842	+	
+6842	-
+6847	+	
+6847	-
+6850	+	
+6851	+	
+6850	-
+6851	-
+6860	+	
+6860	-
+6863	+	
+6863	-
+6866	+	
+6866	-
+null	-
+6868	+	
+6868	-
+6872	+	
+6872	-
+6875	+	
+6875	-
+6878	+	
+6878	-
+6881	+	
+6881	-
+6884	+	
+6884	-
+6888	+	
+failOnce.out1	+	rm
+6888	-
+failOnce.out1	-
+6893	+	
+failOnce.out1	+	rm
+6893	-
+failOnce.out1	-
+6897	+	
+failOnce.out2	+	rm
+6897	-
+failOnce.out2	-
+6903	+	
+failOnce.out1	+	rm
+6903	-
+failOnce.out1	-
+6908	+	
+failOnce.out1	+	rm
+6908	-
+failOnce.out1	-
+6913	+	
+failOnce.out2	+	rm
+6913	-
+failOnce.out2	-
+6932	+	
+out1.txt	+	rm
+6932	-
+out1.txt	-
+6936	+	
+out2.txt	+	rm
+6936	-
+out2.txt	-
+6942	+	
+out1.txt	+	rm
+6942	-
+out1.txt	-
+6946	+	
+out2.txt	+	rm
+6946	-
+out2.txt	-
+6950	+	
+out1.txt	+	rm
+6950	-
+out1.txt	-
+6954	+	
+6954	-
+6957	+	
+6957	-
+6963	+	
+out1.txt	+	rm
+6963	-
+out1.txt	-
+6967	+	
+out2.txt	+	rm
+6967	-
+out2.txt	-
+6970	+	
+out1.txt	+	rm
+6970	-
+out1.txt	-
+6974	+	
+out2.txt	+	rm
+6974	-
+out2.txt	-
+6977	+	
+test/graph_05.csv	+	rm
+6977	-
+test/graph_05.csv	-
+6980	+	
+test/graph_05.xml	+	rm
+6980	-
+test/graph_05.xml	-
+6983	+	
+test/graph_05.csv	+	rm
+6983	-
+test/graph_05.csv	-
+6986	+	
+test/graph_05.xml	+	rm
+6986	-
+test/graph_05.xml	-
+6989	+	
+test/graph_06.csv	+	rm
+6989	-
+test/graph_06.csv	-
+6992	+	
+test/graph_06.xml	+	rm
+6992	-
+test/graph_06.xml	-
+6999	+	
+test/graph_08.mid1.txt	+	rm
+6999	-
+test/graph_08.mid1.txt	-
+7002	+	
+test/graph_08.mid2.txt	+	rm
+7002	-
+test/graph_08.mid2.txt	-
+7005	+	
+test/graph_08.out.txt	+	rm
+7005	-
+test/graph_08.out.txt	-
+7019	+	
+graph_08.mid1.txt	+	rm
+7019	-
+graph_08.mid1.txt	-
+7022	+	
+graph_08.out.txt	+	rm
+7022	-
+graph_08.out.txt	-
+7025	+	
+7025	-
+7026	+	
+7026	-
+7030	+	
+7030	-
+7033	+	
+test/checkpoint_08.csv	+	rm
+7033	-
+test/checkpoint_08.csv	-
+7036	+	
+test/checkpoint_08.xml	+	rm
+7036	-
+test/checkpoint_08.xml	-
+7039	+	
+test/checkpoint_08.csv	+	rm
+7039	-
+test/checkpoint_08.csv	-
+7042	+	
+test/checkpoint_08.xml	+	rm
+7042	-
+test/checkpoint_08.xml	-
+7045	+	
+test/checkpoint_09.csv	+	rm
+7045	-
+test/checkpoint_09.csv	-
+7048	+	
+test/checkpoint_09.xml	+	rm
+7048	-
+test/checkpoint_09.xml	-

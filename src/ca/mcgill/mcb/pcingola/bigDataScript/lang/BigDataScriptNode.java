@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.TypeCheckedNodes;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
@@ -34,6 +35,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	protected BigDataScriptNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
 
+	Type returnType;
+
 	/**
 	 * Constructor
 	 * @param parent
@@ -46,6 +49,54 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		// Initialize some defaults
 		initialize();
 		doParse(tree);
+	}
+
+	/**
+	 * Can returnType be casted to bool?
+	 */
+	protected boolean canCastBool() {
+		return ((returnType != null) && returnType.canCast(Type.BOOL));
+	}
+
+	/**
+	 * Can returnType be casted to int?
+	 */
+	protected boolean canCastInt() {
+		return ((returnType != null) && returnType.canCast(Type.INT));
+	}
+
+	/**
+	 * Can returnType be casted to real?
+	 */
+	protected boolean canCastReal() {
+		return ((returnType != null) && returnType.canCast(Type.REAL));
+	}
+
+	/**
+	 * Check that this expression can be casted to bool
+	 * Add a compile error otherwise
+	 */
+	protected void checkCanCastBool(CompilerMessages compilerMessages) {
+		if ((returnType != null) && !returnType.canCast(Type.BOOL)) compilerMessages.add(this, "Cannot cast " + returnType + " to bool", MessageType.ERROR);
+	}
+
+	/**
+	 * Check that this expression can be casted to int
+	 * Add a compile error otherwise
+	 */
+	protected void checkCanCastInt(CompilerMessages compilerMessages) {
+		if ((returnType != null) && !returnType.canCast(Type.INT)) compilerMessages.add(this, "Cannot cast " + returnType + " to int", MessageType.ERROR);
+	}
+
+	/**
+	 * Check that this expression can be casted to either int or real
+	 * Add a compile error otherwise
+	 */
+	protected void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
+		if ((returnType != null) //
+				&& (!returnType.canCast(Type.INT) //
+				&& !returnType.canCast(Type.REAL)) //
+		) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
 	}
 
 	/**
@@ -67,6 +118,45 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		} else {
 			if (parent != null && parent.getLineNum() > 0) lineNum = parent.getLineNum();
 		}
+	}
+
+	/**
+	 * Evaluate an expression, return result
+	 */
+	public Object eval(BigDataScriptThread bdsThread) {
+		throw new RuntimeException("Unplemented method 'eval' for class " + getClass().getSimpleName());
+	}
+
+	/**
+	 * Evaluate an expression as an 'bool'
+	 */
+	public boolean evalBool(BigDataScriptThread bdsThread) {
+		Object ret = eval(bdsThread);
+		return (Boolean) Type.BOOL.cast(ret);
+	}
+
+	/**
+	 * Evaluate an expression as an 'int'
+	 */
+	public long evalInt(BigDataScriptThread bdsThread) {
+		Object ret = eval(bdsThread);
+		return (Long) Type.INT.cast(ret);
+	}
+
+	/**
+	 * Evaluate an expression as an 'real'
+	 */
+	public double evalReal(BigDataScriptThread bdsThread) {
+		Object ret = eval(bdsThread);
+		return (Double) Type.REAL.cast(ret);
+	}
+
+	/**
+	 * Evaluate an expression as an 'bool'
+	 */
+	public String evalString(BigDataScriptThread bdsThread) {
+		Object ret = eval(bdsThread);
+		return (String) Type.STRING.cast(ret);
 	}
 
 	/**
@@ -275,6 +365,13 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return (ProgramUnit) n;
 	}
 
+	/**
+	 * Which type does this expression return?
+	 */
+	public Type getReturnType() {
+		return returnType;
+	}
+
 	public Scope getScope() {
 		return null;
 	}
@@ -296,6 +393,13 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	}
 
 	/**
+	 * Is return type bool?
+	 */
+	protected boolean isBool() {
+		return (returnType != null) && returnType.isBool();
+	}
+
+	/**
 	 * Is this a fake node (created during serialization)
 	 */
 	public boolean isFake() {
@@ -303,10 +407,54 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	}
 
 	/**
+	 * Is return type int?
+	 */
+	protected boolean isInt() {
+		return (returnType != null) && returnType.isInt();
+	}
+
+	protected boolean isList() {
+		return (returnType != null) && returnType.isList();
+	}
+
+	protected boolean isList(Type baseType) {
+		return (returnType != null) && returnType.isList(baseType);
+	}
+
+	protected boolean isMap() {
+		return (returnType != null) && returnType.isMap();
+	}
+
+	protected boolean isMap(Type baseType) {
+		return (returnType != null) && returnType.isMap(baseType);
+	}
+
+	/**
 	 * Does this node require a new scope
 	 */
 	public boolean isNeedsScope() {
 		return false;
+	}
+
+	/**
+	 * Is return type real?
+	 */
+	protected boolean isReal() {
+		return (returnType != null) && returnType.isReal();
+	}
+
+	/**
+	 * Do all subordinate expressions have a non-null return type?
+	 */
+	protected boolean isReturnTypesNotNull() {
+		return true;
+	}
+
+	/**
+	 * Is return type string?
+	 */
+	protected boolean isString() {
+		return (returnType != null) && returnType.isString();
 	}
 
 	/**
@@ -360,7 +508,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		Timer.showStdErr(getClass().getSimpleName() //
 				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
 				+ " : " + msg //
-				);
+		);
 	}
 
 	/**
@@ -430,6 +578,13 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 			}
 		}
 
+	}
+
+	/**
+	 * Calculate return type and assign it to 'returnType' variable.
+	 */
+	public Type returnType(Scope scope) {
+		return Type.VOID;
 	}
 
 	/**
@@ -532,7 +687,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + charPosInLine //
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" //
-				);
+		);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields
@@ -657,11 +812,13 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return out.toString();
 	}
 
-	/**
-	 * Perform a typecheck
-	 */
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		// Default: Nothing to do
+		// Calculate return type
+		returnType(scope);
+
+		// Are return types non-null?
+		// Note: null returnTypes happen if variables are missing.
+		if (isReturnTypesNotNull()) typeCheckNotNull(scope, compilerMessages);
 	}
 
 	/**
@@ -704,10 +861,19 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	}
 
 	/**
+	 * Type checking.
+	 * This is invoked once we made sure all return types are non null (so we don't have to check for null every time)
+	 */
+	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+		// Nothing to do
+	}
+
+	/**
 	 * Update ID field
 	 */
 	protected void updateId(int newId) {
 		BigDataScriptNodeFactory.get().updateId(id, newId, this);
 		id = newId;
 	}
+
 }
