@@ -34,8 +34,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	protected BigDataScriptNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
-
-	Type returnType;
+	protected Type returnType;
 
 	/**
 	 * Constructor
@@ -658,6 +657,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 			parent.setFakeId(parentId);
 		}
 
+		returnType = serializer.getNextFieldType();
+
 		// Iterate over fields
 		for (Field field : getAllClassFields(false)) {
 			try {
@@ -686,6 +687,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + lineNum //
 				+ "\t" + charPosInLine //
 				+ "\t" + serializer.serializeSaveValue(parent) //
+				+ "\t" + serializer.serializeSaveValue(returnType) //
 				+ "\t" //
 		);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();

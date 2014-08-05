@@ -19,7 +19,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 public class FunctionDeclaration extends StatementWithScope {
 
 	protected String functionName;
-	protected Type returnType;
 	protected Type funcType;
 	protected Parameters parameters;
 	protected Statement statement;
@@ -68,6 +67,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		return parameters;
 	}
 
+	@Override
 	public Type getReturnType() {
 		return returnType;
 	}
