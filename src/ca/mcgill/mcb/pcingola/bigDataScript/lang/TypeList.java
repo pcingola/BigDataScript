@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListAdd;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListAddList;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListFilter;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListHead;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListIsEmpty;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListJoin;
@@ -79,6 +80,7 @@ public class TypeList extends Type {
 			methods.add(new MethodNativeListAdd(baseType));
 			methods.add(new MethodNativeListAddList(baseType));
 			methods.add(new MethodNativeListHead(baseType));
+			methods.add(new MethodNativeListFilter(baseType));
 			methods.add(new MethodNativeListIsEmpty(baseType));
 			methods.add(new MethodNativeListJoin(baseType));
 			methods.add(new MethodNativeListJoinStr(baseType));

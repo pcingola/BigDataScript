@@ -8,7 +8,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Map: Apply a function to all elements in the list
@@ -42,8 +41,8 @@ public class MethodNativeListMap extends MethodNativeList {
 		//       (this is supposed to be a statically typed language)
 		if (!function.getReturnType().canCast(returnBaseType)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + returnBaseType);
 
-		Gpr.debug("Function should only have one argument");
-		Gpr.debug("List's elements should be 'castable' to function's argument");
+		// TODO: Check that function should only have one argument
+		// TODO: Check List's elements should be 'castable' to function's argument
 
 		return function;
 	}

@@ -59,6 +59,37 @@ public class FunctionDeclaration extends StatementWithScope {
 		return retVal;
 	}
 
+	/**
+	 * Apply function to arguments, return function's result
+	 */
+	public Object apply(BigDataScriptThread bdsThread, Object value) {
+		VarDeclaration fparam[] = getParameters().getVarDecl();
+
+		// Create new scope
+		bdsThread.newScope(this);
+
+		// Add arguments to scope
+		Scope scope = bdsThread.getScope();
+
+		// Only one argument
+		Type argType = fparam[0].type;
+		String argName = fparam[0].getVarInit()[0].varName;
+		scope.add(new ScopeSymbol(argName, argType, value));
+
+		// Run function body
+		RunState rstate = runFunction(bdsThread);
+		if (rstate == RunState.FATAL_ERROR) throw new RuntimeException("Fatal error");
+
+		// Get return value
+		Object retVal = bdsThread.getReturnValue();
+
+		// Back to old scope
+		bdsThread.oldScope();
+
+		// Return result
+		return retVal;
+	}
+
 	public String getFunctionName() {
 		return functionName;
 	}

@@ -1,14 +1,15 @@
 #!/usr/bin/env bds
 
-#void foreach(string[] l) {
-#	for( string s : l ) println s
-#}
+# Function
+string hi(string s)		return 'hi:' + s
 
-string len(string s)		return 'hi:'+s
+bool hasI(string s)		return s.indexOf('i') >= 0
+
+int len(string s)		return s.length()
 
 println "Start"
 
 a := ['hi', 'bye', 'adios']
 
-la := a.mapToInt( len )
+la := a.filter( hasI ).map( hi ).mapToInt( len ).sum()
 println "la: $la"
