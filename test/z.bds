@@ -7,9 +7,12 @@ bool hasI(string s)		return s.indexOf('i') >= 0
 
 int len(string s)		return s.length()
 
+void pp(string s)		println "Element: '$s'"
+
 println "Start"
 
 a := ['hi', 'bye', 'adios']
 
-la := a.filter( hasI ).map( hi ).mapToInt( len ).sum()
+la := a.filter( hasI ).map( hi ).mapToInt( len ).foreach( pp )
+
 println "la: $la"
