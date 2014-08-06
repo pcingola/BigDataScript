@@ -1,18 +1,13 @@
 #!/usr/bin/env bds
 
-# Function
-string hi(string s)		return 'hi:' + s
+int singleMarkerToGeneScores(string[] ss) {
+	for( int i=0 ; i < ss.size() ; i++ ) {
+		s := ss[i]
+		if( ! s.isEmpty() ) println "Empty!"
+	}
 
-bool hasI(string s)		return s.indexOf('i') >= 0
+	return 1
+}
 
-int len(string s)		return s.length()
+print("OK!\n")
 
-void pp(string s)		println "Element: '$s'"
-
-println "Start"
-
-a := ['hi', 'bye', 'adios']
-
-la := a.filter( hasI ).map( hi ).mapToInt( len ).foreach( pp )
-
-println "la: $la"
