@@ -268,4 +268,9 @@ public class TestCasesLang extends TestCasesBase {
 		compileErrors("test/test45.bds", errs);
 	}
 
+	@Test
+	public void test46() {
+		compileOk("test/test46.bds");
+	}
+
 }
