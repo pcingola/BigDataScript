@@ -83,7 +83,6 @@ public class TestCasesRun2 extends TestCasesBase {
 		expectedValues.put("file4", "/path/to/file_4.txt");
 		expectedValues.put("file5", "/path/to/file_5.txt");
 
-		debug = true;
 		runAndCheckMultiple("test/run_107.bds", expectedValues);
 	}
 
@@ -97,7 +96,6 @@ public class TestCasesRun2 extends TestCasesBase {
 		expectedValues.put("file4", "/path/to/file_4.txt");
 		expectedValues.put("file5", "/path/to/file_5.NEW.txt");
 
-		debug = true;
 		runAndCheckMultiple("test/run_108.bds", expectedValues);
 	}
 

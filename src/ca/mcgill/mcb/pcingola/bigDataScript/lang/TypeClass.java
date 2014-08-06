@@ -2,8 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
-
 /**
  * Class type
  *
@@ -58,10 +56,10 @@ public class TypeClass extends Type {
 		return className.compareTo(typec.className);
 	}
 
-	@Override
-	public Scope getClassScope() {
-		return classScope;
-	}
+	//	@Override
+	//	public Scope getClassScope() {
+	//		return classScope;
+	//	}
 
 	@Override
 	public boolean isClass() {

@@ -24,7 +24,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNative
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListSize;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListSort;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListTail;
-import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -74,8 +73,6 @@ public class TypeList extends Type {
 	 */
 	protected void addNativeMethods() {
 		try {
-			if (classScope == null) classScope = new Scope(null, null);
-
 			// Add libarary methods
 			ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
 			methods.add(new MethodNativeListAdd(baseType));

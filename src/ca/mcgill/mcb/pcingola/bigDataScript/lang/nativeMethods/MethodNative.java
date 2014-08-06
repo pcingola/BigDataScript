@@ -26,7 +26,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	 * Add method to class scope
 	 */
 	protected void addNativeMethodToClassScope() {
-		Scope classScope = getClassType().getClassScope();
+		Scope classScope = Scope.getClassScope(getClassType());
 		ScopeSymbol ssym = new ScopeSymbol(functionName, getType());
 		classScope.add(ssym);
 	}

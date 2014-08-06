@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 
 /**
@@ -45,7 +44,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 
 	PrimitiveType primitiveType;
 
-	Scope classScope; // A scope defining all class variables and methods
+	// Scope classScope; // A scope defining all class variables and methods
 
 	/**
 	 * Get a type
@@ -98,7 +97,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	public Type() {
 		super(null, null);
 		primitiveType = PrimitiveType.FAKE;
-		classScope = new Scope(null, null);
+		// classScope = new Scope(null, null);
 	}
 
 	protected Type(BigDataScriptNode parent, ParseTree tree) {
@@ -223,9 +222,9 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 		return primitiveType == type.primitiveType;
 	}
 
-	public Scope getClassScope() {
-		return classScope;
-	}
+	//	public Scope getClassScope() {
+	//		return classScope;
+	//	}
 
 	public PrimitiveType getPrimitiveType() {
 		return primitiveType;
@@ -241,6 +240,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	/**
 	 * Is this type 'bool'?
 	 */
+	@Override
 	public boolean isBool() {
 		return primitiveType == PrimitiveType.BOOL;
 	}
@@ -256,6 +256,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	/**
 	 * Is this type 'string'?
 	 */
+	@Override
 	public boolean isInt() {
 		return primitiveType == PrimitiveType.INT;
 	}
@@ -263,10 +264,12 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	/**
 	 * Is this type 'list'?
 	 */
+	@Override
 	public boolean isList() {
 		return false;
 	}
 
+	@Override
 	public boolean isList(Type baseType) {
 		return false;
 	}
@@ -274,10 +277,12 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	/**
 	 * Is this type 'map'?
 	 */
+	@Override
 	public boolean isMap() {
 		return false;
 	}
 
+	@Override
 	public boolean isMap(Type baseType) {
 		return false;
 	}
@@ -293,6 +298,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	/**
 	 * Is this type 'real'?
 	 */
+	@Override
 	public boolean isReal() {
 		return primitiveType == PrimitiveType.REAL;
 	}
@@ -300,6 +306,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	/**
 	 * Is this type 'string'?
 	 */
+	@Override
 	public boolean isString() {
 		return primitiveType == PrimitiveType.STRING;
 	}

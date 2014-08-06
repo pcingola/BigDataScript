@@ -11,7 +11,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeM
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapRemove;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapSize;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.map.MethodNativeMapValues;
-import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -60,9 +59,6 @@ public class TypeMap extends TypeList {
 	@Override
 	protected void addNativeMethods() {
 		try {
-
-			if (classScope == null) classScope = new Scope(null, null);
-
 			// Add libarary methods
 			ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
 			methods.add(new MethodNativeMapKeys(baseType));

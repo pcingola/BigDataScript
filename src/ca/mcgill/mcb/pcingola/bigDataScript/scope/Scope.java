@@ -46,6 +46,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	// Global scope
 	private static int scopeNum = 0;
 	private static Scope globalScope = new Scope(null, null);
+	private static AutoHashMap<String, Scope> classScope = new AutoHashMap<>(new Scope());
 
 	int id;
 	Scope parent;
@@ -53,6 +54,14 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	HashMap<String, ScopeSymbol> symbols;
 	AutoHashMap<String, List<ScopeSymbol>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
 	BigDataScriptNode node;
+
+	/**
+	 * Class scope
+	 */
+	public static Scope getClassScope(Type type) {
+		if (type == null) return null;
+		return classScope.getOrCreate(type.toString());
+	}
 
 	/**
 	 * Global scope
@@ -74,6 +83,8 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	public Scope() {
 		parent = getGlobalScope();
+		this.node = null;
+		id = nextId();
 		symbols = new HashMap<String, ScopeSymbol>();
 	}
 
