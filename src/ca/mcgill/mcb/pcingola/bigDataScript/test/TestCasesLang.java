@@ -273,4 +273,10 @@ public class TestCasesLang extends TestCasesBase {
 		compileOk("test/test46.bds");
 	}
 
+	@Test
+	public void test47() {
+		String errs = "ERROR [ file 'test/test47.bds', line 3 ] :	Duplicate local name gsea";
+		compileErrors("test/test47.bds", errs);
+	}
+
 }
