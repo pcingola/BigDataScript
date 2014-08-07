@@ -28,11 +28,4 @@ public class ExecutionerClusterPbs extends ExecutionerCluster {
 		clusterAdditionalArgs = additionalArgs;
 
 	}
-
-	//	@Override
-	//	protected CheckTasksRunning getCheckTasksRunning() {
-	//		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, joinArgs(clusterStatCommand, clusterAdditionalArgs));
-	//		return checkTasksRunning;
-	//	}
-
 }

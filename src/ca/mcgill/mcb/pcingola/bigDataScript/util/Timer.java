@@ -65,8 +65,6 @@ public class Timer {
 
 	/**
 	 * Transform miliseconds to HH:MM:SS
-	 * @param millisecs
-	 * @return
 	 */
 	public static String toHHMMSS(long millisecs) {
 		long hours = (millisecs) / (60 * 60 * 1000);

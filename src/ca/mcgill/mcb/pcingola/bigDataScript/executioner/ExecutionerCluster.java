@@ -40,6 +40,10 @@ public class ExecutionerCluster extends Executioner {
 
 	protected String bdsCommand = "bds exec ";
 
+	protected String memParam;
+	protected String cpuParam;
+	protected String wallTimeParam;
+
 	public int MIN_EXTRA_TIMEOUT = 15;
 	public int MAX_EXTRA_TIMEOUT = 120;
 
@@ -61,6 +65,10 @@ public class ExecutionerCluster extends Executioner {
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
 		clusterAdditionalArgs = additionalArgs;
 
+		memParam = "mem=";
+		cpuParam = "nodes=1:ppn=";
+		wallTimeParam = "walltime=";
+
 		// Cluster task need monitoring
 		monitorTask = config.getMonitorTask();
 
@@ -78,12 +86,13 @@ public class ExecutionerCluster extends Executioner {
 		// Add resources request
 		HostResources res = task.getResources();
 
-		int clusterTimeout = calcTimeOut(res);
+		long clusterTimeout = calcTimeOut(res);
+		String clusterTimeoutStr = Timer.toHHMMSS(1000 * clusterTimeout);
 
 		// Cpu, memory and timeout
-		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "nodes=1:ppn=" + res.getCpus());
-		if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + "mem=" + res.getMem());
-		if (clusterTimeout > 0) resSb.append((resSb.length() > 0 ? "," : "") + "walltime=" + clusterTimeout);
+		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + cpuParam + res.getCpus());
+		if (res.getMem() > 0) resSb.append((resSb.length() > 0 ? "," : "") + memParam + res.getMem());
+		if (clusterTimeout > 0) resSb.append((resSb.length() > 0 ? "," : "") + wallTimeParam + clusterTimeoutStr);
 
 		// Any resources requested? Add command line
 		if (resSb.length() > 0) {
@@ -104,9 +113,6 @@ public class ExecutionerCluster extends Executioner {
 	 * Calculate timeout parameter. We want to assign slightly larger timeout
 	 * to the cluster (qsub/msub), because we prefer bds to kill the process (it's
 	 * cleaner and we get exitCode file)
-	 *
-	 * @param res
-	 * @return
 	 */
 	protected int calcTimeOut(HostResources res) {
 		int realTimeout = (int) res.getTimeout();
@@ -115,9 +121,8 @@ public class ExecutionerCluster extends Executioner {
 		int extraTime = (int) (realTimeout * 0.1);
 		if (extraTime < MIN_EXTRA_TIMEOUT) extraTime = MIN_EXTRA_TIMEOUT;
 		if (extraTime > MAX_EXTRA_TIMEOUT) extraTime = MAX_EXTRA_TIMEOUT;
-		int clusterTimeout = realTimeout + extraTime;
 
-		return clusterTimeout;
+		return realTimeout + extraTime;
 	}
 
 	/**
