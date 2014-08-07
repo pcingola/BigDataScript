@@ -10,6 +10,10 @@ cd `dirname $0` &&  cd ..
 # Create 'bds' dir
 mkdir -p "$BDS_HOME" 2> /dev/null
 
+#---
+# Build bds
+#---
+
 # Build Jar file
 mkdir bin 2> /dev/null || true
 echo Building JAR file
@@ -35,9 +39,20 @@ rm "$BDS_HOME/BigDataScript.jar"
 # Binary installed
 echo "Binary created: $BDS_HOME/bds"
 
+#---
+# Copy other stuff
+#---
+
 # Copy 'include' dir
 echo
 echo "Copying include files"
 cd - > /dev/null
 cp -rvf include "$BDS_HOME"
 
+if [ ! -e "$BDS_HOME/bds.config" ]
+then
+	echo "Copying default config file"
+	cp config/bds.default.config "$BDS_HOME/bds.config"
+fi
+
+echo "Done!"
