@@ -262,9 +262,10 @@ public class ExecutionerCluster extends Executioner {
 			// Pattern pattern = Pattern.compile("Your job (\\S+)");
 			Matcher matcher = pidPattern.matcher(line);
 			if (matcher.find()) {
+				if (debug) System.err.println("Regex '" + pidPatternStr + "' matched line: " + line);
 				String pid = matcher.group(1);
 				return pid;
-			} else if (verbose || debug) System.err.println("Regex '" + pidPatternStr + "' did not match line: " + line);
+			} else if (verbose || debug) System.err.println("Regex '" + pidPatternStr + "' did NOT match line: " + line);
 		}
 
 		return line;
