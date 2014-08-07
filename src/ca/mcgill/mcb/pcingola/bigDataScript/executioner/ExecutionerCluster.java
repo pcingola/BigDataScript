@@ -71,9 +71,6 @@ public class ExecutionerCluster extends Executioner {
 
 	/**
 	 * Add resource options to command line parameters
-	 *
-	 * @param task
-	 * @param args
 	 */
 	protected void addResources(Task task, List<String> args) {
 		StringBuilder resSb = new StringBuilder();
