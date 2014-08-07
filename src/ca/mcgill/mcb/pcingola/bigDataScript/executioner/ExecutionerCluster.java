@@ -47,6 +47,7 @@ public class ExecutionerCluster extends Executioner {
 	public int MIN_EXTRA_TIMEOUT = 15;
 	public int MAX_EXTRA_TIMEOUT = 120;
 
+	String pidPatternStr;
 	Pattern pidPattern;
 
 	protected ExecutionerCluster(Config config) {
@@ -68,6 +69,10 @@ public class ExecutionerCluster extends Executioner {
 		memParam = "mem=";
 		cpuParam = "nodes=1:ppn=";
 		wallTimeParam = "walltime=";
+
+		// PID regex matcher
+		pidPatternStr = config.getString(PID_REGEX, "").trim();
+		if (!pidPatternStr.isEmpty()) pidPattern = Pattern.compile(pidPatternStr);
 
 		// Cluster task need monitoring
 		monitorTask = config.getMonitorTask();
@@ -256,7 +261,7 @@ public class ExecutionerCluster extends Executioner {
 			if (matcher.find()) {
 				String pid = matcher.group(1);
 				return pid;
-			}
+			} else if (verbose || debug) System.err.println("Regex '" + pidPatternStr + "' did not match line: " + line);
 		}
 
 		return line;

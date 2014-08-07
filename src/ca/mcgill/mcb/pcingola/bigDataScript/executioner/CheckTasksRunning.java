@@ -14,12 +14,12 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Check that tasks are still running.
- * This method should query the operating system, cluster system or 
- * whatever 'low level' system to make sure the tasks are still 
+ * This method should query the operating system, cluster system or
+ * whatever 'low level' system to make sure the tasks are still
  * running.
- * The idea is that if a task is killed, removed or somehow is no 
+ * The idea is that if a task is killed, removed or somehow is no
  * longer running, we should catch it here (this is the last resort).
- * 
+ *
  * @author pcingola
  */
 public class CheckTasksRunning {
@@ -43,8 +43,8 @@ public class CheckTasksRunning {
 
 	/**
 	 * Check that tasks are actually running
-	 * 
-	 * Default behaviour:
+	 *
+	 * Default behavior:
 	 * 		i) Run a command to query running PIDs
 	 * 		ii) Parse command output, extract all PIDs
 	 * 		iii) For each PID, find the corresponding task, add task 'taskFoundId' (HashSet<String>)
@@ -65,8 +65,6 @@ public class CheckTasksRunning {
 
 	/**
 	 * Find a running task given a PID
-	 * @param pid
-	 * @param state
 	 */
 	protected Set<Task> findRunningTaskByPid(Set<String> pids) {
 		HashSet<Task> tasks = new HashSet<Task>();
@@ -85,7 +83,6 @@ public class CheckTasksRunning {
 
 	/**
 	 * Should we query task states? (i.e. run a command to see if tasks are still alive)
-	 * @return
 	 */
 	protected boolean isCheckTasksRunningTime() {
 		if (time == null) time = new Timer();
@@ -99,7 +96,6 @@ public class CheckTasksRunning {
 	/**
 	 * Parse command output, extract all PIDs
 	 * For each PID, find the corresponding task, add task 'taskFoundId' (HashSet<String>)
-	 * @return
 	 */
 	protected Set<Task> parseCommandOutput() {
 		// For each line in stdout...

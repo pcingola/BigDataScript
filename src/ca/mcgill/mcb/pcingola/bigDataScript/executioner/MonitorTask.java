@@ -54,7 +54,6 @@ public class MonitorTask {
 
 	/**
 	 * Remove task (do not monitor)
-	 * @param task
 	 */
 	public synchronized void remove(Task task) {
 		if (debug) Timer.showStdErr("MonitorTask: Removing task " + task.getId());

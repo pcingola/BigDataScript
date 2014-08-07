@@ -32,6 +32,8 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	public static final int SLEEP_TIME_SHORT = 10;
 	public static final int REPORT_INTERVAL = 60;
 
+	public static final String PID_REGEX = "pidRegex";
+
 	protected boolean debug;
 	protected boolean verbose;
 	protected boolean log;
@@ -215,7 +217,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Kill task by ID
-	 * @param taskId
 	 */
 	public void kill(String taskId) {
 		Task t = findTask(taskId);
