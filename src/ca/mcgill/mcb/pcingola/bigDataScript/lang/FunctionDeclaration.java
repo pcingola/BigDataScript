@@ -181,4 +181,11 @@ public class FunctionDeclaration extends StatementWithScope {
 		return sb.toString();
 	}
 
+	@Override
+	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+		// Function name collides with variable name?
+		if (scope.getSymbolLocal(functionName) != null) compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
+
+	}
+
 }

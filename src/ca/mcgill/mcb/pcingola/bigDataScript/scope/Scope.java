@@ -242,7 +242,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 			if (ssym != null) return ssym;
 
 			// Try a function
-			List<ScopeSymbol> fs = scope.getFunctions(symbol);
+			List<ScopeSymbol> fs = scope.getFunctionsLocal(symbol);
 			// Since we are only matching by name, there has to be one
 			// and only one function with that name
 			// Note, this is limiting and very naive. A better approach is needed
@@ -257,8 +257,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	 * Get symbol on this scope (or any parent scope if not local)
 	 */
 	public synchronized ScopeSymbol getSymbolLocal(String symbol) {
-		if (symbols.containsKey(symbol)) return symbols.get(symbol);
-		return null;
+		return symbols.get(symbol);
 	}
 
 	public Collection<ScopeSymbol> getSymbols() {
@@ -277,7 +276,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	 * Is symbol available on this scope or any parent scope?
 	 */
 	public boolean hasSymbolLocal(String symbol) {
-		return getSymbolLocal(symbol) != null;
+		return getSymbolLocal(symbol) != null || getFunctionsLocal(symbol) != null;
 	}
 
 	/**

@@ -66,7 +66,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (this == TaskState.ERROR) //
 					|| (this == TaskState.ERROR_TIMEOUT) //
 					|| (this == TaskState.KILLED) //
-			;
+					;
 		}
 
 		public boolean isFinished() {
@@ -658,7 +658,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) {
+					) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;
