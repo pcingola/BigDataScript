@@ -73,7 +73,7 @@ public class ExecutionerCluster extends Executioner {
 		// PID regex matcher
 		pidPatternStr = config.getString(PID_REGEX, "").trim();
 		if (!pidPatternStr.isEmpty()) {
-			Gpr.debug("USING PATTERN: " + pidPatternStr);
+			if (debug) Gpr.debug("Using pidPattern: '" + pidPatternStr + "'");
 			pidPattern = Pattern.compile(pidPatternStr);
 		}
 
