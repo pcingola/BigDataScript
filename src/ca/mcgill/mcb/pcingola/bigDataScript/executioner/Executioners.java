@@ -67,8 +67,6 @@ public class Executioners {
 
 	/**
 	 * Create (and start) an executioner
-	 * @param exName
-	 * @return
 	 */
 	private synchronized Executioner factory(ExecutionerType exType) {
 		Executioner executioner;
