@@ -333,6 +333,26 @@ public class BigDataScript {
 		// Reset node factory
 		BigDataScriptNodeFactory.reset();
 
+		// Startup message
+		if (verbose) Timer.showStdErr(VERSION);
+
+		// ---
+		// Config
+		// ---
+		config = new Config(configFile);
+		config.setVerbose(verbose);
+		config.setDebug(debug);
+		config.setLog(log);
+		config.setDryRun(dryRun);
+		config.setTaskFailCount(taskFailCount);
+		config.setNoRmOnExit(noRmOnExit);
+		config.setCreateReport(createReport);
+		if (pidFile == null) {
+			if (programFileName != null) pidFile = programFileName + ".pid";
+			else pidFile = chekcpointRestoreFile + ".pid";
+		}
+		config.setPidFile(pidFile);
+
 		// Global scope
 		initilaizeGlobalScope();
 
@@ -740,25 +760,6 @@ public class BigDataScript {
 	 * Run script
 	 */
 	public int run() {
-		// Startup message
-		if (verbose) Timer.showStdErr(VERSION);
-
-		// ---
-		// Config
-		// ---
-		config = new Config(configFile);
-		config.setVerbose(verbose);
-		config.setDebug(debug);
-		config.setLog(log);
-		config.setDryRun(dryRun);
-		config.setTaskFailCount(taskFailCount);
-		config.setNoRmOnExit(noRmOnExit);
-		config.setCreateReport(createReport);
-		if (pidFile == null) {
-			if (programFileName != null) pidFile = programFileName + ".pid";
-			else pidFile = chekcpointRestoreFile + ".pid";
-		}
-		config.setPidFile(pidFile);
 		Executioners executioners = Executioners.getInstance(config); // Initialize executioners
 
 		// ---
