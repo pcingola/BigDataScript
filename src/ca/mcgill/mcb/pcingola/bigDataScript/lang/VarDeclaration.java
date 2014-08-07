@@ -124,7 +124,14 @@ public class VarDeclaration extends Statement {
 
 			// Already declared?
 			if (scope.hasSymbolLocal(varName)) {
-				compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
+				String other = "";
+				if (scope.getFunctionsLocal(varName) != null) {
+					Type typef = scope.getFunctionsLocal(varName).get(0).getType();
+					FunctionDeclaration fdecl = ((TypeFunc) typef).getFunctionDeclaration();
+					other = " (function '" + varName + "' declared in " + fdecl.getFileName() + ", line " + fdecl.getLineNum() + ")";
+				}
+
+				compilerMessages.add(this, "Duplicate local name '" + varName + "'" + other, MessageType.ERROR);
 			} else {
 				// Calculate implicit data type
 				if (implicit && type == null) type = vi.getExpression().returnType(scope);
