@@ -53,11 +53,13 @@ public class ExecutionerCluster extends Executioner {
 		String killCommand[] = { FAKE_CLUSTER + "qdel" };
 		String statCommand[] = { FAKE_CLUSTER + "qstat" };
 		String postMortemInfoCommand[] = { FAKE_CLUSTER + "qstat", "-f" };
+		String additionalArgs[] = {};
 
 		clusterExecCommand = execCommand;
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
+		clusterAdditionalArgs = additionalArgs;
 
 		// Cluster task need monitoring
 		monitorTask = config.getMonitorTask();
@@ -288,7 +290,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit code : " + cmdExecResult.exitValue //
 				+ "\n\tStdout    : " + cmdExecResult.stdOut //
 				+ "\n\tStderr    : " + cmdExecResult.stdErr //
-				);
+		);
 
 	}
 
