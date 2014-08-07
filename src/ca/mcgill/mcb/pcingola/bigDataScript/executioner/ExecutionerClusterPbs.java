@@ -26,6 +26,5 @@ public class ExecutionerClusterPbs extends ExecutionerCluster {
 		clusterStatCommand = statCommand;
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
 		clusterAdditionalArgs = additionalArgs;
-
 	}
 }
