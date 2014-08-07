@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A "return" statement
- * 
+ *
  * @author pcingola
  */
 public class Return extends Statement {
@@ -28,6 +28,7 @@ public class Return extends Statement {
 		if (tree.getChildCount() > 1) expr = (Expression) factory(tree, 1);
 	}
 
+	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
@@ -55,7 +56,7 @@ public class Return extends Statement {
 
 	@Override
 	public String toString() {
-		return "return( " + expr + " )";
+		return "return " + expr + "\n";
 	}
 
 	@Override

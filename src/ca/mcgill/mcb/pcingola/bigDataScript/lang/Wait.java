@@ -75,4 +75,9 @@ public class Wait extends Statement {
 	protected RunState runStepWaitRecover(BigDataScriptThread bdsThread) {
 		return runStepOk(bdsThread);
 	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName().toLowerCase() + (taskId != null ? taskId : "") + "\n";
+	}
 }

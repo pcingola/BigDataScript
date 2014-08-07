@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * An "exit" statement (quit the program immediately)
- * 
+ *
  * @author pcingola
  */
 public class Exit extends Statement {
@@ -28,6 +28,7 @@ public class Exit extends Statement {
 		if (tree.getChildCount() > 1) expr = (Expression) factory(tree, 1);
 	}
 
+	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
@@ -51,13 +52,14 @@ public class Exit extends Statement {
 	}
 
 	@Override
+	public String toString() {
+		return "exit " + expr + "\n";
+	}
+
+	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		returnType(scope);
 		if ((expr.getReturnType() != null) && (!expr.getReturnType().canCast(returnType))) compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
-	}
-
-	public String toString() {
-		return "exit( " + expr + " )\n";
 	}
 
 }

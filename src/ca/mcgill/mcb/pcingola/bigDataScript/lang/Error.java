@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * An "error" statement (quit the program immediately)
- * 
+ *
  * @author pcingola
  */
 public class Error extends Exit {
@@ -48,13 +48,14 @@ public class Error extends Exit {
 	}
 
 	@Override
+	public String toString() {
+		return "error " + expr + "\n";
+	}
+
+	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		returnType(scope);
 		if ((expr.getReturnType() != null) && (!expr.getReturnType().canCast(Type.STRING))) compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + Type.STRING, MessageType.ERROR);
-	}
-
-	public String toString() {
-		return "error( " + expr + " )\n";
 	}
 
 }

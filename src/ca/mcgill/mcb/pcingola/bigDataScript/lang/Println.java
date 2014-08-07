@@ -9,8 +9,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
- * An "print" statement 
- * 
+ * An "print" statement
+ *
  * @author pcingola
  */
 public class Println extends Exit {
@@ -46,14 +46,14 @@ public class Println extends Exit {
 	}
 
 	@Override
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		returnType(scope);
-		if ((expr.getReturnType() != null) && (!expr.getReturnType().canCast(Type.STRING))) compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + Type.STRING, MessageType.ERROR);
+	public String toString() {
+		return "println " + expr + "\n";
 	}
 
 	@Override
-	public String toString() {
-		return "error( " + expr + " )\n";
+	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+		returnType(scope);
+		if ((expr.getReturnType() != null) && (!expr.getReturnType().canCast(Type.STRING))) compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + Type.STRING, MessageType.ERROR);
 	}
 
 }

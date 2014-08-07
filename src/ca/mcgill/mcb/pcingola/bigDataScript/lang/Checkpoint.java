@@ -44,6 +44,11 @@ public class Checkpoint extends Statement {
 	}
 
 	@Override
+	public String toString() {
+		return this.getClass().getSimpleName().toLowerCase() + expr + "\n";
+	}
+
+	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		if (expr != null) {
 			expr.returnType(scope);

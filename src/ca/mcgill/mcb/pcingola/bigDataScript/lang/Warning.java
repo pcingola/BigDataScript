@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * An "warning" statement (quit the program immediately)
- * 
+ *
  * @author pcingola
  */
 public class Warning extends Error {
@@ -32,7 +32,7 @@ public class Warning extends Error {
 
 	@Override
 	public String toString() {
-		return "warning( " + expr + " )\n";
+		return "warning " + expr + "\n";
 	}
 
 }
