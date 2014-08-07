@@ -56,8 +56,6 @@ public class Config {
 
 	/**
 	 * Create a configuration from 'configFileName'
-	 * @param genomeVersion
-	 * @param configFileName
 	 */
 	public Config(String configFileName) {
 		read(configFileName); // Read config file
@@ -66,8 +64,6 @@ public class Config {
 
 	/**
 	 * Get a property as a double
-	 * @param propertyName
-	 * @return
 	 */
 	protected double getDouble(String propertyName, double defaultValue) {
 		String val = getString(propertyName);

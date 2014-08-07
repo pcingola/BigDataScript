@@ -36,6 +36,7 @@ public class ExecutionerCluster extends Executioner {
 	protected String clusterKillCommand[];
 	protected String clusterStatCommand[];
 	protected String clusterPostMortemInfoCommand[];
+	protected String clusterAdditionalArgs[];
 
 	protected String bdsCommand = "bds exec ";
 
@@ -149,6 +150,10 @@ public class ExecutionerCluster extends Executioner {
 		for (String arg : clusterExecCommand)
 			args.add(arg);
 
+		// Add additional commands
+		for (String arg : clusterAdditionalArgs)
+			args.add(arg);
+
 		// Add resources request
 		HostResources res = task.getResources();
 		int realTimeout = (int) res.getTimeout();
@@ -203,7 +208,7 @@ public class ExecutionerCluster extends Executioner {
 
 	@Override
 	protected CheckTasksRunning getCheckTasksRunning() {
-		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, clusterStatCommand);
+		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, joinArgs(clusterStatCommand, clusterAdditionalArgs));
 		return checkTasksRunning;
 	}
 
@@ -211,20 +216,30 @@ public class ExecutionerCluster extends Executioner {
 		return clusterStatCommand;
 	}
 
+	protected String[] joinArgs(String[] argsOri, String[] argsAdditional) {
+		ArrayList<String> args = new ArrayList<String>();
+
+		// Cluster kill commands
+		for (String arg : argsOri)
+			args.add(arg);
+
+		// Add additional commands
+		for (String arg : argsAdditional)
+			args.add(arg);
+
+		return args.toArray(new String[0]);
+	}
+
 	/**
 	 * An OS command to kill this task
-	 * @param task
-	 * @return
 	 */
 	@Override
 	public String[] osKillCommand(Task task) {
-		return clusterKillCommand;
+		return joinArgs(clusterKillCommand, clusterAdditionalArgs);
 	}
 
 	/**
 	 * Parse PID line from 'qsub' (Cmd)
-	 * @param line
-	 * @return
 	 */
 	@Override
 	public String parsePidLine(String line) {
@@ -273,7 +288,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit code : " + cmdExecResult.exitValue //
 				+ "\n\tStdout    : " + cmdExecResult.stdOut //
 				+ "\n\tStderr    : " + cmdExecResult.stdErr //
-		);
+				);
 
 	}
 

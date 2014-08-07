@@ -4,9 +4,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 
 /**
  * Execute tasks in a MOAB cluster.
- * 
+ *
  * All commands are run using 'qsub' (or equivalent) commands
- * 
+ *
  * @author pcingola
  */
 public class ExecutionerClusterMoab extends ExecutionerCluster {
@@ -27,10 +27,10 @@ public class ExecutionerClusterMoab extends ExecutionerCluster {
 
 	}
 
-	@Override
-	protected CheckTasksRunning getCheckTasksRunning() {
-		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, clusterStatCommand);
-		return checkTasksRunning;
-	}
+	//	@Override
+	//	protected CheckTasksRunning getCheckTasksRunning() {
+	//		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, joinArgs(clusterStatCommand, clusterAdditionalArgs));
+	//		return checkTasksRunning;
+	//	}
 
 }
