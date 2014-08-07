@@ -73,7 +73,7 @@ public class ExecutionerCluster extends Executioner {
 		// PID regex matcher
 		pidPatternStr = config.getString(PID_REGEX, "").trim();
 		if (!pidPatternStr.isEmpty()) {
-			if (debug) Gpr.debug("Using pidPattern: '" + pidPatternStr + "'");
+			if (debug) Timer.showStdErr("ExecutionerCluster: Using pidPattern '" + pidPatternStr + "'");
 			pidPattern = Pattern.compile(pidPatternStr);
 		}
 
@@ -262,10 +262,10 @@ public class ExecutionerCluster extends Executioner {
 			// Pattern pattern = Pattern.compile("Your job (\\S+)");
 			Matcher matcher = pidPattern.matcher(line);
 			if (matcher.find()) {
-				if (debug) System.err.println("Regex '" + pidPatternStr + "' matched line: " + line);
 				String pid = matcher.group(1);
+				if (debug) Timer.showStdErr("ExecutionerCluster: Regex '" + pidPatternStr + "' matched '" + pid + "' in line: " + line);
 				return pid;
-			} else if (verbose || debug) System.err.println("Regex '" + pidPatternStr + "' did NOT match line: " + line);
+			} else if (verbose || debug) Timer.showStdErr("ExecutionerCluster: Regex '" + pidPatternStr + "' did NOT match line: " + line);
 		}
 
 		return line;
