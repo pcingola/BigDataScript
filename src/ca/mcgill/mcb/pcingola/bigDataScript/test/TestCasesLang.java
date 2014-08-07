@@ -116,7 +116,7 @@ public class TestCasesLang extends TestCasesBase {
 
 	@Test
 	public void test19() {
-		String errs = "ERROR [ file 'test/test19.bds', line 4 ] :	Duplicate local name i\n";
+		String errs = "ERROR [ file 'test/test19.bds', line 4 ] :	Duplicate local name 'i'\n";
 		compileErrors("test/test19.bds", errs);
 	}
 
@@ -275,7 +275,7 @@ public class TestCasesLang extends TestCasesBase {
 
 	@Test
 	public void test47() {
-		String errs = "ERROR [ file 'test/test47.bds', line 3 ] :	Duplicate local name gsea";
+		String errs = "ERROR [ file 'test/test47.bds', line 3 ] :	Duplicate local name 'gsea' (function 'gsea' declared in test/test47.bds, line 5)";
 		compileErrors("test/test47.bds", errs);
 	}
 
