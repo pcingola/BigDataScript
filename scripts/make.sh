@@ -14,8 +14,9 @@ ant
 echo
 echo Building bds wrapper: Compiling GO program
 cd go/bds/
+export GOPATH=`pwd`
 go clean
-go build bds.go
+go build 
 go fmt
 
 # Build binay (go executable + JAR file)
