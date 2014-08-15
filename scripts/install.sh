@@ -25,7 +25,8 @@ echo Building GO program
 cd go/bds/
 export GOPATH=$GOPATH:`pwd`
 go clean
-go build bds.go
+go build
+go fmt
 
 # Build binay (go executable + JAR file)
 cat bds "$BDS_HOME/BigDataScript.jar" > bds.bin
