@@ -64,7 +64,7 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 
 		// Sanity check
 		if (nodeId != csnode.getId()) {
-			Gpr.debug("Node ID does not math!" //
+			Gpr.debug("Node ID does not match!" //
 					+ "\n\tNode id    : " + nodeId //
 					+ "\n\tCS_Node id : " + csnode.getId() //
 			);
@@ -73,7 +73,6 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 
 	/**
 	 * Add to program counter
-	 * @param csnode
 	 */
 	public void push(BigDataScriptNode csnode) {
 		nodeIds.push(csnode.getId());

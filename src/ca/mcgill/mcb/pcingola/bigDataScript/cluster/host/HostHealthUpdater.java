@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Update host's info every now and then (in a separate thread)
- * 
+ *
  * @author pcingola
  */
 public class HostHealthUpdater extends Thread {
@@ -74,7 +74,7 @@ public class HostHealthUpdater extends Thread {
 	}
 
 	/**
-	 * Connect to host (via ssh) and execute several commands in order to update host's information 
+	 * Connect to host (via ssh) and execute several commands in order to update host's information
 	 * (e.g. cpu information does not usually change, so it's not obtained)
 	 */
 	void update() {
@@ -92,13 +92,11 @@ public class HostHealthUpdater extends Thread {
 		// Run command parser (updates host health)
 		commandParser.parse();
 
-		if (debug) {
-			Gpr.debug("Host info updated: " + host //
-					+ "\nResources: " + host.getResources() //
-					+ "\nHeath:\n" + host.getHealth() //
-					+ "\nCondition: " + host.getHealth().condition() //
-			);
-		}
+		if (debug) Gpr.debug("Host info updated: " + host //
+				+ "\nResources: " + host.getResources() //
+				+ "\nHeath:\n" + host.getHealth() //
+				+ "\nCondition: " + host.getHealth().condition() //
+		);
 
 		if (debug) Gpr.debug("Update: End\tHost: " + host + "\talive: " + host.getHealth().isAlive());
 	}

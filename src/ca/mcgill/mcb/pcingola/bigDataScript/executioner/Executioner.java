@@ -515,8 +515,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 				// There is no host that can execute this task?
 				//---
 				if (!canBeExecuted) {
-					Gpr.debug("Cluster info: " + cluster.info());
-					Gpr.debug("Cluster: " + cluster);
+					if (debug) Gpr.debug("Cluster info: " + cluster.info() + "\n\tCluster: " + cluster);
 					task.setErrorMsg("Not enough resources to execute task: " + task.getResources());
 
 					// Mark the task to be finished (cannot be done here due to concurrent modification)

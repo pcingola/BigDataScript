@@ -17,17 +17,17 @@ import com.jcraft.jsch.UserInfo;
 
 /**
  * Executes an command in a remote host, via ssh
- * 
- * Most of this code is copied from JSch 
+ *
+ * Most of this code is copied from JSch
  * examples (http://www.jcraft.com/jsch/examples/)
- * 
+ *
  * Important: We force the allocation of a pseudo-tty (see channel.setPty(true) )
- * in order to get the commands killed if the SSH connection is lost (e.g. local 
- * command killed). By doing this, we don't have to worry about leaving 
+ * in order to get the commands killed if the SSH connection is lost (e.g. local
+ * command killed). By doing this, we don't have to worry about leaving
  * commands running on a server when our script died. Otherwise we should
  * have a mechanism to log into the server and kill the processes (which may not
  * be feasible if the network is down).
- * 
+ *
  * @author pcingola
  */
 public class Ssh {
@@ -56,9 +56,6 @@ public class Ssh {
 
 	/**
 	 * Send a command and check for an acknowledge
-	 * @param in
-	 * @return
-	 * @throws IOException
 	 */
 	int checkAck(String scpCommand, OutputStream out, InputStream in) throws Exception {
 		if (debug) Gpr.debug("SCP: Sending: '" + scpCommand + "'");
@@ -116,7 +113,7 @@ public class Ssh {
 		return channel;
 	}
 
-	/** 
+	/**
 	 * Diconnect, clear objects and set exit value
 	 */
 	int disconnect(boolean force) {
@@ -147,10 +144,8 @@ public class Ssh {
 
 	/**
 	 * Connect via ssh and execute a command (e.g. execute "ls -al" in remote host)
-	 * 
+	 *
 	 * Reference: http://www.jcraft.com/jsch/examples/Exec.java.html
-	 * 
-	 * @throws Exception
 	 */
 	public String exec(String command) {
 		// Open ssh session
@@ -170,7 +165,7 @@ public class Ssh {
 			// Read input
 			String result = readChannel(true);
 
-			disconnect(false); // Disconnect and get exit code 
+			disconnect(false); // Disconnect and get exit code
 			return result;
 		} catch (Exception e) {
 			if (debug) e.printStackTrace();
@@ -191,10 +186,6 @@ public class Ssh {
 
 	/**
 	 * Read an input stream while data is available
-	 * @param in
-	 * @param sb
-	 * @param tmp
-	 * @throws IOException
 	 */
 	String readAvailable(InputStream in) throws IOException {
 		if (in.available() > 0) {
@@ -211,7 +202,6 @@ public class Ssh {
 
 	/**
 	 * Read channle's input
-	 * @return
 	 */
 	String readChannel(boolean waitClose) {
 		StringBuilder stdout = new StringBuilder();
@@ -236,9 +226,9 @@ public class Ssh {
 
 	/**
 	 * Copy a local file to a remote file
-	 * 
+	 *
 	 * Reference: http://www.jcraft.com/jsch/examples/ScpTo.java.html
-	 * 
+	 *
 	 * @param localFileName : Local file name
 	 * @param remoteFileName : Remote file name
 	 */
@@ -310,6 +300,8 @@ public class Ssh {
 
 class SshUserInfo implements UserInfo {
 
+	boolean debug = false;
+
 	@Override
 	public String getPassphrase() {
 		return null;
@@ -322,19 +314,19 @@ class SshUserInfo implements UserInfo {
 
 	@Override
 	public boolean promptPassphrase(String arg0) {
-		Gpr.debug("SSH Message: " + arg0);
+		if (debug) Gpr.debug("SSH Message: " + arg0);
 		return false;
 	}
 
 	@Override
 	public boolean promptPassword(String arg0) {
-		Gpr.debug("SSH Message: " + arg0);
+		if (debug) Gpr.debug("SSH Message: " + arg0);
 		return true;
 	}
 
 	@Override
 	public boolean promptYesNo(String arg0) {
-		Gpr.debug("SSH Message: " + arg0);
+		if (debug) Gpr.debug("SSH Message: " + arg0);
 		return true;
 	}
 

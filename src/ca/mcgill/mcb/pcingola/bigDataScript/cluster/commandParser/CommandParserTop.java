@@ -4,8 +4,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * A command parser for 'top -l 1' command (OS X) 
- * 
+ * A command parser for 'top -l 1' command (OS X)
+ *
  * @author pcingola@mcgill.ca
  */
 public class CommandParserTop extends CommandParser {

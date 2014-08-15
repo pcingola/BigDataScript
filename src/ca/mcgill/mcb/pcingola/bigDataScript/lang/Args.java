@@ -5,11 +5,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Arguments
- * 
+ *
  * @author pcingola
  */
 public class Args extends BigDataScriptNode {
@@ -65,15 +64,15 @@ public class Args extends BigDataScriptNode {
 	 * @param scope
 	 * @return
 	 */
+	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
 		if (arguments != null) {
-			for (Expression e : arguments) {
-				if (e == null) //
-					Gpr.debug("NULL!");
-				if (e.getReturnType() == null) returnType = e.returnType(scope); // Only assign this to show that calculation was already performed
-			}
+			for (Expression e : arguments)
+				if (e.getReturnType() == null) // Only assign this to show that calculation was already performed
+					returnType = e.returnType(scope);
+
 		} else returnType = Type.VOID;
 
 		return returnType;
