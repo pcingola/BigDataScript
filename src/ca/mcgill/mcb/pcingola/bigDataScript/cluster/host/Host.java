@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Host's information
- * 
+ *
  * @author pcingola@mcgill.ca
  */
 public class Host implements Comparable<Host> {
@@ -19,10 +19,10 @@ public class Host implements Comparable<Host> {
 	String userName; // Username
 	String hostName; // Host name (or IP address)
 	int port = DEFAULT_PORT; // Ssh port
-	HostResources resources; // Host resources (all cpus, memory, etc) 
+	HostResources resources; // Host resources (all cpus, memory, etc)
 	HostResources resourcesAvaialble; // Available resources
 	HostHealth health;
-	HashSet<Task> tasksRunning; // A list of tasks running in this host 
+	HashSet<Task> tasksRunning; // A list of tasks running in this host
 
 	public Host(Cluster cluster, String hostName) {
 		this.cluster = cluster;
@@ -104,7 +104,6 @@ public class Host implements Comparable<Host> {
 
 	/**
 	 * Remove task from this host
-	 * @param task
 	 */
 	public synchronized void remove(Task task) {
 		if (tasksRunning.remove(task)) updateResources();
@@ -116,7 +115,7 @@ public class Host implements Comparable<Host> {
 	}
 
 	/**
-	 * Update 'resources avaialbe'
+	 * Update 'resources available'
 	 */
 	protected synchronized void updateResources() {
 		resourcesAvaialble = resources.clone();
