@@ -1,11 +1,5 @@
-#!/usr/bin/env bds
+#!/bin/sh
 
-gsea := "This is gsea VARIABLE"
-
-void gsea() println "This is gsea FUNCTION"
-
-void zzz() task sys echo $gsea  
-
-# Main
-zzz()
-
+for( int i=0 ; i < 10 ; i++ ) {
+	task echo Hi $i; sleep 1; echo Done $i
+}

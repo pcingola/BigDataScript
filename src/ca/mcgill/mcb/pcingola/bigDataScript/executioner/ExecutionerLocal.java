@@ -24,8 +24,6 @@ public class ExecutionerLocal extends Executioner {
 
 	/**
 	 * Create command line arguments for "bds -exec"
-	 * @param task
-	 * @return
 	 */
 	public static String[] createBdsExecCmdArgs(Task task) {
 		// Create command line

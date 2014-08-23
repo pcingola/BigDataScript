@@ -156,15 +156,15 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 				+ "\tmem: " + Gpr.toStringMem(mem) //
 				+ (timeout > 0 ? "\ttimeout: " + timeout : "") //
 				+ (wallTimeout > 0 ? "\twall-timeout: " + wallTimeout : "") //
-				;
+		;
 	}
 
 	public String toStringMultiline() {
 		StringBuilder sb = new StringBuilder();
-		if (cpus > 0) sb.append("cpus: " + cpus + "\n");
-		if (mem > 0) sb.append("mem: " + Gpr.toStringMem(mem) + "\n");
-		if (timeout > 0) sb.append("timeout: " + Timer.toDDHHMMSS(timeout * 1000) + "\n");
-		if (wallTimeout > 0) sb.append("walltimeout: " + Timer.toDDHHMMSS(wallTimeout * 1000) + "\n");
+		if (cpus > 0) sb.append("cpus: " + cpus + ", ");
+		if (mem > 0) sb.append((sb.length() > 0 ? ", " : "") + "mem: " + Gpr.toStringMem(mem));
+		if (timeout > 0) sb.append((sb.length() > 0 ? ", " : "") + "timeout: " + Timer.toDDHHMMSS(timeout * 1000));
+		if (wallTimeout > 0) sb.append((sb.length() > 0 ? ", " : "") + "walltimeout: " + Timer.toDDHHMMSS(wallTimeout * 1000));
 		return sb.toString();
 	}
 

@@ -491,7 +491,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 				}
 
 				//---
-				// Select host (we only have one)
+				// Select the first host in the cluster that satisfies requirements
 				//---
 				for (Host host : cluster) {
 					// Host is not alive?
@@ -503,6 +503,11 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 					// Do we have enough resources to run this task in this host?
 					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 						// OK, execute this task in this host
+						Gpr.debug("TASK: " + task.getName() //
+								+ "\n\tHOST                : " + host //
+								+ "\n\tRESOURCES AVAILABLE : " + host.getResourcesAvaialble() //
+								+ "\n\tTASK RESOURCES      : " + task.getResources() //
+						);
 						selectTask(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);
 					} else if (!canBeExecuted) {
