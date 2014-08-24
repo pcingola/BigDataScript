@@ -1,5 +1,7 @@
 #!/bin/sh
 
-for( int i=0 ; i < 10 ; i++ ) {
-	task echo Hi $i; sleep 1; echo Done $i
-}
+paramBool := false
+paramStr  := "Hello"
+
+println "paramBool : $paramBool"
+println "paramStr  : $paramStr"
