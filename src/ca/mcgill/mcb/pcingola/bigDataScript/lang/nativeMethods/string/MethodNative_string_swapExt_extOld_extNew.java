@@ -26,7 +26,7 @@ public class MethodNative_string_swapExt_extOld_extNew extends MethodNative {
 		String argNames[] = { "this", "extOld", "extNew" };
 		Type argTypes[] = { Type.STRING, Type.STRING, Type.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeMethodToClassScope();
+		addNativeMethodToScope();
 	}
 
 	@Override

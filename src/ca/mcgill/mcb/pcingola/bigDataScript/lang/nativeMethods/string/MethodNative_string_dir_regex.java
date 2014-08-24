@@ -26,7 +26,7 @@ public class MethodNative_string_dir_regex extends MethodNative {
 		String argNames[] = { "this", "regex" };
 		Type argTypes[] = { Type.STRING, Type.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeMethodToClassScope();
+		addNativeMethodToScope();
 	}
 
 	@Override

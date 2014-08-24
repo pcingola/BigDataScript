@@ -26,7 +26,7 @@ public class MethodNative_string_dirPath extends MethodNative {
 		String argNames[] = { "this" };
 		Type argTypes[] = { Type.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeMethodToClassScope();
+		addNativeMethodToScope();
 	}
 
 	@Override

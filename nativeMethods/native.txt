@@ -19,6 +19,7 @@ string	string	replace	this,str1,str2	string,string,string	return objThis.toStrin
 int	string	parseInt	this	string	return Gpr.parseLongSafe( objThis.toString().trim() );
 real	string	parseReal	this	string	return Gpr.parseDoubleSafe( objThis.toString().trim() );
 bool	string	parseBool	this	string	return Gpr.parseBoolSafe( objThis.toString().trim() );
+string	string	replace	this,regex,repl	string,string,string	return objThis.toString().replaceAll(csThread.getString("regex"), csThread.getString("repl"));
 #---
 # String: File related methods
 #---
