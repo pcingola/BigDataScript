@@ -103,7 +103,7 @@ public class $methodClass extends MethodNative {
 		String argNames[] = $argNames;
 		Type argTypes[] = $argTypes;
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeMethodToScope();
+		addNativeMethodToClassScope();
 	}
 
 	\@Override
