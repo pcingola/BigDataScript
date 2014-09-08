@@ -1,7 +1,6 @@
 #!/bin/sh
 
-paramBool := false
-paramStr  := "Hello"
+l := ['hi', 'bye']
+s := l.join("\n")
+println "s = $s"
 
-println "paramBool : $paramBool"
-println "paramStr  : $paramStr"
