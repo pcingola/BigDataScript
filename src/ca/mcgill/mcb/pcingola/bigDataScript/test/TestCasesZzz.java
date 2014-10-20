@@ -11,8 +11,13 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test94() {
-		runAndCheckExit("test/run_94.bds", 1);
+	public void test01() {
+		runAndCheckpoint("test/checkpoint_01.bds", null, "i", "10");
 	}
+
+	//	@Test
+	//	public void test02() {
+	//		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
+	//	}
 
 }
