@@ -15,9 +15,9 @@ public class TestCasesZzz extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_01.bds", null, "i", "10");
 	}
 
-	//	@Test
-	//	public void test02() {
-	//		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
-	//	}
+	@Test
+	public void test02() {
+		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
+	}
 
 }

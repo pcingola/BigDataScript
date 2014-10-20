@@ -42,7 +42,7 @@ public class Post extends Pre {
 
 	@Override
 	public String toString() {
-		return operation + expr.toString();
+		return operation.toStringCode() + expr.toString();
 	}
 
 }

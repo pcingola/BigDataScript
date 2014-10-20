@@ -17,8 +17,7 @@ public enum PrePostOperation {
 		throw new RuntimeException("Cannot parse string'" + opStr + "'");
 	}
 
-	@Override
-	public String toString() {
+	public String toStringCode() {
 		switch (this) {
 		case INCREMENT:
 			return "++";
