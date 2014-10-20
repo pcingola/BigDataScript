@@ -12,6 +12,7 @@ task( out <- in, allowEmpty := true ) {
 	sys cp $in $out
 }
 
+wait
 runOk = true
 println "Everything was OK!"
 

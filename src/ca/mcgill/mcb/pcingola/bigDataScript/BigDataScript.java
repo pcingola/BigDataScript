@@ -625,6 +625,7 @@ public class BigDataScript {
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, queue)); // Default queue: none
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Type.STRING, node)); // Default node: none
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Type.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, Type.BOOL, false)); // Tasks are allowed to have empty output file/s
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_RETRY, Type.INT, (long) taskFailCount)); // Task fail can be re-tried (re-run) N times before considering failed.
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Type.INT, timeout)); // Task default timeout
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, Type.INT, wallTimeout)); // Task default wall-timeout

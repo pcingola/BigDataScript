@@ -66,7 +66,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (this == TaskState.ERROR) //
 					|| (this == TaskState.ERROR_TIMEOUT) //
 					|| (this == TaskState.KILLED) //
-					;
+			;
 		}
 
 		public boolean isFinished() {
@@ -94,6 +94,7 @@ public class Task implements BigDataScriptSerialize {
 	public static final int EXITCODE_KILLED = 3;
 
 	protected boolean verbose, debug;
+	protected boolean allowEmpty; // Allow empty output file/s
 	protected boolean canFail; // Allow execution to fail
 	protected boolean dependency; // This is a 'dependency' task. Run only if required
 	protected int bdsLineNum; // Program's line number that created this task (used for reporting errors)
@@ -168,7 +169,7 @@ public class Task implements BigDataScriptSerialize {
 		for (String fileName : outputFiles) {
 			File file = new File(fileName);
 			if (!file.exists()) checkOutputFiles += "Error: Output file '" + fileName + "' does not exist.";
-			else if (file.length() <= 0) checkOutputFiles += "Error: Output file '" + fileName + "' has zero length.";
+			else if ((!allowEmpty) && (file.length() <= 0)) checkOutputFiles += "Error: Output file '" + fileName + "' has zero length.";
 		}
 
 		if (verbose && !checkOutputFiles.isEmpty()) Timer.showStdErr(checkOutputFiles);
@@ -396,6 +397,10 @@ public class Task implements BigDataScriptSerialize {
 		return taskState;
 	}
 
+	public boolean isAllowEmpty() {
+		return allowEmpty;
+	}
+
 	public boolean isCanFail() {
 		return canFail;
 	}
@@ -503,6 +508,7 @@ public class Task implements BigDataScriptSerialize {
 		bdsLineNum = (int) serializer.getNextFieldInt();
 		dependency = serializer.getNextFieldBool();
 		canFail = serializer.getNextFieldBool();
+		allowEmpty = serializer.getNextFieldBool();
 		taskState = TaskState.valueOf(serializer.getNextFieldString());
 		exitValue = (int) serializer.getNextFieldInt();
 		node = serializer.getNextFieldString();
@@ -528,6 +534,7 @@ public class Task implements BigDataScriptSerialize {
 				+ "\t" + bdsLineNum //
 				+ "\t" + dependency //
 				+ "\t" + canFail //
+				+ "\t" + allowEmpty //
 				+ "\t" + serializer.serializeSaveValue(taskState.toString()) //
 				+ "\t" + exitValue //
 				+ "\t" + serializer.serializeSaveValue(node) //
@@ -541,6 +548,10 @@ public class Task implements BigDataScriptSerialize {
 				+ "\t" + serializer.serializeSaveValue(outputFiles) //
 				+ "\t" + serializer.serializeSave(resources) //
 				+ "\n";
+	}
+
+	public void setAllowEmpty(boolean allowEmpty) {
+		this.allowEmpty = allowEmpty;
 	}
 
 	public void setCanFail(boolean canFail) {
@@ -658,7 +669,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-					) {
+			) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;

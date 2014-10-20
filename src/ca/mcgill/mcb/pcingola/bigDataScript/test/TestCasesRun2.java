@@ -103,4 +103,8 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheck("test/run_109.bds", "r1", "4027146782649399912");
 	}
 
+	public void test110() {
+		runAndCheck("test/run_110.bds", "runOk", "true");
+	}
+
 }

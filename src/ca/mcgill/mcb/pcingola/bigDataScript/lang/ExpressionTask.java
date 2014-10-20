@@ -25,6 +25,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_CPUS = "cpus";
 	public static final String TASK_OPTION_MEM = "mem";
 	public static final String TASK_OPTION_CAN_FAIL = "canFail";
+	public static final String TASK_OPTION_ALLOW_EMPTY = "allowEmpty";
 	public static final String TASK_OPTION_NODE = "node";
 	public static final String TASK_OPTION_PHYSICAL_PATH = "ppwd";
 	public static final String TASK_OPTION_QUEUE = "queue";
@@ -81,6 +82,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setVerbose(bdsThread.getConfig().isVerbose());
 		task.setDebug(bdsThread.getConfig().isDebug());
 		task.setCanFail(bdsThread.getBool(TASK_OPTION_CAN_FAIL));
+		task.setAllowEmpty(bdsThread.getBool(TASK_OPTION_ALLOW_EMPTY));
 		task.getResources().setCpus((int) bdsThread.getInt(TASK_OPTION_CPUS));
 		task.getResources().setMem(bdsThread.getInt(TASK_OPTION_MEM));
 		task.setNode(bdsThread.getString(TASK_OPTION_NODE));
