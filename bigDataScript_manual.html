@@ -746,8 +746,9 @@ name \t value
 					<tr> <td> print( expr )								</td> <td> Show to stdout (same as 'print' statement) </td> </tr>
 					<tr> <td> printErr( expr )							</td> <td> Show to stderr </td> </tr>
 					<tr> <td> real rand() 								</td> <td> Random number [0, 1] inetrval </td> </tr>
-					<tr> <td> int rand() 								</td> <td> Random number (64 bits) </td> </tr>
-					<tr> <td> int rand(int range)						</td> <td> Random number [0, range] interval </td> </tr>
+					<tr> <td> int randInt() 							</td> <td> Random number (64 bits) </td> </tr>
+					<tr> <td> int randInt(int range)					</td> <td> Random number [0, range] interval </td> </tr>
+					<tr> <td> void randSeed(int seed)					</td> <td> Set random seed (for current thread) </td> </tr>
 					<tr> <td> int[] range(min, max)						</td> <td> A list of numbers between [min, max] inclusive </td> </tr>
 					<tr> <td> int[] range(min, max, step)				</td> <td> A list of numbers between [min, min+step, min+2*step, ... ]. Includes max if min+N*step = max </td> </tr>
 					<tr> <td> real[] range(min, max, step)				</td> <td> A list of numbers between [min, min+step, min+2*step, ... ]. Includes max if min+N*step = max </td> </tr>
