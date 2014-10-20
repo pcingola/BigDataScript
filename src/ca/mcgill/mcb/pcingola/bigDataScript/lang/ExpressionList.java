@@ -70,6 +70,12 @@ public class ExpressionList extends Expression {
 
 	@Override
 	public String toString() {
+
+		// Special cases: Empty or only one element
+		if (expressions.length <= 0) return "";
+		if (expressions.length == 1) return expressions[0].toString();
+
+		// List
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("( ");

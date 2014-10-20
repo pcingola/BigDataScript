@@ -602,6 +602,9 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 				// Check that runStates are correctly propagated to thread
 				if (rstate.isExit()) bdsThread.setRunState(rstate);
+			} else {
+				// Make sure we return immediately using the current thread state
+				rstate = bdsThread.getRunState();
 			}
 		} catch (Throwable t) {
 			bdsThread.fatalError(this, t);

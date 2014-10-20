@@ -40,4 +40,9 @@ public class Post extends Pre {
 		operation = PrePostOperation.parse(tree.getChild(1).getText());
 	}
 
+	@Override
+	public String toString() {
+		return operation + expr.toString();
+	}
+
 }

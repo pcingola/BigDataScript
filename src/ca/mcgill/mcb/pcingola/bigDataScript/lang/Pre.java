@@ -52,6 +52,11 @@ public class Pre extends ExpressionUnary {
 	}
 
 	@Override
+	public String toString() {
+		return expr.toString() + operation;
+	}
+
+	@Override
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		if (!expr.isInt()) compilerMessages.add(this, "Only int variables can be used with ++ or -- operators", MessageType.ERROR);
 	}

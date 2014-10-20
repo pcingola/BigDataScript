@@ -1,16 +1,10 @@
 #!/usr/bin/env bds
 
-runOk := false
-
-# Function dies
-void die(string anything) {
-	error("cannot escape " + anything)
-	exit 1
+void fail() {
+	println "The following 'sys' command will fail"
+	sys rm FAIL_zxzxzxzx
 }
 
-# Die within a function
-die("x")
-
-# This should never be executed
-runOk = true
-println "You won't see me, really"
+for( int i=0 ; i < 10 ; i++ ) {
+	fail()
+}
