@@ -8,8 +8,12 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	public void test110() {
-		runAndCheck("test/run_110.bds", "runOk", "true");
+	public void test111() {
+		runAndCheck("test/run_111.bds", "runOk", "false");
+	}
+
+	public void test112() {
+		runAndCheck("test/run_112.bds", "runOk", "false");
 	}
 
 }

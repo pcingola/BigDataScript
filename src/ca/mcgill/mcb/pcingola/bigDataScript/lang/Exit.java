@@ -45,9 +45,9 @@ public class Exit extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		if (expr != null) csThread.setExitValue(expr.evalInt(csThread)); // Set return value to scope
-		else csThread.setExitValue(0L); // Default is the same as 'exit 0'
+	protected RunState runStep(BigDataScriptThread bdsThread) {
+		if (expr != null) bdsThread.setExitValue(expr.evalInt(bdsThread)); // Set return value to scope
+		else bdsThread.setExitValue(0L); // Default is the same as 'exit 0'
 		return RunState.EXIT;
 	}
 

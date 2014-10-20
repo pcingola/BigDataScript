@@ -47,7 +47,9 @@ public class FunctionDeclaration extends StatementWithScope {
 
 		// Run function body
 		RunState rstate = runFunction(bdsThread);
-		if (rstate == RunState.FATAL_ERROR) throw new RuntimeException("Fatal error");
+
+		// Make sure we propagate runStates that make program exit
+		if (rstate.isExit()) bdsThread.setRunState(rstate);
 
 		// Get return value
 		Object retVal = bdsThread.getReturnValue();

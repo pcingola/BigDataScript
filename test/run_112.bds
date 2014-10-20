@@ -4,12 +4,11 @@ runOk := false
 
 # Function dies
 void die(string anything) {
-	error("cannot escape " + anything)
 	exit 1
 }
 
 # Die within a function
-die("x")
+die("hard")
 
 # This should never be executed
 runOk = true
