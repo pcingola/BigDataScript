@@ -21,6 +21,7 @@ public class NativeLibraryFunctions {
 			, FunctionNativeRand.class //
 			, FunctionNativeRandInt.class //
 			, FunctionNativeRandIntRange.class //
+			, FunctionNativeRandSeed.class //
 			, FunctionNativeRangeInt.class //
 			, FunctionNativeRangeIntStep.class //
 			, FunctionNativeRangeReal.class //

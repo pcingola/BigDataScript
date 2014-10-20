@@ -772,7 +772,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -912,6 +912,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public void setPc(ProgramCounter pc) {
 		this.pc = pc;
+	}
+
+	public void setRandomSeed(long seed) {
+		random = new Random(seed);
 	}
 
 	public void setReturnValue(Object returnValue) {

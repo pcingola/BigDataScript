@@ -99,4 +99,8 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheckMultiple("test/run_108.bds", expectedValues);
 	}
 
+	public void test109() {
+		runAndCheck("test/run_109.bds", "r1", "4027146782649399912");
+	}
+
 }
