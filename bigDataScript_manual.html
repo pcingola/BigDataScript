@@ -768,8 +768,8 @@ name \t value
 						<th> Meaning </th>
 					</tr>
 					<tr>
-						<td> <code>cpus</code>, <code>canFail</code> <code>timeout</code> <code>node</code> <code>queue</code>  </td>	
-						<td> These are the defula valies for <code>task</code> the meaning is explained in Task section of this handbook. </td> 
+						<td> <code>allowEmpty</code> , <code>canFail</code> , <code>cpus</code>, <code>timeout</code> <code>node</code> <code>queue</code>  </td>	
+						<td> These are the default values for <code>task</code> the meaning is explained in Task section of this handbook. </td> 
 					</tr>
 					<tr>
 						<td> string <code>programName</code> </td>	
@@ -1419,6 +1419,11 @@ Done 9
 						<td> <code>cpus</code> </td>	
 						<td> 1 </td> 
 						<td> Number of CPU (cores) used by the process. </td> 
+					</tr>
+					<tr>
+						<td> <code>allowEmpty</code> </td>	
+						<td> false </td> 
+						<td> If true, empty files are allowed in task's outputs. This means that a task producing empty files does not result in program termination and checkpointing. </td> 
 					</tr>
 					<tr>
 						<td> <code>canFail</code> </td>	
