@@ -1,0 +1,41 @@
+#!/usr/bin/env bds
+
+println 'Crash example'
+
+int N = 9
+
+string[] u = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+
+for(int i = 0; i <= N; i ++) {
+  string[] output
+  for (string n : u) {
+    output.add("$i.$n.txt")
+  }
+
+  string s = output.join()
+  dep(output <- "$i.txt") {
+    sys for i in $s; do date > ${i}; done
+  }
+}
+
+for(string n : u) {
+  string[] input
+
+  for(int i = 0; i <= N; i ++) {
+    input.add("$i.$n.txt")
+  }
+
+  string files = input.join()
+  dep("$n.txt" <- input) {
+    sys date > $n.txt
+  }
+
+  dep("$n.final.txt" <- "$n.txt") {
+    sys date > $n.final.txt
+  }
+
+  goal "$n.final.txt"
+  input.rmOnExit()
+}
+
+println 'Done'
