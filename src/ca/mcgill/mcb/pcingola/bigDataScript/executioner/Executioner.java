@@ -3,6 +3,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
@@ -39,12 +41,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected boolean log;
 	protected boolean running, valid;
 	protected int hostIdx = 0;
-	protected ArrayList<Task> tasksToRun; // Tasks queued for execution
-	protected HashMap<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host
-	protected HashMap<String, Task> tasksRunning; // Tasks running
-	protected HashMap<String, Task> tasksDone; // Tasks that fin
-	protected LinkedList<Tuple<Task, TaskState>> taskUpdateStates; // Tasks to be updated
-	protected HashMap<String, Cmd> cmdById;
+	protected List<Task> tasksToRun; // Tasks queued for execution
+	protected Map<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host
+	protected Map<String, Task> tasksRunning; // Tasks running
+	protected Map<String, Task> tasksDone; // Tasks that fin
+	protected List<Tuple<Task, TaskState>> taskUpdateStates; // Tasks to be updated
+	protected Map<String, Cmd> cmdById;
 	protected Tail tail;
 	protected Config config;
 	protected TaskLogger taskLogger;
@@ -61,7 +63,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		tasksSelected = new HashMap<Task, Host>();
 		tasksRunning = new HashMap<String, Task>();
 		tasksDone = new HashMap<String, Task>();
-		taskUpdateStates = new LinkedList<Tuple<Task, TaskState>>();
+		taskUpdateStates = new ArrayList<Tuple<Task, TaskState>>();
 		tail = config.getTail();
 		taskLogger = config.getTaskLogger();
 		cmdById = new HashMap<String, Cmd>();
@@ -144,7 +146,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return exName;
 	}
 
-	public HashMap<String, Task> getTasksRunning() {
+	public Map<String, Task> getTasksRunning() {
 		return tasksRunning;
 	}
 
@@ -421,7 +423,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Run a task on a given host. I.e. execute command
 	 * @param task : Task to run
 	 * @param host : Host to run task (can be null)
-	 * @return
 	 */
 	protected void runTask(Task task, Host host) {
 		// Don't run too many threads at once
@@ -451,7 +452,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Select next task to run and which host it should run into
-	 * @return
 	 */
 	protected synchronized Tuple<Task, Host> selectTask() {
 		// Nothing to run?
@@ -507,7 +507,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 								+ "\n\tHOST                : " + host //
 								+ "\n\tRESOURCES AVAILABLE : " + host.getResourcesAvaialble() //
 								+ "\n\tTASK RESOURCES      : " + task.getResources() //
-						);
+								);
 
 						selectTask(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);
@@ -591,8 +591,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Task finished executing
-	 * @param id
-	 * @return
 	 */
 	@Override
 	public synchronized void taskFinished(Task task, TaskState taskState) {
@@ -608,7 +606,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Move a task from 'tasksToRun' to 'tasksRunning'
-	 * @param task
 	 */
 	@Override
 	public synchronized void taskRunning(Task task) {
@@ -621,8 +618,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		taskUpdateStates.add(new Tuple<Task, TaskState>(task, TaskState.STARTED));
 	}
 
-	protected synchronized void taskUpdateFinished(Task task, TaskState taskState) {
+	protected synchronized boolean taskUpdateFinished(Task task, TaskState taskState) {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
+		if (!task.canChangeState(taskState)) return false;
 
 		String id = task.getId();
 		if (debug) log("Task finished '" + id + "'");
@@ -666,28 +664,32 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 				postMortemInfo(task);
 			}
 		}
+
+		return true;
 	}
 
-	protected synchronized void taskUpdateRunning(Task task) {
+	protected synchronized boolean taskUpdateRunning(Task task) {
 		if (debug) log("Task running '" + task.getId() + "'");
 
-		if (task.isDone()) return; // Already finished, nothing to do
+		if (task.isDone()) return true; // Already finished, nothing to do
+		if (!task.canChangeState(TaskState.RUNNING)) return false;
 
 		// Change state
 		task.state(TaskState.RUNNING);
 
 		// Follow STDOUT and STDERR
 		follow(task);
+		return true;
 	}
 
 	/**
 	 * Task has been started
-	 * @param task
 	 */
-	protected synchronized void taskUpdateStarted(Task task) {
+	protected synchronized boolean taskUpdateStarted(Task task) {
 		if (debug) log("Task started '" + task.getId() + "'");
 
-		if (task.isStarted()) return; // Already started, nothing to do
+		if (task.isStarted()) return true; // Already started, nothing to do
+		if (!task.canChangeState(TaskState.STARTED)) return false;
 
 		// Move from 'tasksToRun' to 'tasksRunning'
 		tasksToRun.remove(task);
@@ -696,6 +698,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// Change state
 		task.state(TaskState.STARTED);
+		return true;
 	}
 
 	/**
@@ -705,6 +708,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (taskUpdateStates.isEmpty()) return;
 
 		// Update each task sequentially, to avoid race conditions
+
 		for (Tuple<Task, TaskState> taskAndState : taskUpdateStates) {
 			Task task = taskAndState.first;
 			TaskState state = taskAndState.second;
@@ -714,7 +718,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			else taskUpdateFinished(task, state);
 		}
 
-		taskUpdateStates = new LinkedList<Tuple<Task, TaskState>>();
+		taskUpdateStates = new ArrayList<Tuple<Task, TaskState>>();
 	}
 
 	@Override
@@ -724,7 +728,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Wait for a task to start
-	 * @param task
 	 */
 	protected void waitStart(Task task) {
 		// Busy wait, probably not the smartest thing to do...

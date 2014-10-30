@@ -66,7 +66,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (this == TaskState.ERROR) //
 					|| (this == TaskState.ERROR_TIMEOUT) //
 					|| (this == TaskState.KILLED) //
-			;
+					;
 		}
 
 		public boolean isFinished() {
@@ -143,6 +143,49 @@ public class Task implements BigDataScriptSerialize {
 	public void addDependency(Task taskDep) {
 		if (dependencies == null) dependencies = new LinkedList<Task>();
 		dependencies.add(taskDep);
+	}
+
+	/**
+	 * Can a task change state to 'newState'?
+	 */
+	public boolean canChangeState(TaskState newState) {
+		if (newState == null) return false;
+		if (newState == taskState) return true; // Nothing to do
+
+		switch (newState) {
+		case SCHEDULED:
+			if (taskState == TaskState.NONE) return true;
+			return false;
+
+		case STARTED:
+			if (taskState == TaskState.SCHEDULED) return true;
+			return false;
+
+		case START_FAILED:
+			if (taskState == TaskState.SCHEDULED || taskState == TaskState.KILLED) return true;
+			return false;
+
+		case RUNNING:
+			if (taskState == TaskState.STARTED) return true;
+			return false;
+
+		case ERROR:
+		case ERROR_TIMEOUT:
+		case FINISHED:
+			if (taskState == TaskState.RUNNING) return true;
+			return false;
+
+		case KILLED:
+			if ((taskState == TaskState.RUNNING) // A task can be killed while running...
+					|| (taskState == TaskState.STARTED) // or right after it started
+					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
+					|| (taskState == TaskState.NONE) // or even if it was not scheduled
+					) return true;
+			return false;
+
+		default:
+			return false;
+		}
 	}
 
 	public boolean canRetry() {
@@ -264,7 +307,6 @@ public class Task implements BigDataScriptSerialize {
 
 	/**
 	 * Elapsed number of seconds this task has been executing
-	 * @return
 	 */
 	public int elapsedSecs() {
 		if (runningStartTime == null) return -1; // Not started?
@@ -349,7 +391,6 @@ public class Task implements BigDataScriptSerialize {
 
 	/**
 	 * A short text describing the task (extracted from program text)
-	 * @return
 	 */
 	public String getProgramHint() {
 		if (programTxt == null) return "";
@@ -472,7 +513,6 @@ public class Task implements BigDataScriptSerialize {
 
 	/**
 	 * Has this task run out of time?
-	 * @return
 	 */
 	public boolean isTimedOut() {
 		int elapsedSecs = elapsedSecs();
@@ -620,7 +660,6 @@ public class Task implements BigDataScriptSerialize {
 
 	/**
 	 * Change state: Make sure state changes are valid
-	 * @param newState
 	 */
 	public synchronized void state(TaskState newState) {
 		if (newState == null) throw new RuntimeException("Cannot change to 'null' state.\n" + this);
@@ -669,7 +708,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) {
+					) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;

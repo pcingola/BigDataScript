@@ -301,13 +301,14 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit code : " + cmdExecResult.exitValue //
 				+ "\n\tStdout    : " + cmdExecResult.stdOut //
 				+ "\n\tStderr    : " + cmdExecResult.stdErr //
-		);
+				);
 
 	}
 
 	@Override
-	protected synchronized void taskUpdateRunning(Task task) {
-		super.taskUpdateRunning(task);
+	protected synchronized boolean taskUpdateRunning(Task task) {
+		boolean ret = super.taskUpdateRunning(task);
+		if (!ret) return false;
 
 		// Cmd invoking 'qsub' finished execution => the task is in the cluster now
 		String id = task.getId();
@@ -318,6 +319,7 @@ public class ExecutionerCluster extends Executioner {
 			cmdById.remove(id); // Remove command
 		}
 
+		return true;
 	}
 
 }
