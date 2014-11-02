@@ -507,7 +507,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 								+ "\n\tHOST                : " + host //
 								+ "\n\tRESOURCES AVAILABLE : " + host.getResourcesAvaialble() //
 								+ "\n\tTASK RESOURCES      : " + task.getResources() //
-								);
+						);
 
 						selectTask(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);
@@ -707,6 +707,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected synchronized void taskUpdateStates() {
 		if (taskUpdateStates.isEmpty()) return;
 
+		// Get a list ready for next iteration
 		ArrayList<Tuple<Task, TaskState>> taskUpdateStatesNew = new ArrayList<Tuple<Task, TaskState>>();
 
 		// Update each task sequentially, to avoid race conditions
