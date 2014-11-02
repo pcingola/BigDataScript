@@ -707,18 +707,25 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected synchronized void taskUpdateStates() {
 		if (taskUpdateStates.isEmpty()) return;
 
-		// Update each task sequentially, to avoid race conditions
+		ArrayList<Tuple<Task, TaskState>> taskUpdateStatesNew = new ArrayList<Tuple<Task, TaskState>>();
 
+		// Update each task sequentially, to avoid race conditions
 		for (Tuple<Task, TaskState> taskAndState : taskUpdateStates) {
 			Task task = taskAndState.first;
 			TaskState state = taskAndState.second;
 
-			if (state.isStarted()) taskUpdateStarted(task);
-			else if (state.isRunning()) taskUpdateRunning(task);
-			else taskUpdateFinished(task, state);
+			// Try to change state
+			boolean ok = false;
+			if (state.isStarted()) ok = taskUpdateStarted(task);
+			else if (state.isRunning()) ok = taskUpdateRunning(task);
+			else ok = taskUpdateFinished(task, state);
+
+			// Could not change state? Keep task update
+			if (!ok) taskUpdateStatesNew.add(taskAndState);
 		}
 
-		taskUpdateStates = new ArrayList<Tuple<Task, TaskState>>();
+		// Keep unchanged states for next time
+		taskUpdateStates = taskUpdateStatesNew;
 	}
 
 	@Override

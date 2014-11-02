@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -75,9 +76,18 @@ public class MonitorTask {
 		ArrayList<Task> toUpdate = null;
 
 		for (Task task : execByTask.keySet()) {
-			String exitFile = task.getExitCodeFile();
+			String exitFileName = task.getExitCodeFile();
 
-			if (Gpr.exists(exitFile) || task.isTimedOut()) {
+			// Check that 'exitFile' exists and it is not zero length
+			// From 'Fedor Gusev':
+			//     ...here NFS is somewhat slow, and the file is still empty
+			//     and it report exit code as 1. But if I check the file manually, it
+			//     has 0 in it. I've introduced a check for non-zero length of
+			//     the file and the problem is gone.
+			File exitFile = new File(exitFileName);
+			boolean exitFileOk = exitFile.exists() && exitFile.length() > 0;
+
+			if (exitFileOk || task.isTimedOut()) {
 				// Create (or add) to tasks to delete
 				if (toUpdate == null) toUpdate = new ArrayList<Task>();
 				toUpdate.add(task);
