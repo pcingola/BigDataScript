@@ -334,7 +334,7 @@ public class BigDataScript {
 		BigDataScriptNodeFactory.reset();
 
 		// Startup message
-		if (verbose) Timer.showStdErr(VERSION);
+		if (verbose || debug) Timer.showStdErr(VERSION);
 
 		// ---
 		// Config
