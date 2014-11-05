@@ -76,7 +76,8 @@ public class BigDataScript {
 	boolean log;
 	boolean dryRun;
 	boolean noRmOnExit;
-	boolean createReport = true;
+	boolean createReport;
+	boolean useDoneFile;
 	int taskFailCount = -1;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
@@ -320,8 +321,10 @@ public class BigDataScript {
 	 * Get default settings
 	 */
 	void initDefaults() {
-		log = true;
+		createReport = true;
 		dryRun = false;
+		log = true;
+		useDoneFile = false;
 	}
 
 	/**
@@ -713,6 +716,7 @@ public class BigDataScript {
 				if ((i + 1) < args.length) configFile = args[++i];
 				else usage("Option '-c' without restore file argument");
 			} else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
+			else if (args[i].equalsIgnoreCase("-useDone")) useDoneFile = true;
 			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
 			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) usage(null);
 			else if (args[i].equalsIgnoreCase("-dryRun")) {
@@ -924,6 +928,7 @@ public class BigDataScript {
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
 		System.err.println("  [-d | -debug  ]                : Debug mode.");
+		System.err.println("  -done                          : Use '.done' files: Default: " + useDoneFile);
 		System.err.println("  -dryRun                        : Do not run any task, just show what would be run.");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files).");
