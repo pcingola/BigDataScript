@@ -531,7 +531,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			}
 		}
 
-		// Finish these tasks. Cannot be executed: failed due to resources issues.
+		// These tasks cannot be executed due to "lack of resources"
 		if (finishTask != null) {
 			for (Task task : finishTask) {
 				task.setExitValue(Task.EXITCODE_ERROR);
@@ -596,7 +596,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	public synchronized void taskFinished(Task task, TaskState taskState) {
 		if (taskState == null) {
 			// Set task state. Infer form exit code if no state is available.
-			// Note: This is the last thing we do in order for wait() methods to be sure that task has finished and all data has finished updating.
+			// Note: This is the last thing we do in order for wait() methods to 
+			//       be sure that task has finished and all data has finished 
+			//       updating.
+
 			// Set exit status
 			taskState = TaskState.exitCode2taskState(task.getExitValue());
 		}

@@ -49,7 +49,7 @@ public class MonitorTask {
 		// Is it time to update?
 		if (latestUpdate.elapsed() < SLEEP_TIME) return;
 
-		update();
+		updateFinished();
 		latestUpdate.start();
 	}
 
@@ -70,9 +70,10 @@ public class MonitorTask {
 	}
 
 	/**
-	 * Check is an exist file exists, update states
+	 * Update finished tasks.
+	 * Check if 'exitFile' exist and update states accordingly
 	 */
-	synchronized void update() {
+	synchronized void updateFinished() {
 		ArrayList<Task> toUpdate = null;
 
 		for (Task task : execByTask.keySet()) {
@@ -97,38 +98,36 @@ public class MonitorTask {
 		// An task to delete?
 		if (toUpdate != null) {
 			for (Task task : toUpdate) {
-				update(task);
+				updateFinished(task);
 				remove(task); // We don't need to monitor this task any more
 			}
 		}
 	}
 
 	/**
-	 * Exit file exists: update states
+	 * Update finished task.
 	 */
-	synchronized void update(Task task) {
+	synchronized void updateFinished(Task task) {
 		if (debug) Timer.showStdErr("MonitorTask: Found exit file " + task.getExitCodeFile());
 
-		int exitVal = 0;
+		int exitCode = 0;
 		TaskState taskState = null;
 
 		if (task.isTimedOut()) {
 			// Timed out
-			exitVal = Task.EXITCODE_TIMEOUT;
+			exitCode = Task.EXITCODE_TIMEOUT;
 			taskState = TaskState.ERROR_TIMEOUT;
 		} else {
 			// Exit file found: Parse exit file
-			// sleep();
 			String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
-			exitVal = (exitFileStr.equals("0") ? 0 : 1); // Anything else than OK is error condition
-			taskState = null; // Automatic: let taskFinished decide
-			if (debug) Timer.showStdErr("MonitorTask: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitVal);
+			exitCode = (exitFileStr.equals("0") ? 0 : 1); // Anything else than OK is error condition
+			taskState = null; // Automatic: let taskFinished decide, based on 'exitCode'
+			if (debug) Timer.showStdErr("MonitorTask: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitCode);
 		}
 
 		// Inform executioner that task has finished
 		Executioner executioner = execByTask.get(task);
-		task.setExitValue(exitVal);
-
+		task.setExitValue(exitCode);
 		executioner.taskFinished(task, taskState);
 	}
 }

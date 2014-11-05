@@ -66,7 +66,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (this == TaskState.ERROR) //
 					|| (this == TaskState.ERROR_TIMEOUT) //
 					|| (this == TaskState.KILLED) //
-					;
+			;
 		}
 
 		public boolean isFinished() {
@@ -180,7 +180,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-					) return true;
+			) return true;
 			return false;
 
 		default:
@@ -208,6 +208,7 @@ public class Task implements BigDataScriptSerialize {
 		if (checkOutputFiles != null) return checkOutputFiles;
 		if (!isStateFinished() || outputFiles == null) return ""; // Nothing to check
 
+		Gpr.debug("CHECK OUPUT FILES:\tState: " + taskState);
 		checkOutputFiles = "";
 		for (String fileName : outputFiles) {
 			File file = new File(fileName);
@@ -708,7 +709,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-					) {
+			) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;
