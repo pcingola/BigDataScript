@@ -208,7 +208,6 @@ public class Task implements BigDataScriptSerialize {
 		if (checkOutputFiles != null) return checkOutputFiles;
 		if (!isStateFinished() || outputFiles == null) return ""; // Nothing to check
 
-		Gpr.debug("CHECK OUPUT FILES:\tState: " + taskState);
 		checkOutputFiles = "";
 		for (String fileName : outputFiles) {
 			File file = new File(fileName);
