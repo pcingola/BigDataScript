@@ -129,9 +129,14 @@ public class ExecutionerLocal extends Executioner {
 		CmdLocal cmd = (CmdLocal) cmdById.get(task.getId());
 
 		if (cmd == null) {
-			Gpr.debug("Command for taks '" + task.getId() + "' is null. This should not happen!");
+			Gpr.debug("Command for taks '" + task.getId() + "' is null.\nThis should not happen!" //
+					+ "Task state: " + task.getTaskState() //
+					+ "\n---------------------\n" //
+					+ task.getProgramTxt() //
+					+ "\n---------------------" //
+			);
 			return;
-		}
+		} else Gpr.debug("Follow: " + task.getProgramHint());
 
 		// Wait for cmd thread to start, STDOUT and STDERR to became available
 		while (!cmd.isStarted() || (cmd.getStdout() == null) || (cmd.getStderr() == null))
