@@ -1,6 +1,8 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -113,6 +115,19 @@ public class TestCasesRun2 extends TestCasesBase {
 
 	public void test112() {
 		runAndCheck("test/run_112.bds", "runOk", "false");
+	}
+
+	@Test
+	public void test113_parallel_function_calls() {
+		String stdout = runAndReturnStdout("test/run_113.bds");
+
+		Set<String> linesPar = new HashSet<String>();
+		for (String line : stdout.split("\n")) {
+			if (line.startsWith("Par:")) {
+				if (linesPar.contains(line)) throw new RuntimeException("Line repeated (this should never happen): '" + line + "'");
+				linesPar.add(line);
+			}
+		}
 	}
 
 }

@@ -6,6 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -126,6 +127,11 @@ public class ExecutionerLocal extends Executioner {
 
 		// We need to feed the InputStreams from the process, instead of file names
 		CmdLocal cmd = (CmdLocal) cmdById.get(task.getId());
+
+		if (cmd == null) {
+			Gpr.debug("Command for taks '" + task.getId() + "' is null. This should not happen!");
+			return;
+		}
 
 		// Wait for cmd thread to start, STDOUT and STDERR to became available
 		while (!cmd.isStarted() || (cmd.getStdout() == null) || (cmd.getStderr() == null))

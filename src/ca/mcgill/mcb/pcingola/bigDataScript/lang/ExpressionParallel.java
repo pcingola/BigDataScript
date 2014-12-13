@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.FunctionCallThread;
 
 /**
  * A 'par' expression
@@ -26,6 +27,15 @@ public class ExpressionParallel extends ExpressionTask {
 	}
 
 	/**
+	 * Create a new BdsThread that runs a function call in parallel
+	 */
+	FunctionCallThread createParallelFunctionCall(BigDataScriptThread bdsThread, Object arguments[]) {
+		FunctionCallThread bdsNewThread = new FunctionCallThread(statement, bdsThread, arguments);
+		bdsNewThread.start();
+		return bdsNewThread;
+	}
+
+	/**
 	 * Evaluate 'par' expression
 	 */
 	@Override
@@ -34,11 +44,27 @@ public class ExpressionParallel extends ExpressionTask {
 		if (taskOptions != null) {
 			boolean ok = (Boolean) taskOptions.eval(bdsThread);
 			if (bdsThread.isDebug()) log("task-options check " + ok);
-			if (!ok) return execId; // Task options clause not satisfied. Do not execute task
+			if (!ok) return execId; // Options clause not satisfied. Do not execute 'parallel'
 		}
 
-		// Create new bds thread
-		BigDataScriptThread bdsNewThread = createParallel(bdsThread);
+		// Create thread and execute statements
+		BigDataScriptThread bdsNewThread = null;
+		if (statement instanceof FunctionCall) {
+			// If the statement is a function call, we run it slightly differently:
+			// We first compute the function's arguments (in the current thread), to
+			// avoid race conditions. Then we create a thread and call the function
+
+			// Evaluate function arguments in current thread
+			FunctionCall fcall = (FunctionCall) statement;
+			Object arguments[] = fcall.evalFunctionArguments(bdsThread);
+
+			// Create and run new thread that runs the function call in parallel
+			bdsNewThread = createParallelFunctionCall(bdsThread, arguments);
+		} else {
+			// Create and run new bds thread
+			bdsNewThread = createParallel(bdsThread);
+		}
+
 		return bdsNewThread.getBdsThreadId(); // Return thread ID (so that we can 'wait' on it)
 	}
 

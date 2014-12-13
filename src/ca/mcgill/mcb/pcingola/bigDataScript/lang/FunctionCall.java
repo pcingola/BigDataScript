@@ -28,6 +28,24 @@ public class FunctionCall extends Expression {
 	 */
 	@Override
 	public Object eval(BigDataScriptThread bdsThread) {
+		// Evaluate function arguments
+		Object arguments[] = evalFunctionArguments(bdsThread);
+
+		// Apply function to parameters
+		return functionDeclaration.apply(bdsThread, arguments);
+	}
+
+	/**
+	 * Apply function to pre-calculated parameters
+	 */
+	public Object eval(BigDataScriptThread bdsThread, Object arguments[]) {
+		return functionDeclaration.apply(bdsThread, arguments);
+	}
+
+	/**
+	 * Evaluate function's arguments
+	 */
+	public Object[] evalFunctionArguments(BigDataScriptThread bdsThread) {
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
 
@@ -39,8 +57,7 @@ public class FunctionCall extends Expression {
 			values[i] = value;
 		}
 
-		// Apply function to values
-		return functionDeclaration.apply(bdsThread, values);
+		return values;
 	}
 
 	@Override

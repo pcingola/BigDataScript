@@ -12,7 +12,7 @@ public class TeeOutputStream extends OutputStream {
 
 	OutputStream ostream1, ostream2;
 
-	TeeOutputStream(OutputStream o1, OutputStream o2) throws IOException {
+	public TeeOutputStream(OutputStream o1, OutputStream o2) {
 		ostream1 = o1;
 		ostream2 = o2;
 	}

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.TeeOutputStream;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -119,7 +120,7 @@ public class TestCasesBase extends TestCase {
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-			);
+					);
 		}
 	}
 
@@ -214,6 +215,44 @@ public class TestCasesBase extends TestCase {
 	 * Check that StdOut has a string (or that the string is not present if 'reverse')
 	 */
 	String runAndCheckStdout(String fileName, String expectedStdout, boolean reverse) {
+		//		String args[] = { fileName };
+		//
+		//		// Compile
+		//		BigDataScript bigDataScript = new BigDataScript(args);
+		//		bigDataScript.compile();
+		//		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+		//
+		//		PrintStream stdout = System.out;
+		//		ByteArrayOutputStream captureStdout = new ByteArrayOutputStream();
+		//		try {
+		//			// Capture STDOUT
+		//			System.setOut(new PrintStream(captureStdout));
+		//
+		//			// Run
+		//			bigDataScript = new BigDataScript(args);
+		//			bigDataScript.run();
+		//		} catch (Throwable t) {
+		//			t.printStackTrace();
+		//		} finally {
+		//			// Restore STDERR
+		//			System.setOut(stdout);
+		//		}
+
+		// Run command and capture stdout
+		String captureStdout = runAndReturnStdout(fileName);
+
+		// Check that the expected string is in STDERR
+		if (debug) Gpr.debug("Program's stdout: '" + captureStdout + "'");
+		int index = captureStdout.toString().indexOf(expectedStdout);
+		if (!reverse && index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in STDOUT not found.\nSTDOUT:\n" + captureStdout + "\n");
+		if (reverse && index >= 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in absent from STDOUT, but it was found.\nSTDOUT:\n" + captureStdout + "\n");
+		return captureStdout.toString();
+	}
+
+	/**
+	 * Run a bds program and capture stdout (while still showing it)
+	 */
+	String runAndReturnStdout(String fileName) {
 		String args[] = { fileName };
 
 		// Compile
@@ -221,11 +260,13 @@ public class TestCasesBase extends TestCase {
 		bigDataScript.compile();
 		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
-		PrintStream stdout = System.out;
+		PrintStream stdout = System.out; // Store original stdout
 		ByteArrayOutputStream captureStdout = new ByteArrayOutputStream();
+		TeeOutputStream tee = new TeeOutputStream(stdout, captureStdout);
+
 		try {
 			// Capture STDOUT
-			System.setOut(new PrintStream(captureStdout));
+			System.setOut(new PrintStream(tee));
 
 			// Run
 			bigDataScript = new BigDataScript(args);
@@ -237,12 +278,6 @@ public class TestCasesBase extends TestCase {
 			System.setOut(stdout);
 		}
 
-		// Check that the expected string is in STDERR
-		if (debug) Gpr.debug("Program's stdout: '" + captureStdout + "'");
-		int index = captureStdout.toString().indexOf(expectedStdout);
-		if (!reverse && index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in STDOUT not found.\nSTDOUT:\n" + captureStdout + "\n");
-		if (reverse && index >= 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in absent from STDOUT, but it was found.\nSTDOUT:\n" + captureStdout + "\n");
 		return captureStdout.toString();
 	}
-
 }

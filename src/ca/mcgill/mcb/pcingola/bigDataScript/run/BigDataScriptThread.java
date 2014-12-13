@@ -801,16 +801,16 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		for (BigDataScriptThread bth : bdsChildThreadsById.values())
 			if (!bth.isAlive()) bth.start();
 
-		// Run program
-		RunState runState = null;
-		try {
-			runState = statement.run(this);
-		} catch (Throwable t) {
-			runState = RunState.FATAL_ERROR;
-			if (isVerbose()) throw new RuntimeException(t);
-			else Timer.showStdErr("Fatal error: Program execution finished");
-			return;
-		}
+		// Run statement (i.e. run program)
+		RunState runState = runStatement();
+		//		try {
+		//			runState = statement.run(this);
+		//		} catch (Throwable t) {
+		//			runState = RunState.FATAL_ERROR;
+		//			if (isVerbose()) throw new RuntimeException(t);
+		//			else Timer.showStdErr("Fatal error: Program execution finished");
+		//			return;
+		//		}
 
 		// OK, we finished running
 		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
@@ -855,6 +855,24 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// OK, we are done
 		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' finished, run state: '" + runState + "', exit value: '" + getExitValue() + "'");
+	}
+
+	/**
+	 * Run statements (i.e. run program)
+	 */
+	protected RunState runStatement() {
+		// Run program
+		RunState runState = null;
+
+		try {
+			runState = statement.run(this);
+		} catch (Throwable t) {
+			runState = RunState.FATAL_ERROR;
+			if (isVerbose()) throw new RuntimeException(t);
+			else Timer.showStdErr("Fatal error: Program execution finished");
+		}
+
+		return runState;
 	}
 
 	@SuppressWarnings("unchecked")

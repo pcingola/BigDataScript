@@ -83,7 +83,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
 	public Scope() {
 		parent = getGlobalScope();
-		this.node = null;
+		node = null;
 		id = nextId();
 		symbols = new HashMap<String, ScopeSymbol>();
 	}
