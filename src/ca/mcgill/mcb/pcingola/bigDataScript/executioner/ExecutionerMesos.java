@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.mesos.BdsMesosFramework;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**

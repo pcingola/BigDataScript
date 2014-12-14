@@ -11,7 +11,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependency;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -34,7 +35,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
 
-	protected TaskOptions taskOptions;
+	protected ExpressionTaskOptions taskOptions;
 	protected Statement statement;
 
 	/**
@@ -57,6 +58,7 @@ public class ExpressionTask extends ExpressionWithScope {
 			task.state(TaskState.RUNNING);
 			task.state(TaskState.FINISHED);
 			task.setExitValue(0);
+			bdsThread.add(task);
 		} else {
 			bdsThread.add(task);
 			executioner.add(task);
@@ -70,12 +72,12 @@ public class ExpressionTask extends ExpressionWithScope {
 	/**
 	 * Create a task
 	 */
-	Task createTask(BigDataScriptThread bdsThread, ExpressionSys sys) {
+	Task createTask(BigDataScriptThread bdsThread, TaskDependency taskDependency, ExpressionSys sys) {
 		// Get an ID
 		String execId = sys.execId("task", bdsThread);
 
 		// Create Task
-		Task task = new Task(execId, sys.getSysFileName(execId), sys.getCommands(bdsThread), getFileName(), getLineNum());
+		Task task = new Task(execId, this, sys.getSysFileName(execId), sys.getCommands(bdsThread));
 
 		// Configure Task parameters
 		task.setVerbose(bdsThread.getConfig().isVerbose());
@@ -89,11 +91,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setMaxFailCount((int) bdsThread.getInt(TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
 		task.getResources().setTimeout(bdsThread.getInt(TASK_OPTION_TIMEOUT));
 		task.getResources().setWallTimeout(bdsThread.getInt(TASK_OPTION_WALL_TIMEOUT));
-
-		if (taskOptions != null) {
-			task.setInputFiles(taskOptions.getInputFiles());
-			task.setOutputFiles(taskOptions.getOutputFiles());
-		}
+		if (taskDependency != null) task.setTaskDependency(taskDependency);
 
 		return task;
 	}
@@ -110,18 +108,19 @@ public class ExpressionTask extends ExpressionWithScope {
 	 */
 	@Override
 	public Object eval(BigDataScriptThread bdsThread) {
-		// Execute options assignments
+		// Evaluate task options (get a list of dependencies)
+		TaskDependency taskDependency = null;
 		if (taskOptions != null) {
-			boolean ok = (Boolean) taskOptions.eval(bdsThread);
-			if (bdsThread.isDebug()) log("task-options check " + ok);
-			if (!ok) return ""; // Task options clause not satisfied. Do not execute task
+			taskDependency = taskOptions.evalTaskDependency(bdsThread);
+			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null));
+			if (taskDependency == null) return ""; // Task options clause not satisfied. Do not execute task
 		}
 
 		// Evaluate 'sys' statements
 		ExpressionSys sys = evalSys(bdsThread);
 
 		// Create task
-		Task task = createTask(bdsThread, sys);
+		Task task = createTask(bdsThread, taskDependency, sys);
 
 		// Schedule task for execution
 		dispatchTask(bdsThread, task);
@@ -172,7 +171,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (tree.getChild(idx).getText().equals("(")) {
 			int lastIdx = indexOf(tree, ")");
 
-			taskOptions = new TaskOptions(this, null);
+			taskOptions = new ExpressionTaskOptions(this, null);
 			taskOptions.parse(tree, ++idx, lastIdx);
 			idx = lastIdx + 1; // Skip last ')'
 		}
@@ -211,7 +210,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof LiteralString //
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
-						;
+				;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}

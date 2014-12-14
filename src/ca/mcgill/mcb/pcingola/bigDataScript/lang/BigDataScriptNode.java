@@ -417,7 +417,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	}
 
 	protected boolean isList(Type baseType) {
-		return (returnType != null) && returnType.isList(baseType);
+		if (returnType == null) return false;
+		return returnType.isList(baseType);
 	}
 
 	protected boolean isMap() {
@@ -517,7 +518,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Show a parseTree node
-	 * @param tree
 	 */
 	void printNode(ParseTree tree) {
 		System.out.println(tree.getClass().getSimpleName());

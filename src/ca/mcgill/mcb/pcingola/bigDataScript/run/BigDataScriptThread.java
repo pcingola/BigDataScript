@@ -36,6 +36,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TailFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependecies;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -100,7 +101,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		config = parent.config;
 		random = parent.random;
 		removeOnExit = parent.removeOnExit;
-		taskDependecies = new TaskDependecies(this);
+		taskDependecies = TaskDependecies.get();
 		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
 
 		setStatement(statement);
@@ -116,7 +117,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		this.config = config;
 		random = new Random();
 		removeOnExit = new LinkedList<String>();
-		taskDependecies = new TaskDependecies(this);
+		taskDependecies = TaskDependecies.get();
 		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
 
 		if (statement != null) setStatement(statement);
@@ -591,7 +592,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		List<String> taskIds = new ArrayList<String>();
 
 		// Find dependencies
-		Set<Task> tasks = taskDependecies.goal(out);
+		Set<Task> tasks = taskDependecies.goal(this, out);
 
 		// No update needed?
 		if (tasks == null) {
@@ -1143,7 +1144,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		boolean ok = true;
 
 		if (isVerbose() && !isTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
-		for (String tid : taskDependecies.getTaskIds())
+
+		// Get all taskIds in a new collection (to avoid concurrent modification
+		LinkedList<String> tids = new LinkedList<>();
+		tids.addAll(taskDependecies.getTaskIds());
+
+		// Wait for each task
+		for (String tid : tids)
 			ok &= waitTask(tid);
 
 		return ok;

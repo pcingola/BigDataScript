@@ -12,10 +12,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.DependencyState;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.DependencyState;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.TextTable;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
@@ -518,7 +518,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 								+ "\n\tHOST                : " + host //
 								+ "\n\tRESOURCES AVAILABLE : " + host.getResourcesAvaialble() //
 								+ "\n\tTASK RESOURCES      : " + task.getResources() //
-						);
+								);
 
 						selectTask(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);

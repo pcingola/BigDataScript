@@ -77,7 +77,7 @@ public class ExpressionParallel extends ExpressionTask {
 		if (tree.getChild(idx).getText().equals("(")) {
 			int lastIdx = indexOf(tree, ")");
 
-			taskOptions = new TaskOptions(this, null);
+			taskOptions = new ExpressionTaskOptions(this, null);
 			taskOptions.parse(tree, ++idx, lastIdx);
 			idx = lastIdx + 1; // Skip last ')'
 		}

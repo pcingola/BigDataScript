@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.run;
+package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,9 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionDepOperator;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -23,17 +22,25 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TaskDependecies {
 
+	private static TaskDependecies taskDependecies = new TaskDependecies();
+
 	boolean debug = false;
 	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
 	Map<String, Task> tasksById;
 	AutoHashMap<String, List<Task>> tasksByOutput;
-	BigDataScriptThread bdsThread;
 
-	public TaskDependecies(BigDataScriptThread bdsThread) {
+	public static TaskDependecies get() {
+		return taskDependecies;
+	}
+
+	public static void reset() {
+		taskDependecies = new TaskDependecies();
+	}
+
+	private TaskDependecies() {
 		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
 		tasksById = new HashMap<String, Task>();
 		tasks = new ArrayList<Task>();
-		this.bdsThread = bdsThread;
 	}
 
 	/**
@@ -131,24 +138,24 @@ public class TaskDependecies {
 		return goals;
 	}
 
-	public Task get(String taskId) {
+	public synchronized Task get(String taskId) {
 		return tasksById.get(taskId);
 	}
 
-	public Collection<String> getTaskIds() {
+	public synchronized Collection<String> getTaskIds() {
 		return tasksById.keySet();
 	}
 
-	public Collection<Task> getTasks() {
+	public synchronized Collection<Task> getTasks() {
 		return tasks;
 	}
 
 	/**
 	 * Find tasks required to achieve goal 'out'
 	 */
-	public Set<Task> goal(String out) {
+	public synchronized Set<Task> goal(BigDataScriptThread bdsThread, String out) {
 		Set<Task> tasks = new HashSet<>();
-		goalRun(out, tasks);
+		goalRun(bdsThread, out, tasks);
 		return tasks;
 	}
 
@@ -158,6 +165,9 @@ public class TaskDependecies {
 	boolean goalNeedsUpdate(String out) {
 		// Find all 'leaf nodes' (files) required for this goal
 		Set<String> leaves = findLeafNodes(out);
+		TaskDependency tasDep = new TaskDependency(null);
+		tasDep.addOutput(out);
+		tasDep.addInput(leaves);
 
 		if (debug) {
 			Gpr.debug("\n\tGoal: " + out + "\n\tLeaf nodes:");
@@ -165,13 +175,13 @@ public class TaskDependecies {
 				System.err.println("\t\t'" + n + "'");
 		}
 
-		return needsUpdate(out, leaves);
+		return tasDep.depOperator();
 	}
 
 	/**
 	 * Find all leaf nodes required for goal 'out'
 	 */
-	boolean goalRun(String goal, Set<Task> addedTasks) {
+	boolean goalRun(BigDataScriptThread bdsThread, String goal, Set<Task> addedTasks) {
 
 		// Check if we really need to update this goal (with respect to the leaf nodes)
 		if (!goalNeedsUpdate(goal)) return false;
@@ -186,7 +196,7 @@ public class TaskDependecies {
 
 			if (t.getInputFiles() != null) //
 				for (String in : t.getInputFiles())
-					goalRun(in, addedTasks);
+					goalRun(bdsThread, in, addedTasks);
 		}
 
 		// Run all tasks
@@ -198,7 +208,7 @@ public class TaskDependecies {
 		return true;
 	}
 
-	public boolean hasTask(String taskId) {
+	public synchronized boolean hasTask(String taskId) {
 		return tasksById.containsKey(taskId);
 	}
 
@@ -227,33 +237,6 @@ public class TaskDependecies {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Do 'outs' files need to be updated respect to 'ins'?
-	 */
-	boolean needsUpdate(Collection<String> outs, Collection<String> ins) {
-		ExpressionDepOperator dep = new ExpressionDepOperator(null, null);
-		return dep.depOperator(outs, ins, debug);
-	}
-
-	/**
-	 * Does 'out' file need to be updated respect to 'ins'?
-	 */
-	boolean needsUpdate(String out, Collection<String> ins) {
-		// Collection of output files (only one element)
-		LinkedList<String> outs = new LinkedList<>();
-		outs.add(out);
-		return needsUpdate(outs, ins);
-	}
-
-	/**
-	 * Do output files in this task need to be updated?
-	 */
-	boolean needsUpdate(Task task) {
-		Collection<String> outs = task.getOutputFiles() != null ? task.getOutputFiles() : new LinkedList<String>();
-		Collection<String> ins = task.getInputFiles() != null ? task.getInputFiles() : new LinkedList<String>();
-		return needsUpdate(outs, ins);
 	}
 
 	@Override

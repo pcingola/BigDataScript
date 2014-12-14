@@ -136,6 +136,10 @@ public class TypeList extends Type {
 
 	@Override
 	public boolean isList(Type baseType) {
+		// If baseType is void, then the list must be empty.
+		// An empty list complies with all types.
+		if (this.baseType.isVoid()) return true;
+
 		return this.baseType.equals(baseType);
 	}
 

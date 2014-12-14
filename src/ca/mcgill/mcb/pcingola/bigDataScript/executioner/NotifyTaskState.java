@@ -1,7 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState;
 
 /**
  * Notify task state change

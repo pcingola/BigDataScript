@@ -1,8 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -11,6 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependency;
 
 /**
  * Dependency operator '<-'
@@ -24,70 +23,9 @@ public class ExpressionDepOperator extends Expression {
 
 	Expression left[];
 	Expression right[];
-	List<String> leftEval;
-	List<String> rightEval;
 
 	public ExpressionDepOperator(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	/**
-	 * Calculate the result of '<-' operator give two collections files (left hand side and right handside)
-	 */
-	public boolean depOperator(Collection<String> leftEval, Collection<String> rightEval, boolean debug) {
-		// Left hand side
-		// Calculate minimum modification time
-		long minModifiedLeft = Long.MAX_VALUE;
-		for (String fileName : leftEval) {
-			File file = new File(fileName);
-
-			// Any 'left' file does not exists? => We need to build this dependency
-			if (!file.exists()) {
-				if (debug) log("Left file '" + fileName + "' doesn't exist");
-				return true;
-			}
-
-			if (file.isFile() && file.length() <= 0) {
-				if (debug) log("Left file '" + fileName + "' is empty");
-				return true; // File is empty? => We need to build this dependency.
-			} else if (file.isDirectory()) {
-				// Notice: If it is a directory, we must rebuild if it is empty
-				File dirList[] = file.listFiles();
-				if ((dirList == null) || dirList.length <= 0) {
-					if (debug) log("Left file '" + fileName + "' is empty");
-					return true;
-				}
-			}
-
-			minModifiedLeft = Math.min(minModifiedLeft, file.lastModified());
-		}
-
-		// Right hand side
-		// Calculate minimum modification time
-		long maxModifiedRight = Long.MIN_VALUE;
-		for (String fileName : rightEval) {
-			File file = new File(fileName);
-
-			if (file.exists()) {
-				// Update max time
-				maxModifiedRight = Math.max(maxModifiedRight, file.lastModified());
-			} else {
-				// Make sure that we schedule the task if the input file doesn't exits
-				// The reason to do this, is that probably the input file was defined
-				// by some other task that is pending execution.
-				if (debug) log("Right file '" + fileName + "' doesn't exist");
-				return true;
-			}
-		}
-
-		// Have all 'left' files been modified before 'right' files?
-		// I.e. Have all goals been created after the input files?
-		if (minModifiedLeft < maxModifiedRight) {
-			if (debug) log("Modification times, minModifiedLeft (" + minModifiedLeft + ") < maxModifiedRight (" + maxModifiedRight + ")");
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
@@ -95,12 +33,8 @@ public class ExpressionDepOperator extends Expression {
 	 */
 	@Override
 	public Object eval(BigDataScriptThread bdsThread) {
-		// All expressions are evaluated
-		leftEval = eval(bdsThread, left);
-		rightEval = eval(bdsThread, right);
-
-		boolean debug = bdsThread.isDebug();
-		return depOperator(leftEval, rightEval, debug);
+		TaskDependency taskDependency = evalTaskDependency(bdsThread);
+		return taskDependency.depOperator();
 	}
 
 	/**
@@ -125,12 +59,20 @@ public class ExpressionDepOperator extends Expression {
 		return resList;
 	}
 
-	public List<String> getInputFiles() {
-		return rightEval;
-	}
+	/**
+	 * Evaluate expressions and create a task dependency
+	 */
+	public TaskDependency evalTaskDependency(BigDataScriptThread bdsThread) {
+		// All expressions are evaluated
+		List<String> leftEval = eval(bdsThread, left);
+		List<String> rightEval = eval(bdsThread, right);
 
-	public List<String> getOutputFiles() {
-		return leftEval;
+		TaskDependency taskDependency = new TaskDependency(this);
+		taskDependency.addOutput(leftEval);
+		taskDependency.addInput(rightEval);
+
+		bdsThread.isDebug();
+		return taskDependency;
 	}
 
 	@Override

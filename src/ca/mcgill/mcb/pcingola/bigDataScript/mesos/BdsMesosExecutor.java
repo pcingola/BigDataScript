@@ -238,7 +238,7 @@ public class BdsMesosExecutor implements Executor, NotifyTaskState, PidParser {
 	}
 
 	@Override
-	public void taskFinished(Task task, Task.TaskState taskState) {
+	public void taskFinished(Task task, ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState taskState) {
 		String tid = task.getId();
 		if (debug) Gpr.debug("Task " + tid + " finished");
 

@@ -1,0 +1,8 @@
+#!/usr/bin/env bds
+
+
+tid := task echo Hi; sleep 1
+
+task( [] <- tid ) {
+	sys echo Bye
+}

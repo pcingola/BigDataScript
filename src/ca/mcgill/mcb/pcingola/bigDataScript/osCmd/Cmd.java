@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.NotifyTaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.PidParser;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**

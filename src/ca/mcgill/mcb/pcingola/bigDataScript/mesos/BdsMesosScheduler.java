@@ -42,6 +42,7 @@ import org.apache.mesos.SchedulerDriver;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 import com.google.protobuf.ByteString;
@@ -275,16 +276,16 @@ public class BdsMesosScheduler implements Scheduler {
 			break;
 
 		case TASK_FINISHED:
-			executionerMesos.taskFinished(task, Task.TaskState.FINISHED);
+			executionerMesos.taskFinished(task, TaskState.FINISHED);
 			break;
 
 		case TASK_FAILED:
-			executionerMesos.taskFinished(task, Task.TaskState.ERROR);
+			executionerMesos.taskFinished(task, TaskState.ERROR);
 			break;
 
 		case TASK_KILLED:
 		case TASK_LOST:
-			executionerMesos.taskFinished(task, Task.TaskState.KILLED);
+			executionerMesos.taskFinished(task, TaskState.KILLED);
 			break;
 
 		default:

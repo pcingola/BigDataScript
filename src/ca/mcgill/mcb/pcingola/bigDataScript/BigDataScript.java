@@ -49,6 +49,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependecies;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -765,7 +766,9 @@ public class BigDataScript {
 	 * Run script
 	 */
 	public int run() {
-		Executioners executioners = Executioners.getInstance(config); // Initialize executioners
+		// Initialize 
+		Executioners executioners = Executioners.getInstance(config);
+		TaskDependecies.reset();
 
 		// ---
 		// Run

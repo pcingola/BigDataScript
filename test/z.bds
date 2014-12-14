@@ -1,12 +1,9 @@
 #!/usr/bin/env bds
 
-# A function defining a task
-void someFunction(int i) {
-	task echo TASK $i; sleep 1
-}
+in := "in.txt"
+out := "out.txt"
+out2 := "out2.txt"
 
-# A loop fires threads of funcions
-for ( int i : range(1, 5) ) {
-   	par someFunction(i)
-}
-
+sys touch $in $out $out2; rm $in $out $out2; date > $in
+task( out <- in ) sys echo Hi ; sleep 1 ; cat $in > $out
+task( out2 <- out ) sys echo Hi 2 ; sleep 1 ; cat $out > $out2
