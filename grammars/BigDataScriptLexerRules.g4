@@ -73,4 +73,4 @@ COMMENT_LINE_HASH : '#' ~('\n'|'\r')* { skip(); };
 ID                :    ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
 
 // Newline and white space
-WS                : ( ' ' | '\t' | '\r' | '\u000C' ) { skip(); } ;
+WS                : ( ' ' | '\t' | '\r' | '\\\n' | '\\\r\n' | '\u000C' ) { skip(); } ;

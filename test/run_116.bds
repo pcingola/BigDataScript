@@ -23,7 +23,7 @@ y := \
 z \
 	:= 1
 
-print "The answer \
+print "The answer\
 		is: " + func(x, \
 						y, \
 						z \
