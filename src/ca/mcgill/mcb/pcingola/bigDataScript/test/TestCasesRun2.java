@@ -144,4 +144,10 @@ public class TestCasesRun2 extends TestCasesBase {
 		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
 	}
 
+	@Test
+	public void test115_task_dependency_using_taskId() {
+		String stdout = runAndReturnStdout("test/run_115.bds");
+		Assert.assertEquals("Hi 1\nBye 1\nHi 2\nBye 2\n", stdout);
+	}
+
 }

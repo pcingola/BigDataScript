@@ -47,19 +47,24 @@ public class TaskDependency {
 	}
 
 	public void addInput(Collection<String> inputs) {
-		inputFiles.addAll(inputs);
+		for (String in : inputs)
+			addInput(in);
 	}
 
-	public void addInput(String input) {
-		inputFiles.add(input);
+	public void addInput(String in) {
+		// Is 'in' a task ID?
+		Task task = TaskDependecies.get().get(in);
+
+		if (task != null) tasks.add(task);
+		else inputFiles.add(in); // No taskDI, must be a file
 	}
 
 	public void addOutput(Collection<String> outputs) {
-		this.outputFiles.addAll(outputs);
+		outputFiles.addAll(outputs);
 	}
 
 	public void addOutput(String output) {
-		this.outputFiles.add(output);
+		outputFiles.add(output);
 	}
 
 	/**
@@ -79,6 +84,16 @@ public class TaskDependency {
 
 		if (task.verbose && !checkOutputFiles.isEmpty()) Timer.showStdErr(checkOutputFiles);
 		return checkOutputFiles;
+	}
+
+	/**
+	 * Mark output files to be deleted on exit
+	 */
+	public void deleteOutputFilesOnExit() {
+		for (String fileName : outputFiles) {
+			File file = new File(fileName);
+			if (file.exists()) file.deleteOnExit();
+		}
 	}
 
 	/**
@@ -156,18 +171,12 @@ public class TaskDependency {
 		return !tasks.isEmpty();
 	}
 
-	public void setDebug(boolean debug) {
-		this.debug = debug;
+	boolean isTask(String tid) {
+		return TaskDependecies.get().hasTask(tid);
 	}
 
-	/**
-	 * Mark output files to be deleted on exit
-	 */
-	public void deleteOutputFilesOnExit() {
-		for (String fileName : outputFiles) {
-			File file = new File(fileName);
-			if (file.exists()) file.deleteOnExit();
-		}
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 
 	@Override

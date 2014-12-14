@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 /**
@@ -11,8 +13,9 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test02() {
-		runAndCheckpoint("test/z_splitLines.bds", null, "l", "15");
+	public void test115_task_dependency_using_taskId() {
+		String stdout = runAndReturnStdout("test/run_115.bds");
+		Assert.assertEquals("Hi 1\nBye 1\nHi 2\nBye 2\n", stdout);
 	}
 
 }
