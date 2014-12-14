@@ -16,15 +16,13 @@ public class TailStream extends TailFile {
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 
 	String tailId;
-	// BufferedInputStream input; // Input buffer
-	InputStream input; // Input buffer
+	InputStream input;
 
 	/**
 	 * Provide an inputStream (instead of an input file)
 	 */
 	public TailStream(InputStream input, boolean showStderr, String tailId) {
 		super(null, showStderr);
-		// this.input = new BufferedInputStream(input);
 		this.input = input;
 		this.tailId = tailId;
 	}
@@ -37,7 +35,7 @@ public class TailStream extends TailFile {
 		try {
 			if (attemptTail) tail();
 
-			// Is it already open?
+			// Is it still open?
 			if (input != null) {
 				if (debug) log("Closing '" + tailId + "'");
 				input.close();
@@ -98,7 +96,6 @@ public class TailStream extends TailFile {
 			return count;
 		} catch (Exception e) {
 			// Problems with this buffer? Remove it from the list
-			// Timer.showStdErr("ERROR: Tail on file '" + inputFileName + "' / '" + outputFileName + "' failed.\n" + e);
 			close(false);
 			return -1;
 		}

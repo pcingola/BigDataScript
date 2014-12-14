@@ -26,7 +26,6 @@ public class ExpressionSys extends Expression {
 	protected static int sysId = 1;
 
 	protected String commands;
-	protected String execId;
 	protected String output;
 	InterpolateVars interpolateVars;
 
@@ -46,7 +45,7 @@ public class ExpressionSys extends Expression {
 	/**
 	 * Get a sys ID
 	 */
-	private static int nextId() {
+	private static synchronized int nextId() {
 		return sysId++;
 	}
 
@@ -67,8 +66,9 @@ public class ExpressionSys extends Expression {
 	/**
 	 * Create an exec ID
 	 */
-	public String execId(String name, BigDataScriptThread bdsThread) {
-		execId = bdsThread.getBdsThreadId() + "/" + name + ".line_" + getLineNum() + ".id_" + nextId();
+	public synchronized String execId(String name, BigDataScriptThread bdsThread) {
+		int nid = nextId();
+		String execId = bdsThread.getBdsThreadId() + "/" + name + ".line_" + getLineNum() + ".id_" + nid;
 		return execId;
 	}
 
@@ -77,7 +77,7 @@ public class ExpressionSys extends Expression {
 		return interpolateVars.eval(bdsThread).toString(); // Variable interpolation
 	}
 
-	public String getSysFileName() {
+	public String getSysFileName(String execId) {
 		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
 
 		String sysFileName = execId + ".sh";
@@ -110,8 +110,7 @@ public class ExpressionSys extends Expression {
 	protected RunState runStep(BigDataScriptThread bdsThread) {
 		if (bdsThread.isCheckpointRecover()) return RunState.CHECKPOINT_RECOVER;
 
-		// Get an ID
-		execId = execId("exec", bdsThread);
+		execId("exec", bdsThread);
 
 		// EXEC expressions are always executed locally AND immediately
 		LinkedList<String> args = new LinkedList<String>();
@@ -136,7 +135,7 @@ public class ExpressionSys extends Expression {
 				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-						);
+				);
 				return RunState.FATAL_ERROR;
 			}
 		}

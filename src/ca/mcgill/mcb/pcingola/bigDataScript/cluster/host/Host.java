@@ -36,7 +36,6 @@ public class Host implements Comparable<Host> {
 
 	/**
 	 * Add task to this host
-	 * @param task
 	 */
 	public synchronized void add(Task task) {
 		if (tasksRunning.add(task)) updateResources();
@@ -71,7 +70,7 @@ public class Host implements Comparable<Host> {
 		return resources;
 	}
 
-	public HostResources getResourcesAvaialble() {
+	public synchronized HostResources getResourcesAvaialble() {
 		if (resourcesAvaialble == null) updateResources();
 		return resourcesAvaialble;
 	}

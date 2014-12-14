@@ -36,7 +36,6 @@ public class ExpressionTask extends ExpressionWithScope {
 
 	protected TaskOptions taskOptions;
 	protected Statement statement;
-	protected String execId = "";
 
 	/**
 	 * Execute a task (schedule it into executioner)
@@ -73,10 +72,10 @@ public class ExpressionTask extends ExpressionWithScope {
 	 */
 	Task createTask(BigDataScriptThread bdsThread, ExpressionSys sys) {
 		// Get an ID
-		execId = sys.execId("task", bdsThread);
+		String execId = sys.execId("task", bdsThread);
 
 		// Create Task
-		Task task = new Task(execId, sys.getSysFileName(), sys.getCommands(bdsThread), getFileName(), getLineNum());
+		Task task = new Task(execId, sys.getSysFileName(execId), sys.getCommands(bdsThread), getFileName(), getLineNum());
 
 		// Configure Task parameters
 		task.setVerbose(bdsThread.getConfig().isVerbose());
@@ -115,7 +114,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (taskOptions != null) {
 			boolean ok = (Boolean) taskOptions.eval(bdsThread);
 			if (bdsThread.isDebug()) log("task-options check " + ok);
-			if (!ok) return execId; // Task options clause not satisfied. Do not execute task
+			if (!ok) return ""; // Task options clause not satisfied. Do not execute task
 		}
 
 		// Evaluate 'sys' statements
@@ -127,7 +126,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Schedule task for execution
 		dispatchTask(bdsThread, task);
 
-		return execId;
+		return task.getId();
 	}
 
 	/**
@@ -212,7 +211,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof LiteralString //
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
-				;
+						;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}

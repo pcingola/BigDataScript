@@ -44,7 +44,7 @@ public class ExpressionParallel extends ExpressionTask {
 		if (taskOptions != null) {
 			boolean ok = (Boolean) taskOptions.eval(bdsThread);
 			if (bdsThread.isDebug()) log("task-options check " + ok);
-			if (!ok) return execId; // Options clause not satisfied. Do not execute 'parallel'
+			if (!ok) return ""; // Options clause not satisfied. Do not execute 'parallel'
 		}
 
 		// Create thread and execute statements

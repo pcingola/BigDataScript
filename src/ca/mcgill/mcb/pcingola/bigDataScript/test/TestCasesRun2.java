@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 /**
@@ -128,6 +130,18 @@ public class TestCasesRun2 extends TestCasesBase {
 				linesPar.add(line);
 			}
 		}
+	}
+
+	@Test
+	public void test114_parallel_function_task_calls() {
+		String stdout = runAndReturnStdout("test/run_114.bds");
+
+		Set<String> linesPar = new HashSet<String>();
+		for (String line : stdout.split("\n"))
+			if (line.startsWith("TASK")) linesPar.add(line);
+
+		// Check
+		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
 	}
 
 }

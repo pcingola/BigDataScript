@@ -52,6 +52,7 @@ public class CmdLocal extends Cmd {
 	protected boolean execPrepare() throws Exception {
 		// Build process and start it
 		ProcessBuilder pb = new ProcessBuilder(commandArgs);
+
 		if (debug) {
 			StringBuilder cmdsb = new StringBuilder();
 			for (String arg : commandArgs)
@@ -85,8 +86,6 @@ public class CmdLocal extends Cmd {
 
 	/**
 	 * Feed a string to process' STDIN
-	 * @throws InterruptedException
-	 * @throws IOException
 	 */
 	protected void feedStdin() throws InterruptedException, IOException {
 		if ((feedStdin == null) || feedStdin.isEmpty()) return; // Nothing to do
@@ -123,7 +122,6 @@ public class CmdLocal extends Cmd {
 
 	/**
 	 * Send a kill signal using 'bds kill'
-	 * @param pid
 	 */
 	protected void killBds(int pid) {
 		if (debug) Gpr.debug("Kill pid: " + pid);
@@ -173,9 +171,6 @@ public class CmdLocal extends Cmd {
 
 	/**
 	 * Read child process pid (or cluster job id)
-	 * @return
-	 * @throws InterruptedException
-	 * @throws IOException
 	 */
 	protected boolean readPid() throws InterruptedException, IOException {
 		pid = "";

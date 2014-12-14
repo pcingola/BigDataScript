@@ -132,8 +132,6 @@ public abstract class TailFile {
 
 	/**
 	 * Open a file and add buffer to 'buffers'
-	 * @param inputFileName
-	 * @return
 	 */
 	protected abstract boolean open();
 

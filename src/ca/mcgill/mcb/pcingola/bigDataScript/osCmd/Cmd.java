@@ -40,7 +40,6 @@ public abstract class Cmd extends Thread {
 
 	/**
 	 * Append error message
-	 * @param errMsg
 	 */
 	protected void addError(String errMsg) {
 		if (errMsg != null) {
@@ -61,7 +60,7 @@ public abstract class Cmd extends Thread {
 			executing = true;
 
 			// Prepare to execute
-			if (execPrepare()) stateStarted(); // Now we are really done and the process is started. Update states
+			if (execPrepare()) stateStarted(); // We are ready to launch. Update states
 			else {
 				execError(null, TaskState.START_FAILED, Task.EXITCODE_ERROR);
 				return exitValue;
@@ -197,8 +196,8 @@ public abstract class Cmd extends Thread {
 	}
 
 	public void setExecutioner(Executioner executioner) {
-		this.notifyTaskState = executioner;
-		this.pidParser = executioner;
+		notifyTaskState = executioner;
+		pidParser = executioner;
 	}
 
 	public void setHost(Host host) {

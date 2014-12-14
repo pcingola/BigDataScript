@@ -96,7 +96,7 @@ public class ExecutionerLocal extends Executioner {
 	 * Create a CmdRunner to execute the script
 	 */
 	@Override
-	protected Cmd createCmd(Task task) {
+	protected synchronized Cmd createCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
 		// Create command line
@@ -122,25 +122,20 @@ public class ExecutionerLocal extends Executioner {
 	 * Follow a task's STDOUT and STDERR
 	 */
 	@Override
-	protected void follow(Task task) {
+	protected synchronized void follow(Task task) {
 		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
 
 		// We need to feed the InputStreams from the process, instead of file names
-		CmdLocal cmd = (CmdLocal) cmdById.get(task.getId());
-
+		CmdLocal cmd = (CmdLocal) getCmd(task);
 		if (cmd == null) {
-			Gpr.debug("Command for taks '" + task.getId() + "' is null.\nThis should not happen!" //
-					+ "Task state: " + task.getTaskState() //
-					+ "\n---------------------\n" //
-					+ task.getProgramTxt() //
-					+ "\n---------------------" //
-			);
+			Gpr.debug("Cannot find command (null command) for task '" + task.getId() + "'. This should never happen!\nTask:\n" + task.getProgramTxt());
 			return;
-		} else Gpr.debug("Follow: " + task.getProgramHint());
+		}
 
 		// Wait for cmd thread to start, STDOUT and STDERR to became available
-		while (!cmd.isStarted() || (cmd.getStdout() == null) || (cmd.getStderr() == null))
+		while (!cmd.isStarted() || (cmd.getStdout() == null) || (cmd.getStderr() == null)) {
 			sleepShort();
+		}
 
 		// Add to tail
 		tail.add(cmd.getStdout(), task.getStdoutFile(), false);

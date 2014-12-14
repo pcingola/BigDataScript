@@ -46,7 +46,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected Map<String, Task> tasksRunning; // Tasks running
 	protected Map<String, Task> tasksDone; // Tasks that fin
 	protected List<Tuple<Task, TaskState>> taskUpdateStates; // Tasks to be updated
-	protected Map<String, Cmd> cmdById;
+	private Map<String, Cmd> cmdById;
 	protected Tail tail;
 	protected Config config;
 	protected TaskLogger taskLogger;
@@ -60,12 +60,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		valid = true;
 		this.config = config;
 		tasksToRun = new ArrayList<Task>();
-		tasksSelected = new HashMap<Task, Host>();
-		tasksRunning = new HashMap<String, Task>();
-		tasksDone = new HashMap<String, Task>();
 		taskUpdateStates = new ArrayList<Tuple<Task, TaskState>>();
 		tail = config.getTail();
 		taskLogger = config.getTaskLogger();
+		tasksSelected = new HashMap<Task, Host>();
+		tasksRunning = new HashMap<String, Task>();
+		tasksDone = new HashMap<String, Task>();
 		cmdById = new HashMap<String, Cmd>();
 		debug = config.isDebug();
 		verbose = config.isVerbose();
@@ -82,6 +82,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (verbose) log("Queuing task: " + task.getId());
 		task.state(TaskState.SCHEDULED);
 		tasksToRun.add(task);
+	}
+
+	protected synchronized void addCmd(Task task, Cmd cmd) {
+		cmdById.put(task.getId(), cmd);
 	}
 
 	/**
@@ -133,6 +137,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	protected CheckTasksRunning getCheckTasksRunning() {
 		return null;
+	}
+
+	protected synchronized Cmd getCmd(Task task) {
+		return cmdById.get(task.getId());
 	}
 
 	public String getExecutionerId() {
@@ -234,7 +242,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (debug) log("Killing task '" + task.getId() + "'");
 
 		// Kill command
-		Cmd cmd = cmdById.get(task.getId());
+		Cmd cmd = getCmd(task);
 		if (cmd != null) cmd.kill();
 
 		// Mark task as finished
@@ -272,6 +280,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected synchronized void remove(Task task, Host host) {
 		tasksSelected.remove(task);
 		host.remove(task);
+	}
+
+	protected synchronized void removeCmd(Task task) {
+		cmdById.remove(task.getId());
 	}
 
 	/**
@@ -438,13 +450,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		// TODO: If an exception is thrown here, we should be able to either recover or mark the task as START_FAILED
 		Cmd cmd = createCmd(task);
 		if (cmd != null) {
+			addCmd(task, cmd);
 			cmd.setHost(host);
 			cmd.setExecutioner(this);
 			cmd.setTask(task);
 			cmd.setDebug(debug);
 		}
-
-		cmdById.put(task.getId(), cmd);
 
 		host.add(task);
 		if (cmd != null) cmd.start();
@@ -596,8 +607,8 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	public synchronized void taskFinished(Task task, TaskState taskState) {
 		if (taskState == null) {
 			// Set task state. Infer form exit code if no state is available.
-			// Note: This is the last thing we do in order for wait() methods to 
-			//       be sure that task has finished and all data has finished 
+			// Note: This is the last thing we do in order for wait() methods to
+			//       be sure that task has finished and all data has finished
 			//       updating.
 
 			// Set exit status
@@ -629,12 +640,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (debug) log("Task finished '" + id + "'");
 
 		// Find command
-		Cmd cmd = cmdById.get(id);
+		Cmd cmd = getCmd(task);
 		if (cmd != null) {
 			Host host = cmd.getHost();
 			remove(task, host); // Remove task form host
-			cmdById.remove(id); // Remove command
 		}
+		removeCmd(task); // Remove command (if any)
 
 		followStop(task); // Remove from 'tail' thread
 

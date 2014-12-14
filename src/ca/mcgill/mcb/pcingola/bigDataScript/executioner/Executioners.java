@@ -1,7 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
@@ -17,15 +17,12 @@ public class Executioners {
 
 	/**
 	 * Type of executioners
-	 * @author pcingola
-	 *
 	 */
 	public enum ExecutionerType {
 		SYS, LOCAL, SSH, CLUSTER, MOAB, PBS, SGE, MESOS;
 
 		/**
 		 * Parse an executioner name
-		 * @param exName
 		 * @return Corresponding ExecutionerType or LOCAL if there is any error
 		 */
 		public static ExecutionerType parseSafe(String exName) {
@@ -42,13 +39,11 @@ public class Executioners {
 
 	// Singleton variable
 	private static Executioners executionersInstance = null;
-	private static HashMap<ExecutionerType, Executioner> executioners = new HashMap<ExecutionerType, Executioner>();
-
+	private static ConcurrentHashMap<ExecutionerType, Executioner> executioners = new ConcurrentHashMap<ExecutionerType, Executioner>();
 	Config config;
 
 	/**
 	 * Get instance
-	 * @return
 	 */
 	public static Executioners getInstance() {
 		return executionersInstance;
@@ -106,15 +101,12 @@ public class Executioners {
 			throw new RuntimeException("Unknown executioner type '" + exType + "'");
 		}
 
-		// Set flags
+		// Set some parameters
 		executioner.setVerbose(config.isVerbose());
 		executioner.setDebug(config.isDebug());
 		executioner.setLog(config.isLog());
 
-		// Start thread
-		executioner.start();
 		return executioner;
-
 	}
 
 	/**
@@ -126,7 +118,8 @@ public class Executioners {
 		// Invalid or null? Create a new one
 		if ((ex == null) || !ex.isValid()) {
 			ex = factory(exType);
-			executioners.put(exType, ex);
+			executioners.put(exType, ex); // Cache instance 
+			ex.start(); // Start thread
 		}
 
 		return ex;

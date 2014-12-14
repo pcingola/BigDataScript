@@ -310,13 +310,12 @@ public class ExecutionerCluster extends Executioner {
 		boolean ret = super.taskUpdateRunning(task);
 		if (!ret) return false;
 
-		// Cmd invoking 'qsub' finished execution => the task is in the cluster now
-		String id = task.getId();
-		Cmd cmd = cmdById.get(id);
+		task.getId();
+		Cmd cmd = getCmd(task);
 		if (cmd != null) {
 			Host host = cmd.getHost();
 			remove(task, host); // Remove task form host
-			cmdById.remove(id); // Remove command
+			removeCmd(task); // Remove command
 		}
 
 		return true;

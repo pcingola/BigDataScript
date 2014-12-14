@@ -85,8 +85,6 @@ public class Tail extends Thread {
 
 	/**
 	 * Remove 'fileName' (do not 'follow' any more)
-	 * @param fileName
-	 * @param showStderr
 	 */
 	public synchronized void remove(String fileName) {
 		try {
@@ -98,6 +96,7 @@ public class Tail extends Thread {
 			files.remove(fileName);
 		} catch (Exception e) {
 			// Nothing to do
+			e.printStackTrace();
 		}
 	}
 

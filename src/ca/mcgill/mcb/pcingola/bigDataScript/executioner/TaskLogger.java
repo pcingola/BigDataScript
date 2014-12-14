@@ -35,8 +35,6 @@ public class TaskLogger {
 
 	/**
 	 * Add a task and the corresponding executioner
-	 * @param task
-	 * @param executioner
 	 */
 	public synchronized void add(Task task, Executioner executioner) {
 		StringBuilder lines = new StringBuilder();
