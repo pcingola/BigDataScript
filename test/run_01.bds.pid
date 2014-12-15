@@ -7280,3 +7280,29 @@ test/graph_10.out.txt	-
 2202	-
 2203	+	
 2203	-
+2207	+	
+2207	-
+2218	+	
+test/checkpoint_08.csv	+	rm
+2218	-
+test/checkpoint_08.csv	-
+2221	+	
+test/checkpoint_08.xml	+	rm
+2221	-
+test/checkpoint_08.xml	-
+2224	+	
+test/checkpoint_08.csv	+	rm
+2224	-
+test/checkpoint_08.csv	-
+2227	+	
+test/checkpoint_08.xml	+	rm
+2227	-
+test/checkpoint_08.xml	-
+2230	+	
+test/checkpoint_09.csv	+	rm
+2230	-
+test/checkpoint_09.csv	-
+2233	+	
+test/checkpoint_09.xml	+	rm
+2233	-
+test/checkpoint_09.xml	-
