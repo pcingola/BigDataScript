@@ -49,7 +49,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class BigDataScriptThread extends Thread implements BigDataScriptSerialize {
 
-	public static final int SLEEP_TIME = 250;
 	private static int threadNumber = 1;
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
 	public static final String REPORT_RED_COLOR = "style=\"background-color: #ffc0c0\"";
@@ -101,11 +100,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		config = parent.config;
 		random = parent.random;
 		removeOnExit = parent.removeOnExit;
-		taskDependecies = TaskDependecies.get();
+
 		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
+		taskDependecies = new TaskDependecies();
 
 		setStatement(statement);
 		parent.add(this);
+
+		taskDependecies.setVerbose(isVerbose());
+		taskDependecies.setDebug(isDebug());
 	}
 
 	public BigDataScriptThread(Statement statement, Config config) {
@@ -117,23 +120,26 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		this.config = config;
 		random = new Random();
 		removeOnExit = new LinkedList<String>();
-		taskDependecies = TaskDependecies.get();
+		taskDependecies = new TaskDependecies();
 		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
 
 		if (statement != null) setStatement(statement);
+
+		taskDependecies.setVerbose(isVerbose());
+		taskDependecies.setDebug(isDebug());
 	}
 
 	/**
 	 * Add a child task
 	 */
-	public void add(BigDataScriptThread bdsThread) {
+	public synchronized void add(BigDataScriptThread bdsThread) {
 		bdsChildThreadsById.put(bdsThread.getBdsThreadId(), bdsThread);
 	}
 
 	/**
 	 * Add a task
 	 */
-	public void add(Task task) {
+	public synchronized void add(Task task) {
 		taskDependecies.add(task);
 	}
 
@@ -537,6 +543,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return returnValue;
 	}
 
+	/**
+	 * Get 'root' thread
+	 */
+	public BigDataScriptThread getRoot() {
+		if (parent == null) return this;
+		return parent.getRoot();
+	}
+
 	public RunState getRunState() {
 		return runState;
 	}
@@ -568,7 +582,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Get a task
 	 */
 	public Task getTask(String taskId) {
-		return taskDependecies.get(taskId);
+		return taskDependecies.getTask(taskId);
 	}
 
 	/**
@@ -581,8 +595,19 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Get a thread
 	 */
-	public BigDataScriptThread getThread(String threadId) {
-		return bdsChildThreadsById.get(threadId);
+	public synchronized BigDataScriptThread getThread(String threadId) {
+		// Do we have this thread?
+		BigDataScriptThread bdsth = bdsChildThreadsById.get(threadId);
+		if (bdsth != null) return bdsth;
+
+		// Search in all child threads
+		for (BigDataScriptThread child : bdsChildThreadsById.values()) {
+			bdsth = child.getThread(threadId);
+			if (bdsth != null) return bdsth;
+		}
+
+		// Not found
+		return null;
 	}
 
 	/**
@@ -623,23 +648,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public boolean isRoot() {
 		return parent == null;
-	}
-
-	/**
-	 * Have all tasks finished executing?
-	 */
-	public boolean isTasksDone() {
-		for (String taskId : taskDependecies.getTaskIds()) {
-			if ((taskId == null) || taskId.isEmpty()) continue;
-
-			Task task = getTask(taskId);
-			if (task == null) continue;
-
-			if (!task.isDone()) return false;
-		}
-
-		return true;
-
 	}
 
 	public boolean isThreadsDone() {
@@ -773,7 +781,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1002,14 +1010,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return false;
 	}
 
-	void sleep() {
-		try {
-			Thread.sleep(SLEEP_TIME);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * Show BDS calling stack
 	 */
@@ -1088,71 +1088,22 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Wait for one task/thread to finish
 	 */
 	public boolean wait(String id) {
-		if (taskDependecies.hasTask(id)) return waitTask(id);
-		if (bdsChildThreadsById.containsKey(id)) return waitThread(id);
+
+		// Note: We could be waiting for another thread's taskID.
+		//       So we need to wait on the global TaskDependencies
+		if (TaskDependecies.get().hasTask(id)) return TaskDependecies.get().waitTask(id);
+
+		// Note: We could be waiting for a non-child thread to finish
+		//       So we have to wait on the 'root' BdsThread'
+		BigDataScriptThread bdsThRoot = getRoot();
+		BigDataScriptThread bdsTh = bdsThRoot.getThread(id);
+		if (bdsTh != null) return waitThread(bdsTh);
 		return true; // Nothing to do (already finished)
 	}
 
 	public boolean waitAll() {
-		boolean ok = waitTasksAll();
+		boolean ok = taskDependecies.waitTasksAll();
 		ok &= waitThreadAll();
-		return ok;
-	}
-
-	/**
-	 * Wait for one task to finish
-	 * @return true if task finished OK or it was allowed to fail (i.e. canFail = true)
-	 */
-	public boolean waitTask(String taskId) {
-		if ((taskId == null) || taskId.isEmpty()) return true;
-
-		Task task = getTask(taskId);
-		if (task == null) return false; // No task? We are done!
-
-		// Is task a dependency?
-		if (task.isDependency() && !task.isScheduled()) {
-			if (isDebug()) Timer.showStdErr("Wait: Task '" + task.getId() + "' is dependency and has not been scheduled for execution. Not wating.");
-			return true;
-		}
-
-		if (isVerbose()) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId());
-
-		// Wait for task to finish
-		while (!task.isDone())
-			sleep();
-
-		// Either finished OK or it was allowed to fail
-		boolean ok = task.isDoneOk() || task.isCanFail();
-
-		// If task failed, show task information and failure reason.
-		if (!ok) {
-			// Show error and mark all files to be deleted on exit
-			System.err.println("Task failed:\n" + task.toString(true));
-			task.deleteOutputFilesOnExit();
-		}
-
-		if (isVerbose()) Timer.showStdErr("Wait: Task '" + task.getId() + "' finished.");
-		return ok;
-	}
-
-	/**
-	 * Wait for all tasks to finish
-	 * @return true if all tasks finished OK or it were allowed to fail (i.e. canFail = true)
-	 */
-	public boolean waitTasksAll() {
-		// Wait for all tasks to finish
-		boolean ok = true;
-
-		if (isVerbose() && !isTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
-
-		// Get all taskIds in a new collection (to avoid concurrent modification
-		LinkedList<String> tids = new LinkedList<>();
-		tids.addAll(taskDependecies.getTaskIds());
-
-		// Wait for each task
-		for (String tid : tids)
-			ok &= waitTask(tid);
-
 		return ok;
 	}
 
@@ -1160,9 +1111,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Wait for one thread to finish
 	 * @return true if thread finished OK
 	 */
-	public boolean waitThread(String bdsThreadId) {
+	public boolean waitThread(BigDataScriptThread bdsThread) {
 		try {
-			BigDataScriptThread bdsThread = bdsChildThreadsById.get(bdsThreadId);
 			if (bdsThread != null) {
 				bdsThread.join();
 				return bdsThread.getExitValue() == 0; // Finished OK?
@@ -1180,8 +1130,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		boolean ok = true;
 
 		if (isVerbose() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
-		for (String bdsThreadId : bdsChildThreadsById.keySet())
-			ok &= waitThread(bdsThreadId);
+		for (BigDataScriptThread bdsth : bdsChildThreadsById.values())
+			ok &= waitThread(bdsth);
 
 		return ok;
 	}

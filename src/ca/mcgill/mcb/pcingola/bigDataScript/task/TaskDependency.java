@@ -53,7 +53,7 @@ public class TaskDependency {
 
 	public void addInput(String in) {
 		// Is 'in' a task ID?
-		Task task = TaskDependecies.get().get(in);
+		Task task = TaskDependecies.get().getTask(in);
 
 		if (task != null) tasks.add(task);
 		else inputFiles.add(in); // No taskDI, must be a file

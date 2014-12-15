@@ -14,6 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Store task and dependency graph
@@ -22,9 +23,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TaskDependecies {
 
-	private static TaskDependecies taskDependecies = new TaskDependecies();
+	public static final int SLEEP_TIME = 250;
+	private static TaskDependecies taskDependecies = new TaskDependecies(); // Global instance (keeps track of all tasks in this process)
 
 	boolean debug = false;
+	boolean verbose = false;
 	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
 	Map<String, Task> tasksById;
 	AutoHashMap<String, List<Task>> tasksByOutput;
@@ -37,7 +40,7 @@ public class TaskDependecies {
 		taskDependecies = new TaskDependecies();
 	}
 
-	private TaskDependecies() {
+	public TaskDependecies() {
 		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
 		tasksById = new HashMap<String, Task>();
 		tasks = new ArrayList<Task>();
@@ -50,6 +53,8 @@ public class TaskDependecies {
 		if (isCircular(task)) throw new RuntimeException("Circular dependency on task '" + task.getId() + "'");
 		addTask(task);
 		if (!task.isDependency()) findDirectDependencies(task); // Find and update task's immediate dependencies (only if the task is to be executed)
+
+		if (this != taskDependecies) taskDependecies.add(task); // Add to glabal object
 	}
 
 	/**
@@ -138,7 +143,7 @@ public class TaskDependecies {
 		return goals;
 	}
 
-	public synchronized Task get(String taskId) {
+	public synchronized Task getTask(String taskId) {
 		return tasksById.get(taskId);
 	}
 
@@ -239,6 +244,39 @@ public class TaskDependecies {
 		return false;
 	}
 
+	/**
+	 * Have all tasks finished executing?
+	 */
+	public boolean isTasksDone() {
+		for (String taskId : taskDependecies.getTaskIds()) {
+			if ((taskId == null) || taskId.isEmpty()) continue;
+
+			Task task = getTask(taskId);
+			if (task == null) continue;
+
+			if (!task.isDone()) return false;
+		}
+
+		return true;
+
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+
+	void sleep() {
+		try {
+			Thread.sleep(SLEEP_TIME);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -253,6 +291,63 @@ public class TaskDependecies {
 				sb.append("\t" + t.getId() + "\n");
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Wait for one task to finish
+	 * @return true if task finished OK or it was allowed to fail (i.e. canFail = true)
+	 */
+	public boolean waitTask(String taskId) {
+		if ((taskId == null) || taskId.isEmpty()) return true;
+
+		Task task = getTask(taskId);
+		if (task == null) return false; // No task? We are done!
+
+		// Is task a dependency?
+		if (task.isDependency() && !task.isScheduled()) {
+			if (debug) Timer.showStdErr("Wait: Task '" + task.getId() + "' is dependency and has not been scheduled for execution. Not wating.");
+			return true;
+		}
+
+		if (verbose) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId());
+
+		// Wait for task to finish
+		while (!task.isDone())
+			sleep();
+
+		// Either finished OK or it was allowed to fail
+		boolean ok = task.isDoneOk() || task.isCanFail();
+
+		// If task failed, show task information and failure reason.
+		if (!ok) {
+			// Show error and mark all files to be deleted on exit
+			System.err.println("Task failed:\n" + task.toString(true));
+			task.deleteOutputFilesOnExit();
+		}
+
+		if (verbose) Timer.showStdErr("Wait: Task '" + task.getId() + "' finished.");
+		return ok;
+	}
+
+	/**
+	 * Wait for all tasks to finish
+	 * @return true if all tasks finished OK or it were allowed to fail (i.e. canFail = true)
+	 */
+	public boolean waitTasksAll() {
+		// Wait for all tasks to finish
+		boolean ok = true;
+
+		if (verbose && !isTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
+
+		// Get all taskIds in a new collection (to avoid concurrent modification
+		LinkedList<String> tids = new LinkedList<>();
+		tids.addAll(getTaskIds());
+
+		// Wait for each task
+		for (String tid : tids)
+			ok &= waitTask(tid);
+
+		return ok;
 	}
 
 }
