@@ -1,17 +1,15 @@
 #!/usr/bin/env bds
 
+task date > 1.txt
+wait
 
-#x := [5, 4, 3, 2, 1]
-x := [1, 5]
-
-// A function defining two sequential tasks
-void sequentialTasks(int i) {
-    task echo "Iter $i, Task 1: Start"; sleep $i; echo "Iter $i, Task 1: End"
-    wait        // Wait for all tasks within this thread/parallel
-    task echo "Iter $i, Task 2: Start"; sleep $i; echo  "Iter $i, Task 2: End"
+dep("2.txt" <- "1.txt") {
+  sys cp 1.txt 2.txt
 }
 
-// A loop fires threads of sequential tasks
-for ( int i : x ) {
-    par sequentialTasks(i)    // Fire a parallel thread that runs 'sequentialTasks'
+dep("3.txt".path() <- "2.txt".path()) {
+  sys cp 2.txt 3.txt
 }
+
+goal("3.txt".path())
+
