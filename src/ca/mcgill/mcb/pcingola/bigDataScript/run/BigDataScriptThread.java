@@ -811,21 +811,18 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if (!bth.isAlive()) bth.start();
 
 		// Run statement (i.e. run program)
+		boolean ok = true;
 		RunState runState = runStatement();
-		//		try {
-		//			runState = statement.run(this);
-		//		} catch (Throwable t) {
-		//			runState = RunState.FATAL_ERROR;
-		//			if (isVerbose()) throw new RuntimeException(t);
-		//			else Timer.showStdErr("Fatal error: Program execution finished");
-		//			return;
-		//		}
+		if (runState == RunState.FATAL_ERROR) {
+			// Error condition
+			ok = false;
+		} else {
+			// OK, we finished running
+			if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
 
-		// OK, we finished running
-		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
-
-		// Implicit 'wait' statement at the end of the program
-		boolean ok = waitAll();
+			// Implicit 'wait' statement at the end of the program
+			ok = waitAll();
+		}
 
 		// All tasks in wait finished OK?
 		if (!ok) {

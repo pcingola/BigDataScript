@@ -1,6 +1,0 @@
-#!/usr/bin/env bds
-
-
-l := ['hi']
-print("l=$l[0]\n")
-

@@ -1,8 +1,0 @@
-#!/usr/bin/env bds
-
-
-l := ['hi']
-
-print("l=" + l[2] + "\t")
-print("bye\n")
-

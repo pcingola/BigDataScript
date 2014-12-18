@@ -1,0 +1,15 @@
+#!/usr/bin/env bds
+
+task date > 1.txt
+wait
+
+dep("2.txt" <- "1.txt") {
+  sys cp 1.txt 2.txt
+}
+
+dep("3.txt".path() <- "2.txt".path()) {
+  sys cp 2.txt 3.txt
+}
+
+goal("3.txt".path())
+

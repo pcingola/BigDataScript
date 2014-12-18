@@ -1,0 +1,17 @@
+#!/usr/bin/env bds
+
+A := 'A.txt'
+B := 'B.txt'
+C := 'C.txt'
+D := 'D.txt'
+E := 'E.txt'
+
+dep( [C, D] <- [A, B] ) { 
+	sys echo do something | tee $C > $D
+}
+
+dep( E <- [C, D] ) { 
+	sys echo do something > $E
+}
+
+goal( E )

@@ -196,7 +196,7 @@ public class TaskDependecies {
 
 		// Satisfy all goals before running
 		for (Task t : tasks) {
-			if (addedTasks.contains(t)) throw new RuntimeException("Circular dependency on task '" + t.getId() + "'");
+			if (addedTasks.contains(t)) continue; // Don't add twice
 			addedTasks.add(t);
 
 			if (t.getInputFiles() != null) //
@@ -221,12 +221,14 @@ public class TaskDependecies {
 	 * Is there a circular dependency for this task?
 	 */
 	boolean isCircular(Task task) {
-		return isCircular(task, new HashSet<Task>());
+		boolean circ = isCircular(task, new HashSet<Task>());
+		return circ;
 	}
 
 	/**
 	 * Is there a circular dependency for this task?
 	 */
+	@SuppressWarnings("unchecked")
 	boolean isCircular(Task task, HashSet<Task> tasks) {
 		if (!tasks.add(task)) return true;
 
@@ -236,8 +238,10 @@ public class TaskDependecies {
 				List<Task> depTasks = tasksByOutput.get(in);
 
 				if (depTasks != null) {
-					for (Task t : depTasks)
-						if (isCircular(t, tasks)) return true;
+					for (Task t : depTasks) {
+						HashSet<Task> newTasks = (HashSet<Task>) tasks.clone();
+						if (isCircular(t, newTasks)) return true;
+					}
 				}
 			}
 		}

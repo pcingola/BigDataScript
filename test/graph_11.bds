@@ -1,5 +1,6 @@
 #!/usr/bin/env bds
 
+ok := false
 A := 'tmp_A.txt'
 B := 'tmp_B.txt'
 C := 'tmp_C.txt'
@@ -10,12 +11,11 @@ dep( [C, D] <- [A, B] ) {
 	sys echo Do something 1 | tee $C > $D
 }
 
-dep( A <- [C, D] ) { 
+dep( E <- [C, D] ) { 
 	sys echo Do something 2 > $E
 }
 
-print "Goal\n"
-goal( A )
-wait
+goal( E )
 
-print "Finished!\n"
+wait
+ok = true

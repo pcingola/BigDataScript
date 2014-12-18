@@ -215,16 +215,17 @@ public class Task implements BigDataScriptSerialize {
 		if (isStarted()) return DependencyState.WAIT; // Already started but not finished? => Then you should wait;
 		if (!taskDependency.hasTasks()) return DependencyState.OK; // No dependencies? => we are ready to execute
 
-		// TODO: How do we deal with circular dependency
-		if (tasksVisited.contains(this)) throw new RuntimeException("Circular dependency on task:" + this);
-		tasksVisited.add(this);
+		// Ignore if already visited
+		if (!tasksVisited.contains(this)) {
+			tasksVisited.add(this);
 
-		// Check that all dependencies are OK
-		for (Task task : taskDependency.getTasks()) {
-			// Analyze dependent task
-			DependencyState dep = task.dependencyState(tasksVisited);
-			if (dep != DependencyState.OK) return dep; // Propagate non-OK states (i.e. error or wait)
-			if (!task.isDone()) return DependencyState.WAIT; // Dependency OK, but not finished? => Wait for it
+			// Check that all dependencies are OK
+			for (Task task : taskDependency.getTasks()) {
+				// Analyze dependent task
+				DependencyState dep = task.dependencyState(tasksVisited);
+				if (dep != DependencyState.OK) return dep; // Propagate non-OK states (i.e. error or wait)
+				if (!task.isDone()) return DependencyState.WAIT; // Dependency OK, but not finished? => Wait for it
+			}
 		}
 
 		// Only if all dependent tasks are OK, we can say that we are ready
