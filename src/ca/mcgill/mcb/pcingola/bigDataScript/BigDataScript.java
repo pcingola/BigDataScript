@@ -65,8 +65,8 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2014-12-15";
-	public static final String REVISION = "d";
+	public static final String BUILD = "2014-12-18";
+	public static final String REVISION = "e";
 	public static final String VERSION_MAJOR = "0.99";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
