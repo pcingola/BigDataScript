@@ -1,8 +1,9 @@
 #!/usr/bin/env bds
 
-# Include a file having no statements
-include 'zi'
+void usage() {
+	print "Usage\n"
+}
 
 print "Hi\n"
-
+usage()
 checkpoint 'z.chp'

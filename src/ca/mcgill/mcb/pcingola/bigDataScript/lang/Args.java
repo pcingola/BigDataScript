@@ -13,7 +13,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class Args extends BigDataScriptNode {
 
-	Type returnType;
 	Expression arguments[];
 
 	/**

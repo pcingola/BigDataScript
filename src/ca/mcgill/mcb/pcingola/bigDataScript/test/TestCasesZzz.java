@@ -11,8 +11,7 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test12() {
-		// Run pipeline and test checkpoint
-		runAndCheckpoint("test/checkpoint_12.bds", "test/checkpoint_12.chp", "ok", "true");
+	public void test13_checkPoint_function_with_empty_Args() {
+		runAndCheckpoint("test/checkpoint_13.bds", "test/checkpoint_13.chp", "ok", "true");
 	}
 }
