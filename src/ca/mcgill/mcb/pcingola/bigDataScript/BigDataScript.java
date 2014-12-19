@@ -98,8 +98,8 @@ public class BigDataScript {
 	 * Returns null if error
 	 * Use 'alreadyIncluded' to keep track of from 'include' statements
 	 */
-	public static ParseTree createAst(File file, boolean debug, Set<File> alreadyIncluded) {
-		alreadyIncluded.add(Gpr.getCanonicalFile(file));
+	public static ParseTree createAst(File file, boolean debug, Set<String> alreadyIncluded) {
+		alreadyIncluded.add(Gpr.getCanonicalFileName(file));
 		String fileName = file.toString();
 		String filePath = fileName;
 
@@ -175,24 +175,28 @@ public class BigDataScript {
 	/**
 	 * Resolve include statements
 	 */
-	private static boolean resolveIncludes(ParseTree tree, boolean debug, Set<File> alreadyIncluded) {
+	private static boolean resolveIncludes(ParseTree tree, boolean debug, Set<String> alreadyIncluded) {
 		boolean changed = false;
 		if (tree instanceof IncludeFileContext) {
 			// Parent file: The one that is including the other file
 			File parentFile = new File(((IncludeFileContext) tree).getStart().getInputStream().getSourceName());
 
 			// Included file name
-			String includedFilename = StatementInclude.includedFileName(tree.getChild(1).getText());
+			String includedFilename = StatementInclude.includeFileName(tree.getChild(1).getText());
 
 			// Find file (look into all include paths)
-			File includedFile = StatementInclude.includedFile(includedFilename, parentFile);
+			File includedFile = StatementInclude.includeFile(includedFilename, parentFile);
 			if (includedFile == null) {
 				CompilerMessages.get().add(tree, parentFile, "\n\tIncluded file not found: '" + includedFilename + "'\n\tSearch path: " + Config.get().getIncludePath(), MessageType.ERROR);
 				return false;
 			}
 
 			// Already included? don't bother
-			if (alreadyIncluded.contains(Gpr.getCanonicalFile(includedFile))) return false;
+			String canonicalFileName = Gpr.getCanonicalFileName(includedFile);
+			if (alreadyIncluded.contains(canonicalFileName)) {
+				if (debug) Gpr.debug("File already included: '" + includedFilename + "'\tCanonical path: '" + canonicalFileName + "'");
+				return false;
+			}
 			if (!includedFile.canRead()) {
 				CompilerMessages.get().add(tree, parentFile, "\n\tCannot read included file: '" + includedFilename + "'", MessageType.ERROR);
 				return false;
@@ -291,7 +295,7 @@ public class BigDataScript {
 	 */
 	ParseTree createAst() {
 		File file = new File(programFileName);
-		return createAst(file, debug, new HashSet<File>());
+		return createAst(file, debug, new HashSet<String>());
 	}
 
 	public BigDataScriptThread getBigDataScriptThread() {

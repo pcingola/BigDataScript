@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A block of statements associated to a file (program's source)
- * 
+ *
  * @author pcingola
  */
 public class BlockWithFile extends Block {
@@ -38,6 +38,24 @@ public class BlockWithFile extends Block {
 	@Override
 	public Statement[] getStatements() {
 		return statements;
+	}
+
+	/**
+	 * Save to a file
+	 */
+	public void save(boolean verbose) {
+		String reBasedName = "./" + getFileName();
+
+		// Write file
+		if (verbose) System.err.println("Extracting file (program unit): '" + reBasedName);
+		if (Gpr.exists(reBasedName)) {
+			// Do not overwrite!
+			if (verbose) System.err.println("File '" + reBasedName + "' already exists: Nothing done!");
+		} else {
+			String dirName = Gpr.dirName(reBasedName);
+			(new File(dirName)).mkdirs(); // Create directories
+			Gpr.toFile(reBasedName, getFileText()); // Save file
+		}
 	}
 
 	public void setFile(File file) {

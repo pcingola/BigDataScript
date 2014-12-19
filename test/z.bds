@@ -1,8 +1,8 @@
 #!/usr/bin/env bds
 
-include 'zi'
-include './zi'
-include '../test/zi'
+include 'test/zi'
+include './test/zi'
+include 'test/../test/zi'
 
 void usage() {
 	print "Usage\n"

@@ -20,9 +20,8 @@ public class StatementInclude extends BlockWithFile {
 	 * Find the appropriate file
 	 * @param includedFilename
 	 * @param parent : Parent file (where the 'include' statement is)
-	 * @return
 	 */
-	public static File includedFile(String includedFilename, File parent) {
+	public static File includeFile(String includedFilename, File parent) {
 		File includedFile = new File(includedFilename);
 		if (includedFile.exists() && includedFile.canRead()) return includedFile;
 
@@ -41,15 +40,12 @@ public class StatementInclude extends BlockWithFile {
 	}
 
 	/**
-	 * Find the appropriate (canonical) include file name
-	 * @param includedFilename
-	 * @return
+	 * Find the appropriate include file name
 	 */
-	public static String includedFileName(String includedFilename) {
+	public static String includeFileName(String includedFilename) {
 		if (includedFilename.startsWith("\'") || includedFilename.startsWith("\"")) includedFilename = includedFilename.substring(1); // Remove leading quotes
 		if (includedFilename.endsWith("\'") || includedFilename.endsWith("\"")) includedFilename = includedFilename.substring(0, includedFilename.length() - 1).trim(); // Remove trailing quotes
 		if (!includedFilename.endsWith(".bds")) includedFilename += ".bds"; // Append '.bds' if needed (it's optional)
-
 		return includedFilename;
 	}
 
@@ -73,10 +69,10 @@ public class StatementInclude extends BlockWithFile {
 		// File name & parent file name: this is merely informational
 		File parentFile = getParent().getFile();
 		parentFileName = (parentFile != null ? parentFile.toString() : null);
-		fileName = includedFileName(tree.getChild(0).getChild(1).getText());
+		fileName = includeFileName(tree.getChild(0).getChild(1).getText());
 
 		// Resolve file and read program text
-		File includedFile = StatementInclude.includedFile(fileName, parentFile);
+		File includedFile = StatementInclude.includeFile(fileName, parentFile);
 		setFile(includedFile);
 
 		super.parse(tree.getChild(0)); // Block parses statement

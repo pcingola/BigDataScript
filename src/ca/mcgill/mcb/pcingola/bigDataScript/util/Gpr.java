@@ -224,6 +224,17 @@ public class Gpr {
 	/**
 	 * Canonical path as a string
 	 */
+	public static String getCanonicalFileName(File f) {
+		try {
+			return f.getCanonicalPath();
+		} catch (Exception e) {
+			return f.getPath();
+		}
+	}
+
+	/**
+	 * Canonical path as a string
+	 */
 	public static String getCanonicalFileName(String f) {
 		try {
 			File ff = new File(f);
