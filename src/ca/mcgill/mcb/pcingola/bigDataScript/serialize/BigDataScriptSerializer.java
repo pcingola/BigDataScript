@@ -260,10 +260,12 @@ public class BigDataScriptSerializer {
 
 			// Add all nodes to array
 			String arrayVal = getNextField();
-			for (String nodeNum : arrayVal.split(",")) {
-				BigDataScriptNode csnode = BigDataScriptNodeFactory.get().factory(componentType.getCanonicalName(), null, null);
-				csnode.setFakeId(parseNodeId(nodeNum));
-				list.add(csnode);
+			if (arrayVal != null && !arrayVal.isEmpty()) {
+				for (String nodeNum : arrayVal.split(",")) {
+					BigDataScriptNode csnode = BigDataScriptNodeFactory.get().factory(componentType.getCanonicalName(), null, null);
+					csnode.setFakeId(parseNodeId(nodeNum));
+					list.add(csnode);
+				}
 			}
 
 			// Create array

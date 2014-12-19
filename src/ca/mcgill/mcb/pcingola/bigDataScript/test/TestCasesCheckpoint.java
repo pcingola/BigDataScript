@@ -148,4 +148,9 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
 	}
 
+	@Test
+	public void test12_serializationOfEmptyIncludes() {
+		runAndCheckpoint("test/checkpoint_12.bds", "test/checkpoint_12.chp", "ok", "true");
+	}
+
 }
