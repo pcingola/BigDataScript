@@ -15,5 +15,6 @@ rm -rvf \
 	z.pid \
 	test/*chp \
 	failOnce.* \
-	test/tmp*.txt
+	test/tmp*.txt \
+	tmp*.txt
 
