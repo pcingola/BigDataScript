@@ -34,7 +34,8 @@ public class ExpressionDepOperator extends Expression {
 	@Override
 	public Object eval(BigDataScriptThread bdsThread) {
 		TaskDependency taskDependency = evalTaskDependency(bdsThread);
-		return taskDependency.depOperator();
+		boolean dep = taskDependency.depOperator();
+		return dep;
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -7,6 +8,8 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.junit.Test;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Test cases that require BDS code execution and check results
@@ -164,25 +167,50 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Iter 5, Task 1: End\n" //
 				+ "Iter 5, Task 2: Start\n" //
 				+ "Iter 5, Task 2: End\n" //
-		;;
+				;;
 
-		String stdout = runAndReturnStdout("test/run_117.bds");
+				String stdout = runAndReturnStdout("test/run_117.bds");
 
-		if (stdout.indexOf(expectedStdout) < 0) {
-			String msg = "Cannot find desired output:\n" //
-					+ "---------- Expected output ----------\n" //
-					+ expectedStdout //
-					+ "-------------- STDOUT --------------\n" //
-					+ stdout //
-			;
-			System.err.println(msg);
-			throw new RuntimeException(msg);
-		}
+				if (stdout.indexOf(expectedStdout) < 0) {
+					String msg = "Cannot find desired output:\n" //
+							+ "---------- Expected output ----------\n" //
+							+ expectedStdout //
+							+ "-------------- STDOUT --------------\n" //
+							+ stdout //
+							;
+					System.err.println(msg);
+					throw new RuntimeException(msg);
+				}
 	}
 
 	@Test
 	public void test118_dependency_using_path() {
 		runAndCheckExit("test/run_118.bds", 0);
+	}
+
+	@Test
+	public void test119_task_dependency() {
+		Gpr.debug("Test");
+
+		// Delete input file
+		String inFile = "tmp_in.txt";
+		(new File(inFile)).delete();
+
+		String expectedStdout1 = "Creating tmp_in.txt\n" //
+				+ "Running task\n" //
+				+ "Creating tmp_out.txt\n" //
+				+ "Done\n" //"
+				;
+
+		String expectedStdout2 = "Running task\n" //
+				+ "Done\n" //"
+				;
+
+		System.out.println("First run:");
+		runAndCheckStdout("test/run_119.bds", expectedStdout1);
+
+		System.out.println("\n\nSecond run:");
+		runAndCheckStdout("test/run_119.bds", expectedStdout2);
 	}
 
 }

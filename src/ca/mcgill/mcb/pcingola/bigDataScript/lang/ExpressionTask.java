@@ -112,8 +112,11 @@ public class ExpressionTask extends ExpressionWithScope {
 		TaskDependency taskDependency = null;
 		if (taskOptions != null) {
 			taskDependency = taskOptions.evalTaskDependency(bdsThread);
-			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null));
+			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
 			if (taskDependency == null) return ""; // Task options clause not satisfied. Do not execute task
+
+			boolean needsUpdate = taskDependency.depOperator();
+			if (!needsUpdate) return ""; // Task options clause not satisfied. Do not execute task
 		}
 
 		// Evaluate 'sys' statements

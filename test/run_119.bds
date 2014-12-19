@@ -1,6 +1,5 @@
 #!/usr/bin/env bds
 
-
 inFile := "tmp_in.txt"
 outFile := "tmp_out.txt"
 
