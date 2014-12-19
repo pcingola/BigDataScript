@@ -20,7 +20,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrePostOperation;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrimitiveType;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Statement;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.StatementInclude;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
@@ -44,6 +46,8 @@ public class BigDataScriptSerializer {
 	public static final String NODE_IDENTIFIER = "node:";
 	public static final String TYPE_IDENTIFIER = "type:";
 
+	public static boolean debug = false;
+
 	String fileName;
 	int lineNum;
 	String line;
@@ -52,10 +56,12 @@ public class BigDataScriptSerializer {
 	Config config;
 	Set<BigDataScriptSerialize> serializedNodes;
 	Map<String, BigDataScriptThread> threadsById;
+	boolean extractSource;
 
 	public BigDataScriptSerializer(String fileName, Config config) {
 		this.fileName = fileName;
 		this.config = config;
+		this.extractSource = (config != null && config.isExtractSource());
 		serializedNodes = new HashSet<BigDataScriptSerialize>();
 		threadsById = new HashMap<String, BigDataScriptThread>();
 	}
@@ -367,6 +373,27 @@ public class BigDataScriptSerializer {
 					// De-serialize
 					bdsSerialize.serializeParse(this);
 					nodesById.put(bdsSerialize.getNodeId(), bdsSerialize);
+
+					// Extract source code files?
+					if (extractSource) {
+						if (bdsSerialize instanceof ProgramUnit) {
+							ProgramUnit pu = (ProgramUnit) bdsSerialize;
+							String baseName = Gpr.baseName(pu.getFileName());
+
+							// Write file
+							System.err.println("Extracting file: '" + baseName + "'");
+							if (Gpr.exists(baseName)) System.err.println("File '" + baseName + "' already exists: Nothing done!");
+							else Gpr.toFile(baseName, pu.getFileText());
+						} else if (bdsSerialize instanceof StatementInclude) {
+							StatementInclude sincl = (StatementInclude) bdsSerialize;
+							String baseName = Gpr.baseName(sincl.getFileName());
+
+							// Write file
+							System.err.println("Extracting file: '" + baseName + "'");
+							if (Gpr.exists(baseName)) System.err.println("File '" + baseName + "' already exists: Nothing done!");
+							else Gpr.toFile(baseName, sincl.getFileText());
+						}
+					}
 
 					// Post processing
 					if (bdsSerialize instanceof BigDataScriptThread) {

@@ -79,6 +79,7 @@ public class BigDataScript {
 	boolean noRmOnExit;
 	boolean createReport;
 	boolean useDoneFile;
+	boolean extractSource;
 	int taskFailCount = -1;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
@@ -353,6 +354,7 @@ public class BigDataScript {
 		config.setTaskFailCount(taskFailCount);
 		config.setNoRmOnExit(noRmOnExit);
 		config.setCreateReport(createReport);
+		config.setExtractSource(extractSource);
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
 			else pidFile = chekcpointRestoreFile + ".pid";
@@ -713,51 +715,55 @@ public class BigDataScript {
 		bigDataScriptAction = BigDataScriptAction.RUN;
 
 		for (int i = 0; i < args.length; i++) {
-			if (programFileName != null) programArgs.add(args[i]); // Everything after 'programFileName' is an command line argument for the BigDataScript program
-			else if (args[i].equals("-c") || args[i].equalsIgnoreCase("-config")) {
+			String arg = args[i];
+
+			if (programFileName != null) programArgs.add(arg); // Everything after 'programFileName' is an command line argument for the BigDataScript program
+			else if (arg.equals("-c") || arg.equalsIgnoreCase("-config")) {
 				// Checkpoint restore
 				if ((i + 1) < args.length) configFile = args[++i];
 				else usage("Option '-c' without restore file argument");
-			} else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
-			else if (args[i].equalsIgnoreCase("-useDone")) useDoneFile = true;
-			else if (args[i].equals("-l") || args[i].equalsIgnoreCase("-log")) log = true;
-			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) usage(null);
-			else if (args[i].equalsIgnoreCase("-dryRun")) {
+			} else if (arg.equals("-d") || arg.equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
+			else if (arg.equalsIgnoreCase("-useDone")) useDoneFile = true;
+			else if (arg.equals("-l") || arg.equalsIgnoreCase("-log")) log = true;
+			else if (arg.equals("-h") || arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("--help")) usage(null);
+			else if (arg.equalsIgnoreCase("-dryRun")) {
 				dryRun = true;
 				noRmOnExit = true; // Not running, so don't delete files
 				createReport = false;
-			} else if (args[i].equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
-			else if (args[i].equalsIgnoreCase("-noReport")) createReport = false;
-			else if (args[i].equals("-i") || args[i].equalsIgnoreCase("-info")) {
+			} else if (arg.equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
+			else if (arg.equalsIgnoreCase("-noReport")) createReport = false;
+			else if (arg.equals("-i") || arg.equalsIgnoreCase("-info")) {
 				// Checkpoint info
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 				else usage("Option '-i' without checkpoint file argument");
 				bigDataScriptAction = BigDataScriptAction.INFO_CHECKPOINT;
-			} else if (args[i].equals("-pid")) {
+			} else if (arg.equalsIgnoreCase("-extractSource")) {
+				extractSource = true;
+			} else if (arg.equalsIgnoreCase("-pid")) {
 				// PID file
 				if ((i + 1) < args.length) pidFile = args[++i];
 				else usage("Option '-pid' without file argument");
-			} else if (args[i].equals("-q") || args[i].equalsIgnoreCase("-queue")) {
+			} else if (arg.equals("-q") || arg.equalsIgnoreCase("-queue")) {
 				// Queue name
 				if ((i + 1) < args.length) queue = args[++i];
 				else usage("Option '-queue' without file argument");
-			} else if (args[i].equals("-r") || args[i].equalsIgnoreCase("-restore")) {
+			} else if (arg.equals("-r") || arg.equalsIgnoreCase("-restore")) {
 				// Checkpoint restore
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 				else usage("Option '-r' without checkpoint file argument");
 				bigDataScriptAction = BigDataScriptAction.RUN_CHECKPOINT;
-			} else if (args[i].equals("-s") || args[i].equalsIgnoreCase("-system")) {
+			} else if (arg.equals("-s") || arg.equalsIgnoreCase("-system")) {
 				// System type
 				if ((i + 1) < args.length) system = args[++i];
 				else usage("Option '-system' without file argument");
-			} else if (args[i].equals("-t") || args[i].equalsIgnoreCase("-test")) {
+			} else if (arg.equals("-t") || arg.equalsIgnoreCase("-test")) {
 				bigDataScriptAction = BigDataScriptAction.TEST;
-			} else if (args[i].equals("-y") || args[i].equalsIgnoreCase("-retry")) {
+			} else if (arg.equals("-y") || arg.equalsIgnoreCase("-retry")) {
 				// Number of retries
 				if ((i + 1) < args.length) taskFailCount = Gpr.parseIntSafe(args[++i]);
 				else usage("Option '-t' without number argument");
-			} else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
-			else if (programFileName == null) programFileName = args[i]; // Get program file name
+			} else if (arg.equals("-v") || arg.equalsIgnoreCase("-verbose")) verbose = true;
+			else if (programFileName == null) programFileName = arg; // Get program file name
 		}
 
 		// Sanity checks
@@ -935,6 +941,7 @@ public class BigDataScript {
 		System.err.println("  [-d | -debug  ]                : Debug mode.");
 		System.err.println("  -done                          : Use 'done' files: Default: " + useDoneFile);
 		System.err.println("  -dryRun                        : Do not run any task, just show what would be run.");
+		System.err.println("  [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files).");
 		System.err.println("  -noReport                      : Do not create report.");

@@ -140,14 +140,10 @@ public class BigDataScriptNodeFactory {
 
 	/**
 	 * Get an ID for a node and set 'nodesById'
-	 * @return
 	 */
 	protected synchronized int getNextNodeId(BigDataScriptNode node) {
 		int id = (!createFakeIds ? nodeNumber++ : fakeNodeNumber++);
-
-		// Update nodesById
-		nodesById.put(id, node);
-
+		nodesById.put(id, node); // Update nodesById
 		return id;
 	}
 
@@ -221,7 +217,7 @@ public class BigDataScriptNodeFactory {
 		BigDataScriptNode realNode = BigDataScriptNodeFactory.get().getNode(nodeId);
 
 		// Check that node was replaced
-		if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node :" + nodeId);
+		if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node '" + nodeId + "'");
 
 		return realNode;
 	}

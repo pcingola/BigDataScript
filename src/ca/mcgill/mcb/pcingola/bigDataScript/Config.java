@@ -35,6 +35,7 @@ public class Config {
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	boolean noRmOnExit = false; // Avoid removing files on exit
 	boolean createReport = true; // Create report when thread finishes
+	boolean extractSource = false;
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	String configDirName;
 	String pidFile;
@@ -169,6 +170,10 @@ public class Config {
 		return dryRun;
 	}
 
+	public boolean isExtractSource() {
+		return extractSource;
+	}
+
 	public boolean isLog() {
 		return log;
 	}
@@ -235,6 +240,10 @@ public class Config {
 
 	public void setDryRun(boolean dryRun) {
 		this.dryRun = dryRun;
+	}
+
+	public void setExtractSource(boolean extractSource) {
+		this.extractSource = extractSource;
 	}
 
 	public void setLog(boolean log) {

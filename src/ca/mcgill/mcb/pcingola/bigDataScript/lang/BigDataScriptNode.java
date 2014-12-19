@@ -549,10 +549,10 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 								// Is it a fake node? => Replace by real node
 								if (csnode.isFake()) {
 									// Find real node based on fake one
-									BigDataScriptNode trueCsnode = BigDataScriptNodeFactory.get().realNode(csnode);
+									BigDataScriptNode node = BigDataScriptNodeFactory.get().realNode(csnode);
 
 									// Replace this array element
-									Array.set(fieldObj, idx, trueCsnode);
+									Array.set(fieldObj, idx, node);
 								}
 							}
 							idx++;
