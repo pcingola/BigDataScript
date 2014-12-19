@@ -12,8 +12,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 public class TypeFunc extends Type {
 
 	FunctionDeclaration functionDeclaration;
-	protected Type returnType;
 	protected Parameters parameters;
+
+	//	protected Type returnType;
 
 	/**
 	 * Get or create TypeFunc
@@ -112,6 +113,7 @@ public class TypeFunc extends Type {
 		return parameters;
 	}
 
+	@Override
 	public Type getReturnType() {
 		return returnType;
 	}

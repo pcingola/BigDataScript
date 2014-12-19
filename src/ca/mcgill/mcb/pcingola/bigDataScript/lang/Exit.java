@@ -16,7 +16,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 public class Exit extends Statement {
 
 	Expression expr;
-	Type returnType;
+
+	//	Type returnType;
 
 	public Exit(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
