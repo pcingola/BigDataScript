@@ -217,6 +217,7 @@ public class BigDataScript {
 	}
 
 	public BigDataScript(String args[]) {
+		initDefaults();
 		parse(args);
 		initialize();
 	}
@@ -332,6 +333,7 @@ public class BigDataScript {
 	 * Initialize before running or type-checking
 	 */
 	void initialize() {
+		initDefaults();
 		Type.reset();
 
 		// Reset node factory

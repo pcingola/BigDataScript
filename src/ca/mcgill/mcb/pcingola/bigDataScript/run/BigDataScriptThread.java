@@ -279,7 +279,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Add task details and time-line
 		//---
 		int taskNum = 1;
-		for (Task task : getTasks()) {
+		//		for (Task task : getTasks()) {
+		for (Task task : TaskDependecies.get().getTasks()) {
 			rTemplate.add("taskNum", "" + taskNum);
 			rTemplate.add("taskId", task.getId());
 			rTemplate.add("taskPid", task.getPid());
@@ -292,6 +293,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if (task.getFailCount() > 1) rTemplate.add("taskRetry", "" + (task.getFailCount() - 1) + "/" + (task.getMaxFailCount() - 1));
 			else rTemplate.add("taskRetry", "");
 
+			// Task status
 			if (!task.isDoneOk()) {
 				rTemplate.add("taskColor", REPORT_RED_COLOR);
 
@@ -322,6 +324,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				rTemplate.add("taskErrMsg", "");
 			}
 
+			// Running times
 			Date start = task.getRunningStartTime();
 			if (start != null) {
 				rTemplate.add("taskStart", outFormat.format(start));
@@ -781,7 +784,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -856,7 +859,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Finish up
 		removeStaleFiles();
 		timer.end();
-		if (config != null && config.isCreateReport()) createReport();
+		if (config != null && config.isCreateReport() && isRoot()) createReport();
 		if (!isRoot()) parent.remove(this); // Remove from parent's threads
 
 		// OK, we are done

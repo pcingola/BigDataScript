@@ -1,21 +1,8 @@
 #!/usr/bin/env bds
 
-t1 := "tmp_1.txt"
-t2 := "tmp_2.txt"
-t3 := "tmp_3.txt"
-
-task echo CREATE $t1; date > $t1
-wait
-
-dep( t2 <- t1 ) {
-  sys echo COPY $t1 TO $t2; cp $t1 $t2
+pid := par {
+	for( int i=0 ; i < 10 ; i++ ) {
+		task echo "Hi $i"
+	}
 }
-
-dep( t3.path() <- t2.path() ) {
-  sys echo COPY $t2 TO $t3; cp $t2 $t3
-}
-
-goal( t3.path() )
-wait
-print "Done!\n"
 
