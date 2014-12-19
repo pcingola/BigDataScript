@@ -11,11 +11,8 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test35() {
-		runAndCheck("test/run_35.bds", "exitStat", "1");
-	}
-
-	public void test45() {
-		runAndCheckExit("test/run_45.bds", 1);
+	public void test11() {
+		// Run pipeline and test checkpoint
+		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
 	}
 }
