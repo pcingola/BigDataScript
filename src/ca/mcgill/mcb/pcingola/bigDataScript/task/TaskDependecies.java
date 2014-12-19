@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +33,7 @@ public class TaskDependecies {
 	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
 	Map<String, Task> tasksById;
 	AutoHashMap<String, List<Task>> tasksByOutput;
+	HashMap<String, String> canonicalPath;
 
 	public static TaskDependecies get() {
 		return taskDependecies;
@@ -41,6 +44,7 @@ public class TaskDependecies {
 	}
 
 	public TaskDependecies() {
+		canonicalPath = new HashMap<String, String>();
 		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
 		tasksById = new HashMap<String, Task>();
 		tasks = new ArrayList<Task>();
@@ -70,8 +74,19 @@ public class TaskDependecies {
 		// Add task by output files
 		if (task.getOutputFiles() != null) {
 			for (String outFile : task.getOutputFiles())
-				tasksByOutput.getOrCreate(outFile).add(task);
+				addTaskByOutput(outFile, task);
 		}
+	}
+
+	/**
+	 * Add to 'taskByOutput' map
+	 */
+	void addTaskByOutput(String outFile, Task task) {
+		// Use canonical paths
+		String outPath = getCanonicalPath(outFile);
+
+		// Add to map
+		tasksByOutput.getOrCreate(outPath).add(task);
 	}
 
 	/**
@@ -82,12 +97,12 @@ public class TaskDependecies {
 			// Add input dependencies based on input files
 			if (task.getInputFiles() != null) {
 				for (String inFile : task.getInputFiles()) {
-					List<Task> taskDeps = tasksByOutput.get(inFile);
+					List<Task> taskDeps = getTasksByOutput(inFile);
 					if (taskDeps != null) {
 						for (Task taskDep : taskDeps)
 							if (!taskDep.isDone() // Don't add finished tasks
 									&& !taskDep.isDependency() // If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
-									) task.addDependency(taskDep); // Add it to dependency list
+							) task.addDependency(taskDep); // Add it to dependency list
 					}
 				}
 			}
@@ -103,7 +118,7 @@ public class TaskDependecies {
 		// Only add nodes that do not have dependent tasks (i.e. are leaves)
 		Set<String> leaves = new HashSet<String>();
 		for (String n : nodes)
-			if (!tasksByOutput.containsKey(n)) leaves.add(n);
+			if (!hasTasksByOutput(n)) leaves.add(n);
 
 		return leaves;
 	}
@@ -127,7 +142,7 @@ public class TaskDependecies {
 			// For each goal
 			for (String goal : goals) {
 				// Find all tasks required for this goal
-				List<Task> tasks = tasksByOutput.get(goal);
+				List<Task> tasks = getTasksByOutput(goal);
 
 				if (tasks != null) // Add all task's input files
 					for (Task t : tasks)
@@ -143,6 +158,30 @@ public class TaskDependecies {
 		return goals;
 	}
 
+	/**
+	 * Find canonical path (cache return values)
+	 */
+	String getCanonicalPath(String fileName) {
+		String filePath = canonicalPath.get(fileName);
+
+		// Not found? => Populate map
+		if (filePath == null) {
+			File f = new File(fileName);
+			try {
+				filePath = f.getCanonicalPath();
+			} catch (IOException e) {
+				// Cannot find path? Use file name
+				if (debug) e.printStackTrace();
+				filePath = fileName;
+			}
+
+			// Add to map
+			canonicalPath.put(fileName, filePath);
+		}
+
+		return filePath;
+	}
+
 	public synchronized Task getTask(String taskId) {
 		return tasksById.get(taskId);
 	}
@@ -153,6 +192,17 @@ public class TaskDependecies {
 
 	public synchronized Collection<Task> getTasks() {
 		return tasks;
+	}
+
+	/**
+	 * Get all tasks that output this outFile
+	 */
+	protected List<Task> getTasksByOutput(String outFile) {
+		// Use canonical paths
+		String outPath = getCanonicalPath(outFile);
+
+		// Get list
+		return tasksByOutput.get(outPath);
 	}
 
 	/**
@@ -191,7 +241,7 @@ public class TaskDependecies {
 		// Check if we really need to update this goal (with respect to the leaf nodes)
 		if (!goalNeedsUpdate(goal)) return false;
 
-		List<Task> tasks = tasksByOutput.get(goal);
+		List<Task> tasks = getTasksByOutput(goal);
 		if (tasks == null) return false;
 
 		// Satisfy all goals before running
@@ -218,6 +268,14 @@ public class TaskDependecies {
 	}
 
 	/**
+	 * Do we have any entries on this outFile?
+	 */
+	boolean hasTasksByOutput(String outFile) {
+		String outPath = getCanonicalPath(outFile);
+		return tasksByOutput.containsKey(outPath);
+	}
+
+	/**
 	 * Is there a circular dependency for this task?
 	 */
 	boolean isCircular(Task task) {
@@ -235,7 +293,7 @@ public class TaskDependecies {
 		// Get all input files, find corresponding tasks and recurse
 		if (task.getInputFiles() != null) {
 			for (String in : task.getInputFiles()) {
-				List<Task> depTasks = tasksByOutput.get(in);
+				List<Task> depTasks = getTasksByOutput(in);
 
 				if (depTasks != null) {
 					for (Task t : depTasks) {

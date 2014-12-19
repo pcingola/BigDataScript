@@ -11,7 +11,7 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test12_circularDependency() {
-		runAndCheckStderr("test/graph_12.bds", "Fatal error: test/graph_12.bds, line 18, pos 1. Circular dependency on task 'graph_12.bds.");
+	public void test118_dependency_using_path() {
+		runAndCheckExit("test/run_118.bds", 0);
 	}
 }

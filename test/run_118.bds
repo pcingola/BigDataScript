@@ -4,7 +4,8 @@ t1 := "tmp_1.txt"
 t2 := "tmp_2.txt"
 t3 := "tmp_3.txt"
 
-task echo CREATE $t1; date > $t1
+# Create new files
+sys touch $t1 $t2 $t3; rm $t1 $t2 $t3; echo CREATE $t1; date > $t1
 wait
 
 dep( t2 <- t1 ) {

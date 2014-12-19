@@ -94,7 +94,6 @@ public class TestCasesBase extends TestCase {
 
 	/**
 	 * Check that a file compiles without any errors, runs and all variables have their expected values
-	 * @param fileName
 	 */
 	void runAndCheckMultiple(String fileName, HashMap<String, Object> expectedValues, ArrayList<String> args) {
 		// Prepare command line arguments
@@ -120,7 +119,7 @@ public class TestCasesBase extends TestCase {
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-					);
+			);
 		}
 	}
 

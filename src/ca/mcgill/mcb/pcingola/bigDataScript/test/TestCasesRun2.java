@@ -164,20 +164,25 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Iter 5, Task 1: End\n" //
 				+ "Iter 5, Task 2: Start\n" //
 				+ "Iter 5, Task 2: End\n" //
-				;;
+		;;
 
-				String stdout = runAndReturnStdout("test/run_117.bds");
+		String stdout = runAndReturnStdout("test/run_117.bds");
 
-				if (stdout.indexOf(expectedStdout) < 0) {
-					String msg = "Cannot find desired output:\n" //
-							+ "---------- Expected output ----------\n" //
-							+ expectedStdout //
-							+ "-------------- STDOUT --------------\n" //
-							+ stdout //
-							;
-					System.err.println(msg);
-					throw new RuntimeException(msg);
-				}
+		if (stdout.indexOf(expectedStdout) < 0) {
+			String msg = "Cannot find desired output:\n" //
+					+ "---------- Expected output ----------\n" //
+					+ expectedStdout //
+					+ "-------------- STDOUT --------------\n" //
+					+ stdout //
+			;
+			System.err.println(msg);
+			throw new RuntimeException(msg);
+		}
+	}
+
+	@Test
+	public void test118_dependency_using_path() {
+		runAndCheckExit("test/run_118.bds", 0);
 	}
 
 }
