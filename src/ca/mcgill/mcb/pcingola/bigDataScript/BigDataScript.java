@@ -325,7 +325,7 @@ public class BigDataScript {
 	void initDefaults() {
 		createReport = true;
 		dryRun = false;
-		log = true;
+		log = false;
 		useDoneFile = false;
 	}
 

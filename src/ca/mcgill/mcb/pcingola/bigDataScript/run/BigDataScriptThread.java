@@ -83,6 +83,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	TaskDependecies taskDependecies;
 	List<Task> restoredTasks; // Unserialized tasks.
 
+	public static final String DATE_FORMAT_CSV = "yyyy,MM,dd,HH,mm,ss";
+
+	public static final String DATE_FORMAT_HTML = "yyyy-MM-dd HH:mm:ss";
+
 	/**
 	 * Get an ID for a node
 	 */
@@ -255,8 +259,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		String outFile = getBdsThreadId() + ".report.html";
 		if (isVerbose()) Timer.showStdErr("Writing report file '" + outFile + "'");
 
-		SimpleDateFormat csvFormat = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
-		SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
 		// Create a template
 		RTemplate rTemplate = new RTemplate(BigDataScript.class, REPORT_TEMPLATE, outFile);
@@ -266,7 +269,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		//---
 		rTemplate.add("fileName", statement.getFileName());
 		rTemplate.add("progName", Gpr.baseName(statement.getFileName()));
-		rTemplate.add("threadId", bdsThreadId);
+		rTemplate.add("threadIdRoot", bdsThreadId);
 		rTemplate.add("runTime", (timer != null ? timer.toString() : ""));
 		rTemplate.add("startTime", (timer != null ? outFormat.format(timer.getStart()) : ""));
 
@@ -275,123 +278,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (exitValue > 0) rTemplate.add("exitColor", REPORT_RED_COLOR);
 		else rTemplate.add("exitColor", "");
 
-		//---
+		// Threads details
+		createReport(rTemplate, this, null);
+
 		// Add task details and time-line
-		//---
 		int taskNum = 1;
-		//		for (Task task : getTasks()) {
-		for (Task task : TaskDependecies.get().getTasks()) {
-			rTemplate.add("taskNum", "" + taskNum);
-			rTemplate.add("taskId", task.getId());
-			rTemplate.add("taskPid", task.getPid());
-			rTemplate.add("taskName", task.getName());
-			rTemplate.add("taskOk", "" + task.isDoneOk());
-			rTemplate.add("taskExitCode", "" + task.getExitValue());
-			rTemplate.add("taskState", "" + task.getTaskState());
-			rTemplate.add("taskDepState", "" + task.dependencyState());
-
-			if (task.getFailCount() > 1) rTemplate.add("taskRetry", "" + (task.getFailCount() - 1) + "/" + (task.getMaxFailCount() - 1));
-			else rTemplate.add("taskRetry", "");
-
-			// Task status
-			if (!task.isDoneOk()) {
-				rTemplate.add("taskColor", REPORT_RED_COLOR);
-
-				String ch = task.checkOutputFiles();
-				if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", "\n" + LINE + "Check output files" + LINE + "\n" + ch + "\n");
-				else rTemplate.add("taskCheckOut", "");
-
-				if (task.getPostMortemInfo() != null && !task.getPostMortemInfo().isEmpty()) rTemplate.add("taskPostMortemInfo", "\n" + LINE + "Post mortem info" + LINE + "\n" + task.getPostMortemInfo() + "\n");
-				else rTemplate.add("taskPostMortemInfo", "");
-
-				String tailErr = TailFile.tail(task.getStderrFile());
-				if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", "\n" + LINE + "Stderr" + LINE + "\n" + tailErr + "\n");
-				else rTemplate.add("taskStderr", "");
-
-				String tailOut = TailFile.tail(task.getStdoutFile());
-				if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", "\n" + LINE + "Stdout" + LINE + "\n" + tailOut + "\n");
-				else rTemplate.add("taskStdout", "");
-
-				if (task.getErrorMsg() != null) rTemplate.add("taskErrMsg", "\n" + LINE + "Error message" + LINE + "\n" + task.getErrorMsg() + "\n");
-				else rTemplate.add("taskErrMsg", "");
-
-			} else {
-				rTemplate.add("taskColor", "");
-				rTemplate.add("taskCheckOut", "");
-				rTemplate.add("taskPostMortemInfo", "");
-				rTemplate.add("taskStderr", "");
-				rTemplate.add("taskStdout", "");
-				rTemplate.add("taskErrMsg", "");
-			}
-
-			// Running times
-			Date start = task.getRunningStartTime();
-			if (start != null) {
-				rTemplate.add("taskStart", outFormat.format(start));
-				rTemplate.add("taskStartCsv", csvFormat.format(start));
-			} else {
-				rTemplate.add("taskStart", "");
-				rTemplate.add("taskStartCsv", "");
-			}
-
-			Date end = task.getRunningEndTime();
-			if (end != null) {
-				rTemplate.add("taskEnd", outFormat.format(end));
-				rTemplate.add("taskEndCsv", csvFormat.format(end));
-			} else {
-				rTemplate.add("taskEnd", "");
-				rTemplate.add("taskEndCsv", "");
-			}
-
-			if (start != null && end != null) rTemplate.add("taskElapsed", Timer.toDDHHMMSS(end.getTime() - start.getTime()));
-			else rTemplate.add("taskElapsed", "");
-
-			// Program & hint
-			rTemplate.add("taskProgram", task.getProgramTxt());
-			rTemplate.add("taskHint", task.getProgramHint());
-
-			// Dependencies
-			StringBuilder sbdep = new StringBuilder();
-			if (task.getDependencies() != null) {
-				for (Task t : task.getDependencies())
-					sbdep.append(t.getName() + "\n");
-			}
-			rTemplate.add("taskDep", sbdep.toString());
-
-			// Input files
-			StringBuilder sbinf = new StringBuilder();
-			if (task.getInputFiles() != null) {
-				for (String inFile : task.getInputFiles())
-					sbinf.append(inFile + "\n");
-			}
-			rTemplate.add("taskInFiles", sbinf.toString());
-
-			// Output files
-			StringBuilder sboutf = new StringBuilder();
-			if (task.getOutputFiles() != null) {
-				for (String outf : task.getOutputFiles())
-					sboutf.append(outf + "\n");
-			}
-			rTemplate.add("taskOutFiles", sboutf.toString());
-
-			// Resources
-			if (task.getResources() != null) {
-				HostResources hr = task.getResources();
-				rTemplate.add("taskResources", hr.toStringMultiline());
-				rTemplate.add("taskTimeout", Timer.toDDHHMMSS(hr.getTimeout() * 1000));
-				rTemplate.add("taskWallTimeout", Timer.toDDHHMMSS(hr.getWallTimeout() * 1000));
-				rTemplate.add("taskCpus", (hr.getCpus() > 0 ? hr.getCpus() : ""));
-				rTemplate.add("taskMem", (hr.getMem() > 0 ? Gpr.toStringMem(hr.getMem()) : ""));
-			} else {
-				rTemplate.add("taskResources", "");
-				rTemplate.add("taskTimeout", "");
-				rTemplate.add("taskWallTimeout", "");
-				rTemplate.add("taskCpus", "");
-				rTemplate.add("taskMem", "");
-			}
-
-			taskNum++;
-		}
+		for (Task task : TaskDependecies.get().getTasks())
+			createReport(rTemplate, task, taskNum++);
 
 		// Number of tasks executed
 		rTemplate.add("taskCount", taskNum - 1);
@@ -433,6 +326,146 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
+	 * Add thread information to report
+	 */
+	void createReport(RTemplate rTemplate, BigDataScriptThread bdsThread, BigDataScriptThread bdsThreadParent) {
+		// ID and parent
+		String thisId = bdsThread.getBdsThreadId();
+		String parenId = (bdsThreadParent != null ? bdsThreadParent.getBdsThreadId() : "Null");
+		rTemplate.add("threadId", thisId);
+		rTemplate.add("threadParent", parenId);
+
+		// Add tasks
+		StringBuilder sb = new StringBuilder();
+		for (Task t : bdsThread.getTasks())
+			sb.append(t.getId() + "\n");
+		rTemplate.add("threadTasks", sb.toString());
+
+		// Recurse to child threads
+		for (BigDataScriptThread bdsThreadChild : bdsThread.bdsChildThreadsById.values())
+			createReport(rTemplate, bdsThreadChild, bdsThread);
+	}
+
+	/**
+	 * Create map with task details
+	 */
+	void createReport(RTemplate rTemplate, Task task, int taskNum) {
+		BigDataScriptThread bdsThread = findBdsThread(task);
+		SimpleDateFormat csvFormat = new SimpleDateFormat(DATE_FORMAT_CSV);
+		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
+
+		rTemplate.add("taskNum", "" + taskNum);
+		rTemplate.add("taskId", task.getId());
+		rTemplate.add("taskThread", (bdsThread != null ? bdsThread.getId() : ""));
+		rTemplate.add("taskPid", task.getPid());
+		rTemplate.add("taskName", task.getName());
+		rTemplate.add("taskOk", "" + task.isDoneOk());
+		rTemplate.add("taskExitCode", "" + task.getExitValue());
+		rTemplate.add("taskState", "" + task.getTaskState());
+		rTemplate.add("taskDepState", "" + task.dependencyState());
+
+		if (task.getFailCount() > 1) rTemplate.add("taskRetry", "" + (task.getFailCount() - 1) + "/" + (task.getMaxFailCount() - 1));
+		else rTemplate.add("taskRetry", "");
+
+		// Task status
+		if (!task.isDoneOk()) {
+			rTemplate.add("taskColor", REPORT_RED_COLOR);
+
+			String ch = task.checkOutputFiles();
+			if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", "\n" + LINE + "Check output files" + LINE + "\n" + ch + "\n");
+			else rTemplate.add("taskCheckOut", "");
+
+			if (task.getPostMortemInfo() != null && !task.getPostMortemInfo().isEmpty()) rTemplate.add("taskPostMortemInfo", "\n" + LINE + "Post mortem info" + LINE + "\n" + task.getPostMortemInfo() + "\n");
+			else rTemplate.add("taskPostMortemInfo", "");
+
+			String tailErr = TailFile.tail(task.getStderrFile());
+			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", "\n" + LINE + "Stderr" + LINE + "\n" + tailErr + "\n");
+			else rTemplate.add("taskStderr", "");
+
+			String tailOut = TailFile.tail(task.getStdoutFile());
+			if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", "\n" + LINE + "Stdout" + LINE + "\n" + tailOut + "\n");
+			else rTemplate.add("taskStdout", "");
+
+			if (task.getErrorMsg() != null) rTemplate.add("taskErrMsg", "\n" + LINE + "Error message" + LINE + "\n" + task.getErrorMsg() + "\n");
+			else rTemplate.add("taskErrMsg", "");
+
+		} else {
+			rTemplate.add("taskColor", "");
+			rTemplate.add("taskCheckOut", "");
+			rTemplate.add("taskPostMortemInfo", "");
+			rTemplate.add("taskStderr", "");
+			rTemplate.add("taskStdout", "");
+			rTemplate.add("taskErrMsg", "");
+		}
+
+		// Running times
+		Date start = task.getRunningStartTime();
+		if (start != null) {
+			rTemplate.add("taskStart", outFormat.format(start));
+			rTemplate.add("taskStartCsv", csvFormat.format(start));
+		} else {
+			rTemplate.add("taskStart", "");
+			rTemplate.add("taskStartCsv", "");
+		}
+
+		Date end = task.getRunningEndTime();
+		if (end != null) {
+			rTemplate.add("taskEnd", outFormat.format(end));
+			rTemplate.add("taskEndCsv", csvFormat.format(end));
+		} else {
+			rTemplate.add("taskEnd", "");
+			rTemplate.add("taskEndCsv", "");
+		}
+
+		if (start != null && end != null) rTemplate.add("taskElapsed", Timer.toDDHHMMSS(end.getTime() - start.getTime()));
+		else rTemplate.add("taskElapsed", "");
+
+		// Program & hint
+		rTemplate.add("taskProgram", task.getProgramTxt());
+		rTemplate.add("taskHint", task.getProgramHint());
+
+		// Dependencies
+		StringBuilder sbdep = new StringBuilder();
+		if (task.getDependencies() != null) {
+			for (Task t : task.getDependencies())
+				sbdep.append(t.getName() + "\n");
+		}
+		rTemplate.add("taskDep", sbdep.toString());
+
+		// Input files
+		StringBuilder sbinf = new StringBuilder();
+		if (task.getInputFiles() != null) {
+			for (String inFile : task.getInputFiles())
+				sbinf.append(inFile + "\n");
+		}
+		rTemplate.add("taskInFiles", sbinf.toString());
+
+		// Output files
+		StringBuilder sboutf = new StringBuilder();
+		if (task.getOutputFiles() != null) {
+			for (String outf : task.getOutputFiles())
+				sboutf.append(outf + "\n");
+		}
+		rTemplate.add("taskOutFiles", sboutf.toString());
+
+		// Resources
+		if (task.getResources() != null) {
+			HostResources hr = task.getResources();
+			rTemplate.add("taskResources", hr.toStringMultiline());
+			rTemplate.add("taskTimeout", Timer.toDDHHMMSS(hr.getTimeout() * 1000));
+			rTemplate.add("taskWallTimeout", Timer.toDDHHMMSS(hr.getWallTimeout() * 1000));
+			rTemplate.add("taskCpus", (hr.getCpus() > 0 ? hr.getCpus() : ""));
+			rTemplate.add("taskMem", (hr.getMem() > 0 ? Gpr.toStringMem(hr.getMem()) : ""));
+		} else {
+			rTemplate.add("taskResources", "");
+			rTemplate.add("taskTimeout", "");
+			rTemplate.add("taskWallTimeout", "");
+			rTemplate.add("taskCpus", "");
+			rTemplate.add("taskMem", "");
+		}
+	}
+
+	/**
 	 * Show a fatal error
 	 */
 	public void fatalError(BigDataScriptNode bdsnode, String message) {
@@ -465,6 +498,21 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Show java stack trace
 		if ((config == null) || isVerbose()) t.printStackTrace();
+	}
+
+	/**
+	 * Find bdsThread that has 'task'
+	 */
+	public BigDataScriptThread findBdsThread(Task task) {
+		if (getTask(task.getId()) != null) return this;
+
+		for (BigDataScriptThread childBdsTh : bdsChildThreadsById.values()) {
+			BigDataScriptThread bdsThFound = childBdsTh.findBdsThread(task);
+			if (bdsThFound != null) return bdsThFound;
+		}
+
+		return null;
+
 	}
 
 	public String getBdsThreadId() {
@@ -784,7 +832,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}

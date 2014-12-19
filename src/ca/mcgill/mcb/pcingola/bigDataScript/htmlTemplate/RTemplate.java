@@ -11,9 +11,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * R-Template: The Retarded Template Engine
- * 
+ *
  * Templates are annotated with double curly brackets {{name}}
- *  
+ *
  * @author pcingola
  */
 public class RTemplate {
@@ -44,7 +44,6 @@ public class RTemplate {
 
 	/**
 	 * Create output file
-	 * @param keyValues
 	 */
 	public void createOuptut() {
 		// Open input and read the whole file
@@ -69,17 +68,20 @@ public class RTemplate {
 				+ "\n\tBase class    : " + baseClass.getCanonicalName() //
 				+ "\n\tResource name : " + resourceName//
 				+ "\n\tLine number   : " + lineNum//
-		;
+				;
 
 		throw new RuntimeException(msg);
 	}
 
 	/**
 	 * Parse each input line
-	 * @param line
-	 * @return
 	 */
 	String parseLine(String line, int lineNum) {
+		// Debug from HTML template?
+		if (line.startsWith("DEBUG")) {
+			debug = true;
+		}
+
 		Matcher m = PATTERN.matcher(line);
 
 		ArrayList<String> lineParts = new ArrayList<String>(); // Collect the parts of the line that do not match regex here
@@ -119,17 +121,17 @@ public class RTemplate {
 
 	/**
 	 * Replace by values
-	 * @param lineParts
-	 * @param keys
-	 * @return
 	 */
 	String replaceValues(ArrayList<String> lineParts, ArrayList<String> keys, int lineNum) {
-		// How many time do we repeat the line?
+		// How many times do we repeat the line?
 		int maxLen = Integer.MAX_VALUE;
+
 		for (String key : keys) {
 			if (!keyValues.containsKey(key)) error("Key '" + key + "' not found!", lineNum);
-			int len = keyValues.get(key).size();
+			List<String> values = keyValues.get(key);
+			int len = values.size();
 			maxLen = Math.min(maxLen, len);
+			if (debug) Gpr.debug("\t\tKey '': " + key + "\tNum. values: " + maxLen + "\tMax len: " + maxLen);
 		}
 		if (debug) Gpr.debug("\t\tMax len: " + maxLen);
 
@@ -143,11 +145,6 @@ public class RTemplate {
 
 	/**
 	 * Replace by values (list item number 'idx')
-	 * @param lineParts
-	 * @param keys
-	 * @param lineNum
-	 * @param idx
-	 * @return
 	 */
 	String replaceValues(ArrayList<String> lineParts, ArrayList<String> keys, int lineNum, int idx) {
 		StringBuilder sb = new StringBuilder();

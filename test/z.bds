@@ -1,8 +1,13 @@
 #!/usr/bin/env bds
 
-pid := par {
+par {
 	for( int i=0 ; i < 10 ; i++ ) {
 		task echo "Hi $i"
 	}
 }
 
+par {
+	for( int i=0 ; i < 10 ; i++ ) {
+		task echo "Bye $i"
+	}
+}
