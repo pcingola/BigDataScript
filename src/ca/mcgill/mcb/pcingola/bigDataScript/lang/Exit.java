@@ -17,8 +17,6 @@ public class Exit extends Statement {
 
 	Expression expr;
 
-	//	Type returnType;
-
 	public Exit(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}

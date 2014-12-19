@@ -14,8 +14,6 @@ public class TypeFunc extends Type {
 	FunctionDeclaration functionDeclaration;
 	protected Parameters parameters;
 
-	//	protected Type returnType;
-
 	/**
 	 * Get or create TypeFunc
 	 */
