@@ -1,19 +1,11 @@
-#!/usr/bin/env bds
 
-
-inFile := "tmp_in.txt"
-outFile := "tmp_out.txt"
-
-# Let's say in.txt exists and has "Hello world" in it
-if( ! inFile.exists() ) {
-	sys echo Creating $inFile; echo 'Hello world' > $inFile
+// This task should fail
+string tid = task( canFail=true ) {
+	sys mkdir a/b/c/d/e/f/g
 }
-
-print "Running task\n"
-task( outFile <- inFile ) {
-	sys echo Creating $outFile
-	sys cat $inFile > $outFile
-}
+print("Task ID: '$tid'\n")
 
 wait
-print "Done\n"
+
+int exitStat = tid.exitCode();
+print("exitStat: $exitStat\n");

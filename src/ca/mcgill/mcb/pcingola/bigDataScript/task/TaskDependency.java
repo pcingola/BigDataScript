@@ -100,6 +100,9 @@ public class TaskDependency {
 	 * Calculate the result of '<-' operator give two collections files (left hand side and right handside)
 	 */
 	public boolean depOperator() {
+		// Empty dependency is always true
+		if (outputFiles.isEmpty() && inputFiles.isEmpty()) return true;
+
 		// Left hand side
 		// Calculate minimum modification time
 		long minModifiedLeft = Long.MAX_VALUE;

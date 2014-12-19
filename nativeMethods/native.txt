@@ -58,4 +58,4 @@ bool	string	isDone	this	string	String taskId = objThis.toString(); Task task = c
 bool	string	isDoneOk	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return false; return task.isDoneOk();
 string	string	stdout	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStdoutFile(), false);
 string	string	stderr	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStderrFile(), false);
-int	string	exitCode	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return 0; return (long) task.getExitValue();
+int	string	exitCode	this	string	String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return 0L; return (long) task.getExitValue();

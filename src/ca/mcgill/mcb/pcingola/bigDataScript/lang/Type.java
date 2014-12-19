@@ -150,23 +150,25 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	 * Cast an object t another
 	 * @param toType : Final type for object 'obj'
 	 * @param obj : Object
-	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
 	public Object cast(Object obj) {
 		if (isBool()) {
 			if (obj instanceof Boolean) return obj;
 			if (obj instanceof Long) return ((Long) obj) != 0;
+			if (obj instanceof Integer) return ((Long) obj) != 0;
 			if (obj instanceof Double) return ((Double) obj) != 0.0;
 			if (obj instanceof String) return !((String) obj).isEmpty();
 			if (obj instanceof List) return !((List) obj).isEmpty();
 			if (obj instanceof Map) return !((Map) obj).isEmpty();
 		} else if (isInt()) {
 			if (obj instanceof Long) return obj;
+			if (obj instanceof Integer) return (long) obj;
 			if (obj instanceof Boolean) return ((Boolean) obj) ? Type.INT_ONE : Type.INT_ZERO;
 		} else if (isReal()) {
 			if (obj instanceof Boolean) return ((Boolean) obj) ? Type.REAL_ONE : Type.REAL_ZERO;
 			if (obj instanceof Long) return new Double((Long) obj);
+			if (obj instanceof Integer) return new Double((Integer) obj);
 			if (obj instanceof Double) return obj;
 		} else if (isList()) {
 			if (obj instanceof ArrayList) return obj;

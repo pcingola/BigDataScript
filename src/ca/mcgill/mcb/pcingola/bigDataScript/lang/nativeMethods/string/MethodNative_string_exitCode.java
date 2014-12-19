@@ -25,6 +25,9 @@ public class MethodNative_string_exitCode extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return 0; return (long) task.getExitValue();
+		String taskId = objThis.toString();
+		Task task = csThread.getTask(taskId);
+		if (task == null) return 0L;
+		return (long) task.getExitValue();
 	}
 }
