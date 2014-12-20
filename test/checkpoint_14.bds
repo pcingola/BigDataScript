@@ -2,5 +2,5 @@
 
 string{} opt
 print opt.hasKey("key") + "\n"
-checkpoint 'test/z.chp'
+checkpoint 'test/checkpoint_14.chp'
 ok := true

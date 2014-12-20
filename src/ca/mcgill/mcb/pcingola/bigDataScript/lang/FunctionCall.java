@@ -15,9 +15,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  */
 public class FunctionCall extends Expression {
 
-	String functionName;
-	Args args;
-	FunctionDeclaration functionDeclaration;
+	protected String functionName;
+	protected Args args;
+	protected FunctionDeclaration functionDeclaration;
 
 	public FunctionCall(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);

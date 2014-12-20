@@ -57,3 +57,33 @@
 6036	-
 6060	+	
 6060	-
+2402	+	
+2401	+	
+2401	-
+2402	-
+2409	+	
+2409	-
+2412	+	
+test/checkpoint_08.csv	+	rm
+2412	-
+test/checkpoint_08.csv	-
+2415	+	
+test/checkpoint_08.xml	+	rm
+2415	-
+test/checkpoint_08.xml	-
+2418	+	
+test/checkpoint_08.csv	+	rm
+2418	-
+test/checkpoint_08.csv	-
+2421	+	
+test/checkpoint_08.xml	+	rm
+2421	-
+test/checkpoint_08.xml	-
+2424	+	
+test/checkpoint_09.csv	+	rm
+2424	-
+test/checkpoint_09.csv	-
+2427	+	
+test/checkpoint_09.xml	+	rm
+2427	-
+test/checkpoint_09.xml	-

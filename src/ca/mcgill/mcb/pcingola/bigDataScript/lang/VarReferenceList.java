@@ -18,8 +18,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class VarReferenceList extends Reference {
 
-	VarReference variable;
-	Expression expressionIdx;
+	protected VarReference variable;
+	protected Expression expressionIdx;
 
 	public VarReferenceList(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);

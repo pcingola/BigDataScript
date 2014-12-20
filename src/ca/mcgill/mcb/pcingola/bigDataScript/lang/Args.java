@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class Args extends BigDataScriptNode {
 
-	Expression arguments[];
+	protected Expression arguments[];
 
 	/**
 	 * Create 'method' arguments by prepending 'this' argument expression
@@ -29,8 +29,11 @@ public class Args extends BigDataScriptNode {
 		// Copy arguments
 		argsThis.arguments[0] = exprThis;
 		if (args.arguments != null) {
-			for (int i = 0; i < args.arguments.length; i++)
-				argsThis.arguments[i + 1] = args.arguments[i];
+			for (int i = 0; i < args.arguments.length; i++) {
+				Expression expr = args.arguments[i];
+				argsThis.arguments[i + 1] = expr; // Assign to new arguments
+				expr.parent = argsThis; // Update parent
+			}
 		}
 
 		return argsThis;
@@ -60,8 +63,6 @@ public class Args extends BigDataScriptNode {
 
 	/**
 	 * Calculate return type for every expression
-	 * @param scope
-	 * @return
 	 */
 	@Override
 	public Type returnType(Scope scope) {

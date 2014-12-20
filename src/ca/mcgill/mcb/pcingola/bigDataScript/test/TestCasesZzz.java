@@ -11,7 +11,7 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test14_WTF() {
+	public void test14_serialize_method_call_args() {
 		runAndCheckpoint("test/z.bds", "test/z.chp", "ok", "true");
 	}
 }

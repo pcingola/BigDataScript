@@ -15,7 +15,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  */
 public class MethodCall extends FunctionCall {
 
-	Expression expresionObj;
+	// Object that calls the mathod: obj.method(args)
+	// This object is also the used as the first argument in
+	// the function call (so this information is redundant, but
+	// kept here for convinience)
+	protected Expression expresionObj;
 
 	public MethodCall(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);

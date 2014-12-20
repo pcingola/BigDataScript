@@ -72,6 +72,7 @@ public class TestCasesBase extends TestCase {
 		ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varname);
 
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
+		Assert.assertTrue("Missing variable '" + varname + "'", ssym != null);
 		Assert.assertEquals(expectedValue.toString(), ssym == null ? "" : ssym.getValue().toString());
 	}
 
@@ -114,12 +115,13 @@ public class TestCasesBase extends TestCase {
 			Object expectedValue = expectedValues.get(varName);
 
 			ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varName);
+			Assert.assertTrue("Missing variable '" + varName + "'", ssym != null);
 
 			if (debug) Gpr.debug("Program: " + fileName + "\tvarName: '" + varName + "'\tssym: " + ssym);
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-			);
+					);
 		}
 	}
 
@@ -149,6 +151,8 @@ public class TestCasesBase extends TestCase {
 		else {
 			// Check that values match
 			ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varname);
+			Assert.assertTrue("Missing variable '" + varname + "'", ssym != null);
+
 			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 			Assert.assertEquals(expectedValue, ssym.getValue().toString());
 		}
@@ -165,6 +169,8 @@ public class TestCasesBase extends TestCase {
 
 		// Check that values match
 		ScopeSymbol ssym = bigDataScript2.getProgramUnit().getRunScope().getSymbol(varname);
+		Assert.assertTrue("Missing variable '" + varname + "'", ssym != null);
+
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 		Assert.assertEquals(expectedValue, ssym.getValue().toString());
 	}
@@ -214,29 +220,6 @@ public class TestCasesBase extends TestCase {
 	 * Check that StdOut has a string (or that the string is not present if 'reverse')
 	 */
 	String runAndCheckStdout(String fileName, String expectedStdout, boolean reverse) {
-		//		String args[] = { fileName };
-		//
-		//		// Compile
-		//		BigDataScript bigDataScript = new BigDataScript(args);
-		//		bigDataScript.compile();
-		//		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
-		//
-		//		PrintStream stdout = System.out;
-		//		ByteArrayOutputStream captureStdout = new ByteArrayOutputStream();
-		//		try {
-		//			// Capture STDOUT
-		//			System.setOut(new PrintStream(captureStdout));
-		//
-		//			// Run
-		//			bigDataScript = new BigDataScript(args);
-		//			bigDataScript.run();
-		//		} catch (Throwable t) {
-		//			t.printStackTrace();
-		//		} finally {
-		//			// Restore STDERR
-		//			System.setOut(stdout);
-		//		}
-
 		// Run command and capture stdout
 		String captureStdout = runAndReturnStdout(fileName);
 

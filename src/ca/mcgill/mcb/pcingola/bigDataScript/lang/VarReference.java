@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  */
 public class VarReference extends Reference {
 
-	String name;
+	protected String name;
 
 	public VarReference(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);

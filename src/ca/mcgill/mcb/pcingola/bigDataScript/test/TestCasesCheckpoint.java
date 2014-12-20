@@ -158,4 +158,9 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_13.bds", "test/checkpoint_13.chp", "ok", "true");
 	}
 
+	@Test
+	public void test14_serialize_method_call_args() {
+		runAndCheckpoint("test/checkpoint_14.bds", "test/checkpoint_14.chp", "ok", "true");
+	}
+
 }

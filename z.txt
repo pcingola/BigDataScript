@@ -1,0 +1,72 @@
+BigDataScript	0.99g
+BigDataScriptThread	1	list:0	"z.bds.20141220_092613_085"	"ProgramUnit:976"	"Scope:13"	""
+ProgramCounter	976	1020
+Scope	13	"Scope:3"	node:976
+ScopeSymbol	"opt"	type:MAP:STRING	map:0
+Scope	3	""	null
+ScopeSymbol	"PATH"	type:STRING	"/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/X11/bin:/usr/local/go/bin:/usr/texbin:/Users/pcingola/bin:/Users/pcingola/tools/scala/bin:/Users/pcingola/tools/ant/bin:/Users/pcingola/tools/mvn/bin:/Users/pcingola/tools/samtools:/Users/pcingola/tools/bcftools:/Users/pcingola/tools/htslib:/Users/pcingola/tools/bwa:/Users/pcingola/tools/bowtie:/Users/pcingola/tools/bowtie2:/Users/pcingola/tools/tophat:/Users/pcingola/tools/bedTools/bin:/Users/pcingola/tools/sbt/bin:/Users/pcingola/tools/plink:/Users/pcingola/tools/Sublime_Text_2:/Users/pcingola/tools/aws_amazon:/Users/pcingola/tools/aws_amazon/ec2-api-tools/bin:/Users/pcingola/.bds"
+ScopeSymbol	"allowEmpty"	type:BOOL	false
+ScopeSymbol	"programName"	type:STRING	"z.bds"
+ScopeSymbol	"AWS_SECRET_KEY"	type:STRING	"tra2wBFh0owDvxtVr2HPe5cr4N/hxiF5xqe1KmS3"
+ScopeSymbol	"LOGNAME"	type:STRING	"pcingola"
+ScopeSymbol	"PWD"	type:STRING	"/Users/pcingola/workspace/BigDataScript"
+ScopeSymbol	"TERM_PROGRAM_VERSION"	type:STRING	"326"
+ScopeSymbol	"day"	type:INT	86400
+ScopeSymbol	"SHELL"	type:STRING	"/bin/bash"
+ScopeSymbol	"TMPDIR"	type:STRING	"/var/folders/j9/9d0xhhn97vq2546d8gvmb25w0000gn/T/"
+ScopeSymbol	"canFail"	type:BOOL	false
+ScopeSymbol	"node"	type:STRING	""
+ScopeSymbol	"system"	type:STRING	"local"
+ScopeSymbol	"cpusLocal"	type:INT	4
+ScopeSymbol	"TERM_SESSION_ID"	type:STRING	"C7AD20B2-91D6-485B-B5CD-D52C770003C6"
+ScopeSymbol	"__CF_USER_TEXT_ENCODING"	type:STRING	"0x1F5:0:0"
+ScopeSymbol	"Apple_PubSub_Socket_Render"	type:STRING	"/tmp/launch-KgDg1a/Render"
+ScopeSymbol	"__CHECKFIX1436934"	type:STRING	"1"
+ScopeSymbol	"AWS_ACCESS_KEY"	type:STRING	"AKIAIQKR55MXBUA6JALQ"
+ScopeSymbol	"SHLVL"	type:STRING	"2"
+ScopeSymbol	"week"	type:INT	604800
+ScopeSymbol	"JAVA_ARCH"	type:STRING	"x86_64"
+ScopeSymbol	"G"	type:INT	1073741824
+ScopeSymbol	"HISTSIZE"	type:STRING	"100000"
+ScopeSymbol	"K"	type:INT	1024
+ScopeSymbol	"EC2_HOME"	type:STRING	"/Users/pcingola/tools/aws_amazon/ec2-api-tools"
+ScopeSymbol	"TERM"	type:STRING	"xterm-256color"
+ScopeSymbol	"M"	type:INT	1048576
+ScopeSymbol	"LANG"	type:STRING	"en_CA.UTF-8"
+ScopeSymbol	"timeout"	type:INT	86400
+ScopeSymbol	"P"	type:INT	1125899906842624
+ScopeSymbol	"HISTFILESIZE"	type:STRING	"100000000"
+ScopeSymbol	"DISPLAY"	type:STRING	"/tmp/launch-cuHbZu/org.macosforge.xquartz:0"
+ScopeSymbol	"mem"	type:INT	-1
+ScopeSymbol	"T"	type:INT	1099511627776
+ScopeSymbol	"hour"	type:INT	3600
+ScopeSymbol	"retry"	type:INT	0
+ScopeSymbol	"_"	type:STRING	"/Users/pcingola/.bds/bds"
+ScopeSymbol	"JAVA_MAIN_CLASS_2381"	type:STRING	"ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"
+ScopeSymbol	"cpus"	type:INT	1
+ScopeSymbol	"TERM_PROGRAM"	type:STRING	"Apple_Terminal"
+ScopeSymbol	"walltimeout"	type:INT	86400
+ScopeSymbol	"USER"	type:STRING	"pcingola"
+ScopeSymbol	"minute"	type:INT	60
+ScopeSymbol	"args"	type:LIST:STRING	list:0
+ScopeSymbol	"SSH_AUTH_SOCK"	type:STRING	"/tmp/launch-mmpJS8/Listeners"
+ScopeSymbol	"programPath"	type:STRING	"test/z.bds"
+ScopeSymbol	"ppwd"	type:STRING	"/Users/pcingola/Documents/workspace/BigDataScript"
+ScopeSymbol	"com.apple.java.jvmTask"	type:STRING	"CommandLine"
+ScopeSymbol	"queue"	type:STRING	""
+ScopeSymbol	"HOME"	type:STRING	"/Users/pcingola"
+ProgramUnit	976	1	18	null	null	"test/z.bds"	"#!/usr/bin/env bds\n\nstring{} opt\nprint opt.hasKey(\"key\") + \"\\n\"\ncheckpoint 'test/z.chp'\nok := true\n"	true	node:977,node:1010,node:1020,node:1022
+VarDeclaration	977	3	6	node:976	null	false	type:MAP:STRING	node:1009
+VariableInit	1009	3	9	node:977	null	null	"opt"
+Print	1010	4	0	node:976	type:STRING	node:1011
+ExpressionPlus	1011	4	24	node:1010	type:STRING	node:1012	node:1018
+MethodCall	1012	4	9	node:1011	type:BOOL	node:1017	node:1013	node:650	"hasKey"
+Args	1017	0	0	node:1012	type:STRING	node:1013,node:1015
+VarReference	1013	4	6	node:1012	type:MAP:STRING	"opt"
+LiteralString	1015	4	17	node:1017	type:STRING	null	"key"
+LiteralString	1018	4	26	node:1011	type:STRING	null	"\n"
+Checkpoint	1020	5	0	node:976	null	node:1021
+LiteralString	1021	5	11	node:1020	type:STRING	null	"test/z.chp"
+VarDeclaration	1022	6	0	node:976	null	true	type:BOOL	node:1023
+VariableInitImplicit	1023	6	0	node:1022	null	node:1024	"ok"
+LiteralBool	1024	6	6	node:1023	type:BOOL	true

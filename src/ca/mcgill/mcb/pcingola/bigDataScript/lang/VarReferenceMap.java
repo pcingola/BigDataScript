@@ -11,14 +11,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
- * A reference to a list/array variable. E.g. list[3]
+ * A reference to a map variable. E.g. map{'hello'}
  *
  * @author pcingola
  */
 public class VarReferenceMap extends Reference {
 
-	VarReference variable;
-	Expression expressionKey;
+	protected VarReference variable;
+	protected Expression expressionKey;
 
 	public VarReferenceMap(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
