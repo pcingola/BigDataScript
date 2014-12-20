@@ -13,8 +13,8 @@ rm -rvf \
 	in.txt \
 	out?.txt \
 	z.pid \
-	test/*chp \
 	failOnce.* \
 	test/tmp*.txt \
-	tmp*.txt
+	tmp*.txt \
+	`find . -iname "*.chp"` \
 
