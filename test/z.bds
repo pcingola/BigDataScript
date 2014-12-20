@@ -1,13 +1,11 @@
 #!/usr/bin/env bds
 
-include 'test/zi'
-include './test/zi'
-include 'test/../test/zi'
-
-void usage() {
-	print "Usage\n"
+void zzz( string{} opt ) {
+  print opt.hasKey("key") 
 }
 
-print "Hi\n"
-usage()
-checkpoint 'z.chp'
+print "Creating checkpoint\n"
+checkpoint 'test/z.chp'
+print "Done\n"
+
+ok := true

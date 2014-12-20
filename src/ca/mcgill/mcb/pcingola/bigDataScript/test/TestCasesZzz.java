@@ -11,7 +11,7 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test13_checkPoint_function_with_empty_Args() {
-		runAndCheckpoint("test/checkpoint_13.bds", "test/checkpoint_13.chp", "ok", "true");
+	public void test14_WTF() {
+		runAndCheckpoint("test/z.bds", "test/z.chp", "ok", "true");
 	}
 }

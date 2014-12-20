@@ -190,7 +190,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		if (isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
 		BigDataScriptSerializer bdsSer = new BigDataScriptSerializer(checkpointFileName, config);
-		bdsSer.save(this);
+		bdsSer.save(getRoot()); // Save root thread
 
 		return checkpointFileName;
 	}
@@ -832,7 +832,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -977,6 +977,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Save all tasks (in the same order that they were added)
 		for (Task task : taskDependecies.getTasks())
 			out.append(serializer.serializeSave(task));
+
+		// Save all threads
+		for (BigDataScriptThread bdsTh : bdsChildThreadsById.values())
+			out.append(serializer.serializeSave(bdsTh));
 
 		return out.toString();
 	}

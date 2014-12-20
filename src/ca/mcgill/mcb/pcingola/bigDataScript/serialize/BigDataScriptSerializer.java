@@ -60,7 +60,7 @@ public class BigDataScriptSerializer {
 	public BigDataScriptSerializer(String fileName, Config config) {
 		this.fileName = fileName;
 		this.config = config;
-		this.extractSource = (config != null && config.isExtractSource());
+		extractSource = (config != null && config.isExtractSource());
 		serializedNodes = new HashSet<BigDataScriptSerialize>();
 		threadsById = new HashMap<String, BigDataScriptThread>();
 	}
@@ -479,9 +479,11 @@ public class BigDataScriptSerializer {
 			// Save version
 			outFile.print(BigDataScript.class.getSimpleName() + "\t" + BigDataScript.VERSION_SHORT + "\n");
 
-			// Serialize all threads
-			for (BigDataScriptThread bth : bdsThread.getBdsThreads())
-				outFile.print(this.serializeSave(bth));
+			//			// Serialize all threads
+			//			for (BigDataScriptThread bth : bdsThread.getBdsThreads())
+			//				outFile.print(this.serializeSave(bth));
+
+			outFile.print(this.serializeSave(bdsThread));
 
 			outFile.close();
 		} catch (IOException e) {
