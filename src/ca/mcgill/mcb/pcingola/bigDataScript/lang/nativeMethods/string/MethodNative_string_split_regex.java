@@ -1,10 +1,16 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class MethodNative_string_split_regex extends MethodNative {
 	public MethodNative_string_split_regex() {
@@ -25,6 +31,6 @@ public class MethodNative_string_split_regex extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return array2list( objThis.toString().split( csThread.getString("regex") ) );
+		String str = objThis.toString(); if( str.isEmpty() ) return new ArrayList<String>(); try { return array2list( str.split( csThread.getString("regex") ) ); } catch( Throwable t ) { ArrayList<String> l = new ArrayList<String>(); l.add(str); return l; }
 	}
 }
