@@ -12,8 +12,7 @@ public class TestCasesZzz extends TestCasesBase {
 
 	@Test
 	public void test121_split_empty_string() {
-		runAndCheck("test/run_121.bds", "len", "1");
-		String s = "";
+		runAndCheck("test/z.bds", "len", "");
 	}
 
 }

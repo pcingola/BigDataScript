@@ -1,0 +1,13 @@
+#!/usr/bin/env bds
+
+int fact(int n) {
+	if( n <= 1 ) {
+		return 1
+	}
+
+	# Create child threads
+	return n * fact(n-1)
+}
+
+n := 5
+print "Fact($n): " + fact(n)

@@ -1,4 +1,16 @@
 #!/usr/bin/env bds
 
-l := "test/".dirPath("*.bds")
-print "l : $l\n"
+void childPar(int n) {
+	if( n >= 4 ) {
+		checkpoint 'z.chp'
+		return
+	}
+
+	# Create child threads
+	for( int i : range(0, n) ) {
+		pid := par childPar( n+1 )
+		print "($i / $n)\t=>\t$pid\n"
+	}
+}
+
+childPar(1)
