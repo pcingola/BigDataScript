@@ -201,7 +201,7 @@ doi: 10.1093/bioinformatics/btu595
 <pre class="prettyprint">
 #!/usr/bin/env bds
 
-print("Hello world\n")
+print "Hello world\n"
 </pre>
 
 <pre class="prettyprint">
@@ -277,11 +277,11 @@ Hello world
 					<li> Statements can be terminated either by semicolon or by a new line.
 <pre class="prettyprint">
 # Two statements
-print("Hi\n"); print("Bye\n");
+print "Hi\n"; print "Bye\n";
 
 # Two statements, same as before but using lines instead of semicolon
-print("Hi\n") 
-print("Bye\n")
+print "Hi\n" 
+print "Bye\n"
 </pre>
 					<li> <code> break </code>: Breaks from current loop
 <pre class="prettyprint">
@@ -470,7 +470,10 @@ par {
         print("This is executed in parallel: $i\n")
     }
 }
-
+</pre>
+					or just call a function in parallel
+<pre class="prettyprint">
+par doSomething(arg1, arg2)
 </pre>
 					<li> <code> sys </code> Execute an OS commnad. Execution is immediate and local (i.e. in the same computer as <code>bds</code> is running). It's intended for executing fast OS commands (not heavyweight processing).
 <pre class="prettyprint">
@@ -567,10 +570,10 @@ if( f.canRead() ) {
 					<tr><td>bool		</td> <td>string.canExec()					</td> <td> True if file has execution permission	</td> </tr>
 					<tr><td>bool		</td> <td>string.delete()					</td> <td> Delete file	</td> </tr>
 					<tr><td>string[]	</td> <td>string.dir()						</td> <td> List files in a directory ('ls')   </td> </tr>
-					<tr><td>string[]	</td> <td>string.dir(string regex)			</td> <td> List files matching a regular expression </td> </tr>
+					<tr><td>string[]	</td> <td>string.dir(string regex)			</td> <td> List files matching a 'glob' (regular expresion for files)</td> </tr>
 					<tr><td>string		</td> <td>string.dirName()					</td> <td> File's directory name	</td> </tr>
 					<tr><td>string[]	</td> <td>string.dirPath()					</td> <td> List files using canonical paths	</td> </tr>
-					<tr><td>string[]	</td> <td>string.dirPath(string regex)		</td> <td> List files, matching a regular expresion, using canonical paths	</td> </tr>
+					<tr><td>string[]	</td> <td>string.dirPath(string regex)		</td> <td> List files, matching a 'glob' (regular expresion for files), using canonical paths	</td> </tr>
 					<tr><td>string		</td> <td>string.extName()				  	</td> <td> File's extension	</td> </tr>
 					<tr><td>bool		</td> <td>string.exists()					</td> <td> True if file exists	</td> </tr>
 					<tr><td>bool		</td> <td>string.isDir()					</td> <td> True if it's a directory	</td> </tr>
@@ -1849,6 +1852,21 @@ Parallel 5
 Main 5
 </pre>
 
+			Perhaps a more elegant way to write the same code would be:
+
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+void count(string msg) {
+    for( int i : range(1, 5) ) {
+        print("$msg $i\n")
+        sleep( 0.2 )
+    }
+}
+
+par count('Parallel')   # Call function in parallel thread
+count('Main')           # Call function in 'main' thread
+</pre>
 				<code>par</code> also works with optional expresions that must be all 'true' to evaluate the block.
 	
 <pre class="prettyprint">
@@ -1879,6 +1897,97 @@ wait pid                            // Wait for parallel to finish
 				We mentioned before that, by default, a <code>wait</code> statement with no arguments, would wait for 'all' tasks to finish.
 				Specifically, <code>wait</code> statement waits for all tasks scheduled by the same thread and for all 'parallels'.
 				So, <code>wait</code> statement with no arguments, will not restore execution until all threads and tasks trigered by the current thread have finished.
+				<br>
+				<br>
+				<h3> Calling functions  with 'par' </h3>
+
+				A function can be called in a parallel thread using <code>par</code> statements.
+				<br>
+				E.g.:
+<pre>
+par someFunction(x, y)
+</pre>
+				It is important to notice that the return value from a <code>par</code> it is a 'parallel ID' (i.e. a thread ID) and not the function's return value.
+				This is because the parallel thread could take a long time to process and we don't want to stop execution in the current thread until the function finishes.
+				<br>
+				<br>
+				So, this sample code will show the 'parallel ID' independently of the function's return value:
+<pre>
+pid := par someFunction(x, y)  # 'par' returns a thread ID
+print "Parallel ID: $pid\n"
+</pre>
+				<br>
+				<b>Important:</b> When calling a function, arguments are evaluated <b>before</b> the new thread is created. 
+				The reason for this is to simplify race conditions.
+
+				<h3> Race conditions in 'par' and how to avoid them </h3>
+				As is the case when creating threads in any programming language, using <code>par</code> can lead to race conditions.
+				<br>
+				As an example, consider this code:
+				<br>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+for( int i : range(0, 10) ) {
+    par {
+        print "Number: $i\n"
+    }
+}   
+</pre>
+			The output is (comments added for clarification):
+<pre>
+$ ./z.bds
+Number: 0
+Number: 2		# We missed number 1?
+Number: 3
+Number: 4
+Number: 6		# We missed number 5?
+Number: 6		# Two '6'?
+Number: 8
+Number: 8
+Number: 10		# Three number 10?
+Number: 10
+Number: 10
+</pre>
+
+			This is clearly not the results we wanted.
+			<br>
+			What happened? Well, obviously this had a race condition. 
+			From the time thread is created (<code>par</code>), until variable <code>i</code> is evaluated in <code>print</code> statement (parallel thread), the main thread has already changed <code>i</code>'s value.
+			<br>
+			<br>
+			To avoid this type of race condition, when using <code>par</code> to call a function, arguments are evaluated in the current thread.
+			Then a new thread is created and the function is invoked.
+			See what happens when we refactor the code:
+			<br>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+void show(int num) {
+    print "Number: $num\n"
+}
+
+for( int i : range(0, 10) ) {
+    par show(i)
+}   
+</pre>
+			<br>
+			Now the output is what we expect:
+			<br>
+<pre>
+$ ./z.bds
+Number: 0
+Number: 1
+Number: 2
+Number: 3
+Number: 4
+Number: 5
+Number: 6
+Number: 7
+Number: 8
+Number: 9
+Number: 10
+</pre>
 			</div>
 
 			<!-- ================================================== -->
