@@ -215,7 +215,12 @@ public class TestCasesRun2 extends TestCasesBase {
 
 	@Test
 	public void test120_split_empty_string() {
-		runAndCheck("test/z.bds", "len", "0");
+		runAndCheck("test/run_120.bds", "len", "0");
+	}
+
+	@Test
+	public void test121_split_empty_string() {
+		runAndCheck("test/run_121.bds", "len", "1");
 	}
 
 }

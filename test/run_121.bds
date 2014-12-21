@@ -1,0 +1,10 @@
+#!/usr/bin/env bds
+
+str := 'hi there'
+l := str.split("(*")	# This regex won't compile
+len := l.size()			# We should get a list with one element
+
+print "str         : '$str'\n"
+print "l           : $l\n"
+print "l.size()    : " + l.size() + "\n"
+print "l.isEmpty() : " + l.isEmpty() + "\n"

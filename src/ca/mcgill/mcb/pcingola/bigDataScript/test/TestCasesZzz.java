@@ -11,7 +11,9 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test120_split_empty_string() {
-		runAndCheck("test/z.bds", "len", "0");
+	public void test121_split_empty_string() {
+		runAndCheck("test/run_121.bds", "len", "1");
+		String s = "";
 	}
+
 }

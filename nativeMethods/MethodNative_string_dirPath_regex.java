@@ -1,21 +1,18 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class MethodNative_string_dirPath_regex extends MethodNative {
-
 	public MethodNative_string_dirPath_regex() {
 		super();
 	}
@@ -26,7 +23,7 @@ public class MethodNative_string_dirPath_regex extends MethodNative {
 		classType = Type.STRING;
 		returnType = TypeList.get(Type.STRING);
 
-		String argNames[] = { "this", "glob" };
+		String argNames[] = { "this", "regex" };
 		Type argTypes[] = { Type.STRING, Type.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
@@ -34,35 +31,6 @@ public class MethodNative_string_dirPath_regex extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		String glob = csThread.getString("glob");
-
-		//---
-		// List all files, filtered by 'glob'
-		//---
-		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
-		ArrayList<String> list = new ArrayList<String>();
-		File files[] = new File(objThis.toString()).listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(File file) {
-				return matcher.matches(file.toPath().getFileName());
-			}
-		});
-
-		//---
-		// Convert to list of strings
-		//---
-		if (files == null) return list;
-		for (File s : files)
-			try {
-				list.add(s.getCanonicalPath());
-			} catch (IOException e) {
-				// Ignore file
-			}
-
-		// Sort by name
-		Collections.sort(list);
-
-		return list;
+		String regex = csThread.getString("regex"); ArrayList<String> list = new ArrayList<String>(); File dir[] = (new File(objThis.toString())).listFiles(); if (dir == null) return list; for (File f : dir) try { String c = f.getCanonicalPath(); if(c.matches(regex)) list.add(c); } catch (Exception e) {;} Collections.sort(list); return list;
 	}
 }
