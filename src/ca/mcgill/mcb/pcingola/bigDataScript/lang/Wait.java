@@ -30,16 +30,9 @@ public class Wait extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
-		if (bdsThread.getRunState() == RunState.WAIT_RECOVER) runStepWaitRecover(bdsThread);
-		else runStepOk(bdsThread);
-	}
-
-	/**
-	 * Run in 'OK' state
-	 */
 	@SuppressWarnings("rawtypes")
-	protected void runStepOk(BigDataScriptThread bdsThread) {
+	protected void runStep(BigDataScriptThread bdsThread) {
+
 		boolean ok = false;
 		String type = "Task";
 
@@ -63,15 +56,20 @@ public class Wait extends Statement {
 			// Create a checkpoint
 			bdsThread.fatalError(this, type + "/s failed.");
 		}
+
+		// Were we recovering from a 'wait' within a checkpoint?
+		if (bdsThread.getRunState() == RunState.WAIT_RECOVER) {
+			bdsThread.setRunState(RunState.OK);
+		}
 	}
 
-	/**
-	 * Run in 'WAIT_RECOVER' state.
-	 * This happens when recovering from a checkpoint.
-	 */
-	protected void runStepWaitRecover(BigDataScriptThread bdsThread) {
-		runStepOk(bdsThread);
-	}
+	//	/**
+	//	 * Run in 'WAIT_RECOVER' state.
+	//	 * This happens when recovering from a checkpoint.
+	//	 */
+	//	protected void runStepWaitRecover(BigDataScriptThread bdsThread) {
+	//		runStepOk(bdsThread);
+	//	}
 
 	@Override
 	public String toString() {
