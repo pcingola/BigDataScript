@@ -49,11 +49,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class BigDataScriptThread extends Thread implements BigDataScriptSerialize {
 
-	private static int threadNumber = 1;
+	public static final String DATE_FORMAT_CSV = "yyyy,MM,dd,HH,mm,ss";
+	public static final String DATE_FORMAT_HTML = "yyyy-MM-dd HH:mm:ss";
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
 	public static final String REPORT_RED_COLOR = "style=\"background-color: #ffc0c0\"";
 	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
 	public static final String LINE = "--------------------";
+
+	private static int threadNumber = 1;
 
 	Config config; // Config
 	Random random; // Uniform random number generator
@@ -82,10 +85,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	// Task management
 	TaskDependecies taskDependecies;
 	List<Task> restoredTasks; // Unserialized tasks.
-
-	public static final String DATE_FORMAT_CSV = "yyyy,MM,dd,HH,mm,ss";
-
-	public static final String DATE_FORMAT_HTML = "yyyy-MM-dd HH:mm:ss";
 
 	/**
 	 * Get an ID for a node
@@ -220,10 +219,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Make sure that the statement node is the first in the checkpoint recovery
 	 */
 	public void checkpointRecoverReset() {
-		for (checkPointRecoverNodeIdx = 0; checkPointRecoverNodeIdx < pc.size(); checkPointRecoverNodeIdx++)
+		for (checkPointRecoverNodeIdx = 0; checkPointRecoverNodeIdx < pc.size(); checkPointRecoverNodeIdx++) {
 			if (pc.nodeId(checkPointRecoverNodeIdx) == statement.getId()) return;
+		}
 
-		throw new RuntimeException("Checkpoint statement not found in PC");
+		throw new RuntimeException("Checkpoint statement not found in PC: " + pc);
 	}
 
 	void createBdsThreadId() {
@@ -687,7 +687,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Are we in CHECKPOINT_RECOVER mode?
 	 */
 	public boolean isCheckpointRecover() {
-		return runState == RunState.CHECKPOINT_RECOVER;
+		//		return runState == RunState.CHECKPOINT_RECOVER;
+		return runState == RunState.WAIT_RECOVER //
+				|| runState == RunState.CHECKPOINT_RECOVER //
+		;
+
 	}
 
 	public boolean isDebug() {
@@ -955,15 +959,17 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	@Override
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		StringBuilder out = new StringBuilder();
-
-		out.append(getClass().getSimpleName());
-		out.append("\t" + bdsThreadNum);
-		out.append("\t" + serializer.serializeSaveValue(removeOnExit));
-		out.append("\t" + serializer.serializeSaveValue(getBdsThreadId()));
-		out.append("\t" + serializer.serializeSaveValue(statement.getNodeId()));
-		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
-		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
+		out.append(serializeSaveThreadMain(serializer));
 		out.append("\n");
+		out.append(serializeSaveThreadData(serializer));
+		return out.toString();
+	}
+
+	/**
+	 * Save thread's data
+	 */
+	protected String serializeSaveThreadData(BigDataScriptSerializer serializer) {
+		StringBuilder out = new StringBuilder();
 
 		// Save program counter
 		out.append(serializer.serializeSave(pc));
@@ -982,6 +988,22 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		for (BigDataScriptThread bdsTh : bdsChildThreadsById.values())
 			out.append(serializer.serializeSave(bdsTh));
 
+		return out.toString();
+	}
+
+	/**
+	 * Save thread's main information
+	 */
+	protected String serializeSaveThreadMain(BigDataScriptSerializer serializer) {
+		StringBuilder out = new StringBuilder();
+
+		out.append(getClass().getSimpleName());
+		out.append("\t" + bdsThreadNum);
+		out.append("\t" + serializer.serializeSaveValue(removeOnExit));
+		out.append("\t" + serializer.serializeSaveValue(getBdsThreadId()));
+		out.append("\t" + serializer.serializeSaveValue(statement.getNodeId()));
+		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
+		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
 		return out.toString();
 	}
 
@@ -1007,6 +1029,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public void setScope(Scope scope) {
 		this.scope = scope;
+	}
+
+	/**
+	 * Find and set statement
+	 */
+	public void setStatement(Map<String, BigDataScriptSerialize> nodesById) {
+		Statement stat = (Statement) nodesById.get(statementNodeId);
+		if (stat == null) throw new RuntimeException("Cannot find statement node '" + statementNodeId + "'");
+		setStatement(stat);
 	}
 
 	/**

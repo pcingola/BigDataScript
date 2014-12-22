@@ -1,8 +1,13 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.serialize;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,11 +26,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrePostOperation;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrimitiveType;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.Statement;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.FunctionCallThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.ProgramCounter;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
@@ -67,6 +72,36 @@ public class BigDataScriptSerializer {
 
 	public boolean add(BigDataScriptSerialize node) {
 		return serializedNodes.add(node);
+	}
+
+	/**
+	 * Read the object from Base64 string.
+	 */
+	public Object base64Decode(String s) {
+		try {
+			byte[] data = Base64Coder.decode(s);
+			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+			Object o = ois.readObject();
+			ois.close();
+			return o;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Write the object to a Base64 string.
+	 */
+	public String base64encode(Serializable o) {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(o);
+			oos.close();
+			return new String(Base64Coder.encode(baos.toByteArray()));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public BigDataScriptThread getBdsThread(String bdsThreadId) {
@@ -343,6 +378,14 @@ public class BigDataScriptSerializer {
 					currScope = null;
 
 					bdsSerialize = bdsThread;
+				} else if (clazz.equals(FunctionCallThread.class.getSimpleName())) {
+					// Parse BigDataScriptThread
+					FunctionCallThread fcallThread = new FunctionCallThread(config);
+					currBdsThread = fcallThread;
+					currBdsThread.setScope(null);
+					currScope = null;
+
+					bdsSerialize = fcallThread;
 				} else if (clazz.equals(ProgramCounter.class.getSimpleName())) {
 					// Parse ProgramCounter
 					bdsSerialize = new ProgramCounter();
@@ -429,10 +472,7 @@ public class BigDataScriptSerializer {
 		//---
 		for (BigDataScriptThread bth : bdsThreads) {
 			// Set statement
-			String statId = bth.getStatementNodeId();
-			Statement statement = (Statement) nodesById.get(statId);
-			if (statement == null) throw new RuntimeException("Cannot find statement node '" + statId + "'");
-			bth.setStatement(statement);
+			bth.setStatement(nodesById);
 			bth.checkpointRecoverReset(); // Checkpoint starts recovering node form 'statement' (instead of 'programUnit')
 
 			String scopeId = bth.getScopeNodeId();
@@ -479,12 +519,8 @@ public class BigDataScriptSerializer {
 			// Save version
 			outFile.print(BigDataScript.class.getSimpleName() + "\t" + BigDataScript.VERSION_SHORT + "\n");
 
-			//			// Serialize all threads
-			//			for (BigDataScriptThread bth : bdsThread.getBdsThreads())
-			//				outFile.print(this.serializeSave(bth));
-
+			// Save main thread
 			outFile.print(this.serializeSave(bdsThread));
-
 			outFile.close();
 		} catch (IOException e) {
 			throw new RuntimeException(e);

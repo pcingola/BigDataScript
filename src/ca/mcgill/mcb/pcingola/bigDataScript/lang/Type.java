@@ -44,8 +44,6 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 
 	PrimitiveType primitiveType;
 
-	// Scope classScope; // A scope defining all class variables and methods
-
 	/**
 	 * Get a type
 	 */

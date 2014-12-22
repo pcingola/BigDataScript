@@ -12,7 +12,7 @@ public class TestCasesZzz extends TestCasesBase {
 
 	@Test
 	public void test121_split_empty_string() {
-		runAndCheck("test/z.bds", "len", "");
+		runAndCheckpoint("test/z.bds", "test/z.chp", "ok", "true");
 	}
 
 }

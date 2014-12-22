@@ -1,13 +1,17 @@
 #!/usr/bin/env bds
 
-int fact(int n) {
-	if( n <= 1 ) {
-		return 1
+par {
+	for( int i=0 ; i < 10 ; i++ ) {
+		if( i == 4 ) {
+			print "Checkpoint\n"
+			checkpoint 'test/zz.chp'
+		}
+		print "par: $i\n";
+		sleep(1)
 	}
-
-	# Create child threads
-	return n * fact(n-1)
 }
 
-n := 5
-print "Fact($n): " + fact(n)
+for( int i=0 ; i < 10 ; i++ ) {
+	print "main: $i\n";
+	sleep(1)
+}

@@ -1,0 +1,9 @@
+#!/usr/bin/env bds
+
+void show(string s) {
+	print "$s\n"
+}
+
+par show("hi")
+checkpoint 'test/z.chp'
+ok := true

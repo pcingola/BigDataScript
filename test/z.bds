@@ -1,16 +1,15 @@
 #!/usr/bin/env bds
 
-void childPar(int n) {
-	if( n >= 4 ) {
-		checkpoint 'z.chp'
-		return
-	}
-
-	# Create child threads
-	for( int i : range(0, n) ) {
-		pid := par childPar( n+1 )
-		print "($i / $n)\t=>\t$pid\n"
-	}
+void show(string s, int[] l) {
+	print "Before\t$s: $l\n"
+	sleep(3)
+	print "After\t$s: $l\n"
 }
 
-childPar(1)
+l := [1, 2, 3]
+par show("hi", l)
+sleep(1)
+print "Checkpoint\n"
+checkpoint 'test/z.chp'
+ok := true
+print "Done\n"

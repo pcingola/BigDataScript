@@ -30,7 +30,7 @@ public class ExpressionParallel extends ExpressionTask {
 	 * Create a new BdsThread that runs a function call in parallel
 	 */
 	FunctionCallThread createParallelFunctionCall(BigDataScriptThread bdsThread, Object arguments[]) {
-		FunctionCallThread bdsNewThread = new FunctionCallThread(statement, bdsThread, arguments);
+		FunctionCallThread bdsNewThread = new FunctionCallThread(this, (FunctionCall) statement, bdsThread, arguments);
 		bdsNewThread.start();
 		return bdsNewThread;
 	}
@@ -55,8 +55,8 @@ public class ExpressionParallel extends ExpressionTask {
 			// avoid race conditions. Then we create a thread and call the function
 
 			// Evaluate function arguments in current thread
-			FunctionCall fcall = (FunctionCall) statement;
-			Object arguments[] = fcall.evalFunctionArguments(bdsThread);
+			FunctionCall functionCall = (FunctionCall) statement;
+			Object arguments[] = functionCall.evalFunctionArguments(bdsThread);
 
 			// Create and run new thread that runs the function call in parallel
 			bdsNewThread = createParallelFunctionCall(bdsThread, arguments);

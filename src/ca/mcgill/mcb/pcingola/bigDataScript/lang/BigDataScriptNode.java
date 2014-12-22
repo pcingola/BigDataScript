@@ -726,7 +726,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 						} else out.append(serializer.serializeSaveValue(fieldObj) + "\t");
 
 						// Can we recurse into this field?
-						if ((fieldObj != null) && (fieldObj instanceof BigDataScriptNode)) nodesToRecurse.add((BigDataScriptNode) fieldObj);
+						if (fieldObj instanceof BigDataScriptNode) nodesToRecurse.add((BigDataScriptNode) fieldObj);
 					}
 				} else {
 					// Value of this field is null
