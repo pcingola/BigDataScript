@@ -18,6 +18,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Scope: Variables, functions and classes
@@ -309,12 +310,18 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		node = BigDataScriptNodeFactory.get().realNode(node);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		// Nothing to do
 		id = (int) serializer.getNextFieldInt();
+		Gpr.debug("ID:" + id);
 		parentNodeId = serializer.getNextFieldString();
 		int nodeId = serializer.getNextFieldNodeId();
+
+		// Stack
+		String b64 = serializer.getNextField();
+		stack = (b64 != null && !b64.isEmpty() ? (Deque<Object>) serializer.base64Decode(b64) : null);
 
 		if (nodeId != 0) {
 			// Node is not null
@@ -332,6 +339,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		out.append("\t" + serializer.serializeSaveValue(id));
 		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getNodeId() : ""));
 		out.append("\t" + serializer.serializeSaveValue(node));
+		out.append("\t" + (stack != null ? serializer.base64encode(stack) : ""));
 		out.append("\n");
 
 		for (ScopeSymbol ss : symbols.values()) {
@@ -359,7 +367,6 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		StringBuilder sb = new StringBuilder();
 		if (parent != null) {
 			String parentStr = parent.toString();
-			// if (!parentStr.isEmpty()) sb.append("\n---------- Scope ----------\n" + parentStr);
 			if (!parentStr.isEmpty()) sb.append(parentStr);
 		}
 
@@ -370,6 +377,13 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		Collections.sort(ssyms);
 		for (ScopeSymbol ss : ssyms)
 			sbThis.append(ss + "\n");
+
+		// Show stack:
+		if (stack != null) {
+			int num = 0;
+			for (Object obj : stack)
+				sbThis.append("Stack[" + (num++) + "]:\t" + obj.toString() + "\n");
+		}
 
 		// Show scope functions
 		if (showFunc && functions != null) {
