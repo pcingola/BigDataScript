@@ -20,8 +20,8 @@ public class LiteralInt extends Literal {
 	}
 
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return value;
+	public void eval(BigDataScriptThread bdsThread) {
+		bdsThread.push(value);
 	}
 
 	public long getValue() {

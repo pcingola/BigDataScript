@@ -39,12 +39,16 @@ public class ExpressionParallel extends ExpressionTask {
 	 * Evaluate 'par' expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		// Execute options assignments
 		if (taskOptions != null) {
-			boolean ok = (Boolean) taskOptions.eval(bdsThread);
+			boolean ok = taskOptions.evalBool(bdsThread);
 			if (bdsThread.isDebug()) log("task-options check " + ok);
-			if (!ok) return ""; // Options clause not satisfied. Do not execute 'parallel'
+			if (!ok) {
+				// Options clause not satisfied. Do not execute 'parallel'
+				bdsThread.push("");
+				return;
+			}
 		}
 
 		// Create thread and execute statements
@@ -56,7 +60,8 @@ public class ExpressionParallel extends ExpressionTask {
 
 			// Evaluate function arguments in current thread
 			FunctionCall functionCall = (FunctionCall) statement;
-			Object arguments[] = functionCall.evalFunctionArguments(bdsThread);
+			functionCall.evalFunctionArguments(bdsThread);
+			Object arguments[] = (Object[]) bdsThread.pop();
 
 			// Create and run new thread that runs the function call in parallel
 			bdsNewThread = createParallelFunctionCall(bdsThread, arguments);
@@ -65,7 +70,7 @@ public class ExpressionParallel extends ExpressionTask {
 			bdsNewThread = createParallel(bdsThread);
 		}
 
-		return bdsNewThread.getBdsThreadId(); // Return thread ID (so that we can 'wait' on it)
+		bdsThread.push(bdsNewThread.getBdsThreadId()); // Return thread ID (so that we can 'wait' on it)
 	}
 
 	@Override

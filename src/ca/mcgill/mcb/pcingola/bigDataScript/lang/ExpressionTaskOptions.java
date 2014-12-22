@@ -27,9 +27,9 @@ public class ExpressionTaskOptions extends ExpressionList {
 	 * @return true if all clauses are satisfied and taskDependency was created.
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		TaskDependency taskDeps = evalTaskDependency(bdsThread);
-		return taskDeps != null;
+		bdsThread.push(taskDeps != null);
 	}
 
 	/**
@@ -53,7 +53,8 @@ public class ExpressionTaskOptions extends ExpressionList {
 
 				sat &= (taskDepsExpr != null); // Convert expression to boolean
 			} else {
-				Object value = expr.eval(bdsThread);
+				expr.eval(bdsThread);
+				Object value = bdsThread.pop();
 				if (expr instanceof ExpressionAssignment) ; // Nothing to do
 				else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
 				else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean

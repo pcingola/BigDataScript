@@ -20,8 +20,8 @@ public class ExpressionWrapper extends Expression {
 	}
 
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return expression.eval(csThread);
+	public void eval(BigDataScriptThread bdsThread) {
+		expression.eval(bdsThread);
 	}
 
 	@Override

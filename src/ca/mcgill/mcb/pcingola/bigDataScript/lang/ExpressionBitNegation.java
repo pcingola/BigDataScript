@@ -22,8 +22,8 @@ public class ExpressionBitNegation extends ExpressionUnary {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return ~expr.evalInt(csThread);
+	public void eval(BigDataScriptThread bdsThread) {
+		bdsThread.push(~expr.evalInt(bdsThread));
 	}
 
 	@Override

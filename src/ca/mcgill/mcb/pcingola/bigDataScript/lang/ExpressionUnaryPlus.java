@@ -20,9 +20,8 @@ public class ExpressionUnaryPlus extends ExpressionUnaryMinus {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		if (returnType == Type.INT) return expr.evalInt(csThread);
-		else if (returnType == Type.REAL) return expr.evalReal(csThread);
+	public void eval(BigDataScriptThread csThread) {
+		if ((returnType == Type.INT) || (returnType == Type.REAL)) expr.eval(csThread);
 		else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
 

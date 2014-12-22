@@ -22,11 +22,13 @@ public class ExpressionList extends Expression {
 	}
 
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		Object value = null;
-		for (Expression expr : expressions)
-			value = expr.eval(csThread);
-		return value;
+		for (Expression expr : expressions) {
+			expr.eval(bdsThread);
+			value = bdsThread.pop();
+		}
+		bdsThread.push(value);
 	}
 
 	@Override

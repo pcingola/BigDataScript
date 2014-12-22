@@ -22,10 +22,11 @@ public class ExpressionAssignment extends ExpressionBinary {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 
 		// Get value
-		Object value = right.eval(bdsThread);
+		right.eval(bdsThread);
+		Object value = bdsThread.pop();
 
 		if (left instanceof VarReference) {
 			((VarReference) left).setValue(bdsThread, value);;
@@ -37,7 +38,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 			listIndex.setValue(bdsThread, value);
 		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 
-		return value;
+		bdsThread.push(value);
 	}
 
 	@Override

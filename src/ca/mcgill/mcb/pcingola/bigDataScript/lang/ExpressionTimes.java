@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A multiplication
- * 
+ *
  * @author pcingola
  */
 public class ExpressionTimes extends ExpressionMath {
@@ -21,19 +21,27 @@ public class ExpressionTimes extends ExpressionMath {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		if (isInt()) return left.evalInt(csThread) * right.evalInt(csThread);
-		if (isReal()) return left.evalReal(csThread) * right.evalReal(csThread);
+	public void eval(BigDataScriptThread bdsThread) {
+		if (isInt()) {
+			bdsThread.push(left.evalInt(bdsThread) * right.evalInt(bdsThread));
+			return;
+		}
+
+		if (isReal()) {
+			bdsThread.push(left.evalReal(bdsThread) * right.evalReal(bdsThread));
+			return;
+		}
+
 		if (isString()) {
 			// string * int : Get number and string
 			String str = "";
 			long num = 0;
 			if (left.canCastInt()) {
-				num = left.evalInt(csThread);
-				str = right.evalString(csThread);
+				num = left.evalInt(bdsThread);
+				str = right.evalString(bdsThread);
 			} else if (right.canCastInt()) {
-				str = left.evalString(csThread);
-				num = right.evalInt(csThread);
+				str = left.evalString(bdsThread);
+				num = right.evalInt(bdsThread);
 			} else throw new RuntimeException("Neither is an int. This should never happen!");
 
 			// Multiply (append the same string num times
@@ -41,9 +49,16 @@ public class ExpressionTimes extends ExpressionMath {
 			for (int i = 0; i < num; i++)
 				sb.append(str);
 
-			return sb.toString();
+			bdsThread.push(sb.toString());
+			return;
 		}
+
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
+	}
+
+	@Override
+	protected String op() {
+		return "*";
 	}
 
 	@Override
@@ -71,11 +86,6 @@ public class ExpressionTimes extends ExpressionMath {
 			left.checkCanCastIntOrReal(compilerMessages);
 			right.checkCanCastIntOrReal(compilerMessages);
 		}
-	}
-
-	@Override
-	protected String op() {
-		return "*";
 	}
 
 }

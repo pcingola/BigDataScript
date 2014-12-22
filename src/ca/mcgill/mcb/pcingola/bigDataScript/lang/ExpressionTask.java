@@ -107,16 +107,24 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Evaluate 'task' expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		// Evaluate task options (get a list of dependencies)
 		TaskDependency taskDependency = null;
 		if (taskOptions != null) {
 			taskDependency = taskOptions.evalTaskDependency(bdsThread);
 			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
-			if (taskDependency == null) return ""; // Task options clause not satisfied. Do not execute task
+			if (taskDependency == null) {
+				// Task options clause not satisfied. Do not execute task
+				bdsThread.push("");
+				return;
+			}
 
 			boolean needsUpdate = taskDependency.depOperator();
-			if (!needsUpdate) return ""; // Task options clause not satisfied. Do not execute task
+			if (!needsUpdate) {
+				// Task options clause not satisfied. Do not execute task
+				bdsThread.push("");
+				return;
+			}
 		}
 
 		// Evaluate 'sys' statements
@@ -128,7 +136,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Schedule task for execution
 		dispatchTask(bdsThread, task);
 
-		return task.getId();
+		bdsThread.push(task.getId());
 	}
 
 	/**
@@ -140,7 +148,11 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (statement instanceof ExpressionSys) sys = (ExpressionSys) statement;
 		else if (statement instanceof LiteralString) {
 			LiteralString lstr = (LiteralString) statement;
-			String str = (String) lstr.eval(bdsThread); // Evaluate (e.g. interpolate variables)
+
+			// Evaluate (e.g. interpolate variables)
+			lstr.eval(bdsThread);
+			String str = bdsThread.pop().toString();
+
 			sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);
 		} else if (statement instanceof Block) {
 			// Create one sys statement for all sys statements in the block
@@ -213,7 +225,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof LiteralString //
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
-				;
+						;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}

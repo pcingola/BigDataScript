@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
+import java.util.List;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
@@ -20,9 +22,12 @@ public class ExpressionGoal extends ExpressionUnary {
 	}
 
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-		Object value = expr.eval(bdsThread);
-		return bdsThread.goal(value.toString());
+	public void eval(BigDataScriptThread bdsThread) {
+		expr.eval(bdsThread);
+		Object value = bdsThread.pop();
+
+		List<String> taskIds = bdsThread.goal(value.toString());
+		bdsThread.push(taskIds);
 	}
 
 	@Override

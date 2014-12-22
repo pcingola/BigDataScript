@@ -18,14 +18,28 @@ public class ExpressionMinus extends ExpressionMath {
 	}
 
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public void eval(BigDataScriptThread csThread) {
 		if (right == null) {
 			// This should be an unary expression!
-			if (isInt()) return -left.evalInt(csThread);
-			if (isReal()) return -left.evalReal(csThread);
+			if (isInt()) {
+				csThread.push(-left.evalInt(csThread));
+				return;
+			}
+
+			if (isReal()) {
+				csThread.push(-left.evalReal(csThread));
+				return;
+			}
 		} else {
-			if (isInt()) return left.evalInt(csThread) - right.evalInt(csThread);
-			if (isReal()) return left.evalReal(csThread) - right.evalReal(csThread);
+			if (isInt()) {
+				csThread.push(left.evalInt(csThread) - right.evalInt(csThread));
+				return;
+			}
+
+			if (isReal()) {
+				csThread.push(left.evalReal(csThread) - right.evalReal(csThread));
+				return;
+			}
 		}
 
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());

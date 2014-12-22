@@ -23,9 +23,9 @@ public class LiteralString extends Literal {
 	}
 
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-		if (interpolateVars == null) return value; // No variable interpolation? => Literal
-		return interpolateVars.eval(bdsThread); // Variable interpolation
+	public void eval(BigDataScriptThread bdsThread) {
+		if (interpolateVars == null) bdsThread.push(value); // No variable interpolation? => Literal
+		else interpolateVars.eval(bdsThread); // Variable interpolation
 	}
 
 	@Override

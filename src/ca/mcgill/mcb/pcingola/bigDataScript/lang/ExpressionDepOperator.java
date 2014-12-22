@@ -32,10 +32,10 @@ public class ExpressionDepOperator extends Expression {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		TaskDependency taskDependency = evalTaskDependency(bdsThread);
 		boolean dep = taskDependency.depOperator();
-		return dep;
+		bdsThread.push(dep);
 	}
 
 	/**
@@ -47,7 +47,8 @@ public class ExpressionDepOperator extends Expression {
 		ArrayList<String> resList = new ArrayList<String>();
 
 		for (Expression e : expr) {
-			Object result = e.eval(bdsThread);
+			e.eval(bdsThread);
+			Object result = bdsThread.pop();
 
 			if (result instanceof List) {
 				// Flatten the list

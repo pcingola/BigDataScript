@@ -29,12 +29,12 @@ public class VarReferenceMap extends Reference {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		String key = evalKey(bdsThread);
 		HashMap map = getMap(bdsThread.getScope());
 		Object ret = map.get(key);
 		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + key + "'.");
-		return ret;
+		bdsThread.push(ret);
 	}
 
 	/**

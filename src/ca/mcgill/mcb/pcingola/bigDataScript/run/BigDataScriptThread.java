@@ -776,6 +776,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		scope = scope.getParent();
 	}
 
+	public Object pop() {
+		return scope.pop();
+	}
+
 	void prinntCode(String code) {
 		// Show file contents
 		int lineNum = 1;
@@ -814,6 +818,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				System.out.println("--- End of scope ---");
 			}
 		}
+	}
+
+	public void push(Object obj) {
+		scope.push(obj);
 	}
 
 	/**

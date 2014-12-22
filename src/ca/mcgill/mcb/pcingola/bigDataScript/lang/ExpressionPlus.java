@@ -26,31 +26,34 @@ public class ExpressionPlus extends ExpressionMath {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		if (isInt()) return left.evalInt(csThread) + right.evalInt(csThread);
-		if (isReal()) return left.evalReal(csThread) + right.evalReal(csThread);
-		if (isString()) return left.evalString(csThread) + right.evalString(csThread);
+	public void eval(BigDataScriptThread csThread) {
+		if (isInt()) {
+			csThread.push(left.evalInt(csThread) + right.evalInt(csThread));
+			return;
+		}
+
+		if (isReal()) {
+			csThread.push(left.evalReal(csThread) + right.evalReal(csThread));
+			return;
+		}
+
+		if (isString()) {
+			csThread.push(left.evalString(csThread) + right.evalString(csThread));
+			return;
+		}
+
 		if (isList()) {
-			if (left.isList() && right.isList()) {
-				ArrayList list = new ArrayList();
-				list.addAll((Collection) left.eval(csThread));
-				list.addAll((Collection) right.eval(csThread));
-				return list;
-			}
+			ArrayList list = new ArrayList();
+			left.eval(csThread);
+			if (left.isList()) list.addAll((Collection) csThread.pop());
+			else list.add(csThread.pop());
 
-			if (left.isList()) {
-				ArrayList list = new ArrayList();
-				list.addAll((Collection) left.eval(csThread));
-				list.add(right.eval(csThread));
-				return list;
-			}
+			right.eval(csThread);
+			if (right.isList()) list.addAll((Collection) csThread.pop());
+			else list.add(csThread.pop());
 
-			if (right.isList()) {
-				ArrayList list = new ArrayList();
-				list.add(left.eval(csThread));
-				list.addAll((Collection) right.eval(csThread));
-				return list;
-			}
+			csThread.push(list);
+			return;
 		}
 
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());

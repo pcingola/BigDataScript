@@ -30,11 +30,11 @@ public class VarReferenceList extends Reference {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		int idx = evalIndex(bdsThread);
 		ArrayList list = getList(bdsThread.getScope());
 		if ((idx < 0) || (idx >= list.size())) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + list.size() + ").");
-		return list.get(idx);
+		bdsThread.push(list.get(idx));
 	}
 
 	/**

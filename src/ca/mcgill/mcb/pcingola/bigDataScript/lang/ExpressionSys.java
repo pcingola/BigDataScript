@@ -56,10 +56,10 @@ public class ExpressionSys extends Expression {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		// Run like a statement and return task ID
 		run(bdsThread);
-		return (output != null ? output : "");
+		bdsThread.push(output != null ? output : "");
 	}
 
 	/**
@@ -73,7 +73,10 @@ public class ExpressionSys extends Expression {
 
 	public String getCommands(BigDataScriptThread bdsThread) {
 		if (interpolateVars == null) return commands; // No variable interpolation? => Literal
-		return interpolateVars.eval(bdsThread).toString(); // Variable interpolation
+
+		// Variable interpolation
+		interpolateVars.eval(bdsThread);
+		return bdsThread.pop().toString();
 	}
 
 	public String getSysFileName(String execId) {
@@ -134,7 +137,7 @@ public class ExpressionSys extends Expression {
 				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-						);
+				);
 				return;
 			}
 		}

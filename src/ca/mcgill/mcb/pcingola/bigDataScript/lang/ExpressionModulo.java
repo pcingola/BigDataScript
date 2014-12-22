@@ -21,8 +21,8 @@ public class ExpressionModulo extends ExpressionMath {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return left.evalInt(csThread) % right.evalInt(csThread);
+	public void eval(BigDataScriptThread csThread) {
+		csThread.push(left.evalInt(csThread) % right.evalInt(csThread));
 	}
 
 	@Override

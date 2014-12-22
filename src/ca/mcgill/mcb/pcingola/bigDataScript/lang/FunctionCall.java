@@ -28,37 +28,39 @@ public class FunctionCall extends Expression {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		// Evaluate function arguments
-		Object arguments[] = evalFunctionArguments(bdsThread);
+		evalFunctionArguments(bdsThread);
+		Object arguments[] = (Object[]) bdsThread.pop();
 
 		// Apply function to parameters
-		return functionDeclaration.apply(bdsThread, arguments);
+		bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
 	}
 
 	/**
 	 * Apply function to pre-calculated parameters
 	 */
-	public Object eval(BigDataScriptThread bdsThread, Object arguments[]) {
-		return functionDeclaration.apply(bdsThread, arguments);
+	public void eval(BigDataScriptThread bdsThread, Object arguments[]) {
+		bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
 	}
 
 	/**
 	 * Evaluate function's arguments
 	 */
-	public Object[] evalFunctionArguments(BigDataScriptThread bdsThread) {
+	public void evalFunctionArguments(BigDataScriptThread bdsThread) {
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
 
 		// Evaluate all expressions
 		Object values[] = new Object[fparam.length];
 		for (int i = 0; i < fparam.length; i++) {
-			Object value = arguments[i].eval(bdsThread);
+			arguments[i].eval(bdsThread);
+			Object value = bdsThread.pop();
 			value = fparam[i].type.cast(value);
 			values[i] = value;
 		}
 
-		return values;
+		bdsThread.push(values);
 	}
 
 	@Override

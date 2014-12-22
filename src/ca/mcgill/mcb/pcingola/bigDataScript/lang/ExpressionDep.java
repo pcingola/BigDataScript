@@ -26,9 +26,9 @@ public class ExpressionDep extends ExpressionTask {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		taskOptions.setEvalAll(true); // Force all task options to be evaluated
-		return super.eval(bdsThread);
+		super.eval(bdsThread);
 	}
 
 	@Override

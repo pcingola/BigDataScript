@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.scope;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -53,6 +54,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	String parentNodeId;
 	HashMap<String, ScopeSymbol> symbols;
 	AutoHashMap<String, List<ScopeSymbol>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
+	Deque<Object> stack;
 	BigDataScriptNode node;
 
 	/**
@@ -289,6 +291,15 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	@Override
 	public Iterator<String> iterator() {
 		return symbols.keySet().iterator();
+	}
+
+	public Object pop() {
+		return stack.removeFirst();
+	}
+
+	public void push(Object obj) {
+		if (stack == null) stack = new LinkedList<>();
+		stack.addFirst(obj);
 	}
 
 	/**

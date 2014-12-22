@@ -29,15 +29,15 @@ public class MethodCall extends FunctionCall {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-
+	public void eval(BigDataScriptThread bdsThread) {
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
 
 		// Evaluate all expressions
 		Object values[] = new Object[fparam.length];
 		for (int i = 0; i < fparam.length; i++) {
-			Object value = arguments[i].eval(bdsThread);
+			arguments[i].eval(bdsThread);
+			Object value = bdsThread.pop();
 			value = fparam[i].type.cast(value);
 			values[i] = value;
 		}
@@ -64,7 +64,7 @@ public class MethodCall extends FunctionCall {
 		bdsThread.oldScope();
 
 		// Return result
-		return retVal;
+		bdsThread.push(retVal);
 	}
 
 	@Override

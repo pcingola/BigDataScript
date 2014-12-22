@@ -70,20 +70,21 @@ public class ForLoopList extends StatementWithScope {
 
 	/**
 	 * Iterable values (list of elements to iterate)
-	 * @param csThread
+	 * @param bdsThread
 	 * @param varSym
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList initIterableValues(BigDataScriptThread csThread, ScopeSymbol varSym) {
+	protected ArrayList initIterableValues(BigDataScriptThread bdsThread, ScopeSymbol varSym) {
 		// Are we recovering state from a checkpoint file?
-		if (csThread.isCheckpointRecover()) {
-			ScopeSymbol ssIterableList = csThread.getScope().getSymbol(iterableListName);
+		if (bdsThread.isCheckpointRecover()) {
+			ScopeSymbol ssIterableList = bdsThread.getScope().getSymbol(iterableListName);
 			return (ArrayList) ssIterableList.getValue();
 		}
 
 		// Evaluate list
-		Object res = expression.eval(csThread);
+		expression.eval(bdsThread);
+		Object res = bdsThread.pop();
 
 		//---
 		// Find (or create) a collection we can iterate on
@@ -105,7 +106,7 @@ public class ForLoopList extends StatementWithScope {
 		iterableListName = ScopeSymbol.INTERNAL_SYMBOL_START + "iterableList." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
 		Type iterableListType = TypeList.get(varSym.getType());
 		ScopeSymbol ssIterableList = new ScopeSymbol(iterableListName, iterableListType, iterableValues);
-		csThread.getScope().add(ssIterableList);
+		bdsThread.getScope().add(ssIterableList);
 
 		return iterableValues;
 	}

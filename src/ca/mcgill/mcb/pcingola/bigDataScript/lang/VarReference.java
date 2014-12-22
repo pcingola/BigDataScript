@@ -25,9 +25,9 @@ public class VarReference extends Reference {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		ScopeSymbol ss = bdsThread.getScope().getSymbol(name);
-		return ss.getValue();
+		bdsThread.push(ss.getValue());
 	}
 
 	/**

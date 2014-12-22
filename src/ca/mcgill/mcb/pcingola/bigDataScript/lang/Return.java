@@ -48,8 +48,12 @@ public class Return extends Statement {
 	 */
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
-		if (expr != null) bdsThread.setReturnValue(expr.eval(bdsThread)); // Set return value to scope
-		else bdsThread.setReturnValue(null);
+		if (expr != null) {
+			// Set return value to scope
+			expr.eval(bdsThread);
+			bdsThread.setReturnValue(bdsThread.pop());
+		} else bdsThread.setReturnValue(null);
+
 		bdsThread.setRunState(RunState.RETURN);
 	}
 
