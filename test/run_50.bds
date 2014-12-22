@@ -2,12 +2,16 @@
 
 include 'inc/test-inc.bds';
 
-int i = f2(30);
-int jx = f4(40);
-int jy = f41(50);
+int i = f2(30);		// i = 32
+int jx = f4(40);	// jx = 44
+int jy = f41(50);	// jy = 91
 
 int f2(int j) {
 	return j+2;
 }
 
+# print "i = $i\n"
+# print "j = $j\n"
+# print "jx = $jx\n"
+# print "jy = $jy\n"
 

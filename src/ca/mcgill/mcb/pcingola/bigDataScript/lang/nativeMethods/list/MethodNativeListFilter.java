@@ -55,15 +55,15 @@ public class MethodNativeListFilter extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
 		ArrayList newList = new ArrayList();
 
 		// Get function
-		FunctionDeclaration function = findFunction(csThread, "f");
+		FunctionDeclaration function = findFunction(bdsThread, "f");
 
 		for (Object val : list) {
-			Object ret = function.apply(csThread, val);
+			Object ret = function.apply(bdsThread, val);
 			if ((Boolean) Type.BOOL.cast(ret)) newList.add(val);
 		}
 

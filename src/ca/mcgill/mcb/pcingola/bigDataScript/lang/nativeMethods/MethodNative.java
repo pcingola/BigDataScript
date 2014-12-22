@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.MethodDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
@@ -60,18 +59,19 @@ public abstract class MethodNative extends MethodDeclaration {
 	protected abstract void initMethod();
 
 	@Override
-	public RunState runFunction(BigDataScriptThread csThread) {
+	public void runFunction(BigDataScriptThread bdsThread) {
 		// Get object 'this'
-		ScopeSymbol symThis = csThread.getScope().getSymbol(THIS_KEYWORD);
+		ScopeSymbol symThis = bdsThread.getScope().getSymbol(THIS_KEYWORD);
 		Object objThis = symThis.getValue();
 
 		// Run method
-		Object result = runMethodNative(csThread, objThis);
-
-		// Set result in scope
-		csThread.setReturnValue(result);
-
-		return RunState.OK;
+		try {
+			Object result = runMethodNative(bdsThread, objThis);
+			bdsThread.setReturnValue(result); // Set result in scope
+		} catch (Throwable t) {
+			if (bdsThread.isVerbose()) t.printStackTrace();
+			bdsThread.fatalError(this, t.getMessage());
+		}
 	}
 
 	/**

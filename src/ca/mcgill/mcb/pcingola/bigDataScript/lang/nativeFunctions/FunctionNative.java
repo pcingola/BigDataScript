@@ -5,14 +5,13 @@ import java.util.Collections;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.FunctionDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 
 /**
- * A native function declaration 
- * 
+ * A native function declaration
+ *
  * @author pcingola
  */
 public abstract class FunctionNative extends FunctionDeclaration {
@@ -62,14 +61,16 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	protected abstract void initFunction();
 
 	@Override
-	public RunState runFunction(BigDataScriptThread csThread) {
-		// Run method
-		Object result = runFunctionNative(csThread);
+	public void runFunction(BigDataScriptThread bdsThread) {
+		try {
+			// Run function
+			Object result = runFunctionNative(bdsThread);
+			bdsThread.setReturnValue(result); // Set result in scope
+		} catch (Throwable t) {
+			if (bdsThread.isVerbose()) t.printStackTrace();
+			bdsThread.fatalError(this, t.getMessage());
+		}
 
-		// Set result in scope
-		csThread.setReturnValue(result);
-
-		return RunState.OK;
 	}
 
 	/**

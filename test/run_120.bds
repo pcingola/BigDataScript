@@ -8,8 +8,3 @@ print "l           : $l\n"
 print "l.size()    : " + l.size() + "\n"
 print "l.isEmpty() : " + l.isEmpty() + "\n"
 
-# str = 'hi there'
-# l = str.split("(*")
-# print "l           : $l\n"
-# print "l.size()    : " + l.size() + "\n"
-# print "l.isEmpty() : " + l.isEmpty() + "\n"

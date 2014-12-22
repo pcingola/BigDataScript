@@ -66,20 +66,21 @@ public class VariableInit extends BigDataScriptNode {
 	 * Run
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected void runStep(BigDataScriptThread bdsThread) {
 		if (expression != null) {
-			Scope scope = csThread.getScope();
+			Scope scope = bdsThread.getScope();
 			ScopeSymbol ssym = scope.getSymbol(varName);
-			Object value = expression.eval(csThread);
+			Object value = expression.eval(bdsThread);
 
 			// Error running expression?
-			if (value == null) return RunState.FATAL_ERROR;
+			if (value == null) {
+				bdsThread.setRunState(RunState.FATAL_ERROR);
+				return;
+			}
 
 			value = ssym.getType().cast(value);
 			ssym.setValue(value);
 		}
-
-		return RunState.OK;
 	}
 
 	public void setExpression(Expression expression) {

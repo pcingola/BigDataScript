@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
  * Statement
- * 
+ *
  * @author pcingola
  */
 public class Statement extends BigDataScriptNode {
@@ -18,6 +18,7 @@ public class Statement extends BigDataScriptNode {
 		throw new RuntimeException("This method should never be invoked!");
 	}
 
+	@Override
 	public String toString() {
 		return this.getClass().getSimpleName().toLowerCase() + "\n";
 	}

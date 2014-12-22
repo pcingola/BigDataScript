@@ -163,4 +163,14 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_14.bds", "test/checkpoint_14.chp", "ok", "true");
 	}
 
+	@Test
+	public void test15_checkpoint_par_function_call() {
+		runAndCheckpoint("test/checkpoint_15.bds", "test/checkpoint_15.chp", "ok", "true");
+	}
+
+	@Test
+	public void test16_checkpoint_recursive() {
+		runAndCheckpoint("test/checkpoint_16.bds", "test/checkpoint_16.chp", "fn", "120");
+	}
+
 }

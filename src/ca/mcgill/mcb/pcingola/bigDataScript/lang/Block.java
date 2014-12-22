@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 
 /**
  * A block of statements
@@ -40,13 +39,13 @@ public class Block extends StatementWithScope {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread bdsThread) {
+	protected void runStep(BigDataScriptThread bdsThread) {
 		for (Statement st : statements) {
 			if (st != null) {
-				RunState rstate = st.run(bdsThread);
+				st.run(bdsThread);
 
 				// Act based on run state
-				switch (rstate) {
+				switch (bdsThread.getRunState()) {
 				case OK: // OK do nothing
 				case CHECKPOINT_RECOVER:
 					break;
@@ -56,15 +55,13 @@ public class Block extends StatementWithScope {
 				case RETURN:
 				case EXIT:
 				case FATAL_ERROR:
-					return rstate;
+					return;
 
 				default:
-					throw new RuntimeException("Unhandled RunState: " + rstate);
+					throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
 				}
 			}
 		}
-
-		return RunState.OK;
 	}
 
 	@Override

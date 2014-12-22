@@ -1,0 +1,18 @@
+#!/usr/bin/env bds
+
+int fact(int x) {
+	if(x <= 1)	{
+		print "Before Checkpoint\n"
+		checkpoint 'test/checkpoint_16.chp'
+		print "After Checkpoint\n"
+		return 1;
+	}
+
+	fa := x * fact(x-1);	
+	print "fact($x): $fa\n"
+	return fa
+}
+
+n := 5
+fn := fact(n)
+print "$n! = $fn\n";

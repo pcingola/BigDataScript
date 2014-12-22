@@ -37,14 +37,14 @@ public class Error extends Exit {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread bdsThread) {
+	protected void runStep(BigDataScriptThread bdsThread) {
 		String msg = "";
 		if (expr != null) msg = expr.evalString(bdsThread); // Evaluate expression to show
 
 		Timer.showStdErr("Error" + (!msg.isEmpty() ? ": " + msg : ""));
 
 		bdsThread.setExitValue(1L); // Set exit value
-		return RunState.EXIT;
+		bdsThread.setRunState(RunState.EXIT);
 	}
 
 	@Override

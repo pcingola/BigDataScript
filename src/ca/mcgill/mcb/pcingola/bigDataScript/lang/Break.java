@@ -25,8 +25,8 @@ public class Break extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		return RunState.BREAK;
+	protected void runStep(BigDataScriptThread bdsThread) {
+		bdsThread.setRunState(RunState.BREAK);
 	}
 
 	@Override

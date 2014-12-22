@@ -224,7 +224,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ "\tnodeId: " + pc.nodeId(checkPointRecoverNodeIdx) //
 					+ "\tstatementId: " + statement.getId() //
 					+ "\tstatement: " + statement.getClass().getSimpleName() //
-			);
+					);
 			if (pc.nodeId(checkPointRecoverNodeIdx) == statement.getId()) return;
 		}
 
@@ -692,15 +692,28 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Are we in CHECKPOINT_RECOVER mode?
 	 */
 	public boolean isCheckpointRecover() {
-		//		return runState == RunState.CHECKPOINT_RECOVER;
 		return runState == RunState.WAIT_RECOVER //
 				|| runState == RunState.CHECKPOINT_RECOVER //
-		;
-
+				;
 	}
 
 	public boolean isDebug() {
 		return config != null && config.isDebug();
+	}
+
+	/**
+	 * Is it in RunState exit mode?
+	 */
+	public boolean isExit() {
+		return runState.isExit();
+	}
+
+	public boolean isFatalError() {
+		return runState == RunState.FATAL_ERROR;
+	}
+
+	public boolean isReturn() {
+		return runState == RunState.RETURN;
 	}
 
 	/**
@@ -841,7 +854,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -872,8 +885,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Run statement (i.e. run program)
 		boolean ok = true;
-		RunState runState = runStatement();
-		if (runState == RunState.FATAL_ERROR) {
+		runStatement();
+		if (isFatalError()) {
 			// Error condition
 			ok = false;
 		} else {
@@ -926,19 +939,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Run statements (i.e. run program)
 	 */
-	protected RunState runStatement() {
-		// Run program
-		RunState runState = null;
-
+	protected void runStatement() {
 		try {
-			runState = statement.run(this);
+			statement.run(this);
 		} catch (Throwable t) {
 			runState = RunState.FATAL_ERROR;
 			if (isVerbose()) throw new RuntimeException(t);
 			else Timer.showStdErr("Fatal error: Program execution finished");
 		}
-
-		return runState;
 	}
 
 	@SuppressWarnings("unchecked")

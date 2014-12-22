@@ -398,9 +398,13 @@ public class TestCasesRun extends TestCasesBase {
 
 	@Test
 	public void test50() {
-		runAndCheck("test/run_50.bds", "j", 302);
-		runAndCheck("test/run_50.bds", "i", 32);
-		runAndCheck("test/run_50.bds", "jx", 44);
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("i", "32");
+		expectedValues.put("j", "302");
+		expectedValues.put("jx", "44");
+		expectedValues.put("jy", "91");
+
+		runAndCheckMultiple("test/run_50.bds", expectedValues);
 	}
 
 	@Test

@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
@@ -36,13 +35,10 @@ public class Println extends Exit {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected void runStep(BigDataScriptThread csThread) {
 		String msg = "";
 		if (expr != null) msg = expr.evalString(csThread); // Evaluate expression to show
-
 		System.out.println(!msg.isEmpty() ? msg : "");
-
-		return RunState.OK;
 	}
 
 	@Override

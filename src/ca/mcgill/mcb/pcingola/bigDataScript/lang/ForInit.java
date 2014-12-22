@@ -3,7 +3,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
@@ -37,14 +36,12 @@ public class ForInit extends Statement {
 	 * Run 
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected void runStep(BigDataScriptThread csThread) {
 		if (varDeclaration != null) varDeclaration.run(csThread);
 		else {
 			for (Expression expr : expressions)
 				expr.run(csThread);
 		}
-
-		return RunState.OK;
 	}
 
 }

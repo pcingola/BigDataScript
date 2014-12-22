@@ -28,8 +28,8 @@ public class Continue extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		return RunState.CONTINUE;
+	protected void runStep(BigDataScriptThread bdsThread) {
+		bdsThread.setRunState(RunState.CONTINUE);
 	}
 
 	@Override
