@@ -49,37 +49,37 @@ public class ForLoop extends StatementWithScope {
 	 * Run 
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected void runStep(BigDataScriptThread bdsThread) {
 		// Loop initialization
-		if (begin != null) begin.run(csThread);
+		if (begin != null) begin.run(bdsThread);
 
-		while (condition != null ? condition.evalBool(csThread) : true) { // Loop condition
-			RunState rstate = statement.run(csThread); // Loop statement
+		while (condition != null ? condition.evalBool(bdsThread) : true) { // Loop condition
+			statement.run(bdsThread); // Loop statement
 
-			switch (rstate) {
+			switch (bdsThread.getRunState()) {
 			case OK:
 			case CHECKPOINT_RECOVER:
 				break;
 
-			case BREAK: // Break from loop, OK done
-				return RunState.OK;
+			case BREAK: // Break from loop
+				bdsThread.setRunState(RunState.OK);
+				return;
+
+			case CONTINUE: // Continue: Nothing to do, just continue with the next iteration
+				bdsThread.setRunState(RunState.OK);
+				break;
 
 			case FATAL_ERROR:
 			case RETURN: // Return
 			case EXIT: // Exit program
-				return rstate;
-
-			case CONTINUE: // Nothing to do, just continue with the next iteration
-				break;
+				return;
 
 			default:
-				throw new RuntimeException("Unhandled RunState: " + rstate);
+				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
 			}
 
-			if (end != null) end.run(csThread); // End of loop
+			if (end != null) end.run(bdsThread); // End of loop
 		}
-
-		return RunState.OK;
 	}
 
 	@Override

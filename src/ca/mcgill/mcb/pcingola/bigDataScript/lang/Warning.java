@@ -3,7 +3,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -21,13 +20,10 @@ public class Warning extends Error {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected void runStep(BigDataScriptThread csThread) {
 		String msg = "";
 		if (expr != null) msg = expr.evalString(csThread); // Evaluate expression to show
-
 		Timer.showStdErr("Warning" + (!msg.isEmpty() ? ": " + msg : ""));
-
-		return RunState.OK;
 	}
 
 	@Override

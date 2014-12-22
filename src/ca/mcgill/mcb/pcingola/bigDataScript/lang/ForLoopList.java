@@ -16,14 +16,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
- * 
+ *
  * @author pcingola
  */
 public class ForLoopList extends StatementWithScope {
 
-	// Note:	It is important that 'begin' node is type-checked before the others in order to 
+	// Note:	It is important that 'begin' node is type-checked before the others in order to
 	//			add variables to the scope before ForCondition, ForEnd or Statement uses them.
-	//			So the field name should be alphabetically sorted before the other (that's why 
+	//			So the field name should be alphabetically sorted before the other (that's why
 	//			I call it 'begin' and not 'init').
 	//			Yes, it's a horrible hack.
 	VarDeclaration beginVarDecl;
@@ -116,7 +116,7 @@ public class ForLoopList extends StatementWithScope {
 
 		if (isTerminal(tree, idx, "for")) idx++; // 'for'
 		if (isTerminal(tree, idx, "(")) idx++; // '('
-		if (!isTerminal(tree, idx, ":")) beginVarDecl = (VarDeclaration) factory(tree, idx++); // Is this a 'for:beginVarDecl'? 
+		if (!isTerminal(tree, idx, ":")) beginVarDecl = (VarDeclaration) factory(tree, idx++); // Is this a 'for:beginVarDecl'?
 		if (isTerminal(tree, idx, ":")) idx++; // ':'
 		if (!isTerminal(tree, idx, ";")) expression = (Expression) factory(tree, idx++); // Is this a 'for:expression'?
 		if (isTerminal(tree, idx, ")")) idx++; // ')'
@@ -124,23 +124,24 @@ public class ForLoopList extends StatementWithScope {
 		statement = (Statement) factory(tree, idx++);
 	}
 
+	@Override
 	public Type returnType(Scope scope) {
 		return expression.returnType(scope);
 	}
 
 	/**
-	 * Run 
+	 * Run
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		ScopeSymbol varSym = initBeginDecl(csThread);
-		ArrayList iterableValues = initIterableValues(csThread, varSym);
-		ScopeSymbol iterableCount = initIterableCounter(csThread);
+	protected void runStep(BigDataScriptThread bdsThread) {
+		ScopeSymbol varSym = initBeginDecl(bdsThread);
+		ArrayList iterableValues = initIterableValues(bdsThread, varSym);
+		ScopeSymbol iterableCount = initIterableCounter(bdsThread);
 
 		// First element to iterate.
 		// Note: This could be set by a checkpoint recovery, so we have to read it from the scope
-		long interStart = (Long) iterableCount.getValue(); // 
+		long interStart = (Long) iterableCount.getValue(); //
 
 		// Iterate on collection
 		for (int iter = (int) interStart; iter < iterableValues.size(); iter++) {
@@ -150,30 +151,30 @@ public class ForLoopList extends StatementWithScope {
 			Object o = iterableValues.get(iter);
 			varSym.setValue(varSym.getType().cast(o));
 
-			RunState rstate = statement.run(csThread); // Loop statement
+			statement.run(bdsThread); // Loop statement
 
-			switch (rstate) {
+			switch (bdsThread.getRunState()) {
 			case OK:
 			case CHECKPOINT_RECOVER:
 				break;
 
-			case BREAK: // Break from loop, OK done
-				return RunState.OK;
+			case BREAK: // Break from loop
+				bdsThread.setRunState(RunState.OK);
+				return;
+
+			case CONTINUE: // Continue: Nothing to do, just continue with the next iteration
+				bdsThread.setRunState(RunState.OK);
+				break;
 
 			case FATAL_ERROR:
 			case RETURN: // Return
 			case EXIT: // Exit program
-				return rstate;
-
-			case CONTINUE: // Nothing to do, just continue with the next iteration
-				break;
+				return;
 
 			default:
-				throw new RuntimeException("Unhandled RunState: " + rstate);
+				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
 			}
 		}
-
-		return RunState.OK;
 	}
 
 	@Override

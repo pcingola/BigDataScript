@@ -50,10 +50,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		}
 
 		// Run function body
-		RunState rstate = runFunction(bdsThread);
-
-		// Make sure we propagate runStates that make program exit
-		if (rstate.isExit()) bdsThread.setRunState(rstate);
+		runFunction(bdsThread);
 
 		// Get return value
 		Object retVal = bdsThread.getReturnValue();
@@ -69,28 +66,31 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * Apply function to arguments, return function's result
 	 */
 	public Object apply(BigDataScriptThread bdsThread, Object value) {
-		VarDeclaration fparam[] = getParameters().getVarDecl();
+		// Create scope and add function arguments
+		if (!bdsThread.isCheckpointRecover()) {
+			VarDeclaration fparam[] = getParameters().getVarDecl();
 
-		// Create new scope
-		bdsThread.newScope(this);
+			// Create new scope
+			bdsThread.newScope(this);
 
-		// Add arguments to scope
-		Scope scope = bdsThread.getScope();
+			// Add arguments to scope
+			Scope scope = bdsThread.getScope();
 
-		// Only one argument
-		Type argType = fparam[0].type;
-		String argName = fparam[0].getVarInit()[0].varName;
-		scope.add(new ScopeSymbol(argName, argType, value));
+			// Only one argument
+			Type argType = fparam[0].type;
+			String argName = fparam[0].getVarInit()[0].varName;
+			scope.add(new ScopeSymbol(argName, argType, value));
+		}
 
 		// Run function body
-		RunState rstate = runFunction(bdsThread);
-		if (rstate == RunState.FATAL_ERROR) throw new RuntimeException("Fatal error");
+		runFunction(bdsThread);
+		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
 
 		// Get return value
 		Object retVal = bdsThread.getReturnValue();
 
 		// Back to old scope
-		bdsThread.oldScope();
+		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
 
 		// Return result
 		return retVal;
@@ -139,16 +139,16 @@ public class FunctionDeclaration extends StatementWithScope {
 	/**
 	 * Run this function's statement
 	 */
-	protected RunState runFunction(BigDataScriptThread bdsThread) {
-		RunState runState = statement.run(bdsThread);
+	protected void runFunction(BigDataScriptThread bdsThread) {
+		statement.run(bdsThread);
 
 		// Not a standard 'return' statement? Make sure we are returning the right type.
-		if ((runState != RunState.RETURN) && !returnType.canCastObject(bdsThread.getReturnValue())) {
+		if ((bdsThread.getRunState() != RunState.RETURN) //
+				&& !returnType.canCastObject(bdsThread.getReturnValue()) //
+				) {
 			// Not the right type? Force a default value of the right type
 			bdsThread.setReturnValue(returnType.defaultValue());
 		}
-
-		return runState;
 	}
 
 	/**
@@ -159,9 +159,8 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * 'FunctionDeclaration.runFunction()' method.
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread bdsThread) {
+	protected void runStep(BigDataScriptThread bdsThread) {
 		// Nothing to do (it's just a declaration)
-		return RunState.OK;
 	}
 
 	@Override

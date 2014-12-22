@@ -47,10 +47,10 @@ public class Return extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		if (expr != null) csThread.setReturnValue(expr.eval(csThread)); // Set return value to scope
-		else csThread.setReturnValue(null);
-		return RunState.RETURN;
+	protected void runStep(BigDataScriptThread bdsThread) {
+		if (expr != null) bdsThread.setReturnValue(expr.eval(bdsThread)); // Set return value to scope
+		else bdsThread.setReturnValue(null);
+		bdsThread.setRunState(RunState.RETURN);
 	}
 
 	@Override

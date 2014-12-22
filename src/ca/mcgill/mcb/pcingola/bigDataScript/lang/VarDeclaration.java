@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
@@ -79,13 +78,13 @@ public class VarDeclaration extends Statement {
 	 * Run
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
+	protected void runStep(BigDataScriptThread bdsThread) {
 		for (VariableInit vi : varInit) {
-			csThread.getScope().add(new ScopeSymbol(vi.varName, type)); // Add variable to scope
-			RunState rstate = vi.run(csThread); // Run varInit
+			bdsThread.getScope().add(new ScopeSymbol(vi.varName, type)); // Add variable to scope
+			vi.run(bdsThread); // Run varInit
 
 			// Act based on run state
-			switch (rstate) {
+			switch (bdsThread.getRunState()) {
 			case OK: // OK do nothing
 			case CHECKPOINT_RECOVER:
 				break;
@@ -95,14 +94,12 @@ public class VarDeclaration extends Statement {
 			case RETURN:
 			case EXIT:
 			case FATAL_ERROR:
-				return rstate;
+				return;
 
 			default:
-				throw new RuntimeException("Unhandled RunState: " + rstate);
+				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
 			}
 		}
-
-		return RunState.OK;
 	}
 
 	@Override

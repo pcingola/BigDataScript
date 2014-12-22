@@ -55,14 +55,14 @@ public class MethodNativeListForEach extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
 
 		// Get function
-		FunctionDeclaration function = findFunction(csThread, "f");
+		FunctionDeclaration function = findFunction(bdsThread, "f");
 
 		for (Object val : list)
-			function.apply(csThread, val);
+			function.apply(bdsThread, val);
 
 		return list;
 	}

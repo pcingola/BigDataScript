@@ -50,19 +50,15 @@ public class FunctionCallThread extends BigDataScriptThread {
 	 * Run statements (i.e. run function call)
 	 */
 	@Override
-	protected RunState runStatement() {
-		// Run functiona call
-		RunState runState = null;
+	protected void runStatement() {
 		try {
+			// Run function call
 			functionCall.eval(this, arguments);
-			runState = RunState.OK;
 		} catch (Throwable t) {
 			runState = RunState.FATAL_ERROR;
 			if (isVerbose()) throw new RuntimeException(t);
 			else Timer.showStdErr("Fatal error: Program execution finished");
 		}
-
-		return runState;
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 
@@ -107,8 +106,8 @@ public class ExpressionSys extends Expression {
 	}
 
 	@Override
-	protected RunState runStep(BigDataScriptThread bdsThread) {
-		if (bdsThread.isCheckpointRecover()) return RunState.CHECKPOINT_RECOVER;
+	protected void runStep(BigDataScriptThread bdsThread) {
+		if (bdsThread.isCheckpointRecover()) return;
 
 		execId("exec", bdsThread);
 
@@ -135,15 +134,13 @@ public class ExpressionSys extends Expression {
 				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-				);
-				return RunState.FATAL_ERROR;
+						);
+				return;
 			}
 		}
 
 		// Collect output
 		if (execResult.stdOut != null) output = execResult.stdOut;
-
-		return RunState.OK;
 	}
 
 	@Override

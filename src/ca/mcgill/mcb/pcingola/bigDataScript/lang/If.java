@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
@@ -41,10 +40,12 @@ public class If extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		if (condition == null || condition.evalBool(csThread)) return statement.run(csThread);
-		if (elseStatement != null) return elseStatement.run(csThread);
-		return RunState.OK;
+	protected void runStep(BigDataScriptThread csThread) {
+		if (condition == null || condition.evalBool(csThread)) {
+			statement.run(csThread);
+		} else if (elseStatement != null) {
+			elseStatement.run(csThread);
+		}
 	}
 
 	@Override

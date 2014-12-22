@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * While statement
- * 
+ *
  * @author pcingola
  */
 public class While extends Statement {
@@ -36,31 +36,32 @@ public class While extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected RunState runStep(BigDataScriptThread csThread) {
-		while (condition != null ? condition.evalBool(csThread) : true) { // Loop condition
-			RunState rstate = statement.run(csThread);
+	protected void runStep(BigDataScriptThread bdsThread) {
+		while (condition != null ? condition.evalBool(bdsThread) : true) { // Loop condition
+			statement.run(bdsThread);
 
-			switch (rstate) {
+			switch (bdsThread.getRunState()) {
 			case OK: // OK continue
 			case CHECKPOINT_RECOVER:
 				break;
 
-			case BREAK:
-				return RunState.OK;
+			case BREAK: // Break from loop
+				bdsThread.setRunState(RunState.OK);
+				return;
+
+			case CONTINUE: // Continue: Nothing to do, just continue with the next iteration
+				bdsThread.setRunState(RunState.OK);
+				break;
 
 			case FATAL_ERROR:
 			case RETURN:
 			case EXIT:
-				return rstate;
-
-			case CONTINUE: // Nothing to do, just continue with the next iteration
-				break;
+				return;
 
 			default:
-				throw new RuntimeException("Unhandled RunState: " + rstate);
+				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
 			}
 		}
-		return RunState.OK;
 	}
 
 	@Override

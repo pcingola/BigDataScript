@@ -19,7 +19,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.TypeCheckedNodes;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
@@ -589,31 +588,19 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	/**
 	 * Run this node
 	 */
-	public RunState run(BigDataScriptThread bdsThread) {
+	public void run(BigDataScriptThread bdsThread) {
 		boolean recover = bdsThread.isCheckpointRecover();
 
-		RunState rstate = RunState.OK;
 		if (!recover) runBegin(bdsThread); // Before node execution
-		else rstate = RunState.CHECKPOINT_RECOVER;
 
 		try {
-			if (bdsThread.shouldRun(this)) {
-				rstate = runStep(bdsThread); // Run
-
-				// Check that runStates are correctly propagated to thread
-				if (rstate.isExit()) bdsThread.setRunState(rstate);
-			} else {
-				// Make sure we return immediately using the current thread state
-				rstate = bdsThread.getRunState();
-			}
+			// Run?
+			if (bdsThread.shouldRun(this)) runStep(bdsThread);
 		} catch (Throwable t) {
 			bdsThread.fatalError(this, t);
-			rstate = RunState.FATAL_ERROR;
 		}
 
 		if (!recover) runEnd(bdsThread); // After node execution
-
-		return rstate;
 	}
 
 	/**
@@ -634,7 +621,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		if (isNeedsScope()) bdsThread.oldScope();
 	}
 
-	protected RunState runStep(BigDataScriptThread bdsThread) {
+	protected void runStep(BigDataScriptThread bdsThread) {
 		throw new RuntimeException("Unimplemented method for class " + getClass().getSimpleName() + ", id = " + id);
 	}
 
