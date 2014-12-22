@@ -32,17 +32,21 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * Apply function to arguments, return function's result
 	 */
 	public Object apply(BigDataScriptThread bdsThread, Object values[]) {
-		VarDeclaration fparam[] = getParameters().getVarDecl();
 
-		// Create new scope
-		bdsThread.newScope(this);
+		// Create scope and add function arguments
+		if (!bdsThread.isCheckpointRecover()) {
+			VarDeclaration fparam[] = getParameters().getVarDecl();
 
-		// Add arguments to scope
-		Scope scope = bdsThread.getScope();
-		for (int i = 0; i < fparam.length; i++) {
-			Type argType = fparam[i].type;
-			String argName = fparam[i].getVarInit()[0].varName;
-			scope.add(new ScopeSymbol(argName, argType, values[i]));
+			// Create new scope
+			bdsThread.newScope(this);
+
+			// Add arguments to scope
+			Scope scope = bdsThread.getScope();
+			for (int i = 0; i < fparam.length; i++) {
+				Type argType = fparam[i].type;
+				String argName = fparam[i].getVarInit()[0].varName;
+				scope.add(new ScopeSymbol(argName, argType, values[i]));
+			}
 		}
 
 		// Run function body
@@ -54,8 +58,8 @@ public class FunctionDeclaration extends StatementWithScope {
 		// Get return value
 		Object retVal = bdsThread.getReturnValue();
 
-		// Back to old scope
-		bdsThread.oldScope();
+		// Restore old scope
+		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
 
 		// Return result
 		return retVal;

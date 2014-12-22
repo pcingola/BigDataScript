@@ -220,6 +220,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public void checkpointRecoverReset() {
 		for (checkPointRecoverNodeIdx = 0; checkPointRecoverNodeIdx < pc.size(); checkPointRecoverNodeIdx++) {
+			Gpr.debug("checkPointRecoverNodeIdx: " + checkPointRecoverNodeIdx //
+					+ "\tnodeId: " + pc.nodeId(checkPointRecoverNodeIdx) //
+					+ "\tstatementId: " + statement.getId() //
+					+ "\tstatement: " + statement.getClass().getSimpleName() //
+			);
 			if (pc.nodeId(checkPointRecoverNodeIdx) == statement.getId()) return;
 		}
 
@@ -1076,6 +1081,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Which node are we looking for?
 		int nodeNum = checkpointRecoverNextNode();
+		Gpr.debug("nodeId: " + node.getId() + "\tlooking for: " + nodeNum);
 		if (node.getId() == nodeNum) {
 			// Node found!
 			checkpointRecoverFound();

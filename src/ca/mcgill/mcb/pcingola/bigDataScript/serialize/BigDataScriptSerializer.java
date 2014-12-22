@@ -473,7 +473,7 @@ public class BigDataScriptSerializer {
 		for (BigDataScriptThread bth : bdsThreads) {
 			// Set statement
 			bth.setStatement(nodesById);
-			bth.checkpointRecoverReset(); // Checkpoint starts recovering node form 'statement' (instead of 'programUnit')
+			bth.checkpointRecoverReset(); // Checkpoint starts recovering node from 'statement' (instead of 'programUnit')
 
 			String scopeId = bth.getScopeNodeId();
 			Scope scope = (Scope) nodesById.get(scopeId);

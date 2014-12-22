@@ -15,4 +15,9 @@ public class TestCasesZzz extends TestCasesBase {
 		runAndCheckpoint("test/z.bds", "test/z.chp", "ok", "true");
 	}
 
+	@Test
+	public void test122_checkpoint_recursive() {
+		runAndCheckpoint("test/zz.bds", "test/zz.chp", "fn", "120");
+	}
+
 }
