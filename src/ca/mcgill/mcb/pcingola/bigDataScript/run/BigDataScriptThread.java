@@ -712,6 +712,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return runState == RunState.FATAL_ERROR;
 	}
 
+	public boolean isReturn() {
+		return runState == RunState.RETURN;
+	}
+
 	/**
 	 * Is this the 'root' (main) thread?
 	 */

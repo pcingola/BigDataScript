@@ -219,7 +219,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	}
 
 	@Test
-	public void test121_split_empty_string() {
+	public void test121_split_fail_regex() {
 		runAndCheck("test/run_121.bds", "len", "1");
 	}
 

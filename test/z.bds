@@ -1,23 +1,10 @@
-#!/usr/bin/env bds
+// include
 
-ok := false
+include 'inc/test-inc.bds';
 
-# Function to execute in parallel
-void show(string s, int[] l) {
-	print "Before\t$s: $l\n"
-	sleep(3)
-	print "After\t$s: $l\n"
-	ok = true	# This is executed after main's 'ok=false' (after sleep)
+print "Test!\n"
+
+int f2(int j) {
+	return j+2;
 }
 
-l := [1, 2, 3]
-par show("hi", l)
-
-# Checkpoint in the middle of 'par' -> sleep(3)
-sleep(1)
-print "Checkpoint\n"
-checkpoint 'test/z.chp'
-
-# Done
-print "Done\n"
-ok = false

@@ -26,9 +26,6 @@ public class Expression extends Statement {
 		} catch (Throwable t) {
 			if (Config.get().isDebug()) t.printStackTrace();
 			bdsThread.fatalError(this, t);
-			//			return RunState.FATAL_ERROR;
 		}
-		//		return RunState.OK;
 	}
-
 }

@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
@@ -89,6 +90,19 @@ public class FunctionCall extends Expression {
 		}
 
 		return returnType;
+	}
+
+	/**
+	 * Run an expression: I.e. evaluate the expression
+	 */
+	@Override
+	protected void runStep(BigDataScriptThread bdsThread) {
+		try {
+			eval(bdsThread);
+		} catch (Throwable t) {
+			if (Config.get().isDebug()) t.printStackTrace();
+			bdsThread.fatalError(this, t);
+		}
 	}
 
 	protected String signature() {
