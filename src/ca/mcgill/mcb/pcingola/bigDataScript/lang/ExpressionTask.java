@@ -104,42 +104,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	/**
-	 * Evaluate 'task' expression
-	 */
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		// Evaluate task options (get a list of dependencies)
-		TaskDependency taskDependency = null;
-		if (taskOptions != null) {
-			taskDependency = taskOptions.evalTaskDependency(bdsThread);
-			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
-			if (taskDependency == null) {
-				// Task options clause not satisfied. Do not execute task
-				bdsThread.push("");
-				return;
-			}
-
-			boolean needsUpdate = taskDependency.depOperator();
-			if (!needsUpdate) {
-				// Task options clause not satisfied. Do not execute task
-				bdsThread.push("");
-				return;
-			}
-		}
-
-		// Evaluate 'sys' statements
-		ExpressionSys sys = evalSys(bdsThread);
-
-		// Create task
-		Task task = createTask(bdsThread, taskDependency, sys);
-
-		// Schedule task for execution
-		dispatchTask(bdsThread, task);
-
-		bdsThread.push(task.getId());
-	}
-
-	/**
 	 * Evaluate 'sys' statements used to create task
 	 */
 	ExpressionSys evalSys(BigDataScriptThread bdsThread) {
@@ -207,6 +171,42 @@ public class ExpressionTask extends ExpressionWithScope {
 		return returnType;
 	}
 
+	/**
+	 * Evaluate 'task' expression
+	 */
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		// Evaluate task options (get a list of dependencies)
+		TaskDependency taskDependency = null;
+		if (taskOptions != null) {
+			taskDependency = taskOptions.evalTaskDependency(bdsThread);
+			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
+			if (taskDependency == null) {
+				// Task options clause not satisfied. Do not execute task
+				bdsThread.push("");
+				return;
+			}
+
+			boolean needsUpdate = taskDependency.depOperator();
+			if (!needsUpdate) {
+				// Task options clause not satisfied. Do not execute task
+				bdsThread.push("");
+				return;
+			}
+		}
+
+		// Evaluate 'sys' statements
+		ExpressionSys sys = evalSys(bdsThread);
+
+		// Create task
+		Task task = createTask(bdsThread, taskDependency, sys);
+
+		// Schedule task for execution
+		dispatchTask(bdsThread, task);
+
+		bdsThread.push(task.getId());
+	}
+
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
 		// Sanity check options
@@ -225,7 +225,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof LiteralString //
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
-						;
+				;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}

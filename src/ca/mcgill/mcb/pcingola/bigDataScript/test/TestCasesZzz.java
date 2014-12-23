@@ -11,9 +11,15 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test118_dependency_using_path() {
-		runAndCheckExit("test/run_118.bds", 0);
+	public void test08() {
+		String errs = "ERROR [ file 'test/test08.bds', line 11 ] :	Only variable reference can be used with ++ or -- operators\n";
+		compileErrors("test/test08.bds", errs);
 	}
+	//
+	//	@Test
+	//	public void test118_dependency_using_path() {
+	//		runAndCheckExit("test/run_118.bds", 0);
+	//	}
 
 	//	@Test
 	//	public void test06() {

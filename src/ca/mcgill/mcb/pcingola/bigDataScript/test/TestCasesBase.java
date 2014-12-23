@@ -50,7 +50,8 @@ public class TestCasesBase extends TestCase {
 	 * Check that a file compiles with expected errors
 	 */
 	void compileErrors(String fileName, String expectedErrors) {
-		BigDataScript bigDataScript = compileTest(fileName);
+		BigDataScript bigDataScript = bds(fileName);
+		bigDataScript.compile();
 		if (bigDataScript.getCompilerMessages().isEmpty()) fail("Expecting compilation errors in file '" + fileName + "', but none found!\n");
 		Assert.assertEquals(expectedErrors.trim(), bigDataScript.getCompilerMessages().toString().trim());
 	}
@@ -59,7 +60,8 @@ public class TestCasesBase extends TestCase {
 	 * Check that a file compiles without any errors
 	 */
 	void compileOk(String fileName) {
-		BigDataScript bigDataScript = compileTest(fileName);
+		BigDataScript bigDataScript = bds(fileName);
+		bigDataScript.compile();
 		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 	}
 
@@ -135,7 +137,7 @@ public class TestCasesBase extends TestCase {
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-			);
+					);
 		}
 	}
 
