@@ -36,24 +36,17 @@ public class ExpressionPlus extends ExpressionMath {
 		if (isInt()) {
 			bdsThread.push(((long) lval) + ((long) rval));
 			return;
-		}
-
-		if (isReal()) {
+		} else if (isReal()) {
 			bdsThread.push(((double) lval) + ((double) rval));
 			return;
-		}
-
-		if (isString()) {
+		} else if (isString()) {
 			bdsThread.push(lval.toString() + rval.toString());
 			return;
-		}
-
-		if (isList()) {
+		} else if (isList()) {
 			ArrayList list = new ArrayList();
 			if (left.isList()) list.addAll((Collection) lval);
 			else list.add(lval);
 
-			right.run(bdsThread);
 			if (right.isList()) list.addAll((Collection) rval);
 			else list.add(rval);
 

@@ -1,8 +1,6 @@
 
-int i = 1
+string[] events
+str := "Events: '" + events + "' list"
 
-if( i < 10 ) {
-	i++
-} else {
-	--i
-}
+
+
