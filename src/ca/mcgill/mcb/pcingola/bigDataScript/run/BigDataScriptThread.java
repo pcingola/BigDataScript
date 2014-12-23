@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,6 +76,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	// Scope
 	Scope scope; // Base scope
 	String scopeNodeId; // Scope's ID, used only when un-serializing
+	Deque<Object> stack;
 
 	// BdsThread
 	BigDataScriptThread parent; // Parent thread
@@ -99,6 +101,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		bdsThreadNum = bigDataScriptThreadId();
 		pc = new ProgramCounter(parent.getPc());
 		scope = parent.scope;
+		stack = new LinkedList<>();
 		runState = RunState.OK;
 		config = parent.config;
 		random = parent.random;
@@ -119,6 +122,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		bdsThreadNum = bigDataScriptThreadId();
 		pc = new ProgramCounter();
 		scope = Scope.getGlobalScope();
+		stack = new LinkedList<>();
 		runState = RunState.OK;
 		this.config = config;
 		random = new Random();
@@ -773,12 +777,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public Object peek() {
 		if (isCheckpointRecover()) return null;
-		return scope.peek();
+		return stack.peek();
 	}
 
 	public Object pop() {
 		if (isCheckpointRecover()) return null;
-		return scope.pop();
+		return stack.removeFirst();
 	}
 
 	public void print() {
@@ -822,7 +826,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	public void push(Object obj) {
-		if (!isCheckpointRecover()) scope.push(obj);
+		if (!isCheckpointRecover()) stack.addFirst(obj);
+
 	}
 
 	/**
@@ -943,6 +948,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// OK, we are done
 		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' finished, run state: '" + runState + "', exit value: '" + getExitValue() + "'");
+
+		Gpr.debug("Stack size: " + stack.size() + "\n" + toStringStack());
 	}
 
 	/**
@@ -976,6 +983,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			parent = serializer.getBdsThread(parentBdsThreadId);
 			parent.add(this);
 		}
+
+		// Stack
+		String b64 = serializer.getNextField();
+		stack = (b64 != null && !b64.isEmpty() ? (Deque<Object>) serializer.base64Decode(b64) : null);
+
 	}
 
 	@Override
@@ -1026,6 +1038,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		out.append("\t" + serializer.serializeSaveValue(statement.getNodeId()));
 		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
 		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
+		out.append("\t" + serializer.base64encode(stack));
 		return out.toString();
 	}
 
@@ -1171,6 +1184,17 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		sb.append("\tRun state : " + runState + "\n");
 		sb.append("\tScope     : " + scope + "\n");
 		sb.append("\tProgram   :\n" + statement.toStringTree("\t\t", "program") + "\n");
+		return sb.toString();
+	}
+
+	/**
+	 * Show stack
+	 */
+	public String toStringStack() {
+		StringBuilder sb = new StringBuilder();
+		int num = 0;
+		for (Object obj : stack)
+			sb.append("Stack[" + (num++) + "]:\tClass: " + obj.getClass().getSimpleName() + "\tValue: " + obj.toString() + "\n");
 		return sb.toString();
 	}
 

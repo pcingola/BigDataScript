@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -9,4 +10,9 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
+	@Test
+	public void test02() {
+		verbose = true;
+		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
+	}
 }
