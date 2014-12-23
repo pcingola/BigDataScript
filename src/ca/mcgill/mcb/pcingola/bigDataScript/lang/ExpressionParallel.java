@@ -30,9 +30,41 @@ public class ExpressionParallel extends ExpressionTask {
 	 * Create a new BdsThread that runs a function call in parallel
 	 */
 	FunctionCallThread createParallelFunctionCall(BigDataScriptThread bdsThread, Object arguments[]) {
-		FunctionCallThread bdsNewThread = new FunctionCallThread(this, (FunctionCall) statement, bdsThread, arguments);
+		FunctionCallThread bdsNewThread = new FunctionCallThread(this, getFunctionCall(), bdsThread, arguments);
 		bdsNewThread.start();
 		return bdsNewThread;
+	}
+
+	/**
+	 * Extract a functionCall (if any)
+	 */
+	FunctionCall getFunctionCall() {
+		if (statement instanceof FunctionCall) return (FunctionCall) statement;
+
+		// May be it's a statementExpr that contains a function call
+		if (statement instanceof StatementExpr) {
+			Expression expr = ((StatementExpr) statement).getExpression();
+			if (expr instanceof FunctionCall) return (FunctionCall) expr;
+		}
+
+		return null;
+	}
+
+	@Override
+	protected void parse(ParseTree tree) {
+		int idx = 0;
+		idx++; // 'task' keyword
+
+		// Do we have any task options?
+		if (tree.getChild(idx).getText().equals("(")) {
+			int lastIdx = indexOf(tree, ")");
+
+			taskOptions = new ExpressionTaskOptions(this, null);
+			taskOptions.parse(tree, ++idx, lastIdx);
+			idx = lastIdx + 1; // Skip last ')'
+		}
+
+		statement = (Statement) factory(tree, idx++); // Parse statement
 	}
 
 	/**
@@ -54,13 +86,13 @@ public class ExpressionParallel extends ExpressionTask {
 
 		// Create thread and execute statements
 		BigDataScriptThread bdsNewThread = null;
-		if (statement instanceof FunctionCall) {
+		FunctionCall functionCall = getFunctionCall();
+		if (functionCall != null) {
 			// If the statement is a function call, we run it slightly differently:
 			// We first compute the function's arguments (in the current thread), to
 			// avoid race conditions. Then we create a thread and call the function
 
 			// Evaluate function arguments in current thread
-			FunctionCall functionCall = (FunctionCall) statement;
 			functionCall.evalFunctionArguments(bdsThread);
 			Object arguments[] = (Object[]) bdsThread.pop();
 
@@ -72,23 +104,6 @@ public class ExpressionParallel extends ExpressionTask {
 		}
 
 		bdsThread.push(bdsNewThread.getBdsThreadId()); // Return thread ID (so that we can 'wait' on it)
-	}
-
-	@Override
-	protected void parse(ParseTree tree) {
-		int idx = 0;
-		idx++; // 'task' keyword
-
-		// Do we have any task options?
-		if (tree.getChild(idx).getText().equals("(")) {
-			int lastIdx = indexOf(tree, ")");
-
-			taskOptions = new ExpressionTaskOptions(this, null);
-			taskOptions.parse(tree, ++idx, lastIdx);
-			idx = lastIdx + 1; // Skip last ')'
-		}
-
-		statement = (Statement) factory(tree, idx++); // Parse statement
 	}
 
 	@Override
