@@ -10063,3 +10063,315 @@ null	-
 8609	-
 8612	+	
 8612	-
+8691	+	
+8691	-
+8694	+	
+8694	-
+8697	+	
+8697	-
+null	-
+null	-
+8703	+	
+8703	-
+8705	+	
+8705	-
+8707	+	
+8707	-
+8709	+	
+8709	-
+8712	+	
+8712	-
+8715	+	
+8715	-
+8719	+	
+/Users/pcingola/zero_length_file_out.txt	+	rm
+8719	-
+/Users/pcingola/zero_length_file_out.txt	-
+8720	+	
+8720	-
+8725	+	
+8725	-
+8728	+	
+8729	+	
+8728	-
+8729	-
+8738	+	
+8738	-
+8741	+	
+8741	-
+8744	+	
+8744	-
+null	-
+8746	+	
+8746	-
+8750	+	
+8750	-
+8753	+	
+8753	-
+8756	+	
+8756	-
+8759	+	
+8759	-
+8762	+	
+8762	-
+8766	+	
+failOnce.out1	+	rm
+8766	-
+failOnce.out1	-
+8771	+	
+failOnce.out1	+	rm
+8771	-
+failOnce.out1	-
+8775	+	
+failOnce.out2	+	rm
+8775	-
+failOnce.out2	-
+8781	+	
+failOnce.out1	+	rm
+8781	-
+failOnce.out1	-
+8786	+	
+failOnce.out1	+	rm
+8786	-
+failOnce.out1	-
+8790	+	
+failOnce.out2	+	rm
+8790	-
+failOnce.out2	-
+8798	+	
+8798	-
+8801	+	
+8801	-
+8804	+	
+8804	-
+null	-
+null	-
+8810	+	
+8810	-
+8812	+	
+8812	-
+8814	+	
+8814	-
+8816	+	
+8816	-
+8819	+	
+8819	-
+8822	+	
+8822	-
+8826	+	
+/Users/pcingola/zero_length_file_out.txt	+	rm
+8826	-
+/Users/pcingola/zero_length_file_out.txt	-
+8827	+	
+8827	-
+8832	+	
+8832	-
+8835	+	
+8836	+	
+8835	-
+8836	-
+8845	+	
+8845	-
+8848	+	
+8848	-
+8851	+	
+8851	-
+null	-
+8853	+	
+8853	-
+8857	+	
+8857	-
+8860	+	
+8860	-
+8863	+	
+8863	-
+8866	+	
+8866	-
+8869	+	
+8869	-
+8873	+	
+failOnce.out1	+	rm
+8873	-
+failOnce.out1	-
+8878	+	
+failOnce.out1	+	rm
+8878	-
+failOnce.out1	-
+8882	+	
+failOnce.out2	+	rm
+8882	-
+failOnce.out2	-
+8888	+	
+failOnce.out1	+	rm
+8888	-
+failOnce.out1	-
+8893	+	
+failOnce.out1	+	rm
+8893	-
+failOnce.out1	-
+8897	+	
+failOnce.out2	+	rm
+8897	-
+failOnce.out2	-
+8913	+	
+/Users/pcingola/zero_length_file.out.txt	+	rm
+8913	-
+/Users/pcingola/zero_length_file.out.txt	-
+8916	+	
+8917	+	
+8920	+	
+8924	+	
+8916	-
+8917	-
+8928	+	
+8920	-
+8924	-
+8928	-
+8931	+	
+8931	-
+8934	+	
+8934	-
+8938	+	
+8939	+	
+8938	-
+8939	-
+8944	+	
+8945	+	
+8944	-
+8945	-
+8954	+	
+tmp_2.txt	+	rm
+8954	-
+tmp_2.txt	-
+8957	+	
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	+	rm
+8957	-
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	-
+8961	+	
+tmp_out.txt	+	rm
+8961	-
+tmp_out.txt	-
+8967	+	
+out1.txt	+	rm
+8967	-
+out1.txt	-
+8971	+	
+out2.txt	+	rm
+8971	-
+out2.txt	-
+8977	+	
+out1.txt	+	rm
+8977	-
+out1.txt	-
+8981	+	
+out2.txt	+	rm
+8981	-
+out2.txt	-
+8985	+	
+out1.txt	+	rm
+8985	-
+out1.txt	-
+8989	+	
+test/graph_06.csv	+	rm
+8989	-
+test/graph_06.csv	-
+8992	+	
+test/graph_06.xml	+	rm
+8992	-
+test/graph_06.xml	-
+8995	+	
+8995	-
+8998	+	
+8998	-
+9005	+	
+out1.txt	+	rm
+9005	-
+out1.txt	-
+9009	+	
+out2.txt	+	rm
+9009	-
+out2.txt	-
+9012	+	
+out1.txt	+	rm
+9012	-
+out1.txt	-
+9016	+	
+out2.txt	+	rm
+9016	-
+out2.txt	-
+9019	+	
+test/graph_05.csv	+	rm
+9019	-
+test/graph_05.csv	-
+9022	+	
+test/graph_05.xml	+	rm
+9022	-
+test/graph_05.xml	-
+9025	+	
+test/graph_05.csv	+	rm
+9025	-
+test/graph_05.csv	-
+9028	+	
+test/graph_05.xml	+	rm
+9028	-
+test/graph_05.xml	-
+9035	+	
+test/graph_08.mid1.txt	+	rm
+9035	-
+test/graph_08.mid1.txt	-
+9038	+	
+test/graph_08.mid2.txt	+	rm
+9038	-
+test/graph_08.mid2.txt	-
+9041	+	
+test/graph_08.out.txt	+	rm
+9041	-
+test/graph_08.out.txt	-
+9055	+	
+test/graph_10.mid1.txt	+	rm
+9055	-
+test/graph_10.mid1.txt	-
+9058	+	
+test/graph_10.out.txt	+	rm
+9058	-
+test/graph_10.out.txt	-
+9061	+	
+tmp_C.txt	+	rm
+tmp_D.txt	+	rm
+9061	-
+tmp_C.txt	-
+tmp_D.txt	-
+9065	+	
+tmp_E.txt	+	rm
+9065	-
+tmp_E.txt	-
+9067	+	
+9067	-
+9068	+	
+9068	-
+9073	+	
+9073	-
+9077	+	
+test/checkpoint_08.csv	+	rm
+9077	-
+test/checkpoint_08.csv	-
+9080	+	
+test/checkpoint_08.xml	+	rm
+9080	-
+test/checkpoint_08.xml	-
+9083	+	
+test/checkpoint_08.csv	+	rm
+9083	-
+test/checkpoint_08.csv	-
+9086	+	
+test/checkpoint_08.xml	+	rm
+9086	-
+test/checkpoint_08.xml	-
+9089	+	
+test/checkpoint_09.csv	+	rm
+9089	-
+test/checkpoint_09.csv	-
+9092	+	
+test/checkpoint_09.xml	+	rm
+9092	-
+test/checkpoint_09.xml	-
