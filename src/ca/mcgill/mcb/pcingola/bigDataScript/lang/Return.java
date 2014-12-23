@@ -51,7 +51,7 @@ public class Return extends Statement {
 		if (expr != null) {
 			// Set return value to scope
 			expr.run(bdsThread);
-			bdsThread.setReturnValue(bdsThread.peek());
+			bdsThread.setReturnValue(bdsThread.pop());
 		} else bdsThread.setReturnValue(null);
 
 		bdsThread.setRunState(RunState.RETURN);

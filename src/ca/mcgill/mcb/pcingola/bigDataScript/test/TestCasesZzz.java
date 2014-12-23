@@ -12,6 +12,7 @@ public class TestCasesZzz extends TestCasesBase {
 
 	@Test
 	public void test02() {
+		verbose = true;
 		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
 	}
 

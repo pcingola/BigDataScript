@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
- * 
+ *
  * @author pcingola
  */
 public class ForInit extends Statement {
@@ -33,14 +33,16 @@ public class ForInit extends Statement {
 	}
 
 	/**
-	 * Run 
+	 * Run
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread csThread) {
-		if (varDeclaration != null) varDeclaration.run(csThread);
+	protected void runStep(BigDataScriptThread bdsThread) {
+		if (varDeclaration != null) varDeclaration.run(bdsThread);
 		else {
-			for (Expression expr : expressions)
-				expr.run(csThread);
+			for (Expression expr : expressions) {
+				expr.run(bdsThread);
+				bdsThread.pop(); // Remove from stack, nobody is reading the results
+			}
 		}
 	}
 

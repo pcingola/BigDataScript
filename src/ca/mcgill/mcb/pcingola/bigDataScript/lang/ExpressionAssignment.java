@@ -44,7 +44,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 		Object value = bdsThread.pop();
 
 		if (left instanceof VarReference) {
-			((VarReference) left).setValue(bdsThread, value);;
+			((VarReference) left).setValue(bdsThread, value);
 		} else if (left instanceof VarReferenceList) {
 			VarReferenceList listIndex = (VarReferenceList) left;
 			listIndex.setValue(bdsThread, value);
@@ -53,7 +53,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 			listIndex.setValue(bdsThread, value);
 		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 
-		bdsThread.push(value);
+		// bdsThread.push(value);
 	}
 
 	@Override

@@ -26,18 +26,6 @@ public class VarReferenceList extends Reference {
 	}
 
 	/**
-	 * Evaluate an expression
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		int idx = evalIndex(bdsThread);
-		ArrayList list = getList(bdsThread.getScope());
-		if ((idx < 0) || (idx >= list.size())) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + list.size() + ").");
-		bdsThread.push(list.get(idx));
-	}
-
-	/**
 	 * Return index evaluation
 	 */
 	public int evalIndex(BigDataScriptThread bdsThread) {
@@ -119,6 +107,18 @@ public class VarReferenceList extends Reference {
 		if (nameType.isList()) returnType = ((TypeList) nameType).getBaseType();
 
 		return returnType;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		int idx = evalIndex(bdsThread);
+		ArrayList list = getList(bdsThread.getScope());
+		if ((idx < 0) || (idx >= list.size())) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + list.size() + ").");
+		bdsThread.push(list.get(idx));
 	}
 
 	@Override

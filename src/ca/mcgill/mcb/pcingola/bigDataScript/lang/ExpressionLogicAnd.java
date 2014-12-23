@@ -22,7 +22,10 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 	public void runStep(BigDataScriptThread bdsThread) {
 		left.run(bdsThread);
 		if (!((Boolean) bdsThread.peek())) return; // Already false? No need to evaluate the other expression
-		right.run(bdsThread); // 'AND' only depends on this result (left was true)
+
+		// 'AND' only depends on 'right' result (left was true)
+		bdsThread.pop(); // Remove 'left' result from stack
+		right.run(bdsThread);
 	}
 
 	@Override

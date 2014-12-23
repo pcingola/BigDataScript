@@ -22,16 +22,6 @@ public class ExpressionList extends Expression {
 	}
 
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		Object value = null;
-		for (Expression expr : expressions) {
-			expr.run(bdsThread);
-			value = bdsThread.pop();
-		}
-		bdsThread.push(value);
-	}
-
-	@Override
 	protected boolean isReturnTypesNotNull() {
 		for (Expression expr : expressions)
 			if (expr.getReturnType() == null) return false;
@@ -68,6 +58,16 @@ public class ExpressionList extends Expression {
 
 		returnType = type;
 		return returnType;
+	}
+
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		Object value = null;
+		for (Expression expr : expressions) {
+			expr.run(bdsThread);
+			value = bdsThread.pop();
+		}
+		bdsThread.push(value);
 	}
 
 	@Override

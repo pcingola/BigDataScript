@@ -22,6 +22,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -592,7 +593,11 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		try {
 			// Run?
 			if (bdsThread.shouldRun(this)) {
-				// Gpr.debug("RUN: " + this.getClass().getSimpleName() + "\t" + this + "\t" + bdsThread.getPc());
+				Gpr.debug("RUN: " + this.getClass().getSimpleName() //
+						+ "\t" + this //
+						+ "\n\tPC: " + bdsThread.getPc() //
+						+ "\n\tStack: " + bdsThread.getScope().toStringStack() //
+				);
 				runStep(bdsThread);
 			}
 		} catch (Throwable t) {
