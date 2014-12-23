@@ -570,6 +570,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionBitOr(@NotNull BigDataScriptParser.ExpressionBitOrContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#statementExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterStatementExpr(@NotNull BigDataScriptParser.StatementExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#statementExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitStatementExpr(@NotNull BigDataScriptParser.StatementExprContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#literalInt}.
 	 * @param ctx the parse tree
 	 */
@@ -931,17 +942,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrint(@NotNull BigDataScriptParser.PrintContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#statmentExpr}.
-	 * @param ctx the parse tree
-	 */
-	void enterStatmentExpr(@NotNull BigDataScriptParser.StatmentExprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#statmentExpr}.
-	 * @param ctx the parse tree
-	 */
-	void exitStatmentExpr(@NotNull BigDataScriptParser.StatmentExprContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#literalReal}.

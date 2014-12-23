@@ -680,6 +680,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStatementExpr(@NotNull BigDataScriptParser.StatementExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementExpr(@NotNull BigDataScriptParser.StatementExprContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLiteralInt(@NotNull BigDataScriptParser.LiteralIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1103,19 +1116,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPrint(@NotNull BigDataScriptParser.PrintContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStatmentExpr(@NotNull BigDataScriptParser.StatmentExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatmentExpr(@NotNull BigDataScriptParser.StatmentExprContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

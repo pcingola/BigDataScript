@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * Something the is actually an expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionWrapper extends Expression {
@@ -19,9 +19,8 @@ public class ExpressionWrapper extends Expression {
 		super(parent, tree);
 	}
 
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		expression.run(bdsThread);
+	public Expression getExpression() {
+		return expression;
 	}
 
 	@Override
@@ -40,6 +39,11 @@ public class ExpressionWrapper extends Expression {
 
 		returnType = expression.returnType(scope);
 		return returnType;
+	}
+
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		expression.run(bdsThread);
 	}
 
 	@Override

@@ -948,8 +948,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// OK, we are done
 		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' finished, run state: '" + runState + "', exit value: '" + getExitValue() + "'");
-
-		Gpr.debug("Stack size: " + stack.size() + "\n" + toStringStack());
 	}
 
 	/**
@@ -962,6 +960,16 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			runState = RunState.FATAL_ERROR;
 			if (isVerbose()) throw new RuntimeException(t);
 			else Timer.showStdErr("Fatal error: Program execution finished");
+		}
+	}
+
+	/**
+	 * Check that stack has size zero (perform this check after execution finishes)
+	 */
+	public void sanityCheckStack() {
+		if (stack.size() > 0) {
+			Gpr.debug("Stack size: " + stack.size() + "\n" + toStringStack());
+			throw new RuntimeException("Inconsistent stack. Size: " + stack.size());
 		}
 	}
 

@@ -1,4 +1,5 @@
 // Generated from BigDataScript.g4 by ANTLR 4.2.2
+package ca.mcgill.mcb.pcingola.bigDataScript.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -679,6 +680,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStatementExpr(@NotNull BigDataScriptParser.StatementExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatementExpr(@NotNull BigDataScriptParser.StatementExprContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLiteralInt(@NotNull BigDataScriptParser.LiteralIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1102,19 +1116,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPrint(@NotNull BigDataScriptParser.PrintContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStatmentExpr(@NotNull BigDataScriptParser.StatmentExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatmentExpr(@NotNull BigDataScriptParser.StatmentExprContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

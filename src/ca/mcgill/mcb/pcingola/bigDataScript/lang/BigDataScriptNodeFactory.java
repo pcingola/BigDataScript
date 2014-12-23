@@ -180,7 +180,7 @@ public class BigDataScriptNodeFactory {
 	int isSkip(ParseTree tree) {
 		String className = className(tree);
 		if (className.equals("StatementVarDeclaration")) return 0;
-		if (className.equals("StatmentExpr")) return 0;
+		// if (className.equals("StatmentExpr")) return 0;
 		if (className.equals("ExpressionParen")) return 1;
 		return -1;
 	}

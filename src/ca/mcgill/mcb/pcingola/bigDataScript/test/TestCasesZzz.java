@@ -11,8 +11,13 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test02() {
-		verbose = true;
-		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
+	public void test28() {
+		runAndCheck("test/run_28.bds", "events", "[done]");
 	}
+
+	//	@Test
+	//	public void test02() {
+	//		verbose = true;
+	//		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
+	//	}
 }

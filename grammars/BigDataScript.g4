@@ -55,7 +55,7 @@ statement : '{' statement* '}'                                                  
             | 'while' '(' expression? ')' statement  eol*                                  # while
             | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*        # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
-            | expression  eol*                                                             # statmentExpr
+            | expression  eol*                                                             # statementExpr
             | includeFile eol*                                                             # statementInclude
             | eol                                                                          # statmentEol
           ;

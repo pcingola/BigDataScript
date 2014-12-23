@@ -862,6 +862,9 @@ public class BigDataScript {
 		if (verbose) Timer.showStdErr("Running");
 		int exitCode = runThread(bdsThread);
 
+		// Check stack
+		bdsThread.sanityCheckStack();
+
 		return exitCode;
 	}
 

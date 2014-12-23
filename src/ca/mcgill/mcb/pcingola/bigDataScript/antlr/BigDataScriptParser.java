@@ -1082,31 +1082,6 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class StatmentExprContext extends StatementContext {
-		public EolContext eol(int i) {
-			return getRuleContext(EolContext.class,i);
-		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public List<EolContext> eol() {
-			return getRuleContexts(EolContext.class);
-		}
-		public StatmentExprContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterStatmentExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatmentExpr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatmentExpr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class ContinueContext extends StatementContext {
 		public EolContext eol(int i) {
 			return getRuleContext(EolContext.class,i);
@@ -1173,6 +1148,31 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitBlock(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class StatementExprContext extends StatementContext {
+		public EolContext eol(int i) {
+			return getRuleContext(EolContext.class,i);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public List<EolContext> eol() {
+			return getRuleContexts(EolContext.class);
+		}
+		public StatementExprContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterStatementExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatementExpr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatementExpr(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1937,7 +1937,7 @@ public class BigDataScriptParser extends Parser {
 				break;
 
 			case 19:
-				_localctx = new StatmentExprContext(_localctx);
+				_localctx = new StatementExprContext(_localctx);
 				enterOuterAlt(_localctx, 19);
 				{
 				setState(314); expression(0);

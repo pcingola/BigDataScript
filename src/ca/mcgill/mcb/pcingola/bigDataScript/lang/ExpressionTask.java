@@ -124,8 +124,13 @@ public class ExpressionTask extends ExpressionWithScope {
 
 			Block block = (Block) statement;
 			for (Statement st : block.getStatements()) {
+				// Get 'sys' expression
+				if (st instanceof StatementExpr) st = ((StatementExpr) st).getExpression();
 				ExpressionSys sysst = (ExpressionSys) st;
+
 				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
+
+				// Get commands
 				String commands = sysst.getCommands(bdsThread);
 				syssb.append(commands);
 				syssb.append("\n");
@@ -225,7 +230,8 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof LiteralString //
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
-				;
+						|| node instanceof StatementExpr //
+						;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
