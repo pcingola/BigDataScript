@@ -109,8 +109,12 @@ public class ExpressionTask extends ExpressionWithScope {
 	ExpressionSys evalSys(BigDataScriptThread bdsThread) {
 		ExpressionSys sys = null;
 
-		if (statement instanceof ExpressionSys) sys = (ExpressionSys) statement;
-		else if (statement instanceof LiteralString) {
+		if (statement instanceof StatementExpr) {
+			Expression exprSys = ((StatementExpr) statement).getExpression();
+			sys = (ExpressionSys) exprSys;
+		} else if (statement instanceof ExpressionSys) {
+			sys = (ExpressionSys) statement;
+		} else if (statement instanceof LiteralString) {
 			LiteralString lstr = (LiteralString) statement;
 
 			// Evaluate (e.g. interpolate variables)
@@ -137,7 +141,10 @@ public class ExpressionTask extends ExpressionWithScope {
 			}
 
 			sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
+		} else {
+			throw new RuntimeException("Unimplemented for class '" + statement.getClass().getSimpleName() + "'");
 		}
+
 		return sys;
 	}
 
