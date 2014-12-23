@@ -29,15 +29,6 @@ public class ForLoop extends StatementWithScope {
 		super(parent, tree);
 	}
 
-	/**
-	 * Evaluate condition
-	 */
-	boolean evalCondition(BigDataScriptThread bdsThread) {
-		if (condition == null) return true;
-		condition.run(bdsThread);
-		return popBool(bdsThread);
-	}
-
 	@Override
 	protected void parse(ParseTree tree) {
 		int idx = 0;
@@ -55,6 +46,23 @@ public class ForLoop extends StatementWithScope {
 	}
 
 	/**
+	 * Evaluate condition
+	 */
+	boolean runCondition(BigDataScriptThread bdsThread) {
+		if (condition == null) return true;
+
+		condition.run(bdsThread);
+
+		// If we are recovering from a checkpoint, we have to get
+		// into the loop's statements to find the node where the
+		// program created the checkpoint
+		if (bdsThread.isCheckpointRecover()) return true;
+
+		// Return value form 'condition'
+		return popBool(bdsThread);
+	}
+
+	/**
 	 * Run
 	 */
 	@Override
@@ -62,7 +70,7 @@ public class ForLoop extends StatementWithScope {
 		// Loop initialization
 		if (begin != null) begin.run(bdsThread);
 
-		while (evalCondition(bdsThread)) { // Loop condition
+		while (runCondition(bdsThread)) { // Loop condition
 			statement.run(bdsThread); // Loop statement
 
 			switch (bdsThread.getRunState()) {

@@ -22,15 +22,6 @@ public class If extends Statement {
 		super(parent, tree);
 	}
 
-	/**
-	 * Evaluate condition
-	 */
-	boolean evalCondition(BigDataScriptThread bdsThread) {
-		if (condition == null) return true;
-		condition.run(bdsThread);
-		return popBool(bdsThread);
-	}
-
 	@Override
 	protected void parse(ParseTree tree) {
 		int idx = 0;
@@ -46,11 +37,28 @@ public class If extends Statement {
 	}
 
 	/**
+	 * Evaluate condition
+	 */
+	boolean runCondition(BigDataScriptThread bdsThread) {
+		if (condition == null) return true;
+
+		condition.run(bdsThread);
+
+		// If we are recovering from a checkpoint, we have to get
+		// into the loop's statements to find the node where the
+		// program created the checkpoint
+		if (bdsThread.isCheckpointRecover()) return true;
+
+		// Return value form 'condition'
+		return popBool(bdsThread);
+	}
+
+	/**
 	 * Run the program
 	 */
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
-		if (evalCondition(bdsThread)) {
+		if (runCondition(bdsThread)) {
 			statement.run(bdsThread);
 		} else if (elseStatement != null) {
 			elseStatement.run(bdsThread);

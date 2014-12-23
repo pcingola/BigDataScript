@@ -1,10 +1,10 @@
-#!/usr/bin/env bds
 
-int fact(int x) {
-	if(x <= 1) return 1;
-	return x * fact(x-1);	
+int j = 5
+int i
+
+for( i = 0 ; i < 10 ; i++ ) {
+	print "for: $i\n"
+	checkpoint "test/z.bds.chp"
 }
 
-n := 5
-fn := fact(n)
-print "$n! = $fn\n";
+print "Done\n"

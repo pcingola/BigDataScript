@@ -137,7 +137,7 @@ public class TestCasesBase extends TestCase {
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-					);
+			);
 		}
 	}
 
@@ -175,7 +175,8 @@ public class TestCasesBase extends TestCase {
 		if (checkpointFileName == null) chpFileName = fileName + ".chp";
 		if (debug) Gpr.debug("CheckPoint file name : " + chpFileName);
 		String args2[] = { "-r", chpFileName };
-		BigDataScript bigDataScript2 = new BigDataScript(args2);
+		String args2v[] = { "-v", "-r", chpFileName };
+		BigDataScript bigDataScript2 = new BigDataScript(verbose ? args2v : args2);
 		bigDataScript2.run();
 
 		// Check that values match
