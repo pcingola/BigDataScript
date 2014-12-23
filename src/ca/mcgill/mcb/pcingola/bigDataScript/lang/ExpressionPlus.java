@@ -26,33 +26,36 @@ public class ExpressionPlus extends ExpressionMath {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void eval(BigDataScriptThread csThread) {
+	public void eval(BigDataScriptThread bdsThread) {
+		left.eval(bdsThread);
+		right.eval(bdsThread);
+
 		if (isInt()) {
-			csThread.push(left.evalInt(csThread) + right.evalInt(csThread));
+			bdsThread.push(popInt(bdsThread) + popInt(bdsThread));
 			return;
 		}
 
 		if (isReal()) {
-			csThread.push(left.evalReal(csThread) + right.evalReal(csThread));
+			bdsThread.push(popReal(bdsThread) + popReal(bdsThread));
 			return;
 		}
 
 		if (isString()) {
-			csThread.push(left.evalString(csThread) + right.evalString(csThread));
+			bdsThread.push(popString(bdsThread) + popString(bdsThread));
 			return;
 		}
 
 		if (isList()) {
 			ArrayList list = new ArrayList();
-			left.eval(csThread);
-			if (left.isList()) list.addAll((Collection) csThread.pop());
-			else list.add(csThread.pop());
+			left.eval(bdsThread);
+			if (left.isList()) list.addAll((Collection) bdsThread.pop());
+			else list.add(bdsThread.pop());
 
-			right.eval(csThread);
-			if (right.isList()) list.addAll((Collection) csThread.pop());
-			else list.add(csThread.pop());
+			right.eval(bdsThread);
+			if (right.isList()) list.addAll((Collection) bdsThread.pop());
+			else list.add(bdsThread.pop());
 
-			csThread.push(list);
+			bdsThread.push(list);
 			return;
 		}
 

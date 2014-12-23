@@ -41,7 +41,8 @@ public class VarReferenceMap extends Reference {
 	 * Return index evaluation
 	 */
 	public String evalKey(BigDataScriptThread bdsThread) {
-		return expressionKey.evalString(bdsThread);
+		expressionKey.eval(bdsThread);
+		return popString(bdsThread);
 	}
 
 	@SuppressWarnings("rawtypes")

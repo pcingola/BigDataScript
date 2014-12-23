@@ -18,7 +18,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Scope: Variables, functions and classes
@@ -294,6 +293,10 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		return symbols.keySet().iterator();
 	}
 
+	public Object peek() {
+		return stack.getFirst();
+	}
+
 	public Object pop() {
 		return stack.removeFirst();
 	}
@@ -315,7 +318,6 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		// Nothing to do
 		id = (int) serializer.getNextFieldInt();
-		Gpr.debug("ID:" + id);
 		parentNodeId = serializer.getNextFieldString();
 		int nodeId = serializer.getNextFieldNodeId();
 
@@ -395,6 +397,16 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		// Show header
 		if (sbThis.length() > 0) sb.append("\n---------- Scope " + getScopeName() + " ----------\n" + sbThis.toString());
 
+		return sb.toString();
+	}
+
+	public String toStringStack() {
+		StringBuilder sb = new StringBuilder();
+		if (stack != null) {
+			int num = 0;
+			for (Object obj : stack)
+				sb.append("Stack[" + (num++) + "]:\t" + obj.getClass().getSimpleName() + "\t" + obj.toString() + "\n");
+		}
 		return sb.toString();
 	}
 }

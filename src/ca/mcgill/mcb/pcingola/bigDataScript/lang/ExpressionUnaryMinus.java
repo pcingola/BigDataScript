@@ -24,10 +24,12 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 	 */
 	@Override
 	public void eval(BigDataScriptThread bdsThread) {
+		expr.eval(bdsThread);
+
 		if (returnType == Type.INT) {
-			bdsThread.push(-expr.evalInt(bdsThread));
+			bdsThread.push(-popInt(bdsThread));
 		} else if (returnType == Type.REAL) {
-			bdsThread.push(-expr.evalReal(bdsThread));
+			bdsThread.push(-popReal(bdsThread));
 		} else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
 

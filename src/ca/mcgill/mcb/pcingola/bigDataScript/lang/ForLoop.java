@@ -10,14 +10,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
- * 
+ *
  * @author pcingola
  */
 public class ForLoop extends StatementWithScope {
 
-	// Note:	It is important that 'begin' node is type-checked before the others in order to 
+	// Note:	It is important that 'begin' node is type-checked before the others in order to
 	//			add variables to the scope before ForCondition, ForEnd or Statement uses them.
-	//			So the field name should be alphabetically sorted before the other (that's why 
+	//			So the field name should be alphabetically sorted before the other (that's why
 	//			I call it 'begin' and not 'init').
 	//			Yes, it's a horrible hack.
 	ForInit begin;
@@ -27,6 +27,15 @@ public class ForLoop extends StatementWithScope {
 
 	public ForLoop(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Evaluate condition
+	 */
+	boolean evalCondition(BigDataScriptThread bdsThread) {
+		if (condition == null) return true;
+		condition.eval(bdsThread);
+		return popBool(bdsThread);
 	}
 
 	@Override
@@ -46,14 +55,14 @@ public class ForLoop extends StatementWithScope {
 	}
 
 	/**
-	 * Run 
+	 * Run
 	 */
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
 		// Loop initialization
 		if (begin != null) begin.run(bdsThread);
 
-		while (condition != null ? condition.evalBool(bdsThread) : true) { // Loop condition
+		while (evalCondition(bdsThread)) { // Loop condition
 			statement.run(bdsThread); // Loop statement
 
 			switch (bdsThread.getRunState()) {

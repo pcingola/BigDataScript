@@ -43,7 +43,7 @@ public class ExpressionDepOperator extends Expression {
 	 * @return A list of Strings with the results of all evaluations
 	 */
 	@SuppressWarnings("rawtypes")
-	public List<String> eval(BigDataScriptThread bdsThread, Expression expr[]) {
+	public void eval(BigDataScriptThread bdsThread, Expression expr[]) {
 		ArrayList<String> resList = new ArrayList<String>();
 
 		for (Expression e : expr) {
@@ -58,16 +58,20 @@ public class ExpressionDepOperator extends Expression {
 			} else resList.add(result.toString());
 		}
 
-		return resList;
+		bdsThread.push(resList);
 	}
 
 	/**
 	 * Evaluate expressions and create a task dependency
 	 */
+	@SuppressWarnings("unchecked")
 	public TaskDependency evalTaskDependency(BigDataScriptThread bdsThread) {
 		// All expressions are evaluated
-		List<String> leftEval = eval(bdsThread, left);
-		List<String> rightEval = eval(bdsThread, right);
+		eval(bdsThread, left);
+		List<String> leftEval = (List<String>) bdsThread.pop();
+
+		eval(bdsThread, right);
+		List<String> rightEval = (List<String>) bdsThread.pop();
 
 		TaskDependency taskDependency = new TaskDependency(this);
 		taskDependency.addOutput(leftEval);

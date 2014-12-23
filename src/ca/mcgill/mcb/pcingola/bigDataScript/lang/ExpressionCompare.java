@@ -33,10 +33,16 @@ public class ExpressionCompare extends ExpressionBinary {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread csThread) {
-		if (left.isInt() && right.isInt()) csThread.push(cmp(left.evalInt(csThread), right.evalInt(csThread)));
-		else if (left.isReal() || right.isReal()) csThread.push(cmp(left.evalReal(csThread), right.evalReal(csThread)));
-		else if (left.isString() || right.isString()) csThread.push(cmp(left.evalString(csThread), right.evalString(csThread)));
+	public void eval(BigDataScriptThread bdsThread) {
+		left.eval(bdsThread);
+		right.eval(bdsThread);
+
+		Object rval = bdsThread.pop();
+		Object lval = bdsThread.pop();
+
+		if (left.isInt() && right.isInt()) bdsThread.push(cmp((long) lval, (long) rval));
+		else if (left.isReal() || right.isReal()) bdsThread.push(cmp((double) lval, (double) rval));
+		else if (left.isString() || right.isString()) bdsThread.push(cmp(lval.toString(), rval.toString()));
 		else throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 	}
 

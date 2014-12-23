@@ -20,7 +20,9 @@ public class ExpressionBitXor extends ExpressionBit {
 	 */
 	@Override
 	public void eval(BigDataScriptThread bdsThread) {
-		bdsThread.push(left.evalInt(bdsThread) ^ right.evalInt(bdsThread));
+		left.eval(bdsThread);
+		right.eval(bdsThread);
+		bdsThread.push(left.popInt(bdsThread) ^ right.popInt(bdsThread));
 	}
 
 	@Override

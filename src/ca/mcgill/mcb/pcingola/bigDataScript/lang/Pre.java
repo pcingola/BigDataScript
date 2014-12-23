@@ -28,7 +28,8 @@ public class Pre extends ExpressionUnary {
 	@Override
 	public void eval(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
-		long value = ref.evalInt(bdsThread);
+		ref.eval(bdsThread);
+		long value = popInt(bdsThread);
 
 		if (operation == PrePostOperation.INCREMENT) value++;
 		else if (operation == PrePostOperation.DECREMENT) value--;

@@ -23,7 +23,8 @@ public class Post extends Pre {
 	@Override
 	public void eval(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
-		long value = ref.evalInt(bdsThread);
+		ref.eval(bdsThread);
+		long value = popInt(bdsThread);
 
 		if (operation == PrePostOperation.INCREMENT) ref.setValue(bdsThread, value + 1);
 		else if (operation == PrePostOperation.DECREMENT) ref.setValue(bdsThread, value - 1);

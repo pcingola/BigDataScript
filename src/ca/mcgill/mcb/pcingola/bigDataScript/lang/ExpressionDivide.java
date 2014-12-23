@@ -22,13 +22,20 @@ public class ExpressionDivide extends ExpressionMath {
 	 */
 	@Override
 	public void eval(BigDataScriptThread bdsThread) {
+		left.eval(bdsThread);
+		right.eval(bdsThread);
+
 		if (isInt()) {
-			bdsThread.push(left.evalInt(bdsThread) / right.evalInt(bdsThread));
+			long den = popInt(bdsThread);
+			long num = popInt(bdsThread);
+			bdsThread.push(num / den);
 			return;
 		}
 
 		if (isReal()) {
-			bdsThread.push(left.evalReal(bdsThread) / right.evalReal(bdsThread));
+			double den = popInt(bdsThread);
+			double num = popInt(bdsThread);
+			bdsThread.push(num / den);
 			return;
 		}
 

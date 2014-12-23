@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * If statement
- * 
+ *
  * @author pcingola
  */
 public class If extends Statement {
@@ -20,6 +20,15 @@ public class If extends Statement {
 
 	public If(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Evaluate condition
+	 */
+	boolean evalCondition(BigDataScriptThread bdsThread) {
+		if (condition == null) return true;
+		condition.eval(bdsThread);
+		return popBool(bdsThread);
 	}
 
 	@Override
@@ -40,11 +49,11 @@ public class If extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread csThread) {
-		if (condition == null || condition.evalBool(csThread)) {
-			statement.run(csThread);
+	protected void runStep(BigDataScriptThread bdsThread) {
+		if (evalCondition(bdsThread)) {
+			statement.run(bdsThread);
 		} else if (elseStatement != null) {
-			elseStatement.run(csThread);
+			elseStatement.run(bdsThread);
 		}
 	}
 
@@ -72,6 +81,6 @@ public class If extends Statement {
 				&& !condition.isBool() //
 				&& (retType != null) //
 				&& !retType.canCast(Type.BOOL)//
-		) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
+				) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
 	}
 }

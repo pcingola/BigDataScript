@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A subtraction
- * 
+ *
  * @author pcingola
  */
 public class ExpressionMinus extends ExpressionMath {
@@ -18,26 +18,35 @@ public class ExpressionMinus extends ExpressionMath {
 	}
 
 	@Override
-	public void eval(BigDataScriptThread csThread) {
+	public void eval(BigDataScriptThread bdsThread) {
 		if (right == null) {
+			left.eval(bdsThread);
+
 			// This should be an unary expression!
 			if (isInt()) {
-				csThread.push(-left.evalInt(csThread));
+				bdsThread.push(-popInt(bdsThread));
 				return;
 			}
 
 			if (isReal()) {
-				csThread.push(-left.evalReal(csThread));
+				bdsThread.push(-popReal(bdsThread));
 				return;
 			}
 		} else {
+			left.eval(bdsThread);
+			right.eval(bdsThread);
+
 			if (isInt()) {
-				csThread.push(left.evalInt(csThread) - right.evalInt(csThread));
+				long tr = popInt(bdsThread);
+				long tl = popInt(bdsThread);
+				bdsThread.push(tl - tr);
 				return;
 			}
 
 			if (isReal()) {
-				csThread.push(left.evalReal(csThread) - right.evalReal(csThread));
+				double tr = popInt(bdsThread);
+				double tl = popInt(bdsThread);
+				bdsThread.push(tl - tr);
 				return;
 			}
 		}
@@ -46,14 +55,14 @@ public class ExpressionMinus extends ExpressionMath {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		left.checkCanCastIntOrReal(compilerMessages);
-		if (right != null) right.checkCanCastIntOrReal(compilerMessages);
+	protected String op() {
+		return "-";
 	}
 
 	@Override
-	protected String op() {
-		return "-";
+	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+		left.checkCanCastIntOrReal(compilerMessages);
+		if (right != null) right.checkCanCastIntOrReal(compilerMessages);
 	}
 
 }

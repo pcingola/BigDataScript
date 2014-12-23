@@ -22,13 +22,18 @@ public class ExpressionTimes extends ExpressionMath {
 	 */
 	@Override
 	public void eval(BigDataScriptThread bdsThread) {
+		// Evaliate expressions
+		left.eval(bdsThread);
+		right.eval(bdsThread);
+
+		// Combine results
 		if (isInt()) {
-			bdsThread.push(left.evalInt(bdsThread) * right.evalInt(bdsThread));
+			bdsThread.push(left.popInt(bdsThread) * right.popInt(bdsThread));
 			return;
 		}
 
 		if (isReal()) {
-			bdsThread.push(left.evalReal(bdsThread) * right.evalReal(bdsThread));
+			bdsThread.push(left.popReal(bdsThread) * right.popReal(bdsThread));
 			return;
 		}
 
@@ -37,11 +42,11 @@ public class ExpressionTimes extends ExpressionMath {
 			String str = "";
 			long num = 0;
 			if (left.canCastInt()) {
-				num = left.evalInt(bdsThread);
-				str = right.evalString(bdsThread);
+				num = left.popInt(bdsThread);
+				str = right.popString(bdsThread);
 			} else if (right.canCastInt()) {
-				str = left.evalString(bdsThread);
-				num = right.evalInt(bdsThread);
+				str = left.popString(bdsThread);
+				num = right.popInt(bdsThread);
 			} else throw new RuntimeException("Neither is an int. This should never happen!");
 
 			// Multiply (append the same string num times

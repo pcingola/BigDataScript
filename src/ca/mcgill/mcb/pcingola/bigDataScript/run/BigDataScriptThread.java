@@ -220,11 +220,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public void checkpointRecoverReset() {
 		for (checkPointRecoverNodeIdx = 0; checkPointRecoverNodeIdx < pc.size(); checkPointRecoverNodeIdx++) {
-			Gpr.debug("checkPointRecoverNodeIdx: " + checkPointRecoverNodeIdx //
-					+ "\tnodeId: " + pc.nodeId(checkPointRecoverNodeIdx) //
-					+ "\tstatementId: " + statement.getId() //
-					+ "\tstatement: " + statement.getClass().getSimpleName() //
-					);
 			if (pc.nodeId(checkPointRecoverNodeIdx) == statement.getId()) return;
 		}
 
@@ -776,16 +771,16 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		scope = scope.getParent();
 	}
 
-	public Object pop() {
-		return scope.pop();
+	public Object peek() {
+		if (isCheckpointRecover()) return null;
+		return scope.peek();
 	}
 
-	void prinntCode(String code) {
-		// Show file contents
-		int lineNum = 1;
-		for (String line : code.split("\n"))
-			System.out.println(String.format("%6d |%s", lineNum++, line));
-		System.out.println("");
+	public Object pop() {
+		if (isCheckpointRecover()) return null;
+		Object obj = scope.pop();
+		Gpr.debug("Pop: '" + obj + "'\nStack: " + scope.toStringStack());
+		return obj;
 	}
 
 	public void print() {
@@ -796,7 +791,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Show code
 		for (BigDataScriptNode bwf : nodeWithFiles) {
 			System.out.println("Program file: '" + bwf.getFileName() + "'");
-			prinntCode(((BlockWithFile) bwf).getFileText());
+			printCode(((BlockWithFile) bwf).getFileText());
 		}
 
 		// Show stack trace
@@ -820,8 +815,17 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 	}
 
+	void printCode(String code) {
+		// Show file contents
+		int lineNum = 1;
+		for (String line : code.split("\n"))
+			System.out.println(String.format("%6d |%s", lineNum++, line));
+		System.out.println("");
+	}
+
 	public void push(Object obj) {
-		scope.push(obj);
+		if (!isCheckpointRecover()) scope.push(obj);
+		Gpr.debug("Pushed: '" + obj + "'\nStack: " + scope.toStringStack());
 	}
 
 	/**
@@ -1097,7 +1101,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Which node are we looking for?
 		int nodeNum = checkpointRecoverNextNode();
-		Gpr.debug("nodeId: " + node.getId() + "\tlooking for: " + nodeNum);
+		Gpr.debug("nodeNum: " + nodeNum + "\tnode.id: " + node.getId() + "\t" + node.getClass().getSimpleName());
 		if (node.getId() == nodeNum) {
 			// Node found!
 			checkpointRecoverFound();

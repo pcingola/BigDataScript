@@ -20,7 +20,9 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 	 */
 	@Override
 	public void eval(BigDataScriptThread bdsThread) {
-		bdsThread.push(left.evalBool(bdsThread) && right.evalBool(bdsThread));
+		left.eval(bdsThread);
+		if (!((Boolean) bdsThread.peek())) return; // Already false? No need to evaluate the other expression
+		right.eval(bdsThread); // 'AND' only depends on this result (left was true)
 	}
 
 	@Override

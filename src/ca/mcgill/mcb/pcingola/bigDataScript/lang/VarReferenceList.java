@@ -41,7 +41,8 @@ public class VarReferenceList extends Reference {
 	 * Return index evaluation
 	 */
 	public int evalIndex(BigDataScriptThread bdsThread) {
-		return (int) expressionIdx.evalInt(bdsThread);
+		expressionIdx.eval(bdsThread);
+		return (int) popInt(bdsThread);
 	}
 
 	@SuppressWarnings("rawtypes")

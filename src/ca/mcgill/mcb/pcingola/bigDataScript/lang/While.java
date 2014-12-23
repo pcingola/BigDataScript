@@ -22,6 +22,15 @@ public class While extends Statement {
 		super(parent, tree);
 	}
 
+	/**
+	 * Evaluate condition
+	 */
+	boolean evalCondition(BigDataScriptThread bdsThread) {
+		if (condition == null) return true;
+		condition.eval(bdsThread);
+		return popBool(bdsThread);
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		int idx = 0;
@@ -37,7 +46,7 @@ public class While extends Statement {
 	 */
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
-		while (condition != null ? condition.evalBool(bdsThread) : true) { // Loop condition
+		while (evalCondition(bdsThread)) { // Loop condition
 			statement.run(bdsThread);
 
 			switch (bdsThread.getRunState()) {

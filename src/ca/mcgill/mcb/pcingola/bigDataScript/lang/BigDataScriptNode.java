@@ -22,6 +22,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -125,37 +126,37 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		throw new RuntimeException("Unplemented method 'eval' for class " + getClass().getSimpleName());
 	}
 
-	/**
-	 * Evaluate an expression as an 'bool'
-	 */
-	public boolean evalBool(BigDataScriptThread bdsThread) {
-		eval(bdsThread);
-		return (Boolean) Type.BOOL.cast(bdsThread.pop());
-	}
-
-	/**
-	 * Evaluate an expression as an 'int'
-	 */
-	public long evalInt(BigDataScriptThread bdsThread) {
-		eval(bdsThread);
-		return (Long) Type.INT.cast(bdsThread.pop());
-	}
-
-	/**
-	 * Evaluate an expression as an 'real'
-	 */
-	public double evalReal(BigDataScriptThread bdsThread) {
-		eval(bdsThread);
-		return (Double) Type.REAL.cast(bdsThread.pop());
-	}
-
-	/**
-	 * Evaluate an expression as an 'bool'
-	 */
-	public String evalString(BigDataScriptThread bdsThread) {
-		eval(bdsThread);
-		return (String) Type.STRING.cast(bdsThread.pop());
-	}
+	//	/**
+	//	 * Evaluate an expression as an 'bool'
+	//	 */
+	//	public boolean evalBool(BigDataScriptThread bdsThread) {
+	//		eval(bdsThread);
+	//		return (Boolean) Type.BOOL.cast(bdsThread.pop());
+	//	}
+	//
+	//	/**
+	//	 * Evaluate an expression as an 'int'
+	//	 */
+	//	public long evalInt(BigDataScriptThread bdsThread) {
+	//		eval(bdsThread);
+	//		return (Long) Type.INT.cast(bdsThread.pop());
+	//	}
+	//
+	//	/**
+	//	 * Evaluate an expression as an 'real'
+	//	 */
+	//	public double evalReal(BigDataScriptThread bdsThread) {
+	//		eval(bdsThread);
+	//		return (Double) Type.REAL.cast(bdsThread.pop());
+	//	}
+	//
+	//	/**
+	//	 * Evaluate an expression as an 'bool'
+	//	 */
+	//	public String evalString(BigDataScriptThread bdsThread) {
+	//		eval(bdsThread);
+	//		return (String) Type.STRING.cast(bdsThread.pop());
+	//	}
 
 	/**
 	 * Create a BigDataScriptNode
@@ -516,6 +517,34 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	protected abstract void parse(ParseTree tree);
 
 	/**
+	 * Pop a bool from stack
+	 */
+	public boolean popBool(BigDataScriptThread bdsThread) {
+		return (Boolean) Type.BOOL.cast(bdsThread.pop());
+	}
+
+	/**
+	 * Pop an int from stack
+	 */
+	public long popInt(BigDataScriptThread bdsThread) {
+		return (Long) Type.INT.cast(bdsThread.pop());
+	}
+
+	/**
+	 * Pop a real from stack
+	 */
+	public double popReal(BigDataScriptThread bdsThread) {
+		return (Double) Type.REAL.cast(bdsThread.pop());
+	}
+
+	/**
+	 * Pop a string from stack
+	 */
+	public String popString(BigDataScriptThread bdsThread) {
+		return (String) Type.STRING.cast(bdsThread.pop());
+	}
+
+	/**
 	 * Show a parseTree node
 	 */
 	void printNode(ParseTree tree) {
@@ -595,7 +624,10 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 		try {
 			// Run?
-			if (bdsThread.shouldRun(this)) runStep(bdsThread);
+			if (bdsThread.shouldRun(this)) {
+				Gpr.debug("Run: " + this.getClass().getSimpleName() + "\t" + this + "\nStack: " + bdsThread.getScope().toStringStack());
+				runStep(bdsThread);
+			}
 		} catch (Throwable t) {
 			bdsThread.fatalError(this, t);
 		}

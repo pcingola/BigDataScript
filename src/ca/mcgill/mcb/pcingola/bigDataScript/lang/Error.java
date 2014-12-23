@@ -39,7 +39,11 @@ public class Error extends Exit {
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
 		String msg = "";
-		if (expr != null) msg = expr.evalString(bdsThread); // Evaluate expression to show
+		if (expr != null) {
+			// Evaluate expression to show
+			expr.eval(bdsThread);
+			msg = popString(bdsThread);
+		}
 
 		Timer.showStdErr("Error" + (!msg.isEmpty() ? ": " + msg : ""));
 
