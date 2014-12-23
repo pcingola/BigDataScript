@@ -22,7 +22,7 @@ public class ExpressionVariableInitImplicit extends Expression {
 	}
 
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		// Evaluating the expression consists of initializing the variable and getting the result of that initialization
 
 		// Add variable to scope

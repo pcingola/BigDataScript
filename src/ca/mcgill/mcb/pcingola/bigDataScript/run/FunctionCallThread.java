@@ -53,7 +53,7 @@ public class FunctionCallThread extends BigDataScriptThread {
 	protected void runStatement() {
 		try {
 			// Run function call
-			functionCall.eval(this, arguments);
+			functionCall.apply(this, arguments);
 		} catch (Throwable t) {
 			runState = RunState.FATAL_ERROR;
 			if (isVerbose()) throw new RuntimeException(t);

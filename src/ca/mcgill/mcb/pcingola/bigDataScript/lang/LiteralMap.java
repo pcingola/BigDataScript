@@ -28,19 +28,19 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
-	public void eval(BigDataScriptThread csThread) {
+	public void runStep(BigDataScriptThread csThread) {
 		HashMap<String, Object> map = new HashMap<String, Object>(values.length);
 		Type baseType = baseType();
 
 		for (int i = 0; i < keys.length; i++) {
 			// Evaluate 'key' expression
 			Expression keyExpr = keys[i];
-			keyExpr.eval(csThread);
+			keyExpr.run(csThread);
 			String key = csThread.pop().toString();
 
 			// Evaluate 'value' expression
 			Expression valueExpr = values[i];
-			valueExpr.eval(csThread);
+			valueExpr.run(csThread);
 			Object value = csThread.pop();
 			value = baseType.cast(value);
 

@@ -21,9 +21,9 @@ public class ExpressionDivide extends ExpressionMath {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
-		left.eval(bdsThread);
-		right.eval(bdsThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		left.run(bdsThread);
+		right.run(bdsThread);
 
 		if (isInt()) {
 			long den = popInt(bdsThread);

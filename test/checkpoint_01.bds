@@ -7,3 +7,4 @@ for( i = 0 ; i < 10 ; i++ ) {
 	if( i == j ) checkpoint "test/checkpoint_01.bds.chp"
 }
 
+print "Done\n"

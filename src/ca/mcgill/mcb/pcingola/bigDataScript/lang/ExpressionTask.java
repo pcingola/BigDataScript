@@ -107,7 +107,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Evaluate 'task' expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		// Evaluate task options (get a list of dependencies)
 		TaskDependency taskDependency = null;
 		if (taskOptions != null) {
@@ -150,7 +150,7 @@ public class ExpressionTask extends ExpressionWithScope {
 			LiteralString lstr = (LiteralString) statement;
 
 			// Evaluate (e.g. interpolate variables)
-			lstr.eval(bdsThread);
+			lstr.run(bdsThread);
 			String str = bdsThread.pop().toString();
 
 			sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);

@@ -20,7 +20,7 @@ public class LiteralReal extends Literal {
 	}
 
 	@Override
-	public void eval(BigDataScriptThread csThread) {
+	public void runStep(BigDataScriptThread csThread) {
 		csThread.push(value);
 	}
 

@@ -35,7 +35,7 @@ public class Checkpoint extends Statement {
 		// Get filename
 		String file = null;
 		if (expr != null) {
-			expr.eval(bdsThread);
+			expr.run(bdsThread);
 			file = popString(bdsThread);
 		}
 

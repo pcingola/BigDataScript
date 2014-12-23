@@ -21,9 +21,9 @@ public class Post extends Pre {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
-		ref.eval(bdsThread);
+		ref.run(bdsThread);
 		long value = popInt(bdsThread);
 
 		if (operation == PrePostOperation.INCREMENT) ref.setValue(bdsThread, value + 1);

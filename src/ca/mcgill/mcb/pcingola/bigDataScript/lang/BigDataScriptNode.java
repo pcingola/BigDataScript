@@ -118,43 +118,11 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		}
 	}
 
-	/**
-	 * Evaluate an expression, return result
-	 */
-	public void eval(BigDataScriptThread bdsThread) {
-		throw new RuntimeException("Unplemented method 'eval' for class " + getClass().getSimpleName());
-	}
-
 	//	/**
-	//	 * Evaluate an expression as an 'bool'
+	//	 * Evaluate an expression, return result
 	//	 */
-	//	public boolean evalBool(BigDataScriptThread bdsThread) {
-	//		eval(bdsThread);
-	//		return (Boolean) Type.BOOL.cast(bdsThread.pop());
-	//	}
-	//
-	//	/**
-	//	 * Evaluate an expression as an 'int'
-	//	 */
-	//	public long evalInt(BigDataScriptThread bdsThread) {
-	//		eval(bdsThread);
-	//		return (Long) Type.INT.cast(bdsThread.pop());
-	//	}
-	//
-	//	/**
-	//	 * Evaluate an expression as an 'real'
-	//	 */
-	//	public double evalReal(BigDataScriptThread bdsThread) {
-	//		eval(bdsThread);
-	//		return (Double) Type.REAL.cast(bdsThread.pop());
-	//	}
-	//
-	//	/**
-	//	 * Evaluate an expression as an 'bool'
-	//	 */
-	//	public String evalString(BigDataScriptThread bdsThread) {
-	//		eval(bdsThread);
-	//		return (String) Type.STRING.cast(bdsThread.pop());
+	//	public void runStep(BigDataScriptThread bdsThread) {
+	//		throw new RuntimeException("Unplemented method 'eval' for class " + getClass().getSimpleName());
 	//	}
 
 	/**
@@ -623,7 +591,10 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 		try {
 			// Run?
-			if (bdsThread.shouldRun(this)) runStep(bdsThread);
+			if (bdsThread.shouldRun(this)) {
+				//				Gpr.debug("RUN: " + this.getClass().getSimpleName() + "\t" + this + "\t" + bdsThread.getPc());
+				runStep(bdsThread);
+			}
 		} catch (Throwable t) {
 			bdsThread.fatalError(this, t);
 		}

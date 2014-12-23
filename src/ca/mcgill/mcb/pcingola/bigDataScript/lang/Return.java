@@ -50,7 +50,7 @@ public class Return extends Statement {
 	protected void runStep(BigDataScriptThread bdsThread) {
 		if (expr != null) {
 			// Set return value to scope
-			expr.eval(bdsThread);
+			expr.run(bdsThread);
 			bdsThread.setReturnValue(bdsThread.peek());
 		} else bdsThread.setReturnValue(null);
 

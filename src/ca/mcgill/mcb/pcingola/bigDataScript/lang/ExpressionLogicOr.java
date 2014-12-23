@@ -19,10 +19,10 @@ public class ExpressionLogicOr extends ExpressionLogic {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
-		left.eval(bdsThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		left.run(bdsThread);
 		if ((Boolean) bdsThread.peek()) return; // Already true? No need to evaluate the other expression
-		right.eval(bdsThread); // The 'OR' only depends on this value (left was false)
+		right.run(bdsThread); // The 'OR' only depends on this value (left was false)
 	}
 
 	@Override

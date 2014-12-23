@@ -30,10 +30,10 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 	 */
 	@Override
 	@SuppressWarnings("rawtypes")
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 
 		// Get value
-		right.eval(bdsThread);
+		right.run(bdsThread);
 		List list = (List) bdsThread.pop();
 
 		for (int i = 0; i < lefts.length; i++) {

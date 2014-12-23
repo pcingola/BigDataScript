@@ -83,7 +83,7 @@ public class ForLoopList extends StatementWithScope {
 		}
 
 		// Evaluate list
-		expression.eval(bdsThread);
+		expression.run(bdsThread);
 		Object res = bdsThread.pop();
 
 		//---

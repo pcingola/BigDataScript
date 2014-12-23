@@ -39,10 +39,10 @@ public class ExpressionParallel extends ExpressionTask {
 	 * Evaluate 'par' expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		// Execute options assignments
 		if (taskOptions != null) {
-			taskOptions.eval(bdsThread);
+			taskOptions.run(bdsThread);
 			boolean ok = popBool(bdsThread);
 			if (bdsThread.isDebug()) log("task-options check " + ok);
 			if (!ok) {

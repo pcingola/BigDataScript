@@ -20,7 +20,7 @@ public class LiteralInt extends Literal {
 	}
 
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.push(value);
 	}
 

@@ -29,14 +29,14 @@ public class MethodCall extends FunctionCall {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
 
 		// Evaluate all expressions
 		Object values[] = new Object[fparam.length];
 		for (int i = 0; i < fparam.length; i++) {
-			arguments[i].eval(bdsThread);
+			arguments[i].run(bdsThread);
 			Object value = bdsThread.pop();
 			value = fparam[i].type.cast(value);
 			values[i] = value;

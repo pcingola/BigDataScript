@@ -41,7 +41,7 @@ public class Wait extends Statement {
 			ok = bdsThread.waitAll();
 		} else {
 			// Wait for a specific task or list of tasks
-			taskId.eval(bdsThread);
+			taskId.run(bdsThread);
 			Object val = bdsThread.pop();
 
 			// Are we waiting for a single task/thread or a list?

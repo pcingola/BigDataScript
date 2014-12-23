@@ -19,9 +19,9 @@ public class ExpressionBitOr extends ExpressionBit {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
-		left.eval(bdsThread);
-		right.eval(bdsThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		left.run(bdsThread);
+		right.run(bdsThread);
 		bdsThread.push(left.popInt(bdsThread) | right.popInt(bdsThread));
 	}
 

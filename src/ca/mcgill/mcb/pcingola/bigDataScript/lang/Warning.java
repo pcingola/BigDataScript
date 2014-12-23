@@ -24,7 +24,7 @@ public class Warning extends Error {
 		String msg = "";
 		if (expr != null) {
 			// Evaluate expression to show
-			expr.eval(bdsThread);
+			expr.run(bdsThread);
 			msg = popString(bdsThread);
 		}
 		Timer.showStdErr("Warning" + (!msg.isEmpty() ? ": " + msg : ""));

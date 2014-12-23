@@ -29,7 +29,7 @@ public class VarReferenceMap extends Reference {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		String key = evalKey(bdsThread);
 		HashMap map = getMap(bdsThread.getScope());
 		Object ret = map.get(key);
@@ -41,7 +41,7 @@ public class VarReferenceMap extends Reference {
 	 * Return index evaluation
 	 */
 	public String evalKey(BigDataScriptThread bdsThread) {
-		expressionKey.eval(bdsThread);
+		expressionKey.run(bdsThread);
 		return popString(bdsThread);
 	}
 

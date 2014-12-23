@@ -18,9 +18,9 @@ public class ExpressionMinus extends ExpressionMath {
 	}
 
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		if (right == null) {
-			left.eval(bdsThread);
+			left.run(bdsThread);
 
 			// This should be an unary expression!
 			if (isInt()) {
@@ -33,8 +33,8 @@ public class ExpressionMinus extends ExpressionMath {
 				return;
 			}
 		} else {
-			left.eval(bdsThread);
-			right.eval(bdsThread);
+			left.run(bdsThread);
+			right.run(bdsThread);
 
 			if (isInt()) {
 				long tr = popInt(bdsThread);

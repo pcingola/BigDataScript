@@ -11,8 +11,8 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test15_6() {
-		runAndCheck("test/run_15.bds", "li6", "[apple, orange, i=10hihihi]");
+	public void test01() {
+		runAndCheckpoint("test/checkpoint_01.bds", null, "i", "10");
 	}
 
 	//	@Test

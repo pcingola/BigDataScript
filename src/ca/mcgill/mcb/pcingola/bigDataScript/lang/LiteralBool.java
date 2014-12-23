@@ -23,7 +23,7 @@ public class LiteralBool extends Literal {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.push(value);
 	}
 

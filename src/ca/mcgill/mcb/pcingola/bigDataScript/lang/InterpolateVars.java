@@ -101,7 +101,7 @@ public class InterpolateVars extends Literal {
 	}
 
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		StringBuilder sb = new StringBuilder();
 
 		// Variable interpolation
@@ -112,7 +112,7 @@ public class InterpolateVars extends Literal {
 			// Variable's value
 			Expression ref = exprs[i];
 			if (ref != null) {
-				ref.eval(bdsThread);
+				ref.run(bdsThread);
 				Object val = bdsThread.pop();
 				sb.append(interpolateValue(val));
 			}

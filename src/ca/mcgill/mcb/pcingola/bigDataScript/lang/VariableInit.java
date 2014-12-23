@@ -71,7 +71,7 @@ public class VariableInit extends BigDataScriptNode {
 			Scope scope = bdsThread.getScope();
 			ScopeSymbol ssym = scope.getSymbol(varName);
 
-			expression.eval(bdsThread);
+			expression.run(bdsThread);
 			Object value = bdsThread.pop();
 
 			// Error running expression?

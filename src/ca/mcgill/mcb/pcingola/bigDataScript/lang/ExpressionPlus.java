@@ -26,9 +26,9 @@ public class ExpressionPlus extends ExpressionMath {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
-		left.eval(bdsThread);
-		right.eval(bdsThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		left.run(bdsThread);
+		right.run(bdsThread);
 
 		Object rval = bdsThread.pop();
 		Object lval = bdsThread.pop();
@@ -53,7 +53,7 @@ public class ExpressionPlus extends ExpressionMath {
 			if (left.isList()) list.addAll((Collection) lval);
 			else list.add(lval);
 
-			right.eval(bdsThread);
+			right.run(bdsThread);
 			if (right.isList()) list.addAll((Collection) rval);
 			else list.add(rval);
 

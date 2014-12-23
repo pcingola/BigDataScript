@@ -21,10 +21,10 @@ public class ExpressionTimes extends ExpressionMath {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		// Evaliate expressions
-		left.eval(bdsThread);
-		right.eval(bdsThread);
+		left.run(bdsThread);
+		right.run(bdsThread);
 
 		Object rval = bdsThread.pop();
 		Object lval = bdsThread.pop();

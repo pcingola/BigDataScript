@@ -24,10 +24,10 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 
 		// Get value
-		right.eval(bdsThread);
+		right.run(bdsThread);
 		Object value = bdsThread.pop();
 
 		if (left instanceof VarReference) {

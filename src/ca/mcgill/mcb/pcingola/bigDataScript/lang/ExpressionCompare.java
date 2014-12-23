@@ -33,9 +33,9 @@ public class ExpressionCompare extends ExpressionBinary {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void eval(BigDataScriptThread bdsThread) {
-		left.eval(bdsThread);
-		right.eval(bdsThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		left.run(bdsThread);
+		right.run(bdsThread);
 
 		Object rval = bdsThread.pop();
 		Object lval = bdsThread.pop();

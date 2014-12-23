@@ -34,7 +34,7 @@ public class ForLoop extends StatementWithScope {
 	 */
 	boolean evalCondition(BigDataScriptThread bdsThread) {
 		if (condition == null) return true;
-		condition.eval(bdsThread);
+		condition.run(bdsThread);
 		return popBool(bdsThread);
 	}
 

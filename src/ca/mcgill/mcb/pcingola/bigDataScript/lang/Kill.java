@@ -36,7 +36,7 @@ public class Kill extends Statement {
 	protected void runStep(BigDataScriptThread bdsThread) {
 		// No arguments? Kill for all tasks
 
-		taskId.eval(bdsThread);
+		taskId.run(bdsThread);
 		Object val = bdsThread.pop();
 
 		// Are we Killing for one task or a list of tasks?
