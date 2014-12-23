@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -8,6 +9,11 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
  *
  */
 public class TestCasesZzz extends TestCasesBase {
+
+	@Test
+	public void test15_6() {
+		runAndCheck("test/run_15.bds", "li6", "[apple, orange, i=10hihihi]");
+	}
 
 	//	@Test
 	//	public void test15_checkpoint_par_function_call() {

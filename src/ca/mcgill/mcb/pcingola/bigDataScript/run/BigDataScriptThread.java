@@ -689,7 +689,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public boolean isCheckpointRecover() {
 		return runState == RunState.WAIT_RECOVER //
 				|| runState == RunState.CHECKPOINT_RECOVER //
-				;
+		;
 	}
 
 	public boolean isDebug() {
@@ -778,9 +778,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public Object pop() {
 		if (isCheckpointRecover()) return null;
-		Object obj = scope.pop();
-		Gpr.debug("Pop: '" + obj + "'\nStack: " + scope.toStringStack());
-		return obj;
+		return scope.pop();
 	}
 
 	public void print() {
@@ -825,7 +823,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public void push(Object obj) {
 		if (!isCheckpointRecover()) scope.push(obj);
-		Gpr.debug("Pushed: '" + obj + "'\nStack: " + scope.toStringStack());
 	}
 
 	/**
@@ -866,7 +863,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1101,7 +1098,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Which node are we looking for?
 		int nodeNum = checkpointRecoverNextNode();
-		Gpr.debug("nodeNum: " + nodeNum + "\tnode.id: " + node.getId() + "\t" + node.getClass().getSimpleName());
 		if (node.getId() == nodeNum) {
 			// Node found!
 			checkpointRecoverFound();

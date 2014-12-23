@@ -8,7 +8,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Program unit (usually a file)
@@ -30,8 +29,6 @@ public class FunctionCall extends Expression {
 	 */
 	@Override
 	public void eval(BigDataScriptThread bdsThread) {
-		Gpr.debug("Before : " + bdsThread.getScope().getNodeId() + "\t" + bdsThread.getScope().toStringStack());
-
 		Object arguments[] = null;
 		if (!bdsThread.isCheckpointRecover()) {
 			// Evaluate function arguments
@@ -41,7 +38,6 @@ public class FunctionCall extends Expression {
 
 		// Apply function to parameters
 		bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
-		Gpr.debug("After  : " + bdsThread.getScope().getNodeId() + "\t" + bdsThread.getScope().toStringStack());
 	}
 
 	/**

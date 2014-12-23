@@ -8722,3 +8722,467 @@ test/checkpoint_09.csv	-
 test/checkpoint_09.xml	+	rm
 2503	-
 test/checkpoint_09.xml	-
+3519	+	
+3519	-
+3524	+	
+3524	-
+3527	+	
+3527	-
+null	-
+null	-
+3533	+	
+3533	-
+3535	+	
+3535	-
+3537	+	
+3537	-
+3539	+	
+3539	-
+3542	+	
+3542	-
+3545	+	
+3545	-
+3549	+	
+/Users/pcingola/zero_length_file_out.txt	+	rm
+3549	-
+/Users/pcingola/zero_length_file_out.txt	-
+3550	+	
+3550	-
+3555	+	
+3555	-
+3558	+	
+3559	+	
+3558	-
+3559	-
+3568	+	
+3568	-
+3571	+	
+3571	-
+3574	+	
+3574	-
+null	-
+3576	+	
+3576	-
+3580	+	
+3580	-
+3583	+	
+3583	-
+3586	+	
+3586	-
+3589	+	
+3589	-
+3592	+	
+3592	-
+3596	+	
+failOnce.out1	+	rm
+3596	-
+failOnce.out1	-
+3601	+	
+failOnce.out1	+	rm
+3601	-
+failOnce.out1	-
+3605	+	
+failOnce.out2	+	rm
+3605	-
+failOnce.out2	-
+3611	+	
+failOnce.out1	+	rm
+3611	-
+failOnce.out1	-
+3616	+	
+failOnce.out1	+	rm
+3616	-
+failOnce.out1	-
+3620	+	
+failOnce.out2	+	rm
+3620	-
+failOnce.out2	-
+3636	+	
+/Users/pcingola/zero_length_file.out.txt	+	rm
+3636	-
+/Users/pcingola/zero_length_file.out.txt	-
+3639	+	
+3643	+	
+3640	+	
+3648	+	
+3639	-
+3640	-
+3651	+	
+3643	-
+3648	-
+3651	-
+3654	+	
+3654	-
+3657	+	
+3657	-
+3664	+	
+3665	+	
+3664	-
+3670	+	
+3670	-
+3665	-
+3674	+	
+3674	-
+3682	+	
+tmp_2.txt	+	rm
+3682	-
+tmp_2.txt	-
+3685	+	
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	+	rm
+3685	-
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	-
+3689	+	
+tmp_out.txt	+	rm
+3689	-
+tmp_out.txt	-
+3695	+	
+out1.txt	+	rm
+3695	-
+out1.txt	-
+3699	+	
+out2.txt	+	rm
+3699	-
+out2.txt	-
+3705	+	
+out1.txt	+	rm
+3705	-
+out1.txt	-
+3709	+	
+out2.txt	+	rm
+3709	-
+out2.txt	-
+3712	+	
+out1.txt	+	rm
+3712	-
+out1.txt	-
+3716	+	
+out2.txt	+	rm
+3716	-
+out2.txt	-
+3719	+	
+test/graph_05.csv	+	rm
+3719	-
+test/graph_05.csv	-
+3722	+	
+test/graph_05.xml	+	rm
+3722	-
+test/graph_05.xml	-
+3725	+	
+test/graph_05.csv	+	rm
+3725	-
+test/graph_05.csv	-
+3728	+	
+test/graph_05.xml	+	rm
+3728	-
+test/graph_05.xml	-
+3731	+	
+test/graph_06.csv	+	rm
+3731	-
+test/graph_06.csv	-
+3734	+	
+test/graph_06.xml	+	rm
+3734	-
+test/graph_06.xml	-
+3740	+	
+out1.txt	+	rm
+3740	-
+out1.txt	-
+3744	+	
+out2.txt	+	rm
+3744	-
+out2.txt	-
+3748	+	
+out1.txt	+	rm
+3748	-
+out1.txt	-
+3752	+	
+3752	-
+3755	+	
+3755	-
+3762	+	
+test/graph_08.mid1.txt	+	rm
+3762	-
+test/graph_08.mid1.txt	-
+3765	+	
+test/graph_08.mid2.txt	+	rm
+3765	-
+test/graph_08.mid2.txt	-
+3768	+	
+test/graph_08.out.txt	+	rm
+3768	-
+test/graph_08.out.txt	-
+3782	+	
+test/graph_10.mid1.txt	+	rm
+3782	-
+test/graph_10.mid1.txt	-
+3785	+	
+test/graph_10.out.txt	+	rm
+3785	-
+test/graph_10.out.txt	-
+3788	+	
+tmp_C.txt	+	rm
+tmp_D.txt	+	rm
+3788	-
+tmp_C.txt	-
+tmp_D.txt	-
+3792	+	
+tmp_E.txt	+	rm
+3792	-
+tmp_E.txt	-
+3794	+	
+3794	-
+3795	+	
+3795	-
+3800	+	
+3800	-
+3804	+	
+test/checkpoint_08.csv	+	rm
+3804	-
+test/checkpoint_08.csv	-
+3807	+	
+test/checkpoint_08.xml	+	rm
+3807	-
+test/checkpoint_08.xml	-
+3810	+	
+test/checkpoint_08.csv	+	rm
+3810	-
+test/checkpoint_08.csv	-
+3813	+	
+test/checkpoint_08.xml	+	rm
+3813	-
+test/checkpoint_08.xml	-
+3816	+	
+test/checkpoint_09.csv	+	rm
+3816	-
+test/checkpoint_09.csv	-
+3819	+	
+test/checkpoint_09.xml	+	rm
+3819	-
+test/checkpoint_09.xml	-
+3868	+	
+3868	-
+3873	+	
+3873	-
+3876	+	
+3876	-
+null	-
+null	-
+3882	+	
+3882	-
+3884	+	
+3884	-
+3886	+	
+3886	-
+3888	+	
+3888	-
+3891	+	
+3891	-
+3894	+	
+3894	-
+3898	+	
+/Users/pcingola/zero_length_file_out.txt	+	rm
+3898	-
+/Users/pcingola/zero_length_file_out.txt	-
+3899	+	
+3899	-
+3904	+	
+3904	-
+3907	+	
+3908	+	
+3907	-
+3908	-
+3917	+	
+3917	-
+3920	+	
+3920	-
+3923	+	
+3923	-
+null	-
+3925	+	
+3925	-
+3929	+	
+3929	-
+3932	+	
+3932	-
+3935	+	
+3935	-
+3938	+	
+3938	-
+3941	+	
+3941	-
+3945	+	
+failOnce.out1	+	rm
+3945	-
+failOnce.out1	-
+3950	+	
+failOnce.out1	+	rm
+3950	-
+failOnce.out1	-
+3954	+	
+failOnce.out2	+	rm
+3954	-
+failOnce.out2	-
+3960	+	
+failOnce.out1	+	rm
+3960	-
+failOnce.out1	-
+3965	+	
+failOnce.out1	+	rm
+3965	-
+failOnce.out1	-
+3969	+	
+failOnce.out2	+	rm
+3969	-
+failOnce.out2	-
+3985	+	
+/Users/pcingola/zero_length_file.out.txt	+	rm
+3985	-
+/Users/pcingola/zero_length_file.out.txt	-
+3988	+	
+3989	+	
+3992	+	
+3995	+	
+3988	-
+3989	-
+3992	-
+4000	+	
+3995	-
+4000	-
+4003	+	
+4003	-
+4006	+	
+4006	-
+4010	+	
+4011	+	
+4011	-
+4016	+	
+4016	-
+4010	-
+4019	+	
+4019	-
+4026	+	
+tmp_2.txt	+	rm
+4026	-
+tmp_2.txt	-
+4029	+	
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	+	rm
+4029	-
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	-
+4033	+	
+tmp_out.txt	+	rm
+4033	-
+tmp_out.txt	-
+4039	+	
+out1.txt	+	rm
+4039	-
+out1.txt	-
+4043	+	
+out2.txt	+	rm
+4043	-
+out2.txt	-
+4049	+	
+out1.txt	+	rm
+4049	-
+out1.txt	-
+4053	+	
+out2.txt	+	rm
+4053	-
+out2.txt	-
+4056	+	
+out1.txt	+	rm
+4056	-
+out1.txt	-
+4060	+	
+out2.txt	+	rm
+4060	-
+out2.txt	-
+4063	+	
+test/graph_05.csv	+	rm
+4063	-
+test/graph_05.csv	-
+4066	+	
+test/graph_05.xml	+	rm
+4066	-
+test/graph_05.xml	-
+4069	+	
+test/graph_05.csv	+	rm
+4069	-
+test/graph_05.csv	-
+4072	+	
+test/graph_05.xml	+	rm
+4072	-
+test/graph_05.xml	-
+4075	+	
+test/graph_06.csv	+	rm
+4075	-
+test/graph_06.csv	-
+4078	+	
+test/graph_06.xml	+	rm
+4078	-
+test/graph_06.xml	-
+4084	+	
+out1.txt	+	rm
+4084	-
+out1.txt	-
+4088	+	
+out2.txt	+	rm
+4088	-
+out2.txt	-
+4092	+	
+out1.txt	+	rm
+4092	-
+out1.txt	-
+4096	+	
+4096	-
+4099	+	
+4099	-
+4107	+	
+test/graph_08.mid1.txt	+	rm
+4107	-
+test/graph_08.mid1.txt	-
+4110	+	
+test/graph_08.mid2.txt	+	rm
+4110	-
+test/graph_08.mid2.txt	-
+4113	+	
+test/graph_08.out.txt	+	rm
+4113	-
+test/graph_08.out.txt	-
+4127	+	
+test/graph_10.mid1.txt	+	rm
+4127	-
+test/graph_10.mid1.txt	-
+4130	+	
+test/graph_10.out.txt	+	rm
+4130	-
+test/graph_10.out.txt	-
+4133	+	
+4133	-
+4135	+	
+4135	-
+4139	+	
+4139	-
+4143	+	
+test/checkpoint_08.csv	+	rm
+4143	-
+test/checkpoint_08.csv	-
+4146	+	
+test/checkpoint_08.xml	+	rm
+4146	-
+test/checkpoint_08.xml	-
+4149	+	
+test/checkpoint_08.csv	+	rm
+4149	-
+test/checkpoint_08.csv	-
+4152	+	
+test/checkpoint_08.xml	+	rm
+4152	-
+test/checkpoint_08.xml	-
+4155	+	
+test/checkpoint_09.csv	+	rm
+4155	-
+test/checkpoint_09.csv	-
+4158	+	
+test/checkpoint_09.xml	+	rm
+4158	-
+test/checkpoint_09.xml	-

@@ -30,30 +30,32 @@ public class ExpressionPlus extends ExpressionMath {
 		left.eval(bdsThread);
 		right.eval(bdsThread);
 
+		Object rval = bdsThread.pop();
+		Object lval = bdsThread.pop();
+
 		if (isInt()) {
-			bdsThread.push(popInt(bdsThread) + popInt(bdsThread));
+			bdsThread.push(((long) lval) + ((long) rval));
 			return;
 		}
 
 		if (isReal()) {
-			bdsThread.push(popReal(bdsThread) + popReal(bdsThread));
+			bdsThread.push(((double) lval) + ((double) rval));
 			return;
 		}
 
 		if (isString()) {
-			bdsThread.push(popString(bdsThread) + popString(bdsThread));
+			bdsThread.push(lval.toString() + rval.toString());
 			return;
 		}
 
 		if (isList()) {
 			ArrayList list = new ArrayList();
-			left.eval(bdsThread);
-			if (left.isList()) list.addAll((Collection) bdsThread.pop());
-			else list.add(bdsThread.pop());
+			if (left.isList()) list.addAll((Collection) lval);
+			else list.add(lval);
 
 			right.eval(bdsThread);
-			if (right.isList()) list.addAll((Collection) bdsThread.pop());
-			else list.add(bdsThread.pop());
+			if (right.isList()) list.addAll((Collection) rval);
+			else list.add(rval);
 
 			bdsThread.push(list);
 			return;

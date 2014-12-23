@@ -22,7 +22,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -94,8 +93,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	protected void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
 		if ((returnType != null) //
 				&& (!returnType.canCast(Type.INT) //
-						&& !returnType.canCast(Type.REAL)) //
-				) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
+				&& !returnType.canCast(Type.REAL)) //
+		) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
 	}
 
 	/**
@@ -508,7 +507,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		Timer.showStdErr(getClass().getSimpleName() //
 				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
 				+ " : " + msg //
-				);
+		);
 	}
 
 	/**
@@ -624,10 +623,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 		try {
 			// Run?
-			if (bdsThread.shouldRun(this)) {
-				Gpr.debug("Run: " + this.getClass().getSimpleName() + "\t" + this + "\nStack: " + bdsThread.getScope().toStringStack());
-				runStep(bdsThread);
-			}
+			if (bdsThread.shouldRun(this)) runStep(bdsThread);
 		} catch (Throwable t) {
 			bdsThread.fatalError(this, t);
 		}
@@ -716,7 +712,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" + serializer.serializeSaveValue(returnType) //
 				+ "\t" //
-				);
+		);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields
