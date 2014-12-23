@@ -19,7 +19,32 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TestCasesBase extends TestCase {
 
-	public static boolean debug = false;
+	public boolean debug = false;
+	public boolean verbose = false;
+
+	/**
+	 * Compile a bds script
+	 */
+	BigDataScript bds(String fileName) {
+		String args[] = { fileName };
+		String argsv[] = { "-v", fileName };
+
+		BigDataScript bigDataScript = new BigDataScript(verbose ? argsv : args);
+		return bigDataScript;
+	}
+
+	BigDataScript bds(String[] args) {
+		ArrayList<String> l = new ArrayList<String>();
+
+		if (verbose) l.add("-v");
+		for (String arg : args)
+			l.add(arg);
+
+		args = l.toArray(new String[0]);
+
+		BigDataScript bigDataScript = new BigDataScript(args);
+		return bigDataScript;
+	}
 
 	/**
 	 * Check that a file compiles with expected errors
@@ -39,13 +64,12 @@ public class TestCasesBase extends TestCase {
 	}
 
 	/**
-	 *
 	 * Compile a file
 	 */
 	BigDataScript compileTest(String fileName) {
-		String args[] = { fileName };
-		BigDataScript bigDataScript = new BigDataScript(args);
+		BigDataScript bigDataScript = bds(fileName);
 		bigDataScript.compile();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 		return bigDataScript;
 	}
 
@@ -61,14 +85,11 @@ public class TestCasesBase extends TestCase {
 	 * Check that a file compiles without any errors, runs and a variable have its expected value
 	 */
 	void runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
-		// Compile and check for errors
-		BigDataScript bigDataScript = new BigDataScript(args);
-		bigDataScript.compile();
+		// Compile, check for errors
+		BigDataScript bigDataScript = bds(args);
+		bigDataScript.run();
 		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
-		// Run
-		bigDataScript = new BigDataScript(args);
-		bigDataScript.run();
 		ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varname);
 
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
@@ -77,15 +98,10 @@ public class TestCasesBase extends TestCase {
 	}
 
 	void runAndCheckExit(String fileName, int expectedExitValue) {
-		// Compile
-		String args[] = { fileName };
-		BigDataScript bigDataScript = new BigDataScript(args);
-		bigDataScript.compile();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
-
 		// Run
-		bigDataScript = new BigDataScript(args);
+		BigDataScript bigDataScript = bds(fileName);
 		int exitValue = bigDataScript.run();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 		Assert.assertEquals(expectedExitValue, exitValue);
 	}
 
@@ -99,16 +115,14 @@ public class TestCasesBase extends TestCase {
 	void runAndCheckMultiple(String fileName, HashMap<String, Object> expectedValues, ArrayList<String> args) {
 		// Prepare command line arguments
 		args.add(0, fileName);
+		if (verbose) args.add(0, "-v");
 		String argsArray[] = args.toArray(new String[0]);
 
-		// Compile
+		// Compile & Run
 		BigDataScript bigDataScript = new BigDataScript(argsArray);
-		bigDataScript.compile();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
-
-		// Run
 		bigDataScript = new BigDataScript(argsArray);
 		bigDataScript.run();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
 		// Check all values
 		for (String varName : expectedValues.keySet()) {
@@ -137,14 +151,9 @@ public class TestCasesBase extends TestCase {
 	 */
 	void runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue, Runnable runBeforeRecover) {
 		// Compile
-		String args[] = { fileName };
-		BigDataScript bigDataScript = new BigDataScript(args);
-		bigDataScript.compile();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
-
-		// Run
-		bigDataScript = new BigDataScript(args);
+		BigDataScript bigDataScript = bds(fileName);
 		bigDataScript.run();
+		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
 		// Run something before checkpoint recovery?
 		if (runBeforeRecover != null) runBeforeRecover.run();
@@ -179,22 +188,18 @@ public class TestCasesBase extends TestCase {
 	 * Check that StdErr has a string
 	 */
 	void runAndCheckStderr(String fileName, String expectedStderr) {
-		String args[] = { fileName };
-
 		// Compile
-		BigDataScript bigDataScript = new BigDataScript(args);
-		bigDataScript.compile();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+		BigDataScript bigDataScript = bds(fileName);
 
+		// Capture STDERR
 		PrintStream stderr = System.err;
 		ByteArrayOutputStream captureStderr = new ByteArrayOutputStream();
 		try {
-			// Capture STDERR
 			System.setErr(new PrintStream(captureStderr));
 
 			// Run
-			bigDataScript = new BigDataScript(args);
 			bigDataScript.run();
+			if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
@@ -235,24 +240,18 @@ public class TestCasesBase extends TestCase {
 	 * Run a bds program and capture stdout (while still showing it)
 	 */
 	String runAndReturnStdout(String fileName) {
-		String args[] = { fileName };
+		BigDataScript bigDataScript = bds(fileName);
 
-		// Compile
-		BigDataScript bigDataScript = new BigDataScript(args);
-		bigDataScript.compile();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
-
+		// Capture STDOUT
 		PrintStream stdout = System.out; // Store original stdout
 		ByteArrayOutputStream captureStdout = new ByteArrayOutputStream();
 		TeeOutputStream tee = new TeeOutputStream(stdout, captureStdout);
-
 		try {
-			// Capture STDOUT
 			System.setOut(new PrintStream(tee));
 
 			// Run
-			bigDataScript = new BigDataScript(args);
 			bigDataScript.run();
+			if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
