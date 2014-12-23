@@ -400,6 +400,17 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		return sb.toString();
 	}
 
+	public String toStringScopeNames() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Scopes:\n");
+
+		int i = 0;
+		for (Scope scope = this; scope != null; scope = scope.getParent())
+			sb.append("\t" + (i++) + ": " + scope.getScopeName() + "\n");
+
+		return sb.toString();
+	}
+
 	public String toStringStack() {
 		StringBuilder sb = new StringBuilder();
 		if (stack != null) {

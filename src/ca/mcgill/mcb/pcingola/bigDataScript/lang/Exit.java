@@ -50,7 +50,7 @@ public class Exit extends Statement {
 			bdsThread.setExitValue(popInt(bdsThread)); // Set return value to scope
 		} else bdsThread.setExitValue(0L); // Default is the same as 'exit 0'
 
-		bdsThread.setRunState(RunState.EXIT);
+		if (!bdsThread.isCheckpointRecover()) bdsThread.setRunState(RunState.EXIT);
 	}
 
 	@Override

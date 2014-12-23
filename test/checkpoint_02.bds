@@ -4,7 +4,6 @@ int f(int j) {
     	int h = i + 7;
 		if( i == j ) {
 			checkpoint "test/checkpoint_02.bds.chp"
-			print "i=$i\tj=$j\n"
 			i = 10;
 			return i;
 		}
@@ -16,7 +15,5 @@ int i = 1;
 int j = 5;
 int l = i+j;	# l = 6
 
-fj := f(j)
-print "f($j) = $fj\n"
-l = 5 + fj;	# l = 5 + f(5) = 5 + 10 = 15
+l = 5 + f(j);	# l = 5 + f(5) = 5 + 10 = 15
 

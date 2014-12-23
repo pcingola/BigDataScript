@@ -54,7 +54,7 @@ public class Return extends Statement {
 			bdsThread.setReturnValue(bdsThread.pop());
 		} else bdsThread.setReturnValue(null);
 
-		bdsThread.setRunState(RunState.RETURN);
+		if (!bdsThread.isCheckpointRecover()) bdsThread.setRunState(RunState.RETURN);
 	}
 
 	@Override

@@ -22,7 +22,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -94,8 +93,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	protected void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
 		if ((returnType != null) //
 				&& (!returnType.canCast(Type.INT) //
-				&& !returnType.canCast(Type.REAL)) //
-		) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
+						&& !returnType.canCast(Type.REAL)) //
+				) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
 	}
 
 	/**
@@ -476,7 +475,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		Timer.showStdErr(getClass().getSimpleName() //
 				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
 				+ " : " + msg //
-		);
+				);
 	}
 
 	/**
@@ -586,25 +585,27 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 * Run this node
 	 */
 	public void run(BigDataScriptThread bdsThread) {
-		boolean recover = bdsThread.isCheckpointRecover();
-
-		if (!recover) runBegin(bdsThread); // Before node execution
+		// Before node execution
+		if (!bdsThread.isCheckpointRecover()) runBegin(bdsThread);
 
 		try {
 			// Run?
 			if (bdsThread.shouldRun(this)) {
-				Gpr.debug("RUN: " + this.getClass().getSimpleName() //
-						+ "\t" + this //
-						+ "\n\tPC: " + bdsThread.getPc() //
-						+ "\n\tStack: " + bdsThread.getScope().toStringStack() //
-				);
+				//				Gpr.debug("Run Step: " + this.getClass().getSimpleName() //
+				//						+ "\t" + this //
+				//						+ "\n\tPC: " + bdsThread.getPc() //
+				//						+ "\n\tStack: " + bdsThread.getScope().toStringStack() //
+				//						+ "\n\tScope:\n" + sb //
+				//				);
+
 				runStep(bdsThread);
 			}
 		} catch (Throwable t) {
 			bdsThread.fatalError(this, t);
 		}
 
-		if (!recover) runEnd(bdsThread); // After node execution
+		// After node execution
+		if (!bdsThread.isCheckpointRecover()) runEnd(bdsThread);
 	}
 
 	/**
@@ -612,7 +613,10 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	protected void runBegin(BigDataScriptThread bdsThread) {
 		// Need a new scope?
-		if (isNeedsScope()) bdsThread.newScope(this);
+		if (isNeedsScope()) {
+			bdsThread.newScope(this);
+		}
+
 		bdsThread.getPc().push(this);
 	}
 
@@ -621,8 +625,11 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	protected void runEnd(BigDataScriptThread bdsThread) {
 		bdsThread.getPc().pop(this);
+
 		// Restore old scope?
-		if (isNeedsScope()) bdsThread.oldScope();
+		if (isNeedsScope()) {
+			bdsThread.oldScope();
+		}
 	}
 
 	protected void runStep(BigDataScriptThread bdsThread) {
@@ -688,7 +695,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" + serializer.serializeSaveValue(returnType) //
 				+ "\t" //
-		);
+				);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields
