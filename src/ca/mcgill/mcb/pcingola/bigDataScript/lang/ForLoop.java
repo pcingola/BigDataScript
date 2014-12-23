@@ -10,14 +10,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
- * 
+ *
  * @author pcingola
  */
 public class ForLoop extends StatementWithScope {
 
-	// Note:	It is important that 'begin' node is type-checked before the others in order to 
+	// Note:	It is important that 'begin' node is type-checked before the others in order to
 	//			add variables to the scope before ForCondition, ForEnd or Statement uses them.
-	//			So the field name should be alphabetically sorted before the other (that's why 
+	//			So the field name should be alphabetically sorted before the other (that's why
 	//			I call it 'begin' and not 'init').
 	//			Yes, it's a horrible hack.
 	ForInit begin;
@@ -46,14 +46,31 @@ public class ForLoop extends StatementWithScope {
 	}
 
 	/**
-	 * Run 
+	 * Evaluate condition
+	 */
+	boolean runCondition(BigDataScriptThread bdsThread) {
+		if (condition == null) return true;
+
+		condition.run(bdsThread);
+
+		// If we are recovering from a checkpoint, we have to get
+		// into the loop's statements to find the node where the
+		// program created the checkpoint
+		if (bdsThread.isCheckpointRecover()) return true;
+
+		// Return value form 'condition'
+		return popBool(bdsThread);
+	}
+
+	/**
+	 * Run
 	 */
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
 		// Loop initialization
 		if (begin != null) begin.run(bdsThread);
 
-		while (condition != null ? condition.evalBool(bdsThread) : true) { // Loop condition
+		while (runCondition(bdsThread)) { // Loop condition
 			statement.run(bdsThread); // Loop statement
 
 			switch (bdsThread.getRunState()) {

@@ -1,5 +1,5 @@
 
-string tid = task( canFail=true) {
+string tid = task( canFail=true ) {
 	sys echo Hi
 }
 print("Task ID: '$tid'\n")

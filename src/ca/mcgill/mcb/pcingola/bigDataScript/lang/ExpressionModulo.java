@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A module operation
- * 
+ *
  * @author pcingola
  */
 public class ExpressionModulo extends ExpressionMath {
@@ -21,19 +21,23 @@ public class ExpressionModulo extends ExpressionMath {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return left.evalInt(csThread) % right.evalInt(csThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		left.run(bdsThread);
+		right.run(bdsThread);
+		long den = popInt(bdsThread);
+		long num = popInt(bdsThread);
+		bdsThread.push(num % den);
+	}
+
+	@Override
+	protected String op() {
+		return "%";
 	}
 
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		left.checkCanCastInt(compilerMessages);
 		right.checkCanCastInt(compilerMessages);
-	}
-
-	@Override
-	protected String op() {
-		return "%";
 	}
 
 }

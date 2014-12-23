@@ -68,9 +68,8 @@ public class VariableInit extends BigDataScriptNode {
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
 		if (expression != null) {
-			Scope scope = bdsThread.getScope();
-			ScopeSymbol ssym = scope.getSymbol(varName);
-			Object value = expression.eval(bdsThread);
+			expression.run(bdsThread);
+			Object value = bdsThread.pop();
 
 			// Error running expression?
 			if (value == null) {
@@ -78,9 +77,13 @@ public class VariableInit extends BigDataScriptNode {
 				return;
 			}
 
+			// Change variable's value
+			Scope scope = bdsThread.getScope();
+			ScopeSymbol ssym = scope.getSymbol(varName);
 			value = ssym.getType().cast(value);
 			ssym.setValue(value);
 		}
+
 	}
 
 	public void setExpression(Expression expression) {

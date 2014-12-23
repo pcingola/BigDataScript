@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * An expression having an implicit type variable initialization ( varName := expression )
- * 
+ *
  * @author pcingola
  */
 public class ExpressionVariableInitImplicit extends Expression {
@@ -22,16 +22,19 @@ public class ExpressionVariableInitImplicit extends Expression {
 	}
 
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		// Evaluating the expression consists of initializing the variable and getting the result of that initialization
 
 		// Add variable to scope
-		csThread.getScope().add(new ScopeSymbol(vInit.getVarName(), returnType));
+		Scope scope = bdsThread.getScope();
+		scope.add(new ScopeSymbol(vInit.getVarName(), returnType));
 
 		// Evaluate assignment
-		vInit.run(csThread);
+		vInit.run(bdsThread);
 
-		return csThread.getScope().getSymbol(vInit.getVarName());
+		// Return initialization's result
+		ScopeSymbol ssym = scope.getSymbol(vInit.getVarName());
+		bdsThread.push(ssym.getValue());
 	}
 
 	@Override

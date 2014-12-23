@@ -28,18 +28,19 @@ public class LiteralList extends Literal {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		ArrayList list = new ArrayList(values.length);
 		Type baseType = baseType();
 
 		for (BigDataScriptNode node : values) {
 			Expression expr = (Expression) node;
-			Object value = expr.eval(csThread); // Evaluate expression
+			expr.run(bdsThread); // Evaluate expression
+			Object value = bdsThread.pop();
 			value = baseType.cast(value); // Cast to base type
 			list.add(value); // Add it to list
 		}
 
-		return list;
+		bdsThread.push(list);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ int f(int j) {
 
 int i = 1;
 int j = 5;
-int l = i+j;
+int l = i+j;	# l = 6
 
-l = 5 + f(j);
+l = 5 + f(j);	# l = 5 + f(5) = 5 + 10 = 15
 

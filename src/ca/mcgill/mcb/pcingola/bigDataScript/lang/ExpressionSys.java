@@ -25,7 +25,6 @@ public class ExpressionSys extends Expression {
 	protected static int sysId = 1;
 
 	protected String commands;
-	protected String output;
 	InterpolateVars interpolateVars;
 
 	/**
@@ -53,16 +52,6 @@ public class ExpressionSys extends Expression {
 	}
 
 	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-		// Run like a statement and return task ID
-		run(bdsThread);
-		return (output != null ? output : "");
-	}
-
-	/**
 	 * Create an exec ID
 	 */
 	public synchronized String execId(String name, BigDataScriptThread bdsThread) {
@@ -73,7 +62,10 @@ public class ExpressionSys extends Expression {
 
 	public String getCommands(BigDataScriptThread bdsThread) {
 		if (interpolateVars == null) return commands; // No variable interpolation? => Literal
-		return interpolateVars.eval(bdsThread).toString(); // Variable interpolation
+
+		// Variable interpolation
+		interpolateVars.run(bdsThread);
+		return bdsThread.pop().toString();
 	}
 
 	public String getSysFileName(String execId) {
@@ -140,7 +132,9 @@ public class ExpressionSys extends Expression {
 		}
 
 		// Collect output
+		String output = "";
 		if (execResult.stdOut != null) output = execResult.stdOut;
+		bdsThread.push(output);
 	}
 
 	@Override

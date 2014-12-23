@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 
 /**
  * Boolean AND
- * 
+ *
  * @author pcingola
  */
 public class ExpressionLogicAnd extends ExpressionLogic {
@@ -19,8 +19,13 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return left.evalBool(csThread) && right.evalBool(csThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		left.run(bdsThread);
+		if (!((Boolean) bdsThread.peek())) return; // Already false? No need to evaluate the other expression
+
+		// 'AND' only depends on 'right' result (left was true)
+		bdsThread.pop(); // Remove 'left' result from stack
+		right.run(bdsThread);
 	}
 
 	@Override

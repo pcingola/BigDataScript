@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * If statement
- * 
+ *
  * @author pcingola
  */
 public class If extends Statement {
@@ -37,14 +37,31 @@ public class If extends Statement {
 	}
 
 	/**
+	 * Evaluate condition
+	 */
+	boolean runCondition(BigDataScriptThread bdsThread) {
+		if (condition == null) return true;
+
+		condition.run(bdsThread);
+
+		// If we are recovering from a checkpoint, we have to get
+		// into the loop's statements to find the node where the
+		// program created the checkpoint
+		if (bdsThread.isCheckpointRecover()) return true;
+
+		// Return value form 'condition'
+		return popBool(bdsThread);
+	}
+
+	/**
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread csThread) {
-		if (condition == null || condition.evalBool(csThread)) {
-			statement.run(csThread);
+	protected void runStep(BigDataScriptThread bdsThread) {
+		if (runCondition(bdsThread)) {
+			statement.run(bdsThread);
 		} else if (elseStatement != null) {
-			elseStatement.run(csThread);
+			elseStatement.run(bdsThread);
 		}
 	}
 
@@ -72,6 +89,6 @@ public class If extends Statement {
 				&& !condition.isBool() //
 				&& (retType != null) //
 				&& !retType.canCast(Type.BOOL)//
-		) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
+				) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
 	}
 }

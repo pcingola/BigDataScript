@@ -30,10 +30,11 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 	 */
 	@Override
 	@SuppressWarnings("rawtypes")
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 
 		// Get value
-		List list = (List) right.eval(bdsThread);
+		right.run(bdsThread);
+		List list = (List) bdsThread.pop();
 
 		for (int i = 0; i < lefts.length; i++) {
 			// Get variable
@@ -48,7 +49,7 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 			vr.setValue(bdsThread, value);
 		}
 
-		return list;
+		bdsThread.push(list);
 	}
 
 	@Override

@@ -104,34 +104,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	/**
-	 * Evaluate 'task' expression
-	 */
-	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-		// Evaluate task options (get a list of dependencies)
-		TaskDependency taskDependency = null;
-		if (taskOptions != null) {
-			taskDependency = taskOptions.evalTaskDependency(bdsThread);
-			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
-			if (taskDependency == null) return ""; // Task options clause not satisfied. Do not execute task
-
-			boolean needsUpdate = taskDependency.depOperator();
-			if (!needsUpdate) return ""; // Task options clause not satisfied. Do not execute task
-		}
-
-		// Evaluate 'sys' statements
-		ExpressionSys sys = evalSys(bdsThread);
-
-		// Create task
-		Task task = createTask(bdsThread, taskDependency, sys);
-
-		// Schedule task for execution
-		dispatchTask(bdsThread, task);
-
-		return task.getId();
-	}
-
-	/**
 	 * Evaluate 'sys' statements used to create task
 	 */
 	ExpressionSys evalSys(BigDataScriptThread bdsThread) {
@@ -140,7 +112,11 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (statement instanceof ExpressionSys) sys = (ExpressionSys) statement;
 		else if (statement instanceof LiteralString) {
 			LiteralString lstr = (LiteralString) statement;
-			String str = (String) lstr.eval(bdsThread); // Evaluate (e.g. interpolate variables)
+
+			// Evaluate (e.g. interpolate variables)
+			lstr.run(bdsThread);
+			String str = bdsThread.pop().toString();
+
 			sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);
 		} else if (statement instanceof Block) {
 			// Create one sys statement for all sys statements in the block
@@ -193,6 +169,42 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Task expressions return a task ID (a string)
 		returnType = Type.STRING;
 		return returnType;
+	}
+
+	/**
+	 * Evaluate 'task' expression
+	 */
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		// Evaluate task options (get a list of dependencies)
+		TaskDependency taskDependency = null;
+		if (taskOptions != null) {
+			taskDependency = taskOptions.evalTaskDependency(bdsThread);
+			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
+			if (taskDependency == null) {
+				// Task options clause not satisfied. Do not execute task
+				bdsThread.push("");
+				return;
+			}
+
+			boolean needsUpdate = taskDependency.depOperator();
+			if (!needsUpdate) {
+				// Task options clause not satisfied. Do not execute task
+				bdsThread.push("");
+				return;
+			}
+		}
+
+		// Evaluate 'sys' statements
+		ExpressionSys sys = evalSys(bdsThread);
+
+		// Create task
+		Task task = createTask(bdsThread, taskDependency, sys);
+
+		// Schedule task for execution
+		dispatchTask(bdsThread, task);
+
+		bdsThread.push(task.getId());
 	}
 
 	@Override

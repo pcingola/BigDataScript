@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A subtraction
- * 
+ *
  * @author pcingola
  */
 public class ExpressionMinus extends ExpressionMath {
@@ -18,28 +18,51 @@ public class ExpressionMinus extends ExpressionMath {
 	}
 
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		if (right == null) {
+			left.run(bdsThread);
+
 			// This should be an unary expression!
-			if (isInt()) return -left.evalInt(csThread);
-			if (isReal()) return -left.evalReal(csThread);
+			if (isInt()) {
+				bdsThread.push(-popInt(bdsThread));
+				return;
+			}
+
+			if (isReal()) {
+				bdsThread.push(-popReal(bdsThread));
+				return;
+			}
 		} else {
-			if (isInt()) return left.evalInt(csThread) - right.evalInt(csThread);
-			if (isReal()) return left.evalReal(csThread) - right.evalReal(csThread);
+			left.run(bdsThread);
+			right.run(bdsThread);
+
+			if (isInt()) {
+				long tr = popInt(bdsThread);
+				long tl = popInt(bdsThread);
+				bdsThread.push(tl - tr);
+				return;
+			}
+
+			if (isReal()) {
+				double tr = popInt(bdsThread);
+				double tl = popInt(bdsThread);
+				bdsThread.push(tl - tr);
+				return;
+			}
 		}
 
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		left.checkCanCastIntOrReal(compilerMessages);
-		if (right != null) right.checkCanCastIntOrReal(compilerMessages);
+	protected String op() {
+		return "-";
 	}
 
 	@Override
-	protected String op() {
-		return "-";
+	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+		left.checkCanCastIntOrReal(compilerMessages);
+		if (right != null) right.checkCanCastIntOrReal(compilerMessages);
 	}
 
 }

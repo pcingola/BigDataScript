@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.scope;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -53,6 +54,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	String parentNodeId;
 	HashMap<String, ScopeSymbol> symbols;
 	AutoHashMap<String, List<ScopeSymbol>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
+	Deque<Object> stack;
 	BigDataScriptNode node;
 
 	/**
@@ -291,6 +293,19 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		return symbols.keySet().iterator();
 	}
 
+	public Object peek() {
+		return stack.getFirst();
+	}
+
+	public Object pop() {
+		return stack.removeFirst();
+	}
+
+	public void push(Object obj) {
+		if (stack == null) stack = new LinkedList<>();
+		stack.addFirst(obj);
+	}
+
 	/**
 	 * Replace fake nodes by real nodes (serialization)
 	 */
@@ -298,12 +313,17 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		node = BigDataScriptNodeFactory.get().realNode(node);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		// Nothing to do
 		id = (int) serializer.getNextFieldInt();
 		parentNodeId = serializer.getNextFieldString();
 		int nodeId = serializer.getNextFieldNodeId();
+
+		// Stack
+		String b64 = serializer.getNextField();
+		stack = (b64 != null && !b64.isEmpty() ? (Deque<Object>) serializer.base64Decode(b64) : null);
 
 		if (nodeId != 0) {
 			// Node is not null
@@ -321,6 +341,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		out.append("\t" + serializer.serializeSaveValue(id));
 		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getNodeId() : ""));
 		out.append("\t" + serializer.serializeSaveValue(node));
+		out.append("\t" + (stack != null ? serializer.base64encode(stack) : ""));
 		out.append("\n");
 
 		for (ScopeSymbol ss : symbols.values()) {
@@ -348,7 +369,6 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		StringBuilder sb = new StringBuilder();
 		if (parent != null) {
 			String parentStr = parent.toString();
-			// if (!parentStr.isEmpty()) sb.append("\n---------- Scope ----------\n" + parentStr);
 			if (!parentStr.isEmpty()) sb.append(parentStr);
 		}
 
@@ -360,6 +380,13 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		for (ScopeSymbol ss : ssyms)
 			sbThis.append(ss + "\n");
 
+		// Show stack:
+		if (stack != null) {
+			int num = 0;
+			for (Object obj : stack)
+				sbThis.append("Stack[" + (num++) + "]:\t" + obj.toString() + "\n");
+		}
+
 		// Show scope functions
 		if (showFunc && functions != null) {
 			for (String fname : functions.keySet())
@@ -370,6 +397,27 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		// Show header
 		if (sbThis.length() > 0) sb.append("\n---------- Scope " + getScopeName() + " ----------\n" + sbThis.toString());
 
+		return sb.toString();
+	}
+
+	public String toStringScopeNames() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Scopes:\n");
+
+		int i = 0;
+		for (Scope scope = this; scope != null; scope = scope.getParent())
+			sb.append("\t" + (i++) + ": " + scope.getScopeName() + "\n");
+
+		return sb.toString();
+	}
+
+	public String toStringStack() {
+		StringBuilder sb = new StringBuilder();
+		if (stack != null) {
+			int num = 0;
+			for (Object obj : stack)
+				sb.append("Stack[" + (num++) + "]:\t" + obj.getClass().getSimpleName() + "\t" + obj.toString() + "\n");
+		}
 		return sb.toString();
 	}
 }

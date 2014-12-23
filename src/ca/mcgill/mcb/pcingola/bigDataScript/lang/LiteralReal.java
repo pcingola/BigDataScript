@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A real literal
- * 
+ *
  * @author pcingola
  */
 public class LiteralReal extends Literal {
@@ -20,8 +20,8 @@ public class LiteralReal extends Literal {
 	}
 
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return value;
+	public void runStep(BigDataScriptThread csThread) {
+		csThread.push(value);
 	}
 
 	public double getValue() {

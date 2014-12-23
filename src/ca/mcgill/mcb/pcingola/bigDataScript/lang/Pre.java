@@ -26,16 +26,17 @@ public class Pre extends ExpressionUnary {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
-		long value = (Long) ref.eval(csThread);
+		ref.run(bdsThread);
+		long value = popInt(bdsThread);
 
 		if (operation == PrePostOperation.INCREMENT) value++;
 		else if (operation == PrePostOperation.DECREMENT) value--;
 		else throw new RuntimeException("Unknown operator " + operation);
 
-		ref.setValue(csThread, value);
-		return value;
+		ref.setValue(bdsThread, value);
+		bdsThread.push(value);
 	}
 
 	@Override

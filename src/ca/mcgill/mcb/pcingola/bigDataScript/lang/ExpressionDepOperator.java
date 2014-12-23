@@ -29,44 +29,16 @@ public class ExpressionDepOperator extends Expression {
 	}
 
 	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-		TaskDependency taskDependency = evalTaskDependency(bdsThread);
-		boolean dep = taskDependency.depOperator();
-		return dep;
-	}
-
-	/**
-	 * Evaluate all expressions in the array.
-	 * @return A list of Strings with the results of all evaluations
-	 */
-	@SuppressWarnings("rawtypes")
-	public List<String> eval(BigDataScriptThread bdsThread, Expression expr[]) {
-		ArrayList<String> resList = new ArrayList<String>();
-
-		for (Expression e : expr) {
-			Object result = e.eval(bdsThread);
-
-			if (result instanceof List) {
-				// Flatten the list
-				List l = (List) result;
-				for (Object o : l)
-					resList.add(o.toString());
-			} else resList.add(result.toString());
-		}
-
-		return resList;
-	}
-
-	/**
 	 * Evaluate expressions and create a task dependency
 	 */
+	@SuppressWarnings("unchecked")
 	public TaskDependency evalTaskDependency(BigDataScriptThread bdsThread) {
 		// All expressions are evaluated
-		List<String> leftEval = eval(bdsThread, left);
-		List<String> rightEval = eval(bdsThread, right);
+		runStep(bdsThread, left);
+		List<String> leftEval = (List<String>) bdsThread.pop();
+
+		runStep(bdsThread, right);
+		List<String> rightEval = (List<String>) bdsThread.pop();
 
 		TaskDependency taskDependency = new TaskDependency(this);
 		taskDependency.addOutput(leftEval);
@@ -112,6 +84,39 @@ public class ExpressionDepOperator extends Expression {
 
 		returnType = Type.BOOL;
 		return returnType;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		TaskDependency taskDependency = evalTaskDependency(bdsThread);
+		boolean dep = taskDependency.depOperator();
+		bdsThread.push(dep);
+	}
+
+	/**
+	 * Evaluate all expressions in the array.
+	 * @return A list of Strings with the results of all evaluations
+	 */
+	@SuppressWarnings("rawtypes")
+	public void runStep(BigDataScriptThread bdsThread, Expression expr[]) {
+		ArrayList<String> resList = new ArrayList<String>();
+
+		for (Expression e : expr) {
+			e.run(bdsThread);
+			Object result = bdsThread.pop();
+
+			if (result instanceof List) {
+				// Flatten the list
+				List l = (List) result;
+				for (Object o : l)
+					resList.add(o.toString());
+			} else resList.add(result.toString());
+		}
+
+		bdsThread.push(resList);
 	}
 
 	@Override

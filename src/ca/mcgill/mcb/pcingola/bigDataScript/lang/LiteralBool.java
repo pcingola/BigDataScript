@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A boolean literal
- * 
+ *
  * @author pcingola
  */
 public class LiteralBool extends Literal {
@@ -23,8 +23,8 @@ public class LiteralBool extends Literal {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return value;
+	public void runStep(BigDataScriptThread bdsThread) {
+		bdsThread.push(value);
 	}
 
 	public boolean isValue() {

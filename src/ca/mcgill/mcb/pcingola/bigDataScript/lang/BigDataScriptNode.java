@@ -118,44 +118,12 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		}
 	}
 
-	/**
-	 * Evaluate an expression, return result
-	 */
-	public Object eval(BigDataScriptThread bdsThread) {
-		throw new RuntimeException("Unplemented method 'eval' for class " + getClass().getSimpleName());
-	}
-
-	/**
-	 * Evaluate an expression as an 'bool'
-	 */
-	public boolean evalBool(BigDataScriptThread bdsThread) {
-		Object ret = eval(bdsThread);
-		return (Boolean) Type.BOOL.cast(ret);
-	}
-
-	/**
-	 * Evaluate an expression as an 'int'
-	 */
-	public long evalInt(BigDataScriptThread bdsThread) {
-		Object ret = eval(bdsThread);
-		return (Long) Type.INT.cast(ret);
-	}
-
-	/**
-	 * Evaluate an expression as an 'real'
-	 */
-	public double evalReal(BigDataScriptThread bdsThread) {
-		Object ret = eval(bdsThread);
-		return (Double) Type.REAL.cast(ret);
-	}
-
-	/**
-	 * Evaluate an expression as an 'bool'
-	 */
-	public String evalString(BigDataScriptThread bdsThread) {
-		Object ret = eval(bdsThread);
-		return (String) Type.STRING.cast(ret);
-	}
+	//	/**
+	//	 * Evaluate an expression, return result
+	//	 */
+	//	public void runStep(BigDataScriptThread bdsThread) {
+	//		throw new RuntimeException("Unplemented method 'eval' for class " + getClass().getSimpleName());
+	//	}
 
 	/**
 	 * Create a BigDataScriptNode
@@ -516,6 +484,34 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	protected abstract void parse(ParseTree tree);
 
 	/**
+	 * Pop a bool from stack
+	 */
+	public boolean popBool(BigDataScriptThread bdsThread) {
+		return (Boolean) Type.BOOL.cast(bdsThread.pop());
+	}
+
+	/**
+	 * Pop an int from stack
+	 */
+	public long popInt(BigDataScriptThread bdsThread) {
+		return (Long) Type.INT.cast(bdsThread.pop());
+	}
+
+	/**
+	 * Pop a real from stack
+	 */
+	public double popReal(BigDataScriptThread bdsThread) {
+		return (Double) Type.REAL.cast(bdsThread.pop());
+	}
+
+	/**
+	 * Pop a string from stack
+	 */
+	public String popString(BigDataScriptThread bdsThread) {
+		return (String) Type.STRING.cast(bdsThread.pop());
+	}
+
+	/**
 	 * Show a parseTree node
 	 */
 	void printNode(ParseTree tree) {
@@ -589,18 +585,27 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 * Run this node
 	 */
 	public void run(BigDataScriptThread bdsThread) {
-		boolean recover = bdsThread.isCheckpointRecover();
-
-		if (!recover) runBegin(bdsThread); // Before node execution
+		// Before node execution
+		if (!bdsThread.isCheckpointRecover()) runBegin(bdsThread);
 
 		try {
 			// Run?
-			if (bdsThread.shouldRun(this)) runStep(bdsThread);
+			if (bdsThread.shouldRun(this)) {
+				//				Gpr.debug("Run Step: " + this.getClass().getSimpleName() //
+				//						+ "\t" + this //
+				//						+ "\n\tPC: " + bdsThread.getPc() //
+				//						+ "\n\tStack: " + bdsThread.getScope().toStringStack() //
+				//						+ "\n\tScope:\n" + sb //
+				//				);
+
+				runStep(bdsThread);
+			}
 		} catch (Throwable t) {
 			bdsThread.fatalError(this, t);
 		}
 
-		if (!recover) runEnd(bdsThread); // After node execution
+		// After node execution
+		if (!bdsThread.isCheckpointRecover()) runEnd(bdsThread);
 	}
 
 	/**
@@ -608,7 +613,10 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	protected void runBegin(BigDataScriptThread bdsThread) {
 		// Need a new scope?
-		if (isNeedsScope()) bdsThread.newScope(this);
+		if (isNeedsScope()) {
+			bdsThread.newScope(this);
+		}
+
 		bdsThread.getPc().push(this);
 	}
 
@@ -617,8 +625,11 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	protected void runEnd(BigDataScriptThread bdsThread) {
 		bdsThread.getPc().pop(this);
+
 		// Restore old scope?
-		if (isNeedsScope()) bdsThread.oldScope();
+		if (isNeedsScope()) {
+			bdsThread.oldScope();
+		}
 	}
 
 	protected void runStep(BigDataScriptThread bdsThread) {

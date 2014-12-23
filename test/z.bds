@@ -1,21 +1,10 @@
-#!/usr/bin/env bds
 
+int j = 5
+int i
 
-string out
-
-for( int i : range(0, 10) ) {
-	if( i == 1 )	continue;
-	print "i: $i\n";
-
-	for( int j : range(0, 10) ) {
-		if( j == 3 )	continue;
-		print "\tj: $j\n";
-		out = "$i\t$j"
-		if( j == 7 )	break;
-	}
-
-	if( i == 5 )	break;
+for( i = 0 ; i < 10 ; i++ ) {
+	print "for: $i\n"
+	checkpoint "test/z.bds.chp"
 }
 
-
-print "out = '$out'\n"
+print "Done\n"

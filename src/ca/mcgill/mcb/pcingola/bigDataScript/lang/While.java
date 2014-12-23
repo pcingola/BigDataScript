@@ -33,11 +33,28 @@ public class While extends Statement {
 	}
 
 	/**
+	 * Evaluate condition
+	 */
+	boolean runCondition(BigDataScriptThread bdsThread) {
+		if (condition == null) return true;
+
+		condition.run(bdsThread);
+
+		// If we are recovering from a checkpoint, we have to get
+		// into the loop's statements to find the node where the
+		// program created the checkpoint
+		if (bdsThread.isCheckpointRecover()) return true;
+
+		// Return value form 'condition'
+		return popBool(bdsThread);
+	}
+
+	/**
 	 * Run the program
 	 */
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
-		while (condition != null ? condition.evalBool(bdsThread) : true) { // Loop condition
+		while (runCondition(bdsThread)) { // Loop condition
 			statement.run(bdsThread);
 
 			switch (bdsThread.getRunState()) {

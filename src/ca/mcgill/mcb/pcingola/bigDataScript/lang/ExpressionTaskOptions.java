@@ -27,9 +27,9 @@ public class ExpressionTaskOptions extends ExpressionList {
 	 * @return true if all clauses are satisfied and taskDependency was created.
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		TaskDependency taskDeps = evalTaskDependency(bdsThread);
-		return taskDeps != null;
+		bdsThread.push(taskDeps != null);
 	}
 
 	/**
@@ -53,7 +53,8 @@ public class ExpressionTaskOptions extends ExpressionList {
 
 				sat &= (taskDepsExpr != null); // Convert expression to boolean
 			} else {
-				Object value = expr.eval(bdsThread);
+				expr.run(bdsThread);
+				Object value = bdsThread.pop();
 				if (expr instanceof ExpressionAssignment) ; // Nothing to do
 				else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
 				else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean
@@ -94,7 +95,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 		for (Expression e : expressions)
 			if (!(e instanceof ExpressionAssignment) //
 					&& !(e instanceof ExpressionVariableInitImplicit) //
-					) {
+			) {
 				// Cannot convert to bool? => We cannot use the expression
 				if (!e.getReturnType().canCast(Type.BOOL)) compilerMessages.add(this, "Only assignment, implicit variable declarations or boolean expressions are allowed in task options", MessageType.ERROR);
 			}

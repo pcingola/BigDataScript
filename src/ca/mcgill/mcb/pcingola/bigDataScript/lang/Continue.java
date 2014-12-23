@@ -29,7 +29,7 @@ public class Continue extends Statement {
 	 */
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
-		bdsThread.setRunState(RunState.CONTINUE);
+		if (!bdsThread.isCheckpointRecover()) bdsThread.setRunState(RunState.CONTINUE);
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 
 /**
  * A bitwise AND
- * 
+ *
  * @author pcingola
  */
 public class ExpressionBitAnd extends ExpressionBit {
@@ -19,8 +19,10 @@ public class ExpressionBitAnd extends ExpressionBit {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return left.evalInt(csThread) & right.evalInt(csThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		left.run(bdsThread);
+		right.run(bdsThread);
+		bdsThread.push(left.popInt(bdsThread) & right.popInt(bdsThread));
 	}
 
 	@Override

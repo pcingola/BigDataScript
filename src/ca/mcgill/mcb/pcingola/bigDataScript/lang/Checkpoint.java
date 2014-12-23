@@ -34,7 +34,10 @@ public class Checkpoint extends Statement {
 	protected void runStep(BigDataScriptThread bdsThread) {
 		// Get filename
 		String file = null;
-		if (expr != null) file = expr.evalString(bdsThread);
+		if (expr != null) {
+			expr.run(bdsThread);
+			file = popString(bdsThread);
+		}
 
 		if (file != null) bdsThread.checkpoint(file);
 		else bdsThread.checkpoint(this);

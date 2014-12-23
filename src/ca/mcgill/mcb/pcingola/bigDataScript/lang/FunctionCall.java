@@ -25,40 +25,29 @@ public class FunctionCall extends Expression {
 	}
 
 	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-		// Evaluate function arguments
-		Object arguments[] = evalFunctionArguments(bdsThread);
-
-		// Apply function to parameters
-		return functionDeclaration.apply(bdsThread, arguments);
-	}
-
-	/**
 	 * Apply function to pre-calculated parameters
 	 */
-	public Object eval(BigDataScriptThread bdsThread, Object arguments[]) {
-		return functionDeclaration.apply(bdsThread, arguments);
+	public void apply(BigDataScriptThread bdsThread, Object arguments[]) {
+		bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
 	}
 
 	/**
 	 * Evaluate function's arguments
 	 */
-	public Object[] evalFunctionArguments(BigDataScriptThread bdsThread) {
+	public void evalFunctionArguments(BigDataScriptThread bdsThread) {
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
 
 		// Evaluate all expressions
 		Object values[] = new Object[fparam.length];
 		for (int i = 0; i < fparam.length; i++) {
-			Object value = arguments[i].eval(bdsThread);
+			arguments[i].run(bdsThread);
+			Object value = bdsThread.pop();
 			value = fparam[i].type.cast(value);
 			values[i] = value;
 		}
 
-		return values;
+		bdsThread.push(values);
 	}
 
 	@Override
@@ -98,7 +87,15 @@ public class FunctionCall extends Expression {
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
 		try {
-			eval(bdsThread);
+			Object arguments[] = null;
+			if (!bdsThread.isCheckpointRecover()) {
+				// Evaluate function arguments
+				evalFunctionArguments(bdsThread);
+				arguments = (Object[]) bdsThread.pop();
+			}
+
+			// Apply function to parameters
+			bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
 		} catch (Throwable t) {
 			if (Config.get().isDebug()) t.printStackTrace();
 			bdsThread.fatalError(this, t);

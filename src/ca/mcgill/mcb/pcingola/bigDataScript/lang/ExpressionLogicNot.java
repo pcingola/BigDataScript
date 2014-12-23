@@ -22,8 +22,9 @@ public class ExpressionLogicNot extends ExpressionUnary {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		return !expr.evalBool(csThread);
+	public void runStep(BigDataScriptThread csThread) {
+		expr.run(csThread);
+		csThread.push(!popBool(csThread));
 	}
 
 	@Override

@@ -22,7 +22,8 @@ public class Expression extends Statement {
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
 		try {
-			eval(bdsThread);
+			run(bdsThread);
+			bdsThread.pop();
 		} catch (Throwable t) {
 			if (Config.get().isDebug()) t.printStackTrace();
 			bdsThread.fatalError(this, t);

@@ -28,9 +28,10 @@ public class ExpressionCond extends Expression {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread bdsThread) {
-		if (expr.evalBool(bdsThread)) return exprTrue.eval(bdsThread);
-		return exprFalse.eval(bdsThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		expr.run(bdsThread);
+		if (popBool(bdsThread)) exprTrue.run(bdsThread);
+		else exprFalse.run(bdsThread);
 	}
 
 	@Override

@@ -23,10 +23,14 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
-		if (returnType == Type.INT) return -expr.evalInt(csThread);
-		else if (returnType == Type.REAL) return -expr.evalReal(csThread);
-		else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
+	public void runStep(BigDataScriptThread bdsThread) {
+		expr.run(bdsThread);
+
+		if (returnType == Type.INT) {
+			bdsThread.push(-popInt(bdsThread));
+		} else if (returnType == Type.REAL) {
+			bdsThread.push(-popReal(bdsThread));
+		} else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
 
 	@Override

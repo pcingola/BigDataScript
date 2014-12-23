@@ -21,15 +21,16 @@ public class Post extends Pre {
 	 * Evaluate an expression
 	 */
 	@Override
-	public Object eval(BigDataScriptThread csThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
-		long value = (Long) ref.eval(csThread);
+		ref.run(bdsThread);
+		long value = popInt(bdsThread);
 
-		if (operation == PrePostOperation.INCREMENT) ref.setValue(csThread, value + 1);
-		else if (operation == PrePostOperation.DECREMENT) ref.setValue(csThread, value - 1);
+		if (operation == PrePostOperation.INCREMENT) ref.setValue(bdsThread, value + 1);
+		else if (operation == PrePostOperation.DECREMENT) ref.setValue(bdsThread, value - 1);
 		else throw new RuntimeException("Unknown operator " + operation);
 
-		return value;
+		bdsThread.push(value);
 	}
 
 	@Override
