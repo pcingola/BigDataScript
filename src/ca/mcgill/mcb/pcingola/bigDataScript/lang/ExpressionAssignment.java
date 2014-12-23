@@ -53,7 +53,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 			listIndex.setValue(bdsThread, value);
 		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 
-		// bdsThread.push(value);
+		bdsThread.push(value);
 	}
 
 	@Override
