@@ -11,8 +11,9 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test17_checkpoint_listIndex() {
-		runAndCheckpoint("test/z.bds", "test/z.chp", "res", "34");
+	public void test11() {
+		// Run pipeline and test checkpoint
+		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
 	}
 
 }

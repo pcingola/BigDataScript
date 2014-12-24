@@ -74,12 +74,13 @@ public class BigDataScript {
 
 	boolean verbose;
 	boolean debug;
-	boolean log;
-	boolean dryRun;
-	boolean noRmOnExit;
-	boolean createReport;
-	boolean useDoneFile;
-	boolean extractSource;
+	boolean log; // Log everything
+	boolean dryRun; // Dry run (do not run tasks)
+	boolean noRmOnExit; // Do not remove files on exit
+	boolean createReport; // Create report
+	boolean useDoneFile; // Use files instead of comparing dates
+	boolean extractSource; // Extract source code fmor checkpoint
+	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
 	int taskFailCount = -1;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
@@ -157,7 +158,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-					);
+			);
 			return null;
 		}
 	}
@@ -863,7 +864,7 @@ public class BigDataScript {
 		int exitCode = runThread(bdsThread);
 
 		// Check stack
-		bdsThread.sanityCheckStack();
+		if (stackCheck) bdsThread.sanityCheckStack();
 
 		return exitCode;
 	}
@@ -915,7 +916,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-				);
+		);
 		return exitCode;
 	}
 
@@ -934,8 +935,15 @@ public class BigDataScript {
 			return 1;
 		}
 
+		// Check stack
+		if (stackCheck) bdsThread.sanityCheckStack();
+
 		// OK, we are done
 		return bdsThread.getExitValue();
+	}
+
+	public void setStackCheck(boolean stackCheck) {
+		this.stackCheck = stackCheck;
 	}
 
 	void usage(String err) {

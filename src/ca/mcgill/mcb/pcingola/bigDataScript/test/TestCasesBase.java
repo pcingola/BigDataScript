@@ -30,6 +30,7 @@ public class TestCasesBase extends TestCase {
 		String argsv[] = { "-v", fileName };
 
 		BigDataScript bigDataScript = new BigDataScript(verbose ? argsv : args);
+		bigDataScript.setStackCheck(true);
 		return bigDataScript;
 	}
 
@@ -43,6 +44,7 @@ public class TestCasesBase extends TestCase {
 		args = l.toArray(new String[0]);
 
 		BigDataScript bigDataScript = new BigDataScript(args);
+		bigDataScript.setStackCheck(true);
 		return bigDataScript;
 	}
 
@@ -123,6 +125,7 @@ public class TestCasesBase extends TestCase {
 		// Compile & Run
 		BigDataScript bigDataScript = new BigDataScript(argsArray);
 		bigDataScript = new BigDataScript(argsArray);
+		bigDataScript.setStackCheck(true);
 		bigDataScript.run();
 		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
@@ -137,7 +140,7 @@ public class TestCasesBase extends TestCase {
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-			);
+					);
 		}
 	}
 
@@ -177,6 +180,7 @@ public class TestCasesBase extends TestCase {
 		String args2[] = { "-r", chpFileName };
 		String args2v[] = { "-v", "-r", chpFileName };
 		BigDataScript bigDataScript2 = new BigDataScript(verbose ? args2v : args2);
+		bigDataScript2.setStackCheck(true);
 		bigDataScript2.run();
 
 		// Check that values match
