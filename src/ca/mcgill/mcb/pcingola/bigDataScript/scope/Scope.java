@@ -81,6 +81,10 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		globalScope = new Scope(null, null);
 	}
 
+	public static void setGlobalScope(Scope newGlobalScope) {
+		globalScope = newGlobalScope;
+	}
+
 	public Scope() {
 		parent = getGlobalScope();
 		node = null;

@@ -463,6 +463,10 @@ public class BigDataScriptSerializer {
 				Scope parentScope = (Scope) nodesById.get(parentScopeId);
 				if (parentScope == null) throw new RuntimeException("Cannot find scope node '" + parentScope + "'");
 				scope.setParent(parentScope);
+			} else {
+				// Root (a.k.a. Global) scope
+				scope.setParent(null);
+				Scope.setGlobalScope(scope);
 			}
 		}
 

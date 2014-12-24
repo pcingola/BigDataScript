@@ -2,8 +2,11 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
 import java.io.File;
 
+import org.junit.Assert;
 import org.junit.Test;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class TestCasesCheckpoint extends TestCasesBase {
@@ -181,6 +184,24 @@ public class TestCasesCheckpoint extends TestCasesBase {
 	@Test
 	public void test18_checkpoint_listIndex() {
 		runAndCheckpoint("test/checkpoint_18.bds", "test/checkpoint_18.chp", "res", "34");
+	}
+
+	@Test
+	public void test19_scope_global_global() {
+		// Run pipeline and test checkpoint
+		BigDataScript bds = runAndCheckpoint("test/checkpoint_19.bds", "test/checkpoint_19.chp", "ok", "true");
+
+		// Get scope names
+		BigDataScriptThread bdsThread = bds.getBigDataScriptThread();
+		String scopeNames = bdsThread.getScope().toStringScopeNames();
+
+		// Count number of global scopes
+		int count = 0;
+		for (String line : scopeNames.split("\n")) {
+			if (line.contains("Global")) count++;
+		}
+
+		Assert.assertTrue("There should be one and only one 'Global' scope (count = " + count + ")", count == 1);
 	}
 
 }

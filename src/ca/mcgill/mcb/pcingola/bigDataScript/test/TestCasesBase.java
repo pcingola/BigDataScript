@@ -147,14 +147,14 @@ public class TestCasesBase extends TestCase {
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	void runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue) {
-		runAndCheckpoint(fileName, checkpointFileName, varname, expectedValue, null);
+	BigDataScript runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue) {
+		return runAndCheckpoint(fileName, checkpointFileName, varname, expectedValue, null);
 	}
 
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	void runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue, Runnable runBeforeRecover) {
+	BigDataScript runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue, Runnable runBeforeRecover) {
 		// Compile
 		BigDataScript bigDataScript = bds(fileName);
 		bigDataScript.run();
@@ -189,6 +189,8 @@ public class TestCasesBase extends TestCase {
 
 		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 		Assert.assertEquals(expectedValue, ssym.getValue().toString());
+
+		return bigDataScript2;
 	}
 
 	/**

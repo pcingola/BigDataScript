@@ -158,7 +158,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
@@ -828,8 +828,15 @@ public class BigDataScript {
 		// ProgramUnit's scope it the one before 'global'
 		BigDataScriptThread mainThread = bdsThreads.get(0);
 		programUnit = mainThread.getProgramUnit();
-		for (Scope scope = mainThread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent())
+
+		//for (Scope scope = mainThread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent()) {
+		Scope scope = mainThread.getScope();
+		programUnit.setRunScope(scope);
+		programUnit.setScope(scope);
+		for (; (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent()) {
 			programUnit.setRunScope(scope);
+			programUnit.setScope(scope);
+		}
 
 		// Set state and recover tasks
 		for (BigDataScriptThread bdsThread : bdsThreads) {
@@ -916,7 +923,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-		);
+				);
 		return exitCode;
 	}
 
