@@ -43,8 +43,11 @@ public class FunctionCall extends Expression {
 		for (int i = 0; i < fparam.length; i++) {
 			arguments[i].run(bdsThread);
 			Object value = bdsThread.pop();
-			value = fparam[i].type.cast(value);
-			values[i] = value;
+
+			if (!bdsThread.isCheckpointRecover()) {
+				value = fparam[i].type.cast(value);
+				values[i] = value;
+			}
 		}
 
 		bdsThread.push(values);
@@ -87,12 +90,9 @@ public class FunctionCall extends Expression {
 	@Override
 	protected void runStep(BigDataScriptThread bdsThread) {
 		try {
-			Object arguments[] = null;
-			if (!bdsThread.isCheckpointRecover()) {
-				// Evaluate function arguments
-				evalFunctionArguments(bdsThread);
-				arguments = (Object[]) bdsThread.pop();
-			}
+			// Evaluate function arguments
+			evalFunctionArguments(bdsThread);
+			Object arguments[] = (Object[]) bdsThread.pop();
 
 			// Apply function to parameters
 			bdsThread.push(functionDeclaration.apply(bdsThread, arguments));

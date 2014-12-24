@@ -118,13 +118,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		}
 	}
 
-	//	/**
-	//	 * Evaluate an expression, return result
-	//	 */
-	//	public void runStep(BigDataScriptThread bdsThread) {
-	//		throw new RuntimeException("Unplemented method 'eval' for class " + getClass().getSimpleName());
-	//	}
-
 	/**
 	 * Create a BigDataScriptNode
 	 */

@@ -693,7 +693,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public boolean isCheckpointRecover() {
 		return runState == RunState.WAIT_RECOVER //
 				|| runState == RunState.CHECKPOINT_RECOVER //
-		;
+				;
 	}
 
 	public boolean isDebug() {
@@ -868,7 +868,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
