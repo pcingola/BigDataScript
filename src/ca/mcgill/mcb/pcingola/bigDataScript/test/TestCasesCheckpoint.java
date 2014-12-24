@@ -173,4 +173,9 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_16.bds", "test/checkpoint_16.chp", "fn", "120");
 	}
 
+	@Test
+	public void test17_checkpoint_listIndex() {
+		runAndCheckpoint("test/checkpoint_17.bds", "test/checkpoint_17.chp", "res", "19");
+	}
+
 }
