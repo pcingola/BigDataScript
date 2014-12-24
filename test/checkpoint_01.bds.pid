@@ -237,3 +237,33 @@ test/checkpoint_09.csv	-
 test/checkpoint_09.xml	+	rm
 10760	-
 test/checkpoint_09.xml	-
+10777	+	
+10776	+	
+10776	-
+10777	-
+10783	+	
+10783	-
+10787	+	
+test/checkpoint_08.csv	+	rm
+10787	-
+test/checkpoint_08.csv	-
+10790	+	
+test/checkpoint_08.xml	+	rm
+10790	-
+test/checkpoint_08.xml	-
+10793	+	
+test/checkpoint_08.csv	+	rm
+10793	-
+test/checkpoint_08.csv	-
+10796	+	
+test/checkpoint_08.xml	+	rm
+10796	-
+test/checkpoint_08.xml	-
+10799	+	
+test/checkpoint_09.csv	+	rm
+10799	-
+test/checkpoint_09.csv	-
+10802	+	
+test/checkpoint_09.xml	+	rm
+10802	-
+test/checkpoint_09.xml	-
