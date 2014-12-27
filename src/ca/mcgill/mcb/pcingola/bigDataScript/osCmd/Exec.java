@@ -22,7 +22,6 @@ public class Exec {
 
 	/**
 	 * How many running threads do we have?
-	 * @return
 	 */
 	public static int countRunningThreads() {
 		return Math.max(java.lang.Thread.activeCount(), ManagementFactory.getThreadMXBean().getThreadCount());

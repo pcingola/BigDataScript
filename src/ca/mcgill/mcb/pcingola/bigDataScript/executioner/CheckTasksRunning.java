@@ -1,8 +1,10 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
@@ -28,17 +30,20 @@ public class CheckTasksRunning {
 
 	public static final int CHECK_TASK_RUNNING_INTERVAL = 60;
 	public static final int TASK_STATE_MIN_START_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
+	public static final int TASK_NOT_FOUND_DISAPPEARED = 3; // How many times do we have to 'not find' a task to consider it gone
 
 	protected Timer time; // Timer for checking that tasks are still running
 	protected String[] defaultCmdArgs;
 	protected Executioner executioner;
 	protected ExecResult cmdExecResult;
 	protected int cmdPidColumn; // Column in which command outputs PID
+	protected Map<String, Integer> missingCount; // How many times was a task missing?
 
 	public CheckTasksRunning(Executioner executioner) {
 		this.executioner = executioner;
 		defaultCmdArgs = new String[0];
 		cmdPidColumn = 0;
+		missingCount = new HashMap<String, Integer>();
 	}
 
 	/**
@@ -51,7 +56,7 @@ public class CheckTasksRunning {
 	 * 		iv) If any task was not found, mark it as an finished/error
 	 */
 	public void check() {
-		if (!isCheckTasksRunningTime()) return; // Check every now and then
+		if (!shouldCheck()) return; // Check every now and then
 
 		// Run a command to query running PIDs
 		if (!runCommand()) return;
@@ -82,15 +87,16 @@ public class CheckTasksRunning {
 	}
 
 	/**
-	 * Should we query task states? (i.e. run a command to see if tasks are still alive)
+	 * Increment counter that keeps track on how many times in a row a task was missing
+	 * @return true if task should be considered 'missing'
 	 */
-	protected boolean isCheckTasksRunningTime() {
-		if (time == null) time = new Timer();
-		if (time.elapsedSecs() > CHECK_TASK_RUNNING_INTERVAL) {
-			time.start(); // Restart timer
-			return true;
-		}
-		return false;
+	protected boolean incMissingCount(Task task) {
+		String id = task.getId();
+		int count = (missingCount.containsKey(id) ? missingCount.get(id) + 1 : 1);
+		missingCount.put(id, count);
+
+		Gpr.debug("WARNING: Task PID '" + task.getPid() + "' not found. Incrementing count as 'missing': " + count + "(max. allowed " + TASK_NOT_FOUND_DISAPPEARED + ")");
+		return count > TASK_NOT_FOUND_DISAPPEARED;
 	}
 
 	/**
@@ -120,6 +126,13 @@ public class CheckTasksRunning {
 	}
 
 	/**
+	 * Reset counter (task was found)
+	 */
+	protected void resetMissingCount(Task task) {
+		missingCount.remove(task.getId());
+	}
+
+	/**
 	 * Run a command to find running processes PIDs
 	 * @return true if OK, false on failure
 	 */
@@ -136,18 +149,49 @@ public class CheckTasksRunning {
 		cmdExecResult = Exec.exec(args, true);
 		if (debug) Gpr.debug("Check task running command: exit value " + cmdExecResult.exitValue + ", stdout len: " + cmdExecResult.stdOut.length());
 
-		// Any problems? Report
+		//---
+		// Sanity checks!
+		//---
+
+		// Failed command?
 		if (cmdExecResult.exitValue > 0) {
-			Timer.showStdErr("WARNING: There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'");
+			Timer.showStdErr("WARNING: There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'.\nExit code: " + cmdExecResult.exitValue);
 			return false;
 		}
 
+		// Any problems reported on STDERR?
+		if (cmdExecResult.stdErr.length() > 0) {
+			Timer.showStdErr("WARNING: There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'\nSTDERR:\n" + cmdExecResult.stdErr);
+			return false;
+		}
+
+		// Empty STDOUT?
+		// Note: This might not be a problem, but a cluster (or any computer) running
+		// zero processes is really weird. Furthermore, this commands usually show some
+		// kind of header, so STDOUT is never empty
+		if (cmdExecResult.stdOut.isEmpty()) {
+			Timer.showStdErr("WARNING: Empty STDOUT when executing cluster stat command: '" + cmdsb.toString().trim());
+			return false;
+		}
+
+		// OK
 		return true;
 	}
 
 	/**
-	 * Update tasks according to 'qstat' command
-	 * @param taskFoundId
+	 * Should we query task states? (i.e. run a command to see if tasks are still alive)
+	 */
+	protected boolean shouldCheck() {
+		if (time == null) time = new Timer();
+		if (time.elapsedSecs() > CHECK_TASK_RUNNING_INTERVAL) {
+			time.start(); // Restart timer
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Update tasks according to cluster status
 	 */
 	protected synchronized void tasksRunning(Set<Task> taskFoundId) {
 		LinkedList<Task> finished = null;
@@ -158,13 +202,22 @@ public class CheckTasksRunning {
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
-					) {
-				if (finished == null) finished = new LinkedList<Task>();
-				finished.add(task);
+			) {
+				// Task is missing.
+				// Update counter: Should we consider this task as 'missing'?
+				if (incMissingCount(task)) {
+					if (finished == null) finished = new LinkedList<Task>();
+					finished.add(task);
+				}
+			} else {
+				// Task was found, reset 'missing' counter (if any)
+				resetMissingCount(task);
 			}
 		}
 
+		//---
 		// Any task to mark as finished/ERROR?
+		//---
 		if (finished != null) {
 			for (Task task : finished) {
 				String tpid = task.getPid() != null ? task.getPid() : "";
@@ -178,5 +231,4 @@ public class CheckTasksRunning {
 			}
 		}
 	}
-
 }

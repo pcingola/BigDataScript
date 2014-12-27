@@ -118,6 +118,27 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	/**
+	 * Create bds-exec commnad
+	 */
+	protected String bdsCommand(Task task) {
+		StringBuilder bdsCmd = new StringBuilder();
+
+		// Calculate timeout
+		HostResources res = task.getResources();
+		int realTimeout = (int) res.getTimeout();
+
+		// Create command
+		bdsCmd.append(bdsCommand);
+		bdsCmd.append(realTimeout + " ");
+		bdsCmd.append("'" + task.getStdoutFile() + "' ");
+		bdsCmd.append("'" + task.getStderrFile() + "' ");
+		bdsCmd.append("'" + task.getExitCodeFile() + "' ");
+		bdsCmd.append("'" + task.getProgramFileName() + "' ");
+
+		return bdsCmd.toString();
+	}
+
+	/**
 	 * Calculate timeout parameter. We want to assign slightly larger timeout
 	 * to the cluster (qsub/msub), because we prefer bds to kill the process (it's
 	 * cleaner and we get exitCode file)
@@ -143,9 +164,6 @@ public class ExecutionerCluster extends Executioner {
 	 * they don't do it properly, sometimes they add
 	 * headers & footers, sometimes they mixed STDOUT
 	 * and STDERR in a single file, etc.
-	 *
-	 * @param fileName
-	 * @return
 	 */
 	String clusterStdFile(String fileName) {
 		return fileName + ".cluster";
@@ -168,7 +186,7 @@ public class ExecutionerCluster extends Executioner {
 
 		// Add resources request
 		HostResources res = task.getResources();
-		int realTimeout = (int) res.getTimeout();
+		res.getTimeout();
 
 		// Add resources to command line parameters
 		addResources(task, args);
@@ -187,20 +205,12 @@ public class ExecutionerCluster extends Executioner {
 			cmdStr += arg + " ";
 
 		// Create command to run (it feeds parameters to qsub via stdin)
-		StringBuilder cmdStdin = new StringBuilder();
-		cmdStdin.append(bdsCommand);
-		cmdStdin.append(realTimeout + " ");
-		cmdStdin.append("'" + task.getStdoutFile() + "' ");
-		cmdStdin.append("'" + task.getStderrFile() + "' ");
-		cmdStdin.append("'" + task.getExitCodeFile() + "' ");
-		cmdStdin.append("'" + task.getProgramFileName() + "' ");
-
-		// Run command
+		String cmdStdin = bdsCommand(task);
 		if (debug) Timer.showStdErr("Running command: echo \"" + cmdStdin + "\" | " + cmdStr);
 
 		// Create command
 		CmdCluster cmd = new CmdCluster(task.getId(), args.toArray(Cmd.ARGS_ARRAY_TYPE));
-		cmd.setStdin(cmdStdin.toString());
+		cmd.setStdin(cmdStdin);
 		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
 		if (debug) Timer.showStdErr("Command (CmdCluster): " + cmd);
 
@@ -228,6 +238,9 @@ public class ExecutionerCluster extends Executioner {
 		return clusterStatCommand;
 	}
 
+	/**
+	 * Join arguments
+	 */
 	protected String[] joinArgs(String[] argsOri, String[] argsAdditional) {
 		ArrayList<String> args = new ArrayList<String>();
 
