@@ -447,7 +447,8 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			sleepLong();
 		}
 
-		// TODO: If an exception is thrown here, we should be able to either recover or mark the task as START_FAILED
+		// TODO: If an exception is thrown here, we should be able to
+		// either recover or mark the task as START_FAILED
 		Cmd cmd = createCmd(task);
 		if (cmd != null) {
 			addCmd(task, cmd);

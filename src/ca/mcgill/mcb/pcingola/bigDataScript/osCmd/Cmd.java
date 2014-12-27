@@ -65,18 +65,19 @@ public abstract class Cmd extends Thread {
 				execError(null, TaskState.START_FAILED, Task.EXITCODE_ERROR);
 				return exitValue;
 			}
-		} catch (Exception e) {
-			execError(e, TaskState.START_FAILED, Task.EXITCODE_ERROR);
+		} catch (Throwable t) {
+			execError(t, TaskState.START_FAILED, Task.EXITCODE_ERROR);
 			return exitValue;
 		}
 
 		// Execute command or wait for execution to finish
 		try {
-			stateRunning(); // Now we are really done and the process is started. Update states
+			stateRunningBefore(); // Change state before executing command
 			if (debug) log("Running");
 			execCmd();
-		} catch (Exception e) {
-			execError(e, TaskState.ERROR, Task.EXITCODE_ERROR);
+			stateRunningAfter(); // Change state after executing command (e.g. when sending a task to a cluster system)
+		} catch (Throwable t) {
+			execError(t, TaskState.ERROR, Task.EXITCODE_ERROR);
 			return exitValue;
 		}
 
@@ -105,11 +106,14 @@ public abstract class Cmd extends Thread {
 	/**
 	 * Error while trying to 'exec' of a command, update states
 	 */
-	protected void execError(Exception e, TaskState taskState, int exitCode) {
+	protected void execError(Throwable t, TaskState taskState, int exitCode) {
 		stateDone();
 		exitValue = exitCode;
-		addError(e != null ? e.getMessage() : null);
-		if (debug && e != null) e.printStackTrace();
+
+		addError(t != null ? t.getMessage() : null);
+
+		if (debug && t != null) t.printStackTrace();
+
 		if (task != null) {
 			task.setExitValue(exitCode);
 			if (notifyTaskState != null) notifyTaskState.taskFinished(task, taskState);
@@ -231,6 +235,20 @@ public abstract class Cmd extends Thread {
 	protected void stateRunning() {
 		started = true;
 		if (notifyTaskState != null) notifyTaskState.taskRunning(task);
+	}
+
+	/**
+	 * Change state after executing command
+	 */
+	protected void stateRunningAfter() {
+		// Nothing to do
+	}
+
+	/**
+	 * Change state before executing command
+	 */
+	protected void stateRunningBefore() {
+		stateRunning();
 	}
 
 	protected void stateStarted() {
