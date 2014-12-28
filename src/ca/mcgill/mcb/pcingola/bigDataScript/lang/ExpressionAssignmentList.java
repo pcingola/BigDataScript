@@ -25,33 +25,6 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 		super(parent, tree);
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	@SuppressWarnings("rawtypes")
-	public void runStep(BigDataScriptThread bdsThread) {
-
-		// Get value
-		right.run(bdsThread);
-		List list = (List) bdsThread.pop();
-
-		for (int i = 0; i < lefts.length; i++) {
-			// Get variable
-			VarReference vr = (VarReference) lefts[i];
-
-			// Get value
-			Object value;
-			if (i < list.size()) value = list.get(i);
-			else value = vr.getReturnType().defaultValue(); // List too short? Assign variable's default value
-
-			// Assign value to variable
-			vr.setValue(bdsThread, value);
-		}
-
-		bdsThread.push(list);
-	}
-
 	@Override
 	protected boolean isReturnTypesNotNull() {
 		if (right == null || right.getReturnType() != null) return false;
@@ -91,6 +64,33 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 
 		returnType = lefts[0].returnType(scope); // Get return type for first expreesion
 		return returnType;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@Override
+	@SuppressWarnings("rawtypes")
+	public void runStep(BigDataScriptThread bdsThread) {
+
+		// Get value
+		bdsThread.run(right);
+		List list = (List) bdsThread.pop();
+
+		for (int i = 0; i < lefts.length; i++) {
+			// Get variable
+			VarReference vr = (VarReference) lefts[i];
+
+			// Get value
+			Object value;
+			if (i < list.size()) value = list.get(i);
+			else value = vr.getReturnType().defaultValue(); // List too short? Assign variable's default value
+
+			// Assign value to variable
+			vr.setValue(bdsThread, value);
+		}
+
+		bdsThread.push(list);
 	}
 
 	@Override

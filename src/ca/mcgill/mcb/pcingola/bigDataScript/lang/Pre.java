@@ -22,13 +22,21 @@ public class Pre extends ExpressionUnary {
 		super(parent, tree);
 	}
 
+	@Override
+	protected void parse(ParseTree tree) {
+		operation = PrePostOperation.parse(tree.getChild(0).getText());
+
+		BigDataScriptNode node = factory(tree, 1);
+		if ((node instanceof Reference)) expr = (Expression) node;
+	}
+
 	/**
 	 * Evaluate an expression
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
-		ref.run(bdsThread);
+		bdsThread.run(ref);
 		long value = popInt(bdsThread);
 
 		if (operation == PrePostOperation.INCREMENT) value++;
@@ -37,14 +45,6 @@ public class Pre extends ExpressionUnary {
 
 		ref.setValue(bdsThread, value);
 		bdsThread.push(value);
-	}
-
-	@Override
-	protected void parse(ParseTree tree) {
-		operation = PrePostOperation.parse(tree.getChild(0).getText());
-
-		BigDataScriptNode node = factory(tree, 1);
-		if ((node instanceof Reference)) expr = (Expression) node;
 	}
 
 	@Override

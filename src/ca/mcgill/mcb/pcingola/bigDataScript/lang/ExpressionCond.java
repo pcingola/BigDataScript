@@ -24,16 +24,6 @@ public class ExpressionCond extends Expression {
 		super(parent, tree);
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		expr.run(bdsThread);
-		if (popBool(bdsThread)) exprTrue.run(bdsThread);
-		else exprFalse.run(bdsThread);
-	}
-
 	@Override
 	protected boolean isReturnTypesNotNull() {
 		if (expr == null || expr.getReturnType() == null) return false;
@@ -58,6 +48,16 @@ public class ExpressionCond extends Expression {
 		exprFalse.returnType(scope);
 
 		return returnType;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		bdsThread.run(expr);
+		if (popBool(bdsThread)) bdsThread.run(exprTrue);
+		else bdsThread.run(exprFalse);
 	}
 
 	@Override

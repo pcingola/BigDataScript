@@ -33,10 +33,10 @@ public class Kill extends Statement {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		// No arguments? Kill for all tasks
 
-		taskId.run(bdsThread);
+		bdsThread.run(taskId);
 		Object val = bdsThread.pop();
 
 		// Are we Killing for one task or a list of tasks?

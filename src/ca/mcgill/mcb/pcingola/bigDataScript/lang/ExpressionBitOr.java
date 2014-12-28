@@ -15,19 +15,19 @@ public class ExpressionBitOr extends ExpressionBit {
 		super(parent, tree);
 	}
 
+	@Override
+	protected String op() {
+		return "|";
+	}
+
 	/**
 	 * Evaluate an expression
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-		left.run(bdsThread);
-		right.run(bdsThread);
+		bdsThread.run(left);
+		bdsThread.run(right);
 		bdsThread.push(left.popInt(bdsThread) | right.popInt(bdsThread));
-	}
-
-	@Override
-	protected String op() {
-		return "|";
 	}
 
 }

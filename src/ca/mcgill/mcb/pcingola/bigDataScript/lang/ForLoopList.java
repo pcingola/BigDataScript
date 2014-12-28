@@ -41,10 +41,10 @@ public class ForLoopList extends StatementWithScope {
 	 * @param csThread
 	 * @return
 	 */
-	protected ScopeSymbol initBeginDecl(BigDataScriptThread csThread) {
-		beginVarDecl.run(csThread);
+	protected ScopeSymbol initBeginDecl(BigDataScriptThread bdsThread) {
+		bdsThread.run(beginVarDecl);
 		String varName = beginVarDecl.getVarInit()[0].getVarName();
-		ScopeSymbol varSym = csThread.getScope().getSymbol(varName);
+		ScopeSymbol varSym = bdsThread.getScope().getSymbol(varName);
 		return varSym;
 	}
 
@@ -83,7 +83,7 @@ public class ForLoopList extends StatementWithScope {
 		}
 
 		// Evaluate list
-		expression.run(bdsThread);
+		bdsThread.run(expression);
 		Object res = bdsThread.pop();
 
 		//---
@@ -135,7 +135,7 @@ public class ForLoopList extends StatementWithScope {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		ScopeSymbol varSym = initBeginDecl(bdsThread);
 		ArrayList iterableValues = initIterableValues(bdsThread, varSym);
 		ScopeSymbol iterableCount = initIterableCounter(bdsThread);
@@ -152,7 +152,7 @@ public class ForLoopList extends StatementWithScope {
 			Object o = iterableValues.get(iter);
 			varSym.setValue(varSym.getType().cast(o));
 
-			statement.run(bdsThread); // Loop statement
+			bdsThread.run(statement); // Loop statement
 
 			switch (bdsThread.getRunState()) {
 			case OK:

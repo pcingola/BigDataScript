@@ -64,7 +64,7 @@ public class ExpressionList extends Expression {
 	public void runStep(BigDataScriptThread bdsThread) {
 		Object value = null;
 		for (Expression expr : expressions) {
-			expr.run(bdsThread);
+			bdsThread.run(expr);
 			value = bdsThread.pop();
 		}
 		bdsThread.push(value);

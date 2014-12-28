@@ -29,7 +29,7 @@ public class VarReferenceList extends Reference {
 	 * Return index evaluation
 	 */
 	public int evalIndex(BigDataScriptThread bdsThread) {
-		expressionIdx.run(bdsThread);
+		bdsThread.run(expressionIdx);
 		return (int) popInt(bdsThread);
 	}
 

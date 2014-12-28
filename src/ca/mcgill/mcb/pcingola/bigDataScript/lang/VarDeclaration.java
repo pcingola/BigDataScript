@@ -78,10 +78,10 @@ public class VarDeclaration extends Statement {
 	 * Run
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		for (VariableInit vi : varInit) {
 			bdsThread.getScope().add(new ScopeSymbol(vi.varName, type)); // Add variable to scope
-			vi.run(bdsThread); // Run varInit
+			bdsThread.run(vi);
 
 			// Act based on run state
 			switch (bdsThread.getRunState()) {

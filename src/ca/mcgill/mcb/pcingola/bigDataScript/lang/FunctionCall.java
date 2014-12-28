@@ -41,7 +41,7 @@ public class FunctionCall extends Expression {
 		// Evaluate all expressions
 		Object values[] = new Object[fparam.length];
 		for (int i = 0; i < fparam.length; i++) {
-			arguments[i].run(bdsThread);
+			bdsThread.run(arguments[i]);
 			Object value = bdsThread.pop();
 
 			if (!bdsThread.isCheckpointRecover()) {
@@ -88,7 +88,7 @@ public class FunctionCall extends Expression {
 	 * Run an expression: I.e. evaluate the expression
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		try {
 			// Evaluate function arguments
 			evalFunctionArguments(bdsThread);

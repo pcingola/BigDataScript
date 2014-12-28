@@ -19,20 +19,6 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 		op = "-";
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		expr.run(bdsThread);
-
-		if (returnType == Type.INT) {
-			bdsThread.push(-popInt(bdsThread));
-		} else if (returnType == Type.REAL) {
-			bdsThread.push(-popReal(bdsThread));
-		} else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
-	}
-
 	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
@@ -44,6 +30,20 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 		else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 
 		return returnType;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		bdsThread.run(expr);
+
+		if (returnType == Type.INT) {
+			bdsThread.push(-popInt(bdsThread));
+		} else if (returnType == Type.REAL) {
+			bdsThread.push(-popReal(bdsThread));
+		} else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
 
 	@Override

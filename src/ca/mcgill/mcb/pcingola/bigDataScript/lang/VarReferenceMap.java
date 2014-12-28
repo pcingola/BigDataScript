@@ -25,23 +25,10 @@ public class VarReferenceMap extends Reference {
 	}
 
 	/**
-	 * Evaluate an expression
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		String key = evalKey(bdsThread);
-		HashMap map = getMap(bdsThread.getScope());
-		Object ret = map.get(key);
-		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + key + "'.");
-		bdsThread.push(ret);
-	}
-
-	/**
 	 * Return index evaluation
 	 */
 	public String evalKey(BigDataScriptThread bdsThread) {
-		expressionKey.run(bdsThread);
+		bdsThread.run(expressionKey);
 		return popString(bdsThread);
 	}
 
@@ -120,6 +107,19 @@ public class VarReferenceMap extends Reference {
 		if (nameType.isMap()) returnType = ((TypeMap) nameType).getBaseType();
 
 		return returnType;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		String key = evalKey(bdsThread);
+		HashMap map = getMap(bdsThread.getScope());
+		Object ret = map.get(key);
+		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + key + "'.");
+		bdsThread.push(ret);
 	}
 
 	@Override

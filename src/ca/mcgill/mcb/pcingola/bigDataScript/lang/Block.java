@@ -39,10 +39,10 @@ public class Block extends StatementWithScope {
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		for (Statement st : statements) {
 			if (st != null) {
-				st.run(bdsThread);
+				bdsThread.run(st);
 
 				// Act based on run state
 				switch (bdsThread.getRunState()) {

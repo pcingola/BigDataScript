@@ -31,11 +31,11 @@ public class Checkpoint extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		// Get filename
 		String file = null;
 		if (expr != null) {
-			expr.run(bdsThread);
+			bdsThread.run(expr);
 			file = popString(bdsThread);
 		}
 

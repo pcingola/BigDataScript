@@ -574,49 +574,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return Type.VOID;
 	}
 
-	/**
-	 * Run this node
-	 */
-	public void run(BigDataScriptThread bdsThread) {
-		// Before node execution
-		if (!bdsThread.isCheckpointRecover()) runBegin(bdsThread);
-
-		try {
-			// Run?
-			if (bdsThread.shouldRun(this)) runStep(bdsThread);
-		} catch (Throwable t) {
-			bdsThread.fatalError(this, t);
-		}
-
-		// After node execution
-		if (!bdsThread.isCheckpointRecover()) runEnd(bdsThread);
-	}
-
-	/**
-	 * Run before running the node
-	 */
-	protected void runBegin(BigDataScriptThread bdsThread) {
-		// Need a new scope?
-		if (isNeedsScope()) {
-			bdsThread.newScope(this);
-		}
-
-		bdsThread.getPc().push(this);
-	}
-
-	/**
-	 * Run after running the node
-	 */
-	protected void runEnd(BigDataScriptThread bdsThread) {
-		bdsThread.getPc().pop(this);
-
-		// Restore old scope?
-		if (isNeedsScope()) {
-			bdsThread.oldScope();
-		}
-	}
-
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		throw new RuntimeException("Unimplemented method for class " + getClass().getSimpleName() + ", id = " + id);
 	}
 

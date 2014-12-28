@@ -140,7 +140,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * Run this function's statement
 	 */
 	protected void runFunction(BigDataScriptThread bdsThread) {
-		statement.run(bdsThread);
+		bdsThread.run(statement);
 
 		// Not a standard 'return' statement? Make sure we are returning the right type.
 		if (bdsThread.isReturn()) {
@@ -159,7 +159,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * 'FunctionDeclaration.runFunction()' method.
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		// Nothing to do (it's just a declaration)
 	}
 

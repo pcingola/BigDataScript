@@ -29,23 +29,6 @@ public class ExpressionCompare extends ExpressionBinary {
 		throw new RuntimeException("This method should never be invoked!");
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		left.run(bdsThread);
-		right.run(bdsThread);
-
-		Object rval = bdsThread.pop();
-		Object lval = bdsThread.pop();
-
-		if (left.isInt() && right.isInt()) bdsThread.push(cmp((long) lval, (long) rval));
-		else if (left.isReal() || right.isReal()) bdsThread.push(cmp((double) lval, (double) rval));
-		else if (left.isString() || right.isString()) bdsThread.push(cmp(lval.toString(), rval.toString()));
-		else throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
-	}
-
 	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
@@ -55,6 +38,23 @@ public class ExpressionCompare extends ExpressionBinary {
 
 		return returnType;
 
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		bdsThread.run(left);
+		bdsThread.run(right);
+
+		Object rval = bdsThread.pop();
+		Object lval = bdsThread.pop();
+
+		if (left.isInt() && right.isInt()) bdsThread.push(cmp((long) lval, (long) rval));
+		else if (left.isReal() || right.isReal()) bdsThread.push(cmp((double) lval, (double) rval));
+		else if (left.isString() || right.isString()) bdsThread.push(cmp(lval.toString(), rval.toString()));
+		else throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 	}
 
 	@Override

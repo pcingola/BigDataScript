@@ -28,29 +28,6 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
-	public void runStep(BigDataScriptThread csThread) {
-		HashMap<String, Object> map = new HashMap<String, Object>(values.length);
-		Type baseType = baseType();
-
-		for (int i = 0; i < keys.length; i++) {
-			// Evaluate 'key' expression
-			Expression keyExpr = keys[i];
-			keyExpr.run(csThread);
-			String key = csThread.pop().toString();
-
-			// Evaluate 'value' expression
-			Expression valueExpr = values[i];
-			valueExpr.run(csThread);
-			Object value = csThread.pop();
-			value = baseType.cast(value);
-
-			map.put(key, value); // Add it to map
-		}
-
-		csThread.push(map);
-	}
-
-	@Override
 	protected void parse(ParseTree tree) {
 		int size = (tree.getChildCount() - 1) / 4;
 		keys = new Expression[size];
@@ -92,6 +69,29 @@ public class LiteralMap extends Literal {
 		returnType = TypeMap.get(baseType);
 
 		return returnType;
+	}
+
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		HashMap<String, Object> map = new HashMap<String, Object>(values.length);
+		Type baseType = baseType();
+
+		for (int i = 0; i < keys.length; i++) {
+			// Evaluate 'key' expression
+			Expression keyExpr = keys[i];
+			bdsThread.run(keyExpr);
+			String key = bdsThread.pop().toString();
+
+			// Evaluate 'value' expression
+			Expression valueExpr = values[i];
+			bdsThread.run(valueExpr);
+			Object value = bdsThread.pop();
+			value = baseType.cast(value);
+
+			map.put(key, value); // Add it to map
+		}
+
+		bdsThread.push(map);
 	}
 
 	@Override

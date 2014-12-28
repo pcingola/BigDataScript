@@ -15,22 +15,22 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 		super(parent, tree);
 	}
 
+	@Override
+	protected String op() {
+		return "&&";
+	}
+
 	/**
 	 * Evaluate an expression
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-		left.run(bdsThread);
+		bdsThread.run(left);
 		if (!((Boolean) bdsThread.peek())) return; // Already false? No need to evaluate the other expression
 
 		// 'AND' only depends on 'right' result (left was true)
 		bdsThread.pop(); // Remove 'left' result from stack
-		right.run(bdsThread);
-	}
-
-	@Override
-	protected String op() {
-		return "&&";
+		bdsThread.run(right);
 	}
 
 }

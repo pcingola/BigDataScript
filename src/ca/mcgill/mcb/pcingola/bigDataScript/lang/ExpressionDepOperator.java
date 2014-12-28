@@ -101,11 +101,11 @@ public class ExpressionDepOperator extends Expression {
 	 * @return A list of Strings with the results of all evaluations
 	 */
 	@SuppressWarnings("rawtypes")
-	public void runStep(BigDataScriptThread bdsThread, Expression expr[]) {
+	public void runStep(BigDataScriptThread bdsThread, Expression exprs[]) {
 		ArrayList<String> resList = new ArrayList<String>();
 
-		for (Expression e : expr) {
-			e.run(bdsThread);
+		for (Expression e : exprs) {
+			bdsThread.run(e);
 			Object result = bdsThread.pop();
 
 			if (result instanceof List) {

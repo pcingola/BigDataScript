@@ -10612,3 +10612,240 @@ test/checkpoint_09.csv	-
 test/checkpoint_09.xml	+	rm
 9784	-
 test/checkpoint_09.xml	-
+11861	+	
+11861	-
+11867	+	
+11867	-
+11870	+	
+11870	-
+null	-
+11873	+	
+11873	-
+11877	+	
+11877	-
+11880	+	
+11880	-
+11883	+	
+11883	-
+11886	+	
+11886	-
+11889	+	
+11889	-
+11894	+	
+failOnce.out1	+	rm
+11894	-
+failOnce.out1	-
+11899	+	
+failOnce.out1	+	rm
+11899	-
+failOnce.out1	-
+11903	+	
+failOnce.out2	+	rm
+11903	-
+failOnce.out2	-
+11909	+	
+failOnce.out1	+	rm
+11909	-
+failOnce.out1	-
+11914	+	
+failOnce.out1	+	rm
+11914	-
+failOnce.out1	-
+11918	+	
+failOnce.out2	+	rm
+11918	-
+failOnce.out2	-
+11925	+	
+11925	-
+11928	+	
+11928	-
+11931	+	
+11931	-
+null	-
+null	-
+11937	+	
+11937	-
+11939	+	
+11939	-
+11941	+	
+11941	-
+11943	+	
+11943	-
+11946	+	
+11946	-
+11949	+	
+11949	-
+11953	+	
+/Users/pcingola/zero_length_file_out.txt	+	rm
+11953	-
+/Users/pcingola/zero_length_file_out.txt	-
+11954	+	
+11954	-
+11960	+	
+11960	-
+11963	+	
+11964	+	
+11963	-
+11964	-
+11980	+	
+/Users/pcingola/zero_length_file.out.txt	+	rm
+11980	-
+/Users/pcingola/zero_length_file.out.txt	-
+11983	+	
+11984	+	
+11987	+	
+11990	+	
+11983	-
+11984	-
+11987	-
+11990	-
+11996	+	
+11996	-
+11999	+	
+11999	-
+12002	+	
+12002	-
+12006	+	
+12007	+	
+12006	-
+12012	+	
+12012	-
+12007	-
+12017	+	
+12017	-
+12026	+	
+tmp_2.txt	+	rm
+12026	-
+tmp_2.txt	-
+12029	+	
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	+	rm
+12029	-
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	-
+12033	+	
+tmp_out.txt	+	rm
+12033	-
+tmp_out.txt	-
+12039	+	
+out1.txt	+	rm
+12039	-
+out1.txt	-
+12043	+	
+out2.txt	+	rm
+12043	-
+out2.txt	-
+12049	+	
+out1.txt	+	rm
+12049	-
+out1.txt	-
+12053	+	
+out2.txt	+	rm
+12053	-
+out2.txt	-
+12059	+	
+out1.txt	+	rm
+12059	-
+out1.txt	-
+12063	+	
+12063	-
+12066	+	
+12066	-
+12072	+	
+out1.txt	+	rm
+12072	-
+out1.txt	-
+12077	+	
+out2.txt	+	rm
+12077	-
+out2.txt	-
+12080	+	
+out1.txt	+	rm
+12080	-
+out1.txt	-
+12084	+	
+out2.txt	+	rm
+12084	-
+out2.txt	-
+12087	+	
+test/graph_05.csv	+	rm
+12087	-
+test/graph_05.csv	-
+12090	+	
+test/graph_05.xml	+	rm
+12090	-
+test/graph_05.xml	-
+12093	+	
+test/graph_05.csv	+	rm
+12093	-
+test/graph_05.csv	-
+12096	+	
+test/graph_05.xml	+	rm
+12096	-
+test/graph_05.xml	-
+12099	+	
+test/graph_06.csv	+	rm
+12099	-
+test/graph_06.csv	-
+12102	+	
+test/graph_06.xml	+	rm
+12102	-
+test/graph_06.xml	-
+12105	+	
+tmp_C.txt	+	rm
+tmp_D.txt	+	rm
+12105	-
+tmp_C.txt	-
+tmp_D.txt	-
+12109	+	
+tmp_E.txt	+	rm
+12109	-
+tmp_E.txt	-
+12115	+	
+test/graph_08.mid1.txt	+	rm
+12115	-
+test/graph_08.mid1.txt	-
+12118	+	
+test/graph_08.mid2.txt	+	rm
+12118	-
+test/graph_08.mid2.txt	-
+12121	+	
+test/graph_08.out.txt	+	rm
+12121	-
+test/graph_08.out.txt	-
+12137	+	
+test/graph_10.mid1.txt	+	rm
+12137	-
+test/graph_10.mid1.txt	-
+12140	+	
+test/graph_10.out.txt	+	rm
+12140	-
+test/graph_10.out.txt	-
+12143	+	
+12143	-
+12145	+	
+12145	-
+12150	+	
+12150	-
+12154	+	
+test/checkpoint_08.csv	+	rm
+12154	-
+test/checkpoint_08.csv	-
+12157	+	
+test/checkpoint_08.xml	+	rm
+12157	-
+test/checkpoint_08.xml	-
+12160	+	
+test/checkpoint_08.csv	+	rm
+12160	-
+test/checkpoint_08.csv	-
+12163	+	
+test/checkpoint_08.xml	+	rm
+12163	-
+test/checkpoint_08.xml	-
+12166	+	
+test/checkpoint_09.csv	+	rm
+12166	-
+test/checkpoint_09.csv	-
+12169	+	
+test/checkpoint_09.xml	+	rm
+12169	-
+test/checkpoint_09.xml	-

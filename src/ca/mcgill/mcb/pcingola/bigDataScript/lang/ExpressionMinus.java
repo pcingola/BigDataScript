@@ -18,9 +18,15 @@ public class ExpressionMinus extends ExpressionMath {
 	}
 
 	@Override
+	protected String op() {
+		return "-";
+	}
+
+	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		if (right == null) {
-			left.run(bdsThread);
+			// Unary minus operator
+			bdsThread.run(left);
 
 			// This should be an unary expression!
 			if (isInt()) {
@@ -33,8 +39,9 @@ public class ExpressionMinus extends ExpressionMath {
 				return;
 			}
 		} else {
-			left.run(bdsThread);
-			right.run(bdsThread);
+			// Binary minus operator: Subtraction
+			bdsThread.run(left);
+			bdsThread.run(right);
 
 			if (isInt()) {
 				long tr = popInt(bdsThread);
@@ -52,11 +59,6 @@ public class ExpressionMinus extends ExpressionMath {
 		}
 
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
-	}
-
-	@Override
-	protected String op() {
-		return "-";
 	}
 
 	@Override

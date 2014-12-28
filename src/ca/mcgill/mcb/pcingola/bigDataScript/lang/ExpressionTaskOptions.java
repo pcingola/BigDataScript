@@ -22,17 +22,6 @@ public class ExpressionTaskOptions extends ExpressionList {
 	}
 
 	/**
-	 * Evaluate: Returns 'true' if all boolean expressions are 'true'.
-	 *
-	 * @return true if all clauses are satisfied and taskDependency was created.
-	 */
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		TaskDependency taskDeps = evalTaskDependency(bdsThread);
-		bdsThread.push(taskDeps != null);
-	}
-
-	/**
 	 * Evaluate expressions and create a TaskDependency (only if clauses are satisfied
 	 * Note: We only care about the value of bool expressions
 	 * Note: If 'evalAll' is true, all expressions in the list are evaluated, even if the first one is false
@@ -53,7 +42,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 
 				sat &= (taskDepsExpr != null); // Convert expression to boolean
 			} else {
-				expr.run(bdsThread);
+				bdsThread.run(expr);
 				Object value = bdsThread.pop();
 				if (expr instanceof ExpressionAssignment) ; // Nothing to do
 				else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
@@ -65,6 +54,17 @@ public class ExpressionTaskOptions extends ExpressionList {
 		}
 
 		return sat ? taskDeps : null;
+	}
+
+	/**
+	 * Evaluate: Returns 'true' if all boolean expressions are 'true'.
+	 *
+	 * @return true if all clauses are satisfied and taskDependency was created.
+	 */
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		TaskDependency taskDeps = evalTaskDependency(bdsThread);
+		bdsThread.push(taskDeps != null);
 	}
 
 	public void setEvalAll(boolean evalAll) {
@@ -95,7 +95,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 		for (Expression e : expressions)
 			if (!(e instanceof ExpressionAssignment) //
 					&& !(e instanceof ExpressionVariableInitImplicit) //
-			) {
+					) {
 				// Cannot convert to bool? => We cannot use the expression
 				if (!e.getReturnType().canCast(Type.BOOL)) compilerMessages.add(this, "Only assignment, implicit variable declarations or boolean expressions are allowed in task options", MessageType.ERROR);
 			}

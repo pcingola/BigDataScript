@@ -118,7 +118,7 @@ public class ExpressionTask extends ExpressionWithScope {
 			LiteralString lstr = (LiteralString) statement;
 
 			// Evaluate (e.g. interpolate variables)
-			lstr.run(bdsThread);
+			bdsThread.run(lstr);
 			String str = bdsThread.pop().toString();
 
 			sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);

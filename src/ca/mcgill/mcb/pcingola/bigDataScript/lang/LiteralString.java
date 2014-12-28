@@ -23,12 +23,6 @@ public class LiteralString extends Literal {
 	}
 
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		if (interpolateVars == null) bdsThread.push(value); // No variable interpolation? => Literal
-		else interpolateVars.run(bdsThread); // Variable interpolation
-	}
-
-	@Override
 	protected void parse(ParseTree tree) {
 		String valueStr = tree.getChild(0).getText();
 
@@ -48,6 +42,12 @@ public class LiteralString extends Literal {
 
 		returnType = Type.STRING;
 		return returnType;
+	}
+
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		if (interpolateVars == null) bdsThread.push(value); // No variable interpolation? => Literal
+		else bdsThread.run(interpolateVars); // Variable interpolation
 	}
 
 	@Override

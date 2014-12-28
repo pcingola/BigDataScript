@@ -1,9 +1,0 @@
-#!/usr/bin/env bds
-
-include 'zi'
-
-s := ''		# Empty string
-l := s.split('\t')
-print "l: $l\nl.size: " + l.size() + "\n"
-
-checkpoint 'z.chp'

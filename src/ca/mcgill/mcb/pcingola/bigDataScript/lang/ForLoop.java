@@ -51,7 +51,7 @@ public class ForLoop extends StatementWithScope {
 	boolean runCondition(BigDataScriptThread bdsThread) {
 		if (condition == null) return true;
 
-		condition.run(bdsThread);
+		bdsThread.run(condition);
 
 		// If we are recovering from a checkpoint, we have to get
 		// into the loop's statements to find the node where the
@@ -66,12 +66,12 @@ public class ForLoop extends StatementWithScope {
 	 * Run
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		// Loop initialization
-		if (begin != null) begin.run(bdsThread);
+		if (begin != null) bdsThread.run(begin);
 
 		while (runCondition(bdsThread)) { // Loop condition
-			statement.run(bdsThread); // Loop statement
+			bdsThread.run(statement); // Loop statement
 
 			switch (bdsThread.getRunState()) {
 			case OK:
@@ -95,7 +95,7 @@ public class ForLoop extends StatementWithScope {
 				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
 			}
 
-			if (end != null) end.run(bdsThread); // End of loop
+			if (end != null) bdsThread.run(end); // End of loop
 		}
 	}
 

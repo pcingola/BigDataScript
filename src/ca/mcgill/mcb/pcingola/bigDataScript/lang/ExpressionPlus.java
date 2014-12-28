@@ -21,42 +21,6 @@ public class ExpressionPlus extends ExpressionMath {
 		super(parent, tree);
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		left.run(bdsThread);
-		right.run(bdsThread);
-
-		Object rval = bdsThread.pop();
-		Object lval = bdsThread.pop();
-
-		if (isInt()) {
-			bdsThread.push(((long) lval) + ((long) rval));
-			return;
-		} else if (isReal()) {
-			bdsThread.push(((double) lval) + ((double) rval));
-			return;
-		} else if (isString()) {
-			bdsThread.push(lval.toString() + rval.toString());
-			return;
-		} else if (isList()) {
-			ArrayList list = new ArrayList();
-			if (left.isList()) list.addAll((Collection) lval);
-			else list.add(lval);
-
-			if (right.isList()) list.addAll((Collection) rval);
-			else list.add(rval);
-
-			bdsThread.push(list);
-			return;
-		}
-
-		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
-	}
-
 	@Override
 	protected String op() {
 		return "+";
@@ -85,6 +49,42 @@ public class ExpressionPlus extends ExpressionMath {
 		else if (left.isString() || right.isString()) returnType = Type.STRING;
 
 		return returnType;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		bdsThread.run(left);
+		bdsThread.run(right);
+
+		Object rval = bdsThread.pop();
+		Object lval = bdsThread.pop();
+
+		if (isInt()) {
+			bdsThread.push(((long) lval) + ((long) rval));
+			return;
+		} else if (isReal()) {
+			bdsThread.push(((double) lval) + ((double) rval));
+			return;
+		} else if (isString()) {
+			bdsThread.push(lval.toString() + rval.toString());
+			return;
+		} else if (isList()) {
+			ArrayList list = new ArrayList();
+			if (left.isList()) list.addAll((Collection) lval);
+			else list.add(lval);
+
+			if (right.isList()) list.addAll((Collection) rval);
+			else list.add(rval);
+
+			bdsThread.push(list);
+			return;
+		}
+
+		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 	}
 
 	@Override

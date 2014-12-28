@@ -66,9 +66,9 @@ public class VariableInit extends BigDataScriptNode {
 	 * Run
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		if (expression != null) {
-			expression.run(bdsThread);
+			bdsThread.run(expression);
 			Object value = bdsThread.pop();
 
 			// Error running expression?

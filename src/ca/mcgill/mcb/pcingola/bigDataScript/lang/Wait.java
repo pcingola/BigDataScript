@@ -31,7 +31,7 @@ public class Wait extends Statement {
 	 */
 	@Override
 	@SuppressWarnings("rawtypes")
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 
 		boolean ok = false;
 		String type = "Task";
@@ -41,7 +41,7 @@ public class Wait extends Statement {
 			ok = bdsThread.waitAll();
 		} else {
 			// Wait for a specific task or list of tasks
-			taskId.run(bdsThread);
+			bdsThread.run(taskId);
 			Object val = bdsThread.pop();
 
 			// Are we waiting for a single task/thread or a list?

@@ -30,7 +30,7 @@ public class ExpressionVariableInitImplicit extends Expression {
 		scope.add(new ScopeSymbol(vInit.getVarName(), returnType));
 
 		// Evaluate assignment
-		vInit.run(bdsThread);
+		bdsThread.run(vInit);
 
 		// Return initialization's result
 		ScopeSymbol ssym = scope.getSymbol(vInit.getVarName());

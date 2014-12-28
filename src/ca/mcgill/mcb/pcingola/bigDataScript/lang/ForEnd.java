@@ -18,7 +18,7 @@ public class ForEnd extends ExpressionList {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		for (Expression expr : expressions) {
-			expr.run(bdsThread);
+			bdsThread.run(expr);
 			bdsThread.pop(); // Remove from stack, nobody is reading the results
 		}
 	}

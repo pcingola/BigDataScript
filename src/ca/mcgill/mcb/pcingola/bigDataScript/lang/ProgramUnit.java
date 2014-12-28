@@ -54,17 +54,13 @@ public class ProgramUnit extends BlockWithFile {
 	}
 
 	@Override
-	protected void runBegin(BigDataScriptThread bdsThread) {
-		super.runBegin(bdsThread);
+	public void runStep(BigDataScriptThread bdsThread) {
 		runScope = bdsThread.getScope();
+		super.runStep(bdsThread);
 	}
 
 	public void setBigDataScriptThread(BigDataScriptThread bigDataScriptThread) {
 		this.bigDataScriptThread = bigDataScriptThread;
-	}
-
-	public void setRunScope(Scope runScope) {
-		this.runScope = runScope;
 	}
 
 	/**
@@ -82,7 +78,7 @@ public class ProgramUnit extends BlockWithFile {
 					&& fname.substring(0, 4).equalsIgnoreCase("test") // Starts with 'test'
 					&& fd.getParameters().getVarDecl() != null //
 					&& fd.getParameters().getVarDecl().length == 0 // There are no arguments to this function (e.g. 'test01()')
-					) testFuncs.add(fd);
+			) testFuncs.add(fd);
 		}
 
 		return testFuncs;

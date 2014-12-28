@@ -36,11 +36,11 @@ public class ForInit extends Statement {
 	 * Run
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
-		if (varDeclaration != null) varDeclaration.run(bdsThread);
+	public void runStep(BigDataScriptThread bdsThread) {
+		if (varDeclaration != null) bdsThread.run(varDeclaration);
 		else {
 			for (Expression expr : expressions) {
-				expr.run(bdsThread);
+				bdsThread.run(expr);
 				bdsThread.pop(); // Remove from stack, nobody is reading the results
 			}
 		}

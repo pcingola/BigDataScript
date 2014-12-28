@@ -15,22 +15,22 @@ public class ExpressionLogicOr extends ExpressionLogic {
 		super(parent, tree);
 	}
 
+	@Override
+	protected String op() {
+		return "||";
+	}
+
 	/**
 	 * Evaluate an expression
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-		left.run(bdsThread);
+		bdsThread.run(left);
 		if ((Boolean) bdsThread.peek()) return; // Already true? No need to evaluate the other expression
 
 		//  'OR' only depends on 'right' value (left was false)
 		bdsThread.pop(); // Remove 'left' result from stack
-		right.run(bdsThread);
-	}
-
-	@Override
-	protected String op() {
-		return "||";
+		bdsThread.run(right);
 	}
 
 }

@@ -20,11 +20,11 @@ public class Warning extends Error {
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		String msg = "";
 		if (expr != null) {
 			// Evaluate expression to show
-			expr.run(bdsThread);
+			bdsThread.run(expr);
 			msg = popString(bdsThread);
 		}
 		Timer.showStdErr("Warning" + (!msg.isEmpty() ? ": " + msg : ""));

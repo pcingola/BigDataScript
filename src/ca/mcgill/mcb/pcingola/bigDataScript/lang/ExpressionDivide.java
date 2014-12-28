@@ -17,13 +17,18 @@ public class ExpressionDivide extends ExpressionMath {
 		super(parent, tree);
 	}
 
+	@Override
+	protected String op() {
+		return "/";
+	}
+
 	/**
 	 * Evaluate an expression
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-		left.run(bdsThread);
-		right.run(bdsThread);
+		bdsThread.run(left);
+		bdsThread.run(right);
 
 		if (isInt()) {
 			long den = popInt(bdsThread);
@@ -40,11 +45,6 @@ public class ExpressionDivide extends ExpressionMath {
 		}
 
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
-	}
-
-	@Override
-	protected String op() {
-		return "/";
 	}
 
 	@Override

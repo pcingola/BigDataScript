@@ -17,14 +17,33 @@ public class ExpressionTimes extends ExpressionMath {
 		super(parent, tree);
 	}
 
+	@Override
+	protected String op() {
+		return "*";
+	}
+
+	@Override
+	public Type returnType(Scope scope) {
+		if (returnType != null) return returnType;
+
+		super.returnType(scope);
+
+		if (isReturnTypesNotNull()) {
+			if (left.isString() || right.isString()) returnType = Type.STRING;
+			else if (left.canCastInt() && right.canCastInt()) returnType = Type.INT;
+			else if (left.canCastReal() && right.canCastReal()) returnType = Type.REAL;
+		}
+		return returnType;
+	}
+
 	/**
 	 * Evaluate an expression
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		// Evaliate expressions
-		left.run(bdsThread);
-		right.run(bdsThread);
+		bdsThread.run(left);
+		bdsThread.run(right);
 
 		Object rval = bdsThread.pop();
 		Object lval = bdsThread.pop();
@@ -62,25 +81,6 @@ public class ExpressionTimes extends ExpressionMath {
 		}
 
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
-	}
-
-	@Override
-	protected String op() {
-		return "*";
-	}
-
-	@Override
-	public Type returnType(Scope scope) {
-		if (returnType != null) return returnType;
-
-		super.returnType(scope);
-
-		if (isReturnTypesNotNull()) {
-			if (left.isString() || right.isString()) returnType = Type.STRING;
-			else if (left.canCastInt() && right.canCastInt()) returnType = Type.INT;
-			else if (left.canCastReal() && right.canCastReal()) returnType = Type.REAL;
-		}
-		return returnType;
 	}
 
 	@Override

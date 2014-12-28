@@ -38,7 +38,7 @@ public class While extends Statement {
 	boolean runCondition(BigDataScriptThread bdsThread) {
 		if (condition == null) return true;
 
-		condition.run(bdsThread);
+		bdsThread.run(condition);
 
 		// If we are recovering from a checkpoint, we have to get
 		// into the loop's statements to find the node where the
@@ -53,9 +53,9 @@ public class While extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		while (runCondition(bdsThread)) { // Loop condition
-			statement.run(bdsThread);
+			bdsThread.run(statement);
 
 			switch (bdsThread.getRunState()) {
 			case OK: // OK continue

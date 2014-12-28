@@ -23,7 +23,7 @@ public class ExpressionBitNegation extends ExpressionUnary {
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-		expr.run(bdsThread);
+		bdsThread.run(expr);
 		bdsThread.push(~popInt(bdsThread));
 	}
 

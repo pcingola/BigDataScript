@@ -17,21 +17,21 @@ public class ExpressionModulo extends ExpressionMath {
 		super(parent, tree);
 	}
 
+	@Override
+	protected String op() {
+		return "%";
+	}
+
 	/**
 	 * Evaluate an expression
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-		left.run(bdsThread);
-		right.run(bdsThread);
+		bdsThread.run(left);
+		bdsThread.run(right);
 		long den = popInt(bdsThread);
 		long num = popInt(bdsThread);
 		bdsThread.push(num % den);
-	}
-
-	@Override
-	protected String op() {
-		return "%";
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class StatementExpr extends ExpressionWrapper {
 
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-		expression.run(bdsThread);
+		bdsThread.run(expression);
 
 		// This is an expression in form of a statement, so
 		// we remove the result from the stack (to avoid filling up

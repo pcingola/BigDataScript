@@ -17,13 +17,21 @@ public class Post extends Pre {
 		super(parent, tree);
 	}
 
+	@Override
+	protected void parse(ParseTree tree) {
+		BigDataScriptNode node = factory(tree, 0);
+		if (node instanceof Reference) expr = (Expression) node;
+
+		operation = PrePostOperation.parse(tree.getChild(1).getText());
+	}
+
 	/**
 	 * Evaluate an expression
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
-		ref.run(bdsThread);
+		bdsThread.run(ref);
 		long value = popInt(bdsThread);
 
 		if (operation == PrePostOperation.INCREMENT) ref.setValue(bdsThread, value + 1);
@@ -31,14 +39,6 @@ public class Post extends Pre {
 		else throw new RuntimeException("Unknown operator " + operation);
 
 		bdsThread.push(value);
-	}
-
-	@Override
-	protected void parse(ParseTree tree) {
-		BigDataScriptNode node = factory(tree, 0);
-		if (node instanceof Reference) expr = (Expression) node;
-
-		operation = PrePostOperation.parse(tree.getChild(1).getText());
 	}
 
 	@Override

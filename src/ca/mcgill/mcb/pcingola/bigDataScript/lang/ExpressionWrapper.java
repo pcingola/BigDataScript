@@ -43,7 +43,7 @@ public class ExpressionWrapper extends Expression {
 
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-		expression.run(bdsThread);
+		bdsThread.run(expression);
 	}
 
 	@Override

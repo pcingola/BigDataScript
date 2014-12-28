@@ -42,7 +42,7 @@ public class If extends Statement {
 	boolean runCondition(BigDataScriptThread bdsThread) {
 		if (condition == null) return true;
 
-		condition.run(bdsThread);
+		bdsThread.run(condition);
 
 		// If we are recovering from a checkpoint, we have to get
 		// into the loop's statements to find the node where the
@@ -57,11 +57,11 @@ public class If extends Statement {
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		if (runCondition(bdsThread)) {
-			statement.run(bdsThread);
+			bdsThread.run(statement);
 		} else if (elseStatement != null) {
-			elseStatement.run(bdsThread);
+			bdsThread.run(elseStatement);
 		}
 	}
 

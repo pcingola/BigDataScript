@@ -26,23 +26,6 @@ public class LiteralList extends Literal {
 		return ((TypeList) returnType).getBaseType();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		ArrayList list = new ArrayList(values.length);
-		Type baseType = baseType();
-
-		for (BigDataScriptNode node : values) {
-			Expression expr = (Expression) node;
-			expr.run(bdsThread); // Evaluate expression
-			Object value = bdsThread.pop();
-			value = baseType.cast(value); // Cast to base type
-			list.add(value); // Add it to list
-		}
-
-		bdsThread.push(list);
-	}
-
 	@Override
 	protected void parse(ParseTree tree) {
 		int listSize = (tree.getChildCount() - 1) / 2;
@@ -84,6 +67,23 @@ public class LiteralList extends Literal {
 		returnType = TypeList.get(baseType);
 
 		return returnType;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		ArrayList list = new ArrayList(values.length);
+		Type baseType = baseType();
+
+		for (BigDataScriptNode node : values) {
+			Expression expr = (Expression) node;
+			bdsThread.run(expr); // Evaluate expression
+			Object value = bdsThread.pop();
+			value = baseType.cast(value); // Cast to base type
+			list.add(value); // Add it to list
+		}
+
+		bdsThread.push(list);
 	}
 
 	@Override

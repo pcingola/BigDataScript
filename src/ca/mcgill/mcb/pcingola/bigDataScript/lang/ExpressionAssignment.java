@@ -40,7 +40,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 	public void runStep(BigDataScriptThread bdsThread) {
 
 		// Get value
-		right.run(bdsThread);
+		bdsThread.run(right);
 		Object value = bdsThread.pop();
 
 		if (left instanceof VarReference) {

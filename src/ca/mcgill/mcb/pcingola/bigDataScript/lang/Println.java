@@ -35,10 +35,10 @@ public class Println extends Exit {
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		String msg = "";
 		if (expr != null) {
-			expr.run(bdsThread); // Evaluate expression to show
+			bdsThread.run(expr); // Evaluate expression to show
 			msg = popString(bdsThread);
 		}
 		System.out.println(!msg.isEmpty() ? msg : "");

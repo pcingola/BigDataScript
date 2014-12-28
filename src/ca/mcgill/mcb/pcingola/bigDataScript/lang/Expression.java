@@ -20,9 +20,9 @@ public class Expression extends Statement {
 	 * Run an expression: I.e. evaluate the expression
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		try {
-			run(bdsThread);
+			bdsThread.run(this);
 			bdsThread.pop();
 		} catch (Throwable t) {
 			if (Config.get().isDebug()) t.printStackTrace();

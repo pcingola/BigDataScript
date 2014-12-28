@@ -20,29 +20,6 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 
 	protected abstract ExpressionBinary createSubExpression();
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-
-		// Get value
-		right.run(bdsThread);
-		Object value = bdsThread.pop();
-
-		if (left instanceof VarReference) {
-			((VarReference) left).setValue(bdsThread, value);;
-		} else if (left instanceof VarReferenceList) {
-			VarReferenceList listIndex = (VarReferenceList) left;
-			listIndex.setValue(bdsThread, value);
-		} else if (left instanceof VarReferenceMap) {
-			VarReferenceMap listIndex = (VarReferenceMap) left;
-			listIndex.setValue(bdsThread, value);
-		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
-
-		bdsThread.push(value);
-	}
-
 	@Override
 	protected void parse(ParseTree tree) {
 		left = (Expression) factory(tree, 0);
@@ -63,6 +40,29 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 		returnType = left.getReturnType();
 
 		return returnType;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+
+		// Get value
+		bdsThread.run(right);
+		Object value = bdsThread.pop();
+
+		if (left instanceof VarReference) {
+			((VarReference) left).setValue(bdsThread, value);;
+		} else if (left instanceof VarReferenceList) {
+			VarReferenceList listIndex = (VarReferenceList) left;
+			listIndex.setValue(bdsThread, value);
+		} else if (left instanceof VarReferenceMap) {
+			VarReferenceMap listIndex = (VarReferenceMap) left;
+			listIndex.setValue(bdsThread, value);
+		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
+
+		bdsThread.push(value);
 	}
 
 	@Override

@@ -60,7 +60,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	private static int threadNumber = 1;
 
 	Config config; // Config
-	Random random; // Uniform random number generator
+	Random random; // Random number generator
 
 	// Program and state
 	Statement statement; // Main statement executed by this thread
@@ -72,6 +72,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	List<String> removeOnExit; // Files to be removed on exit
 	int checkPointRecoverNodeIdx; // Checkpint recovery node index
 	Timer timer; // Program timer
+	boolean freeze; // Freeze execution in next execution step
 
 	// Scope
 	Scope scope; // Base scope
@@ -227,7 +228,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if (pc.nodeId(checkPointRecoverNodeIdx) == statement.getId()) return;
 		}
 
-		throw new RuntimeException("Checkpoint statement not found in PC: " + pc);
+		throw new RuntimeException("Checkpoint statement not found in Program Counter:" //
+				+ " \n\tPC           : " + pc //
+				+ " \n\tBds thread ID: " + getBdsThreadId() //
+				);
 	}
 
 	void createBdsThreadId() {
@@ -691,9 +695,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Are we in CHECKPOINT_RECOVER mode?
 	 */
 	public boolean isCheckpointRecover() {
-		return runState == RunState.WAIT_RECOVER //
-				|| runState == RunState.CHECKPOINT_RECOVER //
-				;
+		return runState.isCheckpointRecover();
 	}
 
 	public boolean isDebug() {
@@ -708,11 +710,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	public boolean isFatalError() {
-		return runState == RunState.FATAL_ERROR;
+		return runState.isFatalError();
 	}
 
 	public boolean isReturn() {
-		return runState == RunState.RETURN;
+		return runState.isReturn();
 	}
 
 	/**
@@ -893,7 +895,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		createLogDir(); // Create log dir
 
-		// Star child threads (e.g. when recovering)
+		// Start child threads (e.g. when recovering)
 		for (BigDataScriptThread bth : bdsChildThreadsById.values())
 			if (!bth.isAlive()) bth.start();
 
@@ -951,11 +953,49 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
+	 * Run this node
+	 */
+	public void run(BigDataScriptNode node) {
+		// Before node execution
+		if (!isCheckpointRecover()) runBegin(node);
+
+		try {
+			// Run?
+			if (shouldRun(node)) node.runStep(this);
+		} catch (Throwable t) {
+			fatalError(node, t);
+		}
+
+		// After node execution
+		if (!isCheckpointRecover()) runEnd(node);
+	}
+
+	/**
+	 * Run before running the node
+	 */
+	protected void runBegin(BigDataScriptNode node) {
+		// Need a new scope?
+		if (node.isNeedsScope()) newScope(node);
+
+		getPc().push(node);
+	}
+
+	/**
+	 * Run after running the node
+	 */
+	protected void runEnd(BigDataScriptNode node) {
+		getPc().pop(node);
+
+		// Restore old scope?
+		if (node.isNeedsScope()) oldScope();
+	}
+
+	/**
 	 * Run statements (i.e. run program)
 	 */
 	protected void runStatement() {
 		try {
-			statement.run(this);
+			run(statement);
 		} catch (Throwable t) {
 			runState = RunState.FATAL_ERROR;
 			if (isVerbose()) throw new RuntimeException(t);

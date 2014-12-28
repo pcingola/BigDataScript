@@ -74,7 +74,7 @@ public class ExpressionParallel extends ExpressionTask {
 	public void runStep(BigDataScriptThread bdsThread) {
 		// Execute options assignments
 		if (taskOptions != null) {
-			taskOptions.run(bdsThread);
+			bdsThread.run(taskOptions);
 			boolean ok = popBool(bdsThread);
 			if (bdsThread.isDebug()) log("task-options check " + ok);
 			if (!ok) {

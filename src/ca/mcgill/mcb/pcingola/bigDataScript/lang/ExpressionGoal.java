@@ -22,19 +22,19 @@ public class ExpressionGoal extends ExpressionUnary {
 	}
 
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		expr.run(bdsThread);
-		Object value = bdsThread.pop();
-
-		List<String> taskIds = bdsThread.goal(value.toString());
-		bdsThread.push(taskIds);
-	}
-
-	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 		returnType = TypeList.get(Type.STRING);
 		return returnType;
+	}
+
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		bdsThread.run(expr);
+		Object value = bdsThread.pop();
+
+		List<String> taskIds = bdsThread.goal(value.toString());
+		bdsThread.push(taskIds);
 	}
 
 	@Override

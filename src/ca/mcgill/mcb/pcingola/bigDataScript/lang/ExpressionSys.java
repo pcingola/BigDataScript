@@ -64,7 +64,7 @@ public class ExpressionSys extends Expression {
 		if (interpolateVars == null) return commands; // No variable interpolation? => Literal
 
 		// Variable interpolation
-		interpolateVars.run(bdsThread);
+		bdsThread.run(interpolateVars);
 		return bdsThread.pop().toString();
 	}
 
@@ -98,7 +98,7 @@ public class ExpressionSys extends Expression {
 	}
 
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		execId("exec", bdsThread);

@@ -36,7 +36,7 @@ public class MethodCall extends FunctionCall {
 		// Evaluate all expressions
 		Object values[] = new Object[fparam.length];
 		for (int i = 0; i < fparam.length; i++) {
-			arguments[i].run(bdsThread);
+			bdsThread.run(arguments[i]);
 			Object value = bdsThread.pop();
 			value = fparam[i].type.cast(value);
 			values[i] = value;

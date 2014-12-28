@@ -35,11 +35,11 @@ public class Print extends Exit {
 	 * Run the program
 	 */
 	@Override
-	protected void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BigDataScriptThread bdsThread) {
 		String msg = "";
 		if (expr != null) {
 			// Evaluate expression to show
-			expr.run(bdsThread);
+			bdsThread.run(expr);
 			msg = popString(bdsThread);
 		}
 
