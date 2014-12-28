@@ -71,7 +71,7 @@ public class Exec {
 
 		// Collect output
 		if (stdout != null) stdOutStr = stdout.getAllLines();
-		if (stderr != null) stdErrStr = stdout.getAllLines();
+		if (stderr != null) stdErrStr = stderr.getAllLines();
 
 		return new ExecResult(stdOutStr, stdErrStr, exitValue);
 	}
