@@ -267,3 +267,33 @@ test/checkpoint_09.csv	-
 test/checkpoint_09.xml	+	rm
 10802	-
 test/checkpoint_09.xml	-
+14006	+	
+14007	+	
+14007	-
+14006	-
+14012	+	
+14012	-
+14016	+	
+test/checkpoint_08.csv	+	rm
+14016	-
+test/checkpoint_08.csv	-
+14019	+	
+test/checkpoint_08.xml	+	rm
+14019	-
+test/checkpoint_08.xml	-
+14022	+	
+test/checkpoint_08.csv	+	rm
+14022	-
+test/checkpoint_08.csv	-
+14025	+	
+test/checkpoint_08.xml	+	rm
+14025	-
+test/checkpoint_08.xml	-
+14028	+	
+test/checkpoint_09.csv	+	rm
+14028	-
+test/checkpoint_09.csv	-
+14031	+	
+test/checkpoint_09.xml	+	rm
+14031	-
+test/checkpoint_09.xml	-

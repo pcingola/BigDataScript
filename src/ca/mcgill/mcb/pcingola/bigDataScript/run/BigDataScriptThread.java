@@ -217,7 +217,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Get next node to find (CHECKPOINT_RECOVER run state0
+	 * Get next node to find (CHECKPOINT_RECOVER run state)
 	 */
 	public int checkpointRecoverNextNode() {
 		return pc.nodeId(checkPointRecoverNodeIdx);
@@ -237,7 +237,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			throw new RuntimeException("Checkpoint statement not found in Program Counter:" //
 					+ " \n\tPC           : " + pc //
 					+ " \n\tBds thread ID: " + getBdsThreadId() //
-			);
+					);
 		}
 	}
 
@@ -902,7 +902,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1081,6 +1081,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			parent.add(this);
 		}
 
+		// State
+		runState = RunState.valueOf(serializer.getNextFieldString());
+
 		// Stack
 		String b64 = serializer.getNextField();
 		stack = (b64 != null && !b64.isEmpty() ? (Deque<Object>) serializer.base64Decode(b64) : null);
@@ -1164,6 +1167,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		out.append("\t" + serializer.serializeSaveValue(statement.getNodeId()));
 		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
 		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
+		out.append("\t" + serializer.serializeSaveValue(runState.toString()));
 		out.append("\t" + serializer.base64encode(stack));
 		return out.toString();
 	}
@@ -1243,7 +1247,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 
 		// Which node are we looking for?
+		if (!checkpointRecoverHasNextNode()) return false; // No more nodes to recover? This might happen when recovering a thread that already finished execution
 		int nodeNum = checkpointRecoverNextNode();
+
+		// Match?
 		if (node.getId() == nodeNum) {
 			// Node found!
 			checkpointRecoverFound();

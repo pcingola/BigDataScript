@@ -3,7 +3,7 @@
 void zzz(int n) {
 	if( n > 1 ) {
 		print "Checkpoint\n"
-		checkpoint "test/z.chp"
+		checkpoint "test/checkpoint_21.chp"
 		print "After checkpoint\n"
 		return
 	}

@@ -209,4 +209,8 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_20.bds", "test/checkpoint_20.chp", null, null);
 	}
 
+	@Test
+	public void test21_checkpoint_after_par_thread_finished_execution() {
+		runAndCheckpoint("test/checkpoint_21.bds", "test/checkpoint_21.chp", null, null);
+	}
 }
