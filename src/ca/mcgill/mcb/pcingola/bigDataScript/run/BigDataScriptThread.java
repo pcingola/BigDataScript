@@ -72,7 +72,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	Object returnValue; // Latest return value (from a 'return' statement)
 	int exitValue; // Exit value
 	List<String> removeOnExit; // Files to be removed on exit
-	int checkPointRecoverNodeIdx; // Checkpint recovery node index
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
 
@@ -203,41 +202,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Found a node (CHECKPOINT_RECOVER run state)
-	 */
-	public void checkpointRecoverFound() {
-		checkPointRecoverNodeIdx++;
-	}
-
-	/**
-	 * Is there a next node to find? (CHECKPOINT_RECOVER run state0
-	 */
-	public boolean checkpointRecoverHasNextNode() {
-		return pc.size() > checkPointRecoverNodeIdx;
-	}
-
-	/**
-	 * Get next node to find (CHECKPOINT_RECOVER run state)
-	 */
-	public int checkpointRecoverNextNode() {
-		return pc.nodeId(checkPointRecoverNodeIdx);
-	}
-
-	/**
 	 * Make sure that the statement node is the first in the checkpoint recovery
 	 */
 	public void checkpointRecoverReset() {
-		for (checkPointRecoverNodeIdx = 0; checkPointRecoverNodeIdx < pc.size(); checkPointRecoverNodeIdx++) {
-			if (pc.nodeId(checkPointRecoverNodeIdx) == statement.getId()) return;
-		}
+		if (pc.checkpointRecoverReset(statement)) return;
 
 		// Empty PC means that we finished executing
 		if (!pc.isEmpty()) {
 			// If PC is not empty, we should have found the nodes
-			throw new RuntimeException("Checkpoint statement not found in Program Counter:" //
-					+ " \n\tPC           : " + pc //
-					+ " \n\tBds thread ID: " + getBdsThreadId() //
-					);
+			throw new RuntimeException("Checkpoint statement not found in Program Counter:" + this);
 		}
 	}
 
@@ -1246,17 +1219,21 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			throw new RuntimeException("Unhandled RunState: " + runState);
 		}
 
+		//---
+		// Recovering form a checkpoint
+		//---
+
 		// Which node are we looking for?
-		if (!checkpointRecoverHasNextNode()) return false; // No more nodes to recover? This might happen when recovering a thread that already finished execution
-		int nodeNum = checkpointRecoverNextNode();
+		if (!pc.checkpointRecoverHasNextNode()) return false; // No more nodes to recover? This might happen when recovering a thread that already finished execution
+		int nodeNum = pc.checkpointRecoverNextNode();
 
 		// Match?
 		if (node.getId() == nodeNum) {
 			// Node found!
-			checkpointRecoverFound();
+			pc.checkpointRecoverFound();
 
 			// More nodes to recurse? => continue
-			if (checkpointRecoverHasNextNode()) return true;
+			if (pc.checkpointRecoverHasNextNode()) return true;
 
 			// Last node found!
 			runState = RunState.OK; // Switch to 'normal' run state

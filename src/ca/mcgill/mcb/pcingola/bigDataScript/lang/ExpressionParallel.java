@@ -94,16 +94,32 @@ public class ExpressionParallel extends ExpressionTask {
 
 			// Evaluate function arguments in current thread
 			functionCall.evalFunctionArguments(bdsThread);
-			Object arguments[] = (Object[]) bdsThread.pop();
+			Object arguments[] = null;
 
-			// Create and run new thread that runs the function call in parallel
-			bdsNewThread = createParallelFunctionCall(bdsThread, arguments);
+			if (!bdsThread.isCheckpointRecover()) {
+				arguments = (Object[]) bdsThread.pop();
+
+				// Create and run new thread that runs the function call in parallel
+				bdsNewThread = createParallelFunctionCall(bdsThread, arguments);
+			} else {
+				// When recovering from checkpoints, serialization mechanism takes care
+				// of creating new threads, so we don't need to do it again here.
+			}
+
 		} else {
-			// Create and run new bds thread
-			bdsNewThread = createParallel(bdsThread);
+			if (!bdsThread.isCheckpointRecover()) {
+				// Create and run new bds thread
+				bdsNewThread = createParallel(bdsThread);
+			} else {
+				// When recovering from checkpoints, serialization mechanism takes care
+				// of creating new threads, so we don't need to do it again here.
+			}
 		}
 
-		bdsThread.push(bdsNewThread.getBdsThreadId()); // Return thread ID (so that we can 'wait' on it)
+		// Thread created. Return thread ID (so that we can 'wait' on it)
+		if (!bdsThread.isCheckpointRecover()) {
+			bdsThread.push(bdsNewThread.getBdsThreadId());
+		}
 	}
 
 	@Override

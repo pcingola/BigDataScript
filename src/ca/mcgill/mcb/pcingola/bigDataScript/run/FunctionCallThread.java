@@ -43,7 +43,7 @@ public class FunctionCallThread extends BigDataScriptThread {
 		super.checkpointRecoverReset(); // Find the 'par' statement
 
 		// Now we need to move to the first statement in the function (i.e. right after the function call)
-		checkpointRecoverFound();
+		pc.checkpointRecoverFound();
 	}
 
 	/**

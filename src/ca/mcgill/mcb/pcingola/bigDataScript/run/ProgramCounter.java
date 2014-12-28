@@ -17,8 +17,9 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 
 	private static int programCounterNum = 0;
 
-	Stack<Integer> nodeIds;
 	int id;
+	int checkPointRecoverNodeIdx; // Checkpoint recovery node index
+	Stack<Integer> nodeIds;
 
 	protected static int nextId() {
 		return ++programCounterNum;
@@ -33,6 +34,35 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 		nodeIds = new Stack<Integer>();
 		nodeIds.addAll(pc.nodeIds);
 		id = nextId();
+	}
+
+	/**
+	 * Found a node (CHECKPOINT_RECOVER run state)
+	 */
+	public void checkpointRecoverFound() {
+		checkPointRecoverNodeIdx++;
+	}
+
+	/**
+	 * Is there a next node to find? (CHECKPOINT_RECOVER run state0
+	 */
+	public boolean checkpointRecoverHasNextNode() {
+		return size() > checkPointRecoverNodeIdx;
+	}
+
+	/**
+	 * Get next node to find (CHECKPOINT_RECOVER run state)
+	 */
+	public int checkpointRecoverNextNode() {
+		return nodeId(checkPointRecoverNodeIdx);
+	}
+
+	public boolean checkpointRecoverReset(BigDataScriptNode statement) {
+		for (checkPointRecoverNodeIdx = 0; checkPointRecoverNodeIdx < size(); checkPointRecoverNodeIdx++) {
+			if (nodeId(checkPointRecoverNodeIdx) == statement.getId()) return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -67,7 +97,7 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 			Gpr.debug("Node ID does not match!" //
 					+ "\n\tNode id    : " + nodeId //
 					+ "\n\tCS_Node id : " + csnode.getId() //
-					);
+			);
 		}
 	}
 
