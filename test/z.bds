@@ -1,12 +1,22 @@
 #!/usr/bin/env bds
 
+done := false
+
 void zzz(int n) {
-	for(int i=0; i < n ; i++ ) print "before\t$i\n"
+	if( n > 4 ) {
+		if( ! done ) {
+			done = true
+			print "CHECKPOINT!!!\n"
+			checkpoint "test/z.chp"
+		}
+		return
+	}
 
-	checkpoint "test/z.chp"
-
-	for(int i=0; i < n ; i++ ) print "after\t$i\n"
+	print "zzz($n)\n"
+	for(int i=0; i < n ; i++ ) {
+		pid := par zzz(n+1)
+		print "\t$pid\n"
+	}
 }
 
-par zzz(10)
-done := true
+zzz(1)
