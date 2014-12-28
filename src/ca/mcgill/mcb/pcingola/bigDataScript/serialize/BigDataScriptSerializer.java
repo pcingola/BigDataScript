@@ -533,8 +533,8 @@ public class BigDataScriptSerializer {
 	/**
 	 * Serialize a node
 	 */
-	public String serializeSave(BigDataScriptSerialize node) {
-		if (add(node)) return node.serializeSave(this);
+	public String serializeSave(BigDataScriptSerialize bdsSer) {
+		if (add(bdsSer)) return bdsSer.serializeSave(this);
 		return "";
 	}
 

@@ -16,7 +16,7 @@ public class TestCasesZzz extends TestCasesBase {
 	@Test
 	public void test_thread_structure() {
 		// Run pipeline and test checkpoint
-		BigDataScript bds = runAndCheckpoint("test/z.bds", "test/z.chp", "done", "true");
+		BigDataScript bds = runAndCheckpoint("test/z.bds", "test/z.chp", null, null);
 
 		// Get scope names
 		BigDataScriptThread bdsThread = bds.getBigDataScriptThread();

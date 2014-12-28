@@ -3,7 +3,7 @@
 void zzz(int n) {
 	for(int i=0; i < n ; i++ ) print "before\t$i\n"
 
-	checkpoint "test/z.chp"
+	checkpoint "test/checkpoint_20.chp"
 
 	for(int i=0; i < n ; i++ ) print "after\t$i\n"
 }

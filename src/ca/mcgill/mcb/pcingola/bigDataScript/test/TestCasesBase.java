@@ -140,7 +140,7 @@ public class TestCasesBase extends TestCase {
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-			);
+					);
 		}
 	}
 
@@ -154,7 +154,7 @@ public class TestCasesBase extends TestCase {
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	BigDataScript runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue, Runnable runBeforeRecover) {
+	BigDataScript runAndCheckpoint(String fileName, String checkpointFileName, String varName, Object expectedValue, Runnable runBeforeRecover) {
 		// Compile
 		BigDataScript bigDataScript = bds(fileName);
 		bigDataScript.run();
@@ -162,10 +162,10 @@ public class TestCasesBase extends TestCase {
 
 		// Run something before checkpoint recovery?
 		if (runBeforeRecover != null) runBeforeRecover.run();
-		else {
+		else if (varName != null) {
 			// Check that values match
-			ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varname);
-			Assert.assertTrue("Missing variable '" + varname + "'", ssym != null);
+			ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varName);
+			Assert.assertTrue("Missing variable '" + varName + "'", ssym != null);
 
 			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
 			Assert.assertEquals(expectedValue, ssym.getValue().toString());
@@ -183,12 +183,14 @@ public class TestCasesBase extends TestCase {
 		bigDataScript2.setStackCheck(true);
 		bigDataScript2.run();
 
-		// Check that values match
-		ScopeSymbol ssym = bigDataScript2.getProgramUnit().getRunScope().getSymbol(varname);
-		Assert.assertTrue("Missing variable '" + varname + "'", ssym != null);
+		if (varName != null) {
+			// Check that values match
+			ScopeSymbol ssym = bigDataScript2.getProgramUnit().getRunScope().getSymbol(varName);
+			Assert.assertTrue("Missing variable '" + varName + "'", ssym != null);
 
-		if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
-		Assert.assertEquals(expectedValue, ssym.getValue().toString());
+			if (debug) Gpr.debug("Program: " + fileName + "\t" + ssym);
+			Assert.assertEquals(expectedValue, ssym.getValue().toString());
+		}
 
 		return bigDataScript2;
 	}

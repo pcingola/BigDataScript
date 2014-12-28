@@ -57,6 +57,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
 	public static final String LINE = "--------------------";
 
+	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
+
 	private static int threadNumber = 1;
 
 	Config config; // Config
@@ -192,6 +194,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Default file name
 		if (checkpointFileName == null) checkpointFileName = statement.getFileName() + ".chp";
 
+		// Save
 		if (isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
 		BigDataScriptSerializer bdsSer = new BigDataScriptSerializer(checkpointFileName, config);
 		bdsSer.save(getRoot()); // Save root thread
@@ -228,10 +231,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if (pc.nodeId(checkPointRecoverNodeIdx) == statement.getId()) return;
 		}
 
-		throw new RuntimeException("Checkpoint statement not found in Program Counter:" //
-				+ " \n\tPC           : " + pc //
-				+ " \n\tBds thread ID: " + getBdsThreadId() //
-				);
+		// Empty PC means that we finished executing
+		if (!pc.isEmpty()) {
+			// If PC is not empty, we should have found the nodes
+			throw new RuntimeException("Checkpoint statement not found in Program Counter:" //
+					+ " \n\tPC           : " + pc //
+					+ " \n\tBds thread ID: " + getBdsThreadId() //
+			);
+		}
 	}
 
 	void createBdsThreadId() {
@@ -523,6 +530,24 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	}
 
+	/**
+	 * Freeze thread execution
+	 */
+	protected void freeze() {
+		RunState oldRunState = runState;
+		runState = RunState.FROZEN;
+
+		while (freeze) {
+			try {
+				Thread.sleep(FROZEN_SLEEP_TIME);
+			} catch (InterruptedException e) {
+				// Nothing to do
+			}
+		}
+
+		runState = oldRunState; // Restore old state
+	}
+
 	public String getBdsThreadId() {
 		return bdsThreadId;
 	}
@@ -713,6 +738,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return runState.isFatalError();
 	}
 
+	/**
+	 * Is this thread frozen?
+	 */
+	public boolean isFrozen() {
+		return runState.isFrozen();
+	}
+
 	public boolean isReturn() {
 		return runState.isReturn();
 	}
@@ -870,7 +902,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -902,6 +934,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Run statement (i.e. run program)
 		boolean ok = true;
 		runStatement();
+
+		// We are done running
+		if (isDebug()) Gpr.debug("BdsThread finished: " + getBdsThreadId());
 		if (isFatalError()) {
 			// Error condition
 			ok = false;
@@ -942,6 +977,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if (ev != null && ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
 		}
 
+		// We are completely done
+		runState = RunState.FINISHED;
+
 		// Finish up
 		removeStaleFiles();
 		timer.end();
@@ -958,6 +996,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public void run(BigDataScriptNode node) {
 		// Before node execution
 		if (!isCheckpointRecover()) runBegin(node);
+
+		// Should we freeze execution?
+		if (freeze) freeze();
 
 		try {
 			// Run?
@@ -976,8 +1017,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	protected void runBegin(BigDataScriptNode node) {
 		// Need a new scope?
 		if (node.isNeedsScope()) newScope(node);
-
 		getPc().push(node);
+
 	}
 
 	/**
@@ -995,7 +1036,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	protected void runStatement() {
 		try {
-			run(statement);
+			if (isCheckpointRecover() && pc.isEmpty()) {
+				// This is a special case: We are in recovery mode, but the
+				// thread has finished execution (PC is empty)
+				// = >There is nothing to execute
+				if (isDebug()) Gpr.debug("Thread finished execution before checkpoint, nothing to run. BdsThreadId: " + getBdsThreadId());
+			} else {
+				// Normal execution => Run statement
+				run(statement);
+			}
 		} catch (Throwable t) {
 			runState = RunState.FATAL_ERROR;
 			if (isVerbose()) throw new RuntimeException(t);
@@ -1040,6 +1089,35 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	@Override
 	public String serializeSave(BigDataScriptSerializer serializer) {
+		// This 'serializeSave' method can be called form another thread
+		// We have to make sure that the thread is not running while
+		// serializing (otherwise we'll recover an inconsistent state)
+
+		// Set this thread to freeze (it will be frozen in the next 'run' call)
+		setFreeze(true);
+		String pcOld = pc.toString(); // Save current program counter
+
+		// Serialize
+		String serStr = serializeSaveAll(serializer);
+
+		// Has program counter changed?
+		String pcNew = pc.toString();
+		if (!pcNew.equals(pcOld)) {
+			// PC changed => We have to serialize again
+			// This time we are 'safe' because thread should be frozen
+			serStr = serializeSaveAll(serializer);
+		}
+
+		// Un-freeze
+		setFreeze(false);
+
+		return serStr.toString();
+	}
+
+	/**
+	 * Serialize main and data
+	 */
+	public String serializeSaveAll(BigDataScriptSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 		out.append(serializeSaveThreadMain(serializer));
 		out.append("\n");
@@ -1092,6 +1170,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public void setExitValue(long exitValue) {
 		this.exitValue = (int) exitValue;
+	}
+
+	/**
+	 * Freeze execution before next node run
+	 */
+	public void setFreeze(boolean freeze) {
+		this.freeze = freeze;
 	}
 
 	public void setPc(ProgramCounter pc) {

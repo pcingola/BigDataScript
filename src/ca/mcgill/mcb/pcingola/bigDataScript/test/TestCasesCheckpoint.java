@@ -204,4 +204,9 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		Assert.assertTrue("There should be one and only one 'Global' scope (count = " + count + ")", count == 1);
 	}
 
+	@Test
+	public void test20_checkpoint_after_main_thread_finished_execution() {
+		runAndCheckpoint("test/checkpoint_20.bds", "test/checkpoint_20.chp", null, null);
+	}
+
 }
