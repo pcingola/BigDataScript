@@ -40,8 +40,8 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	public HostResources(HostResources hr) {
 		cpus = hr.cpus;
 		mem = hr.mem;
-		timeout = 0;
-		wallTimeout = 0;
+		timeout = hr.timeout;
+		wallTimeout = hr.wallTimeout;
 		id = nextId();
 	}
 
@@ -74,7 +74,6 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 
 	/**
 	 * Consume resources (subtract resources)
-	 * @param hr
 	 */
 	public void consume(HostResources hr) {
 		if (hr == null) return;
@@ -105,8 +104,6 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 
 	/**
 	 * Does this resource have at least 'hr' resources?
-	 * @param hr
-	 * @return
 	 */
 	public boolean hasResources(HostResources hr) {
 		return compareTo(hr) >= 0;
@@ -143,7 +140,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 		this.timeout = timeout;
 
 		// Wall-timeout cannot be shorter than timeout
-		if (timeout > wallTimeout) wallTimeout = timeout;
+		if (wallTimeout > 0 && timeout > wallTimeout) wallTimeout = timeout;
 	}
 
 	public void setWallTimeout(long walltimeout) {
@@ -156,7 +153,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 				+ "\tmem: " + Gpr.toStringMem(mem) //
 				+ (timeout > 0 ? "\ttimeout: " + timeout : "") //
 				+ (wallTimeout > 0 ? "\twall-timeout: " + wallTimeout : "") //
-		;
+				;
 	}
 
 	public String toStringMultiline() {

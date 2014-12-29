@@ -89,8 +89,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setNode(bdsThread.getString(TASK_OPTION_NODE));
 		task.setQueue(bdsThread.getString(TASK_OPTION_QUEUE));
 		task.setMaxFailCount((int) bdsThread.getInt(TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
-		task.getResources().setTimeout(bdsThread.getInt(TASK_OPTION_TIMEOUT));
 		task.getResources().setWallTimeout(bdsThread.getInt(TASK_OPTION_WALL_TIMEOUT));
+		task.getResources().setTimeout(bdsThread.getInt(TASK_OPTION_TIMEOUT));
 		if (taskDependency != null) task.setTaskDependency(taskDependency);
 
 		return task;
@@ -242,7 +242,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-				;
+						;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
