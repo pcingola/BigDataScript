@@ -749,6 +749,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	@SuppressWarnings("rawtypes")
 	public void kill(List taskIds) {
+		if (taskIds == null) return;
+
 		// We are done when ALL tasks are done
 		for (Object tid : taskIds)
 			kill(tid.toString());
@@ -758,6 +760,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Kill one task/thread
 	 */
 	public void kill(String taskId) {
+		if (taskId == null) return;
+
 		if (bdsChildThreadsById.containsKey(taskId)) {
 			// Kill thread
 			bdsChildThreadsById.get(taskId).kill();
@@ -875,7 +879,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1321,6 +1325,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	@SuppressWarnings("rawtypes")
 	public boolean wait(List ids) {
+		if (ids == null) return true;
+
 		boolean ok = true;
 
 		// We are done when ALL tasks/threads are done
@@ -1334,6 +1340,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Wait for one task/thread to finish
 	 */
 	public boolean wait(String id) {
+		if (id == null) return true;
 
 		// Note: We could be waiting for another thread's taskID.
 		//       So we need to wait on the global TaskDependencies

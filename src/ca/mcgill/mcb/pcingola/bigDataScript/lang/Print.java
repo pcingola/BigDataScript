@@ -40,9 +40,11 @@ public class Print extends Exit {
 		if (expr != null) {
 			// Evaluate expression to show
 			bdsThread.run(expr);
+			if (bdsThread.isCheckpointRecover()) return;
 			msg = popString(bdsThread);
 		}
 
+		if (bdsThread.isCheckpointRecover()) return;
 		if (!msg.isEmpty()) System.out.print(msg);
 	}
 

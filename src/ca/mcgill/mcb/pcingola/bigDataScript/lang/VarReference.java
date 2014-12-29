@@ -74,6 +74,7 @@ public class VarReference extends Reference {
 	 */
 	@Override
 	public void setValue(BigDataScriptThread bdsThread, Object value) {
+		if (value == null) return;
 		ScopeSymbol ssym = getScopeSymbol(bdsThread.getScope()); // Get scope symbol
 		value = getReturnType().cast(value); // Cast to destination type
 		ssym.setValue(value); // Assign

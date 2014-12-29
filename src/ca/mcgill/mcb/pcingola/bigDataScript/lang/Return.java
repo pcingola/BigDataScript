@@ -51,10 +51,15 @@ public class Return extends Statement {
 		if (expr != null) {
 			// Set return value to scope
 			bdsThread.run(expr);
-			bdsThread.setReturnValue(bdsThread.pop());
-		} else bdsThread.setReturnValue(null);
 
-		if (!bdsThread.isCheckpointRecover()) bdsThread.setRunState(RunState.RETURN);
+			if (bdsThread.isCheckpointRecover()) return;
+			bdsThread.setReturnValue(bdsThread.pop());
+		} else {
+			if (bdsThread.isCheckpointRecover()) return;
+			bdsThread.setReturnValue(null);
+		}
+
+		bdsThread.setRunState(RunState.RETURN);
 	}
 
 	@Override

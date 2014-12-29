@@ -78,6 +78,7 @@ public class LiteralList extends Literal {
 		for (BigDataScriptNode node : values) {
 			Expression expr = (Expression) node;
 			bdsThread.run(expr); // Evaluate expression
+
 			Object value = bdsThread.pop();
 			value = baseType.cast(value); // Cast to base type
 			list.add(value); // Add it to list

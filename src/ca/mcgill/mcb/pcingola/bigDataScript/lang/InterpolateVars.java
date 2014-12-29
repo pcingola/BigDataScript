@@ -120,7 +120,7 @@ public class InterpolateVars extends Literal {
 			}
 		}
 
-		if (!bdsThread.isCheckpointRecover()) bdsThread.push(sb.toString());
+		bdsThread.push(sb.toString());
 	}
 
 	/**

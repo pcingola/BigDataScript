@@ -63,11 +63,13 @@ public class ExpressionList extends Expression {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		Object value = null;
+
 		for (Expression expr : expressions) {
 			bdsThread.run(expr);
-			if (!bdsThread.isCheckpointRecover()) value = bdsThread.pop();
+			value = bdsThread.pop();
 		}
-		if (!bdsThread.isCheckpointRecover()) bdsThread.push(value);
+
+		bdsThread.push(value);
 	}
 
 	@Override

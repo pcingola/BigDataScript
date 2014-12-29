@@ -80,7 +80,10 @@ public class VarDeclaration extends Statement {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		for (VariableInit vi : varInit) {
-			bdsThread.getScope().add(new ScopeSymbol(vi.varName, type)); // Add variable to scope
+			if (!bdsThread.isCheckpointRecover()) {
+				bdsThread.getScope().add(new ScopeSymbol(vi.varName, type)); // Add variable to scope
+			}
+
 			bdsThread.run(vi);
 
 			// Act based on run state

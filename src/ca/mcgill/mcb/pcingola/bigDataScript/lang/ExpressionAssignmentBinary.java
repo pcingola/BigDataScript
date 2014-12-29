@@ -47,13 +47,11 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-
 		// Get value
 		bdsThread.run(right);
-		if (bdsThread.isCheckpointRecover()) return;
-
 		Object value = bdsThread.peek();
 
+		// Assign value
 		if (left instanceof VarReference) {
 			((VarReference) left).setValue(bdsThread, value);;
 		} else if (left instanceof VarReferenceList) {

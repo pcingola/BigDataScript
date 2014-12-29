@@ -27,6 +27,7 @@ public class ExpressionBitOr extends ExpressionBit {
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(left);
 		bdsThread.run(right);
+
 		if (bdsThread.isCheckpointRecover()) return;
 
 		bdsThread.push(left.popInt(bdsThread) | right.popInt(bdsThread));

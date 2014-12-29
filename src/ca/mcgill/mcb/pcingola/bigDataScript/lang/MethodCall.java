@@ -42,29 +42,33 @@ public class MethodCall extends FunctionCall {
 			values[i] = value;
 		}
 
-		// Create new scope
-		// TODO: Add class scope? (class variables & methods)
-		bdsThread.newScope(this);
+		if (!bdsThread.isCheckpointRecover()) {
+			// Create new scope
+			// TODO: Add class scope? (class variables & methods)
+			bdsThread.newScope(this);
 
-		// Add arguments to scope
-		Scope scope = bdsThread.getScope();
-		for (int i = 0; i < fparam.length; i++) {
-			Type argType = fparam[i].type;
-			String argName = fparam[i].getVarInit()[0].varName;
-			scope.add(new ScopeSymbol(argName, argType, values[i]));
+			// Add arguments to scope
+			Scope scope = bdsThread.getScope();
+			for (int i = 0; i < fparam.length; i++) {
+				Type argType = fparam[i].type;
+				String argName = fparam[i].getVarInit()[0].varName;
+				scope.add(new ScopeSymbol(argName, argType, values[i]));
+			}
 		}
 
 		// Run function body
 		functionDeclaration.runFunction(bdsThread);
 
-		// Get return value
-		Object retVal = bdsThread.getReturnValue();
+		if (!bdsThread.isCheckpointRecover()) {
+			// Get return value
+			Object retVal = bdsThread.getReturnValue();
 
-		// Back to old scope
-		bdsThread.oldScope();
+			// Back to old scope
+			bdsThread.oldScope();
 
-		// Return result
-		bdsThread.push(retVal);
+			// Return result
+			bdsThread.push(retVal);
+		}
 	}
 
 	@Override

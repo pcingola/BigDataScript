@@ -116,12 +116,12 @@ public class ExpressionTask extends ExpressionWithScope {
 			sys = (ExpressionSys) statement;
 		} else if (statement instanceof LiteralString) {
 			LiteralString lstr = (LiteralString) statement;
+			bdsThread.run(lstr); // Evaluate (e.g. interpolate variables)
 
-			// Evaluate (e.g. interpolate variables)
-			bdsThread.run(lstr);
-			String str = bdsThread.pop().toString();
-
-			sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);
+			if (!bdsThread.isCheckpointRecover()) {
+				String str = bdsThread.pop().toString();
+				sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);
+			}
 		} else if (statement instanceof Block) {
 			// Create one sys statement for all sys statements in the block
 			StringBuilder syssb = new StringBuilder();
@@ -140,7 +140,9 @@ public class ExpressionTask extends ExpressionWithScope {
 				syssb.append("\n");
 			}
 
-			sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
+			if (!bdsThread.isCheckpointRecover()) {
+				sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
+			}
 		} else {
 			throw new RuntimeException("Unimplemented for class '" + statement.getClass().getSimpleName() + "'");
 		}
@@ -193,20 +195,20 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (taskOptions != null) {
 			taskDependency = taskOptions.evalTaskDependency(bdsThread);
 
-			if (!bdsThread.isCheckpointRecover()) {
-				if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
-				if (taskDependency == null) {
-					// Task options clause not satisfied. Do not execute task
-					bdsThread.push("");
-					return;
-				}
+			if (bdsThread.isCheckpointRecover()) return;
 
-				boolean needsUpdate = taskDependency.depOperator();
-				if (!needsUpdate) {
-					// Task options clause not satisfied. Do not execute task
-					bdsThread.push("");
-					return;
-				}
+			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
+			if (taskDependency == null) {
+				// Task options clause not satisfied. Do not execute task
+				bdsThread.push("");
+				return;
+			}
+
+			boolean needsUpdate = taskDependency.depOperator();
+			if (!needsUpdate) {
+				// Task options clause not satisfied. Do not execute task
+				bdsThread.push("");
+				return;
 			}
 		}
 
@@ -214,6 +216,7 @@ public class ExpressionTask extends ExpressionWithScope {
 
 		// Evaluate 'sys' statements
 		ExpressionSys sys = evalSys(bdsThread);
+
 		// Create task
 		Task task = createTask(bdsThread, taskDependency, sys);
 
@@ -242,7 +245,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-						;
+				;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}

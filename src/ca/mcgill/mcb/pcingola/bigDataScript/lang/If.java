@@ -44,9 +44,6 @@ public class If extends Statement {
 
 		bdsThread.run(condition);
 
-		// If we are recovering from a checkpoint, we have to get
-		// into the loop's statements to find the node where the
-		// program created the checkpoint
 		if (bdsThread.isCheckpointRecover()) return true;
 
 		// Return value form 'condition'

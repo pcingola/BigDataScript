@@ -41,7 +41,7 @@ public class ForInit extends Statement {
 		else {
 			for (Expression expr : expressions) {
 				bdsThread.run(expr);
-				if (!bdsThread.isCheckpointRecover()) bdsThread.pop(); // Remove from stack, nobody is reading the results
+				bdsThread.pop(); // Remove from stack, nobody is reading the results
 			}
 		}
 	}

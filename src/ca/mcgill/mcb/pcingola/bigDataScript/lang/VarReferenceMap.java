@@ -29,6 +29,8 @@ public class VarReferenceMap extends Reference {
 	 */
 	public String evalKey(BigDataScriptThread bdsThread) {
 		bdsThread.run(expressionKey);
+		if (bdsThread.isCheckpointRecover()) return null;
+
 		return popString(bdsThread);
 	}
 
@@ -116,16 +118,23 @@ public class VarReferenceMap extends Reference {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		String key = evalKey(bdsThread);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		HashMap map = getMap(bdsThread.getScope());
 		Object ret = map.get(key);
 		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + key + "'.");
+
 		bdsThread.push(ret);
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setValue(BigDataScriptThread bdsThread, Object value) {
+		if (value == null) return;
+
 		String key = evalKey(bdsThread);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		HashMap map = getMap(bdsThread.getScope());
 		map.put(key, value);
 	}

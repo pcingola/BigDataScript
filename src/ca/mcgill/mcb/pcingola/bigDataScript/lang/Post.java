@@ -32,8 +32,10 @@ public class Post extends Pre {
 	public void runStep(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
 		bdsThread.run(ref);
-		long value = popInt(bdsThread);
+		
+		if (bdsThread.isCheckpointRecover()) return;
 
+		long value = popInt(bdsThread);
 		if (operation == PrePostOperation.INCREMENT) ref.setValue(bdsThread, value + 1);
 		else if (operation == PrePostOperation.DECREMENT) ref.setValue(bdsThread, value - 1);
 		else throw new RuntimeException("Unknown operator " + operation);

@@ -77,18 +77,21 @@ public class LiteralMap extends Literal {
 		Type baseType = baseType();
 
 		for (int i = 0; i < keys.length; i++) {
-			// Evaluate 'key' expression
+			// Evaluate 'key' and 'value' expressions
 			Expression keyExpr = keys[i];
 			bdsThread.run(keyExpr);
-			String key = bdsThread.pop().toString();
 
-			// Evaluate 'value' expression
 			Expression valueExpr = values[i];
 			bdsThread.run(valueExpr);
-			Object value = bdsThread.pop();
-			value = baseType.cast(value);
 
-			map.put(key, value); // Add it to map
+			// Assign to map
+			if (!bdsThread.isCheckpointRecover()) {
+				Object value = bdsThread.pop();
+				String key = bdsThread.pop().toString();
+				value = baseType.cast(value);
+
+				map.put(key, value); // Add it to map
+			}
 		}
 
 		bdsThread.push(map);

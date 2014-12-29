@@ -44,6 +44,7 @@ public class ExpressionTimes extends ExpressionMath {
 		// Evaliate expressions
 		bdsThread.run(left);
 		bdsThread.run(right);
+
 		if (bdsThread.isCheckpointRecover()) return;
 
 		Object rval = bdsThread.pop();

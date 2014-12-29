@@ -37,8 +37,9 @@ public class Pre extends ExpressionUnary {
 	public void runStep(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
 		bdsThread.run(ref);
-		long value = popInt(bdsThread);
+		if (bdsThread.isCheckpointRecover()) return;
 
+		long value = popInt(bdsThread);
 		if (operation == PrePostOperation.INCREMENT) value++;
 		else if (operation == PrePostOperation.DECREMENT) value--;
 		else throw new RuntimeException("Unknown operator " + operation);

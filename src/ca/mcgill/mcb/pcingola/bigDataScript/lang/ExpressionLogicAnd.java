@@ -30,10 +30,10 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 		if (!bdsThread.isCheckpointRecover()) {
 			// Already false? No need to evaluate the other expression
 			if (!((Boolean) bdsThread.peek())) return;
-
-			// 'AND' only depends on 'right' result (left was true)
-			bdsThread.pop(); // Remove 'left' result from stack
 		}
+
+		// 'AND' only depends on 'right' result (left was true)
+		bdsThread.pop(); // Remove 'left' result from stack
 
 		bdsThread.run(right);
 	}

@@ -30,6 +30,7 @@ public class VarReferenceList extends Reference {
 	 */
 	public int evalIndex(BigDataScriptThread bdsThread) {
 		bdsThread.run(expressionIdx);
+		if (bdsThread.isCheckpointRecover()) return 0;
 		return (int) popInt(bdsThread);
 	}
 
@@ -116,6 +117,8 @@ public class VarReferenceList extends Reference {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		int idx = evalIndex(bdsThread);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		ArrayList list = getList(bdsThread.getScope());
 		if ((idx < 0) || (idx >= list.size())) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + list.size() + ").");
 		bdsThread.push(list.get(idx));
@@ -124,7 +127,11 @@ public class VarReferenceList extends Reference {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void setValue(BigDataScriptThread bdsThread, Object value) {
+		if (value == null) return;
+
 		int idx = evalIndex(bdsThread);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		ArrayList<Object> list = getList(bdsThread.getScope());
 
 		// Make sure the array is big enough to hold the data

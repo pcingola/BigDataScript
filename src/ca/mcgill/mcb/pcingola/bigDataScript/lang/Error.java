@@ -42,13 +42,14 @@ public class Error extends Exit {
 		if (expr != null) {
 			// Evaluate expression to show
 			bdsThread.run(expr);
-			if (bdsThread.isCheckpointRecover()) return;
-
 			msg = popString(bdsThread);
 		}
 
-		Timer.showStdErr("Error" + (!msg.isEmpty() ? ": " + msg : ""));
+		// Do not show error during checkpoint recovery
+		if (bdsThread.isCheckpointRecover()) return;
 
+		// Error
+		Timer.showStdErr("Error" + (!msg.isEmpty() ? ": " + msg : ""));
 		bdsThread.setExitValue(1L); // Set exit value
 		bdsThread.setRunState(RunState.EXIT);
 	}

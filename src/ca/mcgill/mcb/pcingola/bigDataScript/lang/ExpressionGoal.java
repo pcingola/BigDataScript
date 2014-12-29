@@ -34,7 +34,6 @@ public class ExpressionGoal extends ExpressionUnary {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		Object value = bdsThread.pop();
-
 		List<String> taskIds = bdsThread.goal(value.toString());
 		bdsThread.push(taskIds);
 	}

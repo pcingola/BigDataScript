@@ -37,6 +37,8 @@ public class Kill extends Statement {
 		// No arguments? Kill for all tasks
 
 		bdsThread.run(taskId);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		Object val = bdsThread.pop();
 
 		// Are we Killing for one task or a list of tasks?

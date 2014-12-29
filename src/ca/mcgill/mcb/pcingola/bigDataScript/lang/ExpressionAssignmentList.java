@@ -78,7 +78,6 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		List list = (List) bdsThread.peek();
-
 		for (int i = 0; i < lefts.length; i++) {
 			// Get variable
 			VarReference vr = (VarReference) lefts[i];

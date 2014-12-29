@@ -109,20 +109,17 @@ public class ExpressionDepOperator extends Expression {
 
 		for (Expression e : exprs) {
 			bdsThread.run(e);
+			Object result = bdsThread.pop();
 
-			if (!bdsThread.isCheckpointRecover()) {
-				Object result = bdsThread.pop();
-
-				if (result instanceof List) {
-					// Flatten the list
-					List l = (List) result;
-					for (Object o : l)
-						resList.add(o.toString());
-				} else resList.add(result.toString());
-			}
+			if (result instanceof List) {
+				// Flatten the list
+				List l = (List) result;
+				for (Object o : l)
+					resList.add(o.toString());
+			} else resList.add(result.toString());
 		}
 
-		if (!bdsThread.isCheckpointRecover()) bdsThread.push(resList);
+		bdsThread.push(resList);
 	}
 
 	@Override

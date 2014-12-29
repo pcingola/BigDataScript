@@ -151,7 +151,8 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	 */
 	@SuppressWarnings("rawtypes")
 	public Object cast(Object obj) {
-		if (isBool()) {
+		if (obj == null) return null;
+		else if (isBool()) {
 			if (obj instanceof Boolean) return obj;
 			if (obj instanceof Long) return ((Long) obj) != 0;
 			if (obj instanceof Integer) return ((Long) obj) != 0;
