@@ -513,6 +513,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		while (freeze) {
 			try {
 				Thread.sleep(FROZEN_SLEEP_TIME);
+				if (isDebug()) Gpr.debug("Frozen bdsThread: '" + getBdsThreadId() + "'");
 			} catch (InterruptedException e) {
 				// Nothing to do
 			}
@@ -918,7 +919,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		runStatement();
 
 		// We are done running
-		if (isDebug()) Gpr.debug("BdsThread finished: " + getBdsThreadId());
+		if (isDebug()) Timer.showStdErr("BdsThread finished: " + getBdsThreadId());
 		if (isFatalError()) {
 			// Error condition
 			ok = false;
@@ -1238,13 +1239,17 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 
 		int nodeNum = pc.checkpointRecoverNextNode();
-		//		Gpr.debug("BdsThreadId: " + getBdsThreadId() //
-		//				+ "\n\tnodeNum   : " + nodeNum //
-		//				+ "\n\tnode ID   : " + node.getId() //
-		//				+ "\n\tPC        : " + pc //
-		//				+ "\n\tnode type : " + node.getClass().getSimpleName() //
-		//				+ "\n\tnode      : " + node //
-		//		);
+
+		//		if (getBdsThreadId().endsWith("_parallel_11")) {
+		//			Gpr.debug("BdsThreadId: " + getBdsThreadId() //
+		//					+ "\n\tnodeNum   : " + nodeNum //
+		//					+ "\n\tnode ID   : " + node.getId() //
+		//					+ "\n\tPC        : " + pc //
+		//					+ "\n\tnode type : " + node.getClass().getSimpleName() //
+		//					+ "\n\tnode      : " + node //
+		//			);
+		//			Gpr.debug("DEBUG");
+		//		}
 
 		// Match?
 		if (node.getId() == nodeNum) {

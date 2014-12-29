@@ -15,6 +15,7 @@ public class TestCasesZzz extends TestCasesBase {
 	@Test
 	public void test_thread_structure() {
 		verbose = true;
+		debug = true;
 
 		// Run pipeline and test checkpoint
 		BigDataScript bds = runAndCheckpoint("test/z.bds", "test/z.chp", null, null);
@@ -31,5 +32,4 @@ public class TestCasesZzz extends TestCasesBase {
 		//
 		//		Assert.assertTrue("There should be one and only one 'Global' scope (count = " + count + ")", count == 1);
 	}
-
 }

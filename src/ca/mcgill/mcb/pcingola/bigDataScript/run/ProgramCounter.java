@@ -102,7 +102,7 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 					+ "\n\tPC         : " + this //
 					+ "\n\tNode Id    : " + nodeId //
 					+ "\n\tbdsNode Id : " + bdsNode.getId() //
-					);
+			);
 		}
 	}
 
@@ -142,13 +142,14 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 
 	@Override
 	public String toString() {
-		StringBuilder out = new StringBuilder();
-		out.append("PC: size " + size() + " / " + initialSize);
-		out.append(isEmpty() ? "[Empty]" : "");
-		out.append(", nodes: ");
-
+		StringBuilder pc = new StringBuilder();
 		for (int nn : nodeIds)
-			out.append((out.length() > 0 ? " -> " : "") + nn);
-		return out.toString();
+			pc.append((pc.length() > 0 ? " -> " : "") + nn);
+
+		return "PC: size " + size() + " / " + initialSize //
+				+ (isEmpty() ? " [Empty] " : "") //
+				+ (checkPointRecoverNodeIdx > 0 ? ", checkPointRecoverNodeIdx: " + checkPointRecoverNodeIdx : "") //
+				+ ", nodes: " + pc //
+		;
 	}
 }

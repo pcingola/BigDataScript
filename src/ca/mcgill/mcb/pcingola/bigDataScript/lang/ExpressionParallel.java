@@ -105,6 +105,8 @@ public class ExpressionParallel extends ExpressionTask {
 			} else {
 				// When recovering from checkpoints, serialization mechanism takes care
 				// of creating new threads, so we don't need to do it again here.
+				bdsNewThread = bdsThread;
+				getFunctionCall().runStep(bdsThread);
 			}
 		} else {
 			if (!bdsThread.isCheckpointRecover()) {
@@ -113,6 +115,8 @@ public class ExpressionParallel extends ExpressionTask {
 			} else {
 				// When recovering from checkpoints, serialization mechanism takes care
 				// of creating new threads, so we don't need to do it again here.
+				bdsNewThread = bdsThread;
+				bdsThread.run(statement);
 			}
 		}
 

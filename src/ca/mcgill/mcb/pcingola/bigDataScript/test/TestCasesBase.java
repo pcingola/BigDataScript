@@ -28,8 +28,12 @@ public class TestCasesBase extends TestCase {
 	BigDataScript bds(String fileName) {
 		String args[] = { fileName };
 		String argsv[] = { "-v", fileName };
+		String argsd[] = { "-d", "-v", fileName };
 
-		BigDataScript bigDataScript = new BigDataScript(verbose ? argsv : args);
+		if (debug) args = argsd;
+		else if (verbose) args = argsv;
+
+		BigDataScript bigDataScript = new BigDataScript(args);
 		bigDataScript.setStackCheck(true);
 		return bigDataScript;
 	}
