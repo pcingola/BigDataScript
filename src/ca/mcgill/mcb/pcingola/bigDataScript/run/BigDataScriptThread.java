@@ -526,15 +526,21 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return bdsThreadId;
 	}
 
+	public List<BigDataScriptThread> getBdsThreads() {
+		List<BigDataScriptThread> list = new ArrayList<BigDataScriptThread>();
+		list.addAll(bdsChildThreadsById.values());
+		return list;
+	}
+
 	/**
 	 * Get all child threads
 	 */
-	public List<BigDataScriptThread> getBdsThreads() {
+	public List<BigDataScriptThread> getBdsThreadsAll() {
 		List<BigDataScriptThread> list = new ArrayList<BigDataScriptThread>();
 		list.add(this);
 
 		for (BigDataScriptThread bth : bdsChildThreadsById.values())
-			list.addAll(bth.getBdsThreads());
+			list.addAll(bth.getBdsThreadsAll());
 
 		return list;
 	}
@@ -884,7 +890,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1238,20 +1244,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			return false;
 		}
 
-		int nodeNum = pc.checkpointRecoverNextNode();
-
-		//		if (getBdsThreadId().endsWith("_parallel_11")) {
-		//			Gpr.debug("BdsThreadId: " + getBdsThreadId() //
-		//					+ "\n\tnodeNum   : " + nodeNum //
-		//					+ "\n\tnode ID   : " + node.getId() //
-		//					+ "\n\tPC        : " + pc //
-		//					+ "\n\tnode type : " + node.getClass().getSimpleName() //
-		//					+ "\n\tnode      : " + node //
-		//			);
-		//			Gpr.debug("DEBUG");
-		//		}
-
 		// Match?
+		int nodeNum = pc.checkpointRecoverNextNode();
 		if (node.getId() == nodeNum) {
 			// Node found!
 			pc.checkpointRecoverFound();

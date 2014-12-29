@@ -8,7 +8,7 @@ void zzz(int n) {
 		if( ! done ) {
 			done = true
 			print "Before checkpoint: zzz($n)\n"
-			checkpoint "test/z.chp"
+			checkpoint "test/checkpoint_23.chp"
 			print "After checkpoint: zzz($n)\n"
 			luae = 42
 		}
