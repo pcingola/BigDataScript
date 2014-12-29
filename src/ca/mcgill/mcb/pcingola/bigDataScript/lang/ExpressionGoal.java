@@ -31,6 +31,8 @@ public class ExpressionGoal extends ExpressionUnary {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(expr);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		Object value = bdsThread.pop();
 
 		List<String> taskIds = bdsThread.goal(value.toString());

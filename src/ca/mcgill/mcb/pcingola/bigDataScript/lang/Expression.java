@@ -23,6 +23,8 @@ public class Expression extends Statement {
 	public void runStep(BigDataScriptThread bdsThread) {
 		try {
 			bdsThread.run(this);
+
+			if (bdsThread.isCheckpointRecover()) return;
 			bdsThread.pop();
 		} catch (Throwable t) {
 			if (Config.get().isDebug()) t.printStackTrace();

@@ -75,12 +75,15 @@ public class ExpressionParallel extends ExpressionTask {
 		// Execute options assignments
 		if (taskOptions != null) {
 			bdsThread.run(taskOptions);
-			boolean ok = popBool(bdsThread);
-			if (bdsThread.isDebug()) log("task-options check " + ok);
-			if (!ok) {
-				// Options clause not satisfied. Do not execute 'parallel'
-				bdsThread.push("");
-				return;
+
+			if (!bdsThread.isCheckpointRecover()) {
+				boolean ok = popBool(bdsThread);
+				if (bdsThread.isDebug()) log("task-options check " + ok);
+				if (!ok) {
+					// Options clause not satisfied. Do not execute 'parallel'
+					bdsThread.push("");
+					return;
+				}
 			}
 		}
 

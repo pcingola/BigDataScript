@@ -26,10 +26,14 @@ public class ExpressionLogicOr extends ExpressionLogic {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(left);
-		if ((Boolean) bdsThread.peek()) return; // Already true? No need to evaluate the other expression
 
-		//  'OR' only depends on 'right' value (left was false)
-		bdsThread.pop(); // Remove 'left' result from stack
+		if (!bdsThread.isCheckpointRecover()) {
+			if ((Boolean) bdsThread.peek()) return; // Already true? No need to evaluate the other expression
+
+			//  'OR' only depends on 'right' value (left was false)
+			bdsThread.pop(); // Remove 'left' result from stack
+		}
+
 		bdsThread.run(right);
 	}
 

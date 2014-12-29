@@ -26,11 +26,15 @@ public class ExpressionVariableInitImplicit extends Expression {
 		// Evaluating the expression consists of initializing the variable and getting the result of that initialization
 
 		// Add variable to scope
-		Scope scope = bdsThread.getScope();
-		scope.add(new ScopeSymbol(vInit.getVarName(), returnType));
+		Scope scope = null;
+		if (!bdsThread.isCheckpointRecover()) {
+			scope = bdsThread.getScope();
+			scope.add(new ScopeSymbol(vInit.getVarName(), returnType));
+		}
 
 		// Evaluate assignment
 		bdsThread.run(vInit);
+		if (bdsThread.isCheckpointRecover()) return;
 
 		// Return initialization's result
 		ScopeSymbol ssym = scope.getSymbol(vInit.getVarName());

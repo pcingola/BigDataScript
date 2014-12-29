@@ -41,6 +41,8 @@ public class ExpressionAssignment extends ExpressionBinary {
 
 		// Get value
 		bdsThread.run(right);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		Object value = bdsThread.pop();
 
 		if (left instanceof VarReference) {

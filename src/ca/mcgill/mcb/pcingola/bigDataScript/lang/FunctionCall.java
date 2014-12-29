@@ -42,15 +42,15 @@ public class FunctionCall extends Expression {
 		Object values[] = new Object[fparam.length];
 		for (int i = 0; i < fparam.length; i++) {
 			bdsThread.run(arguments[i]);
-			Object value = bdsThread.pop();
 
 			if (!bdsThread.isCheckpointRecover()) {
+				Object value = bdsThread.pop();
 				value = fparam[i].type.cast(value);
 				values[i] = value;
 			}
 		}
 
-		bdsThread.push(values);
+		if (!bdsThread.isCheckpointRecover()) bdsThread.push(values);
 	}
 
 	@Override

@@ -50,7 +50,9 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 
 		// Get value
 		bdsThread.run(right);
-		Object value = bdsThread.pop();
+		if (bdsThread.isCheckpointRecover()) return;
+
+		Object value = bdsThread.peek();
 
 		if (left instanceof VarReference) {
 			((VarReference) left).setValue(bdsThread, value);;
@@ -61,8 +63,6 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 			VarReferenceMap listIndex = (VarReferenceMap) left;
 			listIndex.setValue(bdsThread, value);
 		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
-
-		bdsThread.push(value);
 	}
 
 	@Override

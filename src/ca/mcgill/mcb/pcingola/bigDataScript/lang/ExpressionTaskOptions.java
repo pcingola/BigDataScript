@@ -38,15 +38,20 @@ public class ExpressionTaskOptions extends ExpressionList {
 				// This evaluation returns a 'TaskDependence' object
 				ExpressionDepOperator exprDep = (ExpressionDepOperator) expr;
 				TaskDependency taskDepsExpr = exprDep.evalTaskDependency(bdsThread);
-				taskDeps.add(taskDepsExpr);
 
-				sat &= (taskDepsExpr != null); // Convert expression to boolean
+				if (!bdsThread.isCheckpointRecover()) {
+					taskDeps.add(taskDepsExpr);
+					sat &= (taskDepsExpr != null); // Convert expression to boolean
+				}
 			} else {
 				bdsThread.run(expr);
-				Object value = bdsThread.pop();
-				if (expr instanceof ExpressionAssignment) ; // Nothing to do
-				else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
-				else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean
+
+				if (!bdsThread.isCheckpointRecover()) {
+					Object value = bdsThread.pop();
+					if (expr instanceof ExpressionAssignment) ; // Nothing to do
+					else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
+					else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean
+				}
 			}
 
 			// Break expression evaluation if we already know it will not be executed
@@ -95,7 +100,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 		for (Expression e : expressions)
 			if (!(e instanceof ExpressionAssignment) //
 					&& !(e instanceof ExpressionVariableInitImplicit) //
-					) {
+			) {
 				// Cannot convert to bool? => We cannot use the expression
 				if (!e.getReturnType().canCast(Type.BOOL)) compilerMessages.add(this, "Only assignment, implicit variable declarations or boolean expressions are allowed in task options", MessageType.ERROR);
 			}

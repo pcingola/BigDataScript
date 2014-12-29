@@ -27,6 +27,8 @@ public class ExpressionBitAnd extends ExpressionBit {
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(left);
 		bdsThread.run(right);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		bdsThread.push(popInt(bdsThread) & popInt(bdsThread));
 	}
 

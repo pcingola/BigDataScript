@@ -38,6 +38,7 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(expr);
+		if (bdsThread.isCheckpointRecover()) return;
 
 		if (returnType == Type.INT) {
 			bdsThread.push(-popInt(bdsThread));

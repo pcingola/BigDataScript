@@ -141,6 +141,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	 */
 	protected void runFunction(BigDataScriptThread bdsThread) {
 		bdsThread.run(statement);
+		if (bdsThread.isCheckpointRecover()) return;
 
 		// Not a standard 'return' statement? Make sure we are returning the right type.
 		if (bdsThread.isReturn()) {

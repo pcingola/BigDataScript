@@ -192,24 +192,28 @@ public class ExpressionTask extends ExpressionWithScope {
 		TaskDependency taskDependency = null;
 		if (taskOptions != null) {
 			taskDependency = taskOptions.evalTaskDependency(bdsThread);
-			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
-			if (taskDependency == null) {
-				// Task options clause not satisfied. Do not execute task
-				bdsThread.push("");
-				return;
-			}
 
-			boolean needsUpdate = taskDependency.depOperator();
-			if (!needsUpdate) {
-				// Task options clause not satisfied. Do not execute task
-				bdsThread.push("");
-				return;
+			if (!bdsThread.isCheckpointRecover()) {
+				if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
+				if (taskDependency == null) {
+					// Task options clause not satisfied. Do not execute task
+					bdsThread.push("");
+					return;
+				}
+
+				boolean needsUpdate = taskDependency.depOperator();
+				if (!needsUpdate) {
+					// Task options clause not satisfied. Do not execute task
+					bdsThread.push("");
+					return;
+				}
 			}
 		}
 
+		if (bdsThread.isCheckpointRecover()) return;
+
 		// Evaluate 'sys' statements
 		ExpressionSys sys = evalSys(bdsThread);
-
 		// Create task
 		Task task = createTask(bdsThread, taskDependency, sys);
 
@@ -238,7 +242,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-						;
+				;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}

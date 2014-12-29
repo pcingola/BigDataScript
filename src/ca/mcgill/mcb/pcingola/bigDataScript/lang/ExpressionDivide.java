@@ -29,6 +29,7 @@ public class ExpressionDivide extends ExpressionMath {
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(left);
 		bdsThread.run(right);
+		if (bdsThread.isCheckpointRecover()) return;
 
 		if (isInt()) {
 			long den = popInt(bdsThread);

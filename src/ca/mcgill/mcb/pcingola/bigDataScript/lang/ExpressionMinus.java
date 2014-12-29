@@ -27,6 +27,7 @@ public class ExpressionMinus extends ExpressionMath {
 		if (right == null) {
 			// Unary minus operator
 			bdsThread.run(left);
+			if (bdsThread.isCheckpointRecover()) return;
 
 			// This should be an unary expression!
 			if (isInt()) {
@@ -42,6 +43,7 @@ public class ExpressionMinus extends ExpressionMath {
 			// Binary minus operator: Subtraction
 			bdsThread.run(left);
 			bdsThread.run(right);
+			if (bdsThread.isCheckpointRecover()) return;
 
 			if (isInt()) {
 				long tr = popInt(bdsThread);

@@ -75,7 +75,9 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 
 		// Get value
 		bdsThread.run(right);
-		List list = (List) bdsThread.pop();
+		if (bdsThread.isCheckpointRecover()) return;
+
+		List list = (List) bdsThread.peek();
 
 		for (int i = 0; i < lefts.length; i++) {
 			// Get variable
@@ -89,8 +91,6 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 			// Assign value to variable
 			vr.setValue(bdsThread, value);
 		}
-
-		bdsThread.push(list);
 	}
 
 	@Override

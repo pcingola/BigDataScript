@@ -42,6 +42,8 @@ public class Error extends Exit {
 		if (expr != null) {
 			// Evaluate expression to show
 			bdsThread.run(expr);
+			if (bdsThread.isCheckpointRecover()) return;
+
 			msg = popString(bdsThread);
 		}
 

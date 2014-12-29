@@ -89,14 +89,15 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 	/**
 	 * Add to program counter
 	 */
-	public void pop(BigDataScriptNode csnode) {
+	public void pop(BigDataScriptNode bdsNode) {
 		int nodeId = nodeIds.pop();
 
 		// Sanity check
-		if (nodeId != csnode.getId()) {
+		if (nodeId != bdsNode.getId()) {
 			Gpr.debug("Node ID does not match!" //
-					+ "\n\tNode id    : " + nodeId //
-					+ "\n\tCS_Node id : " + csnode.getId() //
+					+ "\n\tPC         : " + this //
+					+ "\n\tNode Id    : " + nodeId //
+					+ "\n\tbdsNode Id : " + bdsNode.getId() //
 			);
 		}
 	}

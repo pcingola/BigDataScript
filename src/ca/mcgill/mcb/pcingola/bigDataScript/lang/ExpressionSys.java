@@ -65,6 +65,8 @@ public class ExpressionSys extends Expression {
 
 		// Variable interpolation
 		bdsThread.run(interpolateVars);
+		if (bdsThread.isCheckpointRecover()) return null;
+
 		return bdsThread.pop().toString();
 	}
 
@@ -110,6 +112,8 @@ public class ExpressionSys extends Expression {
 
 		// Interpolated variables
 		String cmds = getCommands(bdsThread);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		args.add(cmds);
 
 		// Run command line
@@ -126,7 +130,7 @@ public class ExpressionSys extends Expression {
 				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-						);
+				);
 				return;
 			}
 		}

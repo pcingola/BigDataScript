@@ -47,6 +47,7 @@ public class ExpressionCompare extends ExpressionBinary {
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(left);
 		bdsThread.run(right);
+		if (bdsThread.isCheckpointRecover()) return;
 
 		Object rval = bdsThread.pop();
 		Object lval = bdsThread.pop();

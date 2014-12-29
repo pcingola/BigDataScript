@@ -35,10 +35,11 @@ public class ExpressionDepOperator extends Expression {
 	public TaskDependency evalTaskDependency(BigDataScriptThread bdsThread) {
 		// All expressions are evaluated
 		runStep(bdsThread, left);
-		List<String> leftEval = (List<String>) bdsThread.pop();
-
 		runStep(bdsThread, right);
+		if (bdsThread.isCheckpointRecover()) return null;
+
 		List<String> rightEval = (List<String>) bdsThread.pop();
+		List<String> leftEval = (List<String>) bdsThread.pop();
 
 		TaskDependency taskDependency = new TaskDependency(this);
 		taskDependency.addOutput(leftEval);
@@ -92,6 +93,8 @@ public class ExpressionDepOperator extends Expression {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		TaskDependency taskDependency = evalTaskDependency(bdsThread);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		boolean dep = taskDependency.depOperator();
 		bdsThread.push(dep);
 	}
@@ -106,17 +109,20 @@ public class ExpressionDepOperator extends Expression {
 
 		for (Expression e : exprs) {
 			bdsThread.run(e);
-			Object result = bdsThread.pop();
 
-			if (result instanceof List) {
-				// Flatten the list
-				List l = (List) result;
-				for (Object o : l)
-					resList.add(o.toString());
-			} else resList.add(result.toString());
+			if (!bdsThread.isCheckpointRecover()) {
+				Object result = bdsThread.pop();
+
+				if (result instanceof List) {
+					// Flatten the list
+					List l = (List) result;
+					for (Object o : l)
+						resList.add(o.toString());
+				} else resList.add(result.toString());
+			}
 		}
 
-		bdsThread.push(resList);
+		if (!bdsThread.isCheckpointRecover()) bdsThread.push(resList);
 	}
 
 	@Override

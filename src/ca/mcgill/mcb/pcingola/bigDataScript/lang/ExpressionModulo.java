@@ -29,6 +29,8 @@ public class ExpressionModulo extends ExpressionMath {
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(left);
 		bdsThread.run(right);
+		if (bdsThread.isCheckpointRecover()) return;
+
 		long den = popInt(bdsThread);
 		long num = popInt(bdsThread);
 		bdsThread.push(num % den);

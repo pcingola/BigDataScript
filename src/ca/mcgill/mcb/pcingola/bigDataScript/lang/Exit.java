@@ -47,10 +47,14 @@ public class Exit extends Statement {
 	public void runStep(BigDataScriptThread bdsThread) {
 		if (expr != null) {
 			bdsThread.run(expr);
+			if (bdsThread.isCheckpointRecover()) return;
 			bdsThread.setExitValue(popInt(bdsThread)); // Set return value to scope
-		} else bdsThread.setExitValue(0L); // Default is the same as 'exit 0'
+		} else {
+			if (bdsThread.isCheckpointRecover()) return;
+			bdsThread.setExitValue(0L); // Default is the same as 'exit 0'
+		}
 
-		if (!bdsThread.isCheckpointRecover()) bdsThread.setRunState(RunState.EXIT);
+		bdsThread.setRunState(RunState.EXIT);
 	}
 
 	@Override

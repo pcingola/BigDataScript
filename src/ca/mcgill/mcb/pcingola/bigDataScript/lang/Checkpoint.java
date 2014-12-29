@@ -36,9 +36,12 @@ public class Checkpoint extends Statement {
 		String file = null;
 		if (expr != null) {
 			bdsThread.run(expr);
+
+			if (bdsThread.isCheckpointRecover()) return;
 			file = popString(bdsThread);
 		}
 
+		if (bdsThread.isCheckpointRecover()) return;
 		if (file != null) bdsThread.checkpoint(file);
 		else bdsThread.checkpoint(this);
 	}

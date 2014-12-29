@@ -56,8 +56,14 @@ public class ExpressionCond extends Expression {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(expr);
-		if (popBool(bdsThread)) bdsThread.run(exprTrue);
-		else bdsThread.run(exprFalse);
+
+		if (bdsThread.isCheckpointRecover()) {
+			bdsThread.run(exprTrue);
+			if (bdsThread.isCheckpointRecover()) bdsThread.run(exprFalse);
+		} else {
+			if (popBool(bdsThread)) bdsThread.run(exprTrue);
+			else bdsThread.run(exprFalse);
+		}
 	}
 
 	@Override

@@ -113,12 +113,14 @@ public class InterpolateVars extends Literal {
 			Expression ref = exprs[i];
 			if (ref != null) {
 				bdsThread.run(ref);
-				Object val = bdsThread.pop();
-				sb.append(interpolateValue(val));
+				if (!bdsThread.isCheckpointRecover()) {
+					Object val = bdsThread.pop();
+					sb.append(interpolateValue(val));
+				}
 			}
 		}
 
-		bdsThread.push(sb.toString());
+		if (!bdsThread.isCheckpointRecover()) bdsThread.push(sb.toString());
 	}
 
 	/**

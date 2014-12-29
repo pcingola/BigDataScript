@@ -65,9 +65,9 @@ public class ExpressionList extends Expression {
 		Object value = null;
 		for (Expression expr : expressions) {
 			bdsThread.run(expr);
-			value = bdsThread.pop();
+			if (!bdsThread.isCheckpointRecover()) value = bdsThread.pop();
 		}
-		bdsThread.push(value);
+		if (!bdsThread.isCheckpointRecover()) bdsThread.push(value);
 	}
 
 	@Override

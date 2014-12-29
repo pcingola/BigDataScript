@@ -19,7 +19,7 @@ public class ForEnd extends ExpressionList {
 	public void runStep(BigDataScriptThread bdsThread) {
 		for (Expression expr : expressions) {
 			bdsThread.run(expr);
-			bdsThread.pop(); // Remove from stack, nobody is reading the results
+			if (!bdsThread.isCheckpointRecover()) bdsThread.pop(); // Remove from stack, nobody is reading the results
 		}
 	}
 

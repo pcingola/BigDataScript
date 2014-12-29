@@ -69,9 +69,10 @@ public class VariableInit extends BigDataScriptNode {
 	public void runStep(BigDataScriptThread bdsThread) {
 		if (expression != null) {
 			bdsThread.run(expression);
-			Object value = bdsThread.pop();
+			if (bdsThread.isCheckpointRecover()) return;
 
 			// Error running expression?
+			Object value = bdsThread.pop();
 			if (value == null) {
 				bdsThread.setRunState(RunState.FATAL_ERROR);
 				return;

@@ -58,6 +58,14 @@ public class If extends Statement {
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
+
+		if (bdsThread.isCheckpointRecover()) {
+			runCondition(bdsThread);
+			if (bdsThread.isCheckpointRecover()) bdsThread.run(statement);
+			if (bdsThread.isCheckpointRecover()) bdsThread.run(elseStatement);
+			return;
+		}
+
 		if (runCondition(bdsThread)) {
 			bdsThread.run(statement);
 		} else if (elseStatement != null) {
@@ -89,6 +97,6 @@ public class If extends Statement {
 				&& !condition.isBool() //
 				&& (retType != null) //
 				&& !retType.canCast(Type.BOOL)//
-				) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
+		) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
 	}
 }
