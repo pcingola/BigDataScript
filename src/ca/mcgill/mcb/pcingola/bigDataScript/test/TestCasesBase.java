@@ -176,7 +176,7 @@ public class TestCasesBase extends TestCase {
 		//---
 		String chpFileName = checkpointFileName;
 		if (checkpointFileName == null) chpFileName = fileName + ".chp";
-		System.err.println("\n\n\nRecovering from checkpoint file '" + chpFileName + "'\n\n\n");
+		if (verbose) System.err.println("\n\n\nRecovering from checkpoint file '" + chpFileName + "'\n\n\n");
 		if (debug) Gpr.debug("CheckPoint file name : " + chpFileName);
 		String args2[] = { "-r", chpFileName };
 		String args2v[] = { "-v", "-r", chpFileName };

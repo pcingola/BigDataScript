@@ -19,6 +19,7 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 
 	int id;
 	int checkPointRecoverNodeIdx; // Checkpoint recovery node index
+	int initialSize;
 	Stack<Integer> nodeIds;
 
 	protected static int nextId() {
@@ -28,12 +29,14 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 	public ProgramCounter() {
 		nodeIds = new Stack<Integer>();
 		id = nextId();
+		initialSize = 0;
 	}
 
 	public ProgramCounter(ProgramCounter pc) {
 		nodeIds = new Stack<Integer>();
 		nodeIds.addAll(pc.nodeIds);
 		id = nextId();
+		initialSize = pc.size();
 	}
 
 	/**
@@ -71,7 +74,8 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 	}
 
 	boolean isEmpty() {
-		return nodeIds.isEmpty();
+		//		return nodeIds.isEmpty();
+		return size() <= initialSize;
 	}
 
 	@Override
@@ -98,7 +102,7 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 					+ "\n\tPC         : " + this //
 					+ "\n\tNode Id    : " + nodeId //
 					+ "\n\tbdsNode Id : " + bdsNode.getId() //
-			);
+					);
 		}
 	}
 
@@ -111,7 +115,9 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
-		for (int i = 1; i < serializer.getFields().length; i++)
+		initialSize = (int) serializer.getNextFieldInt();
+
+		for (int i = 1; i < serializer.getFields().length - 1; i++)
 			nodeIds.push((int) serializer.getNextFieldInt());
 	}
 
@@ -119,6 +125,7 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 		out.append(getClass().getSimpleName() + "\t");
+		out.append(initialSize + "\t");
 
 		for (int nn : nodeIds)
 			out.append(nn + "\t");
@@ -136,6 +143,10 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 	@Override
 	public String toString() {
 		StringBuilder out = new StringBuilder();
+		out.append("PC: size " + size() + " / " + initialSize);
+		out.append(isEmpty() ? "[Empty]" : "");
+		out.append(", nodes: ");
+
 		for (int nn : nodeIds)
 			out.append((out.length() > 0 ? " -> " : "") + nn);
 		return out.toString();

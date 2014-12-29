@@ -711,6 +711,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return runState.isFatalError();
 	}
 
+	public boolean isFinished() {
+		return runState.isFinished();
+	}
+
 	/**
 	 * Is this thread frozen?
 	 */
@@ -905,8 +909,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		createLogDir(); // Create log dir
 
 		// Start child threads (e.g. when recovering)
-		for (BigDataScriptThread bth : bdsChildThreadsById.values())
-			if (!bth.isAlive()) bth.start();
+		for (BigDataScriptThread bth : bdsChildThreadsById.values()) {
+			if (!bth.isAlive() && !bth.isFinished()) bth.start();
+		}
 
 		// Run statement (i.e. run program)
 		boolean ok = true;
@@ -1064,7 +1069,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Stack
 		String b64 = serializer.getNextField();
 		stack = (b64 != null && !b64.isEmpty() ? (Deque<Object>) serializer.base64Decode(b64) : null);
-
 	}
 
 	@Override
@@ -1228,8 +1232,19 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		//---
 
 		// Which node are we looking for?
-		if (!pc.checkpointRecoverHasNextNode()) return false; // No more nodes to recover? This might happen when recovering a thread that already finished execution
+		if (!pc.checkpointRecoverHasNextNode()) {
+			// No more nodes to recover? This might happen when recovering a thread that already finished execution
+			return false;
+		}
+
 		int nodeNum = pc.checkpointRecoverNextNode();
+		//		Gpr.debug("BdsThreadId: " + getBdsThreadId() //
+		//				+ "\n\tnodeNum   : " + nodeNum //
+		//				+ "\n\tnode ID   : " + node.getId() //
+		//				+ "\n\tPC        : " + pc //
+		//				+ "\n\tnode type : " + node.getClass().getSimpleName() //
+		//				+ "\n\tnode      : " + node //
+		//		);
 
 		// Match?
 		if (node.getId() == nodeNum) {
@@ -1365,8 +1380,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * @return true if thread finished OK
 	 */
 	public boolean waitThread(BigDataScriptThread bdsThread) {
+
 		try {
 			if (bdsThread != null) {
+				if (isVerbose()) Timer.showStdErr("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());
+				if (bdsThread.isFinished()) return true;
 				bdsThread.join();
 				return bdsThread.getExitValue() == 0; // Finished OK?
 			}

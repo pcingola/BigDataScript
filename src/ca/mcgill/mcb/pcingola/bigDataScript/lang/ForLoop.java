@@ -48,7 +48,7 @@ public class ForLoop extends StatementWithScope {
 	/**
 	 * Evaluate condition
 	 */
-	boolean runCondition(BigDataScriptThread bdsThread) {
+	boolean runCondition(BigDataScriptThread bdsThread, boolean first) {
 		if (condition == null) return true;
 
 		bdsThread.run(condition);
@@ -56,7 +56,7 @@ public class ForLoop extends StatementWithScope {
 		// If we are recovering from a checkpoint, we have to get
 		// into the loop's statements to find the node where the
 		// program created the checkpoint
-		if (bdsThread.isCheckpointRecover()) return true;
+		if (bdsThread.isCheckpointRecover()) return first;
 
 		// Return value form 'condition'
 		return popBool(bdsThread);
@@ -67,10 +67,14 @@ public class ForLoop extends StatementWithScope {
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
+
 		// Loop initialization
 		if (begin != null) bdsThread.run(begin);
 
-		while (runCondition(bdsThread)) { // Loop condition
+		boolean first = true;
+		while (runCondition(bdsThread, first)) { // Loop condition
+			first = false;
+
 			bdsThread.run(statement); // Loop statement
 
 			switch (bdsThread.getRunState()) {

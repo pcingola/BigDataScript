@@ -278,9 +278,8 @@ public class BigDataScriptSerializer {
 		// Parse everything else
 		Scope.resetGlobalScope();
 
-		List<BigDataScriptThread> list = parseLines(lines, null);
-
-		return list;
+		List<BigDataScriptThread> bdsThreads = parseLines(lines, null);
+		return bdsThreads;
 	}
 
 	/**
@@ -450,8 +449,8 @@ public class BigDataScriptSerializer {
 		//---
 		// Replace fake nodes by real nodes
 		//---
-		for (BigDataScriptSerialize csnode : serializedNodes)
-			if (csnode != null && csnode instanceof BigDataScriptNode) ((BigDataScriptNode) csnode).replaceFake();
+		for (BigDataScriptSerialize bdsNode : serializedNodes)
+			if (bdsNode != null && bdsNode instanceof BigDataScriptNode) ((BigDataScriptNode) bdsNode).replaceFake();
 
 		for (Scope scope : scopes)
 			scope.replaceFake();

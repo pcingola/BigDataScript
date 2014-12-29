@@ -158,7 +158,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
@@ -829,19 +829,14 @@ public class BigDataScript {
 		BigDataScriptThread mainThread = bdsThreads.get(0);
 		programUnit = mainThread.getProgramUnit();
 
-		//		//for (Scope scope = mainThread.getScope(); (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent()) {
-		//		Scope scope = mainThread.getScope();
-		//		programUnit.setRunScope(scope);
-		//		programUnit.setScope(scope);
-		//		for (; (scope != null) && (scope.getParent() != Scope.getGlobalScope()); scope = scope.getParent()) {
-		//			programUnit.setRunScope(scope);
-		//			programUnit.setScope(scope);
-		//		}
-
 		// Set state and recover tasks
 		for (BigDataScriptThread bdsThread : bdsThreads) {
-			bdsThread.setRunState(RunState.CHECKPOINT_RECOVER); // Set run state to recovery
-			bdsThread.restoreUnserializedTasks(); // Re-execute or add tasks
+			if (bdsThread.isFinished()) {
+				// Thread finished before serialization: Nothing to do
+			} else {
+				bdsThread.setRunState(RunState.CHECKPOINT_RECOVER); // Set run state to recovery
+				bdsThread.restoreUnserializedTasks(); // Re-execute or add tasks
+			}
 		}
 
 		// All set, run main thread
@@ -923,7 +918,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-		);
+				);
 		return exitCode;
 	}
 
@@ -932,6 +927,8 @@ public class BigDataScript {
 	 */
 	int runThread(BigDataScriptThread bdsThread) {
 		bigDataScriptThread = bdsThread;
+		if (bdsThread.isFinished()) return 0;
+
 		bdsThread.start();
 
 		try {

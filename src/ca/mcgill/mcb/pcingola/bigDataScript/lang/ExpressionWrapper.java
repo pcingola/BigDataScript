@@ -47,6 +47,11 @@ public class ExpressionWrapper extends Expression {
 	}
 
 	@Override
+	public String toString() {
+		return (expression != null ? expression.toString() : getClass().getSimpleName() + ":NULL");
+	}
+
+	@Override
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		expression.typeCheck(scope, compilerMessages);
 	}

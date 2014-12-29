@@ -38,8 +38,6 @@ public class ForLoopList extends StatementWithScope {
 
 	/**
 	 * Variable declaration (Loop initialization)
-	 * @param csThread
-	 * @return
 	 */
 	protected ScopeSymbol initBeginDecl(BigDataScriptThread bdsThread) {
 		bdsThread.run(beginVarDecl);
@@ -50,8 +48,6 @@ public class ForLoopList extends StatementWithScope {
 
 	/**
 	 * Iterable counter (current position in iterator)
-	 * @param csThread
-	 * @return
 	 */
 	protected ScopeSymbol initIterableCounter(BigDataScriptThread csThread) {
 		// Are we recovering state from a checkpoint file?
