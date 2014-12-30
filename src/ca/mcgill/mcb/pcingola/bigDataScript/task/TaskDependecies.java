@@ -90,6 +90,22 @@ public class TaskDependecies {
 	}
 
 	/**
+	 * Count how many tasks failed.
+	 *
+	 * Note: Only count tasks that are not supposed
+	 *       to fail (canFail = false)
+	 */
+	public int countTaskFailed() {
+		int count = 0;
+
+		for (Task task : tasksById.values()) {
+			if (task.isFailed() && !task.isCanFail()) count++;
+		}
+
+		return count;
+	}
+
+	/**
 	 * Find all tasks that must be completed before we proceed
 	 */
 	void findDirectDependencies(Task task) {

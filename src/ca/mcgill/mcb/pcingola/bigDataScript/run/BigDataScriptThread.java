@@ -276,6 +276,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Number of tasks executed
 		rTemplate.add("taskCount", taskNum - 1);
+		rTemplate.add("taskFailed", taskDependecies.countTaskFailed());
 
 		// Timeline height
 		int timelineHeight = REPORT_TIMELINE_HEIGHT * (1 + taskNum);
@@ -890,7 +891,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -976,7 +977,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (!isRoot()) parent.remove(this); // Remove from parent's threads
 
 		// OK, we are done
-		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' finished, run state: '" + runState + "', exit value: '" + getExitValue() + "'");
+		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
+				+ "'" + getBdsThreadId() + "'" //
+				+ " finished" //
+				+ ", run state: '" + runState + "'"//
+				+ ", exit value: '" + getExitValue() + "'" //
+		);
 	}
 
 	/**

@@ -64,14 +64,6 @@ public class Wait extends Statement {
 		}
 	}
 
-	//	/**
-	//	 * Run in 'WAIT_RECOVER' state.
-	//	 * This happens when recovering from a checkpoint.
-	//	 */
-	//	protected void runStepWaitRecover(BigDataScriptThread bdsThread) {
-	//		runStepOk(bdsThread);
-	//	}
-
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName().toLowerCase() + (taskId != null ? taskId : "") + "\n";
