@@ -118,7 +118,7 @@ public class TaskDependecies {
 						for (Task taskDep : taskDeps)
 							if (!taskDep.isDone() // Don't add finished tasks
 									&& !taskDep.isDependency() // If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
-									) task.addDependency(taskDep); // Add it to dependency list
+							) task.addDependency(taskDep); // Add it to dependency list
 					}
 				}
 			}

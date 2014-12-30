@@ -891,7 +891,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -977,12 +977,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (!isRoot()) parent.remove(this); // Remove from parent's threads
 
 		// OK, we are done
-		if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
-				+ "'" + getBdsThreadId() + "'" //
-				+ " finished" //
-				+ ", run state: '" + runState + "'"//
-				+ ", exit value: '" + getExitValue() + "'" //
-		);
+		if (isVerbose()) {
+			// Root thread? Report all tasks
+			TaskDependecies td = isRoot() ? TaskDependecies.get() : taskDependecies;
+
+			Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
+					+ "'" + getBdsThreadId() + "'" //
+					+ " finished" //
+					+ (isDebug() ? ", run state: '" + runState + "'" : "") //
+					+ ", exit value: " + getExitValue() //
+					+ ", tasks executed: " + td.getTasks().size() //
+					+ ", tasks failed: " + td.countTaskFailed() //
+					+ "." //
+					);
+		}
 	}
 
 	/**
