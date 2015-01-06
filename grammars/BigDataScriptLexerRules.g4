@@ -31,7 +31,6 @@ fragment HexPrefix : '0x' | '0X' ;
 
 fragment HexDigit : ('0'..'9'|'a'..'f'|'A'..'F') ;
 
-
 fragment NonIntegerNumber
         : ('0' .. '9')+ '.' ('0' .. '9')* Exponent?
         | '.' ( '0' .. '9' )+ Exponent?
