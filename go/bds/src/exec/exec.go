@@ -256,6 +256,9 @@ func (be *BdsExec) executeCommand() int {
 	defer stderr.Close()
 	be.cmd.Stderr = stderr
 
+	// Connect to stdin
+	be.cmd.Stdin = os.Stdin
+
 	// Start process
 	err := be.cmd.Start()
 	if err != nil {

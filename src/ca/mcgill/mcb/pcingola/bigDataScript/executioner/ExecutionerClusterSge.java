@@ -18,6 +18,7 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 	protected final String CONFIG_SGE_PE = "sge.pe";
 	protected final String CONFIG_SGE_MEM = "sge.mem";
 	protected final String CONFIG_SGE_TIMEOUT = "sge.timeout";
+	public static final String PID_REGEX_DEFAULT = "Your job (\\S+)";
 
 	String sgePe = "", sgeMem = "", sgeTimeOut = "";
 
@@ -30,8 +31,9 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 		// 		Your job 33 ("STDIN") has been submitted
 		//
 		// So, this is a pattern matcher to parse the PID
-		String pidPatternStr = config.getString(PID_REGEX, "Your job (\\S+)");
-		pidPattern = Pattern.compile(pidPatternStr);
+		String pidRegexStr = config.getPidRegex(PID_REGEX_DEFAULT);
+		pidPattern = Pattern.compile(pidRegexStr);
+		if (debug) Timer.showStdErr(this.getClass().getSimpleName() + ": Using pidRegex '" + pidRegexStr + "'");
 
 		// SGE parameters from config file
 		sgePe = config.getString(CONFIG_SGE_PE, "");

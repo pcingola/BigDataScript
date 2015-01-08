@@ -1,13 +1,17 @@
 package ca.mcgill.mcb.pcingola.bigDataScript;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -65,8 +69,8 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2014-12-30";
-	public static final String REVISION = "a";
+	public static final String BUILD = "2015-01-08";
+	public static final String REVISION = "b";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -74,6 +78,7 @@ public class BigDataScript {
 
 	boolean verbose;
 	boolean debug;
+	boolean checkPidRegex;
 	boolean log; // Log everything
 	boolean dryRun; // Dry run (do not run tasks)
 	boolean noRmOnExit; // Do not remove files on exit
@@ -737,6 +742,7 @@ public class BigDataScript {
 				createReport = false;
 			} else if (arg.equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
 			else if (arg.equalsIgnoreCase("-noReport")) createReport = false;
+			else if (arg.equalsIgnoreCase("-checkPidRegex")) checkPidRegex = true;
 			else if (arg.equals("-i") || arg.equalsIgnoreCase("-info")) {
 				// Checkpoint info
 				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
@@ -772,7 +778,51 @@ public class BigDataScript {
 		}
 
 		// Sanity checks
-		if ((programFileName == null) && (chekcpointRestoreFile == null)) usage("Missing program file name.");
+		if (checkPidRegex) {
+			// OK: Nothing to chek
+		} else if ((programFileName == null) && (chekcpointRestoreFile == null)) {
+			// No file name => Error
+			usage("Missing program file name.");
+		}
+	}
+
+	/**
+	 * Check 'pidRegex'
+	 */
+	public void checkPidRegex() {
+		// PID regex matcher
+		String pidPatternStr = config.getPidRegex("");
+
+		if (pidPatternStr.isEmpty()) {
+			System.err.println("Cannot find 'pidRegex' entry in config file.");
+			System.exit(1);
+		}
+
+		// Show pattern
+		System.out.println("Matching pidRegex '" + pidPatternStr + "'");
+		Pattern pidPattern = Pattern.compile(pidPatternStr);
+
+		// Read STDIN and check pattern
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			String line;
+			while ((line = in.readLine()) != null) {
+				// Pattern pattern = Pattern.compile("Your job (\\S+)");
+				Matcher matcher = pidPattern.matcher(line);
+
+				String found = "";
+				if (matcher.find()) {
+					String pid = matcher.group(1);
+					found = "matched '" + pid + "'";
+				} else {
+					found = "did not match";
+				}
+
+				System.out.println("Input line:\t'" + line + "'\tPid regex " + found);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -783,9 +833,15 @@ public class BigDataScript {
 		Executioners executioners = Executioners.getInstance(config);
 		TaskDependecies.reset();
 
-		// ---
+		// Check PID regex
+		if (checkPidRegex) {
+			checkPidRegex();
+			return 0;
+		}
+
+		//---
 		// Run
-		// ---
+		//---
 		int exitValue = 0;
 		switch (bigDataScriptAction) {
 		case RUN_CHECKPOINT:
@@ -957,6 +1013,7 @@ public class BigDataScript {
 		System.err.println("Usage: " + BigDataScript.class.getSimpleName() + " [options] file.bds");
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
+		System.err.println("  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.");
 		System.err.println("  [-d | -debug  ]                : Debug mode.");
 		System.err.println("  -done                          : Use 'done' files: Default: " + useDoneFile);
 		System.err.println("  -dryRun                        : Do not run any task, just show what would be run.");

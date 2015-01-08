@@ -27,6 +27,8 @@ public class Config {
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
 
+	public static final String PID_REGEX = "pidRegex";
+
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
 	boolean debug = false; // Debug mode?
@@ -122,6 +124,17 @@ public class Config {
 
 	public String getPidFile() {
 		return pidFile;
+	}
+
+	public String getPidRegex(String defaultPidRegex) {
+		String pidRegex = getString(PID_REGEX, defaultPidRegex).trim();
+
+		// Remove leading and trailing quotes
+		if (pidRegex.startsWith("\"") && pidRegex.endsWith("\"") && pidRegex.length() > 2) {
+			pidRegex = pidRegex.substring(1, pidRegex.length() - 1);
+		}
+
+		return pidRegex;
 	}
 
 	/**

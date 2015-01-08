@@ -34,8 +34,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	public static final int SLEEP_TIME_SHORT = 10;
 	public static final int REPORT_INTERVAL = 60;
 
-	public static final String PID_REGEX = "pidRegex";
-
 	protected boolean debug;
 	protected boolean verbose;
 	protected boolean log;
@@ -519,7 +517,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 								+ "\n\tHOST                : " + host //
 								+ "\n\tRESOURCES AVAILABLE : " + host.getResourcesAvaialble() //
 								+ "\n\tTASK RESOURCES      : " + task.getResources() //
-						);
+								);
 
 						selectTask(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);

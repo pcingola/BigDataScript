@@ -71,9 +71,9 @@ public class ExecutionerCluster extends Executioner {
 		wallTimeParam = "walltime=";
 
 		// PID regex matcher
-		pidPatternStr = config.getString(PID_REGEX, "").trim();
+		pidPatternStr = config.getPidRegex("");
 		if (!pidPatternStr.isEmpty()) {
-			if (debug) Timer.showStdErr("ExecutionerCluster: Using pidPattern '" + pidPatternStr + "'");
+			if (debug) Timer.showStdErr(this.getClass().getSimpleName() + ": Using pidRegex '" + pidPatternStr + "'");
 			pidPattern = Pattern.compile(pidPatternStr);
 		}
 
