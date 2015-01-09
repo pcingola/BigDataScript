@@ -1,8 +1,4 @@
 #!/usr/bin/env bds
 
-for( int i=0 ; i < 10 ; i++ ) {
-	if( i < 3 ) task rm zzz_xxx_zzz.$i
-	else task echo Hi $i
-}
+task echo Hi
 
-print "Done\n"

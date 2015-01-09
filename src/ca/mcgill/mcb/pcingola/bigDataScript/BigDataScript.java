@@ -70,7 +70,7 @@ public class BigDataScript {
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
 	public static final String BUILD = "2015-01-08";
-	public static final String REVISION = "b";
+	public static final String REVISION = "c";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -234,6 +234,45 @@ public class BigDataScript {
 	}
 
 	/**
+	 * Check 'pidRegex'
+	 */
+	public void checkPidRegex() {
+		// PID regex matcher
+		String pidPatternStr = config.getPidRegex("");
+
+		if (pidPatternStr.isEmpty()) {
+			System.err.println("Cannot find 'pidRegex' entry in config file.");
+			System.exit(1);
+		}
+
+		// Show pattern
+		System.out.println("Matching pidRegex '" + pidPatternStr + "'");
+		Pattern pidPattern = Pattern.compile(pidPatternStr);
+
+		// Read STDIN and check pattern
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			String line;
+			while ((line = in.readLine()) != null) {
+				// Pattern pattern = Pattern.compile("Your job (\\S+)");
+				Matcher matcher = pidPattern.matcher(line);
+
+				String found = "";
+				if (matcher.find()) {
+					String pid = matcher.group(1);
+					found = "matched '" + pid + "'";
+				} else {
+					found = "did not match";
+				}
+
+				System.out.println("Input line:\t'" + line + "'\tPid regex " + found);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Compile program
 	 */
 	public boolean compile() {
@@ -344,7 +383,6 @@ public class BigDataScript {
 	 * Initialize before running or type-checking
 	 */
 	void initialize() {
-		initDefaults();
 		Type.reset();
 
 		// Reset node factory
@@ -783,45 +821,6 @@ public class BigDataScript {
 		} else if ((programFileName == null) && (chekcpointRestoreFile == null)) {
 			// No file name => Error
 			usage("Missing program file name.");
-		}
-	}
-
-	/**
-	 * Check 'pidRegex'
-	 */
-	public void checkPidRegex() {
-		// PID regex matcher
-		String pidPatternStr = config.getPidRegex("");
-
-		if (pidPatternStr.isEmpty()) {
-			System.err.println("Cannot find 'pidRegex' entry in config file.");
-			System.exit(1);
-		}
-
-		// Show pattern
-		System.out.println("Matching pidRegex '" + pidPatternStr + "'");
-		Pattern pidPattern = Pattern.compile(pidPatternStr);
-
-		// Read STDIN and check pattern
-		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-			String line;
-			while ((line = in.readLine()) != null) {
-				// Pattern pattern = Pattern.compile("Your job (\\S+)");
-				Matcher matcher = pidPattern.matcher(line);
-
-				String found = "";
-				if (matcher.find()) {
-					String pid = matcher.group(1);
-					found = "matched '" + pid + "'";
-				} else {
-					found = "did not match";
-				}
-
-				System.out.println("Input line:\t'" + line + "'\tPid regex " + found);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
