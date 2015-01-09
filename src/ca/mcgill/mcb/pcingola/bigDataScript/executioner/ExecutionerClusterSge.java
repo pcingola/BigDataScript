@@ -15,9 +15,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ExecutionerClusterSge extends ExecutionerCluster {
 
-	protected final String CONFIG_SGE_PE = "sge.pe";
-	protected final String CONFIG_SGE_MEM = "sge.mem";
-	protected final String CONFIG_SGE_TIMEOUT = "sge.timeout";
 	public static final String PID_REGEX_DEFAULT = "Your job (\\S+)";
 
 	String sgePe = "", sgeMem = "", sgeTimeOut = "";
@@ -36,14 +33,14 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 		if (debug) Timer.showStdErr(this.getClass().getSimpleName() + ": Using pidRegex '" + pidRegexStr + "'");
 
 		// SGE parameters from config file
-		sgePe = config.getString(CONFIG_SGE_PE, "");
-		if (sgePe.isEmpty()) throw new RuntimeException("Missing config file entry '" + CONFIG_SGE_PE + "'.");
+		sgePe = config.getString(Config.CLUSTER_SGE_PE, "");
+		if (sgePe.isEmpty()) throw new RuntimeException("Missing config file entry '" + Config.CLUSTER_SGE_PE + "'.");
 
-		sgeMem = config.getString(CONFIG_SGE_MEM, "");
-		if (sgeMem.isEmpty()) throw new RuntimeException("Missing config file entry '" + CONFIG_SGE_MEM + "'.");
+		sgeMem = config.getString(Config.CLUSTER_SGE_MEM, "");
+		if (sgeMem.isEmpty()) throw new RuntimeException("Missing config file entry '" + Config.CLUSTER_SGE_MEM + "'.");
 
-		sgeTimeOut = config.getString(CONFIG_SGE_TIMEOUT, "");
-		if (sgeTimeOut.isEmpty()) throw new RuntimeException("Missing config file entry '" + CONFIG_SGE_TIMEOUT + "'.");
+		sgeTimeOut = config.getString(Config.CLUSTER_SGE_TIMEOUT, "");
+		if (sgeTimeOut.isEmpty()) throw new RuntimeException("Missing config file entry '" + Config.CLUSTER_SGE_TIMEOUT + "'.");
 	}
 
 	/**
@@ -63,7 +60,7 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 
 		// Memory
 		if (res.getMem() > 0) {
-			if (sgeMem.isEmpty()) throw new RuntimeException("Missing config file entry '" + CONFIG_SGE_PE + "'.");
+			if (sgeMem.isEmpty()) throw new RuntimeException("Missing config file entry '" + Config.CLUSTER_SGE_PE + "'.");
 			args.add("-l");
 			args.add(sgeMem + "=" + res.getMem());
 		}
