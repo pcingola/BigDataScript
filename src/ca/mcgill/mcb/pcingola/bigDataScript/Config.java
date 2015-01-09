@@ -27,7 +27,8 @@ public class Config {
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
 
-	public static final String PID_REGEX = "pidRegex";
+	public static final String PID_REGEX = "pidRegex"; // Regex used for PID
+	public static final String TASK_SHELL = "taskShell"; // Task's shell
 
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 

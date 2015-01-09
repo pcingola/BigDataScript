@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Expression;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
@@ -31,8 +32,7 @@ public class Task implements BigDataScriptSerialize {
 
 	public static final int MAX_HINT_LEN = 150;
 
-	// TODO: This should be a variable (SHEBANG?)
-	public static final String SHE_BANG = "#!/bin/sh -e\n\n"; // Use '-e' so that shell script stops after first error
+	public static final String DEFAULT_TASK_SHELL = "/bin/sh -e"; // Use '-e' so that shell script stops after first error
 
 	protected boolean verbose, debug;
 	protected boolean allowEmpty; // Allow empty output file/s
@@ -172,7 +172,11 @@ public class Task implements BigDataScriptSerialize {
 		}
 
 		// Create file
-		Gpr.toFile(programFileName, SHE_BANG + programTxt);
+		String shell = Config.get().getString(Config.TASK_SHELL, DEFAULT_TASK_SHELL);
+		shell = "#!" + shell + "\n\n";
+
+		Gpr.debug("Shell: " + shell);
+		Gpr.toFile(programFileName, shell + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution
 
 		// Set default file names
