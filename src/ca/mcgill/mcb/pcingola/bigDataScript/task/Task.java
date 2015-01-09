@@ -174,8 +174,6 @@ public class Task implements BigDataScriptSerialize {
 		// Create file
 		String shell = Config.get().getString(Config.TASK_SHELL, DEFAULT_TASK_SHELL);
 		shell = "#!" + shell + "\n\n";
-
-		Gpr.debug("Shell: " + shell);
 		Gpr.toFile(programFileName, shell + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution
 

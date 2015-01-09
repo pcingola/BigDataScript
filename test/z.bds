@@ -1,4 +1,4 @@
 #!/usr/bin/env bds
 
-task echo Hi
+sys echo Hi
 

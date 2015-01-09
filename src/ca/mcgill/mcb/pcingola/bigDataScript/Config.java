@@ -29,6 +29,7 @@ public class Config {
 
 	public static final String PID_REGEX = "pidRegex"; // Regex used for PID
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
+	public static final String SYS_SHELL = "sysShell"; // Sys's shell
 
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 

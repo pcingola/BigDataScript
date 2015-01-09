@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
@@ -20,7 +21,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
  */
 public class ExpressionSys extends Expression {
 
-	public static String SHELL_COMMAND[] = { "/bin/bash", "-e", "-c" };
+	public static String DEFAULT_SYS_SHELL = "/bin/sh -e -c"; // Note: This executes a script, so it requires the "-c" right before script name
 
 	protected static int sysId = 1;
 
@@ -107,7 +108,8 @@ public class ExpressionSys extends Expression {
 
 		// EXEC expressions are always executed locally AND immediately
 		LinkedList<String> args = new LinkedList<String>();
-		for (String arg : SHELL_COMMAND)
+		String shell = Config.get().getString(Config.SYS_SHELL, DEFAULT_SYS_SHELL);
+		for (String arg : shell.split("\\s+"))
 			args.add(arg);
 
 		// Interpolated variables
