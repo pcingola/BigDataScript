@@ -42,7 +42,7 @@ public class Config {
 	public static final String CLUSTER_POSTMORTEMINFO_ADDITIONAL_ARGUMENTS = "clusterPostMortemInfoAdditionalArgs"; // Cluster additional command line arguments (when requesting information about a failed task)
 
 	// Generic cluster
-	public static final String CLUSTER_GENERIC_SUBMIT = "clusterGenericRun";
+	public static final String CLUSTER_GENERIC_RUN = "clusterGenericRun";
 	public static final String CLUSTER_GENERIC_KILL = "clusterGenericKill";
 	public static final String CLUSTER_GENERIC_STAT = "clusterGenericStat";
 	public static final String CLUSTER_GENERIC_POSTMORTEMINFO = "clusterGenericPostMortemInfo";
@@ -59,6 +59,7 @@ public class Config {
 	boolean createReport = true; // Create report when thread finishes
 	boolean extractSource = false;
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
+	String configFileName;
 	String configDirName;
 	String pidFile;
 	Properties properties;
@@ -83,6 +84,14 @@ public class Config {
 	public Config(String configFileName) {
 		read(configFileName); // Read config file
 		configInstance = this;
+	}
+
+	public String getConfigDirName() {
+		return configDirName;
+	}
+
+	public String getConfigFileName() {
+		return configFileName;
 	}
 
 	/**
@@ -169,12 +178,19 @@ public class Config {
 		return val != null ? val.trim() : defaultValue;
 	}
 
+	public String[] getStringArray(String propertyName) {
+		return getStringArray(propertyName, false);
+	}
+
 	/**
 	 * Get a configuration value and split is into an array (using regex '\\s+')
 	 */
-	public String[] getStringArray(String propertyName) {
+	public String[] getStringArray(String propertyName, boolean required) {
 		String val = getString(propertyName);
-		if (val == null) return EMPTY_STRING_ARRAY;
+		if (val == null) {
+			if (required) throw new RuntimeException("Cannot find configuration parameter '" + propertyName + "'" + (configFileName != null ? " in config file '" + configFileName + "'" : ""));
+			return EMPTY_STRING_ARRAY;
+		}
 
 		// Parse and add to list
 		ArrayList<String> vals = new ArrayList<String>();
@@ -263,6 +279,7 @@ public class Config {
 	 * Read configuration file
 	 */
 	private void read(String configFileName) {
+		this.configFileName = configFileName;
 		properties = new Properties();
 
 		if (!Gpr.exists(configFileName)) {

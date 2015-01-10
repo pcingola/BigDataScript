@@ -142,7 +142,6 @@ public class ExecutionerCluster extends Executioner {
 			args.add("-q");
 			args.add(queue);
 		}
-
 	}
 
 	/**

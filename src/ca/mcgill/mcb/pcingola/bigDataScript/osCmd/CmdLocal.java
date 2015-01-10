@@ -139,7 +139,7 @@ public class CmdLocal extends Cmd {
 			args.add("" + pid);
 		}
 
-		// Add tasks's pis
+		// Add tasks's pid
 		if (task != null) args.add(task.getPid());
 		else args.add("" + pid);
 

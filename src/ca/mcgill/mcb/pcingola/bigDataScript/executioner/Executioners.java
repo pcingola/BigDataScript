@@ -19,7 +19,7 @@ public class Executioners {
 	 * Type of executioners
 	 */
 	public enum ExecutionerType {
-		SYS, LOCAL, SSH, CLUSTER, MOAB, PBS, SGE, MESOS;
+		SYS, LOCAL, SSH, CLUSTER, MOAB, PBS, SGE, GENERIC, MESOS;
 
 		/**
 		 * Parse an executioner name
@@ -93,6 +93,10 @@ public class Executioners {
 			executioner = new ExecutionerClusterSge(config);
 			break;
 
+		case GENERIC:
+			executioner = new ExecutionerClusterGeneric(config);
+			break;
+
 		case MESOS:
 			executioner = new ExecutionerMesos(config);
 			break;
@@ -118,7 +122,7 @@ public class Executioners {
 		// Invalid or null? Create a new one
 		if ((ex == null) || !ex.isValid()) {
 			ex = factory(exType);
-			executioners.put(exType, ex); // Cache instance 
+			executioners.put(exType, ex); // Cache instance
 			ex.start(); // Start thread
 		}
 
