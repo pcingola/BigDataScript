@@ -65,8 +65,11 @@ public class ExecutionerCluster extends Executioner {
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
 		clusterRunAdditionalArgs = config.getString(Config.CLUSTER_RUN_ADDITIONAL_ARGUMENTS, "").split("\\s+");
 
-		for (int i = 0; i < clusterRunAdditionalArgs.length; i++) {
-			Gpr.debug(i + "\t'" + clusterRunAdditionalArgs[i] + "'");
+		if (config.isDebug()) {
+			Gpr.debug("Adding clusterRunAdditionalArgs. Number of additional arguments: " + clusterRunAdditionalArgs.length);
+			for (int i = 0; i < clusterRunAdditionalArgs.length; i++) {
+				Gpr.debug("\t" + i + "\t'" + clusterRunAdditionalArgs[i] + "'");
+			}
 		}
 
 		memParam = "mem=";
