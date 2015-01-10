@@ -50,7 +50,7 @@ public class ExecutionerSsh extends Executioner {
 	}
 
 	@Override
-	protected Cmd createCmd(Task task) {
+	protected Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
 		// Create command line

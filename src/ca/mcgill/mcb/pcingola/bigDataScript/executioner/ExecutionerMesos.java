@@ -35,7 +35,7 @@ public class ExecutionerMesos extends Executioner {
 	 * @return
 	 */
 	@Override
-	protected synchronized Cmd createCmd(Task task) {
+	protected synchronized Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 		mesosFramework.add(task);
 		return null; // TODO: Can we actually return 'null'?

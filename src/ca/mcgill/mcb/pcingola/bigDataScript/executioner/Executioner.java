@@ -89,7 +89,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	/**
 	 * Create a command form a task
 	 */
-	protected synchronized Cmd createCmd(Task task) {
+	protected synchronized Cmd createRunCmd(Task task) {
 		throw new RuntimeException("Unimplemented method for class: " + getClass().getCanonicalName());
 	}
 
@@ -447,7 +447,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// TODO: If an exception is thrown here, we should be able to
 		// either recover or mark the task as START_FAILED
-		Cmd cmd = createCmd(task);
+		Cmd cmd = createRunCmd(task);
 		if (cmd != null) {
 			addCmd(task, cmd);
 			cmd.setHost(host);

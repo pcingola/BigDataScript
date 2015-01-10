@@ -21,10 +21,10 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 		String postMortemInfoCommand[] = { FAKE_CLUSTER + "checkjob", "-v" };
 		String additionalArgs[] = {};
 
-		clusterExecCommand = execCommand;
+		clusterRunCommand = execCommand;
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
-		clusterAdditionalArgs = additionalArgs;
+		clusterRunAdditionalArgs = additionalArgs;
 	}
 }

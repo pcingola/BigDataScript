@@ -27,12 +27,19 @@ public class Config {
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
 	public static final String PID_REGEX = "pidRegex"; // Regex used for PID
+
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
 	public static final String SYS_SHELL = "sysShell"; // Sys's shell
+
+	// SGE parameters
 	public static final String CLUSTER_SGE_PE = "sge.pe";
 	public static final String CLUSTER_SGE_MEM = "sge.mem";
 	public static final String CLUSTER_SGE_TIMEOUT = "sge.timeout";
-	public static final String CLUSTER_GENERIC_SUBMIT = "clusterGenericSubmit";
+
+	public static final String CLUSTER_RUN_ADDITIONAL_ARGUMENTS = "clusterRunAdditionalArgs"; // Cluster additional command line arguments (when running tasks)
+
+	// Generic cluster
+	public static final String CLUSTER_GENERIC_SUBMIT = "clusterGenericRun";
 	public static final String CLUSTER_GENERIC_KILL = "clusterGenericKill";
 	public static final String CLUSTER_GENERIC_STAT = "clusterGenericStat";
 	public static final String CLUSTER_GENERIC_POSTMORTEM_INFO = "clusterGenericPostMortemInfo";

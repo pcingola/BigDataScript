@@ -32,11 +32,11 @@ public class ExecutionerCluster extends Executioner {
 	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
 	public static String FAKE_CLUSTER = "";
 
-	protected String clusterExecCommand[];
+	protected String clusterRunCommand[];
 	protected String clusterKillCommand[];
 	protected String clusterStatCommand[];
 	protected String clusterPostMortemInfoCommand[];
-	protected String clusterAdditionalArgs[];
+	protected String clusterRunAdditionalArgs[];
 
 	protected String bdsCommand = "bds exec ";
 
@@ -54,17 +54,20 @@ public class ExecutionerCluster extends Executioner {
 		super(config);
 
 		// Define commands
-		String execCommand[] = { FAKE_CLUSTER + "qsub" };
+		String runCommand[] = { FAKE_CLUSTER + "qsub" };
 		String killCommand[] = { FAKE_CLUSTER + "qdel" };
 		String statCommand[] = { FAKE_CLUSTER + "qstat" };
 		String postMortemInfoCommand[] = { FAKE_CLUSTER + "qstat", "-f" };
-		String additionalArgs[] = {};
 
-		clusterExecCommand = execCommand;
+		clusterRunCommand = runCommand;
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
-		clusterAdditionalArgs = additionalArgs;
+		clusterRunAdditionalArgs = config.getString(Config.CLUSTER_RUN_ADDITIONAL_ARGUMENTS, "").split("\\s+");
+
+		for (int i = 0; i < clusterRunAdditionalArgs.length; i++) {
+			Gpr.debug(i + "\t'" + clusterRunAdditionalArgs[i] + "'");
+		}
 
 		memParam = "mem=";
 		cpuParam = "nodes=1:ppn=";
@@ -170,18 +173,18 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	@Override
-	protected Cmd createCmd(Task task) {
+	protected Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
 		if (debug) Timer.showStdErr("Executioner: " + this.getClass().getSimpleName() + ", task " + task.getId());
 
 		// Create command line
 		ArrayList<String> args = new ArrayList<String>();
-		for (String arg : clusterExecCommand)
+		for (String arg : clusterRunCommand)
 			args.add(arg);
 
 		// Add additional commands
-		for (String arg : clusterAdditionalArgs)
+		for (String arg : clusterRunAdditionalArgs)
 			args.add(arg);
 
 		// Add resources request
@@ -230,7 +233,7 @@ public class ExecutionerCluster extends Executioner {
 
 	@Override
 	protected CheckTasksRunning getCheckTasksRunning() {
-		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, joinArgs(clusterStatCommand, clusterAdditionalArgs));
+		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, clusterStatCommand);
 		return checkTasksRunning;
 	}
 
@@ -260,7 +263,7 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	@Override
 	public String[] osKillCommand(Task task) {
-		return joinArgs(clusterKillCommand, clusterAdditionalArgs);
+		return clusterKillCommand;
 	}
 
 	/**

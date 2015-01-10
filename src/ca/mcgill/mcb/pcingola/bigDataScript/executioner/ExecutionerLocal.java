@@ -96,7 +96,7 @@ public class ExecutionerLocal extends Executioner {
 	 * Create a CmdRunner to execute the script
 	 */
 	@Override
-	protected synchronized Cmd createCmd(Task task) {
+	protected synchronized Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
 		// Create command line
