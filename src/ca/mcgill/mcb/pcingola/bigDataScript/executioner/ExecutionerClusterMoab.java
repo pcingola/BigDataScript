@@ -19,13 +19,11 @@ public class ExecutionerClusterMoab extends ExecutionerCluster {
 		String killCommand[] = { FAKE_CLUSTER + "canceljob" };
 		String statCommand[] = { FAKE_CLUSTER + "showq" };
 		String postMortemInfoCommand[] = { FAKE_CLUSTER + "checkjob", "-v" };
-		String additionalArgs[] = {};
 
 		clusterRunCommand = execCommand;
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
-		clusterRunAdditionalArgs = additionalArgs;
 
 	}
 
