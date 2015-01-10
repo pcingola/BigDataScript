@@ -36,7 +36,11 @@ public class ExecutionerCluster extends Executioner {
 	protected String clusterKillCommand[];
 	protected String clusterStatCommand[];
 	protected String clusterPostMortemInfoCommand[];
+
 	protected String clusterRunAdditionalArgs[];
+	protected String clusterKillAdditionalArgs[];
+	protected String clusterStatAdditionalArgs[];
+	protected String clusterPostMortemAdditionalArgs[];
 
 	protected String bdsCommand = "bds exec ";
 
@@ -63,14 +67,12 @@ public class ExecutionerCluster extends Executioner {
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
-		clusterRunAdditionalArgs = config.getStringArray(Config.CLUSTER_RUN_ADDITIONAL_ARGUMENTS);
 
-		if (config.isDebug()) {
-			Timer.showStdErr("Adding clusterRunAdditionalArgs. Number of additional arguments: " + clusterRunAdditionalArgs.length);
-			for (int i = 0; i < clusterRunAdditionalArgs.length; i++) {
-				System.err.println("\t\t\t" + i + "\t'" + clusterRunAdditionalArgs[i] + "'");
-			}
-		}
+		// Additional command line arguments
+		clusterRunAdditionalArgs = config.getStringArray(Config.CLUSTER_RUN_ADDITIONAL_ARGUMENTS);
+		clusterKillAdditionalArgs = config.getStringArray(Config.CLUSTER_KILL_ADDITIONAL_ARGUMENTS);
+		clusterStatAdditionalArgs = config.getStringArray(Config.CLUSTER_STAT_ADDITIONAL_ARGUMENTS);
+		clusterPostMortemAdditionalArgs = config.getStringArray(Config.CLUSTER_POSTMORTEMINFO_ADDITIONAL_ARGUMENTS);
 
 		memParam = "mem=";
 		cpuParam = "nodes=1:ppn=";
@@ -89,6 +91,26 @@ public class ExecutionerCluster extends Executioner {
 		// Create a cluster having only one host with 'inifinite' capacity
 		cluster = new Cluster();
 		new HostInifinte(cluster);
+	}
+
+	/**
+	 * Join arguments
+	 */
+	protected String[] additionalCommandLineArgs(String[] argsOri, String[] argsAdditional) {
+		ArrayList<String> args = new ArrayList<String>();
+
+		// Cluster kill commands
+		for (int i = 0; i < argsOri.length; i++) {
+			args.add(argsOri[i]);
+
+			// Add additional command line arguments right after the command
+			if (i == 0) {
+				for (String arg : argsAdditional)
+					args.add(arg);
+			}
+		}
+
+		return args.toArray(new String[0]);
 	}
 
 	/**
@@ -183,11 +205,9 @@ public class ExecutionerCluster extends Executioner {
 
 		// Create command line
 		ArrayList<String> args = new ArrayList<String>();
-		for (String arg : clusterRunCommand)
-			args.add(arg);
 
-		// Add additional commands
-		for (String arg : clusterRunAdditionalArgs)
+		// Append command line arguments
+		for (String arg : getCommandRun())
 			args.add(arg);
 
 		// Add resources request
@@ -236,29 +256,24 @@ public class ExecutionerCluster extends Executioner {
 
 	@Override
 	protected CheckTasksRunning getCheckTasksRunning() {
-		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, clusterStatCommand);
+		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, getCommandStat());
 		return checkTasksRunning;
 	}
 
-	public String[] getCommandStat() {
-		return clusterStatCommand;
+	public String[] getCommandKill() {
+		return additionalCommandLineArgs(clusterKillCommand, clusterKillAdditionalArgs);
 	}
 
-	/**
-	 * Join arguments
-	 */
-	protected String[] joinArgs(String[] argsOri, String[] argsAdditional) {
-		ArrayList<String> args = new ArrayList<String>();
+	public String[] getCommandPostMortemInfo() {
+		return additionalCommandLineArgs(clusterPostMortemInfoCommand, clusterPostMortemAdditionalArgs);
+	}
 
-		// Cluster kill commands
-		for (String arg : argsOri)
-			args.add(arg);
+	public String[] getCommandRun() {
+		return additionalCommandLineArgs(clusterRunCommand, clusterRunAdditionalArgs);
+	}
 
-		// Add additional commands
-		for (String arg : argsAdditional)
-			args.add(arg);
-
-		return args.toArray(new String[0]);
+	public String[] getCommandStat() {
+		return additionalCommandLineArgs(clusterStatCommand, clusterStatAdditionalArgs);
 	}
 
 	/**
@@ -266,7 +281,7 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	@Override
 	public String[] osKillCommand(Task task) {
-		return clusterKillCommand;
+		return getCommandKill();
 	}
 
 	/**
@@ -298,13 +313,13 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	@Override
 	protected void postMortemInfo(Task task) {
-		if (clusterPostMortemInfoCommand == null || clusterPostMortemInfoCommand.length < 1) return;
+		if (getCommandPostMortemInfo().length <= 0) return;
 		if (task.getPid() == null || task.getPid().isEmpty()) return;
 
 		// Prepare command line arguments
 		ArrayList<String> args = new ArrayList<String>();
 		StringBuilder cmdsb = new StringBuilder();
-		for (String arg : clusterPostMortemInfoCommand) {
+		for (String arg : getCommandPostMortemInfo()) {
 			args.add(arg);
 			cmdsb.append(" " + arg);
 		}

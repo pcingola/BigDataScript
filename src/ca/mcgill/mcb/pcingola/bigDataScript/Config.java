@@ -37,12 +37,15 @@ public class Config {
 	public static final String CLUSTER_SGE_TIMEOUT = "sge.timeout";
 
 	public static final String CLUSTER_RUN_ADDITIONAL_ARGUMENTS = "clusterRunAdditionalArgs"; // Cluster additional command line arguments (when running tasks)
+	public static final String CLUSTER_KILL_ADDITIONAL_ARGUMENTS = "clusterKillAdditionalArgs"; // Cluster additional command line arguments (when killing tasks)
+	public static final String CLUSTER_STAT_ADDITIONAL_ARGUMENTS = "clusterStatAdditionalArgs"; // Cluster additional command line arguments (when requesting information about all tasks)
+	public static final String CLUSTER_POSTMORTEMINFO_ADDITIONAL_ARGUMENTS = "clusterPostMortemInfoAdditionalArgs"; // Cluster additional command line arguments (when requesting information about a failed task)
 
 	// Generic cluster
 	public static final String CLUSTER_GENERIC_SUBMIT = "clusterGenericRun";
 	public static final String CLUSTER_GENERIC_KILL = "clusterGenericKill";
 	public static final String CLUSTER_GENERIC_STAT = "clusterGenericStat";
-	public static final String CLUSTER_GENERIC_POSTMORTEM_INFO = "clusterGenericPostMortemInfo";
+	public static final String CLUSTER_GENERIC_POSTMORTEMINFO = "clusterGenericPostMortemInfo";
 
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
@@ -173,13 +176,25 @@ public class Config {
 		String val = getString(propertyName);
 		if (val == null) return EMPTY_STRING_ARRAY;
 
+		// Parse and add to list
 		ArrayList<String> vals = new ArrayList<String>();
 		for (String v : val.split("\\s+")) {
 			v = v.trim();
 			if (!v.isEmpty()) vals.add(v.trim());
 		}
 
-		return vals.toArray(EMPTY_STRING_ARRAY);
+		// Convert to string array
+		String valsArray[] = vals.toArray(EMPTY_STRING_ARRAY);
+
+		// Show
+		if (isDebug()) {
+			Timer.showStdErr("Parsing '" + propertyName + "'. Number of additional arguments: " + valsArray.length);
+			for (int i = 0; i < valsArray.length; i++) {
+				System.err.println("\t\t\t" + i + "\t'" + valsArray[i] + "'");
+			}
+		}
+
+		return valsArray;
 	}
 
 	public Tail getTail() {
