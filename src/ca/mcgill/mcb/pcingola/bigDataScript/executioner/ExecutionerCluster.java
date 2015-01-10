@@ -66,9 +66,9 @@ public class ExecutionerCluster extends Executioner {
 		clusterRunAdditionalArgs = config.getStringArray(Config.CLUSTER_RUN_ADDITIONAL_ARGUMENTS);
 
 		if (config.isDebug()) {
-			Gpr.debug("Adding clusterRunAdditionalArgs. Number of additional arguments: " + clusterRunAdditionalArgs.length);
+			Timer.showStdErr("Adding clusterRunAdditionalArgs. Number of additional arguments: " + clusterRunAdditionalArgs.length);
 			for (int i = 0; i < clusterRunAdditionalArgs.length; i++) {
-				Gpr.debug("\t" + i + "\t'" + clusterRunAdditionalArgs[i] + "'");
+				System.err.println("\t\t\t" + i + "\t'" + clusterRunAdditionalArgs[i] + "'");
 			}
 		}
 
