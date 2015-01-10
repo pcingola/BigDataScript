@@ -24,6 +24,7 @@
 #     6) Cluster's STDERR redirect file. This is where the cluster should redirect STDERR
 #     7) Cluster command and arguments to be executed (typically is a "bds -exec ...").
 #
+#                                                                Pablo Cingolani
 #-------------------------------------------------------------------------------
 
 #---
