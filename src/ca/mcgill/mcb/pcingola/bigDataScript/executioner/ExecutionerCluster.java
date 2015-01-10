@@ -63,7 +63,7 @@ public class ExecutionerCluster extends Executioner {
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
-		clusterRunAdditionalArgs = config.getString(Config.CLUSTER_RUN_ADDITIONAL_ARGUMENTS, "").split("\\s+");
+		clusterRunAdditionalArgs = config.getStringArray(Config.CLUSTER_RUN_ADDITIONAL_ARGUMENTS);
 
 		if (config.isDebug()) {
 			Gpr.debug("Adding clusterRunAdditionalArgs. Number of additional arguments: " + clusterRunAdditionalArgs.length);

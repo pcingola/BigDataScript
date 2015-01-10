@@ -46,6 +46,8 @@ public class Config {
 
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
+	public static final String[] EMPTY_STRING_ARRAY = new String[0];
+
 	boolean debug = false; // Debug mode?
 	boolean verbose = false; // Verbose mode?
 	boolean log = false; // Log all commands?
@@ -161,7 +163,23 @@ public class Config {
 
 	public String getString(String propertyName, String defaultValue) {
 		String val = getString(propertyName);
-		return val != null ? val : defaultValue;
+		return val != null ? val.trim() : defaultValue;
+	}
+
+	/**
+	 * Get a configuration value and split is into an array (using regex '\\s+')
+	 */
+	public String[] getStringArray(String propertyName) {
+		String val = getString(propertyName);
+		if (val == null) return EMPTY_STRING_ARRAY;
+
+		ArrayList<String> vals = new ArrayList<String>();
+		for (String v : val.split("\\s+")) {
+			v = v.trim();
+			if (!v.isEmpty()) vals.add(v.trim());
+		}
+
+		return vals.toArray(EMPTY_STRING_ARRAY);
 	}
 
 	public Tail getTail() {
