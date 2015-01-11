@@ -22,14 +22,18 @@
 
 #---
 # Parse command line arguments
+#
+# Note: The script 'run.pl' prepends 'CLUSTERGENERIC_LOCALHOST_' to the 
+#       pid, so we have to remove that
 #---
 $jobId = shift @ARGV;
+if( $jobId =~ /CLUSTERGENERIC_LOCALHOST_(.*)/ ) { $jobId = $1; }
 
 #---
 # Execute cluster command to kill task.
 # Note: In this case the 'cluster' is just the localhost
 #---
-`kill -9 $jobId`;
+system "kill -9 $jobId";
 
 # OK
 exit(0);

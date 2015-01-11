@@ -25,6 +25,7 @@ public class TestSuiteAll {
 		suite.addTestSuite(TestCasesGraph.class);
 		suite.addTestSuite(TestCasesCheckpoint.class);
 		suite.addTestSuite(TestCasesCommandLineOptions.class);
+		suite.addTestSuite(TestCasesClusterGeneric.class);
 
 		return suite;
 	}

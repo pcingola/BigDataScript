@@ -40,21 +40,27 @@ $saveStderr = shift @ARGV;
 $cmd = join(' ', @ARGV);
 
 #---
-# Create command line arguments for qsub
-# Note: In this case the 'cluster' is just the localhost, so
-#       we ignore all resources and run the command
-#---
-
 # Fist line MUST show PID
+#
 # Note: We should be showing the command's PID instead 
 #       of this scripts's PID (but this is a simplified example).
-print "$PID\n\n";
+#
+# Note: Just to show that the command is executed here, we prepend
+#       CLUSTERGENERIC_LOCALHOST to the PID
+#---
+print "CLUSTERGENERIC_LOCALHOST_$$\n\n";
 
+#---
 # Execute command. 
+#
+# Note: In this case the 'cluster' is just the localhost, so
+#       we ignore all resources and run the command
+#
 # Note: We should be checking the exit value and setting this 
 #       script's exit value accordingly (but this is a simplified 
 #       example)
-`$cmd`;
+#---
+system "$cmd";
 
 # OK
 exit(0);

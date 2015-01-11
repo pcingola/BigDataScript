@@ -308,6 +308,10 @@ public class Config {
 		}
 	}
 
+	public void set(String propertyName, String value) {
+		properties.setProperty(propertyName, value);
+	}
+
 	public void setCreateReport(boolean createReport) {
 		this.createReport = createReport;
 	}

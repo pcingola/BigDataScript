@@ -75,7 +75,6 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 		CmdCluster cmd = new CmdCluster(task.getId(), argv);
 		cmd.setReadPid(true); // We execute using a custom made script that is required to output jobID in the first line
 		if (debug) Timer.showStdErr("Command (CmdCluster): " + cmd);
-
 		return cmd;
 	}
 

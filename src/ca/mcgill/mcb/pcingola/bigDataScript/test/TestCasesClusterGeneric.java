@@ -15,14 +15,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * @author pcingola
  *
  */
-public class TestCasesZzz extends TestCasesBase {
+public class TestCasesClusterGeneric extends TestCasesBase {
 
 	@Test
 	public void test01_log() {
 		Gpr.debug("Test");
 
-		// Create command line 
-		BigDataScript bds = bds("test/z.bds");
+		// Create command line
+		BigDataScript bds = bds("test/clusterGeneric_01.bds");
 
 		// Config generic cluster's scripts
 		Config config = bds.getConfig();
@@ -37,7 +37,7 @@ public class TestCasesZzz extends TestCasesBase {
 		// Finished OK?
 		Assert.assertEquals(0, exitCode);
 
-		// Get tasks and check that PID matches 'CLUSTERGENERIC_LOCALHOST_' 
+		// Get tasks and check that PID matches 'CLUSTERGENERIC_LOCALHOST_'
 		// (run.pl prepends that string to PID)
 		for (Task t : bds.getBigDataScriptThread().getTasks()) {
 			if (debug) Gpr.debug("Task " + t.getId() + ", pid " + t.getPid());

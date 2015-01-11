@@ -27,7 +27,7 @@
 # Execute cluster command to show all tasks
 # Note: In this example the 'cluster' is just localhost
 #---
-`ps -a`;
+system "ps -a";
 
 # OK
 exit(0);

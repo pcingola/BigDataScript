@@ -1,0 +1,7 @@
+
+system = "generic"
+
+for( int i=0 ; i < 3 ; i++ ) {
+	task echo Hello $i ; sleep 1 ; echo Bye $i
+}
+
