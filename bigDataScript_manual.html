@@ -1314,9 +1314,22 @@ test_03.bds
 						<td> Tasks are scheduled for execution (using 'msub'). Resource management is delegated to cluster workload management. </td>
 					</tr>
 					<tr> 
+						<td> <code>pbs</code> </td>
+						<td> Running on a PBS cluster </a> </td>
+						<td> Tasks are scheduled for execution (using 'msub'). Resource management is delegated to cluster workload management. </td>
+					</tr>
+					<tr> 
 						<td> <code>sge</code> </td>
 						<td> Running on a SGE cluster </a> </td>
 						<td> Tasks are scheduled for execution (using 'qsub'). Resource management is delegated to cluster workload management. </td>
+					</tr>
+					<tr> 
+						<td> <code>generic</code> </td>
+						<td> Enable user defined scripts to run, kill and find information on tasks</a> </td>
+						<td> This 'generic' cluster allows the user to write/customize scripts that send jobs to the cluster system. 
+							 It can be usefull to either add cluster systems not currently supported by <code>bds</code>, or to customize parameters and scheduling options beyond what <code>bds</code> allows to customize in the config file.
+							 For details, see bds.config file and examples in the project's source code (directories <code>config/clusterGeneric*</code>).
+						</td>
 					</tr>
 					<tr> 
 						<td> <code>mesos</code> </td>
@@ -2321,12 +2334,17 @@ Nice test code 01
 				Running the command line without any arguments, shows a help message
 <pre class="prettyprint">
 $ bds
-Usage: BigDataScript [options] file.bdsBigDataScript 0.99 (build 2014-07-28), by Pablo Cingolani
+BigDataScript 0.999c (build 2015-01-08), by Pablo Cingolani
+
+Usage: BigDataScript [options] file.bds
 
 Available options: 
-  [-c | -config ] bds.config     : Config file. Default : /home/pcingola/.bds/bds.config
+  [-c | -config ] bds.config     : Config file. Default : /Users/pcingola/.bds/bds.config
+  [-checkPidRegex]               : Check configuration 'pidRegex' by matching stdin.
   [-d | -debug  ]                : Debug mode.
+  -done                          : Use 'done' files: Default: false
   -dryRun                        : Do not run any task, just show what would be run.
+  [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').
   [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.
   [-l | -log    ]                : Log all tasks (do not delete tmp files).
   -noReport                      : Do not create report.
@@ -2337,14 +2355,18 @@ Available options:
   [-t | -test   ]                : Perform testing (run all test* functions).
   [-v | -verbose]                : Be verbose.
   [-y | -retry  ] num            : Number of times to retry a failing tasks.
+  -pid file                      : Write local processes PIDs to 'file'
 </pre>
 				<table class="table table-striped">
 					<tr> <th> Option short </th><th> Option long </th> <th> Meaning </th> </tr>
 					<tr> <td> -c </td> <td> -config </td> <td> Path to bds.config file (most of the times no config file is needed) </td> </tr>
+					<tr> <td>    </td> <td> -checkPidRegex </td> <td> Check configuration's 'pidRegex' by matching stdin. </td> </tr>
 					<tr> <td> -d </td> <td> -debug </td> <td> Debug mode, shows detailed information for debugging scripts. </td> </tr>
-					<tr> <td> </td> <td> -dryRun  </td> <td> Do not run any task, just show what would be run. This mode is used when you just want to test your script's logic without executing any tasks. </td> </tr>
+					<tr> <td>    </td> <td> -dryRun  </td> <td> Do not run any task, just show what would be run. This mode is used when you just want to test your script's logic without executing any tasks. </td> </tr>
+					<tr> <td>    </td> <td> -extractSource </td> <td> Extract source code files from checkpoint (only valid combined with '-info').</td> </tr>
 					<tr> <td> -i </td> <td> -info </td> <td> Show state information in checkpoint file. Prints variables, scopes, etc.</td> </tr>
-					<tr> <td> </td> <td> -noReport </td> <td> Do not create HTML report when execution finishes. </td> </tr>
+					<tr> <td>    </td> <td> -noReport </td> <td> Do not create HTML report when execution finishes. </td> </tr>
+					<tr> <td>    </td> <td> -noRmOnExit </td> <td> Do not remove files marked for deletion on exit (rmOnExit). </td> </tr>
 					<tr> <td> -q </td> <td> -queue </td> <td> Set default cluster's queue name. </td> </tr>
 					<tr> <td> -r </td> <td> -restore </td> <td> Restore from a acheckpoiunt and continue execution.</td> </tr>
 					<tr> <td> -s </td> <td> -system </td> <td> Define the 'system' type the script is running on (e.g. cluster type) </td> </tr>
@@ -2354,6 +2376,358 @@ Available options:
 				</table>
 			</div>
 
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="config">BDS Config file </h1>
+				<p class="lead"> BigDataScript's config file allows to customize <code>bds</code>'s behaviour.</p>
+
+				<p> 
+				BigDataScript's config file is usualy located in <code>$HOME/.bds/bds.config</code>.
+				Running <code>bds</code> without any arguments shows the config's file default location.
+				You can provide an alternative path using command line option <code>-c</code>.
+				<br>
+				<br>
+				The config file is roughly divided into sections.
+				It is not required that parameters are in specific sections, we just do it to have some order.
+				We expalin the parameters for each section below.
+				<br>
+				<br>
+				<h3>Default parameters</h3>
+				This section defines default parameters used in running tasks (such as system type, number of CPUs, memory, etc.).
+				Most of the time you'd rather keep options unspecified but it can be convinient to set <code>system = local</code> in 
+				your laptop and <code>system = cluster</code> in your production cluster.
+
+				<table class="table table-striped">
+					<tr>
+						<th>Parameter</th>
+						<th> Comments / examples </th>
+					</tr>
+					<tr>
+						<td> mem </td>
+						<td> Default memory in bytes (negative number means unspecified) </td>
+					</tr>
+					<tr>
+						<td> node  </td>
+						<td> Default execution node (empty means unspecified)  </td>
+					</tr>
+					<tr>
+						<td> queue  </td>
+						<td> Add default queue name (empty means unspecified)  </td>
+					</tr>
+					<tr>
+						<td> retry  </td>
+						<td> Default number of retries when a task fails (0 means no retry). 
+							 Upon failire, a task is re-executed up to 'retry' times. 
+							 I.e. a task is considered failed only after failing 'retry + 1' times.
+						</td>
+					</tr>
+					<tr>
+						<td> system </td>
+						<td> Default system type. If unspecified, the default system is 'local' (run tasks on local computer) </td>
+					</tr>
+					<tr>
+						<td> timeout  </td>
+						<td> Task timeout in seconds (default is one day)  </td>
+					</tr>
+					<tr>
+						<td> walltimeout  </td>
+						<td> Task's wall-timeout in seconds (default is one day). 
+							 Wall timeout includes all the time that the task is waiting to be executed. 
+							 I.e. the total amount of time we are willing to wait for a task to finish.
+							 For example if walltimeout is one day and a task is queued by the cluster 
+							 system for one day (and never executed), it will timeout, even if the task 
+							 was never run.
+						</td>
+					</tr>
+					<tr>
+						<td> taskShell </td>
+						<td> Shell to be used when running a <code>task</code> (default '/bin/sh -e')<br>
+							 <b>WARNING</b>: Make sure you use "-e" or some command line option that stops execution when an error if found.
+						</td>
+					</tr>
+					<tr>
+						<td> sysShell  </td>
+						<td> Shell to be used when running a <code>sys</code> (default '/bin/sh -e -c')<br>
+							 <b>WARNING</b>: Make sure you use "-e" or some command line option that stops execution when an error if found.<br>
+							 <b>WARNING</b>: Make sure you use "-c" or some command line option that allows to provide a script
+						</td>
+					</tr>
+				</table>
+
+				<br>
+				<h3>Cluster options </h3>
+				This section defines parameters to customize <code>bds</code> to run tasks on your cluster.
+
+				<table class="table table-striped">
+					<tr>
+						<th>Parameter</th>
+						<th> Comments / examples </th>
+					</tr>
+					<tr>
+						<td> pidRegex </td>
+						<td> 
+							Regex used to extract PID from cluster command (e.g. qsub). 
+							<br>
+							<br>
+							When <code>bds</code> dispatches a task to the cluster management system (e.g. running 'qsub' command), it expects the cluster system to inform the jobID.
+							Typically cluster systems show jobIDs in the first output line.
+							This regex is used to match that jobID.
+							<br>
+							<br>
+							Default, use the whole line<br>
+							Note: Some clusters add the domain name to the ID and 
+      							then never use it again, some other clusters add 
+      							a message (e.g. 'You job ...')
+							<br>
+							<br>
+							Examples:
+<pre>
+pidRegex = "(.+).domain.com"
+pidRegex = "Your job (\\S+)"
+</pre>
+
+						</td>
+					</tr>
+					<tr>
+						<td> clusterRunAdditionalArgs </td>
+						<td>
+							These command line arguments are added to every cluster 'run' command (e.g. 'qsub')<br>
+							The string is split on spaces (regex: '\s+') and added to the cluster's run command.<br>
+							<br>
+							For instance the following configuration:<br>
+							<br>
+							<pre> clusterRunAdditionalArgs = -A accountID -M user@gmail.com </pre>
+							Will be cause four additional arguments <code>{ '-A', 'accountID', '-M', 'user@gmail.com' }</code> to 
+							be added immediately after 'qsub' (or similar) command used to run tasks on a cluster.
+						</td>
+					</tr>
+					<tr>
+						<td>clusterKillAdditionalArgs</td>
+						<td>
+						These command line arguments are added to every cluster 'kill' command (e.g. 'qdel')<br>
+						Same rules as 'clusterRunAdditionalArgs' apply
+						</td>
+					</tr>
+					<tr>
+						<td>clusterStatAdditionalArgs</td>
+						<td>
+						These command line arguments are added to every cluster 'stat' command (e.g. 'qstat')<br>
+						Same rules as 'clusterRunAdditionalArgs' apply
+						</td>
+					</tr>
+					<tr>
+						<td>clusterPostMortemInfoAdditionalArgs</td>
+						<td>
+						These command line arguments are added to every cluster 'post mortem info' command (e.g. 'qstat -f')
+						Same rules as 'clusterRunAdditionalArgs' apply
+						</td>
+					</tr>
+				</table>
+
+				<br>
+				<h3>SGE Cluster options </h3>
+				This section defines parameters to customize <code>bds</code> to run tasks on a Sun Grid Engine cluster.
+
+				<table class="table table-striped">
+					<tr>
+						<th>Parameter</th>
+						<th> Comments / examples </th>
+					</tr>
+					<tr>
+						<td> sge.pe </td>
+						<td>
+						Parallel environment in SGE (e.g. 'qsub -pe mpi 4')<br>
+						<br>
+						Note on SGE's parallel environment ('-pe'):<br>
+						<br>
+						  The defaults were set to be compatible with <b>StarCluster</b>.<br>
+						  Parallel environment defines how 'slots' (number of cpus requested) 
+						  are allocated. <b>StarCluster</b> by default sets up a parallel environment, called “orte”, 
+						  that has been configured for OpenMPI integration within SGE and has a number of slots 
+						  equal to the total number of processors in the cluster.<br>
+						  See details <code>qconf -sp orte</code>:<br>
+<pre>
+pe_name            orte
+slots              16
+user_lists         NONE
+xuser_lists        NONE
+start_proc_args    /bin/true
+stop_proc_args     /bin/true
+allocation_rule    $round_robin
+control_slaves     TRUE
+job_is_first_task  FALSE
+urgency_slots      min
+accounting_summary FALSE
+</pre>
+						<br>
+						  Notice the <code>allocation_rule = $round_robin</code>.  This defines how to assign slots to a job. By 
+						  default StarCluster configures round_robin allocation. This means that if a job requests 8 
+						  slots for example, it will go to the first machine, grab a single slot if available, move to 
+						  the next machine and grab a single slot if available, and so on wrapping around the cluster 
+						  again if necessary to allocate 8 slots to the job.
+						<br>
+						  You can also configure the parallel environment to try and localize slots as much as 
+						  possible using the "fill_up" allocation rule and job_is_first_task of TRUE.
+						<br>
+						  To configure: qconf -mp orte
+</td>
+					</tr>
+					<tr>
+						<td> sge.mem </td>
+						<td> Parameter for requesting amount of memory in qsub (e.g. <code>qsub -l mem 4G</code>) </td>
+					</tr>
+					<tr>
+						<td> sge.timeout </td>
+						<td> Parameter for timeout in qsub (e.g. <code>qsub -l h_rt 24:00:00</code>) </td>
+					</tr>
+				</table>
+				<br>
+
+				<h3>Generic Cluster options </h3>
+				Cluster <b>generic</b> invokes user defined scripts for manupulating tasks.
+				This allows the user to customize scripts for particular cluster environments (e.g. environments not currently supproted by <code>bds</code>)
+				<br>
+				<br>
+				<b>Note</b>: You should either provide the script's full path or the scripts should 
+					  be in your PATH
+				<br>
+				<br>
+				<b>Note</b>: These scripts "comunicate" with bds by printing information on STDOUT. The 
+					  information has to be printed in a very specific format. Failing to adhere 
+					  to the format will cause bds to fail in unexpected ways.
+				<br>
+				<br>
+				<b>Note</b>: You can use command path starting with '~' to indicate <code>$HOME</code> dir or '.' to 
+					  indicate path relative to config's file dir
+				<br>
+				<br>
+				<table class="table table-striped">
+					<tr>
+						<th>Parameter</th>
+						<th> Comments / examples </th>
+					</tr>
+					<tr>
+						<td> clusterGenericRun </td>
+						<td>
+							The specified script is executed when a task is submitted to the cluster
+							<br>
+							<br>
+							<b>Script's expected output</b>:
+								The script MUST print the cluster's jobID AS THE FIRST LINE. 
+								Make sure to flush STDOUT to avoid other lines to be printed out of order.
+							<br>
+							<br>
+							<b>Command line arguments</b>:
+								<ol>
+									<li> Task's timeout in seconds. Negative number means 'unlimited' (i.e. let the cluster system decide)
+									<li> Tasks required CPUs: number of cores within the same node.
+									<li> Task's required memory in bytes. Negative means 'unspecified' (i.e. let the cluster system decide)
+									<li> Cluster's queue name. Empty means "use cluster's default"
+									<li> Cluster's STDOUT redirect file. This is where the cluster should redirect STDOUT.
+									<li> Cluster's STDERR redirect file. This is where the cluster should redirect STDERR
+									<li> Cluster command and arguments to be executed (typically is a "bds -exec ...").
+								</ol>
+							<br>
+							<br>
+							<b>Example:</b> For examples on how to build this script, take a look at <code>config/clusterGeneric*</code> directory in the source code.
+						</td>
+					</tr>
+					<tr>
+						<td> clusterGenericKill  </td>
+						<td>
+							The specified script is executed in order to kill a task
+							<br>
+							<br>
+							<b>Script's expected output</b>:
+								None
+							<br>
+							<br>
+							<b>Command line arguments</b>:
+								jobId: This is the jobId returned as the first line in 'clusterGenericRun' 
+									  script (i.e. the jobID provided by the cluster management system)
+							<br>
+							<br>
+							<b>Example:</b> For examples on how to build this script, take a look at <code>config/clusterGeneric*</code> directory in the source code.
+						</td>
+					</tr>
+					<tr>
+						<td> clusterGenericStat </td>
+						<td>
+							The specified script is executed in order to show the jobID of all jobs currently scheduled in the cluster
+							<br>
+							<br>
+							<b>Script's expected output</b>:
+								This script is expected to print all jobs currently scheduled or 
+								running in the cluster (e.g. qstat). One per line. The FIRST column 
+								should be the jobID (columns are spce or tab separated). Other 
+								columns may exists (but are currently ignored).
+							<br>
+							<br>
+							<b>Command line arguments</b>:
+								None
+							<br>
+							<br>
+							<b>Example:</b> For examples on how to build this script, take a look at <code>config/clusterGeneric*</code> directory in the source code.
+						</td>
+					</tr>
+					<tr>
+						<td> clusterGenericPostMortemInfo  </td>
+						<td>
+							The specified script is executed in order to get information of a recently 
+							finished jobId. This information is typically used for debuging and it added to bds's output.
+							<br>
+							<br>
+							<b>Script's expected output</b>:
+								The output is not parsed, it is stored and later shown 
+								in bds's report. Is should contain information relevant 
+								to the job's execution (e.g. <code>qstat -f $jobId</code> or <code>checkjob -v $jobId</code>)
+							<br>
+							<br>
+							<b>Command line arguments</b>:
+								jobId: This is the jobId returned as the first line in 'clusterGenericRun' 
+								script (i.e. the jobID provided by the cluster management system)
+							<br>
+							<br>
+							<b>Example:</b> For examples on how to build this script, take a look at <code>config/clusterGeneric*</code> directory in the source code.
+						</td>
+					</tr>
+				</table>
+
+				<h3>SSH Cluster options </h3>
+				Cluster <b>shh</b> creates a virtual cluster using several nodes acceses via shh.
+				<br>
+				<br>
+				<br>
+				<table class="table table-striped">
+					<tr>
+						<th>Parameter</th>
+						<th> Comments / examples </th>
+					</tr>
+					<tr>
+						<td> ssh.nodes </td>
+						<td> 
+							This defines the userName and nodes to be accessed via ssh.
+							<br>
+							<br>
+							Examples:
+							<br>
+							<ul>
+								<li> A trivial 'ssh' cluster composed only of the localhost accesed via ssh (useful for debugging)
+<pre>
+ssh.nodes = user@localhost
+</pre>
+								<li> Some company's servers used as an ssh cluster
+<pre>
+ssh.nodes = user@lab1-1company.com, user@lab1-2company.com, user@lab1-3company.com, user@lab1-4company.com, user@lab1-5company.com
+</pre>
+								<li> A StarCluster run on Amazon AWS
+<pre>
+ssh.nodes = sgeadmin@node001, sgeadmin@node002, sgeadmin@node003, sgeadmin@node004, sgeadmin@node005, sgeadmin@node006
+</pre>
+							</ul>
+						</td>
+				</table>
+			</div>
 		</div>
 
 		<!-- Docs nav
@@ -2402,6 +2776,7 @@ Available options:
 					</li>
 
 					<li><a href="#commandLine"> BDS command line </a></li>
+					<li><a href="#config"> BDS config file </a></li>
 				</ul>
 			</div>
 		</div>
