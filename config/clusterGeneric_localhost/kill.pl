@@ -4,10 +4,9 @@
 # BDS generic cluster example
 #
 # This is a trivial example of the 'cluster generic' interface implementation.
-# The commands implemented in this example simply pass the propper arguments 
-# to qsub, qdel or qstat commands.
-# This is intended as a toy example, since bds can do this directly (but 
-# it's a good starting point to extend your own implementation).
+# The commands implemented in this example do NOT really submit 
+# tasks to a cluster, the tasks are run locally. 
+# This is intended as a toy example and also used for test-cases.
 #
 # The script is called when a task is killed
 #
@@ -27,9 +26,10 @@
 $jobId = shift @ARGV;
 
 #---
-# Execute cluster command to kill task
+# Execute cluster command to kill task.
+# Note: In this case the 'cluster' is just the localhost
 #---
-`qdel $jobId`;
+`kill -9 $jobId`;
 
 # OK
 exit(0);

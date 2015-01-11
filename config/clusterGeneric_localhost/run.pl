@@ -4,10 +4,9 @@
 # BDS generic cluster example
 #
 # This is a trivial example of the 'cluster generic' interface implementation.
-# The commands implemented in this example simply pass the propper arguments 
-# to qsub, qdel or qstat commands.
-# This is intended as a toy example, since bds can do this directly (but 
-# it's a good starting point to extend your own implementation).
+# The commands implemented in this example do NOT really submit 
+# tasks to a cluster, the tasks are run locally. 
+# This is intended as a toy example and also used for test-cases.
 #
 # The script is called when a task is submitted to the cluster
 #
@@ -16,13 +15,13 @@
 #     Make sure to flush STDOUT to avoid other lines to be printed out of order.
 #
 # Command line arguments:
-#     1) Task's timeout in seconds. Negative number means 'unspecified'
+#     1) Task's timeout in seconds. Negative number means 'unlimited'
 #     2) Tasks required CPUs: number of cores within the same node.
 #     3) Task's required memory in bytes. Negative means 'unspecified'
 #     4) Cluster's queue name. Empty means "use cluster's default"
 #     5) Cluster's STDOUT redirect file.
 #     6) Cluster's STDERR redirect file.
-#     7) Cluster command and arguments to be executed
+#     7) Cluster command and arguments to be executed (typically is a "bds -exec ...").
 #
 #                                                                Pablo Cingolani
 #-------------------------------------------------------------------------------
@@ -42,36 +41,20 @@ $cmd = join(' ', @ARGV);
 
 #---
 # Create command line arguments for qsub
+# Note: In this case the 'cluster' is just the localhost, so
+#       we ignore all resources and run the command
 #---
 
-# Resources
-$res = "";
+# Fist line MUST show PID
+# Note: We should be showing the command's PID instead 
+#       of this scripts's PID (but this is a simplified example).
+print "$PID\n\n";
 
-if( $cpus > 0 ) {
-	$res .= "nodes=1:ppn=$cpus";
-}
-
-if( $mem > 0 ) { 
-	$res .= "," if $res ne '';
-	$res .= "mem=$mem"; 
-}
-
-if( $timeout > 0 ) { 
-	$res .= "," if $res ne '';
-	$res .= "walltime=$timeout";
-}
-
-$qsub = "qsub ";
-$qsub .= "-q $queue" if( $queue ne '' );
-$qsub .= "-l $res" if( $res ne '' );
-
-#---
-# Execute 'qsub' command
-#---
-$pid = open QSUB, "| $qsub";
-die "Cannot run command '$qsub'\n" if (! kill(0, $pid); # Check that process exists
-print QSUB "$cmd\n";	# Send cluster's task via qsub's STDIN
-close QSUB;
+# Execute command. 
+# Note: We should be checking the exit value and setting this 
+#       script's exit value accordingly (but this is a simplified 
+#       example)
+`$cmd`;
 
 # OK
 exit(0);

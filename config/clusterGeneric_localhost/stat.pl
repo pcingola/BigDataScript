@@ -4,10 +4,9 @@
 # BDS generic cluster example
 #
 # This is a trivial example of the 'cluster generic' interface implementation.
-# The commands implemented in this example simply pass the propper arguments 
-# to qsub, qdel or qstat commands.
-# This is intended as a toy example, since bds can do this directly (but 
-# it's a good starting point to extend your own implementation).
+# The commands implemented in this example do NOT really submit 
+# tasks to a cluster, the tasks are run locally. 
+# This is intended as a toy example and also used for test-cases.
 #
 # This script is executed in order to show the jobID of all jobs currently 
 # scheduled in the cluster
@@ -26,8 +25,9 @@
 
 #---
 # Execute cluster command to show all tasks
+# Note: In this example the 'cluster' is just localhost
 #---
-`qstat`;
+`ps -a`;
 
 # OK
 exit(0);

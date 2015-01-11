@@ -4,13 +4,12 @@
 # BDS generic cluster example
 #
 # This is a trivial example of the 'cluster generic' interface implementation.
-# The commands implemented in this example simply pass the propper arguments 
-# to qsub, qdel or qstat commands.
-# This is intended as a toy example, since bds can do this directly (but 
-# it's a good starting point to extend your own implementation).
+# The commands implemented in this example do NOT really submit 
+# tasks to a cluster, the tasks are run locally. 
+# This is intended as a toy example and also used for test-cases.
 #
 # The following command is executed in order to get information of a recently 
-# finished jobId. This information is typically used for debuging and it added
+# finished jobId. This information is typically used for debuging and it added 
 # to bds's output.
 #
 # Script's output: 
@@ -33,8 +32,10 @@ $jobId = shift @ARGV;
 
 #---
 # Execute cluster command to show task details
+# Note: In this case the 'cluster' is just the localhost, so 
+#       no information is available after a process dies
 #---
-`qstat -f $jobId`;
+print "No information avaialble on taks $jobId\n";
 
 # OK
 exit(0);
