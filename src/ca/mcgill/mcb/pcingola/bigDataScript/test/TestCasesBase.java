@@ -42,6 +42,7 @@ public class TestCasesBase extends TestCase {
 		ArrayList<String> l = new ArrayList<String>();
 
 		if (verbose) l.add("-v");
+		if (debug) l.add("-d");
 		for (String arg : args)
 			l.add(arg);
 

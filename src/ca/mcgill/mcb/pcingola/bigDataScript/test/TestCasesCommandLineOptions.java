@@ -9,17 +9,18 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * Quick test cases when creating a new feature...
+ * Check command line options
  *
  * @author pcingola
- *
  */
-public class TestCasesZzz extends TestCasesBase {
+public class TestCasesCommandLineOptions extends TestCasesBase {
 
 	@Test
 	public void test01_log() {
-		// Create command line 
-		String args[] = { "-log", "test/z.bds" };
+		Gpr.debug("Test");
+
+		// Create command line
+		String args[] = { "-log", "test/cmdLineOptions_01.bds" };
 		BigDataScript bds = bds(args);
 
 		// Run script
