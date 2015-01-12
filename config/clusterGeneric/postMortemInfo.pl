@@ -29,13 +29,14 @@
 #---
 # Parse command line arguments
 #---
+die "Error: Missing arguments.\nUsage: postMortemInfo.pl jobId\n" if $#ARGV < 0 ;
 $jobId = shift @ARGV;
 
 #---
 # Execute cluster command to show task details
 #---
-`qstat -f $jobId`;
+$exitCode = system "qstat -f $jobId";
 
 # OK
-exit(0);
+exit($exitCode);
 

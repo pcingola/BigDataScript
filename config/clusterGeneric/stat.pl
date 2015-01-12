@@ -27,8 +27,7 @@
 #---
 # Execute cluster command to show all tasks
 #---
-`qstat`;
+$exitCode = system "qstat";
 
 # OK
-exit(0);
-
+exit($exitCode);

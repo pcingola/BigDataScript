@@ -24,13 +24,14 @@
 #---
 # Parse command line arguments
 #---
+die "Error: Missing arguments.\nUsage: kill.pl jobId\n" if $#ARGV < 0 ;
 $jobId = shift @ARGV;
 
 #---
 # Execute cluster command to kill task
 #---
-`qdel $jobId`;
+$exitCode = system "qdel $jobId";
 
 # OK
-exit(0);
+exit($exitCode);
 

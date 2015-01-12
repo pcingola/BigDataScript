@@ -30,6 +30,8 @@
 #---
 # Parse command line arguments
 #---
+die "Error: Missing arguments.\nUsage: run.pl timeout cpus mem queue saveStdout saveStderr cmd arg1 ... argN\n" if $#ARGV < 6 ;
+
 $timeout = shift @ARGV;
 $cpus = shift @ARGV;
 $mem = shift @ARGV;
@@ -69,7 +71,7 @@ $qsub .= "-l $res" if( $res ne '' );
 # Execute 'qsub' command
 #---
 $pid = open QSUB, "| $qsub";
-die "Cannot run command '$qsub'\n" if (! kill(0, $pid); # Check that process exists
+die "Cannot run command '$qsub'\n" if ! kill(0, $pid); # Check that process exists
 print QSUB "$cmd\n";	# Send cluster's task via qsub's STDIN
 close QSUB;
 
