@@ -312,13 +312,14 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	@Override
 	protected void postMortemInfo(Task task) {
-		if (getCommandPostMortemInfo().length <= 0) return;
+		String cmd[] = getCommandPostMortemInfo();
+		if (cmd.length <= 0) return;
 		if (task.getPid() == null || task.getPid().isEmpty()) return;
 
 		// Prepare command line arguments
 		ArrayList<String> args = new ArrayList<String>();
 		StringBuilder cmdsb = new StringBuilder();
-		for (String arg : getCommandPostMortemInfo()) {
+		for (String arg : cmd) {
 			args.add(arg);
 			cmdsb.append(" " + arg);
 		}
@@ -326,7 +327,7 @@ public class ExecutionerCluster extends Executioner {
 
 		// Run command
 		ExecResult cmdExecResult = Exec.exec(args, true);
-		if (debug) Gpr.debug("Finding postMortemInfo for task " + task.getId() + ": Command executed. Exit value " + cmdExecResult.exitValue + ". Stdout len: " + cmdExecResult.stdOut.length());
+		if (debug) Gpr.debug("Finding postMortemInfo for task " + task.getId() + ". Command executed '" + cmdsb + "'. Exit value " + cmdExecResult.exitValue + ". Stdout len: " + cmdExecResult.stdOut.length());
 
 		// Collect the data
 		if (cmdExecResult.exitValue == 0) task.setPostMortemInfo(cmdExecResult.stdOut);
