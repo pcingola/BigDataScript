@@ -95,7 +95,7 @@ public class CheckTasksRunning {
 		int count = (missingCount.containsKey(id) ? missingCount.get(id) + 1 : 1);
 		missingCount.put(id, count);
 
-		Gpr.debug("WARNING: Task PID '" + task.getPid() + "' not found. Incrementing count as 'missing': " + count + "(max. allowed " + TASK_NOT_FOUND_DISAPPEARED + ")");
+		if (debug) Timer.showStdErr("WARNING: Task PID '" + task.getPid() + "' not found for task '" + id + "'. Incrementing count as 'missing': " + count + "(max. allowed " + TASK_NOT_FOUND_DISAPPEARED + ")");
 		return count > TASK_NOT_FOUND_DISAPPEARED;
 	}
 
@@ -147,7 +147,7 @@ public class CheckTasksRunning {
 
 		// Execute command
 		cmdExecResult = Exec.exec(args, true);
-		if (debug) Gpr.debug("Check task running command: exit value " + cmdExecResult.exitValue + ", stdout len: " + cmdExecResult.stdOut.length());
+		if (debug) Timer.showStdErr("Check task running command '" + cmdsb.toString().trim() + "': exit value " + cmdExecResult.exitValue + ", stdout len: " + cmdExecResult.stdOut.length());
 
 		//---
 		// Sanity checks!
@@ -202,7 +202,7 @@ public class CheckTasksRunning {
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
-			) {
+					) {
 				// Task is missing.
 				// Update counter: Should we consider this task as 'missing'?
 				if (incMissingCount(task)) {
