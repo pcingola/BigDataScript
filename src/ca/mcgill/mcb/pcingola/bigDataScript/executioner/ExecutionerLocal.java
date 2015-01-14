@@ -46,6 +46,7 @@ public class ExecutionerLocal extends Executioner {
 	protected ExecutionerLocal(Config config) {
 		super(config);
 		checkTasksRunning = new CheckTasksRunningLocal(this);
+		checkTasksRunning.setDebug(config.isDebug());
 	}
 
 	/**

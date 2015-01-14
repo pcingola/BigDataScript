@@ -26,12 +26,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class CheckTasksRunning {
 
-	public static boolean debug = false;
-
 	public static final int CHECK_TASK_RUNNING_INTERVAL = 60;
 	public static final int TASK_STATE_MIN_START_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
 	public static final int TASK_NOT_FOUND_DISAPPEARED = 3; // How many times do we have to 'not find' a task to consider it gone
 
+	protected boolean debug = false;
 	protected Timer time; // Timer for checking that tasks are still running
 	protected String[] defaultCmdArgs;
 	protected Executioner executioner;
@@ -161,7 +160,7 @@ public class CheckTasksRunning {
 				+ "\n\tExit value : " + cmdExecResult.exitValue //
 				+ "\n\tStdout     : " + cmdExecResult.stdOut //
 				+ "\n\tStderr     : " + cmdExecResult.stdErr //
-		);
+				);
 
 		//---
 		// Sanity checks!
@@ -192,6 +191,10 @@ public class CheckTasksRunning {
 		return true;
 	}
 
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
 	/**
 	 * Should we query task states? (i.e. run a command to see if tasks are still alive)
 	 */
@@ -216,7 +219,7 @@ public class CheckTasksRunning {
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
-					) {
+			) {
 				// Task is missing.
 				// Update counter: Should we consider this task as 'missing'?
 				if (incMissingCount(task)) {
@@ -245,4 +248,5 @@ public class CheckTasksRunning {
 			}
 		}
 	}
+
 }

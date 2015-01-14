@@ -252,7 +252,10 @@ public class ExecutionerCluster extends Executioner {
 
 	@Override
 	protected CheckTasksRunning getCheckTasksRunning() {
-		if (checkTasksRunning == null) checkTasksRunning = new CheckTasksRunningCluster(this, getCommandStat());
+		if (checkTasksRunning == null) {
+			checkTasksRunning = new CheckTasksRunningCluster(this, getCommandStat());
+			checkTasksRunning.setDebug(config.isDebug());
+		}
 		return checkTasksRunning;
 	}
 
