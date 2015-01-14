@@ -47,6 +47,12 @@ public class Config {
 	public static final String CLUSTER_GENERIC_STAT = "clusterGenericStat";
 	public static final String CLUSTER_GENERIC_POSTMORTEMINFO = "clusterGenericPostMortemInfo";
 
+	public static final String MAX_NUMBER_OF_RUNNING_THREADS = "maxThreads";
+	public static int DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS = 512;
+
+	public static final String WAIT_AFTER_TASK_RUN = "waitAfterTaskRun";
+	public static int DEFAULT_WAIT_AFTER_TASK_RUN = 0;
+
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -59,6 +65,8 @@ public class Config {
 	boolean createReport = true; // Create report when thread finishes
 	boolean extractSource = false;
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
+	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
+	int waitAfterTaskRun = -1; // Wait some milisecs after task run
 	String configFileName;
 	String configDirName;
 	String pidFile;
@@ -142,6 +150,19 @@ public class Config {
 		return Gpr.parseLongSafe(val);
 	}
 
+	/**
+	 * Max number of concurrent threads
+	 */
+	public int getMaxThreads() {
+		if (maxThreads <= 0) {
+			// Parse property
+			maxThreads = (int) getLong(MAX_NUMBER_OF_RUNNING_THREADS, DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS);
+			if (debug) Timer.showStdErr("Config: Setting 'maxThreads' to " + maxThreads);
+		}
+
+		return maxThreads;
+	}
+
 	public MonitorTask getMonitorTask() {
 		if (monitorTask == null) {
 			monitorTask = new MonitorTask();
@@ -204,7 +225,7 @@ public class Config {
 
 		// Show
 		if (isDebug()) {
-			Timer.showStdErr("Parsing '" + propertyName + "'. Number of additional arguments: " + valsArray.length);
+			Timer.showStdErr("Config: Parsing '" + propertyName + "'. Number of additional arguments: " + valsArray.length);
 			for (int i = 0; i < valsArray.length; i++) {
 				System.err.println("\t\t\t" + i + "\t'" + valsArray[i] + "'");
 			}
@@ -233,6 +254,16 @@ public class Config {
 			taskLogger.setDebug(isDebug());
 		}
 		return taskLogger;
+	}
+
+	public int getWaitAfterTaskRun() {
+		if (waitAfterTaskRun <= 0) {
+			// Parse property
+			maxThreads = (int) getLong(WAIT_AFTER_TASK_RUN, DEFAULT_WAIT_AFTER_TASK_RUN);
+			if (debug) Timer.showStdErr("Config: Setting 'waitAfterTaskRun' to " + waitAfterTaskRun);
+		}
+
+		return waitAfterTaskRun;
 	}
 
 	public boolean isCreateReport() {

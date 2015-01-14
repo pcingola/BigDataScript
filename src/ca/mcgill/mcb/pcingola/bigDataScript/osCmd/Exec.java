@@ -6,14 +6,13 @@ import java.util.List;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * Execute a command, collect stdout, stderr and exitValue 
- * and return them in an ExecResult 
- * 
+ * Execute a command, collect stdout, stderr and exitValue
+ * and return them in an ExecResult
+ *
  * @author pcingola
  */
 public class Exec {
 
-	public static int MAX_NUMBER_OF_RUNNING_THREADS = 512;
 	public static boolean debug = false;
 
 	int exitValue;

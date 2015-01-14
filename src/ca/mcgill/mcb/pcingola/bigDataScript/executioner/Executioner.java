@@ -439,7 +439,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		// The reason for this is that we can reach the maximum
 		// number of threads available in the operating system.
 		// If that happens, well get an exception
-		for (int numThreads = Exec.countRunningThreads(); numThreads >= Exec.MAX_NUMBER_OF_RUNNING_THREADS; numThreads = Exec.countRunningThreads()) {
+		for (int numThreads = Exec.countRunningThreads(); numThreads >= config.getMaxThreads(); numThreads = Exec.countRunningThreads()) {
 			// Too many threads running? Sleep for a while (block until some threads finish)
 			if (verbose) log("INFO: Too many threads running (" + numThreads + "). Waiting for some threads to finish.");
 			sleepLong();
@@ -458,6 +458,17 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		host.add(task);
 		if (cmd != null) cmd.start();
+
+		// Wait some milliseconds?
+		int waitTime = config.getWaitAfterTaskRun();
+		if (waitTime > 0) {
+			try {
+				sleep(waitTime);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	/**
