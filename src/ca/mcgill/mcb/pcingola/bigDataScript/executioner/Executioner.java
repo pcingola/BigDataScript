@@ -514,7 +514,8 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 						// OK, execute this task in this host
 						if (debug) Timer.showStdErr("Selected task:" //
-								+ "\n\ttask ID         : " + task.getId() + "\tHint: " + task.getProgramHint()//
+								+ "\n\ttask ID        : " + task.getId() //
+								+ "\n\ttask hint      : " + task.getProgramHint()//
 								+ "\n\ttask resources : " + task.getResources() //
 								+ "\n\thost           : " + host //
 								+ "\n\thost resources : " + host.getResourcesAvaialble() //
