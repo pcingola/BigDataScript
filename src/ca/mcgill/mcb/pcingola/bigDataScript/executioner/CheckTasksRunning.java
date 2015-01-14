@@ -95,7 +95,7 @@ public class CheckTasksRunning {
 		int count = (missingCount.containsKey(id) ? missingCount.get(id) + 1 : 1);
 		missingCount.put(id, count);
 
-		if (debug) Timer.showStdErr("WARNING: Task PID '" + task.getPid() + "' not found for task '" + id + "'. Incrementing count as 'missing': " + count + "(max. allowed " + TASK_NOT_FOUND_DISAPPEARED + ")");
+		if (debug) Timer.showStdErr("WARNING: Task PID '" + task.getPid() + "' not found for task '" + id + "'. Incrementing 'missing counter': " + count + " (max. allowed " + TASK_NOT_FOUND_DISAPPEARED + ")");
 		return count > TASK_NOT_FOUND_DISAPPEARED;
 	}
 
