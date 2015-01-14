@@ -513,10 +513,11 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 					// Do we have enough resources to run this task in this host?
 					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 						// OK, execute this task in this host
-						if (debug) Gpr.debug("TASK ID: " + task.getId() + "\tHint: " + task.getProgramHint()//
-								+ "\n\tHOST                : " + host //
-								+ "\n\tRESOURCES AVAILABLE : " + host.getResourcesAvaialble() //
-								+ "\n\tTASK RESOURCES      : " + task.getResources() //
+						if (debug) Timer.showStdErr("Selected task:" //
+								+ "\n\ttask ID         : " + task.getId() + "\tHint: " + task.getProgramHint()//
+								+ "\n\ttask resources : " + task.getResources() //
+								+ "\n\thost           : " + host //
+								+ "\n\thost resources : " + host.getResourcesAvaialble() //
 						);
 
 						selectTask(task, host); // Add task to host (make sure resources are reserved)
