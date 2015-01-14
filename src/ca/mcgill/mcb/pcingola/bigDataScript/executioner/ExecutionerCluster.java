@@ -80,7 +80,7 @@ public class ExecutionerCluster extends Executioner {
 		// PID regex matcher
 		pidPatternStr = config.getPidRegex("");
 		if (!pidPatternStr.isEmpty()) {
-			if (debug) Timer.showStdErr(this.getClass().getSimpleName() + ": Using pidRegex '" + pidPatternStr + "'");
+			if (debug) log("Using pidRegex '" + pidPatternStr + "'");
 			pidPattern = Pattern.compile(pidPatternStr);
 		}
 
@@ -199,7 +199,7 @@ public class ExecutionerCluster extends Executioner {
 	protected Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
-		if (debug) Timer.showStdErr("Executioner: " + this.getClass().getSimpleName() + ", task " + task.getId());
+		if (debug) log("Running task " + task.getId());
 
 		// Create command line
 		ArrayList<String> args = new ArrayList<String>();
@@ -230,14 +230,12 @@ public class ExecutionerCluster extends Executioner {
 
 		// Create command to run (it feeds parameters to qsub via stdin)
 		String cmdStdin = bdsCommand(task);
-		if (debug) Timer.showStdErr(this.getClass().getSimpleName() + " Running command:\n\techo \"" + cmdStdin + "\" | " + cmdStr);
+		if (debug) log("Running task " + task.getId() + ", command:\n\techo \"" + cmdStdin + "\" | " + cmdStr);
 
 		// Create command
 		CmdCluster cmd = new CmdCluster(task.getId(), args.toArray(Cmd.ARGS_ARRAY_TYPE));
 		cmd.setStdin(cmdStdin);
 		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
-		if (debug) Timer.showStdErr("Command (CmdCluster): " + cmd);
-
 		return cmd;
 	}
 
@@ -295,9 +293,9 @@ public class ExecutionerCluster extends Executioner {
 			Matcher matcher = pidPattern.matcher(line);
 			if (matcher.find()) {
 				String pid = matcher.group(1);
-				if (debug) Timer.showStdErr(this.getClass().getSimpleName() + " : Regex '" + pidPatternStr + "' matched '" + pid + "' in line: " + line);
+				if (debug) log("Regex '" + pidPatternStr + "' matched '" + pid + "' in line: '" + line + "'");
 				return pid;
-			} else if (verbose || debug) Timer.showStdErr(this.getClass().getSimpleName() + ": Regex '" + pidPatternStr + "' did NOT match line: " + line);
+			} else if (verbose || debug) log("Regex '" + pidPatternStr + "' did NOT match line: '" + line + "'");
 		}
 
 		return line;
@@ -326,7 +324,7 @@ public class ExecutionerCluster extends Executioner {
 
 		// Run command
 		ExecResult cmdExecResult = Exec.exec(args, true);
-		if (debug) Timer.showStdErr(this.getClass().getSimpleName() + ": Finding postMortemInfo for task " + task.getId() //
+		if (debug) log("Finding postMortemInfo for task " + task.getId() //
 				+ "\n\tCommand executed : '" + cmdsb + "'" //
 				+ "\n\tExit value       : " + cmdExecResult.exitValue //
 				+ "\n\tStdout len       : " + cmdExecResult.stdOut.length() //
@@ -334,7 +332,7 @@ public class ExecutionerCluster extends Executioner {
 
 		// Collect the data
 		if (cmdExecResult.exitValue == 0) task.setPostMortemInfo(cmdExecResult.stdOut);
-		else Timer.showStdErr("Error trying to find out post-mortem info on task (PID '" + task.getPid() + "')." //
+		else log("Error trying to find out post-mortem info on task (PID '" + task.getPid() + "')." //
 				+ "\n\tCommand executed : '" + cmdsb + "'" //
 				+ "\n\tExit code        : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //

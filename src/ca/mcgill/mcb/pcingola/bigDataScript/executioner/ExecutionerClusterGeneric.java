@@ -8,7 +8,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdCluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Execute tasks in a PBS cluster.
@@ -39,7 +38,7 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 	protected Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
-		if (debug) Timer.showStdErr("Executioner: " + this.getClass().getSimpleName() + ", task " + task.getId());
+		if (debug) log("Running task " + task.getId());
 
 		// Create command line
 		ArrayList<String> args = new ArrayList<String>();
@@ -65,7 +64,7 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 		// Convert to string[]
 		String argv[] = args.toArray(Cmd.ARGS_ARRAY_TYPE);
 		if (debug) {
-			Timer.showStdErr("Executioner: " + this.getClass().getSimpleName() + ", custom script command line arguments:");
+			log("Custom script command line arguments:");
 			for (int i = 0; i < argv.length; i++) {
 				System.err.println("\t\t" + i + "\t" + argv[i]);
 			}
@@ -74,7 +73,7 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 		// Create command
 		CmdCluster cmd = new CmdCluster(task.getId(), argv);
 		cmd.setReadPid(true); // We execute using a custom made script that is required to output jobID in the first line
-		if (debug) Timer.showStdErr("Command (CmdCluster): " + cmd);
+		if (debug) log("Running task " + task.getId() + ", command:\n\t" + cmd);
 		return cmd;
 	}
 

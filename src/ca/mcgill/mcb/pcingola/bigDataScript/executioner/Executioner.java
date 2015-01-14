@@ -341,7 +341,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// Show table
 			String columnNames[] = { "PID", "Task state", "Task name", "Dependencies", "Task definition" };
 			TextTable tt = new TextTable(columnNames, table, "\t\t");
-			Timer.showStdErr("Tasks [" + getExecutionerId() + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size() + "\n" + tt.toString());
+			log("Tasks [" + getExecutionerId() + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size() + "\n" + tt.toString());
 		}
 	}
 
@@ -513,7 +513,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 					// Do we have enough resources to run this task in this host?
 					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 						// OK, execute this task in this host
-						if (debug) Timer.showStdErr("Selected task:" //
+						if (debug) log("Selected task:" //
 								+ "\n\ttask ID        : " + task.getId() //
 								+ "\n\ttask hint      : " + task.getProgramHint()//
 								+ "\n\ttask resources : " + task.getResources() //
