@@ -330,8 +330,9 @@ public class ExecutionerCluster extends Executioner {
 		if (debug) log("Finding postMortemInfo for task " + task.getId() //
 				+ "\n\tCommand executed : '" + cmdsb + "'" //
 				+ "\n\tExit value       : " + cmdExecResult.exitValue //
-				+ "\n\tStdout len       : " + cmdExecResult.stdOut.length() //
-		);
+				+ "\n\tStdout           : " + cmdExecResult.stdOut //
+				+ "\n\tStderr           : " + cmdExecResult.stdErr //
+				);
 
 		// Collect the data
 		if (cmdExecResult.exitValue == 0) task.setPostMortemInfo(cmdExecResult.stdOut);
@@ -340,7 +341,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit code        : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
-				);
+		);
 
 	}
 
