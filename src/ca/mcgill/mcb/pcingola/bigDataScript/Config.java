@@ -149,7 +149,7 @@ public class Config {
 	public long getLong(String propertyName, long defaultValue) {
 		String val = getString(propertyName);
 		if (val == null) return defaultValue;
-		return Gpr.parseLongSafe(val);
+		return Gpr.parseLongSafe(val.trim());
 	}
 
 	/**

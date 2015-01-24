@@ -46,7 +46,6 @@ public class CheckTasksRunning {
 	public CheckTasksRunning(Config config, Executioner executioner) {
 		this.executioner = executioner;
 		defaultCmdArgs = new String[0];
-		cmdPidColumn = (int) config.getLong(Config.PID_COLUMN_CHECK_TASK_RUNNING, 0);
 		missingCount = new HashMap<String, Integer>();
 
 		// PID regex matcher
@@ -56,6 +55,10 @@ public class CheckTasksRunning {
 			pidPattern = Pattern.compile(pidPatternStr);
 		}
 
+		// Select column where to look for PID
+		cmdPidColumn = (int) config.getLong(Config.PID_COLUMN_CHECK_TASK_RUNNING, 0);
+		if (cmdPidColumn < 0) cmdPidColumn = 0;
+		if (debug) executioner.log("Using 'cmdPidColumn' " + cmdPidColumn);
 	}
 
 	/**
