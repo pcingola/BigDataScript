@@ -13,7 +13,6 @@ public class CheckTasksRunningLocal extends CheckTasksRunning {
 	public CheckTasksRunningLocal(Config config, Executioner executioner) {
 		super(config, executioner);
 		defaultCmdArgs = ExecutionerLocal.LOCAL_STAT_COMMAND;
-		cmdPidColumn = 0;
 	}
 
 }

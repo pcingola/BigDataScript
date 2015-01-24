@@ -16,7 +16,6 @@ public class CheckTasksRunningCluster extends CheckTasksRunning {
 	public CheckTasksRunningCluster(Config config, Executioner executioner, String cmdArgs[]) {
 		super(config, executioner);
 		defaultCmdArgs = cmdArgs;
-		cmdPidColumn = 0;
 	}
 
 }

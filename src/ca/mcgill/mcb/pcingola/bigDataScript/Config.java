@@ -27,7 +27,8 @@ public class Config {
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
 	public static final String PID_REGEX = "pidRegex"; // Regex used for PID
-	public static final String PID_REGEX_CHECK_TASK_RUNNING = "pidRegexCheckTaskRunning"; // Regex used for checking PID 
+	public static final String PID_REGEX_CHECK_TASK_RUNNING = "pidRegexCheckTaskRunning"; // Regex used for checking PID
+	public static final String PID_COLUMN_CHECK_TASK_RUNNING = "pidColumnCheckTaskRunning"; // Regex used for checking PID
 
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
 	public static final String SYS_SHELL = "sysShell"; // Sys's shell

@@ -46,7 +46,7 @@ public class CheckTasksRunning {
 	public CheckTasksRunning(Config config, Executioner executioner) {
 		this.executioner = executioner;
 		defaultCmdArgs = new String[0];
-		cmdPidColumn = 0;
+		cmdPidColumn = (int) config.getLong(Config.PID_COLUMN_CHECK_TASK_RUNNING, 0);
 		missingCount = new HashMap<String, Integer>();
 
 		// PID regex matcher
@@ -124,10 +124,12 @@ public class CheckTasksRunning {
 
 			String pid = parsePidLine(line);
 			if (pid != null && !pid.isEmpty()) {
+				// PID parsed OK
 				pids.add(pid);
 			} else {
+				// PID not matched by 'pidRegexCheckTaskRunning' Regex? => Try other methods
 
-				// Parse fields
+				// Split fields
 				String fields[] = line.split("\\s+");
 
 				// Obtain PID (found in column number 'cmdPidColumn')
@@ -198,7 +200,7 @@ public class CheckTasksRunning {
 				+ "\n\tExit value : " + cmdExecResult.exitValue //
 				+ "\n\tStdout     : " + cmdExecResult.stdOut //
 				+ "\n\tStderr     : " + cmdExecResult.stdErr //
-				);
+		);
 
 		//---
 		// Sanity checks!
@@ -257,7 +259,7 @@ public class CheckTasksRunning {
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
-					) {
+			) {
 				// Task is missing.
 				// Update counter: Should we consider this task as 'missing'?
 				if (incMissingCount(task)) {
