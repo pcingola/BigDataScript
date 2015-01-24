@@ -120,25 +120,33 @@ public class CheckTasksRunning {
 		HashSet<String> pids = new HashSet<String>();
 
 		for (String line : cmdExecResult.stdOut.split("\n")) {
-			// Parse fields
-			String fields[] = line.trim().split("\\s+");
+			line = line.trim();
 
-			// Obtain PID (found in column number 'cmdPidColumn')
-			if (fields.length > cmdPidColumn) {
-				String pid = fields[cmdPidColumn];
-
-				// Add first column (whole pid)
+			String pid = parsePidLine(line);
+			if (pid != null && !pid.isEmpty()) {
 				pids.add(pid);
+			} else {
 
-				// Try matching using executioner's parsePidLine method
-				if (executioner != null) {
-					String pidPart = executioner.parsePidLine(pid);
+				// Parse fields
+				String fields[] = line.split("\\s+");
+
+				// Obtain PID (found in column number 'cmdPidColumn')
+				if (fields.length > cmdPidColumn) {
+					pid = fields[cmdPidColumn];
+
+					// Add first column (whole pid)
+					pids.add(pid);
+
+					// Try matching using executioner's parsePidLine method
+					if (executioner != null) {
+						String pidPart = executioner.parsePidLine(pid);
+						pids.add(pidPart);
+					}
+
+					// Use only first part (before first dot)
+					String pidPart = pid.split("\\.")[0]; // Use only the first part before '.'
 					pids.add(pidPart);
 				}
-
-				// Use only first part (before first dot)
-				String pidPart = pid.split("\\.")[0]; // Use only the first part before '.'
-				pids.add(pidPart);
 			}
 		}
 
@@ -147,21 +155,18 @@ public class CheckTasksRunning {
 	}
 
 	/**
-	 * Parse PID line from 'qsub' (Cmd)
+	 * Parse PID line from 'qstat' (Cmd)
 	 */
 	public String parsePidLine(String line) {
-		line = line.trim();
-		if (line.isEmpty()) return "";
+		if (pidPattern == null || line.isEmpty()) return "";
 
-		if (pidPattern != null) {
-			// Pattern pattern = Pattern.compile("Your job (\\S+)");
-			Matcher matcher = pidPattern.matcher(line);
-			if (matcher.find()) {
-				String pid = matcher.group(1);
-				if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' matched '" + pid + "' in line: '" + line + "'");
-				return pid;
-			} else if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' did NOT match line: '" + line + "'");
-		}
+		// Pattern pattern = Pattern.compile("Your job (\\S+)");
+		Matcher matcher = pidPattern.matcher(line);
+		if (matcher.find()) {
+			String pid = matcher.group(1);
+			if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' matched '" + pid + "' in line: '" + line + "'");
+			return pid;
+		} else if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' did NOT match line: '" + line + "'");
 
 		return line;
 	}
