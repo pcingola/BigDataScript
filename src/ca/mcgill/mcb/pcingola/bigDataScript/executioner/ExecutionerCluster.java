@@ -253,7 +253,7 @@ public class ExecutionerCluster extends Executioner {
 	@Override
 	protected CheckTasksRunning getCheckTasksRunning() {
 		if (checkTasksRunning == null) {
-			checkTasksRunning = new CheckTasksRunningCluster(this, getCommandStat());
+			checkTasksRunning = new CheckTasksRunningCluster(config, this, getCommandStat());
 			checkTasksRunning.setDebug(config.isDebug());
 		}
 		return checkTasksRunning;
@@ -341,7 +341,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit code        : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
-		);
+				);
 
 	}
 

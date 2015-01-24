@@ -27,6 +27,7 @@ public class Config {
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
 	public static final String PID_REGEX = "pidRegex"; // Regex used for PID
+	public static final String PID_REGEX_CHECK_TASK_RUNNING = "pidRegexCheckTaskRunning"; // Regex used for checking PID 
 
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
 	public static final String SYS_SHELL = "sysShell"; // Sys's shell
@@ -178,6 +179,17 @@ public class Config {
 
 	public String getPidRegex(String defaultPidRegex) {
 		String pidRegex = getString(PID_REGEX, defaultPidRegex).trim();
+
+		// Remove leading and trailing quotes
+		if (pidRegex.startsWith("\"") && pidRegex.endsWith("\"") && pidRegex.length() > 2) {
+			pidRegex = pidRegex.substring(1, pidRegex.length() - 1);
+		}
+
+		return pidRegex;
+	}
+
+	public String getPidRegexCheckTasksRunning(String defaultPidRegex) {
+		String pidRegex = getString(PID_REGEX_CHECK_TASK_RUNNING, defaultPidRegex).trim();
 
 		// Remove leading and trailing quotes
 		if (pidRegex.startsWith("\"") && pidRegex.endsWith("\"") && pidRegex.length() > 2) {

@@ -6,7 +6,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
@@ -37,12 +40,22 @@ public class CheckTasksRunning {
 	protected ExecResult cmdExecResult;
 	protected int cmdPidColumn; // Column in which command outputs PID
 	protected Map<String, Integer> missingCount; // How many times was a task missing?
+	protected String pidPatternStr;
+	protected Pattern pidPattern;
 
-	public CheckTasksRunning(Executioner executioner) {
+	public CheckTasksRunning(Config config, Executioner executioner) {
 		this.executioner = executioner;
 		defaultCmdArgs = new String[0];
 		cmdPidColumn = 0;
 		missingCount = new HashMap<String, Integer>();
+
+		// PID regex matcher
+		pidPatternStr = config.getPidRegexCheckTasksRunning("");
+		if (!pidPatternStr.isEmpty()) {
+			if (debug) executioner.log("Using pidRegex (check tasks running) '" + pidPatternStr + "'");
+			pidPattern = Pattern.compile(pidPatternStr);
+		}
+
 	}
 
 	/**
@@ -134,6 +147,26 @@ public class CheckTasksRunning {
 	}
 
 	/**
+	 * Parse PID line from 'qsub' (Cmd)
+	 */
+	public String parsePidLine(String line) {
+		line = line.trim();
+		if (line.isEmpty()) return "";
+
+		if (pidPattern != null) {
+			// Pattern pattern = Pattern.compile("Your job (\\S+)");
+			Matcher matcher = pidPattern.matcher(line);
+			if (matcher.find()) {
+				String pid = matcher.group(1);
+				if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' matched '" + pid + "' in line: '" + line + "'");
+				return pid;
+			} else if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' did NOT match line: '" + line + "'");
+		}
+
+		return line;
+	}
+
+	/**
 	 * Reset counter (task was found)
 	 */
 	protected void resetMissingCount(Task task) {
@@ -219,7 +252,7 @@ public class CheckTasksRunning {
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
-			) {
+					) {
 				// Task is missing.
 				// Update counter: Should we consider this task as 'missing'?
 				if (incMissingCount(task)) {

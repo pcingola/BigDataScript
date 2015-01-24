@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+
 /**
  * Check that tasks are still running.
  * Use a 'qstat' command
@@ -11,8 +13,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
  */
 public class CheckTasksRunningCluster extends CheckTasksRunning {
 
-	public CheckTasksRunningCluster(Executioner executioner, String cmdArgs[]) {
-		super(executioner);
+	public CheckTasksRunningCluster(Config config, Executioner executioner, String cmdArgs[]) {
+		super(config, executioner);
 		defaultCmdArgs = cmdArgs;
 		cmdPidColumn = 0;
 	}
