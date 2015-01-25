@@ -53,7 +53,6 @@ public class LiteralString extends Literal {
 	@Override
 	public void serializeParse(BigDataScriptSerializer serializer) {
 		super.serializeParse(serializer);
-		// setValueInterpolate(value); // Need to re-build this
 	}
 
 	/**

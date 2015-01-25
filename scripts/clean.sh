@@ -7,6 +7,7 @@ rm -rvf \
 	checkpoint_*.bds.* \
 	run*.bds.* \
 	z.bds.* \
+	cmdLineOptions_*.bds.* \
 	cluster101_20* \
 	bds.pid.* \
 	*.report.html \

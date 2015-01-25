@@ -93,8 +93,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	protected void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
 		if ((returnType != null) //
 				&& (!returnType.canCast(Type.INT) //
-				&& !returnType.canCast(Type.REAL)) //
-		) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
+						&& !returnType.canCast(Type.REAL)) //
+				) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
 	}
 
 	/**
@@ -468,7 +468,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		Timer.showStdErr(getClass().getSimpleName() //
 				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
 				+ " : " + msg //
-		);
+				);
 	}
 
 	/**
@@ -637,7 +637,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" + serializer.serializeSaveValue(returnType) //
 				+ "\t" //
-		);
+				);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields

@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
  * A 'task' statement (to execute a command line in a node)
- * 
+ *
  * @author pcingola
  */
 public class ExpressionTaskLiteral extends ExpressionTask {
@@ -24,7 +24,7 @@ public class ExpressionTaskLiteral extends ExpressionTask {
 
 		// Create a string literal as a statement
 		LiteralString lit = new LiteralString(this, null);
-		lit.setValueInterpolate(valueStr);
+		lit.setValue(valueStr);
 		statement = lit; // Assign literal string as 'statement' to be executed
 	}
 

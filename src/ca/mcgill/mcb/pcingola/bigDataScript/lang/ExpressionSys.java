@@ -21,7 +21,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
  */
 public class ExpressionSys extends Expression {
 
-	public static String DEFAULT_SYS_SHELL = "/bin/sh -e -c"; // Note: This executes a script, so it requires the "-c" right before script name
+	public static String DEFAULT_SYS_SHELL = "/bin/bash -e -c"; // Note: This executes a script, so it requires the "-c" right before script name
 
 	protected static int sysId = 1;
 
@@ -153,9 +153,11 @@ public class ExpressionSys extends Expression {
 
 		// Parse interpolated variables
 		interpolateVars = new InterpolateVars(this, null);
+		interpolateVars.setUseLiteral(true);
 		if (!interpolateVars.parse(cmd)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
-			commands = InterpolateVars.unEscape(cmd); // Just un-escape characters
+			commands = cmd; // Just use literal
+			// commands = InterpolateVars.unEscape(cmd); // Just un-escape characters
 		}
 	}
 

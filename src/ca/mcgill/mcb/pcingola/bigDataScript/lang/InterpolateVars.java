@@ -14,6 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Tuple;
 
 public class InterpolateVars extends Literal {
 
+	boolean useLiteral;
 	String literals[]; // This is used in case of interpolated string literal
 	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
 
@@ -50,6 +51,10 @@ public class InterpolateVars extends Literal {
 				// Convert characters
 				if (c == '\n') {
 					// End of line, continues in the next one
+				} else if (c == '\\') {
+					// Escaped backslash
+					sb.append(c);
+					c = '\0'; // Avoid escaping next char
 				} else {
 					switch (c) {
 					case 'b':
@@ -98,29 +103,6 @@ public class InterpolateVars extends Literal {
 
 	public InterpolateVars(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		StringBuilder sb = new StringBuilder();
-
-		// Variable interpolation
-		for (int i = 0; i < literals.length; i++) {
-			// String before variable
-			sb.append(literals[i]);
-
-			// Variable's value
-			Expression ref = exprs[i];
-			if (ref != null) {
-				bdsThread.run(ref);
-				if (!bdsThread.isCheckpointRecover()) {
-					Object val = bdsThread.pop();
-					sb.append(interpolateValue(val));
-				}
-			}
-		}
-
-		bdsThread.push(sb.toString());
 	}
 
 	/**
@@ -177,7 +159,7 @@ public class InterpolateVars extends Literal {
 			// Parse string literal part
 			//---
 			Tuple<String, String> tupStr = findString(str);
-			String strToAdd = unEscape(tupStr.first);
+			String strToAdd = useLiteral ? tupStr.first : unEscape(tupStr.first);
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed
 
@@ -322,6 +304,33 @@ public class InterpolateVars extends Literal {
 
 		returnType = Type.STRING;
 		return returnType;
+	}
+
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		StringBuilder sb = new StringBuilder();
+
+		// Variable interpolation
+		for (int i = 0; i < literals.length; i++) {
+			// String before variable
+			sb.append(literals[i]);
+
+			// Variable's value
+			Expression ref = exprs[i];
+			if (ref != null) {
+				bdsThread.run(ref);
+				if (!bdsThread.isCheckpointRecover()) {
+					Object val = bdsThread.pop();
+					sb.append(interpolateValue(val));
+				}
+			}
+		}
+
+		bdsThread.push(sb.toString());
+	}
+
+	public void setUseLiteral(boolean useLiteral) {
+		this.useLiteral = useLiteral;
 	}
 
 	@Override
