@@ -69,7 +69,7 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-01-25";
+	public static final String BUILD = "2015-01-26";
 	public static final String REVISION = "d";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
@@ -777,8 +777,9 @@ public class BigDataScript {
 			} else if (arg.equals("-d") || arg.equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
 			else if (arg.equalsIgnoreCase("-useDone")) useDoneFile = true;
 			else if (arg.equals("-l") || arg.equalsIgnoreCase("-log")) log = true;
-			else if (arg.equals("-h") || arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("--help")) usage(null);
-			else if (arg.equalsIgnoreCase("-dryRun")) {
+			else if (arg.equals("-h") || arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("--help")) {
+				usage(null);
+			} else if (arg.equalsIgnoreCase("-dryRun")) {
 				dryRun = true;
 				noRmOnExit = true; // Not running, so don't delete files
 				createReport = false;
@@ -816,7 +817,10 @@ public class BigDataScript {
 				if ((i + 1) < args.length) taskFailCount = Gpr.parseIntSafe(args[++i]);
 				else usage("Option '-t' without number argument");
 			} else if (arg.equals("-v") || arg.equalsIgnoreCase("-verbose")) verbose = true;
-			else if (programFileName == null) programFileName = arg; // Get program file name
+			else if (arg.equalsIgnoreCase("-version")) {
+				System.out.println(VERSION);
+				System.exit(0);
+			} else if (programFileName == null) programFileName = arg; // Get program file name
 		}
 
 		// Sanity checks
@@ -1030,6 +1034,7 @@ public class BigDataScript {
 		System.err.println("  [-s | -system ] type           : Set system type.");
 		System.err.println("  [-t | -test   ]                : Perform testing (run all test* functions).");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
+		System.err.println("  -version                       : Show version and exit.");
 		System.err.println("  [-y | -retry  ] num            : Number of times to retry a failing tasks.");
 		System.err.println("  -pid <file>                    : Write local processes PIDs to 'file'");
 
