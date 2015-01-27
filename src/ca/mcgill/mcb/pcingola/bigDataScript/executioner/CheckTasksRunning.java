@@ -33,7 +33,7 @@ public class CheckTasksRunning {
 	public static final int TASK_STATE_MIN_START_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
 	public static final int TASK_NOT_FOUND_DISAPPEARED = 3; // How many times do we have to 'not find' a task to consider it gone
 
-	protected boolean debug = false;
+	protected boolean debug;
 	protected Timer time; // Timer for checking that tasks are still running
 	protected String[] defaultCmdArgs;
 	protected Executioner executioner;
@@ -48,17 +48,20 @@ public class CheckTasksRunning {
 		defaultCmdArgs = new String[0];
 		missingCount = new HashMap<String, Integer>();
 
+		// Set debug
+		debug = config.isDebug();
+
 		// PID regex matcher
 		pidPatternStr = config.getPidRegexCheckTasksRunning("");
 		if (!pidPatternStr.isEmpty()) {
-			if (debug) executioner.log("Using pidRegex (check tasks running) '" + pidPatternStr + "'");
+			if (debug) log("Using pidRegex (check tasks running) '" + pidPatternStr + "'");
 			pidPattern = Pattern.compile(pidPatternStr);
-		}
+		} else if (debug) log("Config parameter '" + Config.PID_REGEX_CHECK_TASK_RUNNING + "' not set.");
 
 		// Select column where to look for PID
-		cmdPidColumn = (int) config.getLong(Config.PID_COLUMN_CHECK_TASK_RUNNING, 0);
+		cmdPidColumn = (int) config.getLong(Config.PID_COLUMN_CHECK_TASK_RUNNING, 1) - 1;
 		if (cmdPidColumn < 0) cmdPidColumn = 0;
-		if (debug) executioner.log("Using 'cmdPidColumn' " + cmdPidColumn);
+		if (debug) log("Using 'cmdPidColumn' " + cmdPidColumn);
 	}
 
 	/**
@@ -114,23 +117,45 @@ public class CheckTasksRunning {
 		return count > TASK_NOT_FOUND_DISAPPEARED;
 	}
 
+	void log(String msg) {
+		executioner.log(this.getClass().getSimpleName() + ":" + msg);
+	}
+
+	/**
+	 * Parse command output, extract all PIDs
+	 */
+	protected Set<Task> parseCommandOutput() {
+		// For each line in stdout...
+		String lines[] = cmdExecResult.stdOut.split("\n");
+
+		// Parse PIDs
+		Set<String> pids = parseCommandOutput(lines);
+
+		// Find a tasks matching these PIDs
+		return findRunningTaskByPid(pids);
+	}
+
 	/**
 	 * Parse command output, extract all PIDs
 	 * For each PID, find the corresponding task, add task 'taskFoundId' (HashSet<String>)
 	 */
-	protected Set<Task> parseCommandOutput() {
-		// For each line in stdout...
+	public Set<String> parseCommandOutput(String lines[]) {
 		HashSet<String> pids = new HashSet<String>();
 
-		for (String line : cmdExecResult.stdOut.split("\n")) {
+		// Parse lines
+		for (String line : lines) {
 			line = line.trim();
+
+			if (debug) log("Parsing line:\t" + line);
 
 			String pid = parsePidLine(line);
 			if (pid != null && !pid.isEmpty()) {
 				// PID parsed OK
-				pids.add(pid);
+				if (pids.add(pid)) {
+					if (debug) log("\tAdding ID: '" + pid + "'");
+				}
 			} else {
-				// PID not matched by 'pidRegexCheckTaskRunning' Regex? => Try other methods
+				// PID not matched by 'pidRegexCheckTaskRunning' Regex? (or regex not set) => Try other methods
 
 				// Split fields
 				String fields[] = line.split("\\s+");
@@ -140,23 +165,28 @@ public class CheckTasksRunning {
 					pid = fields[cmdPidColumn];
 
 					// Add first column (whole pid)
-					pids.add(pid);
+					if (pids.add(pid)) {
+						if (debug) log("\tAdding ID (column number " + cmdPidColumn + "): '" + pid + "'");
+					}
 
 					// Try matching using executioner's parsePidLine method
 					if (executioner != null) {
 						String pidPart = executioner.parsePidLine(pid);
-						pids.add(pidPart);
+						if (pids.add(pidPart)) {
+							if (debug) log("\tAdding ID (using '" + Config.PID_REGEX + "'): '" + pid + "'");
+						}
 					}
 
 					// Use only first part (before first dot)
 					String pidPart = pid.split("\\.")[0]; // Use only the first part before '.'
-					pids.add(pidPart);
+					if (pids.add(pidPart)) {
+						if (debug) log("\tAdding ID (using string before fisrt dot): '" + pid + "'");
+					}
 				}
 			}
 		}
 
-		// Find a tasks matching these PIDs
-		return findRunningTaskByPid(pids);
+		return pids;
 	}
 
 	/**
@@ -168,7 +198,10 @@ public class CheckTasksRunning {
 		// Pattern pattern = Pattern.compile("Your job (\\S+)");
 		Matcher matcher = pidPattern.matcher(line);
 		if (matcher.find()) {
-			String pid = matcher.group(1);
+			String pid = null;
+			if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
+			else pid = matcher.group(0); // Use whole pattern
+
 			if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' matched '" + pid + "' in line: '" + line + "'");
 			return pid;
 		} else if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' did NOT match line: '" + line + "'");

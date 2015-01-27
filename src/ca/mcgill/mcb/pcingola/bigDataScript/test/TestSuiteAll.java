@@ -20,6 +20,7 @@ public class TestSuiteAll {
 		suite.addTestSuite(TestCasesTail.class);
 		suite.addTestSuite(TestCasesLang.class);
 		suite.addTestSuite(TestCasesInterpolate.class);
+		suite.addTestSuite(TestCasesExecutioners.class);
 		suite.addTestSuite(TestCasesRun.class);
 		suite.addTestSuite(TestCasesRun2.class);
 		suite.addTestSuite(TestCasesGraph.class);

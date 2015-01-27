@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -163,7 +161,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
@@ -245,31 +243,24 @@ public class BigDataScript {
 			System.exit(1);
 		}
 
+		Executioner executioner = Executioners.getInstance().get(ExecutionerType.CLUSTER);
+
 		// Show pattern
 		System.out.println("Matching pidRegex '" + pidPatternStr + "'");
-		Pattern pidPattern = Pattern.compile(pidPatternStr);
 
 		// Read STDIN and check pattern
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String line;
 			while ((line = in.readLine()) != null) {
-				// Pattern pattern = Pattern.compile("Your job (\\S+)");
-				Matcher matcher = pidPattern.matcher(line);
-
-				String found = "";
-				if (matcher.find()) {
-					String pid = matcher.group(1);
-					found = "matched '" + pid + "'";
-				} else {
-					found = "did not match";
-				}
-
-				System.out.println("Input line:\t'" + line + "'\tPid regex " + found);
+				String pid = executioner.parsePidLine(line);
+				System.out.println("Input line:\t'" + line + "'\tMatched: '" + pid + "'");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		executioner.kill(); // Kill executioner
 	}
 
 	/**
@@ -981,7 +972,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-		);
+				);
 		return exitCode;
 	}
 
