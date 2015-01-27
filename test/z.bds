@@ -1,21 +1,15 @@
 #!/usr/bin/env bds
 
-hi := "Hello"
-println   'print_quote        |\t|'
-println   'print_quote        |\t|    variable:$hi'
+in := 'in.txt'
+out := 'out.txt'
+map := { in => out }
 
-println   "print_double       |\t|"
-println   "print_double       |\t|    variable:$hi"
+print "map : $map\n"
 
-println   "print_double_esc   |\\t|"
-println   "print_double_esc   |\\t|   variable:$hi"
+# New input file
+sys date > $in
 
-# These lines depend on the shell being used
-# Using the default '/bin/sh' I see a 'tab' charater, whereas 
-# using /bin/bash I see a '\t' (escaped tab)
-sys  echo "sys                |\t|"
-sys  echo "sys                |\t|    variable:$hi"
+task( map.values() <- map.keys() ) {
+	sys echo RUNNING TASK ; cp $in $out
+}
 
-task echo "task               |\t|"
-wait
-task echo "task               |\t|    variable:$hi"
