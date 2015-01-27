@@ -1260,7 +1260,8 @@ test_03.bds
 </pre>
 				Note that the first time the output is printed by the command execution, the second time is printed by the <code>print</code> statment which show variable <code>dir</code>.
 
-				<li> Characters are passed literally to the interpreting shell, so when you write '\t' it is NOT converted to a tab character before sending it to the shell (no escaping is required)
+				<li> Characters are passed literally to the interpreting shell. 
+					 For example, when you write '\t' it is NOT converted to a tab character before sending it to the shell (no escaping is required):
 <pre>
 $ cat z.bds
 sys echo -e "Hello\tWorld" | awk '{print $1 "\n" $2}'
