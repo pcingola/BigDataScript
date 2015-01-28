@@ -11,6 +11,7 @@ import org.junit.Before;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.TeeOutputStream;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -58,8 +59,9 @@ public class TestCasesBase {
 
 	@Before
 	public void before() {
-		Gpr.debug("RESET!");
+		// Reset singletons
 		Config.reset();
+		Executioners.reset();
 	}
 
 	/**

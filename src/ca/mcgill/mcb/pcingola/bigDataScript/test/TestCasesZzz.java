@@ -18,6 +18,7 @@ public class TestCasesZzz extends TestCasesBase {
 
 	@Test
 	public void test01() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_01.bds", "i", 2L);
 	}
 
@@ -57,7 +58,7 @@ public class TestCasesZzz extends TestCasesBase {
 				+ "print 7\n" //
 				+ "print 8\n" //
 				+ "print 9\n" //
-				;
+		;
 
 		// Run and capture stdout
 		String args[] = { "-quiet", "test/run_124.bds" };

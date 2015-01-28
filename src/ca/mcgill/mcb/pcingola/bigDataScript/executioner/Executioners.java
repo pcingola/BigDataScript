@@ -39,7 +39,10 @@ public class Executioners {
 
 	// Singleton variable
 	private static Executioners executionersInstance = null;
-	private static ConcurrentHashMap<ExecutionerType, Executioner> executioners = new ConcurrentHashMap<ExecutionerType, Executioner>();
+
+	// Map by type
+	private ConcurrentHashMap<ExecutionerType, Executioner> executioners = new ConcurrentHashMap<ExecutionerType, Executioner>();
+
 	Config config;
 
 	/**
@@ -49,9 +52,26 @@ public class Executioners {
 		return executionersInstance;
 	}
 
+	/**
+	 * Get or create instance
+	 */
 	public static synchronized Executioners getInstance(Config config) {
 		if (executionersInstance == null) executionersInstance = new Executioners(config);
 		return executionersInstance;
+	}
+
+	/**
+	 * Reset this singleton
+	 */
+	public static void reset() {
+		if (executionersInstance != null) {
+			// Kill all executioners
+			for (Executioner ex : executionersInstance.getAll())
+				ex.kill();
+		}
+
+		// Reset instance
+		executionersInstance = null;
 	}
 
 	private Executioners(Config config) {
