@@ -18,7 +18,7 @@ public class Tail extends Thread {
 
 	public static final int SLEEP_TIME_DEFAULT = 100;
 
-	boolean debug, verbose;
+	boolean debug, verbose, quiet;
 	boolean running;
 	HashMap<String, TailFile> files;
 	HashSet<String> toRemove;
@@ -36,6 +36,8 @@ public class Tail extends Thread {
 	 * @param showStderr : If true, print to STDERR
 	 */
 	public synchronized void add(InputStream input, String tailId, boolean showStderr) {
+		if (quiet) return; // Quiet mode? Nothing to do
+
 		TailFile tf = new TailStream(input, showStderr, tailId);
 		if (debug) log("Adding (" + tf.getClass().getSimpleName() + ") '" + tailId + "'");
 		tf.setDebug(debug);
@@ -51,6 +53,8 @@ public class Tail extends Thread {
 	 */
 	public synchronized void add(String inputFileName, boolean showStderr) {
 		if (inputFileName == null) return;
+		if (quiet) return; // Quiet mode? Nothing to do
+
 		TailFile tf = new TailFileMulti(inputFileName, showStderr);
 		if (debug) log("Adding (" + tf.getClass().getSimpleName() + ") '" + inputFileName + "'");
 		tf.setDebug(debug);
@@ -107,7 +111,7 @@ public class Tail extends Thread {
 
 			// Loop until kill()
 			while (running) {
-				tail();
+				if (!quiet) tail();
 				sleep(SLEEP_TIME_DEFAULT);
 			}
 
@@ -120,6 +124,10 @@ public class Tail extends Thread {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public void setQuiet(boolean quiet) {
+		this.quiet = quiet;
 	}
 
 	public void setVerbose(boolean verbose) {

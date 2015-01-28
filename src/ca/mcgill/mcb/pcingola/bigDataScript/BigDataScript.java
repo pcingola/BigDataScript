@@ -74,6 +74,7 @@ public class BigDataScript {
 
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
+	boolean quiet;
 	boolean verbose;
 	boolean debug;
 	boolean checkPidRegex;
@@ -390,6 +391,7 @@ public class BigDataScript {
 		// Config
 		// ---
 		config = new Config(configFile);
+		config.setQuiet(quiet);
 		config.setVerbose(verbose);
 		config.setDebug(debug);
 		config.setLog(log);
@@ -788,6 +790,10 @@ public class BigDataScript {
 				// PID file
 				if ((i + 1) < args.length) pidFile = args[++i];
 				else usage("Option '-pid' without file argument");
+			} else if (arg.equalsIgnoreCase("-quiet")) {
+				verbose = false;
+				debug = false;
+				quiet = true;
 			} else if (arg.equals("-q") || arg.equalsIgnoreCase("-queue")) {
 				// Queue name
 				if ((i + 1) < args.length) queue = args[++i];
@@ -1021,6 +1027,7 @@ public class BigDataScript {
 		System.err.println("  -noReport                      : Do not create report.");
 		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).");
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
+		System.err.println("  -quiet                         : Do not show any messages or tasks outputs on STDOUT.");
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-s | -system ] type           : Set system type.");
 		System.err.println("  [-t | -test   ]                : Perform testing (run all test* functions).");

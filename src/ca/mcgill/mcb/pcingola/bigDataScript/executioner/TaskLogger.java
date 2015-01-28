@@ -77,7 +77,6 @@ public class TaskLogger {
 
 	/**
 	 * Append a string to the pidFile
-	 * @param str
 	 */
 	protected void append(String str) {
 		try {
@@ -96,7 +95,6 @@ public class TaskLogger {
 
 	/**
 	 * Remove a task
-	 * @param task
 	 */
 	public synchronized void remove(Task task) {
 		// Remove PID

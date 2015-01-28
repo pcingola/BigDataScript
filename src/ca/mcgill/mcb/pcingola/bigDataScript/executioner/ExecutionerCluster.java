@@ -300,9 +300,9 @@ public class ExecutionerCluster extends Executioner {
 				if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
 				else pid = matcher.group(0); // Use whole pattern
 
-				if (debug) log("Regex '" + pidPatternStr + "' matched '" + pid + "' in line: '" + line + "'");
+				if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
 				return pid;
-			} else if (verbose || debug) log("Regex '" + pidPatternStr + "' did NOT match line: '" + line + "'");
+			} else if (verbose || debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_REGEX + ") did NOT match line: '" + line + "'");
 		}
 
 		return line;
@@ -336,7 +336,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit value       : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
-		);
+				);
 
 		// Collect the data
 		if (cmdExecResult.exitValue == 0) task.setPostMortemInfo(cmdExecResult.stdOut);
@@ -345,7 +345,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit code        : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
-		);
+				);
 
 	}
 

@@ -145,7 +145,7 @@ public class TestCasesBase extends TestCase {
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-					);
+			);
 		}
 	}
 
@@ -253,12 +253,7 @@ public class TestCasesBase extends TestCase {
 		return captureStdout.toString();
 	}
 
-	/**
-	 * Run a bds program and capture stdout (while still showing it)
-	 */
-	String runAndReturnStdout(String fileName) {
-		BigDataScript bigDataScript = bds(fileName);
-
+	String runAndReturnStdout(BigDataScript bigDataScript) {
 		// Capture STDOUT
 		PrintStream stdout = System.out; // Store original stdout
 		ByteArrayOutputStream captureStdout = new ByteArrayOutputStream();
@@ -268,7 +263,7 @@ public class TestCasesBase extends TestCase {
 
 			// Run
 			bigDataScript.run();
-			if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+			if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + bigDataScript.getProgramUnit().getFileName() + "':\n" + bigDataScript.getCompilerMessages());
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
@@ -277,5 +272,18 @@ public class TestCasesBase extends TestCase {
 		}
 
 		return captureStdout.toString();
+	}
+
+	String runAndReturnStdout(String args[]) {
+		BigDataScript bigDataScript = bds(args);
+		return runAndReturnStdout(bigDataScript);
+	}
+
+	/**
+	 * Run a bds program and capture stdout (while still showing it)
+	 */
+	String runAndReturnStdout(String fileName) {
+		BigDataScript bigDataScript = bds(fileName);
+		return runAndReturnStdout(bigDataScript);
 	}
 }

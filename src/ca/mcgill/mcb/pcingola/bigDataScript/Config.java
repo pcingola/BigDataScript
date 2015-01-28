@@ -61,6 +61,7 @@ public class Config {
 
 	boolean debug = false; // Debug mode?
 	boolean verbose = false; // Verbose mode?
+	boolean quiet = false; // Quiet mode?
 	boolean log = false; // Log all commands?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	boolean noRmOnExit = false; // Avoid removing files on exit
@@ -252,6 +253,7 @@ public class Config {
 			tail = new Tail();
 			tail.setDebug(isDebug());
 			tail.setVerbose(isVerbose());
+			tail.setQuiet(isQuiet());
 			tail.start(); // Create a 'tail' process (to show STDOUT & STDERR from all processes)
 		}
 		return tail;
@@ -301,6 +303,10 @@ public class Config {
 
 	public boolean isNoRmOnExit() {
 		return noRmOnExit;
+	}
+
+	public boolean isQuiet() {
+		return quiet;
 	}
 
 	public boolean isVerbose() {
@@ -382,6 +388,10 @@ public class Config {
 
 	public void setPidFile(String pidFile) {
 		this.pidFile = pidFile;
+	}
+
+	public void setQuiet(boolean quiet) {
+		this.quiet = quiet;
 	}
 
 	public void setTaskFailCount(int taskFailCount) {

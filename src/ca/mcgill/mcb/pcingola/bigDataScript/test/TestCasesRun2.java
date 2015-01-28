@@ -167,20 +167,20 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Iter 5, Task 1: End\n" //
 				+ "Iter 5, Task 2: Start\n" //
 				+ "Iter 5, Task 2: End\n" //
-		;;
+				;;
 
-		String stdout = runAndReturnStdout("test/run_117.bds");
+				String stdout = runAndReturnStdout("test/run_117.bds");
 
-		if (stdout.indexOf(expectedStdout) < 0) {
-			String msg = "Cannot find desired output:\n" //
-					+ "---------- Expected output ----------\n" //
-					+ expectedStdout //
-					+ "-------------- STDOUT --------------\n" //
-					+ stdout //
-			;
-			System.err.println(msg);
-			throw new RuntimeException(msg);
-		}
+				if (stdout.indexOf(expectedStdout) < 0) {
+					String msg = "Cannot find desired output:\n" //
+							+ "---------- Expected output ----------\n" //
+							+ expectedStdout //
+							+ "-------------- STDOUT --------------\n" //
+							+ stdout //
+							;
+					System.err.println(msg);
+					throw new RuntimeException(msg);
+				}
 	}
 
 	@Test
@@ -200,11 +200,11 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Running task\n" //
 				+ "Creating tmp_out.txt\n" //
 				+ "Done\n" //"
-		;
+				;
 
 		String expectedStdout2 = "Running task\n" //
 				+ "Done\n" //"
-		;
+				;
 
 		System.out.println("First run:");
 		runAndCheckStdout("test/run_119.bds", expectedStdout1);
@@ -242,9 +242,35 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "sys                |\\t|    variable:Hello\n" //
 				+ "task               |\\t|\n" //
 				+ "task               |\\t|    variable:Hello\n" //
-		;
+				;
 
 		runAndCheckStdout("test/run_123.bds", output);
+	}
+
+	@Test
+	public void test124_quiet_mode() {
+		Gpr.debug("Test");
+		String output = "print 0\n" //
+				+ "print 1\n" //
+				+ "print 2\n" //
+				+ "print 3\n" //
+				+ "print 4\n" //
+				+ "print 5\n" //
+				+ "print 6\n" //
+				+ "print 7\n" //
+				+ "print 8\n" //
+				+ "print 9\n" //
+				;
+
+		// Run and capture stdout
+		String args[] = { "-quiet", "test/run_124.bds" };
+		String stdout = runAndReturnStdout(args);
+		if (verbose) System.err.println("STDOUT: " + stdout);
+
+		// Check that sys and task outputs are not there
+		Assert.assertTrue("Print output should be in STDOUT", stdout.contains(output));
+		Assert.assertTrue("Task output should NOT be in STDOUT", !stdout.contains("task"));
+		Assert.assertTrue("Sys output should NOT be in STDOUT", !stdout.contains("sys"));
 	}
 
 }

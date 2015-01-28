@@ -1,17 +1,12 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import java.util.Set;
+import java.util.HashMap;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.Config;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.CheckTasksRunning;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners.ExecutionerType;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * Quick test cases when creating a new feature...
@@ -22,35 +17,38 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test01_parsePidQstatRegex() {
-		Gpr.debug("Test");
+	public void test26() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("l0", 1);
+		expectedValues.put("l1", 2);
+		expectedValues.put("l2", 3);
+		expectedValues.put("l3", 4);
+		expectedValues.put("l4", 5);
+		expectedValues.put("s", 5);
+		runAndCheckMultiple("test/run_26.bds", expectedValues);
+	}
 
-		// Create 'CheckTasksRunning'
-		Config config = new Config("test/test_parsePidQstatRegex_qstat.config"); // We set here the 'PID_REGEX_CHECK_TASK_RUNNING' parameter
-		config.setDebug(debug);
-		config.setVerbose(verbose);
+	@Test
+	public void test27() {
+		Timer timer = new Timer();
+		timer.start();
+		runAndCheck("test/run_27.bds", "timeout", "1"); // 2 seconds timeout
+		Assert.assertTrue(timer.elapsed() < 3 * 1000); // We should finish in less than 3 secs (the program waits 60secs)
+	}
 
-		Executioner ex = Executioners.getInstance(config).get(ExecutionerType.LOCAL);
-		CheckTasksRunning ctr = new CheckTasksRunning(config, ex);
+	@Test
+	public void test28() {
+		runAndCheck("test/run_28.bds", "events", "[done]");
+	}
 
-		// Parse 'qstat' lines
-		String fileName = "test/test_parsePidQstatRegex_qstat.txt";
-		if (verbose) System.out.println("Reading file '" + fileName + "'");
-		String file = Gpr.readFile(fileName);
-		String lines[] = file.split("\n");
-		Set<String> pids = ctr.parseCommandOutput(lines);
+	@Test
+	public void test29() {
+		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");
+	}
 
-		// Check that all IDs are there
-		for (int i = 1; i < 10; i++) {
-			String pid = "jobId_10" + i;
-			if (verbose) System.out.println("PID: '" + pid + "'\t" + pids.contains(pid));
-			Assert.assertTrue("PID not found: '" + pid + "'", pids.contains(pid));
-		}
-
-		// Finished
-		if (verbose) System.out.println("Killing executioners");
-		ex.kill();
-		if (verbose) System.out.println("Done");
+	@Test
+	public void test30() {
+		runAndCheck("test/run_30.bds", "events", "[runnning, wait, done]");
 	}
 
 }

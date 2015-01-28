@@ -13430,3 +13430,78 @@ test/checkpoint_09.xml	+	rm
 test/checkpoint_09.xml	-
 964	+	
 964	-
+7266	+	
+7266	-
+7269	+	
+7269	-
+7272	+	
+7272	-
+null	-
+null	-
+7278	+	
+7278	-
+7280	+	
+7280	-
+7282	+	
+7282	-
+7284	+	
+7284	-
+7287	+	
+7287	-
+7290	+	
+7290	-
+7294	+	
+/Users/pcingola/zero_length_file_out.txt	+	rm
+7294	-
+/Users/pcingola/zero_length_file_out.txt	-
+7295	+	
+7295	-
+7300	+	
+7300	-
+7303	+	
+7304	+	
+7303	-
+7304	-
+7313	+	
+7313	-
+7316	+	
+7316	-
+7319	+	
+7319	-
+null	-
+7321	+	
+7321	-
+7325	+	
+7325	-
+7328	+	
+7328	-
+7331	+	
+7331	-
+7334	+	
+7334	-
+7337	+	
+7337	-
+7341	+	
+failOnce.out1	+	rm
+7341	-
+failOnce.out1	-
+7346	+	
+failOnce.out1	+	rm
+7346	-
+failOnce.out1	-
+7350	+	
+failOnce.out2	+	rm
+7350	-
+failOnce.out2	-
+7356	+	
+failOnce.out1	+	rm
+7356	-
+failOnce.out1	-
+7361	+	
+failOnce.out1	+	rm
+7361	-
+failOnce.out1	-
+7365	+	
+failOnce.out2	+	rm
+7365	-
+failOnce.out2	-

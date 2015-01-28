@@ -30,7 +30,7 @@ public class TailFileMulti extends TailFile {
 	}
 
 	/**
-	 * Close files
+	 * Close file
 	 */
 	@Override
 	protected synchronized void close(boolean attemptTail) {
@@ -43,8 +43,6 @@ public class TailFileMulti extends TailFile {
 
 	/**
 	 * Open a file and add buffer to 'buffers'
-	 * @param inputFileName
-	 * @return
 	 */
 	@Override
 	protected synchronized boolean open() {

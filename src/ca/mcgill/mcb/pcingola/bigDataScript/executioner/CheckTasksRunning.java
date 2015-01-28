@@ -202,9 +202,9 @@ public class CheckTasksRunning {
 			if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
 			else pid = matcher.group(0); // Use whole pattern
 
-			if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' matched '" + pid + "' in line: '" + line + "'");
+			if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_REGEX_CHECK_TASK_RUNNING + ") matched '" + pid + "' in line: '" + line + "'");
 			return pid;
-		} else if (debug) executioner.log("Check tasks running regex '" + pidPatternStr + "' did NOT match line: '" + line + "'");
+		} else if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_REGEX_CHECK_TASK_RUNNING + ") did NOT match line: '" + line + "'");
 
 		return line;
 	}
@@ -236,7 +236,7 @@ public class CheckTasksRunning {
 				+ "\n\tExit value : " + cmdExecResult.exitValue //
 				+ "\n\tStdout     : " + cmdExecResult.stdOut //
 				+ "\n\tStderr     : " + cmdExecResult.stdErr //
-		);
+				);
 
 		//---
 		// Sanity checks!
@@ -295,7 +295,7 @@ public class CheckTasksRunning {
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
-			) {
+					) {
 				// Task is missing.
 				// Update counter: Should we consider this task as 'missing'?
 				if (incMissingCount(task)) {

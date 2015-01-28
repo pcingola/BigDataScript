@@ -119,7 +119,7 @@ public class ExpressionSys extends Expression {
 		args.add(cmds);
 
 		// Run command line
-		ExecResult execResult = Exec.exec(args, false);
+		ExecResult execResult = Exec.exec(args, bdsThread.getConfig().isQuiet());
 
 		// Error running process?
 		int exitValue = execResult.exitValue;
