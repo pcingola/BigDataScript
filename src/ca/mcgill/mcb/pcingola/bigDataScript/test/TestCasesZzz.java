@@ -1,12 +1,12 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import java.util.HashMap;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
+import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Quick test cases when creating a new feature...
@@ -17,38 +17,57 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test26() {
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
-		expectedValues.put("l0", 1);
-		expectedValues.put("l1", 2);
-		expectedValues.put("l2", 3);
-		expectedValues.put("l3", 4);
-		expectedValues.put("l4", 5);
-		expectedValues.put("s", 5);
-		runAndCheckMultiple("test/run_26.bds", expectedValues);
+	public void test01() {
+		runAndCheck("test/run_01.bds", "i", 2L);
 	}
 
 	@Test
-	public void test27() {
-		Timer timer = new Timer();
-		timer.start();
-		runAndCheck("test/run_27.bds", "timeout", "1"); // 2 seconds timeout
-		Assert.assertTrue(timer.elapsed() < 3 * 1000); // We should finish in less than 3 secs (the program waits 60secs)
+	public void test01_log() {
+		Gpr.debug("Test");
+
+		// Create command line
+		String args[] = { "-log", "test/cmdLineOptions_01.bds" };
+		BigDataScript bds = bds(args);
+
+		// Run script
+		bds.run();
+		BigDataScriptThread bdsThread = bds.getBigDataScriptThread();
+
+		// Check that all 'log' files exists
+		String base = bdsThread.getBdsThreadId() + "/task.line_3.id_1";
+
+		if (verbose) Gpr.debug("Thread ID:" + bdsThread.getBdsThreadId() + "\tBase: " + base);
+		String exts[] = { "sh", "exitCode", "stderr", "stdout" };
+		for (String ext : exts) {
+			String fileName = base + "." + ext;
+			Assert.assertTrue("Log file '" + fileName + "' not found", Gpr.exists(fileName));
+		}
 	}
 
 	@Test
-	public void test28() {
-		runAndCheck("test/run_28.bds", "events", "[done]");
-	}
+	public void test124_quiet_mode() {
+		Gpr.debug("Test");
+		String output = "print 0\n" //
+				+ "print 1\n" //
+				+ "print 2\n" //
+				+ "print 3\n" //
+				+ "print 4\n" //
+				+ "print 5\n" //
+				+ "print 6\n" //
+				+ "print 7\n" //
+				+ "print 8\n" //
+				+ "print 9\n" //
+				;
 
-	@Test
-	public void test29() {
-		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");
-	}
+		// Run and capture stdout
+		String args[] = { "-quiet", "test/run_124.bds" };
+		String stdout = runAndReturnStdout(args);
+		if (verbose) System.err.println("STDOUT: " + stdout);
 
-	@Test
-	public void test30() {
-		runAndCheck("test/run_30.bds", "events", "[runnning, wait, done]");
+		// Check that sys and task outputs are not there
+		Assert.assertTrue("Print output should be in STDOUT", stdout.contains(output));
+		Assert.assertTrue("Task output should NOT be in STDOUT", !stdout.contains("task"));
+		Assert.assertTrue("Sys output should NOT be in STDOUT", !stdout.contains("sys"));
 	}
 
 }

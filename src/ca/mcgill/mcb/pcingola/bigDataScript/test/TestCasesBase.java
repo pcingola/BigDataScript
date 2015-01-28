@@ -7,7 +7,11 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Before;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.TeeOutputStream;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -285,5 +289,11 @@ public class TestCasesBase extends TestCase {
 	String runAndReturnStdout(String fileName) {
 		BigDataScript bigDataScript = bds(fileName);
 		return runAndReturnStdout(bigDataScript);
+	}
+
+	@Before
+	public void before() {
+		Gpr.debug("RESET!");
+		Config.reset();
 	}
 }

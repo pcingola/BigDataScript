@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Properties;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.MonitorTask;
@@ -72,16 +73,27 @@ public class Config {
 	int waitAfterTaskRun = -1; // Wait some milisecs after task run
 	String configFileName;
 	String configDirName;
-	String pidFile;
+	String pidFile = "pidFile" + (new Date()).getTime() + ".txt"; // Default PID file
 	Properties properties;
 	ArrayList<String> includePath;
 	TaskLogger taskLogger;
 	MonitorTask monitorTask;
 	Tail tail;
 
+	/**
+	 * Get singleton
+	 */
 	public static Config get() {
 		if (configInstance == null) configInstance = new Config();
 		return configInstance;
+	}
+
+	/**
+	 * Reset singleton
+	 */
+	public static void reset() {
+		Gpr.debug("RESET");
+		configInstance = null;
 	}
 
 	public Config() {

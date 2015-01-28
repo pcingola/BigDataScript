@@ -2,7 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
 
@@ -28,6 +27,7 @@ public class TaskLogger {
 	HashSet<String> pids;
 
 	public TaskLogger(String pidFile) {
+		if (pidFile == null) throw new RuntimeException("Cannot initialize using a null file!");
 		this.pidFile = pidFile;
 		pids = new HashSet<String>();
 		if (debug) Gpr.debug("Creating PID logger " + pidFile);
@@ -84,7 +84,7 @@ public class TaskLogger {
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(pidFile, true)));
 			out.print(str);
 			out.close(); // We need to flush this as fast as possible to avoid missing PID values in the file
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Error appending information to file '" + pidFile + "'\n", e);
 		}
 	}

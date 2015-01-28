@@ -1,0 +1,266 @@
+7560	+	
+7560	-
+7563	+	
+7563	-
+7566	+	
+7566	-
+null	-
+null	-
+7572	+	
+7572	-
+7574	+	
+7574	-
+7576	+	
+7576	-
+7578	+	
+7578	-
+7581	+	
+7581	-
+7584	+	
+7584	-
+7588	+	
+/Users/pcingola/zero_length_file_out.txt	+	rm
+7588	-
+/Users/pcingola/zero_length_file_out.txt	-
+7589	+	
+7589	-
+7594	+	
+7594	-
+7597	+	
+7598	+	
+7597	-
+7598	-
+7607	+	
+7607	-
+7610	+	
+7610	-
+7613	+	
+7613	-
+null	-
+7615	+	
+7615	-
+7619	+	
+7619	-
+7622	+	
+7622	-
+7625	+	
+7625	-
+7628	+	
+7628	-
+7631	+	
+7631	-
+7635	+	
+failOnce.out1	+	rm
+7635	-
+failOnce.out1	-
+7640	+	
+failOnce.out1	+	rm
+7640	-
+failOnce.out1	-
+7644	+	
+failOnce.out2	+	rm
+7644	-
+failOnce.out2	-
+7650	+	
+failOnce.out1	+	rm
+7650	-
+failOnce.out1	-
+7655	+	
+failOnce.out1	+	rm
+7655	-
+failOnce.out1	-
+7659	+	
+failOnce.out2	+	rm
+7659	-
+failOnce.out2	-
+7667	+	
+/Users/pcingola/zero_length_file.out.txt	+	rm
+7667	-
+/Users/pcingola/zero_length_file.out.txt	-
+7670	+	
+7671	+	
+7675	+	
+7677	+	
+7670	-
+7671	-
+7682	+	
+7675	-
+7677	-
+7682	-
+7693	+	
+7693	-
+7696	+	
+7696	-
+7700	+	
+7701	+	
+7700	-
+7706	+	
+7706	-
+7701	-
+7709	+	
+7709	-
+7717	+	
+tmp_2.txt	+	rm
+7717	-
+tmp_2.txt	-
+7720	+	
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	+	rm
+7720	-
+/Users/pcingola/Documents/workspace/BigDataScript/tmp_3.txt	-
+7724	+	
+tmp_out.txt	+	rm
+7724	-
+tmp_out.txt	-
+7729	+	
+7729	-
+7731	+	
+7731	-
+7743	+	
+7743	-
+7744	+	
+7744	-
+7746	+	
+7746	-
+7748	+	
+7748	-
+7750	+	
+7750	-
+7753	+	
+7753	-
+7755	+	
+7755	-
+7756	+	
+7759	+	
+7756	-
+7761	+	
+7759	-
+7761	-
+7763	+	
+tmp_C.txt	+	rm
+tmp_D.txt	+	rm
+7763	-
+tmp_C.txt	-
+tmp_D.txt	-
+7767	+	
+tmp_E.txt	+	rm
+7767	-
+tmp_E.txt	-
+7773	+	
+test/graph_08.mid1.txt	+	rm
+7773	-
+test/graph_08.mid1.txt	-
+7776	+	
+test/graph_08.mid2.txt	+	rm
+7776	-
+test/graph_08.mid2.txt	-
+7779	+	
+test/graph_08.out.txt	+	rm
+7779	-
+test/graph_08.out.txt	-
+7793	+	
+test/graph_10.mid1.txt	+	rm
+7793	-
+test/graph_10.mid1.txt	-
+7796	+	
+test/graph_10.out.txt	+	rm
+7796	-
+test/graph_10.out.txt	-
+7802	+	
+out1.txt	+	rm
+7802	-
+out1.txt	-
+7806	+	
+out2.txt	+	rm
+7806	-
+out2.txt	-
+7810	+	
+out1.txt	+	rm
+7810	-
+out1.txt	-
+7814	+	
+7814	-
+7817	+	
+7817	-
+7823	+	
+out1.txt	+	rm
+7823	-
+out1.txt	-
+7827	+	
+out2.txt	+	rm
+7827	-
+out2.txt	-
+7830	+	
+out1.txt	+	rm
+7830	-
+out1.txt	-
+7834	+	
+out2.txt	+	rm
+7834	-
+out2.txt	-
+7837	+	
+test/graph_05.csv	+	rm
+7837	-
+test/graph_05.csv	-
+7840	+	
+test/graph_05.xml	+	rm
+7840	-
+test/graph_05.xml	-
+7843	+	
+test/graph_05.csv	+	rm
+7843	-
+test/graph_05.csv	-
+7846	+	
+test/graph_05.xml	+	rm
+7846	-
+test/graph_05.xml	-
+7849	+	
+test/graph_06.csv	+	rm
+7849	-
+test/graph_06.csv	-
+7852	+	
+test/graph_06.xml	+	rm
+7852	-
+test/graph_06.xml	-
+7858	+	
+out1.txt	+	rm
+7858	-
+out1.txt	-
+7862	+	
+out2.txt	+	rm
+7862	-
+out2.txt	-
+7865	+	
+test/checkpoint_08.csv	+	rm
+7865	-
+test/checkpoint_08.csv	-
+7868	+	
+test/checkpoint_08.xml	+	rm
+7868	-
+test/checkpoint_08.xml	-
+7871	+	
+test/checkpoint_08.csv	+	rm
+7871	-
+test/checkpoint_08.csv	-
+7874	+	
+test/checkpoint_08.xml	+	rm
+7874	-
+test/checkpoint_08.xml	-
+7877	+	
+test/checkpoint_09.csv	+	rm
+7877	-
+test/checkpoint_09.csv	-
+7880	+	
+test/checkpoint_09.xml	+	rm
+7880	-
+test/checkpoint_09.xml	-
+7883	+	
+7883	-
+7884	+	
+7884	-
+7889	+	
+7889	-
+7893	+	
+7893	-
+null	-
+null	-
+null	-
