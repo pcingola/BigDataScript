@@ -92,7 +92,6 @@ public class Config {
 	 * Reset singleton
 	 */
 	public static void reset() {
-		Gpr.debug("RESET");
 		configInstance = null;
 	}
 

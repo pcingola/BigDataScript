@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.junit.Before;
 
@@ -21,7 +20,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  *
  * @author pcingola
  */
-public class TestCasesBase extends TestCase {
+public class TestCasesBase {
 
 	public boolean debug = false;
 	public boolean verbose = false;
@@ -57,13 +56,19 @@ public class TestCasesBase extends TestCase {
 		return bigDataScript;
 	}
 
+	@Before
+	public void before() {
+		Gpr.debug("RESET!");
+		Config.reset();
+	}
+
 	/**
 	 * Check that a file compiles with expected errors
 	 */
 	void compileErrors(String fileName, String expectedErrors) {
 		BigDataScript bigDataScript = bds(fileName);
 		bigDataScript.compile();
-		if (bigDataScript.getCompilerMessages().isEmpty()) fail("Expecting compilation errors in file '" + fileName + "', but none found!\n");
+		if (bigDataScript.getCompilerMessages().isEmpty()) Assert.fail("Expecting compilation errors in file '" + fileName + "', but none found!\n");
 		Assert.assertEquals(expectedErrors.trim(), bigDataScript.getCompilerMessages().toString().trim());
 	}
 
@@ -73,7 +78,7 @@ public class TestCasesBase extends TestCase {
 	void compileOk(String fileName) {
 		BigDataScript bigDataScript = bds(fileName);
 		bigDataScript.compile();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+		if (!bigDataScript.getCompilerMessages().isEmpty()) Assert.fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 	}
 
 	/**
@@ -82,7 +87,7 @@ public class TestCasesBase extends TestCase {
 	BigDataScript compileTest(String fileName) {
 		BigDataScript bigDataScript = bds(fileName);
 		bigDataScript.compile();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+		if (!bigDataScript.getCompilerMessages().isEmpty()) Assert.fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 		return bigDataScript;
 	}
 
@@ -101,7 +106,7 @@ public class TestCasesBase extends TestCase {
 		// Compile, check for errors
 		BigDataScript bigDataScript = bds(args);
 		bigDataScript.run();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+		if (!bigDataScript.getCompilerMessages().isEmpty()) Assert.fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
 		ScopeSymbol ssym = bigDataScript.getProgramUnit().getRunScope().getSymbol(varname);
 
@@ -114,7 +119,7 @@ public class TestCasesBase extends TestCase {
 		// Run
 		BigDataScript bigDataScript = bds(fileName);
 		int exitValue = bigDataScript.run();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+		if (!bigDataScript.getCompilerMessages().isEmpty()) Assert.fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 		Assert.assertEquals(expectedExitValue, exitValue);
 	}
 
@@ -136,7 +141,7 @@ public class TestCasesBase extends TestCase {
 		bigDataScript = new BigDataScript(argsArray);
 		bigDataScript.setStackCheck(true);
 		bigDataScript.run();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+		if (!bigDataScript.getCompilerMessages().isEmpty()) Assert.fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
 		// Check all values
 		for (String varName : expectedValues.keySet()) {
@@ -167,7 +172,7 @@ public class TestCasesBase extends TestCase {
 		// Compile
 		BigDataScript bigDataScript = bds(fileName);
 		bigDataScript.run();
-		if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+		if (!bigDataScript.getCompilerMessages().isEmpty()) Assert.fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 
 		// Run something before checkpoint recovery?
 		if (runBeforeRecover != null) runBeforeRecover.run();
@@ -220,7 +225,7 @@ public class TestCasesBase extends TestCase {
 
 			// Run
 			bigDataScript.run();
-			if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
+			if (!bigDataScript.getCompilerMessages().isEmpty()) Assert.fail("Compile errors in file '" + fileName + "':\n" + bigDataScript.getCompilerMessages());
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
@@ -267,7 +272,7 @@ public class TestCasesBase extends TestCase {
 
 			// Run
 			bigDataScript.run();
-			if (!bigDataScript.getCompilerMessages().isEmpty()) fail("Compile errors in file '" + bigDataScript.getProgramUnit().getFileName() + "':\n" + bigDataScript.getCompilerMessages());
+			if (!bigDataScript.getCompilerMessages().isEmpty()) Assert.fail("Compile errors in file '" + bigDataScript.getProgramUnit().getFileName() + "':\n" + bigDataScript.getCompilerMessages());
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
@@ -289,11 +294,5 @@ public class TestCasesBase extends TestCase {
 	String runAndReturnStdout(String fileName) {
 		BigDataScript bigDataScript = bds(fileName);
 		return runAndReturnStdout(bigDataScript);
-	}
-
-	@Before
-	public void before() {
-		Gpr.debug("RESET!");
-		Config.reset();
 	}
 }
