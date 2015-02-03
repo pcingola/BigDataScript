@@ -329,6 +329,7 @@ public class ExecutionerCluster extends Executioner {
 			cmdsb.append(" " + arg);
 		}
 		args.add(task.getPid());
+		cmdsb.append(task.getPid());
 
 		// Run command
 		ExecResult cmdExecResult = Exec.exec(args, true);
@@ -337,7 +338,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit value       : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
-				);
+		);
 
 		// Collect the data
 		if (cmdExecResult.exitValue == 0) task.setPostMortemInfo(cmdExecResult.stdOut);
@@ -346,7 +347,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit code        : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
-				);
+		);
 
 	}
 
