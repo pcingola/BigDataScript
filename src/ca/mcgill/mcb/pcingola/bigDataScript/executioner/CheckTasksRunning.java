@@ -34,6 +34,7 @@ public class CheckTasksRunning {
 	public static final int TASK_NOT_FOUND_DISAPPEARED = 3; // How many times do we have to 'not find' a task to consider it gone
 
 	protected boolean debug;
+	protected boolean verbose;
 	protected Timer time; // Timer for checking that tasks are still running
 	protected String[] defaultCmdArgs;
 	protected Executioner executioner;
@@ -236,7 +237,7 @@ public class CheckTasksRunning {
 				+ "\n\tExit value : " + cmdExecResult.exitValue //
 				+ "\n\tStdout     : " + cmdExecResult.stdOut //
 				+ "\n\tStderr     : " + cmdExecResult.stdErr //
-				);
+		);
 
 		//---
 		// Sanity checks!
@@ -258,7 +259,7 @@ public class CheckTasksRunning {
 		// Note: This might not be a problem, but a cluster (or any computer) running
 		// zero processes is really weird. Furthermore, this commands usually show some
 		// kind of header, so STDOUT is never empty
-		if (cmdExecResult.stdOut.isEmpty()) {
+		if (verbose && cmdExecResult.stdOut.isEmpty()) {
 			Timer.showStdErr("WARNING: Empty STDOUT when executing cluster stat command: '" + cmdsb.toString().trim());
 			return false;
 		}
@@ -269,6 +270,10 @@ public class CheckTasksRunning {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 	/**
@@ -295,7 +300,7 @@ public class CheckTasksRunning {
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
-					) {
+			) {
 				// Task is missing.
 				// Update counter: Should we consider this task as 'missing'?
 				if (incMissingCount(task)) {

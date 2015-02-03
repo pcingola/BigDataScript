@@ -255,6 +255,7 @@ public class ExecutionerCluster extends Executioner {
 		if (checkTasksRunning == null) {
 			checkTasksRunning = new CheckTasksRunningCluster(config, this, getCommandStat());
 			checkTasksRunning.setDebug(config.isDebug());
+			checkTasksRunning.setVerbose(config.isVerbose());
 		}
 		return checkTasksRunning;
 	}
