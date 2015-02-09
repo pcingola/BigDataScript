@@ -64,7 +64,7 @@ public class Return extends Statement {
 
 	@Override
 	public String toString() {
-		return "return " + expr + "\n";
+		return "return " + expr;
 	}
 
 	@Override

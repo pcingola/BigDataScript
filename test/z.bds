@@ -1,12 +1,17 @@
 #!/usr/bin/env bds
 
-int f(int x) {
+int z(int x) {
 	return x + 1;
+}
+
+int f(int x) {
+	j := z(x)
+	return j + 1;
 }
 
 breakpoint "We break here\n"
 
-for( int i=0 ; i < 10 ; i = f(i) ) {
+for( int i=0 ; i < 6 ; i = f(i) ) {
 	print "hi $i\n"
 	debug "Variable: $i\n"
 }

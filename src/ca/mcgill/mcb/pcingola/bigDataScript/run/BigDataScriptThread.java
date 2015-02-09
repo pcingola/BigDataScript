@@ -27,6 +27,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.FunctionCall;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.MethodCall;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Statement;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.StatementInclude;
@@ -478,16 +480,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 			case STEP_OVER:
 				// Run until we are back from a function (method) call
-				Gpr.debug("PC:" + node.getClass().getSimpleName() //
-						+ "\n\t" + pc //
-						+ "\n\t" + debugStepOverPc //
-						+ "\n\t" + node.getClass().getSimpleName() //
-						+ "\n\t" + node //
-				);
-
-				// Are we done stepping over?
-				if (debugStepOverPc == null) break;
-				if (pc.size() <= debugStepOverPc.size()) debugStep(node);
+				if (debugStepOverPc == null) debugStep(node);
+				else if (pc.size() <= debugStepOverPc.size()) {
+					// Are we done stepping over?
+					debugStep(node);
+					debugStepOverPc = null;
+				}
 				break;
 
 			default:
@@ -511,7 +509,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -526,7 +524,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			// Parse options
 			if (line.isEmpty()) {
 				// Empty line? => Continue using the same debug mode
-				if (debugMode == DebugMode.STEP_OVER) debugStepOverPc = new ProgramCounter(pc);
+				if (debugMode == DebugMode.STEP_OVER) debugUpdatePc(node);
 				return;
 			} else if (line.equalsIgnoreCase("h")) {
 				// Show help
@@ -548,7 +546,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			} else if (line.equalsIgnoreCase("o")) {
 				// Switch to 'STEP_OVER' mode
 				debugMode = DebugMode.STEP_OVER;
-				debugStepOverPc = new ProgramCounter(pc);
+				debugUpdatePc(node);
 				return;
 			} else if (line.equalsIgnoreCase("r")) {
 				// Switch to 'RUN' mode
@@ -574,6 +572,18 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			}
 		}
 
+	}
+
+	/**
+	 * Do we need to update 'step over' reference PC
+	 */
+	void debugUpdatePc(BigDataScriptNode node) {
+		if (debugStepOverPc == null //
+				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
+				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
+				) {
+			debugStepOverPc = new ProgramCounter(pc);
+		}
 	}
 
 	/**
@@ -1030,7 +1040,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1128,7 +1138,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks executed: " + td.getTasks().size() //
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ "." //
-			);
+					);
 		}
 	}
 
