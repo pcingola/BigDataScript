@@ -1,8 +1,12 @@
 #!/usr/bin/env bds
 
+int f(int x) {
+	return x + 1;
+}
+
 breakpoint "We break here\n"
 
-for( int i=0 ; i < 10 ; i++ ) {
+for( int i=0 ; i < 10 ; i = f(i) ) {
 	print "hi $i\n"
 	debug "Variable: $i\n"
 }

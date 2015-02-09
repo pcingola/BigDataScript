@@ -7,7 +7,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 
 /**
  * A "break" statement
- * 
+ *
  * @author pcingola
  */
 public class Break extends Statement {
@@ -31,6 +31,6 @@ public class Break extends Statement {
 
 	@Override
 	public String toString() {
-		return "break\n";
+		return "break";
 	}
 }

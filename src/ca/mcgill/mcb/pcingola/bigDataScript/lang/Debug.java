@@ -46,13 +46,13 @@ public class Debug extends Exit {
 			}
 
 			if (bdsThread.isCheckpointRecover()) return;
-			if (!msg.isEmpty()) System.err.print(msg);
+			System.err.print("Debug " + getFileName() + ", line " + getLineNum() + (!msg.isEmpty() ? ": " + msg : ""));
 		}
 	}
 
 	@Override
 	public String toString() {
-		return "debug " + expr + "\n";
+		return "debug " + expr;
 	}
 
 	@Override

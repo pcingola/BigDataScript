@@ -56,7 +56,7 @@ public class Error extends Exit {
 
 	@Override
 	public String toString() {
-		return "error " + expr + "\n";
+		return "error " + expr;
 	}
 
 	@Override

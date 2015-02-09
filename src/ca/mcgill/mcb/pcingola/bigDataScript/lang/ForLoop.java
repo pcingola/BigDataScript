@@ -108,7 +108,7 @@ public class ForLoop extends StatementWithScope {
 	public String toString() {
 		return "for( " + begin + " ; " + condition + " ; " + end + " ) {\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
-				+ "\n}" //
+				+ "}" //
 		;
 	}
 

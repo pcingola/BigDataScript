@@ -59,7 +59,7 @@ public class Exit extends Statement {
 
 	@Override
 	public String toString() {
-		return "exit " + expr + "\n";
+		return "exit " + expr;
 	}
 
 	@Override

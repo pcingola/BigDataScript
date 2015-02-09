@@ -35,7 +35,7 @@ public class Warning extends Error {
 
 	@Override
 	public String toString() {
-		return "warning " + expr + "\n";
+		return "warning " + expr;
 	}
 
 }

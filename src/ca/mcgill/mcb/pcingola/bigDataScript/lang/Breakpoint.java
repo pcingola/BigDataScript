@@ -48,12 +48,12 @@ public class Breakpoint extends Exit {
 		}
 
 		if (bdsThread.isCheckpointRecover()) return;
-		if (!msg.isEmpty()) System.err.print(msg);
+		System.err.print("Breakpoint " + getFileName() + ", line " + getLineNum() + (!msg.isEmpty() ? ": " + msg : ""));
 	}
 
 	@Override
 	public String toString() {
-		return "breakpoint " + expr + "\n";
+		return "breakpoint " + expr;
 	}
 
 	@Override

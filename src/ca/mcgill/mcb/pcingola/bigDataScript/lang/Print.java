@@ -48,7 +48,7 @@ public class Print extends Exit {
 
 	@Override
 	public String toString() {
-		return "print " + expr + "\n";
+		return "print " + expr;
 	}
 
 	@Override
