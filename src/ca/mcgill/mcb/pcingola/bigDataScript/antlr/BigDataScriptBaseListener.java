@@ -966,6 +966,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDebug(@NotNull BigDataScriptParser.DebugContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDebug(@NotNull BigDataScriptParser.DebugContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTypeMap(@NotNull BigDataScriptParser.TypeMapContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1038,6 +1051,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

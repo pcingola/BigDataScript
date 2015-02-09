@@ -8,13 +8,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
- * An "print" statement
+ * An "debug" statement
  *
  * @author pcingola
  */
-public class Print extends Exit {
+public class Debug extends Exit {
 
-	public Print(BigDataScriptNode parent, ParseTree tree) {
+	public Debug(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
@@ -34,21 +34,25 @@ public class Print extends Exit {
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
-		String msg = "";
-		if (expr != null) {
-			// Evaluate expression to show
-			bdsThread.run(expr);
-			if (bdsThread.isCheckpointRecover()) return;
-			msg = popString(bdsThread);
-		}
+		// Only show message if we are in debug mode
+		// Otherwise, the statement is ignored
+		if (bdsThread.getDebugMode() != null) {
+			String msg = "";
+			if (expr != null) {
+				// Evaluate expression to show
+				bdsThread.run(expr);
+				if (bdsThread.isCheckpointRecover()) return;
+				msg = popString(bdsThread);
+			}
 
-		if (bdsThread.isCheckpointRecover()) return;
-		if (!msg.isEmpty()) System.out.print(msg);
+			if (bdsThread.isCheckpointRecover()) return;
+			if (!msg.isEmpty()) System.err.print(msg);
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "print " + expr + "\n";
+		return "debug " + expr + "\n";
 	}
 
 	@Override

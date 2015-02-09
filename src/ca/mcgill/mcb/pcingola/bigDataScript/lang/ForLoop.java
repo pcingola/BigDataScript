@@ -7,6 +7,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
@@ -101,6 +102,14 @@ public class ForLoop extends StatementWithScope {
 
 			if (end != null) bdsThread.run(end); // End of loop
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "for( " + begin + " ; " + condition + " ; " + end + " ) {\n" //
+				+ Gpr.prependEachLine("\t", statement.toString()) //
+				+ "\n}" //
+		;
 	}
 
 	@Override

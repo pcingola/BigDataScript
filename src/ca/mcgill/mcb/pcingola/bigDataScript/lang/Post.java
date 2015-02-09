@@ -32,7 +32,7 @@ public class Post extends Pre {
 	public void runStep(BigDataScriptThread bdsThread) {
 		Reference ref = (Reference) expr;
 		bdsThread.run(ref);
-		
+
 		if (bdsThread.isCheckpointRecover()) return;
 
 		long value = popInt(bdsThread);
@@ -45,7 +45,7 @@ public class Post extends Pre {
 
 	@Override
 	public String toString() {
-		return operation.toStringCode() + expr.toString();
+		return expr.toString() + operation.toStringCode();
 	}
 
 }

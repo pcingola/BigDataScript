@@ -24,6 +24,11 @@ public class Block extends StatementWithScope {
 	}
 
 	@Override
+	public boolean isStopDebug() {
+		return false;
+	}
+
+	@Override
 	protected void parse(ParseTree tree) {
 		ArrayList<Statement> stats = new ArrayList<Statement>();
 		for (int i = 0; i < tree.getChildCount(); i++) {

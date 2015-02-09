@@ -25,9 +25,7 @@ public class Println extends Exit {
 		// Calculate expression's return type
 		if (expr != null) expr.returnType(scope);
 
-		// Program's return type is 'int' (exit code)
 		returnType = Type.STRING;
-
 		return returnType;
 	}
 

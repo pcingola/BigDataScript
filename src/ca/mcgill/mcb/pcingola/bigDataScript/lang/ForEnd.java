@@ -16,6 +16,11 @@ public class ForEnd extends ExpressionList {
 	}
 
 	@Override
+	public boolean isStopDebug() {
+		return true;
+	}
+
+	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		for (Expression expr : expressions) {
 			bdsThread.run(expr);

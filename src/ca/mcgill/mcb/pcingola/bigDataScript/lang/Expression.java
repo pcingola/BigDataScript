@@ -16,6 +16,11 @@ public class Expression extends Statement {
 		super(parent, tree);
 	}
 
+	@Override
+	public boolean isStopDebug() {
+		return false;
+	}
+
 	/**
 	 * Run an expression: I.e. evaluate the expression
 	 */

@@ -411,6 +411,13 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	}
 
 	/**
+	 * Should we stop in this node when debugging?
+	 */
+	public boolean isStopDebug() {
+		return true;
+	}
+
+	/**
 	 * Is return type string?
 	 */
 	protected boolean isString() {

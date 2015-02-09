@@ -106,7 +106,6 @@ public class Gpr {
 	/**
 	 * Return file's name (without the path)
 	 * @param file
-	 * @return
 	 */
 	public static String baseName(String file) {
 		if (file == null) return "";
@@ -117,7 +116,6 @@ public class Gpr {
 	/**
 	 * Return file's name (without the path)
 	 * @param file
-	 * @return
 	 */
 	public static String baseName(String file, String ext) {
 		File f = new File(file);
@@ -406,9 +404,6 @@ public class Gpr {
 
 	/**
 	 * Add 'preLine' to each line in 'str'
-	 * @param num
-	 * @param str
-	 * @return
 	 */
 	public static String prependEachLine(String preLine, String str) {
 		if (preLine == null || str == null) return null;

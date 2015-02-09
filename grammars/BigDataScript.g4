@@ -36,8 +36,10 @@ includeFile : 'include' (STRING_LITERAL | STRING_LITERAL_SINGLE) eol;
 // Statements
 statement : '{' statement* '}'                                                             # block
             | 'break' eol*                                                                 # break
+            | 'breakpoint' expression? eol*                                                # breakpoint
             | 'checkpoint' expression? eol*                                                # checkpoint
             | 'continue' eol*                                                              # continue
+            | 'debug' expression? eol*                                                     # debug
             | 'exit' expression? eol*                                                      # exit
             | 'print' expression? eol*                                                     # print
             | 'println' expression? eol*                                                   # println

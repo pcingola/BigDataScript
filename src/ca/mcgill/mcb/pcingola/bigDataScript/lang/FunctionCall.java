@@ -57,6 +57,11 @@ public class FunctionCall extends Expression {
 	}
 
 	@Override
+	public boolean isStopDebug() {
+		return true;
+	}
+
+	@Override
 	protected void parse(ParseTree tree) {
 		functionName = tree.getChild(0).getText();
 		// child[1] is '('

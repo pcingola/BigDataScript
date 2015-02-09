@@ -34,6 +34,11 @@ public class ExpressionWithScope extends Expression {
 	}
 
 	@Override
+	public boolean isStopDebug() {
+		return false;
+	}
+
+	@Override
 	public void setNeedsScope(boolean needsScope) {
 		this.needsScope = needsScope;
 	}

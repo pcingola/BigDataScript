@@ -7,6 +7,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * While statement
@@ -83,6 +84,14 @@ public class While extends Statement {
 				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "while(  " + condition + " ) {\n" //
+				+ Gpr.prependEachLine("\t", statement.toString()) //
+				+ "\n}" //
+		;
 	}
 
 	@Override

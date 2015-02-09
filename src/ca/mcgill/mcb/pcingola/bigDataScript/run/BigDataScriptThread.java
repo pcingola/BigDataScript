@@ -74,6 +74,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	List<String> removeOnExit; // Files to be removed on exit
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
+	DebugMode debugMode = null; // By default we are NOT debugging the program
 
 	// Scope
 	Scope scope; // Base scope
@@ -454,6 +455,36 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 	}
 
+	void debugStep(BigDataScriptNode node) {
+
+		Gpr.debug("DEBUG [" + debugMode + "], " + node.getClass().getSimpleName() + ":\t" + node);
+	}
+
+	/**
+	 * Running in debug mode: This method is invoked right before running 'node'
+	 */
+	void debug(BigDataScriptNode node) {
+		if (node.isStopDebug()) {
+			switch (debugMode) {
+			case RUN:
+				// Keep running until we find a breakpoint
+				break;
+
+			case STEP:
+				// Show options
+				debugStep(node);
+				break;
+
+			case STEP_OVER:
+				// Run until we are back from a function (method) call
+				break;
+
+			default:
+				throw new RuntimeException("Unimplemented debug mode: " + debugMode);
+			}
+		}
+	}
+
 	/**
 	 * Show a fatal error
 	 */
@@ -555,6 +586,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public Config getConfig() {
 		return config;
+	}
+
+	public DebugMode getDebugMode() {
+		return debugMode;
 	}
 
 	public int getExitValue() {
@@ -891,7 +926,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -989,7 +1024,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks executed: " + td.getTasks().size() //
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ "." //
-					);
+			);
 		}
 	}
 
@@ -1005,7 +1040,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		try {
 			// Run?
-			if (shouldRun(node)) node.runStep(this);
+			if (shouldRun(node)) {
+				// Debug mode?
+				if (debugMode != null) debug(node);
+
+				// Run node
+				node.runStep(this);
+			}
 		} catch (Throwable t) {
 			fatalError(node, t);
 		}
@@ -1172,6 +1213,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		out.append("\t" + serializer.serializeSaveValue(runState.toString()));
 		out.append("\t" + serializer.base64encode(stack));
 		return out.toString();
+	}
+
+	public void setDebugMode(DebugMode debugMode) {
+		this.debugMode = debugMode;
 	}
 
 	public void setExitValue(long exitValue) {

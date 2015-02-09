@@ -8,13 +8,18 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
- * 
+ *
  * @author pcingola
  */
 public class ForCondition extends ExpressionWrapper {
 
 	public ForCondition(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	public boolean isStopDebug() {
+		return true;
 	}
 
 	@Override

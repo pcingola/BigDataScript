@@ -602,6 +602,14 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitDebug(@NotNull BigDataScriptParser.DebugContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitTypeMap(@NotNull BigDataScriptParser.TypeMapContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -643,6 +651,14 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}

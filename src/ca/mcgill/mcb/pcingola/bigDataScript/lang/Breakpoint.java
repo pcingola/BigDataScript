@@ -5,16 +5,17 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.DebugMode;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
- * An "print" statement
+ * An "breakpoint" statement
  *
  * @author pcingola
  */
-public class Print extends Exit {
+public class Breakpoint extends Exit {
 
-	public Print(BigDataScriptNode parent, ParseTree tree) {
+	public Breakpoint(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
@@ -34,6 +35,10 @@ public class Print extends Exit {
 	 */
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
+		// Switch debug mode to 'step'
+		bdsThread.setDebugMode(DebugMode.STEP);
+
+		// Show message
 		String msg = "";
 		if (expr != null) {
 			// Evaluate expression to show
@@ -43,12 +48,12 @@ public class Print extends Exit {
 		}
 
 		if (bdsThread.isCheckpointRecover()) return;
-		if (!msg.isEmpty()) System.out.print(msg);
+		if (!msg.isEmpty()) System.err.print(msg);
 	}
 
 	@Override
 	public String toString() {
-		return "print " + expr + "\n";
+		return "breakpoint " + expr + "\n";
 	}
 
 	@Override

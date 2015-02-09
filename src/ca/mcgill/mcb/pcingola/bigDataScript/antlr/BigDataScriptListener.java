@@ -812,6 +812,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#debug}.
+	 * @param ctx the parse tree
+	 */
+	void enterDebug(@NotNull BigDataScriptParser.DebugContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#debug}.
+	 * @param ctx the parse tree
+	 */
+	void exitDebug(@NotNull BigDataScriptParser.DebugContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#typeMap}.
 	 * @param ctx the parse tree
 	 */
@@ -876,6 +887,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#breakpoint}.
+	 * @param ctx the parse tree
+	 */
+	void enterBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#breakpoint}.
+	 * @param ctx the parse tree
+	 */
+	void exitBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#varReference}.

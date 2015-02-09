@@ -18,6 +18,11 @@ public class StatementExpr extends ExpressionWrapper {
 	}
 
 	@Override
+	public boolean isStopDebug() {
+		return true;
+	}
+
+	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(expression);
 

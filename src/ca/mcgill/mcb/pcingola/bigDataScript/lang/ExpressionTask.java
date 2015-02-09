@@ -151,6 +151,11 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	@Override
+	public boolean isStopDebug() {
+		return true;
+	}
+
+	@Override
 	protected boolean isReturnTypesNotNull() {
 		return true;
 	}
@@ -245,7 +250,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-						;
+				;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}

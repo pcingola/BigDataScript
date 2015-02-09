@@ -46,4 +46,20 @@ public class ForInit extends Statement {
 		}
 	}
 
+	@Override
+	public String toString() {
+
+		if (varDeclaration != null) return varDeclaration.toString();
+
+		// Use expressions
+		StringBuilder sb = new StringBuilder();
+		if (expressions != null) {
+			for (Expression exp : expressions) {
+				if (sb.length() > 0) sb.append(" , ");
+				sb.append(exp.toString());
+			}
+		}
+
+		return sb.toString();
+	}
 }

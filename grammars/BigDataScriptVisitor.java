@@ -523,6 +523,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#debug}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDebug(@NotNull BigDataScriptParser.DebugContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#typeMap}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -563,6 +570,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#breakpoint}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#varReference}.

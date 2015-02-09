@@ -33,6 +33,11 @@ public class ExpressionCond extends Expression {
 	}
 
 	@Override
+	public boolean isStopDebug() {
+		return true;
+	}
+
+	@Override
 	protected void parse(ParseTree tree) {
 		expr = (Expression) factory(tree, 0);
 		exprTrue = (Expression) factory(tree, 2); // Child 1 is '?'
