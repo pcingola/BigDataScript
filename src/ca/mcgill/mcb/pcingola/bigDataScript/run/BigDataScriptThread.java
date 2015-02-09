@@ -1,6 +1,8 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.run;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -74,6 +76,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	List<String> removeOnExit; // Files to be removed on exit
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
+
+	// Debug stuff
+	BufferedReader console; // Read debug commands from console
 	DebugMode debugMode = null; // By default we are NOT debugging the program
 
 	// Scope
@@ -456,17 +461,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Show debug 'step' options
-	 */
-	void debugStep(BigDataScriptNode node) {
-		System.err.println("DEBUG: " //
-				+ node.getFileName() //
-				+ ", line " + node.getLineNum() //
-				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
-				+ ":\t" + node);
-	}
-
-	/**
 	 * Running in debug mode: This method is invoked right before running 'node'
 	 */
 	void debug(BigDataScriptNode node) {
@@ -489,6 +483,67 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				throw new RuntimeException("Unimplemented debug mode: " + debugMode);
 			}
 		}
+	}
+
+	/**
+	 * Show debug 'step' options
+	 */
+	void debugStep(BigDataScriptNode node) {
+		// Show current line
+		System.err.println("DEBUG: " //
+				+ node.getFileName() //
+				+ ", line " + node.getLineNum() //
+				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
+				+ ":\t" + node);
+
+		//---
+		// Wait for options
+		//---
+		while (true) {
+			System.out.print("DEBUG> ");
+			String line = readConsole();
+
+			if (line == null) return;
+			line = line.trim();
+
+			// Parse options
+			if (line.isEmpty()) return; // Empty line? => Continue
+			if (line.equalsIgnoreCase("h")) {
+				// Show help
+				System.out.println("Help:");
+				System.out.println("\th         : Show this help");
+				System.out.println("\to         : Step over");
+				System.out.println("\tr         : Run program (until next breakpoint)");
+				System.out.println("\ts         : Step");
+				System.out.println("\tt         : Show stack trace");
+				System.out.println("\tv varname : Show variable 'varname'");
+			} else if (line.equalsIgnoreCase("r")) {
+				// Switch to 'RUN' mode
+				debugMode = DebugMode.RUN;
+				return;
+			} else if (line.equalsIgnoreCase("t")) {
+				// Show stack trace
+				System.out.println(this.stackTrace());
+			} else if (line.equalsIgnoreCase("o")) {
+				// Switch to 'STEP_OVER' mode
+				debugMode = DebugMode.STEP_OVER;
+				return;
+			} else if (line.equalsIgnoreCase("s")) {
+				// Switch to 'STEP' mode
+				debugMode = DebugMode.STEP;
+				return;
+			} else if (line.startsWith("v ")) {
+				// Get variable's name
+				String varName = line.substring(2).trim(); // Remove leading "s " string
+				ScopeSymbol ss = getScope().getSymbol(varName);
+				if (ss == null) System.out.println("Variable '" + varName + "' not found");
+				else {
+					System.out.println(ss.getType() + " : " + ss.getValue());
+				}
+				return;
+			}
+		}
+
 	}
 
 	/**
@@ -892,6 +947,19 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public void push(Object obj) {
 		if (!isCheckpointRecover()) stack.addFirst(obj);
 
+	}
+
+	/**
+	 * Read a line from STDIN
+	 */
+	public String readConsole() {
+		try {
+			if (console == null) console = new BufferedReader(new InputStreamReader(System.in));
+			String line = console.readLine();
+			return line;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
