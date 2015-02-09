@@ -137,7 +137,7 @@
 
 					<li> <b>Automatic logging</b> 
 					<p>
-					Everything is logged by default, no explicit actions required. 
+					Everything is logged (<code>-log</code> command line option), no explicit actions required. 
 					Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout &amp; stderr and exit codes.
 					</p>
 
@@ -159,6 +159,17 @@
 					<p>
 					Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming. 
 					Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.
+					</p>
+
+					<li> <b>Built in debugger</b> 
+					<p>
+					Debugging is an integral part of programming, so it is part of <code>bds</code> language.
+					Statements <code>breakpoint</code> and <code>debug</code> make debugging part of the language, instead of requiring platform specific tools.
+					</p>
+
+					<li> <b>Built in testing</b> 
+					<p>
+					Code testing is performed in everyday programming, so testing is built in <code>bds</code>.
 					</p>
 				</ul>
 
@@ -290,6 +301,11 @@ for( int i=0 ; i < 10 ; i++ ) {
 }
 </pre>
 
+					<li> <code> breakpoint </code>: Inserts a debugging breakpoint. I.e. when the statement is executed, <code>bds</code> switches execution to debug mode (STEP) 
+<pre class="prettyprint">
+breakpoint "Program execution will switch do debug mode here!\n"
+</pre>
+
 					<li> <code> continue </code>: Continue at the end of the current loop
 <pre class="prettyprint">
 for( int i=0 ; i < 10 ; i++ ) {
@@ -297,6 +313,10 @@ for( int i=0 ; i < 10 ; i++ ) {
 }
 </pre>
 
+					<li> <code> debug </code>: Show a debug message on STDERR only if <code>bds</code> is running in 'debug' mode (otherwise the statement is ignored).
+<pre class="prettyprint">
+debug "Show this message only if we ae in debug mode!\n"
+</pre>
 					<li> <code>error</code> Show an error mesasge and exit the program
 <pre class="prettyprint">
 if( num <= 0 )	warining "Number MUST be positive\n"
@@ -2339,6 +2359,110 @@ Nice test code 01
 </pre>
 			</div>
 
+				<h3 class="page-header" id="debugging"> Debugger </h3>
+				<p class="lead"> Bds provides a simple built in debugger using <code>breakpoint</code> and <code>debug</code> statements.</p>
+
+				<code>bds</code> provides a simple built in debugger that can be activated using <code>breakpoint</code> statement.
+				When a <code>breakpoint</code> statement is found, <code>bds</code> switches to debug mode and prompts the user on the console.
+	
+				<br> File <a href="bds/test_24.bds">test_25.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+int inc(int x) {
+    return x + 1;
+}
+
+debug "This won't be printed because we a re not (yet) in debug mode\n" 
+breakpoint "Activate debug mode and insert a breakpoint here!\n"
+
+for( int i=0 ; i < 3 ; i = inc(i) ) {
+    print "hi $i\n"
+    debug "Variable: $i\n"  # This will be printed
+}
+</pre>
+
+				When we this example, the program runs until the first <code>breakpoint</code> and then <code>bds</code> prompts for debug commands on the console:
+<pre class="prettyprint">
+$ bds test_25.bds 
+Breakpoint test_25.bds, line 8: Activate debug mode and insert a breakpoint here!
+DEBUG [STEP]: test_25.bds, line 10: 
+	for( int i = 0 ; i < 3 ; i = inc( i ) ) {
+		print "hi $i\\n"
+		debug "Variable: $i\\n"
+	}
+>
+</pre>
+
+			You can type 'h' for help in debug commands:
+<pre>
+> h
+Help:
+	[RETURN]  : step
+	f         : show current Frame (variables within current scope)
+	h         : Help
+	o         : step Over
+	p         : show Progeam counter
+	r         : Run program (until next breakpoint)
+	s         : Step
+	t         : show stack Trace
+	v varname : show Variable 'varname'
+</pre>
+
+			Here is an example of a debug session (comments after '#' added for clarity):
+<pre>
+$ bds test_25.bds 
+Breakpoint test_25.bds, line 8: Activate debug mode and insert a breakpoint here!
+DEBUG [STEP]: test_25.bds, line 10: 
+    for( int i = 0 ; i < 3 ; i = inc( i ) ) {
+        print "hi $i\\n"
+        debug "Variable: $i\\n"
+    }
+> 
+DEBUG [STEP]: test_25.bds, line 10: int i = 0 >                      # Pressing Return runs the next step ('int i=0')
+DEBUG [STEP]: test_25.bds, line 10: i = 0 > v i                      # Show variable 'i'
+int : 0
+DEBUG [STEP]: test_25.bds, line 10: i < 3 > 
+DEBUG [STEP]: test_25.bds, line 11: print "hi $i\\n" > 
+hi 0                                                                 # Output to STDOUT from print statement
+DEBUG [STEP]: test_25.bds, line 12: debug "Variable: $i\\n" > 
+Debug test_25.bds, line 12: Variable: 0                              # Since we are in debug mode, 'debug' prints to SDTERR
+DEBUG [STEP]: test_25.bds, line 10: i = inc( i ) > 
+DEBUG [STEP]: test_25.bds, line 10: inc( i ) >                       # Step into function 'inc(i)'
+DEBUG [STEP]: test_25.bds, line 4: return x + 1 > t                  # Show stack trace
+test_25.bds, line 10 :    for( int i=0 ; i < 3 ; i = inc(i) ) {
+test_25.bds, line 3 :    int inc(int x) {
+test_25.bds, line 4 :        return x + 1;
+
+DEBUG [STEP]: test_25.bds, line 4: return x + 1 > f                  # Show frames (variables)
+
+---------- Scope Global ----------
+string _ = "/Users/pcingola/.bds/bds"
+...                                                                  # Edited for brevity
+int walltimeout = 86400
+int week = 604800
+
+---------- Scope test_25.bds:10:ForLoop ----------                   
+int i = 0
+
+---------- Scope test_25.bds:3:FunctionDeclaration ----------
+int x = 0
+
+DEBUG [STEP]: test_25.bds, line 4: return x + 1 >                    # Step, exeute 'return' statement
+DEBUG [STEP]: test_25.bds, line 10: i < 3 > 
+DEBUG [STEP]: test_25.bds, line 11: print "hi $i\\n" > 
+hi 1
+DEBUG [STEP]: test_25.bds, line 12: debug "Variable: $i\\n" > 
+Debug test_25.bds, line 12: Variable: 1
+DEBUG [STEP]: test_25.bds, line 10: i = inc( i ) > o
+DEBUG [STEP_OVER]: test_25.bds, line 10: inc( i ) >                  # Step Over: execute 'inc(i)' and stop after function returns
+DEBUG [STEP_OVER]: test_25.bds, line 10: i < 3 > 
+DEBUG [STEP_OVER]: test_25.bds, line 11: print "hi $i\\n" > r        # Run (until another breakpoint). Since there are no more breakpoints, runs until the end of the program
+hi 2
+Debug test_25.bds, line 12: Variable: 2
+</pre>
+
+		
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="commandLine">BDS Command line options </h1>
