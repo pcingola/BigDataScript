@@ -511,36 +511,41 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if (line.equalsIgnoreCase("h")) {
 				// Show help
 				System.out.println("Help:");
-				System.out.println("\th         : Show this help");
-				System.out.println("\to         : Step over");
+				System.out.println("\tf         : show current Frame (variables within current scope)");
+				System.out.println("\th         : Help");
+				System.out.println("\to         : step Over");
 				System.out.println("\tr         : Run program (until next breakpoint)");
 				System.out.println("\ts         : Step");
-				System.out.println("\tt         : Show stack trace");
-				System.out.println("\tv varname : Show variable 'varname'");
-			} else if (line.equalsIgnoreCase("r")) {
-				// Switch to 'RUN' mode
-				debugMode = DebugMode.RUN;
-				return;
-			} else if (line.equalsIgnoreCase("t")) {
-				// Show stack trace
-				System.out.println(this.stackTrace());
+				System.out.println("\tt         : show stack Trace");
+				System.out.println("\tv varname : show Variable 'varname'");
+			} else if (line.equalsIgnoreCase("f")) {
+				// Show current 'frame'
+				System.out.println(getScope().toString(false));
 			} else if (line.equalsIgnoreCase("o")) {
 				// Switch to 'STEP_OVER' mode
 				debugMode = DebugMode.STEP_OVER;
+				return;
+			} else if (line.equalsIgnoreCase("r")) {
+				// Switch to 'RUN' mode
+				debugMode = DebugMode.RUN;
 				return;
 			} else if (line.equalsIgnoreCase("s")) {
 				// Switch to 'STEP' mode
 				debugMode = DebugMode.STEP;
 				return;
+			} else if (line.equalsIgnoreCase("t")) {
+				// Show stack trace
+				System.out.println(this.stackTrace());
 			} else if (line.startsWith("v ")) {
 				// Get variable's name
 				String varName = line.substring(2).trim(); // Remove leading "s " string
+
+				// Get and show variable
 				ScopeSymbol ss = getScope().getSymbol(varName);
 				if (ss == null) System.out.println("Variable '" + varName + "' not found");
-				else {
-					System.out.println(ss.getType() + " : " + ss.getValue());
-				}
-				return;
+				else System.out.println(ss.getType() + " : " + ss.getValue());
+			} else {
+				System.out.println("Unknown command '" + line + "'");
 			}
 		}
 
@@ -1000,7 +1005,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1098,7 +1103,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks executed: " + td.getTasks().size() //
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ "." //
-			);
+					);
 		}
 	}
 

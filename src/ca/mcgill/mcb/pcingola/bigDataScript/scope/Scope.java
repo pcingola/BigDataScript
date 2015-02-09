@@ -364,7 +364,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 		// Show parents
 		StringBuilder sb = new StringBuilder();
 		if (parent != null) {
-			String parentStr = parent.toString();
+			String parentStr = parent.toString(showFunc);
 			if (!parentStr.isEmpty()) sb.append(parentStr);
 		}
 
