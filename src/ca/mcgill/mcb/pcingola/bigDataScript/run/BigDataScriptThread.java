@@ -455,9 +455,15 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 	}
 
+	/**
+	 * Show debug 'step' options
+	 */
 	void debugStep(BigDataScriptNode node) {
-
-		Gpr.debug("DEBUG [" + debugMode + "], " + node.getClass().getSimpleName() + ":\t" + node);
+		System.err.println("DEBUG: " //
+				+ node.getFileName() //
+				+ ", line " + node.getLineNum() //
+				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
+				+ ":\t" + node);
 	}
 
 	/**

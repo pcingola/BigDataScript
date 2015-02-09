@@ -44,6 +44,11 @@ public class VarDeclaration extends Statement {
 	}
 
 	@Override
+	public boolean isStopDebug() {
+		return false;
+	}
+
+	@Override
 	protected void parse(ParseTree tree) {
 		int idx = 0;
 
