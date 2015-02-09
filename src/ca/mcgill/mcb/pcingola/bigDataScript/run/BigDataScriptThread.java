@@ -509,7 +509,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-				;
+		;
 
 		//---
 		// Wait for options
@@ -529,6 +529,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			} else if (line.equalsIgnoreCase("h")) {
 				// Show help
 				System.err.println("Help:");
+				System.err.println("\t[RETURN]  : " + (debugMode == DebugMode.STEP_OVER ? "step over" : "step"));
 				System.err.println("\tf         : show current Frame (variables within current scope)");
 				System.err.println("\th         : Help");
 				System.err.println("\to         : step Over");
@@ -537,6 +538,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				System.err.println("\ts         : Step");
 				System.err.println("\tt         : show stack Trace");
 				System.err.println("\tv varname : show Variable 'varname'");
+				System.err.println("");
 			} else if (line.equalsIgnoreCase("f")) {
 				// Show current 'frame'
 				System.err.println(getScope().toString(false));
@@ -581,7 +583,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-				) {
+		) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -1040,7 +1042,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1138,7 +1140,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks executed: " + td.getTasks().size() //
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ "." //
-					);
+			);
 		}
 	}
 
