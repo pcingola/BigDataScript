@@ -2188,6 +2188,51 @@ OK : true
 
 				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
 
+				<h3> Automatic command line help </h3>
+				<p class="lead"> An automatic command line 'help' for your scripts can be created. </p>
+
+				When you create varaibles that are used in command line arguments, you can provide an optional <code>help</code> string that <code>bds</code> will show when the script is run using either: <code>-h</code>, <code>-help</code> or <code>--help</code> command line options.
+				<br>
+				<br>
+				For example, if we have the following script:<br>
+				File <a href="bds/test_26.bds">test_26.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+int num = 3		help Number of times 'hi' should be printed
+int min			help Help for argument 'min' should be printed here
+mean := 5		help Help for argument 'mean' should be printed here
+someVeryLongCommandLineArgumentName := true    help This command line argument has a really long name
+
+for( int i=0 ; i < num ; i++ ) {
+	print "hi $i\n"
+}
+</pre>
+
+		When running the script using <code>-h</code> command line option a help screen is created and printed out automatically (no action is programmed in the script to process the '-h' command line option).
+		Note that script command line options are given AFTER script name:
+<pre>
+$ bds test_26.bds -h
+Command line options 'test_26.bds' :
+	num                                 : Number of times 'hi' should be printed
+	min                                 : Help for argument 'min' should be printed here
+	mean                                : Help for argument 'mean' should be printed here
+	someVeryLongCommandLineArgumentName : This command line argument has a really long name
+</pre>
+
+		<br>
+		The same happens if you run the script directly:
+<pre>
+$ ./test_26.bds -h
+Command line options 'test_26.bds' :
+	num                                 : Number of times 'hi' should be printed
+	min                                 : Help for argument 'min' should be printed here
+	mean                                : Help for argument 'mean' should be printed here
+	someVeryLongCommandLineArgumentName : This command line argument has a really long name
+</pre>
+
+	
+
 				<h3 class="page-header" id="log">Logging </h3>
 				<p class="lead"> By cal log all command execution. </p>
 
