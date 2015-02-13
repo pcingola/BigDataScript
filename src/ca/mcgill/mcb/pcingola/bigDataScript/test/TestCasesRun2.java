@@ -273,4 +273,23 @@ public class TestCasesRun2 extends TestCasesBase {
 		Assert.assertTrue("Sys output should NOT be in STDOUT", !stdout.contains("sys"));
 	}
 
+	@Test
+	public void test125_automatic_help() {
+		Gpr.debug("Test");
+		String output = "Command line options 'run_125.bds' :\n" //
+				+ "\tnum                                 : Number of times 'hi' should be printed\n" //
+				+ "\tmin                                 : Help for argument 'min' should be printed here\n" //
+				+ "\tmean                                : Help for argument 'mean' should be printed here\n" //
+				+ "\tsomeVeryLongCommandLineArgumentName : This command line argument has a really long name\n\n" //
+				;
+
+		// Run and capture stdout
+		String args[] = { "test/run_125.bds", "-h" };
+		String stdout = runAndReturnStdout(args);
+		if (verbose) System.err.println("STDOUT: " + stdout);
+
+		// Check that sys and task outputs are not there
+		Assert.assertEquals(output, stdout);
+	}
+
 }

@@ -67,24 +67,25 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-02-09";
+	public static final String BUILD = "2015-02-13";
 	public static final String REVISION = "e";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
-	boolean quiet;
-	boolean verbose;
-	boolean debug;
-	boolean checkPidRegex;
-	boolean log; // Log everything
-	boolean dryRun; // Dry run (do not run tasks)
-	boolean noRmOnExit; // Do not remove files on exit
+	boolean checkPidRegex; // Check PID regex (do not run program)
 	boolean createReport; // Create report
-	boolean useDoneFile; // Use files instead of comparing dates
-	boolean extractSource; // Extract source code fmor checkpoint
+	boolean debug; // debug mode
+	boolean extractSource; // Extract source code form checkpoint (nly valid on recovery mode)
+	boolean dryRun; // Dry run (do not run tasks)
+	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
+	boolean noRmOnExit; // Do not remove temp files on exit
+	boolean quiet; // Quiet mode
+	boolean showHelp; // Show bds's script help (provided on each variable definition). Do not run program
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
+	boolean useDoneFile; // Use files instead of comparing dates
+	boolean verbose; // Verbose mode
 	int taskFailCount = -1;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
@@ -466,7 +467,10 @@ public class BigDataScript {
 			String arg = programArgs.get(argNum);
 
 			// Parse '-OPT' option
-			if (arg.startsWith("-")) {
+			if (arg.equalsIgnoreCase("-h") || arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("--help")) {
+				if (debug) Timer.showStdErr("Activating 'show help' mode");
+				showHelp = true;
+			} else if (arg.startsWith("-")) {
 				// Get variable name and value
 				String varName = arg.substring(1);
 
@@ -922,6 +926,13 @@ public class BigDataScript {
 		BigDataScriptThread bdsThread = new BigDataScriptThread(programUnit, config);
 		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 
+		// Show script's automatic help message
+		if (showHelp) {
+			if (verbose) Timer.showStdErr("Showing automaic 'help'");
+			showHelp();
+			return 0;
+		}
+
 		if (verbose) Timer.showStdErr("Running");
 		int exitCode = runThread(bdsThread);
 
@@ -1008,6 +1019,43 @@ public class BigDataScript {
 
 	public void setStackCheck(boolean stackCheck) {
 		this.stackCheck = stackCheck;
+	}
+
+	/**
+	 * Create and show automatic 'help' message
+	 */
+	void showHelp() {
+		StringBuilder sb = new StringBuilder();
+
+		// Find all variable's help
+		List<String> varNames = new ArrayList<String>();
+		List<String> varHelps = new ArrayList<String>();
+		int maxVarNameLen = 0;
+
+		for (Statement s : programUnit.getStatements()) {
+			// Is it a variable declaration?
+			if (s instanceof VarDeclaration) {
+				VarDeclaration varDecl = (VarDeclaration) s;
+				for (VariableInit vi : varDecl.getVarInit()) {
+
+					// Get variable's name & help
+					if (vi != null && vi.getVarName() != null && vi.getHelp() != null) {
+						varNames.add(vi.getVarName());
+						varHelps.add(vi.getHelp());
+						maxVarNameLen = Math.max(maxVarNameLen, vi.getVarName().length());
+					}
+				}
+			}
+		}
+
+		// Show using appropriately formated string
+		String format = "\t%-" + maxVarNameLen + "s : %s\n";
+		for (int i = 0; i < varNames.size(); i++)
+			sb.append(String.format(format, varNames.get(i), varHelps.get(i)));
+
+		// Show sommand line options
+		if (sb.length() > 0) sb.insert(0, "Command line options '" + Gpr.baseName(programFileName) + "' :\n");
+		System.out.println(sb);
 	}
 
 	void usage(String err) {

@@ -51,6 +51,10 @@ public class VariableInit extends BigDataScriptNode {
 		return expression;
 	}
 
+	public String getHelp() {
+		return help;
+	}
+
 	public String getVarName() {
 		return varName;
 	}
@@ -104,7 +108,10 @@ public class VariableInit extends BigDataScriptNode {
 
 	@Override
 	public String toString() {
-		return varName + (expression != null ? " = " + expression : "");
+		return varName //
+				+ (expression != null ? " = " + expression : "") //
+				+ (help != null ? " help " + help : "") //
+				;
 	}
 
 	@Override

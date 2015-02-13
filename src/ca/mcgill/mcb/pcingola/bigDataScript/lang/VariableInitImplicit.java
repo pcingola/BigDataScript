@@ -44,7 +44,10 @@ public class VariableInitImplicit extends VariableInit {
 
 	@Override
 	public String toString() {
-		return varName + (expression != null ? " := " + expression : "");
+		return varName //
+				+ (expression != null ? " := " + expression : "") //
+				+ (help != null ? " help " + help : "") //
+		;
 	}
 
 	@Override
