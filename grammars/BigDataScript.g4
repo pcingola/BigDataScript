@@ -27,8 +27,8 @@ type : 'bool'                                                                   
 
 // Variable declaration
 varDeclaration       : type variableInit (',' variableInit)* | variableInitImplicit;
-variableInit         : ID ('=' expression)?;
-variableInitImplicit : ID ':=' expression;
+variableInit         : ID ('=' expression)? HELP_LITERAL?;
+variableInitImplicit : ID ':=' expression HELP_LITERAL?;
 
 // Include statement
 includeFile : 'include' (STRING_LITERAL | STRING_LITERAL_SINGLE) eol;

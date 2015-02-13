@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
 /**
  * Variable declaration
- * 
+ *
  * @author pcingola
  */
 public class VariableInitImplicit extends VariableInit {
@@ -28,8 +28,18 @@ public class VariableInitImplicit extends VariableInit {
 	protected void parse(ParseTree tree) {
 		int idx = 0;
 		varName = tree.getChild(idx++).getText();
-		if (isTerminal(tree, idx, ":=")) idx++;
-		expression = (Expression) factory(tree, idx); // Initialization expression
+
+		// Initialization expression
+		if (isTerminal(tree, idx, ":=")) {
+			idx++;
+			expression = (Expression) factory(tree, idx++);
+		}
+
+		// Help string
+		ParseTree node = tree.getChild(idx++);
+		if (node != null && node.getText().startsWith("help")) {
+			help = node.getText().substring("help ".length()).trim();
+		}
 	}
 
 	@Override

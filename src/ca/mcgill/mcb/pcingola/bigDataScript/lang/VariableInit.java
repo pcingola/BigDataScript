@@ -20,6 +20,7 @@ public class VariableInit extends BigDataScriptNode {
 
 	String varName;
 	Expression expression;
+	String help;
 
 	public static VariableInit get(BigDataScriptNode parent, String name, Expression expression) {
 		VariableInit vi = new VariableInit(null, null);
@@ -58,8 +59,18 @@ public class VariableInit extends BigDataScriptNode {
 	protected void parse(ParseTree tree) {
 		int idx = 0;
 		varName = tree.getChild(idx++).getText();
-		if (isTerminal(tree, idx, "=")) idx++;
-		expression = (Expression) factory(tree, idx); // Initialization expression
+
+		// Initialization expression
+		if (isTerminal(tree, idx, "=")) {
+			idx++;
+			expression = (Expression) factory(tree, idx++);
+		}
+
+		// Help string
+		ParseTree node = tree.getChild(idx++);
+		if (node != null && node.getText().startsWith("help")) {
+			help = node.getText().substring("help ".length()).trim();
+		}
 	}
 
 	/**

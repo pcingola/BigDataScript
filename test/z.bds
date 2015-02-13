@@ -1,19 +1,11 @@
 #!/usr/bin/env bds
 
-int z(int x) {
-	return x + 1;
-}
+int num = 3		help Number of times 'hi' should be printed
+int min			help Help for argument 'min' should be printed here
+mean := 5		help Help for argument 'mean' should be printed here
 
-int f(int x) {
-	j := z(x)
-	return j + 1;
-}
-
-breakpoint "We break here\n"
-
-for( int i=0 ; i < 6 ; i = f(i) ) {
+for( int i=0 ; i < num ; i++ ) {
 	print "hi $i\n"
-	debug "Variable: $i\n"
 }
 
 print "Done\n"
