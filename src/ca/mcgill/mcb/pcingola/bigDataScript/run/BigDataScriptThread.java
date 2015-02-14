@@ -57,6 +57,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public static final String DATE_FORMAT_CSV = "yyyy,MM,dd,HH,mm,ss";
 	public static final String DATE_FORMAT_HTML = "yyyy-MM-dd HH:mm:ss";
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
+	public static String DAG_TEMPLATE = "DagTaskTemplate.js";
 	public static final String REPORT_RED_COLOR = "style=\"background-color: #ffc0c0\"";
 	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
 	public static final String LINE = "--------------------";
@@ -254,6 +255,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 
 		String outFile = getBdsThreadId() + ".report.html";
+		String dagJsFile = getBdsThreadId() + ".dag.js";
 		if (isVerbose()) Timer.showStdErr("Writing report file '" + outFile + "'");
 
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
@@ -269,6 +271,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		rTemplate.add("threadIdRoot", bdsThreadId);
 		rTemplate.add("runTime", (timer != null ? timer.toString() : ""));
 		rTemplate.add("startTime", (timer != null ? outFormat.format(timer.getStart()) : ""));
+		rTemplate.add("dagJsFile", dagJsFile);
 
 		// Exit code
 		rTemplate.add("exitValue", "" + exitValue);
@@ -317,10 +320,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("symValue", "");
 		}
 
-		//---
 		// Create output file
-		//---
 		rTemplate.createOuptut();
+
+		// Create DAG script
+		createTaskDag(dagJsFile);
 	}
 
 	/**
@@ -329,9 +333,18 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	void createReport(RTemplate rTemplate, BigDataScriptThread bdsThread, BigDataScriptThread bdsThreadParent) {
 		// ID and parent
 		String thisId = bdsThread.getBdsThreadId();
+		String thisIdNum = threadIdNum(bdsThread);
 		String parenId = (bdsThreadParent != null ? bdsThreadParent.getBdsThreadId() : "Null");
+		String parenIdNum = threadIdNum(bdsThreadParent);
 		rTemplate.add("threadId", thisId);
+		rTemplate.add("threadIdNum", thisIdNum);
 		rTemplate.add("threadParent", parenId);
+		rTemplate.add("threadParentNum", parenIdNum);
+
+		// DAG
+		rTemplate.add("threadDepEdgeId", parenIdNum + "-" + thisIdNum);
+		rTemplate.add("threadDepSource", parenIdNum);
+		rTemplate.add("threadDepTarget", thisIdNum);
 
 		// Add tasks
 		StringBuilder sb = new StringBuilder();
@@ -354,7 +367,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		rTemplate.add("taskNum", "" + taskNum);
 		rTemplate.add("taskId", task.getId());
-		rTemplate.add("taskThread", (bdsThread != null ? bdsThread.getId() : ""));
+		rTemplate.add("taskIdBase", Gpr.baseName(task.getId()));
+		rTemplate.add("taskThreadNum", threadIdNum(bdsThread));
+		rTemplate.add("taskThreadId", (bdsThread != null ? bdsThread.getBdsThreadId() : ""));
 		rTemplate.add("taskPid", task.getPid());
 		rTemplate.add("taskName", task.getName());
 		rTemplate.add("taskOk", "" + task.isDoneOk());
@@ -425,8 +440,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Dependencies
 		StringBuilder sbdep = new StringBuilder();
 		if (task.getDependencies() != null) {
-			for (Task t : task.getDependencies())
+			for (Task t : task.getDependencies()) {
 				sbdep.append(t.getName() + "\n");
+				String tid = Gpr.baseName(task.getId());
+				String parenTid = Gpr.baseName(t.getId());
+				rTemplate.add("taskDepEdgeId", parenTid + "-" + tid);
+				rTemplate.add("taskDepSource", parenTid);
+				rTemplate.add("taskDepTarget", tid);
+			}
 		}
 		rTemplate.add("taskDep", sbdep.toString());
 
@@ -461,6 +482,31 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskCpus", "");
 			rTemplate.add("taskMem", "");
 		}
+	}
+
+	/**
+	 * Create a DAG showing all tasks
+	 */
+	void createTaskDag(String dagJsFile) {
+		Gpr.debug("Creating DAG template: '" + dagJsFile + "'");
+		// Create a template
+		RTemplate rTemplate = new RTemplate(BigDataScript.class, DAG_TEMPLATE, dagJsFile);
+
+		// Add thread information
+		createReport(rTemplate, this, null);
+
+		// Add task details for DAG
+		int taskNum = 1;
+		for (Task task : TaskDependecies.get().getTasks())
+			createReport(rTemplate, task, taskNum++);
+
+		//
+		rTemplate.add("taskDepEdgeId", "id-id");
+		rTemplate.add("taskDepSource", "id");
+		rTemplate.add("taskDepTarget", "id");
+
+		// Create output file
+		rTemplate.createOuptut();
 	}
 
 	/**
@@ -509,7 +555,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -583,7 +629,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-		) {
+				) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -721,6 +767,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public Object getObject(String varName) {
 		return getScope().getSymbol(varName).getValue();
+	}
+
+	public BigDataScriptThread getParent() {
+		return parent;
 	}
 
 	public ProgramCounter getPc() {
@@ -1042,7 +1092,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1140,7 +1190,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks executed: " + td.getTasks().size() //
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ "." //
-			);
+					);
 		}
 	}
 
@@ -1484,6 +1534,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 
 		return sb.toString();
+	}
+
+	String threadIdNum(BigDataScriptThread bdsThread) {
+		if (bdsThread == null) return "None";
+		if (bdsThread.getParent() == null) return "thread_Root";
+		return "thread_" + bdsThread.getId();
 	}
 
 	@Override

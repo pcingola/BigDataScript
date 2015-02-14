@@ -1075,6 +1075,8 @@ public class BigDataScript {
 
 		// Show sommand line options
 		if (sb.length() > 0) sb.insert(0, "Command line options '" + Gpr.baseName(programFileName) + "' :\n");
+		else sb.append("No help available for script '" + Gpr.baseName(programFileName) + "'");
+
 		System.out.println(sb);
 	}
 

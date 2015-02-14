@@ -1,18 +1,25 @@
 #!/usr/bin/env bds
 
-int num = 3		help Number of times 'hi' should be printed
-int min			help Help for argument 'min' should be printed here
-mean := 5		help Help for argument 'mean' should be printed here
-someVeryLongCommandLineArgumentName := true    help This command line argument has a really long name
-salutation := "hi"	help Salutation to use
-useTab := false	help Use tab before printing line
-string[] files  help Files to be analyzed
+void doStuff(string dir) {
+	in := "$dir/in.txt"
+	out := "$dir/out.txt"
 
-for( string f : files) print "file: '$f'\n"
+	sys date > $in ; echo $in
 
-for( int i=0 ; i < num ; i++ ) {
-	if( useTab ) print "\t"
-	print "$salutation $i\n"
+	task( out <- in ) sys ( echo Root task ; cat $in ) > $out ; echo $out
+
+	for( int i=0 ; i < 3 ; i++ ) {
+		outi := "$dir/out_$i.txt"
+		task( outi <- out ) sys ( echo task $i ; cat $out ) > $outi ; echo $outi
+	}
 }
 
+# Main
+#sys rm -rvf $HOME/zzz ; mkdir -p $HOME/zzz/par; mkdir -p $HOME/zzz/par2
+
+par doStuff("$HOME/zzz/par")
+par doStuff("$HOME/zzz/par2")
+doStuff("$HOME/zzz")
+
+wait
 print "Done\n"
