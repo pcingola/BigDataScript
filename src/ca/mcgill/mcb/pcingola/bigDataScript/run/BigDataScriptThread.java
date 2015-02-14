@@ -488,7 +488,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Create a DAG showing all tasks
 	 */
 	void createTaskDag(String dagJsFile) {
-		Gpr.debug("Creating DAG template: '" + dagJsFile + "'");
+		if (isDebug()) Timer.showStdErr("Creating DAG summary script '" + dagJsFile + "'");
+
 		// Create a template
 		RTemplate rTemplate = new RTemplate(BigDataScript.class, DAG_TEMPLATE, dagJsFile);
 

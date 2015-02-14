@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test125_automatic_help() {
+	public void test126_task_dependency_scheduled() {
 		Gpr.debug("Test");
 		String output = "Command line options 'run_125.bds' :\n" //
 				+ "\t-num <int>                             : Number of times 'hi' should be printed\n" //
