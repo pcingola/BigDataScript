@@ -61,13 +61,19 @@ public class Exit extends Statement {
 	public String toString() {
 		return getClass().getSimpleName().toLowerCase() //
 				+ (expr != null ? " " + expr : "") //
-				;
+		;
 	}
 
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		returnType(scope);
-		if ((expr.getReturnType() != null) && (!expr.getReturnType().canCast(returnType))) compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
+
+		if ((expr != null) //
+				&& (expr.getReturnType() != null) //
+				&& (!expr.getReturnType().canCast(returnType)) //
+		) {
+			compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
+		}
 	}
 
 }
