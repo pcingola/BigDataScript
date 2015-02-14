@@ -26,7 +26,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class TaskDependecies {
 
 	public static final int SLEEP_TIME = 250;
-	private static TaskDependecies taskDependecies = new TaskDependecies(); // Global instance (keeps track of all tasks in this process)
+	private static TaskDependecies taskDependecies = new TaskDependecies(); // Global instance (keeps track of all tasks)
 
 	boolean debug = false;
 	boolean verbose = false;
@@ -54,21 +54,30 @@ public class TaskDependecies {
 	 * Add a task
 	 */
 	public synchronized void add(Task task) {
+		// Sanity check: Circular dependency
 		if (isCircular(task)) throw new RuntimeException("Circular dependency on task '" + task.getId() + "'");
-		addTask(task);
-		if (!task.isDependency()) findDirectDependencies(task); // Find and update task's immediate dependencies (only if the task is to be executed)
 
-		if (this != taskDependecies) taskDependecies.add(task); // Add to glabal object
+		// Add task
+		addTask(task);
+
+		// Find and update task's immediate dependencies (only if the task is to be executed)
+		if (!task.isDependency()) findDirectDependencies(task);
+
+		// Add to glabal object
+		if (!isGlobal()) TaskDependecies.get().add(task);
 	}
 
 	/**
-	 * Add a task
+	 * Add a task to collections
 	 */
 	protected synchronized void addTask(Task task) {
-		if (tasksById.containsKey(task.getId())) return; // Already added? Nothing to do
+		// Already added? Nothing to do
+		if (tasksById.containsKey(task.getId())) return;
 
-		// Add task
+		// Add task by ID
 		tasksById.put(task.getId(), task);
+
+		// Add task 
 		tasks.add(task);
 
 		// Add task by output files
@@ -320,6 +329,13 @@ public class TaskDependecies {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Is this the global instance?
+	 */
+	boolean isGlobal() {
+		return this == taskDependecies;
 	}
 
 	/**

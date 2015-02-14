@@ -205,7 +205,7 @@ public class ExpressionTask extends ExpressionWithScope {
 
 			if (taskDependency == null) {
 				// Task options clause not satisfied. Do not execute task => Return empty taskId
-				if (bdsThread.isDebug()) log("Task dependency check: null");
+				if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=false): null");
 				bdsThread.push("");
 				return;
 			}
@@ -253,7 +253,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-						;
+				;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
@@ -262,28 +262,32 @@ public class ExpressionTask extends ExpressionWithScope {
 
 	@Override
 	public String toString() {
-		String statementStr = "";
-
-		// How to show statements
-		if (statement instanceof LiteralString) {
-			// Compact single line
-			statementStr = ((LiteralString) statement).getValue().trim();
-		} else if (statement instanceof ExpressionSys || statement instanceof StatementExpr) {
-			// Compact single line form
-			statementStr = statement.toString();
-		} else {
-			// Multiline
-			statementStr = "{\n" //
-					+ Gpr.prependEachLine("\t", statement.toString()) //
-					+ "}" //
-					;
-		}
-
 		return "task" //
 				+ (taskOptions != null ? taskOptions : "") //
 				+ " " //
-				+ statementStr //
-				;
+				+ toStringStatement() //
+		;
+	}
+
+	/**
+	 * Format statements
+	 */
+	protected String toStringStatement() {
+		if (statement instanceof LiteralString) {
+			// Compact single line
+			return ((LiteralString) statement).getValue().trim();
+		}
+
+		if (statement instanceof ExpressionSys || statement instanceof StatementExpr) {
+			// Compact single line form
+			return statement.toString();
+		}
+
+		// Multiline
+		return "{\n" //
+				+ Gpr.prependEachLine("\t", statement.toString()) //
+				+ "}" //
+		;
 	}
 
 	@Override

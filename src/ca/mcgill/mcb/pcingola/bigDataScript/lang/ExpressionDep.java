@@ -33,7 +33,11 @@ public class ExpressionDep extends ExpressionTask {
 
 	@Override
 	public String toString() {
-		return "dep " + taskOptions + " " + statement;
+		return "dep" //
+				+ (taskOptions != null ? taskOptions : "") //
+				+ " " //
+				+ toStringStatement() //
+				;
 	}
 
 }

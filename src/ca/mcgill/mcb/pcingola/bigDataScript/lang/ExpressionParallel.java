@@ -131,6 +131,10 @@ public class ExpressionParallel extends ExpressionTask {
 
 	@Override
 	public String toString() {
-		return "par " + (taskOptions != null ? taskOptions : "") + " " + statement;
+		return "par" //
+				+ (taskOptions != null ? taskOptions : "") //
+				+ " " //
+				+ toStringStatement() //
+				;
 	}
 }

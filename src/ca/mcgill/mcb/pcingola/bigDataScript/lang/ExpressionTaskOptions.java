@@ -32,8 +32,6 @@ public class ExpressionTaskOptions extends ExpressionList {
 		TaskDependency taskDeps = new TaskDependency(this);
 
 		for (Expression expr : expressions) {
-
-			// All boolean expressions must be "true"
 			if (expr instanceof ExpressionDepOperator) {
 				// This evaluation returns a 'TaskDependence' object
 				ExpressionDepOperator exprDep = (ExpressionDepOperator) expr;
@@ -44,6 +42,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 					sat &= (taskDepsExpr != null); // Convert expression to boolean
 				}
 			} else {
+				// All boolean expressions must be "true"
 				bdsThread.run(expr);
 
 				if (!bdsThread.isCheckpointRecover()) {

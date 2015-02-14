@@ -1,16 +1,21 @@
 #!/usr/bin/env bds
 
 void doStuff(string dir) {
+	dir.mkdir()
+
 	in := "$dir/in.txt"
 	out := "$dir/out.txt"
 
-	sys date > $in ; echo $in
+	# Create input
+	sys date > $in ; echo IN: $in
 
-	task( out <- in ) sys ( echo Root task ; cat $in ) > $out ; echo $out
+	# Create first output
+	task( out <- in ) sys ( echo Root task ; cat $in ) > $out ; echo OUT: $out
 
+	# Create dependent outputs
 	for( int i=0 ; i < 3 ; i++ ) {
 		outi := "$dir/out_$i.txt"
-		task( outi <- out ) sys ( echo task $i ; cat $out ) > $outi ; echo $outi
+		task( outi <- out ) sys ( echo task $i ; cat $out ) > $outi ; echo OUT_$i: $outi
 	}
 }
 
@@ -18,19 +23,7 @@ void doStuff(string dir) {
 # Main
 #---
 
-
 dir := "$HOME/zzz"
-task echo Hi $dir
-#sys rm -rvf $dir
-
 doStuff(dir)
-
-# Parallel
-#dirs := [ "$dir/par", "$dir/par2"]
-#for( string dir : dirs ) {
-	#dirs.mkdir()
-	#par doStuff("$HOME/zzz/par")
-#}
-
 wait
 print "Done\n"
