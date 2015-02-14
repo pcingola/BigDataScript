@@ -167,20 +167,20 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Iter 5, Task 1: End\n" //
 				+ "Iter 5, Task 2: Start\n" //
 				+ "Iter 5, Task 2: End\n" //
-		;;
+				;;
 
-		String stdout = runAndReturnStdout("test/run_117.bds");
+				String stdout = runAndReturnStdout("test/run_117.bds");
 
-		if (stdout.indexOf(expectedStdout) < 0) {
-			String msg = "Cannot find desired output:\n" //
-					+ "---------- Expected output ----------\n" //
-					+ expectedStdout //
-					+ "-------------- STDOUT --------------\n" //
-					+ stdout //
-			;
-			System.err.println(msg);
-			throw new RuntimeException(msg);
-		}
+				if (stdout.indexOf(expectedStdout) < 0) {
+					String msg = "Cannot find desired output:\n" //
+							+ "---------- Expected output ----------\n" //
+							+ expectedStdout //
+							+ "-------------- STDOUT --------------\n" //
+							+ stdout //
+							;
+					System.err.println(msg);
+					throw new RuntimeException(msg);
+				}
 	}
 
 	@Test
@@ -200,11 +200,11 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Running task\n" //
 				+ "Creating tmp_out.txt\n" //
 				+ "Done\n" //"
-		;
+				;
 
 		String expectedStdout2 = "Running task\n" //
 				+ "Done\n" //"
-		;
+				;
 
 		System.out.println("First run:");
 		runAndCheckStdout("test/run_119.bds", expectedStdout1);
@@ -242,7 +242,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "sys                |\\t|    variable:Hello\n" //
 				+ "task               |\\t|\n" //
 				+ "task               |\\t|    variable:Hello\n" //
-		;
+				;
 
 		runAndCheckStdout("test/run_123.bds", output);
 	}
@@ -260,7 +260,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "print 7\n" //
 				+ "print 8\n" //
 				+ "print 9\n" //
-		;
+				;
 
 		// Run and capture stdout
 		String args[] = { "-quiet", "test/run_124.bds" };
@@ -284,7 +284,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\t-salutation <string>                   : Salutation to use\n" //
 				+ "\t-useTab                                : Use tab before printing line\n" //
 				+ "\n" //
-		;
+				;
 
 		// Run and capture stdout
 		String args[] = { "test/run_125.bds", "-h" };
@@ -293,6 +293,38 @@ public class TestCasesRun2 extends TestCasesBase {
 
 		// Check that sys and task outputs are not there
 		Assert.assertEquals(output, stdout);
+	}
+
+	/**
+	 * Task dependent on output from a scheduled task
+	 */
+	@Test
+	public void test126_task_dependency_scheduled() {
+		Gpr.debug("Test");
+
+		String expectedOutput = "IN: /Users/pcingola/zzz/in.txt\n" //
+				+ "OUT: /Users/pcingola/zzz/out.txt\n" //
+				+ "OUT_0: /Users/pcingola/zzz/out_0.txt\n" //
+				+ "OUT_1: /Users/pcingola/zzz/out_1.txt\n" //
+				+ "OUT_2: /Users/pcingola/zzz/out_2.txt\n" //
+				+ "    OUT_0_0: /Users/pcingola/zzz/out_0_0.txt\n" //
+				+ "    OUT_0_1: /Users/pcingola/zzz/out_0_1.txt\n" //
+				+ "    OUT_0_2: /Users/pcingola/zzz/out_0_2.txt\n" //
+				+ "    OUT_1_0: /Users/pcingola/zzz/out_1_0.txt\n" //
+				+ "    OUT_1_1: /Users/pcingola/zzz/out_1_1.txt\n" //
+				+ "    OUT_1_2: /Users/pcingola/zzz/out_1_2.txt\n" //
+				+ "    OUT_2_0: /Users/pcingola/zzz/out_2_0.txt\n" //
+				+ "    OUT_2_1: /Users/pcingola/zzz/out_2_1.txt\n" //
+				+ "    OUT_2_2: /Users/pcingola/zzz/out_2_2.txt\n" //
+				;
+
+		String stdout = runAndReturnStdout("test/run_126.bds");
+		if (verbose) System.err.println("STDOUT: " + stdout);
+
+		// Check that task output lines
+		for (String out : expectedOutput.split("\n")) {
+			Assert.assertTrue("Expected output line not found: '" + out + "'", stdout.contains(out));
+		}
 	}
 
 }

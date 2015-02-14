@@ -1,0 +1,33 @@
+#!/usr/bin/env bds
+
+void doStuff(string dir) {
+	dir.mkdir()
+
+	in := "$dir/in.txt"
+	out := "$dir/out.txt"
+
+	# Create input
+	sys date > $in ; echo IN: $in
+
+	# Create first output
+	task( out <- in ) sys ( echo Root task ; cat $in ) > $out ; echo OUT: $out
+
+	# Create dependent outputs
+	for( int i=0 ; i < 3 ; i++ ) {
+		outi := "$dir/out_$i.txt"
+		task( outi <- out ) sys ( echo task $i ; cat $out ) > $outi ; echo OUT_$i: $outi
+		for( int j=0 ; j < 3 ; j++ ) {
+			outj := "$dir/out_$i_$j.txt"
+			task( outj <- outi ) sys ( echo task $i ; cat $outi ) > $outj ; echo "    OUT_$i_$j: $outj"
+		}
+	}
+}
+
+#---
+# Main
+#---
+
+dir := "$HOME/zzz"
+doStuff(dir)
+wait
+print "Done\n"
