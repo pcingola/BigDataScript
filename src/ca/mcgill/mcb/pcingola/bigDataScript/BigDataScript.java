@@ -1026,32 +1026,52 @@ public class BigDataScript {
 	 */
 	void showHelp() {
 		StringBuilder sb = new StringBuilder();
+		String formatOpt = "%s %s";
 
 		// Find all variable's help
 		List<String> varNames = new ArrayList<String>();
 		List<String> varHelps = new ArrayList<String>();
-		int maxVarNameLen = 0;
+		List<String> varTypes = new ArrayList<String>();
+		int maxOptLen = 0;
 
 		for (Statement s : programUnit.getStatements()) {
 			// Is it a variable declaration?
 			if (s instanceof VarDeclaration) {
-				VarDeclaration varDecl = (VarDeclaration) s;
-				for (VariableInit vi : varDecl.getVarInit()) {
 
-					// Get variable's name & help
+				VarDeclaration varDecl = (VarDeclaration) s;
+				Type type = varDecl.getType();
+				String typeStr = null;
+
+				// Show types
+				if (type.isBool()) typeStr = "";
+				else if (type.isInt()) typeStr = "<int>";
+				else if (type.isReal()) typeStr = "<real>";
+				else if (type.isString()) typeStr = "<string>";
+				else if (type.isList(Type.STRING)) typeStr = "<string,string,string>";
+
+				if (typeStr == null) continue;
+
+				// Get variable's name & help
+				for (VariableInit vi : varDecl.getVarInit()) {
 					if (vi != null && vi.getVarName() != null && vi.getHelp() != null) {
 						varNames.add(vi.getVarName());
 						varHelps.add(vi.getHelp());
-						maxVarNameLen = Math.max(maxVarNameLen, vi.getVarName().length());
+						varTypes.add(typeStr);
+
+						// Format output and calculate length
+						int optLen = String.format(formatOpt, vi.getVarName(), typeStr).length();
+						maxOptLen = Math.max(maxOptLen, optLen);
 					}
 				}
 			}
 		}
 
 		// Show using appropriately formated string
-		String format = "\t%-" + maxVarNameLen + "s : %s\n";
-		for (int i = 0; i < varNames.size(); i++)
-			sb.append(String.format(format, varNames.get(i), varHelps.get(i)));
+		for (int i = 0; i < varNames.size(); i++) {
+			int len = maxOptLen - varNames.get(i).length();
+			String format = "\t-%s %-" + len + "s : %s\n";
+			sb.append(String.format(format, varNames.get(i), varTypes.get(i), varHelps.get(i)));
+		}
 
 		// Show sommand line options
 		if (sb.length() > 0) sb.insert(0, "Command line options '" + Gpr.baseName(programFileName) + "' :\n");

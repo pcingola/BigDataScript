@@ -4,9 +4,12 @@ int num = 3		help Number of times 'hi' should be printed
 int min			help Help for argument 'min' should be printed here
 mean := 5		help Help for argument 'mean' should be printed here
 someVeryLongCommandLineArgumentName := true    help This command line argument has a really long name
+salutation := "hi"	help Salutation to use
+useTab := false	help Use tab before printing line
 
 for( int i=0 ; i < num ; i++ ) {
-	print "hi $i\n"
+	if( useTab ) print "\t"
+	print "$salutation $i\n"
 }
 
 print "Done\n"
