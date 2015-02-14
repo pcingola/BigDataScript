@@ -1047,7 +1047,7 @@ public class BigDataScript {
 				else if (type.isInt()) typeStr = "<int>";
 				else if (type.isReal()) typeStr = "<real>";
 				else if (type.isString()) typeStr = "<string>";
-				else if (type.isList(Type.STRING)) typeStr = "<string , ... , string>";
+				else if (type.isList(Type.STRING)) typeStr = "<string ... string>";
 
 				if (typeStr == null) continue;
 

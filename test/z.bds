@@ -6,6 +6,9 @@ mean := 5		help Help for argument 'mean' should be printed here
 someVeryLongCommandLineArgumentName := true    help This command line argument has a really long name
 salutation := "hi"	help Salutation to use
 useTab := false	help Use tab before printing line
+string[] files  help Files to be analyzed
+
+for( string f : files) print "file: '$f'\n"
 
 for( int i=0 ; i < num ; i++ ) {
 	if( useTab ) print "\t"
