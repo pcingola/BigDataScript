@@ -17,5 +17,6 @@ rm -rvf \
 	failOnce.* \
 	test/tmp*.txt \
 	tmp*.txt \
+	*.dag.js \
 	`find . -iname "*.chp"` \
 
