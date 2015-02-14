@@ -2516,13 +2516,13 @@ Debug test_25.bds, line 12: Variable: 2
 				Running the command line without any arguments, shows a help message
 <pre class="prettyprint">
 $ bds
-BigDataScript 0.999c (build 2015-01-08), by Pablo Cingolani
+BigDataScript 0.999e (build 2015-02-13), by Pablo Cingolani
 
 Usage: BigDataScript [options] file.bds
 
 Available options: 
   [-c | -config ] bds.config     : Config file. Default : /Users/pcingola/.bds/bds.config
-  [-checkPidRegex]               : Check configuration 'pidRegex' by matching stdin.
+  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.
   [-d | -debug  ]                : Debug mode.
   -done                          : Use 'done' files: Default: false
   -dryRun                        : Do not run any task, just show what would be run.
@@ -2532,12 +2532,14 @@ Available options:
   -noReport                      : Do not create report.
   -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).
   [-q | -queue  ] queueName      : Set default queue name.
+  -quiet                         : Do not show any messages or tasks outputs on STDOUT.
   [-r | -restore] checkpoint.chp : Restore state from checkpoint file.
   [-s | -system ] type           : Set system type.
   [-t | -test   ]                : Perform testing (run all test* functions).
   [-v | -verbose]                : Be verbose.
+  -version                       : Show version and exit.
   [-y | -retry  ] num            : Number of times to retry a failing tasks.
-  -pid file                      : Write local processes PIDs to 'file'
+  -pid <file>                    : Write local processes PIDs to 'file'
 </pre>
 				<table class="table table-striped">
 					<tr> <th> Option short </th><th> Option long </th> <th> Meaning </th> </tr>
@@ -2550,6 +2552,7 @@ Available options:
 					<tr> <td>    </td> <td> -noReport </td> <td> Do not create HTML report when execution finishes. </td> </tr>
 					<tr> <td>    </td> <td> -noRmOnExit </td> <td> Do not remove files marked for deletion on exit (rmOnExit). </td> </tr>
 					<tr> <td> -q </td> <td> -queue </td> <td> Set default cluster's queue name. </td> </tr>
+					<tr> <td>    </td> <td> -quiet </td> <td> Do not show any messages or tasks outputs on STDOUT. This means that only the output from <code>print</code> (and other print-like bds statements), statements will be shown on the console </td> </tr>
 					<tr> <td> -r </td> <td> -restore </td> <td> Restore from a acheckpoiunt and continue execution.</td> </tr>
 					<tr> <td> -s </td> <td> -system </td> <td> Define the 'system' type the script is running on (e.g. cluster type) </td> </tr>
 					<tr> <td> -t </td> <td> -test </td> <td> Perform all tests in a script (i.e. run all functions that are called "test*") </td> </tr>
