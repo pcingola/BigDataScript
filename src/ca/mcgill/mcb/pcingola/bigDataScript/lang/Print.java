@@ -2,8 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
-import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
@@ -44,17 +42,6 @@ public class Print extends Exit {
 
 		if (bdsThread.isCheckpointRecover()) return;
 		if (!msg.isEmpty()) System.out.print(msg);
-	}
-
-	@Override
-	public String toString() {
-		return "print " + expr;
-	}
-
-	@Override
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		returnType(scope);
-		if ((expr.getReturnType() != null) && (!expr.getReturnType().canCast(Type.STRING))) compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + Type.STRING, MessageType.ERROR);
 	}
 
 }

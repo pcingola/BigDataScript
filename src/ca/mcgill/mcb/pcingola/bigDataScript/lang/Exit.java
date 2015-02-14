@@ -59,7 +59,9 @@ public class Exit extends Statement {
 
 	@Override
 	public String toString() {
-		return "exit " + expr;
+		return getClass().getSimpleName().toLowerCase() //
+				+ (expr != null ? " " + expr : "") //
+				;
 	}
 
 	@Override

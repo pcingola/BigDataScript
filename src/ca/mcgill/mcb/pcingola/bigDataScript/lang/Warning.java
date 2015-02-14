@@ -33,9 +33,4 @@ public class Warning extends Error {
 		Timer.showStdErr("Warning" + (!msg.isEmpty() ? ": " + msg : ""));
 	}
 
-	@Override
-	public String toString() {
-		return "warning " + expr;
-	}
-
 }
