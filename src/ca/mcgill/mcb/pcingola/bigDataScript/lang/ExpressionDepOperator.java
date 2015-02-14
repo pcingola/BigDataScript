@@ -41,11 +41,11 @@ public class ExpressionDepOperator extends Expression {
 		List<String> rightEval = (List<String>) bdsThread.pop();
 		List<String> leftEval = (List<String>) bdsThread.pop();
 
+		// Create task dependency and add all results
 		TaskDependency taskDependency = new TaskDependency(this);
 		taskDependency.addOutput(leftEval);
 		taskDependency.addInput(rightEval);
 
-		bdsThread.isDebug();
 		return taskDependency;
 	}
 
@@ -95,6 +95,7 @@ public class ExpressionDepOperator extends Expression {
 		TaskDependency taskDependency = evalTaskDependency(bdsThread);
 		if (bdsThread.isCheckpointRecover()) return;
 
+		taskDependency.setDebug(bdsThread.isDebug());
 		boolean dep = taskDependency.depOperator();
 		bdsThread.push(dep);
 	}

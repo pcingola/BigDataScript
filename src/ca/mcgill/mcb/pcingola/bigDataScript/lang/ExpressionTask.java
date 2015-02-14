@@ -210,8 +210,10 @@ public class ExpressionTask extends ExpressionWithScope {
 				return;
 			}
 
-			// Needs update
+			// Needs update?
+			taskDependency.setDebug(bdsThread.isDebug());
 			boolean needsUpdate = taskDependency.depOperator();
+
 			if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=" + needsUpdate + "): " + taskDependency);
 			if (!needsUpdate) {
 				// Task options clause not satisfied. Do not execute task => Return empty taskId

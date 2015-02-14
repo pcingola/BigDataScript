@@ -103,59 +103,79 @@ public class TaskDependency {
 		// Empty dependency is always true
 		if (outputFiles.isEmpty() && inputFiles.isEmpty()) return true;
 
+		//---
 		// Left hand side
 		// Calculate minimum modification time
+		//---
+
 		long minModifiedLeft = Long.MAX_VALUE;
 		for (String fileName : outputFiles) {
 			File file = new File(fileName);
 
 			// Any 'left' file does not exists? => We need to build this dependency
 			if (!file.exists()) {
-				if (debug && (expresison != null)) expresison.log("Left file '" + fileName + "' doesn't exist");
+				if (debug && (expresison != null)) expresison.log("Left hand side: file '" + fileName + "' doesn't exist");
 				return true;
 			}
 
 			if (file.isFile() && file.length() <= 0) {
-				if (debug && (expresison != null)) expresison.log("Left file '" + fileName + "' is empty");
+				if (debug && (expresison != null)) expresison.log("Left hand side: file '" + fileName + "' is empty");
 				return true; // File is empty? => We need to build this dependency.
 			} else if (file.isDirectory()) {
 				// Notice: If it is a directory, we must rebuild if it is empty
 				File dirList[] = file.listFiles();
 				if ((dirList == null) || dirList.length <= 0) {
-					if (debug && (expresison != null)) expresison.log("Left file '" + fileName + "' is empty");
+					if (debug && (expresison != null)) expresison.log("Left hand side: file '" + fileName + "' is empty");
 					return true;
 				}
 			}
 
-			minModifiedLeft = Math.min(minModifiedLeft, file.lastModified());
+			// Analyze modification time
+			long modTime = file.lastModified();
+			minModifiedLeft = Math.min(minModifiedLeft, modTime);
+			if (debug) expresison.log("Left hand side: file '" + fileName + "' modified on " + modTime + ". Min modification time: " + minModifiedLeft);
 		}
 
+		//---
 		// Right hand side
-		// Calculate minimum modification time
+		// Calculate maximum modification time
+		//---
+
 		long maxModifiedRight = Long.MIN_VALUE;
 		for (String fileName : inputFiles) {
 			File file = new File(fileName);
 
+			// Is this file scheduled to be modified by a pending task? => Time will change => We'll need to update
+			List<Task> taskOutList = TaskDependecies.get().getTasksByOutput(fileName);
+			if (taskOutList != null && !taskOutList.isEmpty()) {
+				for (Task t : taskOutList) {
+					// If the task modifying 'file' is not finished => We'll need to update
+					if (!t.isDone()) {
+						if (debug) expresison.log("Right hand side: file '" + fileName + "' will be modified by task '" + t.getId() + "' (task state: '" + t.getTaskState() + "')");
+						return true;
+					}
+				}
+			}
+
 			if (file.exists()) {
 				// Update max time
-				maxModifiedRight = Math.max(maxModifiedRight, file.lastModified());
+				long modTime = file.lastModified();
+				maxModifiedRight = Math.max(maxModifiedRight, modTime);
+				if (debug) expresison.log("Right hand side: file '" + fileName + "' modified on " + modTime + ". Max modification time: " + maxModifiedRight);
 			} else {
 				// Make sure that we schedule the task if the input file doesn't exits
 				// The reason to do this, is that probably the input file was defined
 				// by some other task that is pending execution.
-				if (debug && (expresison != null)) expresison.log("Right file '" + fileName + "' doesn't exist");
+				if (debug && (expresison != null)) expresison.log("Right hand side: file '" + fileName + "' doesn't exist");
 				return true;
 			}
 		}
 
 		// Have all 'left' files been modified before 'right' files?
 		// I.e. Have all goals been created after the input files?
-		if (minModifiedLeft < maxModifiedRight) {
-			if (debug && (expresison != null)) expresison.log("Modification times, minModifiedLeft (" + minModifiedLeft + ") < maxModifiedRight (" + maxModifiedRight + ")");
-			return true;
-		}
-
-		return false;
+		boolean ret = (minModifiedLeft < maxModifiedRight);
+		if (debug) expresison.log("Modification times, minModifiedLeft (" + minModifiedLeft + ") < maxModifiedRight (" + maxModifiedRight + "): " + ret);
+		return ret;
 	}
 
 	public List<String> getInputFiles() {
