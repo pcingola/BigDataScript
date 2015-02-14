@@ -1,6 +1,7 @@
 #!/usr/bin/env bds
 
 print "OK 0: Start\n"
+# This should be an error, since 'debug' is a statement, not a variable name
 debug := false
 print "OK 1: Done\n"
 

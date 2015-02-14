@@ -2,6 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
@@ -10,10 +12,18 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  *
  * @author pcingola
  */
-public class Print extends Exit {
+public class Print extends Statement {
+
+	Expression expr;
 
 	public Print(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	protected void parse(ParseTree tree) {
+		// child[0] = 'print'
+		if (tree.getChildCount() > 1) expr = (Expression) factory(tree, 1);
 	}
 
 	@Override
@@ -42,6 +52,25 @@ public class Print extends Exit {
 
 		if (bdsThread.isCheckpointRecover()) return;
 		if (!msg.isEmpty()) System.out.print(msg);
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName().toLowerCase() //
+				+ (expr != null ? " " + expr : "") //
+		;
+	}
+
+	@Override
+	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+		returnType(scope);
+
+		if ((expr != null) //
+				&& (expr.getReturnType() != null) //
+				&& (!expr.getReturnType().canCast(returnType)) //
+		) {
+			compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
+		}
 	}
 
 }

@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 
 /**
  * This code is mostly from BailErrorStrategy
- * 
+ *
  * @author pcingola
  */
 public class CompileErrorStrategy extends DefaultErrorStrategy {
@@ -29,6 +29,7 @@ public class CompileErrorStrategy extends DefaultErrorStrategy {
 		CompilerMessage cm = new CompilerMessage(e.getOffendingToken().getInputStream().getSourceName(), e.getOffendingToken().getLine(), -1, message, MessageType.ERROR);
 		CompilerMessages.get().add(cm);
 
+		// Add exception to all contexts
 		for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent())
 			context.exception = e;
 
@@ -46,14 +47,15 @@ public class CompileErrorStrategy extends DefaultErrorStrategy {
 		CompilerMessage cm = new CompilerMessage(e.getOffendingToken().getInputStream().getSourceName(), e.getOffendingToken().getLine(), -1, message, MessageType.ERROR);
 		CompilerMessages.get().add(cm);
 
+		// Add exception to all contexts
 		for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent())
 			context.exception = e;
 
 		throw new ParseCancellationException(e);
 	}
 
-	/** Make sure we don't attempt to recover from problems in subrules. */
-	@Override
-	public void sync(Parser recognizer) {
-	}
+	//	/** Make sure we don't attempt to recover from problems in subrules. */
+	//	@Override
+	//	public void sync(Parser recognizer) {
+	//	}
 }

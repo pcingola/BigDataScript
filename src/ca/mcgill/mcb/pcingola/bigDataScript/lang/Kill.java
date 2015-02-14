@@ -53,7 +53,7 @@ public class Kill extends Statement {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName().toLowerCase() + (taskId != null ? taskId : "") + "\n";
+		return this.getClass().getSimpleName().toLowerCase() + (taskId != null ? " " + taskId : "") + "\n";
 	}
 
 }

@@ -22,6 +22,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptLexer;
 import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptParser;
 import ca.mcgill.mcb.pcingola.bigDataScript.antlr.BigDataScriptParser.IncludeFileContext;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompileErrorStrategy;
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerErrorListener;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.TypeCheckedNodes;
@@ -68,7 +69,7 @@ public class BigDataScript {
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
 	public static final String BUILD = "2015-02-14";
-	public static final String REVISION = "f";
+	public static final String REVISION = "g";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -124,7 +125,9 @@ public class BigDataScript {
 			// Create a CharStream that reads from standard input
 			ANTLRFileStream input = new ANTLRFileStream(fileName);
 
-			// Create a lexer that feeds off of input CharStream
+			//---
+			// Lexer: Create a lexer that feeds off of input CharStream
+			//---
 			lexer = new BigDataScriptLexer(input) {
 				@Override
 				public void recover(LexerNoViableAltException e) {
@@ -132,11 +135,18 @@ public class BigDataScript {
 				}
 			};
 
+			//---
+			// Parser
+			//---
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			parser = new BigDataScriptParser(tokens);
-			parser.setErrorHandler(new CompileErrorStrategy()); // bail out with exception if errors in parser
 
-			ParseTree tree = parser.programUnit(); // Begin parsing at main rule
+			// Parser error handling
+			parser.setErrorHandler(new CompileErrorStrategy()); // Bail out with exception if errors in parser
+			parser.addErrorListener(new CompilerErrorListener()); // Catch some other error messages that 'CompileErrorStrategy' fails to catch
+
+			// Begin parsing at main rule
+			ParseTree tree = parser.programUnit();
 
 			// Error loading file?
 			if (tree == null) {
