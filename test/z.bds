@@ -14,12 +14,23 @@ void doStuff(string dir) {
 	}
 }
 
+#---
 # Main
-#sys rm -rvf $HOME/zzz ; mkdir -p $HOME/zzz/par; mkdir -p $HOME/zzz/par2
+#---
 
-par doStuff("$HOME/zzz/par")
-par doStuff("$HOME/zzz/par2")
-doStuff("$HOME/zzz")
+
+dir := "$HOME/zzz"
+task echo Hi $dir
+#sys rm -rvf $dir
+
+doStuff(dir)
+
+# Parallel
+#dirs := [ "$dir/par", "$dir/par2"]
+#for( string dir : dirs ) {
+	#dirs.mkdir()
+	#par doStuff("$HOME/zzz/par")
+#}
 
 wait
 print "Done\n"

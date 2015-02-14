@@ -6,6 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * If statement
@@ -77,12 +78,12 @@ public class If extends Statement {
 		sb.append("if( ");
 		if (condition != null) sb.append(condition);
 		sb.append(" ) {\n");
-		sb.append(statement);
+		sb.append(Gpr.prependEachLine("\t", statement.toString()));
 		if (elseStatement != null) {
 			sb.append("\n} else {\n");
-			sb.append(elseStatement);
+			sb.append(Gpr.prependEachLine("\t", elseStatement.toString()));
 		}
-		sb.append("\n}\n");
+		sb.append("\n}");
 
 		return sb.toString();
 	}

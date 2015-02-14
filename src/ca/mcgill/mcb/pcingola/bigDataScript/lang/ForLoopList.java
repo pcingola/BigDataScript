@@ -13,6 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
@@ -169,6 +170,14 @@ public class ForLoopList extends StatementWithScope {
 				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "for( " + beginVarDecl + " : " + expression + " ) {\n" //
+				+ Gpr.prependEachLine("\t", statement.toString()) //
+				+ "}" //
+		;
 	}
 
 	@Override

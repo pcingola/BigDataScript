@@ -10,6 +10,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Function declaration
@@ -181,9 +182,9 @@ public class FunctionDeclaration extends StatementWithScope {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(returnType + " " + functionName + "( " + parameters + " )\t{\n");
-		sb.append(statement);
-		sb.append("}\n");
+		sb.append(returnType + " " + functionName + "( " + parameters + " ) {\n");
+		sb.append(Gpr.prependEachLine("\t", statement.toString()));
+		sb.append("}");
 		return sb.toString();
 	}
 

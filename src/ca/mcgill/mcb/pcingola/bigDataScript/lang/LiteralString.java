@@ -22,6 +22,10 @@ public class LiteralString extends Literal {
 		super(parent, tree);
 	}
 
+	public String getValue() {
+		return value;
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		String valueStr = tree.getChild(0).getText();

@@ -13,6 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependency;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -151,12 +152,12 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	@Override
-	public boolean isStopDebug() {
+	protected boolean isReturnTypesNotNull() {
 		return true;
 	}
 
 	@Override
-	protected boolean isReturnTypesNotNull() {
+	public boolean isStopDebug() {
 		return true;
 	}
 
@@ -202,16 +203,18 @@ public class ExpressionTask extends ExpressionWithScope {
 
 			if (bdsThread.isCheckpointRecover()) return;
 
-			if (bdsThread.isDebug()) log("task-options check " + (taskDependency != null ? taskDependency : "null"));
 			if (taskDependency == null) {
-				// Task options clause not satisfied. Do not execute task
+				// Task options clause not satisfied. Do not execute task => Return empty taskId
+				if (bdsThread.isDebug()) log("Task dependency check: null");
 				bdsThread.push("");
 				return;
 			}
 
+			// Needs update
 			boolean needsUpdate = taskDependency.depOperator();
+			if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=" + needsUpdate + "): " + taskDependency);
 			if (!needsUpdate) {
-				// Task options clause not satisfied. Do not execute task
+				// Task options clause not satisfied. Do not execute task => Return empty taskId
 				bdsThread.push("");
 				return;
 			}
@@ -250,7 +253,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-				;
+						;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
@@ -259,7 +262,28 @@ public class ExpressionTask extends ExpressionWithScope {
 
 	@Override
 	public String toString() {
-		return "task " + (taskOptions != null ? taskOptions : "") + " " + statement;
+		String statementStr = "";
+
+		// How to show statements
+		if (statement instanceof LiteralString) {
+			// Compact single line
+			statementStr = ((LiteralString) statement).getValue().trim();
+		} else if (statement instanceof ExpressionSys || statement instanceof StatementExpr) {
+			// Compact single line form
+			statementStr = statement.toString();
+		} else {
+			// Multiline
+			statementStr = "{\n" //
+					+ Gpr.prependEachLine("\t", statement.toString()) //
+					+ "}" //
+					;
+		}
+
+		return "task" //
+				+ (taskOptions != null ? taskOptions : "") //
+				+ " " //
+				+ statementStr //
+				;
 	}
 
 	@Override
