@@ -68,6 +68,7 @@ public class Config {
 	boolean noRmOnExit = false; // Avoid removing files on exit
 	boolean createReport = true; // Create report when thread finishes
 	boolean extractSource = false;
+	boolean yamlReport = false; // Use YAML report format
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
 	int waitAfterTaskRun = -1; // Wait some milisecs after task run
@@ -324,6 +325,10 @@ public class Config {
 		return verbose;
 	}
 
+	public boolean isYamlReport() {
+		return yamlReport;
+	}
+
 	public void kill() {
 		if (tail != null) {
 			tail.kill(); // Kill tail process
@@ -411,6 +416,10 @@ public class Config {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+	}
+
+	public void setYamlReport(boolean yamlReport) {
+		this.yamlReport = yamlReport;
 	}
 
 	@Override

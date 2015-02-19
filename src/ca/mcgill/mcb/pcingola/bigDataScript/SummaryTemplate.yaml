@@ -15,9 +15,9 @@ exitValue: {{exitValue}}
 - [{{threadIdNum}}, {{threadParentNum}} ] 
 
 # Task details
-[ taskNum , taskName , taskThreadNum , taskPid , taskOk , taskExitCode , taskRetry , taskState , taskDepState , taskCpus , taskMem , taskStart , taskEnd , taskElapsed , taskTimeout , taskWallTimeout , taskInFiles , taskOutFiles , taskDep , taskCheckOut ]
-[ {{taskNum}} , {{taskName}} , {{taskThreadNum}} , {{taskPid}} , {{taskOk}} , {{taskExitCode}} , {{taskRetry}} , {{taskState}} , {{taskDepState}} , {{taskCpus}} , {{taskMem}} , {{taskStart}} , {{taskEnd}} , {{taskElapsed}} , {{taskTimeout}} , {{taskWallTimeout}} , {{taskInFiles}} , {{taskOutFiles}} , {{taskDep}} , {{taskCheckOut}} ]
+- [ taskNum , taskName , taskThreadNum , taskPid , taskOk , taskExitCode , taskRetry , taskState , taskDepState , taskCpus , taskMem , taskStart , taskEnd , taskElapsed , taskTimeout , taskWallTimeout , taskInFiles , taskOutFiles , taskDep , taskCheckOut ]
+- [ {{taskNum}} , {{taskName}} , {{taskThreadNum}} , {{taskPid}} , {{taskOk}} , {{taskExitCode}} , {{taskRetry}} , {{taskState}} , {{taskDepState}} , {{taskCpus}} , {{taskMem}} , {{taskStart}} , {{taskEnd}} , {{taskElapsed}} , {{taskTimeout}} , {{taskWallTimeout}} , {{taskInFiles}} , {{taskOutFiles}} , {{taskDep}} , {{taskCheckOut}} ]
 
 # Global scope
-[ type , name , value ]
-[ {{symType}} , {{symName}} , {{symValue}} ]
+- [ type , name , value ]
+- [ {{symType}} , {{symName}} , {{symValue}} ]

@@ -87,6 +87,7 @@ public class BigDataScript {
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
 	boolean useDoneFile; // Use files instead of comparing dates
 	boolean verbose; // Verbose mode
+	boolean yamlReport; // Use YAML report style
 	int taskFailCount = -1;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
 	String chekcpointRestoreFile; // Restore file
@@ -173,7 +174,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-					);
+			);
 			return null;
 		}
 	}
@@ -411,6 +412,9 @@ public class BigDataScript {
 		config.setNoRmOnExit(noRmOnExit);
 		config.setCreateReport(createReport);
 		config.setExtractSource(extractSource);
+		config.setVerbose(verbose);
+		config.setYamlReport(yamlReport);
+
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
 			else pidFile = chekcpointRestoreFile + ".pid";
@@ -828,6 +832,7 @@ public class BigDataScript {
 				if ((i + 1) < args.length) taskFailCount = Gpr.parseIntSafe(args[++i]);
 				else usage("Option '-t' without number argument");
 			} else if (arg.equals("-v") || arg.equalsIgnoreCase("-verbose")) verbose = true;
+			else if (arg.equalsIgnoreCase("-yaml")) yamlReport = true;
 			else if (arg.equalsIgnoreCase("-version")) {
 				System.out.println(VERSION);
 				System.exit(0);
@@ -999,7 +1004,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-				);
+		);
 		return exitCode;
 	}
 

@@ -57,6 +57,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public static final String DATE_FORMAT_CSV = "yyyy,MM,dd,HH,mm,ss";
 	public static final String DATE_FORMAT_HTML = "yyyy-MM-dd HH:mm:ss";
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
+	public static String REPORT_TEMPLATE_YAML = "SummaryTemplate.yaml";
 	public static String DAG_TEMPLATE = "DagTaskTemplate.js";
 	public static final String REPORT_RED_COLOR = "style=\"background-color: #ffc0c0\"";
 	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
@@ -256,14 +257,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			return;
 		}
 
-		String outFile = getBdsThreadId() + ".report.html";
+		String outFile = getBdsThreadId() + ".report." + (config.isYamlReport() ? "yaml" : "html");
 		String dagJsFile = getBdsThreadId() + ".dag.js";
 		if (isVerbose()) Timer.showStdErr("Writing report file '" + outFile + "'");
 
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
 		// Create a template
-		RTemplate rTemplate = new RTemplate(BigDataScript.class, REPORT_TEMPLATE, outFile);
+		RTemplate rTemplate = new RTemplate(BigDataScript.class, (config.isYamlReport() ? REPORT_TEMPLATE_YAML : REPORT_TEMPLATE), outFile);
 
 		//---
 		// Add summary table values
@@ -327,7 +328,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		rTemplate.createOuptut();
 
 		// Create DAG script
-		createTaskDag(dagJsFile);
+		if (!config.isYamlReport()) createTaskDag(dagJsFile);
 	}
 
 	/**
@@ -577,7 +578,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-				;
+		;
 
 		//---
 		// Wait for options
@@ -651,7 +652,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-				) {
+		) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -1114,7 +1115,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1213,7 +1214,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
-					);
+			);
 		}
 	}
 
