@@ -52,6 +52,7 @@ public class Task implements BigDataScriptSerialize {
 	protected String stdoutFile, stderrFile, exitCodeFile; // STDOUT, STDERR & exit code Files
 	protected String errorMsg; // Error messages
 	protected String postMortemInfo; // Error information about task that failed
+	protected String taskName = ""; // Task name (can be set by programmer)
 	protected Date runningStartTime, runningEndTime;
 	protected TaskState taskState;
 	protected HostResources resources; // Resources to be consumes when executing this task
@@ -129,7 +130,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) return true;
+					) return true;
 			return false;
 
 		default:
@@ -290,6 +291,7 @@ public class Task implements BigDataScriptSerialize {
 	}
 
 	public String getName() {
+		if (taskName != null && !taskName.isEmpty()) return taskName;
 		return Gpr.baseName(id);
 	}
 
@@ -361,6 +363,10 @@ public class Task implements BigDataScriptSerialize {
 
 	public String getStdoutFile() {
 		return stdoutFile;
+	}
+
+	public String getTaskName() {
+		return taskName;
 	}
 
 	public TaskState getTaskState() {
@@ -580,6 +586,10 @@ public class Task implements BigDataScriptSerialize {
 		this.taskDependency = taskDependency;
 	}
 
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
+
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
@@ -634,7 +644,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) {
+					) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;
@@ -667,6 +677,7 @@ public class Task implements BigDataScriptSerialize {
 
 		if (verbose) {
 			sb.append("\tProgram & line     : '" + bdsFileName + "', line " + bdsLineNum + "\n");
+			sb.append("\tTask Name          : '" + taskName + "'\n");
 			sb.append("\tTask ID            : '" + id + "'\n");
 			sb.append("\tTask PID           : '" + pid + "'\n");
 			sb.append("\tTask hint          : '" + getProgramHint() + "'\n");

@@ -62,6 +62,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
 	public static final String LINE = "--------------------";
 
+	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
+
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
 
 	private static int threadNumber = 1;
@@ -289,6 +291,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Number of tasks executed
 		rTemplate.add("taskCount", taskNum - 1);
 		rTemplate.add("taskFailed", taskDependecies.countTaskFailed());
+		rTemplate.add("taskFailedNames", taskDependecies.taskFailedNames(MAX_TASK_FAILED_NAMES, "\n"));
 
 		// Timeline height
 		int timelineHeight = REPORT_TIMELINE_HEIGHT * (1 + taskNum);
@@ -341,12 +344,17 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		rTemplate.add("threadParent", parenId);
 		rTemplate.add("threadParentNum", parenIdNum);
 
-		// DAG
-		rTemplate.add("threadDepEdgeId", parenIdNum + "-" + thisIdNum);
-		rTemplate.add("threadDepSource", parenIdNum);
-		rTemplate.add("threadDepTarget", thisIdNum);
+		//---
+		// Graph
+		//---
+		rTemplate.add("threadGraphIdNum", thisIdNum);
+		rTemplate.add("threadGraphEdgeId", parenIdNum + "-" + thisIdNum);
+		rTemplate.add("threadGraphEdgeSource", parenIdNum);
+		rTemplate.add("threadGraphEdgeTarget", thisIdNum);
 
+		//---
 		// Add tasks
+		//---
 		StringBuilder sb = new StringBuilder();
 		for (Task t : bdsThread.getTasks())
 			sb.append(t.getId() + "\n");
@@ -367,11 +375,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		rTemplate.add("taskNum", "" + taskNum);
 		rTemplate.add("taskId", task.getId());
-		rTemplate.add("taskIdBase", Gpr.baseName(task.getId()));
-		rTemplate.add("taskThreadNum", threadIdNum(bdsThread));
-		rTemplate.add("taskThreadId", (bdsThread != null ? bdsThread.getBdsThreadId() : ""));
-		rTemplate.add("taskPid", task.getPid());
 		rTemplate.add("taskName", task.getName());
+		rTemplate.add("taskThreadId", (bdsThread != null ? bdsThread.getBdsThreadId() : ""));
+		rTemplate.add("taskThreadNum", threadIdNum(bdsThread));
+		rTemplate.add("taskPid", task.getPid());
 		rTemplate.add("taskOk", "" + task.isDoneOk());
 		rTemplate.add("taskExitCode", "" + task.getExitValue());
 		rTemplate.add("taskState", "" + task.getTaskState());
@@ -442,11 +449,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (task.getDependencies() != null) {
 			for (Task t : task.getDependencies()) {
 				sbdep.append(t.getName() + "\n");
-				String tid = Gpr.baseName(task.getId());
-				String parenTid = Gpr.baseName(t.getId());
-				rTemplate.add("taskDepEdgeId", parenTid + "-" + tid);
-				rTemplate.add("taskDepSource", parenTid);
-				rTemplate.add("taskDepTarget", tid);
 			}
 		}
 		rTemplate.add("taskDep", sbdep.toString());
@@ -482,6 +484,21 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskCpus", "");
 			rTemplate.add("taskMem", "");
 		}
+
+		//---
+		// Graph plot
+		//---
+		rTemplate.add("taskGraphName", task.getName());
+		rTemplate.add("taskGraphThreadNum", threadIdNum(bdsThread));
+		if (task.getDependencies() != null) {
+			for (Task t : task.getDependencies()) {
+				String taskName = task.getName();
+				String parenTaskName = t.getName();
+				rTemplate.add("taskGraphEdgeName", parenTaskName + "-" + taskName);
+				rTemplate.add("taskGraphEdgeSource", parenTaskName);
+				rTemplate.add("taskGraphEdgeTarget", taskName);
+			}
+		}
 	}
 
 	/**
@@ -501,10 +518,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		for (Task task : TaskDependecies.get().getTasks())
 			createReport(rTemplate, task, taskNum++);
 
-		//
-		rTemplate.add("taskDepEdgeId", "id-id");
-		rTemplate.add("taskDepSource", "id");
-		rTemplate.add("taskDepTarget", "id");
+		// Add at least one fake edge, so rTemplate doesn't fail
+		rTemplate.add("threadGraphEdgeId", "threadid-threadid");
+		rTemplate.add("threadGraphEdgeSource", "threadid");
+		rTemplate.add("threadGraphEdgeTarget", "threadid");
+
+		rTemplate.add("taskGraphEdgeName", "taskid-taskid");
+		rTemplate.add("taskGraphEdgeSource", "taskid");
+		rTemplate.add("taskGraphEdgeTarget", "taskid");
 
 		// Create output file
 		rTemplate.createOuptut();
@@ -1190,6 +1211,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", exit value: " + getExitValue() //
 					+ ", tasks executed: " + td.getTasks().size() //
 					+ ", tasks failed: " + td.countTaskFailed() //
+					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
 					);
 		}

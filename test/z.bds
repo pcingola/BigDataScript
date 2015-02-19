@@ -1,6 +1,8 @@
 #!/usr/bin/env bds
 
-print "OK 0: Start\n"
-debug := false
-print "OK 1: Done\n"
 
+for( int i=0 ; i < 10 ; i++ ) {
+	task( taskName := "task with name $i" ) {
+		sys echo Task $i ; rm asdfasdfads
+	}
+}

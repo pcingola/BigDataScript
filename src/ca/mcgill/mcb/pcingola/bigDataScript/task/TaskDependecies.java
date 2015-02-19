@@ -77,7 +77,7 @@ public class TaskDependecies {
 		// Add task by ID
 		tasksById.put(task.getId(), task);
 
-		// Add task 
+		// Add task
 		tasks.add(task);
 
 		// Add task by output files
@@ -369,6 +369,21 @@ public class TaskDependecies {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * A string of at most 'num' task names of tasks that failed
+	 */
+	public String taskFailedNames(int num, String sep) {
+		StringBuilder sb = new StringBuilder();
+		for (Task task : tasksById.values()) {
+			if (task.isFailed() && !task.isCanFail()) {
+				if (sb.length() > 0) sb.append(sep);
+				sb.append(task.getName());
+			}
+		}
+
+		return sb.toString();
 	}
 
 	@Override

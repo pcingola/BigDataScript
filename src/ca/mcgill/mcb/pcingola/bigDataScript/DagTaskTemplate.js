@@ -31,12 +31,12 @@ var cy = cytoscape({
   
   elements: {
     nodes: [
-      { data: { id: '{{threadIdNum}}' } },
-      { data: { id: '{{taskIdBase}}', parent: '{{taskThreadNum}}' } },
+      { data: { id: '{{threadGraphIdNum}}' } },
+      { data: { id: '{{taskGraphName}}', parent: '{{taskGraphThreadNum}}' } },
     ],
     edges: [
-      { data: { id: '{{threadDepEdgeId}}', source: '{{threadDepSource}}', target: '{{threadDepTarget}}' } },
-      { data: { id: '{{taskDepEdgeId}}', source: '{{taskDepSource}}', target: '{{taskDepTarget}}' } },
+      { data: { id: '{{threadGraphEdgeId}}', source: '{{threadGraphEdgeSource}}', target: '{{threadGraphEdgeTarget}}' } },
+      { data: { id: '{{taskGraphEdgeName}}', source: '{{taskGraphEdgeSource}}', target: '{{taskGraphEdgeTarget}}' } },
     ]
   },
   

@@ -33,6 +33,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_QUEUE = "queue";
 	public static final String TASK_OPTION_RETRY = "retry";
 	public static final String TASK_OPTION_SYSTEM = "system";
+	public static final String TASK_OPTION_TASKNAME = "taskName";
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
 
@@ -83,13 +84,18 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Configure Task parameters
 		task.setVerbose(bdsThread.getConfig().isVerbose());
 		task.setDebug(bdsThread.getConfig().isDebug());
+
+		// Set task options
+		task.setTaskName(bdsThread.getString(TASK_OPTION_TASKNAME));
 		task.setCanFail(bdsThread.getBool(TASK_OPTION_CAN_FAIL));
 		task.setAllowEmpty(bdsThread.getBool(TASK_OPTION_ALLOW_EMPTY));
-		task.getResources().setCpus((int) bdsThread.getInt(TASK_OPTION_CPUS));
-		task.getResources().setMem(bdsThread.getInt(TASK_OPTION_MEM));
 		task.setNode(bdsThread.getString(TASK_OPTION_NODE));
 		task.setQueue(bdsThread.getString(TASK_OPTION_QUEUE));
 		task.setMaxFailCount((int) bdsThread.getInt(TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
+
+		// Set task options: Resources
+		task.getResources().setCpus((int) bdsThread.getInt(TASK_OPTION_CPUS));
+		task.getResources().setMem(bdsThread.getInt(TASK_OPTION_MEM));
 		task.getResources().setWallTimeout(bdsThread.getInt(TASK_OPTION_WALL_TIMEOUT));
 		task.getResources().setTimeout(bdsThread.getInt(TASK_OPTION_TIMEOUT));
 		if (taskDependency != null) task.setTaskDependency(taskDependency);
@@ -255,7 +261,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-				;
+						;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
@@ -268,7 +274,7 @@ public class ExpressionTask extends ExpressionWithScope {
 				+ (taskOptions != null ? taskOptions : "") //
 				+ " " //
 				+ toStringStatement() //
-		;
+				;
 	}
 
 	/**
@@ -289,7 +295,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		return "{\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //
-		;
+				;
 	}
 
 	@Override
