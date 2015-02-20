@@ -301,9 +301,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		//---
 		// Show Scope
 		//---
-		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.GLOBAL_VAR_ARGS_LIST).toString());
-		rTemplate.add("scope.TASK_OPTION_SYSTEM", getScope().getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).toString());
-		rTemplate.add("scope.TASK_OPTION_CPUS", getScope().getSymbol(ExpressionTask.TASK_OPTION_CPUS).toString());
+		rTemplate.add("scope.VAR_ARGS_LIST", getScope().getSymbol(Scope.GLOBAL_VAR_ARGS_LIST).getValue());
+		rTemplate.add("scope.TASK_OPTION_SYSTEM", getScope().getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).getValue());
+		rTemplate.add("scope.TASK_OPTION_CPUS", getScope().getSymbol(ExpressionTask.TASK_OPTION_CPUS).getValue());
 
 		// Scope symbols
 		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
@@ -311,7 +311,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		Collections.sort(ssyms);
 
 		if (!ssyms.isEmpty()) {
-
 			for (ScopeSymbol ss : ssyms)
 				if (!ss.getType().isFunction()) {
 					rTemplate.add("symType", ss.getType());
@@ -393,21 +392,21 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskColor", REPORT_RED_COLOR);
 
 			String ch = task.checkOutputFiles();
-			if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", "\n" + LINE + "Check output files" + LINE + "\n" + ch + "\n");
+			if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", multilineString("Check output files", ch));
 			else rTemplate.add("taskCheckOut", "");
 
-			if (task.getPostMortemInfo() != null && !task.getPostMortemInfo().isEmpty()) rTemplate.add("taskPostMortemInfo", "\n" + LINE + "Post mortem info" + LINE + "\n" + task.getPostMortemInfo() + "\n");
+			if (task.getPostMortemInfo() != null && !task.getPostMortemInfo().isEmpty()) rTemplate.add("taskPostMortemInfo", multilineString("Post mortem info", task.getPostMortemInfo()));
 			else rTemplate.add("taskPostMortemInfo", "");
 
 			String tailErr = TailFile.tail(task.getStderrFile());
-			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", "\n" + LINE + "Stderr" + LINE + "\n" + tailErr + "\n");
+			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr));
 			else rTemplate.add("taskStderr", "");
 
 			String tailOut = TailFile.tail(task.getStdoutFile());
-			if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", "\n" + LINE + "Stdout" + LINE + "\n" + tailOut + "\n");
+			if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", multilineString("Stdout", tailOut));
 			else rTemplate.add("taskStdout", "");
 
-			if (task.getErrorMsg() != null) rTemplate.add("taskErrMsg", "\n" + LINE + "Error message" + LINE + "\n" + task.getErrorMsg() + "\n");
+			if (task.getErrorMsg() != null) rTemplate.add("taskErrMsg", multilineString("Error message", task.getErrorMsg()));
 			else rTemplate.add("taskErrMsg", "");
 
 		} else {
@@ -442,7 +441,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		else rTemplate.add("taskElapsed", "");
 
 		// Program & hint
-		rTemplate.add("taskProgram", task.getProgramTxt());
+		rTemplate.add("taskProgram", multilineString(null, task.getProgramTxt()));
 		rTemplate.add("taskHint", task.getProgramHint());
 
 		// Dependencies
@@ -452,7 +451,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				sbdep.append(t.getName() + "\n");
 			}
 		}
-		rTemplate.add("taskDep", sbdep.toString());
+		rTemplate.add("taskDep", multilineString(null, sbdep.toString()));
 
 		// Input files
 		StringBuilder sbinf = new StringBuilder();
@@ -460,7 +459,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			for (String inFile : task.getInputFiles())
 				sbinf.append(inFile + "\n");
 		}
-		rTemplate.add("taskInFiles", sbinf.toString());
+		rTemplate.add("taskInFiles", multilineString(null, sbinf.toString()));
 
 		// Output files
 		StringBuilder sboutf = new StringBuilder();
@@ -468,12 +467,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			for (String outf : task.getOutputFiles())
 				sboutf.append(outf + "\n");
 		}
-		rTemplate.add("taskOutFiles", sboutf.toString());
+		rTemplate.add("taskOutFiles", multilineString(null, sboutf.toString()));
 
 		// Resources
 		if (task.getResources() != null) {
 			HostResources hr = task.getResources();
-			rTemplate.add("taskResources", hr.toStringMultiline());
+			rTemplate.add("taskResources", multilineString(null, hr.toStringMultiline()));
 			rTemplate.add("taskTimeout", Timer.toDDHHMMSS(hr.getTimeout() * 1000));
 			rTemplate.add("taskWallTimeout", Timer.toDDHHMMSS(hr.getWallTimeout() * 1000));
 			rTemplate.add("taskCpus", (hr.getCpus() > 0 ? hr.getCpus() : ""));
@@ -993,6 +992,22 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			for (Executioner executioner : Executioners.getInstance().getAll())
 				executioner.kill(taskId);
 		}
+	}
+
+	/**
+	 * Convert multi-line string for report
+	 */
+	String multilineString(String title, String str) {
+		if (config.isYamlReport()) {
+			// Convert to YAML multi line
+			return Gpr.prependEachLine("        ", str).trim();
+		}
+
+		// Use lines and title separators
+		if (title != null) return "\n" + LINE + title + LINE + "\n" + str + "\n";
+
+		// Nothing to do for regular HTML lines
+		return str;
 	}
 
 	/**

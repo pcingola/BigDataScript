@@ -12,13 +12,23 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 /**
  * R-Template: The Retarded Template Engine
  *
- * Templates are annotated with double curly brackets {{name}}
+ * Templates are annotated using:
+ *
+ * 		- Double curly brackets {{variableName}}
+ *
+ * 		- Multiline parts have a triple curly brackets:
+ * 					{{{ ... text
+ * 						... more text including {{variables}}
+ * 					... final line }}}
  *
  * @author pcingola
  */
 public class RTemplate {
 
 	public static boolean debug = false;
+
+	public static final String MULTILINE_BLOCK_START = "{{{";
+	public static final String MULTILINE_BLOCK_END = "}}}";
 
 	public static final String PATTERN_STRING = "\\{\\{(\\S+)\\}\\}";
 	public static final Pattern PATTERN = Pattern.compile(PATTERN_STRING);
@@ -52,23 +62,48 @@ public class RTemplate {
 		String input = Gpr.read(inStream);
 		if (debug) Gpr.debug("Input:\n" + input);
 
+		// Split by multi-line delimiter '{{{'
+		List<String> linesMulti = splitMultiLine(input);
+
 		// Parse input, line by line
 		StringBuilder out = new StringBuilder();
-		int lineNum = 0;
-		for (String line : input.split("\n"))
-			out.append(parseLine(line, lineNum++));
+		boolean isMultiLine = false;
+		for (String lines : linesMulti) {
+
+			if (isMultiLine) {
+				// Parse while block as multi-line
+				out.append(parseLine(lines));
+			} else {
+				// Parse each line independently
+				for (String line : lines.split("\n"))
+					out.append(parseLine(line));
+			}
+
+			isMultiLine = !isMultiLine;
+		}
 
 		// Create output file
 		Gpr.toFile(outFile, out.toString());
-
 	}
 
-	void error(String errStr, int lineNum) {
+	public String createOuptut(String lines) {
+		// Parse input, line by line
+		StringBuilder out = new StringBuilder();
+		for (String line : lines.split("\n"))
+			out.append(parseLine(line));
+
+		return out.toString();
+	}
+
+	/**
+	 * Show error
+	 * @param errStr
+	 */
+	void error(String errStr) {
 		String msg = "Error parsing: " + errStr //
 				+ "\n\tBase class    : " + baseClass.getCanonicalName() //
 				+ "\n\tResource name : " + resourceName//
-				+ "\n\tLine number   : " + lineNum//
-				;
+		;
 
 		throw new RuntimeException(msg);
 	}
@@ -76,8 +111,8 @@ public class RTemplate {
 	/**
 	 * Parse each input line
 	 */
-	String parseLine(String line, int lineNum) {
-		// Debug from HTML template?
+	String parseLine(String line) {
+		// Debug command from template?
 		if (line.startsWith("DEBUG")) {
 			debug = true;
 		}
@@ -116,18 +151,18 @@ public class RTemplate {
 		if (!found) return line + "\n";
 
 		// Replace values
-		return replaceValues(lineParts, keys, lineNum);
+		return replaceValues(lineParts, keys);
 	}
 
 	/**
 	 * Replace by values
 	 */
-	String replaceValues(ArrayList<String> lineParts, ArrayList<String> keys, int lineNum) {
+	String replaceValues(ArrayList<String> lineParts, ArrayList<String> keys) {
 		// How many times do we repeat the line?
 		int maxLen = Integer.MAX_VALUE;
 
 		for (String key : keys) {
-			if (!keyValues.containsKey(key)) error("Key '" + key + "' not found!", lineNum);
+			if (!keyValues.containsKey(key)) error("Key '" + key + "' not found!");
 			List<String> values = keyValues.get(key);
 			int len = values.size();
 			maxLen = Math.min(maxLen, len);
@@ -138,7 +173,7 @@ public class RTemplate {
 		// Repeat
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < maxLen; i++)
-			sb.append(replaceValues(lineParts, keys, lineNum, i) + "\n");
+			sb.append(replaceValues(lineParts, keys, i) + "\n");
 
 		return sb.toString();
 	}
@@ -146,7 +181,7 @@ public class RTemplate {
 	/**
 	 * Replace by values (list item number 'idx')
 	 */
-	String replaceValues(ArrayList<String> lineParts, ArrayList<String> keys, int lineNum, int idx) {
+	String replaceValues(ArrayList<String> lineParts, ArrayList<String> keys, int idx) {
 		StringBuilder sb = new StringBuilder();
 
 		// Add all parts and values
@@ -164,6 +199,51 @@ public class RTemplate {
 		if (debug) Gpr.debug("ReplaceValues, idx " + idx + " : '" + sb + "'");
 		return sb.toString();
 
+	}
+
+	/**
+	 * Split into multiple lines finding the corresponding delimiters '{{{' and '}}}'
+	 */
+	List<String> splitMultiLine(String input) {
+		List<String> blocks = new ArrayList<String>();
+
+		while (!input.isEmpty()) {
+			int idxStart = input.indexOf(MULTILINE_BLOCK_START);
+
+			if (idxStart < 0) {
+				// No multi-line block delimiter found? 
+				// => All the remaining text is one block
+				blocks.add(input);
+				input = "";
+			} else {
+				// Add next 'regular' block
+				String block = input.substring(0, idxStart);
+				blocks.add(block);
+				input = input.substring(idxStart + MULTILINE_BLOCK_START.length());
+				if (debug) Gpr.debug("Adding regular block:" //
+						+ "\n--------------------------------------------------------------------------------\n" //
+						+ block //
+						+ "\n--------------------------------------------------------------------------------" //
+				);
+
+				// Find block end
+				int idxEnd = input.indexOf(MULTILINE_BLOCK_END);
+				if (idxEnd < 0) error("Multiline block does not have an block end delimiter:\n" + input);
+
+				// Add next 'multiline' block
+				block = input.substring(0, idxEnd);
+				blocks.add(block);
+				if (debug) Gpr.debug("Adding multiline block:" //
+						+ "\n--------------------------------------------------------------------------------\n" //
+						+ block //
+						+ "\n--------------------------------------------------------------------------------" //
+				);
+				input = input.substring(idxEnd + MULTILINE_BLOCK_END.length());
+			}
+		}
+
+		blocks.add(input);
+		return blocks;
 	}
 
 }

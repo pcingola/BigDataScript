@@ -1,8 +1,8 @@
 #!/usr/bin/env bds
 
 
-for( int i=0 ; i < 10 ; i++ ) {
+for( int i=0 ; i < 3 ; i++ ) {
 	task( taskName := "task with name $i" ) {
-		sys echo Task $i ; rm asdfasdfads
+		sys echo Task $i ; rm asdjfalsdjflaksdjflaksd
 	}
 }
