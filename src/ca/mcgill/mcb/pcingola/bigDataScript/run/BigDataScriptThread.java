@@ -577,7 +577,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -651,7 +651,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-		) {
+				) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -908,6 +908,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
+	 * Does 'varName' exists?
+	 */
+	public boolean hasVariable(String varName) {
+		return getScope().getSymbol(varName) != null;
+	}
+
+	/**
 	 * Are we in CHECKPOINT_RECOVER mode?
 	 */
 	public boolean isCheckpointRecover() {
@@ -1130,7 +1137,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1229,7 +1236,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
-			);
+					);
 		}
 	}
 

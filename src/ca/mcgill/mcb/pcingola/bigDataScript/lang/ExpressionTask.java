@@ -86,7 +86,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setDebug(bdsThread.getConfig().isDebug());
 
 		// Set task options
-		task.setTaskName(bdsThread.getString(TASK_OPTION_TASKNAME));
+		if (bdsThread.hasVariable(TASK_OPTION_TASKNAME)) task.setTaskName(bdsThread.getString(TASK_OPTION_TASKNAME));
 		task.setCanFail(bdsThread.getBool(TASK_OPTION_CAN_FAIL));
 		task.setAllowEmpty(bdsThread.getBool(TASK_OPTION_ALLOW_EMPTY));
 		task.setNode(bdsThread.getString(TASK_OPTION_NODE));
@@ -261,7 +261,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-						;
+				;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
@@ -274,7 +274,7 @@ public class ExpressionTask extends ExpressionWithScope {
 				+ (taskOptions != null ? taskOptions : "") //
 				+ " " //
 				+ toStringStatement() //
-				;
+		;
 	}
 
 	/**
@@ -295,7 +295,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		return "{\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //
-				;
+		;
 	}
 
 	@Override
