@@ -13,6 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * An 'exec' expression (to execute a command line in a local computer, return STDOUT)
@@ -55,9 +56,19 @@ public class ExpressionSys extends Expression {
 	/**
 	 * Create an exec ID
 	 */
-	public synchronized String execId(String name, BigDataScriptThread bdsThread) {
-		int nid = nextId();
-		String execId = bdsThread.getBdsThreadId() + "/" + name + ".line_" + getLineNum() + ".id_" + nid;
+	public synchronized String execId(String name, String fileName, BigDataScriptThread bdsThread) {
+		int nextId = nextId();
+
+		String module = fileName;
+		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
+
+		String execId = bdsThread.getBdsThreadId() //
+				+ "/" + name //
+				+ (module == null ? "" : "." + module) //
+				+ ".line_" + getLineNum() //
+				+ ".id_" + nextId //
+		;
+
 		return execId;
 	}
 
@@ -104,7 +115,7 @@ public class ExpressionSys extends Expression {
 	public void runStep(BigDataScriptThread bdsThread) {
 		if (bdsThread.isCheckpointRecover()) return;
 
-		execId("exec", bdsThread);
+		execId("exec", getFileName(), bdsThread);
 
 		// EXEC expressions are always executed locally AND immediately
 		LinkedList<String> args = new LinkedList<String>();
@@ -132,7 +143,7 @@ public class ExpressionSys extends Expression {
 				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-						);
+				);
 				return;
 			}
 		}

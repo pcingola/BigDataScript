@@ -76,7 +76,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	 */
 	Task createTask(BigDataScriptThread bdsThread, TaskDependency taskDependency, ExpressionSys sys) {
 		// Get an ID
-		String execId = sys.execId("task", bdsThread);
+		String execId = sys.execId("task", getFileName(), bdsThread);
 
 		// Create Task
 		Task task = new Task(execId, this, sys.getSysFileName(execId), sys.getCommands(bdsThread));
