@@ -6,18 +6,12 @@
 #
 #-------------------------------------------------------------------------------
 
-# Number of cores to use for java command
-string snpEffJava="java -XX:ParallelGCThreads=2 "
-
 # Default directory
-string snpEffDir="$HOME/snpEff"
+snpEffDir := "$HOME/snpEff"		help Path to SnpEff's dir
 
 # Comands
 string snpEff="$snpEffJava -Xmx4g -jar $snpEffDir/snpEff.jar"
 string snpSift="$snpEffJava -Xmx2g -jar $snpEffDir/SnpSift.jar"
-
-# Additional databases
-
 
 # Gene set analysis correction programs
 string correctionPvalMin   = "$snpEffDir/scripts/gsa/pvalue_correction_scoreCount.sh"

@@ -6,10 +6,10 @@
 #															Pablo Cingolani 2014
 #-------------------------------------------------------------------------------
 
-include "bio/seq/java.bds"
+include 'bio/seq/java'
 
 # Parameters
-snpEffDir := "$HOME/snpEff"
+snpEffDir := "$HOME/snpEff"		help Path to SnpEff's dir
 
 #-------------------------------------------------------------------------------
 # Annotate a VCF file

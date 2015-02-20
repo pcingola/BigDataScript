@@ -3,20 +3,30 @@
 #-------------------------------------------------------------------------------
 # Mapping reads
 #
+# Performance tunning parameters
+# Required variables:
+#    cpusMapping   : Number of CPUs to use in each mapping process
+#    mapSortMemory : Memory used while sorting BAM file (samtools sort)
+#    minMapQ       : Minimum mapping quality filter (0 means no filter)
+#
 #															Pablo Cingolani 2014
 #-------------------------------------------------------------------------------
 
-# Parameters
-readGroupId     := "ReadGroupId"
-libraryId       := "LibraryId"
-platform        := "illumina"
-sampleId        := "SampleId"
-readGroupString := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
+include 'annotate'
+include 'fastq'
+include 'gatk'
 
 # Performance parameters
-cpusMapping     := 6        # Number of CPUs to use in each mapping process
-mapSortMemory   := 4 * G    # Memory used while sorting BAM file (samtools sort)
-minMapQ         := 1		# Minimum mapping quality filter (0 means no filter)
+cpusMapping     := (system == 'local' ? cpusLocal : 4)		help Number of CPUs to use in each mapping process
+mapSortMemory   := 2 * G									help Memory used while sorting BAM files (samtools sort)
+minMapQ			:= 1										help Minimum mapping quality
+
+# Parameters
+readGroupId     := "ReadGroupId"							help Read group ID used in BAM files
+libraryId       := "LibraryId"								help Library ID used in BAM files
+platform        := "illumina"								help Sequencing platform name used in BAM files
+sampleId        := "SampleId"								help Sample ID used in BAM files
+readGroupString := "@RG\tID:$readGroupId\tLB:$libraryId\tPL:$platform\tSM:$sampleId"
 
 #-------------------------------------------------------------------------------
 # Find all chromosome names (from BAM headers)

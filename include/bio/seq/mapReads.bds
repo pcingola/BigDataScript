@@ -1,23 +1,22 @@
 #!/usr/bin/env bds
 
-include "bio/seq/annotate.bds"
-include "bio/seq/fastq.bds"
-include "bio/seq/gatk.bds"
-include "bio/seq/map.bds"
+include 'bio/seq/map'
 
 #-------------------------------------------------------------------------------
 # Command line parameters
 #-------------------------------------------------------------------------------
 
-fq1 := "$ppwd/ERR262996_1.chr20.1.fastq.gz"	# Fastq file
-fq2 := "$ppwd/ERR262996_1.chr20.2.fastq.gz"	# Fastq file, pair end reads. Empty if single-end
+# Input files
+fq1 := "$ppwd/ERR262996_1.fastq.gz"		help Fastq file
+fq2 := "$ppwd/ERR262996_2.fastq.gz"		help Fastq file, pair end reads. Empty if single-end
 
-referenceFasta  := "$ppwd/hg19_chr20.fa"	# Reference genome Fasta file
-genome          := "GRCh37.71"				# Genome used for annotations
+# Reference genome
+referenceFasta  := "hg19_chr20.fa"		help Reference genome Fasta file
+genome          := "GRCh37.75"			help Genome used for annotations
 
-# performance parameters
-numCallers      := 250						# Number of variant caller processes to use. This number is high to improve paralelization
-splitNumReads   := 500 * 1000               # Split fastq files to 'splitNumReads' lines.
+# Performance parameters
+numCallers      := 200					help Number of caller processes to use. This number should be high in order to get better paralelization
+splitNumReads   := 10 * 1000 * 1000     help Split fastq files to 'splitNumReads' lines
 
 #-------------------------------------------------------------------------------
 # Main
@@ -25,11 +24,10 @@ splitNumReads   := 500 * 1000               # Split fastq files to 'splitNumRead
 
 string[] outFiles = mapCallAnnotate(referenceFasta, fq1, fq2, genome, splitNumReads, numCallers)
 
-# OK, wait for all tasks to finish
+# Wait for all tasks to finish
 wait
 print("Done!\n")
 print("\tBAM file           : " + outFiles[0] + "\n")
-print("\tBAM file (rmDup)   : " + outFiles[1] + "\n")
-print("\tVCF file           : " + outFiles[2] + "\n")
-print("\tVCF annotated file : " + outFiles[3] + "\n")
+print("\tVCF file           : " + outFiles[1] + "\n")
+print("\tVCF annotated file : " + outFiles[2] + "\n")
 

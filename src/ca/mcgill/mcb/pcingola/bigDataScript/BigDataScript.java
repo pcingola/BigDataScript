@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +32,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners.ExecutionerType;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.FunctionDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Literal;
@@ -68,7 +71,7 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-02-14";
+	public static final String BUILD = "2015-02-20";
 	public static final String REVISION = "g";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
@@ -361,6 +364,50 @@ public class BigDataScript {
 
 	public ProgramUnit getProgramUnit() {
 		return programUnit;
+	}
+
+	/**
+	 * Find all global variable declarations
+	 */
+	List<VarDeclaration> globalVarDeclarations() {
+		Set<String> included = new HashSet<String>();
+
+		List<VarDeclaration> varDecls = new ArrayList<VarDeclaration>();
+		varDecls.addAll(globalVarDeclarations(programUnit, included));
+
+		// Sort by variable name
+		Collections.sort(varDecls, new Comparator<VarDeclaration>() {
+			@Override
+			public int compare(VarDeclaration v1, VarDeclaration v2) {
+				String vname1 = v1.getVarInit()[0].getVarName();
+				String vname2 = v2.getVarInit()[0].getVarName();
+				return vname1.compareTo(vname2);
+			}
+		});
+
+		return varDecls;
+	}
+
+	/**
+	 * Find all global variable declarations within this block-statement
+	 */
+	List<VarDeclaration> globalVarDeclarations(BlockWithFile block, Set<String> included) {
+		List<VarDeclaration> varDecls = new ArrayList<VarDeclaration>();
+
+		// Already added?
+		String fileName = block.getFileName();
+		if (included.contains(fileName)) return varDecls;
+		included.add(fileName);
+
+		for (Statement s : block.getStatements()) {
+			// Add variable
+			if (s instanceof VarDeclaration) varDecls.add((VarDeclaration) s);
+
+			// Recurse
+			if (s instanceof StatementInclude) varDecls.addAll(globalVarDeclarations((StatementInclude) s, included));
+		}
+
+		return varDecls;
 	}
 
 	/**
@@ -1049,34 +1096,30 @@ public class BigDataScript {
 		List<String> varTypes = new ArrayList<String>();
 		int maxOptLen = 0;
 
-		for (Statement s : programUnit.getStatements()) {
-			// Is it a variable declaration?
-			if (s instanceof VarDeclaration) {
+		// Add help on each variable declaration
+		for (VarDeclaration varDecl : globalVarDeclarations()) {
+			Type type = varDecl.getType();
+			String typeStr = null;
 
-				VarDeclaration varDecl = (VarDeclaration) s;
-				Type type = varDecl.getType();
-				String typeStr = null;
+			// Show types
+			if (type.isBool()) typeStr = "";
+			else if (type.isInt()) typeStr = "<int>";
+			else if (type.isReal()) typeStr = "<real>";
+			else if (type.isString()) typeStr = "<string>";
+			else if (type.isList(Type.STRING)) typeStr = "<string ... string>";
 
-				// Show types
-				if (type.isBool()) typeStr = "";
-				else if (type.isInt()) typeStr = "<int>";
-				else if (type.isReal()) typeStr = "<real>";
-				else if (type.isString()) typeStr = "<string>";
-				else if (type.isList(Type.STRING)) typeStr = "<string ... string>";
+			if (typeStr == null) continue;
 
-				if (typeStr == null) continue;
+			// Get variable's name & help
+			for (VariableInit vi : varDecl.getVarInit()) {
+				if (vi != null && vi.getVarName() != null && vi.getHelp() != null) {
+					varNames.add(vi.getVarName());
+					varHelps.add(vi.getHelp());
+					varTypes.add(typeStr);
 
-				// Get variable's name & help
-				for (VariableInit vi : varDecl.getVarInit()) {
-					if (vi != null && vi.getVarName() != null && vi.getHelp() != null) {
-						varNames.add(vi.getVarName());
-						varHelps.add(vi.getHelp());
-						varTypes.add(typeStr);
-
-						// Format output and calculate length
-						int optLen = String.format(formatOpt, vi.getVarName(), typeStr).length();
-						maxOptLen = Math.max(maxOptLen, optLen);
-					}
+					// Format output and calculate length
+					int optLen = String.format(formatOpt, vi.getVarName(), typeStr).length();
+					maxOptLen = Math.max(maxOptLen, optLen);
 				}
 			}
 		}
