@@ -177,7 +177,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
@@ -536,47 +536,43 @@ public class BigDataScript {
 				String varName = arg.substring(1);
 
 				// Find all variable declarations that match this command line argument
-				for (Statement s : programUnit.getStatements()) {
-					// Is it a variable declaration?
-					if (s instanceof VarDeclaration) {
-						VarDeclaration varDecl = (VarDeclaration) s;
-						Type varType = varDecl.getType();
+				for (VarDeclaration varDecl : globalVarDeclarations()) {
+					Type varType = varDecl.getType();
 
-						// Is is a primitive variable or a primitive list?
-						if (varType.isPrimitiveType() || varType.isList()) {
-							// Find an initialization that matches the command line argument
-							for (VariableInit varInit : varDecl.getVarInit())
-								if (varInit.getVarName().equals(varName)) { // Name matches?
-									int argNumOri = argNum;
-									boolean useVal = false;
+					// Is is a primitive variable or a primitive list?
+					if (varType.isPrimitiveType() || varType.isList()) {
+						// Find an initialization that matches the command line argument
+						for (VariableInit varInit : varDecl.getVarInit())
+							if (varInit.getVarName().equals(varName)) { // Name matches?
+								int argNumOri = argNum;
+								boolean useVal = false;
 
-									if (varType.isList()) {
-										// Create a list of arguments and use them to initialize the variable (list)
-										ArrayList<String> vals = new ArrayList<String>();
-										for (int i = argNum + 1; i < programArgs.size(); i++)
-											if (programArgs.get(i).startsWith("-")) break;
-											else vals.add(programArgs.get(i));
+								if (varType.isList()) {
+									// Create a list of arguments and use them to initialize the variable (list)
+									ArrayList<String> vals = new ArrayList<String>();
+									for (int i = argNum + 1; i < programArgs.size(); i++)
+										if (programArgs.get(i).startsWith("-")) break;
+										else vals.add(programArgs.get(i));
 
-										useVal = initializeArgs(varType, varInit, vals); // Found variable, try to replace or add LITERAL to this VarInit
-									} else if (varType.isBool()) {
-										String valStr = "true";
+									useVal = initializeArgs(varType, varInit, vals); // Found variable, try to replace or add LITERAL to this VarInit
+								} else if (varType.isBool()) {
+									String valStr = "true";
 
-										// Booleans may not have a value (just '-varName' sets them to 'true')
-										if (programArgs.size() > (argNum + 1)) {
-											// Is the next argument 'true' or 'false'? => Set argument
-											String boolVal = programArgs.get(argNum + 1);
-											if (valStr.equalsIgnoreCase("true") || valStr.equalsIgnoreCase("false")) valStr = boolVal;
-										}
-
-										initializeArgs(varType, varInit, valStr);
-									} else {
-										String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
-										useVal = initializeArgs(varType, varInit, val); // Found variable, try to replace or add LITERAL to this VarInit
+									// Booleans may not have a value (just '-varName' sets them to 'true')
+									if (programArgs.size() > (argNum + 1)) {
+										// Is the next argument 'true' or 'false'? => Set argument
+										String boolVal = programArgs.get(argNum + 1);
+										if (valStr.equalsIgnoreCase("true") || valStr.equalsIgnoreCase("false")) valStr = boolVal;
 									}
 
-									if (!useVal) argNum = argNumOri; // We did not use the arguments
+									initializeArgs(varType, varInit, valStr);
+								} else {
+									String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
+									useVal = initializeArgs(varType, varInit, val); // Found variable, try to replace or add LITERAL to this VarInit
 								}
-						}
+
+								if (!useVal) argNum = argNumOri; // We did not use the arguments
+							}
 					}
 				}
 			}
@@ -1051,7 +1047,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-		);
+				);
 		return exitCode;
 	}
 
