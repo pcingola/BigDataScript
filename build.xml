@@ -4,6 +4,7 @@
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar" depends="compile">
 		<copy file="src/ca/mcgill/mcb/pcingola/bigDataScript/SummaryTemplate.html" tofile="bin/ca/mcgill/mcb/pcingola/bigDataScript/SummaryTemplate.html"/>
+		<copy file="src/ca/mcgill/mcb/pcingola/bigDataScript/SummaryTemplate.yaml" tofile="bin/ca/mcgill/mcb/pcingola/bigDataScript/SummaryTemplate.yaml"/>
 		<copy file="./src/ca/mcgill/mcb/pcingola/bigDataScript/DagTaskTemplate.js" tofile="bin/ca/mcgill/mcb/pcingola/bigDataScript/DagTaskTemplate.js"/>
         <jar destfile="${user.home}/.bds/BigDataScript.jar" filesetmanifest="mergewithoutmain">
             <manifest>
