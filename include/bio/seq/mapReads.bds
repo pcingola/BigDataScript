@@ -26,8 +26,8 @@ string[] outFiles = mapCallAnnotate(referenceFasta, fq1, fq2, genome, splitNumRe
 
 # Wait for all tasks to finish
 wait
-print("Done!\n")
 print("\tBAM file           : " + outFiles[0] + "\n")
 print("\tVCF file           : " + outFiles[1] + "\n")
 print("\tVCF annotated file : " + outFiles[2] + "\n")
+print("Done!\n")
 
