@@ -13,7 +13,7 @@ cpusCalling           := 2                                                     h
 
 # Programs
 gatkJar               := "$HOME/tools/gatk/GenomeAnalysisTK.jar"				help Path to GATK's JAR file
-picardPath            := "$HOME/tools/picard"									help Path to Picard
+picardPath            := "$HOME/tools/picard.jar"									help Path to Picard
 callableCollapseSplit := "$HOME/.bds/include/bio/seq/callableCollapseSplit.py"	help Path to script used to calculate callable sets. 
 
 #-------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ string[] gatkPrepare(string fasta) {
 
 	if( dict <- fasta ) {
 		print("Creating dictionary file: $dict\n")
-		task $java -jar $picardPath/CreateSequenceDictionary.jar R= $fasta O= $dict
+		task $java -jar $picardPath CreateSequenceDictionary R= $fasta O= $dict
 	}
 
 	if( fai <- fasta ) {
