@@ -64,6 +64,10 @@ public class InterpolateVars extends Literal {
 						c = '$';
 						break;
 
+					case '_':
+						c = '_';
+						break;
+
 					default:
 						break;
 					}
@@ -98,8 +102,8 @@ public class InterpolateVars extends Literal {
 		while (idx > 0 && // Found something?
 				(str.charAt(idx - 1) == '\\' // Escaped character, ignore
 				|| (idx < (str.length() - 1) && !isVariableNameStartChar(str.charAt(idx + 1))) // First character in variable name has to be a letter
-				) //
-		) {
+						) //
+				) {
 			idx = str.indexOf('$', idx + 1); // Find next one
 		}
 
@@ -273,7 +277,7 @@ public class InterpolateVars extends Literal {
 
 		if (interpolated.second.isEmpty() // No variables?
 				|| (interpolated.second.size() == 1 && interpolated.second.get(0).isEmpty()) // One empty variable?
-		) return false; // Nothing to do
+				) return false; // Nothing to do
 
 		// Something was found, we have to interpolate
 		List<String> strings = interpolated.first;

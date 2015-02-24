@@ -1,14 +1,6 @@
 #!/usr/bin/env bds
 
-BWA_PARAM := "bwa parameters go here"
+i := 42
 
-#print "echo bwa $BWA_PARAM"
-
-#sys echo bwa $BWA_PARAM
-
-#task {
-#	sys echo bwa $BWA_PARAM
-#}
-
-task echo bwa $BWA_PARAM
-
+#print "Answer: $i\_ZZZ\n"
+sys echo "Answer: $i\_ZZZ\n"

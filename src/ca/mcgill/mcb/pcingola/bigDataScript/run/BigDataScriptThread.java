@@ -189,8 +189,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Create a checkpoint file
 	 */
 	public String checkpoint(BigDataScriptNode node) {
-		String programFile = statement.getFileName();
-		String nodeFile = node.getFileName();
+		String programFile = statement.getFileNameCanonical();
+		String nodeFile = node.getFileNameCanonical();
 
 		String checkpointFileName = programFile;
 		if (!programFile.equals(nodeFile)) checkpointFileName += "." + Gpr.baseName(node.getFileName(), ".bds");
@@ -204,7 +204,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	public String checkpoint(String checkpointFileName) {
 		// Default file name
-		if (checkpointFileName == null) checkpointFileName = statement.getFileName() + ".chp";
+		if (checkpointFileName == null) checkpointFileName = statement.getFileNameCanonical() + ".chp";
 
 		// Save
 		if (isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
@@ -662,7 +662,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public void fatalError(BigDataScriptNode bdsnode, String message) {
 		runState = RunState.FATAL_ERROR;
 		String filePos = "";
-		if (bdsnode.getFileName() != null) filePos = bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + (bdsnode.getCharPosInLine() + 1) + ". ";
+		if (bdsnode.getFileNameCanonical() != null) filePos = bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + (bdsnode.getCharPosInLine() + 1) + ". ";
 		System.err.println("Fatal error: " + filePos + message);
 
 		// Show BDS stack trace
@@ -1552,7 +1552,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		for (BigDataScriptNode node : nodesById.values()) {
 			if (node instanceof BlockWithFile) {
 				BlockWithFile bwf = (BlockWithFile) node;
-				String fileName = node.getFileName();
+				String fileName = node.getFileNameCanonical();
 				String code = bwf.getFileText();
 				if (fileName != null && code != null) fileName2codeLines.put(fileName, code.split("\n"));
 			}

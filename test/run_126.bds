@@ -17,8 +17,8 @@ void doStuff(string dir) {
 		outi := "$dir/out_$i.txt"
 		task( outi <- out ) sys ( echo task $i ; cat $out ) > $outi ; echo OUT_$i: $outi
 		for( int j=0 ; j < 3 ; j++ ) {
-			outj := "$dir/out_$i_$j.txt"
-			task( outj <- outi ) sys ( echo task $i ; cat $outi ) > $outj ; echo "    OUT_$i_$j: $outj"
+			outj := "$dir/out_$i\_$j.txt"
+			task( outj <- outi ) sys ( echo task $i ; cat $outi ) > $outj ; echo "    OUT_$i""_$j: $outj"
 		}
 	}
 }
