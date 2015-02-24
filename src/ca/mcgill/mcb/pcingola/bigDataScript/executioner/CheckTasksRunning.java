@@ -14,7 +14,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -97,7 +96,7 @@ public class CheckTasksRunning {
 		for (Task t : executioner.getTasksRunning().values()) {
 			String pid = t.getPid();
 			if (pid != null && pids.contains(pid)) {
-				if (debug) Gpr.debug("Found task PID '" + pid + "'");
+				if (debug) log("Found task PID '" + pid + "'");
 				tasks.add(t);
 			}
 		}
@@ -237,7 +236,7 @@ public class CheckTasksRunning {
 				+ "\n\tExit value : " + cmdExecResult.exitValue //
 				+ "\n\tStdout     : " + cmdExecResult.stdOut //
 				+ "\n\tStderr     : " + cmdExecResult.stdErr //
-		);
+				);
 
 		//---
 		// Sanity checks!
@@ -300,7 +299,7 @@ public class CheckTasksRunning {
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
-			) {
+					) {
 				// Task is missing.
 				// Update counter: Should we consider this task as 'missing'?
 				if (incMissingCount(task)) {
@@ -321,7 +320,7 @@ public class CheckTasksRunning {
 				String tpid = task.getPid() != null ? task.getPid() : "";
 
 				if (!tpid.isEmpty() && !task.isDone()) { // Make sure the task is not finished (race conditions?)
-					if (debug) Gpr.debug("Task PID '" + task.getPid() + "' not found. Marking it as finished.");
+					if (debug) log("Task PID '" + task.getPid() + "' not found. Marking it as finished.");
 					task.setErrorMsg("Task dissapeared from cluster's queue. Task or node failure?");
 					task.setExitValue(Task.EXITCODE_ERROR);
 					executioner.taskFinished(task, TaskState.ERROR);

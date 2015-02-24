@@ -530,7 +530,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 								+ "\n\ttask resources : " + task.getResources() //
 								+ "\n\thost           : " + host //
 								+ "\n\thost resources : " + host.getResourcesAvaialble() //
-						);
+								);
 
 						selectTask(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);
