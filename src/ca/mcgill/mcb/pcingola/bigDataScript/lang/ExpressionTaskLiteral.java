@@ -22,10 +22,9 @@ public class ExpressionTaskLiteral extends ExpressionTask {
 		if (valueStr.startsWith(TASK_STR)) valueStr = tree.getText().substring(TASK_STR.length());
 		valueStr = valueStr.trim();
 
-		// Create a string literal as a statement
-		LiteralString lit = new LiteralString(this, null);
-		lit.setValue(valueStr);
-		statement = lit; // Assign literal string as 'statement' to be executed
+		ExpressionSys sys = new ExpressionSys(this, null);
+		sys.setCommands(valueStr);
+		statement = sys;
 	}
 
 }

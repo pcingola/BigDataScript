@@ -17,17 +17,29 @@ public class VarReference extends Reference {
 
 	protected String name;
 
-	public VarReference(BigDataScriptNode parent, ParseTree tree) {
-		super(parent, tree);
+	/**
+	 * Create a reference form a string
+	 */
+	public static Expression factory(BigDataScriptNode parent, String var) {
+		if (var == null || var.isEmpty()) return null;
+
+		int idxCurly = var.indexOf('{');
+		int idxBrace = var.indexOf('[');
+
+		Reference varRef = null;
+		if (idxCurly < 0 && idxBrace < 0) varRef = new VarReference(parent, null);
+		else if (idxCurly < 0 && idxBrace > 0) varRef = new VarReferenceList(parent, null);
+		else if (idxCurly > 0 && idxBrace < 0) varRef = new VarReferenceMap(parent, null);
+		else if (idxBrace < idxCurly) varRef = new VarReferenceList(parent, null);
+		else varRef = new VarReferenceMap(parent, null);
+
+		// Parse string
+		varRef.parse(var);
+		return varRef;
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
-		ScopeSymbol ss = bdsThread.getScope().getSymbol(name);
-		bdsThread.push(ss.getValue());
+	public VarReference(BigDataScriptNode parent, ParseTree tree) {
+		super(parent, tree);
 	}
 
 	/**
@@ -67,6 +79,16 @@ public class VarReference extends Reference {
 
 		returnType = ss.getType();
 		return returnType;
+	}
+
+	/**
+	 * Evaluate an expression
+	 */
+	@Override
+	public void runStep(BigDataScriptThread bdsThread) {
+		ScopeSymbol ss = bdsThread.getScope().getSymbol(name);
+		if (ss == null) bdsThread.fatalError(this, "Cannot find variable '" + name + "'");
+		bdsThread.push(ss.getValue());
 	}
 
 	/**

@@ -87,7 +87,7 @@ public class VarReferenceMap extends Reference {
 
 		if (idxStr.startsWith("$")) {
 			// We have to interpolate this string
-			expressionKey = InterpolateVars.factory(this, idxStr.substring(1));
+			expressionKey = VarReference.factory(this, idxStr.substring(1));
 		} else {
 			// String literal
 			LiteralString exprIdx = new LiteralString(this, null);

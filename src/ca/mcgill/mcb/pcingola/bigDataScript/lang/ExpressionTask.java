@@ -121,14 +121,16 @@ public class ExpressionTask extends ExpressionWithScope {
 			sys = (ExpressionSys) exprSys;
 		} else if (statement instanceof ExpressionSys) {
 			sys = (ExpressionSys) statement;
-		} else if (statement instanceof LiteralString) {
-			LiteralString lstr = (LiteralString) statement;
-			bdsThread.run(lstr); // Evaluate (e.g. interpolate variables)
-
-			if (!bdsThread.isCheckpointRecover()) {
-				String str = bdsThread.pop().toString();
-				sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);
-			}
+			//		} else if (statement instanceof LiteralString) {
+			//			LiteralString lstr = (LiteralString) statement;
+			//			bdsThread.run(lstr); // Evaluate (e.g. interpolate variables)
+			//
+			//			if (!bdsThread.isCheckpointRecover()) {
+			//				String str = bdsThread.pop().toString();
+			//              // Creating a 'sys' expression on the fly is dangerous (no type checking is performed, we could be referencing missing variables)
+			//				sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);
+			//
+			//			}
 		} else if (statement instanceof Block) {
 			// Create one sys statement for all sys statements in the block
 			StringBuilder syssb = new StringBuilder();
@@ -191,6 +193,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public Type returnType(Scope scope) {
 		// Calculate options' return type
 		if (taskOptions != null) taskOptions.returnType(scope);
+		if (statement != null) statement.returnType(scope);
 
 		// Task expressions return a task ID (a string)
 		returnType = Type.STRING;
@@ -302,6 +305,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		returnType(scope);
 		if (taskOptions != null) taskOptions.typeCheck(scope, compilerMessages);
+		if (statement != null) statement.typeCheck(scope, compilerMessages);
 	}
 
 }

@@ -1,0 +1,14 @@
+#!/usr/bin/env bds
+
+BWA_PARAM := "parameters"
+
+println "bwa $BWA_PARAM"
+
+sys echo bwa $BWA_PARAM
+
+task {
+	sys echo bwa $BWA_PARAM
+}
+
+task echo bwa $BWA_PARAM
+

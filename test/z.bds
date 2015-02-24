@@ -1,8 +1,14 @@
 #!/usr/bin/env bds
 
+BWA_PARAM := "bwa parameters go here"
 
-for( int i=0 ; i < 3 ; i++ ) {
-	task( taskName := "task with name $i" ) {
-		sys echo Task $i ; rm asdjfalsdjflaksdjflaksd
-	}
-}
+#print "echo bwa $BWA_PARAM"
+
+#sys echo bwa $BWA_PARAM
+
+#task {
+#	sys echo bwa $BWA_PARAM
+#}
+
+task echo bwa $BWA_PARAM
+

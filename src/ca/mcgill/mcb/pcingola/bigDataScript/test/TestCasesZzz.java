@@ -2,6 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
 import org.junit.Test;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+
 /**
  * Quick test cases when creating a new feature...
  *
@@ -11,9 +13,16 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test48() {
-		String errs = "ERROR [ file 'test/test48.bds', line 5 ] :	extraneous input ':=' expecting {<EOF>, 'while', '{', 'void', 'for', 'error', 'debug', 'int', 'include', 'task', '(', 'kill', '\n', 'println', 'exit', '++', '~', 'wait', 'dep', '+', 'goal', 'continue', 'return', ';', 'if', 'warning', 'break', 'print', 'parallel', 'par', '[', '--', 'bool', '!', 'string', 'checkpoint', 'breakpoint', '-', 'real', BOOL_LITERAL, INT_LITERAL, REAL_LITERAL, STRING_LITERAL, STRING_LITERAL_SINGLE, SYS_LITERAL, TASK_LITERAL, ID}";
-		compileErrors("test/test48.bds", errs);
+	public void test127_interpolate_variable_with_underscores() {
+		Gpr.debug("Test");
+
+		String output = "bwa parameters\n" //
+				+ "bwa parameters\n" //
+				+ "bwa parameters\n" //
+				+ "bwa parameters\n" //
+		;
+
+		runAndCheckStdout("test/run_127.bds", output);
 	}
 
 }

@@ -19,27 +19,6 @@ public class InterpolateVars extends Literal {
 	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
 
 	/**
-	 * Create a reference form a string
-	 */
-	public static Expression factory(BigDataScriptNode parent, String var) {
-		if (var == null || var.isEmpty()) return null;
-
-		int idxCurly = var.indexOf('{');
-		int idxBrace = var.indexOf('[');
-
-		Reference varRef = null;
-		if (idxCurly < 0 && idxBrace < 0) varRef = new VarReference(parent, null);
-		else if (idxCurly < 0 && idxBrace > 0) varRef = new VarReferenceList(parent, null);
-		else if (idxCurly > 0 && idxBrace < 0) varRef = new VarReferenceMap(parent, null);
-		else if (idxBrace < idxCurly) varRef = new VarReferenceList(parent, null);
-		else varRef = new VarReferenceMap(parent, null);
-
-		// Parse string
-		varRef.parse(var);
-		return varRef;
-	}
-
-	/**
 	 * Un-escape string
 	 */
 	public static String unEscape(String str) {
@@ -118,7 +97,7 @@ public class InterpolateVars extends Literal {
 		// Skip escaped dollar characters ('\$')
 		while (idx > 0 && // Found something?
 				(str.charAt(idx - 1) == '\\' // Escaped character, ignore
-				|| (idx < (str.length() - 1) && !Character.isLetter(str.charAt(idx + 1))) // First character in variable name has to be a letter
+				|| (idx < (str.length() - 1) && !isVariableNameStartChar(str.charAt(idx + 1))) // First character in variable name has to be a letter
 				) //
 		) {
 			idx = str.indexOf('$', idx + 1); // Find next one
@@ -232,7 +211,7 @@ public class InterpolateVars extends Literal {
 				break;
 
 			default:
-				if (!Character.isLetterOrDigit(c) && countBraces == 0 && countCurly == 0) return i;
+				if (!isVariableNameChar(c) && countBraces == 0 && countCurly == 0) return i;
 			}
 		}
 
@@ -272,6 +251,21 @@ public class InterpolateVars extends Literal {
 	}
 
 	/**
+	 * Is this a valid character for a variable name?
+	 */
+	boolean isVariableNameChar(char c) {
+		return Character.isLetterOrDigit(c) || (c == '_');
+	}
+
+	/**
+	 * Is this a valid character for starting a variable name?
+	 * (e.g. the first letter in a variable name cannot be a digit)
+	 */
+	boolean isVariableNameStartChar(char c) {
+		return Character.isLetter(c);
+	}
+
+	/**
 	 * Parse variable interpolation
 	 */
 	public boolean parse(String str) {
@@ -288,7 +282,7 @@ public class InterpolateVars extends Literal {
 
 		// Create and add reference
 		for (String var : variables) {
-			Expression varRef = factory(parent, var);
+			Expression varRef = VarReference.factory(parent, var);
 			exprs.add(varRef);
 		}
 
