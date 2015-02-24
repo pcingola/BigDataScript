@@ -28,7 +28,7 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 		BigDataScriptThread bdsThread = bds.getBigDataScriptThread();
 
 		// Check that all 'log' files exists
-		String base = bdsThread.getBdsThreadId() + "/task.line_3.id_1";
+		String base = bdsThread.getBdsThreadId() + "/task.cmdLineOptions_01.line_3.id_1";
 
 		if (verbose) Gpr.debug("Thread ID:" + bdsThread.getBdsThreadId() + "\tBase: " + base);
 		String exts[] = { "sh", "exitCode", "stderr", "stdout" };
