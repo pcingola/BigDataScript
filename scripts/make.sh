@@ -31,7 +31,4 @@ chmod a+x bds
 # Remove JAR file
 rm $HOME/.bds/BigDataScript.jar
 
-# Move the new binary into place
-mv bds $HOME/.bds/
-
 cd -
