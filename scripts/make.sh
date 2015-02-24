@@ -1,10 +1,14 @@
 #!/bin/sh
 
 # Delete old jar
-rm -f $HOME/.bds/BigDataScript.jar
+if [ -e $HOME/.bds/BigDataScript.jar]; then
+  rm -f $HOME/.bds/BigDataScript.jar
+fi
 
 # Make sure 'bin' dir exists
-mkdir bin
+if [ ! -d bin ]; then
+  mkdir bin
+fi
 
 # Build Jar file
 echo Building JAR file
@@ -26,5 +30,8 @@ chmod a+x bds
 
 # Remove JAR file
 rm $HOME/.bds/BigDataScript.jar
+
+# Move the new binary into place
+mv bds $HOME/.bds/
 
 cd -
