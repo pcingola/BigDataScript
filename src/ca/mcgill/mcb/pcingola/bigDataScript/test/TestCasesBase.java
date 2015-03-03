@@ -250,17 +250,17 @@ public class TestCasesBase {
 	}
 
 	/**
-	 * Check that StdOut has a string (or that the string is not present if 'reverse')
+	 * Check that StdOut has a string (or that the string is NOT present if 'negate' is true)
 	 */
-	String runAndCheckStdout(String fileName, String expectedStdout, boolean reverse) {
+	String runAndCheckStdout(String fileName, String expectedStdout, boolean negate) {
 		// Run command and capture stdout
 		String captureStdout = runAndReturnStdout(fileName);
 
 		// Check that the expected string is in STDERR
 		if (debug) Gpr.debug("Program's stdout: '" + captureStdout + "'");
 		int index = captureStdout.toString().indexOf(expectedStdout);
-		if (!reverse && index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in STDOUT not found.\nSTDOUT:\n" + captureStdout + "\n");
-		if (reverse && index >= 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in absent from STDOUT, but it was found.\nSTDOUT:\n" + captureStdout + "\n");
+		if (!negate && index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in STDOUT not found.\nSTDOUT:\n" + captureStdout + "\n");
+		if (negate && index >= 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in absent from STDOUT, but it was found.\nSTDOUT:\n" + captureStdout + "\n");
 		return captureStdout.toString();
 	}
 

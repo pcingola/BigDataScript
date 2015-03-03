@@ -267,7 +267,14 @@ public class TaskDependecies {
 		if (!goalNeedsUpdate(goal)) return false;
 
 		List<Task> tasks = getTasksByOutput(goal);
-		if (tasks == null) return false;
+		if (tasks == null) {
+			// May be 'out' is actually a taskId?
+			Task taskGoal = getTask(goal);
+			if (taskGoal == null || taskGoal.isDone()) return false;
+
+			tasks = new LinkedList<>();
+			tasks.add(taskGoal);
+		}
 
 		// Satisfy all goals before running
 		for (Task t : tasks) {

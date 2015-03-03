@@ -114,4 +114,9 @@ public class TestCasesGraph extends TestCasesBase {
 		runAndCheckStderr("test/graph_12.bds", "Fatal error: test/graph_12.bds, line 18, pos 1. Circular dependency on task 'graph_12.bds.");
 	}
 
+	@Test
+	public void test13_goal_using_taskId() {
+		runAndCheckStdout("test/graph_13.bds", "out1_2.txt\nout2_1.txt");
+	}
+
 }
