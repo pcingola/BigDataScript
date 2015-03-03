@@ -43,6 +43,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.task.TailFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependecies;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -315,7 +316,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				if (!ss.getType().isFunction()) {
 					rTemplate.add("symType", ss.getType());
 					rTemplate.add("symName", ss.getName());
-					rTemplate.add("symValue", ss.getValue());
+					rTemplate.add("symValue", GprString.escape(ss.getValue().toString()));
 				}
 		} else {
 			rTemplate.add("symType", "");
@@ -469,7 +470,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 		rTemplate.add("taskOutFiles", multilineString(null, sboutf.toString()));
 
-		// Resources
+		// Task resources
 		if (task.getResources() != null) {
 			HostResources hr = task.getResources();
 			rTemplate.add("taskResources", multilineString(null, hr.toStringMultiline()));
@@ -577,7 +578,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -651,7 +652,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-		) {
+				) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -1137,7 +1138,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1236,7 +1237,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
-			);
+					);
 		}
 	}
 
