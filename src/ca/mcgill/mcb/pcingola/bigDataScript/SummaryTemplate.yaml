@@ -14,18 +14,22 @@ system: {{scope.TASK_OPTION_SYSTEM}}
 cpus: {{scope.TASK_OPTION_CPUS}} 
 exitValue: {{exitValue}} 
 
+---
+
 #---
 # Thread structure
 #---
-- threads: {{{
+threads: {{{
   - thread : {{threadIdNum}}
     parent : {{threadParentNum}}
 }}}
 
+---
+
 #---
 # Task details
 #---
-- tasks: {{{
+tasks: {{{
   - # Task identification
     id:          {{taskId}}
     num:         {{taskNum}}
@@ -52,28 +56,41 @@ exitValue: {{exitValue}}
     wallTimeout: {{taskWallTimeout}}
     
     # Task input, output files and dependencies
-    inFiles:     |{{taskInFiles}}
-    outFiles:    |{{taskOutFiles}}
-    dep:         |{{taskDep}}
+    inFiles:     |-
+      {{taskInFiles}}
+    outFiles:    |-
+      {{taskOutFiles}}
+    dep:         |-
+      {{taskDep}}
     
     # Task's error and output file checking messages
-    errorMsg:    |{{taskErrMsg}}
-    checkOut:    |{{taskCheckOut}}
+    errorMsg:    |-
+      {{taskErrMsg}}
+    checkOut:    |-
+      {{taskCheckOut}}
 
     # Task definition (sys statements)
-    task:        |{{taskProgram}}
+    task:        |-
+      {{taskProgram}}
     
     # Stdout / Stderr (head)
-    stdout:      |{{taskStdout}}
-    stderr:      |{{taskStderr}}
+    stdout:      |-
+      {{taskStdout}}
+    stderr:      |-
+      {{taskStderr}}
  
     # Post mortem info
-    postMortem: |{{taskPostMortemInfo}}
+    postMortem:  |-
+      {{taskPostMortemInfo}}
 
 }}}
+
+---
 
 #---
 # Global scope
 #---
-- [ type, name, value ]
-- [ {{symType}}, {{symName}}, {{symValue}} ]
+global_scope: |-
+  type	name	value
+  {{symType}}	{{symName}}	{{symValue}}
+ 

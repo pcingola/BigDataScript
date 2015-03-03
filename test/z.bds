@@ -3,3 +3,4 @@
 BWA_PARAMS := "parameters here"
 
 task echo bwa $BWA_PARAMS
+
