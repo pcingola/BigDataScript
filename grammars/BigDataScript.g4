@@ -78,15 +78,10 @@ expression : BOOL_LITERAL                                                       
            | ID                                                                            # varReference
            | expression '[' expression ']'                                                 # varReferenceList
            | expression '{' expression '}'                                                 # varReferenceMap
-           | expression '&&' expression                                                    # expressionLogicAnd
-           | expression '||' expression                                                    # expressionLogicOr
-           | expression '&' expression                                                     # expressionBitAnd
-           | expression '^' expression                                                     # expressionBitXor
-           | expression '|' expression                                                     # expressionBitOr
            | ('++' | '--') expression                                                      # pre
            | expression ('++' | '--')                                                      # post
-           | expression '!=' expression                                                    # expressionNe
-           | expression '==' expression                                                    # expressionEq
+           | '~' expression                                                                # expressionBitNegation
+           | '!' expression                                                                # expressionLogicNot
            | expression '%' expression                                                     # expressionModulo
            | expression '/' expression                                                     # expressionDivide
            | expression '*' expression                                                     # expressionTimes
@@ -96,13 +91,18 @@ expression : BOOL_LITERAL                                                       
            | expression '>' expression                                                     # expressionGt
            | expression '<=' expression                                                    # expressionLe
            | expression '>=' expression                                                    # expressionGe
-           | '~' expression                                                                # expressionBitNegation
-           | '!' expression                                                                # expressionLogicNot
+           | expression '!=' expression                                                    # expressionNe
+           | expression '==' expression                                                    # expressionEq
            | '-' expression                                                                # expressionUnaryMinus
            | '+' expression                                                                # expressionUnaryPlus
+           | expression '&' expression                                                     # expressionBitAnd
+           | expression '^' expression                                                     # expressionBitXor
+           | expression '|' expression                                                     # expressionBitOr
+           | expression '&&' expression                                                    # expressionLogicAnd
+           | expression '||' expression                                                    # expressionLogicOr
            | '(' expression ')'                                                            # expressionParen
            | expression '?' expression ':' expression                                      # expressionCond
-           |  expression '<-' expression                                                   # expressionDepOperator
+           | expression '<-' expression                                                    # expressionDepOperator
            | '[' ']'                                                                       # literalListEmpty
            | '[' expression (',' expression)* ']'                                          # literalList
            | '{' '}'                                                                       # literalMapEmpty
@@ -119,9 +119,9 @@ expression : BOOL_LITERAL                                                       
            | expression '*=' expression                                                    # expressionAssignmentMult
            | expression '-=' expression                                                    # expressionAssignmentMinus
            | expression '+=' expression                                                    # expressionAssignmentPlus
-           | ID ':=' expression                                                            # expressionVariableInitImplicit
            | '(' expression (',' expression )+ ')' '=' expression                          # expressionAssignmentList
            | expression '=' expression                                                     # expressionAssignment
+           | ID ':=' expression                                                            # expressionVariableInitImplicit
            ;
 
 expressionList : expression ( ',' expression )* ;

@@ -11,23 +11,19 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  *
  * @author pcingola
  */
-public class ExpressionCompare extends ExpressionBinary {
+public abstract class ExpressionCompare extends ExpressionBinary {
 
 	public ExpressionCompare(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
-	boolean cmp(double a, double b) {
-		throw new RuntimeException("This method should never be invoked!");
-	}
+	protected abstract boolean cmp(boolean a, boolean b);
 
-	boolean cmp(long a, long b) {
-		throw new RuntimeException("This method should never be invoked!");
-	}
+	protected abstract boolean cmp(double a, double b);
 
-	boolean cmp(String a, String b) {
-		throw new RuntimeException("This method should never be invoked!");
-	}
+	protected abstract boolean cmp(long a, long b);
+
+	protected abstract boolean cmp(String a, String b);
 
 	@Override
 	public Type returnType(Scope scope) {
@@ -53,9 +49,15 @@ public class ExpressionCompare extends ExpressionBinary {
 		Object rval = bdsThread.pop();
 		Object lval = bdsThread.pop();
 
-		if (left.isInt() && right.isInt()) bdsThread.push(cmp((long) lval, (long) rval));
-		else if (left.isReal() || right.isReal()) bdsThread.push(cmp((double) lval, (double) rval));
-		else if (left.isString() || right.isString()) bdsThread.push(cmp(lval.toString(), rval.toString()));
+		if (left.isNumeric() && right.isNumeric()) {
+
+			// Both are numeric types
+			if (left.isReal() || right.isReal()) bdsThread.push(cmp((double) Type.REAL.cast(lval), (double) Type.REAL.cast(rval)));
+			else if (left.isInt() || right.isInt()) bdsThread.push(cmp((long) Type.INT.cast(lval), (long) Type.INT.cast(rval)));
+			else if (left.isBool() || right.isBool()) bdsThread.push(cmp((boolean) lval, (boolean) rval));
+			else throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName() + "( " + lval + " , " + rval + " )");
+
+		} else if (left.isString() || right.isString()) bdsThread.push(cmp(lval.toString(), rval.toString()));
 		else throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 	}
 

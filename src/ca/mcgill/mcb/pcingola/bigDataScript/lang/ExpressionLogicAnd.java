@@ -28,8 +28,10 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 		bdsThread.run(left);
 
 		if (!bdsThread.isCheckpointRecover()) {
+			boolean ok = (Boolean) Type.BOOL.cast(bdsThread.peek());
+
 			// Already false? No need to evaluate the other expression
-			if (!((Boolean) bdsThread.peek())) return;
+			if (!ok) return;
 		}
 
 		// 'AND' only depends on 'right' result (left was true)

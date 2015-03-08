@@ -28,7 +28,8 @@ public class ExpressionLogicOr extends ExpressionLogic {
 		bdsThread.run(left);
 
 		if (!bdsThread.isCheckpointRecover()) {
-			if ((Boolean) bdsThread.peek()) return; // Already true? No need to evaluate the other expression
+			boolean ok = (Boolean) Type.BOOL.cast(bdsThread.peek());
+			if (ok) return; // Already true? No need to evaluate the other expression
 		}
 
 		//  'OR' only depends on 'right' value (left was false)

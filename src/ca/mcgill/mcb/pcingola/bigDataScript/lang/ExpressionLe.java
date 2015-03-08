@@ -14,17 +14,24 @@ public class ExpressionLe extends ExpressionCompare {
 	}
 
 	@Override
-	boolean cmp(double a, double b) {
+	protected boolean cmp(boolean a, boolean b) {
+		return (a == b) //
+				|| ((!a) && b) // a < b
+				;
+	}
+
+	@Override
+	protected boolean cmp(double a, double b) {
 		return a <= b;
 	}
 
 	@Override
-	boolean cmp(long a, long b) {
+	protected boolean cmp(long a, long b) {
 		return a <= b;
 	}
 
 	@Override
-	boolean cmp(String a, String b) {
+	protected boolean cmp(String a, String b) {
 		return a.compareTo(b) <= 0;
 	}
 

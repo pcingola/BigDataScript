@@ -1,43 +1,24 @@
 package ca.mcgill.mcb.pcingola.bigDataScript;
 
-import java.util.Set;
-
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.CheckTasksRunning;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
-import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners.ExecutionerType;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-
 public class Zzz {
 
 	public static boolean debug = true;
 	public static boolean verbose = true;
 
 	public static void main(String[] args) throws Exception {
-		// Create 'CheckTasksRunning'
-		Config config = new Config();
-		config.setDebug(debug);
-		config.setVerbose(verbose);
+		System.out.println("Start");
 
-		Executioner ex = Executioners.getInstance(config).get(ExecutionerType.LOCAL);
-		CheckTasksRunning ctr = new CheckTasksRunning(config, ex);
-
-		// Parse 'qstat' lines
-		String fileName = Gpr.HOME + "/qstat.txt";
-		System.out.println("Reading file '" + fileName + "'");
-		String file = Gpr.readFile(fileName);
-		String lines[] = file.split("\n");
-		Set<String> pids = ctr.parseCommandOutput(lines);
-
-		// Check that all IDs are there
-		for (int i = 1; i < 10; i++) {
-			String pid = "" + i;
-			System.out.println("PID: '" + pid + "'\t" + pids.contains(pid));
-		}
-
-		// Finished
-		System.out.println("Killing executioners");
-		ex.kill();
-		System.out.println("Done");
+		//		int a = 1;
+		//		int b = 2;
+		//		System.out.println((a == 1 || b == 2) + "\n"); // OK
+		//
+		//		//		System.out.println(a == 1 || b == 2 + "\n"); // Incompatible operand types int and String
+		//
+		//		//		System.out.println((a == 1) || (b == 2) + "\n"); // Operator '||' undefined for types boolean, String
+		//		//		System.out.println("Done");
+		//
+		//		boolean aa = true;
+		//		boolean bb = false;
+		//		System.out.println((aa == true) || (bb == false) + "\n");
 	}
 }

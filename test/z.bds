@@ -1,29 +1,36 @@
 #!/usr/bin/env bds
 
-in1 := "in1.txt"
-in2 := "in2.txt"
+int a = 1
+int b = 2
 
-out1 := "out1.txt"
-out2 := "out2.txt"
+bool aa = true
+bool bb = false
 
-out1_2 := "out1_2.txt"
-out2_1 := "out2_1.txt"
+// This one should print "true" (without trailing "\n")
+// Details:
+//     ( (a==1) || (b==2) + "\n")
+//     ( (1==1) || (2==2) + "\n")
+//     (  true  || true + "\n"  )
+//     (  true  || "true\n"     )
+//     (  true  || true         ) <- Non-empty string converts to true boolean
+//     true
+print( (a==1) || (b==2) + "\n")
 
-# Create new files and remove old ones
-sys rm -f $in1 $in2 $out1 $out2 $out1_2 $out2_1
-sys date > $in1 ; sleep 1 ; date > $in2
+// This one should print "true" (without trailing "\n")
+// Details:
+//     ( a==1 || b==2 + "\n")
+//     ( a==1 || b=="2\n"   )
+//     ( 1==1 || 2=="2\n"   )
+//     ( true || "2"=="2\n" )
+//     ( true || false      )
+//     true
+print( a==1 || b==2 + "\n")
 
-dep( out1 <- in1 ) {
-    sys cp $in1 $out1 ; echo $out1
-}
-
-dep( out2 <- in2 ) {
-    sys cp $in2 $out2 ; echo $out2
-}
-
-tid := dep( [out1_2, out2_1] <- [out1, out2] ) {
-    sys cat $out1 $out2 > $out1_2 ; echo $out1_2
-    sys cat $out2 $out1 > $out2_1 ; echo $out2_1
-}
-
-goal( tid )
+// This should print "true" (without trailing "\n")
+// Details:
+//     ( (aa==true)   || (bb==false)    + "\n")
+//     ( (true==true) || (false==false) + "\n")
+//     (  true        ||  true          + "\n")
+//     (  true        ||  "true\n"            )
+//     true
+print( (aa==true) || (bb==false) + "\n")
