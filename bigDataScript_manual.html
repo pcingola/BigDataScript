@@ -1855,6 +1855,8 @@ OUT
 				In this case, <code>bds</code> create a directed acyclic graph of the dependencies needed to staisfy the goeal 'out.txt' and then executed the required 'dep' declarations.
 				<br>
 				<br>
+				<b>Note:</b> A <code>goal</code> expression returns a list of task Ids to be executed, which can be quite usefull for debugging pourposes.
+				<br>
 				<h3> Intermediate files within a 'goal' can be deleted </h3>
 				<br>
 				In the previous example, if we delete the intermediate files 'mid1.txt' and or 'mid2.txt', and we re-execute the script, <code>bds</code> will notice that the output is still valid with resepect to the inputs 'in.txt' and will not execute any task.
@@ -1873,6 +1875,24 @@ $
 				If the goal up to date, then nothing is done.
 				This feature is particularly usefull when intermediate files are large and we need to clean them up (since we are working with big data problems, this is often the case).
 				<br>
+				<br>
+				<h3> Dependencies that do not create files </h3>
+				<br>
+				What if the final step in your pipeline does not create a ny task?
+				in this case, you can use <code>taskId</code> as a goal, for example:
+				<br>
+				<br>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+tid := dep( taskName := 'hi' ) {
+    sys echo Hello
+}
+
+goal tid	# We use task Id instead of a file name
+</pre>
+
+
 			</div>
 
 			<!-- ================================================== -->
