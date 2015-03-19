@@ -1499,6 +1499,11 @@ Done 9
 						<td> 0 </td> 
 						<td> Number of times a task can be re-executed until it's considered failed. </td> 
 					</tr>
+					<tr>
+						<td> <code>taskName</code> </td>	
+						<td>  </td> 
+						<td> Assign a task name (i.e. puts a label on the task). This makes it easier to find tasks in the final report (it has not effect other than that).</td> 
+					</tr>
 				</table>
 
 				<h3> Conditional execution </h3>
@@ -1590,6 +1595,12 @@ task ( [out1, out2] <- [in, in2] , cpus := 4 , tmp := "$in.tmp" ) {
 	sys cat $in1 | grep "^results" > $out1
 	sys cat $in1 $in2 > $tmp
 	sys wc -l $tmp | wc -l > $out2
+}
+</pre>
+					<li> A task with a label (<code>taskName</code>) is easier to find in the report
+<pre class="prettyprint">
+task ( out <- in, cpus := 4 , taskName := "Filter results" ) {
+	sys cat $in | grep "^results" > $out
 }
 </pre>
 				</p>
@@ -1841,10 +1852,14 @@ MID2
 OUT
 </pre>
 
-			In this case, <code>bds</code> create a directed acyclic graph of the dependencies needed to staisfy the goeal 'out.txt' and then executed the required 'dep' declarations.
-			<br>
-			<br>
-			If we delete the intermediate files 'mid1.txt' and or 'mid2.txt', and we re-execute the script, <code>bds</code> will notice that the output is still valid with resepect to the inputs 'in.txt' and will not execute any task.
+				In this case, <code>bds</code> create a directed acyclic graph of the dependencies needed to staisfy the goeal 'out.txt' and then executed the required 'dep' declarations.
+				<br>
+				<br>
+				<h3> Intermediate files within a 'goal' can be deleted </h3>
+				<br>
+				In the previous example, if we delete the intermediate files 'mid1.txt' and or 'mid2.txt', and we re-execute the script, <code>bds</code> will notice that the output is still valid with resepect to the inputs 'in.txt' and will not execute any task.
+				<br>
+				<br>
 <pre class="prettyprint">
 # Remove intermediate files
 $ rm mid?.txt
@@ -1853,6 +1868,11 @@ $ rm mid?.txt
 $ ./test_18.bds
 $
 </pre>
+				<br>
+				How this works: <code>bds</code> calculates the dependency graph and checks whether the <code>goal</code> is up to date respect to the inputs (which are the leaves in the dependency graph).
+				If the goal up to date, then nothing is done.
+				This feature is particularly usefull when intermediate files are large and we need to clean them up (since we are working with big data problems, this is often the case).
+				<br>
 			</div>
 
 			<!-- ================================================== -->
