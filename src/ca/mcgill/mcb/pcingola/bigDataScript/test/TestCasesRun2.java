@@ -340,4 +340,10 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheckStdout("test/run_127.bds", output);
 	}
 
+	@Test
+	public void test128_task_local_variables() {
+		Gpr.debug("Test");
+		runAndCheckStdout("test/run_128.bds", "TEST\n");
+	}
+
 }

@@ -23,7 +23,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -95,8 +94,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	protected void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
 		if ((returnType != null) //
 				&& (!returnType.canCast(Type.INT) //
-				&& !returnType.canCast(Type.REAL)) //
-		) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
+						&& !returnType.canCast(Type.REAL)) //
+				) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
 	}
 
 	/**
@@ -140,6 +139,9 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Find all nodes of a given type
+	 *
+	 * IMPORTANT: Nodes are return ALPHABETICALLY sorted
+	 *
 	 * @param clazz : Class to find (all nodes if null)
 	 * @param recurse : If true, perform recursive search
 	 */
@@ -157,9 +159,9 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		for (Field field : getAllClassFields()) {
 			try {
 				Object fieldObj = field.get(this);
+
 				// Does the field have a value?
 				if (fieldObj != null && !visited.contains(fieldObj)) {
-					if (fieldObj != null) Gpr.debug("Find: " + fieldObj.getClass().getSimpleName() + "\t" + fieldObj);
 					visited.add(fieldObj);
 
 					// If it's an array, iterate on all objects
@@ -234,6 +236,8 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 	/**
 	 * Get all fields from this class
+	 *
+	 * IMPORTANT: Nodes are returned ALPHABETICALLY sorted
 	 */
 	@SuppressWarnings("rawtypes")
 	List<Field> getAllClassFields(boolean addParent, boolean addNode, boolean addPrimitive, boolean addClass, boolean addArray, boolean addStatic, boolean addPrivate) {
@@ -495,7 +499,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		Timer.showStdErr(getClass().getSimpleName() //
 				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
 				+ " : " + msg //
-		);
+				);
 	}
 
 	/**
@@ -664,7 +668,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" + serializer.serializeSaveValue(returnType) //
 				+ "\t" //
-		);
+				);
 		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
 
 		// Iterate over fields
@@ -807,7 +811,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		if (isNeedsScope()) {
 			Scope newScope = new Scope(scope, this);
 			scope = newScope;
-			Gpr.debug("NEW SCOPE: " + this.getClass().getSimpleName());
 		}
 
 		// Once the scope is right, we can perform the real type-check
@@ -835,7 +838,6 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 
 			// Get back to previous scope
 			scope = scope.getParent();
-			Gpr.debug("END OF SCOPE: " + this.getClass().getSimpleName());
 		}
 	}
 

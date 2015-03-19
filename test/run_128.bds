@@ -1,0 +1,5 @@
+#!/usr/bin/env bds
+
+task ( tmp := "TEST" ) {
+    sys echo $tmp
+}

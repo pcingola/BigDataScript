@@ -7,7 +7,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Variable declaration
@@ -127,7 +126,6 @@ public class VarDeclaration extends Statement {
 		// Add all symbols
 		for (VariableInit vi : varInit) {
 			String varName = vi.varName;
-			Gpr.debug("TYPE CHECK: '" + varName + "'");
 
 			// Already declared?
 			if (scope.hasSymbolLocal(varName)) {

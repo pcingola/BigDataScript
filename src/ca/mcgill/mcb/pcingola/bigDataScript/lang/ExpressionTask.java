@@ -37,7 +37,12 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
 
-	protected ExpressionTaskOptions taskOptions;
+	// Note:	It is important that 'options' node is type-checked before the others in order to
+	//			add variables to the scope before statements uses them.
+	//			So the field name should be alphabetically sorted before the other (that's why
+	//			I call it 'options' and not 'taskOptions').
+	//			Yes, it's a horrible hack.
+	protected ExpressionTaskOptions options;
 	protected Statement statement;
 
 	/**
@@ -168,8 +173,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (tree.getChild(idx).getText().equals("(")) {
 			int lastIdx = indexOf(tree, ")");
 
-			taskOptions = new ExpressionTaskOptions(this, null);
-			taskOptions.parse(tree, ++idx, lastIdx);
+			options = new ExpressionTaskOptions(this, null);
+			options.parse(tree, ++idx, lastIdx);
 			idx = lastIdx + 1; // Skip last ')'
 		}
 
@@ -182,7 +187,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	@Override
 	public Type returnType(Scope scope) {
 		// Calculate options' return type
-		if (taskOptions != null) taskOptions.returnType(scope);
+		if (options != null) options.returnType(scope);
 		if (statement != null) statement.returnType(scope);
 
 		// Task expressions return a task ID (a string)
@@ -197,8 +202,8 @@ public class ExpressionTask extends ExpressionWithScope {
 	public void runStep(BigDataScriptThread bdsThread) {
 		// Evaluate task options (get a list of dependencies)
 		TaskDependency taskDependency = null;
-		if (taskOptions != null) {
-			taskDependency = taskOptions.evalTaskDependency(bdsThread);
+		if (options != null) {
+			taskDependency = options.evalTaskDependency(bdsThread);
 
 			if (bdsThread.isCheckpointRecover()) return;
 
@@ -238,7 +243,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
 		// Sanity check options
-		if (taskOptions != null) taskOptions.sanityCheck(compilerMessages);
+		if (options != null) options.sanityCheck(compilerMessages);
 
 		// Sanity check statements
 		List<BigDataScriptNode> statements = statement.findNodes(null, true);
@@ -254,7 +259,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-				;
+						;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
@@ -264,10 +269,10 @@ public class ExpressionTask extends ExpressionWithScope {
 	@Override
 	public String toString() {
 		return "task" //
-				+ (taskOptions != null ? taskOptions : "") //
+				+ (options != null ? options : "") //
 				+ " " //
 				+ toStringStatement() //
-		;
+				;
 	}
 
 	/**
@@ -288,13 +293,13 @@ public class ExpressionTask extends ExpressionWithScope {
 		return "{\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //
-		;
+				;
 	}
 
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		returnType(scope);
-		if (taskOptions != null) taskOptions.typeCheck(scope, compilerMessages);
+		if (options != null) options.typeCheck(scope, compilerMessages);
 		if (statement != null) statement.typeCheck(scope, compilerMessages);
 	}
 

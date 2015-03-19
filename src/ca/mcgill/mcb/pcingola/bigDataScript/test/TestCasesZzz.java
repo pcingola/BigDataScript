@@ -2,6 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
 import org.junit.Test;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+
 /**
  * Quick test cases when creating a new feature...
  *
@@ -11,8 +13,9 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test14_dep_using_taskId() {
-		runAndCheckStdout("test/graph_14.bds", "Hello\nBye");
+	public void test128_task_local_variables() {
+		Gpr.debug("Test");
+		runAndCheckStdout("test/run_128.bds", "TEST\n");
 	}
 
 }

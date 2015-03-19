@@ -59,8 +59,8 @@ public class ExpressionParallel extends ExpressionTask {
 		if (tree.getChild(idx).getText().equals("(")) {
 			int lastIdx = indexOf(tree, ")");
 
-			taskOptions = new ExpressionTaskOptions(this, null);
-			taskOptions.parse(tree, ++idx, lastIdx);
+			options = new ExpressionTaskOptions(this, null);
+			options.parse(tree, ++idx, lastIdx);
 			idx = lastIdx + 1; // Skip last ')'
 		}
 
@@ -73,8 +73,8 @@ public class ExpressionParallel extends ExpressionTask {
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		// Execute options assignments
-		if (taskOptions != null) {
-			bdsThread.run(taskOptions);
+		if (options != null) {
+			bdsThread.run(options);
 
 			if (!bdsThread.isCheckpointRecover()) {
 				boolean ok = popBool(bdsThread);
@@ -126,13 +126,13 @@ public class ExpressionParallel extends ExpressionTask {
 
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
-		if (taskOptions != null) taskOptions.sanityCheck(compilerMessages);
+		if (options != null) options.sanityCheck(compilerMessages);
 	}
 
 	@Override
 	public String toString() {
 		return "par" //
-				+ (taskOptions != null ? taskOptions : "") //
+				+ (options != null ? options : "") //
 				+ " " //
 				+ toStringStatement() //
 				;
