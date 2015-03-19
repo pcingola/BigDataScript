@@ -97,8 +97,7 @@ public class Config {
 	}
 
 	public Config() {
-		read(DEFAULT_CONFIG_FILE); // Read config file
-		configInstance = this;
+		this(DEFAULT_CONFIG_FILE);
 	}
 
 	/**
@@ -349,7 +348,9 @@ public class Config {
 		properties = new Properties();
 
 		if (!Gpr.exists(configFileName)) {
-			if (verbose) Timer.showStdErr("Config file '" + configFileName + "' not found");
+			// The user specified a configuration file (different than default)
+			// => This should be a fatal error.
+			if (!configFileName.equals(DEFAULT_CONFIG_FILE)) throw new RuntimeException("Config file '" + configFileName + "' not found");
 			return;
 		}
 
