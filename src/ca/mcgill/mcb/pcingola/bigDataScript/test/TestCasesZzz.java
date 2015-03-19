@@ -11,8 +11,8 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test13_goal_using_taskId() {
-		runAndCheckStdout("test/graph_13.bds", "out1_2.txt\nout2_1.txt");
+	public void test14_dep_using_taskId() {
+		runAndCheckStdout("test/graph_14.bds", "Hello\nBye");
 	}
 
 }

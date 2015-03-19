@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-out := "out.txt"
+out := "out.graph_14.txt"
 
 # Clean up
 sys rm -f $out

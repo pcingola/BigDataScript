@@ -119,4 +119,9 @@ public class TestCasesGraph extends TestCasesBase {
 		runAndCheckStdout("test/graph_13.bds", "out1_2.txt\nout2_1.txt");
 	}
 
+	@Test
+	public void test14_dep_using_taskId() {
+		runAndCheckStdout("test/graph_14.bds", "Hello\nBye");
+	}
+
 }

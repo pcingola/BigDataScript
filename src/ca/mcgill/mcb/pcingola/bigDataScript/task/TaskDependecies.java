@@ -142,8 +142,9 @@ public class TaskDependecies {
 
 		// Only add nodes that do not have dependent tasks (i.e. are leaves)
 		Set<String> leaves = new HashSet<String>();
-		for (String n : nodes)
+		for (String n : nodes) {
 			if (!hasTasksByOutput(n)) leaves.add(n);
+		}
 
 		return leaves;
 	}
@@ -170,11 +171,20 @@ public class TaskDependecies {
 				List<Task> tasks = getTasksByOutput(goal);
 
 				if (tasks != null) // Add all task's input files
-					for (Task t : tasks)
+					for (Task t : tasks) {
+						// Add all input files
 						if (t.getInputFiles() != null) {
 							for (String in : t.getInputFiles())
 								changed |= newGoals.add(in); // Add each node
 						}
+
+						// Add all task Ids
+						List<Task> depTasks = t.getDependencies();
+						if (depTasks != null) {
+							for (Task dt : depTasks)
+								changed |= newGoals.add(dt.getId()); // Add each task ID
+						}
+					}
 			}
 
 			goals = newGoals;
@@ -222,9 +232,26 @@ public class TaskDependecies {
 	/**
 	 * Get all tasks that output this outFile
 	 */
-	protected List<Task> getTasksByOutput(String outFile) {
+	protected List<Task> getTasksByOutput(String output) {
+		//---
+		// Check if 'output' is a task Id
+		//---
+		Task taskGoal = getTask(output);
+		if (taskGoal != null) {
+			// Task ID found. Has the task been executed and finished? No need to add it.
+			if (taskGoal.isDone()) return null;
+
+			// New list containing the task
+			LinkedList<Task> taskList = new LinkedList<>();
+			taskList.add(taskGoal);
+			return taskList;
+		}
+
+		//---
+		// Check 'output' as a file
+		//---
 		// Use canonical paths
-		String outPath = getCanonicalPath(outFile);
+		String outPath = getCanonicalPath(output);
 
 		// Get list
 		return tasksByOutput.get(outPath);
@@ -267,23 +294,26 @@ public class TaskDependecies {
 		if (!goalNeedsUpdate(goal)) return false;
 
 		List<Task> tasks = getTasksByOutput(goal);
-		if (tasks == null) {
-			// May be 'out' is actually a taskId?
-			Task taskGoal = getTask(goal);
-			if (taskGoal == null || taskGoal.isDone()) return false;
-
-			tasks = new LinkedList<>();
-			tasks.add(taskGoal);
-		}
+		if (tasks == null) return false;
 
 		// Satisfy all goals before running
 		for (Task t : tasks) {
 			if (addedTasks.contains(t)) continue; // Don't add twice
 			addedTasks.add(t);
 
-			if (t.getInputFiles() != null) //
+			// Add file dependencies
+			if (t.getInputFiles() != null) {
 				for (String in : t.getInputFiles())
 					goalRun(bdsThread, in, addedTasks);
+			}
+
+			// Add task dependencies
+			if (t.getDependencies() != null) {
+				for (Task tt : t.getDependencies())
+					if (!addedTasks.contains(tt)) // Not added yet?
+						goalRun(bdsThread, tt.getId(), addedTasks);
+			}
+
 		}
 
 		// Run all tasks
