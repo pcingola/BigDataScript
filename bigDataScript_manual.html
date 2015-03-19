@@ -1855,7 +1855,11 @@ OUT
 				In this case, <code>bds</code> create a directed acyclic graph of the dependencies needed to staisfy the goeal 'out.txt' and then executed the required 'dep' declarations.
 				<br>
 				<br>
-				<b>Note:</b> A <code>goal</code> expression returns a list of task Ids to be executed, which can be quite usefull for debugging pourposes.
+				<b>Note:</b> A <code>goal</code> expression returns a list of task Ids to be executed, which can be quite usefull for debugging pourposes. So in the previous example you could write:
+<pre class="prettyprint">
+tids := goal out
+print "Executing tasks: $tids\n"
+</pre>
 				<br>
 				<h3> Intermediate files within a 'goal' can be deleted </h3>
 				<br>
