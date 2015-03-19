@@ -121,16 +121,6 @@ public class ExpressionTask extends ExpressionWithScope {
 			sys = (ExpressionSys) exprSys;
 		} else if (statement instanceof ExpressionSys) {
 			sys = (ExpressionSys) statement;
-			//		} else if (statement instanceof LiteralString) {
-			//			LiteralString lstr = (LiteralString) statement;
-			//			bdsThread.run(lstr); // Evaluate (e.g. interpolate variables)
-			//
-			//			if (!bdsThread.isCheckpointRecover()) {
-			//				String str = bdsThread.pop().toString();
-			//              // Creating a 'sys' expression on the fly is dangerous (no type checking is performed, we could be referencing missing variables)
-			//				sys = ExpressionSys.get(parent, str, lineNum, charPosInLine);
-			//
-			//			}
 		} else if (statement instanceof Block) {
 			// Create one sys statement for all sys statements in the block
 			StringBuilder syssb = new StringBuilder();

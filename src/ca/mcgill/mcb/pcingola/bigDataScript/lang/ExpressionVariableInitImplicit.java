@@ -22,6 +22,24 @@ public class ExpressionVariableInitImplicit extends Expression {
 	}
 
 	@Override
+	protected boolean isReturnTypesNotNull() {
+		return vInit.getExpression().getReturnType() != null;
+	}
+
+	@Override
+	protected void parse(ParseTree tree) {
+		vInit = new VariableInitImplicit(this, tree);
+	}
+
+	@Override
+	public Type returnType(Scope scope) {
+		if (returnType != null) return returnType;
+
+		returnType = vInit.getExpression().returnType(scope);
+		return returnType;
+	}
+
+	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		// Evaluating the expression consists of initializing the variable and getting the result of that initialization
 
@@ -42,21 +60,8 @@ public class ExpressionVariableInitImplicit extends Expression {
 	}
 
 	@Override
-	protected boolean isReturnTypesNotNull() {
-		return vInit.getExpression().getReturnType() != null;
-	}
-
-	@Override
-	protected void parse(ParseTree tree) {
-		vInit = new VariableInitImplicit(this, tree);
-	}
-
-	@Override
-	public Type returnType(Scope scope) {
-		if (returnType != null) return returnType;
-
-		returnType = vInit.getExpression().returnType(scope);
-		return returnType;
+	public String toString() {
+		return vInit != null ? vInit.toString() : "";
 	}
 
 	@Override
@@ -73,5 +78,4 @@ public class ExpressionVariableInitImplicit extends Expression {
 		// Add variable to scope
 		if ((varName != null) && (type != null)) scope.add(new ScopeSymbol(varName, type));
 	}
-
 }

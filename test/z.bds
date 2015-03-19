@@ -1,18 +1,5 @@
 #!/usr/bin/env bds
 
-out := "out.txt"
-
-# Clean up
-sys rm -f $out
-
-# This task has no output file
-t1 := dep( cpus := 4 ) {
-    sys echo Hello
+task ( tmp := "TEST" ) {
+    sys echo $tmp
 }
-
-# This task depends on the previous one being executed
-dep ( out <- t1 ) {
-    sys date > $out ; echo Bye
-}
-
-goal out
