@@ -24,8 +24,8 @@ rm -rvf \
 	cluster101_20* \
 	bds.pid.* \
 	*.report.html \
-	in.txt \
-	out?.txt \
+	in*.txt \
+	out*.txt \
 	failOnce.* \
 	`find . -iname "*.chp"` \
 
