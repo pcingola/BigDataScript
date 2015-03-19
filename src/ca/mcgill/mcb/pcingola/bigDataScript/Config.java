@@ -349,7 +349,9 @@ public class Config {
 		properties = new Properties();
 
 		if (!Gpr.exists(configFileName)) {
-			if (verbose) Timer.showStdErr("Config file '" + configFileName + "' not found");
+			// If the config file is NOT found, the error is never shown unless verbose is set.
+			// The error should always be shown.
+			//if (verbose) Timer.showStdErr("Config file '" + configFileName + "' not found");
 			return;
 		}
 
