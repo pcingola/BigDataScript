@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -28,13 +30,30 @@ public class ExpressionGoal extends ExpressionUnary {
 		return returnType;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void runStep(BigDataScriptThread bdsThread) {
 		bdsThread.run(expr);
 		if (bdsThread.isCheckpointRecover()) return;
 
+		// Get expression value
 		Object value = bdsThread.pop();
-		List<String> taskIds = bdsThread.goal(value.toString());
+
+		List<String> taskIds = null;
+		if (expr.isList()) {
+			// Is is a list? Run goal for each element
+			taskIds = new ArrayList<String>();
+
+			// Process each goal
+			Collection goals = (Collection) value;
+			for (Object goal : goals)
+				taskIds.addAll(bdsThread.goal(goal.toString()));
+		} else {
+			// Single valued
+			taskIds = bdsThread.goal(value.toString());
+		}
+
+		// Add results to stack
 		bdsThread.push(taskIds);
 	}
 
