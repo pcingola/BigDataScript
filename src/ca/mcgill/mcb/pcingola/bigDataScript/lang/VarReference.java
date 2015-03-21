@@ -7,7 +7,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A variable reference
@@ -113,10 +112,7 @@ public class VarReference extends Reference {
 		// Calculate return type
 		returnType(scope);
 
-		if (!scope.hasSymbol(name)) {
-			Gpr.debug("VARIABLE NOT FOUND:" + name);
-			compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
-		}
+		if (!scope.hasSymbol(name)) compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
 	}
 
 	@Override
