@@ -1,0 +1,15 @@
+#!/usr/bin/env bds
+
+name := "graph_15"
+
+string[] outs
+for(int i=0; i < 3 ; i++ ) {
+	in := "in.$name.$i.txt"
+	out := "out.$name.$i.txt"
+	outs += out
+
+	sys date > $in
+	dep( out <- in ) sys cat $in > $out ; echo Hi $i
+}
+
+goal outs

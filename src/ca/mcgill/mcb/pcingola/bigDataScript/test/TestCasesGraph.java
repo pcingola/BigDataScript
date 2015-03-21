@@ -2,6 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
 import java.io.File;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -122,6 +124,14 @@ public class TestCasesGraph extends TestCasesBase {
 	@Test
 	public void test14_dep_using_taskId() {
 		runAndCheckStdout("test/graph_14.bds", "Hello\nBye");
+	}
+
+	@Test
+	public void test15_goal_using_list() {
+		String out = runAndReturnStdout("test/graph_15.bds");
+		Assert.assertTrue(out.contains("Hi 0\n"));
+		Assert.assertTrue(out.contains("Hi 1\n"));
+		Assert.assertTrue(out.contains("Hi 2\n"));
 	}
 
 }

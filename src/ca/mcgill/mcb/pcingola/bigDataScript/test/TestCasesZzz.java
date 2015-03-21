@@ -1,8 +1,8 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import org.junit.Test;
+import junit.framework.Assert;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -13,9 +13,11 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test128_task_local_variables() {
-		Gpr.debug("Test");
-		runAndCheckStdout("test/run_128.bds", "TEST\n");
+	public void test15_goal_using_list() {
+		String out = runAndReturnStdout("test/graph_15.bds");
+		Assert.assertTrue(out.contains("Hi 0\n"));
+		Assert.assertTrue(out.contains("Hi 1\n"));
+		Assert.assertTrue(out.contains("Hi 2\n"));
 	}
 
 }
