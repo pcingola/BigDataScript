@@ -15,7 +15,6 @@ import java.util.Set;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -277,7 +276,7 @@ public class TaskDependecies {
 		tasDep.addInput(leaves);
 
 		if (debug) {
-			Gpr.debug("\n\tGoal: " + out + "\n\tLeaf nodes:");
+			Timer.showStdErr("Goal: " + out + "\n\tLeaf nodes:");
 			for (String n : leaves)
 				System.err.println("\t\t'" + n + "'");
 		}
