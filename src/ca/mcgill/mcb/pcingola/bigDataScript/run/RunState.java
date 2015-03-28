@@ -26,7 +26,7 @@ public enum RunState {
 	public boolean isCheckpointRecover() {
 		return this == RunState.WAIT_RECOVER //
 				|| this == RunState.CHECKPOINT_RECOVER //
-				;
+		;
 	}
 
 	/**
@@ -36,7 +36,7 @@ public enum RunState {
 		return this == EXIT //
 				|| this == FATAL_ERROR //
 				|| this == THREAD_KILLED //
-				;
+		;
 	}
 
 	public boolean isFatalError() {

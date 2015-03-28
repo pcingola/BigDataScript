@@ -71,7 +71,7 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-03-19";
+	public static final String BUILD = "2015-03-28";
 	public static final String REVISION = "i";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
@@ -79,7 +79,7 @@ public class BigDataScript {
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
 	boolean checkPidRegex; // Check PID regex (do not run program)
-	boolean createReport; // Create report
+	// boolean createReport; // Create report
 	boolean debug; // debug mode
 	boolean extractSource; // Extract source code form checkpoint (nly valid on recovery mode)
 	boolean dryRun; // Dry run (do not run tasks)
@@ -90,9 +90,10 @@ public class BigDataScript {
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
 	boolean useDoneFile; // Use files instead of comparing dates
 	boolean verbose; // Verbose mode
-	boolean yamlReport; // Use YAML report style
+	boolean reportYaml; // Use YAML report style
+	Boolean reportHtml; // Use HTML report style
 	int taskFailCount = -1;
-	String configFile = Config.DEFAULT_CONFIG_FILE; // Config file
+	String configFile = Config.DEFAULT_CONFIG_FILE; // Configuration file
 	String chekcpointRestoreFile; // Restore file
 	String programFileName; // Program file name
 	String pidFile; // File to store PIDs
@@ -177,7 +178,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
@@ -428,7 +429,8 @@ public class BigDataScript {
 	 * Get default settings
 	 */
 	void initDefaults() {
-		createReport = true;
+		reportHtml = true;
+		reportYaml = false;
 		dryRun = false;
 		log = false;
 		useDoneFile = false;
@@ -457,10 +459,11 @@ public class BigDataScript {
 		config.setDryRun(dryRun);
 		config.setTaskFailCount(taskFailCount);
 		config.setNoRmOnExit(noRmOnExit);
-		config.setCreateReport(createReport);
+		//		config.setCreateReport(createReport);
+		config.setReportHtml(reportHtml);
+		config.setReportYaml(reportYaml);
 		config.setExtractSource(extractSource);
 		config.setVerbose(verbose);
-		config.setYamlReport(yamlReport);
 
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
@@ -823,8 +826,11 @@ public class BigDataScript {
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 
-			if (programFileName != null) programArgs.add(arg); // Everything after 'programFileName' is an command line argument for the BigDataScript program
-			else if (arg.equals("-c") || arg.equalsIgnoreCase("-config")) {
+			if (programFileName != null) {
+				// Everything after 'programFileName' is an command line
+				// argument for the BigDataScript program
+				programArgs.add(arg);
+			} else if (arg.equals("-c") || arg.equalsIgnoreCase("-config")) {
 				// Checkpoint restore
 				if ((i + 1) < args.length) configFile = args[++i];
 				else usage("Option '-c' without restore file argument");
@@ -836,9 +842,8 @@ public class BigDataScript {
 			} else if (arg.equalsIgnoreCase("-dryRun")) {
 				dryRun = true;
 				noRmOnExit = true; // Not running, so don't delete files
-				createReport = false;
+				reportHtml = reportYaml = false;
 			} else if (arg.equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
-			else if (arg.equalsIgnoreCase("-noReport")) createReport = false;
 			else if (arg.equalsIgnoreCase("-checkPidRegex")) checkPidRegex = true;
 			else if (arg.equals("-i") || arg.equalsIgnoreCase("-info")) {
 				// Checkpoint info
@@ -875,7 +880,11 @@ public class BigDataScript {
 				if ((i + 1) < args.length) taskFailCount = Gpr.parseIntSafe(args[++i]);
 				else usage("Option '-t' without number argument");
 			} else if (arg.equals("-v") || arg.equalsIgnoreCase("-verbose")) verbose = true;
-			else if (arg.equalsIgnoreCase("-yaml")) yamlReport = true;
+			else if (arg.equalsIgnoreCase("-reportYaml") || arg.equalsIgnoreCase("-yaml")) reportYaml = true;
+			else if (arg.equalsIgnoreCase("-reportHtml")) reportHtml = true;
+			else if (arg.equalsIgnoreCase("-noReportYaml")) reportYaml = false;
+			else if (arg.equalsIgnoreCase("-noReportHtml")) reportHtml = false;
+			else if (arg.equalsIgnoreCase("-noReport")) reportHtml = reportYaml = false;
 			else if (arg.equalsIgnoreCase("-version")) {
 				System.out.println(VERSION);
 				System.exit(0);
@@ -1047,7 +1056,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-		);
+				);
 		return exitCode;
 	}
 
@@ -1144,17 +1153,20 @@ public class BigDataScript {
 		System.err.println("  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.");
 		System.err.println("  [-d | -debug  ]                : Debug mode.");
 		System.err.println("  -done                          : Use 'done' files: Default: " + useDoneFile);
-		System.err.println("  -dryRun                        : Do not run any task, just show what would be run.");
+		System.err.println("  -dryRun                        : Do not run any task, just show what would be run. Default: " + dryRun);
 		System.err.println("  [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
-		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files).");
-		System.err.println("  -noReport                      : Do not create report.");
-		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).");
+		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files). Default: " + log);
+		System.err.println("  -noReport                      : Do not create any report (neither HTML nor YAML).");
+		System.err.println("  -noReportHtml                  : Do not create HTML report.");
+		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit). Default: " + noRmOnExit);
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
-		System.err.println("  -quiet                         : Do not show any messages or tasks outputs on STDOUT.");
+		System.err.println("  -quiet                         : Do not show any messages or tasks outputs on STDOUT. Default: " + quiet);
+		System.err.println("  -reportHtml                    : Create HTML report. Default: " + reportHtml);
+		System.err.println("  -reportYaml                    : Create YAML report. Default: " + reportYaml);
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-s | -system ] type           : Set system type.");
-		System.err.println("  [-t | -test   ]                : Perform testing (run all test* functions).");
+		System.err.println("  [-t | -test   ]                : Run user test cases (runs all test* functions).");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
 		System.err.println("  -version                       : Show version and exit.");
 		System.err.println("  [-y | -retry  ] num            : Number of times to retry a failing tasks.");

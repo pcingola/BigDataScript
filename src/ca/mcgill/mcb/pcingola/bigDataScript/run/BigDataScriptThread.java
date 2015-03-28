@@ -252,20 +252,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Create an HTML report (after execution finished)
 	 */
-	public void createReport() {
+	public void createReport(boolean yaml) {
 		if (!anyTask()) {
 			if (isVerbose()) Timer.showStdErr("No tasks run: Report file not created for '" + getBdsThreadId() + "'.");
 			return;
 		}
 
-		String outFile = getBdsThreadId() + ".report." + (config.isYamlReport() ? "yaml" : "html");
+		String outFile = getBdsThreadId() + ".report." + (yaml ? "yaml" : "html");
 		String dagJsFile = getBdsThreadId() + ".dag.js";
 		if (isVerbose()) Timer.showStdErr("Writing report file '" + outFile + "'");
 
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
 		// Create a template
-		RTemplate rTemplate = new RTemplate(BigDataScript.class, (config.isYamlReport() ? REPORT_TEMPLATE_YAML : REPORT_TEMPLATE), outFile);
+		RTemplate rTemplate = new RTemplate(BigDataScript.class, (yaml ? REPORT_TEMPLATE_YAML : REPORT_TEMPLATE), outFile);
 
 		//---
 		// Add summary table values
@@ -288,7 +288,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Add task details and time-line
 		int taskNum = 1;
 		for (Task task : TaskDependecies.get().getTasks())
-			createReport(rTemplate, task, taskNum++);
+			createReport(rTemplate, task, taskNum++, yaml);
 
 		// Number of tasks executed
 		rTemplate.add("taskCount", taskNum - 1);
@@ -328,7 +328,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		rTemplate.createOuptut();
 
 		// Create DAG script
-		if (!config.isYamlReport()) createTaskDag(dagJsFile);
+		if (!yaml) createTaskDag(dagJsFile);
 	}
 
 	/**
@@ -369,7 +369,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Create map with task details
 	 */
-	void createReport(RTemplate rTemplate, Task task, int taskNum) {
+	void createReport(RTemplate rTemplate, Task task, int taskNum, boolean yaml) {
 		BigDataScriptThread bdsThread = findBdsThread(task);
 		SimpleDateFormat csvFormat = new SimpleDateFormat(DATE_FORMAT_CSV);
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
@@ -393,21 +393,21 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			rTemplate.add("taskColor", REPORT_RED_COLOR);
 
 			String ch = task.checkOutputFiles();
-			if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", multilineString("Check output files", ch));
+			if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", multilineString("Check output files", ch, yaml));
 			else rTemplate.add("taskCheckOut", "");
 
-			if (task.getPostMortemInfo() != null && !task.getPostMortemInfo().isEmpty()) rTemplate.add("taskPostMortemInfo", multilineString("Post mortem info", task.getPostMortemInfo()));
+			if (task.getPostMortemInfo() != null && !task.getPostMortemInfo().isEmpty()) rTemplate.add("taskPostMortemInfo", multilineString("Post mortem info", task.getPostMortemInfo(), yaml));
 			else rTemplate.add("taskPostMortemInfo", "");
 
 			String tailErr = TailFile.tail(task.getStderrFile());
-			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr));
+			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr, yaml));
 			else rTemplate.add("taskStderr", "");
 
 			String tailOut = TailFile.tail(task.getStdoutFile());
-			if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", multilineString("Stdout", tailOut));
+			if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", multilineString("Stdout", tailOut, yaml));
 			else rTemplate.add("taskStdout", "");
 
-			if (task.getErrorMsg() != null) rTemplate.add("taskErrMsg", multilineString("Error message", task.getErrorMsg()));
+			if (task.getErrorMsg() != null) rTemplate.add("taskErrMsg", multilineString("Error message", task.getErrorMsg(), yaml));
 			else rTemplate.add("taskErrMsg", "");
 
 		} else {
@@ -442,7 +442,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		else rTemplate.add("taskElapsed", "");
 
 		// Program & hint
-		rTemplate.add("taskProgram", multilineString(null, task.getProgramTxt()));
+		rTemplate.add("taskProgram", multilineString(null, task.getProgramTxt(), yaml));
 		rTemplate.add("taskHint", task.getProgramHint());
 
 		// Dependencies
@@ -452,7 +452,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				sbdep.append(t.getName() + "\n");
 			}
 		}
-		rTemplate.add("taskDep", multilineString(null, sbdep.toString()));
+		rTemplate.add("taskDep", multilineString(null, sbdep.toString(), yaml));
 
 		// Input files
 		StringBuilder sbinf = new StringBuilder();
@@ -460,7 +460,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			for (String inFile : task.getInputFiles())
 				sbinf.append(inFile + "\n");
 		}
-		rTemplate.add("taskInFiles", multilineString(null, sbinf.toString()));
+		rTemplate.add("taskInFiles", multilineString(null, sbinf.toString(), yaml));
 
 		// Output files
 		StringBuilder sboutf = new StringBuilder();
@@ -468,12 +468,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			for (String outf : task.getOutputFiles())
 				sboutf.append(outf + "\n");
 		}
-		rTemplate.add("taskOutFiles", multilineString(null, sboutf.toString()));
+		rTemplate.add("taskOutFiles", multilineString(null, sboutf.toString(), yaml));
 
 		// Task resources
 		if (task.getResources() != null) {
 			HostResources hr = task.getResources();
-			rTemplate.add("taskResources", multilineString(null, hr.toStringMultiline()));
+			rTemplate.add("taskResources", multilineString(null, hr.toStringMultiline(), yaml));
 			rTemplate.add("taskTimeout", Timer.toDDHHMMSS(hr.getTimeout() * 1000));
 			rTemplate.add("taskWallTimeout", Timer.toDDHHMMSS(hr.getWallTimeout() * 1000));
 			rTemplate.add("taskCpus", (hr.getCpus() > 0 ? hr.getCpus() : ""));
@@ -517,7 +517,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Add task details for DAG
 		int taskNum = 1;
 		for (Task task : TaskDependecies.get().getTasks())
-			createReport(rTemplate, task, taskNum++);
+			createReport(rTemplate, task, taskNum++, false);
 
 		// Add at least one fake edge, so rTemplate doesn't fail
 		rTemplate.add("threadGraphEdgeId", "threadid-threadid");
@@ -578,7 +578,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -652,7 +652,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-		) {
+				) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -1005,9 +1005,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Convert multi-line string for report
 	 */
-	String multilineString(String title, String str) {
-		if (config.isYamlReport()) {
-			// Convert to YAML multi line
+	String multilineString(String title, String str, boolean yaml) {
+		if (yaml) {
+			// Convert to YAML multi-line
 			return Gpr.prependEachLine("        ", str).trim();
 		}
 
@@ -1138,7 +1138,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1220,7 +1220,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Finish up
 		removeStaleFiles();
 		timer.end();
-		if (config != null && config.isCreateReport() && isRoot()) createReport();
+		if (config != null && isRoot()) {
+			// Create reports? Note that some people may want both HTML and YAML reports
+			if (config.isReportHtml()) createReport(false);
+			if (config.isReportYaml()) createReport(true);
+		}
 		if (!isRoot()) parent.remove(this); // Remove from parent's threads
 
 		// OK, we are done
@@ -1237,7 +1241,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
-			);
+					);
 		}
 	}
 

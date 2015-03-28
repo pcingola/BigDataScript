@@ -66,9 +66,10 @@ public class Config {
 	boolean log = false; // Log all commands?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	boolean noRmOnExit = false; // Avoid removing files on exit
-	boolean createReport = true; // Create report when thread finishes
+	//	boolean createReport = true; // Create report when thread finishes
 	boolean extractSource = false;
-	boolean yamlReport = false; // Use YAML report format
+	boolean reportYaml = false; // Use YAML report format
+	boolean reportHtml = true; // Use HTML report format
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
 	int waitAfterTaskRun = -1; // Wait some milisecs after task run
@@ -292,9 +293,9 @@ public class Config {
 		return waitAfterTaskRun;
 	}
 
-	public boolean isCreateReport() {
-		return createReport;
-	}
+	//	public boolean isCreateReport() {
+	//		return createReport;
+	//	}
 
 	public boolean isDebug() {
 		return debug;
@@ -320,12 +321,16 @@ public class Config {
 		return quiet;
 	}
 
-	public boolean isVerbose() {
-		return verbose;
+	public boolean isReportHtml() {
+		return reportHtml;
 	}
 
-	public boolean isYamlReport() {
-		return yamlReport;
+	public boolean isReportYaml() {
+		return reportYaml;
+	}
+
+	public boolean isVerbose() {
+		return verbose;
 	}
 
 	public void kill() {
@@ -379,9 +384,9 @@ public class Config {
 		properties.setProperty(propertyName, value);
 	}
 
-	public void setCreateReport(boolean createReport) {
-		this.createReport = createReport;
-	}
+	//	public void setCreateReport(boolean createReport) {
+	//		this.createReport = createReport;
+	//	}
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
@@ -411,16 +416,20 @@ public class Config {
 		this.quiet = quiet;
 	}
 
+	public void setReportHtml(boolean reportHtml) {
+		this.reportHtml = reportHtml;
+	}
+
+	public void setReportYaml(boolean yamlReport) {
+		reportYaml = yamlReport;
+	}
+
 	public void setTaskFailCount(int taskFailCount) {
 		this.taskFailCount = taskFailCount;
 	}
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
-	}
-
-	public void setYamlReport(boolean yamlReport) {
-		this.yamlReport = yamlReport;
 	}
 
 	@Override
