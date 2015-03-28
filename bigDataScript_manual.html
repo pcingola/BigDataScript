@@ -2181,248 +2181,7 @@ int i = 5
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="cool">Some cool features </h1>
-				<p class="lead"> BigDataScript has some useful features... </p>
-					
-				<h3> Automatic command line parsing </h3>
-
-				No need to manually parse command line options for your scripts, <code>bds</code> does it for you:
-				Automatic command line parsing parses any command line argument that starts with "-" and assigns the value to the corresponding variable.
-				<br> File <a href="bds/test_20.bds">test_20.bds</a>
-<pre class="prettyprint">
-#!/usr/bin/env bds
-
-in := "in.txt"
-print("In file is '$in'\n")
-</pre>
-
-				If we run this, we get
-<pre class="prettyprint">
-$ ./test_20.bds 
-In file is 'in.txt'
-</pre>
-
-				No we pass a command line argument <code>-in another_file.txt</code>, and <code>bds</code> automatically parses that command line option replacing the value of varialbe 'in'
-<pre class="prettyprint">
-$ ./test_20.bds -in another_file.txt
-In file is 'another_file.txt'
-</pre>
-				This feature also works for other data types (int, real, bool). 
-				In case of bool if the option is present, the variable is set to 'true'.
-				<br> File <a href="bds/test_21.bds">test_21.bds</a>
-<pre class="prettyprint">
-#!/usr/bin/env bds
-
-bool flag
-print("Variable flag is $flag\n")
-</pre>
-
-<pre class="prettyprint">
-$ ./test_21.bds
-Variable flag is false
-</pre>
-
-<pre class="prettyprint">
-$ ./test_21.bds -flag
-Variable flag is true
-</pre>
-
-				You can also apply this to a list of strings.
-				In this case, all command line arguments following the <code>-listName</code> will be included in the list (up to the next argument starting with '-').
-				<br>
-				E.g.: Note that list <code>in</code> is populated using 'in1.txt in2.txt in3.txt' and <code>out</code> is set to 'zzz.txt'
-				<br> File <a href="bds/test_22.bds">test_22.bds</a>
-<pre class="prettyprint">
-#!/usr/bin/env bds
-
-in  := ["in.txt"]
-out := "out.txt"
-ok	:= false
-
-print("In : $in\n")
-print("Out: $out\n")
-print("OK : $ok\n")
-</pre>
-
-<pre class="prettyprint">
-$ ./test_22.bds  -ok -in in1.txt in2.txt in3.txt -out zzz.txt
-In : [in1.txt, in2.txt, in3.txt]
-Out: zzz.txt
-OK : true
-</pre>
-
-				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
-
-				<h3> Automatic command line help </h3>
-				<p class="lead"> An automatic command line 'help' for your scripts can be created. </p>
-
-				When you create varaibles that are used in command line arguments, you can provide an optional <code>help</code> string that <code>bds</code> will show when the script is run using either: <code>-h</code>, <code>-help</code> or <code>--help</code> command line options.
-				<br>
-				<br>
-				For example, if we have the following script:<br>
-				File <a href="bds/test_26.bds">test_26.bds</a>
-<pre class="prettyprint">
-#!/usr/bin/env bds
-
-int num = 3		help Number of times 'hi' should be printed
-int min			help Help for argument 'min' should be printed here
-mean := 5		help Help for argument 'mean' should be printed here
-someVeryLongCommandLineArgumentName := true    help This command line argument has a really long name
-
-for( int i=0 ; i < num ; i++ ) {
-	print "hi $i\n"
-}
-</pre>
-
-		When running the script using <code>-h</code> command line option a help screen is created and printed out automatically (no action is programmed in the script to process the '-h' command line option).
-		Note that script command line options are given AFTER script name:
-<pre>
-$ bds test_26.bds -h
-Command line options 'test_26.bds' :
-	-num <int>                                : Number of times 'hi' should be printed
-	-min <int>                                : Help for argument 'min' should be printed here
-	-mean <int>                               : Help for argument 'mean' should be printed here
-	-someVeryLongCommandLineArgumentName      : This command line argument has a really long name
-</pre>
-
-		<br>
-		The same happens if you run the script directly:
-<pre>
-$ ./test_26.bds -h
-Command line options 'test_26.bds' :
-	num                                 : Number of times 'hi' should be printed
-	min                                 : Help for argument 'min' should be printed here
-	mean                                : Help for argument 'mean' should be printed here
-	someVeryLongCommandLineArgumentName : This command line argument has a really long name
-</pre>
-
-	
-
-				<h3 class="page-header" id="log">Logging </h3>
-				<p class="lead"> By cal log all command execution. </p>
-
-				Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
-				This gives you an automatic log of everything that was executed, as well as the detials of the outputs and exit status from each execution.
-				<br>
-				For example, let's create a simple program and run it
-<pre class="prettyprint">
-string name = "Pablo"
-
-sys echo Hello $name
-</pre>
-
-					Now let's run this script, we use <code>-v</code> command line option to make the output verbose:
-<pre class="prettyprint">
-$ bds -v -log z.bds
-00:00:00.169	Process ID: z.bds.20140328_224825_685
-00:00:00.174	Queuing task 'z.bds.20140328_224825_685/sys.line_4.id_1'
-00:00:00.674	Running task 'z.bds.20140328_224825_685/sys.line_4.id_1'
-00:00:00.689	Finished task 'z.bds.20140328_224825_685/sys.line_4.id_1'
-Hello Pablo
-00:00:00.692	Finished running. Exit value : 0
-</pre>
-				What happened?
-				<ol>
-					<li> bds parses the <code>sys</code> statement and interpolates "echo Hello $name" to "echo Hello Pablo"
-
-					<li> Creates a taks and assigns a task ID <code>z.bds.20140328_224825_685/sys.line_4.id_1</code>
-
-					<li> It creates a shell script file <code>z.bds.20140328_224825_685/sys.line_4.id_1.sh</code> with the code:
-<pre class="prettyprint">
-$ cat z.bds.20140328_224825_685/sys.line_4.id_1.sh 
-#!/bin/sh
-
-echo Hello Pablo
-</pre>
-
-						<li> Then executes this shell script and saves stdout and stderr to z.bds.20140328_224825_685/sys.line_4.id_1.stdout and z.bds.20140328_224825_685/sys.line_4.id_1.stderr respectively
-<pre class="prettyprint">
-$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stdout
-Hello Pablo
-$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
-</pre>
-					Notice that there was no output on stderr (it's empty)
-
-					<li> Command finished without problems, so it continues with the rest of the program
-				
-				</ol>
-				So at the end of the run, we have the file with the script, plus the stdout and stderr files.
-				All the information is logged automatically.
-				<br>
-
-				</p>
-
-				<h3 class="page-header" id="myfirst">Cleanup </h3>
-				<p class="lead"> If a script fails, <code>bds</code> automatically cleans up stale files and kills pending tasks. <p>
-
-				In order to make sure that data pipelines are correctly re-executed after a failure, <code>bds</code> automatically cleans all dependent files from failed tasks.
-				This saves time because the user doesn't need to check for consistency on putative stale files.
-				<br>
-				<br>
-				Also, <code>bds</code> ensures that resources are not wasted, by killing all pending tasks.
-				In large pipelines, thousands of taks can be scheduled for execution in a cluster and it is quite difficult for the user to keep track of them and clean them if the pipeline fails.
-				Fortunately <code>bds</code> takes care of all these details and issues appropiate commands to kill all pending task.
-
-				<br> File <a href="bds/test_22.bds">test_22.bds</a>
-<pre class="prettyprint">
-#!/usr/bin/env bds
-
-for(int i : range(1,10) ) {
-    in  := "in_$i.txt"
-    sys date > $in
-
-    out := "out_$i.txt"
-    task( out <- in ) {
-        sys echo Task $i | tee $out; sleep $i; echo Done $i
-    }
-}
-</pre>
-
-				If I run this example and interrupt it (by pressing Ctrl-C) before it ends:
-<pre class="prettyprint">
-$ ./test_23.bds
-Task 4
-Task 5
-Task 2
-Task 3
-Task 8
-Task 1
-Task 7
-Task 6
-Done 1
-Task 9
-Done 2
-Task 10
-Done 3
-^C				# Here I pressed Ctr-C
-2014/07/31 00:43:46 bds: Received OS signal 'interrupt'
-2014/07/31 00:43:46 bds: Killing PID '32523'
-2014/07/31 00:43:46 bds: Killing PID '32534'
-2014/07/31 00:43:46 bds: Deleting file 'out_6.txt'
-2014/07/31 00:43:46 bds: Deleting file 'out_9.txt'
-2014/07/31 00:43:46 bds: Deleting file 'out_5.txt'
-2014/07/31 00:43:46 bds: Killing PID '32546'
-2014/07/31 00:43:46 bds: Deleting file 'out_4.txt'
-2014/07/31 00:43:46 bds: Deleting file 'out_8.txt'
-2014/07/31 00:43:46 bds: Killing PID '32597'
-2014/07/31 00:43:46 bds: Killing PID '32557'
-2014/07/31 00:43:46 bds: Deleting file 'out_7.txt'
-2014/07/31 00:43:46 bds: Killing PID '32575'
-2014/07/31 00:43:46 bds: Killing PID '32610'
-2014/07/31 00:43:46 bds: Deleting file 'out_10.txt'
-</pre>
-				You can see how <code>bds</code> cleans up all stale files and kills all processes.
-				When this is executed in a cluster, the appropriate <code>qdel</code>, <code>canceljob</code> or similar command is issued (depending on the type of cluster used).
-	
-				<h3 class="page-header" id="myfirst">Disapearing tasks</h3>
-				<p class="lead"> Simetime tasks just disapear from clusters. </p>
-
-				Sometimes cluster fails in ways that the cluster management system is unable to detect a failure, let alone report the error.
-				It can happen that task dissapear without any trace from the cluster (this is not as rare as you may think, particularly when execitun thousands of task per pipeline).
-				For this reason, <code>bds</code> performs active monitoring, to ensure that tasks are still alive.
-				If any tasks "misteriouslt disapears", <code>bds</code> reports the problem and considers the task as failed.
-	
-				<h3 class="page-header" id="myfirst"> Unity Testing </h3>
+				<h1 class="page-header" id="test">Code testing </h1>
 				<p class="lead"> Because nobody writes perfect code. </p>
 
 				<code>bds</code> provides a simple unity testing functionality. 
@@ -2469,8 +2228,10 @@ Nice test code 01
 </pre>
 			</div>
 
-				<h3 class="page-header" id="debugging"> Debugger </h3>
-				<p class="lead"> Bds provides a simple built in debugger using <code>breakpoint</code> and <code>debug</code> statements.</p>
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="debugger"> Debugger (built in) </h1>
+				<p class="lead"> Bds provides a simple yet powerfull built in debugger using <code>breakpoint</code> and <code>debug</code> statements.</p>
 
 				<code>bds</code> provides a simple built in debugger that can be activated using <code>breakpoint</code> statement.
 				When a <code>breakpoint</code> statement is found, <code>bds</code> switches to debug mode and prompts the user on the console.
@@ -2571,8 +2332,258 @@ DEBUG [STEP_OVER]: test_25.bds, line 11: print "hi $i\\n" > r        # Run (unti
 hi 2
 Debug test_25.bds, line 12: Variable: 2
 </pre>
-
+			</div>
 		
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="cmdLineParse">Automatic command line parsing </h1>
+				<p class="lead"> No need to manually parse command line options for your scripts, <code>bds</code> does it for you.</p>
+
+				Automatic command line parsing parses any command line argument that starts with "-" and assigns the value to the corresponding variable.
+				<br> File <a href="bds/test_20.bds">test_20.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+in := "in.txt"
+print("In file is '$in'\n")
+</pre>
+
+				If we run this, we get
+<pre class="prettyprint">
+$ ./test_20.bds 
+In file is 'in.txt'
+</pre>
+
+				No we pass a command line argument <code>-in another_file.txt</code>, and <code>bds</code> automatically parses that command line option replacing the value of varialbe 'in'
+<pre class="prettyprint">
+$ ./test_20.bds -in another_file.txt
+In file is 'another_file.txt'
+</pre>
+				This feature also works for other data types (int, real, bool). 
+				In case of bool if the option is present, the variable is set to 'true'.
+				<br> File <a href="bds/test_21.bds">test_21.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+bool flag
+print("Variable flag is $flag\n")
+</pre>
+
+<pre class="prettyprint">
+$ ./test_21.bds
+Variable flag is false
+</pre>
+
+<pre class="prettyprint">
+$ ./test_21.bds -flag
+Variable flag is true
+</pre>
+
+				You can also apply this to a list of strings.
+				In this case, all command line arguments following the <code>-listName</code> will be included in the list (up to the next argument starting with '-').
+				<br>
+				E.g.: Note that list <code>in</code> is populated using 'in1.txt in2.txt in3.txt' and <code>out</code> is set to 'zzz.txt'
+				<br> File <a href="bds/test_22.bds">test_22.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+in  := ["in.txt"]
+out := "out.txt"
+ok	:= false
+
+print("In : $in\n")
+print("Out: $out\n")
+print("OK : $ok\n")
+</pre>
+
+<pre class="prettyprint">
+$ ./test_22.bds  -ok -in in1.txt in2.txt in3.txt -out zzz.txt
+In : [in1.txt, in2.txt, in3.txt]
+Out: zzz.txt
+OK : true
+</pre>
+
+				<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
+			</div>
+
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="autoHelp">Automatic command line help </h1>
+				<p class="lead"> An automatic command line 'help' for your scripts can be created automatically by <code>bds</code>. </p>
+
+				When you create varaibles that are used in command line arguments, you can provide an optional <code>help</code> string that <code>bds</code> will show when the script is run using either: <code>-h</code>, <code>-help</code> or <code>--help</code> command line options.
+				<br>
+				<br>
+				For example, if we have the following script:<br>
+				File <a href="bds/test_26.bds">test_26.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+int num = 3		help Number of times 'hi' should be printed
+int min			help Help for argument 'min' should be printed here
+mean := 5		help Help for argument 'mean' should be printed here
+someVeryLongCommandLineArgumentName := true    help This command line argument has a really long name
+
+for( int i=0 ; i < num ; i++ ) {
+	print "hi $i\n"
+}
+</pre>
+
+		When running the script using <code>-h</code> command line option a help screen is created and printed out automatically (no action is programmed in the script to process the '-h' command line option).
+		Note that script command line options are given AFTER script name:
+<pre>
+$ bds test_26.bds -h
+Command line options 'test_26.bds' :
+	-num <int>                                : Number of times 'hi' should be printed
+	-min <int>                                : Help for argument 'min' should be printed here
+	-mean <int>                               : Help for argument 'mean' should be printed here
+	-someVeryLongCommandLineArgumentName      : This command line argument has a really long name
+</pre>
+
+		<br>
+		The same happens if you run the script directly:
+<pre>
+$ ./test_26.bds -h
+Command line options 'test_26.bds' :
+	num                                 : Number of times 'hi' should be printed
+	min                                 : Help for argument 'min' should be printed here
+	mean                                : Help for argument 'mean' should be printed here
+	someVeryLongCommandLineArgumentName : This command line argument has a really long name
+</pre>
+
+			</div>
+
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="autoLog">Logging </h1>
+				<p class="lead"> Logging is mundane, boring but many times necesary. Not many peole enjoy adding hundreds of line of code just to perform logging, that's why <code>bds</code> can log everything for you.</p>
+
+				Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
+				This gives you an automatic log of everything that was executed, as well as the detials of the outputs and exit status from each execution.
+				<br>
+				For example, let's create a simple program and run it
+<pre class="prettyprint">
+string name = "Pablo"
+
+sys echo Hello $name
+</pre>
+
+					Now let's run this script, we use <code>-v</code> command line option to make the output verbose:
+<pre class="prettyprint">
+$ bds -v -log z.bds
+00:00:00.169	Process ID: z.bds.20140328_224825_685
+00:00:00.174	Queuing task 'z.bds.20140328_224825_685/sys.line_4.id_1'
+00:00:00.674	Running task 'z.bds.20140328_224825_685/sys.line_4.id_1'
+00:00:00.689	Finished task 'z.bds.20140328_224825_685/sys.line_4.id_1'
+Hello Pablo
+00:00:00.692	Finished running. Exit value : 0
+</pre>
+				What happened?
+				<ol>
+					<li> bds parses the <code>sys</code> statement and interpolates "echo Hello $name" to "echo Hello Pablo"
+
+					<li> Creates a taks and assigns a task ID <code>z.bds.20140328_224825_685/sys.line_4.id_1</code>
+
+					<li> It creates a shell script file <code>z.bds.20140328_224825_685/sys.line_4.id_1.sh</code> with the code:
+<pre class="prettyprint">
+$ cat z.bds.20140328_224825_685/sys.line_4.id_1.sh 
+#!/bin/sh
+
+echo Hello Pablo
+</pre>
+
+						<li> Then executes this shell script and saves stdout and stderr to z.bds.20140328_224825_685/sys.line_4.id_1.stdout and z.bds.20140328_224825_685/sys.line_4.id_1.stderr respectively
+<pre class="prettyprint">
+$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stdout
+Hello Pablo
+$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
+</pre>
+					Notice that there was no output on stderr (it's empty)
+
+					<li> Command finished without problems, so it continues with the rest of the program
+				
+				</ol>
+				So at the end of the run, we have the file with the script, plus the stdout and stderr files.
+				All the information is logged automatically.
+				<br>
+
+				</p>
+
+			</div>
+
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="cleanup">Cleanup </h1>
+				<p class="lead"> If a script fails, <code>bds</code> automatically cleans up stale files and kills pending tasks. <p>
+
+				In order to make sure that data pipelines are correctly re-executed after a failure, <code>bds</code> automatically cleans all dependent files from failed tasks.
+				This saves time because the user doesn't need to check for consistency on putative stale files.
+				<br>
+				<br>
+				Also, <code>bds</code> ensures that resources are not wasted, by killing all pending tasks.
+				In large pipelines, thousands of taks can be scheduled for execution in a cluster and it is quite difficult for the user to keep track of them and clean them if the pipeline fails.
+				Fortunately <code>bds</code> takes care of all these details and issues appropiate commands to kill all pending task.
+
+				<br> File <a href="bds/test_22.bds">test_22.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+for(int i : range(1,10) ) {
+    in  := "in_$i.txt"
+    sys date > $in
+
+    out := "out_$i.txt"
+    task( out <- in ) {
+        sys echo Task $i | tee $out; sleep $i; echo Done $i
+    }
+}
+</pre>
+
+				If I run this example and interrupt it (by pressing Ctrl-C) before it ends:
+<pre class="prettyprint">
+$ ./test_23.bds
+Task 4
+Task 5
+Task 2
+Task 3
+Task 8
+Task 1
+Task 7
+Task 6
+Done 1
+Task 9
+Done 2
+Task 10
+Done 3
+^C				# Here I pressed Ctr-C
+2014/07/31 00:43:46 bds: Received OS signal 'interrupt'
+2014/07/31 00:43:46 bds: Killing PID '32523'
+2014/07/31 00:43:46 bds: Killing PID '32534'
+2014/07/31 00:43:46 bds: Deleting file 'out_6.txt'
+2014/07/31 00:43:46 bds: Deleting file 'out_9.txt'
+2014/07/31 00:43:46 bds: Deleting file 'out_5.txt'
+2014/07/31 00:43:46 bds: Killing PID '32546'
+2014/07/31 00:43:46 bds: Deleting file 'out_4.txt'
+2014/07/31 00:43:46 bds: Deleting file 'out_8.txt'
+2014/07/31 00:43:46 bds: Killing PID '32597'
+2014/07/31 00:43:46 bds: Killing PID '32557'
+2014/07/31 00:43:46 bds: Deleting file 'out_7.txt'
+2014/07/31 00:43:46 bds: Killing PID '32575'
+2014/07/31 00:43:46 bds: Killing PID '32610'
+2014/07/31 00:43:46 bds: Deleting file 'out_10.txt'
+</pre>
+				You can see how <code>bds</code> cleans up all stale files and kills all processes.
+				When this is executed in a cluster, the appropriate <code>qdel</code>, <code>canceljob</code> or similar command is issued (depending on the type of cluster used).
+	
+				<h3 class="page-header" id="myfirst">Disapearing tasks</h3>
+				<p class="lead"> Simetime tasks just disapear from clusters. </p>
+
+				Sometimes cluster fails in ways that the cluster management system is unable to detect a failure, let alone report the error.
+				It can happen that task dissapear without any trace from the cluster (this is not as rare as you may think, particularly when execitun thousands of task per pipeline).
+				For this reason, <code>bds</code> performs active monitoring, to ensure that tasks are still alive.
+				If any tasks "misteriouslt disapears", <code>bds</code> reports the problem and considers the task as failed.
+			</div>
+
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="commandLine">BDS Command line options </h1>
@@ -2581,7 +2592,7 @@ Debug test_25.bds, line 12: Variable: 2
 				Running the command line without any arguments, shows a help message
 <pre class="prettyprint">
 $ bds
-BigDataScript 0.999e (build 2015-02-13), by Pablo Cingolani
+BigDataScript 0.999i (build 2015-03-28), by Pablo Cingolani
 
 Usage: BigDataScript [options] file.bds
 
@@ -2589,18 +2600,20 @@ Available options:
   [-c | -config ] bds.config     : Config file. Default : /Users/pcingola/.bds/bds.config
   [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.
   [-d | -debug  ]                : Debug mode.
-  -done                          : Use 'done' files: Default: false
-  -dryRun                        : Do not run any task, just show what would be run.
+  -dryRun                        : Do not run any task, just show what would be run. Default: false
   [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').
   [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.
-  [-l | -log    ]                : Log all tasks (do not delete tmp files).
-  -noReport                      : Do not create report.
-  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).
+  [-l | -log    ]                : Log all tasks (do not delete tmp files). Default: false
+  -noReport                      : Do not create any report (neither HTML nor YAML).
+  -noReportHtml                  : Do not create HTML report.
+  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit). Default: false
   [-q | -queue  ] queueName      : Set default queue name.
-  -quiet                         : Do not show any messages or tasks outputs on STDOUT.
+  -quiet                         : Do not show any messages or tasks outputs on STDOUT. Default: false
+  -reportHtml                    : Create HTML report. Default: true
+  -reportYaml                    : Create YAML report. Default: false
   [-r | -restore] checkpoint.chp : Restore state from checkpoint file.
   [-s | -system ] type           : Set system type.
-  [-t | -test   ]                : Perform testing (run all test* functions).
+  [-t | -test   ]                : Run user test cases (runs all test* functions).
   [-v | -verbose]                : Be verbose.
   -version                       : Show version and exit.
   [-y | -retry  ] num            : Number of times to retry a failing tasks.
@@ -2610,19 +2623,25 @@ Available options:
 					<tr> <th> Option short </th><th> Option long </th> <th> Meaning </th> </tr>
 					<tr> <td> -c </td> <td> -config </td> <td> Path to bds.config file (most of the times no config file is needed) </td> </tr>
 					<tr> <td>    </td> <td> -checkPidRegex </td> <td> Check configuration's 'pidRegex' by matching stdin. </td> </tr>
-					<tr> <td> -d </td> <td> -debug </td> <td> Debug mode, shows detailed information for debugging scripts. </td> </tr>
+					<tr> <td> -d </td> <td> -debug </td> <td> Debug mode, shows detailed information for debugging scripts or debugging bds itself. </td> </tr>
 					<tr> <td>    </td> <td> -dryRun  </td> <td> Do not run any task, just show what would be run. This mode is used when you just want to test your script's logic without executing any tasks. </td> </tr>
 					<tr> <td>    </td> <td> -extractSource </td> <td> Extract source code files from checkpoint (only valid combined with '-info').</td> </tr>
 					<tr> <td> -i </td> <td> -info </td> <td> Show state information in checkpoint file. Prints variables, scopes, etc.</td> </tr>
-					<tr> <td>    </td> <td> -noReport </td> <td> Do not create HTML report when execution finishes. </td> </tr>
+					<tr> <td> -l </td> <td> -log </td> <td> Log all tasks (do not delete tmp files).</td> </tr>
+					<tr> <td>    </td> <td> -noReport </td> Do not create any report (neither HTML nor YAML).<td> </tr>
+					<tr> <td>    </td> <td> -noReportHtml </td> Do not create HTML report.<td> </tr>
 					<tr> <td>    </td> <td> -noRmOnExit </td> <td> Do not remove files marked for deletion on exit (rmOnExit). </td> </tr>
 					<tr> <td> -q </td> <td> -queue </td> <td> Set default cluster's queue name. </td> </tr>
 					<tr> <td>    </td> <td> -quiet </td> <td> Do not show any messages or tasks outputs on STDOUT. This means that only the output from <code>print</code> (and other print-like bds statements), statements will be shown on the console </td> </tr>
+					<tr> <td>    </td> <td> -reportHtml </td> <td> Create HTML report. Create an HTML report (only if at least one task is executed). By default this option is activated.</tr>
+					<tr> <td>    </td> <td> -reportYaml </td> <td> Create YAML report. Create a YAML report (only if at least one task is executed). </tr>
 					<tr> <td> -r </td> <td> -restore </td> <td> Restore from a acheckpoiunt and continue execution.</td> </tr>
 					<tr> <td> -s </td> <td> -system </td> <td> Define the 'system' type the script is running on (e.g. cluster type) </td> </tr>
 					<tr> <td> -t </td> <td> -test </td> <td> Perform all tests in a script (i.e. run all functions that are called "test*") </td> </tr>
 					<tr> <td> -v </td> <td> -verbose </td> <td> Be verbose (show more information) </td> </tr>
+					<tr> <td>    </td> <td> -version </td> <td> Show version number and exit.</td> </tr>
 					<tr> <td> -y </td> <td> -retry </td> <td> Number of times to retry a failing tasks. </td> </tr>
+					<tr> <td>    </td> <td> -pid </td> <td> Write local processes PIDs to 'file'. Under normal circumstances, you should never use this command line option (unless you are debugging bds itself). </td> </tr>
 				</table>
 			</div>
 
@@ -3017,13 +3036,12 @@ ssh.nodes = sgeadmin@node001, sgeadmin@node002, sgeadmin@node003, sgeadmin@node0
 					<li><a href="#par"> Parallel execution </a></li>
 					<li><a href="#check"> Checkpoints </a></li>
 
-					<li><a href="#cool"> Some cool features </a>
-						<ul class="nav">
-							<li><a href="#log"> Logging </a></li>
-							<li><a href="#args"> Command line arguments </a></li>
-							<li><a href="#test"> Teting </a></li>
-						</ul>
-					</li>
+					<li><a href="#test"> Testing </a></li>
+					<li><a href="#debugger"> Debugger (built in) </a></li>
+					<li><a href="#cmdLineParse"> Command line parsing </a></li>
+					<li><a href="#autoHelp"> Automatic help</a></li>
+					<li><a href="#autoLog"> Logging </a></li>
+					<li><a href="#cleanup"> Cleanup </a></li>
 
 					<li><a href="#commandLine"> BDS command line </a></li>
 					<li><a href="#config"> BDS config file </a></li>
