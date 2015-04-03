@@ -726,7 +726,6 @@ public class BigDataScript {
 
 		long oneDay = 1L * 24 * 60 * 60;
 		long timeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_TIMEOUT, "" + oneDay));
-		Gpr.debug("TIMEOUT= " + timeout);
 		long wallTimeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
 
 		// ---

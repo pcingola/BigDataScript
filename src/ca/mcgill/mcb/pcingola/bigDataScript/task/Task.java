@@ -326,9 +326,11 @@ public class Task implements BigDataScriptSerialize {
 	public String getProgramHint() {
 		if (programTxt == null) return "";
 
+		int maxHintLen = Config.get().getTaskMaxHintLen();
+
 		for (String line : programTxt.split("\n"))
 			if (!(line.isEmpty() || line.startsWith("#"))) {
-				String hint = line.length() > MAX_HINT_LEN ? line.substring(0, MAX_HINT_LEN) : line;
+				String hint = line.length() > maxHintLen ? line.substring(0, maxHintLen) : line;
 				hint = hint.replace('\'', ' ');
 				hint = hint.replace('\t', ' ');
 				return hint;

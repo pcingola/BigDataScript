@@ -12,6 +12,7 @@ import java.util.Properties;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.MonitorTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.TaskLogger;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -59,6 +60,8 @@ public class Config {
 	public static final String WAIT_AFTER_TASK_RUN = "waitAfterTaskRun";
 	public static int DEFAULT_WAIT_AFTER_TASK_RUN = 0;
 
+	public static final String TASK_MAX_HINT_LEN = "taskMaxHintLen";
+
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -75,6 +78,7 @@ public class Config {
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
 	int waitAfterTaskRun = -1; // Wait some milisecs after task run
+	Integer taskMaxHintLen; // Max number of characters to use in tasks's "hint"
 	String configFileName;
 	String configDirName;
 	String pidFile = "pidFile" + (new Date()).getTime() + ".txt"; // Default PID file
@@ -292,6 +296,17 @@ public class Config {
 			taskLogger.setDebug(isDebug());
 		}
 		return taskLogger;
+	}
+
+	public int getTaskMaxHintLen() {
+		if (taskMaxHintLen == null) {
+			taskMaxHintLen = Gpr.parseIntSafe(properties.getProperty(TASK_MAX_HINT_LEN, Task.MAX_HINT_LEN + ""));
+
+			// Negative number means 'unlimited' (technically 2G)
+			if (taskMaxHintLen < 0) taskMaxHintLen = Integer.MAX_VALUE;
+		}
+
+		return taskMaxHintLen;
 	}
 
 	public int getWaitAfterTaskRun() {
