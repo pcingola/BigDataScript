@@ -1,4 +1,3 @@
 #!/usr/bin/env bds
-
-
-print "mem = $mem\n"
+#task echo hi
+task( mem:= 2*G, timeout := 2*hour ) sys echo hi

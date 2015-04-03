@@ -71,8 +71,8 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-03-28";
-	public static final String REVISION = "i";
+	public static final String BUILD = "2015-04-03";
+	public static final String REVISION = "j";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -719,8 +719,6 @@ public class BigDataScript {
 		if (cpus <= 0) throw new RuntimeException("Number of cpus must be a positive number ('" + cpusStr + "')");
 
 		long mem = Gpr.parseMemSafe(config.getString(ExpressionTask.TASK_OPTION_MEM, "-1")); // Default amount of memory: -1 (unrestricted)
-		Gpr.debug("MEM = " + mem);
-
 		String node = config.getString(ExpressionTask.TASK_OPTION_NODE, "");
 		if (queue == null) queue = config.getString(ExpressionTask.TASK_OPTION_QUEUE, "");
 		if (system == null) system = config.getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
@@ -728,6 +726,7 @@ public class BigDataScript {
 
 		long oneDay = 1L * 24 * 60 * 60;
 		long timeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_TIMEOUT, "" + oneDay));
+		Gpr.debug("TIMEOUT= " + timeout);
 		long wallTimeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
 
 		// ---
