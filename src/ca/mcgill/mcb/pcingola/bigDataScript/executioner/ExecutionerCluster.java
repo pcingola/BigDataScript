@@ -47,6 +47,8 @@ public class ExecutionerCluster extends Executioner {
 	protected String cpuParam;
 	protected String wallTimeParam;
 
+	protected boolean postMortemDisabled; // Disable post-mortem taks info?
+
 	public int MIN_EXTRA_TIMEOUT = 15;
 	public int MAX_EXTRA_TIMEOUT = 120;
 
@@ -72,6 +74,8 @@ public class ExecutionerCluster extends Executioner {
 		clusterKillAdditionalArgs = config.getStringArray(Config.CLUSTER_KILL_ADDITIONAL_ARGUMENTS);
 		clusterStatAdditionalArgs = config.getStringArray(Config.CLUSTER_STAT_ADDITIONAL_ARGUMENTS);
 		clusterPostMortemAdditionalArgs = config.getStringArray(Config.CLUSTER_POSTMORTEMINFO_ADDITIONAL_ARGUMENTS);
+
+		postMortemDisabled = config.getBool(Config.CLUSTER_POSTMORTEMINFO_DISABLED, false);
 
 		memParam = "mem=";
 		cpuParam = "nodes=1:ppn=";
@@ -317,6 +321,10 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	@Override
 	protected void postMortemInfo(Task task) {
+		// Post mortem info disabled?
+		if (postMortemDisabled) return;
+
+		// Get command line arguments and execute them
 		String cmd[] = getCommandPostMortemInfo();
 		if (cmd.length <= 0) return;
 		if (task.getPid() == null || task.getPid().isEmpty()) return;
@@ -338,7 +346,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit value       : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
-		);
+				);
 
 		// Collect the data
 		if (cmdExecResult.exitValue == 0) task.setPostMortemInfo(cmdExecResult.stdOut);
@@ -347,7 +355,7 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tExit code        : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
-		);
+				);
 
 	}
 

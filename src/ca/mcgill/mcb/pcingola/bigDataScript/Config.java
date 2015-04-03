@@ -31,6 +31,7 @@ public class Config {
 	public static final String PID_REGEX_CHECK_TASK_RUNNING = "pidRegexCheckTaskRunning"; // Regex used for checking PID
 	public static final String PID_COLUMN_CHECK_TASK_RUNNING = "pidColumnCheckTaskRunning"; // Regex used for checking PID
 
+	// Shells used to invoke 'sys' and 'task'
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
 	public static final String SYS_SHELL = "sysShell"; // Sys's shell
 
@@ -39,10 +40,12 @@ public class Config {
 	public static final String CLUSTER_SGE_MEM = "sge.mem";
 	public static final String CLUSTER_SGE_TIMEOUT = "sge.timeout";
 
+	// Cluster parameters
 	public static final String CLUSTER_RUN_ADDITIONAL_ARGUMENTS = "clusterRunAdditionalArgs"; // Cluster additional command line arguments (when running tasks)
 	public static final String CLUSTER_KILL_ADDITIONAL_ARGUMENTS = "clusterKillAdditionalArgs"; // Cluster additional command line arguments (when killing tasks)
 	public static final String CLUSTER_STAT_ADDITIONAL_ARGUMENTS = "clusterStatAdditionalArgs"; // Cluster additional command line arguments (when requesting information about all tasks)
 	public static final String CLUSTER_POSTMORTEMINFO_ADDITIONAL_ARGUMENTS = "clusterPostMortemInfoAdditionalArgs"; // Cluster additional command line arguments (when requesting information about a failed task)
+	public static final String CLUSTER_POSTMORTEMINFO_DISABLED = "clusterPostMortemDisabled"; // Some clusters do not provide information after the process dies
 
 	// Generic cluster
 	public static final String CLUSTER_GENERIC_RUN = "clusterGenericRun";
@@ -66,7 +69,6 @@ public class Config {
 	boolean log = false; // Log all commands?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	boolean noRmOnExit = false; // Avoid removing files on exit
-	//	boolean createReport = true; // Create report when thread finishes
 	boolean extractSource = false;
 	boolean reportYaml = false; // Use YAML report format
 	boolean reportHtml = true; // Use HTML report format
@@ -107,6 +109,15 @@ public class Config {
 	public Config(String configFileName) {
 		read(configFileName); // Read config file
 		configInstance = this;
+	}
+
+	/**
+	 * Get a property as a boolean
+	 */
+	public boolean getBool(String propertyName, boolean defaultValue) {
+		String val = getString(propertyName);
+		if (val == null) return defaultValue;
+		return Gpr.parseBoolSafe(val.trim());
 	}
 
 	public String getConfigDirName() {
@@ -293,10 +304,6 @@ public class Config {
 		return waitAfterTaskRun;
 	}
 
-	//	public boolean isCreateReport() {
-	//		return createReport;
-	//	}
-
 	public boolean isDebug() {
 		return debug;
 	}
@@ -354,8 +361,10 @@ public class Config {
 
 		if (!Gpr.exists(configFileName)) {
 			// The user specified a configuration file (different than default)
-			// => This should be a fatal error.
-			if (!configFileName.equals(DEFAULT_CONFIG_FILE)) throw new RuntimeException("Config file '" + configFileName + "' not found");
+			if (!configFileName.equals(DEFAULT_CONFIG_FILE)) // => This should be a fatal error.
+				throw new RuntimeException("Config file '" + configFileName + "' not found");
+
+			// User did not specify a config file? => OK
 			return;
 		}
 
@@ -383,10 +392,6 @@ public class Config {
 	public void set(String propertyName, String value) {
 		properties.setProperty(propertyName, value);
 	}
-
-	//	public void setCreateReport(boolean createReport) {
-	//		this.createReport = createReport;
-	//	}
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
