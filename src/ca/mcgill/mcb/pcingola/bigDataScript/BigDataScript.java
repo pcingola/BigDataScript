@@ -79,7 +79,6 @@ public class BigDataScript {
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
 	boolean checkPidRegex; // Check PID regex (do not run program)
-	// boolean createReport; // Create report
 	boolean debug; // debug mode
 	boolean extractSource; // Extract source code form checkpoint (nly valid on recovery mode)
 	boolean dryRun; // Dry run (do not run tasks)
@@ -178,7 +177,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-					);
+			);
 			return null;
 		}
 	}
@@ -719,7 +718,9 @@ public class BigDataScript {
 		long cpus = Gpr.parseIntSafe(cpusStr);
 		if (cpus <= 0) throw new RuntimeException("Number of cpus must be a positive number ('" + cpusStr + "')");
 
-		long mem = Gpr.parseIntSafe(config.getString(ExpressionTask.TASK_OPTION_MEM, "-1")); // Default amount of memory: -1 (unrestricted)
+		long mem = Gpr.parseMemSafe(config.getString(ExpressionTask.TASK_OPTION_MEM, "-1")); // Default amount of memory: -1 (unrestricted)
+		Gpr.debug("MEM = " + mem);
+
 		String node = config.getString(ExpressionTask.TASK_OPTION_NODE, "");
 		if (queue == null) queue = config.getString(ExpressionTask.TASK_OPTION_QUEUE, "");
 		if (system == null) system = config.getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
@@ -1056,7 +1057,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-				);
+		);
 		return exitCode;
 	}
 

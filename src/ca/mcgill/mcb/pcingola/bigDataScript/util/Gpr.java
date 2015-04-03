@@ -379,8 +379,6 @@ public class Gpr {
 
 	/**
 	 * Equivalent to Integer.parseInt, except it returns 0 on invalid integer (NumberFormatException)
-	 * @param s
-	 * @return	int
 	 */
 	public static int parseIntSafe(String s) {
 		try {
@@ -391,13 +389,38 @@ public class Gpr {
 	}
 
 	/**
-	 * Equivalent to Integer.parseInt, except it returns 0 on invalid integer (NumberFormatException)
-	 * @param s
-	 * @return	int
+	 * Equivalent to Long.parseLong, except it returns 0 on invalid integer (NumberFormatException)
 	 */
 	public static long parseLongSafe(String s) {
 		try {
 			return Long.parseLong(s);
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	/**
+	 * Equivalent to Long.parseLong, except it returns 0 on invalid integer (NumberFormatException)
+	 * It also allows numbers to be finished by 'K', 'M', 'G', etc. to identify (2^10, 2^20, 2^30, etc.)
+	 */
+	public static long parseMemSafe(String s) {
+
+		s = s.trim().toUpperCase();
+		if (s.isEmpty()) return 0L;
+
+		// Find multiplier
+		long mult = 1;
+		if (s.endsWith("K")) mult = 1L << 10;
+		else if (s.endsWith("M")) mult = 1L << 20;
+		else if (s.endsWith("G")) mult = 1L << 30;
+		else if (s.endsWith("T")) mult = 1L << 40;
+		else if (s.endsWith("P")) mult = 1L << 50;
+
+		// Remove last char
+		if (mult != 1) s = s.substring(0, s.length() - 1).trim();
+
+		try {
+			return Long.parseLong(s) * mult;
 		} catch (Exception e) {
 			return 0;
 		}
