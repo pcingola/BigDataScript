@@ -56,10 +56,10 @@ public class CheckTasksRunning {
 		if (!pidPatternStr.isEmpty()) {
 			if (debug) log("Using pidRegex (check tasks running) '" + pidPatternStr + "'");
 			pidPattern = Pattern.compile(pidPatternStr);
-		} else if (debug) log("Config parameter '" + Config.PID_REGEX_CHECK_TASK_RUNNING + "' not set.");
+		} else if (debug) log("Config parameter '" + Config.PID_CHECK_TASK_RUNNING_REGEX + "' not set.");
 
 		// Select column where to look for PID
-		cmdPidColumn = (int) config.getLong(Config.PID_COLUMN_CHECK_TASK_RUNNING, 1) - 1;
+		cmdPidColumn = (int) config.getLong(Config.PID_CHECK_TASK_RUNNING_COLUMN, 1) - 1;
 		if (cmdPidColumn < 0) cmdPidColumn = 0;
 		if (debug) log("Using 'cmdPidColumn' " + cmdPidColumn);
 	}
@@ -147,8 +147,9 @@ public class CheckTasksRunning {
 			line = line.trim();
 
 			if (debug) log("Parsing line:\t" + line);
-
 			String pid = parsePidLine(line);
+
+			// Any results?
 			if (pid != null && !pid.isEmpty()) {
 				// PID parsed OK
 				if (pids.add(pid)) {
@@ -161,7 +162,7 @@ public class CheckTasksRunning {
 				String fields[] = line.split("\\s+");
 
 				// Obtain PID (found in column number 'cmdPidColumn')
-				if (fields.length > cmdPidColumn) {
+				if ((0 <= cmdPidColumn) && (cmdPidColumn < fields.length)) {
 					pid = fields[cmdPidColumn];
 
 					// Add first column (whole pid)
@@ -169,15 +170,7 @@ public class CheckTasksRunning {
 						if (debug) log("\tAdding ID (column number " + cmdPidColumn + "): '" + pid + "'");
 					}
 
-					// Try matching using executioner's parsePidLine method
-					if (executioner != null) {
-						String pidPart = executioner.parsePidLine(pid);
-						if (pids.add(pidPart)) {
-							if (debug) log("\tAdding ID (using '" + Config.PID_REGEX + "'): '" + pid + "'");
-						}
-					}
-
-					// Use only first part (before first dot)
+					// Use only first part (split using dot)
 					String pidPart = pid.split("\\.")[0]; // Use only the first part before '.'
 					if (pids.add(pidPart)) {
 						if (debug) log("\tAdding ID (using string before fisrt dot): '" + pid + "'");
@@ -202,9 +195,9 @@ public class CheckTasksRunning {
 			if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
 			else pid = matcher.group(0); // Use whole pattern
 
-			if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_REGEX_CHECK_TASK_RUNNING + ") matched '" + pid + "' in line: '" + line + "'");
+			if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_CHECK_TASK_RUNNING_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
 			return pid;
-		} else if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_REGEX_CHECK_TASK_RUNNING + ") did NOT match line: '" + line + "'");
+		} else if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_CHECK_TASK_RUNNING_REGEX + ") did NOT match line: '" + line + "'");
 
 		return line;
 	}
@@ -236,7 +229,7 @@ public class CheckTasksRunning {
 				+ "\n\tExit value : " + cmdExecResult.exitValue //
 				+ "\n\tStdout     : " + cmdExecResult.stdOut //
 				+ "\n\tStderr     : " + cmdExecResult.stdErr //
-				);
+		);
 
 		//---
 		// Sanity checks!
@@ -299,7 +292,7 @@ public class CheckTasksRunning {
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)
 					&& !task.isDone() // Is the task "not finished"?
-					) {
+			) {
 				// Task is missing.
 				// Update counter: Should we consider this task as 'missing'?
 				if (incMissingCount(task)) {
