@@ -313,7 +313,7 @@ public class Config {
 	public int getWaitAfterTaskRun() {
 		if (waitAfterTaskRun <= 0) {
 			// Parse property
-			maxThreads = (int) getLong(WAIT_AFTER_TASK_RUN, DEFAULT_WAIT_AFTER_TASK_RUN);
+			waitAfterTaskRun = (int) getLong(WAIT_AFTER_TASK_RUN, DEFAULT_WAIT_AFTER_TASK_RUN);
 			if (debug) Timer.showStdErr("Config: Setting 'waitAfterTaskRun' to " + waitAfterTaskRun);
 		}
 
