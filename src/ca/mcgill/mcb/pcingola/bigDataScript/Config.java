@@ -56,7 +56,8 @@ public class Config {
 	public static final String CLUSTER_GENERIC_POSTMORTEMINFO = "clusterGenericPostMortemInfo";
 
 	public static final String MAX_NUMBER_OF_RUNNING_THREADS = "maxThreads";
-	public static int DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS = 512;
+	public static final int MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE = 50; // If maxThreads in configuration file is too small, we'll consider it an error and use this number
+	public static final int DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS = 512;
 
 	public static final String WAIT_AFTER_TASK_RUN = "waitAfterTaskRun";
 	public static int DEFAULT_WAIT_AFTER_TASK_RUN = 0;
@@ -189,6 +190,11 @@ public class Config {
 			// Parse property
 			maxThreads = (int) getLong(MAX_NUMBER_OF_RUNNING_THREADS, DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS);
 			if (debug) Timer.showStdErr("Config: Setting 'maxThreads' to " + maxThreads);
+
+			if (maxThreads < MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE) {
+				Timer.showStdErr("Config: Attempt to set 'maxThreads' to " + maxThreads + ". Too small, using " + MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE + " inseatd.");
+				maxThreads = MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE;
+			}
 		}
 
 		return maxThreads;

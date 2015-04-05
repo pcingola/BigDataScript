@@ -435,14 +435,16 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * @param host : Host to run task (can be null)
 	 */
 	protected void runTask(Task task, Host host) {
-		// Don't run too many threads at once
-		// The reason for this is that we can reach the maximum
-		// number of threads available in the operating system.
-		// If that happens, well get an exception
-		for (int numThreads = Exec.countRunningThreads(); numThreads >= config.getMaxThreads(); numThreads = Exec.countRunningThreads()) {
-			// Too many threads running? Sleep for a while (block until some threads finish)
-			if (verbose) log("INFO: Too many threads running (" + numThreads + "). Waiting for some threads to finish.");
-			sleepLong();
+		if (config.getMaxThreads() > 0) {
+			// Don't run too many threads at once
+			// The reason for this is that we can reach the maximum
+			// number of threads available in the operating system.
+			// If that happens, well get an exception
+			for (int numThreads = Exec.countRunningThreads(); numThreads >= config.getMaxThreads(); numThreads = Exec.countRunningThreads()) {
+				// Too many threads running? Sleep for a while (block until some threads finish)
+				if (verbose) log("INFO: Too many threads running (" + numThreads + "). Waiting for some threads to finish.");
+				sleepLong();
+			}
 		}
 
 		// TODO: If an exception is thrown here, we should be able to
@@ -530,7 +532,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 								+ "\n\ttask resources : " + task.getResources() //
 								+ "\n\thost           : " + host //
 								+ "\n\thost resources : " + host.getResourcesAvaialble() //
-						);
+								);
 
 						selectTask(task, host); // Add task to host (make sure resources are reserved)
 						return new Tuple<Task, Host>(task, host);
