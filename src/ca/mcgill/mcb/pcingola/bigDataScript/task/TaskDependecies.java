@@ -38,6 +38,9 @@ public class TaskDependecies {
 		return taskDependecies;
 	}
 
+	/**
+	 * Create a new Singleton
+	 */
 	public static void reset() {
 		taskDependecies = new TaskDependecies();
 	}
@@ -89,7 +92,7 @@ public class TaskDependecies {
 	/**
 	 * Add to 'taskByOutput' map
 	 */
-	void addTaskByOutput(String outFile, Task task) {
+	protected synchronized void addTaskByOutput(String outFile, Task task) {
 		// Use canonical paths
 		String outPath = getCanonicalPath(outFile);
 
@@ -103,7 +106,7 @@ public class TaskDependecies {
 	 * Note: Only count tasks that are not supposed
 	 *       to fail (canFail = false)
 	 */
-	public int countTaskFailed() {
+	public synchronized int countTaskFailed() {
 		int count = 0;
 
 		for (Task task : tasksById.values()) {
@@ -126,7 +129,7 @@ public class TaskDependecies {
 						for (Task taskDep : taskDeps)
 							if (!taskDep.isDone() // Don't add finished tasks
 									&& !taskDep.isDependency() // If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
-							) task.addDependency(taskDep); // Add it to dependency list
+									) task.addDependency(taskDep); // Add it to dependency list
 					}
 				}
 			}
@@ -337,6 +340,22 @@ public class TaskDependecies {
 	}
 
 	/**
+	 * Have all tasks finished executing?
+	 */
+	public synchronized boolean isAllTasksDone() {
+		for (String taskId : getTaskIds()) {
+			if ((taskId == null) || taskId.isEmpty()) continue;
+
+			Task task = getTask(taskId);
+			if (task == null) continue;
+
+			if (!task.isDone()) return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Is there a circular dependency for this task?
 	 */
 	boolean isCircular(Task task) {
@@ -374,23 +393,6 @@ public class TaskDependecies {
 		return this == taskDependecies;
 	}
 
-	/**
-	 * Have all tasks finished executing?
-	 */
-	public boolean isTasksDone() {
-		for (String taskId : taskDependecies.getTaskIds()) {
-			if ((taskId == null) || taskId.isEmpty()) continue;
-
-			Task task = getTask(taskId);
-			if (task == null) continue;
-
-			if (!task.isDone()) return false;
-		}
-
-		return true;
-
-	}
-
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
@@ -410,7 +412,7 @@ public class TaskDependecies {
 	/**
 	 * A string of at most 'num' task names of tasks that failed
 	 */
-	public String taskFailedNames(int num, String sep) {
+	public synchronized String taskFailedNames(int num, String sep) {
 		StringBuilder sb = new StringBuilder();
 		for (Task task : tasksById.values()) {
 			if (task.isFailed() && !task.isCanFail()) {
@@ -442,7 +444,7 @@ public class TaskDependecies {
 	 * Wait for one task to finish
 	 * @return true if task finished OK or it was allowed to fail (i.e. canFail = true)
 	 */
-	public boolean waitTask(String taskId) {
+	public synchronized boolean waitTask(String taskId) {
 		if ((taskId == null) || taskId.isEmpty()) return true;
 
 		Task task = getTask(taskId);
@@ -478,11 +480,11 @@ public class TaskDependecies {
 	 * Wait for all tasks to finish
 	 * @return true if all tasks finished OK or it were allowed to fail (i.e. canFail = true)
 	 */
-	public boolean waitTasksAll() {
+	public synchronized boolean waitTasksAll() {
 		// Wait for all tasks to finish
 		boolean ok = true;
 
-		if (verbose && !isTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
+		if (verbose && !isAllTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
 
 		// Get all taskIds in a new collection (to avoid concurrent modification
 		LinkedList<String> tids = new LinkedList<>();
