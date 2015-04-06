@@ -97,6 +97,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setNode(bdsThread.getString(TASK_OPTION_NODE));
 		task.setQueue(bdsThread.getString(TASK_OPTION_QUEUE));
 		task.setMaxFailCount((int) bdsThread.getInt(TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
+		task.setCurrentDir(bdsThread.getCurrentDir());
 
 		// Set task options: Resources
 		task.getResources().setCpus((int) bdsThread.getInt(TASK_OPTION_CPUS));

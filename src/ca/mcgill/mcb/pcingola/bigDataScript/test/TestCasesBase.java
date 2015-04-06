@@ -13,6 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.TeeOutputStream;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThreads;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -62,6 +63,7 @@ public class TestCasesBase {
 		// Reset singletons
 		Config.reset();
 		Executioners.reset();
+		BigDataScriptThreads.reset();
 	}
 
 	/**
@@ -156,7 +158,7 @@ public class TestCasesBase {
 			if (!expectedValue.toString().equals(ssym.getValue().toString())) throw new RuntimeException("Variable '" + varName + "' does not match:\n"//
 					+ "\tExpected : '" + expectedValue.toString() + "'" //
 					+ "\tActual   : '" + ssym.getValue().toString() + "'" //
-					);
+			);
 		}
 	}
 

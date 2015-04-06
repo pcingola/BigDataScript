@@ -1,8 +1,10 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.osCmd;
 
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThreads;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -12,6 +14,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  * @author pcingola
  */
 public class Exec {
+
+	public static final String USER_DIR = "user.dir";
 
 	public static boolean debug = false;
 
@@ -26,6 +30,9 @@ public class Exec {
 		return Math.max(java.lang.Thread.activeCount(), ManagementFactory.getThreadMXBean().getThreadCount());
 	}
 
+	/**
+	 * Execute a program
+	 */
 	public static ExecResult exec(List<String> args, boolean quiet) {
 		return new Exec().run(args, quiet);
 	}
@@ -42,6 +49,12 @@ public class Exec {
 		StreamGobbler stdout = null, stderr = null;
 		try {
 			ProcessBuilder pb = new ProcessBuilder(args);
+
+			// Make sure we use the current directory
+			// Note: When we do string.chdir() we set this system variable
+			pb.directory(new File(BigDataScriptThreads.getInstance().get().getCurrentDir()));
+
+			// Create a process
 			Process process = pb.start();
 
 			// Make sure we read STDOUT and STDERR, so that process does not block

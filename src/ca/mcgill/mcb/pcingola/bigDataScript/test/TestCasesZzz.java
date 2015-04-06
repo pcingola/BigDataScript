@@ -1,9 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
-
 /**
  * Quick test cases when creating a new feature...
  *
@@ -12,12 +8,18 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	@Test
-	public void test15_goal_using_list() {
-		String out = runAndReturnStdout("test/graph_15.bds");
-		Assert.assertTrue(out.contains("Hi 0\n"));
-		Assert.assertTrue(out.contains("Hi 1\n"));
-		Assert.assertTrue(out.contains("Hi 2\n"));
-	}
+	//	@Test
+	//	public void test129_chdir_sys() {
+	//		String out = runAndReturnStdout("test/run_129.bds");
+	//		Assert.assertTrue(out.contains("FILE_01\n"));
+	//		Assert.assertTrue(out.contains("FILE_02\n"));
+	//	}
+	//
+	//	@Test
+	//	public void test130_chdir_task() {
+	//		String out = runAndReturnStdout("test/run_130.bds");
+	//		Assert.assertTrue(out.contains("FILE_01\n"));
+	//		Assert.assertTrue(out.contains("FILE_02\n"));
+	//	}
 
 }

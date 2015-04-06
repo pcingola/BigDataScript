@@ -49,7 +49,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.VarDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.VariableInit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.NativeLibraryFunctions;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.NativeLibraryString;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.NativeLibraryString;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -177,7 +177,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
@@ -1055,7 +1055,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-		);
+				);
 		return exitCode;
 	}
 

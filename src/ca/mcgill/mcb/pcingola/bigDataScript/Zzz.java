@@ -1,12 +1,27 @@
 package ca.mcgill.mcb.pcingola.bigDataScript;
 
+import java.io.File;
+import java.util.Enumeration;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+
 public class Zzz {
 
 	public static boolean debug = true;
 	public static boolean verbose = true;
 
+	public static final String USER_DIR = "user.dir";
+
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
+
+		for (Enumeration<Object> keys = System.getProperties().keys(); keys.hasMoreElements();) {
+			System.out.println(keys.nextElement());
+		}
+
+		System.out.println((new File(".")).getAbsolutePath());
+		System.setProperty(USER_DIR, Gpr.HOME);
+		System.out.println((new File(".")).getAbsolutePath());
 
 		//		int a = 1;
 		//		int b = 2;

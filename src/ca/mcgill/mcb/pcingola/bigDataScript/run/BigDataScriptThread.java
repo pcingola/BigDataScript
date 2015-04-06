@@ -35,6 +35,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.StatementInclude;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Wait;
+import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
@@ -95,6 +96,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	Deque<Object> stack;
 
 	// BdsThread
+	String currentDir; // Program's 'current directoy'
 	BigDataScriptThread parent; // Parent thread
 	String bdsThreadId; // BdsThread ID
 	int bdsThreadNum; // Thread number
@@ -122,6 +124,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		config = parent.config;
 		random = parent.random;
 		removeOnExit = parent.removeOnExit;
+		currentDir = parent.currentDir;
 
 		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
 		taskDependecies = new TaskDependecies();
@@ -145,6 +148,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		removeOnExit = new LinkedList<String>();
 		taskDependecies = new TaskDependecies();
 		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
+		currentDir = System.getProperty(Exec.USER_DIR); // By default use Java program's current dir
 
 		if (statement != null) setStatement(statement);
 
@@ -642,7 +646,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				System.err.println("Unknown command '" + line + "'");
 			}
 		}
-
 	}
 
 	/**
@@ -758,6 +761,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	public Config getConfig() {
 		return config;
+	}
+
+	public String getCurrentDir() {
+		return currentDir;
 	}
 
 	public DebugMode getDebugMode() {
@@ -1168,6 +1175,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if (!bth.isAlive() && !bth.isFinished()) bth.start();
 		}
 
+		// Add this thread to collections
+		BigDataScriptThreads.getInstance().add(this);
+
 		// Run statement (i.e. run program)
 		boolean ok = true;
 		runStatement();
@@ -1243,6 +1253,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ "." //
 			);
 		}
+
+		// Remove thread from map
+		BigDataScriptThreads.getInstance().remove(this);
 	}
 
 	/**
@@ -1430,6 +1443,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		out.append("\t" + serializer.serializeSaveValue(runState.toString()));
 		out.append("\t" + serializer.base64encode(stack));
 		return out.toString();
+	}
+
+	public void setCurrentDir(String currentDir) {
+		this.currentDir = currentDir;
 	}
 
 	public void setDebugMode(DebugMode debugMode) {

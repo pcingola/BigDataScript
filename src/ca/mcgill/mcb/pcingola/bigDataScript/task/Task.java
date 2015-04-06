@@ -43,6 +43,7 @@ public class Task implements BigDataScriptSerialize {
 	protected int failCount, maxFailCount; // Number of times that this task failed
 	protected String id; // Task ID
 	protected String bdsFileName; // Program file that created this task (used for reporting errors)
+	protected String currentDir; // Program's 'current directoy' (cd)
 	protected String pid; // PID (if any)
 	protected String programFileDir; // Program file's dir
 	protected String programFileName; // Program file name
@@ -130,7 +131,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) return true;
+					) return true;
 			return false;
 
 		default:
@@ -174,7 +175,10 @@ public class Task implements BigDataScriptSerialize {
 
 		// Create file
 		String shell = Config.get().getString(Config.TASK_SHELL, DEFAULT_TASK_SHELL);
-		shell = "#!" + shell + "\n\n";
+		shell = "#!" + shell + "\n\n" // Shell to use
+				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
+				;
+
 		Gpr.toFile(programFileName, shell + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution
 
@@ -255,6 +259,10 @@ public class Task implements BigDataScriptSerialize {
 
 	public int getBdsLineNum() {
 		return bdsLineNum;
+	}
+
+	public String getCurrentDir() {
+		return currentDir;
 	}
 
 	public List<Task> getDependencies() {
@@ -543,6 +551,10 @@ public class Task implements BigDataScriptSerialize {
 		this.canFail = canFail;
 	}
 
+	public void setCurrentDir(String currentDir) {
+		this.currentDir = currentDir;
+	}
+
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
@@ -645,7 +657,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) {
+					) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;
@@ -721,4 +733,5 @@ public class Task implements BigDataScriptSerialize {
 
 		return sb.toString();
 	}
+
 }

@@ -346,4 +346,18 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheckStdout("test/run_128.bds", "TEST\n");
 	}
 
+	@Test
+	public void test129_chdir_sys() {
+		String out = runAndReturnStdout("test/run_129.bds");
+		Assert.assertTrue(out.contains("FILE_01\n"));
+		Assert.assertTrue(out.contains("FILE_02\n"));
+	}
+
+	@Test
+	public void test130_chdir_task() {
+		String out = runAndReturnStdout("test/run_130.bds");
+		Assert.assertTrue(out.contains("FILE_01\n"));
+		Assert.assertTrue(out.contains("FILE_02\n"));
+	}
+
 }
