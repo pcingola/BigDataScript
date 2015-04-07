@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.run;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -582,7 +583,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -655,7 +656,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-		) {
+				) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -693,6 +694,34 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Show java stack trace
 		if ((config == null) || isVerbose()) t.printStackTrace();
+	}
+
+	/**
+	 * Create a new (and canonical) file relative to 'currentDir'
+	 */
+	public File file(String fileName) {
+		try {
+			File f = new File(fileName);
+
+			// If fileName is an absolute path, we just return the appropriate file
+			if (f.toPath().isAbsolute()) return f.getCanonicalFile();
+
+			// Resolve against 'currentDir'
+			return new File(currentDir, fileName).getCanonicalFile();
+		} catch (IOException e) {
+			throw new RuntimeException("Cannot resolve file '" + fileName + "'", e);
+		}
+	}
+
+	/**
+	 * Create a new (and canonical) file relative to 'currentDir'
+	 */
+	public String filePath(String fileName) {
+		try {
+			return file(fileName).getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException("Cannot resolve file '" + fileName + "'", e);
+		}
 	}
 
 	/**
@@ -1145,7 +1174,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1251,7 +1280,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
-			);
+					);
 		}
 
 		// Remove thread from map

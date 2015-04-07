@@ -12,17 +12,19 @@
 #-------------------------------------------------------------------------------
 void testFile(string fn) {
 
-	print fn.read()
-	print fn.readLines()
-	print fn.exists()
-	print fn.path()
+	println "$fn\tread:" + fn.read()
+	print "$fn\treadLines:" fn.readLines()
+	println fn.readLines()
 
-	print fn.isDir()
-	print fn.isEmpty()
-	print fn.isFile()
+	println "$fn\texists:" + fn.exists()
+	println "$fn\tpath:" + fn.path()
 
-	print fn.canRead()
-	print fn.canWrite()
+	println "$fn\tisDir:" + fn.isDir()
+	println "$fn\tisEmpty:" + fn.isEmpty()
+	println "$fn\tisFile:" + fn.isFile()
+
+	println "$fn\tcanRead:" + fn.canRead()
+	println "$fn\tcanWrite:" + fn.canWrite()
 }
 
 #-------------------------------------------------------------------------------
@@ -34,7 +36,7 @@ newDir := "test"
 newDir.chdir()
 testFile(fileName)
 
-newDir = "chdir_test"
-newDir.chdir()
-testFile(fileName)
+#newDir = "chdir_test"
+#newDir.chdir()
+#testFile(fileName)
 

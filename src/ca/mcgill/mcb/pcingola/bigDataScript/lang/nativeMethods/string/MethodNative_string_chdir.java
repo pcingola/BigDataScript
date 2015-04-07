@@ -1,7 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
 import java.io.File;
-import java.io.IOException;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
@@ -30,16 +29,8 @@ public class MethodNative_string_chdir extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		// Get canonical path to directory
 		String dirName = objThis.toString();
-		File dir = new File(dirName);
-		String path = null;
-
-		try {
-			path = dir.getCanonicalPath();
-		} catch (IOException e) {
-			throw new RuntimeException("Error trying to chdir to '" + path + "'", e);
-		}
+		String path = csThread.filePath(dirName);
 
 		// Re build directory using canonical path
 		// WARNING: 
@@ -47,7 +38,7 @@ public class MethodNative_string_chdir extends MethodNative {
 		//     to 'user.dir' at the beginning of Java program instead of using
 		//     the current one. I'm not sure whether this is a bug in Java's
 		//     libraries or a 'feature'
-		dir = new File(path);
+		File dir = new File(path);
 
 		// Sanity check
 		if (!dir.exists()) throw new RuntimeException("Directory '" + path + "' does not exists");
