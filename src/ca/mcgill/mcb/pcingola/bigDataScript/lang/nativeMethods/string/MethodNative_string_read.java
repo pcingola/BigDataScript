@@ -24,8 +24,8 @@ public class MethodNative_string_read extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		String path = Gpr.getCanonicalFileName(objThis.toString());
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+		String path = bdsThread.filePath(objThis.toString());
 		return Gpr.readFile(path, false);
 	}
 }

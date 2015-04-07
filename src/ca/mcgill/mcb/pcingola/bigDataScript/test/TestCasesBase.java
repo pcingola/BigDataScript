@@ -261,8 +261,8 @@ public class TestCasesBase {
 		// Check that the expected string is in STDERR
 		if (debug) Gpr.debug("Program's stdout: '" + captureStdout + "'");
 		int index = captureStdout.toString().indexOf(expectedStdout);
-		if (!negate && index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in STDOUT not found.\nSTDOUT:\n" + captureStdout + "\n");
-		if (negate && index >= 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in absent from STDOUT, but it was found.\nSTDOUT:\n" + captureStdout + "\n");
+		if (!negate && index < 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' in STDOUT not found.\nSTDOUT:\n'" + captureStdout + "'\n");
+		if (negate && index >= 0) throw new RuntimeException("Error: Expeted string '" + expectedStdout + "' to be absent from STDOUT, but it was found.\nSTDOUT:\n" + captureStdout + "\n");
 		return captureStdout.toString();
 	}
 

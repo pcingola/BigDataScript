@@ -50,8 +50,7 @@ public class Exec {
 		try {
 			ProcessBuilder pb = new ProcessBuilder(args);
 
-			// Make sure we use the current directory
-			// Note: When we do string.chdir() we set this system variable
+			// Make sure we use thread's current directory
 			pb.directory(new File(BigDataScriptThreads.getInstance().get().getCurrentDir()));
 
 			// Create a process

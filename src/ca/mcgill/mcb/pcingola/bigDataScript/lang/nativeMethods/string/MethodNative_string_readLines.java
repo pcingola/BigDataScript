@@ -1,10 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
@@ -30,7 +25,7 @@ public class MethodNative_string_readLines extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return array2list( Gpr.readFile( objThis.toString(), false ).split("\n") ); 
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+		return array2list(Gpr.readFile(bdsThread.filePath(objThis.toString()), false).split("\n"));
 	}
 }

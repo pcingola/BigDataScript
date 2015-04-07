@@ -501,6 +501,7 @@ public class Task implements BigDataScriptSerialize {
 		stdoutFile = serializer.getNextFieldString();
 		stderrFile = serializer.getNextFieldString();
 		exitCodeFile = serializer.getNextFieldString();
+		currentDir = serializer.getNextFieldString();
 
 		// Task dependency
 		List<String> inputFiles = serializer.getNextFieldList(TypeList.get(Type.STRING));
@@ -535,6 +536,7 @@ public class Task implements BigDataScriptSerialize {
 				+ "\t" + serializer.serializeSaveValue(stdoutFile) //
 				+ "\t" + serializer.serializeSaveValue(stderrFile) //
 				+ "\t" + serializer.serializeSaveValue(exitCodeFile) //
+				+ "\t" + serializer.serializeSaveValue(currentDir) //
 				+ "\t" + serializer.serializeSaveValue(taskDependency.getInputFiles()) //
 				+ "\t" + serializer.serializeSaveValue(taskDependency.getOutputFiles()) //
 				+ "\t" + serializer.serializeSave(resources) //

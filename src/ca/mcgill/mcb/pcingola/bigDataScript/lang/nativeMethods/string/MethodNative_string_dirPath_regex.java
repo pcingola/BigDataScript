@@ -33,15 +33,15 @@ public class MethodNative_string_dirPath_regex extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		String glob = csThread.getString("glob");
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+		String glob = bdsThread.getString("glob");
 
 		//---
 		// List all files, filtered by 'glob'
 		//---
 		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
 		ArrayList<String> list = new ArrayList<String>();
-		File files[] = new File(objThis.toString()).listFiles(new FileFilter() {
+		File files[] = bdsThread.file(objThis.toString()).listFiles(new FileFilter() {
 
 			@Override
 			public boolean accept(File file) {

@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 /**
@@ -12,18 +10,14 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	@Test
-	public void test129_chdir_sys() {
-		String out = runAndReturnStdout("test/run_129.bds");
-		Assert.assertTrue(out.contains("FILE_01\n"));
-		Assert.assertTrue(out.contains("FILE_02\n"));
-	}
+	//	@Test
+	//	public void test03() {
+	//		runAndCheckpoint("test/graph_03.bds", "test/graph_03.chp", "out", "Task start\nTask end\n");
+	//	}
 
 	@Test
-	public void test130_chdir_task() {
-		String out = runAndReturnStdout("test/run_130.bds");
-		Assert.assertTrue(out.contains("FILE_01\n"));
-		Assert.assertTrue(out.contains("FILE_02\n"));
+	public void test04() {
+		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
 	}
 
 }

@@ -32,9 +32,9 @@ public class MethodNativeListRmOnExit extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
 		List list = (List) objThis;
-		csThread.rmOnExit(list);
+		bdsThread.rmOnExit(list);
 		return objThis;
 	}
 }

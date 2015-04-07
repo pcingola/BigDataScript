@@ -1,13 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -30,7 +24,7 @@ public class MethodNative_string_write_str extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return Gpr.toFile(objThis.toString(), csThread.getString("str"));
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+		return Gpr.toFile(bdsThread.filePath(objThis.toString()), bdsThread.getString("str"));
 	}
 }

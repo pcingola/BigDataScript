@@ -1186,11 +1186,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	@SuppressWarnings("rawtypes")
 	public synchronized void rmOnExit(List files) {
 		for (Object o : files)
-			removeOnExit.add(o.toString());
+			removeOnExit.add(filePath(o.toString()));
 	}
 
 	public synchronized void rmOnExit(String file) {
-		removeOnExit.add(file);
+		removeOnExit.add(filePath(file));
 	}
 
 	@Override
@@ -1387,6 +1387,9 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// State
 		runState = RunState.valueOf(serializer.getNextFieldString());
 
+		// Current dir
+		currentDir = serializer.getNextFieldString();
+
 		// Stack
 		String b64 = serializer.getNextField();
 		stack = (b64 != null && !b64.isEmpty() ? (Deque<Object>) serializer.base64Decode(b64) : null);
@@ -1470,6 +1473,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
 		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
 		out.append("\t" + serializer.serializeSaveValue(runState.toString()));
+		out.append("\t" + serializer.serializeSaveValue(currentDir));
 		out.append("\t" + serializer.base64encode(stack));
 		return out.toString();
 	}

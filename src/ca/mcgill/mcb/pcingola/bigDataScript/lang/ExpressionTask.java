@@ -260,7 +260,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-				;
+						;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
@@ -273,7 +273,7 @@ public class ExpressionTask extends ExpressionWithScope {
 				+ (options != null ? options : "") //
 				+ " " //
 				+ toStringStatement() //
-		;
+				;
 	}
 
 	/**
@@ -294,7 +294,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		return "{\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //
-		;
+				;
 	}
 
 	@Override

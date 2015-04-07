@@ -39,6 +39,7 @@ public class ExpressionGoal extends ExpressionUnary {
 		// Get expression value
 		Object value = bdsThread.pop();
 
+		// Goal returns a list of taskIds to be run
 		List<String> taskIds = null;
 		if (expr.isList()) {
 			// Is is a list? Run goal for each element

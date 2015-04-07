@@ -1,16 +1,9 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class MethodNative_string_size extends MethodNative {
 	public MethodNative_string_size() {
@@ -30,7 +23,7 @@ public class MethodNative_string_size extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return (long) (new File(objThis.toString())).length();
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+		return (long) (bdsThread.file(objThis.toString())).length();
 	}
 }

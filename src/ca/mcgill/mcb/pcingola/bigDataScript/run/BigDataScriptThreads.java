@@ -10,6 +10,18 @@ public class BigDataScriptThreads {
 	Map<Long, BigDataScriptThread> bdsThreadByThreadId = new HashMap<Long, BigDataScriptThread>();
 
 	/**
+	 * Get canonical path to file using thread's 'current dir' to de-reference
+	 * relative paths
+	 *
+	 * Warning: When un-serializing a task form a checkpoint, threads are not
+	 *          initialized, thus they are null
+	 */
+	public static String filePath(String fileName) {
+		BigDataScriptThread bdsThread = BigDataScriptThreads.getInstance().get();
+		return bdsThread != null ? bdsThread.filePath(fileName) : fileName;
+	}
+
+	/**
 	 * Get singleton
 	 */
 	public static BigDataScriptThreads getInstance() {
@@ -47,4 +59,11 @@ public class BigDataScriptThreads {
 		if (bdsThreadByThreadId.get(id) == bdsThread) bdsThreadByThreadId.remove(id);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (Long thid : bdsThreadByThreadId.keySet())
+			sb.append(thid + "\t" + bdsThreadByThreadId.get(thid).getBdsThreadId() + "\n");
+		return sb.toString();
+	}
 }

@@ -1,6 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list;
 
-import java.io.File;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
@@ -33,12 +32,12 @@ public class MethodNativeListDelete extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
 		List list = (List) objThis;
 
-		for (Object o : list) {
-			(new File(o.toString())).delete();
-		}
+		for (Object o : list)
+			bdsThread.file(o.toString()).delete();
+
 		return objThis;
 	}
 }

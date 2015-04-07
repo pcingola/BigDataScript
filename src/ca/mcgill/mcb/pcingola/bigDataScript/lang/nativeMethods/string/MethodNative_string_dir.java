@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
-import java.io.File;
-
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
@@ -26,7 +24,7 @@ public class MethodNative_string_dir extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
-		return array2listSorted((new File(objThis.toString())).list());
+	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+		return array2listSorted((bdsThread.file(objThis.toString())).list());
 	}
 }
