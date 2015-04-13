@@ -1,0 +1,5 @@
+#!/bin/sh
+
+user=`whoami`
+qstat -f | tee $HOME/qstat.txt | $HOME/qstat.py $user
+
