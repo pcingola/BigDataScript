@@ -56,15 +56,21 @@ public class ExpressionSys extends Expression {
 	/**
 	 * Create an exec ID
 	 */
-	public synchronized String execId(String name, String fileName, BigDataScriptThread bdsThread) {
+	public synchronized String execId(String name, String fileName, String taskName, BigDataScriptThread bdsThread) {
 		int nextId = nextId();
 
+		// Use module name
 		String module = fileName;
 		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
+
+		// Make sure that 'taskName' can be used in a filename
+		if (taskName.isEmpty()) taskName = null;
+		if (taskName != null) taskName = Gpr.sanityzeName(taskName);
 
 		String execId = bdsThread.getBdsThreadId() //
 				+ "/" + name //
 				+ (module == null ? "" : "." + module) //
+				+ (taskName == null ? "" : "." + taskName) //
 				+ ".line_" + getLineNum() //
 				+ ".id_" + nextId //
 		;
@@ -115,7 +121,7 @@ public class ExpressionSys extends Expression {
 	public void runStep(BigDataScriptThread bdsThread) {
 		if (bdsThread.isCheckpointRecover()) return;
 
-		execId("exec", getFileName(), bdsThread);
+		execId("exec", getFileName(), null, bdsThread);
 
 		// EXEC expressions are always executed locally AND immediately
 		LinkedList<String> args = new LinkedList<String>();

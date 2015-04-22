@@ -1,0 +1,4 @@
+#!/usr/bin/env bds
+
+tid := task (taskName := "mytask/unsafe& with spaces $" ) sys echo hi
+print "task ID: '$tid'\n"

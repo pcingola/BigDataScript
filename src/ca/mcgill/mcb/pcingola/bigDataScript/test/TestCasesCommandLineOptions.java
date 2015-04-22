@@ -37,4 +37,5 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 			Assert.assertTrue("Log file '" + fileName + "' not found", Gpr.exists(fileName));
 		}
 	}
+
 }

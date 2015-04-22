@@ -387,4 +387,23 @@ public class TestCasesRun2 extends TestCasesBase {
 		Assert.assertEquals(out, outreal);
 	}
 
+	/**
+	 * Make sure taskId contains 'taskName' parameter
+	 */
+	@Test
+	public void test132_taskName() {
+		String out = runAndReturnStdout("test/run_132.bds");
+		Assert.assertTrue(out.contains("run_132.mytask"));
+	}
+
+	/**
+	 * Make sure taskId contains 'taskName' parameter
+	 * In this test 'taskName' is not safe to be used with as file name, so it has to be sanitized
+	 */
+	@Test
+	public void test133_taskName_unsafe() {
+		String out = runAndReturnStdout("test/run_133.bds");
+		Assert.assertTrue(out.contains("run_133.mytask_unsafe_with_spaces"));
+	}
+
 }

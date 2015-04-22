@@ -658,6 +658,24 @@ public class Gpr {
 	}
 
 	/**
+	 * Convert a string to be used in a filename
+	 */
+	public static String sanityzeName(String fileName) {
+		String out = fileName.trim().replaceAll("[^0-9_a-zA-Z\\.]", "_");
+		out = out.replaceAll("_+", "_");
+
+		// Remove all leading underscores
+		while (out.startsWith("_") || out.startsWith("."))
+			out = out.substring(1);
+
+		// Remove all trailing underscores
+		while (out.endsWith("_") || out.endsWith("."))
+			out = out.substring(0, out.length() - 1);
+
+		return out;
+	}
+
+	/**
 	 * Show a mark
 	 * @param i
 	 * @param showEvery
@@ -857,5 +875,4 @@ public class Gpr {
 		}
 		return String.format("%.1f %s", mem, unit);
 	}
-
 }

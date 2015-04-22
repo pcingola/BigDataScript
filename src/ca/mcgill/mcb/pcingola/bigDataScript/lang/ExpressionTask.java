@@ -80,8 +80,12 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Create a task
 	 */
 	Task createTask(BigDataScriptThread bdsThread, TaskDependency taskDependency, ExpressionSys sys) {
+		// Task name
+		String taskName = "";
+		if (bdsThread.hasVariable(TASK_OPTION_TASKNAME)) taskName = bdsThread.getString(TASK_OPTION_TASKNAME);
+
 		// Get an ID
-		String execId = sys.execId("task", getFileName(), bdsThread);
+		String execId = sys.execId("task", getFileName(), taskName, bdsThread);
 
 		// Create Task
 		Task task = new Task(execId, this, sys.getSysFileName(execId), sys.getCommands(bdsThread));
@@ -91,7 +95,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		task.setDebug(bdsThread.getConfig().isDebug());
 
 		// Set task options
-		if (bdsThread.hasVariable(TASK_OPTION_TASKNAME)) task.setTaskName(bdsThread.getString(TASK_OPTION_TASKNAME));
+		task.setTaskName(taskName);
 		task.setCanFail(bdsThread.getBool(TASK_OPTION_CAN_FAIL));
 		task.setAllowEmpty(bdsThread.getBool(TASK_OPTION_ALLOW_EMPTY));
 		task.setNode(bdsThread.getString(TASK_OPTION_NODE));
