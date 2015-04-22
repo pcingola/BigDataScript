@@ -63,9 +63,10 @@ public class ExpressionSys extends Expression {
 		String module = fileName;
 		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
 
-		// Make sure that 'taskName' can be used in a filename
-		if (taskName.isEmpty()) taskName = null;
-		if (taskName != null) taskName = Gpr.sanityzeName(taskName);
+		if (taskName != null) {
+			if (taskName.isEmpty()) taskName = null;
+			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
+		}
 
 		String execId = bdsThread.getBdsThreadId() //
 				+ "/" + name //
@@ -73,7 +74,7 @@ public class ExpressionSys extends Expression {
 				+ (taskName == null ? "" : "." + taskName) //
 				+ ".line_" + getLineNum() //
 				+ ".id_" + nextId //
-		;
+				;
 
 		return execId;
 	}
@@ -149,7 +150,7 @@ public class ExpressionSys extends Expression {
 				bdsThread.fatalError(this, "Exec failed." //
 						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
-				);
+						);
 				return;
 			}
 		}

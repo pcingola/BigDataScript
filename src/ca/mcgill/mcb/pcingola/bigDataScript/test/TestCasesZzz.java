@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 /**
@@ -12,14 +10,58 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	/**
-	 * Make sure taskId contains 'taskName' parameter
-	 * In this test 'taskName' is not safe to be used with as file name, so it has to be sanitized
-	 */
 	@Test
-	public void test133_taskName_unsafe() {
-		String out = runAndReturnStdout("test/run_133.bds");
-		Assert.assertTrue(out.contains("run_133.mytask_unsafe_with_spaces"));
+	public void test13_goal_using_taskId() {
+		runAndCheckStdout("test/graph_13.bds", "out1_2.txt\nout2_1.txt");
 	}
 
+	//	@Test
+	//	public void test123_literals_sys_task() {
+	//		Gpr.debug("Test");
+	//
+	//		String output = "print_quote        |\\t|\n" //
+	//				+ "print_quote        |\\t|    variable:$hi\n" //
+	//				+ "print_double       |\t|\n" //
+	//				+ "print_double       |\t|    variable:Hello\n" //
+	//				+ "print_double_esc   |\\t|\n" //
+	//				+ "print_double_esc   |\\t|   variable:Hello\n" //
+	//				+ "sys                |\\t|\n" //
+	//				+ "sys                |\\t|    variable:Hello\n" //
+	//				+ "task               |\\t|\n" //
+	//				+ "task               |\\t|    variable:Hello\n" //
+	//		;
+	//
+	//		runAndCheckStdout("test/run_123.bds", output);
+	//	}
+	//
+	//	@Test
+	//	public void test08() {
+	//		runAndCheckStdout("test/graph_08.bds", "MID1\nMID2\nOUT");
+	//	}
+	//
+	//	@Test
+	//	public void test119_task_dependency() {
+	//		Gpr.debug("Test");
+	//
+	//		// Delete input file
+	//		String inFile = "tmp_in.txt";
+	//		(new File(inFile)).delete();
+	//
+	//		String expectedStdout1 = "Creating tmp_in.txt\n" //
+	//				+ "Running task\n" //
+	//				+ "Creating tmp_out.txt\n" //
+	//				+ "Done\n" //"
+	//		;
+	//
+	//		String expectedStdout2 = "Running task\n" //
+	//				+ "Done\n" //"
+	//		;
+	//
+	//		System.out.println("First run:");
+	//		runAndCheckStdout("test/run_119.bds", expectedStdout1);
+	//
+	//		System.out.println("\n\nSecond run:");
+	//		runAndCheckStdout("test/run_119.bds", expectedStdout2);
+	//	}
+	//
 }
