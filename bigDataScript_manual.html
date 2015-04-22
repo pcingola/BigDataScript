@@ -1502,7 +1502,7 @@ Done 9
 					<tr>
 						<td> <code>taskName</code> </td>	
 						<td>  </td> 
-						<td> Assign a task name (i.e. puts a label on the task). This makes it easier to find tasks in the final report (it has no effect other than that).</td> 
+						<td> Assign a task name. This adds a label to the task as well as the taskId returned by <code>task</code> expression. Task ID is used to create log files related to the task (shell script, STDOUT, STDERR and exitCode files) so those file names are also changed. This makes it easier to find tasks in the final report and log files (it has no effect other than that). Note: If taskName contains non-allowed charaters, they are sanitized (replaced by '_').</td> 
 					</tr>
 				</table>
 
