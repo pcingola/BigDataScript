@@ -285,4 +285,10 @@ public class TestCasesLang extends TestCasesBase {
 		compileErrors("test/test48.bds", errs);
 	}
 
+	@Test
+	public void test49() {
+		String errs = "ERROR [ file 'test/test49.bds', line 4 ] :\tTask has empty statement";
+		compileErrors("test/test49.bds", errs);
+	}
+
 }

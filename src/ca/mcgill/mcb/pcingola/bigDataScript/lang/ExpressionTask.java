@@ -251,6 +251,11 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (options != null) options.sanityCheck(compilerMessages);
 
 		// Sanity check statements
+		if (statement == null) {
+			compilerMessages.add(this, "Task has empty statement", MessageType.ERROR);
+			return;
+		}
+
 		List<BigDataScriptNode> statements = statement.findNodes(null, true);
 
 		// No child nodes? Add the only node we have
@@ -264,7 +269,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-						;
+				;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
@@ -277,7 +282,7 @@ public class ExpressionTask extends ExpressionWithScope {
 				+ (options != null ? options : "") //
 				+ " " //
 				+ toStringStatement() //
-				;
+		;
 	}
 
 	/**
@@ -298,7 +303,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		return "{\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //
-				;
+		;
 	}
 
 	@Override

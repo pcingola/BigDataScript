@@ -1,4 +1,5 @@
 #!/usr/bin/env bds
 
-tid := task (taskName := "mytask" ) sys echo hi
-print "task ID: '$tid'\n"
+task (taskName := "mytask") 
+	sys echo hi
+

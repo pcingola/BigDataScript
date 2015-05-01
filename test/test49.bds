@@ -1,0 +1,6 @@
+#!/usr/bin/env bds
+
+# This task is written in 2 separate lines instead of 1 => empty task statement error
+task (taskName := "mytask") 
+	sys echo hi
+
