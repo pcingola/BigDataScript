@@ -167,7 +167,7 @@
 					Statements <code>breakpoint</code> and <code>debug</code> make debugging part of the language, instead of requiring platform specific tools.
 					</p>
 
-					<li> <b>Built in testing</b> 
+					<li> <b>Built in test cases facility</b> 
 					<p>
 					Code testing is performed in everyday programming, so testing is built in <code>bds</code>.
 					</p>
@@ -2181,7 +2181,7 @@ int i = 5
 
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
-				<h1 class="page-header" id="test">Code testing </h1>
+				<h1 class="page-header" id="test">Test cases</h1>
 				<p class="lead"> Because nobody writes perfect code. </p>
 
 				<code>bds</code> provides a simple unit testing functionality. 
@@ -2797,6 +2797,10 @@ pidRegex = "Your job (\\S+)"
 				<h3>SGE Cluster options </h3>
 				This section defines parameters to customize <code>bds</code> to run tasks on a Sun Grid Engine cluster.
 
+				<b>IMPORTANT:</b>	In SGE clusters it is important to enable <code>ENABLE_ADDGRP_KILL=true</code> to the <code>execd_params</code> parameter of <code>qconf -sconf</code>.
+									Otherwise SGE might not be able to kill <code>bds</code> subprocesses running on slave nodes if this option is not enabled.
+									So, if you don't activate <code>ENABLE_ADDGRP_KILL=true</code> killing processes may not work in SGE clusters, nodes will continue to run tasks even after they've been killed either Ctrl-C to bds or by a direct <code>qdel</code> command (the cluster reports them as finished, but they might still be running in the slave node).
+
 				<table class="table table-striped">
 					<tr>
 						<th>Parameter</th>
@@ -3036,7 +3040,7 @@ ssh.nodes = sgeadmin@node001, sgeadmin@node002, sgeadmin@node003, sgeadmin@node0
 					<li><a href="#par"> Parallel execution </a></li>
 					<li><a href="#check"> Checkpoints </a></li>
 
-					<li><a href="#test"> Testing </a></li>
+					<li><a href="#test"> Test cases </a></li>
 					<li><a href="#debugger"> Debugger (built in) </a></li>
 					<li><a href="#cmdLineParse"> Command line parsing </a></li>
 					<li><a href="#autoHelp"> Automatic help</a></li>
