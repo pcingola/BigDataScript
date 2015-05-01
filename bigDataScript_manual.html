@@ -2796,6 +2796,7 @@ pidRegex = "Your job (\\S+)"
 				<br>
 				<h3>SGE Cluster options </h3>
 				This section defines parameters to customize <code>bds</code> to run tasks on a Sun Grid Engine cluster.
+				<p>
 
 				<b>IMPORTANT:</b>	In SGE clusters it is important to enable <code>ENABLE_ADDGRP_KILL=true</code> to the <code>execd_params</code> parameter of <code>qconf -sconf</code>.
 									Otherwise SGE might not be able to kill <code>bds</code> subprocesses running on slave nodes if this option is not enabled.
