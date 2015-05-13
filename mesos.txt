@@ -1,0 +1,38 @@
+
+Install:
+	brew update
+	brew install mesos
+
+	Dir      : /usr/local/Cellar/mesos/0.22.1/
+	LibMesos : /usr/local/Cellar/mesos/0.22.1/lib/libmesos.dylib
+
+Install libraries:
+
+	# Build mesos form source
+	wget http://www.apache.org/dist/mesos/0.22.1/mesos-0.22.1.tar.gz
+	tar -zxf mesos-0.22.1.tar.gz
+	./configure
+	make
+
+	# Copy libraries to BigDataScript/lib dir
+	cp src/java/target/mesos-0.22.1.jar ~/workspace/BigDataScript/lib/
+	cp src/java/target/protobuf-java-2.5.0.jar ~/workspace/BigDataScript/lib/
+
+	# Eclipse, 
+	#	Open Package explorer, go to 'lib' dir, right-click on the JAR files -> Build Path -> Add to build path
+	# 	Open Package explorer, go to "Referenced Libraries", right-click on "mesos-0.22.1.jar" -> Properties -> Native Libraries -> Add "/usr/local/Cellar/mesos/0.22.1/lib"
+
+Run master:
+
+	/usr/local/sbin/mesos-master --registry=in_memory --ip=127.0.0.1
+
+Run Slave:
+
+	sudo /usr/local/sbin/mesos-slave --master=127.0.0.1:5050
+
+Master's http server: 
+	http://localhost:5050
+
+
+Run Java framework (***Exits after successfully running some tasks.***).
+	./src/examples/java/test-framework 127.0.0.1:5050

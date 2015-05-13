@@ -5,12 +5,12 @@
 	<classpathentry kind="lib" path="lib/jsch-0.1.49.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.10.jar" sourcepath="/home/pcingola/.m2/repository/junit/junit/4.10/junit-4.10-sources.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-4.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/mesos-0.18.0.jar">
+	<classpathentry kind="lib" path="lib/mesos-0.22.1.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/pcingola/tools/mesos/lib"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/usr/local/Cellar/mesos/0.22.1/lib/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/protobuf-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/protobuf-java-2.5.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -190,7 +190,7 @@ public class BdsMesosScheduler implements Scheduler {
 			offerIds.add(offer.getId());
 
 			// Should we launch a task?
-			if (taskToLaunch.isEmpty()) {
+			if (!taskToLaunch.isEmpty()) {
 				// Get first task in the queue
 				Task task = taskToLaunch.remove(0); // TODO: We should not remove it completely until we are sure that it was started by Mesos (stateChange)
 				taskById.put(task.getId(), task);
