@@ -208,49 +208,20 @@ public class BdsMesosScheduler implements Scheduler {
 			}
 			if (verbose) Gpr.debug("\t\tOffer:" + offer.getHostname() + "\tcpus: " + offerCpus + "\tmem: " + offerMemGb);
 
-			// TODO: Only add if offer.Id the offer is accepted (does it means that we reject it?)
+			// Add offer ID. If no tasks are added then the offer is assumed to be declined
 			offerIds.add(offer.getId());
 
+			Task task = matchTask(offer);
+
 			// Should we launch a task?
-			if (!taskToLaunch.isEmpty()) {
-				// Get first task in the queue
-				// TODO: We should not remove it completely until we are sure that it was
-				// started by Mesos (stateChange)
-				Task task = taskToLaunch.remove(0);
+			if (task != null) {
+
 				if (verbose) Gpr.debug("Adding task to launch list: " + task);
 
-				// Assign a task ID and name
-				String taskIdMesos = taskIdMesos(task);
-				taskById.put(taskIdMesos, task);
-				TaskID taskId = TaskID.newBuilder().setValue(taskIdMesos).build();
-				String taskName = task.getName();
+				// Create mesos's taskInfo
+				TaskInfo taskInfo = taskInfo(offer, task);
 
-				// Resources
-				int numCpus = task.getResources().getCpus() > 0 ? task.getResources().getCpus() : 1;
-				Resource cpus = Resource.newBuilder().setName(OFFER_CPUS).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(numCpus)).build(); // Number of CPUS
-
-				long memSize = (task.getResources().getMem() / MB) > 0 ? task.getResources().getMem() : 64;
-				Resource mem = Resource.newBuilder().setName(OFFER_MEM).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(memSize)).build(); // Memory in MB
-
-				// Executor
-				ExecutorInfo execInfo = ExecutorInfo.newBuilder(executor).build();
-
-				// Task's data: Command to execute
-				String cmdArgs[] = ExecutionerLocal.createBdsExecCmdArgs(task);
-				ByteString data = ByteString.copyFromUtf8(BdsMesosFramework.packArray(cmdArgs));
-
-				// Create task
-				TaskInfo taskInfo = TaskInfo.newBuilder() //
-						.setName(taskName)//
-						.setTaskId(taskId) //
-						.setSlaveId(offer.getSlaveId()) //
-						.addResources(cpus) //
-						.addResources(mem) //
-						.setExecutor(execInfo) //
-						.setData(data) //
-						.build();
-
-				// Add task to response
+				// Add taskInfo to response
 				taskInfos.add(taskInfo);
 
 				// Mark task as started
@@ -260,6 +231,60 @@ public class BdsMesosScheduler implements Scheduler {
 
 		if (verbose) Gpr.debug("Launching tasks: " + taskInfos.size());
 		driver.launchTasks(offerIds, taskInfos);
+	}
+
+	/**
+	 * Create a mesos taskInfo
+	 */
+	TaskInfo taskInfo(Offer offer, Task task) {
+		// Assign a task ID and name
+		String taskIdMesos = taskIdMesos(task);
+		taskById.put(taskIdMesos, task);
+		TaskID taskId = TaskID.newBuilder().setValue(taskIdMesos).build();
+		String taskName = task.getName();
+
+		// Resources
+		int numCpus = task.getResources().getCpus() > 0 ? task.getResources().getCpus() : 1;
+		Resource cpus = Resource.newBuilder().setName(OFFER_CPUS).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(numCpus)).build(); // Number of CPUS
+
+		long memSize = (task.getResources().getMem() / MB) > 0 ? task.getResources().getMem() : 64;
+		Resource mem = Resource.newBuilder().setName(OFFER_MEM).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(memSize)).build(); // Memory in MB
+
+		// Executor
+		ExecutorInfo execInfo = ExecutorInfo.newBuilder(executor).build();
+
+		// Task's data: Command to execute
+		String cmdArgs[] = ExecutionerLocal.createBdsExecCmdArgs(task);
+		ByteString data = ByteString.copyFromUtf8(BdsMesosFramework.packArray(cmdArgs));
+
+		// Create task
+		TaskInfo taskInfo = TaskInfo.newBuilder() //
+				.setName(taskName)//
+				.setTaskId(taskId) //
+				.setSlaveId(offer.getSlaveId()) //
+				.addResources(cpus) //
+				.addResources(mem) //
+				.setExecutor(execInfo) //
+				.setData(data) //
+				.build();
+
+		return taskInfo;
+	}
+
+	/**
+	 * Find a task that matches the offer
+	 * @return null if no task is found
+	 */
+	protected Task matchTask(Offer offer) {
+		// TODO: Perform real matching!
+		// Trivial implementation just use the first available task
+		if (taskToLaunch.isEmpty()) return null;
+
+		// TODO: We should probably not remove it completely until we 
+		// are sure that it was started by Mesos (stateChange)
+		Task task = taskToLaunch.remove(0);
+
+		return task;
 	}
 
 	/**
