@@ -74,7 +74,7 @@ public class BdsMesosExecutor implements Executor, NotifyTaskState, PidParser {
 	// Script used to fire up BDS executor
 	// This is script invoked by Mesos when a task is executed
 	// The script invokes this class' main method
-	public static String BDS_EXECUTOR_SCRIPT = "scripts/bds_mesos_executor.sh";
+	public static String BDS_EXECUTOR_SCRIPT = BdsMesosFramework.BDS_FRAMEWORK_DIR + "/bds_mesos_executor.sh";
 
 	/**
 	 * Main: Entry point for executor, invoked by Mesos framework

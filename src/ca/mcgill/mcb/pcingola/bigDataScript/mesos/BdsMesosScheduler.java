@@ -55,13 +55,19 @@ import com.google.protobuf.ByteString;
 public class BdsMesosScheduler implements Scheduler {
 
 	static final long MB = 1024 * 1024;
-
-	public static boolean debug = true;
+	public static final String OFFER_CPUS = "cpus";
+	public static final String OFFER_MEM = "mem";
 
 	private final ExecutorInfo executor;
-	List<Task> taskToLaunch;
-	HashMap<String, Task> taskById;
-	ExecutionerMesos executionerMesos;
+	protected boolean verbose = true;
+	protected List<Task> taskToLaunch;
+	protected HashMap<String, Task> taskById;
+	protected ExecutionerMesos executionerMesos;
+
+	// Mesos does not accept '/' in task IDs
+	public static String taskIdMesos(Task task) {
+		return task.getId().replaceAll("/", "_");
+	}
 
 	public BdsMesosScheduler(ExecutionerMesos executionerMesos, ExecutorInfo executor) {
 		this.executionerMesos = executionerMesos;
@@ -72,7 +78,6 @@ public class BdsMesosScheduler implements Scheduler {
 
 	/**
 	 * Add a task to be launched
-	 * @param task
 	 */
 	public void add(Task task) {
 		taskToLaunch.add(task);
@@ -84,7 +89,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void disconnected(SchedulerDriver driver) {
-		if (debug) Gpr.debug("Scheduler: Disconnected");
+		if (verbose) Gpr.debug("Scheduler: Disconnected");
 	}
 
 	/**
@@ -94,7 +99,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void error(SchedulerDriver driver, String message) {
-		if (debug) Gpr.debug("Scheduler: Error '" + message + "'");
+		if (verbose) Gpr.debug("Scheduler: Error '" + message + "'");
 	}
 
 	/**
@@ -104,7 +109,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void executorLost(SchedulerDriver driver, ExecutorID executorId, SlaveID slaveId, int status) {
-		if (debug) Gpr.debug("Scheduler: Executor lost " + executorId.getValue());
+		if (verbose) Gpr.debug("Scheduler: Executor lost " + executorId.getValue());
 	}
 
 	/**
@@ -114,7 +119,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void frameworkMessage(SchedulerDriver driver, ExecutorID executorId, SlaveID slaveId, byte[] data) {
-		if (debug) Gpr.debug("Scheduler: Framework message" //
+		if (verbose) Gpr.debug("Scheduler: Framework message" //
 				+ "\n\tExecutorId : " + executorId.getValue() //
 				+ "\n\tSlaveId    : " + slaveId.getValue() //
 				+ "\n\tMesssage   : '" + new String(data) + "'" //
@@ -131,7 +136,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void offerRescinded(SchedulerDriver driver, OfferID offerId) {
-		if (debug) Gpr.debug("Scheduler: Offer Rescinded " + offerId.getValue());
+		if (verbose) Gpr.debug("Scheduler: Offer Rescinded " + offerId.getValue());
 	}
 
 	/**
@@ -142,7 +147,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void registered(SchedulerDriver driver, FrameworkID frameworkId, MasterInfo masterInfo) {
-		if (debug) Gpr.debug("Scheduler: Registered framework " + frameworkId.getValue() + ", master " + masterInfo.getHostname());
+		if (verbose) Gpr.debug("Scheduler: Registered framework " + frameworkId.getValue() + ", master " + masterInfo.getHostname());
 	}
 
 	/**
@@ -153,7 +158,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void reregistered(SchedulerDriver driver, MasterInfo masterInfo) {
-		if (debug) Gpr.debug("Scheduler: Re-Registered " + masterInfo.getHostname());
+		if (verbose) Gpr.debug("Scheduler: Re-Registered " + masterInfo.getHostname());
 	}
 
 	/**
@@ -173,7 +178,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void resourceOffers(SchedulerDriver driver, List<Offer> offers) {
-		if (debug) Gpr.debug("Scheduler: Resource Offers");
+		if (verbose) Gpr.debug("Scheduler: Resource Offers");
 		Collection<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
 		Collection<OfferID> offerIds = new ArrayList<OfferID>();
 
@@ -185,27 +190,47 @@ public class BdsMesosScheduler implements Scheduler {
 			//       Use the the offer that matches 'best' a task
 			//       In case of multiple matches, the 'first' offer / first 'task' wins
 
-			if (debug) Gpr.debug("\t\t" + offer.getHostname());
+			// Parse offer parameters
+			int offerCpus = -1;
+			int offerMemGb = -1;
+			for (Resource r : offer.getResourcesList()) {
+				String resourceName = r.getName();
+				int value = (int) r.getScalar().getValue();
 
+				switch (resourceName) {
+				case OFFER_MEM:
+					offerMemGb = value;
+					break;
+				case OFFER_CPUS:
+					offerMemGb = value;
+					break;
+				}
+			}
+			if (verbose) Gpr.debug("\t\tOffer:" + offer.getHostname() + "\tcpus: " + offerCpus + "\tmem: " + offerMemGb);
+
+			// TODO: Only add if offer.Id the offer is accepted (does it means that we reject it?)
 			offerIds.add(offer.getId());
 
 			// Should we launch a task?
 			if (!taskToLaunch.isEmpty()) {
 				// Get first task in the queue
-				Task task = taskToLaunch.remove(0); // TODO: We should not remove it completely until we are sure that it was started by Mesos (stateChange)
-				taskById.put(task.getId(), task);
+				// TODO: We should not remove it completely until we are sure that it was
+				// started by Mesos (stateChange)
+				Task task = taskToLaunch.remove(0);
+				if (verbose) Gpr.debug("Adding task to launch list: " + task);
 
 				// Assign a task ID and name
-				TaskID taskId = TaskID.newBuilder().setValue(task.getId()).build();
+				String taskIdMesos = taskIdMesos(task);
+				taskById.put(taskIdMesos, task);
+				TaskID taskId = TaskID.newBuilder().setValue(taskIdMesos).build();
 				String taskName = task.getName();
-				System.out.println("Launching task " + taskId.getValue());
 
 				// Resources
 				int numCpus = task.getResources().getCpus() > 0 ? task.getResources().getCpus() : 1;
-				Resource cpus = Resource.newBuilder().setName("cpus").setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(numCpus)).build(); // Number of CPUS
+				Resource cpus = Resource.newBuilder().setName(OFFER_CPUS).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(numCpus)).build(); // Number of CPUS
 
 				long memSize = (task.getResources().getMem() / MB) > 0 ? task.getResources().getMem() : 64;
-				Resource mem = Resource.newBuilder().setName("mem").setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(memSize)).build(); // Memory in MB
+				Resource mem = Resource.newBuilder().setName(OFFER_MEM).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(memSize)).build(); // Memory in MB
 
 				// Executor
 				ExecutorInfo execInfo = ExecutorInfo.newBuilder(executor).build();
@@ -231,12 +256,9 @@ public class BdsMesosScheduler implements Scheduler {
 				// Mark task as started
 				executionerMesos.taskStarted(task);
 			}
-
 		}
 
-		// Filters filters = Filters.newBuilder().setRefuseSeconds(1).build();
-		// driver.launchTasks(offer.getId(), taskInfos, filters);
-
+		if (verbose) Gpr.debug("Launching tasks: " + taskInfos.size());
 		driver.launchTasks(offerIds, taskInfos);
 	}
 
@@ -247,7 +269,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void slaveLost(SchedulerDriver driver, SlaveID slaveId) {
-		if (debug) Gpr.debug("Scheduler: Slave Lost " + slaveId.getValue());
+		if (verbose) Gpr.debug("Scheduler: Slave Lost " + slaveId.getValue());
 	}
 
 	/**
@@ -263,7 +285,7 @@ public class BdsMesosScheduler implements Scheduler {
 	@Override
 	public void statusUpdate(SchedulerDriver driver, TaskStatus status) {
 		String taskId = status.getTaskId().getValue();
-		if (debug) Gpr.debug("Scheduler: Status update, task " + taskId + ", state " + status.getState());
+		if (verbose) Gpr.debug("Scheduler: Status update, task " + taskId + ", state " + status.getState());
 
 		// Find task
 		Task task = taskById.get(taskId);

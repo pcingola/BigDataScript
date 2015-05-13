@@ -29,6 +29,7 @@ import org.apache.mesos.Protos.FrameworkInfo;
 import org.apache.mesos.Protos.Status;
 import org.apache.mesos.Protos.TaskID;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 
@@ -47,6 +48,7 @@ import com.google.protobuf.ByteString;
 public class BdsMesosFramework extends Thread {
 
 	public static final String BDS_FRAMEWORK_NAME = "BDS_FRAMEWORK";
+	public static final String BDS_FRAMEWORK_DIR = Config.DEFAULT_CONFIG_DIR + "/mesos";
 
 	String master;
 	int status;
@@ -73,8 +75,6 @@ public class BdsMesosFramework extends Thread {
 
 	/**
 	 * Pack an array into a string
-	 * @param array
-	 * @return
 	 */
 	public static String packArray(String[] array) {
 		StringBuilder sb = new StringBuilder();
@@ -87,8 +87,6 @@ public class BdsMesosFramework extends Thread {
 
 	/**
 	 * Unpack an array from a string
-	 * @param string
-	 * @return
 	 */
 	public static String[] unpackArray(String string) {
 		return string.split("\0");

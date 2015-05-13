@@ -2,38 +2,33 @@
 
 echo SCRIPT test-executor
 
-# This script uses MESOS_SOURCE_DIR and MESOS_BUILD_DIR which come
-# from configuration substitutions.
-MESOS_SOURCE_DIR=/home/pcingola/tools/mesos
-MESOS_BUILD_DIR=/home/pcingola/tools/mesos
+BDS_HOME=$HOME/.bds
+BDS_MESOS_DIR=$BDS_HOME/mesos
 
-# Locate Java from environment or use configure discovered location.
-JAVA_HOME=${JAVA_HOME-/usr/lib/jvm/java-8-oracle}
-JAVA=${JAVA-${JAVA_HOME}/bin/java}
+# Java libraries
+PROTOBUF_JAR=`ls $BDS_MESOS_DIR/protobuf*.jar | tail -n 1`
+MESOS_JAR=`ls $BDS_MESOS_DIR/mesos*.jar | tail -n 1`
 
-# Use colors for errors.
-. ${MESOS_SOURCE_DIR}/support/colors.sh
+# BDS executable is also a JAR file
+BDS_JAR=$BDS_HOME/bds
 
-PROTOBUF_JAR=${MESOS_BUILD_DIR}/protobuf-2.5.0.jar
+# Make sure you copied Mesos's native library here
+MESOS_NATIVE_LIB="$BDS_MESOS_DIR/lib"
 
+# Check that libraries are installed
 test ! -e ${PROTOBUF_JAR} && \
-  echo "${RED}Failed to find ${PROTOBUF_JAR}${NORMAL}" && \
+  echo "Cannot find protobuf library ${PROTOBUF_JAR}" && \
   exit 1
-
-MESOS_JAR=${MESOS_BUILD_DIR}/src/mesos-0.18.0.jar
 
 test ! -e ${MESOS_JAR} && \
-  echo "${RED}Failed to find ${MESOS_JAR}${NORMAL}" && \
+  echo "Cannot find mesos library ${MESOS_JAR}" && \
   exit 1
 
-EXAMPLES_JAR=${MESOS_BUILD_DIR}/src/examples.jar
-
-test ! -e ${EXAMPLES_JAR} && \
-  echo "${RED}Failed to find ${EXAMPLES_JAR}${NORMAL}" && \
+test ! -e ${MESOS_NATIVE_LIB} && \
+  echo "Cannot find mesos native library directory ${MESOS_NATIVE_LIB}" && \
   exit 1
 
-ECLIPSE_BIN=$HOME/workspace/BigDataScript/bin
-
-exec ${JAVA} -cp ${PROTOBUF_JAR}:${MESOS_JAR}:${ECLIPSE_BIN} \
-  -Djava.library.path=${MESOS_BUILD_DIR}/src/.libs \
+# Execute Bds executor
+exec java -cp $PROTOBUF_JAR:$MESOS_JAR:$BDS_JAR \
+  -Djava.library.path=$MESOS_NATIVE_LIB \
   ca.mcgill.mcb.pcingola.bigDataScript.mesos.BdsMesosExecutor "${@}"

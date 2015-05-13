@@ -56,4 +56,9 @@ then
 	cp config/bds.default.config "$BDS_HOME/bds.config"
 fi
 
+# Copy mesos related libraries
+mkdir -p $BDS_HOME/mesos || true
+cp -vf lib/mesos*jar lib/protobuf*.jar $BDS_HOME/mesos
+cp -vf scripts/bds_mesos_executor.sh $BDS_HOME/mesos
+
 echo "Done!"
