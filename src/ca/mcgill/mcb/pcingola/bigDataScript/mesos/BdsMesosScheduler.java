@@ -67,7 +67,7 @@ public class BdsMesosScheduler implements Scheduler {
 	public static final String OFFER_MEM = "mem";
 
 	private final ExecutorInfo executor;
-	protected boolean verbose = true;
+	protected boolean verbose = false;
 	protected Cluster cluster;
 	protected HashMap<String, Task> taskById;
 	protected ExecutionerMesos executionerMesos;
@@ -379,6 +379,7 @@ public class BdsMesosScheduler implements Scheduler {
 					if (verbose) Gpr.debug("Trying to launch task " + task.getId());
 					if (matchTask(task, host, offerIds, taskInfos)) {
 						assignedTasks.add(task); // Task was assigned to this host
+						executionerMesos.taskStarted(task);
 
 						// No more resources? => No point on trying to match more tasks
 						if (!host.getResourcesAvaialble().isValid()) break;
@@ -414,7 +415,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void slaveLost(SchedulerDriver driver, SlaveID slaveId) {
-		// TODO: Mark all tasks in that host fail
+		// TODO: Mark call tasks in that host fail
 		if (verbose) Gpr.debug("Scheduler: Slave Lost " + slaveId.getValue());
 	}
 

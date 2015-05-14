@@ -2,7 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.mesos.BdsMesosFramework;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
@@ -79,7 +78,6 @@ public class ExecutionerMesos extends Executioner {
 
 	@Override
 	public String[] osKillCommand(Task task) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -96,17 +94,6 @@ public class ExecutionerMesos extends Executioner {
 	protected void runExecutionerLoopBefore() {
 		super.runExecutionerLoopBefore();
 		initMesos();
-	}
-
-	/**
-	 * Select task to be executed on a host
-	 */
-	@Override
-	protected synchronized void selectTask(Task task, Host host) {
-
-		if (verbose) log("Task selected '" + task.getId() + "' on host '" + host + "'");
-		tasksSelected.put(task, host);
-		host.add(task);
 	}
 
 }

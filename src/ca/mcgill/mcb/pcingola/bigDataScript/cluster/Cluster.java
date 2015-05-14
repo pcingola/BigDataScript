@@ -33,7 +33,6 @@ public class Cluster implements Iterable<Host> {
 	 */
 	public void add(Host host) {
 		String hostName = host.toString();
-		Gpr.debug("ADDING HOST: " + host);
 		hosts.put(hostName, host);
 	}
 
