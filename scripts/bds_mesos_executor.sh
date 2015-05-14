@@ -13,7 +13,7 @@ MESOS_JAR=`ls $BDS_MESOS_DIR/mesos*.jar | tail -n 1`
 BDS_JAR=$BDS_HOME/bds
 
 # Make sure you copied Mesos's native library here
-MESOS_NATIVE_LIB="$BDS_MESOS_DIR/lib"
+MESOS_NATIVE_LIB="$BDS_HOME/lib"
 
 # Check that libraries are installed
 test ! -e ${PROTOBUF_JAR} && \
