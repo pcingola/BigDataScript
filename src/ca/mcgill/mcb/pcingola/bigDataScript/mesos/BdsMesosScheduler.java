@@ -184,7 +184,7 @@ public class BdsMesosScheduler implements Scheduler {
 				+ "\n\tExecutorId : " + executorId.getValue() //
 				+ "\n\tSlaveId    : " + slaveId.getValue() //
 				+ "\n\tMesssage   : '" + new String(data) + "'" //
-		);
+				);
 	}
 
 	protected boolean matchTask(Task task, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
@@ -386,7 +386,7 @@ public class BdsMesosScheduler implements Scheduler {
 					if (verbose) Gpr.debug("Trying to launch task " + task.getId());
 					if (matchTask(task, host, offerIds, taskInfos)) {
 						host.add(task); // Account used resources
-						assignedTasks.add(task); // Task was assigned 
+						assignedTasks.add(task); // Task was assigned
 						executionerMesos.taskStarted(task); // Jump to 'started' state
 
 						// No more resources? => No point on trying to match more tasks
