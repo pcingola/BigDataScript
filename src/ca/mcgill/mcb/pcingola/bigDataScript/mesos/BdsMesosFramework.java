@@ -97,11 +97,6 @@ public class BdsMesosFramework extends Thread {
 		return string.split("\0");
 	}
 
-	private static void usage() {
-		String name = BdsMesosFramework.class.getName();
-		System.err.println("Usage: " + name + " master <tasks>");
-	}
-
 	public BdsMesosFramework(ExecutionerMesos executionerMesos, String master) {
 		super();
 		this.master = master;

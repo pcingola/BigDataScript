@@ -183,7 +183,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 				+ "\tmem: " + Gpr.toStringMem(mem) //
 				+ (timeout > 0 ? "\ttimeout: " + timeout : "") //
 				+ (wallTimeout > 0 ? "\twall-timeout: " + wallTimeout : "") //
-				;
+		;
 	}
 
 	public String toStringMultiline() {

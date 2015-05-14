@@ -2,6 +2,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.mesos.BdsMesosFramework;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
@@ -24,9 +26,9 @@ public class ExecutionerMesos extends Executioner {
 		super(config);
 		removeTaskCannotExecute = false; // In Mesos, host might appear and disappear all the time (according to offer).
 
-		// Create a cluster 
+		// Create a cluster and add an infinite capacity host (master)
 		cluster = new Cluster();
-		// new HostInifinte(cluster);
+		new HostInifinte(cluster);
 	}
 
 	/**
@@ -36,7 +38,7 @@ public class ExecutionerMesos extends Executioner {
 	protected synchronized Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 		mesosFramework.add(task);
-		return null; // TODO: Can we actually return 'null'?
+		return null;
 	}
 
 	/**
@@ -94,6 +96,17 @@ public class ExecutionerMesos extends Executioner {
 	protected void runExecutionerLoopBefore() {
 		super.runExecutionerLoopBefore();
 		initMesos();
+	}
+
+	/**
+	 * Select task to be executed on a host
+	 */
+	@Override
+	protected synchronized void selectTask(Task task, Host host) {
+
+		if (verbose) log("Task selected '" + task.getId() + "' on host '" + host + "'");
+		tasksSelected.put(task, host);
+		host.add(task);
 	}
 
 }

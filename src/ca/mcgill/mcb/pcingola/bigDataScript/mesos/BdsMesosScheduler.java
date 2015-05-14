@@ -18,6 +18,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.mesos;
  * limitations under the License.
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ import org.apache.mesos.SchedulerDriver;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
@@ -67,18 +69,18 @@ public class BdsMesosScheduler implements Scheduler {
 	private final ExecutorInfo executor;
 	protected boolean verbose = true;
 	protected Cluster cluster;
-	protected List<Task> taskToLaunch;
 	protected HashMap<String, Task> taskById;
 	protected ExecutionerMesos executionerMesos;
 	protected Map<String, Set<Offer>> offersByHost;
 	protected Map<String, Offer> offersById;
+	protected Set<Task> taskToLaunch;
 
 	public BdsMesosScheduler(ExecutionerMesos executionerMesos, ExecutorInfo executor) {
 		this.executionerMesos = executionerMesos;
 		this.executor = executor;
 		cluster = executionerMesos.getCluster();
-		taskToLaunch = new LinkedList<Task>();
 		taskById = new HashMap<String, Task>();
+		taskToLaunch = new HashSet<>();
 		offersByHost = new HashMap<>();
 		offersById = new HashMap<>();
 	}
@@ -99,7 +101,10 @@ public class BdsMesosScheduler implements Scheduler {
 			// No host with that name? Create (and add to cluster)
 			host = new Host(cluster, hostName);
 			host.getResources().set(offerResources);
-		} else host.getResources().add(offerResources);
+		} else {
+			host.getResources().add(offerResources);
+			host.updateResourcesAvailable();
+		}
 
 		// Update offers by host
 		Set<Offer> offers = offersByHost.get(hostName);
@@ -118,6 +123,22 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	public synchronized void add(Task task) {
 		taskToLaunch.add(task);
+	}
+
+	/**
+	 * Decline all pending offers
+	 */
+	void declineAllOffers(SchedulerDriver driver) {
+		if (verbose) Gpr.debug("No tasks to run: Declining all remaining offers");
+
+		// Create a new collection to avoid 'concurrent modification'
+		List<Offer> offers = new LinkedList<>();
+		offers.addAll(offersById.values());
+
+		// Decline all
+		for (Offer offer : offers)
+			driver.declineOffer(offer.getId());
+
 	}
 
 	/**
@@ -163,42 +184,28 @@ public class BdsMesosScheduler implements Scheduler {
 		);
 	}
 
-	/**
-	 * Find a task that matches the offer
-	 * Use the the offer that matches the first task in the list
-	 * In case of multiple matches, the 'first' offer / first 'task' wins
-	 *
-	 * @return null if no task is found
-	 */
-	protected boolean matchTask(Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
-		if (taskToLaunch.isEmpty()) return false;
-
-		// TODO: We should probably not remove it completely until we
-		// are sure that it was started by Mesos (stateChange)
-		Task task = taskToLaunch.remove(0);
-
-		return task != null;
-	}
-
 	protected boolean matchTask(Task task, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
-		for (Host host : cluster)
-			if (matchTask(task, host, offerIds, taskInfos)) // Can this task be run on this host?
+		for (Host host : cluster) {
+			if (host instanceof HostInifinte) {
+				// This represents the head node (skip)
+			} else if (matchTask(task, host, offerIds, taskInfos)) {
+				// Can this task be run on this host?
 				return true;
+			}
+		}
 
 		return false;
 	}
 
 	protected synchronized boolean matchTask(Task task, Host host, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
-		HostResources hr = host.getResources();
-		if (hr == null || !hr.isValid()) return false;
-
 		// Not enough resources in this host?
-		if (!hr.hasResources(task.getResources())) return false;
+		if (!host.hasResourcesAvailable(task.getResources())) return false;
 
 		// OK, we should be able to run 'task' in hostName
 		String hostName = host.toString();
 		Set<Offer> offers = offersByHost.get(hostName);
 		if (offers == null) {
+			Gpr.debug("Offer accounting problem in host '" + hostName + "': This should ever happen!");
 			cluster.remove(host); // Remove any resources since we don't really seem to have any
 			return false;
 		}
@@ -210,7 +217,7 @@ public class BdsMesosScheduler implements Scheduler {
 			HostResources or = parseOffer(offer);
 			tr.consume(or);
 
-			// Add offer and taskInfo to lists
+			// Add offer and taskInfo to collections
 			offerIds.add(offer.getId());
 			TaskInfo taskInfo = taskInfo(offer, task);
 			taskInfos.add(taskInfo);
@@ -219,7 +226,7 @@ public class BdsMesosScheduler implements Scheduler {
 			if (tr.isConsumed()) return true;
 		}
 
-		Gpr.debug("Resource accounting problem: This should ever happen!");
+		Gpr.debug("Resource accounting problem in host '" + hostName + "': This should ever happen!");
 		return true;
 	}
 
@@ -290,13 +297,14 @@ public class BdsMesosScheduler implements Scheduler {
 		if (verbose) Gpr.debug("Removing offer [" + offerId + "]:" + hostName + "\t" + offerResources);
 
 		// Update resources by host
-		Host slave = cluster.getHost(hostName);
-		if (slave != null) {
-			HostResources hr = slave.getResources();
+		Host host = cluster.getHost(hostName);
+		if (host != null) {
+			HostResources hr = host.getResources();
 			hr.consume(offerResources);
 
 			// Nothing left? => Remove entry
-			if (!hr.isValid()) cluster.remove(slave);
+			if (!hr.isValid()) cluster.remove(host);
+			host.updateResourcesAvailable();
 		}
 
 		// Update offers by host
@@ -336,21 +344,67 @@ public class BdsMesosScheduler implements Scheduler {
 	@Override
 	public void resourceOffers(SchedulerDriver driver, List<Offer> offers) {
 		if (verbose) Gpr.debug("Scheduler: Resource Offers");
-		//		Collection<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
-		//		Collection<OfferID> offerIds = new ArrayList<OfferID>();
+
+		//---
+		// Process offers
+		//---
+		// No tasks to run? Decline all offers
+		if (taskToLaunch.isEmpty()) {
+			for (Offer offer : offers)
+				driver.declineOffer(offer.getId());
+
+			// Also decline all remaining offers
+			declineAllOffers(driver);
+			return;
+		}
 
 		// Add offers
 		for (Offer offer : offers)
 			add(offer);
 
-		//		while (true) {
-		//			boolean matched = matchTask(offerIds, taskInfos);
-		//			Gpr.debug("MATCHED: " + matched);
-		//			if (!matched) break;
-		//		}
-		//
-		//		if (verbose) Gpr.debug("Launching tasks: " + taskInfos.size());
-		//		driver.launchTasks(offerIds, taskInfos);
+		//---
+		// Match offers (and resources) to tasks
+		//---
+		Set<Task> assignedTasks = new HashSet<>();
+		Collection<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
+		Collection<OfferID> offerIds = new ArrayList<OfferID>();
+		Set<OfferID> offerIdsUsed = new HashSet<OfferID>();
+
+		for (Host host : cluster) {
+			if (host instanceof HostInifinte) {
+				// Skip master node
+			} else {
+				// Try to match as many tasks as possible in this host
+				for (Task task : taskToLaunch) {
+					if (verbose) Gpr.debug("Trying to launch task " + task.getId());
+					if (matchTask(task, host, offerIds, taskInfos)) {
+						assignedTasks.add(task); // Task was assigned to this host
+
+						// No more resources? => No point on trying to match more tasks
+						if (!host.getResourcesAvaialble().isValid()) break;
+					}
+				}
+
+				// Any task to launch?
+				if (!assignedTasks.isEmpty()) {
+					// TODO: Check driver status
+					if (verbose) Gpr.debug("Launching tasks: " + taskInfos.size());
+					driver.launchTasks(offerIds, taskInfos);
+
+					// Remove assigned tasks
+					taskToLaunch.removeAll(assignedTasks);
+					offerIdsUsed.addAll(offerIds);
+
+					// Initialize for next round
+					taskInfos = new ArrayList<TaskInfo>();
+					offerIds = new ArrayList<OfferID>();
+					assignedTasks = new HashSet<Task>();
+				}
+			}
+		}
+
+		// No more task to launch? => decline all remaining offers
+		if (taskToLaunch.isEmpty()) declineAllOffers(driver);
 	}
 
 	/**
@@ -360,6 +414,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void slaveLost(SchedulerDriver driver, SlaveID slaveId) {
+		// TODO: Mark all tasks in that host fail
 		if (verbose) Gpr.debug("Scheduler: Slave Lost " + slaveId.getValue());
 	}
 

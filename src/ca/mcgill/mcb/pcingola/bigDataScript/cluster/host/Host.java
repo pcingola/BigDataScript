@@ -37,7 +37,7 @@ public class Host implements Comparable<Host> {
 	 * Add task to this host
 	 */
 	public synchronized void add(Task task) {
-		if (tasksRunning.add(task)) updateResources();
+		if (tasksRunning.add(task)) updateResourcesAvailable();
 	}
 
 	@Override
@@ -62,12 +62,20 @@ public class Host implements Comparable<Host> {
 	}
 
 	public synchronized HostResources getResourcesAvaialble() {
-		if (resourcesAvaialble == null) updateResources();
+		if (resourcesAvaialble == null) updateResourcesAvailable();
 		return resourcesAvaialble;
 	}
 
 	public String getUserName() {
 		return userName;
+	}
+
+	public boolean hasResourcesAvailable() {
+		return getResourcesAvaialble().isConsumed();
+	}
+
+	public boolean hasResourcesAvailable(HostResources hr) {
+		return getResourcesAvaialble().compareTo(hr) >= 0;
 	}
 
 	void init(Cluster cluster, String hostName) {
@@ -99,7 +107,7 @@ public class Host implements Comparable<Host> {
 	 * Remove task from this host
 	 */
 	public synchronized void remove(Task task) {
-		if (tasksRunning.remove(task)) updateResources();
+		if (tasksRunning.remove(task)) updateResourcesAvailable();
 	}
 
 	@Override
@@ -110,7 +118,7 @@ public class Host implements Comparable<Host> {
 	/**
 	 * Update 'resources available'
 	 */
-	protected synchronized void updateResources() {
+	public synchronized void updateResourcesAvailable() {
 		resourcesAvaialble = resources.clone();
 		for (Task t : tasksRunning)
 			resourcesAvaialble.consume(t.getResources());
