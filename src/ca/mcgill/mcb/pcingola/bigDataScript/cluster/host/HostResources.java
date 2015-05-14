@@ -30,8 +30,8 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	}
 
 	public HostResources() {
-		cpus = 1; // One cpu
-		mem = -1; // No mem insfo
+		cpus = 1; // One CPU
+		mem = -1; // No memory info
 		timeout = 0; // No timeout
 		wallTimeout = 0; // No timeout
 		id = nextId();
@@ -43,6 +43,25 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 		timeout = hr.timeout;
 		wallTimeout = hr.wallTimeout;
 		id = nextId();
+	}
+
+	/**
+	 * Add resources
+	 */
+	public void add(HostResources hr) {
+		if (hr == null) return;
+		addCpus(hr.cpus);
+		addMem(hr.mem);
+	}
+
+	public void addCpus(int cpus) {
+		if (this.cpus <= 0) this.cpus = cpus;
+		else this.cpus += cpus;
+	}
+
+	public void addMem(long mem) {
+		if (this.mem <= 0) this.mem = mem;
+		else this.mem += mem;
 	}
 
 	@Override
@@ -109,6 +128,13 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 		return compareTo(hr) >= 0;
 	}
 
+	/**
+	 * Are all resources consumed?
+	 */
+	public boolean isConsumed() {
+		return (cpus <= 0) && (mem <= 0);
+	}
+
 	public boolean isValid() {
 		if (cpus == 0) return false;
 		if (mem == 0) return false;
@@ -153,7 +179,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 				+ "\tmem: " + Gpr.toStringMem(mem) //
 				+ (timeout > 0 ? "\ttimeout: " + timeout : "") //
 				+ (wallTimeout > 0 ? "\twall-timeout: " + wallTimeout : "") //
-				;
+		;
 	}
 
 	public String toStringMultiline() {

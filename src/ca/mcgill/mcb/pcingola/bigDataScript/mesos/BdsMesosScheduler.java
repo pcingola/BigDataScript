@@ -21,8 +21,11 @@ package ca.mcgill.mcb.pcingola.bigDataScript.mesos;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.mesos.Protos.ExecutorID;
 import org.apache.mesos.Protos.ExecutorInfo;
@@ -39,6 +42,7 @@ import org.apache.mesos.Protos.Value;
 import org.apache.mesos.Scheduler;
 import org.apache.mesos.SchedulerDriver;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
@@ -55,6 +59,7 @@ import com.google.protobuf.ByteString;
 public class BdsMesosScheduler implements Scheduler {
 
 	static final long MB = 1024 * 1024;
+	static final long GB = 1024 * MB;
 	public static final String OFFER_CPUS = "cpus";
 	public static final String OFFER_MEM = "mem";
 
@@ -63,23 +68,51 @@ public class BdsMesosScheduler implements Scheduler {
 	protected List<Task> taskToLaunch;
 	protected HashMap<String, Task> taskById;
 	protected ExecutionerMesos executionerMesos;
-
-	// Mesos does not accept '/' in task IDs
-	public static String taskIdMesos(Task task) {
-		return task.getId().replaceAll("/", "_");
-	}
+	protected Map<String, HostResources> resourcesByHost;
+	protected Map<String, Set<Offer>> offersByHost;
+	protected Map<String, Offer> offersById;
 
 	public BdsMesosScheduler(ExecutionerMesos executionerMesos, ExecutorInfo executor) {
 		this.executionerMesos = executionerMesos;
 		this.executor = executor;
 		taskToLaunch = new LinkedList<Task>();
 		taskById = new HashMap<String, Task>();
+		resourcesByHost = new HashMap<>();
+		offersByHost = new HashMap<>();
+		offersById = new HashMap<>();
+	}
+
+	/**
+	 * Add resource offered
+	 */
+	public synchronized void add(Offer offer) {
+		// Parse offer
+		String hostName = offer.getHostname();
+		String offerId = offer.getId().getValue();
+		HostResources offerResources = parseOffer(offer);
+		if (verbose) Gpr.debug("Adding offer [" + offerId + "]:" + hostName + "\t" + offerResources);
+
+		// Update resources by host
+		HostResources slaveResources = resourcesByHost.get(hostName);
+		if (slaveResources == null) resourcesByHost.put(hostName, offerResources);
+		else slaveResources.add(offerResources);
+
+		// Update offers by host
+		Set<Offer> offers = offersByHost.get(hostName);
+		if (offers == null) {
+			offers = new HashSet<Offer>();
+			offersByHost.put(hostName, offers);
+		}
+		offers.add(offer);
+
+		// Update offer by Id
+		offersById.put(offerId, offer);
 	}
 
 	/**
 	 * Add a task to be launched
 	 */
-	public void add(Task task) {
+	public synchronized void add(Task task) {
 		taskToLaunch.add(task);
 	}
 
@@ -127,16 +160,99 @@ public class BdsMesosScheduler implements Scheduler {
 	}
 
 	/**
+	 * Find a task that matches the offer
+	 * Use the the offer that matches the first task in the list
+	 * In case of multiple matches, the 'first' offer / first 'task' wins
+	 *
+	 * @return null if no task is found
+	 */
+	protected boolean matchTask(Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
+		if (taskToLaunch.isEmpty()) return false;
+
+		// TODO: We should probably not remove it completely until we
+		// are sure that it was started by Mesos (stateChange)
+		Task task = taskToLaunch.remove(0);
+
+		return task != null;
+	}
+
+	protected boolean matchTask(Task task, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
+		for (String hostName : resourcesByHost.keySet())
+			if (matchTask(task, hostName, offerIds, taskInfos)) // Can this task be run on this host?
+				return true;
+
+		return false;
+	}
+
+	protected synchronized boolean matchTask(Task task, String hostName, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
+		HostResources hr = resourcesByHost.get(hostName);
+		if (hr == null || !hr.isValid()) return false;
+
+		// Not enough resources in this host?
+		if (!hr.hasResources(task.getResources())) return false;
+
+		// OK, we should be able to run 'task' in hostName
+		Set<Offer> offers = offersByHost.get(hostName);
+		if (offers == null) {
+			resourcesByHost.remove(hostName); // Remove any resources since we don't really seem to have any
+			return false;
+		}
+
+		// Select offers and add taskInfo
+		HostResources tr = new HostResources(task.getResources());
+		for (Offer offer : offers) {
+			// Consume resources until offers fulfill task requirements
+			HostResources or = parseOffer(offer);
+			tr.consume(or);
+
+			// Add offer and taskInfo to lists
+			offerIds.add(offer.getId());
+			TaskInfo taskInfo = taskInfo(offer, task);
+			taskInfos.add(taskInfo);
+
+			// Are all resources needed for this task satisfied?
+			if (tr.isConsumed()) return true;
+		}
+
+		Gpr.debug("Resource accounting problem: This should ever happen!");
+		return true;
+	}
+
+	/**
 	 * Invoked when an offer is no longer valid (e.g., the slave was
 	 * lost or another framework used resources in the offer). If for
 	 * whatever reason an offer is never rescinded (e.g., dropped
 	 * message, failing over framework, etc.), a framwork that attempts
 	 * to launch tasks using an invalid offer will receive TASK_LOST
-	 * status updats for those tasks (see Scheduler::resourceOffers).
+	 * status updates for those tasks (see Scheduler::resourceOffers).
 	 */
 	@Override
 	public void offerRescinded(SchedulerDriver driver, OfferID offerId) {
 		if (verbose) Gpr.debug("Scheduler: Offer Rescinded " + offerId.getValue());
+		remove(offerId.getValue());
+	}
+
+	/**
+	 * Convert offer to hostResources
+	 */
+	HostResources parseOffer(Offer offer) {
+		HostResources hr = new HostResources();
+
+		for (Resource r : offer.getResourcesList()) {
+			String resourceName = r.getName();
+			int value = (int) r.getScalar().getValue();
+
+			switch (resourceName) {
+			case OFFER_MEM:
+				hr.setMem(GB * value);
+				break;
+			case OFFER_CPUS:
+				hr.setCpus(value);
+				break;
+			}
+		}
+
+		return hr;
 	}
 
 	/**
@@ -148,6 +264,41 @@ public class BdsMesosScheduler implements Scheduler {
 	@Override
 	public void registered(SchedulerDriver driver, FrameworkID frameworkId, MasterInfo masterInfo) {
 		if (verbose) Gpr.debug("Scheduler: Registered framework " + frameworkId.getValue() + ", master " + masterInfo.getHostname());
+	}
+
+	/**
+	 * Add resource offered
+	 */
+	public synchronized void remove(String offerId) {
+		// Update offer by Id
+		Offer offer = offersById.remove(offerId);
+
+		// Offer not found? Nothing to remove
+		if (offer == null) {
+			Gpr.debug("Unknown offer " + offerId);
+			return;
+		}
+
+		// Parse offer
+		String hostName = offer.getHostname();
+		HostResources offerResources = parseOffer(offer);
+		if (verbose) Gpr.debug("Removing offer [" + offerId + "]:" + hostName + "\t" + offerResources);
+
+		// Update resources by host
+		HostResources slaveResources = resourcesByHost.get(hostName);
+		if (slaveResources != null) {
+			slaveResources.consume(offerResources);
+
+			// Nothing left? => Remove entry
+			if (!slaveResources.isValid()) resourcesByHost.remove(hostName);
+		}
+
+		// Update offers by host
+		Set<Offer> offers = offersByHost.get(hostName);
+		if (offers != null) {
+			offers.remove(offer);
+			if (offers.isEmpty()) offersByHost.remove(hostName);
+		}
 	}
 
 	/**
@@ -182,109 +333,17 @@ public class BdsMesosScheduler implements Scheduler {
 		Collection<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
 		Collection<OfferID> offerIds = new ArrayList<OfferID>();
 
-		// TODO: Match offers with tasks by taking into account the number of resources requested
-		//		 Note that when invoking driver.launchTasks() all offers must belong to same slave
+		for (Offer offer : offers)
+			add(offer);
 
-		for (Offer offer : offers) {
-			// TODO: Match a task with this particular offer
-			//       Use the the offer that matches 'best' a task
-			//       In case of multiple matches, the 'first' offer / first 'task' wins
-
-			// Parse offer parameters
-			int offerCpus = -1;
-			int offerMemGb = -1;
-			for (Resource r : offer.getResourcesList()) {
-				String resourceName = r.getName();
-				int value = (int) r.getScalar().getValue();
-
-				switch (resourceName) {
-				case OFFER_MEM:
-					offerMemGb = value;
-					break;
-				case OFFER_CPUS:
-					offerMemGb = value;
-					break;
-				}
-			}
-			if (verbose) Gpr.debug("\t\tOffer:" + offer.getHostname() + "\tcpus: " + offerCpus + "\tmem: " + offerMemGb);
-
-			// Add offer ID. If no tasks are added then the offer is assumed to be declined
-			offerIds.add(offer.getId());
-
-			Task task = matchTask(offer);
-
-			// Should we launch a task?
-			if (task != null) {
-
-				if (verbose) Gpr.debug("Adding task to launch list: " + task);
-
-				// Create mesos's taskInfo
-				TaskInfo taskInfo = taskInfo(offer, task);
-
-				// Add taskInfo to response
-				taskInfos.add(taskInfo);
-
-				// Mark task as started
-				executionerMesos.taskStarted(task);
-			}
+		while (true) {
+			boolean matched = matchTask(offerIds, taskInfos);
+			Gpr.debug("MATCHED: " + matched);
+			if (!matched) break;
 		}
 
 		if (verbose) Gpr.debug("Launching tasks: " + taskInfos.size());
 		driver.launchTasks(offerIds, taskInfos);
-	}
-
-	/**
-	 * Create a mesos taskInfo
-	 */
-	TaskInfo taskInfo(Offer offer, Task task) {
-		// Assign a task ID and name
-		String taskIdMesos = taskIdMesos(task);
-		taskById.put(taskIdMesos, task);
-		TaskID taskId = TaskID.newBuilder().setValue(taskIdMesos).build();
-		String taskName = task.getName();
-
-		// Resources
-		int numCpus = task.getResources().getCpus() > 0 ? task.getResources().getCpus() : 1;
-		Resource cpus = Resource.newBuilder().setName(OFFER_CPUS).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(numCpus)).build(); // Number of CPUS
-
-		long memSize = (task.getResources().getMem() / MB) > 0 ? task.getResources().getMem() : 64;
-		Resource mem = Resource.newBuilder().setName(OFFER_MEM).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(memSize)).build(); // Memory in MB
-
-		// Executor
-		ExecutorInfo execInfo = ExecutorInfo.newBuilder(executor).build();
-
-		// Task's data: Command to execute
-		String cmdArgs[] = ExecutionerLocal.createBdsExecCmdArgs(task);
-		ByteString data = ByteString.copyFromUtf8(BdsMesosFramework.packArray(cmdArgs));
-
-		// Create task
-		TaskInfo taskInfo = TaskInfo.newBuilder() //
-				.setName(taskName)//
-				.setTaskId(taskId) //
-				.setSlaveId(offer.getSlaveId()) //
-				.addResources(cpus) //
-				.addResources(mem) //
-				.setExecutor(execInfo) //
-				.setData(data) //
-				.build();
-
-		return taskInfo;
-	}
-
-	/**
-	 * Find a task that matches the offer
-	 * @return null if no task is found
-	 */
-	protected Task matchTask(Offer offer) {
-		// TODO: Perform real matching!
-		// Trivial implementation just use the first available task
-		if (taskToLaunch.isEmpty()) return null;
-
-		// TODO: We should probably not remove it completely until we 
-		// are sure that it was started by Mesos (stateChange)
-		Task task = taskToLaunch.remove(0);
-
-		return task;
 	}
 
 	/**
@@ -338,5 +397,43 @@ public class BdsMesosScheduler implements Scheduler {
 		default:
 			Gpr.debug("Unhandled Mesos task state: " + status.getState());
 		}
+	}
+
+	/**
+	 * Create a mesos taskInfo
+	 */
+	TaskInfo taskInfo(Offer offer, Task task) {
+		// Assign a task ID and name
+		String taskIdMesos = BdsMesosFramework.taskIdMesos(task);
+		taskById.put(taskIdMesos, task);
+		TaskID taskId = TaskID.newBuilder().setValue(taskIdMesos).build();
+		String taskName = task.getName();
+
+		// Resources
+		int numCpus = task.getResources().getCpus() > 0 ? task.getResources().getCpus() : 1;
+		Resource cpus = Resource.newBuilder().setName(OFFER_CPUS).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(numCpus)).build(); // Number of CPUS
+
+		long memSize = (task.getResources().getMem() / MB) > 0 ? task.getResources().getMem() : 64;
+		Resource mem = Resource.newBuilder().setName(OFFER_MEM).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(memSize)).build(); // Memory in MB
+
+		// Executor
+		ExecutorInfo execInfo = ExecutorInfo.newBuilder(executor).build();
+
+		// Task's data: Command to execute
+		String cmdArgs[] = ExecutionerLocal.createBdsExecCmdArgs(task);
+		ByteString data = ByteString.copyFromUtf8(BdsMesosFramework.packArray(cmdArgs));
+
+		// Create task
+		TaskInfo taskInfo = TaskInfo.newBuilder() //
+				.setName(taskName)//
+				.setTaskId(taskId) //
+				.setSlaveId(offer.getSlaveId()) //
+				.addResources(cpus) //
+				.addResources(mem) //
+				.setExecutor(execInfo) //
+				.setData(data) //
+				.build();
+
+		return taskInfo;
 	}
 }

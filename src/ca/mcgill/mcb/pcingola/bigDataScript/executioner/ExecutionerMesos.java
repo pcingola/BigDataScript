@@ -31,8 +31,6 @@ public class ExecutionerMesos extends Executioner {
 
 	/**
 	 * Create a command form a task
-	 * @param task
-	 * @return
 	 */
 	@Override
 	protected synchronized Cmd createRunCmd(Task task) {
@@ -61,8 +59,6 @@ public class ExecutionerMesos extends Executioner {
 
 	/**
 	 * Kill a task and move it from 'taskRunning' to 'tasksDone'
-	 * @param task
-	 * @return
 	 */
 	@Override
 	public synchronized void kill(Task task) {

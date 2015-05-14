@@ -51,6 +51,7 @@ public class BdsMesosFramework extends Thread {
 	public static final String BDS_FRAMEWORK_DIR = Config.DEFAULT_CONFIG_DIR + "/mesos";
 
 	String master;
+
 	int status;
 	String executorUri;
 	CommandInfo executorCmdInfo;
@@ -83,6 +84,11 @@ public class BdsMesosFramework extends Thread {
 			sb.append(array[i]);
 		}
 		return sb.toString();
+	}
+
+	// Mesos does not accept '/' in task IDs
+	public static String taskIdMesos(Task task) {
+		return task.getId().replaceAll("/", "_");
 	}
 
 	/**
@@ -138,7 +144,10 @@ public class BdsMesosFramework extends Thread {
 	 * Kill framework driver
 	 */
 	public void kill(Task task) {
-		if (schedulerDriver != null) schedulerDriver.killTask(TaskID.newBuilder().setValue(task.getId()).build());
+		if (schedulerDriver != null) {
+			String taskId = taskIdMesos(task);
+			schedulerDriver.killTask(TaskID.newBuilder().setValue(taskId).build());
+		}
 	}
 
 	@Override
