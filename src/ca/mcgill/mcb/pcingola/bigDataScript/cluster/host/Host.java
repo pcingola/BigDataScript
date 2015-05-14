@@ -21,7 +21,6 @@ public class Host implements Comparable<Host> {
 	int port = DEFAULT_PORT; // Ssh port
 	HostResources resources; // Host resources (all cpus, memory, etc)
 	HostResources resourcesAvaialble; // Available resources
-	HostHealth health;
 	HashSet<Task> tasksRunning; // A list of tasks running in this host
 
 	public Host(Cluster cluster, String hostName) {
@@ -41,10 +40,6 @@ public class Host implements Comparable<Host> {
 		if (tasksRunning.add(task)) updateResources();
 	}
 
-	public boolean canUpdateSsh() {
-		return true;
-	}
-
 	@Override
 	public int compareTo(Host host) {
 		return hostName.compareTo(host.hostName);
@@ -52,10 +47,6 @@ public class Host implements Comparable<Host> {
 
 	public Cluster getCluster() {
 		return cluster;
-	}
-
-	public HostHealth getHealth() {
-		return health;
 	}
 
 	public String getHostName() {
@@ -81,7 +72,6 @@ public class Host implements Comparable<Host> {
 
 	void init(Cluster cluster, String hostName) {
 		resources = new HostResources();
-		health = new HostHealth(this);
 
 		// Parse "user@hostname:port"
 		this.hostName = hostName;
@@ -99,6 +89,10 @@ public class Host implements Comparable<Host> {
 
 		tasksRunning = new HashSet<Task>();
 		cluster.add(this);
+	}
+
+	public boolean isAlive() {
+		return true;
 	}
 
 	/**

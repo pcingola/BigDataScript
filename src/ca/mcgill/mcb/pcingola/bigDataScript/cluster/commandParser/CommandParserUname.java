@@ -1,6 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -12,7 +12,7 @@ public class CommandParserUname extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserUname(Host host) {
+	public CommandParserUname(HostSsh host) {
 		super(host, "uname");
 	}
 

@@ -2,7 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
 import ca.mcgill.mcb.pcingola.bigDataScript.mesos.BdsMesosFramework;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
@@ -23,10 +22,11 @@ public class ExecutionerMesos extends Executioner {
 
 	public ExecutionerMesos(Config config) {
 		super(config);
+		removeTaskCannotExecute = false; // In Mesos, host might appear and disappear all the time (according to offer).
 
-		// Create a cluster having only one host with 'inifinite' capacity
+		// Create a cluster 
 		cluster = new Cluster();
-		new HostInifinte(cluster);
+		// new HostInifinte(cluster);
 	}
 
 	/**

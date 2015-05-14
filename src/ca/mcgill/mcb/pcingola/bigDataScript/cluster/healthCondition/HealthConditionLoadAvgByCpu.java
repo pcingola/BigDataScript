@@ -1,14 +1,14 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostSsh;
 
 /**
- * Cpu load average condition 
+ * Cpu load average condition
  * @author pcingola
  */
 public class HealthConditionLoadAvgByCpu extends HealthCondition {
 
-	public HealthConditionLoadAvgByCpu(Host host) {
+	public HealthConditionLoadAvgByCpu(HostSsh host) {
 		super(host);
 	}
 

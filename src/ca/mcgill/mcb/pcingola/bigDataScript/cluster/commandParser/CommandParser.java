@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser;
 
 import java.util.ArrayList;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Ssh;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -19,11 +19,11 @@ public class CommandParser {
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	public static boolean debug = false;
 
-	Host host;
+	HostSsh host;
 	Ssh ssh;
 	String cmd;
 
-	public CommandParser(Host host, String cmd) {
+	public CommandParser(HostSsh host, String cmd) {
 		this.host = host;
 		this.cmd = createCmd(cmd);
 		if (debug) Gpr.debug("cmd=" + this.cmd);
@@ -31,8 +31,6 @@ public class CommandParser {
 
 	/**
 	 * Create a list of commands and 'identifier' lines (echo '#cmdname')
-	 * @param cmd
-	 * @return
 	 */
 	String createCmd(String cmd) {
 		StringBuilder sb = new StringBuilder();

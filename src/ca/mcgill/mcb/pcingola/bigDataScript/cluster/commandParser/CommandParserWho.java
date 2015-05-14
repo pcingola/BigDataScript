@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostSsh;
 
 /**
  * A command parser for 'who' command 
@@ -15,7 +15,7 @@ public class CommandParserWho extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserWho(Host host) {
+	public CommandParserWho(HostSsh host) {
 		super(host, "who");
 	}
 

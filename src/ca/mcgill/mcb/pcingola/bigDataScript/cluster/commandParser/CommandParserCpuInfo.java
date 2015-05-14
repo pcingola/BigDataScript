@@ -1,6 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -12,7 +12,7 @@ public class CommandParserCpuInfo extends CommandParser {
 
 	public static boolean debug = false;
 
-	public CommandParserCpuInfo(Host host) {
+	public CommandParserCpuInfo(HostSsh host) {
 		super(host, "cat /proc/cpuinfo");
 	}
 

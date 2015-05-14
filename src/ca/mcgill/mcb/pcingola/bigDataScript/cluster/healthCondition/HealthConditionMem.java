@@ -1,14 +1,14 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostSsh;
 
 /**
- * Memory usage condition 
+ * Memory usage condition
  * @author pcingola
  */
 public class HealthConditionMem extends HealthCondition {
 
-	public HealthConditionMem(Host host) {
+	public HealthConditionMem(HostSsh host) {
 		super(host);
 	}
 

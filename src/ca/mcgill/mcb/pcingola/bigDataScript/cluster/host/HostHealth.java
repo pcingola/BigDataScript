@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.ClusterSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthCondition;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthCondition.Light;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthConditionLoadAvg;
@@ -11,15 +12,15 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthCondit
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition.HealthConditionMem;
 
 /**
- * Host 'health' parameters (e.g. load average, available disk space, etc.) 
- * 
+ * Host 'health' parameters (e.g. load average, available disk space, etc.)
+ *
  * @author pcingola
  */
 public class HostHealth {
 
 	public static final int REFRESH_MULTIPLIER = 5;
 
-	Host host;
+	HostSsh host;
 	boolean alive; // Is the host alive?
 	String systemType = ""; // System type (e.g. "Linux", "Darwin")
 	String error; // Latest error message
@@ -35,7 +36,7 @@ public class HostHealth {
 	HashMap<String, String> notes;
 	ArrayList<HealthCondition> conditions; // Conditions to test
 
-	public HostHealth(Host host) {
+	public HostHealth(HostSsh host) {
 		this.host = host;
 		notes = new HashMap<String, String>();
 
@@ -123,8 +124,9 @@ public class HostHealth {
 
 	public boolean isUpdated() {
 		if (latestUpdate <= 0) return false; // Never updated
-		long elapsed = ((new Date()).getTime() - latestUpdate) / 1000; // Elapsed time in seconds  
-		return elapsed > (REFRESH_MULTIPLIER * host.getCluster().getRefreshTime()); // Too much time since latest update? => not updated
+		long elapsed = ((new Date()).getTime() - latestUpdate) / 1000; // Elapsed time in seconds
+		ClusterSsh cluster = (ClusterSsh) host.getCluster();
+		return elapsed > (REFRESH_MULTIPLIER * cluster.getRefreshTime()); // Too much time since latest update? => not updated
 	}
 
 	public void setAlive(boolean alive) {

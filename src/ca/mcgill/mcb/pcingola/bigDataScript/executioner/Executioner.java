@@ -38,6 +38,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected boolean verbose;
 	protected boolean log;
 	protected boolean running, valid;
+	protected boolean removeTaskCannotExecute; // Should a task be finished if there are no resources to execute it? In most cases yes, but some clusters host are dynamic (they appear and disappear), so even if there are no resources now there might be resources in the future.
 	protected int hostIdx = 0;
 	protected List<Task> tasksToRun; // Tasks queued for execution
 	protected Map<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host
@@ -52,6 +53,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected Cluster cluster; // Local computer is the 'server' (localhost)
 	protected Timer timer; // Task timer (when was the task started)
 	protected CheckTasksRunning checkTasksRunning;
+	protected LinkedList<Task> finishTask;
 
 	public Executioner(Config config) {
 		super();
@@ -67,6 +69,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		cmdById = new HashMap<String, Cmd>();
 		debug = config.isDebug();
 		verbose = config.isVerbose();
+		removeTaskCannotExecute = true;
 
 		// Create a cluster having only one host (this computer)
 		cluster = new Cluster();
@@ -135,6 +138,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	protected CheckTasksRunning getCheckTasksRunning() {
 		return null;
+	}
+
+	public Cluster getCluster() {
+		return cluster;
 	}
 
 	protected synchronized Cmd getCmd(Task task) {
@@ -275,11 +282,17 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		// Nothing to do
 	}
 
+	/**
+	 * Remove a task form a host
+	 */
 	protected synchronized void remove(Task task, Host host) {
 		tasksSelected.remove(task);
 		host.remove(task);
 	}
 
+	/**
+	 * Remove a command (task)
+	 */
 	protected synchronized void removeCmd(Task task) {
 		cmdById.remove(task.getId());
 	}
@@ -470,30 +483,29 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	/**
-	 * Select next task to run and which host it should run into
+	 * Select next task to run and assign host.
+	 * Note: Some clusters can be viewed as having "single host with almost infinite capacity", so
+	 *       the task is always assigned to the first host in the cluster (representing the
+	 *       master). Then the cluster management system decides on which slave to run. So in
+	 *       many clusters the deciding where to run is trivial.
 	 */
 	protected synchronized Tuple<Task, Host> selectTask() {
 		// Nothing to run?
 		if (tasksToRun.isEmpty()) return null;
 
-		LinkedList<Task> finishTask = null;
+		finishTask = null;
 
 		// Try to find a task matching a host
 		for (Task task : tasksToRun) {
 			// Already selected? Skip
 			if (tasksSelected.containsKey(task)) continue;
 
-			boolean canBeExecuted = false;
-
 			// Can we run this task?
 			if (task.canRun()) {
-				//---
-				// Are dependencies satisfied?
-				//---
+				// Are dependencies satisfied for this task?
 				DependencyState dep = task.dependencyState();
 				switch (dep) {
 				case OK:
@@ -513,46 +525,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 				}
 
-				//---
-				// Select the first host in the cluster that satisfies requirements
-				//---
-				for (Host host : cluster) {
-					// Host is not alive?
-					if (!host.getHealth().isAlive()) {
-						canBeExecuted = true; // May be this host can actually execute this task, we don't know.
-						continue;
-					}
-
-					// Do we have enough resources to run this task in this host?
-					if (host.getResourcesAvaialble().hasResources(task.getResources())) {
-						// OK, execute this task in this host
-						if (debug) log("Selected task:" //
-								+ "\n\ttask ID        : " + task.getId() //
-								+ "\n\ttask hint      : " + task.getProgramHint()//
-								+ "\n\ttask resources : " + task.getResources() //
-								+ "\n\thost           : " + host //
-								+ "\n\thost resources : " + host.getResourcesAvaialble() //
-						);
-
-						selectTask(task, host); // Add task to host (make sure resources are reserved)
-						return new Tuple<Task, Host>(task, host);
-					} else if (!canBeExecuted) {
-						// Can any host actually run this task?
-						canBeExecuted = host.getResources().hasResources(task.getResources());
-					}
-				}
-
-				//---
-				// There is no host that can execute this task?
-				//---
-				if (!canBeExecuted) {
-					if (debug) Gpr.debug("Cluster info: " + cluster.info() + "\n\tCluster: " + cluster);
-					task.setErrorMsg("Not enough resources to execute task: " + task.getResources());
-
-					// Mark the task to be finished (cannot be done here due to concurrent modification)
-					if (finishTask == null) finishTask = new LinkedList<Task>();
-					finishTask.add(task);
-				}
+				// Select a suitable host in the cluster that satisfies task resources
+				Tuple<Task, Host> taskHost = selectTask(task);
+				if (taskHost != null) return taskHost;
 			}
 		}
 
@@ -566,6 +541,56 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		}
 
 		// Cannot run any task in any host
+		return null;
+	}
+
+	/**
+	 * Select a suitable host for this task
+	 */
+	protected synchronized Tuple<Task, Host> selectTask(Task task) {
+		boolean canBeExecuted = false;
+
+		//---
+		// Select the first host in the cluster that satisfies requirements
+		//---
+		for (Host host : cluster) {
+			// Host is not alive?
+			if (!host.isAlive()) {
+				canBeExecuted = true; // May be this host can actually execute this task, we don't know.
+				continue;
+			}
+
+			// Do we have enough resources to run this task in this host?
+			if (host.getResourcesAvaialble().hasResources(task.getResources())) {
+				// OK, execute this task in this host
+				if (debug) log("Selected task:" //
+						+ "\n\ttask ID        : " + task.getId() //
+						+ "\n\ttask hint      : " + task.getProgramHint()//
+						+ "\n\ttask resources : " + task.getResources() //
+						+ "\n\thost           : " + host //
+						+ "\n\thost resources : " + host.getResourcesAvaialble() //
+				);
+
+				selectTask(task, host); // Add task to host (make sure resources are reserved)
+				return new Tuple<Task, Host>(task, host);
+			} else if (!canBeExecuted) {
+				// Can any host actually run this task?
+				canBeExecuted = host.getResources().hasResources(task.getResources());
+			}
+		}
+
+		//---
+		// There is no host that can execute this task?
+		//---
+		if (removeTaskCannotExecute && !canBeExecuted) {
+			if (debug) Gpr.debug("Cluster info: " + cluster.info() + "\n\tCluster: " + cluster);
+			task.setErrorMsg("Not enough resources to execute task: " + task.getResources());
+
+			// Mark the task to be finished (cannot be done here due to concurrent modification)
+			if (finishTask == null) finishTask = new LinkedList<Task>();
+			finishTask.add(task);
+		}
+
 		return null;
 	}
 
@@ -696,6 +721,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return true;
 	}
 
+	/**
+	 * Update task state to 'Running'
+	 */
 	protected synchronized boolean taskUpdateRunning(Task task) {
 		if (debug) log("Task running '" + task.getId() + "'");
 
@@ -770,4 +798,5 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		while (!task.isStarted())
 			sleepShort();
 	}
+
 }

@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.host;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.ClusterSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParser;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserCpuInfo;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.commandParser.CommandParserSystemProfiler;
@@ -15,11 +16,11 @@ public class HostHealthUpdater extends Thread {
 
 	public static boolean debug = false;
 
-	Host host;
+	HostSsh host;
 	boolean run = true;
 	String systemType;
 
-	public HostHealthUpdater(Host host) {
+	public HostHealthUpdater(HostSsh host) {
 		super();
 		this.host = host;
 	}
@@ -59,7 +60,8 @@ public class HostHealthUpdater extends Thread {
 
 				// I'd rather sleep this way in order to allow for notifications (i.e. 'wake up call')
 				synchronized (this) {
-					wait(host.getCluster().getRefreshTime() * 1000);
+					ClusterSsh cluster = (ClusterSsh) host.getCluster();
+					wait(cluster.getRefreshTime() * 1000);
 				}
 			}
 		} catch (Exception t) {
@@ -96,7 +98,7 @@ public class HostHealthUpdater extends Thread {
 				+ "\nResources: " + host.getResources() //
 				+ "\nHeath:\n" + host.getHealth() //
 				+ "\nCondition: " + host.getHealth().condition() //
-		);
+				);
 
 		if (debug) Gpr.debug("Update: End\tHost: " + host + "\talive: " + host.getHealth().isAlive());
 	}

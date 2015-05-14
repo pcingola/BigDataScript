@@ -18,7 +18,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.mesos;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +41,8 @@ import org.apache.mesos.Protos.Value;
 import org.apache.mesos.Scheduler;
 import org.apache.mesos.SchedulerDriver;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerLocal;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
@@ -65,19 +66,19 @@ public class BdsMesosScheduler implements Scheduler {
 
 	private final ExecutorInfo executor;
 	protected boolean verbose = true;
+	protected Cluster cluster;
 	protected List<Task> taskToLaunch;
 	protected HashMap<String, Task> taskById;
 	protected ExecutionerMesos executionerMesos;
-	protected Map<String, HostResources> resourcesByHost;
 	protected Map<String, Set<Offer>> offersByHost;
 	protected Map<String, Offer> offersById;
 
 	public BdsMesosScheduler(ExecutionerMesos executionerMesos, ExecutorInfo executor) {
 		this.executionerMesos = executionerMesos;
 		this.executor = executor;
+		cluster = executionerMesos.getCluster();
 		taskToLaunch = new LinkedList<Task>();
 		taskById = new HashMap<String, Task>();
-		resourcesByHost = new HashMap<>();
 		offersByHost = new HashMap<>();
 		offersById = new HashMap<>();
 	}
@@ -93,9 +94,12 @@ public class BdsMesosScheduler implements Scheduler {
 		if (verbose) Gpr.debug("Adding offer [" + offerId + "]:" + hostName + "\t" + offerResources);
 
 		// Update resources by host
-		HostResources slaveResources = resourcesByHost.get(hostName);
-		if (slaveResources == null) resourcesByHost.put(hostName, offerResources);
-		else slaveResources.add(offerResources);
+		Host host = cluster.getHost(hostName);
+		if (host == null) {
+			// No host with that name? Create (and add to cluster)
+			host = new Host(cluster, hostName);
+			host.getResources().set(offerResources);
+		} else host.getResources().add(offerResources);
 
 		// Update offers by host
 		Set<Offer> offers = offersByHost.get(hostName);
@@ -177,24 +181,25 @@ public class BdsMesosScheduler implements Scheduler {
 	}
 
 	protected boolean matchTask(Task task, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
-		for (String hostName : resourcesByHost.keySet())
-			if (matchTask(task, hostName, offerIds, taskInfos)) // Can this task be run on this host?
+		for (Host host : cluster)
+			if (matchTask(task, host, offerIds, taskInfos)) // Can this task be run on this host?
 				return true;
 
 		return false;
 	}
 
-	protected synchronized boolean matchTask(Task task, String hostName, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
-		HostResources hr = resourcesByHost.get(hostName);
+	protected synchronized boolean matchTask(Task task, Host host, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
+		HostResources hr = host.getResources();
 		if (hr == null || !hr.isValid()) return false;
 
 		// Not enough resources in this host?
 		if (!hr.hasResources(task.getResources())) return false;
 
 		// OK, we should be able to run 'task' in hostName
+		String hostName = host.toString();
 		Set<Offer> offers = offersByHost.get(hostName);
 		if (offers == null) {
-			resourcesByHost.remove(hostName); // Remove any resources since we don't really seem to have any
+			cluster.remove(host); // Remove any resources since we don't really seem to have any
 			return false;
 		}
 
@@ -285,12 +290,13 @@ public class BdsMesosScheduler implements Scheduler {
 		if (verbose) Gpr.debug("Removing offer [" + offerId + "]:" + hostName + "\t" + offerResources);
 
 		// Update resources by host
-		HostResources slaveResources = resourcesByHost.get(hostName);
-		if (slaveResources != null) {
-			slaveResources.consume(offerResources);
+		Host slave = cluster.getHost(hostName);
+		if (slave != null) {
+			HostResources hr = slave.getResources();
+			hr.consume(offerResources);
 
 			// Nothing left? => Remove entry
-			if (!slaveResources.isValid()) resourcesByHost.remove(hostName);
+			if (!hr.isValid()) cluster.remove(slave);
 		}
 
 		// Update offers by host
@@ -330,20 +336,21 @@ public class BdsMesosScheduler implements Scheduler {
 	@Override
 	public void resourceOffers(SchedulerDriver driver, List<Offer> offers) {
 		if (verbose) Gpr.debug("Scheduler: Resource Offers");
-		Collection<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
-		Collection<OfferID> offerIds = new ArrayList<OfferID>();
+		//		Collection<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
+		//		Collection<OfferID> offerIds = new ArrayList<OfferID>();
 
+		// Add offers
 		for (Offer offer : offers)
 			add(offer);
 
-		while (true) {
-			boolean matched = matchTask(offerIds, taskInfos);
-			Gpr.debug("MATCHED: " + matched);
-			if (!matched) break;
-		}
-
-		if (verbose) Gpr.debug("Launching tasks: " + taskInfos.size());
-		driver.launchTasks(offerIds, taskInfos);
+		//		while (true) {
+		//			boolean matched = matchTask(offerIds, taskInfos);
+		//			Gpr.debug("MATCHED: " + matched);
+		//			if (!matched) break;
+		//		}
+		//
+		//		if (verbose) Gpr.debug("Launching tasks: " + taskInfos.size());
+		//		driver.launchTasks(offerIds, taskInfos);
 	}
 
 	/**

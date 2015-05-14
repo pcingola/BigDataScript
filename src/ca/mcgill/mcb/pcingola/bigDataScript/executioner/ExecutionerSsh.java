@@ -3,8 +3,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.executioner;
 import java.util.ArrayList;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.ClusterSsh;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Cmd;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.CmdSsh;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
@@ -37,7 +37,7 @@ public class ExecutionerSsh extends Executioner {
 
 	protected void createCluster() {
 		// Create a cluster
-		cluster = new Cluster();
+		cluster = new ClusterSsh();
 
 		// Add nodes from config file
 		String nodes = config.getString(CONFIG_SSH_NODES, "");
@@ -45,7 +45,7 @@ public class ExecutionerSsh extends Executioner {
 		String sshNodes[] = nodes.split(",");
 		for (String sshNode : sshNodes) {
 			if (config.isDebug()) System.err.println("\tAdding ssh node : '" + sshNode + "'");
-			cluster.add(new Host(cluster, sshNode.trim()));
+			cluster.add(new HostSsh(cluster, sshNode.trim()));
 		}
 	}
 
@@ -79,17 +79,12 @@ public class ExecutionerSsh extends Executioner {
 	@Override
 	protected void follow(Task task) {
 		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
-
-		// No need to 'tail', Ssh class show output to StdOut directly
-		//		tail.add(task.getStdoutFile(), null, false);
-		//		tail.add(task.getStderrFile(), null, true);
-
 		if (monitorTask != null) monitorTask.remove(task);
 	}
 
 	@Override
 	public synchronized void kill() {
-		cluster.stopHostInfoUpdaters();
+		((ClusterSsh) cluster).stopHostInfoUpdaters();
 		super.kill();
 	}
 
@@ -100,9 +95,9 @@ public class ExecutionerSsh extends Executioner {
 
 	@Override
 	public void run() {
-		cluster.startHostInfoUpdaters();
+		((ClusterSsh) cluster).startHostInfoUpdaters();
 		super.run();
-		cluster.stopHostInfoUpdaters();
+		((ClusterSsh) cluster).stopHostInfoUpdaters();
 	}
 
 }

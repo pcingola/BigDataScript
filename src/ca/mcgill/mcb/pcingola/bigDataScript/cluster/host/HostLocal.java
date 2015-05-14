@@ -5,7 +5,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Local host information
- * 
+ *
  * @author pcingola@mcgill.ca
  */
 public class HostLocal extends Host {
@@ -14,13 +14,7 @@ public class HostLocal extends Host {
 		super(cluster, "localhost");
 
 		// Set basic parameters
-		health.setAlive(true);
 		resources.setCpus(Gpr.NUM_CORES);
-	}
-
-	@Override
-	public boolean canUpdateSsh() {
-		return false;
 	}
 
 }

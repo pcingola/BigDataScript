@@ -1,6 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.healthCondition;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
+import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostSsh;
 
 /**
  * Number of users logged in
@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
  */
 public class HealthConditionLoggedInUsers extends HealthCondition {
 
-	public HealthConditionLoggedInUsers(Host host) {
+	public HealthConditionLoggedInUsers(HostSsh host) {
 		super(host);
 	}
 

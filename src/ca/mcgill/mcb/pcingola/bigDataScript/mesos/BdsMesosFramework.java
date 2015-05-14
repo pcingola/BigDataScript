@@ -51,7 +51,6 @@ public class BdsMesosFramework extends Thread {
 	public static final String BDS_FRAMEWORK_DIR = Config.DEFAULT_CONFIG_DIR + "/mesos";
 
 	String master;
-
 	int status;
 	String executorUri;
 	CommandInfo executorCmdInfo;
@@ -62,17 +61,17 @@ public class BdsMesosFramework extends Thread {
 	FrameworkInfo frameworkInfo;
 	ExecutionerMesos executionerMesos;
 
-	public static void main(String[] args) throws Exception {
-		if (args.length < 1 || args.length > 2) {
-			usage();
-			System.exit(1);
-		}
-
-		BdsMesosFramework bdsMesosFramework = new BdsMesosFramework(null, args[0]);
-		bdsMesosFramework.run();
-
-		System.exit(bdsMesosFramework.status);
-	}
+	//	public static void main(String[] args) throws Exception {
+	//		if (args.length < 1 || args.length > 2) {
+	//			usage();
+	//			System.exit(1);
+	//		}
+	//
+	//		BdsMesosFramework bdsMesosFramework = new BdsMesosFramework(null, args[0]);
+	//		bdsMesosFramework.run();
+	//
+	//		System.exit(bdsMesosFramework.status);
+	//	}
 
 	/**
 	 * Pack an array into a string
