@@ -28,6 +28,11 @@ test ! -e ${MESOS_NATIVE_LIB} && \
   echo "Cannot find mesos native library directory ${MESOS_NATIVE_LIB}" && \
   exit 1
 
+if [ ! "$(ls -A $MESOS_NATIVE_LIB)" ]; then
+  echo "Cannot find mesos native library in directory ${MESOS_NATIVE_LIB}" && \
+  exit 1
+fi
+
 # Execute Bds executor
 exec java -cp $PROTOBUF_JAR:$MESOS_JAR:$BDS_JAR \
   -Djava.library.path=$MESOS_NATIVE_LIB \
