@@ -81,8 +81,6 @@ func (be *BdsExec) BigDataScript() int {
 	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is removed
 
 	bdsLibDir := path.Dir(be.execName) + "/" + BDS_NATIVE_LIB_DIR
-	log.Printf("be.execName: '%s'\n", be.execName)
-	log.Printf("PATH: '%s'\n", bdsLibDir)
 	
 	// Append all arguments from command line
 	be.cmdargs = []string{ JAVA_CMD,
