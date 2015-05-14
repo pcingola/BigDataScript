@@ -121,6 +121,8 @@ public class Task implements BigDataScriptSerialize {
 			return false;
 
 		case ERROR:
+			return true;
+
 		case ERROR_TIMEOUT:
 		case FINISHED:
 			if (taskState == TaskState.RUNNING) return true;
@@ -644,6 +646,10 @@ public class Task implements BigDataScriptSerialize {
 			break;
 
 		case ERROR:
+			failCount++; // Count failed, proceed to 'FINISHED' state
+			setState(newState);
+			break;
+
 		case ERROR_TIMEOUT:
 			failCount++; // Count failed, proceed to 'FINISHED' state
 

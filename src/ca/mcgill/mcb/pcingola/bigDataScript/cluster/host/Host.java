@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.host;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
@@ -21,7 +22,7 @@ public class Host implements Comparable<Host> {
 	int port = DEFAULT_PORT; // Ssh port
 	HostResources resources; // Host resources (all cpus, memory, etc)
 	HostResources resourcesAvaialble; // Available resources
-	HashSet<Task> tasksRunning; // A list of tasks running in this host
+	Set<Task> tasksRunning; // A list of tasks running in this host
 
 	public Host(Cluster cluster, String hostName) {
 		this.cluster = cluster;

@@ -129,6 +129,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 * Decline all pending offers
 	 */
 	void declineAllOffers(SchedulerDriver driver) {
+		if (offersById.isEmpty()) return;
 		if (verbose) Gpr.debug("No tasks to run: Declining all remaining offers");
 
 		// Create a new collection to avoid 'concurrent modification'
@@ -136,8 +137,10 @@ public class BdsMesosScheduler implements Scheduler {
 		offers.addAll(offersById.values());
 
 		// Decline all
-		for (Offer offer : offers)
+		for (Offer offer : offers) {
+			if (verbose) Gpr.debug("Declining offer: " + offer.getId());
 			driver.declineOffer(offer.getId());
+		}
 
 	}
 
@@ -200,6 +203,8 @@ public class BdsMesosScheduler implements Scheduler {
 	protected synchronized boolean matchTask(Task task, Host host, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
 		// Not enough resources in this host?
 		if (!host.hasResourcesAvailable(task.getResources())) return false;
+
+		if (verbose) Gpr.debug("Matching task: " + task.getId() + "\t resources: " + task.getResources() + "\thost:" + host.getHostName() + ", resources: " + host.getResourcesAvaialble());
 
 		// OK, we should be able to run 'task' in hostName
 		String hostName = host.toString();
@@ -350,8 +355,10 @@ public class BdsMesosScheduler implements Scheduler {
 		//---
 		// No tasks to run? Decline all offers
 		if (taskToLaunch.isEmpty()) {
-			for (Offer offer : offers)
+			for (Offer offer : offers) {
+				if (verbose) Gpr.debug("Declining offer: " + offer.getId());
 				driver.declineOffer(offer.getId());
+			}
 
 			// Also decline all remaining offers
 			declineAllOffers(driver);
@@ -366,8 +373,8 @@ public class BdsMesosScheduler implements Scheduler {
 		// Match offers (and resources) to tasks
 		//---
 		Set<Task> assignedTasks = new HashSet<>();
-		Collection<TaskInfo> taskInfos = new ArrayList<TaskInfo>();
-		Collection<OfferID> offerIds = new ArrayList<OfferID>();
+		Collection<TaskInfo> taskInfos = new HashSet<TaskInfo>();
+		Collection<OfferID> offerIds = new HashSet<OfferID>();
 		Set<OfferID> offerIdsUsed = new HashSet<OfferID>();
 
 		for (Host host : cluster) {
@@ -378,18 +385,22 @@ public class BdsMesosScheduler implements Scheduler {
 				for (Task task : taskToLaunch) {
 					if (verbose) Gpr.debug("Trying to launch task " + task.getId());
 					if (matchTask(task, host, offerIds, taskInfos)) {
-						assignedTasks.add(task); // Task was assigned to this host
-						executionerMesos.taskStarted(task);
+						host.add(task); // Account used resources
+						assignedTasks.add(task); // Task was assigned 
+						executionerMesos.taskStarted(task); // Jump to 'started' state
 
 						// No more resources? => No point on trying to match more tasks
-						if (!host.getResourcesAvaialble().isValid()) break;
+						if (!host.getResourcesAvaialble().isValid()) {
+							if (verbose) Gpr.debug("Host '" + host.getHostName() + "' has no more resources available");
+							break;
+						}
 					}
 				}
 
 				// Any task to launch?
 				if (!assignedTasks.isEmpty()) {
 					// TODO: Check driver status
-					if (verbose) Gpr.debug("Launching tasks: " + taskInfos.size());
+					if (verbose) Gpr.debug("Launching tasks: offer: " + offerIds.size() + "\ttasks:" + taskInfos.size());
 					driver.launchTasks(offerIds, taskInfos);
 
 					// Remove assigned tasks
@@ -402,6 +413,12 @@ public class BdsMesosScheduler implements Scheduler {
 					assignedTasks = new HashSet<Task>();
 				}
 			}
+		}
+
+		// Remove used offers
+		if (!offerIdsUsed.isEmpty()) {
+			for (OfferID offerId : offerIdsUsed)
+				remove(offerId.getValue());
 		}
 
 		// No more task to launch? => decline all remaining offers
@@ -448,6 +465,7 @@ public class BdsMesosScheduler implements Scheduler {
 			executionerMesos.taskFinished(task, TaskState.FINISHED);
 			break;
 
+		case TASK_ERROR:
 		case TASK_FAILED:
 			executionerMesos.taskFinished(task, TaskState.ERROR);
 			break;
@@ -458,7 +476,7 @@ public class BdsMesosScheduler implements Scheduler {
 			break;
 
 		default:
-			Gpr.debug("Unhandled Mesos task state: " + status.getState());
+			throw new RuntimeException("Unhandled Mesos task state: " + status.getState());
 		}
 	}
 

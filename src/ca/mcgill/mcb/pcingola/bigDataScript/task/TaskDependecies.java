@@ -456,7 +456,7 @@ public class TaskDependecies {
 			return true;
 		}
 
-		if (verbose) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId());
+		if (verbose) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId() + ", state: " + task.getTaskState());
 
 		// Wait for task to finish
 		while (!task.isDone())

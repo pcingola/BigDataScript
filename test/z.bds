@@ -1,7 +1,10 @@
 #!/usr/bin/env bds
 
-max := 1
+max := 8
 for( int i=0 ; i < max ; i++ ) {
 	task echo hi $i
 }
+
+wait
+task echo "OK, we are done!"
 
