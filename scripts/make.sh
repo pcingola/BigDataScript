@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # Delete old jar
-if [ -e $HOME/.bds/BigDataScript.jar]; then
+if [ -e $HOME/.bds/BigDataScript.jar ] 
+then
   rm -f $HOME/.bds/BigDataScript.jar
 fi
 

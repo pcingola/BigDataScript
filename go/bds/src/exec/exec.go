@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -27,6 +28,13 @@ const VERBOSE = true
 const EXITCODE_OK = 0
 const EXITCODE_ERROR = 1
 const EXITCODE_TIMEOUT = 2
+
+const JAVA_CMD = "java"
+const JAVA_MEM = "-Xmx2G"
+const JAVA_NATIVE_LIB = "-Djava.library.path="
+const JAVA_BDS_CLASS = "ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"
+
+const BDS_NATIVE_LIB_DIR = "lib"
 
 // Command indicating to remove file (taskLogger file)
 const CMD_REMOVE_FILE = "rm"
@@ -72,11 +80,16 @@ func (be *BdsExec) BigDataScript() int {
 	be.taskLoggerFile = pidTmpFile
 	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is removed
 
+	bdsLibDir := path.Dir(be.execName) + "/" + BDS_NATIVE_LIB_DIR
+	log.Printf("be.execName: '%s'\n", be.execName)
+	log.Printf("PATH: '%s'\n", bdsLibDir)
+	
 	// Append all arguments from command line
-	be.cmdargs = []string{"java",
-		"-Xmx2G",
+	be.cmdargs = []string{ JAVA_CMD,
+		JAVA_MEM,
+		JAVA_NATIVE_LIB + bdsLibDir,
 		"-cp", be.execName,
-		"ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"}
+		JAVA_BDS_CLASS }
 	be.cmdargs = append(be.cmdargs, "-pid")
 	be.cmdargs = append(be.cmdargs, be.taskLoggerFile)
 	for _, arg := range be.args[1:] {
@@ -84,7 +97,7 @@ func (be *BdsExec) BigDataScript() int {
 	}
 
 	// Execute command
-	be.command = "java"
+	be.command = JAVA_CMD
 	exitCode := be.executeCommand()
 
 	return exitCode
@@ -101,9 +114,9 @@ func (be *BdsExec) discoverExecName() string {
 	}
 
 	f := be.args[0]
+
 	if path.IsAbs(f) {
-		be.execName = f
-		return be.execName
+		return f
 	}
 
 	wd, err := os.Getwd()
@@ -114,8 +127,7 @@ func (be *BdsExec) discoverExecName() string {
 	_, err = os.Stat(f)
 	if err == nil { 
 		// Relative file exists
-		be.execName = path.Clean(path.Join(wd, f))
-		return be.execName
+		return path.Clean(path.Join(wd, f))
 	} 
 
 	f2, err := exec.LookPath(f)
@@ -124,12 +136,10 @@ func (be *BdsExec) discoverExecName() string {
 	}
 
 	if path.IsAbs(f2) {
-		be.execName = f2
-		return be.execName
+		return f2
 	}
 
-	be.execName = path.Clean(path.Join(wd, f2))
-	return be.execName
+	return path.Clean(path.Join(wd, f2))
 }
 
 /*
@@ -145,7 +155,11 @@ func NewBdsExec(args []string) *BdsExec {
 	be.exitFile = ""
 	be.timeSecs = 0
 
-	be.discoverExecName()
+	be.execName = be.discoverExecName()
+	f, err := filepath.EvalSymlinks(be.execName)
+	if err == nil {
+		be.execName = f
+	}
 
 	if DEBUG {
 		log.Printf("Debug: execName:%s\n", be.execName)
