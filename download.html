@@ -88,7 +88,7 @@
 				<br>
 <pre class="prettyprint">
 cd 
-tar -xvzf path/to/bds_linux.tgz 
+tar -xvzf path/to/bds_*.tgz 
 </pre>
 				<br>
 				<i class="icon-warning-sign"></i> BDS's directoy <code>.bds</code> is 'hidden', since the name starts with a dot.
@@ -100,8 +100,10 @@ tar -xvzf path/to/bds_linux.tgz
 <pre class="prettyprint">
 export PATH=$PATH:$HOME/.bds
 </pre>
+				<br>
+				<br>
+				<b>Optional: Mesos</b> If you intend to use <code>bds</code> with mesos, you must install Mesos' native library in <code>$HOME/.bds/lib</code>
 				</p>
-	
 				<p><h3>Requirements</h3>
 				BigDataScript requires Java 7.
 				</p>
