@@ -195,6 +195,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Create a checkpoint file
 	 */
 	public String checkpoint(BigDataScriptNode node) {
+		// Skip checkpoint file?
+		if (Config.get().isNoCheckpoint()) return "";
+
+		// Create checkpoint
 		String programFile = statement.getFileNameCanonical();
 		String nodeFile = node.getFileNameCanonical();
 
@@ -692,7 +696,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Create checkpoint
 		String checkpointFileName = checkpoint(bdsnode);
-		System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
+		if (checkpointFileName.isEmpty()) System.err.println("Creating checkpoint file: Config or command line option disabled checkpoint file creation, nothing done.");
+		else System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
 
 		// Set exit value
 		setExitValue(1L);

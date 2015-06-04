@@ -79,6 +79,7 @@ public class BigDataScript {
 	boolean extractSource; // Extract source code form checkpoint (nly valid on recovery mode)
 	boolean dryRun; // Dry run (do not run tasks)
 	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
+	boolean noCheckpoint; // Do not create checkpoint files
 	boolean noRmOnExit; // Do not remove temp files on exit
 	boolean quiet; // Quiet mode
 	boolean showHelp; // Show bds's script help (provided on each variable definition). Do not run program
@@ -410,6 +411,7 @@ public class BigDataScript {
 		config.setDryRun(dryRun);
 		config.setTaskFailCount(taskFailCount);
 		config.setNoRmOnExit(noRmOnExit);
+		config.setNoCheckpoint(noCheckpoint);
 		//		config.setCreateReport(createReport);
 		config.setReportHtml(reportHtml);
 		config.setReportYaml(reportYaml);
@@ -796,6 +798,7 @@ public class BigDataScript {
 				noRmOnExit = true; // Not running, so don't delete files
 				reportHtml = reportYaml = false;
 			} else if (arg.equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
+			else if (arg.equalsIgnoreCase("-noChp")) noCheckpoint = true;
 			else if (arg.equalsIgnoreCase("-checkPidRegex")) checkPidRegex = true;
 			else if (arg.equals("-i") || arg.equalsIgnoreCase("-info")) {
 				// Checkpoint info
@@ -1054,6 +1057,7 @@ public class BigDataScript {
 		System.err.println("  [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files). Default: " + log);
+		System.err.println("  -noChp                         : Do not create any checkpoint files.");
 		System.err.println("  -noReport                      : Do not create any report (neither HTML nor YAML).");
 		System.err.println("  -noReportHtml                  : Do not create HTML report.");
 		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit). Default: " + noRmOnExit);

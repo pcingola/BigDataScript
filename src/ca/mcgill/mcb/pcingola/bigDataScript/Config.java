@@ -73,6 +73,7 @@ public class Config {
 	boolean quiet = false; // Quiet mode?
 	boolean log = false; // Log all commands?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
+	boolean noCheckpoint; // Do not create checkpoint files
 	boolean noRmOnExit = false; // Avoid removing files on exit
 	boolean extractSource = false;
 	boolean reportYaml = false; // Use YAML report format
@@ -342,6 +343,10 @@ public class Config {
 		return log;
 	}
 
+	public boolean isNoCheckpoint() {
+		return noCheckpoint;
+	}
+
 	public boolean isNoRmOnExit() {
 		return noRmOnExit;
 	}
@@ -429,6 +434,10 @@ public class Config {
 
 	public void setLog(boolean log) {
 		this.log = log;
+	}
+
+	public void setNoCheckpoint(boolean noCheckpoint) {
+		this.noCheckpoint = noCheckpoint;
 	}
 
 	public void setNoRmOnExit(boolean noRmOnExit) {
