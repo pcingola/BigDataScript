@@ -167,20 +167,20 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Iter 5, Task 1: End\n" //
 				+ "Iter 5, Task 2: Start\n" //
 				+ "Iter 5, Task 2: End\n" //
-		;;
+				;;
 
-		String stdout = runAndReturnStdout("test/run_117.bds");
+				String stdout = runAndReturnStdout("test/run_117.bds");
 
-		if (stdout.indexOf(expectedStdout) < 0) {
-			String msg = "Cannot find desired output:\n" //
-					+ "---------- Expected output ----------\n" //
-					+ expectedStdout //
-					+ "-------------- STDOUT --------------\n" //
-					+ stdout //
-			;
-			System.err.println(msg);
-			throw new RuntimeException(msg);
-		}
+				if (stdout.indexOf(expectedStdout) < 0) {
+					String msg = "Cannot find desired output:\n" //
+							+ "---------- Expected output ----------\n" //
+							+ expectedStdout //
+							+ "-------------- STDOUT --------------\n" //
+							+ stdout //
+							;
+					System.err.println(msg);
+					throw new RuntimeException(msg);
+				}
 	}
 
 	@Test
@@ -200,11 +200,11 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Running task\n" //
 				+ "Creating tmp_out.txt\n" //
 				+ "Done\n" //"
-		;
+				;
 
 		String expectedStdout2 = "Running task\n" //
 				+ "Done\n" //"
-		;
+				;
 
 		System.out.println("First run:");
 		runAndCheckStdout("test/run_119.bds", expectedStdout1);
@@ -243,7 +243,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "sys                |\\t|    variable:Hello\n" //
 				// Note: This result may change if we use a different taskShell in bds.config
 				+ "task               |\t|\n" + "task               |\t|    variable:Hello\n" //
-		;
+				;
 
 		runAndCheckStdout("test/run_123.bds", output);
 	}
@@ -261,7 +261,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "print 7\n" //
 				+ "print 8\n" //
 				+ "print 9\n" //
-		;
+				;
 
 		// Run and capture stdout
 		String args[] = { "-quiet", "test/run_124.bds" };
@@ -285,10 +285,32 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\t-someVeryLongCommandLineArgumentName   : This command line argument has a really long name\n" //
 				+ "\t-useTab                                : Use tab before printing line\n" //
 				+ "\n" //
-		;
+				;
 
 		// Run and capture stdout
 		String args[] = { "test/run_125.bds", "-h" };
+		String stdout = runAndReturnStdout(args);
+		if (verbose) System.err.println("STDOUT: " + stdout);
+
+		// Check that sys and task outputs are not there
+		Assert.assertEquals(output, stdout);
+	}
+
+	@Test
+	public void test125b_automatic_help_unsorted() {
+		Gpr.debug("Test");
+		String output = "Command line options 'run_125b.bds' :\n" //
+				+ "\t-useTab <bool>                               : Use tab before printing line\n" //
+				+ "\t-someVeryLongCommandLineArgumentName <bool>  : This command line argument has a really long name\n" //
+				+ "\t-salutation <string>                         : Salutation to use\n" //
+				+ "\t-num <int>                                   : Number of times 'hi' should be printed\n" //
+				+ "\t-min <int>                                   : Help for argument 'min' should be printed here\n" //
+				+ "\t-mean <int>                                  : Help for argument 'mean' should be printed here\n" //
+				+ "\n" //
+				;
+
+		// Run and capture stdout
+		String args[] = { "test/run_125b.bds", "-h" };
 		String stdout = runAndReturnStdout(args);
 		if (verbose) System.err.println("STDOUT: " + stdout);
 
@@ -317,7 +339,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "    OUT_2_0: /Users/pcingola/zzz/out_2_0.txt\n" //
 				+ "    OUT_2_1: /Users/pcingola/zzz/out_2_1.txt\n" //
 				+ "    OUT_2_2: /Users/pcingola/zzz/out_2_2.txt\n" //
-		;
+				;
 
 		String stdout = runAndReturnStdout("test/run_126.bds");
 		if (verbose) System.err.println("STDOUT: " + stdout);
@@ -336,7 +358,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "bwa parameters\n" //
 				+ "bwa parameters\n" //
 				+ "bwa parameters\n" //
-		;
+				;
 
 		runAndCheckStdout("test/run_127.bds", output);
 	}
@@ -382,7 +404,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "chdir_test_file_02.txt\tisFile:true\n" //
 				+ "chdir_test_file_02.txt\tcanRead:true\n" //
 				+ "chdir_test_file_02.txt\tcanWrite:true\n" //
-		;
+				;
 
 		String outreal = runAndReturnStdout("test/run_131.bds");
 		Assert.assertEquals(out, outreal);

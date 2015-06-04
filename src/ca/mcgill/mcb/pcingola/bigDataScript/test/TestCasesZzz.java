@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -13,23 +15,25 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test123_literals_sys_task() {
+	public void test125b_automatic_help_unsorted() {
 		Gpr.debug("Test");
-
-		String output = "print_quote        |\\t|\n" //
-				+ "print_quote        |\\t|    variable:$hi\n" //
-				+ "print_double       |\t|\n" //
-				+ "print_double       |\t|    variable:Hello\n" //
-				+ "print_double_esc   |\\t|\n" //
-				+ "print_double_esc   |\\t|   variable:Hello\n" //
-				// Note: This result may change if we use a different sysShell in bds.config
-				+ "sys                |\\t|\n" //
-				+ "sys                |\\t|    variable:Hello\n" //
-				// Note: This result may change if we use a different taskShell in bds.config
-				+ "task               |\t|\n" + "task               |\t|    variable:Hello\n" //
+		String output = "Command line options 'run_125b.bds' :\n" //
+				+ "\t-useTab <bool>                               : Use tab before printing line\n" //
+				+ "\t-someVeryLongCommandLineArgumentName <bool>  : This command line argument has a really long name\n" //
+				+ "\t-salutation <string>                         : Salutation to use\n" //
+				+ "\t-num <int>                                   : Number of times 'hi' should be printed\n" //
+				+ "\t-min <int>                                   : Help for argument 'min' should be printed here\n" //
+				+ "\t-mean <int>                                  : Help for argument 'mean' should be printed here\n" //
+				+ "\n" //
 		;
 
-		runAndCheckStdout("test/run_123.bds", output);
+		// Run and capture stdout
+		String args[] = { "test/run_125b.bds", "-h" };
+		String stdout = runAndReturnStdout(args);
+		if (verbose) System.err.println("STDOUT: " + stdout);
+
+		// Check that sys and task outputs are not there
+		Assert.assertEquals(output, stdout);
 	}
 
 }

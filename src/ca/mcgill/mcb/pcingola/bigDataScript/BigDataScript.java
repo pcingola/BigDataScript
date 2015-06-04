@@ -71,8 +71,8 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-05-14";
-	public static final String REVISION = "k";
+	public static final String BUILD = "2015-06-04";
+	public static final String REVISION = "l";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -103,6 +103,8 @@ public class BigDataScript {
 	ProgramUnit programUnit; // Program (parsed nodes)
 	BigDataScriptThread bigDataScriptThread;
 	ArrayList<String> programArgs; // Command line arguments for BigDataScript program
+
+	public static final String HELP_UNSORTED_VAR_NAME = "helpUnsorted";
 
 	/**
 	 * Create an AST from a program (using ANTLR lexer & parser)
@@ -177,7 +179,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
+					);
 			return null;
 		}
 	}
@@ -367,28 +369,6 @@ public class BigDataScript {
 	}
 
 	/**
-	 * Find all global variable declarations
-	 */
-	List<VarDeclaration> globalVarDeclarations() {
-		Set<String> included = new HashSet<String>();
-
-		List<VarDeclaration> varDecls = new ArrayList<VarDeclaration>();
-		varDecls.addAll(globalVarDeclarations(programUnit, included));
-
-		// Sort by variable name
-		Collections.sort(varDecls, new Comparator<VarDeclaration>() {
-			@Override
-			public int compare(VarDeclaration v1, VarDeclaration v2) {
-				String vname1 = v1.getVarInit()[0].getVarName();
-				String vname2 = v2.getVarInit()[0].getVarName();
-				return vname1.compareTo(vname2);
-			}
-		});
-
-		return varDecls;
-	}
-
-	/**
 	 * Find all global variable declarations within this block-statement
 	 */
 	List<VarDeclaration> globalVarDeclarations(BlockWithFile block, Set<String> included) {
@@ -408,6 +388,40 @@ public class BigDataScript {
 		}
 
 		return varDecls;
+	}
+
+	/**
+	 * Find all global variable declarations
+	 */
+	List<VarDeclaration> globalVarDeclarations(boolean sort) {
+		Set<String> included = new HashSet<String>();
+
+		List<VarDeclaration> varDecls = new ArrayList<VarDeclaration>();
+		varDecls.addAll(globalVarDeclarations(programUnit, included));
+
+		// Sort by variable name?
+		if (sort) {
+			Collections.sort(varDecls, new Comparator<VarDeclaration>() {
+				@Override
+				public int compare(VarDeclaration v1, VarDeclaration v2) {
+					String vname1 = v1.getVarInit()[0].getVarName();
+					String vname2 = v2.getVarInit()[0].getVarName();
+					return vname1.compareTo(vname2);
+				}
+			});
+		}
+
+		return varDecls;
+	}
+
+	/**
+	 * Find a global variable
+	 */
+	VariableInit globalVarInit(String varName) {
+		for (VarDeclaration varDecl : globalVarDeclarations(false))
+			for (VariableInit varInit : varDecl.getVarInit())
+				if (varInit.getVarName().equals(varName)) return varInit;
+		return null;
 	}
 
 	/**
@@ -538,11 +552,12 @@ public class BigDataScript {
 				String varName = arg.substring(1);
 
 				// Find all variable declarations that match this command line argument
-				for (VarDeclaration varDecl : globalVarDeclarations()) {
+				for (VarDeclaration varDecl : globalVarDeclarations(true)) {
 					Type varType = varDecl.getType();
 
 					// Is is a primitive variable or a primitive list?
 					if (varType.isPrimitiveType() || varType.isList()) {
+
 						// Find an initialization that matches the command line argument
 						for (VariableInit varInit : varDecl.getVarInit())
 							if (varInit.getVarName().equals(varName)) { // Name matches?
@@ -1055,7 +1070,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-		);
+				);
 		return exitCode;
 	}
 
@@ -1100,13 +1115,16 @@ public class BigDataScript {
 		List<String> varTypes = new ArrayList<String>();
 		int maxOptLen = 0;
 
+		// Use unsorted variables if 'helpUnsorted' exists (regardless of its value)
+		boolean sortVars = (globalVarInit(HELP_UNSORTED_VAR_NAME) == null);
+
 		// Add help on each variable declaration
-		for (VarDeclaration varDecl : globalVarDeclarations()) {
+		for (VarDeclaration varDecl : globalVarDeclarations(sortVars)) {
 			Type type = varDecl.getType();
 			String typeStr = null;
 
 			// Show types
-			if (type.isBool()) typeStr = "";
+			if (type.isBool()) typeStr = "<bool>";
 			else if (type.isInt()) typeStr = "<int>";
 			else if (type.isReal()) typeStr = "<real>";
 			else if (type.isString()) typeStr = "<string>";
