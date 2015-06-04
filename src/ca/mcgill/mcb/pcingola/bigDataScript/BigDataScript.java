@@ -84,7 +84,7 @@ public class BigDataScript {
 	boolean quiet; // Quiet mode
 	boolean showHelp; // Show bds's script help (provided on each variable definition). Do not run program
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
-	boolean useDoneFile; // Use files instead of comparing dates
+	//	boolean useDoneFile; // Use files instead of comparing dates
 	boolean verbose; // Verbose mode
 	boolean reportYaml; // Use YAML report style
 	Boolean reportHtml; // Use HTML report style
@@ -385,7 +385,7 @@ public class BigDataScript {
 		reportYaml = false;
 		dryRun = false;
 		log = false;
-		useDoneFile = false;
+		//		useDoneFile = false;
 	}
 
 	/**
@@ -789,7 +789,7 @@ public class BigDataScript {
 				if ((i + 1) < args.length) configFile = args[++i];
 				else usage("Option '-c' without restore file argument");
 			} else if (arg.equals("-d") || arg.equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
-			else if (arg.equalsIgnoreCase("-useDone")) useDoneFile = true;
+			//			else if (arg.equalsIgnoreCase("-useDone")) useDoneFile = true;
 			else if (arg.equals("-l") || arg.equalsIgnoreCase("-log")) log = true;
 			else if (arg.equals("-h") || arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("--help")) {
 				usage(null);
@@ -1052,7 +1052,7 @@ public class BigDataScript {
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
 		System.err.println("  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.");
 		System.err.println("  [-d | -debug  ]                : Debug mode.");
-		System.err.println("  -done                          : Use 'done' files: Default: " + useDoneFile);
+		//		System.err.println("  -done                          : Use 'done' files: Default: " + useDoneFile);
 		System.err.println("  -dryRun                        : Do not run any task, just show what would be run. Default: " + dryRun);
 		System.err.println("  [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').");
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");

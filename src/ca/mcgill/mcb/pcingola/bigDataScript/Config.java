@@ -37,6 +37,10 @@ public class Config {
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
 	public static final String SYS_SHELL = "sysShell"; // Sys's shell
 
+	// Disable checkpoint creation
+	public static final String DISABLE_CHECKPOINT_CREATE = "disaleCheckpoint";
+	public static final String DISABLE_RM_ON_EXIT = "disaleRmOnExit";
+
 	// SGE parameters
 	public static final String CLUSTER_SGE_PE = "sge.pe";
 	public static final String CLUSTER_SGE_MEM = "sge.mem";
@@ -380,6 +384,14 @@ public class Config {
 	}
 
 	/**
+	 * Parse some values
+	 */
+	void parse() {
+		noCheckpoint = getBool(DISABLE_CHECKPOINT_CREATE, false);
+		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
+	}
+
+	/**
 	 * Read configuration file
 	 */
 	private void read(String configFileName) {
@@ -414,6 +426,8 @@ public class Config {
 		} catch (IOException e1) {
 			// OK: May be there is no config file.
 		}
+
+		parse();
 	}
 
 	public void set(String propertyName, String value) {
