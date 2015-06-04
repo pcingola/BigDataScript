@@ -15,13 +15,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public abstract class TailFile {
 
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
+	public static final int DEFAULT_TAIL = 10;
 
 	String inputFileName; // Read (tail -f) from this file
 	boolean showStderr; // Do we show on STDERR? (default STDOUT)
 	boolean debug, verbose;
 
 	public static String tail(String fileName) {
-		return tail(fileName, 10);
+		return tail(fileName, DEFAULT_TAIL);
 	}
 
 	/**

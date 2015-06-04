@@ -731,11 +731,11 @@ public class Task implements BigDataScriptSerialize {
 			if (showCode && (getProgramTxt() != null) && !getProgramTxt().isEmpty()) sb.append("\tProgram            : \n" + Gpr.prependEachLine("\t\t", getProgramTxt()));
 
 			// Show StdErr
-			String tailErr = TailFile.tail(stderrFile);
+			String tailErr = TailFile.tail(stderrFile, Config.get().getTailLines());
 			if ((tailErr != null) && !tailErr.isEmpty()) sb.append("\tStdErr (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailErr));
 
 			// Show StdOut
-			String tailOut = TailFile.tail(stdoutFile);
+			String tailOut = TailFile.tail(stdoutFile, Config.get().getTailLines());
 			if ((tailOut != null) && !tailOut.isEmpty()) sb.append("\tStdOut (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailOut));
 		} else sb.append("'" + bdsFileName + "', line " + bdsLineNum);
 

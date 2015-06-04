@@ -12,6 +12,7 @@ import java.util.Properties;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.MonitorTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.TaskLogger;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Tail;
+import ca.mcgill.mcb.pcingola.bigDataScript.task.TailFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
@@ -38,8 +39,9 @@ public class Config {
 	public static final String SYS_SHELL = "sysShell"; // Sys's shell
 
 	// Disable checkpoint creation
-	public static final String DISABLE_CHECKPOINT_CREATE = "disaleCheckpoint";
-	public static final String DISABLE_RM_ON_EXIT = "disaleRmOnExit";
+	public static final String DISABLE_CHECKPOINT_CREATE = "disableCheckpoint";
+	public static final String DISABLE_RM_ON_EXIT = "disableRmOnExit";
+	public static final String TAIL_LINES = "tailLines"; // Number of lie to use in 'tail'
 
 	// SGE parameters
 	public static final String CLUSTER_SGE_PE = "sge.pe";
@@ -78,13 +80,14 @@ public class Config {
 	boolean log = false; // Log all commands?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	boolean noCheckpoint; // Do not create checkpoint files
-	boolean noRmOnExit = false; // Avoid removing files on exit
+	boolean noRmOnExit; // Avoid removing files on exit
 	boolean extractSource = false;
 	boolean reportYaml = false; // Use YAML report format
 	boolean reportHtml = true; // Use HTML report format
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
 	int waitAfterTaskRun = -1; // Wait some milisecs after task run
+	int tailLines; // Number of lines to use in 'tail'
 	Integer taskMaxHintLen; // Max number of characters to use in tasks's "hint"
 	String configFileName;
 	String configDirName;
@@ -119,6 +122,7 @@ public class Config {
 	 */
 	public Config(String configFileName) {
 		read(configFileName); // Read config file
+		parse(); // Parse values form properties
 		configInstance = this;
 	}
 
@@ -298,6 +302,10 @@ public class Config {
 		return tail;
 	}
 
+	public int getTailLines() {
+		return tailLines;
+	}
+
 	public int getTaskFailCount() {
 		return taskFailCount;
 	}
@@ -389,6 +397,7 @@ public class Config {
 	void parse() {
 		noCheckpoint = getBool(DISABLE_CHECKPOINT_CREATE, false);
 		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
+		tailLines = (int) getLong(TAIL_LINES, TailFile.DEFAULT_TAIL);
 	}
 
 	/**
@@ -426,8 +435,6 @@ public class Config {
 		} catch (IOException e1) {
 			// OK: May be there is no config file.
 		}
-
-		parse();
 	}
 
 	public void set(String propertyName, String value) {
@@ -472,6 +479,10 @@ public class Config {
 
 	public void setReportYaml(boolean yamlReport) {
 		reportYaml = yamlReport;
+	}
+
+	public void setTailLines(int tailLines) {
+		this.tailLines = tailLines;
 	}
 
 	public void setTaskFailCount(int taskFailCount) {

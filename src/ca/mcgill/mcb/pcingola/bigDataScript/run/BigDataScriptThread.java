@@ -407,11 +407,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if (task.getPostMortemInfo() != null && !task.getPostMortemInfo().isEmpty()) rTemplate.add("taskPostMortemInfo", multilineString("Post mortem info", task.getPostMortemInfo(), yaml));
 			else rTemplate.add("taskPostMortemInfo", "");
 
-			String tailErr = TailFile.tail(task.getStderrFile());
+			String tailErr = TailFile.tail(task.getStderrFile(), Config.get().getTailLines());
 			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr, yaml));
 			else rTemplate.add("taskStderr", "");
 
-			String tailOut = TailFile.tail(task.getStdoutFile());
+			String tailOut = TailFile.tail(task.getStdoutFile(), Config.get().getTailLines());
 			if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", multilineString("Stdout", tailOut, yaml));
 			else rTemplate.add("taskStdout", "");
 
