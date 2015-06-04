@@ -2471,7 +2471,32 @@ Command line options 'test_26.bds' :
 	mean                                : Help for argument 'mean' should be printed here
 	someVeryLongCommandLineArgumentName : This command line argument has a really long name
 </pre>
+				<br>
+				<br>
+				Note that by default variables are sorted alphabetically when help is shown. 
+				This can be overriden by creating a global variable <code>helpUnsorted</code> (regardless of it's type and value, since the program may not even be running when the help is shown).
+				<br>
+				File <a href="bds/test_26b.bds">test_26b.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
 
+# This variable is use to indicate that help should be shown unsorted 
+# (i.e. in the same order that variables are declared)
+helpUnsorted := true
+
+zzz := 1        help Help for argument 'zzz' should be printed here
+aaa := 1        help Help for argument 'aaa' should be printed here
+
+print "Done\n"
+</pre>
+
+				Now when we run <code>bds -h</code> help lines are shown unsorted:
+<pre>
+$ ./test_26b.bds -h
+Command line options 'test_26b.bds' :
+	-zzz <int>  : Help for argument 'zzz' should be printed here
+	-aaa <int>  : Help for argument 'aaa' should be printed here
+</pre>
 			</div>
 
 			<!-- ================================================== -->

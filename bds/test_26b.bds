@@ -1,0 +1,10 @@
+#!/usr/bin/env bds
+
+# This variable is use to indicate that help should be shown unsorted 
+# (i.e. in the same order that variables are declared)
+helpUnsorted := true
+
+zzz := 1		help Help for argument 'zzz' should be printed here
+aaa := 1		help Help for argument 'aaa' should be printed here
+
+print "Done\n"
