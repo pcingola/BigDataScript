@@ -1,0 +1,15 @@
+#!/usr/bin/env bds
+
+int num = 3		help Number of times 'hi' should be printed
+int min			help Help for argument 'min' should be printed here
+mean := 5		help Help for argument 'mean' should be printed here
+someVeryLongCommandLineArgumentName := true    help This command line argument has a really long name
+salutation := "hi"	help Salutation to use
+useTab := false	help Use tab before printing line
+
+# Show help if there are no args
+if( args.isEmpty() ) {
+	printHelp()
+	exit(1)
+}
+print "Done\n"

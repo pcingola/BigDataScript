@@ -10,32 +10,26 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
  *
  * @author pcingola
  */
-public class FunctionNativeSleep extends FunctionNative {
+public class FunctionNativePrintHelp extends FunctionNative {
 
-	public FunctionNativeSleep() {
+	public FunctionNativePrintHelp() {
 		super();
 	}
 
 	@Override
 	protected void initFunction() {
-		functionName = "sleep";
+		functionName = "printHelp";
 		returnType = TypeList.get(Type.BOOL);
 
-		String argNames[] = { "seconds" };
-		Type argTypes[] = { Type.INT };
+		String argNames[] = {};
+		Type argTypes[] = {};
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}
 
 	@Override
-	protected Object runFunctionNative(BigDataScriptThread csThread) {
-		long secs = csThread.getInt("seconds");
-		if (secs <= 0) return false;
-		try {
-			Thread.sleep(secs * 1000);
-		} catch (InterruptedException e) {
-			return false;
-		}
+	protected Object runFunctionNative(BigDataScriptThread bdsThread) {
+		bdsThread.getRoot().getProgramUnit().printHelp();
 		return true;
 	}
 

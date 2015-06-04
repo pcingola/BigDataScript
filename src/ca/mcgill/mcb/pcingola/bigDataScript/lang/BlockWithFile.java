@@ -1,6 +1,12 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -66,6 +72,65 @@ public class BlockWithFile extends Block {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 		if (fileName != null) fileText = Gpr.readFile(fileName);
+	}
+
+	/**
+	 * Find all variable declarations
+	 */
+	public List<VarDeclaration> varDeclarations(boolean sort) {
+		Set<String> included = new HashSet<String>();
+
+		List<VarDeclaration> varDecls = new ArrayList<VarDeclaration>();
+		varDecls.addAll(varDeclarations(included));
+
+		// Sort by variable name?
+		if (sort) {
+			Collections.sort(varDecls, new Comparator<VarDeclaration>() {
+				@Override
+				public int compare(VarDeclaration v1, VarDeclaration v2) {
+					String vname1 = v1.getVarInit()[0].getVarName();
+					String vname2 = v2.getVarInit()[0].getVarName();
+					return vname1.compareTo(vname2);
+				}
+			});
+		}
+
+		return varDecls;
+	}
+
+	/**
+	 * Find all global variable declarations within this block-statement
+	 */
+	protected List<VarDeclaration> varDeclarations(Set<String> included) {
+		List<VarDeclaration> varDecls = new ArrayList<VarDeclaration>();
+
+		// Already added?
+		String fileName = getFileName();
+		if (included.contains(fileName)) return varDecls;
+		included.add(fileName);
+
+		for (Statement s : getStatements()) {
+			// Add variable
+			if (s instanceof VarDeclaration) varDecls.add((VarDeclaration) s);
+
+			// Recurse
+			if (s instanceof StatementInclude) {
+				StatementInclude sincl = (StatementInclude) s;
+				varDecls.addAll(sincl.varDeclarations(included));
+			}
+		}
+
+		return varDecls;
+	}
+
+	/**
+	 * Find a variable init by name
+	 */
+	public VariableInit varInit(String varName) {
+		for (VarDeclaration varDecl : varDeclarations(false))
+			for (VariableInit varInit : varDecl.getVarInit())
+				if (varInit.getVarName().equals(varName)) return varInit;
+		return null;
 	}
 
 }

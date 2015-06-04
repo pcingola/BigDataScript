@@ -319,6 +319,30 @@ public class TestCasesRun2 extends TestCasesBase {
 	}
 
 	/**
+	 * Show help when there are no arguments
+	 */
+	@Test
+	public void test125c_automatic_help() {
+		Gpr.debug("Test");
+		String output = "Command line options 'run_125c.bds' :\n" //
+				+ "\t-mean <int>                                  : Help for argument 'mean' should be printed here\n" //
+				+ "\t-min <int>                                   : Help for argument 'min' should be printed here\n" //
+				+ "\t-num <int>                                   : Number of times 'hi' should be printed\n" //
+				+ "\t-salutation <string>                         : Salutation to use\n" //
+				+ "\t-someVeryLongCommandLineArgumentName <bool>  : This command line argument has a really long name\n" //
+				+ "\t-useTab <bool>                               : Use tab before printing line\n" //
+				+ "\n" //
+				;
+
+		// Run and capture stdout
+		String stdout = runAndReturnStdout("test/run_125c.bds");
+		if (verbose) System.err.println("STDOUT: " + stdout);
+
+		// Check that sys and task outputs are not there
+		Assert.assertEquals(output, stdout);
+	}
+
+	/**
 	 * Task dependent on output from a scheduled task
 	 */
 	@Test
