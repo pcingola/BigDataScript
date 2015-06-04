@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -133,7 +134,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-					) return true;
+			) return true;
 			return false;
 
 		default:
@@ -179,7 +180,7 @@ public class Task implements BigDataScriptSerialize {
 		String shell = Config.get().getString(Config.TASK_SHELL, DEFAULT_TASK_SHELL);
 		shell = "#!" + shell + "\n\n" // Shell to use
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
-				;
+		;
 
 		Gpr.toFile(programFileName, shell + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution
@@ -337,16 +338,30 @@ public class Task implements BigDataScriptSerialize {
 		if (programTxt == null) return "";
 
 		int maxHintLen = Config.get().getTaskMaxHintLen();
+		ArrayList<String> filterOutTaskHint = Config.get().getFilterOutTaskHint();
 
+		StringBuilder hint = new StringBuilder();
 		for (String line : programTxt.split("\n"))
-			if (!(line.isEmpty() || line.startsWith("#"))) {
-				String hint = line.length() > maxHintLen ? line.substring(0, maxHintLen) : line;
-				hint = hint.replace('\'', ' ');
-				hint = hint.replace('\t', ' ');
-				return hint;
+			if (!line.startsWith("#")) {
+				line = line.replace('\'', ' ').replace('\t', ' ').replace('\n', ' ').trim(); // Replace some chars
+
+				// Skip empty lines
+				boolean showLine = !line.isEmpty();
+
+				// Skip lines containing any of the strings in 'filterOutTaskHint'
+				if (showLine) {
+					for (String fo : filterOutTaskHint)
+						showLine &= !line.contains(fo);
+				}
+
+				if (showLine) {
+					if (hint.length() > 0) hint.append("; "); // Append using semicolon
+					hint.append(line);
+				}
 			}
 
-		return "";
+		if (hint.length() < maxHintLen) return hint.toString();
+		return hint.toString().substring(0, maxHintLen);
 	}
 
 	public String getProgramTxt() {
@@ -665,7 +680,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-					) {
+			) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;

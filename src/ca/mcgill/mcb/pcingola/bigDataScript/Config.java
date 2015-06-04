@@ -42,6 +42,7 @@ public class Config {
 	public static final String DISABLE_CHECKPOINT_CREATE = "disableCheckpoint";
 	public static final String DISABLE_RM_ON_EXIT = "disableRmOnExit";
 	public static final String TAIL_LINES = "tailLines"; // Number of lie to use in 'tail'
+	public static final String FILTER_OUT_TASK_HINT = "filterOutTaskHint"; // Lines to filter out from task hint
 
 	// SGE parameters
 	public static final String CLUSTER_SGE_PE = "sge.pe";
@@ -94,6 +95,7 @@ public class Config {
 	String pidFile = "pidFile" + (new Date()).getTime() + ".txt"; // Default PID file
 	Properties properties;
 	ArrayList<String> includePath;
+	ArrayList<String> filterOutTaskHint;
 	TaskLogger taskLogger;
 	MonitorTask monitorTask;
 	Tail tail;
@@ -150,6 +152,10 @@ public class Config {
 		String val = getString(propertyName);
 		if (val == null) return defaultValue;
 		return Gpr.parseDoubleSafe(val);
+	}
+
+	public ArrayList<String> getFilterOutTaskHint() {
+		return filterOutTaskHint;
 	}
 
 	/**
@@ -398,6 +404,13 @@ public class Config {
 		noCheckpoint = getBool(DISABLE_CHECKPOINT_CREATE, false);
 		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
 		tailLines = (int) getLong(TAIL_LINES, TailFile.DEFAULT_TAIL);
+
+		// Split and add all items
+		filterOutTaskHint = new ArrayList<String>();
+		for (String foth : getString(FILTER_OUT_TASK_HINT, "").split(" ")) {
+			foth = foth.trim();
+			if (!foth.isEmpty()) filterOutTaskHint.add(foth);
+		}
 	}
 
 	/**
