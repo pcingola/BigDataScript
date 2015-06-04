@@ -1,0 +1,6 @@
+#!/usr/bin/env bds
+
+flagOn  := true
+flagOff := false
+print("flagOn = $flagOn\nflagOff = $flagOff\n")
+

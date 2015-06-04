@@ -2359,6 +2359,7 @@ In file is 'in.txt'
 $ ./test_20.bds -in another_file.txt
 In file is 'another_file.txt'
 </pre>
+
 				This feature also works for other data types (int, real, bool). 
 				In case of bool if the option is present, the variable is set to 'true'.
 				<br> File <a href="bds/test_21.bds">test_21.bds</a>
@@ -2379,6 +2380,26 @@ $ ./test_21.bds -flag
 Variable flag is true
 </pre>
 
+				Or you can specify the value (<code>true</code> or <code>false</code> which is useful to set to <code>false</code> a bool that is by default <code>true</code>:
+				<br> File <a href="bds/test_21b.bds">test_21b.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+flagOn  := true
+flagOff := false
+print("flagOn = $flagOn\nflagOff = $flagOff\n")
+</pre>
+
+				So in this example we can reverse the defaults by running this (note that we can use <code>-flagOff</code> instead of <code>-flagOff true </code>):
+<pre class="prettyprint">
+$ ./test_21b.bds -flagOn false -flagOff true 
+flagOn = false
+flagOff = true
+</pre>
+				Note that we can use <code>-flagOff</code> instead of <code>-flagOff true</code> (the outcome is the same).
+
+				<br>
+				<br>
 				You can also apply this to a list of strings.
 				In this case, all command line arguments following the <code>-listName</code> will be included in the list (up to the next argument starting with '-').
 				<br>
