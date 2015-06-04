@@ -1,0 +1,12 @@
+#!/usr/bin/env bds
+
+zzz := 1		help Help for argument 'zzz' should be printed here
+aaa := 1		help Help for argument 'aaa' should be printed here
+bbb := 1		help Help for argument 'bbb' should be printed here
+
+if( args.isEmpty() ) {
+	printHelp()
+	exit(1)
+}
+
+print "Done\n"
