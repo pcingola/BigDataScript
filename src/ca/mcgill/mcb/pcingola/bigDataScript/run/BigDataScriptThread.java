@@ -376,7 +376,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 */
 	void createReport(RTemplate rTemplate, Task task, int taskNum, boolean yaml) {
 		BigDataScriptThread bdsThread = findBdsThread(task);
-		SimpleDateFormat csvFormat = new SimpleDateFormat(DATE_FORMAT_CSV);
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
 		rTemplate.add("taskNum", "" + taskNum);
@@ -428,7 +427,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		Date start = task.getRunningStartTime();
 		if (start != null) {
 			rTemplate.add("taskStart", outFormat.format(start));
-			rTemplate.add("taskStartCsv", csvFormat.format(start));
+			rTemplate.add("taskStartCsv", csvDate(start));
 		} else {
 			rTemplate.add("taskStart", "");
 			rTemplate.add("taskStartCsv", "");
@@ -437,7 +436,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		Date end = task.getRunningEndTime();
 		if (end != null) {
 			rTemplate.add("taskEnd", outFormat.format(end));
-			rTemplate.add("taskEndCsv", csvFormat.format(end));
+			rTemplate.add("taskEndCsv", csvDate(end));
 		} else {
 			rTemplate.add("taskEnd", "");
 			rTemplate.add("taskEndCsv", "");
@@ -538,6 +537,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
+	 * Create a comma separated string representing a date (Summary report renders it via JavaScript)
+	 * Code contributed by Jin Lee (to fix a bug due to stupid javascript 0-based month concept)
+	 */
+	String csvDate(Date date) {
+		SimpleDateFormat csvFormat = new SimpleDateFormat(DATE_FORMAT_CSV);
+
+		String strTaskStartCsv = (date != null) ? csvFormat.format(date) : csvFormat.format(new Date());
+		String[] csv = strTaskStartCsv.split(",");
+		csv[1] = Integer.toString(Integer.parseInt(csv[1]) - 1);
+		String str = csv[0] + "," + csv[1] + "," + csv[2] + "," + csv[3] + "," + csv[4] + "," + csv[5];
+		return str;
+	}
+
+	/**
 	 * Running in debug mode: This method is invoked right before running 'node'
 	 */
 	void debug(BigDataScriptNode node) {
@@ -583,7 +596,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -656,7 +669,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-		) {
+				) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -1174,7 +1187,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1280,7 +1293,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
-			);
+					);
 		}
 
 		// Remove thread from map
