@@ -362,62 +362,6 @@ public class BigDataScript {
 		return programUnit;
 	}
 
-	//	/**
-	//	 * Find all global variable declarations within this block-statement
-	//	 */
-	//	List<VarDeclaration> globalVarDeclarations(BlockWithFile block, Set<String> included) {
-	//		List<VarDeclaration> varDecls = new ArrayList<VarDeclaration>();
-	//
-	//		// Already added?
-	//		String fileName = block.getFileName();
-	//		if (included.contains(fileName)) return varDecls;
-	//		included.add(fileName);
-	//
-	//		for (Statement s : block.getStatements()) {
-	//			// Add variable
-	//			if (s instanceof VarDeclaration) varDecls.add((VarDeclaration) s);
-	//
-	//			// Recurse
-	//			if (s instanceof StatementInclude) varDecls.addAll(globalVarDeclarations((StatementInclude) s, included));
-	//		}
-	//
-	//		return varDecls;
-	//	}
-	//
-	//	/**
-	//	 * Find all global variable declarations
-	//	 */
-	//	List<VarDeclaration> globalVarDeclarations(boolean sort) {
-	//		Set<String> included = new HashSet<String>();
-	//
-	//		List<VarDeclaration> varDecls = new ArrayList<VarDeclaration>();
-	//		varDecls.addAll(globalVarDeclarations(programUnit, included));
-	//
-	//		// Sort by variable name?
-	//		if (sort) {
-	//			Collections.sort(varDecls, new Comparator<VarDeclaration>() {
-	//				@Override
-	//				public int compare(VarDeclaration v1, VarDeclaration v2) {
-	//					String vname1 = v1.getVarInit()[0].getVarName();
-	//					String vname2 = v2.getVarInit()[0].getVarName();
-	//					return vname1.compareTo(vname2);
-	//				}
-	//			});
-	//		}
-	//
-	//		return varDecls;
-	//	}
-	//
-	//	/**
-	//	 * Find a global variable
-	//	 */
-	//	VariableInit globalVarInit(String varName) {
-	//		for (VarDeclaration varDecl : programUnit.varDeclarations(false))
-	//			for (VariableInit varInit : varDecl.getVarInit())
-	//				if (varInit.getVarName().equals(varName)) return varInit;
-	//		return null;
-	//	}
-
 	/**
 	 * Show information from a checkpoint file
 	 */
@@ -1095,64 +1039,6 @@ public class BigDataScript {
 	public void setStackCheck(boolean stackCheck) {
 		this.stackCheck = stackCheck;
 	}
-
-	//	/**
-	//	 * Create and show automatic 'help' message
-	//	 */
-	//	void showHelp() {
-	//		StringBuilder sb = new StringBuilder();
-	//		String formatOpt = "%s %s";
-	//
-	//		// Find all variable's help
-	//		List<String> varNames = new ArrayList<String>();
-	//		List<String> varHelps = new ArrayList<String>();
-	//		List<String> varTypes = new ArrayList<String>();
-	//		int maxOptLen = 0;
-	//
-	//		// Use unsorted variables if 'helpUnsorted' exists (regardless of its value)
-	//		boolean sortVars = (programUnit.varInit(HELP_UNSORTED_VAR_NAME) == null);
-	//
-	//		// Add help on each variable declaration
-	//		for (VarDeclaration varDecl : programUnit.varDeclarations(sortVars)) {
-	//			Type type = varDecl.getType();
-	//			String typeStr = null;
-	//
-	//			// Show types
-	//			if (type.isBool()) typeStr = "<bool>";
-	//			else if (type.isInt()) typeStr = "<int>";
-	//			else if (type.isReal()) typeStr = "<real>";
-	//			else if (type.isString()) typeStr = "<string>";
-	//			else if (type.isList(Type.STRING)) typeStr = "<string ... string>";
-	//
-	//			if (typeStr == null) continue;
-	//
-	//			// Get variable's name & help
-	//			for (VariableInit vi : varDecl.getVarInit()) {
-	//				if (vi != null && vi.getVarName() != null && vi.getHelp() != null) {
-	//					varNames.add(vi.getVarName());
-	//					varHelps.add(vi.getHelp());
-	//					varTypes.add(typeStr);
-	//
-	//					// Format output and calculate length
-	//					int optLen = String.format(formatOpt, vi.getVarName(), typeStr).length();
-	//					maxOptLen = Math.max(maxOptLen, optLen);
-	//				}
-	//			}
-	//		}
-	//
-	//		// Show using appropriately formated string
-	//		for (int i = 0; i < varNames.size(); i++) {
-	//			int len = maxOptLen - varNames.get(i).length();
-	//			String format = "\t-%s %-" + len + "s : %s\n";
-	//			sb.append(String.format(format, varNames.get(i), varTypes.get(i), varHelps.get(i)));
-	//		}
-	//
-	//		// Show sommand line options
-	//		if (sb.length() > 0) sb.insert(0, "Command line options '" + Gpr.baseName(programFileName) + "' :\n");
-	//		else sb.append("No help available for script '" + Gpr.baseName(programFileName) + "'");
-	//
-	//		System.out.println(sb);
-	//	}
 
 	void usage(String err) {
 		if (err != null) System.err.println("Error: " + err);
