@@ -296,13 +296,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Add task details and time-line
 		int taskNum = 1;
-		for (Task task : TaskDependecies.get().getTasks())
+		TaskDependecies taskDepsRoot = TaskDependecies.get();
+		for (Task task : taskDepsRoot.getTasks())
 			createReport(rTemplate, task, taskNum++, yaml);
 
 		// Number of tasks executed
-		rTemplate.add("taskCount", taskNum - 1);
-		rTemplate.add("taskFailed", taskDependecies.countTaskFailed());
-		rTemplate.add("taskFailedNames", taskDependecies.taskFailedNames(MAX_TASK_FAILED_NAMES, "\n"));
+		rTemplate.add("taskCount", taskDepsRoot.size());
+		rTemplate.add("taskFailed", taskDepsRoot.countTaskFailed());
+		rTemplate.add("taskFailedNames", taskDepsRoot.taskFailedNames(MAX_TASK_FAILED_NAMES, "\n"));
 
 		// Timeline height
 		int timelineHeight = REPORT_TIMELINE_HEIGHT * (1 + taskNum);
@@ -522,10 +523,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Add thread information
 		createReport(rTemplate, this, null);
 
-		// Add task details for DAG
-		int taskNum = 1;
-		for (Task task : TaskDependecies.get().getTasks())
-			createReport(rTemplate, task, taskNum++, false);
+		//		// Add task details for DAG
+		//		int taskNum = 1;
+		//		for (Task task : TaskDependecies.get().getTasks())
+		//			createReport(rTemplate, task, taskNum++, false);
 
 		// Add at least one fake edge, so rTemplate doesn't fail
 		rTemplate.add("threadGraphEdgeId", "threadid-threadid");
@@ -600,7 +601,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-				;
+		;
 
 		//---
 		// Wait for options
@@ -673,7 +674,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-				) {
+		) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -1192,7 +1193,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -1298,7 +1299,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
-					);
+			);
 		}
 
 		// Remove thread from map

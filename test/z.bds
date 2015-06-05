@@ -9,7 +9,9 @@ o3 := "$HOME/out_3.txt"
 sys rm -vf $o2 $o3
 sys date > $i2
 
-task (taskName:='task1') sys echo TASK_1 START ; sleep 10 ; echo TASK_1 END
+par {
+	task (taskName:='task1') sys echo TASK_1 START ; sleep 10 ; echo TASK_1 END
+}
 
 sleep(1)
 task (taskName:='task2', o2 <- i2 ) sys echo TASK_2 START | tee $o2 ; sleep 1 ; echo TASK_2 END

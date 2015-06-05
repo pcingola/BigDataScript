@@ -129,7 +129,7 @@ public class TaskDependecies {
 						for (Task taskDep : taskDeps)
 							if (!taskDep.isDone() // Don't add finished tasks
 									&& !taskDep.isDependency() // If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
-									) task.addDependency(taskDep); // Add it to dependency list
+							) task.addDependency(taskDep); // Add it to dependency list
 					}
 				}
 			}
@@ -401,6 +401,10 @@ public class TaskDependecies {
 		this.verbose = verbose;
 	}
 
+	public synchronized int size() {
+		return tasksById.size();
+	}
+
 	void sleep() {
 		try {
 			Thread.sleep(SLEEP_TIME);
@@ -473,6 +477,7 @@ public class TaskDependecies {
 		}
 
 		if (verbose) Timer.showStdErr("Wait: Task '" + task.getId() + "' finished.");
+
 		return ok;
 	}
 
