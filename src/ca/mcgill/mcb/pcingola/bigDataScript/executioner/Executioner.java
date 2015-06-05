@@ -320,41 +320,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected void reportTasks() {
 		// if (verbose &&
 		if ((hasTaskRunning() || hasTaskToRun()) && isReportTime()) {
-			// Create table
-			int rowNum = 0;
-			String table[][] = new String[tasksToRun.size() + tasksRunning.size()][5];
-
-			// Pending
-			for (Task t : tasksToRun) {
-				table[rowNum][0] = t.getPid() != null ? t.getPid() : "";
-				table[rowNum][1] = "pending (" + t.getTaskState() + ")";
-				table[rowNum][2] = t.getName();
-
-				// Show dependent tasks
-				StringBuilder sb = new StringBuilder();
-				if (t.getDependencies() != null) {
-					for (Task td : t.getDependencies())
-						sb.append(td.getName() + " ");
-				}
-				table[rowNum][3] = sb.toString();
-				table[rowNum][4] = t.getProgramHint();
-				rowNum++;
-			}
-
-			// Running
-			for (Task t : tasksRunning.values()) {
-				table[rowNum][0] = t.getPid() != null ? t.getPid() : "";
-				table[rowNum][1] = "running (" + t.getTaskState() + ")";
-				table[rowNum][2] = t.getName();
-				table[rowNum][3] = "";
-				table[rowNum][4] = t.getProgramHint();
-				rowNum++;
-			}
-
-			// Show table
-			String columnNames[] = { "PID", "Task state", "Task name", "Dependencies", "Task definition" };
-			TextTable tt = new TextTable(columnNames, table, "\t\t");
-			log("Tasks [" + getExecutionerId() + "]\t\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size() + "\n" + tt.toString());
+			log("Tasks [" + getExecutionerId() + "]" //
+					+ "\t\tPending : " + tasksToRun.size() //
+					+ "\tRunning: " + tasksRunning.size() //
+					+ "\tDone: " + tasksDone.size() //
+					+ (Config.get().isQuiet() ? "" : "\n" + toStringTable()) //
+					);
 		}
 	}
 
@@ -569,7 +540,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 						+ "\n\ttask resources : " + task.getResources() //
 						+ "\n\thost           : " + host //
 						+ "\n\thost resources : " + host.getResourcesAvaialble() //
-				);
+						);
 
 				selectTask(task, host); // Add task to host (make sure resources are reserved)
 				return new Tuple<Task, Host>(task, host);
@@ -788,6 +759,47 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	@Override
 	public String toString() {
 		return "Executioner : '" + getExecutionerId() + "'\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size();
+	}
+
+	/**
+	 * Create a table of tasks
+	 */
+	public String toStringTable() {
+		// Create table
+		int rowNum = 0;
+		String table[][] = new String[tasksToRun.size() + tasksRunning.size()][5];
+
+		// Pending
+		for (Task t : tasksToRun) {
+			table[rowNum][0] = t.getPid() != null ? t.getPid() : "";
+			table[rowNum][1] = "pending (" + t.getTaskState() + ")";
+			table[rowNum][2] = t.getName();
+
+			// Show dependent tasks
+			StringBuilder sb = new StringBuilder();
+			if (t.getDependencies() != null) {
+				for (Task td : t.getDependencies())
+					sb.append(td.getName() + " ");
+			}
+			table[rowNum][3] = sb.toString();
+			table[rowNum][4] = t.getProgramHint();
+			rowNum++;
+		}
+
+		// Running
+		for (Task t : tasksRunning.values()) {
+			table[rowNum][0] = t.getPid() != null ? t.getPid() : "";
+			table[rowNum][1] = "running (" + t.getTaskState() + ")";
+			table[rowNum][2] = t.getName();
+			table[rowNum][3] = "";
+			table[rowNum][4] = t.getProgramHint();
+			rowNum++;
+		}
+
+		// Show table
+		String columnNames[] = { "PID", "Task state", "Task name", "Dependencies", "Task definition" };
+		TextTable tt = new TextTable(columnNames, table, "\t\t");
+		return tt.toString();
 	}
 
 	/**

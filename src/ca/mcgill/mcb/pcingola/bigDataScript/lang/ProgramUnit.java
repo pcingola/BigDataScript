@@ -140,7 +140,7 @@ public class ProgramUnit extends BlockWithFile {
 					&& fname.substring(0, 4).equalsIgnoreCase("test") // Starts with 'test'
 					&& fd.getParameters().getVarDecl() != null //
 					&& fd.getParameters().getVarDecl().length == 0 // There are no arguments to this function (e.g. 'test01()')
-			) testFuncs.add(fd);
+					) testFuncs.add(fd);
 		}
 
 		return testFuncs;
