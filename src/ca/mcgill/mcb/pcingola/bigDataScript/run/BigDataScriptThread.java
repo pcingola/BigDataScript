@@ -523,10 +523,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		// Add thread information
 		createReport(rTemplate, this, null);
 
-		//		// Add task details for DAG
-		//		int taskNum = 1;
-		//		for (Task task : TaskDependecies.get().getTasks())
-		//			createReport(rTemplate, task, taskNum++, false);
+		// Add task details for DAG
+		// Note: We need to add tasks again since we are creating another 'report' (the DAG file)
+		int taskNum = 1;
+		for (Task task : TaskDependecies.get().getTasks())
+			createReport(rTemplate, task, taskNum++, false);
 
 		// Add at least one fake edge, so rTemplate doesn't fail
 		rTemplate.add("threadGraphEdgeId", "threadid-threadid");
