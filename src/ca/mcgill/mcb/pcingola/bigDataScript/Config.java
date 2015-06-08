@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
 
@@ -509,6 +510,17 @@ public class Config {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+
+		sb.append("Config file '" + configFileName + "':\n");
+
+		ArrayList<String> keys = new ArrayList<String>();
+		for (Object key : properties.keySet())
+			keys.add(key.toString());
+
+		Collections.sort(keys);
+
+		for (String key : keys)
+			sb.append("\t'" + key + "' : '" + properties.get(key) + "'\n");
 
 		return sb.toString();
 	}

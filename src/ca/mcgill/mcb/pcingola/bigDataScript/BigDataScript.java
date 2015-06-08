@@ -79,8 +79,8 @@ public class BigDataScript {
 	boolean extractSource; // Extract source code form checkpoint (nly valid on recovery mode)
 	boolean dryRun; // Dry run (do not run tasks)
 	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
-	boolean noCheckpoint; // Do not create checkpoint files
-	boolean noRmOnExit; // Do not remove temp files on exit
+	Boolean noCheckpoint; // Do not create checkpoint files
+	Boolean noRmOnExit; // Do not remove temp files on exit
 	boolean quiet; // Quiet mode
 	boolean showHelp; // Show bds's script help (provided on each variable definition). Do not run program
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
@@ -400,9 +400,9 @@ public class BigDataScript {
 		// Startup message
 		if (verbose || debug) Timer.showStdErr(VERSION);
 
-		// ---
+		//---
 		// Config
-		// ---
+		//---
 		config = new Config(configFile);
 		config.setQuiet(quiet);
 		config.setVerbose(verbose);
@@ -410,13 +410,14 @@ public class BigDataScript {
 		config.setLog(log);
 		config.setDryRun(dryRun);
 		config.setTaskFailCount(taskFailCount);
-		config.setNoRmOnExit(noRmOnExit);
-		config.setNoCheckpoint(noCheckpoint);
-		//		config.setCreateReport(createReport);
 		config.setReportHtml(reportHtml);
 		config.setReportYaml(reportYaml);
 		config.setExtractSource(extractSource);
 		config.setVerbose(verbose);
+
+		// Override config file by command line option
+		if (noRmOnExit != null) config.setNoRmOnExit(noRmOnExit);
+		if (noCheckpoint != null) config.setNoCheckpoint(noCheckpoint);
 
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
