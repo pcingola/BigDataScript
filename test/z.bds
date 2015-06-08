@@ -10,7 +10,7 @@ sys rm -vf $o2 $o3
 sys date > $i2
 
 par {
-	task (taskName:='task1') sys echo TASK_1 START ; sleep 3 ; echo TASK_1 END
+	task (taskName:='task1') sys echo TASK_1 START ; sleep 10 ; echo TASK_1 END
 }
 
 sleep(1)
