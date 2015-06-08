@@ -134,7 +134,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) return true;
+					) return true;
 			return false;
 
 		default:
@@ -180,7 +180,7 @@ public class Task implements BigDataScriptSerialize {
 		String shell = Config.get().getString(Config.TASK_SHELL, DEFAULT_TASK_SHELL);
 		shell = "#!" + shell + "\n\n" // Shell to use
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
-		;
+				;
 
 		Gpr.toFile(programFileName, shell + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution
@@ -680,7 +680,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) {
+					) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;
@@ -749,11 +749,11 @@ public class Task implements BigDataScriptSerialize {
 
 			// Show StdErr
 			String tailErr = TailFile.tail(stderrFile, Config.get().getTailLines());
-			if ((tailErr != null) && !tailErr.isEmpty()) sb.append("\tStdErr (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailErr));
+			if ((tailErr != null) && !tailErr.isEmpty()) sb.append("\tStdErr (" + Config.get().getTailLines() + " lines)  :\n" + Gpr.prependEachLine("\t\t", tailErr));
 
 			// Show StdOut
 			String tailOut = TailFile.tail(stdoutFile, Config.get().getTailLines());
-			if ((tailOut != null) && !tailOut.isEmpty()) sb.append("\tStdOut (10 lines)  :\n" + Gpr.prependEachLine("\t\t", tailOut));
+			if ((tailOut != null) && !tailOut.isEmpty()) sb.append("\tStdOut (" + Config.get().getTailLines() + " lines)  :\n" + Gpr.prependEachLine("\t\t", tailOut));
 		} else sb.append("'" + bdsFileName + "', line " + bdsLineNum);
 
 		return sb.toString();

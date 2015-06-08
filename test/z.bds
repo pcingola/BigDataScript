@@ -5,7 +5,7 @@ print "Start\n"
 task {
 	sys echo Hello world
 	sys ls -al
-	sys rm asdfadsfasdf
+	sys rm asdfadsf
 }
 
 wait
