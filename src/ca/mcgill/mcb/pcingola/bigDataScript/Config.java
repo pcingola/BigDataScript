@@ -44,6 +44,7 @@ public class Config {
 	public static final String DISABLE_RM_ON_EXIT = "disableRmOnExit";
 	public static final String TAIL_LINES = "tailLines"; // Number of lie to use in 'tail'
 	public static final String FILTER_OUT_TASK_HINT = "filterOutTaskHint"; // Lines to filter out from task hint
+	public static final String SHOW_TASK_CODE = "showTaskCode"; // Always show task's code (sys commands)
 
 	// SGE parameters
 	public static final String CLUSTER_SGE_PE = "sge.pe";
@@ -86,6 +87,7 @@ public class Config {
 	boolean extractSource = false;
 	boolean reportYaml = false; // Use YAML report format
 	boolean reportHtml = true; // Use HTML report format
+	boolean showTaskCode; // Always show task's code (sys statements)
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
 	int waitAfterTaskRun = -1; // Wait some milisecs after task run
@@ -382,6 +384,10 @@ public class Config {
 		return reportYaml;
 	}
 
+	public boolean isShowTaskCode() {
+		return showTaskCode;
+	}
+
 	public boolean isVerbose() {
 		return verbose;
 	}
@@ -404,6 +410,7 @@ public class Config {
 	void parse() {
 		noCheckpoint = getBool(DISABLE_CHECKPOINT_CREATE, false);
 		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
+		showTaskCode = getBool(SHOW_TASK_CODE, false);
 		tailLines = (int) getLong(TAIL_LINES, TailFile.DEFAULT_TAIL);
 
 		// Split and add all items
@@ -493,6 +500,10 @@ public class Config {
 
 	public void setReportYaml(boolean yamlReport) {
 		reportYaml = yamlReport;
+	}
+
+	public void setShowTaskCode(boolean showTaskCode) {
+		this.showTaskCode = showTaskCode;
 	}
 
 	public void setTailLines(int tailLines) {
