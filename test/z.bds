@@ -1,21 +1,12 @@
 #!/usr/bin/env bds
 
+print "Start\n"
 
-dir := HOME
-i2 := "$HOME/in_2.txt"
-o2 := "$HOME/out_2.txt"
-o3 := "$HOME/out_3.txt"
-
-sys rm -vf $o2 $o3
-sys date > $i2
-
-par {
-	task (taskName:='task1') sys echo TASK_1 START ; sleep 10 ; echo TASK_1 END
+task {
+	sys echo Hello world
+	sys ls -al
+	sys rm asdfadsfasdf
 }
 
-sleep(1)
-task (taskName:='task2', o2 <- i2 ) sys echo TASK_2 START | tee $o2 ; sleep 1 ; echo TASK_2 END
-task (taskName:='task3', o3 <- o2 ) sys echo TASK_3 START | tee $o3 ; sleep 1 ; echo TASK_3 END
-
-println 'Done.'
-
+wait
+print "OK\n"

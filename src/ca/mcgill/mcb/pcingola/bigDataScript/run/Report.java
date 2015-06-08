@@ -48,8 +48,8 @@ public class Report {
 	public Report(BigDataScriptThread bdsThread, boolean yaml) {
 		this.bdsThread = bdsThread;
 		this.yaml = yaml;
-		this.verbose = Config.get().isVerbose();
-		this.debug = Config.get().isDebug();
+		verbose = Config.get().isVerbose();
+		debug = Config.get().isDebug();
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class Report {
 		else rTemplate.add("exitColor", "");
 
 		// Threads details
-		createReport(rTemplate, this, null);
+		createReport(rTemplate, bdsThread, null);
 
 		// Add task details and time-line
 		int taskNum = 1;
@@ -144,7 +144,7 @@ public class Report {
 	/**
 	 * Add thread information to report
 	 */
-	void createReport(RTemplate rTemplate, Report bdsThread, Report bdsThreadParent) {
+	void createReport(RTemplate rTemplate, BigDataScriptThread bdsThread, BigDataScriptThread bdsThreadParent) {
 		// ID and parent
 		String thisId = bdsThread.getBdsThreadId();
 		String thisIdNum = threadIdNum(bdsThread);
@@ -172,7 +172,7 @@ public class Report {
 		rTemplate.add("threadTasks", sb.toString());
 
 		// Recurse to child threads
-		for (Report bdsThreadChild : bdsThread.bdsChildThreadsById.values())
+		for (BigDataScriptThread bdsThreadChild : bdsThread.getBdsThreads())
 			createReport(rTemplate, bdsThreadChild, bdsThread);
 	}
 
@@ -180,14 +180,14 @@ public class Report {
 	 * Create map with task details
 	 */
 	void createReport(RTemplate rTemplate, Task task, int taskNum, boolean yaml) {
-		Report bdsThread = findBdsThread(task);
+		BigDataScriptThread bdsTh = bdsThread.findBdsThread(task);
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
 		rTemplate.add("taskNum", "" + taskNum);
 		rTemplate.add("taskId", Gpr.baseName(task.getId()));
 		rTemplate.add("taskName", task.getName());
-		rTemplate.add("taskThreadId", (bdsThread != null ? bdsThread.getBdsThreadId() : ""));
-		rTemplate.add("taskThreadNum", threadIdNum(bdsThread));
+		rTemplate.add("taskThreadId", (bdsTh != null ? bdsTh.getBdsThreadId() : ""));
+		rTemplate.add("taskThreadNum", threadIdNum(bdsTh));
 		rTemplate.add("taskPid", task.getPid());
 		rTemplate.add("taskOk", "" + task.isDoneOk());
 		rTemplate.add("taskExitCode", "" + task.getExitValue());
@@ -299,7 +299,7 @@ public class Report {
 		// Graph plot
 		//---
 		rTemplate.add("taskGraphName", task.getName());
-		rTemplate.add("taskGraphThreadNum", threadIdNum(bdsThread));
+		rTemplate.add("taskGraphThreadNum", threadIdNum(bdsTh));
 		if (task.getDependencies() != null) {
 			for (Task t : task.getDependencies()) {
 				String taskName = task.getName();
@@ -315,13 +315,13 @@ public class Report {
 	 * Create a DAG showing all tasks
 	 */
 	void createTaskDag(String dagJsFile) {
-		if (isDebug()) Timer.showStdErr("Creating DAG summary script '" + dagJsFile + "'");
+		if (debug) Timer.showStdErr("Creating DAG summary script '" + dagJsFile + "'");
 
 		// Create a template
 		RTemplate rTemplate = new RTemplate(BigDataScript.class, DAG_TEMPLATE, dagJsFile);
 
 		// Add thread information
-		createReport(rTemplate, this, null);
+		createReport(rTemplate, bdsThread, null);
 
 		// Add task details for DAG
 		// Note: We need to add tasks again since we are creating another 'report' (the DAG file)
@@ -354,6 +354,28 @@ public class Report {
 		csv[1] = Integer.toString(Integer.parseInt(csv[1]) - 1);
 		String str = csv[0] + "," + csv[1] + "," + csv[2] + "," + csv[3] + "," + csv[4] + "," + csv[5];
 		return str;
+	}
+
+	/**
+	 * Convert multi-line string for report
+	 */
+	String multilineString(String title, String str, boolean yaml) {
+		if (yaml) {
+			// Convert to YAML multi-line
+			return Gpr.prependEachLine("        ", str).trim();
+		}
+
+		// Use lines and title separators
+		if (title != null) return "\n" + LINE + title + LINE + "\n" + str + "\n";
+
+		// Nothing to do for regular HTML lines
+		return str;
+	}
+
+	String threadIdNum(BigDataScriptThread bdsThread) {
+		if (bdsThread == null) return "None";
+		if (bdsThread.getParent() == null) return "thread_Root";
+		return "thread_" + bdsThread.getId();
 	}
 
 }
