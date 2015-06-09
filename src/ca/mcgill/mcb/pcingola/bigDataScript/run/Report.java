@@ -226,7 +226,7 @@ public class Report {
 			/*
 			rTemplate.add("taskStderr", "");
 			rTemplate.add("taskStdout", "");
-			*/			
+			*/
 			String tailErr = TailFile.tail(task.getStderrFile(), Config.get().getTailLines());
 			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr, yaml));
 			else rTemplate.add("taskStderr", "");
