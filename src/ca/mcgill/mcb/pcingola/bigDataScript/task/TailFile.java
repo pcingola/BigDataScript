@@ -5,6 +5,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -31,11 +32,12 @@ public abstract class TailFile {
 	 * References: http://stackoverflow.com/questions/6888001/java-code-for-tail-n-lines-of-file-equivalent-to-tail-commad-in-unix
 	 *
 	 * @param fileName
-	 * @param numLines
+	 * @param numLines : Number of line to read. Negative means "ALL lines"
 	 * @return
 	 */
 	public static String tail(String fileName, int linesToRead) {
-		if (linesToRead < 1) return "";
+		if (linesToRead == 0) return "";
+		if (linesToRead < 0) return Gpr.readFile(fileName);
 
 		if (fileName == null) return null;
 		File f = new File(fileName);
