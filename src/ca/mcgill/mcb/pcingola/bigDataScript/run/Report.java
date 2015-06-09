@@ -223,8 +223,18 @@ public class Report {
 			rTemplate.add("taskColor", "");
 			rTemplate.add("taskCheckOut", "");
 			rTemplate.add("taskPostMortemInfo", "");
+			/*
 			rTemplate.add("taskStderr", "");
 			rTemplate.add("taskStdout", "");
+			*/			
+			String tailErr = TailFile.tail(task.getStderrFile(), Config.get().getTailLines());
+			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr, yaml));
+			else rTemplate.add("taskStderr", "");
+
+			String tailOut = TailFile.tail(task.getStdoutFile(), Config.get().getTailLines());
+			if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", multilineString("Stdout", tailOut, yaml));
+			else rTemplate.add("taskStdout", "");
+
 			rTemplate.add("taskErrMsg", "");
 		}
 
