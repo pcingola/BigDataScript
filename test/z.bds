@@ -3,10 +3,8 @@
 print "Start\n"
 
 task {
-	sys echo Hello world
-	sys ls -al
-	sys rm asdfadsf
+	sys echo "sleep for 60 secs (task1)"
+	sys sleep 60
 }
 
-wait
 print "OK\n"
