@@ -96,8 +96,6 @@ public class BigDataScriptThreads {
 	 */
 	public BigDataScriptThread get() {
 		long id = Thread.currentThread().getId();
-		if ( bdsThreadByThreadId.get(id) == null )
-			id = bdsThreadByThreadId.keySet().iterator().next();
 		return bdsThreadByThreadId.get(id);
 	}
 
