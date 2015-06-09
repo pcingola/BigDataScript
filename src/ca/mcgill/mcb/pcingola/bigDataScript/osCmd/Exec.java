@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThreads;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -50,8 +51,11 @@ public class Exec {
 		try {
 			ProcessBuilder pb = new ProcessBuilder(args);
 
-			// Make sure we use thread's current directory
-			pb.directory(new File(BigDataScriptThreads.getInstance().get().getCurrentDir()));
+			// Make sure we use bdsThread's current directory or startup
+			// directory if this Exec is not within a bdsThread
+			BigDataScriptThread bdsThread = BigDataScriptThreads.getInstance().get();
+			String currDir = bdsThread != null ? bdsThread.getCurrentDir() : System.getProperty(Exec.USER_DIR);
+			pb.directory(new File(currDir));
 
 			// Create a process
 			Process process = pb.start();
@@ -77,7 +81,7 @@ public class Exec {
 
 			if (debug) Gpr.debug("Exit value: " + exitValue);
 		} catch (Exception e) {
-			throw new RuntimeException("Cannot execute commnads: '" + commands + "'");
+			throw new RuntimeException("Cannot execute commnads: '" + commands + "'", e);
 		}
 
 		// Collect output
