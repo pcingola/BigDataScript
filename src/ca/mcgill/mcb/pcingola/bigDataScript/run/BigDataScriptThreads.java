@@ -3,12 +3,60 @@ package ca.mcgill.mcb.pcingola.bigDataScript.run;
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
+
 public class BigDataScriptThreads {
 
 	private static BigDataScriptThreads bigDataScriptThreads = new BigDataScriptThreads();
 
 	Map<Long, BigDataScriptThread> bdsThreadByThreadId = new HashMap<Long, BigDataScriptThread>();
 
+	protected static int REPORT_INTERVAL=20;
+	protected static Timer timerReport;
+
+	public static void createReport() {
+		if ( timerReport==null) timerReport = new Timer();
+
+		if ( timerReport.elapsedSecs() > REPORT_INTERVAL ) {
+			//BigDataScriptThread thread = bigDataScriptThreads.get().getRoot(); // some DEADLOCK issue
+			BigDataScriptThread thread = bigDataScriptThreads.get();
+
+			// Create HTML report?
+			if (thread.getConfig().isReportHtml()) {
+				Report report = new Report(thread, false);
+				report.createReport();
+			}
+
+			// Create YAML report?
+			if (thread.getConfig().isReportYaml()) {
+				Report report = new Report(thread, true);
+				report.createReport();
+			}
+
+			// Reset report timer
+			timerReport.start();
+		}
+	}
+	/*
+	protected static Thread threadReport;
+	private BigDataScriptThreads() {
+		// start report thread
+		threadReport = new Thread() {
+			@Override
+			public void run() {
+				try {
+					while (true) {
+						Thread.sleep(100);
+					}
+				}
+				catch(InterruptedException e) {
+					System.out.println("RuntimeException from threadReport.run()");
+				}
+			}
+		};
+		threadReport.start();
+	}
+	*/
 	/**
 	 * Get canonical path to file using thread's 'current dir' to de-reference
 	 * relative paths
@@ -48,6 +96,8 @@ public class BigDataScriptThreads {
 	 */
 	public BigDataScriptThread get() {
 		long id = Thread.currentThread().getId();
+		if ( bdsThreadByThreadId.get(id) == null )
+			id = bdsThreadByThreadId.keySet().iterator().next();
 		return bdsThreadByThreadId.get(id);
 	}
 
