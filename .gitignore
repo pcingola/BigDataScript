@@ -7,6 +7,7 @@ bin
 *.chp
 *.pid
 t.bds*
-.nfs*
 tmp
 go/bds/bds
+.nfs*
+.*.swp
