@@ -208,35 +208,23 @@ public class Report {
 			if (task.getPostMortemInfo() != null && !task.getPostMortemInfo().isEmpty()) rTemplate.add("taskPostMortemInfo", multilineString("Post mortem info", task.getPostMortemInfo(), yaml));
 			else rTemplate.add("taskPostMortemInfo", "");
 
-			String tailErr = TailFile.tail(task.getStderrFile(), Config.get().getTailLines());
-			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr, yaml));
-			else rTemplate.add("taskStderr", "");
-
-			String tailOut = TailFile.tail(task.getStdoutFile(), Config.get().getTailLines());
-			if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", multilineString("Stdout", tailOut, yaml));
-			else rTemplate.add("taskStdout", "");
-
 			if (task.getErrorMsg() != null) rTemplate.add("taskErrMsg", multilineString("Error message", task.getErrorMsg(), yaml));
 			else rTemplate.add("taskErrMsg", "");
-
 		} else {
 			rTemplate.add("taskColor", "");
 			rTemplate.add("taskCheckOut", "");
 			rTemplate.add("taskPostMortemInfo", "");
-			/*
-			rTemplate.add("taskStderr", "");
-			rTemplate.add("taskStdout", "");
-			*/
-			String tailErr = TailFile.tail(task.getStderrFile(), Config.get().getTailLines());
-			if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr, yaml));
-			else rTemplate.add("taskStderr", "");
-
-			String tailOut = TailFile.tail(task.getStdoutFile(), Config.get().getTailLines());
-			if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", multilineString("Stdout", tailOut, yaml));
-			else rTemplate.add("taskStdout", "");
-
 			rTemplate.add("taskErrMsg", "");
 		}
+
+		// Always show task's STDOUT/STDERR 
+		String tailErr = TailFile.tail(task.getStderrFile(), Config.get().getTailLines());
+		if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr, yaml));
+		else rTemplate.add("taskStderr", "");
+
+		String tailOut = TailFile.tail(task.getStdoutFile(), Config.get().getTailLines());
+		if ((tailOut != null) && !tailOut.isEmpty()) rTemplate.add("taskStdout", multilineString("Stdout", tailOut, yaml));
+		else rTemplate.add("taskStdout", "");
 
 		// Running times
 		Date start = task.getRunningStartTime();
