@@ -14,6 +14,7 @@ import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThreads;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -463,8 +464,14 @@ public class TaskDependecies {
 		if (verbose) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId() + ", state: " + task.getTaskState());
 
 		// Wait for task to finish
+		/*
 		while (!task.isDone())
 			sleep();
+		*/
+		while (!task.isDone()) {
+			BigDataScriptThreads.getInstance().createReport();
+			sleep();
+		}
 
 		// Either finished OK or it was allowed to fail
 		boolean ok = task.isDoneOk() || task.isCanFail();
@@ -475,6 +482,8 @@ public class TaskDependecies {
 			System.err.println("Task failed:\n" + task.toString(true));
 			task.deleteOutputFilesOnExit();
 		}
+
+		BigDataScriptThreads.getInstance().createReport();
 
 		if (verbose) Timer.showStdErr("Wait: Task '" + task.getId() + "' finished.");
 

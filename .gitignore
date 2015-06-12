@@ -9,3 +9,5 @@ bin
 t.bds*
 tmp
 go/bds/bds
+.nfs*
+.*.swp
