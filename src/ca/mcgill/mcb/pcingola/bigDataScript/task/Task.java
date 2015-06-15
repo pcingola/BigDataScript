@@ -134,7 +134,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-					) return true;
+			) return true;
 			return false;
 
 		default:
@@ -180,7 +180,7 @@ public class Task implements BigDataScriptSerialize {
 		String shell = Config.get().getString(Config.TASK_SHELL, DEFAULT_TASK_SHELL);
 		shell = "#!" + shell + "\n\n" // Shell to use
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
-				;
+		;
 
 		Gpr.toFile(programFileName, shell + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution
@@ -343,7 +343,7 @@ public class Task implements BigDataScriptSerialize {
 		StringBuilder hint = new StringBuilder();
 		for (String line : programTxt.split("\n"))
 			if (!line.startsWith("#")) {
-				line = line.replace('\'', ' ').replace('\t', ' ').replace('\n', ' ').trim(); // Replace some chars
+				line = line.replace('\'', ' ').replace('\t', ' ').replace('\n', ' ').replace('\\', ' ').trim(); // Replace some chars
 
 				// Skip empty lines
 				boolean showLine = !line.isEmpty();
@@ -680,7 +680,7 @@ public class Task implements BigDataScriptSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-					) {
+			) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;
