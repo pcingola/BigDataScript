@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.htmlTemplate;
+package ca.mcgill.mcb.pcingola.bigDataScript.report;
 
 import java.io.InputStream;
 import java.util.ArrayList;

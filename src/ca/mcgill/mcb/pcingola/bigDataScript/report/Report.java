@@ -1,16 +1,19 @@
-package ca.mcgill.mcb.pcingola.bigDataScript.run;
+package ca.mcgill.mcb.pcingola.bigDataScript.report;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
-import ca.mcgill.mcb.pcingola.bigDataScript.htmlTemplate.RTemplate;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Statement;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThreads;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TailFile;
@@ -39,13 +42,38 @@ public class Report {
 	public static final String LINE = "--------------------";
 
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
+	public static final int REPORT_TIME = 60; // Update report every 'REPORT_TIME' seconds
+
+	protected static Timer timerReport = new Timer(); // added by Jin Lee (for prog report timer)
 
 	boolean yaml;
 	boolean verbose;
 	boolean debug;
 	BigDataScriptThread bdsThread;
+	Map<String, BigDataScriptThread> taskId2BdsThread;
+
+	/**
+	 * Check if this is a good time to create a report
+	 */
+	public static void reportTime() {
+		boolean doReport = false;
+
+		synchronized (timerReport) {
+			if (timerReport.elapsedSecs() > REPORT_TIME) { // Generate report every 'REPORT_TIME' seconds
+				timerReport.start();
+				doReport = true;
+			}
+		}
+
+		if (doReport) {
+			Report report = new Report(BigDataScriptThreads.getInstance().get().getRoot(), false);
+			report.createReport();
+		}
+	}
 
 	public Report(BigDataScriptThread bdsThread, boolean yaml) {
+		if (!bdsThread.isRoot()) throw new RuntimeException("Cannot create report from non-root bdsThread");
+
 		this.bdsThread = bdsThread;
 		this.yaml = yaml;
 		verbose = Config.get().isVerbose();
@@ -56,6 +84,8 @@ public class Report {
 	 * Create an HTML report (after execution finished)
 	 */
 	public void createReport() {
+		if (debug) Gpr.debug("CreateReport: Start");
+
 		String bdsThreadId = bdsThread.getBdsThreadId();
 
 		if (!bdsThread.anyTask()) {
@@ -90,14 +120,19 @@ public class Report {
 		if (exitValue > 0) rTemplate.add("exitColor", REPORT_RED_COLOR);
 		else rTemplate.add("exitColor", "");
 
+		// Populate task to bdsThread map
+		taskId2BdsThread = new HashMap<>();
+		taskId2BdsThread(bdsThread);
+
 		// Threads details
-		createReport(rTemplate, bdsThread, null);
+		createReport(rTemplate, bdsThread);
 
 		// Add task details and time-line
 		int taskNum = 1;
 		TaskDependecies taskDepsRoot = TaskDependecies.get();
-		for (Task task : taskDepsRoot.getTasks())
+		for (Task task : taskDepsRoot.getTasks()) {
 			createReport(rTemplate, task, taskNum++, yaml);
+		}
 
 		// Number of tasks executed
 		rTemplate.add("taskCount", taskDepsRoot.size());
@@ -139,15 +174,31 @@ public class Report {
 
 		// Create DAG script
 		if (!yaml) createTaskDag(dagJsFile);
+
+		if (debug) Gpr.debug("CreateReport: End");
+	}
+
+	void taskId2BdsThread(BigDataScriptThread bdsThread) {
+		// Add all tasks in this thread
+		for (Task t : bdsThread.getTasks())
+			taskId2BdsThread.put(t.getId(), bdsThread);
+
+		// Recurse to child threads
+		for (BigDataScriptThread bdsThreadChild : bdsThread.getBdsThreads())
+			taskId2BdsThread(bdsThreadChild);
 	}
 
 	/**
 	 * Add thread information to report
 	 */
-	void createReport(RTemplate rTemplate, BigDataScriptThread bdsThread, BigDataScriptThread bdsThreadParent) {
+	void createReport(RTemplate rTemplate, BigDataScriptThread bdsThread) {
+		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': Start");
+
 		// ID and parent
 		String thisId = bdsThread.getBdsThreadId();
 		String thisIdNum = threadIdNum(bdsThread);
+
+		BigDataScriptThread bdsThreadParent = bdsThread.getParent();
 		String parenId = (bdsThreadParent != null ? bdsThreadParent.getBdsThreadId() : "Null");
 		String parenIdNum = threadIdNum(bdsThreadParent);
 		rTemplate.add("threadId", thisId);
@@ -173,14 +224,18 @@ public class Report {
 
 		// Recurse to child threads
 		for (BigDataScriptThread bdsThreadChild : bdsThread.getBdsThreads())
-			createReport(rTemplate, bdsThreadChild, bdsThread);
+			createReport(rTemplate, bdsThreadChild);
+
+		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': End");
 	}
 
 	/**
 	 * Create map with task details
 	 */
 	void createReport(RTemplate rTemplate, Task task, int taskNum, boolean yaml) {
-		BigDataScriptThread bdsTh = bdsThread.findBdsThread(task);
+		if (debug) Gpr.debug("CreateReport Task '" + task.getId() + "': Start");
+
+		BigDataScriptThread bdsTh = taskId2BdsThread.get(task.getId());
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
 		rTemplate.add("taskNum", "" + taskNum);
@@ -217,7 +272,7 @@ public class Report {
 			rTemplate.add("taskErrMsg", "");
 		}
 
-		// Always show task's STDOUT/STDERR 
+		// Always show task's STDOUT/STDERR
 		String tailErr = TailFile.tail(task.getStderrFile(), Config.get().getTailLines());
 		if ((tailErr != null) && !tailErr.isEmpty()) rTemplate.add("taskStderr", multilineString("Stderr", tailErr, yaml));
 		else rTemplate.add("taskStderr", "");
@@ -307,6 +362,8 @@ public class Report {
 				rTemplate.add("taskGraphEdgeTarget", taskName);
 			}
 		}
+
+		if (debug) Gpr.debug("CreateReport Task '" + task.getId() + "': End");
 	}
 
 	/**
@@ -319,7 +376,7 @@ public class Report {
 		RTemplate rTemplate = new RTemplate(BigDataScript.class, DAG_TEMPLATE, dagJsFile);
 
 		// Add thread information
-		createReport(rTemplate, bdsThread, null);
+		createReport(rTemplate, bdsThread);
 
 		// Add task details for DAG
 		// Note: We need to add tasks again since we are creating another 'report' (the DAG file)

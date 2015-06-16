@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
+import ca.mcgill.mcb.pcingola.bigDataScript.report.Report;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
@@ -25,6 +26,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class TaskDependecies {
 
 	public static final int SLEEP_TIME = 250;
+
 	private static TaskDependecies taskDependecies = new TaskDependecies(); // Global instance (keeps track of all tasks)
 
 	boolean debug = false;
@@ -80,7 +82,9 @@ public class TaskDependecies {
 		tasksById.put(task.getId(), task);
 
 		// Add task
-		tasks.add(task);
+		synchronized (tasks) {
+			tasks.add(task);
+		}
 
 		// Add task by output files
 		if (task.getOutputFiles() != null) {
@@ -227,8 +231,14 @@ public class TaskDependecies {
 		return tasksById.keySet();
 	}
 
-	public synchronized Collection<Task> getTasks() {
-		return tasks;
+	public Collection<Task> getTasks() {
+		List<Task> tasksCopy = new ArrayList<Task>();
+
+		synchronized (tasks) {
+			tasksCopy.addAll(tasks);
+		}
+
+		return tasksCopy;
 	}
 
 	/**
@@ -463,8 +473,10 @@ public class TaskDependecies {
 		if (verbose) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId() + ", state: " + task.getTaskState());
 
 		// Wait for task to finish
-		while (!task.isDone())
+		while (!task.isDone()) {
 			sleep();
+			Report.reportTime();
+		}
 
 		// Either finished OK or it was allowed to fail
 		boolean ok = task.isDoneOk() || task.isCanFail();

@@ -1,13 +1,16 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.run;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class BigDataScriptThreads {
 
 	private static BigDataScriptThreads bigDataScriptThreads = new BigDataScriptThreads();
 
 	Map<Long, BigDataScriptThread> bdsThreadByThreadId = new HashMap<Long, BigDataScriptThread>();
+	Set<BigDataScriptThread> bdsThreadDone = new HashSet<BigDataScriptThread>();
 
 	/**
 	 * Get canonical path to file using thread's 'current dir' to de-reference
@@ -38,7 +41,7 @@ public class BigDataScriptThreads {
 	/**
 	 * Add a bdsThread
 	 */
-	public void add(BigDataScriptThread bdsThread) {
+	public synchronized void add(BigDataScriptThread bdsThread) {
 		long id = Thread.currentThread().getId();
 		bdsThreadByThreadId.put(id, bdsThread);
 	}
@@ -46,7 +49,7 @@ public class BigDataScriptThreads {
 	/**
 	 * Get bdsThread
 	 */
-	public BigDataScriptThread get() {
+	public synchronized BigDataScriptThread get() {
 		long id = Thread.currentThread().getId();
 		return bdsThreadByThreadId.get(id);
 	}
@@ -54,9 +57,13 @@ public class BigDataScriptThreads {
 	/**
 	 * Remove a bdsThread
 	 */
-	public void remove(BigDataScriptThread bdsThread) {
+	public synchronized void remove() {
 		long id = Thread.currentThread().getId();
-		if (bdsThreadByThreadId.get(id) == bdsThread) bdsThreadByThreadId.remove(id);
+		BigDataScriptThread bdsThread = get();
+		if (bdsThreadByThreadId.get(id) == bdsThread) {
+			bdsThreadByThreadId.remove(id);
+			bdsThreadDone.add(bdsThread);
+		} else throw new RuntimeException("Cannot remove thread '" + bdsThread.getBdsThreadId() + "'");
 	}
 
 	@Override

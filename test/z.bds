@@ -2,9 +2,11 @@
 
 print "Start\n"
 
-task {
-	sys echo "sleep for 60 secs (task1)"
-	sys sleep 60
+void f(int t) {
+	task echo "Sleep for $t secs" ; sleep $t ; echo "Bye"
 }
+
+par f(5) 
+f(5)
 
 print "OK\n"
