@@ -178,16 +178,6 @@ public class Report {
 		if (debug) Gpr.debug("CreateReport: End");
 	}
 
-	void taskId2BdsThread(BigDataScriptThread bdsThread) {
-		// Add all tasks in this thread
-		for (Task t : bdsThread.getTasks())
-			taskId2BdsThread.put(t.getId(), bdsThread);
-
-		// Recurse to child threads
-		for (BigDataScriptThread bdsThreadChild : bdsThread.getBdsThreads())
-			taskId2BdsThread(bdsThreadChild);
-	}
-
 	/**
 	 * Add thread information to report
 	 */
@@ -425,6 +415,16 @@ public class Report {
 
 		// Nothing to do for regular HTML lines
 		return str;
+	}
+
+	void taskId2BdsThread(BigDataScriptThread bdsThread) {
+		// Add all tasks in this thread
+		for (Task t : bdsThread.getTasks())
+			taskId2BdsThread.put(t.getId(), bdsThread);
+
+		// Recurse to child threads
+		for (BigDataScriptThread bdsThreadChild : bdsThread.getBdsThreads())
+			taskId2BdsThread(bdsThreadChild);
 	}
 
 	String threadIdNum(BigDataScriptThread bdsThread) {
