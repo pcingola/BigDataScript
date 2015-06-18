@@ -651,14 +651,20 @@ int[] primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 				<table class="table table-striped">
 					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
 					<tr> <td> </td> <td> += </td> <td> Append element(s) at the end of the list </td> </tr>
-					<tr> <td> Element added  </td> <td> add </td> <td> Add at the end of the list </td> </tr>
-					<tr> <td> First element  </td> <td> head </td> <td> Get first element </td> </tr>
+					<tr> <td> Element added  </td> <td> add(X) </td> <td> Add <code>X</code> to the end of the list </td> </tr>
+					<tr> <td> Element added  </td> <td> add(int idx,X) </td> <td> Add <code>X</code> to positon <code>idx</code> in the list </td> </tr>
+					<tr> <td> int </td> <td> count(X) </td> <td> Count number of occurrences of <code>X</code> in the list </td> </tr>
+					<tr> <td> First element  </td> <td> head() </td> <td> Get first element </td> </tr>
+					<tr> <td> int </td> <td> indexOf(X) </td> <td> Position of element <code>X</code> in the list </td> </tr>
 					<tr> <td> int </td> <td> isEmpty() </td> <td> 'true' if the list is empty </td> </tr>
-					<tr> <td> string </td> <td> join() </td> <td> A srting joining all elements of the list (separator ' ') </td> </tr>
+					<tr> <td> string </td> <td> join() </td> <td> A string joining all elements of the list (separator ' ') </td> </tr>
 					<tr> <td> string </td> <td> join(string sep) </td> <td> A srting joining all elements of the list (separator 'sep') </td> </tr>
 					<tr> <td> Last element  </td> <td> pop() </td> <td> Get last element and remove it from the list </td> </tr>
 					<tr> <td> Element pushed  </td> <td> push() </td> <td> Add at the end of the list </td> </tr>
 					<tr> <td> int </td> <td> size() </td> <td> Return the number of elements in the list </td> </tr>
+					<tr> <td> Element to remove  </td> <td> remove(X) </td> <td> Remove element <code>X</code> form the list </td> </tr>
+					<tr> <td> Element to remove  </td> <td> removeIdx(int idx) </td> <td> Remove element at position <code>idx</code> form the list </td> </tr>
+					<tr> <td> New reversed list </td> <td> reverse() </td> <td> Create a new list and reverse it</td> </tr>
 					<tr> <td> Same list </td> <td> rm() </td> <td> Delete all files (assumes list elements are file names) </td> </tr>
 					<tr> <td> Same list </td> <td> rmOnExit() </td> <td> Delete all files when current thread finishes execution (assumes list elements are file names) </td> </tr>
 					<tr> <td> New sorted list </td> <td> sort() </td> <td> Create a new list sorting the elements of this list</td> </tr>
