@@ -1,5 +1,10 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.scope;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
@@ -101,9 +106,26 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 		this.constant = constant;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void setValue(Object value) {
 		if (debug) Gpr.debug("Setting value:\t" + name + " = " + value);
-		this.value = value;
+
+		if (type.isList()) {
+			// Assign the whole list? => Create a new copy
+			this.value = new ArrayList<>();
+			((List) this.value).addAll((List) value);
+		} else if (type.isMap()) {
+			// Assign the whole map? => Create a new copy
+			this.value = new HashMap();
+			Map mapNew = ((Map) this.value);
+			Map mapOri = ((Map) value);
+			for (Object key : mapOri.keySet()) {
+				mapNew.put(key, mapOri.get(key));
+			}
+		} else {
+			// Assign value 
+			this.value = value;
+		}
 	}
 
 	@Override

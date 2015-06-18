@@ -52,15 +52,8 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 		Object value = bdsThread.peek();
 
 		// Assign value
-		if (left instanceof VarReference) {
-			((VarReference) left).setValue(bdsThread, value);;
-		} else if (left instanceof VarReferenceList) {
-			VarReferenceList listIndex = (VarReferenceList) left;
-			listIndex.setValue(bdsThread, value);
-		} else if (left instanceof VarReferenceMap) {
-			VarReferenceMap listIndex = (VarReferenceMap) left;
-			listIndex.setValue(bdsThread, value);
-		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
+		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
+		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 	}
 
 	@Override

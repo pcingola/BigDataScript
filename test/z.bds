@@ -1,15 +1,39 @@
 #!/usr/bin/env bds
 
-help This program does blah
-help Actually, a lot of blah blah
-help     and even more blah
-help     or blah
+l := [1, 2, 3]
 
-verbose := false	help Be verbose
-quiet   := false	help Be very quiet
+#println "l: $l"
+#
+## Test list.add(idx, X)
+#l.add(1, 99)
+#println "l: $l"
+#
+## Test list.reverse()
+#l2 := l.reverse()
+#println "l2: $l2"
+#
+## Test list.count(X)
+#l3 := l2
+#l3 += 99
+#println "l3: $l3"
+#
+## Test list.remove(X)
+#l4 := l3
+#l4.remove(99)
+#println "l4: $l4"
+#
+## Test list.removeAll(X)
+#l5 := l3
+#idxL5 := l5.indexOf(99)
+#println "l5: $l5\tindexOf(99): $idxL5"
 
-help Options related to database
-dbPort := 5432		help Database port
-dbName := "testDb"	help Database name
+int[] lc1 = l
+int[] lc2 
+lc2 = l
+lc3 := l
 
-print "OK\n"
+l.add(99)
+println "l   : $l"
+println "lc1 : $lc1"
+println "lc2 : $lc2"
+println "lc3 : $lc3"

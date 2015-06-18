@@ -1,10 +1,8 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import junit.framework.Assert;
+import java.util.HashMap;
 
 import org.junit.Test;
-
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Quick test cases when creating a new feature...
@@ -14,31 +12,17 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	/**
-	 * Show help when there are no arguments
-	 */
 	@Test
-	public void test134_automatic_help_sections() {
-		Gpr.debug("Test");
-		String output = "This program does blah\n" //
-				+ "Actually, a lot of blah blah\n" //
-				+ "    and even more blah\n" //
-				+ "    or blah\n" //
-				+ "\t-quiet <bool>     : Be very quiet\n" //
-				+ "\t-verbose <bool>   : Be verbose\n" //
-				+ "Options related to database\n" //
-				+ "\t-dbName <string>  : Database name\n" //
-				+ "\t-dbPort <int>     : Database port\n" //
-				+ "\n" //
-				;
+	public void test136() {
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("l", "[1, 99, 2, 3]");
+		expectedValues.put("l2", "[3, 2, 99, 1]");
+		expectedValues.put("l3", "[3, 2, 99, 1, 99]");
+		expectedValues.put("l3count", "2");
+		expectedValues.put("l3idx", "2");
+		expectedValues.put("l4", "[3, 2, 1, 99]");
+		expectedValues.put("l5", "[3, 2, 1, 99]");
 
-		// Run and capture stdout
-		String args[] = { "test/run_134.bds", "-h" };
-		String stdout = runAndReturnStdout(args);
-		if (verbose) System.err.println("STDOUT: " + stdout);
-
-		// Check that sys and task outputs are not there
-		Assert.assertEquals(output, stdout);
+		runAndCheckMultiple("test/run_136.bds", expectedValues);
 	}
-
 }

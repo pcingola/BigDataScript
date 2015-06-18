@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
- * Expression
+ * Assign one variable to another one
  *
  * @author pcingola
  */
@@ -43,15 +43,8 @@ public class ExpressionAssignment extends ExpressionBinary {
 		bdsThread.run(right);
 		Object value = bdsThread.pop();
 
-		if (left instanceof VarReference) {
-			((VarReference) left).setValue(bdsThread, value);
-		} else if (left instanceof VarReferenceList) {
-			VarReferenceList listIndex = (VarReferenceList) left;
-			listIndex.setValue(bdsThread, value);
-		} else if (left instanceof VarReferenceMap) {
-			VarReferenceMap listIndex = (VarReferenceMap) left;
-			listIndex.setValue(bdsThread, value);
-		} else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
+		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
+		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 
 		bdsThread.push(value);
 	}

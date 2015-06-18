@@ -111,7 +111,7 @@ public class VariableInit extends BigDataScriptNode {
 		return varName //
 				+ (expression != null ? " = " + expression : "") //
 				+ (help != null ? " help " + help : "") //
-		;
+				;
 	}
 
 	@Override

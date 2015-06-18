@@ -6,10 +6,13 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListAdd;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListAddIndex;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListAddList;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListCount;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListFilter;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListForEach;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListHead;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListIndexOf;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListIsEmpty;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListJoin;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListJoinStr;
@@ -19,6 +22,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNative
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListMapToString;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListPop;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListPush;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListRemove;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListRemoveIdx;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListReverse;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListRm;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListRmOnExit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.list.MethodNativeListSize;
@@ -76,10 +82,13 @@ public class TypeList extends Type {
 			// Add libarary methods
 			ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
 			methods.add(new MethodNativeListAdd(baseType));
+			methods.add(new MethodNativeListAddIndex(baseType));
 			methods.add(new MethodNativeListAddList(baseType));
-			methods.add(new MethodNativeListHead(baseType));
+			methods.add(new MethodNativeListCount(baseType));
 			methods.add(new MethodNativeListFilter(baseType));
 			methods.add(new MethodNativeListForEach(baseType));
+			methods.add(new MethodNativeListHead(baseType));
+			methods.add(new MethodNativeListIndexOf(baseType));
 			methods.add(new MethodNativeListIsEmpty(baseType));
 			methods.add(new MethodNativeListJoin(baseType));
 			methods.add(new MethodNativeListJoinStr(baseType));
@@ -91,9 +100,12 @@ public class TypeList extends Type {
 			methods.add(new MethodNativeListPush(baseType));
 			methods.add(new MethodNativeListSize(baseType));
 			methods.add(new MethodNativeListSort(baseType));
-			methods.add(new MethodNativeListTail(baseType));
+			methods.add(new MethodNativeListRemove(baseType));
+			methods.add(new MethodNativeListRemoveIdx(baseType));
+			methods.add(new MethodNativeListReverse(baseType));
 			methods.add(new MethodNativeListRmOnExit(baseType));
 			methods.add(new MethodNativeListRm(baseType));
+			methods.add(new MethodNativeListTail(baseType));
 
 			// Show
 			if (debug) {

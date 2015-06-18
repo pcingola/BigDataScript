@@ -80,7 +80,7 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 		List list = (List) bdsThread.peek();
 		for (int i = 0; i < lefts.length; i++) {
 			// Get variable
-			VarReference vr = (VarReference) lefts[i];
+			Reference vr = (Reference) lefts[i];
 
 			// Get value
 			Object value;
