@@ -2472,7 +2472,7 @@ Command line options 'test_26.bds' :
 	someVeryLongCommandLineArgumentName : This command line argument has a really long name
 </pre>
 				<br>
-				<br>
+				<h3> Help sort order </h3>
 				Note that by default variables are sorted alphabetically when help is shown. 
 				This can be overriden by creating a global variable <code>helpUnsorted</code> (regardless of it's type and value, since the program may not even be running when the help is shown).
 				<br>
@@ -2498,9 +2498,10 @@ Command line options 'test_26b.bds' :
 	-aaa <int>  : Help for argument 'aaa' should be printed here
 </pre>
 				<br>
-				<br>
+				<h3> Showing help on empty command line arguments </h3>
 				The function <code>printHelp()</code> can be called to show the help message. 
 				This can be used, for instance, to show a help message when there are no command line arguments by doing something like this:
+				<br>
 				File <a href="bds/test_26c.bds">test_26c.bds</a>
 <pre class="prettyprint">
 #!/usr/bin/env bds
@@ -2524,6 +2525,44 @@ Command line options 'test_26c.bds' :
 	-aaa <int>  : Help for argument 'aaa' should be printed here
 	-bbb <int>  : Help for argument 'bbb' should be printed here
 	-zzz <int>  : Help for argument 'zzz' should be printed here
+</pre>
+				<br>
+				<h3> Help sections </h3>
+
+				Sometimes it is usefull to divide the help message into sections.
+				Sections are marked by <code>help</code> statements as in this example:
+				<br>
+				File <a href="bds/test_26d.bds">test_26d.bds</a>
+<pre class="prettyprint">
+#!/usr/bin/env bds
+
+help This program does blah
+help Actually, a lot of blah blah
+help     and even more blah
+help     or blah
+
+verbose := false    help Be verbose
+quiet   := false    help Be very quiet
+
+help Options related to database
+dbPort := 5432      help Database port
+dbName := "testDb"  help Database name
+
+print "OK\n"
+</pre>
+				<br>
+				When run, variables are grouped in two "help sections" (note that varaibles are sorted within each section):
+<pre>
+$ ./test_26d.bds -h
+This program does blah
+Actually, a lot of blah blah
+    and even more blah
+    or blah
+	-quiet <bool>     : Be very quiet
+	-verbose <bool>   : Be verbose
+Options related to database
+	-dbName <string>  : Database name
+	-dbPort <int>     : Database port
 </pre>
 			</div>
 

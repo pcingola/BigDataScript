@@ -1,0 +1,15 @@
+#!/usr/bin/env bds
+
+help This program does blah
+help Actually, a lot of blah blah
+help     and even more blah
+help     or blah
+
+verbose := false	help Be verbose
+quiet   := false	help Be very quiet
+
+help Options related to database
+dbPort := 5432		help Database port
+dbName := "testDb"	help Database name
+
+print "OK\n"
