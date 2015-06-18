@@ -87,6 +87,7 @@ public class TypeList extends Type {
 			methods.add(new MethodNativeListCount(baseType));
 			methods.add(new MethodNativeListFilter(baseType));
 			methods.add(new MethodNativeListForEach(baseType));
+			methods.add(new MethodNativeListHas(baseType));
 			methods.add(new MethodNativeListHead(baseType));
 			methods.add(new MethodNativeListIndexOf(baseType));
 			methods.add(new MethodNativeListIsEmpty(baseType));
