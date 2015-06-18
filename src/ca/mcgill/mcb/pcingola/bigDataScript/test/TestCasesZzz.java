@@ -13,16 +13,12 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test136() {
+	public void test137() {
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
-		expectedValues.put("l", "[1, 99, 2, 3]");
-		expectedValues.put("l2", "[3, 2, 99, 1]");
-		expectedValues.put("l3", "[3, 2, 99, 1, 99]");
-		expectedValues.put("l3count", "2");
-		expectedValues.put("l3idx", "2");
-		expectedValues.put("l4", "[3, 2, 1, 99]");
-		expectedValues.put("l5", "[3, 2, 1, 99]");
+		expectedValues.put("l", "[1, 2, 3]");
+		expectedValues.put("has2", "true");
+		expectedValues.put("has7", "false");
 
-		runAndCheckMultiple("test/run_136.bds", expectedValues);
+		runAndCheckMultiple("test/run_137.bds", expectedValues);
 	}
 }

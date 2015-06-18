@@ -23,7 +23,7 @@ public class MethodNativeListHas extends MethodNativeList {
 	protected void initMethod(Type baseType) {
 		functionName = "has";
 		classType = TypeList.get(baseType);
-		returnType = Type.INT;
+		returnType = Type.BOOL;
 
 		String argNames[] = { "this", "toCheck" };
 		Type argTypes[] = { classType, baseType };
@@ -37,15 +37,6 @@ public class MethodNativeListHas extends MethodNativeList {
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
 		Object toCheck = csThread.getObject("toCheck");
-		if (toCheck == null) {
-			for (Object val : list) {
-				if (val == null) return true;
-			}
-		} else {
-			for (Object val : list) {
-				if (toCheck.equals(val)) return true;
-			}
-		}
-		return false;
+		return list.contains(toCheck);
 	}
 }
