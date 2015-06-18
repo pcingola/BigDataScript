@@ -5,9 +5,6 @@ import java.util.HashMap;
 /**
  * A Hash that creates new elements if they don't exists
  * @author pcingola
- *
- * @param <K>
- * @param <V>
  */
 public class AutoHashMap<K, V> extends HashMap<K, V> {
 

@@ -933,6 +933,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionDivide(@NotNull BigDataScriptParser.ExpressionDivideContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#help}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelp(@NotNull BigDataScriptParser.HelpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#help}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelp(@NotNull BigDataScriptParser.HelpContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionAssignment}.
 	 * @param ctx the parse tree
 	 */

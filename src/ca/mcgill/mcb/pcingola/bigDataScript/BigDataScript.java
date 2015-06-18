@@ -47,6 +47,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.VariableInit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.NativeLibraryFunctions;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.NativeLibraryString;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.HelpCreator;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
@@ -67,7 +68,7 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-06-16";
+	public static final String BUILD = "2015-06-17";
 	public static final String REVISION = "l";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
@@ -174,7 +175,7 @@ public class BigDataScript {
 			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
-					);
+			);
 			return null;
 		}
 	}
@@ -952,7 +953,8 @@ public class BigDataScript {
 		// Show script's automatic help message
 		if (showHelp) {
 			if (verbose) Timer.showStdErr("Showing automaic 'help'");
-			programUnit.printHelp();
+			HelpCreator hc = new HelpCreator(programUnit);
+			System.out.println(hc);
 			return 0;
 		}
 
@@ -1012,7 +1014,7 @@ public class BigDataScript {
 		Timer.show("Totals"//
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
-				);
+		);
 		return exitCode;
 	}
 

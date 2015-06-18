@@ -59,6 +59,7 @@ statement : '{' statement* '}'                                                  
             | varDeclaration  eol*                                                         # statementVarDeclaration
             | expression  eol*                                                             # statementExpr
             | includeFile eol*                                                             # statementInclude
+            | HELP_LITERAL                                                                 # help
             | eol                                                                          # statmentEol
           ;
 

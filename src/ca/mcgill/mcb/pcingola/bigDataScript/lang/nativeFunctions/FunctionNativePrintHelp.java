@@ -4,6 +4,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.HelpCreator;
 
 /**
  * Native function "sleep"
@@ -29,7 +30,8 @@ public class FunctionNativePrintHelp extends FunctionNative {
 
 	@Override
 	protected Object runFunctionNative(BigDataScriptThread bdsThread) {
-		bdsThread.getRoot().getProgramUnit().printHelp();
+		HelpCreator hc = new HelpCreator(bdsThread.getRoot().getProgramUnit());
+		System.out.println(hc);
 		return true;
 	}
 
