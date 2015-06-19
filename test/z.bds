@@ -1,9 +1,6 @@
 #!/usr/bin/env bds
 
-l := [1, 2, 3]
+string[] test = ["one", "two", "three"]
+string check = test.removeIdx(2)
+print("$test $check\n")
 
-has2 := l.has(2)
-println "has2 : $has2"
-
-has7 := l.has(7)
-println "has7 : $has7"

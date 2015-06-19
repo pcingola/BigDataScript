@@ -22,10 +22,10 @@ public class MethodNativeListRemoveIdx extends MethodNativeList {
 	protected void initMethod(Type baseType) {
 		functionName = "removeIdx";
 		classType = TypeList.get(baseType);
-		returnType = Type.INT;
+		returnType = baseType;
 
 		String argNames[] = { "this", "idx" };
-		Type argTypes[] = { classType, baseType };
+		Type argTypes[] = { classType, Type.INT };
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();
@@ -36,7 +36,6 @@ public class MethodNativeListRemoveIdx extends MethodNativeList {
 	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
 		long idx = csThread.getInt("idx");
-		list.remove((int) idx);
-		return idx;
+		return list.remove((int) idx);
 	}
 }
