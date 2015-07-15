@@ -1,6 +1,3 @@
 #!/usr/bin/env bds
 
-string[] test = ["one", "two", "three"]
-string check = test.removeIdx(2)
-print("$test $check\n")
-
+task rm asfasdfasd

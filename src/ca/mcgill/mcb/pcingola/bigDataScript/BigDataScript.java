@@ -85,7 +85,6 @@ public class BigDataScript {
 	boolean quiet; // Quiet mode
 	boolean showHelp; // Show bds's script help (provided on each variable definition). Do not run program
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
-	//	boolean useDoneFile; // Use files instead of comparing dates
 	boolean verbose; // Verbose mode
 	boolean reportYaml; // Use YAML report style
 	Boolean reportHtml; // Use HTML report style

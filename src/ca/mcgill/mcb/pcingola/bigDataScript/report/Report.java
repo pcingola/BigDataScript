@@ -282,6 +282,7 @@ public class Report {
 		}
 
 		Date end = task.getRunningEndTime();
+		if (end == null) end = start;
 		if (end != null) {
 			rTemplate.add("taskEnd", outFormat.format(end));
 			rTemplate.add("taskEndCsv", csvDate(end));
