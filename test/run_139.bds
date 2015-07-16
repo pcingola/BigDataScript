@@ -1,0 +1,14 @@
+#!/usr/bin/env bds
+
+err := 0.0
+for( real x = 0.0 ; x <= (PI/2.0) ; x += 0.1 ) {
+	y := sin(x)
+	ay := asin(y)
+
+	#println "f($x) = $y\taf($y) = $ay"
+	err += ((ay - x) * (ay - x))
+}
+
+hasErr := (err > 0.000001)
+#print "Error: $err\thasErr = $hasErr\n"
+

@@ -1,8 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.FunctionNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * Function type
@@ -11,19 +9,18 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
  */
 public class TypeFunc extends Type {
 
-	FunctionDeclaration functionDeclaration;
 	protected Parameters parameters;
 
 	/**
 	 * Get or create TypeFunc
 	 */
-	public static TypeFunc get(FunctionDeclaration function) {
+	public static TypeFunc get(FunctionDeclaration functionDecl) {
 		// Get type from hash
-		String key = PrimitiveType.FUNC + ":" + function.signature();
+		String key = PrimitiveType.FUNC + ":" + functionDecl.signature();
 
 		TypeFunc type = (TypeFunc) types.get(key);
 		if (type == null) {
-			type = new TypeFunc(function);
+			type = new TypeFunc(functionDecl);
 			types.put(key, type);
 		}
 
@@ -57,10 +54,11 @@ public class TypeFunc extends Type {
 				Type type = vdecl.getType();
 				for (VariableInit vi : vdecl.getVarInit())
 					sb.append(type + ",");
-
-				sb.deleteCharAt(sb.length() - 1);
 			}
 		}
+
+		int lastChar = sb.length() - 1;
+		if (sb.charAt(lastChar) == ',') sb.deleteCharAt(lastChar);
 		sb.append(") -> ");
 		sb.append(returnType);
 
@@ -68,11 +66,7 @@ public class TypeFunc extends Type {
 	}
 
 	public TypeFunc(FunctionDeclaration functionDeclaration) {
-		super();
-		primitiveType = PrimitiveType.FUNC;
-		this.functionDeclaration = functionDeclaration;
-		parameters = functionDeclaration.getParameters();
-		returnType = functionDeclaration.getReturnType();
+		this(functionDeclaration.getParameters(), functionDeclaration.getReturnType());
 	}
 
 	protected TypeFunc(Parameters parameters, Type returnType) {
@@ -91,20 +85,14 @@ public class TypeFunc extends Type {
 		int cmp = primitiveType.ordinal() - type.primitiveType.ordinal();
 		if (cmp != 0) return cmp;
 
-		TypeFunc typef = (TypeFunc) type;
-		// Both type names are null? => Equal
-		if ((functionDeclaration == null) && (typef.functionDeclaration == null)) return 0;
+		// Compare return types
+		cmp = Gpr.compareNull(returnType, type.getReturnType());
+		if (cmp != 0) return cmp;
 
-		// Any null is 'first'
-		if ((functionDeclaration != null) && (typef.functionDeclaration == null)) return 1;
-		if ((functionDeclaration == null) && (typef.functionDeclaration != null)) return -1;
+		TypeFunc typef = (TypeFunc) type;
 
 		// Compare names
-		return functionDeclaration.signature().compareTo(typef.functionDeclaration.signature());
-	}
-
-	public FunctionDeclaration getFunctionDeclaration() {
-		return functionDeclaration;
+		return Gpr.compareNull(parameters, typef.getParameters());
 	}
 
 	public Parameters getParameters() {
@@ -122,29 +110,8 @@ public class TypeFunc extends Type {
 	}
 
 	@Override
-	public boolean isNative() {
-		return (functionDeclaration instanceof FunctionNative) || (functionDeclaration instanceof MethodNative);
-	}
-
-	@Override
 	public boolean isPrimitiveType() {
 		return false;
-	}
-
-	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
-		if (functionDeclaration instanceof MethodNative) {
-			// Nothing to do: Native methods are not serialized
-		} else super.serializeParse(serializer);
-	}
-
-	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
-		// Nothing to do: Native methods are not serialized
-		if (functionDeclaration instanceof MethodNative) {
-			// Nothing to do: Native methods are not serialized
-			return "";
-		} else return super.serializeSave(serializer);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.MethodDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -26,7 +27,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	 */
 	protected void addNativeMethodToClassScope() {
 		Scope classScope = Scope.getClassScope(getClassType());
-		ScopeSymbol ssym = new ScopeSymbol(functionName, getType());
+		ScopeSymbol ssym = new ScopeSymbol(functionName, getType(), this);
 		classScope.add(ssym);
 	}
 
@@ -57,6 +58,11 @@ public abstract class MethodNative extends MethodDeclaration {
 	 * Initialize method parameters (if possible)
 	 */
 	protected abstract void initMethod();
+
+	@Override
+	public boolean isNative() {
+		return true;
+	}
 
 	@Override
 	public void runFunction(BigDataScriptThread bdsThread) {
@@ -90,6 +96,11 @@ public abstract class MethodNative extends MethodDeclaration {
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		// Nothing to do: Native methods are not serialized
 		return "";
+	}
+
+	@Override
+	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
+		// Nothing to do
 	}
 
 }

@@ -68,8 +68,8 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-06-19";
-	public static final String REVISION = "l";
+	public static final String BUILD = "2015-07-16";
+	public static final String REVISION = "m";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -716,6 +716,10 @@ public class BigDataScript {
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_HOUR, Type.INT, (long) (60 * 60)));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_DAY, Type.INT, (long) (24 * 60 * 60)));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_WEEK, Type.INT, (long) (7 * 24 * 60 * 60)));
+
+		// Math constants
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_E, Type.REAL, Math.E));
+		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_PI, Type.REAL, Math.PI));
 
 		// Add all constants
 		for (ScopeSymbol ss : constants) {

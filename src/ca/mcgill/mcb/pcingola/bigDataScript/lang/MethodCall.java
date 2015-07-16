@@ -25,6 +25,50 @@ public class MethodCall extends FunctionCall {
 		super(parent, tree);
 	}
 
+	@Override
+	protected void parse(ParseTree tree) {
+		expresionObj = (Expression) factory(tree, 0);
+		// child[1] = '.'
+		functionName = tree.getChild(2).getText();
+		// child[3] = '('
+		args = new Args(this, null);
+		args.parse(tree, 4, tree.getChildCount() - 1);
+		// child[tree.getChildCount()] = ')'
+
+		// Create empty (non-null) args
+		if (args == null) args = new Args(this, null);
+		args = Args.getArgsThis(args, expresionObj);
+	}
+
+	@Override
+	public Type returnType(Scope scope) {
+		if (returnType != null) return returnType;
+
+		// Calculate return types for expr and args
+		Type exprType = expresionObj.returnType(scope);
+		args.returnType(scope);
+
+		// Find method
+		if (exprType != null) {
+			// Find function in class
+			Scope classScope = Scope.getClassScope(exprType);
+			if (classScope != null) {
+				ScopeSymbol ssfunc = classScope.findFunction(functionName, args);
+
+				// Not found? Try a 'regular' function
+				if (ssfunc == null) ssfunc = scope.findFunction(functionName, args);
+
+				if (ssfunc != null) {
+					functionDeclaration = (FunctionDeclaration) ssfunc.getValue();
+					returnType = functionDeclaration.getReturnType();
+				}
+			}
+
+		}
+
+		return returnType;
+	}
+
 	/**
 	 * Evaluate an expression
 	 */
@@ -69,50 +113,6 @@ public class MethodCall extends FunctionCall {
 			// Return result
 			bdsThread.push(retVal);
 		}
-	}
-
-	@Override
-	protected void parse(ParseTree tree) {
-		expresionObj = (Expression) factory(tree, 0);
-		// child[1] = '.'
-		functionName = tree.getChild(2).getText();
-		// child[3] = '('
-		args = new Args(this, null);
-		args.parse(tree, 4, tree.getChildCount() - 1);
-		// child[tree.getChildCount()] = ')'
-
-		// Create empty (non-null) args
-		if (args == null) args = new Args(this, null);
-		args = Args.getArgsThis(args, expresionObj);
-	}
-
-	@Override
-	public Type returnType(Scope scope) {
-		if (returnType != null) return returnType;
-
-		// Calculate return types for expr and args
-		Type exprType = expresionObj.returnType(scope);
-		args.returnType(scope);
-
-		// Find method
-		if (exprType != null) {
-			// Find function in class
-			Scope classScope = Scope.getClassScope(exprType);
-			if (classScope != null) {
-				ScopeSymbol ssfunc = classScope.findFunction(functionName, args);
-
-				// Not found? Try a 'regular' function
-				if (ssfunc == null) ssfunc = scope.findFunction(functionName, args);
-
-				if (ssfunc != null) {
-					functionDeclaration = ((TypeFunc) ssfunc.getType()).getFunctionDeclaration();
-					returnType = functionDeclaration.getReturnType();
-				}
-			}
-
-		}
-
-		return returnType;
 	}
 
 	@Override

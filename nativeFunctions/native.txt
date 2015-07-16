@@ -1,0 +1,44 @@
+#retType	functionName	argNames	argTypes	methodBody
+#---
+# Int functions
+#---
+int	abs	x	int	return (Long) Math.abs(bdsThread.getInt("x"));
+int	getExponent	d	real	return (long) Math.getExponent(bdsThread.getReal("d"));
+int	round	a	real	return (Long) Math.round(bdsThread.getReal("a"));
+#---
+# Real functions
+#---
+real	abs	a	real	return (Double) Math.abs(bdsThread.getReal("a"));
+real	acos	a	real	return (Double) Math.acos(bdsThread.getReal("a"));
+real	asin	a	real	return (Double) Math.asin(bdsThread.getReal("a"));
+real	atan	a	real	return (Double) Math.atan(bdsThread.getReal("a"));
+real	atan2	y,x	real,real	return (Double) Math.atan2(bdsThread.getReal("y"), bdsThread.getReal("x"));
+real	cbrt	a	real	return (Double) Math.cbrt(bdsThread.getReal("a"));
+real	ceil	a	real	return (Double) Math.ceil(bdsThread.getReal("a"));
+real	copySign	magnitude,sign	real,real	return (Double) Math.copySign(bdsThread.getReal("magnitude"), bdsThread.getReal("sign"));
+real	cos	a	real	return (Double) Math.cos(bdsThread.getReal("a"));
+real	cosh	x	real	return (Double) Math.cosh(bdsThread.getReal("x"));
+real	exp	a	real	return (Double) Math.exp(bdsThread.getReal("a"));
+real	expm1	x	real	return (Double) Math.expm1(bdsThread.getReal("x"));
+real	floor	a	real	return (Double) Math.floor(bdsThread.getReal("a"));
+real	hypot	x,y	real,real	return (Double) Math.hypot(bdsThread.getReal("x"), bdsThread.getReal("y"));
+real	IEEEremainder	f1,f2	real,real	return (Double) Math.IEEEremainder(bdsThread.getReal("f1"), bdsThread.getReal("f2"));
+real	log	a	real	return (Double) Math.log(bdsThread.getReal("a"));
+real	log10	a	real	return (Double) Math.log10(bdsThread.getReal("a"));
+real	log1p	x	real	return (Double) Math.log1p(bdsThread.getReal("x"));
+real	max	a,b	real,real	return (Double) Math.max(bdsThread.getReal("a"), bdsThread.getReal("b"));
+real	min	a,b	real,real	return (Double) Math.min(bdsThread.getReal("a"), bdsThread.getReal("b"));
+real	nextAfter	start,direction	real,real	return (Double) Math.nextAfter(bdsThread.getReal("start"), bdsThread.getReal("direction"));
+real	nextUp	d	real	return (Double) Math.nextUp(bdsThread.getReal("d"));
+real	pow	a,b	real,real	return (Double) Math.pow(bdsThread.getReal("a"), bdsThread.getReal("b"));
+real	rint	a	real	return (Double) Math.rint(bdsThread.getReal("a"));
+real	scalb	d,scaleFactor	real,int	return (Double) Math.scalb(bdsThread.getReal("d"), (int) bdsThread.getInt("scaleFactor"));
+real	signum	d	real	return (Double) Math.signum(bdsThread.getReal("d"));
+real	sin	a	real	return (Double) Math.sin(bdsThread.getReal("a"));
+real	sinh	x	real	return (Double) Math.sinh(bdsThread.getReal("x"));
+real	sqrt	a	real	return (Double) Math.sqrt(bdsThread.getReal("a"));
+real	tan	a	real	return (Double) Math.tan(bdsThread.getReal("a"));
+real	tanh	x	real	return (Double) Math.tanh(bdsThread.getReal("x"));
+real	toDegrees	angrad	real	return (Double) Math.toDegrees(bdsThread.getReal("angrad"));
+real	toRadians	angdeg	real	return (Double) Math.toRadians(bdsThread.getReal("angdeg"));
+real	ulp	a	real	return (Double) Math.ulp(bdsThread.getReal("d"));

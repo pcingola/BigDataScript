@@ -80,7 +80,7 @@ public class FunctionCall extends Expression {
 
 		ScopeSymbol ssfunc = scope.findFunction(functionName, args);
 		if (ssfunc != null) {
-			functionDeclaration = ((TypeFunc) ssfunc.getType()).getFunctionDeclaration();
+			functionDeclaration = (FunctionDeclaration) ssfunc.getValue();
 			returnType = functionDeclaration.getReturnType();
 		}
 

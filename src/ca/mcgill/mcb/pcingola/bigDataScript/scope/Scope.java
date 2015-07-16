@@ -25,11 +25,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
  */
 public class Scope implements BigDataScriptSerialize, Iterable<String> {
 
-	public static final String GLOBAL_VAR_K = "K";
-	public static final String GLOBAL_VAR_M = "M";
-	public static final String GLOBAL_VAR_G = "G";
-	public static final String GLOBAL_VAR_T = "T";
-	public static final String GLOBAL_VAR_P = "P";
+	public static final String GLOBAL_VAR_K = "K"; // Kilo = 2^10
+	public static final String GLOBAL_VAR_M = "M"; // Mega = 2^20
+	public static final String GLOBAL_VAR_G = "G"; // Giga = 2^30
+	public static final String GLOBAL_VAR_T = "T"; // Tera = 2^40
+	public static final String GLOBAL_VAR_P = "P"; // Peta = 2^50
+	public static final String GLOBAL_VAR_E = "E"; // Euler's constant
+	public static final String GLOBAL_VAR_PI = "PI"; // Pi
 	public static final String GLOBAL_VAR_MINUTE = "minute";
 	public static final String GLOBAL_VAR_HOUR = "hour";
 	public static final String GLOBAL_VAR_DAY = "day";

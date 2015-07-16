@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.FunctionDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -26,14 +27,12 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	 */
 	protected void addNativeFunctionToScope() {
 		Scope classScope = Scope.getGlobalScope();
-		ScopeSymbol ssym = new ScopeSymbol(functionName, getType());
+		ScopeSymbol ssym = new ScopeSymbol(functionName, getType(), this);
 		classScope.add(ssym);
 	}
 
 	/**
 	 * Convert an array to a list
-	 * @param strings
-	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected ArrayList array2list(Object objects[]) {
@@ -44,8 +43,6 @@ public abstract class FunctionNative extends FunctionDeclaration {
 
 	/**
 	 * Convert an array to a list and sort the list
-	 * @param strings
-	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected ArrayList array2listSorted(Object objects[]) {
@@ -59,6 +56,11 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	 * Initialize method parameters (if possible)
 	 */
 	protected abstract void initFunction();
+
+	@Override
+	public boolean isNative() {
+		return true;
+	}
 
 	@Override
 	public void runFunction(BigDataScriptThread bdsThread) {
@@ -75,8 +77,6 @@ public abstract class FunctionNative extends FunctionDeclaration {
 
 	/**
 	 * Run a method
-	 * @param csThread
-	 * @param objThis
 	 */
 	protected abstract Object runFunctionNative(BigDataScriptThread csThread);
 
@@ -89,6 +89,18 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	public String serializeSave(BigDataScriptSerializer serializer) {
 		// Nothing to do: Native methods are not serialized
 		return "";
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("native:" + this.getClass().getCanonicalName());
+		return sb.toString();
+	}
+
+	@Override
+	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
+		// Nothing to do
 	}
 
 }

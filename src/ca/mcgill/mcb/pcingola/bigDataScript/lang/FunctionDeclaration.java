@@ -122,6 +122,10 @@ public class FunctionDeclaration extends StatementWithScope {
 		return funcType;
 	}
 
+	public boolean isNative() {
+		return false;
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		returnType = (Type) factory(tree, 0);
@@ -183,7 +187,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(returnType + " " + functionName + "( " + parameters + " ) {\n");
-		sb.append(Gpr.prependEachLine("\t", statement.toString()));
+		if (statement != null) sb.append(Gpr.prependEachLine("\t", statement.toString()));
 		sb.append("}");
 		return sb.toString();
 	}
@@ -192,7 +196,6 @@ public class FunctionDeclaration extends StatementWithScope {
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Function name collides with variable name?
 		if (scope.getSymbolLocal(functionName) != null) compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
-
 	}
 
 }

@@ -31,17 +31,14 @@ public class ExpressionDivide extends ExpressionMath {
 		bdsThread.run(right);
 		if (bdsThread.isCheckpointRecover()) return;
 
-		if (isInt()) {
-			long den = popInt(bdsThread);
-			long num = popInt(bdsThread);
-			bdsThread.push(num / den);
-			return;
-		}
+		Object rval = bdsThread.pop();
+		Object lval = bdsThread.pop();
 
-		if (isReal()) {
-			double den = popInt(bdsThread);
-			double num = popInt(bdsThread);
-			bdsThread.push(num / den);
+		if (isInt()) {
+			bdsThread.push(((long) lval) / ((long) rval));
+			return;
+		} else if (isReal()) {
+			bdsThread.push(((double) lval) / ((double) rval));
 			return;
 		}
 

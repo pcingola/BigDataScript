@@ -45,19 +45,17 @@ public class ExpressionMinus extends ExpressionMath {
 			bdsThread.run(right);
 			if (bdsThread.isCheckpointRecover()) return;
 
+			Object rval = bdsThread.pop();
+			Object lval = bdsThread.pop();
+
 			if (isInt()) {
-				long tr = popInt(bdsThread);
-				long tl = popInt(bdsThread);
-				bdsThread.push(tl - tr);
+				bdsThread.push(((long) lval) - ((long) rval));
+				return;
+			} else if (isReal()) {
+				bdsThread.push(((double) lval) - ((double) rval));
 				return;
 			}
 
-			if (isReal()) {
-				double tr = popInt(bdsThread);
-				double tl = popInt(bdsThread);
-				bdsThread.push(tl - tr);
-				return;
-			}
 		}
 
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());

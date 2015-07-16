@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
  *
  * @author pcingola
  */
-public class Parameters extends BigDataScriptNode {
+public class Parameters extends BigDataScriptNode implements Comparable<Parameters> {
 
 	VarDeclaration varDecl[];
 
@@ -41,6 +41,12 @@ public class Parameters extends BigDataScriptNode {
 
 	public Parameters(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	public int compareTo(Parameters o) {
+		throw new RuntimeException("Unimplemented!");
+		// return 0;
 	}
 
 	/**

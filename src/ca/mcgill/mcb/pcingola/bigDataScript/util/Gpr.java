@@ -148,6 +148,19 @@ public class Gpr {
 	}
 
 	/**
+	 * Compare if objects are null. If non-null, compare objects
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static int compareNull(Comparable o1, Comparable o2) {
+		int i1 = (o1 == null ? 0 : 1);
+		int i2 = (o2 == null ? 0 : 1);
+		int cmp = i1 - i2;
+		if (cmp != 0) return cmp;
+
+		return o1.compareTo(o2);
+	}
+
+	/**
 	 * Count lines in a file (same as 'wc -l file' in unix)
 	 */
 	public static int countLines(String file) {

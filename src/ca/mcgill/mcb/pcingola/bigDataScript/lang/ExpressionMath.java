@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
  * A mathematical expression (actual '+" can be used for other strings and other things)
- * 
+ *
  * @author pcingola
  */
 public class ExpressionMath extends ExpressionBinary {

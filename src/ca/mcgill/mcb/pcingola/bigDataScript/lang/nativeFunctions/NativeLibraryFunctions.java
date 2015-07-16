@@ -32,7 +32,45 @@ public class NativeLibraryFunctions {
 			, FunctionNativeToIntFromReal.class //
 			, FunctionNativeConfig.class //
 			, FunctionNativeConfigOri.class //
-
+			//
+			// Math functions
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_abs_int.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_getExponent_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_round_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_abs_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_acos_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_asin_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_atan_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_atan2_real_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_cbrt_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_ceil_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_copySign_real_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_cos_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_cosh_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_exp_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_expm1_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_floor_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_hypot_real_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_IEEEremainder_real_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_log_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_log10_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_log1p_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_max_real_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_min_real_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_nextAfter_real_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_nextUp_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_pow_real_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_rint_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_scalb_real_int.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_signum_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_sin_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_sinh_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_sqrt_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_tan_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_tanh_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_toDegrees_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_toRadians_real.class //
+			, ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math.FunctionNative_ulp_real.class //
 	};
 
 	ArrayList<FunctionNative> functions;
