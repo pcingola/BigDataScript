@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.task;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.report.Report;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
@@ -133,7 +132,7 @@ public class TaskDependecies {
 						for (Task taskDep : taskDeps)
 							if (!taskDep.isDone() // Don't add finished tasks
 									&& !taskDep.isDependency() // If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
-							) task.addDependency(taskDep); // Add it to dependency list
+									) task.addDependency(taskDep); // Add it to dependency list
 					}
 				}
 			}
@@ -207,14 +206,8 @@ public class TaskDependecies {
 
 		// Not found? => Populate map
 		if (filePath == null) {
-			File f = new File(fileName);
-			try {
-				filePath = f.getCanonicalPath();
-			} catch (IOException e) {
-				// Cannot find path? Use file name
-				if (debug) e.printStackTrace();
-				filePath = fileName;
-			}
+			Data f = Data.factory(fileName);
+			filePath = f.getPath();
 
 			// Add to map
 			canonicalPath.put(fileName, filePath);

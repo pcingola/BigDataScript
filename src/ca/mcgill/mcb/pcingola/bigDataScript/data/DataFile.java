@@ -61,6 +61,11 @@ public class DataFile extends Data {
 	}
 
 	@Override
+	public void deleteOnExit() {
+		file.deleteOnExit();
+	}
+
+	@Override
 	public boolean download() {
 		return true;
 	}
@@ -98,6 +103,11 @@ public class DataFile extends Data {
 	@Override
 	public boolean isDownloaded() {
 		return true;
+	}
+
+	@Override
+	public boolean isFile() {
+		return file.isFile();
 	}
 
 	@Override

@@ -89,6 +89,11 @@ public abstract class Data {
 	public abstract boolean delete();
 
 	/**
+	 * Delete when program finishes
+	 */
+	public abstract void deleteOnExit();
+
+	/**
 	 * Download file to local file system
 	 */
 	public abstract boolean download();
@@ -141,6 +146,11 @@ public abstract class Data {
 	 * Do we have a (valid) local copy of this data?
 	 */
 	public abstract boolean isDownloaded();
+
+	/**
+	 * Does thi represent a 'file' (not a directory)
+	 */
+	public abstract boolean isFile();
 
 	/**
 	 * List of file names under this 'directory'
