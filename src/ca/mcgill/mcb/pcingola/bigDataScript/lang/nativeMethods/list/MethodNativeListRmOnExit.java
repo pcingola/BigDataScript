@@ -5,7 +5,7 @@ import java.util.List;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * RmOnExit: Mark all files to be deleted on exit
@@ -32,7 +32,7 @@ public class MethodNativeListRmOnExit extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		List list = (List) objThis;
 		bdsThread.rmOnExit(list);
 		return objThis;

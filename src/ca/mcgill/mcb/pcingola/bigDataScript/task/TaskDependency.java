@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Expression;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThreads;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThreads;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -63,7 +63,7 @@ public class TaskDependency {
 		Task task = TaskDependecies.get().getTask(input);
 
 		if (task != null) tasks.add(task);
-		else inputFiles.add(BigDataScriptThreads.filePath(input)); // No taskId, then must be a file
+		else inputFiles.add(BdsThreads.filePath(input)); // No taskId, then must be a file
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class TaskDependency {
 	 * Add output
 	 */
 	public void addOutput(String output) {
-		outputFiles.add(BigDataScriptThreads.filePath(output));
+		outputFiles.add(BdsThreads.filePath(output));
 	}
 
 	/**

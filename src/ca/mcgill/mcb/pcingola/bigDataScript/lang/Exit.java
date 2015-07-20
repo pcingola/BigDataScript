@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
@@ -44,7 +44,7 @@ public class Exit extends Statement {
 	 * Run the program
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		if (expr != null) {
 			bdsThread.run(expr);
 			if (bdsThread.isCheckpointRecover()) return;

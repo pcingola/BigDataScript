@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * A arithmetic 'plus'
@@ -20,7 +20,7 @@ public class ExpressionUnaryPlus extends ExpressionUnaryMinus {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		if ((returnType == Type.INT) || (returnType == Type.REAL)) bdsThread.run(expr);
 		else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}

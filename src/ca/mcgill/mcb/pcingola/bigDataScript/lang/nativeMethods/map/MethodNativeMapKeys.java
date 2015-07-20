@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Return a list of keys
@@ -36,7 +36,7 @@ public class MethodNativeMapKeys extends MethodNativeMap {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread csThread, Object objThis) {
 		HashMap map = (HashMap) objThis;
 		ArrayList list = new ArrayList();
 		list.addAll(map.keySet());

@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependency;
@@ -48,7 +48,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	/**
 	 * Execute a task (schedule it into executioner)
 	 */
-	public static void execute(BigDataScriptThread bdsThread, Task task) {
+	public static void execute(BdsThread bdsThread, Task task) {
 		// Make sure the task in in initial state
 		task.reset();
 
@@ -79,7 +79,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	/**
 	 * Create a task
 	 */
-	Task createTask(BigDataScriptThread bdsThread, TaskDependency taskDependency, ExpressionSys sys) {
+	Task createTask(BdsThread bdsThread, TaskDependency taskDependency, ExpressionSys sys) {
 		// Task name
 		String taskName = "";
 		if (bdsThread.hasVariable(TASK_OPTION_TASKNAME)) taskName = bdsThread.getString(TASK_OPTION_TASKNAME);
@@ -116,14 +116,14 @@ public class ExpressionTask extends ExpressionWithScope {
 	/**
 	 * Dispatch task for execution
 	 */
-	void dispatchTask(BigDataScriptThread bdsThread, Task task) {
+	void dispatchTask(BdsThread bdsThread, Task task) {
 		execute(bdsThread, task);
 	}
 
 	/**
 	 * Evaluate 'sys' statements used to create task
 	 */
-	ExpressionSys evalSys(BigDataScriptThread bdsThread) {
+	ExpressionSys evalSys(BdsThread bdsThread) {
 		ExpressionSys sys = null;
 
 		if (statement instanceof StatementExpr) {
@@ -204,7 +204,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Evaluate 'task' expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		// Evaluate task options (get a list of dependencies)
 		TaskDependency taskDependency = null;
 		if (options != null) {

@@ -37,19 +37,21 @@ public abstract class TailFile {
 	 */
 	public static String tail(String fileName, int linesToRead) {
 		if (linesToRead == 0) return "";
+
+		// Read the whole file?
 		if (linesToRead < 0) return Gpr.readFile(fileName);
 
 		if (fileName == null) return null;
-		File f = new File(fileName);
-		if (f == null || !f.exists()) return null;
-		if (f.length() <= 0) return "";
+		File file = new File(fileName);
+		if (file == null || !file.exists()) return null;
+		if (file.length() <= 0) return "";
 
 		// Read file
 		final int chunkSize = 1024 * 64;
 		List<String> lines = new ArrayList<String>();
 		StringBuilder latestLine = null;
 		try {
-			RandomAccessFile raf = new RandomAccessFile(new File(fileName), "r");
+			RandomAccessFile raf = new RandomAccessFile(file, "r");
 
 			long end = raf.length();
 			boolean readMore = true;

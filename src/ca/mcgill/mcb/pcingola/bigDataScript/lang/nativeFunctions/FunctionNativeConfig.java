@@ -5,7 +5,7 @@ import java.util.HashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -30,7 +30,7 @@ public class FunctionNativeConfig extends FunctionNative {
 		addNativeFunctionToScope();
 	}
 
-	protected Object parseFile(BigDataScriptThread csThread, String fileName, HashMap<String, String> configOri) {
+	protected Object parseFile(BdsThread csThread, String fileName, HashMap<String, String> configOri) {
 		// Sanity check
 		if (!Gpr.canRead(fileName)) csThread.fatalError(this, "Cannot read config file '" + fileName + "'");
 
@@ -73,7 +73,7 @@ public class FunctionNativeConfig extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BigDataScriptThread csThread) {
+	protected Object runFunctionNative(BdsThread csThread) {
 		String fileName = csThread.getString("file");
 		return parseFile(csThread, fileName, null);
 	}

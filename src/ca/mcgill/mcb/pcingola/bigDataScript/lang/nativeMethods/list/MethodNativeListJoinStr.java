@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Join all elements of a ins into a string (using a specified separator)
@@ -33,7 +33,7 @@ public class MethodNativeListJoinStr extends MethodNativeListJoin {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread csThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
 		String ext = csThread.getString("separator");
 		return join(list, ext);

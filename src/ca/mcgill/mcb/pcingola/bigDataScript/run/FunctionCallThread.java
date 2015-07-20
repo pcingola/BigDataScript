@@ -5,8 +5,8 @@ import java.util.Map;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.FunctionCall;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Statement;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerialize;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -22,7 +22,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  *
  * @author pcingola
  */
-public class FunctionCallThread extends BigDataScriptThread {
+public class FunctionCallThread extends BdsThread {
 
 	String functionCallNodeId; // Statement's ID, used only when un-serializing
 	FunctionCall functionCall;
@@ -32,7 +32,7 @@ public class FunctionCallThread extends BigDataScriptThread {
 		super(null, config);
 	}
 
-	public FunctionCallThread(Statement statement, FunctionCall functionCall, BigDataScriptThread parent, Object arguments[]) {
+	public FunctionCallThread(Statement statement, FunctionCall functionCall, BdsThread parent, Object arguments[]) {
 		super(statement, parent);
 		setFunctionCall(functionCall);
 		this.arguments = arguments;
@@ -62,7 +62,7 @@ public class FunctionCallThread extends BigDataScriptThread {
 	}
 
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		super.serializeParse(serializer);
 		functionCallNodeId = serializer.getNextFieldString();
 
@@ -75,7 +75,7 @@ public class FunctionCallThread extends BigDataScriptThread {
 	 * Save thread's main information
 	 */
 	@Override
-	protected String serializeSaveThreadMain(BigDataScriptSerializer serializer) {
+	protected String serializeSaveThreadMain(BdsSerializer serializer) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.serializeSaveThreadMain(serializer));
 
@@ -97,7 +97,7 @@ public class FunctionCallThread extends BigDataScriptThread {
 	}
 
 	@Override
-	public void setStatement(Map<String, BigDataScriptSerialize> nodesById) {
+	public void setStatement(Map<String, BdsSerialize> nodesById) {
 		// Find and set functionCall
 		FunctionCall fcall = (FunctionCall) nodesById.get(functionCallNodeId);
 		if (fcall == null) throw new RuntimeException("Cannot find statement node '" + fcall + "'");

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * A "Kill" statement.
@@ -33,7 +33,7 @@ public class Kill extends Statement {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		// No arguments? Kill for all tasks
 
 		bdsThread.run(taskId);

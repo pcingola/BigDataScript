@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class MethodNative_string_substr_start extends MethodNative {
@@ -30,7 +30,7 @@ public class MethodNative_string_substr_start extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread csThread, Object objThis) {
 		String s = objThis.toString(); int start = (int) csThread.getInt("start") ; start=Math.max(0,start); return s.substring(start);
 	}
 }

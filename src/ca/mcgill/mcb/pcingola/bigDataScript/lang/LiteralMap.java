@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 
 /**
@@ -72,7 +72,7 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		HashMap<String, Object> map = new HashMap<String, Object>(values.length);
 		Type baseType = baseType();
 

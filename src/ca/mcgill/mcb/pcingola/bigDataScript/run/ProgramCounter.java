@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerialize;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  *
  * @author pcingola
  */
-public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer> {
+public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
 
 	private static int programCounterNum = 0;
 
@@ -114,7 +114,7 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 	}
 
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		initialSize = (int) serializer.getNextFieldInt();
 
 		for (int i = 1; i < serializer.getFields().length - 1; i++)
@@ -122,7 +122,7 @@ public class ProgramCounter implements BigDataScriptSerialize, Iterable<Integer>
 	}
 
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 		out.append(getClass().getSimpleName() + "\t");
 		out.append(initialSize + "\t");

@@ -4,7 +4,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class MethodNative_string_readLines extends MethodNative {
@@ -25,7 +25,7 @@ public class MethodNative_string_readLines extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
-		return array2list(Gpr.readFile(bdsThread.filePath(objThis.toString()), false).split("\n"));
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		return array2list(Gpr.readFile(bdsThread.dataLocalPath(objThis.toString()), false).split("\n"));
 	}
 }

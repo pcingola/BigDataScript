@@ -1,7 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.cluster.host;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerialize;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  *
  * @author pcingola
  */
-public class HostResources implements Comparable<HostResources>, BigDataScriptSerialize, Cloneable {
+public class HostResources implements Comparable<HostResources>, BdsSerialize, Cloneable {
 
 	private static int hostResourcesNum = 0;
 
@@ -139,7 +139,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	}
 
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		cpus = (int) serializer.getNextFieldInt();
 		mem = serializer.getNextFieldInt();
 		timeout = serializer.getNextFieldInt();
@@ -147,7 +147,7 @@ public class HostResources implements Comparable<HostResources>, BigDataScriptSe
 	}
 
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		return cpus + "\t" + mem + "\t" + timeout + "\t" + wallTimeout;
 	}
 

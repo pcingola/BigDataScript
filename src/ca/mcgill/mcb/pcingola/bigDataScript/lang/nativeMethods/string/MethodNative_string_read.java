@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class MethodNative_string_read extends MethodNative {
@@ -24,8 +24,8 @@ public class MethodNative_string_read extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
-		String path = bdsThread.filePath(objThis.toString());
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		String path = bdsThread.dataLocalPath(objThis.toString());
 		return Gpr.readFile(path, false);
 	}
 }

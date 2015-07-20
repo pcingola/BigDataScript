@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -36,7 +36,7 @@ public class While extends Statement {
 	/**
 	 * Evaluate condition
 	 */
-	boolean runCondition(BigDataScriptThread bdsThread, boolean first) {
+	boolean runCondition(BdsThread bdsThread, boolean first) {
 		if (condition == null) return true;
 
 		bdsThread.run(condition);
@@ -54,7 +54,7 @@ public class While extends Statement {
 	 * Run the program
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 
 		boolean first = true;
 		while (runCondition(bdsThread, first)) { // Loop condition

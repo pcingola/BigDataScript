@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 public class MethodNative_string_baseName extends MethodNative {
 	public MethodNative_string_baseName() {
@@ -23,7 +23,7 @@ public class MethodNative_string_baseName extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
-		return (bdsThread.file(objThis.toString())).getName();
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		return (bdsThread.data(objThis.toString())).getName();
 	}
 }

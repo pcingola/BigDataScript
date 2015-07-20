@@ -28,7 +28,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrimitiveType;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.FunctionCallThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.ProgramCounter;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
@@ -42,7 +42,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
  *
  * @author pcingola
  */
-public class BigDataScriptSerializer {
+public class BdsSerializer {
 
 	public static final String LIST_IDENTIFIER = "list:";
 	public static final String MAP_IDENTIFIER = "map:";
@@ -57,19 +57,19 @@ public class BigDataScriptSerializer {
 	int parsedField;
 	String fields[];
 	Config config;
-	Set<BigDataScriptSerialize> serializedNodes;
-	Map<String, BigDataScriptThread> threadsById;
+	Set<BdsSerialize> serializedNodes;
+	Map<String, BdsThread> threadsById;
 	boolean extractSource;
 
-	public BigDataScriptSerializer(String fileName, Config config) {
+	public BdsSerializer(String fileName, Config config) {
 		this.fileName = fileName;
 		this.config = config;
 		extractSource = (config != null && config.isExtractSource());
-		serializedNodes = new HashSet<BigDataScriptSerialize>();
-		threadsById = new HashMap<String, BigDataScriptThread>();
+		serializedNodes = new HashSet<BdsSerialize>();
+		threadsById = new HashMap<String, BdsThread>();
 	}
 
-	public boolean add(BigDataScriptSerialize node) {
+	public boolean add(BdsSerialize node) {
 		return serializedNodes.add(node);
 	}
 
@@ -103,7 +103,7 @@ public class BigDataScriptSerializer {
 		}
 	}
 
-	public BigDataScriptThread getBdsThread(String bdsThreadId) {
+	public BdsThread getBdsThread(String bdsThreadId) {
 		return threadsById.get(bdsThreadId);
 	}
 
@@ -260,14 +260,14 @@ public class BigDataScriptSerializer {
 		return nextVal.startsWith(NODE_IDENTIFIER);
 	}
 
-	public boolean isSerialized(BigDataScriptSerialize node) {
+	public boolean isSerialized(BdsSerialize node) {
 		return serializedNodes.contains(node);
 	}
 
 	/**
 	 * Load from a file
 	 */
-	public List<BigDataScriptThread> load() {
+	public List<BdsThread> load() {
 		// Read the whole file
 		String file = Gpr.read(Gpr.reader(fileName, true));
 		if ((file == null) || file.isEmpty()) throw new RuntimeException("Cannot read file '" + fileName + "'");
@@ -278,7 +278,7 @@ public class BigDataScriptSerializer {
 		// Parse everything else
 		Scope.resetGlobalScope();
 
-		List<BigDataScriptThread> bdsThreads = parseLines(lines, null);
+		List<BdsThread> bdsThreads = parseLines(lines, null);
 		return bdsThreads;
 	}
 
@@ -333,16 +333,16 @@ public class BigDataScriptSerializer {
 	 * @param lines
 	 * @param classNameFilter : If not null, only parse lines matching this className
 	 */
-	List<BigDataScriptThread> parseLines(String lines[], String classNameFilter) {
+	List<BdsThread> parseLines(String lines[], String classNameFilter) {
 		// Set fake IDs on
 		BigDataScriptNodeFactory.get().setCreateFakeIds(true);
 
 		// Initialize
-		ArrayList<BigDataScriptThread> bdsThreads = new ArrayList<BigDataScriptThread>();
-		BigDataScriptThread currBdsThread = null;
+		ArrayList<BdsThread> bdsThreads = new ArrayList<BdsThread>();
+		BdsThread currBdsThread = null;
 		Scope currScope = null;
 		ArrayList<Scope> scopes = new ArrayList<Scope>();
-		Map<String, BigDataScriptSerialize> nodesById = new HashMap<String, BigDataScriptSerialize>();
+		Map<String, BdsSerialize> nodesById = new HashMap<String, BdsSerialize>();
 
 		// Parse lines
 		for (int i = 0; i < lines.length; i++) {
@@ -357,7 +357,7 @@ public class BigDataScriptSerializer {
 
 			if ((classNameFilter == null) || (classNameFilter.equals(clazz))) {
 				// Object to un-serialize
-				BigDataScriptSerialize bdsSerialize = null;
+				BdsSerialize bdsSerialize = null;
 
 				//---
 				// Create class (before parsing it)
@@ -368,9 +368,9 @@ public class BigDataScriptSerializer {
 					double versionThis = Gpr.parseDoubleSafe(BigDataScript.VERSION_MAJOR);
 					if (versionThis < version) throw new RuntimeException("Version numbers do not match.\n\tThis version: " + versionThis + "\n\tFile's version: " + version);
 					bdsSerialize = null; // Nothing to parse
-				} else if (clazz.equals(BigDataScriptThread.class.getSimpleName())) {
+				} else if (clazz.equals(BdsThread.class.getSimpleName())) {
 					// Parse BigDataScriptThread
-					BigDataScriptThread bdsThread = new BigDataScriptThread(null, config);
+					BdsThread bdsThread = new BdsThread(null, config);
 					currBdsThread = bdsThread;
 					currBdsThread.setScope(null);
 					currScope = null;
@@ -420,9 +420,9 @@ public class BigDataScriptSerializer {
 					}
 
 					// Post processing
-					if (bdsSerialize instanceof BigDataScriptThread) {
+					if (bdsSerialize instanceof BdsThread) {
 						// Restore a thread
-						BigDataScriptThread bdsThread = (BigDataScriptThread) bdsSerialize;
+						BdsThread bdsThread = (BdsThread) bdsSerialize;
 						bdsThreads.add(bdsThread);
 						threadsById.put(bdsThread.getBdsThreadId(), bdsThread);
 					} else if (bdsSerialize instanceof ScopeSymbol) {
@@ -449,7 +449,7 @@ public class BigDataScriptSerializer {
 		//---
 		// Replace fake nodes by real nodes
 		//---
-		for (BigDataScriptSerialize bdsNode : serializedNodes)
+		for (BdsSerialize bdsNode : serializedNodes)
 			if (bdsNode != null && bdsNode instanceof BigDataScriptNode) ((BigDataScriptNode) bdsNode).replaceFake();
 
 		for (Scope scope : scopes)
@@ -472,7 +472,7 @@ public class BigDataScriptSerializer {
 		//---
 		// Set scope and statement for each bdsThread
 		//---
-		for (BigDataScriptThread bth : bdsThreads) {
+		for (BdsThread bth : bdsThreads) {
 			// Set statement
 			bth.setStatement(nodesById);
 			bth.checkpointRecoverReset(); // Checkpoint starts recovering node from 'statement' (instead of 'programUnit')
@@ -513,7 +513,7 @@ public class BigDataScriptSerializer {
 	/**
 	 * Save data to file
 	 */
-	public void save(BigDataScriptThread bdsThread) {
+	public void save(BdsThread bdsThread) {
 		try {
 			// Open compressed output file
 			PrintStream outFile = new PrintStream(new GZIPOutputStream(new FileOutputStream(fileName)));
@@ -532,7 +532,7 @@ public class BigDataScriptSerializer {
 	/**
 	 * Serialize a node
 	 */
-	public String serializeSave(BigDataScriptSerialize bdsSer) {
+	public String serializeSave(BdsSerialize bdsSer) {
 		if (add(bdsSer)) return bdsSer.serializeSave(this);
 		return "";
 	}

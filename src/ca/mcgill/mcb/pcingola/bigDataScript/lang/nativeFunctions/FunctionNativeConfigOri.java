@@ -5,7 +5,7 @@ import java.util.HashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Native function "config". Read a 'config' file and return values in a hash.
@@ -32,7 +32,7 @@ public class FunctionNativeConfigOri extends FunctionNativeConfig {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Object runFunctionNative(BigDataScriptThread csThread) {
+	protected Object runFunctionNative(BdsThread csThread) {
 		String fileName = csThread.getString("file");
 		HashMap<String, String> configOri = (HashMap<String, String>) csThread.getObject("configOri");
 		return parseFile(csThread, fileName, configOri);

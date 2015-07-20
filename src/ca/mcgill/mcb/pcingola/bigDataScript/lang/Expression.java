@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Expression: A statement that returns a value
@@ -25,7 +25,7 @@ public class Expression extends Statement {
 	 * Run an expression: I.e. evaluate the expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		try {
 			bdsThread.run(this);
 			bdsThread.pop();

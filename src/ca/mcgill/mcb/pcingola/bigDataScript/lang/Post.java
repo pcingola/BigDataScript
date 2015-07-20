@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Post increment / decrement operator
@@ -29,7 +29,7 @@ public class Post extends Pre {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		Reference ref = (Reference) expr;
 		bdsThread.run(ref);
 

@@ -14,8 +14,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ParentNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerialize;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 
 /**
@@ -23,7 +23,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
  *
  * @author pcingola
  */
-public class Scope implements BigDataScriptSerialize, Iterable<String> {
+public class Scope implements BdsSerialize, Iterable<String> {
 
 	public static final String GLOBAL_VAR_K = "K"; // Kilo = 2^10
 	public static final String GLOBAL_VAR_M = "M"; // Mega = 2^20
@@ -318,7 +318,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	}
 
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		// Nothing to do
 		id = (int) serializer.getNextFieldInt();
 		parentNodeId = serializer.getNextFieldString();
@@ -334,7 +334,7 @@ public class Scope implements BigDataScriptSerialize, Iterable<String> {
 	}
 
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 		out.append("Scope");
 		out.append("\t" + serializer.serializeSaveValue(id));

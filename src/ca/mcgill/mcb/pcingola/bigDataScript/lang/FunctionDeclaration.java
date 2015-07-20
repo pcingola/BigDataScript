@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
@@ -32,7 +32,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	/**
 	 * Apply function to arguments, return function's result
 	 */
-	public Object apply(BigDataScriptThread bdsThread, Object values[]) {
+	public Object apply(BdsThread bdsThread, Object values[]) {
 
 		// Create scope and add function arguments
 		if (!bdsThread.isCheckpointRecover()) {
@@ -66,7 +66,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	/**
 	 * Apply function to arguments, return function's result
 	 */
-	public Object apply(BigDataScriptThread bdsThread, Object value) {
+	public Object apply(BdsThread bdsThread, Object value) {
 		// Create scope and add function arguments
 		if (!bdsThread.isCheckpointRecover()) {
 			VarDeclaration fparam[] = getParameters().getVarDecl();
@@ -144,7 +144,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	/**
 	 * Run this function's statement
 	 */
-	protected void runFunction(BigDataScriptThread bdsThread) {
+	protected void runFunction(BdsThread bdsThread) {
 		bdsThread.run(statement);
 		if (bdsThread.isCheckpointRecover()) return;
 
@@ -165,7 +165,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * 'FunctionDeclaration.runFunction()' method.
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		// Nothing to do (it's just a declaration)
 	}
 

@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
@@ -28,6 +28,6 @@ public abstract class Reference extends Expression {
 	 */
 	public abstract void parse(String str);
 
-	public abstract void setValue(BigDataScriptThread bdsThread, Object value);
+	public abstract void setValue(BdsThread bdsThread, Object value);
 
 }

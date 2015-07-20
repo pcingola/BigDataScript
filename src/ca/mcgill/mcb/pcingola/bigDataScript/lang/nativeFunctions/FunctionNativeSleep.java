@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Native function "sleep"
@@ -28,7 +28,7 @@ public class FunctionNativeSleep extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BigDataScriptThread csThread) {
+	protected Object runFunctionNative(BdsThread csThread) {
 		long secs = csThread.getInt("seconds");
 		if (secs <= 0) return false;
 		try {

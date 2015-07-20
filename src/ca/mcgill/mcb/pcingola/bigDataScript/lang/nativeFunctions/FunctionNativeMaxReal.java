@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Native function "rand". Return a random int number
@@ -27,7 +27,7 @@ public class FunctionNativeMaxReal extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BigDataScriptThread csThread) {
+	protected Object runFunctionNative(BdsThread csThread) {
 		double n1 = csThread.getInt("n1");
 		double n2 = csThread.getInt("n2");
 		return Math.max(n1, n2);

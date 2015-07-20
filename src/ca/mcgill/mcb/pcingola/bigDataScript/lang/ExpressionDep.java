@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 
 /**
@@ -17,7 +17,7 @@ public class ExpressionDep extends ExpressionTask {
 	}
 
 	@Override
-	void dispatchTask(BigDataScriptThread bdsThread, Task task) {
+	void dispatchTask(BdsThread bdsThread, Task task) {
 		task.setDependency(true); // Mark this as a 'dependency'
 		bdsThread.add(task);
 	}
@@ -26,7 +26,7 @@ public class ExpressionDep extends ExpressionTask {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		options.setEvalAll(true); // Force all task options to be evaluated
 		super.runStep(bdsThread);
 	}

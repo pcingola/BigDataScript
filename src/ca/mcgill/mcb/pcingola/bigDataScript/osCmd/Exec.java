@@ -4,8 +4,8 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThreads;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThreads;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -53,7 +53,7 @@ public class Exec {
 
 			// Make sure we use bdsThread's current directory or startup
 			// directory if this Exec is not within a bdsThread
-			BigDataScriptThread bdsThread = BigDataScriptThreads.getInstance().get();
+			BdsThread bdsThread = BdsThreads.getInstance().get();
 			String currDir = bdsThread != null ? bdsThread.getCurrentDir() : System.getProperty(Exec.USER_DIR);
 			pb.directory(new File(currDir));
 

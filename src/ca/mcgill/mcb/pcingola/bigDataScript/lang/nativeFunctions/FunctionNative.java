@@ -5,10 +5,10 @@ import java.util.Collections;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.FunctionDeclaration;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 
 /**
  * A native function declaration
@@ -63,7 +63,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	}
 
 	@Override
-	public void runFunction(BigDataScriptThread bdsThread) {
+	public void runFunction(BdsThread bdsThread) {
 		try {
 			// Run function
 			Object result = runFunctionNative(bdsThread);
@@ -78,15 +78,15 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	/**
 	 * Run a method
 	 */
-	protected abstract Object runFunctionNative(BigDataScriptThread csThread);
+	protected abstract Object runFunctionNative(BdsThread csThread);
 
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		// Nothing to do: Native methods are not serialized
 	}
 
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		// Nothing to do: Native methods are not serialized
 		return "";
 	}

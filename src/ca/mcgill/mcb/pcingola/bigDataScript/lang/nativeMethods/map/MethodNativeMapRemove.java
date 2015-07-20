@@ -5,7 +5,7 @@ import java.util.HashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeMap;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Return a list of keys
@@ -33,7 +33,7 @@ public class MethodNativeMapRemove extends MethodNativeMap {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread csThread, Object objThis) {
 		HashMap map = (HashMap) objThis;
 		String key = csThread.getObject("key").toString();
 		return map.remove(key);

@@ -10,9 +10,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.ExecResult;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -56,7 +56,7 @@ public class ExpressionSys extends Expression {
 	/**
 	 * Create an exec ID
 	 */
-	public synchronized String execId(String name, String fileName, String taskName, BigDataScriptThread bdsThread) {
+	public synchronized String execId(String name, String fileName, String taskName, BdsThread bdsThread) {
 		int nextId = nextId();
 
 		// Use module name
@@ -79,7 +79,7 @@ public class ExpressionSys extends Expression {
 		return execId;
 	}
 
-	public String getCommands(BigDataScriptThread bdsThread) {
+	public String getCommands(BdsThread bdsThread) {
 		if (interpolateVars == null) return commands; // No variable interpolation? => Literal
 
 		// Variable interpolation
@@ -119,7 +119,7 @@ public class ExpressionSys extends Expression {
 	}
 
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		execId("exec", getFileName(), null, bdsThread);
@@ -162,7 +162,7 @@ public class ExpressionSys extends Expression {
 	}
 
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		super.serializeParse(serializer);
 	}
 

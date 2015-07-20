@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.FunctionNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 public class FunctionNative_scalb_real_int extends FunctionNative {
 	public FunctionNative_scalb_real_int() {
@@ -22,7 +22,7 @@ public class FunctionNative_scalb_real_int extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BigDataScriptThread bdsThread) {
+	protected Object runFunctionNative(BdsThread bdsThread) {
 		return (Double) Math.scalb(bdsThread.getReal("d"), (int) bdsThread.getInt("scaleFactor"));
 	}
 }

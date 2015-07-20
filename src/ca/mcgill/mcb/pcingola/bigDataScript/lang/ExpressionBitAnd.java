@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * A bitwise AND
@@ -24,7 +24,7 @@ public class ExpressionBitAnd extends ExpressionBit {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		bdsThread.run(left);
 		bdsThread.run(right);
 		if (bdsThread.isCheckpointRecover()) return;

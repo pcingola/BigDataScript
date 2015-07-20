@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 public class MethodNative_string_replace_regex_repl extends MethodNative {
 	public MethodNative_string_replace_regex_repl() {
@@ -23,7 +23,7 @@ public class MethodNative_string_replace_regex_repl extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread csThread, Object objThis) {
 		return objThis.toString().replaceAll(csThread.getString("regex"), csThread.getString("repl"));
 	}
 }

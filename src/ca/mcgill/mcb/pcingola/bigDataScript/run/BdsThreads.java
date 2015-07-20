@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class BigDataScriptThreads {
+public class BdsThreads {
 
-	private static BigDataScriptThreads bigDataScriptThreads = new BigDataScriptThreads();
+	private static BdsThreads bdsThreads = new BdsThreads();
 
-	Map<Long, BigDataScriptThread> bdsThreadByThreadId = new HashMap<Long, BigDataScriptThread>();
-	Set<BigDataScriptThread> bdsThreadDone = new HashSet<BigDataScriptThread>();
+	Map<Long, BdsThread> bdsThreadByThreadId = new HashMap<Long, BdsThread>();
+	Set<BdsThread> bdsThreadDone = new HashSet<BdsThread>();
 
 	/**
 	 * Get canonical path to file using thread's 'current dir' to de-reference
@@ -20,28 +20,28 @@ public class BigDataScriptThreads {
 	 *          initialized, thus they are null
 	 */
 	public static String filePath(String fileName) {
-		BigDataScriptThread bdsThread = BigDataScriptThreads.getInstance().get();
-		return bdsThread != null ? bdsThread.filePath(fileName) : fileName;
+		BdsThread bdsThread = BdsThreads.getInstance().get();
+		return bdsThread != null ? bdsThread.dataLocalPath(fileName) : fileName;
 	}
 
 	/**
 	 * Get singleton
 	 */
-	public static BigDataScriptThreads getInstance() {
-		return bigDataScriptThreads;
+	public static BdsThreads getInstance() {
+		return bdsThreads;
 	}
 
 	/**
 	 * Reset singleton
 	 */
 	public static void reset() {
-		bigDataScriptThreads = new BigDataScriptThreads();
+		bdsThreads = new BdsThreads();
 	}
 
 	/**
 	 * Add a bdsThread
 	 */
-	public synchronized void add(BigDataScriptThread bdsThread) {
+	public synchronized void add(BdsThread bdsThread) {
 		long id = Thread.currentThread().getId();
 		bdsThreadByThreadId.put(id, bdsThread);
 	}
@@ -49,7 +49,7 @@ public class BigDataScriptThreads {
 	/**
 	 * Get bdsThread
 	 */
-	public synchronized BigDataScriptThread get() {
+	public synchronized BdsThread get() {
 		long id = Thread.currentThread().getId();
 		return bdsThreadByThreadId.get(id);
 	}
@@ -59,7 +59,7 @@ public class BigDataScriptThreads {
 	 */
 	public synchronized void remove() {
 		long id = Thread.currentThread().getId();
-		BigDataScriptThread bdsThread = get();
+		BdsThread bdsThread = get();
 		if (bdsThreadByThreadId.get(id) == bdsThread) {
 			bdsThreadByThreadId.remove(id);
 			bdsThreadDone.add(bdsThread);

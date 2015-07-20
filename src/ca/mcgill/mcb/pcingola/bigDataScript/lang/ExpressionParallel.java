@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.FunctionCallThread;
 
 /**
@@ -20,8 +20,8 @@ public class ExpressionParallel extends ExpressionTask {
 	/**
 	 * Create a new BdsThread that runs in parallel
 	 */
-	BigDataScriptThread createParallel(BigDataScriptThread bdsThread) {
-		BigDataScriptThread bdsNewThread = new BigDataScriptThread(statement, bdsThread);
+	BdsThread createParallel(BdsThread bdsThread) {
+		BdsThread bdsNewThread = new BdsThread(statement, bdsThread);
 		bdsNewThread.start();
 		return bdsNewThread;
 	}
@@ -29,7 +29,7 @@ public class ExpressionParallel extends ExpressionTask {
 	/**
 	 * Create a new BdsThread that runs a function call in parallel
 	 */
-	FunctionCallThread createParallelFunctionCall(BigDataScriptThread bdsThread, Object arguments[]) {
+	FunctionCallThread createParallelFunctionCall(BdsThread bdsThread, Object arguments[]) {
 		FunctionCallThread bdsNewThread = new FunctionCallThread(this, getFunctionCall(), bdsThread, arguments);
 		bdsNewThread.start();
 		return bdsNewThread;
@@ -71,7 +71,7 @@ public class ExpressionParallel extends ExpressionTask {
 	 * Evaluate 'par' expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		// Execute options assignments
 		if (options != null) {
 			bdsThread.run(options);
@@ -88,7 +88,7 @@ public class ExpressionParallel extends ExpressionTask {
 		}
 
 		// Create thread and execute statements
-		BigDataScriptThread bdsNewThread = null;
+		BdsThread bdsNewThread = null;
 		FunctionCall functionCall = getFunctionCall();
 		if (functionCall != null) {
 			// If the statement is a function call, we run it slightly differently:

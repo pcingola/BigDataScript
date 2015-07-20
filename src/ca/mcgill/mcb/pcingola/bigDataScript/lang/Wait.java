@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 
 /**
@@ -31,7 +31,7 @@ public class Wait extends Statement {
 	 */
 	@Override
 	@SuppressWarnings("rawtypes")
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 
 		boolean ok = false;
 		String type = "Task";

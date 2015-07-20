@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
@@ -85,7 +85,7 @@ public class VarReference extends Reference {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		ScopeSymbol ss = bdsThread.getScope().getSymbol(name);
 		if (ss == null) bdsThread.fatalError(this, "Cannot find variable '" + name + "'");
 		bdsThread.push(ss.getValue());
@@ -95,7 +95,7 @@ public class VarReference extends Reference {
 	 * Set value to scope symbol
 	 */
 	@Override
-	public void setValue(BigDataScriptThread bdsThread, Object value) {
+	public void setValue(BdsThread bdsThread, Object value) {
 		if (value == null) return;
 		ScopeSymbol ssym = getScopeSymbol(bdsThread.getScope()); // Get scope symbol
 		value = getReturnType().cast(value); // Cast to destination type

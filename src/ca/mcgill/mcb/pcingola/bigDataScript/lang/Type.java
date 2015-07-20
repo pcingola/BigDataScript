@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 
 /**
  * Variable type
@@ -326,7 +326,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 	}
 
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		return ""; // We don't save data type nodes
 	}
 

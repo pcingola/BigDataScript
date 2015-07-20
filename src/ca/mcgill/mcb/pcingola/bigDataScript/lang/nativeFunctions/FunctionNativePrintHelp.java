@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.HelpCreator;
 
 /**
@@ -29,7 +29,7 @@ public class FunctionNativePrintHelp extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BigDataScriptThread bdsThread) {
+	protected Object runFunctionNative(BdsThread bdsThread) {
 		HelpCreator hc = new HelpCreator(bdsThread.getRoot().getProgramUnit());
 		System.out.println(hc);
 		return true;

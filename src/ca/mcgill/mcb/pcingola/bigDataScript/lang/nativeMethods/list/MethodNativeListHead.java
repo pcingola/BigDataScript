@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Head: return the first element of a list
@@ -33,7 +33,7 @@ public class MethodNativeListHead extends MethodNativeList {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread csThread, Object objThis) {
 		ArrayList list = ((ArrayList) objThis);
 		if (list.isEmpty()) throw new RuntimeException("Invoking 'head' on an empty list.");
 		return ((ArrayList) objThis).get(0);

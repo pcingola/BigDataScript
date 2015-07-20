@@ -14,7 +14,7 @@ import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.report.Report;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.AutoHashMap;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -272,7 +272,7 @@ public class TaskDependecies {
 	/**
 	 * Find tasks required to achieve goal 'out'
 	 */
-	public synchronized Set<Task> goal(BigDataScriptThread bdsThread, String out) {
+	public synchronized Set<Task> goal(BdsThread bdsThread, String out) {
 		Set<Task> tasks = new HashSet<>();
 		goalRun(bdsThread, out, tasks);
 		return tasks;
@@ -300,7 +300,7 @@ public class TaskDependecies {
 	/**
 	 * Find all leaf nodes required for goal 'out'
 	 */
-	boolean goalRun(BigDataScriptThread bdsThread, String goal, Set<Task> addedTasks) {
+	boolean goalRun(BdsThread bdsThread, String goal, Set<Task> addedTasks) {
 
 		// Check if we really need to update this goal (with respect to the leaf nodes)
 		if (!goalNeedsUpdate(goal)) return false;

@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
@@ -27,7 +27,7 @@ public class VarReferenceMap extends Reference {
 	/**
 	 * Return index evaluation
 	 */
-	public String evalKey(BigDataScriptThread bdsThread) {
+	public String evalKey(BdsThread bdsThread) {
 		bdsThread.run(expressionKey);
 		if (bdsThread.isCheckpointRecover()) return null;
 
@@ -116,7 +116,7 @@ public class VarReferenceMap extends Reference {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		String key = evalKey(bdsThread);
 		if (bdsThread.isCheckpointRecover()) return;
 
@@ -129,7 +129,7 @@ public class VarReferenceMap extends Reference {
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void setValue(BigDataScriptThread bdsThread, Object value) {
+	public void setValue(BdsThread bdsThread, Object value) {
 		if (value == null) return;
 
 		String key = evalKey(bdsThread);

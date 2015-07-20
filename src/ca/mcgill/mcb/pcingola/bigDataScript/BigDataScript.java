@@ -46,12 +46,12 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.VarDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.VariableInit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.NativeLibraryFunctions;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.NativeLibraryString;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.HelpCreator;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependecies;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
@@ -68,8 +68,8 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-07-16";
-	public static final String REVISION = "l";
+	public static final String BUILD = "2015-07-20";
+	public static final String REVISION = "m";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -98,7 +98,7 @@ public class BigDataScript {
 	BigDataScriptAction bigDataScriptAction;
 	Config config;
 	ProgramUnit programUnit; // Program (parsed nodes)
-	BigDataScriptThread bigDataScriptThread;
+	BdsThread bdsThread;
 	ArrayList<String> programArgs; // Command line arguments for BigDataScript program
 
 	/**
@@ -347,8 +347,8 @@ public class BigDataScript {
 		return createAst(file, debug, new HashSet<String>());
 	}
 
-	public BigDataScriptThread getBigDataScriptThread() {
-		return bigDataScriptThread;
+	public BdsThread getBigDataScriptThread() {
+		return bdsThread;
 	}
 
 	public CompilerMessages getCompilerMessages() {
@@ -368,10 +368,10 @@ public class BigDataScript {
 	 */
 	int infoCheckpoint() {
 		// Load checkpoint file
-		BigDataScriptSerializer bdsSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
-		List<BigDataScriptThread> bdsThreads = bdsSerializer.load();
+		BdsSerializer bdsSerializer = new BdsSerializer(chekcpointRestoreFile, config);
+		List<BdsThread> bdsThreads = bdsSerializer.load();
 
-		for (BigDataScriptThread bdsThread : bdsThreads)
+		for (BdsThread bdsThread : bdsThreads)
 			bdsThread.print();
 
 		return 0;
@@ -912,16 +912,16 @@ public class BigDataScript {
 	 */
 	int runCheckpoint() {
 		// Load checkpoint file
-		BigDataScriptSerializer bdsSerializer = new BigDataScriptSerializer(chekcpointRestoreFile, config);
-		List<BigDataScriptThread> bdsThreads = bdsSerializer.load();
+		BdsSerializer bdsSerializer = new BdsSerializer(chekcpointRestoreFile, config);
+		List<BdsThread> bdsThreads = bdsSerializer.load();
 
 		// Set main thread's programUnit running scope (mostly for debugging and test cases)
 		// ProgramUnit's scope it the one before 'global'
-		BigDataScriptThread mainThread = bdsThreads.get(0);
+		BdsThread mainThread = bdsThreads.get(0);
 		programUnit = mainThread.getProgramUnit();
 
 		// Set state and recover tasks
-		for (BigDataScriptThread bdsThread : bdsThreads) {
+		for (BdsThread bdsThread : bdsThreads) {
 			if (bdsThread.isFinished()) {
 				// Thread finished before serialization: Nothing to do
 			} else {
@@ -950,7 +950,7 @@ public class BigDataScript {
 		initializeArgs();
 
 		// Run the program
-		BigDataScriptThread bdsThread = new BigDataScriptThread(programUnit, config);
+		BdsThread bdsThread = new BdsThread(programUnit, config);
 		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 
 		// Show script's automatic help message
@@ -986,7 +986,7 @@ public class BigDataScript {
 		initializeArgs();
 
 		// Run the program
-		BigDataScriptThread bdsThread = new BigDataScriptThread(programUnit, config);
+		BdsThread bdsThread = new BdsThread(programUnit, config);
 		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 
 		if (verbose) Timer.showStdErr("Running tests");
@@ -998,7 +998,7 @@ public class BigDataScript {
 		int testOk = 0, testError = 0;
 		for (FunctionDeclaration testFunc : testFuncs) {
 			System.out.println("");
-			BigDataScriptThread bdsTestThread = new BigDataScriptThread(testFunc.getStatement(), bdsThread); // Note: We execute the function's body (not the function declaration)
+			BdsThread bdsTestThread = new BdsThread(testFunc.getStatement(), bdsThread); // Note: We execute the function's body (not the function declaration)
 			int exitValTest = runThread(bdsTestThread);
 
 			// Show test result
@@ -1024,8 +1024,8 @@ public class BigDataScript {
 	/**
 	 * Run a thread
 	 */
-	int runThread(BigDataScriptThread bdsThread) {
-		bigDataScriptThread = bdsThread;
+	int runThread(BdsThread bdsThread) {
+		this.bdsThread = bdsThread;
 		if (bdsThread.isFinished()) return 0;
 
 		bdsThread.start();

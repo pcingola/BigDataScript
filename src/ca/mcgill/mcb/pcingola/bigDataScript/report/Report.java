@@ -12,8 +12,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Statement;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThreads;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThreads;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TailFile;
@@ -49,8 +49,8 @@ public class Report {
 	boolean yaml;
 	boolean verbose;
 	boolean debug;
-	BigDataScriptThread bdsThread;
-	Map<String, BigDataScriptThread> taskId2BdsThread;
+	BdsThread bdsThread;
+	Map<String, BdsThread> taskId2BdsThread;
 
 	/**
 	 * Check if this is a good time to create a report
@@ -66,12 +66,12 @@ public class Report {
 		}
 
 		if (doReport) {
-			Report report = new Report(BigDataScriptThreads.getInstance().get().getRoot(), false);
+			Report report = new Report(BdsThreads.getInstance().get().getRoot(), false);
 			report.createReport();
 		}
 	}
 
-	public Report(BigDataScriptThread bdsThread, boolean yaml) {
+	public Report(BdsThread bdsThread, boolean yaml) {
 		if (!bdsThread.isRoot()) throw new RuntimeException("Cannot create report from non-root bdsThread");
 
 		this.bdsThread = bdsThread;
@@ -181,14 +181,14 @@ public class Report {
 	/**
 	 * Add thread information to report
 	 */
-	void createReport(RTemplate rTemplate, BigDataScriptThread bdsThread) {
+	void createReport(RTemplate rTemplate, BdsThread bdsThread) {
 		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': Start");
 
 		// ID and parent
 		String thisId = bdsThread.getBdsThreadId();
 		String thisIdNum = threadIdNum(bdsThread);
 
-		BigDataScriptThread bdsThreadParent = bdsThread.getParent();
+		BdsThread bdsThreadParent = bdsThread.getParent();
 		String parenId = (bdsThreadParent != null ? bdsThreadParent.getBdsThreadId() : "Null");
 		String parenIdNum = threadIdNum(bdsThreadParent);
 		rTemplate.add("threadId", thisId);
@@ -213,7 +213,7 @@ public class Report {
 		rTemplate.add("threadTasks", sb.toString());
 
 		// Recurse to child threads
-		for (BigDataScriptThread bdsThreadChild : bdsThread.getBdsThreads())
+		for (BdsThread bdsThreadChild : bdsThread.getBdsThreads())
 			createReport(rTemplate, bdsThreadChild);
 
 		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': End");
@@ -225,7 +225,7 @@ public class Report {
 	void createReport(RTemplate rTemplate, Task task, int taskNum, boolean yaml) {
 		if (debug) Gpr.debug("CreateReport Task '" + task.getId() + "': Start");
 
-		BigDataScriptThread bdsTh = taskId2BdsThread.get(task.getId());
+		BdsThread bdsTh = taskId2BdsThread.get(task.getId());
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
 		rTemplate.add("taskNum", "" + taskNum);
@@ -418,17 +418,17 @@ public class Report {
 		return str;
 	}
 
-	void taskId2BdsThread(BigDataScriptThread bdsThread) {
+	void taskId2BdsThread(BdsThread bdsThread) {
 		// Add all tasks in this thread
 		for (Task t : bdsThread.getTasks())
 			taskId2BdsThread.put(t.getId(), bdsThread);
 
 		// Recurse to child threads
-		for (BigDataScriptThread bdsThreadChild : bdsThread.getBdsThreads())
+		for (BdsThread bdsThreadChild : bdsThread.getBdsThreads())
 			taskId2BdsThread(bdsThreadChild);
 	}
 
-	String threadIdNum(BigDataScriptThread bdsThread) {
+	String threadIdNum(BdsThread bdsThread) {
 		if (bdsThread == null) return "None";
 		if (bdsThread.getParent() == null) return "thread_Root";
 		return "thread_" + bdsThread.getId();

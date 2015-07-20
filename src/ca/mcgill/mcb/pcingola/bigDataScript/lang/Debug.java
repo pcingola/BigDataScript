@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * An "debug" statement
@@ -19,7 +19,7 @@ public class Debug extends Print {
 	 * Run the program
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		// Only show message if we are in debug mode
 		// Otherwise, the statement is ignored
 		if (bdsThread.getDebugMode() != null) {

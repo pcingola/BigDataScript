@@ -39,6 +39,10 @@ public class Config {
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
 	public static final String SYS_SHELL = "sysShell"; // Sys's shell
 
+	// Temporary directory
+	public static final String TMP_DIR = "tmpDir";
+	public static final String DEFAULT_TMP_DIR = "/tmp";
+
 	// Disable checkpoint creation
 	public static final String DISABLE_CHECKPOINT_CREATE = "disableCheckpoint";
 	public static final String DISABLE_RM_ON_EXIT = "disableRmOnExit";
@@ -336,6 +340,10 @@ public class Config {
 		}
 
 		return taskMaxHintLen;
+	}
+
+	public String getTmpDir() {
+		return getString(TMP_DIR, DEFAULT_TMP_DIR);
 	}
 
 	public int getWaitAfterTaskRun() {

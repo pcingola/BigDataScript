@@ -1,13 +1,11 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
-import java.io.File;
-import java.io.IOException;
-
+import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThreads;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThreads;
 
 public class MethodNative_string_chdir extends MethodNative {
 
@@ -28,22 +26,20 @@ public class MethodNative_string_chdir extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		String dirName = objThis.toString();
-		File dir = bdsThread.file(dirName);
+		Data dir = bdsThread.data(dirName);
 
-		String path = null;
-		try {
-			path = dir.getCanonicalPath();
-		} catch (IOException e) {
-			bdsThread.fatalError(this, "Cannot resolve directory '" + dir + "'");
-		}
+		// Is it remote?
+		if (dir.getScheme().isRemote()) throw new RuntimeException("Cannot chdir to remote directory '" + dirName + "'");
 
+		// Local dir processing
+		String path = dir.getPath();
 		if (!dir.exists()) throw new RuntimeException("Directory '" + path + "' does not exists");
 		if (!dir.isDirectory()) throw new RuntimeException("Cannot chdir to '" + path + "', not a directory.");
 
 		// OK change dir
-		BigDataScriptThreads.getInstance().get().setCurrentDir(path);
+		BdsThreads.getInstance().get().setCurrentDir(path);
 		return null;
 	}
 }

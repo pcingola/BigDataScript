@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Native function "range". Return a random list of int
@@ -30,7 +30,7 @@ public class FunctionNativeRangeIntStep extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BigDataScriptThread bdsThread) {
+	protected Object runFunctionNative(BdsThread bdsThread) {
 		long min = bdsThread.getInt("min");
 		long max = bdsThread.getInt("max");
 		long step = bdsThread.getInt("step");

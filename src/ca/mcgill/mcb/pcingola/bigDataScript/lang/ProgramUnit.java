@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
@@ -21,7 +21,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  */
 public class ProgramUnit extends BlockWithFile {
 
-	BigDataScriptThread bigDataScriptThread;
+	BdsThread bigDataScriptThread;
 	Scope runScope; // Scope used when running this program. Used in test cases
 
 	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
@@ -40,7 +40,7 @@ public class ProgramUnit extends BlockWithFile {
 	}
 
 	@Override
-	public BigDataScriptThread getBigDataScriptThread() {
+	public BdsThread getBigDataScriptThread() {
 		return bigDataScriptThread;
 	}
 
@@ -54,12 +54,12 @@ public class ProgramUnit extends BlockWithFile {
 	}
 
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		super.runStep(bdsThread);
 		runScope = bdsThread.getScope();
 	}
 
-	public void setBigDataScriptThread(BigDataScriptThread bigDataScriptThread) {
+	public void setBigDataScriptThread(BdsThread bigDataScriptThread) {
 		this.bigDataScriptThread = bigDataScriptThread;
 	}
 

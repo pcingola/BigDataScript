@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.math;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.FunctionNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 public class FunctionNative_abs_int extends FunctionNative {
 	public FunctionNative_abs_int() {
@@ -22,7 +22,7 @@ public class FunctionNative_abs_int extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BigDataScriptThread bdsThread) {
+	protected Object runFunctionNative(BdsThread bdsThread) {
 		return (Long) Math.abs(bdsThread.getInt("x"));
 	}
 }

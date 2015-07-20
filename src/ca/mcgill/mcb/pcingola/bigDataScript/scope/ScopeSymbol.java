@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerialize;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
 
@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
  *
  * @author pcingola
  */
-public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymbol> {
+public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 
 	// Internal variables use this symbol at the beginning to make sure programmers don't collide with their names
 	// Important: This must be an invalid symbol in variable names
@@ -84,7 +84,7 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 	}
 
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		// Parse type
 		name = serializer.getNextFieldString();
 		type = serializer.getNextFieldType();
@@ -94,10 +94,10 @@ public class ScopeSymbol implements BigDataScriptSerialize, Comparable<ScopeSymb
 	}
 
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		return getClass().getSimpleName() //
 				+ "\t" + serializer.serializeSaveValue(name) //
-				+ "\t" + BigDataScriptSerializer.TYPE_IDENTIFIER + type.toStringSerializer() //
+				+ "\t" + BdsSerializer.TYPE_IDENTIFIER + type.toStringSerializer() //
 				+ "\t" + serializer.serializeSaveValue(value) //
 				+ "\n";
 	}

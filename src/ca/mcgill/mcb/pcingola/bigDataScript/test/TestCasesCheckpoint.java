@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 public class TestCasesCheckpoint extends TestCasesBase {
@@ -193,7 +193,7 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		BigDataScript bds = runAndCheckpoint("test/checkpoint_19.bds", "test/checkpoint_19.chp", "ok", "true");
 
 		// Get scope names
-		BigDataScriptThread bdsThread = bds.getBigDataScriptThread();
+		BdsThread bdsThread = bds.getBigDataScriptThread();
 		String scopeNames = bdsThread.getScope().toStringScopeNames();
 
 		// Count number of global scopes
@@ -225,25 +225,25 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		BigDataScript bds = runAndCheckpoint("test/checkpoint_23.bds", "test/checkpoint_23.chp", "luae", "42");
 
 		// Get scope names
-		BigDataScriptThread bdsThread = bds.getBigDataScriptThread();
+		BdsThread bdsThread = bds.getBigDataScriptThread();
 
 		// All threads (including root thread)
 		Assert.assertEquals(4, bdsThread.getBdsThreadsAll().size());
 
 		// First 'level'
-		List<BigDataScriptThread> bdsThreadsL1 = bdsThread.getBdsThreads();
+		List<BdsThread> bdsThreadsL1 = bdsThread.getBdsThreads();
 		if (verbose) Gpr.debug("Root thread '" + bdsThread.getBdsThreadId() + "', number of child threads: " + bdsThreadsL1.size());
 		Assert.assertEquals(1, bdsThreadsL1.size());
 
 		// Second 'level'
-		for (BigDataScriptThread bdsthl1 : bdsThreadsL1) {
-			List<BigDataScriptThread> bdsThreadsL2 = bdsthl1.getBdsThreads();
+		for (BdsThread bdsthl1 : bdsThreadsL1) {
+			List<BdsThread> bdsThreadsL2 = bdsthl1.getBdsThreads();
 			if (verbose) Gpr.debug("Level 1 thread '" + bdsthl1.getBdsThreadId() + "', number of child threads: " + bdsThreadsL2.size());
 			Assert.assertEquals(2, bdsThreadsL2.size());
 
 			// Third 'level'
-			for (BigDataScriptThread bdsthl2 : bdsThreadsL2) {
-				List<BigDataScriptThread> bdsThreadsL3 = bdsthl2.getBdsThreads();
+			for (BdsThread bdsthl2 : bdsThreadsL2) {
+				List<BdsThread> bdsThreadsL3 = bdsthl2.getBdsThreads();
 				if (verbose) Gpr.debug("Level 2 thread '" + bdsthl2.getBdsThreadId() + "', number of child threads: " + bdsThreadsL3.size());
 				Assert.assertEquals(0, bdsThreadsL3.size());
 			}

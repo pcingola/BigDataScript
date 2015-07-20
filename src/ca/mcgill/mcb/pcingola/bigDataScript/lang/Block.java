@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * A block of statements
@@ -44,7 +44,7 @@ public class Block extends StatementWithScope {
 	 * Run the program
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		for (Statement st : statements) {
 			if (st != null) {
 				bdsThread.run(st);

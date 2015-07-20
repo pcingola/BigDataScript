@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 public class MethodNative_string_canWrite extends MethodNative {
 	public MethodNative_string_canWrite() {
@@ -23,8 +23,8 @@ public class MethodNative_string_canWrite extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
-		return (bdsThread.file(objThis.toString())).canWrite();
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		return (bdsThread.data(objThis.toString())).canWrite();
 	}
 
 }

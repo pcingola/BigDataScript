@@ -2,7 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.run;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
@@ -34,8 +34,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.Exec;
 import ca.mcgill.mcb.pcingola.bigDataScript.report.Report;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerialize;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependecies;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -48,7 +48,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  *
  * @author pcingola
  */
-public class BigDataScriptThread extends Thread implements BigDataScriptSerialize {
+public class BdsThread extends Thread implements BdsSerialize {
 
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
@@ -80,10 +80,10 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	// BdsThread
 	String currentDir; // Program's 'current directoy'
-	BigDataScriptThread parent; // Parent thread
+	BdsThread parent; // Parent thread
 	String bdsThreadId; // BdsThread ID
 	int bdsThreadNum; // Thread number
-	Map<String, BigDataScriptThread> bdsChildThreadsById; // Child threads
+	Map<String, BdsThread> bdsChildThreadsById; // Child threads
 
 	// Task management
 	TaskDependecies taskDependecies;
@@ -96,7 +96,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return threadNumber++;
 	}
 
-	public BigDataScriptThread(Statement statement, BigDataScriptThread parent) {
+	public BdsThread(Statement statement, BdsThread parent) {
 		super();
 		this.parent = parent;
 		bdsThreadNum = bigDataScriptThreadId();
@@ -109,7 +109,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		removeOnExit = parent.removeOnExit;
 		currentDir = parent.currentDir;
 
-		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
+		bdsChildThreadsById = new HashMap<String, BdsThread>();
 		taskDependecies = new TaskDependecies();
 
 		setStatement(statement);
@@ -119,7 +119,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		taskDependecies.setDebug(isDebug());
 	}
 
-	public BigDataScriptThread(Statement statement, Config config) {
+	public BdsThread(Statement statement, Config config) {
 		super();
 		bdsThreadNum = bigDataScriptThreadId();
 		pc = new ProgramCounter();
@@ -130,7 +130,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		random = new Random();
 		removeOnExit = new LinkedList<String>();
 		taskDependecies = new TaskDependecies();
-		bdsChildThreadsById = new HashMap<String, BigDataScriptThread>();
+		bdsChildThreadsById = new HashMap<String, BdsThread>();
 		currentDir = System.getProperty(Exec.USER_DIR); // By default use Java program's current dir
 
 		if (statement != null) setStatement(statement);
@@ -142,7 +142,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Add a child task
 	 */
-	public synchronized void add(BigDataScriptThread bdsThread) {
+	public synchronized void add(BdsThread bdsThread) {
 		bdsChildThreadsById.put(bdsThread.getBdsThreadId(), bdsThread);
 	}
 
@@ -167,7 +167,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	public boolean anyTask() {
 		if (!getTasks().isEmpty()) return true;
 
-		for (BigDataScriptThread bdsThread : bdsChildThreadsById.values())
+		for (BdsThread bdsThread : bdsChildThreadsById.values())
 			if (bdsThread.anyTask()) return true;
 
 		return false;
@@ -200,7 +200,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Save
 		if (isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
-		BigDataScriptSerializer bdsSer = new BigDataScriptSerializer(checkpointFileName, config);
+		BdsSerializer bdsSer = new BdsSerializer(checkpointFileName, config);
 		bdsSer.save(getRoot()); // Save root thread
 
 		return checkpointFileName;
@@ -238,6 +238,20 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// No logging? Delete on exit
 		if ((config != null) && !config.isLog()) logdir.deleteOnExit();
+	}
+
+	/**
+	 * Create a new (and canonical) file relative to 'currentDir'
+	 */
+	public Data data(String fileName) {
+		return Data.factory(fileName, currentDir);
+	}
+
+	/**
+	 * Create a new (and canonical) file relative to 'currentDir'
+	 */
+	public String dataLocalPath(String fileName) {
+		return Data.factory(fileName, currentDir).getLocalPath();
 	}
 
 	/**
@@ -401,34 +415,6 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	/**
-	 * Create a new (and canonical) file relative to 'currentDir'
-	 */
-	public File file(String fileName) {
-		try {
-			File f = new File(fileName);
-
-			// If fileName is an absolute path, we just return the appropriate file
-			if (f.toPath().isAbsolute()) return f.getCanonicalFile();
-
-			// Resolve against 'currentDir'
-			return new File(currentDir, fileName).getCanonicalFile();
-		} catch (IOException e) {
-			throw new RuntimeException("Cannot resolve file '" + fileName + "'", e);
-		}
-	}
-
-	/**
-	 * Create a new (and canonical) file relative to 'currentDir'
-	 */
-	public String filePath(String fileName) {
-		try {
-			return file(fileName).getCanonicalPath();
-		} catch (IOException e) {
-			throw new RuntimeException("Cannot resolve file '" + fileName + "'", e);
-		}
-	}
-
-	/**
 	 * Freeze thread execution
 	 */
 	protected void freeze() {
@@ -451,8 +437,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return bdsThreadId;
 	}
 
-	public List<BigDataScriptThread> getBdsThreads() {
-		List<BigDataScriptThread> list = new ArrayList<BigDataScriptThread>();
+	public List<BdsThread> getBdsThreads() {
+		List<BdsThread> list = new ArrayList<BdsThread>();
 		list.addAll(bdsChildThreadsById.values());
 		return list;
 	}
@@ -460,11 +446,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Get all child threads
 	 */
-	public List<BigDataScriptThread> getBdsThreadsAll() {
-		List<BigDataScriptThread> list = new ArrayList<BigDataScriptThread>();
+	public List<BdsThread> getBdsThreadsAll() {
+		List<BdsThread> list = new ArrayList<BdsThread>();
 		list.add(this);
 
-		for (BigDataScriptThread bth : bdsChildThreadsById.values())
+		for (BdsThread bth : bdsChildThreadsById.values())
 			list.addAll(bth.getBdsThreadsAll());
 
 		return list;
@@ -517,7 +503,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		return getScope().getSymbol(varName).getValue();
 	}
 
-	public BigDataScriptThread getParent() {
+	public BdsThread getParent() {
 		return parent;
 	}
 
@@ -547,7 +533,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Get 'root' thread
 	 */
-	public BigDataScriptThread getRoot() {
+	public BdsThread getRoot() {
 		if (parent == null) return this;
 		return parent.getRoot();
 	}
@@ -596,13 +582,13 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Get a thread
 	 */
-	public synchronized BigDataScriptThread getThread(String threadId) {
+	public synchronized BdsThread getThread(String threadId) {
 		// Do we have this thread?
-		BigDataScriptThread bdsth = bdsChildThreadsById.get(threadId);
+		BdsThread bdsth = bdsChildThreadsById.get(threadId);
 		if (bdsth != null) return bdsth;
 
 		// Search in all child threads
-		for (BigDataScriptThread child : bdsChildThreadsById.values()) {
+		for (BdsThread child : bdsChildThreadsById.values()) {
 			bdsth = child.getThread(threadId);
 			if (bdsth != null) return bdsth;
 		}
@@ -816,14 +802,14 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Remove a child thread
 	 */
-	public void remove(BigDataScriptThread bdsThread) {
+	public void remove(BdsThread bdsThread) {
 		bdsChildThreadsById.remove(bdsThread);
 	}
 
 	/**
 	 * Remove stale files (controlled by '-noRmOnExit' command line option)
 	 */
-	void removeStaleFiles() {
+	void removeStaleData() {
 		if (!isRoot()) return;
 
 		// Remove all pending files
@@ -834,7 +820,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 				if (isVerbose()) Timer.showStdErr("Deleting stale files:");
 				for (String fileName : removeOnExit) {
 					if (isVerbose()) System.err.println("\t" + fileName);
-					(new File(fileName)).delete();
+					Data.factory(fileName).delete();
 				}
 			}
 		}
@@ -863,11 +849,11 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	@SuppressWarnings("rawtypes")
 	public synchronized void rmOnExit(List files) {
 		for (Object o : files)
-			removeOnExit.add(filePath(o.toString()));
+			removeOnExit.add(dataLocalPath(o.toString()));
 	}
 
 	public synchronized void rmOnExit(String file) {
-		removeOnExit.add(filePath(file));
+		removeOnExit.add(dataLocalPath(file));
 	}
 
 	@Override
@@ -877,12 +863,12 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		createLogDir(); // Create log dir
 
 		// Start child threads (e.g. when recovering)
-		for (BigDataScriptThread bth : bdsChildThreadsById.values()) {
+		for (BdsThread bth : bdsChildThreadsById.values()) {
 			if (!bth.isAlive() && !bth.isFinished()) bth.start();
 		}
 
 		// Add this thread to collections
-		BigDataScriptThreads.getInstance().add(this);
+		BdsThreads.getInstance().add(this);
 
 		// Run statement (i.e. run program)
 		boolean ok = true;
@@ -934,7 +920,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		runState = RunState.FINISHED;
 
 		// Finish up
-		removeStaleFiles();
+		removeStaleData();
 		timer.end();
 		// Create reports? Only root thread creates reports
 		if (config != null && isRoot()) {
@@ -973,7 +959,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		}
 
 		// Remove thread from "running threads"
-		BigDataScriptThreads.getInstance().remove();
+		BdsThreads.getInstance().remove();
 	}
 
 	/**
@@ -1055,7 +1041,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		bdsThreadNum = (int) serializer.getNextFieldInt();
 		removeOnExit = serializer.getNextFieldList(TypeList.get(Type.STRING));
 		bdsThreadId = serializer.getNextFieldString();
@@ -1084,7 +1070,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	}
 
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		// This 'serializeSave' method can be called form another thread
 		// We have to make sure that the thread is not running while
 		// serializing (otherwise we'll recover an inconsistent state)
@@ -1113,7 +1099,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Serialize main and data
 	 */
-	public String serializeSaveAll(BigDataScriptSerializer serializer) {
+	public String serializeSaveAll(BdsSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 		out.append(serializeSaveThreadMain(serializer));
 		out.append("\n");
@@ -1124,7 +1110,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Save thread's data
 	 */
-	protected String serializeSaveThreadData(BigDataScriptSerializer serializer) {
+	protected String serializeSaveThreadData(BdsSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 
 		// Save program counter
@@ -1141,7 +1127,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 			out.append(serializer.serializeSave(task));
 
 		// Save all threads
-		for (BigDataScriptThread bdsTh : bdsChildThreadsById.values())
+		for (BdsThread bdsTh : bdsChildThreadsById.values())
 			out.append(serializer.serializeSave(bdsTh));
 
 		return out.toString();
@@ -1150,7 +1136,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Save thread's main information
 	 */
-	protected String serializeSaveThreadMain(BigDataScriptSerializer serializer) {
+	protected String serializeSaveThreadMain(BdsSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 
 		out.append(getClass().getSimpleName());
@@ -1208,7 +1194,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	/**
 	 * Find and set statement
 	 */
-	public void setStatement(Map<String, BigDataScriptSerialize> nodesById) {
+	public void setStatement(Map<String, BdsSerialize> nodesById) {
 		Statement stat = (Statement) nodesById.get(statementNodeId);
 		if (stat == null) throw new RuntimeException("Cannot find statement node '" + statementNodeId + "'");
 		setStatement(stat);
@@ -1376,8 +1362,8 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 
 		// Note: We could be waiting for a non-child thread to finish
 		//       So we have to wait on the 'root' BdsThread'
-		BigDataScriptThread bdsThRoot = getRoot();
-		BigDataScriptThread bdsTh = bdsThRoot.getThread(id);
+		BdsThread bdsThRoot = getRoot();
+		BdsThread bdsTh = bdsThRoot.getThread(id);
 		if (bdsTh != null) return waitThread(bdsTh);
 		return true; // Nothing to do (already finished)
 	}
@@ -1392,7 +1378,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 	 * Wait for one thread to finish
 	 * @return true if thread finished OK
 	 */
-	public boolean waitThread(BigDataScriptThread bdsThread) {
+	public boolean waitThread(BdsThread bdsThread) {
 
 		try {
 			if (bdsThread != null) {
@@ -1414,7 +1400,7 @@ public class BigDataScriptThread extends Thread implements BigDataScriptSerializ
 		boolean ok = true;
 
 		if (isVerbose() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
-		for (BigDataScriptThread bdsth : bdsChildThreadsById.values())
+		for (BdsThread bdsth : bdsChildThreadsById.values())
 			ok &= waitThread(bdsth);
 
 		return ok;

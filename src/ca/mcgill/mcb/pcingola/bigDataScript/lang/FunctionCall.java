@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 
@@ -27,14 +27,14 @@ public class FunctionCall extends Expression {
 	/**
 	 * Apply function to pre-calculated parameters
 	 */
-	public void apply(BigDataScriptThread bdsThread, Object arguments[]) {
+	public void apply(BdsThread bdsThread, Object arguments[]) {
 		bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
 	}
 
 	/**
 	 * Evaluate function's arguments
 	 */
-	public void evalFunctionArguments(BigDataScriptThread bdsThread) {
+	public void evalFunctionArguments(BdsThread bdsThread) {
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
 
@@ -91,7 +91,7 @@ public class FunctionCall extends Expression {
 	 * Run an expression: I.e. evaluate the expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		try {
 			// Evaluate function arguments
 			evalFunctionArguments(bdsThread);

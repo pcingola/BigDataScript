@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -28,7 +28,7 @@ public class VarReferenceList extends Reference {
 	/**
 	 * Return index evaluation
 	 */
-	public int evalIndex(BigDataScriptThread bdsThread) {
+	public int evalIndex(BdsThread bdsThread) {
 		bdsThread.run(expressionIdx);
 		if (bdsThread.isCheckpointRecover()) return 0;
 		return (int) popInt(bdsThread);
@@ -115,7 +115,7 @@ public class VarReferenceList extends Reference {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		int idx = evalIndex(bdsThread);
 		if (bdsThread.isCheckpointRecover()) return;
 
@@ -126,7 +126,7 @@ public class VarReferenceList extends Reference {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void setValue(BigDataScriptThread bdsThread, Object value) {
+	public void setValue(BdsThread bdsThread, Object value) {
 		if (value == null) return;
 
 		int idx = evalIndex(bdsThread);

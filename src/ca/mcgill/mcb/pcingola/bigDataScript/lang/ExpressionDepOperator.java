@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependency;
 
@@ -32,7 +32,7 @@ public class ExpressionDepOperator extends Expression {
 	 * Evaluate expressions and create a task dependency
 	 */
 	@SuppressWarnings("unchecked")
-	public TaskDependency evalTaskDependency(BigDataScriptThread bdsThread) {
+	public TaskDependency evalTaskDependency(BdsThread bdsThread) {
 		// All expressions are evaluated
 		runStep(bdsThread, left);
 		runStep(bdsThread, right);
@@ -91,7 +91,7 @@ public class ExpressionDepOperator extends Expression {
 	 * Evaluate an expression
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		TaskDependency taskDependency = evalTaskDependency(bdsThread);
 		if (bdsThread.isCheckpointRecover()) return;
 
@@ -105,7 +105,7 @@ public class ExpressionDepOperator extends Expression {
 	 * @return A list of Strings with the results of all evaluations
 	 */
 	@SuppressWarnings("rawtypes")
-	public void runStep(BigDataScriptThread bdsThread, Expression exprs[]) {
+	public void runStep(BdsThread bdsThread, Expression exprs[]) {
 		ArrayList<String> resList = new ArrayList<String>();
 
 		for (Expression e : exprs) {

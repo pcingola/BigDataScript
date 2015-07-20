@@ -7,7 +7,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Filter elements form a list by applying a function that returns a 'bool'
@@ -24,7 +24,7 @@ public class MethodNativeListFilter extends MethodNativeList {
 	 * Find a function
 	 * TODO: Move this to Scope?
 	 */
-	protected FunctionDeclaration findFunction(BigDataScriptThread bdsThread, String fname) {
+	protected FunctionDeclaration findFunction(BdsThread bdsThread, String fname) {
 		FunctionDeclaration function = (FunctionDeclaration) bdsThread.getObject("f");
 
 		// Type checking
@@ -55,7 +55,7 @@ public class MethodNativeListFilter extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
 		ArrayList newList = new ArrayList();
 

@@ -13,8 +13,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Expression;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerialize;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
@@ -23,7 +23,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  *
  * @author pcingola
  */
-public class Task implements BigDataScriptSerialize {
+public class Task implements BdsSerialize {
 
 	// Exit codes (see bds.go)
 	public static final int EXITCODE_OK = 0;
@@ -501,7 +501,7 @@ public class Task implements BigDataScriptSerialize {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		// Note that "Task classname" field has been consumed at this point
 		id = serializer.getNextField();
 		bdsFileName = serializer.getNextFieldString();
@@ -536,7 +536,7 @@ public class Task implements BigDataScriptSerialize {
 	}
 
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		return getClass().getSimpleName() //
 				+ "\t" + id //
 				+ "\t" + serializer.serializeSaveValue(bdsFileName) //

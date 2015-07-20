@@ -19,10 +19,10 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.TypeCheckedNodes;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerialize;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerialize;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -30,7 +30,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  *
  * @author pcingola
  */
-public abstract class BigDataScriptNode implements BigDataScriptSerialize {
+public abstract class BigDataScriptNode implements BdsSerialize {
 
 	protected BigDataScriptNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
@@ -279,7 +279,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return fields;
 	}
 
-	public BigDataScriptThread getBigDataScriptThread() {
+	public BdsThread getBigDataScriptThread() {
 		if (parent != null) return parent.getBigDataScriptThread();
 		return null;
 	}
@@ -510,28 +510,28 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	/**
 	 * Pop a bool from stack
 	 */
-	public boolean popBool(BigDataScriptThread bdsThread) {
+	public boolean popBool(BdsThread bdsThread) {
 		return (Boolean) Type.BOOL.cast(bdsThread.pop());
 	}
 
 	/**
 	 * Pop an int from stack
 	 */
-	public long popInt(BigDataScriptThread bdsThread) {
+	public long popInt(BdsThread bdsThread) {
 		return (Long) Type.INT.cast(bdsThread.pop());
 	}
 
 	/**
 	 * Pop a real from stack
 	 */
-	public double popReal(BigDataScriptThread bdsThread) {
+	public double popReal(BdsThread bdsThread) {
 		return (Double) Type.REAL.cast(bdsThread.pop());
 	}
 
 	/**
 	 * Pop a string from stack
 	 */
-	public String popString(BigDataScriptThread bdsThread) {
+	public String popString(BdsThread bdsThread) {
 		return (String) Type.STRING.cast(bdsThread.pop());
 	}
 
@@ -605,7 +605,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 		return Type.VOID;
 	}
 
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		throw new RuntimeException("Unimplemented method for class " + getClass().getSimpleName() + ", id = " + id);
 	}
 
@@ -621,7 +621,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 
 		// Use ID from file
 		updateId((int) serializer.getNextFieldInt());
@@ -657,7 +657,7 @@ public abstract class BigDataScriptNode implements BigDataScriptSerialize {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 
 		// Not an array: Single field. Show

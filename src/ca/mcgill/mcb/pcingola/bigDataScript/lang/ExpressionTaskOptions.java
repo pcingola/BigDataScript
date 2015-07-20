@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskDependency;
 
@@ -27,7 +27,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 	 * Note: If 'evalAll' is true, all expressions in the list are evaluated, even if the first one is false
 	 * @return A 'TaskDependencies' object if the task has to be run, null otherwise
 	 */
-	public TaskDependency evalTaskDependency(BigDataScriptThread bdsThread) {
+	public TaskDependency evalTaskDependency(BdsThread bdsThread) {
 		boolean sat = true;
 		TaskDependency taskDeps = new TaskDependency(this);
 
@@ -66,7 +66,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 	 * @return true if all clauses are satisfied and taskDependency was created.
 	 */
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		TaskDependency taskDeps = evalTaskDependency(bdsThread);
 		bdsThread.push(taskDeps != null);
 	}

@@ -5,7 +5,7 @@ import java.util.List;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 /**
  * Rm: Delete all files in list: same as string[].rm()
@@ -32,11 +32,11 @@ public class MethodNativeListDelete extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		List list = (List) objThis;
 
 		for (Object o : list)
-			bdsThread.file(o.toString()).delete();
+			bdsThread.data(o.toString()).delete();
 
 		return objThis;
 	}

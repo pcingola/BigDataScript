@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
@@ -40,7 +40,7 @@ public class ForLoopList extends StatementWithScope {
 	/**
 	 * Variable declaration (Loop initialization)
 	 */
-	protected ScopeSymbol initBeginDecl(BigDataScriptThread bdsThread) {
+	protected ScopeSymbol initBeginDecl(BdsThread bdsThread) {
 		bdsThread.run(beginVarDecl);
 		String varName = beginVarDecl.getVarInit()[0].getVarName();
 		ScopeSymbol varSym = bdsThread.getScope().getSymbol(varName);
@@ -50,7 +50,7 @@ public class ForLoopList extends StatementWithScope {
 	/**
 	 * Iterable counter (current position in iterator)
 	 */
-	protected ScopeSymbol initIterableCounter(BigDataScriptThread csThread) {
+	protected ScopeSymbol initIterableCounter(BdsThread csThread) {
 		// Are we recovering state from a checkpoint file?
 		if (csThread.isCheckpointRecover()) {
 			ScopeSymbol ssIterableCount = csThread.getScope().getSymbol(iterableCountName);
@@ -69,7 +69,7 @@ public class ForLoopList extends StatementWithScope {
 	 * Iterable values (list of elements to iterate)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList initIterableValues(BigDataScriptThread bdsThread, ScopeSymbol varSym) {
+	protected ArrayList initIterableValues(BdsThread bdsThread, ScopeSymbol varSym) {
 		// Evaluate list
 		bdsThread.run(expression);
 
@@ -129,7 +129,7 @@ public class ForLoopList extends StatementWithScope {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	public void runStep(BigDataScriptThread bdsThread) {
+	public void runStep(BdsThread bdsThread) {
 		ScopeSymbol varSym = initBeginDecl(bdsThread);
 		ArrayList iterableValues = initIterableValues(bdsThread, varSym);
 		ScopeSymbol iterableCount = initIterableCounter(bdsThread);

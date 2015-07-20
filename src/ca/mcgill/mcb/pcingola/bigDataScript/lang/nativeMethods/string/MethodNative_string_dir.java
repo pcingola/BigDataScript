@@ -4,7 +4,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 public class MethodNative_string_dir extends MethodNative {
 	public MethodNative_string_dir() {
@@ -24,7 +24,7 @@ public class MethodNative_string_dir extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BigDataScriptThread bdsThread, Object objThis) {
-		return array2listSorted((bdsThread.file(objThis.toString())).list());
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		return bdsThread.data(objThis.toString()).list();
 	}
 }

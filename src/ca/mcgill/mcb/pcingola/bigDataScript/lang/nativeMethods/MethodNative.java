@@ -5,10 +5,10 @@ import java.util.Collections;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.MethodDeclaration;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
 import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
-import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BigDataScriptSerializer;
+import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 
 /**
  * A native method declaration
@@ -65,7 +65,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	}
 
 	@Override
-	public void runFunction(BigDataScriptThread bdsThread) {
+	public void runFunction(BdsThread bdsThread) {
 		// Get object 'this'
 		ScopeSymbol symThis = bdsThread.getScope().getSymbol(THIS_KEYWORD);
 		Object objThis = symThis.getValue();
@@ -83,17 +83,17 @@ public abstract class MethodNative extends MethodDeclaration {
 	/**
 	 * Run a method
 	 */
-	protected Object runMethodNative(BigDataScriptThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread csThread, Object objThis) {
 		throw new RuntimeException("Unimplemented method for class " + this.getClass().getSimpleName());
 	}
 
 	@Override
-	public void serializeParse(BigDataScriptSerializer serializer) {
+	public void serializeParse(BdsSerializer serializer) {
 		// Nothing to do: Native methods are not serialized
 	}
 
 	@Override
-	public String serializeSave(BigDataScriptSerializer serializer) {
+	public String serializeSave(BdsSerializer serializer) {
 		// Nothing to do: Native methods are not serialized
 		return "";
 	}

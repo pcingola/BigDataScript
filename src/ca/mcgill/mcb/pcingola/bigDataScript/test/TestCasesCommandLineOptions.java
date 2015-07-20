@@ -5,7 +5,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BigDataScriptThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
@@ -25,7 +25,7 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 
 		// Run script
 		bds.run();
-		BigDataScriptThread bdsThread = bds.getBigDataScriptThread();
+		BdsThread bdsThread = bds.getBigDataScriptThread();
 
 		// Check that all 'log' files exists
 		String base = bdsThread.getBdsThreadId() + "/task.cmdLineOptions_01.line_3.id_1";
