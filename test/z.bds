@@ -1,7 +1,7 @@
 #!/usr/bin/env bds
 
 
-file := "http://arxiv.org/pdf/1506.08452v1.pdf"
+file := "https://arxiv.org/pdf/1506.08452v1.pdf"
 
 #localFile := file.download()
 #println "localFile : $localFile"

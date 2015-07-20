@@ -56,7 +56,12 @@ public abstract class Data {
 			break;
 
 		case HTTP:
+		case HTTPS:
 			data = new DataHttp(url);
+			break;
+
+		case S3:
+			data = new DataS3(url);
 			break;
 
 		default:

@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  *
  * @author pcingola
  */
-public class DataHttp extends DataRemote {
+public class DataS3 extends DataRemote {
 
 	private static int BUFFER_SIZE = 102400;
 
@@ -24,7 +24,7 @@ public class DataHttp extends DataRemote {
 	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
 	public final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 
-	public DataHttp(String url) {
+	public DataS3(String url) {
 		super(url);
 		canWrite = false;
 	}
