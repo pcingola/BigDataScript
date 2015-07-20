@@ -5,20 +5,19 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
-public class MethodNative_string_write_str extends MethodNative {
-	public MethodNative_string_write_str() {
+public class MethodNative_string_download_localname extends MethodNative {
+	public MethodNative_string_download_localname() {
 		super();
 	}
 
 	@Override
 	protected void initMethod() {
-		functionName = "write";
+		functionName = "download";
 		classType = Type.STRING;
 		returnType = Type.STRING;
 
-		String argNames[] = { "this", "str" };
+		String argNames[] = { "this", "localName" };
 		Type argTypes[] = { Type.STRING, Type.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
@@ -26,23 +25,11 @@ public class MethodNative_string_write_str extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		// Download data if nescesary
+		String localName = bdsThread.getString("localName");
+
 		Data data = bdsThread.data(objThis.toString());
-
-		// Save to file
-		String str = bdsThread.getString("str");
-		if (data.isRemote()) {
-			// Save to temp file and upload
-			String tmpFileName = "";
-			Gpr.toFile(tmpFileName, str);
-
-			if (!data.upload(tmpFileName)) return ""; // Failed upload?
-		} else {
-			// Save to local file
-			Gpr.toFile(data.getLocalPath(), str);
-		}
-
-		// OK
-		return str;
+		Data localData = bdsThread.data(localName);
+		if (!data.download(localData.getPath())) return "";
+		return data.getLocalPath();
 	}
 }

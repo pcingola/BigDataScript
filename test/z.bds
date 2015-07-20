@@ -3,6 +3,14 @@
 
 file := "http://arxiv.org/pdf/1506.08452v1.pdf"
 
-localFile := file.download()
-println "localFile : $localFile"
+#localFile := file.download()
+#println "localFile : $localFile"
+
+lf := 'paper.pdf'
+if( lf <- file ) {
+	println "Downloading to $lf"
+	file.download(lf)
+} else {
+	println "Download: OK"
+}
 

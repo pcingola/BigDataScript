@@ -66,7 +66,7 @@ public class DataFile extends Data {
 	}
 
 	@Override
-	public boolean download() {
+	public boolean download(String localName) {
 		return true;
 	}
 
@@ -133,8 +133,8 @@ public class DataFile extends Data {
 	}
 
 	@Override
-	public boolean upload() {
-		return true;
+	public boolean upload(String filename) {
+		throw new RuntimeException("Error: Cannot upload local file '" + this + "'");
 	}
 
 }

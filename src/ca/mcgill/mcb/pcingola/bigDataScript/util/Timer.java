@@ -83,7 +83,6 @@ public class Timer {
 
 	/**
 	 * Elapsed miliseconds
-	 * @return
 	 */
 	public long elapsed() {
 		if (end != null) return end.getTime() - start.getTime();
@@ -93,7 +92,6 @@ public class Timer {
 
 	/**
 	 * Elapsed seconds
-	 * @return
 	 */
 	public int elapsedSecs() {
 		long e = elapsed();
@@ -121,16 +119,16 @@ public class Timer {
 
 	/**
 	 * Remaining time until timeout
-	 * @return
 	 */
 	public long remaining() {
 		long remaining = timeOut - elapsed();
 		return remaining > 0 ? remaining : 0;
 	}
 
-	public void start() {
+	public Timer start() {
 		start = new Date();
 		end = null;
+		return this;
 	}
 
 	@Override

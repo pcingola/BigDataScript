@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
+
 public class BdsThreads {
 
 	private static BdsThreads bdsThreads = new BdsThreads();
@@ -19,9 +21,10 @@ public class BdsThreads {
 	 * Warning: When un-serializing a task form a checkpoint, threads are not
 	 *          initialized, thus they are null
 	 */
-	public static String filePath(String fileName) {
+	public static Data data(String url) {
 		BdsThread bdsThread = BdsThreads.getInstance().get();
-		return bdsThread != null ? bdsThread.dataLocalPath(fileName) : fileName;
+		if (bdsThread == null) return Data.factory(url);
+		return bdsThread.data(url);
 	}
 
 	/**

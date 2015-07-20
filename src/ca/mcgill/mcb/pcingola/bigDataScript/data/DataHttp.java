@@ -9,8 +9,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.Config;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -18,39 +16,17 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  *
  * @author pcingola
  */
-public class DataHttp extends Data {
+public class DataHttp extends DataRemote {
 
 	private static int BUFFER_SIZE = 102400;
-	private static long CACHE_TIMEOUT = 1000;
 
 	public final int HTTP_OK = 200; // Connection OK
 	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
 	public final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 
-	boolean canRead;
-	boolean exists;
-	Date lastModified;
-	long size;
-	Timer latestUpdate;
-
 	public DataHttp(String url) {
 		super(url);
-	}
-
-	@Override
-	public boolean canExecute() {
-		return false;
-	}
-
-	@Override
-	public boolean canRead() {
-		if (needsUpdateInfo()) updateInfo();
-		return canRead;
-	}
-
-	@Override
-	public boolean canWrite() {
-		return false;
+		canWrite = false;
 	}
 
 	/**
@@ -109,16 +85,10 @@ public class DataHttp extends Data {
 		if (verbose) Timer.showStdErr("Cannot delete file '" + getUrl() + "'");
 	}
 
-	@Override
-	public boolean download() {
-		if (isDownloaded()) return true;
-		String localFile = localFile();
-		return download(localFile);
-	}
-
 	/**
 	 * Download a file
 	 */
+	@Override
 	public boolean download(String localFile) {
 		URL url = url();
 
@@ -176,58 +146,12 @@ public class DataHttp extends Data {
 		}
 	}
 
-	@Override
-	public boolean exists() {
-		if (needsUpdateInfo()) updateInfo();
-		return exists;
-	}
-
-	@Override
-	public Date getLastModified() {
-		if (needsUpdateInfo()) updateInfo();
-		return lastModified;
-	}
-
-	@Override
-	public String getParent() {
-		int idx = path.lastIndexOf('/');
-		if (idx > 0) return path.substring(0, idx);
-		return null;
-	}
-
 	/**
 	 * HTTP has no concept of directory
 	 */
 	@Override
 	public boolean isDirectory() {
 		return false;
-	}
-
-	@Override
-	public boolean isDownloaded() {
-		// Did we download
-		if (localPath == null) localPath = localFile();
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getUrl() + "'");
-
-		// Is there a local file
-		File localFile = new File(localPath);
-		if (!localFile.exists()) return false;
-
-		// Get remote data
-		if (needsUpdateInfo()) {
-			if (!updateInfo()) return false;
-		}
-
-		// Has local file a different size than remote file?
-		if (localFile.length() != size) return false;
-
-		// Is local file older than remote file?
-		long lflm = localFile.lastModified();
-		long rflm = lastModified.getTime();
-		if (lflm < rflm) return false;
-
-		// OK, we have a local file that looks updated respect to the remote file
-		return true;
 	}
 
 	@Override
@@ -240,18 +164,6 @@ public class DataHttp extends Data {
 		return new ArrayList<>();
 	}
 
-	protected String localFile() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(Config.get().getTmpDir());
-		sb.append("/" + scheme);
-
-		for (String part : path.split("/")) {
-			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
-		}
-
-		return sb.toString();
-	}
-
 	/**
 	 * Cannot create dirs in http
 	 */
@@ -260,23 +172,14 @@ public class DataHttp extends Data {
 		return false;
 	}
 
-	protected boolean needsUpdateInfo() {
-		return latestUpdate == null || latestUpdate.isExpired();
-	}
-
-	@Override
-	public long size() {
-		if (needsUpdateInfo()) updateInfo();
-		return size;
-	}
-
 	/**
 	 * Connect and update info
 	 */
+	@Override
 	protected boolean updateInfo() {
 		URLConnection connection = connect(url());
 
-		latestUpdate = new Timer(CACHE_TIMEOUT);
+		latestUpdate = new Timer(CACHE_TIMEOUT).start();
 		boolean ok;
 		if (connection == null) {
 			// Cannot connect
@@ -310,7 +213,7 @@ public class DataHttp extends Data {
 	 * Cannot upload to a web server
 	 */
 	@Override
-	public boolean upload() {
+	public boolean upload(String localFileName) {
 		return false;
 	}
 

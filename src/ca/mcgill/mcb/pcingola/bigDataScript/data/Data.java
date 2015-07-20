@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A data object: Typically a file, but
@@ -113,7 +114,14 @@ public abstract class Data {
 	/**
 	 * Download file to local file system
 	 */
-	public abstract boolean download();
+	public boolean download() {
+		return download(null);
+	}
+
+	/**
+	 * Download file to local file system
+	 */
+	public abstract boolean download(String localFileName);
 
 	/**
 	 * Does data exists?
@@ -129,6 +137,7 @@ public abstract class Data {
 	 * This is a local version of the (possibly remote) data object
 	 */
 	public String getLocalPath() {
+		if (localPath == null) localPath = localPath();
 		return localPath;
 	}
 
@@ -169,11 +178,27 @@ public abstract class Data {
 	 */
 	public abstract boolean isFile();
 
+	public boolean isRemote() {
+		return scheme.isRemote();
+	}
+
 	/**
 	 * List of file names under this 'directory'
 	 * File names should be returned as canonical paths
 	 */
 	public abstract ArrayList<String> list();
+
+	protected String localPath() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Config.get().getTmpDir());
+		sb.append("/" + scheme);
+
+		for (String part : path.split("/")) {
+			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+		}
+
+		return sb.toString();
+	}
 
 	public abstract boolean mkdirs();
 
@@ -198,7 +223,11 @@ public abstract class Data {
 	/**
 	 * Upload local version of the file to remote file system
 	 */
-	public abstract boolean upload();
+	public boolean upload() {
+		return upload(getLocalPath());
+	}
+
+	public abstract boolean upload(String locaLFileName);
 
 	public URL url() {
 		try {

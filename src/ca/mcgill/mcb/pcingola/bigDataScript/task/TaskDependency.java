@@ -63,7 +63,7 @@ public class TaskDependency {
 		Task task = TaskDependecies.get().getTask(input);
 
 		if (task != null) tasks.add(task);
-		else inputs.add(BdsThreads.filePath(input)); // No taskId, then must be a file
+		else inputs.add(BdsThreads.data(input).getUrl()); // No taskId, then must be a file
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class TaskDependency {
 	 * Add output
 	 */
 	public void addOutput(String output) {
-		outputs.add(BdsThreads.filePath(output));
+		outputs.add(BdsThreads.data(output).getUrl());
 	}
 
 	/**
@@ -123,31 +123,31 @@ public class TaskDependency {
 		//---
 
 		long minModifiedLeft = Long.MAX_VALUE;
-		for (String fileName : outputs) {
-			Data file = Data.factory(fileName);
+		for (String output : outputs) {
+			Data dataOut = Data.factory(output);
 
 			// Any 'left' file does not exists? => We need to build this dependency
-			if (!file.exists()) {
-				if (debug && (expresison != null)) expresison.log("Left hand side: file '" + fileName + "' doesn't exist");
+			if (!dataOut.exists()) {
+				if (debug && (expresison != null)) expresison.log("Left hand side: file '" + output + "' doesn't exist");
 				return true;
 			}
 
-			if (file.isFile() && file.size() <= 0) {
-				if (debug && (expresison != null)) expresison.log("Left hand side: file '" + fileName + "' is empty");
+			if (dataOut.isFile() && dataOut.size() <= 0) {
+				if (debug && (expresison != null)) expresison.log("Left hand side: file '" + output + "' is empty");
 				return true; // File is empty? => We need to build this dependency.
-			} else if (file.isDirectory()) {
+			} else if (dataOut.isDirectory()) {
 				// Notice: If it is a directory, we must rebuild if it is empty
-				List<String> dirList = file.list();
+				List<String> dirList = dataOut.list();
 				if (dirList.isEmpty()) {
-					if (debug && (expresison != null)) expresison.log("Left hand side: file '" + fileName + "' is an empty dir");
+					if (debug && (expresison != null)) expresison.log("Left hand side: file '" + output + "' is an empty dir");
 					return true;
 				}
 			}
 
 			// Analyze modification time
-			long modTime = file.getLastModified().getTime();
+			long modTime = dataOut.getLastModified().getTime();
 			minModifiedLeft = Math.min(minModifiedLeft, modTime);
-			if (debug) expresison.log("Left hand side: file '" + fileName + "' modified on " + modTime + ". Min modification time: " + minModifiedLeft);
+			if (debug) expresison.log("Left hand side: file '" + output + "' modified on " + modTime + ". Min modification time: " + minModifiedLeft);
 		}
 
 		//---
@@ -156,31 +156,31 @@ public class TaskDependency {
 		//---
 
 		long maxModifiedRight = Long.MIN_VALUE;
-		for (String fileName : inputs) {
-			Data file = Data.factory(fileName);
+		for (String inout : inputs) {
+			Data dataIn = Data.factory(inout);
 
 			// Is this file scheduled to be modified by a pending task? => Time will change => We'll need to update
-			List<Task> taskOutList = TaskDependecies.get().getTasksByOutput(fileName);
+			List<Task> taskOutList = TaskDependecies.get().getTasksByOutput(inout);
 			if (taskOutList != null && !taskOutList.isEmpty()) {
 				for (Task t : taskOutList) {
 					// If the task modifying 'file' is not finished => We'll need to update
 					if (!t.isDone()) {
-						if (debug) expresison.log("Right hand side: file '" + fileName + "' will be modified by task '" + t.getId() + "' (task state: '" + t.getTaskState() + "')");
+						if (debug) expresison.log("Right hand side: file '" + inout + "' will be modified by task '" + t.getId() + "' (task state: '" + t.getTaskState() + "')");
 						return true;
 					}
 				}
 			}
 
-			if (file.exists()) {
+			if (dataIn.exists()) {
 				// Update max time
-				long modTime = file.getLastModified().getTime();
+				long modTime = dataIn.getLastModified().getTime();
 				maxModifiedRight = Math.max(maxModifiedRight, modTime);
-				if (debug) expresison.log("Right hand side: file '" + fileName + "' modified on " + modTime + ". Max modification time: " + maxModifiedRight);
+				if (debug) expresison.log("Right hand side: file '" + inout + "' modified on " + modTime + ". Max modification time: " + maxModifiedRight);
 			} else {
 				// Make sure that we schedule the task if the input file doesn't exits
 				// The reason to do this, is that probably the input file was defined
 				// by some other task that is pending execution.
-				if (debug && (expresison != null)) expresison.log("Right hand side: file '" + fileName + "' doesn't exist");
+				if (debug && (expresison != null)) expresison.log("Right hand side: file '" + inout + "' doesn't exist");
 				return true;
 			}
 		}

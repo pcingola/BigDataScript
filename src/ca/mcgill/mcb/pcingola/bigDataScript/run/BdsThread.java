@@ -247,12 +247,12 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return Data.factory(fileName, currentDir);
 	}
 
-	/**
-	 * Create a new (and canonical) file relative to 'currentDir'
-	 */
-	public String dataLocalPath(String fileName) {
-		return Data.factory(fileName, currentDir).getLocalPath();
-	}
+	//	/**
+	//	 * Create a new (and canonical) file relative to 'currentDir'
+	//	 */
+	//	public String dataLocalPath(String fileName) {
+	//		return Data.factory(fileName, currentDir).getLocalPath();
+	//	}
 
 	/**
 	 * Running in debug mode: This method is invoked right before running 'node'
@@ -300,7 +300,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -373,7 +373,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-		) {
+				) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -837,7 +837,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
+					) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -849,11 +849,17 @@ public class BdsThread extends Thread implements BdsSerialize {
 	@SuppressWarnings("rawtypes")
 	public synchronized void rmOnExit(List files) {
 		for (Object o : files)
-			removeOnExit.add(dataLocalPath(o.toString()));
+			rmOnExit(o.toString());
 	}
 
 	public synchronized void rmOnExit(String file) {
-		removeOnExit.add(dataLocalPath(file));
+		Data data = data(file);
+
+		// Add file for removal
+		removeOnExit.add(data.getPath());
+
+		// Remove local (cached) copy of the file
+		if (data.getScheme().isRemote() && (data.getLocalPath() != null)) removeOnExit.add(data.getLocalPath());
 	}
 
 	@Override
@@ -955,7 +961,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
-			);
+					);
 		}
 
 		// Remove thread from "running threads"
