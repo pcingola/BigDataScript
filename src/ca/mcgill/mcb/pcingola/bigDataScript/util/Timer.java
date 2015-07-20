@@ -114,7 +114,6 @@ public class Timer {
 
 	/**
 	 * Has this timer expired?
-	 * @return
 	 */
 	public boolean isExpired() {
 		return timeOut <= elapsed();

@@ -1,7 +1,11 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.data;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 
 /**
  * A data object: Typically a file, but
@@ -27,9 +31,11 @@ import java.util.Date;
  */
 public abstract class Data {
 
-	DataScheme scheme; // File system type
-	String path;
-	String localPath; // File name used for local processing
+	protected boolean verbose;
+	protected boolean debug;
+	protected DataScheme scheme; // File system type
+	protected String path;
+	protected String localPath; // File name used for local processing
 
 	public static Data factory(String url) {
 		return factory(url, null);
@@ -42,13 +48,24 @@ public abstract class Data {
 		DataScheme scheme = DataScheme.parse(url);
 		if (scheme == null) throw new RuntimeException("Unknown data scheme '" + url + "'");
 
+		Data data = null;
 		switch (scheme) {
 		case FILE:
-			return new DataFile(url, currentDir);
+			data = new DataFile(url, currentDir);
+			break;
+
+		case HTTP:
+			data = new DataHttp(url);
+			break;
 
 		default:
 			throw new RuntimeException("Unimplemented scheme '" + scheme + "'");
 		}
+
+		data.setVerbose(Config.get().isVerbose());
+		data.setDebug(Config.get().isDebug());
+
+		return data;
 	}
 
 	/**
@@ -160,6 +177,14 @@ public abstract class Data {
 
 	public abstract boolean mkdirs();
 
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+
 	/**
 	 * Data object size
 	 */
@@ -174,4 +199,12 @@ public abstract class Data {
 	 * Upload local version of the file to remote file system
 	 */
 	public abstract boolean upload();
+
+	public URL url() {
+		try {
+			return new URL(getUrl());
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Error connecting to '" + getUrl() + "'", e);
+		}
+	}
 }

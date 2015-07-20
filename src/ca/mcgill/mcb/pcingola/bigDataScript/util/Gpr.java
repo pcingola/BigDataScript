@@ -366,8 +366,6 @@ public class Gpr {
 
 	/**
 	 * Equivalent to Double.parseDouble(), except it returns 0 on invalid double (NumberFormatException)
-	 * @param s
-	 * @return	int
 	 */
 	public static double parseDoubleSafe(String s) {
 		try {
@@ -379,8 +377,6 @@ public class Gpr {
 
 	/**
 	 * Equivalent to Float.parseFloat(), except it returns 0 on invalid double (NumberFormatException)
-	 * @param s
-	 * @return	int
 	 */
 	public static float parseFloatSafe(String s) {
 		try {
@@ -476,8 +472,6 @@ public class Gpr {
 
 	/**
 	 * Read an input stream
-	 * @param is
-	 * @return
 	 */
 	public static String read(InputStream is) {
 		if (is == null) return null;
@@ -500,8 +494,6 @@ public class Gpr {
 
 	/**
 	 * Try to open a file (BufferedReader) using either the file or a gzip file (appending '.gz' to fileName)
-	 * @param fileName
-	 * @return
 	 */
 	public static BufferedReader reader(String fileName) {
 		return reader(fileName, false, true);
