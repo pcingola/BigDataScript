@@ -10,6 +10,7 @@ rm -rvf \
 	cmdLineOptions_*.bds.* \
 	*.pid \
 	z.bds.* \
+	graph_*.bds.* \
 	*.html \
 	*.dag.js \
 	test/tmp*.txt \
