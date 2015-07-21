@@ -1,12 +1,14 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.data;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.http.client.utils.URIBuilder;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
  * A data object: Typically a file, but
@@ -32,10 +34,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public abstract class Data {
 
+	public static final String PROTOCOL_SEP = "://";
+
 	protected boolean verbose;
 	protected boolean debug;
-	protected DataScheme scheme; // File system type
-	protected String path;
 	protected String localPath; // File name used for local processing
 
 	public static Data factory(String url) {
@@ -45,50 +47,55 @@ public abstract class Data {
 	/**
 	 * Create a data object, resolve local files using 'currentDir'
 	 */
-	public static Data factory(String url, String currentDir) {
-		DataScheme scheme = DataScheme.parse(url);
-		if (scheme == null) throw new RuntimeException("Unknown data scheme '" + url + "'");
+	public static Data factory(String urlStr, String currentDir) {
+		String proto = "file";
 
+		// Get protocol
+		int idx = urlStr.indexOf(PROTOCOL_SEP);
+		if (idx < 0) proto = "file";
+		else proto = urlStr.substring(0, idx);
+
+		// Create each data type
 		Data data = null;
-		switch (scheme) {
-		case FILE:
-			data = new DataFile(url, currentDir);
+		switch (proto) {
+		case "file":
+			data = new DataFile(urlStr, currentDir);
 			break;
 
-		case HTTP:
-		case HTTPS:
-			data = new DataHttp(url);
+		case "http":
+		case "https":
+			data = new DataHttp(parseUrl(urlStr));
 			break;
 
-		case S3:
-			data = new DataS3(url);
+		case "s3":
+			data = new DataS3(parseUrl(urlStr));
 			break;
 
 		default:
-			throw new RuntimeException("Unimplemented scheme '" + scheme + "'");
+			throw new RuntimeException("Unimplemented proteocol '" + proto + "' for URL " + urlStr);
 		}
 
+		// Set values form config
 		data.setVerbose(Config.get().isVerbose());
 		data.setDebug(Config.get().isDebug());
 
 		return data;
 	}
 
-	/**
-	 * Remove scheme part form URL
-	 */
-	public static String removeScheme(String url, DataScheme scheme) {
-		String schemePrefix = scheme + DataScheme.SEP;
-		if (url.toUpperCase().startsWith(schemePrefix)) url = url.substring(schemePrefix.length());
-		return url;
+	public static URL parseUrl(String urlStr) {
+		try {
+			// No protocol: file
+			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URL("file" + PROTOCOL_SEP + urlStr);
+
+			// Encode the url
+			URIBuilder ub = new URIBuilder(urlStr);
+			return ub.build().toURL();
+		} catch (URISyntaxException | MalformedURLException e) {
+			throw new RuntimeException("Cannot parse URL " + urlStr, e);
+		}
 	}
 
-	public Data(String url) {
-		// Parse scheme
-		scheme = DataScheme.parse(url);
-
-		// Default scheme: Local file
-		path = removeScheme(url, scheme);
+	public Data() {
 	}
 
 	/**
@@ -133,6 +140,8 @@ public abstract class Data {
 	 */
 	public abstract boolean exists();
 
+	public abstract String getCanonicalPath();
+
 	/**
 	 * Get latest medification time
 	 */
@@ -142,30 +151,14 @@ public abstract class Data {
 	 * This is a local version of the (possibly remote) data object
 	 */
 	public String getLocalPath() {
-		if (localPath == null) localPath = localPath();
 		return localPath;
 	}
 
-	public String getName() {
-		int idx = path.lastIndexOf('/');
-		if (idx >= 0) return path.substring(idx);
-		return path;
-	}
+	public abstract String getName();
 
 	public abstract String getParent();
 
-	public String getPath() {
-		return path;
-	}
-
-	public DataScheme getScheme() {
-		return scheme;
-	}
-
-	public String getUrl() {
-		if (scheme.isRemote()) return scheme + DataScheme.SEP + path;
-		return path;
-	}
+	public abstract String getPath();
 
 	/**
 	 * Is this a directory (or an equivalent abstraction, such
@@ -179,13 +172,11 @@ public abstract class Data {
 	public abstract boolean isDownloaded();
 
 	/**
-	 * Does thi represent a 'file' (not a directory)
+	 * Does this represent a 'file' (not a directory)
 	 */
 	public abstract boolean isFile();
 
-	public boolean isRemote() {
-		return scheme.isRemote();
-	}
+	public abstract boolean isRemote();
 
 	/**
 	 * List of file names under this 'directory'
@@ -193,18 +184,29 @@ public abstract class Data {
 	 */
 	public abstract ArrayList<String> list();
 
-	protected String localPath() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(Config.get().getTmpDir());
-		sb.append("/" + scheme);
-
-		for (String part : path.split("/")) {
-			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
-		}
-
-		return sb.toString();
-	}
-
+	//	protected String localPath() {
+	//		StringBuilder sb = new StringBuilder();
+	//		sb.append(Config.get().getTmpDir());
+	//		sb.append("/" + url.getProtocol());
+	//
+	//		// Authority: Host and port
+	//		for (String part : url.getAuthority().split("[:\\.]")) {
+	//			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+	//		}
+	//
+	//		// Path
+	//		for (String part : url.getPath().split("/")) {
+	//			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+	//		}
+	//
+	//		// Query
+	//		for (String part : url.getPath().split("&")) {
+	//			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+	//		}
+	//
+	//		return sb.toString();
+	//	}
+	//
 	public abstract boolean mkdirs();
 
 	public void setDebug(boolean debug) {
@@ -220,11 +222,6 @@ public abstract class Data {
 	 */
 	public abstract long size();
 
-	@Override
-	public String toString() {
-		return getUrl();
-	}
-
 	/**
 	 * Upload local version of the file to remote file system
 	 */
@@ -234,11 +231,4 @@ public abstract class Data {
 
 	public abstract boolean upload(String locaLFileName);
 
-	public URL url() {
-		try {
-			return new URL(getUrl());
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("Error connecting to '" + getUrl() + "'", e);
-		}
-	}
 }

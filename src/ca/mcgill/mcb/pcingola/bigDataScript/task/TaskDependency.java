@@ -63,7 +63,7 @@ public class TaskDependency {
 		Task task = TaskDependecies.get().getTask(input);
 
 		if (task != null) tasks.add(task);
-		else inputs.add(BdsThreads.data(input).getUrl()); // No taskId, then must be a file
+		else inputs.add(BdsThreads.data(input).getCanonicalPath()); // No taskId, then must be a file
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class TaskDependency {
 	 * Add output
 	 */
 	public void addOutput(String output) {
-		outputs.add(BdsThreads.data(output).getUrl());
+		outputs.add(BdsThreads.data(output).getCanonicalPath());
 	}
 
 	/**

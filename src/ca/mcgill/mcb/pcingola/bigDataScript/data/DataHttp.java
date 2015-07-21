@@ -24,7 +24,7 @@ public class DataHttp extends DataRemote {
 	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
 	public final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 
-	public DataHttp(String url) {
+	public DataHttp(URL url) {
 		super(url);
 		canWrite = false;
 	}
@@ -32,7 +32,7 @@ public class DataHttp extends DataRemote {
 	/**
 	 * Connect and cache some data
 	 */
-	protected URLConnection connect(URL url) {
+	protected URLConnection connect() {
 		try {
 			if (verbose) Timer.showStdErr("Connecting to " + url);
 			URLConnection connection = url.openConnection();
@@ -90,10 +90,8 @@ public class DataHttp extends DataRemote {
 	 */
 	@Override
 	public boolean download(String localFile) {
-		URL url = url();
-
 		try {
-			URLConnection connection = connect(url);
+			URLConnection connection = connect();
 			if (connection == null) return false;
 
 			// Copy resource to local file, use remote file if no local file name specified
@@ -177,7 +175,7 @@ public class DataHttp extends DataRemote {
 	 */
 	@Override
 	protected boolean updateInfo() {
-		URLConnection connection = connect(url());
+		URLConnection connection = connect();
 
 		latestUpdate = new Timer(CACHE_TIMEOUT).start();
 		boolean ok;

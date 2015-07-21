@@ -29,12 +29,12 @@ public class DataFile extends Data {
 		}
 	}
 
-	public DataFile(String path, String currentDir) {
-		super(path);
-		file = resolveLocalPath(path, currentDir);
+	public DataFile(String fileName, String currentDir) {
+		super();
+		file = resolveLocalPath(fileName, currentDir);
 
 		try {
-			this.path = localPath = file.getCanonicalPath();
+			localPath = file.getCanonicalPath();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -76,6 +76,15 @@ public class DataFile extends Data {
 	}
 
 	@Override
+	public String getCanonicalPath() {
+		try {
+			return file.getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException("Cannot get canonical path for file " + file, e);
+		}
+	}
+
+	@Override
 	public Date getLastModified() {
 		return new Date(file.lastModified());
 	}
@@ -92,7 +101,7 @@ public class DataFile extends Data {
 
 	@Override
 	public String getPath() {
-		return path;
+		return file.getPath();
 	}
 
 	@Override
@@ -108,6 +117,11 @@ public class DataFile extends Data {
 	@Override
 	public boolean isFile() {
 		return file.isFile();
+	}
+
+	@Override
+	public boolean isRemote() {
+		return false;
 	}
 
 	@Override

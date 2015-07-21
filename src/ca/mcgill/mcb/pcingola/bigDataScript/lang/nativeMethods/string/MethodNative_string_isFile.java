@@ -1,6 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.data.DataScheme;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
@@ -25,6 +24,6 @@ public class MethodNative_string_isFile extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		return (bdsThread.data(objThis.toString())).getScheme() == DataScheme.FILE;
+		return (bdsThread.data(objThis.toString())).isFile();
 	}
 }

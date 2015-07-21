@@ -300,7 +300,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-				;
+		;
 
 		//---
 		// Wait for options
@@ -373,7 +373,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-				) {
+		) {
 			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
@@ -837,7 +837,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
-					) {
+			) {
 				// Task not finished or failed? Re-execute
 				ExpressionTask.execute(this, task);
 			}
@@ -859,7 +859,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		removeOnExit.add(data.getPath());
 
 		// Remove local (cached) copy of the file
-		if (data.getScheme().isRemote() && (data.getLocalPath() != null)) removeOnExit.add(data.getLocalPath());
+		if (data.isRemote() && (data.getLocalPath() != null)) removeOnExit.add(data.getLocalPath());
 	}
 
 	@Override
@@ -961,7 +961,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
 					+ "." //
-					);
+			);
 		}
 
 		// Remove thread from "running threads"
