@@ -6,7 +6,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
  * @author pcingola
  *
  */
-public class TestCasesZzz extends TestCasesBase {
+public class TestCasesRemote extends TestCasesBase {
 
 	/**
 	 *  Test cases to create

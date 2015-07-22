@@ -42,8 +42,8 @@ public class TaskDependency {
 	 * Add all dependencies from 'taskDependency' to this this one
 	 */
 	public void add(TaskDependency taskDependency) {
-		addInput(taskDependency.getInputFiles());
-		addOutput(taskDependency.getOutputFiles());
+		addInput(taskDependency.getInputs());
+		addOutput(taskDependency.getOutputs());
 		tasks.addAll(taskDependency.getTasks());
 	}
 
@@ -62,8 +62,13 @@ public class TaskDependency {
 		// Is 'input' a task ID?
 		Task task = TaskDependecies.get().getTask(input);
 
-		if (task != null) tasks.add(task);
-		else inputs.add(BdsThreads.data(input).getCanonicalPath()); // No taskId, then must be a file
+		if (task != null) {
+			// It is a taskId, add task as dependency
+			tasks.add(task);
+		} else {
+			// Not a taksID, must be an input 'data' (a file)
+			inputs.add(BdsThreads.data(input).getCanonicalPath());
+		}
 	}
 
 	/**
@@ -192,11 +197,11 @@ public class TaskDependency {
 		return ret;
 	}
 
-	public List<String> getInputFiles() {
+	public List<String> getInputs() {
 		return inputs;
 	}
 
-	public List<String> getOutputFiles() {
+	public List<String> getOutputs() {
 		return outputs;
 	}
 

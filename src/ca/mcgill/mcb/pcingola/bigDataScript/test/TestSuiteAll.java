@@ -21,6 +21,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesCheckpoint.class, //
 		TestCasesCommandLineOptions.class, //
 		TestCasesClusterGeneric.class, //
+		TestCasesRemote.class, //
 })
 public class TestSuiteAll {
 

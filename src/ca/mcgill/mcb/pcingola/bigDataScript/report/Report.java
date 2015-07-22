@@ -309,16 +309,16 @@ public class Report {
 
 		// Input files
 		StringBuilder sbinf = new StringBuilder();
-		if (task.getInputFiles() != null) {
-			for (String inFile : task.getInputFiles())
+		if (task.getInputs() != null) {
+			for (String inFile : task.getInputs())
 				sbinf.append(inFile + "\n");
 		}
 		rTemplate.add("taskInFiles", multilineString(null, sbinf.toString(), yaml));
 
 		// Output files
 		StringBuilder sboutf = new StringBuilder();
-		if (task.getOutputFiles() != null) {
-			for (String outf : task.getOutputFiles())
+		if (task.getOutputs() != null) {
+			for (String outf : task.getOutputs())
 				sboutf.append(outf + "\n");
 		}
 		rTemplate.add("taskOutFiles", multilineString(null, sboutf.toString(), yaml));

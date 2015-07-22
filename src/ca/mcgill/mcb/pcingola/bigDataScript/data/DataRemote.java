@@ -73,6 +73,12 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
+	public String getLocalPath() {
+		if (localPath == null) localPath = localPath();
+		return localPath;
+	}
+
+	@Override
 	public String getName() {
 		File path = new File(url.getPath());
 		return path.getName();
@@ -137,18 +143,24 @@ public abstract class DataRemote extends Data {
 		sb.append("/" + url.getProtocol());
 
 		// Authority: Host and port
-		for (String part : url.getAuthority().split("[:\\.]")) {
-			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+		if (url.getAuthority() != null) {
+			for (String part : url.getAuthority().split("[:\\.]")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
 		}
 
 		// Path
-		for (String part : url.getPath().split("/")) {
-			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+		if (url.getPath() != null) {
+			for (String part : url.getPath().split("/")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
 		}
 
 		// Query
-		for (String part : url.getPath().split("&")) {
-			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+		if (url.getQuery() != null) {
+			for (String part : url.getQuery().split("&")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
 		}
 
 		return sb.toString();
@@ -164,6 +176,11 @@ public abstract class DataRemote extends Data {
 		return size;
 	}
 
+	@Override
+	public String toString() {
+		return url + " <=> " + getLocalPath();
+	}
+
 	/**
 	 * Connect to remote and update info
 	 */
@@ -176,5 +193,4 @@ public abstract class DataRemote extends Data {
 	public boolean upload() {
 		return false;
 	}
-
 }

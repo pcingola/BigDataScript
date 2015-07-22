@@ -2,7 +2,10 @@
 
 
 file := "https://arxiv.org/pdf/1506.08452v1.pdf"
+out := "out.pdf"
 
-localFile := file.download()
-println "localFile : $localFile"
+sys rm -vf $out
 
+task( out <- file ) {
+	sys cat $file > $out
+}

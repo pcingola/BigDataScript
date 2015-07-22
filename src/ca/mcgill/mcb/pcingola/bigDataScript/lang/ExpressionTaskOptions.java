@@ -99,7 +99,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 		for (Expression e : expressions)
 			if (!(e instanceof ExpressionAssignment) //
 					&& !(e instanceof ExpressionVariableInitImplicit) //
-			) {
+					) {
 				// Cannot convert to bool? => We cannot use the expression
 				if (!e.getReturnType().canCast(Type.BOOL)) compilerMessages.add(this, "Only assignment, implicit variable declarations or boolean expressions are allowed in task options", MessageType.ERROR);
 			}

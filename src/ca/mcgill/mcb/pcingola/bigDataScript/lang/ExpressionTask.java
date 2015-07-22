@@ -1,11 +1,13 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
+import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
@@ -36,6 +38,9 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_TASKNAME = "taskName";
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
+
+	public static final String CMD_DOWNLOAD = "bds -download";
+	public static final String CMD_UPLOAD = "bds -upload";
 
 	// Note:	It is important that 'options' node is type-checked before the others in order to
 	//			add variables to the scope before statements uses them.
@@ -77,6 +82,74 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	/**
+	 * Create commands that will be executed in a shell
+	 */
+	String createCommands(BdsThread bdsThread, TaskDependency taskDependency, ExpressionSys sys) {
+		Gpr.debug("CREATE cmds: " + taskDependency);
+
+		//---
+		// Are there any remote inputs?
+		// We need to create the appropriate 'download' commands
+		//---
+		HashMap<String, String> replace = new HashMap<>();
+		StringBuilder sbDown = new StringBuilder();
+		for (String in : taskDependency.getInputs()) {
+			Data dataIn = Data.factory(in);
+			if (dataIn.isRemote()) {
+				sbDown.append(CMD_DOWNLOAD //
+						+ " \"" + dataIn.getCanonicalPath() + "\"" //
+						+ " \"" + dataIn.getLocalPath() + "\"" //
+						+ "\n");
+
+				replace.put(dataIn.getCanonicalPath(), dataIn.getLocalPath());
+			}
+		}
+
+		//---
+		// Are there any remote outputs?
+		// We need to create the appropriate 'upload' commands
+		//---
+		StringBuilder sbUp = new StringBuilder();
+		for (String out : taskDependency.getOutputs()) {
+			Data dataOut = Data.factory(out);
+			if (dataOut.isRemote()) {
+				sbUp.append(CMD_UPLOAD //
+						+ " \"" + dataOut.getLocalPath() + "\"" //
+						+ " \"" + dataOut.getCanonicalPath() + "\"" //
+						+ "\n");
+
+				replace.put(dataOut.getCanonicalPath(), dataOut.getLocalPath());
+			}
+		}
+
+		//---
+		// Sys commands
+		//---
+		String sysCmds = sys.getCommands(bdsThread);
+
+		// No Down/Up-load? Just return the SYS commands
+		if (sbDown.length() <= 0 && sbUp.length() <= 0) return sysCmds;
+
+		// Replace all occurrences of remote references
+		sysCmds = replace(replace, sysCmds);
+
+		// Put everything together
+		StringBuilder sbSys = new StringBuilder();
+		if (sbDown.length() > 0) {
+			sbSys.append("# Download commands\n");
+			sbSys.append(sbDown);
+		}
+		sbSys.append(sysCmds);
+		if (sbUp.length() > 0) {
+			sbSys.append("\n# Upload commands\n");
+			sbSys.append(sbUp);
+		}
+
+		Gpr.debug("CMDS:\n" + sbSys);
+		return sbSys.toString();
+	}
+
+	/**
 	 * Create a task
 	 */
 	Task createTask(BdsThread bdsThread, TaskDependency taskDependency, ExpressionSys sys) {
@@ -87,8 +160,11 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Get an ID
 		String execId = sys.execId("task", getFileName(), taskName, bdsThread);
 
+		// Get commands representing a shell program
+		String sysCmds = createCommands(bdsThread, taskDependency, sys);
+
 		// Create Task
-		Task task = new Task(execId, this, sys.getSysFileName(execId), sys.getCommands(bdsThread));
+		Task task = new Task(execId, this, sys.getSysFileName(execId), sysCmds);
 
 		// Configure Task parameters
 		task.setVerbose(bdsThread.getConfig().isVerbose());
@@ -184,6 +260,56 @@ public class ExpressionTask extends ExpressionWithScope {
 		}
 
 		statement = (Statement) factory(tree, idx++); // Parse statement
+	}
+
+	/**
+	 * Replace all occurrences in 'replace' map
+	 */
+	String replace(HashMap<String, String> replace, String sysCmds) {
+
+		for (String key : replace.keySet()) {
+			String sysCmdsPrev;
+			do {
+				sysCmdsPrev = sysCmds;
+				sysCmds = replace(key, replace.get(key), sysCmds);
+			} while (!sysCmdsPrev.equals(sysCmds)); // Continue while there are replacements
+		}
+		Gpr.debug("REPLACING: " + sysCmds);
+		return sysCmds;
+	}
+
+	/**
+	 * Replace a single instance of 'oldStr' by 'newStr'
+	 */
+	String replace(String oldStr, String newStr, String str) {
+		Gpr.debug("REPLACE '" + oldStr + "' by '" + newStr + "'");
+		int start = str.indexOf(oldStr);
+		if (start < 0) return str; // Nothing found
+
+		// Check that 'oldStr' is a separated / quoted word
+		int end = start + oldStr.length();
+		char prevChar = start > 0 ? str.charAt(start - 1) : '\0';
+		char nextChar = end < str.length() ? str.charAt(end) : '\0';
+
+		// Change if surrounded by spaces or quotes
+		boolean change = false;
+		if (prevChar == '\'' && nextChar == '\'') change = true;
+		if (prevChar == '"' && nextChar == '"') change = true;
+		if ((prevChar == ' ' || prevChar == '\t' || prevChar == '\n' || prevChar == '\0') //
+				&& //
+				(nextChar == ' ' || nextChar == '\t' || nextChar == '\n' || nextChar == '\0')) {
+			change = true;
+		}
+
+		// Change str?
+		if (change) { //
+			return str.substring(0, start) // Keep first
+					+ newStr // Replace oldStr by newStr
+					+ (nextChar == '\0' ? "" : str.substring(start + oldStr.length())) // Last part only if there is something after 'oldStr
+			;
+		}
+
+		return str;
 	}
 
 	/**

@@ -134,7 +134,7 @@ public class Task implements BdsSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) return true;
+					) return true;
 			return false;
 
 		default:
@@ -180,7 +180,7 @@ public class Task implements BdsSerialize {
 		String shell = Config.get().getString(Config.TASK_SHELL, DEFAULT_TASK_SHELL);
 		shell = "#!" + shell + "\n\n" // Shell to use
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
-		;
+				;
 
 		Gpr.toFile(programFileName, shell + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution
@@ -293,8 +293,8 @@ public class Task implements BdsSerialize {
 		return id;
 	}
 
-	public List<String> getInputFiles() {
-		return taskDependency.getInputFiles();
+	public List<String> getInputs() {
+		return taskDependency.getInputs();
 	}
 
 	public int getMaxFailCount() {
@@ -315,8 +315,8 @@ public class Task implements BdsSerialize {
 		return getId();
 	}
 
-	public List<String> getOutputFiles() {
-		return taskDependency.getOutputFiles();
+	public List<String> getOutputs() {
+		return taskDependency.getOutputs();
 	}
 
 	public synchronized String getPid() {
@@ -554,8 +554,8 @@ public class Task implements BdsSerialize {
 				+ "\t" + serializer.serializeSaveValue(stderrFile) //
 				+ "\t" + serializer.serializeSaveValue(exitCodeFile) //
 				+ "\t" + serializer.serializeSaveValue(currentDir) //
-				+ "\t" + serializer.serializeSaveValue(taskDependency.getInputFiles()) //
-				+ "\t" + serializer.serializeSaveValue(taskDependency.getOutputFiles()) //
+				+ "\t" + serializer.serializeSaveValue(taskDependency.getInputs()) //
+				+ "\t" + serializer.serializeSaveValue(taskDependency.getOutputs()) //
 				+ "\t" + serializer.serializeSave(resources) //
 				+ "\n";
 		// TODO: Add tasks by ID. Make sure all tasks are stored before this one
@@ -680,7 +680,7 @@ public class Task implements BdsSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-			) {
+					) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;
@@ -721,8 +721,8 @@ public class Task implements BdsSerialize {
 			sb.append("\tState              : '" + taskState + "'\n");
 			sb.append("\tDependency state   : '" + dependencyState() + "'\n");
 			sb.append("\tRetries available  : '" + failCount + "'\n");
-			sb.append("\tInput files        : '" + taskDependency.getInputFiles() + "'\n");
-			sb.append("\tOutput files       : '" + taskDependency.getOutputFiles() + "'\n");
+			sb.append("\tInput files        : '" + taskDependency.getInputs() + "'\n");
+			sb.append("\tOutput files       : '" + taskDependency.getOutputs() + "'\n");
 
 			if (!getDependencies().isEmpty()) {
 				sb.append("\tTask dependencies  : ");

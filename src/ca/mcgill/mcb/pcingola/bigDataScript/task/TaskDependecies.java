@@ -86,8 +86,8 @@ public class TaskDependecies {
 		}
 
 		// Add task by output files
-		if (task.getOutputFiles() != null) {
-			for (String outFile : task.getOutputFiles())
+		if (task.getOutputs() != null) {
+			for (String outFile : task.getOutputs())
 				addTaskByOutput(outFile, task);
 		}
 	}
@@ -125,8 +125,8 @@ public class TaskDependecies {
 	void findDirectDependencies(Task task) {
 		if (!task.isDone()) {
 			// Add input dependencies based on input files
-			if (task.getInputFiles() != null) {
-				for (String inFile : task.getInputFiles()) {
+			if (task.getInputs() != null) {
+				for (String inFile : task.getInputs()) {
 					List<Task> taskDeps = getTasksByOutput(inFile);
 					if (taskDeps != null) {
 						for (Task taskDep : taskDeps)
@@ -178,8 +178,8 @@ public class TaskDependecies {
 				if (tasks != null) // Add all task's input files
 					for (Task t : tasks) {
 						// Add all input files
-						if (t.getInputFiles() != null) {
-							for (String in : t.getInputFiles())
+						if (t.getInputs() != null) {
+							for (String in : t.getInputs())
 								changed |= newGoals.add(in); // Add each node
 						}
 
@@ -307,8 +307,8 @@ public class TaskDependecies {
 			addedTasks.add(t);
 
 			// Add file dependencies
-			if (t.getInputFiles() != null) {
-				for (String in : t.getInputFiles())
+			if (t.getInputs() != null) {
+				for (String in : t.getInputs())
 					goalRun(bdsThread, in, addedTasks);
 			}
 
@@ -374,8 +374,8 @@ public class TaskDependecies {
 		if (!tasks.add(task)) return true;
 
 		// Get all input files, find corresponding tasks and recurse
-		if (task.getInputFiles() != null) {
-			for (String in : task.getInputFiles()) {
+		if (task.getInputs() != null) {
+			for (String in : task.getInputs()) {
 				List<Task> depTasks = getTasksByOutput(in);
 
 				if (depTasks != null) {

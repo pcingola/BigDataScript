@@ -64,8 +64,8 @@ public class TaskLogger {
 		// Note: If this task does not finish (e.g. Ctrl-C), we have to remove these files.
 		//       If the task finished OK, we mark them not to be removed
 		//---
-		if (task.getOutputFiles() != null) {
-			for (String file : task.getOutputFiles())
+		if (task.getOutputs() != null) {
+			for (String file : task.getOutputs())
 				lines.append(file + "\t+\t" + CMD_REMOVE_FILE + "\n");
 		}
 
@@ -107,8 +107,8 @@ public class TaskLogger {
 		lines.append(task.getPid() + "\t-\n");
 
 		// Append task output files.
-		if (task.getOutputFiles() != null) {
-			for (String file : task.getOutputFiles())
+		if (task.getOutputs() != null) {
+			for (String file : task.getOutputs())
 				lines.append(file + "\t-\n");
 		}
 
