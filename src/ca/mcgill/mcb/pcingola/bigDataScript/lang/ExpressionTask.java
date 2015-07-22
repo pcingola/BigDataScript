@@ -85,8 +85,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Create commands that will be executed in a shell
 	 */
 	String createCommands(BdsThread bdsThread, TaskDependency taskDependency, ExpressionSys sys) {
-		Gpr.debug("CREATE cmds: " + taskDependency);
-
 		//---
 		// Are there any remote inputs?
 		// We need to create the appropriate 'download' commands
@@ -145,7 +143,6 @@ public class ExpressionTask extends ExpressionWithScope {
 			sbSys.append(sbUp);
 		}
 
-		Gpr.debug("CMDS:\n" + sbSys);
 		return sbSys.toString();
 	}
 
@@ -274,7 +271,7 @@ public class ExpressionTask extends ExpressionWithScope {
 				sysCmds = replace(key, replace.get(key), sysCmds);
 			} while (!sysCmdsPrev.equals(sysCmds)); // Continue while there are replacements
 		}
-		Gpr.debug("REPLACING: " + sysCmds);
+
 		return sysCmds;
 	}
 
@@ -282,7 +279,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Replace a single instance of 'oldStr' by 'newStr'
 	 */
 	String replace(String oldStr, String newStr, String str) {
-		Gpr.debug("REPLACE '" + oldStr + "' by '" + newStr + "'");
 		int start = str.indexOf(oldStr);
 		if (start < 0) return str; // Nothing found
 

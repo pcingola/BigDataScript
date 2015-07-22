@@ -1,8 +1,8 @@
 #!/usr/bin/env bds
 
 
-file := "https://arxiv.org/pdf/1506.08452v1.pdf"
-out := "out.pdf"
+file := "https://arxiv.org/pdf/1506.08452v1.pdf"	# You should read this paper
+out  := "out.pdf"
 
 sys rm -vf $out
 
