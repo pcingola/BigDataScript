@@ -18,6 +18,8 @@
             <zipfileset excludes="META-INF/*.SF" src="lib/junit-4.10.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/mesos-0.22.1.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/protobuf-java-2.5.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/httpclient-4.5.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/httpcore-4.4.1.jar"/>
         </jar>
     </target>
 
@@ -31,10 +33,10 @@
 			srcdir="src" 
 			destdir="bin" 
 			debug="true" 
-			source="7"
-			target="7"
+			source="8"
+			target="8"
 			includeantruntime="false" 
-			classpath="lib/antlr-runtime-4.2.2.jar:lib/commons-lang3-3.1.jar:lib/jsch-0.1.49.jar:lib/junit-4.10.jar:lib/mesos-0.22.1.jar:lib/protobuf-java-2.5.0.jar"
+			classpath="lib/antlr-runtime-4.2.2.jar:lib/commons-lang3-3.1.jar:lib/jsch-0.1.49.jar:lib/junit-4.10.jar:lib/mesos-0.22.1.jar:lib/protobuf-java-2.5.0.jar:lib/httpclient-4.5.jar:lib/httpcore-4.4.1.jar"
 		/>
 	</target>
 

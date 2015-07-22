@@ -115,6 +115,11 @@ public class DataFile extends Data {
 	}
 
 	@Override
+	public boolean isDownloaded(String localPath) {
+		return this.localPath.equals(localPath);
+	}
+
+	@Override
 	public boolean isFile() {
 		return file.isFile();
 	}
@@ -122,6 +127,11 @@ public class DataFile extends Data {
 	@Override
 	public boolean isRemote() {
 		return false;
+	}
+
+	@Override
+	public boolean isUploaded(String localPath) {
+		return this.localPath.equals(localPath);
 	}
 
 	@Override

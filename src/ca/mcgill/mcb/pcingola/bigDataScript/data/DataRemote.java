@@ -106,9 +106,7 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
-	public boolean isDownloaded() {
-		// Did we download
-		if (localPath == null) localPath = localPath();
+	public boolean isDownloaded(String localPath) {
 		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getUrl() + "'");
 
 		// Is there a local file
@@ -117,7 +115,7 @@ public abstract class DataRemote extends Data {
 
 		// Get remote data
 		if (needsUpdateInfo()) {
-			if (!updateInfo()) return false;
+			if (!updateInfo()) return false; // Cannot update information
 		}
 
 		// Has local file a different size than remote file?
@@ -125,7 +123,7 @@ public abstract class DataRemote extends Data {
 
 		// Is local file older than remote file?
 		long lflm = localFile.lastModified();
-		long rflm = lastModified.getTime();
+		long rflm = getLastModified().getTime();
 		if (lflm < rflm) return false;
 
 		// OK, we have a local file that looks updated respect to the remote file
@@ -134,6 +132,31 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isRemote() {
+		return true;
+	}
+
+	@Override
+	public boolean isUploaded(String localPath) {
+		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getUrl() + "'");
+
+		// Is there a local file
+		File localFile = new File(localPath);
+		if (!localFile.exists()) return false;
+
+		// Get remote data
+		if (needsUpdateInfo()) {
+			if (!updateInfo()) return false; // Cannot update information
+		}
+
+		// Has local file a different size than remote file?
+		if (localFile.length() != size) return false;
+
+		// Is local file older than remote file?
+		long lflm = localFile.lastModified();
+		long rflm = getLastModified().getTime();
+		if (lflm > rflm) return false;
+
+		// OK, we have a local file that looks updated respect to the remote file
 		return true;
 	}
 

@@ -26,6 +26,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerErrorListener;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.TypeCheckedNodes;
+import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners.ExecutionerType;
@@ -68,7 +69,7 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-07-20";
+	public static final String BUILD = "2015-07-22";
 	public static final String REVISION = "m";
 	public static final String VERSION_MAJOR = "0.999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
@@ -339,12 +340,71 @@ public class BigDataScript {
 	}
 
 	/**
+	 * Load configuration file
+	 */
+	protected void config() {
+		//---
+		// Config
+		//---
+		config = new Config(configFile);
+		config.setQuiet(quiet);
+		config.setVerbose(verbose);
+		config.setDebug(debug);
+		config.setLog(log);
+		config.setDryRun(dryRun);
+		config.setTaskFailCount(taskFailCount);
+		config.setReportHtml(reportHtml);
+		config.setReportYaml(reportYaml);
+		config.setExtractSource(extractSource);
+		config.setVerbose(verbose);
+
+		// Override config file by command line option
+		if (noRmOnExit != null) config.setNoRmOnExit(noRmOnExit);
+
+		if (noCheckpoint != null) config.setNoCheckpoint(noCheckpoint);
+
+		if (pidFile == null) {
+			if (programFileName != null) pidFile = programFileName + ".pid";
+			else pidFile = chekcpointRestoreFile + ".pid";
+		}
+
+		config.setPidFile(pidFile);
+	}
+
+	/**
 	 * Create an AST from a program file
 	 * @return A parsed tree
 	 */
 	ParseTree createAst() {
 		File file = new File(programFileName);
 		return createAst(file, debug, new HashSet<String>());
+	}
+
+	/**
+	 * Download a URL to a local file
+	 * @return true if successful
+	 */
+	public boolean download(String url, String fileName) {
+		Data remote = Data.factory(url);
+
+		// Sanity checks
+		if (!remote.isRemote()) {
+			System.err.println("Cannot download non-remote URL: " + url);
+			return false;
+		}
+
+		if (!remote.isFile()) {
+			System.err.println("Cannot download non-file: " + url);
+			return false;
+		}
+
+		// Already downloaded? Nothing to do
+		if (remote.isDownloaded(fileName)) {
+			if (verbose) System.err.println("Local file is up to date, no download required: " + fileName);
+			return true;
+		}
+
+		return remote.download(fileName);
 	}
 
 	public BdsThread getBigDataScriptThread() {
@@ -400,30 +460,8 @@ public class BigDataScript {
 		// Startup message
 		if (verbose || debug) Timer.showStdErr(VERSION);
 
-		//---
-		// Config
-		//---
-		config = new Config(configFile);
-		config.setQuiet(quiet);
-		config.setVerbose(verbose);
-		config.setDebug(debug);
-		config.setLog(log);
-		config.setDryRun(dryRun);
-		config.setTaskFailCount(taskFailCount);
-		config.setReportHtml(reportHtml);
-		config.setReportYaml(reportYaml);
-		config.setExtractSource(extractSource);
-		config.setVerbose(verbose);
-
-		// Override config file by command line option
-		if (noRmOnExit != null) config.setNoRmOnExit(noRmOnExit);
-		if (noCheckpoint != null) config.setNoCheckpoint(noCheckpoint);
-
-		if (pidFile == null) {
-			if (programFileName != null) pidFile = programFileName + ".pid";
-			else pidFile = chekcpointRestoreFile + ".pid";
-		}
-		config.setPidFile(pidFile);
+		// Load config file
+		config();
 
 		// Global scope
 		initilaizeGlobalScope();
@@ -766,6 +804,13 @@ public class BigDataScript {
 		if (debug) log("Native library:\n" + nativeLibraryString);
 	}
 
+	/**
+	 * Is this a command line option (e.g. "-tfam" is a command line option, but "-" means STDIN)
+	 */
+	protected boolean isOpt(String arg) {
+		return arg.startsWith("-") && (arg.length() > 1);
+	}
+
 	void log(String msg) {
 		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}
@@ -789,66 +834,160 @@ public class BigDataScript {
 				// Everything after 'programFileName' is an command line
 				// argument for the BigDataScript program
 				programArgs.add(arg);
-			} else if (arg.equals("-c") || arg.equalsIgnoreCase("-config")) {
-				// Checkpoint restore
-				if ((i + 1) < args.length) configFile = args[++i];
-				else usage("Option '-c' without restore file argument");
-			} else if (arg.equals("-d") || arg.equalsIgnoreCase("-debug")) debug = verbose = true; // Debug implies verbose
-			//			else if (arg.equalsIgnoreCase("-useDone")) useDoneFile = true;
-			else if (arg.equals("-l") || arg.equalsIgnoreCase("-log")) log = true;
-			else if (arg.equals("-h") || arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("--help")) {
-				usage(null);
-			} else if (arg.equalsIgnoreCase("-dryRun")) {
-				dryRun = true;
-				noRmOnExit = true; // Not running, so don't delete files
-				reportHtml = reportYaml = false;
-			} else if (arg.equalsIgnoreCase("-noRmOnExit")) noRmOnExit = true;
-			else if (arg.equalsIgnoreCase("-noChp")) noCheckpoint = true;
-			else if (arg.equalsIgnoreCase("-checkPidRegex")) checkPidRegex = true;
-			else if (arg.equals("-i") || arg.equalsIgnoreCase("-info")) {
-				// Checkpoint info
-				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
-				else usage("Option '-i' without checkpoint file argument");
-				bigDataScriptAction = BigDataScriptAction.INFO_CHECKPOINT;
-			} else if (arg.equalsIgnoreCase("-extractSource")) {
-				extractSource = true;
-			} else if (arg.equalsIgnoreCase("-pid")) {
-				// PID file
-				if ((i + 1) < args.length) pidFile = args[++i];
-				else usage("Option '-pid' without file argument");
-			} else if (arg.equalsIgnoreCase("-quiet")) {
-				verbose = false;
-				debug = false;
-				quiet = true;
-			} else if (arg.equals("-q") || arg.equalsIgnoreCase("-queue")) {
-				// Queue name
-				if ((i + 1) < args.length) queue = args[++i];
-				else usage("Option '-queue' without file argument");
-			} else if (arg.equals("-r") || arg.equalsIgnoreCase("-restore")) {
-				// Checkpoint restore
-				if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
-				else usage("Option '-r' without checkpoint file argument");
-				bigDataScriptAction = BigDataScriptAction.RUN_CHECKPOINT;
-			} else if (arg.equals("-s") || arg.equalsIgnoreCase("-system")) {
-				// System type
-				if ((i + 1) < args.length) system = args[++i];
-				else usage("Option '-system' without file argument");
-			} else if (arg.equals("-t") || arg.equalsIgnoreCase("-test")) {
-				bigDataScriptAction = BigDataScriptAction.TEST;
-			} else if (arg.equals("-y") || arg.equalsIgnoreCase("-retry")) {
-				// Number of retries
-				if ((i + 1) < args.length) taskFailCount = Gpr.parseIntSafe(args[++i]);
-				else usage("Option '-t' without number argument");
-			} else if (arg.equals("-v") || arg.equalsIgnoreCase("-verbose")) verbose = true;
-			else if (arg.equalsIgnoreCase("-reportYaml") || arg.equalsIgnoreCase("-yaml")) reportYaml = true;
-			else if (arg.equalsIgnoreCase("-reportHtml")) reportHtml = true;
-			else if (arg.equalsIgnoreCase("-noReportYaml")) reportYaml = false;
-			else if (arg.equalsIgnoreCase("-noReportHtml")) reportHtml = false;
-			else if (arg.equalsIgnoreCase("-noReport")) reportHtml = reportYaml = false;
-			else if (arg.equalsIgnoreCase("-version")) {
-				System.out.println(VERSION);
-				System.exit(0);
+			} else if (isOpt(arg)) {
+
+				switch (arg.toLowerCase()) {
+				case "-checkpidregex":
+					checkPidRegex = true;
+					break;
+
+				case "-c":
+				case "-config":
+					// Checkpoint restore
+					if ((i + 1) < args.length) configFile = args[++i];
+					else usage("Option '-c' without restore file argument");
+					break;
+
+				case "-d":
+				case "-debug":
+					debug = verbose = true; // Debug implies verbose
+					break;
+
+				case "-download":
+					if ((i + 2) < args.length) {
+						config();
+						boolean ok = download(args[++i], args[++i]);
+						System.exit(ok ? 0 : 1);
+					} else usage("Option '-download' requires two parameters (URL and file)");
+					break;
+
+				case "-dryrun":
+					dryRun = true;
+					noRmOnExit = true; // Not running, so don't delete files
+					reportHtml = reportYaml = false;
+					break;
+
+				case "-extractsource":
+					extractSource = true;
+					break;
+
+				case "-h":
+				case "-help":
+				case "--help":
+					usage(null);
+					break;
+
+				case "-i":
+				case "-info":
+					// Checkpoint info
+					if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
+					else usage("Option '-i' without checkpoint file argument");
+					bigDataScriptAction = BigDataScriptAction.INFO_CHECKPOINT;
+					break;
+
+				case "-l":
+				case "-log":
+					log = true;
+					break;
+
+				case "-nochp":
+					noCheckpoint = true;
+					break;
+
+				case "-noreport":
+					reportHtml = reportYaml = false;
+					break;
+
+				case "-noreporthtml":
+					reportHtml = false;
+					break;
+
+				case "-noreportyaml":
+					reportYaml = false;
+					break;
+
+				case "-normonexit":
+					noRmOnExit = true;
+					break;
+
+				case "-pid":
+					// PID file
+					if ((i + 1) < args.length) pidFile = args[++i];
+					else usage("Option '-pid' without file argument");
+					break;
+
+				case "-q":
+				case "-queue":
+					// Queue name
+					if ((i + 1) < args.length) queue = args[++i];
+					else usage("Option '-queue' without file argument");
+					break;
+
+				case "-quiet":
+					verbose = false;
+					debug = false;
+					quiet = true;
+					break;
+
+				case "-r":
+				case "-restore":
+					// Checkpoint restore
+					if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
+					else usage("Option '-r' without checkpoint file argument");
+					bigDataScriptAction = BigDataScriptAction.RUN_CHECKPOINT;
+					break;
+
+				case "-reporthtml":
+					reportHtml = true;
+					break;
+
+				case "-reportyaml":
+				case "-yaml":
+					reportYaml = true;
+					break;
+
+				case "-s":
+				case "-system":
+					// System type
+					if ((i + 1) < args.length) system = args[++i];
+					else usage("Option '-system' without file argument");
+					break;
+
+				case "-t":
+				case "-test":
+					bigDataScriptAction = BigDataScriptAction.TEST;
+					break;
+
+				case "-upload":
+					if ((i + 2) < args.length) {
+						config();
+						boolean ok = upload(args[++i], args[++i]);
+						System.exit(ok ? 0 : 1);
+					} else usage("Option '-upload' requires two parameters (file and URL)");
+					break;
+
+				case "-v":
+				case "-verbose":
+					verbose = true;
+					break;
+
+				case "-version":
+					System.out.println(VERSION);
+					System.exit(0);
+					break;
+
+				case "-y":
+				case "-retry":
+					// Number of retries
+					if ((i + 1) < args.length) taskFailCount = Gpr.parseIntSafe(args[++i]);
+					else usage("Option '-t' without number argument");
+					break;
+
+				default:
+					usage("Unknown command line option " + arg);
+				}
 			} else if (programFileName == null) programFileName = arg; // Get program file name
+
 		}
 
 		// Sanity checks
@@ -1049,6 +1188,44 @@ public class BigDataScript {
 		this.stackCheck = stackCheck;
 	}
 
+	/**
+	 * Upload a local file to a URL
+	 * @return true if successful
+	 */
+	public boolean upload(String fileName, String url) {
+		Data remote = Data.factory(url);
+		Data local = Data.factory(fileName);
+
+		// Sanity checks
+		if (!remote.isRemote()) {
+			System.err.println("Cannot upload to non-remote URL: " + url);
+			return false;
+		}
+
+		if (!local.isFile()) {
+			System.err.println("Cannot upload non-file: " + fileName);
+			return false;
+		}
+
+		if (!local.exists()) {
+			System.err.println("Local file does not exists: " + fileName);
+			return false;
+		}
+
+		if (!local.canRead()) {
+			System.err.println("Cannot read local file : " + fileName);
+			return false;
+		}
+
+		// Already uploaded? Nothing to do
+		if (remote.isUploaded(fileName)) {
+			if (verbose) System.err.println("Remote file is up to date, no upload required: " + url);
+			return true;
+		}
+
+		return remote.upload(fileName);
+	}
+
 	void usage(String err) {
 		if (err != null) System.err.println("Error: " + err);
 
@@ -1058,6 +1235,7 @@ public class BigDataScript {
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
 		System.err.println("  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.");
 		System.err.println("  [-d | -debug  ]                : Debug mode.");
+		System.err.println("  -download url file             : Download 'url' to local 'file'. Note: Used by 'taks'");
 		//		System.err.println("  -done                          : Use 'done' files: Default: " + useDoneFile);
 		System.err.println("  -dryRun                        : Do not run any task, just show what would be run. Default: " + dryRun);
 		System.err.println("  [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').");
@@ -1074,6 +1252,7 @@ public class BigDataScript {
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-s | -system ] type           : Set system type.");
 		System.err.println("  [-t | -test   ]                : Run user test cases (runs all test* functions).");
+		System.err.println("  -upload file url               : Upload local file to 'url'. Note: Used by 'taks'");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
 		System.err.println("  -version                       : Show version and exit.");
 		System.err.println("  [-y | -retry  ] num            : Number of times to retry a failing tasks.");

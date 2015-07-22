@@ -293,20 +293,24 @@ public class ExpressionTask extends ExpressionWithScope {
 
 		// Change if surrounded by spaces or quotes
 		boolean change = false;
-		if (prevChar == '\'' && nextChar == '\'') change = true;
-		if (prevChar == '"' && nextChar == '"') change = true;
-		if ((prevChar == ' ' || prevChar == '\t' || prevChar == '\n' || prevChar == '\0') //
-				&& //
+		if (prevChar == '\'' && nextChar == '\'') {
+			// Surrounded by single quote
+			change = true;
+		} else if (prevChar == '"' && nextChar == '"') {
+			// Surrounded by double quote
+			change = true;
+		} else if ((prevChar == ' ' || prevChar == '\t' || prevChar == '\n' || prevChar == '\0') && //
 				(nextChar == ' ' || nextChar == '\t' || nextChar == '\n' || nextChar == '\0')) {
+			// Surrounded by space, tab, newline or end_of_string
 			change = true;
 		}
 
-		// Change str?
+		// Change oldStr by newStr?
 		if (change) { //
 			return str.substring(0, start) // Keep first
 					+ newStr // Replace oldStr by newStr
 					+ (nextChar == '\0' ? "" : str.substring(start + oldStr.length())) // Last part only if there is something after 'oldStr
-			;
+					;
 		}
 
 		return str;
@@ -395,7 +399,7 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //
-				;
+						;
 
 				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 			}
@@ -408,7 +412,7 @@ public class ExpressionTask extends ExpressionWithScope {
 				+ (options != null ? options : "") //
 				+ " " //
 				+ toStringStatement() //
-		;
+				;
 	}
 
 	/**
@@ -429,7 +433,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		return "{\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //
-		;
+				;
 	}
 
 	@Override

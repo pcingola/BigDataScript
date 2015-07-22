@@ -169,14 +169,36 @@ public abstract class Data {
 	/**
 	 * Do we have a (valid) local copy of this data?
 	 */
-	public abstract boolean isDownloaded();
+	public boolean isDownloaded() {
+		return isDownloaded(getLocalPath());
+	}
+
+	/**
+	 * Do we have a (valid) local copy of this data?
+	 */
+	public abstract boolean isDownloaded(String localPath);
 
 	/**
 	 * Does this represent a 'file' (not a directory)
 	 */
 	public abstract boolean isFile();
 
+	/**
+	 * Is this a remote data object (i.e. not accessible to the file system)
+	 */
 	public abstract boolean isRemote();
+
+	/**
+	 * Do we have a (valid) remote copy of this local data?
+	 */
+	public boolean isUploaded() {
+		return isUploaded(getLocalPath());
+	}
+
+	/**
+	 * Do we have a (valid) remote copy of this data?
+	 */
+	public abstract boolean isUploaded(String localPath);
 
 	/**
 	 * List of file names under this 'directory'
@@ -184,29 +206,9 @@ public abstract class Data {
 	 */
 	public abstract ArrayList<String> list();
 
-	//	protected String localPath() {
-	//		StringBuilder sb = new StringBuilder();
-	//		sb.append(Config.get().getTmpDir());
-	//		sb.append("/" + url.getProtocol());
-	//
-	//		// Authority: Host and port
-	//		for (String part : url.getAuthority().split("[:\\.]")) {
-	//			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
-	//		}
-	//
-	//		// Path
-	//		for (String part : url.getPath().split("/")) {
-	//			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
-	//		}
-	//
-	//		// Query
-	//		for (String part : url.getPath().split("&")) {
-	//			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
-	//		}
-	//
-	//		return sb.toString();
-	//	}
-	//
+	/**
+	 * Create all directories in path
+	 */
 	public abstract boolean mkdirs();
 
 	public void setDebug(boolean debug) {
@@ -229,6 +231,10 @@ public abstract class Data {
 		return upload(getLocalPath());
 	}
 
+	/**
+	 * Upload a file to location
+	 * @return true if successful
+	 */
 	public abstract boolean upload(String locaLFileName);
 
 }
