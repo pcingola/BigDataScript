@@ -1,11 +1,18 @@
 #!/usr/bin/env bds
 
 
-file := "https://arxiv.org/pdf/1506.08452v1.pdf"	# You should read this paper
-out  := "out.pdf"
+fileRemote := "https://arxiv.org/pdf/1506.08452v1.pdf"	# You should read this paper...
+out  := "out.pdf"									# Local file name
 
+# Remove file 
 sys rm -vf $out
 
-task( out <- file ) {
-	sys cat $file > $out
+# This will download 'fileRemote' to a 'tmp' directory (if 
+# not already downloaded).
+# Task statement will also automatically replace wherever 
+# the remote name appears so the system command (cat) will 
+# be executed on a local file
+task( out <- fileRemote ) {
+	sys cat $fileRemote > $out
 }
+
