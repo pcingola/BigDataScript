@@ -2,7 +2,7 @@
 
 
 fileRemote := "https://arxiv.org/pdf/1506.08452v1.pdf"	# You should read this paper...
-out  := "out.pdf"									# Local file name
+out  := "tmp_pdf.txt"									# Local file name
 
 # Remove file 
 sys rm -vf $out
