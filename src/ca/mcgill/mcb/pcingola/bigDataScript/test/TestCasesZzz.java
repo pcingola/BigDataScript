@@ -1,5 +1,11 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
+import junit.framework.Assert;
+
+import org.junit.Test;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
+
 /**
  * Quick test cases when creating a new feature...
  *
@@ -7,6 +13,34 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
  *
  */
 public class TestCasesZzz extends TestCasesBase {
+
+	@Test
+	public void test29() {
+		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");
+	}
+
+	@Test
+	public void test30() {
+		runAndCheck("test/run_30.bds", "events", "[runnning, wait, done]");
+	}
+
+	@Test
+	public void test31() {
+		Timer timer = new Timer();
+		timer.start();
+		runAndCheck("test/run_31.bds", "events", "[runnning, kill, done]");
+		Assert.assertTrue(timer.elapsed() < 1 * 1000); // We should finish in much less than 1 secs (the program waits 60secs)
+	}
+
+	@Test
+	public void test32() {
+		runAndCheck("test/run_32.bds", "out", "Hi\n");
+	}
+
+	@Test
+	public void test33() {
+		runAndCheck("test/run_33.bds", "err", "Hi\n");
+	}
 
 	/**
 	 *  Test cases to create

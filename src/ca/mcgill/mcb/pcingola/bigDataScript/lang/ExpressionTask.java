@@ -85,38 +85,45 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Create commands that will be executed in a shell
 	 */
 	String createCommands(BdsThread bdsThread, TaskDependency taskDependency, ExpressionSys sys) {
-		//---
-		// Are there any remote inputs?
-		// We need to create the appropriate 'download' commands
-		//---
 		HashMap<String, String> replace = new HashMap<>();
 		StringBuilder sbDown = new StringBuilder();
-		for (String in : taskDependency.getInputs()) {
-			Data dataIn = Data.factory(in);
-			if (dataIn.isRemote()) {
-				sbDown.append(CMD_DOWNLOAD //
-						+ " \"" + dataIn.getCanonicalPath() + "\"" //
-						+ " \"" + dataIn.getLocalPath() + "\"" //
-						+ "\n");
-
-				replace.put(dataIn.getCanonicalPath(), dataIn.getLocalPath());
-			}
-		}
-
-		//---
-		// Are there any remote outputs?
-		// We need to create the appropriate 'upload' commands
-		//---
 		StringBuilder sbUp = new StringBuilder();
-		for (String out : taskDependency.getOutputs()) {
-			Data dataOut = Data.factory(out);
-			if (dataOut.isRemote()) {
-				sbUp.append(CMD_UPLOAD //
-						+ " \"" + dataOut.getLocalPath() + "\"" //
-						+ " \"" + dataOut.getCanonicalPath() + "\"" //
-						+ "\n");
 
-				replace.put(dataOut.getCanonicalPath(), dataOut.getLocalPath());
+		if (taskDependency != null) {
+			//---
+			// Are there any remote inputs?
+			// We need to create the appropriate 'download' commands
+			//---
+			if (taskDependency.getInputs() != null) {
+				for (String in : taskDependency.getInputs()) {
+					Data dataIn = Data.factory(in);
+					if (dataIn.isRemote()) {
+						sbDown.append(CMD_DOWNLOAD //
+								+ " \"" + dataIn.getCanonicalPath() + "\"" //
+								+ " \"" + dataIn.getLocalPath() + "\"" //
+								+ "\n");
+
+						replace.put(dataIn.getCanonicalPath(), dataIn.getLocalPath());
+					}
+				}
+			}
+
+			//---
+			// Are there any remote outputs?
+			// We need to create the appropriate 'upload' commands
+			//---
+			if (taskDependency.getOutputs() != null) {
+				for (String out : taskDependency.getOutputs()) {
+					Data dataOut = Data.factory(out);
+					if (dataOut.isRemote()) {
+						sbUp.append(CMD_UPLOAD //
+								+ " \"" + dataOut.getLocalPath() + "\"" //
+								+ " \"" + dataOut.getCanonicalPath() + "\"" //
+								+ "\n");
+
+						replace.put(dataOut.getCanonicalPath(), dataOut.getLocalPath());
+					}
+				}
 			}
 		}
 
