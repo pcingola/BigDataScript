@@ -34,7 +34,7 @@ public class DataS3 extends DataRemote {
 
 	private static int BUFFER_SIZE = 100 * 1024;
 
-	public static final String DEFAULT_AWS_REGION = Regions.US_WEST_2.toString();
+	public static final String DEFAULT_AWS_REGION = Regions.US_EAST_1.toString();
 	public static final String AWS_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PREFIX = "s3";
 
@@ -70,13 +70,16 @@ public class DataS3 extends DataRemote {
 		try {
 			if (!isFile()) return false;
 
-			S3Object object = getS3().getObject(new GetObjectRequest(bucketName, key));
+			S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
 			if (verbose) System.out.println("Downloading '" + this + "'");
+			updateInfo(s3object);
 
-			S3ObjectInputStream is = object.getObjectContent();
+			// Create local file
+			mkDirsLocalPath();
 			FileOutputStream os = new FileOutputStream(getLocalPath());
 
-			// Copy to file
+			// Copy S3 object to file
+			S3ObjectInputStream is = s3object.getObjectContent();
 			int count = 0, total = 0, lastShown = 0;
 			byte data[] = new byte[BUFFER_SIZE];
 			while ((count = is.read(data, 0, BUFFER_SIZE)) != -1) {
@@ -97,6 +100,9 @@ public class DataS3 extends DataRemote {
 			is.close();
 			os.close();
 			if (verbose) Timer.showStdErr("Donwload finished. Total " + total + " bytes.");
+
+			// Update last modified info
+			updateLocalFileLastModified();
 
 			return true;
 		} catch (Exception e) {
@@ -173,10 +179,11 @@ public class DataS3 extends DataRemote {
 		key = s3uri.getKey();
 
 		// Parse and set region
-		String regionStr = s3uri.getRegion().toUpperCase();
+		String regionStr = s3uri.getRegion();
 		try {
 			if (regionStr == null) regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
 			region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
+			Gpr.debug("REGION: " + region);
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot parse AWS region '" + regionStr + "'", e);
 		}
@@ -189,6 +196,14 @@ public class DataS3 extends DataRemote {
 	protected boolean updateInfo() {
 		// Read metadata
 		S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
+		return updateInfo(s3object);
+	}
+
+	/**
+	 * Update object's information
+	 */
+	protected boolean updateInfo(S3Object s3object) {
+		// Read metadata
 		ObjectMetadata om = s3object.getObjectMetadata();
 
 		// Update data
@@ -204,7 +219,7 @@ public class DataS3 extends DataRemote {
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
 				+ "\n\tsize         : " + size //
-		);
+				);
 
 		return true;
 	}

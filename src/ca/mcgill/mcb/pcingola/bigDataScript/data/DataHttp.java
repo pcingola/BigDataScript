@@ -1,6 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.data;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -91,29 +90,19 @@ public class DataHttp extends DataRemote {
 	@Override
 	public boolean download(String localFile) {
 		try {
+			// Connect and update info
 			URLConnection connection = connect();
 			if (connection == null) return false;
+			updateInfo(connection);
 
 			// Copy resource to local file, use remote file if no local file name specified
 			InputStream is = url.openStream();
-
-			// Print info about resource
-			Date date = new Date(connection.getLastModified());
-			if (debug) Timer.showStdErr("Downloading file (type: " + connection.getContentType() + ", modified on: " + date + ")");
 
 			// Open local file
 			if (verbose) Timer.showStdErr("Local file name: '" + localFile + "'");
 
 			// Create local directory if it doesn't exists
-			File file = new File(localFile);
-			if (file != null && file.getParent() != null) {
-				File path = new File(file.getParent());
-				if (!path.exists()) {
-					if (verbose) Timer.showStdErr("Local path '" + path + "' doesn't exist, creating.");
-					path.mkdirs();
-				}
-			}
-
+			mkDirsLocalPath();
 			FileOutputStream os = new FileOutputStream(localFile);
 
 			// Copy to file
@@ -137,6 +126,9 @@ public class DataHttp extends DataRemote {
 			is.close();
 			os.close();
 			if (verbose) Timer.showStdErr("Donwload finished. Total " + total + " bytes.");
+
+			// Update file's last modified
+			updateLocalFileLastModified();
 
 			return true;
 		} catch (Exception e) {
@@ -176,8 +168,10 @@ public class DataHttp extends DataRemote {
 	 */
 	@Override
 	protected boolean updateInfo() {
-		URLConnection connection = connect();
+		return updateInfo(connect());
+	}
 
+	protected boolean updateInfo(URLConnection connection) {
 		latestUpdate = new Timer(CACHE_TIMEOUT).start();
 		boolean ok;
 		if (connection == null) {
@@ -203,7 +197,7 @@ public class DataHttp extends DataRemote {
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
 				+ "\n\tsize         : " + size //
-				);
+		);
 
 		return ok;
 	}

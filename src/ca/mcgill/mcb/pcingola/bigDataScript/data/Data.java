@@ -53,7 +53,25 @@ public abstract class Data {
 		// Get protocol
 		int idx = urlStr.indexOf(PROTOCOL_SEP);
 		if (idx < 0) proto = "file";
-		else proto = urlStr.substring(0, idx);
+		else {
+			proto = urlStr.substring(0, idx);
+			String host = urlStr.substring(idx + PROTOCOL_SEP.length());
+
+			// Check is this ia an S3 URL
+			// Get host
+			int idxHost = host.indexOf('/');
+			if (idxHost > 0) host = host.substring(0, idxHost);
+
+			int idxPort = host.indexOf(':');
+			if (idxPort > 0) host = host.substring(0, idxPort);
+
+			if (host.endsWith(DataS3.AWS_DOMAIN)) {
+				String s3domain = host.substring(0, host.length() - DataS3.AWS_DOMAIN.length() - 1);
+				int idxDot = s3domain.lastIndexOf('.');
+				if (idxDot > 0) s3domain = s3domain.substring(idxDot + 1);
+				if (s3domain.startsWith(DataS3.AWS_S3_PREFIX)) proto = "s3";
+			}
+		}
 
 		// Create each data type
 		Data data = null;

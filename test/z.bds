@@ -1,7 +1,8 @@
 #!/usr/bin/env bds
 
 
-fileRemote := "https://arxiv.org/pdf/1506.08452v1.pdf"	# You should read this paper...
+#`fileRemote := "https://arxiv.org/pdf/1506.08452v1.pdf"	# You should read this paper...
+fileRemote := "http://pcingola.zzz.s3.amazonaws.com/z.txt"	# Test file in an S3 bucket
 out  := "tmp_pdf.txt"									# Local file name
 
 # Remove file 

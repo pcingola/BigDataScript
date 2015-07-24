@@ -189,6 +189,20 @@ public abstract class DataRemote extends Data {
 		return sb.toString();
 	}
 
+	protected void mkDirsLocalPath() {
+		File file = new File(getLocalPath());
+
+		// Create local directory if it doesn't exists
+		if (file != null && file.getParent() != null) {
+			File path = new File(file.getParent());
+			if (!path.exists()) {
+				if (verbose) Timer.showStdErr("Local path '" + path + "' doesn't exist, creating.");
+				path.mkdirs();
+			}
+		}
+
+	}
+
 	protected boolean needsUpdateInfo() {
 		return latestUpdate == null || latestUpdate.isExpired();
 	}
@@ -208,6 +222,16 @@ public abstract class DataRemote extends Data {
 	 * Connect to remote and update info
 	 */
 	protected abstract boolean updateInfo();
+
+	/**
+	 * Update last modified in local copy
+	 */
+	protected void updateLocalFileLastModified() {
+		if (lastModified != null) {
+			File file = new File(getLocalPath());
+			file.setLastModified(lastModified.getTime());
+		}
+	}
 
 	/**
 	 * Cannot upload to a web server
