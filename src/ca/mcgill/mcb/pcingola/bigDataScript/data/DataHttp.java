@@ -102,7 +102,7 @@ public class DataHttp extends DataRemote {
 			if (verbose) Timer.showStdErr("Local file name: '" + localFile + "'");
 
 			// Create local directory if it doesn't exists
-			mkDirsLocalPath();
+			mkdirsLocal(localFile);
 			FileOutputStream os = new FileOutputStream(localFile);
 
 			// Copy to file
@@ -156,7 +156,7 @@ public class DataHttp extends DataRemote {
 	}
 
 	/**
-	 * Cannot create dirs in http
+	 * Cannot create remote dirs in http
 	 */
 	@Override
 	public boolean mkdirs() {
@@ -192,7 +192,7 @@ public class DataHttp extends DataRemote {
 		}
 
 		// Show information
-		if (verbose) Timer.showStdErr("Updated infromation for '" + getUrl() + "'"//
+		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
 				+ "\n\tcanRead      : " + canRead //
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //

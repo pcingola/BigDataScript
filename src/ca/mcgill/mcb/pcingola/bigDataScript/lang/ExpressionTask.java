@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
+import ca.mcgill.mcb.pcingola.bigDataScript.data.DataRemote;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
@@ -122,6 +123,11 @@ public class ExpressionTask extends ExpressionWithScope {
 								+ "\n");
 
 						replace.put(dataOut.getCanonicalPath(), dataOut.getLocalPath());
+
+						// Note, commands executed locally will output to the local file, so
+						// we must make sure that the path exists (otherwise the command
+						// results in an error.
+						((DataRemote) dataOut).mkdirsLocal();
 					}
 				}
 			}

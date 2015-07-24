@@ -189,18 +189,26 @@ public abstract class DataRemote extends Data {
 		return sb.toString();
 	}
 
-	protected void mkDirsLocalPath() {
-		File file = new File(getLocalPath());
+	public boolean mkdirsLocal() {
+		return mkdirsLocal(getLocalPath());
+	}
+
+	/**
+	 * Create local path
+	 */
+	protected boolean mkdirsLocal(String localFile) {
+		File file = new File(localFile);
 
 		// Create local directory if it doesn't exists
 		if (file != null && file.getParent() != null) {
 			File path = new File(file.getParent());
-			if (!path.exists()) {
-				if (verbose) Timer.showStdErr("Local path '" + path + "' doesn't exist, creating.");
-				path.mkdirs();
-			}
+			if (path.exists()) return true;
+
+			if (verbose) Timer.showStdErr("Local path '" + path + "' doesn't exist, creating.");
+			return path.mkdirs();
 		}
 
+		return false;
 	}
 
 	protected boolean needsUpdateInfo() {

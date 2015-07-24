@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.data;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -75,7 +77,7 @@ public class DataS3 extends DataRemote {
 			updateInfo(s3object);
 
 			// Create local file
-			mkDirsLocalPath();
+			mkdirsLocal(localFile);
 			FileOutputStream os = new FileOutputStream(getLocalPath());
 
 			// Copy S3 object to file
@@ -183,7 +185,6 @@ public class DataS3 extends DataRemote {
 		try {
 			if (regionStr == null) regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
 			region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
-			Gpr.debug("REGION: " + region);
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot parse AWS region '" + regionStr + "'", e);
 		}
@@ -194,9 +195,22 @@ public class DataS3 extends DataRemote {
 	 */
 	@Override
 	protected boolean updateInfo() {
-		// Read metadata
-		S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
-		return updateInfo(s3object);
+		try {
+			S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
+			return updateInfo(s3object);
+		} catch (AmazonServiceException e) {
+			String errorCode = e.getErrorCode();
+			if (!errorCode.equals("NoSuchKey")) throw new RuntimeException("Error accessing S3 bucket '" + bucketName + "', key '" + key + "'" + this, e);
+
+			// The object does not exists
+			exists = false;
+			canRead = false;
+			lastModified = new Date(0L);
+			size = 0;
+			latestUpdate = new Timer(CACHE_TIMEOUT).start();
+			return true;
+		}
+
 	}
 
 	/**
@@ -214,12 +228,12 @@ public class DataS3 extends DataRemote {
 		latestUpdate = new Timer(CACHE_TIMEOUT).start();
 
 		// Show information
-		if (verbose) Timer.showStdErr("Updated infromation for '" + getUrl() + "'"//
+		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
 				+ "\n\tcanRead      : " + canRead //
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
 				+ "\n\tsize         : " + size //
-				);
+		);
 
 		return true;
 	}
@@ -230,7 +244,7 @@ public class DataS3 extends DataRemote {
 	@Override
 	public boolean upload(String localFileName) {
 		// Create and check file
-		File file = new File(getLocalPath());
+		File file = new File(localFileName);
 		if (!file.exists() || !file.isFile() || !file.canRead()) {
 			if (debug) Gpr.debug("Error accessing local file '" + getLocalPath() + "'");
 			return false;
