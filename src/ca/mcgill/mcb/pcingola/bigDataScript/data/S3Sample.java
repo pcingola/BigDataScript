@@ -38,9 +38,51 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  */
 public class S3Sample {
 
+	/**
+	 * Creates a temporary file with text data to demonstrate uploading a file
+	 * to Amazon S3
+	 *
+	 * @return A newly created temporary file with text data.
+	 *
+	 * @throws IOException
+	 */
+	private static File createSampleFile() throws IOException {
+		File file = File.createTempFile("aws-java-sdk-", ".txt");
+		file.deleteOnExit();
+
+		Writer writer = new OutputStreamWriter(new FileOutputStream(file));
+		writer.write("abcdefghijklmnopqrstuvwxyz\n");
+		writer.write("01234567890112345678901234\n");
+		writer.write("!@#$%^&*()-=[]{};':',.<>/?\n");
+		writer.write("01234567890112345678901234\n");
+		writer.write("abcdefghijklmnopqrstuvwxyz\n");
+		writer.close();
+
+		return file;
+	}
+
+	/**
+	 * Displays the contents of the specified input stream as text.
+	 *
+	 * @param input
+	 *            The input stream to display as text.
+	 *
+	 * @throws IOException
+	 */
+	private static void displayTextInputStream(InputStream input) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+		while (true) {
+			String line = reader.readLine();
+			if (line == null) break;
+
+			System.out.println("    " + line);
+		}
+		System.out.println();
+	}
+
 	public static void main(String[] args) throws IOException {
 		/*
-		 * Create your credentials file at ~/.aws/credentials (C:\Users\USER_NAME\.aws\credentials for Windows users) 
+		 * Create your credentials file at ~/.aws/credentials (C:\Users\USER_NAME\.aws\credentials for Windows users)
 		 * and save the following lines after replacing the underlined values with your own.
 		 *
 		 * [default]
@@ -148,48 +190,6 @@ public class S3Sample {
 			System.out.println("Caught an AmazonClientException, which means the client encountered " + "a serious internal problem while trying to communicate with S3, " + "such as not being able to access the network.");
 			System.out.println("Error Message: " + ace.getMessage());
 		}
-	}
-
-	/**
-	 * Creates a temporary file with text data to demonstrate uploading a file
-	 * to Amazon S3
-	 *
-	 * @return A newly created temporary file with text data.
-	 *
-	 * @throws IOException
-	 */
-	private static File createSampleFile() throws IOException {
-		File file = File.createTempFile("aws-java-sdk-", ".txt");
-		file.deleteOnExit();
-
-		Writer writer = new OutputStreamWriter(new FileOutputStream(file));
-		writer.write("abcdefghijklmnopqrstuvwxyz\n");
-		writer.write("01234567890112345678901234\n");
-		writer.write("!@#$%^&*()-=[]{};':',.<>/?\n");
-		writer.write("01234567890112345678901234\n");
-		writer.write("abcdefghijklmnopqrstuvwxyz\n");
-		writer.close();
-
-		return file;
-	}
-
-	/**
-	 * Displays the contents of the specified input stream as text.
-	 *
-	 * @param input
-	 *            The input stream to display as text.
-	 *
-	 * @throws IOException
-	 */
-	private static void displayTextInputStream(InputStream input) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-		while (true) {
-			String line = reader.readLine();
-			if (line == null) break;
-
-			System.out.println("    " + line);
-		}
-		System.out.println();
 	}
 
 }

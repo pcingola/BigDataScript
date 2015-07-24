@@ -18,7 +18,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class DataHttp extends DataRemote {
 
-	private static int BUFFER_SIZE = 102400;
+	private static int BUFFER_SIZE = 100 * 1024;
 
 	public final int HTTP_OK = 200; // Connection OK
 	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
@@ -114,8 +114,7 @@ public class DataHttp extends DataRemote {
 				}
 			}
 
-			FileOutputStream os = null;
-			os = new FileOutputStream(localFile);
+			FileOutputStream os = new FileOutputStream(localFile);
 
 			// Copy to file
 			int count = 0, total = 0, lastShown = 0;
@@ -124,10 +123,12 @@ public class DataHttp extends DataRemote {
 				os.write(data, 0, count);
 				total += count;
 
-				// Show every MB
-				if ((total - lastShown) > (1024 * 1024)) {
-					if (verbose) System.err.print(".");
-					lastShown = total;
+				if (verbose) {
+					// Show every MB
+					if ((total - lastShown) > (1024 * 1024)) {
+						System.err.print(".");
+						lastShown = total;
+					}
 				}
 			}
 			if (verbose) System.err.println("");
@@ -202,7 +203,7 @@ public class DataHttp extends DataRemote {
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
 				+ "\n\tsize         : " + size //
-		);
+				);
 
 		return ok;
 	}

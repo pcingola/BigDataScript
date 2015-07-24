@@ -2,87 +2,64 @@ package ca.mcgill.mcb.pcingola.bigDataScript.data;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3URI;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+
 /**
- * A file / directory on a web server
+ * A bucket / object in AWS S3
  *
  * @author pcingola
  */
 public class DataS3 extends DataRemote {
 
-	private static int BUFFER_SIZE = 102400;
+	private static int BUFFER_SIZE = 100 * 1024;
 
-	public final int HTTP_OK = 200; // Connection OK
-	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
-	public final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
+	public static final String DEFAULT_AWS_REGION = Regions.US_WEST_2.toString();
+	public static final String AWS_DOMAIN = "amazonaws.com";
+	public static final String AWS_S3_PREFIX = "s3";
+
+	private static Map<Region, AmazonS3> s3ByRegion = new HashMap<>();
+
+	Region region;
+	String bucketName;
+	String key;
 
 	public DataS3(URL url) {
 		super(url);
+		parse(url.toString());
 		canWrite = false;
-	}
-
-	/**
-	 * Connect and cache some data
-	 */
-	protected URLConnection connect() {
-		try {
-			if (verbose) Timer.showStdErr("Connecting to " + url);
-			URLConnection connection = url.openConnection();
-
-			// Follow redirect? (only for http connections)
-			if (connection instanceof HttpURLConnection) {
-				for (boolean followRedirect = true; followRedirect;) {
-					HttpURLConnection httpConnection = (HttpURLConnection) connection;
-					int code = httpConnection.getResponseCode();
-
-					switch (code) {
-					case HTTP_OK:
-						// Status OK
-						return connection;
-					case HTTP_REDIR:
-						String newUrl = connection.getHeaderField("Location");
-						if (verbose) Timer.showStdErr("Following redirect: " + newUrl);
-						url = new URL(newUrl);
-						connection = url.openConnection();
-						break;
-
-					case HTTP_NOTFOUND:
-						canRead = false;
-						if (verbose) Timer.showStdErr("File '" + url + "' not found on server.");
-						return null;
-
-					default:
-						canRead = false;
-						if (verbose) Timer.showStdErr("Server error " + code + " for URL '" + url + "'");
-						return null;
-					}
-				}
-			}
-		} catch (Exception e) {
-			Timer.showStdErr("ERROR while connecting to " + this);
-			throw new RuntimeException(e);
-		}
-
-		return null;
 	}
 
 	@Override
 	public boolean delete() {
-		if (verbose) Timer.showStdErr("Cannot delete file '" + getUrl() + "'");
-		return false;
+		if (!isFile()) return false; // Do not delete bucket
+		getS3().deleteObject(bucketName, key);
+		return true;
 	}
 
 	@Override
 	public void deleteOnExit() {
-		if (verbose) Timer.showStdErr("Cannot delete file '" + getUrl() + "'");
+		if (verbose) Timer.showStdErr("Cannot delete file '" + this + "'");
 	}
 
 	/**
@@ -91,31 +68,13 @@ public class DataS3 extends DataRemote {
 	@Override
 	public boolean download(String localFile) {
 		try {
-			URLConnection connection = connect();
-			if (connection == null) return false;
+			if (!isFile()) return false;
 
-			// Copy resource to local file, use remote file if no local file name specified
-			InputStream is = url.openStream();
+			S3Object object = getS3().getObject(new GetObjectRequest(bucketName, key));
+			if (verbose) System.out.println("Downloading '" + this + "'");
 
-			// Print info about resource
-			Date date = new Date(connection.getLastModified());
-			if (debug) Timer.showStdErr("Downloading file (type: " + connection.getContentType() + ", modified on: " + date + ")");
-
-			// Open local file
-			if (verbose) Timer.showStdErr("Local file name: '" + localFile + "'");
-
-			// Create local directory if it doesn't exists
-			File file = new File(localFile);
-			if (file != null && file.getParent() != null) {
-				File path = new File(file.getParent());
-				if (!path.exists()) {
-					if (verbose) Timer.showStdErr("Local path '" + path + "' doesn't exist, creating.");
-					path.mkdirs();
-				}
-			}
-
-			FileOutputStream os = null;
-			os = new FileOutputStream(localFile);
+			S3ObjectInputStream is = object.getObjectContent();
+			FileOutputStream os = new FileOutputStream(getLocalPath());
 
 			// Copy to file
 			int count = 0, total = 0, lastShown = 0;
@@ -124,10 +83,12 @@ public class DataS3 extends DataRemote {
 				os.write(data, 0, count);
 				total += count;
 
-				// Show every MB
-				if ((total - lastShown) > (1024 * 1024)) {
-					if (verbose) System.err.print(".");
-					lastShown = total;
+				if (verbose) {
+					// Show every MB
+					if ((total - lastShown) > (1024 * 1024)) {
+						System.err.print(".");
+						lastShown = total;
+					}
 				}
 			}
 			if (verbose) System.err.println("");
@@ -139,35 +100,86 @@ public class DataS3 extends DataRemote {
 
 			return true;
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while connecting to " + getUrl());
+			Timer.showStdErr("ERROR while downloading " + this);
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
-	 * HTTP has no concept of directory
+	 * Create an S3 client.
+	 * S3 clients are thread safe, thus it is encouraged to have
+	 * only one client instead of instantiating one each time.
+	 */
+	protected AmazonS3 getS3() {
+		AmazonS3 s3 = s3ByRegion.get(region);
+
+		if (s3 == null) {
+			// Create singleton in a thread safe way
+			synchronized (s3ByRegion) {
+				if (s3ByRegion.get(region) == null) {
+					// Create client
+					s3 = new AmazonS3Client();
+					s3.setRegion(region);
+					s3ByRegion.put(region, s3);
+				}
+			}
+		}
+
+		return s3;
+	}
+
+	/**
+	 * Is this a bucket?
 	 */
 	@Override
 	public boolean isDirectory() {
-		return false;
+		return key == null;
 	}
 
 	@Override
 	public boolean isFile() {
-		return true;
+		return key != null;
 	}
 
 	@Override
 	public ArrayList<String> list() {
-		return new ArrayList<>();
+		ArrayList<String> list = new ArrayList<>();
+
+		ObjectListing objectListing = getS3().listObjects(new ListObjectsRequest().withBucketName(bucketName));
+		for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+			list.add(objectSummary.toString());
+			// list.add(objectSummary.getKey());
+		}
+
+		return list;
 	}
 
 	/**
-	 * Cannot create dirs in http
+	 * There is no concept of directory in S3
+	 * Paths created automatically
 	 */
 	@Override
 	public boolean mkdirs() {
-		return false;
+		return true;
+	}
+
+	/**
+	 * Parse string representing an AWS S3 URI
+	 */
+	protected void parse(String s3UriStr) {
+		AmazonS3URI s3uri = new AmazonS3URI(s3UriStr);
+
+		bucketName = s3uri.getBucket();
+		key = s3uri.getKey();
+
+		// Parse and set region
+		String regionStr = s3uri.getRegion().toUpperCase();
+		try {
+			if (regionStr == null) regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
+			region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot parse AWS region '" + regionStr + "'", e);
+		}
 	}
 
 	/**
@@ -175,26 +187,16 @@ public class DataS3 extends DataRemote {
 	 */
 	@Override
 	protected boolean updateInfo() {
-		URLConnection connection = connect();
+		// Read metadata
+		S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
+		ObjectMetadata om = s3object.getObjectMetadata();
 
+		// Update data
+		size = om.getContentLength();
+		canRead = true;
+		lastModified = om.getLastModified();
+		exists = true;
 		latestUpdate = new Timer(CACHE_TIMEOUT).start();
-		boolean ok;
-		if (connection == null) {
-			// Cannot connect
-			canRead = false;
-			exists = false;
-			lastModified = new Date(0);
-			size = 0;
-			ok = false;
-		} else {
-			// Update data
-			size = connection.getContentLengthLong();
-			canRead = true;
-			lastModified = new Date(connection.getLastModified());
-			exists = true;
-			ok = true;
-
-		}
 
 		// Show information
 		if (verbose) Timer.showStdErr("Updated infromation for '" + getUrl() + "'"//
@@ -204,7 +206,7 @@ public class DataS3 extends DataRemote {
 				+ "\n\tsize         : " + size //
 		);
 
-		return ok;
+		return true;
 	}
 
 	/**
@@ -212,7 +214,15 @@ public class DataS3 extends DataRemote {
 	 */
 	@Override
 	public boolean upload(String localFileName) {
-		return false;
-	}
+		// Create and check file
+		File file = new File(getLocalPath());
+		if (!file.exists() || !file.isFile() || !file.canRead()) {
+			if (debug) Gpr.debug("Error accessing local file '" + getLocalPath() + "'");
+			return false;
+		}
 
+		// Upload
+		getS3().putObject(new PutObjectRequest(bucketName, key, file));
+		return true;
+	}
 }
