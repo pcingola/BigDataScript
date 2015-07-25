@@ -13,10 +13,13 @@ import java.util.Date;
  */
 public class DataFile extends Data {
 
+	public static final String PROTOCOL_FILE = "file://";
+
 	File file;
 
 	public static File resolveLocalPath(String fileName, String currentDir) {
 		try {
+			if (fileName.toLowerCase().startsWith(PROTOCOL_FILE)) fileName = fileName.substring(PROTOCOL_FILE.length());
 			File f = new File(fileName);
 
 			// If fileName is an absolute path, we just return the appropriate file

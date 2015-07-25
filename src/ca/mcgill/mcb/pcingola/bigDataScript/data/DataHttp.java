@@ -1,13 +1,21 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.data;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.http.client.utils.URIBuilder;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -23,8 +31,11 @@ public class DataHttp extends DataRemote {
 	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
 	public final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 
-	public DataHttp(URL url) {
-		super(url);
+	protected URL url;
+
+	public DataHttp(String urlStr) {
+		super();
+		url = parseUrl(urlStr);
 		canWrite = false;
 	}
 
@@ -137,6 +148,38 @@ public class DataHttp extends DataRemote {
 		}
 	}
 
+	@Override
+	public String getCanonicalPath() {
+		return url.toString();
+	}
+
+	@Override
+	public String getName() {
+		File path = new File(url.getPath());
+		return path.getName();
+	}
+
+	@Override
+	public String getParent() {
+		try {
+			String path = url.getPath();
+			String paren = (new File(path)).getParent();
+			URI uri = new URI(url.getProtocol(), url.getAuthority(), paren, null, null);
+			return uri.toString();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Error parsing URL: " + url, e);
+		}
+	}
+
+	@Override
+	public String getPath() {
+		return url.getPath();
+	}
+
+	public URL getUrl() {
+		return url;
+	}
+
 	/**
 	 * HTTP has no concept of directory
 	 */
@@ -155,12 +198,55 @@ public class DataHttp extends DataRemote {
 		return new ArrayList<>();
 	}
 
+	@Override
+	protected String localPath() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Config.get().getTmpDir() + "/" + TMP_BDS_DATA);
+		sb.append("/" + url.getProtocol());
+
+		// Authority: Host and port
+		if (url.getAuthority() != null) {
+			for (String part : url.getAuthority().split("[:\\.]")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		// Path
+		if (url.getPath() != null) {
+			for (String part : url.getPath().split("/")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		// Query
+		if (url.getQuery() != null) {
+			for (String part : url.getQuery().split("&")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		return sb.toString();
+	}
+
 	/**
 	 * Cannot create remote dirs in http
 	 */
 	@Override
 	public boolean mkdirs() {
 		return false;
+	}
+
+	protected URL parseUrl(String urlStr) {
+		try {
+			// No protocol: file
+			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URL("file" + PROTOCOL_SEP + urlStr);
+
+			// Encode the url
+			URIBuilder ub = new URIBuilder(urlStr);
+			return ub.build().toURL();
+		} catch (URISyntaxException | MalformedURLException e) {
+			throw new RuntimeException("Cannot parse URL " + urlStr, e);
+		}
 	}
 
 	/**
@@ -183,10 +269,15 @@ public class DataHttp extends DataRemote {
 			ok = false;
 		} else {
 			// Update data
-			size = connection.getContentLengthLong();
+			size = connection.getContentLengthLong(); // Could be negative (unspecified)
 			canRead = true;
-			lastModified = new Date(connection.getLastModified());
 			exists = true;
+
+			// Last modified
+			long lastMod = connection.getLastModified();
+			if (lastMod == 0) lastMod = connection.getDate(); // If last_modified is not found, use 'date' (e.g. dynamic content)
+			lastModified = new Date(lastMod);
+
 			ok = true;
 
 		}
@@ -197,7 +288,7 @@ public class DataHttp extends DataRemote {
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
 				+ "\n\tsize         : " + size //
-		);
+				);
 
 		return ok;
 	}

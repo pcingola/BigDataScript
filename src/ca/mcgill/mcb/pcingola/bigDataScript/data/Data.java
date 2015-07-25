@@ -1,12 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.data;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
-
-import org.apache.http.client.utils.URIBuilder;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 
@@ -82,11 +77,11 @@ public abstract class Data {
 
 		case "http":
 		case "https":
-			data = new DataHttp(parseUrl(urlStr));
+			data = new DataHttp(urlStr);
 			break;
 
 		case "s3":
-			data = new DataS3(parseUrl(urlStr));
+			data = new DataS3(urlStr);
 			break;
 
 		default:
@@ -98,19 +93,6 @@ public abstract class Data {
 		data.setDebug(Config.get().isDebug());
 
 		return data;
-	}
-
-	public static URL parseUrl(String urlStr) {
-		try {
-			// No protocol: file
-			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URL("file" + PROTOCOL_SEP + urlStr);
-
-			// Encode the url
-			URIBuilder ub = new URIBuilder(urlStr);
-			return ub.build().toURL();
-		} catch (URISyntaxException | MalformedURLException e) {
-			throw new RuntimeException("Cannot parse URL " + urlStr, e);
-		}
 	}
 
 	public Data() {

@@ -2,7 +2,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.data;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,13 +41,14 @@ public class DataS3 extends DataRemote {
 
 	private static Map<Region, AmazonS3> s3ByRegion = new HashMap<>();
 
+	AmazonS3URI s3uri;
 	Region region;
 	String bucketName;
 	String key;
 
-	public DataS3(URL url) {
-		super(url);
-		parse(url.toString());
+	public DataS3(String urlStr) {
+		super();
+		parse(urlStr);
 		canWrite = false;
 	}
 
@@ -113,6 +113,48 @@ public class DataS3 extends DataRemote {
 		}
 	}
 
+	public String getBucket() {
+		return bucketName;
+	}
+
+	@Override
+	public String getCanonicalPath() {
+		return s3uri.toString();
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	@Override
+	public String getName() {
+		if (key == null) return "";
+
+		int idx = key.lastIndexOf('/');
+		if (idx >= 0) return key.substring(idx + 1);
+
+		return key;
+	}
+
+	@Override
+	public String getParent() {
+		if (key == null) return bucketName;
+
+		int idx = key.lastIndexOf('/');
+		if (idx >= 0) return bucketName + "/" + key.substring(0, idx);
+
+		return bucketName;
+	}
+
+	@Override
+	public String getPath() {
+		return bucketName + "/" + key;
+	}
+
+	public Region getRegion() {
+		return region;
+	}
+
 	/**
 	 * Create an S3 client.
 	 * S3 clients are thread safe, thus it is encouraged to have
@@ -162,6 +204,26 @@ public class DataS3 extends DataRemote {
 		return list;
 	}
 
+	@Override
+	protected String localPath() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Config.get().getTmpDir() + "/" + TMP_BDS_DATA + "/s3");
+
+		// Bucket
+		for (String part : getBucket().split("/")) {
+			if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+		}
+
+		// Key
+		if (getKey() != null) {
+			for (String part : getKey().split("/")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		return sb.toString();
+	}
+
 	/**
 	 * There is no concept of directory in S3
 	 * Paths created automatically
@@ -175,8 +237,7 @@ public class DataS3 extends DataRemote {
 	 * Parse string representing an AWS S3 URI
 	 */
 	protected void parse(String s3UriStr) {
-		AmazonS3URI s3uri = new AmazonS3URI(s3UriStr);
-
+		s3uri = new AmazonS3URI(s3UriStr);
 		bucketName = s3uri.getBucket();
 		key = s3uri.getKey();
 
@@ -233,7 +294,7 @@ public class DataS3 extends DataRemote {
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
 				+ "\n\tsize         : " + size //
-		);
+				);
 
 		return true;
 	}
