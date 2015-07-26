@@ -29,7 +29,6 @@ public class MethodNative_string_download_localname extends MethodNative {
 
 		Data data = bdsThread.data(objThis.toString());
 		Data localData = bdsThread.data(localName);
-		if (!data.download(localData.getPath())) return "";
-		return data.getLocalPath();
+		return data.download(localData.getCanonicalPath());
 	}
 }

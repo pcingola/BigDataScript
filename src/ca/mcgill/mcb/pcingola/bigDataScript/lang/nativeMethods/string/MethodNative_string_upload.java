@@ -6,8 +6,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
-public class MethodNative_string_download extends MethodNative {
-	public MethodNative_string_download() {
+public class MethodNative_string_upload extends MethodNative {
+	public MethodNative_string_upload() {
 		super();
 	}
 
@@ -26,6 +26,6 @@ public class MethodNative_string_download extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		Data data = bdsThread.data(objThis.toString());
-		return data.download();
+		return data.upload();
 	}
 }

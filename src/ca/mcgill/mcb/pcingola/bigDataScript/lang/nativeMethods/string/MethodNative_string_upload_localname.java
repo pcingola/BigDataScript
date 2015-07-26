@@ -6,8 +6,8 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
-public class MethodNative_string_download extends MethodNative {
-	public MethodNative_string_download() {
+public class MethodNative_string_upload_localname extends MethodNative {
+	public MethodNative_string_upload_localname() {
 		super();
 	}
 
@@ -15,9 +15,9 @@ public class MethodNative_string_download extends MethodNative {
 	protected void initMethod() {
 		functionName = "download";
 		classType = Type.STRING;
-		returnType = Type.STRING;
+		returnType = Type.BOOL;
 
-		String argNames[] = { "this" };
+		String argNames[] = { "this", "localName" };
 		Type argTypes[] = { Type.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
@@ -25,7 +25,11 @@ public class MethodNative_string_download extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		String localName = bdsThread.getString("localName");
+
 		Data data = bdsThread.data(objThis.toString());
-		return data.download();
+		Data localData = bdsThread.data(localName);
+
+		return data.upload(localData.getCanonicalPath());
 	}
 }

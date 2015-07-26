@@ -38,6 +38,7 @@ public class DataS3 extends DataRemote {
 	public static final String DEFAULT_AWS_REGION = Regions.US_EAST_1.toString();
 	public static final String AWS_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PREFIX = "s3";
+	public static final String AWS_S3_PROTOCOL = "s3://";
 
 	private static Map<Region, AmazonS3> s3ByRegion = new HashMap<>();
 
@@ -138,12 +139,13 @@ public class DataS3 extends DataRemote {
 
 	@Override
 	public String getParent() {
-		if (key == null) return bucketName;
+		if (key == null) return AWS_S3_PROTOCOL + bucketName;
 
-		int idx = key.lastIndexOf('/');
-		if (idx >= 0) return bucketName + "/" + key.substring(0, idx);
+		String cp = getCanonicalPath();
+		int idx = cp.lastIndexOf('/');
+		if (idx >= 0) return cp.substring(0, idx);
 
-		return bucketName;
+		return AWS_S3_PROTOCOL + bucketName;
 	}
 
 	@Override
