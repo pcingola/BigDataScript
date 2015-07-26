@@ -585,6 +585,8 @@ if( f.canRead() ) {
 					<tr> <th>Return type</th><th> Method</th> 								<th> Meaning </th> </tr>
 					<tr><td>string		</td> <td>string.baseName()					</td> <td> File's base name	</td> </tr>
 					<tr><td>string		</td> <td>string.baseName(string ext)		</td> <td> File's base name, remove extention 'ext'	</td> </tr>
+					<tr><td>string		</td> <td>string.download()					</td> <td> Donwload data from URL (string). Returns local file name (empty string if failed) </td> </tr>
+					<tr><td>bool		</td> <td>string.download(string file)		</td> <td> Donwload data from URL to 'file'. Returns true if succeeded. </td> </tr>
 					<tr><td>bool		</td> <td>string.canRead()					</td> <td> True if file has read permission	</td> </tr>
 					<tr><td>bool		</td> <td>string.canWrite()					</td> <td> True if file has write permission   </td> </tr>
 					<tr><td>bool		</td> <td>string.canExec()					</td> <td> True if file has execution permission	</td> </tr>
@@ -610,6 +612,8 @@ if( f.canRead() ) {
 					<tr><td>int			</td> <td>string.size()						</td> <td> File size in bytes  </td> </tr>
 					<tr><td>string		</td> <td>string.swapExt(string newExt)	</td> <td> Swap file extension </td> </tr>
 					<tr><td>string		</td> <td>string.swapExt(string oldExt,string newExt)		</td> <td> Swap file extension, only if extension matches the provided 'oldExt'</td> </tr>
+					<tr><td>string		</td> <td>string.upload()					</td> <td> Upload data from URL (string). Returns true if succeeded. </td> </tr>
+					<tr><td>bool		</td> <td>string.upload(string file)		</td> <td> Upload data from 'file' to URL. Returns true if succeeded. </td> </tr>
 					<tr><td>string		</td> <td>string.write(string file)			</td> <td> Write string to 'file' </td> </tr>
 				</table>
 				
@@ -798,12 +802,28 @@ name \t value
 						<th> Meaning </th>
 					</tr>
 					<tr>
-						<td> <code>allowEmpty</code> , <code>canFail</code> , <code>cpus</code>, <code>timeout</code> <code>node</code> <code>queue</code>  </td>	
+						<td> <code>allowEmpty</code> 
+							, <code>canFail</code> 
+							, <code>cpus</code>
+							, <code>mem</code>
+							, <code>timeout</code>
+							, <code>node</code>
+							, <code>queue</code>  
+							, <code>retry</code>  
+							, <code>system</code>  
+							, <code>taskName</code>  
+							, <code>timeout</code>  
+							, <code>walltimeout</code>  
+						</td>	
 						<td> These are the default values for <code>task</code>. Their meanings are explained in the Task section of this handbook. </td> 
 					</tr>
 					<tr>
 						<td> string <code>programName</code> </td>	
 						<td> The program's name </td> 
+					</tr>
+					<tr>
+						<td> string <code>programPath</code> </td>	
+						<td> The program's path </td> 
 					</tr>
 					<tr>
 						<td> string[] <code>args</code> </td>	
@@ -822,8 +842,16 @@ name \t value
 						<td> All shell variables at the moment of invocation (e.g. <code>HOME</code>, <code>PWD</code>, etc.)</td> 
 					</tr>
 					<tr>
-						<td> K, M, G, T, P </td>	
-						<td> Kile, Mega, Giga, Tera, Peta (2^10, 2^20, 2^30, 2^40 and 2^50 respectively)</td> 
+						<td> int <code>K, M, G, T, P</code> </td>	
+						<td> Kilo, Mega, Giga, Tera, Peta (2^10, 2^20, 2^30, 2^40 and 2^50 respectively)</td> 
+					</tr>
+					<tr>
+						<td> real <code>E, PI</code> </td>	
+						<td> Euler's constant (2.718281...) and Pi (3.1415927...) </td> 
+					</tr>
+					<tr>
+						<td> int <code>minute, hour, day, week</code> </td>	
+						<td> Number of seconds in a minute, hour, day and week respectively</td> 
 					</tr>
 				</table>
 				<br>
@@ -1925,6 +1953,50 @@ for(int i=0; i < 3 ; i++ ) {
 goal outs	# We use a list of goals, it is interpreted as multiple goal statements (one for each item in the list)
 </pre>
 
+			</div>
+
+			<!-- ================================================== -->
+			<div class="bs-docs-section">
+				<h1 class="page-header" id="remote">Remote files (Amazon S3, Http, etc.) </h1>
+				<p class="lead"> Often applications need to run tasks on remote data files, <code>bds</code> can transparently handle remote data dependencies</p>
+
+				In many cases data files may reside in non-local file systems, such as <code>HTTP</code> or Amazon's <code>S3</code> object storage.
+				Fortunately <code>bds</code> can tranparently handle remote dependencis, download the input files and upload the results without you having to write a single line of code.
+				<br>
+				<br>
+				<b>Example 1:</b> In this example, the remote file <code>index.html</code> is remote input file to the <code>task</code>.
+				Obviously <code>index.html</code> is hosted on GitHub's servers, thus not avilable on the computer where the script is running.
+				Before the command (<code>cat</code>) is executed, the remote file is transparently downloaded by <code>bds</code>.
+				<br>
+				<br>
+<pre class="prettyprint">
+in  := 'http://pcingola.github.io/BigDataScript/index.html'
+out := 'tmp.html'
+
+task( out <- in ) sys cat $in > $out
+</pre>
+				<br>
+				Notice that: 
+				<ol>
+					<li> there is no code for downloading the remote file (<code>index.html</code>) in the script;
+					<li> the file is downloaded on the processing node performing the task, which may differ from the node running the script (e.g. if it is running on a cluster);
+					<li> task dependencies are verified without downloading data, so the task as well as the corresponding download / upload operations are only performed if required;
+					<li> if the file is required in the future, <code>bds</code> checks if the local (cached) copy is still valid, and uses the cached file if possible (saving bandwith and time).
+				</ol>
+				<br>
+				<b>Example 2:</b> The following example is slightly more complicated, the input ('index.html') is processed (<code>cat</code> and <code>echo</code> commands) and the results are stored in an <code>Amazon S3</code> object.
+				Once more, notice that <code>bds</code> transparently takes care of downloading the file and then uploading the output to Amazon's S3.
+				<br>
+				<br>
+<pre class="prettyprint">
+in  := 'http://pcingola.github.io/BigDataScript/index.html'
+out := 's3://pcingola.bds/test_remote_12.txt'
+
+task( out <- in ) {
+	sys cat $in > $out
+	sys echo "This line is appeneded to the file" >> $out
+}
+</pre>
 			</div>
 
 			<!-- ================================================== -->
@@ -3161,6 +3233,7 @@ ssh.nodes = sgeadmin@node001, sgeadmin@node002, sgeadmin@node003, sgeadmin@node0
 					<li><a href="#waitExpr"> Wait </a></li>
 					<li><a href="#dep"> Dependency operator </a></li>
 					<li><a href="#goal"> Goals </a></li>
+					<li><a href="#remote"> Remote files </a></li>
 					<li><a href="#par"> Parallel execution </a></li>
 					<li><a href="#check"> Checkpoints </a></li>
 
