@@ -7,6 +7,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 
 public class MethodNative_string_upload_localname extends MethodNative {
+
 	public MethodNative_string_upload_localname() {
 		super();
 	}

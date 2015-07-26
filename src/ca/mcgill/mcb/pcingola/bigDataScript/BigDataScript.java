@@ -725,7 +725,7 @@ public class BigDataScript {
 		// ---
 		// Add global symbols
 		// ---
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, ""));
+		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, "")); // Now is empty, but they are assigned later
 		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Type.STRING, ""));
 
 		// Task related variables: Default values
@@ -743,7 +743,6 @@ public class BigDataScript {
 		// Number of local CPUs
 		// Kilo, Mega, Giga, Tera, Peta.
 		LinkedList<ScopeSymbol> constants = new LinkedList<ScopeSymbol>();
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, "")); // Program name, now is empty, but it is filled later
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, (long) Gpr.NUM_CORES));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));

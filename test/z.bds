@@ -1,26 +1,5 @@
 
+println "programName : $programName"
+println "programPath : $programPath"
 
-out := 's3://pcingola.bds/test_remote_13_file_does_not_exits_in_S3.txt'
-
-println "baseName       : " + out.baseName()
-println "baseName('txt'): " + out.baseName('.txt')
-println "canRead        : " + out.canRead()
-println "canWrite       : " + out.canWrite()
-println "dirName        : " + out.dirName()
-println "dirPath        : " + out.dirPath()
-println "dir            : " + out.dir()
-println "extName        : " + out.extName()
-println "exists         : " + out.exists()
-println "isDir          : " + out.isDir()
-println "isFile         : " + out.isFile()
-println "path           : " + out.path()
-println "pathName       : " + out.pathName()
-println "removeExt      : " + out.removeExt()
-
-#println "write          : " + out.write()
-#
-#println "isRead         : " + out.isRead()
-#println "isReadLines    : " + out.isReadLines()
-#
-#println "size           : " + out.size()
 
