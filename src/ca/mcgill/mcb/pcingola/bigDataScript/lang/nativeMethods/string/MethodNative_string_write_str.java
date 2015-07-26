@@ -1,6 +1,9 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
+import java.io.File;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
+import ca.mcgill.mcb.pcingola.bigDataScript.data.DataRemote;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
@@ -32,10 +35,20 @@ public class MethodNative_string_write_str extends MethodNative {
 		// Save to file
 		String str = bdsThread.getString("str");
 		if (data.isRemote()) {
+			DataRemote dr = (DataRemote) data;
+			if (!dr.isFile()) bdsThread.fatalError(this, "Cannot write to non-file: " + dr.getCanonicalPath());
+
 			// Save to temp file and upload
-			String tmpFileName = "";
+			String tmpFileName = dr.getLocalPath();
+
+			// Make sure temp dir exists
+			(new File(tmpFileName)).getParentFile().mkdirs();
+
+			// Create local file
+			Gpr.debug("local file: " + tmpFileName);
 			Gpr.toFile(tmpFileName, str);
 
+			// Upload file
 			if (!data.upload(tmpFileName)) return ""; // Failed upload?
 		} else {
 			// Save to local file

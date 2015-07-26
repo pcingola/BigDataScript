@@ -1,0 +1,16 @@
+
+out := 's3://pcingola.bds/zzz/test_remote_18.txt'
+
+# Unique name
+tid := task echo Hi
+
+# Create new file
+str := "Hello: $tid"
+out.write(str)
+
+# Download file
+instr := out.read();
+
+# Does text match?
+ok := (instr == str)
+println "ok: $ok\ndata : '$instr'"
