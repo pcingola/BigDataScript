@@ -4,4 +4,5 @@ out := 'tmp_remote_03.txt'
 
 task( out <- in ) sys cat $in > $out
 
+wait
 first := out.readLines().head()

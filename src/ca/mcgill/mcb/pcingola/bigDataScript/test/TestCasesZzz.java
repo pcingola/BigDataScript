@@ -152,41 +152,34 @@ public class TestCasesZzz extends TestCasesBase {
 	//
 	//	@Test
 	//	public void test03_task_URL() {
-	//		verbose = true;
 	//		runAndCheck("test/remote_03.bds", "first", "<!DOCTYPE html>");
 	//	}
 	//
+	//	@Test
+	//	public void test04_task_URL() {
+	//		runAndCheck("test/remote_04.bds", "first", "<!DOCTYPE html>");
+	//	}
+	//	@Test
+	//	public void test05_task_URL() {
+	//		runAndCheck("test/remote_05.bds", "first", "<!DOCTYPE html>");
+	//	}
+	//
+	//	@Test
+	//	public void test06_task_URL() {
+	//		runAndCheck("test/remote_06.bds", "first", "<!DOCTYPE html>");
+	//	}
+	//
+	//	@Test
+	//	public void test07_task_URL() {
+	//		runAndCheck("test/remote_07.bds", "first", "<!DOCTYPE html>");
+	//	}
 	@Test
-	public void test04_task_URL() {
-		verbose = true;
-		runAndCheck("test/remote_04.bds", "first", "<!DOCTYPE html>");
+	public void test08_task_URL() {
+		runAndCheck("test/remote_08.bds", "first", "<!DOCTYPE html>");
 	}
-
-	//	// Program 4:
-	//	task cat "$in" > $out
-	//
-	//	// Program 5:
-	//	task cat '$in' > $out
-	//
-	//	// Program 6:
-	//	task cat "$in\"this is not changed" > $out
-	//
-	//	// Program 7:
-	//	task ( out <- [in, in2] ) {
-	//		sys cat $in > $out
-	//	}
-	//
-	//	// Program 8:
-	//  inList := [$in, $in2]
-	//	task ( out <- inList ) {
-	//		sys cat $in > $out
-	//	}
-	//
 	//	// Program 9:
 	//	task ( 'file.txt' <- 'http://www.google.com/index.html' ) {
 	//		sys cat http://www.google.com/index.html > file.txt
-	//	}
-	//
 	//	}
 	//
 	//	@Test

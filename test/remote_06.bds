@@ -1,10 +1,9 @@
 
 in := 'http://pcingola.github.io/BigDataScript/index.html'
 in2	:= 'http://pcingola.github.io/BigDataScript/about.html'
-out := 'tmp_remote_08.txt'
+out := 'tmp_remote_06.txt'
 
-lin := [in, in2]
-task( out <- lin ) sys cat $lin[0] $lin[1] > $out
+task( out <- [in, in2] ) sys cat $in $in2 > $out
 
 wait
 first := out.readLines().head()
