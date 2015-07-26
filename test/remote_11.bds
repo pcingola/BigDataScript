@@ -1,0 +1,5 @@
+
+in := 'http://pcingola.github.io/BigDataScript/index.html'
+locFile := 'tmp_remote_11.txt'
+ok := in.download(locFile)
+

@@ -1,0 +1,7 @@
+
+task( 'tmp_remote_09.txt' <- 'http://pcingola.github.io/BigDataScript/index.html' ) {
+	sys cat 'http://pcingola.github.io/BigDataScript/index.html' > 'tmp_remote_09.txt'
+}
+
+wait
+first := 'tmp_remote_09.txt'.readLines().head()

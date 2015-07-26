@@ -1,14 +1,12 @@
 
 
-out := 's3://pcingola.bds/test_remote_13_file_does_not_exits_in_S3.txt'
+out := 's3://pcingola.bds/hello.txt'
 
 println "baseName       : " + out.baseName()
 println "baseName('txt'): " + out.baseName('.txt')
 println "canRead        : " + out.canRead()
 println "canWrite       : " + out.canWrite()
 println "dirName        : " + out.dirName()
-println "dirPath        : " + out.dirPath()
-println "dir            : " + out.dir()
 println "extName        : " + out.extName()
 println "exists         : " + out.exists()
 println "isDir          : " + out.isDir()
@@ -16,6 +14,13 @@ println "isFile         : " + out.isFile()
 println "path           : " + out.path()
 println "pathName       : " + out.pathName()
 println "removeExt      : " + out.removeExt()
+
+# Dir
+print   "dirPath        : "
+println out.dirPath()
+
+print   "dir            : "
+println out.dir()
 
 #println "write          : " + out.write()
 #

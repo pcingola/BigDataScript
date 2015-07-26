@@ -13,12 +13,12 @@ public class MethodNative_string_upload_localname extends MethodNative {
 
 	@Override
 	protected void initMethod() {
-		functionName = "download";
+		functionName = "upload";
 		classType = Type.STRING;
 		returnType = Type.BOOL;
 
 		String argNames[] = { "this", "localName" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Type.STRING, Type.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

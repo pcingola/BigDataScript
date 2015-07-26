@@ -79,6 +79,8 @@ public class Timer {
 
 	public Timer(long timeOutMiliSec) {
 		timeOut = timeOutMiliSec;
+		start = new Date();
+		end = null;
 	}
 
 	/**

@@ -173,21 +173,124 @@ public class TestCasesZzz extends TestCasesBase {
 	//	public void test07_task_URL() {
 	//		runAndCheck("test/remote_07.bds", "first", "<!DOCTYPE html>");
 	//	}
+	//	@Test
+	//	public void test08_task_URL() {
+	//		runAndCheck("test/remote_08.bds", "first", "<!DOCTYPE html>");
+	//	}
+	//
+	//	@Test
+	//	public void test09_task_URL() {
+	//		runAndCheck("test/remote_09.bds", "first", "<!DOCTYPE html>");
+	//	}
+	//
+	//	@Test
+	//	public void test10_download() {
+	//		runAndCheck("test/remote_10.bds", "locFile", "/tmp/bds/http/pcingola/github/io/BigDataScript/index.html");
+	//	}
+	//
+	//	@Test
+	//	public void test11_download() {
+	//		runAndCheck("test/remote_11.bds", "ok", "true");
+	//	}
+	//
+	//	@Test
+	//	public void test12_upload() {
+	//		verbose = true;
+	//		runAndCheck("test/remote_12.bds", "ok", "true");
+	//	}
+	//
+	//
+	//	@Test
+	//	public void test13_S3() {
+	//		String expectedOutput = "" //
+	// + "canonical      : test_remote_13_file_does_not_exits_in_S3.txt\n" //
+	//				+ "baseName       : test_remote_13_file_does_not_exits_in_S3.txt\n" //
+	//				+ "baseName('txt'): test_remote_13_file_does_not_exits_in_S3\n" //
+	//				+ "canRead        : false\n" + "canWrite       : false\n" //
+	//				+ "dirName        : s3://pcingola.bds\n" //
+	//				+ "extName        : txt\n" //
+	//				+ "exists         : false\n" + "isDir          : false\n" //
+	//				+ "isFile         : true\n" //
+	//				+ "path           : s3://pcingola.bds/test_remote_13_file_does_not_exits_in_S3.txt\n" //
+	//				+ "pathName       : s3://pcingola.bds\n" //
+	//				+ "removeExt      : s3://pcingola.bds/test_remote_13_file_does_not_exits_in_S3\n" //
+	//				+ "dirPath        : []\n" //
+	//				+ "dir            : []\n" //
+	//		;
+	//
+	//		runAndCheckStdout("test/remote_13.bds", expectedOutput);
+	//	}
+	//
+	//
+	//
+	//	@Test
+	//	public void test14_S3() {
+	//		String expectedOutput = "" //
+	//				+ "baseName       : hello.txt\n" //
+	//				+ "baseName('txt'): hello\n" //
+	//				+ "canRead        : true\n" //
+	//				+ "canWrite       : false\n" //
+	//				+ "dirName        : s3://pcingola.bds\n" //
+	//				+ "extName        : txt\n" //
+	//				+ "exists         : true\n" //
+	//				+ "isDir          : false\n" //
+	//				+ "isFile         : true\n" //
+	//				+ "path           : s3://pcingola.bds/hello.txt\n" //
+	//				+ "pathName       : s3://pcingola.bds\n" //
+	//				+ "removeExt      : s3://pcingola.bds/hello\n" //
+	//				+ "dirPath        : [s3://pcingola.bds/hello.txt]\n" //
+	//				+ "dir            : [s3://pcingola.bds/hello.txt]\n" //
+	//		;
+	//
+	//		runAndCheckStdout("test/remote_14.bds", expectedOutput);
+	//	}
+	//
+	//	@Test
+	//	public void test15_S3() {
+	//		verbose = true;
+	//
+	//		String expectedOutput = "" //
+	//				+ "baseName       : \n" //
+	//				+ "baseName('txt'): \n" //
+	//				+ "canRead        : true\n" //
+	//				+ "canWrite       : true\n" //
+	//				+ "dirName        : s3://pcingola.bds/test_dir\n" //
+	//				+ "extName        : bds/test_dir/\n" //
+	//				+ "exists         : true\n" //
+	//				+ "isDir          : true\n" //
+	//				+ "isFile         : false\n" //
+	//				+ "path           : s3://pcingola.bds/test_dir/\n" //
+	//				+ "pathName       : s3://pcingola.bds/test_dir\n" //
+	//				+ "removeExt      : s3://pcingola\n" //
+	//				+ "dirPath        : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
+	//				+ "dir            : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
+	//		;
+	//
+	//		runAndCheckStdout("test/remote_15.bds", expectedOutput);
+	//	}
+
 	@Test
-	public void test08_task_URL() {
-		runAndCheck("test/remote_08.bds", "first", "<!DOCTYPE html>");
+	public void test16_S3() {
+		verbose = true;
+
+		String expectedOutput = "" //
+				+ "baseName       : \n" //
+				+ "baseName('txt'): \n" //
+				+ "canRead        : true\n" //
+				+ "canWrite       : true\n" //
+				+ "dirName        : s3://pcingola.bds/test_dir\n" //
+				+ "extName        : bds/test_dir/\n" //
+				+ "exists         : true\n" //
+				+ "isDir          : true\n" //
+				+ "isFile         : false\n" //
+				+ "path           : s3://pcingola.bds/test_dir/\n" //
+				+ "pathName       : s3://pcingola.bds/test_dir\n" //
+				+ "removeExt      : s3://pcingola\n" //
+				+ "dirPath        : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
+				+ "dir            : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
+		;
+
+		runAndCheckStdout("test/remote_15.bds", expectedOutput);
 	}
-	//	// Program 9:
-	//	task ( 'file.txt' <- 'http://www.google.com/index.html' ) {
-	//		sys cat http://www.google.com/index.html > file.txt
-	//	}
-	//
-	//	@Test
-	//	public void test04_task_URL_download() {
-	//	}
-	//
-	//	@Test
-	//	public void test05_task_URL_upload() {
-	//	}
 
 }

@@ -114,6 +114,21 @@ public class DataS3 extends DataRemote {
 		}
 	}
 
+	/**
+	 * Does the directory exist?
+	 */
+	protected boolean existsDir() {
+		ObjectListing objectListing = getS3().listObjects( //
+				new ListObjectsRequest() //
+						.withBucketName(bucketName) //
+						.withPrefix(key) //
+						.withMaxKeys(1) // We only need one to check for existence
+				);
+
+		// Are there more than zero objects?
+		return objectListing.getObjectSummaries().size() > 0;
+	}
+
 	public String getBucket() {
 		return bucketName;
 	}
@@ -185,22 +200,21 @@ public class DataS3 extends DataRemote {
 	 */
 	@Override
 	public boolean isDirectory() {
-		return key == null;
+		return (key == null || key.endsWith("/"));
 	}
 
 	@Override
 	public boolean isFile() {
-		return key != null;
+		return !isDirectory();
 	}
 
 	@Override
 	public ArrayList<String> list() {
 		ArrayList<String> list = new ArrayList<>();
 
-		ObjectListing objectListing = getS3().listObjects(new ListObjectsRequest().withBucketName(bucketName));
+		ObjectListing objectListing = getS3().listObjects(new ListObjectsRequest().withBucketName(bucketName).withPrefix(key));
 		for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-			list.add(objectSummary.toString());
-			// list.add(objectSummary.getKey());
+			list.add(AWS_S3_PROTOCOL + bucketName + "/" + objectSummary.getKey());
 		}
 
 		return list;
@@ -259,8 +273,20 @@ public class DataS3 extends DataRemote {
 	@Override
 	protected boolean updateInfo() {
 		try {
-			S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
-			return updateInfo(s3object);
+
+			if (isFile()) {
+				S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
+				return updateInfo(s3object);
+			} else if (existsDir()) {
+				// Special case when keys are 'directories'
+				exists = true;
+				canRead = true;
+				canWrite = true;
+				lastModified = new Date(0L);
+				size = 0;
+				latestUpdate = new Timer(CACHE_TIMEOUT);
+				return true;
+			} else return false;
 		} catch (AmazonServiceException e) {
 			String errorCode = e.getErrorCode();
 			if (!errorCode.equals("NoSuchKey")) throw new RuntimeException("Error accessing S3 bucket '" + bucketName + "', key '" + key + "'" + this, e);
@@ -268,12 +294,12 @@ public class DataS3 extends DataRemote {
 			// The object does not exists
 			exists = false;
 			canRead = false;
+			canWrite = false;
 			lastModified = new Date(0L);
 			size = 0;
-			latestUpdate = new Timer(CACHE_TIMEOUT).start();
+			latestUpdate = new Timer(CACHE_TIMEOUT);
 			return true;
 		}
-
 	}
 
 	/**
@@ -286,9 +312,10 @@ public class DataS3 extends DataRemote {
 		// Update data
 		size = om.getContentLength();
 		canRead = true;
+		canWrite = true;
 		lastModified = om.getLastModified();
 		exists = true;
-		latestUpdate = new Timer(CACHE_TIMEOUT).start();
+		latestUpdate = new Timer(CACHE_TIMEOUT);
 
 		// Show information
 		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
@@ -296,7 +323,7 @@ public class DataS3 extends DataRemote {
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
 				+ "\n\tsize         : " + size //
-				);
+		);
 
 		return true;
 	}

@@ -1,0 +1,4 @@
+
+in := 'http://pcingola.github.io/BigDataScript/index.html'
+locFile := in.download()
+

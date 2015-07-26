@@ -404,7 +404,7 @@ public class ExpressionTask extends ExpressionWithScope {
 			if (node instanceof Statement) {
 				boolean ok = node instanceof ExpressionSys //
 						|| node instanceof Block //
-						|| node instanceof LiteralString //
+						|| node instanceof Literal //
 						|| node instanceof InterpolateVars //
 						|| node instanceof Reference //
 						|| node instanceof StatementExpr //

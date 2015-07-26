@@ -258,7 +258,7 @@ public class DataHttp extends DataRemote {
 	}
 
 	protected boolean updateInfo(URLConnection connection) {
-		latestUpdate = new Timer(CACHE_TIMEOUT).start();
+		latestUpdate = new Timer(CACHE_TIMEOUT);
 		boolean ok;
 		if (connection == null) {
 			// Cannot connect

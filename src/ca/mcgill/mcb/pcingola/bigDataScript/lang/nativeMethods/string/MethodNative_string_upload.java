@@ -13,7 +13,7 @@ public class MethodNative_string_upload extends MethodNative {
 
 	@Override
 	protected void initMethod() {
-		functionName = "download";
+		functionName = "upload";
 		classType = Type.STRING;
 		returnType = Type.STRING;
 

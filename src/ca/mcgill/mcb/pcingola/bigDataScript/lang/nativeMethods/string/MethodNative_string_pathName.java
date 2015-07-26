@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.MethodNative;
@@ -25,7 +26,9 @@ public class MethodNative_string_pathName extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		try {
-			return bdsThread.data(objThis.toString()).getParent();
+			String parenPath = bdsThread.data(objThis.toString()).getParent();
+			Data d = bdsThread.data(parenPath);
+			return d.getCanonicalPath();
 		} catch (Exception e) {
 			return "";
 		}

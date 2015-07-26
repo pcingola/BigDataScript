@@ -33,40 +33,42 @@ public class NativeLibraryString {
 			// String as files
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_baseName" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_baseName_ext" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_dirName" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_download" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_download_localname" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_pathName" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_extName" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_canExec" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_canRead" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_canWrite" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_canExec" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_exists" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_isDir" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_isFile" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_delete" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_rm" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_mkdir" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_read" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_removeExt" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_removeExt_ext" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_rmOnExit" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_swapExt_extNew" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_swapExt_extOld_extNew" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_write_str" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_readLines" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_chdir" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_delete" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_dir" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_dir_regex" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_dirName" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_dirPath" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_dirPath_regex" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_download" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_download_localname" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_exists" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_extName" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_isDir" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_isFile" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_mkdir" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_pathName" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_read" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_readLines" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_removeExt" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_removeExt_ext" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_rm" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_rmOnExit" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_size" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_swapExt_extNew" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_swapExt_extOld_extNew" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_upload" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_upload_localname" //
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_write_str" //
 			// String as task
+			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_exitCode" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_isDone" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_isDoneOk" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_stdout" //
 			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_stderr" //
-			, "ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.MethodNative_string_exitCode" //
 
 	};
 

@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Parameters;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
@@ -28,7 +29,13 @@ public class MethodNative_string_dirPath extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList<String> list = bdsThread.data(objThis.toString()).list();
+		ArrayList<String> list = new ArrayList<>();
+
+		for (String file : bdsThread.data(objThis.toString()).list()) {
+			Data d = bdsThread.data(file);
+			list.add(d.getCanonicalPath());
+		}
+
 		Collections.sort(list);
 		return list;
 	}

@@ -26,6 +26,7 @@ public class MethodNative_string_download extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		Data data = bdsThread.data(objThis.toString());
-		return data.download();
+		if (!data.download()) return "";
+		return data.getLocalPath();
 	}
 }
