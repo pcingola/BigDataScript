@@ -326,7 +326,7 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 		case sig := <-osSignal:
 			// Ignore some signals (e.g. "window changed")
 			sigStr := sig.String()
-			if sigStr != "window changed" && sigStr != "child exited" {
+			if sigStr != "window changed" && sigStr != "child exited" && sigStr != "window size changes" {
 				if VERBOSE || DEBUG {
 					log.Printf("bds: Received OS signal '%s'\n", sigStr)
 				}
