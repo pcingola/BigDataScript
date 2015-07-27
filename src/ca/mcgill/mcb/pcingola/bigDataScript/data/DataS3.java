@@ -11,6 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -186,7 +187,7 @@ public class DataS3 extends DataRemote {
 				if (s3ByRegion.get(region) == null) {
 					// Create client
 					s3 = new AmazonS3Client();
-					s3.setRegion(region);
+					if (region != null) s3.setRegion(region);
 					s3ByRegion.put(region, s3);
 				}
 			}
@@ -260,8 +261,9 @@ public class DataS3 extends DataRemote {
 		// Parse and set region
 		String regionStr = s3uri.getRegion();
 		try {
-			if (regionStr == null) regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
-			region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
+			//			if (regionStr == null) regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
+			//			region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
+			if (regionStr != null) region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot parse AWS region '" + regionStr + "'", e);
 		}
@@ -273,7 +275,18 @@ public class DataS3 extends DataRemote {
 	@Override
 	protected boolean updateInfo() {
 		try {
+			if (region == null) {
+				String regionName = getS3().getBucketLocation(bucketName);
 
+				// Update region 
+				if (regionName.equals("US")) region = Region.getRegion(Regions.valueOf(DEFAULT_AWS_REGION));
+				else region = Region.getRegion(Regions.fromName(regionName));
+			}
+		} catch (AmazonClientException e) {
+			throw new RuntimeException("Error accessing S3 bucket '" + bucketName + "'", e);
+		}
+
+		try {
 			if (isFile()) {
 				S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
 				return updateInfo(s3object);
