@@ -1,5 +1,5 @@
 
-println "programName : $programName"
-println "programPath : $programPath"
-
+gen := "Xiphophorus_maculatus.Xipmac4.4.2.80.gtf.gz"
+long := gen.split('\.')[0]
+println "$gen\t$long"
 
