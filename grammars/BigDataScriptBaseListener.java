@@ -95,19 +95,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarReferenceMap(@NotNull BigDataScriptParser.VarReferenceMapContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitVarReferenceMap(@NotNull BigDataScriptParser.VarReferenceMapContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterExpressionEq(@NotNull BigDataScriptParser.ExpressionEqContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -141,19 +128,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterVarReferenceList(@NotNull BigDataScriptParser.VarReferenceListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitVarReferenceList(@NotNull BigDataScriptParser.VarReferenceListContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -310,6 +284,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBlock(@NotNull BigDataScriptParser.BlockContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterReferenceMap(@NotNull BigDataScriptParser.ReferenceMapContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitReferenceMap(@NotNull BigDataScriptParser.ReferenceMapContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -927,6 +914,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterReferenceVar(@NotNull BigDataScriptParser.ReferenceVarContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitReferenceVar(@NotNull BigDataScriptParser.ReferenceVarContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpressionSys(@NotNull BigDataScriptParser.ExpressionSysContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -947,6 +947,19 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterReferenceList(@NotNull BigDataScriptParser.ReferenceListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitReferenceList(@NotNull BigDataScriptParser.ReferenceListContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1064,19 +1077,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterVarReference(@NotNull BigDataScriptParser.VarReferenceContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitVarReference(@NotNull BigDataScriptParser.VarReferenceContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -12,32 +13,25 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
 /**
- * A reference to a list/array variable. E.g. list[3]
+ * A reference to a list/array expression.
+ * E.g. list[3]
  *
  * @author pcingola
  */
-public class VarReferenceList extends Reference {
+public class ReferenceList extends Reference {
 
-	protected VarReference variable;
-	protected Expression expressionIdx;
+	// protected VarReference variable; // !!!! This should be an arbitrary expression that returns a list
+	protected Expression exprList; // !!!! This should be an arbitrary expression that returns a list
+	protected Expression exprIdx;
 
-	public VarReferenceList(BigDataScriptNode parent, ParseTree tree) {
+	public ReferenceList(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	/**
-	 * Return index evaluation
-	 */
-	public int evalIndex(BdsThread bdsThread) {
-		bdsThread.run(expressionIdx);
-		if (bdsThread.isCheckpointRecover()) return 0;
-		return (int) popInt(bdsThread);
 	}
 
 	@SuppressWarnings("rawtypes")
 	public ArrayList getList(Scope scope) {
 		ScopeSymbol ss = getScopeSymbol(scope);
-		ss.getType();
+		if (ss == null) return null;
 		return (ArrayList) ss.getValue();
 	}
 
@@ -46,7 +40,8 @@ public class VarReferenceList extends Reference {
 	 */
 	@Override
 	public ScopeSymbol getScopeSymbol(Scope scope) {
-		return variable.getScopeSymbol(scope);
+		if (exprList instanceof ReferenceVar) return ((ReferenceVar) exprList).getScopeSymbol(scope);
+		return null;
 	}
 
 	public Type getType(Scope scope) {
@@ -56,7 +51,8 @@ public class VarReferenceList extends Reference {
 
 	@Override
 	public String getVariableName() {
-		return variable.getVariableName();
+		if (exprList instanceof ReferenceVar) return ((ReferenceVar) exprList).getVariableName();
+		return null;
 	}
 
 	@Override
@@ -64,11 +60,15 @@ public class VarReferenceList extends Reference {
 		return returnType != null;
 	}
 
+	public boolean isVariableReference() {
+		return exprList instanceof ReferenceVar;
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
-		variable = (VarReference) factory(tree, 0);
+		exprList = (Expression) factory(tree, 0);
 		// child[1] = '['
-		expressionIdx = (Expression) factory(tree, 2);
+		exprIdx = (Expression) factory(tree, 2);
 		// child[3] = ']'
 	}
 
@@ -80,20 +80,21 @@ public class VarReferenceList extends Reference {
 
 		// Create VarReference
 		String varName = str.substring(0, idx1);
-		variable = new VarReference(this, null);
-		variable.parse(varName);
+		ReferenceVar refVar = new ReferenceVar(this, null);
+		refVar.parse(varName);
+		exprList = refVar;
 
 		// Create index expression
 		String idxStr = str.substring(idx1 + 1, idx2);
 
 		if (idxStr.startsWith("$")) {
 			// We have to interpolate this string
-			expressionIdx = VarReference.factory(this, idxStr.substring(1));
+			exprIdx = ReferenceVar.factory(this, idxStr.substring(1));
 		} else {
 			// String literal
-			LiteralInt exprIdx = new LiteralInt(this, null);
-			exprIdx.setValue(Gpr.parseLongSafe(idxStr));
-			expressionIdx = exprIdx;
+			LiteralInt litInt = new LiteralInt(this, null);
+			litInt.setValue(Gpr.parseLongSafe(idxStr));
+			exprIdx = litInt;
 		}
 	}
 
@@ -101,8 +102,8 @@ public class VarReferenceList extends Reference {
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
-		expressionIdx.returnType(scope);
-		Type nameType = variable.returnType(scope);
+		exprIdx.returnType(scope);
+		Type nameType = exprList.returnType(scope);
 
 		if (nameType == null) return null;
 		if (nameType.isList()) returnType = ((TypeList) nameType).getBaseType();
@@ -116,10 +117,17 @@ public class VarReferenceList extends Reference {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		int idx = evalIndex(bdsThread);
+		// Evaluate expressions
+		bdsThread.run(exprList);
+		bdsThread.run(exprIdx);
+
 		if (bdsThread.isCheckpointRecover()) return;
 
-		ArrayList list = getList(bdsThread.getScope());
+		// Get results
+		int idx = (int) popInt(bdsThread);
+		List list = (List) bdsThread.pop();
+
+		//ArrayList list = getList(bdsThread.getScope());
 		if ((idx < 0) || (idx >= list.size())) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + list.size() + ").");
 		bdsThread.push(list.get(idx));
 	}
@@ -129,10 +137,12 @@ public class VarReferenceList extends Reference {
 	public void setValue(BdsThread bdsThread, Object value) {
 		if (value == null) return;
 
-		int idx = evalIndex(bdsThread);
+		bdsThread.run(exprIdx);
+		int idx = (int) popInt(bdsThread);
 		if (bdsThread.isCheckpointRecover()) return;
 
 		ArrayList<Object> list = getList(bdsThread.getScope());
+		if (list == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
 
 		// Make sure the array is big enough to hold the data
 		if (idx >= list.size()) {
@@ -149,7 +159,7 @@ public class VarReferenceList extends Reference {
 
 	@Override
 	public String toString() {
-		return variable + "[" + expressionIdx + "]";
+		return exprList + "[" + exprIdx + "]";
 	}
 
 	@Override
@@ -157,8 +167,8 @@ public class VarReferenceList extends Reference {
 		// Calculate return type
 		returnType(scope);
 
-		if ((variable.getReturnType() != null) && !variable.getReturnType().isList()) compilerMessages.add(this, "Symbol '" + variable + "' is not a list/array", MessageType.ERROR);
-		if (expressionIdx != null) expressionIdx.checkCanCastInt(compilerMessages);
+		if ((exprList.getReturnType() != null) && !exprList.getReturnType().isList()) compilerMessages.add(this, "Expression '" + exprList + "' is not a list/array", MessageType.ERROR);
+		if (exprIdx != null) exprIdx.checkCanCastInt(compilerMessages);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  *
  * @author pcingola
  */
-public class VarReference extends Reference {
+public class ReferenceVar extends Reference {
 
 	protected String name;
 
@@ -27,18 +27,18 @@ public class VarReference extends Reference {
 		int idxBrace = var.indexOf('[');
 
 		Reference varRef = null;
-		if (idxCurly < 0 && idxBrace < 0) varRef = new VarReference(parent, null);
-		else if (idxCurly < 0 && idxBrace > 0) varRef = new VarReferenceList(parent, null);
-		else if (idxCurly > 0 && idxBrace < 0) varRef = new VarReferenceMap(parent, null);
-		else if (idxBrace < idxCurly) varRef = new VarReferenceList(parent, null);
-		else varRef = new VarReferenceMap(parent, null);
+		if (idxCurly < 0 && idxBrace < 0) varRef = new ReferenceVar(parent, null);
+		else if (idxCurly < 0 && idxBrace > 0) varRef = new ReferenceList(parent, null);
+		else if (idxCurly > 0 && idxBrace < 0) varRef = new ReferenceMap(parent, null);
+		else if (idxBrace < idxCurly) varRef = new ReferenceList(parent, null);
+		else varRef = new ReferenceMap(parent, null);
 
 		// Parse string
 		varRef.parse(var);
 		return varRef;
 	}
 
-	public VarReference(BigDataScriptNode parent, ParseTree tree) {
+	public ReferenceVar(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

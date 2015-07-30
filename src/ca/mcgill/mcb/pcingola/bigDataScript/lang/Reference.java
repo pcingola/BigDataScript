@@ -20,7 +20,13 @@ public abstract class Reference extends Expression {
 	public abstract String getVariableName();
 
 	public boolean isConstant(Scope scope) {
-		return getScopeSymbol(scope).isConstant();
+		ScopeSymbol ss = getScopeSymbol(scope);
+		return (ss != null) && ss.isConstant();
+	}
+
+	public boolean isVariable(Scope scope) {
+		ScopeSymbol ss = getScopeSymbol(scope);
+		return (ss != null);
 	}
 
 	/**

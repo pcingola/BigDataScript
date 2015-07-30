@@ -34,7 +34,6 @@ public class ExpressionBinary extends Expression {
 
 	/**
 	 * Operator to show when printing this expression
-	 * @return
 	 */
 	protected String op() {
 		return this.getClass().getSimpleName().toLowerCase();

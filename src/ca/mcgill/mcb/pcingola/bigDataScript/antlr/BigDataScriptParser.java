@@ -2358,28 +2358,6 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class VarReferenceMapContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public VarReferenceMapContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterVarReferenceMap(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarReferenceMap(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarReferenceMap(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class ExpressionEqContext extends ExpressionContext {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
@@ -2443,28 +2421,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionDepOperator(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class VarReferenceListContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public VarReferenceListContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterVarReferenceList(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarReferenceList(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarReferenceList(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2569,6 +2525,28 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPost(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ReferenceMapContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ReferenceMapContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterReferenceMap(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReferenceMap(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReferenceMap(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -3203,6 +3181,23 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class ReferenceVarContext extends ExpressionContext {
+		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
+		public ReferenceVarContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterReferenceVar(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReferenceVar(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReferenceVar(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class ExpressionSysContext extends ExpressionContext {
 		public TerminalNode SYS_LITERAL() { return getToken(BigDataScriptParser.SYS_LITERAL, 0); }
 		public ExpressionSysContext(ExpressionContext ctx) { copyFrom(ctx); }
@@ -3242,6 +3237,28 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class ReferenceListContext extends ExpressionContext {
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ReferenceListContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterReferenceList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReferenceList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReferenceList(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class LiteralListEmptyContext extends ExpressionContext {
 		public LiteralListEmptyContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -3255,23 +3272,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralListEmpty(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class VarReferenceContext extends ExpressionContext {
-		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
-		public VarReferenceContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterVarReference(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarReference(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarReference(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -3595,7 +3595,7 @@ public class BigDataScriptParser extends Parser {
 
 			case 14:
 				{
-				_localctx = new VarReferenceContext(_localctx);
+				_localctx = new ReferenceVarContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(399); match(ID);
@@ -4157,7 +4157,7 @@ public class BigDataScriptParser extends Parser {
 
 					case 27:
 						{
-						_localctx = new VarReferenceListContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new ReferenceListContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(587);
 						if (!(precpred(_ctx, 46))) throw new FailedPredicateException(this, "precpred(_ctx, 46)");
@@ -4169,7 +4169,7 @@ public class BigDataScriptParser extends Parser {
 
 					case 28:
 						{
-						_localctx = new VarReferenceMapContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new ReferenceMapContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(592);
 						if (!(precpred(_ctx, 45))) throw new FailedPredicateException(this, "precpred(_ctx, 45)");

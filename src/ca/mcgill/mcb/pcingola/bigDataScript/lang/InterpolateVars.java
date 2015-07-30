@@ -286,7 +286,7 @@ public class InterpolateVars extends Literal {
 
 		// Create and add reference
 		for (String var : variables) {
-			Expression varRef = VarReference.factory(parent, var);
+			Expression varRef = ReferenceVar.factory(parent, var);
 			exprs.add(varRef);
 		}
 

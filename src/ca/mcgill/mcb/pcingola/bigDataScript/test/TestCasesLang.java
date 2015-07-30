@@ -291,4 +291,17 @@ public class TestCasesLang extends TestCasesBase {
 		compileErrors("test/test49.bds", errs);
 	}
 
+	@Test
+	public void test50() {
+		String errs = "ERROR [ file 'test/test50.bds', line 6 ] :\tCannot assign to non-variable 'f(  )[0]'";
+		compileErrors("test/test50.bds", errs);
+	}
+
+	@Test
+	public void test51() {
+		verbose = true;
+		String errs = "ERROR [ file 'test/test51.bds', line 6 ] :	Cannot assign to non-variable 'f(  ){\"hi\"}'";
+		compileErrors("test/test51.bds", errs);
+	}
+
 }

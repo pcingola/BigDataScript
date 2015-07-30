@@ -65,7 +65,7 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		// Trying to assign to a constant?
-		if (((Reference) left).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + ((Reference) left).getVariableName() + "'", MessageType.ERROR);
+		if (((Reference) left).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + left + "'", MessageType.ERROR);
 
 		// Can we cast 'right type' into 'left type'?
 		if (left.isList() && right.isList() && right instanceof LiteralListEmpty) {

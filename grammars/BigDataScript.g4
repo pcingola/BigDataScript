@@ -76,9 +76,9 @@ expression : BOOL_LITERAL                                                       
            | STRING_LITERAL_SINGLE                                                         # literalString
            | ID '('(expression (',' expression )*)? ')'                                    # functionCall
            | expression '.' ID '('(expression (',' expression )*)? ')'                     # methodCall
-           | ID                                                                            # varReference
-           | expression '[' expression ']'                                                 # varReferenceList
-           | expression '{' expression '}'                                                 # varReferenceMap
+           | ID                                                                            # referenceVar
+           | expression '[' expression ']'                                                 # referenceList
+           | expression '{' expression '}'                                                 # referenceMap
            | ('++' | '--') expression                                                      # pre
            | expression ('++' | '--')                                                      # post
            | '~' expression                                                                # expressionBitNegation

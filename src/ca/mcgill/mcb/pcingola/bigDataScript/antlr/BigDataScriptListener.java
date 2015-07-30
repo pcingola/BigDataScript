@@ -75,17 +75,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionAssignmentList(@NotNull BigDataScriptParser.ExpressionAssignmentListContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#varReferenceMap}.
-	 * @param ctx the parse tree
-	 */
-	void enterVarReferenceMap(@NotNull BigDataScriptParser.VarReferenceMapContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#varReferenceMap}.
-	 * @param ctx the parse tree
-	 */
-	void exitVarReferenceMap(@NotNull BigDataScriptParser.VarReferenceMapContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionEq}.
 	 * @param ctx the parse tree
 	 */
@@ -117,17 +106,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#varReferenceList}.
-	 * @param ctx the parse tree
-	 */
-	void enterVarReferenceList(@NotNull BigDataScriptParser.VarReferenceListContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#varReferenceList}.
-	 * @param ctx the parse tree
-	 */
-	void exitVarReferenceList(@NotNull BigDataScriptParser.VarReferenceListContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#while}.
@@ -260,6 +238,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBlock(@NotNull BigDataScriptParser.BlockContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#referenceMap}.
+	 * @param ctx the parse tree
+	 */
+	void enterReferenceMap(@NotNull BigDataScriptParser.ReferenceMapContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#referenceMap}.
+	 * @param ctx the parse tree
+	 */
+	void exitReferenceMap(@NotNull BigDataScriptParser.ReferenceMapContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionLogicNot}.
@@ -779,6 +768,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	void exitExpressionTask(@NotNull BigDataScriptParser.ExpressionTaskContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#referenceVar}.
+	 * @param ctx the parse tree
+	 */
+	void enterReferenceVar(@NotNull BigDataScriptParser.ReferenceVarContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#referenceVar}.
+	 * @param ctx the parse tree
+	 */
+	void exitReferenceVar(@NotNull BigDataScriptParser.ReferenceVarContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionSys}.
 	 * @param ctx the parse tree
 	 */
@@ -799,6 +799,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#referenceList}.
+	 * @param ctx the parse tree
+	 */
+	void enterReferenceList(@NotNull BigDataScriptParser.ReferenceListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#referenceList}.
+	 * @param ctx the parse tree
+	 */
+	void exitReferenceList(@NotNull BigDataScriptParser.ReferenceListContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#literalListEmpty}.
@@ -898,17 +909,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#varReference}.
-	 * @param ctx the parse tree
-	 */
-	void enterVarReference(@NotNull BigDataScriptParser.VarReferenceContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#varReference}.
-	 * @param ctx the parse tree
-	 */
-	void exitVarReference(@NotNull BigDataScriptParser.VarReferenceContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionTaskLiteral}.

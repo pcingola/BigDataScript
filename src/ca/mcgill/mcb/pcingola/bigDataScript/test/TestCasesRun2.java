@@ -531,4 +531,14 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheck("test/run_139.bds", "hasErr", "false");
 	}
 
+	@Test
+	public void test140_list_nonvariable() {
+		runAndCheck("test/run_140.bds", "i", "2");
+	}
+
+	@Test
+	public void test141_map_nonvariable() {
+		runAndCheck("test/run_141.bds", "i", "42");
+	}
+
 }

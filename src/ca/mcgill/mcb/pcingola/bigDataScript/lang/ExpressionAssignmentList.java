@@ -120,8 +120,8 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 		for (Expression l : lefts) {
 			if (l == null) compilerMessages.add(this, "Cannot parse left expresison.", MessageType.ERROR);
 			else if (!(l instanceof Reference)) compilerMessages.add(this, "Left hand side expression is not a variable reference '" + l + "'", MessageType.ERROR);
-			else if (!l.getReturnType().isPrimitiveType()) compilerMessages.add(this, "Variable '" + ((Reference) l).getVariableName() + "' is non-primitive type " + l.getReturnType(), MessageType.ERROR);
-			else if (((Reference) l).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + ((Reference) l).getVariableName() + "'", MessageType.ERROR);
+			else if (!l.getReturnType().isPrimitiveType()) compilerMessages.add(this, "Variable '" + l + "' is non-primitive type " + l.getReturnType(), MessageType.ERROR);
+			else if (((Reference) l).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + l + "'", MessageType.ERROR);
 		}
 
 		// Can we cast 'right type' into 'left type'?

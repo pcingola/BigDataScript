@@ -54,13 +54,6 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionAssignmentList(@NotNull BigDataScriptParser.ExpressionAssignmentListContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#varReferenceMap}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVarReferenceMap(@NotNull BigDataScriptParser.VarReferenceMapContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionEq}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -80,13 +73,6 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#varReferenceList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVarReferenceList(@NotNull BigDataScriptParser.VarReferenceListContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#while}.
@@ -171,6 +157,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBlock(@NotNull BigDataScriptParser.BlockContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#referenceMap}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReferenceMap(@NotNull BigDataScriptParser.ReferenceMapContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionLogicNot}.
@@ -502,6 +495,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionTask(@NotNull BigDataScriptParser.ExpressionTaskContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#referenceVar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReferenceVar(@NotNull BigDataScriptParser.ReferenceVarContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionSys}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -514,6 +514,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#referenceList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReferenceList(@NotNull BigDataScriptParser.ReferenceListContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#literalListEmpty}.
@@ -577,13 +584,6 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#varReference}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVarReference(@NotNull BigDataScriptParser.VarReferenceContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionTaskLiteral}.

@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -15,23 +16,14 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  *
  * @author pcingola
  */
-public class VarReferenceMap extends Reference {
+public class ReferenceMap extends Reference {
 
-	protected VarReference variable;
+	// protected ReferenceVar variable;
+	protected Expression variable;
 	protected Expression expressionKey;
 
-	public VarReferenceMap(BigDataScriptNode parent, ParseTree tree) {
+	public ReferenceMap(BigDataScriptNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	/**
-	 * Return index evaluation
-	 */
-	public String evalKey(BdsThread bdsThread) {
-		bdsThread.run(expressionKey);
-		if (bdsThread.isCheckpointRecover()) return null;
-
-		return popString(bdsThread);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -45,7 +37,9 @@ public class VarReferenceMap extends Reference {
 	 */
 	@Override
 	public ScopeSymbol getScopeSymbol(Scope scope) {
-		return variable.getScopeSymbol(scope);
+		if (variable instanceof ReferenceVar) return ((ReferenceVar) variable).getScopeSymbol(scope);
+		return null;
+
 	}
 
 	public Type getType(Scope scope) {
@@ -55,7 +49,9 @@ public class VarReferenceMap extends Reference {
 
 	@Override
 	public String getVariableName() {
-		return variable.getVariableName();
+		if (variable instanceof ReferenceVar) return ((ReferenceVar) variable).getVariableName();
+		return null;
+
 	}
 
 	@Override
@@ -65,7 +61,7 @@ public class VarReferenceMap extends Reference {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		variable = (VarReference) factory(tree, 0);
+		variable = (Expression) factory(tree, 0);
 		// child[1] = '{'
 		expressionKey = (Expression) factory(tree, 2);
 		// child[3] = '}'
@@ -79,15 +75,16 @@ public class VarReferenceMap extends Reference {
 
 		// Create VarReference
 		String varName = str.substring(0, idx1);
-		variable = new VarReference(this, null);
-		variable.parse(varName);
+		ReferenceVar refVar = new ReferenceVar(this, null);
+		refVar.parse(varName);
+		variable = refVar;
 
 		// Create index expression
 		String idxStr = str.substring(idx1 + 1, idx2);
 
 		if (idxStr.startsWith("$")) {
 			// We have to interpolate this string
-			expressionKey = VarReference.factory(this, idxStr.substring(1));
+			expressionKey = ReferenceVar.factory(this, idxStr.substring(1));
 		} else {
 			// String literal
 			LiteralString exprIdx = new LiteralString(this, null);
@@ -117,10 +114,17 @@ public class VarReferenceMap extends Reference {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		String key = evalKey(bdsThread);
+		// Evaluate expressions
+		bdsThread.run(variable);
+		bdsThread.run(expressionKey);
+
 		if (bdsThread.isCheckpointRecover()) return;
 
-		HashMap map = getMap(bdsThread.getScope());
+		// Get results
+		String key = popString(bdsThread);
+		Map map = (Map) bdsThread.pop();
+
+		// Obtain map entry
 		Object ret = map.get(key);
 		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + key + "'.");
 
@@ -132,10 +136,12 @@ public class VarReferenceMap extends Reference {
 	public void setValue(BdsThread bdsThread, Object value) {
 		if (value == null) return;
 
-		String key = evalKey(bdsThread);
+		bdsThread.run(expressionKey);
+		String key = popString(bdsThread);
 		if (bdsThread.isCheckpointRecover()) return;
 
 		HashMap map = getMap(bdsThread.getScope());
+		if (map == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
 		map.put(key, value);
 	}
 
