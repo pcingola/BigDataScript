@@ -1,6 +1,4 @@
 
-int{} f() { 
-	return { 'hi' => 1, 'bye' => 2 };
-}
+a := 'hi'
 
-f(){'hi'} = 99
+sys echo $a $a $a
