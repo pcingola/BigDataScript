@@ -1,4 +1,3 @@
-
 file := 'ftp://ftp.ensembl.org/pub/release-75/README'
 out  := 'zzz_readme_date.txt'
 
