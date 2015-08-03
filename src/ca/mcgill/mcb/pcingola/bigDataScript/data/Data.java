@@ -84,8 +84,12 @@ public abstract class Data {
 			data = new DataS3(urlStr);
 			break;
 
+		case "ftp":
+			data = new DataFtp(urlStr);
+			break;
+
 		default:
-			throw new RuntimeException("Unimplemented proteocol '" + proto + "' for URL " + urlStr);
+			throw new RuntimeException("Unimplemented protocol '" + proto + "' for URL " + urlStr);
 		}
 
 		// Set values form config

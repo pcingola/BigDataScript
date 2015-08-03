@@ -40,6 +40,13 @@ public class DataHttp extends DataRemote {
 	}
 
 	/**
+	 * Close connection
+	 */
+	protected void close(URLConnection connection) {
+		// Nothing to do
+	}
+
+	/**
 	 * Connect and cache some data
 	 */
 	protected URLConnection connect() {
@@ -92,7 +99,7 @@ public class DataHttp extends DataRemote {
 
 	@Override
 	public void deleteOnExit() {
-		if (verbose) Timer.showStdErr("Cannot delete file '" + getUrl() + "'");
+		throw new RuntimeException("Unimplemented!");
 	}
 
 	/**
@@ -100,9 +107,10 @@ public class DataHttp extends DataRemote {
 	 */
 	@Override
 	public boolean download(String localFile) {
+		URLConnection connection = null;
 		try {
 			// Connect and update info
-			URLConnection connection = connect();
+			connection = connect();
 			if (connection == null) return false;
 			updateInfo(connection);
 
@@ -145,6 +153,8 @@ public class DataHttp extends DataRemote {
 		} catch (Exception e) {
 			Timer.showStdErr("ERROR while connecting to " + getUrl());
 			throw new RuntimeException(e);
+		} finally {
+			close(connection);
 		}
 	}
 
@@ -254,7 +264,10 @@ public class DataHttp extends DataRemote {
 	 */
 	@Override
 	protected boolean updateInfo() {
-		return updateInfo(connect());
+		URLConnection connection = connect();
+		boolean ok = updateInfo(connection);
+		close(connection);
+		return ok;
 	}
 
 	protected boolean updateInfo(URLConnection connection) {
@@ -288,7 +301,7 @@ public class DataHttp extends DataRemote {
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
 				+ "\n\tsize         : " + size //
-				);
+		);
 
 		return ok;
 	}

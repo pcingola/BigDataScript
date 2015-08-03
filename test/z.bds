@@ -1,4 +1,5 @@
 
-a := 'hi'
+file := 'ftp://ftp.ensembl.org/pub/release-75/README'
+out  := 'zzz_readme_date.txt'
 
-sys echo $a $a $a
+task( out <- file ) sys ( cat $file ; date ) > $out
