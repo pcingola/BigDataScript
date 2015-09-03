@@ -52,8 +52,8 @@ public class ExecutionerCluster extends Executioner {
 	public int MIN_EXTRA_TIMEOUT = 15;
 	public int MAX_EXTRA_TIMEOUT = 120;
 
-	String pidPatternStr;
-	Pattern pidPattern;
+	protected String pidRegexStr; // Regular expression matching a PID from 'qsub' command
+	protected Pattern pidRegex; // Regular expression (compiled) matching a PID from 'qsub' command
 
 	protected ExecutionerCluster(Config config) {
 		super(config);
@@ -82,10 +82,10 @@ public class ExecutionerCluster extends Executioner {
 		wallTimeParam = "walltime=";
 
 		// PID regex matcher
-		pidPatternStr = config.getPidRegex("");
-		if (!pidPatternStr.isEmpty()) {
-			if (debug) log("Using pidRegex '" + pidPatternStr + "'");
-			pidPattern = Pattern.compile(pidPatternStr);
+		pidRegexStr = config.getPidRegex("");
+		if (!pidRegexStr.isEmpty()) {
+			if (debug) log("Using pidRegex '" + pidRegexStr + "'");
+			pidRegex = Pattern.compile(pidRegexStr);
 		}
 
 		// Cluster task need monitoring
@@ -296,18 +296,20 @@ public class ExecutionerCluster extends Executioner {
 		line = line.trim();
 		if (line.isEmpty()) return "";
 
-		if (pidPattern != null) {
+		if (pidRegex != null) {
 			// Pattern pattern = Pattern.compile("Your job (\\S+)");
-			Matcher matcher = pidPattern.matcher(line);
+			Matcher matcher = pidRegex.matcher(line);
 			if (matcher.find()) {
 
 				String pid = null;
 				if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
 				else pid = matcher.group(0); // Use whole pattern
 
-				if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
+				if (debug) log("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
 				return pid;
-			} else if (verbose || debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_REGEX + ") did NOT match line: '" + line + "'");
+			} else if (verbose || debug) log("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") did NOT match line: '" + line + "'");
+		} else if (debug) {
+			log("No PID regex configured in (missing " + Config.PID_REGEX + " entry in config file?). Using whole line");
 		}
 
 		return line;

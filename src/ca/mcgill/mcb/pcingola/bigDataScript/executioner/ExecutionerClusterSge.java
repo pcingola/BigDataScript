@@ -32,8 +32,8 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 		// 		Your job 33 ("STDIN") has been submitted
 		//
 		// So, this is a pattern matcher to parse the PID
-		String pidRegexStr = config.getPidRegex(PID_REGEX_DEFAULT);
-		pidPattern = Pattern.compile(pidRegexStr);
+		pidRegexStr = config.getPidRegex(PID_REGEX_DEFAULT);
+		pidRegex = Pattern.compile(pidRegexStr);
 		if (debug) log("Using pidRegex '" + pidRegexStr + "'");
 
 		// SGE parameters from config file
