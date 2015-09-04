@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import org.junit.Test;
-
 /**
  * Quick test cases when creating a new feature...
  *
@@ -10,8 +8,4 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	@Test
-	public void test141_map_nonvariable() {
-		runAndCheck("test/run_141.bds", "i", "42");
-	}
 }

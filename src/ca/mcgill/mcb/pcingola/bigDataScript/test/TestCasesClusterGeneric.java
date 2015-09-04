@@ -1,13 +1,12 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -22,9 +21,11 @@ public class TestCasesClusterGeneric extends TestCasesBase {
 		Gpr.debug("Test");
 
 		// Create command line
-		BigDataScript bds = bds("test/clusterGeneric_01.bds");
+		BdsTest bdsTest = new BdsTest("test/clusterGeneric_01.bds", verbose, debug);
+		bdsTest.bds(); // Create command now so we can change 'config' before running
 
 		// Config generic cluster's scripts
+		BigDataScript bds = bdsTest.bds;
 		Config config = bds.getConfig();
 		config.set(Config.CLUSTER_GENERIC_RUN, "clusterGeneric_localhost/run.pl");
 		config.set(Config.CLUSTER_GENERIC_KILL, "clusterGeneric_localhost/kill.pl");
@@ -32,10 +33,8 @@ public class TestCasesClusterGeneric extends TestCasesBase {
 		config.set(Config.CLUSTER_GENERIC_POSTMORTEMINFO, "clusterGeneric_localhost/postMortemInfo.pl");
 
 		// Run script
-		int exitCode = bds.run();
-
-		// Finished OK?
-		Assert.assertEquals(0, exitCode);
+		bdsTest.run();
+		bdsTest.checkRunOk(); // Finished OK?
 
 		// Get tasks and check that PID matches 'CLUSTERGENERIC_LOCALHOST_'
 		// (run.pl prepends that string to PID)

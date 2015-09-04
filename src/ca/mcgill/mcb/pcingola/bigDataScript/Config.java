@@ -92,7 +92,7 @@ public class Config {
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	boolean noCheckpoint; // Do not create checkpoint files
 	boolean noRmOnExit; // Avoid removing files on exit
-	boolean extractSource = false;
+	boolean extractSource = false; // Extract source code from checkpoint file
 	boolean reportYaml = false; // Use YAML report format
 	boolean reportHtml = true; // Use HTML report format
 	boolean showTaskCode; // Always show task's code (sys statements)

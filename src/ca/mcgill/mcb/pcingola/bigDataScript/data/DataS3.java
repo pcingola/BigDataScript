@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.Config;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.regions.Region;
@@ -26,6 +22,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+
+import ca.mcgill.mcb.pcingola.bigDataScript.Config;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * A bucket / object in AWS S3
@@ -124,7 +124,7 @@ public class DataS3 extends DataRemote {
 						.withBucketName(bucketName) //
 						.withPrefix(key) //
 						.withMaxKeys(1) // We only need one to check for existence
-				);
+		);
 
 		// Are there more than zero objects?
 		return objectListing.getObjectSummaries().size() > 0;
@@ -213,9 +213,20 @@ public class DataS3 extends DataRemote {
 	public ArrayList<String> list() {
 		ArrayList<String> list = new ArrayList<>();
 
-		ObjectListing objectListing = getS3().listObjects(new ListObjectsRequest().withBucketName(bucketName).withPrefix(key));
+		// Files are not supposed to have a 'directory' result
+		if (isFile()) return list;
+
+		ObjectListing objectListing = getS3().listObjects( //
+				new ListObjectsRequest()//
+						.withBucketName(bucketName)//
+						.withPrefix(key) //
+		);
+
+		int keyLen = key.length();
 		for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-			list.add(AWS_S3_PROTOCOL + bucketName + "/" + objectSummary.getKey());
+			String fileName = objectSummary.getKey();
+			if (fileName.length() > keyLen) fileName = fileName.substring(keyLen); // First part is not expected in list (only the file name, no prefix)
+			list.add(fileName);
 		}
 
 		return list;
@@ -278,7 +289,7 @@ public class DataS3 extends DataRemote {
 			if (region == null) {
 				String regionName = getS3().getBucketLocation(bucketName);
 
-				// Update region 
+				// Update region
 				if (regionName.equals("US")) region = Region.getRegion(Regions.valueOf(DEFAULT_AWS_REGION));
 				else region = Region.getRegion(Regions.fromName(regionName));
 			}

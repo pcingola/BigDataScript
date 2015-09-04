@@ -1,10 +1,10 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.InterpolateVars;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -17,8 +17,10 @@ public class TestCasesInterpolate extends TestCasesBase {
 	void checkInterpolate(String str, String strings[], String vars[]) {
 		InterpolateVars iv = new InterpolateVars(null, null);
 		iv.parse(str);
-		System.out.println("String: " + str);
-		System.out.println("\tInterpolation result: |" + iv + "|");
+		if (verbose) {
+			System.out.println("String: " + str);
+			System.out.println("\tInterpolation result: |" + iv + "|");
+		}
 
 		// Special case: No variables to interpolate
 		if (strings.length == 1 && vars[0].isEmpty()) {
@@ -28,9 +30,12 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 		// Check strings
 		for (int i = 0; i < strings.length; i++) {
-			System.out.print("\tIndex: " + i);
-			System.out.print("\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getLiterals()[i]);
-			System.out.println("\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getExpressions()[i]);
+			if (verbose) {
+				System.out.print("\tIndex: " + i);
+				System.out.print("\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getLiterals()[i]);
+				System.out.println("\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getExpressions()[i]);
+			}
+
 			Assert.assertEquals(strings[i], iv.getLiterals()[i]);
 			if (vars[i] != null && !vars[i].isEmpty()) Assert.assertEquals(vars[i], iv.getExpressions()[i].toString());
 		}
@@ -38,6 +43,8 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test00() {
+		Gpr.debug("Test");
+
 		String strings[] = { "Hello $i" };
 		String vars[] = { "" };
 
@@ -46,6 +53,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test01() {
+		Gpr.debug("Test");
 		String strings[] = { "Hello " };
 		String vars[] = { "i" };
 
@@ -54,6 +62,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test02() {
+		Gpr.debug("Test");
 		String strings[] = { "Hello ", " " };
 		String vars[] = { "i", "j" };
 
@@ -62,6 +71,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test03() {
+		Gpr.debug("Test");
 		String strings[] = { "Hello ", "" };
 		String vars[] = { "i", "j" };
 
@@ -70,6 +80,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test04() {
+		Gpr.debug("Test");
 		String strings[] = { "l[1] : " };
 		String vars[] = { "l[1]" };
 
@@ -78,6 +89,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test05() {
+		Gpr.debug("Test");
 		String strings[] = { "m{'Helo'} : " };
 		String vars[] = { "m{\"Helo\"}" };
 
@@ -86,6 +98,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test06() {
+		Gpr.debug("Test");
 		String strings[] = { "m{'Helo'} : " };
 		String vars[] = { "m{l[i]}" };
 
@@ -94,6 +107,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test07() {
+		Gpr.debug("Test");
 		String strings[] = { "Hello $" };
 		String vars[] = { "" };
 
@@ -102,6 +116,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test08() {
+		Gpr.debug("Test");
 		String strings[] = { "Hello $\n" };
 		String vars[] = { "" };
 
@@ -110,6 +125,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test09() {
+		Gpr.debug("Test");
 		String strings[] = { "m{'Helo'} : " };
 		String vars[] = { "m{s}" };
 
@@ -118,6 +134,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test10() {
+		Gpr.debug("Test");
 		String strings[] = { "l[1] : '", "'\n" };
 		String vars[] = { "l[1]", "" };
 
@@ -126,6 +143,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test11() {
+		Gpr.debug("Test");
 		String strings[] = { "List with variable index: '", "'\n" };
 		String vars[] = { "l[s]", "" };
 
@@ -134,6 +152,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test12() {
+		Gpr.debug("Test");
 		String strings[] = { "List with variable index: {", "}\n" };
 		String vars[] = { "l[s]", "" };
 
@@ -142,6 +161,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test13() {
+		Gpr.debug("Test");
 		String strings[] = { "List with variable index: [", "]\n" };
 		String vars[] = { "l[s]", "" };
 
@@ -150,6 +170,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test14() {
+		Gpr.debug("Test");
 		String strings[] = { "Map with list and variable index: ", };
 		String vars[] = { "m{l[s]}", "" };
 
@@ -158,6 +179,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 	@Test
 	public void test15() {
+		Gpr.debug("Test");
 		String strings[] = { "Map with list and variable index: {", "}\n" };
 		String vars[] = { "m{l[s]}", "" };
 

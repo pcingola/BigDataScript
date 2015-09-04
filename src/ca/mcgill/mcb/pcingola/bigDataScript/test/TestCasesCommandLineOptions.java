@@ -1,12 +1,11 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import junit.framework.Assert;
 
 /**
  * Check command line options
@@ -20,11 +19,15 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 		Gpr.debug("Test");
 
 		// Create command line
-		String args[] = { "-log", "test/cmdLineOptions_01.bds" };
-		BigDataScript bds = bds(args);
+		String args[] = { "-log" };
+		BdsTest bdsTest = new BdsTest("test/cmdLineOptions_01.bds", args, verbose, debug);
 
 		// Run script
-		bds.run();
+		bdsTest.run();
+		bdsTest.checkRunOk();
+
+		// Get thread
+		BigDataScript bds = bdsTest.bds;
 		BdsThread bdsThread = bds.getBigDataScriptThread();
 
 		// Check that all 'log' files exists

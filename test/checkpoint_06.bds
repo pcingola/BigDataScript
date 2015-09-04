@@ -1,4 +1,4 @@
-print("============= Ignore errors (begin) ============= \n")
+print "============= Ignore errors (begin) ============= \n"
 
 bool b = false
 
@@ -8,4 +8,5 @@ task sleep 1; rm test/checkpoint_06.tmp
 wait
 b = true
 
-print("============= Ignore errors (end) ============= \n")
+print "============= Ignore errors (end) ============= \n"
+print "b = $b\n"

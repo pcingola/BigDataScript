@@ -37,13 +37,7 @@ public class MethodNative_string_dirPath_regex extends MethodNative {
 	 */
 	boolean matches(String path, PathMatcher matcher) {
 		File file = new File(path);
-		File canFile;
-		try {
-			canFile = file.getCanonicalFile();
-			return matcher.matches(canFile.toPath());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		return matcher.matches(file.toPath());
 	}
 
 	@Override
@@ -55,16 +49,33 @@ public class MethodNative_string_dirPath_regex extends MethodNative {
 		//---
 		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
 
-		ArrayList<String> list = bdsThread.data(objThis.toString()) // Create data object
+		String baseDirName = objThis.toString();
+		if (!baseDirName.endsWith("/")) baseDirName += "/";
+		String baseDir = baseDirName;
+
+		ArrayList<String> list = bdsThread.data(baseDir) // Create data object
 				.list() // List files in dir
 				.stream() // Convert to stream
 				.filter(d -> matches(d, matcher)) // Filter using path matcher
+				.map(d -> toCanonicalPath(baseDir + d)) // Filter using path matcher
 				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
-		;
+				;
 
 		// Sort by name
 		Collections.sort(list);
 
 		return list;
+	}
+
+	/**
+	 * Convert to canonical path
+	 */
+	String toCanonicalPath(String path) {
+		try {
+			String cpath = new File(path).getCanonicalPath();
+			return cpath;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

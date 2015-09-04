@@ -3,8 +3,6 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
@@ -13,6 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.data.DataHttp;
 import ca.mcgill.mcb.pcingola.bigDataScript.data.DataRemote;
 import ca.mcgill.mcb.pcingola.bigDataScript.data.DataS3;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -154,57 +153,67 @@ public class TestCasesRemote extends TestCasesBase {
 
 	@Test
 	public void test03_task_URL() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_03.bds", "first", "<!DOCTYPE html>");
 	}
 
 	@Test
 	public void test04_task_URL() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_04.bds", "first", "<!DOCTYPE html>");
 	}
 
 	@Test
 	public void test05_task_URL() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_05.bds", "first", "<!DOCTYPE html>");
 	}
 
 	@Test
 	public void test06_task_URL() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_06.bds", "first", "<!DOCTYPE html>");
 	}
 
 	@Test
 	public void test07_task_URL() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_07.bds", "first", "<!DOCTYPE html>");
 	}
 
 	@Test
 	public void test08_task_URL() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_08.bds", "first", "<!DOCTYPE html>");
 	}
 
 	@Test
 	public void test09_task_URL() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_09.bds", "first", "<!DOCTYPE html>");
 	}
 
 	@Test
 	public void test10_download() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_10.bds", "locFile", "/tmp/bds/http/pcingola/github/io/BigDataScript/index.html");
 	}
 
 	@Test
 	public void test11_download() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_11.bds", "ok", "true");
 	}
 
 	@Test
 	public void test12_upload() {
-		verbose = true;
+		Gpr.debug("Test");
 		runAndCheck("test/remote_12.bds", "ok", "true");
 	}
 
 	@Test
 	public void test13_S3() {
+		Gpr.debug("Test");
 		String expectedOutput = "" //
 				+ "canonical      : test_remote_13_file_does_not_exits_in_S3.txt\n" //
 				+ "baseName       : test_remote_13_file_does_not_exits_in_S3.txt\n" //
@@ -226,6 +235,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 	@Test
 	public void test14_S3() {
+		Gpr.debug("Test");
 		String expectedOutput = "" //
 				+ "baseName       : hello.txt\n" //
 				+ "baseName('txt'): hello\n" //
@@ -239,8 +249,8 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "path           : s3://pcingola.bds/hello.txt\n" //
 				+ "pathName       : s3://pcingola.bds\n" //
 				+ "removeExt      : s3://pcingola.bds/hello\n" //
-				+ "dirPath        : [s3://pcingola.bds/hello.txt]\n" //
-				+ "dir            : [s3://pcingola.bds/hello.txt]\n" //
+				+ "dirPath        : []\n" //
+				+ "dir            : []\n" //
 				;
 
 		runAndCheckStdout("test/remote_14.bds", expectedOutput);
@@ -248,8 +258,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 	@Test
 	public void test15_S3() {
-		verbose = true;
-
+		Gpr.debug("Test");
 		String expectedOutput = "" //
 				+ "baseName       : \n" //
 				+ "baseName('txt'): \n" //
@@ -264,7 +273,7 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "pathName       : s3://pcingola.bds/test_dir\n" //
 				+ "removeExt      : s3://pcingola\n" //
 				+ "dirPath        : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
-				+ "dir            : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
+				+ "dir            : [z1.txt, z2.txt]\n" //
 				;
 
 		runAndCheckStdout("test/remote_15.bds", expectedOutput);
@@ -272,8 +281,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 	@Test
 	public void test16_S3() {
-		verbose = true;
-
+		Gpr.debug("Test");
 		String expectedOutput = "" //
 				+ "baseName       : test_remote_16.txt\n" //
 				+ "baseName('txt'): test_remote_16\n" //
@@ -288,8 +296,8 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "pathName       : s3://pcingola.bds\n" //
 				+ "removeExt      : s3://pcingola.bds/test_remote_16\n" //
 				+ "size           : 6\n" //
-				+ "dirPath        : [s3://pcingola.bds/test_remote_16.txt]\n" //
-				+ "dir            : [s3://pcingola.bds/test_remote_16.txt]\n" //
+				+ "dirPath        : []\n" //
+				+ "dir            : []\n" //
 				;
 
 		runAndCheckStdout("test/remote_16.bds", expectedOutput);
@@ -297,8 +305,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 	@Test
 	public void test17_S3() {
-		verbose = true;
-
+		Gpr.debug("Test");
 		String expectedOutput = "" //
 				+ "baseName       : test_remote_17.txt\n" //
 				+ "baseName('txt'): test_remote_17\n" //
@@ -313,8 +320,8 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "pathName       : s3://pcingola.bds\n" //
 				+ "removeExt      : s3://pcingola.bds/test_remote_17\n" //
 				+ "size           : 6\n" //
-				+ "dirPath        : [s3://pcingola.bds/test_remote_17.txt]\n" //
-				+ "dir            : [s3://pcingola.bds/test_remote_17.txt]\n" //
+				+ "dirPath        : []\n" //
+				+ "dir            : []\n" //
 				+ "\n" //
 				+ "Delete file s3://pcingola.bds/test_remote_17.txt\n" //
 				+ "canRead        : false\n" //
@@ -330,6 +337,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 	@Test
 	public void test18_S3() {
+		Gpr.debug("Test");
 		runAndCheck("test/remote_18.bds", "ok", "true");
 	}
 

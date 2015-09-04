@@ -30,6 +30,14 @@ public class MethodNative_string_dir_regex extends MethodNative {
 		addNativeMethodToClassScope();
 	}
 
+	/**
+	 * Does the path match?
+	 */
+	boolean matches(String path, PathMatcher matcher) {
+		File file = new File(path);
+		return matcher.matches(file.toPath());
+	}
+
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		String glob = bdsThread.getString("glob");
@@ -39,12 +47,13 @@ public class MethodNative_string_dir_regex extends MethodNative {
 		//---
 		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
 
-		ArrayList<String> list = bdsThread.data(objThis.toString()) // Create data object
+		String baseDir = objThis.toString();
+		ArrayList<String> list = bdsThread.data(baseDir) // Create data object
 				.list() // List files in dir
 				.stream() // Convert to stream
-				.filter(d -> matcher.matches((new File(d)).toPath())) // Filter using path matcher
+				.filter(d -> matches(d, matcher)) // Filter using path matcher
 				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
-		;
+				;
 
 		// Sort by name
 		Collections.sort(list);

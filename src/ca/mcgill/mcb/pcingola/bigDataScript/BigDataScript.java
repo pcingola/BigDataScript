@@ -78,8 +78,8 @@ public class BigDataScript {
 
 	boolean checkPidRegex; // Check PID regex (do not run program)
 	boolean debug; // debug mode
-	boolean extractSource; // Extract source code form checkpoint (nly valid on recovery mode)
 	boolean dryRun; // Dry run (do not run tasks)
+	boolean extractSource; // Extract source code form checkpoint (nly valid on recovery mode)
 	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
 	Boolean noCheckpoint; // Do not create checkpoint files
 	Boolean noRmOnExit; // Do not remove temp files on exit
@@ -87,8 +87,8 @@ public class BigDataScript {
 	boolean showHelp; // Show bds's script help (provided on each variable definition). Do not run program
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
 	boolean verbose; // Verbose mode
+	boolean reportHtml; // Use HTML report style
 	boolean reportYaml; // Use YAML report style
-	Boolean reportHtml; // Use HTML report style
 	int taskFailCount = -1;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Configuration file
 	String chekcpointRestoreFile; // Restore file

@@ -31,7 +31,11 @@ public class MethodNative_string_dirPath extends MethodNative {
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		ArrayList<String> list = new ArrayList<>();
 
-		for (String file : bdsThread.data(objThis.toString()).list()) {
+		String baseDir = objThis.toString();
+		if (!baseDir.endsWith("/")) baseDir += "/";
+
+		for (String file : bdsThread.data(baseDir).list()) {
+			file = baseDir + file;
 			Data d = bdsThread.data(file);
 			list.add(d.getCanonicalPath());
 		}

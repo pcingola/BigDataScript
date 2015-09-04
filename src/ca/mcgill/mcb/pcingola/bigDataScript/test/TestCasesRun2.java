@@ -3,13 +3,13 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import junit.framework.Assert;
 
 /**
  * Test cases that require BDS code execution and check results
@@ -23,65 +23,74 @@ public class TestCasesRun2 extends TestCasesBase {
 
 	@Test
 	public void test100() {
+		Gpr.debug("Test");
+
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("s", 1);
 		expectedValues.put("s2", -1);
 
-		runAndCheckMultiple("test/run_100.bds", expectedValues);
+		runAndCheck("test/run_100.bds", expectedValues);
 	}
 
 	@Test
 	public void test101() {
+		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("a", 1);
 		expectedValues.put("b", 3);
 		expectedValues.put("c", 5);
 
-		runAndCheckMultiple("test/run_101.bds", expectedValues);
+		runAndCheck("test/run_101.bds", expectedValues);
 	}
 
 	@Test
 	public void test102() {
+		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("a", 1);
 		expectedValues.put("b", 3);
 		expectedValues.put("c", 5);
 		expectedValues.put("d", 0);
 
-		runAndCheckMultiple("test/run_102.bds", expectedValues);
+		runAndCheck("test/run_102.bds", expectedValues);
 	}
 
 	@Test
 	public void test103() {
+		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("is", "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
 		expectedValues.put("is2", "[1, 3, 5, 7, 9]");
 		expectedValues.put("rs", "[1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]");
 
-		runAndCheckMultiple("test/run_103.bds", expectedValues);
+		runAndCheck("test/run_103.bds", expectedValues);
 	}
 
 	@Test
 	public void test104() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_104.bds", "isRun", "true");
 	}
 
 	@Test
 	public void test105() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_105.bds", "isRun", "false");
 	}
 
 	@Test
 	public void test106() {
+		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("str1", "l[1] : '2'");
 		expectedValues.put("str2", "m{'Hello'} : 'Bye'");
 
-		runAndCheckMultiple("test/run_106.bds", expectedValues);
+		runAndCheck("test/run_106.bds", expectedValues);
 	}
 
 	@Test
 	public void test107() {
+		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("paramName", "parameter_value");
 		expectedValues.put("file1", "/path/to/file_1.txt");
@@ -90,11 +99,12 @@ public class TestCasesRun2 extends TestCasesBase {
 		expectedValues.put("file4", "/path/to/file_4.txt");
 		expectedValues.put("file5", "/path/to/file_5.txt");
 
-		runAndCheckMultiple("test/run_107.bds", expectedValues);
+		runAndCheck("test/run_107.bds", expectedValues);
 	}
 
 	@Test
 	public void test108() {
+		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("paramName", "parameter_value");
 		expectedValues.put("file1", "/path/to/file_1.txt");
@@ -103,27 +113,32 @@ public class TestCasesRun2 extends TestCasesBase {
 		expectedValues.put("file4", "/path/to/file_4.txt");
 		expectedValues.put("file5", "/path/to/file_5.NEW.txt");
 
-		runAndCheckMultiple("test/run_108.bds", expectedValues);
+		runAndCheck("test/run_108.bds", expectedValues);
 	}
 
 	public void test109() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_109.bds", "r1", "4027146782649399912");
 	}
 
 	public void test110() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_110.bds", "runOk", "true");
 	}
 
 	public void test111() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_111.bds", "runOk", "false");
 	}
 
 	public void test112() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_112.bds", "runOk", "false");
 	}
 
 	@Test
 	public void test113_parallel_function_calls() {
+		Gpr.debug("Test");
 		String stdout = runAndReturnStdout("test/run_113.bds");
 
 		Set<String> linesPar = new HashSet<String>();
@@ -137,6 +152,7 @@ public class TestCasesRun2 extends TestCasesBase {
 
 	@Test
 	public void test114_parallel_function_task_calls() {
+		Gpr.debug("Test");
 		String stdout = runAndReturnStdout("test/run_114.bds");
 
 		Set<String> linesPar = new HashSet<String>();
@@ -149,18 +165,21 @@ public class TestCasesRun2 extends TestCasesBase {
 
 	@Test
 	public void test115_task_dependency_using_taskId() {
+		Gpr.debug("Test");
 		String stdout = runAndReturnStdout("test/run_115.bds");
 		Assert.assertEquals("Hi 1\nBye 1\nHi 2\nBye 2\n", stdout);
 	}
 
 	@Test
 	public void test116_lineWrap_backslashId() {
+		Gpr.debug("Test");
 		String stdout = runAndReturnStdout("test/run_116.bds");
 		Assert.assertEquals("hi bye\nThe answer\t\tis: 42", stdout);
 	}
 
 	@Test
 	public void test117_serial_parallel_tasks() {
+		Gpr.debug("Test");
 		String expectedStdout = "Iter 1, Task 1: End\n" //
 				+ "Iter 1, Task 2: Start\n" //
 				+ "Iter 1, Task 2: End\n" //
@@ -169,22 +188,23 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Iter 5, Task 2: End\n" //
 				;;
 
-				String stdout = runAndReturnStdout("test/run_117.bds");
+		String stdout = runAndReturnStdout("test/run_117.bds");
 
-				if (stdout.indexOf(expectedStdout) < 0) {
-					String msg = "Cannot find desired output:\n" //
-							+ "---------- Expected output ----------\n" //
-							+ expectedStdout //
-							+ "-------------- STDOUT --------------\n" //
-							+ stdout //
-							;
-					System.err.println(msg);
-					throw new RuntimeException(msg);
-				}
+		if (stdout.indexOf(expectedStdout) < 0) {
+			String msg = "Cannot find desired output:\n" //
+					+ "---------- Expected output ----------\n" //
+					+ expectedStdout //
+					+ "-------------- STDOUT --------------\n" //
+					+ stdout //
+					;
+			System.err.println(msg);
+			throw new RuntimeException(msg);
+		}
 	}
 
 	@Test
 	public void test118_dependency_using_path() {
+		Gpr.debug("Test");
 		runAndCheckExit("test/run_118.bds", 0);
 	}
 
@@ -206,25 +226,28 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Done\n" //"
 				;
 
-		System.out.println("First run:");
+		if (verbose) System.out.println("First run:");
 		runAndCheckStdout("test/run_119.bds", expectedStdout1);
 
-		System.out.println("\n\nSecond run:");
+		if (verbose) System.out.println("\n\nSecond run:");
 		runAndCheckStdout("test/run_119.bds", expectedStdout2);
 	}
 
 	@Test
 	public void test120_split_empty_string() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_120.bds", "len", "0");
 	}
 
 	@Test
 	public void test121_split_fail_regex() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_121.bds", "len", "1");
 	}
 
 	@Test
 	public void test122_nestest_break_continue() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_122.bds", "out", "5\t7");
 	}
 
@@ -238,10 +261,10 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "print_double       |\t|    variable:Hello\n" //
 				+ "print_double_esc   |\\t|\n" //
 				+ "print_double_esc   |\\t|   variable:Hello\n" //
-				// Note: This result may change if we use a different sysShell in bds.config
+		// Note: This result may change if we use a different sysShell in bds.config
 				+ "sys                |\\t|\n" //
 				+ "sys                |\\t|    variable:Hello\n" //
-				// Note: This result may change if we use a different taskShell in bds.config
+		// Note: This result may change if we use a different taskShell in bds.config
 				+ "task               |\t|\n" + "task               |\t|    variable:Hello\n" //
 				;
 
@@ -264,8 +287,8 @@ public class TestCasesRun2 extends TestCasesBase {
 				;
 
 		// Run and capture stdout
-		String args[] = { "-quiet", "test/run_124.bds" };
-		String stdout = runAndReturnStdout(args);
+		String args[] = { "-quiet" };
+		String stdout = runAndReturnStdout("test/run_124.bds", args);
 		if (verbose) System.err.println("STDOUT: " + stdout);
 
 		// Check that sys and task outputs are not there
@@ -287,13 +310,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\n" //
 				;
 
-		// Run and capture stdout
-		String args[] = { "test/run_125.bds", "-h" };
-		String stdout = runAndReturnStdout(args);
-		if (verbose) System.err.println("STDOUT: " + stdout);
-
-		// Check that sys and task outputs are not there
-		Assert.assertEquals(output, stdout);
+		runAndCheckHelp("test/run_125.bds", output);
 	}
 
 	@Test
@@ -309,13 +326,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\n" //
 				;
 
-		// Run and capture stdout
-		String args[] = { "test/run_125b.bds", "-h" };
-		String stdout = runAndReturnStdout(args);
-		if (verbose) System.err.println("STDOUT: " + stdout);
-
-		// Check that sys and task outputs are not there
-		Assert.assertEquals(output, stdout);
+		runAndCheckHelp("test/run_125b.bds", output);
 	}
 
 	/**
@@ -334,12 +345,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\n" //
 				;
 
-		// Run and capture stdout
-		String stdout = runAndReturnStdout("test/run_125c.bds");
-		if (verbose) System.err.println("STDOUT: " + stdout);
-
-		// Check that sys and task outputs are not there
-		Assert.assertEquals(output, stdout);
+		runAndCheckHelp("test/run_125c.bds", output);
 	}
 
 	/**
@@ -395,6 +401,7 @@ public class TestCasesRun2 extends TestCasesBase {
 
 	@Test
 	public void test129_chdir_sys() {
+		Gpr.debug("Test");
 		String out = runAndReturnStdout("test/run_129.bds");
 		Assert.assertTrue(out.contains("FILE_01\n"));
 		Assert.assertTrue(out.contains("FILE_02\n"));
@@ -402,6 +409,7 @@ public class TestCasesRun2 extends TestCasesBase {
 
 	@Test
 	public void test130_chdir_task() {
+		Gpr.debug("Test");
 		String out = runAndReturnStdout("test/run_130.bds");
 		Assert.assertTrue(out.contains("FILE_01\n"));
 		Assert.assertTrue(out.contains("FILE_02\n"));
@@ -409,6 +417,7 @@ public class TestCasesRun2 extends TestCasesBase {
 
 	@Test
 	public void test131_chdir_fileMethods() {
+		Gpr.debug("Test");
 		String out = ""//
 				+ "chdir_test_file_01.txt\tread:FILE_01\n" //
 				+ "chdir_test_file_01.txt\treadLines:[FILE_01]\n" //
@@ -439,6 +448,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	 */
 	@Test
 	public void test132_taskName() {
+		Gpr.debug("Test");
 		String out = runAndReturnStdout("test/run_132.bds");
 		Assert.assertTrue(out.contains("run_132.mytask"));
 	}
@@ -449,6 +459,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	 */
 	@Test
 	public void test133_taskName_unsafe() {
+		Gpr.debug("Test");
 		String out = runAndReturnStdout("test/run_133.bds");
 		Assert.assertTrue(out.contains("run_133.mytask_unsafe_with_spaces"));
 	}
@@ -471,28 +482,24 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\n" //
 				;
 
-		// Run and capture stdout
-		String args[] = { "test/run_134.bds", "-h" };
-		String stdout = runAndReturnStdout(args);
-		if (verbose) System.err.println("STDOUT: " + stdout);
-
-		// Check that sys and task outputs are not there
-		Assert.assertEquals(output, stdout);
+		runAndCheckHelp("test/run_134.bds", output);
 	}
 
 	@Test
 	public void test135() {
+		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("l", "[1, 2, 3, 99]");
 		expectedValues.put("lc1", "[1, 2, 3]");
 		expectedValues.put("lc2", "[1, 2, 3]");
 		expectedValues.put("lc3", "[1, 2, 3]");
 
-		runAndCheckMultiple("test/run_135.bds", expectedValues);
+		runAndCheck("test/run_135.bds", expectedValues);
 	}
 
 	@Test
 	public void test136() {
+		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("l", "[1, 99, 2, 3]");
 		expectedValues.put("l2", "[3, 2, 99, 1]");
@@ -502,17 +509,18 @@ public class TestCasesRun2 extends TestCasesBase {
 		expectedValues.put("l4", "[3, 2, 1, 99]");
 		expectedValues.put("l5", "[3, 2, 1, 99]");
 
-		runAndCheckMultiple("test/run_136.bds", expectedValues);
+		runAndCheck("test/run_136.bds", expectedValues);
 	}
 
 	@Test
 	public void test137() {
+		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
 		expectedValues.put("l", "[1, 2, 3]");
 		expectedValues.put("has2", "true");
 		expectedValues.put("has7", "false");
 
-		runAndCheckMultiple("test/run_137.bds", expectedValues);
+		runAndCheck("test/run_137.bds", expectedValues);
 	}
 
 	/**
@@ -520,6 +528,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	 */
 	@Test
 	public void test138() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_138.bds", "hasErr", "false");
 	}
 
@@ -528,17 +537,35 @@ public class TestCasesRun2 extends TestCasesBase {
 	 */
 	@Test
 	public void test139() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_139.bds", "hasErr", "false");
 	}
 
 	@Test
 	public void test140_list_nonvariable() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_140.bds", "i", "2");
 	}
 
 	@Test
 	public void test141_map_nonvariable() {
+		Gpr.debug("Test");
 		runAndCheck("test/run_141.bds", "i", "42");
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void test142_dirPath() {
+		Gpr.debug("Test");
+		List<String> dir2 = (List<String>) runAndGet("test/run_142.bds", "dir2");
+
+		Assert.assertEquals(10, dir2.size());
+
+		for (String f : dir2) {
+			if (debug) System.out.println(f);
+			Assert.assertTrue("Path must be canonical", f.startsWith("/"));
+			Assert.assertTrue("Path must be canonical", f.endsWith(".bds"));
+		}
 	}
 
 }

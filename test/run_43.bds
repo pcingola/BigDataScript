@@ -15,7 +15,7 @@ task( out <- in ) {
 # This will be executed
 task sleep 1; echo Second
 
-# Task 'First' execution fails at here. 
+# Task 'First' execution fails here. 
 # At 'wait' statement is when we check wether a task finished OK or not
 wait
 

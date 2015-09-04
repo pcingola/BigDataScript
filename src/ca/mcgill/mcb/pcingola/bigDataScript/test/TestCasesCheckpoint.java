@@ -16,36 +16,43 @@ public class TestCasesCheckpoint extends TestCasesBase {
 
 	@Test
 	public void test01() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_01.bds", null, "i", "10");
 	}
 
 	@Test
 	public void test02() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
 	}
 
 	@Test
 	public void test03() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_03.bds", null, "s2", "After checkpoint 42");
 	}
 
 	@Test
 	public void test04() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_04.bds", null, "s", "one\teins");
 	}
 
 	@Test
 	public void test04_2() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_04.bds", null, "i", "3");
 	}
 
 	@Test
 	public void test04_3() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_04.bds", null, "ss", "one\ttwo");
 	}
 
 	@Test
 	public void test05() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_05.bds", null, "l0", "ONE");
 	}
 
@@ -57,6 +64,7 @@ public class TestCasesCheckpoint extends TestCasesBase {
 	 */
 	@Test
 	public void test06() {
+		Gpr.debug("Test");
 		final String fileToDelete = "test/checkpoint_06.tmp";
 
 		Runnable createFile = new Runnable() {
@@ -78,11 +86,13 @@ public class TestCasesCheckpoint extends TestCasesBase {
 
 	@Test
 	public void test07() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_07.bds", null, "sloop", "three");
 	}
 
 	@Test
 	public void test08() {
+		Gpr.debug("Test");
 		// Remove old entries
 		String prefix = "test/checkpoint_08";
 		File txt = new File(prefix + ".txt");
@@ -113,6 +123,7 @@ public class TestCasesCheckpoint extends TestCasesBase {
 
 	@Test
 	public void test09() {
+		Gpr.debug("Test");
 		// Remove old entries
 		String prefix = "test/checkpoint_09";
 		File txt = new File(prefix + ".txt");
@@ -142,53 +153,63 @@ public class TestCasesCheckpoint extends TestCasesBase {
 
 	@Test
 	public void test10() {
+		Gpr.debug("Test");
 		// Run pipeline and test checkpoint
 		runAndCheckpoint("test/checkpoint_10.bds", "test/checkpoint_10.chp", "sumMain", "55");
 	}
 
 	@Test
 	public void test11() {
+		Gpr.debug("Test");
 		// Run pipeline and test checkpoint
 		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
 	}
 
 	@Test
 	public void test12_serializationOfEmptyIncludes() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_12.bds", "test/checkpoint_12.chp", "ok", "true");
 	}
 
 	@Test
 	public void test13_checkPoint_function_with_empty_Args() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_13.bds", "test/checkpoint_13.chp", "ok", "true");
 	}
 
 	@Test
 	public void test14_serialize_method_call_args() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_14.bds", "test/checkpoint_14.chp", "ok", "true");
 	}
 
 	@Test
 	public void test15_checkpoint_par_function_call() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_15.bds", "test/checkpoint_15.chp", "ok", "true");
 	}
 
 	@Test
 	public void test16_checkpoint_recursive() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_16.bds", "test/checkpoint_16.chp", "fn", "120");
 	}
 
 	@Test
 	public void test17_checkpoint_listIndex() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_17.bds", "test/checkpoint_17.chp", "res", "19");
 	}
 
 	@Test
 	public void test18_checkpoint_listIndex() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_18.bds", "test/checkpoint_18.chp", "res", "34");
 	}
 
 	@Test
 	public void test19_scope_global_global() {
+		Gpr.debug("Test");
 		// Run pipeline and test checkpoint
 		BigDataScript bds = runAndCheckpoint("test/checkpoint_19.bds", "test/checkpoint_19.chp", "ok", "true");
 
@@ -207,20 +228,24 @@ public class TestCasesCheckpoint extends TestCasesBase {
 
 	@Test
 	public void test20_checkpoint_after_main_thread_finished_execution() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_20.bds", "test/checkpoint_20.chp", null, null);
 	}
 
 	@Test
 	public void test21_checkpoint_after_par_thread_finished_execution() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_21.bds", "test/checkpoint_21.chp", null, null);
 	}
 
 	public void test22_par_par_par() {
+		Gpr.debug("Test");
 		runAndCheckpoint("test/checkpoint_22.bds", "test/checkpoint_22.chp", "luae", "42");
 	}
 
 	@Test
 	public void test23_thread_structure() {
+		Gpr.debug("Test");
 		// Run pipeline and test checkpoint
 		BigDataScript bds = runAndCheckpoint("test/checkpoint_23.bds", "test/checkpoint_23.chp", "luae", "42");
 
