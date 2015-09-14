@@ -53,7 +53,7 @@ cp -rvf include "$BDS_HOME"
 if [ ! -e "$BDS_HOME/bds.config" ]
 then
 	echo "Copying default config file"
-	cp config/bds.default.config "$BDS_HOME/bds.config"
+	cp config/bds.config "$BDS_HOME/bds.config"
 fi
 
 # Copy mesos related libraries
