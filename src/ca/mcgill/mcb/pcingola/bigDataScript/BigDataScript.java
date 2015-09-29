@@ -58,7 +58,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * BigDataScript command line parser
+ * BigDataScript command line 
  *
  * @author pcingola
  */
@@ -69,8 +69,8 @@ public class BigDataScript {
 	}
 
 	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
-	public static final String BUILD = "2015-09-04";
-	public static final String REVISION = "b";
+	public static final String BUILD = "2015-09-29";
+	public static final String REVISION = "c";
 	public static final String VERSION_MAJOR = "0.9999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
