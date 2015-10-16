@@ -35,7 +35,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 		// Check some features
 		Assert.assertTrue("Is S3?", d instanceof DataS3);
-		Assert.assertEquals(url, d.getCanonicalPath());
+		Assert.assertEquals(url, d.getAbsolutePath());
 		Assert.assertEquals(objectSize, d.size());
 		Assert.assertEquals(lastModified, d.getLastModified().getTime());
 		Assert.assertTrue("Is file?", d.isFile());
@@ -48,7 +48,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 		// Is it at the correct local file?
 		Assert.assertEquals("/tmp/bds/s3/pcingola.bds/hello.txt", d.getLocalPath());
-		Assert.assertEquals(canPath, d.getCanonicalPath());
+		Assert.assertEquals(canPath, d.getAbsolutePath());
 		Assert.assertEquals(paren, d.getParent());
 		Assert.assertEquals("hello.txt", d.getName());
 
@@ -79,25 +79,26 @@ public class TestCasesRemote extends TestCasesBase {
 		Data d = Data.factory("tmp.txt");
 		if (verbose) Gpr.debug("Path: " + d.getPath());
 		Assert.assertTrue(d instanceof DataFile);
-		Assert.assertEquals(currPath + "/tmp.txt", d.getCanonicalPath());
-		Gpr.toFile(d.getCanonicalPath(), "test");
+		Assert.assertEquals(currPath + "/tmp.txt", d.getAbsolutePath());
+		Gpr.toFile(d.getAbsolutePath(), "test");
 		Assert.assertTrue(d.isFile());
 		Assert.assertFalse(d.isDirectory());
 
 		d = Data.factory("./tmp.txt");
-		if (verbose) Gpr.debug("Path: " + d.getPath());
+		if (verbose) Gpr.debug("Path: " + d.getPath() + "\tabsolutePath: " + d.getAbsolutePath());
 		Assert.assertTrue(d instanceof DataFile);
+		Assert.assertEquals(currPath + "/./tmp.txt", d.getAbsolutePath());
 		Assert.assertEquals(currPath + "/tmp.txt", d.getCanonicalPath());
 
 		d = Data.factory("/tmp.txt");
 		if (verbose) Gpr.debug("Path: " + d.getPath());
 		Assert.assertTrue(d instanceof DataFile);
-		Assert.assertEquals("/tmp.txt", d.getCanonicalPath());
+		Assert.assertEquals("/tmp.txt", d.getAbsolutePath());
 
 		d = Data.factory("file:///tmp.txt");
 		if (verbose) Gpr.debug("Path: " + d.getPath());
 		Assert.assertTrue(d instanceof DataFile);
-		Assert.assertEquals("/tmp.txt", d.getCanonicalPath());
+		Assert.assertEquals("/tmp.txt", d.getAbsolutePath());
 	}
 
 	@Test
@@ -112,7 +113,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 		// Check some features
 		Assert.assertTrue(d instanceof DataHttp);
-		Assert.assertEquals("http://www.google.com/index.html", d.getCanonicalPath());
+		Assert.assertEquals("http://www.google.com/index.html", d.getAbsolutePath());
 		Assert.assertEquals("http://www.google.com/", d.getParent());
 		Assert.assertEquals("/index.html", d.getPath());
 		Assert.assertEquals("index.html", d.getName());

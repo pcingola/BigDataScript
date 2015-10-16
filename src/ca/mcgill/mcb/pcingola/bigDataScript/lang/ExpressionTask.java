@@ -100,11 +100,11 @@ public class ExpressionTask extends ExpressionWithScope {
 					Data dataIn = Data.factory(in);
 					if (dataIn.isRemote()) {
 						sbDown.append(CMD_DOWNLOAD //
-								+ " \"" + dataIn.getCanonicalPath() + "\"" //
+								+ " \"" + dataIn.getAbsolutePath() + "\"" //
 								+ " \"" + dataIn.getLocalPath() + "\"" //
 								+ "\n");
 
-						replace.put(dataIn.getCanonicalPath(), dataIn.getLocalPath());
+						replace.put(dataIn.getAbsolutePath(), dataIn.getLocalPath());
 					}
 				}
 			}
@@ -119,10 +119,10 @@ public class ExpressionTask extends ExpressionWithScope {
 					if (dataOut.isRemote()) {
 						sbUp.append(CMD_UPLOAD //
 								+ " \"" + dataOut.getLocalPath() + "\"" //
-								+ " \"" + dataOut.getCanonicalPath() + "\"" //
+								+ " \"" + dataOut.getAbsolutePath() + "\"" //
 								+ "\n");
 
-						replace.put(dataOut.getCanonicalPath(), dataOut.getLocalPath());
+						replace.put(dataOut.getAbsolutePath(), dataOut.getLocalPath());
 
 						// Note, commands executed locally will output to the local file, so
 						// we must make sure that the path exists (otherwise the command

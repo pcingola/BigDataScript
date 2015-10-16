@@ -31,6 +31,6 @@ public class MethodNative_string_upload_localname extends MethodNative {
 		Data data = bdsThread.data(objThis.toString());
 		Data localData = bdsThread.data(localName);
 
-		return data.upload(localData.getCanonicalPath());
+		return data.upload(localData.getAbsolutePath());
 	}
 }

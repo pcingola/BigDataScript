@@ -67,7 +67,7 @@ public class TaskDependency {
 			tasks.add(task);
 		} else {
 			// Not a taksID, must be an input 'data' (a file)
-			inputs.add(BdsThreads.data(input).getCanonicalPath());
+			inputs.add(BdsThreads.data(input).getAbsolutePath());
 		}
 	}
 
@@ -83,7 +83,7 @@ public class TaskDependency {
 	 * Add output
 	 */
 	public void addOutput(String output) {
-		outputs.add(BdsThreads.data(output).getCanonicalPath());
+		outputs.add(BdsThreads.data(output).getAbsolutePath());
 	}
 
 	/**

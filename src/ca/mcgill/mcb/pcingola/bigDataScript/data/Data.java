@@ -144,6 +144,8 @@ public abstract class Data {
 	 */
 	public abstract boolean exists();
 
+	public abstract String getAbsolutePath();
+
 	public abstract String getCanonicalPath();
 
 	/**

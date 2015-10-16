@@ -159,7 +159,7 @@ public class DataHttp extends DataRemote {
 	}
 
 	@Override
-	public String getCanonicalPath() {
+	public String getAbsolutePath() {
 		return url.toString();
 	}
 

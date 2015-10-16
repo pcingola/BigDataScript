@@ -568,4 +568,10 @@ public class TestCasesRun2 extends TestCasesBase {
 		}
 	}
 
+	@Test
+	public void test143_pathAbsolute() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_143.bds", "fileBase", "tmp_run_143_link.txt");
+	}
+
 }

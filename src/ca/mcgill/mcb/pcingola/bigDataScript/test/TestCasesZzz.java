@@ -1,13 +1,14 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
 
-import org.junit.Assert;
 import org.junit.Test;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
-import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
+import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
+import ca.mcgill.mcb.pcingola.bigDataScript.data.DataFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
+import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -18,35 +19,40 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test23_thread_structure() {
+	public void test01_parse_URLs_file() {
 		Gpr.debug("Test");
-		// Run pipeline and test checkpoint
-		BigDataScript bds = runAndCheckpoint("test/checkpoint_23.bds", "test/checkpoint_23.chp", "luae", "42");
 
-		// Get scope names
-		BdsThread bdsThread = bds.getBigDataScriptThread();
-
-		// All threads (including root thread)
-		Assert.assertEquals(4, bdsThread.getBdsThreadsAll().size());
-
-		// First 'level'
-		List<BdsThread> bdsThreadsL1 = bdsThread.getBdsThreads();
-		if (verbose) Gpr.debug("Root thread '" + bdsThread.getBdsThreadId() + "', number of child threads: " + bdsThreadsL1.size());
-		Assert.assertEquals(1, bdsThreadsL1.size());
-
-		// Second 'level'
-		for (BdsThread bdsthl1 : bdsThreadsL1) {
-			List<BdsThread> bdsThreadsL2 = bdsthl1.getBdsThreads();
-			if (verbose) Gpr.debug("Level 1 thread '" + bdsthl1.getBdsThreadId() + "', number of child threads: " + bdsThreadsL2.size());
-			Assert.assertEquals(2, bdsThreadsL2.size());
-
-			// Third 'level'
-			for (BdsThread bdsthl2 : bdsThreadsL2) {
-				List<BdsThread> bdsThreadsL3 = bdsthl2.getBdsThreads();
-				if (verbose) Gpr.debug("Level 2 thread '" + bdsthl2.getBdsThreadId() + "', number of child threads: " + bdsThreadsL3.size());
-				Assert.assertEquals(0, bdsThreadsL3.size());
-			}
+		String currPath;
+		try {
+			currPath = (new File(".")).getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
+		if (verbose) Gpr.debug("CurrPath: " + currPath);
+
+		Data d = Data.factory("tmp.txt");
+		if (verbose) Gpr.debug("Path: " + d.getPath());
+		Assert.assertTrue(d instanceof DataFile);
+		Assert.assertEquals(currPath + "/tmp.txt", d.getAbsolutePath());
+		Gpr.toFile(d.getAbsolutePath(), "test");
+		Assert.assertTrue(d.isFile());
+		Assert.assertFalse(d.isDirectory());
+
+		d = Data.factory("./tmp.txt");
+		if (verbose) Gpr.debug("Path: " + d.getPath() + "\tabsolutePath: " + d.getAbsolutePath());
+		Assert.assertTrue(d instanceof DataFile);
+		Assert.assertEquals(currPath + "/./tmp.txt", d.getAbsolutePath());
+		Assert.assertEquals(currPath + "/tmp.txt", d.getCanonicalPath());
+
+		d = Data.factory("/tmp.txt");
+		if (verbose) Gpr.debug("Path: " + d.getPath());
+		Assert.assertTrue(d instanceof DataFile);
+		Assert.assertEquals("/tmp.txt", d.getAbsolutePath());
+
+		d = Data.factory("file:///tmp.txt");
+		if (verbose) Gpr.debug("Path: " + d.getPath());
+		Assert.assertTrue(d instanceof DataFile);
+		Assert.assertEquals("/tmp.txt", d.getAbsolutePath());
 	}
 
 }

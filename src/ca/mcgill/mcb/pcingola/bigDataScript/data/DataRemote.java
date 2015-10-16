@@ -59,6 +59,11 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
+	public String getCanonicalPath() {
+		return getAbsolutePath();
+	}
+
+	@Override
 	public Date getLastModified() {
 		if (needsUpdateInfo()) updateInfo();
 		return lastModified;
@@ -72,7 +77,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isDownloaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getCanonicalPath() + "'");
+		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getAbsolutePath() + "'");
 
 		// Is there a local file
 		File localFile = new File(localPath);
@@ -103,7 +108,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isUploaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getCanonicalPath() + "'");
+		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getAbsolutePath() + "'");
 
 		// Is there a local file
 		File localFile = new File(localPath);
@@ -162,7 +167,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public String toString() {
-		return getCanonicalPath() + " <=> " + getLocalPath();
+		return getAbsolutePath() + " <=> " + getLocalPath();
 	}
 
 	/**

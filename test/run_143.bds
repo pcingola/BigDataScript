@@ -1,0 +1,8 @@
+
+fileOri  := 'tmp_run_143.txt'
+fileLink := 'tmp_run_143_link.txt'
+
+sys rm -f $fileOri $fileLink; date > $fileOri ; ln -s $fileOri $fileLink
+
+fileBase := fileLink.baseName()
+println "filebase: $fileBase"

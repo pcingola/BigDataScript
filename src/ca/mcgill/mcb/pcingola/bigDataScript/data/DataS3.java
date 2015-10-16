@@ -135,7 +135,7 @@ public class DataS3 extends DataRemote {
 	}
 
 	@Override
-	public String getCanonicalPath() {
+	public String getAbsolutePath() {
 		return s3uri.toString();
 	}
 
@@ -157,7 +157,7 @@ public class DataS3 extends DataRemote {
 	public String getParent() {
 		if (key == null) return AWS_S3_PROTOCOL + bucketName;
 
-		String cp = getCanonicalPath();
+		String cp = getAbsolutePath();
 		int idx = cp.lastIndexOf('/');
 		if (idx >= 0) return cp.substring(0, idx);
 

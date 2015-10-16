@@ -1,7 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public class MethodNative_string_dirPath_regex extends MethodNative {
 				.list() // List files in dir
 				.stream() // Convert to stream
 				.filter(d -> matches(d, matcher)) // Filter using path matcher
-				.map(d -> toCanonicalPath(baseDir + d)) // Filter using path matcher
+				.map(d -> toAbsolutePath(baseDir + d)) // Filter using path matcher
 				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
 				;
 
@@ -68,14 +67,9 @@ public class MethodNative_string_dirPath_regex extends MethodNative {
 	}
 
 	/**
-	 * Convert to canonical path
+	 * Convert to absolute path
 	 */
-	String toCanonicalPath(String path) {
-		try {
-			String cpath = new File(path).getCanonicalPath();
-			return cpath;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	String toAbsolutePath(String path) {
+		return new File(path).getAbsolutePath();
 	}
 }
