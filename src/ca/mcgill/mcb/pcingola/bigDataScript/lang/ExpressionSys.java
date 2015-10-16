@@ -74,7 +74,7 @@ public class ExpressionSys extends Expression {
 				+ (taskName == null ? "" : "." + taskName) //
 				+ ".line_" + getLineNum() //
 				+ ".id_" + nextId //
-		;
+				;
 
 		return execId;
 	}
@@ -147,9 +147,10 @@ public class ExpressionSys extends Expression {
 
 			// Execution failed on a 'sys' command that cannot fail. Save checkpoint and exit
 			if (!canFail) {
-				bdsThread.fatalError(this, "Exec failed." //
-						+ "\n\tExit value : " + exitValue //
-						+ "\n\tCommand    : " + cmds //
+				bdsThread.fatalError(this,
+						"Exec failed." //
+								+ "\n\tExit value : " + exitValue //
+								+ "\n\tCommand    : " + cmds //
 				);
 				return;
 			}

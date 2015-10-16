@@ -18,29 +18,20 @@ public class DataFile extends Data {
 	File file;
 
 	public static File resolveLocalPath(String fileName, String currentDir) {
-		try {
-			if (fileName.toLowerCase().startsWith(PROTOCOL_FILE)) fileName = fileName.substring(PROTOCOL_FILE.length());
-			File f = new File(fileName);
+		if (fileName.toLowerCase().startsWith(PROTOCOL_FILE)) fileName = fileName.substring(PROTOCOL_FILE.length());
+		File f = new File(fileName);
 
-			// If fileName is an absolute path, we just return the appropriate file
-			if (f.toPath().isAbsolute() || currentDir == null) return f.getCanonicalFile();
+		// If fileName is an absolute path, we just return the appropriate file
+		if (f.toPath().isAbsolute() || currentDir == null) return f.getAbsoluteFile();
 
-			// Resolve against 'currentDir'
-			return new File(currentDir, fileName).getCanonicalFile();
-		} catch (IOException e) {
-			throw new RuntimeException("Cannot resolve file '" + fileName + "'", e);
-		}
+		// Resolve against 'currentDir'
+		return new File(currentDir, fileName).getAbsoluteFile();
 	}
 
 	public DataFile(String fileName, String currentDir) {
 		super();
 		file = resolveLocalPath(fileName, currentDir);
-
-		try {
-			localPath = file.getCanonicalPath();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		localPath = file.getAbsolutePath();
 	}
 
 	@Override
@@ -79,11 +70,16 @@ public class DataFile extends Data {
 	}
 
 	@Override
+	public String getAbsolutePath() {
+		return file.getAbsolutePath();
+	}
+
+	@Override
 	public String getCanonicalPath() {
 		try {
 			return file.getCanonicalPath();
 		} catch (IOException e) {
-			throw new RuntimeException("Cannot get canonical path for file " + file, e);
+			throw new RuntimeException(e);
 		}
 	}
 

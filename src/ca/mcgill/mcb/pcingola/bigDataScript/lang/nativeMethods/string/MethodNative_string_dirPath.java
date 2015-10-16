@@ -37,7 +37,7 @@ public class MethodNative_string_dirPath extends MethodNative {
 		for (String file : bdsThread.data(baseDir).list()) {
 			file = baseDir + file;
 			Data d = bdsThread.data(file);
-			list.add(d.getCanonicalPath());
+			list.add(d.getAbsolutePath());
 		}
 
 		Collections.sort(list);

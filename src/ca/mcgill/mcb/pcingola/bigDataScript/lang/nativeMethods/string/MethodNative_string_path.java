@@ -25,7 +25,7 @@ public class MethodNative_string_path extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		try {
-			return (bdsThread.data(objThis.toString())).getCanonicalPath();
+			return (bdsThread.data(objThis.toString())).getAbsolutePath();
 		} catch (Exception e) {
 			return "";
 		}

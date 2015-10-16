@@ -36,7 +36,7 @@ public class MethodNative_string_write_str extends MethodNative {
 		String str = bdsThread.getString("str");
 		if (data.isRemote()) {
 			DataRemote dr = (DataRemote) data;
-			if (!dr.isFile()) bdsThread.fatalError(this, "Cannot write to non-file: " + dr.getCanonicalPath());
+			if (!dr.isFile()) bdsThread.fatalError(this, "Cannot write to non-file: " + dr.getAbsolutePath());
 
 			// Save to temp file and upload
 			String tmpFileName = dr.getLocalPath();
