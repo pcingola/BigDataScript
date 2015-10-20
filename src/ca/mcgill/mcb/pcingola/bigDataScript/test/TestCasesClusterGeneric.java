@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.test;
 
 import org.junit.Test;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.Bds;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -25,7 +25,7 @@ public class TestCasesClusterGeneric extends TestCasesBase {
 		bdsTest.bds(); // Create command now so we can change 'config' before running
 
 		// Config generic cluster's scripts
-		BigDataScript bds = bdsTest.bds;
+		Bds bds = bdsTest.bds;
 		Config config = bds.getConfig();
 		config.set(Config.CLUSTER_GENERIC_RUN, "clusterGeneric_localhost/run.pl");
 		config.set(Config.CLUSTER_GENERIC_KILL, "clusterGeneric_localhost/kill.pl");

@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public abstract class ExpressionCompare extends ExpressionBinary {
 
-	public ExpressionCompare(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionCompare(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

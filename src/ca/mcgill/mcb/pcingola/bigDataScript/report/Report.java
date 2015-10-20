@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.Bds;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostResources;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
@@ -100,7 +100,7 @@ public class Report {
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
 		// Create a template
-		RTemplate rTemplate = new RTemplate(BigDataScript.class, (yaml ? REPORT_TEMPLATE_YAML : REPORT_TEMPLATE), outFile);
+		RTemplate rTemplate = new RTemplate(Bds.class, (yaml ? REPORT_TEMPLATE_YAML : REPORT_TEMPLATE), outFile);
 
 		//---
 		// Add summary table values
@@ -364,7 +364,7 @@ public class Report {
 		if (debug) Timer.showStdErr("Creating DAG summary script '" + dagJsFile + "'");
 
 		// Create a template
-		RTemplate rTemplate = new RTemplate(BigDataScript.class, DAG_TEMPLATE, dagJsFile);
+		RTemplate rTemplate = new RTemplate(Bds.class, DAG_TEMPLATE, dagJsFile);
 
 		// Add thread information
 		createReport(rTemplate, bdsThread);

@@ -16,7 +16,7 @@ public class Checkpoint extends Statement {
 
 	Expression expr;
 
-	public Checkpoint(BigDataScriptNode parent, ParseTree tree) {
+	public Checkpoint(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

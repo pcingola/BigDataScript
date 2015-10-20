@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
  */
 public class ExpressionDep extends ExpressionTask {
 
-	public ExpressionDep(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionDep(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

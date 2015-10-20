@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.run;
 import java.util.Iterator;
 import java.util.Stack;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerialize;
 import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
@@ -60,7 +60,7 @@ public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
 		return nodeId(checkPointRecoverNodeIdx);
 	}
 
-	public boolean checkpointRecoverReset(BigDataScriptNode statement) {
+	public boolean checkpointRecoverReset(BdsNode statement) {
 		for (checkPointRecoverNodeIdx = 0; checkPointRecoverNodeIdx < size(); checkPointRecoverNodeIdx++) {
 			if (nodeId(checkPointRecoverNodeIdx) == statement.getId()) return true;
 		}
@@ -93,7 +93,7 @@ public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
 	/**
 	 * Add to program counter
 	 */
-	public void pop(BigDataScriptNode bdsNode) {
+	public void pop(BdsNode bdsNode) {
 		int nodeId = nodeIds.pop();
 
 		// Sanity check
@@ -109,7 +109,7 @@ public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
 	/**
 	 * Add to program counter
 	 */
-	public void push(BigDataScriptNode csnode) {
+	public void push(BdsNode csnode) {
 		nodeIds.push(csnode.getId());
 	}
 

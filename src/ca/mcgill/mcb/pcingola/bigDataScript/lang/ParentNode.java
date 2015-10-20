@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
  * 
  * @author pcingola
  */
-public class ParentNode extends BigDataScriptNode {
+public class ParentNode extends BdsNode {
 
 	public ParentNode() {
 		super(null, null);

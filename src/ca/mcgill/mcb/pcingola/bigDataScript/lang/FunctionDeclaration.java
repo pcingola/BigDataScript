@@ -25,7 +25,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	protected Statement statement;
 	protected String signature;
 
-	public FunctionDeclaration(BigDataScriptNode parent, ParseTree tree) {
+	public FunctionDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
@@ -172,7 +172,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
 		if (!returnType.isVoid()) {
-			List<BigDataScriptNode> returnStatements = findNodes(Return.class, true);
+			List<BdsNode> returnStatements = findNodes(Return.class, true);
 			if (returnStatements.isEmpty()) compilerMessages.add(this, "Function has no return statement", MessageType.ERROR);
 		}
 	}

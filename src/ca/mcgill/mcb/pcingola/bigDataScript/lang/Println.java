@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
  */
 public class Println extends Print {
 
-	public Println(BigDataScriptNode parent, ParseTree tree) {
+	public Println(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

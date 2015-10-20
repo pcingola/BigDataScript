@@ -24,7 +24,7 @@ public class ReferenceList extends Reference {
 	protected Expression exprList; // !!!! This should be an arbitrary expression that returns a list
 	protected Expression exprIdx;
 
-	public ReferenceList(BigDataScriptNode parent, ParseTree tree) {
+	public ReferenceList(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

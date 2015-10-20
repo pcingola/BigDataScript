@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.Bds;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 
@@ -211,7 +211,7 @@ public class TestCasesCheckpoint extends TestCasesBase {
 	public void test19_scope_global_global() {
 		Gpr.debug("Test");
 		// Run pipeline and test checkpoint
-		BigDataScript bds = runAndCheckpoint("test/checkpoint_19.bds", "test/checkpoint_19.chp", "ok", "true");
+		Bds bds = runAndCheckpoint("test/checkpoint_19.bds", "test/checkpoint_19.chp", "ok", "true");
 
 		// Get scope names
 		BdsThread bdsThread = bds.getBigDataScriptThread();
@@ -247,7 +247,7 @@ public class TestCasesCheckpoint extends TestCasesBase {
 	public void test23_thread_structure() {
 		Gpr.debug("Test");
 		// Run pipeline and test checkpoint
-		BigDataScript bds = runAndCheckpoint("test/checkpoint_23.bds", "test/checkpoint_23.chp", "luae", "42");
+		Bds bds = runAndCheckpoint("test/checkpoint_23.bds", "test/checkpoint_23.chp", "luae", "42");
 
 		// Get scope names
 		BdsThread bdsThread = bds.getBigDataScriptThread();

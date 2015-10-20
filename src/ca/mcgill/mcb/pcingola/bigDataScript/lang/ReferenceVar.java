@@ -20,7 +20,7 @@ public class ReferenceVar extends Reference {
 	/**
 	 * Create a reference form a string
 	 */
-	public static Expression factory(BigDataScriptNode parent, String var) {
+	public static Expression factory(BdsNode parent, String var) {
 		if (var == null || var.isEmpty()) return null;
 
 		int idxCurly = var.indexOf('{');
@@ -38,7 +38,7 @@ public class ReferenceVar extends Reference {
 		return varRef;
 	}
 
-	public ReferenceVar(BigDataScriptNode parent, ParseTree tree) {
+	public ReferenceVar(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

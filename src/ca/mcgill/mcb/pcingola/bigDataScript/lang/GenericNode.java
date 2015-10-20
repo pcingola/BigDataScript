@@ -9,12 +9,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
  * 
  * @author pcingola
  */
-public class GenericNode extends BigDataScriptNode {
+public class GenericNode extends BdsNode {
 
 	File file;
-	BigDataScriptNode nodes[];
+	BdsNode nodes[];
 
-	public GenericNode(BigDataScriptNode parent, ParseTree tree) {
+	public GenericNode(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

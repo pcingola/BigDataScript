@@ -18,7 +18,7 @@ public class Kill extends Statement {
 
 	Expression taskId;
 
-	public Kill(BigDataScriptNode parent, ParseTree tree) {
+	public Kill(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  *
  * @author pcingola
  */
-public class Args extends BigDataScriptNode {
+public class Args extends BdsNode {
 
 	protected Expression arguments[];
 
@@ -39,7 +39,7 @@ public class Args extends BigDataScriptNode {
 		return argsThis;
 	}
 
-	public Args(BigDataScriptNode parent, ParseTree tree) {
+	public Args(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
@@ -82,7 +82,7 @@ public class Args extends BigDataScriptNode {
 	protected void sanityCheck(CompilerMessages compilerMessages) {
 		// Check that all arguments are expressions
 		int argNum = 1;
-		for (BigDataScriptNode node : arguments) {
+		for (BdsNode node : arguments) {
 			if (!(node instanceof Expression)) compilerMessages.add(node, "Expression expected as argument number " + argNum + " (instead of '" + node.getClass().getSimpleName() + "')", MessageType.ERROR);
 			argNum++;
 		}

@@ -17,7 +17,7 @@ public class ExpressionVariableInitImplicit extends Expression {
 
 	VariableInitImplicit vInit;
 
-	public ExpressionVariableInitImplicit(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionVariableInitImplicit(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

@@ -14,7 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ExpressionAssignment extends ExpressionBinary {
 
-	public ExpressionAssignment(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionAssignment(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

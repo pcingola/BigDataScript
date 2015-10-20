@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ExpressionBitNegation extends ExpressionUnary {
 
-	public ExpressionBitNegation(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionBitNegation(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		op = "~";
 	}

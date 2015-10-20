@@ -14,28 +14,28 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  *
  * @author pcingola
  */
-public class BigDataScriptNodeFactory {
+public class BdsNodeFactory {
 
 	public static boolean debug = false;
-	private static BigDataScriptNodeFactory bigDataScriptNodeFactory = new BigDataScriptNodeFactory();
+	private static BdsNodeFactory bdsNodeFactory = new BdsNodeFactory();
 
 	boolean createFakeIds = false;
 	int nodeNumber = 1, fakeNodeNumber = Integer.MIN_VALUE;
 	String packageName;
-	HashMap<Integer, BigDataScriptNode> nodesById = new HashMap<Integer, BigDataScriptNode>(); // Important note: Node 0 means 'null' (numbering is one-based)
+	HashMap<Integer, BdsNode> nodesById = new HashMap<Integer, BdsNode>(); // Important note: Node 0 means 'null' (numbering is one-based)
 
 	/**
 	 * Get singleton
 	 */
-	public static BigDataScriptNodeFactory get() {
-		return bigDataScriptNodeFactory;
+	public static BdsNodeFactory get() {
+		return bdsNodeFactory;
 	}
 
 	/**
 	 * Reset Factory instance
 	 */
 	public static void reset() {
-		bigDataScriptNodeFactory = new BigDataScriptNodeFactory();
+		bdsNodeFactory = new BdsNodeFactory();
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class BigDataScriptNodeFactory {
 	/**
 	 * Create BigDataScriptNodes
 	 */
-	public final BigDataScriptNode factory(BigDataScriptNode parent, ParseTree tree) {
+	public final BdsNode factory(BdsNode parent, ParseTree tree) {
 		if (tree == null) return null;
 		if (tree instanceof TerminalNode) {
 			if (debug) Gpr.debug("Terminal node: " + tree.getClass().getCanonicalName() + "\n\t\tText: '" + tree.getText() + "'" + "\n\t\tSymbol: " + ((TerminalNode) tree).getSymbol() + "\n\t\tPayload: " + ((TerminalNode) tree).getPayload());
@@ -71,7 +71,7 @@ public class BigDataScriptNodeFactory {
 		String className = className(tree);
 
 		// Create
-		BigDataScriptNode node = factory(className, parent, tree);
+		BdsNode node = factory(className, parent, tree);
 		return node;
 	}
 
@@ -79,7 +79,7 @@ public class BigDataScriptNodeFactory {
 	 * Create BigDataScriptNodes
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public BigDataScriptNode factory(String className, BigDataScriptNode parent, ParseTree tree) {
+	public BdsNode factory(String className, BdsNode parent, ParseTree tree) {
 		if (className.startsWith(packageName())) className = className.substring(packageName().length());
 
 		// This node doesn't do anything, it should not be created (it is a sub-product of the grammar)
@@ -107,14 +107,14 @@ public class BigDataScriptNodeFactory {
 			}
 
 			// Create class
-			Constructor<BigDataScriptNode>[] classConstructors = clazz.getConstructors();
-			Constructor<BigDataScriptNode> classConstructor = classConstructors[0];
+			Constructor<BdsNode>[] classConstructors = clazz.getConstructors();
+			Constructor<BdsNode> classConstructor = classConstructors[0];
 
-			BigDataScriptNode csnode;
+			BdsNode csnode;
 
 			// Number of arguments in constructor?
 			if (classConstructor.getParameterTypes().length == 0) {
-				csnode = (BigDataScriptNode) clazz.newInstance();
+				csnode = (BdsNode) clazz.newInstance();
 			} else if (classConstructor.getParameterTypes().length == 2) {
 				// Two parameter constructor
 				Object[] params = new Object[2];
@@ -141,7 +141,7 @@ public class BigDataScriptNodeFactory {
 	/**
 	 * Get an ID for a node and set 'nodesById'
 	 */
-	protected synchronized int getNextNodeId(BigDataScriptNode node) {
+	protected synchronized int getNextNodeId(BdsNode node) {
 		int id = (!createFakeIds ? nodeNumber++ : fakeNodeNumber++);
 		nodesById.put(id, node); // Update nodesById
 		return id;
@@ -151,14 +151,14 @@ public class BigDataScriptNodeFactory {
 	 * Get node by ID number
 	 * @return Node or null if not found
 	 */
-	public synchronized BigDataScriptNode getNode(int nodeId) {
+	public synchronized BdsNode getNode(int nodeId) {
 		return nodesById.get(nodeId);
 	}
 
 	/**
 	 * Get all nodes
 	 */
-	public synchronized Collection<BigDataScriptNode> getNodes() {
+	public synchronized Collection<BdsNode> getNodes() {
 		return nodesById.values();
 	}
 
@@ -191,16 +191,16 @@ public class BigDataScriptNodeFactory {
 	public String packageName() {
 		if (packageName != null) return packageName;
 
-		packageName = BigDataScriptNode.class.getCanonicalName();
+		packageName = BdsNode.class.getCanonicalName();
 		int len = packageName.length();
-		packageName = packageName.substring(0, len - BigDataScriptNode.class.getSimpleName().length());
+		packageName = packageName.substring(0, len - BdsNode.class.getSimpleName().length());
 		return packageName; // Add package name
 	}
 
 	/**
 	 * Get the 'real node' corresponding to this 'fake node' (this is used during serialization)
 	 */
-	public BigDataScriptNode realNode(BigDataScriptNode fakeNode) {
+	public BdsNode realNode(BdsNode fakeNode) {
 		if (fakeNode == null) return null; // Nothing to do
 		if (!fakeNode.isFake()) return fakeNode; // Real node? don't replace
 
@@ -214,7 +214,7 @@ public class BigDataScriptNodeFactory {
 		// Is it a fake node? => Replace by real node
 		// Find real node based on fake ID
 		int nodeId = -fakeNode.getId(); // Fake IDs are the negative values of real IDs
-		BigDataScriptNode realNode = BigDataScriptNodeFactory.get().getNode(nodeId);
+		BdsNode realNode = BdsNodeFactory.get().getNode(nodeId);
 
 		// Check that node was replaced
 		if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node '" + nodeId + "'");
@@ -226,7 +226,7 @@ public class BigDataScriptNodeFactory {
 		this.createFakeIds = createFakeIds;
 	}
 
-	public void updateId(int oldId, int newId, BigDataScriptNode node) {
+	public void updateId(int oldId, int newId, BdsNode node) {
 		if (debug) Gpr.debug("Update node ID: " + oldId + " -> " + newId + "\t" + node.getClass().getSimpleName());
 		nodesById.remove(oldId);
 		if (newId != 0) nodesById.put(newId, node);

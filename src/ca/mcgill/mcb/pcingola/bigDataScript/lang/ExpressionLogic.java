@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ExpressionLogic extends ExpressionBinary {
 
-	public ExpressionLogic(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionLogic(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

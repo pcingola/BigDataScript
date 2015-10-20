@@ -30,7 +30,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners.ExecutionerType;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.FunctionDeclaration;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Literal;
@@ -58,20 +58,20 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * BigDataScript command line 
+ * bds command line  
  *
  * @author pcingola
  */
-public class BigDataScript {
+public class Bds {
 
-	enum BigDataScriptAction {
+	enum BdsAction {
 		RUN, RUN_CHECKPOINT, INFO_CHECKPOINT, TEST
 	}
 
-	public static final String SOFTWARE_NAME = BigDataScript.class.getSimpleName();
+	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String BUILD = "2015-09-29";
-	public static final String REVISION = "c";
-	public static final String VERSION_MAJOR = "0.9999";
+	public static final String REVISION = "";
+	public static final String VERSION_MAJOR = "0.99999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
@@ -96,7 +96,7 @@ public class BigDataScript {
 	String pidFile; // File to store PIDs
 	String system; // System type
 	String queue; // Queue name
-	BigDataScriptAction bigDataScriptAction;
+	BdsAction bigDataScriptAction;
 	Config config;
 	ProgramUnit programUnit; // Program (parsed nodes)
 	BdsThread bdsThread;
@@ -185,7 +185,7 @@ public class BigDataScript {
 	 */
 	public static void main(String[] args) {
 		// Create BigDataScript object and run it
-		BigDataScript bigDataScript = new BigDataScript(args);
+		Bds bigDataScript = new Bds(args);
 		int exitValue = bigDataScript.run();
 		System.exit(exitValue);
 	}
@@ -239,7 +239,7 @@ public class BigDataScript {
 		return changed;
 	}
 
-	public BigDataScript(String args[]) {
+	public Bds(String args[]) {
 		initDefaults();
 		parse(args);
 		initialize();
@@ -313,7 +313,7 @@ public class BigDataScript {
 		//---
 		if (debug) log("Creating BigDataScript tree.");
 		CompilerMessages.reset();
-		programUnit = (ProgramUnit) BigDataScriptNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
+		programUnit = (ProgramUnit) BdsNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
 		if (debug) log("AST:\n" + programUnit.toString());
 		// Any error messages?
 		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
@@ -455,7 +455,7 @@ public class BigDataScript {
 		Type.reset();
 
 		// Reset node factory
-		BigDataScriptNodeFactory.reset();
+		BdsNodeFactory.reset();
 
 		// Startup message
 		if (verbose || debug) Timer.showStdErr(VERSION);
@@ -824,7 +824,7 @@ public class BigDataScript {
 		if (args.length <= 0) usage(null);
 
 		programArgs = new ArrayList<String>();
-		bigDataScriptAction = BigDataScriptAction.RUN;
+		bigDataScriptAction = BdsAction.RUN;
 
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
@@ -881,7 +881,7 @@ public class BigDataScript {
 					// Checkpoint info
 					if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 					else usage("Option '-i' without checkpoint file argument");
-					bigDataScriptAction = BigDataScriptAction.INFO_CHECKPOINT;
+					bigDataScriptAction = BdsAction.INFO_CHECKPOINT;
 					break;
 
 				case "-l":
@@ -933,7 +933,7 @@ public class BigDataScript {
 					// Checkpoint restore
 					if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 					else usage("Option '-r' without checkpoint file argument");
-					bigDataScriptAction = BigDataScriptAction.RUN_CHECKPOINT;
+					bigDataScriptAction = BdsAction.RUN_CHECKPOINT;
 					break;
 
 				case "-reporthtml":
@@ -954,7 +954,7 @@ public class BigDataScript {
 
 				case "-t":
 				case "-test":
-					bigDataScriptAction = BigDataScriptAction.TEST;
+					bigDataScriptAction = BdsAction.TEST;
 					break;
 
 				case "-upload":
@@ -1229,7 +1229,7 @@ public class BigDataScript {
 		if (err != null) System.err.println("Error: " + err);
 
 		System.out.println(VERSION + "\n");
-		System.err.println("Usage: " + BigDataScript.class.getSimpleName() + " [options] file.bds");
+		System.err.println("Usage: " + Bds.class.getSimpleName() + " [options] file.bds");
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
 		System.err.println("  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.");

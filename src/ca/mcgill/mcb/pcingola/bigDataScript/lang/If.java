@@ -19,7 +19,7 @@ public class If extends Statement {
 	Statement statement;
 	Statement elseStatement;
 
-	public If(BigDataScriptNode parent, ParseTree tree) {
+	public If(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

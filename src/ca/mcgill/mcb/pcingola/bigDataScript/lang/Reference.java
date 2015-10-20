@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  */
 public abstract class Reference extends Expression {
 
-	public Reference(BigDataScriptNode parent, ParseTree tree) {
+	public Reference(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

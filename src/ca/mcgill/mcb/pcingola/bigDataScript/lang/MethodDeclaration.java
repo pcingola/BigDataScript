@@ -13,7 +13,7 @@ public class MethodDeclaration extends FunctionDeclaration {
 
 	protected Type classType;
 
-	public MethodDeclaration(BigDataScriptNode parent, ParseTree tree) {
+	public MethodDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

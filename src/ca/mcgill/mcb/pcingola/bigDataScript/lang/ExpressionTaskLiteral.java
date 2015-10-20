@@ -11,7 +11,7 @@ public class ExpressionTaskLiteral extends ExpressionTask {
 
 	public static final String TASK_STR = "task";
 
-	public ExpressionTaskLiteral(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionTaskLiteral(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

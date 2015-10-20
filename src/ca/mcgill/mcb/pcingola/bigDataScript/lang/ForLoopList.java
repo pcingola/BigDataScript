@@ -33,7 +33,7 @@ public class ForLoopList extends StatementWithScope {
 	String iterableListName;
 	String iterableCountName;
 
-	public ForLoopList(BigDataScriptNode parent, ParseTree tree) {
+	public ForLoopList(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

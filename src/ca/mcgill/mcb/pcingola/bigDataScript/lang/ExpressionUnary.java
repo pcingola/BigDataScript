@@ -15,7 +15,7 @@ public class ExpressionUnary extends Expression {
 	Expression expr;
 	protected String op;
 
-	public ExpressionUnary(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionUnary(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

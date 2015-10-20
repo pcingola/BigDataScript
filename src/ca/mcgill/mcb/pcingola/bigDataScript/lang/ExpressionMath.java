@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ExpressionMath extends ExpressionBinary {
 
-	public ExpressionMath(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionMath(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

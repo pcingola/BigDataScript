@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class Literal extends Expression {
 
-	public Literal(BigDataScriptNode parent, ParseTree tree) {
+	public Literal(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

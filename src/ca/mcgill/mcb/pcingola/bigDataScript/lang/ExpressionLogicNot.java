@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ExpressionLogicNot extends ExpressionUnary {
 
-	public ExpressionLogicNot(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionLogicNot(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		op = "!";
 	}

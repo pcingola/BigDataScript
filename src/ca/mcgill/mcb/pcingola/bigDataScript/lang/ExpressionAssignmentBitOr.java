@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class ExpressionAssignmentBitOr extends ExpressionAssignmentBinary {
 
-	public ExpressionAssignmentBitOr(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionAssignmentBitOr(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

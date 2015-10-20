@@ -26,13 +26,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * Base AST node for BigDataScript language elements
+ * Base AST node for bds language elements
  *
  * @author pcingola
  */
-public abstract class BigDataScriptNode implements BdsSerialize {
+public abstract class BdsNode implements BdsSerialize {
 
-	protected BigDataScriptNode parent;
+	protected BdsNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
 	protected Type returnType;
 
@@ -41,8 +41,8 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 	 * @param parent : Parent node
 	 * @param tree   : Not null if you want the parsing to be performed now
 	 */
-	public BigDataScriptNode(BigDataScriptNode parent, ParseTree tree) {
-		id = BigDataScriptNodeFactory.get().getNextNodeId(this);
+	public BdsNode(BdsNode parent, ParseTree tree) {
+		id = BdsNodeFactory.get().getNextNodeId(this);
 		this.parent = parent;
 
 		// Initialize some defaults
@@ -95,7 +95,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 		if ((returnType != null) //
 				&& (!returnType.canCast(Type.INT) //
 						&& !returnType.canCast(Type.REAL)) //
-				) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
+		) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
 	}
 
 	/**
@@ -122,9 +122,9 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 	/**
 	 * Create a BigDataScriptNode
 	 */
-	final BigDataScriptNode factory(ParseTree tree, int childNum) {
+	final BdsNode factory(ParseTree tree, int childNum) {
 		ParseTree child = childNum >= 0 ? tree.getChild(childNum) : tree;
-		return BigDataScriptNodeFactory.get().factory(this, child);
+		return BdsNodeFactory.get().factory(this, child);
 	}
 
 	/**
@@ -146,14 +146,14 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 	 * @param recurse : If true, perform recursive search
 	 */
 	@SuppressWarnings("rawtypes")
-	public List<BigDataScriptNode> findNodes(Class clazz, boolean recurse) {
+	public List<BdsNode> findNodes(Class clazz, boolean recurse) {
 		HashSet<Object> visited = new HashSet<Object>();
 		return findNodes(clazz, recurse, visited);
 	}
 
 	@SuppressWarnings("rawtypes")
-	List<BigDataScriptNode> findNodes(Class clazz, boolean recurse, Set<Object> visited) {
-		List<BigDataScriptNode> list = new ArrayList<BigDataScriptNode>();
+	List<BdsNode> findNodes(Class clazz, boolean recurse, Set<Object> visited) {
+		List<BdsNode> list = new ArrayList<BdsNode>();
 
 		// Iterate over fields
 		for (Field field : getAllClassFields()) {
@@ -187,17 +187,17 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 	 * @param fieldObj
 	 */
 	@SuppressWarnings("rawtypes")
-	List<BigDataScriptNode> findNodes(Class clazz, Object fieldObj, boolean recurse, Set<Object> visited) {
-		List<BigDataScriptNode> list = new ArrayList<BigDataScriptNode>();
+	List<BdsNode> findNodes(Class clazz, Object fieldObj, boolean recurse, Set<Object> visited) {
+		List<BdsNode> list = new ArrayList<BdsNode>();
 
 		// If it is a BigDataScriptNode then we can recurse into it
-		if ((fieldObj != null) && (fieldObj instanceof BigDataScriptNode)) {
+		if ((fieldObj != null) && (fieldObj instanceof BdsNode)) {
 			// Found the requested type?
-			if ((clazz == null) || (fieldObj.getClass() == clazz)) list.add((BigDataScriptNode) fieldObj);
+			if ((clazz == null) || (fieldObj.getClass() == clazz)) list.add((BdsNode) fieldObj);
 
 			// We can recurse into this field
 			if (recurse) {
-				BigDataScriptNode csnode = ((BigDataScriptNode) fieldObj);
+				BdsNode csnode = ((BdsNode) fieldObj);
 				list.addAll(csnode.findNodes(clazz, recurse, visited));
 			}
 		}
@@ -209,7 +209,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 	 * Find a parent of type 'clazz'
 	 */
 	@SuppressWarnings("rawtypes")
-	protected BigDataScriptNode findParent(Class clazz) {
+	protected BdsNode findParent(Class clazz) {
 		if (this.getClass() == clazz) return this;
 		if (parent != null) return parent.findParent(clazz);
 		return null;
@@ -219,7 +219,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 	 * Find any parent node 'clazz' before any node 'stopAtClass'
 	 */
 	@SuppressWarnings("rawtypes")
-	protected BigDataScriptNode findParent(Class clazz, Class stopAtClass) {
+	protected BdsNode findParent(Class clazz, Class stopAtClass) {
 		if (this.getClass() == clazz) return this;
 		if (this.getClass() == stopAtClass) return null;
 		if (parent != null) return parent.findParent(clazz);
@@ -242,7 +242,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 	@SuppressWarnings("rawtypes")
 	List<Field> getAllClassFields(boolean addParent, boolean addNode, boolean addPrimitive, boolean addClass, boolean addArray, boolean addStatic, boolean addPrivate) {
 		// Top class (if we are looking for 'parent' field, we need to include BigDataScriptNode, otherwise we don't
-		Class topClass = (addParent ? Object.class : BigDataScriptNode.class);
+		Class topClass = (addParent ? Object.class : BdsNode.class);
 
 		// Get all fields for each parent class
 		ArrayList<Field> fields = new ArrayList<Field>();
@@ -256,7 +256,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 					if (addStatic) fields.add(f);
 				} else if (f.getName().equals("parent")) {
 					if (addParent) fields.add(f);
-				} else if (f.getType().getCanonicalName().startsWith(BigDataScriptNodeFactory.get().packageName())) {
+				} else if (f.getType().getCanonicalName().startsWith(BdsNodeFactory.get().packageName())) {
 					if (addNode) fields.add(f);
 				} else if (f.getType().isPrimitive() || (f.getType() == String.class)) {
 					if (addPrimitive) fields.add(f);
@@ -324,7 +324,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 		return getClass().getSimpleName() + ":" + id;
 	}
 
-	public BigDataScriptNode getParent() {
+	public BdsNode getParent() {
 		return parent;
 	}
 
@@ -335,7 +335,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 	 * @return
 	 */
 	public ProgramUnit getProgramUnit() {
-		BigDataScriptNode n = this;
+		BdsNode n = this;
 		while (n.getParent() != null)
 			n = n.getParent();
 		return (ProgramUnit) n;
@@ -499,7 +499,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 		Timer.showStdErr(getClass().getSimpleName() //
 				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
 				+ " : " + msg //
-				);
+		);
 	}
 
 	/**
@@ -562,13 +562,13 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 					if (fieldObj.getClass().isArray()) {
 						int idx = 0;
 						for (Object fieldObjSingle : (Object[]) fieldObj) {
-							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BigDataScriptNode)) {
-								BigDataScriptNode csnode = (BigDataScriptNode) fieldObjSingle;
+							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BdsNode)) {
+								BdsNode csnode = (BdsNode) fieldObjSingle;
 
 								// Is it a fake node? => Replace by real node
 								if (csnode.isFake()) {
 									// Find real node based on fake one
-									BigDataScriptNode node = BigDataScriptNodeFactory.get().realNode(csnode);
+									BdsNode node = BdsNodeFactory.get().realNode(csnode);
 
 									// Replace this array element
 									Array.set(fieldObj, idx, node);
@@ -577,13 +577,13 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 							idx++;
 						}
 					} else {
-						if (fieldObj instanceof BigDataScriptNode) {
-							BigDataScriptNode csnode = (BigDataScriptNode) fieldObj;
+						if (fieldObj instanceof BdsNode) {
+							BdsNode csnode = (BdsNode) fieldObj;
 
 							// Is it a fake node? => Replace by real node
 							if (csnode.isFake()) {
 								// Find real node based on fake one
-								BigDataScriptNode trueCsnode = BigDataScriptNodeFactory.get().realNode(csnode);
+								BdsNode trueCsnode = BdsNodeFactory.get().realNode(csnode);
 
 								// Set field to real node
 								field.set(this, trueCsnode);
@@ -668,8 +668,8 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 				+ "\t" + serializer.serializeSaveValue(parent) //
 				+ "\t" + serializer.serializeSaveValue(returnType) //
 				+ "\t" //
-				);
-		ArrayList<BigDataScriptNode> nodesToRecurse = new ArrayList<BigDataScriptNode>();
+		);
+		ArrayList<BdsNode> nodesToRecurse = new ArrayList<BdsNode>();
 
 		// Iterate over fields
 		for (Field field : getAllClassFields(false)) {
@@ -685,7 +685,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 							out.append(serializer.serializeSaveValue(fieldObjSingle) + ",");
 
 							// Can we recurse into this field?
-							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BigDataScriptNode)) nodesToRecurse.add((BigDataScriptNode) fieldObjSingle);
+							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BdsNode)) nodesToRecurse.add((BdsNode) fieldObjSingle);
 						}
 
 						out.deleteCharAt(out.length() - 1); // Remove last comma
@@ -697,11 +697,11 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 						} else out.append(serializer.serializeSaveValue(fieldObj) + "\t");
 
 						// Can we recurse into this field?
-						if (fieldObj instanceof BigDataScriptNode) nodesToRecurse.add((BigDataScriptNode) fieldObj);
+						if (fieldObj instanceof BdsNode) nodesToRecurse.add((BdsNode) fieldObj);
 					}
 				} else {
 					// Value of this field is null
-					if (fieldClass.getCanonicalName().startsWith(BigDataScriptNodeFactory.get().packageName())) out.append("null\t");
+					if (fieldClass.getCanonicalName().startsWith(BdsNodeFactory.get().packageName())) out.append("null\t");
 					else out.append(serializer.serializeSaveValue(fieldObj) + "\t");
 				}
 			} catch (Exception e) {
@@ -715,7 +715,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 		serializer.add(this);
 
 		// Recurse
-		for (BigDataScriptNode node : nodesToRecurse)
+		for (BdsNode node : nodesToRecurse)
 			if (!serializer.isSerialized(node)) out.append(serializer.serializeSave(node));
 
 		return out.toString();
@@ -765,16 +765,16 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 						int idx = 0;
 						for (Object fieldObjSingle : (Object[]) fieldObj) {
 							// We can recurse into this field
-							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BigDataScriptNode)) {
-								BigDataScriptNode csnode = (BigDataScriptNode) fieldObjSingle;
+							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BdsNode)) {
+								BdsNode csnode = (BdsNode) fieldObjSingle;
 								out.append(csnode.toStringTree(tabs + "\t", field.getName() + "[" + idx + "]") + "\n");
 							}
 							idx++;
 						}
 					} else {
 						// We can recurse into this field
-						if ((fieldObj != null) && (fieldObj instanceof BigDataScriptNode)) {
-							BigDataScriptNode csnode = (BigDataScriptNode) fieldObj;
+						if ((fieldObj != null) && (fieldObj instanceof BdsNode)) {
+							BdsNode csnode = (BdsNode) fieldObj;
 							out.append(csnode.toStringTree(tabs + "\t", field.getName()) + "\n");
 						} else out.append(tabs + field.getType().getSimpleName() + " " + field.getName() + " : " + fieldObj + "\n");
 					}
@@ -817,13 +817,13 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 		typeCheck(scope, compilerMessages);
 
 		// Get all sub-nodes (first level, do not recurse)
-		List<BigDataScriptNode> nodes = findNodes(null, false);
+		List<BdsNode> nodes = findNodes(null, false);
 
 		// Add this node as 'type-checked' to avoid infinite recursion
 		TypeCheckedNodes.get().add(this);
 
 		// Check all sub-nodes
-		for (BigDataScriptNode node : nodes) {
+		for (BdsNode node : nodes) {
 			// Not already type-checked? Go ahead
 			if (!TypeCheckedNodes.get().isTypeChecked(node)) {
 				node.typeChecking(scope, compilerMessages);
@@ -853,7 +853,7 @@ public abstract class BigDataScriptNode implements BdsSerialize {
 	 * Update ID field
 	 */
 	protected void updateId(int newId) {
-		BigDataScriptNodeFactory.get().updateId(id, newId, this);
+		BdsNodeFactory.get().updateId(id, newId, this);
 		id = newId;
 	}
 

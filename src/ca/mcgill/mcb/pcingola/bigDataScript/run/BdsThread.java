@@ -18,7 +18,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioner;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Checkpoint;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
@@ -176,7 +176,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Create a checkpoint file
 	 */
-	public String checkpoint(BigDataScriptNode node) {
+	public String checkpoint(BdsNode node) {
 		// Skip checkpoint file?
 		if (Config.get().isNoCheckpoint()) return "";
 
@@ -257,7 +257,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Running in debug mode: This method is invoked right before running 'node'
 	 */
-	void debug(BigDataScriptNode node) {
+	void debug(BdsNode node) {
 		if (node.isStopDebug()) {
 			switch (debugMode) {
 			case RUN:
@@ -288,7 +288,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Show debug 'step' options
 	 */
-	void debugStep(BigDataScriptNode node) {
+	void debugStep(BdsNode node) {
 		// Show current line
 		String prg = node.toString();
 		if (prg.indexOf("\n") > 0) prg = "\n" + Gpr.prependEachLine("\t", prg);
@@ -369,7 +369,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Do we need to update 'step over' reference PC
 	 */
-	void debugUpdatePc(BigDataScriptNode node) {
+	void debugUpdatePc(BdsNode node) {
 		if (debugStepOverPc == null //
 				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
 				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
@@ -381,7 +381,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Show a fatal error
 	 */
-	public void fatalError(BigDataScriptNode bdsnode, String message) {
+	public void fatalError(BdsNode bdsnode, String message) {
 		runState = RunState.FATAL_ERROR;
 		String filePos = "";
 		if (bdsnode.getFileNameCanonical() != null) filePos = bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + (bdsnode.getCharPosInLine() + 1) + ". ";
@@ -406,7 +406,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Show a fatal error
 	 */
-	public void fatalError(BigDataScriptNode bdsnode, Throwable t) {
+	public void fatalError(BdsNode bdsnode, Throwable t) {
 		if (runState == RunState.FATAL_ERROR) return;
 		fatalError(bdsnode, t.getMessage());
 
@@ -720,7 +720,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Create a new scope
 	 */
-	public void newScope(BigDataScriptNode node) {
+	public void newScope(BdsNode node) {
 		scope = new Scope(scope, node);
 	}
 
@@ -743,11 +743,11 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 	public void print() {
 		// Create a list with program file and all included files
-		List<BigDataScriptNode> nodeWithFiles = statement.findNodes(StatementInclude.class, true);
+		List<BdsNode> nodeWithFiles = statement.findNodes(StatementInclude.class, true);
 		nodeWithFiles.add(0, statement);
 
 		// Show code
-		for (BigDataScriptNode bwf : nodeWithFiles) {
+		for (BdsNode bwf : nodeWithFiles) {
 			System.out.println("Program file: '" + bwf.getFileName() + "'");
 			printCode(((BlockWithFile) bwf).getFileText());
 		}
@@ -759,7 +759,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		// Show scopes
 		for (Scope scope = getScope(); scope != null; scope = scope.getParent()) {
 			if (!scope.isEmpty()) {
-				BigDataScriptNode node = scope.getNode();
+				BdsNode node = scope.getNode();
 
 				String scopeInfo = "";
 				if ((node != null) && (scope.getNode().getFileName() != null)) scopeInfo = scope.getNode().getFileName() + ":" + scope.getNode().getLineNum();
@@ -971,7 +971,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Run this node
 	 */
-	public void run(BigDataScriptNode node) {
+	public void run(BdsNode node) {
 		// Before node execution
 		if (!isCheckpointRecover()) runBegin(node);
 
@@ -998,7 +998,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Run before running the node
 	 */
-	protected void runBegin(BigDataScriptNode node) {
+	protected void runBegin(BdsNode node) {
 		// Need a new scope?
 		if (node.isNeedsScope()) newScope(node);
 		getPc().push(node);
@@ -1007,7 +1007,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Run after running the node
 	 */
-	protected void runEnd(BigDataScriptNode node) {
+	protected void runEnd(BdsNode node) {
 		getPc().pop(node);
 
 		// Restore old scope?
@@ -1218,7 +1218,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	/**
 	 * Should we run this node?
 	 */
-	public boolean shouldRun(BigDataScriptNode node) {
+	public boolean shouldRun(BdsNode node) {
 		// Should we run?
 		switch (runState) {
 		case OK:
@@ -1275,16 +1275,16 @@ public class BdsThread extends Thread implements BdsSerialize {
 	public String stackTrace() {
 
 		// Get all nodes and hash them by ID
-		List<BigDataScriptNode> nodes = statement.findNodes(null, true);
-		HashMap<Integer, BigDataScriptNode> nodesById = new HashMap<Integer, BigDataScriptNode>();
-		for (BigDataScriptNode node : nodes) {
+		List<BdsNode> nodes = statement.findNodes(null, true);
+		HashMap<Integer, BdsNode> nodesById = new HashMap<Integer, BdsNode>();
+		for (BdsNode node : nodes) {
 			nodesById.put(node.getId(), node);
 		}
 		nodesById.put(statement.getId(), statement);
 
 		// Collect source code
 		HashMap<String, String[]> fileName2codeLines = new HashMap<String, String[]>();
-		for (BigDataScriptNode node : nodesById.values()) {
+		for (BdsNode node : nodesById.values()) {
 			if (node instanceof BlockWithFile) {
 				BlockWithFile bwf = (BlockWithFile) node;
 				String fileName = node.getFileNameCanonical();
@@ -1297,7 +1297,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		StringBuilder sb = new StringBuilder();
 		String linePrev = "";
 		for (int nodeId : pc) {
-			BigDataScriptNode node = nodesById.get(nodeId);
+			BdsNode node = nodesById.get(nodeId);
 			if (node == null) continue;
 
 			String fileName = node.getFileName();

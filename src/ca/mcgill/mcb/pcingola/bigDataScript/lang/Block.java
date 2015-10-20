@@ -15,7 +15,7 @@ public class Block extends StatementWithScope {
 
 	protected Statement statements[];
 
-	public Block(BigDataScriptNode parent, ParseTree tree) {
+	public Block(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
@@ -32,7 +32,7 @@ public class Block extends StatementWithScope {
 	protected void parse(ParseTree tree) {
 		ArrayList<Statement> stats = new ArrayList<Statement>();
 		for (int i = 0; i < tree.getChildCount(); i++) {
-			BigDataScriptNode node = factory(tree, i);
+			BdsNode node = factory(tree, i);
 			if (node != null) stats.add((Statement) node);
 		}
 

@@ -18,7 +18,7 @@ public class LiteralString extends Literal {
 	String value; // If it is a simple literal, we use this
 	InterpolateVars interpolateVars;
 
-	public LiteralString(BigDataScriptNode parent, ParseTree tree) {
+	public LiteralString(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

@@ -18,7 +18,7 @@ public class LiteralList extends Literal {
 
 	Expression values[];
 
-	public LiteralList(BigDataScriptNode parent, ParseTree tree) {
+	public LiteralList(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
@@ -43,7 +43,7 @@ public class LiteralList extends Literal {
 		// Calculate baseType
 		//---
 		Type baseType = null;
-		for (BigDataScriptNode node : values) {
+		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			Type typeExpr = expr.returnType(scope);
 
@@ -75,7 +75,7 @@ public class LiteralList extends Literal {
 		ArrayList list = new ArrayList(values.length);
 		Type baseType = baseType();
 
-		for (BigDataScriptNode node : values) {
+		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			bdsThread.run(expr); // Evaluate expression
 
@@ -89,7 +89,7 @@ public class LiteralList extends Literal {
 
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
-		for (BigDataScriptNode csnode : values)
+		for (BdsNode csnode : values)
 			if (!(csnode instanceof Expression)) compilerMessages.add(csnode, "Expecting expression instead of " + csnode.getClass().getSimpleName(), MessageType.ERROR);
 	}
 
@@ -112,7 +112,7 @@ public class LiteralList extends Literal {
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		Type baseType = ((TypeList) returnType).getBaseType();
 
-		for (BigDataScriptNode node : values) {
+		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			Type typeExpr = expr.returnType(scope);
 

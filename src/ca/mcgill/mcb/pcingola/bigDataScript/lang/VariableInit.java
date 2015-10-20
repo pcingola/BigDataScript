@@ -16,13 +16,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.ScopeSymbol;
  *
  * @author pcingola
  */
-public class VariableInit extends BigDataScriptNode {
+public class VariableInit extends BdsNode {
 
 	String varName;
 	Expression expression;
 	String help;
 
-	public static VariableInit get(BigDataScriptNode parent, String name, Expression expression) {
+	public static VariableInit get(BdsNode parent, String name, Expression expression) {
 		VariableInit vi = new VariableInit(null, null);
 		vi.parent = parent;
 		vi.varName = name;
@@ -43,7 +43,7 @@ public class VariableInit extends BigDataScriptNode {
 		return vi;
 	}
 
-	public VariableInit(BigDataScriptNode parent, ParseTree tree) {
+	public VariableInit(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

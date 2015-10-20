@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ForCondition extends ExpressionWrapper {
 
-	public ForCondition(BigDataScriptNode parent, ParseTree tree) {
+	public ForCondition(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

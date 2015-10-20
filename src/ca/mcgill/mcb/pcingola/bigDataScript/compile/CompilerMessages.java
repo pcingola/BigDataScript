@@ -10,7 +10,7 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessage.MessageType;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.GenericNode;
 
 /**
@@ -54,7 +54,7 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 		messages = new HashMap<String, CompilerMessage>();
 	}
 
-	public void add(BigDataScriptNode node, String message, MessageType type) {
+	public void add(BdsNode node, String message, MessageType type) {
 		CompilerMessageBdsNode cm = CompilerMessageBdsNode.createCompilerMessageBdsNode(node, message, type);
 		String key = cm.toString();
 		if (!messages.containsKey(key)) messages.put(key, cm);
@@ -84,7 +84,7 @@ public class CompilerMessages implements Iterable<CompilerMessage> {
 
 	/** only for special cases, returns false */
 	public boolean addError(String msg) {
-		add((BigDataScriptNode) null, msg, MessageType.ERROR);
+		add((BdsNode) null, msg, MessageType.ERROR);
 		return false;
 	}
 

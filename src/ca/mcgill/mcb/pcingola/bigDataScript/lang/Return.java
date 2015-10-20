@@ -17,7 +17,7 @@ public class Return extends Statement {
 
 	Expression expr;
 
-	public Return(BigDataScriptNode parent, ParseTree tree) {
+	public Return(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

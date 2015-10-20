@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ExpressionMinus extends ExpressionMath {
 
-	public ExpressionMinus(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionMinus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

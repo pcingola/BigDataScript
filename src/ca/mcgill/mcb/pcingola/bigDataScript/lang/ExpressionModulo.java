@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ExpressionModulo extends ExpressionMath {
 
-	public ExpressionModulo(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionModulo(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class ExpressionLt extends ExpressionCompare {
 
-	public ExpressionLt(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionLt(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

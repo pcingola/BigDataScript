@@ -18,7 +18,7 @@ public class Pre extends ExpressionUnary {
 
 	PrePostOperation operation;
 
-	public Pre(BigDataScriptNode parent, ParseTree tree) {
+	public Pre(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
@@ -26,7 +26,7 @@ public class Pre extends ExpressionUnary {
 	protected void parse(ParseTree tree) {
 		operation = PrePostOperation.parse(tree.getChild(0).getText());
 
-		BigDataScriptNode node = factory(tree, 1);
+		BdsNode node = factory(tree, 1);
 		if ((node instanceof Reference)) expr = (Expression) node;
 	}
 

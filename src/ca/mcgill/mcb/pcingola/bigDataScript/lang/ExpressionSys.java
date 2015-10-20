@@ -32,7 +32,7 @@ public class ExpressionSys extends Expression {
 	/**
 	 * Create a new sys command
 	 */
-	public static ExpressionSys get(BigDataScriptNode parent, String commands, int lineNum, int charPosInLine) {
+	public static ExpressionSys get(BdsNode parent, String commands, int lineNum, int charPosInLine) {
 		ExpressionSys sys = new ExpressionSys(parent, null);
 
 		sys.lineNum = lineNum;
@@ -49,7 +49,7 @@ public class ExpressionSys extends Expression {
 		return sysId++;
 	}
 
-	public ExpressionSys(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionSys(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

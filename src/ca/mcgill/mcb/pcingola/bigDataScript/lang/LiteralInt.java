@@ -15,7 +15,7 @@ public class LiteralInt extends Literal {
 
 	long value;
 
-	public LiteralInt(BigDataScriptNode parent, ParseTree tree) {
+	public LiteralInt(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

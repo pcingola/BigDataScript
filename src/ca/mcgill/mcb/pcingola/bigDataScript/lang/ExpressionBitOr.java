@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
  */
 public class ExpressionBitOr extends ExpressionBit {
 
-	public ExpressionBitOr(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionBitOr(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

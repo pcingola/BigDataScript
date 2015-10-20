@@ -2,7 +2,7 @@ package ca.mcgill.mcb.pcingola.bigDataScript.compile;
 
 import java.util.HashSet;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNode;
 
 /**
  * Have nodes been type-checked?
@@ -17,7 +17,7 @@ public class TypeCheckedNodes {
 		return typeCheckedNodes;
 	}
 
-	HashSet<BigDataScriptNode> done;
+	HashSet<BdsNode> done;
 
 	private TypeCheckedNodes() {
 		reset();
@@ -27,14 +27,14 @@ public class TypeCheckedNodes {
 	 * Add a node to the type checked set
 	 * @param node
 	 */
-	public void add(BigDataScriptNode node) {
+	public void add(BdsNode node) {
 		done.add(node);
 	}
 
 	/**
 	 * Has 'node' been type-checked?
 	 */
-	public boolean isTypeChecked(BigDataScriptNode node) {
+	public boolean isTypeChecked(BdsNode node) {
 		return done.contains(node);
 	}
 
@@ -42,7 +42,7 @@ public class TypeCheckedNodes {
 	 * Reset all data
 	 */
 	public void reset() {
-		done = new HashSet<BigDataScriptNode>();
+		done = new HashSet<BdsNode>();
 	}
 
 }

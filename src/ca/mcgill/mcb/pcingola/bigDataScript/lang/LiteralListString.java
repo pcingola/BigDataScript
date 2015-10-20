@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class LiteralListString extends LiteralList {
 
-	public LiteralListString(BigDataScriptNode parent, ParseTree tree) {
+	public LiteralListString(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		returnType = TypeList.get(Type.STRING);
 	}

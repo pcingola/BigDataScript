@@ -30,7 +30,7 @@ public class TypeClass extends Type {
 		return type;
 	}
 
-	private TypeClass(BigDataScriptNode parent, ParseTree tree) {
+	private TypeClass(BdsNode parent, ParseTree tree) {
 		super();
 		primitiveType = PrimitiveType.CLASS;
 	}

@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
  */
 public class StatementExpr extends ExpressionWrapper {
 
-	public StatementExpr(BigDataScriptNode parent, ParseTree tree) {
+	public StatementExpr(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

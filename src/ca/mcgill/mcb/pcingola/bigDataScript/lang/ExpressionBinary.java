@@ -14,7 +14,7 @@ public class ExpressionBinary extends Expression {
 	Expression left;
 	Expression right;
 
-	public ExpressionBinary(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionBinary(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

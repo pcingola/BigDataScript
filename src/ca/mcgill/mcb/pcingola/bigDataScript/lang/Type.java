@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.serialize.BdsSerializer;
  *
  * @author pcingola
  */
-public class Type extends BigDataScriptNode implements Comparable<Type> {
+public class Type extends BdsNode implements Comparable<Type> {
 
 	protected static HashMap<String, Type> types = new HashMap<String, Type>();
 
@@ -98,7 +98,7 @@ public class Type extends BigDataScriptNode implements Comparable<Type> {
 		// classScope = new Scope(null, null);
 	}
 
-	protected Type(BigDataScriptNode parent, ParseTree tree) {
+	protected Type(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

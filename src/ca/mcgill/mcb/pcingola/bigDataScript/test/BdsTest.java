@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.Bds;
 import ca.mcgill.mcb.pcingola.bigDataScript.compile.CompilerMessages;
 import ca.mcgill.mcb.pcingola.bigDataScript.osCmd.TeeOutputStream;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
@@ -29,7 +29,7 @@ public class BdsTest {
 	public String argsAfter[]; // Command line arguments (after program name)
 	public String fileName;
 	public CompilerMessages compilerMessages;
-	public BigDataScript bds;
+	public Bds bds;
 	public Integer exitCode;
 	public ByteArrayOutputStream captureStdout, captureStderr; // Capture STDOUT & STDERR
 	public TeeOutputStream teeStdout, teeStderr;
@@ -77,7 +77,7 @@ public class BdsTest {
 		args = l.toArray(new String[0]);
 
 		// Create command
-		bds = new BigDataScript(args);
+		bds = new Bds(args);
 		bds.setStackCheck(true);
 	}
 
@@ -298,7 +298,7 @@ public class BdsTest {
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	public BigDataScript runAndCheckpoint(String checkpointFileName, String varName, Object expectedValue, Runnable runBeforeRecover) {
+	public Bds runAndCheckpoint(String checkpointFileName, String varName, Object expectedValue, Runnable runBeforeRecover) {
 		// Run
 		run();
 		checkCompileOk();
@@ -316,7 +316,7 @@ public class BdsTest {
 		if (debug) Gpr.debug("CheckPoint file name : " + chpFileName);
 		String args2[] = { "-r", chpFileName };
 		String args2v[] = { "-v", "-r", chpFileName };
-		BigDataScript bigDataScript2 = new BigDataScript(verbose ? args2v : args2);
+		Bds bigDataScript2 = new Bds(verbose ? args2v : args2);
 		bigDataScript2.setStackCheck(true);
 		bigDataScript2.run();
 

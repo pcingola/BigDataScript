@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.RunState;
  */
 public class Break extends Statement {
 
-	public Break(BigDataScriptNode parent, ParseTree tree) {
+	public Break(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

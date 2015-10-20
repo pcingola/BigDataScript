@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class Error extends Print {
 
-	public Error(BigDataScriptNode parent, ParseTree tree) {
+	public Error(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

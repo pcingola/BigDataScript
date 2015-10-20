@@ -13,13 +13,13 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
  */
 public class Post extends Pre {
 
-	public Post(BigDataScriptNode parent, ParseTree tree) {
+	public Post(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		BigDataScriptNode node = factory(tree, 0);
+		BdsNode node = factory(tree, 0);
 		if (node instanceof Reference) expr = (Expression) node;
 
 		operation = PrePostOperation.parse(tree.getChild(1).getText());

@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.DebugMode;
  */
 public class Breakpoint extends Print {
 
-	public Breakpoint(BigDataScriptNode parent, ParseTree tree) {
+	public Breakpoint(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

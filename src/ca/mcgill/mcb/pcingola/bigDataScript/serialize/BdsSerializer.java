@@ -18,10 +18,10 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.Bds;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BlockWithFile;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrePostOperation;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.PrimitiveType;
@@ -300,7 +300,7 @@ public class BdsSerializer {
 			String arrayVal = getNextField();
 			if (arrayVal != null && !arrayVal.isEmpty()) {
 				for (String nodeNum : arrayVal.split(",")) {
-					BigDataScriptNode csnode = BigDataScriptNodeFactory.get().factory(componentType.getCanonicalName(), null, null);
+					BdsNode csnode = BdsNodeFactory.get().factory(componentType.getCanonicalName(), null, null);
 					csnode.setFakeId(parseNodeId(nodeNum));
 					list.add(csnode);
 				}
@@ -313,8 +313,8 @@ public class BdsSerializer {
 		else if (fieldClass == PrimitiveType.class) return PrimitiveType.valueOf(getNextField());
 		else if (fieldClass.getCanonicalName().startsWith(Type.class.getCanonicalName())) {
 			return getNextFieldType();
-		} else if (fieldClass.getCanonicalName().startsWith(BigDataScriptNodeFactory.get().packageName())) {
-			BigDataScriptNode csnode = BigDataScriptNodeFactory.get().factory(fieldClass.getCanonicalName(), null, null);
+		} else if (fieldClass.getCanonicalName().startsWith(BdsNodeFactory.get().packageName())) {
+			BdsNode csnode = BdsNodeFactory.get().factory(fieldClass.getCanonicalName(), null, null);
 			csnode.setFakeId(getNextFieldNodeId());
 			return csnode;
 		} else if (fieldClass == Scope.class) return null; // Nothing to do (this only happens in ProgramUnit class
@@ -335,7 +335,7 @@ public class BdsSerializer {
 	 */
 	List<BdsThread> parseLines(String lines[], String classNameFilter) {
 		// Set fake IDs on
-		BigDataScriptNodeFactory.get().setCreateFakeIds(true);
+		BdsNodeFactory.get().setCreateFakeIds(true);
 
 		// Initialize
 		ArrayList<BdsThread> bdsThreads = new ArrayList<BdsThread>();
@@ -362,10 +362,10 @@ public class BdsSerializer {
 				//---
 				// Create class (before parsing it)
 				//---
-				if (clazz.equals(BigDataScript.class.getSimpleName())) {
+				if (clazz.equals(Bds.class.getSimpleName())) {
 					// Check version number
 					double version = Gpr.parseDoubleSafe(fields[1]);
-					double versionThis = Gpr.parseDoubleSafe(BigDataScript.VERSION_MAJOR);
+					double versionThis = Gpr.parseDoubleSafe(Bds.VERSION_MAJOR);
 					if (versionThis < version) throw new RuntimeException("Version numbers do not match.\n\tThis version: " + versionThis + "\n\tFile's version: " + version);
 					bdsSerialize = null; // Nothing to parse
 				} else if (clazz.equals(BdsThread.class.getSimpleName())) {
@@ -402,8 +402,8 @@ public class BdsSerializer {
 					bdsSerialize = new Task();
 				} else {
 					// Everything else has been parsed, this must be a BigDataScriptNode
-					String className = BigDataScriptNodeFactory.get().packageName() + clazz;
-					bdsSerialize = BigDataScriptNodeFactory.get().factory(className, null, null);
+					String className = BdsNodeFactory.get().packageName() + clazz;
+					bdsSerialize = BdsNodeFactory.get().factory(className, null, null);
 				}
 
 				//---
@@ -434,9 +434,9 @@ public class BdsSerializer {
 					} else if (bdsSerialize instanceof Task) {
 						Task task = (Task) bdsSerialize;
 						currBdsThread.addUnserialized(task);
-					} else if (bdsSerialize instanceof BigDataScriptNode) {
+					} else if (bdsSerialize instanceof BdsNode) {
 						// UnSerialize
-						BigDataScriptNode csnode = (BigDataScriptNode) bdsSerialize;
+						BdsNode csnode = (BdsNode) bdsSerialize;
 						serializedNodes.add(csnode);
 					}
 				}
@@ -444,13 +444,13 @@ public class BdsSerializer {
 		}
 
 		// Set fake IDs off
-		BigDataScriptNodeFactory.get().setCreateFakeIds(false);
+		BdsNodeFactory.get().setCreateFakeIds(false);
 
 		//---
 		// Replace fake nodes by real nodes
 		//---
 		for (BdsSerialize bdsNode : serializedNodes)
-			if (bdsNode != null && bdsNode instanceof BigDataScriptNode) ((BigDataScriptNode) bdsNode).replaceFake();
+			if (bdsNode != null && bdsNode instanceof BdsNode) ((BdsNode) bdsNode).replaceFake();
 
 		for (Scope scope : scopes)
 			scope.replaceFake();
@@ -519,7 +519,7 @@ public class BdsSerializer {
 			PrintStream outFile = new PrintStream(new GZIPOutputStream(new FileOutputStream(fileName)));
 
 			// Save version
-			outFile.print(BigDataScript.class.getSimpleName() + "\t" + BigDataScript.VERSION_SHORT + "\n");
+			outFile.print(Bds.class.getSimpleName() + "\t" + Bds.VERSION_SHORT + "\n");
 
 			// Save main thread
 			outFile.print(this.serializeSave(bdsThread));
@@ -546,7 +546,7 @@ public class BdsSerializer {
 
 		if (value instanceof Type) return TYPE_IDENTIFIER + ((Type) value).toStringSerializer();
 
-		if (value instanceof BigDataScriptNode) return NODE_IDENTIFIER + ((BigDataScriptNode) value).getId();
+		if (value instanceof BdsNode) return NODE_IDENTIFIER + ((BdsNode) value).getId();
 
 		if (value instanceof String) {
 			String escapedStr = StringEscapeUtils.escapeJava(value.toString());

@@ -17,7 +17,7 @@ public class ExpressionList extends Expression {
 
 	Expression expressions[];
 
-	public ExpressionList(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionList(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

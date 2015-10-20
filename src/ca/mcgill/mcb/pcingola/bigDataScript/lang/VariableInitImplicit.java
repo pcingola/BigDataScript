@@ -20,7 +20,7 @@ public class VariableInitImplicit extends VariableInit {
 		return vi;
 	}
 
-	public VariableInitImplicit(BigDataScriptNode parent, ParseTree tree) {
+	public VariableInitImplicit(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

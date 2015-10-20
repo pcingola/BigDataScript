@@ -7,9 +7,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
  *
  * @author pcingola
  */
-public class Statement extends BigDataScriptNode {
+public class Statement extends BdsNode {
 
-	public Statement(BigDataScriptNode parent, ParseTree tree) {
+	public Statement(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

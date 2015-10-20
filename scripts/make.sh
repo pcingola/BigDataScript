@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # Delete old jar
-if [ -e $HOME/.bds/BigDataScript.jar ] 
+if [ -e $HOME/.bds/bds.jar ] 
 then
-  rm -f $HOME/.bds/BigDataScript.jar
+  rm -f $HOME/.bds/bds.jar
 fi
 
 # Make sure 'bin' dir exists
@@ -25,11 +25,11 @@ go build
 go fmt
 
 # Build binay (go executable + JAR file)
-cat bds $HOME/.bds/BigDataScript.jar > bds.bin
+cat bds $HOME/.bds/bds.jar > bds.bin
 mv bds.bin bds
 chmod a+x bds
 
 # Remove JAR file
-rm $HOME/.bds/BigDataScript.jar
+rm $HOME/.bds/bds.jar
 
 cd -

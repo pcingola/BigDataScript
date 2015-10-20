@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.FunctionCallThread;
  */
 public class ExpressionParallel extends ExpressionTask {
 
-	public ExpressionParallel(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionParallel(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

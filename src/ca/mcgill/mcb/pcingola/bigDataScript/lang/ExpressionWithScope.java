@@ -14,7 +14,7 @@ public class ExpressionWithScope extends Expression {
 	protected Scope scope; // Scope required for this statement. Note: This is not a scope used at run-time, this is just a used to hold the symbols that will be required when running
 	boolean needsScope; // Do we really need a scope? If a scope is requested, but we don't add new symbols, then we don't really need it (e.g. while loop without any new variables)
 
-	public ExpressionWithScope(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionWithScope(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

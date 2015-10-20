@@ -19,7 +19,7 @@ public class While extends Statement {
 	Expression condition;
 	Statement statement;
 
-	public While(BigDataScriptNode parent, ParseTree tree) {
+	public While(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

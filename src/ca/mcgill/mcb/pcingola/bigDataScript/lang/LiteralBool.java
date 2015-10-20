@@ -15,7 +15,7 @@ public class LiteralBool extends Literal {
 
 	boolean value;
 
-	public LiteralBool(BigDataScriptNode parent, ParseTree tree) {
+	public LiteralBool(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

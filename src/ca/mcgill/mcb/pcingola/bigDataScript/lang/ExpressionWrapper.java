@@ -15,7 +15,7 @@ public class ExpressionWrapper extends Expression {
 
 	Expression expression;
 
-	public ExpressionWrapper(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionWrapper(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

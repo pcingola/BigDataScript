@@ -32,7 +32,7 @@ const EXITCODE_TIMEOUT = 2
 const JAVA_CMD = "java"
 const JAVA_MEM = "-Xmx2G"
 const JAVA_NATIVE_LIB = "-Djava.library.path="
-const JAVA_BDS_CLASS = "ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript"
+const JAVA_BDS_CLASS = "ca.mcgill.mcb.pcingola.bigDataScript.Bds"
 
 const BDS_NATIVE_LIB_DIR = "lib"
 
@@ -58,10 +58,10 @@ type BdsExec struct {
 }
 
 /*
-	Invoke BigDataScript java program
+	Invoke bds java program
 
 	WARNING:
-		It is assumed that BigDataScript.jar is in the same executable binary as 'bds'
+		It is assumed that bds.jar is in the same executable binary as 'bds'
 
 		This is actually a nice hack used to distribute only one file. Since JAR files
 		are actually ZIP files and ZIP files are indexed from the end of the file, you can
@@ -70,7 +70,7 @@ type BdsExec struct {
 
 		Idea and implementation of this hack: Hernan Gonzalez
 */
-func (be *BdsExec) BigDataScript() int {
+func (be *BdsExec) Bds() int {
 	// Create a taskLoggerFile (temp file based on pid number)
 	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid())
 	pidTmpFile, err := tmpfile.TempFile(prefix)
@@ -587,7 +587,7 @@ func (be *BdsExec) Usage(msg string) {
 	// Show help and exit
 	fmt.Fprintf(os.Stderr, "Usage: bds command\n\n")
 	fmt.Fprintf(os.Stderr, "Commands:\n\n")
-	fmt.Fprintf(os.Stderr, "  default :  Execute BigDataScript Java program (compiler and interpreter)\n")
+	fmt.Fprintf(os.Stderr, "  default :  Execute bds Java program (compiler and interpreter)\n")
 	fmt.Fprintf(os.Stderr, "             Syntax:\n")
 	fmt.Fprintf(os.Stderr, "                 bds [options] program.bds\n\n")
 	fmt.Fprintf(os.Stderr, "  exec    :  Execute shell scripts and:\n")

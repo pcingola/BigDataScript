@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
  */
 public class ExpressionUnaryPlus extends ExpressionUnaryMinus {
 
-	public ExpressionUnaryPlus(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionUnaryPlus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		op = "+";
 	}

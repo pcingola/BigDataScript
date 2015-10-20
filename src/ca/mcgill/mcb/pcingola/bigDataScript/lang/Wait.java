@@ -16,7 +16,7 @@ public class Wait extends Statement {
 
 	Expression taskId;
 
-	public Wait(BigDataScriptNode parent, ParseTree tree) {
+	public Wait(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

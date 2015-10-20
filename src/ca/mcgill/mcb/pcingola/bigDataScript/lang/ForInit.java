@@ -14,7 +14,7 @@ public class ForInit extends Statement {
 	VarDeclaration varDeclaration;
 	Expression expressions[];
 
-	public ForInit(BigDataScriptNode parent, ParseTree tree) {
+	public ForInit(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

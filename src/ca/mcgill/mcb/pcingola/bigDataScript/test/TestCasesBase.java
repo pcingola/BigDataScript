@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import org.junit.Before;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.BigDataScript;
+import ca.mcgill.mcb.pcingola.bigDataScript.Bds;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThreads;
@@ -113,14 +113,14 @@ public class TestCasesBase {
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	BigDataScript runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue) {
+	Bds runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue) {
 		return runAndCheckpoint(fileName, checkpointFileName, varname, expectedValue, null);
 	}
 
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	BigDataScript runAndCheckpoint(String fileName, String checkpointFileName, String varName, Object expectedValue, Runnable runBeforeRecover) {
+	Bds runAndCheckpoint(String fileName, String checkpointFileName, String varName, Object expectedValue, Runnable runBeforeRecover) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		return bdsTest.runAndCheckpoint(checkpointFileName, varName, expectedValue, runBeforeRecover);
 	}

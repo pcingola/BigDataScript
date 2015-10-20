@@ -16,7 +16,7 @@ public class Print extends Statement {
 
 	Expression expr;
 
-	public Print(BigDataScriptNode parent, ParseTree tree) {
+	public Print(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

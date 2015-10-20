@@ -1,5 +1,5 @@
 /*
-	Execute BigDataScript:
+	Execute bds:
 
 	This program allows different "commands"
 	Commands:
@@ -19,7 +19,7 @@
 
 	Examples:
 
-	This will load, compile and execute 'myprogram.bds' (BigDataScript program)
+	This will load, compile and execute 'myprogram.bds' (bds program)
 		$ bds myprogram.bds
 
 	This will execute "ls -al", redirect standard output and standard error
@@ -76,8 +76,8 @@ func main() {
 		}
 	}
 
-	// Execute BigDataScript.jar
-	os.Exit(bdsexec.BigDataScript())
+	// Execute Bds.jar
+	os.Exit(bdsexec.Bds())
 }
 
 // A function used for testing

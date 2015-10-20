@@ -84,7 +84,7 @@ public class InterpolateVars extends Literal {
 		return sb.toString();
 	}
 
-	public InterpolateVars(BigDataScriptNode parent, ParseTree tree) {
+	public InterpolateVars(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
  *
  * @author pcingola
  */
-public class Parameters extends BigDataScriptNode implements Comparable<Parameters> {
+public class Parameters extends BdsNode implements Comparable<Parameters> {
 
 	VarDeclaration varDecl[];
 
@@ -39,7 +39,7 @@ public class Parameters extends BigDataScriptNode implements Comparable<Paramete
 		return params;
 	}
 
-	public Parameters(BigDataScriptNode parent, ParseTree tree) {
+	public Parameters(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

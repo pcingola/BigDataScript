@@ -16,7 +16,7 @@ public class Help extends Statement {
 
 	String helpString;
 
-	public Help(BigDataScriptNode parent, ParseTree tree) {
+	public Help(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

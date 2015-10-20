@@ -22,7 +22,7 @@ public class BlockWithFile extends Block {
 	protected String fileName;
 	protected String fileText;
 
-	public BlockWithFile(BigDataScriptNode parent, ParseTree tree) {
+	public BlockWithFile(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

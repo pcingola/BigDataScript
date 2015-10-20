@@ -1,6 +1,6 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.compile;
 
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.GenericNode;
 
 /**
@@ -10,9 +10,9 @@ import ca.mcgill.mcb.pcingola.bigDataScript.lang.GenericNode;
  */
 public class CompilerMessageBdsNode extends CompilerMessage {
 
-	final BigDataScriptNode node;
+	final BdsNode node;
 
-	public static CompilerMessageBdsNode createCompilerMessageBdsNode(BigDataScriptNode node, String message, MessageType type) {
+	public static CompilerMessageBdsNode createCompilerMessageBdsNode(BdsNode node, String message, MessageType type) {
 		if (node == null) return new CompilerMessageBdsNode(new GenericNode(null, null), null, -1, -1, message, type);
 		else {
 			if (node.getFileName() != null) return new CompilerMessageBdsNode(node, node.getFileName(), node.getLineNum(), node.getCharPosInLine() + 1, message, type);
@@ -20,7 +20,7 @@ public class CompilerMessageBdsNode extends CompilerMessage {
 		}
 	}
 
-	private CompilerMessageBdsNode(BigDataScriptNode node, String fileName, int lineNum, int charPosInLine, String message, MessageType type) {
+	private CompilerMessageBdsNode(BdsNode node, String fileName, int lineNum, int charPosInLine, String message, MessageType type) {
 		super(fileName, lineNum, charPosInLine, message, type);
 		this.node = node;
 	}
@@ -30,7 +30,7 @@ public class CompilerMessageBdsNode extends CompilerMessage {
 		return fileName;
 	}
 
-	public BigDataScriptNode getNode() {
+	public BdsNode getNode() {
 		return node;
 	}
 }

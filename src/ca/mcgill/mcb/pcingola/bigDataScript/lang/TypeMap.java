@@ -49,7 +49,7 @@ public class TypeMap extends TypeList {
 		types.put(key, type);
 	}
 
-	public TypeMap(BigDataScriptNode parent, ParseTree tree) {
+	public TypeMap(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

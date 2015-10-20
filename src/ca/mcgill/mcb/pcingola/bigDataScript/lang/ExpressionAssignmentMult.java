@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class ExpressionAssignmentMult extends ExpressionAssignmentBinary {
 
-	public ExpressionAssignmentMult(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionAssignmentMult(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

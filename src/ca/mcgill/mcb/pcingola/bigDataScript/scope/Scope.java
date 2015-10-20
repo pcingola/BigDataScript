@@ -9,8 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Args;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNode;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.BigDataScriptNodeFactory;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNode;
+import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ParentNode;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeFunc;
@@ -55,7 +55,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	String parentNodeId;
 	HashMap<String, ScopeSymbol> symbols;
 	AutoHashMap<String, List<ScopeSymbol>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
-	BigDataScriptNode node;
+	BdsNode node;
 
 	/**
 	 * Class scope
@@ -98,7 +98,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	 * Constructor
 	 * @param parent : If null => use global Scope
 	 */
-	public Scope(Scope parent, BigDataScriptNode node) {
+	public Scope(Scope parent, BdsNode node) {
 		this.parent = parent;
 		this.node = node;
 		id = nextId();
@@ -215,7 +215,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 		return functions.get(functionName);
 	}
 
-	public BigDataScriptNode getNode() {
+	public BdsNode getNode() {
 		return node;
 	}
 
@@ -314,7 +314,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	 * Replace fake nodes by real nodes (serialization)
 	 */
 	public void replaceFake() {
-		node = BigDataScriptNodeFactory.get().realNode(node);
+		node = BdsNodeFactory.get().realNode(node);
 	}
 
 	@Override

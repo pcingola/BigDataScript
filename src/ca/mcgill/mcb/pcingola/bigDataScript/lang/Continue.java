@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class Continue extends Statement {
 
-	public Continue(BigDataScriptNode parent, ParseTree tree) {
+	public Continue(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

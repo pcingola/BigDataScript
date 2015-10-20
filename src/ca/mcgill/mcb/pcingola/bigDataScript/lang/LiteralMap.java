@@ -19,7 +19,7 @@ public class LiteralMap extends Literal {
 	Expression keys[];
 	Expression values[];
 
-	public LiteralMap(BigDataScriptNode parent, ParseTree tree) {
+	public LiteralMap(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
@@ -48,7 +48,7 @@ public class LiteralMap extends Literal {
 		// Calculate baseType
 		//---
 		Type baseType = null;
-		for (BigDataScriptNode node : values) {
+		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			Type typeExpr = expr.returnType(scope);
 
@@ -99,7 +99,7 @@ public class LiteralMap extends Literal {
 
 	@Override
 	protected void sanityCheck(CompilerMessages compilerMessages) {
-		for (BigDataScriptNode csnode : values)
+		for (BdsNode csnode : values)
 			if (!(csnode instanceof Expression)) compilerMessages.add(csnode, "Expecting expression instead of " + csnode.getClass().getSimpleName(), MessageType.ERROR);
 	}
 
@@ -118,7 +118,7 @@ public class LiteralMap extends Literal {
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		Type baseType = ((TypeMap) returnType).getBaseType();
 
-		for (BigDataScriptNode node : values) {
+		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			Type typeExpr = expr.returnType(scope);
 

@@ -24,7 +24,7 @@ public class ExpressionDepOperator extends Expression {
 	Expression left[];
 	Expression right[];
 
-	public ExpressionDepOperator(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionDepOperator(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

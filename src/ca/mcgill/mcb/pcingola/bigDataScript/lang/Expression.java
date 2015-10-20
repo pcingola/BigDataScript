@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
  */
 public class Expression extends Statement {
 
-	public Expression(BigDataScriptNode parent, ParseTree tree) {
+	public Expression(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

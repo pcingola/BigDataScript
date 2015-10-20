@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class LiteralMapEmpty extends LiteralMap {
 
-	public LiteralMapEmpty(BigDataScriptNode parent, ParseTree tree) {
+	public LiteralMapEmpty(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

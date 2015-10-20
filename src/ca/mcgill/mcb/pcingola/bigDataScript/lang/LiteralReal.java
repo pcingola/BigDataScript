@@ -15,7 +15,7 @@ public class LiteralReal extends Literal {
 
 	double value;
 
-	public LiteralReal(BigDataScriptNode parent, ParseTree tree) {
+	public LiteralReal(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

@@ -71,7 +71,7 @@ public class TypeList extends Type {
 		types.put(key, type);
 	}
 
-	public TypeList(BigDataScriptNode parent, ParseTree tree) {
+	public TypeList(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

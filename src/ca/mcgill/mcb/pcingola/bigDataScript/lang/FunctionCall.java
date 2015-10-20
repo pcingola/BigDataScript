@@ -20,7 +20,7 @@ public class FunctionCall extends Expression {
 	protected Args args;
 	protected FunctionDeclaration functionDeclaration;
 
-	public FunctionCall(BigDataScriptNode parent, ParseTree tree) {
+	public FunctionCall(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

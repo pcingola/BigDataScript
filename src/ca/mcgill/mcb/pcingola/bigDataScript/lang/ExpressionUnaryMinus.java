@@ -14,7 +14,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ExpressionUnaryMinus extends ExpressionUnary {
 
-	public ExpressionUnaryMinus(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionUnaryMinus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		op = "-";
 	}

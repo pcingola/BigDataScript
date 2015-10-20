@@ -20,7 +20,7 @@ public class ExpressionCond extends Expression {
 	Expression exprTrue;
 	Expression exprFalse;
 
-	public ExpressionCond(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionCond(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

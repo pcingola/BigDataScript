@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class Warning extends Error {
 
-	public Warning(BigDataScriptNode parent, ParseTree tree) {
+	public Warning(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

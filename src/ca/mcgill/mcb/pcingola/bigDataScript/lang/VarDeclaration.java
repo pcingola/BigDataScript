@@ -19,7 +19,7 @@ public class VarDeclaration extends Statement {
 	Type type;
 	VariableInit varInit[];
 
-	public static VarDeclaration get(BigDataScriptNode parent, Type type, String varName, Expression expression) {
+	public static VarDeclaration get(BdsNode parent, Type type, String varName, Expression expression) {
 		VarDeclaration vd = new VarDeclaration(parent, null);
 		vd.type = type;
 		vd.varInit = new VariableInit[1];
@@ -31,7 +31,7 @@ public class VarDeclaration extends Statement {
 		return get(null, type, varName, null);
 	}
 
-	public VarDeclaration(BigDataScriptNode parent, ParseTree tree) {
+	public VarDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

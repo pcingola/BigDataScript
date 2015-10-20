@@ -22,7 +22,7 @@ public class ReferenceMap extends Reference {
 	protected Expression variable;
 	protected Expression expressionKey;
 
-	public ReferenceMap(BigDataScriptNode parent, ParseTree tree) {
+	public ReferenceMap(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

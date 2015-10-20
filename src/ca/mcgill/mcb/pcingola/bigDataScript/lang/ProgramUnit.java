@@ -33,7 +33,7 @@ public class ProgramUnit extends BlockWithFile {
 		}
 	}
 
-	public ProgramUnit(BigDataScriptNode parent, ParseTree tree) {
+	public ProgramUnit(BdsNode parent, ParseTree tree) {
 		super(parent, null); // little hack begin: parse is done later
 		if (tree != null) setFile(discoverFileFromTree(tree));
 		doParse(tree); // little hack end
@@ -68,8 +68,8 @@ public class ProgramUnit extends BlockWithFile {
 	 */
 	public List<FunctionDeclaration> testsFunctions() {
 		List<FunctionDeclaration> testFuncs = new ArrayList<FunctionDeclaration>();
-		List<BigDataScriptNode> allFuncs = findNodes(FunctionDeclaration.class, true);
-		for (BigDataScriptNode func : allFuncs) {
+		List<BdsNode> allFuncs = findNodes(FunctionDeclaration.class, true);
+		for (BdsNode func : allFuncs) {
 			// Create scope symbol
 			FunctionDeclaration fd = (FunctionDeclaration) func;
 
@@ -87,8 +87,8 @@ public class ProgramUnit extends BlockWithFile {
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Add all functions
-		List<BigDataScriptNode> funcs = findNodes(FunctionDeclaration.class, true);
-		for (BigDataScriptNode func : funcs) {
+		List<BdsNode> funcs = findNodes(FunctionDeclaration.class, true);
+		for (BdsNode func : funcs) {
 			// Create scope symbol
 			FunctionDeclaration fd = (FunctionDeclaration) func;
 			TypeFunc typeFunc = new TypeFunc(fd);

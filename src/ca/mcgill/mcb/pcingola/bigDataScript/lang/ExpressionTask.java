@@ -78,7 +78,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		}
 	}
 
-	public ExpressionTask(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionTask(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
@@ -395,12 +395,12 @@ public class ExpressionTask extends ExpressionWithScope {
 			return;
 		}
 
-		List<BigDataScriptNode> statements = statement.findNodes(null, true);
+		List<BdsNode> statements = statement.findNodes(null, true);
 
 		// No child nodes? Add the only node we have
 		if (statements.isEmpty()) statements.add(statement);
 
-		for (BigDataScriptNode node : statements) {
+		for (BdsNode node : statements) {
 			if (node instanceof Statement) {
 				boolean ok = node instanceof ExpressionSys //
 						|| node instanceof Block //

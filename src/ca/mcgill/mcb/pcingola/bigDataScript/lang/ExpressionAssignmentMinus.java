@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class ExpressionAssignmentMinus extends ExpressionAssignmentBinary {
 
-	public ExpressionAssignmentMinus(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionAssignmentMinus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

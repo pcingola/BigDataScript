@@ -21,7 +21,7 @@ public class MethodCall extends FunctionCall {
 	// kept here for convinience)
 	protected Expression expresionObj;
 
-	public MethodCall(BigDataScriptNode parent, ParseTree tree) {
+	public MethodCall(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

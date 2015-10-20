@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class LiteralListEmpty extends LiteralList {
 
-	public LiteralListEmpty(BigDataScriptNode parent, ParseTree tree) {
+	public LiteralListEmpty(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

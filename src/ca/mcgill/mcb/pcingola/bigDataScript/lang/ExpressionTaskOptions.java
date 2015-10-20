@@ -17,7 +17,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 
 	boolean evalAll; // Force to evaluate all expressions
 
-	public ExpressionTaskOptions(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionTaskOptions(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

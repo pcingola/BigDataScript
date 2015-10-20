@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.scope.Scope;
  */
 public class ExpressionDivide extends ExpressionMath {
 
-	public ExpressionDivide(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionDivide(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

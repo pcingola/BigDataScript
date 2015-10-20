@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
  */
 public class ExpressionLogicOr extends ExpressionLogic {
 
-	public ExpressionLogicOr(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionLogicOr(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

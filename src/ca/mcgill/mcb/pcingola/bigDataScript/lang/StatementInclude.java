@@ -54,7 +54,7 @@ public class StatementInclude extends BlockWithFile {
 		return true;
 	}
 
-	public StatementInclude(BigDataScriptNode parent, ParseTree tree) {
+	public StatementInclude(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

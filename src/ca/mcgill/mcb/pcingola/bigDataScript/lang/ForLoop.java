@@ -26,7 +26,7 @@ public class ForLoop extends StatementWithScope {
 	ForEnd end;
 	Statement statement;
 
-	public ForLoop(BigDataScriptNode parent, ParseTree tree) {
+	public ForLoop(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 

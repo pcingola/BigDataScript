@@ -29,13 +29,13 @@ go build
 go fmt
 
 # Build binay (go executable + JAR file)
-cat bds "$BDS_HOME/BigDataScript.jar" > bds.bin
+cat bds "$BDS_HOME/bds.jar" > bds.bin
 mv bds.bin bds
 chmod a+x bds
 mv bds "$BDS_HOME"
 
 # Remove JAR file
-rm "$BDS_HOME/BigDataScript.jar"
+rm "$BDS_HOME/bds.jar"
 
 # Binary installed
 echo "Binary created: $BDS_HOME/bds"

@@ -21,7 +21,7 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 
 	Expression lefts[];
 
-	public ExpressionAssignmentList(BigDataScriptNode parent, ParseTree tree) {
+	public ExpressionAssignmentList(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
