@@ -84,12 +84,41 @@ public class InterpolateVars extends Literal {
 		return sb.toString();
 	}
 
+	/**
+	 * Almost literal string: Only unescape dolar
+	 */
+	public static String unEscapeDollar(String str) {
+		StringBuilder sb = new StringBuilder();
+
+		char cprev = '\0';
+		for (char c : str.toCharArray()) {
+			if (cprev == '\\') {
+				if (c == '$') {
+					// Un-escape "\$" to "$"
+					sb.append(c);
+				} else {
+					// Add every other escaped sequence (do not modify it)
+					sb.append(cprev);
+					sb.append(c);
+				}
+			} else if (c != '\\') {
+				sb.append(c);
+			}
+
+			cprev = c;
+		}
+
+		if (cprev == '\\') sb.append(cprev); // Append last charater
+
+		return sb.toString();
+	}
+
 	public InterpolateVars(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
 	/**
-	 * Find the next 'string' (until an interpolation is found
+	 * Find the next 'string' (until an interpolation is found)
 	 */
 	Tuple<String, String> findString(String str) {
 		// Empty? Nothing to do
@@ -99,11 +128,11 @@ public class InterpolateVars extends Literal {
 		int idx = str.indexOf('$');
 
 		// Skip escaped dollar characters ('\$')
-		while (idx > 0 && // Found something?
-				(str.charAt(idx - 1) == '\\' // Escaped character, ignore
-				|| (idx < (str.length() - 1) && !isVariableNameStartChar(str.charAt(idx + 1))) // First character in variable name has to be a letter
-						) //
-				) {
+		while (idx > 0 // Found something?
+				&& (str.charAt(idx - 1) == '\\' // Escaped character, ignore
+						|| (idx < (str.length() - 1) //
+								&& !isVariableNameStartChar(str.charAt(idx + 1)) // First character in variable name has to be a letter
+		))) {
 			idx = str.indexOf('$', idx + 1); // Find next one
 		}
 
@@ -142,7 +171,7 @@ public class InterpolateVars extends Literal {
 			// Parse string literal part
 			//---
 			Tuple<String, String> tupStr = findString(str);
-			String strToAdd = useLiteral ? tupStr.first : unEscape(tupStr.first);
+			String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : unEscape(tupStr.first);
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed
 
@@ -275,13 +304,14 @@ public class InterpolateVars extends Literal {
 	public boolean parse(String str) {
 		Tuple<List<String>, List<String>> interpolated = findVariables(str);
 
-		if (interpolated.second.isEmpty() // No variables?
-				|| (interpolated.second.size() == 1 && interpolated.second.get(0).isEmpty()) // One empty variable?
-				) return false; // Nothing to do
-
 		// Something was found, we have to interpolate
 		List<String> strings = interpolated.first;
 		List<String> variables = interpolated.second;
+
+		if (interpolated.second.isEmpty() // No variables?
+				|| (interpolated.second.size() == 1 && interpolated.second.get(0).isEmpty()) // One empty variable?
+		) return false; // Nothing to do
+
 		List<Expression> exprs = new ArrayList<Expression>();
 
 		// Create and add reference
@@ -351,6 +381,6 @@ public class InterpolateVars extends Literal {
 		// Do we have any interpolated variables? Make sure they are in the scope
 		if (exprs != null) //
 			for (Expression expr : exprs)
-				if (expr != null) expr.typeCheck(scope, compilerMessages);
+			if (expr != null) expr.typeCheck(scope, compilerMessages);
 	}
 }

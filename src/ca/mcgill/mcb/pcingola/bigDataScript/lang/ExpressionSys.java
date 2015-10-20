@@ -175,8 +175,7 @@ public class ExpressionSys extends Expression {
 		interpolateVars.setUseLiteral(true);
 		if (!interpolateVars.parse(cmd)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
-			commands = cmd; // Just use literal
-			// commands = InterpolateVars.unEscape(cmd); // Just un-escape characters
+			commands = InterpolateVars.unEscapeDollar(cmd); // Just use literal, but escape dollar signs
 		}
 	}
 

@@ -186,4 +186,80 @@ public class TestCasesInterpolate extends TestCasesBase {
 		checkInterpolate("Map with list and variable index: {$m{$l[$s]}}\n", strings, vars);
 	}
 
+	@Test
+	public void test16() {
+		Gpr.debug("Test");
+		String str = "something ending in backslash \\";
+		String strAfter = InterpolateVars.unEscapeDollar(str);
+
+		if (verbose) {
+			Gpr.debug("str (before): " + str);
+			Gpr.debug("str (after) : " + strAfter);
+		}
+
+		Assert.assertEquals("Expected string should end in backslash", str, strAfter);
+	}
+
+	@Test
+	public void test17() {
+		Gpr.debug("Test");
+		String str = "ending in dollar $";
+		String strAfter = InterpolateVars.unEscapeDollar(str);
+
+		if (verbose) {
+			Gpr.debug("str (before): " + str);
+			Gpr.debug("str (after) : " + strAfter);
+		}
+
+		Assert.assertEquals("Expected string should end in backslash", str, strAfter);
+	}
+
+	@Test
+	public void test18() {
+		Gpr.debug("Test");
+		String str = "this dolalr sign '\\$VAR' should be escaped";
+		String strExpected = "this dolalr sign '$VAR' should be escaped";
+
+		String strAfter = InterpolateVars.unEscapeDollar(str);
+		if (verbose) {
+			Gpr.debug("str (before): " + str);
+			Gpr.debug("str (after) : " + strAfter);
+		}
+
+		Assert.assertEquals("Expected string should end in backslash", strExpected, strAfter);
+	}
+
+	@Test
+	public void test19() {
+		Gpr.debug("Test");
+		String str = "hello \\t world \\n";
+		String strAfter = InterpolateVars.unEscapeDollar(str);
+
+		if (verbose) {
+			Gpr.debug("str (before): " + str);
+			Gpr.debug("str (after) : " + strAfter);
+		}
+
+		Assert.assertEquals("Expected string should end in backslash", str, strAfter);
+	}
+
+	@Test
+	public void test20() {
+		Gpr.debug("Test");
+
+		// We want to execute an inline perl script within a task
+		// E.g.:
+		//     task perl -e 'use English; print "PID: \$PID\n";'
+		// 
+		// Here $PID is a perl variable and should not be interpreted 
+		// by bds. We need a way to escape such variables.
+
+		String cmd = "PID: \\$PID";
+		InterpolateVars intVars = new InterpolateVars(null, null);
+		boolean parsed = intVars.parse(cmd);
+
+		if (verbose) Gpr.debug("cmd: '" + cmd + "'");
+		Assert.assertFalse("This string should not be parsed by interpolation", parsed);
+	}
+
 }
