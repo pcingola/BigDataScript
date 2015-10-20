@@ -7,6 +7,11 @@ import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.bigDataScript.data.Data;
 
+/**
+ * All BdsThreads are tracked here
+ * 
+ * @author pcingola
+ */
 public class BdsThreads {
 
 	private static BdsThreads bdsThreads = new BdsThreads();

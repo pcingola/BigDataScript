@@ -104,6 +104,7 @@ public class Config {
 	String configFileName;
 	String configDirName;
 	String pidFile = "pidFile" + (new Date()).getTime() + ".txt"; // Default PID file
+	String reportFileName; // Preferred file name to use for progress and final report
 	Properties properties;
 	ArrayList<String> includePath;
 	ArrayList<String> filterOutTaskHint;
@@ -259,6 +260,10 @@ public class Config {
 		}
 
 		return pidRegex;
+	}
+
+	public String getReportFileName() {
+		return reportFileName;
 	}
 
 	/**
@@ -506,6 +511,10 @@ public class Config {
 		this.quiet = quiet;
 	}
 
+	public void setReportFileName(String reportFileName) {
+		this.reportFileName = reportFileName;
+	}
+
 	public void setReportHtml(boolean reportHtml) {
 		this.reportHtml = reportHtml;
 	}
@@ -547,4 +556,5 @@ public class Config {
 
 		return sb.toString();
 	}
+
 }

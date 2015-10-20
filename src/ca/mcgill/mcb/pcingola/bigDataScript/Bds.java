@@ -94,9 +94,10 @@ public class Bds {
 	String chekcpointRestoreFile; // Restore file
 	String programFileName; // Program file name
 	String pidFile; // File to store PIDs
+	String reportFileName;
 	String system; // System type
 	String queue; // Queue name
-	BdsAction bigDataScriptAction;
+	BdsAction bdsAction;
 	Config config;
 	ProgramUnit programUnit; // Program (parsed nodes)
 	BdsThread bdsThread;
@@ -353,6 +354,7 @@ public class Bds {
 		config.setLog(log);
 		config.setDryRun(dryRun);
 		config.setTaskFailCount(taskFailCount);
+		config.setReportFileName(reportFileName);
 		config.setReportHtml(reportHtml);
 		config.setReportYaml(reportYaml);
 		config.setExtractSource(extractSource);
@@ -441,6 +443,7 @@ public class Bds {
 	 * Get default settings
 	 */
 	void initDefaults() {
+		reportFileName = null;
 		reportHtml = true;
 		reportYaml = false;
 		dryRun = false;
@@ -824,7 +827,7 @@ public class Bds {
 		if (args.length <= 0) usage(null);
 
 		programArgs = new ArrayList<String>();
-		bigDataScriptAction = BdsAction.RUN;
+		bdsAction = BdsAction.RUN;
 
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
@@ -881,7 +884,7 @@ public class Bds {
 					// Checkpoint info
 					if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 					else usage("Option '-i' without checkpoint file argument");
-					bigDataScriptAction = BdsAction.INFO_CHECKPOINT;
+					bdsAction = BdsAction.INFO_CHECKPOINT;
 					break;
 
 				case "-l":
@@ -933,11 +936,16 @@ public class Bds {
 					// Checkpoint restore
 					if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
 					else usage("Option '-r' without checkpoint file argument");
-					bigDataScriptAction = BdsAction.RUN_CHECKPOINT;
+					bdsAction = BdsAction.RUN_CHECKPOINT;
 					break;
 
 				case "-reporthtml":
 					reportHtml = true;
+					break;
+
+				case "-reportname":
+					if ((i + 1) < args.length) reportFileName = args[++i];
+					else usage("Option '-reportName' without name argument");
 					break;
 
 				case "-reportyaml":
@@ -954,7 +962,7 @@ public class Bds {
 
 				case "-t":
 				case "-test":
-					bigDataScriptAction = BdsAction.TEST;
+					bdsAction = BdsAction.TEST;
 					break;
 
 				case "-upload":
@@ -1016,7 +1024,7 @@ public class Bds {
 		// Run
 		//---
 		int exitValue = 0;
-		switch (bigDataScriptAction) {
+		switch (bdsAction) {
 		case RUN_CHECKPOINT:
 			exitValue = runCheckpoint();
 			break;
@@ -1247,6 +1255,7 @@ public class Bds {
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
 		System.err.println("  -quiet                         : Do not show any messages or tasks outputs on STDOUT. Default: " + quiet);
 		System.err.println("  -reportHtml                    : Create HTML report. Default: " + reportHtml);
+		System.err.println("  -reportName <name>             : Set base-name for report files.");
 		System.err.println("  -reportYaml                    : Create YAML report. Default: " + reportYaml);
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-s | -system ] type           : Set system type.");

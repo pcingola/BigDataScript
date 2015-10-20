@@ -24,9 +24,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.GprString;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * A threads used in a bigDataScript program
- *
- * It has all information to run a program (scope, pc, run state, etc)
+ * Progress and final report (HTML & YAML)
  *
  * @author pcingola
  */
@@ -93,8 +91,13 @@ public class Report {
 			return;
 		}
 
-		String outFile = bdsThread.getBdsThreadId() + ".report." + (yaml ? "yaml" : "html");
-		String dagJsFile = bdsThread.getBdsThreadId() + ".dag.js";
+		// Get report base name or create one
+		String reportBaseName = Config.get().getReportFileName();
+		if (reportBaseName == null) reportBaseName = bdsThread.getBdsThreadId();
+
+		// Create report file names
+		String outFile = reportBaseName + ".report." + (yaml ? "yaml" : "html");
+		String dagJsFile = reportBaseName + ".dag.js";
 		if (verbose) Timer.showStdErr("Writing report file '" + outFile + "'");
 
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
