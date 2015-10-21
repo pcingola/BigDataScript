@@ -43,6 +43,10 @@ import (
 */
 func main() {
 
+	if exec.DEBUG {
+		log.Printf("Info: bds 'main()' invoked with command line argumnts: %v", os.Args)
+	}
+
 	bdsexec := exec.NewBdsExec(os.Args)
 
 	// Parse command line arguments

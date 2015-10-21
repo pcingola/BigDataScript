@@ -12,7 +12,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"syscall"	
+	"syscall"
 	"time"
 
 	"fileutil"
@@ -48,9 +48,9 @@ type BdsExec struct {
 	cmd *exec.Cmd 			// BdsExec: Command
 	cmdargs []string 		// BdsExec: Command arguments
 	command string 			// BdsExec: Command to execute (path to a shell script)
-	outFile string 			// BdsExec: Copy (tee) stdout to this file 
-	errFile string 			// BdsExec: Copy (tee) stderr to this file 
-	exitFile string 		// BdsExec: Write exit code to this file 
+	outFile string 			// BdsExec: Copy (tee) stdout to this file
+	errFile string 			// BdsExec: Copy (tee) stderr to this file
+	exitFile string 		// BdsExec: Write exit code to this file
 	timeSecs int 			// BdsExec: Maximum execution time
 	exitCode int 			// Command's Exit code
 
@@ -78,10 +78,13 @@ func (be *BdsExec) Bds() int {
 		log.Fatal(err)
 	}
 	be.taskLoggerFile = pidTmpFile
-	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is removed
+	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is new
+	if DEBUG {
+		log.Printf("Info: taskLoggerFile '%s'\n", be.taskLoggerFile)
+	}
 
 	bdsLibDir := path.Dir(be.execName) + "/" + BDS_NATIVE_LIB_DIR
-	
+
 	// Append all arguments from command line
 	be.cmdargs = []string{ JAVA_CMD,
 		JAVA_MEM,
@@ -123,10 +126,10 @@ func (be *BdsExec) discoverExecName() string {
 	}
 
 	_, err = os.Stat(f)
-	if err == nil { 
+	if err == nil {
 		// Relative file exists
 		return path.Clean(path.Join(wd, f))
-	} 
+	}
 
 	f2, err := exec.LookPath(f)
 	if err != nil {
@@ -241,15 +244,19 @@ func (be *BdsExec) executeCommand() int {
 		signal.Notify(osSignal) // Capture all signals
 	} else {
 		// Set a new process group.
-		// Since we want to kill all child processes, we'll send a kill signal to this process group.
-		// But we don't want to kill the calling program...
-		// fmt.Fprintf(os.Stderr, "bds: setting new process group\n")
+		// We want to be able to kill all child processes, without killing the
+		// calling program (bds). We create a new group thus we can send a
+		// kill signal to this new process group.
+		if DEBUG {
+			log.Printf("Info: Setting new process group\n")
+		}
+
 		if err := syscall.Setpgid(0, 0); err != nil {
 			// During an ssh remote execution we will no be albe to do this.
 			// In this case, we assume that the SSH daemon will catch the sinals
 			// and kill al child processes.
 			if DEBUG {
-				log.Printf("Error redirecting signals: %s", err)
+				log.Printf("Error setting process group: %s", err)
 			}
 		}
 	}
@@ -388,7 +395,7 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 
 		exitCode <- err.Error()
 		return
-	} 
+	}
 
 	if DEBUG {
 		log.Printf("Debug, execute: Finished OK\n")
@@ -601,4 +608,3 @@ func (be *BdsExec) Usage(msg string) {
 	fmt.Fprintf(os.Stderr, "  kill pid :  Kill process group 'pid'.\n")
 	os.Exit(1)
 }
-
