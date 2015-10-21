@@ -30,7 +30,7 @@ public class Executioners {
 			try {
 				return ExecutionerType.valueOf(exName.toUpperCase());
 			} catch (Exception e) {
-				System.out.println("UNknown system type '" + exName + "', using 'local'");
+				System.out.println("Unknown system type '" + exName + "', using 'local'");
 				return LOCAL;
 			}
 		}

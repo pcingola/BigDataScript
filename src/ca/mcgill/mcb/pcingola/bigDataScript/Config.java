@@ -275,7 +275,10 @@ public class Config {
 
 	public String getString(String propertyName, String defaultValue) {
 		String val = getString(propertyName);
-		return val != null ? val.trim() : defaultValue;
+		if (val == null) return defaultValue;
+		val = val.trim();
+		if (val.startsWith("\"") && val.endsWith("\"")) val = val.substring(1, val.length() - 1);
+		return val;
 	}
 
 	public String[] getStringArray(String propertyName) {
