@@ -156,7 +156,8 @@ public class CheckTasksRunning {
 					if (debug) log("\tAdding ID: '" + pid + "'");
 				}
 			} else {
-				// PID not matched by 'pidRegexCheckTaskRunning' Regex? (or regex not set) => Try other methods
+				// PID not matched by 'pidRegexCheckTaskRunning' regex (or regex not set)?
+				// => Try other methods
 
 				// Split fields
 				String fields[] = line.split("\\s+");
