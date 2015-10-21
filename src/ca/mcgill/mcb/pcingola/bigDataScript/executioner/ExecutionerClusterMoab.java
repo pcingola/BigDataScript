@@ -24,7 +24,6 @@ public class ExecutionerClusterMoab extends ExecutionerCluster {
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
-
 	}
 
 }

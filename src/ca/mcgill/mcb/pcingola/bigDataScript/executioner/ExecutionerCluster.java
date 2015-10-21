@@ -32,6 +32,9 @@ public class ExecutionerCluster extends Executioner {
 	protected String clusterStatCommand[];
 	protected String clusterPostMortemInfoCommand[];
 
+	protected String clusterRunCommandStdOutOption = "-o";
+	protected String clusterRunCommandStdErrOption = "-e";
+
 	protected String clusterRunAdditionalArgs[];
 	protected String clusterKillAdditionalArgs[];
 	protected String clusterStatAdditionalArgs[];
@@ -201,38 +204,48 @@ public class ExecutionerCluster extends Executioner {
 
 		if (debug) log("Running task " + task.getId());
 
-		// Create command line
+		//---
+		// Create command line to dispatch 'task' to the cluster management system
+		//---
 		ArrayList<String> args = new ArrayList<String>();
 
 		// Append command line arguments
 		for (String arg : getCommandRun())
 			args.add(arg);
 
-		// Add resources request
-		HostResources res = task.getResources();
-		res.getTimeout();
-
 		// Add resources to command line parameters
 		addResources(task, args);
 
-		// Stdout
-		args.add("-o");
-		args.add(clusterStdFile(task.getStdoutFile()));
+		// Tell cluster to redirect Stdout to a file
+		if (clusterRunCommandStdOutOption != null) {
+			args.add(clusterRunCommandStdOutOption);
+			args.add(clusterStdFile(task.getStdoutFile()));
+		}
 
-		// Stderr
-		args.add("-e");
-		args.add(clusterStdFile(task.getStderrFile()));
+		// Tell cluster to redirect Stderr to a file
+		if (clusterRunCommandStdErrOption != null) {
+			args.add(clusterRunCommandStdErrOption);
+			args.add(clusterStdFile(task.getStderrFile()));
+		}
 
-		// Show command string
-		String cmdStr = "";
-		for (String arg : args)
-			cmdStr += arg + " ";
-
-		// Create command to run (it feeds parameters to qsub via stdin)
+		//---
+		// Cluster command is feed some parameters via STDIN. This is
+		// similar to running "echo ... | qsub" on a shell.
+		// This part creates those 'stdin' parameters
+		//---
 		String cmdStdin = bdsCommand(task);
-		if (debug) log("Running task " + task.getId() + ", command:\n\techo \"" + cmdStdin + "\" | " + cmdStr);
+		if (debug) {
+			// Show command string
+			StringBuilder cmdStr = new StringBuilder();
+			for (String arg : args)
+				cmdStr.append(arg + " ");
 
-		// Create command
+			log("Running task " + task.getId() + ", command:\n\techo \"" + cmdStdin + "\" | " + cmdStr);
+		}
+
+		//---
+		// Create full command
+		//---
 		CmdCluster cmd = new CmdCluster(task.getId(), args.toArray(Cmd.ARGS_ARRAY_TYPE));
 		cmd.setStdin(cmdStdin);
 		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
@@ -319,7 +332,7 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	@Override
 	protected void postMortemInfo(Task task) {
-		// Post mortem info disabled?
+		// Post-mortem info disabled?
 		if (postMortemDisabled) return;
 
 		// Get command line arguments and execute them
@@ -354,6 +367,34 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
 		);
+	}
+
+	@Override
+	protected void runTask(Task task, Host host) {
+		// Create a (shell) command to run task in cluster
+		Cmd cmd = createRunCmd(task);
+		if (cmd != null) {
+			addCmd(task, cmd);
+			cmd.setHost(host);
+			cmd.setExecutioner(this);
+			cmd.setTask(task);
+			cmd.setDebug(debug);
+		}
+
+		host.add(task);
+
+		// Run command
+		// Note: We run in blocking mode to avoid choking the head node with 
+		// too many threads, too many file descriptors, etc..
+		if (cmd != null) {
+			try {
+				cmd.start();
+				cmd.join(); // Wait for this thread to finish
+			} catch (InterruptedException e) {
+				throw new RuntimeException("Error while waiting for command execution:\n\tCommand: " + cmd, e);
+			}
+		}
+
 	}
 
 	@Override
