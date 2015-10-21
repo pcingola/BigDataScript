@@ -19,7 +19,7 @@ public class Executioners {
 	 * Type of executioners
 	 */
 	public enum ExecutionerType {
-		SYS, LOCAL, SSH, CLUSTER, MOAB, PBS, SGE, GENERIC, MESOS;
+		CLUSTER, FAKE, GENERIC, LOCAL, MESOS, MOAB, PBS, SGE, SSH, SYS;
 
 		/**
 		 * Parse an executioner name
@@ -89,16 +89,24 @@ public class Executioners {
 		if (config.isVerbose()) Timer.showStdErr("Executioner factory: Creating new executioner type '" + exType + "'");
 
 		switch (exType) {
+		case CLUSTER:
+			executioner = new ExecutionerCluster(config);
+			break;
+
+		case FAKE:
+			executioner = new ExecutionerClusterFake(config);
+			break;
+
+		case GENERIC:
+			executioner = new ExecutionerClusterGeneric(config);
+			break;
+
 		case LOCAL:
 			executioner = new ExecutionerLocal(config);
 			break;
 
-		case SSH:
-			executioner = new ExecutionerSsh(config);
-			break;
-
-		case CLUSTER:
-			executioner = new ExecutionerCluster(config);
+		case MESOS:
+			executioner = new ExecutionerMesos(config);
 			break;
 
 		case MOAB:
@@ -109,16 +117,12 @@ public class Executioners {
 			executioner = new ExecutionerClusterPbs(config);
 			break;
 
+		case SSH:
+			executioner = new ExecutionerSsh(config);
+			break;
+
 		case SGE:
 			executioner = new ExecutionerClusterSge(config);
-			break;
-
-		case GENERIC:
-			executioner = new ExecutionerClusterGeneric(config);
-			break;
-
-		case MESOS:
-			executioner = new ExecutionerMesos(config);
 			break;
 
 		default:

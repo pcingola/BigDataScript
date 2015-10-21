@@ -1,0 +1,11 @@
+#!/bin/sh
+
+
+# Clear all tasks from this 'fake cluster'
+rm -rf "$HOME/.bds/fakeClusterTasks/"
+
+# Create directories
+mkdir -p "$HOME/.bds/fakeClusterTasks/"
+mkdir "$HOME/.bds/fakeClusterTasks/done"
+
+

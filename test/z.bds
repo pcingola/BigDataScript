@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-task perl -e 'print "PID:$$\n";'
-task perl -e 'use English; print "PID:\$PID\n";'
-task perl -e 'use English; print "REAL_USER_ID:\$REAL_USER_ID\n";'
 
+for( int i=0 ; i < 10000 ; i++ ) {
+	task echo Hi $i; sleep 1; echo Bye $i
+}

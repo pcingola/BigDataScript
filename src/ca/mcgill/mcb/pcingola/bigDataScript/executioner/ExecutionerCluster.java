@@ -27,10 +27,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
  */
 public class ExecutionerCluster extends Executioner {
 
-	// FAKE_CLUSTER: Only used for debugging when you don't have a cluster (or don't want to wait for cluster's respose)
-	//	public static String FAKE_CLUSTER = Gpr.HOME + "/workspace/BigDataScript/fakeCluster/";
-	public static String FAKE_CLUSTER = "";
-
 	protected String clusterRunCommand[];
 	protected String clusterKillCommand[];
 	protected String clusterStatCommand[];
@@ -59,10 +55,10 @@ public class ExecutionerCluster extends Executioner {
 		super(config);
 
 		// Define commands
-		String runCommand[] = { FAKE_CLUSTER + "qsub" };
-		String killCommand[] = { FAKE_CLUSTER + "qdel" };
-		String statCommand[] = { FAKE_CLUSTER + "qstat" };
-		String postMortemInfoCommand[] = { FAKE_CLUSTER + "qstat", "-f" };
+		String runCommand[] = { "qsub" };
+		String killCommand[] = { "qdel" };
+		String statCommand[] = { "qstat" };
+		String postMortemInfoCommand[] = { "qstat", "-f" };
 
 		clusterRunCommand = runCommand;
 		clusterKillCommand = killCommand;
@@ -358,7 +354,6 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
 		);
-
 	}
 
 	@Override

@@ -325,7 +325,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 					+ "\tRunning: " + tasksRunning.size() //
 					+ "\tDone: " + tasksDone.size() //
 					+ (Config.get().isQuiet() ? "" : "\n" + toStringTable()) //
-					);
+			);
 		}
 	}
 
@@ -424,9 +424,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// The reason for this is that we can reach the maximum
 			// number of threads available in the operating system.
 			// If that happens, well get an exception
-			for (int numThreads = Exec.countRunningThreads(); numThreads >= config.getMaxThreads(); numThreads = Exec.countRunningThreads()) {
+			while (Exec.countRunningThreads() >= config.getMaxThreads()) {
 				// Too many threads running? Sleep for a while (block until some threads finish)
-				if (verbose) log("INFO: Too many threads running (" + numThreads + "). Waiting for some threads to finish.");
+				if (verbose) log("INFO: Too many threads running (limit set to " + config.getMaxThreads() + "). Waiting for some threads to finish.");
 				sleepLong();
 			}
 		}
@@ -540,7 +540,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 						+ "\n\ttask resources : " + task.getResources() //
 						+ "\n\thost           : " + host //
 						+ "\n\thost resources : " + host.getResourcesAvaialble() //
-						);
+				);
 
 				selectTask(task, host); // Add task to host (make sure resources are reserved)
 				return new Tuple<Task, Host>(task, host);
