@@ -352,7 +352,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			while (running) {
 				// Run loop
 				if (runExecutionerLoop()) {
-					if (debug) log("Queue: No task to run.");
+					if (debug) log("Queue: No more tasks to run.");
 				}
 
 				sleepLong();
