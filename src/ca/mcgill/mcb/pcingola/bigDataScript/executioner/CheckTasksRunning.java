@@ -95,9 +95,13 @@ public class CheckTasksRunning {
 		// Find task by PID
 		for (Task t : executioner.getTasksRunning().values()) {
 			String pid = t.getPid();
-			if (pid != null && pids.contains(pid)) {
-				if (debug) log("Found task PID '" + pid + "'");
-				tasks.add(t);
+
+			if (pid != null) {
+				// Matches pid?
+				if (pids.contains(pid) || pids.contains(parsePidPart(pid))) {
+					if (debug) log("Found task PID '" + pid + "'");
+					tasks.add(t);
+				}
 			}
 		}
 
@@ -172,7 +176,7 @@ public class CheckTasksRunning {
 					}
 
 					// Use only first part (split using dot)
-					String pidPart = pid.split("\\.")[0]; // Use only the first part before '.'
+					String pidPart = parsePidPart(pid);
 					if (pids.add(pidPart)) {
 						if (debug) log("\tAdding ID (using string before fisrt dot): '" + pidPart + "'");
 					}
@@ -201,6 +205,13 @@ public class CheckTasksRunning {
 		} else if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_CHECK_TASK_RUNNING_REGEX + ") did NOT match line: '" + line + "'");
 
 		return line;
+	}
+
+	/**
+	 *  Use only the first part before '.' as PID
+	 */
+	String parsePidPart(String pid) {
+		return pid.split("\\.")[0];
 	}
 
 	/**
