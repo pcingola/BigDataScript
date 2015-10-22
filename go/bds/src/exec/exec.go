@@ -251,14 +251,15 @@ func (be *BdsExec) executeCommand() int {
 			log.Printf("Info: Setting new process group\n")
 		}
 
-		if err := syscall.Setpgid(0, 0); err != nil {
-			// During an ssh remote execution we will no be albe to do this.
-			// In this case, we assume that the SSH daemon will catch the sinals
-			// and kill al child processes.
-			if DEBUG {
-				log.Printf("Error setting process group: %s", err)
-			}
-		}
+		log.Printf("NOT SETTING GROUP!\n")
+		// if err := syscall.Setpgid(0, 0); err != nil {
+		// 	// During an ssh remote execution we will no be albe to do this.
+		// 	// In this case, we assume that the SSH daemon will catch the sinals
+		// 	// and kill al child processes.
+		// 	if DEBUG {
+		// 		log.Printf("Error setting process group: %s", err)
+		// 	}
+		// }
 	}
 
 	// Create command
@@ -345,15 +346,15 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 		}
 	}
 
+	// Write exitCode to file
+	if (be.exitFile != "") && (be.exitFile != "-") {
+		fileutil.WriteFile(be.exitFile, exitStr)
+	}
+
 	// Should we kill child process?
 	if kill {
 		be.cmd.Process.Kill()
 		be.cmd.Process.Wait() // Reap their souls
-	}
-
-	// Write exitCode to file or show as log message
-	if (be.exitFile != "") && (be.exitFile != "-") {
-		fileutil.WriteFile(be.exitFile, exitStr) // Dump error to 'exitFile'
 	}
 
 	if kill {
@@ -363,7 +364,7 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 		}
 
 		// Send a SIGKILL to the process group (just in case any child process is still executing)
-		syscall.Kill(0, syscall.SIGHUP) // Other options: -syscall.Getpgrp() , syscall.SIGKILL
+		syscall.Kill(0, syscall.SIGHUP)
 	}
 
 	// OK? exit value should be zero
