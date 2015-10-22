@@ -248,7 +248,7 @@ func (be *BdsExec) executeCommand() int {
 		// calling program (bds). We create a new group thus we can send a
 		// kill signal to this new process group.
 		// log.Printf("NOT SETTING GROUP!\n")
-		gpidOri :=  syscall.Getpgid(0);
+		gpidOri, _ :=  syscall.Getpgid(0);
 		if err := syscall.Setpgid(0, 0); err != nil {
 			// During an ssh remote execution we will no be albe to do this.
 			// In this case, we assume that the SSH daemon will catch the sinals
@@ -259,7 +259,7 @@ func (be *BdsExec) executeCommand() int {
 		}
 
 		if DEBUG {
-			gpidNew :=  syscall.Getpgid(0);
+			gpidNew, _ :=  syscall.Getpgid(0);
 			log.Printf("Info: Setting new process group. Original GPID: %d, new GPID: %d\n", gpidOri, gpidNew)
 		}
 	}
