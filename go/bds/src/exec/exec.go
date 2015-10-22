@@ -251,15 +251,15 @@ func (be *BdsExec) executeCommand() int {
 			log.Printf("Info: Setting new process group\n")
 		}
 
-		log.Printf("NOT SETTING GROUP!\n")
-		// if err := syscall.Setpgid(0, 0); err != nil {
-		// 	// During an ssh remote execution we will no be albe to do this.
-		// 	// In this case, we assume that the SSH daemon will catch the sinals
-		// 	// and kill al child processes.
-		// 	if DEBUG {
-		// 		log.Printf("Error setting process group: %s", err)
-		// 	}
-		// }
+		// log.Printf("NOT SETTING GROUP!\n")
+		if err := syscall.Setpgid(0, 0); err != nil {
+			// During an ssh remote execution we will no be albe to do this.
+			// In this case, we assume that the SSH daemon will catch the sinals
+			// and kill al child processes.
+			if DEBUG {
+				log.Printf("Error setting process group: %s", err)
+			}
+		}
 	}
 
 	// Create command
