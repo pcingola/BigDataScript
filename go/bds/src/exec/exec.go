@@ -21,7 +21,7 @@ import (
 )
 
 // Verbose & Debug
-const DEBUG = true
+const DEBUG = false
 const VERBOSE = true
 
 // Exit codes
@@ -241,27 +241,32 @@ func (be *BdsExec) executeCommand() int {
 	osSignal := make(chan os.Signal)
 
 	if be.taskLoggerFile != "" {
+		// Main bds program
 		signal.Notify(osSignal) // Capture all signals
 	} else {
 		// Set a new process group.
 		// We want to be able to kill all child processes, without killing the
-		// calling program (bds). We create a new group thus we can send a
-		// kill signal to this new process group.
-		log.Printf("NOT SETTING GROUP!\n")
-		// gpidOri, _ :=  syscall.Getpgid(0);
-		// if err := syscall.Setpgid(0, 0); err != nil {
-		// 	// During an ssh remote execution we will no be albe to do this.
-		// 	// In this case, we assume that the SSH daemon will catch the sinals
-		// 	// and kill al child processes.
-		// 	if DEBUG {
-		// 		log.Printf("Error setting process group: %s", err)
-		// 	}
-		// }
-		//
-		// if DEBUG {
-		// 	gpidNew, _ :=  syscall.Getpgid(0);
-		// 	log.Printf("Info: Setting new process group. Original GPID: %d, new GPID: %d\n", gpidOri, gpidNew)
-		// }
+		// calling program. E.g. When running using a local executor, the Java Bds
+		// calls 'bds exec', so sending a kill to the group when a timeOut occurs,
+		// would also kill the parent Java program and kill the whole bds execution
+		// (clearly not what we want).
+		// To avoid this, we create a new group thus we can send a kill signal to
+		// this new process group.
+
+		gpidOri, _ :=  syscall.Getpgid(0);
+		if err := syscall.Setpgid(0, 0); err != nil {
+			// During an ssh remote execution we will no be albe to do this.
+			// In this case, we assume that the SSH daemon will catch the sinals
+			// and kill al child processes.
+			if DEBUG {
+				log.Printf("Error setting process group: %s", err)
+			}
+		}
+
+		if DEBUG {
+			gpidNew, _ :=  syscall.Getpgid(0);
+			log.Printf("Info: Setting new process group. Original GPID: %d, new GPID: %d\n", gpidOri, gpidNew)
+		}
 	}
 
 	// Create command
