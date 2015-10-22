@@ -176,7 +176,7 @@ func NewBdsExec(args []string) *BdsExec {
 */
 func (be *BdsExec) ExecuteCommandArgs() int {
 	if DEBUG {
-		log.Print("Debug, ExecuteCommandArgs\n")
+		log.Print("Debug: ExecuteCommandArgs\n")
 	}
 
 	minArgs := 6
@@ -234,7 +234,7 @@ func (be *BdsExec) ExecuteCommandArgs() int {
 */
 func (be *BdsExec) executeCommand() int {
 	if DEBUG {
-		log.Printf("Debug: executeCommand %s\n", be.command)
+		log.Printf("Debug, executeCommand %s\n", be.command)
 	}
 
 	// Redirect all signals to channel (e.g. Ctrl-C)
@@ -247,11 +247,8 @@ func (be *BdsExec) executeCommand() int {
 		// We want to be able to kill all child processes, without killing the
 		// calling program (bds). We create a new group thus we can send a
 		// kill signal to this new process group.
-		if DEBUG {
-			log.Printf("Info: Setting new process group\n")
-		}
-
 		// log.Printf("NOT SETTING GROUP!\n")
+		gpidOri :=  syscall.Getpgid();
 		if err := syscall.Setpgid(0, 0); err != nil {
 			// During an ssh remote execution we will no be albe to do this.
 			// In this case, we assume that the SSH daemon will catch the sinals
@@ -259,6 +256,11 @@ func (be *BdsExec) executeCommand() int {
 			if DEBUG {
 				log.Printf("Error setting process group: %s", err)
 			}
+		}
+
+		if DEBUG {
+			gpidNew :=  syscall.Getpgid();
+			log.Printf("Info: Setting new process group. Original GPID: %d, new GPID: %d\n", gpidOri, gpidNew)
 		}
 	}
 
@@ -297,7 +299,7 @@ func (be *BdsExec) executeCommand() int {
 */
 func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 	if DEBUG {
-		log.Printf("Debug: executeCommandTimeout\n")
+		log.Printf("Debug, executeCommandTimeout\n")
 	}
 
 	// Wait for execution to finish or timeout
@@ -349,7 +351,7 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 	// Write exitCode to file
 	if (be.exitFile != "") && (be.exitFile != "-") {
 		if DEBUG {
-			log.Printf("Info: Writing exit status '%s' to exit file '%s'\n",be.exitFile, exitStr )
+			log.Printf("Info: Writing exit status '%s' to exit file '%s'\n", exitStr, be.exitFile )
 		}
 		fileutil.WriteFile(be.exitFile, exitStr)
 	}
@@ -501,7 +503,7 @@ func (be *BdsExec) taskLoggerCleanUpAll() {
 	cmds := make(map[string]string)
 
 	if file, err = os.Open(be.taskLoggerFile); err != nil {
-		fmt.Fprintf(os.Stderr, "bds: cannot open TaskLogger file '%s' (%d)\n", be.taskLoggerFile, syscall.Getpid())
+		log.Printf("Error: Cannot open TaskLogger file '%s' (PID: %d)\n", be.taskLoggerFile, syscall.Getpid())
 		return
 	}
 	defer file.Close() // Make sure the file is deleted
@@ -542,19 +544,19 @@ func (be *BdsExec) taskLoggerCleanUpAll() {
 		if running {
 			if cmd, ok := cmds[pid]; !ok {
 				if VERBOSE {
-					log.Printf("bds: Killing PID '%s'\n", pid)
+					log.Printf("Info: Killing PID '%s'\n", pid)
 				}
 				pidInt, _ := strconv.Atoi(pid)
 				be.KillProcessGroup(pidInt) // No need to run a command, just kill local porcess group
 			} else if cmd == CMD_REMOVE_FILE {
 				// This is a file to be removed, not a command
 				if VERBOSE {
-					log.Printf("bds: Deleting file '%s'\n", pid)
+					log.Printf("Info: Deleting file '%s'\n", pid)
 				}
 				os.Remove(pid)
 			} else {
 				if DEBUG {
-					log.Printf("Killing PID '%s' using command '%s'\n", pid, runCmds[cmd])
+					log.Printf("Info: Killing PID '%s' using command '%s'\n", pid, runCmds[cmd])
 				}
 
 				// Create command to be executed
@@ -566,7 +568,7 @@ func (be *BdsExec) taskLoggerCleanUpAll() {
 			}
 		} else {
 			if DEBUG {
-				log.Printf("Debug: taskLoggerCleanUpAll. Not killing PID '%s' (finishde running)\n", pid)
+				log.Printf("Debug, taskLoggerCleanUpAll: Not killing PID '%s' (finishde running)\n", pid)
 			}
 		}
 	}
@@ -576,7 +578,7 @@ func (be *BdsExec) taskLoggerCleanUpAll() {
 		if len(cmd) > 0 {
 			// fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
 			if VERBOSE {
-				log.Printf("bds: Running command '%s'\n", cmd)
+				log.Printf("Info: Running command '%s'\n", cmd)
 			}
 			cmdExec := exec.Command(cmd)
 			cmdExec.Args = strings.Split(args, "\t")
