@@ -21,7 +21,7 @@ import (
 )
 
 // Verbose & Debug
-const DEBUG = false
+const DEBUG = true
 const VERBOSE = true
 
 // Exit codes
