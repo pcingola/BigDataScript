@@ -33,8 +33,6 @@ public class Task implements BdsSerialize {
 
 	public static final int MAX_HINT_LEN = 150;
 
-	public static final String DEFAULT_TASK_SHELL = "/bin/sh -e"; // Use '-e' so that shell script stops after first error
-
 	protected boolean verbose, debug;
 	protected boolean allowEmpty; // Allow empty output file/s
 	protected boolean canFail; // Allow execution to fail
@@ -134,7 +132,7 @@ public class Task implements BdsSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-					) return true;
+			) return true;
 			return false;
 
 		default:
@@ -177,7 +175,7 @@ public class Task implements BdsSerialize {
 		}
 
 		// Create file
-		String shell = Config.get().getString(Config.TASK_SHELL, DEFAULT_TASK_SHELL);
+		String shell = Config.get().getTaskShell();
 		shell = "#!" + shell + "\n\n" // Shell to use
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
 				;
@@ -680,7 +678,7 @@ public class Task implements BdsSerialize {
 					|| (taskState == TaskState.STARTED) // or right after it started
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
-					) {
+			) {
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;

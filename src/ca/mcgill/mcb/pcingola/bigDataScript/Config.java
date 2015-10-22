@@ -41,7 +41,10 @@ public class Config {
 
 	// Shells used to invoke 'sys' and 'task'
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
+	public static final String TASK_SHELL_DEFAULT = "/bin/bash -e"; // Use '-e' so that shell script stops after first error
+
 	public static final String SYS_SHELL = "sysShell"; // Sys's shell
+	public static String SYS_SHELL_DEFAULT = "/bin/bash -e -c"; // Note: This executes a script, so it requires the "-c" right before script name
 
 	// Temporary directory
 	public static final String TMP_DIR = "tmpDir";
@@ -316,6 +319,10 @@ public class Config {
 		return valsArray;
 	}
 
+	public String getSysShell() {
+		return getString(Config.SYS_SHELL, Config.SYS_SHELL_DEFAULT);
+	}
+
 	public Tail getTail() {
 		if (tail == null) {
 			tail = new Tail();
@@ -352,6 +359,10 @@ public class Config {
 		}
 
 		return taskMaxHintLen;
+	}
+
+	public String getTaskShell() {
+		return getString(Config.TASK_SHELL, Config.TASK_SHELL_DEFAULT);
 	}
 
 	public String getTmpDir() {
@@ -559,5 +570,4 @@ public class Config {
 
 		return sb.toString();
 	}
-
 }

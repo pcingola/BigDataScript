@@ -22,8 +22,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
  */
 public class ExpressionSys extends Expression {
 
-	public static String DEFAULT_SYS_SHELL = "/bin/bash -e -c"; // Note: This executes a script, so it requires the "-c" right before script name
-
 	protected static int sysId = 1;
 
 	protected String commands;
@@ -126,7 +124,7 @@ public class ExpressionSys extends Expression {
 
 		// EXEC expressions are always executed locally AND immediately
 		LinkedList<String> args = new LinkedList<String>();
-		String shell = Config.get().getString(Config.SYS_SHELL, DEFAULT_SYS_SHELL);
+		String shell = Config.get().getSysShell();
 		for (String arg : shell.split("\\s+"))
 			args.add(arg);
 
