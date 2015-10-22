@@ -348,11 +348,17 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 
 	// Write exitCode to file
 	if (be.exitFile != "") && (be.exitFile != "-") {
+		if DEBUG {
+			log.Printf("Info: Writing exit status '%s' to exit file '%s'\n",be.exitFile, exitStr )
+		}
 		fileutil.WriteFile(be.exitFile, exitStr)
 	}
 
 	// Should we kill child process?
 	if kill {
+		if DEBUG {
+			log.Printf("Info: Killing process\n")
+		}
 		be.cmd.Process.Kill()
 		be.cmd.Process.Wait() // Reap their souls
 	}
@@ -364,6 +370,9 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 		}
 
 		// Send a SIGKILL to the process group (just in case any child process is still executing)
+		if DEBUG {
+			log.Printf("Info: Killing process group: kill(0, SIGHUP)\n")
+		}
 		syscall.Kill(0, syscall.SIGHUP)
 	}
 
