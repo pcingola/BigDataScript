@@ -2,5 +2,5 @@
 
 
 for( int i=0 ; i < 3 ; i++ ) {
-	task echo Hi $i; echo Bye $i
+	task echo Hi $i
 }
