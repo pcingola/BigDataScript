@@ -1,6 +1,7 @@
 #!/usr/bin/env bds
 
+include 'zz.bds'
 
 for( int i=0 ; i < 3 ; i++ ) {
-	task echo Hi $i
+	println "$hi $i"
 }

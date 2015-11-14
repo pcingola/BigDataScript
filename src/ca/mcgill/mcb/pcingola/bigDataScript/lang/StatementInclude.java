@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.bigDataScript.lang;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -26,14 +27,25 @@ public class StatementInclude extends BlockWithFile {
 		if (includedFile.exists() && includedFile.canRead()) return includedFile;
 
 		// Not an absolute file name? Try to find relative to parent file
-		if (parent != null && parent.exists() && !includedFile.isAbsolute()) includedFile = new File(parent.getParent(), includedFilename);
-		if (includedFile.exists() && includedFile.canRead()) return includedFile;
+		if (!includedFile.isAbsolute()) {
+			if (parent != null && parent.exists()) includedFile = new File(parent.getParent(), includedFilename);
+			if (includedFile.exists() && includedFile.canRead()) return includedFile;
 
-		// Try all include paths
-		for (String incPath : Config.get().getIncludePath()) {
-			File incDir = new File(incPath);
-			includedFile = new File(incDir, includedFilename);
-			if (includedFile.exists() && includedFile.canRead()) return includedFile; // Found the file?
+			// Try parent's canonical path (e.g. when file is a symLink)
+			File parentCanon = null;
+			try {
+				parentCanon = parent.getCanonicalFile();
+				if (parentCanon != null && parentCanon.exists()) includedFile = new File(parentCanon.getParent(), includedFilename);
+				if (includedFile.exists() && includedFile.canRead()) return includedFile;
+			} catch (IOException e) {
+			}
+
+			// Try all include paths
+			for (String incPath : Config.get().getIncludePath()) {
+				File incDir = new File(incPath);
+				includedFile = new File(incDir, includedFilename);
+				if (includedFile.exists() && includedFile.canRead()) return includedFile; // Found the file?
+			}
 		}
 
 		return null;

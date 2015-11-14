@@ -69,8 +69,8 @@ public class Bds {
 	}
 
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
-	public static final String BUILD = "2015-09-22";
-	public static final String REVISION = "";
+	public static final String BUILD = "2015-11-14";
+	public static final String REVISION = "a";
 	public static final String VERSION_MAJOR = "0.99999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -216,6 +216,8 @@ public class Bds {
 				if (debug) Gpr.debug("File already included: '" + includedFilename + "'\tCanonical path: '" + canonicalFileName + "'");
 				return false;
 			}
+
+			// Can we read the include file?
 			if (!includedFile.canRead()) {
 				CompilerMessages.get().add(tree, parentFile, "\n\tCannot read included file: '" + includedFilename + "'", MessageType.ERROR);
 				return false;
