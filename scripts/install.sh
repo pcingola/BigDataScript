@@ -23,7 +23,7 @@ ant
 echo
 echo Building GO program
 cd go/bds/
-export GOPATH=$GOPATH:`pwd`
+export GOPATH=$GOPATH:`pwd -P`
 go clean
 go build
 go fmt
