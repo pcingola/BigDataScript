@@ -131,8 +131,11 @@ public class CmdLocal extends Cmd {
 
 		// Add command and arguments
 		if (notifyTaskState != null && (notifyTaskState instanceof Executioner) && (task != null)) {
-			for (String arg : ((Executioner) notifyTaskState).osKillCommand(task))
-				args.add(arg);
+			String argsKill[] = ((Executioner) notifyTaskState).osKillCommand(task);
+			if (argsKill != null) {
+				for (String arg : argsKill)
+					args.add(arg);
+			}
 		} else {
 			for (String arg : ExecutionerLocal.LOCAL_KILL_COMMAND)
 				args.add(arg);
