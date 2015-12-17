@@ -181,8 +181,10 @@ public class BdsParseArgs {
 			ArrayList<String> vals = new ArrayList<String>();
 			for (argNum++; argNum < programArgs.size(); argNum++) {
 				String val = programArgs.get(argNum);
-				if (isOpt(val)) break; // Stop if another argument is found
-				else vals.add(val);
+				if (isOpt(val)) { // Stop if another argument is found
+					argNum--; // This value is not used
+					break;
+				} else vals.add(val);
 			}
 
 			return vals;
@@ -221,8 +223,10 @@ public class BdsParseArgs {
 			ArrayList<String> vals = new ArrayList<String>();
 			for (argNum++; argNum < programArgs.size(); argNum++) {
 				String val = programArgs.get(argNum);
-				if (isOpt(val)) break; // Stop if another argument is found
-				else vals.add(val);
+				if (isOpt(val)) { // Stop if another argument is found
+					argNum--; // This value is not used
+					break;
+				} else vals.add(val);
 			}
 
 			useVal = setVarInit(varType, varInit, vals); // Found variable, try to replace or add LITERAL to this VarInit
@@ -232,7 +236,7 @@ public class BdsParseArgs {
 			// Booleans may not have a value (just '-varName' sets them to 'true')
 			if (programArgs.size() > (argNum + 1)) {
 				// Is the next argument 'true' or 'false'? => Set argument
-				String boolVal = programArgs.get(argNum + 1);
+				String boolVal = programArgs.get(++argNum);
 				if (valStr.equalsIgnoreCase("true") || valStr.equalsIgnoreCase("false")) valStr = boolVal;
 			}
 
