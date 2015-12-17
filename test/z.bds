@@ -1,7 +1,4 @@
 #!/usr/bin/env bds
+cpusLocal = 2
+print "cpus : $cpus\ncpusLocal: $cpusLocal\n"
 
-include 'zz.bds'
-
-for( int i=0 ; i < 3 ; i++ ) {
-	println "$hi $i"
-}
