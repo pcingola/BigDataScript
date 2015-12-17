@@ -1,3 +1,5 @@
 #!/usr/bin/env bds
+
 print "cpus : $cpus\ncpusLocal: $cpusLocal\n"
+task echo hi
 
