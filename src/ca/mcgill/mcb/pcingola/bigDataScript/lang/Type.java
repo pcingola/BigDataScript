@@ -223,10 +223,6 @@ public class Type extends BdsNode implements Comparable<Type> {
 		return primitiveType == type.primitiveType;
 	}
 
-	//	public Scope getClassScope() {
-	//		return classScope;
-	//	}
-
 	public PrimitiveType getPrimitiveType() {
 		return primitiveType;
 	}
@@ -323,6 +319,30 @@ public class Type extends BdsNode implements Comparable<Type> {
 	protected void parse(ParseTree tree) {
 		String typeName = tree.getChild(0).getText();
 		primitiveType = PrimitiveType.valueOf(typeName.toUpperCase());
+	}
+
+	public Object parse(String valStr) {
+		// Create a different literal for each primitive type
+		switch (primitiveType) {
+		case BOOL:
+			if (valStr == null) return false;
+			// Parse boolean
+			valStr = valStr.toLowerCase();
+			if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) return true;
+			return false;
+
+		case INT:
+			return Long.parseLong(valStr);
+
+		case REAL:
+			return Double.parseDouble(valStr);
+
+		case STRING:
+			return (valStr != null ? valStr : "");
+
+		default:
+			throw new RuntimeException("Cannot convert command line argument to variable type '" + this + "'");
+		}
 	}
 
 	@Override

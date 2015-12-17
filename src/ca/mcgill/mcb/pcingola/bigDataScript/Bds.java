@@ -33,18 +33,10 @@ import ca.mcgill.mcb.pcingola.bigDataScript.executioner.Executioners.Executioner
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.BdsNodeFactory;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ExpressionTask;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.FunctionDeclaration;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.Literal;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralBool;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralInt;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralListString;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralReal;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.LiteralString;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.ProgramUnit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.StatementInclude;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.Type;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.TypeList;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.VarDeclaration;
-import ca.mcgill.mcb.pcingola.bigDataScript.lang.VariableInit;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeFunctions.NativeLibraryFunctions;
 import ca.mcgill.mcb.pcingola.bigDataScript.lang.nativeMethods.string.NativeLibraryString;
 import ca.mcgill.mcb.pcingola.bigDataScript.run.BdsThread;
@@ -58,7 +50,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
- * bds command line
+ * BDS command line
  *
  * @author pcingola
  */
@@ -84,7 +76,6 @@ public class Bds {
 	Boolean noCheckpoint; // Do not create checkpoint files
 	Boolean noRmOnExit; // Do not remove temp files on exit
 	boolean quiet; // Quiet mode
-	boolean showHelp; // Show bds's script help (provided on each variable definition). Do not run program
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
 	boolean verbose; // Verbose mode
 	boolean reportHtml; // Use HTML report style
@@ -423,6 +414,10 @@ public class Bds {
 		return config;
 	}
 
+	public ArrayList<String> getProgramArgs() {
+		return programArgs;
+	}
+
 	public ProgramUnit getProgramUnit() {
 		return programUnit;
 	}
@@ -450,7 +445,6 @@ public class Bds {
 		reportYaml = false;
 		dryRun = false;
 		log = false;
-		//		useDoneFile = false;
 	}
 
 	/**
@@ -473,229 +467,6 @@ public class Bds {
 
 		// Libraries
 		initilaizeLibraries();
-	}
-
-	/**
-	 * Set command line arguments as global variables
-	 *
-	 * How it works: - Program is executes as something like:
-	 *
-	 * java -jar BigDataScript.jar [options] programFile.bds [programOptions]
-	 *
-	 * - Any command line argument AFTER "programFile.bds" is considered a
-	 * command line argument for the BigDataScript program. E.g.
-	 *
-	 * java -jar BigDataScript.jar -v program.bds -file myFile.txt -verbose -num
-	 * 7
-	 *
-	 * So our program "program.bds" has command line options: -file myFile.txt
-	 * -verbose -num 7 (notice that "-v" is a command line option for
-	 * loudScript.jar and not for "program.bds")
-	 *
-	 * - We look for variables in ProgramUnit that match the name of these
-	 * command line arguments
-	 *
-	 * - Then we add those values to the variable initialization. Thus
-	 * overriding any initialization values provided in the program. E.g.
-	 *
-	 * Our program has the following variable declarations: string file =
-	 * "default_file.txt" int num = 3 bool verbose = false
-	 *
-	 * We execute the program: java -jar BigDataScript.jar -v program.bds -file
-	 * myFile.txt -verbose -num 7
-	 *
-	 * The variable declarations are replaced as follows: string file =
-	 * "myFile.txt" int num = 7 bool verbose = true
-	 *
-	 * - Note: Only primitive types are supported (i.e.: string, bool, int &
-	 * real)
-	 *
-	 * - Note: Unmatched variables names will be silently ignored (same for
-	 * variables that match, but are non-primitive)
-	 *
-	 * - Note: If a variable is matched, is primitive, but cannot be converted.
-	 * An error is thrown. E.g.: Program: int num = 1
-	 *
-	 * Command line: java -jar BigDataScript.jar program.bds -num "hello" <-
-	 * This is an error because 'num' is an int
-	 *
-	 * - Note: Unprocessed arguments will be available to the program as an
-	 * 'args' list
-	 */
-	void initializeArgs() {
-		// Set program arguments as global variables
-		for (int argNum = 0; argNum < programArgs.size(); argNum++) {
-			String arg = programArgs.get(argNum);
-
-			// Parse '-OPT' option
-			if (arg.equalsIgnoreCase("-h") || arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("--help")) {
-				if (debug) Timer.showStdErr("Activating 'show help' mode");
-				showHelp = true;
-			} else if (arg.startsWith("-")) {
-				// Get variable name and value
-				String varName = arg.substring(1);
-
-				// Find all variable declarations that match this command line argument
-				for (VarDeclaration varDecl : programUnit.varDeclarations(true)) {
-					Type varType = varDecl.getType();
-
-					// Is is a primitive variable or a primitive list?
-					if (varType.isPrimitiveType() || varType.isList()) {
-
-						// Find an initialization that matches the command line argument
-						for (VariableInit varInit : varDecl.getVarInit())
-							if (varInit.getVarName().equals(varName)) { // Name matches?
-								int argNumOri = argNum;
-								boolean useVal = false;
-
-								if (varType.isList()) {
-									// Create a list of arguments and use them to initialize the variable (list)
-									ArrayList<String> vals = new ArrayList<String>();
-									for (int i = argNum + 1; i < programArgs.size(); i++)
-										if (programArgs.get(i).startsWith("-")) break;
-										else vals.add(programArgs.get(i));
-
-									useVal = initializeArgs(varType, varInit, vals); // Found variable, try to replace or add LITERAL to this VarInit
-								} else if (varType.isBool()) {
-									String valStr = "true";
-
-									// Booleans may not have a value (just '-varName' sets them to 'true')
-									if (programArgs.size() > (argNum + 1)) {
-										// Is the next argument 'true' or 'false'? => Set argument
-										String boolVal = programArgs.get(argNum + 1);
-										if (valStr.equalsIgnoreCase("true") || valStr.equalsIgnoreCase("false")) valStr = boolVal;
-									}
-
-									initializeArgs(varType, varInit, valStr);
-								} else {
-									String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
-									useVal = initializeArgs(varType, varInit, val); // Found variable, try to replace or add LITERAL to this VarInit
-								}
-
-								if (!useVal) argNum = argNumOri; // We did not use the arguments
-							}
-					}
-				}
-			}
-		}
-
-		// Make all unprocessed arguments available for the program (in 'args' list)
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Type.STRING), programArgs));
-
-		// Initialize program name
-		String programPath = programUnit.getFileName();
-		String progName = Gpr.baseName(programPath);
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, progName));
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Type.STRING, programPath));
-	}
-
-	/**
-	 * Add or replace initialization statement in this VarInit
-	 *
-	 * Note: We create a Literal node (of the appropriate type) and add it to
-	 * "varInit.expression"
-	 *
-	 * @param varType
-	 *            : Variable type
-	 * @param varInit
-	 *            : Variable initialization
-	 * @param vals
-	 *            : Value to assign
-	 */
-	boolean initializeArgs(Type varType, VariableInit varInit, ArrayList<String> vals) {
-		boolean usedVal = true;
-
-		try {
-			Literal literal = null;
-
-			if (varType.isList(Type.STRING)) {
-				// Create literal
-				LiteralListString lit = new LiteralListString(varInit, null);
-				literal = lit;
-				lit.setValue(vals); // Set literal value
-			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
-
-			// Set varInit to literal
-			varInit.setExpression(literal);
-		} catch (Exception e) {
-			// Error parsing 'val'?
-			throw new RuntimeException("Cannot convert argument '" + vals + "' to type " + varType);
-		}
-
-		return usedVal;
-	}
-
-	/**
-	 * Add or replace initialization statement in this VarInit
-	 *
-	 * Note: We create a Literal node (of the appropriate type) and add it to
-	 * "varInit.expression"
-	 *
-	 * @param varType
-	 *            : Variable type
-	 * @param varInit
-	 *            : Variable initialization
-	 * @param valStr
-	 *            : Value to assign
-	 */
-	boolean initializeArgs(Type varType, VariableInit varInit, String valStr) {
-		boolean usedVal = true;
-
-		try {
-			Literal literal = null;
-
-			// Create a different literal for each primitive type
-			if (varType.isBool()) {
-				// Create literal
-				LiteralBool lit = new LiteralBool(varInit, null);
-				literal = lit;
-
-				// Set literal value
-				boolean valBool = true; // Default value is 'true'
-				if (valStr != null) {
-					// Parse boolean
-					valStr = valStr.toLowerCase();
-					if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) valBool = true;
-					else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) valBool = false;
-					else usedVal = false; // Not any valid value? => This
-					// argument is not used
-				}
-
-				lit.setValue(valBool);
-			} else if (varType.isInt()) {
-				// Create literal
-				LiteralInt lit = new LiteralInt(varInit, null);
-				literal = lit;
-
-				// Set literal value
-				long valInt = Long.parseLong(valStr);
-				lit.setValue(valInt);
-			} else if (varType.isReal()) {
-				// Create literal
-				LiteralReal lit = new LiteralReal(varInit, null);
-				literal = lit;
-
-				// Set literal value
-				double valReal = Double.parseDouble(valStr);
-				lit.setValue(valReal);
-			} else if (varType.isString()) {
-				// Create literal
-				LiteralString lit = new LiteralString(varInit, null);
-				literal = lit;
-
-				// Set literal value
-				if (valStr == null) valStr = ""; // We should never have 'null' values
-				lit.setValue(valStr);
-			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
-
-			// Set varInit to literal
-			varInit.setExpression(literal);
-		} catch (Exception e) {
-			// Error parsing 'val'?
-			throw new RuntimeException("Cannot convert argument '" + valStr + "' to type " + varType);
-		}
-
-		return usedVal;
 	}
 
 	/**
@@ -727,6 +498,8 @@ public class Bds {
 		long timeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_TIMEOUT, "" + oneDay));
 		long wallTimeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
 
+		long cpusLocal = Gpr.parseLongSafe(config.getString(Scope.GLOBAL_VAR_LOCAL_CPUS, "" + Gpr.NUM_CORES));
+
 		// ---
 		// Add global symbols
 		// ---
@@ -744,7 +517,7 @@ public class Bds {
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_RETRY, Type.INT, (long) taskFailCount)); // Task fail can be re-tried (re-run) N times before considering failed.
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Type.INT, timeout)); // Task default timeout
 		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, Type.INT, wallTimeout)); // Task default wall-timeout
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, (long) Gpr.NUM_CORES));
+		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, cpusLocal));
 
 		// Number of local CPUs
 		// Kilo, Mega, Giga, Tera, Peta.
@@ -821,8 +594,6 @@ public class Bds {
 
 	/**
 	 * Parse command line arguments
-	 *
-	 * @param args
 	 */
 	public void parse(String[] args) {
 		// Nothing? Show command line options
@@ -1095,14 +866,16 @@ public class Bds {
 		}
 
 		if (verbose) Timer.showStdErr("Initializing");
-		initializeArgs();
+		BdsParseArgs bdsParseArgs = new BdsParseArgs(this);
+		bdsParseArgs.setDebug(debug);
+		bdsParseArgs.parse();
 
 		// Run the program
 		BdsThread bdsThread = new BdsThread(programUnit, config);
 		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 
 		// Show script's automatic help message
-		if (showHelp) {
+		if (bdsParseArgs.isShowHelp()) {
 			if (verbose) Timer.showStdErr("Showing automaic 'help'");
 			HelpCreator hc = new HelpCreator(programUnit);
 			System.out.println(hc);
@@ -1131,7 +904,9 @@ public class Bds {
 		}
 
 		if (verbose) Timer.showStdErr("Initializing");
-		initializeArgs();
+		BdsParseArgs bdsParseArgs = new BdsParseArgs(this);
+		bdsParseArgs.setDebug(debug);
+		bdsParseArgs.parse();
 
 		// Run the program
 		BdsThread bdsThread = new BdsThread(programUnit, config);

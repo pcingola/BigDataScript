@@ -1,4 +1,3 @@
 #!/usr/bin/env bds
-cpusLocal = 2
 print "cpus : $cpus\ncpusLocal: $cpusLocal\n"
 

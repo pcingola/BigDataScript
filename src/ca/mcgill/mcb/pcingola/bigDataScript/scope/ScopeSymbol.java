@@ -123,7 +123,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 				mapNew.put(key, mapOri.get(key));
 			}
 		} else {
-			// Assign value 
+			// Assign value
 			this.value = value;
 		}
 	}
