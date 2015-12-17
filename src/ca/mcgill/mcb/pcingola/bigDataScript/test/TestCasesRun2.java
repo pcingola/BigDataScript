@@ -265,7 +265,8 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "sys                |\\t|\n" //
 				+ "sys                |\\t|    variable:Hello\n" //
 		// Note: This result may change if we use a different taskShell in bds.config
-				+ "task               |\t|\n" + "task               |\t|    variable:Hello\n" //
+				+ "task               |\\t|\n" //
+				+ "task               |\\t|    variable:Hello\n" //
 				;
 
 		runAndCheckStdout("test/run_123.bds", output);
