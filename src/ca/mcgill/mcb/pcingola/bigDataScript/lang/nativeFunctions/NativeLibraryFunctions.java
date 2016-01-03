@@ -12,7 +12,9 @@ public class NativeLibraryFunctions {
 
 	@SuppressWarnings("rawtypes")
 	public static Class classes[] = { //
-	FunctionNativePrint.class //
+			FunctionNativePrint.class //
+			, FunctionNativeLog.class //
+			, FunctionNativeTime.class //
 			, FunctionNativePrintErr.class //
 			, FunctionNativeMinInt.class //
 			, FunctionNativeMaxInt.class //
