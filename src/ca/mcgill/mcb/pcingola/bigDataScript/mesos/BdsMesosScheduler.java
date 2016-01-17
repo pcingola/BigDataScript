@@ -261,7 +261,7 @@ public class BdsMesosScheduler implements Scheduler {
 
 			switch (resourceName) {
 			case OFFER_MEM:
-				hr.setMem(GB * value);
+				hr.setMem(MB * value);
 				break;
 			case OFFER_CPUS:
 				hr.setCpus(value);
