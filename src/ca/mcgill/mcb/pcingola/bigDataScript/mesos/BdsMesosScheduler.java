@@ -232,7 +232,7 @@ public class BdsMesosScheduler implements Scheduler {
 		}
 
 		Gpr.debug("Resource accounting problem in host '" + hostName + "': This should ever happen!");
-		return true;
+		return false;
 	}
 
 	/**
@@ -254,6 +254,9 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	HostResources parseOffer(Offer offer) {
 		HostResources hr = new HostResources();
+
+		hr.setMem(0);
+		hr.setCpus(0);
 
 		for (Resource r : offer.getResourcesList()) {
 			String resourceName = r.getName();
