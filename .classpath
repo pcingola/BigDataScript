@@ -17,7 +17,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/mesos-0.26.0.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/pcingola/.bds/lib/libmesos-0.26.0.so"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/pcingola/.bds/lib/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
