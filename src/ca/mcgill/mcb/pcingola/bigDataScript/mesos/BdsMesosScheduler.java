@@ -42,6 +42,8 @@ import org.apache.mesos.Protos.Value;
 import org.apache.mesos.Scheduler;
 import org.apache.mesos.SchedulerDriver;
 
+import com.google.protobuf.ByteString;
+
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.Cluster;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.Host;
 import ca.mcgill.mcb.pcingola.bigDataScript.cluster.host.HostInifinte;
@@ -51,8 +53,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.TaskState;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
-
-import com.google.protobuf.ByteString;
 
 /**
  * BDS scheduler for Mesos
@@ -184,7 +184,7 @@ public class BdsMesosScheduler implements Scheduler {
 				+ "\n\tExecutorId : " + executorId.getValue() //
 				+ "\n\tSlaveId    : " + slaveId.getValue() //
 				+ "\n\tMesssage   : '" + new String(data) + "'" //
-				);
+		);
 	}
 
 	protected boolean matchTask(Task task, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {

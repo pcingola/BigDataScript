@@ -61,7 +61,7 @@ public class Bds {
 	}
 
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
-	public static final String BUILD = "2016-01-03";
+	public static final String BUILD = "2016-01-18";
 	public static final String REVISION = "c";
 	public static final String VERSION_MAJOR = "0.99999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
