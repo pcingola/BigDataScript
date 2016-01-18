@@ -90,6 +90,19 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
+	 * Count the number of failed tasks
+	 */
+	int countFaield() {
+		int count = 0;
+		for (Map.Entry<String, Task> entry : tasksDone.entrySet()) {
+			if (entry.getValue().isFailed()) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
 	 * Create a command form a task
 	 */
 	protected synchronized Cmd createRunCmd(Task task) {
@@ -318,21 +331,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Report tasks to running, to run and done
 	 */
 	protected void reportTasks() {
-		// if (verbose &&
 		if ((hasTaskRunning() || hasTaskToRun()) && isReportTime()) {
-			/* Count the number of failed tasks */
-			int nbKO = 0;
-			for (Map.Entry<String, Task> entry : tasksDone.entrySet())
-			{
-				if (entry.getValue().isFailed()) {
-					nbKO++;
-				}
-			}
 			log("Tasks [" + getExecutionerId() + "]" //
 					+ "\t\tPending: " + tasksToRun.size() //
 					+ "\tRunning: " + tasksRunning.size() //
 					+ "\tDone: " + tasksDone.size() //
-					+ "\tFailed: " + nbKO //
+					+ "\tFailed: " + countFaield() //
 					+ (Config.get().isQuiet() ? "" : "\n" + toStringTable()) //
 			);
 		}
@@ -767,16 +771,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	@Override
 	public String toString() {
-		/* Count the number of failed tasks */
-		int nbKO = 0;
-		for (Map.Entry<String, Task> entry : tasksDone.entrySet())
-		{
-			if (entry.getValue().isFailed()) {
-				nbKO++;
-			}
-		}
-		return "Executioner : '" + getExecutionerId() + "'\tPending : " + tasksToRun.size() + "\tRunning: " + tasksRunning.size() + "\tDone: " + tasksDone.size() +
-			"\tFailed: " + nbKO;
+		return "Executioner : '" + getExecutionerId() //
+				+ "'\tPending : " + tasksToRun.size() //
+				+ "\tRunning: " + tasksRunning.size() //
+				+ "\tDone: " + tasksDone.size() //
+				+ "\tFailed: " + countFaield() //
+				;
 	}
 
 	/**
