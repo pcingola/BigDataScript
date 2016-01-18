@@ -33,8 +33,6 @@ import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
 
-import com.google.protobuf.ByteString;
-
 /**
  * A sample class to run BDS' Mesos framework
  *
@@ -60,18 +58,6 @@ public class BdsMesosFramework extends Thread {
 	MesosSchedulerDriver schedulerDriver;
 	FrameworkInfo frameworkInfo;
 	ExecutionerMesos executionerMesos;
-
-	//	public static void main(String[] args) throws Exception {
-	//		if (args.length < 1 || args.length > 2) {
-	//			usage();
-	//			System.exit(1);
-	//		}
-	//
-	//		BdsMesosFramework bdsMesosFramework = new BdsMesosFramework(null, args[0]);
-	//		bdsMesosFramework.run();
-	//
-	//		System.exit(bdsMesosFramework.status);
-	//	}
 
 	/**
 	 * Pack an array into a string
@@ -200,7 +186,7 @@ public class BdsMesosFramework extends Thread {
 
 				Credential credential = Credential.newBuilder() //
 						.setPrincipal(System.getenv("DEFAULT_PRINCIPAL")) //
-						.setSecret(ByteString.copyFrom(System.getenv("DEFAULT_SECRET").getBytes())) //
+						.setSecret(System.getenv("DEFAULT_SECRET")) //
 						.build();
 
 				schedulerDriver = new MesosSchedulerDriver(scheduler, frameworkInfo, master, credential);

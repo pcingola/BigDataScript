@@ -1,5 +1,7 @@
 #!/usr/bin/env bds
 
+system='mesos'
 
-print "Hi\n"
-log("info message: " + time() )
+for( int i=0 ; i < 3 ; i++ ) {
+	task echo Hi $i
+}
