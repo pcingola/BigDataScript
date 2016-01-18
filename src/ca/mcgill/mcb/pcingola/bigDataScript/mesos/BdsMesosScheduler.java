@@ -232,7 +232,7 @@ public class BdsMesosScheduler implements Scheduler {
 		}
 
 		Gpr.debug("Resource accounting problem in host '" + hostName + "': This should ever happen!");
-		return true;
+		return false;
 	}
 
 	/**
@@ -255,13 +255,16 @@ public class BdsMesosScheduler implements Scheduler {
 	HostResources parseOffer(Offer offer) {
 		HostResources hr = new HostResources();
 
+		hr.setMem(0);
+		hr.setCpus(0);
+
 		for (Resource r : offer.getResourcesList()) {
 			String resourceName = r.getName();
 			int value = (int) r.getScalar().getValue();
 
 			switch (resourceName) {
 			case OFFER_MEM:
-				hr.setMem(GB * value);
+				hr.setMem(MB * value);
 				break;
 			case OFFER_CPUS:
 				hr.setCpus(value);
@@ -494,7 +497,7 @@ public class BdsMesosScheduler implements Scheduler {
 		int numCpus = task.getResources().getCpus() > 0 ? task.getResources().getCpus() : 1;
 		Resource cpus = Resource.newBuilder().setName(OFFER_CPUS).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(numCpus)).build(); // Number of CPUS
 
-		long memSize = (task.getResources().getMem() / MB) > 0 ? task.getResources().getMem() : 64;
+		long memSize = (task.getResources().getMem() / MB) > 0 ? (task.getResources().getMem() / MB) : 64;
 		Resource mem = Resource.newBuilder().setName(OFFER_MEM).setType(Value.Type.SCALAR).setScalar(Value.Scalar.newBuilder().setValue(memSize)).build(); // Memory in MB
 
 		// Executor
