@@ -200,6 +200,9 @@ public class BdsMesosScheduler implements Scheduler {
 		return false;
 	}
 
+	/**
+	 * Match a task to the offer/s
+	 */
 	protected synchronized boolean matchTask(Task task, Host host, Collection<OfferID> offerIds, Collection<TaskInfo> taskInfos) {
 		// Not enough resources in this host?
 		if (!host.hasResourcesAvailable(task.getResources())) return false;

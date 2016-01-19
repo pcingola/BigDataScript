@@ -68,7 +68,7 @@ public class BdsMesosExecutor implements Executor, NotifyTaskState, PidParser {
 		}
 	}
 
-	public static boolean debug = true;
+	public static boolean debug = false;
 	HashMap<String, CmdInfo> cmdInfoById;
 
 	// Script used to fire up BDS executor
