@@ -32,6 +32,7 @@ import org.apache.mesos.Protos.TaskID;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
  * A sample class to run BDS' Mesos framework
@@ -48,6 +49,7 @@ public class BdsMesosFramework extends Thread {
 	public static final String BDS_FRAMEWORK_NAME = "BDS_FRAMEWORK";
 	public static final String BDS_FRAMEWORK_DIR = Config.DEFAULT_CONFIG_DIR + "/mesos";
 
+	boolean verbose, debug;
 	String master;
 	int status;
 	String executorUri;
@@ -164,7 +166,7 @@ public class BdsMesosFramework extends Thread {
 
 			// Enable checkpointing
 			if (System.getenv("MESOS_CHECKPOINT") != null) {
-				System.out.println("Enabling checkpoint for the framework");
+				if (verbose) Timer.showStdErr("Enabling checkpoint for Mesos framework");
 				frameworkBuilder.setCheckpoint(true);
 			}
 
@@ -172,25 +174,20 @@ public class BdsMesosFramework extends Thread {
 			frameworkInfo = frameworkBuilder.build();
 
 			if (System.getenv("MESOS_AUTHENTICATE") != null) {
-				System.out.println("Enabling authentication for the framework");
+				if (verbose) Timer.showStdErr("Enabling authentication for Mesos framework");
 
-				if (System.getenv("DEFAULT_PRINCIPAL") == null) {
-					System.err.println("Expecting authentication principal in the environment");
-					System.exit(1);
-				}
-
-				if (System.getenv("DEFAULT_SECRET") == null) {
-					System.err.println("Expecting authentication secret in the environment");
-					System.exit(1);
-				}
+				if (System.getenv("DEFAULT_PRINCIPAL") == null) throw new RuntimeException("Expecting authentication principal in the environment");
+				if (System.getenv("DEFAULT_SECRET") == null) throw new RuntimeException("Expecting authentication secret in the environment");
 
 				Credential credential = Credential.newBuilder() //
 						.setPrincipal(System.getenv("DEFAULT_PRINCIPAL")) //
 						.setSecret(System.getenv("DEFAULT_SECRET")) //
 						.build();
 
+				if (verbose) Timer.showStdErr("Setting up Mesos Driver with credentials, master = '" + master + "'");
 				schedulerDriver = new MesosSchedulerDriver(scheduler, frameworkInfo, master, credential);
 			} else {
+				if (verbose) Timer.showStdErr("Setting up Mesos Driver, master = '" + master + "'");
 				schedulerDriver = new MesosSchedulerDriver(scheduler, frameworkInfo, master);
 			}
 
@@ -203,6 +200,14 @@ public class BdsMesosFramework extends Thread {
 			status = 1;
 			if (schedulerDriver != null) schedulerDriver.stop(); // Ensure that the driver process terminates.
 		}
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 }

@@ -11,7 +11,11 @@
 #---
 # Get BDS directories
 #---
-if [ -z "$HOME" ]
+if [ "$USER" = "root" ]
+then
+	# Use /usr/local/bds path instead of /root/.bds
+	BDS_HOME="/usr/local/bds"
+elif [ -z "$HOME" ]
 then
 	# Home variable not set? Try using BASH_SOURCE
 	BDS_HOME_MESOS=`dirname ${BASH_SOURCE[0]}`
@@ -28,24 +32,28 @@ BDS_JAR=$BDS_HOME/bds
 #---
 # Mesos libraries
 #---
+ls -al $BDS_MESOS_DIR
 PROTOBUF_JAR=`ls $BDS_MESOS_DIR/protobuf*.jar | tail -n 1`
 MESOS_JAR=`ls $BDS_MESOS_DIR/mesos*.jar | tail -n 1`
 
 # Path to native library
 if [ -z "$MESOS_NATIVE_LIBRARY" ]
 then
-	# Use path provided by mesos
-	MESOS_NATIVE_LIB_DIR=`dirname $MESOS_NATIVE_LIBRARY`
-else
 	# Guess from bds' home dir
 	MESOS_NATIVE_LIB_DIR="$BDS_HOME/lib"
+else
+	# Use path provided by mesos
+	MESOS_NATIVE_LIB_DIR=`dirname $MESOS_NATIVE_LIBRARY`
 fi
 
 
 #---
 # Check that libraries are installed
 #---
+echo "User                 :"`whoami`
+echo "Script               :$0"
 echo "BDS_HOME             :$BDS_HOME"
+echo "BDS_MESOS_DIR        :$BDS_MESOS_DIR"
 echo "BDS_JAR              :$BDS_JAR"
 echo "MESOS_JAR            :$MESOS_JAR"
 echo "MESOS_NATIVE_LIB_DIR :$MESOS_NATIVE_LIB_DIR"

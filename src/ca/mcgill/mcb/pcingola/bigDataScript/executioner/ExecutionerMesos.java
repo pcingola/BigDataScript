@@ -17,7 +17,7 @@ import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 public class ExecutionerMesos extends Executioner {
 
 	public static final String MESOS_MASTER_PROPERTY_NAME = "mesos.master";
-	public static final String DEFAULE_MESOS_MASTER = "127.0.0.1:5050";
+	public static final String DEFAULT_MESOS_MASTER = "127.0.1.1:5050";
 
 	BdsMesosFramework mesosFramework;
 
@@ -45,8 +45,10 @@ public class ExecutionerMesos extends Executioner {
 	 */
 	void initMesos() {
 		// Initialize framework
-		String master = config.getString(MESOS_MASTER_PROPERTY_NAME, DEFAULE_MESOS_MASTER);
+		String master = config.getString(MESOS_MASTER_PROPERTY_NAME, DEFAULT_MESOS_MASTER);
 		mesosFramework = new BdsMesosFramework(this, master);
+		mesosFramework.setVerbose(verbose);
+		mesosFramework.setDebug(debug);
 		mesosFramework.start();
 
 		// Wait for Mesos connection
