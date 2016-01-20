@@ -19,6 +19,8 @@ package ca.mcgill.mcb.pcingola.bigDataScript.mesos;
  */
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import org.apache.mesos.MesosSchedulerDriver;
 import org.apache.mesos.Protos.CommandInfo;
@@ -32,6 +34,7 @@ import org.apache.mesos.Protos.TaskID;
 import ca.mcgill.mcb.pcingola.bigDataScript.Config;
 import ca.mcgill.mcb.pcingola.bigDataScript.executioner.ExecutionerMesos;
 import ca.mcgill.mcb.pcingola.bigDataScript.task.Task;
+import ca.mcgill.mcb.pcingola.bigDataScript.util.Gpr;
 import ca.mcgill.mcb.pcingola.bigDataScript.util.Timer;
 
 /**
@@ -103,6 +106,23 @@ public class BdsMesosFramework extends Thread {
 		return frameworkInfo;
 	}
 
+	String getMasterIp() {
+		String m[] = master.split(":");
+		String name = m[0];
+		String port = (m.length > 0 ? m[1] : "");
+
+		InetAddress inetAddress;
+		try {
+			inetAddress = InetAddress.getByName(name);
+		} catch (UnknownHostException e) {
+			throw new RuntimeException(e);
+		}
+
+		String ipPort = inetAddress.getHostAddress() + (!port.isEmpty() ? ":" + port : "");
+		if (debug) Gpr.debug("Master name: '" + name + "'\tport: '" + port + "'\tipPort: '" + ipPort + "'");
+		return ipPort;
+	}
+
 	public BdsMesosScheduler getScheduler() {
 		return scheduler;
 	}
@@ -135,6 +155,8 @@ public class BdsMesosFramework extends Thread {
 	@Override
 	public void run() {
 		try {
+			String masterIpPort = getMasterIp();
+
 			//---
 			// Initialize executor
 			//---
@@ -184,11 +206,11 @@ public class BdsMesosFramework extends Thread {
 						.setSecret(System.getenv("DEFAULT_SECRET")) //
 						.build();
 
-				if (verbose) Timer.showStdErr("Setting up Mesos Driver with credentials, master = '" + master + "'");
-				schedulerDriver = new MesosSchedulerDriver(scheduler, frameworkInfo, master, credential);
+				if (verbose) Timer.showStdErr("Setting up Mesos Driver with credentials, master = '" + masterIpPort + "'");
+				schedulerDriver = new MesosSchedulerDriver(scheduler, frameworkInfo, masterIpPort, credential);
 			} else {
-				if (verbose) Timer.showStdErr("Setting up Mesos Driver, master = '" + master + "'");
-				schedulerDriver = new MesosSchedulerDriver(scheduler, frameworkInfo, master);
+				if (verbose) Timer.showStdErr("Setting up Mesos Driver, master = '" + masterIpPort + "'");
+				schedulerDriver = new MesosSchedulerDriver(scheduler, frameworkInfo, masterIpPort);
 			}
 
 			//---
