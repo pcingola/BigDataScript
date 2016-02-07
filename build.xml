@@ -3,12 +3,12 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar" depends="compile">
-		<copy file="src/ca/mcgill/mcb/pcingola/bigDataScript/SummaryTemplate.html" tofile="bin/ca/mcgill/mcb/pcingola/bigDataScript/SummaryTemplate.html"/>
-		<copy file="src/ca/mcgill/mcb/pcingola/bigDataScript/SummaryTemplate.yaml" tofile="bin/ca/mcgill/mcb/pcingola/bigDataScript/SummaryTemplate.yaml"/>
-		<copy file="./src/ca/mcgill/mcb/pcingola/bigDataScript/DagTaskTemplate.js" tofile="bin/ca/mcgill/mcb/pcingola/bigDataScript/DagTaskTemplate.js"/>
+		<copy file="src/org/bigDataScript/SummaryTemplate.html" tofile="bin/org/bigDataScript/SummaryTemplate.html"/>
+		<copy file="src/org/bigDataScript/SummaryTemplate.yaml" tofile="bin/org/bigDataScript/SummaryTemplate.yaml"/>
+		<copy file="./src/org/bigDataScript/DagTaskTemplate.js" tofile="bin/org/bigDataScript/DagTaskTemplate.js"/>
         <jar destfile="${user.home}/.bds/bds.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="ca.mcgill.mcb.pcingola.bigDataScript.Bds"/>
+                <attribute name="Main-Class" value="org.bigDataScript.Bds"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="./bin"/>
