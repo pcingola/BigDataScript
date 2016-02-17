@@ -22,9 +22,9 @@ import org.bds.antlr.BigDataScriptParser;
 import org.bds.antlr.BigDataScriptParser.IncludeFileContext;
 import org.bds.compile.CompileErrorStrategy;
 import org.bds.compile.CompilerErrorListener;
+import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.compile.TypeCheckedNodes;
-import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.data.Data;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
@@ -60,7 +60,7 @@ public class Bds {
 	}
 
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
-	public static final String BUILD = "2016-02-07";
+	public static final String BUILD = "2016-02-17";
 	public static final String REVISION = "c";
 	public static final String VERSION_MAJOR = "0.99999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;

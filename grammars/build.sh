@@ -15,8 +15,8 @@ rm *.class *.java
 
 # Compile
 echo Create Lexer and Parser
-$antlr4 -visitor -package org.bigDataScript.antlr $grammar
+$antlr4 -visitor -package org.bds.antlr $grammar
 
 # Copy to source dir
-cp *.java ../src/org/bigDataScript/antlr/
+cp *.java ../src/org/bds/antlr/
 

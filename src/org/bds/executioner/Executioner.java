@@ -782,7 +782,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	/**
 	 * Create a table of tasks
 	 */
-	public String toStringTable() {
+	public synchronized String toStringTable() {
 		// Create table
 		int rowNum = 0;
 		String table[][] = new String[tasksToRun.size() + tasksRunning.size()][5];
