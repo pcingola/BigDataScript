@@ -20,6 +20,8 @@ public class TestCasesClusterGeneric extends TestCasesBase {
 	public void test01_log() {
 		Gpr.debug("Test");
 
+		verbose = true;
+
 		// Create command line
 		BdsTest bdsTest = new BdsTest("test/clusterGeneric_01.bds", verbose, debug);
 		bdsTest.bds(); // Create command now so we can change 'config' before running
