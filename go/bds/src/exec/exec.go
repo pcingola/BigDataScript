@@ -32,7 +32,7 @@ const EXITCODE_TIMEOUT = 2
 const JAVA_CMD = "java"
 const JAVA_MEM = "-Xmx2G"
 const JAVA_NATIVE_LIB = "-Djava.library.path="
-const JAVA_BDS_CLASS = "org.bigDataScript.Bds"
+const JAVA_BDS_CLASS = "org.bds.Bds"
 
 const BDS_NATIVE_LIB_DIR = "lib"
 
