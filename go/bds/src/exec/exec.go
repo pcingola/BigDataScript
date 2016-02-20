@@ -30,7 +30,7 @@ const EXITCODE_ERROR = 1
 const EXITCODE_TIMEOUT = 2
 
 const JAVA_CMD = "java"
-const JAVA_MEM = "-Xmx2G"
+const JAVA_MEM = "-Xmx4G"
 const JAVA_NATIVE_LIB = "-Djava.library.path="
 const JAVA_BDS_CLASS = "org.bds.Bds"
 
