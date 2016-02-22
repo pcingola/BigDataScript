@@ -1,7 +1,7 @@
 #!/usr/bin/env bds
 
-system='mesos'
+f := "zzz.txt"
+l := f.readLines()
+println "Lines: " + l.size() + "\tempty: " + l.isEmpty()
+println l
 
-for( int i=0 ; i < 3 ; i++ ) {
-	task echo Hi $i
-}
