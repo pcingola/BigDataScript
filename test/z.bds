@@ -1,7 +1,7 @@
 #!/usr/bin/env bds
 
-f := "zzz.txt"
-l := f.readLines()
-println "Lines: " + l.size() + "\tempty: " + l.isEmpty()
-println l
-
+for( int i=0 ; i < 10 ; i++ ) {
+	task( cpus := 1 , mem := 3 * G ) {
+		sys echo Hi $i; sleep 1; echo Bye $i
+	}
+}

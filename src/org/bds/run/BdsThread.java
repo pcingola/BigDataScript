@@ -247,13 +247,6 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return Data.factory(fileName, currentDir);
 	}
 
-	//	/**
-	//	 * Create a new (and canonical) file relative to 'currentDir'
-	//	 */
-	//	public String dataLocalPath(String fileName) {
-	//		return Data.factory(fileName, currentDir).getLocalPath();
-	//	}
-
 	/**
 	 * Running in debug mode: This method is invoked right before running 'node'
 	 */
@@ -300,7 +293,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
