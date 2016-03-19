@@ -337,7 +337,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 					+ "\tRunning: " + tasksRunning.size() //
 					+ "\tDone: " + tasksDone.size() //
 					+ "\tFailed: " + countFaield() //
-					+ (Config.get().isQuiet() ? "" : "\n" + toStringTable()) //
+					+ (Config.get().isVerbose() ? "" : "\n" + toStringTable()) //
 			);
 		}
 	}
