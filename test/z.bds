@@ -1,5 +1,8 @@
 #!/usr/bin/env bds
 
-for( int i=0 ; i < 100 ; i++ ) {
-	task echo Hi $i; sleep 10
-}
+println "Firing a long running task"
+task echo Hi; sleep 60; echo Bye
+
+sys sleep 2
+error("This should abort all tasks immediately!")
+println("NEVER SHOW THIS!")

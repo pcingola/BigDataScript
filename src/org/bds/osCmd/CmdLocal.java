@@ -154,7 +154,7 @@ public class CmdLocal extends Cmd {
 			int exitVal = proc.waitFor();
 			if (exitVal != 0) log("Error killing process " + pid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			if (debug) e.printStackTrace();
 		}
 	}
 

@@ -883,7 +883,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 			if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
 
 			// Implicit 'wait' statement at the end of the program
-			ok = waitAll();
+			if (isFinished()) ok = waitAll();
 		}
 
 		// All tasks in wait finished OK?
