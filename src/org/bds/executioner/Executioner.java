@@ -29,10 +29,10 @@ import org.bds.util.Tuple;
  */
 public abstract class Executioner extends Thread implements NotifyTaskState, PidParser {
 
-	public static final int SLEEP_TIME_LONG = 500;
-	public static final int SLEEP_TIME_MID = 200;
-	public static final int SLEEP_TIME_SHORT = 10;
-	public static final int REPORT_INTERVAL = 60;
+	public static final int SLEEP_TIME_LONG = 500; // Milliseconds
+	public static final int SLEEP_TIME_MID = 200; // Milliseconds
+	public static final int SLEEP_TIME_SHORT = 10; // Milliseconds
+	public static final int REPORT_INTERVAL = 60; // Interval in seconds
 
 	protected boolean debug;
 	protected boolean verbose;
@@ -337,7 +337,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 					+ "\tRunning: " + tasksRunning.size() //
 					+ "\tDone: " + tasksDone.size() //
 					+ "\tFailed: " + countFaield() //
-					+ (Config.get().isVerbose() ? "" : "\n" + toStringTable()) //
+					+ (Config.get().isVerbose() ? "\n" + toStringTable() : "") //
 			);
 		}
 	}
