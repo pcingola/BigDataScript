@@ -634,9 +634,6 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return config != null && config.isDebug();
 	}
 
-	/**
-	 * Is it in RunState exit mode?
-	 */
 	public boolean isExit() {
 		return runState.isExit();
 	}
@@ -882,8 +879,9 @@ public class BdsThread extends Thread implements BdsSerialize {
 			// OK, we finished running
 			if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
 
-			// Implicit 'wait' statement at the end of the program
-			if (isFinished()) ok = waitAll();
+			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
+			if (!isFatalError() && !isExit()) ok = waitAll();
+			else ok = false;
 		}
 
 		// All tasks in wait finished OK?

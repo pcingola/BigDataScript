@@ -26,21 +26,18 @@ public enum RunState {
 	public boolean isCheckpointRecover() {
 		return this == RunState.WAIT_RECOVER //
 				|| this == RunState.CHECKPOINT_RECOVER //
-		;
+				;
 	}
 
 	/**
 	 * Should we exit the execution thread?
 	 */
 	public boolean isExit() {
-		return this == EXIT //
-				|| this == FATAL_ERROR //
-				|| this == THREAD_KILLED //
-		;
+		return this == EXIT;
 	}
 
 	public boolean isFatalError() {
-		return this == RunState.FATAL_ERROR;
+		return this == FATAL_ERROR;
 	}
 
 	public boolean isFinished() {
@@ -52,6 +49,10 @@ public enum RunState {
 	 */
 	public boolean isFrozen() {
 		return this == FROZEN;
+	}
+
+	public boolean isOk() {
+		return this == OK;
 	}
 
 	public boolean isReturn() {
