@@ -132,7 +132,7 @@ public class TaskDependecies {
 						for (Task taskDep : taskDeps)
 							if (!taskDep.isDone() // Don't add finished tasks
 									&& !taskDep.isDependency() // If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
-									) task.addDependency(taskDep); // Add it to dependency list
+							) task.addDependency(taskDep); // Add it to dependency list
 					}
 				}
 			}
@@ -177,19 +177,19 @@ public class TaskDependecies {
 
 				if (tasks != null) // Add all task's input files
 					for (Task t : tasks) {
-						// Add all input files
-						if (t.getInputs() != null) {
-							for (String in : t.getInputs())
-								changed |= newGoals.add(in); // Add each node
-						}
-
-						// Add all task Ids
-						List<Task> depTasks = t.getDependencies();
-						if (depTasks != null) {
-							for (Task dt : depTasks)
-								changed |= newGoals.add(dt.getId()); // Add each task ID
-						}
+					// Add all input files
+					if (t.getInputs() != null) {
+						for (String in : t.getInputs())
+							changed |= newGoals.add(in); // Add each node
 					}
+
+					// Add all task Ids
+					List<Task> depTasks = t.getDependencies();
+					if (depTasks != null) {
+						for (Task dt : depTasks)
+							changed |= newGoals.add(dt.getId()); // Add each task ID
+					}
+				}
 			}
 
 			goals = newGoals;

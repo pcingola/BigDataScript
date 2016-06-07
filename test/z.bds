@@ -1,8 +1,39 @@
 #!/usr/bin/env bds
 
-println "Firing a long running task"
-task echo Hi; sleep 60; echo Bye
+string[] tids_all
 
-sys sleep 2
-error("This should abort all tasks immediately!")
-println("NEVER SHOW THIS!")
+sleep_sec := 1      help sleep_sec
+
+num_rep := 2        help num_rep
+nth_spp := 3        help nth_spp
+nth     := 10       help nth
+
+par spp()
+wait
+
+for ( string tid : tids_all ) {
+    print("\t$tid : "+tid.isDone()+", "+tid.isDoneOk()+", "+tid.exitCode()+"\n")
+	println tid.stdout()
+}
+
+void spp() {
+        for (int i=1; i<=num_rep; i++) spp_sub(i)
+}
+
+void spp_sub(int i) {
+        time := min(i,sleep_sec)
+        taskName := "spp $i"
+        tid := task {
+                sys echo $(date)": spp   $i started."
+                sys sleep $time
+                sys echo $(date)": spp   $i done."
+        }
+        register_par( tid, nth_spp )
+}
+
+void register_par( string tid, int nth_task ) {
+
+    if ( tid == "" ) return
+
+    tids_all.add(tid)
+}

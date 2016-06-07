@@ -559,10 +559,16 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
-	 * Get a task
+	 * Get a task (this thread or any child thread)
 	 */
 	public Task getTask(String taskId) {
-		return taskDependecies.getTask(taskId);
+		Task task = taskDependecies.getTask(taskId);
+		if (task != null) return task;
+		for (BdsThread bdsThread : bdsChildThreadsById.values()) {
+			task = bdsThread.getTask(taskId);
+			if (task != null) return task;
+		}
+		return null;
 	}
 
 	/**
