@@ -1,39 +1,7 @@
 #!/usr/bin/env bds
 
-string[] tids_all
+task echo hi ; sleep 1 ; ls zxzxzxzx # This task should fail 
+task echo hi ; sleep 3 ; echo bye
 
-sleep_sec := 1      help sleep_sec
-
-num_rep := 2        help num_rep
-nth_spp := 3        help nth_spp
-nth     := 10       help nth
-
-par spp()
 wait
-
-for ( string tid : tids_all ) {
-    print("\t$tid : "+tid.isDone()+", "+tid.isDoneOk()+", "+tid.exitCode()+"\n")
-	println tid.stdout()
-}
-
-void spp() {
-        for (int i=1; i<=num_rep; i++) spp_sub(i)
-}
-
-void spp_sub(int i) {
-        time := min(i,sleep_sec)
-        taskName := "spp $i"
-        tid := task {
-                sys echo $(date)": spp   $i started."
-                sys sleep $time
-                sys echo $(date)": spp   $i done."
-        }
-        register_par( tid, nth_spp )
-}
-
-void register_par( string tid, int nth_task ) {
-
-    if ( tid == "" ) return
-
-    tids_all.add(tid)
-}
+println "Done"
