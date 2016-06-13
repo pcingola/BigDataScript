@@ -84,10 +84,9 @@ public class ExecutionerLocal extends Executioner {
 		// This is a horrible hack used to make sure the 'programFileName' has
 		// been fully written to disk and we no have the file open for writing.
 		// Even if we closed the file, sometimes a "text file busy" error
-		// pops up
-		// and not execute.
+		// pops up.
 		try {
-			sleep(1);
+			sleep(Config.get().getWaitTextFileBusy());
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}

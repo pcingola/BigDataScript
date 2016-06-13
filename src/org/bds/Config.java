@@ -82,6 +82,9 @@ public class Config {
 	public static final String WAIT_AFTER_TASK_RUN = "waitAfterTaskRun";
 	public static int DEFAULT_WAIT_AFTER_TASK_RUN = 0;
 
+	public static final String WAIT_TEXT_FILE_BUSY = "waitTextFileBusy";
+	public static int DEFAULT_WAIT_TEXT_FILE_BUSY = 1;
+
 	public static final String TASK_MAX_HINT_LEN = "taskMaxHintLen";
 
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
@@ -101,7 +104,8 @@ public class Config {
 	boolean showTaskCode; // Always show task's code (sys statements)
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
-	int waitAfterTaskRun = -1; // Wait some milisecs after task run
+	int waitAfterTaskRun = -1; // Wait some milisec after task run
+	int waitTextFileBusy = -1; // Wait some milisecs after writing a shell file to disk (before execution)
 	int tailLines; // Number of lines to use in 'tail'
 	Integer taskMaxHintLen; // Max number of characters to use in tasks's "hint"
 	String configFileName;
@@ -377,6 +381,16 @@ public class Config {
 		}
 
 		return waitAfterTaskRun;
+	}
+
+	public int getWaitTextFileBusy() {
+		if (waitTextFileBusy < 0) {
+			// Parse property
+			waitTextFileBusy = (int) getLong(WAIT_TEXT_FILE_BUSY, DEFAULT_WAIT_TEXT_FILE_BUSY);
+			if (debug) Timer.showStdErr("Config: Setting 'waitTextFileBusy' to " + waitTextFileBusy);
+		}
+
+		return waitTextFileBusy;
 	}
 
 	public boolean isDebug() {
