@@ -1,5 +1,6 @@
 package org.bds.lang.nativeMethods.string;
 
+import org.bds.data.Data;
 import org.bds.lang.Parameters;
 import org.bds.lang.Type;
 import org.bds.lang.nativeMethods.MethodNative;
@@ -24,9 +25,15 @@ public class MethodNative_string_baseName_ext extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		// Get basename
+		String filePath = objThis.toString();
+		if (filePath.isEmpty()) return "";
+		Data data = bdsThread.data(filePath);
+		String baseName = data.getName();
+
+		// Remove ext
 		String ext = bdsThread.getString("ext");
-		String b = (bdsThread.data(objThis.toString())).getName();
-		if (b.endsWith(ext)) return b.substring(0, b.length() - ext.length());
-		return b;
+		if (baseName.endsWith(ext)) return baseName.substring(0, baseName.length() - ext.length());
+		return baseName;
 	}
 }

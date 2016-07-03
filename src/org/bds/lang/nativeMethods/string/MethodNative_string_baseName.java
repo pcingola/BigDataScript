@@ -1,5 +1,6 @@
 package org.bds.lang.nativeMethods.string;
 
+import org.bds.data.Data;
 import org.bds.lang.Parameters;
 import org.bds.lang.Type;
 import org.bds.lang.nativeMethods.MethodNative;
@@ -24,6 +25,9 @@ public class MethodNative_string_baseName extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		return (bdsThread.data(objThis.toString())).getName();
+		String filePath = objThis.toString();
+		if (filePath.isEmpty()) return "";
+		Data data = bdsThread.data(filePath);
+		return data.getName();
 	}
 }

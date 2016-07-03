@@ -1,7 +1,8 @@
 #!/usr/bin/env bds
 
-zcount := true
+string check
 
-task(count) {
-	sys echo hi
-}
+string tt = check.baseName()
+
+print("$tt \n")
+
