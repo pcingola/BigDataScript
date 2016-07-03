@@ -1,7 +1,7 @@
 #!/usr/bin/env bds
 
-task echo hi ; sleep 1 ; ls zxzxzxzx # This task should fail 
-task echo hi ; sleep 3 ; echo bye
+zcount := true
 
-wait
-println "Done"
+task(count) {
+	sys echo hi
+}

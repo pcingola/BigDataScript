@@ -1,8 +1,8 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.task.TaskDependency;
@@ -98,9 +98,10 @@ public class ExpressionTaskOptions extends ExpressionList {
 		for (Expression e : expressions)
 			if (!(e instanceof ExpressionAssignment) //
 					&& !(e instanceof ExpressionVariableInitImplicit) //
-					) {
+			) {
 				// Cannot convert to bool? => We cannot use the expression
-				if (!e.getReturnType().canCast(Type.BOOL)) compilerMessages.add(this, "Only assignment, implicit variable declarations or boolean expressions are allowed in task options", MessageType.ERROR);
+				if (e.getReturnType() == null) compilerMessages.add(this, "Unknonw expression '" + e + "'", MessageType.ERROR);
+				else if (!e.getReturnType().canCast(Type.BOOL)) compilerMessages.add(this, "Only assignment, implicit variable declarations or boolean expressions are allowed in task options", MessageType.ERROR);
 			}
 	}
 }
