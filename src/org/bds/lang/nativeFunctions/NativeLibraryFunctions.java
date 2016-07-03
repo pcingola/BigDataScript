@@ -34,6 +34,12 @@ public class NativeLibraryFunctions {
 			, FunctionNativeToIntFromReal.class //
 			, FunctionNativeConfig.class //
 			, FunctionNativeConfigOri.class //
+			, FunctionNativeAssertBool.class //
+			, FunctionNativeAssertBoolNoMsg.class //
+			, FunctionNativeAssertInt.class //
+			, FunctionNativeAssertIntNoMsg.class //
+			, FunctionNativeAssertString.class //
+			, FunctionNativeAssertStringNoMsg.class //
 			//
 			// Math functions
 			, org.bds.lang.nativeFunctions.math.FunctionNative_abs_int.class //

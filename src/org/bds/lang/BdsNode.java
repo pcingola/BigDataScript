@@ -15,9 +15,9 @@ import java.util.Set;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.compile.TypeCheckedNodes;
-import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.serialize.BdsSerialize;
@@ -98,7 +98,7 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	/**
-	 * This should only be called from the outside if tree not passed in the constructor
+	 * Parse tree
 	 */
 	protected void doParse(ParseTree tree) {
 		if (tree != null) {

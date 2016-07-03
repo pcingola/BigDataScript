@@ -24,6 +24,7 @@ public class BdsTest {
 
 	public boolean debug;
 	public boolean verbose;
+	public boolean testCases; // Is this a bds-test? i.e. should it run as 'bds --test'?
 
 	public Boolean compileOk;
 	public String args[]; // Command line arguments (before program name)
@@ -62,6 +63,9 @@ public class BdsTest {
 		// Add command line options
 		if (verbose) l.add("-v");
 		if (debug) l.add("-d");
+
+		// Is this a 'test case' run?
+		if (testCases) l.add("-t");
 
 		if (args != null) {
 			for (String arg : args)
@@ -149,6 +153,15 @@ public class BdsTest {
 	public void checkExitCode(int expectedExitCode) {
 		Assert.assertTrue(errMsg("No exit value (program was not run)"), exitCode != null);
 		Assert.assertEquals(errMsg("Expecting exit code '" + expectedExitCode + "', but it was '" + exitCode + "'"), expectedExitCode, (int) exitCode);
+	}
+
+	/**
+	 * Check that the program run and finished with a failed exit code
+	 */
+	void checkRunExitCodeFail() {
+		checkCompileOk();
+		checkRunState(RunState.FINISHED);
+		checkExitCode(1);
 	}
 
 	/**
@@ -336,6 +349,10 @@ public class BdsTest {
 		}
 
 		return bigDataScript2;
+	}
+
+	public void setTestCases(boolean testCases) {
+		this.testCases = testCases;
 	}
 
 	@Override

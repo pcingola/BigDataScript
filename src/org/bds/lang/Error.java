@@ -32,7 +32,12 @@ public class Error extends Print {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		// Error
-		Timer.showStdErr("Error" + (!msg.isEmpty() ? ": " + msg : ""));
+		String filePos = bdsThread.getFileLinePos(this);
+		Timer.showStdErr("Error" //
+				+ (filePos.isEmpty() ? "" : " (" + filePos + ")") //
+				+ (!msg.isEmpty() ? ": " + msg : "") //
+		);
+
 		bdsThread.setExitValue(1L); // Set exit value
 		bdsThread.setRunState(RunState.EXIT);
 	}

@@ -68,6 +68,10 @@ public class Block extends StatementWithScope {
 		}
 	}
 
+	public void setStatements(Statement[] statements) {
+		this.statements = statements;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

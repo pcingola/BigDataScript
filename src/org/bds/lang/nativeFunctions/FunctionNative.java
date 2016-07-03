@@ -72,7 +72,6 @@ public abstract class FunctionNative extends FunctionDeclaration {
 			if (bdsThread.isVerbose()) t.printStackTrace();
 			bdsThread.fatalError(this, t.getMessage());
 		}
-
 	}
 
 	/**

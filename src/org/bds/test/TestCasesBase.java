@@ -178,4 +178,24 @@ public class TestCasesBase {
 		return bdsTest.captureStdout.toString();
 	}
 
+	/**
+	 * Run test cases: Check that at least one test case FAILS
+	 */
+	void runTestCasesFail(String fileName) {
+		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.setTestCases(true);
+		bdsTest.run();
+		bdsTest.checkRunExitCodeFail();
+	}
+
+	/**
+	 * Run test cases: Check that all test cases PASS
+	 */
+	void runTestCasesPass(String fileName) {
+		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.setTestCases(true);
+		bdsTest.run();
+		bdsTest.checkRunOk();
+	}
+
 }

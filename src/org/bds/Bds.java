@@ -33,9 +33,11 @@ import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ExpressionTask;
 import org.bds.lang.FunctionDeclaration;
 import org.bds.lang.ProgramUnit;
+import org.bds.lang.Statement;
 import org.bds.lang.StatementInclude;
 import org.bds.lang.Type;
 import org.bds.lang.TypeList;
+import org.bds.lang.VarDeclaration;
 import org.bds.lang.nativeFunctions.NativeLibraryFunctions;
 import org.bds.lang.nativeMethods.string.NativeLibraryString;
 import org.bds.run.BdsThread;
@@ -913,15 +915,25 @@ public class Bds {
 
 		if (verbose) Timer.showStdErr("Running tests");
 		ProgramUnit pu = bdsThread.getProgramUnit();
-		List<FunctionDeclaration> testFuncs = pu.testsFunctions();
+		return runTests(pu);
+	}
 
-		// For each test function, create a thread that executes the function's body
+	/**
+	 * For each "test*()" function in ProgramUnit, create a thread
+	 * that executes the function's body
+	 */
+	int runTests(ProgramUnit progUnit) {
+		// We need to execute all variable declarations in order to be able to use global vairables in 'test*()' functions"
+		List<VarDeclaration> varDecls = programUnit.varDeclarations(false);
+		List<FunctionDeclaration> testFuncs = progUnit.testsFunctions();
+
 		int exitCode = 0;
 		int testOk = 0, testError = 0;
 		for (FunctionDeclaration testFunc : testFuncs) {
 			System.out.println("");
-			BdsThread bdsTestThread = new BdsThread(testFunc.getStatement(), bdsThread); // Note: We execute the function's body (not the function declaration)
-			int exitValTest = runThread(bdsTestThread);
+
+			// Run each function
+			int exitValTest = runTests(progUnit, testFunc, varDecls);
 
 			// Show test result
 			if (exitValTest == 0) {
@@ -940,7 +952,30 @@ public class Bds {
 				+ "\n                  OK    : " + testOk //
 				+ "\n                  ERROR : " + testError //
 		);
+
 		return exitCode;
+	}
+
+	/**
+	 * Run a single test function, return exit code
+	 */
+	int runTests(ProgramUnit progUnit, FunctionDeclaration testFunc, List<VarDeclaration> varDecls) {
+		List<Statement> statements = new ArrayList<>();
+
+		// Add all variable declarations
+		for (VarDeclaration varDecl : varDecls)
+			statements.add(varDecl);
+
+		// Note: We execute the function's body (not the function declaration)
+		statements.add(testFunc.getStatement());
+
+		// Create a program unit having all variable declarations and the test function's statements
+		ProgramUnit puTest = new ProgramUnit(progUnit, null);
+		puTest.setStatements(statements.toArray(new Statement[0]));
+
+		BdsThread bdsTestThread = new BdsThread(puTest, config);
+		int exitValTest = runThread(bdsTestThread);
+		return exitValTest;
 	}
 
 	/**

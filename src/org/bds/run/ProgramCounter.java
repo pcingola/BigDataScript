@@ -74,7 +74,6 @@ public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
 	}
 
 	boolean isEmpty() {
-		//		return nodeIds.isEmpty();
 		return size() <= initialSize;
 	}
 
@@ -109,8 +108,8 @@ public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
 	/**
 	 * Add to program counter
 	 */
-	public void push(BdsNode csnode) {
-		nodeIds.push(csnode.getId());
+	public void push(BdsNode bdsNode) {
+		nodeIds.push(bdsNode.getId());
 	}
 
 	@Override
@@ -150,6 +149,6 @@ public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
 				+ (isEmpty() ? " [Empty] " : "") //
 				+ (checkPointRecoverNodeIdx > 0 ? ", checkPointRecoverNodeIdx: " + checkPointRecoverNodeIdx : "") //
 				+ ", nodes: " + pc //
-		;
+				;
 	}
 }

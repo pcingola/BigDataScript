@@ -20,7 +20,7 @@ import org.bds.scope.ScopeSymbol;
  */
 public class ProgramUnit extends BlockWithFile {
 
-	BdsThread bigDataScriptThread;
+	BdsThread bdsThread;
 	Scope runScope; // Scope used when running this program. Used in test cases
 
 	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
@@ -40,7 +40,7 @@ public class ProgramUnit extends BlockWithFile {
 
 	@Override
 	public BdsThread getBigDataScriptThread() {
-		return bigDataScriptThread;
+		return bdsThread;
 	}
 
 	public Scope getRunScope() {
@@ -58,8 +58,8 @@ public class ProgramUnit extends BlockWithFile {
 		runScope = bdsThread.getScope();
 	}
 
-	public void setBigDataScriptThread(BdsThread bigDataScriptThread) {
-		this.bigDataScriptThread = bigDataScriptThread;
+	public void setBdsThread(BdsThread bdsThread) {
+		this.bdsThread = bdsThread;
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class ProgramUnit extends BlockWithFile {
 					&& fname.substring(0, 4).equalsIgnoreCase("test") // Starts with 'test'
 					&& fd.getParameters().getVarDecl() != null //
 					&& fd.getParameters().getVarDecl().length == 0 // There are no arguments to this function (e.g. 'test01()')
-					) testFuncs.add(fd);
+			) testFuncs.add(fd);
 		}
 
 		return testFuncs;

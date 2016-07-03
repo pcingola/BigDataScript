@@ -19,6 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesRun2.class, //
 		TestCasesGraph.class, //
 		TestCasesCheckpoint.class, //
+		TestCasesTesting.class, //
 		TestCasesCommandLineOptions.class, //
 		TestCasesClusterGeneric.class, //
 		TestCasesRemote.class, //

@@ -29,7 +29,12 @@ public class Warning extends Error {
 		}
 
 		if (bdsThread.isCheckpointRecover()) return;
-		Timer.showStdErr("Warning" + (!msg.isEmpty() ? ": " + msg : ""));
+
+		String filePos = bdsThread.getFileLinePos(this);
+		Timer.showStdErr("Warning" //
+				+ (filePos.isEmpty() ? "" : " (" + filePos + ")") //
+				+ (!msg.isEmpty() ? ": " + msg : "") //
+		);
 	}
 
 }

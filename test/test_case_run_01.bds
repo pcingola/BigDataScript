@@ -4,5 +4,5 @@ var := "Hi"
 
 void test01() {
 	println "Hi $var"
-	assert("Should be 'Hi'", 'HiZ', var)
+	assert("Should be 'Hi'", 'Hi', var)
 }

@@ -174,6 +174,21 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
+	 * Assertion failed (in bds test case)
+	 */
+	public void assertionFailed(BdsNode bdsnode, String message) {
+		runState = RunState.FATAL_ERROR;
+		String filePos = getFileLinePos(bdsnode);
+		System.err.println("Assertion failed: " //
+				+ filePos + (filePos.isEmpty() ? "" : ". ") //
+				+ message //
+		);
+
+		// Set exit value
+		setExitValue(1L);
+	}
+
+	/**
 	 * Create a checkpoint file
 	 */
 	public String checkpoint(BdsNode node) {
@@ -376,9 +391,10 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 */
 	public void fatalError(BdsNode bdsnode, String message) {
 		runState = RunState.FATAL_ERROR;
-		String filePos = "";
-		if (bdsnode.getFileNameCanonical() != null) filePos = bdsnode.getFileName() + ", line " + bdsnode.getLineNum() + ", pos " + (bdsnode.getCharPosInLine() + 1) + ". ";
-		System.err.println("Fatal error: " + filePos + message);
+		String filePos = getFileLinePos(bdsnode);
+		System.err.println("Fatal error: " //
+				+ filePos + (filePos.isEmpty() ? "" : ". ") //
+				+ message);
 
 		// Show BDS stack trace
 		try {
@@ -470,6 +486,44 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 	public int getExitValue() {
 		return exitValue;
+	}
+
+	/**
+	 * Try to get file / line / pos information
+	 * Recurse to parent node if not found
+	 */
+	public String getFileLinePos(BdsNode bdsNode) {
+		// If the node has file/line info, we are done
+		if (bdsNode.getFileNameCanonical() != null) { //
+			return bdsNode.getFileName() //
+					+ ", line " + bdsNode.getLineNum() //
+					+ ", pos " + (bdsNode.getCharPosInLine() + 1) //
+					;
+		}
+
+		// No file/line info in 'bdsNode'. we walk the program-counter
+		// form end to start and return the information from the
+		// first node that has file/line data
+
+		// Find all nodes and add them to a map (by nodeId)
+		List<BdsNode> bdsNodes = statement.findNodes(null, true);
+		Map<Integer, BdsNode> nodesById = new HashMap<>();
+		for (BdsNode n : bdsNodes)
+			nodesById.put(n.getId(), n);
+
+		// Go backwards on PC and return the first information for
+		// the first node that has file/line/pos info.
+		for (int idx = pc.size() - 1; idx >= 0; idx--) {
+			int nodeId = pc.nodeId(idx);
+			BdsNode bn = nodesById.get(nodeId);
+
+			if (bn.getFileNameCanonical() != null) { //
+				return bn.getFileName() + ", line " + bn.getLineNum();
+			}
+		}
+
+		// Nothing found? Return empty
+		return "";
 	}
 
 	/**

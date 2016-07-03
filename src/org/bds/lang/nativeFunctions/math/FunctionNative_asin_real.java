@@ -6,6 +6,7 @@ import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_asin_real extends FunctionNative {
+
 	public FunctionNative_asin_real() {
 		super();
 	}
@@ -23,6 +24,6 @@ public class FunctionNative_asin_real extends FunctionNative {
 
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
-		return (Double) Math.asin(bdsThread.getReal("a"));
+		return Math.asin(bdsThread.getReal("a"));
 	}
 }
