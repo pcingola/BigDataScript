@@ -326,7 +326,7 @@ public class CheckTasksRunning {
 
 				if (!tpid.isEmpty() && !task.isDone()) { // Make sure the task is not finished (race conditions?)
 					if (debug) log("Task PID '" + task.getPid() + "' not found. Marking it as finished.");
-					task.setErrorMsg("Task dissapeared from cluster's queue. Task or node failure?");
+					task.setErrorMsg("Task disappeared from cluster's queue. Task or node failure?");
 					task.setExitValue(Task.EXITCODE_ERROR);
 					executioner.taskFinished(task, TaskState.ERROR);
 				}
