@@ -1,8 +1,26 @@
 #!/usr/bin/env bds
 
-string check
+doCompress := false
+refFiles := '/tmp/ref_dir'
+fastaDir := '/tmp/other_dir'
+fastaRef := "$fastaDir/hg19.fa"
 
-string tt = check.baseName()
+# Create files and dirs (remove old)
+sys rm -rf $refFiles $fastaDir 
+refFiles.mkdir()
+fastaDir.mkdir()
+sys date > $fastaRef
 
-print("$tt \n")
+# Compress
+if( doCompress ) {
+	sys gzip $fastaRef
+	fastaRef = "$fastaRef.gz"
+}
+
+localRef := refFiles + "/" + fastaRef.baseName()
+localFastaRef := localRef.removeExt(".gz")
+
+dep(localRef <- fastaRef, taskName := "Copying FASTA file") sys cp -v $fastaRef $refFiles; echo Copy $fastaRef to $refFiles
+dep(localRef.extName() == "gz", localFastaRef <- localRef, taskName := "gzip FASTA file") sys gunzip $localRef; echo Uncompress $localRef
+goal localFastaRef
 
