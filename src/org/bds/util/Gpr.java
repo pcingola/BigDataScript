@@ -20,7 +20,11 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.net.JarURLConnection;
+import java.net.URLConnection;
+import java.sql.Date;
 import java.text.CharacterIterator;
+import java.text.SimpleDateFormat;
 import java.text.StringCharacterIterator;
 import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
@@ -158,6 +162,33 @@ public class Gpr {
 		if (cmp != 0) return cmp;
 
 		return o1.compareTo(o2);
+	}
+
+	/**
+	 * Return a time-stamp showing When was the JAR file
+	 * created OR when was a class compiled
+	 */
+	public static String compileTimeStamp(Class<?> cl) {
+		try {
+			String resName = cl.getName().replace('.', '/') + ".class";
+			URLConnection conn = ClassLoader.getSystemResource(resName).openConnection();
+
+			long epoch = 0;
+			if (conn instanceof JarURLConnection) {
+				// Is it a JAR file? Get manifest time
+				epoch = ((JarURLConnection) conn).getJarFile().getEntry("META-INF/MANIFEST.MF").getTime();
+			} else {
+				// Regular file? Get file compile time
+				epoch = conn.getLastModified();
+			}
+
+			// Format as timestamp
+			Date epochDate = new Date(epoch);
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			return df.format(epochDate);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
@@ -880,4 +911,5 @@ public class Gpr {
 		}
 		return String.format("%.1f %s", mem, unit);
 	}
+
 }

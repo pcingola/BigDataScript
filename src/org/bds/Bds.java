@@ -62,7 +62,7 @@ public class Bds {
 	}
 
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
-	public static final String BUILD = "2016-06-06";
+	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
 	public static final String REVISION = "e";
 	public static final String VERSION_MAJOR = "0.99999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
@@ -522,7 +522,7 @@ public class Bds {
 
 		// Number of local CPUs
 		// Kilo, Mega, Giga, Tera, Peta.
-		LinkedList<ScopeSymbol> constants = new LinkedList<ScopeSymbol>();
+		LinkedList<ScopeSymbol> constants = new LinkedList<>();
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));
 		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT, 1024L * 1024L * 1024L));
@@ -600,7 +600,7 @@ public class Bds {
 		// Nothing? Show command line options
 		if (args.length <= 0) usage(null);
 
-		programArgs = new ArrayList<String>();
+		programArgs = new ArrayList<>();
 		bdsAction = BdsAction.RUN;
 
 		for (int i = 0; i < args.length; i++) {
