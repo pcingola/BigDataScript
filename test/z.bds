@@ -1,8 +1,6 @@
 #!/usr/bin/env bds
 
-var := "Hi"
+var := ",,,,,,"
 
-void test01() {
-	println "Hi $var"
-	assert("Should be 'Hi'", 'HiZ', var)
-}
+l := var.split(',')
+println "LIST: $l"
