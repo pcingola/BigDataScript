@@ -33,7 +33,7 @@ public class MethodNative_string_isDoneOk extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread csThread, Object objThis) {
 		String taskId = objThis.toString();
-		Task task = BdsThreads.getTask(taskId);
+		Task task = BdsThreads.getTaskNoSync(taskId);
 		if (task == null) return false;
 		return task.isDoneOk();
 	}

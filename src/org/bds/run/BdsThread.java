@@ -625,6 +625,16 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return null;
 	}
 
+	public Task getTaskNoSync(String taskId) {
+		Task task = taskDependecies.getTaskNoSync(taskId);
+		if (task != null) return task;
+		for (BdsThread bdsThread : bdsChildThreadsById.values()) {
+			task = bdsThread.getTaskNoSync(taskId);
+			if (task != null) return task;
+		}
+		return null;
+	}
+
 	/**
 	 * Get all tasks
 	 */
