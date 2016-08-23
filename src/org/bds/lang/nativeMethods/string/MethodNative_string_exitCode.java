@@ -27,7 +27,7 @@ public class MethodNative_string_exitCode extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		String taskId = objThis.toString();
-		Task task = BdsThreads.getTask(taskId);
+		Task task = BdsThreads.getTaskNoSync(taskId);
 		if (task == null) return 0L;
 		return (long) task.getExitValue();
 	}

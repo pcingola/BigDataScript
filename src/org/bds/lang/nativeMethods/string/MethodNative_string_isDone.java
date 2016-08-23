@@ -27,7 +27,7 @@ public class MethodNative_string_isDone extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		String taskId = objThis.toString();
-		Task task = BdsThreads.getTask(taskId);
+		Task task = BdsThreads.getTaskNoSync(taskId);
 		if (task == null) return false;
 		return task.isDone();
 	}

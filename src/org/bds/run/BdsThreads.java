@@ -75,13 +75,13 @@ public class BdsThreads {
 		} else throw new RuntimeException("Cannot remove thread '" + bdsThread.getBdsThreadId() + "'");
 	}
 
-	public static Task getTask(String taskId) {
-		for (BdsThread bdsThread : getInstance().bdsThreadByThreadId.values()) {
-			Task task = bdsThread.getTask(taskId);
+	public static Task getTaskNoSync(String taskId) {
+		for (BdsThread bdsThread : bdsThreads.bdsThreadByThreadId.values() ) {
+			Task task = bdsThread.getTaskNoSync(taskId);
 			if (task != null) return task;
 		}
-		for (BdsThread bdsThread : getInstance().bdsThreadDone) {
-			Task task = bdsThread.getTask(taskId);
+		for (BdsThread bdsThread : bdsThreads.bdsThreadDone) {
+			Task task = bdsThread.getTaskNoSync(taskId);
 			if (task != null) return task;
 		}
 		return null;

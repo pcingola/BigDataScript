@@ -220,6 +220,10 @@ public class TaskDependecies {
 		return tasksById.get(taskId);
 	}
 
+	public Task getTaskNoSync(String taskId) {
+		return tasksById.get(taskId);
+	}
+
 	public synchronized Collection<String> getTaskIds() {
 		return tasksById.keySet();
 	}
