@@ -4,6 +4,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.Type;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.run.BdsThread;
+import org.bds.run.BdsThreads;
 import org.bds.task.Task;
 
 public class MethodNative_string_exitCode extends MethodNative {
@@ -26,7 +27,7 @@ public class MethodNative_string_exitCode extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		String taskId = objThis.toString();
-		Task task = bdsThread.getTask(taskId);
+		Task task = BdsThreads.getTask(taskId);
 		if (task == null) return 0L;
 		return (long) task.getExitValue();
 	}

@@ -9,6 +9,7 @@ import org.bds.lang.Type;
 import org.bds.lang.TypeList;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.run.BdsThread;
+import org.bds.run.BdsThreads;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 
@@ -31,6 +32,9 @@ public class MethodNative_string_stdout extends MethodNative {
 
 	@Override
 	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return ""; return Gpr.readFile(task.getStdoutFile(), false);
+		String taskId = objThis.toString();
+		Task task = BdsThreads.getTask(taskId);
+		if (task == null) return "";
+		return Gpr.readFile(task.getStdoutFile(), false);
 	}
 }
