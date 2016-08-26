@@ -82,5 +82,12 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 				args.add(sgeTimeOut2 + "=" + Timer.toHHMMSS(clusterTimeout * 1000));
 			}
 		}
+
+		// A particular queue was requested?
+		String queue = task.getQueue();
+		if (queue != null && !queue.isEmpty()) {
+			args.add("-q");
+			args.add(queue);
+		}		
 	}
 }
