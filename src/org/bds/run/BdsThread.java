@@ -109,7 +109,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		removeOnExit = parent.removeOnExit;
 		currentDir = parent.currentDir;
 
-		bdsChildThreadsById = new HashMap<String, BdsThread>();
+		bdsChildThreadsById = new HashMap<>();
 		taskDependecies = new TaskDependecies();
 
 		setStatement(statement);
@@ -128,9 +128,9 @@ public class BdsThread extends Thread implements BdsSerialize {
 		runState = RunState.OK;
 		this.config = config;
 		random = new Random();
-		removeOnExit = new LinkedList<String>();
+		removeOnExit = new LinkedList<>();
 		taskDependecies = new TaskDependecies();
-		bdsChildThreadsById = new HashMap<String, BdsThread>();
+		bdsChildThreadsById = new HashMap<>();
 		currentDir = System.getProperty(Exec.USER_DIR); // By default use Java program's current dir
 
 		if (statement != null) setStatement(statement);
@@ -157,7 +157,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Add tasks form un-serialization
 	 */
 	public void addUnserialized(Task task) {
-		if (restoredTasks == null) restoredTasks = new ArrayList<Task>();
+		if (restoredTasks == null) restoredTasks = new ArrayList<>();
 		restoredTasks.add(task);
 	}
 
@@ -308,7 +308,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-				;
+		;
 
 		//---
 		// Wait for options
@@ -447,7 +447,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	public List<BdsThread> getBdsThreads() {
-		List<BdsThread> list = new ArrayList<BdsThread>();
+		List<BdsThread> list = new ArrayList<>();
 		list.addAll(bdsChildThreadsById.values());
 		return list;
 	}
@@ -456,7 +456,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Get all child threads
 	 */
 	public List<BdsThread> getBdsThreadsAll() {
-		List<BdsThread> list = new ArrayList<BdsThread>();
+		List<BdsThread> list = new ArrayList<>();
 		list.add(this);
 
 		for (BdsThread bth : bdsChildThreadsById.values())
@@ -498,7 +498,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 			return bdsNode.getFileName() //
 					+ ", line " + bdsNode.getLineNum() //
 					+ ", pos " + (bdsNode.getCharPosInLine() + 1) //
-					;
+			;
 		}
 
 		// No file/line info in 'bdsNode'. we walk the program-counter
@@ -658,7 +658,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Execute dependency tasks to achieve goal 'out'
 	 */
 	public synchronized List<String> goal(String out) {
-		List<String> taskIds = new ArrayList<String>();
+		List<String> taskIds = new ArrayList<>();
 
 		// Find dependencies
 		Set<Task> tasks = taskDependecies.goal(this, out);
@@ -979,8 +979,9 @@ public class BdsThread extends Thread implements BdsSerialize {
 		// Finish up
 		removeStaleData();
 		timer.end();
+
 		// Create reports? Only root thread creates reports
-		if (config != null && isRoot()) {
+		if (config != null && isRoot() && config.isLog()) {
 			// Note that some people may want both HTML and YAML reports
 
 			// Create HTML report?
@@ -1327,14 +1328,14 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 		// Get all nodes and hash them by ID
 		List<BdsNode> nodes = statement.findNodes(null, true);
-		HashMap<Integer, BdsNode> nodesById = new HashMap<Integer, BdsNode>();
+		HashMap<Integer, BdsNode> nodesById = new HashMap<>();
 		for (BdsNode node : nodes) {
 			nodesById.put(node.getId(), node);
 		}
 		nodesById.put(statement.getId(), statement);
 
 		// Collect source code
-		HashMap<String, String[]> fileName2codeLines = new HashMap<String, String[]>();
+		HashMap<String, String[]> fileName2codeLines = new HashMap<>();
 		for (BdsNode node : nodesById.values()) {
 			if (node instanceof BlockWithFile) {
 				BlockWithFile bwf = (BlockWithFile) node;

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bds.Config;
 import org.bds.data.Data;
 import org.bds.lang.ExpressionTask;
 import org.bds.report.Report;
@@ -47,10 +48,10 @@ public class TaskDependecies {
 	}
 
 	public TaskDependecies() {
-		canonicalPath = new HashMap<String, String>();
-		tasksByOutput = new AutoHashMap<String, List<Task>>(new LinkedList<Task>());
-		tasksById = new HashMap<String, Task>();
-		tasks = new ArrayList<Task>();
+		canonicalPath = new HashMap<>();
+		tasksByOutput = new AutoHashMap<>(new LinkedList<Task>());
+		tasksById = new HashMap<>();
+		tasks = new ArrayList<>();
 	}
 
 	/**
@@ -146,7 +147,7 @@ public class TaskDependecies {
 		Set<String> nodes = findNodes(out); // Find all nodes
 
 		// Only add nodes that do not have dependent tasks (i.e. are leaves)
-		Set<String> leaves = new HashSet<String>();
+		Set<String> leaves = new HashSet<>();
 		for (String n : nodes) {
 			if (!hasTasksByOutput(n)) leaves.add(n);
 		}
@@ -159,7 +160,7 @@ public class TaskDependecies {
 	 */
 	Set<String> findNodes(String out) {
 		// A set of 'goal' nodes
-		Set<String> goals = new HashSet<String>();
+		Set<String> goals = new HashSet<>();
 		goals.add(out);
 
 		// For each goal
@@ -167,7 +168,7 @@ public class TaskDependecies {
 			changed = false;
 
 			// We need a new set to avoid 'concurrent modification' exception
-			Set<String> newGoals = new HashSet<String>();
+			Set<String> newGoals = new HashSet<>();
 			newGoals.addAll(goals);
 
 			// For each goal
@@ -179,17 +180,17 @@ public class TaskDependecies {
 					for (Task t : tasks) {
 					// Add all input files
 					if (t.getInputs() != null) {
-						for (String in : t.getInputs())
-							changed |= newGoals.add(in); // Add each node
+					for (String in : t.getInputs())
+					changed |= newGoals.add(in); // Add each node
 					}
 
 					// Add all task Ids
 					List<Task> depTasks = t.getDependencies();
 					if (depTasks != null) {
-						for (Task dt : depTasks)
-							changed |= newGoals.add(dt.getId()); // Add each task ID
+					for (Task dt : depTasks)
+					changed |= newGoals.add(dt.getId()); // Add each task ID
 					}
-				}
+					}
 			}
 
 			goals = newGoals;
@@ -225,7 +226,7 @@ public class TaskDependecies {
 	}
 
 	public Collection<Task> getTasks() {
-		List<Task> tasksCopy = new ArrayList<Task>();
+		List<Task> tasksCopy = new ArrayList<>();
 
 		synchronized (tasks) {
 			tasksCopy.addAll(tasks);
@@ -435,7 +436,7 @@ public class TaskDependecies {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		ArrayList<String> outs = new ArrayList<String>();
+		ArrayList<String> outs = new ArrayList<>();
 		outs.addAll(tasksByOutput.keySet());
 		Collections.sort(outs);
 
@@ -468,7 +469,9 @@ public class TaskDependecies {
 		// Wait for task to finish
 		while (!task.isDone()) {
 			sleep();
-			Report.reportTime();
+			if (Config.get().isLog()) {
+				Report.reportTime();
+			}
 		}
 
 		// Either finished OK or it was allowed to fail
