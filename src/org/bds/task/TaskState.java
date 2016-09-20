@@ -13,6 +13,7 @@ public enum TaskState {
 	;
 
 	public static TaskState exitCode2taskState(int exitCode) {
+		//		Gpr.debug("exitCode: " + exitCode + "\t" + (exitCode & 0x007f));
 		switch (exitCode) {
 		case Task.EXITCODE_OK:
 			return FINISHED;
@@ -36,7 +37,7 @@ public enum TaskState {
 				|| (this == TaskState.ERROR) //
 				|| (this == TaskState.ERROR_TIMEOUT) //
 				|| (this == TaskState.KILLED) //
-				;
+		;
 	}
 
 	public boolean isFinished() {

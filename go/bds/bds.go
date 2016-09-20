@@ -81,7 +81,12 @@ func main() {
 	}
 
 	// Execute Bds.jar
-	os.Exit(bdsexec.Bds())
+	exitCode := bdsexec.Bds()
+	if exec.DEBUG {
+		log.Printf("Debug: Exit code '%d'\n", exitCode)
+	}
+
+	os.Exit(exitCode)
 }
 
 // A function used for testing

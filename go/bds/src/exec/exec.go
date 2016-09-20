@@ -21,7 +21,7 @@ import (
 )
 
 // Verbose & Debug
-const DEBUG = false
+const DEBUG = true
 const VERBOSE = true
 
 // Exit codes
@@ -80,7 +80,7 @@ func (be *BdsExec) Bds() int {
 	be.taskLoggerFile = pidTmpFile
 	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is new
 	if DEBUG {
-		log.Printf("Info: taskLoggerFile '%s'\n", be.taskLoggerFile)
+		log.Printf("Debug: taskLoggerFile '%s'\n", be.taskLoggerFile)
 	}
 
 	bdsLibDir := path.Dir(be.execName) + "/" + BDS_NATIVE_LIB_DIR
@@ -334,6 +334,7 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 			run = false
 			kill = true
 			exitStr = "Time out"
+			log.Printf("EXIT STR 1:'%s'", exitStr)
 			if DEBUG {
 				log.Printf("Debug, executeCommandTimeout: Timeout!\n")
 			}
@@ -354,34 +355,14 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 	}
 
 	// Write exitCode to file
-	if (be.exitFile != "") && (be.exitFile != "-") {
-		if DEBUG {
-			log.Printf("Info: Writing exit status '%s' to exit file '%s'\n", exitStr, be.exitFile )
-		}
-		fileutil.WriteFile(be.exitFile, exitStr)
-	}
+	be.updateExitFile(exitStr)
 
 	// Should we kill child process?
 	if kill {
-		if DEBUG {
-			log.Printf("Info: Killing process\n")
-		}
-		be.cmd.Process.Kill()
-		be.cmd.Process.Wait() // Reap their souls
+		be.kill()
 	}
 
-	if kill {
-		// Should we kill all process groups from taskLoggerFile?
-		if be.taskLoggerFile != "" {
-			be.taskLoggerCleanUpAll()
-		}
-
-		// Send a SIGKILL to the process group (just in case any child process is still executing)
-		if DEBUG {
-			log.Printf("Info: Killing process group: kill(0, SIGHUP)\n")
-		}
-		syscall.Kill(0, syscall.SIGHUP)
-	}
+	log.Printf("EXIT STR 4: '%s'", exitStr)
 
 	// OK? exit value should be zero
 	if exitStr == "0" {
@@ -419,6 +400,33 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 	}
 
 	exitCode <- "0"
+}
+
+/*
+	Kill all child process
+*/
+func (be *BdsExec) kill() {
+	if DEBUG {
+		log.Printf("Debug: Killing process\n")
+	}
+	be.cmd.Process.Kill()
+	be.cmd.Process.Wait() // Reap their souls
+
+	// Should we kill all process groups from taskLoggerFile?
+	if be.taskLoggerFile != "" {
+		be.taskLoggerCleanUpAll()
+	}
+
+	// Send a SIGKILL to the process group (just in case any child process is still executing)
+	if DEBUG {
+		log.Printf("Debug: Killing process group: kill(0, SIGHUP)\n")
+	}
+
+	syscall.Kill(0, syscall.SIGHUP)
+
+	if DEBUG {
+		log.Printf("Debug: Killed process group: kill(0, SIGHUP)\n")
+	}
 }
 
 /*
@@ -592,6 +600,18 @@ func (be *BdsExec) taskLoggerCleanUpAll() {
 				log.Fatal(err)
 			}
 		}
+	}
+}
+
+/*
+	Write exit information to 'exitFile'
+*/
+func (be *BdsExec) updateExitFile(exitStr string) {
+	if (be.exitFile != "") && (be.exitFile != "-") {
+		if DEBUG {
+			log.Printf("Debug: Writing exit status '%s' to exit file '%s'\n", exitStr, be.exitFile )
+		}
+		fileutil.WriteFile(be.exitFile, exitStr)
 	}
 }
 

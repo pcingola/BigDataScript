@@ -12,10 +12,10 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test11() {
+	public void test85() {
 		Gpr.debug("Test");
-		// Run pipeline and test checkpoint
-		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
+		verbose = true;
+		runAndCheckStderr("test/run_84.bds", "ERROR_TIMEOUT");
 	}
 
 }
