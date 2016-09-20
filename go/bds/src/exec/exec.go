@@ -21,7 +21,7 @@ import (
 )
 
 // Verbose & Debug
-const DEBUG = true
+const DEBUG = false
 const VERBOSE = true
 
 // Exit codes
@@ -334,7 +334,6 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 			run = false
 			kill = true
 			exitStr = "Time out"
-			log.Printf("EXIT STR 1:'%s'", exitStr)
 			if DEBUG {
 				log.Printf("Debug, executeCommandTimeout: Timeout!\n")
 			}
@@ -359,10 +358,10 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
 
 	// Should we kill child process?
 	if kill {
+		// WARNING: The kill(0) signal will also kill this process, so nothing
+		// may be execited after this call (platform dependent)
 		be.kill()
 	}
-
-	log.Printf("EXIT STR 4: '%s'", exitStr)
 
 	// OK? exit value should be zero
 	if exitStr == "0" {
@@ -422,6 +421,8 @@ func (be *BdsExec) kill() {
 		log.Printf("Debug: Killing process group: kill(0, SIGHUP)\n")
 	}
 
+	// WARNING: The Kill(0) signal will also kill this process, so nothing
+	// may be execited after this call (platform dependent)
 	syscall.Kill(0, syscall.SIGHUP)
 
 	if DEBUG {

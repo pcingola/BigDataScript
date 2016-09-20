@@ -59,14 +59,14 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		super();
 		valid = true;
 		this.config = config;
-		tasksToRun = new ArrayList<Task>();
-		taskUpdateStates = new ArrayList<Tuple<Task, TaskState>>();
+		tasksToRun = new ArrayList<>();
+		taskUpdateStates = new ArrayList<>();
 		tail = config.getTail();
 		taskLogger = config.getTaskLogger();
-		tasksSelected = new HashMap<Task, Host>();
-		tasksRunning = new HashMap<String, Task>();
-		tasksDone = new HashMap<String, Task>();
-		cmdById = new HashMap<String, Cmd>();
+		tasksSelected = new HashMap<>();
+		tasksRunning = new HashMap<>();
+		tasksDone = new HashMap<>();
+		cmdById = new HashMap<>();
 		debug = config.isDebug();
 		verbose = config.isVerbose();
 		removeTaskCannotExecute = true;
@@ -234,7 +234,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// Kill all 'tasksToRun'.
 		// Note: We need to create a new list to avoid concurrent modification exceptions
-		ArrayList<Task> tokill = new ArrayList<Task>();
+		ArrayList<Task> tokill = new ArrayList<>();
 		tokill.addAll(tasksToRun);
 		tokill.addAll(tasksRunning.values());
 		for (Task t : tokill)
@@ -500,7 +500,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 				case ERROR:
 					// Dependency error => Finish this task
-					if (finishTask == null) finishTask = new LinkedList<Task>();
+					if (finishTask == null) finishTask = new LinkedList<>();
 					finishTask.add(task);
 					continue; // Do not schedule
 
@@ -556,7 +556,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 				);
 
 				selectTask(task, host); // Add task to host (make sure resources are reserved)
-				return new Tuple<Task, Host>(task, host);
+				return new Tuple<>(task, host);
 			} else if (!canBeExecuted) {
 				// Can any host actually run this task?
 				canBeExecuted = host.getResources().hasResources(task.getResources());
@@ -571,7 +571,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			task.setErrorMsg("Not enough resources to execute task: " + task.getResources());
 
 			// Mark the task to be finished (cannot be done here due to concurrent modification)
-			if (finishTask == null) finishTask = new LinkedList<Task>();
+			if (finishTask == null) finishTask = new LinkedList<>();
 			finishTask.add(task);
 		}
 
@@ -634,11 +634,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			//       be sure that task has finished and all data has finished
 			//       updating.
 
-			// Set exit status
-			taskState = TaskState.exitCode2taskState(task.getExitValue());
+			taskState = task.taskState();
 		}
 
-		taskUpdateStates.add(new Tuple<Task, TaskState>(task, taskState));
+		taskUpdateStates.add(new Tuple<>(task, taskState));
 	}
 
 	/**
@@ -646,13 +645,13 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 */
 	@Override
 	public synchronized void taskRunning(Task task) {
-		taskUpdateStates.add(new Tuple<Task, TaskState>(task, TaskState.RUNNING));
+		taskUpdateStates.add(new Tuple<>(task, TaskState.RUNNING));
 
 	}
 
 	@Override
 	public synchronized void taskStarted(Task task) {
-		taskUpdateStates.add(new Tuple<Task, TaskState>(task, TaskState.STARTED));
+		taskUpdateStates.add(new Tuple<>(task, TaskState.STARTED));
 	}
 
 	protected synchronized boolean taskUpdateFinished(Task task, TaskState taskState) {
@@ -748,7 +747,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (taskUpdateStates.isEmpty()) return;
 
 		// Get a list ready for next iteration
-		ArrayList<Tuple<Task, TaskState>> taskUpdateStatesNew = new ArrayList<Tuple<Task, TaskState>>();
+		ArrayList<Tuple<Task, TaskState>> taskUpdateStatesNew = new ArrayList<>();
 
 		// Update each task sequentially, to avoid race conditions
 		for (Tuple<Task, TaskState> taskAndState : taskUpdateStates) {
@@ -776,7 +775,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 				+ "\tRunning: " + tasksRunning.size() //
 				+ "\tDone: " + tasksDone.size() //
 				+ "\tFailed: " + countFaield() //
-				;
+		;
 	}
 
 	/**

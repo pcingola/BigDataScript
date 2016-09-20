@@ -31,6 +31,9 @@ public class Task implements BdsSerialize {
 	public static final int EXITCODE_TIMEOUT = 2;
 	public static final int EXITCODE_KILLED = 3;
 
+	public static final String EXIT_STR_TIMEOUT = "Time out";
+	public static final String EXIT_STR_KILLED = "Signal received";
+
 	public static final int MAX_HINT_LEN = 150;
 
 	protected boolean verbose, debug;
@@ -178,7 +181,7 @@ public class Task implements BdsSerialize {
 		String shell = Config.get().getTaskShell();
 		shell = "#!" + shell + "\n\n" // Shell to use
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
-				;
+		;
 
 		Gpr.toFile(programFileName, shell + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution
@@ -206,7 +209,7 @@ public class Task implements BdsSerialize {
 	}
 
 	public DependencyState dependencyState() {
-		HashSet<Task> tasks = new HashSet<Task>();
+		HashSet<Task> tasks = new HashSet<>();
 		return dependencyState(tasks);
 	}
 
@@ -695,6 +698,31 @@ public class Task implements BdsSerialize {
 			// Update failCount if output files failed to be created
 			if (!isCanFail() && !checkOutputFiles().isEmpty()) failCount++;
 		}
+	}
+
+	/**
+	 * Calculate task's state when the process finished
+	 */
+	public TaskState taskState() {
+		if (exitCodeFile != null && Gpr.exists(exitCodeFile)) {
+			// Use exit file
+			String exitStr = Gpr.readFile(exitCodeFile).trim();
+			switch (exitStr) {
+			case EXIT_STR_TIMEOUT:
+				return TaskState.ERROR_TIMEOUT;
+
+			case EXIT_STR_KILLED:
+				return TaskState.KILLED;
+
+			default:
+				// No information in exit file? Use exit code
+				if (debug) Gpr.debug("Using exit file info failed ('" + exitStr + "'), using exit code ('" + getExitValue() + "')");
+				return TaskState.exitCode2taskState(exitValue);
+			}
+		}
+
+		// Use exit value
+		return TaskState.exitCode2taskState(getExitValue());
 	}
 
 	@Override

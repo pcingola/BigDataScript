@@ -12,10 +12,9 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test85() {
+	public void test90() {
 		Gpr.debug("Test");
-		verbose = true;
-		runAndCheckStderr("test/run_84.bds", "ERROR_TIMEOUT");
+		runAndCheck("test/run_90.bds", "ok", "true");
 	}
 
 }
