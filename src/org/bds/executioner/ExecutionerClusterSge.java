@@ -17,7 +17,7 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 
 	public static final String PID_REGEX_DEFAULT = "Your job (\\S+)";
 
-	String sgePe = "", sgeMem = "", sgeTimeOut = "";
+	String sgePe = "", sgeMem = "", sgeTimeOut = "", sgeTimeOut2 = "";
 
 	public ExecutionerClusterSge(Config config) {
 		super(config);
@@ -45,6 +45,8 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 
 		sgeTimeOut = config.getString(Config.CLUSTER_SGE_TIMEOUT, "");
 		if (sgeTimeOut.isEmpty()) throw new RuntimeException("Missing config file entry '" + Config.CLUSTER_SGE_TIMEOUT + "'.");
+
+		sgeTimeOut2 = config.getString(Config.CLUSTER_SGE_TIMEOUT2, "");
 	}
 
 	/**
@@ -71,9 +73,21 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 
 		// Timeout
 		int clusterTimeout = calcTimeOut(res);
-		if (res.getMem() > 0) {
+		if (clusterTimeout > 0) {
 			args.add("-l");
 			args.add(sgeTimeOut + "=" + Timer.toHHMMSS(clusterTimeout * 1000));
+
+			if ( !sgeTimeOut2.isEmpty() ) {
+				args.add("-l");
+				args.add(sgeTimeOut2 + "=" + Timer.toHHMMSS(clusterTimeout * 1000));
+			}
 		}
+
+		// A particular queue was requested?
+		String queue = task.getQueue();
+		if (queue != null && !queue.isEmpty()) {
+			args.add("-q");
+			args.add(queue);
+		}		
 	}
 }

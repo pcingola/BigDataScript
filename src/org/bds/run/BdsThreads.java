@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bds.data.Data;
+import org.bds.task.Task;
 
 /**
  * All BdsThreads are tracked here
@@ -72,6 +73,18 @@ public class BdsThreads {
 			bdsThreadByThreadId.remove(id);
 			bdsThreadDone.add(bdsThread);
 		} else throw new RuntimeException("Cannot remove thread '" + bdsThread.getBdsThreadId() + "'");
+	}
+
+	public static Task getTaskNoSync(String taskId) {
+		for (BdsThread bdsThread : bdsThreads.bdsThreadByThreadId.values() ) {
+			Task task = bdsThread.getTaskNoSync(taskId);
+			if (task != null) return task;
+		}
+		for (BdsThread bdsThread : bdsThreads.bdsThreadDone) {
+			Task task = bdsThread.getTaskNoSync(taskId);
+			if (task != null) return task;
+		}
+		return null;
 	}
 
 	@Override

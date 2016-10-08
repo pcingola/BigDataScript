@@ -61,6 +61,7 @@ public class Config {
 	public static final String CLUSTER_SGE_PE = "sge.pe";
 	public static final String CLUSTER_SGE_MEM = "sge.mem";
 	public static final String CLUSTER_SGE_TIMEOUT = "sge.timeout";
+	public static final String CLUSTER_SGE_TIMEOUT2 = "sge.timeout2";
 
 	// Cluster parameters
 	public static final String CLUSTER_RUN_ADDITIONAL_ARGUMENTS = "clusterRunAdditionalArgs"; // Cluster additional command line arguments (when running tasks)
