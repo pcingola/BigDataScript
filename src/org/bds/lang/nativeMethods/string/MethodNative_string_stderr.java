@@ -27,8 +27,17 @@ public class MethodNative_string_stderr extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		String taskId = objThis.toString();
+
+		// Find task
 		Task task = bdsThread.getTask(taskId);
 		if (task == null) return "";
-		return Gpr.readFile(task.getStderrFile(), false);
+
+		// Find STDERR file
+		String stderrFile = task.getStderrFile();
+		if (stderrFile == null || !Gpr.exists(stderrFile)) return "";
+
+		// Read STDERR file
+		String stderr = Gpr.readFile(stderrFile, false);
+		return stderr == null ? "" : stderr;
 	}
 }
