@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 
 BDS_HOME="$HOME/.bds"
 
@@ -8,7 +8,7 @@ echo "Changing dir" `dirname $0`
 cd `dirname $0` &&  cd ..
 
 # Create 'bds' dir
-mkdir -p "$BDS_HOME" 2> /dev/null
+mkdir -p "$BDS_HOME" 2> /dev/null || true
 
 #---
 # Build bds
