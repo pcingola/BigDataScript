@@ -1,0 +1,145 @@
+
+#---
+# Program overview
+#---
+program: remote_06.bds 
+scriptFile: test/remote_06.bds 
+programId: remote_06.bds.20170127_063313_730 
+startTime: 2017-01-27 06:33:13 
+runtime: 00:00:01.773 
+tasksExecuted: 1 
+tasksFailed: 0 
+arguments: [] 
+system: local 
+cpus: 1 
+exitValue: 0 
+
+---
+
+#---
+# Thread structure
+#---
+threads: 
+
+  - thread : thread_Root
+    parent : None
+
+
+
+---
+
+#---
+# Task details
+#---
+tasks: 
+
+  - # Task identification
+    id:          task.remote_06.line_6.id_169
+    num:         1
+    name:        task.remote_06.line_6.id_169
+    threadNum:   thread_Root
+    pid:         16427
+    
+    # Task status
+    ok:          true
+    exitCode:    0
+    retry:       
+    state:       FINISHED
+    depState:    OK
+    
+    # Task resources
+    cpus:        1
+    mem:         
+    
+    # Task times
+    start:       2017-01-27 06:33:14
+    end:         2017-01-27 06:33:15
+    elapsed:     00:00:00
+    timeout:     1 day
+    wallTimeout: 1 day
+    
+    # Task input, output files and dependencies
+    inFiles:     |-
+      http://pcingola.github.io/BigDataScript/index.html
+        http://pcingola.github.io/BigDataScript/about.html
+    outFiles:    |-
+      /Users/pcingola/Documents/workspace/BigDataScript/tmp_remote_06.txt
+    dep:         |-
+      
+    
+    # Task's error and output file checking messages
+    errorMsg:    |-
+      
+    checkOut:    |-
+      
+
+    # Task definition (sys statements)
+    task:        |-
+      # Download commands
+        bds -download "http://pcingola.github.io/BigDataScript/index.html" "/tmp/bds/http/pcingola/github/io/BigDataScript/index.html"
+        bds -download "http://pcingola.github.io/BigDataScript/about.html" "/tmp/bds/http/pcingola/github/io/BigDataScript/about.html"
+         cat /tmp/bds/http/pcingola/github/io/BigDataScript/index.html /tmp/bds/http/pcingola/github/io/BigDataScript/about.html > tmp_remote_06.txt
+    
+    # Stdout / Stderr (head)
+    stdout:      |-
+      
+    stderr:      |-
+      
+ 
+    # Post mortem info
+    postMortem:  |-
+      
+
+
+
+
+---
+
+#---
+# Global scope
+#---
+global_scope: |-
+  type	name	value
+  string	__CF_USER_TEXT_ENCODING	0x1F5:0x0:0x52
+  bool	allowEmpty	false
+  string	APP_ICON_15056	../Resources/Eclipse.icns
+  string	Apple_PubSub_Socket_Render	/private/tmp/com.apple.launchd.yd5QhZ0Kte/Render
+  string[]	args	[]
+  bool	canFail	false
+  int	cpus	1
+  int	cpusLocal	4
+  int	day	86400
+  string	DISPLAY	/private/tmp/com.apple.launchd.6u7Dkgt06S/org.macosforge.xquartz:0
+  real	E	2.718281828459045
+  int	G	1073741824
+  string	HOME	/Users/pcingola
+  int	hour	3600
+  string	JAVA_MAIN_CLASS_15962	org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
+  string	JAVA_STARTED_ON_FIRST_THREAD_15056	1
+  int	K	1024
+  string	LOGNAME	pcingola
+  int	M	1048576
+  int	mem	-1
+  int	minute	60
+  string	node	
+  int	P	1125899906842624
+  string	PATH	/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bds
+  real	PI	3.141592653589793
+  string	ppwd	/Users/pcingola/Documents/workspace/BigDataScript
+  string	programName	remote_06.bds
+  string	programPath	test/remote_06.bds
+  string	queue	
+  int	retry	0
+  string	SHELL	/bin/bash
+  string	SSH_AUTH_SOCK	/private/tmp/com.apple.launchd.UjzdWAQiHe/Listeners
+  string	system	local
+  int	T	1099511627776
+  int	timeout	86400
+  string	TMPDIR	/var/folders/j9/9d0xhhn97vq2546d8gvmb25w0000gn/T/
+  string	USER	pcingola
+  int	walltimeout	86400
+  int	week	604800
+  string	XPC_FLAGS	0x0
+  string	XPC_SERVICE_NAME	org.eclipse.platform.ide.4508
+ 
+
