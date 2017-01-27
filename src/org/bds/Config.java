@@ -55,8 +55,8 @@ public class Config {
 	public static final String DISABLE_RM_ON_EXIT = "disableRmOnExit";
 	public static final String FILTER_OUT_TASK_HINT = "filterOutTaskHint"; // Lines to filter out from task hint
 	public static final String SHOW_TASK_CODE = "showTaskCode"; // Always show task's code (sys commands)
-	public static final String REPORT_HTML = "reportHtml"; // Create an html report
-	public static final String REPORT_YAML = "reportYaml"; // Create a yaml report
+	public static final String REPORT_HTML = "reportHtml"; // Create an HTML report
+	public static final String REPORT_YAML = "reportYaml"; // Create a YAML report
 	public static final String TAIL_LINES = "tailLines"; // Number of lie to use in 'tail'
 	public static final String TASK_MAX_HINT_LEN = "taskMaxHintLen";
 
