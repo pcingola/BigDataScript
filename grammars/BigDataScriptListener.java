@@ -1,5 +1,4 @@
 // Generated from BigDataScript.g4 by ANTLR 4.2.2
-package org.bigDataScript.antlr;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -700,6 +699,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#switch}.
+	 * @param ctx the parse tree
+	 */
+	void enterSwitch(@NotNull BigDataScriptParser.SwitchContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#switch}.
+	 * @param ctx the parse tree
+	 */
+	void exitSwitch(@NotNull BigDataScriptParser.SwitchContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#expressionLe}.

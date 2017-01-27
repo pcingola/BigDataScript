@@ -1,10 +1,20 @@
 #!/usr/bin/env bds
 
-tid := task echo hey
-wait
-print("This is task id --> "); print(tid); print("\n")
-print("This is task exitCode() --> "); print(tid.exitCode()); print("\n")
-print("This is task isDone() --> "); print(tid.isDone()); print("\n")
-print("This is task stdout() --> "); print(tid.stdout()); print("\n")
-print("This is task stderr() --> "); print(tid.stderr()); print("\n")
 
+str := 'a'
+
+switch( str ) {
+	case 'a': 
+		println 'A'
+		println 'Got it!'
+		break
+
+	case 'b':
+		println 'B'
+		break
+
+	default:
+		println 'Unknown'
+}
+
+println 'Done'
