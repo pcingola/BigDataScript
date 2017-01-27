@@ -64,6 +64,8 @@ public class Report {
 		}
 
 		if (doReport) {
+			// Create an HTML report
+			// Note: Should we create a YAML report as well?
 			Report report = new Report(BdsThreads.getInstance().get().getRoot(), false);
 			report.createReport();
 		}

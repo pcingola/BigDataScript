@@ -308,7 +308,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -498,7 +498,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 			return bdsNode.getFileName() //
 					+ ", line " + bdsNode.getLineNum() //
 					+ ", pos " + (bdsNode.getCharPosInLine() + 1) //
-			;
+					;
 		}
 
 		// No file/line info in 'bdsNode'. we walk the program-counter
@@ -981,9 +981,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		timer.end();
 
 		// Create reports? Only root thread creates reports
-		if (config != null && isRoot() && config.isLog()) {
-			// Note that some people may want both HTML and YAML reports
-
+		if (config != null && isRoot()) {
 			// Create HTML report?
 			if (config.isReportHtml()) {
 				Report report = new Report(this, false);
