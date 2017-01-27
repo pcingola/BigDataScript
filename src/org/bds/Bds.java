@@ -63,7 +63,7 @@ public class Bds {
 
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "f";
+	public static final String REVISION = "g";
 	public static final String VERSION_MAJOR = "0.99999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -442,7 +442,7 @@ public class Bds {
 	 */
 	void initDefaults() {
 		reportFileName = null;
-		reportHtml = true;
+		reportHtml = false;
 		reportYaml = false;
 		dryRun = false;
 		log = false;
@@ -640,7 +640,7 @@ public class Bds {
 				case "-dryrun":
 					dryRun = true;
 					noRmOnExit = true; // Not running, so don't delete files
-					reportHtml = reportYaml = false;
+					reportHtml = reportYaml = false; // Don't create reports
 					break;
 
 				case "-extractsource":

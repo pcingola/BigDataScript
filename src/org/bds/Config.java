@@ -31,7 +31,7 @@ public class Config {
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
 
-	// Amazon AWS parameters
+	// Cloud: Amazon AWS parameters
 	public static final String AWS_REGION = "awsRegion";
 
 	// PID regular expressions
@@ -50,31 +50,35 @@ public class Config {
 	public static final String TMP_DIR = "tmpDir";
 	public static final String DEFAULT_TMP_DIR = "/tmp";
 
-	// Disable checkpoint creation
-	public static final String DISABLE_CHECKPOINT_CREATE = "disableCheckpoint";
+	// Running & reporting
+	public static final String DISABLE_CHECKPOINT_CREATE = "disableCheckpoint"; // Disable checkpoint creation
 	public static final String DISABLE_RM_ON_EXIT = "disableRmOnExit";
-	public static final String TAIL_LINES = "tailLines"; // Number of lie to use in 'tail'
 	public static final String FILTER_OUT_TASK_HINT = "filterOutTaskHint"; // Lines to filter out from task hint
 	public static final String SHOW_TASK_CODE = "showTaskCode"; // Always show task's code (sys commands)
+	public static final String REPORT_HTML = "reportHtml"; // Create an html report
+	public static final String REPORT_YAML = "reportYaml"; // Create a yaml report
+	public static final String TAIL_LINES = "tailLines"; // Number of lie to use in 'tail'
+	public static final String TASK_MAX_HINT_LEN = "taskMaxHintLen";
 
-	// SGE parameters
+	// Cluster: SGE parameters
 	public static final String CLUSTER_SGE_PE = "sge.pe";
 	public static final String CLUSTER_SGE_MEM = "sge.mem";
 	public static final String CLUSTER_SGE_TIMEOUT = "sge.timeout";
 
-	// Cluster parameters
+	// Cluster: Parameters
 	public static final String CLUSTER_RUN_ADDITIONAL_ARGUMENTS = "clusterRunAdditionalArgs"; // Cluster additional command line arguments (when running tasks)
 	public static final String CLUSTER_KILL_ADDITIONAL_ARGUMENTS = "clusterKillAdditionalArgs"; // Cluster additional command line arguments (when killing tasks)
 	public static final String CLUSTER_STAT_ADDITIONAL_ARGUMENTS = "clusterStatAdditionalArgs"; // Cluster additional command line arguments (when requesting information about all tasks)
 	public static final String CLUSTER_POSTMORTEMINFO_ADDITIONAL_ARGUMENTS = "clusterPostMortemInfoAdditionalArgs"; // Cluster additional command line arguments (when requesting information about a failed task)
 	public static final String CLUSTER_POSTMORTEMINFO_DISABLED = "clusterPostMortemDisabled"; // Some clusters do not provide information after the process dies
 
-	// Generic cluster
+	// Cluster: Generic cluster
 	public static final String CLUSTER_GENERIC_RUN = "clusterGenericRun";
 	public static final String CLUSTER_GENERIC_KILL = "clusterGenericKill";
 	public static final String CLUSTER_GENERIC_STAT = "clusterGenericStat";
 	public static final String CLUSTER_GENERIC_POSTMORTEMINFO = "clusterGenericPostMortemInfo";
 
+	// Thread running
 	public static final String MAX_NUMBER_OF_RUNNING_THREADS = "maxThreads";
 	public static final int MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE = 50; // If maxThreads in configuration file is too small, we'll consider it an error and use this number
 	public static final int DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS = 512;
@@ -84,8 +88,6 @@ public class Config {
 
 	public static final String WAIT_TEXT_FILE_BUSY = "waitTextFileBusy";
 	public static int DEFAULT_WAIT_TEXT_FILE_BUSY = 1;
-
-	public static final String TASK_MAX_HINT_LEN = "taskMaxHintLen";
 
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
@@ -100,7 +102,7 @@ public class Config {
 	boolean noRmOnExit; // Avoid removing files on exit
 	boolean extractSource = false; // Extract source code from checkpoint file
 	boolean reportYaml = false; // Use YAML report format
-	boolean reportHtml = true; // Use HTML report format
+	boolean reportHtml = false; // Use HTML report format
 	boolean showTaskCode; // Always show task's code (sys statements)
 	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
 	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
@@ -457,6 +459,8 @@ public class Config {
 		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
 		showTaskCode = getBool(SHOW_TASK_CODE, false);
 		tailLines = (int) getLong(TAIL_LINES, TailFile.DEFAULT_TAIL);
+		reportHtml = getBool(REPORT_HTML, false);
+		reportYaml = getBool(REPORT_YAML, false);
 
 		// Split and add all items
 		filterOutTaskHint = new ArrayList<String>();
