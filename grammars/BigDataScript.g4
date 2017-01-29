@@ -54,7 +54,7 @@ statement : '{' statement* '}'                                                  
             | 'kill' expression  eol*                                                      # kill
             | 'return' expression?  eol*                                                   # return
             | 'wait' (expression (',' expression)* )?  eol*                                # wait
-            | 'switch' '(' expression? ')' '{' eol* ('case' expression ':' statement* 'break' eol*)+ ('default' ':' statement*)? '}' eol* # switch
+            | 'switch' '(' expression? ')' '{' eol* ('case' expression ':' statement* eol*)* ('default' ':' statement*)? ('case' expression ':' statement* eol*)* '}' eol* # switch
             | 'while' '(' expression? ')' statement  eol*                                  # while
             | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*        # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration

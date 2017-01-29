@@ -1,13 +1,15 @@
 #!/usr/bin/env bds
 
-
-str := 'a'
+str := 'zx'
 
 switch( str ) {
 	case 'a': 
 		println 'A'
 		println 'Got it!'
 		break
+
+	case 'z'+'x':
+		println 'Z'
 
 	case 'b':
 		println 'B'

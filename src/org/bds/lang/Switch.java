@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
+import org.bds.run.RunState;
 import org.bds.scope.Scope;
 import org.bds.util.Gpr;
 
@@ -17,59 +17,49 @@ import org.bds.util.Gpr;
  */
 public class Switch extends Statement {
 
-	Expression condition;
-	List<Expression> caseExpression;
-	List<Statement> caseStatements;
-	Statement defaultStatement;
+	Expression switchExpr;
+	List<Case> caseStatements;
+	Default defaultStatement;
 
 	public Switch(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
+	public Expression getSwitchExpr() {
+		return switchExpr;
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
+		caseStatements = new ArrayList<>();
+
 		int idx = 0;
 		if (isTerminal(tree, idx, "switch")) idx++; // 'switch'
 		if (isTerminal(tree, idx, "(")) idx++; // '('
-		if (!isTerminal(tree, idx, ")")) condition = (Expression) factory(tree, idx++);
+		if (!isTerminal(tree, idx, ")")) switchExpr = (Expression) factory(tree, idx++);
 		if (isTerminal(tree, idx, ")")) idx++; // ')'
 		if (isTerminal(tree, idx, "{")) idx++; // '{'
+		int idxOri = idx;
 
-		while(true) {
-			idx = findIndex(tree, "case", idx);
-			if (idx < 0) break; // No (other) case statements found
-			Expression expr = (Expression) factory(tree, ++idx);
-			if (isTerminal(tree, idx, ":")) idx++; // ':'
-			
-			List<Statement> stats = new ArrayList<>();
-			while( true) {
-				if (isTerminal(tree, idx, "case")|| isTerminal(tree, idx, "break")||isTerminal(tree, idx, "default")) 
-					break;
-				
-				Statement stat = (Statement) factory(tree, idx + 1);
-				stats.add(stat);
-			}
-			
-			Gpr.debug(idx+"\t" + tree.getChild(idx));
+		// Parse all 'case' statements
+		while (true) {
+			Case caseSt = new Case(this, tree);
+			idx = caseSt.parse(tree, idx);
+			if (idx < 0) break;
+
+			caseStatements.add(caseSt);
 		}
-		
+
 		// Do we have an 'default' statement?
-		idx = findIndex(tree, "default", idx);
-		if (idx > 0) defaultStatement = (Statement) factory(tree, idx + 1);
+		Default defSt = new Default(this, tree);
+		idx = defSt.parse(tree, idxOri);
+		if (idx < 0) return; // Default statement not found
+		defaultStatement = defSt;
 	}
 
-	/**
-	 * Evaluate condition
-	 */
-	boolean runCondition(BdsThread bdsThread) {
-		if (condition == null) return true;
-
-		bdsThread.run(condition);
-
-		if (bdsThread.isCheckpointRecover()) return true;
-
-		// Return value form 'condition'
-		return popBool(bdsThread);
+	void restoreStack(BdsThread bdsThread) {
+		bdsThread.pop(); // Remove case 'fall-through' result from stack
+		bdsThread.pop(); // Remove switch expression result from stack
 	}
 
 	/**
@@ -77,33 +67,78 @@ public class Switch extends Statement {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
+		// TODO: Write checkpoint recovery
+		if (bdsThread.isCheckpointRecover()) throw new RuntimeException("Unimplemented!!!");
 
-		if (bdsThread.isCheckpointRecover()) {
-			runCondition(bdsThread);
-			//if (bdsThread.isCheckpointRecover()) bdsThread.run(statement);
-			if (bdsThread.isCheckpointRecover()) bdsThread.run(defaultStatement);
-			return;
+		// Run switch expression
+		runSwitchExpression(bdsThread);
+
+		// Put the fall-through value in the stack
+		bdsThread.push(false);
+
+		// Run each of the 'case' statements
+		for (Case caseSt : caseStatements) {
+			caseSt.runStep(bdsThread);
+
+			switch (bdsThread.getRunState()) {
+			case OK:
+			case CHECKPOINT_RECOVER:
+				break;
+
+			case BREAK: // Break from 'switch'
+				bdsThread.setRunState(RunState.OK);
+				restoreStack(bdsThread);
+				return;
+
+			case CONTINUE: // Continue: Breaking form a 'for' loop. Propagate 'continue' state
+			case RETURN: // Return
+			case EXIT: // Exit program
+			case FATAL_ERROR:
+				restoreStack(bdsThread);
+				return;
+
+			default:
+				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
+			}
 		}
 
-		if (runCondition(bdsThread)) {
-			// bdsThread.run(statement);
-		} else if (defaultStatement != null) {
-			bdsThread.run(defaultStatement);
+		// Run default statement
+		if (defaultStatement != null) {
+			defaultStatement.runStep(bdsThread);
+			// When the 'default' is in the middle of a 'switch', there can be
+			// a 'break' statement. In this case we must clear the 'break' state
+			// so it doesn't get propagated
+			if (bdsThread.getRunState() == RunState.BREAK) bdsThread.setRunState(RunState.OK);
 		}
+
+		restoreStack(bdsThread);
+	}
+
+	/**
+	 * Evaluate condition
+	 */
+	void runSwitchExpression(BdsThread bdsThread) {
+		if (switchExpr == null) return;
+		bdsThread.run(switchExpr);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("if( ");
-		if (condition != null) sb.append(condition);
+		sb.append("switch( ");
+		if (switchExpr != null) sb.append(switchExpr);
 		sb.append(" ) {\n");
-		// sb.append(Gpr.prependEachLine("\t", statement.toString()));
+
+		if (caseStatements != null) {
+			for (Case c : caseStatements)
+				sb.append(Gpr.prependEachLine("\t", c.toString()));
+		}
+
 		if (defaultStatement != null) {
-			sb.append("\n} else {\n");
 			sb.append(Gpr.prependEachLine("\t", defaultStatement.toString()));
 		}
+
 		sb.append("\n}");
 
 		return sb.toString();
@@ -111,11 +146,12 @@ public class Switch extends Statement {
 
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		Type retType = condition.returnType(scope);
-		if ((condition != null) //
-				&& !condition.isBool() //
-				&& (retType != null) //
-				&& !retType.canCast(Type.BOOL)//
-		) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
+		if (switchExpr != null) {
+			Type retType = switchExpr.returnType(scope);
+			Gpr.debug("retType: " + retType);
+			for (Case c : caseStatements)
+				c.typeCheck(scope, compilerMessages);
+
+		}
 	}
 }

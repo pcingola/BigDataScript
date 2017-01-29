@@ -5,7 +5,7 @@ import org.bds.scope.Scope;
 
 /**
  * A binary expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionBinary extends Expression {

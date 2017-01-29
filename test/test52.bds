@@ -1,0 +1,34 @@
+
+str := 'b'
+
+switch( str ) {
+    case 'a':
+        println 'A'
+        println 'Got it!'
+        break
+
+    case 'b':
+        println 'B'
+        break
+
+    case 'c':
+        println 'C'
+		# Fall-through
+		
+    case 'd':
+        println 'D'
+		break
+
+	case 'e': # Fall-through without statements
+	case 'f':
+        println 'EF'
+		break
+    
+	case 'z': # Fall-through without other case statement (nothing is executed, cannot fall through to 'default')
+        println 'Z'
+
+    default:
+        println 'Unknown'
+}
+
+println 'Done'
