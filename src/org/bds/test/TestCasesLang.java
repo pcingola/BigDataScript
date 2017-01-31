@@ -331,7 +331,7 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test48() {
 		Gpr.debug("Test");
-		String errs = "ERROR [ file 'test/test48.bds', line 5 ] :	extraneous input ':=' expecting {<EOF>, 'while', '{', 'void', 'for', 'error', 'debug', 'int', 'include', 'task', '(', 'kill', '\n', 'println', 'exit', '++', '~', 'wait', 'dep', '+', 'goal', 'continue', 'return', ';', 'if', 'warning', 'break', 'print', 'parallel', 'par', '[', '--', 'bool', '!', 'string', 'checkpoint', 'breakpoint', '-', 'real', BOOL_LITERAL, INT_LITERAL, REAL_LITERAL, STRING_LITERAL, STRING_LITERAL_SINGLE, HELP_LITERAL, SYS_LITERAL, TASK_LITERAL, ID}";
+		String errs = "ERROR [ file 'test/test48.bds', line 5 ] :	extraneous input ':=' expecting {<EOF>, 'while', '{', 'void', 'for', 'error', 'debug', 'int', 'include', 'task', '(', 'kill', '\n', 'println', 'exit', '++', '~', 'wait', 'dep', '+', 'goal', 'continue', 'return', ';', 'if', 'warning', 'break', 'print', 'switch', 'parallel', 'par', '[', '--', 'bool', '!', 'string', 'checkpoint', 'breakpoint', '-', 'real', BOOL_LITERAL, INT_LITERAL, REAL_LITERAL, STRING_LITERAL, STRING_LITERAL_SINGLE, HELP_LITERAL, SYS_LITERAL, TASK_LITERAL, ID}";
 		compileErrors("test/test48.bds", errs);
 	}
 
@@ -354,6 +354,25 @@ public class TestCasesLang extends TestCasesBase {
 		Gpr.debug("Test");
 		String errs = "ERROR [ file 'test/test51.bds', line 6 ] :	Cannot assign to non-variable 'f(  ){\"hi\"}'";
 		compileErrors("test/test51.bds", errs);
+	}
+
+	@Test
+	public void test52() {
+		Gpr.debug("Test");
+		compileOk("test/test52.bds");
+	}
+
+	@Test
+	public void test53() {
+		Gpr.debug("Test");
+		compileOk("test/test53.bds");
+	}
+
+	@Test
+	public void test54() {
+		Gpr.debug("Test");
+		String errs = "ERROR [ file 'test/test54.bds', line 9 ] :	Switch expression and case expression types do not match (string vs int): case 7";
+		compileErrors("test/test54.bds", errs);
 	}
 
 }

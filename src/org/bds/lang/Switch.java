@@ -147,11 +147,9 @@ public class Switch extends Statement {
 	@Override
 	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		if (switchExpr != null) {
-			Type retType = switchExpr.returnType(scope);
-			Gpr.debug("retType: " + retType);
+			switchExpr.returnType(scope); // Calculate switch expression return type
 			for (Case c : caseStatements)
 				c.typeCheck(scope, compilerMessages);
-
 		}
 	}
 }
