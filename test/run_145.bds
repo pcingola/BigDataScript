@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-in := 'b'
+in := 'a'
 out := 1
 
 switch( in ) {
@@ -13,6 +13,7 @@ switch( in ) {
 
 	case 'b':
 		out *= 7
+		break
 
 	default:
 		out *= 100
