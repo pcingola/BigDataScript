@@ -8,6 +8,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
+import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
 
 /**
@@ -96,8 +97,10 @@ public class Case extends Statement {
 	public void runStep(BdsThread bdsThread) {
 		if (bdsThread.isCheckpointRecover()) {
 			runCondition(bdsThread);
-			if (bdsThread.isCheckpointRecover()) runStatements(bdsThread);
-			return;
+			if (bdsThread.isCheckpointRecover()) {
+				runStatements(bdsThread);
+				return;
+			}
 		}
 
 		// Pop the previous 'case' condition value (fall-through?)
@@ -156,6 +159,13 @@ public class Case extends Statement {
 			for (Statement s : statements)
 				s.typeCheck(scope, compilerMessages);
 		}
+	}
+
+	@Override
+	public String serializeSave(BdsSerializer serializer) {
+		String ret = super.serializeSave(serializer);
+		Gpr.debug("Serialize: Case. Ret:" + ret);
+		return ret;
 	}
 
 }

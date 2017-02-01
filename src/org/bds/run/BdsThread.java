@@ -308,7 +308,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-		;
+				;
 
 		//---
 		// Wait for options
@@ -498,7 +498,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 			return bdsNode.getFileName() //
 					+ ", line " + bdsNode.getLineNum() //
 					+ ", pos " + (bdsNode.getCharPosInLine() + 1) //
-			;
+					;
 		}
 
 		// No file/line info in 'bdsNode'. we walk the program-counter
@@ -595,6 +595,10 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 	public String getScopeNodeId() {
 		return scopeNodeId;
+	}
+
+	public Deque<Object> getStack() {
+		return stack;
 	}
 
 	public Statement getStatement() {
@@ -1375,6 +1379,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		sb.append("BigDataScriptThread: " + bdsThreadNum + "\n");
 		sb.append("\tPC        : " + pc + "\n");
 		sb.append("\tRun state : " + runState + "\n");
+		sb.append("\tStack     : " + stack + "\n");
 		sb.append("\tScope     : " + scope + "\n");
 		sb.append("\tProgram   :\n" + statement.toStringTree("\t\t", "program") + "\n");
 		return sb.toString();

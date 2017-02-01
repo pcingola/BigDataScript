@@ -8,6 +8,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
+import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
 
 /**
@@ -58,6 +59,7 @@ public class Switch extends Statement {
 	}
 
 	void restoreStack(BdsThread bdsThread) {
+		if (bdsThread.isCheckpointRecover()) return;
 		bdsThread.pop(); // Remove case 'fall-through' result from stack
 		bdsThread.pop(); // Remove switch expression result from stack
 	}
@@ -67,18 +69,19 @@ public class Switch extends Statement {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		// TODO: Write checkpoint recovery
-		if (bdsThread.isCheckpointRecover()) throw new RuntimeException("Unimplemented!!!");
-
 		// Run switch expression
 		runSwitchExpression(bdsThread);
 
-		// Put the fall-through value in the stack
-		bdsThread.push(false);
+		if (!bdsThread.isCheckpointRecover()) {
+			// Put the fall-through value in the stack
+			bdsThread.push(false);
+		}
 
 		// Run each of the 'case' statements
 		for (Case caseSt : caseStatements) {
+			Gpr.debug("Stack [case before]: " + bdsThread.getStack());
 			caseSt.runStep(bdsThread);
+			Gpr.debug("Stack [case after]: " + bdsThread.getStack());
 
 			switch (bdsThread.getRunState()) {
 			case OK:
@@ -119,7 +122,27 @@ public class Switch extends Statement {
 	 */
 	void runSwitchExpression(BdsThread bdsThread) {
 		if (switchExpr == null) return;
+		Gpr.debug("Stack [switch expr before]: " + bdsThread.getStack());
 		bdsThread.run(switchExpr);
+		Gpr.debug("Stack [switch expr after]: " + bdsThread.getStack());
+	}
+
+	@Override
+	public String serializeSave(BdsSerializer serializer) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.serializeSave(serializer));
+
+		for (Case c : caseStatements)
+			sb.append(c.serializeSave(serializer));
+		Gpr.debug("Serialize: Switch. Ret:" + sb);
+		return sb.toString();
+	}
+
+	@Override
+	public void serializeParse(BdsSerializer serializer) {
+		super.serializeParse(serializer);
+
+		Gpr.debug("SerializeParse: Switch:" + this);
 	}
 
 	@Override
@@ -152,4 +175,5 @@ public class Switch extends Statement {
 				c.typeCheck(scope, compilerMessages);
 		}
 	}
+
 }
