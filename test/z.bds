@@ -1,5 +1,2 @@
-#!/usr/bin/env bds
-
 var := sys grep "text" $HOME/file.in | tr -d "\n"
-task ls
 println "var = '$var'"
