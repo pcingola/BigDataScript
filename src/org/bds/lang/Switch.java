@@ -8,7 +8,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
-import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
 
 /**
@@ -19,7 +18,7 @@ import org.bds.util.Gpr;
 public class Switch extends Statement {
 
 	Expression switchExpr;
-	List<Case> caseStatements;
+	Case[] caseStatements;
 	Default defaultStatement;
 
 	public Switch(BdsNode parent, ParseTree tree) {
@@ -32,7 +31,7 @@ public class Switch extends Statement {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		caseStatements = new ArrayList<>();
+		List<Case> caseSts = new ArrayList<>();
 
 		int idx = 0;
 		if (isTerminal(tree, idx, "switch")) idx++; // 'switch'
@@ -47,9 +46,9 @@ public class Switch extends Statement {
 			Case caseSt = new Case(this, tree);
 			idx = caseSt.parse(tree, idx);
 			if (idx < 0) break;
-
-			caseStatements.add(caseSt);
+			caseSts.add(caseSt);
 		}
+		caseStatements = caseSts.toArray(new Case[0]);
 
 		// Do we have an 'default' statement?
 		Default defSt = new Default(this, tree);
@@ -79,9 +78,7 @@ public class Switch extends Statement {
 
 		// Run each of the 'case' statements
 		for (Case caseSt : caseStatements) {
-			Gpr.debug("Stack [case before]: " + bdsThread.getStack());
 			caseSt.runStep(bdsThread);
-			Gpr.debug("Stack [case after]: " + bdsThread.getStack());
 
 			switch (bdsThread.getRunState()) {
 			case OK:
@@ -122,27 +119,7 @@ public class Switch extends Statement {
 	 */
 	void runSwitchExpression(BdsThread bdsThread) {
 		if (switchExpr == null) return;
-		Gpr.debug("Stack [switch expr before]: " + bdsThread.getStack());
 		bdsThread.run(switchExpr);
-		Gpr.debug("Stack [switch expr after]: " + bdsThread.getStack());
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.serializeSave(serializer));
-
-		for (Case c : caseStatements)
-			sb.append(c.serializeSave(serializer));
-		Gpr.debug("Serialize: Switch. Ret:" + sb);
-		return sb.toString();
-	}
-
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		super.serializeParse(serializer);
-
-		Gpr.debug("SerializeParse: Switch:" + this);
 	}
 
 	@Override

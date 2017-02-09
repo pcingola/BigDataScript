@@ -18,12 +18,12 @@ import org.bds.util.Gpr;
 public class Case extends Statement {
 
 	Expression expression;
-	List<Statement> statements;
+	Statement[] statements;
 	ExpressionEq exprEq;
 
 	public Case(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-		statements = new ArrayList<>();
+		statements = new Statement[0];
 	}
 
 	protected boolean isEndOfStatements(ParseTree tree, int idx) {
@@ -37,7 +37,7 @@ public class Case extends Statement {
 	}
 
 	protected int parse(ParseTree tree, int idx) {
-		statements = new ArrayList<>();
+		List<Statement> stats = new ArrayList<>();
 
 		idx = findIndex(tree, "case", idx);
 		if (idx < 0) return idx; // No case statements found
@@ -51,10 +51,10 @@ public class Case extends Statement {
 		// Add all statement
 		while (idx < tree.getChildCount()) {
 			if (isEndOfStatements(tree, idx)) break;
-
 			Statement stat = (Statement) factory(tree, idx++);
-			if (stat != null) statements.add(stat);
+			if (stat != null) stats.add(stat);
 		}
+		statements = stats.toArray(new Statement[0]);
 
 		// Create an expression for comparing 'switch' expresion to 'case' expression
 		exprEq = new ExpressionEq(this, null);

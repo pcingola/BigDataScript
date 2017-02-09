@@ -1,6 +1,7 @@
 package org.bds.lang;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.run.BdsThread;
@@ -24,7 +25,7 @@ public class Default extends Case {
 
 	@Override
 	protected int parse(ParseTree tree, int idx) {
-		statements = new ArrayList<>();
+		List<Statement> stats = new ArrayList<>();
 
 		idx = findIndex(tree, "default", idx);
 		if (idx < 0) return idx; // No 'default' statement found
@@ -36,8 +37,9 @@ public class Default extends Case {
 			if (isEndOfStatements(tree, idx)) break;
 
 			Statement stat = (Statement) factory(tree, idx++);
-			if (stat != null) statements.add(stat);
+			if (stat != null) stats.add(stat);
 		}
+		statements = stats.toArray(new Statement[0]);
 
 		return idx;
 	}

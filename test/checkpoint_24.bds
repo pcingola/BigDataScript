@@ -30,5 +30,5 @@ int zzz(string in) {
 	return out
 }
 
+# Main
 out := zzz('x')
-println "out : $out"
