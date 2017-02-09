@@ -8,7 +8,6 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
-import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
 
 /**
@@ -36,6 +35,10 @@ public class Case extends Statement {
 		// Do nothing. The other parse method will be invoked by 'switch' parsing
 	}
 
+	/**
+	 * Invoked by 'switch' parsing
+	 * Return last index in tree that was parsed + 1
+	 */
 	protected int parse(ParseTree tree, int idx) {
 		List<Statement> stats = new ArrayList<>();
 
@@ -65,10 +68,10 @@ public class Case extends Statement {
 	}
 
 	/**
-	 * Evaluate case equality
+	 * Evaluate case expression
 	 */
-	boolean runCondition(BdsThread bdsThread) {
-		if (expression == null) return true; // No expression? Always true
+	boolean runCaseExpr(BdsThread bdsThread) {
+		if (expression == null) return true; // No expression? Always true (e.g. 'default')
 
 		bdsThread.run(expression);
 		if (bdsThread.isCheckpointRecover()) return true;
@@ -79,7 +82,7 @@ public class Case extends Statement {
 	}
 
 	/**
-	 * Evaluate condition
+	 * Run case statements
 	 */
 	void runStatements(BdsThread bdsThread) {
 		for (Statement s : statements)
@@ -88,17 +91,22 @@ public class Case extends Statement {
 
 	/**
 	 * Run the program
-	 * Keep in mind that each 'case' is executed with two values 
+	 * Keep in mind that each 'case' is executed with two values
 	 * pushed into the stack by 'switch' execution:
-	 * 		1) Previous case condition result (boolean: was the expression equal to 'swtich' expression?)
+	 * 		1) Previous case condition result (boolean: was the expression equal to 'switch' expression?)
 	 * 		2) Switch expression result
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		if (bdsThread.isCheckpointRecover()) {
-			runCondition(bdsThread);
-			if (bdsThread.isCheckpointRecover()) {
+			boolean caseCond = runCaseExpr(bdsThread);
+			if (bdsThread.isCheckpointRecover() || caseCond) {
 				runStatements(bdsThread);
+				// Since this statements were executed, it means that the 
+				// case condition (either the expression of the fall-through) 
+				// are true. We need to push the value into the stack, because
+				// the next 'case' may have have a fall-through 
+				bdsThread.push(true);
 				return;
 			}
 		}
@@ -110,7 +118,7 @@ public class Case extends Statement {
 			// Previous case condition was true => Fall-through, we execute statements
 			runStatements(bdsThread);
 		} else {
-			caseCond = runCondition(bdsThread);
+			caseCond = runCaseExpr(bdsThread);
 			// Case condition true => execute statements
 			if (caseCond) runStatements(bdsThread);
 		}
@@ -159,13 +167,6 @@ public class Case extends Statement {
 			for (Statement s : statements)
 				s.typeCheck(scope, compilerMessages);
 		}
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		String ret = super.serializeSave(serializer);
-		Gpr.debug("Serialize: Case. Ret:" + ret);
-		return ret;
 	}
 
 }

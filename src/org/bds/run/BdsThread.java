@@ -76,7 +76,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	// Scope
 	Scope scope; // Base scope
 	String scopeNodeId; // Scope's ID, used only when un-serializing
-	Deque<Object> stack;
+	Deque<Object> stack; // Program stack
 
 	// BdsThread
 	String currentDir; // Program's 'current directoy'
@@ -1318,7 +1318,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 			// Last node found!
 			runState = RunState.OK; // Switch to 'normal' run state
 			if (node instanceof Wait) runState = RunState.WAIT_RECOVER; // We want to recover all tasks that failed in wait statement
-			if (node instanceof Checkpoint) return false; // We want to recover AFTER the checkpoint
+			if (node instanceof Checkpoint) return false; // We want to recover AFTER the checkpoint statement
 			return true;
 		}
 
@@ -1442,7 +1442,6 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * @return true if thread finished OK
 	 */
 	public boolean waitThread(BdsThread bdsThread) {
-
 		try {
 			if (bdsThread != null) {
 				if (isVerbose()) Timer.showStdErr("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());

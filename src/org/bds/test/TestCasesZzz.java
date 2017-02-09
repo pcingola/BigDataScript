@@ -42,9 +42,15 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test25_varname() {
+	public void test25_switch() {
 		Gpr.debug("Test");
-		runAndCheckpoint("test/checkpoint_25.bds", "test/checkpoint_25.chp", "out", 4);
+		runAndCheckpoint("test/checkpoint_25.bds", "test/checkpoint_25.chp", "out", 35);
+	}
+
+	@Test
+	public void test26_switch() {
+		Gpr.debug("Test");
+		runAndCheckpoint("test/checkpoint_26.bds", "test/checkpoint_26.chp", "out", 56);
 	}
 
 }

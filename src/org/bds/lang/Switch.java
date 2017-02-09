@@ -115,7 +115,7 @@ public class Switch extends Statement {
 	}
 
 	/**
-	 * Evaluate condition
+	 * Evaluate switch expression
 	 */
 	void runSwitchExpression(BdsThread bdsThread) {
 		if (switchExpr == null) return;

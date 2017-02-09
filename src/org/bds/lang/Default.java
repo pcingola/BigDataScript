@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.run.BdsThread;
-import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
 
 /**
@@ -50,13 +49,6 @@ public class Default extends Case {
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		runStatements(bdsThread);
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		String ret = super.serializeSave(serializer);
-		Gpr.debug("Serialize: Default. Ret:" + ret);
-		return ret;
 	}
 
 	@Override
