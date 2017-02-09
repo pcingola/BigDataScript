@@ -102,10 +102,10 @@ public class Case extends Statement {
 			boolean caseCond = runCaseExpr(bdsThread);
 			if (bdsThread.isCheckpointRecover() || caseCond) {
 				runStatements(bdsThread);
-				// Since this statements were executed, it means that the 
-				// case condition (either the expression of the fall-through) 
+				// Since this statements were executed, it means that the
+				// case condition (either the expression of the fall-through)
 				// are true. We need to push the value into the stack, because
-				// the next 'case' may have have a fall-through 
+				// the next 'case' may have have a fall-through
 				bdsThread.push(true);
 				return;
 			}
