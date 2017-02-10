@@ -1,0 +1,96 @@
+
+#---
+# Program overview
+#---
+program: {{progName}} 
+scriptFile: {{fileName}} 
+programId: {{threadIdRoot}} 
+startTime: {{startTime}} 
+runtime: {{runTime}} 
+tasksExecuted: {{taskCount}} 
+tasksFailed: {{taskFailed}} 
+arguments: {{scope.VAR_ARGS_LIST}} 
+system: {{scope.TASK_OPTION_SYSTEM}} 
+cpus: {{scope.TASK_OPTION_CPUS}} 
+exitValue: {{exitValue}} 
+
+---
+
+#---
+# Thread structure
+#---
+threads: {{{
+  - thread : {{threadIdNum}}
+    parent : {{threadParentNum}}
+}}}
+
+---
+
+#---
+# Task details
+#---
+tasks: {{{
+  - # Task identification
+    id:          {{taskId}}
+    num:         {{taskNum}}
+    name:        {{taskName}}
+    threadNum:   {{taskThreadNum}}
+    pid:         {{taskPid}}
+    
+    # Task status
+    ok:          {{taskOk}}
+    exitCode:    {{taskExitCode}}
+    retry:       {{taskRetry}}
+    state:       {{taskState}}
+    depState:    {{taskDepState}}
+    
+    # Task resources
+    cpus:        {{taskCpus}}
+    mem:         {{taskMem}}
+    
+    # Task times
+    start:       {{taskStart}}
+    end:         {{taskEnd}}
+    elapsed:     {{taskElapsed}}
+    timeout:     {{taskTimeout}}
+    wallTimeout: {{taskWallTimeout}}
+    
+    # Task input, output files and dependencies
+    inFiles:     |-
+      {{taskInFiles}}
+    outFiles:    |-
+      {{taskOutFiles}}
+    dep:         |-
+      {{taskDep}}
+    
+    # Task's error and output file checking messages
+    errorMsg:    |-
+      {{taskErrMsg}}
+    checkOut:    |-
+      {{taskCheckOut}}
+
+    # Task definition (sys statements)
+    task:        |-
+      {{taskProgram}}
+    
+    # Stdout / Stderr (head)
+    stdout:      |-
+      {{taskStdout}}
+    stderr:      |-
+      {{taskStderr}}
+ 
+    # Post mortem info
+    postMortem:  |-
+      {{taskPostMortemInfo}}
+
+}}}
+
+---
+
+#---
+# Global scope
+#---
+global_scope: |-
+  type	name	value
+  {{symType}}	{{symName}}	{{symValue}}
+ 
