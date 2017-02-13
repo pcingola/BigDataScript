@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.data.Data;
 import org.bds.data.DataRemote;
 import org.bds.executioner.Executioner;
@@ -14,9 +14,7 @@ import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.task.Task;
 import org.bds.task.TaskDependency;
-import org.bds.task.TaskState;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * A 'task' expression
@@ -54,27 +52,12 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Execute a task (schedule it into executioner)
 	 */
 	public static void execute(BdsThread bdsThread, Task task) {
-		// Make sure the task in in initial state
-		task.reset();
-
 		// Select executioner and queue for execution
 		String runSystem = bdsThread.getString(TASK_OPTION_SYSTEM);
 		Executioner executioner = Executioners.getInstance().get(runSystem);
 
-		// Queue exec
-		if (bdsThread.getConfig().isDryRun()) {
-			// Dry run: Don't run the task, just show what would be run
-			Timer.showStdErr("Dry run task:\n" + task.toString(true, true));
-			task.state(TaskState.SCHEDULED);
-			task.state(TaskState.STARTED);
-			task.state(TaskState.RUNNING);
-			task.state(TaskState.FINISHED);
-			task.setExitValue(0);
-			bdsThread.add(task);
-		} else {
-			bdsThread.add(task);
-			executioner.add(task);
-		}
+		// Execute task
+		task.execute(bdsThread, executioner);
 	}
 
 	public ExpressionTask(BdsNode parent, ParseTree tree) {

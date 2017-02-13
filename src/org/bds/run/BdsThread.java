@@ -985,9 +985,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		timer.end();
 
 		// Create reports? Only root thread creates reports
-		if (config != null && isRoot() && config.isLog()) {
-			// Note that some people may want both HTML and YAML reports
-
+		if (config != null && isRoot()) {
 			// Create HTML report?
 			if (config.isReportHtml()) {
 				Report report = new Report(this, false);

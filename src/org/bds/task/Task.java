@@ -10,9 +10,11 @@ import java.util.Set;
 
 import org.bds.Config;
 import org.bds.cluster.host.HostResources;
+import org.bds.executioner.Executioner;
 import org.bds.lang.Expression;
 import org.bds.lang.Type;
 import org.bds.lang.TypeList;
+import org.bds.run.BdsThread;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
@@ -181,7 +183,7 @@ public class Task implements BdsSerialize {
 		String shell = Config.get().getTaskShell();
 		shell = "#!" + shell + "\n\n" // Shell to use
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
-		;
+				;
 
 		Gpr.toFile(programFileName, shell + programTxt);
 		(new File(programFileName)).setExecutable(true); // Allow execution
@@ -255,6 +257,29 @@ public class Task implements BdsSerialize {
 		long start = runningStartTime.getTime();
 		int elapsedSecs = (int) ((end - start) / 1000);
 		return elapsedSecs;
+	}
+
+	/**
+	 * Execute a task in from a bdsThread on a given executioner
+	 */
+	public synchronized void execute(BdsThread bdsThread, Executioner executioner) {
+		// Make sure the task in in initial state
+		reset();
+
+		// Queue exec
+		if (bdsThread.getConfig().isDryRun()) {
+			// Dry run: Don't run the task, just show what would be run
+			Timer.showStdErr("Dry run task:\n" + toString(true, true));
+			state(TaskState.SCHEDULED);
+			state(TaskState.STARTED);
+			state(TaskState.RUNNING);
+			state(TaskState.FINISHED);
+			setExitValue(0);
+			bdsThread.add(this);
+		} else {
+			bdsThread.add(this);
+			executioner.add(this);
+		}
 	}
 
 	public String getBdsFileName() {
@@ -491,7 +516,7 @@ public class Task implements BdsSerialize {
 	/**
 	 * Reset parameters and allow a task to be re-executed
 	 */
-	public void reset() {
+	public synchronized void reset() {
 		taskState = TaskState.NONE;
 		exitValue = 0;
 		runningStartTime = null;

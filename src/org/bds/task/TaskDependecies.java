@@ -180,17 +180,17 @@ public class TaskDependecies {
 					for (Task t : tasks) {
 					// Add all input files
 					if (t.getInputs() != null) {
-					for (String in : t.getInputs())
-					changed |= newGoals.add(in); // Add each node
+						for (String in : t.getInputs())
+							changed |= newGoals.add(in); // Add each node
 					}
 
 					// Add all task Ids
 					List<Task> depTasks = t.getDependencies();
 					if (depTasks != null) {
-					for (Task dt : depTasks)
-					changed |= newGoals.add(dt.getId()); // Add each task ID
+						for (Task dt : depTasks)
+							changed |= newGoals.add(dt.getId()); // Add each task ID
 					}
-					}
+				}
 			}
 
 			goals = newGoals;
@@ -324,8 +324,10 @@ public class TaskDependecies {
 
 		// Run all tasks
 		for (Task t : tasks) {
-			t.setDependency(false); // We are executing this task, so it it no long a 'dep'
-			ExpressionTask.execute(bdsThread, t);
+			if (!t.isScheduled()) {
+				t.setDependency(false); // We are executing this task, so it it no longer a 'dep'
+				ExpressionTask.execute(bdsThread, t);
+			}
 		}
 
 		return true;

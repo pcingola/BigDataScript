@@ -79,8 +79,8 @@ public class Bds {
 	boolean quiet; // Quiet mode
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
 	boolean verbose; // Verbose mode
-	boolean reportHtml; // Use HTML report style
-	boolean reportYaml; // Use YAML report style
+	Boolean reportHtml; // Use HTML report style
+	Boolean reportYaml; // Use YAML report style
 	int taskFailCount = -1;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Configuration file
 	String chekcpointRestoreFile; // Restore file
@@ -349,15 +349,14 @@ public class Bds {
 		config.setDryRun(dryRun);
 		config.setTaskFailCount(taskFailCount);
 		config.setReportFileName(reportFileName);
-		config.setReportHtml(reportHtml);
-		config.setReportYaml(reportYaml);
 		config.setExtractSource(extractSource);
 		config.setVerbose(verbose);
 
 		// Override config file by command line option
 		if (noRmOnExit != null) config.setNoRmOnExit(noRmOnExit);
-
 		if (noCheckpoint != null) config.setNoCheckpoint(noCheckpoint);
+		if (reportHtml != null) config.setReportHtml(reportHtml);
+		if (reportYaml != null) config.setReportYaml(reportYaml);
 
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
@@ -442,8 +441,8 @@ public class Bds {
 	 */
 	void initDefaults() {
 		reportFileName = null;
-		reportHtml = true;
-		reportYaml = false;
+		reportHtml = null;
+		reportYaml = null;
 		dryRun = false;
 		log = false;
 	}
@@ -640,7 +639,7 @@ public class Bds {
 				case "-dryrun":
 					dryRun = true;
 					noRmOnExit = true; // Not running, so don't delete files
-					reportHtml = reportYaml = false;
+					reportHtml = reportYaml = false; // Don't create reports
 					break;
 
 				case "-extractsource":
@@ -1060,8 +1059,6 @@ public class Bds {
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files). Default: " + log);
 		System.err.println("  -noChp                         : Do not create any checkpoint files.");
-		System.err.println("  -noReport                      : Do not create any report (neither HTML nor YAML).");
-		System.err.println("  -noReportHtml                  : Do not create HTML report.");
 		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit). Default: " + noRmOnExit);
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
 		System.err.println("  -quiet                         : Do not show any messages or tasks outputs on STDOUT. Default: " + quiet);

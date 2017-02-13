@@ -4,9 +4,11 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
+import org.bds.Config;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
 import org.bds.util.Gpr;
+import org.bds.util.Timer;
 
 /**
  * Execute a command, collect stdout, stderr and exitValue
@@ -39,6 +41,8 @@ public class Exec {
 	}
 
 	protected ExecResult run(List<String> args, boolean quiet) {
+		if (Config.get().isVerbose() || Config.get().isLog()) Timer.showStdErr("Executing command. Arguments: " + args);
+
 		// Create a command string
 		StringBuilder cmdsb = new StringBuilder();
 		for (String arg : args)
