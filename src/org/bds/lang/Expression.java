@@ -21,7 +21,7 @@ public class Expression extends Statement {
 	}
 
 	/**
-	 * Run an expression: I.e. evaluate the expression
+	 * Run an expression (as a statement): I.e. evaluate the expression
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {

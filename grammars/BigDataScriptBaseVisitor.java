@@ -1,5 +1,5 @@
 // Generated from BigDataScript.g4 by ANTLR 4.2.2
-package org.bigDataScript.antlr;
+package org.bds.antlr;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -515,6 +515,14 @@ public class BigDataScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitSwitch(@NotNull BigDataScriptParser.SwitchContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}

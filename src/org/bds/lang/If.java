@@ -1,8 +1,8 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.util.Gpr;
@@ -77,7 +77,7 @@ public class If extends Statement {
 		sb.append("if( ");
 		if (condition != null) sb.append(condition);
 		sb.append(" ) {\n");
-		sb.append(Gpr.prependEachLine("\t", statement.toString()));
+		if (statement != null) sb.append(Gpr.prependEachLine("\t", statement.toString()));
 		if (elseStatement != null) {
 			sb.append("\n} else {\n");
 			sb.append(Gpr.prependEachLine("\t", elseStatement.toString()));

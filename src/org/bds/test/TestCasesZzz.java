@@ -12,9 +12,10 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test90() {
+	public void test11() {
 		Gpr.debug("Test");
-		runAndCheck("test/run_90.bds", "ok", "true");
+		// Run pipeline and test checkpoint
+		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
 	}
 
 }

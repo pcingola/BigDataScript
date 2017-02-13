@@ -17,3 +17,4 @@ switch( in ) {
 	default:
 		out *= 100
 }
+

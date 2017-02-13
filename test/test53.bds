@@ -1,0 +1,22 @@
+
+str := 'a'
+
+switch( str ) {
+    case 'a':
+        println 'A'
+        break
+
+    case 'b':
+        println 'B'
+        break
+
+    default:
+		# Default in the middle of the switch statement (note that it does not fall-through)
+        println 'Unknown'
+
+    case 'c':
+        println 'C'
+		break
+}
+
+println 'Done'

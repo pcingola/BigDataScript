@@ -1,5 +1,5 @@
 // Generated from BigDataScript.g4 by ANTLR 4.2.2
-package org.bigDataScript.antlr;
+package org.bds.antlr;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -451,6 +451,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#switch}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSwitch(@NotNull BigDataScriptParser.SwitchContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionLe}.

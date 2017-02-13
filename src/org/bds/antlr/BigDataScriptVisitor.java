@@ -453,6 +453,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#switch}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSwitch(@NotNull BigDataScriptParser.SwitchContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#expressionLe}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
