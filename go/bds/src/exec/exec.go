@@ -3,6 +3,7 @@ package exec
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -38,6 +39,11 @@ const BDS_NATIVE_LIB_DIR = "lib"
 
 // Command indicating to remove file (taskLogger file)
 const CMD_REMOVE_FILE = "rm"
+
+const MAX_CHECKSUM_ITERS = 100
+const CHECKSUM_LINE_START = "# Checksum: " // This has to match the one defined in 'Task.java'
+const CHECKSUM_SLEEP_TIME = 10 // Sleep time while waiting for correct checksum to appear (in miliseconds)
+
 
 type BdsExec struct {
 	args []string 			// Command line arguments invoking 'bds'
@@ -102,6 +108,70 @@ func (be *BdsExec) Bds() int {
 	exitCode := be.executeCommand()
 
 	return exitCode
+}
+
+/*
+  Calculate the 'checksum' of a file and compare it to
+	the '# Checksum' line.
+	The main pourpose is to know when the file has been fully
+	written to disk, so we can execute it without having a
+	'text file busy' error
+*/
+func (be *BdsExec) checksum() bool {
+	buff, err := ioutil.ReadFile(be.command);
+	if err != nil {
+		return false
+	}
+
+	// Find 'checksum' line position
+	cmd := string(buff)
+	idx := strings.Index(cmd, CHECKSUM_LINE_START)
+	if idx < 0 {
+		return false
+	}
+	idx-- // Don't include '\n' prior to line
+
+	// Extract checksum value
+	chsumStr := strings.TrimSpace(string(buff[idx+len(CHECKSUM_LINE_START):]))
+	chsum, err := strconv.ParseInt(chsumStr, 16, 32)
+	chsum32 := uint32(chsum);
+	if err != nil {
+		return false
+	}
+
+	// Checksum all bytes before 'idx'
+	var sum uint32
+	for i := 0 ; i < idx ; i++ {
+		sum = sum * 33 + uint32(buff[i])
+	}
+
+  // Is checksum correct?
+	return sum == chsum32
+}
+
+/*
+  This function reads a 'shell' file created by Task.java
+	(see Task.createProgramFile() method) and checks that the 'checksum'
+	line at the end of the file matches the result. It waits for some
+	predefined time until the line appears.
+	The main purpose is to avoid 'text file busy' errors that are
+	triggered by executing a shell file that is still begin written (or
+	flushed) to the disk.
+	Ideally we'd like to have some sort of 'lsof' command line
+	functionality but it might be difficult to do it in a platform
+	independent way.
+*/
+func (be *BdsExec) checksumWait() bool {
+	for i := 0 ; i < MAX_CHECKSUM_ITERS ; i++ {
+			if DEBUG {
+				log.Printf("Debug: checksumWait (%d): '%s'\n", i, be.command)
+			}
+		 	if be.checksum() {
+				return true
+			}
+			time.Sleep(CHECKSUM_SLEEP_TIME) // Sleep for a while
+		}
+	return false
 }
 
 /*
@@ -244,6 +314,8 @@ func (be *BdsExec) executeCommand() int {
 		// Main bds program
 		signal.Notify(osSignal) // Capture all signals
 	} else {
+		be.checksumWait()
+
 		// Set a new process group.
 		// We want to be able to kill all child processes, without killing the
 		// calling program. E.g. When running using a local executor, the Java Bds

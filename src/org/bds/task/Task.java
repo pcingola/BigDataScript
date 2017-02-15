@@ -27,6 +27,8 @@ import org.bds.util.Timer;
  */
 public class Task implements BdsSerialize {
 
+	public static final String CHECKSUM_LINE_START = "# Checksum: ";
+
 	// Exit codes (see bds.go)
 	public static final int EXITCODE_OK = 0;
 	public static final int EXITCODE_ERROR = 1;
@@ -162,6 +164,27 @@ public class Task implements BdsSerialize {
 	}
 
 	/**
+	 * Create a line that contains a checksum (for integrity)
+	 *
+	 * e.g.:
+	 *     #!/bin/sh
+	 *     echo hi
+	 *     # Checksum: 65AF9234
+	 *
+	 * Note: We use Bernstein's hash function
+	 * Reference: http://burtleburtle.net/bob/hash/doobs.html
+	 *
+	 * @return
+	 */
+	protected String checkSumLine(String program) {
+		int checksum = 0;
+		for (char c : program.toCharArray()) {
+			checksum = checksum * 33 + (c);
+		}
+		return CHECKSUM_LINE_START + Integer.toHexString(checksum) + "\n";
+	}
+
+	/**
 	 * Create a program file
 	 */
 	public void createProgramFile() {
@@ -185,8 +208,11 @@ public class Task implements BdsSerialize {
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
 				;
 
-		Gpr.toFile(programFileName, shell + programTxt);
-		(new File(programFileName)).setExecutable(true); // Allow execution
+		// Save file and make it executable
+		String program = shell + programTxt;
+		program += "\n" + checkSumLine(program);
+		Gpr.toFile(programFileName, program);
+		(new File(programFileName)).setExecutable(true);
 
 		// Set default file names
 		String base = Gpr.removeExt(programFileName);

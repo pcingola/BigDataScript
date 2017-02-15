@@ -80,7 +80,7 @@ public class ExecutionerLocal extends Executioner {
 	 *
 	 */
 	void avoidTextFileBusyError() {
-		// Hack to avoid "Text file busy" errors: Sleep 1 millisecond.
+		// Hack to avoid "Text file busy" errors: Sleep N milliseconds.
 		// This is a horrible hack used to make sure the 'programFileName' has
 		// been fully written to disk and we no have the file open for writing.
 		// Even if we closed the file, sometimes a "text file busy" error
