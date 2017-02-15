@@ -86,7 +86,8 @@ public class ExecutionerLocal extends Executioner {
 		// Even if we closed the file, sometimes a "text file busy" error
 		// pops up.
 		try {
-			sleep(Config.get().getWaitTextFileBusy());
+			int sleepTime = Config.get().getWaitTextFileBusy();
+			if (sleepTime > 0) sleep(sleepTime);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
