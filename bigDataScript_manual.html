@@ -798,6 +798,21 @@ Key : Hola	Value : Adios
 				<br>
 				<table class="table table-striped">
 					<tr> <th> Function </th> <th> Meaning </th> </tr>
+					<tr> <td> int abs(int x)								</td> <td> Absolute value of a number </td> </tr>
+					<tr> <td> real abs(real x)								</td> <td> Absolute value of a number </td> </tr>
+					<tr> <td> real acos(real x)								</td> <td> The trigonometric arc-cosine of a number </td> </tr>
+					<tr> <td> real asin(real x)								</td> <td> The trigonometric arc-sine of a number </td> </tr>
+					<tr> <td> real atan(real x)								</td> <td> The trigonometric arc-tangent of a number </td> </tr>
+					<tr> <td> real atan2(real x)							</td> <td> Returns the angle theta from the conversion of rectangular coordinates (x, y) to polar coordinates (r, theta).</td> </tr>
+					<tr> <td> assert(bool expr) 							</td> <td> Used for testing: Throw an error if <code>expr</code> is <code>false</code> </td> </tr>
+					<tr> <td> assert(string msg, bool expr) 				</td> <td> Used for testing: Throw error message <code>msg</code> if <code>expr</code> is <code>false</code> </td> </tr>
+					<tr> <td> assert(string msg, bool expected, bool result)</td> <td> Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>bool</code>) </td> </tr>
+					<tr> <td> assert(int expected, int result)				</td> <td> Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>int</code>)</td> </tr>
+					<tr> <td> assert(string msg, int expected, int result)	</td> <td> Used for testing: Throw error message if <code>result</code> value is not equal to <code>expected</code> (compare <code>int</code>)</td> </tr>
+					<tr> <td> assert(string expected, string result)		</td> <td> Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td> </tr>
+					<tr> <td> assert(string msg, string expected, string result)</td> <td> Used for testing: Throw error message if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td> </tr>
+					<tr> <td> real cbrt(real x)								</td> <td> The cubic root of a number </td> </tr>
+					<tr> <td> real ceil(real x)								</td> <td> The ceiling of a number </td> </tr>
 					<tr> <td> string{} config(string fileName)			</td> <td> Read and parse 'fileName', return &lt;name,value&gt; pairs in a map.<br>
 																					Parsing: Lines starting with '#' are ignored, so are blank lines.<br>
 																					Name/Value delimiters can be any of ':', '=' or '\t' (the first one found in each line will be used).<br>
@@ -808,23 +823,53 @@ name = value
 name \t value
 </pre>
 					<tr> <td> string{} config(string fileName, string{} defaults)			</td> <td> Same as <code>string{} config(string fileName)</code>, but using <code>defaults</code> as default values (if not found in fileName) </td> </tr>
-					<tr> <td> int max(int n1, int n2) 					</td> <td> Maximum of two numbers </td> </tr>
-					<tr> <td> real max(real n1, real n2) 				</td> <td> Maximum of two numbers </td> </tr>
-					<tr> <td> int min(int n1, int n2) 					</td> <td> Minimum of two numbers </td> </tr>
-					<tr> <td> real min(real n1, real n2) 				</td> <td> Minimum of two numbers </td> </tr>
-					<tr> <td> print( expr )								</td> <td> Show to stdout (same as 'print' statement) </td> </tr>
-					<tr> <td> printErr( expr )							</td> <td> Show to stderr </td> </tr>
-					<tr> <td> real rand() 								</td> <td> Random number [0, 1] inetrval </td> </tr>
-					<tr> <td> int randInt() 							</td> <td> Random number (64 bits) </td> </tr>
-					<tr> <td> int randInt(int range)					</td> <td> Random number [0, range] interval </td> </tr>
-					<tr> <td> void randSeed(int seed)					</td> <td> Set random seed (for current thread) </td> </tr>
-					<tr> <td> int[] range(min, max)						</td> <td> A list of numbers between [min, max] inclusive </td> </tr>
-					<tr> <td> int[] range(min, max, step)				</td> <td> A list of numbers between [min, min+step, min+2*step, ... ]. Includes max if min+N*step = max </td> </tr>
-					<tr> <td> real[] range(min, max, step)				</td> <td> A list of numbers between [min, min+step, min+2*step, ... ]. Includes max if min+N*step = max </td> </tr>
-					<tr> <td> sleep( int seconds )						</td> <td> Sleep for 'seconds' </td> </tr>
-					<tr> <td> sleep( real seconds )						</td> <td> Sleep for '1000 * seconds' milliseconds. E.g. sleep(0.5) sleeps for half a second </td> </tr>
-					<tr> <td> int toInt(bool b)							</td> <td> Convert boolean to int </td> </tr>
-					<tr> <td> int toInt(real r)							</td> <td> Convert real to int </td> </tr>
+					<tr> <td> real copySign(real x, real y)					</td> <td> Returns the first floating-point argument with the sign of the second floating-point argument</td> </tr>
+					<tr> <td> real cos(real x)								</td> <td> The trigonometric cosine of an angle </td> </tr>
+					<tr> <td> real cosh(real x)								</td> <td> The trigonometric hyperbolic cosine of an angle </td> </tr>
+					<tr> <td> real exp(real x)								</td> <td> Return e^x </td> </tr>
+					<tr> <td> real exppm1(real x)							</td> <td> Return e^x-1 </td> </tr>
+					<tr> <td> real floor(real x)							</td> <td> The floor of a number </td> </tr>
+					<tr> <td> int getExponent(real x)						</td> <td> exponent used in the representation of a real</td> </tr>
+					<tr> <td> real hypot(real x, real y)					</td> <td> Returns sqrt(x2 +y2) without intermediate overflow or underflow. </td> </tr>
+					<tr> <td> real IEEEremainder(real x, real y)			</td> <td> Computes the remainder operation on two arguments as prescribed by the IEEE 754 standard.. </td> </tr>
+					<tr> <td> log(string msg)								</td> <td> Log 'msg' (i.e. show to stderr) </td> </tr>
+					<tr> <td> real log(real x)								</td> <td> Natural logarithm of a number </td> </tr>
+					<tr> <td> real log10(real x)							</td> <td> Logarithm (base 10) of a number </td> </tr>
+					<tr> <td> real log1p(real x)							</td> <td> Natural logarithm of '1+x' </td> </tr>
+					<tr> <td> int max(int n1, int n2) 						</td> <td> Maximum of two numbers </td> </tr>
+					<tr> <td> real max(real n1, real n2) 					</td> <td> Maximum of two numbers </td> </tr>
+					<tr> <td> int min(int n1, int n2) 						</td> <td> Minimum of two numbers </td> </tr>
+					<tr> <td> real min(real n1, real n2) 					</td> <td> Minimum of two numbers </td> </tr>
+					<tr> <td> real nextAfter(real x, real y)				</td> <td> Returns the number adjacent to the first argument in the direction of the second argument</td> </tr>
+					<tr> <td> real nextUp(real x)							</td> <td> Returns the floating-point value adjacent to d in the direction of positive infinity.</td> </tr>
+					<tr> <td> real pow(real x, real y)						</td> <td> Return x^y </td> </tr>
+					<tr> <td> print( expr )									</td> <td> Show to stdout (same as 'print' statement) </td> </tr>
+					<tr> <td> printErr( expr )								</td> <td> Show to stderr </td> </tr>
+					<tr> <td> printHelp()									</td> <td> Print automatically generated help message (see 'help' statement) </td> </tr>
+					<tr> <td> real rand() 									</td> <td> Random number [0, 1] inetrval </td> </tr>
+					<tr> <td> int randInt() 								</td> <td> Random number (64 bits) </td> </tr>
+					<tr> <td> int randInt(int range)						</td> <td> Random number [0, range] interval </td> </tr>
+					<tr> <td> void randSeed(int seed)						</td> <td> Set random seed (for current thread) </td> </tr>
+					<tr> <td> int[] range(min, max)							</td> <td> A list of numbers between [min, max] inclusive </td> </tr>
+					<tr> <td> int[] range(min, max, step)					</td> <td> A list of numbers between [min, min+step, min+2*step, ... ]. Includes max if min+N*step = max </td> </tr>
+					<tr> <td> real[] range(min, max, step)					</td> <td> A list of numbers between [min, min+step, min+2*step, ... ]. Includes max if min+N*step = max </td> </tr>
+					<tr> <td> real rint(real x) 							</td> <td> Returns the real value that is closest in value to the argument and is equal to a mathematical integer </td> </tr>
+					<tr> <td> int round(real x) 							</td> <td> Rounded number </td> </tr>
+					<tr> <td> real scalb(real x, int sf)					</td> <td> Return x * 2^sf rounded  </td> </tr>
+					<tr> <td> real signum(real x)							</td> <td> The sign function of a number </td> </tr>
+					<tr> <td> real sin(real x)								</td> <td> The trigonometric sine of an angle </td> </tr>
+					<tr> <td> real sinh(real x)								</td> <td> The trigonometric hyperbolic-sine of an angle </td> </tr>
+					<tr> <td> sleep( int seconds )							</td> <td> Sleep for 'seconds' </td> </tr>
+					<tr> <td> sleep( real seconds )							</td> <td> Sleep for '1000 * seconds' milliseconds. E.g. sleep(0.5) sleeps for half a second </td> </tr>
+					<tr> <td> real sqrt(real x)								</td> <td> The square rootof a number</td> </tr>
+					<tr> <td> real tan(real x)								</td> <td> The trigonometric tangent of an angle </td> </tr>
+					<tr> <td> real tanh(real x)								</td> <td> The trigonometric hyperbolic tangent of an angle </td> </tr>
+					<tr> <td> int time()									</td> <td> Return the milliseconds elapsed since epoch</td> </tr>
+					<tr> <td> real toDegrees(real x)						</td> <td> Convert x radians to degrees</td> </tr>
+					<tr> <td> real toRadians(real x)						</td> <td> Convert x degrees to radians</td> </tr>
+					<tr> <td> int toInt(bool b)								</td> <td> Convert boolean to int </td> </tr>
+					<tr> <td> int toInt(real r)								</td> <td> Convert real to int </td> </tr>
+					<tr> <td> real ulp(real r)								</td> <td> Returns the size of an ulp of the argument</td> </tr>
 
 				</table>
 
