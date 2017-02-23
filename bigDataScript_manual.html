@@ -365,8 +365,10 @@ if( i < 10 )	print("Less than ten\n")
 <pre class="prettyprint">
 if( i < 10 ) {
     print("Less than ten\n")
+} else if( i <= 20 ) {
+    print("Between ten and twenty\n")
 } else {
-    print("More than ten\n")
+    print("More than twenty\n")
 }
 </pre>
 
@@ -396,6 +398,28 @@ int twice(int n) {
 }
 </pre>
 
+					<li> <code> switch </code> Switch statements are similar to multiple <code> if / else if </code> statements
+<pre class="prettyprint">
+in := 'x'
+out := 1
+
+switch( in ) {
+    case 'a': 
+        out *= 3
+        break
+
+    case 'z'+'x':   # Note that the 'case' expressions are evaluated at run time (you can even call functions here)
+        out *= 5    # Note that this falls through to "case 'b'"
+
+    case 'b':
+        out *= 7
+        break
+
+    default:        # You can define 'default' anywhere (no need to do it after 'case')
+        out *= 100
+}
+</pre>
+
 					<li> <code>warning</code> Show a warning message
 <pre class="prettyprint">
 if( num <= 0 )	warning "Number should be positive\n"
@@ -412,7 +436,7 @@ int i      # 'i' is an 64 bit int variable
 real r     # 'r' is a double-precision floating-point number
 string s   # 's' is a string
 </pre>
-					<li> <code> type varName = expr </code> Declare varaible 'var' as type 'type', evaluate expression and assign result to initialize 'var'
+					<li> <code> type varName = expr </code> Declare varaible 'var' as type 'type', evaluate expression and assign result to initialize 'var'.
 <pre class="prettyprint">
 int i = 42
 real r = 3.1415927
@@ -437,7 +461,7 @@ s = "Hello " + world
 (name, value) = line.split('\t')
 </pre>
 
-					<li> <code> expr ? exprTrue : exprFalse</code> Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'
+					<li> Ternary operator <code> expr ? exprTrue : exprFalse</code> Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'
 <pre class="prettyprint">
 sign = ( i >= 0 ? 1 : -1 )
 </pre>
@@ -801,6 +825,7 @@ name \t value
 					<tr> <td> sleep( real seconds )						</td> <td> Sleep for '1000 * seconds' milliseconds. E.g. sleep(0.5) sleeps for half a second </td> </tr>
 					<tr> <td> int toInt(bool b)							</td> <td> Convert boolean to int </td> </tr>
 					<tr> <td> int toInt(real r)							</td> <td> Convert real to int </td> </tr>
+
 				</table>
 
 				<h3 class="page-header" id="vars">Predefined global variables </h3>
