@@ -506,34 +506,34 @@ public abstract class BdsNode implements BdsSerialize {
 	 */
 	protected abstract void parse(ParseTree tree);
 
-	/**
-	 * Pop a bool from stack
-	 */
-	public boolean popBool(BdsThread bdsThread) {
-		return (Boolean) Type.BOOL.cast(bdsThread.pop());
-	}
-
-	/**
-	 * Pop an int from stack
-	 */
-	public long popInt(BdsThread bdsThread) {
-		return (Long) Type.INT.cast(bdsThread.pop());
-	}
-
-	/**
-	 * Pop a real from stack
-	 */
-	public double popReal(BdsThread bdsThread) {
-		return (Double) Type.REAL.cast(bdsThread.pop());
-	}
-
-	/**
-	 * Pop a string from stack
-	 */
-	public String popString(BdsThread bdsThread) {
-		return (String) Type.STRING.cast(bdsThread.pop());
-	}
-
+	//	/**
+	//	 * Pop a bool from stack
+	//	 */
+	//	public boolean popBool(BdsThread bdsThread) {
+	//		return (Boolean) Type.BOOL.cast(bdsThread.pop());
+	//	}
+	//
+	//	/**
+	//	 * Pop an int from stack
+	//	 */
+	//	public long popInt(BdsThread bdsThread) {
+	//		return (Long) Type.INT.cast(bdsThread.pop());
+	//	}
+	//
+	//	/**
+	//	 * Pop a real from stack
+	//	 */
+	//	public double popReal(BdsThread bdsThread) {
+	//		return (Double) Type.REAL.cast(bdsThread.pop());
+	//	}
+	//
+	//	/**
+	//	 * Pop a string from stack
+	//	 */
+	//	public String popString(BdsThread bdsThread) {
+	//		return (String) Type.STRING.cast(bdsThread.pop());
+	//	}
+	//
 	/**
 	 * Show a parseTree node
 	 */

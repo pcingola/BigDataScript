@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -60,19 +60,31 @@ public class ExpressionPlus extends ExpressionMath {
 		bdsThread.run(right);
 		if (bdsThread.isCheckpointRecover()) return;
 
-		Object rval = bdsThread.pop();
-		Object lval = bdsThread.pop();
-
 		if (isInt()) {
-			bdsThread.push(((long) lval) + ((long) rval));
+			long r = bdsThread.popInt();
+			long l = bdsThread.popInt();
+			bdsThread.push(l + r);
 			return;
-		} else if (isReal()) {
-			bdsThread.push(((double) lval) + ((double) rval));
+		}
+
+		if (isReal()) {
+			double r = bdsThread.popReal();
+			double l = bdsThread.popReal();
+			bdsThread.push(l + r);
 			return;
-		} else if (isString()) {
+		}
+
+		if (isString()) {
+			Object rval = bdsThread.pop();
+			Object lval = bdsThread.pop();
 			bdsThread.push(lval.toString() + rval.toString());
 			return;
-		} else if (isList()) {
+		}
+
+		if (isList()) {
+			Object rval = bdsThread.pop();
+			Object lval = bdsThread.pop();
+
 			ArrayList list = new ArrayList();
 			if (left.isList()) list.addAll((Collection) lval);
 			else list.add(lval);

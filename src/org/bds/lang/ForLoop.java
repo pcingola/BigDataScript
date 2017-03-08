@@ -1,8 +1,8 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -59,7 +59,7 @@ public class ForLoop extends StatementWithScope {
 		if (bdsThread.isCheckpointRecover()) return first;
 
 		// Return value form 'condition'
-		return popBool(bdsThread);
+		return bdsThread.popBool();
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class ForLoop extends StatementWithScope {
 		return "for( " + begin + " ; " + condition + " ; " + end + " ) {\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //
-		;
+				;
 	}
 
 	@Override

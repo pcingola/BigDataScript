@@ -1,8 +1,8 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -46,7 +46,7 @@ public class Print extends Statement {
 			// Evaluate expression to show
 			bdsThread.run(expr);
 			if (bdsThread.isCheckpointRecover()) return;
-			msg = popString(bdsThread);
+			msg = bdsThread.popString();
 		}
 
 		if (bdsThread.isCheckpointRecover()) return;
@@ -57,7 +57,7 @@ public class Print extends Statement {
 	public String toString() {
 		return getClass().getSimpleName().toLowerCase() //
 				+ (expr != null ? " " + expr : "") //
-		;
+				;
 	}
 
 	@Override

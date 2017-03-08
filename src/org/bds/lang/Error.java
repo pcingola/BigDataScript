@@ -25,7 +25,7 @@ public class Error extends Print {
 		if (expr != null) {
 			// Evaluate expression to show
 			bdsThread.run(expr);
-			msg = popString(bdsThread);
+			msg = bdsThread.popString();
 		}
 
 		// Do not show error during checkpoint recovery

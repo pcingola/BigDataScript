@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -120,7 +120,7 @@ public class ReferenceMap extends Reference {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		// Get results
-		String key = popString(bdsThread);
+		String key = bdsThread.popString();
 		Map map = (Map) bdsThread.pop();
 
 		// Obtain map entry
@@ -136,7 +136,7 @@ public class ReferenceMap extends Reference {
 		if (value == null) return;
 
 		bdsThread.run(expressionKey);
-		String key = popString(bdsThread);
+		String key = bdsThread.popString();
 		if (bdsThread.isCheckpointRecover()) return;
 
 		HashMap map = getMap(bdsThread.getScope());

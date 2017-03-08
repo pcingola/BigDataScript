@@ -27,7 +27,7 @@ public class ExpressionBitAnd extends ExpressionBit {
 		bdsThread.run(left);
 		bdsThread.run(right);
 		if (bdsThread.isCheckpointRecover()) return;
-		bdsThread.push(popInt(bdsThread) & popInt(bdsThread));
+		bdsThread.push(bdsThread.popInt() & bdsThread.popInt());
 	}
 
 }

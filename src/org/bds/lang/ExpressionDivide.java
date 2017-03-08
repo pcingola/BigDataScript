@@ -30,14 +30,15 @@ public class ExpressionDivide extends ExpressionMath {
 		bdsThread.run(right);
 		if (bdsThread.isCheckpointRecover()) return;
 
-		Object rval = bdsThread.pop();
-		Object lval = bdsThread.pop();
-
 		if (isInt()) {
-			bdsThread.push(((long) lval) / ((long) rval));
+			long r = bdsThread.popInt();
+			long l = bdsThread.popInt();
+			bdsThread.push(l / r);
 			return;
 		} else if (isReal()) {
-			bdsThread.push(((double) lval) / ((double) rval));
+			double r = bdsThread.popReal();
+			double l = bdsThread.popReal();
+			bdsThread.push(l / r);
 			return;
 		}
 

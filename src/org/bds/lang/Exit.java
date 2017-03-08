@@ -1,8 +1,8 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -47,7 +47,7 @@ public class Exit extends Statement {
 		if (expr != null) {
 			bdsThread.run(expr);
 			if (bdsThread.isCheckpointRecover()) return;
-			bdsThread.setExitValue(popInt(bdsThread)); // Set return value to scope
+			bdsThread.setExitValue(bdsThread.popInt()); // Set return value to scope
 		} else {
 			if (bdsThread.isCheckpointRecover()) return;
 			bdsThread.setExitValue(0L); // Default is the same as 'exit 0'
@@ -60,7 +60,7 @@ public class Exit extends Statement {
 	public String toString() {
 		return getClass().getSimpleName().toLowerCase() //
 				+ (expr != null ? " " + expr : "") //
-		;
+				;
 	}
 
 	@Override

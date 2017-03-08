@@ -35,7 +35,7 @@ public class Checkpoint extends Statement {
 		String file = null;
 		if (expr != null) {
 			bdsThread.run(expr);
-			file = popString(bdsThread);
+			file = bdsThread.popString();
 		}
 
 		// Do not create checkpoint file during recovery

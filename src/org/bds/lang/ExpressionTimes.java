@@ -46,21 +46,25 @@ public class ExpressionTimes extends ExpressionMath {
 
 		if (bdsThread.isCheckpointRecover()) return;
 
-		Object rval = bdsThread.pop();
-		Object lval = bdsThread.pop();
-
 		// Combine results
 		if (isInt()) {
-			bdsThread.push(((long) lval) * ((long) rval));
+			long r = bdsThread.popInt();
+			long l = bdsThread.popInt();
+			bdsThread.push(l * r);
 			return;
 		}
 
 		if (isReal()) {
-			bdsThread.push(((double) lval) * ((double) rval));
+			double r = bdsThread.popReal();
+			double l = bdsThread.popReal();
+			bdsThread.push(l * r);
 			return;
 		}
 
 		if (isString()) {
+			Object rval = bdsThread.pop();
+			Object lval = bdsThread.pop();
+
 			// string * int : Get number and string
 			String str = "";
 			long num = 0;

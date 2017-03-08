@@ -795,6 +795,50 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return stack.removeFirst();
 	}
 
+	//	public long popInt() {
+	//		if (isCheckpointRecover()) return 0;
+	//		Object num = stack.removeFirst();
+	//		if (num instanceof Long) return ((Long) num).longValue();
+	//		if (num instanceof Double) return ((Double) num).longValue();
+	//		throw new RuntimeException("Cannot convert type '" + num.getClass().getCanonicalName() + "' to 'int'");
+	//	}
+	//
+	//	public double popReal() {
+	//		if (isCheckpointRecover()) return 0;
+	//		Object num = stack.removeFirst();
+	//		if (num instanceof Double) return ((Double) num).doubleValue();
+	//		if (num instanceof Long) return ((Long) num).doubleValue();
+	//		throw new RuntimeException("Cannot convert type '" + num.getClass().getCanonicalName() + "' to 'int'");
+	//	}
+
+	/**
+	 * Pop a bool from stack
+	 */
+	public boolean popBool() {
+		return (Boolean) Type.BOOL.cast(pop());
+	}
+
+	/**
+	 * Pop an int from stack
+	 */
+	public long popInt() {
+		return (Long) Type.INT.cast(pop());
+	}
+
+	/**
+	 * Pop a real from stack
+	 */
+	public double popReal() {
+		return (Double) Type.REAL.cast(pop());
+	}
+
+	/**
+	 * Pop a string from stack
+	 */
+	public String popString() {
+		return (String) Type.STRING.cast(pop());
+	}
+
 	public void print() {
 		// Create a list with program file and all included files
 		List<BdsNode> nodeWithFiles = statement.findNodes(StatementInclude.class, true);

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -123,7 +123,7 @@ public class ReferenceList extends Reference {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		// Get results
-		int idx = (int) popInt(bdsThread);
+		int idx = (int) bdsThread.popInt();
 		List list = (List) bdsThread.pop();
 
 		//ArrayList list = getList(bdsThread.getScope());
@@ -137,7 +137,7 @@ public class ReferenceList extends Reference {
 		if (value == null) return;
 
 		bdsThread.run(exprIdx);
-		int idx = (int) popInt(bdsThread);
+		int idx = (int) bdsThread.popInt();
 		if (bdsThread.isCheckpointRecover()) return;
 
 		ArrayList<Object> list = getList(bdsThread.getScope());

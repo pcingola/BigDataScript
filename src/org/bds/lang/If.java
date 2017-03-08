@@ -47,7 +47,7 @@ public class If extends Statement {
 		if (bdsThread.isCheckpointRecover()) return true;
 
 		// Return value form 'condition'
-		return popBool(bdsThread);
+		return bdsThread.popBool();
 	}
 
 	/**

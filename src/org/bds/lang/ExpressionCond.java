@@ -1,8 +1,8 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -65,7 +65,7 @@ public class ExpressionCond extends Expression {
 			bdsThread.run(exprTrue);
 			if (bdsThread.isCheckpointRecover()) bdsThread.run(exprFalse);
 		} else {
-			if (popBool(bdsThread)) bdsThread.run(exprTrue);
+			if (bdsThread.popBool()) bdsThread.run(exprTrue);
 			else bdsThread.run(exprFalse);
 		}
 	}
@@ -82,6 +82,6 @@ public class ExpressionCond extends Expression {
 		if (exprTrue != null //
 				&& exprFalse != null //
 				&& !exprTrue.getReturnType().canCast(exprFalse.getReturnType()) //
-				) compilerMessages.add(this, "Both expressions must be the same type. Expression for 'true': " + exprTrue.getReturnType() + ", expression for 'false' " + exprFalse.getReturnType(), MessageType.ERROR);
+		) compilerMessages.add(this, "Both expressions must be the same type. Expression for 'true': " + exprTrue.getReturnType() + ", expression for 'false' " + exprFalse.getReturnType(), MessageType.ERROR);
 	}
 }

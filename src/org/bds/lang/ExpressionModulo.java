@@ -30,8 +30,8 @@ public class ExpressionModulo extends ExpressionMath {
 		bdsThread.run(right);
 		if (bdsThread.isCheckpointRecover()) return;
 
-		long den = popInt(bdsThread);
-		long num = popInt(bdsThread);
+		long den = bdsThread.popInt();
+		long num = bdsThread.popInt();
 		bdsThread.push(num % den);
 	}
 

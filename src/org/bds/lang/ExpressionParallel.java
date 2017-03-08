@@ -76,7 +76,7 @@ public class ExpressionParallel extends ExpressionTask {
 			bdsThread.run(options);
 
 			if (!bdsThread.isCheckpointRecover()) {
-				boolean ok = popBool(bdsThread);
+				boolean ok = bdsThread.popBool();
 				if (bdsThread.isDebug()) log("task-options check " + ok);
 				if (!ok) {
 					// Options clause not satisfied. Do not execute 'parallel'

@@ -23,7 +23,7 @@ public class Println extends Print {
 		if (expr != null) {
 			bdsThread.run(expr); // Evaluate expression to show
 			if (bdsThread.isCheckpointRecover()) return;
-			msg = popString(bdsThread);
+			msg = bdsThread.popString();
 		}
 
 		if (bdsThread.isCheckpointRecover()) return;

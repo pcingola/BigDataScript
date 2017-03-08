@@ -24,7 +24,7 @@ public class ExpressionBitNegation extends ExpressionUnary {
 	public void runStep(BdsThread bdsThread) {
 		bdsThread.run(expr);
 		if (bdsThread.isCheckpointRecover()) return;
-		bdsThread.push(~popInt(bdsThread));
+		bdsThread.push(~bdsThread.popInt());
 	}
 
 	@Override

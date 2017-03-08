@@ -1,9 +1,9 @@
 package org.bds.test;
 
+import java.util.HashMap;
+
 import org.bds.util.Gpr;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -14,29 +14,51 @@ import junit.framework.Assert;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test124_quiet_mode() {
+	public void test149_div() {
 		Gpr.debug("Test");
-		String output = "print 0\n" //
-				+ "print 1\n" //
-				+ "print 2\n" //
-				+ "print 3\n" //
-				+ "print 4\n" //
-				+ "print 5\n" //
-				+ "print 6\n" //
-				+ "print 7\n" //
-				+ "print 8\n" //
-				+ "print 9\n" //
-				;
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("val0", 50);
+		expectedValues.put("val1", 50.0);
+		expectedValues.put("val2", 50.0);
+		expectedValues.put("val3", 50.0);
 
-		// Run and capture stdout
-		String args[] = { "-quiet" };
-		String stdout = runAndReturnStdout("test/run_124.bds", args);
-		if (verbose) System.err.println("STDOUT: " + stdout);
+		runAndCheck("test/run_149.bds", expectedValues);
+	}
 
-		// Check that sys and task outputs are not there
-		Assert.assertTrue("Print output should be in STDOUT", stdout.contains(output));
-		Assert.assertTrue("Task output should NOT be in STDOUT", !stdout.contains("task"));
-		Assert.assertTrue("Sys output should NOT be in STDOUT", !stdout.contains("sys"));
+	@Test
+	public void test150_mult() {
+		Gpr.debug("Test");
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("val0", 200);
+		expectedValues.put("val1", 200.0);
+		expectedValues.put("val2", 200.0);
+		expectedValues.put("val3", 200.0);
+
+		runAndCheck("test/run_150.bds", expectedValues);
+	}
+
+	@Test
+	public void test151_plus() {
+		Gpr.debug("Test");
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("val0", 102);
+		expectedValues.put("val1", 102.0);
+		expectedValues.put("val2", 102.0);
+		expectedValues.put("val3", 102.0);
+
+		runAndCheck("test/run_151.bds", expectedValues);
+	}
+
+	@Test
+	public void test152_minus() {
+		Gpr.debug("Test");
+		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		expectedValues.put("val0", 98);
+		expectedValues.put("val1", 98.0);
+		expectedValues.put("val2", 98.0);
+		expectedValues.put("val3", 98.0);
+
+		runAndCheck("test/run_152.bds", expectedValues);
 	}
 
 }

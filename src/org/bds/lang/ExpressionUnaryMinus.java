@@ -1,8 +1,8 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -40,9 +40,9 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		if (returnType == Type.INT) {
-			bdsThread.push(-popInt(bdsThread));
+			bdsThread.push(-bdsThread.popInt());
 		} else if (returnType == Type.REAL) {
-			bdsThread.push(-popReal(bdsThread));
+			bdsThread.push(-bdsThread.popReal());
 		} else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
 

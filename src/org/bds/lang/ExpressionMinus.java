@@ -30,12 +30,12 @@ public class ExpressionMinus extends ExpressionMath {
 
 			// This should be an unary expression!
 			if (isInt()) {
-				bdsThread.push(-popInt(bdsThread));
+				bdsThread.push(-bdsThread.popInt());
 				return;
 			}
 
 			if (isReal()) {
-				bdsThread.push(-popReal(bdsThread));
+				bdsThread.push(-bdsThread.popReal());
 				return;
 			}
 		} else {
@@ -44,14 +44,17 @@ public class ExpressionMinus extends ExpressionMath {
 			bdsThread.run(right);
 			if (bdsThread.isCheckpointRecover()) return;
 
-			Object rval = bdsThread.pop();
-			Object lval = bdsThread.pop();
-
 			if (isInt()) {
-				bdsThread.push(((long) lval) - ((long) rval));
+				long r = bdsThread.popInt();
+				long l = bdsThread.popInt();
+				bdsThread.push(l - r);
 				return;
-			} else if (isReal()) {
-				bdsThread.push(((double) lval) - ((double) rval));
+			}
+
+			if (isReal()) {
+				double r = bdsThread.popReal();
+				double l = bdsThread.popReal();
+				bdsThread.push(l - r);
 				return;
 			}
 

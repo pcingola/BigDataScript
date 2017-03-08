@@ -1,8 +1,8 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -38,7 +38,7 @@ public class Pre extends ExpressionUnary {
 		bdsThread.run(ref);
 		if (bdsThread.isCheckpointRecover()) return;
 
-		long value = popInt(bdsThread);
+		long value = bdsThread.popInt();
 		if (operation == PrePostOperation.INCREMENT) value++;
 		else if (operation == PrePostOperation.DECREMENT) value--;
 		else throw new RuntimeException("Unknown operator " + operation);

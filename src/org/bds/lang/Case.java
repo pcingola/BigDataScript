@@ -112,7 +112,7 @@ public class Case extends Statement {
 		}
 
 		// Pop the previous 'case' condition value (fall-through?)
-		boolean prevCaseCond = popBool(bdsThread);
+		boolean prevCaseCond = bdsThread.popBool();
 		boolean caseCond = prevCaseCond;
 		if (prevCaseCond) {
 			// Previous case condition was true => Fall-through, we execute statements

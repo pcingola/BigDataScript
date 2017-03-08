@@ -25,7 +25,7 @@ public class Warning extends Error {
 			// Evaluate expression to show
 			bdsThread.run(expr);
 			if (bdsThread.isCheckpointRecover()) return;
-			msg = popString(bdsThread);
+			msg = bdsThread.popString();
 		}
 
 		if (bdsThread.isCheckpointRecover()) return;

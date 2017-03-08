@@ -34,7 +34,7 @@ public class Post extends Pre {
 
 		if (bdsThread.isCheckpointRecover()) return;
 
-		long value = popInt(bdsThread);
+		long value = bdsThread.popInt();
 		if (operation == PrePostOperation.INCREMENT) ref.setValue(bdsThread, value + 1);
 		else if (operation == PrePostOperation.DECREMENT) ref.setValue(bdsThread, value - 1);
 		else throw new RuntimeException("Unknown operator " + operation);

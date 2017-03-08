@@ -29,7 +29,7 @@ public class ExpressionBitXor extends ExpressionBit {
 
 		if (bdsThread.isCheckpointRecover()) return;
 
-		bdsThread.push(left.popInt(bdsThread) ^ right.popInt(bdsThread));
+		bdsThread.push(bdsThread.popInt() ^ bdsThread.popInt());
 	}
 
 }

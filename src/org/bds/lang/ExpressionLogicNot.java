@@ -24,7 +24,7 @@ public class ExpressionLogicNot extends ExpressionUnary {
 	public void runStep(BdsThread bdsThread) {
 		bdsThread.run(expr);
 		if (bdsThread.isCheckpointRecover()) return;
-		bdsThread.push(!popBool(bdsThread));
+		bdsThread.push(!bdsThread.popBool());
 	}
 
 	@Override
