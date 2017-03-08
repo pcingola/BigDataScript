@@ -1,0 +1,254 @@
+
+#---
+# Program overview
+#---
+program: clusterGeneric_01.bds 
+scriptFile: test/clusterGeneric_01.bds 
+programId: clusterGeneric_01.bds.20170307_195422_223 
+startTime: 2017-03-07 19:54:22 
+runtime: 00:00:03.803 
+tasksExecuted: 3 
+tasksFailed: 0 
+arguments: [] 
+system: generic 
+cpus: 1 
+exitValue: 0 
+
+---
+
+#---
+# Thread structure
+#---
+threads: 
+
+  - thread : thread_Root
+    parent : None
+
+
+
+---
+
+#---
+# Task details
+#---
+tasks: 
+
+  - # Task identification
+    id:          task.clusterGeneric_01.line_5.id_163
+    num:         1
+    name:        task.clusterGeneric_01.line_5.id_163
+    threadNum:   thread_Root
+    pid:         CLUSTERGENERIC_LOCALHOST_6962
+    
+    # Task status
+    ok:          true
+    exitCode:    0
+    retry:       
+    state:       FINISHED
+    depState:    OK
+    
+    # Task resources
+    cpus:        1
+    mem:         
+    
+    # Task times
+    start:       2017-03-07 19:54:23
+    end:         2017-03-07 19:54:24
+    elapsed:     00:00:01
+    timeout:     1 day
+    wallTimeout: 1 day
+    
+    # Task input, output files and dependencies
+    inFiles:     |-
+      
+    outFiles:    |-
+      
+    dep:         |-
+      
+    
+    # Task's error and output file checking messages
+    errorMsg:    |-
+      
+    checkOut:    |-
+      
+
+    # Task definition (sys statements)
+    task:        |-
+      echo Hello 0 ; sleep 1 ; echo Bye 0
+    
+    # Stdout / Stderr (head)
+    stdout:      |-
+      Hello 0
+        Bye 0
+    stderr:      |-
+      
+ 
+    # Post mortem info
+    postMortem:  |-
+      
+
+
+
+  - # Task identification
+    id:          task.clusterGeneric_01.line_5.id_164
+    num:         2
+    name:        task.clusterGeneric_01.line_5.id_164
+    threadNum:   thread_Root
+    pid:         CLUSTERGENERIC_LOCALHOST_6966
+    
+    # Task status
+    ok:          true
+    exitCode:    0
+    retry:       
+    state:       FINISHED
+    depState:    OK
+    
+    # Task resources
+    cpus:        1
+    mem:         
+    
+    # Task times
+    start:       2017-03-07 19:54:24
+    end:         2017-03-07 19:54:25
+    elapsed:     00:00:01
+    timeout:     1 day
+    wallTimeout: 1 day
+    
+    # Task input, output files and dependencies
+    inFiles:     |-
+      
+    outFiles:    |-
+      
+    dep:         |-
+      
+    
+    # Task's error and output file checking messages
+    errorMsg:    |-
+      
+    checkOut:    |-
+      
+
+    # Task definition (sys statements)
+    task:        |-
+      echo Hello 1 ; sleep 1 ; echo Bye 1
+    
+    # Stdout / Stderr (head)
+    stdout:      |-
+      Hello 1
+        Bye 1
+    stderr:      |-
+      
+ 
+    # Post mortem info
+    postMortem:  |-
+      
+
+
+
+  - # Task identification
+    id:          task.clusterGeneric_01.line_5.id_165
+    num:         3
+    name:        task.clusterGeneric_01.line_5.id_165
+    threadNum:   thread_Root
+    pid:         CLUSTERGENERIC_LOCALHOST_6970
+    
+    # Task status
+    ok:          true
+    exitCode:    0
+    retry:       
+    state:       FINISHED
+    depState:    OK
+    
+    # Task resources
+    cpus:        1
+    mem:         
+    
+    # Task times
+    start:       2017-03-07 19:54:25
+    end:         2017-03-07 19:54:25
+    elapsed:     00:00:00
+    timeout:     1 day
+    wallTimeout: 1 day
+    
+    # Task input, output files and dependencies
+    inFiles:     |-
+      
+    outFiles:    |-
+      
+    dep:         |-
+      
+    
+    # Task's error and output file checking messages
+    errorMsg:    |-
+      
+    checkOut:    |-
+      
+
+    # Task definition (sys statements)
+    task:        |-
+      echo Hello 2 ; sleep 1 ; echo Bye 2
+    
+    # Stdout / Stderr (head)
+    stdout:      |-
+      Hello 2
+        Bye 2
+    stderr:      |-
+      
+ 
+    # Post mortem info
+    postMortem:  |-
+      
+
+
+
+
+---
+
+#---
+# Global scope
+#---
+global_scope: |-
+  type	name	value
+  string	__CF_USER_TEXT_ENCODING	0x1F5:0x0:0x52
+  bool	allowEmpty	false
+  string	APP_ICON_5631	../Resources/Eclipse.icns
+  string	Apple_PubSub_Socket_Render	/private/tmp/com.apple.launchd.eEAWVDfNcs/Render
+  string[]	args	[]
+  bool	canFail	false
+  int	cpus	1
+  int	cpusLocal	4
+  int	day	86400
+  string	DISPLAY	/private/tmp/com.apple.launchd.9Al6JTQJ3G/org.macosforge.xquartz:0
+  real	E	2.718281828459045
+  int	G	1073741824
+  string	HOME	/Users/pcingola
+  int	hour	3600
+  string	JAVA_MAIN_CLASS_6519	org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
+  string	JAVA_STARTED_ON_FIRST_THREAD_5631	1
+  int	K	1024
+  string	LOGNAME	pcingola
+  int	M	1048576
+  int	mem	-1
+  int	minute	60
+  string	node	
+  int	P	1125899906842624
+  string	PATH	/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bds
+  real	PI	3.141592653589793
+  string	ppwd	/Users/pcingola/Documents/workspace/BigDataScript
+  string	programName	clusterGeneric_01.bds
+  string	programPath	test/clusterGeneric_01.bds
+  string	queue	
+  int	retry	0
+  string	SHELL	/bin/bash
+  string	SSH_AUTH_SOCK	/private/tmp/com.apple.launchd.J7xVICPWUs/Listeners
+  string	system	generic
+  int	T	1099511627776
+  int	timeout	86400
+  string	TMPDIR	/var/folders/j9/9d0xhhn97vq2546d8gvmb25w0000gn/T/
+  string	USER	pcingola
+  int	walltimeout	86400
+  int	week	604800
+  string	XPC_FLAGS	0x0
+  string	XPC_SERVICE_NAME	org.eclipse.platform.ide.6004
+ 
+
