@@ -1,16 +1,10 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.Type;
-import org.bds.lang.TypeList;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
-import org.bds.util.Gpr;
 
 public class MethodNative_string_isDoneOk extends MethodNative {
 	public MethodNative_string_isDoneOk() {
@@ -30,7 +24,10 @@ public class MethodNative_string_isDoneOk extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		String taskId = objThis.toString(); Task task = csThread.getTask(taskId); if (task == null) return false; return task.isDoneOk();
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		String taskId = objThis.toString();
+		Task task = bdsThread.getTask(taskId);
+		if (task == null) return false;
+		return task.isDoneOk();
 	}
 }
