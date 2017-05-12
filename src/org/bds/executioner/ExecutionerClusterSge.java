@@ -18,6 +18,7 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 	public static final String PID_REGEX_DEFAULT = "Your job (\\S+)";
 
 	String sgePe = "", sgeMem = "", sgeTimeOut = "", sgeTimeOutSoft = "";
+	boolean timeInSecs = false;
 
 	public ExecutionerClusterSge(Config config) {
 		super(config);
@@ -48,6 +49,10 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 
 		sgeTimeOutSoft = config.getString(Config.CLUSTER_SGE_TIMEOUT_SOFT, "");
 		if (sgeTimeOut.isEmpty()) throw new RuntimeException("Missing config file entry '" + Config.CLUSTER_SGE_TIMEOUT_SOFT + "'.");
+
+		timeInSecs = config.getBool(Config.CLUSTER_SGE_TIME_IN_SECS, false);
+		if (sgeMem.isEmpty()) throw new RuntimeException("Missing config file entry '" + Config.CLUSTER_SGE_MEM + "'.");
+
 	}
 
 	/**
@@ -77,11 +82,11 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 		if (clusterTimeout > 0) {
 			// Hard timeout
 			args.add("-l");
-			args.add(sgeTimeOut + "=" + Timer.toHHMMSS(clusterTimeout * 1000));
+			args.add(sgeTimeOut + "=" + time(clusterTimeout));
 
 			// Soft timeout
 			args.add("-l");
-			args.add(sgeTimeOutSoft + "=" + Timer.toHHMMSS(clusterTimeout * 1000));
+			args.add(sgeTimeOutSoft + "=" + time(clusterTimeout));
 		}
 
 		// A particular queue was requested?
@@ -90,5 +95,13 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 			args.add("-q");
 			args.add(queue);
 		}
+	}
+
+	/**
+	 * Represent a time according for 'qsub' command line arguments
+	 */
+	protected String time(int secs) {
+		if (timeInSecs) return secs + "";
+		return Timer.toHHMMSS(secs * 1000L);
 	}
 }
