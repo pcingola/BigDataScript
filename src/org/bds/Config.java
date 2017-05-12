@@ -63,7 +63,8 @@ public class Config {
 	// Cluster: SGE parameters
 	public static final String CLUSTER_SGE_PE = "sge.pe";
 	public static final String CLUSTER_SGE_MEM = "sge.mem";
-	public static final String CLUSTER_SGE_TIMEOUT = "sge.timeout";
+	public static final String CLUSTER_SGE_TIMEOUT_HARD = "sge.timeout";
+	public static final String CLUSTER_SGE_TIMEOUT_SOFT = "sge.timeoutSoft";
 
 	// Cluster: Parameters
 	public static final String CLUSTER_RUN_ADDITIONAL_ARGUMENTS = "clusterRunAdditionalArgs"; // Cluster additional command line arguments (when running tasks)
@@ -190,7 +191,7 @@ public class Config {
 	public Collection<String> getIncludePath() {
 		// Create array if needed
 		if (includePath == null) {
-			includePath = new ArrayList<String>();
+			includePath = new ArrayList<>();
 
 			// Add by search order
 			includePath.add("."); // Current dir (obviously)
@@ -305,7 +306,7 @@ public class Config {
 		}
 
 		// Parse and add to list
-		ArrayList<String> vals = new ArrayList<String>();
+		ArrayList<String> vals = new ArrayList<>();
 		for (String v : val.split("\\s+")) {
 			v = v.trim();
 			if (!v.isEmpty()) vals.add(v.trim());
@@ -463,7 +464,7 @@ public class Config {
 		reportYaml = getBool(REPORT_YAML, false);
 
 		// Split and add all items
-		filterOutTaskHint = new ArrayList<String>();
+		filterOutTaskHint = new ArrayList<>();
 		for (String foth : getString(FILTER_OUT_TASK_HINT, "").split(" ")) {
 			foth = foth.trim();
 			if (!foth.isEmpty()) filterOutTaskHint.add(foth);
@@ -577,7 +578,7 @@ public class Config {
 
 		sb.append("Config file '" + configFileName + "':\n");
 
-		ArrayList<String> keys = new ArrayList<String>();
+		ArrayList<String> keys = new ArrayList<>();
 		for (Object key : properties.keySet())
 			keys.add(key.toString());
 
