@@ -89,7 +89,7 @@ public class Config {
 	public static int DEFAULT_WAIT_AFTER_TASK_RUN = 0;
 
 	public static final String WAIT_TEXT_FILE_BUSY = "waitTextFileBusy";
-	public static int DEFAULT_WAIT_TEXT_FILE_BUSY = 1;
+	public static int DEFAULT_WAIT_TEXT_FILE_BUSY = 10;
 
 	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
 
