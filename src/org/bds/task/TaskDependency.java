@@ -29,9 +29,9 @@ public class TaskDependency {
 
 	public TaskDependency(Expression expresison) {
 		this.expresison = expresison;
-		outputs = new ArrayList<String>();
-		inputs = new ArrayList<String>();
-		tasks = new ArrayList<Task>();
+		outputs = new ArrayList<>();
+		inputs = new ArrayList<>();
+		tasks = new ArrayList<>();
 	}
 
 	public void add(Task task) {
@@ -116,7 +116,7 @@ public class TaskDependency {
 	}
 
 	/**
-	 * Calculate the result of '<-' operator give two collections files (left hand side and right handside)
+	 * Calculate the result of '<-' operator give two collections files (left hand side and right hand-side)
 	 */
 	public boolean depOperator() {
 		// Empty dependency is always true
