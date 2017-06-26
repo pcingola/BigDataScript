@@ -9,3 +9,4 @@ int f( int x ) {
 }
 
 int j = f(true)
+int k = f(42)

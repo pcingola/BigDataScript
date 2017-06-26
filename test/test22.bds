@@ -8,3 +8,5 @@ int f( int i ) {
 	int h = g( i );
 	return h;
 }
+
+f(1)

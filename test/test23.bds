@@ -8,3 +8,6 @@ int f( int i ) {
 	int h = g( i );
 	return h;
 }
+
+i := 1
+f(i)

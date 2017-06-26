@@ -5,3 +5,6 @@ int f( int i ) {			// OK to declare 'i' here
 	int i;					// New block scope, so it is OK to declare 'i' again (parameter will be shadowed)
 	return i;
 }
+
+i = 1
+f(i)

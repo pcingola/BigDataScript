@@ -335,7 +335,7 @@ public class Bds {
 
 		// Perform some checking and show warning messages
 		compileWarn();
-		if (!CompilerMessages.get().hasErrors()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
 
 		// OK
 		return true;
@@ -354,9 +354,8 @@ public class Bds {
 	void compileWarnUnusedFunctions() {
 		String progUnitFile = programUnit.getFileNameCanonical();
 
+		// Add all function declarations to 'unused' set
 		List<BdsNode> fdecls = programUnit.findNodes(FunctionDeclaration.class, true);
-
-		// Add all to 'unused' set
 		Set<FunctionDeclaration> unused = new HashSet<>();
 		for (BdsNode n : fdecls) {
 			FunctionDeclaration fdecl = (FunctionDeclaration) n;

@@ -3,3 +3,6 @@
 int f( int i ) {
 	return i;
 }
+
+f(2)
+
