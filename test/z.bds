@@ -7,6 +7,11 @@ out  := 'out.txt'
 
 stime := 3
 
+int inc(int n) { return n+1; }
+int dec(int n, int step) { return n-step; }
+
+# Main
+
 # Dependencies: There is no need declare them in order
 dep( out <- mid2 )     sys echo $mid2 > $out  ; echo OUT   ; sleep 1
 dep( mid2 <- mid1 )    sys echo $mid1 > $mid2 ; echo MID2  ; sleep 1

@@ -29,8 +29,10 @@ import org.bds.data.Data;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
+import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ExpressionTask;
+import org.bds.lang.FunctionCall;
 import org.bds.lang.FunctionDeclaration;
 import org.bds.lang.ProgramUnit;
 import org.bds.lang.Statement;
@@ -63,7 +65,7 @@ public class Bds {
 
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "l";
+	public static final String REVISION = "m";
 	public static final String VERSION_MAJOR = "0.99999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
@@ -79,6 +81,7 @@ public class Bds {
 	boolean quiet; // Quiet mode
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
 	boolean verbose; // Verbose mode
+	boolean warnUnusedFunctionsAnyFile; // Warn if there are unused functions in all any (included) file
 	Boolean reportHtml; // Use HTML report style
 	Boolean reportYaml; // Use YAML report style
 	int taskFailCount = -1;
@@ -330,8 +333,52 @@ public class Bds {
 		// Free some memory by reseting structure we won't use any more
 		TypeCheckedNodes.get().reset();
 
+		// Perform some checking and show warning messages
+		compileWarn();
+		if (!CompilerMessages.get().hasErrors()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+
 		// OK
 		return true;
+	}
+
+	/**
+	 * Perform some checking and show warning messages
+	 */
+	void compileWarn() {
+		compileWarnUnusedFunctions();
+	}
+
+	/**
+	 * Check for unused functions
+	 */
+	void compileWarnUnusedFunctions() {
+		String progUnitFile = programUnit.getFileNameCanonical();
+
+		List<BdsNode> fdecls = programUnit.findNodes(FunctionDeclaration.class, true);
+
+		// Add all to 'unused' set
+		Set<FunctionDeclaration> unused = new HashSet<>();
+		for (BdsNode n : fdecls) {
+			FunctionDeclaration fdecl = (FunctionDeclaration) n;
+			if (warnUnusedFunctionsAnyFile //
+					|| (!warnUnusedFunctionsAnyFile && progUnitFile.equals(fdecl.getFileNameCanonical()))) {
+				unused.add(fdecl);
+			}
+		}
+
+		// Remove the ones that are used
+		List<BdsNode> fcalls = programUnit.findNodes(FunctionCall.class, true);
+		for (BdsNode n : fcalls) {
+			FunctionCall fcall = (FunctionCall) n;
+			FunctionDeclaration fdecl = fcall.getFunctionDeclaration();
+			unused.remove(fdecl);
+		}
+
+		// Any functions that are 'unused'?
+		if (unused.isEmpty()) return;
+		for (FunctionDeclaration fdecl : unused) {
+			CompilerMessages.get().add(fdecl, "Unused function " + fdecl.getFunctionName() + fdecl.signature(), MessageType.WARNING);
+		}
 	}
 
 	/**
@@ -756,6 +803,10 @@ public class Bds {
 					System.exit(0);
 					break;
 
+				case "-wall":
+					warnUnusedFunctionsAnyFile = false;
+					break;
+
 				case "-y":
 				case "-retry":
 					// Number of retries
@@ -1071,6 +1122,7 @@ public class Bds {
 		System.err.println("  -upload file url               : Upload local file to 'url'. Note: Used by 'taks'");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
 		System.err.println("  -version                       : Show version and exit.");
+		System.err.println("  -wall                          : Show all compile time warnings.");
 		System.err.println("  [-y | -retry  ] num            : Number of times to retry a failing tasks.");
 		System.err.println("  -pid <file>                    : Write local processes PIDs to 'file'");
 
