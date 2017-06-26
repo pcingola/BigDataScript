@@ -345,7 +345,7 @@ public class Bds {
 	 * Perform some checking and show warning messages
 	 */
 	void compileWarn() {
-		compileWarnUnusedFunctions();
+		// compileWarnUnusedFunctions();
 	}
 
 	/**
@@ -371,6 +371,7 @@ public class Bds {
 			FunctionCall fcall = (FunctionCall) n;
 			FunctionDeclaration fdecl = fcall.getFunctionDeclaration();
 			unused.remove(fdecl);
+			Gpr.debug("CALL: " + fdecl.getFunctionName() + fdecl.signature());
 		}
 
 		// Any functions that are 'unused'?

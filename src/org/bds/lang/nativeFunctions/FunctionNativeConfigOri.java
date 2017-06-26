@@ -32,9 +32,9 @@ public class FunctionNativeConfigOri extends FunctionNativeConfig {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Object runFunctionNative(BdsThread csThread) {
-		String fileName = csThread.getString("file");
-		HashMap<String, String> configOri = (HashMap<String, String>) csThread.getObject("configOri");
-		return parseFile(csThread, fileName, configOri);
+	protected Object runFunctionNative(BdsThread bdsThread) {
+		String fileName = bdsThread.getString("file");
+		HashMap<String, String> configOri = (HashMap<String, String>) bdsThread.getObject("configOri");
+		return parseFile(bdsThread, fileName, configOri);
 	}
 }

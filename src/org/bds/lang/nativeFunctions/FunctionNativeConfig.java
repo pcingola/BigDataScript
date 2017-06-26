@@ -30,9 +30,9 @@ public class FunctionNativeConfig extends FunctionNative {
 		addNativeFunctionToScope();
 	}
 
-	protected Object parseFile(BdsThread csThread, String fileName, HashMap<String, String> configOri) {
+	protected Object parseFile(BdsThread bdsThread, String fileName, HashMap<String, String> configOri) {
 		// Sanity check
-		if (!Gpr.canRead(fileName)) csThread.fatalError(this, "Cannot read config file '" + fileName + "'");
+		if (!Gpr.canRead(fileName)) bdsThread.fatalError(this, "Cannot read config file '" + fileName + "'");
 
 		// Create config, add default values
 		HashMap<String, String> config = new HashMap<>();
