@@ -804,7 +804,7 @@ public class Bds {
 					break;
 
 				case "-wall":
-					warnUnusedFunctionsAnyFile = false;
+					warnUnusedFunctionsAnyFile = true;
 					break;
 
 				case "-y":
