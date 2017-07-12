@@ -14,7 +14,7 @@ import org.bds.util.Gpr;
  * Case statement (in switch condition)
  *
  */
-public class Case extends Statement {
+public class Case extends StatementWithScope {
 
 	Expression expression;
 	Statement[] statements;

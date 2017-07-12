@@ -375,4 +375,11 @@ public class TestCasesLang extends TestCasesBase {
 		compileErrors("test/test54.bds", errs);
 	}
 
+	@Test
+	public void test55() {
+		Gpr.debug("Test");
+		String errs = "ERROR [ file 'test/test55.bds', line 15 ] :	Symbol 'b' cannot be resolved";
+		compileErrors("test/test55.bds", errs);
+	}
+
 }
