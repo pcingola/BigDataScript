@@ -6,7 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
-import org.bds.util.Gpr;
 
 /**
  * An expression having an implicit type variable initialization ( varName := expression )
@@ -70,7 +69,6 @@ public class ExpressionVariableInitImplicit extends Expression {
 
 		// Already declared?
 		String varName = vInit.varName;
-		Gpr.debug("Check variable:" + varName);
 		if (scope.hasSymbolLocal(varName)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
 
 		// Calculate implicit data type
