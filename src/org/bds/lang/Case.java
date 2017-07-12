@@ -149,7 +149,11 @@ public class Case extends Statement {
 			Type switchExprType = ((Switch) parent).getSwitchExpr().getReturnType();
 			Type caseExprType = expression.returnType(scope);
 
-			if (switchExprType.isString() && caseExprType.isString()) {
+			if (switchExprType == null) {
+				// This will be reported in error messages
+			} else if (caseExprType == null) {
+				compilerMessages.add(this, "Cannot 'case' resolve expression '" + expression + "'", MessageType.ERROR);
+			} else if (switchExprType.isString() && caseExprType.isString()) {
 				// OK, convert to string
 			} else if (switchExprType.isNumeric() && caseExprType.isNumeric()) {
 				// OK, convert to numeric
@@ -161,11 +165,6 @@ public class Case extends Statement {
 								+ "): case " + expression,
 						MessageType.ERROR);
 			}
-		}
-
-		if (statements != null) {
-			for (Statement s : statements)
-				s.typeCheck(scope, compilerMessages);
 		}
 	}
 
