@@ -1,6 +1,8 @@
 #!/bin/sh -ex
-
-BDS_HOME="$HOME/.bds"
+if [ -z ${BDS_HOME} ]; then
+    BDS_HOME="$HOME/.bds"
+fi
+ORIGDIR=${PWD}
 
 echo "Changing dir" `dirname $0`
 
@@ -29,13 +31,13 @@ go build
 go fmt
 
 # Build binay (go executable + JAR file)
-cat bds "$BDS_HOME/bds.jar" > bds.bin
+cat bds "${ORIGDIR}/build/bds.jar" > bds.bin
 mv bds.bin bds
 chmod a+x bds
 mv bds "$BDS_HOME"
 
 # Remove JAR file
-rm "$BDS_HOME/bds.jar"
+rm "${ORIGDIR}/build/bds.jar"
 
 # Binary installed
 echo "Binary created: $BDS_HOME/bds"
