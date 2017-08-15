@@ -26,7 +26,7 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 
 		if (expr.canCastInt()) returnType = Type.INT;
 		else if (expr.canCastReal()) returnType = Type.REAL;
-		else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
+		else return null; // Cannot cast to 'int' or 'real'. This should never happen!"
 
 		return returnType;
 	}

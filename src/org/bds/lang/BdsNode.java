@@ -146,13 +146,13 @@ public abstract class BdsNode implements BdsSerialize {
 	 */
 	@SuppressWarnings("rawtypes")
 	public List<BdsNode> findNodes(Class clazz, boolean recurse) {
-		HashSet<Object> visited = new HashSet<Object>();
+		HashSet<Object> visited = new HashSet<>();
 		return findNodes(clazz, recurse, visited);
 	}
 
 	@SuppressWarnings("rawtypes")
 	List<BdsNode> findNodes(Class clazz, boolean recurse, Set<Object> visited) {
-		List<BdsNode> list = new ArrayList<BdsNode>();
+		List<BdsNode> list = new ArrayList<>();
 
 		// Iterate over fields
 		for (Field field : getAllClassFields()) {
@@ -187,7 +187,7 @@ public abstract class BdsNode implements BdsSerialize {
 	 */
 	@SuppressWarnings("rawtypes")
 	List<BdsNode> findNodes(Class clazz, Object fieldObj, boolean recurse, Set<Object> visited) {
-		List<BdsNode> list = new ArrayList<BdsNode>();
+		List<BdsNode> list = new ArrayList<>();
 
 		// If it is a BigDataScriptNode then we can recurse into it
 		if ((fieldObj != null) && (fieldObj instanceof BdsNode)) {
@@ -244,7 +244,7 @@ public abstract class BdsNode implements BdsSerialize {
 		Class topClass = (addParent ? Object.class : BdsNode.class);
 
 		// Get all fields for each parent class
-		ArrayList<Field> fields = new ArrayList<Field>();
+		ArrayList<Field> fields = new ArrayList<>();
 
 		for (Class clazz = this.getClass(); clazz != topClass; clazz = clazz.getSuperclass()) {
 			for (Field f : clazz.getDeclaredFields()) {
@@ -506,34 +506,6 @@ public abstract class BdsNode implements BdsSerialize {
 	 */
 	protected abstract void parse(ParseTree tree);
 
-	//	/**
-	//	 * Pop a bool from stack
-	//	 */
-	//	public boolean popBool(BdsThread bdsThread) {
-	//		return (Boolean) Type.BOOL.cast(bdsThread.pop());
-	//	}
-	//
-	//	/**
-	//	 * Pop an int from stack
-	//	 */
-	//	public long popInt(BdsThread bdsThread) {
-	//		return (Long) Type.INT.cast(bdsThread.pop());
-	//	}
-	//
-	//	/**
-	//	 * Pop a real from stack
-	//	 */
-	//	public double popReal(BdsThread bdsThread) {
-	//		return (Double) Type.REAL.cast(bdsThread.pop());
-	//	}
-	//
-	//	/**
-	//	 * Pop a string from stack
-	//	 */
-	//	public String popString(BdsThread bdsThread) {
-	//		return (String) Type.STRING.cast(bdsThread.pop());
-	//	}
-	//
 	/**
 	 * Show a parseTree node
 	 */
@@ -668,7 +640,7 @@ public abstract class BdsNode implements BdsSerialize {
 				+ "\t" + serializer.serializeSaveValue(returnType) //
 				+ "\t" //
 		);
-		ArrayList<BdsNode> nodesToRecurse = new ArrayList<BdsNode>();
+		ArrayList<BdsNode> nodesToRecurse = new ArrayList<>();
 
 		// Iterate over fields
 		for (Field field : getAllClassFields(false)) {
