@@ -961,7 +961,7 @@ for( int i=0 ; i < 10 ; i++ ) {
 }
 </pre>
 
-Note that bds interpolates variable <code>$i</code> (string interpolation simply means replacing by the value of variable within the string)
+Note that bds interpolates variable <code>$i</code> (string interpolation simply means replacing by the value of a variable within the string)
 <br>
 <br>
 
@@ -1014,7 +1014,7 @@ $ bds -s cluster test_04.bds
 					
 				<h3 class="page-header" id="taskDep">Task dependencies</h3>
 				<p class="lead">
-				In a typical pipeline we must be able to control task execution which depend on previously executed tasks.
+				In a typical pipeline we must be able to control task execution which depends on previously executed tasks.
 				Here we show how.
 				<p>
 					
@@ -1207,14 +1207,14 @@ Done inter.txt
 Creating out.txt
 Done out.txt
 </pre>
-				Note how the second task is executed only after the first one finshed.
+				Note how the second task is executed only after the first one finished.
 
 				<h3 class="page-header" id="taskDep2">Complex dependencies: <code>dep</code> and <code>goal</code> </h3>
 				<p class="lead">
 				The <code>goal</code> statement helps to program complex task scheduling interdependencies.
 				<p>
 
-				In the previous exmple, we had an input file 'in.txt', an intermediate file 'inter.txt' and an output file 'out.txt'.
+				In the previous example, we had an input file 'in.txt', an intermediate file 'inter.txt' and an output file 'out.txt'.
 				One problem is that if we delete the intermediate file 'inter.txt' (e.g. because we may want to delete big files with intermediate results), then both tasks will be executed
 
 				<br>
@@ -1345,7 +1345,7 @@ $
 					<li> Everything after <code>sys</code> until the end of the line is interpreted to be a command
 					<li> If the line ends with a backslash, next line is interpreted as part of the same command (same as in a shell script)
 					<li> Variables are interpolated. E.g. <code> sys echo Hello $person</code> will replace '$person' by the variable's name before sending it to the OS for execution.
-					<li> BDS immediately executes the OS command in the local machine and waits until the command finishes exeution.
+					<li> BDS immediately executes the OS command in the local machine and waits until the command finishes execution.
 					<li> If the command exits with an error condition, then <code>bds</code> creates a checkpoint, and exits with a non-zero exit code.
 					<li> No resource accounting is performed, the command is executed even if all CPUs are busy executing tasks.
 				E.g.
@@ -1367,7 +1367,7 @@ After
 sys echo Hello ; echo Bye
 </pre>
 
-				<li> Multi-line stalements are allowed, by using a backslash at the end of the line (same as a shell script)
+				<li> Multi-line statements are allowed, by using a backslash at the end of the line (same as a shell script)
 
 <pre class="prettyprint">
 sys echo HeLLo \
@@ -1419,7 +1419,7 @@ World
 
 				A <code>task</code>expression, just like <code>sys</code> expression, also executes a command.
 				The main difference is that a <code>task</code> is "scheduled for execution" instead of executed immediately.
-				Task execution order is not guaranteed, but <code>bds</code> provides a mechanism for creating task dependencies by means of <code>wait</code> statements.
+				Task execution order is not guaranteed but <code>bds</code> provides a mechanism for creating task dependencies by means of <code>wait</code> statements.
 				<br>
 				<br>
 				A task expression either performs basic resource management or delegates resource management to cluster management tools.
@@ -1428,7 +1428,7 @@ World
 				As executing tasks finish and CPUs become available, the remaining tasks are executed.
 				<br>
 				Similarly, if you schedule 10,000 tasks for execution, but your cluster only has 1,000 cores, then only 1,000 tasks will be executed as a given time.
-				Again, other tasks are queued for later execution, but in this case all the resource management is done by your cluster's workload management system (e.g. GridEngine, PBS, Torque, etc.).
+				Again, other tasks are queued for later execution, but in this case, all the resource management is done by your cluster's workload management system (e.g. GridEngine, PBS, Torque, etc.).
 				<br>
 				<br>
 				<i class="icon-warning-sign"></i> Most cluster resource management do not guarantee that tasks are executed in the same order as queued.
@@ -1446,7 +1446,7 @@ World
 					<tr>
 						<td> <code>local</code> </td>	
 						<td> Running on a single computer. E.g. programming and debugging on your laptop or running stuff on a server </td> 
-						<td> A local queue is created, the total number of CPUs used by all tasks running is less or equal then the number of CPU cores available </td> 
+						<td> A local queue is created, the total number of CPUs used by all tasks running is less or equal than the number of CPU cores available </td> 
 					</tr>
 					<tr>
 						<td> <code>ssh</code> </td>	
@@ -1508,7 +1508,7 @@ Hello
 				<code>task</code> is non-blocking, which means that <code>bds</code> continues execution immediately without waiting for the task to finish.
 				So, many tasks can be scheduled by simply invoking a task statement many times. 
 				<br>
-				Once a <code>task</code> is scheduled, execution order depends on underliying system and there is absolutely no guarantee about execution order (unless you use a <code>wait</code> statements or other dependency mechanism).
+				Once a <code>task</code> is scheduled, execution order depends on the underliying system and there is absolutely no guarantee about execution order (unless you use a <code>wait</code> statements or other dependency mechanism).
 				<br>
 				E.g., this example shows clearly all the tasks are NOT executed in order, even on local computers:
 				<br> File <a href="bds/test_10.bds">test_10.bds</a>
@@ -1625,7 +1625,7 @@ Done 9
 
 				<h3> Conditional execution </h3>
 				Conditional execution of tasks can, obviously, be achieved using an <code>if</code> statement.
-				Since conditional execution is so common, we allow for some syntatic sugar by <code> task( expression1, expression2, ... ) { ... } </code>.
+				Since conditional execution is so common, we allow for some syntactic sugar by <code> task( expression1, expression2, ... ) { ... } </code>.
 				where <code>expression1</code>, <code>expression2</code>, etc. are either boolean expressions or variable declarations.
 				The task is executed only if all <code>bool</code> expressions are <code>true</code>.
 				<br>
@@ -1727,7 +1727,7 @@ task ( out <- in, cpus := 4 , taskName := "Filter results" ) {
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="waitExpr">Wait </h1>
 				<p class="lead"> Task coordination mechanisms rely on waiting for some tasks to finish before starting new ones.</p>
-				As we mentioend several times, task execution order is not guaranteed.
+				As we mentioned several times, task execution order is not guaranteed.
 				<br> File <a href="bds/test_13.bds">test_13.bds</a>
 <pre class="prettyprint">
 #!/usr/bin/env bds
@@ -1858,7 +1858,7 @@ DONE 9
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="dep">Dependency operator </h1>
-				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and timestamps.  </p>
+				<p class="lead"> You can use a dependency operator <code>&lt;-</code> to decide whether tasks should be run or not, based on file existence and time-stamps.  </p>
 
 				The dependency operator is written as <code> out &lt;- in</code>.
 				It is true if <code>out</code> file needs to be created or updated.
@@ -2043,7 +2043,7 @@ goal outs	# We use a list of goals, it is interpreted as multiple goal statement
 				<p class="lead"> Often applications need to run tasks on remote data files, <code>bds</code> can transparently handle remote data dependencies</p>
 
 				In many cases data files may reside in non-local file systems, such as <code>HTTP</code> or Amazon's <code>S3</code> object storage.
-				Fortunately <code>bds</code> can tranparently handle remote dependencis, download the input files and upload the results without you having to write a single line of code.
+				Fortunately <code>bds</code> can transparently handle remote dependencies, download the input files and upload the results without you having to write a single line of code.
 				<br>
 				<br>
 				<b>Example 1:</b> In this example, the remote file <code>index.html</code> is remote input file to the <code>task</code>.
@@ -2062,7 +2062,7 @@ task( out <- in ) sys cat $in > $out
 				<ol>
 					<li> there is no code for downloading the remote file (<code>index.html</code>) in the script;
 					<li> the file is downloaded on the processing node performing the task, which may differ from the node running the script (e.g. if it is running on a cluster);
-					<li> task dependencies are verified without downloading data, so the task as well as the corresponding download / upload operations are only performed if required;
+					<li> task dependencies are verified without downloading data, so the task, as well as the corresponding download / upload operations, are only performed if required;
 					<li> if the file is required in the future, <code>bds</code> checks if the local (cached) copy is still valid, and uses the cached file if possible (saving bandwith and time).
 				</ol>
 				<br>
@@ -2225,7 +2225,7 @@ Number: 10
 			This is clearly not the result we wanted.
 			<br>
 			What happened? Well, obviously this had a race condition. 
-			From the time thread is created (<code>par</code>), until variable <code>i</code> is evaluated in <code>print</code> statement (parallel thread), the main thread has already changed <code>i</code>'s value.
+			From the time thread is created (<code>par</code>), until the variable <code>i</code> is evaluated in <code>print</code> statement (parallel thread), the main thread has already changed <code>i</code>'s value.
 			<br>
 			<br>
 			To avoid this type of race condition, when using <code>par</code> to call a function, arguments are evaluated in the current thread.
@@ -2634,7 +2634,7 @@ Command line options 'test_26.bds' :
 </pre>
 				<br>
 				<h3> Help sort order </h3>
-				By default variables are sorted alphabetically when help is shown. 
+				By default, variables are sorted alphabetically when help is shown. 
 				This can be overridden by creating a global variable <code>helpUnsorted</code> (regardless of its type and value, since the program may not even be running when the help is shown).
 				<br>
 				File <a href="bds/test_26b.bds">test_26b.bds</a>
@@ -2730,7 +2730,7 @@ Options related to database
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="autoLog">Logging </h1>
-				<p class="lead"> Logging is mundane and boring, but many times nescesary. Not many people enjoy adding hundreds of line of code just to perform logging. That's why <code>bds</code> can log everything for you.</p>
+				<p class="lead"> Logging is mundane and boring, but many times necessary. Not many people enjoy adding hundreds of line of code just to perform logging. That's why <code>bds</code> can log everything for you.</p>
 
 				Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
 				This gives you an automatic log of everything that was executed, as well as the details of the outputs and exit status from each execution.
@@ -2796,7 +2796,7 @@ $ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
 				<br>
 				Also, <code>bds</code> ensures that resources are not wasted, by killing all pending tasks.
 				In large pipelines, thousands of tasks can be scheduled for execution in a cluster and it is quite difficult for the user to keep track of them and clean them if the pipeline fails.
-				Fortunately <code>bds</code> takes care of all these details and issues appropriate commands to kill all pending tasks.
+				Fortunately, <code>bds</code> takes care of all these details and issues appropriate commands to kill all pending tasks.
 
 				<br> File <a href="bds/test_22.bds">test_22.bds</a>
 <pre class="prettyprint">
@@ -2922,7 +2922,7 @@ Available options:
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="config">BDS Config file </h1>
-				<p class="lead"> BigDataScript's config file allows to customize <code>bds</code>'s behaviour.</p>
+				<p class="lead"> BigDataScript's config file allows customizing <code>bds</code>'s behavior.</p>
 
 				<p> 
 				BigDataScript's config file is usually located in <code>$HOME/.bds/bds.config</code>.
@@ -2992,7 +2992,7 @@ Available options:
 						<td> sysShell  </td>
 						<td> Shell to be used when running a <code>sys</code> (default '/bin/sh -e -c')<br>
 							 <b>WARNING</b>: Make sure you use "-e" or some command line option that stops execution when an error if found.<br>
-							 <b>WARNING</b>: Make sure you use "-c" or some command line option that allows to provide a script
+							 <b>WARNING</b>: Make sure you use "-c" or some command line option that allows providing a script
 						</td>
 					</tr>
 				</table>
@@ -3035,7 +3035,7 @@ pidRegex = "Your job (\\S+)"
 						<td> clusterRunAdditionalArgs </td>
 						<td>
 							These command line arguments are added to every cluster 'run' command (e.g. 'qsub')<br>
-							The string is split on spaces (regex: '\s+') and added to the cluster's run command.<br>
+							The string is split into spaces (regex: '\s+') and added to the cluster's run command.<br>
 							<br>
 							For instance the following configuration:<br>
 							<br>
@@ -3245,7 +3245,7 @@ accounting_summary FALSE
 				</table>
 
 				<h3>SSH Cluster options </h3>
-				Cluster <b>shh</b> creates a virtual cluster using several nodes acceses via shh.
+				Cluster <b>shh</b> creates a virtual cluster using several nodes access via shh.
 				<br>
 				<br>
 				<br>
