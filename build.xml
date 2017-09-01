@@ -6,7 +6,7 @@
 		<copy file="src/org/bds/SummaryTemplate.html" tofile="bin/org/bds/SummaryTemplate.html"/>
 		<copy file="src/org/bds/SummaryTemplate.yaml" tofile="bin/org/bds/SummaryTemplate.yaml"/>
 		<copy file="./src/org/bds/DagTaskTemplate.js" tofile="bin/org/bds/DagTaskTemplate.js"/>
-        <jar destfile="${user.home}/.bds/bds.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="build/bds.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="org.bigDataScript.Bds"/>
                 <attribute name="Class-Path" value="."/>
