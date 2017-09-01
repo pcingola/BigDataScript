@@ -810,11 +810,11 @@ Key : Hola	Value : Adios
 					<tr> <td> assert(string msg, bool expected, bool result)</td> <td> Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>bool</code>) </td> </tr>
 					<tr> <td> assert(int expected, int result)				</td> <td> Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>int</code>)</td> </tr>
 					<tr> <td> assert(string msg, int expected, int result)	</td> <td> Used for testing: Throw error message if <code>result</code> value is not equal to <code>expected</code> (compare <code>int</code>)</td> </tr>
-					<tr> <td> assert(string expected, string result)		</td> <td> Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td> </tr>
-					<tr> <td> assert(string msg, string expected, string result)</td> <td> Used for testing: Throw error message if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td> </tr>
+					<tr> <td> assert(string expected, string result)		</td> <td> Used for testing: Throw error message if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td> </tr>
+					<tr> <td> assert(string msg, string expected, string result)</td> <td> Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td> </tr>
 					<tr> <td> real cbrt(real x)								</td> <td> The cube root of a number </td> </tr>
 					<tr> <td> real ceil(real x)								</td> <td> The ceiling of a number </td> </tr>
-					<tr> <td> string{} config(string fileName)			</td> <td> Read and parse 'fileName', return &lt;name,value&gt; pairs in a map.<br>
+					<tr> <td> string{} config(string fileName)				</td> <td> Read and parse 'fileName', return &lt;name,value&gt; pairs in a map.<br>
 																					Parsing: Lines starting with '#' are ignored, so are blank lines.<br>
 																					Name/Value delimiters can be any of ':', '=' or '\t' (the first one found in each line will be used).<br>
 																					The following are valid and equivalent:<br>
@@ -961,7 +961,7 @@ for( int i=0 ; i < 10 ; i++ ) {
 }
 </pre>
 
-Note that bds interpolates variable <code>$i</code>
+Note that bds interpolates variable <code>$i</code> (string interpolation simply means replacing by the value of variable within the string)
 <br>
 <br>
 
@@ -2878,7 +2878,7 @@ Available options:
   [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').
   [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.
   [-l | -log    ]                : Log all tasks (do not delete tmp files). Default: false
-  -noReport                      : Do not create any report (neither HTML nor YAML).
+  -noReport                      : Do not create any report.
   -noReportHtml                  : Do not create HTML report.
   -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit). Default: false
   [-q | -queue  ] queueName      : Set default queue name.
@@ -2902,7 +2902,7 @@ Available options:
 					<tr> <td>    </td> <td> -extractSource </td> <td> Extract source code files from checkpoint (only valid combined with '-info').</td> </tr>
 					<tr> <td> -i </td> <td> -info </td> <td> Show state information in checkpoint file. Prints variables, scopes, etc.</td> </tr>
 					<tr> <td> -l </td> <td> -log </td> <td> Log all tasks (do not delete tmp files).</td> </tr>
-					<tr> <td>    </td> <td> -noReport </td> Do not create any report (neither HTML nor YAML).<td> </tr>
+					<tr> <td>    </td> <td> -noReport </td> Do not create any report.<td> </tr>
 					<tr> <td>    </td> <td> -noReportHtml </td> Do not create HTML report.<td> </tr>
 					<tr> <td>    </td> <td> -noRmOnExit </td> <td> Do not remove files marked for deletion on exit (rmOnExit). </td> </tr>
 					<tr> <td> -q </td> <td> -queue </td> <td> Set default cluster's queue name. </td> </tr>
