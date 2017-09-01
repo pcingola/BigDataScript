@@ -185,7 +185,7 @@
 
 				<h3> Paper & Citations </h3>
 				<p>
-				If you are using BigDataScript in an academic environment, please cire our <a href="https://doi.org/10.1093/bioinformatics/btu595">paper</a>:
+				If you are using BigDataScript in an academic environment, please cite our <a href="https://doi.org/10.1093/bioinformatics/btu595">paper</a>:
 <pre>
 BigDataScript: A scripting language for data pipelines 
 P. Cingolani; R. Sladek; M. Blanchette
@@ -200,7 +200,7 @@ doi: 10.1093/bioinformatics/btu595
 				Potential delays incurred by BigDataScript should not affect the overall time.
 				<br>
 				Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.
-				The fact that BigDataScript takes a few miliseconds more to invoke those programs, really doesn't make any difference.
+				The fact that BigDataScript takes a few milliseconds more to invoke those programs, really doesn't make any difference.
 				</p>
 
 				<h3> Why is it called "BigDataScript" </h3>
@@ -281,7 +281,7 @@ Hello world
 				<p class="lead"> Learning BigDataScript language (<code>bds</code>) is almost trivial, all the statements and expression and data types do what you expect. </p>
 				<p>
 				BigDataScript is really simple and you should be able to code within a few minutes.
-				This section is inteded as a reference, so just glance through it.
+				This section is intended as a reference, so just glance through it.
 				<br>
 				<br>
 				<ul>
@@ -325,9 +325,9 @@ for( int i=0 ; i < 10 ; i++ ) {
 
 					<li> <code> debug </code>: Show a debug message on STDERR only if <code>bds</code> is running in 'debug' mode (otherwise the statement is ignored).
 <pre class="prettyprint">
-debug "Show this message only if we ae in debug mode!\n"
+debug "Show this message only if we are in debug mode!\n"
 </pre>
-					<li> <code>error</code> Show an error mesasge and exit the program
+					<li> <code>error</code> Show an error message and exit the program
 <pre class="prettyprint">
 if( num <= 0 )	warning "Number MUST be positive\n"
 </pre>
@@ -430,20 +430,20 @@ if( num <= 0 )	warning "Number should be positive\n"
 while( i < 10 ) i++
 </pre>
 
-					<li> <code> type varName </code> Declare varaible 'var' as type 'type'
+					<li> <code> type varName </code> Declare variable 'var' as type 'type'
 <pre class="prettyprint">
 int i      # 'i' is an 64 bit int variable
 real r     # 'r' is a double-precision floating-point number
 string s   # 's' is a string
 </pre>
-					<li> <code> type varName = expr </code> Declare varaible 'var' as type 'type', evaluate expression and assign result to initialize 'var'.
+					<li> <code> type varName = expr </code> Declare variable 'var' as type 'type', evaluate expression and assign result to initialize 'var'.
 <pre class="prettyprint">
 int i = 42
 real r = 3.1415927
 string s = "Hello!"
 </pre>
 
-					<li> <code> varName := expr </code> Declare varaible 'var', use type inference, evaluate expression 'expr' and assign result to initialize 'var'
+					<li> <code> varName := expr </code> Declare variable 'var', use type inference, evaluate expression 'expr' and assign result to initialize 'var'
 <pre class="prettyprint">
 i := 42
 r := 3.1415927
@@ -496,13 +496,13 @@ The sum is : 55
 
 				<h3 class="page-header" id="taskCluster">Special purpose statements, commands and operators </h3>
 
-				These are statements, operators and expressions that are unique to <code>bds</code>.
+				These are statements, operators, and expressions that are unique to <code>bds</code>.
 				We just enumerate them here, but we explain details on what they mean and how they work in the following sections. 
 				This list is intended as a reference for people that are already familiar with these concepts, so don't despair if you don't understand what they mean.
 				<br>
 				<br>
 				<ul>
-					<li> <code> &lt;- </code> Dependency operator. Return true if any left hand side file needs to be updated with respect to any right hand side file
+					<li> <code> &lt;- </code> Dependency operator. Return true if any left-hand side file needs to be updated with respect to any right-hand side file
 <pre class="prettyprint">
 # Evaluate dependency 
 if( 'out.txt' <- 'in.txt' )    print("File out.txt needs to be updated\n")
@@ -529,12 +529,12 @@ par {
 <pre class="prettyprint">
 par doSomething(arg1, arg2)
 </pre>
-					<li> <code> sys </code> Execute an OS commnad. Execution is immediate and local (i.e. in the same computer as <code>bds</code> is running). It's intended for executing fast OS commands (not heavyweight processing).
+					<li> <code> sys </code> Execute an OS command. Execution is immediate and local (i.e. in the same computer as <code>bds</code> is running). It's intended for executing fast OS commands (not heavyweight processing).
 <pre class="prettyprint">
 # Execute an "ls" command
 sys ls -al
 </pre>
-					<li> <code> task </code> Schedule an OS commnad for execution. Depending on the value of <code>system</code>, the execution can be local, in a cluster, remote server, etc.
+					<li> <code> task </code> Schedule an OS command for execution. Depending on the value of <code>system</code>, the execution can be local, in a cluster, remote server, etc.
 <pre class="prettyprint">
 # Execute bwa command (create an index of the human genome)
 task bwa index hg19.fasta
@@ -568,7 +568,7 @@ wait listOfTaskIDs
 					<tr> <td> real   </td> <td> A 64 bit IEEE 754 number (same as Java's double) </td> </tr>
 					<tr> <td> bool   </td> <td> A boolean value, can be 'true' or 'false' (same as Java's boolean)</td> </tr>
 					<tr> <td> Arrays, List, Stacks   </td> <td> These are all the same, just a different way to call a list of elements</td> </tr>
-					<tr> <td> Maps   </td> <td> Maps are hashes that have <code>string</code> keys.</td> </tr>
+					<tr> <td> Maps   </td> <td> Maps are hashes (a.k.a. dictionaries that have <code>string</code> keys.</td> </tr>
 				</table>
 
 				There is no "null" element. Again, the idea is to minimize points of failure.
@@ -647,7 +647,7 @@ if( f.canRead() ) {
 					<tr><td>int			</td> <td>string.size()						</td> <td> File size in bytes  </td> </tr>
 					<tr><td>string		</td> <td>string.swapExt(string newExt)	</td> <td> Swap file extension </td> </tr>
 					<tr><td>string		</td> <td>string.swapExt(string oldExt,string newExt)		</td> <td> Swap file extension, only if extension matches the provided 'oldExt'</td> </tr>
-					<tr><td>string		</td> <td>string.upload()					</td> <td> Upload data from URL (string). Returns true if succeeded. </td> </tr>
+					<tr><td>string		</td> <td>string.upload()					</td> <td> Upload data to URL (string). Returns true if succeeded. </td> </tr>
 					<tr><td>bool		</td> <td>string.upload(string file)		</td> <td> Upload data from 'file' to URL. Returns true if succeeded. </td> </tr>
 					<tr><td>string		</td> <td>string.write(string file)			</td> <td> Write string to 'file' </td> </tr>
 				</table>
@@ -691,7 +691,7 @@ int[] primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 					<tr> <th>Returns </th><th> Method</th> <th> Meaning </th> </tr>
 					<tr> <td> </td> <td> += </td> <td> Append element(s) at the end of the list </td> </tr>
 					<tr> <td> Element added  </td> <td> add(X) </td> <td> Add <code>X</code> to the end of the list </td> </tr>
-					<tr> <td> Element added  </td> <td> add(int idx,X) </td> <td> Add <code>X</code> to positon <code>idx</code> in the list </td> </tr>
+					<tr> <td> Element added  </td> <td> add(int idx,X) </td> <td> Add <code>X</code> to position <code>idx</code> in the list </td> </tr>
 					<tr> <td> Same list  </td> <td> delete() </td> <td> Delete all files in the list (assumes list elements are file names). Same as <code>list.rm()</code></td> </tr>
 					<tr> <td> int </td> <td> count(X) </td> <td> Count number of occurrences of <code>X</code> in the list </td> </tr>
 					<tr> <td> bool </td> <td> has(X) </td> <td> Does the list contain <code>X</code>? </td> </tr>
@@ -699,11 +699,11 @@ int[] primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 					<tr> <td> int </td> <td> indexOf(X) </td> <td> Position of element <code>X</code> in the list </td> </tr>
 					<tr> <td> bool </td> <td> isEmpty() </td> <td> 'true' if the list is empty </td> </tr>
 					<tr> <td> string </td> <td> join() </td> <td> A string joining all elements of the list (separator ' ') </td> </tr>
-					<tr> <td> string </td> <td> join(string sep) </td> <td> A srting joining all elements of the list (separator 'sep') </td> </tr>
+					<tr> <td> string </td> <td> join(string sep) </td> <td> A string joining all elements of the list (separator 'sep') </td> </tr>
 					<tr> <td> Last element  </td> <td> pop() </td> <td> Get last element and remove it from the list </td> </tr>
 					<tr> <td> Element pushed  </td> <td> push() </td> <td> Add at the end of the list </td> </tr>
-					<tr> <td> Element to remove  </td> <td> remove(X) </td> <td> Remove element <code>X</code> form the list </td> </tr>
-					<tr> <td> Element to remove  </td> <td> removeIdx(int idx) </td> <td> Remove element at position <code>idx</code> form the list </td> </tr>
+					<tr> <td> Element to remove  </td> <td> remove(X) </td> <td> Remove element <code>X</code> from the list </td> </tr>
+					<tr> <td> Element to remove  </td> <td> removeIdx(int idx) </td> <td> Remove element at position <code>idx</code> from the list </td> </tr>
 					<tr> <td> New reversed list </td> <td> reverse() </td> <td> Create a new list and reverse it</td> </tr>
 					<tr> <td> Same list </td> <td> rm() </td> <td> Delete all files (assumes list elements are file names) </td> </tr>
 					<tr> <td> Same list </td> <td> rmOnExit() </td> <td> Delete all files when current thread finishes execution (assumes list elements are file names) </td> </tr>
@@ -714,7 +714,7 @@ int[] primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 				<br>
 
 				<b>Iterating on an array/list</b><br>
-				You can iterate on an array simply bo doing
+				You can iterate on an array simply by doing
 <pre class="prettyprint">
 $ cat z.bds 
 string[] array = ["one", "two", "three"]
@@ -812,7 +812,7 @@ Key : Hola	Value : Adios
 					<tr> <td> assert(string msg, int expected, int result)	</td> <td> Used for testing: Throw error message if <code>result</code> value is not equal to <code>expected</code> (compare <code>int</code>)</td> </tr>
 					<tr> <td> assert(string expected, string result)		</td> <td> Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td> </tr>
 					<tr> <td> assert(string msg, string expected, string result)</td> <td> Used for testing: Throw error message if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td> </tr>
-					<tr> <td> real cbrt(real x)								</td> <td> The cubic root of a number </td> </tr>
+					<tr> <td> real cbrt(real x)								</td> <td> The cube root of a number </td> </tr>
 					<tr> <td> real ceil(real x)								</td> <td> The ceiling of a number </td> </tr>
 					<tr> <td> string{} config(string fileName)			</td> <td> Read and parse 'fileName', return &lt;name,value&gt; pairs in a map.<br>
 																					Parsing: Lines starting with '#' are ignored, so are blank lines.<br>
@@ -826,7 +826,7 @@ name \t value
 					<tr> <td> string{} config(string fileName, string{} defaults)			</td> <td> Same as <code>string{} config(string fileName)</code>, but using <code>defaults</code> as default values (if not found in fileName) </td> </tr>
 					<tr> <td> real copySign(real x, real y)					</td> <td> Returns the first floating-point argument with the sign of the second floating-point argument</td> </tr>
 					<tr> <td> real cos(real x)								</td> <td> The trigonometric cosine of an angle </td> </tr>
-					<tr> <td> real cosh(real x)								</td> <td> The trigonometric hyperbolic cosine of an angle </td> </tr>
+					<tr> <td> real cosh(real x)								</td> <td> The hyperbolic cosine of an angle </td> </tr>
 					<tr> <td> real exp(real x)								</td> <td> Return e^x </td> </tr>
 					<tr> <td> real exppm1(real x)							</td> <td> Return e^x-1 </td> </tr>
 					<tr> <td> real floor(real x)							</td> <td> The floor of a number </td> </tr>
@@ -847,7 +847,7 @@ name \t value
 					<tr> <td> print( expr )									</td> <td> Show to stdout (same as 'print' statement) </td> </tr>
 					<tr> <td> printErr( expr )								</td> <td> Show to stderr </td> </tr>
 					<tr> <td> printHelp()									</td> <td> Print automatically generated help message (see 'help' statement) </td> </tr>
-					<tr> <td> real rand() 									</td> <td> Random number [0, 1] inetrval </td> </tr>
+					<tr> <td> real rand() 									</td> <td> Random number [0, 1] interval </td> </tr>
 					<tr> <td> int randInt() 								</td> <td> Random number (64 bits) </td> </tr>
 					<tr> <td> int randInt(int range)						</td> <td> Random number [0, range] interval </td> </tr>
 					<tr> <td> void randSeed(int seed)						</td> <td> Set random seed (for current thread) </td> </tr>
@@ -859,12 +859,12 @@ name \t value
 					<tr> <td> real scalb(real x, int sf)					</td> <td> Return x * 2^sf rounded  </td> </tr>
 					<tr> <td> real signum(real x)							</td> <td> The sign function of a number </td> </tr>
 					<tr> <td> real sin(real x)								</td> <td> The trigonometric sine of an angle </td> </tr>
-					<tr> <td> real sinh(real x)								</td> <td> The trigonometric hyperbolic-sine of an angle </td> </tr>
+					<tr> <td> real sinh(real x)								</td> <td> The hyperbolic-sine of an angle </td> </tr>
 					<tr> <td> sleep( int seconds )							</td> <td> Sleep for 'seconds' </td> </tr>
 					<tr> <td> sleep( real seconds )							</td> <td> Sleep for '1000 * seconds' milliseconds. E.g. sleep(0.5) sleeps for half a second </td> </tr>
-					<tr> <td> real sqrt(real x)								</td> <td> The square rootof a number</td> </tr>
+					<tr> <td> real sqrt(real x)								</td> <td> The square root of a number</td> </tr>
 					<tr> <td> real tan(real x)								</td> <td> The trigonometric tangent of an angle </td> </tr>
-					<tr> <td> real tanh(real x)								</td> <td> The trigonometric hyperbolic tangent of an angle </td> </tr>
+					<tr> <td> real tanh(real x)								</td> <td> The hyperbolic tangent of an angle </td> </tr>
 					<tr> <td> int time()									</td> <td> Return the milliseconds elapsed since epoch</td> </tr>
 					<tr> <td> real toDegrees(real x)						</td> <td> Convert x radians to degrees</td> </tr>
 					<tr> <td> real toRadians(real x)						</td> <td> Convert x degrees to radians</td> </tr>
@@ -1019,7 +1019,7 @@ $ bds -s cluster test_04.bds
 				<p>
 					
 				<h3 class="page-header" id="taskDep2">Waiting for a task to finish '<code>wait</code>' </h3>
-				The simplest form of execution control is to wait until one or more tasks finish before executng the next task(s).
+				The simplest form of execution control is to wait until one or more tasks finish before executing the next task(s).
 				This is done using the <code>wait</code> statement.
 				<br>
 				<br>
@@ -1113,7 +1113,7 @@ if( outFile <- inFile ) {
 }
 </pre>
 
-When executing for the first time, the both tasks are executed and both files ('in.txt' and 'out.txt') are created.
+When executing for the first time, both tasks are executed and both files ('in.txt' and 'out.txt') are created.
 <pre class="prettyprint">
 $ ./test_06.bds
 Creating in.txt
@@ -1143,7 +1143,7 @@ if( outFile <- inFile ) {
 }
 </pre>
 
-					<li> This construction is so common, that we allow for some sintactic sugar. 
+					<li> This construction is so common that we allow for some syntactic sugar. 
 <pre class="prettyprint">
 task( outFile <- inFile ) { 
 	sys echo Creating $outFile; cat $inFile > $outFile
@@ -1159,12 +1159,12 @@ task( outFile <- inFile ) {
 				<h3 class="page-header" id="taskDep2">Automatic task dependency detection </h3>
 				<p class="lead">
 				Programming task dependencies can be difficult.
-				BDS can help by automatically inferring task dependencies and executing task in the correct order.
+				BDS can help by automatically inferring task dependencies and executing tasks in the correct order.
 				<p>
 				<br> In this example, we have two tasks:
 				<ul>
 					<li> The first task uses an input file 'in.txt', to create an intermediate file 'inter.txt' 
-					<li> The second task, uses the intermediate file 'inter.txt' to create the ouptut file 'out.txt'.
+					<li> The second task uses the intermediate file 'inter.txt' to create the ouptut file 'out.txt'.
 				</ul>
 				The script below does not have a <code>wait</code> statement. 
 				Instead <code>bds</code> automatically infers that the second task depends on the first one, and does not start execution until the first task begins.
@@ -1188,7 +1188,7 @@ task( outFile <- intermediate ) {
 }
 </pre>
 
-				As a side note: We used the <code>:=</code> operator to declare variable using type inference. 
+				As a side note: We used the <code>:=</code> operator to declare variables using type inference. 
 				So we can write <code>inFile := "in.txt"</code> instead of <code>string inFile = "in.txt"</code>, which not only is shorter to type, but also makes the code look cleaner.
 				<br>
 				<br>
@@ -1214,11 +1214,11 @@ Done out.txt
 				The <code>goal</code> statement helps to program complex task scheduling interdependencies.
 				<p>
 
-				In the preivous exmple, we had an input file 'in.txt', an intermediate file 'inter.txt' and an output file 'out.txt'.
+				In the previous exmple, we had an input file 'in.txt', an intermediate file 'inter.txt' and an output file 'out.txt'.
 				One problem is that if we delete the intermediate file 'inter.txt' (e.g. because we may want to delete big files with intermediate results), then both tasks will be executed
 
 				<br>
-				For convinience, here is the code again. File <a href="bds/test_07.bds">test_07.bds</a>
+				For convenience, here is the code again. File <a href="bds/test_07.bds">test_07.bds</a>
 <pre class="prettyprint">
 #!/usr/bin/env bds
 
@@ -1281,9 +1281,9 @@ if( outFile <- inFile) {
 				<ul>
 					<li> <code>dep</code> defines a task exactly the same way as <code>task</code> expression, but it doesn't evaluate if the tasks should be executed or not (it's just declarative). 
         
-					<li> <code>goal</code> executes all dependencies necesary to create an output 
+					<li> <code>goal</code> executes all dependencies nescesary to create an output 
 				</ul>
-				Exmple:
+				Example:
 				<br>
 				<br> File <a href="bds/test_08.bds">test_08.bds</a>
 <pre class="prettyprint">
@@ -1362,7 +1362,7 @@ After
 </pre>
 
 				<li> Everything after a <code>sys</code> keyword until the end of the line is considered part of the command to be executed.
-				So mutiple shell commands can be separated by semicolon
+				So multiple shell commands can be separated by semicolon
 <pre class="prettyprint">
 sys echo Hello ; echo Bye
 </pre>
@@ -1484,7 +1484,7 @@ World
 					<tr> 
 						<td> <code>mesos</code> </td>
 						<td> Running on a Mesos framework </a> </td>
-						<td> Tasks are scheduled for execution Mesos framework and resource management is delegated to Mesos. </td>
+						<td> Tasks are scheduled for execution in Mesos framework and resource management is delegated to Mesos. </td>
 					</tr>
 				</table>
 				<br>
@@ -1533,7 +1533,7 @@ Hi 8
 </pre>
 
 			<h3> Resource consumption and task options</h3>
-			Often <code>task</code> requires many CPUs or resourcerces.
+			Often <code>task</code> requires many CPUs or resources.
 			In such case, we should inform the resource management system in order to get an efficient allocation of resources (plus many cluster systems kill tasks that fail to report resources correctly).
 			<br>
 			E.g., In this example we allocate 4 CPUs per task and run it on an 8-core computer, so obviously only 2 tasks can run at the same time:
@@ -1604,7 +1604,7 @@ Done 9
 					<tr>
 						<td> <code>node</code> </td>	
 						<td>  </td> 
-						<td> If possible this task should be executed on a particular cluster node. This option is ony used for cluster systems and ignored on any other systems. </td> 
+						<td> If possible this task should be executed on a particular cluster node. This option is only used for cluster systems and ignored on any other systems. </td> 
 					</tr>
 					<tr>
 						<td> <code>queue</code> </td>	
@@ -1619,14 +1619,14 @@ Done 9
 					<tr>
 						<td> <code>taskName</code> </td>	
 						<td>  </td> 
-						<td> Assign a task name. This adds a label to the task as well as the taskId returned by <code>task</code> expression. Task ID is used to create log files related to the task (shell script, STDOUT, STDERR and exitCode files) so those file names are also changed. This makes it easier to find tasks in the final report and log files (it has no effect other than that). Note: If taskName contains non-allowed charaters, they are sanitized (replaced by '_').</td> 
+						<td> Assign a task name. This adds a label to the task as well as the taskId returned by <code>task</code> expression. Task ID is used to create log files related to the task (shell script, STDOUT, STDERR and exitCode files) so those file names are also changed. This makes it easier to find tasks in the final report and log files (it has no effect other than that). Note: If taskName contains non-allowed characters, they are sanitized (replaced by '_').</td> 
 					</tr>
 				</table>
 
 				<h3> Conditional execution </h3>
-				Conditional execution of task can, obviously, be achieved using an <code>if</code> statement.
-				Since conditional execution is so common, we allow for some syntatic sugar by <code> task( experession1, experession2, ... ) { ... } </code>.
-				where <code>experession1</code>, <code>experession2</code>, etc. are either boolean expressions or variable declarations.
+				Conditional execution of tasks can, obviously, be achieved using an <code>if</code> statement.
+				Since conditional execution is so common, we allow for some syntatic sugar by <code> task( expression1, expression2, ... ) { ... } </code>.
+				where <code>expression1</code>, <code>expression2</code>, etc. are either boolean expressions or variable declarations.
 				The task is executed only if all <code>bool</code> expressions are <code>true</code>.
 				<br>
 				So the following programs are equivalent
@@ -1706,7 +1706,7 @@ task ( [out1, out2] <- [in1, in2] ) {
 	sys cat $in1 $in2 | wc -l > $out2
 }
 </pre>
-					<li> A task with mutiple inputs and outputs dependencies, using 4 CPUs and declaring a local variable 'tmp'
+					<li> A task with multiple inputs and outputs dependencies, using 4 CPUs and declaring a local variable 'tmp'
 <pre class="prettyprint">
 task ( [out1, out2] <- [in1, in2] , cpus := 4 , tmp := "$in1.tmp" ) {
 	sys cat $in1 | grep "^results" > $out1
@@ -1864,7 +1864,7 @@ DONE 9
 				It is true if <code>out</code> file needs to be created or updated.
 				This means that the operator is true if any of the following is satisfied:
 				<ul>
-					<li> <code>out</code> file does not exits
+					<li> <code>out</code> file does not exist
 					<li> <code>out</code> file is empty (has zero length)
 					<li> <code>out</code> latest modification time is earlier than <code>in</code> latest modification time
 				</ul>
@@ -2016,7 +2016,7 @@ goal tid	# We use task Id instead of a file name
 				<br>
 				<h3> Multiple goals </h3>
 				<br>
-				Sometimes it is convinient to fire multiple goals at once, you can do this by passing a list, instead of a string to <code>goal</code>.
+				Sometimes it is convenient to fire multiple goals at once. You can do this by passing a list, instead of a string, to <code>goal</code>.
 				<br>
 				<br>
 <pre class="prettyprint">
@@ -2047,7 +2047,7 @@ goal outs	# We use a list of goals, it is interpreted as multiple goal statement
 				<br>
 				<br>
 				<b>Example 1:</b> In this example, the remote file <code>index.html</code> is remote input file to the <code>task</code>.
-				Obviously <code>index.html</code> is hosted on GitHub's servers, thus not avilable on the computer where the script is running.
+				Obviously <code>index.html</code> is hosted on GitHub's servers, thus not available on the computer where the script is running.
 				Before the command (<code>cat</code>) is executed, the remote file is transparently downloaded by <code>bds</code>.
 				<br>
 				<br>
@@ -2088,7 +2088,7 @@ task( out <- in ) {
 				<br>
 				Sometimes multiple branches of an analysis pipeline must be run in parallel. 
 				<code>bds</code> provides a simple <code>par</code> expression to run code in parallel.
-				Originally this was called <code>parallel</code>, but then I realized I was too lazy to type all those leters, so I reduced it to <code>par</code> (both of them work if you choose to be more verbose).
+				Originally this was called <code>parallel</code>, but then I realized I was too lazy to type all those letters, so I reduced it to <code>par</code> (both of them work if you choose to be more verbose).
 				<br> 
 				<br> E.g.: File <a href="bds/test_16.bds">test_16.bds</a>
 <pre class="prettyprint">
@@ -2166,9 +2166,9 @@ wait pid                            // Wait for parallel to finish
 				Here <code>wait</code> statement waits until the function "longRunningFunction()" finishes.
 				<br>
 				<br>
-				We mentioned before that, by default, a <code>wait</code> statement with no arguments, would wait for 'all' tasks to finish.
+				We mentioned before that, by default, a <code>wait</code> statement with no arguments would wait for 'all' tasks to finish.
 				Specifically, <code>wait</code> statement waits for all tasks scheduled by the same thread and for all 'parallels'.
-				So, <code>wait</code> statement with no arguments, will not restore execution until all threads and tasks trigered by the current thread have finished.
+				So, <code>wait</code> statement with no arguments, will not restore execution until all threads and tasks triggered by the current thread have finished.
 				<br>
 				<br>
 				<h3> Calling functions  with 'par' </h3>
@@ -2271,7 +2271,7 @@ Number: 10
 				This is a powerful tool to create robust pipelines and to recover from several failure conditions.
 				<br>
 				<br>
-				A checkpoint is created either when a task fails or when an explicit <code>checkpopint</code> command is executed.
+				A checkpoint is created either when a task fails or when an explicit <code>checkpoint</code> command is executed.
 				E.g.: The following program counts from 0 to 9, creating a checkpoint when the counter gets to 5
 				<br> File <a href="bds/test_19.bds">test_19.bds</a>
 <pre class="prettyprint">
@@ -2515,7 +2515,7 @@ $ ./test_20.bds
 In file is 'in.txt'
 </pre>
 
-				Now we pass a command line argument <code>-in another_file.txt</code>, and <code>bds</code> automatically parses that command line option replacing the value of varialbe 'in'
+				Now we pass a command line argument <code>-in another_file.txt</code>, and <code>bds</code> automatically parses that command line option replacing the value of variable 'in'
 <pre class="prettyprint">
 $ ./test_20.bds -in another_file.txt
 In file is 'another_file.txt'
@@ -2591,7 +2591,7 @@ OK : true
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="autoHelp">Automatic command line help </h1>
-				<p class="lead"> An automatic command line 'help' for your scripts can be created automatically by <code>bds</code>. </p>
+				<p class="lead"> A command line 'help' for your scripts can be created automatically by <code>bds</code>. </p>
 
 				When you create variables that are used in command line arguments, you can provide an optional <code>help</code> string that <code>bds</code> will show when the script is run using either: <code>-h</code>, <code>-help</code> or <code>--help</code> command line options.
 				<br>
@@ -2634,8 +2634,8 @@ Command line options 'test_26.bds' :
 </pre>
 				<br>
 				<h3> Help sort order </h3>
-				Note that by default variables are sorted alphabetically when help is shown. 
-				This can be overriden by creating a global variable <code>helpUnsorted</code> (regardless of it's type and value, since the program may not even be running when the help is shown).
+				By default variables are sorted alphabetically when help is shown. 
+				This can be overridden by creating a global variable <code>helpUnsorted</code> (regardless of its type and value, since the program may not even be running when the help is shown).
 				<br>
 				File <a href="bds/test_26b.bds">test_26b.bds</a>
 <pre class="prettyprint">
@@ -2690,7 +2690,7 @@ Command line options 'test_26c.bds' :
 				<br>
 				<h3> Help sections </h3>
 
-				Sometimes it is usefull to divide the help message into sections.
+				Sometimes it is useful to divide the help message into sections.
 				Sections are marked by <code>help</code> statements as in this example:
 				<br>
 				File <a href="bds/test_26d.bds">test_26d.bds</a>
@@ -2712,7 +2712,7 @@ dbName := "testDb"  help Database name
 print "OK\n"
 </pre>
 				<br>
-				When run, variables are grouped in two "help sections" (note that varaibles are sorted within each section):
+				When run, variables are grouped in two "help sections" (note that variables are sorted within each section):
 <pre>
 $ ./test_26d.bds -h
 This program does blah
@@ -2730,7 +2730,7 @@ Options related to database
 			<!-- ================================================== -->
 			<div class="bs-docs-section">
 				<h1 class="page-header" id="autoLog">Logging </h1>
-				<p class="lead"> Logging is mundane, boring but many times necesary. Not many peole enjoy adding hundreds of line of code just to perform logging, that's why <code>bds</code> can log everything for you.</p>
+				<p class="lead"> Logging is mundane and boring, but many times nescesary. Not many people enjoy adding hundreds of line of code just to perform logging. That's why <code>bds</code> can log everything for you.</p>
 
 				Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
 				This gives you an automatic log of everything that was executed, as well as the details of the outputs and exit status from each execution.
@@ -2796,7 +2796,7 @@ $ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
 				<br>
 				Also, <code>bds</code> ensures that resources are not wasted, by killing all pending tasks.
 				In large pipelines, thousands of tasks can be scheduled for execution in a cluster and it is quite difficult for the user to keep track of them and clean them if the pipeline fails.
-				Fortunately <code>bds</code> takes care of all these details and issues appropiate commands to kill all pending task.
+				Fortunately <code>bds</code> takes care of all these details and issues appropriate commands to kill all pending tasks.
 
 				<br> File <a href="bds/test_22.bds">test_22.bds</a>
 <pre class="prettyprint">
@@ -2850,12 +2850,12 @@ Done 3
 				When this is executed in a cluster, the appropriate <code>qdel</code>, <code>canceljob</code> or similar command is issued (depending on the type of cluster used).
 	
 				<h3 class="page-header" id="myfirst">Disappearing tasks</h3>
-				<p class="lead"> Simetime tasks just disappear from clusters. </p>
+				<p class="lead"> Sometimes tasks just disappear from clusters. </p>
 
-				Sometimes cluster fails in ways that the cluster management system is unable to detect a failure, let alone report the error.
-				It can happen that task disappear without any trace from the cluster (this is not as rare as you may think, particularly when executing thousands of tasks per pipeline).
+				Sometimes clusters fail in ways that the cluster management system is unable to detect, let alone report the error.
+				It can happen that tasks disappear without any trace from the cluster (this is not as rare as you may think, particularly when executing thousands of tasks per pipeline).
 				For this reason, <code>bds</code> performs active monitoring, to ensure that tasks are still alive.
-				If any tasks "mysteriously disappears", <code>bds</code> reports the problem and considers the task as failed.
+				If any task "mysteriously disappears", <code>bds</code> reports the problem and considers the task as failed.
 			</div>
 
 			<!-- ================================================== -->
@@ -2863,7 +2863,7 @@ Done 3
 				<h1 class="page-header" id="commandLine">BDS Command line options </h1>
 				<p class="lead"> BigDataScript (<code>bds</code>) command line arguments. <p>
 					
-				Running the command line without any arguments, shows a help message
+				Running the bds command without any arguments shows a help message
 <pre class="prettyprint">
 $ bds
 BigDataScript 0.999i (build 2015-03-28), by Pablo Cingolani
@@ -2925,7 +2925,7 @@ Available options:
 				<p class="lead"> BigDataScript's config file allows to customize <code>bds</code>'s behaviour.</p>
 
 				<p> 
-				BigDataScript's config file is usualy located in <code>$HOME/.bds/bds.config</code>.
+				BigDataScript's config file is usually located in <code>$HOME/.bds/bds.config</code>.
 				Running <code>bds</code> without any arguments shows the config's file default location.
 				You can provide an alternative path using command line option <code>-c</code>.
 				<br>
@@ -2937,7 +2937,7 @@ Available options:
 				<br>
 				<h3>Default parameters</h3>
 				This section defines default parameters used in running tasks (such as system type, number of CPUs, memory, etc.).
-				Most of the time you'd rather keep options unspecified but it can be convinient to set <code>system = local</code> in 
+				Most of the time you'd rather keep options unspecified but it can be convenient to set <code>system = local</code> in 
 				your laptop and <code>system = cluster</code> in your production cluster.
 
 				<table class="table table-striped">
@@ -3136,7 +3136,7 @@ accounting_summary FALSE
 
 				<h3>Generic Cluster options </h3>
 				Cluster <b>generic</b> invokes user defined scripts for manupulating tasks.
-				This allows the user to customize scripts for particular cluster environments (e.g. environments not currently supproted by <code>bds</code>)
+				This allows the user to customize scripts for particular cluster environments (e.g. environments not currently supported by <code>bds</code>)
 				<br>
 				<br>
 				<b>Note</b>: You should either provide the script's full path or the scripts should 
@@ -3149,7 +3149,7 @@ accounting_summary FALSE
 				<br>
 				<br>
 				<b>Note</b>: You can use command path starting with '~' to indicate <code>$HOME</code> dir or '.' to 
-					  indicate path relative to config's file dir
+					  indicate path relative to config file's dir
 				<br>
 				<br>
 				<table class="table table-striped">
@@ -3171,7 +3171,7 @@ accounting_summary FALSE
 							<b>Command line arguments</b>:
 								<ol>
 									<li> Task's timeout in seconds. Negative number means 'unlimited' (i.e. let the cluster system decide)
-									<li> Tasks required CPUs: number of cores within the same node.
+									<li> Task's required CPUs: number of cores within the same node.
 									<li> Task's required memory in bytes. Negative means 'unspecified' (i.e. let the cluster system decide)
 									<li> Cluster's queue name. Empty means "use cluster's default"
 									<li> Cluster's STDOUT redirect file. This is where the cluster should redirect STDOUT.
@@ -3209,9 +3209,9 @@ accounting_summary FALSE
 							<br>
 							<b>Script's expected output</b>:
 								This script is expected to print all jobs currently scheduled or 
-								running in the cluster (e.g. qstat). One per line. The FIRST column 
-								should be the jobID (columns are spce or tab separated). Other 
-								columns may exists (but are currently ignored).
+								running in the cluster (e.g. qstat), one per line. The FIRST column 
+								should be the jobID (columns are space or tab separated). Other 
+								columns may exist (but are currently ignored).
 							<br>
 							<br>
 							<b>Command line arguments</b>:
@@ -3225,7 +3225,7 @@ accounting_summary FALSE
 						<td> clusterGenericPostMortemInfo  </td>
 						<td>
 							The specified script is executed in order to get information of a recently 
-							finished jobId. This information is typically used for debuging and it added to bds's output.
+							finished jobId. This information is typically used for debuging and is added to bds's output.
 							<br>
 							<br>
 							<b>Script's expected output</b>:
