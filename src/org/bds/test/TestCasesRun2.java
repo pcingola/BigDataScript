@@ -25,7 +25,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	public void test100() {
 		Gpr.debug("Test");
 
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("s", 1);
 		expectedValues.put("s2", -1);
 
@@ -35,7 +35,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test101() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("a", 1);
 		expectedValues.put("b", 3);
 		expectedValues.put("c", 5);
@@ -46,7 +46,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test102() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("a", 1);
 		expectedValues.put("b", 3);
 		expectedValues.put("c", 5);
@@ -58,7 +58,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test103() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("is", "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
 		expectedValues.put("is2", "[1, 3, 5, 7, 9]");
 		expectedValues.put("rs", "[1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]");
@@ -81,7 +81,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test106() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("str1", "l[1] : '2'");
 		expectedValues.put("str2", "m{'Hello'} : 'Bye'");
 
@@ -91,7 +91,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test107() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("paramName", "parameter_value");
 		expectedValues.put("file1", "/path/to/file_1.txt");
 		expectedValues.put("file2", "/path/to/file_2.txt");
@@ -105,7 +105,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test108() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("paramName", "parameter_value");
 		expectedValues.put("file1", "/path/to/file_1.txt");
 		expectedValues.put("file2", "/path/to/file_2.txt");
@@ -141,7 +141,7 @@ public class TestCasesRun2 extends TestCasesBase {
 		Gpr.debug("Test");
 		String stdout = runAndReturnStdout("test/run_113.bds");
 
-		Set<String> linesPar = new HashSet<String>();
+		Set<String> linesPar = new HashSet<>();
 		for (String line : stdout.split("\n")) {
 			if (line.startsWith("Par:")) {
 				if (linesPar.contains(line)) throw new RuntimeException("Line repeated (this should never happen): '" + line + "'");
@@ -155,7 +155,7 @@ public class TestCasesRun2 extends TestCasesBase {
 		Gpr.debug("Test");
 		String stdout = runAndReturnStdout("test/run_114.bds");
 
-		Set<String> linesPar = new HashSet<String>();
+		Set<String> linesPar = new HashSet<>();
 		for (String line : stdout.split("\n"))
 			if (line.startsWith("TASK")) linesPar.add(line);
 
@@ -186,7 +186,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Iter 5, Task 1: End\n" //
 				+ "Iter 5, Task 2: Start\n" //
 				+ "Iter 5, Task 2: End\n" //
-				;;
+		;;
 
 		String stdout = runAndReturnStdout("test/run_117.bds");
 
@@ -196,7 +196,7 @@ public class TestCasesRun2 extends TestCasesBase {
 					+ expectedStdout //
 					+ "-------------- STDOUT --------------\n" //
 					+ stdout //
-					;
+			;
 			System.err.println(msg);
 			throw new RuntimeException(msg);
 		}
@@ -220,11 +220,11 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "Running task\n" //
 				+ "Creating tmp_out.txt\n" //
 				+ "Done\n" //"
-				;
+		;
 
 		String expectedStdout2 = "Running task\n" //
 				+ "Done\n" //"
-				;
+		;
 
 		if (verbose) System.out.println("First run:");
 		runAndCheckStdout("test/run_119.bds", expectedStdout1);
@@ -261,13 +261,13 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "print_double       |\t|    variable:Hello\n" //
 				+ "print_double_esc   |\\t|\n" //
 				+ "print_double_esc   |\\t|   variable:Hello\n" //
-		// Note: This result may change if we use a different sysShell in bds.config
+				// Note: This result may change if we use a different sysShell in bds.config
 				+ "sys                |\\t|\n" //
 				+ "sys                |\\t|    variable:Hello\n" //
-		// Note: This result may change if we use a different taskShell in bds.config
+				// Note: This result may change if we use a different taskShell in bds.config
 				+ "task               |\\t|\n" //
 				+ "task               |\\t|    variable:Hello\n" //
-				;
+		;
 
 		runAndCheckStdout("test/run_123.bds", output);
 	}
@@ -285,7 +285,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "print 7\n" //
 				+ "print 8\n" //
 				+ "print 9\n" //
-				;
+		;
 
 		// Run and capture stdout
 		String args[] = { "-quiet" };
@@ -309,7 +309,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\t-someVeryLongCommandLineArgumentName <bool>  : This command line argument has a really long name\n" //
 				+ "\t-useTab <bool>                               : Use tab before printing line\n" //
 				+ "\n" //
-				;
+		;
 
 		runAndCheckHelp("test/run_125.bds", output);
 	}
@@ -325,7 +325,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\t-min <int>                                   : Help for argument 'min' should be printed here\n" //
 				+ "\t-mean <int>                                  : Help for argument 'mean' should be printed here\n" //
 				+ "\n" //
-				;
+		;
 
 		runAndCheckHelp("test/run_125b.bds", output);
 	}
@@ -344,7 +344,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\t-someVeryLongCommandLineArgumentName <bool>  : This command line argument has a really long name\n" //
 				+ "\t-useTab <bool>                               : Use tab before printing line\n" //
 				+ "\n" //
-				;
+		;
 
 		runAndCheckHelp("test/run_125c.bds", output);
 	}
@@ -370,7 +370,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "    OUT_2_0: " + Gpr.HOME + "/zzz/out_2_0.txt\n" //
 				+ "    OUT_2_1: " + Gpr.HOME + "/zzz/out_2_1.txt\n" //
 				+ "    OUT_2_2: " + Gpr.HOME + "/zzz/out_2_2.txt\n" //
-				;
+		;
 
 		String stdout = runAndReturnStdout("test/run_126.bds");
 		if (verbose) {
@@ -395,7 +395,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "bwa parameters\n" //
 				+ "bwa parameters\n" //
 				+ "bwa parameters\n" //
-				;
+		;
 
 		runAndCheckStdout("test/run_127.bds", output);
 	}
@@ -444,7 +444,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "chdir_test_file_02.txt\tisFile:true\n" //
 				+ "chdir_test_file_02.txt\tcanRead:true\n" //
 				+ "chdir_test_file_02.txt\tcanWrite:true\n" //
-				;
+		;
 
 		String outreal = runAndReturnStdout("test/run_131.bds");
 		Assert.assertEquals(out, outreal);
@@ -487,7 +487,7 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "\t-dbName <string>  : Database name\n" //
 				+ "\t-dbPort <int>     : Database port\n" //
 				+ "\n" //
-				;
+		;
 
 		runAndCheckHelp("test/run_134.bds", output);
 	}
@@ -495,7 +495,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test135() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("l", "[1, 2, 3, 99]");
 		expectedValues.put("lc1", "[1, 2, 3]");
 		expectedValues.put("lc2", "[1, 2, 3]");
@@ -507,7 +507,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test136() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("l", "[1, 99, 2, 3]");
 		expectedValues.put("l2", "[3, 2, 99, 1]");
 		expectedValues.put("l3", "[3, 2, 99, 1, 99]");
@@ -522,7 +522,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test137() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("l", "[1, 2, 3]");
 		expectedValues.put("has2", "true");
 		expectedValues.put("has7", "false");
@@ -635,7 +635,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test149_div() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("val0", 50);
 		expectedValues.put("val1", 50.0);
 		expectedValues.put("val2", 50.0);
@@ -647,7 +647,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test150_mult() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("val0", 200);
 		expectedValues.put("val1", 200.0);
 		expectedValues.put("val2", 200.0);
@@ -659,7 +659,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test151_plus() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("val0", 102);
 		expectedValues.put("val1", 102.0);
 		expectedValues.put("val2", 102.0);
@@ -671,13 +671,25 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test152_minus() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("val0", 98);
 		expectedValues.put("val1", 98.0);
 		expectedValues.put("val2", 98.0);
 		expectedValues.put("val3", 98.0);
 
 		runAndCheck("test/run_152.bds", expectedValues);
+	}
+
+	@Test
+	public void test153_caseInt() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_153.bds", "r", "The answer");
+	}
+
+	@Test
+	public void test154_caseReal() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_154.bds", "res", "OK");
 	}
 
 }

@@ -416,7 +416,7 @@ public abstract class BdsNode implements BdsSerialize {
 	 * Is return type numeric?
 	 */
 	protected boolean isNumeric() {
-		return (returnType != null) && (returnType.isBool() || returnType.isInt() || returnType.isReal());
+		return isBool() || isInt() || isReal();
 	}
 
 	/**

@@ -1,0 +1,15 @@
+#!/usr/bin/env bds
+
+
+i := 42
+r := ''
+
+switch( i ) {
+	case 3:
+		r = 'Three'
+		break
+
+	case 42:
+		r = 'The answer'
+		break
+}

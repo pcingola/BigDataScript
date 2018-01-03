@@ -16,7 +16,7 @@ import org.bds.serialize.BdsSerializer;
  */
 public class Type extends BdsNode implements Comparable<Type> {
 
-	protected static HashMap<String, Type> types = new HashMap<String, Type>();
+	protected static HashMap<String, Type> types = new HashMap<>();
 
 	public final static Type ANY = Type.get(PrimitiveType.ANY); // ANY type (wildcard type)
 	public final static Type BOOL = Type.get(PrimitiveType.BOOL);
@@ -84,7 +84,7 @@ public class Type extends BdsNode implements Comparable<Type> {
 	 * Reset all types
 	 */
 	public static void reset() {
-		types = new HashMap<String, Type>();
+		types = new HashMap<>();
 
 		// Add base types
 		for (PrimitiveType pt : PrimitiveType.values())

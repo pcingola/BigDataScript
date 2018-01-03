@@ -65,7 +65,7 @@ public class Bds {
 
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "o";
+	public static final String REVISION = "p";
 	public static final String VERSION_MAJOR = "0.99999";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
