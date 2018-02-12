@@ -305,10 +305,10 @@ public class BdsThread extends Thread implements BdsSerialize {
 		String prompt = "DEBUG [" + debugMode + "]: " //
 				+ node.getFileName() //
 				+ ", line " + node.getLineNum() //
-				+ (isVerbose() ? " (" + node.getClass().getSimpleName() + ")" : "") //
+				+ (isDebug() ? " (" + node.getClass().getSimpleName() + ")" : "") //
 				+ ": " + prg //
 				+ "> " //
-				;
+		;
 
 		//---
 		// Wait for options
@@ -498,7 +498,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 			return bdsNode.getFileName() //
 					+ ", line " + bdsNode.getLineNum() //
 					+ ", pos " + (bdsNode.getCharPosInLine() + 1) //
-					;
+			;
 		}
 
 		// No file/line info in 'bdsNode'. we walk the program-counter
@@ -913,9 +913,9 @@ public class BdsThread extends Thread implements BdsSerialize {
 		// Remove all pending files
 		if (!removeOnExit.isEmpty()) {
 			if (config != null && config.isNoRmOnExit()) {
-				if (isVerbose()) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
+				if (isDebug()) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
 			} else {
-				if (isVerbose()) Timer.showStdErr("Deleting stale files:");
+				if (isDebug()) Timer.showStdErr("Deleting stale files:");
 				for (String fileName : removeOnExit) {
 					if (isVerbose()) System.err.println("\t" + fileName);
 					Data.factory(fileName).delete();
@@ -985,7 +985,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 			ok = false;
 		} else {
 			// OK, we finished running
-			if (isVerbose()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
+			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
 
 			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
 			if (!isFatalError() && !isExit()) ok = waitAll();
@@ -1046,7 +1046,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		if (!isRoot()) parent.remove(this); // Remove this bdsThread from parent's threads
 
 		// OK, we are done
-		if (isVerbose()) {
+		if (isDebug()) {
 			// Root thread? Report all tasks
 			TaskDependecies td = isRoot() ? TaskDependecies.get() : taskDependecies;
 
@@ -1486,7 +1486,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	public boolean waitThread(BdsThread bdsThread) {
 		try {
 			if (bdsThread != null) {
-				if (isVerbose()) Timer.showStdErr("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());
+				if (isDebug()) Timer.showStdErr("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());
 				if (bdsThread.isFinished()) return true;
 				bdsThread.join();
 				return bdsThread.getExitValue() == 0; // Finished OK?
@@ -1503,7 +1503,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		// Wait for all tasks to finish
 		boolean ok = true;
 
-		if (isVerbose() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
+		if (isDebug() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
 		for (BdsThread bdsth : bdsChildThreadsById.values())
 			ok &= waitThread(bdsth);
 

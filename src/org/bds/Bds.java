@@ -65,8 +65,8 @@ public class Bds {
 
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "p";
-	public static final String VERSION_MAJOR = "0.99999";
+	public static final String REVISION = "";
+	public static final String VERSION_MAJOR = "1.0";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
@@ -442,7 +442,7 @@ public class Bds {
 
 		// Already downloaded? Nothing to do
 		if (remote.isDownloaded(fileName)) {
-			if (verbose) System.err.println("Local file is up to date, no download required: " + fileName);
+			if (debug) System.err.println("Local file is up to date, no download required: " + fileName);
 			return true;
 		}
 
@@ -504,7 +504,7 @@ public class Bds {
 		BdsNodeFactory.reset();
 
 		// Startup message
-		if (verbose || debug) Timer.showStdErr(VERSION);
+		if (log || debug) Timer.showStdErr(VERSION);
 
 		// Load config file
 		config();
@@ -795,6 +795,7 @@ public class Bds {
 
 				case "-v":
 				case "-verbose":
+					quiet = false;
 					verbose = true;
 					break;
 
@@ -864,7 +865,7 @@ public class Bds {
 		default:
 			exitValue = runCompile(); // Compile & run
 		}
-		if (verbose) Timer.showStdErr("Finished. Exit code: " + exitValue);
+		if (debug) Timer.showStdErr("Finished. Exit code: " + exitValue);
 
 		//---
 		// Kill all executioners
@@ -909,31 +910,31 @@ public class Bds {
 	 */
 	int runCompile() {
 		// Compile, abort on errors
-		if (verbose) Timer.showStdErr("Parsing");
+		if (debug) Timer.showStdErr("Parsing");
 		if (!compile()) {
 			// Show errors and warnings, if any
 			if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
 			return 1;
 		}
 
-		if (verbose) Timer.showStdErr("Initializing");
+		if (debug) Timer.showStdErr("Initializing");
 		BdsParseArgs bdsParseArgs = new BdsParseArgs(this);
 		bdsParseArgs.setDebug(debug);
 		bdsParseArgs.parse();
 
 		// Run the program
 		BdsThread bdsThread = new BdsThread(programUnit, config);
-		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
+		if (debug) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 
 		// Show script's automatic help message
 		if (bdsParseArgs.isShowHelp()) {
-			if (verbose) Timer.showStdErr("Showing automaic 'help'");
+			if (debug) Timer.showStdErr("Showing automaic 'help'");
 			HelpCreator hc = new HelpCreator(programUnit);
 			System.out.println(hc);
 			return 0;
 		}
 
-		if (verbose) Timer.showStdErr("Running");
+		if (debug) Timer.showStdErr("Running");
 		int exitCode = runThread(bdsThread);
 
 		// Check stack
@@ -947,23 +948,23 @@ public class Bds {
 	 */
 	int runTests() {
 		// Compile, abort on errors
-		if (verbose) Timer.showStdErr("Parsing");
+		if (debug) Timer.showStdErr("Parsing");
 		if (!compile()) {
 			// Show errors and warnings, if any
 			if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
 			return 1;
 		}
 
-		if (verbose) Timer.showStdErr("Initializing");
+		if (debug) Timer.showStdErr("Initializing");
 		BdsParseArgs bdsParseArgs = new BdsParseArgs(this);
 		bdsParseArgs.setDebug(debug);
 		bdsParseArgs.parse();
 
 		// Run the program
 		BdsThread bdsThread = new BdsThread(programUnit, config);
-		if (verbose) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
+		if (debug) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 
-		if (verbose) Timer.showStdErr("Running tests");
+		if (debug) Timer.showStdErr("Running tests");
 		ProgramUnit pu = bdsThread.getProgramUnit();
 		return runTests(pu);
 	}
@@ -1087,7 +1088,7 @@ public class Bds {
 
 		// Already uploaded? Nothing to do
 		if (remote.isUploaded(fileName)) {
-			if (verbose) System.err.println("Remote file is up to date, no upload required: " + url);
+			if (debug) System.err.println("Remote file is up to date, no upload required: " + url);
 			return true;
 		}
 

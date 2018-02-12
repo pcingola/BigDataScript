@@ -1,15 +1,4 @@
 #!/usr/bin/env bds
 
-
-r := 1.234
-res := ''
-
-switch( r ) {
-	case 0.234 + 1.0:
-		res = 'OK'
-		break
-
-	default:
-		res = 'Wrong answer'
-		break
-}
+l := sys date
+println "l: $l"

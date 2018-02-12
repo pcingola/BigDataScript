@@ -80,7 +80,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Queue an Exec and return a the id
 	 */
 	public synchronized void add(Task task) {
-		if (verbose) log("Queuing task: " + task.getId());
+		if (debug) log("Queuing task: " + task.getId());
 		task.state(TaskState.SCHEDULED);
 		tasksToRun.add(task);
 	}
@@ -230,7 +230,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Stop executioner and kill all tasks
 	 */
 	public synchronized void kill() {
-		if (verbose) log("Killed");
+		if (debug) log("Killed");
 
 		// Kill all 'tasksToRun'.
 		// Note: We need to create a new list to avoid concurrent modification exceptions
@@ -347,9 +347,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 */
 	@Override
 	public void run() {
-		if (verbose) log("Started running");
+		if (debug) log("Started running");
 		runExecutioner();
-		if (verbose) log("Finished running");
+		if (debug) log("Finished running");
 	}
 
 	/**
@@ -439,7 +439,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// If that happens, well get an exception
 			while (Exec.countRunningThreads() >= config.getMaxThreads()) {
 				// Too many threads running? Sleep for a while (block until some threads finish)
-				if (verbose) log("INFO: Too many threads running (limit set to " + config.getMaxThreads() + "). Waiting for some threads to finish.");
+				if (debug) log("INFO: Too many threads running (limit set to " + config.getMaxThreads() + "). Waiting for some threads to finish.");
 				sleepLong();
 			}
 		}
@@ -582,7 +582,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Select task to be executed on a host
 	 */
 	protected synchronized void selectTask(Task task, Host host) {
-		if (verbose) log("Task selected '" + task.getId() + "' on host '" + host + "'");
+		if (debug) log("Task selected '" + task.getId() + "' on host '" + host + "'");
 		tasksSelected.put(task, host);
 		host.add(task);
 	}
@@ -688,7 +688,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// Can we re-try?
 			if (!task.isCanFail() && task.canRetry()) {
 				// Retry task
-				log("Task failed, retrying ( " + task.getMaxFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (verbose ? "\n" : ", ") + task.toString(verbose));
+				log("Task failed, retrying ( " + task.getMaxFailCount() + " remaining retries ): task ID '" + task.getId() + "'" + (debug ? "\n" : ", ") + task.toString(verbose));
 
 				// Move task form 'taskDone' back to 'tasksToRun' queue
 				task.reset(); // Prepare to re-run task

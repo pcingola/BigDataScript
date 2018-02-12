@@ -41,7 +41,7 @@ public class Executioners {
 	private static Executioners executionersInstance = null;
 
 	// Map by type
-	private ConcurrentHashMap<ExecutionerType, Executioner> executioners = new ConcurrentHashMap<ExecutionerType, Executioner>();
+	private ConcurrentHashMap<ExecutionerType, Executioner> executioners = new ConcurrentHashMap<>();
 
 	Config config;
 
@@ -86,7 +86,7 @@ public class Executioners {
 	private synchronized Executioner factory(ExecutionerType exType) {
 		Executioner executioner;
 
-		if (config.isVerbose()) Timer.showStdErr("Executioner factory: Creating new executioner type '" + exType + "'");
+		if (config.isDebug()) Timer.showStdErr("Executioner factory: Creating new executioner type '" + exType + "'");
 
 		switch (exType) {
 		case CLUSTER:

@@ -41,7 +41,7 @@ public class Exec {
 	}
 
 	protected ExecResult run(List<String> args, boolean quiet) {
-		if (Config.get().isVerbose() || Config.get().isLog()) Timer.showStdErr("Executing command. Arguments: " + args);
+		if (Config.get().isDebug() || Config.get().isLog()) Timer.showStdErr("Executing command. Arguments: " + args);
 
 		// Create a command string
 		StringBuilder cmdsb = new StringBuilder();

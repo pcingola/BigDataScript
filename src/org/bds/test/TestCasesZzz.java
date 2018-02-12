@@ -3,6 +3,8 @@ package org.bds.test;
 import org.bds.util.Gpr;
 import org.junit.Test;
 
+import junit.framework.Assert;
+
 /**
  * Quick test cases when creating a new feature...
  *
@@ -10,11 +12,12 @@ import org.junit.Test;
  *
  */
 public class TestCasesZzz extends TestCasesBase {
+
 	@Test
-	public void test11() {
+	public void test116_lineWrap_backslashId() {
 		Gpr.debug("Test");
-		// Run pipeline and test checkpoint
-		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
+		String stdout = runAndReturnStdout("test/run_116.bds");
+		Assert.assertEquals("hi bye\nThe answer\t\tis: 42", stdout);
 	}
 
 }

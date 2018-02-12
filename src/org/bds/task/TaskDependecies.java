@@ -180,17 +180,17 @@ public class TaskDependecies {
 					for (Task t : tasks) {
 					// Add all input files
 					if (t.getInputs() != null) {
-						for (String in : t.getInputs())
-							changed |= newGoals.add(in); // Add each node
+					for (String in : t.getInputs())
+					changed |= newGoals.add(in); // Add each node
 					}
 
 					// Add all task Ids
 					List<Task> depTasks = t.getDependencies();
 					if (depTasks != null) {
-						for (Task dt : depTasks)
-							changed |= newGoals.add(dt.getId()); // Add each task ID
+					for (Task dt : depTasks)
+					changed |= newGoals.add(dt.getId()); // Add each task ID
 					}
-				}
+					}
 			}
 
 			goals = newGoals;
@@ -466,7 +466,7 @@ public class TaskDependecies {
 			return true;
 		}
 
-		if (verbose) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId() + ", state: " + task.getTaskState());
+		if (debug) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId() + ", state: " + task.getTaskState());
 
 		// Wait for task to finish
 		while (!task.isDone()) {
@@ -486,7 +486,7 @@ public class TaskDependecies {
 			task.deleteOutputFilesOnExit();
 		}
 
-		if (verbose) Timer.showStdErr("Wait: Task '" + task.getId() + "' finished.");
+		if (debug) Timer.showStdErr("Wait: Task '" + task.getId() + "' finished.");
 
 		return ok;
 	}
@@ -499,7 +499,7 @@ public class TaskDependecies {
 		// Wait for all tasks to finish
 		boolean ok = true;
 
-		if (verbose && !isAllTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
+		if (debug && !isAllTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
 
 		// Get all taskIds in a new collection (to avoid concurrent modification
 		LinkedList<String> tids = new LinkedList<>();

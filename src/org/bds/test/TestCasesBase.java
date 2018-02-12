@@ -144,7 +144,7 @@ public class TestCasesBase {
 	 * Check that StdOut has a string (or that the string is NOT present if 'negate' is true)
 	 */
 	String runAndCheckStdout(String fileName, String expectedStdout, boolean negate) {
-		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		BdsTest bdsTest = new BdsTest(fileName, true, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		bdsTest.checkStdout(expectedStdout, negate);
@@ -172,7 +172,7 @@ public class TestCasesBase {
 	 * Run a bds program and capture stdout (while still showing it)
 	 */
 	String runAndReturnStdout(String fileName, String args[]) {
-		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
+		BdsTest bdsTest = new BdsTest(fileName, args, true, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		return bdsTest.captureStdout.toString();

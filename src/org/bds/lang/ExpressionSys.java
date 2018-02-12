@@ -71,7 +71,7 @@ public class ExpressionSys extends Expression {
 				+ (taskName == null ? "" : "." + taskName) //
 				+ ".line_" + getLineNum() //
 				+ ".id_" + nextId //
-				;
+		;
 
 		return execId;
 	}
@@ -122,7 +122,7 @@ public class ExpressionSys extends Expression {
 		execId("exec", getFileName(), null, bdsThread);
 
 		// EXEC expressions are always executed locally AND immediately
-		LinkedList<String> args = new LinkedList<String>();
+		LinkedList<String> args = new LinkedList<>();
 		String shell = Config.get().getSysShell();
 		for (String arg : shell.split("\\s+"))
 			args.add(arg);
@@ -134,7 +134,8 @@ public class ExpressionSys extends Expression {
 		args.add(cmds);
 
 		// Run command line
-		ExecResult execResult = Exec.exec(args, bdsThread.getConfig().isQuiet());
+		boolean quiet = !(bdsThread.getConfig().isVerbose() || bdsThread.getConfig().isDebug() || bdsThread.getConfig().isLog());
+		ExecResult execResult = Exec.exec(args, quiet);
 
 		// Error running process?
 		int exitValue = execResult.exitValue;
@@ -144,10 +145,9 @@ public class ExpressionSys extends Expression {
 
 			// Execution failed on a 'sys' command that cannot fail. Save checkpoint and exit
 			if (!canFail) {
-				bdsThread.fatalError(this,
-						"Exec failed." //
-								+ "\n\tExit value : " + exitValue //
-								+ "\n\tCommand    : " + cmds //
+				bdsThread.fatalError(this, "Exec failed." //
+						+ "\n\tExit value : " + exitValue //
+						+ "\n\tCommand    : " + cmds //
 				);
 				return;
 			}
