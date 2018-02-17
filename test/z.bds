@@ -1,4 +1,19 @@
 #!/usr/bin/env bds
 
-l := sys date
-println "l: $l"
+# string{string[]} mapList
+# string[] ls = ['a','b','c']
+# mapList{'hi'} = ls
+# println "mapList{'hi'} : $mapList{'hi'}"
+
+# string[][] lls
+# lls[0] = ['a', 1, 3.14]
+# println "lls: $lls"
+
+int _plus(int a, int b)
+
+# Array access
+a[7]
+var.get(42)
+
+a[7] = expr
+var.set(7, exp)
