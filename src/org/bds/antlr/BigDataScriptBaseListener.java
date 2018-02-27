@@ -1,8 +1,7 @@
-// Generated from BigDataScript.g4 by ANTLR 4.2.2
+// Generated from BigDataScript.g4 by ANTLR 4.7.1
 package org.bds.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -17,1271 +16,1224 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCheckpoint(@NotNull BigDataScriptParser.CheckpointContext ctx) { }
+	@Override public void enterProgramUnit(BigDataScriptParser.ProgramUnitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCheckpoint(@NotNull BigDataScriptParser.CheckpointContext ctx) { }
-
+	@Override public void exitProgramUnit(BigDataScriptParser.ProgramUnitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionLogicAnd(@NotNull BigDataScriptParser.ExpressionLogicAndContext ctx) { }
+	@Override public void enterEol(BigDataScriptParser.EolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionLogicAnd(@NotNull BigDataScriptParser.ExpressionLogicAndContext ctx) { }
-
+	@Override public void exitEol(BigDataScriptParser.EolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveString(@NotNull BigDataScriptParser.TypePrimitiveStringContext ctx) { }
+	@Override public void enterTypeList(BigDataScriptParser.TypeListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePrimitiveString(@NotNull BigDataScriptParser.TypePrimitiveStringContext ctx) { }
-
+	@Override public void exitTypeList(BigDataScriptParser.TypeListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEol(@NotNull BigDataScriptParser.EolContext ctx) { }
+	@Override public void enterTypePrimitiveString(BigDataScriptParser.TypePrimitiveStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEol(@NotNull BigDataScriptParser.EolContext ctx) { }
-
+	@Override public void exitTypePrimitiveString(BigDataScriptParser.TypePrimitiveStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatementInclude(@NotNull BigDataScriptParser.StatementIncludeContext ctx) { }
+	@Override public void enterTypeArray(BigDataScriptParser.TypeArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatementInclude(@NotNull BigDataScriptParser.StatementIncludeContext ctx) { }
-
+	@Override public void exitTypeArray(BigDataScriptParser.TypeArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionAssignmentList(@NotNull BigDataScriptParser.ExpressionAssignmentListContext ctx) { }
+	@Override public void enterTypePrimitiveVoid(BigDataScriptParser.TypePrimitiveVoidContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionAssignmentList(@NotNull BigDataScriptParser.ExpressionAssignmentListContext ctx) { }
-
+	@Override public void exitTypePrimitiveVoid(BigDataScriptParser.TypePrimitiveVoidContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionEq(@NotNull BigDataScriptParser.ExpressionEqContext ctx) { }
+	@Override public void enterTypeMap(BigDataScriptParser.TypeMapContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionEq(@NotNull BigDataScriptParser.ExpressionEqContext ctx) { }
-
+	@Override public void exitTypeMap(BigDataScriptParser.TypeMapContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionMinus(@NotNull BigDataScriptParser.ExpressionMinusContext ctx) { }
+	@Override public void enterTypePrimitiveReal(BigDataScriptParser.TypePrimitiveRealContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionMinus(@NotNull BigDataScriptParser.ExpressionMinusContext ctx) { }
-
+	@Override public void exitTypePrimitiveReal(BigDataScriptParser.TypePrimitiveRealContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx) { }
+	@Override public void enterTypeClass(BigDataScriptParser.TypeClassContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionDepOperator(@NotNull BigDataScriptParser.ExpressionDepOperatorContext ctx) { }
-
+	@Override public void exitTypeClass(BigDataScriptParser.TypeClassContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterWhile(@NotNull BigDataScriptParser.WhileContext ctx) { }
+	@Override public void enterTypePrimitiveBool(BigDataScriptParser.TypePrimitiveBoolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitWhile(@NotNull BigDataScriptParser.WhileContext ctx) { }
-
+	@Override public void exitTypePrimitiveBool(BigDataScriptParser.TypePrimitiveBoolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterForEnd(@NotNull BigDataScriptParser.ForEndContext ctx) { }
+	@Override public void enterTypePrimitiveInt(BigDataScriptParser.TypePrimitiveIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitForEnd(@NotNull BigDataScriptParser.ForEndContext ctx) { }
-
+	@Override public void exitTypePrimitiveInt(BigDataScriptParser.TypePrimitiveIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionNe(@NotNull BigDataScriptParser.ExpressionNeContext ctx) { }
+	@Override public void enterClassDef(BigDataScriptParser.ClassDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionNe(@NotNull BigDataScriptParser.ExpressionNeContext ctx) { }
-
+	@Override public void exitClassDef(BigDataScriptParser.ClassDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionBitXor(@NotNull BigDataScriptParser.ExpressionBitXorContext ctx) { }
+	@Override public void enterVarDeclaration(BigDataScriptParser.VarDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionBitXor(@NotNull BigDataScriptParser.ExpressionBitXorContext ctx) { }
-
+	@Override public void exitVarDeclaration(BigDataScriptParser.VarDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionBitNegation(@NotNull BigDataScriptParser.ExpressionBitNegationContext ctx) { }
+	@Override public void enterVariableInit(BigDataScriptParser.VariableInitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionBitNegation(@NotNull BigDataScriptParser.ExpressionBitNegationContext ctx) { }
-
+	@Override public void exitVariableInit(BigDataScriptParser.VariableInitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterForCondition(@NotNull BigDataScriptParser.ForConditionContext ctx) { }
+	@Override public void enterVariableInitImplicit(BigDataScriptParser.VariableInitImplicitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitForCondition(@NotNull BigDataScriptParser.ForConditionContext ctx) { }
-
+	@Override public void exitVariableInitImplicit(BigDataScriptParser.VariableInitImplicitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterProgramUnit(@NotNull BigDataScriptParser.ProgramUnitContext ctx) { }
+	@Override public void enterIncludeFile(BigDataScriptParser.IncludeFileContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitProgramUnit(@NotNull BigDataScriptParser.ProgramUnitContext ctx) { }
-
+	@Override public void exitIncludeFile(BigDataScriptParser.IncludeFileContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionBitAnd(@NotNull BigDataScriptParser.ExpressionBitAndContext ctx) { }
+	@Override public void enterBlock(BigDataScriptParser.BlockContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionBitAnd(@NotNull BigDataScriptParser.ExpressionBitAndContext ctx) { }
-
+	@Override public void exitBlock(BigDataScriptParser.BlockContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPost(@NotNull BigDataScriptParser.PostContext ctx) { }
+	@Override public void enterBreak(BigDataScriptParser.BreakContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPost(@NotNull BigDataScriptParser.PostContext ctx) { }
-
+	@Override public void exitBreak(BigDataScriptParser.BreakContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterContinue(@NotNull BigDataScriptParser.ContinueContext ctx) { }
+	@Override public void enterBreakpoint(BigDataScriptParser.BreakpointContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitContinue(@NotNull BigDataScriptParser.ContinueContext ctx) { }
-
+	@Override public void exitBreakpoint(BigDataScriptParser.BreakpointContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterWarning(@NotNull BigDataScriptParser.WarningContext ctx) { }
+	@Override public void enterCheckpoint(BigDataScriptParser.CheckpointContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitWarning(@NotNull BigDataScriptParser.WarningContext ctx) { }
-
+	@Override public void exitCheckpoint(BigDataScriptParser.CheckpointContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBlock(@NotNull BigDataScriptParser.BlockContext ctx) { }
+	@Override public void enterContinue(BigDataScriptParser.ContinueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBlock(@NotNull BigDataScriptParser.BlockContext ctx) { }
-
+	@Override public void exitContinue(BigDataScriptParser.ContinueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterReferenceMap(@NotNull BigDataScriptParser.ReferenceMapContext ctx) { }
+	@Override public void enterDebug(BigDataScriptParser.DebugContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitReferenceMap(@NotNull BigDataScriptParser.ReferenceMapContext ctx) { }
-
+	@Override public void exitDebug(BigDataScriptParser.DebugContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionLogicNot(@NotNull BigDataScriptParser.ExpressionLogicNotContext ctx) { }
+	@Override public void enterExit(BigDataScriptParser.ExitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionLogicNot(@NotNull BigDataScriptParser.ExpressionLogicNotContext ctx) { }
-
+	@Override public void exitExit(BigDataScriptParser.ExitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterForLoop(@NotNull BigDataScriptParser.ForLoopContext ctx) { }
+	@Override public void enterPrint(BigDataScriptParser.PrintContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitForLoop(@NotNull BigDataScriptParser.ForLoopContext ctx) { }
-
+	@Override public void exitPrint(BigDataScriptParser.PrintContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterForLoopList(@NotNull BigDataScriptParser.ForLoopListContext ctx) { }
+	@Override public void enterPrintln(BigDataScriptParser.PrintlnContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitForLoopList(@NotNull BigDataScriptParser.ForLoopListContext ctx) { }
-
+	@Override public void exitPrintln(BigDataScriptParser.PrintlnContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIf(@NotNull BigDataScriptParser.IfContext ctx) { }
+	@Override public void enterWarning(BigDataScriptParser.WarningContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIf(@NotNull BigDataScriptParser.IfContext ctx) { }
-
+	@Override public void exitWarning(BigDataScriptParser.WarningContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionVariableInitImplicit(@NotNull BigDataScriptParser.ExpressionVariableInitImplicitContext ctx) { }
+	@Override public void enterError(BigDataScriptParser.ErrorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionVariableInitImplicit(@NotNull BigDataScriptParser.ExpressionVariableInitImplicitContext ctx) { }
-
+	@Override public void exitError(BigDataScriptParser.ErrorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionAssignmentMult(@NotNull BigDataScriptParser.ExpressionAssignmentMultContext ctx) { }
+	@Override public void enterForLoop(BigDataScriptParser.ForLoopContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionAssignmentMult(@NotNull BigDataScriptParser.ExpressionAssignmentMultContext ctx) { }
-
+	@Override public void exitForLoop(BigDataScriptParser.ForLoopContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionDep(@NotNull BigDataScriptParser.ExpressionDepContext ctx) { }
+	@Override public void enterForLoopList(BigDataScriptParser.ForLoopListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionDep(@NotNull BigDataScriptParser.ExpressionDepContext ctx) { }
-
+	@Override public void exitForLoopList(BigDataScriptParser.ForLoopListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionLt(@NotNull BigDataScriptParser.ExpressionLtContext ctx) { }
+	@Override public void enterIf(BigDataScriptParser.IfContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionLt(@NotNull BigDataScriptParser.ExpressionLtContext ctx) { }
-
+	@Override public void exitIf(BigDataScriptParser.IfContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionAssignmentDiv(@NotNull BigDataScriptParser.ExpressionAssignmentDivContext ctx) { }
+	@Override public void enterKill(BigDataScriptParser.KillContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionAssignmentDiv(@NotNull BigDataScriptParser.ExpressionAssignmentDivContext ctx) { }
-
+	@Override public void exitKill(BigDataScriptParser.KillContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPre(@NotNull BigDataScriptParser.PreContext ctx) { }
+	@Override public void enterReturn(BigDataScriptParser.ReturnContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPre(@NotNull BigDataScriptParser.PreContext ctx) { }
-
+	@Override public void exitReturn(BigDataScriptParser.ReturnContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionUnaryPlus(@NotNull BigDataScriptParser.ExpressionUnaryPlusContext ctx) { }
+	@Override public void enterWait(BigDataScriptParser.WaitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionUnaryPlus(@NotNull BigDataScriptParser.ExpressionUnaryPlusContext ctx) { }
-
+	@Override public void exitWait(BigDataScriptParser.WaitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveVoid(@NotNull BigDataScriptParser.TypePrimitiveVoidContext ctx) { }
+	@Override public void enterSwitch(BigDataScriptParser.SwitchContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePrimitiveVoid(@NotNull BigDataScriptParser.TypePrimitiveVoidContext ctx) { }
-
+	@Override public void exitSwitch(BigDataScriptParser.SwitchContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIncludeFile(@NotNull BigDataScriptParser.IncludeFileContext ctx) { }
+	@Override public void enterWhile(BigDataScriptParser.WhileContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIncludeFile(@NotNull BigDataScriptParser.IncludeFileContext ctx) { }
-
+	@Override public void exitWhile(BigDataScriptParser.WhileContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionLogicOr(@NotNull BigDataScriptParser.ExpressionLogicOrContext ctx) { }
+	@Override public void enterFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionLogicOr(@NotNull BigDataScriptParser.ExpressionLogicOrContext ctx) { }
-
+	@Override public void exitFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionParallel(@NotNull BigDataScriptParser.ExpressionParallelContext ctx) { }
+	@Override public void enterStatementVarDeclaration(BigDataScriptParser.StatementVarDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionParallel(@NotNull BigDataScriptParser.ExpressionParallelContext ctx) { }
-
+	@Override public void exitStatementVarDeclaration(BigDataScriptParser.StatementVarDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveReal(@NotNull BigDataScriptParser.TypePrimitiveRealContext ctx) { }
+	@Override public void enterStatementClassDeclaration(BigDataScriptParser.StatementClassDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePrimitiveReal(@NotNull BigDataScriptParser.TypePrimitiveRealContext ctx) { }
-
+	@Override public void exitStatementClassDeclaration(BigDataScriptParser.StatementClassDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralBool(@NotNull BigDataScriptParser.LiteralBoolContext ctx) { }
+	@Override public void enterStatementExpr(BigDataScriptParser.StatementExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralBool(@NotNull BigDataScriptParser.LiteralBoolContext ctx) { }
-
+	@Override public void exitStatementExpr(BigDataScriptParser.StatementExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionGoal(@NotNull BigDataScriptParser.ExpressionGoalContext ctx) { }
+	@Override public void enterStatementInclude(BigDataScriptParser.StatementIncludeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionGoal(@NotNull BigDataScriptParser.ExpressionGoalContext ctx) { }
-
+	@Override public void exitStatementInclude(BigDataScriptParser.StatementIncludeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarDeclaration(@NotNull BigDataScriptParser.VarDeclarationContext ctx) { }
+	@Override public void enterHelp(BigDataScriptParser.HelpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarDeclaration(@NotNull BigDataScriptParser.VarDeclarationContext ctx) { }
-
+	@Override public void exitHelp(BigDataScriptParser.HelpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionTimes(@NotNull BigDataScriptParser.ExpressionTimesContext ctx) { }
+	@Override public void enterStatmentEol(BigDataScriptParser.StatmentEolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionTimes(@NotNull BigDataScriptParser.ExpressionTimesContext ctx) { }
-
+	@Override public void exitStatmentEol(BigDataScriptParser.StatmentEolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExit(@NotNull BigDataScriptParser.ExitContext ctx) { }
+	@Override public void enterForInit(BigDataScriptParser.ForInitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExit(@NotNull BigDataScriptParser.ExitContext ctx) { }
-
+	@Override public void exitForInit(BigDataScriptParser.ForInitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionList(@NotNull BigDataScriptParser.ExpressionListContext ctx) { }
+	@Override public void enterForCondition(BigDataScriptParser.ForConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionList(@NotNull BigDataScriptParser.ExpressionListContext ctx) { }
-
+	@Override public void exitForCondition(BigDataScriptParser.ForConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionPlus(@NotNull BigDataScriptParser.ExpressionPlusContext ctx) { }
+	@Override public void enterForEnd(BigDataScriptParser.ForEndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionPlus(@NotNull BigDataScriptParser.ExpressionPlusContext ctx) { }
-
+	@Override public void exitForEnd(BigDataScriptParser.ForEndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunctionCall(@NotNull BigDataScriptParser.FunctionCallContext ctx) { }
+	@Override public void enterExpressionLogicAnd(BigDataScriptParser.ExpressionLogicAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunctionCall(@NotNull BigDataScriptParser.FunctionCallContext ctx) { }
-
+	@Override public void exitExpressionLogicAnd(BigDataScriptParser.ExpressionLogicAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionParen(@NotNull BigDataScriptParser.ExpressionParenContext ctx) { }
+	@Override public void enterExpressionAssignmentList(BigDataScriptParser.ExpressionAssignmentListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionParen(@NotNull BigDataScriptParser.ExpressionParenContext ctx) { }
-
+	@Override public void exitExpressionAssignmentList(BigDataScriptParser.ExpressionAssignmentListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionCond(@NotNull BigDataScriptParser.ExpressionCondContext ctx) { }
+	@Override public void enterExpressionEq(BigDataScriptParser.ExpressionEqContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionCond(@NotNull BigDataScriptParser.ExpressionCondContext ctx) { }
-
+	@Override public void exitExpressionEq(BigDataScriptParser.ExpressionEqContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionUnaryMinus(@NotNull BigDataScriptParser.ExpressionUnaryMinusContext ctx) { }
+	@Override public void enterExpressionMinus(BigDataScriptParser.ExpressionMinusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionUnaryMinus(@NotNull BigDataScriptParser.ExpressionUnaryMinusContext ctx) { }
-
+	@Override public void exitExpressionMinus(BigDataScriptParser.ExpressionMinusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionBitOr(@NotNull BigDataScriptParser.ExpressionBitOrContext ctx) { }
+	@Override public void enterExpressionDepOperator(BigDataScriptParser.ExpressionDepOperatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionBitOr(@NotNull BigDataScriptParser.ExpressionBitOrContext ctx) { }
-
+	@Override public void exitExpressionDepOperator(BigDataScriptParser.ExpressionDepOperatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatementExpr(@NotNull BigDataScriptParser.StatementExprContext ctx) { }
+	@Override public void enterExpressionNe(BigDataScriptParser.ExpressionNeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatementExpr(@NotNull BigDataScriptParser.StatementExprContext ctx) { }
-
+	@Override public void exitExpressionNe(BigDataScriptParser.ExpressionNeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralInt(@NotNull BigDataScriptParser.LiteralIntContext ctx) { }
+	@Override public void enterExpressionBitXor(BigDataScriptParser.ExpressionBitXorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralInt(@NotNull BigDataScriptParser.LiteralIntContext ctx) { }
-
+	@Override public void exitExpressionBitXor(BigDataScriptParser.ExpressionBitXorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralMapEmpty(@NotNull BigDataScriptParser.LiteralMapEmptyContext ctx) { }
+	@Override public void enterExpressionBitNegation(BigDataScriptParser.ExpressionBitNegationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralMapEmpty(@NotNull BigDataScriptParser.LiteralMapEmptyContext ctx) { }
-
+	@Override public void exitExpressionBitNegation(BigDataScriptParser.ExpressionBitNegationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodCall(@NotNull BigDataScriptParser.MethodCallContext ctx) { }
+	@Override public void enterExpressionBitAnd(BigDataScriptParser.ExpressionBitAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodCall(@NotNull BigDataScriptParser.MethodCallContext ctx) { }
-
+	@Override public void exitExpressionBitAnd(BigDataScriptParser.ExpressionBitAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatementVarDeclaration(@NotNull BigDataScriptParser.StatementVarDeclarationContext ctx) { }
+	@Override public void enterPost(BigDataScriptParser.PostContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatementVarDeclaration(@NotNull BigDataScriptParser.StatementVarDeclarationContext ctx) { }
-
+	@Override public void exitPost(BigDataScriptParser.PostContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterWait(@NotNull BigDataScriptParser.WaitContext ctx) { }
+	@Override public void enterReferenceMap(BigDataScriptParser.ReferenceMapContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitWait(@NotNull BigDataScriptParser.WaitContext ctx) { }
-
+	@Override public void exitReferenceMap(BigDataScriptParser.ReferenceMapContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralString(@NotNull BigDataScriptParser.LiteralStringContext ctx) { }
+	@Override public void enterExpressionLogicNot(BigDataScriptParser.ExpressionLogicNotContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralString(@NotNull BigDataScriptParser.LiteralStringContext ctx) { }
-
+	@Override public void exitExpressionLogicNot(BigDataScriptParser.ExpressionLogicNotContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionGt(@NotNull BigDataScriptParser.ExpressionGtContext ctx) { }
+	@Override public void enterExpressionVariableInitImplicit(BigDataScriptParser.ExpressionVariableInitImplicitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionGt(@NotNull BigDataScriptParser.ExpressionGtContext ctx) { }
-
+	@Override public void exitExpressionVariableInitImplicit(BigDataScriptParser.ExpressionVariableInitImplicitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionModulo(@NotNull BigDataScriptParser.ExpressionModuloContext ctx) { }
+	@Override public void enterExpressionAssignmentMult(BigDataScriptParser.ExpressionAssignmentMultContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionModulo(@NotNull BigDataScriptParser.ExpressionModuloContext ctx) { }
-
+	@Override public void exitExpressionAssignmentMult(BigDataScriptParser.ExpressionAssignmentMultContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveBool(@NotNull BigDataScriptParser.TypePrimitiveBoolContext ctx) { }
+	@Override public void enterExpressionDep(BigDataScriptParser.ExpressionDepContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePrimitiveBool(@NotNull BigDataScriptParser.TypePrimitiveBoolContext ctx) { }
-
+	@Override public void exitExpressionDep(BigDataScriptParser.ExpressionDepContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveInt(@NotNull BigDataScriptParser.TypePrimitiveIntContext ctx) { }
+	@Override public void enterExpressionLt(BigDataScriptParser.ExpressionLtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePrimitiveInt(@NotNull BigDataScriptParser.TypePrimitiveIntContext ctx) { }
-
+	@Override public void exitExpressionLt(BigDataScriptParser.ExpressionLtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterError(@NotNull BigDataScriptParser.ErrorContext ctx) { }
+	@Override public void enterExpressionAssignmentDiv(BigDataScriptParser.ExpressionAssignmentDivContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitError(@NotNull BigDataScriptParser.ErrorContext ctx) { }
-
+	@Override public void exitExpressionAssignmentDiv(BigDataScriptParser.ExpressionAssignmentDivContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx) { }
+	@Override public void enterPre(BigDataScriptParser.PreContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionAssignmentBitAnd(@NotNull BigDataScriptParser.ExpressionAssignmentBitAndContext ctx) { }
-
+	@Override public void exitPre(BigDataScriptParser.PreContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSwitch(@NotNull BigDataScriptParser.SwitchContext ctx) { }
+	@Override public void enterExpressionUnaryPlus(BigDataScriptParser.ExpressionUnaryPlusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSwitch(@NotNull BigDataScriptParser.SwitchContext ctx) { }
-
+	@Override public void exitExpressionUnaryPlus(BigDataScriptParser.ExpressionUnaryPlusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionLe(@NotNull BigDataScriptParser.ExpressionLeContext ctx) { }
+	@Override public void enterExpressionLogicOr(BigDataScriptParser.ExpressionLogicOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionLe(@NotNull BigDataScriptParser.ExpressionLeContext ctx) { }
-
+	@Override public void exitExpressionLogicOr(BigDataScriptParser.ExpressionLogicOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralMap(@NotNull BigDataScriptParser.LiteralMapContext ctx) { }
+	@Override public void enterExpressionParallel(BigDataScriptParser.ExpressionParallelContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralMap(@NotNull BigDataScriptParser.LiteralMapContext ctx) { }
-
+	@Override public void exitExpressionParallel(BigDataScriptParser.ExpressionParallelContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrintln(@NotNull BigDataScriptParser.PrintlnContext ctx) { }
+	@Override public void enterLiteralBool(BigDataScriptParser.LiteralBoolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPrintln(@NotNull BigDataScriptParser.PrintlnContext ctx) { }
-
+	@Override public void exitLiteralBool(BigDataScriptParser.LiteralBoolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionAssignmentBitOr(@NotNull BigDataScriptParser.ExpressionAssignmentBitOrContext ctx) { }
+	@Override public void enterExpressionGoal(BigDataScriptParser.ExpressionGoalContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionAssignmentBitOr(@NotNull BigDataScriptParser.ExpressionAssignmentBitOrContext ctx) { }
-
+	@Override public void exitExpressionGoal(BigDataScriptParser.ExpressionGoalContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeList(@NotNull BigDataScriptParser.TypeListContext ctx) { }
+	@Override public void enterExpressionTimes(BigDataScriptParser.ExpressionTimesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeList(@NotNull BigDataScriptParser.TypeListContext ctx) { }
-
+	@Override public void exitExpressionTimes(BigDataScriptParser.ExpressionTimesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionTask(@NotNull BigDataScriptParser.ExpressionTaskContext ctx) { }
+	@Override public void enterExpressionPlus(BigDataScriptParser.ExpressionPlusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionTask(@NotNull BigDataScriptParser.ExpressionTaskContext ctx) { }
-
+	@Override public void exitExpressionPlus(BigDataScriptParser.ExpressionPlusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterReferenceVar(@NotNull BigDataScriptParser.ReferenceVarContext ctx) { }
+	@Override public void enterFunctionCall(BigDataScriptParser.FunctionCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitReferenceVar(@NotNull BigDataScriptParser.ReferenceVarContext ctx) { }
-
+	@Override public void exitFunctionCall(BigDataScriptParser.FunctionCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionSys(@NotNull BigDataScriptParser.ExpressionSysContext ctx) { }
+	@Override public void enterExpressionParen(BigDataScriptParser.ExpressionParenContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionSys(@NotNull BigDataScriptParser.ExpressionSysContext ctx) { }
-
+	@Override public void exitExpressionParen(BigDataScriptParser.ExpressionParenContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx) { }
+	@Override public void enterExpressionCond(BigDataScriptParser.ExpressionCondContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionAssignmentMinus(@NotNull BigDataScriptParser.ExpressionAssignmentMinusContext ctx) { }
-
+	@Override public void exitExpressionCond(BigDataScriptParser.ExpressionCondContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterReferenceList(@NotNull BigDataScriptParser.ReferenceListContext ctx) { }
+	@Override public void enterExpressionUnaryMinus(BigDataScriptParser.ExpressionUnaryMinusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitReferenceList(@NotNull BigDataScriptParser.ReferenceListContext ctx) { }
-
+	@Override public void exitExpressionUnaryMinus(BigDataScriptParser.ExpressionUnaryMinusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { }
+	@Override public void enterExpressionBitOr(BigDataScriptParser.ExpressionBitOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralListEmpty(@NotNull BigDataScriptParser.LiteralListEmptyContext ctx) { }
-
+	@Override public void exitExpressionBitOr(BigDataScriptParser.ExpressionBitOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDebug(@NotNull BigDataScriptParser.DebugContext ctx) { }
+	@Override public void enterLiteralInt(BigDataScriptParser.LiteralIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDebug(@NotNull BigDataScriptParser.DebugContext ctx) { }
-
+	@Override public void exitLiteralInt(BigDataScriptParser.LiteralIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeMap(@NotNull BigDataScriptParser.TypeMapContext ctx) { }
+	@Override public void enterLiteralMapEmpty(BigDataScriptParser.LiteralMapEmptyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeMap(@NotNull BigDataScriptParser.TypeMapContext ctx) { }
-
+	@Override public void exitLiteralMapEmpty(BigDataScriptParser.LiteralMapEmptyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBreak(@NotNull BigDataScriptParser.BreakContext ctx) { }
+	@Override public void enterMethodCall(BigDataScriptParser.MethodCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBreak(@NotNull BigDataScriptParser.BreakContext ctx) { }
-
+	@Override public void exitMethodCall(BigDataScriptParser.MethodCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKill(@NotNull BigDataScriptParser.KillContext ctx) { }
+	@Override public void enterLiteralNull(BigDataScriptParser.LiteralNullContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKill(@NotNull BigDataScriptParser.KillContext ctx) { }
-
+	@Override public void exitLiteralNull(BigDataScriptParser.LiteralNullContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVariableInit(@NotNull BigDataScriptParser.VariableInitContext ctx) { }
+	@Override public void enterLiteralString(BigDataScriptParser.LiteralStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVariableInit(@NotNull BigDataScriptParser.VariableInitContext ctx) { }
-
+	@Override public void exitLiteralString(BigDataScriptParser.LiteralStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatmentEol(@NotNull BigDataScriptParser.StatmentEolContext ctx) { }
+	@Override public void enterExpressionGt(BigDataScriptParser.ExpressionGtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatmentEol(@NotNull BigDataScriptParser.StatmentEolContext ctx) { }
-
+	@Override public void exitExpressionGt(BigDataScriptParser.ExpressionGtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx) { }
+	@Override public void enterExpressionModulo(BigDataScriptParser.ExpressionModuloContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVariableInitImplicit(@NotNull BigDataScriptParser.VariableInitImplicitContext ctx) { }
-
+	@Override public void exitExpressionModulo(BigDataScriptParser.ExpressionModuloContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx) { }
+	@Override public void enterExpressionAssignmentBitAnd(BigDataScriptParser.ExpressionAssignmentBitAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBreakpoint(@NotNull BigDataScriptParser.BreakpointContext ctx) { }
-
+	@Override public void exitExpressionAssignmentBitAnd(BigDataScriptParser.ExpressionAssignmentBitAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionTaskLiteral(@NotNull BigDataScriptParser.ExpressionTaskLiteralContext ctx) { }
+	@Override public void enterExpressionLe(BigDataScriptParser.ExpressionLeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionTaskLiteral(@NotNull BigDataScriptParser.ExpressionTaskLiteralContext ctx) { }
-
+	@Override public void exitExpressionLe(BigDataScriptParser.ExpressionLeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionDivide(@NotNull BigDataScriptParser.ExpressionDivideContext ctx) { }
+	@Override public void enterLiteralMap(BigDataScriptParser.LiteralMapContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionDivide(@NotNull BigDataScriptParser.ExpressionDivideContext ctx) { }
-
+	@Override public void exitLiteralMap(BigDataScriptParser.LiteralMapContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterHelp(@NotNull BigDataScriptParser.HelpContext ctx) { }
+	@Override public void enterExpressionAssignmentBitOr(BigDataScriptParser.ExpressionAssignmentBitOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitHelp(@NotNull BigDataScriptParser.HelpContext ctx) { }
-
+	@Override public void exitExpressionAssignmentBitOr(BigDataScriptParser.ExpressionAssignmentBitOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionAssignment(@NotNull BigDataScriptParser.ExpressionAssignmentContext ctx) { }
+	@Override public void enterExpressionTask(BigDataScriptParser.ExpressionTaskContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionAssignment(@NotNull BigDataScriptParser.ExpressionAssignmentContext ctx) { }
-
+	@Override public void exitExpressionTask(BigDataScriptParser.ExpressionTaskContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypeArray(@NotNull BigDataScriptParser.TypeArrayContext ctx) { }
+	@Override public void enterReferenceVar(BigDataScriptParser.ReferenceVarContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypeArray(@NotNull BigDataScriptParser.TypeArrayContext ctx) { }
-
+	@Override public void exitReferenceVar(BigDataScriptParser.ReferenceVarContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrint(@NotNull BigDataScriptParser.PrintContext ctx) { }
+	@Override public void enterExpressionSys(BigDataScriptParser.ExpressionSysContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPrint(@NotNull BigDataScriptParser.PrintContext ctx) { }
-
+	@Override public void exitExpressionSys(BigDataScriptParser.ExpressionSysContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralReal(@NotNull BigDataScriptParser.LiteralRealContext ctx) { }
+	@Override public void enterExpressionAssignmentMinus(BigDataScriptParser.ExpressionAssignmentMinusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralReal(@NotNull BigDataScriptParser.LiteralRealContext ctx) { }
-
+	@Override public void exitExpressionAssignmentMinus(BigDataScriptParser.ExpressionAssignmentMinusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionAssignmentPlus(@NotNull BigDataScriptParser.ExpressionAssignmentPlusContext ctx) { }
+	@Override public void enterReferenceList(BigDataScriptParser.ReferenceListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionAssignmentPlus(@NotNull BigDataScriptParser.ExpressionAssignmentPlusContext ctx) { }
-
+	@Override public void exitReferenceList(BigDataScriptParser.ReferenceListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterForInit(@NotNull BigDataScriptParser.ForInitContext ctx) { }
+	@Override public void enterLiteralListEmpty(BigDataScriptParser.LiteralListEmptyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitForInit(@NotNull BigDataScriptParser.ForInitContext ctx) { }
-
+	@Override public void exitLiteralListEmpty(BigDataScriptParser.LiteralListEmptyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionGe(@NotNull BigDataScriptParser.ExpressionGeContext ctx) { }
+	@Override public void enterExpressionTaskLiteral(BigDataScriptParser.ExpressionTaskLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionGe(@NotNull BigDataScriptParser.ExpressionGeContext ctx) { }
-
+	@Override public void exitExpressionTaskLiteral(BigDataScriptParser.ExpressionTaskLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralList(@NotNull BigDataScriptParser.LiteralListContext ctx) { }
+	@Override public void enterExpressionDivide(BigDataScriptParser.ExpressionDivideContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralList(@NotNull BigDataScriptParser.LiteralListContext ctx) { }
-
+	@Override public void exitExpressionDivide(BigDataScriptParser.ExpressionDivideContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunctionDeclaration(@NotNull BigDataScriptParser.FunctionDeclarationContext ctx) { }
+	@Override public void enterExpressionAssignment(BigDataScriptParser.ExpressionAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunctionDeclaration(@NotNull BigDataScriptParser.FunctionDeclarationContext ctx) { }
-
+	@Override public void exitExpressionAssignment(BigDataScriptParser.ExpressionAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLiteralReal(BigDataScriptParser.LiteralRealContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLiteralReal(BigDataScriptParser.LiteralRealContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExpressionAssignmentPlus(BigDataScriptParser.ExpressionAssignmentPlusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpressionAssignmentPlus(BigDataScriptParser.ExpressionAssignmentPlusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExpressionGe(BigDataScriptParser.ExpressionGeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpressionGe(BigDataScriptParser.ExpressionGeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLiteralList(BigDataScriptParser.LiteralListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLiteralList(BigDataScriptParser.LiteralListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterReturn(@NotNull BigDataScriptParser.ReturnContext ctx) { }
+	@Override public void enterExpressionList(BigDataScriptParser.ExpressionListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitReturn(@NotNull BigDataScriptParser.ReturnContext ctx) { }
+	@Override public void exitExpressionList(BigDataScriptParser.ExpressionListContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEveryRule(@NotNull ParserRuleContext ctx) { }
+	@Override public void enterEveryRule(ParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEveryRule(@NotNull ParserRuleContext ctx) { }
+	@Override public void exitEveryRule(ParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void visitTerminal(@NotNull TerminalNode node) { }
+	@Override public void visitTerminal(TerminalNode node) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void visitErrorNode(@NotNull ErrorNode node) { }
+	@Override public void visitErrorNode(ErrorNode node) { }
 }

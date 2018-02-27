@@ -9,6 +9,8 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.statement.BlockWithFile;
+import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -66,7 +68,7 @@ public class ProgramUnit extends BlockWithFile {
 	 * Return all functions whose name starts with 'test'
 	 */
 	public List<FunctionDeclaration> testsFunctions() {
-		List<FunctionDeclaration> testFuncs = new ArrayList<FunctionDeclaration>();
+		List<FunctionDeclaration> testFuncs = new ArrayList<>();
 		List<BdsNode> allFuncs = findNodes(FunctionDeclaration.class, true);
 		for (BdsNode func : allFuncs) {
 			// Create scope symbol
@@ -84,7 +86,7 @@ public class ProgramUnit extends BlockWithFile {
 	}
 
 	@Override
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Add all functions
 		List<BdsNode> funcs = findNodes(FunctionDeclaration.class, true);
 		for (BdsNode func : funcs) {

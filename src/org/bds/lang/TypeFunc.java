@@ -1,5 +1,6 @@
 package org.bds.lang;
 
+import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.util.Gpr;
 
 /**

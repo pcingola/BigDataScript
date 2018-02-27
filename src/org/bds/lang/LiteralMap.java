@@ -3,8 +3,9 @@ package org.bds.lang;
 import java.util.HashMap;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
+import org.bds.lang.expression.Expression;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -72,7 +73,7 @@ public class LiteralMap extends Literal {
 
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		HashMap<String, Object> map = new HashMap<String, Object>(values.length);
+		HashMap<String, Object> map = new HashMap<>(values.length);
 		Type baseType = baseType();
 
 		for (int i = 0; i < keys.length; i++) {
@@ -97,7 +98,7 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
-	protected void sanityCheck(CompilerMessages compilerMessages) {
+	public void sanityCheck(CompilerMessages compilerMessages) {
 		for (BdsNode csnode : values)
 			if (!(csnode instanceof Expression)) compilerMessages.add(csnode, "Expecting expression instead of " + csnode.getClass().getSimpleName(), MessageType.ERROR);
 	}

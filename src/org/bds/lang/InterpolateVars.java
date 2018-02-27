@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.expression.Expression;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.util.Tuple;
@@ -121,7 +122,7 @@ public class InterpolateVars extends Literal {
 	 */
 	Tuple<String, String> findString(String str) {
 		// Empty? Nothing to do
-		if (str.isEmpty()) return new Tuple<String, String>(str, "");
+		if (str.isEmpty()) return new Tuple<>(str, "");
 
 		// Find next '$'
 		int idx = str.indexOf('$');
@@ -131,39 +132,39 @@ public class InterpolateVars extends Literal {
 				&& (str.charAt(idx - 1) == '\\' // Escaped character, ignore
 						|| (idx < (str.length() - 1) //
 								&& !isVariableNameStartChar(str.charAt(idx + 1)) // First character in variable name has to be a letter
-		))) {
+						))) {
 			idx = str.indexOf('$', idx + 1); // Find next one
 		}
 
 		// Nothing found?
-		if (idx < 0) return new Tuple<String, String>(str, "");
+		if (idx < 0) return new Tuple<>(str, "");
 
 		// String that ends with a dollar sign is not a variable
-		if (idx == str.length() - 1) return new Tuple<String, String>(str, "");
+		if (idx == str.length() - 1) return new Tuple<>(str, "");
 
-		return new Tuple<String, String>(str.substring(0, idx), str.substring(idx));
+		return new Tuple<>(str.substring(0, idx), str.substring(idx));
 	}
 
 	/**
 	 * Find the next variable
 	 */
 	Tuple<String, String> findVariableRef(String str) {
-		if (str.isEmpty()) return new Tuple<String, String>("", "");
+		if (str.isEmpty()) return new Tuple<>("", "");
 
 		int idx = indexRefEnd(str);
 
 		// Nothing found?
-		if (idx < 0) return new Tuple<String, String>(str, "");
+		if (idx < 0) return new Tuple<>(str, "");
 
-		return new Tuple<String, String>(str.substring(1, idx), str.substring(idx)); // Note, subString starts at '1' to remove '$' character
+		return new Tuple<>(str.substring(1, idx), str.substring(idx)); // Note, subString starts at '1' to remove '$' character
 	}
 
 	/**
 	 * Find variables and strings
 	 */
 	Tuple<List<String>, List<String>> findVariables(String str) {
-		ArrayList<String> listStr = new ArrayList<String>();
-		ArrayList<String> listVars = new ArrayList<String>();
+		ArrayList<String> listStr = new ArrayList<>();
+		ArrayList<String> listVars = new ArrayList<>();
 
 		while (!str.isEmpty()) {
 			//---
@@ -182,7 +183,7 @@ public class InterpolateVars extends Literal {
 			str = tupVar.second; // Remaining to be analyzed
 		}
 
-		return new Tuple<List<String>, List<String>>(listStr, listVars);
+		return new Tuple<>(listStr, listVars);
 	}
 
 	public Expression[] getExpressions() {
@@ -311,7 +312,7 @@ public class InterpolateVars extends Literal {
 				|| (interpolated.second.size() == 1 && interpolated.second.get(0).isEmpty()) // One empty variable?
 		) return false; // Nothing to do
 
-		List<Expression> exprs = new ArrayList<Expression>();
+		List<Expression> exprs = new ArrayList<>();
 
 		// Create and add reference
 		for (String var : variables) {
@@ -376,7 +377,7 @@ public class InterpolateVars extends Literal {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		// Do we have any interpolated variables? Make sure they are in the scope
 		if (exprs != null) //
 			for (Expression expr : exprs)

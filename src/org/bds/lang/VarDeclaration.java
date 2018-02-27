@@ -1,8 +1,11 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
+import org.bds.lang.expression.Expression;
+import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.statement.Statement;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -121,7 +124,7 @@ public class VarDeclaration extends Statement {
 	}
 
 	@Override
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Add all symbols
 		for (VariableInit vi : varInit) {
 			String varName = vi.varName;

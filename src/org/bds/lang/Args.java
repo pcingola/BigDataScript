@@ -1,8 +1,9 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
+import org.bds.lang.expression.Expression;
 import org.bds.scope.Scope;
 
 /**
@@ -51,7 +52,7 @@ public class Args extends BdsNode {
 		parse(tree, 0, tree.getChildCount());
 	}
 
-	protected void parse(ParseTree tree, int offset, int max) {
+	public void parse(ParseTree tree, int offset, int max) {
 		int num = (max - offset + 1) / 2;
 		arguments = new Expression[num];
 
@@ -78,7 +79,7 @@ public class Args extends BdsNode {
 	}
 
 	@Override
-	protected void sanityCheck(CompilerMessages compilerMessages) {
+	public void sanityCheck(CompilerMessages compilerMessages) {
 		// Check that all arguments are expressions
 		int argNum = 1;
 		for (BdsNode node : arguments) {

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.serialize.BdsSerializer;
 
 /**

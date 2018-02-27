@@ -52,21 +52,21 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Can returnType be casted to bool?
 	 */
-	protected boolean canCastBool() {
+	public boolean canCastBool() {
 		return ((returnType != null) && returnType.canCast(Type.BOOL));
 	}
 
 	/**
 	 * Can returnType be casted to int?
 	 */
-	protected boolean canCastInt() {
+	public boolean canCastInt() {
 		return ((returnType != null) && returnType.canCast(Type.INT));
 	}
 
 	/**
 	 * Can returnType be casted to real?
 	 */
-	protected boolean canCastReal() {
+	public boolean canCastReal() {
 		return ((returnType != null) && returnType.canCast(Type.REAL));
 	}
 
@@ -74,7 +74,7 @@ public abstract class BdsNode implements BdsSerialize {
 	 * Check that this expression can be casted to bool
 	 * Add a compile error otherwise
 	 */
-	protected void checkCanCastBool(CompilerMessages compilerMessages) {
+	public void checkCanCastBool(CompilerMessages compilerMessages) {
 		if ((returnType != null) && !returnType.canCast(Type.BOOL)) compilerMessages.add(this, "Cannot cast " + returnType + " to bool", MessageType.ERROR);
 	}
 
@@ -82,7 +82,7 @@ public abstract class BdsNode implements BdsSerialize {
 	 * Check that this expression can be casted to int
 	 * Add a compile error otherwise
 	 */
-	protected void checkCanCastInt(CompilerMessages compilerMessages) {
+	public void checkCanCastInt(CompilerMessages compilerMessages) {
 		if ((returnType != null) && !returnType.canCast(Type.INT)) compilerMessages.add(this, "Cannot cast " + returnType + " to int", MessageType.ERROR);
 	}
 
@@ -90,7 +90,7 @@ public abstract class BdsNode implements BdsSerialize {
 	 * Check that this expression can be casted to either int or real
 	 * Add a compile error otherwise
 	 */
-	protected void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
+	public void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
 		if ((returnType != null) //
 				&& (!returnType.canCast(Type.INT) //
 						&& !returnType.canCast(Type.REAL)) //
@@ -121,7 +121,7 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Create a BigDataScriptNode
 	 */
-	final BdsNode factory(ParseTree tree, int childNum) {
+	final public BdsNode factory(ParseTree tree, int childNum) {
 		ParseTree child = childNum >= 0 ? tree.getChild(childNum) : tree;
 		return BdsNodeFactory.get().factory(this, child);
 	}
@@ -364,13 +364,13 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Initialize some defaults (before parsing)
 	 */
-	void initialize() {
+	protected void initialize() {
 	}
 
 	/**
 	 * Is return type bool?
 	 */
-	protected boolean isBool() {
+	public boolean isBool() {
 		return (returnType != null) && returnType.isBool();
 	}
 
@@ -384,24 +384,24 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Is return type int?
 	 */
-	protected boolean isInt() {
+	public boolean isInt() {
 		return (returnType != null) && returnType.isInt();
 	}
 
-	protected boolean isList() {
+	public boolean isList() {
 		return (returnType != null) && returnType.isList();
 	}
 
-	protected boolean isList(Type baseType) {
+	public boolean isList(Type baseType) {
 		if (returnType == null) return false;
 		return returnType.isList(baseType);
 	}
 
-	protected boolean isMap() {
+	public boolean isMap() {
 		return (returnType != null) && returnType.isMap();
 	}
 
-	protected boolean isMap(Type baseType) {
+	public boolean isMap(Type baseType) {
 		return (returnType != null) && returnType.isMap(baseType);
 	}
 
@@ -415,21 +415,21 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Is return type numeric?
 	 */
-	protected boolean isNumeric() {
+	public boolean isNumeric() {
 		return isBool() || isInt() || isReal();
 	}
 
 	/**
 	 * Is return type real?
 	 */
-	protected boolean isReal() {
+	public boolean isReal() {
 		return (returnType != null) && returnType.isReal();
 	}
 
 	/**
 	 * Do all subordinate expressions have a non-null return type?
 	 */
-	protected boolean isReturnTypesNotNull() {
+	public boolean isReturnTypesNotNull() {
 		return true;
 	}
 
@@ -443,7 +443,7 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Is return type string?
 	 */
-	protected boolean isString() {
+	public boolean isString() {
 		return (returnType != null) && returnType.isString();
 	}
 
@@ -462,7 +462,7 @@ public abstract class BdsNode implements BdsSerialize {
 	 *
 	 * @param tree
 	 */
-	boolean lineAndPos(ParseTree tree) {
+	protected boolean lineAndPos(ParseTree tree) {
 		// Is this a token?
 		if (tree.getPayload() instanceof Token) {
 			lineAndPos((Token) tree.getPayload());
@@ -583,7 +583,7 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Perform several basic sanity checks right after parsing the tree
 	 */
-	protected void sanityCheck(CompilerMessages compilerMessages) {
+	public void sanityCheck(CompilerMessages compilerMessages) {
 		// Default : Do nothing
 	}
 
@@ -764,7 +764,7 @@ public abstract class BdsNode implements BdsSerialize {
 		return out.toString();
 	}
 
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Calculate return type
 		returnType(scope);
 

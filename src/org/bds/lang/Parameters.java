@@ -65,7 +65,7 @@ public class Parameters extends BdsNode implements Comparable<Parameters> {
 		parse(tree, 0, tree.getChildCount());
 	}
 
-	protected void parse(ParseTree tree, int offset, int max) {
+	public void parse(ParseTree tree, int offset, int max) {
 		int num = (max - offset + 1) / 2; // Comma separated list of expressions
 		varDecl = new VarDeclaration[num];
 

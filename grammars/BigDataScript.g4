@@ -23,7 +23,11 @@ type : 'bool'                                                                   
      | type '[' ']'                                                                        # typeArray
      | type '{' '}'                                                                        # typeMap
      | type '{' type '}'                                                                   # typeMap
+     | ID                                                                                  # typeClass
      ;
+
+// Class definition
+classDef: 'class' ID eol* '{' ( type ID | eol ) * '}';
 
 // Variable declaration
 varDeclaration       : type variableInit (',' variableInit)* | variableInitImplicit;
@@ -58,6 +62,7 @@ statement : '{' statement* '}'                                                  
             | 'while' '(' expression? ')' statement  eol*                                  # while
             | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*        # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
+            | classDef  eol*                                                               # statementClassDeclaration
             | expression  eol*                                                             # statementExpr
             | includeFile eol*                                                             # statementInclude
             | HELP_LITERAL                                                                 # help
@@ -70,7 +75,8 @@ forCondition : expression;
 
 forEnd : expressionList;
 
-expression : BOOL_LITERAL                                                                  # literalBool
+expression : NULL_LITERAL                                                                  # literalNull
+           | BOOL_LITERAL                                                                  # literalBool
            | INT_LITERAL                                                                   # literalInt
            | REAL_LITERAL                                                                  # literalReal
            | STRING_LITERAL                                                                # literalString

@@ -3,8 +3,9 @@ package org.bds.lang;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
+import org.bds.lang.expression.Expression;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -87,7 +88,7 @@ public class LiteralList extends Literal {
 	}
 
 	@Override
-	protected void sanityCheck(CompilerMessages compilerMessages) {
+	public void sanityCheck(CompilerMessages compilerMessages) {
 		for (BdsNode csnode : values)
 			if (!(csnode instanceof Expression)) compilerMessages.add(csnode, "Expecting expression instead of " + csnode.getClass().getSimpleName(), MessageType.ERROR);
 	}

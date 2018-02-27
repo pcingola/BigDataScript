@@ -5,13 +5,13 @@ init="programUnit"
 testFile="../test/z.bds"
 
 # Programs
-jar="../lib/antlr-4.2.2-complete.jar"
+jar="../lib/antlr-4.7.1-complete.jar"
 antlr4="java -Xmx1g -cp $jar org.antlr.v4.Tool"
 grun="java -Xmx1g -cp .:$jar org.antlr.v4.runtime.misc.TestRig"
 
 # Delete old files
 touch tmp.java tmp.class
-rm *.class *.java 
+rm *.class *.java *.interp *.tokens
 
 # Compile
 echo Create Lexer and Parser

@@ -16,7 +16,7 @@ fragment IntegerNumber
         ;
 
 fragment EscapeSequence
-        : '\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\'' | '\\'
+        : '\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '"' | '\'' | '\\'
         | ('0'..'3') ('0'..'7') ('0'..'7')
         | ('0'..'7') ('0'..'7')
         | ('0'..'7')
@@ -45,6 +45,7 @@ fragment SysMultiLine : ( EscapedNewLine | ~( '\r' | '\n') )*;
 //---
 
 // Number literals
+NULL_LITERAL      : 'null';
 BOOL_LITERAL      : 'true' | 'false' ;
 INT_LITERAL       : IntegerNumber ;
 REAL_LITERAL      : NonIntegerNumber ;

@@ -31,17 +31,17 @@ import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
-import org.bds.lang.ExpressionTask;
-import org.bds.lang.FunctionCall;
-import org.bds.lang.FunctionDeclaration;
 import org.bds.lang.ProgramUnit;
-import org.bds.lang.Statement;
-import org.bds.lang.StatementInclude;
 import org.bds.lang.Type;
 import org.bds.lang.TypeList;
 import org.bds.lang.VarDeclaration;
+import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.nativeFunctions.NativeLibraryFunctions;
 import org.bds.lang.nativeMethods.string.NativeLibraryString;
+import org.bds.lang.statement.FunctionCall;
+import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.statement.Statement;
+import org.bds.lang.statement.StatementInclude;
 import org.bds.run.BdsThread;
 import org.bds.run.HelpCreator;
 import org.bds.run.RunState;
@@ -74,7 +74,7 @@ public class Bds {
 	boolean checkPidRegex; // Check PID regex (do not run program)
 	boolean debug; // debug mode
 	boolean dryRun; // Dry run (do not run tasks)
-	boolean extractSource; // Extract source code form checkpoint (nly valid on recovery mode)
+	boolean extractSource; // Extract source code form checkpoint (only valid on recovery mode)
 	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
 	Boolean noCheckpoint; // Do not create checkpoint files
 	Boolean noRmOnExit; // Do not remove temp files on exit

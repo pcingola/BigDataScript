@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.bds.compile.CompilerMessages;
-import org.bds.lang.MethodDeclaration;
+import org.bds.lang.statement.MethodDeclaration;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;

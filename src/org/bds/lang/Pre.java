@@ -3,6 +3,8 @@ package org.bds.lang;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.expression.Expression;
+import org.bds.lang.expression.ExpressionUnary;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -48,7 +50,7 @@ public class Pre extends ExpressionUnary {
 	}
 
 	@Override
-	protected void sanityCheck(CompilerMessages compilerMessages) {
+	public void sanityCheck(CompilerMessages compilerMessages) {
 		if (!(expr instanceof Reference)) compilerMessages.add(this, "Only variable reference can be used with ++ or -- operators", MessageType.ERROR);
 	}
 

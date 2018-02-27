@@ -2,6 +2,7 @@ package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.expression.Expression;
 import org.bds.scope.Scope;
 
 /**
@@ -16,7 +17,7 @@ public class Literal extends Expression {
 	}
 
 	@Override
-	protected boolean isReturnTypesNotNull() {
+	public boolean isReturnTypesNotNull() {
 		return true;
 	}
 

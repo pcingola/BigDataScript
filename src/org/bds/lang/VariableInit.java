@@ -1,8 +1,9 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
+import org.bds.lang.expression.Expression;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -110,11 +111,11 @@ public class VariableInit extends BdsNode {
 		return varName //
 				+ (expression != null ? " = " + expression : "") //
 				+ (help != null ? " help " + help : "") //
-				;
+		;
 	}
 
 	@Override
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Variable type
 		ScopeSymbol varSym = scope.getSymbolLocal(varName);
 		Type varType = null;

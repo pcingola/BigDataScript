@@ -6,6 +6,7 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.expression.Expression;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -55,7 +56,7 @@ public class ReferenceList extends Reference {
 	}
 
 	@Override
-	protected boolean isReturnTypesNotNull() {
+	public boolean isReturnTypesNotNull() {
 		return returnType != null;
 	}
 
@@ -162,7 +163,7 @@ public class ReferenceList extends Reference {
 	}
 
 	@Override
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Calculate return type
 		returnType(scope);
 

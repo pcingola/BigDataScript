@@ -3,8 +3,8 @@ package org.bds.run;
 import java.util.Map;
 
 import org.bds.Config;
-import org.bds.lang.FunctionCall;
-import org.bds.lang.Statement;
+import org.bds.lang.statement.FunctionCall;
+import org.bds.lang.statement.Statement;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
 import org.bds.util.Timer;

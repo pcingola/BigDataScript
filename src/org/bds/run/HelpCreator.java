@@ -7,14 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.bds.lang.Block;
-import org.bds.lang.Help;
 import org.bds.lang.ProgramUnit;
-import org.bds.lang.Statement;
-import org.bds.lang.StatementInclude;
 import org.bds.lang.Type;
 import org.bds.lang.VarDeclaration;
 import org.bds.lang.VariableInit;
+import org.bds.lang.statement.Block;
+import org.bds.lang.statement.Help;
+import org.bds.lang.statement.Statement;
+import org.bds.lang.statement.StatementInclude;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
 
