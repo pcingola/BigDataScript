@@ -58,7 +58,7 @@ public class BdsTest {
 	 * Create 'command'
 	 */
 	void bds() {
-		ArrayList<String> l = new ArrayList<String>();
+		ArrayList<String> l = new ArrayList<>();
 
 		// Add command line options
 		if (verbose) l.add("-v");
@@ -136,6 +136,7 @@ public class BdsTest {
 	 */
 	public void checkCompileError(String expectedErrors) {
 		Assert.assertFalse(errMsg("Expecting compilation errors, none found (program compiled OK)"), compileOk);
+		if (compilerMessages.toString().startsWith(expectedErrors)) return;
 		Assert.assertEquals(errMsg("Expecting compilation errors not found"), expectedErrors.trim(), compilerMessages.toString().trim());
 	}
 
@@ -178,7 +179,7 @@ public class BdsTest {
 	 */
 	void checkRunState(RunState expectedRunState) {
 		Assert.assertEquals(errMsg("Expecting rRunState '" + expectedRunState + "', but it was '" + runState + "'") //
-		, expectedRunState //
+				, expectedRunState //
 				, runState//
 		);
 	}
@@ -209,8 +210,7 @@ public class BdsTest {
 				errMsg("Variable '" + varname + "' has different value than expeced:\n" //
 						+ "\tExpected value : " + expectedValue //
 						+ "\tReal value     : " + ssym.getValue()) //
-						,
-				expectedValue.toString() //
+				, expectedValue.toString() //
 				, ssym.getValue().toString() //
 		);
 	}
@@ -231,8 +231,8 @@ public class BdsTest {
 						+ "\tExpected : '" + expectedValue.toString() + "'" //
 						+ "\tActual   : '" + ssym.getValue().toString() + "'" //
 				) //
-				, expectedValue.toString() //
-				, ssym.getValue().toString() //
+						, expectedValue.toString() //
+						, ssym.getValue().toString() //
 				);
 			}
 		}
@@ -342,8 +342,7 @@ public class BdsTest {
 					errMsg("Variable '" + varName + "' has different value than expeced:\n" //
 							+ "\tExpected value : " + expectedValue //
 							+ "\tReal value     : " + ssym.getValue()) //
-							,
-					expectedValue.toString() //
+					, expectedValue.toString() //
 					, ssym.getValue().toString() //
 			);
 		}

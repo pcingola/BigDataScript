@@ -226,8 +226,12 @@ public class Bds {
 			}
 
 			// Is a child always a RuleContext?
+			IncludeFileContext includeFileContext = ((IncludeFileContext) tree);
 			for (int i = 0; i < treeinc.getChildCount(); i++) {
-				((IncludeFileContext) tree).addChild((RuleContext) treeinc.getChild(i));
+				Tree child = treeinc.getChild(i);
+				if (child instanceof RuleContext) { // Do not add TerminalNode (EOF)
+					includeFileContext.addChild((RuleContext) treeinc.getChild(i));
+				}
 			}
 		} else {
 			for (int i = 0; i < tree.getChildCount(); i++)

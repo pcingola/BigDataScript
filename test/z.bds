@@ -1,7 +1,14 @@
-#!/usr/bin/env bds
+// include
 
-print "OK 0: Start\n"
-# This should be an error, since 'debug' is a statement, not a variable name
-debug := false
-print "OK 1: Done\n"
+include 'inc/test-inc.bds';
+
+int i = f2(3);
+int jx = f4(3);
+int jy = f41(3);
+
+int f2(int j) {
+	return j+2;
+}
+
+print("Hi\n");
 
