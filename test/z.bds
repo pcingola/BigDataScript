@@ -1,14 +1,14 @@
-// include
+#!/usr/bin/env bds
 
-include 'inc/test-inc.bds';
+retry = 3
+ok := false
 
-int i = f2(3);
-int jx = f4(3);
-int jy = f41(3);
+# Task will fail once, then re-executed and succeed
+failOnceFile := "failOnce.txt"
+failOnceFile.delete()
+task ./test/failOnce.pl
+wait
 
-int f2(int j) {
-	return j+2;
-}
-
-print("Hi\n");
+# Only true if re-execution succeeds
+ok = true
 
