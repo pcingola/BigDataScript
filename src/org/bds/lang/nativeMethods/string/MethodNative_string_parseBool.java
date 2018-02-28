@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
 import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.util.Gpr;

@@ -1,49 +1,47 @@
-package org.bds.lang;
+package org.bds.lang.type;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.util.Gpr;
 
 /**
- * A boolean literal
+ * A real literal
  *
  * @author pcingola
  */
-public class LiteralBool extends Literal {
+public class LiteralReal extends Literal {
 
-	boolean value;
+	double value;
 
-	public LiteralBool(BdsNode parent, ParseTree tree) {
+	public LiteralReal(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
 	@Override
-	public void runStep(BdsThread bdsThread) {
-		bdsThread.push(value);
+	public void runStep(BdsThread csThread) {
+		csThread.push(value);
 	}
 
-	public boolean isValue() {
+	public double getValue() {
 		return value;
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		value = Gpr.parseBoolSafe(tree.getChild(0).getText());
+		value = Gpr.parseDoubleSafe(tree.getChild(0).getText());
 	}
 
 	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
-		returnType = Type.BOOL;
+		returnType = Type.REAL;
 		return returnType;
 	}
 
-	public void setValue(boolean value) {
+	public void setValue(double value) {
 		this.value = value;
 	}
 

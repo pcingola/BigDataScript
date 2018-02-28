@@ -1,6 +1,8 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.lang.statement.VarDeclaration;
+import org.bds.lang.type.Type;
 
 /**
  * Function / method parameters declaration
@@ -53,7 +55,7 @@ public class Parameters extends BdsNode implements Comparable<Parameters> {
 	 * Get parameter 'i' type
 	 */
 	public Type getType(int i) {
-		return varDecl[i].type;
+		return varDecl[i].getType();
 	}
 
 	public VarDeclaration[] getVarDecl() {

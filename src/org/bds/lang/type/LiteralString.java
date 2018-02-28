@@ -1,7 +1,8 @@
-package org.bds.lang;
+package org.bds.lang.type;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.serialize.BdsSerializer;

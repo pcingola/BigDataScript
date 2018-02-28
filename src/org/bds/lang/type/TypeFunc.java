@@ -1,6 +1,9 @@
-package org.bds.lang;
+package org.bds.lang.type;
 
+import org.bds.lang.Parameters;
 import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.statement.VarDeclaration;
+import org.bds.lang.statement.VariableInit;
 import org.bds.util.Gpr;
 
 /**

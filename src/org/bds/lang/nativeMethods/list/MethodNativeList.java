@@ -2,8 +2,8 @@ package org.bds.lang.nativeMethods.list;
 
 import java.util.ArrayList;
 
-import org.bds.lang.Type;
 import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
 
 /**

@@ -1,4 +1,4 @@
-package org.bds.lang;
+package org.bds.lang.type;
 
 /**
  * Primitive types

@@ -1,3 +1,4 @@
 #!/usr/bin/env bds
 
-zz := Zzz(1, 2.0, "hi", true, null, 'hi')
+i := 42
+println("i = $i")

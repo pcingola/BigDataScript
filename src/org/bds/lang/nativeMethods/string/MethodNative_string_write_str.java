@@ -5,8 +5,8 @@ import java.io.File;
 import org.bds.data.Data;
 import org.bds.data.DataRemote;
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
 import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 

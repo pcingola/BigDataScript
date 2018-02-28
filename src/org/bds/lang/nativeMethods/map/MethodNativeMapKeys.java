@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
-import org.bds.lang.TypeMap;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.TypeMap;
 import org.bds.run.BdsThread;
 
 /**

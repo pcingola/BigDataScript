@@ -1,4 +1,4 @@
-package org.bds.lang;
+package org.bds.lang.type;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;

@@ -18,6 +18,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.compile.TypeCheckedNodes;
+import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.serialize.BdsSerialize;
@@ -705,6 +706,10 @@ public abstract class BdsNode implements BdsSerialize {
 		throw new RuntimeException("Cannot set 'needsScope' in this node:" + this.getClass().getSimpleName());
 	}
 
+	public void setParent(BdsNode parent) {
+		this.parent = parent;
+	}
+
 	public void setScope(Scope scope) {
 		throw new RuntimeException("Cannot set scope to node " + this.getClass().getSimpleName());
 	}
@@ -827,5 +832,4 @@ public abstract class BdsNode implements BdsSerialize {
 		BdsNodeFactory.get().updateId(id, newId, this);
 		id = newId;
 	}
-
 }

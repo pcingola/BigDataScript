@@ -3,8 +3,8 @@ package org.bds.lang.expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.PrimitiveType;
-import org.bds.lang.Type;
+import org.bds.lang.type.PrimitiveType;
+import org.bds.lang.type.Type;
 import org.bds.scope.Scope;
 
 /**

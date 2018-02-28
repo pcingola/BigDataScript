@@ -3,7 +3,7 @@ package org.bds.lang.nativeFunctions;
 import java.util.Date;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
+import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
 
 /**

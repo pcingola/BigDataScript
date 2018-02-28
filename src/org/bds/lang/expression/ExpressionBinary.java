@@ -2,7 +2,7 @@ package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.lang.Type;
+import org.bds.lang.type.Type;
 import org.bds.scope.Scope;
 
 /**

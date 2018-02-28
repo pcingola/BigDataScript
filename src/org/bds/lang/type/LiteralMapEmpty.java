@@ -1,6 +1,7 @@
-package org.bds.lang;
+package org.bds.lang.type;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.scope.Scope;
 

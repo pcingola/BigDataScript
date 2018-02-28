@@ -1,48 +1,50 @@
-package org.bds.lang;
+package org.bds.lang.type;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.util.Gpr;
 
 /**
- * An int literal
+ * A boolean literal
  *
  * @author pcingola
  */
-public class LiteralInt extends Literal {
+public class LiteralBool extends Literal {
 
-	long value;
+	boolean value;
 
-	public LiteralInt(BdsNode parent, ParseTree tree) {
+	public LiteralBool(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
+	/**
+	 * Evaluate an expression
+	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		bdsThread.push(value);
 	}
 
-	public long getValue() {
+	public boolean isValue() {
 		return value;
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		String intStr = tree.getChild(0).getText().toLowerCase();
-		if (intStr.startsWith("0x")) value = Long.parseLong(intStr.substring(2), 16);
-		else value = Gpr.parseLongSafe(tree.getChild(0).getText());
+		value = Gpr.parseBoolSafe(tree.getChild(0).getText());
 	}
 
 	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
-		returnType = Type.INT;
+		returnType = Type.BOOL;
 		return returnType;
 	}
 
-	public void setValue(long value) {
+	public void setValue(boolean value) {
 		this.value = value;
 	}
 
@@ -50,5 +52,4 @@ public class LiteralInt extends Literal {
 	public String toString() {
 		return "" + value;
 	}
-
 }

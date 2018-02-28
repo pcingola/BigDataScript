@@ -8,12 +8,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bds.lang.Args;
 import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ParentNode;
-import org.bds.lang.Type;
-import org.bds.lang.TypeFunc;
+import org.bds.lang.statement.Args;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeFunc;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
 import org.bds.util.AutoHashMap;

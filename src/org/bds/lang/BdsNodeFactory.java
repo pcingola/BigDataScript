@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
 import org.bds.util.Gpr;
 
 /**
@@ -21,7 +23,7 @@ public class BdsNodeFactory {
 	boolean createFakeIds = false;
 	int nodeNumber = 1, fakeNodeNumber = Integer.MIN_VALUE;
 	String packageName;
-	HashMap<Integer, BdsNode> nodesById = new HashMap<Integer, BdsNode>(); // Important note: Node 0 means 'null' (numbering is one-based)
+	HashMap<Integer, BdsNode> nodesById = new HashMap<>(); // Important note: Node 0 means 'null' (numbering is one-based)
 
 	/**
 	 * Get singleton
@@ -74,12 +76,19 @@ public class BdsNodeFactory {
 		return node;
 	}
 
+	@SuppressWarnings("rawtypes")
+	Class findClass(String className) {
+		className = packageName() + className;
+		Class clazz = Class.forName(className);
+		return clazz;
+	}
+
 	/**
 	 * Create BigDataScriptNodes
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public BdsNode factory(String className, BdsNode parent, ParseTree tree) {
-		if (className.startsWith(packageName())) className = className.substring(packageName().length());
+		className = stripPackageName(className);
 
 		// This node doesn't do anything, it should not be created (it is a sub-product of the grammar)
 		if ((tree != null) && isIgnore(tree)) return null;
@@ -93,8 +102,7 @@ public class BdsNodeFactory {
 
 		// Create object
 		try {
-			className = packageName() + className;
-			Class clazz = Class.forName(className);
+			Class clazz = findClass(className);
 
 			// Is it a Type?
 			if (clazz == Type.class) {
@@ -223,6 +231,15 @@ public class BdsNodeFactory {
 
 	public void setCreateFakeIds(boolean createFakeIds) {
 		this.createFakeIds = createFakeIds;
+	}
+
+	/**
+	 * Remove Java package name from class name
+	 */
+	String stripPackageName(String className) {
+		if (className.indexOf('.') < 0) return className;
+		String cn[] = className.split("\\.");
+		return cn[cn.length - 1];
 	}
 
 	public void updateId(int oldId, int newId, BdsNode node) {

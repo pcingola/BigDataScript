@@ -1,8 +1,8 @@
 package org.bds.lang.nativeFunctions.math;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
 import org.bds.lang.nativeFunctions.FunctionNative;
+import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_tanh_real extends FunctionNative {

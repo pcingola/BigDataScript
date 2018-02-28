@@ -3,10 +3,10 @@ package org.bds.lang.nativeMethods.list;
 import java.util.ArrayList;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeFunc;
-import org.bds.lang.TypeList;
 import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeFunc;
+import org.bds.lang.type.TypeList;
 import org.bds.run.BdsThread;
 
 /**

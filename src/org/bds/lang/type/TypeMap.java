@@ -1,8 +1,9 @@
-package org.bds.lang;
+package org.bds.lang.type;
 
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.nativeMethods.map.MethodNativeMapHasKey;
 import org.bds.lang.nativeMethods.map.MethodNativeMapHasValue;

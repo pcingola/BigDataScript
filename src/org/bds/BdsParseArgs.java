@@ -2,17 +2,17 @@ package org.bds;
 
 import java.util.ArrayList;
 
-import org.bds.lang.Literal;
-import org.bds.lang.LiteralBool;
-import org.bds.lang.LiteralInt;
-import org.bds.lang.LiteralListString;
-import org.bds.lang.LiteralReal;
-import org.bds.lang.LiteralString;
 import org.bds.lang.ProgramUnit;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
-import org.bds.lang.VarDeclaration;
-import org.bds.lang.VariableInit;
+import org.bds.lang.statement.VarDeclaration;
+import org.bds.lang.statement.VariableInit;
+import org.bds.lang.type.Literal;
+import org.bds.lang.type.LiteralBool;
+import org.bds.lang.type.LiteralInt;
+import org.bds.lang.type.LiteralListString;
+import org.bds.lang.type.LiteralReal;
+import org.bds.lang.type.LiteralString;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.util.Gpr;

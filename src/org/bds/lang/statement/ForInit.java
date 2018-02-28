@@ -2,7 +2,6 @@ package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.lang.VarDeclaration;
 import org.bds.lang.expression.Expression;
 import org.bds.run.BdsThread;
 

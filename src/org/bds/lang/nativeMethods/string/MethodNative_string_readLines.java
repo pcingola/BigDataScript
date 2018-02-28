@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
 import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 

@@ -2,9 +2,7 @@ package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.lang.Type;
-import org.bds.lang.VarDeclaration;
-import org.bds.lang.VariableInit;
+import org.bds.lang.type.Type;
 
 /**
  * Method declaration
