@@ -7,7 +7,7 @@ import BigDataScriptLexerRules;
 //------------------------------------------------------------------------------
 
 // Main program
-programUnit : eol* statement+;
+programUnit : eol* statement+ EOF;
 
 // End of line (semicolons are optional)
 eol : (';' | '\n' )+;
