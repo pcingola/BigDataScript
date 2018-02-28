@@ -25,30 +25,7 @@ import org.bds.util.AutoHashMap;
  */
 public class Scope implements BdsSerialize, Iterable<String> {
 
-	public static final String GLOBAL_VAR_K = "K"; // Kilo = 2^10
-	public static final String GLOBAL_VAR_M = "M"; // Mega = 2^20
-	public static final String GLOBAL_VAR_G = "G"; // Giga = 2^30
-	public static final String GLOBAL_VAR_T = "T"; // Tera = 2^40
-	public static final String GLOBAL_VAR_P = "P"; // Peta = 2^50
-	public static final String GLOBAL_VAR_E = "E"; // Euler's constant
-	public static final String GLOBAL_VAR_PI = "PI"; // Pi
-	public static final String GLOBAL_VAR_MINUTE = "minute";
-	public static final String GLOBAL_VAR_HOUR = "hour";
-	public static final String GLOBAL_VAR_DAY = "day";
-	public static final String GLOBAL_VAR_WEEK = "week";
-	public static final String GLOBAL_VAR_LOCAL_CPUS = "cpusLocal";
-
-	// Command line arguments are available in this list
-	public static final String GLOBAL_VAR_ARGS_LIST = "args";
-
-	// Program name
-	public static final String GLOBAL_VAR_PROGRAM_NAME = "programName";
-	public static final String GLOBAL_VAR_PROGRAM_PATH = "programPath";
-
-	// Global scope
 	private static int scopeNum = 0;
-	private static Scope globalScope = new Scope(null, null);
-	private static AutoHashMap<String, Scope> classScope = new AutoHashMap<>(new Scope());
 
 	int id;
 	Scope parent;
@@ -57,41 +34,15 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	AutoHashMap<String, List<ScopeSymbol>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
 	BdsNode node;
 
-	/**
-	 * Class scope
-	 */
-	public static Scope getClassScope(Type type) {
-		if (type == null) return null;
-		return classScope.getOrCreate(type.toString());
-	}
-
-	/**
-	 * Global scope
-	 */
-	public static Scope getGlobalScope() {
-		return globalScope;
-	}
-
 	protected static int nextId() {
 		return ++scopeNum;
 	}
 
-	/**
-	 * Reset Global Scope
-	 */
-	public static void resetGlobalScope() {
-		globalScope = new Scope(null, null);
-	}
-
-	public static void setGlobalScope(Scope newGlobalScope) {
-		globalScope = newGlobalScope;
-	}
-
 	public Scope() {
-		parent = getGlobalScope();
+		parent = GlobalScope.get();
 		node = null;
 		id = nextId();
-		symbols = new HashMap<String, ScopeSymbol>();
+		symbols = new HashMap<>();
 	}
 
 	/**
@@ -103,14 +54,14 @@ public class Scope implements BdsSerialize, Iterable<String> {
 		this.node = node;
 		id = nextId();
 
-		symbols = new HashMap<String, ScopeSymbol>();
+		symbols = new HashMap<>();
 		if (node != null) copy(node.getScope()); // Copy symbols from other scope
 	}
 
 	public synchronized void add(ScopeSymbol symbol) {
 		if (symbol.isFunction()) {
 			// Create hash?
-			if (functions == null) functions = new AutoHashMap<String, List<ScopeSymbol>>(new LinkedList<ScopeSymbol>());
+			if (functions == null) functions = new AutoHashMap<>(new LinkedList<ScopeSymbol>());
 
 			// Add function by name
 			functions.getOrCreate(symbol.getName()).add(symbol);
@@ -188,7 +139,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	 */
 	public List<ScopeSymbol> getFunctions() {
 		if (functions == null) return null;
-		List<ScopeSymbol> funcs = new ArrayList<ScopeSymbol>();
+		List<ScopeSymbol> funcs = new ArrayList<>();
 
 		for (String fname : functions.keySet())
 			funcs.addAll(functions.get(fname));
@@ -200,7 +151,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	 * Find all functions whose names are 'functionName'
 	 */
 	public List<ScopeSymbol> getFunctions(String functionName) {
-		List<ScopeSymbol> funcs = new ArrayList<ScopeSymbol>();
+		List<ScopeSymbol> funcs = new ArrayList<>();
 
 		for (Scope scope = this; scope != null; scope = scope.parent) {
 			List<ScopeSymbol> fs = scope.getFunctionsLocal(functionName);
@@ -372,7 +323,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 
 		// Show scope symbols
 		StringBuilder sbThis = new StringBuilder();
-		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
+		ArrayList<ScopeSymbol> ssyms = new ArrayList<>();
 		ssyms.addAll(symbols.values());
 		Collections.sort(ssyms);
 		for (ScopeSymbol ss : ssyms)
@@ -402,13 +353,4 @@ public class Scope implements BdsSerialize, Iterable<String> {
 		return sb.toString();
 	}
 
-	//	public String toStringStack() {
-	//		StringBuilder sb = new StringBuilder();
-	//		if (stack != null) {
-	//			int num = 0;
-	//			for (Object obj : stack)
-	//				sb.append("Stack[" + (num++) + "]:\t" + obj.getClass().getSimpleName() + "\t" + obj.toString() + "\n");
-	//		}
-	//		return sb.toString();
-	//	}
 }

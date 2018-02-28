@@ -795,22 +795,6 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return stack.removeFirst();
 	}
 
-	//	public long popInt() {
-	//		if (isCheckpointRecover()) return 0;
-	//		Object num = stack.removeFirst();
-	//		if (num instanceof Long) return ((Long) num).longValue();
-	//		if (num instanceof Double) return ((Double) num).longValue();
-	//		throw new RuntimeException("Cannot convert type '" + num.getClass().getCanonicalName() + "' to 'int'");
-	//	}
-	//
-	//	public double popReal() {
-	//		if (isCheckpointRecover()) return 0;
-	//		Object num = stack.removeFirst();
-	//		if (num instanceof Double) return ((Double) num).doubleValue();
-	//		if (num instanceof Long) return ((Long) num).doubleValue();
-	//		throw new RuntimeException("Cannot convert type '" + num.getClass().getCanonicalName() + "' to 'int'");
-	//	}
-
 	/**
 	 * Pop a bool from stack
 	 */

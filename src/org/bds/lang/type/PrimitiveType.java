@@ -6,5 +6,5 @@ package org.bds.lang.type;
  * @author pcingola
  */
 public enum PrimitiveType {
-	VOID, BOOL, INT, REAL, STRING, LIST, MAP, FUNC, CLASS, FAKE, ANY
+	// VOID, BOOL, INT, REAL, STRING, LIST, MAP, FUNC, CLASS, FAKE, ANY
 };
