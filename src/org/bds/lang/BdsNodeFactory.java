@@ -3,6 +3,7 @@ package org.bds.lang;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -20,10 +21,19 @@ public class BdsNodeFactory {
 	public static boolean debug = false;
 	private static BdsNodeFactory bdsNodeFactory = new BdsNodeFactory();
 
+	public static final String packageNames[] = { //
+			"org.bds.lang.expression" //
+			, "org.bds.lang.statement" //
+			, "org.bds.lang.type" //
+			, "org.bds.lang" //
+	};
+
 	boolean createFakeIds = false;
 	int nodeNumber = 1, fakeNodeNumber = Integer.MIN_VALUE;
 	String packageName;
-	HashMap<Integer, BdsNode> nodesById = new HashMap<>(); // Important note: Node 0 means 'null' (numbering is one-based)
+	Map<Integer, BdsNode> nodesById = new HashMap<>(); // Important note: Node 0 means 'null' (numbering is one-based)
+	@SuppressWarnings("rawtypes")
+	Map<String, Class> classByName = new HashMap<>(); // Class cache
 
 	/**
 	 * Get singleton
@@ -74,13 +84,6 @@ public class BdsNodeFactory {
 		// Create
 		BdsNode node = factory(className, parent, tree);
 		return node;
-	}
-
-	@SuppressWarnings("rawtypes")
-	Class findClass(String className) {
-		className = packageName() + className;
-		Class clazz = Class.forName(className);
-		return clazz;
 	}
 
 	/**
@@ -135,6 +138,26 @@ public class BdsNodeFactory {
 		} catch (Exception e) {
 			throw new RuntimeException("Error creating object: Class '" + className + "'", e);
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	Class findClass(String className) {
+		// Is it cached?
+		if (classByName.containsKey(className)) return classByName.get(className);
+
+		// Find full package name
+		for (String packageName : packageNames) {
+			try {
+				String fqcn = packageName + "." + className;
+				Class clazz = Class.forName(fqcn);
+				classByName.put(className, clazz);
+				return clazz;
+			} catch (ClassNotFoundException e) {
+				// Not found, keep looking
+			}
+		}
+
+		throw new RuntimeException("Cannot find class '" + className + "'. This should never happen!");
 	}
 
 	/**
