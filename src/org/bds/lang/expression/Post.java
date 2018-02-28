@@ -3,6 +3,7 @@ package org.bds.lang.expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Reference;
+import org.bds.lang.value.ValueInt;
 import org.bds.run.BdsThread;
 
 /**
@@ -36,11 +37,12 @@ public class Post extends Pre {
 
 		if (bdsThread.isCheckpointRecover()) return;
 
-		long value = bdsThread.popInt();
-		if (operation == PrePostOperation.INCREMENT) ref.setValue(bdsThread, value + 1);
-		else if (operation == PrePostOperation.DECREMENT) ref.setValue(bdsThread, value - 1);
+		ValueInt value = (ValueInt) bdsThread.pop();
+		if (operation == PrePostOperation.INCREMENT) value.set(value.get() + 1);
+		else if (operation == PrePostOperation.DECREMENT) value.set(value.get() - 1);
 		else throw new RuntimeException("Unknown operator " + operation);
 
+		ref.setValue(bdsThread, value);
 		bdsThread.push(value);
 	}
 

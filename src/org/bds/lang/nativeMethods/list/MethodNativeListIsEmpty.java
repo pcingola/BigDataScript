@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -22,7 +23,7 @@ public class MethodNativeListIsEmpty extends MethodNativeList {
 	protected void initMethod(Type baseType) {
 		functionName = "isEmpty";
 		classType = TypeList.get(baseType);
-		returnType = Type.BOOL;
+		returnType = Types.BOOL;
 
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };

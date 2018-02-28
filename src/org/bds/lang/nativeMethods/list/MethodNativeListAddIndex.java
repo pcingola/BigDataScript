@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -25,7 +26,7 @@ public class MethodNativeListAddIndex extends MethodNativeList {
 		returnType = baseType;
 
 		String argNames[] = { "this", "idx", "toPush" };
-		Type argTypes[] = { classType, Type.INT, baseType };
+		Type argTypes[] = { classType, Types.INT, baseType };
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();

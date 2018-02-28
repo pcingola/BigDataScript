@@ -3,6 +3,7 @@ package org.bds.lang.nativeMethods.string;
 import org.bds.lang.Parameters;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_replace_regex_repl extends MethodNative {
@@ -13,11 +14,11 @@ public class MethodNative_string_replace_regex_repl extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "replaceAll";
-		classType = Type.STRING;
-		returnType = Type.STRING;
+		classType = Types.STRING;
+		returnType = Types.STRING;
 
 		String argNames[] = { "this", "regex", "repl" };
-		Type argTypes[] = { Type.STRING, Type.STRING, Type.STRING };
+		Type argTypes[] = { Types.STRING, Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

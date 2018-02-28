@@ -12,8 +12,8 @@ import org.bds.Config;
 import org.bds.cluster.host.HostResources;
 import org.bds.executioner.Executioner;
 import org.bds.lang.expression.Expression;
-import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
@@ -573,8 +573,8 @@ public class Task implements BdsSerialize {
 		currentDir = serializer.getNextFieldString();
 
 		// Task dependency
-		List<String> inputFiles = serializer.getNextFieldList(TypeList.get(Type.STRING));
-		List<String> outputFiles = serializer.getNextFieldList(TypeList.get(Type.STRING));
+		List<String> inputFiles = serializer.getNextFieldList(TypeList.get(Types.STRING));
+		List<String> outputFiles = serializer.getNextFieldList(TypeList.get(Types.STRING));
 		// serializer.getNextFieldList(TypeList.get(Type.STRING)); // Task IDs
 
 		taskDependency = new TaskDependency();

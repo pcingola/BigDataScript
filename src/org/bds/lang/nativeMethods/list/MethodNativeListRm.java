@@ -5,6 +5,7 @@ import java.util.List;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -22,7 +23,7 @@ public class MethodNativeListRm extends MethodNativeList {
 	protected void initMethod(Type baseType) {
 		functionName = "rm";
 		classType = TypeList.get(baseType);
-		returnType = Type.VOID;
+		returnType = Types.VOID;
 
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };

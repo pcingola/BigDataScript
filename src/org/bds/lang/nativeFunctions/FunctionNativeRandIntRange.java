@@ -2,6 +2,7 @@ package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -18,10 +19,10 @@ public class FunctionNativeRandIntRange extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "randInt";
-		returnType = Type.INT;
+		returnType = Types.INT;
 
 		String argNames[] = { "range" };
-		Type argTypes[] = { Type.INT };
+		Type argTypes[] = { Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}

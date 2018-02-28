@@ -5,7 +5,9 @@ import java.util.Collections;
 
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerializer;
@@ -26,7 +28,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	 * Add method to global scope
 	 */
 	protected void addNativeFunctionToScope() {
-		Scope classScope = Scope.getGlobalScope();
+		Scope classScope = GlobalScope.get();
 		ScopeSymbol ssym = new ScopeSymbol(functionName, getType(), this);
 		classScope.add(ssym);
 	}
@@ -66,7 +68,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	public void runFunction(BdsThread bdsThread) {
 		try {
 			// Run function
-			Object result = runFunctionNative(bdsThread);
+			Value result = runFunctionNativeValue(bdsThread);
 			bdsThread.setReturnValue(result); // Set result in scope
 		} catch (Throwable t) {
 			if (bdsThread.isVerbose()) t.printStackTrace();
@@ -75,9 +77,17 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	}
 
 	/**
-	 * Run a method
+	 * Run a native method
 	 */
-	protected abstract Object runFunctionNative(BdsThread csThread);
+	protected abstract Object runFunctionNative(BdsThread bdsThread);
+
+	/**
+	 * Run a native method, wrap result in a 'Value'
+	 */
+	protected Value runFunctionNativeValue(BdsThread bdsThread) {
+		Object ret = runFunctionNative(bdsThread);
+		return Value.factory(ret);
+	}
 
 	@Override
 	public void serializeParse(BdsSerializer serializer) {

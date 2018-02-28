@@ -3,6 +3,7 @@ package org.bds.lang.expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -31,7 +32,7 @@ public class ExpressionBitNegation extends ExpressionUnary {
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		// Can we transform to an int?
-		expr.checkCanCastInt(compilerMessages);
+		expr.getReturnType().checkCanCast(Types.INT, compilerMessages);
 	}
 
 }

@@ -9,6 +9,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunc;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -69,7 +70,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	/**
 	 * Apply function to arguments, return function's result
 	 */
-	public Object apply(BdsThread bdsThread, Object value) {
+	public Value apply(BdsThread bdsThread, Object value) {
 		// Create scope and add function arguments
 		if (!bdsThread.isCheckpointRecover()) {
 			VarDeclaration fparam[] = getParameters().getVarDecl();
@@ -91,7 +92,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
 
 		// Get return value
-		Object retVal = bdsThread.getReturnValue();
+		Value retVal = bdsThread.getReturnValue();
 
 		// Back to old scope
 		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
@@ -154,9 +155,9 @@ public class FunctionDeclaration extends StatementWithScope {
 		// Not a standard 'return' statement? Make sure we are returning the right type.
 		if (bdsThread.isReturn()) {
 			bdsThread.setRunState(RunState.OK); // Restore 'OK' runState
-		} else if (!returnType.canCastObject(bdsThread.getReturnValue())) {
+		} else if (!returnType.canCast(bdsThread.getReturnValue().getType())) {
 			// Not the right type? Force a default value of the right type
-			bdsThread.setReturnValue(returnType.defaultValue());
+			bdsThread.setReturnValue(returnType.getDefaultValue());
 		}
 	}
 

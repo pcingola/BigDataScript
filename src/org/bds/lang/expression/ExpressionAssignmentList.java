@@ -6,10 +6,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.type.LiteralListEmpty;
 import org.bds.lang.type.Reference;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.value.LiteralListEmpty;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -87,9 +88,9 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 			Reference vr = (Reference) lefts[i];
 
 			// Get value
-			Object value;
+			Value value;
 			if (i < list.size()) value = list.get(i);
-			else value = vr.getReturnType().defaultValue(); // List too short? Assign variable's default value
+			else value = vr.getReturnType().getDefaultValue(); // List too short? Assign variable's default value
 
 			// Assign value to variable
 			vr.setValue(bdsThread, value);

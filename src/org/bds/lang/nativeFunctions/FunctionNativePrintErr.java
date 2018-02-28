@@ -3,6 +3,7 @@ package org.bds.lang.nativeFunctions;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -19,10 +20,10 @@ public class FunctionNativePrintErr extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "printErr";
-		returnType = TypeList.get(Type.STRING);
+		returnType = TypeList.get(Types.STRING);
 
 		String argNames[] = { "str" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}

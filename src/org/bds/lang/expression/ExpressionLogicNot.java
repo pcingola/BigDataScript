@@ -31,7 +31,7 @@ public class ExpressionLogicNot extends ExpressionUnary {
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		// Can we transform to bool?
-		expr.checkCanCastBool(compilerMessages);
+		expr.checkCanCastToBool(compilerMessages);
 	}
 
 }

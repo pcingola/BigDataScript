@@ -11,6 +11,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_dir_regex extends MethodNative {
@@ -21,11 +22,11 @@ public class MethodNative_string_dir_regex extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "dir";
-		classType = Type.STRING;
-		returnType = TypeList.get(Type.STRING);
+		classType = Types.STRING;
+		returnType = TypeList.get(Types.STRING);
 
 		String argNames[] = { "this", "glob" };
-		Type argTypes[] = { Type.STRING, Type.STRING };
+		Type argTypes[] = { Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

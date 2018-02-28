@@ -79,7 +79,7 @@ public class ExpressionCond extends Expression {
 
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		if (expr != null) expr.checkCanCastBool(compilerMessages);
+		if (expr != null) expr.checkCanCastToBool(compilerMessages);
 
 		if (exprTrue != null //
 				&& exprFalse != null //

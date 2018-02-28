@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -30,9 +31,9 @@ public class ExpressionTimes extends ExpressionMath {
 		super.returnType(scope);
 
 		if (isReturnTypesNotNull()) {
-			if (left.isString() || right.isString()) returnType = Type.STRING;
-			else if (left.canCastInt() && right.canCastInt()) returnType = Type.INT;
-			else if (left.canCastReal() && right.canCastReal()) returnType = Type.REAL;
+			if (left.isString() || right.isString()) returnType = Types.STRING;
+			else if (left.canCastToInt() && right.canCastToInt()) returnType = Types.INT;
+			else if (left.canCastToReal() && right.canCastToReal()) returnType = Types.REAL;
 		}
 		return returnType;
 	}
@@ -42,7 +43,7 @@ public class ExpressionTimes extends ExpressionMath {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		// Evaliate expressions
+		// Evaluate expressions
 		bdsThread.run(left);
 		bdsThread.run(right);
 
@@ -70,13 +71,13 @@ public class ExpressionTimes extends ExpressionMath {
 			// string * int : Get number and string
 			String str = "";
 			long num = 0;
-			if (left.canCastInt()) {
+			if (left.canCastToInt()) {
 				num = (long) lval;
 				str = rval.toString();
-			} else if (right.canCastInt()) {
+			} else if (right.canCastToInt()) {
 				str = lval.toString();
 				num = ((long) rval);
-			} else throw new RuntimeException("Neither is an int. This should never happen!");
+			} else throw new RuntimeException("Neither argument is type int. This should never happen!");
 
 			// Multiply (append the same string num times
 			StringBuilder sb = new StringBuilder();
@@ -92,14 +93,14 @@ public class ExpressionTimes extends ExpressionMath {
 
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		if (left.isString() && right.canCastInt()) {
+		if (left.isString() && right.canCastToInt()) {
 			// string * int: OK
-		} else if (left.canCastInt() && right.isString()) {
+		} else if (left.canCastToInt() && right.isString()) {
 			// int * string : OK
 		} else {
 			// Normal 'math'
-			left.checkCanCastIntOrReal(compilerMessages);
-			right.checkCanCastIntOrReal(compilerMessages);
+			left.checkCanCastToNumeric(compilerMessages);
+			right.checkCanCastToNumeric(compilerMessages);
 		}
 	}
 

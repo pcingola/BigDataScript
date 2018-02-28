@@ -10,6 +10,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -28,7 +29,7 @@ public class ExpressionGoal extends ExpressionUnary {
 	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
-		returnType = TypeList.get(Type.STRING);
+		returnType = TypeList.get(Types.STRING);
 		return returnType;
 	}
 

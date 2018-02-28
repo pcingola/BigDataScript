@@ -6,6 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -39,7 +40,7 @@ public class Return extends Statement {
 		// Find enclosing function
 		FunctionDeclaration func = (FunctionDeclaration) findParent(FunctionDeclaration.class);
 		// Get funtion's expected return type
-		if (func == null) returnType = Type.INT; // Function not found? This is not inside any function...must be in 'main' => return type is 'int'
+		if (func == null) returnType = Types.INT; // Function not found? This is not inside any function...must be in 'main' => return type is 'int'
 		else returnType = func.getReturnType();
 
 		return returnType;
@@ -74,7 +75,7 @@ public class Return extends Statement {
 		returnType(scope);
 
 		if (expr == null) {
-			if (!returnType.isVoid()) compilerMessages.add(this, "Cannot cast " + Type.VOID + " to " + returnType, MessageType.ERROR);
+			if (!returnType.isVoid()) compilerMessages.add(this, "Cannot cast " + Types.VOID + " to " + returnType, MessageType.ERROR);
 		} else if ((expr.getReturnType() != null) && (!expr.getReturnType().canCast(returnType))) compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
 
 	}

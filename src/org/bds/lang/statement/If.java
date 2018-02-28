@@ -96,7 +96,7 @@ public class If extends Statement {
 		if ((condition != null) //
 				&& !condition.isBool() //
 				&& (retType != null) //
-				&& !retType.canCast(Type.BOOL)//
+				&& !retType.canCastToBool()//
 		) compilerMessages.add(this, "Condition in 'if' statement must be a bool expression", MessageType.ERROR);
 	}
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -22,10 +23,10 @@ public class MethodNativeMapRemove extends MethodNativeMap {
 	protected void initMethod(Type baseType) {
 		functionName = "remove";
 		classType = TypeMap.get(baseType);
-		returnType = Type.BOOL;
+		returnType = Types.BOOL;
 
 		String argNames[] = { "this", "key" };
-		Type argTypes[] = { classType, Type.STRING }; // null: don't check argument (anything can be converted to 'string')
+		Type argTypes[] = { classType, Types.STRING }; // null: don't check argument (anything can be converted to 'string')
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();

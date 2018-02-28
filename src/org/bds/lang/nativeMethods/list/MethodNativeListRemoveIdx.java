@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -25,7 +26,7 @@ public class MethodNativeListRemoveIdx extends MethodNativeList {
 		returnType = baseType;
 
 		String argNames[] = { "this", "idx" };
-		Type argTypes[] = { classType, Type.INT };
+		Type argTypes[] = { classType, Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();

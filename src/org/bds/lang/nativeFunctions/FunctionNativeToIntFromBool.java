@@ -2,6 +2,7 @@ package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -18,10 +19,10 @@ public class FunctionNativeToIntFromBool extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "toInt";
-		returnType = Type.INT;
+		returnType = Types.INT;
 
 		String argNames[] = { "num" };
-		Type argTypes[] = { Type.BOOL };
+		Type argTypes[] = { Types.BOOL };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}

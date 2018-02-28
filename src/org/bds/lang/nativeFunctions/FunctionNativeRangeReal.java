@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -21,10 +22,10 @@ public class FunctionNativeRangeReal extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "range";
-		returnType = TypeList.get(Type.REAL);
+		returnType = TypeList.get(Types.REAL);
 
 		String argNames[] = { "min", "max", "step" };
-		Type argTypes[] = { Type.REAL, Type.REAL, Type.REAL };
+		Type argTypes[] = { Types.REAL, Types.REAL, Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}

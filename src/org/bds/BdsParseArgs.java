@@ -5,14 +5,15 @@ import java.util.ArrayList;
 import org.bds.lang.ProgramUnit;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.statement.VariableInit;
-import org.bds.lang.type.Literal;
-import org.bds.lang.type.LiteralBool;
-import org.bds.lang.type.LiteralInt;
-import org.bds.lang.type.LiteralListString;
-import org.bds.lang.type.LiteralReal;
-import org.bds.lang.type.LiteralString;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Literal;
+import org.bds.lang.value.LiteralBool;
+import org.bds.lang.value.LiteralInt;
+import org.bds.lang.value.LiteralListString;
+import org.bds.lang.value.LiteralReal;
+import org.bds.lang.value.LiteralString;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.util.Gpr;
@@ -108,13 +109,13 @@ public class BdsParseArgs {
 		}
 
 		// Make all unprocessed arguments available for the program (in 'args' list)
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Type.STRING), programArgs));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING), programArgs));
 
 		// Initialize program name
 		String programPath = programUnit.getFileName();
 		String progName = Gpr.baseName(programPath);
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, progName));
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Type.STRING, programPath));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Types.STRING, progName));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Types.STRING, programPath));
 	}
 
 	/**
@@ -261,7 +262,7 @@ public class BdsParseArgs {
 		try {
 			Literal literal = null;
 
-			if (varType.isList(Type.STRING)) {
+			if (varType.isList(Types.STRING)) {
 				// Create literal
 				LiteralListString lit = new LiteralListString(varInit, null);
 				literal = lit;

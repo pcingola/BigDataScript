@@ -12,6 +12,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -62,7 +63,7 @@ public class ForLoopList extends StatementWithScope {
 
 		// Create counter
 		iterableCountName = ScopeSymbol.INTERNAL_SYMBOL_START + "iterableCount." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
-		Type iterableCountType = Type.INT;
+		Type iterableCountType = Types.INT;
 		ScopeSymbol ssIterableCount = new ScopeSymbol(iterableCountName, iterableCountType, 0L);
 		csThread.getScope().add(ssIterableCount);
 		return ssIterableCount;

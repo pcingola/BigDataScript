@@ -2,6 +2,7 @@ package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -18,7 +19,7 @@ public class FunctionNativeMaxReal extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "max";
-		returnType = Type.REAL;
+		returnType = Types.REAL;
 
 		String argNames[] = { "n1", "n2" };
 		Type argTypes[] = { returnType, returnType };

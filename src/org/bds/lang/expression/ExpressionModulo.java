@@ -38,8 +38,8 @@ public class ExpressionModulo extends ExpressionMath {
 
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		left.checkCanCastInt(compilerMessages);
-		right.checkCanCastInt(compilerMessages);
+		left.checkCanCastToInt(compilerMessages);
+		right.checkCanCastToInt(compilerMessages);
 	}
 
 }

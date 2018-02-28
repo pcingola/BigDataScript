@@ -2,6 +2,7 @@ package org.bds.lang.nativeMethods.list;
 
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 
 /**
  * Map: Apply a function to all elements in the list
@@ -18,7 +19,7 @@ public class MethodNativeListMapToReal extends MethodNativeListMap {
 	protected void initMethod(Type baseType) {
 		super.initMethod(baseType);
 		functionName = "mapToReal";
-		returnBaseType = Type.REAL;
+		returnBaseType = Types.REAL;
 		returnType = TypeList.get(returnBaseType);
 	}
 

@@ -3,8 +3,8 @@ package org.bds.lang.expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.type.PrimitiveType;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.scope.Scope;
 
 /**
@@ -23,7 +23,7 @@ public class ExpressionLogic extends ExpressionBinary {
 		if (returnType != null) return returnType;
 
 		super.returnType(scope);
-		returnType = Type.get(PrimitiveType.BOOL);
+		returnType = Types.BOOL;
 
 		return returnType;
 
@@ -32,8 +32,8 @@ public class ExpressionLogic extends ExpressionBinary {
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		// Can we transform 'left' into an int?
-		left.checkCanCastBool(compilerMessages);
-		right.checkCanCastBool(compilerMessages);
+		left.checkCanCastToBool(compilerMessages);
+		right.checkCanCastToBool(compilerMessages);
 	}
 
 }

@@ -15,10 +15,11 @@ import org.bds.lang.statement.Block;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementExpr;
 import org.bds.lang.type.InterpolateVars;
-import org.bds.lang.type.Literal;
-import org.bds.lang.type.LiteralString;
 import org.bds.lang.type.Reference;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Literal;
+import org.bds.lang.value.LiteralString;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.task.Task;
@@ -326,7 +327,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (statement != null) statement.returnType(scope);
 
 		// Task expressions return a task ID (a string)
-		returnType = Type.STRING;
+		returnType = Types.STRING;
 		return returnType;
 	}
 

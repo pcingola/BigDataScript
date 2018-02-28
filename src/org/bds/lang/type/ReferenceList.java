@@ -8,6 +8,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.value.LiteralInt;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -152,7 +153,7 @@ public class ReferenceList extends Reference {
 			list.ensureCapacity(idx + 1);
 
 			while (list.size() <= idx)
-				list.add(baseType.defaultValue());
+				list.add(baseType.getDefaultValue());
 		}
 
 		list.set(idx, value);

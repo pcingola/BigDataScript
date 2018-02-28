@@ -7,6 +7,8 @@ import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunc;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -31,7 +33,7 @@ public class MethodNativeListFilter extends MethodNativeList {
 		// TODO: This is awful to say the least!
 		//       Type checking should be done at compile time, not here
 		//       (this is supposed to be a statically typed language)
-		if (!function.getReturnType().canCast(Type.BOOL)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + Type.BOOL);
+		if (!function.getReturnType().canCast(Types.BOOL)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + Types.BOOL);
 
 		// TODO: Check that function should only have one argument
 		// TODO: Check List's elements should be 'castable' to function's argument
@@ -45,7 +47,7 @@ public class MethodNativeListFilter extends MethodNativeList {
 		classType = TypeList.get(baseType);
 		returnType = TypeList.get(baseType);;
 
-		TypeFunc typeFunc = TypeFunc.get(Parameters.get(baseType, ""), Type.BOOL);
+		TypeFunc typeFunc = TypeFunc.get(Parameters.get(baseType, ""), Types.BOOL);
 		String argNames[] = { "this", "f" };
 		Type argTypes[] = { classType, typeFunc };
 		parameters = Parameters.get(argTypes, argNames);
@@ -63,8 +65,8 @@ public class MethodNativeListFilter extends MethodNativeList {
 		FunctionDeclaration function = findFunction(bdsThread, "f");
 
 		for (Object val : list) {
-			Object ret = function.apply(bdsThread, val);
-			if ((Boolean) Type.BOOL.cast(ret)) newList.add(val);
+			Value ret = function.apply(bdsThread, val);
+			if (ret.toBool()) newList.add(val);
 		}
 
 		return newList;

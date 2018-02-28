@@ -30,7 +30,7 @@ public class ExpressionBinary extends Expression {
 	@Override
 	public boolean isReturnTypesNotNull() {
 		if (right == null) return (left.getReturnType() != null);
-		return (left.getReturnType() != null) && (right.getReturnType() != null);
+		return left.isReturnTypesNotNull() && right.isReturnTypesNotNull();
 	}
 
 	/**

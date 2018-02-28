@@ -5,6 +5,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -26,8 +27,8 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 
 		expr.returnType(scope);
 
-		if (expr.canCastInt()) returnType = Type.INT;
-		else if (expr.canCastReal()) returnType = Type.REAL;
+		if (expr.canCastToInt()) returnType = Types.INT;
+		else if (expr.canCastToReal()) returnType = Types.REAL;
 		else return null; // Cannot cast to 'int' or 'real'. This should never happen!"
 
 		return returnType;
@@ -41,9 +42,9 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 		bdsThread.run(expr);
 		if (bdsThread.isCheckpointRecover()) return;
 
-		if (returnType == Type.INT) {
+		if (returnType == Types.INT) {
 			bdsThread.push(-bdsThread.popInt());
-		} else if (returnType == Type.REAL) {
+		} else if (returnType == Types.REAL) {
 			bdsThread.push(-bdsThread.popReal());
 		} else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
@@ -51,7 +52,7 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		// Can we transform to an int?
-		if (!expr.canCastInt() && !expr.canCastInt()) compilerMessages.add(this, "Cannot cast expression to int or real", MessageType.ERROR);
+		if (!expr.canCastToInt() && !expr.canCastToReal()) compilerMessages.add(this, "Cannot cast expression to int or real", MessageType.ERROR);
 	}
 
 }

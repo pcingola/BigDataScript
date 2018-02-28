@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
@@ -22,10 +23,10 @@ public class FunctionNativeConfig extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "config";
-		returnType = TypeMap.get(Type.STRING);
+		returnType = TypeMap.get(Types.STRING);
 
 		String argNames[] = { "file" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}

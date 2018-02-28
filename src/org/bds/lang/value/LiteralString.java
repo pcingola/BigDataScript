@@ -1,8 +1,9 @@
-package org.bds.lang.type;
+package org.bds.lang.value;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.type.InterpolateVars;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.serialize.BdsSerializer;
@@ -15,24 +16,20 @@ import org.bds.util.GprString;
  */
 public class LiteralString extends Literal {
 
-	String value; // If it is a simple literal, we use this
 	InterpolateVars interpolateVars;
 
 	public LiteralString(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	public String getValue() {
-		return value;
+		value = new ValueString();
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		String valueStr = tree.getChild(0).getText();
+		String valueStr = parseValue(tree);
 
 		if (valueStr.charAt(0) == '\'' && valueStr.charAt(valueStr.length() - 1) == '\'') {
 			// Remove quotes: No unescaping, no interpolation
-			value = valueStr.substring(1, valueStr.length() - 1);
+			value.set(valueStr.substring(1, valueStr.length() - 1));
 		} else {
 			// Remove quotes and interpolate string
 			valueStr = valueStr.substring(1, valueStr.length() - 1);
@@ -41,11 +38,8 @@ public class LiteralString extends Literal {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
-		if (returnType != null) return returnType;
-
-		returnType = Type.STRING;
-		return returnType;
+	protected String parseValue(ParseTree tree) {
+		return tree.getChild(0).getText();
 	}
 
 	@Override
@@ -62,27 +56,20 @@ public class LiteralString extends Literal {
 	/**
 	 * Sets literal value and finds interpolated variables
 	 */
-	public void setValue(String valueStr) {
-		value = valueStr;
-	}
-
-	/**
-	 * Sets literal value and finds interpolated variables
-	 */
 	public void setValueInterpolate(String valueStr) {
-		value = valueStr;
+		value.set(valueStr);
 
 		// Parse interpolated vars
 		interpolateVars = new InterpolateVars(this, null);
 		if (!interpolateVars.parse(valueStr)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
-			value = InterpolateVars.unEscape(valueStr); // Un-escape characters
+			value.set(InterpolateVars.unEscape(valueStr)); // Un-escape characters
 		}
 	}
 
 	@Override
 	public String toString() {
-		return "\"" + GprString.escape(value) + "\"";
+		return "\"" + GprString.escape(value.get().toString()) + "\"";
 	}
 
 	@Override

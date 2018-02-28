@@ -1,10 +1,13 @@
-package org.bds.lang.type;
+package org.bds.lang.value;
 
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.scope.Scope;
 
 /**
@@ -16,7 +19,7 @@ public class LiteralListString extends LiteralList {
 
 	public LiteralListString(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-		returnType = TypeList.get(Type.STRING);
+		returnType = TypeList.get(Types.STRING);
 	}
 
 	@Override

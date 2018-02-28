@@ -66,8 +66,8 @@ public class ExpressionMinus extends ExpressionMath {
 
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		left.checkCanCastIntOrReal(compilerMessages);
-		if (right != null) right.checkCanCastIntOrReal(compilerMessages);
+		if (left != null) left.checkCanCastToNumeric(compilerMessages);
+		if (right != null) right.checkCanCastToNumeric(compilerMessages);
 	}
 
 }

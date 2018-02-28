@@ -2,6 +2,7 @@ package org.bds.lang.nativeMethods;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -18,11 +19,11 @@ public class MethodNativeZzz extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "zzz";
-		classType = Type.STRING;
-		returnType = Type.STRING;
+		classType = Types.STRING;
+		returnType = Types.STRING;
 
 		String argNames[] = { "this", "ext" };
-		Type argTypes[] = { classType, Type.STRING };
+		Type argTypes[] = { classType, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

@@ -8,6 +8,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
@@ -20,11 +21,11 @@ public class MethodNative_string_substr_start extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "substr";
-		classType = Type.STRING;
-		returnType = Type.STRING;
+		classType = Types.STRING;
+		returnType = Types.STRING;
 
 		String argNames[] = { "this", "start" };
-		Type argTypes[] = { Type.STRING, Type.INT };
+		Type argTypes[] = { Types.STRING, Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

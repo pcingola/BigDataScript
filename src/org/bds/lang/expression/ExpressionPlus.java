@@ -9,6 +9,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -34,8 +35,8 @@ public class ExpressionPlus extends ExpressionMath {
 
 		super.returnType(scope);
 
-		if (left.canCastInt() && right.canCastInt()) returnType = Type.INT;
-		else if (left.canCastReal() && right.canCastReal()) returnType = Type.REAL;
+		if (left.canCastToInt() && right.canCastToInt()) returnType = Types.INT;
+		else if (left.canCastToReal() && right.canCastToReal()) returnType = Types.REAL;
 		else if (left.isList() && right.isList()) {
 			if (left.getReturnType() == null || right.getReturnType() == null) return null;
 			if (left.getReturnType().compareTo(right.getReturnType()) == 0) returnType = left.getReturnType(); // List plus List
@@ -48,7 +49,7 @@ public class ExpressionPlus extends ExpressionMath {
 			if (left.getReturnType() == null || right.getReturnType() == null) return null;
 			if (left.getReturnType().compareTo(tlist.getBaseType()) == 0) returnType = right.getReturnType(); // Item plus List
 		} else if (right.isList() && left.getReturnType().canCast(right.getReturnType())) returnType = right.getReturnType(); // Item plus List
-		else if (left.isString() || right.isString()) returnType = Type.STRING;
+		else if (left.isString() || right.isString()) returnType = Types.STRING;
 
 		return returnType;
 	}
@@ -118,8 +119,8 @@ public class ExpressionPlus extends ExpressionMath {
 			// Either side is a string? => String plus String
 		} else {
 			// Normal 'math'
-			left.checkCanCastIntOrReal(compilerMessages);
-			right.checkCanCastIntOrReal(compilerMessages);
+			left.checkCanCastToNumeric(compilerMessages);
+			right.checkcanCastToNumeric(compilerMessages);
 		}
 	}
 

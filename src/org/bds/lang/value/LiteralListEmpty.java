@@ -1,35 +1,33 @@
-package org.bds.lang.type;
+package org.bds.lang.value;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.scope.Scope;
 
 /**
- * Expression: Literal empty map
+ * Expression: Literal empty list '[]'
  * 
  * @author pcingola
  */
-public class LiteralMapEmpty extends LiteralMap {
+public class LiteralListEmpty extends LiteralList {
 
-	public LiteralMapEmpty(BdsNode parent, ParseTree tree) {
+	public LiteralListEmpty(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		keys = new Expression[0];
 		values = new Expression[0];
 	}
 
 	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
-
-		// Create a list of 'baseType'
-		returnType = TypeMap.get(Type.VOID);
-
+		returnType = TypeList.get(Types.VOID);
 		return returnType;
 	}
-
 }

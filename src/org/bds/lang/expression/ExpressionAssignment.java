@@ -4,15 +4,17 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.type.LiteralListEmpty;
-import org.bds.lang.type.LiteralMapEmpty;
 import org.bds.lang.type.Reference;
 import org.bds.lang.type.Type;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
 /**
  * Assign one variable to another one
+ * 
+ * Example: 
+ *     a = b
  *
  * @author pcingola
  */
@@ -42,10 +44,9 @@ public class ExpressionAssignment extends ExpressionBinary {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-
 		// Get value
 		bdsThread.run(right);
-		Object value = bdsThread.pop();
+		Value value = bdsThread.pop();
 
 		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
 		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
@@ -67,14 +68,9 @@ public class ExpressionAssignment extends ExpressionBinary {
 		if (!((Reference) left).isVariable(scope)) compilerMessages.add(this, "Cannot assign to non-variable '" + left + "'", MessageType.ERROR);
 
 		// Can we cast 'right type' into 'left type'?
-		if (left.isList() && right.isList() && right instanceof LiteralListEmpty) {
-			// OK, empty list can be assigned to any list
-		} else if (left.isMap() && right.isMap() && right instanceof LiteralMapEmpty) {
-			// OK, empty map can be assigned to any map
-		} else if (!right.getReturnType().canCast(left.getReturnType())) {
+		if (!right.getReturnType().canCast(left.getReturnType())) {
 			compilerMessages.add(this, "Cannot cast " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
 		}
-
 	}
 
 }

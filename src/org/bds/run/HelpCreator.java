@@ -15,6 +15,7 @@ import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
 
@@ -220,7 +221,7 @@ public class HelpCreator {
 		else if (type.isInt()) return "<int>";
 		else if (type.isReal()) return "<real>";
 		else if (type.isString()) return "<string>";
-		else if (type.isList(Type.STRING)) return "<string ... string>";
+		else if (type.isList(Types.STRING)) return "<string ... string>";
 
 		return null;
 	}

@@ -6,6 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -37,7 +38,7 @@ public class Exit extends Statement {
 		if (expr != null) expr.returnType(scope);
 
 		// Program's return type is 'int' (exit code)
-		returnType = Type.INT;
+		returnType = Types.INT;
 
 		return returnType;
 	}

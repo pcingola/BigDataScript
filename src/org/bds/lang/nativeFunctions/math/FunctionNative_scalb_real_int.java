@@ -3,6 +3,7 @@ package org.bds.lang.nativeFunctions.math;
 import org.bds.lang.Parameters;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_scalb_real_int extends FunctionNative {
@@ -13,10 +14,10 @@ public class FunctionNative_scalb_real_int extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "scalb";
-		returnType = Type.REAL;
+		returnType = Types.REAL;
 
 		String argNames[] = { "d", "scaleFactor" };
-		Type argTypes[] = { Type.REAL, Type.INT };
+		Type argTypes[] = { Types.REAL, Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}

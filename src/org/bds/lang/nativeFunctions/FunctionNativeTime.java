@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -20,7 +21,7 @@ public class FunctionNativeTime extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "time";
-		returnType = Type.INT;
+		returnType = Types.INT;
 
 		String argNames[] = {};
 		Type argTypes[] = {};

@@ -1,18 +1,23 @@
 package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessage.MessageType;
-import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.type.LiteralListEmpty;
-import org.bds.lang.type.LiteralMapEmpty;
 import org.bds.lang.type.Reference;
 import org.bds.lang.type.Type;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
 /**
- * Expression
+ * Expression where there is a binary operator and an assignment
+ * 
+ * Examples
+ * 		a += b
+ * 		a -= b
+ * 		a *= b
+ * 		a /= b
+ * 		a &= b
+ * 		a |= b
  *
  * @author pcingola
  */
@@ -53,32 +58,11 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 	public void runStep(BdsThread bdsThread) {
 		// Get value
 		bdsThread.run(right);
-		Object value = bdsThread.peek();
+		Value value = bdsThread.peek();
 
 		// Assign value
 		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
 		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
-	}
-
-	@Override
-	public void sanityCheck(CompilerMessages compilerMessages) {
-		// Is 'left' a variable?
-		if (!(left instanceof Reference)) compilerMessages.add(this, "Assignment to non variable", MessageType.ERROR);
-	}
-
-	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		// Trying to assign to a constant?
-		if (((Reference) left).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + left + "'", MessageType.ERROR);
-
-		// Can we cast 'right type' into 'left type'?
-		if (left.isList() && right.isList() && right instanceof LiteralListEmpty) {
-			// OK, empty list can be assigned to any list
-		} else if (left.isMap() && right.isMap() && right instanceof LiteralMapEmpty) {
-			// OK, empty map can be assigned to any map
-		} else if (!right.getReturnType().canCast(left.getReturnType())) {
-			compilerMessages.add(this, "Cannot cast " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
-		}
 	}
 
 }

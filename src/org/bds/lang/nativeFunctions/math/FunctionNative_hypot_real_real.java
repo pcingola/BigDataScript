@@ -3,6 +3,7 @@ package org.bds.lang.nativeFunctions.math;
 import org.bds.lang.Parameters;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_hypot_real_real extends FunctionNative {
@@ -13,10 +14,10 @@ public class FunctionNative_hypot_real_real extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "hypot";
-		returnType = Type.REAL;
+		returnType = Types.REAL;
 
 		String argNames[] = { "x", "y" };
-		Type argTypes[] = { Type.REAL, Type.REAL };
+		Type argTypes[] = { Types.REAL, Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}

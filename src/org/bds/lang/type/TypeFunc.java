@@ -109,16 +109,6 @@ public class TypeFunc extends Type {
 	}
 
 	@Override
-	public boolean isFunction() {
-		return true;
-	}
-
-	@Override
-	public boolean isPrimitiveType() {
-		return false;
-	}
-
-	@Override
 	public String toString() {
 		return signature(parameters, returnType);
 	}

@@ -6,6 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.scope.Scope;
 
 /**
@@ -75,7 +76,7 @@ public class Args extends BdsNode {
 				if (e.getReturnType() == null) // Only assign this to show that calculation was already performed
 					returnType = e.returnType(scope);
 
-		} else returnType = Type.VOID;
+		} else returnType = Types.VOID;
 
 		return returnType;
 	}

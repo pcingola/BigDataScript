@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,9 +41,11 @@ import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.HelpCreator;
 import org.bds.run.RunState;
+import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerializer;
@@ -527,8 +528,8 @@ public class Bds {
 		if (debug) log("Initialize global scope.");
 
 		// Reset Global scope
-		Scope.resetGlobalScope();
-		Scope globalScope = Scope.getGlobalScope();
+		GlobalScope.reset();
+		GlobalScope globalScope = GlobalScope.get();
 
 		//--
 		// Get default veluas from command line or config file
@@ -549,43 +550,45 @@ public class Bds {
 		long timeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_TIMEOUT, "" + oneDay));
 		long wallTimeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
 
-		long cpusLocal = Gpr.parseLongSafe(config.getString(Scope.GLOBAL_VAR_LOCAL_CPUS, "" + Gpr.NUM_CORES));
+		globalScope.init(config);
 
-		// ---
-		// Add global symbols
-		// ---
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, "")); // Now is empty, but they are assigned later
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Type.STRING, ""));
-
-		// Task related variables: Default values
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system)); // System type: "local", "ssh", "cluster", "aws", etc.
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Type.INT, cpus)); // Default number of cpus
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_MEM, Type.INT, mem)); // Default amount of memory (unrestricted)
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, queue)); // Default queue: none
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Type.STRING, node)); // Default node: none
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Type.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, Type.BOOL, false)); // Tasks are allowed to have empty output file/s
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_RETRY, Type.INT, (long) taskFailCount)); // Task fail can be re-tried (re-run) N times before considering failed.
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Type.INT, timeout)); // Task default timeout
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, Type.INT, wallTimeout)); // Task default wall-timeout
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, cpusLocal));
-
-		// Number of local CPUs
-		// Kilo, Mega, Giga, Tera, Peta.
-		LinkedList<ScopeSymbol> constants = new LinkedList<>();
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT, 1024L * 1024L * 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Type.INT, 1024L * 1024L * 1024L * 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_MINUTE, Type.INT, 60L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_HOUR, Type.INT, (long) (60 * 60)));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_DAY, Type.INT, (long) (24 * 60 * 60)));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_WEEK, Type.INT, (long) (7 * 24 * 60 * 60)));
-
-		// Math constants
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_E, Type.REAL, Math.E));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_PI, Type.REAL, Math.PI));
+		//		long cpusLocal = Gpr.parseLongSafe(config.getString(Scope.GLOBAL_VAR_LOCAL_CPUS, "" + Gpr.NUM_CORES));
+		//
+		//		// ---
+		//		// Add global symbols
+		//		// ---
+		//		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, "")); // Now is empty, but they are assigned later
+		//		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Type.STRING, ""));
+		//
+		//		// Task related variables: Default values
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system)); // System type: "local", "ssh", "cluster", "aws", etc.
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Type.INT, cpus)); // Default number of cpus
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_MEM, Type.INT, mem)); // Default amount of memory (unrestricted)
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, queue)); // Default queue: none
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Type.STRING, node)); // Default node: none
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Type.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, Type.BOOL, false)); // Tasks are allowed to have empty output file/s
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_RETRY, Type.INT, (long) taskFailCount)); // Task fail can be re-tried (re-run) N times before considering failed.
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Type.INT, timeout)); // Task default timeout
+		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, Type.INT, wallTimeout)); // Task default wall-timeout
+		//		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, cpusLocal));
+		//
+		//		// Number of local CPUs
+		//		// Kilo, Mega, Giga, Tera, Peta.
+		//		LinkedList<ScopeSymbol> constants = new LinkedList<>();
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT, 1024L * 1024L * 1024L));
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Type.INT, 1024L * 1024L * 1024L * 1024L));
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_MINUTE, Type.INT, 60L));
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_HOUR, Type.INT, (long) (60 * 60)));
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_DAY, Type.INT, (long) (24 * 60 * 60)));
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_WEEK, Type.INT, (long) (7 * 24 * 60 * 60)));
+		//
+		//		// Math constants
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_E, Type.REAL, Math.E));
+		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_PI, Type.REAL, Math.PI));
 
 		// Add all constants
 		for (ScopeSymbol ss : constants) {
@@ -600,13 +603,13 @@ public class Bds {
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot get cannonical path for current dir");
 		}
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_PHYSICAL_PATH, Type.STRING, path));
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_PHYSICAL_PATH, Types.STRING, path));
 
 		// Set all environment variables
 		Map<String, String> envMap = System.getenv();
 		for (String varName : envMap.keySet()) {
 			String varVal = envMap.get(varName);
-			globalScope.add(new ScopeSymbol(varName, Type.STRING, varVal));
+			globalScope.add(new ScopeSymbol(varName, Types.STRING, varVal));
 		}
 
 		// Command line arguments (default: empty list)
@@ -614,7 +617,7 @@ public class Bds {
 		// we have to set something now, otherwise we'll get a "variable
 		// not found" error at compiler time, if the program attempts
 		// to use 'args'.
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Type.STRING), new ArrayList<String>()));
+		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING), new ArrayList<String>()));
 	}
 
 	/**

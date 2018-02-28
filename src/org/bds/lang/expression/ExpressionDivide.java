@@ -48,8 +48,8 @@ public class ExpressionDivide extends ExpressionMath {
 
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		left.checkCanCastIntOrReal(compilerMessages);
-		right.checkCanCastIntOrReal(compilerMessages);
+		left.checkCanCastToNumeric(compilerMessages);
+		right.checkCanCastToNumeric(compilerMessages);
 	}
 
 }

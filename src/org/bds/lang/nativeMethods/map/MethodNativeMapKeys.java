@@ -8,6 +8,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -25,7 +26,7 @@ public class MethodNativeMapKeys extends MethodNativeMap {
 	protected void initMethod(Type baseType) {
 		functionName = "keys";
 		classType = TypeMap.get(baseType);
-		returnType = TypeList.get(Type.STRING);
+		returnType = TypeList.get(Types.STRING);
 
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };

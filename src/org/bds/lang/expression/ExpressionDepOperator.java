@@ -8,6 +8,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.task.TaskDependency;
@@ -84,7 +85,7 @@ public class ExpressionDepOperator extends Expression {
 		for (Expression e : right)
 			e.returnType(scope);
 
-		returnType = Type.BOOL;
+		returnType = Types.BOOL;
 		return returnType;
 	}
 
@@ -160,12 +161,12 @@ public class ExpressionDepOperator extends Expression {
 		// Check that expression lists are either strings or lists of strings
 		for (Expression e : left)
 			if (e.isString()) ; // OK
-			else if (e.isList(Type.STRING)) ; //
+			else if (e.isList(Types.STRING)) ; //
 			else compilerMessages.add(e, "Expression should be string or string[]", MessageType.ERROR);
 
 		for (Expression e : right)
 			if (e.isString()) ; // OK
-			else if (e.isList(Type.STRING)) ; //
+			else if (e.isList(Types.STRING)) ; //
 			else compilerMessages.add(e, "Expression should be string or string[]", MessageType.ERROR);
 	}
 

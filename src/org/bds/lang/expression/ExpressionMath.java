@@ -3,6 +3,7 @@ package org.bds.lang.expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.scope.Scope;
 
 /**
@@ -23,11 +24,11 @@ public class ExpressionMath extends ExpressionBinary {
 		super.returnType(scope);
 
 		if (right == null) {
-			if (left.canCastInt()) returnType = Type.INT;
-			else if (left.canCastReal()) returnType = Type.REAL;
+			if (left.canCastToInt()) returnType = Types.INT;
+			else if (left.canCastToReal()) returnType = Types.REAL;
 		} else {
-			if (left.canCastInt() && right.canCastInt()) returnType = Type.INT;
-			else if (left.canCastReal() && right.canCastReal()) returnType = Type.REAL;
+			if (left.canCastToInt() && right.canCastToInt()) returnType = Types.INT;
+			else if (left.canCastToReal() && right.canCastToReal()) returnType = Types.REAL;
 		}
 
 		return returnType;

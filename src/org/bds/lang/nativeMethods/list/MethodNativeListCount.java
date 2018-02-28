@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -22,7 +23,7 @@ public class MethodNativeListCount extends MethodNativeList {
 	protected void initMethod(Type baseType) {
 		functionName = "count";
 		classType = TypeList.get(baseType);
-		returnType = Type.INT;
+		returnType = Types.INT;
 
 		String argNames[] = { "this", "toCount" };
 		Type argTypes[] = { classType, baseType };

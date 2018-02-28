@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -22,10 +23,10 @@ public class MethodNativeListJoinStr extends MethodNativeListJoin {
 	protected void initMethod(Type baseType) {
 		functionName = "join";
 		classType = TypeList.get(baseType);
-		returnType = Type.STRING;
+		returnType = Types.STRING;
 
 		String argNames[] = { "this", "separator" };
-		Type argTypes[] = { classType, Type.STRING };
+		Type argTypes[] = { classType, Types.STRING };
 
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();

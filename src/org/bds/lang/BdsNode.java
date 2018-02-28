@@ -19,6 +19,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.compile.TypeCheckedNodes;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.serialize.BdsSerialize;
@@ -50,52 +51,44 @@ public abstract class BdsNode implements BdsSerialize {
 		doParse(tree);
 	}
 
-	/**
-	 * Can returnType be casted to bool?
-	 */
-	public boolean canCastBool() {
-		return ((returnType != null) && returnType.canCast(Type.BOOL));
+	public boolean canCast(Type t) {
+		return returnType.canCast(t);
 	}
 
-	/**
-	 * Can returnType be casted to int?
-	 */
-	public boolean canCastInt() {
-		return ((returnType != null) && returnType.canCast(Type.INT));
+	public boolean canCastToBool() {
+		return Types.BOOL.canCast(returnType);
 	}
 
-	/**
-	 * Can returnType be casted to real?
-	 */
-	public boolean canCastReal() {
-		return ((returnType != null) && returnType.canCast(Type.REAL));
+	public boolean canCastToInt() {
+		return Types.INT.canCast(returnType);
 	}
 
-	/**
-	 * Check that this expression can be casted to bool
-	 * Add a compile error otherwise
-	 */
-	public void checkCanCastBool(CompilerMessages compilerMessages) {
-		if ((returnType != null) && !returnType.canCast(Type.BOOL)) compilerMessages.add(this, "Cannot cast " + returnType + " to bool", MessageType.ERROR);
+	public boolean canCastToReal() {
+		return Types.REAL.canCast(returnType);
 	}
 
-	/**
-	 * Check that this expression can be casted to int
-	 * Add a compile error otherwise
-	 */
-	public void checkCanCastInt(CompilerMessages compilerMessages) {
-		if ((returnType != null) && !returnType.canCast(Type.INT)) compilerMessages.add(this, "Cannot cast " + returnType + " to int", MessageType.ERROR);
+	public void checkCanCastTo(Type t, CompilerMessages compilerMessages) {
+		if (!t.canCast(returnType)) compilerMessages.add(this, "Cannot cast " + returnType + " to " + t, MessageType.ERROR);
 	}
 
-	/**
-	 * Check that this expression can be casted to either int or real
-	 * Add a compile error otherwise
-	 */
-	public void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
-		if ((returnType != null) //
-				&& (!returnType.canCast(Type.INT) //
-						&& !returnType.canCast(Type.REAL)) //
-		) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
+	public void checkCanCastToBool(CompilerMessages compilerMessages) {
+		checkCanCastTo(Types.BOOL, compilerMessages);
+	}
+
+	public void checkCanCastToInt(CompilerMessages compilerMessages) {
+		checkCanCastTo(Types.INT, compilerMessages);
+	}
+
+	public void checkCanCastToNumeric(CompilerMessages compilerMessages) {
+		if (!canCastToInt() && !canCastToReal()) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
+	}
+
+	public void checkCanCastToReal(CompilerMessages compilerMessages) {
+		checkCanCastTo(Types.REAL, compilerMessages);
+	}
+
+	public void checkCanCastToString(CompilerMessages compilerMessages) {
+		checkCanCastTo(Types.STRING, compilerMessages);
 	}
 
 	/**
@@ -369,11 +362,12 @@ public abstract class BdsNode implements BdsSerialize {
 	protected void initialize() {
 	}
 
-	/**
-	 * Is return type bool?
-	 */
 	public boolean isBool() {
-		return (returnType != null) && returnType.isBool();
+		return returnType.is(Types.BOOL);
+	}
+
+	public boolean isVoid() {
+		return returnType.is(Types.VOID);
 	}
 
 	/**
@@ -383,28 +377,8 @@ public abstract class BdsNode implements BdsSerialize {
 		return id <= 0;
 	}
 
-	/**
-	 * Is return type int?
-	 */
 	public boolean isInt() {
-		return (returnType != null) && returnType.isInt();
-	}
-
-	public boolean isList() {
-		return (returnType != null) && returnType.isList();
-	}
-
-	public boolean isList(Type baseType) {
-		if (returnType == null) return false;
-		return returnType.isList(baseType);
-	}
-
-	public boolean isMap() {
-		return (returnType != null) && returnType.isMap();
-	}
-
-	public boolean isMap(Type baseType) {
-		return (returnType != null) && returnType.isMap(baseType);
+		return returnType.is(Types.INT);
 	}
 
 	/**
@@ -414,25 +388,16 @@ public abstract class BdsNode implements BdsSerialize {
 		return false;
 	}
 
-	/**
-	 * Is return type numeric?
-	 */
 	public boolean isNumeric() {
-		return isBool() || isInt() || isReal();
+		return isInt() || isReal();
 	}
 
-	/**
-	 * Is return type real?
-	 */
 	public boolean isReal() {
-		return (returnType != null) && returnType.isReal();
+		return returnType.is(Types.REAL);
 	}
 
-	/**
-	 * Do all subordinate expressions have a non-null return type?
-	 */
 	public boolean isReturnTypesNotNull() {
-		return true;
+		return returnType != null;
 	}
 
 	/**
@@ -442,11 +407,8 @@ public abstract class BdsNode implements BdsSerialize {
 		return true;
 	}
 
-	/**
-	 * Is return type string?
-	 */
 	public boolean isString() {
-		return (returnType != null) && returnType.isString();
+		return returnType.is(Types.STRING);
 	}
 
 	/**
@@ -575,7 +537,7 @@ public abstract class BdsNode implements BdsSerialize {
 	 * Calculate return type and assign it to 'returnType' variable.
 	 */
 	public Type returnType(Scope scope) {
-		return Type.VOID;
+		return Types.VOID;
 	}
 
 	public void runStep(BdsThread bdsThread) {
@@ -770,9 +732,14 @@ public abstract class BdsNode implements BdsSerialize {
 		return out.toString();
 	}
 
+	/**
+	 * Type checking (compilation step)
+	 * @param scope
+	 * @param compilerMessages
+	 */
 	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Calculate return type
-		returnType(scope);
+		returnType = returnType(scope);
 
 		// Are return types non-null?
 		// Note: null returnTypes happen if variables are missing.

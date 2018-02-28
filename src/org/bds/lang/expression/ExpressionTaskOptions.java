@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.task.TaskDependency;
@@ -47,10 +46,10 @@ public class ExpressionTaskOptions extends ExpressionList {
 				bdsThread.run(expr);
 
 				if (!bdsThread.isCheckpointRecover()) {
-					Object value = bdsThread.pop();
+					boolean value = bdsThread.popBool(); // Convert expression to boolean
 					if (expr instanceof ExpressionAssignment) ; // Nothing to do
 					else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
-					else sat &= (Boolean) Type.BOOL.cast(value); // Convert expression to boolean
+					else sat &= value;
 				}
 			}
 
@@ -103,7 +102,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 			) {
 				// Cannot convert to bool? => We cannot use the expression
 				if (e.getReturnType() == null) compilerMessages.add(this, "Unknonw expression '" + e + "'", MessageType.ERROR);
-				else if (!e.getReturnType().canCast(Type.BOOL)) compilerMessages.add(this, "Only assignment, implicit variable declarations or boolean expressions are allowed in task options", MessageType.ERROR);
+				else if (!e.getReturnType().canCastToBool()) compilerMessages.add(this, "Only assignment, implicit variable declarations or boolean expressions are allowed in task options", MessageType.ERROR);
 			}
 	}
 }

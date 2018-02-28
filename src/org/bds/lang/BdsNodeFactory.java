@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.util.Gpr;
 
 /**
@@ -97,11 +98,11 @@ public class BdsNodeFactory {
 		if ((tree != null) && isIgnore(tree)) return null;
 
 		// Types: Get instance nodes (singletons)
-		if (className.equals("TypePrimitiveBool")) return Type.BOOL;
-		if (className.equals("TypePrimitiveInt")) return Type.INT;
-		if (className.equals("TypePrimitiveReal")) return Type.REAL;
-		if (className.equals("TypePrimitiveString")) return Type.STRING;
-		if (className.equals("TypePrimitiveVoid")) return Type.VOID;
+		if (className.equals("TypePrimitiveBool")) return Types.BOOL;
+		if (className.equals("TypePrimitiveInt")) return Types.INT;
+		if (className.equals("TypePrimitiveReal")) return Types.REAL;
+		if (className.equals("TypePrimitiveString")) return Types.STRING;
+		if (className.equals("TypePrimitiveVoid")) return Types.VOID;
 
 		// Create object
 		try {

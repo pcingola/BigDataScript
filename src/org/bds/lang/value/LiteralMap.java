@@ -1,4 +1,4 @@
-package org.bds.lang.type;
+package org.bds.lang.value;
 
 import java.util.HashMap;
 
@@ -7,6 +7,8 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeMap;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 

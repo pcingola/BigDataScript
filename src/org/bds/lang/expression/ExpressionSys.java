@@ -10,6 +10,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
@@ -114,7 +115,7 @@ public class ExpressionSys extends Expression {
 	 */
 	@Override
 	public Type returnType(Scope scope) {
-		returnType = Type.STRING;
+		returnType = Types.STRING;
 		return returnType;
 	}
 

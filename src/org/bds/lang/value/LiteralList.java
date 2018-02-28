@@ -1,4 +1,4 @@
-package org.bds.lang.type;
+package org.bds.lang.value;
 
 import java.util.ArrayList;
 
@@ -7,6 +7,9 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -62,7 +65,7 @@ public class LiteralList extends Literal {
 		}
 
 		// Default base type if nothing found
-		if (baseType == null) baseType = Type.VOID;
+		if (baseType == null) baseType = Types.VOID;
 
 		// Create a list of 'baseType'
 		returnType = TypeList.get(baseType);

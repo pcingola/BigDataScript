@@ -2,6 +2,7 @@ package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNativeAssertInt extends FunctionNativeAssert {
@@ -13,10 +14,10 @@ public class FunctionNativeAssertInt extends FunctionNativeAssert {
 	@Override
 	protected void initFunction() {
 		functionName = "assert";
-		returnType = Type.BOOL;
+		returnType = Types.BOOL;
 
 		String argNames[] = { "msg", "expected", "value" };
-		Type argTypes[] = { Type.STRING, Type.INT, Type.INT };
+		Type argTypes[] = { Types.STRING, Types.INT, Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}

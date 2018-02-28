@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -63,7 +64,7 @@ public class ExpressionList extends Expression {
 
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		Object value = null;
+		Value value = null;
 
 		for (Expression expr : expressions) {
 			bdsThread.run(expr);

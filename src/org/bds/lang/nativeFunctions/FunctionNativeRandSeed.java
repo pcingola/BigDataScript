@@ -2,6 +2,7 @@ package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -18,10 +19,10 @@ public class FunctionNativeRandSeed extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "randSeed";
-		returnType = Type.VOID;
+		returnType = Types.VOID;
 
 		String argNames[] = { "seed" };
-		Type argTypes[] = { Type.INT };
+		Type argTypes[] = { Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}

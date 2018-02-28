@@ -28,10 +28,16 @@ import org.bds.lang.statement.MethodCall;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.statement.Wait;
-import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueReal;
+import org.bds.lang.value.ValueString;
 import org.bds.osCmd.Exec;
 import org.bds.report.Report;
+import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerialize;
@@ -62,7 +68,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	String statementNodeId; // Statement's ID, used only when un-serializing
 	ProgramCounter pc; // Program counter
 	RunState runState; // Latest RunState
-	Object returnValue; // Latest return value (from a 'return' statement)
+	Value returnValue; // Latest return value (from a 'return' statement)
 	int exitValue; // Exit value
 	List<String> removeOnExit; // Files to be removed on exit
 	Timer timer; // Program timer
@@ -76,10 +82,10 @@ public class BdsThread extends Thread implements BdsSerialize {
 	// Scope
 	Scope scope; // Base scope
 	String scopeNodeId; // Scope's ID, used only when un-serializing
-	Deque<Object> stack; // Program stack
+	Deque<Value> stack; // Program stack
 
 	// BdsThread
-	String currentDir; // Program's 'current directoy'
+	String currentDir; // Program's 'current directory'
 	BdsThread parent; // Parent thread
 	String bdsThreadId; // BdsThread ID
 	int bdsThreadNum; // Thread number
@@ -123,7 +129,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		super();
 		bdsThreadNum = bigDataScriptThreadId();
 		pc = new ProgramCounter();
-		scope = Scope.getGlobalScope();
+		scope = GlobalScope.get();
 		stack = new LinkedList<>();
 		runState = RunState.OK;
 		this.config = config;
@@ -573,7 +579,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return (Double) getScope().getSymbol(varName).getValue();
 	}
 
-	public Object getReturnValue() {
+	public Value getReturnValue() {
 		return returnValue;
 	}
 
@@ -597,7 +603,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return scopeNodeId;
 	}
 
-	public Deque<Object> getStack() {
+	public Deque<Value> getStack() {
 		return stack;
 	}
 
@@ -785,12 +791,12 @@ public class BdsThread extends Thread implements BdsSerialize {
 		scope = scope.getParent();
 	}
 
-	public Object peek() {
+	public Value peek() {
 		if (isCheckpointRecover()) return null;
 		return stack.peek();
 	}
 
-	public Object pop() {
+	public Value pop() {
 		if (isCheckpointRecover()) return null;
 		return stack.removeFirst();
 	}
@@ -799,28 +805,28 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Pop a bool from stack
 	 */
 	public boolean popBool() {
-		return (Boolean) Type.BOOL.cast(pop());
+		return (Boolean) Types.BOOL.cast(pop()).get();
 	}
 
 	/**
 	 * Pop an int from stack
 	 */
 	public long popInt() {
-		return (Long) Type.INT.cast(pop());
+		return (Long) Types.INT.cast(pop()).get();
 	}
 
 	/**
 	 * Pop a real from stack
 	 */
 	public double popReal() {
-		return (Double) Type.REAL.cast(pop());
+		return (Double) Types.REAL.cast(pop()).get();
 	}
 
 	/**
 	 * Pop a string from stack
 	 */
 	public String popString() {
-		return (String) Type.STRING.cast(pop());
+		return (String) Types.STRING.cast(pop()).get();
 	}
 
 	public void print() {
@@ -863,9 +869,24 @@ public class BdsThread extends Thread implements BdsSerialize {
 		System.out.println("");
 	}
 
-	public void push(Object obj) {
-		if (!isCheckpointRecover()) stack.addFirst(obj);
+	public void push(boolean b) {
+		push(new ValueBool(b));
+	}
 
+	public void push(double v) {
+		push(new ValueReal(v));
+	}
+
+	public void push(long v) {
+		push(new ValueInt(v));
+	}
+
+	public void push(String s) {
+		push(new ValueString(s));
+	}
+
+	public void push(Value obj) {
+		if (!isCheckpointRecover()) stack.addFirst(obj);
 	}
 
 	/**
@@ -1131,7 +1152,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	@Override
 	public void serializeParse(BdsSerializer serializer) {
 		bdsThreadNum = (int) serializer.getNextFieldInt();
-		removeOnExit = serializer.getNextFieldList(TypeList.get(Type.STRING));
+		removeOnExit = serializer.getNextFieldList(TypeList.get(Types.STRING));
 		bdsThreadId = serializer.getNextFieldString();
 		statementNodeId = serializer.getNextFieldString();
 		scopeNodeId = serializer.getNextFieldString();
@@ -1154,7 +1175,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 		// Stack
 		String b64 = serializer.getNextField();
-		stack = (b64 != null && !b64.isEmpty() ? (Deque<Object>) serializer.base64Decode(b64) : null);
+		stack = (b64 != null && !b64.isEmpty() ? (Deque<Value>) serializer.base64Decode(b64) : null);
 	}
 
 	@Override
@@ -1267,7 +1288,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		random = new Random(seed);
 	}
 
-	public void setReturnValue(Object returnValue) {
+	public void setReturnValue(Value returnValue) {
 		this.returnValue = returnValue;
 	}
 

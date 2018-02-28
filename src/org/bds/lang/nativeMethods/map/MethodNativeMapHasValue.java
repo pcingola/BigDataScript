@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -22,7 +23,7 @@ public class MethodNativeMapHasValue extends MethodNativeMap {
 	protected void initMethod(Type baseType) {
 		functionName = "hasValue";
 		classType = TypeMap.get(baseType);
-		returnType = Type.BOOL;
+		returnType = Types.BOOL;
 
 		String argNames[] = { "this", "val" };
 		Type argTypes[] = { classType, baseType }; // null: don't check argument (anything can be converted to 'string')

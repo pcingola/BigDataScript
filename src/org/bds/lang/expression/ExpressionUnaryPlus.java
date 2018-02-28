@@ -2,7 +2,6 @@ package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
 
 /**
@@ -22,7 +21,7 @@ public class ExpressionUnaryPlus extends ExpressionUnaryMinus {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		if ((returnType == Type.INT) || (returnType == Type.REAL)) bdsThread.run(expr);
+		if (returnType.isInt() || returnType.isReal()) bdsThread.run(expr);
 		else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
 }

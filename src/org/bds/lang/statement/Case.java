@@ -10,6 +10,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.expression.ExpressionEq;
 import org.bds.lang.type.Type;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.util.Gpr;
@@ -80,8 +81,8 @@ public class Case extends StatementWithScope {
 		bdsThread.run(expression);
 		if (bdsThread.isCheckpointRecover()) return true;
 
-		Object caseRes = bdsThread.pop(); // Value form 'case expression'
-		Object switchRes = bdsThread.peek(); // Switch expression value
+		Value caseRes = bdsThread.pop(); // Value form 'case expression'
+		Value switchRes = bdsThread.peek(); // Switch expression value
 		return exprEq.compare(bdsThread, switchRes, caseRes); //Compare them
 	}
 

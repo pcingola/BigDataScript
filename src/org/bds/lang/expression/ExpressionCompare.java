@@ -5,6 +5,8 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -27,12 +29,12 @@ public abstract class ExpressionCompare extends ExpressionBinary {
 
 	protected abstract boolean cmp(String a, String b);
 
-	public boolean compare(BdsThread bdsThread, Object lval, Object rval) {
+	public boolean compare(BdsThread bdsThread, Value lval, Value rval) {
 		if (left.isNumeric() && right.isNumeric()) {
 			// Both are numeric types
-			if (left.isReal() || right.isReal()) return cmp((double) Type.REAL.cast(lval), (double) Type.REAL.cast(rval));
-			else if (left.isInt() || right.isInt()) return cmp((long) Type.INT.cast(lval), (long) Type.INT.cast(rval));
-			else if (left.isBool() || right.isBool()) return cmp((boolean) lval, (boolean) rval);
+			if (left.isReal() || right.isReal()) return cmp(lval.toReal(), rval.toReal());
+			else if (left.isInt() || right.isInt()) return cmp(lval.toInt(), rval.toInt());
+			else if (left.isBool() || right.isBool()) return cmp(lval.toBool(), rval.toBool());
 			else throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName() + "( " + lval + " , " + rval + " )");
 
 		} else if (left.isString() || right.isString()) return cmp(lval.toString(), rval.toString());
@@ -44,7 +46,7 @@ public abstract class ExpressionCompare extends ExpressionBinary {
 		if (returnType != null) return returnType;
 
 		super.returnType(scope);
-		returnType = Type.BOOL;
+		returnType = Types.BOOL;
 
 		return returnType;
 
@@ -60,8 +62,8 @@ public abstract class ExpressionCompare extends ExpressionBinary {
 
 		if (bdsThread.isCheckpointRecover()) return;
 
-		Object rval = bdsThread.pop();
-		Object lval = bdsThread.pop();
+		Value rval = bdsThread.pop();
+		Value lval = bdsThread.pop();
 
 		bdsThread.push(compare(bdsThread, lval, rval));
 	}

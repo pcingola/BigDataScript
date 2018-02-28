@@ -6,6 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -35,7 +36,7 @@ public class Print extends Statement {
 		// Calculate expression's return type
 		if (expr != null) expr.returnType(scope);
 
-		returnType = Type.STRING;
+		returnType = Types.STRING;
 		return returnType;
 	}
 

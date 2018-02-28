@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -21,10 +22,10 @@ public class FunctionNativeRangeIntStep extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "range";
-		returnType = TypeList.get(Type.INT);
+		returnType = TypeList.get(Types.INT);
 
 		String argNames[] = { "min", "max", "step" };
-		Type argTypes[] = { Type.INT, Type.INT, Type.INT };
+		Type argTypes[] = { Types.INT, Types.INT, Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}
