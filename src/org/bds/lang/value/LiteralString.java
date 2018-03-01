@@ -20,6 +20,11 @@ public class LiteralString extends Literal {
 
 	public LiteralString(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	protected void initialize() {
+		super.initialize();
 		value = new ValueString();
 	}
 

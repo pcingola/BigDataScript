@@ -13,6 +13,11 @@ public class LiteralReal extends Literal {
 
 	public LiteralReal(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	protected void initialize() {
+		super.initialize();
 		value = new ValueReal();
 	}
 

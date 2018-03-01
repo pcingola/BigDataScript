@@ -13,6 +13,11 @@ public class LiteralInt extends Literal {
 
 	public LiteralInt(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	protected void initialize() {
+		super.initialize();
 		value = new ValueInt();
 	}
 

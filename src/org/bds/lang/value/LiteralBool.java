@@ -13,6 +13,11 @@ public class LiteralBool extends Literal {
 
 	public LiteralBool(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	protected void initialize() {
+		super.initialize();
 		value = new ValueBool();
 	}
 
