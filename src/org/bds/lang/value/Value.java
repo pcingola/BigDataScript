@@ -4,7 +4,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 
 /**
- * Define a map
+ * Define a value 
  * @author pcingola
  */
 public abstract class Value {

@@ -4,6 +4,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.statement.VariableInit;
+import org.bds.lang.value.Value;
 import org.bds.util.Gpr;
 
 /**
@@ -13,22 +14,22 @@ import org.bds.util.Gpr;
  */
 public class TypeFunction extends Type {
 
-	protected Parameters parameters;
+	protected Parameters parameters; // Function parameters
+	// Note: returnType already exists in BdsNode
 
 	/**
 	 * Get or create TypeFunction
 	 */
 	public static TypeFunction get(FunctionDeclaration functionDecl) {
 		// Get type from hash
-		String key = PrimitiveType.FUNCTION + ":" + functionDecl.signature();
-
-		TypeFunction type = (TypeFunction) types.get(key);
+		String key = signature(functionDecl.getParameters(), functionDecl.getReturnType());
+		TypeFunction type = (TypeFunction) Types.get(key);
 		if (type == null) {
 			type = new TypeFunction(functionDecl);
-			types.put(key, type);
+			Types.put(type);
 		}
 
-		return (TypeFunction) types.get(key);
+		return type;
 	}
 
 	/**
@@ -36,16 +37,19 @@ public class TypeFunction extends Type {
 	 */
 	public static TypeFunction get(Parameters parameters, Type returnType) {
 		// Get type from hash
-		String key = PrimitiveType.FUNCTION + ":" + signature(parameters, returnType);
-
-		TypeFunction type = (TypeFunction) types.get(key);
+		String key = signature(parameters, returnType);
+		TypeFunction type = (TypeFunction) Types.get(key);
 		if (type == null) {
 			type = new TypeFunction(parameters, returnType);
-			types.put(key, type);
+			Types.put(type);
 		}
 
-		return (TypeFunction) types.get(key);
+		return type;
 	}
+
+	//	public static String typeKey(Type keyType, Type valueType) {
+	//		return valueType + "{" + keyType + "}";
+	//	}
 
 	/**
 	 * Generic signature for a function
@@ -65,7 +69,6 @@ public class TypeFunction extends Type {
 		if (sb.charAt(lastChar) == ',') sb.deleteCharAt(lastChar);
 		sb.append(") -> ");
 		sb.append(returnType);
-
 		return sb.toString();
 	}
 
@@ -85,16 +88,15 @@ public class TypeFunction extends Type {
 
 	@Override
 	public int compareTo(Type type) {
-		int cmp = primitiveType.ordinal() - type.primitiveType.ordinal();
+		int cmp = super.compareTo(type);
 		if (cmp != 0) return cmp;
 
 		// Compare return types
-		cmp = Gpr.compareNull(returnType, type.getReturnType());
+		TypeFunction typef = (TypeFunction) type;
+		cmp = Gpr.compareNull(returnType, typef.getReturnType());
 		if (cmp != 0) return cmp;
 
-		TypeFunction typef = (TypeFunction) type;
-
-		// Compare names
+		// Compare parameters
 		return Gpr.compareNull(parameters, typef.getParameters());
 	}
 
@@ -110,6 +112,12 @@ public class TypeFunction extends Type {
 	@Override
 	public boolean isFunction() {
 		return true;
+	}
+
+	@Override
+	public Value newValue() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

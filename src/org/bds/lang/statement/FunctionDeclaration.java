@@ -69,7 +69,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	}
 
 	/**
-	 * Apply function to arguments, return function's result
+	 * Apply function to one argument, return function's result
 	 */
 	public Value apply(BdsThread bdsThread, Object value) {
 		// Create scope and add function arguments
