@@ -56,11 +56,11 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		// Get value
+		// Get map
 		bdsThread.run(right);
 		Value value = bdsThread.peek();
 
-		// Assign value
+		// Assign map
 		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
 		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 	}

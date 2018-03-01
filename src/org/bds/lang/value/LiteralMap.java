@@ -27,7 +27,7 @@ public class LiteralMap extends Literal {
 	}
 
 	public Type baseType() {
-		return ((TypeMap) returnType).getBaseType();
+		return ((TypeMap) returnType).getElementType();
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class LiteralMap extends Literal {
 		Type baseType = baseType();
 
 		for (int i = 0; i < keys.length; i++) {
-			// Evaluate 'key' and 'value' expressions
+			// Evaluate 'key' and 'map' expressions
 			Expression keyExpr = keys[i];
 			bdsThread.run(keyExpr);
 
@@ -119,7 +119,7 @@ public class LiteralMap extends Literal {
 
 	@Override
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		Type baseType = ((TypeMap) returnType).getBaseType();
+		Type baseType = ((TypeMap) returnType).getElementType();
 
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;

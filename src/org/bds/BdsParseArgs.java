@@ -103,7 +103,7 @@ public class BdsParseArgs {
 				if (debug) Timer.showStdErr("Activating 'show help' mode");
 				showHelp = true;
 			} else if (arg.startsWith("-")) {
-				// Get variable name and value
+				// Get variable name and map
 				String varName = arg.substring(1);
 				initializeArgs(varName);
 			}
@@ -183,24 +183,24 @@ public class BdsParseArgs {
 			for (argNum++; argNum < programArgs.size(); argNum++) {
 				String val = programArgs.get(argNum);
 				if (isOpt(val)) { // Stop if another argument is found
-					argNum--; // This value is not used
+					argNum--; // This map is not used
 					break;
 				} else vals.add(val);
 			}
 
 			return vals;
 		} else if (varType.isBool()) {
-			// Booleans may not have a value (just '-varName' sets them to 'true')
+			// Booleans may not have a map (just '-varName' sets them to 'true')
 			if (programArgs.size() > (argNum + 1)) {
 				// Is the next argument 'true' or 'false'? => Set argument
 				String valStr = programArgs.get(++argNum).toLowerCase();
 				if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) return true;
 				else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) return false;
 
-				// Not any valid value? => This argument is not used
+				// Not any valid map? => This argument is not used
 				argNum--;
 			}
-			return Value.factory(true); // Default value
+			return Value.factory(true); // Default map
 		}
 
 		// Default parsing
@@ -225,7 +225,7 @@ public class BdsParseArgs {
 			for (argNum++; argNum < programArgs.size(); argNum++) {
 				String val = programArgs.get(argNum);
 				if (isOpt(val)) { // Stop if another argument is found
-					argNum--; // This value is not used
+					argNum--; // This map is not used
 					break;
 				} else vals.add(val);
 			}
@@ -234,7 +234,7 @@ public class BdsParseArgs {
 		} else if (varType.isBool()) {
 			String valStr = "true";
 
-			// Booleans may not have a value (just '-varName' sets them to 'true')
+			// Booleans may not have a map (just '-varName' sets them to 'true')
 			if (programArgs.size() > (argNum + 1)) {
 				// Is the next argument 'true' or 'false'? => Set argument
 				String boolVal = programArgs.get(++argNum);
@@ -266,7 +266,7 @@ public class BdsParseArgs {
 				// Create literal
 				LiteralListString lit = new LiteralListString(varInit, null);
 				literal = lit;
-				lit.setValue(vals); // Set literal value
+				lit.setValue(vals); // Set literal map
 			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
 
 			// Set varInit to literal
@@ -301,14 +301,14 @@ public class BdsParseArgs {
 				LiteralBool lit = new LiteralBool(varInit, null);
 				literal = lit;
 
-				// Set literal value
-				boolean valBool = true; // Default value is 'true'
+				// Set literal map
+				boolean valBool = true; // Default map is 'true'
 				if (valStr != null) {
 					// Parse boolean
 					valStr = valStr.toLowerCase();
 					if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) valBool = true;
 					else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) valBool = false;
-					else usedVal = false; // Not any valid value? => This argument is not used
+					else usedVal = false; // Not any valid map? => This argument is not used
 				}
 
 				lit.setValue(valBool);
@@ -317,7 +317,7 @@ public class BdsParseArgs {
 				LiteralInt lit = new LiteralInt(varInit, null);
 				literal = lit;
 
-				// Set literal value
+				// Set literal map
 				long valInt = Long.parseLong(valStr);
 				lit.setValue(valInt);
 			} else if (varType.isReal()) {
@@ -325,7 +325,7 @@ public class BdsParseArgs {
 				LiteralReal lit = new LiteralReal(varInit, null);
 				literal = lit;
 
-				// Set literal value
+				// Set literal map
 				double valReal = Double.parseDouble(valStr);
 				lit.setValue(valReal);
 			} else if (varType.isString()) {
@@ -333,7 +333,7 @@ public class BdsParseArgs {
 				LiteralString lit = new LiteralString(varInit, null);
 				literal = lit;
 
-				// Set literal value
+				// Set literal map
 				if (valStr == null) valStr = ""; // We should never have 'null' values
 				lit.setValue(valStr);
 			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");

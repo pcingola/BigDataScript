@@ -74,8 +74,7 @@ public class TypeFunction extends Type {
 	}
 
 	protected TypeFunction(Parameters parameters, Type returnType) {
-		super();
-		primitiveType = PrimitiveType.FUNCTION;
+		super(PrimitiveType.FUNCTION);
 		this.parameters = parameters;
 		this.returnType = returnType;
 	}

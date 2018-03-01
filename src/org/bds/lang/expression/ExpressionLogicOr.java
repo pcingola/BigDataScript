@@ -32,7 +32,7 @@ public class ExpressionLogicOr extends ExpressionLogic {
 			if (ok) return; // Already true? No need to evaluate the other expression
 		}
 
-		//  'OR' only depends on 'right' value (left was false)
+		//  'OR' only depends on 'right' map (left was false)
 		bdsThread.pop(); // Remove 'left' result from stack
 
 		bdsThread.run(right);

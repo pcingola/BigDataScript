@@ -1,6 +1,6 @@
 package org.bds.lang.value;
 
-import java.util.List;
+import java.util.Map;
 
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -10,23 +10,31 @@ import org.bds.lang.type.TypeList;
  * @author pcingola
  */
 @SuppressWarnings("rawtypes")
-public class ValueList extends Value {
+public class ValueMap extends Value {
 
-	List value;
+	Map map;
 
-	public ValueList(Type type) {
+	public ValueMap(Type type) {
 		super(type);
 	}
 
 	@Override
-	public List get() {
-		return value;
+	public Map get() {
+		return map;
+	}
+
+	/**
+	 * Get element 'idx'
+	 */
+	public Value getValue(Value idx) {
+		Object elem = get().get(idx);
+		return ((TypeMap) type).getValueType().newValue(elem);
 	}
 
 	/**
 	 * Get element number 'idx' from the list wrapped into a 'Value'
 	 */
-	public Value getValue(int idx) {
+	public Value getValue(Value idx) {
 		Object elem = get().get(idx);
 		return ((TypeList) type).getElementType().newValue(elem);
 	}
@@ -34,11 +42,11 @@ public class ValueList extends Value {
 	@Override
 	public void set(Object v) {
 		// TODO: Check list elements class
-		value = (List) v;
+		map = (Map) v;
 	}
 
 	public int size() {
-		return get().size();
+		return map.size();
 	}
 
 }

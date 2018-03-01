@@ -350,7 +350,7 @@ public class InterpolateVars extends Literal {
 			// String before variable
 			sb.append(literals[i]);
 
-			// Variable's value
+			// Variable's map
 			Expression ref = exprs[i];
 			if (ref != null) {
 				bdsThread.run(ref);

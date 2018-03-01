@@ -1,7 +1,7 @@
 package org.bds.lang.type;
 
 /**
- * 'Any' value: Generic
+ * 'Any' map: Generic
  *
  * @author pcingola
  *

@@ -9,7 +9,8 @@ import org.bds.lang.value.ValueString;
 public class TypeBool extends Type {
 
 	public TypeBool() {
-		super(PrimitiveType.BOOL, new ValueBool(Boolean.FALSE));
+		super(PrimitiveType.BOOL);
+		defaultValue = new ValueBool(Boolean.FALSE);
 	}
 
 	@Override
@@ -22,7 +23,7 @@ public class TypeBool extends Type {
 	}
 
 	/**
-	 * Cast a value 'v' to this type (i.e. convert to type 'bool')
+	 * Cast a map 'v' to this type (i.e. convert to type 'bool')
 	 */
 	public Value cast(Value v) {
 		Type vt = v.getType();
@@ -34,7 +35,7 @@ public class TypeBool extends Type {
 		if (vt.isInt()) val = (((ValueInt) v).get() != 0L);
 		else if (vt.isReal()) val = (((ValueReal) v).get() != 0.0);
 		else if (vt.isString()) val = !(((ValueString) v).get().isEmpty());
-		else throw new RuntimeException("Cannot convert value type '" + v.getType() + "' to 'bool'");
+		else throw new RuntimeException("Cannot convert map type '" + v.getType() + "' to 'bool'");
 
 		vb.set(val);
 		return vb;

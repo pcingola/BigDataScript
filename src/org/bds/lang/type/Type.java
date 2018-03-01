@@ -30,13 +30,6 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		returnType = this;
 	}
 
-	public Type(PrimitiveType primitiveType, Value defaultValue) {
-		super(null, null);
-		this.primitiveType = primitiveType;
-		this.defaultValue = defaultValue;
-		returnType = this;
-	}
-
 	/**
 	 * Can 'type' be casted to 'this'?
 	 * @param type: The type to be casted to 'this' type
@@ -65,7 +58,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	}
 
 	/**
-	 * Get default initialization value
+	 * Get default initialization map
 	 */
 	public Value getDefaultValue() {
 		return defaultValue;
@@ -149,12 +142,12 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	}
 
 	/**
-	 * Create a new value if this type
+	 * Create a new map if this type
 	 */
 	public abstract Value newValue();
 
 	/**
-	 * Create a new value if this type and set it to 'v'
+	 * Create a new map if this type and set it to 'v'
 	 */
 	public Value newValue(Object v) {
 		Value value = newValue();

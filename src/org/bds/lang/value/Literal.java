@@ -38,7 +38,7 @@ public abstract class Literal extends Expression {
 	}
 
 	/**
-	 * Evaluate an expression: Push value to stack
+	 * Evaluate an expression: Push map to stack
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {

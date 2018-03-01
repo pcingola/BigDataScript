@@ -1,7 +1,7 @@
 package org.bds.lang.type;
 
 /**
- * 'void' value
+ * 'void' map
  * 
  * @author pcingola
  *

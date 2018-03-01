@@ -7,7 +7,7 @@ import org.bds.lang.statement.Statement;
 import org.bds.run.BdsThread;
 
 /**
- * Expression: A statement that returns a value
+ * Expression: A statement that returns a map
  *
  * @author pcingola
  */

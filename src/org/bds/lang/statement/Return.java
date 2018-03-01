@@ -52,7 +52,7 @@ public class Return extends Statement {
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		if (expr != null) {
-			// Set return value to scope
+			// Set return map to scope
 			bdsThread.run(expr);
 
 			if (bdsThread.isCheckpointRecover()) return;

@@ -57,7 +57,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		// Run function body
 		runFunction(bdsThread);
 
-		// Get return value
+		// Get return map
 		Object retVal = bdsThread.getReturnValue();
 
 		// Restore old scope
@@ -91,7 +91,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		runFunction(bdsThread);
 		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
 
-		// Get return value
+		// Get return map
 		Value retVal = bdsThread.getReturnValue();
 
 		// Back to old scope
@@ -156,7 +156,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		if (bdsThread.isReturn()) {
 			bdsThread.setRunState(RunState.OK); // Restore 'OK' runState
 		} else if (!returnType.canCast(bdsThread.getReturnValue().getType())) {
-			// Not the right type? Force a default value of the right type
+			// Not the right type? Force a default map of the right type
 			bdsThread.setReturnValue(returnType.getDefaultValue());
 		}
 	}

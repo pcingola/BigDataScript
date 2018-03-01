@@ -108,7 +108,7 @@ public class ReferenceList extends Reference {
 		Type nameType = exprList.returnType(scope);
 
 		if (nameType == null) return null;
-		if (nameType.isList()) returnType = ((TypeList) nameType).getBaseType();
+		if (nameType.isList()) returnType = ((TypeList) nameType).getElementType();
 
 		return returnType;
 	}
@@ -149,7 +149,7 @@ public class ReferenceList extends Reference {
 		// Make sure the array is big enough to hold the data
 		if (idx >= list.size()) {
 			TypeList type = (TypeList) getType(bdsThread.getScope());
-			Type baseType = type.getBaseType();
+			Type baseType = type.getElementType();
 			list.ensureCapacity(idx + 1);
 
 			while (list.size() <= idx)

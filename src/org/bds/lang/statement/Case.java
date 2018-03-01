@@ -82,7 +82,7 @@ public class Case extends StatementWithScope {
 		if (bdsThread.isCheckpointRecover()) return true;
 
 		Value caseRes = bdsThread.pop(); // Value form 'case expression'
-		Value switchRes = bdsThread.peek(); // Switch expression value
+		Value switchRes = bdsThread.peek(); // Switch expression map
 		return exprEq.compare(bdsThread, switchRes, caseRes); //Compare them
 	}
 
@@ -109,14 +109,14 @@ public class Case extends StatementWithScope {
 				runStatements(bdsThread);
 				// Since this statements were executed, it means that the
 				// case condition (either the expression of the fall-through)
-				// are true. We need to push the value into the stack, because
+				// are true. We need to push the map into the stack, because
 				// the next 'case' may have have a fall-through
 				bdsThread.push(true);
 				return;
 			}
 		}
 
-		// Pop the previous 'case' condition value (fall-through?)
+		// Pop the previous 'case' condition map (fall-through?)
 		boolean prevCaseCond = bdsThread.popBool();
 		boolean caseCond = prevCaseCond;
 		if (prevCaseCond) {

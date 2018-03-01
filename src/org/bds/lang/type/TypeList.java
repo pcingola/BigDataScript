@@ -51,10 +51,10 @@ public class TypeList extends Type {
 	 */
 	public static TypeList get(Type elementType) {
 		// Get type from hash
-		String key = elementType + "[]";
+		String key = typeKey(elementType);
 		TypeList type = (TypeList) Types.get(key);
 
-		// No type available? Create & add
+		// No type cached? Create & add
 		if (type == null) {
 			type = new TypeList(elementType);
 			Types.put(type);
@@ -64,15 +64,21 @@ public class TypeList extends Type {
 		return type;
 	}
 
+	public static String typeKey(Type elementType) {
+		return elementType + "[]";
+	}
+
 	private TypeList(BdsNode parent, ParseTree tree, Type baseType) {
 		super(parent, tree);
 		primitiveType = PrimitiveType.LIST;
 		elementType = baseType;
+		defaultValue = new ValueList(baseType);
 	}
 
 	private TypeList(Type baseType) {
 		super(PrimitiveType.LIST);
 		elementType = baseType;
+		defaultValue = new ValueList(baseType);
 	}
 
 	/**
@@ -121,8 +127,15 @@ public class TypeList extends Type {
 		}
 	}
 
-	public Type getBaseType() {
-		return elementType;
+	@Override
+	public int compareTo(Type type) {
+		// Compare type
+		int cmp = super.compareTo(type);
+		if (cmp != 0) return cmp;
+
+		// Compare element type
+		TypeList ltype = (TypeList) type;
+		return elementType.compareTo(ltype.elementType);
 	}
 
 	public Type getElementType() {
@@ -163,7 +176,7 @@ public class TypeList extends Type {
 
 	@Override
 	public String toString() {
-		return elementType + "[]";
+		return typeKey(elementType);
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		// Get value
+		// Get map
 		bdsThread.run(right);
 		Value value = bdsThread.pop();
 

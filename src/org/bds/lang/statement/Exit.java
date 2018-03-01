@@ -51,7 +51,7 @@ public class Exit extends Statement {
 		if (expr != null) {
 			bdsThread.run(expr);
 			if (bdsThread.isCheckpointRecover()) return;
-			bdsThread.setExitValue(bdsThread.popInt()); // Set return value to scope
+			bdsThread.setExitValue(bdsThread.popInt()); // Set return map to scope
 		} else {
 			if (bdsThread.isCheckpointRecover()) return;
 			bdsThread.setExitValue(0L); // Default is the same as 'exit 0'

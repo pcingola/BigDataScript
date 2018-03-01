@@ -11,7 +11,7 @@ public class Timer {
 	long timeOut;
 
 	/**
-	 * Show absolute timer value and a message
+	 * Show absolute timer map and a message
 	 * @param msg
 	 */
 	public static void show(String msg) {
@@ -19,7 +19,7 @@ public class Timer {
 	}
 
 	/**
-	 * Show absolute timer value and a message on STDERR
+	 * Show absolute timer map and a message on STDERR
 	 * @param msg
 	 */
 	public static void showStdErr(String msg) {

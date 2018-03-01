@@ -39,7 +39,7 @@ public class ExpressionGoal extends ExpressionUnary {
 		bdsThread.run(expr);
 		if (bdsThread.isCheckpointRecover()) return;
 
-		// Get expression value
+		// Get expression map
 		Object value = bdsThread.pop();
 
 		// Goal returns a list of taskIds to be run

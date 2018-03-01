@@ -238,7 +238,7 @@ public class CheckTasksRunning {
 		cmdExecResult = Exec.exec(args, true);
 		if (debug) Timer.showStdErr("Check task running:" //
 				+ "\n\tCommand    : '" + cmdsb.toString().trim() + "'" //
-				+ "\n\tExit value : " + cmdExecResult.exitValue //
+				+ "\n\tExit map : " + cmdExecResult.exitValue //
 				+ "\n\tStdout     : " + cmdExecResult.stdOut //
 				+ "\n\tStderr     : " + cmdExecResult.stdErr //
 		);

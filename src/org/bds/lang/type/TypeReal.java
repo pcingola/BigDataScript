@@ -8,7 +8,8 @@ import org.bds.lang.value.ValueReal;
 public class TypeReal extends Type {
 
 	public TypeReal() {
-		super(PrimitiveType.REAL, new ValueReal(0.0));
+		super(PrimitiveType.REAL);
+		defaultValue = new ValueReal(0.0);
 	}
 
 	@Override
@@ -19,7 +20,7 @@ public class TypeReal extends Type {
 	}
 
 	/**
-	 * Cast a value 'v' to this type (i.e. convert to type 'real')
+	 * Cast a map 'v' to this type (i.e. convert to type 'real')
 	 */
 	public Value cast(Value v) {
 		Type vt = v.getType();
@@ -30,7 +31,7 @@ public class TypeReal extends Type {
 
 		if (vt.is(Types.BOOL)) val = ((ValueBool) v).get() ? 1.0 : 0.0;
 		else if (vt.is(Types.INT)) val = ((ValueInt) v).get();
-		else throw new RuntimeException("Cannot convert value type '" + v.getType() + "' to 'bool'");
+		else throw new RuntimeException("Cannot convert map type '" + v.getType() + "' to 'bool'");
 
 		vb.set(val);
 		return vb;

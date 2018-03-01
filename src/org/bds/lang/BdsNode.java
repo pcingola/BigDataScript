@@ -156,7 +156,7 @@ public abstract class BdsNode implements BdsSerialize {
 				field.setAccessible(true);
 				Object fieldObj = field.get(this);
 
-				// Does the field have a value?
+				// Does the field have a map?
 				if (fieldObj != null && !visited.contains(fieldObj)) {
 					visited.add(fieldObj);
 
@@ -454,7 +454,7 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	/**
-	 * Is child 'idx' a terminal node with value 'str'?
+	 * Is child 'idx' a terminal node with map 'str'?
 	 */
 	protected boolean isTerminal(ParseTree tree, int idx, String str) {
 		ParseTree node = tree.getChild(idx);
@@ -537,7 +537,7 @@ public abstract class BdsNode implements BdsSerialize {
 			try {
 				Object fieldObj = field.get(this);
 
-				// Does the field have a value?
+				// Does the field have a map?
 				if (fieldObj != null) {
 					// If it's an array, iterate on all objects
 					if (fieldObj.getClass().isArray()) {
@@ -658,7 +658,7 @@ public abstract class BdsNode implements BdsSerialize {
 				Object fieldObj = field.get(this);
 				Class fieldClass = field.getDeclaringClass();
 
-				// Does the field have a value?
+				// Does the field have a map?
 				if (fieldObj != null) {
 					// If it's an array, iterate on all objects
 					if (fieldObj.getClass().isArray()) {
@@ -672,7 +672,7 @@ public abstract class BdsNode implements BdsSerialize {
 						out.deleteCharAt(out.length() - 1); // Remove last comma
 						out.append("\t");
 					} else {
-						// Serialize field value
+						// Serialize field map
 						if (fieldObj instanceof Scope) {
 							// Do not serialize scope here
 						} else out.append(serializer.serializeSaveValue(fieldObj) + "\t");
@@ -742,7 +742,7 @@ public abstract class BdsNode implements BdsSerialize {
 			try {
 				Object fieldObj = field.get(this);
 
-				// Does the field have a value?
+				// Does the field have a map?
 				if (fieldObj != null) {
 
 					// If it's an array, iterate on all objects

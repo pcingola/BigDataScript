@@ -27,7 +27,7 @@ public class LiteralList extends Literal {
 	}
 
 	public Type baseType() {
-		return ((TypeList) returnType).getBaseType();
+		return ((TypeList) returnType).getElementType();
 	}
 
 	@Override
@@ -37,6 +37,11 @@ public class LiteralList extends Literal {
 		for (int i = 1, j = 0; j < listSize; i += 2, j++) { // Skip first '[' and comma separators
 			values[j] = (Expression) factory(tree, i);
 		}
+	}
+
+	@Override
+	protected Object parseValue(ParseTree tree) {
+		throw new RuntimeException("UNIMPLEMENTED!");
 	}
 
 	@Override
@@ -77,15 +82,17 @@ public class LiteralList extends Literal {
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		ArrayList list = new ArrayList(values.length);
-		Type baseType = baseType();
+		baseType();
 
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			bdsThread.run(expr); // Evaluate expression
 
-			Object value = bdsThread.pop();
-			value = baseType.cast(value); // Cast to base type
-			list.add(value); // Add it to list
+			bdsThread.pop();
+			// !!! TODO:
+			// map = baseType.cast(map); // Cast to base type
+			//			list.add(map); // Add it to list
+			throw new RuntimeException("!!!");
 		}
 
 		bdsThread.push(list);
@@ -114,7 +121,7 @@ public class LiteralList extends Literal {
 
 	@Override
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		Type baseType = ((TypeList) returnType).getBaseType();
+		Type baseType = ((TypeList) returnType).getElementType();
 
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;

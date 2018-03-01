@@ -152,7 +152,7 @@ public class BdsTest {
 	 * Check exit code
 	 */
 	public void checkExitCode(int expectedExitCode) {
-		Assert.assertTrue(errMsg("No exit value (program was not run)"), exitCode != null);
+		Assert.assertTrue(errMsg("No exit map (program was not run)"), exitCode != null);
 		Assert.assertEquals(errMsg("Expecting exit code '" + expectedExitCode + "', but it was '" + exitCode + "'"), expectedExitCode, (int) exitCode);
 	}
 
@@ -201,15 +201,15 @@ public class BdsTest {
 	}
 
 	/**
-	 * Check a variable's value
+	 * Check a variable's map
 	 */
 	public void checkVariable(String varname, Object expectedValue) {
 		ScopeSymbol ssym = getSymbol(varname);
 		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), ssym != null);
 		Assert.assertEquals( //
-				errMsg("Variable '" + varname + "' has different value than expeced:\n" //
-						+ "\tExpected value : " + expectedValue //
-						+ "\tReal value     : " + ssym.getValue()) //
+				errMsg("Variable '" + varname + "' has different map than expeced:\n" //
+						+ "\tExpected map : " + expectedValue //
+						+ "\tReal map     : " + ssym.getValue()) //
 				, expectedValue.toString() //
 				, ssym.getValue().toString() //
 		);
@@ -334,14 +334,14 @@ public class BdsTest {
 		bigDataScript2.setStackCheck(true);
 		bigDataScript2.run();
 
-		// Check variable's value on the recovered (checkpoint run) program
+		// Check variable's map on the recovered (checkpoint run) program
 		if (varName != null) {
 			ScopeSymbol ssym = bigDataScript2.getProgramUnit().getRunScope().getSymbol(varName);
 			Assert.assertTrue(errMsg("Variable '" + varName + "' not found "), ssym != null);
 			Assert.assertEquals( //
-					errMsg("Variable '" + varName + "' has different value than expeced:\n" //
-							+ "\tExpected value : " + expectedValue //
-							+ "\tReal value     : " + ssym.getValue()) //
+					errMsg("Variable '" + varName + "' has different map than expeced:\n" //
+							+ "\tExpected map : " + expectedValue //
+							+ "\tReal map     : " + ssym.getValue()) //
 					, expectedValue.toString() //
 					, ssym.getValue().toString() //
 			);

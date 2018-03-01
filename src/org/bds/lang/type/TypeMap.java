@@ -11,62 +11,67 @@ import org.bds.lang.nativeMethods.map.MethodNativeMapKeys;
 import org.bds.lang.nativeMethods.map.MethodNativeMapRemove;
 import org.bds.lang.nativeMethods.map.MethodNativeMapSize;
 import org.bds.lang.nativeMethods.map.MethodNativeMapValues;
+import org.bds.lang.value.Value;
 import org.bds.util.Gpr;
 
 /**
- * A hash
+ * A hash /  map/ dictionary
  *
  * @author pcingola
  */
-public class TypeMap extends TypeList {
+public class TypeMap extends Type {
 
 	public static boolean debug = false;
+
+	protected Type keyType; // Type for 'key' elements
+	protected Type valueType; // Type for 'value' elements
+
+	public static String typeKey(Type keyType, Type valueType) {
+		return valueType + "{" + keyType + "}";
+	}
 
 	/**
 	 * Get a list type
 	 */
 	public static TypeMap get(Type keyType, Type valueType) {
 		// Get type from hash
-		String key = PrimitiveType.MAP + ":" + baseType;
-		TypeMap type = (TypeMap) types.get(key);
+		String key = typeKey(keyType, valueType);
+		TypeMap type = (TypeMap) Types.get(key);
 
-		// No type available? Create & add
+		// No type cached? Create & add
 		if (type == null) {
-			type = new TypeMap(null, null);
-			type.primitiveType = PrimitiveType.MAP;
-			type.elementType = baseType;
-			put(type);
-
+			type = new TypeMap(keyType, valueType);
+			Types.put(type);
 			type.addNativeMethods();
 		}
 
 		return type;
 	}
 
-	protected static void put(TypeMap type) {
-		// Get type from hash
-		String key = PrimitiveType.MAP + ":" + type.elementType;
-		types.put(key, type);
-	}
-
 	public TypeMap(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+		this.primitiveType = PrimitiveType.MAP;
+	}
+
+	private TypeMap(Type keyType, Type valueType) {
+		super(PrimitiveType.MAP);
+		this.keyType = keyType;
+		this.valueType = valueType;
 	}
 
 	/**
 	 * Add all library methods here
 	 */
-	@Override
 	protected void addNativeMethods() {
 		try {
 			// Add libarary methods
 			ArrayList<MethodNative> methods = new ArrayList<>();
-			methods.add(new MethodNativeMapKeys(elementType));
-			methods.add(new MethodNativeMapValues(elementType));
-			methods.add(new MethodNativeMapSize(elementType));
-			methods.add(new MethodNativeMapHasKey(elementType));
-			methods.add(new MethodNativeMapHasValue(elementType));
-			methods.add(new MethodNativeMapRemove(elementType));
+			methods.add(new MethodNativeMapKeys(this));
+			methods.add(new MethodNativeMapValues(this));
+			methods.add(new MethodNativeMapSize(this));
+			methods.add(new MethodNativeMapHasKey(this));
+			methods.add(new MethodNativeMapHasValue(this));
+			methods.add(new MethodNativeMapRemove(this));
 
 			// Show
 			if (debug) {
@@ -82,21 +87,26 @@ public class TypeMap extends TypeList {
 
 	@Override
 	public int compareTo(Type type) {
-		int cmp = primitiveType.ordinal() - type.primitiveType.ordinal();
+		// Compare type
+		int cmp = super.compareTo(type);
 		if (cmp != 0) return cmp;
 
-		TypeMap ltype = (TypeMap) type;
-		return elementType.compareTo(ltype.elementType);
+		// Compare key type
+		TypeMap mtype = (TypeMap) type;
+		cmp = keyType.compareTo(mtype.keyType);
+		if (cmp != 0) return cmp;
+
+		// Compare value type
+		return valueType.compareTo(mtype.valueType);
 	}
 
 	@Override
 	public boolean equals(Type type) {
-		return (primitiveType == type.primitiveType) && (elementType.equals(((TypeMap) type).elementType));
-	}
-
-	@Override
-	public boolean isList() {
-		return false;
+		TypeMap mtype = (TypeMap) type;
+		return (primitiveType == type.primitiveType) //
+				&& keyType.equals(mtype.keyType) //
+				&& valueType.equals(mtype.valueType) //
+		;
 	}
 
 	@Override
@@ -106,28 +116,36 @@ public class TypeMap extends TypeList {
 
 	@Override
 	public boolean isMap(Type kewType, Type valueType) {
-		return this.elementType.equals(baseType);
+		return keyType.equals(this.keyType) //
+				&& valueType.equals(this.valueType) //
+		;
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		// TODO: We are only allowing to build lists of primitive types. We should change this!
-		String listTypeName = tree.getChild(0).getChild(0).getText();
+		// !!! TODO: We are only allowing to build lists of primitive types. We should change this!
+		String valueTypeName = tree.getChild(0).getChild(0).getText();
 		primitiveType = PrimitiveType.MAP;
-		elementType = Type.get(listTypeName.toUpperCase());
-
-		put(this);
+		keyType = Types.get(valueTypeName.toUpperCase());
+		Types.put(this);
 		addNativeMethods();
 	}
 
 	@Override
 	public String toString() {
-		return elementType + "{}";
+		return typeKey(keyType, valueType);
 	}
 
+	// !!! TODO: FIX
+	//	@Override
+	//	public String toStringSerializer() {
+	//		return primitiveType + ":" + keyType.toStringSerializer();
+	//	}
+
 	@Override
-	public String toStringSerializer() {
-		return primitiveType + ":" + elementType.toStringSerializer();
+	public Value newValue() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

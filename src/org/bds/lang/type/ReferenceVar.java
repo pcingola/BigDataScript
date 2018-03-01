@@ -93,7 +93,7 @@ public class ReferenceVar extends Reference {
 	}
 
 	/**
-	 * Set value to scope symbol
+	 * Set map to scope symbol
 	 */
 	@Override
 	public void setValue(BdsThread bdsThread, Object value) {

@@ -100,7 +100,10 @@ public class ExpressionParallel extends ExpressionTask {
 
 			// Evaluate function arguments in current thread
 			functionCall.evalFunctionArguments(bdsThread);
-			Object arguments[] = (Object[]) bdsThread.pop();
+			// !!! TODO: 
+			// Object arguments[] = (Object[]) bdsThread.pop();
+			Object arguments[] = null;
+			if (2 % 1 == 0) throw new RuntimeException("!!!");
 
 			if (!bdsThread.isCheckpointRecover()) {
 				// Create and run new thread that runs the function call in parallel

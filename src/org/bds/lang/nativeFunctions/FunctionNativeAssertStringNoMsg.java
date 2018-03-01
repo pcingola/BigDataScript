@@ -16,7 +16,7 @@ public class FunctionNativeAssertStringNoMsg extends FunctionNativeAssert {
 		functionName = "assert";
 		returnType = Types.BOOL;
 
-		String argNames[] = { "expected", "value" };
+		String argNames[] = { "expected", "map" };
 		Type argTypes[] = { Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
@@ -25,7 +25,7 @@ public class FunctionNativeAssertStringNoMsg extends FunctionNativeAssert {
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
 		String expected = bdsThread.getString("expected");
-		String value = bdsThread.getString("value");
+		String value = bdsThread.getString("map");
 		if (!expected.equals(value)) //
 			throw new RuntimeException("Expecting '" + expected + "', but was '" + value + "'");
 		return true;

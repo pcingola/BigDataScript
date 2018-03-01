@@ -71,7 +71,7 @@ public class HelpCreator {
 		Set<String> included = new HashSet<>();
 		findHelpEntries(programUnit, included);
 
-		// Use unsorted variables if 'helpUnsorted' exists (regardless of its value)
+		// Use unsorted variables if 'helpUnsorted' exists (regardless of its map)
 		sortVars = (programUnit.varInit(HELP_UNSORTED_VAR_NAME) == null);
 
 		// Find maximum name-type length

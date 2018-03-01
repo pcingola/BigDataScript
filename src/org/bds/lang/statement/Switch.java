@@ -74,7 +74,7 @@ public class Switch extends Statement {
 		runSwitchExpression(bdsThread);
 
 		if (!bdsThread.isCheckpointRecover()) {
-			// Put the fall-through value in the stack
+			// Put the fall-through map in the stack
 			bdsThread.push(false);
 		}
 

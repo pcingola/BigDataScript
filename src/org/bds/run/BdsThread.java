@@ -69,8 +69,8 @@ public class BdsThread extends Thread implements BdsSerialize {
 	String statementNodeId; // Statement's ID, used only when un-serializing
 	ProgramCounter pc; // Program counter
 	RunState runState; // Latest RunState
-	Value returnValue; // Latest return value (from a 'return' statement)
-	int exitValue; // Exit value
+	Value returnValue; // Latest return map (from a 'return' statement)
+	int exitValue; // Exit map
 	List<String> removeOnExit; // Files to be removed on exit
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
@@ -191,7 +191,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 				+ message //
 		);
 
-		// Set exit value
+		// Set exit map
 		setExitValue(1L);
 	}
 
@@ -415,7 +415,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		if (checkpointFileName.isEmpty()) System.err.println("Creating checkpoint file: Config or command line option disabled checkpoint file creation, nothing done.");
 		else System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
 
-		// Set exit value
+		// Set exit map
 		setExitValue(1L);
 	}
 
@@ -473,7 +473,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
-	 * Get variable's value as a bool
+	 * Get variable's map as a bool
 	 */
 	public boolean getBool(String varName) {
 		return (Boolean) getScope().getSymbol(varName).getValue();
@@ -534,7 +534,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
-	 * Get variable's value as an int
+	 * Get variable's map as an int
 	 */
 	public long getInt(String varName) {
 		ScopeSymbol ssym = getScope().getSymbol(varName);
@@ -551,7 +551,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
-	 * Get variable's value as a java object
+	 * Get variable's map as a java object
 	 */
 	public Object getObject(String varName) {
 		return getScope().getSymbol(varName).getValue();
@@ -574,7 +574,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
-	 * Get variable's value as a real
+	 * Get variable's map as a real
 	 */
 	public double getReal(String varName) {
 		return (Double) getScope().getSymbol(varName).getValue();
@@ -617,7 +617,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
-	 * Get variable's value as a string
+	 * Get variable's map as a string
 	 */
 	public String getString(String varName) {
 		return getScope().getSymbol(varName).getValue().toString();
@@ -1066,7 +1066,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 					+ "'" + getBdsThreadId() + "'" //
 					+ " finished" //
 					+ (isDebug() ? ", run state: '" + runState + "'" : "") //
-					+ ", exit value: " + getExitValue() //
+					+ ", exit map: " + getExitValue() //
 					+ ", tasks executed: " + td.getTasks().size() //
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //

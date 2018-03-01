@@ -13,9 +13,9 @@ import org.bds.run.BdsThread;
  */
 public abstract class MethodNativeMap extends MethodNative {
 
-	public MethodNativeMap(Type baseType) {
+	public MethodNativeMap(Type mapType) {
 		super();
-		initMethod(baseType);
+		initMethod(mapType);
 	}
 
 	@Override
@@ -23,13 +23,13 @@ public abstract class MethodNativeMap extends MethodNative {
 		// Nothing to do, we cannot initialize directly
 	}
 
-	protected abstract void initMethod(Type baseType);
+	protected abstract void initMethod(Type mapType);
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
-		Object toPush = csThread.getObject("toPush");
+		Object toPush = bdsThread.getObject("toPush");
 		list.add(toPush);
 		return toPush;
 	}

@@ -106,7 +106,7 @@ public class MethodCall extends FunctionCall {
 		functionDeclaration.runFunction(bdsThread);
 
 		if (!bdsThread.isCheckpointRecover()) {
-			// Get return value
+			// Get return map
 			Object retVal = bdsThread.getReturnValue();
 
 			// Back to old scope

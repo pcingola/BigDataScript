@@ -11,7 +11,7 @@ import org.bds.lang.value.Value;
 public class TypeUniqueValue extends Type {
 
 	public TypeUniqueValue(PrimitiveType primitiveType) {
-		super(primitiveType, null);
+		super(primitiveType);
 	}
 
 	@Override
@@ -20,7 +20,7 @@ public class TypeUniqueValue extends Type {
 	}
 
 	/**
-	 * Cast a value 'v' to this type
+	 * Cast a map 'v' to this type
 	 */
 	public Value cast(Value v) {
 		return v;
@@ -28,7 +28,7 @@ public class TypeUniqueValue extends Type {
 
 	@Override
 	public Value newValue() {
-		throw new RuntimeException("Cannot create new value of type '" + primitiveType.toString() + "'");
+		throw new RuntimeException("Cannot create new map of type '" + primitiveType.toString() + "'");
 	}
 
 }

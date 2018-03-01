@@ -47,7 +47,7 @@ public class While extends Statement {
 		// program created the checkpoint
 		if (bdsThread.isCheckpointRecover()) return first;
 
-		// Return value form 'condition'
+		// Return map form 'condition'
 		return bdsThread.popBool();
 	}
 

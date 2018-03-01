@@ -27,9 +27,9 @@ public abstract class MethodNativeList extends MethodNative {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
-		Object toPush = csThread.getObject("toPush");
+		Object toPush = bdsThread.getObject("toPush");
 		list.add(toPush);
 		return toPush;
 	}

@@ -43,11 +43,11 @@ public class ExpressionPlus extends ExpressionMath {
 		} else if (left.isList() && !right.isList()) {
 			TypeList tlist = (TypeList) left.getReturnType();
 			if (left.getReturnType() == null || right.getReturnType() == null) return null;
-			if (right.getReturnType().compareTo(tlist.getBaseType()) == 0) returnType = left.getReturnType(); // List plus Item
+			if (right.getReturnType().compareTo(tlist.getElementType()) == 0) returnType = left.getReturnType(); // List plus Item
 		} else if (!left.isList() && right.isList()) {
 			TypeList tlist = (TypeList) right.getReturnType();
 			if (left.getReturnType() == null || right.getReturnType() == null) return null;
-			if (left.getReturnType().compareTo(tlist.getBaseType()) == 0) returnType = right.getReturnType(); // Item plus List
+			if (left.getReturnType().compareTo(tlist.getElementType()) == 0) returnType = right.getReturnType(); // Item plus List
 		} else if (right.isList() && left.getReturnType().canCast(right.getReturnType())) returnType = right.getReturnType(); // Item plus List
 		else if (left.isString() || right.isString()) returnType = Types.STRING;
 
@@ -111,10 +111,10 @@ public class ExpressionPlus extends ExpressionMath {
 			}
 		} else if (left.isList() && !right.isList()) {
 			TypeList tlist = (TypeList) left.getReturnType();
-			if (right.getReturnType().compareTo(tlist.getBaseType()) != 0) compilerMessages.add(this, "Cannot append " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
+			if (right.getReturnType().compareTo(tlist.getElementType()) != 0) compilerMessages.add(this, "Cannot append " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
 		} else if (right.isList() && !left.isList()) {
 			TypeList tlist = (TypeList) right.getReturnType();
-			if (left.getReturnType().compareTo(tlist.getBaseType()) != 0) compilerMessages.add(this, "Cannot append " + left.getReturnType() + " to " + right.getReturnType(), MessageType.ERROR);
+			if (left.getReturnType().compareTo(tlist.getElementType()) != 0) compilerMessages.add(this, "Cannot append " + left.getReturnType() + " to " + right.getReturnType(), MessageType.ERROR);
 		} else if (left.isString() || right.isString()) {
 			// Either side is a string? => String plus String
 		} else {

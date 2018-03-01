@@ -25,7 +25,7 @@ public abstract class Cmd extends Thread {
 	protected String error = ""; // Errors
 	protected boolean executing = false;
 	protected boolean started = false; // Command states
-	protected int exitValue = 0; // Command exit value
+	protected int exitValue = 0; // Command exit map
 	protected Task task = null; // Task corresponding to this cmd
 	protected Host host; // Host to execute command (in case it's ssh)
 	protected HostResources resources; // Resources required by this command

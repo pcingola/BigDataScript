@@ -83,7 +83,7 @@ public class Exec {
 			stdout.join();
 			stderr.join();
 
-			if (debug) Gpr.debug("Exit value: " + exitValue);
+			if (debug) Gpr.debug("Exit map: " + exitValue);
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot execute commnads: '" + commands + "'", e);
 		}

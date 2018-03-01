@@ -4,7 +4,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 
 /**
- * Define a value
+ * Define a map
  * @author pcingola
  */
 public abstract class Value {
@@ -18,7 +18,7 @@ public abstract class Value {
 		if (v instanceof String) return new ValueString((String) v);
 		if (v instanceof Integer) return new ValueInt(((Integer) v).longValue());
 		if (v instanceof Float) return new ValueReal(((Float) v).doubleValue());
-		throw new RuntimeException("Cannot create value from object class " + v.getClass().getCanonicalName());
+		throw new RuntimeException("Cannot create map from object class " + v.getClass().getCanonicalName());
 	}
 
 	public Value(Type type) {
@@ -27,28 +27,28 @@ public abstract class Value {
 	}
 
 	/**
-	 * Convert value to 'bool'
+	 * Convert map to 'bool'
 	 */
 	public boolean asBool() {
 		return (boolean) Types.BOOL.cast(this).get();
 	}
 
 	/**
-	 * Convert value to 'int'
+	 * Convert map to 'int'
 	 */
 	public long asInt() {
 		return (long) Types.INT.cast(this).get();
 	}
 
 	/**
-	 * Convert value to 'real'
+	 * Convert map to 'real'
 	 */
 	public double asReal() {
 		return (double) Types.REAL.cast(this).get();
 	}
 
 	/**
-	 * Convert value to 'string'
+	 * Convert map to 'string'
 	 */
 	public String asString() {
 		return (String) Types.STRING.cast(this).get();

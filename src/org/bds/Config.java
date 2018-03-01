@@ -297,7 +297,7 @@ public class Config {
 	}
 
 	/**
-	 * Get a configuration value and split is into an array (using regex '\\s+')
+	 * Get a configuration map and split is into an array (using regex '\\s+')
 	 */
 	public String[] getStringArray(String propertyName, boolean required) {
 		String val = getString(propertyName);

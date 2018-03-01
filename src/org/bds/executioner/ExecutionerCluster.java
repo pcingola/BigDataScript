@@ -354,7 +354,7 @@ public class ExecutionerCluster extends Executioner {
 		ExecResult cmdExecResult = Exec.exec(args, true);
 		if (debug) log("Finding postMortemInfo for task " + task.getId() //
 				+ "\n\tCommand executed : '" + cmdsb + "'" //
-				+ "\n\tExit value       : " + cmdExecResult.exitValue //
+				+ "\n\tExit map       : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
 		);

@@ -54,7 +54,7 @@ public class LiteralString extends Literal {
 	}
 
 	/**
-	 * Sets literal value and finds interpolated variables
+	 * Sets literal map and finds interpolated variables
 	 */
 	public void setValueInterpolate(String valueStr) {
 		value.set(valueStr);

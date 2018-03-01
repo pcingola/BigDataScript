@@ -71,7 +71,7 @@ public class TestCasesBase {
 	}
 
 	/**
-	 * Check that a file compiles without any errors, runs and a variable have its expected value
+	 * Check that a file compiles without any errors, runs and a variable have its expected map
 	 */
 	void runAndCheck(String fileName, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
@@ -81,7 +81,7 @@ public class TestCasesBase {
 	}
 
 	/**
-	 * Check that a file compiles without any errors, runs and a variable have its expected value
+	 * Check that a file compiles without any errors, runs and a variable have its expected map
 	 */
 	void runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);

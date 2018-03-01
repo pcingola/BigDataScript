@@ -772,7 +772,7 @@ public class Task implements BdsSerialize {
 			}
 		}
 
-		// Use exit value
+		// Use exit map
 		return TaskState.exitCode2taskState(getExitValue());
 	}
 

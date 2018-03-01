@@ -173,7 +173,7 @@ public class BdsSerializer {
 		int size = Gpr.parseIntSafe(sizeStr);
 
 		for (int i = 0; i < size; i++) {
-			Object value = getNextField(type.getBaseType());
+			Object value = getNextField(type.getElementType());
 			list.add(value);
 		}
 
@@ -194,7 +194,7 @@ public class BdsSerializer {
 
 		for (int i = 0; i < size; i++) {
 			Object key = getNextFieldString();
-			Object value = getNextField(type.getBaseType());
+			Object value = getNextField(type.getElementType());
 			map.put(key, value);
 		}
 
@@ -282,7 +282,7 @@ public class BdsSerializer {
 	}
 
 	/**
-	 * Parse a value
+	 * Parse a map
 	 * @param fieldClass : Class of field to parse
 	 * @param componentType : Component class (in case of an array)
 	 */
@@ -537,7 +537,7 @@ public class BdsSerializer {
 	}
 
 	/**
-	 * Serialize a value
+	 * Serialize a map
 	 */
 	@SuppressWarnings("rawtypes")
 	public String serializeSaveValue(Object value) {

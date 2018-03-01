@@ -59,7 +59,7 @@ public class ForLoop extends StatementWithScope {
 		// program created the checkpoint
 		if (bdsThread.isCheckpointRecover()) return first;
 
-		// Return value form 'condition'
+		// Return map form 'condition'
 		return bdsThread.popBool();
 	}
 

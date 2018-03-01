@@ -1,7 +1,5 @@
 package org.bds.lang.expression;
 
-import java.util.List;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
@@ -11,6 +9,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.value.LiteralListEmpty;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -75,24 +74,23 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 	 * Evaluate an expression
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
 	public void runStep(BdsThread bdsThread) {
 
-		// Get value
+		// Get map
 		bdsThread.run(right);
 		if (bdsThread.isCheckpointRecover()) return;
 
-		List list = (List) bdsThread.peek();
+		ValueList list = (ValueList) bdsThread.peek();
 		for (int i = 0; i < lefts.length; i++) {
 			// Get variable
 			Reference vr = (Reference) lefts[i];
 
-			// Get value
+			// Get map
 			Value value;
-			if (i < list.size()) value = list.get(i);
-			else value = vr.getReturnType().getDefaultValue(); // List too short? Assign variable's default value
+			if (i < list.size()) value = list.getValue(i);
+			else value = vr.getReturnType().getDefaultValue(); // List too short? Assign variable's default map
 
-			// Assign value to variable
+			// Assign map to variable
 			vr.setValue(bdsThread, value);
 		}
 	}
@@ -125,7 +123,8 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 		for (Expression l : lefts) {
 			if (l == null) compilerMessages.add(this, "Cannot parse left expresison.", MessageType.ERROR);
 			else if (!(l instanceof Reference)) compilerMessages.add(this, "Left hand side expression is not a variable reference '" + l + "'", MessageType.ERROR);
-			else if (!l.getReturnType().isPrimitiveType()) compilerMessages.add(this, "Variable '" + l + "' is non-primitive type " + l.getReturnType(), MessageType.ERROR);
+			// !!! TODO: Remove next line?
+			// else if (!l.getReturnType().isPrimitiveType()) compilerMessages.add(this, "Variable '" + l + "' is non-primitive type " + l.getReturnType(), MessageType.ERROR);
 			else if (((Reference) l).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + l + "'", MessageType.ERROR);
 		}
 
@@ -135,7 +134,7 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 				// OK, empty list can be assigned to any variable
 			} else {
 				TypeList typeList = (TypeList) right.getReturnType();
-				Type type = typeList.getBaseType();
+				Type type = typeList.getElementType();
 
 				// Check that all left hand sides match
 				for (Expression l : lefts)

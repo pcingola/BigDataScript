@@ -19,7 +19,6 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	// Important: This must be an invalid symbol in variable names
 	public static final String INTERNAL_SYMBOL_START = "$";
 	public static boolean debug = false;
-
 	private static int scopeSymbolNum = 0;
 
 	int id;
@@ -93,7 +92,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 		name = serializer.getNextFieldString();
 		type = serializer.getNextFieldType();
 
-		// Parse value
+		// Parse map
 		value = serializer.getNextField(type);
 	}
 
@@ -111,7 +110,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	}
 
 	public void setValue(Value value) {
-		if (debug) Gpr.debug("Setting value:\t" + name + " = " + value);
+		if (debug) Gpr.debug("Setting map:\t" + name + " = " + value);
 		this.value.set(value);
 	}
 

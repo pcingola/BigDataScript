@@ -22,7 +22,7 @@ public class ClusterSsh extends Cluster {
 	String sshComand = "ssh"; // Default 'ssh' command
 	int connectTimeout = 10; // Default connection timeout is 10 seconds
 	long defaultWaitTime = 100; // Default time to use in 'wait' calls
-	int sshKeepAlive = 240; // Default 'keep alive' value for ssh (i.e. ServerAliveInterval)
+	int sshKeepAlive = 240; // Default 'keep alive' map for ssh (i.e. ServerAliveInterval)
 	long refreshTime = 60; // Number of seconds before host info updates
 	protected Map<String, HostHealthUpdater> hostHealthUpdaters; // All hosts updaters indexed by name
 

@@ -7,7 +7,8 @@ import org.bds.lang.value.ValueInt;
 public class TypeInt extends Type {
 
 	public TypeInt() {
-		super(PrimitiveType.INT, new ValueInt(0L));
+		super(PrimitiveType.INT);
+		defaultValue = new ValueInt(0L);
 	}
 
 	@Override
@@ -16,7 +17,7 @@ public class TypeInt extends Type {
 	}
 
 	/**
-	 * Cast a value 'v' to this type (i.e. convert to type 'int')
+	 * Cast a map 'v' to this type (i.e. convert to type 'int')
 	 */
 	public Value cast(Value v) {
 		Type vt = v.getType();
@@ -26,7 +27,7 @@ public class TypeInt extends Type {
 		long val = 0;
 
 		if (vt.isBool()) val = ((ValueBool) v).get() ? 1 : 0;
-		else throw new RuntimeException("Cannot convert value type '" + v.getType() + "' to 'bool'");
+		else throw new RuntimeException("Cannot convert map type '" + v.getType() + "' to 'bool'");
 
 		vb.set(val);
 		return vb;

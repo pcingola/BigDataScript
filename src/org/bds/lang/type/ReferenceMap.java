@@ -105,7 +105,7 @@ public class ReferenceMap extends Reference {
 		Type nameType = variable.returnType(scope);
 
 		if (nameType == null) return null;
-		if (nameType.isMap()) returnType = ((TypeMap) nameType).getBaseType();
+		if (nameType.isMap()) returnType = ((TypeMap) nameType).getElementType();
 
 		return returnType;
 	}

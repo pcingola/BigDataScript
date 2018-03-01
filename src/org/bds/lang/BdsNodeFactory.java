@@ -72,7 +72,7 @@ public class BdsNodeFactory {
 			return null;
 		}
 
-		// Skip container nodes (they don't add value)
+		// Skip container nodes (they don't add map)
 		int childNum = -1;
 		while ((childNum = isSkip(tree)) >= 0) {
 			if (debug) Gpr.debug("Skipping container node: " + tree.getClass().getSimpleName());

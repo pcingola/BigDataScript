@@ -3,7 +3,7 @@ package org.bds.lang.value;
 import org.bds.lang.type.Type;
 
 /**
- * Define a value
+ * Define a map
  * @author pcingola
  */
 public abstract class ValuePrimitive<T extends Object> extends Value {

@@ -23,7 +23,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 
 	/**
 	 * Evaluate expressions and create a TaskDependency (only if clauses are satisfied
-	 * Note: We only care about the value of bool expressions
+	 * Note: We only care about the map of bool expressions
 	 * Note: If 'evalAll' is true, all expressions in the list are evaluated, even if the first one is false
 	 * @return A 'TaskDependencies' object if the task has to be run, null otherwise
 	 */

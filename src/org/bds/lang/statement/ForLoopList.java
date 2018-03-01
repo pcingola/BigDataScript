@@ -194,7 +194,7 @@ public class ForLoopList extends StatementWithScope {
 			if (!exprType.isList() && !exprType.isMap()) compilerMessages.add(this, "Expression should return a list or a map", MessageType.ERROR);
 			else if (beginVarDecl != null) {
 				TypeList exprListType = (TypeList) exprType;
-				Type baseType = exprListType.getBaseType();
+				Type baseType = exprListType.getElementType();
 				Type varType = beginVarDecl.getType();
 
 				if ((baseType != null) && !baseType.canCast(varType)) compilerMessages.add(this, "Cannot cast " + baseType + " to " + varType, MessageType.ERROR);

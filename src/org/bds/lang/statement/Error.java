@@ -39,7 +39,7 @@ public class Error extends Print {
 				+ (!msg.isEmpty() ? ": " + msg : "") //
 		);
 
-		bdsThread.setExitValue(1L); // Set exit value
+		bdsThread.setExitValue(1L); // Set exit map
 		bdsThread.setRunState(RunState.EXIT);
 	}
 }
