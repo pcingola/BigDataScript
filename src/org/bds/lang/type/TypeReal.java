@@ -9,28 +9,26 @@ public class TypeReal extends Type {
 
 	public TypeReal() {
 		super(PrimitiveType.REAL);
-		defaultValue = new ValueReal(0.0);
 	}
 
 	@Override
 	public boolean canCast(Type type) {
-		return type.is(Types.BOOL) //
-				|| type.is(Types.INT) //
-		;
+		return type.isBool() || type.isInt();
 	}
 
 	/**
 	 * Cast a map 'v' to this type (i.e. convert to type 'real')
 	 */
+	@Override
 	public Value cast(Value v) {
 		Type vt = v.getType();
-		if (vt.is(Types.REAL)) return v;
+		if (vt.isReal()) return v;
 
 		ValueReal vb = new ValueReal();
 		double val = 0;
 
-		if (vt.is(Types.BOOL)) val = ((ValueBool) v).get() ? 1.0 : 0.0;
-		else if (vt.is(Types.INT)) val = ((ValueInt) v).get();
+		if (vt.isBool()) val = ((ValueBool) v).get() ? 1.0 : 0.0;
+		else if (vt.isInt()) val = ((ValueInt) v).get();
 		else throw new RuntimeException("Cannot convert map type '" + v.getType() + "' to 'bool'");
 
 		vb.set(val);

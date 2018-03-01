@@ -159,7 +159,7 @@ public class FunctionDeclaration extends StatementWithScope {
 			bdsThread.setRunState(RunState.OK); // Restore 'OK' runState
 		} else if (!returnType.canCast(bdsThread.getReturnValue().getType())) {
 			// Not the right type? Force a default map of the right type
-			bdsThread.setReturnValue(returnType.getDefaultValue());
+			bdsThread.setReturnValue(returnType.newValue());
 		}
 	}
 

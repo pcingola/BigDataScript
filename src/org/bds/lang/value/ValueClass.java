@@ -27,7 +27,7 @@ public class ValueClass extends Value {
 
 	@Override
 	protected void init() {
-		set(type.getDefaultValue());
+		set(type.newValue());
 		throw new RuntimeException("!!! INITIALIZE ALL FIELDS");
 	}
 

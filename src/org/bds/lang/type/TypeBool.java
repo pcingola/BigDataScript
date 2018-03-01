@@ -10,7 +10,6 @@ public class TypeBool extends Type {
 
 	public TypeBool() {
 		super(PrimitiveType.BOOL);
-		defaultValue = new ValueBool(Boolean.FALSE);
 	}
 
 	@Override
@@ -25,6 +24,7 @@ public class TypeBool extends Type {
 	/**
 	 * Cast a map 'v' to this type (i.e. convert to type 'bool')
 	 */
+	@Override
 	public Value cast(Value v) {
 		Type vt = v.getType();
 		if (vt.isBool()) return v;

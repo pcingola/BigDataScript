@@ -6,6 +6,7 @@ public class ValueInt extends ValuePrimitive<Long> {
 
 	public ValueInt() {
 		super(Types.INT);
+		set(0L);
 	}
 
 	public ValueInt(Long v) {

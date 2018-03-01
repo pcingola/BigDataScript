@@ -33,7 +33,7 @@ public class LiteralString extends Literal {
 		String valueStr = parseValue(tree);
 
 		if (valueStr.charAt(0) == '\'' && valueStr.charAt(valueStr.length() - 1) == '\'') {
-			// Remove quotes: No unescaping, no interpolation
+			// Remove quotes: No un-escaping, no interpolation
 			value.set(valueStr.substring(1, valueStr.length() - 1));
 		} else {
 			// Remove quotes and interpolate string

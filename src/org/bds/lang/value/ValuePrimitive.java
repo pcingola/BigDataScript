@@ -26,7 +26,7 @@ public abstract class ValuePrimitive<T extends Object> extends Value {
 
 	@Override
 	public String toString() {
-		return value.toString();
+		return value != null ? value.toString() : "null";
 	}
 
 }

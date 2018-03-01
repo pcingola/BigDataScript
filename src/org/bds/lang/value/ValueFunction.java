@@ -13,17 +13,11 @@ public class ValueFunction extends Value {
 
 	public ValueFunction(Type type) {
 		super(type);
-		init();
 	}
 
 	@Override
 	public Object get() {
 		return fdecl;
-	}
-
-	@Override
-	protected void init() {
-		set(type.getDefaultValue());
 	}
 
 	@Override

@@ -88,7 +88,7 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 			// Get map
 			Value value;
 			if (i < list.size()) value = list.getValue(i);
-			else value = vr.getReturnType().getDefaultValue(); // List too short? Assign variable's default map
+			else value = vr.getReturnType().newValue(); // List too short? Assign variable's default map
 
 			// Assign map to variable
 			vr.setValue(bdsThread, value);

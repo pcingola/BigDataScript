@@ -70,13 +70,11 @@ public class TypeList extends Type {
 		super(parent, tree);
 		primitiveType = PrimitiveType.LIST;
 		elementType = baseType;
-		defaultValue = new ValueList(baseType);
 	}
 
 	private TypeList(Type baseType) {
 		super(PrimitiveType.LIST);
 		elementType = baseType;
-		defaultValue = new ValueList(baseType);
 	}
 
 	/**

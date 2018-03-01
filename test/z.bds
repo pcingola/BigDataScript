@@ -1,4 +1,10 @@
 #!/usr/bin/env bds
 
-i := 42
+#i := 42
+#j := 5
+int i
+int j
+i = 42
+j = 5
 println("i : $i")
+println("j : $j")

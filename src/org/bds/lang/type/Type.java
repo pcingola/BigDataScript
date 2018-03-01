@@ -16,7 +16,6 @@ import org.bds.serialize.BdsSerializer;
 public abstract class Type extends BdsNode implements Comparable<Type> {
 
 	protected PrimitiveType primitiveType;
-	protected Value defaultValue;
 	protected Scope scope; // A type requires a scope to define all methods related to this type / class
 
 	protected Type(BdsNode parent, ParseTree tree) {
@@ -78,13 +77,6 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 
 	public boolean equals(Type type) {
 		return primitiveType.equals(type.primitiveType);
-	}
-
-	/**
-	 * Get default initialization map
-	 */
-	public Value getDefaultValue() {
-		return defaultValue;
 	}
 
 	public PrimitiveType getPrimitiveType() {
@@ -173,7 +165,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	}
 
 	/**
-	 * Create a new map if this type
+	 * Create a new value (properly initialzed)
 	 */
 	public abstract Value newValue();
 

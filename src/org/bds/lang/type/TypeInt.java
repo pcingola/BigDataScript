@@ -8,7 +8,6 @@ public class TypeInt extends Type {
 
 	public TypeInt() {
 		super(PrimitiveType.INT);
-		defaultValue = new ValueInt(0L);
 	}
 
 	@Override
@@ -19,9 +18,10 @@ public class TypeInt extends Type {
 	/**
 	 * Cast a map 'v' to this type (i.e. convert to type 'int')
 	 */
+	@Override
 	public Value cast(Value v) {
 		Type vt = v.getType();
-		if (vt.is(Types.INT)) return v;
+		if (vt.isInt()) return v;
 
 		ValueInt vb = new ValueInt();
 		long val = 0;
@@ -42,5 +42,4 @@ public class TypeInt extends Type {
 	public Value newValue() {
 		return new ValueInt();
 	}
-
 }
