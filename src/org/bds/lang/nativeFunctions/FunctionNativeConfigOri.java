@@ -1,6 +1,7 @@
 package org.bds.lang.nativeFunctions;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -23,10 +24,10 @@ public class FunctionNativeConfigOri extends FunctionNativeConfig {
 	@Override
 	protected void initFunction() {
 		functionName = "config";
-		returnType = TypeMap.get(Types.STRING);
+		returnType = TypeMap.get(Types.STRING, Types.STRING);
 
 		String argNames[] = { "file", "configOri" };
-		Type argTypes[] = { Types.STRING, TypeMap.get(Types.STRING) };
+		Type argTypes[] = { Types.STRING, returnType };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeFunctionToScope();
 	}
@@ -35,7 +36,7 @@ public class FunctionNativeConfigOri extends FunctionNativeConfig {
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
 		String fileName = bdsThread.getString("file");
-		HashMap<String, String> configOri = (HashMap<String, String>) bdsThread.getObject("configOri");
+		Map<String, String> configOri = (HashMap<String, String>) bdsThread.getObject("configOri");
 		return parseFile(bdsThread, fileName, configOri);
 	}
 }

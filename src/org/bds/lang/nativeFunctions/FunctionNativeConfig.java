@@ -1,6 +1,7 @@
 package org.bds.lang.nativeFunctions;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -23,7 +24,7 @@ public class FunctionNativeConfig extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "config";
-		returnType = TypeMap.get(Types.STRING);
+		returnType = TypeMap.get(Types.STRING, Types.STRING);
 
 		String argNames[] = { "file" };
 		Type argTypes[] = { Types.STRING };
@@ -31,7 +32,7 @@ public class FunctionNativeConfig extends FunctionNative {
 		addNativeFunctionToScope();
 	}
 
-	protected Object parseFile(BdsThread bdsThread, String fileName, HashMap<String, String> configOri) {
+	protected Object parseFile(BdsThread bdsThread, String fileName, Map<String, String> configOri) {
 		// Sanity check
 		if (!Gpr.canRead(fileName)) bdsThread.fatalError(this, "Cannot read config file '" + fileName + "'");
 
