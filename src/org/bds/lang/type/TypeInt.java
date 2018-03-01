@@ -34,4 +34,9 @@ public class TypeInt extends Type {
 		return vb;
 	}
 
+	@Override
+	public Value newValue() {
+		return new ValueInt();
+	}
+
 }

@@ -329,6 +329,11 @@ public class InterpolateVars extends Literal {
 	}
 
 	@Override
+	protected String parseValue(ParseTree tree) {
+		return tree.getChild(0).getText();
+	}
+
+	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
@@ -385,4 +390,5 @@ public class InterpolateVars extends Literal {
 			for (Expression expr : exprs)
 			if (expr != null) expr.typeCheck(scope, compilerMessages);
 	}
+
 }

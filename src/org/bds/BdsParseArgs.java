@@ -14,7 +14,8 @@ import org.bds.lang.value.LiteralInt;
 import org.bds.lang.value.LiteralListString;
 import org.bds.lang.value.LiteralReal;
 import org.bds.lang.value.LiteralString;
-import org.bds.scope.Scope;
+import org.bds.lang.value.Value;
+import org.bds.scope.GlobalScope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -108,14 +109,13 @@ public class BdsParseArgs {
 			}
 		}
 
-		// Make all unprocessed arguments available for the program (in 'args' list)
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING), programArgs));
-
 		// Initialize program name
 		String programPath = programUnit.getFileName();
 		String progName = Gpr.baseName(programPath);
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Types.STRING, progName));
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Types.STRING, programPath));
+		GlobalScope gs = GlobalScope.get();
+		gs.add(new ScopeSymbol(GlobalScope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING), programArgs)); // Make all unprocessed arguments available for the program (in 'args' list)
+		gs.add(new ScopeSymbol(GlobalScope.GLOBAL_VAR_PROGRAM_NAME, progName));
+		gs.add(new ScopeSymbol(GlobalScope.GLOBAL_VAR_PROGRAM_PATH, programPath));
 	}
 
 	/**
@@ -146,9 +146,9 @@ public class BdsParseArgs {
 		// Initialize scope variables
 		// Note: Only does this if the variable was not found in the program
 		//---
-		ScopeSymbol ssym = Scope.getGlobalScope().getSymbol(varName);
+		ScopeSymbol ssym = GlobalScope.get().getSymbol(varName);
 		if (ssym != null) {
-			Object value = parseArgs(ssym.getType());
+			Value value = parseArgs(ssym.getType());
 			ssym.setValue(value);
 		}
 
@@ -176,10 +176,10 @@ public class BdsParseArgs {
 	/**
 	 * Parse an argument and return an object with the
 	 */
-	Object parseArgs(Type varType) {
+	Value parseArgs(Type varType) {
 		if (varType.isList()) {
 			// Create a list of arguments and use them to initialize the variable (list)
-			ArrayList<String> vals = new ArrayList<String>();
+			ArrayList<String> vals = new ArrayList<>();
 			for (argNum++; argNum < programArgs.size(); argNum++) {
 				String val = programArgs.get(argNum);
 				if (isOpt(val)) { // Stop if another argument is found
@@ -200,7 +200,7 @@ public class BdsParseArgs {
 				// Not any valid value? => This argument is not used
 				argNum--;
 			}
-			return true; // Default value
+			return Value.factory(true); // Default value
 		}
 
 		// Default parsing
@@ -221,7 +221,7 @@ public class BdsParseArgs {
 
 		if (varType.isList()) {
 			// Create a list of arguments and use them to initialize the variable (list)
-			ArrayList<String> vals = new ArrayList<String>();
+			ArrayList<String> vals = new ArrayList<>();
 			for (argNum++; argNum < programArgs.size(); argNum++) {
 				String val = programArgs.get(argNum);
 				if (isOpt(val)) { // Stop if another argument is found

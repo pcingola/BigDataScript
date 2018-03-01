@@ -40,4 +40,9 @@ public class TypeBool extends Type {
 		return vb;
 	}
 
+	@Override
+	public Value newValue() {
+		return new ValueBool();
+	}
+
 }

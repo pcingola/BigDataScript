@@ -31,4 +31,9 @@ public class TypeString extends Type {
 		return vs;
 	}
 
+	@Override
+	public Value newValue() {
+		return new ValueString();
+	}
+
 }

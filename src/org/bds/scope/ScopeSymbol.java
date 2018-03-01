@@ -1,11 +1,8 @@
 package org.bds.scope;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
@@ -28,7 +25,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	int id;
 	Type type;
 	String name;
-	Object value;
+	Value value;
 	boolean constant = false;
 
 	protected static int nextId() {
@@ -49,7 +46,14 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	public ScopeSymbol(String name, Type type, Object value) {
 		this.name = name;
 		this.type = type;
-		this.value = value;
+		this.value = type.newValue(value);
+		id = nextId();
+	}
+
+	public ScopeSymbol(String name, Object value) {
+		this.name = name;
+		this.value = Value.factory(value);
+		this.type = this.value.getType();
 		id = nextId();
 	}
 
@@ -80,7 +84,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	}
 
 	public boolean isFunction() {
-		return type.isFunction();
+		return type.is(Types.FUNC);
 	}
 
 	@Override
@@ -90,7 +94,8 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 		type = serializer.getNextFieldType();
 
 		// Parse value
-		value = serializer.getNextField(type);
+		throw new RuntimeException("!!! UNIMPLEMENTED");
+		// value = serializer.getNextField(type);
 	}
 
 	@Override
@@ -106,26 +111,9 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 		this.constant = constant;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void setValue(Object value) {
+	public void setValue(Value value) {
 		if (debug) Gpr.debug("Setting value:\t" + name + " = " + value);
-
-		if (type.isList()) {
-			// Assign the whole list? => Create a new copy
-			this.value = new ArrayList<>();
-			((List) this.value).addAll((List) value);
-		} else if (type.isMap()) {
-			// Assign the whole map? => Create a new copy
-			this.value = new HashMap();
-			Map mapNew = ((Map) this.value);
-			Map mapOri = ((Map) value);
-			for (Object key : mapOri.keySet()) {
-				mapNew.put(key, mapOri.get(key));
-			}
-		} else {
-			// Assign value
-			this.value = value;
-		}
+		this.value.set(value);
 	}
 
 	@Override
@@ -134,7 +122,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 
 		if (type != null && value != null) {
 			if (type.isString()) valStr = "\"" + GprString.escape(value.toString()) + "\"";
-			else if (type.isFunction()) return name + " : " + type;
+			else if (isFunction()) return name + " : " + type;
 			else valStr = "" + value;
 		}
 

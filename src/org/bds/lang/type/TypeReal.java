@@ -36,4 +36,9 @@ public class TypeReal extends Type {
 		return vb;
 	}
 
+	@Override
+	public Value newValue() {
+		return new ValueReal();
+	}
+
 }

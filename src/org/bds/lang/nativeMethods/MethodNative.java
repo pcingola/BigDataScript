@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.MethodDeclaration;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -72,7 +73,7 @@ public abstract class MethodNative extends MethodDeclaration {
 
 		// Run method
 		try {
-			Object result = runMethodNative(bdsThread, objThis);
+			Value result = runMethodNativeValue(bdsThread, objThis);
 			bdsThread.setReturnValue(result); // Set result in scope
 		} catch (Throwable t) {
 			if (bdsThread.isVerbose()) t.printStackTrace();

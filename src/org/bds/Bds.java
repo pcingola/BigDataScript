@@ -39,7 +39,6 @@ import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.statement.VarDeclaration;
-import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
@@ -503,7 +502,7 @@ public class Bds {
 	 * Initialize before running or type-checking
 	 */
 	void initialize() {
-		Type.reset();
+		Types.reset();
 
 		// Reset node factory
 		BdsNodeFactory.reset();
@@ -531,70 +530,17 @@ public class Bds {
 		GlobalScope.reset();
 		GlobalScope globalScope = GlobalScope.get();
 
-		//--
-		// Get default veluas from command line or config file
-		//---
+		// Initialize config-based global variables
+		globalScope.init(config);
 
-		// Command line parameters override defaults
-		String cpusStr = config.getString(ExpressionTask.TASK_OPTION_CPUS, "1"); // Default number of cpus: 1
-		long cpus = Gpr.parseIntSafe(cpusStr);
-		if (cpus <= 0) throw new RuntimeException("Number of cpus must be a positive number ('" + cpusStr + "')");
-
-		long mem = Gpr.parseMemSafe(config.getString(ExpressionTask.TASK_OPTION_MEM, "-1")); // Default amount of memory: -1 (unrestricted)
-		String node = config.getString(ExpressionTask.TASK_OPTION_NODE, "");
+		// Add global symbols
+		// Get default values from command line or config file
 		if (queue == null) queue = config.getString(ExpressionTask.TASK_OPTION_QUEUE, "");
 		if (system == null) system = config.getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
 		if (taskFailCount < 0) taskFailCount = Gpr.parseIntSafe(config.getString(ExpressionTask.TASK_OPTION_RETRY, "0"));
-
-		long oneDay = 1L * 24 * 60 * 60;
-		long timeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_TIMEOUT, "" + oneDay));
-		long wallTimeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
-
-		globalScope.init(config);
-
-		//		long cpusLocal = Gpr.parseLongSafe(config.getString(Scope.GLOBAL_VAR_LOCAL_CPUS, "" + Gpr.NUM_CORES));
-		//
-		//		// ---
-		//		// Add global symbols
-		//		// ---
-		//		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, "")); // Now is empty, but they are assigned later
-		//		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Type.STRING, ""));
-		//
-		//		// Task related variables: Default values
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Type.STRING, system)); // System type: "local", "ssh", "cluster", "aws", etc.
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Type.INT, cpus)); // Default number of cpus
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_MEM, Type.INT, mem)); // Default amount of memory (unrestricted)
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Type.STRING, queue)); // Default queue: none
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Type.STRING, node)); // Default node: none
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Type.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, Type.BOOL, false)); // Tasks are allowed to have empty output file/s
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_RETRY, Type.INT, (long) taskFailCount)); // Task fail can be re-tried (re-run) N times before considering failed.
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Type.INT, timeout)); // Task default timeout
-		//		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, Type.INT, wallTimeout)); // Task default wall-timeout
-		//		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Type.INT, cpusLocal));
-		//
-		//		// Number of local CPUs
-		//		// Kilo, Mega, Giga, Tera, Peta.
-		//		LinkedList<ScopeSymbol> constants = new LinkedList<>();
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Type.INT, 1024L));
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Type.INT, 1024L * 1024L));
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Type.INT, 1024L * 1024L * 1024L));
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Type.INT, 1024L * 1024L * 1024L * 1024L));
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Type.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_MINUTE, Type.INT, 60L));
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_HOUR, Type.INT, (long) (60 * 60)));
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_DAY, Type.INT, (long) (24 * 60 * 60)));
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_WEEK, Type.INT, (long) (7 * 24 * 60 * 60)));
-		//
-		//		// Math constants
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_E, Type.REAL, Math.E));
-		//		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_PI, Type.REAL, Math.PI));
-
-		// Add all constants
-		for (ScopeSymbol ss : constants) {
-			ss.setConstant(true);
-			globalScope.add(ss);
-		}
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, system)); // System type: "local", "ssh", "cluster", "aws", etc.
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, queue)); // Default queue: none
+		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_RETRY, (long) taskFailCount)); // Task fail can be re-tried (re-run) N times before considering failed.
 
 		// Set "physical" path
 		String path;
@@ -617,7 +563,7 @@ public class Bds {
 		// we have to set something now, otherwise we'll get a "variable
 		// not found" error at compiler time, if the program attempts
 		// to use 'args'.
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING), new ArrayList<String>()));
+		globalScope.add(new ScopeSymbol(GlobalScope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING)));
 	}
 
 	/**

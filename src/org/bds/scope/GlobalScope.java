@@ -2,11 +2,12 @@ package org.bds.scope;
 
 import java.util.LinkedList;
 
+import org.bds.Config;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.lang.value.ValueString;
 import org.bds.util.AutoHashMap;
+import org.bds.util.Gpr;
 
 public class GlobalScope extends Scope {
 
@@ -59,42 +60,65 @@ public class GlobalScope extends Scope {
 
 	private GlobalScope() {
 		super(null, null);
+		initConstants();
 	}
 
-	void init() {
+	public void init(Config config) {
 		// Add global symbols
-		globalScope.add(new ScopeSymbol(GLOBAL_VAR_PROGRAM_NAME, Types.STRING, "")); // Now is empty, but they are assigned later
-		globalScope.add(new ScopeSymbol(GLOBAL_VAR_PROGRAM_PATH, new ValueString()));
+		add(new ScopeSymbol(GLOBAL_VAR_PROGRAM_NAME, "")); // Now is empty, but they are assigned later
+		add(new ScopeSymbol(GLOBAL_VAR_PROGRAM_PATH, ""));
+
+		// CPUS
+		long cpusLocal = Gpr.parseLongSafe(config.getString(GLOBAL_VAR_LOCAL_CPUS, "" + Gpr.NUM_CORES));
+		add(new ScopeSymbol(GLOBAL_VAR_LOCAL_CPUS, cpusLocal));
+
+		String cpusStr = config.getString(ExpressionTask.TASK_OPTION_CPUS, "1"); // Default number of cpus: 1
+		long cpus = Gpr.parseIntSafe(cpusStr);
+		if (cpus <= 0) throw new RuntimeException("Number of cpus must be a positive number ('" + cpusStr + "')");
+
+		long mem = Gpr.parseMemSafe(config.getString(ExpressionTask.TASK_OPTION_MEM, "-1")); // Default amount of memory: -1 (unrestricted)
+		String node = config.getString(ExpressionTask.TASK_OPTION_NODE, "");
+
+		long oneDay = 1L * 24 * 60 * 60;
+		long timeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_TIMEOUT, "" + oneDay));
+		long wallTimeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
 
 		// Task related variables: Default values
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, Types.STRING, system)); // System type: "local", "ssh", "cluster", "aws", etc.
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Types.INT, cpus)); // Default number of cpus
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_MEM, Types.INT, mem)); // Default amount of memory (unrestricted)
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, Types.STRING, queue)); // Default queue: none
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Types.STRING, node)); // Default node: none
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Types.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, Types.BOOL, false)); // Tasks are allowed to have empty output file/s
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_RETRY, Types.INT, (long) taskFailCount)); // Task fail can be re-tried (re-run) N times before considering failed.
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Types.INT, timeout)); // Task default timeout
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, Types.INT, wallTimeout)); // Task default wall-timeout
-		globalScope.add(new ScopeSymbol(Scope.GLOBAL_VAR_LOCAL_CPUS, Types.INT, cpusLocal));
+		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Types.INT, cpus)); // Default number of cpus
+		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_MEM, Types.INT, mem)); // Default amount of memory (unrestricted)
+		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Types.STRING, node)); // Default node: none
+		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Types.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
+		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, Types.BOOL, false)); // Tasks are allowed to have empty output file/s
+		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Types.INT, timeout)); // Task default timeout
+		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, Types.INT, wallTimeout)); // Task default wall-timeout
+	}
 
+	/**
+	 * Initialize constants
+	 */
+	protected void initConstants() {
 		// Number of local CPUs
 		// Kilo, Mega, Giga, Tera, Peta.
 		LinkedList<ScopeSymbol> constants = new LinkedList<>();
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_K, Types.INT, 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_M, Types.INT, 1024L * 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_G, Types.INT, 1024L * 1024L * 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_T, Types.INT, 1024L * 1024L * 1024L * 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_P, Types.INT, 1024L * 1024L * 1024L * 1024L * 1024L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_MINUTE, Types.INT, 60L));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_HOUR, Types.INT, (long) (60 * 60)));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_DAY, Types.INT, (long) (24 * 60 * 60)));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_WEEK, Types.INT, (long) (7 * 24 * 60 * 60)));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_K, 1024L));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_M, 1024L * 1024L));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_G, 1024L * 1024L * 1024L));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_T, 1024L * 1024L * 1024L * 1024L));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_P, 1024L * 1024L * 1024L * 1024L * 1024L));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_MINUTE, 60L));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_HOUR, (long) (60 * 60)));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_DAY, (long) (24 * 60 * 60)));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_WEEK, (long) (7 * 24 * 60 * 60)));
 
 		// Math constants
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_E, Types.REAL, Math.E));
-		constants.add(new ScopeSymbol(Scope.GLOBAL_VAR_PI, Types.REAL, Math.PI));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_E, Math.E));
+		constants.add(new ScopeSymbol(GLOBAL_VAR_PI, Math.PI));
+
+		// Add all constants
+		for (ScopeSymbol ss : constants) {
+			ss.setConstant(true);
+			add(ss);
+		}
 	}
 
 }

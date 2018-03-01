@@ -80,6 +80,20 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		return equals(type);
 	}
 
+	/**
+	 * Create a new value if this type
+	 */
+	public abstract Value newValue();
+
+	/**
+	 * Create a new value if this type and set it to 'v'
+	 */
+	public Value newValue(Object v) {
+		Value value = newValue();
+		value.set(v);
+		return value;
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		throw new RuntimeException("UNIMPLEMENTED PARSE TYPE");

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeFake;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.util.Gpr;
@@ -110,7 +111,7 @@ public class BdsNodeFactory {
 
 			// Is it a Type?
 			if (clazz == Type.class) {
-				if (tree == null) return new Type(); // No tree data? return a new FAKE node
+				if (tree == null) return new TypeFake(); // No tree data? return a new FAKE node
 
 				// No need to create a new node
 				String typeName = tree.getChild(0).getText().toUpperCase();
