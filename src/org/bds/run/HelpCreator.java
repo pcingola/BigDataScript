@@ -15,7 +15,6 @@ import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.Types;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
 
@@ -41,7 +40,7 @@ public class HelpCreator {
 		this.programUnit = programUnit;
 		helpStrings = new LinkedList<>();
 		included = new HashSet<>();
-		varDeclBySection = new AutoHashMap<String, LinkedList<VarDeclaration>>(new LinkedList<VarDeclaration>());
+		varDeclBySection = new AutoHashMap<>(new LinkedList<VarDeclaration>());
 
 		addSection(null); // Initialize default section
 	}
@@ -68,7 +67,7 @@ public class HelpCreator {
 		StringBuilder sb = new StringBuilder();
 
 		// Find variable declarations and help sections
-		Set<String> included = new HashSet<String>();
+		Set<String> included = new HashSet<>();
 		findHelpEntries(programUnit, included);
 
 		// Use unsorted variables if 'helpUnsorted' exists (regardless of its value)
@@ -221,7 +220,7 @@ public class HelpCreator {
 		else if (type.isInt()) return "<int>";
 		else if (type.isReal()) return "<real>";
 		else if (type.isString()) return "<string>";
-		else if (type.isList(Types.STRING)) return "<string ... string>";
+		// TODO: !!! else if (type.isList(Types.STRING)) return "<string ... string>";
 
 		return null;
 	}

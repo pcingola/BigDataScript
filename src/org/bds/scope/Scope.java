@@ -294,9 +294,10 @@ public class Scope implements BdsSerialize, Iterable<String> {
 		out.append("\n");
 
 		for (ScopeSymbol ss : symbols.values()) {
-			if (ss.getType().isNative()) {
-				; // Do not save native functions
-			} else out.append(serializer.serializeSave(ss));
+			// TODO: !!! 
+			//			if (ss.getType().isNative()) {
+			//				; // Do not save native functions
+			//			} else out.append(serializer.serializeSave(ss));
 		}
 
 		if (parent != null) out.append(serializer.serializeSave(parent));
