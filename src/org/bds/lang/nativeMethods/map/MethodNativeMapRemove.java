@@ -21,8 +21,8 @@ public class MethodNativeMapRemove extends MethodNativeMap {
 
 	@Override
 	protected void initMethod() {
+		TypeMap mapType = (TypeMap) classType;
 		functionName = "remove";
-		classType = mapType;
 		returnType = Types.BOOL;
 
 		String argNames[] = { "this", "key" };

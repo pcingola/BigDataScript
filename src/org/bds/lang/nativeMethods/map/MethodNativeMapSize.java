@@ -21,8 +21,8 @@ public class MethodNativeMapSize extends MethodNativeMap {
 
 	@Override
 	protected void initMethod() {
+		TypeMap mapType = (TypeMap) classType;
 		functionName = "size";
-		classType = mapType;
 		returnType = Types.INT;
 
 		String argNames[] = { "this" };

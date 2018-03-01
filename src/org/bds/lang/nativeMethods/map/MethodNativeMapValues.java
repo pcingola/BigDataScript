@@ -24,8 +24,8 @@ public class MethodNativeMapValues extends MethodNativeMap {
 
 	@Override
 	protected void initMethod() {
+		TypeMap mapType = (TypeMap) classType;
 		functionName = "values";
-		classType = mapType;
 		returnType = TypeList.get(mapType.getValueType());
 
 		String argNames[] = { "this" };

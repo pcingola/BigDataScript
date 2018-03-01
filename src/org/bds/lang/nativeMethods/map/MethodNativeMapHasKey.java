@@ -21,8 +21,8 @@ public class MethodNativeMapHasKey extends MethodNativeMap {
 
 	@Override
 	protected void initMethod() {
+		TypeMap mapType = (TypeMap) classType;
 		functionName = "hasKey";
-		classType = mapType;
 		returnType = Types.BOOL;
 
 		String argNames[] = { "this", "key" };

@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.nativeMethods.map.MethodNativeMapHasKey;
+import org.bds.lang.nativeMethods.map.MethodNativeMapHasValue;
+import org.bds.lang.nativeMethods.map.MethodNativeMapKeys;
+import org.bds.lang.nativeMethods.map.MethodNativeMapRemove;
+import org.bds.lang.nativeMethods.map.MethodNativeMapSize;
+import org.bds.lang.nativeMethods.map.MethodNativeMapValues;
 import org.bds.lang.value.Value;
 import org.bds.util.Gpr;
 
@@ -60,13 +66,12 @@ public class TypeMap extends Type {
 		try {
 			// Add libarary methods
 			ArrayList<MethodNative> methods = new ArrayList<>();
-			//!!! TODO: UNCOMENT
-			//			methods.add(new MethodNativeMapKeys(this));
-			//			methods.add(new MethodNativeMapValues(this));
-			//			methods.add(new MethodNativeMapSize(this));
-			//			methods.add(new MethodNativeMapHasKey(this));
-			//			methods.add(new MethodNativeMapHasValue(this));
-			//			methods.add(new MethodNativeMapRemove(this));
+			methods.add(new MethodNativeMapKeys(this));
+			methods.add(new MethodNativeMapValues(this));
+			methods.add(new MethodNativeMapSize(this));
+			methods.add(new MethodNativeMapHasKey(this));
+			methods.add(new MethodNativeMapHasValue(this));
+			methods.add(new MethodNativeMapRemove(this));
 
 			// Show
 			if (debug) {
