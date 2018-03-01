@@ -26,10 +26,6 @@ public class TypeMap extends Type {
 	protected Type keyType; // Type for 'key' elements
 	protected Type valueType; // Type for 'value' elements
 
-	public static String typeKey(Type keyType, Type valueType) {
-		return valueType + "{" + keyType + "}";
-	}
-
 	/**
 	 * Get a list type
 	 */
@@ -48,9 +44,13 @@ public class TypeMap extends Type {
 		return type;
 	}
 
+	public static String typeKey(Type keyType, Type valueType) {
+		return valueType + "{" + keyType + "}";
+	}
+
 	public TypeMap(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-		this.primitiveType = PrimitiveType.MAP;
+		primitiveType = PrimitiveType.MAP;
 	}
 
 	private TypeMap(Type keyType, Type valueType) {
@@ -109,6 +109,14 @@ public class TypeMap extends Type {
 		;
 	}
 
+	public Type getKeyType() {
+		return keyType;
+	}
+
+	public Type getValueType() {
+		return valueType;
+	}
+
 	@Override
 	public boolean isMap() {
 		return true;
@@ -116,9 +124,15 @@ public class TypeMap extends Type {
 
 	@Override
 	public boolean isMap(Type kewType, Type valueType) {
-		return keyType.equals(this.keyType) //
+		return keyType.equals(keyType) //
 				&& valueType.equals(this.valueType) //
 		;
+	}
+
+	@Override
+	public Value newValue() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -131,11 +145,6 @@ public class TypeMap extends Type {
 		addNativeMethods();
 	}
 
-	@Override
-	public String toString() {
-		return typeKey(keyType, valueType);
-	}
-
 	// !!! TODO: FIX
 	//	@Override
 	//	public String toStringSerializer() {
@@ -143,9 +152,8 @@ public class TypeMap extends Type {
 	//	}
 
 	@Override
-	public Value newValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public String toString() {
+		return typeKey(keyType, valueType);
 	}
 
 }

@@ -39,6 +39,14 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		return equals(type); // Same type
 	}
 
+	/**
+	 * Cast value 'v' to this type
+	 */
+	public Value cast(Value v) {
+		if (is(v.getType())) return v; // Same type? No need to cast
+		throw new RuntimeException("Cannot cast type '" + v.getType() + "' to type '" + this + "'");
+	}
+
 	public void checkCanCast(Type type, CompilerMessages compilerMessages) {
 		if (!returnType.isReturnTypesNotNull() && !returnType.canCast(type)) {
 			compilerMessages.add(this, "Cannot cast " + type + " to " + returnType, MessageType.ERROR);

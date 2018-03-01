@@ -1,6 +1,7 @@
 package org.bds.lang.value;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
@@ -9,6 +10,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -26,9 +28,9 @@ public class LiteralMap extends Literal {
 		super(parent, tree);
 	}
 
-	public Type baseType() {
-		return ((TypeMap) returnType).getElementType();
-	}
+	//	public Type baseType() {
+	//		return ((TypeMap) returnType).getElementType();
+	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {
@@ -50,17 +52,18 @@ public class LiteralMap extends Literal {
 		//---
 		// Calculate elementType
 		//---
-		Type baseType = null;
+		Type valueType = null;
+		Type keyType = null;
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			Type typeExpr = expr.returnType(scope);
 
 			if (typeExpr != null) {
-				if (baseType == null) {
-					baseType = typeExpr;
-				} else if (!typeExpr.canCast(baseType)) { // Can we cast ?
-					if (baseType.canCast(typeExpr)) { // Can we cast the other way?
-						baseType = typeExpr;
+				if (valueType == null) {
+					valueType = typeExpr;
+				} else if (!typeExpr.canCast(valueType)) { // Can we cast ?
+					if (valueType.canCast(typeExpr)) { // Can we cast the other way?
+						valueType = typeExpr;
 					} else {
 						// We have a problem...we'll report it in typeCheck.
 					}
@@ -68,16 +71,20 @@ public class LiteralMap extends Literal {
 			}
 		}
 
-		// Create a list of 'elementType'
-		returnType = TypeMap.get(baseType);
+		// Default key is string
+		if (keyType == null) keyType = Types.STRING;
+
+		// Get a map type
+		returnType = TypeMap.get(keyType, valueType);
 
 		return returnType;
 	}
 
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		HashMap<String, Object> map = new HashMap<>(values.length);
-		Type baseType = baseType();
+		Map<String, Object> map = new HashMap<>(values.length);
+		TypeMap mapType = (TypeMap) getReturnType();
+		Type valueType = mapType.getValueType();
 
 		for (int i = 0; i < keys.length; i++) {
 			// Evaluate 'key' and 'map' expressions
@@ -89,15 +96,17 @@ public class LiteralMap extends Literal {
 
 			// Assign to map
 			if (!bdsThread.isCheckpointRecover()) {
-				Object value = bdsThread.pop();
+				Value value = bdsThread.pop();
 				String key = bdsThread.pop().toString();
-				value = baseType.cast(value);
-
+				value = valueType.cast(value);
 				map.put(key, value); // Add it to map
 			}
 		}
 
-		bdsThread.push(map);
+		// Create value map an push to stack
+		ValueMap vmap = new ValueMap(mapType);
+		vmap.set(map);
+		bdsThread.push(vmap);
 	}
 
 	@Override
@@ -119,15 +128,23 @@ public class LiteralMap extends Literal {
 
 	@Override
 	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		Type baseType = ((TypeMap) returnType).getElementType();
+		Type valueType = ((TypeMap) returnType).getValueType();
 
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			Type typeExpr = expr.returnType(scope);
 
 			// Can we cast ?
-			if ((typeExpr != null) && !typeExpr.canCast(baseType)) compilerMessages.add(this, "Map types are not consistent. Expecting " + baseType, MessageType.ERROR);
+			if ((typeExpr != null) && !typeExpr.canCast(valueType)) compilerMessages.add(this, "Map types are not consistent. Expecting " + valueType, MessageType.ERROR);
 		}
+
+		// !!! TODO: Type check for keys
+	}
+
+	@Override
+	protected Object parseValue(ParseTree tree) {
+		// !!! TODO 
+		throw new RuntimeException("!!! UNIMPLEMENTED");
 	}
 
 }

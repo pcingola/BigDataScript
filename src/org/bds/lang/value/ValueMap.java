@@ -3,7 +3,7 @@ package org.bds.lang.value;
 import java.util.Map;
 
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeList;
+import org.bds.lang.type.TypeMap;
 
 /**
  * Define a map of type list
@@ -24,19 +24,11 @@ public class ValueMap extends Value {
 	}
 
 	/**
-	 * Get element 'idx'
+	 * Get element 'idx' wrapped into a 'Value'
 	 */
 	public Value getValue(Value idx) {
 		Object elem = get().get(idx);
 		return ((TypeMap) type).getValueType().newValue(elem);
-	}
-
-	/**
-	 * Get element number 'idx' from the list wrapped into a 'Value'
-	 */
-	public Value getValue(Value idx) {
-		Object elem = get().get(idx);
-		return ((TypeList) type).getElementType().newValue(elem);
 	}
 
 	@Override
