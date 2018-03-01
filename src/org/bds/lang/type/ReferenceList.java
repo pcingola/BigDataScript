@@ -1,14 +1,13 @@
 package org.bds.lang.type;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.LiteralInt;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -22,20 +21,19 @@ import org.bds.util.Gpr;
  */
 public class ReferenceList extends Reference {
 
-	protected VarReference variable; // TODO: This should be an arbitrary expression that returns a list
-	protected Expression exprList; // TODO: This should be an arbitrary expression that returns a list
-	protected Expression exprIdx;
+	protected Expression exprList; // An arbitrary expression that returns a list
+	protected Expression exprIdx; // An arbitrary expression that returns an int
 
 	public ReferenceList(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public ArrayList getList(Scope scope) {
-		ScopeSymbol ss = getScopeSymbol(scope);
-		if (ss == null) return null;
-		return (ArrayList) ss.getValue();
-	}
+	//	@SuppressWarnings("rawtypes")
+	//	public ArrayList getList(Scope scope) {
+	//		ScopeSymbol ss = getScopeSymbol(scope);
+	//		if (ss == null) return null;
+	//		return (List) ss.getValue();
+	//	}
 
 	/**
 	 * Get symbol from scope
@@ -126,37 +124,44 @@ public class ReferenceList extends Reference {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		// Get results
-		int idx = (int) bdsThread.popInt();
-		List list = (List) bdsThread.pop();
+		long idx = bdsThread.popInt();
+		ValueList vlist = (ValueList) bdsThread.pop();
+		if (vlist.isIndexOutOfRange(idx)) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + vlist.size() + ").");
 
-		//ArrayList list = getList(bdsThread.getScope());
-		if ((idx < 0) || (idx >= list.size())) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + list.size() + ").");
-		bdsThread.push(list.get(idx));
+		// Push value to stack
+		bdsThread.push(vlist.getValue(idx));
 	}
 
+	//	@Override
+	//	@SuppressWarnings("unchecked")
+	//	public void setValue(BdsThread bdsThread, Object value) {
+	//		if (value == null) return;
+	//
+	//		bdsThread.run(exprIdx);
+	//		int idx = (int) bdsThread.popInt();
+	//		if (bdsThread.isCheckpointRecover()) return;
+	//
+	//		ArrayList<Object> list = getList(bdsThread.getScope());
+	//		if (list == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
+	//
+	//		// Make sure the array is big enough to hold the data
+	//		if (idx >= list.size()) {
+	//			TypeList type = (TypeList) getType(bdsThread.getScope());
+	//			Type baseType = type.getElementType();
+	//			list.ensureCapacity(idx + 1);
+	//
+	//			while (list.size() <= idx)
+	//				list.add(baseType.getDefaultValue());
+	//		}
+	//
+	//		list.set(idx, value);
+	//	}
+
 	@Override
-	@SuppressWarnings("unchecked")
-	public void setValue(BdsThread bdsThread, Object value) {
-		if (value == null) return;
+	public void setValue(BdsThread bdsThread, Value value) {
+		// !!! UNIMPLEMNTED
+		throw new RuntimeException("!!! UNIMPLEMNTED");
 
-		bdsThread.run(exprIdx);
-		int idx = (int) bdsThread.popInt();
-		if (bdsThread.isCheckpointRecover()) return;
-
-		ArrayList<Object> list = getList(bdsThread.getScope());
-		if (list == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
-
-		// Make sure the array is big enough to hold the data
-		if (idx >= list.size()) {
-			TypeList type = (TypeList) getType(bdsThread.getScope());
-			Type baseType = type.getElementType();
-			list.ensureCapacity(idx + 1);
-
-			while (list.size() <= idx)
-				list.add(baseType.getDefaultValue());
-		}
-
-		list.set(idx, value);
 	}
 
 	@Override
@@ -170,7 +175,7 @@ public class ReferenceList extends Reference {
 		returnType(scope);
 
 		if ((exprList.getReturnType() != null) && !exprList.getReturnType().isList()) compilerMessages.add(this, "Expression '" + exprList + "' is not a list/array", MessageType.ERROR);
-		if (exprIdx != null) exprIdx.checkCanCastInt(compilerMessages);
+		if (exprIdx != null) exprIdx.checkCanCastToInt(compilerMessages);
 	}
 
 	@Override

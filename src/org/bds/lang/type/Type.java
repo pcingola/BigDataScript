@@ -104,6 +104,10 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		return false;
 	}
 
+	public boolean isFunctionNative() {
+		return false;
+	}
+
 	@Override
 	public boolean isInt() {
 		return false;

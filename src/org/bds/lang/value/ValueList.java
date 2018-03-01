@@ -26,9 +26,18 @@ public class ValueList extends Value {
 	/**
 	 * Get element number 'idx' from the list wrapped into a 'Value'
 	 */
-	public Value getValue(int idx) {
-		Object elem = get().get(idx);
+	public Value getValue(long idx) {
+
+		Object elem = get().get((int) idx);
 		return ((TypeList) type).getElementType().newValue(elem);
+	}
+
+	/**
+	 * Is this index out of range?
+	 */
+	public boolean isIndexOutOfRange(long idx) {
+		List list = get();
+		return idx < 0L || idx > list.size();
 	}
 
 	@Override
