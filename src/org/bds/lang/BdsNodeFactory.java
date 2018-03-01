@@ -115,7 +115,7 @@ public class BdsNodeFactory {
 
 				// No need to create a new node
 				String typeName = tree.getChild(0).getText().toUpperCase();
-				return Type.get(typeName, parent, tree);
+				return Types.get(typeName);
 			}
 
 			// Create class

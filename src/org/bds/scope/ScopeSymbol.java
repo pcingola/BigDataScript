@@ -34,6 +34,13 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 		id = nextId();
 	}
 
+	public ScopeSymbol(String name, Object val) {
+		this.name = name;
+		value = Value.factory(val);
+		type = value.getType();
+		id = nextId();
+	}
+
 	public ScopeSymbol(String name, Type type) {
 		this.name = name;
 		this.type = type;
@@ -48,10 +55,10 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 		id = nextId();
 	}
 
-	public ScopeSymbol(String name, Object value) {
+	public ScopeSymbol(String name, Value value) {
 		this.name = name;
-		this.value = Value.factory(value);
-		this.type = this.value.getType();
+		this.value = value;
+		type = value.getType();
 		id = nextId();
 	}
 
@@ -92,7 +99,9 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 		type = serializer.getNextFieldType();
 
 		// Parse map
-		value = serializer.getNextField(type);
+		// !!! TODO:
+		// value = serializer.getNextField(type);
+		throw new RuntimeException("!!! UNIMPLEMENTED");
 	}
 
 	@Override
@@ -113,7 +122,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	}
 
 	public void setValueNative(Object obj) {
-		this.value.set(obj);
+		value.set(obj);
 	}
 
 	@Override

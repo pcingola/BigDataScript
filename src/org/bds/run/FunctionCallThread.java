@@ -5,6 +5,7 @@ import java.util.Map;
 import org.bds.Config;
 import org.bds.lang.statement.FunctionCall;
 import org.bds.lang.statement.Statement;
+import org.bds.lang.value.ValueArgs;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
 import org.bds.util.Timer;
@@ -26,13 +27,13 @@ public class FunctionCallThread extends BdsThread {
 
 	String functionCallNodeId; // Statement's ID, used only when un-serializing
 	FunctionCall functionCall;
-	Object arguments[];
+	ValueArgs arguments;
 
 	public FunctionCallThread(Config config) {
 		super(null, config);
 	}
 
-	public FunctionCallThread(Statement statement, FunctionCall functionCall, BdsThread parent, Object arguments[]) {
+	public FunctionCallThread(Statement statement, FunctionCall functionCall, BdsThread parent, ValueArgs arguments) {
 		super(statement, parent);
 		setFunctionCall(functionCall);
 		this.arguments = arguments;
@@ -66,9 +67,10 @@ public class FunctionCallThread extends BdsThread {
 		super.serializeParse(serializer);
 		functionCallNodeId = serializer.getNextFieldString();
 
-		// Arguments encoded as base64 object
-		String b64 = serializer.getNextField();
-		arguments = (Object[]) serializer.base64Decode(b64);
+		serializer.getNextField();
+		// !!! TODO: FIX
+		// arguments = (Object[]) serializer.base64Decode(b64);
+		throw new RuntimeException("!!! UNIMPLEMENTED");
 	}
 
 	/**

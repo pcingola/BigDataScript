@@ -6,6 +6,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.statement.FunctionCall;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementExpr;
+import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
 import org.bds.run.FunctionCallThread;
 
@@ -32,8 +33,8 @@ public class ExpressionParallel extends ExpressionTask {
 	/**
 	 * Create a new BdsThread that runs a function call in parallel
 	 */
-	FunctionCallThread createParallelFunctionCall(BdsThread bdsThread, Object arguments[]) {
-		FunctionCallThread bdsNewThread = new FunctionCallThread(this, getFunctionCall(), bdsThread, arguments);
+	FunctionCallThread createParallelFunctionCall(BdsThread bdsThread, ValueArgs args) {
+		FunctionCallThread bdsNewThread = new FunctionCallThread(this, getFunctionCall(), bdsThread, args);
 		bdsNewThread.start();
 		return bdsNewThread;
 	}
@@ -100,10 +101,7 @@ public class ExpressionParallel extends ExpressionTask {
 
 			// Evaluate function arguments in current thread
 			functionCall.evalFunctionArguments(bdsThread);
-			// !!! TODO: 
-			// Object arguments[] = (Object[]) bdsThread.pop();
-			Object arguments[] = null;
-			if (2 % 1 == 0) throw new RuntimeException("!!!");
+			ValueArgs arguments = (ValueArgs) bdsThread.pop();
 
 			if (!bdsThread.isCheckpointRecover()) {
 				// Create and run new thread that runs the function call in parallel

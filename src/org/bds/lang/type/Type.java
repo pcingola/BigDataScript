@@ -79,6 +79,10 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		return defaultValue;
 	}
 
+	public PrimitiveType getPrimitiveType() {
+		return primitiveType;
+	}
+
 	/**
 	 * Is this type same as 'type'?
 	 */

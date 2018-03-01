@@ -14,7 +14,7 @@ public class Types {
 	public final static TypeBool BOOL = new TypeBool();
 	public final static TypeClass CLASS = TypeClass.get(null); // A class
 	public final static TypeFake FAKE = new TypeFake(); // Fake type (for serialization)
-	public final static TypeFunction FUNCTION = new TypeFunction();
+	public final static TypeFunction FUNCTION = TypeFunctionEmpty.get();
 	public final static TypeInt INT = new TypeInt();
 	public final static TypeList LIST = TypeList.get(ANY);
 	public final static TypeMap MAP = TypeMap.get(ANY, ANY);
@@ -36,7 +36,7 @@ public class Types {
 		types.put(type.toString(), type);
 	}
 
-	static Type get(String typeStr) {
+	static public Type get(String typeStr) {
 		return types.get(typeStr.toLowerCase());
 	}
 

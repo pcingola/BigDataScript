@@ -69,6 +69,14 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	}
 
 	/**
+	 * Add all symbols from 'scope'
+	 */
+	public synchronized void addAll(Scope scope) {
+		for (String name : scope)
+			add(scope.getSymbol(name));
+	}
+
+	/**
 	 * Copy symbols from other scope
 	 */
 	void copy(Scope oscope) {

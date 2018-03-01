@@ -2,6 +2,9 @@ package org.bds.lang.type;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueClass;
+import org.bds.scope.Scope;
 
 /**
  * Class type
@@ -11,33 +14,33 @@ import org.bds.lang.BdsNode;
 public class TypeClass extends Type {
 
 	String className;
+	Scope classScope;
 
 	/**
 	 * Get a class type
 	 */
 	public static TypeClass get(String className) {
 		// Get type from hash
-		String key = PrimitiveType.CLASS + ":" + className;
-		TypeClass type = (TypeClass) types.get(key);
+		String key = className;
+		TypeClass type = (TypeClass) Types.get(key);
 
 		// No type available? Create & add
 		if (type == null) {
-			type = new TypeClass(null, null);
-			type.primitiveType = PrimitiveType.CLASS;
-			type.className = className;
-			types.put(key, type);
+			type = new TypeClass(className);
+			Types.put(type);
 		}
 
 		return type;
 	}
 
 	private TypeClass(BdsNode parent, ParseTree tree) {
-		super();
+		super(parent, tree);
 		primitiveType = PrimitiveType.CLASS;
 	}
 
-	public boolean canCast(TypeClass type) {
-		throw new RuntimeException("Unimplemented!");
+	private TypeClass(String clasName) {
+		super(PrimitiveType.CLASS);
+		className = clasName;
 	}
 
 	@Override
@@ -57,10 +60,9 @@ public class TypeClass extends Type {
 		return className.compareTo(typec.className);
 	}
 
-	//	@Override
-	//	public Scope getClassScope() {
-	//		return classScope;
-	//	}
+	public Scope getClassScope() {
+		return classScope;
+	}
 
 	@Override
 	public boolean isClass() {
@@ -68,8 +70,8 @@ public class TypeClass extends Type {
 	}
 
 	@Override
-	public boolean isPrimitiveType() {
-		return false;
+	public Value newValue() {
+		return new ValueClass(this);
 	}
 
 	@Override

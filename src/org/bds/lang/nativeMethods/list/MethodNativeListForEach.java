@@ -62,8 +62,9 @@ public class MethodNativeListForEach extends MethodNativeList {
 		// Get function
 		FunctionDeclaration function = findFunction(bdsThread, "f");
 
-		for (Object val : list)
-			function.apply(bdsThread, val);
+		// !!! TODO: IMPLEMENT!
+		//		for (Object val : list)
+		//			function.apply(bdsThread, val);
 
 		return list;
 	}

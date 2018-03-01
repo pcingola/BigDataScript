@@ -8,7 +8,6 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
-import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -63,11 +62,11 @@ public class MethodNativeListFilter extends MethodNativeList {
 
 		// Get function
 		FunctionDeclaration function = findFunction(bdsThread, "f");
-
-		for (Object val : list) {
-			Value ret = function.apply(bdsThread, val);
-			if (ret.asBool()) newList.add(val);
-		}
+		// !!! TODO: IMPLEMENT
+		//		for (Object val : list) {
+		//			Value ret = function.apply(bdsThread, val);
+		//			if (ret.asBool()) newList.add(val);
+		//		}
 
 		return newList;
 	}

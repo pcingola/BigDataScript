@@ -134,8 +134,7 @@ public class VarDeclaration extends Statement {
 				String other = "";
 				if (scope.getFunctionsLocal(varName) != null) {
 					ScopeSymbol ssf = scope.getFunctionsLocal(varName).get(0);
-					FunctionDeclaration fdecl = (FunctionDeclaration) ssf.getValue();
-
+					FunctionDeclaration fdecl = (FunctionDeclaration) ssf.getValue().get();
 					other = " (function '" + varName + "' declared in " + fdecl.getFileName() + ", line " + fdecl.getLineNum() + ")";
 				}
 

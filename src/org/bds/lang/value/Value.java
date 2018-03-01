@@ -4,7 +4,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 
 /**
- * Define a value 
+ * Define a value
  * @author pcingola
  */
 public abstract class Value {
@@ -54,6 +54,9 @@ public abstract class Value {
 		return (String) Types.STRING.cast(this).get();
 	}
 
+	/**
+	 * Get native object (raw data)
+	 */
 	public abstract Object get();
 
 	public Type getType() {

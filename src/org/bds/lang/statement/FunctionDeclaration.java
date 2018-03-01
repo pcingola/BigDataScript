@@ -10,6 +10,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -34,9 +35,43 @@ public class FunctionDeclaration extends StatementWithScope {
 	}
 
 	/**
+	 * Apply function to one argument, return function's result
+	 */
+	public Value apply(BdsThread bdsThread, Value value) {
+		// Create scope and add function arguments
+		if (!bdsThread.isCheckpointRecover()) {
+			VarDeclaration fparam[] = getParameters().getVarDecl();
+
+			// Create new scope
+			bdsThread.newScope(this);
+
+			// Add arguments to scope
+			Scope scope = bdsThread.getScope();
+
+			// Only one argument
+			//			Type argType = fparam[0].getType();
+			String argName = fparam[0].getVarInit()[0].getVarName();
+			scope.add(new ScopeSymbol(argName, value));
+		}
+
+		// Run function body
+		runFunction(bdsThread);
+		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
+
+		// Get return map
+		Value retVal = bdsThread.getReturnValue();
+
+		// Back to old scope
+		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
+
+		// Return result
+		return retVal;
+	}
+
+	/**
 	 * Apply function to arguments, return function's result
 	 */
-	public Value apply(BdsThread bdsThread, Object values[]) {
+	public Value apply(BdsThread bdsThread, ValueArgs args) {
 
 		// Create scope and add function arguments
 		if (!bdsThread.isCheckpointRecover()) {
@@ -50,7 +85,7 @@ public class FunctionDeclaration extends StatementWithScope {
 			for (int i = 0; i < fparam.length; i++) {
 				Type argType = fparam[i].getType();
 				String argName = fparam[i].getVarInit()[0].getVarName();
-				scope.add(new ScopeSymbol(argName, argType, values[i]));
+				scope.add(new ScopeSymbol(argName, argType, args.getValue(i)));
 			}
 		}
 
@@ -62,40 +97,6 @@ public class FunctionDeclaration extends StatementWithScope {
 		Value retVal = bdsThread.getReturnValue();
 
 		// Restore old scope
-		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
-
-		// Return result
-		return retVal;
-	}
-
-	/**
-	 * Apply function to one argument, return function's result
-	 */
-	public Value apply(BdsThread bdsThread, Object value) {
-		// Create scope and add function arguments
-		if (!bdsThread.isCheckpointRecover()) {
-			VarDeclaration fparam[] = getParameters().getVarDecl();
-
-			// Create new scope
-			bdsThread.newScope(this);
-
-			// Add arguments to scope
-			Scope scope = bdsThread.getScope();
-
-			// Only one argument
-			Type argType = fparam[0].getType();
-			String argName = fparam[0].getVarInit()[0].getVarName();
-			scope.add(new ScopeSymbol(argName, argType, value));
-		}
-
-		// Run function body
-		runFunction(bdsThread);
-		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
-
-		// Get return map
-		Value retVal = bdsThread.getReturnValue();
-
-		// Back to old scope
 		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
 
 		// Return result

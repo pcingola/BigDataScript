@@ -6,6 +6,8 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -52,20 +54,21 @@ public class MethodCall extends FunctionCall {
 
 		// Find method
 		if (exprType != null) {
-			// Find function in class
-			Scope classScope = Scope.getClassScope(exprType);
-			if (classScope != null) {
-				ScopeSymbol ssfunc = classScope.findFunction(functionName, args);
-
-				// Not found? Try a 'regular' function
-				if (ssfunc == null) ssfunc = scope.findFunction(functionName, args);
-
-				if (ssfunc != null) {
-					functionDeclaration = (FunctionDeclaration) ssfunc.getValue();
-					returnType = functionDeclaration.getReturnType();
-				}
-			}
-
+			// !!! TODO: IMPLEMENT
+			throw new RuntimeException("!!! UNIMPLEMENTED");
+			//			// Find function in class
+			//			Scope classScope = Scope.getClassScope(exprType);
+			//			if (classScope != null) {
+			//				ScopeSymbol ssfunc = classScope.findFunction(functionName, args);
+			//
+			//				// Not found? Try a 'regular' function
+			//				if (ssfunc == null) ssfunc = scope.findFunction(functionName, args);
+			//
+			//				if (ssfunc != null) {
+			//					functionDeclaration = (FunctionDeclaration) ssfunc.getValue().get();
+			//					returnType = functionDeclaration.getReturnType();
+			//				}
+			//			}
 		}
 
 		return returnType;
@@ -80,12 +83,12 @@ public class MethodCall extends FunctionCall {
 		Expression arguments[] = args.getArguments();
 
 		// Evaluate all expressions
-		Object values[] = new Object[fparam.length];
+		ValueArgs vargs = new ValueArgs(fparam.length);
 		for (int i = 0; i < fparam.length; i++) {
 			bdsThread.run(arguments[i]);
-			Object value = bdsThread.pop();
+			Value value = bdsThread.pop();
 			value = fparam[i].getType().cast(value);
-			values[i] = value;
+			vargs.setValue(i, value);
 		}
 
 		if (!bdsThread.isCheckpointRecover()) {
@@ -96,9 +99,8 @@ public class MethodCall extends FunctionCall {
 			// Add arguments to scope
 			Scope scope = bdsThread.getScope();
 			for (int i = 0; i < fparam.length; i++) {
-				Type argType = fparam[i].getType();
 				String argName = fparam[i].getVarInit()[0].getVarName();
-				scope.add(new ScopeSymbol(argName, argType, values[i]));
+				scope.add(new ScopeSymbol(argName, vargs.getValue(i)));
 			}
 		}
 
@@ -107,7 +109,7 @@ public class MethodCall extends FunctionCall {
 
 		if (!bdsThread.isCheckpointRecover()) {
 			// Get return map
-			Object retVal = bdsThread.getReturnValue();
+			Value retVal = bdsThread.getReturnValue();
 
 			// Back to old scope
 			bdsThread.oldScope();

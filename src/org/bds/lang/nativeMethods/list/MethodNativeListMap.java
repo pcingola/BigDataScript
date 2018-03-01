@@ -79,9 +79,10 @@ public class MethodNativeListMap extends MethodNativeList {
 		// Map
 		List res = new ArrayList();
 		for (Object o : list) {
-			Object r = function.apply(bdsThread, o); // Get result
-			Object ret = returnBaseType.castNativeObject(r); // Cast to list's type
-			res.add(ret); // Add to list
+			// !!! TODO: UNIMPLEMENTED!
+			//			Object r = function.apply(bdsThread, o); // Get result
+			//			Object ret = returnBaseType.castNativeObject(r); // Cast to list's type
+			//			res.add(ret); // Add to list
 		}
 
 		return res;

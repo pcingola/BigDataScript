@@ -27,9 +27,11 @@ import org.bds.lang.type.PrimitiveType;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.FunctionCallThread;
 import org.bds.run.ProgramCounter;
+import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.task.Task;
@@ -64,8 +66,8 @@ public class BdsSerializer {
 		this.fileName = fileName;
 		this.config = config;
 		extractSource = (config != null && config.isExtractSource());
-		serializedNodes = new HashSet<BdsSerialize>();
-		threadsById = new HashMap<String, BdsThread>();
+		serializedNodes = new HashSet<>();
+		threadsById = new HashMap<>();
 	}
 
 	public boolean add(BdsSerialize node) {
@@ -192,9 +194,10 @@ public class BdsSerializer {
 		String sizeStr = nextField.substring(MAP_IDENTIFIER.length());
 		int size = Gpr.parseIntSafe(sizeStr);
 
+		// !!! TODO: Key type is not used
 		for (int i = 0; i < size; i++) {
 			Object key = getNextFieldString();
-			Object value = getNextField(type.getElementType());
+			Object value = getNextField(type.getValueType());
 			map.put(key, value);
 		}
 
@@ -235,15 +238,16 @@ public class BdsSerializer {
 		String fields[] = typeStr.split(":");
 
 		// Base type?
-		if (fields.length == 1) return Type.get(fields[0]);
+		if (fields.length == 1) return Types.get(fields[0]);
 
 		// List
 		if (fields[0].equals(PrimitiveType.LIST.toString())) {
-			Type baseType = Type.get(fields[1]);
+			Type baseType = Types.get(fields[1]);
 			return TypeList.get(baseType);
 		} else if (fields[0].equals(PrimitiveType.MAP.toString())) {
-			Type baseType = Type.get(fields[1]);
-			return TypeMap.get(baseType);
+			Type valueType = Types.get(fields[1]);
+			// !!! TODO: Key type us not used
+			return TypeMap.get(Types.STRING, valueType);
 		}
 
 		// Error
@@ -275,7 +279,7 @@ public class BdsSerializer {
 		String lines[] = file.split("\n");
 
 		// Parse everything else
-		Scope.resetGlobalScope();
+		GlobalScope.reset();
 
 		List<BdsThread> bdsThreads = parseLines(lines, null);
 		return bdsThreads;
@@ -337,11 +341,11 @@ public class BdsSerializer {
 		BdsNodeFactory.get().setCreateFakeIds(true);
 
 		// Initialize
-		ArrayList<BdsThread> bdsThreads = new ArrayList<BdsThread>();
+		ArrayList<BdsThread> bdsThreads = new ArrayList<>();
 		BdsThread currBdsThread = null;
 		Scope currScope = null;
-		ArrayList<Scope> scopes = new ArrayList<Scope>();
-		Map<String, BdsSerialize> nodesById = new HashMap<String, BdsSerialize>();
+		ArrayList<Scope> scopes = new ArrayList<>();
+		Map<String, BdsSerialize> nodesById = new HashMap<>();
 
 		// Parse lines
 		for (int i = 0; i < lines.length; i++) {
@@ -462,9 +466,9 @@ public class BdsSerializer {
 				if (parentScope == null) throw new RuntimeException("Cannot find scope node '" + parentScope + "'");
 				scope.setParent(parentScope);
 			} else {
-				// Root (a.k.a. Global) scope
+				// Copy all symbols to global scope
 				scope.setParent(null);
-				Scope.setGlobalScope(scope);
+				GlobalScope.get().addAll(scope);
 			}
 		}
 

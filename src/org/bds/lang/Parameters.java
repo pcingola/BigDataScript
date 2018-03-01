@@ -11,6 +11,8 @@ import org.bds.lang.type.Type;
  */
 public class Parameters extends BdsNode implements Comparable<Parameters> {
 
+	public static final Parameters EMPTY = new Parameters(null, null);
+
 	VarDeclaration varDecl[];
 
 	/**
@@ -43,6 +45,7 @@ public class Parameters extends BdsNode implements Comparable<Parameters> {
 
 	public Parameters(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+		if (parent == null && tree == null) varDecl = new VarDeclaration[0];
 	}
 
 	@Override

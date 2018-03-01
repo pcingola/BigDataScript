@@ -7,6 +7,8 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -29,7 +31,7 @@ public class FunctionCall extends Expression {
 	/**
 	 * Apply function to pre-calculated parameters
 	 */
-	public void apply(BdsThread bdsThread, Object arguments[]) {
+	public void apply(BdsThread bdsThread, ValueArgs arguments) {
 		bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
 	}
 
@@ -41,16 +43,16 @@ public class FunctionCall extends Expression {
 		Expression arguments[] = args.getArguments();
 
 		// Evaluate all expressions
-		Object values[] = new Object[fparam.length];
+		ValueArgs vargs = new ValueArgs(fparam.length);
 		for (int i = 0; i < fparam.length; i++) {
 			bdsThread.run(arguments[i]);
 
-			Object value = bdsThread.pop();
+			Value value = bdsThread.pop();
 			value = fparam[i].getType().cast(value);
-			values[i] = value;
+			vargs.setValue(i, value);
 		}
 
-		bdsThread.push(values);
+		bdsThread.push(vargs);
 	}
 
 	public FunctionDeclaration getFunctionDeclaration() {
@@ -90,7 +92,7 @@ public class FunctionCall extends Expression {
 
 		ScopeSymbol ssfunc = scope.findFunction(functionName, args);
 		if (ssfunc != null) {
-			functionDeclaration = (FunctionDeclaration) ssfunc.getValue();
+			functionDeclaration = (FunctionDeclaration) ssfunc.getValue().get();
 			returnType = functionDeclaration.getReturnType();
 		}
 
@@ -105,7 +107,7 @@ public class FunctionCall extends Expression {
 		try {
 			// Evaluate function arguments
 			evalFunctionArguments(bdsThread);
-			Object arguments[] = (Object[]) bdsThread.pop();
+			Value arguments = bdsThread.pop();
 
 			// Apply function to parameters
 			bdsThread.push(functionDeclaration.apply(bdsThread, arguments));

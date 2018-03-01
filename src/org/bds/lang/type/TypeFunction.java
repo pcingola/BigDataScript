@@ -47,10 +47,6 @@ public class TypeFunction extends Type {
 		return type;
 	}
 
-	//	public static String typeKey(Type keyType, Type valueType) {
-	//		return valueType + "{" + keyType + "}";
-	//	}
-
 	/**
 	 * Generic signature for a function
 	 */
