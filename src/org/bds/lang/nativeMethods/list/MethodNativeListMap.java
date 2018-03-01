@@ -1,12 +1,14 @@
 package org.bds.lang.nativeMethods.list;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -42,7 +44,7 @@ public class MethodNativeListMap extends MethodNativeList {
 		if (!function.getReturnType().canCast(returnBaseType)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + returnBaseType);
 
 		// TODO: Check that function should only have one argument
-		// TODO: Check List's elements should be 'castable' to function's argument
+		// TODO: Check List's elements should be able to 'cast' to function's argument
 
 		return function;
 	}
@@ -58,7 +60,7 @@ public class MethodNativeListMap extends MethodNativeList {
 		this.returnBaseType = returnBaseType;
 		returnType = TypeList.get(returnBaseType);
 
-		TypeFunction typeFunc = TypeFunction.get(Parameters.get(baseType, ""), Type.ANY);
+		TypeFunction typeFunc = TypeFunction.get(Parameters.get(baseType, ""), Types.ANY);
 		String argNames[] = { "this", "f" };
 		Type argTypes[] = { classType, typeFunc };
 		parameters = Parameters.get(argTypes, argNames);
@@ -69,18 +71,16 @@ public class MethodNativeListMap extends MethodNativeList {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
+		List list = (List) objThis;
 
 		// Get function
 		FunctionDeclaration function = findFunction(bdsThread, "f");
 
 		// Map
-		ArrayList res = new ArrayList();
-		Object values[] = new Object[1];
+		List res = new ArrayList();
 		for (Object o : list) {
-			values[0] = o;
-			Object r = function.apply(bdsThread, values); // Get result
-			Object ret = returnBaseType.cast(r); // Cast to list's type
+			Object r = function.apply(bdsThread, o); // Get result
+			Object ret = returnBaseType.castNativeObject(r); // Cast to list's type
 			res.add(ret); // Add to list
 		}
 

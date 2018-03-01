@@ -69,7 +69,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	public void runFunction(BdsThread bdsThread) {
 		// Get object 'this'
 		ScopeSymbol symThis = bdsThread.getScope().getSymbol(THIS_KEYWORD);
-		Object objThis = symThis.getValue();
+		Object objThis = symThis.getValue().get();
 
 		// Run method
 		try {
@@ -84,8 +84,16 @@ public abstract class MethodNative extends MethodDeclaration {
 	/**
 	 * Run a method
 	 */
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		throw new RuntimeException("Unimplemented method for class " + this.getClass().getSimpleName());
+	}
+
+	/**
+	 * Run native method and wrap result in a 'Value'
+	 */
+	protected Value runMethodNativeValue(BdsThread bdsThread, Object objThis) {
+		Object res = runMethodNativeValue(bdsThread, objThis);
+		return returnType.newValue(res);
 	}
 
 	@Override

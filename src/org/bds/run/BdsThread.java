@@ -476,7 +476,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Get variable's map as a bool
 	 */
 	public boolean getBool(String varName) {
-		return (Boolean) getScope().getSymbol(varName).getValue();
+		return getScope().getSymbol(varName).getValue().asBool();
 	}
 
 	public Config getConfig() {
@@ -537,8 +537,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Get variable's map as an int
 	 */
 	public long getInt(String varName) {
-		ScopeSymbol ssym = getScope().getSymbol(varName);
-		return (Long) ssym.getValue();
+		return getScope().getSymbol(varName).getValue().asInt();
 	}
 
 	public String getLogBaseName() {
@@ -577,7 +576,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Get variable's map as a real
 	 */
 	public double getReal(String varName) {
-		return (Double) getScope().getSymbol(varName).getValue();
+		return getScope().getSymbol(varName).getValue().asReal();
 	}
 
 	public Value getReturnValue() {

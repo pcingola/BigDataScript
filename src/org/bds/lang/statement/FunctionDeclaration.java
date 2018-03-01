@@ -36,7 +36,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	/**
 	 * Apply function to arguments, return function's result
 	 */
-	public Object apply(BdsThread bdsThread, Object values[]) {
+	public Value apply(BdsThread bdsThread, Object values[]) {
 
 		// Create scope and add function arguments
 		if (!bdsThread.isCheckpointRecover()) {
@@ -56,9 +56,10 @@ public class FunctionDeclaration extends StatementWithScope {
 
 		// Run function body
 		runFunction(bdsThread);
+		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
 
 		// Get return map
-		Object retVal = bdsThread.getReturnValue();
+		Value retVal = bdsThread.getReturnValue();
 
 		// Restore old scope
 		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();

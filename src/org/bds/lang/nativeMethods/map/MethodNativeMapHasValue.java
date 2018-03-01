@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.map;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -15,18 +15,18 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeMapHasValue extends MethodNativeMap {
 
-	public MethodNativeMapHasValue(Type baseType) {
-		super(baseType);
+	public MethodNativeMapHasValue(TypeMap mapType) {
+		super(mapType);
 	}
 
 	@Override
-	protected void initMethod(Type baseType) {
+	protected void initMethod() {
 		functionName = "hasValue";
-		classType = TypeMap.get(baseType);
+		classType = mapType;
 		returnType = Types.BOOL;
 
 		String argNames[] = { "this", "val" };
-		Type argTypes[] = { classType, baseType }; // null: don't check argument (anything can be converted to 'string')
+		Type argTypes[] = { mapType, mapType.getKeyType() };
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();
@@ -34,9 +34,9 @@ public class MethodNativeMapHasValue extends MethodNativeMap {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		HashMap map = (HashMap) objThis;
-		Object val = csThread.getObject("val");
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		Map map = (Map) objThis;
+		Object val = bdsThread.getObject("val");
 		return map.containsValue(val);
 	}
 }

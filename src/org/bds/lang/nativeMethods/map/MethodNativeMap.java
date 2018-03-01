@@ -1,10 +1,7 @@
 package org.bds.lang.nativeMethods.map;
 
-import java.util.ArrayList;
-
 import org.bds.lang.nativeMethods.MethodNative;
-import org.bds.lang.type.Type;
-import org.bds.run.BdsThread;
+import org.bds.lang.type.TypeMap;
 
 /**
  * Methods for Maps
@@ -13,9 +10,12 @@ import org.bds.run.BdsThread;
  */
 public abstract class MethodNativeMap extends MethodNative {
 
-	public MethodNativeMap(Type mapType) {
+	TypeMap mapType;
+
+	public MethodNativeMap(TypeMap mapType) {
 		super();
-		initMethod(mapType);
+		this.mapType = mapType;
+		initMethod();
 	}
 
 	@Override
@@ -23,14 +23,4 @@ public abstract class MethodNativeMap extends MethodNative {
 		// Nothing to do, we cannot initialize directly
 	}
 
-	protected abstract void initMethod(Type mapType);
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		Object toPush = bdsThread.getObject("toPush");
-		list.add(toPush);
-		return toPush;
-	}
 }

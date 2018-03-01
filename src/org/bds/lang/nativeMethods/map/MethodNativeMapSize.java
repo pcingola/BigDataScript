@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.map;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -15,18 +15,18 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeMapSize extends MethodNativeMap {
 
-	public MethodNativeMapSize(Type baseType) {
-		super(baseType);
+	public MethodNativeMapSize(TypeMap mapType) {
+		super(mapType);
 	}
 
 	@Override
-	protected void initMethod(Type baseType) {
+	protected void initMethod() {
 		functionName = "size";
-		classType = TypeMap.get(baseType);
+		classType = mapType;
 		returnType = Types.INT;
 
 		String argNames[] = { "this" };
-		Type argTypes[] = { classType };
+		Type argTypes[] = { mapType };
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();
@@ -34,8 +34,8 @@ public class MethodNativeMapSize extends MethodNativeMap {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		HashMap map = (HashMap) objThis;
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		Map map = (Map) objThis;
 		return (long) map.size();
 	}
 }
