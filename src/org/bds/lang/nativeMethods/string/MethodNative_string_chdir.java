@@ -8,7 +8,7 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
 
-public class MethodNative_string_chdir extends MethodNative {
+public class MethodNative_string_chdir extends MethodNativeString {
 
 	public MethodNative_string_chdir() {
 		super();

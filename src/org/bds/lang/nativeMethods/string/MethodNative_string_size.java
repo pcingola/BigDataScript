@@ -6,7 +6,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_size extends MethodNative {
+public class MethodNative_string_size extends MethodNativeString {
 	public MethodNative_string_size() {
 		super();
 	}

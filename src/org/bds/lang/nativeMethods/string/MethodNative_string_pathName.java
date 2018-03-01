@@ -7,7 +7,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_pathName extends MethodNative {
+public class MethodNative_string_pathName extends MethodNativeString {
 	public MethodNative_string_pathName() {
 		super();
 	}

@@ -11,7 +11,7 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
-public class MethodNative_string_readLines extends MethodNative {
+public class MethodNative_string_readLines extends MethodNativeString {
 	public MethodNative_string_readLines() {
 		super();
 	}

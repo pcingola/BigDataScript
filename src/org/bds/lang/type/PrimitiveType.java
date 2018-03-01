@@ -20,23 +20,11 @@ public enum PrimitiveType {
 		case BOOL:
 			return Types.BOOL;
 
-		case CLASS:
-			return Types.CLASS;
-
 		case FAKE:
 			return Types.FAKE;
 
-		case FUNCTION:
-			return Types.FUNCTION;
-
 		case INT:
 			return Types.INT;
-
-		case LIST:
-			return Types.LIST;
-
-		case MAP:
-			return Types.MAP;
 
 		case NULL:
 			return Types.NULL;

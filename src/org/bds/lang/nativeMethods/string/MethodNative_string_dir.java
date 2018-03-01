@@ -10,7 +10,7 @@ import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_dir extends MethodNative {
+public class MethodNative_string_dir extends MethodNativeString {
 	public MethodNative_string_dir() {
 		super();
 	}

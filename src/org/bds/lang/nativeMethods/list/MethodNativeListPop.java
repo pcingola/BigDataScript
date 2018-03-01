@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -14,14 +14,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListPop extends MethodNativeList {
 
-	public MethodNativeListPop(Type baseType) {
-		super(baseType);
+	public MethodNativeListPop(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "pop";
-		classType = TypeList.get(baseType);
 		returnType = baseType;
 
 		String argNames[] = { "this" };
@@ -33,8 +32,8 @@ public class MethodNativeListPop extends MethodNativeList {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		List list = (List) objThis;
 		if (list.isEmpty()) throw new RuntimeException("Invoking 'pop' element on an empty list.");
 		return list.remove(list.size() - 1);
 	}

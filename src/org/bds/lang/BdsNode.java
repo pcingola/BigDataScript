@@ -18,6 +18,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.compile.TypeCheckedNodes;
+import org.bds.lang.type.PrimitiveType;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
@@ -365,15 +366,15 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isAny() {
-		return returnType.is(Types.ANY);
+		return returnType.getPrimitiveType() == PrimitiveType.ANY;
 	}
 
 	public boolean isBool() {
-		return returnType.is(Types.BOOL);
+		return returnType.getPrimitiveType() == PrimitiveType.BOOL;
 	}
 
 	public boolean isClass() {
-		return returnType.is(Types.CLASS);
+		return returnType.getPrimitiveType() == PrimitiveType.CLASS;
 	}
 
 	/**
@@ -384,15 +385,15 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isFunction() {
-		return returnType.is(Types.FUNCTION);
+		return returnType.getPrimitiveType() == PrimitiveType.FUNCTION;
 	}
 
 	public boolean isInt() {
-		return returnType.is(Types.INT);
+		return returnType.getPrimitiveType() == PrimitiveType.INT;
 	}
 
 	public boolean isList() {
-		return returnType.is(Types.LIST);
+		return returnType.getPrimitiveType() == PrimitiveType.LIST;
 	}
 
 	public boolean isList(Type elementType) {
@@ -409,12 +410,11 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isMap() {
-		return returnType.is(Types.MAP);
+		return returnType.getPrimitiveType() == PrimitiveType.MAP;
 	}
 
 	public boolean isMap(Type keyType, Type valueType) {
-		if (!returnType.is(Types.MAP)) return false;
-
+		if (!isMap()) return false;
 		TypeMap typeMap = (TypeMap) returnType;
 		return typeMap.getKeyType().is(keyType) && typeMap.getValueType().is(valueType);
 	}
@@ -427,7 +427,7 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isNull() {
-		return returnType.is(Types.NULL);
+		return returnType.getPrimitiveType() == PrimitiveType.NULL;
 	}
 
 	public boolean isNumeric() {
@@ -435,7 +435,7 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isReal() {
-		return returnType.is(Types.REAL);
+		return returnType.getPrimitiveType() == PrimitiveType.REAL;
 	}
 
 	public boolean isReturnTypesNotNull() {
@@ -450,7 +450,7 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isString() {
-		return returnType.is(Types.STRING);
+		return returnType.getPrimitiveType() == PrimitiveType.STRING;
 	}
 
 	/**

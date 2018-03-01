@@ -7,7 +7,7 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
 
-public class MethodNative_string_isDone extends MethodNative {
+public class MethodNative_string_isDone extends MethodNativeString {
 	public MethodNative_string_isDone() {
 		super();
 	}

@@ -15,14 +15,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListDelete extends MethodNativeList {
 
-	public MethodNativeListDelete(Type baseType) {
-		super(baseType);
+	public MethodNativeListDelete(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "delete";
-		classType = TypeList.get(baseType);
 		returnType = Types.VOID;
 
 		String argNames[] = { "this" };

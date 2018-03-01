@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
 import org.bds.run.BdsThread;
 
 /**
@@ -13,9 +14,14 @@ import org.bds.run.BdsThread;
  */
 public abstract class MethodNativeList extends MethodNative {
 
-	public MethodNativeList(Type baseType) {
-		super();
-		if (baseType != null) initMethod(baseType);
+	Type elementType;
+
+	public MethodNativeList(TypeList listType) {
+		super(listType);
+		if (listType != null) {
+			elementType = listType.getElementType();
+			initMethod(elementType);
+		}
 	}
 
 	@Override
@@ -23,6 +29,10 @@ public abstract class MethodNativeList extends MethodNative {
 		// Nothing to do, we cannot initialize directly
 	}
 
+	/**
+	 * Initialzie according to list's elements type (a.k.a. baseType)
+	 * @param baseType
+	 */
 	protected abstract void initMethod(Type baseType);
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

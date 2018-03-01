@@ -15,14 +15,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListAddIndex extends MethodNativeList {
 
-	public MethodNativeListAddIndex(Type baseType) {
-		super(baseType);
+	public MethodNativeListAddIndex(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "add";
-		classType = TypeList.get(baseType);
 		returnType = baseType;
 
 		String argNames[] = { "this", "idx", "toPush" };

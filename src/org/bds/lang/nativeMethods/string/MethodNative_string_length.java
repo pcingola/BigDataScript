@@ -13,7 +13,7 @@ import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 
-public class MethodNative_string_length extends MethodNative {
+public class MethodNative_string_length extends MethodNativeString {
 	public MethodNative_string_length() {
 		super();
 	}

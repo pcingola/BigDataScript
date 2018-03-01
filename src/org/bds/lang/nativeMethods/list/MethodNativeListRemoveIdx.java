@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -15,14 +15,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListRemoveIdx extends MethodNativeList {
 
-	public MethodNativeListRemoveIdx(Type baseType) {
-		super(baseType);
+	public MethodNativeListRemoveIdx(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "removeIdx";
-		classType = TypeList.get(baseType);
 		returnType = baseType;
 
 		String argNames[] = { "this", "idx" };
@@ -34,9 +33,9 @@ public class MethodNativeListRemoveIdx extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		long idx = csThread.getInt("idx");
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		List list = (List) objThis;
+		long idx = bdsThread.getInt("idx");
 		return list.remove((int) idx);
 	}
 }

@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -15,14 +15,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListIsEmpty extends MethodNativeList {
 
-	public MethodNativeListIsEmpty(Type baseType) {
-		super(baseType);
+	public MethodNativeListIsEmpty(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "isEmpty";
-		classType = TypeList.get(baseType);
 		returnType = Types.BOOL;
 
 		String argNames[] = { "this" };
@@ -34,8 +33,8 @@ public class MethodNativeListIsEmpty extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		List list = (List) objThis;
 		return list.isEmpty();
 	}
 }

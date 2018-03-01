@@ -15,14 +15,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListRmOnExit extends MethodNativeList {
 
-	public MethodNativeListRmOnExit(Type baseType) {
-		super(baseType);
+	public MethodNativeListRmOnExit(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "rmOnExit";
-		classType = TypeList.get(baseType);
 		returnType = Types.VOID;
 
 		String argNames[] = { "this" };
@@ -31,7 +30,7 @@ public class MethodNativeListRmOnExit extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		List list = (List) objThis;

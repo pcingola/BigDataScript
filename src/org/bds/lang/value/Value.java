@@ -64,7 +64,6 @@ public abstract class Value {
 	}
 
 	protected void init() {
-		set(type.getDefaultValue());
 	}
 
 	public void parse(String str) {

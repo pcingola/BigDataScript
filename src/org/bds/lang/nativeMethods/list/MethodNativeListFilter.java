@@ -17,8 +17,8 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListFilter extends MethodNativeList {
 
-	public MethodNativeListFilter(Type baseType) {
-		super(baseType);
+	public MethodNativeListFilter(TypeList listType) {
+		super(listType);
 	}
 
 	/**

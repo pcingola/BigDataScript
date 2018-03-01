@@ -13,7 +13,7 @@ import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 
-public class MethodNative_string_toUpper extends MethodNative {
+public class MethodNative_string_toUpper extends MethodNativeString {
 	public MethodNative_string_toUpper() {
 		super();
 	}

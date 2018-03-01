@@ -14,14 +14,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListRemove extends MethodNativeList {
 
-	public MethodNativeListRemove(Type baseType) {
-		super(baseType);
+	public MethodNativeListRemove(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "remove";
-		classType = TypeList.get(baseType);
 		returnType = baseType;
 
 		String argNames[] = { "this", "toRemove" };

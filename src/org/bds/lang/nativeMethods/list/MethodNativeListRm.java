@@ -15,14 +15,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListRm extends MethodNativeList {
 
-	public MethodNativeListRm(Type baseType) {
-		super(baseType);
+	public MethodNativeListRm(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "rm";
-		classType = TypeList.get(baseType);
 		returnType = Types.VOID;
 
 		String argNames[] = { "this" };

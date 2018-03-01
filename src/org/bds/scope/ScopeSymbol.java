@@ -1,7 +1,7 @@
 package org.bds.scope;
 
+import org.bds.lang.type.PrimitiveType;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
@@ -89,7 +89,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	}
 
 	public boolean isFunction() {
-		return type.is(Types.FUNCTION);
+		return type.getPrimitiveType() == PrimitiveType.FUNCTION;
 	}
 
 	@Override

@@ -14,7 +14,7 @@ import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_dirPath_regex extends MethodNative {
+public class MethodNative_string_dirPath_regex extends MethodNativeString {
 
 	public MethodNative_string_dirPath_regex() {
 		super();

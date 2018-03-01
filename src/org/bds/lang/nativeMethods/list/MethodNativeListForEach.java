@@ -17,8 +17,8 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListForEach extends MethodNativeList {
 
-	public MethodNativeListForEach(Type baseType) {
-		super(baseType);
+	public MethodNativeListForEach(TypeList listType) {
+		super(listType);
 	}
 
 	/**

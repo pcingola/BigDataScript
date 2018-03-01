@@ -6,7 +6,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_swapExt_ext extends MethodNative {
+public class MethodNative_string_swapExt_ext extends MethodNativeString {
 	public MethodNative_string_swapExt_ext() {
 		super();
 	}

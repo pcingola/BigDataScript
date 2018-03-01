@@ -11,7 +11,7 @@ import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_dirPath extends MethodNative {
+public class MethodNative_string_dirPath extends MethodNativeString {
 	public MethodNative_string_dirPath() {
 		super();
 	}

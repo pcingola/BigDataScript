@@ -8,7 +8,7 @@ import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 
-public class MethodNative_string_stdout extends MethodNative {
+public class MethodNative_string_stdout extends MethodNativeString {
 	public MethodNative_string_stdout() {
 		super();
 	}

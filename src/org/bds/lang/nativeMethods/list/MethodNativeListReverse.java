@@ -2,6 +2,7 @@ package org.bds.lang.nativeMethods.list;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -15,14 +16,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListReverse extends MethodNativeList {
 
-	public MethodNativeListReverse(Type baseType) {
-		super(baseType);
+	public MethodNativeListReverse(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "reverse";
-		classType = TypeList.get(baseType);
 		returnType = TypeList.get(baseType);
 
 		String argNames[] = { "this" };
@@ -34,14 +34,14 @@ public class MethodNativeListReverse extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		List list = (List) objThis;
 
 		// Empty list? => Nothing to do
 		if (list.size() <= 0) return new ArrayList();
 
 		// Create new list and sort it
-		ArrayList newList = new ArrayList(list.size());
+		List newList = new ArrayList(list.size());
 		newList.addAll(list);
 		Collections.reverse(newList);
 

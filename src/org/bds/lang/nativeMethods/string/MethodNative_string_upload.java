@@ -7,7 +7,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_upload extends MethodNative {
+public class MethodNative_string_upload extends MethodNativeString {
 
 	public MethodNative_string_upload() {
 		super();

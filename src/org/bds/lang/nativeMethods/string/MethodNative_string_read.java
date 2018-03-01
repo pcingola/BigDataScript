@@ -8,7 +8,7 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
-public class MethodNative_string_read extends MethodNative {
+public class MethodNative_string_read extends MethodNativeString {
 	public MethodNative_string_read() {
 		super();
 	}

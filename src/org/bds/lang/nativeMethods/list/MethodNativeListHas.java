@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -11,19 +11,17 @@ import org.bds.run.BdsThread;
 /**
  * Has: Check if an element exists in the list
  * 
- * 
  * @author karthik-rp
  */
 public class MethodNativeListHas extends MethodNativeList {
 
-	public MethodNativeListHas(Type baseType) {
-		super(baseType);
+	public MethodNativeListHas(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "has";
-		classType = TypeList.get(baseType);
 		returnType = Types.BOOL;
 
 		String argNames[] = { "this", "toCheck" };
@@ -36,7 +34,7 @@ public class MethodNativeListHas extends MethodNativeList {
 	@SuppressWarnings({ "rawtypes" })
 	@Override
 	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
+		List list = (List) objThis;
 		Object toCheck = csThread.getObject("toCheck");
 		return list.contains(toCheck);
 	}

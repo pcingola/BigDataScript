@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -16,14 +16,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListAddList extends MethodNativeList {
 
-	public MethodNativeListAddList(Type baseType) {
-		super(baseType);
+	public MethodNativeListAddList(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "add";
-		classType = TypeList.get(baseType);
 		returnType = baseType;
 
 		String argNames[] = { "this", "toPush" };
@@ -35,9 +34,9 @@ public class MethodNativeListAddList extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		ArrayList toPush = (ArrayList) csThread.getObject("toPush");
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		List list = (List) objThis;
+		List toPush = (List) bdsThread.getObject("toPush");
 		list.addAll(toPush);
 		return toPush;
 	}

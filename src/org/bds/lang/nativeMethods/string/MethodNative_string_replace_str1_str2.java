@@ -6,7 +6,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_replace_str1_str2 extends MethodNative {
+public class MethodNative_string_replace_str1_str2 extends MethodNativeString {
 	public MethodNative_string_replace_str1_str2() {
 		super();
 	}

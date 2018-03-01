@@ -1,6 +1,7 @@
 package org.bds.lang.type;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
@@ -87,33 +88,33 @@ public class TypeList extends Type {
 	protected void addNativeMethods() {
 		try {
 			// Add libarary methods
-			ArrayList<MethodNative> methods = new ArrayList<>();
-			methods.add(new MethodNativeListAdd(elementType));
-			methods.add(new MethodNativeListAddIndex(elementType));
-			methods.add(new MethodNativeListAddList(elementType));
-			methods.add(new MethodNativeListCount(elementType));
-			methods.add(new MethodNativeListFilter(elementType));
-			methods.add(new MethodNativeListForEach(elementType));
-			methods.add(new MethodNativeListHas(elementType));
-			methods.add(new MethodNativeListHead(elementType));
-			methods.add(new MethodNativeListIndexOf(elementType));
-			methods.add(new MethodNativeListIsEmpty(elementType));
-			methods.add(new MethodNativeListJoin(elementType));
-			methods.add(new MethodNativeListJoinStr(elementType));
-			methods.add(new MethodNativeListMap(elementType));
-			methods.add(new MethodNativeListMapToInt(elementType));
-			methods.add(new MethodNativeListMapToReal(elementType));
-			methods.add(new MethodNativeListMapToString(elementType));
-			methods.add(new MethodNativeListPop(elementType));
-			methods.add(new MethodNativeListPush(elementType));
-			methods.add(new MethodNativeListSize(elementType));
-			methods.add(new MethodNativeListSort(elementType));
-			methods.add(new MethodNativeListRemove(elementType));
-			methods.add(new MethodNativeListRemoveIdx(elementType));
-			methods.add(new MethodNativeListReverse(elementType));
-			methods.add(new MethodNativeListRmOnExit(elementType));
-			methods.add(new MethodNativeListRm(elementType));
-			methods.add(new MethodNativeListTail(elementType));
+			List<MethodNative> methods = new ArrayList<>();
+			methods.add(new MethodNativeListAdd(this));
+			methods.add(new MethodNativeListAddIndex(this));
+			methods.add(new MethodNativeListAddList(this));
+			methods.add(new MethodNativeListCount(this));
+			methods.add(new MethodNativeListFilter(this));
+			methods.add(new MethodNativeListForEach(this));
+			methods.add(new MethodNativeListHas(this));
+			methods.add(new MethodNativeListHead(this));
+			methods.add(new MethodNativeListIndexOf(this));
+			methods.add(new MethodNativeListIsEmpty(this));
+			methods.add(new MethodNativeListJoin(this));
+			methods.add(new MethodNativeListJoinStr(this));
+			methods.add(new MethodNativeListMap(this));
+			methods.add(new MethodNativeListMapToInt(this));
+			methods.add(new MethodNativeListMapToReal(this));
+			methods.add(new MethodNativeListMapToString(this));
+			methods.add(new MethodNativeListPop(this));
+			methods.add(new MethodNativeListPush(this));
+			methods.add(new MethodNativeListSize(this));
+			methods.add(new MethodNativeListSort(this));
+			methods.add(new MethodNativeListRemove(this));
+			methods.add(new MethodNativeListRemoveIdx(this));
+			methods.add(new MethodNativeListReverse(this));
+			methods.add(new MethodNativeListRmOnExit(this));
+			methods.add(new MethodNativeListRm(this));
+			methods.add(new MethodNativeListTail(this));
 
 			// Show
 			if (debug) {
@@ -141,10 +142,6 @@ public class TypeList extends Type {
 	public Type getElementType() {
 		return elementType;
 	}
-
-	//	public boolean canCast(TypeList type) {
-	//		throw new RuntimeException("Unimplemented!");
-	//	}
 
 	@Override
 	public boolean isList() {

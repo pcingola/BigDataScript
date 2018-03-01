@@ -6,7 +6,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_canWrite extends MethodNative {
+public class MethodNative_string_canWrite extends MethodNativeString {
 	public MethodNative_string_canWrite() {
 		super();
 	}

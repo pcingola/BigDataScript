@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -15,14 +15,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListCount extends MethodNativeList {
 
-	public MethodNativeListCount(Type baseType) {
-		super(baseType);
+	public MethodNativeListCount(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "count";
-		classType = TypeList.get(baseType);
 		returnType = Types.INT;
 
 		String argNames[] = { "this", "toCount" };
@@ -34,9 +33,9 @@ public class MethodNativeListCount extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		Object toCount = csThread.getObject("toCount");
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		List list = (List) objThis;
+		Object toCount = bdsThread.getObject("toCount");
 
 		long count = 0;
 		for (Object o : list)

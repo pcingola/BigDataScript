@@ -12,12 +12,8 @@ public class Types {
 
 	public final static TypeAny ANY = new TypeAny(); // ANY type (wild-card type)
 	public final static TypeBool BOOL = new TypeBool();
-	public final static TypeClass CLASS = TypeClass.get(null); // A class
 	public final static TypeFake FAKE = new TypeFake(); // Fake type (for serialization)
-	public final static TypeFunction FUNCTION = TypeFunctionEmpty.get();
 	public final static TypeInt INT = new TypeInt();
-	public final static TypeList LIST = TypeList.get(ANY);
-	public final static TypeMap MAP = TypeMap.get(ANY, ANY);
 	public final static TypeNull NULL = new TypeNull(); // NULL type
 	public final static TypeReal REAL = new TypeReal();
 	public final static TypeString STRING = new TypeString();
@@ -49,12 +45,8 @@ public class Types {
 		// Add base types
 		put(ANY);
 		put(BOOL);
-		put(CLASS);
 		put(FAKE);
-		put(FUNCTION);
 		put(INT);
-		put(LIST);
-		put(MAP);
 		put(NULL);
 		put(REAL);
 		put(STRING);

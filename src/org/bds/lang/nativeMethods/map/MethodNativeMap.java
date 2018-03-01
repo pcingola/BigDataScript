@@ -13,7 +13,7 @@ public abstract class MethodNativeMap extends MethodNative {
 	TypeMap mapType;
 
 	public MethodNativeMap(TypeMap mapType) {
-		super();
+		super(mapType);
 		this.mapType = mapType;
 		initMethod();
 	}

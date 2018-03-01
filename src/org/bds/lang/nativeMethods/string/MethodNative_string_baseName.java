@@ -2,12 +2,12 @@ package org.bds.lang.nativeMethods.string;
 
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
-import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_baseName extends MethodNative {
+public class MethodNative_string_baseName extends MethodNativeString {
+
 	public MethodNative_string_baseName() {
 		super();
 	}

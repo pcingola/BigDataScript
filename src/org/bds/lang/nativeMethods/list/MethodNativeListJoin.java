@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -15,14 +15,13 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListJoin extends MethodNativeList {
 
-	public MethodNativeListJoin(Type baseType) {
-		super(baseType);
+	public MethodNativeListJoin(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "join";
-		classType = TypeList.get(baseType);
 		returnType = Types.STRING;
 
 		String argNames[] = { "this" };
@@ -33,7 +32,7 @@ public class MethodNativeListJoin extends MethodNativeList {
 	}
 
 	@SuppressWarnings("rawtypes")
-	String join(ArrayList list, String str) {
+	String join(List list, String str) {
 		StringBuilder sb = new StringBuilder();
 
 		if (list.isEmpty()) return "";
@@ -49,7 +48,7 @@ public class MethodNativeListJoin extends MethodNativeList {
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
+		List list = (List) objThis;
 		return join(list, " ");
 	}
 }

@@ -1,6 +1,7 @@
 package org.bds.lang.nativeMethods.list;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -14,15 +15,14 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListTail extends MethodNativeList {
 
-	public MethodNativeListTail(Type baseType) {
-		super(baseType);
+	public MethodNativeListTail(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "tail";
-		classType = TypeList.get(baseType);
-		returnType = TypeList.get(baseType);
+		returnType = classType;
 
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };
@@ -32,14 +32,14 @@ public class MethodNativeListTail extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		List list = (List) objThis;
 
 		// Empty list or only one element? => Nothing to do
 		if (list.size() <= 1) return new ArrayList();
 
 		// Create new list
-		ArrayList newList = new ArrayList(list.size() - 1);
+		List newList = new ArrayList(list.size() - 1);
 
 		// Add all but first elements from list
 		int idx = 0;

@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.MethodDeclaration;
+import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
@@ -18,8 +19,9 @@ import org.bds.serialize.BdsSerializer;
  */
 public abstract class MethodNative extends MethodDeclaration {
 
-	public MethodNative() {
+	public MethodNative(Type classType) {
 		super(null, null);
+		this.classType = classType;
 		initMethod();
 	}
 

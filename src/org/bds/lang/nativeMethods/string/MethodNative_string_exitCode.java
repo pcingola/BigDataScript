@@ -7,7 +7,7 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
 
-public class MethodNative_string_exitCode extends MethodNative {
+public class MethodNative_string_exitCode extends MethodNativeString {
 	public MethodNative_string_exitCode() {
 		super();
 	}
