@@ -27,6 +27,7 @@ public class BdsNodeFactory {
 			"org.bds.lang.expression" //
 			, "org.bds.lang.statement" //
 			, "org.bds.lang.type" //
+			, "org.bds.lang.value" //
 			, "org.bds.lang" //
 	};
 

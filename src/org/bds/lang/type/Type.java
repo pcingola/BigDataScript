@@ -5,6 +5,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.value.Value;
+import org.bds.scope.Scope;
 import org.bds.serialize.BdsSerializer;
 
 /**
@@ -16,6 +17,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 
 	protected PrimitiveType primitiveType;
 	protected Value defaultValue;
+	protected Scope scope; // A type requires a scope to define all methods related to this type / class
 
 	protected Type(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -28,6 +30,12 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		super(null, null);
 		this.primitiveType = primitiveType;
 		returnType = this;
+		scope = new Scope();
+	}
+
+	@Override
+	public Scope getScope() {
+		return scope;
 	}
 
 	/**

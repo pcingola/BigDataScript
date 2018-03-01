@@ -6,32 +6,6 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodNative;
-import org.bds.lang.nativeMethods.list.MethodNativeListAdd;
-import org.bds.lang.nativeMethods.list.MethodNativeListAddIndex;
-import org.bds.lang.nativeMethods.list.MethodNativeListAddList;
-import org.bds.lang.nativeMethods.list.MethodNativeListCount;
-import org.bds.lang.nativeMethods.list.MethodNativeListFilter;
-import org.bds.lang.nativeMethods.list.MethodNativeListForEach;
-import org.bds.lang.nativeMethods.list.MethodNativeListHas;
-import org.bds.lang.nativeMethods.list.MethodNativeListHead;
-import org.bds.lang.nativeMethods.list.MethodNativeListIndexOf;
-import org.bds.lang.nativeMethods.list.MethodNativeListIsEmpty;
-import org.bds.lang.nativeMethods.list.MethodNativeListJoin;
-import org.bds.lang.nativeMethods.list.MethodNativeListJoinStr;
-import org.bds.lang.nativeMethods.list.MethodNativeListMap;
-import org.bds.lang.nativeMethods.list.MethodNativeListMapToInt;
-import org.bds.lang.nativeMethods.list.MethodNativeListMapToReal;
-import org.bds.lang.nativeMethods.list.MethodNativeListMapToString;
-import org.bds.lang.nativeMethods.list.MethodNativeListPop;
-import org.bds.lang.nativeMethods.list.MethodNativeListPush;
-import org.bds.lang.nativeMethods.list.MethodNativeListRemove;
-import org.bds.lang.nativeMethods.list.MethodNativeListRemoveIdx;
-import org.bds.lang.nativeMethods.list.MethodNativeListReverse;
-import org.bds.lang.nativeMethods.list.MethodNativeListRm;
-import org.bds.lang.nativeMethods.list.MethodNativeListRmOnExit;
-import org.bds.lang.nativeMethods.list.MethodNativeListSize;
-import org.bds.lang.nativeMethods.list.MethodNativeListSort;
-import org.bds.lang.nativeMethods.list.MethodNativeListTail;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.util.Gpr;
@@ -89,32 +63,33 @@ public class TypeList extends Type {
 		try {
 			// Add libarary methods
 			List<MethodNative> methods = new ArrayList<>();
-			methods.add(new MethodNativeListAdd(this));
-			methods.add(new MethodNativeListAddIndex(this));
-			methods.add(new MethodNativeListAddList(this));
-			methods.add(new MethodNativeListCount(this));
-			methods.add(new MethodNativeListFilter(this));
-			methods.add(new MethodNativeListForEach(this));
-			methods.add(new MethodNativeListHas(this));
-			methods.add(new MethodNativeListHead(this));
-			methods.add(new MethodNativeListIndexOf(this));
-			methods.add(new MethodNativeListIsEmpty(this));
-			methods.add(new MethodNativeListJoin(this));
-			methods.add(new MethodNativeListJoinStr(this));
-			methods.add(new MethodNativeListMap(this));
-			methods.add(new MethodNativeListMapToInt(this));
-			methods.add(new MethodNativeListMapToReal(this));
-			methods.add(new MethodNativeListMapToString(this));
-			methods.add(new MethodNativeListPop(this));
-			methods.add(new MethodNativeListPush(this));
-			methods.add(new MethodNativeListSize(this));
-			methods.add(new MethodNativeListSort(this));
-			methods.add(new MethodNativeListRemove(this));
-			methods.add(new MethodNativeListRemoveIdx(this));
-			methods.add(new MethodNativeListReverse(this));
-			methods.add(new MethodNativeListRmOnExit(this));
-			methods.add(new MethodNativeListRm(this));
-			methods.add(new MethodNativeListTail(this));
+			//!!! TODO: UNCOMENT
+			//			methods.add(new MethodNativeListAdd(this));
+			//			methods.add(new MethodNativeListAddIndex(this));
+			//			methods.add(new MethodNativeListAddList(this));
+			//			methods.add(new MethodNativeListCount(this));
+			//			methods.add(new MethodNativeListFilter(this));
+			//			methods.add(new MethodNativeListForEach(this));
+			//			methods.add(new MethodNativeListHas(this));
+			//			methods.add(new MethodNativeListHead(this));
+			//			methods.add(new MethodNativeListIndexOf(this));
+			//			methods.add(new MethodNativeListIsEmpty(this));
+			//			methods.add(new MethodNativeListJoin(this));
+			//			methods.add(new MethodNativeListJoinStr(this));
+			//			methods.add(new MethodNativeListMap(this));
+			//			methods.add(new MethodNativeListMapToInt(this));
+			//			methods.add(new MethodNativeListMapToReal(this));
+			//			methods.add(new MethodNativeListMapToString(this));
+			//			methods.add(new MethodNativeListPop(this));
+			//			methods.add(new MethodNativeListPush(this));
+			//			methods.add(new MethodNativeListSize(this));
+			//			methods.add(new MethodNativeListSort(this));
+			//			methods.add(new MethodNativeListRemove(this));
+			//			methods.add(new MethodNativeListRemoveIdx(this));
+			//			methods.add(new MethodNativeListReverse(this));
+			//			methods.add(new MethodNativeListRmOnExit(this));
+			//			methods.add(new MethodNativeListRm(this));
+			//			methods.add(new MethodNativeListTail(this));
 
 			// Show
 			if (debug) {
@@ -124,7 +99,7 @@ public class TypeList extends Type {
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
-			throw new RuntimeException("Erroe while adding native mehods for class '" + this + "'", t);
+			throw new RuntimeException("Error while adding native mehods for class '" + this + "'", t);
 		}
 	}
 

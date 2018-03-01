@@ -7,13 +7,18 @@ import org.bds.lang.type.Type;
  * Define a value of type 'function'
  * @author pcingola
  */
-public abstract class ValueFunction extends Value {
+public class ValueFunction extends Value {
 
 	FunctionDeclaration fdecl;
 
-	private ValueFunction(Type type) {
+	public ValueFunction(Type type) {
 		super(type);
 		init();
+	}
+
+	@Override
+	public Object get() {
+		return fdecl;
 	}
 
 	@Override

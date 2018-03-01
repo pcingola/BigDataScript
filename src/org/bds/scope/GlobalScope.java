@@ -36,6 +36,7 @@ public class GlobalScope extends Scope {
 	private static AutoHashMap<String, Scope> classScope = new AutoHashMap<>(new Scope());
 
 	public static GlobalScope get() {
+		if (globalScope == null) reset();
 		return globalScope;
 	}
 
@@ -52,6 +53,7 @@ public class GlobalScope extends Scope {
 	 */
 	public static void reset() {
 		globalScope = new GlobalScope();
+		globalScope.initConstants();
 	}
 
 	public static void set(GlobalScope newGlobalScope) {
@@ -60,7 +62,6 @@ public class GlobalScope extends Scope {
 
 	private GlobalScope() {
 		super(null, null);
-		initConstants();
 	}
 
 	public void init(Config config) {

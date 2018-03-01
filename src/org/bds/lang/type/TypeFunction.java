@@ -5,6 +5,7 @@ import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueFunction;
 import org.bds.util.Gpr;
 
 /**
@@ -112,8 +113,7 @@ public class TypeFunction extends Type {
 
 	@Override
 	public Value newValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ValueFunction(this);
 	}
 
 	@Override
