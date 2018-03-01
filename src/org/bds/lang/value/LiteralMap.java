@@ -48,7 +48,7 @@ public class LiteralMap extends Literal {
 		if (returnType != null) return returnType;
 
 		//---
-		// Calculate baseType
+		// Calculate elementType
 		//---
 		Type baseType = null;
 		for (BdsNode node : values) {
@@ -68,7 +68,7 @@ public class LiteralMap extends Literal {
 			}
 		}
 
-		// Create a list of 'baseType'
+		// Create a list of 'elementType'
 		returnType = TypeMap.get(baseType);
 
 		return returnType;

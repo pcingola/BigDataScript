@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.Parameters;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeFunc;
+import org.bds.lang.type.TypeFunction;
 import org.bds.lang.type.TypeList;
 import org.bds.run.BdsThread;
 
@@ -58,7 +58,7 @@ public class MethodNativeListMap extends MethodNativeList {
 		this.returnBaseType = returnBaseType;
 		returnType = TypeList.get(returnBaseType);
 
-		TypeFunc typeFunc = TypeFunc.get(Parameters.get(baseType, ""), Type.ANY);
+		TypeFunction typeFunc = TypeFunction.get(Parameters.get(baseType, ""), Type.ANY);
 		String argNames[] = { "this", "f" };
 		Type argTypes[] = { classType, typeFunc };
 		parameters = Parameters.get(argTypes, argNames);

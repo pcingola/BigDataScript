@@ -25,7 +25,7 @@ public class TypeMap extends TypeList {
 	/**
 	 * Get a list type
 	 */
-	public static TypeMap get(Type baseType) {
+	public static TypeMap get(Type keyType, Type valueType) {
 		// Get type from hash
 		String key = PrimitiveType.MAP + ":" + baseType;
 		TypeMap type = (TypeMap) types.get(key);
@@ -34,7 +34,7 @@ public class TypeMap extends TypeList {
 		if (type == null) {
 			type = new TypeMap(null, null);
 			type.primitiveType = PrimitiveType.MAP;
-			type.baseType = baseType;
+			type.elementType = baseType;
 			put(type);
 
 			type.addNativeMethods();
@@ -45,7 +45,7 @@ public class TypeMap extends TypeList {
 
 	protected static void put(TypeMap type) {
 		// Get type from hash
-		String key = PrimitiveType.MAP + ":" + type.baseType;
+		String key = PrimitiveType.MAP + ":" + type.elementType;
 		types.put(key, type);
 	}
 
@@ -60,13 +60,13 @@ public class TypeMap extends TypeList {
 	protected void addNativeMethods() {
 		try {
 			// Add libarary methods
-			ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
-			methods.add(new MethodNativeMapKeys(baseType));
-			methods.add(new MethodNativeMapValues(baseType));
-			methods.add(new MethodNativeMapSize(baseType));
-			methods.add(new MethodNativeMapHasKey(baseType));
-			methods.add(new MethodNativeMapHasValue(baseType));
-			methods.add(new MethodNativeMapRemove(baseType));
+			ArrayList<MethodNative> methods = new ArrayList<>();
+			methods.add(new MethodNativeMapKeys(elementType));
+			methods.add(new MethodNativeMapValues(elementType));
+			methods.add(new MethodNativeMapSize(elementType));
+			methods.add(new MethodNativeMapHasKey(elementType));
+			methods.add(new MethodNativeMapHasValue(elementType));
+			methods.add(new MethodNativeMapRemove(elementType));
 
 			// Show
 			if (debug) {
@@ -86,12 +86,12 @@ public class TypeMap extends TypeList {
 		if (cmp != 0) return cmp;
 
 		TypeMap ltype = (TypeMap) type;
-		return baseType.compareTo(ltype.baseType);
+		return elementType.compareTo(ltype.elementType);
 	}
 
 	@Override
 	public boolean equals(Type type) {
-		return (primitiveType == type.primitiveType) && (baseType.equals(((TypeMap) type).baseType));
+		return (primitiveType == type.primitiveType) && (elementType.equals(((TypeMap) type).elementType));
 	}
 
 	@Override
@@ -105,8 +105,8 @@ public class TypeMap extends TypeList {
 	}
 
 	@Override
-	public boolean isMap(Type baseType) {
-		return this.baseType.equals(baseType);
+	public boolean isMap(Type kewType, Type valueType) {
+		return this.elementType.equals(baseType);
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class TypeMap extends TypeList {
 		// TODO: We are only allowing to build lists of primitive types. We should change this!
 		String listTypeName = tree.getChild(0).getChild(0).getText();
 		primitiveType = PrimitiveType.MAP;
-		baseType = Type.get(listTypeName.toUpperCase());
+		elementType = Type.get(listTypeName.toUpperCase());
 
 		put(this);
 		addNativeMethods();
@@ -122,12 +122,12 @@ public class TypeMap extends TypeList {
 
 	@Override
 	public String toString() {
-		return baseType + "{}";
+		return elementType + "{}";
 	}
 
 	@Override
 	public String toStringSerializer() {
-		return primitiveType + ":" + baseType.toStringSerializer();
+		return primitiveType + ":" + elementType.toStringSerializer();
 	}
 
 }

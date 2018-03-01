@@ -2,14 +2,13 @@ package org.bds.lang.type;
 
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
-import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 
 public class TypeString extends Type {
 
 	public TypeString() {
-		super("string", new ValueReal(0.0));
+		super(PrimitiveType.STRING, new ValueReal(0.0));
 	}
 
 	/**
@@ -17,18 +16,21 @@ public class TypeString extends Type {
 	 */
 	public Value cast(Value v) {
 		Type vt = v.getType();
-		if (vt.is(Types.STRING)) return v;
+		if (vt.isString()) return v;
 
 		ValueString vs = new ValueString();
 		String val = "";
 
-		if (vt.is(Types.BOOL)) val = ((ValueBool) v).get() ? "true" : "false";
-		else if (vt.is(Types.INT)) val = ((ValueInt) v).get().toString();
-		else if (vt.is(Types.REAL)) val = ((ValueInt) v).get().toString();
+		if (vt.isBool()) val = ((ValueBool) v).get() ? "true" : "false";
 		else val = v.toString();
 
 		vs.set(val);
 		return vs;
+	}
+
+	@Override
+	public boolean isString() {
+		return false;
 	}
 
 	@Override

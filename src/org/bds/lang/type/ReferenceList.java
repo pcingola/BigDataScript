@@ -22,8 +22,8 @@ import org.bds.util.Gpr;
  */
 public class ReferenceList extends Reference {
 
-	// protected VarReference variable; // !!!! This should be an arbitrary expression that returns a list
-	protected Expression exprList; // !!!! This should be an arbitrary expression that returns a list
+	protected VarReference variable; // TODO: This should be an arbitrary expression that returns a list
+	protected Expression exprList; // TODO: This should be an arbitrary expression that returns a list
 	protected Expression exprIdx;
 
 	public ReferenceList(BdsNode parent, ParseTree tree) {

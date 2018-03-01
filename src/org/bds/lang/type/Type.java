@@ -14,25 +14,27 @@ import org.bds.serialize.BdsSerializer;
  */
 public abstract class Type extends BdsNode implements Comparable<Type> {
 
-	String typeName;
-	Value defaultValue;
-
-	public static int VOID;
+	protected PrimitiveType primitiveType;
+	protected Value defaultValue;
 
 	protected Type(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-		typeName = tree.getChild(0).getText();
+		String typeName = tree.getChild(0).getText();
+		primitiveType = PrimitiveType.valueOf(typeName);
+		returnType = this;
 	}
 
-	public Type(String typeName) {
+	public Type(PrimitiveType primitiveType) {
 		super(null, null);
-		this.typeName = typeName;
+		this.primitiveType = primitiveType;
+		returnType = this;
 	}
 
-	public Type(String typeName, Value defaultValue) {
+	public Type(PrimitiveType primitiveType, Value defaultValue) {
 		super(null, null);
-		this.typeName = typeName;
+		this.primitiveType = primitiveType;
 		this.defaultValue = defaultValue;
+		returnType = this;
 	}
 
 	/**
@@ -55,11 +57,11 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	 */
 	@Override
 	public int compareTo(Type type) {
-		return typeName.compareTo(type.getTypeName());
+		return primitiveType.compareTo(type.primitiveType);
 	}
 
 	public boolean equals(Type type) {
-		return typeName.equals(type.getTypeName());
+		return primitiveType.equals(type.primitiveType);
 	}
 
 	/**
@@ -69,15 +71,81 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		return defaultValue;
 	}
 
-	public String getTypeName() {
-		return typeName;
-	}
-
 	/**
 	 * Is this type same as 'type'?
 	 */
 	public boolean is(Type type) {
 		return equals(type);
+	}
+
+	@Override
+	public boolean isAny() {
+		return false;
+	}
+
+	@Override
+	public boolean isBool() {
+		return false;
+	}
+
+	@Override
+	public boolean isClass() {
+		return false;
+	}
+
+	@Override
+	public boolean isFake() {
+		return false;
+	}
+
+	@Override
+	public boolean isFunction() {
+		return false;
+	}
+
+	@Override
+	public boolean isInt() {
+		return false;
+	}
+
+	@Override
+	public boolean isList() {
+		return false;
+	}
+
+	@Override
+	public boolean isList(Type elementType) {
+		return false;
+	}
+
+	@Override
+	public boolean isMap() {
+		return false;
+	}
+
+	@Override
+	public boolean isMap(Type keyType, Type valueType) {
+		return false;
+	}
+
+	@Override
+	public boolean isNull() {
+		return false;
+	}
+
+	@Override
+	public boolean isReal() {
+		return false;
+	}
+
+	@Override
+	public boolean isString() {
+		return false;
+	}
+
+	@Override
+	public boolean isVoid() {
+		return false;
 	}
 
 	/**
@@ -106,10 +174,10 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 
 	@Override
 	public String toString() {
-		return typeName;
+		return primitiveType.toString();
 	}
 
 	public String toStringSerializer() {
-		return typeName;
+		return toString();
 	}
 }

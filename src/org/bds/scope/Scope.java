@@ -13,7 +13,7 @@ import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ParentNode;
 import org.bds.lang.statement.Args;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeFunc;
+import org.bds.lang.type.TypeFunction;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
 import org.bds.util.AutoHashMap;
@@ -97,7 +97,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 		for (ScopeSymbol ssfunc : ssfuncs) {
 			boolean ok = false;
 			int score = 0;
-			TypeFunc sstype = (TypeFunc) ssfunc.getType();
+			TypeFunction sstype = (TypeFunction) ssfunc.getType();
 
 			// Find the ones with the same number of parameters
 			int argc = args.size();
@@ -294,10 +294,9 @@ public class Scope implements BdsSerialize, Iterable<String> {
 		out.append("\n");
 
 		for (ScopeSymbol ss : symbols.values()) {
-			// TODO: !!! 
-			//			if (ss.getType().isNative()) {
-			//				; // Do not save native functions
-			//			} else out.append(serializer.serializeSave(ss));
+			if (ss.getType().isNative()) {
+				; // Do not save native functions
+			} else out.append(serializer.serializeSave(ss));
 		}
 
 		if (parent != null) out.append(serializer.serializeSave(parent));

@@ -13,4 +13,9 @@ public class ValueInt extends ValuePrimitive<Long> {
 		set(v);
 	}
 
+	@Override
+	public long asInt() {
+		return value;
+	}
+
 }

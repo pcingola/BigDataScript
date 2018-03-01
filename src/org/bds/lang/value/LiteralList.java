@@ -44,7 +44,7 @@ public class LiteralList extends Literal {
 		if (returnType != null) return returnType;
 
 		//---
-		// Calculate baseType
+		// Calculate elementType
 		//---
 		Type baseType = null;
 		for (BdsNode node : values) {
@@ -67,7 +67,7 @@ public class LiteralList extends Literal {
 		// Default base type if nothing found
 		if (baseType == null) baseType = Types.VOID;
 
-		// Create a list of 'baseType'
+		// Create a list of 'elementType'
 		returnType = TypeList.get(baseType);
 
 		return returnType;

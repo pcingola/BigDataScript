@@ -29,7 +29,7 @@ public class LiteralMapEmpty extends LiteralMap {
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
-		// Create a list of 'baseType'
+		// Create a list of 'elementType'
 		returnType = TypeMap.get(Types.VOID);
 
 		return returnType;

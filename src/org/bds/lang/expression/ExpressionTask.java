@@ -422,7 +422,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	protected String toStringStatement() {
 		if (statement instanceof LiteralString) {
 			// Compact single line
-			return ((LiteralString) statement).getValue().trim();
+			return ((LiteralString) statement).getValue().asString().trim();
 		}
 
 		if (statement instanceof ExpressionSys || statement instanceof StatementExpr) {

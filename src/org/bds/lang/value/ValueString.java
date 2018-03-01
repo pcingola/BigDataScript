@@ -13,4 +13,9 @@ public class ValueString extends ValuePrimitive<String> {
 		set(v);
 	}
 
+	@Override
+	public String asString() {
+		return value;
+	}
+
 }

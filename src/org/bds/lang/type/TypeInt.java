@@ -7,14 +7,12 @@ import org.bds.lang.value.ValueInt;
 public class TypeInt extends Type {
 
 	public TypeInt() {
-		super("int", new ValueInt(0L));
+		super(PrimitiveType.INT, new ValueInt(0L));
 	}
 
 	@Override
 	public boolean canCast(Type type) {
-		return type.is(Types.BOOL) //
-				|| type.is(Types.INT) //
-		;
+		return isInt() || isBool();
 	}
 
 	/**
@@ -27,11 +25,16 @@ public class TypeInt extends Type {
 		ValueInt vb = new ValueInt();
 		long val = 0;
 
-		if (vt.is(Types.BOOL)) val = ((ValueBool) v).get() ? 1 : 0;
+		if (vt.isBool()) val = ((ValueBool) v).get() ? 1 : 0;
 		else throw new RuntimeException("Cannot convert value type '" + v.getType() + "' to 'bool'");
 
 		vb.set(val);
 		return vb;
+	}
+
+	@Override
+	public boolean isInt() {
+		return true;
 	}
 
 	@Override

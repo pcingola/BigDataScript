@@ -75,7 +75,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 		return type;
 	}
 
-	public Object getValue() {
+	public Value getValue() {
 		return value;
 	}
 
@@ -84,7 +84,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	}
 
 	public boolean isFunction() {
-		return type.is(Types.FUNC);
+		return type.is(Types.FUNCTION);
 	}
 
 	@Override
@@ -94,8 +94,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 		type = serializer.getNextFieldType();
 
 		// Parse value
-		throw new RuntimeException("!!! UNIMPLEMENTED");
-		// value = serializer.getNextField(type);
+		value = serializer.getNextField(type);
 	}
 
 	@Override

@@ -21,6 +21,10 @@ public abstract class Literal extends Expression {
 		super(parent, tree);
 	}
 
+	public Value getValue() {
+		return value;
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		setValue(parseValue(tree));

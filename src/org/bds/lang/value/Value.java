@@ -26,6 +26,34 @@ public abstract class Value {
 		init();
 	}
 
+	/**
+	 * Convert value to 'bool'
+	 */
+	public boolean asBool() {
+		return (boolean) Types.BOOL.cast(this).get();
+	}
+
+	/**
+	 * Convert value to 'int'
+	 */
+	public long asInt() {
+		return (long) Types.INT.cast(this).get();
+	}
+
+	/**
+	 * Convert value to 'real'
+	 */
+	public double asReal() {
+		return (double) Types.REAL.cast(this).get();
+	}
+
+	/**
+	 * Convert value to 'string'
+	 */
+	public String asString() {
+		return (String) Types.STRING.cast(this).get();
+	}
+
 	public abstract Object get();
 
 	public Type getType() {
@@ -37,22 +65,5 @@ public abstract class Value {
 	}
 
 	public abstract void set(Object v);
-
-	public boolean toBool() {
-		return (boolean) Types.BOOL.cast(this).get();
-	}
-
-	public long toInt() {
-		return (long) Types.INT.cast(this).get();
-	}
-
-	public double toReal() {
-		return (double) Types.REAL.cast(this).get();
-	}
-
-	@Override
-	public String toString() {
-		return (String) Types.STRING.cast(this).get();
-	}
 
 }

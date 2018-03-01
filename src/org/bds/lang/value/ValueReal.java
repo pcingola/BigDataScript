@@ -13,4 +13,9 @@ public class ValueReal extends ValuePrimitive<Double> {
 		set(v);
 	}
 
+	@Override
+	public double asReal() {
+		return value;
+	}
+
 }

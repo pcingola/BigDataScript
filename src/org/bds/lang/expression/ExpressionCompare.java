@@ -32,9 +32,9 @@ public abstract class ExpressionCompare extends ExpressionBinary {
 	public boolean compare(BdsThread bdsThread, Value lval, Value rval) {
 		if (left.isNumeric() && right.isNumeric()) {
 			// Both are numeric types
-			if (left.isReal() || right.isReal()) return cmp(lval.toReal(), rval.toReal());
-			else if (left.isInt() || right.isInt()) return cmp(lval.toInt(), rval.toInt());
-			else if (left.isBool() || right.isBool()) return cmp(lval.toBool(), rval.toBool());
+			if (left.isReal() || right.isReal()) return cmp(lval.asReal(), rval.asReal());
+			else if (left.isInt() || right.isInt()) return cmp(lval.asInt(), rval.asInt());
+			else if (left.isBool() || right.isBool()) return cmp(lval.asBool(), rval.asBool());
 			else throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName() + "( " + lval + " , " + rval + " )");
 
 		} else if (left.isString() || right.isString()) return cmp(lval.toString(), rval.toString());

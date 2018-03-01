@@ -8,7 +8,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeFunc;
+import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
@@ -122,7 +122,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * Get this function's type
 	 */
 	public Type getType() {
-		if (funcType == null) funcType = TypeFunc.get(this);
+		if (funcType == null) funcType = TypeFunction.get(this);
 		return funcType;
 	}
 
@@ -183,7 +183,7 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	public String signature() {
 		if (signature != null) return signature;
-		signature = TypeFunc.signature(parameters, returnType);
+		signature = TypeFunction.signature(parameters, returnType);
 		return signature;
 	}
 

@@ -9,7 +9,7 @@ package org.bds.lang.type;
 public class TypeVoid extends TypeUniqueValue {
 
 	public TypeVoid() {
-		super("void");
+		super(PrimitiveType.VOID);
 	}
 
 }

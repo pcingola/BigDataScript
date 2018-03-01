@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.FunctionDeclaration;
-import org.bds.lang.type.TypeFunc;
+import org.bds.lang.type.TypeFunction;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -93,7 +93,7 @@ public class ProgramUnit extends BlockWithFile {
 		for (BdsNode func : funcs) {
 			// Create scope symbol
 			FunctionDeclaration fd = (FunctionDeclaration) func;
-			TypeFunc typeFunc = new TypeFunc(fd);
+			TypeFunction typeFunc = new TypeFunction(fd);
 			ScopeSymbol ssym = new ScopeSymbol(fd.getFunctionName(), typeFunc, fd);
 
 			// Add it to scope

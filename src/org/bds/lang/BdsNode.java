@@ -19,6 +19,8 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.compile.TypeCheckedNodes;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
@@ -362,12 +364,16 @@ public abstract class BdsNode implements BdsSerialize {
 	protected void initialize() {
 	}
 
+	public boolean isAny() {
+		return returnType.is(Types.ANY);
+	}
+
 	public boolean isBool() {
 		return returnType.is(Types.BOOL);
 	}
 
-	public boolean isVoid() {
-		return returnType.is(Types.VOID);
+	public boolean isClass() {
+		return returnType.is(Types.CLASS);
 	}
 
 	/**
@@ -377,8 +383,40 @@ public abstract class BdsNode implements BdsSerialize {
 		return id <= 0;
 	}
 
+	public boolean isFunction() {
+		return returnType.is(Types.FUNCTION);
+	}
+
 	public boolean isInt() {
 		return returnType.is(Types.INT);
+	}
+
+	public boolean isList() {
+		return returnType.is(Types.LIST);
+	}
+
+	public boolean isList(Type elementType) {
+		if (!isList()) return false;
+
+		Type re = ((TypeList) returnType).getElementType();
+
+		// If elementType is void, then the list must be empty
+		// An empty list complies with all types
+		if (re.isVoid() || re.isAny() || elementType.isAny()) return true;
+
+		// Same element types?
+		return re.equals(elementType);
+	}
+
+	public boolean isMap() {
+		return returnType.is(Types.MAP);
+	}
+
+	public boolean isMap(Type keyType, Type valueType) {
+		if (!returnType.is(Types.MAP)) return false;
+
+		TypeMap typeMap = (TypeMap) returnType;
+		return typeMap.getKeyType().is(keyType) && typeMap.getValueType().is(valueType);
 	}
 
 	/**
@@ -386,6 +424,10 @@ public abstract class BdsNode implements BdsSerialize {
 	 */
 	public boolean isNeedsScope() {
 		return false;
+	}
+
+	public boolean isNull() {
+		return returnType.is(Types.NULL);
 	}
 
 	public boolean isNumeric() {
@@ -417,6 +459,10 @@ public abstract class BdsNode implements BdsSerialize {
 	protected boolean isTerminal(ParseTree tree, int idx, String str) {
 		ParseTree node = tree.getChild(idx);
 		return ((node instanceof TerminalNode) && node.getText().equals(str));
+	}
+
+	public boolean isVoid() {
+		return returnType.is(Types.VOID);
 	}
 
 	/**

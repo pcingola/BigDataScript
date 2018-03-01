@@ -9,15 +9,15 @@ import org.bds.lang.value.ValueString;
 public class TypeBool extends Type {
 
 	public TypeBool() {
-		super("bool", new ValueBool(Boolean.FALSE));
+		super(PrimitiveType.BOOL, new ValueBool(Boolean.FALSE));
 	}
 
 	@Override
 	public boolean canCast(Type type) {
 		return equals(type) // Same type?
-				|| type.is(Types.INT) //
-				|| type.is(Types.REAL) //
-				|| type.is(Types.STRING) //
+				|| type.isInt() //
+				|| type.isReal() //
+				|| type.isString() //
 		;
 	}
 
@@ -26,18 +26,23 @@ public class TypeBool extends Type {
 	 */
 	public Value cast(Value v) {
 		Type vt = v.getType();
-		if (vt.is(Types.BOOL)) return v;
+		if (vt.isBool()) return v;
 
 		ValueBool vb = new ValueBool();
 		boolean val = false;
 
-		if (vt.is(Types.INT)) val = (((ValueInt) v).get() != 0L);
-		else if (vt.is(Types.REAL)) val = (((ValueReal) v).get() != 0.0);
-		else if (vt.is(Types.STRING)) val = !(((ValueString) v).get().isEmpty());
+		if (vt.isInt()) val = (((ValueInt) v).get() != 0L);
+		else if (vt.isReal()) val = (((ValueReal) v).get() != 0.0);
+		else if (vt.isString()) val = !(((ValueString) v).get().isEmpty());
 		else throw new RuntimeException("Cannot convert value type '" + v.getType() + "' to 'bool'");
 
 		vb.set(val);
 		return vb;
+	}
+
+	@Override
+	public boolean isBool() {
+		return true;
 	}
 
 	@Override

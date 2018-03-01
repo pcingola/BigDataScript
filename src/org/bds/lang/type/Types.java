@@ -3,19 +3,25 @@ package org.bds.lang.type;
 import java.util.Collection;
 import java.util.HashMap;
 
+/**
+ * A registry of all available types
+ * 
+ * @author pcingola
+ */
 public class Types {
 
-	public final static TypeAny ANY = new TypeAny(); // ANY type (wildcard type)
-	public final static TypeNull NULL = new TypeNull(); // NULL type
+	public final static TypeAny ANY = new TypeAny(); // ANY type (wild-card type)
 	public final static TypeBool BOOL = new TypeBool();
+	public final static TypeClass CLASS = TypeClass.get(null); // A class
 	public final static TypeFake FAKE = new TypeFake(); // Fake type (for serialization)
-	public final static TypeFunction FUNC = new TypeFunction();
+	public final static TypeFunction FUNCTION = new TypeFunction();
 	public final static TypeInt INT = new TypeInt();
+	public final static TypeList LIST = TypeList.get(ANY);
+	public final static TypeMap MAP = TypeMap.get(ANY, ANY);
+	public final static TypeNull NULL = new TypeNull(); // NULL type
 	public final static TypeReal REAL = new TypeReal();
 	public final static TypeString STRING = new TypeString();
-	public final static TypeVoid VOID = new TypeVoid();
-
-	public final static Type[] BASIC_TYPES = { ANY, BOOL, FAKE, FUNC, INT, REAL, STRING, VOID };
+	public final static TypeVoid VOID = new TypeVoid(); // Void for side-effect functions
 
 	protected static HashMap<String, Type> types = new HashMap<>();
 
@@ -27,7 +33,11 @@ public class Types {
 	}
 
 	static void put(Type type) {
-		types.put(type.getTypeName(), type);
+		types.put(type.toString(), type);
+	}
+
+	static Type get(String typeStr) {
+		return types.get(typeStr.toLowerCase());
 	}
 
 	/**
@@ -37,8 +47,18 @@ public class Types {
 		types = new HashMap<>();
 
 		// Add base types
-		for (Type t : BASIC_TYPES)
-			put(t);
+		put(ANY);
+		put(BOOL);
+		put(CLASS);
+		put(FAKE);
+		put(FUNCTION);
+		put(INT);
+		put(LIST);
+		put(MAP);
+		put(NULL);
+		put(REAL);
+		put(STRING);
+		put(VOID);
 	}
 
 }

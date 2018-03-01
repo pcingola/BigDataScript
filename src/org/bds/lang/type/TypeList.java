@@ -31,6 +31,8 @@ import org.bds.lang.nativeMethods.list.MethodNativeListRmOnExit;
 import org.bds.lang.nativeMethods.list.MethodNativeListSize;
 import org.bds.lang.nativeMethods.list.MethodNativeListSort;
 import org.bds.lang.nativeMethods.list.MethodNativeListTail;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.util.Gpr;
 
 /**
@@ -42,37 +44,35 @@ public class TypeList extends Type {
 
 	public static boolean debug = false;
 
-	Type baseType; // Base type for this list
+	Type elementType; // Type of elements in the list
 
 	/**
-	 * Get a list type
+	 * Get a (cached) list type
 	 */
-	public static TypeList get(Type baseType) {
+	public static TypeList get(Type elementType) {
 		// Get type from hash
-		String key = PrimitiveType.LIST + ":" + baseType;
-		TypeList type = (TypeList) types.get(key);
+		String key = elementType + "[]";
+		TypeList type = (TypeList) Types.get(key);
 
 		// No type available? Create & add
 		if (type == null) {
-			type = new TypeList(null, null);
-			type.primitiveType = PrimitiveType.LIST;
-			type.baseType = baseType;
-			put(type);
-
+			type = new TypeList(elementType);
+			Types.put(type);
 			type.addNativeMethods();
 		}
 
 		return type;
 	}
 
-	protected static void put(TypeList type) {
-		// Get type from hash
-		String key = PrimitiveType.LIST + ":" + type.baseType;
-		types.put(key, type);
+	private TypeList(BdsNode parent, ParseTree tree, Type baseType) {
+		super(parent, tree);
+		primitiveType = PrimitiveType.LIST;
+		elementType = baseType;
 	}
 
-	public TypeList(BdsNode parent, ParseTree tree) {
-		super(parent, tree);
+	private TypeList(Type baseType) {
+		super(PrimitiveType.LIST);
+		elementType = baseType;
 	}
 
 	/**
@@ -81,33 +81,33 @@ public class TypeList extends Type {
 	protected void addNativeMethods() {
 		try {
 			// Add libarary methods
-			ArrayList<MethodNative> methods = new ArrayList<MethodNative>();
-			methods.add(new MethodNativeListAdd(baseType));
-			methods.add(new MethodNativeListAddIndex(baseType));
-			methods.add(new MethodNativeListAddList(baseType));
-			methods.add(new MethodNativeListCount(baseType));
-			methods.add(new MethodNativeListFilter(baseType));
-			methods.add(new MethodNativeListForEach(baseType));
-			methods.add(new MethodNativeListHas(baseType));
-			methods.add(new MethodNativeListHead(baseType));
-			methods.add(new MethodNativeListIndexOf(baseType));
-			methods.add(new MethodNativeListIsEmpty(baseType));
-			methods.add(new MethodNativeListJoin(baseType));
-			methods.add(new MethodNativeListJoinStr(baseType));
-			methods.add(new MethodNativeListMap(baseType));
-			methods.add(new MethodNativeListMapToInt(baseType));
-			methods.add(new MethodNativeListMapToReal(baseType));
-			methods.add(new MethodNativeListMapToString(baseType));
-			methods.add(new MethodNativeListPop(baseType));
-			methods.add(new MethodNativeListPush(baseType));
-			methods.add(new MethodNativeListSize(baseType));
-			methods.add(new MethodNativeListSort(baseType));
-			methods.add(new MethodNativeListRemove(baseType));
-			methods.add(new MethodNativeListRemoveIdx(baseType));
-			methods.add(new MethodNativeListReverse(baseType));
-			methods.add(new MethodNativeListRmOnExit(baseType));
-			methods.add(new MethodNativeListRm(baseType));
-			methods.add(new MethodNativeListTail(baseType));
+			ArrayList<MethodNative> methods = new ArrayList<>();
+			methods.add(new MethodNativeListAdd(elementType));
+			methods.add(new MethodNativeListAddIndex(elementType));
+			methods.add(new MethodNativeListAddList(elementType));
+			methods.add(new MethodNativeListCount(elementType));
+			methods.add(new MethodNativeListFilter(elementType));
+			methods.add(new MethodNativeListForEach(elementType));
+			methods.add(new MethodNativeListHas(elementType));
+			methods.add(new MethodNativeListHead(elementType));
+			methods.add(new MethodNativeListIndexOf(elementType));
+			methods.add(new MethodNativeListIsEmpty(elementType));
+			methods.add(new MethodNativeListJoin(elementType));
+			methods.add(new MethodNativeListJoinStr(elementType));
+			methods.add(new MethodNativeListMap(elementType));
+			methods.add(new MethodNativeListMapToInt(elementType));
+			methods.add(new MethodNativeListMapToReal(elementType));
+			methods.add(new MethodNativeListMapToString(elementType));
+			methods.add(new MethodNativeListPop(elementType));
+			methods.add(new MethodNativeListPush(elementType));
+			methods.add(new MethodNativeListSize(elementType));
+			methods.add(new MethodNativeListSort(elementType));
+			methods.add(new MethodNativeListRemove(elementType));
+			methods.add(new MethodNativeListRemoveIdx(elementType));
+			methods.add(new MethodNativeListReverse(elementType));
+			methods.add(new MethodNativeListRmOnExit(elementType));
+			methods.add(new MethodNativeListRm(elementType));
+			methods.add(new MethodNativeListTail(elementType));
 
 			// Show
 			if (debug) {
@@ -121,27 +121,17 @@ public class TypeList extends Type {
 		}
 	}
 
-	public boolean canCast(TypeList type) {
-		throw new RuntimeException("Unimplemented!");
-	}
-
-	@Override
-	public int compareTo(Type type) {
-		int cmp = primitiveType.ordinal() - type.primitiveType.ordinal();
-		if (cmp != 0) return cmp;
-
-		TypeList ltype = (TypeList) type;
-		return baseType.compareTo(ltype.baseType);
-	}
-
-	@Override
-	public boolean equals(Type type) {
-		return (primitiveType == type.primitiveType) && (baseType.equals(((TypeList) type).baseType));
-	}
-
 	public Type getBaseType() {
-		return baseType;
+		return elementType;
 	}
+
+	public Type getElementType() {
+		return elementType;
+	}
+
+	//	public boolean canCast(TypeList type) {
+	//		throw new RuntimeException("Unimplemented!");
+	//	}
 
 	@Override
 	public boolean isList() {
@@ -150,37 +140,35 @@ public class TypeList extends Type {
 
 	@Override
 	public boolean isList(Type baseType) {
-		// If baseType is void, then the list must be empty.
+		// If elementType is void, then the list must be empty.
 		// An empty list complies with all types.
-		if (this.baseType.isVoid()) return true;
-
-		return this.baseType.equals(baseType);
+		if (elementType.isVoid() || elementType.isAny() || baseType.isAny()) return true;
+		return elementType.equals(baseType);
 	}
 
 	@Override
-	public boolean isPrimitiveType() {
-		return false;
+	public Value newValue() {
+		return new ValueList(elementType);
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		// TODO: We are only allowing to build lists of primitive types. We should change this!
+		// TODO: We are only allowing to build lists of primitive types
 		String listTypeName = tree.getChild(0).getChild(0).getText();
 		primitiveType = PrimitiveType.LIST;
-		baseType = Type.get(listTypeName.toUpperCase());
-
-		put(this);
+		elementType = Types.get(listTypeName.toUpperCase());
+		Types.put(this);
 		addNativeMethods();
 	}
 
 	@Override
 	public String toString() {
-		return baseType + "[]";
+		return elementType + "[]";
 	}
 
 	@Override
 	public String toStringSerializer() {
-		return primitiveType + ":" + baseType.toStringSerializer();
+		return primitiveType + ":" + elementType.toStringSerializer();
 	}
 
 }

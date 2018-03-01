@@ -10,8 +10,8 @@ import org.bds.lang.value.Value;
  */
 public class TypeUniqueValue extends Type {
 
-	public TypeUniqueValue(String tname) {
-		super(tname, null);
+	public TypeUniqueValue(PrimitiveType primitiveType) {
+		super(primitiveType, null);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class TypeUniqueValue extends Type {
 
 	@Override
 	public Value newValue() {
-		throw new RuntimeException("Cannot create new value of type '" + typeName + "'");
+		throw new RuntimeException("Cannot create new value of type '" + primitiveType.toString() + "'");
 	}
 
 }

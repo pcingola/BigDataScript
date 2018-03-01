@@ -9,7 +9,12 @@ package org.bds.lang.type;
 public class TypeAny extends TypeUniqueValue {
 
 	public TypeAny() {
-		super("any");
+		super(PrimitiveType.ANY);
+	}
+
+	@Override
+	public boolean isAny() {
+		return true;
 	}
 
 }

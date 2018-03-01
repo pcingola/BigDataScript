@@ -8,7 +8,7 @@ import org.bds.lang.value.ValueReal;
 public class TypeReal extends Type {
 
 	public TypeReal() {
-		super("real", new ValueReal(0.0));
+		super(PrimitiveType.REAL, new ValueReal(0.0));
 	}
 
 	@Override
@@ -34,6 +34,11 @@ public class TypeReal extends Type {
 
 		vb.set(val);
 		return vb;
+	}
+
+	@Override
+	public boolean isReal() {
+		return true;
 	}
 
 	@Override

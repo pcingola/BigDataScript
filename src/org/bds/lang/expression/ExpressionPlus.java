@@ -120,7 +120,7 @@ public class ExpressionPlus extends ExpressionMath {
 		} else {
 			// Normal 'math'
 			left.checkCanCastToNumeric(compilerMessages);
-			right.checkcanCastToNumeric(compilerMessages);
+			right.checkCanCastToNumeric(compilerMessages);
 		}
 	}
 

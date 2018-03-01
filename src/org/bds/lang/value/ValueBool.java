@@ -13,4 +13,9 @@ public class ValueBool extends ValuePrimitive<Boolean> {
 		set(v);
 	}
 
+	@Override
+	public boolean asBool() {
+		return value;
+	}
+
 }

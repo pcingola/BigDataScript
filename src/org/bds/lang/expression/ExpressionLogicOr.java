@@ -28,7 +28,7 @@ public class ExpressionLogicOr extends ExpressionLogic {
 		bdsThread.run(left);
 
 		if (!bdsThread.isCheckpointRecover()) {
-			boolean ok = bdsThread.peek().toBool();
+			boolean ok = bdsThread.peek().asBool();
 			if (ok) return; // Already true? No need to evaluate the other expression
 		}
 
