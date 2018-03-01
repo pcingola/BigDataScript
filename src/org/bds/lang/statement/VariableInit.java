@@ -8,6 +8,7 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.LiteralListEmpty;
 import org.bds.lang.value.LiteralMapEmpty;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -91,7 +92,7 @@ public class VariableInit extends BdsNode {
 			if (bdsThread.isCheckpointRecover()) return;
 
 			// Error running expression?
-			Object value = bdsThread.pop();
+			Value value = bdsThread.pop();
 			if (value == null) {
 				bdsThread.setRunState(RunState.FATAL_ERROR);
 				return;

@@ -1,14 +1,13 @@
 package org.bds.lang.type;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.LiteralString;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueMap;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -20,7 +19,6 @@ import org.bds.scope.ScopeSymbol;
  */
 public class ReferenceMap extends Reference {
 
-	// protected ReferenceVar variable;
 	protected Expression variable;
 	protected Expression expressionKey;
 
@@ -28,10 +26,9 @@ public class ReferenceMap extends Reference {
 		super(parent, tree);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public HashMap getMap(Scope scope) {
+	public ValueMap getMap(Scope scope) {
 		ScopeSymbol ss = getScopeSymbol(scope);
-		return (HashMap) ss.getValue();
+		return (ValueMap) ss.getValue();
 	}
 
 	/**
@@ -100,20 +97,16 @@ public class ReferenceMap extends Reference {
 	@Override
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
-
 		expressionKey.returnType(scope);
-		Type nameType = variable.returnType(scope);
-
-		if (nameType == null) return null;
-		if (nameType.isMap()) returnType = ((TypeMap) nameType).getElementType();
-
-		return returnType;
+		// returnType = TypeMap.get(keyType, valueType);
+		// !!! TODO: FIXME
+		throw new RuntimeException("!!!");
+		// return returnType;
 	}
 
 	/**
 	 * Evaluate an expression
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		// Evaluate expressions
@@ -123,28 +116,27 @@ public class ReferenceMap extends Reference {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		// Get results
-		String key = bdsThread.popString();
-		Map map = (Map) bdsThread.pop();
+		Value vkey = bdsThread.pop();
+		ValueMap vmap = (ValueMap) bdsThread.pop();
 
 		// Obtain map entry
-		Object ret = map.get(key);
-		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + key + "'.");
+		Value ret = vmap.getValue(vkey);
+		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + vkey + "'.");
 
 		bdsThread.push(ret);
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void setValue(BdsThread bdsThread, Object value) {
+	public void setValue(BdsThread bdsThread, Value value) {
 		if (value == null) return;
 
 		bdsThread.run(expressionKey);
-		String key = bdsThread.popString();
+		Value key = bdsThread.pop();
 		if (bdsThread.isCheckpointRecover()) return;
 
-		HashMap map = getMap(bdsThread.getScope());
-		if (map == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
-		map.put(key, value);
+		ValueMap vmap = getMap(bdsThread.getScope());
+		if (vmap == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
+		vmap.put(key, value);
 	}
 
 	@Override

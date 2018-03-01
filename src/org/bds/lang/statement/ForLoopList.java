@@ -13,6 +13,8 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueInt;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
@@ -54,10 +56,10 @@ public class ForLoopList extends StatementWithScope {
 	/**
 	 * Iterable counter (current position in iterator)
 	 */
-	protected ScopeSymbol initIterableCounter(BdsThread csThread) {
+	protected ScopeSymbol initIterableCounter(BdsThread bdsThread) {
 		// Are we recovering state from a checkpoint file?
-		if (csThread.isCheckpointRecover()) {
-			ScopeSymbol ssIterableCount = csThread.getScope().getSymbol(iterableCountName);
+		if (bdsThread.isCheckpointRecover()) {
+			ScopeSymbol ssIterableCount = bdsThread.getScope().getSymbol(iterableCountName);
 			return ssIterableCount;
 		}
 
@@ -65,7 +67,7 @@ public class ForLoopList extends StatementWithScope {
 		iterableCountName = ScopeSymbol.INTERNAL_SYMBOL_START + "iterableCount." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
 		Type iterableCountType = Types.INT;
 		ScopeSymbol ssIterableCount = new ScopeSymbol(iterableCountName, iterableCountType, 0L);
-		csThread.getScope().add(ssIterableCount);
+		bdsThread.getScope().add(ssIterableCount);
 		return ssIterableCount;
 	}
 
@@ -73,29 +75,30 @@ public class ForLoopList extends StatementWithScope {
 	 * Iterable values (list of elements to iterate)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList initIterableValues(BdsThread bdsThread, ScopeSymbol varSym) {
+	protected List initIterableValues(BdsThread bdsThread, ScopeSymbol varSym) {
 		// Evaluate list
 		bdsThread.run(expression);
 
 		// Are we recovering state from a checkpoint file?
 		if (bdsThread.isCheckpointRecover()) {
 			ScopeSymbol ssIterableList = bdsThread.getScope().getSymbol(iterableListName);
-			return (ArrayList) ssIterableList.getValue();
+			return (List) ssIterableList.getValue().get();
 		}
 
 		//---
 		// Find (or create) a collection we can iterate on
 		//---
-		Object res = bdsThread.pop();
-		ArrayList iterableValues = new ArrayList();
-		if (res instanceof List) iterableValues.addAll((List) res);
-		else if (res instanceof Map) {
+		Value res = bdsThread.pop();
+		Type resType = res.getType();
+		List iterableValues = new ArrayList();
+		if (resType.isList()) iterableValues.addAll((List) res.get());
+		else if (resType.isMap()) {
 			// Create a sorted list of values
-			iterableValues.addAll(((Map) res).values());
+			iterableValues.addAll(((Map) res.get()).values());
 			Collections.sort(iterableValues);
 		} else {
 			// Single object
-			iterableValues.add(res);
+			iterableValues.add(res.get());
 		}
 
 		//---
@@ -135,20 +138,21 @@ public class ForLoopList extends StatementWithScope {
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		ScopeSymbol varSym = initBeginDecl(bdsThread);
-		ArrayList iterableValues = initIterableValues(bdsThread, varSym);
+		List iterableValues = initIterableValues(bdsThread, varSym);
 		ScopeSymbol iterableCount = initIterableCounter(bdsThread);
 
 		// First element to iterate.
 		// Note: This could be set by a checkpoint recovery, so we have to read it from the scope
-		long interStart = (Long) iterableCount.getValue(); //
+		ValueInt counter = (ValueInt) iterableCount.getValue();
+		long interStart = counter.asInt(); //
 
 		// Iterate on collection
-		for (int iter = (int) interStart; iter < iterableValues.size(); iter++) {
-			iterableCount.setValue(iter); // Update scope symbol (so that checkpoints can save state)
+		for (int idx = (int) interStart; idx < iterableValues.size(); idx++) {
+			counter.set(idx); // Update scope symbol (so that checkpoints can save state)
 
 			// Get the element we are iterating on
-			Object o = iterableValues.get(iter);
-			varSym.setValue(varSym.getType().cast(o));
+			Object o = iterableValues.get(idx);
+			varSym.setValueNative(varSym.getType().castNativeObject(o));
 
 			bdsThread.run(statement); // Loop statement
 

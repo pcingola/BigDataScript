@@ -5,6 +5,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
@@ -96,7 +97,7 @@ public class ReferenceVar extends Reference {
 	 * Set map to scope symbol
 	 */
 	@Override
-	public void setValue(BdsThread bdsThread, Object value) {
+	public void setValue(BdsThread bdsThread, Value value) {
 		if (value == null) return;
 		ScopeSymbol ssym = getScopeSymbol(bdsThread.getScope()); // Get scope symbol
 		value = getReturnType().cast(value); // Cast to destination type

@@ -18,4 +18,9 @@ public class ValueReal extends ValuePrimitive<Double> {
 		return value;
 	}
 
+	@Override
+	public void parse(String str) {
+		value = Double.parseDouble(str);
+	}
+
 }

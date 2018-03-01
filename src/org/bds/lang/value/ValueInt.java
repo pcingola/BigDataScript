@@ -13,9 +13,18 @@ public class ValueInt extends ValuePrimitive<Long> {
 		set(v);
 	}
 
+	public void set(long value) {
+		this.value = value;
+	}
+
 	@Override
 	public long asInt() {
 		return value;
+	}
+
+	@Override
+	public void parse(String str) {
+		value = Long.parseLong(str);
 	}
 
 }

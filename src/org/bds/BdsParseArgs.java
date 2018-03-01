@@ -1,6 +1,7 @@
 package org.bds;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.lang.ProgramUnit;
 import org.bds.lang.statement.VarDeclaration;
@@ -15,6 +16,7 @@ import org.bds.lang.value.LiteralListString;
 import org.bds.lang.value.LiteralReal;
 import org.bds.lang.value.LiteralString;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueBool;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.util.Gpr;
@@ -130,8 +132,13 @@ public class BdsParseArgs {
 		// Find all variable declarations that match this command line argument
 		for (VarDeclaration varDecl : programUnit.varDeclarations(true)) {
 			Type varType = varDecl.getType();
-			// Is is a primitive variable or a primitive list?
-			if (varType.isPrimitiveType() || varType.isList()) {
+			// We can only parse some basic types or lists of strings
+			if (varType.isBool() //
+					|| varType.isInt() //
+					|| varType.isReal() //
+					|| varType.isString() //
+					|| varType.isList(Types.STRING) //
+			) {
 
 				// Find an initialization that matches the command line argument
 				for (VariableInit varInit : varDecl.getVarInit())
@@ -179,7 +186,7 @@ public class BdsParseArgs {
 	Value parseArgs(Type varType) {
 		if (varType.isList()) {
 			// Create a list of arguments and use them to initialize the variable (list)
-			ArrayList<String> vals = new ArrayList<>();
+			List<String> vals = new ArrayList<>();
 			for (argNum++; argNum < programArgs.size(); argNum++) {
 				String val = programArgs.get(argNum);
 				if (isOpt(val)) { // Stop if another argument is found
@@ -188,14 +195,14 @@ public class BdsParseArgs {
 				} else vals.add(val);
 			}
 
-			return vals;
+			return TypeList.get(Types.STRING).newValue(vals);
 		} else if (varType.isBool()) {
 			// Booleans may not have a map (just '-varName' sets them to 'true')
 			if (programArgs.size() > (argNum + 1)) {
 				// Is the next argument 'true' or 'false'? => Set argument
 				String valStr = programArgs.get(++argNum).toLowerCase();
-				if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) return true;
-				else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) return false;
+				if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) return ValueBool.TRUE;
+				else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) return ValueBool.FALSE;
 
 				// Not any valid map? => This argument is not used
 				argNum--;
@@ -204,8 +211,10 @@ public class BdsParseArgs {
 		}
 
 		// Default parsing
-		String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
-		return varType.parse(val);
+		String valStr = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
+		Value val = varType.newValue();
+		val.parse(valStr);
+		return val;
 	}
 
 	public void setDebug(boolean debug) {

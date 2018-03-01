@@ -18,4 +18,9 @@ public class ValueString extends ValuePrimitive<String> {
 		return value;
 	}
 
+	@Override
+	public void parse(String str) {
+		value = str;
+	}
+
 }

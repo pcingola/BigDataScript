@@ -5,7 +5,6 @@ import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
-import org.bds.util.Gpr;
 import org.bds.util.GprString;
 
 /**
@@ -110,8 +109,11 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	}
 
 	public void setValue(Value value) {
-		if (debug) Gpr.debug("Setting map:\t" + name + " = " + value);
-		this.value.set(value);
+		this.value.set(value.get());
+	}
+
+	public void setValueNative(Object obj) {
+		this.value.set(obj);
 	}
 
 	@Override

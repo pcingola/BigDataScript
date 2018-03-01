@@ -64,6 +64,10 @@ public abstract class Value {
 		set(type.getDefaultValue());
 	}
 
+	public void parse(String str) {
+		throw new RuntimeException("String parsing unimplemented for type '" + this + "'");
+	}
+
 	public abstract void set(Object v);
 
 }

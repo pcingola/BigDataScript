@@ -14,6 +14,7 @@ import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.statement.Statement;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
+import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.task.TailFile;
@@ -152,12 +153,12 @@ public class Report {
 		// Show Scope
 		//---
 		Scope scope = bdsThread.getScope();
-		rTemplate.add("scope.VAR_ARGS_LIST", scope.getSymbol(Scope.GLOBAL_VAR_ARGS_LIST).getValue());
+		rTemplate.add("scope.VAR_ARGS_LIST", scope.getSymbol(GlobalScope.GLOBAL_VAR_ARGS_LIST).getValue());
 		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).getValue());
 		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getSymbol(ExpressionTask.TASK_OPTION_CPUS).getValue());
 
 		// Scope symbols
-		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
+		ArrayList<ScopeSymbol> ssyms = new ArrayList<>();
 		ssyms.addAll(scope.getSymbols());
 		Collections.sort(ssyms);
 

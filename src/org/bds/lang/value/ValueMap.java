@@ -27,8 +27,15 @@ public class ValueMap extends Value {
 	 * Get element 'idx' wrapped into a 'Value'
 	 */
 	public Value getValue(Value idx) {
-		Object elem = get().get(idx);
-		return ((TypeMap) type).getValueType().newValue(elem);
+		Object oidx = idx.get();
+		Object oelem = get().get(oidx);
+		return ((TypeMap) type).getValueType().newValue(oelem);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void put(Value key, Value val) {
+		Map map = get();
+		map.put(key.get(), val.get());
 	}
 
 	@Override
