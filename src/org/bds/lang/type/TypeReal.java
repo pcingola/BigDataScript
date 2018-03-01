@@ -29,7 +29,7 @@ public class TypeReal extends Type {
 
 		if (vt.isBool()) val = ((ValueBool) v).get() ? 1.0 : 0.0;
 		else if (vt.isInt()) val = ((ValueInt) v).get();
-		else throw new RuntimeException("Cannot convert map type '" + v.getType() + "' to 'bool'");
+		else throw new RuntimeException("Cannot convert type '" + v.getType() + "' to 'real'");
 
 		vb.set(val);
 		return vb;

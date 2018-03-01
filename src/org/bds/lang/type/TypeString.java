@@ -1,7 +1,6 @@
 package org.bds.lang.type;
 
 import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueString;
 
 public class TypeString extends Type {
@@ -17,15 +16,7 @@ public class TypeString extends Type {
 	public Value cast(Value v) {
 		Type vt = v.getType();
 		if (vt.isString()) return v;
-
-		ValueString vs = new ValueString();
-		String val = "";
-
-		if (vt.isBool()) val = ((ValueBool) v).get() ? "true" : "false";
-		else val = v.toString();
-
-		vs.set(val);
-		return vs;
+		return new ValueString(v.toString());
 	}
 
 	@Override

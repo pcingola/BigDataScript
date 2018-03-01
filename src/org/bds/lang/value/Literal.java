@@ -34,7 +34,9 @@ public abstract class Literal extends Expression {
 
 	@Override
 	public Type returnType(Scope scope) {
-		return value.getType();
+		if (returnType != null) return returnType;
+		returnType = value.getType();
+		return returnType;
 	}
 
 	/**

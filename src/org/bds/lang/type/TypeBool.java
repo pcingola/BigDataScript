@@ -35,7 +35,7 @@ public class TypeBool extends Type {
 		if (vt.isInt()) val = (((ValueInt) v).get() != 0L);
 		else if (vt.isReal()) val = (((ValueReal) v).get() != 0.0);
 		else if (vt.isString()) val = !(((ValueString) v).get().isEmpty());
-		else throw new RuntimeException("Cannot convert map type '" + v.getType() + "' to 'bool'");
+		else throw new RuntimeException("Cannot convert type '" + v.getType() + "' to 'bool'");
 
 		vb.set(val);
 		return vb;

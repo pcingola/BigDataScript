@@ -12,7 +12,7 @@ public class TypeInt extends Type {
 
 	@Override
 	public boolean canCast(Type type) {
-		return isInt() || isBool();
+		return type.isInt() || type.isBool();
 	}
 
 	/**
@@ -27,7 +27,7 @@ public class TypeInt extends Type {
 		long val = 0;
 
 		if (vt.isBool()) val = ((ValueBool) v).get() ? 1 : 0;
-		else throw new RuntimeException("Cannot convert map type '" + v.getType() + "' to 'bool'");
+		else throw new RuntimeException("Cannot convert type '" + v.getType() + "' to 'int'");
 
 		vb.set(val);
 		return vb;
