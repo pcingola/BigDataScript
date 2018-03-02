@@ -6,6 +6,8 @@ import org.bds.lang.value.ValueInt;
 
 public class TypeInt extends Type {
 
+	private static final Integer ZERO = 0;
+
 	public TypeInt() {
 		super(PrimitiveType.INT);
 	}
@@ -31,6 +33,11 @@ public class TypeInt extends Type {
 
 		vb.set(val);
 		return vb;
+	}
+
+	@Override
+	public Object getDefaultValueNative() {
+		return ZERO;
 	}
 
 	@Override

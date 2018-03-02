@@ -42,7 +42,14 @@ public class TypeList extends Type {
 
 	public static boolean debug = false;
 
+	public static TypeList LIST_ANY = new TypeList(Types.ANY);
+
 	Type elementType; // Type of elements in the list
+
+	public static TypeList factory(BdsNode parent, ParseTree tree) {
+		TypeList typeList = new TypeList(Types.STRING);
+		return get(typeList.getElementType());
+	}
 
 	/**
 	 * Get a (cached) list type
@@ -66,10 +73,9 @@ public class TypeList extends Type {
 		return elementType + "[]";
 	}
 
-	private TypeList(BdsNode parent, ParseTree tree, Type baseType) {
+	private TypeList(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		primitiveType = PrimitiveType.LIST;
-		elementType = baseType;
 	}
 
 	private TypeList(Type baseType) {
@@ -159,12 +165,11 @@ public class TypeList extends Type {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		// TODO: We are only allowing to build lists of primitive types
+		// !!! TODO: We are only allowing to build lists of primitive types
 		String listTypeName = tree.getChild(0).getChild(0).getText();
 		primitiveType = PrimitiveType.LIST;
-		elementType = Types.get(listTypeName.toUpperCase());
+		elementType = Types.get(listTypeName);
 		Types.put(this);
-		addNativeMethods();
 	}
 
 	@Override

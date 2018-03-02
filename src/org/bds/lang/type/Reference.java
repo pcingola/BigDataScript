@@ -36,6 +36,8 @@ public abstract class Reference extends Expression {
 	 */
 	public abstract void parse(String str);
 
+	// public abstract void setValue(BdsThread bdsThread, Object value);
+
 	public abstract void setValue(BdsThread bdsThread, Value value);
 
 }

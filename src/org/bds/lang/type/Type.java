@@ -21,8 +21,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	protected Type(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		String typeName = tree.getChild(0).getText();
-		primitiveType = PrimitiveType.valueOf(typeName);
-		returnType = this;
+		primitiveType = PrimitiveType.valueOf(typeName.toUpperCase());
 	}
 
 	public Type(PrimitiveType primitiveType) {
@@ -30,11 +29,6 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		this.primitiveType = primitiveType;
 		returnType = this;
 		scope = new Scope();
-	}
-
-	@Override
-	public Scope getScope() {
-		return scope;
 	}
 
 	/**
@@ -79,8 +73,27 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		return primitiveType.equals(type.primitiveType);
 	}
 
+	/** 
+	 * Default value (native object). Most of the time this value is null 
+	 * @return
+	 */
+	public Object getDefaultValueNative() {
+		return null;
+	}
+
 	public PrimitiveType getPrimitiveType() {
 		return primitiveType;
+	}
+
+	@Override
+	public Scope getScope() {
+		return scope;
+	}
+
+	@Override
+	protected void initialize() {
+		returnType = this;
+		scope = new Scope();
 	}
 
 	/**

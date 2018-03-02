@@ -23,11 +23,13 @@ public class TypeMap extends Type {
 
 	public static boolean debug = false;
 
+	public static final TypeMap MAP_ANY_ANY = new TypeMap(Types.ANY, Types.ANY);
+
 	protected Type keyType; // Type for 'key' elements
 	protected Type valueType; // Type for 'value' elements
 
 	/**
-	 * Get a list type
+	 * Get a map type (used cached version if found)
 	 */
 	public static TypeMap get(Type keyType, Type valueType) {
 		// Get type from hash
@@ -48,7 +50,7 @@ public class TypeMap extends Type {
 		return valueType + "{" + keyType + "}";
 	}
 
-	public TypeMap(BdsNode parent, ParseTree tree) {
+	private TypeMap(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		primitiveType = PrimitiveType.MAP;
 	}
@@ -142,7 +144,6 @@ public class TypeMap extends Type {
 		primitiveType = PrimitiveType.MAP;
 		keyType = Types.get(valueTypeName.toUpperCase());
 		Types.put(this);
-		addNativeMethods();
 	}
 
 	// !!! TODO: FIX

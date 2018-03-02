@@ -1,6 +1,8 @@
 package org.bds.lang;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,12 +66,77 @@ public class BdsNodeFactory {
 	}
 
 	/**
+	 * Find constructor and invoke it to create node
+	 * @param clazz: Node class
+	 * @param parent: Parameter for constructor
+	 * @param tree: Parameter for constructor
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected BdsNode createBdsNode(Class clazz, BdsNode parent, ParseTree tree) {
+		try {
+			// Create class
+			Constructor<BdsNode>[] classConstructors = clazz.getConstructors();
+			if (classConstructors.length < 1) {
+				// No public constructors found, try factory method
+				return createBdsNodeFactory(clazz, parent, tree);
+			}
+
+			Constructor<BdsNode> classConstructor = classConstructors[0];
+
+			// Number of arguments in constructor?
+			if (classConstructor.getParameterTypes().length == 0) {
+				return (BdsNode) clazz.newInstance();
+			} else if (classConstructor.getParameterTypes().length == 2) {
+				// Two parameter constructor
+				Object[] params = { parent, tree };
+				return classConstructor.newInstance(params);
+			} else throw new RuntimeException("Unknown constructor method for class '" + clazz.getCanonicalName() + "'");
+		} catch (Exception e) {
+			throw new RuntimeException("Error creating object: Class '" + clazz.getCanonicalName() + "'", e);
+		}
+	}
+
+	/**
+	 * Find constructor and invoke it to create node
+	 * @param clazz: Node class
+	 * @param parent: Parameter for constructor
+	 * @param tree: Parameter for constructor
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected BdsNode createBdsNodeFactory(Class clazz, BdsNode parent, ParseTree tree) {
+		try {
+			// Find factory method
+			Class[] paramClasses = { BdsNode.class, ParseTree.class };
+			Method factoryMethod = clazz.getMethod("factory", paramClasses);
+			if (factoryMethod == null) throw new RuntimeException("Could not find any public constructors or factory method for class '" + clazz.getCanonicalName() + "'");
+
+			// Invoke factory method
+			Object[] params = { parent, tree };
+			return (BdsNode) factoryMethod.invoke(null, params);
+		} catch (NoSuchMethodException | SecurityException e) {
+			throw new RuntimeException("Could not find any public constructors or factory method for class '" + clazz.getCanonicalName() + "'", e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException("Could not accedd factory method for class '" + clazz.getCanonicalName() + "'", e);
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException("Invalid arguments when invoking factory method for class '" + clazz.getCanonicalName() + "'", e);
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException("Invalid invokation of factory method for class '" + clazz.getCanonicalName() + "'", e);
+		}
+	}
+
+	/**
 	 * Create BigDataScriptNodes
 	 */
 	public final BdsNode factory(BdsNode parent, ParseTree tree) {
 		if (tree == null) return null;
 		if (tree instanceof TerminalNode) {
-			if (debug) Gpr.debug("Terminal node: " + tree.getClass().getCanonicalName() + "\n\t\tText: '" + tree.getText() + "'" + "\n\t\tSymbol: " + ((TerminalNode) tree).getSymbol() + "\n\t\tPayload: " + ((TerminalNode) tree).getPayload());
+			if (debug) {
+				Gpr.debug("Terminal node: " + tree.getClass().getCanonicalName() //
+						+ "\n\t\tText    : '" + tree.getText() + "'" //
+						+ "\n\t\tSymbol  : " + ((TerminalNode) tree).getSymbol() //
+						+ "\n\t\tPayload : " + ((TerminalNode) tree).getPayload() //
+				);
+			}
 			return null;
 		}
 
@@ -92,7 +159,7 @@ public class BdsNodeFactory {
 	/**
 	 * Create BigDataScriptNodes
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	public BdsNode factory(String className, BdsNode parent, ParseTree tree) {
 		className = stripPackageName(className);
 
@@ -100,47 +167,28 @@ public class BdsNodeFactory {
 		if ((tree != null) && isIgnore(tree)) return null;
 
 		// Types: Get instance nodes (singletons)
-		if (className.equals("TypePrimitiveBool")) return Types.BOOL;
-		if (className.equals("TypePrimitiveInt")) return Types.INT;
-		if (className.equals("TypePrimitiveReal")) return Types.REAL;
-		if (className.equals("TypePrimitiveString")) return Types.STRING;
-		if (className.equals("TypePrimitiveVoid")) return Types.VOID;
+		if (className.equals("TypeAny")) return Types.ANY;
+		if (className.equals("TypeBool")) return Types.BOOL;
+		if (className.equals("TypeInt")) return Types.INT;
+		if (className.equals("TypeNull")) return Types.NULL;
+		if (className.equals("TypeReal")) return Types.REAL;
+		if (className.equals("TypeString")) return Types.STRING;
+		if (className.equals("TypeVoid")) return Types.VOID;
 
 		// Create object
-		try {
-			Class clazz = findClass(className);
+		Class clazz = findClass(className);
 
-			// Is it a Type?
-			if (clazz == Type.class) {
-				if (tree == null) return new TypeFake(); // No tree data? return a new FAKE node
+		// Is it a Type?
+		if (clazz == Type.class) {
+			if (tree == null) return new TypeFake(); // No tree data? return a new FAKE node
 
-				// No need to create a new node
-				String typeName = tree.getChild(0).getText().toUpperCase();
-				return Types.get(typeName);
-			}
-
-			// Create class
-			Constructor<BdsNode>[] classConstructors = clazz.getConstructors();
-			Constructor<BdsNode> classConstructor = classConstructors[0];
-
-			BdsNode csnode;
-
-			// Number of arguments in constructor?
-			if (classConstructor.getParameterTypes().length == 0) {
-				csnode = (BdsNode) clazz.newInstance();
-			} else if (classConstructor.getParameterTypes().length == 2) {
-				// Two parameter constructor
-				Object[] params = new Object[2];
-				params[0] = parent;
-				params[1] = tree;
-				csnode = classConstructor.newInstance(params);
-			} else throw new RuntimeException("Unknown constructor method for class '" + className + "'");
-
-			// Done, return new object
-			return csnode;
-		} catch (Exception e) {
-			throw new RuntimeException("Error creating object: Class '" + className + "'", e);
+			// No need to create a new node
+			String typeName = tree.getChild(0).getText().toUpperCase();
+			return Types.get(typeName);
 		}
+
+		// Create class
+		return createBdsNode(clazz, parent, tree);
 	}
 
 	@SuppressWarnings("rawtypes")

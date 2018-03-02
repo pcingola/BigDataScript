@@ -116,9 +116,11 @@ public class VarDeclaration extends Statement {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		if (type != null) sb.append(type + " ");
-		for (int i = 0; i < varInit.length; i++) {
-			sb.append(varInit[i]);
-			if (i < varInit.length - 1) sb.append(",");
+		if (varInit != null) {
+			for (int i = 0; i < varInit.length; i++) {
+				sb.append(varInit[i]);
+				if (i < varInit.length - 1) sb.append(",");
+			}
 		}
 		return sb.toString();
 	}

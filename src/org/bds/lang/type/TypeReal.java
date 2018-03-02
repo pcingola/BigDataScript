@@ -7,6 +7,8 @@ import org.bds.lang.value.ValueReal;
 
 public class TypeReal extends Type {
 
+	private static final Double ZERO = 0.0;
+
 	public TypeReal() {
 		super(PrimitiveType.REAL);
 	}
@@ -33,6 +35,11 @@ public class TypeReal extends Type {
 
 		vb.set(val);
 		return vb;
+	}
+
+	@Override
+	public Object getDefaultValueNative() {
+		return ZERO;
 	}
 
 	@Override

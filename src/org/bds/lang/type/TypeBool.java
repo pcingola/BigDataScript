@@ -42,6 +42,11 @@ public class TypeBool extends Type {
 	}
 
 	@Override
+	public Object getDefaultValueNative() {
+		return Boolean.FALSE;
+	}
+
+	@Override
 	public boolean isBool() {
 		return true;
 	}

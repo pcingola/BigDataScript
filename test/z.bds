@@ -1,7 +1,14 @@
 #!/usr/bin/env bds
 
-i := 40
-j := 2.1
-println("i : $i")
-println("j : " + j)
-println("i+j : " + (i - j))
+#b := true
+#println("b : $b")
+#
+#s := 'hi'
+#println("s : $s")
+
+#l := ['a', 'ab', 'abc']
+string[] l
+l[0] = 'hi'
+l[1] = 'bye'
+
+println("l : $l")

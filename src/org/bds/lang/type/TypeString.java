@@ -5,6 +5,8 @@ import org.bds.lang.value.ValueString;
 
 public class TypeString extends Type {
 
+	private static final String EMPTY = "";
+
 	public TypeString() {
 		super(PrimitiveType.STRING);
 	}
@@ -17,6 +19,11 @@ public class TypeString extends Type {
 		Type vt = v.getType();
 		if (vt.isString()) return v;
 		return new ValueString(v.toString());
+	}
+
+	@Override
+	public Object getDefaultValueNative() {
+		return EMPTY;
 	}
 
 	@Override

@@ -14,6 +14,8 @@ public class Types {
 	public final static TypeBool BOOL = new TypeBool();
 	public final static TypeFake FAKE = new TypeFake(); // Fake type (for serialization)
 	public final static TypeInt INT = new TypeInt();
+	public final static TypeList LIST = TypeList.LIST_ANY; // Generic list
+	public final static TypeMap MAP = TypeMap.MAP_ANY_ANY; // Generic map
 	public final static TypeNull NULL = new TypeNull(); // NULL type
 	public final static TypeReal REAL = new TypeReal();
 	public final static TypeString STRING = new TypeString();

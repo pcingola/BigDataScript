@@ -28,12 +28,12 @@ public class ReferenceList extends Reference {
 		super(parent, tree);
 	}
 
-	//	@SuppressWarnings("rawtypes")
-	//	public ArrayList getList(Scope scope) {
-	//		ScopeSymbol ss = getScopeSymbol(scope);
-	//		if (ss == null) return null;
-	//		return (List) ss.getValue();
-	//	}
+	@SuppressWarnings("rawtypes")
+	public ValueList getList(Scope scope) {
+		ScopeSymbol ss = getScopeSymbol(scope);
+		if (ss == null) return null;
+		return (ValueList) ss.getValue();
+	}
 
 	/**
 	 * Get symbol from scope
@@ -132,36 +132,17 @@ public class ReferenceList extends Reference {
 		bdsThread.push(vlist.getValue(idx));
 	}
 
-	//	@Override
-	//	@SuppressWarnings("unchecked")
-	//	public void setValue(BdsThread bdsThread, Object value) {
-	//		if (value == null) return;
-	//
-	//		bdsThread.run(exprIdx);
-	//		int idx = (int) bdsThread.popInt();
-	//		if (bdsThread.isCheckpointRecover()) return;
-	//
-	//		ArrayList<Object> list = getList(bdsThread.getScope());
-	//		if (list == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
-	//
-	//		// Make sure the array is big enough to hold the data
-	//		if (idx >= list.size()) {
-	//			TypeList type = (TypeList) getType(bdsThread.getScope());
-	//			Type baseType = type.getElementType();
-	//			list.ensureCapacity(idx + 1);
-	//
-	//			while (list.size() <= idx)
-	//				list.add(baseType.getDefaultValue());
-	//		}
-	//
-	//		list.set(idx, value);
-	//	}
-
 	@Override
 	public void setValue(BdsThread bdsThread, Value value) {
-		// !!! UNIMPLEMNTED
-		throw new RuntimeException("!!! UNIMPLEMNTED");
+		if (value == null) return;
 
+		bdsThread.run(exprIdx);
+		int idx = (int) bdsThread.popInt();
+		if (bdsThread.isCheckpointRecover()) return;
+
+		ValueList vlist = getList(bdsThread.getScope());
+		if (vlist == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
+		vlist.setValue(idx, value);
 	}
 
 	@Override
