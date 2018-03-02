@@ -1,6 +1,7 @@
 #!/usr/bin/env bds
 
-i := 42
-j := 5
+i := 40
+j := 2.1
 println("i : $i")
 println("j : " + j)
+println("i+j : " + (i - j))

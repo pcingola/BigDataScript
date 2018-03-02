@@ -13,7 +13,7 @@ public class TypeReal extends Type {
 
 	@Override
 	public boolean canCast(Type type) {
-		return type.isBool() || type.isInt();
+		return type.isReal() || type.isInt() || type.isBool();
 	}
 
 	/**
