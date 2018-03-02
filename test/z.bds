@@ -10,5 +10,6 @@
 string[] l
 l[0] = 'hi'
 l[1] = 'bye'
+l[2] = 42
 
 println("l : $l")

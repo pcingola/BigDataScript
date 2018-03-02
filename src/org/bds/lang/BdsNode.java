@@ -71,7 +71,9 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public void checkCanCastTo(Type t, CompilerMessages compilerMessages) {
-		if (!t.canCast(returnType)) compilerMessages.add(this, "Cannot cast " + returnType + " to " + t, MessageType.ERROR);
+		if (!t.canCast(returnType)) {
+			compilerMessages.add(this, "Cannot cast " + returnType + " to " + t, MessageType.ERROR);
+		}
 	}
 
 	public void checkCanCastToBool(CompilerMessages compilerMessages) {

@@ -160,7 +160,7 @@ public class TypeList extends Type {
 
 	@Override
 	public Value newValue() {
-		return new ValueList(elementType);
+		return new ValueList(this);
 	}
 
 	@Override
