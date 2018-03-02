@@ -28,7 +28,6 @@ public class ReferenceList extends Reference {
 		super(parent, tree);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public ValueList getList(Scope scope) {
 		ScopeSymbol ss = getScopeSymbol(scope);
 		if (ss == null) return null;
@@ -114,7 +113,6 @@ public class ReferenceList extends Reference {
 	/**
 	 * Evaluate an expression
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		// Evaluate expressions
