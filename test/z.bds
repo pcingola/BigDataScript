@@ -1,15 +1,21 @@
 #!/usr/bin/env bds
 
-#b := true
-#println("b : $b")
-#
-#s := 'hi'
-#println("s : $s")
+b := true
+println("b : $b")
+
+s := 'hi'
+println("s : $s")
 
 #l := ['a', 'ab', 'abc']
 string[] l
 l[0] = 'hi'
-l[1] = 'bye'
-l[2] = 42
-
+l[1] = 'world'
+l[2] = 42 
+l[3] = 1.23 
+l[4] = true 
+l[10] = 'bye'
 println("l : $l")
+
+i := 5 + true
+print("i : $i")
+

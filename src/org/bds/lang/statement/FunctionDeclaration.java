@@ -157,7 +157,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		// Not a standard 'return' statement? Make sure we are returning the right type.
 		if (bdsThread.isReturn()) {
 			bdsThread.setRunState(RunState.OK); // Restore 'OK' runState
-		} else if (!returnType.canCast(bdsThread.getReturnValue().getType())) {
+		} else if (!returnType.canCastTo(bdsThread.getReturnValue().getType())) {
 			// Not the right type? Force a default map of the right type
 			bdsThread.setReturnValue(returnType.newValue());
 		}

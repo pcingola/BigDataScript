@@ -15,7 +15,7 @@ public class TypeUniqueValue extends Type {
 	}
 
 	@Override
-	public boolean canCast(Type type) {
+	public boolean canCastTo(Type type) {
 		return true;
 	}
 

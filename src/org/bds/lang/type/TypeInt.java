@@ -13,8 +13,8 @@ public class TypeInt extends Type {
 	}
 
 	@Override
-	public boolean canCast(Type type) {
-		return type.isInt() || type.isBool();
+	public boolean canCastTo(Type type) {
+		return type.isInt() || type.isReal() || type.isString();
 	}
 
 	/**

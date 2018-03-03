@@ -12,6 +12,14 @@ public class TypeString extends Type {
 	}
 
 	/**
+	 * We can cast anything to a string
+	 */
+	@Override
+	public boolean canCastTo(Type type) {
+		return type.isString();
+	}
+
+	/**
 	 * Cast a map 'v' to this type (i.e. convert to type 'string')
 	 */
 	@Override
@@ -28,7 +36,7 @@ public class TypeString extends Type {
 
 	@Override
 	public boolean isString() {
-		return false;
+		return true;
 	}
 
 	@Override

@@ -120,7 +120,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 					// Same argument?
 					if ((argType != null) && !argType.equals(funcType)) {
 						// Can we cast?
-						if (argType.canCast(funcType)) score++; // Add a point if we can cast
+						if (argType.canCastTo(funcType)) score++; // Add a point if we can cast
 						else ok = false;
 					}
 				}

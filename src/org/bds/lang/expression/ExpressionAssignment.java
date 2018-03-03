@@ -68,7 +68,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 		if (!((Reference) left).isVariable(scope)) compilerMessages.add(this, "Cannot assign to non-variable '" + left + "'", MessageType.ERROR);
 
 		// Can we cast 'right type' into 'left type'?
-		if (!right.getReturnType().canCast(left.getReturnType())) {
+		if (!right.canCastTo(left)) {
 			compilerMessages.add(this, "Cannot cast " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
 		}
 	}

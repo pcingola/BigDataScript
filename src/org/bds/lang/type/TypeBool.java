@@ -13,12 +13,8 @@ public class TypeBool extends Type {
 	}
 
 	@Override
-	public boolean canCast(Type type) {
-		return equals(type) // Same type?
-				|| type.isInt() //
-				|| type.isReal() //
-				|| type.isString() //
-		;
+	public boolean canCastTo(Type type) {
+		return type.isBool() || type.isInt() || type.isReal() || type.isString();
 	}
 
 	/**

@@ -70,7 +70,7 @@ public class Print extends Statement {
 
 		if ((expr != null) //
 				&& (expr.getReturnType() != null) //
-				&& (!expr.getReturnType().canCast(returnType)) //
+				&& (!expr.getReturnType().canCastTo(returnType)) //
 		) {
 			compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
 		}

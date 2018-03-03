@@ -76,7 +76,7 @@ public class Return extends Statement {
 
 		if (expr == null) {
 			if (!returnType.isVoid()) compilerMessages.add(this, "Cannot cast " + Types.VOID + " to " + returnType, MessageType.ERROR);
-		} else if ((expr.getReturnType() != null) && (!expr.getReturnType().canCast(returnType))) compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
+		} else if ((expr.getReturnType() != null) && (!expr.getReturnType().canCastTo(returnType))) compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
 
 	}
 }

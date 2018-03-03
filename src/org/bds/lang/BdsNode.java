@@ -54,24 +54,29 @@ public abstract class BdsNode implements BdsSerialize {
 		doParse(tree);
 	}
 
-	public boolean canCast(Type t) {
-		return returnType.canCast(t);
+	/**
+	 * Can cast type 't' to returnType?
+	 * @param t
+	 * @return
+	 */
+	public boolean canCastTo(BdsNode n) {
+		return returnType.canCastTo(n.getReturnType());
 	}
 
 	public boolean canCastToBool() {
-		return Types.BOOL.canCast(returnType);
+		return returnType.canCastTo(Types.BOOL);
 	}
 
 	public boolean canCastToInt() {
-		return Types.INT.canCast(returnType);
+		return returnType.canCastTo(Types.INT);
 	}
 
 	public boolean canCastToReal() {
-		return Types.REAL.canCast(returnType);
+		return returnType.canCastTo(Types.REAL);
 	}
 
 	public void checkCanCastTo(Type t, CompilerMessages compilerMessages) {
-		if (!t.canCast(returnType)) {
+		if (!returnType.canCastTo(t)) {
 			compilerMessages.add(this, "Cannot cast " + returnType + " to " + t, MessageType.ERROR);
 		}
 	}
@@ -368,15 +373,15 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isAny() {
-		return returnType.getPrimitiveType() == PrimitiveType.ANY;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.ANY;
 	}
 
 	public boolean isBool() {
-		return returnType.getPrimitiveType() == PrimitiveType.BOOL;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.BOOL;
 	}
 
 	public boolean isClass() {
-		return returnType.getPrimitiveType() == PrimitiveType.CLASS;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.CLASS;
 	}
 
 	/**
@@ -387,28 +392,30 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isFunction() {
-		return returnType.getPrimitiveType() == PrimitiveType.FUNCTION;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.FUNCTION;
 	}
 
 	public boolean isInt() {
-		return returnType.getPrimitiveType() == PrimitiveType.INT;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.INT;
 	}
 
 	public boolean isList() {
-		return returnType.getPrimitiveType() == PrimitiveType.LIST;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.LIST;
 	}
 
 	public boolean isList(Type elementType) {
-		if (!isList()) return false;
+		if (isList()) {
 
-		Type re = ((TypeList) returnType).getElementType();
+			Type re = ((TypeList) returnType).getElementType();
 
-		// If elementType is void, then the list must be empty
-		// An empty list complies with all types
-		if (re.isVoid() || re.isAny() || elementType.isAny()) return true;
+			// If elementType is void, then the list must be empty
+			// An empty list complies with all types
+			if (re.isVoid() || re.isAny() || elementType.isAny()) return true;
 
-		// Same element types?
-		return re.equals(elementType);
+			// Same element types?
+			return re.equals(elementType);
+		}
+		return false;
 	}
 
 	public boolean isMap() {
@@ -416,9 +423,11 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isMap(Type keyType, Type valueType) {
-		if (!isMap()) return false;
-		TypeMap typeMap = (TypeMap) returnType;
-		return typeMap.getKeyType().is(keyType) && typeMap.getValueType().is(valueType);
+		if (isMap()) {
+			TypeMap typeMap = (TypeMap) returnType;
+			return typeMap.getKeyType().is(keyType) && typeMap.getValueType().is(valueType);
+		}
+		return false;
 	}
 
 	/**

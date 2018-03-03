@@ -59,8 +59,8 @@ public class LiteralList extends Literal {
 			if (typeExpr != null) {
 				if (baseType == null) {
 					baseType = typeExpr;
-				} else if (!typeExpr.canCast(baseType)) { // Can we cast ?
-					if (baseType.canCast(typeExpr)) { // Can we cast the other way?
+				} else if (!typeExpr.canCastTo(baseType)) { // Can we cast ?
+					if (baseType.canCastTo(typeExpr)) { // Can we cast the other way?
 						baseType = typeExpr;
 					} else {
 						// We have a problem...we'll report it in typeCheck.
@@ -128,7 +128,9 @@ public class LiteralList extends Literal {
 			Type typeExpr = expr.returnType(scope);
 
 			// Can we cast ?
-			if ((typeExpr != null) && !typeExpr.canCast(baseType)) compilerMessages.add(this, "List types are not consistent. Expecting " + baseType, MessageType.ERROR);
+			if ((typeExpr != null) && !typeExpr.canCastTo(baseType)) {
+				compilerMessages.add(this, "List types are not consistent. Expecting " + baseType, MessageType.ERROR);
+			}
 		}
 	}
 

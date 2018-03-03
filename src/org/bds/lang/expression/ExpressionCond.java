@@ -83,7 +83,7 @@ public class ExpressionCond extends Expression {
 
 		if (exprTrue != null //
 				&& exprFalse != null //
-				&& !exprTrue.getReturnType().canCast(exprFalse.getReturnType()) //
+				&& !exprFalse.getReturnType().canCastTo(exprTrue.getReturnType()) //
 		) compilerMessages.add(this, "Both expressions must be the same type. Expression for 'true': " + exprTrue.getReturnType() + ", expression for 'false' " + exprFalse.getReturnType(), MessageType.ERROR);
 	}
 }

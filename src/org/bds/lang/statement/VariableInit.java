@@ -137,7 +137,7 @@ public class VariableInit extends BdsNode {
 				// OK, Empty list literal can be assigned to any list
 			} else if (varSym.getType().isMap() && exprRetType.isMap() && (expression instanceof LiteralMapEmpty)) {
 				// OK, Empty map literal can be assigned to any map
-			} else if (!exprRetType.canCast(varType)) {
+			} else if (!exprRetType.canCastTo(varType)) {
 				// We cannot cast expression's type to variable's type: Error
 				compilerMessages.add(this, "Cannot cast " + exprRetType + " to " + varType, MessageType.ERROR);
 			}

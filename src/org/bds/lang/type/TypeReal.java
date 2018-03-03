@@ -14,8 +14,8 @@ public class TypeReal extends Type {
 	}
 
 	@Override
-	public boolean canCast(Type type) {
-		return type.isReal() || type.isInt() || type.isBool();
+	public boolean canCastTo(Type type) {
+		return type.isReal() || type.isString();
 	}
 
 	/**

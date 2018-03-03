@@ -32,11 +32,9 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	}
 
 	/**
-	 * Can 'type' be casted to 'this'?
-	 * @param type: The type to be casted to 'this' type
+	 * Can this type be casted to 'type'?
 	 */
-	@Override
-	public boolean canCast(Type type) {
+	public boolean canCastTo(Type type) {
 		return equals(type); // Same type
 	}
 
@@ -56,7 +54,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	}
 
 	public void checkCanCast(Type type, CompilerMessages compilerMessages) {
-		if (!returnType.isReturnTypesNotNull() && !returnType.canCast(type)) {
+		if (returnType.isReturnTypesNotNull() && !returnType.canCastTo(type)) {
 			compilerMessages.add(this, "Cannot cast " + type + " to " + returnType, MessageType.ERROR);
 		}
 	}
@@ -73,8 +71,8 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		return primitiveType.equals(type.primitiveType);
 	}
 
-	/** 
-	 * Default value (native object). Most of the time this value is null 
+	/**
+	 * Default value (native object). Most of the time this value is null
 	 * @return
 	 */
 	public Object getDefaultValueNative() {

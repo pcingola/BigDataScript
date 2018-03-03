@@ -195,13 +195,16 @@ public class ForLoopList extends StatementWithScope {
 		if (statement == null) compilerMessages.add(this, "Empty for statement", MessageType.ERROR);
 
 		if (exprType != null) {
-			if (!exprType.isList() && !exprType.isMap()) compilerMessages.add(this, "Expression should return a list or a map", MessageType.ERROR);
-			else if (beginVarDecl != null) {
+			if (!exprType.isList() && !exprType.isMap()) {
+				compilerMessages.add(this, "Expression should return a list or a map", MessageType.ERROR);
+			} else if (beginVarDecl != null) {
 				TypeList exprListType = (TypeList) exprType;
 				Type baseType = exprListType.getElementType();
 				Type varType = beginVarDecl.getType();
 
-				if ((baseType != null) && !baseType.canCast(varType)) compilerMessages.add(this, "Cannot cast " + baseType + " to " + varType, MessageType.ERROR);
+				if ((baseType != null) && !baseType.canCastTo(varType)) {
+					compilerMessages.add(this, "Cannot cast " + baseType + " to " + varType, MessageType.ERROR);
+				}
 			}
 		}
 	}

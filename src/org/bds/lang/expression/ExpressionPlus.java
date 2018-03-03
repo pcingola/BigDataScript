@@ -35,23 +35,42 @@ public class ExpressionPlus extends ExpressionMath {
 
 		super.returnType(scope);
 
-		if (left.canCastToInt() && right.canCastToInt()) returnType = Types.INT;
-		else if (left.canCastToReal() && right.canCastToReal()) returnType = Types.REAL;
-		else if (left.isList() && right.isList()) {
-			if (left.getReturnType() == null || right.getReturnType() == null) return null;
-			if (left.getReturnType().compareTo(right.getReturnType()) == 0) returnType = left.getReturnType(); // List plus List
-		} else if (left.isList() && !right.isList()) {
-			TypeList tlist = (TypeList) left.getReturnType();
-			if (left.getReturnType() == null || right.getReturnType() == null) return null;
-			if (right.getReturnType().compareTo(tlist.getElementType()) == 0) returnType = left.getReturnType(); // List plus Item
-		} else if (!left.isList() && right.isList()) {
-			TypeList tlist = (TypeList) right.getReturnType();
-			if (left.getReturnType() == null || right.getReturnType() == null) return null;
-			if (left.getReturnType().compareTo(tlist.getElementType()) == 0) returnType = right.getReturnType(); // Item plus List
-		} else if (right.isList() && left.getReturnType().canCast(right.getReturnType())) returnType = right.getReturnType(); // Item plus List
-		else if (left.isString() || right.isString()) returnType = Types.STRING;
+		if (left.canCastToInt() && right.canCastToInt()) {
+			// Int + Int
+			returnType = Types.INT;
+		} else if (left.canCastToReal() && right.canCastToReal()) {
+			// Real + Real
+			returnType = Types.REAL;
+		} else if (left.isList() || right.isList()) {
+			// Either side is a list
+			returnType = returnTypeListPlusList(left.getReturnType(), right.getReturnType());
+		} else if (left.isString() || right.isString()) {
+			// String plus something (convert to string)
+			returnType = Types.STRING;
+		}
 
 		return returnType;
+	}
+
+	/**
+	 * Calculate the element type of the resulting list '+' operation
+	 * @param let: Left type (can be either list or element)
+	 * @param ret: Right type (can be either list or element)
+	 * @return
+	 */
+	public Type returnTypeListPlusList(Type lt, Type rt) {
+		if (lt == null || rt == null) return null;
+		if (!lt.isList() && !rt.isList()) return null;
+
+		// Get element type
+		Type let = lt, ret = rt;
+		if (lt.isList()) let = ((TypeList) lt).getElementType();
+		if (rt.isList()) ret = ((TypeList) rt).getElementType();
+
+		// Which one we can cast?
+		if (ret.canCastTo(let)) return TypeList.get(let);
+		if (let.canCastTo(ret)) return TypeList.get(ret);
+		return null;
 	}
 
 	/**
@@ -105,16 +124,11 @@ public class ExpressionPlus extends ExpressionMath {
 
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		if (left.isList() && right.isList()) {
-			if (left.getReturnType().compareTo(right.getReturnType()) != 0) {
-				compilerMessages.add(this, "Cannot append " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
+		if (left.isList() || right.isList()) {
+			Type rt = returnTypeListPlusList(left.getReturnType(), right.getReturnType());
+			if (rt == null) {
+				compilerMessages.add(this, "Cannot append " + left.getReturnType() + " and " + right.getReturnType(), MessageType.ERROR);
 			}
-		} else if (left.isList() && !right.isList()) {
-			TypeList tlist = (TypeList) left.getReturnType();
-			if (right.getReturnType().compareTo(tlist.getElementType()) != 0) compilerMessages.add(this, "Cannot append " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
-		} else if (right.isList() && !left.isList()) {
-			TypeList tlist = (TypeList) right.getReturnType();
-			if (left.getReturnType().compareTo(tlist.getElementType()) != 0) compilerMessages.add(this, "Cannot append " + left.getReturnType() + " to " + right.getReturnType(), MessageType.ERROR);
 		} else if (left.isString() || right.isString()) {
 			// Either side is a string? => String plus String
 		} else {

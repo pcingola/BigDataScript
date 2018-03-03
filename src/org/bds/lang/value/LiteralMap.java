@@ -61,8 +61,8 @@ public class LiteralMap extends Literal {
 			if (typeExpr != null) {
 				if (valueType == null) {
 					valueType = typeExpr;
-				} else if (!typeExpr.canCast(valueType)) { // Can we cast ?
-					if (valueType.canCast(typeExpr)) { // Can we cast the other way?
+				} else if (!typeExpr.canCastTo(valueType)) { // Can we cast ?
+					if (valueType.canCastTo(typeExpr)) { // Can we cast the other way?
 						valueType = typeExpr;
 					} else {
 						// We have a problem...we'll report it in typeCheck.
@@ -135,7 +135,9 @@ public class LiteralMap extends Literal {
 			Type typeExpr = expr.returnType(scope);
 
 			// Can we cast ?
-			if ((typeExpr != null) && !typeExpr.canCast(valueType)) compilerMessages.add(this, "Map types are not consistent. Expecting " + valueType, MessageType.ERROR);
+			if ((typeExpr != null) && !typeExpr.canCastTo(valueType)) {
+				compilerMessages.add(this, "Map types are not consistent. Expecting " + valueType, MessageType.ERROR);
+			}
 		}
 
 		// !!! TODO: Type check for keys

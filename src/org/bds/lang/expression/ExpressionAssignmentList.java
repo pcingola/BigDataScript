@@ -138,7 +138,7 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 
 				// Check that all left hand sides match
 				for (Expression l : lefts)
-					if (!type.canCast(l.getReturnType())) compilerMessages.add(this, "Cannot cast " + type + " to " + l.getReturnType(), MessageType.ERROR);
+					if (!type.canCastTo(l.getReturnType())) compilerMessages.add(this, "Cannot cast " + type + " to " + l.getReturnType(), MessageType.ERROR);
 			}
 		} else compilerMessages.add(this, "Right hand side expreesion is not a list.", MessageType.ERROR);
 	}

@@ -32,7 +32,7 @@ public class MethodNativeListFilter extends MethodNativeList {
 		// TODO: This is awful to say the least!
 		//       Type checking should be done at compile time, not here
 		//       (this is supposed to be a statically typed language)
-		if (!function.getReturnType().canCast(Types.BOOL)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + Types.BOOL);
+		if (!function.getReturnType().canCastTo(Types.BOOL)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + Types.BOOL);
 
 		// TODO: Check that function should only have one argument
 		// TODO: Check List's elements should be 'castable' to function's argument
