@@ -30,7 +30,7 @@ public class LiteralMapEmpty extends LiteralMap {
 		if (returnType != null) return returnType;
 
 		// Create a list of 'elementType'
-		returnType = TypeMap.get(Types.ANY, Types.ANY);
+		returnType = TypeMap.get(Types.VOID, Types.VOID);
 
 		return returnType;
 	}

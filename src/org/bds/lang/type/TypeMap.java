@@ -68,6 +68,24 @@ public class TypeMap extends TypeComposite {
 		this.valueType = valueType;
 	}
 
+	/**
+	 * Can this type be casted to 'type'?
+	 */
+	@Override
+	public boolean canCastTo(Type type) {
+		return equals(type) // Same type
+				|| isEmptyMap() // Empty mapscan be converted in assignment. e.g.: " map = {} "
+				|| type.isBool() // Convert to boolean value
+		;
+	}
+
+	@Override
+	public Value cast(Value v) {
+		if (is(v.getType())) return v; // Same type? No need to cast
+		if (v.getType().isMap() && ((TypeMap) v.getType()).isEmptyMap()) return newValue(); // Empty map? Create new value
+		throw new RuntimeException("Cannot cast type '" + v.getType() + "' to type '" + this + "'");
+	}
+
 	@Override
 	public Object castNativeObject(Object o) {
 		if (o instanceof Map) return o;
@@ -131,6 +149,14 @@ public class TypeMap extends TypeComposite {
 
 	public Type getValueType() {
 		return valueType;
+	}
+
+	/**
+	 * Empty map (e.g. LiteralMapEmpty)
+	 * @return
+	 */
+	boolean isEmptyMap() {
+		return getKeyType().isVoid() && getValueType().isVoid();
 	}
 
 	@Override

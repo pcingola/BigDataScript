@@ -56,15 +56,17 @@ public class ValueMap extends Value {
 	@SuppressWarnings("unchecked")
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
 		Map map = get();
+		if (map.isEmpty()) return "{}";
+
+		StringBuilder sb = new StringBuilder();
 		List keys = new ArrayList<>();
 		keys.addAll(map.keySet());
 		Collections.sort(keys);
 
 		for (Object o : keys) {
 			if (sb.length() > 0) sb.append(", ");
-			sb.append(o.toString() + " => " + map.get(o));
+			sb.append(" " + o.toString() + " => " + map.get(o));
 		}
 		return "{ " + sb.toString() + " }";
 	}

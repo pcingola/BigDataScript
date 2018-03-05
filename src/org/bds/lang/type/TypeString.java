@@ -16,7 +16,7 @@ public class TypeString extends TypePrimitive {
 	 */
 	@Override
 	public boolean canCastTo(Type type) {
-		return type.isString();
+		return type.isString() || type.isBool();
 	}
 
 	/**

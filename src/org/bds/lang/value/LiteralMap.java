@@ -73,6 +73,7 @@ public class LiteralMap extends Literal {
 
 		// Default key is string
 		if (keyType == null) keyType = Types.STRING;
+		if (valueType == null) keyType = valueType = Types.VOID; // Empty map
 
 		// Get a map type
 		returnType = TypeMap.get(keyType, valueType);

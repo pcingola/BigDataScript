@@ -3,6 +3,8 @@ package org.bds.lang.type;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueMap;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 
@@ -31,6 +33,8 @@ public class TypeBool extends TypePrimitive {
 		if (vt.isInt()) val = (((ValueInt) v).get() != 0L);
 		else if (vt.isReal()) val = (((ValueReal) v).get() != 0.0);
 		else if (vt.isString()) val = !(((ValueString) v).get().isEmpty());
+		else if (vt.isList()) val = ((ValueList) v).size() > 0;
+		else if (vt.isMap()) val = ((ValueMap) v).size() > 0;
 		else throw new RuntimeException("Cannot convert type '" + v.getType() + "' to 'bool'");
 
 		vb.set(val);

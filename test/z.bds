@@ -1,11 +1,41 @@
-#!/usr/bin.enbv bds
 
-string[] l1
-string[] l2
-l1 = []
-l2 = []
-println "l1: $l1\t\tl2: $l2"
-l1 += 'hi'
-println "l1: $l1\t\tl2: $l2"
-l2 += 'bye'
-println "l1: $l1\t\tl2: $l2"
+print("Hi\n")
+
+string sfalse = ""
+string strue = "hi"
+
+int ifalse = 0
+int itrue = 2
+
+real rfalse = 0.0
+real rtrue = 0.1
+
+string[] lfalse = []
+string[] ltrue = ['hi', 'bye']
+
+string{} mfalse = {}
+string{} mtrue = {'hi' => 'bye', 'hola' => 'adios' }
+
+# Assignments to bool
+bool bsfalse = sfalse 
+bool bstrue  = strue 
+bool bifalse = ifalse 
+bool bitrue  = itrue 
+bool brfalse = rfalse 
+bool brtrue  = rtrue 
+bool blfalse = lfalse 
+bool bltrue  = ltrue 
+bool bmfalse =  mfalse
+bool bmtrue  =  mtrue
+
+print(" bsfalse = $bsfalse\n")
+print(" bstrue  = $bstrue \n")
+print(" bifalse = $bifalse\n")
+print(" bitrue  = $bitrue \n")
+print(" brfalse = $brfalse\n")
+print(" brtrue  = $brtrue \n")
+print(" blfalse = $blfalse\n")
+print(" bltrue  = $bltrue \n")
+print(" bmfalse =  $bmfalse\n")
+print(" bmtrue  =  $bmtrue \n")
+print("End\n")
