@@ -13,11 +13,19 @@ import org.bds.lang.type.TypeList;
 @SuppressWarnings("rawtypes")
 public class ValueList extends Value {
 
-	List value;
+	List<Object> value;
 
 	public ValueList(Type type) {
+		this(type, -1);
+	}
+
+	public ValueList(Type type, int len) {
 		super(type);
-		value = new ArrayList<>();
+		value = len > 0 ? new ArrayList<>(len) : new ArrayList<>();
+	}
+
+	public void add(Value v) {
+		value.add(v.get());
 	}
 
 	@Override
@@ -41,10 +49,11 @@ public class ValueList extends Value {
 		return idx < 0L || idx > list.size();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void set(Object v) {
-		// TODO: Check list elements class
-		value = (List) v;
+		// !!! TODO: Check list elements class
+		value = (List<Object>) v;
 	}
 
 	@SuppressWarnings("unchecked")

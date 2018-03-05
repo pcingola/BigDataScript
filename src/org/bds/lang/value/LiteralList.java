@@ -1,7 +1,5 @@
 package org.bds.lang.value;
 
-import java.util.ArrayList;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
@@ -26,7 +24,7 @@ public class LiteralList extends Literal {
 		super(parent, tree);
 	}
 
-	public Type baseType() {
+	public Type getElementType() {
 		return ((TypeList) returnType).getElementType();
 	}
 
@@ -78,24 +76,21 @@ public class LiteralList extends Literal {
 		return returnType;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		ArrayList list = new ArrayList(values.length);
-		baseType();
+		Type elemType = getElementType();
+		ValueList vlist = new ValueList(returnType, values.length);
 
+		// Add all elements
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			bdsThread.run(expr); // Evaluate expression
 
-			bdsThread.pop();
-			// !!! TODO:
-			// map = baseType.cast(map); // Cast to base type
-			//			list.add(map); // Add it to list
-			throw new RuntimeException("!!!");
+			value = bdsThread.pop();
+			vlist.add(elemType.cast(value));
 		}
 
-		bdsThread.push(list);
+		bdsThread.push(vlist);
 	}
 
 	@Override
