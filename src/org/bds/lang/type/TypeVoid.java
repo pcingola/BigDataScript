@@ -12,4 +12,9 @@ public class TypeVoid extends TypeUniqueValue {
 		super(PrimitiveType.VOID);
 	}
 
+	@Override
+	public boolean isVoid() {
+		return true;
+	}
+
 }

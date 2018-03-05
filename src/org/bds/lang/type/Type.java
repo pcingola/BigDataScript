@@ -1,11 +1,16 @@
 package org.bds.lang.type;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.value.Value;
 import org.bds.scope.Scope;
+import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerializer;
 
 /**
@@ -29,6 +34,17 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		this.primitiveType = primitiveType;
 		returnType = this;
 		scope = new Scope();
+	}
+
+	/**
+	 * Add all library methods here
+	 */
+	protected void addNativeMethods() {
+		List<MethodNative> methods = declateNativeMethods();
+		for (MethodNative method : methods) {
+			ScopeSymbol symbol = new ScopeSymbol(method.getFunctionName(), method.getType(), method);
+			getScope().add(symbol);
+		}
 	}
 
 	/**
@@ -65,6 +81,13 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	@Override
 	public int compareTo(Type type) {
 		return primitiveType.compareTo(type.primitiveType);
+	}
+
+	/**
+	 * Declare native methods (default is 'object' level methods
+	 */
+	protected List<MethodNative> declateNativeMethods() {
+		return new ArrayList<>(); // Empty list
 	}
 
 	public boolean equals(Type type) {
@@ -207,4 +230,5 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	public String toStringSerializer() {
 		return toString();
 	}
+
 }

@@ -344,22 +344,6 @@ public class BigDataScriptParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class TypePrimitiveStringContext extends TypeContext {
-		public TypePrimitiveStringContext(TypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveString(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveString(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveString(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class TypeArrayContext extends TypeContext {
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
@@ -379,19 +363,19 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class TypePrimitiveVoidContext extends TypeContext {
-		public TypePrimitiveVoidContext(TypeContext ctx) { copyFrom(ctx); }
+	public static class TypeIntContext extends TypeContext {
+		public TypeIntContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveVoid(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypeInt(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveVoid(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeInt(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveVoid(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeInt(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -417,19 +401,35 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class TypePrimitiveRealContext extends TypeContext {
-		public TypePrimitiveRealContext(TypeContext ctx) { copyFrom(ctx); }
+	public static class TypeRealContext extends TypeContext {
+		public TypeRealContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveReal(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypeReal(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveReal(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeReal(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveReal(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeReal(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class TypeStringContext extends TypeContext {
+		public TypeStringContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypeString(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeString(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeString(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -450,35 +450,35 @@ public class BigDataScriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class TypePrimitiveBoolContext extends TypeContext {
-		public TypePrimitiveBoolContext(TypeContext ctx) { copyFrom(ctx); }
+	public static class TypeBoolContext extends TypeContext {
+		public TypeBoolContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveBool(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypeBool(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveBool(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeBool(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveBool(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeBool(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class TypePrimitiveIntContext extends TypeContext {
-		public TypePrimitiveIntContext(TypeContext ctx) { copyFrom(ctx); }
+	public static class TypeVoidContext extends TypeContext {
+		public TypeVoidContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypePrimitiveInt(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).enterTypeVoid(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypePrimitiveInt(this);
+			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeVoid(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypePrimitiveInt(this);
+			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeVoid(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -503,7 +503,7 @@ public class BigDataScriptParser extends Parser {
 			switch (_input.LA(1)) {
 			case T__3:
 				{
-				_localctx = new TypePrimitiveBoolContext(_localctx);
+				_localctx = new TypeBoolContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
@@ -513,7 +513,7 @@ public class BigDataScriptParser extends Parser {
 				break;
 			case T__4:
 				{
-				_localctx = new TypePrimitiveIntContext(_localctx);
+				_localctx = new TypeIntContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(58);
@@ -522,7 +522,7 @@ public class BigDataScriptParser extends Parser {
 				break;
 			case T__5:
 				{
-				_localctx = new TypePrimitiveRealContext(_localctx);
+				_localctx = new TypeRealContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(59);
@@ -531,7 +531,7 @@ public class BigDataScriptParser extends Parser {
 				break;
 			case T__6:
 				{
-				_localctx = new TypePrimitiveStringContext(_localctx);
+				_localctx = new TypeStringContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(60);
@@ -540,7 +540,7 @@ public class BigDataScriptParser extends Parser {
 				break;
 			case T__7:
 				{
-				_localctx = new TypePrimitiveVoidContext(_localctx);
+				_localctx = new TypeVoidContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(61);

@@ -219,7 +219,7 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	}
 
 	/**
-	 * Get symbol on this scope (or any parent scope if not local)
+	 * Get symbol on this scope (only search this scope)
 	 */
 	public synchronized ScopeSymbol getSymbolLocal(String symbol) {
 		return symbols.get(symbol);

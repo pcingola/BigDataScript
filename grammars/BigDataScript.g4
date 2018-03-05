@@ -15,11 +15,11 @@ eol : (';' | '\n' )+;
 // Types
 typeList : type (',' type)* ;
 
-type : 'bool'                                                                              # typePrimitiveBool
-     | 'int'                                                                               # typePrimitiveInt
-     | 'real'                                                                              # typePrimitiveReal
-     | 'string'                                                                            # typePrimitiveString 
-     | 'void'                                                                              # typePrimitiveVoid
+type : 'bool'                                                                              # typeBool
+     | 'int'                                                                               # typeInt
+     | 'real'                                                                              # typeReal
+     | 'string'                                                                            # typeString 
+     | 'void'                                                                              # typeVoid
      | type '[' ']'                                                                        # typeArray
      | type '{' '}'                                                                        # typeMap
      | type '{' type '}'                                                                   # typeMap

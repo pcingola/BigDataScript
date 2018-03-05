@@ -1,6 +1,6 @@
 package org.bds.lang.type;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
@@ -67,13 +67,28 @@ public class TypeMap extends Type {
 		this.valueType = valueType;
 	}
 
+	@Override
+	public int compareTo(Type type) {
+		// Compare type
+		int cmp = super.compareTo(type);
+		if (cmp != 0) return cmp;
+
+		// Compare key type
+		TypeMap mtype = (TypeMap) type;
+		cmp = keyType.compareTo(mtype.keyType);
+		if (cmp != 0) return cmp;
+
+		// Compare value type
+		return valueType.compareTo(mtype.valueType);
+	}
+
 	/**
-	 * Add all library methods here
+	 * Declare all native methods for this class
 	 */
-	protected void addNativeMethods() {
+	@Override
+	protected List<MethodNative> declateNativeMethods() {
+		List<MethodNative> methods = super.declateNativeMethods();
 		try {
-			// Add libarary methods
-			ArrayList<MethodNative> methods = new ArrayList<>();
 			methods.add(new MethodNativeMapKeys(this));
 			methods.add(new MethodNativeMapValues(this));
 			methods.add(new MethodNativeMapSize(this));
@@ -91,28 +106,14 @@ public class TypeMap extends Type {
 			t.printStackTrace();
 			throw new RuntimeException("Error while adding native mehods for class '" + this + "'", t);
 		}
-	}
-
-	@Override
-	public int compareTo(Type type) {
-		// Compare type
-		int cmp = super.compareTo(type);
-		if (cmp != 0) return cmp;
-
-		// Compare key type
-		TypeMap mtype = (TypeMap) type;
-		cmp = keyType.compareTo(mtype.keyType);
-		if (cmp != 0) return cmp;
-
-		// Compare value type
-		return valueType.compareTo(mtype.valueType);
+		return methods;
 	}
 
 	@Override
 	public boolean equals(Type type) {
+		if (!type.isMap()) return false;
 		TypeMap mtype = (TypeMap) type;
-		return (primitiveType == type.primitiveType) //
-				&& keyType.equals(mtype.keyType) //
+		return keyType.equals(mtype.keyType) //
 				&& valueType.equals(mtype.valueType) //
 		;
 	}

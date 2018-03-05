@@ -148,7 +148,7 @@ public class ExpressionPlus extends ExpressionMath {
 		if (left.isList() || right.isList()) {
 			Type rt = returnTypeListPlusList(left.getReturnType(), right.getReturnType());
 			if (rt == null) {
-				compilerMessages.add(this, "Cannot append " + left.getReturnType() + " and " + right.getReturnType(), MessageType.ERROR);
+				compilerMessages.add(this, "Cannot append " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
 			}
 		} else if (left.isString() || right.isString()) {
 			// Either side is a string? => String plus String

@@ -3,8 +3,6 @@ package org.bds.test;
 import org.bds.util.Gpr;
 import org.junit.Test;
 
-import junit.framework.Assert;
-
 /**
  * Quick test cases when creating a new feature...
  *
@@ -14,10 +12,10 @@ import junit.framework.Assert;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test116_lineWrap_backslashId() {
+	public void test45() {
 		Gpr.debug("Test");
-		String stdout = runAndReturnStdout("test/run_116.bds");
-		Assert.assertEquals("hi bye\nThe answer\t\tis: 42", stdout);
+		String errs = "ERROR [ file 'test/test45.bds', line 2 ] :	Cannot append int to string[]";
+		compileErrors("test/test45.bds", errs);
 	}
 
 }

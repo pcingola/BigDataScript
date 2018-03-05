@@ -311,8 +311,7 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test45() {
 		Gpr.debug("Test");
-		String errs = "ERROR [ file 'test/test45.bds', line 2 ] :	Cannot append int to string[]";
-		compileErrors("test/test45.bds", errs);
+		compileOk("test/test45.bds");
 	}
 
 	@Test

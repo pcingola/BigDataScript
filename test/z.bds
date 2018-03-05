@@ -1,14 +1,2 @@
-#!/usr/bin/env bds
-
-real{int} mir
-mir{42} = 42.123
-mir{71} = 3.14159
-mir{42} += .876
-
-println("mir: $mir")
-
-string{} m
-m{'one'} = '1'
-m{'two'} = '2'
-m{'three'} = '3'
-println("m : $m")
+l := ['one']
+ll := l + 1

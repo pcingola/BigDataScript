@@ -54,21 +54,19 @@ public class MethodCall extends FunctionCall {
 
 		// Find method
 		if (exprType != null) {
-			// !!! TODO: IMPLEMENT
-			throw new RuntimeException("!!! UNIMPLEMENTED");
-			//			// Find function in class
-			//			Scope classScope = Scope.getClassScope(exprType);
-			//			if (classScope != null) {
-			//				ScopeSymbol ssfunc = classScope.findFunction(functionName, args);
-			//
-			//				// Not found? Try a 'regular' function
-			//				if (ssfunc == null) ssfunc = scope.findFunction(functionName, args);
-			//
-			//				if (ssfunc != null) {
-			//					functionDeclaration = (FunctionDeclaration) ssfunc.getValue().get();
-			//					returnType = functionDeclaration.getReturnType();
-			//				}
-			//			}
+			// Find function in class
+			Scope classScope = exprType.getScope();
+			if (classScope != null) {
+				ScopeSymbol ssfunc = classScope.findFunction(functionName, args);
+
+				// Not found? Try a 'regular' function
+				if (ssfunc == null) ssfunc = scope.findFunction(functionName, args);
+
+				if (ssfunc != null) {
+					functionDeclaration = (FunctionDeclaration) ssfunc.getValue().get();
+					returnType = functionDeclaration.getReturnType();
+				}
+			}
 		}
 
 		return returnType;

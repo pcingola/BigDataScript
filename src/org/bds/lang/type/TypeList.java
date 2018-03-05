@@ -1,6 +1,5 @@
 package org.bds.lang.type;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -83,13 +82,24 @@ public class TypeList extends Type {
 		elementType = baseType;
 	}
 
+	@Override
+	public int compareTo(Type type) {
+		// Compare type
+		int cmp = super.compareTo(type);
+		if (cmp != 0) return cmp;
+
+		// Compare element type
+		TypeList ltype = (TypeList) type;
+		return elementType.compareTo(ltype.elementType);
+	}
+
 	/**
-	 * Add all library methods here
+	 * Declare all native methods for this class
 	 */
-	protected void addNativeMethods() {
+	@Override
+	protected List<MethodNative> declateNativeMethods() {
+		List<MethodNative> methods = super.declateNativeMethods();
 		try {
-			// Add libarary methods
-			List<MethodNative> methods = new ArrayList<>();
 			methods.add(new MethodNativeListAdd(this));
 			methods.add(new MethodNativeListAddIndex(this));
 			methods.add(new MethodNativeListAddList(this));
@@ -128,17 +138,14 @@ public class TypeList extends Type {
 			t.printStackTrace();
 			throw new RuntimeException("Error while adding native mehods for class '" + this + "'", t);
 		}
+		return methods;
 	}
 
 	@Override
-	public int compareTo(Type type) {
-		// Compare type
-		int cmp = super.compareTo(type);
-		if (cmp != 0) return cmp;
-
-		// Compare element type
-		TypeList ltype = (TypeList) type;
-		return elementType.compareTo(ltype.elementType);
+	public boolean equals(Type type) {
+		return type.isList() //
+				&& elementType.equals(((TypeList) type).getElementType()) //
+		;
 	}
 
 	public Type getElementType() {

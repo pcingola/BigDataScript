@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import org.bds.Config;
 import org.bds.lang.expression.ExpressionTask;
-import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
@@ -38,14 +37,6 @@ public class GlobalScope extends Scope {
 	public static GlobalScope get() {
 		if (globalScope == null) reset();
 		return globalScope;
-	}
-
-	/**
-	 * Class scope
-	 */
-	public static Scope getClassScope(Type type) {
-		if (type == null) return null;
-		return classScope.getOrCreate(type.toString());
 	}
 
 	/**

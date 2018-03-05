@@ -52,18 +52,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveString(BigDataScriptParser.TypePrimitiveStringContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTypePrimitiveString(BigDataScriptParser.TypePrimitiveStringContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterTypeArray(BigDataScriptParser.TypeArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -76,13 +64,13 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveVoid(BigDataScriptParser.TypePrimitiveVoidContext ctx) { }
+	@Override public void enterTypeInt(BigDataScriptParser.TypeIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePrimitiveVoid(BigDataScriptParser.TypePrimitiveVoidContext ctx) { }
+	@Override public void exitTypeInt(BigDataScriptParser.TypeIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -100,13 +88,25 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveReal(BigDataScriptParser.TypePrimitiveRealContext ctx) { }
+	@Override public void enterTypeReal(BigDataScriptParser.TypeRealContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePrimitiveReal(BigDataScriptParser.TypePrimitiveRealContext ctx) { }
+	@Override public void exitTypeReal(BigDataScriptParser.TypeRealContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypeString(BigDataScriptParser.TypeStringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeString(BigDataScriptParser.TypeStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -124,25 +124,25 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveBool(BigDataScriptParser.TypePrimitiveBoolContext ctx) { }
+	@Override public void enterTypeBool(BigDataScriptParser.TypeBoolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePrimitiveBool(BigDataScriptParser.TypePrimitiveBoolContext ctx) { }
+	@Override public void exitTypeBool(BigDataScriptParser.TypeBoolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTypePrimitiveInt(BigDataScriptParser.TypePrimitiveIntContext ctx) { }
+	@Override public void enterTypeVoid(BigDataScriptParser.TypeVoidContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTypePrimitiveInt(BigDataScriptParser.TypePrimitiveIntContext ctx) { }
+	@Override public void exitTypeVoid(BigDataScriptParser.TypeVoidContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

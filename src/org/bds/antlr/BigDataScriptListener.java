@@ -38,18 +38,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitTypeList(BigDataScriptParser.TypeListContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code typePrimitiveString}
-	 * labeled alternative in {@link BigDataScriptParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypePrimitiveString(BigDataScriptParser.TypePrimitiveStringContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code typePrimitiveString}
-	 * labeled alternative in {@link BigDataScriptParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypePrimitiveString(BigDataScriptParser.TypePrimitiveStringContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code typeArray}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
 	 * @param ctx the parse tree
@@ -62,17 +50,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitTypeArray(BigDataScriptParser.TypeArrayContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code typePrimitiveVoid}
+	 * Enter a parse tree produced by the {@code typeInt}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterTypePrimitiveVoid(BigDataScriptParser.TypePrimitiveVoidContext ctx);
+	void enterTypeInt(BigDataScriptParser.TypeIntContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code typePrimitiveVoid}
+	 * Exit a parse tree produced by the {@code typeInt}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitTypePrimitiveVoid(BigDataScriptParser.TypePrimitiveVoidContext ctx);
+	void exitTypeInt(BigDataScriptParser.TypeIntContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code typeMap}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
@@ -86,17 +74,29 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitTypeMap(BigDataScriptParser.TypeMapContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code typePrimitiveReal}
+	 * Enter a parse tree produced by the {@code typeReal}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterTypePrimitiveReal(BigDataScriptParser.TypePrimitiveRealContext ctx);
+	void enterTypeReal(BigDataScriptParser.TypeRealContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code typePrimitiveReal}
+	 * Exit a parse tree produced by the {@code typeReal}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitTypePrimitiveReal(BigDataScriptParser.TypePrimitiveRealContext ctx);
+	void exitTypeReal(BigDataScriptParser.TypeRealContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code typeString}
+	 * labeled alternative in {@link BigDataScriptParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeString(BigDataScriptParser.TypeStringContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeString}
+	 * labeled alternative in {@link BigDataScriptParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeString(BigDataScriptParser.TypeStringContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code typeClass}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
@@ -110,29 +110,29 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitTypeClass(BigDataScriptParser.TypeClassContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code typePrimitiveBool}
+	 * Enter a parse tree produced by the {@code typeBool}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterTypePrimitiveBool(BigDataScriptParser.TypePrimitiveBoolContext ctx);
+	void enterTypeBool(BigDataScriptParser.TypeBoolContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code typePrimitiveBool}
+	 * Exit a parse tree produced by the {@code typeBool}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitTypePrimitiveBool(BigDataScriptParser.TypePrimitiveBoolContext ctx);
+	void exitTypeBool(BigDataScriptParser.TypeBoolContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code typePrimitiveInt}
+	 * Enter a parse tree produced by the {@code typeVoid}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterTypePrimitiveInt(BigDataScriptParser.TypePrimitiveIntContext ctx);
+	void enterTypeVoid(BigDataScriptParser.TypeVoidContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code typePrimitiveInt}
+	 * Exit a parse tree produced by the {@code typeVoid}
 	 * labeled alternative in {@link BigDataScriptParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitTypePrimitiveInt(BigDataScriptParser.TypePrimitiveIntContext ctx);
+	void exitTypeVoid(BigDataScriptParser.TypeVoidContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#classDef}.
 	 * @param ctx the parse tree
