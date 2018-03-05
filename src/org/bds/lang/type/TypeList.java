@@ -47,7 +47,7 @@ public class TypeList extends Type {
 	Type elementType; // Type of elements in the list
 
 	public static TypeList factory(BdsNode parent, ParseTree tree) {
-		TypeList typeList = new TypeList(Types.STRING);
+		TypeList typeList = new TypeList(parent, tree);
 		return get(typeList.getElementType());
 	}
 
@@ -169,7 +169,6 @@ public class TypeList extends Type {
 		String listTypeName = tree.getChild(0).getChild(0).getText();
 		primitiveType = PrimitiveType.LIST;
 		elementType = Types.get(listTypeName);
-		Types.put(this);
 	}
 
 	@Override

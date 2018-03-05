@@ -98,10 +98,14 @@ public class ReferenceMap extends Reference {
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 		expressionKey.returnType(scope);
-		// returnType = TypeMap.get(keyType, valueType);
-		// !!! TODO: FIXME
-		throw new RuntimeException("!!!");
-		// return returnType;
+
+		// Retrieve map from scope
+		Type mapType = variable.returnType(scope);
+		if (mapType != null && mapType.isMap()) {
+			returnType = ((TypeMap) mapType).getValueType();
+		}
+
+		return returnType;
 	}
 
 	/**
@@ -135,7 +139,7 @@ public class ReferenceMap extends Reference {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		ValueMap vmap = getMap(bdsThread.getScope());
-		if (vmap == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
+		if (vmap == null) bdsThread.fatalError(this, "Cannot find variable '" + this + "'");
 		vmap.put(key, value);
 	}
 
@@ -149,8 +153,20 @@ public class ReferenceMap extends Reference {
 		// Calculate return type
 		returnType(scope);
 
-		// Note: We do not perform type checking on 'key' since everything can be cast to a string
-		if ((variable.getReturnType() != null) && !variable.getReturnType().isMap()) compilerMessages.add(this, "Symbol '" + variable + "' is not a map", MessageType.ERROR);
+		// Is it a map?
+		if (!variable.isMap()) {
+			compilerMessages.add(this, "Symbol '" + variable + "' is not a map", MessageType.ERROR);
+			return;
+		}
+
+		// Check map key
+		Type keyType = expressionKey.getReturnType();
+		if (expressionKey.getReturnType() == null) return;
+
+		TypeMap mapType = (TypeMap) variable.getReturnType();
+		if (!keyType.canCastTo(mapType.getKeyType())) {
+			compilerMessages.add(this, "Cannot cast key expression from '" + keyType + "' to '" + mapType.getKeyType() + "'", MessageType.ERROR);
+		}
 	}
 
 	@Override

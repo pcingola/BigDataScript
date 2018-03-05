@@ -12,6 +12,7 @@ import org.bds.lang.nativeMethods.map.MethodNativeMapRemove;
 import org.bds.lang.nativeMethods.map.MethodNativeMapSize;
 import org.bds.lang.nativeMethods.map.MethodNativeMapValues;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueMap;
 import org.bds.util.Gpr;
 
 /**
@@ -27,6 +28,11 @@ public class TypeMap extends Type {
 
 	protected Type keyType; // Type for 'key' elements
 	protected Type valueType; // Type for 'value' elements
+
+	public static TypeMap factory(BdsNode parent, ParseTree tree) {
+		TypeMap typeMap = new TypeMap(parent, tree);
+		return get(typeMap.getKeyType(), typeMap.getValueType());
+	}
 
 	/**
 	 * Get a map type (used cached version if found)
@@ -133,17 +139,26 @@ public class TypeMap extends Type {
 
 	@Override
 	public Value newValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ValueMap(this);
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		// !!! TODO: We are only allowing to build lists of primitive types. We should change this!
+		// !!! TODO: We are only allowing to build maps of primitive types!
+
+		// Value type
 		String valueTypeName = tree.getChild(0).getChild(0).getText();
 		primitiveType = PrimitiveType.MAP;
-		keyType = Types.get(valueTypeName.toUpperCase());
-		Types.put(this);
+		valueType = Types.get(valueTypeName.toUpperCase());
+
+		// Key type
+		if (tree.getChildCount() > 3) {
+			String keyTypeName = tree.getChild(2).getChild(0).getText();
+			keyType = Types.get(keyTypeName.toUpperCase());
+		} else {
+			// Default key is type string
+			keyType = Types.STRING;
+		}
 	}
 
 	// !!! TODO: FIX

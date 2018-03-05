@@ -1,0 +1,45 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007f0d86d19fb2, pid=13894, tid=13916
+#
+# JRE version: Java(TM) SE Runtime Environment (9.0+11) (build 9.0.4+11)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (9.0.4+11, mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# C  [libjimage.so+0x3fb2]  ImageStrings::find(Endian*, char const*, int*, unsigned int)+0x42
+#
+# Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport %p %s %c %d %P" (or dumping to /home/pcingola/workspace/BigDataScript/core.13894)
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:46806 -Djava.library.path=/home/pcingola/.bds/lib -Dfile.encoding=UTF-8 org.bds.Bds -v /home/pcingola/workspace/BigDataScript/test/z.bds
+
+Host: Intel(R) Core(TM) i7-6600U CPU @ 2.60GHz, 4 cores, 31G, Ubuntu 16.04.3 LTS
+Time: Mon Mar  5 10:18:35 2018 EST elapsed time: 17 seconds (0d 0h 0m 17s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007f0d88256000):  JavaThread "Signal Dispatcher" daemon [_thread_in_vm, id=13916, stack(0x00007f0d309c8000,0x00007f0d30ac9000)]
+
+Stack: [0x00007f0d309c8000,0x00007f0d30ac9000],  sp=0x00007f0d30ac62c0,  free space=1016k
+Native frames: (J=compiled Java code, A=aot compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [libjimage.so+0x3fb2]  ImageStrings::find(Endian*, char const*, int*, unsigned int)+0x42
+C  [libjimage.so+0x4b8c]  ImageFileReader::find_location_index(char const*, unsigned long long*) const+0x3c
+C  [libjimage.so+0x505a]  JIMAGE_FindResource+0xba
+V  [libjvm.so+0x5aae8e]  ClassPathImageEntry::open_stream(char const*, Thread*)+0x4e
+V  [libjvm.so+0x5ae0a0]  ClassLoader::load_class(Symbol*, bool, Thread*)+0x150
+V  [libjvm.so+0xcbcd34]  SystemDictionary::load_instance_class(Symbol*, Handle, Thread*)+0x554
+V  [libjvm.so+0xcbd8f1]  SystemDictionary::resolve_instance_class_or_null(Symbol*, Handle, Handle, Thread*)+0xa91
+V  [libjvm.so+0xcbec4b]  SystemDictionary::resolve_or_fail(Symbol*, Handle, Handle, bool, Thread*)+0x4b
+V  [libjvm.so+0x648c34]  ConstantPool::klass_at_impl(constantPoolHandle const&, int, bool, Thread*)+0x104
+V  [libjvm.so+0x82b1ca]  InterpreterRuntime::_new(JavaThread*, ConstantPool*, int)+0x6a
+j  jdk.internal.misc.Signal.dispatch(I)V+25 java.base@9.0.4
+v  ~StubRoutines::call_stub
+V  [libjvm.so+0x83d60a]  JavaCalls::call_helper(JavaValue*, methodHandle const&, JavaCallArguments*, Thread*)+0x47a
+V  [libjvm.so+0x83c788]  JavaCalls::call_static(JavaValue*, KlassHandle, Symbol*, Symbol*, JavaCallArguments*, Thread*)+0x138
+V  [libjvm.so+0xb5e961]  signal_thread_entry(JavaThread*, Thread*)+0x271
+V  [libjvm.so+0xcef338]

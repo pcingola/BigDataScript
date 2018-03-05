@@ -60,19 +60,19 @@ public abstract class BdsNode implements BdsSerialize {
 	 * @return
 	 */
 	public boolean canCastTo(BdsNode n) {
-		return returnType.canCastTo(n.getReturnType());
+		return returnType != null && returnType.canCastTo(n.getReturnType());
 	}
 
 	public boolean canCastToBool() {
-		return returnType.canCastTo(Types.BOOL);
+		return returnType != null && returnType.canCastTo(Types.BOOL);
 	}
 
 	public boolean canCastToInt() {
-		return returnType.canCastTo(Types.INT);
+		return returnType != null && returnType.canCastTo(Types.INT);
 	}
 
 	public boolean canCastToReal() {
-		return returnType.canCastTo(Types.REAL);
+		return returnType != null && returnType.canCastTo(Types.REAL);
 	}
 
 	public void checkCanCastTo(Type t, CompilerMessages compilerMessages) {
@@ -419,7 +419,7 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isMap() {
-		return returnType.getPrimitiveType() == PrimitiveType.MAP;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.MAP;
 	}
 
 	public boolean isMap(Type keyType, Type valueType) {
@@ -438,7 +438,7 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isNull() {
-		return returnType.getPrimitiveType() == PrimitiveType.NULL;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.NULL;
 	}
 
 	public boolean isNumeric() {
@@ -446,7 +446,7 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isReal() {
-		return returnType.getPrimitiveType() == PrimitiveType.REAL;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.REAL;
 	}
 
 	public boolean isReturnTypesNotNull() {
@@ -461,7 +461,7 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	public boolean isString() {
-		return returnType.getPrimitiveType() == PrimitiveType.STRING;
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.STRING;
 	}
 
 	/**

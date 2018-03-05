@@ -12,8 +12,8 @@ import org.bds.scope.Scope;
 
 /**
  * Assign one variable to another one
- * 
- * Example: 
+ *
+ * Example:
  *     a = b
  *
  * @author pcingola
@@ -64,8 +64,9 @@ public class ExpressionAssignment extends ExpressionBinary {
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		// Trying to assign to a constant?
-		if (((Reference) left).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + left + "'", MessageType.ERROR);
-		if (!((Reference) left).isVariable(scope)) compilerMessages.add(this, "Cannot assign to non-variable '" + left + "'", MessageType.ERROR);
+		Reference rleft = ((Reference) left);
+		if (rleft.isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + left + "'", MessageType.ERROR);
+		if (!rleft.isVariable(scope)) compilerMessages.add(this, "Cannot assign to non-variable '" + left + "'", MessageType.ERROR);
 
 		// Can we cast 'right type' into 'left type'?
 		if (!right.canCastTo(left)) {
