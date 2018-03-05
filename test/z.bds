@@ -1,11 +1,17 @@
 #!/usr/bin/env bds
 
 l1 := ['a', 'ab', 'abc']
-# println("l1 : $l1")
-# 
-# l2 := l1 + 'bye'
-# println("l2 : $l2")
+println("l1 : $l1")
+
+l2 := l1 + 'bye'
+println("l2 : $l2")
 
 l3 := 'hi' + l1 
+println("l3 : $l3")
+
+l4 := l2 + l3
+println("l4 : $l4")
+
+l3 += 'bye'
 println("l3 : $l3")
 
