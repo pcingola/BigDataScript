@@ -68,10 +68,7 @@ public class Print extends Statement {
 	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		returnType(scope);
 
-		if ((expr != null) //
-				&& (expr.getReturnType() != null) //
-				&& (!expr.getReturnType().canCastTo(returnType)) //
-		) {
+		if (!expr.canCastToString()) {
 			compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
 		}
 	}

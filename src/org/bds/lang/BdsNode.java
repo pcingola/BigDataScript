@@ -75,6 +75,10 @@ public abstract class BdsNode implements BdsSerialize {
 		return returnType != null && returnType.canCastTo(Types.REAL);
 	}
 
+	public boolean canCastToString() {
+		return returnType != null && true; // Everything can be cast to a string
+	}
+
 	public void checkCanCastTo(Type t, CompilerMessages compilerMessages) {
 		if (!returnType.canCastTo(t)) {
 			compilerMessages.add(this, "Cannot cast " + returnType + " to " + t, MessageType.ERROR);

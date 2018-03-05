@@ -94,7 +94,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	 * Run native method and wrap result in a 'Value'
 	 */
 	protected Value runMethodNativeValue(BdsThread bdsThread, Object objThis) {
-		Object res = runMethodNativeValue(bdsThread, objThis);
+		Object res = runMethodNative(bdsThread, objThis);
 		return returnType.newValue(res);
 	}
 

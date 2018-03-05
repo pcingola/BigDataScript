@@ -1,6 +1,9 @@
 
-int f( int x ) {
-	return 2 * x;
-}
+string[] events
 
-int j = f(3)
+print("Events:" + events + "\n")
+
+events.add("done")
+print("Events:" + events + "\n")
+
+
