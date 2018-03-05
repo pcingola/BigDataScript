@@ -1,8 +1,10 @@
 package org.bds.lang.type;
 
+import org.bds.lang.value.Value;
+
 /**
  * 'void' map
- * 
+ *
  * @author pcingola
  *
  */
@@ -15,6 +17,11 @@ public class TypeVoid extends TypeUniqueValue {
 	@Override
 	public boolean isVoid() {
 		return true;
+	}
+
+	@Override
+	public Value newValue() {
+		return Value.VOID;
 	}
 
 }

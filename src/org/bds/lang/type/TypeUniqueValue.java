@@ -8,7 +8,7 @@ import org.bds.lang.value.Value;
  * @author pcingola
  *
  */
-public class TypeUniqueValue extends Type {
+public abstract class TypeUniqueValue extends Type {
 
 	public TypeUniqueValue(PrimitiveType primitiveType) {
 		super(primitiveType);
@@ -30,11 +30,6 @@ public class TypeUniqueValue extends Type {
 	@Override
 	public Object castNativeObject(Object o) {
 		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
-	}
-
-	@Override
-	public Value newValue() {
-		throw new RuntimeException("Cannot create new map of type '" + primitiveType.toString() + "'");
 	}
 
 }

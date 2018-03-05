@@ -1,41 +1,29 @@
+#!/usr/bin/env bds
 
-print("Hi\n")
+retry = 1
 
-string sfalse = ""
-string strue = "hi"
+in   := "failOnce.in"
+out1 := "failOnce.out1"
+out2 := "failOnce.out2"
 
-int ifalse = 0
-int itrue = 2
+failOnceFile := "failOnce.txt"
+failOnceFile.delete()
 
-real rfalse = 0.0
-real rtrue = 0.1
+# Delete old files
+[ in, out1, out2 ].rm()
 
-string[] lfalse = []
-string[] ltrue = ['hi', 'bye']
+# Create input file
+sys echo IN > $in
 
-string{} mfalse = {}
-string{} mtrue = {'hi' => 'bye', 'hola' => 'adios' }
+# Create out1
+# Note: Task will fail once, then run OK
+task( out1 <- in ) sys echo TASK 1 ; sleep 1; ./test/failOnce.pl ; echo TASK 1 > $out1 ; echo TASK 1 END
 
-# Assignments to bool
-bool bsfalse = sfalse 
-bool bstrue  = strue 
-bool bifalse = ifalse 
-bool bitrue  = itrue 
-bool brfalse = rfalse 
-bool brtrue  = rtrue 
-bool blfalse = lfalse 
-bool bltrue  = ltrue 
-bool bmfalse =  mfalse
-bool bmtrue  =  mtrue
+# Create out2 frmo out1
+task( out2 <- out1 ) sys echo TASK 2 START ; sleep 1; cat $out1 > $out2 ; echo TASK 2 >> $out2 ; echo TASK 2 END
 
-print(" bsfalse = $bsfalse\n")
-print(" bstrue  = $bstrue \n")
-print(" bifalse = $bifalse\n")
-print(" bitrue  = $bitrue \n")
-print(" brfalse = $brfalse\n")
-print(" brtrue  = $brtrue \n")
-print(" blfalse = $blfalse\n")
-print(" bltrue  = $bltrue \n")
-print(" bmfalse =  $bmfalse\n")
-print(" bmtrue  =  $bmtrue \n")
-print("End\n")
+wait
+
+outs := sys cat $out2
+
+print("Done:\n$outs\n")

@@ -9,6 +9,11 @@ import org.bds.lang.type.Types;
  */
 public abstract class Value {
 
+	public static final ValueUnique ANY = ValueUnique.get(Types.ANY);
+	public static final ValueUnique FAKE = ValueUnique.get(Types.FAKE);
+	public static final ValueUnique NULL = ValueUnique.get(Types.NULL);
+	public static final ValueUnique VOID = ValueUnique.get(Types.VOID);
+
 	protected Type type;
 
 	public static Value factory(Object v) {
