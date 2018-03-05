@@ -6,6 +6,7 @@ public class ValueString extends ValuePrimitive<String> {
 
 	public ValueString() {
 		super(Types.STRING);
+		value = "";
 	}
 
 	public ValueString(String v) {

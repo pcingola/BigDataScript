@@ -22,8 +22,14 @@ public class TypeUniqueValue extends Type {
 	/**
 	 * Cast a map 'v' to this type
 	 */
+	@Override
 	public Value cast(Value v) {
 		return v;
+	}
+
+	@Override
+	public Object castNativeObject(Object o) {
+		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
 	}
 
 	@Override

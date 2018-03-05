@@ -1,9 +1,8 @@
 
-string[] events
 
-print("Events:" + events + "\n")
+string[] list = [ "one", "two", "three" ]
+string ss
 
-events.add("done")
-print("Events:" + events + "\n")
-
-
+for( string s : list ) {
+	ss = ss + s
+}

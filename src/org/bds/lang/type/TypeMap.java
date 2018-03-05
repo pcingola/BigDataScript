@@ -1,6 +1,7 @@
 package org.bds.lang.type;
 
 import java.util.List;
+import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
@@ -20,7 +21,7 @@ import org.bds.util.Gpr;
  *
  * @author pcingola
  */
-public class TypeMap extends Type {
+public class TypeMap extends TypeComposite {
 
 	public static boolean debug = false;
 
@@ -65,6 +66,12 @@ public class TypeMap extends Type {
 		super(PrimitiveType.MAP);
 		this.keyType = keyType;
 		this.valueType = valueType;
+	}
+
+	@Override
+	public Object castNativeObject(Object o) {
+		if (o instanceof Map) return o;
+		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
 	}
 
 	@Override
@@ -143,6 +150,12 @@ public class TypeMap extends Type {
 		return new ValueMap(this);
 	}
 
+	// !!! TODO: FIX
+	//	@Override
+	//	public String toStringSerializer() {
+	//		return primitiveType + ":" + keyType.toStringSerializer();
+	//	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		// !!! TODO: We are only allowing to build maps of primitive types!
@@ -161,12 +174,6 @@ public class TypeMap extends Type {
 			keyType = Types.STRING;
 		}
 	}
-
-	// !!! TODO: FIX
-	//	@Override
-	//	public String toStringSerializer() {
-	//		return primitiveType + ":" + keyType.toStringSerializer();
-	//	}
 
 	@Override
 	public String toString() {

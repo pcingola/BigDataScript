@@ -11,7 +11,7 @@ import org.bds.scope.Scope;
  *
  * @author pcingola
  */
-public class TypeClass extends Type {
+public class TypeClass extends TypeComposite {
 
 	String className;
 	Scope classScope;

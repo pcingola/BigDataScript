@@ -4,7 +4,7 @@ import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueInt;
 
-public class TypeInt extends Type {
+public class TypeInt extends TypePrimitive {
 
 	private static final Integer ZERO = 0;
 
@@ -33,6 +33,13 @@ public class TypeInt extends Type {
 
 		vb.set(val);
 		return vb;
+	}
+
+	@Override
+	public Object castNativeObject(Object o) {
+		if (o instanceof Long) return o;
+		if (o instanceof Boolean) return ((Boolean) o) ? 1L : 0L;
+		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
 	}
 
 	@Override

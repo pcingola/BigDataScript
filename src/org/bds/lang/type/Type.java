@@ -65,9 +65,8 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	/**
 	 * This is used when casting Java object (e.g. running native functions & methods)
 	 */
-	public Object castNativeObject(Object o) {
-		throw new RuntimeException("Cannot cast native ofject '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
-	}
+	public abstract Object castNativeObject(Object o);
+	// { throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'"); }
 
 	public void checkCanCast(Type type, CompilerMessages compilerMessages) {
 		if (returnType.isReturnTypesNotNull() && !returnType.canCastTo(type)) {

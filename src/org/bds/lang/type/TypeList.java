@@ -37,7 +37,7 @@ import org.bds.util.Gpr;
  *
  * @author pcingola
  */
-public class TypeList extends Type {
+public class TypeList extends TypeComposite {
 
 	public static boolean debug = false;
 

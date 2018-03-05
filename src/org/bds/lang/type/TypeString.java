@@ -3,7 +3,7 @@ package org.bds.lang.type;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueString;
 
-public class TypeString extends Type {
+public class TypeString extends TypePrimitive {
 
 	private static final String EMPTY = "";
 
@@ -27,6 +27,12 @@ public class TypeString extends Type {
 		Type vt = v.getType();
 		if (vt.isString()) return v;
 		return new ValueString(v.toString());
+	}
+
+	@Override
+	public Object castNativeObject(Object o) {
+		if (o instanceof String) return o;
+		return o.toString();
 	}
 
 	@Override

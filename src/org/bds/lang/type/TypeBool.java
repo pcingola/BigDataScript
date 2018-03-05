@@ -6,7 +6,7 @@ import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 
-public class TypeBool extends Type {
+public class TypeBool extends TypePrimitive {
 
 	public TypeBool() {
 		super(PrimitiveType.BOOL);
@@ -35,6 +35,15 @@ public class TypeBool extends Type {
 
 		vb.set(val);
 		return vb;
+	}
+
+	@Override
+	public Object castNativeObject(Object o) {
+		if (o instanceof Boolean) return o;
+		if (o instanceof Long) return ((Long) o) != 0;
+		if (o instanceof Double) return ((Double) o) != 0.0;
+		if (o instanceof String) return !((String) o).isEmpty();
+		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
 	}
 
 	@Override

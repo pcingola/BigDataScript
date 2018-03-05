@@ -5,7 +5,7 @@ import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueReal;
 
-public class TypeReal extends Type {
+public class TypeReal extends TypePrimitive {
 
 	private static final Double ZERO = 0.0;
 
@@ -35,6 +35,14 @@ public class TypeReal extends Type {
 
 		vb.set(val);
 		return vb;
+	}
+
+	@Override
+	public Object castNativeObject(Object o) {
+		if (o instanceof Double) return o;
+		if (o instanceof Boolean) return ((Boolean) o) ? 1.0 : 0.0;
+		if (o instanceof Long) return ((Long) o).doubleValue();
+		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
 	}
 
 	@Override
