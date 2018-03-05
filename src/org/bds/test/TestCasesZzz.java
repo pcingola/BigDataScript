@@ -12,10 +12,9 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test45() {
+	public void test09() {
 		Gpr.debug("Test");
-		String errs = "ERROR [ file 'test/test45.bds', line 2 ] :	Cannot append int to string[]";
-		compileErrors("test/test45.bds", errs);
+		runAndCheck("test/run_09.bds", "i", 5L);
 	}
 
 }

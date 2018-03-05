@@ -107,7 +107,7 @@ public class FunctionCall extends Expression {
 		try {
 			// Evaluate function arguments
 			evalFunctionArguments(bdsThread);
-			Value arguments = bdsThread.pop();
+			ValueArgs arguments = (ValueArgs) bdsThread.pop();
 
 			// Apply function to parameters
 			bdsThread.push(functionDeclaration.apply(bdsThread, arguments));

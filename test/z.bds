@@ -1,2 +1,6 @@
-l := ['one']
-ll := l + 1
+
+int f( int x ) {
+	return 2 * x;
+}
+
+int j = f(3)

@@ -23,45 +23,6 @@ public class ExpressionPlus extends ExpressionMath {
 		super(parent, tree);
 	}
 
-	/**
-	 * Evaluate a 'plus' expression involving at least one list
-	 */
-	ValueList listPlus(BdsThread bdsThread) {
-		Value rval = bdsThread.pop();
-		Value lval = bdsThread.pop();
-
-		Type lt = left.getReturnType();
-		Type rt = right.getReturnType();
-
-		if (lt.isList() && rt.isList()) {
-			// List + List
-			ValueList llist = (ValueList) lval;
-			ValueList rlist = (ValueList) rval;
-			ValueList vlist = new ValueList(lt, llist.size() + rlist.size());
-			vlist.addAll(llist);
-			vlist.addAll(rlist);
-			return vlist;
-		} else if (lt.isList() && !rt.isList()) {
-			// List + element
-			ValueList llist = (ValueList) lval;
-			Type let = ((TypeList) lt).getElementType();
-			ValueList vlist = new ValueList(lt, llist.size() + 1);
-			vlist.addAll(llist);
-			vlist.add(let.cast(rval));
-			return vlist;
-		} else if (!lt.isList() && rt.isList()) {
-			// element + List
-			ValueList rlist = (ValueList) rval;
-			Type ret = ((TypeList) rt).getElementType();
-			ValueList vlist = new ValueList(rt, rlist.size() + 1);
-			vlist.add(ret.cast(lval));
-			vlist.addAll(rlist);
-			return vlist;
-		}
-
-		return null;
-	}
-
 	@Override
 	protected String op() {
 		return "+";
@@ -81,7 +42,7 @@ public class ExpressionPlus extends ExpressionMath {
 			returnType = Types.REAL;
 		} else if (left.isList() || right.isList()) {
 			// Either side is a list
-			returnType = returnTypeListPlusList(left.getReturnType(), right.getReturnType());
+			returnType = returnTypeList();
 		} else if (left.isString() || right.isString()) {
 			// String plus something (convert to string)
 			returnType = Types.STRING;
@@ -96,7 +57,10 @@ public class ExpressionPlus extends ExpressionMath {
 	 * @param ret: Right type (can be either list or element)
 	 * @return
 	 */
-	public Type returnTypeListPlusList(Type lt, Type rt) {
+	public Type returnTypeList() {
+		Type lt = left.getReturnType();
+		Type rt = right.getReturnType();
+
 		if (lt == null || rt == null) return null;
 		if (!lt.isList() && !rt.isList()) return null;
 
@@ -137,16 +101,55 @@ public class ExpressionPlus extends ExpressionMath {
 			String lval = bdsThread.popString();
 			bdsThread.push(lval.toString() + rval.toString());
 		} else if (isList()) {
-			bdsThread.push(listPlus(bdsThread));
+			bdsThread.push(runStepList(bdsThread));
 		} else {
 			throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 		}
 	}
 
+	/**
+	 * Evaluate a 'plus' expression involving at least one list
+	 */
+	ValueList runStepList(BdsThread bdsThread) {
+		Value rval = bdsThread.pop();
+		Value lval = bdsThread.pop();
+
+		Type lt = left.getReturnType();
+		Type rt = right.getReturnType();
+
+		if (lt.isList() && rt.isList()) {
+			// List + List
+			ValueList llist = (ValueList) lval;
+			ValueList rlist = (ValueList) rval;
+			ValueList vlist = new ValueList(lt, llist.size() + rlist.size());
+			vlist.addAll(llist);
+			vlist.addAll(rlist);
+			return vlist;
+		} else if (lt.isList() && !rt.isList()) {
+			// List + element
+			ValueList llist = (ValueList) lval;
+			Type let = ((TypeList) lt).getElementType();
+			ValueList vlist = new ValueList(lt, llist.size() + 1);
+			vlist.addAll(llist);
+			vlist.add(let.cast(rval));
+			return vlist;
+		} else if (!lt.isList() && rt.isList()) {
+			// element + List
+			ValueList rlist = (ValueList) rval;
+			Type ret = ((TypeList) rt).getElementType();
+			ValueList vlist = new ValueList(rt, rlist.size() + 1);
+			vlist.add(ret.cast(lval));
+			vlist.addAll(rlist);
+			return vlist;
+		}
+
+		return null;
+	}
+
 	@Override
 	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
 		if (left.isList() || right.isList()) {
-			Type rt = returnTypeListPlusList(left.getReturnType(), right.getReturnType());
+			Type rt = returnTypeList();
 			if (rt == null) {
 				compilerMessages.add(this, "Cannot append " + right.getReturnType() + " to " + left.getReturnType(), MessageType.ERROR);
 			}

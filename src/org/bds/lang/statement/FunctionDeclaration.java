@@ -49,9 +49,9 @@ public class FunctionDeclaration extends StatementWithScope {
 			Scope scope = bdsThread.getScope();
 
 			// Only one argument
-			//			Type argType = fparam[0].getType();
+			Type argType = fparam[0].getType();
 			String argName = fparam[0].getVarInit()[0].getVarName();
-			scope.add(new ScopeSymbol(argName, value));
+			scope.add(new ScopeSymbol(argName, argType, value));
 		}
 
 		// Run function body
@@ -83,9 +83,8 @@ public class FunctionDeclaration extends StatementWithScope {
 			// Add arguments to scope
 			Scope scope = bdsThread.getScope();
 			for (int i = 0; i < fparam.length; i++) {
-				Type argType = fparam[i].getType();
 				String argName = fparam[i].getVarInit()[0].getVarName();
-				scope.add(new ScopeSymbol(argName, argType, args.getValue(i)));
+				scope.add(new ScopeSymbol(argName, args.getValue(i)));
 			}
 		}
 
@@ -157,9 +156,14 @@ public class FunctionDeclaration extends StatementWithScope {
 		// Not a standard 'return' statement? Make sure we are returning the right type.
 		if (bdsThread.isReturn()) {
 			bdsThread.setRunState(RunState.OK); // Restore 'OK' runState
-		} else if (!returnType.canCastTo(bdsThread.getReturnValue().getType())) {
-			// Not the right type? Force a default map of the right type
-			bdsThread.setReturnValue(returnType.newValue());
+		} else {
+			Value retVal = bdsThread.getReturnValue();
+			Type retType = retVal.getType();
+			if (!retType.canCastTo(returnType)) {
+				// Not the right type? Force a default value for returnType
+				// Note: This should be caught as a compile time error
+				bdsThread.setReturnValue(returnType.newValue());
+			}
 		}
 	}
 

@@ -54,41 +54,30 @@ public class ExpressionTimes extends ExpressionMath {
 			long r = bdsThread.popInt();
 			long l = bdsThread.popInt();
 			bdsThread.push(l * r);
-			return;
-		}
-
-		if (isReal()) {
+		} else if (isReal()) {
 			double r = bdsThread.popReal();
 			double l = bdsThread.popReal();
 			bdsThread.push(l * r);
-			return;
-		}
-
-		if (isString()) {
-			Object rval = bdsThread.pop();
-			Object lval = bdsThread.pop();
-
-			// string * int : Get number and string
-			String str = "";
+		} else if (isString()) {
 			long num = 0;
-			if (left.canCastToInt()) {
-				num = (long) lval;
-				str = rval.toString();
-			} else if (right.canCastToInt()) {
-				str = lval.toString();
-				num = ((long) rval);
-			} else throw new RuntimeException("Neither argument is type int. This should never happen!");
+			String str = "";
 
+			if (right.canCastToInt()) {
+				num = bdsThread.popInt();
+				str = bdsThread.popString();
+			} else if (left.canCastToInt()) {
+				str = bdsThread.popString();
+				num = bdsThread.popInt();
+			}
 			// Multiply (append the same string num times
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < num; i++)
 				sb.append(str);
 
 			bdsThread.push(sb.toString());
-			return;
+		} else {
+			throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 		}
-
-		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 	}
 
 	@Override
