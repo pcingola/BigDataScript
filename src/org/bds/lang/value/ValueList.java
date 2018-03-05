@@ -28,6 +28,11 @@ public class ValueList extends Value {
 		value.add(v.get());
 	}
 
+	@SuppressWarnings("unchecked")
+	public void addAll(ValueList v) {
+		value.addAll(v.get());
+	}
+
 	@Override
 	public List get() {
 		return value;

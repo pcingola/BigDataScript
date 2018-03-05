@@ -1,8 +1,5 @@
 package org.bds.lang.expression;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
@@ -10,6 +7,8 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -22,6 +21,45 @@ public class ExpressionPlus extends ExpressionMath {
 
 	public ExpressionPlus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Evaluate a 'plus' expression involving at least one list
+	 */
+	ValueList listPlus(BdsThread bdsThread) {
+		Value rval = bdsThread.pop();
+		Value lval = bdsThread.pop();
+
+		Type lt = left.getReturnType();
+		Type rt = right.getReturnType();
+
+		if (lt.isList() && rt.isList()) {
+			// List + List
+			ValueList llist = (ValueList) lval;
+			ValueList rlist = (ValueList) rval;
+			ValueList vlist = new ValueList(lt, llist.size() + rlist.size());
+			vlist.addAll(llist);
+			vlist.addAll(rlist);
+			return vlist;
+		} else if (lt.isList() && !rt.isList()) {
+			// List + element
+			ValueList llist = (ValueList) lval;
+			Type let = ((TypeList) lt).getElementType();
+			ValueList vlist = new ValueList(lt, llist.size() + 1);
+			vlist.addAll(llist);
+			vlist.add(let.cast(rval));
+			return vlist;
+		} else if (!lt.isList() && rt.isList()) {
+			// element + List
+			ValueList rlist = (ValueList) rval;
+			Type ret = ((TypeList) rt).getElementType();
+			ValueList vlist = new ValueList(rt, rlist.size() + 1);
+			vlist.add(ret.cast(lval));
+			vlist.addAll(rlist);
+			return vlist;
+		}
+
+		return null;
 	}
 
 	@Override
@@ -62,21 +100,24 @@ public class ExpressionPlus extends ExpressionMath {
 		if (lt == null || rt == null) return null;
 		if (!lt.isList() && !rt.isList()) return null;
 
-		// Get element type
-		Type let = lt, ret = rt;
-		if (lt.isList()) let = ((TypeList) lt).getElementType();
-		if (rt.isList()) ret = ((TypeList) rt).getElementType();
-
-		// Which one we can cast?
-		if (ret.canCastTo(let)) return TypeList.get(let);
-		if (let.canCastTo(ret)) return TypeList.get(ret);
+		if (lt.isList() && rt.isList()) {
+			// List + List: They should have the same element type
+			if (lt.equals(rt)) return lt;
+		} else if (lt.isList() && !rt.isList()) {
+			// List + element: If the element can be casted, we are fine
+			Type let = ((TypeList) lt).getElementType();
+			if (rt.canCastTo(let)) return lt;
+		} else if (!lt.isList() && rt.isList()) {
+			// element + List : If the element can be casted, we are fine
+			Type ret = ((TypeList) rt).getElementType();
+			if (lt.canCastTo(ret)) return rt;
+		}
 		return null;
 	}
 
 	/**
 	 * Evaluate an expression
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		bdsThread.run(left);
@@ -87,39 +128,19 @@ public class ExpressionPlus extends ExpressionMath {
 			long r = bdsThread.popInt();
 			long l = bdsThread.popInt();
 			bdsThread.push(l + r);
-			return;
-		}
-
-		if (isReal()) {
+		} else if (isReal()) {
 			double r = bdsThread.popReal();
 			double l = bdsThread.popReal();
 			bdsThread.push(l + r);
-			return;
-		}
-
-		if (isString()) {
-			Object rval = bdsThread.pop();
-			Object lval = bdsThread.pop();
+		} else if (isString()) {
+			String rval = bdsThread.popString();
+			String lval = bdsThread.popString();
 			bdsThread.push(lval.toString() + rval.toString());
-			return;
+		} else if (isList()) {
+			bdsThread.push(listPlus(bdsThread));
+		} else {
+			throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 		}
-
-		if (isList()) {
-			Object rval = bdsThread.pop();
-			Object lval = bdsThread.pop();
-
-			ArrayList list = new ArrayList();
-			if (left.isList()) list.addAll((Collection) lval);
-			else list.add(lval);
-
-			if (right.isList()) list.addAll((Collection) rval);
-			else list.add(rval);
-
-			bdsThread.push(list);
-			return;
-		}
-
-		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 	}
 
 	@Override
