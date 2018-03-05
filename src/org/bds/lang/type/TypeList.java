@@ -68,6 +68,23 @@ public class TypeList extends TypeComposite {
 		return type;
 	}
 
+	/**
+	 * Can this type be casted to 'type'?
+	 */
+	@Override
+	public boolean canCastTo(Type type) {
+		return equals(type) // Same type
+				|| getElementType().isVoid() // Empty list can be converted in assignment. e.g.: " list := [] " 
+		;
+	}
+
+	@Override
+	public Value cast(Value v) {
+		if (is(v.getType())) return v; // Same type? No need to cast
+		if (v.getType().isList() && ((ValueList) v).isEmpty()) return newValue(); // Empty list?
+		throw new RuntimeException("Cannot cast type '" + v.getType() + "' to type '" + this + "'");
+	}
+
 	public static String typeKey(Type elementType) {
 		return elementType + "[]";
 	}

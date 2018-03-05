@@ -6,6 +6,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -33,9 +34,9 @@ public class MethodNativeListHas extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		List list = (List) objThis;
-		Object toCheck = csThread.getObject("toCheck");
-		return list.contains(toCheck);
+		Value toCheck = bdsThread.getValue("toCheck");
+		return list.contains(toCheck.get());
 	}
 }

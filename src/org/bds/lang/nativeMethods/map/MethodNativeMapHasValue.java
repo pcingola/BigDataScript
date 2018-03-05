@@ -6,6 +6,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -36,7 +37,7 @@ public class MethodNativeMapHasValue extends MethodNativeMap {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		Map map = (Map) objThis;
-		Object val = bdsThread.getObject("val");
-		return map.containsValue(val);
+		Value val = bdsThread.getValue("val");
+		return map.containsValue(val.get());
 	}
 }

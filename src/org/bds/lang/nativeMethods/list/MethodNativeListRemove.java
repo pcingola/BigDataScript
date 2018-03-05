@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -34,8 +35,8 @@ public class MethodNativeListRemove extends MethodNativeList {
 	@Override
 	protected Object runMethodNative(BdsThread csThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
-		Object toRemove = csThread.getObject("toRemove");
-		list.remove(toRemove);
-		return toRemove;
+		Value toRemove = csThread.getValue("toRemove");
+		list.remove(toRemove.get());
+		return toRemove.get();
 	}
 }

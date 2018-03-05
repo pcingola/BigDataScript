@@ -49,7 +49,6 @@ public class ForInit extends Statement {
 
 	@Override
 	public String toString() {
-
 		if (varDeclaration != null) return varDeclaration.toString();
 
 		// Use expressions

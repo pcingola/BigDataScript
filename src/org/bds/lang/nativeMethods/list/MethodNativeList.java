@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -39,8 +40,8 @@ public abstract class MethodNativeList extends MethodNative {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
-		Object toPush = bdsThread.getObject("toPush");
-		list.add(toPush);
+		Value toPush = bdsThread.getValue("toPush");
+		list.add(toPush.get());
 		return toPush;
 	}
 }

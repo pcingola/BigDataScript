@@ -6,6 +6,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -35,11 +36,12 @@ public class MethodNativeListCount extends MethodNativeList {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		List list = (List) objThis;
-		Object toCount = bdsThread.getObject("toCount");
+		Value toCount = bdsThread.getValue("toCount");
+		Object oToCount = toCount.get();
 
 		long count = 0;
 		for (Object o : list)
-			if (toCount.equals(o)) count++;
+			if (oToCount.equals(o)) count++;
 
 		return count;
 	}

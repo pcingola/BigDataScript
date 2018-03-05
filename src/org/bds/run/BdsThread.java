@@ -549,13 +549,6 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return bdsThreadId;
 	}
 
-	/**
-	 * Get variable's map as a java object
-	 */
-	public Object getObject(String varName) {
-		return getScope().getSymbol(varName).getValue();
-	}
-
 	public BdsThread getParent() {
 		return parent;
 	}
@@ -662,6 +655,13 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 	public Timer getTimer() {
 		return timer;
+	}
+
+	/**
+	 * Get variable's value (as a Value object)
+	 */
+	public Value getValue(String varName) {
+		return getScope().getSymbol(varName).getValue();
 	}
 
 	/**

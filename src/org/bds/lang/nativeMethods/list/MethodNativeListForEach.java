@@ -8,6 +8,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.ValueFunction;
 import org.bds.run.BdsThread;
 
 /**
@@ -26,7 +27,8 @@ public class MethodNativeListForEach extends MethodNativeList {
 	 * TODO: Move this to Scope?
 	 */
 	protected FunctionDeclaration findFunction(BdsThread bdsThread, String fname) {
-		FunctionDeclaration function = (FunctionDeclaration) bdsThread.getObject("f");
+		ValueFunction vf = (ValueFunction) bdsThread.getValue("f");
+		FunctionDeclaration function = (FunctionDeclaration) vf.get();
 
 		// Type checking
 		// TODO: This is awful to say the least!

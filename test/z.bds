@@ -1,8 +1,11 @@
+#!/usr/bin.enbv bds
 
-
-string[] list = [ "one", "two", "three" ]
-string ss
-
-for( string s : list ) {
-	ss = ss + s
-}
+string[] l1
+string[] l2
+l1 = []
+l2 = []
+println "l1: $l1\t\tl2: $l2"
+l1 += 'hi'
+println "l1: $l1\t\tl2: $l2"
+l2 += 'bye'
+println "l1: $l1\t\tl2: $l2"

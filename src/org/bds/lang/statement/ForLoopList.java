@@ -12,6 +12,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueInt;
@@ -198,10 +199,16 @@ public class ForLoopList extends StatementWithScope {
 			if (!exprType.isList() && !exprType.isMap()) {
 				compilerMessages.add(this, "Expression should return a list or a map", MessageType.ERROR);
 			} else if (beginVarDecl != null) {
-				TypeList exprListType = (TypeList) exprType;
-				Type baseType = exprListType.getElementType();
-				Type varType = beginVarDecl.getType();
+				Type baseType;
 
+				if (exprType.isList()) baseType = ((TypeList) exprType).getElementType();
+				else if (exprType.isMap()) baseType = ((TypeMap) exprType).getValueType();
+				else {
+					compilerMessages.add(this, "Expression should return a list or a map", MessageType.ERROR);
+					return;
+				}
+
+				Type varType = beginVarDecl.getType();
 				if ((baseType != null) && !baseType.canCastTo(varType)) {
 					compilerMessages.add(this, "Cannot cast " + baseType + " to " + varType, MessageType.ERROR);
 				}

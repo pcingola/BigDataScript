@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.util.Gpr;
 
 /**
  * Define a map of type list
@@ -25,6 +26,7 @@ public class ValueList extends Value {
 	}
 
 	public void add(Value v) {
+		Gpr.debug("LIST ADD: " + v + "v.get().class: " + v.get().getClass().getCanonicalName());
 		value.add(v.get());
 	}
 
@@ -44,6 +46,10 @@ public class ValueList extends Value {
 	public Value getValue(long idx) {
 		Object elem = get().get((int) idx);
 		return ((TypeList) type).getElementType().newValue(elem);
+	}
+
+	public boolean isEmpty() {
+		return get().isEmpty();
 	}
 
 	/**

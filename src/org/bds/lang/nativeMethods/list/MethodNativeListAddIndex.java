@@ -6,6 +6,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -33,11 +34,11 @@ public class MethodNativeListAddIndex extends MethodNativeList {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		ArrayList list = (ArrayList) objThis;
-		long idx = csThread.getInt("idx");
-		Object toPush = csThread.getObject("toPush");
-		list.add((int) idx, toPush);
+		long idx = bdsThread.getInt("idx");
+		Value toPush = bdsThread.getValue("toPush");
+		list.add((int) idx, toPush.get());
 		return toPush;
 	}
 }

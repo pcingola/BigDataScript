@@ -99,7 +99,7 @@ public class LiteralMap extends Literal {
 				Value value = bdsThread.pop();
 				String key = bdsThread.pop().toString();
 				value = valueType.cast(value);
-				map.put(key, value); // Add it to map
+				map.put(key, value.get()); // Add it to map
 			}
 		}
 

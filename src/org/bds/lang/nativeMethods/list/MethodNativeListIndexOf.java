@@ -6,6 +6,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -35,9 +36,9 @@ public class MethodNativeListIndexOf extends MethodNativeList {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		List list = (List) objThis;
-		Object toFind = bdsThread.getObject("toFind");
+		Value toFind = bdsThread.getValue("toFind");
 
-		long idx = list.indexOf(toFind);
+		long idx = list.indexOf(toFind.get());
 		return idx;
 	}
 }
