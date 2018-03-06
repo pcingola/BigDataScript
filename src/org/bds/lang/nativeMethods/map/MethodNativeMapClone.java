@@ -22,7 +22,7 @@ public class MethodNativeMapClone extends MethodNativeMap {
 	@Override
 	protected void initMethod() {
 		TypeMap mapType = (TypeMap) classType;
-		functionName = "keys";
+		functionName = "clone";
 		returnType = mapType;
 
 		String argNames[] = { "this" };

@@ -9,6 +9,6 @@ void someFunction(int x) {
 # A loop fires threads of sequential tasks
 for ( int i : range(0,10) ) {
 	print "Loop: $i\n";
-   	par someFunction(i)
+   	par someFunction(i.clone())
 }
 
