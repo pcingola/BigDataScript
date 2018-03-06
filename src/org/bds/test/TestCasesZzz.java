@@ -12,12 +12,6 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test92() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_92.bds", "outs", "TASK 1\nTASK 2\n");
-	}
-
-	@Test
 	public void test93() {
 		Gpr.debug("Test");
 		runAndCheck("test/run_93.bds", "outs", "TASK 1\nTASK 2\n");

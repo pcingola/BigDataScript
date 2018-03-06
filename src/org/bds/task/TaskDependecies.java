@@ -34,7 +34,7 @@ public class TaskDependecies {
 	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
 	Map<String, Task> tasksById;
 	AutoHashMap<String, List<Task>> tasksByOutput;
-	HashMap<String, String> canonicalPath;
+	Map<String, String> canonicalPath;
 
 	public static TaskDependecies get() {
 		return taskDependecies;

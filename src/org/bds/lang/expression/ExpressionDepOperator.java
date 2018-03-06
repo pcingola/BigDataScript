@@ -9,6 +9,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.task.TaskDependency;
@@ -40,13 +41,13 @@ public class ExpressionDepOperator extends Expression {
 		runStep(bdsThread, right);
 		if (bdsThread.isCheckpointRecover()) return null;
 
-		List<String> rightEval = (List<String>) bdsThread.pop();
-		List<String> leftEval = (List<String>) bdsThread.pop();
+		ValueList rightEval = (ValueList) bdsThread.pop();
+		ValueList leftEval = (ValueList) bdsThread.pop();
 
 		// Create task dependency and add all results
 		TaskDependency taskDependency = new TaskDependency(this);
-		taskDependency.addOutput(leftEval);
-		taskDependency.addInput(rightEval);
+		taskDependency.addOutput(leftEval.get());
+		taskDependency.addInput(rightEval.get());
 
 		return taskDependency;
 	}
