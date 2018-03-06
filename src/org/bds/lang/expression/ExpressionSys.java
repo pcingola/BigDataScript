@@ -87,7 +87,7 @@ public class ExpressionSys extends Expression {
 		bdsThread.run(interpolateVars);
 		if (bdsThread.isCheckpointRecover()) return null;
 
-		return bdsThread.pop().toString();
+		return bdsThread.popString();
 	}
 
 	public String getSysFileName(String execId) {

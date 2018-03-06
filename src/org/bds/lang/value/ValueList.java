@@ -28,6 +28,10 @@ public class ValueList extends Value {
 		value.add(v.get());
 	}
 
+	public void addNative(Object o) {
+		value.add(o);
+	}
+
 	@SuppressWarnings("unchecked")
 	public void addAll(ValueList v) {
 		value.addAll(v.get());

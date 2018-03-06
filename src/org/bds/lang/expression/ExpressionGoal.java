@@ -11,6 +11,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 
@@ -40,7 +41,7 @@ public class ExpressionGoal extends ExpressionUnary {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		// Get expression map
-		Object value = bdsThread.pop();
+		Value value = bdsThread.pop();
 
 		// Goal returns a list of taskIds to be run
 		List<String> taskIds = null;
@@ -49,12 +50,12 @@ public class ExpressionGoal extends ExpressionUnary {
 			taskIds = new ArrayList<>();
 
 			// Process each goal
-			Collection goals = (Collection) value;
+			Collection goals = (Collection) value.get();
 			for (Object goal : goals)
 				taskIds.addAll(bdsThread.goal(goal.toString()));
 		} else {
 			// Single valued
-			taskIds = bdsThread.goal(value.toString());
+			taskIds = bdsThread.goal(value.get().toString());
 		}
 
 		// Add results to stack

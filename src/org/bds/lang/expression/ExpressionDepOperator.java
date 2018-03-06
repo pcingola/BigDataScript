@@ -9,6 +9,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
@@ -109,18 +110,20 @@ public class ExpressionDepOperator extends Expression {
 	 */
 	@SuppressWarnings("rawtypes")
 	public void runStep(BdsThread bdsThread, Expression exprs[]) {
-		ArrayList<String> resList = new ArrayList<>();
+		ValueList resList = new ValueList(Types.STRING);
 
 		for (Expression e : exprs) {
 			bdsThread.run(e);
-			Object result = bdsThread.pop();
+			Value result = bdsThread.pop();
 
-			if (result instanceof List) {
-				// Flatten the list
-				List l = (List) result;
-				for (Object o : l)
-					resList.add(o.toString());
-			} else resList.add(result.toString());
+			if (result.getType().isList()) {
+				// Add all elements as strings
+				for (Object o : (List) result.get()) {
+					resList.addNative(o.toString());
+				}
+			} else {
+				resList.addNative(result.get().toString());
+			}
 		}
 
 		bdsThread.push(resList);

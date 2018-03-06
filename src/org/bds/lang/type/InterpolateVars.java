@@ -10,6 +10,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.Literal;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.util.Tuple;
@@ -257,13 +258,13 @@ public class InterpolateVars extends Literal {
 	 * How to show objects in interpolation
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	String interpolateValue(Object val) {
-		if (val instanceof Map) {
+	String interpolateValue(Value val) {
+		if (val.getType().isMap()) {
 			StringBuilder sb = new StringBuilder();
 
 			// We sort keys in maps, so that contents are always the same
-			Map map = (Map) val;
-			ArrayList keys = new ArrayList();
+			Map map = (Map) val.get();
+			List keys = new ArrayList();
 			keys.addAll(map.keySet());
 			Collections.sort(keys);
 
@@ -278,7 +279,7 @@ public class InterpolateVars extends Literal {
 			return sb.toString();
 		}
 
-		return val.toString();
+		return val.get().toString();
 	}
 
 	public boolean isEmpty() {
@@ -355,7 +356,7 @@ public class InterpolateVars extends Literal {
 			if (ref != null) {
 				bdsThread.run(ref);
 				if (!bdsThread.isCheckpointRecover()) {
-					Object val = bdsThread.pop();
+					Value val = bdsThread.pop();
 					sb.append(interpolateValue(val));
 				}
 			}

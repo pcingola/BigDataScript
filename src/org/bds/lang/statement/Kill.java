@@ -5,6 +5,7 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -40,15 +41,15 @@ public class Kill extends Statement {
 		bdsThread.run(taskId);
 		if (bdsThread.isCheckpointRecover()) return;
 
-		Object val = bdsThread.pop();
+		Value val = bdsThread.pop();
 
 		// Are we Killing for one task or a list of tasks?
-		if (val instanceof List) {
-			bdsThread.kill((List) val);
-			bdsThread.wait((List) val);
+		if (val.getType().isList()) {
+			bdsThread.kill((List) val.get());
+			bdsThread.wait((List) val.get());
 		} else {
-			bdsThread.kill(val.toString());
-			bdsThread.wait(val.toString());
+			bdsThread.kill(val.get().toString());
+			bdsThread.wait(val.get().toString());
 		}
 	}
 

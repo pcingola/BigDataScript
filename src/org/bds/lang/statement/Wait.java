@@ -5,6 +5,7 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 
@@ -43,13 +44,14 @@ public class Wait extends Statement {
 		} else {
 			// Wait for a specific task or list of tasks
 			bdsThread.run(taskId);
-			Object val = bdsThread.pop();
+			Value val = bdsThread.pop();
 
 			// Are we waiting for a single task/thread or a list?
-			if (val instanceof List) ok = bdsThread.wait((List) val);
+			if (val.getType().isList()) ok = bdsThread.wait((List) val.get());
 			else {
-				if (bdsThread.getThread(val.toString()) != null) type = "Thread";
-				ok = bdsThread.wait(val.toString());
+				String valStr = val.get().toString();
+				if (bdsThread.getThread(valStr) != null) type = "Thread";
+				ok = bdsThread.wait(valStr);
 			}
 		}
 
