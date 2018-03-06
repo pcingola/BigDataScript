@@ -44,8 +44,8 @@ public class Pre extends ExpressionUnary {
 
 		ValueInt value = (ValueInt) bdsThread.pop();
 		ValueInt newValue;
-		if (operation == PrePostOperation.INCREMENT) newValue = new ValueInt(value.get() + 1);
-		else if (operation == PrePostOperation.DECREMENT) newValue = new ValueInt(value.get() - 1);
+		if (operation == PrePostOperation.INCREMENT) newValue = new ValueInt(value.asInt() + 1);
+		else if (operation == PrePostOperation.DECREMENT) newValue = new ValueInt(value.asInt() - 1);
 		else throw new RuntimeException("Unknown operator " + operation);
 
 		ref.setValue(bdsThread, newValue);
