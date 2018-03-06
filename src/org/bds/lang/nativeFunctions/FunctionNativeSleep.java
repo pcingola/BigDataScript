@@ -2,7 +2,6 @@ package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
@@ -20,7 +19,7 @@ public class FunctionNativeSleep extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "sleep";
-		returnType = TypeList.get(Types.BOOL);
+		returnType = Types.BOOL;
 
 		String argNames[] = { "seconds" };
 		Type argTypes[] = { Types.INT };
