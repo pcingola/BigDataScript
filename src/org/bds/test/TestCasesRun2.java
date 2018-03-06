@@ -497,11 +497,23 @@ public class TestCasesRun2 extends TestCasesBase {
 		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("l", "[1, 2, 3, 99]");
+		expectedValues.put("lc1", "[1, 2, 3, 99]");
+		expectedValues.put("lc2", "[1, 2, 3, 99]");
+		expectedValues.put("lc3", "[1, 2, 3, 99]");
+
+		runAndCheck("test/run_135.bds", expectedValues);
+	}
+
+	@Test
+	public void test135_clone() {
+		Gpr.debug("Test");
+		HashMap<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("l", "[1, 2, 3, 99]");
 		expectedValues.put("lc1", "[1, 2, 3]");
 		expectedValues.put("lc2", "[1, 2, 3]");
 		expectedValues.put("lc3", "[1, 2, 3]");
 
-		runAndCheck("test/run_135.bds", expectedValues);
+		runAndCheck("test/run_135_clone.bds", expectedValues);
 	}
 
 	@Test
