@@ -68,7 +68,7 @@ public class ValueMap extends Value {
 			if (sb.length() > 0) sb.append(", ");
 			sb.append(" " + o.toString() + " => " + map.get(o));
 		}
-		return "{ " + sb.toString() + " }";
+		return "{" + sb.toString() + " }";
 	}
 
 }

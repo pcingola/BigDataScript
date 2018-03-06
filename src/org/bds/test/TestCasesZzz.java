@@ -12,9 +12,9 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test93() {
+	public void test104() {
 		Gpr.debug("Test");
-		runAndCheck("test/run_93.bds", "outs", "TASK 1\nTASK 2\n");
+		runAndCheck("test/run_104.bds", "isRun", "true");
 	}
 
 }

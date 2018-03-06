@@ -158,9 +158,9 @@ public class FunctionDeclaration extends StatementWithScope {
 			bdsThread.setRunState(RunState.OK); // Restore 'OK' runState
 		} else {
 			Value retVal = bdsThread.getReturnValue();
-			Type retType = retVal.getType();
-			if (!retType.canCastTo(returnType)) {
-				// Not the right type? Force a default value for returnType
+			if (retVal == null || !retVal.getType().canCastTo(returnType)) {
+				// No return value or not the right type? 
+				// Then force a default value for returnType
 				// Note: This should be caught as a compile time error
 				bdsThread.setReturnValue(returnType.newValue());
 			}

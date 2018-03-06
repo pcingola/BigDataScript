@@ -38,11 +38,12 @@ public class Post extends Pre {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		ValueInt value = (ValueInt) bdsThread.pop();
-		if (operation == PrePostOperation.INCREMENT) value.set(value.get() + 1);
-		else if (operation == PrePostOperation.DECREMENT) value.set(value.get() - 1);
+		ValueInt newValue;
+		if (operation == PrePostOperation.INCREMENT) newValue = new ValueInt(value.get() + 1);
+		else if (operation == PrePostOperation.DECREMENT) newValue = new ValueInt(value.get() - 1);
 		else throw new RuntimeException("Unknown operator " + operation);
 
-		ref.setValue(bdsThread, value);
+		ref.setValue(bdsThread, newValue);
 		bdsThread.push(value);
 	}
 

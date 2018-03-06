@@ -23,6 +23,7 @@ public abstract class Value {
 		if (v instanceof String) return new ValueString((String) v);
 		if (v instanceof Integer) return new ValueInt(((Integer) v).longValue());
 		if (v instanceof Float) return new ValueReal(((Float) v).doubleValue());
+		if (v == null) return Value.NULL;
 		throw new RuntimeException("Cannot create Value from object class " + v.getClass().getCanonicalName());
 	}
 
