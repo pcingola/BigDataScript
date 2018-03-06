@@ -8,6 +8,7 @@ import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.nativeMethods.list.MethodNativeListAdd;
 import org.bds.lang.nativeMethods.list.MethodNativeListAddIndex;
 import org.bds.lang.nativeMethods.list.MethodNativeListAddList;
+import org.bds.lang.nativeMethods.list.MethodNativeListClone;
 import org.bds.lang.nativeMethods.list.MethodNativeListCount;
 import org.bds.lang.nativeMethods.list.MethodNativeListFilter;
 import org.bds.lang.nativeMethods.list.MethodNativeListForEach;
@@ -121,6 +122,7 @@ public class TypeList extends TypeComposite {
 			methods.add(new MethodNativeListAdd(this));
 			methods.add(new MethodNativeListAddIndex(this));
 			methods.add(new MethodNativeListAddList(this));
+			methods.add(new MethodNativeListClone(this));
 			methods.add(new MethodNativeListCount(this));
 			methods.add(new MethodNativeListFilter(this));
 			methods.add(new MethodNativeListForEach(this));

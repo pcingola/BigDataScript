@@ -13,7 +13,7 @@ import org.bds.lang.type.TypeList;
 @SuppressWarnings("rawtypes")
 public class ValueList extends Value {
 
-	List<Object> value;
+	List<Object> list;
 
 	public ValueList(Type type) {
 		this(type, -1);
@@ -21,34 +21,33 @@ public class ValueList extends Value {
 
 	public ValueList(Type type, int len) {
 		super(type);
-		value = len > 0 ? new ArrayList<>(len) : new ArrayList<>();
+		list = len > 0 ? new ArrayList<>(len) : new ArrayList<>();
 	}
 
 	public void add(Value v) {
-		value.add(v.get());
+		list.add(v.get());
 	}
 
 	@SuppressWarnings("unchecked")
 	public void addAll(ValueList v) {
-		value.addAll(v.get());
+		list.addAll(v.get());
 	}
 
 	public void addNative(Object o) {
-		value.add(o);
+		list.add(o);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Value clone() {
-		ValueList vl = new ValueList(type, value.size());
-		List l = vl.get();
-		l.addAll(value);
+		ValueList vl = new ValueList(type, list.size());
+		vl.get().addAll(list);
 		return vl;
 	}
 
 	@Override
 	public List get() {
-		return value;
+		return list;
 	}
 
 	/**
@@ -75,7 +74,7 @@ public class ValueList extends Value {
 	@Override
 	public void set(Object v) {
 		// !!! TODO: Check list elements class
-		value = (List<Object>) v;
+		list = (List<Object>) v;
 	}
 
 	@SuppressWarnings("unchecked")

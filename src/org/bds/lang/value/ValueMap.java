@@ -23,11 +23,16 @@ public class ValueMap extends Value {
 		map = new HashMap();
 	}
 
+	public ValueMap(Type type, int size) {
+		super(type);
+		map = new HashMap(size);
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public ValueMap clone() {
-		Map mapClone = new HashMap(map.size());
-		ValueMap vm = new ValueMap(type);
-		vm.set(mapClone);
+		ValueMap vm = new ValueMap(type, map.size());
+		vm.get().putAll(map);
 		return vm;
 	}
 

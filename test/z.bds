@@ -4,12 +4,12 @@
 l := [1, 2, 3]
 
 # Assign list to other lists in different ways
-int[] lc1 = l
+int[] lc1 = l.clone()
 
 int[] lc2 
-lc2 = l
+lc2 = l.clone()
 
-lc3 := l
+lc3 := l.clone()
 
 # Modify original list
 l.add(99)

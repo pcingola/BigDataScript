@@ -40,6 +40,10 @@ public class NativeLibraryFunctions {
 			, FunctionNativeAssertIntNoMsg.class //
 			, FunctionNativeAssertString.class //
 			, FunctionNativeAssertStringNoMsg.class //
+			, FunctionNative_clone_bool.class //
+			, FunctionNative_clone_int.class //
+			, FunctionNative_clone_real.class //
+			, FunctionNative_clone_string.class //
 			//
 			// Math functions
 			, org.bds.lang.nativeFunctions.math.FunctionNative_abs_int.class //
@@ -86,7 +90,7 @@ public class NativeLibraryFunctions {
 	@SuppressWarnings("rawtypes")
 	public NativeLibraryFunctions() {
 		try {
-			functions = new ArrayList<FunctionNative>();
+			functions = new ArrayList<>();
 
 			for (Class c : classes)
 				functions.add((FunctionNative) c.newInstance());
