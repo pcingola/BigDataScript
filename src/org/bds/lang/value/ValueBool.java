@@ -22,6 +22,11 @@ public class ValueBool extends ValuePrimitive<Boolean> {
 	}
 
 	@Override
+	public ValueBool clone() {
+		return new ValueBool(asBool());
+	}
+
+	@Override
 	public void parse(String str) {
 		value = Boolean.parseBoolean(str);
 	}

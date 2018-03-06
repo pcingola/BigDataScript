@@ -20,6 +20,11 @@ public class ValueString extends ValuePrimitive<String> {
 	}
 
 	@Override
+	public ValueString clone() {
+		return new ValueString(asString());
+	}
+
+	@Override
 	public void parse(String str) {
 		value = str;
 	}

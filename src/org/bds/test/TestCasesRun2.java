@@ -3,9 +3,9 @@ package org.bds.test;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.bds.lang.value.ValueList;
 import org.bds.util.Gpr;
 import org.junit.Test;
 
@@ -560,15 +560,16 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheck("test/run_141.bds", "i", "42");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void test142_dirPath() {
 		Gpr.debug("Test");
-		List<String> dir2 = (List<String>) runAndGet("test/run_142.bds", "dir2");
+		verbose = debug = true;
+		ValueList dir2 = (ValueList) runAndGet("test/run_142.bds", "dir2");
 
 		Assert.assertEquals(10, dir2.size());
 
-		for (String f : dir2) {
+		for (Object o : dir2.get()) {
+			String f = o.toString();
 			if (debug) System.out.println(f);
 			Assert.assertTrue("Path must be canonical", f.startsWith("/"));
 			Assert.assertTrue("Path must be canonical", f.endsWith(".bds"));

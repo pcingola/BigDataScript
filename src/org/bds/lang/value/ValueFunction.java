@@ -16,6 +16,11 @@ public class ValueFunction extends Value {
 	}
 
 	@Override
+	public Value clone() {
+		return this; // Function types are not cloned
+	}
+
+	@Override
 	public Object get() {
 		return fdecl;
 	}
@@ -27,7 +32,6 @@ public class ValueFunction extends Value {
 
 	@Override
 	public void set(Object v) {
-		// !!! TODO: Check that parameters and return type are OK
 		fdecl = (FunctionDeclaration) v;
 	};
 

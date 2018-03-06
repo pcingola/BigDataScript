@@ -7,7 +7,7 @@ import org.bds.lang.type.Types;
  * Define a value
  * @author pcingola
  */
-public abstract class Value {
+public abstract class Value implements Cloneable {
 
 	public static final ValueUnique ANY = ValueUnique.get(Types.ANY);
 	public static final ValueUnique FAKE = ValueUnique.get(Types.FAKE);
@@ -59,6 +59,9 @@ public abstract class Value {
 	public String asString() {
 		return (String) Types.STRING.cast(this).get();
 	}
+
+	@Override
+	public abstract Value clone();
 
 	/**
 	 * Get native object (raw data)

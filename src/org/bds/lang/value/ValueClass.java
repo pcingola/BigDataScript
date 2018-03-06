@@ -17,6 +17,12 @@ public class ValueClass extends Value {
 		init();
 	}
 
+	@Override
+	public Value clone() {
+		// !!! TODO Auto-generated method stub
+		throw new RuntimeException("!!! UNIMPLEMENTED");
+	}
+
 	/**
 	 * Get native object (raw data)
 	 */

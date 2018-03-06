@@ -5,6 +5,11 @@ import java.util.Map;
 
 import org.bds.lang.type.Type;
 
+/**
+ * Unique values, such as 'null' and 'void'
+ *
+ * @author pcingola
+ */
 public class ValueUnique extends Value {
 
 	private static Map<Type, ValueUnique> valueUniqueByType = new HashMap<>();
@@ -16,6 +21,11 @@ public class ValueUnique extends Value {
 
 	private ValueUnique(Type type) {
 		super(type);
+	}
+
+	@Override
+	public Value clone() {
+		return this; // Note that unique values are not cloned
 	}
 
 	@Override

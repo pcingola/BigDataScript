@@ -19,6 +19,11 @@ public class ValueReal extends ValuePrimitive<Double> {
 	}
 
 	@Override
+	public ValueReal clone() {
+		return new ValueReal(asReal());
+	}
+
+	@Override
 	public void parse(String str) {
 		value = Double.parseDouble(str);
 	}

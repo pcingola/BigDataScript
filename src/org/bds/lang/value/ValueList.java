@@ -28,13 +28,22 @@ public class ValueList extends Value {
 		value.add(v.get());
 	}
 
+	@SuppressWarnings("unchecked")
+	public void addAll(ValueList v) {
+		value.addAll(v.get());
+	}
+
 	public void addNative(Object o) {
 		value.add(o);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void addAll(ValueList v) {
-		value.addAll(v.get());
+	@Override
+	public Value clone() {
+		ValueList vl = new ValueList(type, value.size());
+		List l = vl.get();
+		l.addAll(value);
+		return vl;
 	}
 
 	@Override

@@ -15,6 +15,9 @@ public abstract class ValuePrimitive<T extends Object> extends Value {
 	}
 
 	@Override
+	public abstract ValuePrimitive<T> clone();
+
+	@Override
 	public T get() {
 		return value;
 	}

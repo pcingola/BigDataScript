@@ -24,6 +24,14 @@ public class ValueMap extends Value {
 	}
 
 	@Override
+	public ValueMap clone() {
+		Map mapClone = new HashMap(map.size());
+		ValueMap vm = new ValueMap(type);
+		vm.set(mapClone);
+		return vm;
+	}
+
+	@Override
 	public Map get() {
 		return map;
 	}

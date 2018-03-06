@@ -13,6 +13,22 @@ public class ValueArgs extends Value {
 		values = new Value[n];
 	}
 
+	/**
+	 * Clone all values in the argument list
+	 */
+	@Override
+	public ValueArgs clone() {
+		ValueArgs va = new ValueArgs(values.length);
+
+		// Populate values with clones for each value
+		Value newValues[] = va.values;
+		for (int i = 0; i < values.length; i++) {
+			newValues[i] = values[i].clone();
+		}
+
+		return va;
+	}
+
 	@Override
 	public Object get() {
 		return values;
@@ -54,4 +70,5 @@ public class ValueArgs extends Value {
 		}
 		return "(" + sb.toString() + ")";
 	}
+
 }
