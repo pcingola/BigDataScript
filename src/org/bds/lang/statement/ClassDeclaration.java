@@ -80,7 +80,7 @@ public class ClassDeclaration extends Block {
 		// Sift statements
 		for (Statement s : statements) {
 			if (s instanceof VarDeclaration) lvd.add((VarDeclaration) s);
-			else if (s instanceof VarDeclaration) lfd.add((FunctionDeclaration) s);
+			else if (s instanceof FunctionDeclaration) lfd.add((FunctionDeclaration) s);
 			else ls.add(s);
 		}
 
@@ -131,19 +131,25 @@ public class ClassDeclaration extends Block {
 
 		sb.append(" {\n");
 
-		if (varDecl != null) {
+		if (varDecl != null && varDecl.length > 0) {
+			sb.append("\t# Variables\n");
 			for (int i = 0; i < varDecl.length; i++)
 				sb.append("\t" + varDecl[i] + "\n");
+			sb.append("\n");
 		}
 
-		if (funcDecl != null) {
+		if (funcDecl != null && funcDecl.length > 0) {
+			sb.append("\t# Methods\n");
 			for (int i = 0; i < funcDecl.length; i++)
-				sb.append("\t" + funcDecl[i] + "\n");
+				sb.append("\t" + funcDecl[i].signatureWithName() + "\n");
+			sb.append("\n");
 		}
 
-		if (statements != null) {
+		if (statements != null && statements.length > 0) {
+			sb.append("\t# Constructor statements\n");
 			for (int i = 0; i < statements.length; i++)
 				sb.append("\t" + statements[i] + "\n");
+			sb.append("\n");
 		}
 
 		sb.append("}\n");

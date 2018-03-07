@@ -159,7 +159,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		} else {
 			Value retVal = bdsThread.getReturnValue();
 			if (retVal == null || !retVal.getType().canCastTo(returnType)) {
-				// No return value or not the right type? 
+				// No return value or not the right type?
 				// Then force a default value for returnType
 				// Note: This should be caught as a compile time error
 				bdsThread.setReturnValue(returnType.newValue());
@@ -191,6 +191,10 @@ public class FunctionDeclaration extends StatementWithScope {
 		if (signature != null) return signature;
 		signature = TypeFunction.signature(parameters, returnType);
 		return signature;
+	}
+
+	public String signatureWithName() {
+		return returnType + " " + functionName + "(" + parameters + ")";
 	}
 
 	@Override
