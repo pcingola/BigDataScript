@@ -4,7 +4,7 @@ package org.bds.lang.value;
  * Define values to be passed to a function as arguments
  * @author pcingola
  */
-public class ValueArgs extends Value {
+public class ValueArgs extends ValueComposite {
 
 	Value values[];
 

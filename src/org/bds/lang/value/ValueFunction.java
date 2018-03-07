@@ -7,7 +7,7 @@ import org.bds.lang.type.Type;
  * Define a value of type 'function'
  * @author pcingola
  */
-public class ValueFunction extends Value {
+public class ValueFunction extends ValueComposite {
 
 	FunctionDeclaration fdecl;
 

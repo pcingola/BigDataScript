@@ -14,7 +14,7 @@ import org.bds.lang.type.TypeMap;
  * @author pcingola
  */
 @SuppressWarnings("rawtypes")
-public class ValueMap extends Value {
+public class ValueMap extends ValueComposite {
 
 	Map map;
 

@@ -1,18 +1,21 @@
 package org.bds.lang.value;
 
+import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 
-public class ValueBool extends ValuePrimitive<Boolean> {
+public class ValueBool extends ValuePrimitive {
 
 	public final static ValueBool TRUE = new ValueBool(true);
 	public final static ValueBool FALSE = new ValueBool(false);
 
+	boolean value;
+
 	public ValueBool() {
-		super(Types.BOOL);
+		super();
 	}
 
 	public ValueBool(Boolean v) {
-		super(Types.BOOL);
+		super();
 		set(v);
 	}
 
@@ -27,8 +30,23 @@ public class ValueBool extends ValuePrimitive<Boolean> {
 	}
 
 	@Override
+	public Boolean get() {
+		return Boolean.valueOf(value);
+	}
+
+	@Override
+	public Type getType() {
+		return Types.BOOL;
+	}
+
+	@Override
 	public void parse(String str) {
 		value = Boolean.parseBoolean(str);
+	}
+
+	@Override
+	public void set(Object v) {
+		value = (Boolean) v;
 	}
 
 }

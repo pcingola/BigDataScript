@@ -10,9 +10,11 @@ import org.bds.lang.type.Type;
  *
  * @author pcingola
  */
-public class ValueUnique extends Value {
+public class ValueUnique extends ValuePrimitive {
 
 	private static Map<Type, ValueUnique> valueUniqueByType = new HashMap<>();
+
+	protected Type type;
 
 	public static ValueUnique get(Type type) {
 		if (!valueUniqueByType.containsKey(type)) valueUniqueByType.put(type, new ValueUnique(type));
@@ -20,7 +22,8 @@ public class ValueUnique extends Value {
 	}
 
 	private ValueUnique(Type type) {
-		super(type);
+		super();
+		this.type = type;
 	}
 
 	@Override
@@ -34,8 +37,13 @@ public class ValueUnique extends Value {
 	}
 
 	@Override
+	public Type getType() {
+		return type;
+	}
+
+	@Override
 	public void set(Object v) {
-		// This value cannot be set
+		// This value cannot be set. Nothing to do
 	}
 
 }

@@ -11,7 +11,7 @@ import org.bds.lang.type.TypeList;
  * @author pcingola
  */
 @SuppressWarnings("rawtypes")
-public class ValueList extends Value {
+public class ValueList extends ValueComposite {
 
 	List<Object> list;
 

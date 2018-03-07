@@ -17,16 +17,16 @@ public class TestCasesZzz extends TestCasesBase {
 		runAndCheckpoint("test/graph_03.bds", "test/graph_03.chp", "out", "Task start\nTask end\n");
 	}
 
-	@Test
-	public void test04() {
-		Gpr.debug("Test");
-		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
-	}
-
-	@Test
-	public void test10() {
-		Gpr.debug("Test");
-		runAndCheck("test/graph_10.bds", "num", "2");
-	}
+	//	@Test
+	//	public void test04() {
+	//		Gpr.debug("Test");
+	//		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
+	//	}
+	//
+	//	@Test
+	//	public void test10() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/graph_10.bds", "num", "2");
+	//	}
 
 }

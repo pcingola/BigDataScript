@@ -14,8 +14,6 @@ public abstract class Value implements Cloneable {
 	public static final ValueUnique NULL = ValueUnique.get(Types.NULL);
 	public static final ValueUnique VOID = ValueUnique.get(Types.VOID);
 
-	protected Type type;
-
 	public static Value factory(Object v) {
 		if (v instanceof Boolean) return new ValueBool((Boolean) v);
 		if (v instanceof Long) return new ValueInt((Long) v);
@@ -27,8 +25,7 @@ public abstract class Value implements Cloneable {
 		throw new RuntimeException("Cannot create Value from object class " + v.getClass().getCanonicalName());
 	}
 
-	public Value(Type type) {
-		this.type = type;
+	public Value() {
 		init();
 	}
 
@@ -68,17 +65,32 @@ public abstract class Value implements Cloneable {
 	 */
 	public abstract Object get();
 
-	public Type getType() {
-		return type;
-	}
+	/**
+	 * Get value type
+	 */
+	public abstract Type getType();
 
+	/**
+	 * Initialize value
+	 */
 	protected void init() {
 	}
 
+	/**
+	 * Parse value from string
+	 */
 	public void parse(String str) {
 		throw new RuntimeException("String parsing unimplemented for type '" + this + "'");
 	}
 
+	/**
+	 * Set value's native object
+	 */
 	public abstract void set(Object v);
+
+	@Override
+	public String toString() {
+		return get() != null ? get().toString() : "null";
+	}
 
 }

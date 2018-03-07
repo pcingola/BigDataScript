@@ -8,7 +8,7 @@ import org.bds.lang.type.Type;
  * Define a value of an object (i.e. a class)
  * @author pcingola
  */
-public class ValueClass extends Value {
+public class ValueClass extends ValueComposite {
 
 	Map<String, Value> classMap;
 
