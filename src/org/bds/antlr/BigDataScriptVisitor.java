@@ -262,12 +262,12 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatementVarDeclaration(BigDataScriptParser.StatementVarDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code statementClassDeclaration}
+	 * Visit a parse tree produced by the {@code classDeclaration}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatementClassDeclaration(BigDataScriptParser.StatementClassDeclarationContext ctx);
+	T visitClassDeclaration(BigDataScriptParser.ClassDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code statementExpr}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.

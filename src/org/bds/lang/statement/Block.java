@@ -1,6 +1,7 @@
 package org.bds.lang.statement;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
@@ -30,8 +31,12 @@ public class Block extends StatementWithScope {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		ArrayList<Statement> stats = new ArrayList<Statement>();
-		for (int i = 0; i < tree.getChildCount(); i++) {
+		parse(tree, 0);
+	}
+
+	protected void parse(ParseTree tree, int startIdx) {
+		List<Statement> stats = new ArrayList<>();
+		for (int i = startIdx; i < tree.getChildCount(); i++) {
 			BdsNode node = factory(tree, i);
 			if (node != null) stats.add((Statement) node);
 		}

@@ -27,7 +27,7 @@ type : 'bool'                                                                   
      ;
 
 // Class definition
-classDef: 'class' ID eol* '{' ( type ID | eol ) * '}';
+classDef: 'class' ID eol* ('extends' ID)? '{' statement* '}';
 
 // Variable declaration
 varDeclaration       : type variableInit (',' variableInit)* | variableInitImplicit;
@@ -62,7 +62,7 @@ statement : '{' statement* '}'                                                  
             | 'while' '(' expression? ')' statement  eol*                                  # while
             | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*        # functionDeclaration
             | varDeclaration  eol*                                                         # statementVarDeclaration
-            | classDef  eol*                                                               # statementClassDeclaration
+            | classDef  eol*                                                               # classDeclaration
             | expression  eol*                                                             # statementExpr
             | includeFile eol*                                                             # statementInclude
             | HELP_LITERAL                                                                 # help

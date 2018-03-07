@@ -17,9 +17,9 @@ import org.bds.scope.ScopeSymbol;
  */
 public class VarDeclaration extends Statement {
 
-	boolean implicit;
-	Type type;
-	VariableInit varInit[];
+	protected boolean implicit;
+	protected Type type;
+	protected VariableInit varInit[];
 
 	public static VarDeclaration get(BdsNode parent, Type type, String varName, Expression expression) {
 		VarDeclaration vd = new VarDeclaration(parent, null);

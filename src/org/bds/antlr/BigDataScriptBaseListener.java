@@ -460,13 +460,13 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatementClassDeclaration(BigDataScriptParser.StatementClassDeclarationContext ctx) { }
+	@Override public void enterClassDeclaration(BigDataScriptParser.ClassDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatementClassDeclaration(BigDataScriptParser.StatementClassDeclarationContext ctx) { }
+	@Override public void exitClassDeclaration(BigDataScriptParser.ClassDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

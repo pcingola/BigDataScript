@@ -1,5 +1,4 @@
 // Generated from BigDataScript.g4 by ANTLR 4.7.1
-package org.bds.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -436,17 +435,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitStatementVarDeclaration(BigDataScriptParser.StatementVarDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code statementClassDeclaration}
+	 * Enter a parse tree produced by the {@code classDeclaration}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatementClassDeclaration(BigDataScriptParser.StatementClassDeclarationContext ctx);
+	void enterClassDeclaration(BigDataScriptParser.ClassDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code statementClassDeclaration}
+	 * Exit a parse tree produced by the {@code classDeclaration}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatementClassDeclaration(BigDataScriptParser.StatementClassDeclarationContext ctx);
+	void exitClassDeclaration(BigDataScriptParser.ClassDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code statementExpr}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.

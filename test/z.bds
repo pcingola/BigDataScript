@@ -1,4 +1,22 @@
 #!/usr/bin/env bds
 
+int i
+
+
+class Zzz {
+	int i
+	real r
+	string[] l
+
+	# Constructor code
+	print("Constructor code")
+
+	void hi() {
+		print "Hi there:\ti: $i"
+	}
+}
+
+class Aaa extends Zzz { }
+
 print("Hi")
 

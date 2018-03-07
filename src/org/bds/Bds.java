@@ -777,7 +777,7 @@ public class Bds {
 
 		// Sanity checks
 		if (checkPidRegex) {
-			// OK: Nothing to chek
+			// OK: Nothing to check
 		} else if ((programFileName == null) && (chekcpointRestoreFile == null)) {
 			// No file name => Error
 			usage("Missing program file name.");
