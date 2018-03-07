@@ -1,8 +1,6 @@
 package org.bds.lang.type;
 
 import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueBool;
-import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueReal;
 
 public class TypeReal extends TypePrimitive {
@@ -29,8 +27,8 @@ public class TypeReal extends TypePrimitive {
 		ValueReal vb = new ValueReal();
 		double val = 0;
 
-		if (vt.isBool()) val = ((ValueBool) v).get() ? 1.0 : 0.0;
-		else if (vt.isInt()) val = ((ValueInt) v).get();
+		if (vt.isBool()) val = v.asBool() ? 1.0 : 0.0;
+		else if (vt.isInt()) val = v.asInt();
 		else throw new RuntimeException("Cannot convert type '" + v.getType() + "' to 'real'");
 
 		vb.set(val);

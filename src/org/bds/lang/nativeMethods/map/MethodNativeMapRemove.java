@@ -38,6 +38,6 @@ public class MethodNativeMapRemove extends MethodNativeMap {
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		Map map = (Map) objThis;
 		Value key = bdsThread.getValue("key");
-		return map.remove(key.get());
+		return map.remove(key.get()) != null;
 	}
 }

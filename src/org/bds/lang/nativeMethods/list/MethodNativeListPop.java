@@ -34,7 +34,7 @@ public class MethodNativeListPop extends MethodNativeList {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		List list = (List) objThis;
-		if (list.isEmpty()) throw new RuntimeException("Invoking 'pop' element on an empty list.");
+		if (list.isEmpty()) throw new RuntimeException("Invoking 'pop' on an empty list.");
 		return list.remove(list.size() - 1);
 	}
 }

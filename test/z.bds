@@ -1,21 +1,33 @@
 #!/usr/bin/env bds
 
-# Create a list
 l := [1, 2, 3]
 
-# Assign list to other lists in different ways
-int[] lc1 = l.clone()
+println "l: $l"
 
-int[] lc2 
-lc2 = l.clone()
+# Test list.add(idx, X)
+l.add(1, 99)
+println "l: $l"
 
-lc3 := l
+# Test list.reverse()
+l2 := l.reverse()
+println "l2: $l2"
 
-# Modify original list
-l.add(99)
+# Test list.count(X)
+l3 := l2.clone()
+l3 += 99
+l3count := l3.count(99)
+println "l3: $l3\tl3.count(99): $l3count"
 
-# Check that assigned lists were not modified
-println "l   : $l"
-println "lc1 : $lc1"
-println "lc2 : $lc2"
-println "lc3 : $lc3"
+# Test list.indexOf(X)
+l3idx := l3.indexOf(99)
+println "l3: $l3\tl3.indexOf(99): $l3idx"
+
+# Test list.remove(X)
+l4 := l3.clone()
+l4.remove(99)
+println "l4: $l4"
+
+# Test list.removeIdx(X)
+l5 := l3.clone()
+l5.removeIdx(2)
+println "l5: $l5"

@@ -50,12 +50,21 @@ public class ValueList extends ValueComposite {
 		return list;
 	}
 
+	public Type getElementType() {
+		return getType().getElementType();
+	}
+
+	@Override
+	public TypeList getType() {
+		return (TypeList) type;
+	}
+
 	/**
 	 * Get element number 'idx' from the list wrapped into a 'Value'
 	 */
 	public Value getValue(long idx) {
 		Object elem = get().get((int) idx);
-		return ((TypeList) type).getElementType().newValue(elem);
+		return getElementType().newValue(elem);
 	}
 
 	public boolean isEmpty() {

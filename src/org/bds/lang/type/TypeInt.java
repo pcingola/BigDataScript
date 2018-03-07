@@ -1,7 +1,6 @@
 package org.bds.lang.type;
 
 import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueInt;
 
 public class TypeInt extends TypePrimitive {
@@ -28,7 +27,7 @@ public class TypeInt extends TypePrimitive {
 		ValueInt vb = new ValueInt();
 		long val = 0;
 
-		if (vt.isBool()) val = ((ValueBool) v).get() ? 1 : 0;
+		if (vt.isBool()) val = v.asBool() ? 1 : 0;
 		else throw new RuntimeException("Cannot convert type '" + v.getType() + "' to 'int'");
 
 		vb.set(val);

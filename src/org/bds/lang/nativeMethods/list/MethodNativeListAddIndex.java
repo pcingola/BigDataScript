@@ -38,7 +38,8 @@ public class MethodNativeListAddIndex extends MethodNativeList {
 		ArrayList list = (ArrayList) objThis;
 		long idx = bdsThread.getInt("idx");
 		Value toPush = bdsThread.getValue("toPush");
-		list.add((int) idx, toPush.get());
-		return toPush;
+		Object v = toPush.get();
+		list.add((int) idx, v);
+		return v;
 	}
 }

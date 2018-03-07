@@ -14,7 +14,7 @@ import org.bds.util.Gpr;
  *
  * @author pcingola
  */
-public class TypeFunction extends Type {
+public class TypeFunction extends TypeComposite {
 
 	protected Parameters parameters; // Function parameters
 	// Note: returnType already exists in BdsNode

@@ -8,7 +8,7 @@ import org.bds.lang.value.Value;
  * @author pcingola
  *
  */
-public abstract class TypeUniqueValue extends Type {
+public abstract class TypeUniqueValue extends TypePrimitive {
 
 	public TypeUniqueValue(PrimitiveType primitiveType) {
 		super(primitiveType);

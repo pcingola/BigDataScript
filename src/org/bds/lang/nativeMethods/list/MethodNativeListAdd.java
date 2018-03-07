@@ -38,7 +38,8 @@ public class MethodNativeListAdd extends MethodNativeList {
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		List list = (List) objThis;
 		Value toPush = bdsThread.getValue("toPush");
-		list.add(toPush.get());
-		return toPush;
+		Object v = toPush.get();
+		list.add(v);
+		return v;
 	}
 }
