@@ -411,9 +411,13 @@ public class BdsThread extends Thread implements BdsSerialize {
 		}
 
 		// Create checkpoint
-		String checkpointFileName = checkpoint(bdsnode);
-		if (checkpointFileName.isEmpty()) System.err.println("Creating checkpoint file: Config or command line option disabled checkpoint file creation, nothing done.");
-		else System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
+		try {
+			String checkpointFileName = checkpoint(bdsnode);
+			if (checkpointFileName.isEmpty()) System.err.println("Creating checkpoint file: Config or command line option disabled checkpoint file creation, nothing done.");
+			else System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
+		} catch (Throwable t) {
+			// Ignore serialization error at this stage (we are within a fatal error)
+		}
 
 		// Set exit map
 		setExitValue(1L);

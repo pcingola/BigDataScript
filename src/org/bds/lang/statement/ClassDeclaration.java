@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeClass;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
-import org.bds.util.Gpr;
 
 /**
  * Variable declaration
@@ -27,9 +28,25 @@ public class ClassDeclaration extends Block {
 		super(parent, tree);
 	}
 
+	public String getClassName() {
+		return className;
+	}
+
+	public ClassDeclaration getClassParent() {
+		return classParent;
+	}
+
+	public String getExtendsName() {
+		return extendsName;
+	}
+
+	public FunctionDeclaration[] getFuncDecl() {
+		return funcDecl;
+	}
+
 	/**
 	 * Get this class type
-	 * Note: We use 'returnType' for storing the 
+	 * Note: We use 'returnType' for storing the
 	 */
 	public Type getType() {
 		return returnType;
@@ -37,10 +54,6 @@ public class ClassDeclaration extends Block {
 
 	public VarDeclaration[] getVarDecl() {
 		return varDecl;
-	}
-
-	public FunctionDeclaration[] getFuncDecl() {
-		return funcDecl;
 	}
 
 	@Override
@@ -68,8 +81,6 @@ public class ClassDeclaration extends Block {
 			parse(tree, ++idx);
 			parseSortStatements();
 		}
-
-		Gpr.debug("CLASS: " + this);
 	}
 
 	protected void parseSortStatements() {
@@ -88,6 +99,26 @@ public class ClassDeclaration extends Block {
 		varDecl = lvd.toArray(new VarDeclaration[0]);
 		funcDecl = lfd.toArray(new FunctionDeclaration[0]);
 		statements = ls.toArray(new Statement[0]);
+	}
+
+	@Override
+	public Type returnType(Scope scope) {
+		if (returnType != null) return returnType;
+
+		// Create class type
+		returnType = TypeClass.get(className);
+
+		// TODO: Add local class scope
+		for (VarDeclaration vd : varDecl)
+			vd.returnType(scope);
+
+		for (FunctionDeclaration fd : funcDecl)
+			fd.returnType(scope);
+
+		for (Statement s : statements)
+			s.returnType(scope);
+
+		return returnType;
 	}
 
 	/**
@@ -158,6 +189,9 @@ public class ClassDeclaration extends Block {
 
 	@Override
 	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+		// Class name collides with other names?
+		if (scope.getSymbolLocal(className) != null) compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
+
 		// Add all symbols
 		//		for (VarDeclaration vi : varDecl) {
 		//			String varName = vi.varName;

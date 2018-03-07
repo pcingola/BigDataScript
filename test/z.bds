@@ -1,7 +1,5 @@
 #!/usr/bin/env bds
 
-int i
-
 
 class Zzz {
 	int i
@@ -12,11 +10,11 @@ class Zzz {
 	print("Constructor code")
 
 	void hi() {
-		print "Hi there:\ti: $i"
+		print "Hi there"
 	}
 }
 
 class Aaa extends Zzz { }
 
-print("Hi")
+print("Hi:")
 

@@ -25,7 +25,7 @@ import org.bds.util.Gpr;
 public class FunctionDeclaration extends StatementWithScope {
 
 	protected String functionName;
-	protected Type funcType;
+	protected TypeFunction funcType;
 	protected Parameters parameters;
 	protected Statement statement;
 	protected String signature;
@@ -122,7 +122,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	/**
 	 * Get this function's type
 	 */
-	public Type getType() {
+	public TypeFunction getType() {
 		if (funcType == null) funcType = TypeFunction.get(this);
 		return funcType;
 	}
@@ -208,7 +208,7 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	@Override
 	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		// Function name collides with variable name?
+		// Function name collides with other names?
 		if (scope.getSymbolLocal(functionName) != null) compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
 	}
 

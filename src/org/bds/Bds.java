@@ -311,7 +311,7 @@ public class Bds {
 		if (!CompilerMessages.get().isEmpty()) return false;
 
 		//---
-		// Convert to BigDataScriptNodes
+		// Convert to BdsNodes
 		//---
 		if (debug) log("Creating BigDataScript tree.");
 		CompilerMessages.reset();
