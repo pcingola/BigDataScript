@@ -23,8 +23,8 @@ import org.bds.scope.ScopeSymbol;
  */
 public class ProgramUnit extends BlockWithFile {
 
-	BdsThread bdsThread;
-	Scope runScope; // Scope used when running this program. Used in test cases
+	protected BdsThread bdsThread;
+	protected Scope runScope; // Scope used when running this program. Used in test cases
 
 	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
 		try {

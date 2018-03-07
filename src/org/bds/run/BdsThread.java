@@ -1084,6 +1084,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		// Before node execution
 		if (!isCheckpointRecover()) runBegin(node);
 
+		Gpr.debug("BDSTHREAD:" + this);
 		// Should we freeze execution?
 		if (freeze) freeze();
 

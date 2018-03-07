@@ -755,6 +755,7 @@ public abstract class BdsNode implements BdsSerialize {
 		// Iterate over fields
 		for (Field field : getAllClassFields()) {
 			try {
+				field.setAccessible(true);
 				Object fieldObj = field.get(this);
 
 				// Does the field have a map?
