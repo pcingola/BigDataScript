@@ -8,6 +8,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
@@ -110,7 +111,7 @@ public class ExpressionDepOperator extends Expression {
 	 */
 	@SuppressWarnings("rawtypes")
 	public void runStep(BdsThread bdsThread, Expression exprs[]) {
-		ValueList resList = new ValueList(Types.STRING);
+		ValueList resList = new ValueList(TypeList.get(Types.STRING));
 
 		for (Expression e : exprs) {
 			bdsThread.run(e);

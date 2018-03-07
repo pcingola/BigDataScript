@@ -878,7 +878,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	public void push(List<String> ls) {
-		ValueList vl = new ValueList(Types.STRING);
+		ValueList vl = new ValueList(TypeList.get(Types.STRING));
 		vl.set(ls);
 		push(vl);
 	}

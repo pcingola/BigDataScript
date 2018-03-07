@@ -1,33 +1,14 @@
 #!/usr/bin/env bds
 
-l := [1, 2, 3]
+tid := task echo Task start; sleep 2; echo Task end
+print("Task id: $tid\n")
 
-println "l: $l"
+checkpoint "test/graph_03.chp"
+print("After checkpoint\n")
 
-# Test list.add(idx, X)
-l.add(1, 99)
-println "l: $l"
+print("Waiting\n")
+wait
+print("After wait\n")
 
-# Test list.reverse()
-l2 := l.reverse()
-println "l2: $l2"
-
-# Test list.count(X)
-l3 := l2.clone()
-l3 += 99
-l3count := l3.count(99)
-println "l3: $l3\tl3.count(99): $l3count"
-
-# Test list.indexOf(X)
-l3idx := l3.indexOf(99)
-println "l3: $l3\tl3.indexOf(99): $l3idx"
-
-# Test list.remove(X)
-l4 := l3.clone()
-l4.remove(99)
-println "l4: $l4"
-
-# Test list.removeIdx(X)
-l5 := l3.clone()
-l5.removeIdx(2)
-println "l5: $l5"
+out := tid.stdout()
+print("Output: $out\n")
