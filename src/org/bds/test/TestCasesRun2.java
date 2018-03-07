@@ -575,7 +575,6 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test142_dirPath() {
 		Gpr.debug("Test");
-		verbose = debug = true;
 		ValueList dir2 = (ValueList) runAndGet("test/run_142.bds", "dir2");
 
 		Assert.assertEquals(10, dir2.size());
