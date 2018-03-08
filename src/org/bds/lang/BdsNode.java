@@ -27,6 +27,7 @@ import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Timer;
 
 /**
@@ -597,7 +598,7 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Calculate return type and assign it to 'returnType' variable.
 	 */
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		return Types.VOID;
 	}
 
@@ -738,6 +739,10 @@ public abstract class BdsNode implements BdsSerialize {
 		throw new RuntimeException("Cannot set scope to node " + this.getClass().getSimpleName());
 	}
 
+	public void setSymbolTable(SymbolTable symtab) {
+		throw new RuntimeException("Cannot set symbol table to node " + this.getClass().getSimpleName());
+	}
+
 	@Override
 	public String toString() {
 		return "Program: " + getFileName() + "\n";
@@ -799,28 +804,28 @@ public abstract class BdsNode implements BdsSerialize {
 	 * @param scope
 	 * @param compilerMessages
 	 */
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Calculate return type
-		returnType = returnType(scope);
+		returnType = returnType(symtab);
 
 		// Are return types non-null?
 		// Note: null returnTypes happen if variables are missing.
-		if (isReturnTypesNotNull()) typeCheckNotNull(scope, compilerMessages);
+		if (isReturnTypesNotNull()) typeCheckNotNull(symtab, compilerMessages);
 	}
 
 	/**
 	 * Perform several basic type checking tasks.
 	 * Invoke 'typeCheck()' method on all sub-nodes
 	 */
-	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
+	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Create a new scope?
 		if (isNeedsScope()) {
-			Scope newScope = new Scope(scope, this);
-			scope = newScope;
+			SymbolTable newSymtab = new SymbolTable(symtab);
+			symtab = newSymtab;
 		}
 
 		// Once the scope is right, we can perform the real type-check
-		typeCheck(scope, compilerMessages);
+		typeCheck(symtab, compilerMessages);
 
 		// Get all sub-nodes (first level, do not recurse)
 		List<BdsNode> nodes = findNodes(null, false);
@@ -832,18 +837,18 @@ public abstract class BdsNode implements BdsSerialize {
 		for (BdsNode node : nodes) {
 			// Not already type-checked? Go ahead
 			if (!TypeCheckedNodes.get().isTypeChecked(node)) {
-				node.typeChecking(scope, compilerMessages);
+				node.typeChecking(symtab, compilerMessages);
 			}
 		}
 
 		// Scope processing
 		if (isNeedsScope()) {
 			// Do we really need a scope? If the scope is empty, we don't really need it
-			if (scope.isEmpty()) setNeedsScope(false);
-			else setScope(scope);
+			if (symtab.isEmpty()) setNeedsScope(false);
+			else setSymbolTable(symtab);
 
 			// Get back to previous scope
-			scope = scope.getParent();
+			symtab = symtab.getParent();
 		}
 	}
 
@@ -851,7 +856,7 @@ public abstract class BdsNode implements BdsSerialize {
 	 * Type checking.
 	 * This is invoked once we made sure all return types are non null (so we don't have to check for null every time)
 	 */
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Nothing to do
 	}
 

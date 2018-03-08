@@ -15,6 +15,8 @@ import org.bds.lang.type.TypeFunction;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
+import org.bds.scope.ScopeSymbolFunction;
+import org.bds.util.Gpr;
 
 /**
  * A program unit
@@ -89,12 +91,15 @@ public class ProgramUnit extends BlockWithFile {
 	@Override
 	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
 		// Add all functions
-		List<BdsNode> funcs = findNodes(FunctionDeclaration.class, true);
+		// !!! TODO: Move this to the appropriate scope!?!?!?
+		Gpr.debug("!!! FIXME: This should be in the appropriate scope");
+		List<BdsNode> funcs = findNodes(FunctionDeclaration.class, false);
 		for (BdsNode func : funcs) {
+			Gpr.debug("!!! ADDING FUNCTION: " + func);
 			// Create scope symbol
 			FunctionDeclaration fd = (FunctionDeclaration) func;
 			TypeFunction typeFunc = new TypeFunction(fd);
-			ScopeSymbol ssym = new ScopeSymbol(fd.getFunctionName(), typeFunc, fd);
+			ScopeSymbol ssym = new ScopeSymbolFunction(fd.getFunctionName(), typeFunc, fd);
 
 			// Add it to scope
 			scope.add(ssym);

@@ -7,7 +7,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Arguments
@@ -68,13 +68,13 @@ public class Args extends BdsNode {
 	 * Calculate return type for every expression
 	 */
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		if (arguments != null) {
 			for (Expression e : arguments)
 				if (e.getReturnType() == null) // Only assign this to show that calculation was already performed
-					returnType = e.returnType(scope);
+					returnType = e.returnType(symtab);
 
 		} else returnType = Types.VOID;
 

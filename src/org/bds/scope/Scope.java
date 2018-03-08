@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
@@ -30,8 +31,9 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	int id;
 	Scope parent;
 	String parentNodeId;
-	HashMap<String, ScopeSymbol> symbols;
+	Map<String, ScopeSymbol> symbols;
 	AutoHashMap<String, List<ScopeSymbol>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
+	Map<String, ScopeSymbol> types; // Types defined within this scope
 	BdsNode node;
 
 	protected static int nextId() {

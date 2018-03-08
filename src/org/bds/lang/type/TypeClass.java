@@ -1,13 +1,13 @@
 package org.bds.lang.type;
 
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.lang.BdsNode;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.VarDeclaration;
-import org.bds.lang.statement.VariableInit;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueClass;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
 
 /**
  * Class type
@@ -16,39 +16,29 @@ import org.bds.scope.ScopeSymbol;
  */
 public class TypeClass extends TypeComposite {
 
-	ClassDeclaration classDecl;
-	String className;
-	Scope classScope;
+	protected String className;
+	protected ClassDeclaration classDecl;
+	protected Scope classScope;
 
-	public static TypeClass factory(ClassDeclaration classDecl, Scope parentScope) {
-		// Get type from hash
+	public static TypeClass factory(ClassDeclaration classDecl, Scope scope) {
+		// Get type from scope
 		String className = classDecl.getClassName();
 		if (Types.get(className) != null) throw new RuntimeException("Class '" + className + "' already exists. This should never happen!");
 
-		TypeClass type = new TypeClass(classDecl, parentScope);
+		TypeClass type = new TypeClass(classDecl, scope);
 		Types.put(type);
 
 		return type;
 	}
 
-	/**
-	 * Get a class type
-	 */
-	public static TypeClass get(String className) {
-		// Get type from hash
-		String key = className;
-		return (TypeClass) Types.get(key);
+	public TypeClass(BdsNode parent, ParseTree tree) {
+		super(parent, tree);
+		primitiveType = PrimitiveType.CLASS;
 	}
-
-	//	private TypeClass(BdsNode parent, ParseTree tree) {
-	//		super(parent, tree);
-	//		primitiveType = PrimitiveType.CLASS;
-	//	}
 
 	private TypeClass(ClassDeclaration classDeclaration, Scope parentScope) {
 		super(PrimitiveType.CLASS);
 		classDecl = classDeclaration;
-		className = classDecl.getClassName();
 		initClassScope(parentScope);
 	}
 
@@ -57,43 +47,54 @@ public class TypeClass extends TypeComposite {
 		int cmp = primitiveType.ordinal() - type.primitiveType.ordinal();
 		if (cmp != 0) return cmp;
 
-		TypeClass typec = (TypeClass) type;
-		// Both type names are null? => Equal
-		if ((className == null) && (typec.className == null)) return 0;
+		String tcn = ((TypeClass) type).getClassName();
 
-		// Any null is 'first'
-		if ((className != null) && (typec.className == null)) return 1;
-		if ((className == null) && (typec.className != null)) return -1;
+		// Compare if null
+		if ((className == null) && (tcn == null)) return 0;
+		if ((className != null) && (tcn == null)) return 1;
+		if ((className == null) && (tcn != null)) return -1;
 
 		// Compare names
-		return className.compareTo(typec.className);
+		return className.compareTo(tcn);
+	}
+
+	public String getClassName() {
+		return className;
 	}
 
 	public Scope getClassScope() {
 		return classScope;
 	}
 
+	public FunctionDeclaration[] getFuncDecl() {
+		return classDecl.getFuncDecl();
+	}
+
+	public VarDeclaration[] getVarDecl() {
+		return classDecl.getVarDecl();
+	}
+
 	/**
 	 * Initialize class scope
 	 */
 	protected void initClassScope(Scope parentScope) {
-		classScope = new Scope(parentScope, this);
-
-		// Add all variables
-		for (VarDeclaration vd : classDecl.getVarDecl()) {
-			Type type = vd.getType();
-			for (VariableInit vi : vd.getVarInit()) {
-				String name = vi.getVarName();
-				classScope.add(new ScopeSymbol(name, type));
-			}
-		}
-
-		// Add all methods
-		for (FunctionDeclaration fd : classDecl.getFuncDecl()) {
-			Type type = fd.getType();
-			String name = fd.getFunctionName();
-			classScope.add(new ScopeSymbol(name, type));
-		}
+		//		classScope = new Scope(parentScope, this);
+		//
+		//		// Add all variables
+		//		for (VarDeclaration vd : classDecl.getVarDecl()) {
+		//			Type type = vd.getType();
+		//			for (VariableInit vi : vd.getVarInit()) {
+		//				String name = vi.getVarName();
+		//				classScope.add(new ScopeSymbol(name, type));
+		//			}
+		//		}
+		//
+		//		// Add all methods
+		//		for (FunctionDeclaration fd : classDecl.getFuncDecl()) {
+		//			Type type = fd.getType();
+		//			String name = fd.getFunctionName();
+		//			classScope.add(new ScopeSymbol(name, type));
+		//		}
 	}
 
 	@Override
@@ -107,13 +108,18 @@ public class TypeClass extends TypeComposite {
 	}
 
 	@Override
+	protected void parse(ParseTree tree) {
+		className = tree.getChild(0).getText();
+	}
+
+	@Override
 	public String toString() {
-		return "class " + className;
+		return className;
 	}
 
 	@Override
 	public String toStringSerializer() {
-		return primitiveType.toString() + "\t" + className;
+		return primitiveType.toString() + "\t" + getClassName();
 	}
 
 }

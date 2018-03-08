@@ -1,6 +1,5 @@
 package org.bds.scope;
 
-import org.bds.lang.type.PrimitiveType;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.serialize.BdsSerialize;
@@ -20,11 +19,11 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	public static boolean debug = false;
 	private static int scopeSymbolNum = 0;
 
-	int id;
-	Type type;
-	String name;
-	Value value;
-	boolean constant = false;
+	protected int id;
+	protected Type type;
+	protected String name;
+	protected Value value;
+	protected boolean constant = false;
 
 	protected static int nextId() {
 		return ++scopeSymbolNum;
@@ -89,7 +88,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 	}
 
 	public boolean isFunction() {
-		return type.getPrimitiveType() == PrimitiveType.FUNCTION;
+		return false;
 	}
 
 	@Override

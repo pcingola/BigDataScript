@@ -1,0 +1,15 @@
+#!/usr/bin/env bds
+
+
+class Zzz {
+	int i
+	real r
+	string s
+}
+
+Zzz z = Zzz()
+println("z: $z")
+
+z2 := Zzz()
+println("z2: $z2")
+

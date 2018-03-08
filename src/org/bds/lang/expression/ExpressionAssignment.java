@@ -9,6 +9,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Assign one variable to another one
@@ -62,11 +63,11 @@ public class ExpressionAssignment extends ExpressionBinary {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Trying to assign to a constant?
 		Reference rleft = ((Reference) left);
-		if (rleft.isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + left + "'", MessageType.ERROR);
-		if (!rleft.isVariable(scope)) compilerMessages.add(this, "Cannot assign to non-variable '" + left + "'", MessageType.ERROR);
+		if (rleft.isConstant(symtab)) compilerMessages.add(this, "Cannot assign to constant '" + left + "'", MessageType.ERROR);
+		if (!rleft.isVariable(symtab)) compilerMessages.add(this, "Cannot assign to non-variable '" + left + "'", MessageType.ERROR);
 
 		// Can we cast 'right type' into 'left type'?
 		if (!right.canCastTo(left)) {

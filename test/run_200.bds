@@ -1,0 +1,9 @@
+#!/usr/bin/env bds
+
+
+int f(int x) {
+	return x + 1;
+}
+
+z := f
+

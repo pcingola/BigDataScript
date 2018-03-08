@@ -11,6 +11,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
+import org.bds.util.Gpr;
 
 /**
  * Variable declaration
@@ -105,18 +106,22 @@ public class ClassDeclaration extends Block {
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
-		// Create class type
-		returnType = TypeClass.get(className);
+		//		// Create class type
+		//		returnType = TypeClass.get(className);
 
-		// TODO: Add local class scope
-		for (VarDeclaration vd : varDecl)
-			vd.returnType(scope);
+		//		// TODO: Add local class scope
+		//		for (VarDeclaration vd : varDecl)
+		//			vd.returnType(scope);
+		//
+		//		for (FunctionDeclaration fd : funcDecl)
+		//			fd.returnType(scope);
+		//
+		//		for (Statement s : statements)
+		//			s.returnType(scope);
 
-		for (FunctionDeclaration fd : funcDecl)
-			fd.returnType(scope);
-
-		for (Statement s : statements)
-			s.returnType(scope);
+		// Create type within scope
+		Gpr.debug("!!! CREATE CLASS IN SCOPE: " + className);
+		TypeClass.factory(this, scope);
 
 		return returnType;
 	}
@@ -126,32 +131,7 @@ public class ClassDeclaration extends Block {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		throw new RuntimeException("!!! UNIMPLEMENTED");
-
-		//		for (VariableInit vi : varDecl) {
-		//			if (!bdsThread.isCheckpointRecover()) {
-		//				bdsThread.getScope().add(new ScopeSymbol(vi.varName, type)); // Add variable to scope
-		//			}
-		//
-		//			bdsThread.run(vi);
-		//
-		//			// Act based on run state
-		//			switch (bdsThread.getRunState()) {
-		//			case OK: // OK do nothing
-		//			case CHECKPOINT_RECOVER:
-		//				break;
-		//
-		//			case BREAK: // Break form this block immediately
-		//			case CONTINUE:
-		//			case RETURN:
-		//			case EXIT:
-		//			case FATAL_ERROR:
-		//				return;
-		//
-		//			default:
-		//				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
-		//			}
-		//		}
+		// Nothing to do (it's just a declaration)
 	}
 
 	@Override
@@ -189,6 +169,8 @@ public class ClassDeclaration extends Block {
 
 	@Override
 	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+		returnType(scope);
+
 		// Class name collides with other names?
 		if (scope.getSymbolLocal(className) != null) compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
 

@@ -28,13 +28,11 @@ import org.bds.data.Data;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
-import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ProgramUnit;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.nativeFunctions.NativeLibraryFunctions;
 import org.bds.lang.nativeMethods.string.NativeLibraryString;
-import org.bds.lang.statement.FunctionCall;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementInclude;
@@ -45,9 +43,9 @@ import org.bds.run.BdsThread;
 import org.bds.run.HelpCreator;
 import org.bds.run.RunState;
 import org.bds.scope.GlobalScope;
-import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.SymbolTable;
 import org.bds.task.TaskDependecies;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -327,8 +325,9 @@ public class Bds {
 		if (debug) log("Type checking.");
 		CompilerMessages.reset();
 
-		Scope programScope = new Scope();
-		programUnit.typeChecking(programScope, CompilerMessages.get());
+		SymbolTable symbolTable = new SymbolTable();
+		symbolTable.addAll(GlobalScope.get());
+		programUnit.typeChecking(symbolTable, CompilerMessages.get());
 
 		// Any error messages?
 		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
@@ -352,38 +351,38 @@ public class Bds {
 		// compileWarnUnusedFunctions();
 	}
 
-	/**
-	 * Check for unused functions
-	 */
-	void compileWarnUnusedFunctions() {
-		String progUnitFile = programUnit.getFileNameCanonical();
-
-		// Add all function declarations to 'unused' set
-		List<BdsNode> fdecls = programUnit.findNodes(FunctionDeclaration.class, true);
-		Set<FunctionDeclaration> unused = new HashSet<>();
-		for (BdsNode n : fdecls) {
-			FunctionDeclaration fdecl = (FunctionDeclaration) n;
-			if (warnUnusedFunctionsAnyFile //
-					|| (!warnUnusedFunctionsAnyFile && progUnitFile.equals(fdecl.getFileNameCanonical()))) {
-				unused.add(fdecl);
-			}
-		}
-
-		// Remove the ones that are used
-		List<BdsNode> fcalls = programUnit.findNodes(FunctionCall.class, true);
-		for (BdsNode n : fcalls) {
-			FunctionCall fcall = (FunctionCall) n;
-			FunctionDeclaration fdecl = fcall.getFunctionDeclaration();
-			unused.remove(fdecl);
-			Gpr.debug("CALL: " + fdecl.getFunctionName() + fdecl.signature());
-		}
-
-		// Any functions that are 'unused'?
-		if (unused.isEmpty()) return;
-		for (FunctionDeclaration fdecl : unused) {
-			CompilerMessages.get().add(fdecl, "Unused function " + fdecl.getFunctionName() + fdecl.signature(), MessageType.WARNING);
-		}
-	}
+	//	/**
+	//	 * Check for unused functions
+	//	 */
+	//	void compileWarnUnusedFunctions() {
+	//		String progUnitFile = programUnit.getFileNameCanonical();
+	//
+	//		// Add all function declarations to 'unused' set
+	//		List<BdsNode> fdecls = programUnit.findNodes(FunctionDeclaration.class, true);
+	//		Set<FunctionDeclaration> unused = new HashSet<>();
+	//		for (BdsNode n : fdecls) {
+	//			FunctionDeclaration fdecl = (FunctionDeclaration) n;
+	//			if (warnUnusedFunctionsAnyFile //
+	//					|| (!warnUnusedFunctionsAnyFile && progUnitFile.equals(fdecl.getFileNameCanonical()))) {
+	//				unused.add(fdecl);
+	//			}
+	//		}
+	//
+	//		// Remove the ones that are used
+	//		List<BdsNode> fcalls = programUnit.findNodes(FunctionCall.class, true);
+	//		for (BdsNode n : fcalls) {
+	//			FunctionCall fcall = (FunctionCall) n;
+	//			FunctionDeclaration fdecl = fcall.getFunctionDeclaration();
+	//			unused.remove(fdecl);
+	//			Gpr.debug("CALL: " + fdecl.getFunctionName() + fdecl.signature());
+	//		}
+	//
+	//		// Any functions that are 'unused'?
+	//		if (unused.isEmpty()) return;
+	//		for (FunctionDeclaration fdecl : unused) {
+	//			CompilerMessages.get().add(fdecl, "Unused function " + fdecl.getFunctionName() + fdecl.signature(), MessageType.WARNING);
+	//		}
+	//	}
 
 	/**
 	 * Load configuration file
@@ -875,10 +874,6 @@ public class Bds {
 		bdsParseArgs.setDebug(debug);
 		bdsParseArgs.parse();
 
-		// Run the program
-		BdsThread bdsThread = new BdsThread(programUnit, config);
-		if (debug) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
-
 		// Show script's automatic help message
 		if (bdsParseArgs.isShowHelp()) {
 			if (debug) Timer.showStdErr("Showing automaic 'help'");
@@ -887,7 +882,12 @@ public class Bds {
 			return 0;
 		}
 
-		if (debug) Timer.showStdErr("Running");
+		// Run the program
+		BdsThread bdsThread = new BdsThread(programUnit, config);
+		if (debug) {
+			Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
+			Timer.showStdErr("Running");
+		}
 		int exitCode = runThread(bdsThread);
 
 		// Check stack

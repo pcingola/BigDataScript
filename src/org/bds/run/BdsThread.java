@@ -1012,28 +1012,24 @@ public class BdsThread extends Thread implements BdsSerialize {
 			// Errors? Then set exit status appropriately
 			exitValue = 1;
 		} else {
-			Object ev = null;
-
 			switch (runState) {
 			case EXIT:
-				ev = getExitValue();
+				// Exit value already set by 'exit' statement
 				break;
 
 			case RETURN:
-				ev = getReturnValue();
+				exitValue = (int) getReturnValue().asInt();
 				break;
 
 			case FATAL_ERROR:
 			case THREAD_KILLED:
-				ev = 1L;
+				exitValue = 1;
 				break;
 
 			default:
-				ev = null;
+				// Do nothing with exitValue;
 				break;
 			}
-
-			if (ev != null && ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
 		}
 
 		// We are completely done

@@ -25,8 +25,6 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 
 	protected Type(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-		String typeName = tree.getChild(0).getText();
-		primitiveType = PrimitiveType.valueOf(typeName.toUpperCase());
 	}
 
 	public Type(PrimitiveType primitiveType) {
@@ -213,7 +211,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		throw new RuntimeException("UNIMPLEMENTED PARSE TYPE");
+		throw new RuntimeException("This method should never be called!");
 	}
 
 	@Override

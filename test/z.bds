@@ -1,20 +1,12 @@
 #!/usr/bin/env bds
 
+include 'zz'
 
-class Zzz {
-	int i
-	real r
-	string[] l
-
-	# Constructor code
-	print("Constructor code")
-
-	void hi() {
-		print "Hi there"
-	}
+int f(int i) {
+	int g(int j) { return j+1 }
+	return g(i)+2
 }
 
-class Aaa extends Zzz { }
-
-print("Hi:")
-
+x := f(1)
+x := h(1)
+println("x: $x")

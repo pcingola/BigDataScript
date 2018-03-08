@@ -1,8 +1,5 @@
 package org.bds.test;
 
-import org.bds.util.Gpr;
-import org.junit.Test;
-
 /**
  * Quick test cases when creating a new feature...
  *
@@ -12,23 +9,33 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	//	@Test
-	//	public void test03() {
-	//		verbose = debug = true;
+	//	public void test200() {
 	//		Gpr.debug("Test");
-	//		runAndCheckpoint("test/graph_03.bds", "test/graph_03.chp", "out", "Task start\nTask end\n");
+	//		runAndCheck("test/run_200.bds", "", "");
 	//	}
 	//
 	//	@Test
-	//	public void test04() {
+	//	public void test201() {
 	//		Gpr.debug("Test");
-	//		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
+	//		runAndCheck("test/run_201.bds", "", "");
 	//	}
 	//
-
-	@Test
-	public void test10() {
-		Gpr.debug("Test");
-		runAndCheck("test/graph_10.bds", "num", "2");
-	}
+	//	@Test
+	//	public void test202() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_202.bds", "", "");
+	//	}
+	//
+	//	@Test
+	//	public void test203() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_203.bds", "", "");
+	//	}
+	//
+	//	@Test
+	//	public void test204() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_204.bds", "", "");
+	//	}
 
 }
