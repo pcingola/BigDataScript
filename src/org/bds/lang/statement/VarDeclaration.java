@@ -132,10 +132,10 @@ public class VarDeclaration extends Statement {
 			String varName = vi.varName;
 
 			// Already declared?
-			if (scope.hasSymbolLocal(varName)) {
+			if (scope.hasTypeLocal(varName)) {
 				String other = "";
-				if (scope.getFunctionsLocal(varName) != null) {
-					ScopeSymbol ssf = scope.getFunctionsLocal(varName).get(0);
+				if (scope.getTypeFunctionsLocal(varName) != null) {
+					ScopeSymbol ssf = scope.getTypeFunctionsLocal(varName).get(0);
 					FunctionDeclaration fdecl = (FunctionDeclaration) ssf.getValue().get();
 					other = " (function '" + varName + "' declared in " + fdecl.getFileName() + ", line " + fdecl.getLineNum() + ")";
 				}

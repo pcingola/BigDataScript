@@ -8,9 +8,9 @@ import java.util.HashMap;
 
 import org.bds.Bds;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.value.Value;
 import org.bds.osCmd.TeeOutputStream;
 import org.bds.run.RunState;
-import org.bds.scope.ScopeSymbol;
 import org.bds.util.Gpr;
 
 import junit.framework.Assert;
@@ -204,14 +204,14 @@ public class BdsTest {
 	 * Check a variable's map
 	 */
 	public void checkVariable(String varname, Object expectedValue) {
-		ScopeSymbol ssym = getSymbol(varname);
-		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), ssym != null);
+		Value val = getValue(varname);
+		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
 		Assert.assertEquals( //
 				errMsg("Variable '" + varname + "' has different map than expeced:\n" //
 						+ "\tExpected map : " + expectedValue //
-						+ "\tReal map     : " + ssym.getValue()) //
+						+ "\tReal map     : " + val) //
 				, expectedValue.toString() //
-				, ssym.getValue().toString() //
+				, val.toString() //
 		);
 	}
 
@@ -223,16 +223,16 @@ public class BdsTest {
 		for (String varName : expectedValues.keySet()) {
 			Object expectedValue = expectedValues.get(varName);
 
-			ScopeSymbol ssym = getSymbol(varName);
-			Assert.assertTrue(errMsg("Missing variable '" + varName + "'"), ssym != null);
+			Value val = getValue(varName);
+			Assert.assertTrue(errMsg("Missing variable '" + varName + "'"), val != null);
 
-			if (!expectedValue.toString().equals(ssym.getValue().toString())) {
+			if (!expectedValue.toString().equals(val.toString())) {
 				Assert.assertEquals(errMsg("Variable '" + varName + "' does not match:\n"//
 						+ "\tExpected : '" + expectedValue.toString() + "'" //
-						+ "\tActual   : '" + ssym.getValue().toString() + "'" //
+						+ "\tActual   : '" + val.toString() + "'" //
 				) //
 						, expectedValue.toString() //
-						, ssym.getValue().toString() //
+						, val.toString() //
 				);
 			}
 		}
@@ -275,8 +275,8 @@ public class BdsTest {
 	/**
 	 * Get a symbol
 	 */
-	public ScopeSymbol getSymbol(String name) {
-		return bds.getProgramUnit().getRunScope().getSymbol(name);
+	public Value getValue(String name) {
+		return bds.getProgramUnit().getRunScope().getValue(name);
 	}
 
 	/**
@@ -336,14 +336,14 @@ public class BdsTest {
 
 		// Check variable's map on the recovered (checkpoint run) program
 		if (varName != null) {
-			ScopeSymbol ssym = bigDataScript2.getProgramUnit().getRunScope().getSymbol(varName);
-			Assert.assertTrue(errMsg("Variable '" + varName + "' not found "), ssym != null);
+			Value val = bigDataScript2.getProgramUnit().getRunScope().getValue(varName);
+			Assert.assertTrue(errMsg("Variable '" + varName + "' not found "), val != null);
 			Assert.assertEquals( //
 					errMsg("Variable '" + varName + "' has different map than expeced:\n" //
 							+ "\tExpected map : " + expectedValue //
-							+ "\tReal map     : " + ssym.getValue()) //
+							+ "\tReal map     : " + val) //
 					, expectedValue.toString() //
-					, ssym.getValue().toString() //
+					, val.toString() //
 			);
 		}
 

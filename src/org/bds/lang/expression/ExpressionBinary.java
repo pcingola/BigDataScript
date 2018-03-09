@@ -3,7 +3,7 @@ package org.bds.lang.expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A binary expression
@@ -47,11 +47,11 @@ public class ExpressionBinary extends Expression {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		returnType = left.returnType(scope);
-		if (right != null) right.returnType(scope); // Only assign this to show that calculation was already performed
+		returnType = left.returnType(symtab);
+		if (right != null) right.returnType(symtab); // Only assign this to show that calculation was already performed
 
 		return returnType;
 	}

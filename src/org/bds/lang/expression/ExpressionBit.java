@@ -5,7 +5,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A bitwise expression
@@ -19,17 +19,17 @@ public class ExpressionBit extends ExpressionBinary {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		super.returnType(scope);
+		super.returnType(symtab);
 		returnType = Types.INT;
 
 		return returnType;
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Can we transform 'left' into an int?
 		left.getReturnType().checkCanCast(Types.INT, compilerMessages);
 		right.getReturnType().checkCanCast(Types.INT, compilerMessages);

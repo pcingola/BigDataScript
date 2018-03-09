@@ -43,7 +43,6 @@ import org.bds.run.BdsThread;
 import org.bds.run.HelpCreator;
 import org.bds.run.RunState;
 import org.bds.scope.GlobalScope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerializer;
 import org.bds.symbol.SymbolTable;
 import org.bds.task.TaskDependecies;
@@ -537,9 +536,9 @@ public class Bds {
 		if (queue == null) queue = config.getString(ExpressionTask.TASK_OPTION_QUEUE, "");
 		if (system == null) system = config.getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
 		if (taskFailCount < 0) taskFailCount = Gpr.parseIntSafe(config.getString(ExpressionTask.TASK_OPTION_RETRY, "0"));
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_SYSTEM, system)); // System type: "local", "ssh", "cluster", "aws", etc.
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_QUEUE, queue)); // Default queue: none
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_RETRY, (long) taskFailCount)); // Task fail can be re-tried (re-run) N times before considering failed.
+		globalScope.add(ExpressionTask.TASK_OPTION_SYSTEM, system); // System type: "local", "ssh", "cluster", "aws", etc.
+		globalScope.add(ExpressionTask.TASK_OPTION_QUEUE, queue); // Default queue: none
+		globalScope.add(ExpressionTask.TASK_OPTION_RETRY, (long) taskFailCount); // Task fail can be re-tried (re-run) N times before considering failed.
 
 		// Set "physical" path
 		String path;
@@ -548,13 +547,13 @@ public class Bds {
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot get cannonical path for current dir");
 		}
-		globalScope.add(new ScopeSymbol(ExpressionTask.TASK_OPTION_PHYSICAL_PATH, Types.STRING, path));
+		globalScope.add(ExpressionTask.TASK_OPTION_PHYSICAL_PATH, path);
 
 		// Set all environment variables
 		Map<String, String> envMap = System.getenv();
 		for (String varName : envMap.keySet()) {
 			String varVal = envMap.get(varName);
-			globalScope.add(new ScopeSymbol(varName, Types.STRING, varVal));
+			globalScope.add(varName, varVal);
 		}
 
 		// Command line arguments (default: empty list)
@@ -562,7 +561,7 @@ public class Bds {
 		// we have to set something now, otherwise we'll get a "variable
 		// not found" error at compiler time, if the program attempts
 		// to use 'args'.
-		globalScope.add(new ScopeSymbol(GlobalScope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING)));
+		globalScope.add(GlobalScope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING));
 	}
 
 	/**

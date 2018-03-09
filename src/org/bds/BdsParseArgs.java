@@ -17,8 +17,8 @@ import org.bds.lang.value.LiteralReal;
 import org.bds.lang.value.LiteralString;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueList;
 import org.bds.scope.GlobalScope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -115,9 +115,11 @@ public class BdsParseArgs {
 		String programPath = programUnit.getFileName();
 		String progName = Gpr.baseName(programPath);
 		GlobalScope gs = GlobalScope.get();
-		gs.add(new ScopeSymbol(GlobalScope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING), programArgs)); // Make all unprocessed arguments available for the program (in 'args' list)
-		gs.add(new ScopeSymbol(GlobalScope.GLOBAL_VAR_PROGRAM_NAME, progName));
-		gs.add(new ScopeSymbol(GlobalScope.GLOBAL_VAR_PROGRAM_PATH, programPath));
+
+		ValueList vargs = (ValueList) TypeList.get(Types.STRING).newValue(programArgs);
+		gs.add(GlobalScope.GLOBAL_VAR_ARGS_LIST, vargs); // Make all unprocessed arguments available for the program (in 'args' list)
+		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_NAME, progName);
+		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_PATH, programPath);
 	}
 
 	/**
@@ -153,10 +155,10 @@ public class BdsParseArgs {
 		// Initialize scope variables
 		// Note: Only does this if the variable was not found in the program
 		//---
-		ScopeSymbol ssym = GlobalScope.get().getSymbol(varName);
-		if (ssym != null) {
-			Value value = parseArgs(ssym.getType());
-			ssym.setValue(value);
+		Value val = GlobalScope.get().getValue(varName);
+		if (val != null) {
+			Value value = parseArgs(val.getType());
+			val.setValue(value);
 		}
 
 	}

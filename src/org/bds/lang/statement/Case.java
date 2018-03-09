@@ -12,7 +12,7 @@ import org.bds.lang.expression.ExpressionEq;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -149,10 +149,10 @@ public class Case extends StatementWithScope {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if (expression != null) {
 			Type switchExprType = ((Switch) parent).getSwitchExpr().getReturnType();
-			Type caseExprType = expression.returnType(scope);
+			Type caseExprType = expression.returnType(symtab);
 
 			if (switchExprType == null) {
 				// This will be reported in error messages

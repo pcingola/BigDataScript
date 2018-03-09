@@ -9,7 +9,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * An "exit" statement (quit the program immediately)
@@ -31,11 +31,11 @@ public class Exit extends Statement {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		// Calculate expression's return type
-		if (expr != null) expr.returnType(scope);
+		if (expr != null) expr.returnType(symtab);
 
 		// Program's return type is 'int' (exit code)
 		returnType = Types.INT;
@@ -68,8 +68,8 @@ public class Exit extends Statement {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		returnType(scope);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		returnType(symtab);
 
 		if ((expr != null) //
 				&& (expr.getReturnType() != null) //

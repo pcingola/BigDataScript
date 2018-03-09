@@ -6,7 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A "continue" statement
@@ -33,7 +33,7 @@ public class Continue extends Statement {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if ((findParent(ForLoop.class, FunctionDeclaration.class) == null) //
 				&& (findParent(ForLoopList.class, FunctionDeclaration.class) == null) //
 				&& (findParent(While.class, FunctionDeclaration.class) == null) //

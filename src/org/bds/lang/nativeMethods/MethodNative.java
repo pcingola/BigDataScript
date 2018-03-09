@@ -70,7 +70,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	@Override
 	public void runFunction(BdsThread bdsThread) {
 		// Get object 'this'
-		ScopeSymbol symThis = bdsThread.getScope().getSymbol(THIS_KEYWORD);
+		ScopeSymbol symThis = bdsThread.getScope().getValue(THIS_KEYWORD);
 		Object objThis = symThis.getValue().get();
 
 		// Run method

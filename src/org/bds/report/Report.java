@@ -153,9 +153,9 @@ public class Report {
 		// Show Scope
 		//---
 		Scope scope = bdsThread.getScope();
-		rTemplate.add("scope.VAR_ARGS_LIST", scope.getSymbol(GlobalScope.GLOBAL_VAR_ARGS_LIST).getValue());
-		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).getValue());
-		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getSymbol(ExpressionTask.TASK_OPTION_CPUS).getValue());
+		rTemplate.add("scope.VAR_ARGS_LIST", scope.getValue(GlobalScope.GLOBAL_VAR_ARGS_LIST).getValue());
+		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getValue(ExpressionTask.TASK_OPTION_SYSTEM).getValue());
+		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getValue(ExpressionTask.TASK_OPTION_CPUS).getValue());
 
 		// Scope symbols
 		ArrayList<ScopeSymbol> ssyms = new ArrayList<>();

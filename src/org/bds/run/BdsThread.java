@@ -40,7 +40,6 @@ import org.bds.osCmd.Exec;
 import org.bds.report.Report;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerialize;
 import org.bds.serialize.BdsSerializer;
 import org.bds.task.Task;
@@ -372,9 +371,9 @@ public class BdsThread extends Thread implements BdsSerialize {
 				String varName = line.substring(2).trim(); // Remove leading "s " string
 
 				// Get and show variable
-				ScopeSymbol ss = getScope().getSymbol(varName);
-				if (ss == null) System.err.println("Variable '" + varName + "' not found");
-				else System.err.println(ss.getType() + " : " + ss.getValue());
+				Value val = getScope().getValue(varName);
+				if (val == null) System.err.println("Variable '" + varName + "' not found");
+				else System.err.println(val.getType() + " : " + val);
 			} else {
 				System.err.println("Unknown command '" + line + "'");
 			}
@@ -480,7 +479,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Get variable's map as a bool
 	 */
 	public boolean getBool(String varName) {
-		return getScope().getSymbol(varName).getValue().asBool();
+		return getScope().getValue(varName).asBool();
 	}
 
 	public Config getConfig() {
@@ -541,7 +540,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Get variable's map as an int
 	 */
 	public long getInt(String varName) {
-		return getScope().getSymbol(varName).getValue().asInt();
+		return getScope().getValue(varName).asInt();
 	}
 
 	public String getLogBaseName() {
@@ -573,7 +572,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Get variable's map as a real
 	 */
 	public double getReal(String varName) {
-		return getScope().getSymbol(varName).getValue().asReal();
+		return getScope().getValue(varName).asReal();
 	}
 
 	public Value getReturnValue() {
@@ -616,7 +615,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Get variable's map as a string
 	 */
 	public String getString(String varName) {
-		return getScope().getSymbol(varName).getValue().toString();
+		return getScope().getValue(varName).toString();
 	}
 
 	/**
@@ -665,7 +664,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Get variable's value (as a Value object)
 	 */
 	public Value getValue(String varName) {
-		return getScope().getSymbol(varName).getValue();
+		return getScope().getValue(varName);
 	}
 
 	/**
@@ -694,7 +693,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Does 'varName' exists?
 	 */
 	public boolean hasVariable(String varName) {
-		return getScope().getSymbol(varName) != null;
+		return getScope().getValue(varName) != null;
 	}
 
 	/**
@@ -858,7 +857,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 				System.out.println("--- Scope: " + scopeInfo + " ---");
 
 				for (String varName : scope) {
-					System.out.println(scope.getSymbol(varName));
+					System.out.println(scope.getValue(varName));
 				}
 				System.out.println("--- End of scope ---");
 			}
@@ -1231,8 +1230,9 @@ public class BdsThread extends Thread implements BdsSerialize {
 		// Save program counter
 		out.append(serializer.serializeSave(pc));
 
-		// Save scopes
-		out.append(serializer.serializeSave(scope));
+		// !!! TODO
+		//		// Save scopes
+		//		out.append(serializer.serializeSave(scope));
 
 		// Save program nodes
 		out.append(serializer.serializeSave(statement));
@@ -1259,7 +1259,8 @@ public class BdsThread extends Thread implements BdsSerialize {
 		out.append("\t" + serializer.serializeSaveValue(removeOnExit));
 		out.append("\t" + serializer.serializeSaveValue(getBdsThreadId()));
 		out.append("\t" + serializer.serializeSaveValue(statement.getNodeId()));
-		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
+		// !!! TODO
+		// out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
 		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
 		out.append("\t" + serializer.serializeSaveValue(runState.toString()));
 		out.append("\t" + serializer.serializeSaveValue(currentDir));

@@ -11,7 +11,7 @@ import org.bds.lang.value.LiteralListEmpty;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Expression assignment for a list of variables
@@ -59,14 +59,14 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		for (Expression l : lefts)
-			l.returnType(scope);
-		right.returnType(scope);
+			l.returnType(symtab);
+		right.returnType(symtab);
 
-		returnType = lefts[0].returnType(scope); // Get return type for first expreesion
+		returnType = lefts[0].returnType(symtab); // Get return type for first expression
 		return returnType;
 	}
 
@@ -118,14 +118,14 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Trying to assign to a constant?
 		for (Expression l : lefts) {
 			if (l == null) compilerMessages.add(this, "Cannot parse left expresison.", MessageType.ERROR);
 			else if (!(l instanceof Reference)) compilerMessages.add(this, "Left hand side expression is not a variable reference '" + l + "'", MessageType.ERROR);
 			// !!! TODO: Remove next line?
 			// else if (!l.getReturnType().isPrimitiveType()) compilerMessages.add(this, "Variable '" + l + "' is non-primitive type " + l.getReturnType(), MessageType.ERROR);
-			else if (((Reference) l).isConstant(scope)) compilerMessages.add(this, "Cannot assign to constant '" + l + "'", MessageType.ERROR);
+			else if (((Reference) l).isConstant(symtab)) compilerMessages.add(this, "Cannot assign to constant '" + l + "'", MessageType.ERROR);
 		}
 
 		// Can we cast 'right type' into 'left type'?

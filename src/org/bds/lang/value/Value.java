@@ -88,6 +88,10 @@ public abstract class Value implements Cloneable {
 	 */
 	public abstract void set(Object v);
 
+	public void setValue(Value v) {
+		set(v.get());
+	}
+
 	@Override
 	public String toString() {
 		return get() != null ? get().toString() : "null";

@@ -391,12 +391,13 @@ public class BdsSerializer {
 					// Parse ProgramCounter
 					bdsSerialize = new ProgramCounter();
 				} else if (clazz.equals(Scope.class.getSimpleName())) {
-					// Parse Scope
-					Scope scope = new Scope();
-					if (currScope != null) currScope.setParent(scope);
-					currScope = scope;
-					scopes.add(scope);
-					bdsSerialize = currScope;
+					// !!!
+					//					// Parse Scope
+					//					Scope scope = new Scope();
+					//					if (currScope != null) currScope.setParent(scope);
+					//					currScope = scope;
+					//					scopes.add(scope);
+					//					bdsSerialize = currScope;
 				} else if (clazz.equals(ScopeSymbol.class.getSimpleName())) {
 					// Parse ScopeSymbol
 					bdsSerialize = new ScopeSymbol();
@@ -430,7 +431,7 @@ public class BdsSerializer {
 						threadsById.put(bdsThread.getBdsThreadId(), bdsThread);
 					} else if (bdsSerialize instanceof ScopeSymbol) {
 						// Add symbol to current scope
-						currScope.add((ScopeSymbol) bdsSerialize);
+						// !!! currScope.add((ScopeSymbol) bdsSerialize);
 					} else if (bdsSerialize instanceof ProgramCounter) {
 						// Set PC
 						currBdsThread.setPc((ProgramCounter) bdsSerialize);
@@ -455,21 +456,23 @@ public class BdsSerializer {
 		for (BdsSerialize bdsNode : serializedNodes)
 			if (bdsNode != null && bdsNode instanceof BdsNode) ((BdsNode) bdsNode).replaceFake();
 
-		for (Scope scope : scopes)
-			scope.replaceFake();
+		// !!!!!!!!!!!!
+		//		for (Scope scope : scopes)
+		//			scope.replaceFake();
 
 		// Set parent scopes
 		for (Scope scope : scopes) {
-			String parentScopeId = scope.getParentNodeId();
-			if (parentScopeId != null && !parentScopeId.isEmpty()) {
-				Scope parentScope = (Scope) nodesById.get(parentScopeId);
-				if (parentScope == null) throw new RuntimeException("Cannot find scope node '" + parentScope + "'");
-				scope.setParent(parentScope);
-			} else {
-				// Copy all symbols to global scope
-				scope.setParent(null);
-				GlobalScope.get().addAll(scope);
-			}
+			// !!!!!!!!!!!!
+			//			String parentScopeId = scope.getParentNodeId();
+			//			if (parentScopeId != null && !parentScopeId.isEmpty()) {
+			//				Scope parentScope = (Scope) nodesById.get(parentScopeId);
+			//				if (parentScope == null) throw new RuntimeException("Cannot find scope node '" + parentScope + "'");
+			//				scope.setParent(parentScope);
+			//			} else {
+			//				// Copy all symbols to global scope
+			//				scope.setParent(null);
+			//				GlobalScope.get().addAll(scope);
+			//			}
 		}
 
 		//---

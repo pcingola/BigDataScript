@@ -10,8 +10,8 @@ import java.util.Map;
 import org.bds.lang.statement.Args;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
+import org.bds.lang.value.Value;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.util.AutoHashMap;
 
 /**
@@ -52,8 +52,8 @@ public class SymbolTable implements Iterable<String> {
 	 */
 	public void addAll(Scope scope) {
 		for (String name : scope) {
-			ScopeSymbol ss = scope.getSymbol(name);
-			add(name, ss.getType());
+			Value v = scope.getValue(name);
+			add(name, v.getType());
 		}
 	}
 
@@ -62,7 +62,7 @@ public class SymbolTable implements Iterable<String> {
 	 */
 	public TypeFunction findFunction(String functionName, Args args) {
 		// Retrieve all functions with the same name
-		List<TypeFunction> tfuncs = getFunctions(functionName);
+		List<TypeFunction> tfuncs = getTypeFunctions(functionName);
 
 		// Find best matching function...
 		TypeFunction bestTf = null;
@@ -119,28 +119,6 @@ public class SymbolTable implements Iterable<String> {
 		return funcs;
 	}
 
-	/**
-	 * Find all functions whose names are 'functionName'
-	 */
-	public List<TypeFunction> getFunctions(String functionName) {
-		List<TypeFunction> funcs = new ArrayList<>();
-
-		for (SymbolTable scope = this; scope != null; scope = scope.parent) {
-			List<TypeFunction> fs = scope.getFunctionsLocal(functionName);
-			if (fs != null) funcs.addAll(fs);
-		}
-
-		return funcs;
-	}
-
-	/**
-	 * Find all functions whose names are 'functionName' (only look in this symboltable)
-	 */
-	public List<TypeFunction> getFunctionsLocal(String functionName) {
-		if (functions == null) return null;
-		return functions.get(functionName);
-	}
-
 	public SymbolTable getParent() {
 		return parent;
 	}
@@ -156,7 +134,7 @@ public class SymbolTable implements Iterable<String> {
 			if (ssym != null) return ssym;
 
 			// Try a function
-			List<TypeFunction> fs = scope.getFunctionsLocal(name);
+			List<TypeFunction> fs = scope.getTypeFunctionsLocal(name);
 			// Since we are only matching by name, there has to be one
 			// and only one function with that name
 			// Note, this is limiting and very naive. A better approach is needed
@@ -165,6 +143,28 @@ public class SymbolTable implements Iterable<String> {
 
 		// Nothing found
 		return null;
+	}
+
+	/**
+	 * Find all functions whose names are 'functionName'
+	 */
+	public List<TypeFunction> getTypeFunctions(String functionName) {
+		List<TypeFunction> funcs = new ArrayList<>();
+
+		for (SymbolTable scope = this; scope != null; scope = scope.parent) {
+			List<TypeFunction> fs = scope.getTypeFunctionsLocal(functionName);
+			if (fs != null) funcs.addAll(fs);
+		}
+
+		return funcs;
+	}
+
+	/**
+	 * Find all functions whose names are 'functionName' (only look in this symboltable)
+	 */
+	public List<TypeFunction> getTypeFunctionsLocal(String functionName) {
+		if (functions == null) return null;
+		return functions.get(functionName);
 	}
 
 	/**
@@ -178,15 +178,15 @@ public class SymbolTable implements Iterable<String> {
 		return functions != null && !functions.isEmpty();
 	}
 
-	public boolean hasSymbol(String name) {
+	public boolean hasType(String name) {
 		return getType(name) != null;
 	}
 
 	/**
 	 * Is symbol available on this scope or any parent scope?
 	 */
-	public boolean hasSymbolLocal(String symbol) {
-		return getTypeLocal(symbol) != null || getFunctionsLocal(symbol) != null;
+	public boolean hasTypeLocal(String symbol) {
+		return getTypeLocal(symbol) != null || getTypeFunctionsLocal(symbol) != null;
 	}
 
 	/**

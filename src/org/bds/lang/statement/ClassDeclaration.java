@@ -10,7 +10,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -103,7 +103,7 @@ public class ClassDeclaration extends Block {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		//		// Create class type
@@ -121,7 +121,7 @@ public class ClassDeclaration extends Block {
 
 		// Create type within scope
 		Gpr.debug("!!! CREATE CLASS IN SCOPE: " + className);
-		TypeClass.factory(this, scope);
+		TypeClass.factory(this, symtab);
 
 		return returnType;
 	}
@@ -168,11 +168,11 @@ public class ClassDeclaration extends Block {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		returnType(scope);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		returnType(symtab);
 
 		// Class name collides with other names?
-		if (scope.getSymbolLocal(className) != null) compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
+		if (symtab.getTypeLocal(className) != null) compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
 
 		// Add all symbols
 		//		for (VarDeclaration vi : varDecl) {

@@ -100,7 +100,7 @@ public class VariableInit extends BdsNode {
 
 			// Change variable's map
 			Scope scope = bdsThread.getScope();
-			ScopeSymbol ssym = scope.getSymbol(varName);
+			ScopeSymbol ssym = scope.getValue(varName);
 			value = ssym.getType().cast(value);
 			ssym.setValue(value);
 		}

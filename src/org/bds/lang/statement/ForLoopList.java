@@ -50,7 +50,7 @@ public class ForLoopList extends StatementWithScope {
 	protected ScopeSymbol initBeginDecl(BdsThread bdsThread) {
 		bdsThread.run(beginVarDecl);
 		String varName = beginVarDecl.getVarInit()[0].getVarName();
-		ScopeSymbol varSym = bdsThread.getScope().getSymbol(varName);
+		ScopeSymbol varSym = bdsThread.getScope().getValue(varName);
 		return varSym;
 	}
 
@@ -60,7 +60,7 @@ public class ForLoopList extends StatementWithScope {
 	protected ScopeSymbol initIterableCounter(BdsThread bdsThread) {
 		// Are we recovering state from a checkpoint file?
 		if (bdsThread.isCheckpointRecover()) {
-			ScopeSymbol ssIterableCount = bdsThread.getScope().getSymbol(iterableCountName);
+			ScopeSymbol ssIterableCount = bdsThread.getScope().getValue(iterableCountName);
 			return ssIterableCount;
 		}
 
@@ -82,7 +82,7 @@ public class ForLoopList extends StatementWithScope {
 
 		// Are we recovering state from a checkpoint file?
 		if (bdsThread.isCheckpointRecover()) {
-			ScopeSymbol ssIterableList = bdsThread.getScope().getSymbol(iterableListName);
+			ScopeSymbol ssIterableList = bdsThread.getScope().getValue(iterableListName);
 			return (List) ssIterableList.getValue().get();
 		}
 

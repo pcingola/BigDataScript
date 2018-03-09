@@ -6,7 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Conditional expression
@@ -46,12 +46,12 @@ public class ExpressionCond extends Expression {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		expr.returnType(scope);
-		returnType = exprTrue.returnType(scope);
-		exprFalse.returnType(scope);
+		expr.returnType(symtab);
+		returnType = exprTrue.returnType(symtab);
+		exprFalse.returnType(symtab);
 
 		return returnType;
 	}
@@ -78,7 +78,7 @@ public class ExpressionCond extends Expression {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if (expr != null) expr.checkCanCastToBool(compilerMessages);
 
 		if (exprTrue != null //

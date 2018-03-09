@@ -8,7 +8,6 @@ import org.bds.lang.type.Reference;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -31,10 +30,10 @@ public class ExpressionAssignment extends ExpressionBinary {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		super.returnType(scope);
+		super.returnType(symtab);
 		returnType = left.getReturnType();
 
 		return returnType;

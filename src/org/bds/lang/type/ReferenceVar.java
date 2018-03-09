@@ -49,7 +49,7 @@ public class ReferenceVar extends Reference {
 	 */
 	@Override
 	public ScopeSymbol getScopeSymbol(Scope scope) {
-		return scope.getSymbol(name);
+		return scope.getValue(name);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class ReferenceVar extends Reference {
 	public Type returnType(Scope scope) {
 		if (returnType != null) return returnType;
 
-		ScopeSymbol ss = scope.getSymbol(name);
+		ScopeSymbol ss = scope.getValue(name);
 		if (ss == null) return null; // Symbol not found
 
 		returnType = ss.getType();
@@ -88,7 +88,7 @@ public class ReferenceVar extends Reference {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		ScopeSymbol ss = bdsThread.getScope().getSymbol(name);
+		ScopeSymbol ss = bdsThread.getScope().getValue(name);
 		if (ss == null) bdsThread.fatalError(this, "Cannot find variable '" + name + "'");
 		bdsThread.push(ss.getValue());
 	}
@@ -114,7 +114,7 @@ public class ReferenceVar extends Reference {
 		// Calculate return type
 		returnType(scope);
 
-		if (!scope.hasSymbol(name)) compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
+		if (!scope.hasType(name)) compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
 	}
 
 	@Override

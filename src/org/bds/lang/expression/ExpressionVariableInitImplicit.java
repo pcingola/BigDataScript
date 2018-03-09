@@ -57,7 +57,7 @@ public class ExpressionVariableInitImplicit extends Expression {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		// Return initialization's result
-		ScopeSymbol ssym = scope.getSymbol(vInit.getVarName());
+		ScopeSymbol ssym = scope.getValue(vInit.getVarName());
 		bdsThread.push(ssym.getValue());
 	}
 
@@ -72,7 +72,7 @@ public class ExpressionVariableInitImplicit extends Expression {
 
 		// Already declared?
 		String varName = vInit.getVarName();
-		if (scope.hasSymbolLocal(varName)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
+		if (scope.hasTypeLocal(varName)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
 
 		// Calculate implicit data type
 		Type type = vInit.getExpression().returnType(scope);

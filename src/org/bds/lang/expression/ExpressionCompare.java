@@ -8,7 +8,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A comparison expression
@@ -42,10 +42,10 @@ public abstract class ExpressionCompare extends ExpressionBinary {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		super.returnType(scope);
+		super.returnType(symtab);
 		returnType = Types.BOOL;
 
 		return returnType;
@@ -69,7 +69,7 @@ public abstract class ExpressionCompare extends ExpressionBinary {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Either side is a string? => String plus String
 		if (left.isString() || right.isString()) {
 			// OK, convert to string

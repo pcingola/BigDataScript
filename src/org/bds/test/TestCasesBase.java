@@ -158,7 +158,7 @@ public class TestCasesBase {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
-		return bdsTest.getSymbol(varname).getValue();
+		return bdsTest.getValue(varname).getValue();
 	}
 
 	/**
