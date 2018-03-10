@@ -7,10 +7,8 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.GlobalScope;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A native function declaration
@@ -28,9 +26,8 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	 * Add method to global scope
 	 */
 	protected void addNativeFunctionToScope() {
-		Scope classScope = GlobalScope.get();
-		ScopeSymbol ssym = new ScopeSymbol(functionName, getType(), this);
-		classScope.add(ssym);
+		SymbolTable symtab = SymbolTable.get();
+		symtab.add(functionName, getType());
 	}
 
 	/**
@@ -109,7 +106,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	}
 
 	@Override
-	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
+	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Nothing to do
 	}
 

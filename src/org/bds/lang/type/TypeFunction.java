@@ -16,45 +16,8 @@ import org.bds.util.Gpr;
  */
 public class TypeFunction extends TypeComposite {
 
-	//	protected Parameters parameters; // Function parameters
-	FunctionDeclaration functionDecl;
 	// Note: returnType already exists in BdsNode
-
-	/**
-	 * Get or create TypeFunction
-	 */
-	public static TypeFunction get(FunctionDeclaration functionDecl) {
-		// Get type from hash
-		String key = signature(functionDecl.getParameters(), functionDecl.getReturnType());
-		TypeFunction type = (TypeFunction) Types.get(key);
-		if (type == null) {
-			type = new TypeFunction(functionDecl);
-			Types.put(type);
-		}
-
-		return type;
-	}
-
-	/**
-	 * Generic signature for a function
-	 */
-	public static String signature(Parameters parameters, Type returnType) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("(");
-		if (parameters != null) {
-			for (VarDeclaration vdecl : parameters.getVarDecl()) {
-				Type type = vdecl.getType();
-				for (VariableInit vi : vdecl.getVarInit())
-					sb.append(type + ",");
-			}
-		}
-
-		int lastChar = sb.length() - 1;
-		if (sb.charAt(lastChar) == ',') sb.deleteCharAt(lastChar);
-		sb.append(") -> ");
-		sb.append(returnType);
-		return sb.toString();
-	}
+	FunctionDeclaration functionDecl;
 
 	public TypeFunction(FunctionDeclaration functionDeclaration) {
 		super(PrimitiveType.FUNCTION);
@@ -64,12 +27,6 @@ public class TypeFunction extends TypeComposite {
 	public boolean canCast(TypeFunction type) {
 		throw new RuntimeException("Unimplemented!");
 	}
-
-	//	protected TypeFunction(Parameters parameters, Type returnType) {
-	//		super(PrimitiveType.FUNCTION);
-	//		this.parameters = parameters;
-	//		this.returnType = returnType;
-	//	}
 
 	@Override
 	public Object castNativeObject(Object o) {
@@ -114,9 +71,31 @@ public class TypeFunction extends TypeComposite {
 		return new ValueFunction(this);
 	}
 
+	/**
+	 * Generic signature for a function
+	 */
+	public String signature() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		Parameters parameters = getParameters();
+		if (parameters != null) {
+			for (VarDeclaration vdecl : parameters.getVarDecl()) {
+				Type type = vdecl.getType();
+				for (VariableInit vi : vdecl.getVarInit())
+					sb.append(type + ",");
+			}
+		}
+
+		int lastChar = sb.length() - 1;
+		if (sb.charAt(lastChar) == ',') sb.deleteCharAt(lastChar);
+		sb.append(") -> ");
+		sb.append(returnType);
+		return sb.toString();
+	}
+
 	@Override
 	public String toString() {
-		return signature(getParameters(), returnType);
+		return signature();
 	}
 
 }

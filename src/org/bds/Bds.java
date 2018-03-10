@@ -323,10 +323,8 @@ public class Bds {
 		//---
 		if (debug) log("Type checking.");
 		CompilerMessages.reset();
-
-		SymbolTable symbolTable = new SymbolTable();
-		symbolTable.addAll(GlobalScope.get());
-		programUnit.typeChecking(symbolTable, CompilerMessages.get());
+		SymbolTable globalSymbolTable = SymbolTable.get();
+		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
 
 		// Any error messages?
 		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());

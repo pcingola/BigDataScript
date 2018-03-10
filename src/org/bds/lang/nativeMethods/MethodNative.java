@@ -8,9 +8,8 @@ import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A native method declaration
@@ -29,9 +28,8 @@ public abstract class MethodNative extends MethodDeclaration {
 	 * Add method to class scope
 	 */
 	protected void addNativeMethodToClassScope() {
-		Scope classScope = classType.getScope();
-		ScopeSymbol ssym = new ScopeSymbol(functionName, getType(), this);
-		classScope.add(ssym);
+		SymbolTable symTab = classType.getSymbolTable();
+		symTab.add(functionName, getType());
 	}
 
 	/**
@@ -70,8 +68,8 @@ public abstract class MethodNative extends MethodDeclaration {
 	@Override
 	public void runFunction(BdsThread bdsThread) {
 		// Get object 'this'
-		ScopeSymbol symThis = bdsThread.getScope().getValue(THIS_KEYWORD);
-		Object objThis = symThis.getValue().get();
+		Value symThis = bdsThread.getScope().getValue(THIS_KEYWORD);
+		Object objThis = symThis.get();
 
 		// Run method
 		try {
@@ -110,7 +108,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	}
 
 	@Override
-	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
+	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Nothing to do
 	}
 

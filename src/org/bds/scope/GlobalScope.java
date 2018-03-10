@@ -2,6 +2,8 @@ package org.bds.scope;
 
 import org.bds.Config;
 import org.bds.lang.expression.ExpressionTask;
+import org.bds.lang.value.Value;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 public class GlobalScope extends Scope {
@@ -50,6 +52,19 @@ public class GlobalScope extends Scope {
 		super(null, null);
 	}
 
+	/**
+	 * Add value and mark it as constant in global symbol table
+	 */
+	void addConstant(String name, Object val) {
+		// Add value
+		add(name, val);
+
+		// Add scope symbol and flag it as 'constant'
+		Value value = getValue(name);
+		SymbolTable.get().add(name, value.getType());
+		SymbolTable.get().setConstant(name);
+	}
+
 	public void init(Config config) {
 		// Add global symbols
 		add(GLOBAL_VAR_PROGRAM_NAME, ""); // Now is empty, but they are assigned later
@@ -86,26 +101,18 @@ public class GlobalScope extends Scope {
 	protected void initConstants() {
 		// Number of local CPUs
 		// Kilo, Mega, Giga, Tera, Peta.
-		add(GLOBAL_VAR_K, 1024L);
-		add(GLOBAL_VAR_M, 1024L * 1024L);
-		add(GLOBAL_VAR_G, 1024L * 1024L * 1024L);
-		add(GLOBAL_VAR_T, 1024L * 1024L * 1024L * 1024L);
-		add(GLOBAL_VAR_P, 1024L * 1024L * 1024L * 1024L * 1024L);
-		add(GLOBAL_VAR_MINUTE, 60L);
-		add(GLOBAL_VAR_HOUR, (long) (60 * 60));
-		add(GLOBAL_VAR_DAY, (long) (24 * 60 * 60));
-		add(GLOBAL_VAR_WEEK, (long) (7 * 24 * 60 * 60));
+		addConstant(GLOBAL_VAR_K, 1024L);
+		addConstant(GLOBAL_VAR_M, 1024L * 1024L);
+		addConstant(GLOBAL_VAR_G, 1024L * 1024L * 1024L);
+		addConstant(GLOBAL_VAR_T, 1024L * 1024L * 1024L * 1024L);
+		addConstant(GLOBAL_VAR_P, 1024L * 1024L * 1024L * 1024L * 1024L);
+		addConstant(GLOBAL_VAR_MINUTE, 60L);
+		addConstant(GLOBAL_VAR_HOUR, (long) (60 * 60));
+		addConstant(GLOBAL_VAR_DAY, (long) (24 * 60 * 60));
+		addConstant(GLOBAL_VAR_WEEK, (long) (7 * 24 * 60 * 60));
 
 		// Math constants
-		add(GLOBAL_VAR_E, Math.E);
-		add(GLOBAL_VAR_PI, Math.PI);
-
-		// Add all constants
-		Gpr.debug("!!! TODO: MARK AS CONSTANTS!");
-		//		for (ScopeSymbol ss : constants) {
-		//			ss.setConstant(true);
-		//			add(ss);
-		//		}
+		addConstant(GLOBAL_VAR_E, Math.E);
+		addConstant(GLOBAL_VAR_PI, Math.PI);
 	}
-
 }

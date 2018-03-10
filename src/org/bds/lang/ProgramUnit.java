@@ -11,11 +11,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.FunctionDeclaration;
-import org.bds.lang.type.TypeFunction;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
-import org.bds.scope.ScopeSymbolFunction;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -94,17 +91,17 @@ public class ProgramUnit extends BlockWithFile {
 		// Add all functions
 		// !!! TODO: Move this to the appropriate scope!?!?!?
 		Gpr.debug("!!! FIXME: This should be in the appropriate scope");
-		List<BdsNode> funcs = findNodes(FunctionDeclaration.class, false);
-		for (BdsNode func : funcs) {
-			Gpr.debug("!!! ADDING FUNCTION: " + func);
-			// Create scope symbol
-			FunctionDeclaration fd = (FunctionDeclaration) func;
-			TypeFunction typeFunc = new TypeFunction(fd);
-			// !!! TODO: FIXME
-			ScopeSymbol ssym = new ScopeSymbolFunction(fd.getFunctionName(), typeFunc, fd);
-
-			// Add it to scope
-			symtab.add(ssym);
-		}
+		//		List<BdsNode> funcs = findNodes(FunctionDeclaration.class, false);
+		//		for (BdsNode func : funcs) {
+		//			Gpr.debug("!!! ADDING FUNCTION: " + func);
+		//			// Create scope symbol
+		//			FunctionDeclaration fd = (FunctionDeclaration) func;
+		//			TypeFunction typeFunc = new TypeFunction(fd);
+		//			// !!! TODO: FIXME
+		//			ScopeSymbol ssym = new ScopeSymbolFunction(fd.getFunctionName(), typeFunc, fd);
+		//
+		//			// Add it to scope
+		//			symtab.add(ssym);
+		//		}
 	}
 }

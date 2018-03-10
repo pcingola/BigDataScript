@@ -22,8 +22,7 @@ public abstract class Reference extends Expression {
 	public abstract String getVariableName();
 
 	public boolean isConstant(SymbolTable symtab) {
-		Type t = symtab.getType(getVariableName());
-		return (t != null) && t.isConstant();
+		return symtab.isConstant(getVariableName());
 	}
 
 	public boolean isVariable(SymbolTable symtab) {

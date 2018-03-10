@@ -2,16 +2,16 @@ package org.bds.symbol;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bds.lang.statement.Args;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
-import org.bds.lang.value.Value;
-import org.bds.scope.Scope;
 import org.bds.util.AutoHashMap;
 
 /**
@@ -21,12 +21,22 @@ import org.bds.util.AutoHashMap;
  */
 public class SymbolTable implements Iterable<String> {
 
+	// Global scope
+	private static SymbolTable globalSymbolTable = new SymbolTable(null);
 	SymbolTable parent;
 	AutoHashMap<String, List<TypeFunction>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
 	Map<String, Type> types; // Types defined within this symbol table
+	Set<String> constants; // Symbols defined here are 'constant'
+
+	public static SymbolTable get() {
+		if (globalSymbolTable == null) {
+			globalSymbolTable = new SymbolTable(null);
+		}
+		return globalSymbolTable;
+	}
 
 	public SymbolTable() {
-		parent = null;
+		parent = SymbolTable.get();
 	}
 
 	/**
@@ -45,16 +55,6 @@ public class SymbolTable implements Iterable<String> {
 			// Add function by name
 			functions.getOrCreate(name).add((TypeFunction) type);
 		} else types.put(name, type);
-	}
-
-	/**
-	 * Add all variables from a scope
-	 */
-	public void addAll(Scope scope) {
-		for (String name : scope) {
-			Value v = scope.getValue(name);
-			add(name, v.getType());
-		}
 	}
 
 	/**
@@ -189,6 +189,10 @@ public class SymbolTable implements Iterable<String> {
 		return getTypeLocal(symbol) != null || getTypeFunctionsLocal(symbol) != null;
 	}
 
+	public boolean isConstant(String name) {
+		return constants == null || constants.contains(name);
+	}
+
 	/**
 	 * Is this scope empty?
 	 */
@@ -199,6 +203,11 @@ public class SymbolTable implements Iterable<String> {
 	@Override
 	public Iterator<String> iterator() {
 		return types.keySet().iterator();
+	}
+
+	public void setConstant(String name) {
+		if (constants == null) constants = new HashSet<>();
+		constants.add(name);
 	}
 
 	@Override

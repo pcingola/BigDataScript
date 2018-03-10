@@ -123,7 +123,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * Get this function's type
 	 */
 	public TypeFunction getType() {
-		if (funcType == null) funcType = TypeFunction.get(this);
+		if (funcType == null) funcType = new TypeFunction(this);
 		return funcType;
 	}
 
@@ -189,7 +189,7 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	public String signature() {
 		if (signature != null) return signature;
-		signature = TypeFunction.signature(parameters, returnType);
+		signature = getType().signature();
 		return signature;
 	}
 
