@@ -211,7 +211,11 @@ public class FunctionDeclaration extends StatementWithScope {
 		// Function name collides with other names?
 		if (symtab.getTypeLocal(functionName) != null) {
 			compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
+		} else if ((functionName != null) && (getType() != null)) {
+			// Add to parent symbol table, because the current
+			// symbol table is for the function's body 
+			Gpr.debug("!!! TypeFunction: " + getType());
+			symtab.getParent().add(functionName, getType());
 		}
 	}
-
 }

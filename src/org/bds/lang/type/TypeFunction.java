@@ -21,6 +21,7 @@ public class TypeFunction extends TypeComposite {
 
 	public TypeFunction(FunctionDeclaration functionDeclaration) {
 		super(PrimitiveType.FUNCTION);
+		this.functionDecl = functionDeclaration;
 		returnType = functionDeclaration.getReturnType();
 	}
 
