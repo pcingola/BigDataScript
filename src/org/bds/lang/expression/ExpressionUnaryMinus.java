@@ -7,7 +7,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A arithmetic negation
@@ -22,10 +22,10 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		expr.returnType(scope);
+		expr.returnType(symtab);
 
 		if (expr.canCastToInt()) returnType = Types.INT;
 		else if (expr.canCastToReal()) returnType = Types.REAL;
@@ -50,7 +50,7 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Can we transform to an int?
 		if (!expr.canCastToInt() && !expr.canCastToReal()) compilerMessages.add(this, "Cannot cast expression to int or real", MessageType.ERROR);
 	}

@@ -8,7 +8,7 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A variable reference
@@ -48,7 +48,7 @@ public class ReferenceVar extends Reference {
 	 * Get symbol from scope
 	 */
 	@Override
-	public ScopeSymbol getScopeSymbol(Scope scope) {
+	public Value getValue(Scope scope) {
 		return scope.getValue(name);
 	}
 
@@ -73,13 +73,13 @@ public class ReferenceVar extends Reference {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		ScopeSymbol ss = scope.getValue(name);
-		if (ss == null) return null; // Symbol not found
+		Type t = symtab.getType(name);
+		if (t == null) return null; // Symbol not found
 
-		returnType = ss.getType();
+		returnType = t;
 		return returnType;
 	}
 
@@ -88,9 +88,9 @@ public class ReferenceVar extends Reference {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		ScopeSymbol ss = bdsThread.getScope().getValue(name);
-		if (ss == null) bdsThread.fatalError(this, "Cannot find variable '" + name + "'");
-		bdsThread.push(ss.getValue());
+		Value val = bdsThread.getScope().getValue(name);
+		if (val == null) bdsThread.fatalError(this, "Cannot find variable '" + name + "'");
+		bdsThread.push(val);
 	}
 
 	/**
@@ -99,9 +99,9 @@ public class ReferenceVar extends Reference {
 	@Override
 	public void setValue(BdsThread bdsThread, Value value) {
 		if (value == null) return;
-		ScopeSymbol ssym = getScopeSymbol(bdsThread.getScope()); // Get scope symbol
+		Value val = getValue(bdsThread.getScope()); // Get scope symbol
 		value = getReturnType().cast(value); // Cast to destination type
-		ssym.setValue(value); // Assign
+		val.setValue(value); // Assign
 	}
 
 	@Override
@@ -110,15 +110,15 @@ public class ReferenceVar extends Reference {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Calculate return type
-		returnType(scope);
+		returnType(symtab);
 
-		if (!scope.hasType(name)) compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
+		if (!symtab.hasType(name)) compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		throw new RuntimeException("This method should never be called!");
 	}
 

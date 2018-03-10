@@ -10,7 +10,7 @@ import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueMap;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A reference to a map variable. E.g. map{'hello'}
@@ -26,24 +26,14 @@ public class ReferenceMap extends Reference {
 		super(parent, tree);
 	}
 
-	public ValueMap getMap(Scope scope) {
-		ScopeSymbol ss = getScopeSymbol(scope);
-		return (ValueMap) ss.getValue();
-	}
-
 	/**
 	 * Get symbol from scope
 	 */
 	@Override
-	public ScopeSymbol getScopeSymbol(Scope scope) {
-		if (variable instanceof ReferenceVar) return ((ReferenceVar) variable).getScopeSymbol(scope);
+	public ValueMap getValue(Scope scope) {
+		if (variable instanceof ReferenceVar) return (ValueMap) ((ReferenceVar) variable).getValue(scope);
 		return null;
 
-	}
-
-	public Type getType(Scope scope) {
-		ScopeSymbol ss = getScopeSymbol(scope);
-		return ss.getType();
 	}
 
 	@Override
@@ -95,12 +85,12 @@ public class ReferenceMap extends Reference {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
-		expressionKey.returnType(scope);
+		expressionKey.returnType(symtab);
 
 		// Retrieve map from scope
-		Type mapType = variable.returnType(scope);
+		Type mapType = variable.returnType(symtab);
 		if (mapType != null && mapType.isMap()) {
 			returnType = ((TypeMap) mapType).getValueType();
 		}
@@ -138,7 +128,7 @@ public class ReferenceMap extends Reference {
 		Value key = bdsThread.pop();
 		if (bdsThread.isCheckpointRecover()) return;
 
-		ValueMap vmap = getMap(bdsThread.getScope());
+		ValueMap vmap = getValue(bdsThread.getScope());
 		if (vmap == null) bdsThread.fatalError(this, "Cannot find variable '" + this + "'");
 		vmap.put(key, value);
 	}
@@ -149,9 +139,9 @@ public class ReferenceMap extends Reference {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Calculate return type
-		returnType(scope);
+		returnType(symtab);
 
 		// Is it a map?
 		if (!variable.isMap()) {
@@ -170,7 +160,7 @@ public class ReferenceMap extends Reference {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		throw new RuntimeException("This method should never be called!");
 	}
 

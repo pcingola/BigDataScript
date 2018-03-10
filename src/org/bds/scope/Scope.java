@@ -70,6 +70,10 @@ public class Scope implements Iterable<String> {
 			add(name, scope.getValue(name));
 	}
 
+	public Collection<String> getNames() {
+		return values.keySet();
+	}
+
 	public BdsNode getNode() {
 		return node;
 	}
@@ -105,18 +109,18 @@ public class Scope implements Iterable<String> {
 		return values.get(value);
 	}
 
-	public Collection<Value> getvalues() {
+	public Collection<Value> getValues() {
 		return values.values();
 	}
 
-	public boolean hasvalue(String value) {
+	public boolean hasValue(String value) {
 		return getValue(value) != null;
 	}
 
 	/**
 	 * Is value available on this scope or any parent scope?
 	 */
-	public boolean hasvalueLocal(String value) {
+	public boolean hasValueLocal(String value) {
 		return getValueLocal(value) != null;
 	}
 

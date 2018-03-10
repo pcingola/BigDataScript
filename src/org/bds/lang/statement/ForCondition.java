@@ -1,11 +1,11 @@
 package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.ExpressionWrapper;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
@@ -24,7 +24,7 @@ public class ForCondition extends ExpressionWrapper {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if (!isBool()) compilerMessages.add(this, "For loop condition must be a bool expression", MessageType.ERROR);
 	}
 

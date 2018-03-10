@@ -7,7 +7,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -91,8 +91,8 @@ public class If extends Statement {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		Type retType = condition.returnType(scope);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		Type retType = condition.returnType(symtab);
 		if ((condition != null) //
 				&& !condition.isBool() //
 				&& (retType != null) //

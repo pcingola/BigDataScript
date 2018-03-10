@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * An unary expression
@@ -34,10 +34,10 @@ public class ExpressionUnary extends Expression {
 	 * Which type does this expression return?
 	 */
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		returnType = expr.returnType(scope);
+		returnType = expr.returnType(symtab);
 		return returnType;
 	}
 
@@ -47,7 +47,7 @@ public class ExpressionUnary extends Expression {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable scope, CompilerMessages compilerMessages) {
 		expr.typeCheck(scope, compilerMessages);
 	}
 

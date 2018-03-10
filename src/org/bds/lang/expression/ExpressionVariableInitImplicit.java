@@ -6,9 +6,10 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.statement.VariableInitImplicit;
 import org.bds.lang.type.Type;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 
 /**
  * An expression having an implicit type variable initialization ( varName := expression )
@@ -34,10 +35,10 @@ public class ExpressionVariableInitImplicit extends Expression {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		returnType = vInit.getExpression().returnType(scope);
+		returnType = vInit.getExpression().returnType(symtab);
 		return returnType;
 	}
 
@@ -49,7 +50,7 @@ public class ExpressionVariableInitImplicit extends Expression {
 		Scope scope = null;
 		if (!bdsThread.isCheckpointRecover()) {
 			scope = bdsThread.getScope();
-			scope.add(new ScopeSymbol(vInit.getVarName(), returnType));
+			scope.add(vInit.getVarName(), returnType);
 		}
 
 		// Evaluate assignment
@@ -57,8 +58,8 @@ public class ExpressionVariableInitImplicit extends Expression {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		// Return initialization's result
-		ScopeSymbol ssym = scope.getValue(vInit.getVarName());
-		bdsThread.push(ssym.getValue());
+		Value val = scope.getValue(vInit.getVarName());
+		bdsThread.push(val);
 	}
 
 	@Override
@@ -67,17 +68,17 @@ public class ExpressionVariableInitImplicit extends Expression {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		vInit.typeCheck(scope, compilerMessages);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		vInit.typeCheck(symtab, compilerMessages);
 
 		// Already declared?
 		String varName = vInit.getVarName();
-		if (scope.hasTypeLocal(varName)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
+		if (symtab.hasTypeLocal(varName)) compilerMessages.add(this, "Duplicate local name " + varName, MessageType.ERROR);
 
 		// Calculate implicit data type
-		Type type = vInit.getExpression().returnType(scope);
+		Type type = vInit.getExpression().returnType(symtab);
 
 		// Add variable to scope
-		if ((varName != null) && (type != null)) scope.add(new ScopeSymbol(varName, type));
+		if ((varName != null) && (type != null)) symtab.add(varName, type);
 	}
 }

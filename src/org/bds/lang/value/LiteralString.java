@@ -5,8 +5,8 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.InterpolateVars;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
 import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.GprString;
 
 /**
@@ -78,8 +78,8 @@ public class LiteralString extends Literal {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Do we have any interpolated variables? Make sure they are in the scope
-		if (interpolateVars != null) interpolateVars.typeCheckNotNull(scope, compilerMessages);
+		if (interpolateVars != null) interpolateVars.typeCheckNotNull(symtab, compilerMessages);
 	}
 }

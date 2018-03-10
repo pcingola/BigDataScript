@@ -6,7 +6,7 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Expression: Literal empty map
@@ -26,7 +26,7 @@ public class LiteralMapEmpty extends LiteralMap {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		// Create a list of 'elementType'

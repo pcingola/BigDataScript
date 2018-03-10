@@ -12,7 +12,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Expression 'Literal' of a map
@@ -46,7 +46,7 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		//---
@@ -56,7 +56,7 @@ public class LiteralMap extends Literal {
 		Type keyType = null;
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
-			Type typeExpr = expr.returnType(scope);
+			Type typeExpr = expr.returnType(symtab);
 
 			if (typeExpr != null) {
 				if (valueType == null) {
@@ -128,12 +128,12 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		Type valueType = ((TypeMap) returnType).getValueType();
 
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
-			Type typeExpr = expr.returnType(scope);
+			Type typeExpr = expr.returnType(symtab);
 
 			// Can we cast ?
 			if ((typeExpr != null) && !typeExpr.canCastTo(valueType)) {

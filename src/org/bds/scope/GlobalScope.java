@@ -1,11 +1,7 @@
 package org.bds.scope;
 
-import java.util.LinkedList;
-
 import org.bds.Config;
 import org.bds.lang.expression.ExpressionTask;
-import org.bds.lang.type.Types;
-import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
 
 public class GlobalScope extends Scope {
@@ -32,7 +28,6 @@ public class GlobalScope extends Scope {
 
 	// Global scope
 	private static GlobalScope globalScope = new GlobalScope();
-	private static AutoHashMap<String, Scope> classScope = new AutoHashMap<>(new Scope());
 
 	public static GlobalScope get() {
 		if (globalScope == null) reset();
@@ -57,12 +52,12 @@ public class GlobalScope extends Scope {
 
 	public void init(Config config) {
 		// Add global symbols
-		add(new ScopeSymbol(GLOBAL_VAR_PROGRAM_NAME, "")); // Now is empty, but they are assigned later
-		add(new ScopeSymbol(GLOBAL_VAR_PROGRAM_PATH, ""));
+		add(GLOBAL_VAR_PROGRAM_NAME, ""); // Now is empty, but they are assigned later
+		add(GLOBAL_VAR_PROGRAM_PATH, "");
 
 		// CPUS
 		long cpusLocal = Gpr.parseLongSafe(config.getString(GLOBAL_VAR_LOCAL_CPUS, "" + Gpr.NUM_CORES));
-		add(new ScopeSymbol(GLOBAL_VAR_LOCAL_CPUS, cpusLocal));
+		add(GLOBAL_VAR_LOCAL_CPUS, cpusLocal);
 
 		String cpusStr = config.getString(ExpressionTask.TASK_OPTION_CPUS, "1"); // Default number of cpus: 1
 		long cpus = Gpr.parseIntSafe(cpusStr);
@@ -76,13 +71,13 @@ public class GlobalScope extends Scope {
 		long wallTimeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
 
 		// Task related variables: Default values
-		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CPUS, Types.INT, cpus)); // Default number of cpus
-		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_MEM, Types.INT, mem)); // Default amount of memory (unrestricted)
-		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_NODE, Types.STRING, node)); // Default node: none
-		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_CAN_FAIL, Types.BOOL, false)); // Task fail triggers checkpoint & exit (a task cannot fail)
-		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, Types.BOOL, false)); // Tasks are allowed to have empty output file/s
-		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_TIMEOUT, Types.INT, timeout)); // Task default timeout
-		add(new ScopeSymbol(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, Types.INT, wallTimeout)); // Task default wall-timeout
+		add(ExpressionTask.TASK_OPTION_CPUS, cpus); // Default number of cpus
+		add(ExpressionTask.TASK_OPTION_MEM, mem); // Default amount of memory (unrestricted)
+		add(ExpressionTask.TASK_OPTION_NODE, node); // Default node: none
+		add(ExpressionTask.TASK_OPTION_CAN_FAIL, false); // Task fail triggers checkpoint & exit (a task cannot fail)
+		add(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, false); // Tasks are allowed to have empty output file/s
+		add(ExpressionTask.TASK_OPTION_TIMEOUT, timeout); // Task default timeout
+		add(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, wallTimeout); // Task default wall-timeout
 	}
 
 	/**
@@ -91,26 +86,26 @@ public class GlobalScope extends Scope {
 	protected void initConstants() {
 		// Number of local CPUs
 		// Kilo, Mega, Giga, Tera, Peta.
-		LinkedList<ScopeSymbol> constants = new LinkedList<>();
-		constants.add(new ScopeSymbol(GLOBAL_VAR_K, 1024L));
-		constants.add(new ScopeSymbol(GLOBAL_VAR_M, 1024L * 1024L));
-		constants.add(new ScopeSymbol(GLOBAL_VAR_G, 1024L * 1024L * 1024L));
-		constants.add(new ScopeSymbol(GLOBAL_VAR_T, 1024L * 1024L * 1024L * 1024L));
-		constants.add(new ScopeSymbol(GLOBAL_VAR_P, 1024L * 1024L * 1024L * 1024L * 1024L));
-		constants.add(new ScopeSymbol(GLOBAL_VAR_MINUTE, 60L));
-		constants.add(new ScopeSymbol(GLOBAL_VAR_HOUR, (long) (60 * 60)));
-		constants.add(new ScopeSymbol(GLOBAL_VAR_DAY, (long) (24 * 60 * 60)));
-		constants.add(new ScopeSymbol(GLOBAL_VAR_WEEK, (long) (7 * 24 * 60 * 60)));
+		add(GLOBAL_VAR_K, 1024L);
+		add(GLOBAL_VAR_M, 1024L * 1024L);
+		add(GLOBAL_VAR_G, 1024L * 1024L * 1024L);
+		add(GLOBAL_VAR_T, 1024L * 1024L * 1024L * 1024L);
+		add(GLOBAL_VAR_P, 1024L * 1024L * 1024L * 1024L * 1024L);
+		add(GLOBAL_VAR_MINUTE, 60L);
+		add(GLOBAL_VAR_HOUR, (long) (60 * 60));
+		add(GLOBAL_VAR_DAY, (long) (24 * 60 * 60));
+		add(GLOBAL_VAR_WEEK, (long) (7 * 24 * 60 * 60));
 
 		// Math constants
-		constants.add(new ScopeSymbol(GLOBAL_VAR_E, Math.E));
-		constants.add(new ScopeSymbol(GLOBAL_VAR_PI, Math.PI));
+		add(GLOBAL_VAR_E, Math.E);
+		add(GLOBAL_VAR_PI, Math.PI);
 
 		// Add all constants
-		for (ScopeSymbol ss : constants) {
-			ss.setConstant(true);
-			add(ss);
-		}
+		Gpr.debug("!!! TODO: MARK AS CONSTANTS!");
+		//		for (ScopeSymbol ss : constants) {
+		//			ss.setConstant(true);
+		//			add(ss);
+		//		}
 	}
 
 }

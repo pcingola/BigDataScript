@@ -5,7 +5,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A bitwise negation
@@ -30,7 +30,7 @@ public class ExpressionBitNegation extends ExpressionUnary {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Can we transform to an int?
 		expr.getReturnType().checkCanCast(Types.INT, compilerMessages);
 	}

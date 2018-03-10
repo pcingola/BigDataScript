@@ -6,7 +6,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A multiplication
@@ -25,10 +25,10 @@ public class ExpressionTimes extends ExpressionMath {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		super.returnType(scope);
+		super.returnType(symtab);
 
 		if (isReturnTypesNotNull()) {
 			if (left.isString() || right.isString()) returnType = Types.STRING;
@@ -81,7 +81,7 @@ public class ExpressionTimes extends ExpressionMath {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if (left.isString() && right.canCastToInt()) {
 			// string * int: OK
 		} else if (left.canCastToInt() && right.isString()) {

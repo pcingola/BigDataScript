@@ -6,7 +6,7 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Expression: Literal empty list '[]'
@@ -25,7 +25,7 @@ public class LiteralListEmpty extends LiteralList {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 		returnType = TypeList.get(Types.VOID);
 		return returnType;

@@ -5,7 +5,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Something the is actually an expression
@@ -35,10 +35,10 @@ public class ExpressionWrapper extends Expression {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		returnType = expression.returnType(scope);
+		returnType = expression.returnType(symtab);
 		return returnType;
 	}
 
@@ -53,8 +53,8 @@ public class ExpressionWrapper extends Expression {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		expression.typeCheck(scope, compilerMessages);
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
+		expression.typeCheck(symtab, compilerMessages);
 	}
 
 }

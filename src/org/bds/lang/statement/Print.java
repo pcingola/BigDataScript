@@ -8,7 +8,7 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * An "print" statement
@@ -30,11 +30,11 @@ public class Print extends Statement {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		// Calculate expression's return type
-		if (expr != null) expr.returnType(scope);
+		if (expr != null) expr.returnType(symtab);
 
 		returnType = Types.STRING;
 		return returnType;
@@ -65,8 +65,8 @@ public class Print extends Statement {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		returnType(scope);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		returnType(symtab);
 
 		if (!expr.canCastToString()) {
 			compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);

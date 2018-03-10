@@ -16,6 +16,7 @@ import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
 import org.bds.scope.ScopeSymbolFunction;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -89,7 +90,7 @@ public class ProgramUnit extends BlockWithFile {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Add all functions
 		// !!! TODO: Move this to the appropriate scope!?!?!?
 		Gpr.debug("!!! FIXME: This should be in the appropriate scope");
@@ -99,10 +100,11 @@ public class ProgramUnit extends BlockWithFile {
 			// Create scope symbol
 			FunctionDeclaration fd = (FunctionDeclaration) func;
 			TypeFunction typeFunc = new TypeFunction(fd);
+			// !!! TODO: FIXME
 			ScopeSymbol ssym = new ScopeSymbolFunction(fd.getFunctionName(), typeFunc, fd);
 
 			// Add it to scope
-			scope.add(ssym);
+			symtab.add(ssym);
 		}
 	}
 }

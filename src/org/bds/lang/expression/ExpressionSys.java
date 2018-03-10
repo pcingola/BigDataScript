@@ -14,8 +14,8 @@ import org.bds.lang.type.Types;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
 import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -114,7 +114,7 @@ public class ExpressionSys extends Expression {
 	 * Sys expression always returns the task id, which is a string
 	 */
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		returnType = Types.STRING;
 		return returnType;
 	}
@@ -186,8 +186,8 @@ public class ExpressionSys extends Expression {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Do we have any interpolated variables? Make sure they are in the scope
-		if (interpolateVars != null) interpolateVars.typeCheckNotNull(scope, compilerMessages);
+		if (interpolateVars != null) interpolateVars.typeCheckNotNull(symtab, compilerMessages);
 	}
 }

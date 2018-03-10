@@ -13,7 +13,7 @@ import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.task.TaskDependency;
 
 /**
@@ -80,13 +80,13 @@ public class ExpressionDepOperator extends Expression {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		// Make sure we calculate return type fo all expressions
 		for (Expression e : left)
-			e.returnType(scope);
+			e.returnType(symtab);
 
 		for (Expression e : right)
-			e.returnType(scope);
+			e.returnType(symtab);
 
 		returnType = Types.BOOL;
 		return returnType;
@@ -162,7 +162,7 @@ public class ExpressionDepOperator extends Expression {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Check that expression lists are either strings or lists of strings
 		for (Expression e : left)
 			if (e.isString()) ; // OK

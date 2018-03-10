@@ -6,9 +6,9 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeFunction;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Variable declaration
@@ -88,7 +88,7 @@ public class VarDeclaration extends Statement {
 	public void runStep(BdsThread bdsThread) {
 		for (VariableInit vi : varInit) {
 			if (!bdsThread.isCheckpointRecover()) {
-				bdsThread.getScope().add(new ScopeSymbol(vi.varName, type)); // Add variable to scope
+				bdsThread.getScope().add(vi.varName, type.newValue()); // Add variable to scope
 			}
 
 			bdsThread.run(vi);
@@ -126,24 +126,23 @@ public class VarDeclaration extends Statement {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Add all symbols
 		for (VariableInit vi : varInit) {
 			String varName = vi.varName;
 
 			// Already declared?
-			if (scope.hasTypeLocal(varName)) {
+			if (symtab.hasTypeLocal(varName)) {
 				String other = "";
-				if (scope.getTypeFunctionsLocal(varName) != null) {
-					ScopeSymbol ssf = scope.getTypeFunctionsLocal(varName).get(0);
-					FunctionDeclaration fdecl = (FunctionDeclaration) ssf.getValue().get();
-					other = " (function '" + varName + "' declared in " + fdecl.getFileName() + ", line " + fdecl.getLineNum() + ")";
+				if (symtab.getTypeFunctionsLocal(varName) != null) {
+					TypeFunction tf = symtab.getTypeFunctionsLocal(varName).get(0);
+					other = " (function '" + varName + "' declared in " + tf.getFileName() + ", line " + tf.getLineNum() + ")";
 				}
 
 				compilerMessages.add(this, "Duplicate local name '" + varName + "'" + other, MessageType.ERROR);
 			} else {
 				// Calculate implicit data type
-				if (implicit && type == null) type = vi.getExpression().returnType(scope);
+				if (implicit && type == null) type = vi.getExpression().returnType(symtab);
 
 				if (type != null && type.isVoid()) {
 					compilerMessages.add(this, "Cannot declare variable '" + varName + "' type 'void'", MessageType.ERROR);
@@ -151,7 +150,7 @@ public class VarDeclaration extends Statement {
 				}
 
 				// Add variable to scope
-				if ((varName != null) && (type != null)) scope.add(new ScopeSymbol(varName, type));
+				if ((varName != null) && (type != null)) symtab.add(varName, type);
 			}
 		}
 	}

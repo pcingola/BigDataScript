@@ -10,7 +10,7 @@ import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -28,24 +28,13 @@ public class ReferenceList extends Reference {
 		super(parent, tree);
 	}
 
-	public ValueList getList(Scope scope) {
-		ScopeSymbol ss = getScopeSymbol(scope);
-		if (ss == null) return null;
-		return (ValueList) ss.getValue();
-	}
-
 	/**
 	 * Get symbol from scope
 	 */
 	@Override
-	public ScopeSymbol getScopeSymbol(Scope scope) {
-		if (exprList instanceof ReferenceVar) return ((ReferenceVar) exprList).getScopeSymbol(scope);
+	public ValueList getValue(Scope scope) {
+		if (exprList instanceof ReferenceVar) return (ValueList) ((ReferenceVar) exprList).getValue(scope);
 		return null;
-	}
-
-	public Type getType(Scope scope) {
-		ScopeSymbol ss = getScopeSymbol(scope);
-		return ss.getType();
 	}
 
 	@Override
@@ -98,11 +87,11 @@ public class ReferenceList extends Reference {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		exprIdx.returnType(scope);
-		Type nameType = exprList.returnType(scope);
+		exprIdx.returnType(symtab);
+		Type nameType = exprList.returnType(symtab);
 
 		if (nameType == null) return null;
 		if (nameType.isList()) returnType = ((TypeList) nameType).getElementType();
@@ -138,7 +127,7 @@ public class ReferenceList extends Reference {
 		int idx = (int) bdsThread.popInt();
 		if (bdsThread.isCheckpointRecover()) return;
 
-		ValueList vlist = getList(bdsThread.getScope());
+		ValueList vlist = getValue(bdsThread.getScope());
 		if (vlist == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
 		vlist.setValue(idx, value);
 	}
@@ -149,16 +138,16 @@ public class ReferenceList extends Reference {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Calculate return type
-		returnType(scope);
+		returnType(symtab);
 
 		if ((exprList.getReturnType() != null) && !exprList.getReturnType().isList()) compilerMessages.add(this, "Expression '" + exprList + "' is not a list/array", MessageType.ERROR);
 		if (exprIdx != null) exprIdx.checkCanCastToInt(compilerMessages);
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		throw new RuntimeException("This method should never be called!");
 	}
 

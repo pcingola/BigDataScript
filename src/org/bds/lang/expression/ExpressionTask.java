@@ -21,7 +21,7 @@ import org.bds.lang.type.Types;
 import org.bds.lang.value.Literal;
 import org.bds.lang.value.LiteralString;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.task.Task;
 import org.bds.task.TaskDependency;
 import org.bds.util.Gpr;
@@ -321,10 +321,10 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Task expression always returns the task id, which is a string
 	 */
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		// Calculate options' return type
-		if (options != null) options.returnType(scope);
-		if (statement != null) statement.returnType(scope);
+		if (options != null) options.returnType(symtab);
+		if (statement != null) statement.returnType(symtab);
 
 		// Task expressions return a task ID (a string)
 		returnType = Types.STRING;
@@ -438,10 +438,10 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		returnType(scope);
-		if (options != null) options.typeCheck(scope, compilerMessages);
-		if (statement != null) statement.typeCheck(scope, compilerMessages);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		returnType(symtab);
+		if (options != null) options.typeCheck(symtab, compilerMessages);
+		if (statement != null) statement.typeCheck(symtab, compilerMessages);
 	}
 
 }

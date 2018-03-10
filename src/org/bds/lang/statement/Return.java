@@ -9,7 +9,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A "return" statement
@@ -31,11 +31,11 @@ public class Return extends Statement {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		// Calculate expression's return type
-		if (expr != null) expr.returnType(scope);
+		if (expr != null) expr.returnType(symtab);
 
 		// Find enclosing function
 		FunctionDeclaration func = (FunctionDeclaration) findParent(FunctionDeclaration.class);
@@ -71,8 +71,8 @@ public class Return extends Statement {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		returnType(scope);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		returnType(symtab);
 
 		if (expr == null) {
 			if (!returnType.isVoid()) compilerMessages.add(this, "Cannot cast " + Types.VOID + " to " + returnType, MessageType.ERROR);

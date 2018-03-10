@@ -12,11 +12,11 @@ import org.bds.Config;
 import org.bds.cluster.host.HostResources;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.statement.Statement;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.task.TailFile;
 import org.bds.task.Task;
 import org.bds.task.TaskDependecies;
@@ -153,22 +153,22 @@ public class Report {
 		// Show Scope
 		//---
 		Scope scope = bdsThread.getScope();
-		rTemplate.add("scope.VAR_ARGS_LIST", scope.getValue(GlobalScope.GLOBAL_VAR_ARGS_LIST).getValue());
-		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getValue(ExpressionTask.TASK_OPTION_SYSTEM).getValue());
-		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getValue(ExpressionTask.TASK_OPTION_CPUS).getValue());
+		rTemplate.add("scope.VAR_ARGS_LIST", scope.getValue(GlobalScope.GLOBAL_VAR_ARGS_LIST));
+		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getValue(ExpressionTask.TASK_OPTION_SYSTEM));
+		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getValue(ExpressionTask.TASK_OPTION_CPUS));
 
 		// Scope symbols
-		ArrayList<ScopeSymbol> ssyms = new ArrayList<>();
-		ssyms.addAll(scope.getSymbols());
-		Collections.sort(ssyms);
+		ArrayList<String> names = new ArrayList<>();
+		names.addAll(scope.getNames());
+		Collections.sort(names);
 
-		if (!ssyms.isEmpty()) {
-			for (ScopeSymbol ss : ssyms)
-				if (!ss.getType().isFunction()) {
-					rTemplate.add("symType", ss.getType());
-					rTemplate.add("symName", ss.getName());
-					rTemplate.add("symValue", GprString.escape(ss.getValue().toString()));
-				}
+		if (!names.isEmpty()) {
+			for (String name : names) {
+				Value val = scope.getValue(name);
+				rTemplate.add("symType", val.getType());
+				rTemplate.add("symName", name);
+				rTemplate.add("symValue", GprString.escape(val.toString()));
+			}
 		} else {
 			rTemplate.add("symType", "");
 			rTemplate.add("symName", "");

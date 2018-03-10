@@ -7,7 +7,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.type.Reference;
 import org.bds.lang.value.ValueInt;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Pre increment / decrement operator
@@ -63,7 +63,7 @@ public class Pre extends ExpressionUnary {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if (!expr.isInt()) compilerMessages.add(this, "Only int variables can be used with ++ or -- operators", MessageType.ERROR);
 	}
 

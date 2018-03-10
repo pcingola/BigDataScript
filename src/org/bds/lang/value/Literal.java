@@ -6,7 +6,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A boolean literal
@@ -33,7 +33,7 @@ public abstract class Literal extends Expression {
 	protected abstract Object parseValue(ParseTree tree);
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 		returnType = value.getType();
 		return returnType;
@@ -57,7 +57,7 @@ public abstract class Literal extends Expression {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Nothing to do
 	}
 

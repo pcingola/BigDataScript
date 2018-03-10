@@ -16,10 +16,11 @@ import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.scope.Scope;
 import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -47,28 +48,28 @@ public class ForLoopList extends StatementWithScope {
 	/**
 	 * Variable declaration (Loop initialization)
 	 */
-	protected ScopeSymbol initBeginDecl(BdsThread bdsThread) {
+	protected Value initBeginDecl(BdsThread bdsThread) {
 		bdsThread.run(beginVarDecl);
 		String varName = beginVarDecl.getVarInit()[0].getVarName();
-		ScopeSymbol varSym = bdsThread.getScope().getValue(varName);
-		return varSym;
+		Value valSym = bdsThread.getScope().getValue(varName);
+		return valSym;
 	}
 
 	/**
 	 * Iterable counter (current position in iterator)
 	 */
-	protected ScopeSymbol initIterableCounter(BdsThread bdsThread) {
+	protected Value initIterableCounter(BdsThread bdsThread) {
 		// Are we recovering state from a checkpoint file?
 		if (bdsThread.isCheckpointRecover()) {
-			ScopeSymbol ssIterableCount = bdsThread.getScope().getValue(iterableCountName);
+			Value ssIterableCount = bdsThread.getScope().getValue(iterableCountName);
 			return ssIterableCount;
 		}
 
 		// Create counter
 		iterableCountName = ScopeSymbol.INTERNAL_SYMBOL_START + "iterableCount." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
 		Type iterableCountType = Types.INT;
-		ScopeSymbol ssIterableCount = new ScopeSymbol(iterableCountName, iterableCountType, 0L);
-		bdsThread.getScope().add(ssIterableCount);
+		Value ssIterableCount = iterableCountType.newValue(0L);
+		bdsThread.getScope().add(iterableCountName, ssIterableCount);
 		return ssIterableCount;
 	}
 
@@ -76,14 +77,14 @@ public class ForLoopList extends StatementWithScope {
 	 * Iterable values (list of elements to iterate)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected List initIterableValues(BdsThread bdsThread, ScopeSymbol varSym) {
+	protected ValueList initIterableValues(BdsThread bdsThread, Value varSym) {
 		// Evaluate list
 		bdsThread.run(expression);
 
 		// Are we recovering state from a checkpoint file?
 		if (bdsThread.isCheckpointRecover()) {
-			ScopeSymbol ssIterableList = bdsThread.getScope().getValue(iterableListName);
-			return (List) ssIterableList.getValue().get();
+			ValueList ssIterableList = (ValueList) bdsThread.getScope().getValue(iterableListName);
+			return ssIterableList;
 		}
 
 		//---
@@ -107,10 +108,10 @@ public class ForLoopList extends StatementWithScope {
 		//---
 		iterableListName = ScopeSymbol.INTERNAL_SYMBOL_START + "iterableList." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
 		Type iterableListType = TypeList.get(varSym.getType());
-		ScopeSymbol ssIterableList = new ScopeSymbol(iterableListName, iterableListType, iterableValues);
-		bdsThread.getScope().add(ssIterableList);
-
-		return iterableValues;
+		ValueList ssIterableList = new ValueList(iterableListType);
+		ssIterableList.set(iterableValues);
+		bdsThread.getScope().add(iterableListName, ssIterableList);
+		return ssIterableList;
 	}
 
 	@Override
@@ -128,23 +129,22 @@ public class ForLoopList extends StatementWithScope {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
-		return expression.returnType(scope);
+	public Type returnType(SymbolTable symtab) {
+		return expression.returnType(symtab);
 	}
 
 	/**
 	 * Run
 	 */
-	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		ScopeSymbol varSym = initBeginDecl(bdsThread);
-		List iterableValues = initIterableValues(bdsThread, varSym);
-		ScopeSymbol iterableCount = initIterableCounter(bdsThread);
+		Value varSym = initBeginDecl(bdsThread);
+		ValueList iterableValues = initIterableValues(bdsThread, varSym);
+		Value iterableCount = initIterableCounter(bdsThread);
 
 		// First element to iterate.
 		// Note: This could be set by a checkpoint recovery, so we have to read it from the scope
-		ValueInt counter = (ValueInt) iterableCount.getValue();
+		ValueInt counter = (ValueInt) iterableCount;
 		long interStart = counter.asInt(); //
 
 		// Iterate on collection
@@ -152,8 +152,8 @@ public class ForLoopList extends StatementWithScope {
 			counter.set(idx); // Update scope symbol (so that checkpoints can save state)
 
 			// Get the element we are iterating on
-			Object o = iterableValues.get(idx);
-			varSym.setValueNative(varSym.getType().castNativeObject(o));
+			Value v = iterableValues.getValue(idx);
+			varSym.setValue(varSym.getType().cast(v));
 
 			bdsThread.run(statement); // Loop statement
 
@@ -190,8 +190,8 @@ public class ForLoopList extends StatementWithScope {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		Type exprType = returnType(scope);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		Type exprType = returnType(symtab);
 
 		if (statement == null) compilerMessages.add(this, "Empty for statement", MessageType.ERROR);
 

@@ -13,7 +13,7 @@ import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A 'goal' expression
@@ -28,7 +28,7 @@ public class ExpressionGoal extends ExpressionUnary {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 		returnType = TypeList.get(Types.STRING);
 		return returnType;
@@ -63,8 +63,8 @@ public class ExpressionGoal extends ExpressionUnary {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
-		super.typeCheckNotNull(scope, compilerMessages);
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
+		super.typeCheckNotNull(symtab, compilerMessages);
 
 		if (!expr.getReturnType().isString()) compilerMessages.add(this, "Expression does not return 'string' (" + expr.getReturnType() + ")", MessageType.ERROR);
 	}

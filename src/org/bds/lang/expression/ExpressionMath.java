@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A mathematical expression (actual '+" can be used for other strings and other things)
@@ -18,10 +18,10 @@ public class ExpressionMath extends ExpressionBinary {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		super.returnType(scope);
+		super.returnType(symtab);
 
 		if (right == null) {
 			if (left.canCastToInt()) returnType = Types.INT;

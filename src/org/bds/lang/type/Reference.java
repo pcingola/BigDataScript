@@ -5,7 +5,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.ScopeSymbol;
+import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -17,18 +17,18 @@ public abstract class Reference extends Expression {
 		super(parent, tree);
 	}
 
-	public abstract ScopeSymbol getSymbol(SymbolTable symtab);
+	public abstract Value getValue(Scope scope);
 
 	public abstract String getVariableName();
 
 	public boolean isConstant(SymbolTable symtab) {
-		ScopeSymbol ss = getSymbol(symtab);
-		return (ss != null) && ss.isConstant();
+		Type t = symtab.getType(getVariableName());
+		return (t != null) && t.isConstant();
 	}
 
 	public boolean isVariable(SymbolTable symtab) {
-		ScopeSymbol ss = getSymbol(symtab);
-		return (ss != null);
+		Type t = symtab.getType(getVariableName());
+		return (t != null);
 	}
 
 	/**

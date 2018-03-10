@@ -12,7 +12,7 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.value.Literal;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Tuple;
 
 public class InterpolateVars extends Literal {
@@ -335,7 +335,7 @@ public class InterpolateVars extends Literal {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		returnType = Types.STRING;
@@ -385,11 +385,11 @@ public class InterpolateVars extends Literal {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Do we have any interpolated variables? Make sure they are in the scope
 		if (exprs != null) //
 			for (Expression expr : exprs)
-			if (expr != null) expr.typeCheck(scope, compilerMessages);
+			if (expr != null) expr.typeCheck(symtab, compilerMessages);
 	}
 
 }

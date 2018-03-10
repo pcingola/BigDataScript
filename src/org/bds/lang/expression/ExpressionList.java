@@ -6,7 +6,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A list of expression
@@ -51,12 +51,12 @@ public class ExpressionList extends Expression {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		Type type = null;
 		for (Expression expr : expressions)
-			type = expr.returnType(scope);
+			type = expr.returnType(symtab);
 
 		returnType = type;
 		return returnType;
@@ -95,8 +95,8 @@ public class ExpressionList extends Expression {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		for (Expression expr : expressions)
-			expr.typeCheck(scope, compilerMessages);
+			expr.typeCheck(symtab, compilerMessages);
 	}
 }

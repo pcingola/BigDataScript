@@ -10,7 +10,7 @@ import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A sum of two expressions
@@ -29,10 +29,10 @@ public class ExpressionPlus extends ExpressionMath {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		super.returnType(scope);
+		super.returnType(symtab);
 
 		if (left.canCastToInt() && right.canCastToInt()) {
 			// Int + Int
@@ -147,7 +147,7 @@ public class ExpressionPlus extends ExpressionMath {
 	}
 
 	@Override
-	public void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if (left.isList() || right.isList()) {
 			Type rt = returnTypeList();
 			if (rt == null) {

@@ -2,11 +2,11 @@ package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
-import org.bds.lang.BdsNode;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -109,12 +109,12 @@ public class ForLoop extends StatementWithScope {
 		return "for( " + begin + " ; " + condition + " ; " + end + " ) {\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //
-				;
+		;
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		super.typeCheck(scope, compilerMessages);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		super.typeCheck(symtab, compilerMessages);
 		if (statement == null) compilerMessages.add(this, "Empty for statement", MessageType.ERROR);
 	}
 }

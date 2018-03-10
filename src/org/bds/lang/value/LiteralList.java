@@ -9,7 +9,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Expression 'Literal'
@@ -43,7 +43,7 @@ public class LiteralList extends Literal {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		//---
@@ -52,7 +52,7 @@ public class LiteralList extends Literal {
 		Type baseType = null;
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
-			Type typeExpr = expr.returnType(scope);
+			Type typeExpr = expr.returnType(symtab);
 
 			if (typeExpr != null) {
 				if (baseType == null) {
@@ -115,12 +115,12 @@ public class LiteralList extends Literal {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		Type baseType = ((TypeList) returnType).getElementType();
 
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
-			Type typeExpr = expr.returnType(scope);
+			Type typeExpr = expr.returnType(symtab);
 
 			// Can we cast ?
 			if ((typeExpr != null) && !typeExpr.canCastTo(baseType)) {
