@@ -14,7 +14,7 @@ import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -51,7 +51,7 @@ public class FunctionDeclaration extends StatementWithScope {
 			// Only one argument
 			Type argType = fparam[0].getType();
 			String argName = fparam[0].getVarInit()[0].getVarName();
-			scope.add(new ScopeSymbol(argName, argType, value));
+			scope.add(argName, argType.cast(value));
 		}
 
 		// Run function body
@@ -84,7 +84,7 @@ public class FunctionDeclaration extends StatementWithScope {
 			Scope scope = bdsThread.getScope();
 			for (int i = 0; i < fparam.length; i++) {
 				String argName = fparam[i].getVarInit()[0].getVarName();
-				scope.add(new ScopeSymbol(argName, args.getValue(i)));
+				scope.add(argName, args.getValue(i));
 			}
 		}
 
@@ -207,9 +207,9 @@ public class FunctionDeclaration extends StatementWithScope {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Function name collides with other names?
-		if (scope.getSymbolLocal(functionName) != null) compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
+		if (symtab.getTypeLocal(functionName) != null) compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
 	}
 
 }
