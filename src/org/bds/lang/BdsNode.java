@@ -815,10 +815,13 @@ public abstract class BdsNode implements BdsSerialize {
 	 */
 	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Create a new scope?
-		if (isNeedsScope()) {
+		// Note: If a symbolTable has already been assigned, don't change it (e.g. ProgramUnit gets a the Global SymbolTable)
+		boolean newSymTab = false;
+		if (isNeedsScope() && getSymbolTable() == null) {
 			SymbolTable newSymtab = new SymbolTable(this);
 			symtab = newSymtab;
 			setSymbolTable(newSymtab);
+			newSymTab = true;;
 		}
 
 		// Once the scope is right, we can perform the real type-check
@@ -838,15 +841,16 @@ public abstract class BdsNode implements BdsSerialize {
 			}
 		}
 
-		// Scope processing
-		if (isNeedsScope()) {
-			// Do we really need a scope? If the scope is empty, we don't really need it
+		// Restore old SymbolTable?
+		if (newSymTab) {
+			// Do we really need a SymbolTable?
+			// If SymbolTable is empty, we don't really need it
 			if (symtab.isEmpty()) {
 				setNeedsScope(false);
 				setSymbolTable(null);
 			} else setSymbolTable(symtab);
 
-			// Get back to previous scope
+			// Restore previous SymbolTable
 			symtab = symtab.getParent();
 		}
 	}

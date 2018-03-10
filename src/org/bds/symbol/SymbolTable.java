@@ -118,6 +118,7 @@ public class SymbolTable implements Iterable<String> {
 	}
 
 	public SymbolTable getParent() {
+		if (bdsNode == null) return null;
 		for (BdsNode n = bdsNode.getParent(); n != null; n = n.getParent()) {
 			if (n.getSymbolTable() != null) return n.getSymbolTable();
 		}

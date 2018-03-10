@@ -1,6 +1,6 @@
 
-int i
-
-for( i=0 ; i < 10 ; i++ ) {
-	int j = i
+// Task using options and 'sys'
+task (cpus=4) {
+	sys ls -al
 }
+

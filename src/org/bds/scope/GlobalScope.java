@@ -52,6 +52,15 @@ public class GlobalScope extends Scope {
 		super(null, null);
 	}
 
+	@Override
+	public synchronized void add(String name, Object val) {
+		super.add(name, val);
+
+		// Add type to global SymbolTable
+		Value value = getValue(name);
+		SymbolTable.get().add(name, value.getType());
+	}
+
 	/**
 	 * Add value and mark it as constant in global symbol table
 	 */
@@ -59,7 +68,7 @@ public class GlobalScope extends Scope {
 		// Add value
 		add(name, val);
 
-		// Add scope symbol and flag it as 'constant'
+		// Add type to global SymbolTable and flag it as 'constant'
 		Value value = getValue(name);
 		SymbolTable.get().add(name, value.getType());
 		SymbolTable.get().setConstant(name);
@@ -115,4 +124,5 @@ public class GlobalScope extends Scope {
 		addConstant(GLOBAL_VAR_E, Math.E);
 		addConstant(GLOBAL_VAR_PI, Math.PI);
 	}
+
 }

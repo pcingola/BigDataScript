@@ -324,6 +324,7 @@ public class Bds {
 		if (debug) log("Type checking.");
 		CompilerMessages.reset();
 		SymbolTable globalSymbolTable = SymbolTable.get();
+		if (debug) log("Global SymbolTable:\n" + globalSymbolTable);
 		programUnit.setSymbolTable(globalSymbolTable);
 		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
 

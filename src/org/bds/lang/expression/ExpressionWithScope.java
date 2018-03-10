@@ -2,6 +2,7 @@ package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Expression: An expression that requires a new scope
@@ -10,10 +11,16 @@ import org.bds.lang.BdsNode;
  */
 public class ExpressionWithScope extends Expression {
 
-	boolean needsScope; // Do we really need a scope? If a scope is requested, but we don't add new symbols, then we don't really need it (e.g. while loop without any new variables)
+	boolean needsScope; // Do we really need a scope?
+	protected SymbolTable symbolTable; // SymbolTable required for this statement
 
 	public ExpressionWithScope(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	public SymbolTable getSymbolTable() {
+		return symbolTable;
 	}
 
 	@Override
@@ -35,4 +42,10 @@ public class ExpressionWithScope extends Expression {
 	public void setNeedsScope(boolean needsScope) {
 		this.needsScope = needsScope;
 	}
+
+	@Override
+	public void setSymbolTable(SymbolTable symtab) {
+		symbolTable = symtab;
+	}
+
 }
