@@ -8,8 +8,7 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.LiteralListEmpty;
 import org.bds.lang.value.LiteralMapEmpty;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Variable declaration
@@ -55,15 +54,13 @@ public class VariableInitImplicit extends VariableInit {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Variable type
-		ScopeSymbol varSym = scope.getSymbolLocal(varName);
-		Type varType = null;
-		if (varSym != null) varType = varSym.getType();
+		Type varType = symtab.getTypeLocal(varName);
 
 		// Calculate expression type
 		if (expression != null) {
-			Type exprRetType = expression.returnType(scope);
+			Type exprRetType = expression.returnType(symtab);
 
 			// Compare types
 			if ((varType == null) || (exprRetType == null)) {

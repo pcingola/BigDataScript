@@ -9,7 +9,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -147,8 +147,8 @@ public class Switch extends Statement {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		if (switchExpr != null) switchExpr.returnType(scope);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		if (switchExpr != null) switchExpr.returnType(symtab);
 	}
 
 }

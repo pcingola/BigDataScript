@@ -12,7 +12,7 @@ import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Variable initialization
@@ -100,9 +100,9 @@ public class VariableInit extends BdsNode {
 
 			// Change variable's map
 			Scope scope = bdsThread.getScope();
-			ScopeSymbol ssym = scope.getValue(varName);
-			value = ssym.getType().cast(value);
-			ssym.setValue(value);
+			Value val = scope.getValue(varName);
+			value = val.getType().cast(value);
+			val.setValue(value);
 		}
 
 	}
@@ -120,22 +120,20 @@ public class VariableInit extends BdsNode {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Variable type
-		ScopeSymbol varSym = scope.getSymbolLocal(varName);
-		Type varType = null;
-		if (varSym != null) varType = varSym.getType();
+		Type varType = symtab.getTypeLocal(varName);
 
 		// Calculate expression type
 		if (expression != null) {
-			Type exprRetType = expression.returnType(scope);
+			Type exprRetType = expression.returnType(symtab);
 
 			// Compare types
 			if ((varType == null) || (exprRetType == null)) {
 				// Variable not found, nothing else to do
-			} else if (varSym.getType().isList() && exprRetType.isList() && (expression instanceof LiteralListEmpty)) {
+			} else if (varType.isList() && exprRetType.isList() && (expression instanceof LiteralListEmpty)) {
 				// OK, Empty list literal can be assigned to any list
-			} else if (varSym.getType().isMap() && exprRetType.isMap() && (expression instanceof LiteralMapEmpty)) {
+			} else if (varType.isMap() && exprRetType.isMap() && (expression instanceof LiteralMapEmpty)) {
 				// OK, Empty map literal can be assigned to any map
 			} else if (!exprRetType.canCastTo(varType)) {
 				// We cannot cast expression's type to variable's type: Error

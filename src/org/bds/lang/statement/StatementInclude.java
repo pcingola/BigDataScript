@@ -8,7 +8,7 @@ import org.bds.Config;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Include statement: Get source from another file
@@ -91,14 +91,14 @@ public class StatementInclude extends BlockWithFile {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if (!isValidFileName(fileName)) compilerMessages.add(this, "include: Invalid file name '" + fileName + "'", MessageType.ERROR);
-		super.typeCheck(scope, compilerMessages);
+		super.typeCheck(symtab, compilerMessages);
 	}
 
 	@Override
-	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
-		super.typeChecking(scope, compilerMessages);
+	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
+		super.typeChecking(symtab, compilerMessages);
 	}
 
 }

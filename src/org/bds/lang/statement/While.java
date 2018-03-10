@@ -7,7 +7,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -96,8 +96,8 @@ public class While extends Statement {
 	}
 
 	@Override
-	public void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		if (condition != null) condition.returnType(scope);
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		if (condition != null) condition.returnType(symtab);
 		if ((condition != null) && !condition.isBool()) compilerMessages.add(this, "While loop condition must be a bool expression", MessageType.ERROR);
 	}
 
