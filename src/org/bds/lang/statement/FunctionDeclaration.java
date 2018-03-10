@@ -209,7 +209,9 @@ public class FunctionDeclaration extends StatementWithScope {
 	@Override
 	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Function name collides with other names?
-		if (symtab.getTypeLocal(functionName) != null) compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
+		if (symtab.getTypeLocal(functionName) != null) {
+			compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
+		}
 	}
 
 }

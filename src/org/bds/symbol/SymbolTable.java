@@ -118,7 +118,7 @@ public class SymbolTable implements Iterable<String> {
 	}
 
 	public SymbolTable getParent() {
-		for (BdsNode n = bdsNode; n != null; n = n.getParent()) {
+		for (BdsNode n = bdsNode.getParent(); n != null; n = n.getParent()) {
 			if (n.getSymbolTable() != null) return n.getSymbolTable();
 		}
 		return null;
@@ -241,7 +241,9 @@ public class SymbolTable implements Iterable<String> {
 		}
 
 		// Show header
-		if (sbThis.length() > 0) sb.append("\n---------- SymbolTable ----------\n" + sbThis.toString());
+		String symTabName = "";
+		if (bdsNode != null) symTabName = bdsNode.getFileName() + ":" + bdsNode.getLineNum();
+		if (sbThis.length() > 0) sb.append("\n---------- SymbolTable " + symTabName + "  ----------\n" + sbThis.toString());
 
 		return sb.toString();
 	}

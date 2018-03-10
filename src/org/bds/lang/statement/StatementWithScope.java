@@ -19,6 +19,11 @@ public class StatementWithScope extends Statement {
 	}
 
 	@Override
+	public SymbolTable getSymbolTable() {
+		return symbolTable;
+	}
+
+	@Override
 	protected void initialize() {
 		needsScope = true; // A priory, we think we need a scope. This may be changed at type-checking
 	}

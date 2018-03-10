@@ -114,7 +114,9 @@ public class ReferenceVar extends Reference {
 		// Calculate return type
 		returnType(symtab);
 
-		if (!symtab.hasType(name)) compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
+		if (!symtab.hasType(name)) {
+			compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
+		}
 	}
 
 	@Override

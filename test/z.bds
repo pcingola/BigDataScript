@@ -1,11 +1,13 @@
 #!/usr/bin/env bds
 
 # include 'zz'
+#
+#	# int g(int j) { return j+1 }
+#	return i+2
+#}
+#
 
-int f(int i) {
-	# int g(int j) { return j+1 }
-	return i+2
-}
+int f(int i) { return i+1 }
 
 x := f(1)
-println("x: $x")
+println("hi: $x")
