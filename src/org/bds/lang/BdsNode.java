@@ -361,6 +361,10 @@ public abstract class BdsNode implements BdsSerialize {
 		return null;
 	}
 
+	public SymbolTable getSymbolTable() {
+		return null;
+	}
+
 	/**
 	 * Find a child terminal node having 'str' as text
 	 */

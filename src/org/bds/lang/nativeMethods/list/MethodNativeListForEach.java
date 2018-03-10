@@ -2,12 +2,9 @@ package org.bds.lang.nativeMethods.list;
 
 import java.util.ArrayList;
 
-import org.bds.lang.Parameters;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeFunction;
 import org.bds.lang.type.TypeList;
-import org.bds.lang.type.Types;
 import org.bds.lang.value.ValueFunction;
 import org.bds.run.BdsThread;
 
@@ -48,10 +45,10 @@ public class MethodNativeListForEach extends MethodNativeList {
 		classType = TypeList.get(baseType);
 		returnType = TypeList.get(baseType);;
 
-		TypeFunction typeFunc = TypeFunction.get(Parameters.get(baseType, ""), Types.BOOL);
-		String argNames[] = { "this", "f" };
-		Type argTypes[] = { classType, typeFunc };
-		parameters = Parameters.get(argTypes, argNames);
+		//		TypeFunction typeFunc = TypeFunction.get(Parameters.get(baseType, ""), Types.BOOL);
+		//		String argNames[] = { "this", "f" };
+		//		Type argTypes[] = { classType, typeFunc };
+		//		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();
 	}

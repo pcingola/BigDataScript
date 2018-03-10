@@ -7,11 +7,11 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Program unit (usually a file)
@@ -85,14 +85,14 @@ public class FunctionCall extends Expression {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		args.returnType(scope);
+		args.returnType(symtab);
 
-		ScopeSymbol ssfunc = scope.findFunction(functionName, args);
-		if (ssfunc != null) {
-			functionDeclaration = (FunctionDeclaration) ssfunc.getValue().get();
+		TypeFunction tfunc = symtab.findFunction(functionName, args);
+		if (tfunc != null) {
+			functionDeclaration = tfunc.getFunctionDeclaration();
 			returnType = functionDeclaration.getReturnType();
 		}
 
@@ -135,7 +135,7 @@ public class FunctionCall extends Expression {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Could not find the function?
 		if (functionDeclaration == null) compilerMessages.add(this, "Function " + signature() + " cannot be resolved", MessageType.ERROR);
 	}

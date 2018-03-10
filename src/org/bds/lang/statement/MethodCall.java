@@ -6,11 +6,12 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Program unit (usually a file)
@@ -45,25 +46,25 @@ public class MethodCall extends FunctionCall {
 	}
 
 	@Override
-	public Type returnType(Scope scope) {
+	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		// Calculate return types for expr and args
-		Type exprType = expresionObj.returnType(scope);
-		args.returnType(scope);
+		Type exprType = expresionObj.returnType(symtab);
+		args.returnType(symtab);
 
 		// Find method
 		if (exprType != null) {
 			// Find function in class
-			Scope classScope = exprType.getScope();
-			if (classScope != null) {
-				ScopeSymbol ssfunc = classScope.findFunction(functionName, args);
+			SymbolTable classSymTab = exprType.getSymbolTable();
+			if (classSymTab != null) {
+				TypeFunction tfunc = classSymTab.findFunction(functionName, args);
 
 				// Not found? Try a 'regular' function
-				if (ssfunc == null) ssfunc = scope.findFunction(functionName, args);
+				if (tfunc == null) tfunc = symtab.findFunction(functionName, args);
 
-				if (ssfunc != null) {
-					functionDeclaration = (FunctionDeclaration) ssfunc.getValue().get();
+				if (tfunc != null) {
+					functionDeclaration = tfunc.getFunctionDeclaration();
 					returnType = functionDeclaration.getReturnType();
 				}
 			}
@@ -98,7 +99,7 @@ public class MethodCall extends FunctionCall {
 			Scope scope = bdsThread.getScope();
 			for (int i = 0; i < fparam.length; i++) {
 				String argName = fparam[i].getVarInit()[0].getVarName();
-				scope.add(new ScopeSymbol(argName, vargs.getValue(i)));
+				scope.add(argName, vargs.getValue(i));
 			}
 		}
 
@@ -135,7 +136,7 @@ public class MethodCall extends FunctionCall {
 	}
 
 	@Override
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Could not find the function?
 		if (functionDeclaration == null) compilerMessages.add(this, "Method " + signature() + " cannot be resolved", MessageType.ERROR);
 	}

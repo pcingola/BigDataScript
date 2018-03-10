@@ -9,9 +9,9 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.value.Value;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.SymbolTable;
+import org.bds.util.Gpr;
 
 /**
  * Variable type
@@ -21,7 +21,7 @@ import org.bds.serialize.BdsSerializer;
 public abstract class Type extends BdsNode implements Comparable<Type> {
 
 	protected PrimitiveType primitiveType;
-	protected Scope scope; // A type requires a scope to define all methods related to this type / class
+	protected SymbolTable symbolTable; // A type requires a SymbolTable to define all methods related to this type / class
 
 	protected Type(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -30,8 +30,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	public Type(PrimitiveType primitiveType) {
 		super(null, null);
 		this.primitiveType = primitiveType;
-		returnType = this;
-		scope = new Scope();
+		initialize();
 	}
 
 	/**
@@ -40,8 +39,8 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	protected void addNativeMethods() {
 		List<MethodNative> methods = declateNativeMethods();
 		for (MethodNative method : methods) {
-			ScopeSymbol symbol = new ScopeSymbol(method.getFunctionName(), method.getType(), method);
-			getScope().add(symbol);
+			TypeFunction tf = new TypeFunction(method);
+			getSymbolTable().add(method.getFunctionName(), tf);
 		}
 	}
 
@@ -104,14 +103,16 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	}
 
 	@Override
-	public Scope getScope() {
-		return scope;
+	public SymbolTable getSymbolTable() {
+		return symbolTable;
 	}
 
 	@Override
 	protected void initialize() {
 		returnType = this;
-		scope = new Scope();
+		// !!! TODO: Add parent to this table (otherwise this is 'root'
+		Gpr.debug("Add parent to this table (otherwise this is 'root'");
+		symbolTable = new SymbolTable();
 	}
 
 	/**

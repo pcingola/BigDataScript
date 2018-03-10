@@ -16,7 +16,8 @@ import org.bds.util.Gpr;
  */
 public class TypeFunction extends TypeComposite {
 
-	protected Parameters parameters; // Function parameters
+	//	protected Parameters parameters; // Function parameters
+	FunctionDeclaration functionDecl;
 	// Note: returnType already exists in BdsNode
 
 	/**
@@ -28,21 +29,6 @@ public class TypeFunction extends TypeComposite {
 		TypeFunction type = (TypeFunction) Types.get(key);
 		if (type == null) {
 			type = new TypeFunction(functionDecl);
-			Types.put(type);
-		}
-
-		return type;
-	}
-
-	/**
-	 * Get or create TypeFunction
-	 */
-	public static TypeFunction get(Parameters parameters, Type returnType) {
-		// Get type from hash
-		String key = signature(parameters, returnType);
-		TypeFunction type = (TypeFunction) Types.get(key);
-		if (type == null) {
-			type = new TypeFunction(parameters, returnType);
 			Types.put(type);
 		}
 
@@ -71,18 +57,19 @@ public class TypeFunction extends TypeComposite {
 	}
 
 	public TypeFunction(FunctionDeclaration functionDeclaration) {
-		this(functionDeclaration.getParameters(), functionDeclaration.getReturnType());
-	}
-
-	protected TypeFunction(Parameters parameters, Type returnType) {
 		super(PrimitiveType.FUNCTION);
-		this.parameters = parameters;
-		this.returnType = returnType;
+		returnType = functionDeclaration.getReturnType();
 	}
 
 	public boolean canCast(TypeFunction type) {
 		throw new RuntimeException("Unimplemented!");
 	}
+
+	//	protected TypeFunction(Parameters parameters, Type returnType) {
+	//		super(PrimitiveType.FUNCTION);
+	//		this.parameters = parameters;
+	//		this.returnType = returnType;
+	//	}
 
 	@Override
 	public Object castNativeObject(Object o) {
@@ -101,11 +88,15 @@ public class TypeFunction extends TypeComposite {
 		if (cmp != 0) return cmp;
 
 		// Compare parameters
-		return Gpr.compareNull(parameters, typef.getParameters());
+		return Gpr.compareNull(getParameters(), typef.getParameters());
+	}
+
+	public FunctionDeclaration getFunctionDeclaration() {
+		return functionDecl;
 	}
 
 	public Parameters getParameters() {
-		return parameters;
+		return functionDecl.getParameters();
 	}
 
 	@Override
@@ -125,7 +116,7 @@ public class TypeFunction extends TypeComposite {
 
 	@Override
 	public String toString() {
-		return signature(parameters, returnType);
+		return signature(getParameters(), returnType);
 	}
 
 }
