@@ -191,7 +191,7 @@ public class SymbolTable implements Iterable<String> {
 	}
 
 	public boolean isConstant(String name) {
-		return constants == null || constants.contains(name);
+		return constants != null && constants.contains(name);
 	}
 
 	/**
