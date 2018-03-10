@@ -324,6 +324,7 @@ public class Bds {
 		if (debug) log("Type checking.");
 		CompilerMessages.reset();
 		SymbolTable globalSymbolTable = SymbolTable.get();
+		programUnit.setSymbolTable(globalSymbolTable);
 		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
 
 		// Any error messages?
@@ -347,39 +348,6 @@ public class Bds {
 	void compileWarn() {
 		// compileWarnUnusedFunctions();
 	}
-
-	//	/**
-	//	 * Check for unused functions
-	//	 */
-	//	void compileWarnUnusedFunctions() {
-	//		String progUnitFile = programUnit.getFileNameCanonical();
-	//
-	//		// Add all function declarations to 'unused' set
-	//		List<BdsNode> fdecls = programUnit.findNodes(FunctionDeclaration.class, true);
-	//		Set<FunctionDeclaration> unused = new HashSet<>();
-	//		for (BdsNode n : fdecls) {
-	//			FunctionDeclaration fdecl = (FunctionDeclaration) n;
-	//			if (warnUnusedFunctionsAnyFile //
-	//					|| (!warnUnusedFunctionsAnyFile && progUnitFile.equals(fdecl.getFileNameCanonical()))) {
-	//				unused.add(fdecl);
-	//			}
-	//		}
-	//
-	//		// Remove the ones that are used
-	//		List<BdsNode> fcalls = programUnit.findNodes(FunctionCall.class, true);
-	//		for (BdsNode n : fcalls) {
-	//			FunctionCall fcall = (FunctionCall) n;
-	//			FunctionDeclaration fdecl = fcall.getFunctionDeclaration();
-	//			unused.remove(fdecl);
-	//			Gpr.debug("CALL: " + fdecl.getFunctionName() + fdecl.signature());
-	//		}
-	//
-	//		// Any functions that are 'unused'?
-	//		if (unused.isEmpty()) return;
-	//		for (FunctionDeclaration fdecl : unused) {
-	//			CompilerMessages.get().add(fdecl, "Unused function " + fdecl.getFunctionName() + fdecl.signature(), MessageType.WARNING);
-	//		}
-	//	}
 
 	/**
 	 * Load configuration file

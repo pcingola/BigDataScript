@@ -11,7 +11,6 @@ import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.value.Value;
 import org.bds.serialize.BdsSerializer;
 import org.bds.symbol.SymbolTable;
-import org.bds.util.Gpr;
 
 /**
  * Variable type
@@ -110,9 +109,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	@Override
 	protected void initialize() {
 		returnType = this;
-		// !!! TODO: Add parent to this table (otherwise this is 'root'
-		Gpr.debug("Add parent to this table (otherwise this is 'root'");
-		symbolTable = new SymbolTable();
+		symbolTable = new SymbolTable(this);
 	}
 
 	/**

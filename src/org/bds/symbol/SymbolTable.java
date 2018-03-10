@@ -2,6 +2,7 @@ package org.bds.symbol;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bds.lang.BdsNode;
 import org.bds.lang.statement.Args;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
@@ -23,7 +25,8 @@ public class SymbolTable implements Iterable<String> {
 
 	// Global scope
 	private static SymbolTable globalSymbolTable = new SymbolTable(null);
-	SymbolTable parent;
+
+	BdsNode bdsNode;
 	AutoHashMap<String, List<TypeFunction>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
 	Map<String, Type> types; // Types defined within this symbol table
 	Set<String> constants; // Symbols defined here are 'constant'
@@ -35,16 +38,9 @@ public class SymbolTable implements Iterable<String> {
 		return globalSymbolTable;
 	}
 
-	public SymbolTable() {
-		parent = SymbolTable.get();
-	}
-
-	/**
-	 * Constructor
-	 * @param parent : If null => use global symbol table
-	 */
-	public SymbolTable(SymbolTable parent) {
-		this.parent = parent;
+	public SymbolTable(BdsNode bdsNode) {
+		this.bdsNode = bdsNode;
+		types = new HashMap<>();
 	}
 
 	public void add(String name, Type type) {
@@ -54,7 +50,9 @@ public class SymbolTable implements Iterable<String> {
 
 			// Add function by name
 			functions.getOrCreate(name).add((TypeFunction) type);
-		} else types.put(name, type);
+		} else {
+			types.put(name, type);
+		}
 	}
 
 	/**
@@ -120,7 +118,10 @@ public class SymbolTable implements Iterable<String> {
 	}
 
 	public SymbolTable getParent() {
-		return parent;
+		for (BdsNode n = bdsNode; n != null; n = n.getParent()) {
+			if (n.getSymbolTable() != null) return n.getSymbolTable();
+		}
+		return null;
 	}
 
 	/**
@@ -128,13 +129,13 @@ public class SymbolTable implements Iterable<String> {
 	 */
 	public Type getType(String name) {
 		// Find symbol on this or any parent scope
-		for (SymbolTable scope = this; scope != null; scope = scope.parent) {
+		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
 			// Try to find a symbol
-			Type ssym = scope.getTypeLocal(name);
+			Type ssym = symtab.getTypeLocal(name);
 			if (ssym != null) return ssym;
 
 			// Try a function
-			List<TypeFunction> fs = scope.getTypeFunctionsLocal(name);
+			List<TypeFunction> fs = symtab.getTypeFunctionsLocal(name);
 			// Since we are only matching by name, there has to be one
 			// and only one function with that name
 			// Note, this is limiting and very naive. A better approach is needed
@@ -151,7 +152,7 @@ public class SymbolTable implements Iterable<String> {
 	public List<TypeFunction> getTypeFunctions(String functionName) {
 		List<TypeFunction> funcs = new ArrayList<>();
 
-		for (SymbolTable scope = this; scope != null; scope = scope.parent) {
+		for (SymbolTable scope = this; scope != null; scope = scope.getParent()) {
 			List<TypeFunction> fs = scope.getTypeFunctionsLocal(functionName);
 			if (fs != null) funcs.addAll(fs);
 		}
@@ -197,7 +198,7 @@ public class SymbolTable implements Iterable<String> {
 	 * Is this scope empty?
 	 */
 	public boolean isEmpty() {
-		return types.isEmpty() && (functions == null || functions.isEmpty());
+		return types.isEmpty();
 	}
 
 	@Override
@@ -218,6 +219,7 @@ public class SymbolTable implements Iterable<String> {
 	public String toString(boolean showFunc) {
 		// Show parents
 		StringBuilder sb = new StringBuilder();
+		SymbolTable parent = getParent();
 		if (parent != null) {
 			String parentStr = parent.toString(showFunc);
 			if (!parentStr.isEmpty()) sb.append(parentStr);

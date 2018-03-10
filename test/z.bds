@@ -1,12 +1,11 @@
 #!/usr/bin/env bds
 
-include 'zz'
+# include 'zz'
 
 int f(int i) {
-	int g(int j) { return j+1 }
-	return g(i)+2
+	# int g(int j) { return j+1 }
+	return i+2
 }
 
 x := f(1)
-x := h(1)
 println("x: $x")

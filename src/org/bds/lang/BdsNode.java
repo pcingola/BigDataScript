@@ -357,10 +357,6 @@ public abstract class BdsNode implements BdsSerialize {
 		return returnType;
 	}
 
-	public Scope getScope() {
-		return null;
-	}
-
 	public SymbolTable getSymbolTable() {
 		return null;
 	}
@@ -739,10 +735,6 @@ public abstract class BdsNode implements BdsSerialize {
 		this.parent = parent;
 	}
 
-	public void setScope(Scope scope) {
-		throw new RuntimeException("Cannot set scope to node " + this.getClass().getSimpleName());
-	}
-
 	public void setSymbolTable(SymbolTable symtab) {
 		throw new RuntimeException("Cannot set symbol table to node " + this.getClass().getSimpleName());
 	}
@@ -824,8 +816,9 @@ public abstract class BdsNode implements BdsSerialize {
 	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Create a new scope?
 		if (isNeedsScope()) {
-			SymbolTable newSymtab = new SymbolTable(symtab);
+			SymbolTable newSymtab = new SymbolTable(this);
 			symtab = newSymtab;
+			setSymbolTable(newSymtab);
 		}
 
 		// Once the scope is right, we can perform the real type-check
@@ -848,8 +841,10 @@ public abstract class BdsNode implements BdsSerialize {
 		// Scope processing
 		if (isNeedsScope()) {
 			// Do we really need a scope? If the scope is empty, we don't really need it
-			if (symtab.isEmpty()) setNeedsScope(false);
-			else setSymbolTable(symtab);
+			if (symtab.isEmpty()) {
+				setNeedsScope(false);
+				setSymbolTable(null);
+			} else setSymbolTable(symtab);
 
 			// Get back to previous scope
 			symtab = symtab.getParent();
