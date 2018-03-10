@@ -1,13 +1,12 @@
 #!/usr/bin/env bds
 
-# include 'zz'
-#
-#	# int g(int j) { return j+1 }
-#	return i+2
-#}
-#
+include 'zz'
 
-int f(int i) { return i+1 }
+int f(int i) {
+	int g(int j) { return j+1 }
+	return g(i)+2
+}
 
-x := f(1)
-println("hi: $x")
+x := f(2)
+y := h(1)
+println("hi:\tx: $x\ty: $y")
