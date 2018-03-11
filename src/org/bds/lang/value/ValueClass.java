@@ -19,7 +19,7 @@ public class ValueClass extends ValueComposite {
 
 	public ValueClass(Type type) {
 		super(type);
-		init();
+		initValues();
 	}
 
 	@Override
@@ -36,12 +36,12 @@ public class ValueClass extends ValueComposite {
 		return fields;
 	}
 
-	@Override
-	protected void init() {
+	protected void initValues() {
 		Gpr.debug("!!! INIT");
 		fields = new HashMap<>();
 		TypeClass tc = (TypeClass) type;
-		for (VarDeclaration vd : tc.getVarDecl()) {
+		VarDeclaration vdecl[] = tc.getClassDeclaration().getVarDecl();
+		for (VarDeclaration vd : vdecl) {
 			Type vt = vd.getType();
 			for (VariableInit vi : vd.getVarInit()) {
 				Gpr.debug("!!! INIT: " + vi.getVarName() + "\t" + vt.newValue());

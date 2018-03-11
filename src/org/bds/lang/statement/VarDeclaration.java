@@ -6,6 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeFunction;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
@@ -145,9 +146,24 @@ public class VarDeclaration extends Statement {
 				// Calculate implicit data type
 				if (implicit && type == null) type = vi.getExpression().returnType(symtab);
 
+				// Sanity check: Don't declare void variables
 				if (type != null && type.isVoid()) {
 					compilerMessages.add(this, "Cannot declare variable '" + varName + "' type 'void'", MessageType.ERROR);
 					type = null;
+				}
+
+				// Is this a class?
+				if (type.isClass()) {
+					TypeClass tc = (TypeClass) type;
+					Type tfound = symtab.getType(tc.getClassName());
+					// Get class details from SymbolTable, because the 'type' we have here is just an empty stub
+					if (tfound == null) {
+						compilerMessages.add(this, "Cannot resolve class '" + tc.getClassName() + "'", MessageType.ERROR);
+					} else if (!tfound.isClass()) {
+						compilerMessages.add(this, "Type '" + tc.getClassName() + "' is not a class", MessageType.ERROR);
+					} else {
+						type = tfound; // Replace type stub with full type
+					}
 				}
 
 				// Add variable to scope

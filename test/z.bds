@@ -1,13 +1,21 @@
+#!/usr/bin/env bds
 
 
-string file = "default_file.txt"
-bool opt = false
-int num = 1
-real rnum = 1.23
+#Zzz z0
 
-print("file = '$file'\n")
-print("opt  = '$opt'\n")
-print("num  = '$num'\n")
-print("rnum = '$rnum'\n")
-print("args = " + args + "\n")
+class Zzz {
+	int i
+	real r
+	string s
+}
+
+Zzz z1
+
+#Zzz z = Zzz()
+#println("z: $z")
+
+#z2 := Zzz()
+#println("z2: $z2")
+
+println("Hi\tz1: $z1")
 

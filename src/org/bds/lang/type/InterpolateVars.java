@@ -279,7 +279,8 @@ public class InterpolateVars extends Literal {
 			return sb.toString();
 		}
 
-		return val.get().toString();
+		Object o = val.get();
+		return o != null ? o.toString() : "null";
 	}
 
 	public boolean isEmpty() {

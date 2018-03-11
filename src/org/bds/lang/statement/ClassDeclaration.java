@@ -11,7 +11,6 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
-import org.bds.util.Gpr;
 
 /**
  * Variable declaration
@@ -108,23 +107,16 @@ public class ClassDeclaration extends Block {
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		//		// Create class type
-		//		returnType = TypeClass.get(className);
+		for (VarDeclaration vd : varDecl)
+			vd.returnType(symtab);
 
-		//		// TODO: Add local class scope
-		//		for (VarDeclaration vd : varDecl)
-		//			vd.returnType(scope);
-		//
-		//		for (FunctionDeclaration fd : funcDecl)
-		//			fd.returnType(scope);
-		//
-		//		for (Statement s : statements)
-		//			s.returnType(scope);
+		for (FunctionDeclaration fd : funcDecl)
+			fd.returnType(symtab);
 
-		// Create type within scope
-		Gpr.debug("!!! CREATE CLASS IN SCOPE: " + className);
-		//		TypeClass.factory(this, symtab);
+		for (Statement s : statements)
+			s.returnType(symtab);
 
+		returnType = getType();
 		return returnType;
 	}
 
@@ -172,36 +164,12 @@ public class ClassDeclaration extends Block {
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Class name collides with other names?
-		if (symtab.getTypeLocal(className) != null) compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
-
-		// Add all symbols
-		//		for (VarDeclaration vi : varDecl) {
-		//			String varName = vi.varName;
-		//
-		//			// Already declared?
-		//			if (scope.hasSymbolLocal(varName)) {
-		//				String other = "";
-		//				if (scope.getFunctionsLocal(varName) != null) {
-		//					ScopeSymbol ssf = scope.getFunctionsLocal(varName).get(0);
-		//					FunctionDeclaration fdecl = (FunctionDeclaration) ssf.getValue().get();
-		//					other = " (function '" + varName + "' declared in " + fdecl.getFileName() + ", line " + fdecl.getLineNum() + ")";
-		//				}
-		//
-		//				compilerMessages.add(this, "Duplicate local name '" + varName + "'" + other, MessageType.ERROR);
-		//			} else {
-		//				throw new RuntimeException("!!! UNIMPLEMENTED");
-		//				//				// Calculate implicit data type
-		//				//				if (implicit && type == null) type = vi.getExpression().returnType(scope);
-		//				//
-		//				//				if (type != null && type.isVoid()) {
-		//				//					compilerMessages.add(this, "Cannot declare variable '" + varName + "' type 'void'", MessageType.ERROR);
-		//				//					type = null;
-		//				//				}
-		//				//
-		//				//				// Add variable to scope
-		//				//				if ((varName != null) && (type != null)) scope.add(new ScopeSymbol(varName, type));
-		//			}
-		//		}
-		//		}
+		if (symtab.getTypeLocal(className) != null) {
+			compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
+		} else if ((className != null) && (getType() != null)) {
+			// Add to parent symbol table, because the current
+			// symbol table is for the class' body
+			symtab.getParent().add(className, getType());
+		}
 	}
 }
