@@ -2,7 +2,10 @@ package org.bds.scope;
 
 import org.bds.Config;
 import org.bds.lang.expression.ExpressionTask;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.util.Gpr;
 
@@ -55,10 +58,13 @@ public class GlobalScope extends Scope {
 	@Override
 	public synchronized void add(String name, Object val) {
 		super.add(name, val);
+		addToGlobalSymbolTable(name);
+	}
 
-		// Add type to global SymbolTable
-		Value value = getValue(name);
-		GlobalSymbolTable.get().add(name, value.getType());
+	@Override
+	public synchronized void add(String name, Value value) {
+		values.put(name, value);
+		addToGlobalSymbolTable(name);
 	}
 
 	/**
@@ -72,10 +78,19 @@ public class GlobalScope extends Scope {
 		GlobalSymbolTable.get().setConstant(name);
 	}
 
+	public void addToGlobalSymbolTable(String name) {
+		// Add type to global SymbolTable
+		Value value = getValue(name);
+		GlobalSymbolTable.get().add(name, value.getType());
+	}
+
 	public void init(Config config) {
 		// Add global symbols
 		add(GLOBAL_VAR_PROGRAM_NAME, ""); // Now is empty, but they are assigned later
 		add(GLOBAL_VAR_PROGRAM_PATH, "");
+
+		ValueList vargs = new ValueList(TypeList.get(Types.STRING));
+		add(GLOBAL_VAR_ARGS_LIST, vargs);
 
 		// CPUS
 		long cpusLocal = Gpr.parseLongSafe(config.getString(GLOBAL_VAR_LOCAL_CPUS, "" + Gpr.NUM_CORES));
