@@ -136,7 +136,8 @@ public class VarDeclaration extends Statement {
 				String other = "";
 				if (symtab.getTypeFunctionsLocal(varName) != null) {
 					TypeFunction tf = symtab.getTypeFunctionsLocal(varName).get(0);
-					other = " (function '" + varName + "' declared in " + tf.getFileName() + ", line " + tf.getLineNum() + ")";
+					FunctionDeclaration fd = tf.getFunctionDeclaration();
+					other = " (function '" + varName + "' declared in " + fd.getFileName() + ", line " + fd.getLineNum() + ")";
 				}
 
 				compilerMessages.add(this, "Duplicate local name '" + varName + "'" + other, MessageType.ERROR);

@@ -1,8 +1,11 @@
-int i = f2(3);
+#!/usr/bin/env bds
 
-int f2(int j) {
-	return j+2;
-}
+gsea := "This is gsea VARIABLE"
 
-println("Hi\ti:$i");
+void gsea() println "This is gsea FUNCTION"
+
+void zzz() task sys echo $gsea  
+
+# Main
+zzz()
 
