@@ -1,6 +1,7 @@
 package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.symbol.SymbolTable;
 
@@ -41,6 +42,10 @@ public class StatementWithScope extends Statement {
 	@Override
 	public void setSymbolTable(SymbolTable symtab) {
 		symbolTable = symtab;
+	}
+
+	@Override
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 	}
 
 }

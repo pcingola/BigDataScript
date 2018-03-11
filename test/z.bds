@@ -1,12 +1,8 @@
+int i = f2(3);
 
-
-string mem
-int cpus
-int numC = 2
-int m = 4 * G
-
-task (cpus = 2 * numC + 3 , mem = "4g", 5 + 9) {
-  sys ls -al
-  sys du -sm
-  sys bwa aln ... -456
+int f2(int j) {
+	return j+2;
 }
+
+print("Hi\n");
+
