@@ -113,8 +113,9 @@ public class ForLoop extends StatementWithScope {
 	}
 
 	@Override
-	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
-		super.typeCheck(symtab, compilerMessages);
-		if (statement == null) compilerMessages.add(this, "Empty for statement", MessageType.ERROR);
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
+		if (statement == null) {
+			compilerMessages.add(this, "Empty for statement", MessageType.ERROR);
+		}
 	}
 }

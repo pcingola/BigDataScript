@@ -91,14 +91,8 @@ public class StatementInclude extends BlockWithFile {
 	}
 
 	@Override
-	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if (!isValidFileName(fileName)) compilerMessages.add(this, "include: Invalid file name '" + fileName + "'", MessageType.ERROR);
-		super.typeCheck(symtab, compilerMessages);
-	}
-
-	@Override
-	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
-		super.typeChecking(symtab, compilerMessages);
 	}
 
 }

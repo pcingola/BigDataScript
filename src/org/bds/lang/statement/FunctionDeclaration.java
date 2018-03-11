@@ -110,11 +110,6 @@ public class FunctionDeclaration extends StatementWithScope {
 		return parameters;
 	}
 
-	@Override
-	public Type getReturnType() {
-		return returnType;
-	}
-
 	public Statement getStatement() {
 		return statement;
 	}
@@ -207,7 +202,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	}
 
 	@Override
-	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Function name collides with other names?
 		if (symtab.getTypeLocal(functionName) != null) {
 			compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);

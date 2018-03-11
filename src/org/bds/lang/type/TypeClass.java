@@ -1,7 +1,6 @@
 package org.bds.lang.type;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.lang.BdsNode;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.VarDeclaration;
@@ -25,22 +24,29 @@ public class TypeClass extends TypeComposite {
 		String className = classDecl.getClassName();
 		if (Types.get(className) != null) throw new RuntimeException("Class '" + className + "' already exists. This should never happen!");
 
-		TypeClass type = new TypeClass(classDecl, scope);
-		Types.put(type);
-
-		return type;
+		throw new RuntimeException("!!!!!!!!");
+		//		TypeClass type = new TypeClass(classDecl, scope);
+		//		Types.put(type);
+		//
+		//		return type;
 	}
 
-	public TypeClass(BdsNode parent, ParseTree tree) {
-		super(parent, tree);
-		primitiveType = PrimitiveType.CLASS;
-	}
+	//	public TypeClass(BdsNode parent, ParseTree tree) {
+	//		super(parent, tree);
+	//		primitiveType = PrimitiveType.CLASS;
+	//	}
+	//
 
-	private TypeClass(ClassDeclaration classDeclaration, Scope parentScope) {
+	public TypeClass(ClassDeclaration classDeclaration) {
 		super(PrimitiveType.CLASS);
-		classDecl = classDeclaration;
-		initClassScope(parentScope);
+		throw new RuntimeException("!!!!!!!!! UNIMPLEMENTED");
 	}
+
+	//	private TypeClass(ClassDeclaration classDeclaration, Scope parentScope) {
+	//		super(PrimitiveType.CLASS);
+	//		classDecl = classDeclaration;
+	//		initClassScope(parentScope);
+	//	}
 
 	@Override
 	public int compareTo(Type type) {

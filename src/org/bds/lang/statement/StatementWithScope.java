@@ -1,9 +1,12 @@
 package org.bds.lang.statement;
 
+import java.util.List;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.symbol.SymbolTable;
+import org.bds.util.Gpr;
 
 /**
  * A Statement that requires a new Scope
@@ -17,6 +20,31 @@ public class StatementWithScope extends Statement {
 
 	public StatementWithScope(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Add local symbols to SymbolTable
+	 * The idea is that you should be able to refer to functions
+	 * and classes defined within the same scope, but defined
+	 * after the current statement), e.g.:
+	 *   i := f(42)    // Function 'f' is not defined yet
+	 *   int f(int x) { return 2*x }
+	 */
+	public void addLocalSymbols(SymbolTable symtab) {
+		// Add all functions
+		List<BdsNode> fdecls = findNodes(FunctionDeclaration.class, false);
+		for (BdsNode n : fdecls) {
+			FunctionDeclaration fd = (FunctionDeclaration) n;
+			Gpr.debug("ADD LOCAL SYMBOL: " + fd.signatureWithName());
+			symtab.add(fd.getFunctionName(), fd.getType());
+		}
+
+		// Add all classes
+		List<BdsNode> cdecls = findNodes(ClassDeclaration.class, false);
+		for (BdsNode n : cdecls) {
+			ClassDeclaration cd = (ClassDeclaration) n;
+			symtab.add(cd.getClassName(), cd.getType());
+		}
 	}
 
 	@Override
@@ -46,6 +74,14 @@ public class StatementWithScope extends Statement {
 
 	@Override
 	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		addLocalSymbols(symtab);
+
+		// Calculate return type
+		returnType = returnType(symtab);
+
+		// Are return types non-null?
+		// Note: null returnTypes happen if variables are missing.
+		if (isReturnTypesNotNull()) typeCheckNotNull(symtab, compilerMessages);
 	}
 
 }

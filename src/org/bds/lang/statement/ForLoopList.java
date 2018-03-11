@@ -130,7 +130,8 @@ public class ForLoopList extends StatementWithScope {
 
 	@Override
 	public Type returnType(SymbolTable symtab) {
-		return expression.returnType(symtab);
+		returnType = expression.returnType(symtab);
+		return returnType;
 	}
 
 	/**
@@ -190,8 +191,8 @@ public class ForLoopList extends StatementWithScope {
 	}
 
 	@Override
-	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
-		Type exprType = returnType(symtab);
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
+		Type exprType = getReturnType();
 
 		if (statement == null) compilerMessages.add(this, "Empty for statement", MessageType.ERROR);
 

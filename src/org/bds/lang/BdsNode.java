@@ -599,7 +599,9 @@ public abstract class BdsNode implements BdsSerialize {
 	 * Calculate return type and assign it to 'returnType' variable.
 	 */
 	public Type returnType(SymbolTable symtab) {
-		return Types.VOID;
+		if (returnType != null) return returnType;
+		returnType = Types.VOID;
+		return returnType;
 	}
 
 	public void runStep(BdsThread bdsThread) {

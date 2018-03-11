@@ -8,9 +8,10 @@ import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
@@ -55,6 +56,11 @@ public class ProgramUnit extends BlockWithFile {
 	}
 
 	@Override
+	public Type returnType(SymbolTable symtab) {
+		return Types.INT;
+	}
+
+	@Override
 	public void runStep(BdsThread bdsThread) {
 		super.runStep(bdsThread);
 		runScope = bdsThread.getScope();
@@ -85,7 +91,4 @@ public class ProgramUnit extends BlockWithFile {
 		return testFuncs;
 	}
 
-	@Override
-	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
-	}
 }

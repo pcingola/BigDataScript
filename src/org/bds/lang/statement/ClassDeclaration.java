@@ -8,6 +8,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeClass;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
@@ -23,6 +24,7 @@ public class ClassDeclaration extends Block {
 	protected VarDeclaration varDecl[];
 	protected FunctionDeclaration funcDecl[];
 	protected ClassDeclaration classParent;
+	protected TypeClass classType;
 
 	public ClassDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -49,7 +51,8 @@ public class ClassDeclaration extends Block {
 	 * Note: We use 'returnType' for storing the
 	 */
 	public Type getType() {
-		return returnType;
+		if (classType == null) classType = new TypeClass(this);
+		return classType;
 	}
 
 	public VarDeclaration[] getVarDecl() {
@@ -167,9 +170,7 @@ public class ClassDeclaration extends Block {
 	}
 
 	@Override
-	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
-		returnType(symtab);
-
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Class name collides with other names?
 		if (symtab.getTypeLocal(className) != null) compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
 
