@@ -11,6 +11,9 @@ class Zzz {
 
 Zzz z1
 
+# Zzz znull = null 		# OK
+# znull2 := null 		# Ambiguous class type
+
 #Zzz z = Zzz()
 #println("z: $z")
 

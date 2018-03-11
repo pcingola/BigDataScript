@@ -167,9 +167,31 @@ public class ClassDeclaration extends Block {
 		if (symtab.getTypeLocal(className) != null) {
 			compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
 		} else if ((className != null) && (getType() != null)) {
-			// Add to parent symbol table, because the current
-			// symbol table is for the class' body
-			symtab.getParent().add(className, getType());
+			// Add to symbol table
+			addSymTab(symtab);
 		}
 	}
+
+	/**
+	 * Create class constructors
+	 */
+	FunctionDeclaration[] createConstructors() {
+		return null;
+	}
+
+	/**
+	 * Add symbols to symbol table
+	 */
+	void addSymTab(SymbolTable symtab) {
+		// Add to parent symbol table, because the current
+		// symbol table is for the class' body
+		SymbolTable stparen = symtab.getParent();
+		stparen.add(className, getType());
+
+		// Add constructors (i.e. functions that create a new object)
+		// These are functions that have the same name as the class
+		for (FunctionDeclaration fc : createConstructors())
+			stparen.add(fc.getFunctionName(), fc.getType());
+	}
+
 }
