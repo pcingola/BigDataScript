@@ -1,6 +1,12 @@
 
-// Task using options and 'sys'
-task (cpus=4) {
-	sys ls -al
-}
 
+string mem
+int cpus
+int numC = 2
+int m = 4 * G
+
+task (cpus = 2 * numC + 3 , mem = "4g", 5 + 9) {
+  sys ls -al
+  sys du -sm
+  sys bwa aln ... -456
+}

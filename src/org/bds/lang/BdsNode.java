@@ -815,9 +815,8 @@ public abstract class BdsNode implements BdsSerialize {
 	 */
 	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Create a new scope?
-		// Note: If a symbolTable has already been assigned, don't change it (e.g. ProgramUnit gets a the Global SymbolTable)
 		boolean newSymTab = false;
-		if (isNeedsScope() && getSymbolTable() == null) {
+		if (isNeedsScope()) {
 			SymbolTable newSymtab = new SymbolTable(this);
 			symtab = newSymtab;
 			setSymbolTable(newSymtab);

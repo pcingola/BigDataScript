@@ -23,20 +23,10 @@ import org.bds.util.AutoHashMap;
  */
 public class SymbolTable implements Iterable<String> {
 
-	// Global scope
-	private static SymbolTable globalSymbolTable = new SymbolTable(null);
-
 	BdsNode bdsNode;
 	AutoHashMap<String, List<TypeFunction>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
 	Map<String, Type> types; // Types defined within this symbol table
 	Set<String> constants; // Symbols defined here are 'constant'
-
-	public static SymbolTable get() {
-		if (globalSymbolTable == null) {
-			globalSymbolTable = new SymbolTable(null);
-		}
-		return globalSymbolTable;
-	}
 
 	public SymbolTable(BdsNode bdsNode) {
 		this.bdsNode = bdsNode;
@@ -118,15 +108,14 @@ public class SymbolTable implements Iterable<String> {
 	}
 
 	public SymbolTable getParent() {
-		if (bdsNode == null) return null;
 		for (BdsNode n = bdsNode.getParent(); n != null; n = n.getParent()) {
 			if (n.getSymbolTable() != null) return n.getSymbolTable();
 		}
-		return null;
+		return GlobalSymbolTable.get(); // No parent node? Then the SymbolTable parent is 'GlobalSymbolTable'
 	}
 
 	/**
-	 * Get symbol on this scope (or any parent scope)
+	 * Get type for symbol 'name'. If not found, search in any parent scope.
 	 */
 	public Type getType(String name) {
 		// Find symbol on this or any parent scope

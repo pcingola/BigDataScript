@@ -44,7 +44,7 @@ import org.bds.run.HelpCreator;
 import org.bds.run.RunState;
 import org.bds.scope.GlobalScope;
 import org.bds.serialize.BdsSerializer;
-import org.bds.symbol.SymbolTable;
+import org.bds.symbol.GlobalSymbolTable;
 import org.bds.task.TaskDependecies;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -323,9 +323,8 @@ public class Bds {
 		//---
 		if (debug) log("Type checking.");
 		CompilerMessages.reset();
-		SymbolTable globalSymbolTable = SymbolTable.get();
+		GlobalSymbolTable globalSymbolTable = GlobalSymbolTable.get();
 		if (debug) log("Global SymbolTable:\n" + globalSymbolTable);
-		programUnit.setSymbolTable(globalSymbolTable);
 		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
 
 		// Any error messages?
@@ -492,6 +491,7 @@ public class Bds {
 		if (debug) log("Initialize global scope.");
 
 		// Reset Global scope
+		GlobalSymbolTable.reset();
 		GlobalScope.reset();
 		GlobalScope globalScope = GlobalScope.get();
 

@@ -8,6 +8,7 @@ import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.GlobalSymbolTable;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -26,7 +27,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	 * Add method to global scope
 	 */
 	protected void addNativeFunctionToScope() {
-		SymbolTable symtab = SymbolTable.get();
+		SymbolTable symtab = GlobalSymbolTable.get();
 		symtab.add(functionName, getType());
 	}
 

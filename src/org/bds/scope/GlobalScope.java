@@ -3,7 +3,7 @@ package org.bds.scope;
 import org.bds.Config;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.value.Value;
-import org.bds.symbol.SymbolTable;
+import org.bds.symbol.GlobalSymbolTable;
 import org.bds.util.Gpr;
 
 public class GlobalScope extends Scope {
@@ -58,7 +58,7 @@ public class GlobalScope extends Scope {
 
 		// Add type to global SymbolTable
 		Value value = getValue(name);
-		SymbolTable.get().add(name, value.getType());
+		GlobalSymbolTable.get().add(name, value.getType());
 	}
 
 	/**
@@ -69,9 +69,7 @@ public class GlobalScope extends Scope {
 		add(name, val);
 
 		// Add type to global SymbolTable and flag it as 'constant'
-		Value value = getValue(name);
-		SymbolTable.get().add(name, value.getType());
-		SymbolTable.get().setConstant(name);
+		GlobalSymbolTable.get().setConstant(name);
 	}
 
 	public void init(Config config) {

@@ -214,7 +214,6 @@ public class FunctionDeclaration extends StatementWithScope {
 		} else if ((functionName != null) && (getType() != null)) {
 			// Add to parent symbol table, because the current
 			// symbol table is for the function's body 
-			Gpr.debug("!!! TypeFunction: " + getType());
 			symtab.getParent().add(functionName, getType());
 		}
 	}
