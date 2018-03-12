@@ -10,7 +10,6 @@ import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
-import org.bds.util.Gpr;
 
 /**
  * Define a value of an object (i.e. a class)
@@ -41,14 +40,12 @@ public class ValueClass extends ValueComposite {
 	 * Initialize fields (by default the fields are null)
 	 */
 	public void initializeFields() {
-		Gpr.debug("!!! INIT");
 		fields = new HashMap<>();
 		TypeClass tc = (TypeClass) type;
 		VarDeclaration vdecl[] = tc.getClassDeclaration().getVarDecl();
 		for (VarDeclaration vd : vdecl) {
 			Type vt = vd.getType();
 			for (VariableInit vi : vd.getVarInit()) {
-				Gpr.debug("!!! INIT: " + vi.getVarName() + "\t" + vt.newDefaultValue());
 				fields.put(vi.getVarName(), vt.newDefaultValue());
 			}
 		}

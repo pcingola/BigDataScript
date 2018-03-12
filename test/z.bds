@@ -4,7 +4,7 @@
 #Zzz z0
 
 class Zzz {
-	int i
+	int i = 42
 	real r
 	string s
 }

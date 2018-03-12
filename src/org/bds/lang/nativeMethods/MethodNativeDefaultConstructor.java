@@ -1,6 +1,7 @@
 package org.bds.lang.nativeMethods;
 
 import org.bds.lang.Parameters;
+import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.Value;
@@ -21,8 +22,19 @@ public class MethodNativeDefaultConstructor extends MethodNative {
 	public void runFunction(BdsThread bdsThread) {
 		// Run method
 		try {
-			Value result = classType.newValue();
-			bdsThread.setReturnValue(result); // Set result in scope
+			// Create new value
+			Value value = classType.newValue();
+
+			// TODO: We should store new value in 'this' variable
+			bdsThread.getScope().add("this", value);
+
+			// Initialize fields using expressions			
+			TypeClass tc = (TypeClass) classType;
+			VarDeclaration vdecl[] = tc.getClassDeclaration().getVarDecl();
+			for (VarDeclaration vd : vdecl)
+				bdsThread.run(vd);
+
+			bdsThread.setReturnValue(value); // Set result in scope
 		} catch (Throwable t) {
 			if (bdsThread.isVerbose()) t.printStackTrace();
 			bdsThread.fatalError(this, t.getMessage());
