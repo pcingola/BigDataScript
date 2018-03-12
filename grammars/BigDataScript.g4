@@ -81,6 +81,7 @@ expression : NULL_LITERAL                                                       
            | REAL_LITERAL                                                                  # literalReal
            | STRING_LITERAL                                                                # literalString
            | STRING_LITERAL_SINGLE                                                         # literalString
+           | expression ('.' expression)+                                                  # referenceClass
            | ID '('(expression (',' expression )*)? ')'                                    # functionCall
            | expression '.' ID '('(expression (',' expression )*)? ')'                     # methodCall
            | ID                                                                            # referenceVar

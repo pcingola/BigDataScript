@@ -1,4 +1,5 @@
 // Generated from BigDataScript.g4 by ANTLR 4.7.1
+package org.bds.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -1090,6 +1091,18 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpressionAssignmentMinus(BigDataScriptParser.ExpressionAssignmentMinusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterReferenceClass(BigDataScriptParser.ReferenceClassContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitReferenceClass(BigDataScriptParser.ReferenceClassContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

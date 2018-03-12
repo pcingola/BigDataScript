@@ -1066,6 +1066,18 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitExpressionAssignmentMinus(BigDataScriptParser.ExpressionAssignmentMinusContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code referenceClass}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterReferenceClass(BigDataScriptParser.ReferenceClassContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code referenceClass}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitReferenceClass(BigDataScriptParser.ReferenceClassContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code referenceList}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.
 	 * @param ctx the parse tree

@@ -62,14 +62,6 @@ public class Scope implements Iterable<String> {
 		values.put(name, value);
 	}
 
-	/**
-	 * Add all values from 'scope'
-	 */
-	public synchronized void addAll(Scope scope) {
-		for (String name : scope)
-			add(name, scope.getValue(name));
-	}
-
 	public Collection<String> getNames() {
 		return values.keySet();
 	}
