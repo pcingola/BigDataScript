@@ -14,7 +14,7 @@ public class TypeFake extends TypeUniqueValue {
 	}
 
 	@Override
-	public Value newValue() {
+	public Value newDefaultValue() {
 		return Value.FAKE;
 	}
 

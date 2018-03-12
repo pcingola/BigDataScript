@@ -52,7 +52,7 @@ public class Scope implements Iterable<String> {
 	 * Add a new variable of type 'type'
 	 */
 	public synchronized void add(String name, Type type) {
-		values.put(name, type.newValue());
+		values.put(name, type.newDefaultValue());
 	}
 
 	/**

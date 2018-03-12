@@ -68,7 +68,7 @@ public class TypeFunction extends TypeComposite {
 	}
 
 	@Override
-	public Value newValue() {
+	public Value newDefaultValue() {
 		return new ValueFunction(this);
 	}
 

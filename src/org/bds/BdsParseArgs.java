@@ -214,7 +214,7 @@ public class BdsParseArgs {
 
 		// Default parsing
 		String valStr = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
-		Value val = varType.newValue();
+		Value val = varType.newDefaultValue();
 		val.parse(valStr);
 		return val;
 	}

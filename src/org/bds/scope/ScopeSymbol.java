@@ -44,7 +44,7 @@ public class ScopeSymbol implements BdsSerialize, Comparable<ScopeSymbol> {
 		this.name = name;
 		this.type = type;
 		id = nextId();
-		value = type.newValue();
+		value = type.newDefaultValue();
 	}
 
 	public ScopeSymbol(String name, Type type, Object value) {

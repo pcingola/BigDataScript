@@ -157,7 +157,7 @@ public class FunctionDeclaration extends StatementWithScope {
 				// No return value or not the right type?
 				// Then force a default value for returnType
 				// Note: This should be caught as a compile time error
-				bdsThread.setReturnValue(returnType.newValue());
+				bdsThread.setReturnValue(returnType.newDefaultValue());
 			}
 		}
 	}

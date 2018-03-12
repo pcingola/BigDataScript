@@ -194,15 +194,19 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	}
 
 	/**
-	 * Create a new value (properly initialzed)
+	 * Create a new (default) value for this 'type'
 	 */
-	public abstract Value newValue();
+	public abstract Value newDefaultValue();
+
+	public Value newValue() {
+		return newDefaultValue();
+	}
 
 	/**
 	 * Create a new map if this type and set it to 'v'
 	 */
 	public Value newValue(Object v) {
-		Value value = newValue();
+		Value value = newDefaultValue();
 		value.set(v);
 		return value;
 	}

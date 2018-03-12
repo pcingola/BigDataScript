@@ -20,7 +20,7 @@ public class TypeVoid extends TypeUniqueValue {
 	}
 
 	@Override
-	public Value newValue() {
+	public Value newDefaultValue() {
 		return Value.VOID;
 	}
 

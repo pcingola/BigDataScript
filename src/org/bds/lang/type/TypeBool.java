@@ -58,7 +58,7 @@ public class TypeBool extends TypePrimitive {
 	}
 
 	@Override
-	public Value newValue() {
+	public Value newDefaultValue() {
 		return new ValueBool();
 	}
 

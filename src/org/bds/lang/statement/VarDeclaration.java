@@ -89,7 +89,7 @@ public class VarDeclaration extends Statement {
 	public void runStep(BdsThread bdsThread) {
 		for (VariableInit vi : varInit) {
 			if (!bdsThread.isCheckpointRecover()) {
-				bdsThread.getScope().add(vi.varName, type.newValue()); // Add variable to scope
+				bdsThread.getScope().add(vi.varName, type.newDefaultValue()); // Add variable to scope
 			}
 
 			bdsThread.run(vi);

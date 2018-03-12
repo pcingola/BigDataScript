@@ -97,7 +97,7 @@ public class TypeList extends TypeComposite {
 	@Override
 	public Value cast(Value v) {
 		if (is(v.getType())) return v; // Same type? No need to cast
-		if (v.getType().isList() && ((TypeList) v.getType()).getElementType().isVoid()) return newValue(); // Empty list?
+		if (v.getType().isList() && ((TypeList) v.getType()).getElementType().isVoid()) return newDefaultValue(); // Empty list?
 		throw new RuntimeException("Cannot cast type '" + v.getType() + "' to type '" + this + "'");
 	}
 
@@ -186,7 +186,7 @@ public class TypeList extends TypeComposite {
 	}
 
 	@Override
-	public Value newValue() {
+	public Value newDefaultValue() {
 		return new ValueList(this);
 	}
 

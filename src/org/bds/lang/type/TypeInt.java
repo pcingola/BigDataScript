@@ -52,7 +52,7 @@ public class TypeInt extends TypePrimitive {
 	}
 
 	@Override
-	public Value newValue() {
+	public Value newDefaultValue() {
 		return new ValueInt();
 	}
 }

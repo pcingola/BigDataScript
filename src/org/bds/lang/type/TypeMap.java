@@ -83,7 +83,7 @@ public class TypeMap extends TypeComposite {
 	@Override
 	public Value cast(Value v) {
 		if (is(v.getType())) return v; // Same type? No need to cast
-		if (v.getType().isMap() && ((TypeMap) v.getType()).isEmptyMap()) return newValue(); // Empty map? Create new value
+		if (v.getType().isMap() && ((TypeMap) v.getType()).isEmptyMap()) return newDefaultValue(); // Empty map? Create new value
 		throw new RuntimeException("Cannot cast type '" + v.getType() + "' to type '" + this + "'");
 	}
 
@@ -174,7 +174,7 @@ public class TypeMap extends TypeComposite {
 	}
 
 	@Override
-	public Value newValue() {
+	public Value newDefaultValue() {
 		return new ValueMap(this);
 	}
 

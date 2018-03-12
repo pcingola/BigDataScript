@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.nativeMethods.MethodNativeDefaultConstructor;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.run.BdsThread;
@@ -29,6 +30,41 @@ public class ClassDeclaration extends Block {
 		super(parent, tree);
 	}
 
+	/**
+	 * Add symbols to symbol table
+	 */
+	protected void addSymTab(SymbolTable symtab) {
+		// Add to parent symbol table, because the current
+		// symbol table is for the class' body
+		SymbolTable stparen = symtab.getParent();
+		stparen.add(className, getType());
+
+		// Add constructors (i.e. functions that create a new object)
+		// These are functions that have the same name as the class
+		for (FunctionDeclaration fc : constructors())
+			stparen.add(fc.getFunctionName(), fc.getType());
+	}
+
+	/**
+	 * Create class constructors
+	 */
+	protected List<FunctionDeclaration> constructors() {
+		List<FunctionDeclaration> cons = new ArrayList<>();
+
+		// Look for constructors
+		for (FunctionDeclaration f : funcDecl)
+			if (f.getFunctionName().equals(className)) cons.add(f);
+
+		// No constructor declared? Add default (empty) constructor
+		if (cons.isEmpty()) cons.add(defaultConstructor());
+
+		return cons;
+	}
+
+	protected FunctionDeclaration defaultConstructor() {
+		return new MethodNativeDefaultConstructor(getType());
+	}
+
 	public String getClassName() {
 		return className;
 	}
@@ -49,7 +85,7 @@ public class ClassDeclaration extends Block {
 	 * Get this class type
 	 * Note: We use 'returnType' for storing the
 	 */
-	public Type getType() {
+	public TypeClass getType() {
 		if (classType == null) classType = new TypeClass(this);
 		return classType;
 	}
@@ -170,28 +206,6 @@ public class ClassDeclaration extends Block {
 			// Add to symbol table
 			addSymTab(symtab);
 		}
-	}
-
-	/**
-	 * Create class constructors
-	 */
-	FunctionDeclaration[] createConstructors() {
-		return null;
-	}
-
-	/**
-	 * Add symbols to symbol table
-	 */
-	void addSymTab(SymbolTable symtab) {
-		// Add to parent symbol table, because the current
-		// symbol table is for the class' body
-		SymbolTable stparen = symtab.getParent();
-		stparen.add(className, getType());
-
-		// Add constructors (i.e. functions that create a new object)
-		// These are functions that have the same name as the class
-		for (FunctionDeclaration fc : createConstructors())
-			stparen.add(fc.getFunctionName(), fc.getType());
 	}
 
 }

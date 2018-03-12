@@ -47,4 +47,9 @@ public class ValueString extends ValuePrimitive {
 		value = v.toString();
 	}
 
+	@Override
+	public String toString() {
+		return value == null ? "null" : '"' + value + '"';
+	}
+
 }

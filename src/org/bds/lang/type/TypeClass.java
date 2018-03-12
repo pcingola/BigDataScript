@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueClass;
 
 /**
  * Class type
@@ -56,8 +57,15 @@ public class TypeClass extends TypeComposite {
 	}
 
 	@Override
+	public Value newDefaultValue() {
+		return new ValueClass(this); // New object, no fields initializes (null fields)
+	}
+
+	@Override
 	public Value newValue() {
-		return Value.NULL; // Default value for an object is null.
+		ValueClass nv = new ValueClass(this); // New object.
+		nv.initializeFields();
+		return nv;
 	}
 
 	@Override

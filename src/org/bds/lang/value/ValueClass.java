@@ -1,6 +1,9 @@
 package org.bds.lang.value;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bds.lang.statement.VarDeclaration;
@@ -19,12 +22,10 @@ public class ValueClass extends ValueComposite {
 
 	public ValueClass(Type type) {
 		super(type);
-		initValues();
 	}
 
 	@Override
 	public Value clone() {
-		// !!! TODO Auto-generated method stub
 		throw new RuntimeException("!!! UNIMPLEMENTED");
 	}
 
@@ -36,7 +37,10 @@ public class ValueClass extends ValueComposite {
 		return fields;
 	}
 
-	protected void initValues() {
+	/**
+	 * Initialize fields (by default the fields are null)
+	 */
+	public void initializeFields() {
 		Gpr.debug("!!! INIT");
 		fields = new HashMap<>();
 		TypeClass tc = (TypeClass) type;
@@ -44,8 +48,8 @@ public class ValueClass extends ValueComposite {
 		for (VarDeclaration vd : vdecl) {
 			Type vt = vd.getType();
 			for (VariableInit vi : vd.getVarInit()) {
-				Gpr.debug("!!! INIT: " + vi.getVarName() + "\t" + vt.newValue());
-				fields.put(vi.getVarName(), vt.newValue());
+				Gpr.debug("!!! INIT: " + vi.getVarName() + "\t" + vt.newDefaultValue());
+				fields.put(vi.getVarName(), vt.newDefaultValue());
 			}
 		}
 	}
@@ -59,6 +63,21 @@ public class ValueClass extends ValueComposite {
 	@Override
 	public void set(Object v) {
 		fields = (Map<String, Value>) v;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		List<String> fnames = new ArrayList<>(fields.size());
+		fnames.addAll(fields.keySet());
+		Collections.sort(fnames);
+		sb.append("{");
+		for (int i = 0; i < fnames.size(); i++) {
+			String fn = fnames.get(i);
+			sb.append((i > 0 ? ", " : " ") + fn + ": " + fields.get(fn));
+		}
+		sb.append(" }");
+		return sb.toString();
 	}
 
 }

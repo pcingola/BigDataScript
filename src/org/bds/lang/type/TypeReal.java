@@ -54,7 +54,7 @@ public class TypeReal extends TypePrimitive {
 	}
 
 	@Override
-	public Value newValue() {
+	public Value newDefaultValue() {
 		return new ValueReal();
 	}
 

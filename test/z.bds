@@ -9,7 +9,7 @@ class Zzz {
 	string s
 }
 
-Zzz z1
+Zzz z1 = Zzz()
 
 # Zzz znull = null 		# OK
 # znull2 := null 		# Ambiguous class type
