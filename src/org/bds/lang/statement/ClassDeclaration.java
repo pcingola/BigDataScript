@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.nativeMethods.MethodNativeDefaultConstructor;
+import org.bds.lang.nativeMethods.MethodDefaultConstructor;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.run.BdsThread;
@@ -49,7 +49,7 @@ public class ClassDeclaration extends Block {
 	 * Default constructor (if none is provided in the program)
 	 */
 	protected MethodDeclaration defaultConstructor() {
-		return new MethodNativeDefaultConstructor(getType());
+		return new MethodDefaultConstructor(getType());
 	}
 
 	public String getClassName() {

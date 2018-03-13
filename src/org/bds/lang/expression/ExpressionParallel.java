@@ -100,8 +100,7 @@ public class ExpressionParallel extends ExpressionTask {
 			// avoid race conditions. Then we create a thread and call the function
 
 			// Evaluate function arguments in current thread
-			functionCall.evalFunctionArguments(bdsThread);
-			ValueArgs arguments = (ValueArgs) bdsThread.pop();
+			ValueArgs arguments = functionCall.evalArgs(bdsThread);
 
 			if (!bdsThread.isCheckpointRecover()) {
 				// Create and run new thread that runs the function call in parallel

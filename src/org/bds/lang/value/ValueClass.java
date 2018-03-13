@@ -65,13 +65,15 @@ public class ValueClass extends ValueComposite {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		List<String> fnames = new ArrayList<>(fields.size());
-		fnames.addAll(fields.keySet());
-		Collections.sort(fnames);
 		sb.append("{");
-		for (int i = 0; i < fnames.size(); i++) {
-			String fn = fnames.get(i);
-			sb.append((i > 0 ? ", " : " ") + fn + ": " + fields.get(fn));
+		if (fields != null) {
+			List<String> fnames = new ArrayList<>(fields.size());
+			fnames.addAll(fields.keySet());
+			Collections.sort(fnames);
+			for (int i = 0; i < fnames.size(); i++) {
+				String fn = fnames.get(i);
+				sb.append((i > 0 ? ", " : " ") + fn + ": " + fields.get(fn));
+			}
 		}
 		sb.append(" }");
 		return sb.toString();

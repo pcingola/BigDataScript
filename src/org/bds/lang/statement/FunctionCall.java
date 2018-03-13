@@ -23,9 +23,11 @@ public class FunctionCall extends Expression {
 	protected String functionName;
 	protected Args args;
 	protected FunctionDeclaration functionDeclaration;
+	protected int argsStart;
 
 	public FunctionCall(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+		argsStart = 0;
 	}
 
 	/**
@@ -38,21 +40,20 @@ public class FunctionCall extends Expression {
 	/**
 	 * Evaluate function's arguments
 	 */
-	public void evalFunctionArguments(BdsThread bdsThread) {
+	public ValueArgs evalArgs(BdsThread bdsThread) {
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
 
 		// Evaluate all expressions
 		ValueArgs vargs = new ValueArgs(fparam.length);
-		for (int i = 0; i < fparam.length; i++) {
+		for (int i = argsStart; i < fparam.length; i++) {
 			bdsThread.run(arguments[i]);
-
 			Value value = bdsThread.pop();
 			value = fparam[i].getType().cast(value);
 			vargs.setValue(i, value);
 		}
 
-		bdsThread.push(vargs);
+		return vargs;
 	}
 
 	public FunctionDeclaration getFunctionDeclaration() {
@@ -106,8 +107,7 @@ public class FunctionCall extends Expression {
 	public void runStep(BdsThread bdsThread) {
 		try {
 			// Evaluate function arguments
-			evalFunctionArguments(bdsThread);
-			ValueArgs arguments = (ValueArgs) bdsThread.pop();
+			ValueArgs arguments = evalArgs(bdsThread);
 
 			// Apply function to parameters
 			bdsThread.push(functionDeclaration.apply(bdsThread, arguments));

@@ -10,7 +10,6 @@ import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -28,6 +27,27 @@ public class MethodCall extends FunctionCall {
 
 	public MethodCall(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Find method (or function) matching the signature
+	 */
+	protected FunctionDeclaration findMethod(SymbolTable symtab, Type type) {
+		if (type == null) return null;
+
+		// Find function in class
+		SymbolTable classSymTab = type.getSymbolTable();
+		if (classSymTab == null) return null;
+
+		TypeFunction tfunc = classSymTab.findFunction(functionName, args);
+
+		// Not found? Try a 'regular' function
+		if (tfunc == null) tfunc = symtab.findFunction(functionName, args);
+
+		// Not found
+		if (tfunc == null) return null;
+
+		return tfunc.getFunctionDeclaration();
 	}
 
 	@Override
@@ -50,25 +70,13 @@ public class MethodCall extends FunctionCall {
 		if (returnType != null) return returnType;
 
 		// Calculate return types for expr and args
-		Type exprType = expresionObj.returnType(symtab);
+		// Note that expresionObj is null in ExpressionNew (which is a MethodCall)
+		Type exprType = (expresionObj != null ? expresionObj.returnType(symtab) : null);
 		args.returnType(symtab);
 
 		// Find method
-		if (exprType != null) {
-			// Find function in class
-			SymbolTable classSymTab = exprType.getSymbolTable();
-			if (classSymTab != null) {
-				TypeFunction tfunc = classSymTab.findFunction(functionName, args);
-
-				// Not found? Try a 'regular' function
-				if (tfunc == null) tfunc = symtab.findFunction(functionName, args);
-
-				if (tfunc != null) {
-					functionDeclaration = tfunc.getFunctionDeclaration();
-					returnType = functionDeclaration.getReturnType();
-				}
-			}
-		}
+		functionDeclaration = findMethod(symtab, exprType);
+		if (functionDeclaration != null) returnType = functionDeclaration.getReturnType();
 
 		return returnType;
 	}
@@ -78,32 +86,13 @@ public class MethodCall extends FunctionCall {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
-		Expression arguments[] = args.getArguments();
-
 		// Evaluate all expressions
-		ValueArgs vargs = new ValueArgs(fparam.length);
-		for (int i = 0; i < fparam.length; i++) {
-			bdsThread.run(arguments[i]);
-			Value value = bdsThread.pop();
-			value = fparam[i].getType().cast(value);
-			vargs.setValue(i, value);
-		}
+		ValueArgs vargs = evalArgs(bdsThread);
 
-		if (!bdsThread.isCheckpointRecover()) {
-			// Create new scope
-			// TODO: Add class scope? (class variables & methods)
-			bdsThread.newScope(this);
+		// Create scope
+		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
 
-			// Add arguments to scope
-			Scope scope = bdsThread.getScope();
-			for (int i = 0; i < fparam.length; i++) {
-				String argName = fparam[i].getVarInit()[0].getVarName();
-				scope.add(argName, vargs.getValue(i));
-			}
-		}
-
-		// Run function body
+		// Run method body
 		functionDeclaration.runFunction(bdsThread);
 
 		if (!bdsThread.isCheckpointRecover()) {

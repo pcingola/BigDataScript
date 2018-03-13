@@ -35,58 +35,11 @@ public class FunctionDeclaration extends StatementWithScope {
 	}
 
 	/**
-	 * Apply function to one argument, return function's result
-	 */
-	public Value apply(BdsThread bdsThread, Value value) {
-		// Create scope and add function arguments
-		if (!bdsThread.isCheckpointRecover()) {
-			VarDeclaration fparam[] = getParameters().getVarDecl();
-
-			// Create new scope
-			bdsThread.newScope(this);
-
-			// Add arguments to scope
-			Scope scope = bdsThread.getScope();
-
-			// Only one argument
-			Type argType = fparam[0].getType();
-			String argName = fparam[0].getVarInit()[0].getVarName();
-			scope.add(argName, argType.cast(value));
-		}
-
-		// Run function body
-		runFunction(bdsThread);
-		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
-
-		// Get return map
-		Value retVal = bdsThread.getReturnValue();
-
-		// Back to old scope
-		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
-
-		// Return result
-		return retVal;
-	}
-
-	/**
 	 * Apply function to arguments, return function's result
 	 */
 	public Value apply(BdsThread bdsThread, ValueArgs args) {
-
 		// Create scope and add function arguments
-		if (!bdsThread.isCheckpointRecover()) {
-			VarDeclaration fparam[] = getParameters().getVarDecl();
-
-			// Create new scope
-			bdsThread.newScope(this);
-
-			// Add arguments to scope
-			Scope scope = bdsThread.getScope();
-			for (int i = 0; i < fparam.length; i++) {
-				String argName = fparam[i].getVarInit()[0].getVarName();
-				scope.add(argName, args.getValue(i));
-			}
-		}
+		if (!bdsThread.isCheckpointRecover()) createScopeAddArgs(bdsThread, args);
 
 		// Run function body
 		runFunction(bdsThread);
@@ -100,6 +53,22 @@ public class FunctionDeclaration extends StatementWithScope {
 
 		// Return result
 		return retVal;
+	}
+
+	/**
+	 * Create a new scope and add arguments
+	 */
+	protected void createScopeAddArgs(BdsThread bdsThread, ValueArgs vargs) {
+		// Create new scope
+		bdsThread.newScope(this);
+
+		// Add arguments to scope
+		Scope scope = bdsThread.getScope();
+		VarDeclaration fparam[] = getParameters().getVarDecl();
+		for (int i = 0; i < fparam.length; i++) {
+			String argName = fparam[i].getVarInit()[0].getVarName();
+			scope.add(argName, vargs.getValue(i));
+		}
 	}
 
 	public String getFunctionName() {

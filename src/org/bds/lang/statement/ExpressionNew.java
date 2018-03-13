@@ -4,14 +4,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.expression.Expression;
 import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeFunction;
+import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -24,20 +22,31 @@ public class ExpressionNew extends MethodCall {
 	// Operator 'new' calls a constructor method
 	public ExpressionNew(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+		argsStart = 1;
+	}
+
+	@Override
+	public ValueArgs evalArgs(BdsThread bdsThread) {
+		ValueArgs vargs = super.evalArgs(bdsThread);
+
+		// Create and add empty 'this' object
+		Value newValue = expresionObj.getReturnType().newValue();
+		vargs.setValue(0, newValue);
+
+		return vargs;
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		expresionObj = (ReferenceThis) factory(tree, 0);
-		functionName = tree.getChild(1).getText();
-		// child[2] = '('
+		expresionObj = null; // Note that object 'this' does not exists yet
+		functionName = tree.getChild(1).getText(); // Same as class name
+
+		// Parse arguments
 		args = new Args(this, null);
 		args.parse(tree, 3, tree.getChildCount() - 1);
-		// child[tree.getChildCount()] = ')'
 
-		// Create empty (non-null) args
+		// Create empty args
 		if (args == null) args = new Args(this, null);
-		args = Args.getArgsThis(args, expresionObj);
 	}
 
 	@Override
@@ -45,72 +54,22 @@ public class ExpressionNew extends MethodCall {
 		if (returnType != null) return returnType;
 
 		// Calculate return types for expr and args
-		Type exprType = expresionObj.returnType(symtab);
+		// Note that expresionObj is null in ExpressionNew (which is a MethodCall)
+		TypeClass thisType = (TypeClass) symtab.getType(functionName); // Constructors have same name as class
+		if (thisType == null) return null;
+
+		// Prepend 'this' argument to method signature
+		expresionObj = new ReferenceThis(this, thisType);
+		args = Args.getArgsThis(args, expresionObj);
+
+		// Calculate return type for args
 		args.returnType(symtab);
 
 		// Find method
-		if (exprType != null) {
-			// Find function in class
-			SymbolTable classSymTab = exprType.getSymbolTable();
-			if (classSymTab != null) {
-				TypeFunction tfunc = classSymTab.findFunction(functionName, args);
-
-				// Not found? Try a 'regular' function
-				if (tfunc == null) tfunc = symtab.findFunction(functionName, args);
-
-				if (tfunc != null) {
-					functionDeclaration = tfunc.getFunctionDeclaration();
-					returnType = functionDeclaration.getReturnType();
-				}
-			}
-		}
+		functionDeclaration = findMethod(symtab, thisType);
+		if (functionDeclaration != null) returnType = functionDeclaration.getReturnType();
 
 		return returnType;
-	}
-
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
-		Expression arguments[] = args.getArguments();
-
-		// Evaluate all expressions
-		ValueArgs vargs = new ValueArgs(fparam.length);
-		for (int i = 0; i < fparam.length; i++) {
-			bdsThread.run(arguments[i]);
-			Value value = bdsThread.pop();
-			value = fparam[i].getType().cast(value);
-			vargs.setValue(i, value);
-		}
-
-		if (!bdsThread.isCheckpointRecover()) {
-			// Create new scope
-			// TODO: Add class scope? (class variables & methods)
-			bdsThread.newScope(this);
-
-			// Add arguments to scope
-			Scope scope = bdsThread.getScope();
-			for (int i = 0; i < fparam.length; i++) {
-				String argName = fparam[i].getVarInit()[0].getVarName();
-				scope.add(argName, vargs.getValue(i));
-			}
-		}
-
-		// Run function body
-		functionDeclaration.runFunction(bdsThread);
-
-		if (!bdsThread.isCheckpointRecover()) {
-			// Get return map
-			Value retVal = bdsThread.getReturnValue();
-
-			// Back to old scope
-			bdsThread.oldScope();
-
-			// Return result
-			bdsThread.push(retVal);
-		}
 	}
 
 	@Override
@@ -128,6 +87,11 @@ public class ExpressionNew extends MethodCall {
 		}
 		sig.append(")");
 		return sig.toString();
+	}
+
+	@Override
+	public String toString() {
+		return "new " + functionName + "( " + args + " )";
 	}
 
 	@Override
