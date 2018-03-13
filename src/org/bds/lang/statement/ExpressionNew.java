@@ -5,6 +5,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
@@ -14,30 +15,24 @@ import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
 /**
- * Method invocation
+ * Operator 'new' calls a constructor method
  *
  * @author pcingola
  */
-public class MethodCall extends FunctionCall {
+public class ExpressionNew extends MethodCall {
 
-	// Object that calls the method: obj.method(args)
-	// This object is also the used as the first argument in
-	// the function call (so this information is redundant, but
-	// kept here for convinience)
-	protected Expression expresionObj;
-
-	public MethodCall(BdsNode parent, ParseTree tree) {
+	// Operator 'new' calls a constructor method
+	public ExpressionNew(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
 
 	@Override
 	protected void parse(ParseTree tree) {
-		expresionObj = (Expression) factory(tree, 0);
-		// child[1] = '.'
-		functionName = tree.getChild(2).getText();
-		// child[3] = '('
+		expresionObj = (ReferenceThis) factory(tree, 0);
+		functionName = tree.getChild(1).getText();
+		// child[2] = '('
 		args = new Args(this, null);
-		args.parse(tree, 4, tree.getChildCount() - 1);
+		args.parse(tree, 3, tree.getChildCount() - 1);
 		// child[tree.getChildCount()] = ')'
 
 		// Create empty (non-null) args
@@ -138,7 +133,7 @@ public class MethodCall extends FunctionCall {
 	@Override
 	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Could not find the function?
-		if (functionDeclaration == null) compilerMessages.add(this, "Method " + signature() + " cannot be resolved", MessageType.ERROR);
+		if (functionDeclaration == null) compilerMessages.add(this, "Constructor " + signature() + " cannot be resolved", MessageType.ERROR);
 	}
 
 }

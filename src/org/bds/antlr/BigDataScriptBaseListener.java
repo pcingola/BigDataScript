@@ -772,6 +772,18 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExpressionNew(BigDataScriptParser.ExpressionNewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpressionNew(BigDataScriptParser.ExpressionNewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpressionLt(BigDataScriptParser.ExpressionLtContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1103,18 +1115,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpressionTask(BigDataScriptParser.ExpressionTaskContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterNewObject(BigDataScriptParser.NewObjectContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitNewObject(BigDataScriptParser.NewObjectContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -96,7 +96,7 @@ expression : NULL_LITERAL                                                       
            | STRING_LITERAL                                                                # literalString
 		   | STRING_LITERAL_SINGLE                                                         # literalString
            | expression '.' ID '('(expression (',' expression )*)? ')'                     # methodCall
-           | 'new' ID '('(expression (',' expression )*)? ')'                              # newObject
+           | 'new' ID '('(expression (',' expression )*)? ')'                              # expressionNew
            | ID '('(expression (',' expression )*)? ')'                                    # functionCall
            | expression ('.' expression)+                                                  # referenceField
            | ID                                                                            # referenceVar

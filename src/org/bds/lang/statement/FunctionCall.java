@@ -14,7 +14,7 @@ import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
- * Program unit (usually a file)
+ * Function call
  *
  * @author pcingola
  */

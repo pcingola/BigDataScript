@@ -1,4 +1,5 @@
 // Generated from BigDataScript.g4 by ANTLR 4.7.1
+package org.bds.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -739,6 +740,18 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitExpressionDep(BigDataScriptParser.ExpressionDepContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code expressionNew}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionNew(BigDataScriptParser.ExpressionNewContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code expressionNew}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionNew(BigDataScriptParser.ExpressionNewContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code expressionLt}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.
 	 * @param ctx the parse tree
@@ -1074,18 +1087,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionTask(BigDataScriptParser.ExpressionTaskContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code newObject}
-	 * labeled alternative in {@link BigDataScriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterNewObject(BigDataScriptParser.NewObjectContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code newObject}
-	 * labeled alternative in {@link BigDataScriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitNewObject(BigDataScriptParser.NewObjectContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code referenceVar}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.

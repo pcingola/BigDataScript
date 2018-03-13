@@ -4,7 +4,7 @@
 
 # int f(string s) { return s.length() }
 
-#Zzz z0
+Zzz z0
 
 class Zzz {
     int f(string s) { return 1 }
@@ -14,7 +14,7 @@ class Zzz {
 
 }
 
-# Zzz z1 = new Zzz()
+Zzz z1 = new Zzz()
 
 # Zzz znull = null 		# OK
 # znull2 := null 		# Ambiguous class type
