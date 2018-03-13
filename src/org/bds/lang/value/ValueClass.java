@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bds.lang.statement.VarDeclaration;
+import org.bds.lang.statement.FieldDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
@@ -36,16 +36,20 @@ public class ValueClass extends ValueComposite {
 		return fields;
 	}
 
+	public Value getValue(String name) {
+		return fields.get(name);
+	}
+
 	/**
 	 * Initialize fields (by default the fields are null)
 	 */
 	public void initializeFields() {
 		fields = new HashMap<>();
 		TypeClass tc = (TypeClass) type;
-		VarDeclaration vdecl[] = tc.getClassDeclaration().getVarDecl();
-		for (VarDeclaration vd : vdecl) {
-			Type vt = vd.getType();
-			for (VariableInit vi : vd.getVarInit()) {
+		FieldDeclaration fieldDecls[] = tc.getClassDeclaration().getFieldDecl();
+		for (FieldDeclaration fieldDecl : fieldDecls) {
+			Type vt = fieldDecl.getType();
+			for (VariableInit vi : fieldDecl.getVarInit()) {
 				fields.put(vi.getVarName(), vt.newDefaultValue());
 			}
 		}
@@ -60,6 +64,10 @@ public class ValueClass extends ValueComposite {
 	@Override
 	public void set(Object v) {
 		fields = (Map<String, Value>) v;
+	}
+
+	public void setValue(String name, Value v) {
+		fields.put(name, v);
 	}
 
 	@Override

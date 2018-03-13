@@ -36,6 +36,20 @@ public class ExpressionNew extends MethodCall {
 		return vargs;
 	}
 
+	/**
+	 * Run field initialization
+	 */
+	public void initializeFields(BdsThread bdsThread) {
+		Value vthis = bdsThread.getScope().getValue(ClassDeclaration.THIS);
+		TypeClass tthis = (TypeClass) vthis.getType();
+
+		FieldDeclaration fieldDecls[] = tthis.getClassDeclaration().getFieldDecl();
+		for (FieldDeclaration fieldDecl : fieldDecls) {
+			bdsThread.run(fieldDecl);
+		}
+
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		expresionObj = null; // Note that object 'this' does not exists yet
@@ -57,6 +71,7 @@ public class ExpressionNew extends MethodCall {
 		// Note that expresionObj is null in ExpressionNew (which is a MethodCall)
 		TypeClass thisType = (TypeClass) symtab.getType(functionName); // Constructors have same name as class
 		if (thisType == null) return null;
+		returnType = thisType;
 
 		// Prepend 'this' argument to method signature
 		expresionObj = new ReferenceThis(this, thisType);
@@ -67,9 +82,34 @@ public class ExpressionNew extends MethodCall {
 
 		// Find method
 		functionDeclaration = findMethod(symtab, thisType);
-		if (functionDeclaration != null) returnType = functionDeclaration.getReturnType();
 
 		return returnType;
+	}
+
+	@Override
+	public void runStep(BdsThread bdsThread) {
+		// Evaluate all expressions
+		ValueArgs vargs = evalArgs(bdsThread);
+
+		// Create scope
+		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
+
+		// Initialize fields
+		initializeFields(bdsThread);
+
+		// Run method body
+		functionDeclaration.runFunction(bdsThread);
+
+		if (!bdsThread.isCheckpointRecover()) {
+			// Get return map
+			Value retVal = bdsThread.getReturnValue();
+
+			// Back to old scope
+			bdsThread.oldScope();
+
+			// Return result
+			bdsThread.push(retVal);
+		}
 	}
 
 	@Override

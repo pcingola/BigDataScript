@@ -128,6 +128,13 @@ public class Scope implements Iterable<String> {
 		return values.keySet().iterator();
 	}
 
+	/**
+	 * Remove variable from scope
+	 */
+	public synchronized void remove(String name) {
+		values.remove(name);
+	}
+
 	public void setParent(Scope parent) {
 		this.parent = parent;
 	}

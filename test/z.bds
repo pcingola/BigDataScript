@@ -12,9 +12,14 @@ class Zzz {
 	real r
 	string s
 
+	#void Zzz(int x) { i = x }
 }
 
+println("Before")
 Zzz z1 = new Zzz()
+println("After\tz1: $z1")
+
+#Zzz z2 = new Zzz(7)
 
 # Zzz znull = null 		# OK
 # znull2 := null 		# Ambiguous class type

@@ -36,10 +36,6 @@ public class FieldDeclaration extends VarDeclaration {
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		for (VariableInit vi : varInit) {
-			if (!bdsThread.isCheckpointRecover()) {
-				bdsThread.getScope().add(vi.varName, type.newDefaultValue()); // Add variable to scope
-			}
-
 			bdsThread.run(vi);
 
 			// Act based on run state

@@ -10,7 +10,6 @@ import org.bds.lang.value.LiteralListEmpty;
 import org.bds.lang.value.LiteralMapEmpty;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.run.RunState;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
@@ -23,9 +22,10 @@ import org.bds.symbol.SymbolTable;
  */
 public class VariableInit extends BdsNode {
 
-	String varName;
-	Expression expression;
-	String help;
+	protected boolean fieldInit; // Is this a 'field' initialization in a class declaration?
+	protected String varName;
+	protected Expression expression;
+	protected String help;
 
 	public static VariableInit get(BdsNode parent, String name, Expression expression) {
 		VariableInit vi = new VariableInit(null, null);
@@ -50,6 +50,7 @@ public class VariableInit extends BdsNode {
 
 	public VariableInit(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+		fieldInit = false;
 	}
 
 	public Expression getExpression() {
@@ -62,6 +63,10 @@ public class VariableInit extends BdsNode {
 
 	public String getVarName() {
 		return varName;
+	}
+
+	public boolean isFieldInit() {
+		return fieldInit;
 	}
 
 	@Override
@@ -94,21 +99,31 @@ public class VariableInit extends BdsNode {
 			// Error running expression?
 			Value value = bdsThread.pop();
 			if (value == null) {
-				bdsThread.setRunState(RunState.FATAL_ERROR);
+				bdsThread.fatalError(this, "Value is null. This should never happen!");
 				return;
 			}
 
-			// Change variable's map
+			// Change value
 			Scope scope = bdsThread.getScope();
-			Value val = scope.getValue(varName);
-			value = val.getType().cast(value);
-			val.setValue(value);
+			if (fieldInit) {
+				// Class : Change value in ValueClass
+				Value valThis = scope.getValue(varName);
+				value = val.getType().cast(value);
+			} else {
+				// Variable: Change value in scope
+				Value val = scope.getValue(varName);
+				value = val.getType().cast(value);
+				val.setValue(value);
+			}
 		}
-
 	}
 
 	public void setExpression(Expression expression) {
 		this.expression = expression;
+	}
+
+	public void setFieldInit(boolean fieldInit) {
+		this.fieldInit = fieldInit;
 	}
 
 	@Override

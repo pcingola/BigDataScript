@@ -894,8 +894,8 @@ public class BdsThread extends Thread implements BdsSerialize {
 		push(new ValueString(s));
 	}
 
-	public void push(Value obj) {
-		if (!isCheckpointRecover()) stack.addFirst(obj);
+	public void push(Value val) {
+		if (!isCheckpointRecover()) stack.addFirst(val);
 	}
 
 	/**

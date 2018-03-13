@@ -64,7 +64,11 @@ public class ClassDeclaration extends Block {
 		return extendsName;
 	}
 
-	public FunctionDeclaration[] getFuncDecl() {
+	public FieldDeclaration[] getFieldDecl() {
+		return fieldDecl;
+	}
+
+	public MethodDeclaration[] getMethodDecl() {
 		return methodDecl;
 	}
 
@@ -75,10 +79,6 @@ public class ClassDeclaration extends Block {
 	public TypeClass getType() {
 		if (classType == null) classType = new TypeClass(this);
 		return classType;
-	}
-
-	public VarDeclaration[] getVarDecl() {
-		return fieldDecl;
 	}
 
 	/**
@@ -122,6 +122,11 @@ public class ClassDeclaration extends Block {
 			parse(tree, ++idx);
 			parseSortStatements();
 		}
+
+		// Set VarInit as 'field' initialization
+		for (FieldDeclaration fd : fieldDecl)
+			for (VariableInit vi : fd.getVarInit())
+				vi.setFieldInit(true);
 	}
 
 	protected void parseSortStatements() {

@@ -1,8 +1,10 @@
 package org.bds.lang.nativeMethods;
 
 import org.bds.lang.Parameters;
+import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -33,6 +35,8 @@ public class MethodDefaultConstructor extends MethodNative {
 
 	@Override
 	public void runFunction(BdsThread bdsThread) {
-		// Default empty constructor: Nothing to do
+		// Default empty constructor: Nothing to do, just return 'this'
+		Value vthis = bdsThread.getScope().getValue(ClassDeclaration.THIS);
+		bdsThread.setReturnValue(vthis);
 	}
 }
