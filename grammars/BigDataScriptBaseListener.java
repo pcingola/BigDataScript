@@ -1,5 +1,4 @@
 // Generated from BigDataScript.g4 by ANTLR 4.7.1
-package org.bds.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -35,6 +34,18 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEol(BigDataScriptParser.EolContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIncludeFile(BigDataScriptParser.IncludeFileContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIncludeFile(BigDataScriptParser.IncludeFileContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -148,18 +159,6 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClassDef(BigDataScriptParser.ClassDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassDef(BigDataScriptParser.ClassDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterVarDeclaration(BigDataScriptParser.VarDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -196,13 +195,49 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIncludeFile(BigDataScriptParser.IncludeFileContext ctx) { }
+	@Override public void enterFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIncludeFile(BigDataScriptParser.IncludeFileContext ctx) { }
+	@Override public void exitFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFieldDeclaration(BigDataScriptParser.FieldDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFieldDeclaration(BigDataScriptParser.FieldDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMethodDeclaration(BigDataScriptParser.MethodDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMethodDeclaration(BigDataScriptParser.MethodDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterClassDef(BigDataScriptParser.ClassDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClassDef(BigDataScriptParser.ClassDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -436,13 +471,13 @@ public class BigDataScriptBaseListener implements BigDataScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx) { }
+	@Override public void enterStatementFunctionDeclaration(BigDataScriptParser.StatementFunctionDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx) { }
+	@Override public void exitStatementFunctionDeclaration(BigDataScriptParser.StatementFunctionDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

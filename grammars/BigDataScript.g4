@@ -12,6 +12,9 @@ programUnit : eol* statement+ EOF;
 // End of line (semicolons are optional)
 eol : (';' | '\n' )+;
 
+// Include statement
+includeFile : 'include' (STRING_LITERAL | STRING_LITERAL_SINGLE) eol;
+
 // Types
 typeList : type (',' type)* ;
 
@@ -26,47 +29,58 @@ type : 'bool'                                                                   
      | ID                                                                                  # typeClass
      ;
 
-// Class definition
-classDef: 'class' ID eol* ('extends' ID)? '{' statement* '}';
-
 // Variable declaration
 varDeclaration       : type variableInit (',' variableInit)* | variableInitImplicit;
 variableInit         : ID ('=' expression)? HELP_LITERAL?;
 variableInitImplicit : ID ':=' expression HELP_LITERAL?;
 
-// Include statement
-includeFile : 'include' (STRING_LITERAL | STRING_LITERAL_SINGLE) eol;
+// Function declaration
+functionDeclaration  : type ID '(' varDeclaration? (',' varDeclaration)* ')' statement;
+
+// Class field definition
+field :
+      varDeclaration eol*                                                                  # fieldDeclaration
+      | functionDeclaration eol*                                                           # methodDeclaration
+      ;
+
+// Class definition
+classDef : 'class' ID eol* ('extends' ID)? eol* '{' eol* field* '}' ;
 
 // Statements
 statement : '{' statement* '}'                                                             # block
-            | 'break' eol*                                                                 # break
-            | 'breakpoint' expression? eol*                                                # breakpoint
-            | 'checkpoint' expression? eol*                                                # checkpoint
-            | 'continue' eol*                                                              # continue
-            | 'debug' expression? eol*                                                     # debug
-            | 'exit' expression? eol*                                                      # exit
-            | 'print' expression? eol*                                                     # print
-            | 'println' expression? eol*                                                   # println
-            | 'warning' expression? eol*                                                   # warning
-            | 'error' expression? eol*                                                     # error
-            | 'for' '(' ( forInit )? 
-                          ';' ( forCondition )? 
-                          ';' ( end=forEnd )? 
-                    ')' statement eol*                                                     # forLoop
-            | 'for' '(' varDeclaration ':' expression ')' statement eol*                   # forLoopList
-            | 'if' '(' expression ')' statement eol* ( 'else' statement eol* )?            # if
-            | 'kill' expression  eol*                                                      # kill
-            | 'return' expression?  eol*                                                   # return
-            | 'wait' (expression (',' expression)* )?  eol*                                # wait
-            | 'switch' '(' expression? ')' '{' eol* ('case' expression ':' statement* eol*)* ('default' ':' statement*)? ('case' expression ':' statement* eol*)* '}' eol* # switch
-            | 'while' '(' expression? ')' statement  eol*                                  # while
-            | type ID '(' varDeclaration? (',' varDeclaration)* ')' statement  eol*        # functionDeclaration
-            | varDeclaration  eol*                                                         # statementVarDeclaration
-            | classDef  eol*                                                               # classDeclaration
-            | expression  eol*                                                             # statementExpr
-            | includeFile eol*                                                             # statementInclude
-            | HELP_LITERAL                                                                 # help
-            | eol                                                                          # statmentEol
+          | 'break' eol*                                                                   # break
+          | 'breakpoint' expression? eol*                                                  # breakpoint
+          | 'checkpoint' expression? eol*                                                  # checkpoint
+          | 'continue' eol*                                                                # continue
+          | 'debug' expression? eol*                                                       # debug
+          | 'exit' expression? eol*                                                        # exit
+          | 'print' expression? eol*                                                       # print
+          | 'println' expression? eol*                                                     # println
+          | 'warning' expression? eol*                                                     # warning
+          | 'error' expression? eol*                                                       # error
+          | 'for' '(' ( forInit )? 
+                        ';' ( forCondition )? 
+                        ';' ( end=forEnd )? 
+                  ')' statement eol*                                                       # forLoop
+          | 'for' '(' varDeclaration ':' expression ')' statement eol*                     # forLoopList
+          | 'if' '(' expression ')' statement eol* ( 'else' statement eol* )?              # if
+          | 'kill' expression  eol*                                                        # kill
+          | 'return' expression?  eol*                                                     # return
+          | 'wait' (expression (',' expression)* )?  eol*                                  # wait
+          | 'switch' '(' expression? ')'
+                        '{' eol* 
+                           ( 'case' expression ':' statement* eol* )* 
+                           ( 'default' ':' statement* )? 
+                           ( 'case' expression ':' statement* eol* )*
+                       '}' eol*                                                            # switch
+          | 'while' '(' expression? ')' statement  eol*                                    # while
+          | functionDeclaration  eol*                                                      # statementFunctionDeclaration
+          | varDeclaration  eol*                                                           # statementVarDeclaration
+          | classDef  eol*                                                                 # classDeclaration
+          | expression  eol*                                                               # statementExpr
+          | includeFile eol*                                                               # statementInclude
+          | HELP_LITERAL                                                                   # help
+          | eol                                                                            # statmentEol
           ;
 
 forInit : varDeclaration | expressionList;
@@ -134,3 +148,4 @@ expression : NULL_LITERAL                                                       
            ;
 
 expressionList : expression ( ',' expression )* ;
+

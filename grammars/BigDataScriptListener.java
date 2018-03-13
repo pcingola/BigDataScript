@@ -1,5 +1,4 @@
 // Generated from BigDataScript.g4 by ANTLR 4.7.1
-package org.bds.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -27,6 +26,16 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEol(BigDataScriptParser.EolContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#includeFile}.
+	 * @param ctx the parse tree
+	 */
+	void enterIncludeFile(BigDataScriptParser.IncludeFileContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#includeFile}.
+	 * @param ctx the parse tree
+	 */
+	void exitIncludeFile(BigDataScriptParser.IncludeFileContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#typeList}.
 	 * @param ctx the parse tree
@@ -134,16 +143,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitTypeVoid(BigDataScriptParser.TypeVoidContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#classDef}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassDef(BigDataScriptParser.ClassDefContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#classDef}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassDef(BigDataScriptParser.ClassDefContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link BigDataScriptParser#varDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -174,15 +173,49 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitVariableInitImplicit(BigDataScriptParser.VariableInitImplicitContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BigDataScriptParser#includeFile}.
+	 * Enter a parse tree produced by {@link BigDataScriptParser#functionDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterIncludeFile(BigDataScriptParser.IncludeFileContext ctx);
+	void enterFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BigDataScriptParser#includeFile}.
+	 * Exit a parse tree produced by {@link BigDataScriptParser#functionDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitIncludeFile(BigDataScriptParser.IncludeFileContext ctx);
+	void exitFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code fieldDeclaration}
+	 * labeled alternative in {@link BigDataScriptParser#field}.
+	 * @param ctx the parse tree
+	 */
+	void enterFieldDeclaration(BigDataScriptParser.FieldDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code fieldDeclaration}
+	 * labeled alternative in {@link BigDataScriptParser#field}.
+	 * @param ctx the parse tree
+	 */
+	void exitFieldDeclaration(BigDataScriptParser.FieldDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code methodDeclaration}
+	 * labeled alternative in {@link BigDataScriptParser#field}.
+	 * @param ctx the parse tree
+	 */
+	void enterMethodDeclaration(BigDataScriptParser.MethodDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code methodDeclaration}
+	 * labeled alternative in {@link BigDataScriptParser#field}.
+	 * @param ctx the parse tree
+	 */
+	void exitMethodDeclaration(BigDataScriptParser.MethodDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BigDataScriptParser#classDef}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassDef(BigDataScriptParser.ClassDefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BigDataScriptParser#classDef}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassDef(BigDataScriptParser.ClassDefContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code block}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
@@ -412,17 +445,17 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitWhile(BigDataScriptParser.WhileContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code functionDeclaration}
+	 * Enter a parse tree produced by the {@code statementFunctionDeclaration}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx);
+	void enterStatementFunctionDeclaration(BigDataScriptParser.StatementFunctionDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code functionDeclaration}
+	 * Exit a parse tree produced by the {@code statementFunctionDeclaration}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx);
+	void exitStatementFunctionDeclaration(BigDataScriptParser.StatementFunctionDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code statementVarDeclaration}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.

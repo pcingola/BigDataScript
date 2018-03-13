@@ -1,6 +1,8 @@
 #!/usr/bin/env bds
 
-z.a.b[7].c{'hi'}.f()
+# z.a.b[7].c{'hi'}.f()
+
+# int f(string s) { return s.length() }
 
 #Zzz z0
 
@@ -8,9 +10,11 @@ class Zzz {
 	int i = 42
 	real r
 	string s
+
+    int f(string s) { return s.length() }
 }
 
-Zzz z1 = Zzz()
+#Zzz z1 = Zzz()
 
 # Zzz znull = null 		# OK
 # znull2 := null 		# Ambiguous class type
@@ -21,5 +25,5 @@ Zzz z1 = Zzz()
 #z2 := Zzz()
 #println("z2: $z2")
 
-println("Hi\tz1: $z1")
+#println("Hi\tz1: $z1")
 
