@@ -9,6 +9,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.value.LiteralListEmpty;
 import org.bds.lang.value.LiteralMapEmpty;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueClass;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
@@ -107,8 +108,8 @@ public class VariableInit extends BdsNode {
 			Scope scope = bdsThread.getScope();
 			if (fieldInit) {
 				// Class : Change value in ValueClass
-				Value valThis = scope.getValue(varName);
-				value = val.getType().cast(value);
+				ValueClass valThis = (ValueClass) scope.getValue(varName);
+				valThis.setvalue = val.getType().cast(value);
 			} else {
 				// Variable: Change value in scope
 				Value val = scope.getValue(varName);
