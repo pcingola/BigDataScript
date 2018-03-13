@@ -859,6 +859,18 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitExpressionPlus(BigDataScriptParser.ExpressionPlusContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code referenceField}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterReferenceField(BigDataScriptParser.ReferenceFieldContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code referenceField}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitReferenceField(BigDataScriptParser.ReferenceFieldContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code functionCall}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.
 	 * @param ctx the parse tree
@@ -1063,6 +1075,18 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitExpressionTask(BigDataScriptParser.ExpressionTaskContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code newObject}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterNewObject(BigDataScriptParser.NewObjectContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code newObject}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitNewObject(BigDataScriptParser.NewObjectContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code referenceVar}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.
 	 * @param ctx the parse tree
@@ -1098,18 +1122,6 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionAssignmentMinus(BigDataScriptParser.ExpressionAssignmentMinusContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code referenceClass}
-	 * labeled alternative in {@link BigDataScriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterReferenceClass(BigDataScriptParser.ReferenceClassContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code referenceClass}
-	 * labeled alternative in {@link BigDataScriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitReferenceClass(BigDataScriptParser.ReferenceClassContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code referenceList}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.

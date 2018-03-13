@@ -265,7 +265,7 @@ public class BdsParseArgs {
 	 * Add or replace initialization statement in this VarInit
 	 *
 	 * Note: We create a Literal node (of the appropriate type) and add it to
-	 * "varDecl.expression"
+	 * "fieldDecl.expression"
 	 */
 	boolean setVarInit(Type varType, VariableInit varInit, ArrayList<String> vals) {
 		boolean usedVal = true;
@@ -280,7 +280,7 @@ public class BdsParseArgs {
 				lit.setValue(vals); // Set literal map
 			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
 
-			// Set varDecl to literal
+			// Set fieldDecl to literal
 			varInit.setExpression(literal);
 		} catch (Exception e) {
 			// Error parsing 'val'?
@@ -294,10 +294,10 @@ public class BdsParseArgs {
 	 * Add or replace initialization statement in this VarInit
 	 *
 	 * Note: We create a Literal node (of the appropriate type) and add it to
-	 * "varDecl.expression"
+	 * "fieldDecl.expression"
 	 *
 	 * @param varType: Variable type
-	 * @param varDecl: Variable initialization
+	 * @param fieldDecl: Variable initialization
 	 * @param valStr: Value to assign
 	 */
 	boolean setVarInit(Type varType, VariableInit varInit, String valStr) {
@@ -349,7 +349,7 @@ public class BdsParseArgs {
 				lit.setValue(valStr);
 			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
 
-			// Set varDecl to literal
+			// Set fieldDecl to literal
 			varInit.setExpression(literal);
 		} catch (Exception e) {
 			// Error parsing 'val'?

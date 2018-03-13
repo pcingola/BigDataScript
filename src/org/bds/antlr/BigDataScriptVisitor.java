@@ -23,6 +23,12 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEol(BigDataScriptParser.EolContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#includeFile}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIncludeFile(BigDataScriptParser.IncludeFileContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#typeList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -85,12 +91,6 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeVoid(BigDataScriptParser.TypeVoidContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#classDef}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassDef(BigDataScriptParser.ClassDefContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link BigDataScriptParser#varDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -109,11 +109,31 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariableInitImplicit(BigDataScriptParser.VariableInitImplicitContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BigDataScriptParser#includeFile}.
+	 * Visit a parse tree produced by {@link BigDataScriptParser#functionDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIncludeFile(BigDataScriptParser.IncludeFileContext ctx);
+	T visitFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code fieldDeclaration}
+	 * labeled alternative in {@link BigDataScriptParser#field}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldDeclaration(BigDataScriptParser.FieldDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code methodDeclaration}
+	 * labeled alternative in {@link BigDataScriptParser#field}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMethodDeclaration(BigDataScriptParser.MethodDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BigDataScriptParser#classDef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClassDef(BigDataScriptParser.ClassDefContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code block}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
@@ -248,12 +268,12 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitWhile(BigDataScriptParser.WhileContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code functionDeclaration}
+	 * Visit a parse tree produced by the {@code statementFunctionDeclaration}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunctionDeclaration(BigDataScriptParser.FunctionDeclarationContext ctx);
+	T visitStatementFunctionDeclaration(BigDataScriptParser.StatementFunctionDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code statementVarDeclaration}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
@@ -490,6 +510,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpressionPlus(BigDataScriptParser.ExpressionPlusContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code referenceField}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReferenceField(BigDataScriptParser.ReferenceFieldContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code functionCall}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.
 	 * @param ctx the parse tree
@@ -609,6 +636,13 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpressionTask(BigDataScriptParser.ExpressionTaskContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code newObject}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNewObject(BigDataScriptParser.NewObjectContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code referenceVar}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.
 	 * @param ctx the parse tree
@@ -629,13 +663,6 @@ public interface BigDataScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpressionAssignmentMinus(BigDataScriptParser.ExpressionAssignmentMinusContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code referenceClass}
-	 * labeled alternative in {@link BigDataScriptParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitReferenceClass(BigDataScriptParser.ReferenceClassContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code referenceList}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.

@@ -1,8 +1,10 @@
 package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.symbol.SymbolTable;
 
 /**
  * Method declaration
@@ -10,8 +12,6 @@ import org.bds.lang.type.Type;
  * @author pcingola
  */
 public class MethodDeclaration extends FunctionDeclaration {
-
-	public static final String THIS_KEYWORD = "this";
 
 	protected Type classType;
 
@@ -21,6 +21,11 @@ public class MethodDeclaration extends FunctionDeclaration {
 
 	public Type getClassType() {
 		return classType;
+	}
+
+	@Override
+	protected void parse(ParseTree tree) {
+		super.parse(tree.getChild(0));
 	}
 
 	@Override
@@ -50,4 +55,10 @@ public class MethodDeclaration extends FunctionDeclaration {
 
 		return signature;
 	}
+
+	@Override
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
+		// This is checked during ClassDeclaration. Nothing to do here
+	}
+
 }

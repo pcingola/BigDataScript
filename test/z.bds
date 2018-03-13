@@ -7,14 +7,14 @@
 #Zzz z0
 
 class Zzz {
+    int f(string s) { return 1 }
 	int i = 42
 	real r
 	string s
 
-    int f(string s) { return s.length() }
 }
 
-#Zzz z1 = Zzz()
+# Zzz z1 = new Zzz()
 
 # Zzz znull = null 		# OK
 # znull2 := null 		# Ambiguous class type

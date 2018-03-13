@@ -6,7 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeFunction;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
@@ -36,6 +35,14 @@ public class VarDeclaration extends Statement {
 
 	public VarDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Add variable to symbol table
+	 */
+	protected void addVar(SymbolTable symtab, CompilerMessages compilerMessages, String varName) {
+		// Add variable to scope
+		if ((varName != null) && (type != null)) symtab.add(varName, type);
 	}
 
 	public Type getType() {
@@ -152,22 +159,8 @@ public class VarDeclaration extends Statement {
 					type = null;
 				}
 
-				// Is this a class?
-				if (type.isClass()) {
-					TypeClass tc = (TypeClass) type;
-					Type tfound = symtab.getType(tc.getClassName());
-					// Get class details from SymbolTable, because the 'type' we have here is just an empty stub
-					if (tfound == null) {
-						compilerMessages.add(this, "Cannot resolve class '" + tc.getClassName() + "'", MessageType.ERROR);
-					} else if (!tfound.isClass()) {
-						compilerMessages.add(this, "Type '" + tc.getClassName() + "' is not a class", MessageType.ERROR);
-					} else {
-						type = tfound; // Replace type stub with full type
-					}
-				}
-
-				// Add variable to scope
-				if ((varName != null) && (type != null)) symtab.add(varName, type);
+				// Add variable
+				addVar(symtab, compilerMessages, varName);
 			}
 		}
 	}

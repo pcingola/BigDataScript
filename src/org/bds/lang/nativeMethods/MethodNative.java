@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
@@ -68,7 +69,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	@Override
 	public void runFunction(BdsThread bdsThread) {
 		// Get object 'this'
-		Value symThis = bdsThread.getScope().getValue(THIS_KEYWORD);
+		Value symThis = bdsThread.getScope().getValue(ClassDeclaration.THIS);
 		Object objThis = symThis.get();
 
 		// Run method

@@ -20,9 +20,11 @@ import org.bds.symbol.SymbolTable;
  */
 public class ClassDeclaration extends Block {
 
+	public static final String THIS = "this";
+
 	String className, extendsName;
-	protected VarDeclaration varDecl[];
-	protected FunctionDeclaration funcDecl[];
+	protected FieldDeclaration fieldDecl[];
+	protected MethodDeclaration methodDecl[];
 	protected ClassDeclaration classParent;
 	protected TypeClass classType;
 
@@ -34,34 +36,19 @@ public class ClassDeclaration extends Block {
 	 * Add symbols to symbol table
 	 */
 	protected void addSymTab(SymbolTable symtab) {
+		// Add type for 'this' object in current table
+		symtab.add(THIS, getType());
+
 		// Add to parent symbol table, because the current
 		// symbol table is for the class' body
 		SymbolTable stparen = symtab.getParent();
 		stparen.add(className, getType());
-
-		// Add constructors (i.e. functions that create a new object)
-		// These are functions that have the same name as the class
-		for (FunctionDeclaration fc : constructors())
-			stparen.add(fc.getFunctionName(), fc.getType());
 	}
 
 	/**
-	 * Create class constructors
+	 * Default constructor (if none is provided in the program)
 	 */
-	protected List<FunctionDeclaration> constructors() {
-		List<FunctionDeclaration> cons = new ArrayList<>();
-
-		// Look for constructors
-		for (FunctionDeclaration f : funcDecl)
-			if (f.getFunctionName().equals(className)) cons.add(f);
-
-		// No constructor declared? Add default (empty) constructor
-		if (cons.isEmpty()) cons.add(defaultConstructor());
-
-		return cons;
-	}
-
-	protected FunctionDeclaration defaultConstructor() {
+	protected MethodDeclaration defaultConstructor() {
 		return new MethodNativeDefaultConstructor(getType());
 	}
 
@@ -78,7 +65,7 @@ public class ClassDeclaration extends Block {
 	}
 
 	public FunctionDeclaration[] getFuncDecl() {
-		return funcDecl;
+		return methodDecl;
 	}
 
 	/**
@@ -91,7 +78,23 @@ public class ClassDeclaration extends Block {
 	}
 
 	public VarDeclaration[] getVarDecl() {
-		return varDecl;
+		return fieldDecl;
+	}
+
+	/**
+	 * Any (declared) constructors?
+	 */
+	protected boolean hasConstructor(List<MethodDeclaration> lmd) {
+		for (MethodDeclaration md : lmd)
+			if (isConstructor(md)) return true;
+		return false;
+	}
+
+	/**
+	 * Is it a constructor method?
+	 */
+	protected boolean isConstructor(FunctionDeclaration fd) {
+		return fd.getFunctionName().equals(className);
 	}
 
 	@Override
@@ -123,19 +126,22 @@ public class ClassDeclaration extends Block {
 
 	protected void parseSortStatements() {
 		List<VarDeclaration> lvd = new ArrayList<>();
-		List<FunctionDeclaration> lfd = new ArrayList<>();
+		List<MethodDeclaration> lmd = new ArrayList<>();
 		List<Statement> ls = new ArrayList<>();
 
 		// Sift statements
 		for (Statement s : statements) {
 			if (s instanceof VarDeclaration) lvd.add((VarDeclaration) s);
-			else if (s instanceof FunctionDeclaration) lfd.add((FunctionDeclaration) s);
+			else if (s instanceof FunctionDeclaration) lmd.add((MethodDeclaration) s);
 			else ls.add(s);
 		}
 
+		// Should we add a default constructor?
+		if (!hasConstructor(lmd)) lmd.add(0, defaultConstructor());
+
 		// Convert to arrays
-		varDecl = lvd.toArray(new VarDeclaration[0]);
-		funcDecl = lfd.toArray(new FunctionDeclaration[0]);
+		fieldDecl = lvd.toArray(new FieldDeclaration[0]);
+		methodDecl = lmd.toArray(new MethodDeclaration[0]);
 		statements = ls.toArray(new Statement[0]);
 	}
 
@@ -143,10 +149,10 @@ public class ClassDeclaration extends Block {
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		for (VarDeclaration vd : varDecl)
+		for (VarDeclaration vd : fieldDecl)
 			vd.returnType(symtab);
 
-		for (FunctionDeclaration fd : funcDecl)
+		for (FunctionDeclaration fd : methodDecl)
 			fd.returnType(symtab);
 
 		for (Statement s : statements)
@@ -172,24 +178,17 @@ public class ClassDeclaration extends Block {
 
 		sb.append(" {\n");
 
-		if (varDecl != null && varDecl.length > 0) {
+		if (fieldDecl != null && fieldDecl.length > 0) {
 			sb.append("\t# Variables\n");
-			for (int i = 0; i < varDecl.length; i++)
-				sb.append("\t" + varDecl[i] + "\n");
+			for (int i = 0; i < fieldDecl.length; i++)
+				sb.append("\t" + fieldDecl[i] + "\n");
 			sb.append("\n");
 		}
 
-		if (funcDecl != null && funcDecl.length > 0) {
+		if (methodDecl != null && methodDecl.length > 0) {
 			sb.append("\t# Methods\n");
-			for (int i = 0; i < funcDecl.length; i++)
-				sb.append("\t" + funcDecl[i].signatureWithName() + "\n");
-			sb.append("\n");
-		}
-
-		if (statements != null && statements.length > 0) {
-			sb.append("\t# Constructor statements\n");
-			for (int i = 0; i < statements.length; i++)
-				sb.append("\t" + statements[i] + "\n");
+			for (int i = 0; i < methodDecl.length; i++)
+				sb.append("\t" + methodDecl[i].signatureWithName() + "\n");
 			sb.append("\n");
 		}
 

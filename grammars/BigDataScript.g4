@@ -94,10 +94,11 @@ expression : NULL_LITERAL                                                       
            | INT_LITERAL                                                                   # literalInt
            | REAL_LITERAL                                                                  # literalReal
            | STRING_LITERAL                                                                # literalString
-           | STRING_LITERAL_SINGLE                                                         # literalString
-           | expression ('.' expression)+                                                  # referenceClass
-           | ID '('(expression (',' expression )*)? ')'                                    # functionCall
+		   | STRING_LITERAL_SINGLE                                                         # literalString
            | expression '.' ID '('(expression (',' expression )*)? ')'                     # methodCall
+           | 'new' ID '('(expression (',' expression )*)? ')'                              # newObject
+           | ID '('(expression (',' expression )*)? ')'                                    # functionCall
+           | expression ('.' expression)+                                                  # referenceField
            | ID                                                                            # referenceVar
            | expression '[' expression ']'                                                 # referenceList
            | expression '{' expression '}'                                                 # referenceMap
