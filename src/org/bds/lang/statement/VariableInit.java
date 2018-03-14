@@ -108,8 +108,9 @@ public class VariableInit extends BdsNode {
 			Scope scope = bdsThread.getScope();
 			if (fieldInit) {
 				// Class : Change value in ValueClass
-				ValueClass valThis = (ValueClass) scope.getValue(varName);
-				valThis.setvalue = val.getType().cast(value);
+				ValueClass valThis = (ValueClass) scope.getValue(ClassDeclaration.THIS);
+				Value v = valThis.getValue(varName);
+				valThis.setValue(varName, v.getType().cast(value));
 			} else {
 				// Variable: Change value in scope
 				Value val = scope.getValue(varName);
