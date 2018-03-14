@@ -209,11 +209,6 @@ public class SymbolTable implements Iterable<String> {
 	public String toString(boolean showFunc) {
 		// Show parents
 		StringBuilder sb = new StringBuilder();
-		SymbolTable parent = getParent();
-		if (parent != null) {
-			String parentStr = parent.toString(showFunc);
-			if (!parentStr.isEmpty()) sb.append(parentStr);
-		}
 
 		// Show scope symbols
 		StringBuilder sbThis = new StringBuilder();
@@ -234,6 +229,10 @@ public class SymbolTable implements Iterable<String> {
 		String symTabName = "";
 		if (bdsNode != null) symTabName = bdsNode.getFileName() + ":" + bdsNode.getLineNum();
 		if (sbThis.length() > 0) sb.append("\n---------- SymbolTable " + symTabName + "  ----------\n" + sbThis.toString());
+
+		// Show parent table
+		SymbolTable parent = getParent();
+		if (parent != null) sb.append(parent.toString(showFunc));
 
 		return sb.toString();
 	}

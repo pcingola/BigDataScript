@@ -7,17 +7,17 @@
 Zzz z0
 
 class Zzz {
-    int f(string s) { return 1 }
 	int i = 42
 	real r
 	string s
 
 	#void Zzz(int x) { i = x }
+    int f(string s) { return 1 }
 }
 
-println("Before")
 Zzz z1 = new Zzz()
-println("After\tz1: $z1")
+println("z1: $z1")
+z1.f('hi')
 
 #Zzz z2 = new Zzz(7)
 

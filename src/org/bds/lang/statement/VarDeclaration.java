@@ -6,6 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeFunction;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
@@ -41,7 +42,6 @@ public class VarDeclaration extends Statement {
 	 * Add variable to symbol table
 	 */
 	protected void addVar(SymbolTable symtab, CompilerMessages compilerMessages, String varName) {
-		// Add variable to scope
 		if ((varName != null) && (type != null)) symtab.add(varName, type);
 	}
 
@@ -87,6 +87,22 @@ public class VarDeclaration extends Statement {
 				i++; // ','
 			}
 		}
+	}
+
+	/**
+	 * Replace 'stub' typeClass with real typeClass (from symtab)
+	 */
+	protected void replaceStubTypeClass(SymbolTable symtab, CompilerMessages compilerMessages, String varName) {
+		if (!type.isClass()) return;
+
+		TypeClass tc = (TypeClass) type;
+		if (tc.getClassDeclaration() != null) return; // Class information avilable, this is not a 'stub' type
+
+		TypeClass tcReal = (TypeClass) symtab.getType(tc.getClassName());
+		if (!tcReal.isClass()) throw new RuntimeException("Type '" + tc.getClassName() + "' is not a class. This should never happen!");
+		if (tcReal.getClassDeclaration() == null) throw new RuntimeException("Type '" + tc.getClassName() + "' is does not have class declaration infro. This should never happen!");
+
+		type = tcReal;
 	}
 
 	/**
@@ -158,6 +174,9 @@ public class VarDeclaration extends Statement {
 					compilerMessages.add(this, "Cannot declare variable '" + varName + "' type 'void'", MessageType.ERROR);
 					type = null;
 				}
+
+				// Replace TypeClass 'stub'
+				replaceStubTypeClass(symtab, compilerMessages, varName);
 
 				// Add variable
 				addVar(symtab, compilerMessages, varName);

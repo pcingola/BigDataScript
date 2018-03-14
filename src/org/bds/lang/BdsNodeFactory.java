@@ -81,16 +81,18 @@ public class BdsNodeFactory {
 				return createBdsNodeFactory(clazz, parent, tree);
 			}
 
-			Constructor<BdsNode> classConstructor = classConstructors[0];
-
-			// Number of arguments in constructor?
-			if (classConstructor.getParameterTypes().length == 0) {
-				return (BdsNode) clazz.newInstance();
-			} else if (classConstructor.getParameterTypes().length == 2) {
-				// Two parameter constructor
-				Object[] params = { parent, tree };
-				return classConstructor.newInstance(params);
-			} else throw new RuntimeException("Unknown constructor method for class '" + clazz.getCanonicalName() + "'");
+			// Find appropriate constructor
+			for (Constructor<BdsNode> classConstructor : classConstructors) {
+				// Number of arguments in constructor?
+				if (classConstructor.getParameterTypes().length == 0) {
+					return (BdsNode) clazz.newInstance();
+				} else if (classConstructor.getParameterTypes().length == 2) {
+					// Two parameter constructor
+					Object[] params = { parent, tree };
+					return classConstructor.newInstance(params);
+				}
+			}
+			throw new RuntimeException("Unknown constructor method for class '" + clazz.getCanonicalName() + "'");
 		} catch (Exception e) {
 			throw new RuntimeException("Error creating object: Class '" + clazz.getCanonicalName() + "'", e);
 		}
