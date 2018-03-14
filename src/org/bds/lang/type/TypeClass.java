@@ -51,7 +51,9 @@ public class TypeClass extends TypeComposite {
 
 		// Add methods
 		for (MethodDeclaration md : classDecl.getMethodDecl())
-			symbolTable.add(md.getFunctionName(), md.getType());
+			if (!md.isNative()) { // Native method are added to symbol table during initialization
+				symbolTable.add(md.getFunctionName(), md.getType());
+			}
 	}
 
 	@Override

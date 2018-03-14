@@ -48,7 +48,11 @@ public class ReferenceVar extends Reference {
 		classField = false;
 	}
 
-	protected Type findType(SymbolTable symtab, String name) {
+	/**
+	 * Find 'type' for 'name'
+	 * Also mark this as a 'classField' if the it refers to 'this.name'
+	 */
+	protected Type findType(SymbolTable symtab) {
 		Type t = symtab.getType(name);
 		if (t != null) return t;
 
@@ -94,7 +98,7 @@ public class ReferenceVar extends Reference {
 	@Override
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
-		returnType = findType(symtab, name);
+		returnType = findType(symtab);
 		return returnType;
 	}
 

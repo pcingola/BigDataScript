@@ -15,4 +15,18 @@ public class ReferenceField extends ReferenceVar {
 		classField = true;
 	}
 
+	void f() {
+
+		Z z = new Z();
+
+	}
+
+}
+
+class A {
+	public Z z;
+}
+
+class Z {
+	public A a;
 }
