@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeClass;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -17,6 +18,15 @@ public class MethodDeclaration extends FunctionDeclaration {
 
 	public MethodDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Add 'this' parameter to method
+	 */
+	public void addThisArg(TypeClass typeThis) {
+		if (isNative()) return; // Native methods do not need to add 'this' (it's already declared explicitly in the constructor)
+		parameters.addThis(typeThis);
+		signature = null;
 	}
 
 	public Type getClassType() {

@@ -149,8 +149,20 @@ public class ClassDeclaration extends Block {
 		methodDecl = lmd.toArray(new MethodDeclaration[0]);
 		statements = ls.toArray(new Statement[0]);
 
+		// Add 'this' argument to all method declarations
+		addThisArgToMethods();
+
 		// Add all methods to TypeClass' symbol table
 		getType().addMethodsToSymTab();
+	}
+
+	/**
+	 * Add 'this' argument to all method declarations
+	 */
+	protected void addThisArgToMethods() {
+		for (MethodDeclaration md : methodDecl) {
+			md.addThisArg(getType());
+		}
 	}
 
 	@Override

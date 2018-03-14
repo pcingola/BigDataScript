@@ -12,12 +12,13 @@ class Zzz {
 	string s
 
 	#void Zzz(int x) { i = x }
-    int f(string s) { return 1 }
+    int f(string s) { return i + s.length() }
 }
 
 Zzz z1 = new Zzz()
 println("z1: $z1")
-z1.f('hi')
+i := z1.f('hi')
+println("i : $i")
 
 #Zzz z2 = new Zzz(7)
 

@@ -40,6 +40,7 @@ public class MethodCall extends FunctionCall {
 		if (classSymTab == null) return null;
 
 		TypeFunction tfunc = classSymTab.findFunction(functionName, args);
+		if (tfunc != null) return tfunc.getFunctionDeclaration();
 
 		// Not found? Try a 'regular' function
 		if (tfunc == null) tfunc = symtab.findFunction(functionName, args);
@@ -60,8 +61,7 @@ public class MethodCall extends FunctionCall {
 		args.parse(tree, 4, tree.getChildCount() - 1);
 		// child[tree.getChildCount()] = ')'
 
-		// Create empty (non-null) args
-		if (args == null) args = new Args(this, null);
+		// Add 'expresionObj' as first argument ('this')
 		args = Args.getArgsThis(args, expresionObj);
 	}
 

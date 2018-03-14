@@ -1,8 +1,10 @@
 package org.bds.lang;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeClass;
 
 /**
  * Function / method parameters declaration
@@ -48,10 +50,25 @@ public class Parameters extends BdsNode implements Comparable<Parameters> {
 		if (parent == null && tree == null) varDecl = new VarDeclaration[0];
 	}
 
+	/**
+	 * Prepend 'this' to parameters
+	 */
+	public void addThis(TypeClass typeThis) {
+		// Copy to new array (shifted by 1)
+		VarDeclaration newVarDecl[] = new VarDeclaration[varDecl.length + 1];
+		for (int i = 0; i < varDecl.length; i++)
+			newVarDecl[i + 1] = varDecl[i];
+
+		// Add 'this'
+		VarDeclaration varThis = VarDeclaration.get(typeThis, ClassDeclaration.THIS);
+		newVarDecl[0] = varThis;
+
+		varDecl = newVarDecl;
+	}
+
 	@Override
 	public int compareTo(Parameters o) {
 		throw new RuntimeException("!!! Unimplemented!");
-		// return 0;
 	}
 
 	/**
@@ -77,7 +94,6 @@ public class Parameters extends BdsNode implements Comparable<Parameters> {
 		for (int i = offset, j = 0; i < max; j++, i += 2) {
 			varDecl[j] = (VarDeclaration) factory(tree, i);
 		}
-
 	}
 
 	public int size() {
