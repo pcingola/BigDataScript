@@ -12,7 +12,7 @@ public class ReferenceField extends ReferenceVar {
 
 	public ReferenceField(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-		throw new RuntimeException("!!! UNIMPLEMENTED");
+		classField = true;
 	}
 
 }

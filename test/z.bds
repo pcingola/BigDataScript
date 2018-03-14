@@ -17,8 +17,8 @@ class Zzz {
 
 Zzz z1 = new Zzz()
 println("z1: $z1")
-i := z1.f('hi')
-println("i : $i")
+j := z1.f('hi')
+println("j : $j")
 
 #Zzz z2 = new Zzz(7)
 

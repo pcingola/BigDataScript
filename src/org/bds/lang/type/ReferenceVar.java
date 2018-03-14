@@ -5,7 +5,9 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueClass;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
@@ -17,6 +19,7 @@ import org.bds.symbol.SymbolTable;
  */
 public class ReferenceVar extends Reference {
 
+	protected boolean classField;
 	protected String name;
 
 	/**
@@ -42,6 +45,22 @@ public class ReferenceVar extends Reference {
 
 	public ReferenceVar(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+		classField = false;
+	}
+
+	protected Type findType(SymbolTable symtab, String name) {
+		Type t = symtab.getType(name);
+		if (t != null) return t;
+
+		// Is 'this' defined (is it a class?)
+		TypeClass typeThis = (TypeClass) symtab.getType(ClassDeclaration.THIS);
+		if (typeThis == null) return null;
+
+		// Look up 'name' as a field in the class
+		t = typeThis.getSymbolTable().getType(name);
+		classField = (t != null);
+
+		return t;
 	}
 
 	/**
@@ -75,11 +94,7 @@ public class ReferenceVar extends Reference {
 	@Override
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
-
-		Type t = symtab.getType(name);
-		if (t == null) return null; // Symbol not found
-
-		returnType = t;
+		returnType = findType(symtab, name);
 		return returnType;
 	}
 
@@ -88,8 +103,19 @@ public class ReferenceVar extends Reference {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		Value val = bdsThread.getScope().getValue(name);
-		if (val == null) bdsThread.fatalError(this, "Cannot find variable '" + name + "'");
+		Value val = null;
+
+		if (classField) {
+			// Field in a class (object 'this')
+			ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
+			val = vthis.getValue(name);
+			if (val == null) bdsThread.fatalError(this, "Cannot find field '" + name + "'");
+		} else {
+			// Variable
+			val = bdsThread.getScope().getValue(name);
+			if (val == null) bdsThread.fatalError(this, "Cannot find variable '" + name + "'");
+		}
+
 		bdsThread.push(val);
 	}
 
@@ -114,7 +140,7 @@ public class ReferenceVar extends Reference {
 		// Calculate return type
 		returnType(symtab);
 
-		if (!symtab.hasType(name)) {
+		if (returnType == null) {
 			compilerMessages.add(this, "Symbol '" + name + "' cannot be resolved", MessageType.ERROR);
 		}
 	}

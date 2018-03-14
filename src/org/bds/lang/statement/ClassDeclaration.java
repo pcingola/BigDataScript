@@ -46,6 +46,15 @@ public class ClassDeclaration extends Block {
 	}
 
 	/**
+	 * Add 'this' argument to all method declarations
+	 */
+	protected void addThisArgToMethods() {
+		for (MethodDeclaration md : methodDecl) {
+			md.addThisArg(getType());
+		}
+	}
+
+	/**
 	 * Default constructor (if none is provided in the program)
 	 */
 	protected MethodDeclaration defaultConstructor() {
@@ -153,16 +162,7 @@ public class ClassDeclaration extends Block {
 		addThisArgToMethods();
 
 		// Add all methods to TypeClass' symbol table
-		getType().addMethodsToSymTab();
-	}
-
-	/**
-	 * Add 'this' argument to all method declarations
-	 */
-	protected void addThisArgToMethods() {
-		for (MethodDeclaration md : methodDecl) {
-			md.addThisArg(getType());
-		}
+		getType().addToSymbolTable();
 	}
 
 	@Override

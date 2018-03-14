@@ -3,7 +3,9 @@ package org.bds.lang.type;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.statement.ClassDeclaration;
+import org.bds.lang.statement.FieldDeclaration;
 import org.bds.lang.statement.MethodDeclaration;
+import org.bds.lang.statement.VariableInit;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueClass;
 
@@ -39,7 +41,15 @@ public class TypeClass extends TypeComposite {
 	/**
 	 * Add all methods to symbol table
 	 */
-	public void addMethodsToSymTab() {
+	public void addToSymbolTable() {
+		// Add all fields
+		for (FieldDeclaration fd : classDecl.getFieldDecl()) {
+			Type type = fd.getType();
+			for (VariableInit vi : fd.getVarInit())
+				symbolTable.add(vi.getVarName(), type);
+		}
+
+		// Add methods
 		for (MethodDeclaration md : classDecl.getMethodDecl())
 			symbolTable.add(md.getFunctionName(), md.getType());
 	}
