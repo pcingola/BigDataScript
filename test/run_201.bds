@@ -1,6 +1,5 @@
 #!/usr/bin/env bds
 
-
 class Zzz {
 	int i
 	real r

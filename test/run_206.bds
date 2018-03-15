@@ -1,0 +1,19 @@
+#!/usr/bin/env bds
+
+# z.a.b[7].c{'hi'}.f()
+
+# int f(string s) { return s.length() }
+
+Zzz z0
+
+class Zzz {
+	int i = 42
+    #int f(string s) return i + s.length()
+    #int g(int i) return i + 1
+    int h(int i) return this.i + i
+}
+
+Zzz z = new Zzz()
+println("z: $z")
+j := z.h(2)
+println("j : $j")

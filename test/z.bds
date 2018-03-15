@@ -1,35 +1,4 @@
 #!/usr/bin/env bds
 
-# z.a.b[7].c{'hi'}.f()
-
-# int f(string s) { return s.length() }
-
-Zzz z0
-
-class Zzz {
-	int i = 42
-	real r
-	string s
-
-	#void Zzz(int x) { i = x }
-    int f(string s) { return i + s.length() }
-}
-
-Zzz z1 = new Zzz()
-println("z1: $z1")
-j := z1.f('hi')
-println("j : $j")
-
-#Zzz z2 = new Zzz(7)
-
-# Zzz znull = null 		# OK
-# znull2 := null 		# Ambiguous class type
-
-#Zzz z = Zzz()
-#println("z: $z")
-
-#z2 := Zzz()
-#println("z2: $z2")
-
-#println("Hi\tz1: $z1")
+this.i + i
 

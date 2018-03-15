@@ -98,7 +98,13 @@ expression : NULL_LITERAL                                                       
            | expression '.' ID '('(expression (',' expression )*)? ')'                     # methodCall
            | 'new' ID '('(expression (',' expression )*)? ')'                              # expressionNew
            | ID '('(expression (',' expression )*)? ')'                                    # functionCall
-           | expression ('.' expression)+                                                  # referenceField
+           | expression ('.'
+                            (
+                               ID
+                               | ID '[' expression ']' 
+                               | ID '{' expression '}'
+                            )+
+                        )                                                                  # referenceField
            | ID                                                                            # referenceVar
            | expression '[' expression ']'                                                 # referenceList
            | expression '{' expression '}'                                                 # referenceMap

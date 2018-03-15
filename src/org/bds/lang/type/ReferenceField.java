@@ -2,6 +2,8 @@ package org.bds.lang.type;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
+import org.bds.lang.statement.ClassDeclaration;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A reference to a field in a class
@@ -15,18 +17,21 @@ public class ReferenceField extends ReferenceVar {
 		classField = true;
 	}
 
-	void f() {
+	/**
+	 * Find 'type' for 'name'
+	 * Also mark this as a 'classField' if the it refers to 'this.name'
+	 */
+	@Override
+	protected Type findType(SymbolTable symtab) {
+		// Is 'this' defined (is it a class?)
+		TypeClass typeThis = (TypeClass) symtab.getType(ClassDeclaration.THIS);
+		if (typeThis == null) return null;
 
-		Z z = new Z();
+		// Look up 'name' as a field in the class
+		Type t = typeThis.getSymbolTable().getType(name);
+		classField = (t != null);
 
+		return t;
 	}
 
-}
-
-class A {
-	public Z z;
-}
-
-class Z {
-	public A a;
 }
