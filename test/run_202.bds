@@ -6,7 +6,7 @@ class Zzz {
 	string s
 }
 
-Zzz z = Zzz()
+Zzz z = new Zzz()
 z.i = 42
 z.r = 1.234
 z.s = "Hi"

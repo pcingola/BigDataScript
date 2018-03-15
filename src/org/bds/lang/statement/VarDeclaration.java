@@ -93,7 +93,7 @@ public class VarDeclaration extends Statement {
 	 * Replace 'stub' typeClass with real typeClass (from symtab)
 	 */
 	protected void replaceStubTypeClass(SymbolTable symtab, CompilerMessages compilerMessages, String varName) {
-		if (!type.isClass()) return;
+		if (type == null || !type.isClass()) return;
 
 		TypeClass tc = (TypeClass) type;
 		if (tc.getClassDeclaration() != null) return; // Class information avilable, this is not a 'stub' type

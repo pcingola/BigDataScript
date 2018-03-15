@@ -1,7 +1,7 @@
 package org.bds.test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.bds.Bds;
 import org.bds.Config;
@@ -52,7 +52,7 @@ public class TestCasesBase {
 		bdsTest.checkVariable(varname, expectedValue);
 	}
 
-	void runAndCheck(String fileName, HashMap<String, Object> expectedValues) {
+	void runAndCheck(String fileName, Map<String, Object> expectedValues) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
@@ -62,7 +62,7 @@ public class TestCasesBase {
 	/**
 	 * Check that a file compiles without any errors, runs and all variables have their expected values
 	 */
-	void runAndCheck(String fileName, HashMap<String, Object> expectedValues, ArrayList<String> argsAfterList) {
+	void runAndCheck(String fileName, Map<String, Object> expectedValues, List<String> argsAfterList) {
 		String argsAfter[] = argsAfterList.toArray(new String[0]);
 		BdsTest bdsTest = new BdsTest(fileName, null, argsAfter, verbose, debug);
 		bdsTest.run();

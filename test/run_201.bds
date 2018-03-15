@@ -6,9 +6,9 @@ class Zzz {
 	string s
 }
 
-Zzz z = Zzz()
+Zzz z = new Zzz()
 println("z: $z")
 
-z2 := Zzz()
+z2 := new Zzz()
 println("z2: $z2")
 

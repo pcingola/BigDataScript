@@ -2,6 +2,7 @@ package org.bds.test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -166,7 +167,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test17() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<>();
+		Map<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("s", " HEllo ");
 		expectedValues.put("s1", "HEllo");
 		expectedValues.put("s2", " hello ");

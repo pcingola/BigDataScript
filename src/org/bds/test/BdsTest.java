@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.bds.Bds;
 import org.bds.compile.CompilerMessages;
@@ -218,7 +218,7 @@ public class BdsTest {
 	/**
 	 * Check all variables in the hash
 	 */
-	void checkVariables(HashMap<String, Object> expectedValues) {
+	void checkVariables(Map<String, Object> expectedValues) {
 		// Check all values
 		for (String varName : expectedValues.keySet()) {
 			Object expectedValue = expectedValues.get(varName);
