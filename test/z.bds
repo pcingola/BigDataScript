@@ -11,11 +11,13 @@ class Zzz {
     int i = 42
 	string[] l = ['hi', 'bye']
     string{} m = {'hi' => 'hola', 'bye' => 'chau'}
-    #int h(int i) return this.i + i
+    int h(int i) return this.i + i
 }
 
 Zzz z = new Zzz()
 println("z: $z")
+
+z.i = 7
 
 j := z.i
 println("j : $j")

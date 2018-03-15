@@ -19,7 +19,7 @@ import org.bds.symbol.SymbolTable;
  */
 public class ReferenceMap extends Reference {
 
-	protected Expression variable;
+	protected Expression exprMap;
 	protected Expression expressionKey;
 
 	public ReferenceMap(BdsNode parent, ParseTree tree) {
@@ -31,14 +31,14 @@ public class ReferenceMap extends Reference {
 	 */
 	@Override
 	public ValueMap getValue(Scope scope) {
-		if (variable instanceof ReferenceVar) return (ValueMap) ((ReferenceVar) variable).getValue(scope);
+		if (exprMap instanceof ReferenceVar) return (ValueMap) ((ReferenceVar) exprMap).getValue(scope);
 		return null;
 
 	}
 
 	@Override
 	public String getVariableName() {
-		if (variable instanceof ReferenceVar) return ((ReferenceVar) variable).getVariableName();
+		if (exprMap instanceof ReferenceVar) return ((ReferenceVar) exprMap).getVariableName();
 		return null;
 
 	}
@@ -50,7 +50,7 @@ public class ReferenceMap extends Reference {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		variable = (Expression) factory(tree, 0);
+		exprMap = (Expression) factory(tree, 0);
 		// child[1] = '{'
 		expressionKey = (Expression) factory(tree, 2);
 		// child[3] = '}'
@@ -66,7 +66,7 @@ public class ReferenceMap extends Reference {
 		String varName = str.substring(0, idx1);
 		ReferenceVar refVar = new ReferenceVar(this, null);
 		refVar.parse(varName);
-		variable = refVar;
+		exprMap = refVar;
 
 		// Create index expression
 		String idxStr = str.substring(idx1 + 1, idx2);
@@ -90,7 +90,7 @@ public class ReferenceMap extends Reference {
 		expressionKey.returnType(symtab);
 
 		// Retrieve map from scope
-		Type mapType = variable.returnType(symtab);
+		Type mapType = exprMap.returnType(symtab);
 		if (mapType != null && mapType.isMap()) {
 			returnType = ((TypeMap) mapType).getValueType();
 		}
@@ -104,7 +104,7 @@ public class ReferenceMap extends Reference {
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		// Evaluate expressions
-		bdsThread.run(variable);
+		bdsThread.run(exprMap);
 		bdsThread.run(expressionKey);
 
 		if (bdsThread.isCheckpointRecover()) return;
@@ -135,7 +135,7 @@ public class ReferenceMap extends Reference {
 
 	@Override
 	public String toString() {
-		return variable + "{" + expressionKey + "}";
+		return exprMap + "{" + expressionKey + "}";
 	}
 
 	@Override
@@ -144,8 +144,8 @@ public class ReferenceMap extends Reference {
 		returnType(symtab);
 
 		// Is it a map?
-		if (!variable.isMap()) {
-			compilerMessages.add(this, "Symbol '" + variable + "' is not a map", MessageType.ERROR);
+		if (!exprMap.isMap()) {
+			compilerMessages.add(this, "Symbol '" + exprMap + "' is not a map", MessageType.ERROR);
 			return;
 		}
 
@@ -153,7 +153,7 @@ public class ReferenceMap extends Reference {
 		Type keyType = expressionKey.getReturnType();
 		if (expressionKey.getReturnType() == null) return;
 
-		TypeMap mapType = (TypeMap) variable.getReturnType();
+		TypeMap mapType = (TypeMap) exprMap.getReturnType();
 		if (!keyType.canCastTo(mapType.getKeyType())) {
 			compilerMessages.add(this, "Cannot cast key expression from '" + keyType + "' to '" + mapType.getKeyType() + "'", MessageType.ERROR);
 		}
