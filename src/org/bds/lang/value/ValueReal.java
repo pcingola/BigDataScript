@@ -17,8 +17,23 @@ public class ValueReal extends ValuePrimitive {
 	}
 
 	@Override
+	public boolean asBool() {
+		return value != 0.0;
+	}
+
+	@Override
+	public long asInt() {
+		throw new RuntimeException("Cannot convert type '" + getType() + "' to real");
+	}
+
+	@Override
 	public double asReal() {
 		return value;
+	}
+
+	@Override
+	public String asString() {
+		return Double.toString(value);
 	}
 
 	@Override

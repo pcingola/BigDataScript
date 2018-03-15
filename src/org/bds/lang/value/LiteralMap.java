@@ -98,7 +98,7 @@ public class LiteralMap extends Literal {
 			// Assign to map
 			if (!bdsThread.isCheckpointRecover()) {
 				Value value = bdsThread.pop();
-				String key = bdsThread.pop().toString();
+				String key = bdsThread.pop().asString();
 				value = valueType.cast(value);
 				map.put(key, value.get()); // Add it to map
 			}

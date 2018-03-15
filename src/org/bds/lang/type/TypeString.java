@@ -26,7 +26,7 @@ public class TypeString extends TypePrimitive {
 	public Value cast(Value v) {
 		Type vt = v.getType();
 		if (vt.isString()) return v;
-		return new ValueString(v.toString());
+		return new ValueString(v.asString());
 	}
 
 	@Override

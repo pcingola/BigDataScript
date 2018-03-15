@@ -30,32 +30,24 @@ public abstract class Value implements Cloneable {
 	}
 
 	/**
-	 * Convert map to 'bool'
+	 * Convert to 'bool'
 	 */
-	public boolean asBool() {
-		return (boolean) Types.BOOL.cast(this).get();
-	}
+	public abstract boolean asBool();
 
 	/**
-	 * Convert map to 'int'
+	 * Convert to 'int'
 	 */
-	public long asInt() {
-		return (long) Types.INT.cast(this).get();
-	}
+	public abstract long asInt();
 
 	/**
-	 * Convert map to 'real'
+	 * Convert to 'real'
 	 */
-	public double asReal() {
-		return (double) Types.REAL.cast(this).get();
-	}
+	public abstract double asReal();
 
 	/**
-	 * Convert map to 'string'
+	 * Convert to 'string'
 	 */
-	public String asString() {
-		return (String) Types.STRING.cast(this).get();
-	}
+	public abstract String asString();
 
 	@Override
 	public abstract Value clone();

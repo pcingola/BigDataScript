@@ -25,6 +25,24 @@ public class ValueBool extends ValuePrimitive {
 	}
 
 	@Override
+	public long asInt() {
+		return value ? 1L : 0L;
+	}
+
+	/**
+	 * Convert to 'real'
+	 */
+	@Override
+	public double asReal() {
+		throw new RuntimeException("Cannot convert type '" + getType() + "' to real");
+	}
+
+	@Override
+	public String asString() {
+		return Boolean.toString(value);
+	}
+
+	@Override
 	public ValueBool clone() {
 		return new ValueBool(asBool());
 	}

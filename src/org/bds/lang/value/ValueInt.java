@@ -18,8 +18,23 @@ public class ValueInt extends ValuePrimitive {
 	}
 
 	@Override
+	public boolean asBool() {
+		return value != 0L;
+	}
+
+	@Override
 	public long asInt() {
 		return value;
+	}
+
+	@Override
+	public double asReal() {
+		return value;
+	}
+
+	@Override
+	public String asString() {
+		return Double.toString(value);
 	}
 
 	@Override

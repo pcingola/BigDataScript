@@ -80,6 +80,10 @@ public class TypeClass extends TypeComposite {
 		return className;
 	}
 
+	public Type getType(String name) {
+		return symbolTable.getType(name);
+	}
+
 	@Override
 	public boolean isClass() {
 		return true;

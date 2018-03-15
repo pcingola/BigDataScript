@@ -27,6 +27,26 @@ public class ValueUnique extends ValuePrimitive {
 	}
 
 	@Override
+	public boolean asBool() {
+		throw new RuntimeException("Cannot convert type '" + getType() + "' to bool");
+	}
+
+	@Override
+	public long asInt() {
+		throw new RuntimeException("Cannot convert type '" + getType() + "' to int");
+	}
+
+	@Override
+	public double asReal() {
+		throw new RuntimeException("Cannot convert type '" + getType() + "' to real");
+	}
+
+	@Override
+	public String asString() {
+		return toString();
+	}
+
+	@Override
 	public Value clone() {
 		return this; // Note that unique values are not cloned
 	}

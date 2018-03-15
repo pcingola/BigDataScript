@@ -18,6 +18,21 @@ public class ValueString extends ValuePrimitive {
 	}
 
 	@Override
+	public boolean asBool() {
+		return !value.isEmpty();
+	}
+
+	@Override
+	public long asInt() {
+		throw new RuntimeException("Cannot convert type '" + getType() + "' to int");
+	}
+
+	@Override
+	public double asReal() {
+		throw new RuntimeException("Cannot convert type '" + getType() + "' to real");
+	}
+
+	@Override
 	public String asString() {
 		return value;
 	}
