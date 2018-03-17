@@ -10,9 +10,4 @@ class Zzz {
 Zzz z
 z.set(2)
 
-z = new Zzz()
-
-#z = new Zzz(2)
-#println("z: $z")
-
 

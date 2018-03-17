@@ -17,6 +17,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesExecutioners.class, //
 		TestCasesRun.class, //
 		TestCasesRun2.class, //
+		TestCasesRun3.class, //
 		TestCasesGraph.class, //
 		TestCasesCheckpoint.class, //
 		TestCasesTesting.class, //
