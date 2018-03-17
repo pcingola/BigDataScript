@@ -1,5 +1,4 @@
 // Generated from BigDataScript.g4 by ANTLR 4.7.1
-package org.bds.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -143,11 +142,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitProgramUnit(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitProgramUnit(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ProgramUnitContext programUnit() throws RecognitionException {
@@ -215,11 +209,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitEol(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitEol(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -290,11 +279,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitIncludeFile(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitIncludeFile(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final IncludeFileContext includeFile() throws RecognitionException {
@@ -349,11 +333,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeList(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeList(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -419,11 +398,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeArray(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeArray(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeIntContext extends TypeContext {
 		public TypeIntContext(TypeContext ctx) { copyFrom(ctx); }
@@ -434,11 +408,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeInt(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeInt(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class TypeMapContext extends TypeContext {
@@ -457,11 +426,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeMap(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeMap(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeRealContext extends TypeContext {
 		public TypeRealContext(TypeContext ctx) { copyFrom(ctx); }
@@ -473,11 +437,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeReal(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeReal(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeStringContext extends TypeContext {
 		public TypeStringContext(TypeContext ctx) { copyFrom(ctx); }
@@ -488,11 +447,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeString(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeString(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class TypeClassContext extends TypeContext {
@@ -506,11 +460,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeClass(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeClass(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeBoolContext extends TypeContext {
 		public TypeBoolContext(TypeContext ctx) { copyFrom(ctx); }
@@ -522,11 +471,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeBool(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeBool(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeVoidContext extends TypeContext {
 		public TypeVoidContext(TypeContext ctx) { copyFrom(ctx); }
@@ -537,11 +481,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitTypeVoid(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitTypeVoid(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -716,11 +655,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVarDeclaration(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVarDeclaration(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final VarDeclarationContext varDeclaration() throws RecognitionException {
@@ -796,11 +730,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVariableInit(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVariableInit(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final VariableInitContext variableInit() throws RecognitionException {
@@ -864,11 +793,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitVariableInitImplicit(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitVariableInitImplicit(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final VariableInitImplicitContext variableInitImplicit() throws RecognitionException {
@@ -931,11 +855,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitFunctionDeclaration(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitFunctionDeclaration(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1025,11 +944,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitMethodDeclaration(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitMethodDeclaration(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class FieldDeclarationContext extends FieldContext {
 		public VarDeclarationContext varDeclaration() {
@@ -1049,11 +963,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitFieldDeclaration(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitFieldDeclaration(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1150,11 +1059,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitClassDef(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitClassDef(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1287,11 +1191,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitCheckpoint(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitCheckpoint(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class StatementVarDeclarationContext extends StatementContext {
 		public VarDeclarationContext varDeclaration() {
@@ -1311,11 +1210,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatementVarDeclaration(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatementVarDeclaration(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class WaitContext extends StatementContext {
@@ -1340,11 +1234,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitWait(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitWait(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class StatementIncludeContext extends StatementContext {
 		public IncludeFileContext includeFile() {
@@ -1365,11 +1254,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatementInclude(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatementInclude(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ErrorContext extends StatementContext {
 		public ExpressionContext expression() {
@@ -1389,11 +1273,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitError(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitError(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class WhileContext extends StatementContext {
@@ -1418,11 +1297,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitWhile(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitWhile(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class StatementFunctionDeclarationContext extends StatementContext {
 		public FunctionDeclarationContext functionDeclaration() {
@@ -1442,11 +1316,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatementFunctionDeclaration(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatementFunctionDeclaration(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class SwitchContext extends StatementContext {
@@ -1477,11 +1346,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitSwitch(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitSwitch(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ClassDeclarationContext extends StatementContext {
 		public ClassDefContext classDef() {
@@ -1501,11 +1365,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitClassDeclaration(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitClassDeclaration(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class PrintlnContext extends StatementContext {
@@ -1527,11 +1386,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPrintln(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPrintln(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ContinueContext extends StatementContext {
 		public List<EolContext> eol() {
@@ -1548,11 +1402,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitContinue(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitContinue(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class WarningContext extends StatementContext {
@@ -1574,11 +1423,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitWarning(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitWarning(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class BlockContext extends StatementContext {
 		public List<StatementContext> statement() {
@@ -1595,11 +1439,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitBlock(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitBlock(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ForLoopContext extends StatementContext {
@@ -1631,11 +1470,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitForLoop(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitForLoop(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ForLoopListContext extends StatementContext {
 		public VarDeclarationContext varDeclaration() {
@@ -1661,11 +1495,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitForLoopList(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitForLoopList(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class IfContext extends StatementContext {
@@ -1693,11 +1522,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitIf(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitIf(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class DebugContext extends StatementContext {
 		public ExpressionContext expression() {
@@ -1718,11 +1542,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitDebug(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitDebug(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class BreakContext extends StatementContext {
 		public List<EolContext> eol() {
@@ -1739,11 +1558,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitBreak(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitBreak(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class KillContext extends StatementContext {
@@ -1765,11 +1579,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitKill(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitKill(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class StatmentEolContext extends StatementContext {
 		public EolContext eol() {
@@ -1783,11 +1592,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatmentEol(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatmentEol(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class BreakpointContext extends StatementContext {
@@ -1809,11 +1613,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitBreakpoint(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitBreakpoint(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExitContext extends StatementContext {
 		public ExpressionContext expression() {
@@ -1834,11 +1633,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExit(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExit(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class HelpContext extends StatementContext {
 		public TerminalNode HELP_LITERAL() { return getToken(BigDataScriptParser.HELP_LITERAL, 0); }
@@ -1850,11 +1644,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitHelp(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitHelp(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class PrintContext extends StatementContext {
@@ -1876,11 +1665,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPrint(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPrint(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class StatementExprContext extends StatementContext {
 		public ExpressionContext expression() {
@@ -1901,11 +1685,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitStatementExpr(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitStatementExpr(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ReturnContext extends StatementContext {
 		public ExpressionContext expression() {
@@ -1925,11 +1704,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReturn(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReturn(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -2946,11 +2720,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitForInit(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitForInit(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ForInitContext forInit() throws RecognitionException {
@@ -3003,11 +2772,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitForCondition(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitForCondition(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ForConditionContext forCondition() throws RecognitionException {
@@ -3046,11 +2810,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitForEnd(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitForEnd(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -3102,11 +2861,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLogicAnd(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLogicAnd(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionAssignmentListContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -3123,11 +2877,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentList(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentList(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionEqContext extends ExpressionContext {
@@ -3146,11 +2895,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionEq(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionEq(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionMinusContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -3167,11 +2911,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionMinus(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionMinus(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionDepOperatorContext extends ExpressionContext {
@@ -3190,11 +2929,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionDepOperator(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionDepOperator(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionNeContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -3211,11 +2945,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionNe(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionNe(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionBitXorContext extends ExpressionContext {
@@ -3234,11 +2963,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitXor(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitXor(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionBitNegationContext extends ExpressionContext {
 		public ExpressionContext expression() {
@@ -3252,11 +2976,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitNegation(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitNegation(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionBitAndContext extends ExpressionContext {
@@ -3275,11 +2994,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitAnd(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitAnd(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class PostContext extends ExpressionContext {
 		public ExpressionContext expression() {
@@ -3293,11 +3007,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPost(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPost(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ReferenceMapContext extends ExpressionContext {
@@ -3316,11 +3025,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReferenceMap(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReferenceMap(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionLogicNotContext extends ExpressionContext {
 		public ExpressionContext expression() {
@@ -3334,11 +3038,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLogicNot(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLogicNot(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionVariableInitImplicitContext extends ExpressionContext {
@@ -3354,11 +3053,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionVariableInitImplicit(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionVariableInitImplicit(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionAssignmentMultContext extends ExpressionContext {
@@ -3376,11 +3070,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentMult(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentMult(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionDepContext extends ExpressionContext {
@@ -3402,11 +3091,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionDep(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionDep(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionNewContext extends ExpressionContext {
 		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
@@ -3425,11 +3109,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionNew(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionNew(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionLtContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -3446,11 +3125,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLt(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLt(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionAssignmentDivContext extends ExpressionContext {
@@ -3469,11 +3143,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentDiv(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentDiv(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class PreContext extends ExpressionContext {
 		public ExpressionContext expression() {
@@ -3488,11 +3157,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitPre(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitPre(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionUnaryPlusContext extends ExpressionContext {
 		public ExpressionContext expression() {
@@ -3506,11 +3170,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionUnaryPlus(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionUnaryPlus(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionLogicOrContext extends ExpressionContext {
@@ -3528,11 +3187,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLogicOr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLogicOr(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionParallelContext extends ExpressionContext {
@@ -3554,11 +3208,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionParallel(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionParallel(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralBoolContext extends ExpressionContext {
 		public TerminalNode BOOL_LITERAL() { return getToken(BigDataScriptParser.BOOL_LITERAL, 0); }
@@ -3570,11 +3219,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralBool(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralBool(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionGoalContext extends ExpressionContext {
@@ -3589,11 +3233,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionGoal(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionGoal(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionTimesContext extends ExpressionContext {
@@ -3612,11 +3251,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionTimes(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionTimes(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionPlusContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -3634,11 +3268,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionPlus(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionPlus(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ReferenceFieldContext extends ExpressionContext {
 		public ExpressionContext expression() {
@@ -3653,11 +3282,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReferenceField(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReferenceField(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class FunctionCallContext extends ExpressionContext {
@@ -3677,11 +3301,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitFunctionCall(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitFunctionCall(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionParenContext extends ExpressionContext {
 		public ExpressionContext expression() {
@@ -3695,11 +3314,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionParen(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionParen(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionCondContext extends ExpressionContext {
@@ -3718,11 +3332,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionCond(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionCond(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionUnaryMinusContext extends ExpressionContext {
 		public ExpressionContext expression() {
@@ -3736,11 +3345,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionUnaryMinus(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionUnaryMinus(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionBitOrContext extends ExpressionContext {
@@ -3759,11 +3363,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionBitOr(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionBitOr(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralIntContext extends ExpressionContext {
 		public TerminalNode INT_LITERAL() { return getToken(BigDataScriptParser.INT_LITERAL, 0); }
@@ -3776,11 +3375,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralInt(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralInt(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralMapEmptyContext extends ExpressionContext {
 		public LiteralMapEmptyContext(ExpressionContext ctx) { copyFrom(ctx); }
@@ -3791,11 +3385,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralMapEmpty(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralMapEmpty(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class MethodCallContext extends ExpressionContext {
@@ -3815,11 +3404,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitMethodCall(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitMethodCall(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralNullContext extends ExpressionContext {
 		public TerminalNode NULL_LITERAL() { return getToken(BigDataScriptParser.NULL_LITERAL, 0); }
@@ -3831,11 +3415,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralNull(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralNull(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class LiteralStringContext extends ExpressionContext {
@@ -3849,11 +3428,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralString(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralString(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionGtContext extends ExpressionContext {
@@ -3872,11 +3446,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionGt(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionGt(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionModuloContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -3893,11 +3462,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionModulo(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionModulo(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionAssignmentBitAndContext extends ExpressionContext {
@@ -3916,11 +3480,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentBitAnd(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentBitAnd(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionLeContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -3937,11 +3496,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionLe(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionLe(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class LiteralMapContext extends ExpressionContext {
@@ -3960,11 +3514,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralMap(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralMap(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionAssignmentBitOrContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -3981,11 +3530,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentBitOr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentBitOr(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionTaskContext extends ExpressionContext {
@@ -4007,11 +3551,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionTask(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionTask(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ReferenceVarContext extends ExpressionContext {
 		public TerminalNode ID() { return getToken(BigDataScriptParser.ID, 0); }
@@ -4024,11 +3563,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReferenceVar(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReferenceVar(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionSysContext extends ExpressionContext {
 		public TerminalNode SYS_LITERAL() { return getToken(BigDataScriptParser.SYS_LITERAL, 0); }
@@ -4040,11 +3574,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionSys(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionSys(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionAssignmentMinusContext extends ExpressionContext {
@@ -4063,11 +3592,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentMinus(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentMinus(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ReferenceListContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -4085,11 +3609,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitReferenceList(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitReferenceList(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralListEmptyContext extends ExpressionContext {
 		public LiteralListEmptyContext(ExpressionContext ctx) { copyFrom(ctx); }
@@ -4100,11 +3619,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralListEmpty(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralListEmpty(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionTaskLiteralContext extends ExpressionContext {
@@ -4117,11 +3631,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionTaskLiteral(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionTaskLiteral(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionDivideContext extends ExpressionContext {
@@ -4140,11 +3649,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionDivide(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionDivide(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionAssignmentContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -4162,11 +3666,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignment(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignment(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralRealContext extends ExpressionContext {
 		public TerminalNode REAL_LITERAL() { return getToken(BigDataScriptParser.REAL_LITERAL, 0); }
@@ -4178,11 +3677,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralReal(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralReal(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionAssignmentPlusContext extends ExpressionContext {
@@ -4201,11 +3695,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionAssignmentPlus(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionAssignmentPlus(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionGeContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -4223,11 +3712,6 @@ public class BigDataScriptParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionGe(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionGe(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralListContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
@@ -4244,11 +3728,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitLiteralList(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitLiteralList(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -5232,11 +4711,6 @@ public class BigDataScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof BigDataScriptListener ) ((BigDataScriptListener)listener).exitExpressionList(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BigDataScriptVisitor ) return ((BigDataScriptVisitor<? extends T>)visitor).visitExpressionList(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 

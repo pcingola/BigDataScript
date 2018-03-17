@@ -1,13 +1,9 @@
-#!/usr/bin/env bds
 
-class Zzz {
-	int i
-	void Zzz(int j) { i = j }
-	void set(int j) { i = j }
+int i
+
+int f( int i ) {
+	return i;
 }
 
-
-Zzz z
-z.set(2)
-
+println("res: " + f(2) )
 
