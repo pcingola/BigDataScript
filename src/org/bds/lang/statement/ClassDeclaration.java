@@ -225,6 +225,13 @@ public class ClassDeclaration extends Block {
 			// Add to symbol table
 			addSymTab(symtab);
 		}
+
+		// Check constructors
+		for (MethodDeclaration md : methodDecl) {
+			if (isConstructor(md) && md.getReturnType() != null && !md.getReturnType().isVoid()) {
+				compilerMessages.add(this, "Constructor return type must be 'void': " + className, MessageType.ERROR);
+			}
+		}
 	}
 
 }

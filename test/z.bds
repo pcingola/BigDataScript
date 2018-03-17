@@ -2,6 +2,7 @@
 
 class Zzz {
 	int i
+	int Zzz(string s) { i = s.length(); return i; }
 	void Zzz(int j) { i = j }
 	void set(int j) { i = j }
 }

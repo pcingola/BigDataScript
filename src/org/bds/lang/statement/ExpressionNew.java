@@ -27,17 +27,6 @@ public class ExpressionNew extends MethodCall {
 		argsStart = 1;
 	}
 
-	//	@Override
-	//	public ValueArgs evalArgs(BdsThread bdsThread) {
-	//		ValueArgs vargs = super.evalArgs(bdsThread);
-	//
-	//		// Create and add empty 'this' object
-	//		Value newValue = expresionObj.getReturnType().newValue();
-	//		vargs.setValue(0, newValue);
-	//
-	//		return vargs;
-	//	}
-
 	@Override
 	protected Value evalThis(BdsThread bdsThread) {
 		return expresionObj.getReturnType().newValue();
@@ -113,73 +102,6 @@ public class ExpressionNew extends MethodCall {
 			bdsThread.fatalError(this, t);
 		}
 	}
-
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		// Evaluate all expressions
-	//		ValueArgs vargs = evalArgs(bdsThread);
-	//
-	//		// Create scope
-	//		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
-	//
-	//		// Initialize fields
-	//		// Evaluate object
-	//		Value vthis = initializeFields(bdsThread);
-	//
-	//		// Run method body
-	//		functionDeclaration.runFunction(bdsThread);
-	//
-	//		if (!bdsThread.isCheckpointRecover()) {
-	//			// Get return map
-	//			Value retVal = bdsThread.getReturnValue();
-	//
-	//			// Back to old scope
-	//			bdsThread.oldScope();
-	//
-	//			// Return result
-	//			bdsThread.push(retVal);
-	//		}
-	//	}
-
-	//	/**
-	//	 * Evaluate an expression
-	//	 */
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		//		// Evaluate object
-	//		//		bdsThread.run(expresionObj);
-	//		//		Value vthis = bdsThread.pop();
-	//		//
-	//		//		// Is object 'null'?
-	//		//		if (vthis == null //
-	//		//				|| (expresionObj.isClass() && ((ValueClass) vthis).isNull()) //
-	//		//		) {
-	//		//			bdsThread.fatalError(this, "Null pointer: Cannot call method '" + expresionObj.getReturnType() + "." + functionName + "' in null object");
-	//		//		}
-	//
-	//		// Evaluate all expressions
-	//		ValueArgs vargs = evalArgs(bdsThread);
-	//
-	//		Value vthis = initializeFields(bdsThread);
-	//		vargs.setValue(0, vthis); // Set 'this' as first argument
-	//
-	//		// Create scope
-	//		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
-	//
-	//		// Run method body
-	//		functionDeclaration.runFunction(bdsThread);
-	//
-	//		if (!bdsThread.isCheckpointRecover()) {
-	//			// Get return map
-	//			Value retVal = bdsThread.getReturnValue();
-	//
-	//			// Back to old scope
-	//			bdsThread.oldScope();
-	//
-	//			// Return result
-	//			bdsThread.push(retVal);
-	//		}
-	//	}
 
 	@Override
 	protected String signature() {

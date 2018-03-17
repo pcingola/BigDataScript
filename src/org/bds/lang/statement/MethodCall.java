@@ -113,32 +113,6 @@ public class MethodCall extends FunctionCall {
 		return returnType;
 	}
 
-	//	/**
-	//	 * Evaluate an expression
-	//	 */
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		// Evaluate arguments
-	//		ValueArgs vargs = evalArgs(bdsThread);
-	//
-	//		// Create scope
-	//		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
-	//
-	//		// Run method body
-	//		functionDeclaration.runFunction(bdsThread);
-	//
-	//		if (!bdsThread.isCheckpointRecover()) {
-	//			// Get return map
-	//			Value retVal = bdsThread.getReturnValue();
-	//
-	//			// Back to old scope
-	//			bdsThread.oldScope();
-	//
-	//			// Return result
-	//			bdsThread.push(retVal);
-	//		}
-	//	}
-
 	@Override
 	protected String signature() {
 		StringBuilder sig = new StringBuilder();
