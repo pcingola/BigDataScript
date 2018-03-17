@@ -81,8 +81,18 @@ public class ReferenceVar extends Reference {
 	}
 
 	@Override
+	public boolean isConstant(SymbolTable symtab) {
+		return symtab.isConstant(getVariableName());
+	}
+
+	@Override
 	public boolean isReturnTypesNotNull() {
 		return returnType != null;
+	}
+
+	@Override
+	public boolean isVariableReference(SymbolTable symtab) {
+		return true;
 	}
 
 	@Override

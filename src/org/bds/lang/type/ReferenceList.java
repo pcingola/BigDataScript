@@ -39,7 +39,7 @@ public class ReferenceList extends Reference {
 
 	@Override
 	public String getVariableName() {
-		if (exprList instanceof ReferenceVar) return ((ReferenceVar) exprList).getVariableName();
+		if (exprList instanceof Reference) return ((Reference) exprList).getVariableName();
 		return null;
 	}
 
@@ -48,8 +48,10 @@ public class ReferenceList extends Reference {
 		return returnType != null;
 	}
 
-	public boolean isVariableReference() {
-		return exprList instanceof ReferenceVar;
+	@Override
+	public boolean isVariableReference(SymbolTable symtab) {
+		if (exprList instanceof Reference) { return ((Reference) exprList).isVariableReference(symtab); }
+		return false;
 	}
 
 	@Override
@@ -100,7 +102,7 @@ public class ReferenceList extends Reference {
 	}
 
 	/**
-	 * Evaluate an expression
+	 * Evaluate an expression: Get list element into stack
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
@@ -119,15 +121,19 @@ public class ReferenceList extends Reference {
 		bdsThread.push(vlist.getValue(idx));
 	}
 
+	/**
+	 * Set list element
+	 */
 	@Override
 	public void setValue(BdsThread bdsThread, Value value) {
 		if (value == null) return;
 
+		bdsThread.run(exprList);
 		bdsThread.run(exprIdx);
 		int idx = (int) bdsThread.popInt();
 		if (bdsThread.isCheckpointRecover()) return;
 
-		ValueList vlist = getValue(bdsThread.getScope());
+		ValueList vlist = (ValueList) bdsThread.pop(); // getValue(bdsThread.getScope());
 		if (vlist == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
 		vlist.setValue(idx, value);
 	}
@@ -142,7 +148,9 @@ public class ReferenceList extends Reference {
 		// Calculate return type
 		returnType(symtab);
 
-		if ((exprList.getReturnType() != null) && !exprList.getReturnType().isList()) compilerMessages.add(this, "Expression '" + exprList + "' is not a list/array", MessageType.ERROR);
+		if ((exprList.getReturnType() != null) && !exprList.isList()) {
+			compilerMessages.add(this, "Expression '" + exprList + "' is not a list/array", MessageType.ERROR);
+		}
 		if (exprIdx != null) exprIdx.checkCanCastToInt(compilerMessages);
 	}
 

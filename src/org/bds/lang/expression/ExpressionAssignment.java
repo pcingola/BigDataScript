@@ -66,7 +66,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 		// Trying to assign to a constant?
 		Reference rleft = ((Reference) left);
 		if (rleft.isConstant(symtab)) compilerMessages.add(this, "Cannot assign to constant '" + left + "'", MessageType.ERROR);
-		if (!rleft.isVariable(symtab)) compilerMessages.add(this, "Cannot assign to non-variable '" + left + "'", MessageType.ERROR);
+		if (!rleft.isVariableReference(symtab)) compilerMessages.add(this, "Cannot assign to non-variable '" + left + "'", MessageType.ERROR);
 
 		// Can we cast 'right type' into 'left type'?
 		if (!right.canCastTo(left)) {

@@ -22,13 +22,10 @@ public abstract class Reference extends Expression {
 	public abstract String getVariableName();
 
 	public boolean isConstant(SymbolTable symtab) {
-		return symtab.isConstant(getVariableName());
+		return false;
 	}
 
-	public boolean isVariable(SymbolTable symtab) {
-		Type t = symtab.getType(getVariableName());
-		return (t != null);
-	}
+	public abstract boolean isVariableReference(SymbolTable symtab);
 
 	/**
 	 * Parse a string (e.g. an interpolated string)

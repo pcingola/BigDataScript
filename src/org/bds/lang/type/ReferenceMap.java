@@ -38,7 +38,7 @@ public class ReferenceMap extends Reference {
 
 	@Override
 	public String getVariableName() {
-		if (exprMap instanceof ReferenceVar) return ((ReferenceVar) exprMap).getVariableName();
+		if (exprMap instanceof Reference) return ((Reference) exprMap).getVariableName();
 		return null;
 
 	}
@@ -46,6 +46,12 @@ public class ReferenceMap extends Reference {
 	@Override
 	public boolean isReturnTypesNotNull() {
 		return returnType != null;
+	}
+
+	@Override
+	public boolean isVariableReference(SymbolTable symtab) {
+		if (exprMap instanceof Reference) { return ((Reference) exprMap).isVariableReference(symtab); }
+		return false;
 	}
 
 	@Override
@@ -124,11 +130,12 @@ public class ReferenceMap extends Reference {
 	public void setValue(BdsThread bdsThread, Value value) {
 		if (value == null) return;
 
+		bdsThread.run(exprMap);
 		bdsThread.run(expressionKey);
 		Value key = bdsThread.pop();
 		if (bdsThread.isCheckpointRecover()) return;
 
-		ValueMap vmap = getValue(bdsThread.getScope());
+		ValueMap vmap = (ValueMap) bdsThread.pop(); // getValue(bdsThread.getScope());
 		if (vmap == null) bdsThread.fatalError(this, "Cannot find variable '" + this + "'");
 		vmap.put(key, value);
 	}
