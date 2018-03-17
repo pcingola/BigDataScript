@@ -1,7 +1,11 @@
 package org.bds.test;
 
+import java.util.HashMap;
+
 import org.bds.util.Gpr;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -12,54 +16,73 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test17() {
+	public void test42() {
 		Gpr.debug("Test");
-		verbose = true;
-		compileOk("test/test17.bds");
+		compileOk("test/test42.bds");
 	}
 
 	@Test
-	public void test18() {
+	public void test47() {
 		Gpr.debug("Test");
-		compileOk("test/test18.bds");
+		String errs = "ERROR [ file 'test/test47.bds', line 3 ] :	Duplicate local name 'gsea' (function 'gsea' declared in test/test47.bds, line 5)";
+		compileErrors("test/test47.bds", errs);
 	}
 
 	@Test
-	public void test20() {
+	public void test50() {
 		Gpr.debug("Test");
-		compileOk("test/test20.bds");
+		String errs = "ERROR [ file 'test/test50.bds', line 6 ] :\tCannot assign to non-variable 'f(  )[0]'";
+		compileErrors("test/test50.bds", errs);
 	}
 
 	@Test
-	public void test21() {
+	public void test51() {
 		Gpr.debug("Test");
-		compileOk("test/test21.bds");
+		String errs = "ERROR [ file 'test/test51.bds', line 6 ] :	Cannot assign to non-variable 'f(  ){\"hi\"}'";
+		compileErrors("test/test51.bds", errs);
 	}
 
 	@Test
-	public void test22() {
+	public void zrun_test50() {
 		Gpr.debug("Test");
-		compileOk("test/test22.bds");
+		HashMap<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("i", "32");
+		expectedValues.put("j", "302");
+		expectedValues.put("jx", "44");
+		expectedValues.put("jy", "91");
+
+		runAndCheck("test/run_50.bds", expectedValues);
 	}
 
 	@Test
-	public void test23() {
+	public void zrun_test15_3() {
 		Gpr.debug("Test");
-		compileOk("test/test23.bds");
+		runAndCheck("test/run_15.bds", "li3", "[apple, orange, 1]");
 	}
 
 	@Test
-	public void test30() {
+	public void zrun_test95() {
 		Gpr.debug("Test");
-		String errs = "ERROR [ file 'test/test30.bds', line 4 ] :	Cannot cast real to int\n";
-		compileErrors("test/test30.bds", errs);
+		runAndCheck("test/run_95.bds", "ll", "[zero, one, two, three, four, 5]");
 	}
 
 	@Test
-	public void test31() {
+	public void zrun_test116_lineWrap_backslashId() {
 		Gpr.debug("Test");
-		String errs = "ERROR [ file 'test/test31.bds', line 4 ] :	Function has no return statement\n";
-		compileErrors("test/test31.bds", errs);
+		String stdout = runAndReturnStdout("test/run_116.bds");
+		Assert.assertEquals("hi bye\nThe answer\t\tis: 42", stdout);
+	}
+
+	@Test
+	public void zrun_test140_list_nonvariable() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_140.bds", "i", "2");
+	}
+
+	@Test
+	public void zrun_test141_map_nonvariable() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_141.bds", "i", "42");
 	}
 
 	//	@Test
