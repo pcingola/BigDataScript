@@ -228,7 +228,11 @@ public class ClassDeclaration extends Block {
 
 		// Check constructors
 		for (MethodDeclaration md : methodDecl) {
-			if (isConstructor(md) && md.getReturnType() != null && !md.getReturnType().isVoid()) {
+			if (isConstructor(md) //
+					&& md.getReturnType() != null //
+					&& !md.isNative() //
+					&& !md.getReturnType().isVoid() //
+			) {
 				compilerMessages.add(this, "Constructor return type must be 'void': " + className, MessageType.ERROR);
 			}
 		}

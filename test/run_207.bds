@@ -1,17 +1,9 @@
 #!/usr/bin/env bds
 
-#2 * z.a + 1
-#2 * z.a.b + 1
-#2 * z.a.b.c[7] + 1
-#2 * z.a.b.c[7].d + 1
-#2 * z.a.b.c[7].d.e{'hi'} + 1
-#2 * z.a.b.c[7].d.e{'hi'}.f + 1
-
 class Zzz {
     int i = 42
 	string[] l = ['hi', 'bye']
     string{} m = {'hi' => 'hola', 'bye' => 'chau'}
-    #int h(int i) return this.i + i
 }
 
 Zzz z = new Zzz()

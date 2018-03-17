@@ -29,7 +29,10 @@ public class ExpressionNew extends MethodCall {
 
 	@Override
 	protected Value evalThis(BdsThread bdsThread) {
-		return expresionObj.getReturnType().newValue();
+		Value vthis = expresionObj.getReturnType().newValue();
+		bdsThread.getScope().add(ClassDeclaration.THIS, vthis);
+		initializeFields(bdsThread);
+		return vthis;
 	}
 
 	/**

@@ -64,7 +64,7 @@ public class ValueString extends ValuePrimitive {
 
 	@Override
 	public String toString() {
-		return value == null ? "null" : '"' + value + '"';
+		return value == null ? "null" : value;
 	}
 
 }
