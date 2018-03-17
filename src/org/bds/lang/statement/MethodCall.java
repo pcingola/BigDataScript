@@ -54,9 +54,7 @@ public class MethodCall extends FunctionCall {
 		// Is object 'null'?
 		if (vthis == null //
 				|| (expresionObj.isClass() && ((ValueClass) vthis).isNull()) //
-		) {
-			bdsThread.fatalError(this, "Null pointer: Cannot call method '" + expresionObj.getReturnType() + "." + functionName + "' in null object");
-		}
+		) throw new RuntimeException("Null pointer: Cannot call method '" + expresionObj.getReturnType() + "." + functionName + "' in null object");
 
 		return vthis;
 	}
