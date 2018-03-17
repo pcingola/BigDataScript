@@ -45,7 +45,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		runFunction(bdsThread);
 		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
 
-		// Get return map
+		// Get return value
 		Value retVal = bdsThread.getReturnValue();
 
 		// Restore old scope

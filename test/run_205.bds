@@ -7,5 +7,3 @@ class Zzz {
 Zzz z
 z = null
 println("z: $z")
-z = new Zzz()
-println("z: $z")

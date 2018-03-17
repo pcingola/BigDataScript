@@ -8,7 +8,7 @@ class Zzz {
 	int f(int x) { return x + i }
 }
 
-Zzz z = Zzz()
+Zzz z = new Zzz()
 z.i = 2
 j := z.f(40)
 println("z: $z\tj: $j")

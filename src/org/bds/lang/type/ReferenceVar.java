@@ -139,8 +139,17 @@ public class ReferenceVar extends Reference {
 	@Override
 	public void setValue(BdsThread bdsThread, Value value) {
 		if (value == null) return;
-		Value val = getValue(bdsThread.getScope()); // Get scope symbol
-		value = getReturnType().cast(value); // Cast to destination type
+
+		Value val;
+		if (classField) {
+			ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
+			val = vthis.getValue(name);
+			if (val == null) bdsThread.fatalError(this, "Cannot find field '" + name + "'");
+		} else {
+			val = getValue(bdsThread.getScope()); // Get scope symbol
+			value = getReturnType().cast(value); // Cast to destination type
+		}
+
 		val.setValue(value); // Assign
 	}
 

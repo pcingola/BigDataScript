@@ -37,6 +37,7 @@ public class ValueClass extends ValueComposite {
 	}
 
 	public Value getValue(String name) {
+		if (isNull()) throw new RuntimeException("Null pointer: Cannot access field '" + getType() + "." + name + "'");
 		return fields.get(name);
 	}
 
@@ -55,6 +56,10 @@ public class ValueClass extends ValueComposite {
 		}
 	}
 
+	public boolean isNull() {
+		return fields == null;
+	}
+
 	@Override
 	public void parse(String str) {
 		throw new RuntimeException("String parsing unimplemented for type '" + this + "'");
@@ -67,11 +72,14 @@ public class ValueClass extends ValueComposite {
 	}
 
 	public void setValue(String name, Value v) {
+		if (isNull()) throw new RuntimeException("Null pointer: Cannot set field '" + getType() + "." + name + "'");
 		fields.put(name, v);
 	}
 
 	@Override
 	public String toString() {
+		if (isNull()) return "null";
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		if (fields != null) {

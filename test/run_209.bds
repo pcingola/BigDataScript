@@ -1,0 +1,11 @@
+#!/usr/bin/env bds
+
+class Zzz {
+	int i
+}
+
+Zzz z
+j := z.i
+println("z: $z\tj: $j")
+
+

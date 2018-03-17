@@ -1,6 +1,7 @@
 package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.Config;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
@@ -9,6 +10,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
+import org.bds.lang.value.ValueClass;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
@@ -25,29 +27,34 @@ public class ExpressionNew extends MethodCall {
 		argsStart = 1;
 	}
 
+	//	@Override
+	//	public ValueArgs evalArgs(BdsThread bdsThread) {
+	//		ValueArgs vargs = super.evalArgs(bdsThread);
+	//
+	//		// Create and add empty 'this' object
+	//		Value newValue = expresionObj.getReturnType().newValue();
+	//		vargs.setValue(0, newValue);
+	//
+	//		return vargs;
+	//	}
+
 	@Override
-	public ValueArgs evalArgs(BdsThread bdsThread) {
-		ValueArgs vargs = super.evalArgs(bdsThread);
-
-		// Create and add empty 'this' object
-		Value newValue = expresionObj.getReturnType().newValue();
-		vargs.setValue(0, newValue);
-
-		return vargs;
+	protected Value evalThis(BdsThread bdsThread) {
+		return expresionObj.getReturnType().newValue();
 	}
 
 	/**
 	 * Run field initialization
 	 */
-	public void initializeFields(BdsThread bdsThread) {
-		Value vthis = bdsThread.getScope().getValue(ClassDeclaration.THIS);
+	public ValueClass initializeFields(BdsThread bdsThread) {
+		ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
 		TypeClass tthis = (TypeClass) vthis.getType();
 
 		FieldDeclaration fieldDecls[] = tthis.getClassDeclaration().getFieldDecl();
-		for (FieldDeclaration fieldDecl : fieldDecls) {
+		for (FieldDeclaration fieldDecl : fieldDecls)
 			bdsThread.run(fieldDecl);
-		}
 
+		return vthis;
 	}
 
 	@Override
@@ -86,31 +93,93 @@ public class ExpressionNew extends MethodCall {
 		return returnType;
 	}
 
+	/**
+	 * Run an expression: I.e. evaluate the expression
+	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		// Evaluate all expressions
-		ValueArgs vargs = evalArgs(bdsThread);
+		try {
+			// Evaluate function arguments
+			ValueArgs arguments = evalArgs(bdsThread);
 
-		// Create scope
-		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
+			// Apply function to parameters
+			functionDeclaration.apply(bdsThread, arguments);
 
-		// Initialize fields
-		initializeFields(bdsThread);
-
-		// Run method body
-		functionDeclaration.runFunction(bdsThread);
-
-		if (!bdsThread.isCheckpointRecover()) {
-			// Get return map
-			Value retVal = bdsThread.getReturnValue();
-
-			// Back to old scope
-			bdsThread.oldScope();
-
-			// Return result
-			bdsThread.push(retVal);
+			// Constructors return new objects regardless of type declaration
+			Value vthis = arguments.getValue(0);
+			bdsThread.push(vthis);
+		} catch (Throwable t) {
+			if (Config.get().isDebug()) t.printStackTrace();
+			bdsThread.fatalError(this, t);
 		}
 	}
+
+	//	@Override
+	//	public void runStep(BdsThread bdsThread) {
+	//		// Evaluate all expressions
+	//		ValueArgs vargs = evalArgs(bdsThread);
+	//
+	//		// Create scope
+	//		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
+	//
+	//		// Initialize fields
+	//		// Evaluate object
+	//		Value vthis = initializeFields(bdsThread);
+	//
+	//		// Run method body
+	//		functionDeclaration.runFunction(bdsThread);
+	//
+	//		if (!bdsThread.isCheckpointRecover()) {
+	//			// Get return map
+	//			Value retVal = bdsThread.getReturnValue();
+	//
+	//			// Back to old scope
+	//			bdsThread.oldScope();
+	//
+	//			// Return result
+	//			bdsThread.push(retVal);
+	//		}
+	//	}
+
+	//	/**
+	//	 * Evaluate an expression
+	//	 */
+	//	@Override
+	//	public void runStep(BdsThread bdsThread) {
+	//		//		// Evaluate object
+	//		//		bdsThread.run(expresionObj);
+	//		//		Value vthis = bdsThread.pop();
+	//		//
+	//		//		// Is object 'null'?
+	//		//		if (vthis == null //
+	//		//				|| (expresionObj.isClass() && ((ValueClass) vthis).isNull()) //
+	//		//		) {
+	//		//			bdsThread.fatalError(this, "Null pointer: Cannot call method '" + expresionObj.getReturnType() + "." + functionName + "' in null object");
+	//		//		}
+	//
+	//		// Evaluate all expressions
+	//		ValueArgs vargs = evalArgs(bdsThread);
+	//
+	//		Value vthis = initializeFields(bdsThread);
+	//		vargs.setValue(0, vthis); // Set 'this' as first argument
+	//
+	//		// Create scope
+	//		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
+	//
+	//		// Run method body
+	//		functionDeclaration.runFunction(bdsThread);
+	//
+	//		if (!bdsThread.isCheckpointRecover()) {
+	//			// Get return map
+	//			Value retVal = bdsThread.getReturnValue();
+	//
+	//			// Back to old scope
+	//			bdsThread.oldScope();
+	//
+	//			// Return result
+	//			bdsThread.push(retVal);
+	//		}
+	//	}
 
 	@Override
 	protected String signature() {

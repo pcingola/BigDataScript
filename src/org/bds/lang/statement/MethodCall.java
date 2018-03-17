@@ -9,6 +9,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
+import org.bds.lang.value.ValueClass;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
@@ -27,6 +28,37 @@ public class MethodCall extends FunctionCall {
 
 	public MethodCall(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+		argsStart = 1; // First argument is 'this', which is evaluated separately
+	}
+
+	@Override
+	public ValueArgs evalArgs(BdsThread bdsThread) {
+		// Evaluate 'this'
+		Value vthis = evalThis(bdsThread);
+
+		// Evaluate arguments
+		ValueArgs vargs = super.evalArgs(bdsThread);
+		vargs.setValue(0, vthis); // Set 'this' as first argument
+
+		return vargs;
+	}
+
+	/**
+	 * Evaluate 'this' object
+	 */
+	protected Value evalThis(BdsThread bdsThread) {
+		// Evaluate object
+		bdsThread.run(expresionObj);
+		Value vthis = bdsThread.pop();
+
+		// Is object 'null'?
+		if (vthis == null //
+				|| (expresionObj.isClass() && ((ValueClass) vthis).isNull()) //
+		) {
+			bdsThread.fatalError(this, "Null pointer: Cannot call method '" + expresionObj.getReturnType() + "." + functionName + "' in null object");
+		}
+
+		return vthis;
 	}
 
 	/**
@@ -81,31 +113,31 @@ public class MethodCall extends FunctionCall {
 		return returnType;
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Evaluate all expressions
-		ValueArgs vargs = evalArgs(bdsThread);
-
-		// Create scope
-		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
-
-		// Run method body
-		functionDeclaration.runFunction(bdsThread);
-
-		if (!bdsThread.isCheckpointRecover()) {
-			// Get return map
-			Value retVal = bdsThread.getReturnValue();
-
-			// Back to old scope
-			bdsThread.oldScope();
-
-			// Return result
-			bdsThread.push(retVal);
-		}
-	}
+	//	/**
+	//	 * Evaluate an expression
+	//	 */
+	//	@Override
+	//	public void runStep(BdsThread bdsThread) {
+	//		// Evaluate arguments
+	//		ValueArgs vargs = evalArgs(bdsThread);
+	//
+	//		// Create scope
+	//		if (!bdsThread.isCheckpointRecover()) functionDeclaration.createScopeAddArgs(bdsThread, vargs);
+	//
+	//		// Run method body
+	//		functionDeclaration.runFunction(bdsThread);
+	//
+	//		if (!bdsThread.isCheckpointRecover()) {
+	//			// Get return map
+	//			Value retVal = bdsThread.getReturnValue();
+	//
+	//			// Back to old scope
+	//			bdsThread.oldScope();
+	//
+	//			// Return result
+	//			bdsThread.push(retVal);
+	//		}
+	//	}
 
 	@Override
 	protected String signature() {
