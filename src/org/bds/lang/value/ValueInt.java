@@ -34,7 +34,7 @@ public class ValueInt extends ValuePrimitive {
 
 	@Override
 	public String asString() {
-		return Double.toString(value);
+		return Long.toString(value);
 	}
 
 	@Override
