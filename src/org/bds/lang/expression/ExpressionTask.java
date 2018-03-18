@@ -387,7 +387,7 @@ public class ExpressionTask extends ExpressionWithScope {
 			return;
 		}
 
-		List<BdsNode> statements = statement.findNodes(null, true);
+		List<BdsNode> statements = statement.findNodes(null, true, false);
 
 		// No child nodes? Add the only node we have
 		if (statements.isEmpty()) statements.add(statement);

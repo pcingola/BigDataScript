@@ -23,6 +23,11 @@ public class GlobalSymbolTable extends SymbolTable {
 	}
 
 	@Override
+	protected String getName() {
+		return "Global";
+	}
+
+	@Override
 	public SymbolTable getParent() {
 		return null; // GlobalSYmbolTable has no parent
 	}

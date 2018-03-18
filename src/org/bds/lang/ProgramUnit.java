@@ -75,7 +75,7 @@ public class ProgramUnit extends BlockWithFile {
 	 */
 	public List<FunctionDeclaration> testsFunctions() {
 		List<FunctionDeclaration> testFuncs = new ArrayList<>();
-		List<BdsNode> allFuncs = findNodes(FunctionDeclaration.class, true);
+		List<BdsNode> allFuncs = findNodes(FunctionDeclaration.class, true, false);
 		for (BdsNode func : allFuncs) {
 			// Create scope symbol
 			FunctionDeclaration fd = (FunctionDeclaration) func;

@@ -146,7 +146,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {
 		if (!returnType.isVoid()) {
-			List<BdsNode> returnStatements = findNodes(Return.class, true);
+			List<BdsNode> returnStatements = findNodes(Return.class, true, false);
 			if (returnStatements.isEmpty()) compilerMessages.add(this, "Function has no return statement", MessageType.ERROR);
 		}
 	}

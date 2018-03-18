@@ -6,7 +6,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.symbol.SymbolTable;
-import org.bds.util.Gpr;
 
 /**
  * A Statement that requires a new Scope
@@ -32,15 +31,14 @@ public class StatementWithScope extends Statement {
 	 */
 	public void addLocalSymbols(SymbolTable symtab) {
 		// Add all functions
-		List<BdsNode> fdecls = findNodes(FunctionDeclaration.class, false);
+		List<BdsNode> fdecls = findNodes(StatementFunctionDeclaration.class, false, true);
 		for (BdsNode n : fdecls) {
 			FunctionDeclaration fd = (FunctionDeclaration) n;
-			Gpr.debug("ADD LOCAL SYMBOL: " + fd.signatureWithName());
 			symtab.add(fd.getFunctionName(), fd.getType());
 		}
 
 		// Add all classes
-		List<BdsNode> cdecls = findNodes(ClassDeclaration.class, false);
+		List<BdsNode> cdecls = findNodes(ClassDeclaration.class, false, true);
 		for (BdsNode n : cdecls) {
 			ClassDeclaration cd = (ClassDeclaration) n;
 			symtab.add(cd.getClassName(), cd.getType());

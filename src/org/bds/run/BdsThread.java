@@ -516,7 +516,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		// first node that has file/line data
 
 		// Find all nodes and add them to a map (by nodeId)
-		List<BdsNode> bdsNodes = statement.findNodes(null, true);
+		List<BdsNode> bdsNodes = statement.findNodes(null, true, false);
 		Map<Integer, BdsNode> nodesById = new HashMap<>();
 		for (BdsNode n : bdsNodes)
 			nodesById.put(n.getId(), n);
@@ -834,7 +834,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 	public void print() {
 		// Create a list with program file and all included files
-		List<BdsNode> nodeWithFiles = statement.findNodes(StatementInclude.class, true);
+		List<BdsNode> nodeWithFiles = statement.findNodes(StatementInclude.class, true, false);
 		nodeWithFiles.add(0, statement);
 
 		// Show code
@@ -1385,7 +1385,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	public String stackTrace() {
 
 		// Get all nodes and hash them by ID
-		List<BdsNode> nodes = statement.findNodes(null, true);
+		List<BdsNode> nodes = statement.findNodes(null, true, false);
 		HashMap<Integer, BdsNode> nodesById = new HashMap<>();
 		for (BdsNode node : nodes) {
 			nodesById.put(node.getId(), node);

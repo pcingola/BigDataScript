@@ -18,6 +18,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.compile.TypeCheckedNodes;
+import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.type.PrimitiveType;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -151,16 +152,20 @@ public abstract class BdsNode implements BdsSerialize {
 	 * IMPORTANT: Nodes are return ALPHABETICALLY sorted
 	 *
 	 * @param clazz : Class to find (all nodes if null)
+	 *
 	 * @param recurse : If true, perform recursive search
+	 *
+	 * @param recurseInclude : If true, perform recursive search within 'StatementInclide' nodes.
+	 *                         Note: If 'recurse' is set, the value of 'recurseInclude' is irrelevant
 	 */
 	@SuppressWarnings("rawtypes")
-	public List<BdsNode> findNodes(Class clazz, boolean recurse) {
+	public List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude) {
 		HashSet<Object> visited = new HashSet<>();
-		return findNodes(clazz, recurse, visited);
+		return findNodes(clazz, recurse, recurseInclude, visited);
 	}
 
 	@SuppressWarnings("rawtypes")
-	List<BdsNode> findNodes(Class clazz, boolean recurse, Set<Object> visited) {
+	protected List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude, Set<Object> visited) {
 		List<BdsNode> list = new ArrayList<>();
 
 		// Iterate over fields
@@ -176,9 +181,9 @@ public abstract class BdsNode implements BdsSerialize {
 					// If it's an array, iterate on all objects
 					if (fieldObj.getClass().isArray()) {
 						for (Object fieldObjSingle : (Object[]) fieldObj)
-							list.addAll(findNodes(clazz, fieldObjSingle, recurse, visited));
+							list.addAll(findNodes(clazz, fieldObjSingle, recurse, recurseInclude, visited));
 					} else {
-						list.addAll(findNodes(clazz, fieldObj, recurse, visited));
+						list.addAll(findNodes(clazz, fieldObj, recurse, recurseInclude, visited));
 					}
 
 				}
@@ -196,18 +201,19 @@ public abstract class BdsNode implements BdsSerialize {
 	 * @param fieldObj
 	 */
 	@SuppressWarnings("rawtypes")
-	List<BdsNode> findNodes(Class clazz, Object fieldObj, boolean recurse, Set<Object> visited) {
+	List<BdsNode> findNodes(Class clazz, Object fieldObj, boolean recurse, boolean recurseInclude, Set<Object> visited) {
 		List<BdsNode> list = new ArrayList<>();
 
 		// If it is a BigDataScriptNode then we can recurse into it
 		if ((fieldObj != null) && (fieldObj instanceof BdsNode)) {
+			BdsNode bdsnode = ((BdsNode) fieldObj);
+
 			// Found the requested type?
 			if ((clazz == null) || (fieldObj.getClass() == clazz)) list.add((BdsNode) fieldObj);
 
-			// We can recurse into this field
-			if (recurse) {
-				BdsNode csnode = ((BdsNode) fieldObj);
-				list.addAll(csnode.findNodes(clazz, recurse, visited));
+			// Recurse into this field?
+			if (recurse || (recurseInclude && bdsnode instanceof StatementInclude)) {
+				list.addAll(bdsnode.findNodes(clazz, recurse, recurseInclude, visited));
 			}
 		}
 
@@ -829,7 +835,7 @@ public abstract class BdsNode implements BdsSerialize {
 		typeCheck(symtab, compilerMessages);
 
 		// Get all sub-nodes (first level, do not recurse)
-		List<BdsNode> nodes = findNodes(null, false);
+		List<BdsNode> nodes = findNodes(null, false, false);
 
 		// Add this node as 'type-checked' to avoid infinite recursion
 		TypeCheckedNodes.get().add(this);
