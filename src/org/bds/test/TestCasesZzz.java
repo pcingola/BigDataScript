@@ -1,8 +1,5 @@
 package org.bds.test;
 
-import org.bds.util.Gpr;
-import org.junit.Test;
-
 /**
  * Quick test cases when creating a new feature...
  *
@@ -11,33 +8,6 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	@Test
-	public void test42() {
-		Gpr.debug("Test");
-		compileOk("test/test42.bds");
-	}
-
-	//	@Test
-	//	public void test47() {
-	//		Gpr.debug("Test");
-	//		String errs = "ERROR [ file 'test/test47.bds', line 3 ] :	Duplicate local name 'gsea' (function 'gsea' declared in test/test47.bds, line 5)";
-	//		compileErrors("test/test47.bds", errs);
-	//	}
-	//
-	//	@Test
-	//	public void test50() {
-	//		Gpr.debug("Test");
-	//		String errs = "ERROR [ file 'test/test50.bds', line 6 ] :\tCannot assign to non-variable 'f(  )[0]'";
-	//		compileErrors("test/test50.bds", errs);
-	//	}
-	//
-	//	@Test
-	//	public void test51() {
-	//		Gpr.debug("Test");
-	//		String errs = "ERROR [ file 'test/test51.bds', line 6 ] :	Cannot assign to non-variable 'f(  ){\"hi\"}'";
-	//		compileErrors("test/test51.bds", errs);
-	//	}
-	//
 	//	@Test
 	//	public void zrun_test50() {
 	//		Gpr.debug("Test");

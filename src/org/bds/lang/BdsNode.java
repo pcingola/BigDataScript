@@ -241,6 +241,12 @@ public abstract class BdsNode implements BdsSerialize {
 		return null;
 	}
 
+	protected BdsNode findParent(Set<Class> classSet) {
+		if (classSet.contains(this.getClass())) return this;
+		if (parent != null) return parent.findParent(classSet);
+		return null;
+	}
+
 	List<Field> getAllClassFields() {
 		return getAllClassFields(false, true, true, true, true, false, false);
 	}

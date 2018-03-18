@@ -1,14 +1,6 @@
-// include
 
-include 'inc/test-inc.bds';
-
-int i = f2(3);
-int jx = f4(3);
-int jy = f41(3);
-
-int f2(int j) {
-	return j+2;
+int[] f() { 
+	return [1,2,3]
 }
 
-print("Hi\n");
-
+f()[0] = 99

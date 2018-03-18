@@ -1,5 +1,8 @@
 package org.bds.lang.statement;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
@@ -24,6 +27,17 @@ public class Return extends Statement {
 		super(parent, tree);
 	}
 
+	/**
+	 * Find enclosing function
+	 */
+	FunctionDeclaration findParentFunction() {
+		Set<Class> classSet = new HashSet<>();
+		classSet.add(FunctionDeclaration.class);
+		classSet.add(MethodDeclaration.class);
+		classSet.add(StatementFunctionDeclaration.class);
+		return (FunctionDeclaration) findParent(classSet);
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		// child[0] = 'return'
@@ -37,11 +51,15 @@ public class Return extends Statement {
 		// Calculate expression's return type
 		if (expr != null) expr.returnType(symtab);
 
-		// Find enclosing function
-		FunctionDeclaration func = (FunctionDeclaration) findParent(FunctionDeclaration.class);
-		// Get funtion's expected return type
-		if (func == null) returnType = Types.INT; // Function not found? This is not inside any function...must be in 'main' => return type is 'int'
-		else returnType = func.getReturnType();
+		// Find enclosing function / method
+		FunctionDeclaration func = findParentFunction();
+
+		if (func != null) {
+			returnType = func.getReturnType();
+		} else {
+			// Function not found? This is not inside any function...must be in 'main' => return type is 'int'
+			returnType = Types.INT;
+		}
 
 		return returnType;
 	}
