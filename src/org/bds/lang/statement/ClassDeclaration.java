@@ -27,6 +27,7 @@ public class ClassDeclaration extends Block {
 	protected MethodDeclaration methodDecl[];
 	protected ClassDeclaration classParent;
 	protected TypeClass classType;
+	protected TypeClass extendsClass;
 
 	public ClassDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -169,6 +170,8 @@ public class ClassDeclaration extends Block {
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
+		if (extendsName != null) extendsClass = (TypeClass) symtab.getType(extendsName);
+
 		for (VarDeclaration vd : fieldDecl)
 			vd.returnType(symtab);
 
@@ -194,7 +197,7 @@ public class ClassDeclaration extends Block {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class " + className);
-		if (extendsName != null) sb.append("extends " + extendsName);
+		if (extendsName != null) sb.append(" extends " + extendsName);
 
 		sb.append(" {\n");
 
@@ -224,6 +227,11 @@ public class ClassDeclaration extends Block {
 		} else if ((className != null) && (getType() != null)) {
 			// Add to symbol table
 			addSymTab(symtab);
+		}
+
+		// Check parent class
+		if (extendsName != null && extendsClass == null) {
+			compilerMessages.add(this, "Class '" + extendsName + "' not found", MessageType.ERROR);
 		}
 
 		// Check constructors

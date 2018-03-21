@@ -90,6 +90,9 @@ public class TypeClass extends TypeComposite {
 		return className;
 	}
 
+	/**
+	 * Get type for field 'name'
+	 */
 	public Type getType(String name) {
 		return symbolTable.getType(name);
 	}
