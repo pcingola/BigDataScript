@@ -94,7 +94,9 @@ public class TypeClass extends TypeComposite {
 	 * Get type for field 'name'
 	 */
 	public Type getType(String name) {
-		return symbolTable.getType(name);
+		Type t = symbolTable.getType(name);
+		if (t != null) return t;
+		return classDecl.getClassParent() != null ? classDecl.getClassTypeParent().getType(name) : null;
 	}
 
 	@Override

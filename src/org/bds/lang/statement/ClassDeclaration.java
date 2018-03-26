@@ -22,12 +22,13 @@ public class ClassDeclaration extends Block {
 
 	public static final String THIS = "this";
 
-	String className, extendsName;
+	protected String className;
+	protected String classNameParent;
 	protected FieldDeclaration fieldDecl[];
 	protected MethodDeclaration methodDecl[];
 	protected ClassDeclaration classParent;
 	protected TypeClass classType;
-	protected TypeClass extendsClass;
+	protected TypeClass classTypeParent;
 
 	public ClassDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -70,8 +71,12 @@ public class ClassDeclaration extends Block {
 		return classParent;
 	}
 
+	public TypeClass getClassTypeParent() {
+		return classTypeParent;
+	}
+
 	public String getExtendsName() {
-		return extendsName;
+		return classNameParent;
 	}
 
 	public FieldDeclaration[] getFieldDecl() {
@@ -124,7 +129,7 @@ public class ClassDeclaration extends Block {
 		// Extends?
 		if (isTerminal(tree, idx, "extends")) {
 			idx++; // 'extends'
-			extendsName = tree.getChild(idx++).getText();
+			classNameParent = tree.getChild(idx++).getText();
 		}
 
 		// Class body
@@ -170,7 +175,10 @@ public class ClassDeclaration extends Block {
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		if (extendsName != null) extendsClass = (TypeClass) symtab.getType(extendsName);
+		if (classNameParent != null) {
+			classTypeParent = (TypeClass) symtab.getType(classNameParent);
+			classParent = classTypeParent.getClassDeclaration();
+		}
 
 		for (VarDeclaration vd : fieldDecl)
 			vd.returnType(symtab);
@@ -197,7 +205,7 @@ public class ClassDeclaration extends Block {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class " + className);
-		if (extendsName != null) sb.append(" extends " + extendsName);
+		if (classNameParent != null) sb.append(" extends " + classNameParent);
 
 		sb.append(" {\n");
 
@@ -230,8 +238,8 @@ public class ClassDeclaration extends Block {
 		}
 
 		// Check parent class
-		if (extendsName != null && extendsClass == null) {
-			compilerMessages.add(this, "Class '" + extendsName + "' not found", MessageType.ERROR);
+		if (classNameParent != null && classTypeParent == null) {
+			compilerMessages.add(this, "Class '" + classNameParent + "' not found", MessageType.ERROR);
 		}
 
 		// Check constructors

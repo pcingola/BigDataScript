@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 
 /**
- * A comparison expression (==)
+ * A comparison expression (!=)
  *
  * @author pcingola
  */

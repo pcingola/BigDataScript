@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FieldDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.type.Type;
@@ -47,11 +48,18 @@ public class ValueClass extends ValueComposite {
 	public void initializeFields() {
 		fields = new HashMap<>();
 		TypeClass tc = (TypeClass) type;
-		FieldDeclaration fieldDecls[] = tc.getClassDeclaration().getFieldDecl();
-		for (FieldDeclaration fieldDecl : fieldDecls) {
-			Type vt = fieldDecl.getType();
-			for (VariableInit vi : fieldDecl.getVarInit()) {
-				fields.put(vi.getVarName(), vt.newDefaultValue());
+
+		// Fields for this class and all parent classes
+		for (ClassDeclaration cd = tc.getClassDeclaration(); cd != null; cd = cd.getClassParent()) {
+			FieldDeclaration fieldDecls[] = cd.getFieldDecl();
+			for (FieldDeclaration fieldDecl : fieldDecls) { // Add all fields
+				Type vt = fieldDecl.getType();
+				for (VariableInit vi : fieldDecl.getVarInit()) {
+					String fname = vi.getVarName();
+					if (!fields.containsKey(fname)) { // Don't overwrite values 'shadowed' by a child class
+						fields.put(fname, vt.newDefaultValue());
+					}
+				}
 			}
 		}
 	}

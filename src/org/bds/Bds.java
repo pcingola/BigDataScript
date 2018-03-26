@@ -282,71 +282,22 @@ public class Bds {
 	public boolean compile() {
 		if (debug) log("Loading file: '" + programFileName + "'");
 
-		//---
 		// Convert to AST
-		//---
-		if (debug) log("Creating AST.");
-		CompilerMessages.reset();
-		ParseTree tree = null;
+		ParseTree tree = parseProgram();
+		if (tree == null) return false;
 
-		try {
-			tree = createAst();
-		} catch (Exception e) {
-			System.err.println("Fatal error cannot continue - " + e.getMessage());
-			return false;
-		}
-
-		// No tree produced? Fatal error
-		if (tree == null) {
-			if (CompilerMessages.get().isEmpty()) {
-				CompilerMessages.get().addError("Fatal error: Could not compile");
-			}
-			return false;
-		}
-
-		// Any error? Do not continue
-		if (!CompilerMessages.get().isEmpty()) return false;
-
-		//---
 		// Convert to BdsNodes
-		//---
-		if (debug) log("Creating BigDataScript tree.");
-		CompilerMessages.reset();
-		programUnit = (ProgramUnit) BdsNodeFactory.get().factory(null, tree); // Transform AST to BigDataScript tree
-		if (debug) log("AST:\n" + programUnit.toString());
-		// Any error messages?
-		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
-		if (CompilerMessages.get().hasErrors()) return false;
+		programUnit = createModel(tree);
+		if (programUnit == null) return false;
 
-		//---
 		// Type-checking
-		//---
-		if (debug) log("Type checking.");
-		CompilerMessages.reset();
-		GlobalSymbolTable globalSymbolTable = GlobalSymbolTable.get();
-		if (debug) log("Global SymbolTable:\n" + globalSymbolTable);
-		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
+		if (typeChecking()) return false;
 
-		// Any error messages?
-		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
-		if (CompilerMessages.get().hasErrors()) return false;
-
-		// Free some memory by reseting structure we won't use any more
+		// Cleanup: Free some memory by reseting structure we won't use any more
 		TypeCheckedNodes.get().reset();
-
-		// Perform some checking and show warning messages
-		compileWarn();
-		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
 
 		// OK
 		return true;
-	}
-
-	/**
-	 * Perform some checking and show warning messages
-	 */
-	void compileWarn() {
-		// compileWarnUnusedFunctions();
 	}
 
 	/**
@@ -388,6 +339,20 @@ public class Bds {
 	ParseTree createAst() {
 		File file = new File(programFileName);
 		return createAst(file, debug, new HashSet<String>());
+	}
+
+	/**
+	 *  Convert to BdsNodes, create Program Unit
+	 */
+	ProgramUnit createModel(ParseTree tree) {
+		if (debug) log("Creating BigDataScript tree.");
+		CompilerMessages.reset();
+		ProgramUnit pu = (ProgramUnit) BdsNodeFactory.get().factory(null, tree); // Transform AST to BdsNode tree
+		if (debug) log("AST:\n" + pu.toString());
+		// Any error messages?
+		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+		if (CompilerMessages.get().hasErrors()) return null;
+		return pu;
 	}
 
 	/**
@@ -750,6 +715,34 @@ public class Bds {
 	}
 
 	/**
+	 * Lex, parse and create Abstract syntax tree (AST)
+	 */
+	ParseTree parseProgram() {
+		if (debug) log("Creating AST.");
+		CompilerMessages.reset();
+		ParseTree tree = null;
+
+		try {
+			tree = createAst();
+		} catch (Exception e) {
+			System.err.println("Fatal error cannot continue - " + e.getMessage());
+			return null;
+		}
+
+		// No tree produced? Fatal error
+		if (tree == null) {
+			if (CompilerMessages.get().isEmpty()) {
+				CompilerMessages.get().addError("Fatal error: Could not compile");
+			}
+			return null;
+		}
+
+		// Any error? Do not continue
+		if (!CompilerMessages.get().isEmpty()) return null;
+		return tree;
+	}
+
+	/**
 	 * Run script
 	 */
 	public int run() {
@@ -974,6 +967,22 @@ public class Bds {
 
 	public void setStackCheck(boolean stackCheck) {
 		this.stackCheck = stackCheck;
+	}
+
+	/**
+	 * Type checking
+	 */
+	boolean typeChecking() {
+		if (debug) log("Type checking.");
+		CompilerMessages.reset();
+		GlobalSymbolTable globalSymbolTable = GlobalSymbolTable.get();
+		if (debug) log("Global SymbolTable:\n" + globalSymbolTable);
+		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
+
+		// Any error messages?
+		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+		if (CompilerMessages.get().hasErrors()) return true;
+		return false;
 	}
 
 	/**

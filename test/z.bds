@@ -5,7 +5,14 @@ class B extends A {
 
 class A {
 	int i = 42
+	A next
 }
 
+A a = new A()
 B b = new B()
+println("a : $a")
+println("b : $b")
+b.j = 17
+b.i = 21
+b.next = new A()
 println("b : $b")

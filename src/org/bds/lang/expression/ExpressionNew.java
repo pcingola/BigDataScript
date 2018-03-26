@@ -1,10 +1,14 @@
-package org.bds.lang.statement;
+package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.Config;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.statement.Args;
+import org.bds.lang.statement.ClassDeclaration;
+import org.bds.lang.statement.FieldDeclaration;
+import org.bds.lang.statement.MethodCall;
 import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
@@ -42,9 +46,11 @@ public class ExpressionNew extends MethodCall {
 		ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
 		TypeClass tthis = (TypeClass) vthis.getType();
 
-		FieldDeclaration fieldDecls[] = tthis.getClassDeclaration().getFieldDecl();
-		for (FieldDeclaration fieldDecl : fieldDecls)
-			bdsThread.run(fieldDecl);
+		for (ClassDeclaration cd = tthis.getClassDeclaration(); cd != null; cd = cd.getClassParent()) {
+			FieldDeclaration fieldDecls[] = cd.getFieldDecl();
+			for (FieldDeclaration fieldDecl : fieldDecls)
+				bdsThread.run(fieldDecl);
+		}
 
 		return vthis;
 	}

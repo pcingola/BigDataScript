@@ -54,7 +54,9 @@ public class ReferenceField extends ReferenceVar {
 
 		Type classType = exprObj.returnType(symtab);
 		if (classType == null) return null;
-		if (classType.isClass()) returnType = ((TypeClass) classType).getType(name);
+		if (classType.isClass()) {
+			returnType = ((TypeClass) classType).getType(name);
+		}
 
 		return returnType;
 	}
@@ -102,7 +104,12 @@ public class ReferenceField extends ReferenceVar {
 		// Calculate return type
 		returnType(symtab);
 
-		if ((exprObj.getReturnType() != null) && !exprObj.getReturnType().isClass()) compilerMessages.add(this, "Expression '" + exprObj + "' is not an object", MessageType.ERROR);
-		if (returnType == null) compilerMessages.add(this, "Class '" + exprObj.getReturnType() + "' does not have memeber '" + name + "'", MessageType.ERROR);
+		if ((exprObj.getReturnType() != null) && !exprObj.getReturnType().isClass()) {
+			compilerMessages.add(this, "Expression '" + exprObj + "' is not an object", MessageType.ERROR);
+		}
+
+		if (returnType == null) {
+			compilerMessages.add(this, "Class '" + exprObj.getReturnType() + "' does not have memeber '" + name + "'", MessageType.ERROR);
+		}
 	}
 }
