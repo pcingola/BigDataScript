@@ -6,7 +6,9 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
@@ -15,6 +17,9 @@ import org.bds.symbol.SymbolTable;
 
 /**
  * Function call
+ *
+ * Note: A method call is the same as a function call
+ *       using 'this' as first argument.
  *
  * @author pcingola
  */
@@ -41,6 +46,7 @@ public class FunctionCall extends Expression {
 	 * Evaluate function's arguments
 	 */
 	public ValueArgs evalArgs(BdsThread bdsThread) {
+		// Create argument list
 		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
 		Expression arguments[] = args.getArguments();
 
@@ -54,6 +60,46 @@ public class FunctionCall extends Expression {
 		}
 
 		return vargs;
+	}
+
+	/**
+	 * Find method (or function) matching the signature
+	 */
+	protected FunctionDeclaration findMethod(SymbolTable symtab, Type type, Args args) {
+		if (type == null) return null;
+
+		// Find function in class or any super-class
+		if (type.isClass()) {
+			// A class' method
+			for (TypeClass tc = (TypeClass) type; tc != null && tc.getClassDeclaration() != null; tc = tc.getClassDeclaration().getClassTypeParent()) {
+				// Get symbol table
+				SymbolTable classSymTab = tc.getSymbolTable();
+				if (classSymTab == null) return null;
+
+				// Find method in class symbol table
+				TypeFunction tfunc = classSymTab.findFunction(functionName, args);
+				if (tfunc != null) return tfunc.getFunctionDeclaration();
+
+				// Try a 'regular' function, e.g. 'this.funcName()' => 'funcName(this)'
+				tfunc = symtab.findFunction(functionName, args);
+				if (tfunc != null) return tfunc.getFunctionDeclaration();
+			}
+		} else {
+			// Another type of method call, e.g.: string.length()
+			SymbolTable classSymTab = type.getSymbolTable();
+			if (classSymTab == null) return null;
+
+			// Find method in class symbol table
+			TypeFunction tfunc = classSymTab.findFunction(functionName, args);
+			if (tfunc != null) return tfunc.getFunctionDeclaration();
+		}
+
+		// Try a 'regular' function
+		TypeFunction tfunc = symtab.findFunction(functionName, args);
+		if (tfunc != null) return tfunc.getFunctionDeclaration();
+
+		// Not found
+		return null;
 	}
 
 	public FunctionDeclaration getFunctionDeclaration() {
@@ -77,10 +123,10 @@ public class FunctionCall extends Expression {
 	@Override
 	protected void parse(ParseTree tree) {
 		functionName = tree.getChild(0).getText();
-		// child[1] is '('
-
+		// child[1] = '('
 		args = new Args(this, null);
 		args.parse(tree, 2, tree.getChildCount() - 1);
+		// child[tree.getChildCount()] = ')'
 
 		if (args == null) args = new Args(this, null);
 	}
@@ -95,6 +141,18 @@ public class FunctionCall extends Expression {
 		if (tfunc != null) {
 			functionDeclaration = tfunc.getFunctionDeclaration();
 			returnType = functionDeclaration.getReturnType();
+		} else if (symtab.hasType(ClassDeclaration.THIS)) { // Is this function call within a class?
+			// Try "this.functionName(...)", i.e. implicit 'this' object
+			TypeClass typeThis = (TypeClass) symtab.getType(ClassDeclaration.THIS);
+			// Add first argument ('this')
+			Expression expresionThis = new ReferenceThis(this, typeThis);
+			Args argsThis = Args.getArgsThis(args, expresionThis);
+			functionDeclaration = findMethod(symtab, typeThis, argsThis);
+
+			if (functionDeclaration != null) { // Found method
+				returnType = functionDeclaration.getReturnType();
+				args = argsThis;
+			}
 		}
 
 		return returnType;
@@ -137,6 +195,8 @@ public class FunctionCall extends Expression {
 	@Override
 	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Could not find the function?
-		if (functionDeclaration == null) compilerMessages.add(this, "Function " + signature() + " cannot be resolved", MessageType.ERROR);
+		if (functionDeclaration == null) {
+			compilerMessages.add(this, "Function " + signature() + " cannot be resolved", MessageType.ERROR);
+		}
 	}
 }

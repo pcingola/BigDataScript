@@ -33,7 +33,7 @@ public class ExpressionNew extends MethodCall {
 
 	@Override
 	protected Value evalThis(BdsThread bdsThread) {
-		Value vthis = expresionObj.getReturnType().newValue();
+		Value vthis = expresionThis.getReturnType().newValue();
 		bdsThread.getScope().add(ClassDeclaration.THIS, vthis);
 		initializeFields(bdsThread);
 		return vthis;
@@ -57,7 +57,7 @@ public class ExpressionNew extends MethodCall {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		expresionObj = null; // Note that object 'this' does not exists yet
+		expresionThis = null; // Note that object 'this' does not exists yet
 		functionName = tree.getChild(1).getText(); // Same as class name
 
 		// Parse arguments
@@ -79,14 +79,14 @@ public class ExpressionNew extends MethodCall {
 		returnType = thisType;
 
 		// Prepend 'this' argument to method signature
-		expresionObj = new ReferenceThis(this, thisType);
-		args = Args.getArgsThis(args, expresionObj);
+		expresionThis = new ReferenceThis(this, thisType);
+		args = Args.getArgsThis(args, expresionThis);
 
 		// Calculate return type for args
 		args.returnType(symtab);
 
 		// Find method
-		functionDeclaration = findMethod(symtab, thisType);
+		functionDeclaration = findMethod(symtab, thisType, args);
 
 		return returnType;
 	}
@@ -116,7 +116,9 @@ public class ExpressionNew extends MethodCall {
 	protected String signature() {
 		StringBuilder sig = new StringBuilder();
 
-		Type classType = expresionObj.getReturnType();
+		if (expresionThis == null) return "null";
+
+		Type classType = expresionThis.getReturnType();
 		sig.append(classType != null ? classType : "null");
 		sig.append(".");
 		sig.append(functionName);

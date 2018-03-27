@@ -11,3 +11,6 @@ class Zzz {
 Zzz z
 z = new Zzz(7)
 println("z: $z")
+z.set(42)
+println("z: $z")
+

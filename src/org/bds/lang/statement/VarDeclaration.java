@@ -98,9 +98,16 @@ public class VarDeclaration extends Statement {
 		TypeClass tc = (TypeClass) type;
 		if (tc.getClassDeclaration() != null) return; // Class information avilable, this is not a 'stub' type
 
-		TypeClass tcReal = (TypeClass) symtab.getType(tc.getClassName());
+		String cname = tc.getClassName();
+		TypeClass tcReal = (TypeClass) symtab.getType(cname);
+		if (tcReal == null) {
+			compilerMessages.add(this, "Cannot find class '" + cname + "'", MessageType.ERROR);
+			return;
+		}
+
+		// Sanity checks
 		if (!tcReal.isClass()) throw new RuntimeException("Type '" + tc.getClassName() + "' is not a class. This should never happen!");
-		if (tcReal.getClassDeclaration() == null) throw new RuntimeException("Type '" + tc.getClassName() + "' is does not have class declaration infro. This should never happen!");
+		if (tcReal.getClassDeclaration() == null) throw new RuntimeException("Type '" + tc.getClassName() + "' is does not have class declaration info. This should never happen!");
 
 		type = tcReal;
 	}

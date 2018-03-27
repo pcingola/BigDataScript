@@ -6,7 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
 import org.bds.lang.value.ValueClass;
@@ -22,9 +21,8 @@ public class MethodCall extends FunctionCall {
 
 	// Object that calls the method: obj.method(args)
 	// This object is also the used as the first argument in
-	// the function call (so this information is redundant, but
-	// kept here for convinience)
-	protected Expression expresionObj;
+	// the function call (i.e. 'this' argument).
+	protected Expression expresionThis;
 
 	public MethodCall(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -48,42 +46,20 @@ public class MethodCall extends FunctionCall {
 	 */
 	protected Value evalThis(BdsThread bdsThread) {
 		// Evaluate object
-		bdsThread.run(expresionObj);
+		bdsThread.run(expresionThis);
 		Value vthis = bdsThread.pop();
 
 		// Is object 'null'?
 		if (vthis == null //
-				|| (expresionObj.isClass() && ((ValueClass) vthis).isNull()) //
-		) throw new RuntimeException("Null pointer: Cannot call method '" + expresionObj.getReturnType() + "." + functionName + "' in null object");
+				|| (expresionThis.isClass() && ((ValueClass) vthis).isNull()) //
+		) throw new RuntimeException("Null pointer: Cannot call method '" + expresionThis.getReturnType() + "." + functionName + "' in null object");
 
 		return vthis;
 	}
 
-	/**
-	 * Find method (or function) matching the signature
-	 */
-	protected FunctionDeclaration findMethod(SymbolTable symtab, Type type) {
-		if (type == null) return null;
-
-		// Find function in class
-		SymbolTable classSymTab = type.getSymbolTable();
-		if (classSymTab == null) return null;
-
-		TypeFunction tfunc = classSymTab.findFunction(functionName, args);
-		if (tfunc != null) return tfunc.getFunctionDeclaration();
-
-		// Not found? Try a 'regular' function
-		if (tfunc == null) tfunc = symtab.findFunction(functionName, args);
-
-		// Not found
-		if (tfunc == null) return null;
-
-		return tfunc.getFunctionDeclaration();
-	}
-
 	@Override
 	protected void parse(ParseTree tree) {
-		expresionObj = (Expression) factory(tree, 0);
+		expresionThis = (Expression) factory(tree, 0);
 		// child[1] = '.'
 		functionName = tree.getChild(2).getText();
 		// child[3] = '('
@@ -92,7 +68,7 @@ public class MethodCall extends FunctionCall {
 		// child[tree.getChildCount()] = ')'
 
 		// Add 'expresionObj' as first argument ('this')
-		args = Args.getArgsThis(args, expresionObj);
+		args = Args.getArgsThis(args, expresionThis);
 	}
 
 	@Override
@@ -101,11 +77,11 @@ public class MethodCall extends FunctionCall {
 
 		// Calculate return types for expr and args
 		// Note that expresionObj is null in ExpressionNew (which is a MethodCall)
-		Type exprType = (expresionObj != null ? expresionObj.returnType(symtab) : null);
+		Type exprType = (expresionThis != null ? expresionThis.returnType(symtab) : null);
 		args.returnType(symtab);
 
 		// Find method
-		functionDeclaration = findMethod(symtab, exprType);
+		functionDeclaration = findMethod(symtab, exprType, args);
 		if (functionDeclaration != null) returnType = functionDeclaration.getReturnType();
 
 		return returnType;
@@ -115,7 +91,7 @@ public class MethodCall extends FunctionCall {
 	protected String signature() {
 		StringBuilder sig = new StringBuilder();
 
-		Type classType = expresionObj.getReturnType();
+		Type classType = expresionThis.getReturnType();
 		sig.append(classType != null ? classType : "null");
 		sig.append(".");
 		sig.append(functionName);
@@ -131,7 +107,9 @@ public class MethodCall extends FunctionCall {
 	@Override
 	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Could not find the function?
-		if (functionDeclaration == null) compilerMessages.add(this, "Method " + signature() + " cannot be resolved", MessageType.ERROR);
+		if (functionDeclaration == null) {
+			compilerMessages.add(this, "Method " + signature() + " cannot be resolved", MessageType.ERROR);
+		}
 	}
 
 }
