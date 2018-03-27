@@ -56,11 +56,6 @@ public abstract class BdsNode implements BdsSerialize {
 		doParse(tree);
 	}
 
-	/**
-	 * Can cast type 't' to returnType?
-	 * @param t
-	 * @return
-	 */
 	public boolean canCastTo(BdsNode n) {
 		return returnType != null && returnType.canCastTo(n.getReturnType());
 	}

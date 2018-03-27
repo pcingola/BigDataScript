@@ -58,7 +58,6 @@ public class If extends Statement {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-
 		if (bdsThread.isCheckpointRecover()) {
 			runCondition(bdsThread);
 			if (bdsThread.isCheckpointRecover()) bdsThread.run(statement);

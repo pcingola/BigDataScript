@@ -19,10 +19,9 @@ public class TestCasesZzz extends TestCasesBase {
 	//	}
 
 	@Test
-	public void test213() {
+	public void test01() {
 		Gpr.debug("Test");
-		verbose = true;
-		runAndCheck("test/run_213.bds", "z", "{ i: 7 }");
+		runAndCheckpoint("test/checkpoint_01.bds", null, "i", "10");
 	}
 
 }
