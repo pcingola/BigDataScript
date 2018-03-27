@@ -1,8 +1,11 @@
 package org.bds.util;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Timer {
+public class Timer implements Serializable {
+
+	private static final long serialVersionUID = 1749543702279403162L;
 
 	private static Timer timer = new Timer(); // Keep track of time (since first class instantiation)
 

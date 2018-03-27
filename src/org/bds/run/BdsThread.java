@@ -2,7 +2,10 @@ package org.bds.run;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 
 import org.bds.Config;
 import org.bds.data.Data;
@@ -54,7 +58,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class BdsThread extends Thread implements BdsSerialize {
+public class BdsThread extends Thread implements BdsSerialize, Serializable {
+
+	private static final long serialVersionUID = 1206304272840188781L;
 
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
@@ -221,8 +227,19 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 		// Save
 		if (isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
-		BdsSerializer bdsSer = new BdsSerializer(checkpointFileName, config);
-		bdsSer.save(getRoot()); // Save root thread
+
+		// TODO: REMOVE BdsSerializer !!!!!!!!
+		//		BdsSerializer bdsSer = new BdsSerializer(checkpointFileName, config);
+		//		bdsSer.save(getRoot()); // Save root thread
+
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(checkpointFileName)));
+			BdsThread thRoot = getRoot();
+			out.writeObject(thRoot);
+			out.close();
+		} catch (Exception e) {
+			throw new RuntimeException("Error while serializing to file '" + checkpointFileName + "'", e);
+		}
 
 		return checkpointFileName;
 	}
@@ -1258,8 +1275,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		out.append("\t" + serializer.serializeSaveValue(removeOnExit));
 		out.append("\t" + serializer.serializeSaveValue(getBdsThreadId()));
 		out.append("\t" + serializer.serializeSaveValue(statement.getNodeId()));
-		// !!! TODO
-		// out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
+		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
 		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
 		out.append("\t" + serializer.serializeSaveValue(runState.toString()));
 		out.append("\t" + serializer.serializeSaveValue(currentDir));

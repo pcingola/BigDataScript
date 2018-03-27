@@ -1,5 +1,6 @@
 package org.bds.scope;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,8 +21,9 @@ import org.bds.serialize.BdsSerializer;
  *
  * @author pcingola
  */
-public class Scope implements BdsSerialize, Iterable<String> {
+public class Scope implements BdsSerialize, Iterable<String>, Serializable {
 
+	private static final long serialVersionUID = -4041502602912302092L;
 	private static int scopeNum = 0;
 
 	int id;
@@ -157,23 +159,20 @@ public class Scope implements BdsSerialize, Iterable<String> {
 	}
 
 	public String toString(boolean showFunc) {
-		// Show parents
 		StringBuilder sb = new StringBuilder();
-		if (parent != null) {
-			String parentStr = parent.toString(showFunc);
-			if (!parentStr.isEmpty()) sb.append(parentStr);
-		}
+
+		// Show header
+		sb.append("\n---------- Scope " + getScopeName() + " ----------\n");
 
 		// Show scope values
-		StringBuilder sbThis = new StringBuilder();
 		List<String> names = new ArrayList<>();
 		names.addAll(values.keySet());
 		Collections.sort(names);
 		for (String n : names)
-			sbThis.append(n + ": " + getValueLocal(n) + "\n");
+			sb.append(n + ": " + getValueLocal(n) + "\n");
 
-		// Show header
-		if (sbThis.length() > 0) sb.append("\n---------- Scope " + getScopeName() + " ----------\n" + sbThis.toString());
+		// Show parents
+		if (parent != null) sb.append(parent.toString(showFunc));
 
 		return sb.toString();
 	}

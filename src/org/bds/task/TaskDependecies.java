@@ -1,5 +1,6 @@
 package org.bds.task;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,7 +24,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class TaskDependecies {
+public class TaskDependecies implements Serializable {
+
+	private static final long serialVersionUID = -7139051739077288915L;
 
 	public static final int SLEEP_TIME = 250;
 

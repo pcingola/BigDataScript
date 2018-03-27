@@ -1,5 +1,6 @@
 package org.bds.symbol;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import org.bds.util.AutoHashMap;
  *
  * @author pcingola
  */
-public class SymbolTable implements Iterable<String> {
+public class SymbolTable implements Serializable, Iterable<String> {
 
 	public static final String INTERNAL_SYMBOL_START = "$";
 

@@ -400,8 +400,9 @@ public class BdsSerializer {
 					// Parse Task
 					bdsSerialize = new Task();
 				} else {
-					// Everything else has been parsed, this must be a BigDataScriptNode
+					// Everything else has been parsed, this must be a BdsNode
 					String className = BdsNodeFactory.get().packageName() + clazz;
+					Gpr.debug("className: " + className);
 					bdsSerialize = BdsNodeFactory.get().factory(className, null, null);
 				}
 

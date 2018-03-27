@@ -11,6 +11,10 @@ import org.bds.util.Gpr;
 
 public class GlobalScope extends Scope {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	public static final String GLOBAL_VAR_K = "K"; // Kilo = 2^10
 	public static final String GLOBAL_VAR_M = "M"; // Mega = 2^20
 	public static final String GLOBAL_VAR_G = "G"; // Giga = 2^30
@@ -82,6 +86,11 @@ public class GlobalScope extends Scope {
 		// Add type to global SymbolTable
 		Value value = getValue(name);
 		GlobalSymbolTable.get().add(name, value.getType());
+	}
+
+	@Override
+	public Scope getParent() {
+		return null;
 	}
 
 	public void init(Config config) {

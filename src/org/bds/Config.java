@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,7 +24,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Config {
+public class Config implements Serializable {
+
+	private static final long serialVersionUID = 6558109289073244716L;
 
 	public static final String DEFAULT_CONFIG_DIR = Gpr.HOME + "/.bds";
 	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + "/bds.config";

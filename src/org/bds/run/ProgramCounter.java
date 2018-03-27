@@ -1,5 +1,6 @@
 package org.bds.run;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Stack;
 
@@ -13,7 +14,9 @@ import org.bds.util.Gpr;
  *
  * @author pcingola
  */
-public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
+public class ProgramCounter implements Serializable, BdsSerialize, Iterable<Integer> {
+
+	private static final long serialVersionUID = -1907288389943318693L;
 
 	private static int programCounterNum = 0;
 
@@ -27,13 +30,13 @@ public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
 	}
 
 	public ProgramCounter() {
-		nodeIds = new Stack<Integer>();
+		nodeIds = new Stack<>();
 		id = nextId();
 		initialSize = 0;
 	}
 
 	public ProgramCounter(ProgramCounter pc) {
-		nodeIds = new Stack<Integer>();
+		nodeIds = new Stack<>();
 		nodeIds.addAll(pc.nodeIds);
 		id = nextId();
 		initialSize = pc.size();
@@ -149,6 +152,6 @@ public class ProgramCounter implements BdsSerialize, Iterable<Integer> {
 				+ (isEmpty() ? " [Empty] " : "") //
 				+ (checkPointRecoverNodeIdx > 0 ? ", checkPointRecoverNodeIdx: " + checkPointRecoverNodeIdx : "") //
 				+ ", nodes: " + pc //
-				;
+		;
 	}
 }

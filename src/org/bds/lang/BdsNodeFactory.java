@@ -176,7 +176,6 @@ public class BdsNodeFactory {
 		if (className.equals("TypeReal")) return Types.REAL;
 		if (className.equals("TypeString")) return Types.STRING;
 		if (className.equals("TypeVoid")) return Types.VOID;
-		if (className.equals("TypeVoid")) return Types.VOID;
 
 		// Create object
 		Class clazz = findClass(className);

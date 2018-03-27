@@ -2,13 +2,16 @@ package org.bds;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -794,15 +797,29 @@ public class Bds {
 	 */
 	int runCheckpoint() {
 		// Load checkpoint file
-		BdsSerializer bdsSerializer = new BdsSerializer(chekcpointRestoreFile, config);
-		List<BdsThread> bdsThreads = bdsSerializer.load();
+
+		// TODO: REMOVE BdsSerializer
+		//		BdsSerializer bdsSerializer = new BdsSerializer(chekcpointRestoreFile, config);
+		//		List<BdsThread> bdsThreads = bdsSerializer.load();
+
+		BdsThread bdsThreadRoot;
+		try {
+			ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(chekcpointRestoreFile)));
+			bdsThreadRoot = (BdsThread) in.readObject();
+			in.close();
+		} catch (Exception e) {
+			throw new RuntimeException("Error while serializing to file '" + chekcpointRestoreFile + "'", e);
+		}
 
 		// Set main thread's programUnit running scope (mostly for debugging and test cases)
 		// ProgramUnit's scope it the one before 'global'
-		BdsThread mainThread = bdsThreads.get(0);
+		// BdsThread mainThread = bdsThreads.get(0);
+		BdsThread mainThread = bdsThreadRoot;
 		programUnit = mainThread.getProgramUnit();
 
 		// Set state and recover tasks
+		List<BdsThread> bdsThreads = bdsThreadRoot.getBdsThreads();
+		bdsThreads.add(bdsThreadRoot);
 		for (BdsThread bdsThread : bdsThreads) {
 			if (bdsThread.isFinished()) {
 				// Thread finished before serialization: Nothing to do

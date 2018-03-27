@@ -1,5 +1,7 @@
 package org.bds.lang.value;
 
+import java.io.Serializable;
+
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 
@@ -7,7 +9,9 @@ import org.bds.lang.type.Types;
  * Define a value
  * @author pcingola
  */
-public abstract class Value implements Cloneable {
+public abstract class Value implements Serializable, Cloneable {
+
+	private static final long serialVersionUID = 3481924830790274005L;
 
 	public static final ValueUnique ANY = ValueUnique.get(Types.ANY);
 	public static final ValueUnique FAKE = ValueUnique.get(Types.FAKE);

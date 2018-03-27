@@ -1,7 +1,12 @@
 
-int i = 42
-string s = "Before checkpoint $i"
+println("Start")
+int j = 5
+int i
 
-checkpoint "test/checkpoint_03.bds.chp"
+for( i = 0 ; i < 10 ; i++ ) {
+	println("i : $i")
+	int h = i + i
+	if( i == j ) checkpoint "test/checkpoint_01.bds.chp"
+}
 
-string s2 = "After checkpoint $i"
+print "Done\n"

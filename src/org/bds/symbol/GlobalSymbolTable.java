@@ -7,6 +7,8 @@ package org.bds.symbol;
  */
 public class GlobalSymbolTable extends SymbolTable {
 
+	private static final long serialVersionUID = 7118398522311869258L;
+
 	private static GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
 
 	public static GlobalSymbolTable get() {

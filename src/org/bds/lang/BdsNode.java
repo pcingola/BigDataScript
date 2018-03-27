@@ -2,6 +2,7 @@ package org.bds.lang;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -36,8 +37,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public abstract class BdsNode implements BdsSerialize {
+public abstract class BdsNode implements BdsSerialize, Serializable {
 
+	private static final long serialVersionUID = -2443078474175192104L;
 	protected BdsNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
 	protected Type returnType;
