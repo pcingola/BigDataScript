@@ -33,7 +33,6 @@ import org.bds.run.FunctionCallThread;
 import org.bds.run.ProgramCounter;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 import org.bds.util.GprString;
@@ -391,16 +390,12 @@ public class BdsSerializer {
 					// Parse ProgramCounter
 					bdsSerialize = new ProgramCounter();
 				} else if (clazz.equals(Scope.class.getSimpleName())) {
-					// !!!
-					//					// Parse Scope
-					//					Scope scope = new Scope();
-					//					if (currScope != null) currScope.setParent(scope);
-					//					currScope = scope;
-					//					scopes.add(scope);
-					//					bdsSerialize = currScope;
-				} else if (clazz.equals(ScopeSymbol.class.getSimpleName())) {
-					// Parse ScopeSymbol
-					bdsSerialize = new ScopeSymbol();
+					// Parse Scope
+					Scope scope = new Scope();
+					if (currScope != null) currScope.setParent(scope);
+					currScope = scope;
+					scopes.add(scope);
+					bdsSerialize = currScope;
 				} else if (clazz.equals(Task.class.getSimpleName())) {
 					// Parse Task
 					bdsSerialize = new Task();
@@ -429,9 +424,6 @@ public class BdsSerializer {
 						BdsThread bdsThread = (BdsThread) bdsSerialize;
 						bdsThreads.add(bdsThread);
 						threadsById.put(bdsThread.getBdsThreadId(), bdsThread);
-					} else if (bdsSerialize instanceof ScopeSymbol) {
-						// Add symbol to current scope
-						// !!! currScope.add((ScopeSymbol) bdsSerialize);
 					} else if (bdsSerialize instanceof ProgramCounter) {
 						// Set PC
 						currBdsThread.setPc((ProgramCounter) bdsSerialize);

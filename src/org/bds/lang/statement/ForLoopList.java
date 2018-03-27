@@ -19,7 +19,6 @@ import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.scope.ScopeSymbol;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -66,7 +65,7 @@ public class ForLoopList extends StatementWithScope {
 		}
 
 		// Create counter
-		iterableCountName = ScopeSymbol.INTERNAL_SYMBOL_START + "iterableCount." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
+		iterableCountName = SymbolTable.INTERNAL_SYMBOL_START + "iterableCount." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
 		Type iterableCountType = Types.INT;
 		Value ssIterableCount = iterableCountType.newValue(0L);
 		bdsThread.getScope().add(iterableCountName, ssIterableCount);
@@ -106,7 +105,7 @@ public class ForLoopList extends StatementWithScope {
 		//---
 		// Iterable list
 		//---
-		iterableListName = ScopeSymbol.INTERNAL_SYMBOL_START + "iterableList." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
+		iterableListName = SymbolTable.INTERNAL_SYMBOL_START + "iterableList." + getFileName() + "." + getLineNum() + "." + getCharPosInLine();
 		Type iterableListType = TypeList.get(varSym.getType());
 		ValueList ssIterableList = new ValueList(iterableListType);
 		ssIterableList.set(iterableValues);

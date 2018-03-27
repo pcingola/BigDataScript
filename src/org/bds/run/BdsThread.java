@@ -1230,9 +1230,8 @@ public class BdsThread extends Thread implements BdsSerialize {
 		// Save program counter
 		out.append(serializer.serializeSave(pc));
 
-		// !!! TODO
-		//		// Save scopes
-		//		out.append(serializer.serializeSave(scope));
+		// Save scopes
+		out.append(serializer.serializeSave(scope));
 
 		// Save program nodes
 		out.append(serializer.serializeSave(statement));

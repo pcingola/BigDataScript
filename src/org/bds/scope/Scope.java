@@ -9,22 +9,33 @@ import java.util.List;
 import java.util.Map;
 
 import org.bds.lang.BdsNode;
+import org.bds.lang.ParentNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
+import org.bds.serialize.BdsSerialize;
+import org.bds.serialize.BdsSerializer;
 
 /**
  * Scope: Variables, functions and classes
  *
  * @author pcingola
  */
-public class Scope implements Iterable<String> {
+public class Scope implements BdsSerialize, Iterable<String> {
 
+	private static int scopeNum = 0;
+
+	int id;
 	Scope parent;
 	String parentNodeId;
 	Map<String, Value> values;
 	BdsNode node;
 
+	protected static int nextId() {
+		return ++scopeNum;
+	}
+
 	public Scope() {
+		id = nextId();
 		parent = GlobalScope.get();
 		node = null;
 		values = new HashMap<>();
@@ -35,6 +46,7 @@ public class Scope implements Iterable<String> {
 	 * @param parent : If null => use global Scope
 	 */
 	public Scope(Scope parent, BdsNode node) {
+		id = nextId();
 		this.parent = parent;
 		this.node = node;
 		values = new HashMap<>();
@@ -175,6 +187,52 @@ public class Scope implements Iterable<String> {
 			sb.append("\t" + (i++) + ": " + scope.getScopeName() + "\n");
 
 		return sb.toString();
+	}
+
+	@Override
+	public String getNodeId() {
+		return getClass().getSimpleName() + ":" + id;
+	}
+
+	@Override
+	public void serializeParse(BdsSerializer serializer) {
+		// Nothing to do
+		id = (int) serializer.getNextFieldInt();
+		parentNodeId = serializer.getNextFieldString();
+		int nodeId = serializer.getNextFieldNodeId();
+
+		if (nodeId != 0) {
+			// Node is not null
+			node = new ParentNode();
+			node.setFakeId(nodeId);
+		}
+
+		if (id > scopeNum) scopeNum = id + 1;
+	}
+
+	@Override
+	public String serializeSave(BdsSerializer serializer) {
+		StringBuilder out = new StringBuilder();
+		out.append("Scope");
+		out.append("\t" + serializer.serializeSaveValue(id));
+		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getNodeId() : ""));
+		out.append("\t" + serializer.serializeSaveValue(node));
+		out.append("\n");
+
+		for (String name : values.keySet()) {
+			Value val = values.get(name);
+			Type type = val.getType();
+			out.append(val.getClass().getSimpleName() //
+					+ "\t" + serializer.serializeSaveValue(name) //
+					+ "\t" + BdsSerializer.TYPE_IDENTIFIER + type.toStringSerializer() //
+					+ "\t" + serializer.serializeSaveValue(val) //
+			);
+
+		}
+
+		if (parent != null) out.append(serializer.serializeSave(parent));
+
+		return out.toString();
 	}
 
 }

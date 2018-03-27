@@ -23,6 +23,8 @@ import org.bds.util.AutoHashMap;
  */
 public class SymbolTable implements Iterable<String> {
 
+	public static final String INTERNAL_SYMBOL_START = "$";
+
 	BdsNode bdsNode;
 	AutoHashMap<String, List<TypeFunction>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
 	Map<String, Type> types; // Types defined within this symbol table
@@ -239,5 +241,4 @@ public class SymbolTable implements Iterable<String> {
 
 		return sb.toString();
 	}
-
 }
