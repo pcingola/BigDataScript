@@ -666,7 +666,7 @@ public abstract class BdsNode implements BdsSerialize {
 	public String serializeSave(BdsSerializer serializer) {
 		StringBuilder out = new StringBuilder();
 
-		// Not an array: Single field. Show
+		// Not an array? Single field
 		out.append(getClass().getSimpleName() //
 				+ "\t" + id //
 				+ "\t" + lineNum //
@@ -680,6 +680,7 @@ public abstract class BdsNode implements BdsSerialize {
 		// Iterate over fields
 		for (Field field : getAllClassFields(false)) {
 			try {
+				field.setAccessible(true);
 				Object fieldObj = field.get(this);
 				Class fieldClass = field.getDeclaringClass();
 
