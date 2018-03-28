@@ -18,10 +18,18 @@ public class TestCasesZzz extends TestCasesBase {
 	//		runAndCheck("test/run_200.bds", "", "");
 	//	}
 
+	//	@Test
+	//	public void test02() {
+	//		Gpr.debug("Test");
+	//		verbose = true;
+	//		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
+	//	}
+
 	@Test
-	public void test02() {
+	public void test28() {
 		Gpr.debug("Test");
-		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
+		verbose = true;
+		runAndCheckpoint("test/checkpoint_28.bds", "test/checkpoint_28.chp", "out", 47);
 	}
 
 }

@@ -14,6 +14,7 @@ import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
+import org.bds.util.Gpr;
 
 /**
  * Function call
@@ -51,8 +52,10 @@ public class FunctionCall extends Expression {
 		Expression arguments[] = args.getArguments();
 
 		// Evaluate all expressions
+		Gpr.debug("FUNCTION CALL: " + functionName);
 		ValueArgs vargs = new ValueArgs(fparam.length);
 		for (int i = argsStart; i < fparam.length; i++) {
+			Gpr.debug("\tEVALUATING ARG[" + i + "]: " + arguments[i]);
 			bdsThread.run(arguments[i]);
 			Value value = bdsThread.pop();
 			value = fparam[i].getType().cast(value);
@@ -164,6 +167,11 @@ public class FunctionCall extends Expression {
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		try {
+
+			if (bdsThread.isCheckpointRecover()) {
+				evalArgs(bdsThread);
+			}
+
 			// Evaluate function arguments
 			ValueArgs arguments = evalArgs(bdsThread);
 

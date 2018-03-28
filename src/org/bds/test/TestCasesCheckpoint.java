@@ -292,4 +292,10 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_26.bds", "test/checkpoint_26.chp", "out", 56);
 	}
 
+	@Test
+	public void test28() {
+		Gpr.debug("Test");
+		runAndCheckpoint("test/checkpoint_28.bds", "test/checkpoint_28.chp", "out", 47);
+	}
+
 }

@@ -85,7 +85,7 @@ public class BdsThread extends Thread implements BdsSerialize, Serializable {
 	DebugMode debugMode = null; // By default we are NOT debugging the program
 	ProgramCounter debugStepOverPc;
 
-	// Scope
+	// Scope & Stack
 	Scope scope; // Base scope
 	String scopeNodeId; // Scope's ID, used only when un-serializing
 	Deque<Value> stack; // Program stack
@@ -232,6 +232,7 @@ public class BdsThread extends Thread implements BdsSerialize, Serializable {
 		//		BdsSerializer bdsSer = new BdsSerializer(checkpointFileName, config);
 		//		bdsSer.save(getRoot()); // Save root thread
 
+		Gpr.debug("STACK: " + stack);
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(checkpointFileName)));
 			BdsThread thRoot = getRoot();

@@ -104,6 +104,8 @@ public class ProgramCounter implements Serializable, BdsSerialize, Iterable<Inte
 					+ "\n\tPC         : " + this //
 					+ "\n\tNode Id    : " + nodeId //
 					+ "\n\tbdsNode Id : " + bdsNode.getId() //
+					+ "\t" + bdsNode.getClass().getCanonicalName() //
+					+ "\t" + bdsNode.getFileName() + ":" + bdsNode.getLineNum() + ", " + bdsNode.getCharPosInLine() //
 			);
 		}
 	}
