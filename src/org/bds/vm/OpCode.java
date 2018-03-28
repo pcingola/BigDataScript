@@ -3,11 +3,16 @@ package org.bds.vm;
 /**
  * The opcodes are stored into an array of Integers
  *
- * Literal always reference the pool of constants: bool, int, real, string or function
+ * This is a stack machine, so operands act on the element/s of the stack
+ * e.g. ADDI    # pop the last two items in the stack, add them and push the result to the stack
+ *
+ * Notes:
+ *     Literal always reference the pool of constants: bool, int, real, string or function
  *
  * Nomenclature:
- *     literal  : An integer referencing a literal (bool|int|real|string) in the pool of constants
  *     funcName : An integer referencing a string (the function's name) in the pool of constants
+ *     literal  : An integer referencing a literal (bool|int|real|string) in the pool of constants
+ *     pc       : Program counter (new position to jump to)
  *     varName  : An integer referencing a string (the variable's name) in the pool of constants
  *
  * @author pcingola
@@ -20,7 +25,7 @@ public enum OpCode {
 	// Cast values {b,i,r} => {b,i,r}
 	, CAST_BTOI, CAST_BTOR, CAST_ITOB, CAST_ITOR, CAST_RTOB, CAST_RTOI
 	// Function call:
-	//    CALL funcName
+	//    CALL pc
 	, CALL
 	// Division
 	, DIVI, DIVR
@@ -32,13 +37,12 @@ public enum OpCode {
 	, GTB, GTI, GTR
 	// Halt (stop execution in current thread)
 	, HALT
-	// Jumps: unconditional, jump if true, jump if false: 'JMP pc'
+	// Jumps: unconditional, jump if true, jump if false:
+	//    JMP[T|F]    pc
 	, JMP, JMPT, JMPF
-	// Load variable/array/dictionary local scope (into stack)
+	// Load variable from scope into stack
 	//    LOAD varName
-	//    LOADIDX varListName     # Use latest stack element as index
-	//    LOADDICT varDictName    # Use latest stack element as key
-	, LOAD, LOADIDX, LOADDICT
+	, LOAD
 	// Less than
 	, LTB, LTI, LTR, LTS
 	// Less or equal than
@@ -51,19 +55,83 @@ public enum OpCode {
 	, NOP
 	// OR: bool (logical), int (bitwise)
 	, ORB, ORI
+	// Pop: remove latest element from stack
+	, POP
+	// Print
+	, PRINT, PRINTSTACK
 	// Push literal
 	//    PUSHNULL                 # Pushes a 'null' literal
 	//    PUSH{B|I|R|S}  literal   # Pushes a literal constant into the stack
-	, PUSHB, PUSHI, PUSHNULL, PUSHR, PUSHS
+	, PUSHB, PUSHI, PUSHR, PUSHS
+	// Reference: object's field, list index or hash key
+	, REFFIELD, REFLIST, REFMAP
 	// Return (from function)
 	, RET
-	// Store variable/array/dictionary in local scope
+	// Scope: create new scope (and push it), restore old scope (pop current scope)
+	, SCOPEPUSH, SCOPEPOP
+	// Set value
+	, SET
+	// Store variable to local scope
 	//    STORE varName
-	//    STOREIDX varListName     # Use latest stack element as index
-	//    STOREDICT varDictName    # Use latest stack element as key
-	, STORE, STOREIDX, STOREDICT
+	, STORE
 	// Subtraction
 	, SUBI, SUBR
 	// XOR
 	, XORB, XORI
+	//
+	;
+
+	/**
+	 * Is there a 'constant' as a parameter in this OpCode?
+	 */
+	public boolean hasConstant() {
+		switch (this) {
+		case LOAD:
+		case PUSHB:
+		case PUSHI:
+		case PUSHR:
+		case PUSHS:
+		case STORE:
+			return true;
+
+		default:
+			return false;
+		}
+	}
+
+	public boolean hasPc() {
+		switch (this) {
+		case CALL:
+		case JMP:
+		case JMPT:
+		case JMPF:
+			return true;
+
+		default:
+			return false;
+		}
+	}
+
+	/**
+	 * Number of parameters associated with this operand
+	 */
+	public int numParam() {
+		switch (this) {
+		case CALL:
+		case JMP:
+		case JMPT:
+		case JMPF:
+		case LOAD:
+		case PUSHB:
+		case PUSHI:
+		case PUSHR:
+		case PUSHS:
+		case STORE:
+			return 1;
+
+		default:
+			return 0;
+		}
+	}
+
 }

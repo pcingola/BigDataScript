@@ -12,6 +12,7 @@ import org.bds.lang.value.Value;
 import org.bds.osCmd.TeeOutputStream;
 import org.bds.run.RunState;
 import org.bds.util.Gpr;
+import org.bds.vm.BdsVm;
 
 import junit.framework.Assert;
 
@@ -205,6 +206,21 @@ public class BdsTest {
 	 */
 	public void checkVariable(String varname, Object expectedValue) {
 		Value val = getValue(varname);
+		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
+		Assert.assertEquals( //
+				errMsg("Variable '" + varname + "' has different map than expeced:\n" //
+						+ "\tExpected map : " + expectedValue //
+						+ "\tReal map     : " + val) //
+				, expectedValue.toString() //
+				, val.toString() //
+		);
+	}
+
+	/**
+	 * Check a variable's map
+	 */
+	public void checkVariableVm(BdsVm vm, String varname, Object expectedValue) {
+		Value val = vm.getValue(varname);
 		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
 		Assert.assertEquals( //
 				errMsg("Variable '" + varname + "' has different map than expeced:\n" //

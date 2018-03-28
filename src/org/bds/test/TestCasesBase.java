@@ -7,6 +7,8 @@ import org.bds.Bds;
 import org.bds.Config;
 import org.bds.executioner.Executioners;
 import org.bds.run.BdsThreads;
+import org.bds.vm.BdsVm;
+import org.bds.vm.VmAsm;
 import org.junit.Before;
 
 /**
@@ -196,6 +198,15 @@ public class TestCasesBase {
 		bdsTest.setTestCases(true);
 		bdsTest.run();
 		bdsTest.checkRunOk();
+	}
+
+	/**
+	 * Check that a file compiles without any errors, runs and a variable have its expected map
+	 */
+	void runVmAndCheck(String fileName, String varname, Object expectedValue) {
+		VmAsm vmasm = new VmAsm(fileName);
+		BdsVm vm = vmasm.compile();
+		vm.run();
 	}
 
 }
