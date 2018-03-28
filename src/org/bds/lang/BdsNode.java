@@ -881,4 +881,9 @@ public abstract class BdsNode implements BdsSerialize, Serializable {
 		BdsNodeFactory.get().updateId(id, newId, this);
 		id = newId;
 	}
+
+	public List<Integer> vmCode() {
+		List<Integer> code = new ArrayList<>();
+		return code;
+	}
 }
