@@ -13,6 +13,7 @@ import org.bds.util.Gpr;
 public class VmAsm {
 
 	boolean verbose, debug;
+	int lineNum;
 	String file;
 	BdsVm bdsvm;
 	List<Integer> code;
@@ -34,14 +35,10 @@ public class VmAsm {
 	 * @param param
 	 */
 	void addParam(OpCode opcode, String param) {
-		if (opcode.hasPc()) {
-			code.add(Gpr.parseIntSafe(param.toString()));
-		} else if (opcode.hasConstant()) {
-			// We need to add 'param' to pool of constants and add a reference to it
-			Object obj = parseConstant(opcode, param);
-			int idx = bdsvm.addConstant(obj);
-			code.add(idx);
-		} else throw new RuntimeException("Cannot add parameter for opcode '" + opcode + "'. This should never happen!");
+		// We need to add 'param' to pool of constants and add a reference to it
+		Object obj = parseConstant(opcode, param);
+		int idx = bdsvm.addConstant(obj);
+		code.add(idx);
 	}
 
 	/**
@@ -50,17 +47,19 @@ public class VmAsm {
 	public BdsVm compile() {
 		// Initialize
 		bdsvm = new BdsVm();
+		bdsvm.setDebug(debug);
+		bdsvm.setVerbose(verbose);
 		code = new ArrayList<>();
 
 		// Read file and parse each line
+		lineNum = 1;
 		String str = Gpr.readFile(file);
 		for (String line : str.split("\n")) {
 			// Remove comments and labels
 			line = removeComments(line);
 
 			// Parse label, if any
-			String label = label(line);
-			if (label != null) System.out.println(label + ":");
+			label(line);
 
 			// Keep the rest of the line (no labels)
 			line = stripLabel(line).trim();
@@ -69,11 +68,12 @@ public class VmAsm {
 			// Decode instruction
 			OpCode opcode = opcode(line);
 			String param = null;
-			if (opcode.numParam() > 0) param = param(line);
-			System.out.println("\t" + opcode + (param != null ? " " + param : ""));
+			if (opcode.hasParam()) param = param(line);
+			if (verbose) System.out.println("\t" + opcode + (param != null ? " " + param : ""));
 
 			// Add instruction
 			addInstruction(opcode, param);
+			lineNum++;
 		}
 
 		bdsvm.setCode(code);
@@ -83,9 +83,19 @@ public class VmAsm {
 	/**
 	 * Get a label from an input line, null if there are no labels
 	 */
-	String label(String line) {
-		int labelIdx = line.indexOf(':');
-		return labelIdx >= 0 ? line.substring(0, labelIdx).trim() : null;
+	void label(String line) {
+		int idx = line.indexOf(':');
+		if (idx < 0) return;
+
+		String label = line.substring(0, idx).trim();
+
+		if (label.indexOf('(') > 0 && label.indexOf(')') > 0) {
+			bdsvm.addFunction(label, pc());
+		} else {
+			bdsvm.addLabel(label, pc());
+		}
+
+		if (verbose) System.out.println(label + ":");
 	}
 
 	/**
@@ -94,7 +104,11 @@ public class VmAsm {
 	OpCode opcode(String line) {
 		String s[] = line.split("\\s+");
 		String op = s[0].toUpperCase();
-		return OpCode.valueOf(op);
+		try {
+			return OpCode.valueOf(op);
+		} catch (Exception e) {
+			throw new RuntimeException("Unknown opcode '" + op + "', file '" + file + "', line " + lineNum);
+		}
 	}
 
 	/**
@@ -110,6 +124,7 @@ public class VmAsm {
 	 */
 	Object parseConstant(OpCode opcode, String param) {
 		switch (opcode) {
+		case CALL:
 		case LOAD:
 		case PUSHS:
 		case STORE:
@@ -127,6 +142,13 @@ public class VmAsm {
 		default:
 			throw new RuntimeException("Unknown parameter type for opcode '" + opcode + "'");
 		}
+	}
+
+	/**
+	 * Current program counter
+	 */
+	int pc() {
+		return code.size();
 	}
 
 	/**

@@ -52,7 +52,7 @@ public enum OpCode {
 	// Multiplication (int)
 	, MULI, MULR
 	// No operation
-	, NOP
+	, NOOP
 	// OR: bool (logical), int (bitwise)
 	, ORB, ORI
 	// Pop: remove latest element from stack
@@ -82,40 +82,9 @@ public enum OpCode {
 	;
 
 	/**
-	 * Is there a 'constant' as a parameter in this OpCode?
-	 */
-	public boolean hasConstant() {
-		switch (this) {
-		case LOAD:
-		case PUSHB:
-		case PUSHI:
-		case PUSHR:
-		case PUSHS:
-		case STORE:
-			return true;
-
-		default:
-			return false;
-		}
-	}
-
-	public boolean hasPc() {
-		switch (this) {
-		case CALL:
-		case JMP:
-		case JMPT:
-		case JMPF:
-			return true;
-
-		default:
-			return false;
-		}
-	}
-
-	/**
 	 * Number of parameters associated with this operand
 	 */
-	public int numParam() {
+	public boolean hasParam() {
 		switch (this) {
 		case CALL:
 		case JMP:
@@ -127,10 +96,10 @@ public enum OpCode {
 		case PUSHR:
 		case PUSHS:
 		case STORE:
-			return 1;
+			return true;
 
 		default:
-			return 0;
+			return false;
 		}
 	}
 

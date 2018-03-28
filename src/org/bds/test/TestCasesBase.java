@@ -205,6 +205,8 @@ public class TestCasesBase {
 	 */
 	void runVmAndCheck(String fileName, String varname, Object expectedValue) {
 		VmAsm vmasm = new VmAsm(fileName);
+		vmasm.setDebug(debug);
+		vmasm.setVerbose(verbose);
 		BdsVm vm = vmasm.compile();
 		vm.run();
 	}

@@ -13,10 +13,17 @@ import org.junit.Test;
  */
 public class TestCasesVm extends TestCasesBase {
 
+	//	@Test
+	//	public void test00() {
+	//		Gpr.debug("Test");
+	//		runVmAndCheck("test/vm00.asm", "a", "42");
+	//	}
+
 	@Test
-	public void test00() {
+	public void test01() {
 		Gpr.debug("Test");
-		runVmAndCheck("test/vm00.asm", "a", "42");
+		debug = verbose = true;
+		runVmAndCheck("test/vm01.asm", "z", "8");
 	}
 
 }

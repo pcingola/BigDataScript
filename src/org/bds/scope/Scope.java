@@ -43,6 +43,10 @@ public class Scope implements BdsSerialize, Iterable<String>, Serializable {
 		values = new HashMap<>();
 	}
 
+	public Scope(Scope parent) {
+		this(parent, null);
+	}
+
 	/**
 	 * Constructor
 	 * @param parent : If null => use global Scope
@@ -82,6 +86,11 @@ public class Scope implements BdsSerialize, Iterable<String>, Serializable {
 
 	public BdsNode getNode() {
 		return node;
+	}
+
+	@Override
+	public String getNodeId() {
+		return getClass().getSimpleName() + ":" + id;
 	}
 
 	public Scope getParent() {
@@ -149,50 +158,6 @@ public class Scope implements BdsSerialize, Iterable<String>, Serializable {
 		values.remove(name);
 	}
 
-	public void setParent(Scope parent) {
-		this.parent = parent;
-	}
-
-	@Override
-	public String toString() {
-		return toString(true);
-	}
-
-	public String toString(boolean showFunc) {
-		StringBuilder sb = new StringBuilder();
-
-		// Show header
-		sb.append("\n---------- Scope " + getScopeName() + " ----------\n");
-
-		// Show scope values
-		List<String> names = new ArrayList<>();
-		names.addAll(values.keySet());
-		Collections.sort(names);
-		for (String n : names)
-			sb.append(n + ": " + getValueLocal(n) + "\n");
-
-		// Show parents
-		if (parent != null) sb.append(parent.toString(showFunc));
-
-		return sb.toString();
-	}
-
-	public String toStringScopeNames() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Scopes:\n");
-
-		int i = 0;
-		for (Scope scope = this; scope != null; scope = scope.getParent())
-			sb.append("\t" + (i++) + ": " + scope.getScopeName() + "\n");
-
-		return sb.toString();
-	}
-
-	@Override
-	public String getNodeId() {
-		return getClass().getSimpleName() + ":" + id;
-	}
-
 	@Override
 	public void serializeParse(BdsSerializer serializer) {
 		// Nothing to do
@@ -232,6 +197,45 @@ public class Scope implements BdsSerialize, Iterable<String>, Serializable {
 		if (parent != null) out.append(serializer.serializeSave(parent));
 
 		return out.toString();
+	}
+
+	public void setParent(Scope parent) {
+		this.parent = parent;
+	}
+
+	@Override
+	public String toString() {
+		return toString(true);
+	}
+
+	public String toString(boolean showFunc) {
+		StringBuilder sb = new StringBuilder();
+
+		// Show header
+		sb.append("\n---------- Scope " + getScopeName() + " ----------\n");
+
+		// Show scope values
+		List<String> names = new ArrayList<>();
+		names.addAll(values.keySet());
+		Collections.sort(names);
+		for (String n : names)
+			sb.append(n + ": " + getValueLocal(n) + "\n");
+
+		// Show parents
+		if (parent != null) sb.append(parent.toString(showFunc));
+
+		return sb.toString();
+	}
+
+	public String toStringScopeNames() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Scopes:\n");
+
+		int i = 0;
+		for (Scope scope = this; scope != null; scope = scope.getParent())
+			sb.append("\t" + (i++) + ": " + scope.getScopeName() + "\n");
+
+		return sb.toString();
 	}
 
 }

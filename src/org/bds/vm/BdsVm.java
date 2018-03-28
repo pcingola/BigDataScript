@@ -23,7 +23,9 @@ import org.bds.scope.Scope;
 public class BdsVm {
 
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
+	public static final String LABLE_MAIN = "main";
 
+	boolean verbose, debug;
 	int pc;
 	int code[];
 	Deque<Integer> callStack; // Stack for function calls (Program Counter)
@@ -31,6 +33,7 @@ public class BdsVm {
 	Scope scope; // Current scope (variables)
 	Map<String, Integer> labels;
 	Map<Object, Integer> constantsByObject;
+	Map<String, VmFunction> functions;
 	List<Object> constants;
 
 	public BdsVm() {
@@ -38,6 +41,7 @@ public class BdsVm {
 		constants = new ArrayList<>();
 		constantsByObject = new HashMap<>();
 		callStack = new LinkedList<>();
+		functions = new HashMap<>();
 		stack = new LinkedList<>();
 		scope = new Scope();
 	}
@@ -55,7 +59,17 @@ public class BdsVm {
 		int idx = constants.size();
 		constants.add(constant);
 		constantsByObject.put(constant, idx);
+		if (verbose) System.err.println("Added constant (idx: " + idx + "): " + constant);
 		return idx;
+	}
+
+	/**
+	 * Create and add a new function
+	 */
+	public void addFunction(String name, int pc) {
+		VmFunction f = new VmFunction(name, pc);
+		functions.put(name, f);
+		if (verbose) System.err.println("Added function " + f);
 	}
 
 	/**
@@ -65,6 +79,7 @@ public class BdsVm {
 	 */
 	public void addLabel(String label, int codeidx) {
 		labels.put(label, codeidx);
+		if (verbose) System.err.println("Added label '" + label + "': " + codeidx);
 	}
 
 	boolean constantBool() {
@@ -87,6 +102,10 @@ public class BdsVm {
 		return (String) constants.get(idx);
 	}
 
+	VmFunction getFunction(String name) {
+		return functions.get(name);
+	}
+
 	/**
 	 * Get code index where label occurs, -1 if not found
 	 */
@@ -96,6 +115,13 @@ public class BdsVm {
 
 	public Value getValue(String name) {
 		return scope.getValue(name);
+	}
+
+	/**
+	 * Create a new scope
+	 */
+	public void newScope() {
+		scope = new Scope(scope);
 	}
 
 	public Value pop() {
@@ -117,10 +143,24 @@ public class BdsVm {
 	}
 
 	/**
+	 * Pop value from call-stack
+	 */
+	int popPc() {
+		return callStack.removeFirst();
+	}
+
+	/**
 	 * Pop a real from stack
 	 */
 	public double popReal() {
 		return (Double) Types.REAL.cast(pop()).get();
+	}
+
+	/**
+	 * Restore old scope
+	 */
+	public void popScope() {
+		scope = scope.getParent();
 	}
 
 	/**
@@ -150,12 +190,22 @@ public class BdsVm {
 		stack.addFirst(val);
 	}
 
+	/**
+	 * Push program counter to call-stack
+	 */
+	void pushPc() {
+		callStack.addFirst(pc);
+	}
+
 	public void run() {
 		OpCode opcodes[] = OpCode.values();
 
+		// Initialize program counter
+		pc = Math.max(0, getLabel(LABLE_MAIN));
+
 		// First instruction
-		int instruction = code[pc];
-		OpCode opcode = opcodes[instruction];
+		int instruction;
+		OpCode opcode = OpCode.NOOP;
 
 		// Some variables used for opcodes
 		long i1, i2;
@@ -166,6 +216,7 @@ public class BdsVm {
 		while (pc < code.length && opcode != OpCode.HALT) {
 			instruction = code[pc];
 			opcode = opcodes[instruction];
+			if (debug) System.err.println("PC: " + pc + "\tOpCode: " + opcode);
 			pc++;
 
 			switch (opcode) {
@@ -185,6 +236,15 @@ public class BdsVm {
 				s2 = popString();
 				s1 = popString();
 				push(s1 + s2);
+				break;
+
+			case CALL:
+				name = constantString();
+				VmFunction func = getFunction(name);
+				pushPc();
+				pc = func.getPc();
+				newScope();
+				throw new RuntimeException("ADD VARIABLES TO SCOPE!");
 				break;
 
 			case LOAD:
@@ -228,4 +288,23 @@ public class BdsVm {
 		for (int i = 0; i < code.size(); i++)
 			this.code[i] = code.get(i);
 	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("PC         : " + pc);
+		sb.append("\nStack      : " + stack);
+		sb.append("\nCall-Stack : " + callStack);
+		sb.append("\nScope:\n" + scope);
+		return sb.toString();
+	}
+
 }
