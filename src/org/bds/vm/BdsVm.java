@@ -218,13 +218,14 @@ public class BdsVm {
 		OpCode opcode = OpCode.NOOP;
 
 		// Some variables used for opcodes
+		boolean b1, b2;
 		long i1, i2;
 		double r1, r2;
 		String name, s1, s2;
 		Value v1, v2;
 
 		// Execute while not the end of the program
-		while (pc < code.length && opcode != OpCode.HALT) {
+		while (pc < code.length) {
 			instruction = code[pc];
 			opcode = opcodes[instruction];
 			if (debug) System.err.println("PC: " + pc + "\tOpCode: " + opcode);
@@ -249,6 +250,18 @@ public class BdsVm {
 				push(s1 + s2);
 				break;
 
+			case ANDB:
+				b2 = popBool();
+				b1 = popBool();
+				push(b1 && b2);
+				break;
+
+			case ANDI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 & i2);
+				break;
+
 			case CALL:
 				name = constantString(); // Get function name
 				VmFunction func = getFunction(name); // Find function meta-data
@@ -259,9 +272,206 @@ public class BdsVm {
 				pc = func.getPc(); // Jump to function
 				break;
 
+			case DIVI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 / i2);
+				break;
+
+			case DIVR:
+				r2 = popReal();
+				r1 = popReal();
+				push(r1 / r2);
+				break;
+
+			case EQB:
+				b2 = popBool();
+				b1 = popBool();
+				push(b1 == b2);
+				break;
+
+			case EQI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 == i2);
+				break;
+
+			case EQR:
+				r2 = popReal();
+				r1 = popReal();
+				push(r1 == r2);
+				break;
+
+			case EQS:
+				s2 = popString();
+				s1 = popString();
+				push(s1.equals(s2));
+				break;
+
+			case GEB:
+				b2 = popBool();
+				b1 = popBool();
+				push(b1 || b1 == b2);
+				break;
+
+			case GEI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 >= i2);
+				break;
+
+			case GER:
+				r2 = popReal();
+				r1 = popReal();
+				push(r1 >= r2);
+				break;
+
+			case GES:
+				s2 = popString();
+				s1 = popString();
+				push(s1.compareTo(s2) >= 0);
+				break;
+
+			case GTB:
+				b2 = popBool();
+				b1 = popBool();
+				push(b1 && !b2);
+				break;
+
+			case GTI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 > i2);
+				break;
+
+			case GTR:
+				r2 = popReal();
+				r1 = popReal();
+				push(r1 > r2);
+				break;
+
+			case GTS:
+				s2 = popString();
+				s1 = popString();
+				push(s1.compareTo(s2) > 0);
+				break;
+
+			case JMP:
+				name = constantString(); // Get function name
+				pc = getLabel(name);
+				break;
+
+			case JMPT:
+				if (popBool()) {
+					name = constantString(); // Get label name
+					pc = getLabel(name); // Jump to label
+				}
+				break;
+
+			case JMPF:
+				if (!popBool()) {
+					name = constantString(); // Get label name
+					pc = getLabel(name); // Jump to label
+				}
+				break;
+
 			case LOAD:
 				name = constantString();
 				push(scope.getValue(name));
+				break;
+
+			case LEB:
+				b2 = popBool();
+				b1 = popBool();
+				push(b2 || b1 == b2);
+				break;
+
+			case LEI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 <= i2);
+				break;
+
+			case LER:
+				r2 = popReal();
+				r1 = popReal();
+				push(r1 <= r2);
+				break;
+
+			case LES:
+				s2 = popString();
+				s1 = popString();
+				push(s1.compareTo(s2) <= 0);
+				break;
+
+			case LTB:
+				b2 = popBool();
+				b1 = popBool();
+				push(b2 && !b1);
+				break;
+
+			case LTI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 < i2);
+				break;
+
+			case LTR:
+				r2 = popReal();
+				r1 = popReal();
+				push(r1 < r2);
+				break;
+
+			case LTS:
+				s2 = popString();
+				s1 = popString();
+				push(s1.compareTo(s2) < 0);
+				break;
+
+			case MODI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 % i2);
+				break;
+
+			case MULI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 * i2);
+				break;
+
+			case MULR:
+				r2 = popReal();
+				r1 = popReal();
+				push(r1 * r2);
+				break;
+
+			case HALT:
+				return;
+
+			case NOOP:
+				break;
+
+			case NOTB:
+				b1 = popBool();
+				push(!b1);
+				break;
+
+			case NOTI:
+				i1 = popInt();
+				push(~i1);
+				break;
+
+			case ORB:
+				b2 = popBool();
+				b1 = popBool();
+				push(b1 || b2);
+				break;
+
+			case ORI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 | i2);
 				break;
 
 			case PRINT:
@@ -300,12 +510,34 @@ public class BdsVm {
 				scope.add(name, pop());
 				break;
 
+			case SUBI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 - i2);
+				break;
+
+			case SUBR:
+				r2 = popReal();
+				r1 = popReal();
+				push(r1 - r2);
+				break;
+
+			case XORB:
+				b2 = popBool();
+				b1 = popBool();
+				push(b1 ^ b2);
+				break;
+
+			case XORI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 ^ i2);
+				break;
+
 			default:
 				throw new RuntimeException("Unimplemented opcode " + opcode);
 			}
 		}
-
-		if (debug) System.err.println(this);
 	}
 
 	/**

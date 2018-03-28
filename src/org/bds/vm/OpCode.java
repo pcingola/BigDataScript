@@ -30,11 +30,11 @@ public enum OpCode {
 	// Division
 	, DIVI, DIVR
 	// Equality test
-	, EQB, EQI, EQR
+	, EQB, EQI, EQR, EQS
 	// Greater or equal than
 	, GEB, GEI, GER, GES
 	// Greater than
-	, GTB, GTI, GTR
+	, GTB, GTI, GTR, GTS
 	// Halt (stop execution in current thread)
 	, HALT
 	// Jumps: unconditional, jump if true, jump if false:
@@ -53,12 +53,14 @@ public enum OpCode {
 	, MULI, MULR
 	// No operation
 	, NOOP
+	// Negation
+	, NOTB, NOTI
 	// OR: bool (logical), int (bitwise)
 	, ORB, ORI
 	// Pop: remove latest element from stack
 	, POP
 	// Print
-	, PRINT, PRINTSTACK
+	, PRINT
 	// Push literal
 	//    PUSHNULL                 # Pushes a 'null' literal
 	//    PUSH{B|I|R|S}  literal   # Pushes a literal constant into the stack
