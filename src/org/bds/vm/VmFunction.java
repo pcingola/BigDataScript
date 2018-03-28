@@ -10,13 +10,17 @@ package org.bds.vm;
 public class VmFunction {
 
 	String label;
+	String args[];
 	int pc;
-	int argc;
 
 	public VmFunction(String label, int pc) {
 		this.label = label;
 		this.pc = pc;
 		params(label);
+	}
+
+	public String[] getArgs() {
+		return args;
 	}
 
 	public String getLabel() {
@@ -31,13 +35,14 @@ public class VmFunction {
 		String s[] = label.split("[\\(\\)]");
 		if (s.length <= 1) return;
 		String params = s[1];
-		String p[] = params.split(",");
-		argc = p.length;
+		args = params.split(",");
+		for (int i = 0; i < args.length; i++)
+			args[i] = args[i].trim();
 	}
 
 	@Override
 	public String toString() {
-		return "function: " + label + ", pc: " + pc + ", argc: " + argc;
+		return "function: " + label + ", pc: " + pc + ", argc: " + args.length + ", args: " + args;
 	}
 
 }

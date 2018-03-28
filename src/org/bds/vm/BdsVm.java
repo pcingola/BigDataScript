@@ -1,9 +1,8 @@
 package org.bds.vm;
 
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,13 +22,16 @@ import org.bds.scope.Scope;
 public class BdsVm {
 
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
+	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
 	public static final String LABLE_MAIN = "main";
 
 	boolean verbose, debug;
 	int pc;
 	int code[];
-	Deque<Integer> callStack; // Stack for function calls (Program Counter)
-	Deque<Value> stack; // Stack: main stack used for values
+	int callStack[]; // Stack for function calls (Program Counter)
+	int csp; // Call stack pointer
+	Value[] stack; // Stack: main stack used for values
+	int sp; // Stack pointer
 	Scope scope; // Current scope (variables)
 	Map<String, Integer> labels;
 	Map<Object, Integer> constantsByObject;
@@ -40,9 +42,9 @@ public class BdsVm {
 		labels = new HashMap<>();
 		constants = new ArrayList<>();
 		constantsByObject = new HashMap<>();
-		callStack = new LinkedList<>();
+		callStack = new int[CALL_STACK_SIZE];
 		functions = new HashMap<>();
-		stack = new LinkedList<>();
+		stack = new Value[STACK_SIZE];
 		scope = new Scope();
 	}
 
@@ -125,7 +127,8 @@ public class BdsVm {
 	}
 
 	public Value pop() {
-		return stack.removeFirst();
+		if (sp < 0) throw new RuntimeException("Pop from empty stack!");
+		return stack[--sp];
 	}
 
 	/**
@@ -146,7 +149,7 @@ public class BdsVm {
 	 * Pop value from call-stack
 	 */
 	int popPc() {
-		return callStack.removeFirst();
+		return callStack[--csp];
 	}
 
 	/**
@@ -187,14 +190,18 @@ public class BdsVm {
 	}
 
 	public void push(Value val) {
-		stack.addFirst(val);
+		if (sp >= stack.length) {
+			// Resize stack
+			stack = Arrays.copyOf(stack, 2 * stack.length);
+		}
+		stack[sp++] = val;
 	}
 
 	/**
 	 * Push program counter to call-stack
 	 */
 	void pushPc() {
-		callStack.addFirst(pc);
+		callStack[csp++] = pc;
 	}
 
 	public void run() {
@@ -211,6 +218,7 @@ public class BdsVm {
 		long i1, i2;
 		double r1, r2;
 		String name, s1, s2;
+		Value v1, v2;
 
 		// Execute while not the end of the program
 		while (pc < code.length && opcode != OpCode.HALT) {
@@ -239,12 +247,13 @@ public class BdsVm {
 				break;
 
 			case CALL:
-				name = constantString();
-				VmFunction func = getFunction(name);
-				pushPc();
-				pc = func.getPc();
-				newScope();
-				throw new RuntimeException("ADD VARIABLES TO SCOPE!");
+				name = constantString(); // Get function name
+				VmFunction func = getFunction(name); // Find function meta-data
+				newScope(); // Create a new scope
+				for (String arg : func.getArgs()) // Add all arguments to the scope
+					scope.add(arg, pop());
+				pushPc(); // Push PC to call-stack
+				pc = func.getPc(); // Jump to function
 				break;
 
 			case LOAD:
@@ -272,6 +281,17 @@ public class BdsVm {
 				push(constantString());
 				break;
 
+			case RET:
+				popScope(); // Restore scope
+				pc = popPc(); // Pop PC from call-stack
+				break;
+
+			case SET:
+				v1 = pop();
+				v2 = pop();
+				v1.setValue(v2);
+				break;
+
 			case STORE:
 				name = constantString();
 				scope.add(name, pop());
@@ -281,6 +301,8 @@ public class BdsVm {
 				throw new RuntimeException("Unimplemented opcode " + opcode);
 			}
 		}
+
+		if (debug) System.err.println(this);
 	}
 
 	public void setCode(List<Integer> code) {
@@ -300,10 +322,19 @@ public class BdsVm {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("PC         : " + pc);
-		sb.append("\nStack      : " + stack);
-		sb.append("\nCall-Stack : " + callStack);
-		sb.append("\nScope:\n" + scope);
+		sb.append("PC         : " + pc + "\n");
+
+		sb.append("Stack      : [");
+		for (int i = 0; i < sp; i++)
+			sb.append(" " + stack[i]);
+		sb.append(" ]\n");
+
+		sb.append("Call-Stack : [");
+		for (int i = 0; i < csp; i++)
+			sb.append(" " + callStack[i]);
+		sb.append(" ]\n");
+
+		sb.append("Scope:\n" + scope);
 		return sb.toString();
 	}
 
