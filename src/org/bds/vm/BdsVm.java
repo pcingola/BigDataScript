@@ -204,6 +204,9 @@ public class BdsVm {
 		callStack[csp++] = pc;
 	}
 
+	/**
+	 * Run the program in 'code'
+	 */
 	public void run() {
 		OpCode opcodes[] = OpCode.values();
 
@@ -305,6 +308,9 @@ public class BdsVm {
 		if (debug) System.err.println(this);
 	}
 
+	/**
+	 * Add code to the VM
+	 */
 	public void setCode(List<Integer> code) {
 		this.code = new int[code.size()];
 		for (int i = 0; i < code.size(); i++)
