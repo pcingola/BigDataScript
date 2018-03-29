@@ -34,18 +34,20 @@ public class BdsVm {
 	int sp; // Stack pointer
 	Scope scope; // Current scope (variables)
 	Map<String, Integer> labels;
+	Map<Integer, String> labelsByPc;
 	Map<Object, Integer> constantsByObject;
 	Map<String, VmFunction> functions;
 	List<Object> constants;
 
 	public BdsVm() {
-		labels = new HashMap<>();
+		callStack = new int[CALL_STACK_SIZE];
 		constants = new ArrayList<>();
 		constantsByObject = new HashMap<>();
-		callStack = new int[CALL_STACK_SIZE];
 		functions = new HashMap<>();
-		stack = new Value[STACK_SIZE];
+		labels = new HashMap<>();
+		labelsByPc = new HashMap<>();
 		scope = new Scope();
+		stack = new Value[STACK_SIZE];
 	}
 
 	/**
@@ -66,9 +68,10 @@ public class BdsVm {
 	}
 
 	/**
-	 * Create and add a new function
+	 * Create and add a new function (label + function description)
 	 */
 	public void addFunction(String name, int pc) {
+		addLabel(name, pc);
 		VmFunction f = new VmFunction(name, pc);
 		functions.put(name, f);
 		if (verbose) System.err.println("Added function " + f);
@@ -81,6 +84,7 @@ public class BdsVm {
 	 */
 	public void addLabel(String label, int codeidx) {
 		labels.put(label, codeidx);
+		labelsByPc.put(codeidx, label);
 		if (verbose) System.err.println("Added label '" + label + "': " + codeidx);
 	}
 
@@ -104,8 +108,19 @@ public class BdsVm {
 		return (String) constants.get(idx);
 	}
 
+	Object getConstant(int idx) {
+		return constants.get(idx);
+	}
+
 	VmFunction getFunction(String name) {
 		return functions.get(name);
+	}
+
+	/**
+	 * Get label at code idx
+	 */
+	public String getLabel(int codeidx) {
+		return labelsByPc.get(codeidx);
 	}
 
 	/**
@@ -499,6 +514,14 @@ public class BdsVm {
 				pc = popPc(); // Pop PC from call-stack
 				break;
 
+			case SCOPEPUSH:
+				newScope();
+				break;
+
+			case SCOPEPOP:
+				scope = scope.getParent();
+				break;
+
 			case SET:
 				v1 = pop();
 				v2 = pop();
@@ -555,6 +578,33 @@ public class BdsVm {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+	}
+
+	/**
+	 * Output code as 'assembly' (disassembler)
+	 */
+	public String toAsm() {
+		OpCode opcodes[] = OpCode.values();
+
+		StringBuilder sb = new StringBuilder();
+		for (int pc = 0; pc < code.length; pc++) {
+			// Any label?
+			String label = getLabel(pc);
+			if (label != null) sb.append(label + ":\n");
+
+			// Show opcode
+			OpCode op = opcodes[code[pc]];
+			String opstr = op.toString().toLowerCase();
+			if (op.hasParam()) {
+				int idx = code[++pc];
+				Object param = getConstant(idx);
+				sb.append("\t" + opstr + " " + param + "\n");
+			} else {
+				sb.append("\t" + opstr + "\n");
+			}
+		}
+
+		return sb.toString();
 	}
 
 	@Override

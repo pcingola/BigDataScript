@@ -77,6 +77,7 @@ public class VmAsm {
 		}
 
 		bdsvm.setCode(code);
+		if (debug) System.err.println("# Assembly: Start\n" + bdsvm.toAsm() + "\n# Assembly: End\n");
 		return bdsvm;
 	}
 
