@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueMap;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.scope.Scope;
@@ -106,6 +109,11 @@ public class BdsVm {
 	String constantString() {
 		int idx = code[pc++];
 		return (String) constants.get(idx);
+	}
+
+	Type constantType() {
+		int idx = code[pc++];
+		return (Type) constants.get(idx);
 	}
 
 	Object getConstant(int idx) {
@@ -234,10 +242,13 @@ public class BdsVm {
 
 		// Some variables used for opcodes
 		boolean b1, b2;
-		long i1, i2;
+		long i1, i2, idx;
 		double r1, r2;
 		String name, s1, s2;
-		Value v1, v2;
+		Type type;
+		Value v1, v2, val;
+		ValueList vlist;
+		ValueMap vmap;
 
 		// Execute while not the end of the program
 		while (pc < code.length) {
@@ -376,6 +387,9 @@ public class BdsVm {
 				pc = getLabel(name);
 				break;
 
+			case HALT:
+				return;
+
 			case JMPT:
 				if (popBool()) {
 					name = constantString(); // Get label name
@@ -461,8 +475,10 @@ public class BdsVm {
 				push(r1 * r2);
 				break;
 
-			case HALT:
-				return;
+			case NEW:
+				type = constantType(); // Get type
+				val = type.newValue();
+				push(val);
 
 			case NOOP:
 				break;
@@ -509,6 +525,20 @@ public class BdsVm {
 				push(constantString());
 				break;
 
+			case REFLIST:
+				vlist = (ValueList) pop();
+				idx = popInt();
+				val = vlist.getValue(idx);
+				push(val);
+				break;
+
+			case REFMAP:
+				vmap = (ValueMap) pop();
+				v1 = pop();
+				val = vmap.getValue(v1);
+				push(val);
+				break;
+
 			case RET:
 				popScope(); // Restore scope
 				pc = popPc(); // Pop PC from call-stack
@@ -526,6 +556,20 @@ public class BdsVm {
 				v1 = pop();
 				v2 = pop();
 				v1.setValue(v2);
+				break;
+
+			case SETLIST:
+				vlist = (ValueList) pop();
+				idx = popInt();
+				val = pop();
+				vlist.setValue(idx, val);
+				break;
+
+			case SETMAP:
+				vmap = (ValueMap) pop();
+				v1 = pop(); // Key
+				v2 = pop(); // Value
+				vmap.put(v1, v2);
 				break;
 
 			case STORE:

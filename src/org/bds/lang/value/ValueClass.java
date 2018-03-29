@@ -18,6 +18,8 @@ import org.bds.lang.type.TypeClass;
  */
 public class ValueClass extends ValueComposite {
 
+	private static final long serialVersionUID = -1443386366370835828L;
+
 	Map<String, Value> fields; // TODO: Should I change to array for efficiency?
 
 	public ValueClass(Type type) {
@@ -101,6 +103,18 @@ public class ValueClass extends ValueComposite {
 		}
 		sb.append(" }");
 		return sb.toString();
+	}
+
+	@Override
+	public int compareTo(Value v) {
+		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
+		return toString().compareTo(v.toString());
+	}
+
+	@Override
+	public boolean equals(Object v) {
+		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
+		return compareTo(v) == 0;
 	}
 
 }

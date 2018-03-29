@@ -15,6 +15,8 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeConfigOri extends FunctionNativeConfig {
 
+	private static final long serialVersionUID = -1108501856795132536L;
+
 	public FunctionNativeConfigOri() {
 		super();
 	}
@@ -30,11 +32,10 @@ public class FunctionNativeConfigOri extends FunctionNativeConfig {
 		addNativeFunctionToScope();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
 		String fileName = bdsThread.getString("file");
 		ValueMap configOri = (ValueMap) bdsThread.getValue("configOri");
-		return parseFile(bdsThread, fileName, configOri.get());
+		return parseFile(bdsThread, fileName, configOri);
 	}
 }

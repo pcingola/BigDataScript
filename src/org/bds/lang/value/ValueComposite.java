@@ -4,6 +4,8 @@ import org.bds.lang.type.Type;
 
 public abstract class ValueComposite extends Value {
 
+	private static final long serialVersionUID = -6252319879040413844L;
+
 	protected Type type;
 
 	public ValueComposite(Type type) {

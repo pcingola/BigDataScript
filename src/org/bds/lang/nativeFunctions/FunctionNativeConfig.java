@@ -1,12 +1,13 @@
 package org.bds.lang.nativeFunctions;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueMap;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
@@ -16,6 +17,8 @@ import org.bds.util.Gpr;
  * @author pcingola
  */
 public class FunctionNativeConfig extends FunctionNative {
+
+	private static final long serialVersionUID = 5436763379885480214L;
 
 	public FunctionNativeConfig() {
 		super();
@@ -32,13 +35,18 @@ public class FunctionNativeConfig extends FunctionNative {
 		addNativeFunctionToScope();
 	}
 
-	protected Object parseFile(BdsThread bdsThread, String fileName, Map<String, String> configOri) {
+	protected Object parseFile(BdsThread bdsThread, String fileName, ValueMap configOri) {
 		// Sanity check
 		if (!Gpr.canRead(fileName)) bdsThread.fatalError(this, "Cannot read config file '" + fileName + "'");
 
 		// Create config, add default values
 		HashMap<String, String> config = new HashMap<>();
-		if (configOri != null) config.putAll(configOri);
+		if (configOri != null) {
+			// Copy all values from 'configOri'
+			for (Value k : configOri.get().keySet()) {
+				config.put(k.asString(), configOri.getValue(k).asString());
+			}
+		}
 
 		// Read and parse file
 		String fileContents = Gpr.readFile(fileName);
@@ -75,8 +83,8 @@ public class FunctionNativeConfig extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BdsThread csThread) {
-		String fileName = csThread.getString("file");
-		return parseFile(csThread, fileName, null);
+	protected Object runFunctionNative(BdsThread bdsThread) {
+		String fileName = bdsThread.getString("file");
+		return parseFile(bdsThread, fileName, null);
 	}
 }

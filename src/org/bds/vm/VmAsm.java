@@ -1,8 +1,14 @@
 package org.bds.vm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
 import org.bds.util.Gpr;
 
 /**
@@ -17,6 +23,7 @@ public class VmAsm {
 	String file;
 	BdsVm bdsvm;
 	List<Integer> code;
+	Map<String, Type> typeByName;
 
 	public VmAsm(String file) {
 		this.file = file;
@@ -41,15 +48,26 @@ public class VmAsm {
 		code.add(idx);
 	}
 
+	public void addType(Type type) {
+		if (debug) Gpr.debug("Adding type '" + type.toString() + "'");
+		typeByName.put(type.toString(), type);
+	}
+
 	/**
 	 * Compile a file
+	 *
+	 * Note: This object cannot be re-used. Create a new VmAsm
+	 *       each time you compile
 	 */
 	public BdsVm compile() {
+		if (bdsvm != null) throw new RuntimeException("Code already compiled!");
+
 		// Initialize
 		bdsvm = new BdsVm();
+		code = new ArrayList<>();
 		bdsvm.setDebug(debug);
 		bdsvm.setVerbose(verbose);
-		code = new ArrayList<>();
+		initTypes();
 
 		// Read file and parse each line
 		lineNum = 1;
@@ -79,6 +97,28 @@ public class VmAsm {
 		bdsvm.setCode(code);
 		if (debug) System.err.println("# Assembly: Start\n" + bdsvm.toAsm() + "\n# Assembly: End\n");
 		return bdsvm;
+	}
+
+	Type getType(String typeName) {
+		return typeByName.get(typeName);
+	}
+
+	/**
+	 * Initialize types
+	 */
+	void initTypes() {
+		typeByName = new HashMap<>();
+
+		Type types[] = { Types.BOOL, Types.INT, Types.REAL, Types.STRING };
+
+		// Add all basic list types
+		for (Type te : types)
+			addType(TypeList.get(te));
+
+		// Add all basic map types
+		for (Type tk : types)
+			for (Type tv : types)
+				addType(TypeMap.get(tk, tv));
 	}
 
 	/**
@@ -130,6 +170,9 @@ public class VmAsm {
 		case PUSHS:
 		case STORE:
 			return param; // Type is String
+
+		case NEW:
+			return getType(param);
 
 		case PUSHB:
 			return Gpr.parseBoolSafe(param);

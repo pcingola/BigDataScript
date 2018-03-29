@@ -6,10 +6,14 @@ import java.util.Map;
 import org.bds.Bds;
 import org.bds.Config;
 import org.bds.executioner.Executioners;
+import org.bds.lang.type.Type;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThreads;
 import org.bds.vm.BdsVm;
 import org.bds.vm.VmAsm;
 import org.junit.Before;
+
+import junit.framework.Assert;
 
 /**
  * All methods shared amongst test cases
@@ -201,14 +205,36 @@ public class TestCasesBase {
 	}
 
 	/**
-	 * Check that a file compiles without any errors, runs and a variable have its expected map
+	 * Check that a file compiles without any errors, runs the VM
+	 * and checks that a variable has the expected value
 	 */
 	void runVmAndCheck(String fileName, String varname, Object expectedValue) {
+		runVmAndCheck(fileName, varname, expectedValue, null);
+	}
+
+	/**
+	 * Check that a file compiles without any errors, runs the VM
+	 * and checks that a variable has the expected value.
+	 * Add all 'types' during compilation
+	 */
+	void runVmAndCheck(String fileName, String varname, Object expectedValue, List<Type> types) {
 		VmAsm vmasm = new VmAsm(fileName);
 		vmasm.setDebug(debug);
 		vmasm.setVerbose(verbose);
+		if (types != null) types.forEach(t -> vmasm.addType(t));
 		BdsVm vm = vmasm.compile();
 		vm.run();
+
+		// Check value
+		Value val = vm.getValue(varname);
+		Assert.assertTrue("Variable '" + varname + "' not found ", val != null);
+		Assert.assertEquals( //
+				"Variable '" + varname + "' has different value than expeced:\n" //
+						+ "\tExpected value : " + expectedValue //
+						+ "\tReal value     : " + val //
+				, expectedValue.toString() //
+				, val.toString() //
+		);
 	}
 
 }

@@ -9,7 +9,7 @@ import org.bds.lang.type.Types;
  * Define a value
  * @author pcingola
  */
-public abstract class Value implements Serializable, Cloneable {
+public abstract class Value implements Serializable, Cloneable, Comparable<Value> {
 
 	private static final long serialVersionUID = 3481924830790274005L;
 
@@ -56,6 +56,18 @@ public abstract class Value implements Serializable, Cloneable {
 	@Override
 	public abstract Value clone();
 
+	@Override
+	public int compareTo(Value v) {
+		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
+		return toString().compareTo(v.toString());
+	}
+
+	@Override
+	public boolean equals(Object v) {
+		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
+		return compareTo(v) == 0;
+	}
+
 	/**
 	 * Get native object (raw data)
 	 */
@@ -65,6 +77,11 @@ public abstract class Value implements Serializable, Cloneable {
 	 * Get value type
 	 */
 	public abstract Type getType();
+
+	@Override
+	public int hashCode() {
+		return asString().hashCode();
+	}
 
 	/**
 	 * Initialize value

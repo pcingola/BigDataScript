@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.bds.data.Data;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThreads;
 import org.bds.util.Timer;
 
@@ -71,6 +73,11 @@ public class TaskDependency {
 		}
 	}
 
+	public void addInput(ValueList inputs) {
+		for (Value in : inputs)
+			addInput(in.asString());
+	}
+
 	/**
 	 * Add a list of outputs
 	 */
@@ -84,6 +91,11 @@ public class TaskDependency {
 	 */
 	public void addOutput(String output) {
 		outputs.add(BdsThreads.data(output).getAbsolutePath());
+	}
+
+	public void addOutput(ValueList outputs) {
+		for (Value out : outputs)
+			addOutput(out.asString());
 	}
 
 	/**

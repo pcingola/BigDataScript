@@ -7,79 +7,96 @@ import java.util.List;
 import java.util.Map;
 
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeMap;
 
 /**
- * Define a map of type list
+ * Define a value of type map
+ *
+ * Note: It is a map of 'value'
+ *
  * @author pcingola
  */
-@SuppressWarnings("rawtypes")
 public class ValueMap extends ValueComposite {
 
-	Map map;
+	private static final long serialVersionUID = -4576221958237314363L;
+
+	Map<Value, Value> map;
 
 	public ValueMap(Type type) {
 		super(type);
-		map = new HashMap();
+		map = new HashMap<>();
 	}
 
 	public ValueMap(Type type, int size) {
 		super(type);
-		map = new HashMap(size);
+		map = new HashMap<>(size);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public ValueMap clone() {
 		ValueMap vm = new ValueMap(type, map.size());
-		vm.get().putAll(map);
+		for (Value vkey : map.keySet())
+			vm.put(vkey, getValue(vkey));
 		return vm;
 	}
 
 	@Override
-	public Map get() {
+	public Map<Value, Value> get() {
 		return map;
 	}
 
-	/**
-	 * Get element 'idx' wrapped into a 'Value'
-	 */
-	public Value getValue(Value idx) {
-		Object oidx = idx.get();
-		Object oelem = get().get(oidx);
-		return ((TypeMap) type).getValueType().newValue(oelem);
-	}
-
-	@SuppressWarnings("unchecked")
-	public void put(Value key, Value val) {
-		Map map = get();
-		map.put(key.get(), val.get());
+	@Override
+	public int compareTo(Value v) {
+		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
+		return toString().compareTo(v.toString());
 	}
 
 	@Override
+	public boolean equals(Object v) {
+		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
+		return compareTo(v) == 0;
+	}
+
+	/**
+	 * Get element 'key' (which is a 'Value' object)
+	 */
+	public Value getValue(Value key) {
+		return map.get(key);
+	}
+
+	public boolean isEmpty() {
+		return map.isEmpty();
+	}
+
+	/**
+	 * Put (set) entry 'key'
+	 */
+	public void put(Value key, Value val) {
+		map.put(key, val);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public void set(Object v) {
-		// !!! TODO: Check list elements class
-		map = (Map) v;
+		// !!! TODO: WE SHOULD PROBABLY NEVER DO THIS
+		map = (Map<Value, Value>) v;
 	}
 
 	public int size() {
 		return map.size();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public String toString() {
-		Map map = get();
-		if (map.isEmpty()) return "{}";
+		if (isEmpty()) return "{}";
 
 		StringBuilder sb = new StringBuilder();
-		List keys = new ArrayList<>();
+		List<Value> keys = new ArrayList<>();
 		keys.addAll(map.keySet());
 		Collections.sort(keys);
 
-		for (Object o : keys) {
+		for (Value key : keys) {
 			if (sb.length() > 0) sb.append(", ");
-			sb.append(" " + o.toString() + " => " + map.get(o));
+			sb.append(" " + key.toString() + " => " + getValue(key));
 		}
 		return "{" + sb.toString() + " }";
 	}

@@ -5,6 +5,8 @@ import org.bds.lang.type.Types;
 
 public class ValueReal extends ValuePrimitive {
 
+	private static final long serialVersionUID = 6633302344067725505L;
+
 	double value;
 
 	public ValueReal() {
@@ -42,6 +44,18 @@ public class ValueReal extends ValuePrimitive {
 	}
 
 	@Override
+	public int compareTo(Value v) {
+		if (v instanceof ValueReal) return (int) Math.signum(value - ((ValueReal) v).value);
+		return super.compareTo(v);
+	}
+
+	@Override
+	public boolean equals(Object v) {
+		if (v instanceof ValueReal) return value == ((ValueReal) v).value;
+		return false;
+	}
+
+	@Override
 	public Double get() {
 		return Double.valueOf(value);
 	}
@@ -49,6 +63,11 @@ public class ValueReal extends ValuePrimitive {
 	@Override
 	public Type getType() {
 		return Types.REAL;
+	}
+
+	@Override
+	public int hashCode() {
+		return Double.hashCode(value);
 	}
 
 	@Override

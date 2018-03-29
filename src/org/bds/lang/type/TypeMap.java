@@ -24,6 +24,11 @@ import org.bds.util.Gpr;
  */
 public class TypeMap extends TypeComposite {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static boolean debug = false;
 
 	public static final TypeMap MAP_ANY_ANY = new TypeMap(Types.ANY, Types.ANY);

@@ -5,6 +5,7 @@ import org.bds.lang.type.Types;
 
 public class ValueString extends ValuePrimitive {
 
+	private static final long serialVersionUID = 6659374250068336012L;
 	String value;
 
 	public ValueString() {
@@ -43,6 +44,12 @@ public class ValueString extends ValuePrimitive {
 	}
 
 	@Override
+	public boolean equals(Object v) {
+		if (v instanceof ValueString) return value == ((ValueString) v).value;
+		return false;
+	}
+
+	@Override
 	public String get() {
 		return value;
 	}
@@ -50,6 +57,11 @@ public class ValueString extends ValuePrimitive {
 	@Override
 	public Type getType() {
 		return Types.STRING;
+	}
+
+	@Override
+	public int hashCode() {
+		return value.hashCode();
 	}
 
 	@Override

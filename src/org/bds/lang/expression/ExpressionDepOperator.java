@@ -23,6 +23,10 @@ import org.bds.task.TaskDependency;
  */
 public class ExpressionDepOperator extends Expression {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	public static final String DEP_OPERATOR = "<-";
 	public static final String DEP_SEPARATOR = ",";
 
@@ -36,7 +40,6 @@ public class ExpressionDepOperator extends Expression {
 	/**
 	 * Evaluate expressions and create a task dependency
 	 */
-	@SuppressWarnings("unchecked")
 	public TaskDependency evalTaskDependency(BdsThread bdsThread) {
 		// All expressions are evaluated
 		runStep(bdsThread, left);
@@ -48,8 +51,8 @@ public class ExpressionDepOperator extends Expression {
 
 		// Create task dependency and add all results
 		TaskDependency taskDependency = new TaskDependency(this);
-		taskDependency.addOutput(leftEval.get());
-		taskDependency.addInput(rightEval.get());
+		taskDependency.addOutput(leftEval);
+		taskDependency.addInput(rightEval);
 
 		return taskDependency;
 	}

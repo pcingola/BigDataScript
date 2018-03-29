@@ -5,6 +5,10 @@ import org.bds.lang.type.Types;
 
 public class ValueBool extends ValuePrimitive {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	public final static ValueBool TRUE = new ValueBool(true);
 	public final static ValueBool FALSE = new ValueBool(false);
 
@@ -48,6 +52,12 @@ public class ValueBool extends ValuePrimitive {
 	}
 
 	@Override
+	public boolean equals(Object v) {
+		if (v instanceof ValueBool) return value == ((ValueBool) v).value;
+		return false;
+	}
+
+	@Override
 	public Boolean get() {
 		return Boolean.valueOf(value);
 	}
@@ -55,6 +65,11 @@ public class ValueBool extends ValuePrimitive {
 	@Override
 	public Type getType() {
 		return Types.BOOL;
+	}
+
+	@Override
+	public int hashCode() {
+		return value ? 1 : 0;
 	}
 
 	@Override

@@ -55,6 +55,9 @@ public enum OpCode {
 	, NOOP
 	// Negation
 	, NOTB, NOTI
+	// Create new object (of type 'Type') and push it to the stack
+	//    NEW Type
+	, NEW
 	// OR: bool (logical), int (bitwise)
 	, ORB, ORI
 	// Pop: remove latest element from stack
@@ -72,7 +75,7 @@ public enum OpCode {
 	// Scope: create new scope (and push it), restore old scope (pop current scope)
 	, SCOPEPUSH, SCOPEPOP
 	// Set value
-	, SET
+	, SET, SETLIST, SETMAP
 	// Store variable to local scope
 	//    STORE varName
 	, STORE
@@ -93,6 +96,7 @@ public enum OpCode {
 		case JMPT:
 		case JMPF:
 		case LOAD:
+		case NEW:
 		case PUSHB:
 		case PUSHI:
 		case PUSHR:
@@ -105,4 +109,10 @@ public enum OpCode {
 		}
 	}
 
+	/**
+	 * Is the parameter a 'type'?
+	 */
+	public boolean hasParamType() {
+		return this == NEW;
+	}
 }
