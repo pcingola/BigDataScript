@@ -9,7 +9,6 @@ import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.serialize.BdsSerializer;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -95,17 +94,6 @@ public abstract class MethodNative extends MethodDeclaration {
 	protected Value runMethodNativeValue(BdsThread bdsThread, Object objThis) {
 		Object res = runMethodNative(bdsThread, objThis);
 		return returnType.newValue(res);
-	}
-
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		// Nothing to do: Native methods are not serialized
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		// Nothing to do: Native methods are not serialized
-		return "";
 	}
 
 	@Override

@@ -1,13 +1,9 @@
 package org.bds.run;
 
-import java.util.Map;
-
 import org.bds.Config;
 import org.bds.lang.statement.FunctionCall;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.value.ValueArgs;
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
 import org.bds.util.Timer;
 
 /**
@@ -25,7 +21,7 @@ import org.bds.util.Timer;
  */
 public class FunctionCallThread extends BdsThread {
 
-	String functionCallNodeId; // Statement's ID, used only when un-serializing
+	//	String functionCallNodeId; // Statement's ID, used only when un-serializing
 	FunctionCall functionCall;
 	ValueArgs arguments;
 
@@ -62,54 +58,23 @@ public class FunctionCallThread extends BdsThread {
 		}
 	}
 
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		super.serializeParse(serializer);
-		functionCallNodeId = serializer.getNextFieldString();
-
-		serializer.getNextField();
-		// !!! TODO: FIX
-		// arguments = (Object[]) serializer.base64Decode(b64);
-		throw new RuntimeException("!!! UNIMPLEMENTED");
-	}
-
-	/**
-	 * Save thread's main information
-	 */
-	@Override
-	protected String serializeSaveThreadMain(BdsSerializer serializer) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.serializeSaveThreadMain(serializer));
-
-		// Function call (nodeId)
-		sb.append("\t");
-		sb.append(serializer.serializeSaveValue(functionCallNodeId));
-
-		// Arguments encoded as base64 object
-		sb.append("\t");
-		String b64 = serializer.base64encode(arguments);
-		sb.append(b64);
-
-		return sb.toString();
-	}
-
 	public void setFunctionCall(FunctionCall functionCall) {
 		this.functionCall = functionCall;
-		functionCallNodeId = functionCall.getNodeId();
+		//		functionCallNodeId = functionCall.getNodeId();
 	}
 
-	@Override
-	public void setStatement(Map<String, BdsSerialize> nodesById) {
-		// Find and set functionCall
-		FunctionCall fcall = (FunctionCall) nodesById.get(functionCallNodeId);
-		if (fcall == null) throw new RuntimeException("Cannot find statement node '" + fcall + "'");
-		setFunctionCall(fcall);
-
-		// Find and set statement
-		String statId = getStatementNodeId();
-		Statement stat = (Statement) nodesById.get(statId);
-		if (stat == null) throw new RuntimeException("Cannot find statement node '" + statId + "'");
-		setStatement(stat);
-	}
+	//	@Override
+	//	public void setStatement(Map<String, BdsSerialize> nodesById) {
+	//		// Find and set functionCall
+	//		FunctionCall fcall = (FunctionCall) nodesById.get(functionCallNodeId);
+	//		if (fcall == null) throw new RuntimeException("Cannot find statement node '" + fcall + "'");
+	//		setFunctionCall(fcall);
+	//
+	//		// Find and set statement
+	//		String statId = getStatementNodeId();
+	//		Statement stat = (Statement) nodesById.get(statId);
+	//		if (stat == null) throw new RuntimeException("Cannot find statement node '" + statId + "'");
+	//		setStatement(stat);
+	//	}
 
 }

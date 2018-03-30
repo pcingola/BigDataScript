@@ -53,11 +53,13 @@ public enum OpCode {
 	, MULI, MULR
 	// No operation
 	, NOOP
-	// Negation
-	, NOTB, NOTI
+	// Equality test (not equals)
+	, NEB, NEI, NER, NES
 	// Create new object (of type 'Type') and push it to the stack
 	//    NEW Type
 	, NEW
+	// Negation
+	, NOTB, NOTI
 	// OR: bool (logical), int (bitwise)
 	, ORB, ORI
 	// Pop: remove latest element from stack

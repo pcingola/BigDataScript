@@ -26,9 +26,6 @@ import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Timer;
 
@@ -37,7 +34,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public abstract class BdsNode implements BdsSerialize, Serializable {
+public abstract class BdsNode implements Serializable {
 
 	private static final long serialVersionUID = -2443078474175192104L;
 	protected BdsNode parent;
@@ -238,6 +235,7 @@ public abstract class BdsNode implements BdsSerialize, Serializable {
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected BdsNode findParent(Set<Class> classSet) {
 		if (classSet.contains(this.getClass())) return this;
 		if (parent != null) return parent.findParent(classSet);
@@ -335,11 +333,6 @@ public abstract class BdsNode implements BdsSerialize, Serializable {
 
 	public int getLineNum() {
 		return lineNum;
-	}
-
-	@Override
-	public String getNodeId() {
-		return getClass().getSimpleName() + ":" + id;
 	}
 
 	public BdsNode getParent() {
@@ -624,121 +617,6 @@ public abstract class BdsNode implements BdsSerialize, Serializable {
 		// Default : Do nothing
 	}
 
-	/**
-	 * Parse a line from a serialized file
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-
-		// Use ID from file
-		updateId((int) serializer.getNextFieldInt());
-		lineNum = (int) serializer.getNextFieldInt();
-		charPosInLine = (int) serializer.getNextFieldInt();
-
-		// Set parent node
-		int parentId = serializer.getNextFieldNodeId();
-		if (parentId != 0) {
-			// Parent node is not null
-			parent = new ParentNode();
-			parent.setFakeId(parentId);
-		}
-
-		returnType = serializer.getNextFieldType();
-
-		// Iterate over fields
-		for (Field field : getAllClassFields(false)) {
-			try {
-				Class fieldClass = field.getType();
-				Object value = serializer.parse(fieldClass, fieldClass.getComponentType());
-
-				field.set(this, value);
-			} catch (Exception e) {
-				throw new RuntimeException("Error loading field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
-			}
-		}
-	}
-
-	/**
-	 * Create a string to serialize to a file
-	 * @return
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-
-		// Not an array? Single field
-		out.append(getClass().getSimpleName() //
-				+ "\t" + id //
-				+ "\t" + lineNum //
-				+ "\t" + charPosInLine //
-				+ "\t" + serializer.serializeSaveValue(parent) //
-				+ "\t" + serializer.serializeSaveValue(returnType) //
-				+ "\t" //
-		);
-		ArrayList<BdsNode> nodesToRecurse = new ArrayList<>();
-
-		// Iterate over fields
-		for (Field field : getAllClassFields(false)) {
-			try {
-				field.setAccessible(true);
-				Object fieldObj = field.get(this);
-				Class fieldClass = field.getDeclaringClass();
-
-				// Does the field have a map?
-				if (fieldObj != null) {
-					// If it's an array, iterate on all objects
-					if (fieldObj.getClass().isArray()) {
-						for (Object fieldObjSingle : (Object[]) fieldObj) {
-							out.append(serializer.serializeSaveValue(fieldObjSingle) + ",");
-
-							// Can we recurse into this field?
-							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BdsNode)) nodesToRecurse.add((BdsNode) fieldObjSingle);
-						}
-
-						out.deleteCharAt(out.length() - 1); // Remove last comma
-						out.append("\t");
-					} else {
-						// Serialize field map
-						if (fieldObj instanceof Scope) {
-							// Do not serialize scope here
-						} else out.append(serializer.serializeSaveValue(fieldObj) + "\t");
-
-						// Can we recurse into this field?
-						if (fieldObj instanceof BdsNode) nodesToRecurse.add((BdsNode) fieldObj);
-					}
-				} else {
-					// Value of this field is null
-					if (fieldClass.getCanonicalName().startsWith(BdsNodeFactory.get().packageName())) out.append("null\t");
-					else out.append(serializer.serializeSaveValue(fieldObj) + "\t");
-				}
-			} catch (Exception e) {
-				throw new RuntimeException("Error getting field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
-			}
-		}
-
-		out.deleteCharAt(out.length() - 1); // Remove last tab
-		out.append("\n");
-
-		serializer.add(this);
-
-		// Recurse
-		for (BdsNode node : nodesToRecurse)
-			if (!serializer.isSerialized(node)) out.append(serializer.serializeSave(node));
-
-		return out.toString();
-	}
-
-	/**
-	 * Set a fake ID number (this is a fake node created during serialization)
-	 * NOTE!: We set it to a negative number. This is a fake node
-	 */
-	public void setFakeId(int id) {
-		if (id < 0) return; // Is ID already 'fake' node? => Do nothing
-		updateId(-id); // Update using a negative ID (fake ID)
-	}
-
 	public void setNeedsScope(boolean needsScope) {
 		throw new RuntimeException("Cannot set 'needsScope' in this node:" + this.getClass().getSimpleName());
 	}
@@ -749,6 +627,24 @@ public abstract class BdsNode implements BdsSerialize, Serializable {
 
 	public void setSymbolTable(SymbolTable symtab) {
 		throw new RuntimeException("Cannot set symbol table to node " + this.getClass().getSimpleName());
+	}
+
+	public String toAsm() {
+		// Show file, line and position if available
+		if (getFileName() == null) return "";
+		return "# " + getFileName() //
+				+ (lineNum >= 0 ? ", line " + lineNum : "") //
+				+ (charPosInLine >= 0 ? ", pos " + charPosInLine : "") //
+				+ ", node: " + getClass().getSimpleName() //
+				+ "\n";
+	}
+
+	public String toAsmRetType() {
+		if (isInt()) return "i";
+		if (isReal()) return "r";
+		if (isString()) return "s";
+		if (isBool()) return "b";
+		throw new RuntimeException();
 	}
 
 	@Override
@@ -880,10 +776,5 @@ public abstract class BdsNode implements BdsSerialize, Serializable {
 	protected void updateId(int newId) {
 		BdsNodeFactory.get().updateId(id, newId, this);
 		id = newId;
-	}
-
-	public List<Integer> vmCode() {
-		List<Integer> code = new ArrayList<>();
-		return code;
 	}
 }

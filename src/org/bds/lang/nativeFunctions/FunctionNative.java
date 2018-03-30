@@ -7,7 +7,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.serialize.BdsSerializer;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.symbol.SymbolTable;
 
@@ -17,6 +16,11 @@ import org.bds.symbol.SymbolTable;
  * @author pcingola
  */
 public abstract class FunctionNative extends FunctionDeclaration {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public FunctionNative() {
 		super(null, null);
@@ -86,17 +90,6 @@ public abstract class FunctionNative extends FunctionDeclaration {
 		Object ret = runFunctionNative(bdsThread);
 		return returnType.newValue(ret);
 		// return Value.factory(ret);
-	}
-
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		// Nothing to do: Native methods are not serialized
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		// Nothing to do: Native methods are not serialized
-		return "";
 	}
 
 	@Override

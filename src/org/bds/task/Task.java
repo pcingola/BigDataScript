@@ -12,11 +12,7 @@ import org.bds.Config;
 import org.bds.cluster.host.HostResources;
 import org.bds.executioner.Executioner;
 import org.bds.lang.expression.Expression;
-import org.bds.lang.type.TypeList;
-import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -25,7 +21,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Task implements BdsSerialize {
+public class Task {
 
 	public static final String CHECKSUM_LINE_START = "# Checksum: ";
 
@@ -206,7 +202,7 @@ public class Task implements BdsSerialize {
 		String shell = Config.get().getTaskShell();
 		shell = "#!" + shell + "\n\n" // Shell to use
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
-				;
+		;
 
 		// Save file and make it executable
 		String program = shell + programTxt;
@@ -360,11 +356,6 @@ public class Task implements BdsSerialize {
 
 	public String getNode() {
 		return node;
-	}
-
-	@Override
-	public String getNodeId() {
-		return getId();
 	}
 
 	public List<String> getOutputs() {
@@ -549,69 +540,6 @@ public class Task implements BdsSerialize {
 		runningEndTime = null;
 		postMortemInfo = null;
 		errorMsg = null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		// Note that "Task classname" field has been consumed at this point
-		id = serializer.getNextField();
-		bdsFileName = serializer.getNextFieldString();
-		bdsLineNum = (int) serializer.getNextFieldInt();
-		dependency = serializer.getNextFieldBool();
-		canFail = serializer.getNextFieldBool();
-		allowEmpty = serializer.getNextFieldBool();
-		taskState = TaskState.valueOf(serializer.getNextFieldString());
-		exitValue = (int) serializer.getNextFieldInt();
-		node = serializer.getNextFieldString();
-		queue = serializer.getNextFieldString();
-		programFileName = serializer.getNextFieldString();
-		programTxt = serializer.getNextFieldString();
-		stdoutFile = serializer.getNextFieldString();
-		stderrFile = serializer.getNextFieldString();
-		exitCodeFile = serializer.getNextFieldString();
-		currentDir = serializer.getNextFieldString();
-
-		// Task dependency
-		List<String> inputFiles = serializer.getNextFieldList(TypeList.get(Types.STRING));
-		List<String> outputFiles = serializer.getNextFieldList(TypeList.get(Types.STRING));
-		// serializer.getNextFieldList(TypeList.get(Type.STRING)); // Task IDs
-
-		taskDependency = new TaskDependency();
-		taskDependency.addInput(inputFiles);
-		taskDependency.addOutput(outputFiles);
-		// TODO: Add tasks by ID. Make sure all tasks are stored before this one
-		//		taskDependency.addTaskIds(taskIds);
-
-		resources = new HostResources();
-		resources.serializeParse(serializer);
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		return getClass().getSimpleName() //
-				+ "\t" + id //
-				+ "\t" + serializer.serializeSaveValue(bdsFileName) //
-				+ "\t" + bdsLineNum //
-				+ "\t" + dependency //
-				+ "\t" + canFail //
-				+ "\t" + allowEmpty //
-				+ "\t" + serializer.serializeSaveValue(taskState.toString()) //
-				+ "\t" + exitValue //
-				+ "\t" + serializer.serializeSaveValue(node) //
-				+ "\t" + serializer.serializeSaveValue(queue) //
-				+ "\t" + serializer.serializeSaveValue(programFileName) //
-				+ "\t" + serializer.serializeSaveValue(programTxt) //
-				+ "\t" + serializer.serializeSaveValue(stdoutFile) //
-				+ "\t" + serializer.serializeSaveValue(stderrFile) //
-				+ "\t" + serializer.serializeSaveValue(exitCodeFile) //
-				+ "\t" + serializer.serializeSaveValue(currentDir) //
-				+ "\t" + serializer.serializeSaveValue(taskDependency.getInputs()) //
-				+ "\t" + serializer.serializeSaveValue(taskDependency.getOutputs()) //
-				+ "\t" + serializer.serializeSave(resources) //
-				+ "\n";
-		// TODO: Add tasks by ID. Make sure all tasks are stored before this one
-		//				+ "\t" + serializer.serializeSaveValue(taskDependency.getTasksIds()) //
 	}
 
 	public void setAllowEmpty(boolean allowEmpty) {

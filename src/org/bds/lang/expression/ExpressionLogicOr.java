@@ -38,4 +38,11 @@ public class ExpressionLogicOr extends ExpressionLogic {
 		bdsThread.run(right);
 	}
 
+	@Override
+	public String toAsm() {
+		String eb = super.toAsm();
+		String op = "orb";
+		return eb + op + "\n";
+	}
+
 }

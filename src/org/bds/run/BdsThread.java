@@ -44,8 +44,6 @@ import org.bds.osCmd.Exec;
 import org.bds.report.Report;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
 import org.bds.task.Task;
 import org.bds.task.TaskDependecies;
 import org.bds.util.Gpr;
@@ -58,7 +56,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class BdsThread extends Thread implements BdsSerialize, Serializable {
+public class BdsThread extends Thread implements Serializable {
 
 	private static final long serialVersionUID = 1206304272840188781L;
 
@@ -71,7 +69,7 @@ public class BdsThread extends Thread implements BdsSerialize, Serializable {
 
 	// Program and state
 	Statement statement; // Main statement executed by this thread
-	String statementNodeId; // Statement's ID, used only when un-serializing
+	// String statementNodeId; // Statement's ID, used only when un-serializing
 	ProgramCounter pc; // Program counter
 	RunState runState; // Latest RunState
 	Value returnValue; // Latest return map (from a 'return' statement)
@@ -565,11 +563,6 @@ public class BdsThread extends Thread implements BdsSerialize, Serializable {
 		return bdsThreadId;
 	}
 
-	@Override
-	public String getNodeId() {
-		return bdsThreadId;
-	}
-
 	public BdsThread getParent() {
 		return parent;
 	}
@@ -625,9 +618,9 @@ public class BdsThread extends Thread implements BdsSerialize, Serializable {
 		return statement;
 	}
 
-	public String getStatementNodeId() {
-		return statementNodeId;
-	}
+	//	public String getStatementNodeId() {
+	//		return statementNodeId;
+	//	}
 
 	/**
 	 * Get variable's map as a string
@@ -1171,118 +1164,61 @@ public class BdsThread extends Thread implements BdsSerialize, Serializable {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		bdsThreadNum = (int) serializer.getNextFieldInt();
-		removeOnExit = serializer.getNextFieldList(TypeList.get(Types.STRING));
-		bdsThreadId = serializer.getNextFieldString();
-		statementNodeId = serializer.getNextFieldString();
-		scopeNodeId = serializer.getNextFieldString();
-
-		// Update global thread number?
-		if (threadNumber < bdsThreadNum) threadNumber = bdsThreadNum + 1;
-
-		// Set parent thread
-		String parentBdsThreadId = serializer.getNextFieldString();
-		if (!parentBdsThreadId.isEmpty()) {
-			parent = serializer.getBdsThread(parentBdsThreadId);
-			parent.add(this);
-		}
-
-		// State
-		runState = RunState.valueOf(serializer.getNextFieldString());
-
-		// Current dir
-		currentDir = serializer.getNextFieldString();
-
-		// Stack
-		String b64 = serializer.getNextField();
-		stack = (b64 != null && !b64.isEmpty() ? (Deque<Value>) serializer.base64Decode(b64) : null);
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		// This 'serializeSave' method can be called form another thread
-		// We have to make sure that the thread is not running while
-		// serializing (otherwise we'll recover an inconsistent state)
-
-		// Set this thread to freeze (it will be frozen in the next 'run' call)
-		setFreeze(true);
-		String pcOld = pc.toString(); // Save current program counter
-
-		// Serialize
-		String serStr = serializeSaveAll(serializer);
-
-		// Has program counter changed?
-		String pcNew = pc.toString();
-		if (!pcNew.equals(pcOld)) {
-			// PC changed => We have to serialize again
-			// This time we are 'safe' because thread should be frozen
-			serStr = serializeSaveAll(serializer);
-		}
-
-		// Un-freeze
-		setFreeze(false);
-
-		return serStr.toString();
-	}
-
-	/**
-	 * Serialize main and data
-	 */
-	public String serializeSaveAll(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-		out.append(serializeSaveThreadMain(serializer));
-		out.append("\n");
-		out.append(serializeSaveThreadData(serializer));
-		return out.toString();
-	}
-
-	/**
-	 * Save thread's data
-	 */
-	protected String serializeSaveThreadData(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-
-		// Save program counter
-		out.append(serializer.serializeSave(pc));
-
-		// Save scopes
-		out.append(serializer.serializeSave(scope));
-
-		// Save program nodes
-		out.append(serializer.serializeSave(statement));
-
-		// Save all tasks (in the same order that they were added)
-		for (Task task : taskDependecies.getTasks())
-			out.append(serializer.serializeSave(task));
-
-		// Save all threads
-		for (BdsThread bdsTh : bdsChildThreadsById.values())
-			out.append(serializer.serializeSave(bdsTh));
-
-		return out.toString();
-	}
-
-	/**
-	 * Save thread's main information
-	 */
-	protected String serializeSaveThreadMain(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-
-		out.append(getClass().getSimpleName());
-		out.append("\t" + bdsThreadNum);
-		out.append("\t" + serializer.serializeSaveValue(removeOnExit));
-		out.append("\t" + serializer.serializeSaveValue(getBdsThreadId()));
-		out.append("\t" + serializer.serializeSaveValue(statement.getNodeId()));
-		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
-		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
-		out.append("\t" + serializer.serializeSaveValue(runState.toString()));
-		out.append("\t" + serializer.serializeSaveValue(currentDir));
-		out.append("\t" + serializer.base64encode(stack));
-		return out.toString();
-	}
+	//	/**
+	//	 * Serialize main and data
+	//	 */
+	//	public String serializeSaveAll(BdsSerializer serializer) {
+	//		StringBuilder out = new StringBuilder();
+	//		out.append(serializeSaveThreadMain(serializer));
+	//		out.append("\n");
+	//		out.append(serializeSaveThreadData(serializer));
+	//		return out.toString();
+	//	}
+	//
+	//	/**
+	//	 * Save thread's data
+	//	 */
+	//	protected String serializeSaveThreadData(BdsSerializer serializer) {
+	//		StringBuilder out = new StringBuilder();
+	//
+	//		// Save program counter
+	//		out.append(serializer.serializeSave(pc));
+	//
+	//		// Save scopes
+	//		out.append(serializer.serializeSave(scope));
+	//
+	//		// Save program nodes
+	//		out.append(serializer.serializeSave(statement));
+	//
+	//		// Save all tasks (in the same order that they were added)
+	//		for (Task task : taskDependecies.getTasks())
+	//			out.append(serializer.serializeSave(task));
+	//
+	//		// Save all threads
+	//		for (BdsThread bdsTh : bdsChildThreadsById.values())
+	//			out.append(serializer.serializeSave(bdsTh));
+	//
+	//		return out.toString();
+	//	}
+	//
+	//	/**
+	//	 * Save thread's main information
+	//	 */
+	//	protected String serializeSaveThreadMain(BdsSerializer serializer) {
+	//		StringBuilder out = new StringBuilder();
+	//
+	//		out.append(getClass().getSimpleName());
+	//		out.append("\t" + bdsThreadNum);
+	//		out.append("\t" + serializer.serializeSaveValue(removeOnExit));
+	//		out.append("\t" + serializer.serializeSaveValue(getBdsThreadId()));
+	//		out.append("\t" + serializer.serializeSaveValue(statement.getNodeId()));
+	//		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
+	//		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
+	//		out.append("\t" + serializer.serializeSaveValue(runState.toString()));
+	//		out.append("\t" + serializer.serializeSaveValue(currentDir));
+	//		out.append("\t" + serializer.base64encode(stack));
+	//		return out.toString();
+	//	}
 
 	public void setCurrentDir(String currentDir) {
 		this.currentDir = currentDir;
@@ -1323,21 +1259,21 @@ public class BdsThread extends Thread implements BdsSerialize, Serializable {
 		this.scope = scope;
 	}
 
-	/**
-	 * Find and set statement
-	 */
-	public void setStatement(Map<String, BdsSerialize> nodesById) {
-		Statement stat = (Statement) nodesById.get(statementNodeId);
-		if (stat == null) throw new RuntimeException("Cannot find statement node '" + statementNodeId + "'");
-		setStatement(stat);
-	}
+	//	/**
+	//	 * Find and set statement
+	//	 */
+	//	public void setStatement(Map<String, BdsSerialize> nodesById) {
+	//		Statement stat = (Statement) nodesById.get(statementNodeId);
+	//		if (stat == null) throw new RuntimeException("Cannot find statement node '" + statementNodeId + "'");
+	//		setStatement(stat);
+	//	}
 
 	/**
 	 * Set program unit and update bigDataScriptThreadId"
 	 */
 	public void setStatement(Statement statement) {
 		this.statement = statement;
-		statementNodeId = statement.getNodeId();
+		// statementNodeId = statement.getNodeId();
 		createBdsThreadId(); // Create thread ID based on program's name
 	}
 

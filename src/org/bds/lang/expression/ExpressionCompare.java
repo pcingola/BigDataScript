@@ -17,6 +17,11 @@ import org.bds.symbol.SymbolTable;
  */
 public abstract class ExpressionCompare extends ExpressionBinary {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 2704019952314908802L;
+
 	public ExpressionCompare(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -69,6 +74,14 @@ public abstract class ExpressionCompare extends ExpressionBinary {
 	}
 
 	@Override
+	public String toAsm() {
+		String eb = super.toAsm();
+		return eb + toAsmOp() + toAsmRetType() + "\n";
+	}
+
+	protected abstract String toAsmOp();
+
+	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Either side is a string? => String plus String
 		if (left.isString() || right.isString()) {
@@ -82,4 +95,5 @@ public abstract class ExpressionCompare extends ExpressionBinary {
 			//			right.checkCanCastIntOrReal(compilerMessages);
 		}
 	}
+
 }

@@ -11,6 +11,8 @@ import org.bds.run.BdsThread;
  */
 public class ExpressionLogicAnd extends ExpressionLogic {
 
+	private static final long serialVersionUID = 2229407346097707469L;
+
 	public ExpressionLogicAnd(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -40,4 +42,10 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 		bdsThread.run(right);
 	}
 
+	@Override
+	public String toAsm() {
+		String eb = super.toAsm();
+		String op = "andb";
+		return eb + op + "\n";
+	}
 }

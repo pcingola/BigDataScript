@@ -21,6 +21,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class Return extends Statement {
 
+	private static final long serialVersionUID = 1225216199721027945L;
+
 	protected Expression expr;
 
 	public Return(BdsNode parent, ParseTree tree) {
@@ -81,6 +83,14 @@ public class Return extends Statement {
 		}
 
 		bdsThread.setRunState(RunState.RETURN);
+	}
+
+	@Override
+	public String toAsm() {
+		return super.toAsm() //
+				+ (expr != null ? expr.toAsm() : "pushi 0") //
+				+ "ret\n" //
+		;
 	}
 
 	@Override

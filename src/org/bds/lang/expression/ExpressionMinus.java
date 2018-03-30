@@ -13,6 +13,11 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionMinus extends ExpressionMath {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public ExpressionMinus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -62,6 +67,20 @@ public class ExpressionMinus extends ExpressionMath {
 		}
 
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
+	}
+
+	@Override
+	public String toAsm() {
+		String eb = super.toAsm();
+
+		String op = "sub";
+		String type = "";
+
+		if (isInt()) type = "i";
+		else if (isReal()) type = "f";
+		else throw new RuntimeException("Unknown type. This should never happen!");
+
+		return eb + op + type + "\n";
 	}
 
 	@Override

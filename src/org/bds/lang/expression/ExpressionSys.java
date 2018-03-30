@@ -14,7 +14,6 @@ import org.bds.lang.type.Types;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
-import org.bds.serialize.BdsSerializer;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -161,11 +160,6 @@ public class ExpressionSys extends Expression {
 		String output = "";
 		if (execResult.stdOut != null) output = execResult.stdOut;
 		bdsThread.push(output);
-	}
-
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		super.serializeParse(serializer);
 	}
 
 	void setCommands(String cmd) {

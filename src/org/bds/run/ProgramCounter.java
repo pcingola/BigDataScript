@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import org.bds.lang.BdsNode;
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
 
 /**
@@ -14,7 +12,7 @@ import org.bds.util.Gpr;
  *
  * @author pcingola
  */
-public class ProgramCounter implements Serializable, BdsSerialize, Iterable<Integer> {
+public class ProgramCounter implements Serializable, Iterable<Integer> {
 
 	private static final long serialVersionUID = -1907288389943318693L;
 
@@ -71,11 +69,6 @@ public class ProgramCounter implements Serializable, BdsSerialize, Iterable<Inte
 		return false;
 	}
 
-	@Override
-	public String getNodeId() {
-		return getClass().getSimpleName() + ":" + id;
-	}
-
 	boolean isEmpty() {
 		return size() <= initialSize;
 	}
@@ -115,29 +108,6 @@ public class ProgramCounter implements Serializable, BdsSerialize, Iterable<Inte
 	 */
 	public void push(BdsNode bdsNode) {
 		nodeIds.push(bdsNode.getId());
-	}
-
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		initialSize = (int) serializer.getNextFieldInt();
-
-		for (int i = 1; i < serializer.getFields().length - 1; i++)
-			nodeIds.push((int) serializer.getNextFieldInt());
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-		out.append(getClass().getSimpleName() + "\t");
-		out.append(initialSize + "\t");
-
-		for (int nn : nodeIds)
-			out.append(nn + "\t");
-
-		out.deleteCharAt(out.length() - 1); // Remove last tab
-		out.append("\n");
-
-		return out.toString();
 	}
 
 	public int size() {

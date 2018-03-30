@@ -18,10 +18,4 @@ public class ParentNode extends BdsNode {
 		throw new RuntimeException("This method should never be invoked!");
 	}
 
-	@Override
-	public void setFakeId(int id) {
-		// Note: ParentNode does not invoke UpdateId
-		this.id = -id;
-	}
-
 }

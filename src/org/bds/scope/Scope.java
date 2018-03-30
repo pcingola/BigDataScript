@@ -10,18 +10,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.bds.lang.BdsNode;
-import org.bds.lang.ParentNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
 
 /**
  * Scope: Variables, functions and classes
  *
  * @author pcingola
  */
-public class Scope implements BdsSerialize, Iterable<String>, Serializable {
+public class Scope implements Iterable<String>, Serializable {
 
 	private static final long serialVersionUID = -4041502602912302092L;
 	private static int scopeNum = 0;
@@ -88,11 +85,6 @@ public class Scope implements BdsSerialize, Iterable<String>, Serializable {
 		return node;
 	}
 
-	@Override
-	public String getNodeId() {
-		return getClass().getSimpleName() + ":" + id;
-	}
-
 	public Scope getParent() {
 		return parent;
 	}
@@ -156,47 +148,6 @@ public class Scope implements BdsSerialize, Iterable<String>, Serializable {
 	 */
 	public synchronized void remove(String name) {
 		values.remove(name);
-	}
-
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		// Nothing to do
-		id = (int) serializer.getNextFieldInt();
-		parentNodeId = serializer.getNextFieldString();
-		int nodeId = serializer.getNextFieldNodeId();
-
-		if (nodeId != 0) {
-			// Node is not null
-			node = new ParentNode();
-			node.setFakeId(nodeId);
-		}
-
-		if (id > scopeNum) scopeNum = id + 1;
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-		out.append("Scope");
-		out.append("\t" + serializer.serializeSaveValue(id));
-		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getNodeId() : ""));
-		out.append("\t" + serializer.serializeSaveValue(node));
-		out.append("\n");
-
-		for (String name : values.keySet()) {
-			Value val = values.get(name);
-			Type type = val.getType();
-			out.append(val.getClass().getSimpleName() //
-					+ "\t" + serializer.serializeSaveValue(name) //
-					+ "\t" + BdsSerializer.TYPE_IDENTIFIER + type.toStringSerializer() //
-					+ "\t" + serializer.serializeSaveValue(val) //
-			);
-
-		}
-
-		if (parent != null) out.append(serializer.serializeSave(parent));
-
-		return out.toString();
 	}
 
 	public void setParent(Scope parent) {

@@ -13,6 +13,11 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionModulo extends ExpressionMath {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public ExpressionModulo(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -34,6 +39,13 @@ public class ExpressionModulo extends ExpressionMath {
 		long den = bdsThread.popInt();
 		long num = bdsThread.popInt();
 		bdsThread.push(num % den);
+	}
+
+	@Override
+	public String toAsm() {
+		String eb = super.toAsm();
+		String op = "modi";
+		return eb + op + "\n";
 	}
 
 	@Override

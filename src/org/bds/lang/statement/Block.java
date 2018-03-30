@@ -14,6 +14,7 @@ import org.bds.run.BdsThread;
  */
 public class Block extends StatementWithScope {
 
+	private static final long serialVersionUID = -8981215874906264612L;
 	protected Statement statements[];
 
 	public Block(BdsNode parent, ParseTree tree) {
@@ -76,6 +77,21 @@ public class Block extends StatementWithScope {
 
 	public void setStatements(Statement[] statements) {
 		this.statements = statements;
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+
+		if (isNeedsScope()) sb.append("scopepush\n");
+
+		for (Statement s : statements)
+			sb.append(s.toAsm());
+
+		if (isNeedsScope()) sb.append("scopepop\n");
+
+		return sb.toString();
 	}
 
 	@Override

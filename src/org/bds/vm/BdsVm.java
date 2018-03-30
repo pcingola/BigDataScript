@@ -475,6 +475,30 @@ public class BdsVm {
 				push(r1 * r2);
 				break;
 
+			case NEB:
+				b2 = popBool();
+				b1 = popBool();
+				push(b1 != b2);
+				break;
+
+			case NEI:
+				i2 = popInt();
+				i1 = popInt();
+				push(i1 != i2);
+				break;
+
+			case NER:
+				r2 = popReal();
+				r1 = popReal();
+				push(r1 != r2);
+				break;
+
+			case NES:
+				s2 = popString();
+				s1 = popString();
+				push(!s1.equals(s2));
+				break;
+
 			case NEW:
 				type = constantType(); // Get type
 				val = type.newValue();

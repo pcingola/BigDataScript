@@ -46,7 +46,6 @@ import org.bds.run.BdsThread;
 import org.bds.run.HelpCreator;
 import org.bds.run.RunState;
 import org.bds.scope.GlobalScope;
-import org.bds.serialize.BdsSerializer;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.task.TaskDependecies;
 import org.bds.util.Gpr;
@@ -410,11 +409,11 @@ public class Bds {
 	 */
 	int infoCheckpoint() {
 		// Load checkpoint file
-		BdsSerializer bdsSerializer = new BdsSerializer(chekcpointRestoreFile, config);
-		List<BdsThread> bdsThreads = bdsSerializer.load();
 
-		for (BdsThread bdsThread : bdsThreads)
-			bdsThread.print();
+		// TODO: LOAD FROM CHECKLPOINT  !!!!!!!!!!!!!
+
+		//		for (BdsThread bdsThread : bdsThreads)
+		//			bdsThread.print();
 
 		return 0;
 	}

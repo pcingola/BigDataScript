@@ -13,6 +13,11 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionDivide extends ExpressionMath {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public ExpressionDivide(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -44,6 +49,20 @@ public class ExpressionDivide extends ExpressionMath {
 		}
 
 		throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
+	}
+
+	@Override
+	public String toAsm() {
+		String eb = super.toAsm();
+
+		String op = "div";
+		String type = "";
+
+		if (isInt()) type = "i";
+		else if (isReal()) type = "f";
+		else throw new RuntimeException("Unknown type. This should never happen!");
+
+		return eb + op + type + "\n";
 	}
 
 	@Override

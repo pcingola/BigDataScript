@@ -1,8 +1,5 @@
 package org.bds.lang.expression;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
@@ -14,7 +11,6 @@ import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
-import org.bds.vm.OpCode;
 
 /**
  * A sum of two expressions
@@ -22,6 +18,8 @@ import org.bds.vm.OpCode;
  * @author pcingola
  */
 public class ExpressionPlus extends ExpressionMath {
+
+	private static final long serialVersionUID = 1L;
 
 	public ExpressionPlus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -151,6 +149,11 @@ public class ExpressionPlus extends ExpressionMath {
 	}
 
 	@Override
+	public String toAsm() {
+		return "";
+	}
+
+	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		if (left.isList() || right.isList()) {
 			Type rt = returnTypeList();
@@ -164,16 +167,6 @@ public class ExpressionPlus extends ExpressionMath {
 			left.checkCanCastToNumeric(compilerMessages);
 			right.checkCanCastToNumeric(compilerMessages);
 		}
-	}
-
-	@Override
-	public List<Integer> vmCode() {
-		List<Integer> code = new ArrayList<>();
-		code.addAll(left.vmCode());
-		code.addAll(right.vmCode());
-
-		code.add(OpCode.ADDI.ordinal());
-		return code;
 	}
 
 }

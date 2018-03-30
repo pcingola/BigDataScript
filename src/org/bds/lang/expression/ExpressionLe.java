@@ -10,6 +10,8 @@ import org.bds.lang.BdsNode;
  */
 public class ExpressionLe extends ExpressionCompare {
 
+	private static final long serialVersionUID = -9094126571337959268L;
+
 	public ExpressionLe(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -18,7 +20,7 @@ public class ExpressionLe extends ExpressionCompare {
 	protected boolean cmp(boolean a, boolean b) {
 		return (a == b) //
 				|| ((!a) && b) // a < b
-				;
+		;
 	}
 
 	@Override
@@ -39,6 +41,11 @@ public class ExpressionLe extends ExpressionCompare {
 	@Override
 	protected String op() {
 		return "<=";
+	}
+
+	@Override
+	public String toAsmOp() {
+		return "le";
 	}
 
 }

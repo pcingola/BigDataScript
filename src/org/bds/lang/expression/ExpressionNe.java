@@ -10,6 +10,8 @@ import org.bds.lang.BdsNode;
  */
 public class ExpressionNe extends ExpressionCompare {
 
+	private static final long serialVersionUID = 680361809643102250L;
+
 	public ExpressionNe(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -37,6 +39,11 @@ public class ExpressionNe extends ExpressionCompare {
 	@Override
 	protected String op() {
 		return "!=";
+	}
+
+	@Override
+	public String toAsmOp() {
+		return "ne";
 	}
 
 }

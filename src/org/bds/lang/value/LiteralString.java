@@ -5,7 +5,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.InterpolateVars;
 import org.bds.run.BdsThread;
-import org.bds.serialize.BdsSerializer;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.GprString;
 
@@ -51,11 +50,6 @@ public class LiteralString extends Literal {
 	public void runStep(BdsThread bdsThread) {
 		if (interpolateVars == null) bdsThread.push(value); // No variable interpolation? => Literal
 		else bdsThread.run(interpolateVars); // Variable interpolation
-	}
-
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		super.serializeParse(serializer);
 	}
 
 	/**

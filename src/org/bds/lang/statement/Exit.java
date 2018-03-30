@@ -18,6 +18,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class Exit extends Statement {
 
+	private static final long serialVersionUID = 1968968982219240881L;
+
 	Expression expr;
 
 	public Exit(BdsNode parent, ParseTree tree) {
@@ -58,6 +60,14 @@ public class Exit extends Statement {
 		}
 
 		bdsThread.setRunState(RunState.EXIT);
+	}
+
+	@Override
+	public String toAsm() {
+		return super.toAsm() //
+				+ (expr != null ? expr.toAsm() : "") //
+				+ "halt\n" //
+		;
 	}
 
 	@Override

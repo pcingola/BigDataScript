@@ -11,6 +11,8 @@ import org.bds.run.BdsThread;
  */
 public class ExpressionBitOr extends ExpressionBit {
 
+	private static final long serialVersionUID = -4468043225504579475L;
+
 	public ExpressionBitOr(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -31,6 +33,13 @@ public class ExpressionBitOr extends ExpressionBit {
 		if (bdsThread.isCheckpointRecover()) return;
 
 		bdsThread.push(bdsThread.popInt() | bdsThread.popInt());
+	}
+
+	@Override
+	public String toAsm() {
+		String eb = super.toAsm();
+		String op = "ori";
+		return eb + op + "\n";
 	}
 
 }

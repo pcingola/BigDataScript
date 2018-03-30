@@ -9,7 +9,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.value.Value;
-import org.bds.serialize.BdsSerializer;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -214,11 +213,6 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	@Override
 	protected void parse(ParseTree tree) {
 		throw new RuntimeException("This method should never be called!");
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		return ""; // We don't save data type nodes
 	}
 
 	@Override
