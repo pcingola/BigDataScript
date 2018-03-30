@@ -1,5 +1,9 @@
 package org.bds.scope;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
 import org.bds.Config;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.type.TypeList;
@@ -11,10 +15,8 @@ import org.bds.util.Gpr;
 
 public class GlobalScope extends Scope {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2390988552900770372L;
+
 	public static final String GLOBAL_VAR_K = "K"; // Kilo = 2^10
 	public static final String GLOBAL_VAR_M = "M"; // Mega = 2^20
 	public static final String GLOBAL_VAR_G = "G"; // Giga = 2^30
@@ -145,6 +147,43 @@ public class GlobalScope extends Scope {
 		// Math constants
 		addConstant(GLOBAL_VAR_E, Math.E);
 		addConstant(GLOBAL_VAR_PI, Math.PI);
+	}
+
+	/**
+	 * Add symbols to global scope
+	 */
+	public void initilaize(Config config) {
+		// Initialize config-based global variables
+		init(config);
+
+		// Add global symbols
+		// Get default values from command line or config file
+		add(ExpressionTask.TASK_OPTION_SYSTEM, config.getSystem()); // System type: "local", "ssh", "cluster", "aws", etc.
+		add(ExpressionTask.TASK_OPTION_QUEUE, config.getQueue()); // Default queue: none
+		add(ExpressionTask.TASK_OPTION_RETRY, (long) config.getTaskFailCount()); // Task fail can be re-tried (re-run) N times before considering failed.
+
+		// Set "physical" path
+		String path;
+		try {
+			path = new File(".").getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException("Cannot get cannonical path for current dir");
+		}
+		globalScope.add(ExpressionTask.TASK_OPTION_PHYSICAL_PATH, path);
+
+		// Set all environment variables
+		Map<String, String> envMap = System.getenv();
+		for (String varName : envMap.keySet()) {
+			String varVal = envMap.get(varName);
+			globalScope.add(varName, varVal);
+		}
+
+		// Command line arguments (default: empty list)
+		// This is properly set in 'initializeArgs()' method, but
+		// we have to set something now, otherwise we'll get a "variable
+		// not found" error at compiler time, if the program attempts
+		// to use 'args'.
+		globalScope.add(GlobalScope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING));
 	}
 
 }

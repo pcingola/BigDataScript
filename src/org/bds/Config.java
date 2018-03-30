@@ -11,8 +11,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
 
+import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.executioner.MonitorTask;
 import org.bds.executioner.TaskLogger;
+import org.bds.lang.expression.ExpressionTask;
 import org.bds.task.Tail;
 import org.bds.task.TailFile;
 import org.bds.task.Task;
@@ -57,9 +59,10 @@ public class Config implements Serializable {
 	public static final String DISABLE_CHECKPOINT_CREATE = "disableCheckpoint"; // Disable checkpoint creation
 	public static final String DISABLE_RM_ON_EXIT = "disableRmOnExit";
 	public static final String FILTER_OUT_TASK_HINT = "filterOutTaskHint"; // Lines to filter out from task hint
-	public static final String SHOW_TASK_CODE = "showTaskCode"; // Always show task's code (sys commands)
+	public static final String QUEUE = "queue";
 	public static final String REPORT_HTML = "reportHtml"; // Create an HTML report
 	public static final String REPORT_YAML = "reportYaml"; // Create a YAML report
+	public static final String SHOW_TASK_CODE = "showTaskCode"; // Always show task's code (sys commands)
 	public static final String TAIL_LINES = "tailLines"; // Number of lie to use in 'tail'
 	public static final String TASK_MAX_HINT_LEN = "taskMaxHintLen";
 
@@ -118,7 +121,9 @@ public class Config implements Serializable {
 	String configFileName;
 	String configDirName;
 	String pidFile = "pidFile" + (new Date()).getTime() + ".txt"; // Default PID file
+	String queue; // Queue name
 	String reportFileName; // Preferred file name to use for progress and final report
+	String system; // System type
 	Properties properties;
 	ArrayList<String> includePath;
 	ArrayList<String> filterOutTaskHint;
@@ -215,6 +220,15 @@ public class Config implements Serializable {
 	}
 
 	/**
+	 * Get a property as a int
+	 */
+	public int getInt(String propertyName, int defaultValue) {
+		String val = getString(propertyName);
+		if (val == null) return defaultValue;
+		return Gpr.parseIntSafe(val.trim());
+	}
+
+	/**
 	 * Get a property as a long
 	 */
 	public long getLong(String propertyName, long defaultValue) {
@@ -276,6 +290,10 @@ public class Config implements Serializable {
 		return pidRegex;
 	}
 
+	public String getQueue() {
+		return queue;
+	}
+
 	public String getReportFileName() {
 		return reportFileName;
 	}
@@ -332,6 +350,10 @@ public class Config implements Serializable {
 
 	public String getSysShell() {
 		return getString(Config.SYS_SHELL, Config.SYS_SHELL_DEFAULT);
+	}
+
+	public String getSystem() {
+		return system;
 	}
 
 	public Tail getTail() {
@@ -462,10 +484,13 @@ public class Config implements Serializable {
 	void parse() {
 		noCheckpoint = getBool(DISABLE_CHECKPOINT_CREATE, false);
 		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
+		queue = getString(QUEUE, "");
 		showTaskCode = getBool(SHOW_TASK_CODE, false);
 		tailLines = (int) getLong(TAIL_LINES, TailFile.DEFAULT_TAIL);
 		reportHtml = getBool(REPORT_HTML, false);
 		reportYaml = getBool(REPORT_YAML, false);
+		system = getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
+		taskFailCount = getInt(ExpressionTask.TASK_OPTION_RETRY, 0);
 
 		// Split and add all items
 		filterOutTaskHint = new ArrayList<>();
@@ -544,6 +569,10 @@ public class Config implements Serializable {
 		this.pidFile = pidFile;
 	}
 
+	public void setQueue(String queue) {
+		this.queue = queue;
+	}
+
 	public void setQuiet(boolean quiet) {
 		this.quiet = quiet;
 	}
@@ -562,6 +591,10 @@ public class Config implements Serializable {
 
 	public void setShowTaskCode(boolean showTaskCode) {
 		this.showTaskCode = showTaskCode;
+	}
+
+	public void setSystem(String system) {
+		this.system = system;
 	}
 
 	public void setTailLines(int tailLines) {

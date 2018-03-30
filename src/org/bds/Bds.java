@@ -1,46 +1,26 @@
 package org.bds;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-import org.antlr.v4.runtime.ANTLRFileStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.LexerNoViableAltException;
-import org.antlr.v4.runtime.RuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.Tree;
-import org.bds.antlr.BigDataScriptLexer;
-import org.bds.antlr.BigDataScriptParser;
-import org.bds.antlr.BigDataScriptParser.IncludeFileContext;
-import org.bds.compile.CompileErrorStrategy;
-import org.bds.compile.CompilerErrorListener;
-import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
-import org.bds.compile.TypeCheckedNodes;
 import org.bds.data.Data;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ProgramUnit;
-import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.nativeFunctions.NativeLibraryFunctions;
 import org.bds.lang.nativeMethods.string.NativeLibraryString;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
-import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.statement.VarDeclaration;
-import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.HelpCreator;
@@ -98,84 +78,6 @@ public class Bds {
 	ArrayList<String> programArgs; // Command line arguments for BigDataScript program
 
 	/**
-	 * Create an AST from a program (using ANTLR lexer & parser)
-	 * Returns null if error
-	 * Use 'alreadyIncluded' to keep track of from 'include' statements
-	 */
-	public static ParseTree createAst(File file, boolean debug, Set<String> alreadyIncluded) {
-		alreadyIncluded.add(Gpr.getCanonicalFileName(file));
-		String fileName = file.toString();
-		String filePath = fileName;
-
-		BigDataScriptLexer lexer = null;
-		BigDataScriptParser parser = null;
-
-		try {
-			filePath = file.getCanonicalPath();
-
-			// Input stream
-			if (!Gpr.canRead(filePath)) {
-				CompilerMessages.get().addError("Can't read file '" + filePath + "'");
-				return null;
-			}
-
-			// Create a CharStream that reads from standard input
-			ANTLRFileStream input = new ANTLRFileStream(fileName);
-
-			//---
-			// Lexer: Create a lexer that feeds off of input CharStream
-			//---
-			lexer = new BigDataScriptLexer(input) {
-				@Override
-				public void recover(LexerNoViableAltException e) {
-					throw new RuntimeException(e); // Bail out
-				}
-			};
-
-			//---
-			// Parser
-			//---
-			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			parser = new BigDataScriptParser(tokens);
-
-			// Parser error handling
-			parser.setErrorHandler(new CompileErrorStrategy()); // Bail out with exception if errors in parser
-			parser.addErrorListener(new CompilerErrorListener()); // Catch some other error messages that 'CompileErrorStrategy' fails to catch
-
-			// Begin parsing at main rule
-			ParseTree tree = parser.programUnit();
-
-			// Error loading file?
-			if (tree == null) {
-				System.err.println("Can't parse file '" + filePath + "'");
-				return null;
-			}
-
-			// Show main nodes
-			if (debug) {
-				Timer.showStdErr("AST:");
-				for (int childNum = 0; childNum < tree.getChildCount(); childNum++) {
-					Tree child = tree.getChild(childNum);
-					System.err.println("\t\tChild " + childNum + ":\t" + child + "\tTree:'" + child.toStringTree() + "'");
-				}
-			}
-
-			// Included files
-			boolean resolveIncludePending = true;
-			while (resolveIncludePending)
-				resolveIncludePending = resolveIncludes(tree, debug, alreadyIncluded);
-
-			return tree;
-		} catch (Exception e) {
-			String msg = e.getMessage();
-			CompilerMessages.get().addError("Could not compile " + filePath //
-					+ (msg != null ? " :" + e.getMessage() : "") //
-			);
-			return null;
-		}
-	}
-
-	/**
 	 * Main
 	 */
 	public static void main(String[] args) {
@@ -183,61 +85,6 @@ public class Bds {
 		Bds bigDataScript = new Bds(args);
 		int exitValue = bigDataScript.run();
 		System.exit(exitValue);
-	}
-
-	/**
-	 * Resolve include statements
-	 */
-	private static boolean resolveIncludes(ParseTree tree, boolean debug, Set<String> alreadyIncluded) {
-		boolean changed = false;
-		if (tree instanceof IncludeFileContext) {
-			// Parent file: The one that is including the other file
-			File parentFile = new File(((IncludeFileContext) tree).getStart().getInputStream().getSourceName());
-
-			// Included file name
-			String includedFilename = StatementInclude.includeFileName(tree.getChild(1).getText());
-
-			// Find file (look into all include paths)
-			File includedFile = StatementInclude.includeFile(includedFilename, parentFile);
-			if (includedFile == null) {
-				CompilerMessages.get().add(tree, parentFile, "\n\tIncluded file not found: '" + includedFilename + "'\n\tSearch path: " + Config.get().getIncludePath(), MessageType.ERROR);
-				return false;
-			}
-
-			// Already included? don't bother
-			String canonicalFileName = Gpr.getCanonicalFileName(includedFile);
-			if (alreadyIncluded.contains(canonicalFileName)) {
-				if (debug) Gpr.debug("File already included: '" + includedFilename + "'\tCanonical path: '" + canonicalFileName + "'");
-				return false;
-			}
-
-			// Can we read the include file?
-			if (!includedFile.canRead()) {
-				CompilerMessages.get().add(tree, parentFile, "\n\tCannot read included file: '" + includedFilename + "'", MessageType.ERROR);
-				return false;
-			}
-
-			// Parse
-			ParseTree treeinc = createAst(includedFile, debug, alreadyIncluded);
-			if (treeinc == null) {
-				CompilerMessages.get().add(tree, parentFile, "\n\tFatal error including file '" + includedFilename + "'", MessageType.ERROR);
-				return false;
-			}
-
-			// Is a child always a RuleContext?
-			IncludeFileContext includeFileContext = ((IncludeFileContext) tree);
-			for (int i = 0; i < treeinc.getChildCount(); i++) {
-				Tree child = treeinc.getChild(i);
-				if (child instanceof RuleContext) { // Do not add TerminalNode (EOF)
-					includeFileContext.addChild((RuleContext) treeinc.getChild(i));
-				}
-			}
-		} else {
-			for (int i = 0; i < tree.getChildCount(); i++)
-				changed |= resolveIncludes(tree.getChild(i), debug, alreadyIncluded);
-		}
-
-		return changed;
 	}
 
 	public Bds(String args[]) {
@@ -279,30 +126,6 @@ public class Bds {
 	}
 
 	/**
-	 * Compile program
-	 */
-	public boolean compile() {
-		if (debug) log("Loading file: '" + programFileName + "'");
-
-		// Convert to AST
-		ParseTree tree = parseProgram();
-		if (tree == null) return false;
-
-		// Convert to BdsNodes
-		programUnit = createModel(tree);
-		if (programUnit == null) return false;
-
-		// Type-checking
-		if (typeChecking()) return false;
-
-		// Cleanup: Free some memory by reseting structure we won't use any more
-		TypeCheckedNodes.get().reset();
-
-		// OK
-		return true;
-	}
-
-	/**
 	 * Load configuration file
 	 */
 	protected void config() {
@@ -310,51 +133,29 @@ public class Bds {
 		// Config
 		//---
 		config = new Config(configFile);
-		config.setQuiet(quiet);
-		config.setVerbose(verbose);
 		config.setDebug(debug);
+		config.setExtractSource(extractSource);
 		config.setLog(log);
 		config.setDryRun(dryRun);
-		config.setTaskFailCount(taskFailCount);
+		config.setQuiet(quiet);
 		config.setReportFileName(reportFileName);
-		config.setExtractSource(extractSource);
+		config.setTaskFailCount(taskFailCount);
 		config.setVerbose(verbose);
 
 		// Override config file by command line option
-		if (noRmOnExit != null) config.setNoRmOnExit(noRmOnExit);
 		if (noCheckpoint != null) config.setNoCheckpoint(noCheckpoint);
+		if (noRmOnExit != null) config.setNoRmOnExit(noRmOnExit);
+		if (queue != null) config.setQueue(queue);
 		if (reportHtml != null) config.setReportHtml(reportHtml);
 		if (reportYaml != null) config.setReportYaml(reportYaml);
+		if (system != null) config.setSystem(system);
+		if (taskFailCount > 0) config.setTaskFailCount(taskFailCount);
 
 		if (pidFile == null) {
 			if (programFileName != null) pidFile = programFileName + ".pid";
 			else pidFile = chekcpointRestoreFile + ".pid";
 		}
-
 		config.setPidFile(pidFile);
-	}
-
-	/**
-	 * Create an AST from a program file
-	 * @return A parsed tree
-	 */
-	ParseTree createAst() {
-		File file = new File(programFileName);
-		return createAst(file, debug, new HashSet<String>());
-	}
-
-	/**
-	 *  Convert to BdsNodes, create Program Unit
-	 */
-	ProgramUnit createModel(ParseTree tree) {
-		if (debug) log("Creating BigDataScript tree.");
-		CompilerMessages.reset();
-		ProgramUnit pu = (ProgramUnit) BdsNodeFactory.get().factory(null, tree); // Transform AST to BdsNode tree
-		if (debug) log("AST:\n" + pu.toString());
-		// Any error messages?
-		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
-		if (CompilerMessages.get().hasErrors()) return null;
-		return pu;
 	}
 
 	/**
@@ -445,57 +246,12 @@ public class Bds {
 		config();
 
 		// Global scope
-		initilaizeGlobalScope();
+		GlobalSymbolTable.reset();
+		GlobalScope.reset();
+		GlobalScope.get().initilaize(config);
 
 		// Libraries
 		initilaizeLibraries();
-	}
-
-	/**
-	 * Add symbols to global scope
-	 */
-	void initilaizeGlobalScope() {
-		if (debug) log("Initialize global scope.");
-
-		// Reset Global scope
-		GlobalSymbolTable.reset();
-		GlobalScope.reset();
-		GlobalScope globalScope = GlobalScope.get();
-
-		// Initialize config-based global variables
-		globalScope.init(config);
-
-		// Add global symbols
-		// Get default values from command line or config file
-		if (queue == null) queue = config.getString(ExpressionTask.TASK_OPTION_QUEUE, "");
-		if (system == null) system = config.getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
-		if (taskFailCount < 0) taskFailCount = Gpr.parseIntSafe(config.getString(ExpressionTask.TASK_OPTION_RETRY, "0"));
-		globalScope.add(ExpressionTask.TASK_OPTION_SYSTEM, system); // System type: "local", "ssh", "cluster", "aws", etc.
-		globalScope.add(ExpressionTask.TASK_OPTION_QUEUE, queue); // Default queue: none
-		globalScope.add(ExpressionTask.TASK_OPTION_RETRY, (long) taskFailCount); // Task fail can be re-tried (re-run) N times before considering failed.
-
-		// Set "physical" path
-		String path;
-		try {
-			path = new File(".").getCanonicalPath();
-		} catch (IOException e) {
-			throw new RuntimeException("Cannot get cannonical path for current dir");
-		}
-		globalScope.add(ExpressionTask.TASK_OPTION_PHYSICAL_PATH, path);
-
-		// Set all environment variables
-		Map<String, String> envMap = System.getenv();
-		for (String varName : envMap.keySet()) {
-			String varVal = envMap.get(varName);
-			globalScope.add(varName, varVal);
-		}
-
-		// Command line arguments (default: empty list)
-		// This is properly set in 'initializeArgs()' method, but
-		// we have to set something now, otherwise we'll get a "variable
-		// not found" error at compiler time, if the program attempts
-		// to use 'args'.
-		globalScope.add(GlobalScope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING));
 	}
 
 	/**
@@ -520,9 +276,9 @@ public class Bds {
 		return arg.startsWith("-") && (arg.length() > 1);
 	}
 
-	void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
-	}
+	//	void log(String msg) {
+	//		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
+	//	}
 
 	/**
 	 * Parse command line arguments
@@ -716,33 +472,33 @@ public class Bds {
 		}
 	}
 
-	/**
-	 * Lex, parse and create Abstract syntax tree (AST)
-	 */
-	ParseTree parseProgram() {
-		if (debug) log("Creating AST.");
-		CompilerMessages.reset();
-		ParseTree tree = null;
-
-		try {
-			tree = createAst();
-		} catch (Exception e) {
-			System.err.println("Fatal error cannot continue - " + e.getMessage());
-			return null;
-		}
-
-		// No tree produced? Fatal error
-		if (tree == null) {
-			if (CompilerMessages.get().isEmpty()) {
-				CompilerMessages.get().addError("Fatal error: Could not compile");
-			}
-			return null;
-		}
-
-		// Any error? Do not continue
-		if (!CompilerMessages.get().isEmpty()) return null;
-		return tree;
-	}
+	//	/**
+	//	 * Lex, parse and create Abstract syntax tree (AST)
+	//	 */
+	//	ParseTree parseProgram() {
+	//		if (debug) log("Creating AST.");
+	//		CompilerMessages.reset();
+	//		ParseTree tree = null;
+	//
+	//		try {
+	//			tree = createAst();
+	//		} catch (Exception e) {
+	//			System.err.println("Fatal error cannot continue - " + e.getMessage());
+	//			return null;
+	//		}
+	//
+	//		// No tree produced? Fatal error
+	//		if (tree == null) {
+	//			if (CompilerMessages.get().isEmpty()) {
+	//				CompilerMessages.get().addError("Fatal error: Could not compile");
+	//			}
+	//			return null;
+	//		}
+	//
+	//		// Any error? Do not continue
+	//		if (!CompilerMessages.get().isEmpty()) return null;
+	//		return tree;
+	//	}
 
 	/**
 	 * Run script
@@ -985,21 +741,21 @@ public class Bds {
 		this.stackCheck = stackCheck;
 	}
 
-	/**
-	 * Type checking
-	 */
-	boolean typeChecking() {
-		if (debug) log("Type checking.");
-		CompilerMessages.reset();
-		GlobalSymbolTable globalSymbolTable = GlobalSymbolTable.get();
-		if (debug) log("Global SymbolTable:\n" + globalSymbolTable);
-		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
-
-		// Any error messages?
-		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
-		if (CompilerMessages.get().hasErrors()) return true;
-		return false;
-	}
+	//	/**
+	//	 * Type checking
+	//	 */
+	//	boolean typeChecking() {
+	//		if (debug) log("Type checking.");
+	//		CompilerMessages.reset();
+	//		GlobalSymbolTable globalSymbolTable = GlobalSymbolTable.get();
+	//		if (debug) log("Global SymbolTable:\n" + globalSymbolTable);
+	//		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
+	//
+	//		// Any error messages?
+	//		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+	//		if (CompilerMessages.get().hasErrors()) return true;
+	//		return false;
+	//	}
 
 	/**
 	 * Upload a local file to a URL
