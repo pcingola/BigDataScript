@@ -44,6 +44,11 @@ public class ValueClass extends ValueComposite {
 		return fields.get(name);
 	}
 
+	@Override
+	public int hashCode() {
+		return fields.hashCode();
+	}
+
 	/**
 	 * Initialize fields (by default the fields are null)
 	 */
@@ -103,18 +108,6 @@ public class ValueClass extends ValueComposite {
 		}
 		sb.append(" }");
 		return sb.toString();
-	}
-
-	@Override
-	public int compareTo(Value v) {
-		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
-		return toString().compareTo(v.toString());
-	}
-
-	@Override
-	public boolean equals(Object v) {
-		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
-		return compareTo(v) == 0;
 	}
 
 }

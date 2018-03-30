@@ -49,6 +49,29 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 	}
 
 	@Override
+	public int compareTo(Value v) {
+		int cmp = compareClass(v);
+		if (cmp != 0) return cmp;
+
+		// Compare types
+		cmp = type.compareTo(v.getType());
+		if (cmp != 0) return cmp;
+
+		// Compare all elements
+		ValueList vl = (ValueList) v;
+		int len = Math.min(size(), vl.size());
+		for (int i = 0; i < len; i++) {
+			Value v1 = getValue(i);
+			Value v2 = getValue(i);
+			cmp = v1.compareTo(v2);
+			if (cmp != 0) return cmp;
+		}
+
+		// May be one of the list has more elements...
+		return size() - vl.size();
+	}
+
+	@Override
 	public List<Value> get() {
 		return list;
 	}
@@ -67,6 +90,11 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 	 */
 	public Value getValue(long idx) {
 		return list.get((int) idx);
+	}
+
+	@Override
+	public int hashCode() {
+		return list.hashCode();
 	}
 
 	public boolean isEmpty() {
@@ -125,18 +153,6 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 			sb.append(v.toString());
 		}
 		return "[" + sb.toString() + "]";
-	}
-
-	@Override
-	public int compareTo(Value v) {
-		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
-		return toString().compareTo(v.toString());
-	}
-
-	@Override
-	public boolean equals(Object v) {
-		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
-		return compareTo(v) == 0;
 	}
 
 }

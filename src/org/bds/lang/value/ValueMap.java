@@ -44,23 +44,16 @@ public class ValueMap extends ValueComposite {
 		return map;
 	}
 
-	@Override
-	public int compareTo(Value v) {
-		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
-		return toString().compareTo(v.toString());
-	}
-
-	@Override
-	public boolean equals(Object v) {
-		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
-		return compareTo(v) == 0;
-	}
-
 	/**
 	 * Get element 'key' (which is a 'Value' object)
 	 */
 	public Value getValue(Value key) {
 		return map.get(key);
+	}
+
+	@Override
+	public int hashCode() {
+		return map.hashCode();
 	}
 
 	public boolean isEmpty() {

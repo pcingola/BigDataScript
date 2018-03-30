@@ -56,16 +56,23 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 	@Override
 	public abstract Value clone();
 
+	protected int compareClass(Value v) {
+		// Different class? Compare names
+		if (!getClass().equals(v.getClass())) return getClass().getSimpleName().compareTo(v.getClass().getSimpleName());
+		return 0;
+	}
+
 	@Override
 	public int compareTo(Value v) {
-		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
+		int cmp = compareClass(v);
+		if (cmp != 0) return cmp;
 		return toString().compareTo(v.toString());
 	}
 
 	@Override
 	public boolean equals(Object v) {
-		!!!!!!!!!!! COMPARE TYPES !!!!!!!!!!!!!!!!
-		return compareTo(v) == 0;
+		if (!getClass().equals(v.getClass())) return false;
+		return compareTo((Value) v) == 0;
 	}
 
 	/**
