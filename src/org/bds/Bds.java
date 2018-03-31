@@ -157,10 +157,14 @@ public class Bds {
 				// argument for the BigDataScript program
 				bdsRun.addArg(arg);
 			} else if (isOpt(arg)) {
-
+				// Note: Options sorted by 'long' option name
 				switch (arg.toLowerCase()) {
 				case "-checkpidregex":
 					bdsRun.setBdsAction(BdsAction.CHECK_PID_REGEX);
+					break;
+
+				case "-compile":
+					bdsRun.setBdsAction(BdsAction.COMPILE);
 					break;
 
 				case "-c":
@@ -392,6 +396,7 @@ public class Bds {
 		System.err.println("Usage: " + Bds.class.getSimpleName() + " [options] file.bds");
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile);
+		System.err.println("  [-compile]                     : Compile only, do not run.");
 		System.err.println("  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.");
 		System.err.println("  [-d | -debug  ]                : Debug mode.");
 		System.err.println("  -download url file             : Download 'url' to local 'file'. Note: Used by 'taks'");

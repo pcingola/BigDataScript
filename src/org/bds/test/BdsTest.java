@@ -263,7 +263,7 @@ public class BdsTest {
 		compileOk = false;
 		try {
 			captureStart(); // Capture STDOUT & STDERR
-			compileOk = bds.getBdsRun().compile(); // Run
+			compileOk = bds.run() == 0; // Compiled OK?
 			compilerMessages = CompilerMessages.get();
 		} catch (Throwable t) {
 			captureShow(); // Make sure STDOUT & STDERR have been shown

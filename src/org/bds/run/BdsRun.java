@@ -38,7 +38,7 @@ import org.bds.util.Timer;
 public class BdsRun {
 
 	public enum BdsAction {
-		RUN, RUN_CHECKPOINT, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
+		RUN, RUN_CHECKPOINT, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
 	}
 
 	boolean debug; // debug mode
@@ -95,9 +95,20 @@ public class BdsRun {
 		executioner.kill(); // Kill executioner
 	}
 
+	/**
+	 * Compile program
+	 * @return True if compiled OK
+	 */
 	public boolean compile() {
+		if (debug) Timer.showStdErr("Parsing");
 		BdsCompiler compiler = new BdsCompiler(programFileName);
 		programUnit = compiler.compile();
+
+		// Show errors and warnings, if any
+		if ((programUnit == null) && !CompilerMessages.get().isEmpty()) {
+			System.err.println("Compiler messages:\n" + CompilerMessages.get());
+		}
+
 		return programUnit != null;
 	}
 
@@ -184,6 +195,10 @@ public class BdsRun {
 		// Run
 		//---
 		switch (bdsAction) {
+		case COMPILE:
+			exitValue = compile() ? 0 : 1;
+			break;
+
 		case RUN_CHECKPOINT:
 			exitValue = runCheckpoint();
 			break;
@@ -262,13 +277,8 @@ public class BdsRun {
 	 * BdsCompiler and run
 	 */
 	int runCompile() {
-		// BdsCompiler, abort on errors
-		if (debug) Timer.showStdErr("Parsing");
-		if (!compile()) {
-			// Show errors and warnings, if any
-			if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
-			return 1;
-		}
+		// Compile, abort on errors
+		if (!compile()) return 1;
 
 		if (debug) Timer.showStdErr("Initializing");
 		BdsParseArgs bdsParseArgs = new BdsParseArgs(programUnit, programArgs);
@@ -301,13 +311,8 @@ public class BdsRun {
 	 * BdsCompiler and run
 	 */
 	int runTests() {
-		// BdsCompiler, abort on errors
-		if (debug) Timer.showStdErr("Parsing");
-		if (!compile()) {
-			// Show errors and warnings, if any
-			if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
-			return 1;
-		}
+		// Compile, abort on errors
+		if (!compile()) return 1;
 
 		if (debug) Timer.showStdErr("Initializing");
 		BdsParseArgs bdsParseArgs = new BdsParseArgs(programUnit, programArgs);
