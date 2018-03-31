@@ -121,9 +121,13 @@ public class Config implements Serializable {
 	String configFileName;
 	String configDirName;
 	String pidFile = "pidFile" + (new Date()).getTime() + ".txt"; // Default PID file
+	String pidRegex;
 	String queue; // Queue name
 	String reportFileName; // Preferred file name to use for progress and final report
 	String system; // System type
+	String sysShell; // System shell
+	String taskShell; // Task shell
+	String tmpDir; // Tmp directory
 	Properties properties;
 	ArrayList<String> includePath;
 	ArrayList<String> filterOutTaskHint;
@@ -191,11 +195,6 @@ public class Config implements Serializable {
 
 	/**
 	 * A collection of strings showing where to search for include files
-	 *
-	 * TODO: Add path from config file
-	 * TODO: Add default system-wide include path ("/usr/local/bds/include")
-	 *
-	 * @return
 	 */
 	public Collection<String> getIncludePath() {
 		// Create array if needed
@@ -241,17 +240,6 @@ public class Config implements Serializable {
 	 * Max number of concurrent threads
 	 */
 	public int getMaxThreads() {
-		if (maxThreads <= 0) {
-			// Parse property
-			maxThreads = (int) getLong(MAX_NUMBER_OF_RUNNING_THREADS, DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS);
-			if (debug) Timer.showStdErr("Config: Setting 'maxThreads' to " + maxThreads);
-
-			if (maxThreads < MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE) {
-				Timer.showStdErr("Config: Attempt to set 'maxThreads' to " + maxThreads + ". Too small, using " + MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE + " inseatd.");
-				maxThreads = MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE;
-			}
-		}
-
 		return maxThreads;
 	}
 
@@ -269,24 +257,12 @@ public class Config implements Serializable {
 	}
 
 	public String getPidRegex(String defaultPidRegex) {
-		String pidRegex = getString(PID_REGEX, defaultPidRegex).trim();
-
-		// Remove leading and trailing quotes
-		if (pidRegex.startsWith("\"") && pidRegex.endsWith("\"") && pidRegex.length() > 2) {
-			pidRegex = pidRegex.substring(1, pidRegex.length() - 1);
-		}
-
+		if (pidRegex == null || pidRegex.isEmpty()) return defaultPidRegex;
 		return pidRegex;
 	}
 
 	public String getPidRegexCheckTasksRunning(String defaultPidRegex) {
-		String pidRegex = getString(PID_CHECK_TASK_RUNNING_REGEX, defaultPidRegex).trim();
-
-		// Remove leading and trailing quotes
-		if (pidRegex.startsWith("\"") && pidRegex.endsWith("\"") && pidRegex.length() > 2) {
-			pidRegex = pidRegex.substring(1, pidRegex.length() - 1);
-		}
-
+		if (pidRegex == null || pidRegex.isEmpty()) return defaultPidRegex;
 		return pidRegex;
 	}
 
@@ -349,7 +325,7 @@ public class Config implements Serializable {
 	}
 
 	public String getSysShell() {
-		return getString(Config.SYS_SHELL, Config.SYS_SHELL_DEFAULT);
+		return sysShell;
 	}
 
 	public String getSystem() {
@@ -384,41 +360,22 @@ public class Config implements Serializable {
 	}
 
 	public int getTaskMaxHintLen() {
-		if (taskMaxHintLen == null) {
-			taskMaxHintLen = Gpr.parseIntSafe(properties.getProperty(TASK_MAX_HINT_LEN, Task.MAX_HINT_LEN + ""));
-
-			// Negative number means 'unlimited' (technically 2G)
-			if (taskMaxHintLen < 0) taskMaxHintLen = Integer.MAX_VALUE;
-		}
-
 		return taskMaxHintLen;
 	}
 
 	public String getTaskShell() {
-		return getString(Config.TASK_SHELL, Config.TASK_SHELL_DEFAULT);
+		return taskShell;
 	}
 
 	public String getTmpDir() {
-		return getString(TMP_DIR, DEFAULT_TMP_DIR);
+		return tmpDir;
 	}
 
 	public int getWaitAfterTaskRun() {
-		if (waitAfterTaskRun < 0) {
-			// Parse property
-			waitAfterTaskRun = (int) getLong(WAIT_AFTER_TASK_RUN, DEFAULT_WAIT_AFTER_TASK_RUN);
-			if (debug) Timer.showStdErr("Config: Setting 'waitAfterTaskRun' to " + waitAfterTaskRun);
-		}
-
 		return waitAfterTaskRun;
 	}
 
 	public int getWaitTextFileBusy() {
-		if (waitTextFileBusy < 0) {
-			// Parse property
-			waitTextFileBusy = (int) getLong(WAIT_TEXT_FILE_BUSY, DEFAULT_WAIT_TEXT_FILE_BUSY);
-			if (debug) Timer.showStdErr("Config: Setting 'waitTextFileBusy' to " + waitTextFileBusy);
-		}
-
 		return waitTextFileBusy;
 	}
 
@@ -482,15 +439,37 @@ public class Config implements Serializable {
 	 * Parse some values
 	 */
 	void parse() {
+		maxThreads = (int) getLong(MAX_NUMBER_OF_RUNNING_THREADS, DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS);
 		noCheckpoint = getBool(DISABLE_CHECKPOINT_CREATE, false);
 		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
+		pidRegex = getString(PID_REGEX).trim();
 		queue = getString(QUEUE, "");
 		showTaskCode = getBool(SHOW_TASK_CODE, false);
+		sysShell = getString(Config.SYS_SHELL, Config.SYS_SHELL_DEFAULT);
 		tailLines = (int) getLong(TAIL_LINES, TailFile.DEFAULT_TAIL);
 		reportHtml = getBool(REPORT_HTML, false);
 		reportYaml = getBool(REPORT_YAML, false);
 		system = getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
 		taskFailCount = getInt(ExpressionTask.TASK_OPTION_RETRY, 0);
+		taskMaxHintLen = Gpr.parseIntSafe(properties.getProperty(TASK_MAX_HINT_LEN, Task.MAX_HINT_LEN + ""));
+		taskShell = getString(Config.TASK_SHELL, Config.TASK_SHELL_DEFAULT);
+		tmpDir = getString(TMP_DIR, DEFAULT_TMP_DIR);
+		waitAfterTaskRun = (int) getLong(WAIT_AFTER_TASK_RUN, DEFAULT_WAIT_AFTER_TASK_RUN);
+		waitTextFileBusy = (int) getLong(WAIT_TEXT_FILE_BUSY, DEFAULT_WAIT_TEXT_FILE_BUSY);
+
+		// Sanity checks
+		if (maxThreads < MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE) {
+			Timer.showStdErr("Config: Attempt to set 'maxThreads' to " + maxThreads + ". Too small, using " + MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE + " inseatd.");
+			maxThreads = MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE;
+		}
+
+		// Negative number means 'unlimited' (technically 2G)
+		if (taskMaxHintLen < 0) taskMaxHintLen = Integer.MAX_VALUE;
+
+		// Remove leading and trailing quotes from pidRegex
+		if (pidRegex.startsWith("\"") && pidRegex.endsWith("\"") && pidRegex.length() > 2) {
+			pidRegex = pidRegex.substring(1, pidRegex.length() - 1);
+		}
 
 		// Split and add all items
 		filterOutTaskHint = new ArrayList<>();

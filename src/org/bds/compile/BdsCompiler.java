@@ -23,11 +23,11 @@ import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
- * Compile a Bds program: Run lexer and parser, creat AST, perform typechcking and create BdsNode tree
+ * BdsCompiler a Bds program: Run lexer and parser, creat AST, perform typechcking and create BdsNode tree
  *
  * @author pcingola
  */
-public class Compile {
+public class BdsCompiler {
 
 	boolean debug; // debug mode
 	boolean verbose; // Verbose mode
@@ -168,7 +168,7 @@ public class Compile {
 	}
 
 	/**
-	 * Compile program
+	 * BdsCompiler program
 	 */
 	public boolean compile() {
 		if (debug) log("Loading file: '" + programFileName + "'");

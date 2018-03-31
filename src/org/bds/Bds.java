@@ -532,7 +532,7 @@ public class Bds {
 			break;
 
 		default:
-			exitValue = runCompile(); // Compile & run
+			exitValue = runCompile(); // BdsCompiler & run
 		}
 		if (debug) Timer.showStdErr("Finished. Exit code: " + exitValue);
 
@@ -589,10 +589,10 @@ public class Bds {
 	}
 
 	/**
-	 * Compile and run
+	 * BdsCompiler and run
 	 */
 	int runCompile() {
-		// Compile, abort on errors
+		// BdsCompiler, abort on errors
 		if (debug) Timer.showStdErr("Parsing");
 		if (!compile()) {
 			// Show errors and warnings, if any
@@ -628,10 +628,10 @@ public class Bds {
 	}
 
 	/**
-	 * Compile and run
+	 * BdsCompiler and run
 	 */
 	int runTests() {
-		// Compile, abort on errors
+		// BdsCompiler, abort on errors
 		if (debug) Timer.showStdErr("Parsing");
 		if (!compile()) {
 			// Show errors and warnings, if any

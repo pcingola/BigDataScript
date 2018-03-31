@@ -17,7 +17,7 @@ import org.bds.vm.BdsVm;
 import junit.framework.Assert;
 
 /**
- * BDS test cases: Compile or run a bds program and store exitCode, STDOUT, STDERR, etc.
+ * BDS test cases: BdsCompiler or run a bds program and store exitCode, STDOUT, STDERR, etc.
  *
  * @author pcingola
  */
@@ -145,7 +145,7 @@ public class BdsTest {
 	 * Check that the file was compiled OK
 	 */
 	public void checkCompileOk() {
-		if (!compilerMessages.isEmpty()) Assert.fail("Compile errors in file '" + fileName + "':\n" + compilerMessages);
+		if (!compilerMessages.isEmpty()) Assert.fail("BdsCompiler errors in file '" + fileName + "':\n" + compilerMessages);
 		if (compileOk != null) Assert.assertTrue(errMsg("There was an error while compiling"), compileOk);
 	}
 
@@ -255,7 +255,7 @@ public class BdsTest {
 	}
 
 	/**
-	 * Compile code
+	 * BdsCompiler code
 	 */
 	public boolean compile() {
 		if (bds == null) bds(); // Create command

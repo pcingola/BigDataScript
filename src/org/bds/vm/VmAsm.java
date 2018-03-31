@@ -54,7 +54,7 @@ public class VmAsm {
 	}
 
 	/**
-	 * Compile a file
+	 * BdsCompiler a file
 	 *
 	 * Note: This object cannot be re-used. Create a new VmAsm
 	 *       each time you compile
