@@ -314,13 +314,20 @@ public class BdsRun {
 			return 0;
 		}
 
-		// Run the program
-		BdsThread bdsThread = new BdsThread(programUnit, config);
-		if (debug) {
-			Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
-			Timer.showStdErr("Running");
+		if (USE_VM) {
+			// USING VM
+			throw new RuntimeException("UNIMPLEMENTED!!!!!!!!");
+		} else {
+			// TODO: OLD STYLE
+
+			// Run the program
+			BdsThread bdsThread = new BdsThread(programUnit, config);
+			if (debug) {
+				Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
+				Timer.showStdErr("Running");
+			}
+			int exitCode = runThread(bdsThread);
 		}
-		int exitCode = runThread(bdsThread);
 
 		// Check stack
 		if (stackCheck) bdsThread.sanityCheckStack();
