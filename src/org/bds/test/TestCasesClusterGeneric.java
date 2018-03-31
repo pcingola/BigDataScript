@@ -38,7 +38,7 @@ public class TestCasesClusterGeneric extends TestCasesBase {
 
 		// Get tasks and check that PID matches 'CLUSTERGENERIC_LOCALHOST_'
 		// (run.pl prepends that string to PID)
-		for (Task t : bds.getBigDataScriptThread().getTasks()) {
+		for (Task t : bds.getBdsRun().getBdsThread().getTasks()) {
 			if (debug) Gpr.debug("Task " + t.getId() + ", pid " + t.getPid());
 			Assert.assertTrue("Task " + t.getId() + " was NOT executed by ClusterGeneric_localhos (pid " + t.getPid() + ")", t.getPid().startsWith("CLUSTERGENERIC_LOCALHOST_"));
 		}

@@ -104,7 +104,7 @@ public class BdsRun {
 		return bdsAction;
 	}
 
-	public BdsThread getBigDataScriptThread() {
+	public BdsThread getBdsThread() {
 		return bdsThread;
 	}
 

@@ -213,7 +213,7 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		Bds bds = runAndCheckpoint("test/checkpoint_19.bds", "test/checkpoint_19.chp", "ok", "true");
 
 		// Get scope names
-		BdsThread bdsThread = bds.getBigDataScriptThread();
+		BdsThread bdsThread = bds.getBdsRun().getBdsThread();
 		String scopeNames = bdsThread.getScope().toStringScopeNames();
 
 		// Count number of global scopes
@@ -249,7 +249,7 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		Bds bds = runAndCheckpoint("test/checkpoint_23.bds", "test/checkpoint_23.chp", "luae", "42");
 
 		// Get scope names
-		BdsThread bdsThread = bds.getBigDataScriptThread();
+		BdsThread bdsThread = bds.getBdsRun().getBdsThread();
 
 		// All threads (including root thread)
 		Assert.assertEquals(4, bdsThread.getBdsThreadsAll().size());

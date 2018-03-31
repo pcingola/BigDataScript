@@ -305,7 +305,7 @@ public class BdsTest {
 			captureStart(); // Capture STDOUT & STDERR
 			exitCode = bds.run(); // Run
 			compilerMessages = CompilerMessages.get(); // Any compile errors?
-			if (bds.getBdsRun().getBigDataScriptThread() != null) runState = bds.getBdsRun().getBigDataScriptThread().getRunState(); // Get final RunState
+			if (bds.getBdsRun().getBdsThread() != null) runState = bds.getBdsRun().getBdsThread().getRunState(); // Get final RunState
 		} catch (Throwable t) {
 			captureShow(); // Make sure STDOUT & STDERR have been shown
 			captureStop();

@@ -28,7 +28,7 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 
 		// Get thread
 		Bds bds = bdsTest.bds;
-		BdsThread bdsThread = bds.getBigDataScriptThread();
+		BdsThread bdsThread = bds.getBdsRun().getBdsThread();
 
 		// Check that all 'log' files exists
 		String base = bdsThread.getBdsThreadId() + "/task.cmdLineOptions_01.line_3.id_1";
