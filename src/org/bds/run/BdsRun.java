@@ -37,6 +37,8 @@ import org.bds.util.Timer;
  */
 public class BdsRun {
 
+	public static boolean USE_VM = true; // Use VM
+
 	public enum BdsAction {
 		RUN, RUN_CHECKPOINT, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
 	}
