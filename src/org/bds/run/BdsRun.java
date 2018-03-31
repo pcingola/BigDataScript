@@ -52,10 +52,11 @@ public class BdsRun {
 	BdsAction bdsAction;
 	BdsThread bdsThread;
 	ProgramUnit programUnit; // Program (parsed nodes)
-	ArrayList<String> programArgs; // Command line arguments for BigDataScript program
+	List<String> programArgs; // Command line arguments for BigDataScript program
 
 	public BdsRun() {
 		bdsAction = BdsAction.RUN;
+		programArgs = new ArrayList<>();
 	}
 
 	public void addArg(String arg) {
@@ -96,7 +97,7 @@ public class BdsRun {
 
 	public boolean compile() {
 		BdsCompiler compiler = new BdsCompiler(programFileName);
-		programUnit = compiler.getProgramUnit();
+		programUnit = compiler.compile();
 		return programUnit != null;
 	}
 
@@ -108,7 +109,7 @@ public class BdsRun {
 		return bdsThread;
 	}
 
-	public ArrayList<String> getProgramArgs() {
+	public List<String> getProgramArgs() {
 		return programArgs;
 	}
 
