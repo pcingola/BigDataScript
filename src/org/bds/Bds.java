@@ -61,9 +61,6 @@ public class Bds {
 	 * Load configuration file
 	 */
 	protected void config() {
-		//---
-		// Config
-		//---
 		config = new Config(configFile);
 		config.setDebug(debug);
 		config.setExtractSource(extractSource);
@@ -422,5 +419,4 @@ public class Bds {
 		if (err != null) System.exit(1);
 		System.exit(0);
 	}
-
 }
