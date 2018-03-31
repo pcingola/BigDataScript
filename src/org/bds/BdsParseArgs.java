@@ -85,11 +85,11 @@ public class BdsParseArgs {
 	boolean showHelp;
 	int argNum = 0;
 	ProgramUnit programUnit;
-	ArrayList<String> programArgs; // Command line arguments for BigDataScript program
+	List<String> programArgs; // Command line arguments for BigDataScript program
 
-	public BdsParseArgs(Bds bds) {
-		programUnit = bds.programUnit;
-		programArgs = bds.getProgramArgs();
+	public BdsParseArgs(ProgramUnit programUnit, List<String> args) {
+		this.programUnit = programUnit;
+		programArgs = args;
 	}
 
 	/**

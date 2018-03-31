@@ -84,7 +84,7 @@ public class BdsTest {
 
 		// Create command
 		bds = new Bds(args);
-		bds.setStackCheck(true);
+		bds.getBdsRun().setStackCheck(true);
 	}
 
 	/**
@@ -217,21 +217,6 @@ public class BdsTest {
 	}
 
 	/**
-	 * Check a variable's map
-	 */
-	public void checkVariableVm(BdsVm vm, String varname, Object expectedValue) {
-		Value val = vm.getValue(varname);
-		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
-		Assert.assertEquals( //
-				errMsg("Variable '" + varname + "' has different map than expeced:\n" //
-						+ "\tExpected map : " + expectedValue //
-						+ "\tReal map     : " + val) //
-				, expectedValue.toString() //
-				, val.toString() //
-		);
-	}
-
-	/**
 	 * Check all variables in the hash
 	 */
 	void checkVariables(Map<String, Object> expectedValues) {
@@ -255,6 +240,21 @@ public class BdsTest {
 	}
 
 	/**
+	 * Check a variable's map
+	 */
+	public void checkVariableVm(BdsVm vm, String varname, Object expectedValue) {
+		Value val = vm.getValue(varname);
+		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
+		Assert.assertEquals( //
+				errMsg("Variable '" + varname + "' has different map than expeced:\n" //
+						+ "\tExpected map : " + expectedValue //
+						+ "\tReal map     : " + val) //
+				, expectedValue.toString() //
+				, val.toString() //
+		);
+	}
+
+	/**
 	 * BdsCompiler code
 	 */
 	public boolean compile() {
@@ -263,8 +263,8 @@ public class BdsTest {
 		compileOk = false;
 		try {
 			captureStart(); // Capture STDOUT & STDERR
-			compileOk = bds.compile(); // Run
-			compilerMessages = bds.getCompilerMessages();
+			compileOk = bds.getBdsRun().compile(); // Run
+			compilerMessages = CompilerMessages.get();
 		} catch (Throwable t) {
 			captureShow(); // Make sure STDOUT & STDERR have been shown
 			captureStop();
@@ -292,7 +292,7 @@ public class BdsTest {
 	 * Get a symbol
 	 */
 	public Value getValue(String name) {
-		return bds.getProgramUnit().getRunScope().getValue(name);
+		return bds.getBdsRun().getProgramUnit().getRunScope().getValue(name);
 	}
 
 	/**
@@ -304,8 +304,8 @@ public class BdsTest {
 		try {
 			captureStart(); // Capture STDOUT & STDERR
 			exitCode = bds.run(); // Run
-			compilerMessages = bds.getCompilerMessages(); // Any compile errors?
-			if (bds.getBigDataScriptThread() != null) runState = bds.getBigDataScriptThread().getRunState(); // Get final RunState
+			compilerMessages = CompilerMessages.get(); // Any compile errors?
+			if (bds.getBdsRun().getBigDataScriptThread() != null) runState = bds.getBdsRun().getBigDataScriptThread().getRunState(); // Get final RunState
 		} catch (Throwable t) {
 			captureShow(); // Make sure STDOUT & STDERR have been shown
 			captureStop();
@@ -347,12 +347,12 @@ public class BdsTest {
 		String args2[] = { "-r", chpFileName };
 		String args2v[] = { "-v", "-r", chpFileName };
 		Bds bigDataScript2 = new Bds(verbose ? args2v : args2);
-		bigDataScript2.setStackCheck(true);
+		bigDataScript2.getBdsRun().setStackCheck(true);
 		bigDataScript2.run();
 
 		// Check variable's map on the recovered (checkpoint run) program
 		if (varName != null) {
-			Value val = bigDataScript2.getProgramUnit().getRunScope().getValue(varName);
+			Value val = bigDataScript2.getBdsRun().getProgramUnit().getRunScope().getValue(varName);
 			Assert.assertTrue(errMsg("Variable '" + varName + "' not found "), val != null);
 			Assert.assertEquals( //
 					errMsg("Variable '" + varName + "' has different map than expeced:\n" //

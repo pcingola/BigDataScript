@@ -34,12 +34,49 @@ public class BdsCompiler {
 	String programFileName; // Program file name
 	ProgramUnit programUnit; // Program (parsed nodes)
 
+	public BdsCompiler(String fileName) {
+		programFileName = fileName;
+	}
+
+	/**
+	 * BdsCompiler program
+	 */
+	public ProgramUnit compile() {
+		if (debug) log("Loading file: '" + programFileName + "'");
+
+		// Convert to AST
+		ParseTree tree = parseProgram();
+		if (tree == null) return null;
+
+		// Convert to BdsNodes
+		programUnit = createModel(tree);
+		if (programUnit == null) return null;
+
+		// Type-checking
+		if (typeChecking()) return null;
+
+		// Cleanup: Free some memory by reseting structure we won't use any more
+		TypeCheckedNodes.get().reset();
+
+		// OK
+		return programUnit;
+	}
+
+	/**
+	 * Create an AST from a program file
+	 * @return A parsed tree
+	 */
+	ParseTree createAst() {
+		File file = new File(programFileName);
+		return createAst(file, debug, new HashSet<String>());
+	}
+
 	/**
 	 * Create an AST from a program (using ANTLR lexer & parser)
 	 * Returns null if error
 	 * Use 'alreadyIncluded' to keep track of from 'include' statements
 	 */
-	public static ParseTree createAst(File file, boolean debug, Set<String> alreadyIncluded) {
+	ParseTree createAst(File file, boolean debug, Set<String> alreadyIncluded) {
 		alreadyIncluded.add(Gpr.getCanonicalFileName(file));
 		String fileName = file.toString();
 		String filePath = fileName;
@@ -113,9 +150,59 @@ public class BdsCompiler {
 	}
 
 	/**
+	 *  Convert to BdsNodes, create Program Unit
+	 */
+	ProgramUnit createModel(ParseTree tree) {
+		if (debug) log("Creating BigDataScript tree.");
+		CompilerMessages.reset();
+		ProgramUnit pu = (ProgramUnit) BdsNodeFactory.get().factory(null, tree); // Transform AST to BdsNode tree
+		if (debug) log("AST:\n" + pu.toString());
+		// Any error messages?
+		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
+		if (CompilerMessages.get().hasErrors()) return null;
+		return pu;
+	}
+
+	public ProgramUnit getProgramUnit() {
+		return programUnit;
+	}
+
+	void log(String msg) {
+		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
+	}
+
+	/**
+	 * Lex, parse and create Abstract syntax tree (AST)
+	 */
+	ParseTree parseProgram() {
+		if (debug) log("Creating AST.");
+		CompilerMessages.reset();
+		ParseTree tree = null;
+
+		try {
+			tree = createAst();
+		} catch (Exception e) {
+			System.err.println("Fatal error cannot continue - " + e.getMessage());
+			return null;
+		}
+
+		// No tree produced? Fatal error
+		if (tree == null) {
+			if (CompilerMessages.get().isEmpty()) {
+				CompilerMessages.get().addError("Fatal error: Could not compile");
+			}
+			return null;
+		}
+
+		// Any error? Do not continue
+		if (!CompilerMessages.get().isEmpty()) return null;
+		return tree;
+	}
+
+	/**
 	 * Resolve include statements
 	 */
-	private static boolean resolveIncludes(ParseTree tree, boolean debug, Set<String> alreadyIncluded) {
+	boolean resolveIncludes(ParseTree tree, boolean debug, Set<String> alreadyIncluded) {
 		boolean changed = false;
 		if (tree instanceof IncludeFileContext) {
 			// Parent file: The one that is including the other file
@@ -165,85 +252,6 @@ public class BdsCompiler {
 		}
 
 		return changed;
-	}
-
-	/**
-	 * BdsCompiler program
-	 */
-	public boolean compile() {
-		if (debug) log("Loading file: '" + programFileName + "'");
-
-		// Convert to AST
-		ParseTree tree = parseProgram();
-		if (tree == null) return false;
-
-		// Convert to BdsNodes
-		programUnit = createModel(tree);
-		if (programUnit == null) return false;
-
-		// Type-checking
-		if (typeChecking()) return false;
-
-		// Cleanup: Free some memory by reseting structure we won't use any more
-		TypeCheckedNodes.get().reset();
-
-		// OK
-		return true;
-	}
-
-	/**
-	 * Create an AST from a program file
-	 * @return A parsed tree
-	 */
-	ParseTree createAst() {
-		File file = new File(programFileName);
-		return createAst(file, debug, new HashSet<String>());
-	}
-
-	/**
-	 *  Convert to BdsNodes, create Program Unit
-	 */
-	ProgramUnit createModel(ParseTree tree) {
-		if (debug) log("Creating BigDataScript tree.");
-		CompilerMessages.reset();
-		ProgramUnit pu = (ProgramUnit) BdsNodeFactory.get().factory(null, tree); // Transform AST to BdsNode tree
-		if (debug) log("AST:\n" + pu.toString());
-		// Any error messages?
-		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
-		if (CompilerMessages.get().hasErrors()) return null;
-		return pu;
-	}
-
-	void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
-	}
-
-	/**
-	 * Lex, parse and create Abstract syntax tree (AST)
-	 */
-	ParseTree parseProgram() {
-		if (debug) log("Creating AST.");
-		CompilerMessages.reset();
-		ParseTree tree = null;
-
-		try {
-			tree = createAst();
-		} catch (Exception e) {
-			System.err.println("Fatal error cannot continue - " + e.getMessage());
-			return null;
-		}
-
-		// No tree produced? Fatal error
-		if (tree == null) {
-			if (CompilerMessages.get().isEmpty()) {
-				CompilerMessages.get().addError("Fatal error: Could not compile");
-			}
-			return null;
-		}
-
-		// Any error? Do not continue
-		if (!CompilerMessages.get().isEmpty()) return null;
-		return tree;
 	}
 
 	/**
