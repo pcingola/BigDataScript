@@ -38,9 +38,10 @@ public class TestCasesVm extends TestCasesBase {
 	//	}
 
 	@Test
-	public void test03() {
+	public void test04() {
 		Gpr.debug("Test");
-		runVmAndCheck("test/vm03.asm", "z", "bye");
+		runVmAndCheck("test/z.bds", "z", "bye");
+
 	}
 
 }

@@ -159,6 +159,10 @@ public class Bds {
 			} else if (isOpt(arg)) {
 				// Note: Options sorted by 'long' option name
 				switch (arg.toLowerCase()) {
+				case "-asm":
+					bdsRun.setBdsAction(BdsAction.ASSEMBLY);
+					break;
+
 				case "-checkpidregex":
 					bdsRun.setBdsAction(BdsAction.CHECK_PID_REGEX);
 					break;

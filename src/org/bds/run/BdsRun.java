@@ -38,7 +38,7 @@ import org.bds.util.Timer;
 public class BdsRun {
 
 	public enum BdsAction {
-		RUN, RUN_CHECKPOINT, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
+		RUN, RUN_CHECKPOINT, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
 	}
 
 	boolean debug; // debug mode
@@ -61,6 +61,21 @@ public class BdsRun {
 
 	public void addArg(String arg) {
 		programArgs.add(arg);
+	}
+
+	/**
+	 * Print assembly code to STDOUT
+	 */
+	int assembly() {
+		// Compile, abort on errors
+		if (!compile()) return 1;
+		try {
+			System.out.println(programUnit.toAsm());
+		} catch (Throwable t) {
+			if (verbose) t.printStackTrace();
+			return 1;
+		}
+		return 0;
 	}
 
 	/**
@@ -195,6 +210,10 @@ public class BdsRun {
 		// Run
 		//---
 		switch (bdsAction) {
+		case ASSEMBLY:
+			exitValue = assembly();
+			break;
+
 		case COMPILE:
 			exitValue = compile() ? 0 : 1;
 			break;
