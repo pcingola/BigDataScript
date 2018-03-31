@@ -442,7 +442,7 @@ public class Config implements Serializable {
 		maxThreads = (int) getLong(MAX_NUMBER_OF_RUNNING_THREADS, DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS);
 		noCheckpoint = getBool(DISABLE_CHECKPOINT_CREATE, false);
 		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
-		pidRegex = getString(PID_REGEX).trim();
+		pidRegex = getString(PID_REGEX, "").trim();
 		queue = getString(QUEUE, "");
 		showTaskCode = getBool(SHOW_TASK_CODE, false);
 		sysShell = getString(Config.SYS_SHELL, Config.SYS_SHELL_DEFAULT);
