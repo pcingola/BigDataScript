@@ -1,5 +1,11 @@
 
 
-int i = 7 + 5;
-println("i : $i")
+int mem
+int cpu
+int numC = 2
 
+task (cpu = 2 * numC + 3 , mem = 4 * G, 5 + 9) {
+  sys ls -al
+  sys du -sm
+  sys echo bwa aln ... -456
+}

@@ -221,11 +221,7 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test32() {
 		Gpr.debug("Test");
-		// WARNING: Since now expressions are casted to BOOL, we should not get an error using this task(...)
 		compileOk("test/test32.bds");
-
-		//		String errs = "ERROR [ file 'test/test32.bds', line 7 ] :	Only assignment or boolean expressions are allowed in task options\n";
-		//		compileErrors("test/test32.bds", errs);
 	}
 
 	@Test
