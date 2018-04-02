@@ -11,6 +11,8 @@ import org.bds.run.BdsThread;
  */
 public class Println extends Print {
 
+	private static final long serialVersionUID = 2059553580460692477L;
+
 	public Println(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -31,4 +33,8 @@ public class Println extends Print {
 		System.out.println(!msg.isEmpty() ? msg : "");
 	}
 
+	@Override
+	public String toAsm() {
+		return expr.toAsm() + "println\n";
+	}
 }

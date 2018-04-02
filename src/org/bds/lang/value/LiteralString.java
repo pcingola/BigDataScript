@@ -15,6 +15,8 @@ import org.bds.util.GprString;
  */
 public class LiteralString extends Literal {
 
+	private static final long serialVersionUID = -2844811652533999173L;
+
 	InterpolateVars interpolateVars;
 
 	public LiteralString(BdsNode parent, ParseTree tree) {
@@ -64,6 +66,13 @@ public class LiteralString extends Literal {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
 			value.set(InterpolateVars.unEscape(valueStr)); // Un-escape characters
 		}
+	}
+
+	@Override
+	public String toAsm() {
+		if (value == null) return "pushs ''\n";
+		if (interpolateVars != null) return "interp '" + value.asString() + "'\n";
+		return "pushs '" + value.asString() + "'\n";
 	}
 
 	@Override

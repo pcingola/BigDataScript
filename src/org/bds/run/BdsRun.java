@@ -323,6 +323,8 @@ public class BdsRun {
 			String asm = programUnit.toAsm();
 			Gpr.debug("VM asm:\n" + asm);
 			VmAsm vmasm = new VmAsm();
+			vmasm.setDebug(debug);
+			vmasm.setVerbose(verbose);
 			vmasm.setCode(asm);
 			BdsVm vm = vmasm.compile();
 			exitCode = vm.run();

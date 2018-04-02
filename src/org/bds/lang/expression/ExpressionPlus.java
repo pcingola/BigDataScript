@@ -150,7 +150,10 @@ public class ExpressionPlus extends ExpressionMath {
 
 	@Override
 	public String toAsm() {
-		return "";
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		sb.append("add" + toAsmRetType() + "\n");
+		return sb.toString();
 	}
 
 	@Override

@@ -67,8 +67,8 @@ public class ExpressionBinary extends Expression {
 	@Override
 	public String toAsm() {
 		return super.toAsm() //
-				+ left.toAsm() + "\n" //
-				+ right.toAsm() + "\n" //
+				+ left.toAsm() //
+				+ right.toAsm() //
 		;
 	}
 

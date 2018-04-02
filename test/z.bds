@@ -1,3 +1,7 @@
 
-int i
-println("Hi i:$i")
+int i = 7
+j := 42
+h := i+j
+println("Hi h: " + h)
+# println("Hi h: $h")
+

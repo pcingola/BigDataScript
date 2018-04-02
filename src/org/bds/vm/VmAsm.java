@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -17,6 +19,8 @@ import org.bds.util.Gpr;
  * @author pcingola
  */
 public class VmAsm {
+
+	static final Pattern labelPattern = Pattern.compile("\\s*(\\S+)\\s*:(.*)");
 
 	boolean verbose, debug;
 	int lineNum;
@@ -60,7 +64,7 @@ public class VmAsm {
 
 	String code() {
 		if (file != null) return Gpr.readFile(file);
-		return "";
+		return codeStr;
 	}
 
 	/**
@@ -85,11 +89,8 @@ public class VmAsm {
 			// Remove comments and labels
 			line = removeComments(line);
 
-			// Parse label, if any
-			label(line);
-
-			// Keep the rest of the line (no labels)
-			line = stripLabel(line).trim();
+			// Parse label, if any.Keep the rest of the line
+			line = label(line);
 			if (line.isEmpty()) continue;
 
 			// Decode instruction
@@ -133,12 +134,14 @@ public class VmAsm {
 	/**
 	 * Get a label from an input line, null if there are no labels
 	 */
-	void label(String line) {
-		int idx = line.indexOf(':');
-		if (idx < 0) return;
+	String label(String line) {
+		Matcher m = labelPattern.matcher(line);
+		if (!m.matches()) return line;
 
-		String label = line.substring(0, idx).trim();
+		String label = m.group(1);
+		String rest = m.group(2);
 
+		// Is 'label' a function signature?
 		if (label.indexOf('(') > 0 && label.indexOf(')') > 0) {
 			bdsvm.addFunction(label, pc());
 		} else {
@@ -146,13 +149,14 @@ public class VmAsm {
 		}
 
 		if (verbose) System.out.println(label + ":");
+		return rest.trim();
 	}
 
 	/**
 	 * Parse an opcode
 	 */
 	OpCode opcode(String line) {
-		String s[] = line.split("\\s+");
+		String s[] = line.split("\\s+", 2);
 		String op = s[0].toUpperCase();
 		try {
 			return OpCode.valueOf(op);
@@ -165,7 +169,7 @@ public class VmAsm {
 	 * Parse a parameter
 	 */
 	String param(String line) {
-		String s[] = line.split("\\s+");
+		String s[] = line.split("\\s+", 2);
 		return s.length > 1 ? s[1] : null;
 	}
 
@@ -176,9 +180,15 @@ public class VmAsm {
 		switch (opcode) {
 		case CALL:
 		case LOAD:
-		case PUSHS:
 		case STORE:
-			return param; // Type is String
+			return param; // Type is (raw) string without quotes (i.e. it should not be empty)
+
+		case PUSHS:
+			int lastCharIdx = param.length() - 1;
+			if ((param.charAt(0) == '\'' && param.charAt(lastCharIdx) == '\'') // Using single quotes
+					|| (param.charAt(0) == '"' && param.charAt(lastCharIdx) == '"')) // Using double quotes
+				return param.substring(1, param.length() - 1); // Remove quotes
+			return param; // Unquoted string
 
 		case NEW:
 			return getType(param);

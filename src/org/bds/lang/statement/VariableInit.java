@@ -23,9 +23,6 @@ import org.bds.symbol.SymbolTable;
  */
 public class VariableInit extends BdsNode {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 2385160471242254601L;
 	protected boolean fieldInit; // Is this a 'field' initialization in a class declaration?
 	protected String varName;
@@ -135,8 +132,8 @@ public class VariableInit extends BdsNode {
 	@Override
 	public String toAsm() {
 		return super.toAsm() //
-				+ (expression != null ? " = " + expression.toAsm() : "") //
-				+ (help != null ? "# help: " + help : "") //
+				+ (expression != null ? expression.toAsm() : "") //
+				+ (help != null ? "# help: " + help + "\n" : "") //
 				+ "store  " + varName + "\n"//
 		;
 	}

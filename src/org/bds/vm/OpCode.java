@@ -37,6 +37,9 @@ public enum OpCode {
 	, GTB, GTI, GTR, GTS
 	// Halt (stop execution in current thread)
 	, HALT
+	// Interpolate variables in literal string
+	//    INTERP 'string'
+	, INTERP
 	// Jumps: unconditional, jump if true, jump if false:
 	//    JMP[T|F]    pc
 	, JMP, JMPT, JMPF
@@ -65,7 +68,7 @@ public enum OpCode {
 	// Pop: remove latest element from stack
 	, POP
 	// Print
-	, PRINT
+	, PRINT, PRINTLN
 	// Push literal
 	//    PUSHNULL                 # Pushes a 'null' literal
 	//    PUSH{B|I|R|S}  literal   # Pushes a literal constant into the stack
@@ -94,6 +97,7 @@ public enum OpCode {
 	public boolean hasParam() {
 		switch (this) {
 		case CALL:
+		case INTERP:
 		case JMP:
 		case JMPT:
 		case JMPF:

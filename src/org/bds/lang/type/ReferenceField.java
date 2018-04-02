@@ -18,6 +18,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ReferenceField extends ReferenceVar {
 
+	private static final long serialVersionUID = -4588214482827808525L;
+
 	Expression exprObj;
 
 	public ReferenceField(BdsNode parent, ParseTree tree) {
@@ -92,6 +94,11 @@ public class ReferenceField extends ReferenceVar {
 		if (valObj == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
 		value = getReturnType().cast(value); // Cast to destination type
 		valObj.setValue(name, value); // Assign to field 'name'
+	}
+
+	@Override
+	public String toAsm() {
+		return exprObj.toAsm() + "\nload " + name + "\n";
 	}
 
 	@Override

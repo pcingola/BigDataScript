@@ -547,6 +547,10 @@ public class BdsVm {
 				break;
 
 			case PRINT:
+				System.out.print(pop());
+				break;
+
+			case PRINTLN:
 				System.out.println(pop());
 				break;
 

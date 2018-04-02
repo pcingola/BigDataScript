@@ -17,6 +17,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class Print extends Statement {
 
+	private static final long serialVersionUID = 7817162862107991819L;
+
 	Expression expr;
 
 	public Print(BdsNode parent, ParseTree tree) {
@@ -55,6 +57,11 @@ public class Print extends Statement {
 
 		if (bdsThread.isCheckpointRecover()) return;
 		if (!msg.isEmpty()) System.out.print(msg);
+	}
+
+	@Override
+	public String toAsm() {
+		return expr.toAsm() + "print\n";
 	}
 
 	@Override

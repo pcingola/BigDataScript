@@ -19,6 +19,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ReferenceVar extends Reference {
 
+	private static final long serialVersionUID = 8534323120718015390L;
+
 	protected boolean classField;
 	protected String name;
 
@@ -151,6 +153,12 @@ public class ReferenceVar extends Reference {
 		}
 
 		val.setValue(value); // Assign
+	}
+
+	@Override
+	public String toAsm() {
+		if (classField) return "load this\nload " + name + "\n";
+		return "load " + name + "\n";
 	}
 
 	@Override

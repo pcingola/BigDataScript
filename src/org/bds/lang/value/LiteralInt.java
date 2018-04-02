@@ -11,6 +11,8 @@ import org.bds.util.Gpr;
  */
 public class LiteralInt extends Literal {
 
+	private static final long serialVersionUID = -2949196571488456087L;
+
 	public LiteralInt(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -26,6 +28,12 @@ public class LiteralInt extends Literal {
 		String intStr = tree.getChild(0).getText().toLowerCase();
 		if (intStr.startsWith("0x")) return Long.parseLong(intStr.substring(2), 16);
 		return Gpr.parseLongSafe(intStr);
+	}
+
+	@Override
+	public String toAsm() {
+		if (value == null) return "pushi 0\n";
+		return "pushi " + value.asInt() + "\n";
 	}
 
 }

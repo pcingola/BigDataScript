@@ -11,6 +11,8 @@ import org.bds.util.Gpr;
  */
 public class LiteralBool extends Literal {
 
+	private static final long serialVersionUID = -6159777492966451864L;
+
 	public LiteralBool(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -25,4 +27,11 @@ public class LiteralBool extends Literal {
 	protected Boolean parseValue(ParseTree tree) {
 		return Gpr.parseBoolSafe(tree.getChild(0).getText());
 	}
+
+	@Override
+	public String toAsm() {
+		if (value == null) return "pushb false\n";
+		return "pushb " + value.asBool() + "\n";
+	}
+
 }
