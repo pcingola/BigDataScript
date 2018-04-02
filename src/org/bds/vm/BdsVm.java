@@ -33,6 +33,7 @@ public class BdsVm {
 	int code[];
 	int callStack[]; // Stack for function calls (Program Counter)
 	int csp; // Call stack pointer
+	int exitCode = -1; // Default exit code is error (program did not start)
 	Value[] stack; // Stack: main stack used for values
 	int sp; // Stack pointer
 	Scope scope; // Current scope (variables)
@@ -116,8 +117,20 @@ public class BdsVm {
 		return (Type) constants.get(idx);
 	}
 
+	/**
+	 * Get exit code. If the stak is empty, then the exitcode is 0 (i.e. program finished OK)
+	 */
+	int exitCode() {
+		exitCode = isEmptyStack() ? 0 : (int) popInt();
+		return exitCode;
+	}
+
 	Object getConstant(int idx) {
 		return constants.get(idx);
+	}
+
+	public int getExitCode() {
+		return exitCode;
 	}
 
 	VmFunction getFunction(String name) {
@@ -142,6 +155,10 @@ public class BdsVm {
 		return scope.getValue(name);
 	}
 
+	public boolean isEmptyStack() {
+		return sp <= 0;
+	}
+
 	/**
 	 * Create a new scope
 	 */
@@ -150,7 +167,7 @@ public class BdsVm {
 	}
 
 	public Value pop() {
-		if (sp < 0) throw new RuntimeException("Pop from empty stack!");
+		if (isEmptyStack()) throw new RuntimeException("Pop from empty stack!");
 		return stack[--sp];
 	}
 
@@ -230,7 +247,7 @@ public class BdsVm {
 	/**
 	 * Run the program in 'code'
 	 */
-	public void run() {
+	public int run() {
 		OpCode opcodes[] = OpCode.values();
 
 		// Initialize program counter
@@ -388,7 +405,7 @@ public class BdsVm {
 				break;
 
 			case HALT:
-				return;
+				return exitCode();
 
 			case JMPT:
 				if (popBool()) {
@@ -629,6 +646,8 @@ public class BdsVm {
 				throw new RuntimeException("Unimplemented opcode " + opcode);
 			}
 		}
+
+		return exitCode();
 	}
 
 	/**

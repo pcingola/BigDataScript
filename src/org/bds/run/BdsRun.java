@@ -28,7 +28,10 @@ import org.bds.lang.type.Types;
 import org.bds.scope.GlobalScope;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.task.TaskDependecies;
+import org.bds.util.Gpr;
 import org.bds.util.Timer;
+import org.bds.vm.BdsVm;
+import org.bds.vm.VmAsm;
 
 /**
  * Run a bds program
@@ -37,11 +40,12 @@ import org.bds.util.Timer;
  */
 public class BdsRun {
 
-	public static boolean USE_VM = true; // Use VM
-
 	public enum BdsAction {
 		RUN, RUN_CHECKPOINT, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
 	}
+
+	// TODO: Remove this option when VM is fully implemented
+	public static boolean USE_VM = false;
 
 	boolean debug; // debug mode
 	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
@@ -314,9 +318,14 @@ public class BdsRun {
 			return 0;
 		}
 
+		int exitCode = 0;
 		if (USE_VM) {
-			// USING VM
-			throw new RuntimeException("UNIMPLEMENTED!!!!!!!!");
+			String asm = programUnit.toAsm();
+			Gpr.debug("VM asm:\n" + asm);
+			VmAsm vmasm = new VmAsm();
+			vmasm.setCode(asm);
+			BdsVm vm = vmasm.compile();
+			exitCode = vm.run();
 		} else {
 			// TODO: OLD STYLE
 
@@ -326,7 +335,7 @@ public class BdsRun {
 				Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 				Timer.showStdErr("Running");
 			}
-			int exitCode = runThread(bdsThread);
+			exitCode = runThread(bdsThread);
 		}
 
 		// Check stack

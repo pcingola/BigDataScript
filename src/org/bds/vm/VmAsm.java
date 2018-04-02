@@ -20,10 +20,15 @@ public class VmAsm {
 
 	boolean verbose, debug;
 	int lineNum;
+	String codeStr;
 	String file;
 	BdsVm bdsvm;
 	List<Integer> code;
 	Map<String, Type> typeByName;
+
+	public VmAsm() {
+		this(null);
+	}
 
 	public VmAsm(String file) {
 		this.file = file;
@@ -53,6 +58,11 @@ public class VmAsm {
 		typeByName.put(type.toString(), type);
 	}
 
+	String code() {
+		if (file != null) return Gpr.readFile(file);
+		return "";
+	}
+
 	/**
 	 * BdsCompiler a file
 	 *
@@ -71,8 +81,7 @@ public class VmAsm {
 
 		// Read file and parse each line
 		lineNum = 1;
-		String str = Gpr.readFile(file);
-		for (String line : str.split("\n")) {
+		for (String line : code().split("\n")) {
 			// Remove comments and labels
 			line = removeComments(line);
 
@@ -201,6 +210,10 @@ public class VmAsm {
 	String removeComments(String line) {
 		int commentIdx = line.indexOf('#');
 		return commentIdx >= 0 ? line.substring(0, commentIdx) : line;
+	}
+
+	public void setCode(String codeStr) {
+		this.codeStr = codeStr;
 	}
 
 	public void setDebug(boolean debug) {
