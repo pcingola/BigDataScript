@@ -16,6 +16,10 @@ import org.bds.symbol.SymbolTable;
  */
 public class Args extends BdsNode {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 2390753021158525223L;
 	protected Expression arguments[];
 
 	/**
@@ -93,6 +97,14 @@ public class Args extends BdsNode {
 
 	public int size() {
 		return (arguments != null ? arguments.length : 0);
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		for (Expression ex : arguments)
+			sb.append(ex.toAsm());
+		return sb.toString();
 	}
 
 	@Override

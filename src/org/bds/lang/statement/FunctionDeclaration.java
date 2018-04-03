@@ -159,8 +159,35 @@ public class FunctionDeclaration extends StatementWithScope {
 		return signature;
 	}
 
+	public String signatureAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(functionName + "(");
+		boolean empty = true;
+		for (VarDeclaration vdecl : parameters.getVarDecl()) {
+			for (VariableInit vi : vdecl.getVarInit()) {
+				sb.append((empty ? "" : ",") + vi.getVarName());
+				empty = false;
+			}
+		}
+		sb.append(")");
+		return sb.toString();
+	}
+
 	public String signatureWithName() {
 		return returnType + " " + functionName + "(" + parameters + ")";
+	}
+
+	@Override
+	public String toAsm() {
+		String funcEndLabel = getClass().getSimpleName() + "_" + getId() + "_end";
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		sb.append("jmp " + funcEndLabel + "\n"); // Make sure we skip function definition when running
+		sb.append(signatureAsm() + ":\n");
+		if (statement != null) sb.append(statement.toAsm());
+		sb.append(funcEndLabel + ":\n");
+		return sb.toString();
 	}
 
 	@Override

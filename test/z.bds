@@ -1,6 +1,12 @@
 
+int f(int x) {
+	# println("f($x)")
+	return x + 7
+}
+
 int i = 7
 j := 10
-h := i*j
+h := f(i*j)
 println("|Hi h:$h\tj:$j\ti:$i|")
+
 

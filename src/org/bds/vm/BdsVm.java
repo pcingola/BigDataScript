@@ -275,7 +275,7 @@ public class BdsVm {
 		while (pc < code.length) {
 			instruction = code[pc];
 			opcode = OPCODES[instruction];
-			if (debug) System.err.println(toAsm(pc) + "\tstack: " + stackToString());
+			if (debug) System.err.println(toAsm(pc) + "\t\t\tstack: " + stackToString());
 			pc++;
 
 			switch (opcode) {

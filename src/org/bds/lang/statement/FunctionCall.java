@@ -26,6 +26,8 @@ import org.bds.util.Gpr;
  */
 public class FunctionCall extends Expression {
 
+	private static final long serialVersionUID = 6677584957911766940L;
+
 	protected String functionName;
 	protected Args args;
 	protected FunctionDeclaration functionDeclaration;
@@ -193,6 +195,15 @@ public class FunctionCall extends Expression {
 		}
 		sig.append(")");
 		return sig.toString();
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		sb.append(args.toAsm());
+		sb.append("call " + functionDeclaration.signatureAsm() + "\n");
+		return sb.toString();
 	}
 
 	@Override

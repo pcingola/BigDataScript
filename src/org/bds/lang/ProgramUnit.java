@@ -23,6 +23,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ProgramUnit extends BlockWithFile {
 
+	private static final long serialVersionUID = 3819936306695046515L;
+
 	protected BdsThread bdsThread;
 	protected Scope runScope; // Scope used when running this program. Used in test cases
 

@@ -13,6 +13,8 @@ import org.bds.lang.type.TypeClass;
  */
 public class Parameters extends BdsNode implements Comparable<Parameters> {
 
+	private static final long serialVersionUID = -5814584605870004567L;
+
 	public static final Parameters EMPTY = new Parameters(null, null);
 
 	VarDeclaration varDecl[];
