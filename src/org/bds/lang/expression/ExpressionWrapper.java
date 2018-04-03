@@ -14,6 +14,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionWrapper extends Expression {
 
+	private static final long serialVersionUID = 4296005193087284250L;
+
 	protected Expression expression;
 
 	public ExpressionWrapper(BdsNode parent, ParseTree tree) {
@@ -45,6 +47,11 @@ public class ExpressionWrapper extends Expression {
 	@Override
 	public void runStep(BdsThread bdsThread) {
 		bdsThread.run(expression);
+	}
+
+	@Override
+	public String toAsm() {
+		return super.toAsm() + expression.toAsm();
 	}
 
 	@Override

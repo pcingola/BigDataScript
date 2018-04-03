@@ -58,13 +58,33 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 	 */
 	@Override
 	public void runStep(BdsThread bdsThread) {
-		// Get map
+		// Get value
 		bdsThread.run(right);
 		Value value = bdsThread.peek();
 
 		// Assign variable
 		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
 		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		
+	!!!!!!!!!!	
+			return super.toAsm() //
+					+ right.toAsm() //
+					+ ((Reference) left).toAsmSet() //
+			;
+
+		//		// Get value
+		//		bdsThread.run(right);
+		//		Value value = bdsThread.peek();
+		//
+		//		// Assign variable
+		//		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
+		//		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
+		return sb.toString();
 	}
 
 }

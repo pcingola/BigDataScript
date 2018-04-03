@@ -14,6 +14,8 @@ import org.bds.run.BdsThread;
  */
 public class StatementExpr extends ExpressionWrapper {
 
+	private static final long serialVersionUID = 2132767867913705734L;
+
 	public StatementExpr(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}

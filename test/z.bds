@@ -1,12 +1,7 @@
 
-int f(int x) {
-	# println("f($x)")
-	return x + 7
-}
 
-int i = 7
-j := 10
-h := f(i*j)
-println("|Hi h:$h\tj:$j\ti:$i|")
-
+int i = 2
+println("i : $i")
+i = 1
+println("i : $i")
 

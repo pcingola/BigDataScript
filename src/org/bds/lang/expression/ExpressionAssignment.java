@@ -20,6 +20,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionAssignment extends ExpressionBinary {
 
+	private static final long serialVersionUID = -186692673709030759L;
+
 	public ExpressionAssignment(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -59,6 +61,14 @@ public class ExpressionAssignment extends ExpressionBinary {
 		// Is 'left' a variable?
 		if (left == null) compilerMessages.add(this, "Cannot parse left expresison.", MessageType.ERROR);
 		else if (!(left instanceof Reference)) compilerMessages.add(this, "Assignment to non variable ('" + left + "')", MessageType.ERROR);
+	}
+
+	@Override
+	public String toAsm() {
+		return super.toAsm() //
+				+ right.toAsm() //
+				+ ((Reference) left).toAsmSet() //
+		;
 	}
 
 	@Override
