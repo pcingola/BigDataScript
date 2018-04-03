@@ -7,11 +7,13 @@ import org.bds.lang.statement.Statement;
 import org.bds.run.BdsThread;
 
 /**
- * Expression: A statement that returns a map
+ * Expression: A statement that returns a value
  *
  * @author pcingola
  */
 public class Expression extends Statement {
+
+	private static final long serialVersionUID = -2172180316283535708L;
 
 	public Expression(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -34,5 +36,12 @@ public class Expression extends Statement {
 			if (Config.get().isDebug()) t.printStackTrace();
 			bdsThread.fatalError(this, t);
 		}
+	}
+
+	@Override
+	public String toAsm() {
+		return super.toAsm() //
+				+ "pop\n" //
+		;
 	}
 }

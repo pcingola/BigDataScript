@@ -17,6 +17,8 @@ import org.bds.util.Gpr;
  */
 public class While extends Statement {
 
+	private static final long serialVersionUID = 4230873819642138184L;
+
 	Expression condition;
 	Statement statement;
 
@@ -85,6 +87,26 @@ public class While extends Statement {
 				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
 			}
 		}
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+
+		String loopStartLabel = getClass().getSimpleName() + "_start_" + id;
+		String loopEndLabel = getClass().getSimpleName() + "_end_" + id;
+
+		if (isNeedsScope()) sb.append("scopepush\n");
+		sb.append(loopStartLabel + ":\n");
+		sb.append(condition.toAsm());
+		sb.append("jmpf " + loopEndLabel + "\n");
+		sb.append(statement.toAsm());
+		sb.append("jmp " + loopStartLabel + "\n");
+		sb.append(loopEndLabel + ":\n");
+		if (isNeedsScope()) sb.append("scopepop\n");
+
+		return sb.toString();
 	}
 
 	@Override

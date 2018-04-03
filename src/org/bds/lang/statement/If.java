@@ -75,6 +75,31 @@ public class If extends Statement {
 	}
 
 	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+
+		String ifLabel = getClass().getSimpleName() + "_if_" + id;
+		String elseLabel = getClass().getSimpleName() + "_else_" + id;
+		String endLabel = getClass().getSimpleName() + "_end_" + id;
+		if (elseStatement != null) elseLabel = endLabel;
+
+		sb.append(condition.toAsm());
+		sb.append("jmpf " + elseLabel + "\n");
+		sb.append(ifLabel + ":\n");
+		sb.append(statement.toAsm());
+
+		if (elseStatement != null) {
+			sb.append("jmp " + endLabel + "\n");
+			sb.append(elseLabel + ":\n");
+			sb.append(elseStatement.toAsm());
+		}
+		sb.append(endLabel + ":\n");
+
+		return sb.toString();
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
