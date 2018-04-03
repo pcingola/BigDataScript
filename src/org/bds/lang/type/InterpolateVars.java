@@ -17,6 +17,8 @@ import org.bds.util.Tuple;
 
 public class InterpolateVars extends Literal {
 
+	private static final long serialVersionUID = 5380913311800422951L;
+
 	boolean useLiteral;
 	String literals[]; // This is used in case of interpolated string literal
 	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
@@ -368,6 +370,32 @@ public class InterpolateVars extends Literal {
 
 	public void setUseLiteral(boolean useLiteral) {
 		this.useLiteral = useLiteral;
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+
+		// Variable interpolation
+		int count = 0;
+		for (int i = 0; i < literals.length; i++) {
+			// String before variable
+			sb.append("pushs '" + literals[i] + "'\n");
+			count++;
+
+			// Reference to value
+			Expression ref = exprs[i];
+			if (ref != null) {
+				sb.append(ref.toAsm());
+				count++;
+			}
+		}
+
+		// Join all strings
+		for (int i = 0; i < count - 1; i++)
+			sb.append("adds\n");
+
+		return sb.toString();
 	}
 
 	@Override

@@ -2,10 +2,5 @@
 int i = 7
 j := 10
 h := i*j
-println("Hi h: " + h)
-for(int i=0 ; i < 10 ; i++ ) {
-	println("i: " + i)
-	if( i == 5 ) println("FIVE")
-	else println("NOT FIVE")
-}
-# println("Hi h: $h")
+println("|Hi h:$h\tj:$j\ti:$i|")
+

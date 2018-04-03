@@ -71,8 +71,8 @@ public class LiteralString extends Literal {
 	@Override
 	public String toAsm() {
 		if (value == null) return "pushs ''\n";
-		if (interpolateVars != null) return "interp '" + value.asString() + "'\n";
-		return "pushs '" + value.asString() + "'\n";
+		if (interpolateVars == null) return "pushs '" + value.asString() + "'\n";
+		return interpolateVars.toAsm();
 	}
 
 	@Override

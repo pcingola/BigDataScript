@@ -41,9 +41,6 @@ public enum OpCode {
 	, HALT
 	// Increment (i.e. valueInt++)
 	, INC
-	// Interpolate variables in literal string
-	//    INTERP 'string'
-	, INTERP
 	// Jumps: unconditional, jump if true, jump if false:
 	//    JMP[T|F]    pc
 	, JMP, JMPT, JMPF
@@ -101,7 +98,6 @@ public enum OpCode {
 	public boolean hasParam() {
 		switch (this) {
 		case CALL:
-		case INTERP:
 		case JMP:
 		case JMPT:
 		case JMPF:

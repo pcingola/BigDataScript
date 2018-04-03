@@ -252,6 +252,8 @@ public class BdsVm {
 	 * Run the program in 'code'
 	 */
 	public int run() {
+		debug = true;
+
 		// Initialize program counter
 		pc = Math.max(0, getLabel(LABLE_MAIN));
 
@@ -691,7 +693,7 @@ public class BdsVm {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
 		for (int i = 0; i < sp; i++)
-			sb.append(" " + stack[i]);
+			sb.append((i > 0 ? ", '" : "'") + stack[i] + "'");
 		sb.append(" ]");
 		return sb.toString();
 	}
@@ -722,6 +724,7 @@ public class BdsVm {
 
 		// Parameter?
 		Object param = null;
+		String quote = (op == OpCode.PUSHS ? "'" : "");
 		if (op.hasParam()) {
 			int idx = code[++pc];
 			param = getConstant(idx);
@@ -729,7 +732,7 @@ public class BdsVm {
 
 		return (label != null ? label + ":\n" : "") //
 				+ "\t" + opstr //
-				+ (param != null ? " " + param : "") //
+				+ (param != null ? " " + quote + param + quote : "") //
 		;
 	}
 
