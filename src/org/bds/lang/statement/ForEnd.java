@@ -34,15 +34,11 @@ public class ForEnd extends ExpressionList {
 
 	@Override
 	public String toAsm() {
-		if (expressions.length <= 0) return "";
-		if (expressions.length == 1) return expressions[0].toAsm();
-
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < expressions.length; i++) {
 			sb.append(expressions[i].toAsm());
 			sb.append("pop\n");
 		}
-
 		return sb.toString();
 	}
 

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.bds.lang.type.Type;
-import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueInt;
@@ -180,14 +179,14 @@ public class BdsVm {
 	 * Pop a bool from stack
 	 */
 	public boolean popBool() {
-		return (Boolean) Types.BOOL.cast(pop()).get();
+		return pop().asBool();
 	}
 
 	/**
 	 * Pop an int from stack
 	 */
 	public long popInt() {
-		return (Long) Types.INT.cast(pop()).get();
+		return pop().asInt();
 	}
 
 	/**
@@ -201,7 +200,7 @@ public class BdsVm {
 	 * Pop a real from stack
 	 */
 	public double popReal() {
-		return (Double) Types.REAL.cast(pop()).get();
+		return pop().asReal();
 	}
 
 	/**
@@ -215,7 +214,7 @@ public class BdsVm {
 	 * Pop a string from stack
 	 */
 	public String popString() {
-		return (String) Types.STRING.cast(pop()).get();
+		return pop().asString();
 	}
 
 	public void push(boolean b) {
@@ -253,8 +252,6 @@ public class BdsVm {
 	 * Run the program in 'code'
 	 */
 	public int run() {
-		debug = true; // !!!!!!!
-
 		// Initialize program counter
 		pc = Math.max(0, getLabel(LABLE_MAIN));
 
@@ -276,7 +273,7 @@ public class BdsVm {
 		while (pc < code.length) {
 			instruction = code[pc];
 			opcode = OPCODES[instruction];
-			if (debug) System.err.print(toAsm(pc));
+			if (debug) System.err.println(toAsm(pc) + "\tstack: " + stackToString());
 			pc++;
 
 			switch (opcode) {
@@ -561,6 +558,10 @@ public class BdsVm {
 				push(i1 | i2);
 				break;
 
+			case POP:
+				pop();
+				break;
+
 			case PRINT:
 				System.out.print(pop());
 				break;
@@ -686,13 +687,22 @@ public class BdsVm {
 		this.verbose = verbose;
 	}
 
+	String stackToString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for (int i = 0; i < sp; i++)
+			sb.append(" " + stack[i]);
+		sb.append(" ]");
+		return sb.toString();
+	}
+
 	/**
 	 * Output code as 'assembly' (disassembler)
 	 */
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
 		for (int pc = 0; pc < code.length; pc++) {
-			sb.append(toAsm(pc));
+			sb.append(toAsm(pc) + "\n");
 			if (hasParam(pc)) pc++;
 		}
 
@@ -720,24 +730,18 @@ public class BdsVm {
 		return (label != null ? label + ":\n" : "") //
 				+ "\t" + opstr //
 				+ (param != null ? " " + param : "") //
-				+ "\n";
+		;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("PC         : " + pc + "\n");
-
-		sb.append("Stack      : [");
-		for (int i = 0; i < sp; i++)
-			sb.append(" " + stack[i]);
-		sb.append(" ]\n");
-
+		sb.append("Stack      : " + stackToString());
 		sb.append("Call-Stack : [");
 		for (int i = 0; i < csp; i++)
 			sb.append(" " + callStack[i]);
 		sb.append(" ]\n");
-
 		sb.append("Scope:\n" + scope);
 		return sb.toString();
 	}

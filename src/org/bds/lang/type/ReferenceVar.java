@@ -162,6 +162,12 @@ public class ReferenceVar extends Reference {
 	}
 
 	@Override
+	public String toAsmSet() {
+		if (classField) return "pushs " + name + "\nload this\nsetfield\n";
+		return "store " + name + "\n";
+	}
+
+	@Override
 	public String toString() {
 		return name;
 	}

@@ -82,7 +82,7 @@ public class If extends Statement {
 		String ifLabel = getClass().getSimpleName() + "_if_" + id;
 		String elseLabel = getClass().getSimpleName() + "_else_" + id;
 		String endLabel = getClass().getSimpleName() + "_end_" + id;
-		if (elseStatement != null) elseLabel = endLabel;
+		if (elseStatement == null) elseLabel = endLabel;
 
 		sb.append(condition.toAsm());
 		sb.append("jmpf " + elseLabel + "\n");

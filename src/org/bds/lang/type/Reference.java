@@ -13,6 +13,11 @@ import org.bds.symbol.SymbolTable;
  */
 public abstract class Reference extends Expression {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -8617102495338919053L;
+
 	public Reference(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -35,5 +40,12 @@ public abstract class Reference extends Expression {
 	// public abstract void setValue(BdsThread bdsThread, Object value);
 
 	public abstract void setValue(BdsThread bdsThread, Value value);
+
+	/**
+	 * Assembly code to set the referenced value
+	 */
+	public String toAsmSet() {
+		return "";
+	}
 
 }

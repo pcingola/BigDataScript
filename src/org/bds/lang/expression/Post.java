@@ -15,6 +15,11 @@ import org.bds.run.BdsThread;
  */
 public class Post extends Pre {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -7171687135383949830L;
+
 	public Post(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -45,6 +50,31 @@ public class Post extends Pre {
 
 		ref.setValue(bdsThread, newValue);
 		bdsThread.push(value);
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		Reference ref = (Reference) expr;
+		sb.append(ref.toAsm());
+		sb.append(ref.toAsm());
+
+		switch (operation) {
+		case INCREMENT:
+			sb.append("inc\n");
+			break;
+
+		case DECREMENT:
+			sb.append("dec\n");
+			break;
+
+		default:
+			throw new RuntimeException("Unknown operator " + operation);
+		}
+
+		sb.append(ref.toAsmSet());
+
+		return sb.toString();
 	}
 
 	@Override

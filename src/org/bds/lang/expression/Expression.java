@@ -37,11 +37,4 @@ public class Expression extends Statement {
 			bdsThread.fatalError(this, t);
 		}
 	}
-
-	@Override
-	public String toAsm() {
-		return super.toAsm() //
-				+ "pop\n" //
-		;
-	}
 }

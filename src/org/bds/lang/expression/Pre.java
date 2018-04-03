@@ -67,25 +67,29 @@ public class Pre extends ExpressionUnary {
 		if (!expr.isInt()) compilerMessages.add(this, "Only int variables can be used with ++ or -- operators", MessageType.ERROR);
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
 	@Override
 	public String toAsm() {
-		//		Reference ref = (Reference) expr;
-		//		bdsThread.run(ref);
-		//
-		//		if (bdsThread.isCheckpointRecover()) return;
-		//
-		//		ValueInt value = (ValueInt) bdsThread.pop();
-		//		ValueInt newValue;
-		//		if (operation == PrePostOperation.INCREMENT) newValue = new ValueInt(value.asInt() + 1);
-		//		else if (operation == PrePostOperation.DECREMENT) newValue = new ValueInt(value.asInt() - 1);
-		//		else throw new RuntimeException("Unknown operator " + operation);
-		//
-		//		ref.setValue(bdsThread, newValue);
-		//		bdsThread.push(newValue);
-		return "";
+		StringBuilder sb = new StringBuilder();
+		Reference ref = (Reference) expr;
+		sb.append(ref.toAsm());
+
+		switch (operation) {
+		case INCREMENT:
+			sb.append("inc\n");
+			break;
+
+		case DECREMENT:
+			sb.append("dec\n");
+			break;
+
+		default:
+			throw new RuntimeException("Unknown operator " + operation);
+		}
+
+		sb.append(ref.toAsmSet());
+		sb.append(ref.toAsm());
+
+		return sb.toString();
 	}
 
 }

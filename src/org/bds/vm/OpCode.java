@@ -84,7 +84,7 @@ public enum OpCode {
 	// Scope: create new scope (and push it), restore old scope (pop current scope)
 	, SCOPEPUSH, SCOPEPOP
 	// Set value
-	, SET, SETLIST, SETMAP
+	, SET, SETFIELD, SETLIST, SETMAP
 	// Store variable to local scope
 	//    STORE varName
 	, STORE
