@@ -12,6 +12,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionBinary extends Expression {
 
+	private static final long serialVersionUID = -9057903233688463643L;
+
 	Expression left;
 	Expression right;
 

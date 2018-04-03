@@ -13,10 +13,7 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionDivide extends ExpressionMath {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 9104903229675355893L;
 
 	public ExpressionDivide(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -53,16 +50,10 @@ public class ExpressionDivide extends ExpressionMath {
 
 	@Override
 	public String toAsm() {
-		String eb = super.toAsm();
-
-		String op = "div";
-		String type = "";
-
-		if (isInt()) type = "i";
-		else if (isReal()) type = "f";
-		else throw new RuntimeException("Unknown type. This should never happen!");
-
-		return eb + op + type + "\n";
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		sb.append("div" + toAsmRetType() + "\n");
+		return sb.toString();
 	}
 
 	@Override

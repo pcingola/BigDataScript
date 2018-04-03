@@ -13,10 +13,7 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionMinus extends ExpressionMath {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4071972960119042793L;
 
 	public ExpressionMinus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -71,16 +68,10 @@ public class ExpressionMinus extends ExpressionMath {
 
 	@Override
 	public String toAsm() {
-		String eb = super.toAsm();
-
-		String op = "sub";
-		String type = "";
-
-		if (isInt()) type = "i";
-		else if (isReal()) type = "f";
-		else throw new RuntimeException("Unknown type. This should never happen!");
-
-		return eb + op + type + "\n";
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		sb.append("sub" + toAsmRetType() + "\n");
+		return sb.toString();
 	}
 
 	@Override

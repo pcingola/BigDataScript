@@ -44,8 +44,6 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 
 	@Override
 	public String toAsm() {
-		String eb = super.toAsm();
-		String op = "andb";
-		return eb + op + "\n";
+		return super.toAsm() + "andb\n";
 	}
 }

@@ -19,6 +19,8 @@ import org.bds.util.Gpr;
  */
 public class Switch extends Statement {
 
+	private static final long serialVersionUID = -8726313466692867714L;
+
 	Expression switchExpr;
 	Case[] caseStatements;
 	Default defaultStatement;

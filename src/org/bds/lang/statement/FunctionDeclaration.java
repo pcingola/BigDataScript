@@ -24,6 +24,8 @@ import org.bds.util.Gpr;
  */
 public class FunctionDeclaration extends StatementWithScope {
 
+	private static final long serialVersionUID = 4332975458857670311L;
+
 	protected String functionName;
 	protected TypeFunction funcType;
 	protected Parameters parameters;

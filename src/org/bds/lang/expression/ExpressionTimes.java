@@ -15,6 +15,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionTimes extends ExpressionMath {
 
+	private static final long serialVersionUID = 4728016127160486111L;
+
 	public ExpressionTimes(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -78,6 +80,14 @@ public class ExpressionTimes extends ExpressionMath {
 		} else {
 			throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
 		}
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		sb.append("mul" + toAsmRetType() + "\n");
+		return sb.toString();
 	}
 
 	@Override

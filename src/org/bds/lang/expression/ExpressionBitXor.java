@@ -37,9 +37,7 @@ public class ExpressionBitXor extends ExpressionBit {
 
 	@Override
 	public String toAsm() {
-		String eb = super.toAsm();
-		String op = "xori";
-		return eb + op + "\n";
+		return super.toAsm() + "xori\n";
 	}
 
 }

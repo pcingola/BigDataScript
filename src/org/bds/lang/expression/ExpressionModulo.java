@@ -13,10 +13,7 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionModulo extends ExpressionMath {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 8708379553154399665L;
 
 	public ExpressionModulo(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -44,8 +41,7 @@ public class ExpressionModulo extends ExpressionMath {
 	@Override
 	public String toAsm() {
 		String eb = super.toAsm();
-		String op = "modi";
-		return eb + op + "\n";
+		return eb + "modi\n";
 	}
 
 	@Override

@@ -35,9 +35,7 @@ public class ExpressionBitAnd extends ExpressionBit {
 
 	@Override
 	public String toAsm() {
-		String eb = super.toAsm();
-		String op = "andi";
-		return eb + op + "\n";
+		return super.toAsm() + "andi\n";
 	}
 
 }

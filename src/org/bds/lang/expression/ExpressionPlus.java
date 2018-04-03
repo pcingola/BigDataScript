@@ -19,7 +19,7 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionPlus extends ExpressionMath {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3368537782650014362L;
 
 	public ExpressionPlus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);

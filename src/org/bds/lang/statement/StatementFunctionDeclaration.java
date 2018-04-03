@@ -10,6 +10,8 @@ import org.bds.lang.BdsNode;
  */
 public class StatementFunctionDeclaration extends FunctionDeclaration {
 
+	private static final long serialVersionUID = 3845968537453208768L;
+
 	public StatementFunctionDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}

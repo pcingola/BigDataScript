@@ -17,6 +17,8 @@ import org.bds.util.Gpr;
  */
 public class If extends Statement {
 
+	private static final long serialVersionUID = 4743568468530684151L;
+
 	Expression condition;
 	Statement statement;
 	Statement elseStatement;

@@ -11,6 +11,8 @@ import org.bds.run.BdsThread;
  */
 public class ExpressionLogicOr extends ExpressionLogic {
 
+	private static final long serialVersionUID = -9149820473234256403L;
+
 	public ExpressionLogicOr(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -40,9 +42,7 @@ public class ExpressionLogicOr extends ExpressionLogic {
 
 	@Override
 	public String toAsm() {
-		String eb = super.toAsm();
-		String op = "orb";
-		return eb + op + "\n";
+		return super.toAsm() + "orb\n";
 	}
 
 }

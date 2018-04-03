@@ -10,7 +10,7 @@ import org.bds.symbol.SymbolTable;
 
 /**
  * Expression where there is a binary operator and an assignment
- * 
+ *
  * Examples
  * 		a += b
  * 		a -= b
@@ -22,6 +22,8 @@ import org.bds.symbol.SymbolTable;
  * @author pcingola
  */
 public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
+
+	private static final long serialVersionUID = 7795747128948650351L;
 
 	public ExpressionAssignmentBinary(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -60,7 +62,7 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 		bdsThread.run(right);
 		Value value = bdsThread.peek();
 
-		// Assign map
+		// Assign variable
 		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
 		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 	}
