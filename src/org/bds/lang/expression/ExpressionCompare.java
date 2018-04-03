@@ -17,9 +17,6 @@ import org.bds.symbol.SymbolTable;
  */
 public abstract class ExpressionCompare extends ExpressionBinary {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 2704019952314908802L;
 
 	public ExpressionCompare(BdsNode parent, ParseTree tree) {
@@ -76,10 +73,18 @@ public abstract class ExpressionCompare extends ExpressionBinary {
 	@Override
 	public String toAsm() {
 		String eb = super.toAsm();
-		return eb + toAsmOp() + toAsmRetType() + "\n";
+		return eb + toAsmOp() + toAsmType() + "\n";
 	}
 
 	protected abstract String toAsmOp();
+
+	protected String toAsmType() {
+		if (left.isReal() || right.isReal()) return "r";
+		else if (left.isInt() || right.isInt()) return "i";
+		else if (left.isBool() || right.isBool()) return "b";
+		else if (left.isString() || right.isString()) return "s";
+		throw new RuntimeException("Unknown comparisson type: " + left.getReturnType() + ", " + right.getReturnType());
+	}
 
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {

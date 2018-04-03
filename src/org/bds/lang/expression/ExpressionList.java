@@ -17,6 +17,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionList extends Expression {
 
+	private static final long serialVersionUID = -7620532827417450679L;
+
 	protected Expression expressions[];
 
 	public ExpressionList(BdsNode parent, ParseTree tree) {
@@ -75,8 +77,22 @@ public class ExpressionList extends Expression {
 	}
 
 	@Override
-	public String toString() {
+	public String toAsm() {
+		if (expressions.length <= 0) return "";
+		if (expressions.length == 1) return expressions[0].toAsm();
 
+		// Run all expression, but keep only the last one in the stack
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < expressions.length; i++) {
+			sb.append(expressions[i].toAsm());
+			if (i < expressions.length - 1) sb.append("pop\n");
+		}
+
+		return sb.toString();
+	}
+
+	@Override
+	public String toString() {
 		// Special cases: Empty or only one element
 		if (expressions.length <= 0) return "";
 		if (expressions.length == 1) return expressions[0].toString();

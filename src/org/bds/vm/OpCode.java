@@ -27,6 +27,8 @@ public enum OpCode {
 	// Function call:
 	//    CALL pc
 	, CALL
+	// Decrement (i.e. valueInt--)
+	, DEC
 	// Division
 	, DIVI, DIVR
 	// Equality test
@@ -37,6 +39,8 @@ public enum OpCode {
 	, GTB, GTI, GTR, GTS
 	// Halt (stop execution in current thread)
 	, HALT
+	// Increment (i.e. valueInt++)
+	, INC
 	// Interpolate variables in literal string
 	//    INTERP 'string'
 	, INTERP

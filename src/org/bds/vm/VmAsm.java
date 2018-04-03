@@ -58,7 +58,6 @@ public class VmAsm {
 	}
 
 	public void addType(Type type) {
-		if (debug) Gpr.debug("Adding type '" + type.toString() + "'");
 		typeByName.put(type.toString(), type);
 	}
 
@@ -179,6 +178,9 @@ public class VmAsm {
 	Object parseConstant(OpCode opcode, String param) {
 		switch (opcode) {
 		case CALL:
+		case JMP:
+		case JMPT:
+		case JMPF:
 		case LOAD:
 		case STORE:
 			return param; // Type is (raw) string without quotes (i.e. it should not be empty)

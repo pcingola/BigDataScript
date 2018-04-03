@@ -6,7 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.util.Gpr;
 
 /**
  * A "break" statement
@@ -19,6 +18,31 @@ public class Break extends Statement {
 
 	public Break(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * How many enclosing scopes do we have to "break' through?
+	 */
+	int countScopesBreakNode() {
+		int countScopes = 0;
+		for (BdsNode bn = this; bn != null; bn = bn.getParent()) {
+			if (bn.isNeedsScope()) countScopes++;
+
+			if (isBreak(bn)) return countScopes;
+			else if (isFunction(bn)) return countScopes;
+		}
+		return countScopes;
+	}
+
+	/**
+	 * Find enclosing loop or switch
+	 */
+	BdsNode findBreakNode() {
+		for (BdsNode bn = this; bn != null; bn = bn.getParent()) {
+			if (isBreak(bn)) return bn;
+			else if (isFunction(bn)) return null; // Reached function or method definition?
+		}
+		return null;
 	}
 
 	/**
@@ -57,19 +81,26 @@ public class Break extends Statement {
 	 */
 	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {
-		boolean found = false;
-		for (BdsNode bn = this; bn != null; bn = bn.getParent()) {
-			if (isBreak(bn)) {
-				Gpr.debug("Found node:" + bn);
-				found = true;
-				break;
-			} else if (isFunction(bn)) {
-				// Reached function or method definition?
-				break;
-			}
+		if (findBreakNode() == null) {
+			compilerMessages.add(this, "'break' statement not inside 'for'/'while' loop or 'switch'", MessageType.ERROR);
 		}
+	}
 
-		if (!found) compilerMessages.add(this, "'break' statement not inside 'for'/'while' loop or 'switch'", MessageType.ERROR);
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+
+		// Restore scopes
+		int countScopes = countScopesBreakNode();
+		for (int i = 0; i < countScopes; i++)
+			sb.append("scopepop\n");
+
+		// Jump for end of enclosing loop/switch
+		BdsNode bdsNode = findBreakNode();
+		String breakLabel = bdsNode.getClass().getSimpleName() + "_end_" + bdsNode.getId();
+		sb.append("jmp " + breakLabel + "\n");
+		return sb.toString();
 	}
 
 	@Override

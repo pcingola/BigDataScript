@@ -4,9 +4,8 @@ j := 10
 h := i*j
 println("Hi h: " + h)
 for(int i=0 ; i < 10 ; i++ ) {
-	if( i == 5 ) {
-		break;
-	}
+	println("i: " + i)
+	#if( i == 5 ) { break; }
 }
 # println("Hi h: $h")
 

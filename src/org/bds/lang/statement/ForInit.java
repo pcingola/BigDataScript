@@ -12,6 +12,8 @@ import org.bds.run.BdsThread;
  */
 public class ForInit extends Statement {
 
+	private static final long serialVersionUID = -5184554138462446111L;
+
 	VarDeclaration varDeclaration;
 	Expression expressions[];
 
@@ -45,6 +47,21 @@ public class ForInit extends Statement {
 				bdsThread.pop(); // Remove from stack, nobody is reading the results
 			}
 		}
+	}
+
+	@Override
+	public String toAsm() {
+		if (varDeclaration != null) return varDeclaration.toAsm();
+
+		// Use expressions
+		StringBuilder sb = new StringBuilder();
+		if (expressions != null) {
+			for (Expression exp : expressions) {
+				sb.append(exp.toAsm() + "\npop\n");
+			}
+		}
+
+		return sb.toString();
 	}
 
 	@Override

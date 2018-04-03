@@ -14,6 +14,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ForCondition extends ExpressionWrapper {
 
+	private static final long serialVersionUID = -3735136770121564146L;
+
 	public ForCondition(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -21,6 +23,11 @@ public class ForCondition extends ExpressionWrapper {
 	@Override
 	public boolean isStopDebug() {
 		return true;
+	}
+
+	@Override
+	public String toAsm() {
+		return expression.toAsm();
 	}
 
 	@Override

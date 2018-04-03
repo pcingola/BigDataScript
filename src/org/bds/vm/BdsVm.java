@@ -27,6 +27,7 @@ public class BdsVm {
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
 	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
 	public static final String LABLE_MAIN = "main";
+	private static final OpCode OPCODES[] = OpCode.values();
 
 	boolean verbose, debug;
 	int pc;
@@ -67,7 +68,6 @@ public class BdsVm {
 		int idx = constants.size();
 		constants.add(constant);
 		constantsByObject.put(constant, idx);
-		if (verbose) System.err.println("Added constant (idx: " + idx + "): " + constant);
 		return idx;
 	}
 
@@ -78,7 +78,6 @@ public class BdsVm {
 		addLabel(name, pc);
 		VmFunction f = new VmFunction(name, pc);
 		functions.put(name, f);
-		if (verbose) System.err.println("Added function " + f);
 	}
 
 	/**
@@ -89,7 +88,6 @@ public class BdsVm {
 	public void addLabel(String label, int codeidx) {
 		labels.put(label, codeidx);
 		labelsByPc.put(codeidx, label);
-		if (verbose) System.err.println("Added label '" + label + "': " + codeidx);
 	}
 
 	boolean constantBool() {
@@ -153,6 +151,13 @@ public class BdsVm {
 
 	public Value getValue(String name) {
 		return scope.getValue(name);
+	}
+
+	/**
+	 * Does the OpCode at position 'pc' have a paramter?
+	 */
+	boolean hasParam(int pc) {
+		return OPCODES[code[pc]].hasParam();
 	}
 
 	public boolean isEmptyStack() {
@@ -248,7 +253,7 @@ public class BdsVm {
 	 * Run the program in 'code'
 	 */
 	public int run() {
-		OpCode opcodes[] = OpCode.values();
+		debug = true; // !!!!!!!
 
 		// Initialize program counter
 		pc = Math.max(0, getLabel(LABLE_MAIN));
@@ -270,8 +275,8 @@ public class BdsVm {
 		// Execute while not the end of the program
 		while (pc < code.length) {
 			instruction = code[pc];
-			opcode = opcodes[instruction];
-			if (debug) System.err.println("PC: " + pc + "\tOpCode: " + opcode);
+			opcode = OPCODES[instruction];
+			if (debug) System.err.print(toAsm(pc));
 			pc++;
 
 			switch (opcode) {
@@ -313,6 +318,11 @@ public class BdsVm {
 					scope.add(arg, pop());
 				pushPc(); // Push PC to call-stack
 				pc = func.getPc(); // Jump to function
+				break;
+
+			case DEC:
+				i1 = popInt();
+				push(--i1);
 				break;
 
 			case DIVI:
@@ -399,26 +409,31 @@ public class BdsVm {
 				push(s1.compareTo(s2) > 0);
 				break;
 
+			case HALT:
+				return exitCode();
+
+			case INC:
+				i1 = popInt();
+				push(++i1);
+				break;
+
 			case JMP:
 				name = constantString(); // Get function name
 				pc = getLabel(name);
 				break;
 
-			case HALT:
-				return exitCode();
-
 			case JMPT:
 				if (popBool()) {
 					name = constantString(); // Get label name
 					pc = getLabel(name); // Jump to label
-				}
+				} else pc++;
 				break;
 
 			case JMPF:
 				if (!popBool()) {
 					name = constantString(); // Get label name
 					pc = getLabel(name); // Jump to label
-				}
+				} else pc++;
 				break;
 
 			case LOAD:
@@ -675,27 +690,37 @@ public class BdsVm {
 	 * Output code as 'assembly' (disassembler)
 	 */
 	public String toAsm() {
-		OpCode opcodes[] = OpCode.values();
-
 		StringBuilder sb = new StringBuilder();
 		for (int pc = 0; pc < code.length; pc++) {
-			// Any label?
-			String label = getLabel(pc);
-			if (label != null) sb.append(label + ":\n");
-
-			// Show opcode
-			OpCode op = opcodes[code[pc]];
-			String opstr = op.toString().toLowerCase();
-			if (op.hasParam()) {
-				int idx = code[++pc];
-				Object param = getConstant(idx);
-				sb.append("\t" + opstr + " " + param + "\n");
-			} else {
-				sb.append("\t" + opstr + "\n");
-			}
+			sb.append(toAsm(pc));
+			if (hasParam(pc)) pc++;
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * Show opcode at 'pc'
+	 */
+	String toAsm(int pc) {
+		// Any label?
+		String label = getLabel(pc);
+
+		// Show opcode
+		OpCode op = OPCODES[code[pc]];
+		String opstr = op.toString().toLowerCase();
+
+		// Parameter?
+		Object param = null;
+		if (op.hasParam()) {
+			int idx = code[++pc];
+			param = getConstant(idx);
+		}
+
+		return (label != null ? label + ":\n" : "") //
+				+ "\t" + opstr //
+				+ (param != null ? " " + param : "") //
+				+ "\n";
 	}
 
 	@Override
