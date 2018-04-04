@@ -13,6 +13,11 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionLogicNot extends ExpressionUnary {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 4334042905605735832L;
+
 	public ExpressionLogicNot(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		op = "!";
@@ -26,6 +31,11 @@ public class ExpressionLogicNot extends ExpressionUnary {
 		bdsThread.run(expr);
 		if (bdsThread.isCheckpointRecover()) return;
 		bdsThread.push(!bdsThread.popBool());
+	}
+
+	@Override
+	public String toAsm() {
+		return expr.toAsm() + "notb\n";
 	}
 
 	@Override

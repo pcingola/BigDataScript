@@ -16,6 +16,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionUnaryMinus extends ExpressionUnary {
 
+	private static final long serialVersionUID = -5030008162832737754L;
+
 	public ExpressionUnaryMinus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		op = "-";
@@ -47,6 +49,13 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 		} else if (returnType == Types.REAL) {
 			bdsThread.push(-bdsThread.popReal());
 		} else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
+	}
+
+	@Override
+	public String toAsm() {
+		if (isInt()) return "pushi 0\n" + expr.toAsm() + "subi\n";
+		if (isReal()) return "pushr 0.0\n" + expr.toAsm() + "subr\n";
+		throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
 
 	@Override

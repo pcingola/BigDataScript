@@ -11,6 +11,8 @@ import org.bds.run.BdsThread;
  */
 public class ExpressionUnaryPlus extends ExpressionUnaryMinus {
 
+	private static final long serialVersionUID = 4577333129590654063L;
+
 	public ExpressionUnaryPlus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		op = "+";
@@ -24,4 +26,10 @@ public class ExpressionUnaryPlus extends ExpressionUnaryMinus {
 		if (returnType.isInt() || returnType.isReal()) bdsThread.run(expr);
 		else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
+
+	@Override
+	public String toAsm() {
+		return expr.toAsm();
+	}
+
 }

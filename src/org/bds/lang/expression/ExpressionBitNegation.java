@@ -14,6 +14,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionBitNegation extends ExpressionUnary {
 
+	private static final long serialVersionUID = 3145269999331496620L;
+
 	public ExpressionBitNegation(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		op = "~";
@@ -30,9 +32,13 @@ public class ExpressionBitNegation extends ExpressionUnary {
 	}
 
 	@Override
+	public String toAsm() {
+		return expr.toAsm() + "noti\n";
+	}
+
+	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Can we transform to an int?
 		expr.getReturnType().checkCanCast(Types.INT, compilerMessages);
 	}
-
 }
