@@ -193,6 +193,13 @@ public class ForLoopList extends StatementWithScope {
 		String loopContinueLabel = getClass().getSimpleName() + "_continue_" + id;
 		String loopEndLabel = getClass().getSimpleName() + "_end_" + id;
 
+		// internal counter
+		// max_counter = list size
+		// for(int $i=0 ; $i < $len ; $i++ ) {
+		//     $var = list[$i]
+		//     statements
+		//  }
+
 		if (isNeedsScope()) sb.append("scopepush\n");
 		sb.append(loopInitLabel + ":\n");
 		sb.append(begin.toAsm());
