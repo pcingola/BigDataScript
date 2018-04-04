@@ -21,16 +21,14 @@ import org.bds.symbol.SymbolTable;
  */
 public class LiteralMap extends Literal {
 
+	private static final long serialVersionUID = 5866903221831301923L;
+
 	Expression keys[];
 	Expression values[];
 
 	public LiteralMap(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
-
-	//	public Type baseType() {
-	//		return ((TypeMap) returnType).getElementType();
-	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {
@@ -43,6 +41,11 @@ public class LiteralMap extends Literal {
 			i += 2;
 			values[j] = (Expression) factory(tree, i);
 		}
+	}
+
+	@Override
+	protected Object parseValue(ParseTree tree) {
+		throw new RuntimeException("This should never happen!");
 	}
 
 	@Override
@@ -117,6 +120,32 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+
+		// Create a new map (temporary variable)
+		String varMap = SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + getId() + "_map";
+		sb.append("new " + returnType + "\n");
+		sb.append("store " + varMap + "\n");
+
+		// Add all elements to map
+		for (int i = 0; i < values.length; i++) {
+			// Evaluate expression and assign to items: '$map[exprKey] = exprVal'
+			Expression exprVal = values[i];
+			Expression exprKey = keys[i];
+			sb.append(exprVal.toAsm());
+			sb.append(exprKey.toAsm());
+			sb.append("load " + varMap + "\n");
+			sb.append("setmap\n");
+		}
+
+		// Leave map as last element in the stack
+		sb.append("load " + varMap + "\n");
+		return sb.toString();
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < keys.length; i++) {
@@ -142,12 +171,6 @@ public class LiteralMap extends Literal {
 		}
 
 		// !!! TODO: Type check for keys
-	}
-
-	@Override
-	protected Object parseValue(ParseTree tree) {
-		// !!! TODO 
-		throw new RuntimeException("!!! UNIMPLEMENTED");
 	}
 
 }

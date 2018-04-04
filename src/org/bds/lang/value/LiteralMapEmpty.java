@@ -10,10 +10,12 @@ import org.bds.symbol.SymbolTable;
 
 /**
  * Expression: Literal empty map
- * 
+ *
  * @author pcingola
  */
 public class LiteralMapEmpty extends LiteralMap {
+
+	private static final long serialVersionUID = 7742952716041459654L;
 
 	public LiteralMapEmpty(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
