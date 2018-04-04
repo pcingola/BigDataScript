@@ -5,10 +5,12 @@ import org.bds.lang.BdsNode;
 
 /**
  * Expression '/='
- * 
+ *
  * @author pcingola
  */
 public class ExpressionAssignmentDiv extends ExpressionAssignmentBinary {
+
+	private static final long serialVersionUID = -2367714044119782574L;
 
 	public ExpressionAssignmentDiv(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -22,6 +24,13 @@ public class ExpressionAssignmentDiv extends ExpressionAssignmentBinary {
 	@Override
 	protected String op() {
 		return "/=";
+	}
+
+	@Override
+	protected String toAsmOp() {
+		if (returnType.isInt()) return "divi\n";
+		if (returnType.isReal()) return "divr\n";
+		throw new RuntimeException("Unknown operation '" + op() + "' for type " + returnType);
 	}
 
 }

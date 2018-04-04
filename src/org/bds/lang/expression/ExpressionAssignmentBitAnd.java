@@ -26,4 +26,9 @@ public class ExpressionAssignmentBitAnd extends ExpressionAssignmentBinary {
 		return "&=";
 	}
 
+	@Override
+	protected String toAsmOp() {
+		return "andi\n";
+	}
+
 }

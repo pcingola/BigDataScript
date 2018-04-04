@@ -5,10 +5,12 @@ import org.bds.lang.BdsNode;
 
 /**
  * Expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionAssignmentMinus extends ExpressionAssignmentBinary {
+
+	private static final long serialVersionUID = 7729438200021904075L;
 
 	public ExpressionAssignmentMinus(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -22,6 +24,13 @@ public class ExpressionAssignmentMinus extends ExpressionAssignmentBinary {
 	@Override
 	protected String op() {
 		return "-=";
+	}
+
+	@Override
+	protected String toAsmOp() {
+		if (returnType.isInt()) return "subi\n";
+		if (returnType.isReal()) return "subr\n";
+		throw new RuntimeException("Unknown operation '" + op() + "' for type " + returnType);
 	}
 
 }

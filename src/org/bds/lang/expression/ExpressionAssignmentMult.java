@@ -5,10 +5,12 @@ import org.bds.lang.BdsNode;
 
 /**
  * Expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionAssignmentMult extends ExpressionAssignmentBinary {
+
+	private static final long serialVersionUID = 8347513714266058836L;
 
 	public ExpressionAssignmentMult(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -22,6 +24,13 @@ public class ExpressionAssignmentMult extends ExpressionAssignmentBinary {
 	@Override
 	protected String op() {
 		return "*=";
+	}
+
+	@Override
+	protected String toAsmOp() {
+		if (returnType.isInt()) return "muli\n";
+		if (returnType.isReal()) return "mulr\n";
+		throw new RuntimeException("Unknown operation '" + op() + "' for type " + returnType);
 	}
 
 }

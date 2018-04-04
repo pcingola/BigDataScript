@@ -5,10 +5,15 @@ import org.bds.lang.BdsNode;
 
 /**
  * Expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionAssignmentBitOr extends ExpressionAssignmentBinary {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -2969794879422342835L;
 
 	public ExpressionAssignmentBitOr(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -22,6 +27,11 @@ public class ExpressionAssignmentBitOr extends ExpressionAssignmentBinary {
 	@Override
 	protected String op() {
 		return "|=";
+	}
+
+	@Override
+	protected String toAsmOp() {
+		return "orii\n";
 	}
 
 }
