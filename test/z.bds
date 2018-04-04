@@ -1,6 +1,8 @@
 
-for(int i=0; i < 10 ; i++) {
-	if( i == 2 ) continue
-	println(i)
-}
 
+l := ['a', 'b', 'c']
+print(l)
+
+s := l.size()
+
+#for(string s : l) println(s)

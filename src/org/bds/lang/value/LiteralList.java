@@ -18,6 +18,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class LiteralList extends Literal {
 
+	private static final long serialVersionUID = -7535741001316384850L;
+
 	Expression values[];
 
 	public LiteralList(BdsNode parent, ParseTree tree) {
@@ -97,6 +99,31 @@ public class LiteralList extends Literal {
 	public void sanityCheck(CompilerMessages compilerMessages) {
 		for (BdsNode csnode : values)
 			if (!(csnode instanceof Expression)) compilerMessages.add(csnode, "Expecting expression instead of " + csnode.getClass().getSimpleName(), MessageType.ERROR);
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+
+		// Create a new list (temporary variable)
+		String varList = SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + getId() + "_list";
+		sb.append("new " + returnType + "\n");
+		sb.append("store " + varList + "\n");
+
+		// Add all elements to list
+		for (int i = 0; i < values.length; i++) {
+			// Evaluate expression and assign to list item: '$list[i] = expr'
+			Expression expr = values[i];
+			sb.append(expr.toAsm());
+			sb.append("pushi " + i + "\n");
+			sb.append("load " + varList + "\n");
+			sb.append("setlist\n");
+		}
+
+		// Leave list as last element in the stack
+		sb.append("load " + varList + "\n");
+		return sb.toString();
 	}
 
 	@Override

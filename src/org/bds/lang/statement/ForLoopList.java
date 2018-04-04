@@ -193,23 +193,73 @@ public class ForLoopList extends StatementWithScope {
 		String loopContinueLabel = getClass().getSimpleName() + "_continue_" + id;
 		String loopEndLabel = getClass().getSimpleName() + "_end_" + id;
 
-		// internal counter
-		// max_counter = list size
-		// for(int $i=0 ; $i < $len ; $i++ ) {
-		//     $var = list[$i]
+		// Loop variable
+		String varName = beginVarDecl.getVarInit()[0].getVarName();
+
+		// Internal state variables
+		String varBaseName = SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + getId();
+		String varList = varBaseName + "_list";
+		String varCounter = varBaseName + "_count";
+		String varMaxCounter = varBaseName + "_max_count";
+
+		//
+		// Sample code;
+		//   for(var : expressionList) {
+		//       statements
+		//   }
+		//
+		// How the loop is executed:
+		//   $list = expressionList
+		//   $maxCount = $list.size()
+		//   for(int $count=0 ; $count < $maxCount ; $count++ ) {
+		//     var = list[$count]
 		//     statements
-		//  }
+		//   }
+		//
 
 		if (isNeedsScope()) sb.append("scopepush\n");
+
+		// Evaluate expression: '$list = expressionList' 
+		sb.append(expression.toAsm());
+		sb.append("store " + varList + "\n");
+
+		// Get list size: '$maxCount = $list.size()'
+		sb.append("load " + varList + "\n");
+		sb.append("call size()\n");
+		sb.append("store " + varMaxCounter + "\n");
+
+		// Loop start		
 		sb.append(loopInitLabel + ":\n");
-		sb.append(begin.toAsm());
+
+		// Initialize variables: 'for(int $count = 0 ;'
+		sb.append("pushi 0\n");
+		sb.append("store " + varCounter + "\n");
+
+		// Loop condition: 'for(... ; $count < $maxCount ; ...)'
 		sb.append(loopStartLabel + ":\n");
-		sb.append(condition.toAsm());
+		sb.append("load " + varCounter + "\n");
+		sb.append("load " + varMaxCounter + "\n");
+		sb.append("lt\n");
 		sb.append("jmpf " + loopEndLabel + "\n");
+
+		// Assign loop variable: 'var = list[$count]'
+		sb.append("load " + varCounter + "\n");
+		sb.append("load " + varList + "\n");
+		sb.append("reflist\n");
+		sb.append("store " + varName + "\n");
+
+		// Execute statements: 'statements'
 		sb.append(statement.toAsm());
+
+		// Loop end part: $i++
 		sb.append(loopContinueLabel + ":\n");
-		sb.append(end.toAsm());
+		sb.append("load " + varCounter);
+		sb.append("inc");
+
+		// Jump to beginning of loop
 		sb.append("jmp " + loopStartLabel + "\n");
+
+		// Loop finished
 		sb.append(loopEndLabel + ":\n");
 		if (isNeedsScope()) sb.append("scopepop\n");
 
