@@ -7,6 +7,7 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_abs_int extends FunctionNative {
+
 	public FunctionNative_abs_int() {
 		super();
 	}
@@ -24,6 +25,6 @@ public class FunctionNative_abs_int extends FunctionNative {
 
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
-		return (Long) Math.abs(bdsThread.getInt("x"));
+		return Math.abs(bdsThread.getInt("x"));
 	}
 }

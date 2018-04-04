@@ -17,10 +17,7 @@ import org.bds.symbol.SymbolTable;
  */
 public abstract class FunctionNative extends FunctionDeclaration {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 5510708631419216087L;
 
 	public FunctionNative() {
 		super(null, null);
