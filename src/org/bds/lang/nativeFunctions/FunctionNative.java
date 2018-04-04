@@ -7,6 +7,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.symbol.SymbolTable;
 
@@ -25,11 +26,11 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	}
 
 	/**
-	 * Add method to global scope
+	 * Add method to global scope and global symbol table
 	 */
-	protected void addNativeFunctionToScope() {
-		SymbolTable symtab = GlobalSymbolTable.get();
-		symtab.add(functionName, getType());
+	protected void addNativeFunction() {
+		GlobalScope.get().add(this);
+		GlobalSymbolTable.get().add(this);
 	}
 
 	/**
@@ -86,7 +87,6 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	protected Value runFunctionNativeValue(BdsThread bdsThread) {
 		Object ret = runFunctionNative(bdsThread);
 		return returnType.newValue(ret);
-		// return Value.factory(ret);
 	}
 
 	@Override

@@ -27,7 +27,7 @@ public class FunctionNativeRangeReal extends FunctionNative {
 		String argNames[] = { "min", "max", "step" };
 		Type argTypes[] = { Types.REAL, Types.REAL, Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

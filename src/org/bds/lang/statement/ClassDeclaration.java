@@ -20,6 +20,11 @@ import org.bds.symbol.SymbolTable;
  */
 public class ClassDeclaration extends Block {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -8891327817053470787L;
+
 	public static final String THIS = "this";
 
 	protected String className;
@@ -219,7 +224,7 @@ public class ClassDeclaration extends Block {
 		if (methodDecl != null && methodDecl.length > 0) {
 			sb.append("\t# Methods\n");
 			for (int i = 0; i < methodDecl.length; i++)
-				sb.append("\t" + methodDecl[i].signatureWithName() + "\n");
+				sb.append("\t" + methodDecl[i].signature() + "\n");
 			sb.append("\n");
 		}
 

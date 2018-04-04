@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.bds.lang.BdsNode;
+import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueFunction;
 
 /**
  * Scope: Variables, functions and classes
@@ -55,6 +57,11 @@ public class Scope implements Iterable<String>, Serializable {
 		values = new HashMap<>();
 	}
 
+	public synchronized void add(FunctionDeclaration fdecl) {
+		ValueFunction vf = new ValueFunction(fdecl);
+		values.put(fdecl.signature(), vf);
+	}
+
 	/**
 	 * Add a value to scope using a primitive object
 	 */
@@ -90,7 +97,7 @@ public class Scope implements Iterable<String>, Serializable {
 	}
 
 	public String getScopeName() {
-		if (node == null) return "Global";
+		if (node == null) return "" + id;
 		return (node.getFileName() != null ? node.getFileName() + ":" + node.getLineNum() + ":" : "") + node.getClass().getSimpleName();
 	}
 
@@ -112,8 +119,8 @@ public class Scope implements Iterable<String>, Serializable {
 	/**
 	 * Get value on this scope (only search this scope)
 	 */
-	public synchronized Value getValueLocal(String value) {
-		return values.get(value);
+	public synchronized Value getValueLocal(String name) {
+		return values.get(name);
 	}
 
 	public Collection<Value> getValues() {

@@ -24,7 +24,7 @@ public class FunctionNativeSleepReal extends FunctionNative {
 		String argNames[] = { "seconds" };
 		Type argTypes[] = { Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

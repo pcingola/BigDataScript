@@ -19,7 +19,7 @@ public class FunctionNative_hypot_real_real extends FunctionNative {
 		String argNames[] = { "x", "y" };
 		Type argTypes[] = { Types.REAL, Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

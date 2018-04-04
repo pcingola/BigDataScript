@@ -25,8 +25,9 @@ public enum OpCode {
 	// Cast values {b,i,r} => {b,i,r}
 	, CAST_BTOI, CAST_BTOR, CAST_ITOB, CAST_ITOR, CAST_RTOB, CAST_RTOI
 	// Function call:
-	//    CALL pc
-	, CALL
+	//    CALL function_signature
+	//    CALLNATIVE function_signature 
+	, CALL, CALLNATIVE
 	// Decrement (i.e. valueInt--)
 	, DEC
 	// Division
@@ -98,6 +99,7 @@ public enum OpCode {
 	public boolean hasParam() {
 		switch (this) {
 		case CALL:
+		case CALLNATIVE:
 		case JMP:
 		case JMPT:
 		case JMPF:

@@ -40,6 +40,8 @@ import org.bds.util.Gpr;
  */
 public class TypeList extends TypeComposite {
 
+	private static final long serialVersionUID = -6328403968286013768L;
+
 	public static boolean debug = false;
 
 	public static TypeList LIST_ANY = new TypeList(Types.ANY);
@@ -149,11 +151,7 @@ public class TypeList extends TypeComposite {
 			methods.add(new MethodNativeListTail(this));
 
 			// Show
-			if (debug) {
-				Gpr.debug("Type " + this + ", library methods added: ");
-				for (MethodNative method : methods)
-					Gpr.debug("\t" + method.signature());
-			}
+			if (debug) Gpr.debug("Type " + this + ", library methods added: ");
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new RuntimeException("Error while adding native mehods for class '" + this + "'", t);

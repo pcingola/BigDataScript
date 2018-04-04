@@ -18,7 +18,7 @@ public class FunctionNative_clone_bool extends FunctionNative {
 		String argNames[] = { "x" };
 		Type argTypes[] = { Types.BOOL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

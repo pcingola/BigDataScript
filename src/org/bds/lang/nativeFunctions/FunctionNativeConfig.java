@@ -32,7 +32,7 @@ public class FunctionNativeConfig extends FunctionNative {
 		String argNames[] = { "file" };
 		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	protected Object parseFile(BdsThread bdsThread, String fileName, ValueMap configOri) {

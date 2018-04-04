@@ -19,7 +19,7 @@ public class FunctionNative_scalb_real_int extends FunctionNative {
 		String argNames[] = { "d", "scaleFactor" };
 		Type argTypes[] = { Types.REAL, Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

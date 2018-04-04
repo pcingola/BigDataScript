@@ -7,7 +7,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
-import org.bds.lang.type.TypeFunction;
+import org.bds.lang.value.ValueFunction;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
@@ -197,9 +197,9 @@ public class VarDeclaration extends Statement {
 			// Already declared?
 			if (symtab.hasTypeLocal(varName)) {
 				String other = "";
-				if (symtab.getTypeFunctionsLocal(varName) != null) {
-					TypeFunction tf = symtab.getTypeFunctionsLocal(varName).get(0);
-					FunctionDeclaration fd = tf.getFunctionDeclaration();
+				if (symtab.getValueFunctionsLocal(varName) != null) {
+					ValueFunction vf = symtab.getValueFunctionsLocal(varName).get(0);
+					FunctionDeclaration fd = vf.getFunctionDeclaration();
 					other = " (function '" + varName + "' declared in " + fd.getFileName() + ", line " + fd.getLineNum() + ")";
 				}
 

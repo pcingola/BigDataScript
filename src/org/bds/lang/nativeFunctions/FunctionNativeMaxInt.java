@@ -24,7 +24,7 @@ public class FunctionNativeMaxInt extends FunctionNative {
 		String argNames[] = { "n1", "n2" };
 		Type argTypes[] = { returnType, returnType };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class FunctionNative_nextAfter_real_real extends FunctionNative {
 		String argNames[] = { "start", "direction" };
 		Type argTypes[] = { Types.REAL, Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

@@ -27,7 +27,7 @@ public class FunctionNativeRangeIntStep extends FunctionNative {
 		String argNames[] = { "min", "max", "step" };
 		Type argTypes[] = { Types.INT, Types.INT, Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

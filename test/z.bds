@@ -1,7 +1,7 @@
 
 i := -5
 a := abs(i)
-println(a)
+println(i)
 
 # l := ['a', 'b', 'c']
 # print(l)

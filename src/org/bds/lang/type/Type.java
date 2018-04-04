@@ -36,10 +36,8 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	 */
 	protected void addNativeMethods() {
 		List<MethodNative> methods = declateNativeMethods();
-		for (MethodNative method : methods) {
-			TypeFunction tf = new TypeFunction(method);
-			getSymbolTable().add(method.getFunctionName(), tf);
-		}
+		for (MethodNative method : methods)
+			getSymbolTable().add(method);
 	}
 
 	/**

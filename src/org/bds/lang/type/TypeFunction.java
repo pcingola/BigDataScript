@@ -6,7 +6,6 @@ import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueFunction;
 import org.bds.util.Gpr;
 
 /**
@@ -16,12 +15,14 @@ import org.bds.util.Gpr;
  */
 public class TypeFunction extends TypeComposite {
 
+	private static final long serialVersionUID = -6636870217965016947L;
+
 	// Note: returnType already exists in BdsNode
-	FunctionDeclaration functionDecl;
+	Parameters parameters;
 
 	public TypeFunction(FunctionDeclaration functionDeclaration) {
 		super(PrimitiveType.FUNCTION);
-		this.functionDecl = functionDeclaration;
+		parameters = functionDeclaration.getParameters();
 		returnType = functionDeclaration.getReturnType();
 	}
 
@@ -49,12 +50,8 @@ public class TypeFunction extends TypeComposite {
 		return Gpr.compareNull(getParameters(), typef.getParameters());
 	}
 
-	public FunctionDeclaration getFunctionDeclaration() {
-		return functionDecl;
-	}
-
 	public Parameters getParameters() {
-		return functionDecl.getParameters();
+		return parameters;
 	}
 
 	@Override
@@ -69,7 +66,7 @@ public class TypeFunction extends TypeComposite {
 
 	@Override
 	public Value newDefaultValue() {
-		return new ValueFunction(this);
+		throw new RuntimeException("Cannot instanciate default value for function type " + this);
 	}
 
 	/**

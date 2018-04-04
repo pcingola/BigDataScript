@@ -19,7 +19,7 @@ public class FunctionNativeAssertIntNoMsg extends FunctionNativeAssert {
 		String argNames[] = { "expected", "map" };
 		Type argTypes[] = { Types.INT, Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

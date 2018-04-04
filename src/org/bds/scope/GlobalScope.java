@@ -95,6 +95,11 @@ public class GlobalScope extends Scope {
 		return null;
 	}
 
+	@Override
+	public String getScopeName() {
+		return "Global";
+	}
+
 	public void init(Config config) {
 		// Add global symbols
 		add(GLOBAL_VAR_PROGRAM_NAME, ""); // Now is empty, but they are assigned later

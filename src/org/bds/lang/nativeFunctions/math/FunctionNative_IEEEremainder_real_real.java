@@ -19,7 +19,7 @@ public class FunctionNative_IEEEremainder_real_real extends FunctionNative {
 		String argNames[] = { "f1", "f2" };
 		Type argTypes[] = { Types.REAL, Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

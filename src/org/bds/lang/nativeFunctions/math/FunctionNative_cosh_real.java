@@ -19,7 +19,7 @@ public class FunctionNative_cosh_real extends FunctionNative {
 		String argNames[] = { "x" };
 		Type argTypes[] = { Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class FunctionNative_nextUp_real extends FunctionNative {
 		String argNames[] = { "d" };
 		Type argTypes[] = { Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

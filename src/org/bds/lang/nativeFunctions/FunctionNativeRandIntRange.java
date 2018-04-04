@@ -24,7 +24,7 @@ public class FunctionNativeRandIntRange extends FunctionNative {
 		String argNames[] = { "range" };
 		Type argTypes[] = { Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

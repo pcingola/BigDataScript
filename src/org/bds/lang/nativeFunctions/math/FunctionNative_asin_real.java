@@ -20,7 +20,7 @@ public class FunctionNative_asin_real extends FunctionNative {
 		String argNames[] = { "a" };
 		Type argTypes[] = { Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

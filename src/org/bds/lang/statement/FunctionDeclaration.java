@@ -1,5 +1,6 @@
 package org.bds.lang.statement;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -31,6 +32,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	protected Parameters parameters;
 	protected Statement statement;
 	protected String signature;
+	protected List<String> parameterNames;
 
 	public FunctionDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -75,6 +77,17 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	public String getFunctionName() {
 		return functionName;
+	}
+
+	public List<String> getParameterNames() {
+		if (parameterNames != null) return parameterNames;
+		parameterNames = new LinkedList<>();
+
+		for (VarDeclaration vd : parameters.getVarDecl())
+			for (VariableInit vi : vd.getVarInit())
+				parameterNames.add(vi.getVarName());
+
+		return parameterNames;
 	}
 
 	public Parameters getParameters() {
@@ -155,27 +168,13 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	public String signature() {
 		if (signature != null) return signature;
-		signature = getType().signature();
+		signature = functionName + getType().signature();
 		return signature;
 	}
 
-	public String signatureAsm() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(functionName + "(");
-		boolean empty = true;
-		for (VarDeclaration vdecl : parameters.getVarDecl()) {
-			for (VariableInit vi : vdecl.getVarInit()) {
-				sb.append((empty ? "" : ",") + vi.getVarName());
-				empty = false;
-			}
-		}
-		sb.append(")");
-		return sb.toString();
-	}
-
-	public String signatureWithName() {
-		return returnType + " " + functionName + "(" + parameters + ")";
-	}
+	//	public String signatureWithName() {
+	//		return returnType + " " + functionName + "(" + parameters + ")";
+	//	}
 
 	@Override
 	public String toAsm() {
@@ -184,7 +183,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 		sb.append("jmp " + funcEndLabel + "\n"); // Make sure we skip function definition when running
-		sb.append(signatureAsm() + ":\n");
+		sb.append(signature() + ":\n");
 		if (statement != null) sb.append(statement.toAsm());
 		sb.append(funcEndLabel + ":\n");
 		return sb.toString();

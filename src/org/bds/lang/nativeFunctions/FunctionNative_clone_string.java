@@ -18,7 +18,7 @@ public class FunctionNative_clone_string extends FunctionNative {
 		String argNames[] = { "x" };
 		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

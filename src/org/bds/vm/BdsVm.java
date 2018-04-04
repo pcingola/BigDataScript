@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueFunction;
 import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueMap;
@@ -88,6 +90,26 @@ public class BdsVm {
 	public void addLabel(String label, int codeidx) {
 		labels.put(label, codeidx);
 		labelsByPc.put(codeidx, label);
+	}
+
+	/**
+	 * Call native function
+	 * @param fname
+	 */
+	void callNative(String fname) {
+		// Find function
+		ValueFunction valuef = (ValueFunction) scope.getValue(fname);
+		Gpr.debug("FUNCTION NAME: " + fname + "\tvalue: " + valuef);
+		FunctionDeclaration fdecl = valuef.getFunctionDeclaration();
+
+		newScope(); // Create a new scope
+
+		// Add all arguments to the scope
+		for (String pn : fdecl.getParameterNames())
+			scope.add(pn, pop());
+
+		Value ret = fdecl.runFunction();
+		popScope(); // Restore old scope
 	}
 
 	boolean constantBool() {
@@ -318,6 +340,11 @@ public class BdsVm {
 					scope.add(arg, pop());
 				pushPc(); // Push PC to call-stack
 				pc = func.getPc(); // Jump to function
+				break;
+
+			case CALLNATIVE:
+				name = constantString(); // Get function name
+				callNative(name);
 				break;
 
 			case DEC:

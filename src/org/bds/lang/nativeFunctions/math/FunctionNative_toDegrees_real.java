@@ -19,7 +19,7 @@ public class FunctionNative_toDegrees_real extends FunctionNative {
 		String argNames[] = { "angrad" };
 		Type argTypes[] = { Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

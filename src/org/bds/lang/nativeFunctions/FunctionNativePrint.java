@@ -25,7 +25,7 @@ public class FunctionNativePrint extends FunctionNative {
 		String argNames[] = { "str" };
 		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

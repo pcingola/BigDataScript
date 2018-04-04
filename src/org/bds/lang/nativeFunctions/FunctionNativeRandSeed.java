@@ -24,7 +24,7 @@ public class FunctionNativeRandSeed extends FunctionNative {
 		String argNames[] = { "seed" };
 		Type argTypes[] = { Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

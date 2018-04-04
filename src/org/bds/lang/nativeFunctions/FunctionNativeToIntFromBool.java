@@ -24,7 +24,7 @@ public class FunctionNativeToIntFromBool extends FunctionNative {
 		String argNames[] = { "num" };
 		Type argTypes[] = { Types.BOOL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

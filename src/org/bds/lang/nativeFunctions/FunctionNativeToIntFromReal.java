@@ -24,7 +24,7 @@ public class FunctionNativeToIntFromReal extends FunctionNative {
 		String argNames[] = { "num" };
 		Type argTypes[] = { Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

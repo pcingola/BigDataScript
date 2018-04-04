@@ -178,6 +178,7 @@ public class VmAsm {
 	Object parseConstant(OpCode opcode, String param) {
 		switch (opcode) {
 		case CALL:
+		case CALLNATIVE:
 		case JMP:
 		case JMPT:
 		case JMPF:

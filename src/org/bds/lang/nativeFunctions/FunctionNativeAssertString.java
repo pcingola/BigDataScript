@@ -19,7 +19,7 @@ public class FunctionNativeAssertString extends FunctionNativeAssert {
 		String argNames[] = { "msg", "expected", "map" };
 		Type argTypes[] = { Types.STRING, Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

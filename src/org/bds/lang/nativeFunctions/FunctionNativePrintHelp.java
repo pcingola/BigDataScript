@@ -26,7 +26,7 @@ public class FunctionNativePrintHelp extends FunctionNative {
 		String argNames[] = {};
 		Type argTypes[] = {};
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

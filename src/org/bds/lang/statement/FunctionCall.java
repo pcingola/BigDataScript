@@ -9,9 +9,9 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
-import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
+import org.bds.lang.value.ValueFunction;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
@@ -79,12 +79,12 @@ public class FunctionCall extends Expression {
 				if (classSymTab == null) return null;
 
 				// Find method in class symbol table
-				TypeFunction tfunc = classSymTab.findFunction(functionName, args);
-				if (tfunc != null) return tfunc.getFunctionDeclaration();
+				ValueFunction vfunc = classSymTab.findFunction(functionName, args);
+				if (vfunc != null) return vfunc.getFunctionDeclaration();
 
 				// Try a 'regular' function, e.g. 'this.funcName()' => 'funcName(this)'
-				tfunc = symtab.findFunction(functionName, args);
-				if (tfunc != null) return tfunc.getFunctionDeclaration();
+				vfunc = symtab.findFunction(functionName, args);
+				if (vfunc != null) return vfunc.getFunctionDeclaration();
 			}
 		} else {
 			// Another type of method call, e.g.: string.length()
@@ -92,13 +92,13 @@ public class FunctionCall extends Expression {
 			if (classSymTab == null) return null;
 
 			// Find method in class symbol table
-			TypeFunction tfunc = classSymTab.findFunction(functionName, args);
-			if (tfunc != null) return tfunc.getFunctionDeclaration();
+			ValueFunction vfunc = classSymTab.findFunction(functionName, args);
+			if (vfunc != null) return vfunc.getFunctionDeclaration();
 		}
 
 		// Try a 'regular' function
-		TypeFunction tfunc = symtab.findFunction(functionName, args);
-		if (tfunc != null) return tfunc.getFunctionDeclaration();
+		ValueFunction vfunc = symtab.findFunction(functionName, args);
+		if (vfunc != null) return vfunc.getFunctionDeclaration();
 
 		// Not found
 		return null;
@@ -139,7 +139,7 @@ public class FunctionCall extends Expression {
 
 		args.returnType(symtab);
 
-		TypeFunction tfunc = symtab.findFunction(functionName, args);
+		ValueFunction tfunc = symtab.findFunction(functionName, args);
 		if (tfunc != null) {
 			functionDeclaration = tfunc.getFunctionDeclaration();
 			returnType = functionDeclaration.getReturnType();
@@ -196,7 +196,7 @@ public class FunctionCall extends Expression {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 		sb.append(args.toAsm());
-		sb.append("call " + functionDeclaration.signatureAsm() + "\n");
+		sb.append((functionDeclaration.isNative() ? "callnative " : "call ") + functionDeclaration.signature() + "\n");
 		return sb.toString();
 	}
 

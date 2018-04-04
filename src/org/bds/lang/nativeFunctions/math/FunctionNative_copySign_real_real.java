@@ -19,7 +19,7 @@ public class FunctionNative_copySign_real_real extends FunctionNative {
 		String argNames[] = { "magnitude", "sign" };
 		Type argTypes[] = { Types.REAL, Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

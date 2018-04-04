@@ -29,7 +29,7 @@ public class FunctionNativeConfigOri extends FunctionNativeConfig {
 		String argNames[] = { "file", "configOri" };
 		Type argTypes[] = { Types.STRING, returnType };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

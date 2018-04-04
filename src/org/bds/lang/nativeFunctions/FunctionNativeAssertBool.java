@@ -19,7 +19,7 @@ public class FunctionNativeAssertBool extends FunctionNativeAssert {
 		String argNames[] = { "msg", "cond" };
 		Type argTypes[] = { Types.STRING, Types.BOOL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

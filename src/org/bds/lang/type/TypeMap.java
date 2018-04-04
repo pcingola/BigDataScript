@@ -24,10 +24,7 @@ import org.bds.util.Gpr;
  */
 public class TypeMap extends TypeComposite {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3321302248243052342L;
 
 	public static boolean debug = false;
 
@@ -129,11 +126,7 @@ public class TypeMap extends TypeComposite {
 			methods.add(new MethodNativeMapValues(this));
 
 			// Show
-			if (debug) {
-				Gpr.debug("Type " + this + ", library methods added: ");
-				for (MethodNative method : methods)
-					Gpr.debug("\t" + method.signature());
-			}
+			if (debug) Gpr.debug("Type " + this + ", library methods added: ");
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new RuntimeException("Error while adding native mehods for class '" + this + "'", t);
@@ -182,12 +175,6 @@ public class TypeMap extends TypeComposite {
 	public Value newDefaultValue() {
 		return new ValueMap(this);
 	}
-
-	// !!! TODO: FIX
-	//	@Override
-	//	public String toStringSerializer() {
-	//		return primitiveType + ":" + keyType.toStringSerializer();
-	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {

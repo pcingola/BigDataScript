@@ -1,7 +1,7 @@
 package org.bds.lang.value;
 
+import org.bds.lang.Parameters;
 import org.bds.lang.statement.FunctionDeclaration;
-import org.bds.lang.type.Type;
 
 /**
  * Define a value of type 'function'
@@ -9,10 +9,14 @@ import org.bds.lang.type.Type;
  */
 public class ValueFunction extends ValueComposite {
 
-	FunctionDeclaration fdecl;
+	private static final long serialVersionUID = -823063546180378116L;
 
-	public ValueFunction(Type type) {
-		super(type);
+	// Note: returnType already exists in BdsNode
+	FunctionDeclaration functionDecl;
+
+	public ValueFunction(FunctionDeclaration functionDecl) {
+		super(functionDecl.getType());
+		this.functionDecl = functionDecl;
 	}
 
 	@Override
@@ -22,7 +26,15 @@ public class ValueFunction extends ValueComposite {
 
 	@Override
 	public Object get() {
-		return fdecl;
+		return functionDecl;
+	}
+
+	public FunctionDeclaration getFunctionDeclaration() {
+		return functionDecl;
+	}
+
+	public Parameters getParameters() {
+		return functionDecl.getParameters();
 	}
 
 	@Override
@@ -32,7 +44,12 @@ public class ValueFunction extends ValueComposite {
 
 	@Override
 	public void set(Object v) {
-		fdecl = (FunctionDeclaration) v;
-	};
+		functionDecl = (FunctionDeclaration) v;
+	}
+
+	@Override
+	public String toString() {
+		return functionDecl.signature();
+	}
 
 }

@@ -20,7 +20,7 @@ public class FunctionNative_abs_int extends FunctionNative {
 		String argNames[] = { "x" };
 		Type argTypes[] = { Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override
