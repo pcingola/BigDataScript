@@ -37,12 +37,20 @@ public class Break extends Statement {
 	/**
 	 * Find enclosing loop or switch
 	 */
-	BdsNode findBreakNode() {
+	protected BdsNode findBreakNode() {
 		for (BdsNode bn = this; bn != null; bn = bn.getParent()) {
 			if (isBreak(bn)) return bn;
 			else if (isFunction(bn)) return null; // Reached function or method definition?
 		}
 		return null;
+	}
+
+	/**
+	 * Find label to jump to (asm)
+	 */
+	protected String findLabel() {
+		BdsNode bdsNode = findBreakNode();
+		return bdsNode.getClass().getSimpleName() + "_end_" + bdsNode.getId();
 	}
 
 	/**
@@ -86,20 +94,25 @@ public class Break extends Statement {
 		}
 	}
 
+	protected String scopePop() {
+		StringBuilder sb = new StringBuilder();
+		int countScopes = countScopesBreakNode();
+		for (int i = 0; i < countScopes; i++)
+			sb.append("scopepop\n");
+		return sb.toString();
+	}
+
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 
 		// Restore scopes
-		int countScopes = countScopesBreakNode();
-		for (int i = 0; i < countScopes; i++)
-			sb.append("scopepop\n");
+		sb.append(scopePop());
 
 		// Jump for end of enclosing loop/switch
-		BdsNode bdsNode = findBreakNode();
-		String breakLabel = bdsNode.getClass().getSimpleName() + "_end_" + bdsNode.getId();
-		sb.append("jmp " + breakLabel + "\n");
+		String jmpLabel = findLabel();
+		sb.append("jmp " + jmpLabel + "\n");
 		return sb.toString();
 	}
 

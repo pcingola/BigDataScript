@@ -95,10 +95,12 @@ public class While extends Statement {
 		sb.append(super.toAsm());
 
 		String loopStartLabel = getClass().getSimpleName() + "_start_" + id;
+		String loopContinueLabel = getClass().getSimpleName() + "_continue_" + id;
 		String loopEndLabel = getClass().getSimpleName() + "_end_" + id;
 
 		if (isNeedsScope()) sb.append("scopepush\n");
 		sb.append(loopStartLabel + ":\n");
+		sb.append(loopContinueLabel + ":\n");
 		sb.append(condition.toAsm());
 		sb.append("jmpf " + loopEndLabel + "\n");
 		sb.append(statement.toAsm());
