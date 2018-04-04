@@ -26,11 +26,4 @@ public class ExpressionAssignmentMult extends ExpressionAssignmentBinary {
 		return "*=";
 	}
 
-	@Override
-	protected String toAsmOp() {
-		if (returnType.isInt()) return "muli\n";
-		if (returnType.isReal()) return "mulr\n";
-		throw new RuntimeException("Unknown operation '" + op() + "' for type " + returnType);
-	}
-
 }

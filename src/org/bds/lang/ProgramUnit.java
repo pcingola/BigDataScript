@@ -93,4 +93,12 @@ public class ProgramUnit extends BlockWithFile {
 		return testFuncs;
 	}
 
+	@Override
+	public String toAsm() {
+		return "main:\n" //
+				+ super.toAsm() //
+				+ "halt" //
+		;
+	}
+
 }

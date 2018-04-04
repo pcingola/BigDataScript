@@ -26,12 +26,4 @@ public class ExpressionAssignmentPlus extends ExpressionAssignmentBinary {
 		return "+=";
 	}
 
-	@Override
-	protected String toAsmOp() {
-		if (returnType.isInt()) return "addi\n";
-		if (returnType.isReal()) return "addr\n";
-		if (returnType.isString()) return "adds\n";
-		throw new RuntimeException("Unknown operation '" + op() + "' for type " + returnType);
-	}
-
 }

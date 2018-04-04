@@ -25,12 +25,4 @@ public class ExpressionAssignmentDiv extends ExpressionAssignmentBinary {
 	protected String op() {
 		return "/=";
 	}
-
-	@Override
-	protected String toAsmOp() {
-		if (returnType.isInt()) return "divi\n";
-		if (returnType.isReal()) return "divr\n";
-		throw new RuntimeException("Unknown operation '" + op() + "' for type " + returnType);
-	}
-
 }

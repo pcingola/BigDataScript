@@ -15,6 +15,7 @@ import org.bds.lang.value.ValueMap;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.scope.Scope;
+import org.bds.util.Gpr;
 
 /**
  * Bds Virtual Machine
@@ -669,6 +670,7 @@ public class BdsVm {
 			}
 		}
 
+		if (sp > 1) Gpr.debug("WARNING: Stack should have one value or be empty.\nStack: " + stackToString());
 		return exitCode();
 	}
 

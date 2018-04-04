@@ -26,11 +26,4 @@ public class ExpressionAssignmentMinus extends ExpressionAssignmentBinary {
 		return "-=";
 	}
 
-	@Override
-	protected String toAsmOp() {
-		if (returnType.isInt()) return "subi\n";
-		if (returnType.isReal()) return "subr\n";
-		throw new RuntimeException("Unknown operation '" + op() + "' for type " + returnType);
-	}
-
 }

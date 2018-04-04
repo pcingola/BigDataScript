@@ -65,8 +65,7 @@ public class ExpressionAssignment extends ExpressionBinary {
 
 	@Override
 	public String toAsm() {
-		return super.toAsm() //
-				+ right.toAsm() //
+		return right.toAsm() //
 				+ ((Reference) left).toAsmSet() //
 		;
 	}

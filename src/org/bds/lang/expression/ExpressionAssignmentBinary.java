@@ -66,18 +66,4 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
 		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
 	}
-
-	@Override
-	public String toAsm() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.toAsm());
-		sb.append(right.toAsm());
-		sb.append(left.toAsm());
-		sb.append(toAsmOp());
-		sb.append(((Reference) left).toAsmSet());
-		return sb.toString();
-	}
-
-	protected abstract String toAsmOp();
-
 }

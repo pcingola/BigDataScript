@@ -28,10 +28,4 @@ public class ExpressionAssignmentBitOr extends ExpressionAssignmentBinary {
 	protected String op() {
 		return "|=";
 	}
-
-	@Override
-	protected String toAsmOp() {
-		return "orii\n";
-	}
-
 }
