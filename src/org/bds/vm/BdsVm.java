@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
@@ -16,6 +17,7 @@ import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueMap;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
+import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.util.Gpr;
 
@@ -45,6 +47,7 @@ public class BdsVm {
 	Map<Object, Integer> constantsByObject;
 	Map<String, VmFunction> functions;
 	List<Object> constants;
+	BdsThread bdsThread;
 
 	public BdsVm() {
 		callStack = new int[CALL_STACK_SIZE];
@@ -108,7 +111,8 @@ public class BdsVm {
 		for (String pn : fdecl.getParameterNames())
 			scope.add(pn, pop());
 
-		Value ret = fdecl.runFunction();
+		FunctionNative fn = (FunctionNative) fdecl;
+		Value ret = fn.runFunctionNativeValue(bdsThread);
 		popScope(); // Restore old scope
 	}
 

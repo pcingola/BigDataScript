@@ -84,7 +84,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	/**
 	 * Run a native method, wrap result in a 'Value'
 	 */
-	protected Value runFunctionNativeValue(BdsThread bdsThread) {
+	public Value runFunctionNativeValue(BdsThread bdsThread) {
 		Object ret = runFunctionNative(bdsThread);
 		return returnType.newValue(ret);
 	}
