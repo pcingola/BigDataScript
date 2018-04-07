@@ -69,7 +69,6 @@ public class BdsThread extends Thread implements Serializable {
 
 	// Program and state
 	Statement statement; // Main statement executed by this thread
-	// String statementNodeId; // Statement's ID, used only when un-serializing
 	ProgramCounter pc; // Program counter
 	RunState runState; // Latest RunState
 	Value returnValue; // Latest return map (from a 'return' statement)
@@ -85,7 +84,6 @@ public class BdsThread extends Thread implements Serializable {
 
 	// Scope & Stack
 	Scope scope; // Base scope
-	String scopeNodeId; // Scope's ID, used only when un-serializing
 	Deque<Value> stack; // Program stack
 
 	// BdsThread
@@ -606,10 +604,6 @@ public class BdsThread extends Thread implements Serializable {
 		return scope;
 	}
 
-	public String getScopeNodeId() {
-		return scopeNodeId;
-	}
-
 	public Deque<Value> getStack() {
 		return stack;
 	}
@@ -617,10 +611,6 @@ public class BdsThread extends Thread implements Serializable {
 	public Statement getStatement() {
 		return statement;
 	}
-
-	//	public String getStatementNodeId() {
-	//		return statementNodeId;
-	//	}
 
 	/**
 	 * Get variable's map as a string
