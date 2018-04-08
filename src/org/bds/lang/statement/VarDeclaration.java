@@ -8,7 +8,6 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -112,37 +111,6 @@ public class VarDeclaration extends Statement {
 		if (tcReal.getClassDeclaration() == null) throw new RuntimeException("Type '" + tc.getClassName() + "' is does not have class declaration info. This should never happen!");
 
 		type = tcReal;
-	}
-
-	/**
-	 * Run
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		for (VariableInit vi : varInit) {
-			if (!bdsThread.isCheckpointRecover()) {
-				bdsThread.getScope().add(vi.varName, type.newDefaultValue()); // Add variable to scope
-			}
-
-			bdsThread.run(vi);
-
-			// Act based on run state
-			switch (bdsThread.getRunState()) {
-			case OK: // OK do nothing
-			case CHECKPOINT_RECOVER:
-				break;
-
-			case BREAK: // Break form this block immediately
-			case CONTINUE:
-			case RETURN:
-			case EXIT:
-			case FATAL_ERROR:
-				return;
-
-			default:
-				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
-			}
-		}
 	}
 
 	@Override

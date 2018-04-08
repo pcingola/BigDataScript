@@ -11,7 +11,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.Literal;
 import org.bds.lang.value.Value;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Tuple;
 
@@ -343,29 +342,6 @@ public class InterpolateVars extends Literal {
 
 		returnType = Types.STRING;
 		return returnType;
-	}
-
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		StringBuilder sb = new StringBuilder();
-
-		// Variable interpolation
-		for (int i = 0; i < literals.length; i++) {
-			// String before variable
-			sb.append(literals[i]);
-
-			// Variable's map
-			Expression ref = exprs[i];
-			if (ref != null) {
-				bdsThread.run(ref);
-				if (!bdsThread.isCheckpointRecover()) {
-					Value val = bdsThread.pop();
-					sb.append(interpolateValue(val));
-				}
-			}
-		}
-
-		bdsThread.push(sb.toString());
 	}
 
 	public void setUseLiteral(boolean useLiteral) {

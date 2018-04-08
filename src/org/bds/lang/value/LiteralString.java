@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.InterpolateVars;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.GprString;
 
@@ -46,12 +45,6 @@ public class LiteralString extends Literal {
 	@Override
 	protected String parseValue(ParseTree tree) {
 		return tree.getChild(0).getText();
-	}
-
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		if (interpolateVars == null) bdsThread.push(value); // No variable interpolation? => Literal
-		else bdsThread.run(interpolateVars); // Variable interpolation
 	}
 
 	/**

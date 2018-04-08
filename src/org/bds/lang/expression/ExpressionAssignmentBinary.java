@@ -2,10 +2,7 @@ package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.lang.type.Reference;
 import org.bds.lang.type.Type;
-import org.bds.lang.value.Value;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -53,17 +50,4 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 		return returnType;
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Get value
-		bdsThread.run(right);
-		Value value = bdsThread.peek();
-
-		// Assign variable
-		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
-		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
-	}
 }

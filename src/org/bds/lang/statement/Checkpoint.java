@@ -5,7 +5,6 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -28,24 +27,24 @@ public class Checkpoint extends Statement {
 		if (tree.getChildCount() > idx) expr = (Expression) factory(tree, idx);
 	}
 
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Get filename
-		String file = null;
-		if (expr != null) {
-			bdsThread.run(expr);
-			file = bdsThread.popString();
-		}
-
-		// Do not create checkpoint file during recovery
-		if (bdsThread.isCheckpointRecover()) return;
-
-		if (file != null) bdsThread.checkpoint(file);
-		else bdsThread.checkpoint(this);
-	}
+	//	/**
+	//	 * Run the program
+	//	 */
+	//	@Override
+	//	public void runStep(BdsThread bdsThread) {
+	//		// Get filename
+	//		String file = null;
+	//		if (expr != null) {
+	//			bdsThread.run(expr);
+	//			file = bdsThread.popString();
+	//		}
+	//
+	//		// Do not create checkpoint file during recovery
+	//		if (bdsThread.isCheckpointRecover()) return;
+	//
+	//		if (file != null) bdsThread.checkpoint(file);
+	//		else bdsThread.checkpoint(this);
+	//	}
 
 	@Override
 	public String toString() {

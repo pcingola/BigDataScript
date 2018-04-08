@@ -8,9 +8,6 @@ import org.bds.lang.type.Reference;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.value.LiteralListEmpty;
-import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueList;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -22,6 +19,8 @@ import org.bds.symbol.SymbolTable;
  * @author pcingola
  */
 public class ExpressionAssignmentList extends ExpressionAssignment {
+
+	private static final long serialVersionUID = -6552994245332708707L;
 
 	Expression lefts[];
 
@@ -68,31 +67,6 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 
 		returnType = lefts[0].returnType(symtab); // Get return type for first expression
 		return returnType;
-	}
-
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-
-		// Get map
-		bdsThread.run(right);
-		if (bdsThread.isCheckpointRecover()) return;
-
-		ValueList list = (ValueList) bdsThread.peek();
-		for (int i = 0; i < lefts.length; i++) {
-			// Get variable
-			Reference vr = (Reference) lefts[i];
-
-			// Get map
-			Value value;
-			if (i < list.size()) value = list.getValue(i);
-			else value = vr.getReturnType().newDefaultValue(); // List too short? Assign variable's default map
-
-			// Assign map to variable
-			vr.setValue(bdsThread, value);
-		}
 	}
 
 	@Override

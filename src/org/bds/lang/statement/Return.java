@@ -10,8 +10,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.run.BdsThread;
-import org.bds.run.RunState;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -64,25 +62,6 @@ public class Return extends Statement {
 		}
 
 		return returnType;
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		if (expr != null) {
-			// Set return map to scope
-			bdsThread.run(expr);
-
-			if (bdsThread.isCheckpointRecover()) return;
-			bdsThread.setReturnValue(bdsThread.pop());
-		} else {
-			if (bdsThread.isCheckpointRecover()) return;
-			bdsThread.setReturnValue(null);
-		}
-
-		bdsThread.setRunState(RunState.RETURN);
 	}
 
 	@Override

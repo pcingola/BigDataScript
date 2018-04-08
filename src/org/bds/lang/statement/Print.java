@@ -7,7 +7,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -40,23 +39,6 @@ public class Print extends Statement {
 
 		returnType = Types.STRING;
 		return returnType;
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		String msg = "";
-		if (expr != null) {
-			// Evaluate expression to show
-			bdsThread.run(expr);
-			if (bdsThread.isCheckpointRecover()) return;
-			msg = bdsThread.popString();
-		}
-
-		if (bdsThread.isCheckpointRecover()) return;
-		if (!msg.isEmpty()) System.out.print(msg);
 	}
 
 	@Override

@@ -4,8 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.run.BdsThread;
-import org.bds.run.RunState;
 
 /**
  * A "break" statement
@@ -74,14 +72,6 @@ public class Break extends Statement {
 	@Override
 	protected void parse(ParseTree tree) {
 		// Nothing to do
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		bdsThread.setRunState(RunState.BREAK);
 	}
 
 	/**

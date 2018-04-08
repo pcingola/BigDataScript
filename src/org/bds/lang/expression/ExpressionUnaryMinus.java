@@ -6,7 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -34,21 +33,6 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 		else return null; // Cannot cast to 'int' or 'real'. This should never happen!"
 
 		return returnType;
-	}
-
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		bdsThread.run(expr);
-		if (bdsThread.isCheckpointRecover()) return;
-
-		if (returnType == Types.INT) {
-			bdsThread.push(-bdsThread.popInt());
-		} else if (returnType == Types.REAL) {
-			bdsThread.push(-bdsThread.popReal());
-		} else throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
 
 	@Override

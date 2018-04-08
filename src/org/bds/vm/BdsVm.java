@@ -34,6 +34,7 @@ public class BdsVm {
 	private static final OpCode OPCODES[] = OpCode.values();
 
 	boolean verbose, debug;
+	boolean run;
 	int pc;
 	int code[];
 	int callStack[]; // Stack for function calls (Program Counter)
@@ -112,7 +113,7 @@ public class BdsVm {
 			scope.add(pn, pop());
 
 		FunctionNative fn = (FunctionNative) fdecl;
-		Value ret = fn.runFunctionNativeValue(bdsThread);
+		fn.runFunctionNativeValue(bdsThread);
 		popScope(); // Restore old scope
 	}
 
@@ -279,11 +280,19 @@ public class BdsVm {
 	 * Run the program in 'code'
 	 */
 	public int run() {
-		debug = true;
-
 		// Initialize program counter
 		pc = Math.max(0, getLabel(LABLE_MAIN));
 
+		run = true;
+		runLoop();
+
+		return exitCode();
+	}
+
+	/**
+	 * Run the program in 'code'
+	 */
+	protected void runLoop() {
 		// First instruction
 		int instruction;
 		OpCode opcode = OpCode.NOOP;
@@ -299,10 +308,10 @@ public class BdsVm {
 		ValueMap vmap;
 
 		// Execute while not the end of the program
-		while (pc < code.length) {
+		while (pc < code.length && run) {
 			instruction = code[pc];
 			opcode = OPCODES[instruction];
-			if (debug) System.err.println(toAsm(pc) + "\t\t\tstack: " + stackToString());
+			if (debug) System.err.println(toAsm(pc) + "\t\t\tstack: " + toStringStack());
 			pc++;
 
 			switch (opcode) {
@@ -441,7 +450,7 @@ public class BdsVm {
 				break;
 
 			case HALT:
-				return exitCode();
+				return;
 
 			case INC:
 				i1 = popInt();
@@ -700,9 +709,13 @@ public class BdsVm {
 				throw new RuntimeException("Unimplemented opcode " + opcode);
 			}
 		}
+	}
 
-		if (sp > 1) Gpr.debug("WARNING: Stack should have one value or be empty.\nStack: " + stackToString());
-		return exitCode();
+	public void sanityCheckStack() {
+		if (sp > 1) {
+			Gpr.debug("Stack size: " + sp + "\n" + toStringStack());
+			throw new RuntimeException("Inconsistent stack. Size: " + sp);
+		}
 	}
 
 	/**
@@ -720,15 +733,6 @@ public class BdsVm {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
-	}
-
-	String stackToString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		for (int i = 0; i < sp; i++)
-			sb.append((i > 0 ? ", '" : "'") + stack[i] + "'");
-		sb.append(" ]");
-		return sb.toString();
 	}
 
 	/**
@@ -773,12 +777,21 @@ public class BdsVm {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("PC         : " + pc + "\n");
-		sb.append("Stack      : " + stackToString());
+		sb.append("Stack      : " + toStringStack());
 		sb.append("Call-Stack : [");
 		for (int i = 0; i < csp; i++)
 			sb.append(" " + callStack[i]);
 		sb.append(" ]\n");
 		sb.append("Scope:\n" + scope);
+		return sb.toString();
+	}
+
+	String toStringStack() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for (int i = 0; i < sp; i++)
+			sb.append((i > 0 ? ", '" : "'") + stack[i] + "'");
+		sb.append(" ]");
 		return sb.toString();
 	}
 

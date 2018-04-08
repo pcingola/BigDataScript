@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.run.BdsThread;
 
 /**
  * A block of statements
@@ -44,35 +43,6 @@ public class Block extends StatementWithScope {
 
 		// Create an array
 		statements = stats.toArray(new Statement[0]);
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		for (Statement st : statements) {
-			if (st != null) {
-				bdsThread.run(st);
-
-				// Act based on run state
-				switch (bdsThread.getRunState()) {
-				case OK: // OK do nothing
-				case CHECKPOINT_RECOVER:
-					break;
-
-				case BREAK: // Break form this block immediately
-				case CONTINUE:
-				case RETURN:
-				case EXIT:
-				case FATAL_ERROR:
-					return;
-
-				default:
-					throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
-				}
-			}
-		}
 	}
 
 	public void setStatements(Statement[] statements) {

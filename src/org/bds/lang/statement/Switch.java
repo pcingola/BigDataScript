@@ -7,8 +7,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
-import org.bds.run.BdsThread;
-import org.bds.run.RunState;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -61,70 +59,70 @@ public class Switch extends Statement {
 		defaultStatement = defSt;
 	}
 
-	void restoreStack(BdsThread bdsThread) {
-		if (bdsThread.isCheckpointRecover()) return;
-		bdsThread.pop(); // Remove case 'fall-through' result from stack
-		bdsThread.pop(); // Remove switch expression result from stack
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Run switch expression
-		runSwitchExpression(bdsThread);
-
-		if (!bdsThread.isCheckpointRecover()) {
-			// Put the fall-through map in the stack
-			bdsThread.push(false);
-		}
-
-		// Run each of the 'case' statements
-		for (Case caseSt : caseStatements) {
-			caseSt.runStep(bdsThread);
-
-			switch (bdsThread.getRunState()) {
-			case OK:
-			case CHECKPOINT_RECOVER:
-				break;
-
-			case BREAK: // Break from 'switch'
-				bdsThread.setRunState(RunState.OK);
-				restoreStack(bdsThread);
-				return;
-
-			case CONTINUE: // Continue: Breaking form a 'for' loop. Propagate 'continue' state
-			case RETURN: // Return
-			case EXIT: // Exit program
-			case FATAL_ERROR:
-				restoreStack(bdsThread);
-				return;
-
-			default:
-				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
-			}
-		}
-
-		// Run default statement
-		if (defaultStatement != null) {
-			defaultStatement.runStep(bdsThread);
-			// When the 'default' is in the middle of a 'switch', there can be
-			// a 'break' statement. In this case we must clear the 'break' state
-			// so it doesn't get propagated
-			if (bdsThread.getRunState() == RunState.BREAK) bdsThread.setRunState(RunState.OK);
-		}
-
-		restoreStack(bdsThread);
-	}
-
-	/**
-	 * Evaluate switch expression
-	 */
-	void runSwitchExpression(BdsThread bdsThread) {
-		if (switchExpr == null) return;
-		bdsThread.run(switchExpr);
-	}
+	//	void restoreStack(BdsThread bdsThread) {
+	//		if (bdsThread.isCheckpointRecover()) return;
+	//		bdsThread.pop(); // Remove case 'fall-through' result from stack
+	//		bdsThread.pop(); // Remove switch expression result from stack
+	//	}
+	//
+	//	/**
+	//	 * Run the program
+	//	 */
+	//	@Override
+	//	public void runStep(BdsThread bdsThread) {
+	//		// Run switch expression
+	//		runSwitchExpression(bdsThread);
+	//
+	//		if (!bdsThread.isCheckpointRecover()) {
+	//			// Put the fall-through map in the stack
+	//			bdsThread.push(false);
+	//		}
+	//
+	//		// Run each of the 'case' statements
+	//		for (Case caseSt : caseStatements) {
+	//			caseSt.runStep(bdsThread);
+	//
+	//			switch (bdsThread.getRunState()) {
+	//			case OK:
+	//			case CHECKPOINT_RECOVER:
+	//				break;
+	//
+	//			case BREAK: // Break from 'switch'
+	//				bdsThread.setRunState(RunState.OK);
+	//				restoreStack(bdsThread);
+	//				return;
+	//
+	//			case CONTINUE: // Continue: Breaking form a 'for' loop. Propagate 'continue' state
+	//			case RETURN: // Return
+	//			case EXIT: // Exit program
+	//			case FATAL_ERROR:
+	//				restoreStack(bdsThread);
+	//				return;
+	//
+	//			default:
+	//				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
+	//			}
+	//		}
+	//
+	//		// Run default statement
+	//		if (defaultStatement != null) {
+	//			defaultStatement.runStep(bdsThread);
+	//			// When the 'default' is in the middle of a 'switch', there can be
+	//			// a 'break' statement. In this case we must clear the 'break' state
+	//			// so it doesn't get propagated
+	//			if (bdsThread.getRunState() == RunState.BREAK) bdsThread.setRunState(RunState.OK);
+	//		}
+	//
+	//		restoreStack(bdsThread);
+	//	}
+	//
+	//	/**
+	//	 * Evaluate switch expression
+	//	 */
+	//	void runSwitchExpression(BdsThread bdsThread) {
+	//		if (switchExpr == null) return;
+	//		bdsThread.run(switchExpr);
+	//	}
 
 	@Override
 	public String toString() {

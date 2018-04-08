@@ -10,7 +10,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodDefaultConstructor;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -196,14 +195,6 @@ public class ClassDeclaration extends Block {
 
 		returnType = getType();
 		return returnType;
-	}
-
-	/**
-	 * Run
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Nothing to do (it's just a declaration)
 	}
 
 	@Override

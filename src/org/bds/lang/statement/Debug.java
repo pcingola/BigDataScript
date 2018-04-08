@@ -2,7 +2,6 @@ package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.run.BdsThread;
 
 /**
  * An "debug" statement
@@ -11,29 +10,10 @@ import org.bds.run.BdsThread;
  */
 public class Debug extends Print {
 
+	private static final long serialVersionUID = -5740742098036893666L;
+
 	public Debug(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Only show message if we are in debug mode
-		// Otherwise, the statement is ignored
-		if (bdsThread.getDebugMode() != null) {
-			String msg = "";
-			if (expr != null) {
-				// Evaluate expression to show
-				bdsThread.run(expr);
-				if (bdsThread.isCheckpointRecover()) return;
-				msg = bdsThread.popString();
-			}
-
-			if (bdsThread.isCheckpointRecover()) return;
-			System.err.print("Debug " + getFileName() + ", line " + getLineNum() + (!msg.isEmpty() ? ": " + msg : ""));
-		}
 	}
 
 }

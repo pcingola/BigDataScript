@@ -13,6 +13,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionMath extends ExpressionBinary {
 
+	private static final long serialVersionUID = 6807552145516884040L;
+
 	public ExpressionMath(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}

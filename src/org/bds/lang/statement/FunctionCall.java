@@ -1,7 +1,6 @@
 package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.Config;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
@@ -9,7 +8,6 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
-import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
 import org.bds.lang.value.ValueFunction;
 import org.bds.run.BdsThread;
@@ -44,25 +42,25 @@ public class FunctionCall extends Expression {
 		bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
 	}
 
-	/**
-	 * Evaluate function's arguments
-	 */
-	public ValueArgs evalArgs(BdsThread bdsThread) {
-		// Create argument list
-		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
-		Expression arguments[] = args.getArguments();
-
-		// Evaluate all expressions
-		ValueArgs vargs = new ValueArgs(fparam.length);
-		for (int i = argsStart; i < fparam.length; i++) {
-			bdsThread.run(arguments[i]);
-			Value value = bdsThread.pop();
-			value = fparam[i].getType().cast(value);
-			vargs.setValue(i, value);
-		}
-
-		return vargs;
-	}
+	//	/**
+	//	 * Evaluate function's arguments
+	//	 */
+	//	public ValueArgs evalArgs(BdsThread bdsThread) {
+	//		// Create argument list
+	//		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
+	//		Expression arguments[] = args.getArguments();
+	//
+	//		// Evaluate all expressions
+	//		ValueArgs vargs = new ValueArgs(fparam.length);
+	//		for (int i = argsStart; i < fparam.length; i++) {
+	//			bdsThread.run(arguments[i]);
+	//			Value value = bdsThread.pop();
+	//			value = fparam[i].getType().cast(value);
+	//			vargs.setValue(i, value);
+	//		}
+	//
+	//		return vargs;
+	//	}
 
 	/**
 	 * Find method (or function) matching the signature
@@ -158,25 +156,6 @@ public class FunctionCall extends Expression {
 		}
 
 		return returnType;
-	}
-
-	/**
-	 * Run an expression: I.e. evaluate the expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		try {
-			if (bdsThread.isCheckpointRecover()) evalArgs(bdsThread);
-
-			// Evaluate function arguments
-			ValueArgs arguments = evalArgs(bdsThread);
-
-			// Apply function to parameters
-			bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
-		} catch (Throwable t) {
-			if (Config.get().isDebug()) t.printStackTrace();
-			bdsThread.fatalError(this, t);
-		}
 	}
 
 	protected String signature() {

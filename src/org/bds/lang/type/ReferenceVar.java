@@ -115,27 +115,6 @@ public class ReferenceVar extends Reference {
 	}
 
 	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		Value val = null;
-
-		if (classField) {
-			// Field in a class (object 'this')
-			ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
-			val = vthis.getValue(name);
-			if (val == null) bdsThread.fatalError(this, "Cannot find field '" + name + "'");
-		} else {
-			// Variable
-			val = bdsThread.getScope().getValue(name);
-			if (val == null) bdsThread.fatalError(this, "Cannot find variable '" + name + "'");
-		}
-
-		bdsThread.push(val);
-	}
-
-	/**
 	 * Set map to scope symbol
 	 */
 	@Override

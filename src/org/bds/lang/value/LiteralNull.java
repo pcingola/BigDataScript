@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -13,6 +12,8 @@ import org.bds.symbol.SymbolTable;
  * @author pcingola
  */
 public class LiteralNull extends Literal {
+
+	private static final long serialVersionUID = 5488861478790119788L;
 
 	public LiteralNull(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -31,11 +32,6 @@ public class LiteralNull extends Literal {
 	@Override
 	public Type returnType(SymbolTable symtab) {
 		return Types.NULL;
-	}
-
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		bdsThread.push(Value.NULL); // Push 'null'
 	}
 
 	@Override

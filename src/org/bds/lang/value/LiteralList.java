@@ -8,7 +8,6 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -76,23 +75,6 @@ public class LiteralList extends Literal {
 		returnType = TypeList.get(baseType);
 
 		return returnType;
-	}
-
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		Type elemType = getElementType();
-		ValueList vlist = new ValueList(returnType, values.length);
-
-		// Add all elements
-		for (BdsNode node : values) {
-			Expression expr = (Expression) node;
-			bdsThread.run(expr); // Evaluate expression
-
-			value = bdsThread.pop();
-			vlist.add(elemType.cast(value));
-		}
-
-		bdsThread.push(vlist);
 	}
 
 	@Override

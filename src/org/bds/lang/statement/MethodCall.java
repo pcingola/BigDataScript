@@ -6,10 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
-import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueArgs;
-import org.bds.lang.value.ValueClass;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -18,6 +14,8 @@ import org.bds.symbol.SymbolTable;
  * @author pcingola
  */
 public class MethodCall extends FunctionCall {
+
+	private static final long serialVersionUID = -2090332737988933898L;
 
 	// Object that calls the method: obj.method(args)
 	// This object is also the used as the first argument in
@@ -29,33 +27,33 @@ public class MethodCall extends FunctionCall {
 		argsStart = 1; // First argument is 'this', which is evaluated separately
 	}
 
-	@Override
-	public ValueArgs evalArgs(BdsThread bdsThread) {
-		// Evaluate 'this'
-		Value vthis = evalThis(bdsThread);
+	//	@Override
+	//	public ValueArgs evalArgs(BdsThread bdsThread) {
+	//		// Evaluate 'this'
+	//		Value vthis = evalThis(bdsThread);
+	//
+	//		// Evaluate arguments
+	//		ValueArgs vargs = super.evalArgs(bdsThread);
+	//		vargs.setValue(0, vthis); // Set 'this' as first argument
+	//
+	//		return vargs;
+	//	}
 
-		// Evaluate arguments
-		ValueArgs vargs = super.evalArgs(bdsThread);
-		vargs.setValue(0, vthis); // Set 'this' as first argument
-
-		return vargs;
-	}
-
-	/**
-	 * Evaluate 'this' object
-	 */
-	protected Value evalThis(BdsThread bdsThread) {
-		// Evaluate object
-		bdsThread.run(expresionThis);
-		Value vthis = bdsThread.pop();
-
-		// Is object 'null'?
-		if (vthis == null //
-				|| (expresionThis.isClass() && ((ValueClass) vthis).isNull()) //
-		) throw new RuntimeException("Null pointer: Cannot call method '" + expresionThis.getReturnType() + "." + functionName + "' in null object");
-
-		return vthis;
-	}
+	//	/**
+	//	 * Evaluate 'this' object
+	//	 */
+	//	protected Value evalThis(BdsThread bdsThread) {
+	//		// Evaluate object
+	//		bdsThread.run(expresionThis);
+	//		Value vthis = bdsThread.pop();
+	//
+	//		// Is object 'null'?
+	//		if (vthis == null //
+	//				|| (expresionThis.isClass() && ((ValueClass) vthis).isNull()) //
+	//		) throw new RuntimeException("Null pointer: Cannot call method '" + expresionThis.getReturnType() + "." + functionName + "' in null object");
+	//
+	//		return vthis;
+	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {

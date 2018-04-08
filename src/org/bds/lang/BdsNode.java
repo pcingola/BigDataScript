@@ -3,7 +3,6 @@ package org.bds.lang;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -546,68 +545,12 @@ public abstract class BdsNode implements Serializable {
 	}
 
 	/**
-	 * Replace fake nodes by real nodes (serialization)
-	 */
-	public void replaceFake() {
-
-		// Iterate over fields
-		for (Field field : getAllClassFields(true)) {
-			try {
-				Object fieldObj = field.get(this);
-
-				// Does the field have a map?
-				if (fieldObj != null) {
-					// If it's an array, iterate on all objects
-					if (fieldObj.getClass().isArray()) {
-						int idx = 0;
-						for (Object fieldObjSingle : (Object[]) fieldObj) {
-							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BdsNode)) {
-								BdsNode csnode = (BdsNode) fieldObjSingle;
-
-								// Is it a fake node? => Replace by real node
-								if (csnode.isFake()) {
-									// Find real node based on fake one
-									BdsNode node = BdsNodeFactory.get().realNode(csnode);
-
-									// Replace this array element
-									Array.set(fieldObj, idx, node);
-								}
-							}
-							idx++;
-						}
-					} else {
-						if (fieldObj instanceof BdsNode) {
-							BdsNode csnode = (BdsNode) fieldObj;
-
-							// Is it a fake node? => Replace by real node
-							if (csnode.isFake()) {
-								// Find real node based on fake one
-								BdsNode trueCsnode = BdsNodeFactory.get().realNode(csnode);
-
-								// Set field to real node
-								field.set(this, trueCsnode);
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				throw new RuntimeException("Error replacing fake field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
-			}
-		}
-
-	}
-
-	/**
 	 * Calculate return type and assign it to 'returnType' variable.
 	 */
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 		returnType = Types.VOID;
 		return returnType;
-	}
-
-	public void runStep(BdsThread bdsThread) {
-		throw new RuntimeException("Unimplemented method for class " + getClass().getSimpleName() + ", id = " + id);
 	}
 
 	/**

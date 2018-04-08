@@ -2,17 +2,13 @@ package org.bds.lang.expression;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.Config;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.osCmd.Exec;
-import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
@@ -23,6 +19,8 @@ import org.bds.util.Gpr;
  * @author pcingola
  */
 public class ExpressionSys extends Expression {
+
+	private static final long serialVersionUID = -8698024999497987021L;
 
 	protected static int sysId = 1;
 
@@ -82,11 +80,12 @@ public class ExpressionSys extends Expression {
 	public String getCommands(BdsThread bdsThread) {
 		if (interpolateVars == null) return commands; // No variable interpolation? => Literal
 
-		// Variable interpolation
-		bdsThread.run(interpolateVars);
-		if (bdsThread.isCheckpointRecover()) return null;
-
-		return bdsThread.popString();
+		throw new RuntimeException("!!!");
+		//		// Variable interpolation
+		//		bdsThread.run(interpolateVars);
+		//		if (bdsThread.isCheckpointRecover()) return null;
+		//
+		//		return bdsThread.popString();
 	}
 
 	public String getSysFileName(String execId) {
@@ -118,49 +117,50 @@ public class ExpressionSys extends Expression {
 		return returnType;
 	}
 
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		if (bdsThread.isCheckpointRecover()) return;
-
-		execId("exec", getFileName(), null, bdsThread);
-
-		// EXEC expressions are always executed locally AND immediately
-		LinkedList<String> args = new LinkedList<>();
-		String shell = Config.get().getSysShell();
-		for (String arg : shell.split("\\s+"))
-			args.add(arg);
-
-		// Interpolated variables
-		String cmds = getCommands(bdsThread);
-		if (bdsThread.isCheckpointRecover()) return;
-
-		args.add(cmds);
-
-		// Run command line
-		boolean quiet = !(bdsThread.getConfig().isVerbose() || bdsThread.getConfig().isDebug() || bdsThread.getConfig().isLog());
-		ExecResult execResult = Exec.exec(args, quiet);
-
-		// Error running process?
-		int exitValue = execResult.exitValue;
-		if (exitValue != 0) {
-			// Can this execution fail?
-			boolean canFail = bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL);
-
-			// Execution failed on a 'sys' command that cannot fail. Save checkpoint and exit
-			if (!canFail) {
-				bdsThread.fatalError(this, "Exec failed." //
-						+ "\n\tExit map : " + exitValue //
-						+ "\n\tCommand    : " + cmds //
-				);
-				return;
-			}
-		}
-
-		// Collect output
-		String output = "";
-		if (execResult.stdOut != null) output = execResult.stdOut;
-		bdsThread.push(output);
-	}
+	//	@Override
+	//	public void runStep(BdsThread bdsThread) {
+	//		if (bdsThread.isCheckpointRecover()) return;
+	//
+	//		execId("exec", getFileName(), null, bdsThread);
+	//
+	//		// EXEC expressions are always executed locally AND immediately
+	//		LinkedList<String> args = new LinkedList<>();
+	//		String shell = Config.get().getSysShell();
+	//		for (String arg : shell.split("\\s+"))
+	//			args.add(arg);
+	//
+	//		// Interpolated variables
+	//		String cmds = getCommands(bdsThread);
+	//		if (bdsThread.isCheckpointRecover()) return;
+	//
+	//		args.add(cmds);
+	//
+	//		// Run command line
+	//		boolean quiet = !(bdsThread.getConfig().isVerbose() || bdsThread.getConfig().isDebug() || bdsThread.getConfig().isLog());
+	//		ExecResult execResult = Exec.exec(args, quiet);
+	//
+	//		// Error running process?
+	//		int exitValue = execResult.exitValue;
+	//		if (exitValue != 0) {
+	//			// Can this execution fail?
+	//			boolean canFail = bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL);
+	//
+	//			// Execution failed on a 'sys' command that cannot fail. Save checkpoint and exit
+	//			if (!canFail) {
+	//				bdsThread.fatalError(this,
+	//						"Exec failed." //
+	//								+ "\n\tExit map : " + exitValue //
+	//								+ "\n\tCommand    : " + cmds //
+	//				);
+	//				return;
+	//			}
+	//		}
+	//
+	//		// Collect output
+	//		String output = "";
+	//		if (execResult.stdOut != null) output = execResult.stdOut;
+	//		bdsThread.push(output);
+	//	}
 
 	void setCommands(String cmd) {
 		commands = cmd.trim();

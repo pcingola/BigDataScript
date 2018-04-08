@@ -1,12 +1,8 @@
 package org.bds.lang.statement;
 
-import java.util.List;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
-import org.bds.lang.value.Value;
-import org.bds.run.BdsThread;
 
 /**
  * A "Kill" statement.
@@ -18,6 +14,8 @@ import org.bds.run.BdsThread;
  */
 public class Kill extends Statement {
 
+	private static final long serialVersionUID = 7625787663609361813L;
+
 	Expression taskId;
 
 	public Kill(BdsNode parent, ParseTree tree) {
@@ -28,29 +26,6 @@ public class Kill extends Statement {
 	protected void parse(ParseTree tree) {
 		// child[0] = 'Kill'
 		if (tree.getChildCount() > 1) taskId = (Expression) factory(tree, 1);
-	}
-
-	/**
-	 * Run the program
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// No arguments? Kill for all tasks
-
-		bdsThread.run(taskId);
-		if (bdsThread.isCheckpointRecover()) return;
-
-		Value val = bdsThread.pop();
-
-		// Are we Killing for one task or a list of tasks?
-		if (val.getType().isList()) {
-			bdsThread.kill((List) val.get());
-			bdsThread.wait((List) val.get());
-		} else {
-			bdsThread.kill(val.get().toString());
-			bdsThread.wait(val.get().toString());
-		}
 	}
 
 	@Override

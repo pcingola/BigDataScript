@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
 /**
@@ -42,14 +41,6 @@ public class Default extends Case {
 		statements = stats.toArray(new Statement[0]);
 
 		return idx;
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		runStatements(bdsThread);
 	}
 
 	@Override

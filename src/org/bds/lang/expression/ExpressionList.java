@@ -4,8 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
-import org.bds.lang.value.Value;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -62,18 +60,6 @@ public class ExpressionList extends Expression {
 
 		returnType = type;
 		return returnType;
-	}
-
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		Value value = null;
-
-		for (Expression expr : expressions) {
-			bdsThread.run(expr);
-			value = bdsThread.pop();
-		}
-
-		bdsThread.push(value);
 	}
 
 	@Override

@@ -82,34 +82,6 @@ public class ExpressionPlus extends ExpressionMath {
 	}
 
 	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		bdsThread.run(left);
-		bdsThread.run(right);
-		if (bdsThread.isCheckpointRecover()) return;
-
-		if (isInt()) {
-			long r = bdsThread.popInt();
-			long l = bdsThread.popInt();
-			bdsThread.push(l + r);
-		} else if (isReal()) {
-			double r = bdsThread.popReal();
-			double l = bdsThread.popReal();
-			bdsThread.push(l + r);
-		} else if (isString()) {
-			String rval = bdsThread.popString();
-			String lval = bdsThread.popString();
-			bdsThread.push(lval.toString() + rval.toString());
-		} else if (isList()) {
-			bdsThread.push(runStepList(bdsThread));
-		} else {
-			throw new RuntimeException("Unknown return type " + returnType + " for expression " + getClass().getSimpleName());
-		}
-	}
-
-	/**
 	 * Evaluate a 'plus' expression involving at least one list
 	 */
 	ValueList runStepList(BdsThread bdsThread) {

@@ -11,6 +11,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionWithScope extends Expression {
 
+	private static final long serialVersionUID = 7598998758400573217L;
+
 	boolean needsScope; // Do we really need a scope?
 	protected SymbolTable symbolTable; // SymbolTable required for this statement
 

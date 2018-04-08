@@ -1,8 +1,5 @@
 package org.bds.lang.value;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
@@ -11,7 +8,6 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -82,35 +78,6 @@ public class LiteralMap extends Literal {
 		returnType = TypeMap.get(keyType, valueType);
 
 		return returnType;
-	}
-
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		Map<String, Object> map = new HashMap<>(values.length);
-		TypeMap mapType = (TypeMap) getReturnType();
-		Type valueType = mapType.getValueType();
-
-		for (int i = 0; i < keys.length; i++) {
-			// Evaluate 'key' and 'map' expressions
-			Expression keyExpr = keys[i];
-			bdsThread.run(keyExpr);
-
-			Expression valueExpr = values[i];
-			bdsThread.run(valueExpr);
-
-			// Assign to map
-			if (!bdsThread.isCheckpointRecover()) {
-				Value value = bdsThread.pop();
-				String key = bdsThread.pop().asString();
-				value = valueType.cast(value);
-				map.put(key, value.get()); // Add it to map
-			}
-		}
-
-		// Create value map an push to stack
-		ValueMap vmap = new ValueMap(mapType);
-		vmap.set(map);
-		bdsThread.push(vmap);
 	}
 
 	@Override

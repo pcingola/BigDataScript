@@ -2,7 +2,6 @@ package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.run.BdsThread;
 
 /**
  * A "help" statement
@@ -11,6 +10,8 @@ import org.bds.run.BdsThread;
  * @author pcingola
  */
 public class Help extends Statement {
+
+	private static final long serialVersionUID = 7858059563027890150L;
 
 	public static final int HELP_KEYWORD_LEN = "help".length() + 1;
 
@@ -29,14 +30,6 @@ public class Help extends Statement {
 		helpString = tree.getText();
 		if (helpString.length() > HELP_KEYWORD_LEN) helpString = helpString.substring(HELP_KEYWORD_LEN);
 		else helpString = "";
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Nothing to do
 	}
 
 	@Override

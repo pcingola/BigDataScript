@@ -6,9 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.statement.VariableInitImplicit;
 import org.bds.lang.type.Type;
-import org.bds.lang.value.Value;
-import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -17,6 +14,8 @@ import org.bds.symbol.SymbolTable;
  * @author pcingola
  */
 public class ExpressionVariableInitImplicit extends Expression {
+
+	private static final long serialVersionUID = -2365717696772581323L;
 
 	VariableInitImplicit vInit;
 
@@ -40,26 +39,6 @@ public class ExpressionVariableInitImplicit extends Expression {
 
 		returnType = vInit.getExpression().returnType(symtab);
 		return returnType;
-	}
-
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Evaluating the expression consists of initializing the variable and getting the result of that initialization
-
-		// Add variable to scope
-		Scope scope = null;
-		if (!bdsThread.isCheckpointRecover()) {
-			scope = bdsThread.getScope();
-			scope.add(vInit.getVarName(), returnType);
-		}
-
-		// Evaluate assignment
-		bdsThread.run(vInit);
-		if (bdsThread.isCheckpointRecover()) return;
-
-		// Return initialization's result
-		Value val = scope.getValue(vInit.getVarName());
-		bdsThread.push(val);
 	}
 
 	@Override

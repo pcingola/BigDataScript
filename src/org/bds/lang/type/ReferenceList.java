@@ -21,6 +21,8 @@ import org.bds.util.Gpr;
  */
 public class ReferenceList extends Reference {
 
+	private static final long serialVersionUID = 611130025318771524L;
+
 	protected Expression exprList; // An arbitrary expression that returns a list
 	protected Expression exprIdx; // An arbitrary expression that returns an int
 
@@ -102,40 +104,20 @@ public class ReferenceList extends Reference {
 	}
 
 	/**
-	 * Evaluate an expression: Get list element into stack
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Evaluate expressions
-		bdsThread.run(exprList);
-		bdsThread.run(exprIdx);
-
-		if (bdsThread.isCheckpointRecover()) return;
-
-		// Get results
-		long idx = bdsThread.popInt();
-		ValueList vlist = (ValueList) bdsThread.pop();
-		if (vlist.isIndexOutOfRange(idx)) throw new RuntimeException("Trying to access element number " + idx + " from list '" + getVariableName() + "' (list size: " + vlist.size() + ").");
-
-		// Push value to stack
-		bdsThread.push(vlist.getValue(idx));
-	}
-
-	/**
 	 * Set list element
 	 */
 	@Override
 	public void setValue(BdsThread bdsThread, Value value) {
-		if (value == null) return;
-
-		bdsThread.run(exprList);
-		bdsThread.run(exprIdx);
-		int idx = (int) bdsThread.popInt();
-		if (bdsThread.isCheckpointRecover()) return;
-
-		ValueList vlist = (ValueList) bdsThread.pop(); // getValue(bdsThread.getScope());
-		if (vlist == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
-		vlist.setValue(idx, value);
+		//		if (value == null) return;
+		//
+		//		bdsThread.run(exprList);
+		//		bdsThread.run(exprIdx);
+		//		int idx = (int) bdsThread.popInt();
+		//		if (bdsThread.isCheckpointRecover()) return;
+		//
+		//		ValueList vlist = (ValueList) bdsThread.pop(); // getValue(bdsThread.getScope());
+		//		if (vlist == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
+		//		vlist.setValue(idx, value);
 	}
 
 	@Override

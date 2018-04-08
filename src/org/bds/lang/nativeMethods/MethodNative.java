@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.bds.compile.CompilerMessages;
-import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
@@ -65,21 +64,21 @@ public abstract class MethodNative extends MethodDeclaration {
 		return true;
 	}
 
-	@Override
-	public void runFunction(BdsThread bdsThread) {
-		// Get object 'this'
-		Value symThis = bdsThread.getScope().getValue(ClassDeclaration.THIS);
-		Object objThis = symThis.get();
-
-		// Run method
-		try {
-			Value result = runMethodNativeValue(bdsThread, objThis);
-			bdsThread.setReturnValue(result); // Set result in scope
-		} catch (Throwable t) {
-			if (bdsThread.isVerbose()) t.printStackTrace();
-			bdsThread.fatalError(this, t.getMessage());
-		}
-	}
+	//	@Override
+	//	public void runFunction(BdsThread bdsThread) {
+	//		// Get object 'this'
+	//		Value symThis = bdsThread.getScope().getValue(ClassDeclaration.THIS);
+	//		Object objThis = symThis.get();
+	//
+	//		// Run method
+	//		try {
+	//			Value result = runMethodNativeValue(bdsThread, objThis);
+	//			bdsThread.setReturnValue(result); // Set result in scope
+	//		} catch (Throwable t) {
+	//			if (bdsThread.isVerbose()) t.printStackTrace();
+	//			bdsThread.fatalError(this, t.getMessage());
+	//		}
+	//	}
 
 	/**
 	 * Run a method

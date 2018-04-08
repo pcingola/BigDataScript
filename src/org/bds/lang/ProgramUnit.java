@@ -62,12 +62,6 @@ public class ProgramUnit extends BlockWithFile {
 		return Types.INT;
 	}
 
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		super.runStep(bdsThread);
-		runScope = bdsThread.getScope();
-	}
-
 	public void setBdsThread(BdsThread bdsThread) {
 		this.bdsThread = bdsThread;
 	}

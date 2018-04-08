@@ -17,6 +17,8 @@ import org.bds.run.FunctionCallThread;
  */
 public class ExpressionParallel extends ExpressionTask {
 
+	private static final long serialVersionUID = 2497612763467835459L;
+
 	public ExpressionParallel(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
@@ -71,61 +73,61 @@ public class ExpressionParallel extends ExpressionTask {
 		statement = (Statement) factory(tree, idx++); // Parse statement
 	}
 
-	/**
-	 * Evaluate 'par' expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Execute options assignments
-		if (options != null) {
-			bdsThread.run(options);
-
-			if (!bdsThread.isCheckpointRecover()) {
-				boolean ok = bdsThread.popBool();
-				if (bdsThread.isDebug()) log("task-options check " + ok);
-				if (!ok) {
-					// Options clause not satisfied. Do not execute 'parallel'
-					bdsThread.push("");
-					return;
-				}
-			}
-		}
-
-		// Create thread and execute statements
-		BdsThread bdsNewThread = null;
-		FunctionCall functionCall = getFunctionCall();
-		if (functionCall != null) {
-			// If the statement is a function call, we run it slightly differently:
-			// We first compute the function's arguments (in the current thread), to
-			// avoid race conditions. Then we create a thread and call the function
-
-			// Evaluate function arguments in current thread
-			ValueArgs arguments = functionCall.evalArgs(bdsThread);
-
-			if (!bdsThread.isCheckpointRecover()) {
-				// Create and run new thread that runs the function call in parallel
-				bdsNewThread = createParallelFunctionCall(bdsThread, arguments);
-			} else {
-				// When recovering from checkpoints, serialization mechanism takes care
-				// of creating new threads, so we don't need to do it again here.
-				bdsNewThread = bdsThread;
-				getFunctionCall().runStep(bdsThread);
-			}
-		} else {
-			if (!bdsThread.isCheckpointRecover()) {
-				// Create and run new bds thread
-				bdsNewThread = createParallel(bdsThread);
-			} else {
-				// When recovering from checkpoints, serialization mechanism takes care
-				// of creating new threads, so we don't need to do it again here.
-				bdsNewThread = bdsThread;
-				bdsThread.run(statement);
-			}
-		}
-
-		// Thread created. Return thread ID (so that we can 'wait' on it)
-		if (!bdsThread.isCheckpointRecover()) bdsThread.push(bdsNewThread.getBdsThreadId());
-	}
+	//	/**
+	//	 * Evaluate 'par' expression
+	//	 */
+	//	@Override
+	//	public void runStep(BdsThread bdsThread) {
+	//		// Execute options assignments
+	//		if (options != null) {
+	//			bdsThread.run(options);
+	//
+	//			if (!bdsThread.isCheckpointRecover()) {
+	//				boolean ok = bdsThread.popBool();
+	//				if (bdsThread.isDebug()) log("task-options check " + ok);
+	//				if (!ok) {
+	//					// Options clause not satisfied. Do not execute 'parallel'
+	//					bdsThread.push("");
+	//					return;
+	//				}
+	//			}
+	//		}
+	//
+	//		// Create thread and execute statements
+	//		BdsThread bdsNewThread = null;
+	//		FunctionCall functionCall = getFunctionCall();
+	//		if (functionCall != null) {
+	//			// If the statement is a function call, we run it slightly differently:
+	//			// We first compute the function's arguments (in the current thread), to
+	//			// avoid race conditions. Then we create a thread and call the function
+	//
+	//			// Evaluate function arguments in current thread
+	//			ValueArgs arguments = functionCall.evalArgs(bdsThread);
+	//
+	//			if (!bdsThread.isCheckpointRecover()) {
+	//				// Create and run new thread that runs the function call in parallel
+	//				bdsNewThread = createParallelFunctionCall(bdsThread, arguments);
+	//			} else {
+	//				// When recovering from checkpoints, serialization mechanism takes care
+	//				// of creating new threads, so we don't need to do it again here.
+	//				bdsNewThread = bdsThread;
+	//				getFunctionCall().runStep(bdsThread);
+	//			}
+	//		} else {
+	//			if (!bdsThread.isCheckpointRecover()) {
+	//				// Create and run new bds thread
+	//				bdsNewThread = createParallel(bdsThread);
+	//			} else {
+	//				// When recovering from checkpoints, serialization mechanism takes care
+	//				// of creating new threads, so we don't need to do it again here.
+	//				bdsNewThread = bdsThread;
+	//				bdsThread.run(statement);
+	//			}
+	//		}
+	//
+	//		// Thread created. Return thread ID (so that we can 'wait' on it)
+	//		if (!bdsThread.isCheckpointRecover()) bdsThread.push(bdsNewThread.getBdsThreadId());
+	//	}
 
 	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {

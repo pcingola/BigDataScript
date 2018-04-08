@@ -5,7 +5,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -37,14 +36,6 @@ public abstract class Literal extends Expression {
 		if (returnType != null) return returnType;
 		returnType = value.getType();
 		return returnType;
-	}
-
-	/**
-	 * Evaluate an expression: Push map to stack
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		bdsThread.push(value);
 	}
 
 	public void setValue(Object v) {

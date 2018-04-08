@@ -8,10 +8,6 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.LiteralListEmpty;
 import org.bds.lang.value.LiteralMapEmpty;
-import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueClass;
-import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -86,38 +82,6 @@ public class VariableInit extends BdsNode {
 		ParseTree node = tree.getChild(idx++);
 		if (node != null && node.getText().startsWith("help")) {
 			help = node.getText().substring("help ".length()).trim();
-		}
-	}
-
-	/**
-	 * Run
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		if (expression != null) {
-			bdsThread.run(expression);
-			if (bdsThread.isCheckpointRecover()) return;
-
-			// Error running expression?
-			Value value = bdsThread.pop();
-			if (value == null) {
-				bdsThread.fatalError(this, "Value is null. This should never happen!");
-				return;
-			}
-
-			// Change value
-			Scope scope = bdsThread.getScope();
-			if (fieldInit) {
-				// Class : Change value in ValueClass
-				ValueClass valThis = (ValueClass) scope.getValue(ClassDeclaration.THIS);
-				Value v = valThis.getValue(varName);
-				valThis.setValue(varName, v.getType().cast(value));
-			} else {
-				// Variable: Change value in scope
-				Value val = scope.getValue(varName);
-				value = val.getType().cast(value);
-				val.setValue(value);
-			}
 		}
 	}
 

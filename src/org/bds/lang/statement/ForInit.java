@@ -3,7 +3,6 @@ package org.bds.lang.statement;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
-import org.bds.run.BdsThread;
 
 /**
  * for( ForInit ; ForCondition ; ForEnd ) Statements
@@ -32,20 +31,6 @@ public class ForInit extends Statement {
 			expressions = new Expression[num];
 			for (int i = 0; i < num; i++)
 				expressions[i] = (Expression) factory(tree, i);
-		}
-	}
-
-	/**
-	 * Run
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		if (varDeclaration != null) bdsThread.run(varDeclaration);
-		else {
-			for (Expression expr : expressions) {
-				bdsThread.run(expr);
-				bdsThread.pop(); // Remove from stack, nobody is reading the results
-			}
 		}
 	}
 

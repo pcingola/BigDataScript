@@ -5,7 +5,6 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -16,6 +15,8 @@ import org.bds.symbol.SymbolTable;
  * @author pcingola
  */
 public class ExpressionCond extends Expression {
+
+	private static final long serialVersionUID = 7334801802344186931L;
 
 	Expression expr;
 	Expression exprTrue;
@@ -54,22 +55,6 @@ public class ExpressionCond extends Expression {
 		exprFalse.returnType(symtab);
 
 		return returnType;
-	}
-
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		bdsThread.run(expr);
-
-		if (bdsThread.isCheckpointRecover()) {
-			bdsThread.run(exprTrue);
-			if (bdsThread.isCheckpointRecover()) bdsThread.run(exprFalse);
-		} else {
-			if (bdsThread.popBool()) bdsThread.run(exprTrue);
-			else bdsThread.run(exprFalse);
-		}
 	}
 
 	@Override

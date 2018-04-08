@@ -6,9 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.statement.ClassDeclaration;
-import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueClass;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -63,38 +60,21 @@ public class ReferenceField extends ReferenceVar {
 		return returnType;
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Evaluate expressions
-		bdsThread.run(exprObj);
-
-		if (bdsThread.isCheckpointRecover()) return;
-
-		// Get result
-		ValueClass vclass = (ValueClass) bdsThread.pop();
-
-		// Push value to stack
-		bdsThread.push(vclass.getValue(name));
-	}
-
-	/**
-	 * Set map to scope symbol
-	 */
-	@Override
-	public void setValue(BdsThread bdsThread, Value value) {
-		if (value == null) return;
-
-		// Evaluate expressions
-		bdsThread.run(exprObj);
-
-		ValueClass valObj = (ValueClass) bdsThread.pop(); // getValue(bdsThread.getScope()); // Get scope symbol
-		if (valObj == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
-		value = getReturnType().cast(value); // Cast to destination type
-		valObj.setValue(name, value); // Assign to field 'name'
-	}
+	//	/**
+	//	 * Set map to scope symbol
+	//	 */
+	//	@Override
+	//	public void setValue(BdsThread bdsThread, Value value) {
+	//		if (value == null) return;
+	//
+	//		// Evaluate expressions
+	//		bdsThread.run(exprObj);
+	//
+	//		ValueClass valObj = (ValueClass) bdsThread.pop(); // getValue(bdsThread.getScope()); // Get scope symbol
+	//		if (valObj == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
+	//		value = getReturnType().cast(value); // Cast to destination type
+	//		valObj.setValue(name, value); // Assign to field 'name'
+	//	}
 
 	@Override
 	public String toAsm() {

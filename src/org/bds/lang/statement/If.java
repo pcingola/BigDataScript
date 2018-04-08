@@ -6,7 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -39,39 +38,6 @@ public class If extends Statement {
 		// Do we have an 'else' statement?
 		idx = findIndex(tree, "else", idx);
 		if (idx > 0) elseStatement = (Statement) factory(tree, idx + 1);
-	}
-
-	/**
-	 * Evaluate condition
-	 */
-	boolean runCondition(BdsThread bdsThread) {
-		if (condition == null) return true;
-
-		bdsThread.run(condition);
-
-		if (bdsThread.isCheckpointRecover()) return true;
-
-		// Return map form 'condition'
-		return bdsThread.popBool();
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		if (bdsThread.isCheckpointRecover()) {
-			runCondition(bdsThread);
-			if (bdsThread.isCheckpointRecover()) bdsThread.run(statement);
-			if (bdsThread.isCheckpointRecover()) bdsThread.run(elseStatement);
-			return;
-		}
-
-		if (runCondition(bdsThread)) {
-			bdsThread.run(statement);
-		} else if (elseStatement != null) {
-			bdsThread.run(elseStatement);
-		}
 	}
 
 	@Override

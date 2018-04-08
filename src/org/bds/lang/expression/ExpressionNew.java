@@ -1,21 +1,14 @@
 package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.Config;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.statement.Args;
-import org.bds.lang.statement.ClassDeclaration;
-import org.bds.lang.statement.FieldDeclaration;
 import org.bds.lang.statement.MethodCall;
 import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
-import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueArgs;
-import org.bds.lang.value.ValueClass;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -25,35 +18,37 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionNew extends MethodCall {
 
+	private static final long serialVersionUID = -4273100354848715681L;
+
 	// Operator 'new' calls a constructor method
 	public ExpressionNew(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		argsStart = 1;
 	}
 
-	@Override
-	protected Value evalThis(BdsThread bdsThread) {
-		Value vthis = expresionThis.getReturnType().newValue();
-		bdsThread.getScope().add(ClassDeclaration.THIS, vthis);
-		initializeFields(bdsThread);
-		return vthis;
-	}
+	//	@Override
+	//	protected Value evalThis(BdsThread bdsThread) {
+	//		Value vthis = expresionThis.getReturnType().newValue();
+	//		bdsThread.getScope().add(ClassDeclaration.THIS, vthis);
+	//		initializeFields(bdsThread);
+	//		return vthis;
+	//	}
 
-	/**
-	 * Run field initialization
-	 */
-	public ValueClass initializeFields(BdsThread bdsThread) {
-		ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
-		TypeClass tthis = (TypeClass) vthis.getType();
-
-		for (ClassDeclaration cd = tthis.getClassDeclaration(); cd != null; cd = cd.getClassParent()) {
-			FieldDeclaration fieldDecls[] = cd.getFieldDecl();
-			for (FieldDeclaration fieldDecl : fieldDecls)
-				bdsThread.run(fieldDecl);
-		}
-
-		return vthis;
-	}
+	//	/**
+	//	 * Run field initialization
+	//	 */
+	//	public ValueClass initializeFields(BdsThread bdsThread) {
+	//		ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
+	//		TypeClass tthis = (TypeClass) vthis.getType();
+	//
+	//		for (ClassDeclaration cd = tthis.getClassDeclaration(); cd != null; cd = cd.getClassParent()) {
+	//			FieldDeclaration fieldDecls[] = cd.getFieldDecl();
+	//			for (FieldDeclaration fieldDecl : fieldDecls)
+	//				bdsThread.run(fieldDecl);
+	//		}
+	//
+	//		return vthis;
+	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {
@@ -89,27 +84,6 @@ public class ExpressionNew extends MethodCall {
 		functionDeclaration = findMethod(symtab, thisType, args);
 
 		return returnType;
-	}
-
-	/**
-	 * Run an expression: I.e. evaluate the expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		try {
-			// Evaluate function arguments
-			ValueArgs arguments = evalArgs(bdsThread);
-
-			// Apply function to parameters
-			functionDeclaration.apply(bdsThread, arguments);
-
-			// Constructors return new objects regardless of type declaration
-			Value vthis = arguments.getValue(0);
-			bdsThread.push(vthis);
-		} catch (Throwable t) {
-			if (Config.get().isDebug()) t.printStackTrace();
-			bdsThread.fatalError(this, t);
-		}
 	}
 
 	@Override

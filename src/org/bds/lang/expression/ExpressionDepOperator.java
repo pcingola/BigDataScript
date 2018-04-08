@@ -1,20 +1,14 @@
 package org.bds.lang.expression;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
-import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueList;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
-import org.bds.task.TaskDependency;
 
 /**
  * Dependency operator '<-'
@@ -37,25 +31,25 @@ public class ExpressionDepOperator extends Expression {
 		super(parent, tree);
 	}
 
-	/**
-	 * Evaluate expressions and create a task dependency
-	 */
-	public TaskDependency evalTaskDependency(BdsThread bdsThread) {
-		// All expressions are evaluated
-		runStep(bdsThread, left);
-		runStep(bdsThread, right);
-		if (bdsThread.isCheckpointRecover()) return null;
-
-		ValueList rightEval = (ValueList) bdsThread.pop();
-		ValueList leftEval = (ValueList) bdsThread.pop();
-
-		// Create task dependency and add all results
-		TaskDependency taskDependency = new TaskDependency(this);
-		taskDependency.addOutput(leftEval);
-		taskDependency.addInput(rightEval);
-
-		return taskDependency;
-	}
+	//	/**
+	//	 * Evaluate expressions and create a task dependency
+	//	 */
+	//	public TaskDependency evalTaskDependency(BdsThread bdsThread) {
+	//		// All expressions are evaluated
+	//		runStep(bdsThread, left);
+	//		runStep(bdsThread, right);
+	//		if (bdsThread.isCheckpointRecover()) return null;
+	//
+	//		ValueList rightEval = (ValueList) bdsThread.pop();
+	//		ValueList leftEval = (ValueList) bdsThread.pop();
+	//
+	//		// Create task dependency and add all results
+	//		TaskDependency taskDependency = new TaskDependency(this);
+	//		taskDependency.addOutput(leftEval);
+	//		taskDependency.addInput(rightEval);
+	//
+	//		return taskDependency;
+	//	}
 
 	@Override
 	public boolean isReturnTypesNotNull() {
@@ -95,43 +89,43 @@ public class ExpressionDepOperator extends Expression {
 		return returnType;
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		TaskDependency taskDependency = evalTaskDependency(bdsThread);
-		if (bdsThread.isCheckpointRecover()) return;
+	//	/**
+	//	 * Evaluate an expression
+	//	 */
+	//	@Override
+	//	public void runStep(BdsThread bdsThread) {
+	//		TaskDependency taskDependency = evalTaskDependency(bdsThread);
+	//		if (bdsThread.isCheckpointRecover()) return;
+	//
+	//		taskDependency.setDebug(bdsThread.isDebug());
+	//		boolean dep = taskDependency.depOperator();
+	//		bdsThread.push(dep);
+	//	}
 
-		taskDependency.setDebug(bdsThread.isDebug());
-		boolean dep = taskDependency.depOperator();
-		bdsThread.push(dep);
-	}
-
-	/**
-	 * Evaluate all expressions in the array.
-	 * @return A list of Strings with the results of all evaluations
-	 */
-	@SuppressWarnings("rawtypes")
-	public void runStep(BdsThread bdsThread, Expression exprs[]) {
-		ValueList resList = new ValueList(TypeList.get(Types.STRING));
-
-		for (Expression e : exprs) {
-			bdsThread.run(e);
-			Value result = bdsThread.pop();
-
-			if (result.getType().isList()) {
-				// Add all elements as strings
-				for (Object o : (List) result.get()) {
-					resList.addNative(o.toString());
-				}
-			} else {
-				resList.addNative(result.get().toString());
-			}
-		}
-
-		bdsThread.push(resList);
-	}
+	//	/**
+	//	 * Evaluate all expressions in the array.
+	//	 * @return A list of Strings with the results of all evaluations
+	//	 */
+	//	@SuppressWarnings("rawtypes")
+	//	public void runStep(BdsThread bdsThread, Expression exprs[]) {
+	//		ValueList resList = new ValueList(TypeList.get(Types.STRING));
+	//
+	//		for (Expression e : exprs) {
+	//			bdsThread.run(e);
+	//			Value result = bdsThread.pop();
+	//
+	//			if (result.getType().isList()) {
+	//				// Add all elements as strings
+	//				for (Object o : (List) result.get()) {
+	//					resList.addNative(o.toString());
+	//				}
+	//			} else {
+	//				resList.addNative(result.get().toString());
+	//			}
+	//		}
+	//
+	//		bdsThread.push(resList);
+	//	}
 
 	@Override
 	public String toString() {

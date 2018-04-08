@@ -331,50 +331,50 @@ public class ExpressionTask extends ExpressionWithScope {
 		return returnType;
 	}
 
-	/**
-	 * Evaluate 'task' expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Evaluate task options (get a list of dependencies)
-		TaskDependency taskDependency = null;
-		if (options != null) {
-			taskDependency = options.evalTaskDependency(bdsThread);
-
-			if (bdsThread.isCheckpointRecover()) return;
-
-			if (taskDependency == null) {
-				// Task options clause not satisfied. Do not execute task => Return empty taskId
-				if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=false): null");
-				bdsThread.push("");
-				return;
-			}
-
-			// Needs update?
-			taskDependency.setDebug(bdsThread.isDebug());
-			boolean needsUpdate = taskDependency.depOperator();
-
-			if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=" + needsUpdate + "): " + taskDependency);
-			if (!needsUpdate) {
-				// Task options clause not satisfied. Do not execute task => Return empty taskId
-				bdsThread.push("");
-				return;
-			}
-		}
-
-		if (bdsThread.isCheckpointRecover()) return;
-
-		// Evaluate 'sys' statements
-		ExpressionSys sys = evalSys(bdsThread);
-
-		// Create task
-		Task task = createTask(bdsThread, taskDependency, sys);
-
-		// Schedule task for execution
-		dispatchTask(bdsThread, task);
-
-		bdsThread.push(task.getId());
-	}
+	//	/**
+	//	 * Evaluate 'task' expression
+	//	 */
+	//	@Override
+	//	public void runStep(BdsThread bdsThread) {
+	//		// Evaluate task options (get a list of dependencies)
+	//		TaskDependency taskDependency = null;
+	//		if (options != null) {
+	//			taskDependency = options.evalTaskDependency(bdsThread);
+	//
+	//			if (bdsThread.isCheckpointRecover()) return;
+	//
+	//			if (taskDependency == null) {
+	//				// Task options clause not satisfied. Do not execute task => Return empty taskId
+	//				if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=false): null");
+	//				bdsThread.push("");
+	//				return;
+	//			}
+	//
+	//			// Needs update?
+	//			taskDependency.setDebug(bdsThread.isDebug());
+	//			boolean needsUpdate = taskDependency.depOperator();
+	//
+	//			if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=" + needsUpdate + "): " + taskDependency);
+	//			if (!needsUpdate) {
+	//				// Task options clause not satisfied. Do not execute task => Return empty taskId
+	//				bdsThread.push("");
+	//				return;
+	//			}
+	//		}
+	//
+	//		if (bdsThread.isCheckpointRecover()) return;
+	//
+	//		// Evaluate 'sys' statements
+	//		ExpressionSys sys = evalSys(bdsThread);
+	//
+	//		// Create task
+	//		Task task = createTask(bdsThread, taskDependency, sys);
+	//
+	//		// Schedule task for execution
+	//		dispatchTask(bdsThread, task);
+	//
+	//		bdsThread.push(task.getId());
+	//	}
 
 	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {

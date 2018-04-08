@@ -10,7 +10,7 @@ import org.bds.util.Timer;
  * A thread that performs a function call using some arguments
  * Typical example:
  *
- * 		par funct(x, y)
+ * 		par function(x, y)
  *
  * The executions is:
  *	i) Function arguments x and y are calculated (in the calling thread, to avid race conditions)
@@ -20,6 +20,8 @@ import org.bds.util.Timer;
  * @author pcingola
  */
 public class FunctionCallThread extends BdsThread {
+
+	private static final long serialVersionUID = -3177132243907469975L;
 
 	//	String functionCallNodeId; // Statement's ID, used only when un-serializing
 	FunctionCall functionCall;
@@ -33,14 +35,6 @@ public class FunctionCallThread extends BdsThread {
 		super(statement, parent);
 		setFunctionCall(functionCall);
 		this.arguments = arguments;
-	}
-
-	@Override
-	public void checkpointRecoverReset() {
-		super.checkpointRecoverReset(); // Find the 'par' statement
-
-		// Now we need to move to the first statement in the function (i.e. right after the function call)
-		pc.checkpointRecoverFound();
 	}
 
 	/**

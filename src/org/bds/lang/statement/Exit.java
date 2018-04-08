@@ -7,8 +7,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
-import org.bds.run.BdsThread;
-import org.bds.run.RunState;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -43,23 +41,6 @@ public class Exit extends Statement {
 		returnType = Types.INT;
 
 		return returnType;
-	}
-
-	/**
-	 * Run the program
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		if (expr != null) {
-			bdsThread.run(expr);
-			if (bdsThread.isCheckpointRecover()) return;
-			bdsThread.setExitValue(bdsThread.popInt()); // Set return map to scope
-		} else {
-			if (bdsThread.isCheckpointRecover()) return;
-			bdsThread.setExitValue(0L); // Default is the same as 'exit 0'
-		}
-
-		bdsThread.setRunState(RunState.EXIT);
 	}
 
 	@Override

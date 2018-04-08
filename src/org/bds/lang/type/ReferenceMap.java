@@ -19,6 +19,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ReferenceMap extends Reference {
 
+	private static final long serialVersionUID = 2655912724548019580L;
+
 	protected Expression exprMap;
 	protected Expression expressionKey;
 
@@ -104,40 +106,18 @@ public class ReferenceMap extends Reference {
 		return returnType;
 	}
 
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Evaluate expressions
-		bdsThread.run(exprMap);
-		bdsThread.run(expressionKey);
-
-		if (bdsThread.isCheckpointRecover()) return;
-
-		// Get results
-		Value vkey = bdsThread.pop();
-		ValueMap vmap = (ValueMap) bdsThread.pop();
-
-		// Obtain map entry
-		Value ret = vmap.getValue(vkey);
-		if (ret == null) throw new RuntimeException("Map '" + getVariableName() + "' does not have key '" + vkey + "'.");
-
-		bdsThread.push(ret);
-	}
-
 	@Override
 	public void setValue(BdsThread bdsThread, Value value) {
-		if (value == null) return;
-
-		bdsThread.run(exprMap);
-		bdsThread.run(expressionKey);
-		Value key = bdsThread.pop();
-		if (bdsThread.isCheckpointRecover()) return;
-
-		ValueMap vmap = (ValueMap) bdsThread.pop(); // getValue(bdsThread.getScope());
-		if (vmap == null) bdsThread.fatalError(this, "Cannot find variable '" + this + "'");
-		vmap.put(key, value);
+		//		if (value == null) return;
+		//
+		//		bdsThread.run(exprMap);
+		//		bdsThread.run(expressionKey);
+		//		Value key = bdsThread.pop();
+		//		if (bdsThread.isCheckpointRecover()) return;
+		//
+		//		ValueMap vmap = (ValueMap) bdsThread.pop(); // getValue(bdsThread.getScope());
+		//		if (vmap == null) bdsThread.fatalError(this, "Cannot find variable '" + this + "'");
+		//		vmap.put(key, value);
 	}
 
 	@Override

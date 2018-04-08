@@ -6,8 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Reference;
 import org.bds.lang.type.Type;
-import org.bds.lang.value.Value;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -39,21 +37,6 @@ public class ExpressionAssignment extends ExpressionBinary {
 		returnType = left.getReturnType();
 
 		return returnType;
-	}
-
-	/**
-	 * Evaluate an expression
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Get map
-		bdsThread.run(right);
-		Value value = bdsThread.pop();
-
-		if (left instanceof Reference) ((Reference) left).setValue(bdsThread, value);
-		else throw new RuntimeException("Unimplemented assignment evaluation for type " + left.getReturnType());
-
-		bdsThread.push(value);
 	}
 
 	@Override

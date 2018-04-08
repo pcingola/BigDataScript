@@ -9,10 +9,12 @@ import org.bds.symbol.SymbolTable;
 
 /**
  * Boolean expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionLogic extends ExpressionBinary {
+
+	private static final long serialVersionUID = -1919645541823823005L;
 
 	public ExpressionLogic(BdsNode parent, ParseTree tree) {
 		super(parent, tree);

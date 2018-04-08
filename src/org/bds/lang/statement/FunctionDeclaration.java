@@ -13,8 +13,6 @@ import org.bds.lang.type.TypeFunction;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueArgs;
 import org.bds.run.BdsThread;
-import org.bds.run.RunState;
-import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -42,38 +40,39 @@ public class FunctionDeclaration extends StatementWithScope {
 	 * Apply function to arguments, return function's result
 	 */
 	public Value apply(BdsThread bdsThread, ValueArgs args) {
-		// Create scope and add function arguments
-		if (!bdsThread.isCheckpointRecover()) createScopeAddArgs(bdsThread, args);
-
-		// Run function body
-		runFunction(bdsThread);
-		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
-
-		// Get return value
-		Value retVal = bdsThread.getReturnValue();
-
-		// Restore old scope
-		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
-
-		// Return result
-		return retVal;
+		//		// Create scope and add function arguments
+		//		if (!bdsThread.isCheckpointRecover()) createScopeAddArgs(bdsThread, args);
+		//
+		//		// Run function body
+		//		runFunction(bdsThread);
+		//		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
+		//
+		//		// Get return value
+		//		Value retVal = bdsThread.getReturnValue();
+		//
+		//		// Restore old scope
+		//		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
+		//
+		//		// Return result
+		//		return retVal;
+		return null;
 	}
 
-	/**
-	 * Create a new scope and add arguments
-	 */
-	protected void createScopeAddArgs(BdsThread bdsThread, ValueArgs vargs) {
-		// Create new scope
-		bdsThread.newScope(this);
-
-		// Add arguments to scope
-		Scope scope = bdsThread.getScope();
-		VarDeclaration fparam[] = getParameters().getVarDecl();
-		for (int i = 0; i < fparam.length; i++) {
-			String argName = fparam[i].getVarInit()[0].getVarName();
-			scope.add(argName, vargs.getValue(i));
-		}
-	}
+	//	/**
+	//	 * Create a new scope and add arguments
+	//	 */
+	//	protected void createScopeAddArgs(BdsThread bdsThread, ValueArgs vargs) {
+	//		// Create new scope
+	//		bdsThread.newScope(this);
+	//
+	//		// Add arguments to scope
+	//		Scope scope = bdsThread.getScope();
+	//		VarDeclaration fparam[] = getParameters().getVarDecl();
+	//		for (int i = 0; i < fparam.length; i++) {
+	//			String argName = fparam[i].getVarInit()[0].getVarName();
+	//			scope.add(argName, vargs.getValue(i));
+	//		}
+	//	}
 
 	public String getFunctionName() {
 		return functionName;
@@ -125,38 +124,26 @@ public class FunctionDeclaration extends StatementWithScope {
 		statement = (Statement) factory(tree, maxParams + 1);
 	}
 
-	/**
-	 * Run this function's statement
-	 */
-	protected void runFunction(BdsThread bdsThread) {
-		bdsThread.run(statement);
-		if (bdsThread.isCheckpointRecover()) return;
-
-		// Not a standard 'return' statement? Make sure we are returning the right type.
-		if (bdsThread.isReturn()) {
-			bdsThread.setRunState(RunState.OK); // Restore 'OK' runState
-		} else {
-			Value retVal = bdsThread.getReturnValue();
-			if (retVal == null || !retVal.getType().canCastTo(returnType)) {
-				// No return value or not the right type?
-				// Then force a default value for returnType
-				// Note: This should be caught as a compile time error
-				bdsThread.setReturnValue(returnType.newDefaultValue());
-			}
-		}
-	}
-
-	/**
-	 * Run: Does nothing. A function declaration only declares
-	 * a function, it doesn't do any real work.
-	 * A FunctionCall actually makes the function 'run'. This
-	 * is done by evaluating the call, which invokes
-	 * 'FunctionDeclaration.runFunction()' method.
-	 */
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		// Nothing to do (it's just a declaration)
-	}
+	//	/**
+	//	 * Run this function's statement
+	//	 */
+	//	protected void runFunction(BdsThread bdsThread) {
+	//		bdsThread.run(statement);
+	//		if (bdsThread.isCheckpointRecover()) return;
+	//
+	//		// Not a standard 'return' statement? Make sure we are returning the right type.
+	//		if (bdsThread.isReturn()) {
+	//			bdsThread.setRunState(RunState.OK); // Restore 'OK' runState
+	//		} else {
+	//			Value retVal = bdsThread.getReturnValue();
+	//			if (retVal == null || !retVal.getType().canCastTo(returnType)) {
+	//				// No return value or not the right type?
+	//				// Then force a default value for returnType
+	//				// Note: This should be caught as a compile time error
+	//				bdsThread.setReturnValue(returnType.newDefaultValue());
+	//			}
+	//		}
+	//	}
 
 	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {

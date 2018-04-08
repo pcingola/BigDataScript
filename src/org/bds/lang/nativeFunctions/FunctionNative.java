@@ -64,17 +64,17 @@ public abstract class FunctionNative extends FunctionDeclaration {
 		return true;
 	}
 
-	@Override
-	public void runFunction(BdsThread bdsThread) {
-		try {
-			// Run function
-			Value result = runFunctionNativeValue(bdsThread);
-			bdsThread.setReturnValue(result); // Set result in scope
-		} catch (Throwable t) {
-			if (bdsThread.isVerbose()) t.printStackTrace();
-			bdsThread.fatalError(this, t.getMessage());
-		}
-	}
+	//	@Override
+	//	public void runFunction(BdsThread bdsThread) {
+	//		try {
+	//			// Run function
+	//			Value result = runFunctionNativeValue(bdsThread);
+	//			bdsThread.setReturnValue(result); // Set result in scope
+	//		} catch (Throwable t) {
+	//			if (bdsThread.isVerbose()) t.printStackTrace();
+	//			bdsThread.fatalError(this, t.getMessage());
+	//		}
+	//	}
 
 	/**
 	 * Run a native method
