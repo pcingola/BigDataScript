@@ -28,7 +28,6 @@ import org.bds.lang.type.Types;
 import org.bds.scope.GlobalScope;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.task.TaskDependecies;
-import org.bds.util.Gpr;
 import org.bds.util.Timer;
 import org.bds.vm.BdsVm;
 import org.bds.vm.VmAsm;
@@ -320,14 +319,26 @@ public class BdsRun {
 
 		int exitCode = 0;
 		if (USE_VM) {
+			// Get assembly code
 			String asm = programUnit.toAsm();
-			Gpr.debug("VM asm:\n" + asm);
+
+			// Compile assembly 
 			VmAsm vmasm = new VmAsm();
 			vmasm.setDebug(debug);
 			vmasm.setVerbose(verbose);
 			vmasm.setCode(asm);
 			BdsVm vm = vmasm.compile();
-			exitCode = vm.run();
+
+			// Run thread
+			BdsThread bdsThread = new BdsThread(programUnit, config, vm);
+			if (debug) {
+				Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
+				Timer.showStdErr("Running");
+			}
+
+			// Get exit code
+			exitCode = runThread(bdsThread);
+
 		} else {
 			// TODO: OLD STYLE
 

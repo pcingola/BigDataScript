@@ -132,7 +132,8 @@ public class BdsVm {
 			scope.add(pn, pop());
 
 		FunctionNative fn = (FunctionNative) fdecl;
-		fn.runFunctionNativeValue(bdsThread);
+		Value retVal = fn.runFunctionNativeValue(bdsThread);
+		push(retVal);
 		popScope(); // Restore old scope
 	}
 
@@ -184,6 +185,10 @@ public class BdsVm {
 		return exitCode;
 	}
 
+	public BdsThread getBdsThread() {
+		return bdsThread;
+	}
+
 	Object getConstant(int idx) {
 		return constants.get(idx);
 	}
@@ -208,6 +213,10 @@ public class BdsVm {
 	 */
 	public int getLabel(String label) {
 		return labels.containsKey(label) ? labels.get(label) : -1;
+	}
+
+	public Scope getScope() {
+		return scope;
 	}
 
 	public Value getValue(String name) {
@@ -773,6 +782,10 @@ public class BdsVm {
 			Gpr.debug("Stack size: " + sp + "\n" + toStringStack());
 			throw new RuntimeException("Inconsistent stack. Size: " + sp);
 		}
+	}
+
+	public void setBdsThread(BdsThread bdsThread) {
+		this.bdsThread = bdsThread;
 	}
 
 	/**

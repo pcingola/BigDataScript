@@ -117,6 +117,10 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	public BdsThread(Statement statement, Config config) {
+		this(statement, config, null);
+	}
+
+	public BdsThread(Statement statement, Config config, BdsVm vm) {
 		super();
 		bdsThreadNum = bigDataScriptThreadId();
 		runState = RunState.OK;
@@ -131,6 +135,8 @@ public class BdsThread extends Thread implements Serializable {
 
 		taskDependecies.setVerbose(isVerbose());
 		taskDependecies.setDebug(isDebug());
+		this.vm = vm;
+		vm.setBdsThread(this);
 	}
 
 	/**
@@ -567,7 +573,7 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	public Scope getScope() {
-		throw new RuntimeException("!!!");
+		return vm.getScope();
 	}
 
 	//	public Deque<Value> getStack() {
@@ -1047,7 +1053,7 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	protected void runStatement() {
 		try {
-			// run(statement);
+			vm.run();
 		} catch (Throwable t) {
 			runState = RunState.FATAL_ERROR;
 			if (isVerbose()) throw new RuntimeException(t);
