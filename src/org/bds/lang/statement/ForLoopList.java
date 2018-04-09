@@ -111,7 +111,7 @@ public class ForLoopList extends StatementWithScope {
 		sb.append(loopStartLabel + ":\n");
 		sb.append("load " + varCounter + "\n");
 		sb.append("load " + varMaxCounter + "\n");
-		sb.append("lt\n");
+		sb.append("lti\n");
 		sb.append("jmpf " + loopEndLabel + "\n");
 
 		// Assign loop variable: 'var = list[$count]'

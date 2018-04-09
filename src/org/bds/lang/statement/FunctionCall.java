@@ -175,8 +175,14 @@ public class FunctionCall extends Expression {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 		sb.append(args.toAsm());
-		sb.append((functionDeclaration.isNative() ? "callnative " : "call ") + functionDeclaration.signature() + "\n");
+		sb.append(toAsmCall());
 		return sb.toString();
+	}
+
+	protected String toAsmCall() {
+		return (functionDeclaration.isNative() ? "callnative " : "call ") //
+				+ functionDeclaration.signature() //
+				+ "\n";
 	}
 
 	@Override

@@ -1,14 +1,7 @@
 
-i := -5
-a := abs(i)
-println(a)
-
-# l := ['a', 'b', 'c']
-# print(l)
-# 
-# m := { 'a' => '1', 'b' => '1', 'c' => '3' }
-# print(m)
-# 
-# s := l.size()
-
+string[] l
+#l := ['a', 'b', 'c']
+s := l.size()
+print(s)
 #for(string s : l) println(s)
+

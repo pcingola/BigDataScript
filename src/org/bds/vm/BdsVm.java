@@ -636,6 +636,7 @@ public class BdsVm {
 				type = constantType(); // Get type
 				val = type.newValue();
 				push(val);
+				break;
 
 			case NODE:
 				nodeId = paramInt();

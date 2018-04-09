@@ -144,4 +144,9 @@ public enum OpCode {
 			return false;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return super.toString().toLowerCase();
+	}
 }

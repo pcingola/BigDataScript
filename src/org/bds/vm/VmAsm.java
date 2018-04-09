@@ -189,8 +189,6 @@ public class VmAsm {
 		case JMPF:
 		case LOAD:
 		case STORE:
-			return param; // Type is (raw) string without quotes (i.e. it should not be empty)
-
 		case PUSHS:
 			int lastCharIdx = param.length() - 1;
 			if ((param.charAt(0) == '\'' && param.charAt(lastCharIdx) == '\'') // Using single quotes

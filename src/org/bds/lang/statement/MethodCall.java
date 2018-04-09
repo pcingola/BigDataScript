@@ -85,21 +85,28 @@ public class MethodCall extends FunctionCall {
 		return returnType;
 	}
 
-	@Override
-	protected String signature() {
-		StringBuilder sig = new StringBuilder();
+	//	@Override
+	//	protected String signature() {
+	//		StringBuilder sig = new StringBuilder();
+	//
+	//		Type classType = expresionThis.getReturnType();
+	//		sig.append(classType != null ? classType : "null");
+	//		sig.append(".");
+	//		sig.append(functionName);
+	//		sig.append("(");
+	//		for (int i = 1; i < args.size(); i++) {
+	//			sig.append(args.getArguments()[i].getReturnType());
+	//			if (i < (args.size() - 1)) sig.append(",");
+	//		}
+	//		sig.append(")");
+	//		return sig.toString();
+	//	}
 
-		Type classType = expresionThis.getReturnType();
-		sig.append(classType != null ? classType : "null");
-		sig.append(".");
-		sig.append(functionName);
-		sig.append("(");
-		for (int i = 1; i < args.size(); i++) {
-			sig.append(args.getArguments()[i].getReturnType());
-			if (i < (args.size() - 1)) sig.append(",");
-		}
-		sig.append(")");
-		return sig.toString();
+	@Override
+	protected String toAsmCall() {
+		return (functionDeclaration.isNative() ? "callnative " : "call ") //
+				+ functionDeclaration.signature() //
+				+ "\n";
 	}
 
 	@Override
