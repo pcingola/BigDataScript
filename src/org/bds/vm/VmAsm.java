@@ -96,8 +96,13 @@ public class VmAsm {
 			OpCode opcode = opcode(line);
 			String param = null;
 			if (opcode.hasParam()) param = param(line);
-			if (verbose) System.out.println("\t" + opcode + (param != null ? " " + param : ""));
-
+			if (verbose) {
+				// Show instruction
+				String q = opcode.isParamString() ? "'" : "";
+				System.out.println("\t" + opcode.toString().toLowerCase() //
+						+ (param != null ? " " + q + param + q : "") //
+				);
+			}
 			// Add instruction
 			addInstruction(opcode, param);
 			lineNum++;

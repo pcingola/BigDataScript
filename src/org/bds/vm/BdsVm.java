@@ -823,8 +823,9 @@ public class BdsVm {
 
 		// Parameter?
 		Object param = null;
-		String quote = (op == OpCode.PUSHS ? "'" : "");
+		String quote = "";
 		if (op.hasParam()) {
+			quote = op.isParamString() ? "'" : "";
 			int idx = code[++pc];
 			param = getConstant(idx);
 		}

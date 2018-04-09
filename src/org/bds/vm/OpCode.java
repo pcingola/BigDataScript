@@ -26,7 +26,7 @@ public enum OpCode {
 	, CAST_BTOI, CAST_BTOR, CAST_ITOB, CAST_ITOR, CAST_RTOB, CAST_RTOI
 	// Function call:
 	//    CALL function_signature
-	//    CALLNATIVE function_signature 
+	//    CALLNATIVE function_signature
 	, CALL, CALLNATIVE
 	// Decrement (i.e. valueInt--)
 	, DEC
@@ -125,5 +125,23 @@ public enum OpCode {
 	 */
 	public boolean hasParamType() {
 		return this == NEW;
+	}
+
+	public boolean isParamString() {
+		switch (this) {
+		case CALL:
+		case CALLNATIVE:
+		case JMP:
+		case JMPT:
+		case JMPF:
+		case LOAD:
+		case NEW:
+		case PUSHS:
+		case STORE:
+			return true;
+
+		default:
+			return false;
+		}
 	}
 }
