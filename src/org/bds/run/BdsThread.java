@@ -159,20 +159,20 @@ public class BdsThread extends Thread implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Assertion failed (in bds test case)
-	 */
-	public void assertionFailed(BdsNode bdsnode, String message) {
-		runState = RunState.FATAL_ERROR;
-		String filePos = getFileLinePos(bdsnode);
-		System.err.println("Assertion failed: " //
-				+ filePos + (filePos.isEmpty() ? "" : ". ") //
-				+ message //
-		);
-
-		// Set exit map
-		setExitValue(1L);
-	}
+	//	/**
+	//	 * Assertion failed (in bds test case)
+	//	 */
+	//	public void assertionFailed(BdsNode bdsnode, String message) {
+	//		runState = RunState.FATAL_ERROR;
+	//		String filePos = getFileLinePos(bdsnode);
+	//		System.err.println("Assertion failed: " //
+	//				+ filePos + (filePos.isEmpty() ? "" : ". ") //
+	//				+ message //
+	//		);
+	//
+	//		// Set exit map
+	//		setExitValue(1L);
+	//	}
 
 	/**
 	 * Create a checkpoint file
@@ -244,35 +244,65 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	/**
-	 * Running in debug mode: This method is invoked right before running 'node'
+	 * Show a fatal error
 	 */
-	void debug(BdsNode node) {
-		if (node.isStopDebug()) {
-			switch (debugMode) {
-			case RUN:
-				// Keep running until we find a breakpoint
-				break;
+	public void fatalError(BdsNode bdsnode, String message) {
+		runState = RunState.FATAL_ERROR;
+		String filePos = getFileLinePos(bdsnode);
+		System.err.println("Fatal error: " //
+				+ filePos + (filePos.isEmpty() ? "" : ". ") //
+				+ message);
 
-			case STEP:
-				// Show options
-				debugStep(node);
-				break;
-
-			case STEP_OVER:
-				// Run until we are back from a function (method) call
-				if (debugStepOverPc == null) debugStep(node);
-				else if (pc.size() <= debugStepOverPc.size()) {
-					// Are we done stepping over?
-					debugStep(node);
-					debugStepOverPc = null;
-				}
-				break;
-
-			default:
-				throw new RuntimeException("Unimplemented debug mode: " + debugMode);
-			}
+		// Show BDS stack trace
+		try {
+			System.err.println(stackTrace());
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
+
+		// Create checkpoint
+		try {
+			String checkpointFileName = checkpoint(bdsnode);
+			if (checkpointFileName.isEmpty()) System.err.println("Creating checkpoint file: Config or command line option disabled checkpoint file creation, nothing done.");
+			else System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
+		} catch (Throwable t) {
+			// Ignore serialization error at this stage (we are within a fatal error)
+		}
+
+		// Set exit map
+		setExitValue(1L);
 	}
+
+	//	/**
+	//	 * Running in debug mode: This method is invoked right before running 'node'
+	//	 */
+	//	void debug(BdsNode node) {
+	//		if (node.isStopDebug()) {
+	//			switch (debugMode) {
+	//			case RUN:
+	//				// Keep running until we find a breakpoint
+	//				break;
+	//
+	//			case STEP:
+	//				// Show options
+	//				debugStep(node);
+	//				break;
+	//
+	//			case STEP_OVER:
+	//				// Run until we are back from a function (method) call
+	//				if (debugStepOverPc == null) debugStep(node);
+	//				else if (pc.size() <= debugStepOverPc.size()) {
+	//					// Are we done stepping over?
+	//					debugStep(node);
+	//					debugStepOverPc = null;
+	//				}
+	//				break;
+	//
+	//			default:
+	//				throw new RuntimeException("Unimplemented debug mode: " + debugMode);
+	//			}
+	//		}
+	//	}
 
 	//	/**
 	//	 * Show debug 'step' options
@@ -370,36 +400,6 @@ public class BdsThread extends Thread implements Serializable {
 	/**
 	 * Show a fatal error
 	 */
-	public void fatalError(BdsNode bdsnode, String message) {
-		runState = RunState.FATAL_ERROR;
-		String filePos = getFileLinePos(bdsnode);
-		System.err.println("Fatal error: " //
-				+ filePos + (filePos.isEmpty() ? "" : ". ") //
-				+ message);
-
-		// Show BDS stack trace
-		try {
-			System.err.println(stackTrace());
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
-
-		// Create checkpoint
-		try {
-			String checkpointFileName = checkpoint(bdsnode);
-			if (checkpointFileName.isEmpty()) System.err.println("Creating checkpoint file: Config or command line option disabled checkpoint file creation, nothing done.");
-			else System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
-		} catch (Throwable t) {
-			// Ignore serialization error at this stage (we are within a fatal error)
-		}
-
-		// Set exit map
-		setExitValue(1L);
-	}
-
-	/**
-	 * Show a fatal error
-	 */
 	public void fatalError(BdsNode bdsnode, Throwable t) {
 		if (runState == RunState.FATAL_ERROR) return;
 		fatalError(bdsnode, t.getMessage());
@@ -478,6 +478,7 @@ public class BdsThread extends Thread implements Serializable {
 	 * Recurse to parent node if not found
 	 */
 	public String getFileLinePos(BdsNode bdsNode) {
+
 		// If the node has file/line info, we are done
 		if (bdsNode.getFileNameCanonical() != null) { //
 			return bdsNode.getFileName() //
@@ -486,26 +487,22 @@ public class BdsThread extends Thread implements Serializable {
 			;
 		}
 
-		// No file/line info in 'bdsNode'. we walk the program-counter
-		// form end to start and return the information from the
-		// first node that has file/line data
-
-		// Find all nodes and add them to a map (by nodeId)
-		List<BdsNode> bdsNodes = statement.findNodes(null, true, false);
-		Map<Integer, BdsNode> nodesById = new HashMap<>();
-		for (BdsNode n : bdsNodes)
-			nodesById.put(n.getId(), n);
-
-		// Go backwards on PC and return the first information for
-		// the first node that has file/line/pos info.
-		for (int idx = pc.size() - 1; idx >= 0; idx--) {
-			int nodeId = pc.nodeId(idx);
-			BdsNode bn = nodesById.get(nodeId);
-
-			if (bn.getFileNameCanonical() != null) { //
-				return bn.getFileName() + ", line " + bn.getLineNum();
-			}
-		}
+		// 		Map<Integer, BdsNode> nodesById = getNodesById();
+		//
+		//		// No file/line info in 'bdsNode'. we walk the program-counter
+		//		// form end to start and return the information from the
+		//		// first node that has file/line data
+		//
+		//		// Go backwards on stack and return the first information for
+		//		// the first node that has file/line/pos info.
+		//		for (int idx = pc.size() - 1; idx >= 0; idx--) {
+		//			int nodeId = pc.nodeId(idx);
+		//			BdsNode bn = nodesById.get(nodeId);
+		//
+		//			if (bn.getFileNameCanonical() != null) { //
+		//				return bn.getFileName() + ", line " + bn.getLineNum();
+		//			}
+		//		}
 
 		// Nothing found? Return empty
 		return "";
@@ -520,6 +517,18 @@ public class BdsThread extends Thread implements Serializable {
 
 	public String getLogBaseName() {
 		return bdsThreadId;
+	}
+
+	/**
+	 * Map nodes by ID
+	 */
+	Map<Integer, BdsNode> getNodesById() {
+		List<BdsNode> bdsNodes = statement.findNodes(null, true, false);
+		Map<Integer, BdsNode> nodesById = new HashMap<>();
+		for (BdsNode n : bdsNodes)
+			nodesById.put(n.getId(), n);
+
+		return nodesById;
 	}
 
 	public BdsThread getParent() {
@@ -1038,7 +1047,7 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	protected void runStatement() {
 		try {
-			run(statement);
+			// run(statement);
 		} catch (Throwable t) {
 			runState = RunState.FATAL_ERROR;
 			if (isVerbose()) throw new RuntimeException(t);
@@ -1084,9 +1093,9 @@ public class BdsThread extends Thread implements Serializable {
 		this.runState = runState;
 	}
 
-	public void setScope(Scope scope) {
-		this.scope = scope;
-	}
+	//	public void setScope(Scope scope) {
+	//		this.scope = scope;
+	//	}
 
 	/**
 	 * Set program unit and update bigDataScriptThreadId"
@@ -1101,7 +1110,6 @@ public class BdsThread extends Thread implements Serializable {
 	 * Show BDS calling stack
 	 */
 	public String stackTrace() {
-
 		return vm.stackTrace();
 	}
 
@@ -1109,22 +1117,8 @@ public class BdsThread extends Thread implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("BigDataScriptThread: " + bdsThreadNum + "\n");
-		sb.append("\tPC        : " + pc + "\n");
 		sb.append("\tRun state : " + runState + "\n");
-		sb.append("\tStack     : " + stack + "\n");
-		sb.append("\tScope     : " + scope + "\n");
 		sb.append("\tProgram   :\n" + statement.toStringTree("\t\t", "program") + "\n");
-		return sb.toString();
-	}
-
-	/**
-	 * Show stack
-	 */
-	public String toStringStack() {
-		StringBuilder sb = new StringBuilder();
-		int num = 0;
-		for (Object obj : stack)
-			sb.append("Stack[" + (num++) + "]:\tClass: " + obj.getClass().getSimpleName() + "\tValue: " + obj.toString() + "\n");
 		return sb.toString();
 	}
 

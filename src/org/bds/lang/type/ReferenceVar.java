@@ -7,7 +7,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueClass;
 import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
@@ -119,19 +118,20 @@ public class ReferenceVar extends Reference {
 	 */
 	@Override
 	public void setValue(BdsThread bdsThread, Value value) {
-		if (value == null) return;
-
-		Value val;
-		if (classField) {
-			ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
-			val = vthis.getValue(name);
-			if (val == null) bdsThread.fatalError(this, "Cannot find field '" + name + "'");
-		} else {
-			val = getValue(bdsThread.getScope()); // Get scope symbol
-			value = getReturnType().cast(value); // Cast to destination type
-		}
-
-		val.setValue(value); // Assign
+		throw new RuntimeException("!!! REMOVE CODE?");
+		//		if (value == null) return;
+		//
+		//		Value val;
+		//		if (classField) {
+		//			ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
+		//			val = vthis.getValue(name);
+		//			if (val == null) bdsThread.fatalError(this, "Cannot find field '" + name + "'");
+		//		} else {
+		//			val = getValue(bdsThread.getScope()); // Get scope symbol
+		//			value = getReturnType().cast(value); // Cast to destination type
+		//		}
+		//
+		//		val.setValue(value); // Assign
 	}
 
 	@Override

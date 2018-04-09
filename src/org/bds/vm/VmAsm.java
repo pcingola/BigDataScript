@@ -196,6 +196,9 @@ public class VmAsm {
 		case NEW:
 			return getType(param);
 
+		case NODE:
+			return Gpr.parseIntSafe(param);
+
 		case PUSHB:
 			return Gpr.parseBoolSafe(param);
 

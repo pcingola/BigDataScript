@@ -33,15 +33,19 @@ public class BdsVm {
 	public static final String LABLE_MAIN = "main";
 	private static final OpCode OPCODES[] = OpCode.values();
 
-	boolean verbose, debug;
-	boolean run;
-	int pc;
-	int code[];
+	boolean debug;
+	boolean verbose;
+	boolean run; // Keep program running while this variable is 'true'
 	int callStack[]; // Stack for function calls (Program Counter)
+	int code[]; // Compile assembly code (OopCodes)
 	int csp; // Call stack pointer
 	int exitCode = -1; // Default exit code is error (program did not start)
-	Value[] stack; // Stack: main stack used for values
+	int nodeId; // Current node ID (BdsNode). Used for linking to original bds code
+	int nodeStack[]; // Stack of bdsNodes (stack trace functionality)
+	int nsp; // Node stack pointer
+	int pc; // Program counter
 	int sp; // Stack pointer
+	Value[] stack; // Stack: main stack used for values
 	Scope scope; // Current scope (variables)
 	Map<String, Integer> labels;
 	Map<Integer, String> labelsByPc;
@@ -57,6 +61,7 @@ public class BdsVm {
 		functions = new HashMap<>();
 		labels = new HashMap<>();
 		labelsByPc = new HashMap<>();
+		nodeStack = new int[CALL_STACK_SIZE];
 		scope = new Scope();
 		stack = new Value[STACK_SIZE];
 	}
@@ -97,6 +102,20 @@ public class BdsVm {
 	}
 
 	/**
+	 * Call a function
+	 * @param name: Function's signature
+	 */
+	void call(String name) {
+		VmFunction func = getFunction(name); // Find function meta-data
+		newScope(); // Create a new scope
+		for (String arg : func.getArgs()) // Add all arguments to the scope
+			scope.add(arg, pop());
+		pushPc(); // Push PC to call-stack
+		pc = func.getPc(); // Jump to function
+		pushNodeId(); // Store latest node ID
+	}
+
+	/**
 	 * Call native function
 	 * @param fname
 	 */
@@ -117,33 +136,48 @@ public class BdsVm {
 		popScope(); // Restore old scope
 	}
 
+	/**
+	 * Parameters is a reference to a 'bool' constant
+	 */
 	boolean constantBool() {
 		int idx = code[pc++];
 		return (Boolean) constants.get(idx);
 	}
 
+	/**
+	 * Parameters is a reference to a 'int' constant
+	 */
 	long constantInt() {
 		int idx = code[pc++];
 		return (Long) constants.get(idx);
 	}
 
+	/**
+	 * Parameters is a reference to a 'real' constant
+	 */
 	double constantReal() {
 		int idx = code[pc++];
 		return (Double) constants.get(idx);
 	}
 
+	/**
+	 * Parameters is a reference to a 'string' constant
+	 */
 	String constantString() {
 		int idx = code[pc++];
 		return (String) constants.get(idx);
 	}
 
+	/**
+	 * Parameters is a reference to a 'type' constant
+	 */
 	Type constantType() {
 		int idx = code[pc++];
 		return (Type) constants.get(idx);
 	}
 
 	/**
-	 * Get exit code. If the stak is empty, then the exitcode is 0 (i.e. program finished OK)
+	 * Get exit code. If the stack is empty, then the exit-code is 0 (i.e. program finished OK)
 	 */
 	int exitCode() {
 		exitCode = isEmptyStack() ? 0 : (int) popInt();
@@ -181,7 +215,7 @@ public class BdsVm {
 	}
 
 	/**
-	 * Does the OpCode at position 'pc' have a paramter?
+	 * Does the OpCode at position 'pc' have a parameter?
 	 */
 	boolean hasParam(int pc) {
 		return OPCODES[code[pc]].hasParam();
@@ -196,6 +230,13 @@ public class BdsVm {
 	 */
 	public void newScope() {
 		scope = new Scope(scope);
+	}
+
+	/**
+	 * Parameter is an int
+	 */
+	int paramInt() {
+		return code[pc++];
 	}
 
 	public Value pop() {
@@ -215,6 +256,13 @@ public class BdsVm {
 	 */
 	public long popInt() {
 		return pop().asInt();
+	}
+
+	/**
+	 * Pop value from node-stack
+	 */
+	void popNodeId() {
+		nodeId = nodeStack[--nsp];
 	}
 
 	/**
@@ -272,6 +320,13 @@ public class BdsVm {
 	/**
 	 * Push program counter to call-stack
 	 */
+	void pushNodeId() {
+		nodeStack[nsp++] = nodeId;
+	}
+
+	/**
+	 * Push program counter to call-stack
+	 */
 	void pushPc() {
 		callStack[csp++] = pc;
 	}
@@ -293,6 +348,8 @@ public class BdsVm {
 	 * Run the program in 'code'
 	 */
 	protected void runLoop() {
+		debug = true;
+
 		// First instruction
 		int instruction;
 		OpCode opcode = OpCode.NOOP;
@@ -347,12 +404,7 @@ public class BdsVm {
 
 			case CALL:
 				name = constantString(); // Get function name
-				VmFunction func = getFunction(name); // Find function meta-data
-				newScope(); // Create a new scope
-				for (String arg : func.getArgs()) // Add all arguments to the scope
-					scope.add(arg, pop());
-				pushPc(); // Push PC to call-stack
-				pc = func.getPc(); // Jump to function
+				call(name);
 				break;
 
 			case CALLNATIVE:
@@ -576,6 +628,10 @@ public class BdsVm {
 				val = type.newValue();
 				push(val);
 
+			case NODE:
+				nodeId = paramInt();
+				break;
+
 			case NOOP:
 				break;
 
@@ -646,6 +702,7 @@ public class BdsVm {
 			case RET:
 				popScope(); // Restore scope
 				pc = popPc(); // Pop PC from call-stack
+				popNodeId();
 				break;
 
 			case SCOPEPUSH:
@@ -733,6 +790,11 @@ public class BdsVm {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+	}
+
+	public String stackTrace() {
+		// TODO: !!! IMPLEMENT
+		return "";
 	}
 
 	/**

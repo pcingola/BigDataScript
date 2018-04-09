@@ -56,6 +56,8 @@ public enum OpCode {
 	, MODI
 	// Multiplication (int)
 	, MULI, MULR
+	// Set current BdsNode number. Used for references to bds code (debugging, stack trace, etc.)
+	, NODE
 	// No operation
 	, NOOP
 	// Equality test (not equals)
@@ -105,6 +107,7 @@ public enum OpCode {
 		case JMPF:
 		case LOAD:
 		case NEW:
+		case NODE:
 		case PUSHB:
 		case PUSHI:
 		case PUSHR:
