@@ -44,9 +44,6 @@ public class BdsRun {
 		RUN, RUN_CHECKPOINT, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
 	}
 
-	// TODO: Remove this option when VM is fully implemented
-	public static boolean USE_VM = false;
-
 	boolean debug; // debug mode
 	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
@@ -117,7 +114,7 @@ public class BdsRun {
 	}
 
 	/**
-	 * Compile program
+	 * Compile program to BdsNode tree
 	 * @return True if compiled OK
 	 */
 	public boolean compile() {
@@ -220,12 +217,13 @@ public class BdsRun {
 			exitValue = assembly();
 			break;
 
-		case COMPILE:
-			exitValue = compile() ? 0 : 1;
+		case CHECK_PID_REGEX:
+			checkPidRegex();
+			exitValue = 0;
 			break;
 
-		case RUN_CHECKPOINT:
-			exitValue = runCheckpoint();
+		case COMPILE:
+			exitValue = compile() ? 0 : 1;
 			break;
 
 		case INFO_CHECKPOINT:
@@ -236,14 +234,18 @@ public class BdsRun {
 			exitValue = runTests();
 			break;
 
-		case CHECK_PID_REGEX:
-			checkPidRegex();
-			exitValue = 0;
+		case RUN:
+			exitValue = runCompile(); // Compile + Run
+			break;
+
+		case RUN_CHECKPOINT:
+			exitValue = runCheckpoint();
 			break;
 
 		default:
-			exitValue = runCompile(); // BdsCompiler & run
+			throw new RuntimeException("Unimplemented action '" + bdsAction + "'");
 		}
+
 		if (debug) Timer.showStdErr("Finished. Exit code: " + exitValue);
 
 		//---
@@ -318,40 +320,26 @@ public class BdsRun {
 			return 0;
 		}
 
-		int exitCode = 0;
-		if (USE_VM) {
-			// Get assembly code
-			String asm = programUnit.toAsm();
-			Gpr.debug("Assembly:\n" + asm);
+		// Get assembly code
+		String asm = programUnit.toAsm();
+		Gpr.debug("Assembly:\n" + asm);
 
-			// Compile assembly 
-			VmAsm vmasm = new VmAsm();
-			vmasm.setDebug(debug);
-			vmasm.setVerbose(verbose);
-			vmasm.setCode(asm);
-			BdsVm vm = vmasm.compile();
+		// Compile assembly
+		VmAsm vmasm = new VmAsm();
+		vmasm.setDebug(debug);
+		vmasm.setVerbose(verbose);
+		vmasm.setCode(asm);
+		BdsVm vm = vmasm.compile();
 
-			// Run thread
-			BdsThread bdsThread = new BdsThread(programUnit, config, vm);
-			if (debug) {
-				Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
-				Timer.showStdErr("Running");
-			}
-
-			// Get exit code
-			exitCode = runThread(bdsThread);
-
-		} else {
-			// TODO: OLD STYLE
-
-			// Run the program
-			BdsThread bdsThread = new BdsThread(programUnit, config);
-			if (debug) {
-				Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
-				Timer.showStdErr("Running");
-			}
-			exitCode = runThread(bdsThread);
+		// Run thread
+		BdsThread bdsThread = new BdsThread(programUnit, config, vm);
+		if (debug) {
+			Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
+			Timer.showStdErr("Running");
 		}
+
+		// Run and get exit code
+		int exitCode = runThread(bdsThread);
 
 		// Check stack
 		if (stackCheck) bdsThread.sanityCheckStack();

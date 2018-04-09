@@ -23,7 +23,9 @@ import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
- * BdsCompiler a Bds program: Run lexer and parser, creat AST, perform typechcking and create BdsNode tree
+ * BdsCompiler a Bds program.
+ * 
+ * Runs lexer & parser, create AST, perform type-checking and create BdsNode tree
  *
  * @author pcingola
  */

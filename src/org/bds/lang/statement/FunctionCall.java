@@ -42,26 +42,6 @@ public class FunctionCall extends Expression {
 		bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
 	}
 
-	//	/**
-	//	 * Evaluate function's arguments
-	//	 */
-	//	public ValueArgs evalArgs(BdsThread bdsThread) {
-	//		// Create argument list
-	//		VarDeclaration fparam[] = functionDeclaration.getParameters().getVarDecl();
-	//		Expression arguments[] = args.getArguments();
-	//
-	//		// Evaluate all expressions
-	//		ValueArgs vargs = new ValueArgs(fparam.length);
-	//		for (int i = argsStart; i < fparam.length; i++) {
-	//			bdsThread.run(arguments[i]);
-	//			Value value = bdsThread.pop();
-	//			value = fparam[i].getType().cast(value);
-	//			vargs.setValue(i, value);
-	//		}
-	//
-	//		return vargs;
-	//	}
-
 	/**
 	 * Find method (or function) matching the signature
 	 */

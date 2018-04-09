@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bds.lang.nativeFunctions.FunctionNative;
+import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
@@ -18,7 +19,9 @@ import org.bds.lang.value.ValueMap;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
 /**
@@ -51,7 +54,10 @@ public class BdsVm {
 	Map<Integer, String> labelsByPc;
 	Map<Object, Integer> constantsByObject;
 	Map<String, VmFunction> functions;
+	Map<String, FunctionDeclaration> nativeFunctions;
+	Map<Type, Integer> typeToIndex;
 	List<Object> constants;
+	List<Type> types;
 	BdsThread bdsThread;
 
 	public BdsVm() {
@@ -61,9 +67,12 @@ public class BdsVm {
 		functions = new HashMap<>();
 		labels = new HashMap<>();
 		labelsByPc = new HashMap<>();
+		nativeFunctions = new HashMap<>();
 		nodeStack = new int[CALL_STACK_SIZE];
 		scope = new Scope();
 		stack = new Value[STACK_SIZE];
+		types = new ArrayList<>();
+		typeToIndex = new HashMap<>();
 	}
 
 	/**
@@ -102,11 +111,58 @@ public class BdsVm {
 	}
 
 	/**
+	 * Add native function
+	 */
+	public void addNativeFunction(FunctionDeclaration fd) {
+		if (!fd.isNative()) throw new RuntimeException("Error trying to add non-native function as native: " + fd.signature());
+		nativeFunctions.put(fd.signature(), fd);
+	}
+
+	/**
+	 *  Add native functions
+	 */
+	void addNativeFunctions() {
+		// Add all native functions from global scope
+		for (Value v : GlobalScope.get().getValues()) {
+			if (v.getType().isFunction()) {
+				ValueFunction vf = (ValueFunction) v;
+				FunctionDeclaration fd = vf.getFunctionDeclaration();
+				if (fd.isNative()) addNativeFunction(fd);
+			}
+		}
+
+		// Add all native functions from all defined types
+		for (Type t : types) {
+			SymbolTable st = t.getSymbolTable();
+			for (ValueFunction vf : st.getFunctions()) {
+				FunctionDeclaration fd = vf.getFunctionDeclaration();
+				if (fd.isNative()) addNativeFunction(fd);
+			}
+		}
+	}
+
+	/**
+	 * Add new type
+	 * @param type
+	 * @return Type index
+	 */
+	public int addType(Type type) {
+		// Already in 'types' pool?
+		if (typeToIndex.containsKey(type)) return typeToIndex.get(type);
+
+		// Add new type
+		int idx = types.size();
+		types.add(type);
+		typeToIndex.put(type, idx);
+		return idx;
+	}
+
+	/**
 	 * Call a function
 	 * @param name: Function's signature
 	 */
-	void call(String name) {
-		VmFunction func = getFunction(name); // Find function meta-data
+	void call(String fsig) {
+		VmFunction func = getFunction(fsig); // Find function meta-data
 		newScope(); // Create a new scope
 		for (String arg : func.getArgs()) // Add all arguments to the scope
 			scope.add(arg, pop());
@@ -116,14 +172,47 @@ public class BdsVm {
 	}
 
 	/**
-	 * Call native function
-	 * @param fname
+	 * Call a method
+	 * @param val: Object (e.g. ValueClass)
+	 * @param name: Method's signature
 	 */
-	void callNative(String fname) {
+	void callMethod(Value val, String name) {
+		throw new RuntimeException("!!!");
+	}
+
+	/**
+	 * Call a method
+	 * @param val: Object (e.g. ValueClass)
+	 * @param name: Method's signature
+	 */
+	void callMethodNative(String fsig) {
 		// Find function
-		ValueFunction valuef = (ValueFunction) scope.getValue(fname);
-		Gpr.debug("FUNCTION NAME: " + fname + "\tvalue: " + valuef);
-		FunctionDeclaration fdecl = valuef.getFunctionDeclaration();
+		FunctionDeclaration fdecl = nativeFunctions.get(fsig);
+
+		newScope(); // Create a new scope
+
+		// Add all arguments to the scope
+		Value vthis = null; // The last item to pop from the stack is 'this'
+		for (String pn : fdecl.getParameterNames()) {
+			Gpr.debug("ADDING PARAMETER: " + pn);
+			vthis = pop();
+			scope.add(pn, vthis);
+		}
+
+		// Run method
+		MethodNative mn = (MethodNative) fdecl;
+		Value retVal = mn.runMethodNativeValue(bdsThread, vthis.get());
+		push(retVal); // Push result to stack
+		popScope(); // Restore old scope
+	}
+
+	/**
+	 * Call native function
+	 * @param fsig
+	 */
+	void callNative(String fsig) {
+		// Find function
+		FunctionDeclaration fdecl = nativeFunctions.get(fsig);
 
 		newScope(); // Create a new scope
 
@@ -131,9 +220,10 @@ public class BdsVm {
 		for (String pn : fdecl.getParameterNames())
 			scope.add(pn, pop());
 
+		// Run function
 		FunctionNative fn = (FunctionNative) fdecl;
 		Value retVal = fn.runFunctionNativeValue(bdsThread);
-		push(retVal);
+		push(retVal); // Push result to stack
 		popScope(); // Restore old scope
 	}
 
@@ -174,7 +264,7 @@ public class BdsVm {
 	 */
 	Type constantType() {
 		int idx = code[pc++];
-		return (Type) constants.get(idx);
+		return types.get(idx);
 	}
 
 	/**
@@ -217,6 +307,10 @@ public class BdsVm {
 
 	public Scope getScope() {
 		return scope;
+	}
+
+	Type getType(int idx) {
+		return types.get(idx);
 	}
 
 	public Value getValue(String name) {
@@ -347,6 +441,9 @@ public class BdsVm {
 		// Initialize program counter
 		pc = Math.max(0, getLabel(LABLE_MAIN));
 
+		// Add functions from global scope
+		addNativeFunctions();
+
 		run = true;
 		runLoop();
 
@@ -412,13 +509,24 @@ public class BdsVm {
 				break;
 
 			case CALL:
-				name = constantString(); // Get function name
+				name = constantString(); // Get function signature
 				call(name);
 				break;
 
+			case CALLM:
+				name = constantString(); // Get method signature
+				val = pop(); // Get object
+				callMethod(val, name);
+				break;
+
 			case CALLNATIVE:
-				name = constantString(); // Get function name
+				name = constantString(); // Get function signature
 				callNative(name);
+				break;
+
+			case CALLMNATIVE:
+				name = constantString(); // Get method signature
+				callMethodNative(name);
 				break;
 
 			case DEC:

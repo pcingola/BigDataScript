@@ -58,22 +58,6 @@ public class FunctionDeclaration extends StatementWithScope {
 		return null;
 	}
 
-	//	/**
-	//	 * Create a new scope and add arguments
-	//	 */
-	//	protected void createScopeAddArgs(BdsThread bdsThread, ValueArgs vargs) {
-	//		// Create new scope
-	//		bdsThread.newScope(this);
-	//
-	//		// Add arguments to scope
-	//		Scope scope = bdsThread.getScope();
-	//		VarDeclaration fparam[] = getParameters().getVarDecl();
-	//		for (int i = 0; i < fparam.length; i++) {
-	//			String argName = fparam[i].getVarInit()[0].getVarName();
-	//			scope.add(argName, vargs.getValue(i));
-	//		}
-	//	}
-
 	public String getFunctionName() {
 		return functionName;
 	}
@@ -124,27 +108,6 @@ public class FunctionDeclaration extends StatementWithScope {
 		statement = (Statement) factory(tree, maxParams + 1);
 	}
 
-	//	/**
-	//	 * Run this function's statement
-	//	 */
-	//	protected void runFunction(BdsThread bdsThread) {
-	//		bdsThread.run(statement);
-	//		if (bdsThread.isCheckpointRecover()) return;
-	//
-	//		// Not a standard 'return' statement? Make sure we are returning the right type.
-	//		if (bdsThread.isReturn()) {
-	//			bdsThread.setRunState(RunState.OK); // Restore 'OK' runState
-	//		} else {
-	//			Value retVal = bdsThread.getReturnValue();
-	//			if (retVal == null || !retVal.getType().canCastTo(returnType)) {
-	//				// No return value or not the right type?
-	//				// Then force a default value for returnType
-	//				// Note: This should be caught as a compile time error
-	//				bdsThread.setReturnValue(returnType.newDefaultValue());
-	//			}
-	//		}
-	//	}
-
 	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {
 		if (!returnType.isVoid()) {
@@ -158,10 +121,6 @@ public class FunctionDeclaration extends StatementWithScope {
 		signature = functionName + getType().signature();
 		return signature;
 	}
-
-	//	public String signatureWithName() {
-	//		return returnType + " " + functionName + "(" + parameters + ")";
-	//	}
 
 	@Override
 	public String toAsm() {

@@ -52,13 +52,13 @@ public class VmAsm {
 	 */
 	void addParam(OpCode opcode, String param) {
 		// We need to add 'param' to pool of constants and add a reference to it
-		Object obj = parseConstant(opcode, param);
-		int idx = bdsvm.addConstant(obj);
+		int idx = parseParam(opcode, param);
 		code.add(idx);
 	}
 
 	public void addType(Type type) {
 		typeByName.put(type.toString(), type);
+		bdsvm.addType(type);
 	}
 
 	String code() {
@@ -184,6 +184,8 @@ public class VmAsm {
 		switch (opcode) {
 		case CALL:
 		case CALLNATIVE:
+		case CALLM:
+		case CALLMNATIVE:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -213,6 +215,22 @@ public class VmAsm {
 
 		default:
 			throw new RuntimeException("Unknown parameter type for opcode '" + opcode + "'");
+		}
+	}
+
+	/**
+	 * Convert parameter string to appropriate constant type and add it to constant pool
+	 * @return Index in constant pool
+	 */
+	int parseParam(OpCode opcode, String param) {
+		Object oparam = parseConstant(opcode, param);
+
+		switch (opcode) {
+		case NEW:
+			return bdsvm.addType((Type) oparam);
+
+		default:
+			return bdsvm.addConstant(oparam);
 		}
 	}
 

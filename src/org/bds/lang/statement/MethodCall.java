@@ -27,34 +27,6 @@ public class MethodCall extends FunctionCall {
 		argsStart = 1; // First argument is 'this', which is evaluated separately
 	}
 
-	//	@Override
-	//	public ValueArgs evalArgs(BdsThread bdsThread) {
-	//		// Evaluate 'this'
-	//		Value vthis = evalThis(bdsThread);
-	//
-	//		// Evaluate arguments
-	//		ValueArgs vargs = super.evalArgs(bdsThread);
-	//		vargs.setValue(0, vthis); // Set 'this' as first argument
-	//
-	//		return vargs;
-	//	}
-
-	//	/**
-	//	 * Evaluate 'this' object
-	//	 */
-	//	protected Value evalThis(BdsThread bdsThread) {
-	//		// Evaluate object
-	//		bdsThread.run(expresionThis);
-	//		Value vthis = bdsThread.pop();
-	//
-	//		// Is object 'null'?
-	//		if (vthis == null //
-	//				|| (expresionThis.isClass() && ((ValueClass) vthis).isNull()) //
-	//		) throw new RuntimeException("Null pointer: Cannot call method '" + expresionThis.getReturnType() + "." + functionName + "' in null object");
-	//
-	//		return vthis;
-	//	}
-
 	@Override
 	protected void parse(ParseTree tree) {
 		expresionThis = (Expression) factory(tree, 0);
@@ -85,26 +57,26 @@ public class MethodCall extends FunctionCall {
 		return returnType;
 	}
 
-	//	@Override
-	//	protected String signature() {
-	//		StringBuilder sig = new StringBuilder();
-	//
-	//		Type classType = expresionThis.getReturnType();
-	//		sig.append(classType != null ? classType : "null");
-	//		sig.append(".");
-	//		sig.append(functionName);
-	//		sig.append("(");
-	//		for (int i = 1; i < args.size(); i++) {
-	//			sig.append(args.getArguments()[i].getReturnType());
-	//			if (i < (args.size() - 1)) sig.append(",");
-	//		}
-	//		sig.append(")");
-	//		return sig.toString();
-	//	}
+	@Override
+	protected String signature() {
+		StringBuilder sig = new StringBuilder();
+
+		Type classType = expresionThis.getReturnType();
+		sig.append(classType != null ? classType : "null");
+		sig.append(".");
+		sig.append(functionName);
+		sig.append("(");
+		for (int i = 1; i < args.size(); i++) {
+			sig.append(args.getArguments()[i].getReturnType());
+			if (i < (args.size() - 1)) sig.append(",");
+		}
+		sig.append(")");
+		return sig.toString();
+	}
 
 	@Override
 	protected String toAsmCall() {
-		return (functionDeclaration.isNative() ? "callnative " : "call ") //
+		return (functionDeclaration.isNative() ? "callmnative " : "callm ") //
 				+ functionDeclaration.signature() //
 				+ "\n";
 	}

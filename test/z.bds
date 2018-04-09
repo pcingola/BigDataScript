@@ -1,6 +1,6 @@
 
-string[] l
-#l := ['a', 'b', 'c']
+#string[] l
+l := ['a', 'b', 'c']
 s := l.size()
 print(s)
 #for(string s : l) println(s)

@@ -40,16 +40,16 @@ public class MethodDeclaration extends FunctionDeclaration {
 		super.parse(tree.getChild(0));
 	}
 
-	//	@Override
-	//	public String signature() {
-	//		if (signature != null) return signature;
-	//
-	//		signature = (classType != null ? classType : "null") //
-	//				+ "." + functionName //
-	//				+ getType().signature();
-	//
-	//		return signature;
-	//	}
+	@Override
+	public String signature() {
+		if (signature != null) return signature;
+
+		signature = (classType != null ? classType : "null") //
+				+ "." + functionName //
+				+ getType().signature();
+
+		return signature;
+	}
 
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {

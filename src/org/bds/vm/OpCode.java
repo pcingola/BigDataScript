@@ -28,6 +28,10 @@ public enum OpCode {
 	//    CALL function_signature
 	//    CALLNATIVE function_signature
 	, CALL, CALLNATIVE
+	// Method call:
+	//    CALL method_signature
+	//    CALLNATIVE method_signature
+	, CALLM, CALLMNATIVE
 	// Decrement (i.e. valueInt--)
 	, DEC
 	// Division
@@ -102,6 +106,8 @@ public enum OpCode {
 		switch (this) {
 		case CALL:
 		case CALLNATIVE:
+		case CALLM:
+		case CALLMNATIVE:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -131,6 +137,8 @@ public enum OpCode {
 		switch (this) {
 		case CALL:
 		case CALLNATIVE:
+		case CALLM:
+		case CALLMNATIVE:
 		case JMP:
 		case JMPT:
 		case JMPF:

@@ -312,10 +312,6 @@ public class Bds {
 					System.exit(0);
 					break;
 
-				case "-vm":
-					BdsRun.USE_VM = true;
-					break;
-
 				case "-wall":
 					// TODO: Not implementation yet
 					break;

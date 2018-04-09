@@ -64,22 +64,6 @@ public abstract class MethodNative extends MethodDeclaration {
 		return true;
 	}
 
-	//	@Override
-	//	public void runFunction(BdsThread bdsThread) {
-	//		// Get object 'this'
-	//		Value symThis = bdsThread.getScope().getValue(ClassDeclaration.THIS);
-	//		Object objThis = symThis.get();
-	//
-	//		// Run method
-	//		try {
-	//			Value result = runMethodNativeValue(bdsThread, objThis);
-	//			bdsThread.setReturnValue(result); // Set result in scope
-	//		} catch (Throwable t) {
-	//			if (bdsThread.isVerbose()) t.printStackTrace();
-	//			bdsThread.fatalError(this, t.getMessage());
-	//		}
-	//	}
-
 	/**
 	 * Run a method
 	 */
@@ -90,7 +74,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	/**
 	 * Run native method and wrap result in a 'Value'
 	 */
-	protected Value runMethodNativeValue(BdsThread bdsThread, Object objThis) {
+	public Value runMethodNativeValue(BdsThread bdsThread, Object objThis) {
 		Object res = runMethodNative(bdsThread, objThis);
 		return returnType.newValue(res);
 	}
