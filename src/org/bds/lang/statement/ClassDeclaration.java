@@ -197,6 +197,26 @@ public class ClassDeclaration extends Block {
 	}
 
 	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+
+		String labelClassEnd = getClass().getSimpleName() + "_" + id + "_" + getClassName() + "_end";
+
+		sb.append(toAsmNode());
+		sb.append("jmp " + labelClassEnd + "\n"); // Jump to end of class (in case of runaway code
+
+		// Compile non-native methods
+		for (FunctionDeclaration fd : methodDecl)
+			if (!fd.isNative()) sb.append(fd.toAsm());
+
+		for (Statement s : statements)
+			sb.append(s.toAsm());
+
+		sb.append(labelClassEnd + ":\n");
+		return sb.toString();
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class " + className);

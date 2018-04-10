@@ -28,6 +28,7 @@ public class MethodDeclaration extends FunctionDeclaration {
 	public void addThisArg(TypeClass typeThis) {
 		if (isNative()) return; // Native methods do not need to add 'this' (it's already declared explicitly in the constructor)
 		parameters.addThis(typeThis);
+		if (classType == null) classType = typeThis;
 		signature = null;
 	}
 

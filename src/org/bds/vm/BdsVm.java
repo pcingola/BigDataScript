@@ -55,7 +55,7 @@ public class BdsVm {
 	Map<Integer, String> labelsByPc;
 	Map<Object, Integer> constantsByObject;
 	Map<String, VmFunction> functions;
-	Map<String, FunctionDeclaration> nativeFunctions;
+	Map<String, FunctionDeclaration> functionsBySignature;
 	Map<Type, Integer> typeToIndex;
 	List<Object> constants;
 	List<Type> types;
@@ -68,7 +68,7 @@ public class BdsVm {
 		functions = new HashMap<>();
 		labels = new HashMap<>();
 		labelsByPc = new HashMap<>();
-		nativeFunctions = new HashMap<>();
+		functionsBySignature = new HashMap<>();
 		nodeStack = new int[CALL_STACK_SIZE];
 		scope = new Scope();
 		stack = new Value[STACK_SIZE];
@@ -93,12 +93,46 @@ public class BdsVm {
 	}
 
 	/**
-	 * Create and add a new function (label + function description)
+	 * Add native function
 	 */
-	public void addFunction(String name, int pc) {
+	public void addFunction(FunctionDeclaration fd) {
+		functionsBySignature.put(fd.signature(), fd);
+
+		// Update parameters
+		VmFunction vmf = functions.get(fd.signature());
+		if (vmf != null) vmf.set(fd);
+	}
+
+	/**
+	 * Create and add a new function's descriptor (PC, arg names, etc)
+	 */
+	public void addFunctionPc(String name, int pc) {
 		addLabel(name, pc);
 		VmFunction f = new VmFunction(name, pc);
 		functions.put(name, f);
+	}
+
+	/**
+	 *  Add native functions
+	 */
+	void addFunctions() {
+		// Add all native functions from global scope
+		for (Value v : GlobalScope.get().getValues()) {
+			if (v.getType().isFunction()) {
+				ValueFunction vf = (ValueFunction) v;
+				FunctionDeclaration fd = vf.getFunctionDeclaration();
+				addFunction(fd);
+			}
+		}
+
+		// Add all native functions from all defined types
+		for (Type t : types) {
+			SymbolTable st = t.getSymbolTable();
+			for (ValueFunction vf : st.getFunctions()) {
+				FunctionDeclaration fd = vf.getFunctionDeclaration();
+				addFunction(fd);
+			}
+		}
 	}
 
 	/**
@@ -109,37 +143,6 @@ public class BdsVm {
 	public void addLabel(String label, int codeidx) {
 		labels.put(label, codeidx);
 		labelsByPc.put(codeidx, label);
-	}
-
-	/**
-	 * Add native function
-	 */
-	public void addNativeFunction(FunctionDeclaration fd) {
-		if (!fd.isNative()) throw new RuntimeException("Error trying to add non-native function as native: " + fd.signature());
-		nativeFunctions.put(fd.signature(), fd);
-	}
-
-	/**
-	 *  Add native functions
-	 */
-	void addNativeFunctions() {
-		// Add all native functions from global scope
-		for (Value v : GlobalScope.get().getValues()) {
-			if (v.getType().isFunction()) {
-				ValueFunction vf = (ValueFunction) v;
-				FunctionDeclaration fd = vf.getFunctionDeclaration();
-				if (fd.isNative()) addNativeFunction(fd);
-			}
-		}
-
-		// Add all native functions from all defined types
-		for (Type t : types) {
-			SymbolTable st = t.getSymbolTable();
-			for (ValueFunction vf : st.getFunctions()) {
-				FunctionDeclaration fd = vf.getFunctionDeclaration();
-				if (fd.isNative()) addNativeFunction(fd);
-			}
-		}
 	}
 
 	/**
@@ -167,8 +170,12 @@ public class BdsVm {
 	void call(String fsig) {
 		VmFunction func = getFunction(fsig); // Find function meta-data
 		newScope(); // Create a new scope
-		for (String arg : func.getArgs()) // Add all arguments to the scope
-			scope.add(arg, pop());
+
+		// Add all arguments to the scope. Remember that stack in reverse order
+		String[] args = func.getArgs();
+		for (int i = args.length - 1; i >= 0; i--)
+			scope.add(args[i], pop());
+
 		pushPc(); // Push PC to call-stack
 		pc = func.getPc(); // Jump to function
 		pushNodeId(); // Store latest node ID
@@ -176,34 +183,44 @@ public class BdsVm {
 
 	/**
 	 * Call a method
-	 * @param val: Object (e.g. ValueClass)
 	 * @param name: Method's signature
 	 */
-	void callMethod(Value val, String name) {
-		throw new RuntimeException("!!!");
+	void callMethod(String fsig) {
+		VmFunction func = getFunction(fsig); // Find method meta-data
+		newScope(); // Create a new scope
+
+		// Add all arguments to the scope. Remember that stack in reverse order
+		String[] args = func.getArgs();
+		for (int i = args.length - 1; i >= 0; i--)
+			scope.add(args[i], pop());
+
+		pushPc(); // Push PC to call-stack
+		pc = func.getPc(); // Jump to function
+		pushNodeId(); // Store latest node ID
 	}
 
 	/**
 	 * Call a method
-	 * @param val: Object (e.g. ValueClass)
 	 * @param name: Method's signature
 	 */
 	void callMethodNative(String fsig) {
 		// Find function
-		FunctionDeclaration fdecl = nativeFunctions.get(fsig);
+		FunctionDeclaration fdecl = functionsBySignature.get(fsig);
 
 		newScope(); // Create a new scope
 
-		// Add all arguments to the scope
+		// Add all arguments to the scope. Remember that stack in reverse order
 		Value vthis = null; // The last item to pop from the stack is 'this'
-		for (String pn : fdecl.getParameterNames()) {
+		List<String> args = fdecl.getParameterNames();
+		for (int i = args.size() - 1; i >= 0; i--) {
 			vthis = pop();
-			scope.add(pn, vthis);
+			scope.add(args.get(i), vthis);
 		}
 
 		// Run method
 		MethodNative mn = (MethodNative) fdecl;
 		Value retVal = mn.runMethodNativeValue(bdsThread, vthis.get());
+
 		push(retVal); // Push result to stack
 		popScope(); // Restore old scope
 	}
@@ -214,13 +231,14 @@ public class BdsVm {
 	 */
 	void callNative(String fsig) {
 		// Find function
-		FunctionDeclaration fdecl = nativeFunctions.get(fsig);
+		FunctionDeclaration fdecl = functionsBySignature.get(fsig);
 
 		newScope(); // Create a new scope
 
-		// Add all arguments to the scope
-		for (String pn : fdecl.getParameterNames())
-			scope.add(pn, pop());
+		// Add all arguments to the scope. Remember that stack in reverse order
+		List<String> args = fdecl.getParameterNames();
+		for (int i = args.size() - 1; i >= 0; i--)
+			scope.add(args.get(i), pop());
 
 		// Run function
 		FunctionNative fn = (FunctionNative) fdecl;
@@ -444,7 +462,7 @@ public class BdsVm {
 		pc = Math.max(0, getLabel(LABLE_MAIN));
 
 		// Add functions from global scope
-		addNativeFunctions();
+		addFunctions();
 
 		run = true;
 		runLoop();
@@ -518,8 +536,7 @@ public class BdsVm {
 
 			case CALLM:
 				name = constantString(); // Get method signature
-				val = pop(); // Get object
-				callMethod(val, name);
+				callMethod(name);
 				break;
 
 			case CALLNATIVE:
@@ -806,6 +823,13 @@ public class BdsVm {
 				push(constantString());
 				break;
 
+			case REFFIELD:
+				name = constantString();
+				vclass = (ValueClass) pop();
+				val = vclass.getValue(name);
+				push(val);
+				break;
+
 			case REFLIST:
 				vlist = (ValueList) pop();
 				idx = popInt();
@@ -840,6 +864,13 @@ public class BdsVm {
 				v1.setValue(v2);
 				break;
 
+			case SETFIELD:
+				name = constantString();
+				vclass = (ValueClass) pop();
+				val = pop();
+				vclass.setValue(name, val);
+				break;
+
 			case SETLIST:
 				vlist = (ValueList) pop();
 				idx = popInt();
@@ -852,13 +883,6 @@ public class BdsVm {
 				v1 = pop(); // Key
 				v2 = pop(); // Value
 				vmap.put(v1, v2);
-				break;
-
-			case SETFIELD:
-				name = constantString();
-				vclass = (ValueClass) pop();
-				val = pop();
-				vclass.setValue(name, val);
 				break;
 
 			case STORE:

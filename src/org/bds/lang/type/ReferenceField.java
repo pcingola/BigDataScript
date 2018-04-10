@@ -60,25 +60,9 @@ public class ReferenceField extends ReferenceVar {
 		return returnType;
 	}
 
-	//	/**
-	//	 * Set map to scope symbol
-	//	 */
-	//	@Override
-	//	public void setValue(BdsThread bdsThread, Value value) {
-	//		if (value == null) return;
-	//
-	//		// Evaluate expressions
-	//		bdsThread.run(exprObj);
-	//
-	//		ValueClass valObj = (ValueClass) bdsThread.pop(); // getValue(bdsThread.getScope()); // Get scope symbol
-	//		if (valObj == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
-	//		value = getReturnType().cast(value); // Cast to destination type
-	//		valObj.setValue(name, value); // Assign to field 'name'
-	//	}
-
 	@Override
 	public String toAsm() {
-		return exprObj.toAsm() + "\nload " + name + "\n";
+		return exprObj.toAsm() + "\nreffield " + name + "\n";
 	}
 
 	@Override

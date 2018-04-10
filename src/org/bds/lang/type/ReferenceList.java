@@ -6,9 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.LiteralInt;
-import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
-import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
@@ -101,23 +99,6 @@ public class ReferenceList extends Reference {
 		if (nameType.isList()) returnType = ((TypeList) nameType).getElementType();
 
 		return returnType;
-	}
-
-	/**
-	 * Set list element
-	 */
-	@Override
-	public void setValue(BdsThread bdsThread, Value value) {
-		//		if (value == null) return;
-		//
-		//		bdsThread.run(exprList);
-		//		bdsThread.run(exprIdx);
-		//		int idx = (int) bdsThread.popInt();
-		//		if (bdsThread.isCheckpointRecover()) return;
-		//
-		//		ValueList vlist = (ValueList) bdsThread.pop(); // getValue(bdsThread.getScope());
-		//		if (vlist == null) bdsThread.fatalError(this, "Cannot assign to non-variable '" + this + "'");
-		//		vlist.setValue(idx, value);
 	}
 
 	@Override

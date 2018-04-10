@@ -6,9 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.LiteralString;
-import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueMap;
-import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
@@ -104,20 +102,6 @@ public class ReferenceMap extends Reference {
 		}
 
 		return returnType;
-	}
-
-	@Override
-	public void setValue(BdsThread bdsThread, Value value) {
-		//		if (value == null) return;
-		//
-		//		bdsThread.run(exprMap);
-		//		bdsThread.run(expressionKey);
-		//		Value key = bdsThread.pop();
-		//		if (bdsThread.isCheckpointRecover()) return;
-		//
-		//		ValueMap vmap = (ValueMap) bdsThread.pop(); // getValue(bdsThread.getScope());
-		//		if (vmap == null) bdsThread.fatalError(this, "Cannot find variable '" + this + "'");
-		//		vmap.put(key, value);
 	}
 
 	@Override

@@ -17,9 +17,6 @@ import org.bds.symbol.SymbolTable;
  */
 public abstract class MethodNative extends MethodDeclaration {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 7663900761574026674L;
 
 	public MethodNative(Type classType) {

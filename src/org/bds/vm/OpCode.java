@@ -118,6 +118,7 @@ public enum OpCode {
 		case PUSHI:
 		case PUSHR:
 		case PUSHS:
+		case REFFIELD:
 		case SETFIELD:
 		case STORE:
 			return true;
@@ -141,6 +142,7 @@ public enum OpCode {
 		case JMPF:
 		case LOAD:
 		case PUSHS:
+		case REFFIELD:
 		case SETFIELD:
 		case STORE:
 			return true;

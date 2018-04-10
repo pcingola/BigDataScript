@@ -7,7 +7,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.value.Value;
-import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
@@ -113,36 +112,15 @@ public class ReferenceVar extends Reference {
 		return returnType;
 	}
 
-	/**
-	 * Set map to scope symbol
-	 */
-	@Override
-	public void setValue(BdsThread bdsThread, Value value) {
-		throw new RuntimeException("!!! REMOVE CODE?");
-		//		if (value == null) return;
-		//
-		//		Value val;
-		//		if (classField) {
-		//			ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
-		//			val = vthis.getValue(name);
-		//			if (val == null) bdsThread.fatalError(this, "Cannot find field '" + name + "'");
-		//		} else {
-		//			val = getValue(bdsThread.getScope()); // Get scope symbol
-		//			value = getReturnType().cast(value); // Cast to destination type
-		//		}
-		//
-		//		val.setValue(value); // Assign
-	}
-
 	@Override
 	public String toAsm() {
-		if (classField) return "load this\nload " + name + "\n";
+		if (classField) return "load this\nreffield " + name + "\n";
 		return "load " + name + "\n";
 	}
 
 	@Override
 	public String toAsmSet() {
-		if (classField) return "pushs " + name + "\nload this\nsetfield\n";
+		if (classField) return "load this\nsetfield " + name + "\n";
 		return "store " + name + "\n";
 	}
 

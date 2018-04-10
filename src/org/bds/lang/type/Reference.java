@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.Value;
-import org.bds.run.BdsThread;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
@@ -36,10 +35,6 @@ public abstract class Reference extends Expression {
 	 * Parse a string (e.g. an interpolated string)
 	 */
 	public abstract void parse(String str);
-
-	// public abstract void setValue(BdsThread bdsThread, Object value);
-
-	public abstract void setValue(BdsThread bdsThread, Value value);
 
 	/**
 	 * Assembly code to set the referenced value

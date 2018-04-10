@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -19,8 +17,6 @@ import org.bds.util.Gpr;
  * @author pcingola
  */
 public class VmAsm {
-
-	static final Pattern labelPattern = Pattern.compile("\\s*(\\S+)\\s*:(.*)");
 
 	boolean verbose, debug;
 	int lineNum;
@@ -146,15 +142,15 @@ public class VmAsm {
 	 * Get a label from an input line, null if there are no labels
 	 */
 	String label(String line) {
-		Matcher m = labelPattern.matcher(line);
-		if (!m.matches()) return line;
+		int idx = line.lastIndexOf(':');
+		if (idx < 0) return line;
 
-		String label = m.group(1);
-		String rest = m.group(2);
+		String label = line.substring(0, idx).trim();
+		String rest = line.substring(idx + 1).trim();
 
 		// Is 'label' a function signature?
 		if (label.indexOf('(') > 0 && label.indexOf(')') > 0) {
-			bdsvm.addFunction(label, pc());
+			bdsvm.addFunctionPc(label, pc());
 		} else {
 			bdsvm.addLabel(label, pc());
 		}
@@ -198,6 +194,7 @@ public class VmAsm {
 		case JMPF:
 		case LOAD:
 		case PUSHS:
+		case REFFIELD:
 		case SETFIELD:
 		case STORE:
 			int lastCharIdx = param.length() - 1;

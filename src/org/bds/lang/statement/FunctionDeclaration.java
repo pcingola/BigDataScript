@@ -1,6 +1,6 @@
 package org.bds.lang.statement;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -64,7 +64,7 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	public List<String> getParameterNames() {
 		if (parameterNames != null) return parameterNames;
-		parameterNames = new LinkedList<>();
+		parameterNames = new ArrayList<>();
 
 		for (VarDeclaration vd : parameters.getVarDecl())
 			for (VariableInit vi : vd.getVarInit())
