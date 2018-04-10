@@ -19,9 +19,6 @@ import org.bds.symbol.SymbolTable;
  */
 public class ClassDeclaration extends Block {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -8891327817053470787L;
 
 	public static final String THIS = "this";
@@ -96,7 +93,9 @@ public class ClassDeclaration extends Block {
 	 * Note: We use 'returnType' for storing the
 	 */
 	public TypeClass getType() {
-		if (classType == null) classType = new TypeClass(this);
+		if (classType == null) {
+			classType = new TypeClass(this);
+		}
 		return classType;
 	}
 

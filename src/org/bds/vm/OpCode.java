@@ -118,6 +118,7 @@ public enum OpCode {
 		case PUSHI:
 		case PUSHR:
 		case PUSHS:
+		case SETFIELD:
 		case STORE:
 			return true;
 
@@ -127,12 +128,8 @@ public enum OpCode {
 	}
 
 	/**
-	 * Is the parameter a 'type'?
+	 * Is the parameter a string?
 	 */
-	public boolean hasParamType() {
-		return this == NEW;
-	}
-
 	public boolean isParamString() {
 		switch (this) {
 		case CALL:
@@ -143,9 +140,22 @@ public enum OpCode {
 		case JMPT:
 		case JMPF:
 		case LOAD:
-		case NEW:
 		case PUSHS:
+		case SETFIELD:
 		case STORE:
+			return true;
+
+		default:
+			return false;
+		}
+	}
+
+	/**
+	 * Is the parameters a 'type'?
+	 */
+	public boolean isParamType() {
+		switch (this) {
+		case NEW:
 			return true;
 
 		default:

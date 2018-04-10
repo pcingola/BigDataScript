@@ -14,7 +14,6 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 	private static final long serialVersionUID = 3481924830790274005L;
 
 	public static final ValueUnique ANY = ValueUnique.get(Types.ANY);
-	public static final ValueUnique FAKE = ValueUnique.get(Types.FAKE);
 	public static final ValueUnique NULL = ValueUnique.get(Types.NULL);
 	public static final ValueUnique VOID = ValueUnique.get(Types.VOID);
 

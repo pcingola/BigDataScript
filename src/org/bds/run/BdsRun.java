@@ -53,6 +53,7 @@ public class BdsRun {
 	String programFileName; // Program file name
 	Config config;
 	BdsAction bdsAction;
+	BdsVm vm;
 	BdsThread bdsThread;
 	ProgramUnit programUnit; // Program (parsed nodes)
 	List<String> programArgs; // Command line arguments for BigDataScript program
@@ -71,7 +72,7 @@ public class BdsRun {
 	 */
 	int assembly() {
 		// Compile, abort on errors
-		if (!compile()) return 1;
+		if (!compileBds()) return 1;
 		try {
 			System.out.println(programUnit.toAsm());
 		} catch (Throwable t) {
@@ -113,11 +114,34 @@ public class BdsRun {
 		executioner.kill(); // Kill executioner
 	}
 
+	public boolean compile() {
+		if (!compileBds()) return false;
+
+		try {
+			// Get assembly code
+			String asm = programUnit.toAsm();
+			Gpr.debug("Assembly:\n" + asm);
+
+			// Compile assembly
+			VmAsm vmasm = new VmAsm();
+			vmasm.setDebug(debug);
+			vmasm.setVerbose(verbose);
+			vmasm.setCode(asm);
+
+			// Compile assembly
+			vm = vmasm.compile();
+			return true;
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		return false;
+	}
+
 	/**
 	 * Compile program to BdsNode tree
 	 * @return True if compiled OK
 	 */
-	public boolean compile() {
+	boolean compileBds() {
 		if (debug) Timer.showStdErr("Parsing");
 		BdsCompiler compiler = new BdsCompiler(programFileName);
 		programUnit = compiler.compile();
@@ -178,13 +202,13 @@ public class BdsRun {
 		GlobalScope.get().initilaize(config);
 
 		// Libraries
-		initilaizeLibraries();
+		initilaizeNativeLibraries();
 	}
 
 	/**
 	 * Initialize standard libraries
 	 */
-	void initilaizeLibraries() {
+	void initilaizeNativeLibraries() {
 		if (debug) log("Initialize standard libraries.");
 
 		// Native functions
@@ -198,6 +222,27 @@ public class BdsRun {
 
 	void log(String msg) {
 		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
+	}
+
+	/**
+	 * Parse command line arguments
+	 * @return true if automatic help is shown and program should finish
+	 */
+	boolean parseCmdLineArgs() {
+		if (debug) Timer.showStdErr("Initializing");
+		BdsParseArgs bdsParseArgs = new BdsParseArgs(programUnit, programArgs);
+		bdsParseArgs.setDebug(debug);
+		bdsParseArgs.parse();
+
+		// Show script's automatic help message
+		if (bdsParseArgs.isShowHelp()) {
+			if (debug) Timer.showStdErr("Showing automaic 'help'");
+			HelpCreator hc = new HelpCreator(programUnit);
+			System.out.println(hc);
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -223,7 +268,7 @@ public class BdsRun {
 			break;
 
 		case COMPILE:
-			exitValue = compile() ? 0 : 1;
+			exitValue = compileBds() ? 0 : 1;
 			break;
 
 		case INFO_CHECKPOINT:
@@ -257,6 +302,26 @@ public class BdsRun {
 		config.kill(); // Kill 'tail' and 'monitor' threads
 
 		return exitValue;
+	}
+
+	/**
+	 * Create a BdsThread and run it
+	 */
+	int runBdsThread() {
+		// Create & run thread
+		BdsThread bdsThread = new BdsThread(programUnit, config, vm);
+		if (debug) {
+			Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
+			Timer.showStdErr("Running");
+		}
+
+		// Run and get exit code
+		int exitCode = runThread(bdsThread);
+
+		// Check stack
+		if (stackCheck) bdsThread.sanityCheckStack();
+
+		return exitCode;
 	}
 
 	/**
@@ -307,62 +372,28 @@ public class BdsRun {
 		// Compile, abort on errors
 		if (!compile()) return 1;
 
-		if (debug) Timer.showStdErr("Initializing");
-		BdsParseArgs bdsParseArgs = new BdsParseArgs(programUnit, programArgs);
-		bdsParseArgs.setDebug(debug);
-		bdsParseArgs.parse();
-
-		// Show script's automatic help message
-		if (bdsParseArgs.isShowHelp()) {
-			if (debug) Timer.showStdErr("Showing automaic 'help'");
-			HelpCreator hc = new HelpCreator(programUnit);
-			System.out.println(hc);
-			return 0;
-		}
-
-		// Get assembly code
-		String asm = programUnit.toAsm();
-		Gpr.debug("Assembly:\n" + asm);
-
-		// Compile assembly
-		VmAsm vmasm = new VmAsm();
-		vmasm.setDebug(debug);
-		vmasm.setVerbose(verbose);
-		vmasm.setCode(asm);
-		BdsVm vm = vmasm.compile();
+		// Parse command line args & show automatic help
+		if (parseCmdLineArgs()) return 0;
 
 		// Run thread
-		BdsThread bdsThread = new BdsThread(programUnit, config, vm);
-		if (debug) {
-			Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
-			Timer.showStdErr("Running");
-		}
-
-		// Run and get exit code
-		int exitCode = runThread(bdsThread);
-
-		// Check stack
-		if (stackCheck) bdsThread.sanityCheckStack();
-
-		return exitCode;
+		return runBdsThread();
 	}
 
 	/**
-	 * BdsCompiler and run
+	 * Compile and run tests
 	 */
 	int runTests() {
 		// Compile, abort on errors
 		if (!compile()) return 1;
 
-		if (debug) Timer.showStdErr("Initializing");
-		BdsParseArgs bdsParseArgs = new BdsParseArgs(programUnit, programArgs);
-		bdsParseArgs.setDebug(debug);
-		bdsParseArgs.parse();
+		// Parse command line args & show automatic help
+		if (parseCmdLineArgs()) return 0;
 
-		// Run the program
+		// Create thread
 		BdsThread bdsThread = new BdsThread(programUnit, config);
 		if (debug) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 
+		// Run tests
 		if (debug) Timer.showStdErr("Running tests");
 		ProgramUnit pu = bdsThread.getProgramUnit();
 		return runTests(pu);

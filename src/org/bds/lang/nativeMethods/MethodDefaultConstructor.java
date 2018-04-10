@@ -3,6 +3,7 @@ package org.bds.lang.nativeMethods;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
+import org.bds.run.BdsThread;
 
 /**
  * A method to create objects (default constructor) for all classes
@@ -32,10 +33,9 @@ public class MethodDefaultConstructor extends MethodNative {
 		addNativeMethodToClassScope();
 	}
 
-	//	@Override
-	//	public void runFunction(BdsThread bdsThread) {
-	//		// Default empty constructor: Nothing to do, just return 'this'
-	//		Value vthis = bdsThread.getScope().getValue(ClassDeclaration.THIS);
-	//		bdsThread.setReturnValue(vthis);
-	//	}
+	@Override
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		return objThis; // Default constructor doesn't do anything
+	}
+
 }

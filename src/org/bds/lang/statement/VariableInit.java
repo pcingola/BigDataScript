@@ -93,10 +93,41 @@ public class VariableInit extends BdsNode {
 		this.fieldInit = fieldInit;
 	}
 
+	public void setType(Type type) {
+		returnType = type;
+	}
+
 	@Override
 	public String toAsm() {
+		return fieldInit ? toAsmFieldInit() : toAsmVarInit();
+	}
+
+	/**
+	 * Default value initialization
+	 */
+	String toAsmDefaultValue() {
+		if (returnType != null) {
+			if (returnType.isBool()) return "pushb false\n";
+			else if (returnType.isInt()) return "pushi 0\n";
+			else if (returnType.isReal()) return "pushr 0.0\n";
+			else if (returnType.isString()) return "pushs ''\n";
+			else if (returnType.isList() || returnType.isMap() || returnType.isClass()) return "new " + returnType.toString();
+		}
+		throw new RuntimeException("Unknown default value for type '" + returnType + "'");
+	}
+
+	String toAsmFieldInit() {
 		return super.toAsm() //
-				+ (expression != null ? expression.toAsm() : "") //
+				+ (expression != null ? expression.toAsm() : toAsmDefaultValue()) //
+				+ (help != null ? "# help: " + help + "\n" : "") //
+				+ "load this\n" //
+				+ "setfield  " + varName + "\n"//
+		;
+	}
+
+	String toAsmVarInit() {
+		return super.toAsm() //
+				+ (expression != null ? expression.toAsm() : toAsmDefaultValue()) //
 				+ (help != null ? "# help: " + help + "\n" : "") //
 				+ "store  " + varName + "\n"//
 		;

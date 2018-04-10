@@ -114,6 +114,7 @@ public class VmAsm {
 	}
 
 	Type getType(String typeName) {
+		if (!typeByName.containsKey(typeName)) throw new RuntimeException("Cannot find type '" + typeName + "'");
 		return typeByName.get(typeName);
 	}
 
@@ -133,6 +134,12 @@ public class VmAsm {
 		for (Type tk : types)
 			for (Type tv : types)
 				addType(TypeMap.get(tk, tv));
+
+		// Add all classes
+		Types.getAll().stream() //
+				.filter(t -> t.isClass()) //
+				.forEach(t -> addType(t)) //
+		;
 	}
 
 	/**
@@ -190,8 +197,9 @@ public class VmAsm {
 		case JMPT:
 		case JMPF:
 		case LOAD:
-		case STORE:
 		case PUSHS:
+		case SETFIELD:
+		case STORE:
 			int lastCharIdx = param.length() - 1;
 			if ((param.charAt(0) == '\'' && param.charAt(lastCharIdx) == '\'') // Using single quotes
 					|| (param.charAt(0) == '"' && param.charAt(lastCharIdx) == '"')) // Using double quotes

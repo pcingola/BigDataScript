@@ -573,6 +573,10 @@ public abstract class BdsNode implements Serializable {
 	}
 
 	public String toAsm() {
+		return toAsmNode();
+	}
+
+	public String toAsmNode() {
 		// Show file, line and position if available
 		if (getFileName() == null) return "node " + id;
 		return "# " + getFileName() //

@@ -12,6 +12,10 @@ import org.bds.symbol.SymbolTable;
 
 /**
  * Variable declaration
+ * E.g.:
+ *
+ *     int i,j;         // Note that we declare two variables
+ *     string s = 'hi'
  *
  * @author pcingola
  */
@@ -87,6 +91,9 @@ public class VarDeclaration extends Statement {
 				varInit[j++] = (VariableInit) factory(tree, i);
 				i++; // ','
 			}
+
+			for (VariableInit vi : varInit)
+				vi.setType(type);
 		}
 	}
 
@@ -118,28 +125,11 @@ public class VarDeclaration extends Statement {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 
-		// Default value initialization
-		String init = "";
-		if (type != null) {
-			if (type.isBool()) init = "pushb false";
-			else if (type.isInt()) init = "pushi 0";
-			else if (type.isReal()) init = "pushr 0.0";
-			else if (type.isString()) init = "pushs ''";
-			else if (type.isList() || type.isMap() || type.isClass()) init = "new " + type.toString();
-			else throw new RuntimeException("Unknown default value for type '" + type + "'");
+		if (varInit != null) {
+			for (VariableInit vi : varInit)
+				sb.append(vi.toAsm());
 		}
 
-		if (varInit != null) {
-			for (VariableInit vi : varInit) {
-				if (vi.getExpression() == null) {
-					// Use default value initialization
-					sb.append(init + "\nstore " + vi.getVarName() + "\n");
-				} else {
-					// Initialize using an expression
-					sb.append(vi.toAsm());
-				}
-			}
-		}
 		return sb.toString();
 	}
 

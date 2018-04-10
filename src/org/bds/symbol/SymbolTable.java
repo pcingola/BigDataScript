@@ -50,12 +50,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	}
 
 	public void add(String name, Type type) {
-		if (type.isFunction()) {
-			// TODO: Implement!!!???
-			throw new RuntimeException("Unimplemented generic function types in symbol table");
-		} else {
-			types.put(name, type);
-		}
+		types.put(name, type);
 	}
 
 	/**

@@ -5,6 +5,8 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.statement.Args;
+import org.bds.lang.statement.ClassDeclaration;
+import org.bds.lang.statement.FieldDeclaration;
 import org.bds.lang.statement.MethodCall;
 import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
@@ -25,30 +27,6 @@ public class ExpressionNew extends MethodCall {
 		super(parent, tree);
 		argsStart = 1;
 	}
-
-	//	@Override
-	//	protected Value evalThis(BdsThread bdsThread) {
-	//		Value vthis = expresionThis.getReturnType().newValue();
-	//		bdsThread.getScope().add(ClassDeclaration.THIS, vthis);
-	//		initializeFields(bdsThread);
-	//		return vthis;
-	//	}
-
-	//	/**
-	//	 * Run field initialization
-	//	 */
-	//	public ValueClass initializeFields(BdsThread bdsThread) {
-	//		ValueClass vthis = (ValueClass) bdsThread.getScope().getValue(ClassDeclaration.THIS);
-	//		TypeClass tthis = (TypeClass) vthis.getType();
-	//
-	//		for (ClassDeclaration cd = tthis.getClassDeclaration(); cd != null; cd = cd.getClassParent()) {
-	//			FieldDeclaration fieldDecls[] = cd.getFieldDecl();
-	//			for (FieldDeclaration fieldDecl : fieldDecls)
-	//				bdsThread.run(fieldDecl);
-	//		}
-	//
-	//		return vthis;
-	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {
@@ -103,6 +81,41 @@ public class ExpressionNew extends MethodCall {
 		}
 		sig.append(")");
 		return sig.toString();
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(toAsmNode());
+
+		// This is like a function call that initializes fields, so
+		// we need a scope and variable 'this' has to be set
+		sb.append("scopepush\n");
+		sb.append("new " + expresionThis.getReturnType().toString() + "\n");
+		sb.append("store this\n");
+		sb.append(toAsmInitFields());
+		sb.append("scopepush\n");
+
+		sb.append(args.toAsm());
+		sb.append(toAsmCall());
+		return sb.toString();
+	}
+
+	/**
+	 * Field initialization
+	 */
+	String toAsmInitFields() {
+		StringBuilder sb = new StringBuilder();
+		TypeClass tthis = (TypeClass) expresionThis.getReturnType();
+
+		for (ClassDeclaration cd = tthis.getClassDeclaration(); cd != null; cd = cd.getClassParent()) {
+			FieldDeclaration fieldDecls[] = cd.getFieldDecl();
+			for (FieldDeclaration fieldDecl : fieldDecls) {
+				sb.append(fieldDecl.toAsm());
+			}
+		}
+
+		return sb.toString();
 	}
 
 	@Override

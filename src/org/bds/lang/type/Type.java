@@ -18,6 +18,8 @@ import org.bds.symbol.SymbolTable;
  */
 public abstract class Type extends BdsNode implements Comparable<Type> {
 
+	private static final long serialVersionUID = -2836048827087214442L;
+
 	protected PrimitiveType primitiveType;
 	protected SymbolTable symbolTable; // A type requires a SymbolTable to define all methods related to this type / class
 

@@ -12,7 +12,6 @@ public class Types {
 
 	public final static TypeAny ANY = new TypeAny(); // ANY type (wild-card type)
 	public final static TypeBool BOOL = new TypeBool();
-	public final static TypeFake FAKE = new TypeFake(); // Fake type (for serialization)
 	public final static TypeInt INT = new TypeInt();
 	public final static TypeList LIST = TypeList.LIST_ANY; // Generic list
 	public final static TypeMap MAP = TypeMap.MAP_ANY_ANY; // Generic map
@@ -35,7 +34,7 @@ public class Types {
 	}
 
 	static public Type get(String typeStr) {
-		return types.get(typeStr.toLowerCase());
+		return types.get(typeStr);
 	}
 
 	/**
@@ -47,7 +46,6 @@ public class Types {
 		// Add base types
 		put(ANY);
 		put(BOOL);
-		put(FAKE);
 		put(INT);
 		put(NULL);
 		put(REAL);

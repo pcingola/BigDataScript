@@ -6,7 +6,7 @@ package org.bds.lang.type;
  * @author pcingola
  */
 public enum PrimitiveType {
-	ANY, BOOL, CLASS, FAKE, FUNCTION, LIST, MAP, NULL, INT, REAL, STRING, VOID;
+	ANY, BOOL, CLASS, FUNCTION, LIST, MAP, NULL, INT, REAL, STRING, VOID;
 
 	/**
 	 * Get 'Type' object from this enum
@@ -19,9 +19,6 @@ public enum PrimitiveType {
 
 		case BOOL:
 			return Types.BOOL;
-
-		case FAKE:
-			return Types.FAKE;
 
 		case INT:
 			return Types.INT;

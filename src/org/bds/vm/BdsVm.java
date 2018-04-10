@@ -12,6 +12,7 @@ import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueList;
@@ -147,6 +148,8 @@ public class BdsVm {
 	 * @return Type index
 	 */
 	public int addType(Type type) {
+		if (type == null) throw new RuntimeException("Cannot add null type!");
+
 		// Already in 'types' pool?
 		if (typeToIndex.containsKey(type)) return typeToIndex.get(type);
 
@@ -194,7 +197,6 @@ public class BdsVm {
 		// Add all arguments to the scope
 		Value vthis = null; // The last item to pop from the stack is 'this'
 		for (String pn : fdecl.getParameterNames()) {
-			Gpr.debug("ADDING PARAMETER: " + pn);
 			vthis = pop();
 			scope.add(pn, vthis);
 		}
@@ -469,6 +471,7 @@ public class BdsVm {
 		Value v1, v2, val;
 		ValueList vlist;
 		ValueMap vmap;
+		ValueClass vclass;
 
 		// Execute while not the end of the program
 		while (pc < code.length && run) {
@@ -851,6 +854,13 @@ public class BdsVm {
 				vmap.put(v1, v2);
 				break;
 
+			case SETFIELD:
+				name = constantString();
+				vclass = (ValueClass) pop();
+				val = pop();
+				vclass.setValue(name, val);
+				break;
+
 			case STORE:
 				name = constantString();
 				scope.add(name, pop());
@@ -944,17 +954,17 @@ public class BdsVm {
 		String opstr = op.toString().toLowerCase();
 
 		// Parameter?
-		Object param = null;
-		String quote = "";
+		String param = null;
 		if (op.hasParam()) {
-			quote = op.isParamString() ? "'" : "";
 			int idx = code[++pc];
-			param = getConstant(idx);
+			if (op.isParamString()) param = "'" + getConstant(idx) + "'";
+			else if (op.isParamType()) param = "'" + getType(idx) + "'";
+			else param = getConstant(idx).toString();
 		}
 
 		return (label != null ? label + ":\n" : "") //
 				+ "\t" + opstr //
-				+ (param != null ? " " + quote + param + quote : "") //
+				+ (param != null ? " " + param : "") //
 		;
 	}
 

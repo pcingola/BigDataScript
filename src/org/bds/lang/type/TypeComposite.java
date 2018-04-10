@@ -10,6 +10,8 @@ import org.bds.lang.BdsNode;
  */
 public abstract class TypeComposite extends Type {
 
+	private static final long serialVersionUID = 6716080829178399904L;
+
 	protected TypeComposite(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}

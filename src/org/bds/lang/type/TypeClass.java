@@ -16,6 +16,8 @@ import org.bds.lang.value.ValueClass;
  */
 public class TypeClass extends TypeComposite {
 
+	private static final long serialVersionUID = -6173442643563941413L;
+
 	protected String className;
 	protected ClassDeclaration classDecl;
 
@@ -36,6 +38,7 @@ public class TypeClass extends TypeComposite {
 		super(PrimitiveType.CLASS);
 		classDecl = classDeclaration;
 		className = classDecl.getClassName();
+		Types.put(this);
 	}
 
 	/**
@@ -51,8 +54,8 @@ public class TypeClass extends TypeComposite {
 
 		// Add methods
 		for (MethodDeclaration md : classDecl.getMethodDecl())
-			if (!md.isNative()) { // Native method are added to symbol table during initialization
-				symbolTable.add(md.getFunctionName(), md.getType());
+			if (!md.isNative()) { // Add declared method (native methods are added to symbol table during initialization, do not add again)
+				symbolTable.add(md);
 			}
 	}
 

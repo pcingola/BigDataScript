@@ -1,7 +1,11 @@
 
-#string[] l
-l := ['a', 'b', 'c']
-s := l.size()
+class A {
+	int i = 42
+	int z
+	int f(int x) return x+i
+}
+
+A a = new A()
+s := a.f(1)
 print(s)
-#for(string s : l) println(s)
 
