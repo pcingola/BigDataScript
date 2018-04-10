@@ -5,10 +5,8 @@ import org.bds.lang.type.Types;
 
 public class ValueBool extends ValuePrimitive {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8451305342267329643L;
+
 	public final static ValueBool TRUE = new ValueBool(true);
 	public final static ValueBool FALSE = new ValueBool(false);
 
@@ -20,7 +18,7 @@ public class ValueBool extends ValuePrimitive {
 
 	public ValueBool(Boolean v) {
 		super();
-		set(v);
+		value = v;
 	}
 
 	@Override
@@ -58,11 +56,6 @@ public class ValueBool extends ValuePrimitive {
 	}
 
 	@Override
-	public Boolean get() {
-		return Boolean.valueOf(value);
-	}
-
-	@Override
 	public Type getType() {
 		return Types.BOOL;
 	}
@@ -78,8 +71,8 @@ public class ValueBool extends ValuePrimitive {
 	}
 
 	@Override
-	public void set(Object v) {
-		value = (Boolean) v;
+	public void setValue(Value v) {
+		value = v.asBool();
 	}
 
 }

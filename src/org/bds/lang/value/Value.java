@@ -75,11 +75,6 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 	}
 
 	/**
-	 * Get native object (raw data)
-	 */
-	public abstract Object get();
-
-	/**
 	 * Get value type
 	 */
 	public abstract Type getType();
@@ -102,18 +97,6 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 		throw new RuntimeException("String parsing unimplemented for type '" + this + "'");
 	}
 
-	/**
-	 * Set value's native object
-	 */
-	public abstract void set(Object v);
-
-	public void setValue(Value v) {
-		set(v.get());
-	}
-
-	@Override
-	public String toString() {
-		return get() != null ? get().toString() : "null";
-	}
+	public abstract void setValue(Value v);
 
 }

@@ -1,11 +1,5 @@
 
-class A {
-	int i = 42
-	int z
-	int f(int x) return x+i
-}
 
-A a = new A()
-s := a.f(1)
-print(s)
-
+l := ['a', 'b']
+l.add('c')
+println(l)

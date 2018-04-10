@@ -49,20 +49,6 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		return equals(type); // Same type
 	}
 
-	/**
-	 * Cast value 'v' to this type
-	 */
-	public Value cast(Value v) {
-		if (is(v.getType())) return v; // Same type? No need to cast
-		throw new RuntimeException("Cannot cast type '" + v.getType() + "' to type '" + this + "'");
-	}
-
-	/**
-	 * This is used when casting Java object (e.g. running native functions & methods)
-	 */
-	public abstract Object castNativeObject(Object o);
-	// { throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'"); }
-
 	public void checkCanCast(Type type, CompilerMessages compilerMessages) {
 		if (returnType.isReturnTypesNotNull() && !returnType.canCastTo(type)) {
 			compilerMessages.add(this, "Cannot cast " + type + " to " + returnType, MessageType.ERROR);
@@ -134,11 +120,6 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	}
 
 	@Override
-	public boolean isFake() {
-		return false;
-	}
-
-	@Override
 	public boolean isFunction() {
 		return false;
 	}
@@ -204,11 +185,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	/**
 	 * Create a new map if this type and set it to 'v'
 	 */
-	public Value newValue(Object v) {
-		Value value = newDefaultValue();
-		value.set(v);
-		return value;
-	}
+	public abstract Value newValue(Object v);
 
 	@Override
 	protected void parse(ParseTree tree) {

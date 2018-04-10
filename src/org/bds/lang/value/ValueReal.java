@@ -15,7 +15,7 @@ public class ValueReal extends ValuePrimitive {
 
 	public ValueReal(Double v) {
 		super();
-		set(v);
+		value = v;
 	}
 
 	@Override
@@ -56,11 +56,6 @@ public class ValueReal extends ValuePrimitive {
 	}
 
 	@Override
-	public Double get() {
-		return Double.valueOf(value);
-	}
-
-	@Override
 	public Type getType() {
 		return Types.REAL;
 	}
@@ -76,8 +71,7 @@ public class ValueReal extends ValuePrimitive {
 	}
 
 	@Override
-	public void set(Object v) {
-		value = (Double) v;
+	public void setValue(Value v) {
+		value = v.asReal();
 	}
-
 }

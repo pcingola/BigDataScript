@@ -14,6 +14,10 @@ import org.bds.symbol.SymbolTable;
  */
 public abstract class Literal extends Expression {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 5099898775266921617L;
 	protected Value value;
 
 	public Literal(BdsNode parent, ParseTree tree) {
@@ -29,7 +33,7 @@ public abstract class Literal extends Expression {
 		setValue(parseValue(tree));
 	}
 
-	protected abstract Object parseValue(ParseTree tree);
+	protected abstract Value parseValue(ParseTree tree);
 
 	@Override
 	public Type returnType(SymbolTable symtab) {
@@ -38,8 +42,8 @@ public abstract class Literal extends Expression {
 		return returnType;
 	}
 
-	public void setValue(Object v) {
-		value.set(v);
+	public void setValue(Value v) {
+		value = v;
 	}
 
 	@Override

@@ -94,6 +94,8 @@ public enum OpCode {
 	, STORE
 	// Subtraction
 	, SUBI, SUBR
+	// Swap two values in stack
+	, SWAP
 	// XOR
 	, XORB, XORI
 	//

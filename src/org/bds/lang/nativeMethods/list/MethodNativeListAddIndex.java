@@ -7,6 +7,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -42,4 +43,13 @@ public class MethodNativeListAddIndex extends MethodNativeList {
 		list.add((int) idx, v);
 		return v;
 	}
+
+	@Override
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		long idx = bdsThread.getInt("idx");
+		Value toPush = bdsThread.getValue("toPush");
+		vthis.setValue(idx, toPush);
+		return toPush;
+	}
+
 }

@@ -24,8 +24,8 @@ public class LiteralReal extends Literal {
 	}
 
 	@Override
-	protected Double parseValue(ParseTree tree) {
-		return Gpr.parseDoubleSafe(tree.getChild(0).getText());
+	protected ValueReal parseValue(ParseTree tree) {
+		return new ValueReal(Gpr.parseDoubleSafe(tree.getChild(0).getText()));
 	}
 
 	@Override

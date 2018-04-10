@@ -69,17 +69,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	/**
 	 * Run a method
 	 */
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		throw new RuntimeException("Unimplemented method for class " + this.getClass().getSimpleName());
-	}
-
-	/**
-	 * Run native method and wrap result in a 'Value'
-	 */
-	public Value runMethodNativeValue(BdsThread bdsThread, Object objThis) {
-		Object res = runMethodNative(bdsThread, objThis);
-		return returnType.newValue(res);
-	}
+	public abstract Value runMethod(BdsThread bdsThread, Value vThis);
 
 	@Override
 	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {

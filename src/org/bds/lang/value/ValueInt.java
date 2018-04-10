@@ -57,11 +57,6 @@ public class ValueInt extends ValuePrimitive {
 	}
 
 	@Override
-	public Long get() {
-		return Long.valueOf(value);
-	}
-
-	@Override
 	public Type getType() {
 		return Types.INT;
 	}
@@ -81,8 +76,8 @@ public class ValueInt extends ValuePrimitive {
 	}
 
 	@Override
-	public void set(Object v) {
-		value = (Long) v;
+	public void setValue(Value v) {
+		value = v.asInt();
 	}
 
 }

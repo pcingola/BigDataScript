@@ -42,7 +42,7 @@ public abstract class ValueComposite extends Value {
 	 */
 	@Override
 	public String asString() {
-		return get().toString();
+		return toString();
 	}
 
 	@Override

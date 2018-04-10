@@ -30,11 +30,11 @@ public class LiteralString extends Literal {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		String valueStr = parseValue(tree);
+		String valueStr = tree.getChild(0).getText();
 
 		if (valueStr.charAt(0) == '\'' && valueStr.charAt(valueStr.length() - 1) == '\'') {
 			// Remove quotes: No un-escaping, no interpolation
-			value.set(valueStr.substring(1, valueStr.length() - 1));
+			value = new ValueString(valueStr.substring(1, valueStr.length() - 1));
 		} else {
 			// Remove quotes and interpolate string
 			valueStr = valueStr.substring(1, valueStr.length() - 1);
@@ -43,21 +43,21 @@ public class LiteralString extends Literal {
 	}
 
 	@Override
-	protected String parseValue(ParseTree tree) {
-		return tree.getChild(0).getText();
+	protected ValueString parseValue(ParseTree tree) {
+		return new ValueString(tree.getChild(0).getText());
 	}
 
 	/**
 	 * Sets literal map and finds interpolated variables
 	 */
 	public void setValueInterpolate(String valueStr) {
-		value.set(valueStr);
+		value = new ValueString(valueStr);
 
 		// Parse interpolated vars
 		interpolateVars = new InterpolateVars(this, null);
 		if (!interpolateVars.parse(valueStr)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
-			value.set(InterpolateVars.unEscape(valueStr)); // Un-escape characters
+			value = new ValueString(InterpolateVars.unEscape(valueStr)); // Un-escape characters
 		}
 	}
 
@@ -70,7 +70,7 @@ public class LiteralString extends Literal {
 
 	@Override
 	public String toString() {
-		return "\"" + GprString.escape(value.get().toString()) + "\"";
+		return "\"" + GprString.escape(value.toString()) + "\"";
 	}
 
 	@Override

@@ -17,7 +17,10 @@ import org.bds.lang.value.LiteralReal;
 import org.bds.lang.value.LiteralString;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueReal;
+import org.bds.lang.value.ValueString;
 import org.bds.scope.GlobalScope;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -232,13 +235,13 @@ public class BdsParseArgs {
 
 		if (varType.isList()) {
 			// Create a list of arguments and use them to initialize the variable (list)
-			ArrayList<String> vals = new ArrayList<>();
+			ValueList vals = new ValueList(Types.STRING);
 			for (argNum++; argNum < programArgs.size(); argNum++) {
-				String val = programArgs.get(argNum);
-				if (isOpt(val)) { // Stop if another argument is found
+				String s = programArgs.get(argNum);
+				if (isOpt(s)) { // Stop if another argument is found
 					argNum--; // This map is not used
 					break;
-				} else vals.add(val);
+				} else vals.add(new ValueString(s));
 			}
 
 			useVal = setVarInit(varType, varInit, vals); // Found variable, try to replace or add LITERAL to this VarInit
@@ -259,35 +262,6 @@ public class BdsParseArgs {
 		}
 
 		if (!useVal) argNum = argNumOri; // We did not use the arguments
-	}
-
-	/**
-	 * Add or replace initialization statement in this VarInit
-	 *
-	 * Note: We create a Literal node (of the appropriate type) and add it to
-	 * "fieldDecl.expression"
-	 */
-	boolean setVarInit(Type varType, VariableInit varInit, ArrayList<String> vals) {
-		boolean usedVal = true;
-
-		try {
-			Literal literal = null;
-
-			if (varType.isList(Types.STRING)) {
-				// Create literal
-				LiteralListString lit = new LiteralListString(varInit, null);
-				literal = lit;
-				lit.setValue(vals); // Set literal map
-			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
-
-			// Set fieldDecl to literal
-			varInit.setExpression(literal);
-		} catch (Exception e) {
-			// Error parsing 'val'?
-			throw new RuntimeException("Cannot convert argument '" + vals + "' to type " + varType);
-		}
-
-		return usedVal;
 	}
 
 	/**
@@ -319,10 +293,10 @@ public class BdsParseArgs {
 					valStr = valStr.toLowerCase();
 					if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) valBool = true;
 					else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) valBool = false;
-					else usedVal = false; // Not any valid map? => This argument is not used
+					else usedVal = false; // Not any valid value? => This argument is not used
 				}
 
-				lit.setValue(valBool);
+				lit.setValue(new ValueBool(valBool));
 			} else if (varType.isInt()) {
 				// Create literal
 				LiteralInt lit = new LiteralInt(varInit, null);
@@ -330,7 +304,7 @@ public class BdsParseArgs {
 
 				// Set literal map
 				long valInt = Long.parseLong(valStr);
-				lit.setValue(valInt);
+				lit.setValue(new ValueInt(valInt));
 			} else if (varType.isReal()) {
 				// Create literal
 				LiteralReal lit = new LiteralReal(varInit, null);
@@ -338,15 +312,15 @@ public class BdsParseArgs {
 
 				// Set literal map
 				double valReal = Double.parseDouble(valStr);
-				lit.setValue(valReal);
+				lit.setValue(new ValueReal(valReal));
 			} else if (varType.isString()) {
 				// Create literal
 				LiteralString lit = new LiteralString(varInit, null);
 				literal = lit;
 
-				// Set literal map
+				// Set literal value
 				if (valStr == null) valStr = ""; // We should never have 'null' values
-				lit.setValue(valStr);
+				lit.setValue(new ValueString(valStr));
 			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
 
 			// Set fieldDecl to literal
@@ -354,6 +328,35 @@ public class BdsParseArgs {
 		} catch (Exception e) {
 			// Error parsing 'val'?
 			throw new RuntimeException("Cannot convert argument '" + valStr + "' to type " + varType);
+		}
+
+		return usedVal;
+	}
+
+	/**
+	 * Add or replace initialization statement in this VarInit
+	 *
+	 * Note: We create a Literal node (of the appropriate type) and add it to
+	 * "fieldDecl.expression"
+	 */
+	boolean setVarInit(Type varType, VariableInit varInit, ValueList vals) {
+		boolean usedVal = true;
+
+		try {
+			Literal literal = null;
+
+			if (varType.isList(Types.STRING)) {
+				// Create literal
+				LiteralListString lit = new LiteralListString(varInit, null);
+				literal = lit;
+				lit.setValue(vals); // Set literal map
+			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
+
+			// Set fieldDecl to literal
+			varInit.setExpression(literal);
+		} catch (Exception e) {
+			// Error parsing 'val'?
+			throw new RuntimeException("Cannot convert argument '" + vals + "' to type " + varType);
 		}
 
 		return usedVal;

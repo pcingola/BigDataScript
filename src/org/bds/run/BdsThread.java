@@ -27,12 +27,9 @@ import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementInclude;
-import org.bds.lang.type.TypeList;
-import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueInt;
-import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.osCmd.Exec;
@@ -851,11 +848,11 @@ public class BdsThread extends Thread implements Serializable {
 		push(new ValueReal(v));
 	}
 
-	public void push(List<String> ls) {
-		ValueList vl = new ValueList(TypeList.get(Types.STRING));
-		vl.set(ls);
-		push(vl);
-	}
+	//	public void push(List<String> ls) {
+	//		ValueList vl = new ValueList(TypeList.get(Types.STRING));
+	//		vl.set(ls);
+	//		push(vl);
+	//	}
 
 	public void push(long v) {
 		push(new ValueInt(v));

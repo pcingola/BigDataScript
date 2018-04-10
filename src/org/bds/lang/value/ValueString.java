@@ -15,7 +15,7 @@ public class ValueString extends ValuePrimitive {
 
 	public ValueString(String v) {
 		super();
-		set(v);
+		value = v;
 	}
 
 	@Override
@@ -50,11 +50,6 @@ public class ValueString extends ValuePrimitive {
 	}
 
 	@Override
-	public String get() {
-		return value;
-	}
-
-	@Override
 	public Type getType() {
 		return Types.STRING;
 	}
@@ -70,8 +65,8 @@ public class ValueString extends ValuePrimitive {
 	}
 
 	@Override
-	public void set(Object v) {
-		value = v.toString();
+	public void setValue(Value v) {
+		value = v.asString();
 	}
 
 	@Override

@@ -24,10 +24,12 @@ public class LiteralInt extends Literal {
 	}
 
 	@Override
-	protected Long parseValue(ParseTree tree) {
+	protected ValueInt parseValue(ParseTree tree) {
 		String intStr = tree.getChild(0).getText().toLowerCase();
-		if (intStr.startsWith("0x")) return Long.parseLong(intStr.substring(2), 16);
-		return Gpr.parseLongSafe(intStr);
+		long l;
+		if (intStr.startsWith("0x")) l = Long.parseLong(intStr.substring(2), 16);
+		else l = Gpr.parseLongSafe(intStr);
+		return new ValueInt(l);
 	}
 
 	@Override

@@ -390,13 +390,6 @@ public abstract class BdsNode implements Serializable {
 		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.CLASS;
 	}
 
-	/**
-	 * Is this a fake node (created during serialization)
-	 */
-	public boolean isFake() {
-		return id <= 0;
-	}
-
 	public boolean isFunction() {
 		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.FUNCTION;
 	}
@@ -594,6 +587,7 @@ public abstract class BdsNode implements Serializable {
 		if (isReal()) return "r";
 		if (isString()) return "s";
 		if (isBool()) return "b";
+		if (isList()) return "l";
 		throw new RuntimeException();
 	}
 

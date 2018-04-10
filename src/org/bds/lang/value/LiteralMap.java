@@ -40,8 +40,8 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
-	protected Object parseValue(ParseTree tree) {
-		throw new RuntimeException("This should never happen!");
+	protected ValueList parseValue(ParseTree tree) {
+		throw new RuntimeException("This method should never be invoked!!!");
 	}
 
 	@Override

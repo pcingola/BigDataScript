@@ -1,7 +1,5 @@
 package org.bds.lang.value;
 
-import java.util.ArrayList;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
@@ -12,10 +10,12 @@ import org.bds.symbol.SymbolTable;
 
 /**
  * Expression 'Literal'
- * 
+ *
  * @author pcingola
  */
 public class LiteralListString extends LiteralList {
+
+	private static final long serialVersionUID = -4999985887360700695L;
 
 	public LiteralListString(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -28,10 +28,10 @@ public class LiteralListString extends LiteralList {
 		throw new RuntimeException("This should never happen!");
 	}
 
-	public void setValue(ArrayList<String> vals) {
+	public void setValue(ValueList vals) {
 		values = new Expression[vals.size()];
 		int j = 0;
-		for (String val : vals) {
+		for (Value val : vals) {
 			LiteralString lit = new LiteralString(this, null);
 			lit.setValue(val);
 			values[j++] = lit;

@@ -24,8 +24,8 @@ public class LiteralBool extends Literal {
 	}
 
 	@Override
-	protected Boolean parseValue(ParseTree tree) {
-		return Gpr.parseBoolSafe(tree.getChild(0).getText());
+	protected ValueBool parseValue(ParseTree tree) {
+		return new ValueBool(Gpr.parseBoolSafe(tree.getChild(0).getText()));
 	}
 
 	@Override

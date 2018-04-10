@@ -25,8 +25,8 @@ public class LiteralNull extends Literal {
 	}
 
 	@Override
-	protected Object parseValue(ParseTree tree) {
-		return null;
+	protected Value parseValue(ParseTree tree) {
+		return Value.NULL;
 	}
 
 	@Override

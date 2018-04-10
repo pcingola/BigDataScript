@@ -1,9 +1,7 @@
 package org.bds.lang.type;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
@@ -11,6 +9,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.Literal;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueString;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Tuple;
 
@@ -258,30 +257,8 @@ public class InterpolateVars extends Literal {
 	/**
 	 * How to show objects in interpolation
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	String interpolateValue(Value val) {
-		if (val.getType().isMap()) {
-			StringBuilder sb = new StringBuilder();
-
-			// We sort keys in maps, so that contents are always the same
-			Map map = (Map) val.get();
-			List keys = new ArrayList();
-			keys.addAll(map.keySet());
-			Collections.sort(keys);
-
-			int count = 0;
-			sb.append("{ ");
-			for (Object k : keys) {
-				sb.append((count > 0 ? ", " : "") + k + " => " + map.get(k));
-				count++;
-			}
-			sb.append(" }");
-
-			return sb.toString();
-		}
-
-		Object o = val.get();
-		return o != null ? o.toString() : "null";
+		return val != null ? val.toString() : "null";
 	}
 
 	public boolean isEmpty() {
@@ -332,8 +309,8 @@ public class InterpolateVars extends Literal {
 	}
 
 	@Override
-	protected String parseValue(ParseTree tree) {
-		return tree.getChild(0).getText();
+	protected ValueString parseValue(ParseTree tree) {
+		return new ValueString(tree.getChild(0).getText());
 	}
 
 	@Override

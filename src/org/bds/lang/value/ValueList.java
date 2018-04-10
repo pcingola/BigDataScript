@@ -33,12 +33,9 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 		list.add(v);
 	}
 
-	public void addAll(ValueList v) {
-		list.addAll(v.get());
-	}
-
-	public void addNative(Object o) {
-		list.add(type.newValue(o));
+	public void addAll(ValueList vlist) {
+		for (Value v : vlist)
+			list.add(v);
 	}
 
 	@Override
@@ -69,11 +66,6 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 
 		// May be one of the list has more elements...
 		return size() - vl.size();
-	}
-
-	@Override
-	public List<Value> get() {
-		return list;
 	}
 
 	public Type getElementType() {
@@ -113,15 +105,8 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 		return list.iterator();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void set(Object v) {
-		// !!! TODO: Check list elements class
-		list = (List<Value>) v;
-	}
-
 	public void setValue(long idx, Value value) {
-		ArrayList<Value> list = (ArrayList<Value>) get();
+		ArrayList<Value> list = (ArrayList<Value>) this.list;
 
 		int iidx = (int) idx;
 		if (idx < 0) throw new RuntimeException("Cannot set list element indexed with negative index value: " + idx);
@@ -137,12 +122,13 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 		list.set((int) idx, value);
 	}
 
-	public void setValueNative(long idx, Object obj) {
-		setValue(idx, type.newValue(obj));
+	@Override
+	public void setValue(Value value) {
+		list = ((ValueList) value).list;
 	}
 
 	public int size() {
-		return get().size();
+		return list.size();
 	}
 
 	@Override

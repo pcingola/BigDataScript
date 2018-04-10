@@ -219,7 +219,7 @@ public class BdsVm {
 
 		// Run method
 		MethodNative mn = (MethodNative) fdecl;
-		Value retVal = mn.runMethodNativeValue(bdsThread, vthis.get());
+		Value retVal = mn.runMethod(bdsThread, vthis);
 
 		push(retVal); // Push result to stack
 		popScope(); // Restore old scope
@@ -902,6 +902,13 @@ public class BdsVm {
 				push(r1 - r2);
 				break;
 
+			case SWAP:
+				v2 = pop();
+				v1 = pop();
+				push(v2);
+				push(v1);
+				break;
+
 			case XORB:
 				b2 = popBool();
 				b1 = popBool();
@@ -1013,5 +1020,4 @@ public class BdsVm {
 		sb.append(" ]");
 		return sb.toString();
 	}
-
 }

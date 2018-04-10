@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bds.lang.type.Type;
 
@@ -39,10 +40,10 @@ public class ValueMap extends ValueComposite {
 		return vm;
 	}
 
-	@Override
-	public Map<Value, Value> get() {
-		return map;
-	}
+	//	@Override
+	//	public Map<Value, Value> get() {
+	//		return map;
+	//	}
 
 	/**
 	 * Get element 'key' (which is a 'Value' object)
@@ -60,6 +61,10 @@ public class ValueMap extends ValueComposite {
 		return map.isEmpty();
 	}
 
+	public Set<Value> keySet() {
+		return map.keySet();
+	}
+
 	/**
 	 * Put (set) entry 'key'
 	 */
@@ -67,11 +72,16 @@ public class ValueMap extends ValueComposite {
 		map.put(key, val);
 	}
 
-	@SuppressWarnings("unchecked")
+	//	@SuppressWarnings("unchecked")
+	//	@Override
+	//	public void set(Object v) {
+	//		// !!! TODO: WE SHOULD PROBABLY NEVER DO THIS
+	//		map = (Map<Value, Value>) v;
+	//	}
+
 	@Override
-	public void set(Object v) {
-		// !!! TODO: WE SHOULD PROBABLY NEVER DO THIS
-		map = (Map<Value, Value>) v;
+	public void setValue(Value vmap) {
+		map = ((ValueMap) vmap).map;
 	}
 
 	public int size() {
@@ -93,5 +103,4 @@ public class ValueMap extends ValueComposite {
 		}
 		return "{" + sb.toString() + " }";
 	}
-
 }

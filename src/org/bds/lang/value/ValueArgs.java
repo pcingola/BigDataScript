@@ -6,6 +6,8 @@ package org.bds.lang.value;
  */
 public class ValueArgs extends ValueComposite {
 
+	private static final long serialVersionUID = -721120684142267125L;
+
 	Value values[];
 
 	public ValueArgs(int n) {
@@ -29,11 +31,6 @@ public class ValueArgs extends ValueComposite {
 		return va;
 	}
 
-	@Override
-	public Object get() {
-		return values;
-	}
-
 	/**
 	 * Get argument number 'idx'
 	 */
@@ -48,13 +45,13 @@ public class ValueArgs extends ValueComposite {
 		return idx < 0L || idx > values.length;
 	}
 
-	@Override
-	public void set(Object v) {
-		values = (Value[]) v;
-	}
-
 	public void setValue(long idx, Value v) {
 		values[(int) idx] = v;
+	}
+
+	@Override
+	public void setValue(Value v) {
+		values = ((ValueArgs) v).values;
 	}
 
 	public int size() {

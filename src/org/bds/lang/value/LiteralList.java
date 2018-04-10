@@ -39,8 +39,8 @@ public class LiteralList extends Literal {
 	}
 
 	@Override
-	protected Object parseValue(ParseTree tree) {
-		throw new RuntimeException("UNIMPLEMENTED!");
+	protected ValueList parseValue(ParseTree tree) {
+		throw new RuntimeException("This method should never be invoked!!!");
 	}
 
 	@Override

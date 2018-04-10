@@ -7,9 +7,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
-import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueList;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -84,47 +81,49 @@ public class ExpressionPlus extends ExpressionMath {
 	/**
 	 * Evaluate a 'plus' expression involving at least one list
 	 */
-	ValueList runStepList(BdsThread bdsThread) {
-		Value rval = bdsThread.pop();
-		Value lval = bdsThread.pop();
-
+	String toAsmList() {
+		StringBuilder sb = new StringBuilder();
 		Type lt = left.getReturnType();
 		Type rt = right.getReturnType();
 
 		if (lt.isList() && rt.isList()) {
-			// List + List
-			ValueList llist = (ValueList) lval;
-			ValueList rlist = (ValueList) rval;
-			ValueList vlist = new ValueList(lt, llist.size() + rlist.size());
-			vlist.addAll(llist);
-			vlist.addAll(rlist);
-			return vlist;
+			//			// List + List
+			//			sb.append(left.toAsm());
+			//			sb.append(right.toAsm());
+			//			sb.append("swap\n");
+			//			sb.append("new " + returnType + "\n");
+			//			sb.append("callmnative \n");
+			//			sb.append("addl\n");
 		} else if (lt.isList() && !rt.isList()) {
 			// List + element
-			ValueList llist = (ValueList) lval;
-			Type let = ((TypeList) lt).getElementType();
-			ValueList vlist = new ValueList(lt, llist.size() + 1);
-			vlist.addAll(llist);
-			vlist.add(let.cast(rval));
-			return vlist;
+			//			ValueList llist = (ValueList) lval;
+			//			Type let = ((TypeList) lt).getElementType();
+			//			ValueList vlist = new ValueList(lt, llist.size() + 1);
+			//			vlist.addAll(llist);
+			//			vlist.add(let.cast(rval));
+			//			return vlist;
 		} else if (!lt.isList() && rt.isList()) {
-			// element + List
-			ValueList rlist = (ValueList) rval;
-			Type ret = ((TypeList) rt).getElementType();
-			ValueList vlist = new ValueList(rt, rlist.size() + 1);
-			vlist.add(ret.cast(lval));
-			vlist.addAll(rlist);
-			return vlist;
+			//			// element + List
+			//			ValueList rlist = (ValueList) rval;
+			//			Type ret = ((TypeList) rt).getElementType();
+			//			ValueList vlist = new ValueList(rt, rlist.size() + 1);
+			//			vlist.add(ret.cast(lval));
+			//			vlist.addAll(rlist);
+			//			return vlist;
 		}
 
-		return null;
+		return sb.toString();
 	}
 
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
-		sb.append("add" + toAsmRetType() + "\n");
+		if (returnType.isList()) {
+			sb.append(toAsmList());
+		} else {
+			sb.append("add" + toAsmRetType() + "\n");
+		}
 		return sb.toString();
 	}
 

@@ -1,11 +1,10 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -15,6 +14,7 @@ import org.bds.run.BdsThread;
  */
 public abstract class MethodNativeList extends MethodNative {
 
+	private static final long serialVersionUID = 488512750560356752L;
 	Type elementType;
 
 	public MethodNativeList(TypeList listType) {
@@ -36,12 +36,11 @@ public abstract class MethodNativeList extends MethodNative {
 	 */
 	protected abstract void initMethod(Type baseType);
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		Value toPush = bdsThread.getValue("toPush");
-		list.add(toPush.get());
-		return toPush;
+	public Value runMethod(BdsThread bdsThread, Value vthis) {
+		return runMethod(bdsThread, (ValueList) vthis);
 	}
+
+	public abstract Value runMethod(BdsThread bdsThread, ValueList vthis);
+
 }
