@@ -1,6 +1,4 @@
 
-string s = "Hello";
+int i = 6
+string s = "this is string interpolation: int i = $i \n"
 
-string s2 = s + " world";
-
-string s3 = s * 3;

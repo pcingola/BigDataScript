@@ -350,6 +350,26 @@ public class BdsVm {
 	}
 
 	/**
+	 * Multiply a string by an int (i.e. repeat string 'n' times)
+	 */
+	String muls(Value v1, Value v2) {
+		String s = "";
+		long count = 0;
+		if (v1.getType().isString()) {
+			s = v1.asString();
+			count = v2.asInt();
+		} else {
+			s = v2.asString();
+			count = v1.asInt();
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < count; i++)
+			sb.append(s);
+		return sb.toString();
+	}
+
+	/**
 	 * Create a new scope
 	 */
 	public void newScope() {
@@ -363,13 +383,13 @@ public class BdsVm {
 		return code[pc++];
 	}
 
+	public Value peek() {
+		return stack[sp - 1];
+	}
+
 	public Value pop() {
 		if (isEmptyStack()) throw new RuntimeException("Pop from empty stack!");
 		return stack[--sp];
-	}
-
-	public Value peek() {
-		return stack[sp - 1];
 	}
 
 	/**
@@ -377,6 +397,16 @@ public class BdsVm {
 	 */
 	public boolean popBool() {
 		return pop().asBool();
+	}
+
+	/**
+	 * Restore from call frame
+	 */
+	void popCallFrame() {
+		CallFrame sf = callFrame[--fp];
+		pc = sf.pc;
+		nodeId = sf.nodeId;
+		scope = sf.scope;
 	}
 
 	/**
@@ -398,16 +428,6 @@ public class BdsVm {
 	 */
 	public void popScope() {
 		scope = scope.getParent();
-	}
-
-	/**
-	 * Restore from call frame
-	 */
-	void popCallFrame() {
-		CallFrame sf = callFrame[--fp];
-		pc = sf.pc;
-		nodeId = sf.nodeId;
-		scope = sf.scope;
 	}
 
 	/**
@@ -727,6 +747,12 @@ public class BdsVm {
 				r2 = popReal();
 				r1 = popReal();
 				push(r1 * r2);
+				break;
+
+			case MULS:
+				v2 = pop();
+				v1 = pop();
+				push(muls(v1, v2));
 				break;
 
 			case NEB:

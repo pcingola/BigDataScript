@@ -59,7 +59,7 @@ public enum OpCode {
 	// Modulo (int)
 	, MODI
 	// Multiplication (int)
-	, MULI, MULR
+	, MULI, MULR, MULS
 	// Set current BdsNode number. Used for references to bds code (debugging, stack trace, etc.)
 	, NODE
 	// No operation
