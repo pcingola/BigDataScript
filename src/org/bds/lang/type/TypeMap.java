@@ -174,12 +174,12 @@ public class TypeMap extends TypeComposite {
 		// Value type
 		String valueTypeName = tree.getChild(0).getChild(0).getText();
 		primitiveType = PrimitiveType.MAP;
-		valueType = Types.get(valueTypeName.toUpperCase());
+		valueType = Types.get(valueTypeName);
 
 		// Key type
 		if (tree.getChildCount() > 3) {
 			String keyTypeName = tree.getChild(2).getChild(0).getText();
-			keyType = Types.get(keyTypeName.toUpperCase());
+			keyType = Types.get(keyTypeName);
 		} else {
 			// Default key is type string
 			keyType = Types.STRING;
