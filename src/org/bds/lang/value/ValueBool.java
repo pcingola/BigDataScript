@@ -75,4 +75,9 @@ public class ValueBool extends ValuePrimitive {
 		value = v.asBool();
 	}
 
+	@Override
+	public String toString() {
+		return Boolean.toString(value);
+	}
+
 }

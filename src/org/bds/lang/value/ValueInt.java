@@ -80,4 +80,8 @@ public class ValueInt extends ValuePrimitive {
 		value = v.asInt();
 	}
 
+	@Override
+	public String toString() {
+		return Long.toString(value);
+	}
 }

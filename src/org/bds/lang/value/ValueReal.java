@@ -74,4 +74,10 @@ public class ValueReal extends ValuePrimitive {
 	public void setValue(Value v) {
 		value = v.asReal();
 	}
+
+	@Override
+	public String toString() {
+		return Double.toString(value);
+	}
+
 }

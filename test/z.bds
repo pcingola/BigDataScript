@@ -3,3 +3,4 @@
 l := ['a', 'b']
 l.add('c')
 println(l)
+println(l.size() + 2)
