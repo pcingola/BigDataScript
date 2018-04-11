@@ -135,7 +135,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 	@Test
 	public void test10() {
 		Gpr.debug("Test");
-		String strings[] = { "l[1] : '", "'\n" };
+		String strings[] = { "l[1] : '", "'\\n" };
 		String vars[] = { "l[1]", "" };
 
 		checkInterpolate("l[1] : '$l[1]'\n", strings, vars);
@@ -144,7 +144,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 	@Test
 	public void test11() {
 		Gpr.debug("Test");
-		String strings[] = { "List with variable index: '", "'\n" };
+		String strings[] = { "List with variable index: '", "'\\n" };
 		String vars[] = { "l[s]", "" };
 
 		checkInterpolate("List with variable index: '$l[$s]'\n", strings, vars);
@@ -153,7 +153,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 	@Test
 	public void test12() {
 		Gpr.debug("Test");
-		String strings[] = { "List with variable index: {", "}\n" };
+		String strings[] = { "List with variable index: {", "}\\n" };
 		String vars[] = { "l[s]", "" };
 
 		checkInterpolate("List with variable index: {$l[$s]}\n", strings, vars);
@@ -162,7 +162,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 	@Test
 	public void test13() {
 		Gpr.debug("Test");
-		String strings[] = { "List with variable index: [", "]\n" };
+		String strings[] = { "List with variable index: [", "]\\n" };
 		String vars[] = { "l[s]", "" };
 
 		checkInterpolate("List with variable index: [$l[$s]]\n", strings, vars);
@@ -180,7 +180,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 	@Test
 	public void test15() {
 		Gpr.debug("Test");
-		String strings[] = { "Map with list and variable index: {", "}\n" };
+		String strings[] = { "Map with list and variable index: {", "}\\n" };
 		String vars[] = { "m{l[s]}", "" };
 
 		checkInterpolate("Map with list and variable index: {$m{$l[$s]}}\n", strings, vars);
