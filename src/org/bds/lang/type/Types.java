@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 /**
  * A registry of all available types
- * 
+ *
  * @author pcingola
  */
 public class Types {
@@ -22,6 +22,10 @@ public class Types {
 
 	protected static HashMap<String, Type> types = new HashMap<>();
 
+	static public Type get(String typeStr) {
+		return types.get(typeStr);
+	}
+
 	/**
 	 * Get all available types
 	 */
@@ -31,10 +35,6 @@ public class Types {
 
 	static void put(Type type) {
 		types.put(type.toString(), type);
-	}
-
-	static public Type get(String typeStr) {
-		return types.get(typeStr);
 	}
 
 	/**

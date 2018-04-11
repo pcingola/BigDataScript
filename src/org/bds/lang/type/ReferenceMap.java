@@ -7,6 +7,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.LiteralString;
 import org.bds.lang.value.ValueMap;
+import org.bds.lang.value.ValueString;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
@@ -85,7 +86,7 @@ public class ReferenceMap extends Reference {
 			LiteralString exprIdx = new LiteralString(this, null);
 			if (idxStr.startsWith("'")) idxStr = idxStr.substring(1);
 			if (idxStr.endsWith("'")) idxStr = idxStr.substring(0, idxStr.length() - 1);
-			exprIdx.setValue(idxStr);
+			exprIdx.setValue(new ValueString(idxStr));
 			expressionKey = exprIdx;
 		}
 	}

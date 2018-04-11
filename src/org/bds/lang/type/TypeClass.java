@@ -59,16 +59,6 @@ public class TypeClass extends TypeComposite {
 			}
 	}
 
-	/**
-	 * Cast value 'v' to this type
-	 */
-	@Override
-	public Value cast(Value v) {
-		if (is(v.getType())) return v; // Same type? No need to cast
-		if (v.getType().isNull()) return v; // Null can be casted to any class
-		throw new RuntimeException("Cannot cast type '" + v.getType() + "' to type '" + this + "'");
-	}
-
 	@Override
 	public int compareTo(Type type) {
 		int cmp = primitiveType.ordinal() - type.primitiveType.ordinal();

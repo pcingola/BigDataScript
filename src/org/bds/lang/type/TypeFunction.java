@@ -2,7 +2,6 @@ package org.bds.lang.type;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.statement.FunctionDeclaration;
-import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.value.Value;
@@ -28,12 +27,6 @@ public class TypeFunction extends TypeComposite {
 
 	public boolean canCast(TypeFunction type) {
 		throw new RuntimeException("Unimplemented!");
-	}
-
-	@Override
-	public Object castNativeObject(Object o) {
-		if (o instanceof MethodDeclaration || o instanceof FunctionDeclaration) return o;
-		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
 	}
 
 	@Override

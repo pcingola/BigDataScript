@@ -10,6 +10,8 @@ import org.bds.lang.value.Value;
  */
 public abstract class TypeUniqueValue extends TypePrimitive {
 
+	private static final long serialVersionUID = -6886551737572639463L;
+
 	public TypeUniqueValue(PrimitiveType primitiveType) {
 		super(primitiveType);
 	}
@@ -19,17 +21,9 @@ public abstract class TypeUniqueValue extends TypePrimitive {
 		return true;
 	}
 
-	/**
-	 * Cast a map 'v' to this type
-	 */
 	@Override
-	public Value cast(Value v) {
-		return v;
-	}
-
-	@Override
-	public Object castNativeObject(Object o) {
-		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
+	public Value newValue(Object v) {
+		throw new RuntimeException("Unimplemented. This method should never be invoked!");
 	}
 
 }

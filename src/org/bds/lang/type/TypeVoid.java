@@ -10,6 +10,8 @@ import org.bds.lang.value.Value;
  */
 public class TypeVoid extends TypeUniqueValue {
 
+	private static final long serialVersionUID = 5168539880975634030L;
+
 	public TypeVoid() {
 		super(PrimitiveType.VOID);
 	}
@@ -23,5 +25,4 @@ public class TypeVoid extends TypeUniqueValue {
 	public Value newDefaultValue() {
 		return Value.VOID;
 	}
-
 }

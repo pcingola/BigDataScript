@@ -12,6 +12,8 @@ import org.bds.lang.type.Type;
  */
 public class ValueUnique extends ValuePrimitive {
 
+	private static final long serialVersionUID = 8806864117675019213L;
+
 	private static Map<Type, ValueUnique> valueUniqueByType = new HashMap<>();
 
 	protected Type type;
@@ -52,18 +54,12 @@ public class ValueUnique extends ValuePrimitive {
 	}
 
 	@Override
-	public Object get() {
-		return null;
-	}
-
-	@Override
 	public Type getType() {
 		return type;
 	}
 
 	@Override
-	public void set(Object v) {
-		// This value cannot be set. Nothing to do
+	public void setValue(Value v) {
+		// nothing to do: Value cannot be set.
 	}
-
 }

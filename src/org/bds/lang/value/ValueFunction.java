@@ -24,11 +24,6 @@ public class ValueFunction extends ValueComposite {
 		return this; // Function types are not cloned
 	}
 
-	@Override
-	public Object get() {
-		return functionDecl;
-	}
-
 	public FunctionDeclaration getFunctionDeclaration() {
 		return functionDecl;
 	}
@@ -43,8 +38,8 @@ public class ValueFunction extends ValueComposite {
 	}
 
 	@Override
-	public void set(Object v) {
-		functionDecl = (FunctionDeclaration) v;
+	public void setValue(Value v) {
+		// Ignored: Value cannot be set.
 	}
 
 	@Override

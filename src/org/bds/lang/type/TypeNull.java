@@ -10,6 +10,8 @@ import org.bds.lang.value.Value;
  */
 public class TypeNull extends TypeUniqueValue {
 
+	private static final long serialVersionUID = 8321504654535669530L;
+
 	public TypeNull() {
 		super(PrimitiveType.NULL);
 	}
@@ -23,5 +25,4 @@ public class TypeNull extends TypeUniqueValue {
 	public Value newDefaultValue() {
 		return Value.NULL;
 	}
-
 }

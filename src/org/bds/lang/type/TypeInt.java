@@ -5,6 +5,8 @@ import org.bds.lang.value.ValueInt;
 
 public class TypeInt extends TypePrimitive {
 
+	private static final long serialVersionUID = 1032236278001833639L;
+
 	private static final Integer ZERO = 0;
 
 	public TypeInt() {
@@ -14,31 +16,6 @@ public class TypeInt extends TypePrimitive {
 	@Override
 	public boolean canCastTo(Type type) {
 		return type.isBool() || type.isInt() || type.isReal() || type.isString();
-	}
-
-	/**
-	 * Cast a map 'v' to this type (i.e. convert to type 'int')
-	 */
-	@Override
-	public Value cast(Value v) {
-		Type vt = v.getType();
-		if (vt.isInt()) return v;
-
-		ValueInt vb = new ValueInt();
-		long val = 0;
-
-		if (vt.isBool()) val = v.asBool() ? 1 : 0;
-		else throw new RuntimeException("Cannot convert type '" + v.getType() + "' to 'int'");
-
-		vb.set(val);
-		return vb;
-	}
-
-	@Override
-	public Object castNativeObject(Object o) {
-		if (o instanceof Long) return o;
-		if (o instanceof Boolean) return ((Boolean) o) ? 1L : 0L;
-		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
 	}
 
 	@Override
@@ -54,5 +31,10 @@ public class TypeInt extends TypePrimitive {
 	@Override
 	public Value newDefaultValue() {
 		return new ValueInt();
+	}
+
+	@Override
+	public Value newValue(Object v) {
+		return new ValueInt((Long) v);
 	}
 }

@@ -97,13 +97,6 @@ public class TypeList extends TypeComposite {
 	}
 
 	@Override
-	public Value cast(Value v) {
-		if (is(v.getType())) return v; // Same type? No need to cast
-		if (v.getType().isList() && ((TypeList) v.getType()).getElementType().isVoid()) return newDefaultValue(); // Empty list?
-		throw new RuntimeException("Cannot cast type '" + v.getType() + "' to type '" + this + "'");
-	}
-
-	@Override
 	public int compareTo(Type type) {
 		// Compare type
 		int cmp = super.compareTo(type);
@@ -189,8 +182,12 @@ public class TypeList extends TypeComposite {
 	}
 
 	@Override
-	protected void parse(ParseTree tree) {
+	public Value newValue(Object v) {
+		throw new RuntimeException("Unimplemented. This method should never be invoked!");
+	}
 
+	@Override
+	protected void parse(ParseTree tree) {
 		// !!! TODO: We are only allowing to build lists of primitive types
 		primitiveType = PrimitiveType.LIST;
 		elementType = (Type) factory(tree, 0);

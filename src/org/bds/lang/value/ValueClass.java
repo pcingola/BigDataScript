@@ -31,14 +31,6 @@ public class ValueClass extends ValueComposite {
 		throw new RuntimeException("!!! UNIMPLEMENTED");
 	}
 
-	/**
-	 * Get native object (raw data)
-	 */
-	@Override
-	public Object get() {
-		return fields;
-	}
-
 	public Value getValue(String name) {
 		if (isNull()) throw new RuntimeException("Null pointer: Cannot access field '" + getType() + "." + name + "'");
 		return fields.get(name);
@@ -80,15 +72,14 @@ public class ValueClass extends ValueComposite {
 		throw new RuntimeException("String parsing unimplemented for type '" + this + "'");
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void set(Object v) {
-		fields = (Map<String, Value>) v;
-	}
-
 	public void setValue(String name, Value v) {
 		if (isNull()) throw new RuntimeException("Null pointer: Cannot set field '" + getType() + "." + name + "'");
 		fields.put(name, v);
+	}
+
+	@Override
+	public void setValue(Value v) {
+		fields = ((ValueClass) v).fields;
 	}
 
 	@Override

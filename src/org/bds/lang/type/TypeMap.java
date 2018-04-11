@@ -1,7 +1,6 @@
 package org.bds.lang.type;
 
 import java.util.List;
-import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
@@ -77,22 +76,9 @@ public class TypeMap extends TypeComposite {
 	@Override
 	public boolean canCastTo(Type type) {
 		return equals(type) // Same type
-				|| isEmptyMap() // Empty mapscan be converted in assignment. e.g.: " map = {} "
+				|| (isEmptyMap() && type.isMap()) // Empty maps can be converted in assignment. e.g.: " map = {} "
 				|| type.isBool() // Convert to boolean value
 		;
-	}
-
-	@Override
-	public Value cast(Value v) {
-		if (is(v.getType())) return v; // Same type? No need to cast
-		if (v.getType().isMap() && ((TypeMap) v.getType()).isEmptyMap()) return newDefaultValue(); // Empty map? Create new value
-		throw new RuntimeException("Cannot cast type '" + v.getType() + "' to type '" + this + "'");
-	}
-
-	@Override
-	public Object castNativeObject(Object o) {
-		if (o instanceof Map) return o;
-		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
 	}
 
 	@Override
@@ -174,6 +160,11 @@ public class TypeMap extends TypeComposite {
 	@Override
 	public Value newDefaultValue() {
 		return new ValueMap(this);
+	}
+
+	@Override
+	public Value newValue(Object v) {
+		throw new RuntimeException("Unimplemented. This method should never be invoked!");
 	}
 
 	@Override

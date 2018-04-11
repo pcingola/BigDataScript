@@ -2,6 +2,7 @@ package org.bds.lang.type;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
+import org.bds.lang.value.Value;
 
 /**
  * Primitive types
@@ -21,8 +22,8 @@ public abstract class TypeComposite extends Type {
 	}
 
 	@Override
-	public Object castNativeObject(Object o) {
-		throw new RuntimeException("Cannot cast native object '" + o.getClass().getCanonicalName() + "' to type '" + this + "'");
+	public Value newValue(Object v) {
+		throw new RuntimeException("Unimplemented. This method should never be invoked!");
 	}
 
 }

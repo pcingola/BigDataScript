@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.util.Gpr;
 import org.junit.Test;
@@ -579,8 +580,8 @@ public class TestCasesRun2 extends TestCasesBase {
 
 		Assert.assertEquals(10, dir2.size());
 
-		for (Object o : dir2.get()) {
-			String f = o.toString();
+		for (Value v : dir2) {
+			String f = v.toString();
 			if (debug) System.out.println(f);
 			Assert.assertTrue("Path must be canonical", f.startsWith("/"));
 			Assert.assertTrue("Path must be canonical", f.endsWith(".bds"));

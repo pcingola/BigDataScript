@@ -6,6 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.LiteralInt;
+import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueList;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
@@ -83,7 +84,7 @@ public class ReferenceList extends Reference {
 		} else {
 			// String literal
 			LiteralInt litInt = new LiteralInt(this, null);
-			litInt.setValue(Gpr.parseLongSafe(idxStr));
+			litInt.setValue(new ValueInt(Gpr.parseLongSafe(idxStr)));
 			exprIdx = litInt;
 		}
 	}
