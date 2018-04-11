@@ -1,12 +1,10 @@
+#!/usr/bin/env bds
 
-int f( int i ) {
+ss := ['hi']
+string[] zz
 
-	int g( int j ) {		// OK to declare a function in a function
-		return 2*j;
-	}
+s := ss[0]
+s.isEmpty()
 
-	int h = g( i );
-	return h;
-}
+print("OK!\n")
 
-println(f(1))

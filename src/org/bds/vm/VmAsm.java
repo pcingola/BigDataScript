@@ -165,6 +165,10 @@ public class VmAsm {
 
 		Type types[] = { Types.BOOL, Types.INT, Types.REAL, Types.STRING };
 
+		// Add primitive types
+		for (Type t : types)
+			addType(t);
+
 		// Add all basic list types
 		for (Type te : types)
 			addType(TypeList.get(te));

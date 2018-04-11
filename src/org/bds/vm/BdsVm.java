@@ -149,9 +149,11 @@ public class BdsVm {
 		// Add all native functions from all defined types (e.g. classes, list, map, etc.)
 		for (Type t : types) {
 			SymbolTable st = t.getSymbolTable();
-			for (ValueFunction vf : st.getFunctions()) {
-				FunctionDeclaration fd = vf.getFunctionDeclaration();
-				addFunction(fd);
+			if (st.hasFunctions()) {
+				for (ValueFunction vf : st.getFunctions()) {
+					FunctionDeclaration fd = vf.getFunctionDeclaration();
+					addFunction(fd);
+				}
 			}
 		}
 	}
