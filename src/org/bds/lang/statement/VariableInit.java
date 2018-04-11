@@ -111,7 +111,7 @@ public class VariableInit extends BdsNode {
 			else if (returnType.isInt()) return "pushi 0\n";
 			else if (returnType.isReal()) return "pushr 0.0\n";
 			else if (returnType.isString()) return "pushs ''\n";
-			else if (returnType.isList() || returnType.isMap() || returnType.isClass()) return "new " + returnType.toString();
+			else if (returnType.isList() || returnType.isMap() || returnType.isClass()) return "new " + returnType.toString() + "\n";
 		}
 		throw new RuntimeException("Unknown default value for type '" + returnType + "'");
 	}
@@ -129,7 +129,8 @@ public class VariableInit extends BdsNode {
 		return super.toAsm() //
 				+ (expression != null ? expression.toAsm() : toAsmDefaultValue()) //
 				+ (help != null ? "# help: " + help + "\n" : "") //
-				+ "store  " + varName + "\n"//
+				+ "store  " + varName + "\n" //
+				+ "pop\n" //
 		;
 	}
 

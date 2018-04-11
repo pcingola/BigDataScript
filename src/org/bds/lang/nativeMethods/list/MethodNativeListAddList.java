@@ -38,6 +38,6 @@ public class MethodNativeListAddList extends MethodNativeList {
 	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
 		ValueList toPush = (ValueList) bdsThread.getValue("toPush");
 		vthis.addAll(toPush);
-		return toPush;
+		return vthis;
 	}
 }

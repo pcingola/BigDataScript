@@ -105,6 +105,7 @@ public class LiteralMap extends Literal {
 			sb.append(exprKey.toAsm());
 			sb.append("load " + varMap + "\n");
 			sb.append("setmap\n");
+			sb.append("pop\n");
 		}
 
 		// Leave map as last element in the stack

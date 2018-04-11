@@ -25,7 +25,7 @@ public class MethodNativeListAdd extends MethodNativeList {
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "add";
-		returnType = baseType;
+		returnType = classType;
 
 		String argNames[] = { "this", "toPush" };
 		Type argTypes[] = { classType, baseType };
@@ -38,6 +38,6 @@ public class MethodNativeListAdd extends MethodNativeList {
 	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
 		Value toPush = bdsThread.getValue("toPush");
 		vthis.add(toPush);
-		return toPush;
+		return vthis;
 	}
 }

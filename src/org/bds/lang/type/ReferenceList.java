@@ -103,6 +103,20 @@ public class ReferenceList extends Reference {
 	}
 
 	@Override
+	public String toAsm() {
+		return exprIdx.toAsm() //
+				+ exprList.toAsm() //
+				+ "reflist\n";
+	}
+
+	@Override
+	public String toAsmSet() {
+		return exprIdx.toAsm() //
+				+ exprList.toAsm() //
+				+ "setlist\n";
+	}
+
+	@Override
 	public String toString() {
 		return exprList + "[" + exprIdx + "]";
 	}

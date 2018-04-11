@@ -4,9 +4,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.nativeMethods.list.MethodNativeListAdd;
+import org.bds.lang.nativeMethods.list.MethodNativeListAddList;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.ValueFunction;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -78,52 +81,54 @@ public class ExpressionPlus extends ExpressionMath {
 		return null;
 	}
 
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		if (returnType.isList()) {
+			sb.append(toAsmNode());
+			sb.append(toAsmList());
+		} else {
+			sb.append(super.toAsm());
+			sb.append("add" + toAsmRetType() + "\n");
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * Evaluate a 'plus' expression involving at least one list
+	 * Note: We use native method calls
 	 */
 	String toAsmList() {
 		StringBuilder sb = new StringBuilder();
 		Type lt = left.getReturnType();
 		Type rt = right.getReturnType();
 
+		ValueFunction methodAdd = returnType.getSymbolTable().findFunction(MethodNativeListAdd.class);
+		ValueFunction methodAddList = returnType.getSymbolTable().findFunction(MethodNativeListAddList.class);
+
 		if (lt.isList() && rt.isList()) {
-			//			// List + List
-			//			sb.append(left.toAsm());
-			//			sb.append(right.toAsm());
-			//			sb.append("swap\n");
-			//			sb.append("new " + returnType + "\n");
-			//			sb.append("callmnative \n");
-			//			sb.append("addl\n");
+			// List + List
+			sb.append("new " + returnType + "\n");
+			sb.append(left.toAsm());
+			sb.append("callmnative " + methodAddList + "\n");
+			sb.append(right.toAsm());
+			sb.append("callmnative " + methodAddList + "\n");
 		} else if (lt.isList() && !rt.isList()) {
 			// List + element
-			//			ValueList llist = (ValueList) lval;
-			//			Type let = ((TypeList) lt).getElementType();
-			//			ValueList vlist = new ValueList(lt, llist.size() + 1);
-			//			vlist.addAll(llist);
-			//			vlist.add(let.cast(rval));
-			//			return vlist;
+			sb.append("new " + returnType + "\n");
+			sb.append(left.toAsm());
+			sb.append("callmnative " + methodAddList + "\n");
+			sb.append(right.toAsm());
+			sb.append("callmnative " + methodAdd + "\n");
 		} else if (!lt.isList() && rt.isList()) {
-			//			// element + List
-			//			ValueList rlist = (ValueList) rval;
-			//			Type ret = ((TypeList) rt).getElementType();
-			//			ValueList vlist = new ValueList(rt, rlist.size() + 1);
-			//			vlist.add(ret.cast(lval));
-			//			vlist.addAll(rlist);
-			//			return vlist;
+			// element + List
+			sb.append("new " + returnType + "\n");
+			sb.append(left.toAsm());
+			sb.append("callmnative " + methodAdd + "\n");
+			sb.append(right.toAsm());
+			sb.append("callmnative " + methodAddList + "\n");
 		}
 
-		return sb.toString();
-	}
-
-	@Override
-	public String toAsm() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.toAsm());
-		if (returnType.isList()) {
-			sb.append(toAsmList());
-		} else {
-			sb.append("add" + toAsmRetType() + "\n");
-		}
 		return sb.toString();
 	}
 

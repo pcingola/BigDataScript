@@ -1,6 +1,12 @@
 
 
-l := ['a', 'b']
-l.add('c')
+#x := 0
+#for(int i=1 ; i < 10 ; i++) x += i
+#println(x)
+
+string[] l
+#l := ['a', 'b']
+l = ['a', 'b'] + 'c'
+#l = 'c' + l
+l[1] = 'z'
 println(l)
-println(l.size() + 2)

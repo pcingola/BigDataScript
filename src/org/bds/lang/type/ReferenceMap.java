@@ -106,6 +106,20 @@ public class ReferenceMap extends Reference {
 	}
 
 	@Override
+	public String toAsm() {
+		return expressionKey.toAsm() //
+				+ exprMap.toAsm() //
+				+ "reflist\n";
+	}
+
+	@Override
+	public String toAsmSet() {
+		return expressionKey.toAsm() //
+				+ exprMap.toAsm() //
+				+ "setmap\n";
+	}
+
+	@Override
 	public String toString() {
 		return exprMap + "{" + expressionKey + "}";
 	}

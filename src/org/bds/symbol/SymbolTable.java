@@ -54,6 +54,21 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	}
 
 	/**
+	 * Find a native function or method by class
+	 */
+	public ValueFunction findFunction(Class<? extends FunctionDeclaration> clazz) {
+		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
+			for (List<ValueFunction> lvf : symtab.functions.values()) {
+				for (ValueFunction vf : lvf) {
+					FunctionDeclaration fd = vf.getFunctionDeclaration();
+					if (fd.getClass() == clazz) return vf;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Find a function that matches a function call
 	 */
 	public ValueFunction findFunction(String functionName, Args args) {

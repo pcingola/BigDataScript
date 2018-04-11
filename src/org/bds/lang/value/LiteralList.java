@@ -92,6 +92,7 @@ public class LiteralList extends Literal {
 		String varList = SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + getId() + "_list";
 		sb.append("new " + returnType + "\n");
 		sb.append("store " + varList + "\n");
+		sb.append("pop\n");
 
 		// Add all elements to list
 		for (int i = 0; i < values.length; i++) {
@@ -101,6 +102,7 @@ public class LiteralList extends Literal {
 			sb.append("pushi " + i + "\n");
 			sb.append("load " + varList + "\n");
 			sb.append("setlist\n");
+			sb.append("pop\n");
 		}
 
 		// Leave list as last element in the stack

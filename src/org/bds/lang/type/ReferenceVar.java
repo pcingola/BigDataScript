@@ -121,7 +121,7 @@ public class ReferenceVar extends Reference {
 	@Override
 	public String toAsmSet() {
 		if (classField) return "load this\nsetfield " + name + "\n";
-		return "store " + name + "\n";
+		return "store " + name + "\n"; // Leave value in the stack
 	}
 
 	@Override

@@ -368,6 +368,10 @@ public class BdsVm {
 		return stack[--sp];
 	}
 
+	public Value peek() {
+		return stack[sp - 1];
+	}
+
 	/**
 	 * Pop a bool from stack
 	 */
@@ -787,7 +791,7 @@ public class BdsVm {
 				break;
 
 			case POP:
-				pop();
+				sp--; // Drop last value from stack
 				break;
 
 			case PRINT:
@@ -851,32 +855,30 @@ public class BdsVm {
 				v1 = pop();
 				v2 = pop();
 				v1.setValue(v2);
+				push(v1);
 				break;
 
 			case SETFIELD:
 				name = constantString();
 				vclass = (ValueClass) pop();
-				val = pop();
-				vclass.setValue(name, val);
+				vclass.setValue(name, peek()); // We leave the value in the stack
 				break;
 
 			case SETLIST:
 				vlist = (ValueList) pop();
 				idx = popInt();
-				val = pop();
-				vlist.setValue(idx, val);
+				vlist.setValue(idx, peek()); // We leave the value in the stack
 				break;
 
 			case SETMAP:
 				vmap = (ValueMap) pop();
 				v1 = pop(); // Key
-				v2 = pop(); // Value
-				vmap.put(v1, v2);
+				vmap.put(v1, peek()); // We leave the value in the stack
 				break;
 
 			case STORE:
 				name = constantString();
-				scope.add(name, pop());
+				scope.add(name, peek()); // We leave the value in the stack
 				break;
 
 			case SUBI:

@@ -13,6 +13,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class ReferenceThis extends ReferenceVar {
 
+	private static final long serialVersionUID = -6552060494780352017L;
+
 	public ReferenceThis(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		name = ClassDeclaration.THIS;
