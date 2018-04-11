@@ -72,7 +72,6 @@ public class Return extends Statement {
 		sb.append(super.toAsm());
 		sb.append((expr != null ? expr.toAsm() : "pushi 0"));
 		sb.append("ret\n");
-
 		return sb.toString();
 	}
 

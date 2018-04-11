@@ -292,7 +292,7 @@ public class BdsTest {
 	 * Get a symbol
 	 */
 	public Value getValue(String name) {
-		return bds.getBdsRun().getProgramUnit().getRunScope().getValue(name);
+		return bds.getBdsRun().getScope().getValue(name);
 	}
 
 	/**
@@ -352,7 +352,7 @@ public class BdsTest {
 
 		// Check variable's map on the recovered (checkpoint run) program
 		if (varName != null) {
-			Value val = bigDataScript2.getBdsRun().getProgramUnit().getRunScope().getValue(varName);
+			Value val = bigDataScript2.getBdsRun().getScope().getValue(varName);
 			Assert.assertTrue(errMsg("Variable '" + varName + "' not found "), val != null);
 			Assert.assertEquals( //
 					errMsg("Variable '" + varName + "' has different map than expeced:\n" //

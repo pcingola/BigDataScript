@@ -10,10 +10,10 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.statement.Statement;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -26,7 +26,6 @@ public class ProgramUnit extends BlockWithFile {
 	private static final long serialVersionUID = 3819936306695046515L;
 
 	protected BdsThread bdsThread;
-	protected Scope runScope; // Scope used when running this program. Used in test cases
 
 	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
 		try {
@@ -46,10 +45,6 @@ public class ProgramUnit extends BlockWithFile {
 	@Override
 	public BdsThread getBigDataScriptThread() {
 		return bdsThread;
-	}
-
-	public Scope getRunScope() {
-		return runScope;
 	}
 
 	@Override
@@ -89,10 +84,23 @@ public class ProgramUnit extends BlockWithFile {
 
 	@Override
 	public String toAsm() {
-		return "main:\n" //
-				+ super.toAsm() //
-				+ "halt" //
-		;
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(toAsmNode());
+		sb.append("main:\n");
+
+		if (isNeedsScope()) sb.append("scopepush\n");
+
+		for (Statement s : statements)
+			sb.append(s.toAsm());
+
+		// Note: We don't pop the scope.
+		//       We leave the last scope when because it is useful for 
+		//       checking variable values in test cases. Since the program
+		//       finished, it makes no difference (we are cleaning up later).
+		sb.append("halt\n");
+
+		return sb.toString();
 	}
 
 }

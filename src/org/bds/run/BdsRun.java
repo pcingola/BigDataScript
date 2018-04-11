@@ -26,6 +26,7 @@ import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.type.Types;
 import org.bds.scope.GlobalScope;
+import org.bds.scope.Scope;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.task.TaskDependecies;
 import org.bds.util.Gpr;
@@ -168,6 +169,14 @@ public class BdsRun {
 
 	public ProgramUnit getProgramUnit() {
 		return programUnit;
+	}
+
+	public Scope getScope() {
+		return vm.getScope();
+	}
+
+	public BdsVm getVm() {
+		return vm;
 	}
 
 	/**
