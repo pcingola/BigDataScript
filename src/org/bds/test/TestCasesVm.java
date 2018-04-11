@@ -13,35 +13,28 @@ import org.junit.Test;
  */
 public class TestCasesVm extends TestCasesBase {
 
-	//	@Test
-	//	public void test00() {
-	//		Gpr.debug("Test");
-	//		runVmAndCheck("test/vm00.asm", "a", "42");
-	//	}
-	//
-	//	@Test
-	//	public void test01() {
-	//		Gpr.debug("Test");
-	//		runVmAndCheck("test/vm01.asm", "z", "8");
-	//	}
-	//
-	//	@Test
-	//	public void test02() {
-	//		Gpr.debug("Test");
-	//		runVmAndCheck("test/vm02.asm", "z", "hi");
-	//	}
-	//
-	//	@Test
-	//	public void test03() {
-	//		Gpr.debug("Test");
-	//		runVmAndCheck("test/vm03.asm", "z", "bye");
-	//	}
+	@Test
+	public void test00() {
+		Gpr.debug("Test");
+		runVmAndCheck("test/vm00.asm", "a", "42");
+	}
 
 	@Test
-	public void test04() {
+	public void test01() {
 		Gpr.debug("Test");
-		runVmAndCheck("test/z.bds", "z", "bye");
+		runVmAndCheck("test/vm01.asm", "z", "8");
+	}
 
+	@Test
+	public void test02() {
+		Gpr.debug("Test");
+		runVmAndCheck("test/vm02.asm", "z", "hi");
+	}
+
+	@Test
+	public void test03() {
+		Gpr.debug("Test");
+		runVmAndCheck("test/vm03.asm", "z", "bye");
 	}
 
 }

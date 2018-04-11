@@ -7,7 +7,7 @@ ret
 
 main:
 pushi 0
-store z
+var z
 pushi 7
 call f(x)  # Function call:
            #    - create new scope

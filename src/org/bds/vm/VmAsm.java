@@ -144,7 +144,7 @@ public class VmAsm {
 	String label(String line) {
 		int idx = line.lastIndexOf(':');
 		int idxQuote = line.lastIndexOf('\'');
-		if (idx < 0 || idx < idxQuote) return line;
+		if (idx < 0 || idx < idxQuote) return line.trim();
 
 		String label = line.substring(0, idx).trim();
 		String rest = line.substring(idx + 1).trim();

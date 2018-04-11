@@ -1,4 +1,5 @@
 
 main:
 pushi 42
-store a
+var a
+pop
