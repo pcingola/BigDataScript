@@ -5,9 +5,11 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.nativeMethods.list.MethodNativeListSize;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
+import org.bds.lang.value.ValueFunction;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -66,13 +68,15 @@ public class ForLoopList extends StatementWithScope {
 		String loopEndLabel = getClass().getSimpleName() + "_end_" + id;
 
 		// Loop variable
-		String varName = beginVarDecl.getVarInit()[0].getVarName();
+		VariableInit vinit = beginVarDecl.getVarInit()[0];
+		String varName = vinit.getVarName();
 
 		// Internal state variables
 		String varBaseName = SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + getId();
 		String varList = varBaseName + "_list";
 		String varCounter = varBaseName + "_count";
 		String varMaxCounter = varBaseName + "_max_count";
+		ValueFunction methodSize = returnType.getSymbolTable().findFunction(MethodNativeListSize.class);
 
 		//
 		// Sample code;
@@ -93,19 +97,23 @@ public class ForLoopList extends StatementWithScope {
 
 		// Evaluate expression: '$list = expressionList' 
 		sb.append(expression.toAsm());
-		sb.append("store " + varList + "\n");
+		sb.append("var " + varList + "\n");
+		sb.append("pop\n");
 
 		// Get list size: '$maxCount = $list.size()'
 		sb.append("load " + varList + "\n");
-		sb.append("call size()\n");
-		sb.append("store " + varMaxCounter + "\n");
+		sb.append("callmnative " + methodSize + "\n");
+		sb.append("var " + varMaxCounter + "\n");
+		sb.append("pop\n");
 
 		// Loop start		
 		sb.append(loopInitLabel + ":\n");
 
 		// Initialize variables: 'for(int $count = 0 ;'
+		sb.append(vinit.toAsm());
 		sb.append("pushi 0\n");
-		sb.append("store " + varCounter + "\n");
+		sb.append("var " + varCounter + "\n");
+		sb.append("pop\n");
 
 		// Loop condition: 'for(... ; $count < $maxCount ; ...)'
 		sb.append(loopStartLabel + ":\n");
@@ -119,14 +127,17 @@ public class ForLoopList extends StatementWithScope {
 		sb.append("load " + varList + "\n");
 		sb.append("reflist\n");
 		sb.append("store " + varName + "\n");
+		sb.append("pop\n");
 
 		// Execute statements: 'statements'
 		sb.append(statement.toAsm());
 
 		// Loop end part: $i++
 		sb.append(loopContinueLabel + ":\n");
-		sb.append("load " + varCounter);
-		sb.append("inc");
+		sb.append("load " + varCounter + "\n");
+		sb.append("inc\n");
+		sb.append("store " + varCounter + "\n");
+		sb.append("pop\n");
 
 		// Jump to beginning of loop
 		sb.append("jmp " + loopStartLabel + "\n");

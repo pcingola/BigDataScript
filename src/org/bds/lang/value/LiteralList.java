@@ -91,7 +91,7 @@ public class LiteralList extends Literal {
 		// Create a new list (temporary variable)
 		String varList = SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + getId() + "_list";
 		sb.append("new " + returnType + "\n");
-		sb.append("store " + varList + "\n");
+		sb.append("var " + varList + "\n");
 		sb.append("pop\n");
 
 		// Add all elements to list

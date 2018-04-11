@@ -21,4 +21,10 @@ public class Expression extends Statement {
 	public boolean isStopDebug() {
 		return false;
 	}
+
+	@Override
+	public String toAsm() {
+		return "";
+	}
+
 }
