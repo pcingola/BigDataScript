@@ -1,20 +1,22 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.List;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * Has: Check if an element exists in the list
- * 
+ *
  * @author karthik-rp
  */
 public class MethodNativeListHas extends MethodNativeList {
+
+	private static final long serialVersionUID = 989799140756758369L;
 
 	public MethodNativeListHas(TypeList listType) {
 		super(listType);
@@ -32,11 +34,9 @@ public class MethodNativeListHas extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		List list = (List) objThis;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
 		Value toCheck = bdsThread.getValue("toCheck");
-		return list.contains(toCheck.get());
+		return new ValueBool(vthis.contains(toCheck));
 	}
 }

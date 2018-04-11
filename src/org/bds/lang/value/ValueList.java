@@ -75,6 +75,10 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 		return size() - vl.size();
 	}
 
+	public boolean contains(Value v) {
+		return list.contains(v);
+	}
+
 	public Type getElementType() {
 		return getType().getElementType();
 	}
@@ -151,50 +155,5 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 		}
 		return "[" + sb.toString() + "]";
 	}
-
-	//	@Override
-	//	public boolean addAll(Collection<? extends Value> vcol) {
-	//		return list.addAll(vcol);
-	//	}
-	//
-	//	@Override
-	//	public void clear() {
-	//		list.clear();
-	//	}
-	//
-	//	@Override
-	//	public boolean contains(Object v) {
-	//		return list.contains(v);
-	//	}
-	//
-	//	@Override
-	//	public boolean containsAll(Collection<?> vcol) {
-	//		return list.containsAll(vcol);
-	//	}
-	//
-	//	@Override
-	//	public boolean remove(Object v) {
-	//		return list.remove(v);
-	//	}
-	//
-	//	@Override
-	//	public boolean removeAll(Collection<?> vcol) {
-	//		return list.removeAll(vcol);
-	//	}
-	//
-	//	@Override
-	//	public boolean retainAll(Collection<?> vcol) {
-	//		return list.retainAll(vcol);
-	//	}
-	//
-	//	@Override
-	//	public Object[] toArray() {
-	//		return list.toArray();
-	//	}
-	//
-	//	@Override
-	//	public <T> T[] toArray(T[] a) {
-	//		return list.toArray(a);
-	//	}
 
 }

@@ -1,12 +1,12 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.List;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -15,6 +15,8 @@ import org.bds.run.BdsThread;
  * @author pcingola
  */
 public class MethodNativeListCount extends MethodNativeList {
+
+	private static final long serialVersionUID = 3750856247316038370L;
 
 	public MethodNativeListCount(TypeList listType) {
 		super(listType);
@@ -32,17 +34,13 @@ public class MethodNativeListCount extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		List list = (List) objThis;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
 		Value toCount = bdsThread.getValue("toCount");
-		Object oToCount = toCount.get();
-
 		long count = 0;
-		for (Object o : list)
-			if (oToCount.equals(o)) count++;
+		for (Value v : vthis)
+			if (toCount.equals(v)) count++;
 
-		return count;
+		return new ValueInt(count);
 	}
 }
