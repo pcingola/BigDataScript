@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
@@ -94,9 +95,8 @@ public class VmAsm {
 			if (opcode.hasParam()) param = param(line);
 			if (verbose) {
 				// Show instruction
-				String q = opcode.isParamString() ? "'" : "";
 				System.out.println("\t" + opcode.toString().toLowerCase() //
-						+ (param != null ? " " + q + param + q : "") //
+						+ (param != null ? " " + param : "") //
 				);
 			}
 			// Add instruction
@@ -199,11 +199,7 @@ public class VmAsm {
 		case SETFIELD:
 		case STORE:
 		case VAR:
-			int lastCharIdx = param.length() - 1;
-			if ((param.charAt(0) == '\'' && param.charAt(lastCharIdx) == '\'') // Using single quotes
-					|| (param.charAt(0) == '"' && param.charAt(lastCharIdx) == '"')) // Using double quotes
-				return param.substring(1, param.length() - 1); // Remove quotes
-			return param; // Unquoted string
+			return parseParamString(param);
 
 		case NEW:
 			return getType(param);
@@ -239,6 +235,20 @@ public class VmAsm {
 		default:
 			return bdsvm.addConstant(oparam);
 		}
+	}
+
+	/**
+	 * Parse literal string
+	 */
+	String parseParamString(String param) {
+		int lastCharIdx = param.length() - 1;
+		if ((param.charAt(0) == '\'' && param.charAt(lastCharIdx) == '\'') // Using single quotes
+				|| (param.charAt(0) == '"' && param.charAt(lastCharIdx) == '"')) // Using double quotes
+		{
+			String escapedStr = param.substring(1, param.length() - 1); // Remove quotes
+			return InterpolateVars.unEscape(escapedStr);
+		}
+		return param; // Unquoted string
 	}
 
 	/**

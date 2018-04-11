@@ -88,7 +88,7 @@ public class InterpolateVars extends Literal {
 	}
 
 	/**
-	 * Almost literal string: Only unescape dolar
+	 * Almost literal string: Only un-escape dollar
 	 */
 	public static String unEscapeDollar(String str) {
 		StringBuilder sb = new StringBuilder();
@@ -174,7 +174,8 @@ public class InterpolateVars extends Literal {
 			// Parse string literal part
 			//---
 			Tuple<String, String> tupStr = findString(str);
-			String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : unEscape(tupStr.first);
+			// String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : unEscape(tupStr.first);
+			String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : tupStr.first;
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed
 

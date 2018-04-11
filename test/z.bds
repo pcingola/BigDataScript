@@ -1,4 +1,6 @@
 
 int i = 6
 string s = "this is string interpolation: int i = $i \n"
+println(s)
+print("---\n\thi\n---\n")
 

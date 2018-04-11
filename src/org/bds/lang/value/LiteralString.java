@@ -57,7 +57,7 @@ public class LiteralString extends Literal {
 		interpolateVars = new InterpolateVars(this, null);
 		if (!interpolateVars.parse(valueStr)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
-			value = new ValueString(InterpolateVars.unEscape(valueStr)); // Un-escape characters
+			// value = new ValueString(InterpolateVars.unEscape(valueStr)); // Un-escape characters
 		}
 	}
 
