@@ -40,10 +40,11 @@ public class VmFunction {
 		if (s.length <= 1) return;
 		String params = s[1];
 
-		args = params.split(",");
-		for (int i = 0; i < args.length; i++) {
-			args[i] = args[i].trim();
-			String[] tn = args[i].split("\\s+");
+		String[] argsDef = params.split(",");
+		args = new String[argsDef.length];
+		for (int i = 0; i < argsDef.length; i++) {
+			String argDef = argsDef[i].trim();
+			String[] tn = argDef.split("\\s+");
 			if (tn.length > 1) args[i] = tn[1].trim(); // First item is 'type', second is argument name
 		}
 	}

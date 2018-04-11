@@ -136,7 +136,7 @@ public class VmAsm {
 		if (programUnit == null) return;
 
 		// Add all classes
-		List<BdsNode> cdecls = programUnit.findNodes(ClassDeclaration.class, false, true);
+		List<BdsNode> cdecls = programUnit.findNodes(ClassDeclaration.class, true, true);
 		for (BdsNode n : cdecls) {
 			ClassDeclaration cd = (ClassDeclaration) n;
 			bdsvm.addType(cd.getType());
@@ -150,7 +150,7 @@ public class VmAsm {
 		if (programUnit == null) return;
 
 		// Add all functions
-		List<BdsNode> fdecls = programUnit.findNodes(StatementFunctionDeclaration.class, false, true);
+		List<BdsNode> fdecls = programUnit.findNodes(StatementFunctionDeclaration.class, true, true);
 		for (BdsNode n : fdecls) {
 			FunctionDeclaration fd = (FunctionDeclaration) n;
 			bdsvm.addFunction(fd);

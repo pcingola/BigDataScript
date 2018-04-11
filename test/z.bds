@@ -1,8 +1,12 @@
 
+int f( int i ) {
 
-string s = "this is a multi 
-line string. 
-It can span as many lines as you want 
-yes!"
-println(s)
+	int g( int j ) {		// OK to declare a function in a function
+		return 2*j;
+	}
 
+	int h = g( i );
+	return h;
+}
+
+println(f(1))
