@@ -1,11 +1,10 @@
 package org.bds.lang.nativeMethods.map;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueMap;
 import org.bds.run.BdsThread;
 
 /**
@@ -14,6 +13,8 @@ import org.bds.run.BdsThread;
  * @author pcingola
  */
 public class MethodNativeMapClone extends MethodNativeMap {
+
+	private static final long serialVersionUID = -6953764021982952187L;
 
 	public MethodNativeMapClone(TypeMap mapType) {
 		super(mapType);
@@ -32,12 +33,8 @@ public class MethodNativeMapClone extends MethodNativeMap {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		Map map = (Map) objThis;
-		Map newMap = new HashMap(map.size());
-		newMap.putAll(map);
-		return newMap;
+	protected Value runMethodNative(BdsThread bdsThread, ValueMap vthis) {
+		return vthis.clone();
 	}
 }

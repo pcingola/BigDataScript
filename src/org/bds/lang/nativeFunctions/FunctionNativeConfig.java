@@ -43,7 +43,7 @@ public class FunctionNativeConfig extends FunctionNative {
 		HashMap<String, String> config = new HashMap<>();
 		if (configOri != null) {
 			// Copy all values from 'configOri'
-			for (Value k : configOri.get().keySet()) {
+			for (Value k : configOri.keySet()) {
 				config.put(k.asString(), configOri.getValue(k).asString());
 			}
 		}

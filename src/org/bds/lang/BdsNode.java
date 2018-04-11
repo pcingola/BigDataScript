@@ -714,11 +714,11 @@ public abstract class BdsNode implements Serializable {
 		// Nothing to do
 	}
 
-	/**
-	 * Update ID field
-	 */
-	protected void updateId(int newId) {
-		BdsNodeFactory.get().updateId(id, newId, this);
-		id = newId;
-	}
+	//	/**
+	//	 * Update ID field
+	//	 */
+	//	protected void updateId(int newId) {
+	//		BdsNodeFactory.get().updateId(id, newId, this);
+	//		id = newId;
+	//	}
 }

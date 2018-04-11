@@ -1,6 +1,8 @@
 package org.bds.lang.value;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,8 +31,13 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 		list = len > 0 ? new ArrayList<>(len) : new ArrayList<>();
 	}
 
-	public void add(Value v) {
-		list.add(v);
+	public boolean add(Value v) {
+		return list.add(v);
+	}
+
+	public void addAll(Collection<? extends Value> vcol) {
+		for (Value v : vcol)
+			list.add(v);
 	}
 
 	public void addAll(ValueList vlist) {
@@ -131,6 +138,10 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 		return list.size();
 	}
 
+	public void sort() {
+		Collections.sort(list);
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -140,5 +151,50 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 		}
 		return "[" + sb.toString() + "]";
 	}
+
+	//	@Override
+	//	public boolean addAll(Collection<? extends Value> vcol) {
+	//		return list.addAll(vcol);
+	//	}
+	//
+	//	@Override
+	//	public void clear() {
+	//		list.clear();
+	//	}
+	//
+	//	@Override
+	//	public boolean contains(Object v) {
+	//		return list.contains(v);
+	//	}
+	//
+	//	@Override
+	//	public boolean containsAll(Collection<?> vcol) {
+	//		return list.containsAll(vcol);
+	//	}
+	//
+	//	@Override
+	//	public boolean remove(Object v) {
+	//		return list.remove(v);
+	//	}
+	//
+	//	@Override
+	//	public boolean removeAll(Collection<?> vcol) {
+	//		return list.removeAll(vcol);
+	//	}
+	//
+	//	@Override
+	//	public boolean retainAll(Collection<?> vcol) {
+	//		return list.retainAll(vcol);
+	//	}
+	//
+	//	@Override
+	//	public Object[] toArray() {
+	//		return list.toArray();
+	//	}
+	//
+	//	@Override
+	//	public <T> T[] toArray(T[] a) {
+	//		return list.toArray(a);
+	//	}
 
 }

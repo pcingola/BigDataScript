@@ -1,22 +1,22 @@
 package org.bds.lang.nativeMethods.map;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueMap;
 import org.bds.run.BdsThread;
 
 /**
  * Return a list of values
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeMapValues extends MethodNativeMap {
+
+	private static final long serialVersionUID = -8674758888911074901L;
 
 	public MethodNativeMapValues(TypeMap mapType) {
 		super(mapType);
@@ -35,13 +35,12 @@ public class MethodNativeMapValues extends MethodNativeMap {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		Map map = (Map) objThis;
-		List list = new ArrayList();
-		list.addAll(map.values());
-		Collections.sort(list);
-		return list;
+	protected Value runMethodNative(BdsThread bdsThread, ValueMap vthis) {
+		TypeMap tm = (TypeMap) vthis.getType();
+		ValueList vlist = new ValueList(tm.getValueType());
+		vlist.addAll(vthis.values());
+		vlist.sort();
+		return vlist;
 	}
 }

@@ -1,19 +1,22 @@
 package org.bds.lang.nativeMethods.map;
 
-import java.util.Map;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueMap;
 import org.bds.run.BdsThread;
 
 /**
  * Return a list of keys
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeMapSize extends MethodNativeMap {
+
+	private static final long serialVersionUID = -4810154711988899565L;
 
 	public MethodNativeMapSize(TypeMap mapType) {
 		super(mapType);
@@ -32,10 +35,8 @@ public class MethodNativeMapSize extends MethodNativeMap {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		Map map = (Map) objThis;
-		return (long) map.size();
+	protected Value runMethodNative(BdsThread bdsThread, ValueMap vthis) {
+		return new ValueInt((long) vthis.size());
 	}
 }

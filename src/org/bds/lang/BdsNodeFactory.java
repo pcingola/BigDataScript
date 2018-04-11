@@ -214,7 +214,6 @@ public class BdsNodeFactory {
 
 	/**
 	 * Get current node ID (used for testing)
-	 * @return
 	 */
 	public synchronized int getCurrentNodeId() {
 		return nodeNumber;
@@ -279,34 +278,34 @@ public class BdsNodeFactory {
 		return packageName; // Add package name
 	}
 
-	/**
-	 * Get the 'real node' corresponding to this 'fake node' (this is used during serialization)
-	 */
-	public BdsNode realNode(BdsNode fakeNode) {
-		if (fakeNode == null) return null; // Nothing to do
-		if (!fakeNode.isFake()) return fakeNode; // Real node? don't replace
+	//	/**
+	//	 * Get the 'real node' corresponding to this 'fake node' (this is used during serialization)
+	//	 */
+	//	public BdsNode realNode(BdsNode fakeNode) {
+	//		if (fakeNode == null) return null; // Nothing to do
+	//		if (!fakeNode.isFake()) return fakeNode; // Real node? don't replace
+	//
+	//		// Type nodes are not replaced, just ID is updated
+	//		if (fakeNode instanceof Type) {
+	//			int newId = getNextNodeId(fakeNode);
+	//			fakeNode.updateId(newId);
+	//			return fakeNode;
+	//		}
+	//
+	//		// Is it a fake node? => Replace by real node
+	//		// Find real node based on fake ID
+	//		int nodeId = -fakeNode.getId(); // Fake IDs are the negative values of real IDs
+	//		BdsNode realNode = BdsNodeFactory.get().getNode(nodeId);
+	//
+	//		// Check that node was replaced
+	//		if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node '" + nodeId + "'");
+	//
+	//		return realNode;
+	//	}
 
-		// Type nodes are not replaced, just ID is updated
-		if (fakeNode instanceof Type) {
-			int newId = getNextNodeId(fakeNode);
-			fakeNode.updateId(newId);
-			return fakeNode;
-		}
-
-		// Is it a fake node? => Replace by real node
-		// Find real node based on fake ID
-		int nodeId = -fakeNode.getId(); // Fake IDs are the negative values of real IDs
-		BdsNode realNode = BdsNodeFactory.get().getNode(nodeId);
-
-		// Check that node was replaced
-		if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node '" + nodeId + "'");
-
-		return realNode;
-	}
-
-	public void setCreateFakeIds(boolean createFakeIds) {
-		this.createFakeIds = createFakeIds;
-	}
+	//	public void setCreateFakeIds(boolean createFakeIds) {
+	//		this.createFakeIds = createFakeIds;
+	//	}
 
 	/**
 	 * Remove Java package name from class name
@@ -317,10 +316,10 @@ public class BdsNodeFactory {
 		return cn[cn.length - 1];
 	}
 
-	public void updateId(int oldId, int newId, BdsNode node) {
-		if (debug) Gpr.debug("Update node ID: " + oldId + " -> " + newId + "\t" + node.getClass().getSimpleName());
-		nodesById.remove(oldId);
-		if (newId != 0) nodesById.put(newId, node);
-		if (nodeNumber <= newId) nodeNumber = newId + 1;
-	}
+	//	public void updateId(int oldId, int newId, BdsNode node) {
+	//		if (debug) Gpr.debug("Update node ID: " + oldId + " -> " + newId + "\t" + node.getClass().getSimpleName());
+	//		nodesById.remove(oldId);
+	//		if (newId != 0) nodesById.put(newId, node);
+	//		if (nodeNumber <= newId) nodeNumber = newId + 1;
+	//	}
 }

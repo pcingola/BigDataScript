@@ -1,7 +1,5 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -31,17 +29,6 @@ public class MethodNativeListAddIndex extends MethodNativeList {
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		long idx = bdsThread.getInt("idx");
-		Value toPush = bdsThread.getValue("toPush");
-		Object v = toPush.get();
-		list.add((int) idx, v);
-		return v;
 	}
 
 	@Override

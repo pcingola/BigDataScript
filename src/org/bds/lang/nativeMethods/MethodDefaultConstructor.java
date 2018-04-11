@@ -3,6 +3,7 @@ package org.bds.lang.nativeMethods;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
 /**
@@ -34,8 +35,8 @@ public class MethodDefaultConstructor extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		return objThis; // Default constructor doesn't do anything
+	public Value runMethod(BdsThread bdsThread, Value vThis) {
+		return vThis; // Default constructor doesn't do anything, just return the newly created object
 	}
 
 }
