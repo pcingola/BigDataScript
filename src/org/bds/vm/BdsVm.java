@@ -97,11 +97,22 @@ public class BdsVm {
 	 * Add native function
 	 */
 	public void addFunction(FunctionDeclaration fd) {
-		functionsBySignature.put(fd.signature(), fd);
+		String sig = fd.signature();
+		functionsBySignature.put(sig, fd);
 
-		// Update parameters
-		VmFunction vmf = functions.get(fd.signature());
-		if (vmf != null) vmf.set(fd);
+		// Add VM function description only for non-native functions
+		if (fd.isNative()) return;
+
+		VmFunction vmf = functions.get(sig);
+		if (vmf != null) {
+			// Update parameters
+			vmf.set(fd);
+		} else {
+			// Add new entry
+			vmf = new VmFunction(sig, -1);
+			vmf.set(fd);
+			functions.put(sig, vmf);
+		}
 	}
 
 	/**
@@ -109,12 +120,21 @@ public class BdsVm {
 	 */
 	public void addFunctionPc(String name, int pc) {
 		addLabel(name, pc);
-		VmFunction f = new VmFunction(name, pc);
-		functions.put(name, f);
+
+		VmFunction vmf = functions.get(name);
+		if (vmf != null) {
+			// Update parameters
+			vmf.setPc(pc);
+		} else {
+			// Add new entry
+			vmf = new VmFunction(name, pc);
+			functions.put(name, vmf);
+		}
+
 	}
 
 	/**
-	 *  Add native functions
+	 *  Add global functions
 	 */
 	void addFunctions() {
 		// Add all native functions from global scope
@@ -126,7 +146,7 @@ public class BdsVm {
 			}
 		}
 
-		// Add all native functions from all defined types
+		// Add all native functions from all defined types (e.g. classes, list, map, etc.)
 		for (Type t : types) {
 			SymbolTable st = t.getSymbolTable();
 			for (ValueFunction vf : st.getFunctions()) {
@@ -489,6 +509,7 @@ public class BdsVm {
 	 * Run the program in 'code'
 	 */
 	protected void runLoop() {
+		debug = true;
 		// First instruction
 		int instruction;
 		OpCode opcode = OpCode.NOOP;

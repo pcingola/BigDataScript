@@ -55,6 +55,10 @@ public class VmFunction {
 		args = fd.getParameterNames().toArray(new String[0]);
 	}
 
+	public void setPc(int pc) {
+		this.pc = pc;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

@@ -123,7 +123,7 @@ public class BdsRun {
 			Gpr.debug("Assembly:\n" + asm);
 
 			// Compile assembly
-			VmAsm vmasm = new VmAsm();
+			VmAsm vmasm = new VmAsm(programUnit);
 			vmasm.setDebug(debug);
 			vmasm.setVerbose(verbose);
 			vmasm.setCode(asm);

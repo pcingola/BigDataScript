@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.lang.BdsNode;
+import org.bds.lang.ProgramUnit;
+import org.bds.lang.statement.ClassDeclaration;
+import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.statement.StatementFunctionDeclaration;
 import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -24,11 +29,12 @@ public class VmAsm {
 	String codeStr;
 	String file;
 	BdsVm bdsvm;
+	ProgramUnit programUnit;
 	List<Integer> code;
 	Map<String, Type> typeByName;
 
-	public VmAsm() {
-		this(null);
+	public VmAsm(ProgramUnit programUnit) {
+		this.programUnit = programUnit;
 	}
 
 	public VmAsm(String file) {
@@ -77,7 +83,7 @@ public class VmAsm {
 		code = new ArrayList<>();
 		bdsvm.setDebug(debug);
 		bdsvm.setVerbose(verbose);
-		initTypes();
+		init();
 
 		// Read file and parse each line
 		lineNum = 1;
@@ -112,6 +118,43 @@ public class VmAsm {
 	Type getType(String typeName) {
 		if (!typeByName.containsKey(typeName)) throw new RuntimeException("Cannot find type '" + typeName + "'");
 		return typeByName.get(typeName);
+	}
+
+	/**
+	 * Initialzie symbols, classes, functions, types, etc.
+	 */
+	void init() {
+		initTypes();
+		initFunctions();
+		initClasses();
+	}
+
+	/**
+	 * Add all defined classes
+	 */
+	void initClasses() {
+		if (programUnit == null) return;
+
+		// Add all classes
+		List<BdsNode> cdecls = programUnit.findNodes(ClassDeclaration.class, false, true);
+		for (BdsNode n : cdecls) {
+			ClassDeclaration cd = (ClassDeclaration) n;
+			bdsvm.addType(cd.getType());
+		}
+	}
+
+	/**
+	 * Add all defined functions
+	 */
+	void initFunctions() {
+		if (programUnit == null) return;
+
+		// Add all functions
+		List<BdsNode> fdecls = programUnit.findNodes(StatementFunctionDeclaration.class, false, true);
+		for (BdsNode n : fdecls) {
+			FunctionDeclaration fd = (FunctionDeclaration) n;
+			bdsvm.addFunction(fd);
+		}
 	}
 
 	/**
