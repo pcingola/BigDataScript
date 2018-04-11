@@ -8,9 +8,7 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
-import org.bds.lang.value.ValueArgs;
 import org.bds.lang.value.ValueFunction;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -33,13 +31,6 @@ public class FunctionCall extends Expression {
 	public FunctionCall(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		argsStart = 0;
-	}
-
-	/**
-	 * Apply function to pre-calculated parameters
-	 */
-	public void apply(BdsThread bdsThread, ValueArgs arguments) {
-		bdsThread.push(functionDeclaration.apply(bdsThread, arguments));
 	}
 
 	/**

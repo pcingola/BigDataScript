@@ -1,6 +1,10 @@
 
-int i = 6
-string s = "this is string interpolation: int i = $i \n"
-println(s)
-print("---\n\thi\n---\n")
+
+int f( int i ) {
+	return i;
+}
+
+int x
+x = f(2)
+println(x)
 

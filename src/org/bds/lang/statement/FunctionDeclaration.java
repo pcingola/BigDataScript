@@ -10,9 +10,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
-import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueArgs;
-import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -34,28 +31,6 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	public FunctionDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	/**
-	 * Apply function to arguments, return function's result
-	 */
-	public Value apply(BdsThread bdsThread, ValueArgs args) {
-		//		// Create scope and add function arguments
-		//		if (!bdsThread.isCheckpointRecover()) createScopeAddArgs(bdsThread, args);
-		//
-		//		// Run function body
-		//		runFunction(bdsThread);
-		//		if (bdsThread.isFatalError()) throw new RuntimeException("Fatal error");
-		//
-		//		// Get return value
-		//		Value retVal = bdsThread.getReturnValue();
-		//
-		//		// Restore old scope
-		//		if (!bdsThread.isCheckpointRecover()) bdsThread.oldScope();
-		//
-		//		// Return result
-		//		return retVal;
-		return null;
 	}
 
 	public String getFunctionName() {
@@ -152,7 +127,7 @@ public class FunctionDeclaration extends StatementWithScope {
 		} else if ((functionName != null) && (getType() != null)) {
 			// Add to parent symbol table, because the current
 			// symbol table is for the function's body
-			symtab.getParent().add(functionName, getType());
+			symtab.getParent().add(this);
 		}
 	}
 }

@@ -186,7 +186,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	}
 
 	/**
-	 * Find all functions whose names are 'functionName' (only look in this symboltable)
+	 * Find all functions whose names are 'functionName' (only look in this symbol table)
 	 */
 	public List<ValueFunction> getValueFunctionsLocal(String functionName) {
 		if (functions == null) return null;

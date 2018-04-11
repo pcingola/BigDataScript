@@ -34,7 +34,7 @@ public class StatementWithScope extends Statement {
 		List<BdsNode> fdecls = findNodes(StatementFunctionDeclaration.class, false, true);
 		for (BdsNode n : fdecls) {
 			FunctionDeclaration fd = (FunctionDeclaration) n;
-			symtab.add(fd.getFunctionName(), fd.getType());
+			symtab.add(fd);
 		}
 
 		// Add all classes
