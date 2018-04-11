@@ -22,6 +22,15 @@ public class InterpolateVars extends Literal {
 	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
 
 	/**
+	 * Replace '\n' by '\\n' (same for '\r')
+	 */
+	public static String escapeMultiline(String s) {
+		s = s.replace("\n", "\\n");
+		s = s.replace("\r", "\\r");
+		return s;
+	}
+
+	/**
 	 * Un-escape string
 	 */
 	public static String unEscape(String str) {
@@ -175,7 +184,7 @@ public class InterpolateVars extends Literal {
 			//---
 			Tuple<String, String> tupStr = findString(str);
 			// String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : unEscape(tupStr.first);
-			String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : tupStr.first;
+			String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : escapeMultiline(tupStr.first);
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed
 

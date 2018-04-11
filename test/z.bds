@@ -1,10 +1,8 @@
 
 
-int f( int i ) {
-	return i;
-}
-
-int x
-x = f(2)
-println(x)
+string s = "this is a multi 
+line string. 
+It can span as many lines as you want 
+yes!"
+println(s)
 
