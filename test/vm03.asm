@@ -2,7 +2,7 @@
 main:
 new string{string}  # string{} a
 var a             
-
+pop
 
 pushs bye           # stack: bye
 pushs hi            # stack: hi, bye
