@@ -16,7 +16,6 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test00() {
 		Gpr.debug("Test");
-		verbose = true;
 		compileOk("test/test00.bds");
 	}
 
