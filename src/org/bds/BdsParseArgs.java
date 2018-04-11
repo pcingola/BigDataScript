@@ -119,7 +119,11 @@ public class BdsParseArgs {
 		String progName = Gpr.baseName(programPath);
 		GlobalScope gs = GlobalScope.get();
 
-		ValueList vargs = (ValueList) TypeList.get(Types.STRING).newValue(programArgs);
+		// Create and populate argument list
+		ValueList vargs = (ValueList) TypeList.get(Types.STRING).newValue();
+		for (String arg : programArgs)
+			vargs.add(new ValueString(arg));
+
 		gs.add(GlobalScope.GLOBAL_VAR_ARGS_LIST, vargs); // Make all unprocessed arguments available for the program (in 'args' list)
 		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_NAME, progName);
 		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_PATH, programPath);

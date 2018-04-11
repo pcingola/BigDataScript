@@ -7,7 +7,8 @@ import org.bds.lang.expression.ExpressionWrapper;
 /**
  * A statement that is actually an expression.
  * E.g.:
- *        i++   # This statement is a line of code with only one expression ('i++')
+ *        i++    # This statement is a line of code with only one expression ('i++')
+ *        f(42)  # Same here, the expression is a function call
  *
  * @author pcingola
  */
@@ -22,6 +23,14 @@ public class StatementExpr extends ExpressionWrapper {
 	@Override
 	public boolean isStopDebug() {
 		return true;
+	}
+
+	@Override
+	public String toAsm() {
+		return toAsmNode() //
+				+ expression.toAsm() //
+				+ "pop\n" // Expression leaves result in the stack, so we remove it (the result is not used)
+		;
 	}
 
 }

@@ -22,6 +22,7 @@ public class Return extends Statement {
 	private static final long serialVersionUID = 1225216199721027945L;
 
 	protected Expression expr;
+	protected FunctionDeclaration functionDecl; // Enclosing function or method
 
 	public Return(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -30,6 +31,7 @@ public class Return extends Statement {
 	/**
 	 * Find enclosing function
 	 */
+	@SuppressWarnings("rawtypes")
 	FunctionDeclaration findParentFunction() {
 		Set<Class> classSet = new HashSet<>();
 		classSet.add(FunctionDeclaration.class);
@@ -52,10 +54,10 @@ public class Return extends Statement {
 		if (expr != null) expr.returnType(symtab);
 
 		// Find enclosing function / method
-		FunctionDeclaration func = findParentFunction();
+		functionDecl = findParentFunction();
 
-		if (func != null) {
-			returnType = func.getReturnType();
+		if (functionDecl != null) {
+			returnType = functionDecl.getReturnType();
 		} else {
 			// Function not found? This is not inside any function...must be in 'main' => return type is 'int'
 			returnType = Types.INT;
@@ -66,10 +68,12 @@ public class Return extends Statement {
 
 	@Override
 	public String toAsm() {
-		return super.toAsm() //
-				+ (expr != null ? expr.toAsm() : "pushi 0") //
-				+ "ret\n" //
-		;
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		sb.append((expr != null ? expr.toAsm() : "pushi 0"));
+		sb.append("ret\n");
+
+		return sb.toString();
 	}
 
 	@Override

@@ -37,20 +37,18 @@ public class BdsVm {
 	public static final String LABLE_MAIN = "main";
 	private static final OpCode OPCODES[] = OpCode.values();
 
-	boolean debug;
-	boolean verbose;
-	boolean run; // Keep program running while this variable is 'true'
-	int callStack[]; // Stack for function calls (Program Counter)
 	int code[]; // Compile assembly code (OopCodes)
-	int csp; // Call stack pointer
+	boolean debug;
 	int exitCode = -1; // Default exit code is error (program did not start)
+	int fp; // Frame pointer
 	int nodeId; // Current node ID (BdsNode). Used for linking to original bds code
-	int nodeStack[]; // Stack of bdsNodes (stack trace functionality)
-	int nsp; // Node stack pointer
 	int pc; // Program counter
+	boolean run; // Keep program running while this variable is 'true'
+	Scope scope; // Current scope (variables)
 	int sp; // Stack pointer
 	Value[] stack; // Stack: main stack used for values
-	Scope scope; // Current scope (variables)
+	CallFrame[] callFrame; // Call Frame stack
+	boolean verbose;
 	Map<String, Integer> labels;
 	Map<Integer, String> labelsByPc;
 	Map<Object, Integer> constantsByObject;
@@ -62,18 +60,21 @@ public class BdsVm {
 	BdsThread bdsThread;
 
 	public BdsVm() {
-		callStack = new int[CALL_STACK_SIZE];
 		constants = new ArrayList<>();
 		constantsByObject = new HashMap<>();
 		functions = new HashMap<>();
 		labels = new HashMap<>();
 		labelsByPc = new HashMap<>();
 		functionsBySignature = new HashMap<>();
-		nodeStack = new int[CALL_STACK_SIZE];
 		scope = new Scope();
 		stack = new Value[STACK_SIZE];
 		types = new ArrayList<>();
 		typeToIndex = new HashMap<>();
+
+		// Initialize call frames
+		callFrame = new CallFrame[CALL_STACK_SIZE];
+		for (int i = 0; i < callFrame.length; i++)
+			callFrame[i] = new CallFrame();
 	}
 
 	/**
@@ -168,6 +169,8 @@ public class BdsVm {
 	 * @param name: Function's signature
 	 */
 	void call(String fsig) {
+		pushCallFrame(); // Push stack frame
+
 		VmFunction func = getFunction(fsig); // Find function meta-data
 		newScope(); // Create a new scope
 
@@ -176,9 +179,7 @@ public class BdsVm {
 		for (int i = args.length - 1; i >= 0; i--)
 			scope.add(args[i], pop());
 
-		pushPc(); // Push PC to call-stack
 		pc = func.getPc(); // Jump to function
-		pushNodeId(); // Store latest node ID
 	}
 
 	/**
@@ -186,6 +187,8 @@ public class BdsVm {
 	 * @param name: Method's signature
 	 */
 	void callMethod(String fsig) {
+		pushCallFrame(); // Push stack frame
+
 		VmFunction func = getFunction(fsig); // Find method meta-data
 		newScope(); // Create a new scope
 
@@ -194,9 +197,7 @@ public class BdsVm {
 		for (int i = args.length - 1; i >= 0; i--)
 			scope.add(args[i], pop());
 
-		pushPc(); // Push PC to call-stack
 		pc = func.getPc(); // Jump to function
-		pushNodeId(); // Store latest node ID
 	}
 
 	/**
@@ -382,20 +383,6 @@ public class BdsVm {
 	}
 
 	/**
-	 * Pop value from node-stack
-	 */
-	void popNodeId() {
-		nodeId = nodeStack[--nsp];
-	}
-
-	/**
-	 * Pop value from call-stack
-	 */
-	int popPc() {
-		return callStack[--csp];
-	}
-
-	/**
 	 * Pop a real from stack
 	 */
 	public double popReal() {
@@ -407,6 +394,16 @@ public class BdsVm {
 	 */
 	public void popScope() {
 		scope = scope.getParent();
+	}
+
+	/**
+	 * Restore from call frame
+	 */
+	void popCallFrame() {
+		CallFrame sf = callFrame[--fp];
+		pc = sf.pc;
+		nodeId = sf.nodeId;
+		scope = sf.scope;
 	}
 
 	/**
@@ -441,17 +438,11 @@ public class BdsVm {
 	}
 
 	/**
-	 * Push program counter to call-stack
+	 * Push call frame
 	 */
-	void pushNodeId() {
-		nodeStack[nsp++] = nodeId;
-	}
-
-	/**
-	 * Push program counter to call-stack
-	 */
-	void pushPc() {
-		callStack[csp++] = pc;
+	void pushCallFrame() {
+		CallFrame sf = callFrame[fp++];
+		sf.set(pc, nodeId, scope);
 	}
 
 	/**
@@ -845,9 +836,7 @@ public class BdsVm {
 				break;
 
 			case RET:
-				popScope(); // Restore scope
-				pc = popPc(); // Pop PC from call-stack
-				popNodeId();
+				popCallFrame(); // Restore everything from stack frame
 				break;
 
 			case SCOPEPUSH:
@@ -1003,10 +992,10 @@ public class BdsVm {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("PC         : " + pc + "\n");
-		sb.append("Stack      : " + toStringStack());
+		sb.append("Stack      : " + toStringStack() + "\n");
 		sb.append("Call-Stack : [");
-		for (int i = 0; i < csp; i++)
-			sb.append(" " + callStack[i]);
+		for (int i = 0; i < fp; i++)
+			sb.append(" " + callFrame[i]);
 		sb.append(" ]\n");
 		sb.append("Scope:\n" + scope);
 		return sb.toString();
