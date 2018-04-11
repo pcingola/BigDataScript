@@ -1,6 +1,10 @@
 
-int{} f() { 
-	return { 'hi' => 1, 'bye' => 2 };
+
+system="local"
+
+task ( timeout=1 ) {
+	sys echo GOING TO SLEEP...
+	sys sleep 60
+	sys echo DONE
 }
 
-f(){'hi'} = 99
