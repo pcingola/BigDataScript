@@ -161,6 +161,19 @@ public class Scope implements Iterable<String>, Serializable {
 		this.parent = parent;
 	}
 
+	/**
+	 * Add a value to scope
+	 */
+	public synchronized void setValue(String name, Value value) {
+		for (Scope s = this; s != null; s = s.parent) {
+			if (s.values.containsKey(name)) {
+				s.values.put(name, value);
+				return;
+			}
+		}
+		throw new RuntimeException("Could not find variable '" + name + "'");
+	}
+
 	@Override
 	public String toString() {
 		return toString(true);

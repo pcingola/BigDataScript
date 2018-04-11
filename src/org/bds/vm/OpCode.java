@@ -96,6 +96,8 @@ public enum OpCode {
 	, SUBI, SUBR
 	// Swap two values in stack
 	, SWAP
+	// Create a variable in local scope
+	, VAR
 	// XOR
 	, XORB, XORI
 	//
@@ -123,6 +125,7 @@ public enum OpCode {
 		case REFFIELD:
 		case SETFIELD:
 		case STORE:
+		case VAR:
 			return true;
 
 		default:
@@ -147,6 +150,7 @@ public enum OpCode {
 		case REFFIELD:
 		case SETFIELD:
 		case STORE:
+		case VAR:
 			return true;
 
 		default:

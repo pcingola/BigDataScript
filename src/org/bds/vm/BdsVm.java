@@ -878,7 +878,7 @@ public class BdsVm {
 
 			case STORE:
 				name = constantString();
-				scope.add(name, peek()); // We leave the value in the stack
+				scope.setValue(name, peek()); // We leave the value in the stack
 				break;
 
 			case SUBI:
@@ -898,6 +898,11 @@ public class BdsVm {
 				v1 = pop();
 				push(v2);
 				push(v1);
+				break;
+
+			case VAR:
+				name = constantString();
+				scope.add(name, peek()); // We leave the value in the stack
 				break;
 
 			case XORB:

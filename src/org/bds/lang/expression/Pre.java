@@ -57,7 +57,6 @@ public class Pre extends ExpressionUnary {
 		}
 
 		sb.append(ref.toAsmSet());
-		sb.append(ref.toAsm());
 
 		return sb.toString();
 	}

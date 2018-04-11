@@ -13,9 +13,6 @@ import org.bds.lang.type.Reference;
  */
 public class Post extends Pre {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -7171687135383949830L;
 
 	public Post(BdsNode parent, ParseTree tree) {
@@ -34,7 +31,6 @@ public class Post extends Pre {
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
 		Reference ref = (Reference) expr;
-		sb.append(ref.toAsm());
 		sb.append(ref.toAsm());
 
 		switch (operation) {

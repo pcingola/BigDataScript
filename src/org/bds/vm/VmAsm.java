@@ -197,6 +197,7 @@ public class VmAsm {
 		case REFFIELD:
 		case SETFIELD:
 		case STORE:
+		case VAR:
 			int lastCharIdx = param.length() - 1;
 			if ((param.charAt(0) == '\'' && param.charAt(lastCharIdx) == '\'') // Using single quotes
 					|| (param.charAt(0) == '"' && param.charAt(lastCharIdx) == '"')) // Using double quotes
