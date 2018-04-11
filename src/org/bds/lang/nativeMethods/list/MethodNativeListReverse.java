@@ -1,20 +1,20 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * Sort: Create a new list and reverse it
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListReverse extends MethodNativeList {
+
+	private static final long serialVersionUID = -3872253997912952255L;
 
 	public MethodNativeListReverse(TypeList listType) {
 		super(listType);
@@ -32,19 +32,16 @@ public class MethodNativeListReverse extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		List list = (List) objThis;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		// Empty list? => Nothing to reverse, return a new list
+		ValueList rl = new ValueList(vthis.getType());
+		if (vthis.size() <= 0) return rl;
 
-		// Empty list? => Nothing to do
-		if (list.size() <= 0) return new ArrayList();
+		// Add all items and reverse list
+		rl.addAll(vthis);
+		rl.reverse();
 
-		// Create new list and sort it
-		List newList = new ArrayList(list.size());
-		newList.addAll(list);
-		Collections.reverse(newList);
-
-		return newList;
+		return rl;
 	}
 }

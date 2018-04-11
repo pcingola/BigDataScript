@@ -1,10 +1,10 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -13,6 +13,8 @@ import org.bds.run.BdsThread;
  * @author pcingola
  */
 public class MethodNativeListHead extends MethodNativeList {
+
+	private static final long serialVersionUID = -9109867503215538994L;
 
 	public MethodNativeListHead(TypeList baseType) {
 		super(baseType);
@@ -30,11 +32,9 @@ public class MethodNativeListHead extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList list = ((ArrayList) objThis);
-		if (list.isEmpty()) throw new RuntimeException("Invoking 'head' on an empty list.");
-		return ((ArrayList) objThis).get(0);
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		if (vthis.isEmpty()) throw new RuntimeException("Invoking 'head' on an empty list.");
+		return vthis.getValue(0);
 	}
 }

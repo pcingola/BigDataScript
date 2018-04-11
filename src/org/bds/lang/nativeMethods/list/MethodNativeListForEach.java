@@ -1,11 +1,9 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
-import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
-import org.bds.lang.value.ValueFunction;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -15,28 +13,10 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListForEach extends MethodNativeList {
 
+	private static final long serialVersionUID = 9104415099027143132L;
+
 	public MethodNativeListForEach(TypeList listType) {
 		super(listType);
-	}
-
-	/**
-	 * Find a function
-	 * TODO: Move this to Scope?
-	 */
-	protected FunctionDeclaration findFunction(BdsThread bdsThread, String fname) {
-		ValueFunction vf = (ValueFunction) bdsThread.getValue("f");
-		FunctionDeclaration function = (FunctionDeclaration) vf.get();
-
-		// Type checking
-		// TODO: This is awful to say the least!
-		//       Type checking should be done at compile time, not here
-		//       (this is supposed to be a statically typed language)
-		//		if (!function.getReturnType().canCast(Type.BOOL)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + Type.BOOL);
-
-		// TODO: Check that function should only have one argument
-		// TODO: Check List's elements should be 'castable' to function's argument
-
-		return function;
 	}
 
 	@Override
@@ -45,6 +25,7 @@ public class MethodNativeListForEach extends MethodNativeList {
 		classType = TypeList.get(baseType);
 		returnType = TypeList.get(baseType);;
 
+		// TODO: Broken, need major fixing
 		//		TypeFunction typeFunc = TypeFunction.get(Parameters.get(baseType, ""), Types.BOOL);
 		//		String argNames[] = { "this", "f" };
 		//		Type argTypes[] = { classType, typeFunc };
@@ -53,18 +34,10 @@ public class MethodNativeListForEach extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-
-		// Get function
-		FunctionDeclaration function = findFunction(bdsThread, "f");
-
-		// !!! TODO: IMPLEMENT!
-		//		for (Object val : list)
-		//			function.apply(bdsThread, val);
-
-		return list;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		// TODO: Functional style not implemented!
+		throw new RuntimeException("Unimplemented!");
 	}
+
 }

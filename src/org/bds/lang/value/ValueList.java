@@ -89,7 +89,7 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 	}
 
 	/**
-	 * Get element number 'idx' from the list wrapped into a 'Value'
+	 * Get element number 'idx' from the list
 	 */
 	public Value getValue(long idx) {
 		return list.get((int) idx);
@@ -98,6 +98,10 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 	@Override
 	public int hashCode() {
 		return list.hashCode();
+	}
+
+	public int indexOf(Value v) {
+		return list.indexOf(v);
 	}
 
 	public boolean isEmpty() {
@@ -114,6 +118,21 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 	@Override
 	public Iterator<Value> iterator() {
 		return list.iterator();
+	}
+
+	/**
+	 * Remove element number 'idx' from the list
+	 */
+	public Value remove(int idx) {
+		return list.remove(idx);
+	}
+
+	public boolean remove(Value v) {
+		return list.remove(v);
+	}
+
+	public void reverse() {
+		Collections.reverse(list);
 	}
 
 	public void setValue(long idx, Value value) {

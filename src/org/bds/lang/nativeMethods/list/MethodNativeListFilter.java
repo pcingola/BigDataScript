@@ -1,12 +1,9 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
-import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
-import org.bds.lang.type.Types;
-import org.bds.lang.value.ValueFunction;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -16,28 +13,10 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListFilter extends MethodNativeList {
 
+	private static final long serialVersionUID = -4112078662727069249L;
+
 	public MethodNativeListFilter(TypeList listType) {
 		super(listType);
-	}
-
-	/**
-	 * Find a function
-	 * TODO: Move this to Scope?
-	 */
-	protected FunctionDeclaration findFunction(BdsThread bdsThread, String fname) {
-		ValueFunction vf = (ValueFunction) bdsThread.getValue("f");
-		FunctionDeclaration function = (FunctionDeclaration) vf.get();
-
-		// Type checking
-		// TODO: This is awful to say the least!
-		//       Type checking should be done at compile time, not here
-		//       (this is supposed to be a statically typed language)
-		if (!function.getReturnType().canCastTo(Types.BOOL)) bdsThread.fatalError(this, "Cannot cast " + function.getReturnType() + " to " + Types.BOOL);
-
-		// TODO: Check that function should only have one argument
-		// TODO: Check List's elements should be 'castable' to function's argument
-
-		return function;
 	}
 
 	@Override
@@ -55,20 +34,9 @@ public class MethodNativeListFilter extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		ArrayList newList = new ArrayList();
-
-		// Get function
-		FunctionDeclaration function = findFunction(bdsThread, "f");
-		// !!! TODO: IMPLEMENT
-		//		for (Object val : list) {
-		//			Value ret = function.apply(bdsThread, val);
-		//			if (ret.asBool()) newList.add(val);
-		//		}
-
-		return newList;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		// TODO: Functional style not implemented!
+		throw new RuntimeException("Unimplemented!");
 	}
 }

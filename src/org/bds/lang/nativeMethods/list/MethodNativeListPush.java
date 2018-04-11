@@ -1,19 +1,20 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.List;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * Push: Add an element to the end of the list
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListPush extends MethodNativeList {
+
+	private static final long serialVersionUID = 4083084613330119066L;
 
 	public MethodNativeListPush(TypeList listType) {
 		super(listType);
@@ -31,13 +32,10 @@ public class MethodNativeListPush extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		List list = (List) objThis;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
 		Value toPush = bdsThread.getValue("toPush");
-		Object v = toPush.get();
-		list.add(v);
-		return v;
+		vthis.add(toPush);
+		return toPush;
 	}
 }

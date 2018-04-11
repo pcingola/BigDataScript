@@ -1,19 +1,22 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.List;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 
 /**
  * Join all elements of a ins into a string (using a specified separator)
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListJoinStr extends MethodNativeListJoin {
+
+	private static final long serialVersionUID = 4062371438805409127L;
 
 	public MethodNativeListJoinStr(TypeList listType) {
 		super(listType);
@@ -31,11 +34,9 @@ public class MethodNativeListJoinStr extends MethodNativeListJoin {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		List list = (List) objThis;
-		String ext = bdsThread.getString("separator");
-		return join(list, ext);
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		String sep = bdsThread.getString("separator");
+		return new ValueString(join(vthis, sep));
 	}
 }

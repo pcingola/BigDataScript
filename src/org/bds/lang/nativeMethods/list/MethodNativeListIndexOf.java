@@ -1,12 +1,12 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.List;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -15,6 +15,8 @@ import org.bds.run.BdsThread;
  * @author pcingola
  */
 public class MethodNativeListIndexOf extends MethodNativeList {
+
+	private static final long serialVersionUID = -3244209394215672718L;
 
 	public MethodNativeListIndexOf(TypeList listType) {
 		super(listType);
@@ -32,13 +34,10 @@ public class MethodNativeListIndexOf extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		List list = (List) objThis;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
 		Value toFind = bdsThread.getValue("toFind");
-
-		long idx = list.indexOf(toFind.get());
-		return idx;
+		long idx = vthis.indexOf(toFind);
+		return new ValueInt(idx);
 	}
 }

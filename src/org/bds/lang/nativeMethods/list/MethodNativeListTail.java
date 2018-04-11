@@ -1,19 +1,20 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * Tail: Create a new list with all the elements but the first
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListTail extends MethodNativeList {
+
+	private static final long serialVersionUID = -4517146733140753324L;
 
 	public MethodNativeListTail(TypeList listType) {
 		super(listType);
@@ -30,22 +31,17 @@ public class MethodNativeListTail extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		List list = (List) objThis;
-
-		// Empty list or only one element? => Nothing to do
-		if (list.size() <= 1) return new ArrayList();
-
-		// Create new list
-		List newList = new ArrayList(list.size() - 1);
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		// Empty list? => Nothing to do
+		ValueList tl = new ValueList(vthis.getType());
+		if (vthis.size() <= 1) return tl;
 
 		// Add all but first elements from list
-		int idx = 0;
-		for (Object o : list)
-			if ((idx++) > 0) newList.add(o);
-
-		return newList;
+		int max = vthis.size();
+		for (int i = 1; i < max; i++)
+			tl.add(vthis.getValue(i));
+		return tl;
 	}
+
 }

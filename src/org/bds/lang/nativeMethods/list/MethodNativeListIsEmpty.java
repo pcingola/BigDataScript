@@ -1,19 +1,22 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.List;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * List's length (number of elements)
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListIsEmpty extends MethodNativeList {
+
+	private static final long serialVersionUID = 3783361619646858067L;
 
 	public MethodNativeListIsEmpty(TypeList listType) {
 		super(listType);
@@ -31,10 +34,8 @@ public class MethodNativeListIsEmpty extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		List list = (List) objThis;
-		return list.isEmpty();
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		return new ValueBool(vthis.isEmpty());
 	}
 }

@@ -1,11 +1,10 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -14,6 +13,8 @@ import org.bds.run.BdsThread;
  * @author pcingola
  */
 public class MethodNativeListRemove extends MethodNativeList {
+
+	private static final long serialVersionUID = -3111970920223868244L;
 
 	public MethodNativeListRemove(TypeList listType) {
 		super(listType);
@@ -31,12 +32,10 @@ public class MethodNativeListRemove extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		Value toRemove = csThread.getValue("toRemove");
-		list.remove(toRemove.get());
-		return toRemove.get();
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		Value toRemove = bdsThread.getValue("toRemove");
+		vthis.remove(toRemove);
+		return toRemove;
 	}
 }

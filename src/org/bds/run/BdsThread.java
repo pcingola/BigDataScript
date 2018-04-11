@@ -30,6 +30,7 @@ import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.osCmd.Exec;
@@ -927,13 +928,8 @@ public class BdsThread extends Thread implements Serializable {
 		restoredTasks = null; // We don't need it any more (plus we want to make sure we don't schedule tasks more than once)
 	}
 
-	@SuppressWarnings("rawtypes")
-	public synchronized void rmOnExit(List files) {
-		for (Object o : files)
-			rmOnExit(o.toString());
-	}
-
-	public synchronized void rmOnExit(String file) {
+	public synchronized void rmOnExit(Value vfile) {
+		String file = vfile.asString();
 		Data data = data(file);
 
 		// Add file for removal
@@ -941,6 +937,11 @@ public class BdsThread extends Thread implements Serializable {
 
 		// Remove local (cached) copy of the file
 		if (data.isRemote() && (data.getLocalPath() != null)) removeOnExit.add(data.getLocalPath());
+	}
+
+	public synchronized void rmOnExit(ValueList files) {
+		for (Value v : files)
+			rmOnExit(v);
 	}
 
 	@Override
