@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.lang.expression.ExpressionSys;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.statement.FunctionDeclaration;
@@ -346,6 +347,10 @@ public class BdsVm {
 	 */
 	public int getLabel(String label) {
 		return labels.containsKey(label) ? labels.get(label) : -1;
+	}
+
+	public int getNodeId() {
+		return nodeId;
 	}
 
 	public Scope getScope() {
@@ -940,6 +945,10 @@ public class BdsVm {
 				push(r1 - r2);
 				break;
 
+			case SYS:
+				sys();
+				break;
+
 			case SWAP:
 				v2 = pop();
 				v1 = pop();
@@ -1001,6 +1010,13 @@ public class BdsVm {
 	public String stackTrace() {
 		// TODO: !!! IMPLEMENT
 		return "";
+	}
+
+	/**
+	 * Execute a 'sys' instruction
+	 */
+	void sys() {
+		ExpressionSys.run(bdsThread);
 	}
 
 	/**

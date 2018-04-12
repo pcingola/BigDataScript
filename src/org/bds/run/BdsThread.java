@@ -22,6 +22,7 @@ import org.bds.data.Data;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.lang.BdsNode;
+import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ProgramUnit;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.statement.BlockWithFile;
@@ -74,7 +75,6 @@ public class BdsThread extends Thread implements Serializable {
 	// Debug stuff
 	BufferedReader console; // Read debug commands from console
 	DebugMode debugMode = null; // By default we are NOT debugging the program
-	ProgramCounter debugStepOverPc;
 
 	// BdsThread
 	String currentDir; // Program's 'current directory'
@@ -277,6 +277,21 @@ public class BdsThread extends Thread implements Serializable {
 		setExitValue(1L);
 	}
 
+	/**
+	 * Show a fatal error
+	 */
+	public void fatalError(BdsNode bdsnode, Throwable t) {
+		if (runState == RunState.FATAL_ERROR) return;
+		fatalError(bdsnode, t.getMessage());
+
+		// Show java stack trace
+		if ((config == null) || isVerbose()) t.printStackTrace();
+	}
+
+	public void fatalError(String message) {
+		fatalError(getCurrentRunNode(), message);
+	}
+
 	//	/**
 	//	 * Running in debug mode: This method is invoked right before running 'node'
 	//	 */
@@ -402,17 +417,6 @@ public class BdsThread extends Thread implements Serializable {
 	//	}
 
 	/**
-	 * Show a fatal error
-	 */
-	public void fatalError(BdsNode bdsnode, Throwable t) {
-		if (runState == RunState.FATAL_ERROR) return;
-		fatalError(bdsnode, t.getMessage());
-
-		// Show java stack trace
-		if ((config == null) || isVerbose()) t.printStackTrace();
-	}
-
-	/**
 	 * Freeze thread execution
 	 */
 	protected void freeze() {
@@ -467,6 +471,14 @@ public class BdsThread extends Thread implements Serializable {
 
 	public String getCurrentDir() {
 		return currentDir;
+	}
+
+	/**
+	 * Get node being executed by the vm
+	 */
+	public BdsNode getCurrentRunNode() {
+		int nodeId = vm.getNodeId();
+		return BdsNodeFactory.get().getNode(nodeId);
 	}
 
 	public DebugMode getDebugMode() {
@@ -667,13 +679,6 @@ public class BdsThread extends Thread implements Serializable {
 		return getScope().getValue(varName) != null;
 	}
 
-	/**
-	 * Are we in CHECKPOINT_RECOVER mode?
-	 */
-	public boolean isCheckpointRecover() {
-		return runState.isCheckpointRecover();
-	}
-
 	public boolean isDebug() {
 		return config != null && config.isDebug();
 	}
@@ -770,7 +775,7 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	public Value pop() {
-		return null;
+		return vm.pop();
 	}
 
 	/**
@@ -864,8 +869,7 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	public void push(Value val) {
-		// stack.addFirst(val);
-		throw new RuntimeException("!!!!");
+		vm.push(val);
 	}
 
 	/**

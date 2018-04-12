@@ -8,7 +8,6 @@ import org.bds.lang.statement.Args;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FieldDeclaration;
 import org.bds.lang.statement.MethodCall;
-import org.bds.lang.type.ReferenceThis;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.symbol.SymbolTable;

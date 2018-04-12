@@ -15,7 +15,6 @@ import org.bds.lang.statement.Block;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementExpr;
 import org.bds.lang.type.InterpolateVars;
-import org.bds.lang.type.Reference;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Literal;
@@ -127,8 +126,9 @@ public class ExpressionTask extends ExpressionWithScope {
 
 		//---
 		// Sys commands
+		// Command from string or interpolated vars
 		//---
-		String sysCmds = sys.getCommands(bdsThread);
+		String sysCmds = bdsThread.popString();
 
 		// No Down/Up-load? Just return the SYS commands
 		if (sbDown.length() <= 0 && sbUp.length() <= 0) return sysCmds;
@@ -204,35 +204,35 @@ public class ExpressionTask extends ExpressionWithScope {
 	ExpressionSys evalSys(BdsThread bdsThread) {
 		ExpressionSys sys = null;
 
-		if (statement instanceof StatementExpr) {
-			Expression exprSys = ((StatementExpr) statement).getExpression();
-			sys = (ExpressionSys) exprSys;
-		} else if (statement instanceof ExpressionSys) {
-			sys = (ExpressionSys) statement;
-		} else if (statement instanceof Block) {
-			// Create one sys statement for all sys statements in the block
-			StringBuilder syssb = new StringBuilder();
-
-			Block block = (Block) statement;
-			for (Statement st : block.getStatements()) {
-				// Get 'sys' expression
-				if (st instanceof StatementExpr) st = ((StatementExpr) st).getExpression();
-				ExpressionSys sysst = (ExpressionSys) st;
-
-				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
-
-				// Get commands
-				String commands = sysst.getCommands(bdsThread);
-				syssb.append(commands);
-				syssb.append("\n");
-			}
-
-			if (!bdsThread.isCheckpointRecover()) {
-				sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
-			}
-		} else {
-			throw new RuntimeException("Unimplemented for class '" + statement.getClass().getSimpleName() + "'");
-		}
+		//		if (statement instanceof StatementExpr) {
+		//			Expression exprSys = ((StatementExpr) statement).getExpression();
+		//			sys = (ExpressionSys) exprSys;
+		//		} else if (statement instanceof ExpressionSys) {
+		//			sys = (ExpressionSys) statement;
+		//		} else if (statement instanceof Block) {
+		//			// Create one sys statement for all sys statements in the block
+		//			StringBuilder syssb = new StringBuilder();
+		//
+		//			Block block = (Block) statement;
+		//			for (Statement st : block.getStatements()) {
+		//				// Get 'sys' expression
+		//				if (st instanceof StatementExpr) st = ((StatementExpr) st).getExpression();
+		//				ExpressionSys sysst = (ExpressionSys) st;
+		//
+		//				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
+		//
+		//				// Get commands
+		//				String commands = sysst.getCommands(bdsThread);
+		//				syssb.append(commands);
+		//				syssb.append("\n");
+		//			}
+		//
+		//			if (!bdsThread.isCheckpointRecover()) {
+		//				sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
+		//			}
+		//		} else {
+		//			throw new RuntimeException("Unimplemented for class '" + statement.getClass().getSimpleName() + "'");
+		//		}
 
 		return sys;
 	}

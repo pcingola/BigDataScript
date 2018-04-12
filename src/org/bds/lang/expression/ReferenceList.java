@@ -1,10 +1,11 @@
-package org.bds.lang.type;
+package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.expression.Expression;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
 import org.bds.lang.value.LiteralInt;
 import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueList;

@@ -94,6 +94,8 @@ public enum OpCode {
 	, STORE
 	// Subtraction
 	, SUBI, SUBR
+	// Sys command
+	, SYS
 	// Swap two values in stack
 	, SWAP
 	// Create a variable in local scope

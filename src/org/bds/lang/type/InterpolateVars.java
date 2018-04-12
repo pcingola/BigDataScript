@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.expression.ReferenceVar;
 import org.bds.lang.value.Literal;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueString;
@@ -120,7 +121,7 @@ public class InterpolateVars extends Literal {
 			cprev = c;
 		}
 
-		if (cprev == '\\') sb.append(cprev); // Append last charater
+		if (cprev == '\\') sb.append(cprev); // Append last char
 
 		return sb.toString();
 	}
@@ -183,7 +184,6 @@ public class InterpolateVars extends Literal {
 			// Parse string literal part
 			//---
 			Tuple<String, String> tupStr = findString(str);
-			// String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : unEscape(tupStr.first);
 			String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : escapeMultiline(tupStr.first);
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed

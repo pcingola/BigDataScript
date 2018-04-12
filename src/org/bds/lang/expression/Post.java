@@ -2,7 +2,6 @@ package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
-import org.bds.lang.type.Reference;
 
 /**
  * Post increment / decrement operator

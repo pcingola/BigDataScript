@@ -1,10 +1,4 @@
 
-
-system="local"
-
-task ( timeout=1 ) {
-	sys echo GOING TO SLEEP...
-	sys sleep 60
-	sys echo DONE
-}
+s := 'world'
+sys echo hi $s
 

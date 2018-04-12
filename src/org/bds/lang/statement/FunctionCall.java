@@ -5,7 +5,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
-import org.bds.lang.type.ReferenceThis;
+import org.bds.lang.expression.ReferenceThis;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
