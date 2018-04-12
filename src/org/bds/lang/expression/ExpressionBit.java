@@ -9,10 +9,12 @@ import org.bds.symbol.SymbolTable;
 
 /**
  * A bitwise expression
- * 
+ *
  * @author pcingola
  */
 public class ExpressionBit extends ExpressionBinary {
+
+	private static final long serialVersionUID = 3166871171374710364L;
 
 	public ExpressionBit(BdsNode parent, ParseTree tree) {
 		super(parent, tree);

@@ -1,12 +1,5 @@
 
-bool f(int x) {
-	println("f: $x")
-			return x > 10
+
+task {
+	sys echo hi
 }
-
-# Shortcircuit and
-
-#a := f(1) && f(20)
-o := f(1) || f(20)
-
-

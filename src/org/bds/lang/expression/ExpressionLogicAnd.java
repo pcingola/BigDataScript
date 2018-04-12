@@ -24,7 +24,7 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 	@Override
 	public String toAsm() {
 		// Logic and has to be implemented using a short-circuit operation
-		// I.e: If left expression is false, we do not calculate right 
+		// I.e: If left expression is false, we do not calculate right
 		//      expression because we already know that the result will
 		//      be 'false'
 
