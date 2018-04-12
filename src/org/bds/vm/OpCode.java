@@ -98,6 +98,8 @@ public enum OpCode {
 	, SYS
 	// Swap two values in stack
 	, SWAP
+	// Dispatch a task
+	, TASK
 	// Create a variable in local scope
 	, VAR
 	// XOR

@@ -972,6 +972,10 @@ public class BdsVm {
 				push(v1);
 				break;
 
+			case TASK:
+				task();
+				break;
+
 			case VAR:
 				name = constantString();
 				scope.add(name, peek()); // We leave the value in the stack
@@ -1030,6 +1034,13 @@ public class BdsVm {
 	public String stackTrace() {
 		// TODO: !!! IMPLEMENT
 		return "";
+	}
+
+	/**
+	 * Execute a 'taks'
+	 */
+	void task() {
+
 	}
 
 	/**

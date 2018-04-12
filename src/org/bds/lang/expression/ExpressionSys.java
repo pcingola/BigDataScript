@@ -1,7 +1,5 @@
 package org.bds.lang.expression;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -79,18 +77,6 @@ public class ExpressionSys extends Expression {
 
 	public ExpressionSys(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	public String getSysFileName(String execId) {
-		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
-
-		String sysFileName = execId + ".sh";
-		File f = new File(sysFileName);
-		try {
-			return f.getCanonicalPath();
-		} catch (IOException e) {
-			throw new RuntimeException("cannot get cannonical path for file '" + sysFileName + "'");
-		}
 	}
 
 	@Override
