@@ -26,9 +26,19 @@ public class InterpolateVars extends Literal {
 	 * Replace '\n' by '\\n' (same for '\r')
 	 */
 	public static String escapeMultiline(String s) {
-		s = s.replace("\n", "\\n");
-		s = s.replace("\r", "\\r");
-		return s;
+		String lines[] = s.split("\n");
+		if (lines.length <= 1) return s;
+
+		// Correct lines ending in backslash (e.g. multi-line unix commands)
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < lines.length; i++) {
+			String l = lines[i];
+			if (l.endsWith("\\")) {
+				sb.append(l + "\\" + "\\n"); // Make sure we have an (escaped) backslash, followed by newline (escaped)
+			} else sb.append(l + "\\n"); // Add escaped newline
+		}
+
+		return sb.toString();
 	}
 
 	/**
@@ -38,7 +48,6 @@ public class InterpolateVars extends Literal {
 		StringBuilder sb = new StringBuilder();
 		char cprev = ' ';
 		for (char c : str.toCharArray()) {
-
 			if (cprev == '\\') {
 				// Convert characters
 				if (c == '\n') {
