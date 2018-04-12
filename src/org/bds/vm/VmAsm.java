@@ -186,6 +186,19 @@ public class VmAsm {
 	}
 
 	/**
+	 * Remove comment lines
+	 */
+	boolean isCommentLine(String line) {
+		for (int i = 0; i < line.length(); i++) {
+			char c = line.charAt(i);
+			if (Character.isWhitespace(c)) continue;
+			if (c == '#') return true; // First non-whitespace is '#'
+			return false;
+		}
+		return true; // Only whitespaces
+	}
+
+	/**
 	 * Get a label from an input line, null if there are no labels
 	 */
 	String label(String line) {
@@ -279,6 +292,9 @@ public class VmAsm {
 		case NEW:
 			return bdsvm.addType((Type) oparam);
 
+		case NODE:
+			return ((int) oparam);
+
 		default:
 			return bdsvm.addConstant(oparam);
 		}
@@ -303,19 +319,6 @@ public class VmAsm {
 	 */
 	int pc() {
 		return code.size();
-	}
-
-	/**
-	 * Remove comment lines
-	 */
-	boolean isCommentLine(String line) {
-		for (int i = 0; i < line.length(); i++) {
-			char c = line.charAt(i);
-			if (Character.isWhitespace(c)) continue;
-			if (c == '#') return true; // First non-whitespace is '#'
-			return false;
-		}
-		return true; // Only whitespaces
 	}
 
 	public void setCode(String codeStr) {

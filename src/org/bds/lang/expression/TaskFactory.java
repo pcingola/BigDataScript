@@ -182,11 +182,15 @@ public class TaskFactory {
 
 		// Try to find a 'task' node
 		for (BdsNode bn = n; bn != null; bn = bn.getParent()) {
-			if (bn instanceof ExpressionTask) return bn;
+			if (bn instanceof ExpressionTask) {
+				bdsNode = bn;
+				return bdsNode;
+			}
 		}
 
 		// Not found? Use this as default
-		return n;
+		bdsNode = n;
+		return bdsNode;
 	}
 
 	String getFileName() {
@@ -321,11 +325,12 @@ public class TaskFactory {
 			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
 		}
 
+		int ln = getLineNum();
 		String execId = bdsThread.getBdsThreadId() //
 				+ "/task" //
 				+ (module == null ? "" : "." + module) //
 				+ (taskName == null ? "" : "." + taskName) //
-				+ ".line_" + getLineNum() //
+				+ (ln > 0 ? ".line_" + ln : "") //
 				+ ".id_" + nextId //
 		;
 

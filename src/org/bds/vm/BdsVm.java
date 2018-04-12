@@ -1082,6 +1082,7 @@ public class BdsVm {
 			int idx = code[++pc];
 			if (op.isParamString()) param = "'" + getConstant(idx) + "'";
 			else if (op.isParamType()) param = "'" + getType(idx) + "'";
+			else if (op.isParamNodeId()) param = "" + idx;
 			else param = getConstant(idx).toString();
 		}
 

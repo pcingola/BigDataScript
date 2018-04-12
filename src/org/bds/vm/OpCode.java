@@ -138,6 +138,15 @@ public enum OpCode {
 	}
 
 	/**
+	 * Is the parameters a 'nodeId'?
+	 * Note that node ID is a 32bit int encoded encoded directly in
+	 * the opcode parameter (as opposed to using poll of constants)
+	 */
+	public boolean isParamNodeId() {
+		return this == NODE;
+	}
+
+	/**
 	 * Is the parameter a string?
 	 */
 	public boolean isParamString() {
@@ -166,13 +175,7 @@ public enum OpCode {
 	 * Is the parameters a 'type'?
 	 */
 	public boolean isParamType() {
-		switch (this) {
-		case NEW:
-			return true;
-
-		default:
-			return false;
-		}
+		return this == NEW;
 	}
 
 	@Override
