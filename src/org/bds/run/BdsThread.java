@@ -726,51 +726,9 @@ public class BdsThread extends Thread implements Serializable {
 		}
 	}
 
-	//	/**
-	//	 * Create a new scope
-	//	 */
-	//	public void newScope(BdsNode node) {
-	//		scope = new Scope(scope, node);
-	//	}
-	//
-	//	/**
-	//	 * Back to old scope
-	//	 */
-	//	public void oldScope() {
-	//		scope = scope.getParent();
-	//	}
-
 	public Value pop() {
 		return vm.pop();
 	}
-
-	//	/**
-	//	 * Pop a bool from stack
-	//	 */
-	//	public boolean popBool() {
-	//		return pop().asBool();
-	//	}
-	//
-	//	/**
-	//	 * Pop an int from stack
-	//	 */
-	//	public long popInt() {
-	//		return pop().asInt();
-	//	}
-	//
-	//	/**
-	//	 * Pop a real from stack
-	//	 */
-	//	public double popReal() {
-	//		return pop().asReal();
-	//	}
-	//
-	//	/**
-	//	 * Pop a string from stack
-	//	 */
-	//	public String popString() {
-	//		return pop().asString();
-	//	}
 
 	public void print() {
 		// Create a list with program file and all included files
