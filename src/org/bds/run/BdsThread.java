@@ -24,7 +24,6 @@ import org.bds.executioner.Executioners;
 import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ProgramUnit;
-import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementInclude;
@@ -285,7 +284,7 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	public void fatalError(String message) {
-		fatalError(getCurrentRunNode(), message);
+		fatalError(getBdsNodeCurrent(), message);
 	}
 
 	//	/**
@@ -469,9 +468,9 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	/**
-	 * Get node being executed by the vm
+	 * Get node currently executed by the VM
 	 */
-	public BdsNode getCurrentRunNode() {
+	public BdsNode getBdsNodeCurrent() {
 		int nodeId = vm.getNodeId();
 		return BdsNodeFactory.get().getNode(nodeId);
 	}
@@ -827,7 +826,9 @@ public class BdsThread extends Thread implements Serializable {
 					&& !task.isDependency() // Don't execute dependencies, unledd needed
 			) {
 				// Task not finished or failed? Re-execute
-				ExpressionTask.execute(this, task);
+				// TODO: FIXME!!!
+				// ExpressionTask.execute(this, task);
+				throw new RuntimeException("!!!! IMPLEMENT");
 			}
 		}
 

@@ -8,13 +8,15 @@ import org.bds.data.Data;
 import org.bds.data.DataRemote;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
+import org.bds.lang.BdsNode;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.task.TaskDependency;
 import org.bds.util.Gpr;
 
 /**
- * Execute a 'task' VM opcode 
+ * Execute a 'task' VM opcode
  *
  * @author pcingola
  */
@@ -22,12 +24,18 @@ public class TaskFactory {
 
 	private static int sysId = 1;
 
+	Task task;
+	TaskDependency taskDependency;
+	BdsThread bdsThread;
+	BdsNode bdsNode;
+	String commands;
+
 	/**
 	 * Execute a task (schedule it into executioner)
 	 */
 	public static void execute(BdsThread bdsThread, Task task) {
 		// Select executioner and queue for execution
-		String runSystem = bdsThread.getString(TASK_OPTION_SYSTEM);
+		String runSystem = bdsThread.getString(ExpressionTask.TASK_OPTION_SYSTEM);
 		Executioner executioner = Executioners.getInstance().get(runSystem);
 		task.execute(bdsThread, executioner); // Execute task
 	}
@@ -39,13 +47,14 @@ public class TaskFactory {
 		return sysId++;
 	}
 
-	public TaskFactory() {
+	public TaskFactory(BdsThread bdsThread) {
+		this.bdsThread = bdsThread;
 	}
 
 	/**
 	 * Create commands that will be executed in a shell
 	 */
-	String createCommands(BdsThread bdsThread, TaskDependency taskDependency, ExpressionSys x) {
+	String createCommands() {
 		HashMap<String, String> replace = new HashMap<>();
 		StringBuilder sbDown = new StringBuilder();
 		StringBuilder sbUp = new StringBuilder();
@@ -59,7 +68,7 @@ public class TaskFactory {
 				for (String in : taskDependency.getInputs()) {
 					Data dataIn = Data.factory(in);
 					if (dataIn.isRemote()) {
-						sbDown.append(CMD_DOWNLOAD //
+						sbDown.append(ExpressionTask.CMD_DOWNLOAD //
 								+ " \"" + dataIn.getAbsolutePath() + "\"" //
 								+ " \"" + dataIn.getLocalPath() + "\"" //
 								+ "\n");
@@ -77,7 +86,7 @@ public class TaskFactory {
 				for (String out : taskDependency.getOutputs()) {
 					Data dataOut = Data.factory(out);
 					if (dataOut.isRemote()) {
-						sbUp.append(CMD_UPLOAD //
+						sbUp.append(ExpressionTask.CMD_UPLOAD //
 								+ " \"" + dataOut.getLocalPath() + "\"" //
 								+ " \"" + dataOut.getAbsolutePath() + "\"" //
 								+ "\n");
@@ -120,7 +129,75 @@ public class TaskFactory {
 		return sbSys.toString();
 	}
 
-	public String getSysFileName(String execId) {
+	/**
+	 * Create a task
+	 */
+	Task createTask() {
+		// Get an ID
+		String taskId = taskId();
+
+		// Get commands representing a shell program
+		String sysCmds = createCommands();
+
+		// Create Task
+		String sysFileName = getSysFileName(taskId);
+		Task task = new Task(taskId, getBdsNode(), sysFileName, sysCmds);
+
+		// Configure Task parameters
+		task.setVerbose(bdsThread.getConfig().isVerbose());
+		task.setDebug(bdsThread.getConfig().isDebug());
+
+		// Set task options
+		task.setTaskName(taskName);
+		task.setCanFail(bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL));
+		task.setAllowEmpty(bdsThread.getBool(ExpressionTask.TASK_OPTION_ALLOW_EMPTY));
+		task.setNode(bdsThread.getString(ExpressionTask.TASK_OPTION_NODE));
+		task.setQueue(bdsThread.getString(ExpressionTask.TASK_OPTION_QUEUE));
+		task.setMaxFailCount((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
+		task.setCurrentDir(bdsThread.getCurrentDir());
+
+		// Set task options: Resources
+		task.getResources().setCpus((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_CPUS));
+		task.getResources().setMem(bdsThread.getInt(ExpressionTask.TASK_OPTION_MEM));
+		task.getResources().setWallTimeout(bdsThread.getInt(ExpressionTask.TASK_OPTION_WALL_TIMEOUT));
+		task.getResources().setTimeout(bdsThread.getInt(ExpressionTask.TASK_OPTION_TIMEOUT));
+		if (taskDependency != null) task.setTaskDependency(taskDependency);
+
+		return task;
+	}
+
+	/**
+	 * Dispatch task for execution
+	 */
+	void dispatchTask(Task task) {
+		execute(bdsThread, task);
+	}
+
+	/**
+	 * Try to find the current bdsNode
+	 */
+	BdsNode getBdsNode() {
+		if (bdsNode != null) return bdsNode;
+		BdsNode n = bdsThread.getBdsNodeCurrent();
+
+		// Try to find a 'task' node
+		for (BdsNode bn = n; bn != null; bn = bn.getParent()) {
+			if (bn instanceof ExpressionTask) return bn;
+		}
+
+		// Not found? Use this as default
+		return n;
+	}
+
+	String getFileName() {
+		return (getBdsNode() != null) ? getBdsNode().getFileName() : null;
+	}
+
+	int getLineNum() {
+		return (getBdsNode() != null) ? getBdsNode().getLineNum() : -1;
+	}
+
+	String getSysFileName(String execId) {
 		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
 
 		String sysFileName = execId + ".sh";
@@ -132,51 +209,8 @@ public class TaskFactory {
 		}
 	}
 
-	/**
-	 * Create a task
-	 */
-	Task createTask(BdsThread bdsThread, TaskDependency taskDependency, String commands) {
-		// Task name
-		String taskName = "";
-		if (bdsThread.hasVariable(TASK_OPTION_TASKNAME)) taskName = bdsThread.getString(TASK_OPTION_TASKNAME);
-
-		// Get an ID
-		String execId = taskId("task", getFileName(), taskName, bdsThread);
-
-		// Get commands representing a shell program
-		String sysCmds = createCommands(bdsThread, taskDependency, commands);
-
-		// Create Task
-		Task task = new Task(execId, this, getSysFileName(execId), sysCmds);
-
-		// Configure Task parameters
-		task.setVerbose(bdsThread.getConfig().isVerbose());
-		task.setDebug(bdsThread.getConfig().isDebug());
-
-		// Set task options
-		task.setTaskName(taskName);
-		task.setCanFail(bdsThread.getBool(TASK_OPTION_CAN_FAIL));
-		task.setAllowEmpty(bdsThread.getBool(TASK_OPTION_ALLOW_EMPTY));
-		task.setNode(bdsThread.getString(TASK_OPTION_NODE));
-		task.setQueue(bdsThread.getString(TASK_OPTION_QUEUE));
-		task.setMaxFailCount((int) bdsThread.getInt(TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
-		task.setCurrentDir(bdsThread.getCurrentDir());
-
-		// Set task options: Resources
-		task.getResources().setCpus((int) bdsThread.getInt(TASK_OPTION_CPUS));
-		task.getResources().setMem(bdsThread.getInt(TASK_OPTION_MEM));
-		task.getResources().setWallTimeout(bdsThread.getInt(TASK_OPTION_WALL_TIMEOUT));
-		task.getResources().setTimeout(bdsThread.getInt(TASK_OPTION_TIMEOUT));
-		if (taskDependency != null) task.setTaskDependency(taskDependency);
-
-		return task;
-	}
-
-	/**
-	 * Dispatch task for execution
-	 */
-	void dispatchTask(BdsThread bdsThread, Task task) {
-		execute(bdsThread, task);
+	String getTaskName() {
+		return bdsThread.hasVariable(ExpressionTask.TASK_OPTION_TASKNAME) ? bdsThread.getString(ExpressionTask.TASK_OPTION_TASKNAME) : null;
 	}
 
 	/**
@@ -233,32 +267,9 @@ public class TaskFactory {
 	}
 
 	/**
-	 * Create a task ID
+	 * Create and run task
 	 */
-	protected synchronized String taskId(String name, String fileName, String taskName, BdsThread bdsThread) {
-		int nextId = nextId();
-
-		// Use module name
-		String module = fileName;
-		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
-
-		if (taskName != null) {
-			if (taskName.isEmpty()) taskName = null;
-			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
-		}
-
-		String execId = bdsThread.getBdsThreadId() //
-				+ "/" + name //
-				+ (module == null ? "" : "." + module) //
-				+ (taskName == null ? "" : "." + taskName) //
-				+ ".line_" + getLineNum() //
-				+ ".id_" + nextId //
-		;
-
-		return execId;
-	}
-
-	public static void run(BdsThread bdsThread) {
+	public void run() {
 		// Evaluate task options (get a list of dependencies)
 		TaskDependency taskDependency = null;
 
@@ -287,16 +298,44 @@ public class TaskFactory {
 		//		}
 
 		// Evaluate 'sys' statements
-		String commands = bdsThread.pop().asString();
+		commands = bdsThread.pop().asString();
 		Gpr.debug("COMMANDS: " + commands);
 
 		// Create task
-		Task task = createTask(bdsThread, taskDependency, commands);
+		Task task = createTask();
 
 		// Schedule task for execution
-		dispatchTask(bdsThread, task);
+		dispatchTask(task);
 
-		bdsThread.push(task.getId());
+		// Push taskId to stack
+		bdsThread.push(new ValueString(task.getId()));
+	}
+
+	/**
+	 * Create a task ID
+	 */
+	String taskId() {
+		int nextId = nextId();
+
+		// Use module name
+		String module = getFileName();
+		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
+
+		String taskName = getTaskName();
+		if (taskName != null) {
+			if (taskName.isEmpty()) taskName = null;
+			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
+		}
+
+		String execId = bdsThread.getBdsThreadId() //
+				+ "/task" //
+				+ (module == null ? "" : "." + module) //
+				+ (taskName == null ? "" : "." + taskName) //
+				+ ".line_" + getLineNum() //
+				+ ".id_" + nextId //
+		;
+
+		return execId;
 	}
 
 }

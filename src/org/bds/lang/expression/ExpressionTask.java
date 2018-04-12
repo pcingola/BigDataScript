@@ -130,11 +130,9 @@ public class ExpressionTask extends ExpressionWithScope {
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("scopepush\n");
-
-		sb.append(toAsmSys());
-
 		sb.append(super.toAsmNode()); // Task will use the node to get parameters
+		sb.append("scopepush\n");
+		sb.append(toAsmSys());
 		sb.append("task\n");
 		sb.append("scopepop\n");
 		return sb.toString();

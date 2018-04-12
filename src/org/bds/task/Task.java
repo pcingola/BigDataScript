@@ -11,7 +11,7 @@ import java.util.Set;
 import org.bds.Config;
 import org.bds.cluster.host.HostResources;
 import org.bds.executioner.Executioner;
-import org.bds.lang.expression.Expression;
+import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -69,13 +69,18 @@ public class Task {
 		this(id, null, null, null, -1);
 	}
 
-	public Task(String id, Expression expr, String programFileName, String programTxt) {
+	public Task(String id, BdsNode bdsNode, String programFileName, String programTxt) {
 		this.id = id;
 		this.programFileName = programFileName;
 		this.programTxt = programTxt;
-		bdsFileName = expr.getFileName();
-		bdsLineNum = expr.getLineNum();
-		taskDependency = new TaskDependency(expr);
+		if (bdsNode != null) {
+			bdsFileName = bdsNode.getFileName();
+			bdsLineNum = bdsNode.getLineNum();
+		} else {
+			bdsFileName = "";
+			bdsLineNum = -1;
+		}
+		taskDependency = new TaskDependency(bdsNode);
 		resources = new HostResources();
 		reset();
 	}

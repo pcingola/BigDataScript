@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.bds.Config;
 import org.bds.lang.expression.ExpressionSys;
+import org.bds.lang.expression.TaskFactory;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.statement.FunctionDeclaration;
@@ -1040,7 +1041,8 @@ public class BdsVm {
 	 * Execute a 'taks'
 	 */
 	void task() {
-
+		TaskFactory tf = new TaskFactory(bdsThread);
+		tf.run();
 	}
 
 	/**
