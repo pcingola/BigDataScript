@@ -206,35 +206,33 @@ public class ExpressionTask extends ExpressionWithScope {
 	ExpressionSys evalSys(BdsThread bdsThread) {
 		ExpressionSys sys = null;
 
-		//		if (statement instanceof StatementExpr) {
-		//			Expression exprSys = ((StatementExpr) statement).getExpression();
-		//			sys = (ExpressionSys) exprSys;
-		//		} else if (statement instanceof ExpressionSys) {
-		//			sys = (ExpressionSys) statement;
-		//		} else if (statement instanceof Block) {
-		//			// Create one sys statement for all sys statements in the block
-		//			StringBuilder syssb = new StringBuilder();
-		//
-		//			Block block = (Block) statement;
-		//			for (Statement st : block.getStatements()) {
-		//				// Get 'sys' expression
-		//				if (st instanceof StatementExpr) st = ((StatementExpr) st).getExpression();
-		//				ExpressionSys sysst = (ExpressionSys) st;
-		//
-		//				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
-		//
-		//				// Get commands
-		//				String commands = sysst.getCommands(bdsThread);
-		//				syssb.append(commands);
-		//				syssb.append("\n");
-		//			}
-		//
-		//			if (!bdsThread.isCheckpointRecover()) {
-		//				sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
-		//			}
-		//		} else {
-		//			throw new RuntimeException("Unimplemented for class '" + statement.getClass().getSimpleName() + "'");
-		//		}
+		if (statement instanceof StatementExpr) {
+			Expression exprSys = ((StatementExpr) statement).getExpression();
+			sys = (ExpressionSys) exprSys;
+		} else if (statement instanceof ExpressionSys) {
+			sys = (ExpressionSys) statement;
+		} else if (statement instanceof Block) {
+			// Create one sys statement for all sys statements in the block
+			StringBuilder syssb = new StringBuilder();
+
+			Block block = (Block) statement;
+			for (Statement st : block.getStatements()) {
+				// Get 'sys' expression
+				if (st instanceof StatementExpr) st = ((StatementExpr) st).getExpression();
+				ExpressionSys sysst = (ExpressionSys) st;
+
+				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
+
+				// Get commands
+				String commands = sysst.getCommands(bdsThread);
+				syssb.append(commands);
+				syssb.append("\n");
+			}
+
+			sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
+		} else {
+			throw new RuntimeException("Unimplemented for class '" + statement.getClass().getSimpleName() + "'");
+		}
 
 		return sys;
 	}
@@ -333,50 +331,46 @@ public class ExpressionTask extends ExpressionWithScope {
 		return returnType;
 	}
 
-	//	/**
-	//	 * Evaluate 'task' expression
-	//	 */
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		// Evaluate task options (get a list of dependencies)
-	//		TaskDependency taskDependency = null;
-	//		if (options != null) {
-	//			taskDependency = options.evalTaskDependency(bdsThread);
-	//
-	//			if (bdsThread.isCheckpointRecover()) return;
-	//
-	//			if (taskDependency == null) {
-	//				// Task options clause not satisfied. Do not execute task => Return empty taskId
-	//				if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=false): null");
-	//				bdsThread.push("");
-	//				return;
-	//			}
-	//
-	//			// Needs update?
-	//			taskDependency.setDebug(bdsThread.isDebug());
-	//			boolean needsUpdate = taskDependency.depOperator();
-	//
-	//			if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=" + needsUpdate + "): " + taskDependency);
-	//			if (!needsUpdate) {
-	//				// Task options clause not satisfied. Do not execute task => Return empty taskId
-	//				bdsThread.push("");
-	//				return;
-	//			}
-	//		}
-	//
-	//		if (bdsThread.isCheckpointRecover()) return;
-	//
-	//		// Evaluate 'sys' statements
-	//		ExpressionSys sys = evalSys(bdsThread);
-	//
-	//		// Create task
-	//		Task task = createTask(bdsThread, taskDependency, sys);
-	//
-	//		// Schedule task for execution
-	//		dispatchTask(bdsThread, task);
-	//
-	//		bdsThread.push(task.getId());
-	//	}
+	@Override
+	public String toAsm() {
+		// Evaluate task options (get a list of dependencies)
+		TaskDependency taskDependency = null;
+
+		//		if (options != null) {
+		//			taskDependency = options.evalTaskDependency(bdsThread);
+		//
+		//			if (bdsThread.isCheckpointRecover()) return;
+		//
+		//			if (taskDependency == null) {
+		//				// Task options clause not satisfied. Do not execute task => Return empty taskId
+		//				if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=false): null");
+		//				bdsThread.push("");
+		//				return;
+		//			}
+		//
+		//			// Needs update?
+		//			taskDependency.setDebug(bdsThread.isDebug());
+		//			boolean needsUpdate = taskDependency.depOperator();
+		//
+		//			if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=" + needsUpdate + "): " + taskDependency);
+		//			if (!needsUpdate) {
+		//				// Task options clause not satisfied. Do not execute task => Return empty taskId
+		//				bdsThread.push("");
+		//				return;
+		//			}
+		//		}
+
+		// Evaluate 'sys' statements
+		ExpressionSys sys = evalSys(bdsThread);
+
+		// Create task
+		Task task = createTask(bdsThread, taskDependency, sys);
+
+		// Schedule task for execution
+		dispatchTask(bdsThread, task);
+
+		bdsThread.push(task.getId());
+	}
 
 	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {
