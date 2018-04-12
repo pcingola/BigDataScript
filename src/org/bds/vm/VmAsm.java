@@ -89,7 +89,7 @@ public class VmAsm {
 		lineNum = 1;
 		for (String line : code().split("\n")) {
 			// Remove comments and labels
-			line = removeComments(line);
+			if (isCommentLine(line)) continue;
 
 			// Parse label, if any.Keep the rest of the line
 			line = label(line);
@@ -306,11 +306,16 @@ public class VmAsm {
 	}
 
 	/**
-	 * Remove comments
+	 * Remove comment lines
 	 */
-	String removeComments(String line) {
-		int commentIdx = line.indexOf('#');
-		return commentIdx >= 0 ? line.substring(0, commentIdx) : line;
+	boolean isCommentLine(String line) {
+		for (int i = 0; i < line.length(); i++) {
+			char c = line.charAt(i);
+			if (Character.isWhitespace(c)) continue;
+			if (c == '#') return true; // First non-whitespace is '#'
+			return false;
+		}
+		return true; // Only whitespaces
 	}
 
 	public void setCode(String codeStr) {

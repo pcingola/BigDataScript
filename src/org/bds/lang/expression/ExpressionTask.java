@@ -51,6 +51,8 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String CMD_DOWNLOAD = "bds -download";
 	public static final String CMD_UPLOAD = "bds -upload";
 
+	private static int sysId = 1;
+
 	// Note:	It is important that 'options' node is type-checked before the others in order to
 	//			add variables to the scope before statements uses them.
 	//			So the field name should be alphabetically sorted before the other (that's why
@@ -69,6 +71,13 @@ public class ExpressionTask extends ExpressionWithScope {
 
 		// Execute task
 		task.execute(bdsThread, executioner);
+	}
+
+	/**
+	 * Get a sys ID
+	 */
+	private static synchronized int nextId() {
+		return sysId++;
 	}
 
 	public ExpressionTask(BdsNode parent, ParseTree tree) {
@@ -162,7 +171,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		if (bdsThread.hasVariable(TASK_OPTION_TASKNAME)) taskName = bdsThread.getString(TASK_OPTION_TASKNAME);
 
 		// Get an ID
-		String execId = sys.execId("task", getFileName(), taskName, bdsThread);
+		String execId = taskId("task", getFileName(), taskName, bdsThread);
 
 		// Get commands representing a shell program
 		String sysCmds = createCommands(bdsThread, taskDependency, sys);
@@ -198,43 +207,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	 */
 	void dispatchTask(BdsThread bdsThread, Task task) {
 		execute(bdsThread, task);
-	}
-
-	/**
-	 * Evaluate 'sys' statements used to create task
-	 */
-	ExpressionSys evalSys(BdsThread bdsThread) {
-		ExpressionSys sys = null;
-
-		if (statement instanceof StatementExpr) {
-			Expression exprSys = ((StatementExpr) statement).getExpression();
-			sys = (ExpressionSys) exprSys;
-		} else if (statement instanceof ExpressionSys) {
-			sys = (ExpressionSys) statement;
-		} else if (statement instanceof Block) {
-			// Create one sys statement for all sys statements in the block
-			StringBuilder syssb = new StringBuilder();
-
-			Block block = (Block) statement;
-			for (Statement st : block.getStatements()) {
-				// Get 'sys' expression
-				if (st instanceof StatementExpr) st = ((StatementExpr) st).getExpression();
-				ExpressionSys sysst = (ExpressionSys) st;
-
-				syssb.append("\n# SYS command. line " + sysst.getLineNum() + "\n\n");
-
-				// Get commands
-				String commands = sysst.getCommands(bdsThread);
-				syssb.append(commands);
-				syssb.append("\n");
-			}
-
-			sys = ExpressionSys.get(parent, syssb.toString(), lineNum, charPosInLine);
-		} else {
-			throw new RuntimeException("Unimplemented for class '" + statement.getClass().getSimpleName() + "'");
-		}
-
-		return sys;
 	}
 
 	@Override
@@ -332,47 +304,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	@Override
-	public String toAsm() {
-		// Evaluate task options (get a list of dependencies)
-		TaskDependency taskDependency = null;
-
-		//		if (options != null) {
-		//			taskDependency = options.evalTaskDependency(bdsThread);
-		//
-		//			if (bdsThread.isCheckpointRecover()) return;
-		//
-		//			if (taskDependency == null) {
-		//				// Task options clause not satisfied. Do not execute task => Return empty taskId
-		//				if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=false): null");
-		//				bdsThread.push("");
-		//				return;
-		//			}
-		//
-		//			// Needs update?
-		//			taskDependency.setDebug(bdsThread.isDebug());
-		//			boolean needsUpdate = taskDependency.depOperator();
-		//
-		//			if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=" + needsUpdate + "): " + taskDependency);
-		//			if (!needsUpdate) {
-		//				// Task options clause not satisfied. Do not execute task => Return empty taskId
-		//				bdsThread.push("");
-		//				return;
-		//			}
-		//		}
-
-		// Evaluate 'sys' statements
-		ExpressionSys sys = evalSys(bdsThread);
-
-		// Create task
-		Task task = createTask(bdsThread, taskDependency, sys);
-
-		// Schedule task for execution
-		dispatchTask(bdsThread, task);
-
-		bdsThread.push(task.getId());
-	}
-
-	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {
 		// Sanity check options
 		if (options != null) options.sanityCheck(compilerMessages);
@@ -403,11 +334,121 @@ public class ExpressionTask extends ExpressionWithScope {
 		}
 	}
 
+	/**
+	 * Create a task ID
+	 */
+	public synchronized String taskId(String name, String fileName, String taskName, BdsThread bdsThread) {
+		int nextId = nextId();
+
+		// Use module name
+		String module = fileName;
+		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
+
+		if (taskName != null) {
+			if (taskName.isEmpty()) taskName = null;
+			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
+		}
+
+		String execId = bdsThread.getBdsThreadId() //
+				+ "/" + name //
+				+ (module == null ? "" : "." + module) //
+				+ (taskName == null ? "" : "." + taskName) //
+				+ ".line_" + getLineNum() //
+				+ ".id_" + nextId //
+		;
+
+		return execId;
+	}
+
+	//	@Override
+	//	public String toAsm() {
+	//		// Evaluate task options (get a list of dependencies)
+	//		TaskDependency taskDependency = null;
+	//
+	//		//		if (options != null) {
+	//		//			taskDependency = options.evalTaskDependency(bdsThread);
+	//		//
+	//		//			if (bdsThread.isCheckpointRecover()) return;
+	//		//
+	//		//			if (taskDependency == null) {
+	//		//				// Task options clause not satisfied. Do not execute task => Return empty taskId
+	//		//				if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=false): null");
+	//		//				bdsThread.push("");
+	//		//				return;
+	//		//			}
+	//		//
+	//		//			// Needs update?
+	//		//			taskDependency.setDebug(bdsThread.isDebug());
+	//		//			boolean needsUpdate = taskDependency.depOperator();
+	//		//
+	//		//			if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=" + needsUpdate + "): " + taskDependency);
+	//		//			if (!needsUpdate) {
+	//		//				// Task options clause not satisfied. Do not execute task => Return empty taskId
+	//		//				bdsThread.push("");
+	//		//				return;
+	//		//			}
+	//		//		}
+	//
+	//		// Evaluate 'sys' statements
+	//		ExpressionSys sys = evalSys(bdsThread);
+	//
+	//		// Create task
+	//		Task task = createTask(bdsThread, taskDependency, sys);
+	//
+	//		// Schedule task for execution
+	//		dispatchTask(bdsThread, task);
+	//
+	//		bdsThread.push(task.getId());
+	//	}
+
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsmNode());
+		sb.append("scopepush\n");
 
+		sb.append(toAsmSys());
+
+		sb.append("scopepop\n");
 		return sb.toString();
+	}
+
+	/**
+	 * Evaluate 'sys' statements used to create task
+	 */
+	String toAsmSys() {
+		// Only one 'sys' expression
+		if (statement instanceof StatementExpr) {
+			Expression exprSys = ((StatementExpr) statement).getExpression();
+			ExpressionSys sys = (ExpressionSys) exprSys;
+			return sys.toAsm(false);
+		}
+
+		// One 'sys' expression within a statement
+		if (statement instanceof ExpressionSys) {
+			ExpressionSys sys = (ExpressionSys) statement;
+			return sys.toAsm(false);
+		}
+
+		// Multiple 'sys' expressions in a block
+		if (statement instanceof Block) {
+			// Create one sys statement for all sys statements in the block
+			StringBuilder sb = new StringBuilder();
+
+			Block block = (Block) statement;
+			for (Statement st : block.getStatements()) {
+				// Get 'sys' expression
+				if (st instanceof StatementExpr) st = ((StatementExpr) st).getExpression();
+				ExpressionSys sys = (ExpressionSys) st;
+				sb.append("pushs '\\n# SYS command. line " + sys.getLineNum() + "\\n\\n'\n");
+				sb.append(sys.toAsm(false));
+				sb.append("adds\n");
+			}
+
+			return sb.toString();
+		}
+
+		throw new RuntimeException("Unimplemented for class '" + statement.getClass().getSimpleName() + "'");
 	}
 
 	@Override

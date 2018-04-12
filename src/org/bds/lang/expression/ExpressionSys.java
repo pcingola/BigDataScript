@@ -16,7 +16,6 @@ import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
-import org.bds.util.Gpr;
 
 /**
  * An 'exec' expression (to execute a command line in a local computer, return STDOUT)
@@ -26,8 +25,6 @@ import org.bds.util.Gpr;
 public class ExpressionSys extends Expression {
 
 	private static final long serialVersionUID = -8698024999497987021L;
-
-	protected static int sysId = 1;
 
 	protected String commands;
 	InterpolateVars interpolateVars;
@@ -43,75 +40,7 @@ public class ExpressionSys extends Expression {
 		return sys;
 	}
 
-	/**
-	 * Get a sys ID
-	 */
-	private static synchronized int nextId() {
-		return sysId++;
-	}
-
-	public ExpressionSys(BdsNode parent, ParseTree tree) {
-		super(parent, tree);
-	}
-
-	/**
-	 * Create an exec ID
-	 */
-	public synchronized String execId(String name, String fileName, String taskName, BdsThread bdsThread) {
-		int nextId = nextId();
-
-		// Use module name
-		String module = fileName;
-		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
-
-		if (taskName != null) {
-			if (taskName.isEmpty()) taskName = null;
-			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
-		}
-
-		String execId = bdsThread.getBdsThreadId() //
-				+ "/" + name //
-				+ (module == null ? "" : "." + module) //
-				+ (taskName == null ? "" : "." + taskName) //
-				+ ".line_" + getLineNum() //
-				+ ".id_" + nextId //
-		;
-
-		return execId;
-	}
-
-	public String getSysFileName(String execId) {
-		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
-
-		String sysFileName = execId + ".sh";
-		File f = new File(sysFileName);
-		try {
-			return f.getCanonicalPath();
-		} catch (IOException e) {
-			throw new RuntimeException("cannot get cannonical path for file '" + sysFileName + "'");
-		}
-	}
-
-	@Override
-	protected void parse(ParseTree tree) {
-		String cmd = tree.getChild(0).getText();
-
-		if (cmd.startsWith("sys")) cmd = cmd.substring("sys".length());
-		setCommands(cmd);
-	}
-
-	/**
-	 * Sys expression always returns the task id, which is a string
-	 */
-	@Override
-	public Type returnType(SymbolTable symtab) {
-		returnType = Types.STRING;
-		return returnType;
-	}
-
 	public static void run(BdsThread bdsThread) {
-		nextId(); // Make sure sysId is increased
-
 		// 'sys' expressions are always executed locally and immediately
 		LinkedList<String> args = new LinkedList<>();
 		String shell = Config.get().getSysShell();
@@ -148,6 +77,39 @@ public class ExpressionSys extends Expression {
 		bdsThread.push(new ValueString(output));
 	}
 
+	public ExpressionSys(BdsNode parent, ParseTree tree) {
+		super(parent, tree);
+	}
+
+	public String getSysFileName(String execId) {
+		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
+
+		String sysFileName = execId + ".sh";
+		File f = new File(sysFileName);
+		try {
+			return f.getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException("cannot get cannonical path for file '" + sysFileName + "'");
+		}
+	}
+
+	@Override
+	protected void parse(ParseTree tree) {
+		String cmd = tree.getChild(0).getText();
+
+		if (cmd.startsWith("sys")) cmd = cmd.substring("sys".length());
+		setCommands(cmd);
+	}
+
+	/**
+	 * Sys expression always returns the task id, which is a string
+	 */
+	@Override
+	public Type returnType(SymbolTable symtab) {
+		returnType = Types.STRING;
+		return returnType;
+	}
+
 	void setCommands(String cmd) {
 		commands = cmd.trim();
 
@@ -162,16 +124,21 @@ public class ExpressionSys extends Expression {
 
 	@Override
 	public String toAsm() {
+		return toAsm(true);
+	}
+
+	public String toAsm(boolean useSys) {
 		StringBuilder sb = new StringBuilder();
 
 		if (interpolateVars == null) {
 			// No variable interpolation? => Literal
-			sb.append("pushs '" + commands + "'\n");
+			String cmd = InterpolateVars.escapeMultiline(commands);
+			sb.append("pushs '" + cmd + "'\n");
 		} else {
 			sb.append(interpolateVars.toAsm());
 		}
 
-		sb.append("sys\n");
+		if (useSys) sb.append("sys\n");
 
 		return sb.toString();
 	}

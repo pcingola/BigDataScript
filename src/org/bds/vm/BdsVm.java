@@ -11,6 +11,7 @@ import org.bds.lang.expression.ExpressionSys;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
@@ -1093,8 +1094,11 @@ public class BdsVm {
 	String toStringStack() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		for (int i = 0; i < sp; i++)
-			sb.append((i > 0 ? ", '" : "'") + stack[i] + "'");
+		for (int i = 0; i < sp; i++) {
+			Value v = stack[i];
+			String s = v.getType().isString() ? "'" + InterpolateVars.escapeMultiline(v.asString()) + "'" : v.toString();
+			sb.append((i > 0 ? ", " : "") + s);
+		}
 		sb.append(" ]");
 		return sb.toString();
 	}

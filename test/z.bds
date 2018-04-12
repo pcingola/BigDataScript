@@ -1,5 +1,6 @@
 
 
 task {
-	sys echo hi
+	sys echo hi; \
+		echo bye
 }
