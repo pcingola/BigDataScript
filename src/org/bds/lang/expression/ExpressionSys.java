@@ -11,6 +11,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.ValueString;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
@@ -118,7 +119,7 @@ public class ExpressionSys extends Expression {
 			args.add(arg);
 
 		// Command from string or interpolated vars
-		String cmds = bdsThread.popString();
+		String cmds = bdsThread.pop().asString();
 		args.add(cmds);
 
 		// Run command line
@@ -144,7 +145,7 @@ public class ExpressionSys extends Expression {
 		// Collect output
 		String output = "";
 		if (execResult.stdOut != null) output = execResult.stdOut;
-		bdsThread.push(output);
+		bdsThread.push(new ValueString(output));
 	}
 
 	void setCommands(String cmd) {

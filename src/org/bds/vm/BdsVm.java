@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.Config;
 import org.bds.lang.expression.ExpressionSys;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
@@ -21,6 +22,7 @@ import org.bds.lang.value.ValueMap;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
+import org.bds.run.RunState;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
@@ -40,7 +42,7 @@ public class BdsVm {
 
 	int code[]; // Compile assembly code (OopCodes)
 	boolean debug;
-	int exitCode = -1; // Default exit code is error (program did not start)
+	Integer exitCode = null; // Default exit code: program did not start
 	int fp; // Frame pointer
 	int nodeId; // Current node ID (BdsNode). Used for linking to original bds code
 	int pc; // Program counter
@@ -315,6 +317,8 @@ public class BdsVm {
 	 * Get exit code. If the stack is empty, then the exit-code is 0 (i.e. program finished OK)
 	 */
 	int exitCode() {
+		// Set externally? E.g. BdsThread.fatalError()
+		if (exitCode != null) return exitCode;
 		exitCode = isEmptyStack() ? 0 : (int) popInt();
 		return exitCode;
 	}
@@ -507,7 +511,17 @@ public class BdsVm {
 		addFunctions();
 
 		run = true;
-		runLoop();
+		try {
+			runLoop();
+		} catch (Throwable t) {
+			bdsThread.setRunState(RunState.FATAL_ERROR);
+			exitCode = 1;
+
+			if (Config.get().isVerbose()) {
+				t.printStackTrace();
+				System.err.println("VM:\n" + this);
+			}
+		}
 
 		return exitCode();
 	}
@@ -680,6 +694,7 @@ public class BdsVm {
 				break;
 
 			case HALT:
+				bdsThread.setRunState(RunState.FINISHED);
 				return;
 
 			case INC:
@@ -1001,6 +1016,10 @@ public class BdsVm {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public void setRun(boolean run) {
+		this.run = run;
 	}
 
 	public void setVerbose(boolean verbose) {

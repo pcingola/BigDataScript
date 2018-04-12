@@ -362,7 +362,7 @@ public class BdsRun {
 		List<BdsThread> bdsThreads = bdsThreadRoot.getBdsThreads();
 		bdsThreads.add(bdsThreadRoot);
 		for (BdsThread bdsThread : bdsThreads) {
-			if (bdsThread.isFinished()) {
+			if (bdsThread.getRunState().isFinished()) {
 				// Thread finished before serialization: Nothing to do
 			} else {
 				bdsThread.setRunState(RunState.CHECKPOINT_RECOVER); // Set run state to recovery
@@ -473,7 +473,7 @@ public class BdsRun {
 	 */
 	int runThread(BdsThread bdsThread) {
 		this.bdsThread = bdsThread;
-		if (bdsThread.isFinished()) return 0;
+		if (bdsThread.getRunState().isFinished()) return 0;
 
 		bdsThread.start();
 

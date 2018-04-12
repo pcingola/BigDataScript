@@ -29,11 +29,7 @@ import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueBool;
-import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueList;
-import org.bds.lang.value.ValueReal;
-import org.bds.lang.value.ValueString;
 import org.bds.osCmd.Exec;
 import org.bds.report.Report;
 import org.bds.scope.Scope;
@@ -98,7 +94,7 @@ public class BdsThread extends Thread implements Serializable {
 		super();
 		this.parent = parent;
 		bdsThreadNum = bigDataScriptThreadId();
-		runState = RunState.OK;
+		setRunState(RunState.OK);
 		config = parent.config;
 		random = parent.random;
 		removeOnExit = parent.removeOnExit;
@@ -121,7 +117,7 @@ public class BdsThread extends Thread implements Serializable {
 	public BdsThread(Statement statement, Config config, BdsVm vm) {
 		super();
 		bdsThreadNum = bigDataScriptThreadId();
-		runState = RunState.OK;
+		setRunState(RunState.OK);
 		this.config = config;
 		random = new Random();
 		removeOnExit = new LinkedList<>();
@@ -251,7 +247,7 @@ public class BdsThread extends Thread implements Serializable {
 	 * Show a fatal error
 	 */
 	public void fatalError(BdsNode bdsnode, String message) {
-		runState = RunState.FATAL_ERROR;
+		setRunState(RunState.FATAL_ERROR);
 		String filePos = getFileLinePos(bdsnode);
 		System.err.println("Fatal error: " //
 				+ filePos + (filePos.isEmpty() ? "" : ". ") //
@@ -281,7 +277,7 @@ public class BdsThread extends Thread implements Serializable {
 	 * Show a fatal error
 	 */
 	public void fatalError(BdsNode bdsnode, Throwable t) {
-		if (runState == RunState.FATAL_ERROR) return;
+		if (getRunState().isFatalError()) return;
 		fatalError(bdsnode, t.getMessage());
 
 		// Show java stack trace
@@ -416,24 +412,23 @@ public class BdsThread extends Thread implements Serializable {
 	//		}
 	//	}
 
-	/**
-	 * Freeze thread execution
-	 */
-	protected void freeze() {
-		RunState oldRunState = runState;
-		runState = RunState.FROZEN;
-
-		while (freeze) {
-			try {
-				Thread.sleep(FROZEN_SLEEP_TIME);
-				if (isDebug()) Gpr.debug("Frozen bdsThread: '" + getBdsThreadId() + "'");
-			} catch (InterruptedException e) {
-				// Nothing to do
-			}
-		}
-
-		runState = oldRunState; // Restore old state
-	}
+	//	/**
+	//	 * Freeze thread execution
+	//	 */
+	//	protected void freeze() {
+	//		RunState oldRunState = runState;
+	//		setRunState(RunState.FROZEN);
+	//
+	//		while (freeze) {
+	//			try {
+	//				Thread.sleep(FROZEN_SLEEP_TIME);
+	//				if (isDebug()) Gpr.debug("Frozen bdsThread: '" + getBdsThreadId() + "'");
+	//			} catch (InterruptedException e) {
+	//				// Nothing to do
+	//			}
+	//		}
+	//		setRunState(oldRunState); // Restore old state
+	//	}
 
 	public String getBdsThreadId() {
 		return bdsThreadId;
@@ -502,6 +497,8 @@ public class BdsThread extends Thread implements Serializable {
 					+ ", pos " + (bdsNode.getCharPosInLine() + 1) //
 			;
 		}
+
+		// TODO: FIX THIS USING VM CALL STACK
 
 		// 		Map<Integer, BdsNode> nodesById = getNodesById();
 		//
@@ -585,10 +582,6 @@ public class BdsThread extends Thread implements Serializable {
 	public Scope getScope() {
 		return vm.getScope();
 	}
-
-	//	public Deque<Value> getStack() {
-	//		return stack;
-	//	}
 
 	public Statement getStatement() {
 		return statement;
@@ -683,29 +676,6 @@ public class BdsThread extends Thread implements Serializable {
 		return config != null && config.isDebug();
 	}
 
-	public boolean isExit() {
-		return runState.isExit();
-	}
-
-	public boolean isFatalError() {
-		return runState.isFatalError();
-	}
-
-	public boolean isFinished() {
-		return runState.isFinished();
-	}
-
-	/**
-	 * Is this thread frozen?
-	 */
-	public boolean isFrozen() {
-		return runState.isFrozen();
-	}
-
-	public boolean isReturn() {
-		return runState.isReturn();
-	}
-
 	/**
 	 * Is this the 'root' (main) thread?
 	 */
@@ -725,7 +695,7 @@ public class BdsThread extends Thread implements Serializable {
 	 * Kill: Stop execution of current thread
 	 */
 	public void kill() {
-		runState = RunState.THREAD_KILLED; // Set state to 'kill'
+		setRunState(RunState.THREAD_KILLED); // Set state to 'kill'
 	}
 
 	/**
@@ -770,41 +740,37 @@ public class BdsThread extends Thread implements Serializable {
 	//		scope = scope.getParent();
 	//	}
 
-	public Value peek() {
-		return null;
-	}
-
 	public Value pop() {
 		return vm.pop();
 	}
 
-	/**
-	 * Pop a bool from stack
-	 */
-	public boolean popBool() {
-		return pop().asBool();
-	}
-
-	/**
-	 * Pop an int from stack
-	 */
-	public long popInt() {
-		return pop().asInt();
-	}
-
-	/**
-	 * Pop a real from stack
-	 */
-	public double popReal() {
-		return pop().asReal();
-	}
-
-	/**
-	 * Pop a string from stack
-	 */
-	public String popString() {
-		return pop().asString();
-	}
+	//	/**
+	//	 * Pop a bool from stack
+	//	 */
+	//	public boolean popBool() {
+	//		return pop().asBool();
+	//	}
+	//
+	//	/**
+	//	 * Pop an int from stack
+	//	 */
+	//	public long popInt() {
+	//		return pop().asInt();
+	//	}
+	//
+	//	/**
+	//	 * Pop a real from stack
+	//	 */
+	//	public double popReal() {
+	//		return pop().asReal();
+	//	}
+	//
+	//	/**
+	//	 * Pop a string from stack
+	//	 */
+	//	public String popString() {
+	//		return pop().asString();
+	//	}
 
 	public void print() {
 		// Create a list with program file and all included files
@@ -844,22 +810,6 @@ public class BdsThread extends Thread implements Serializable {
 		for (String line : code.split("\n"))
 			System.out.println(String.format("%6d |%s", lineNum++, line));
 		System.out.println("");
-	}
-
-	public void push(boolean b) {
-		push(new ValueBool(b));
-	}
-
-	public void push(double v) {
-		push(new ValueReal(v));
-	}
-
-	public void push(long v) {
-		push(new ValueInt(v));
-	}
-
-	public void push(String s) {
-		push(new ValueString(s));
 	}
 
 	public void push(Value val) {
@@ -950,7 +900,7 @@ public class BdsThread extends Thread implements Serializable {
 
 		// Start child threads (e.g. when recovering)
 		for (BdsThread bth : bdsChildThreadsById.values()) {
-			if (!bth.isAlive() && !bth.isFinished()) bth.start();
+			if (!bth.isAlive() && !bth.getRunState().isFinished()) bth.start();
 		}
 
 		// Add this thread to collections
@@ -962,7 +912,7 @@ public class BdsThread extends Thread implements Serializable {
 
 		// We are done running
 		if (isDebug()) Timer.showStdErr("BdsThread finished: " + getBdsThreadId());
-		if (isFatalError()) {
+		if (getRunState().isFatalError()) {
 			// Error condition
 			ok = false;
 		} else {
@@ -970,8 +920,7 @@ public class BdsThread extends Thread implements Serializable {
 			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
 
 			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
-			if (!isFatalError() && !isExit()) ok = waitAll();
-			else ok = false;
+			ok = waitAll();
 		}
 
 		// All tasks in wait finished OK?
@@ -979,15 +928,7 @@ public class BdsThread extends Thread implements Serializable {
 			// Errors? Then set exit status appropriately
 			exitValue = 1;
 		} else {
-			switch (runState) {
-			case EXIT:
-				// Exit value already set by 'exit' statement
-				break;
-
-			case RETURN:
-				exitValue = vm.getExitCode();
-				break;
-
+			switch (getRunState()) {
 			case FATAL_ERROR:
 			case THREAD_KILLED:
 				exitValue = 1;
@@ -1000,7 +941,7 @@ public class BdsThread extends Thread implements Serializable {
 		}
 
 		// We are completely done
-		runState = RunState.FINISHED;
+		setRunState(RunState.FINISHED);
 
 		// Finish up
 		removeStaleData();
@@ -1031,7 +972,7 @@ public class BdsThread extends Thread implements Serializable {
 			Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
 					+ "'" + getBdsThreadId() + "'" //
 					+ " finished" //
-					+ (isDebug() ? ", run state: '" + runState + "'" : "") //
+					+ (isDebug() ? ", run state: '" + getRunState() + "'" : "") //
 					+ ", exit map: " + getExitValue() //
 					+ ", tasks executed: " + td.getTasks().size() //
 					+ ", tasks failed: " + td.countTaskFailed() //
@@ -1051,7 +992,7 @@ public class BdsThread extends Thread implements Serializable {
 		try {
 			vm.run();
 		} catch (Throwable t) {
-			runState = RunState.FATAL_ERROR;
+			setRunState(RunState.FATAL_ERROR);
 			if (isVerbose()) throw new RuntimeException(t);
 			else Timer.showStdErr("Fatal error: Program execution finished");
 		}
@@ -1093,6 +1034,27 @@ public class BdsThread extends Thread implements Serializable {
 
 	public void setRunState(RunState runState) {
 		this.runState = runState;
+
+		if (vm != null) {
+			switch (runState) {
+
+			case OK:
+				vm.setRun(false);
+				break;
+
+			case FATAL_ERROR:
+			case FINISHED:
+			case THREAD_KILLED:
+				vm.setRun(false);
+				break;
+
+			case WAIT_RECOVER:
+				throw new RuntimeException("!!!");
+
+			default:
+				break;
+			}
+		}
 	}
 
 	//	public void setScope(Scope scope) {
@@ -1119,7 +1081,7 @@ public class BdsThread extends Thread implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("BigDataScriptThread: " + bdsThreadNum + "\n");
-		sb.append("\tRun state : " + runState + "\n");
+		sb.append("\tRun state : " + getRunState() + "\n");
 		sb.append("\tProgram   :\n" + statement.toStringTree("\t\t", "program") + "\n");
 		return sb.toString();
 	}
@@ -1173,7 +1135,7 @@ public class BdsThread extends Thread implements Serializable {
 		try {
 			if (bdsThread != null) {
 				if (isDebug()) Timer.showStdErr("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());
-				if (bdsThread.isFinished()) return true;
+				if (bdsThread.getRunState().isFinished()) return true;
 				bdsThread.join();
 				return bdsThread.getExitValue() == 0; // Finished OK?
 			}

@@ -32,6 +32,8 @@ import org.bds.util.Gpr;
  */
 public class ExpressionTask extends ExpressionWithScope {
 
+	private static final long serialVersionUID = 5026042355679287158L;
+
 	// Variable names
 	public static final String TASK_OPTION_CPUS = "cpus";
 	public static final String TASK_OPTION_MEM = "mem";
@@ -128,7 +130,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Sys commands
 		// Command from string or interpolated vars
 		//---
-		String sysCmds = bdsThread.popString();
+		String sysCmds = bdsThread.pop().asString();
 
 		// No Down/Up-load? Just return the SYS commands
 		if (sbDown.length() <= 0 && sbUp.length() <= 0) return sysCmds;
