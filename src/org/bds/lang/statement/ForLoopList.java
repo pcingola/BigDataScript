@@ -62,10 +62,11 @@ public class ForLoopList extends StatementWithScope {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 
-		String loopInitLabel = getClass().getSimpleName() + "_init_" + id;
-		String loopStartLabel = getClass().getSimpleName() + "_start_" + id;
-		String loopContinueLabel = getClass().getSimpleName() + "_continue_" + id;
-		String loopEndLabel = getClass().getSimpleName() + "_end_" + id;
+		String labelBase = getClass().getSimpleName() + "_" + id + "_";
+		String loopInitLabel = labelBase + "init";
+		String loopStartLabel = labelBase + "start";
+		String loopContinueLabel = labelBase + "continue";
+		String loopEndLabel = labelBase + "end";
 
 		// Loop variable
 		VariableInit vinit = beginVarDecl.getVarInit()[0];
@@ -95,7 +96,7 @@ public class ForLoopList extends StatementWithScope {
 
 		if (isNeedsScope()) sb.append("scopepush\n");
 
-		// Evaluate expression: '$list = expressionList' 
+		// Evaluate expression: '$list = expressionList'
 		sb.append(expression.toAsm());
 		sb.append("var " + varList + "\n");
 		sb.append("pop\n");
@@ -106,7 +107,7 @@ public class ForLoopList extends StatementWithScope {
 		sb.append("var " + varMaxCounter + "\n");
 		sb.append("pop\n");
 
-		// Loop start		
+		// Loop start
 		sb.append(loopInitLabel + ":\n");
 
 		// Initialize variables: 'for(int $count = 0 ;'

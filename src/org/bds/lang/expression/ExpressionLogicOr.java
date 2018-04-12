@@ -23,7 +23,25 @@ public class ExpressionLogicOr extends ExpressionLogic {
 
 	@Override
 	public String toAsm() {
-		return super.toAsm() + "orb\n";
+		// Logic and has to be implemented using a short-circuit operation
+		// I.e: If left expression is true, we do not calculate right 
+		//      expression because we already know that the result will
+		//      be 'true'
+
+		String lableBase = getClass().getSimpleName() + "_" + id + "_";
+		String labelTrue = lableBase + "true";
+		String labelEnd = lableBase + "end";
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(left.toAsm());
+		sb.append("jmpt " + labelTrue + "\n");
+		sb.append(right.toAsm());
+		sb.append("jmp " + labelEnd + "\n");
+		sb.append(labelTrue + ":\n");
+		sb.append("pushb true\n");
+		sb.append(labelEnd + ":\n");
+
+		return sb.toString();
 	}
 
 }

@@ -51,10 +51,11 @@ public class ForLoop extends StatementWithScope {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 
-		String loopInitLabel = getClass().getSimpleName() + "_init_" + id;
-		String loopStartLabel = getClass().getSimpleName() + "_start_" + id;
-		String loopContinueLabel = getClass().getSimpleName() + "_continue_" + id;
-		String loopEndLabel = getClass().getSimpleName() + "_end_" + id;
+		String labelBase = getClass().getSimpleName() + "_" + id + "_";
+		String loopInitLabel = labelBase + "init";
+		String loopStartLabel = labelBase + "start";
+		String loopContinueLabel = labelBase + "continue";
+		String loopEndLabel = labelBase + "end";
 
 		if (isNeedsScope()) sb.append("scopepush\n");
 		sb.append(loopInitLabel + ":\n");

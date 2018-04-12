@@ -23,6 +23,24 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 
 	@Override
 	public String toAsm() {
-		return super.toAsm() + "andb\n";
+		// Logic and has to be implemented using a short-circuit operation
+		// I.e: If left expression is false, we do not calculate right 
+		//      expression because we already know that the result will
+		//      be 'false'
+
+		String lableBase = getClass().getSimpleName() + "_" + id + "_";
+		String labelFalse = lableBase + "false";
+		String labelEnd = lableBase + "end";
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(left.toAsm());
+		sb.append("jmpf " + labelFalse + "\n");
+		sb.append(right.toAsm());
+		sb.append("jmp " + labelEnd + "\n");
+		sb.append(labelFalse + ":\n");
+		sb.append("pushb false\n");
+		sb.append(labelEnd + ":\n");
+
+		return sb.toString();
 	}
 }

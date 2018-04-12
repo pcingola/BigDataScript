@@ -45,9 +45,10 @@ public class If extends Statement {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 
-		String ifLabel = getClass().getSimpleName() + "_if_" + id;
-		String elseLabel = getClass().getSimpleName() + "_else_" + id;
-		String endLabel = getClass().getSimpleName() + "_end_" + id;
+		String labelBase = getClass().getSimpleName() + "_" + id + "_";
+		String ifLabel = labelBase + "if";
+		String elseLabel = labelBase + "else";
+		String endLabel = labelBase + "end";
 		if (elseStatement == null) elseLabel = endLabel;
 
 		sb.append(condition.toAsm());
