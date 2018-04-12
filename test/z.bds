@@ -1,4 +1,4 @@
 
 s := 'world'
-sys echo hi $s
+sys rm hi
 

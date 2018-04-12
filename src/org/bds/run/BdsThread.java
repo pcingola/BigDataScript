@@ -854,12 +854,6 @@ public class BdsThread extends Thread implements Serializable {
 		push(new ValueReal(v));
 	}
 
-	//	public void push(List<String> ls) {
-	//		ValueList vl = new ValueList(TypeList.get(Types.STRING));
-	//		vl.set(ls);
-	//		push(vl);
-	//	}
-
 	public void push(long v) {
 		push(new ValueInt(v));
 	}
@@ -889,7 +883,7 @@ public class BdsThread extends Thread implements Serializable {
 	 * Remove a child thread
 	 */
 	public void remove(BdsThread bdsThread) {
-		bdsChildThreadsById.remove(bdsThread);
+		bdsChildThreadsById.remove(bdsThread.getBdsThreadId());
 	}
 
 	/**
