@@ -148,7 +148,7 @@ public class TaskFactory {
 		task.setDebug(bdsThread.getConfig().isDebug());
 
 		// Set task options
-		task.setTaskName(taskName);
+		task.setTaskName(getTaskName());
 		task.setCanFail(bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL));
 		task.setAllowEmpty(bdsThread.getBool(ExpressionTask.TASK_OPTION_ALLOW_EMPTY));
 		task.setNode(bdsThread.getString(ExpressionTask.TASK_OPTION_NODE));
@@ -271,8 +271,6 @@ public class TaskFactory {
 	 */
 	public void run() {
 		// Evaluate task options (get a list of dependencies)
-		TaskDependency taskDependency = null;
-
 		//		if (options != null) {
 		//			taskDependency = options.evalTaskDependency(bdsThread);
 		//
@@ -296,10 +294,6 @@ public class TaskFactory {
 		//				return;
 		//			}
 		//		}
-
-		// Evaluate 'sys' statements
-		commands = bdsThread.pop().asString();
-		Gpr.debug("COMMANDS: " + commands);
 
 		// Create task
 		Task task = createTask();

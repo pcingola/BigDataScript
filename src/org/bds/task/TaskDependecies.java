@@ -13,14 +13,13 @@ import java.util.Set;
 
 import org.bds.Config;
 import org.bds.data.Data;
-import org.bds.lang.expression.ExpressionTask;
 import org.bds.report.Report;
 import org.bds.run.BdsThread;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Timer;
 
 /**
- * Store task and dependency graph
+ * Store task and dependency graph (i.e. all task dependencies)
  *
  * @author pcingola
  */
@@ -329,7 +328,9 @@ public class TaskDependecies implements Serializable {
 		for (Task t : tasks) {
 			if (!t.isScheduled()) {
 				t.setDependency(false); // We are executing this task, so it it no longer a 'dep'
-				ExpressionTask.execute(bdsThread, t);
+				// TODO: FIXME !!!!!!!!!!
+				// ExpressionTask.execute(bdsThread, t);
+				throw new RuntimeException("!!!!!!!!!!!!!!1");
 			}
 		}
 

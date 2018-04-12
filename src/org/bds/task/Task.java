@@ -36,10 +36,11 @@ public class Task {
 
 	public static final int MAX_HINT_LEN = 150;
 
-	protected boolean verbose, debug;
 	protected boolean allowEmpty; // Allow empty output file/s
 	protected boolean canFail; // Allow execution to fail
+	protected boolean debug;
 	protected boolean dependency; // This is a 'dependency' task. Run only if required
+	protected boolean verbose;
 	protected int bdsLineNum; // Program's line number that created this task (used for reporting errors)
 	protected int exitValue; // Exit (error) code
 	protected int failCount, maxFailCount; // Number of times that this task failed
@@ -307,18 +308,6 @@ public class Task {
 			bdsThread.add(this);
 			executioner.add(this);
 		}
-	}
-
-	public String getBdsFileName() {
-		return bdsFileName;
-	}
-
-	public int getBdsLineNum() {
-		return bdsLineNum;
-	}
-
-	public String getCurrentDir() {
-		return currentDir;
 	}
 
 	public List<Task> getDependencies() {
