@@ -67,8 +67,11 @@ public class Exec {
 			// Make sure we read STDOUT and STDERR, so that process does not block
 			stdout = new StreamGobbler(process.getInputStream(), false);
 			stderr = new StreamGobbler(process.getErrorStream(), true);
-			stdout.setSaveLinesInMemory(true);
-			stderr.setSaveLinesInMemory(true);
+
+			// TODO: Remove this options to save all process output to memory. Looks like a waste of resources.
+			//			stdout.setSaveLinesInMemory(true);
+			//			stderr.setSaveLinesInMemory(true);
+
 			if (quiet) {
 				stdout.setQuietMode();
 				stderr.setQuietMode();

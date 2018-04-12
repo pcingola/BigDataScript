@@ -410,6 +410,13 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+
+		return sb.toString();
+	}
+
+	@Override
 	public String toString() {
 		return "task" //
 				+ (options != null ? options : "") //
