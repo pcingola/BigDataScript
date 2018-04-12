@@ -4,6 +4,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
+import org.bds.lang.value.LiteralInt;
+import org.bds.lang.value.LiteralReal;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -13,11 +15,21 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionUnary extends Expression {
 
+	private static final long serialVersionUID = 2061510479540249610L;
+
 	protected Expression expr;
 	protected String op;
 
 	public ExpressionUnary(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	boolean isLiteralInt() {
+		return expr instanceof LiteralInt;
+	}
+
+	boolean isLiteralReal() {
+		return expr instanceof LiteralReal;
 	}
 
 	@Override

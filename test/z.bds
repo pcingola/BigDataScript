@@ -1,4 +1,12 @@
 
-s := 'world'
-sys rm hi
+bool f(int x) {
+	println("f: $x")
+	return x < 10
+}
+
+# Shortcircuit and
+
+a := f(1) && f(20)
+o := f(11) || f(20)
+
 

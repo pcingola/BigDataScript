@@ -30,8 +30,12 @@ public class LiteralReal extends Literal {
 
 	@Override
 	public String toAsm() {
+		return toAsm(false);
+	}
+
+	public String toAsm(boolean minus) {
 		if (value == null) return "pushr 0.0\n";
-		return "pushr " + value.asReal() + "\n";
+		return "pushr " + (minus ? "-" : "") + value.asReal() + "\n";
 	}
 
 }

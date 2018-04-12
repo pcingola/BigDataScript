@@ -6,6 +6,8 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.LiteralInt;
+import org.bds.lang.value.LiteralReal;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -37,8 +39,24 @@ public class ExpressionUnaryMinus extends ExpressionUnary {
 
 	@Override
 	public String toAsm() {
-		if (isInt()) return "pushi 0\n" + expr.toAsm() + "subi\n";
-		if (isReal()) return "pushr 0.0\n" + expr.toAsm() + "subr\n";
+		// Int expression
+		if (isInt()) {
+			if (isLiteralInt()) {
+				// If it's a literal, just use the minus sign in the literal
+				return ((LiteralInt) expr).toAsm(true);
+			}
+			return "pushi 0\n" + expr.toAsm() + "subi\n";
+		}
+
+		// Real expression
+		if (isReal()) {
+			if (isLiteralReal()) {
+				// If it's a literal, just use the minus sign in the literal
+				return ((LiteralReal) expr).toAsm(true);
+			}
+			return "pushr 0.0\n" + expr.toAsm() + "subr\n";
+		}
+
 		throw new RuntimeException("Cannot cast to 'int' or 'real'. This should never happen!");
 	}
 

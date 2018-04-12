@@ -34,8 +34,12 @@ public class LiteralInt extends Literal {
 
 	@Override
 	public String toAsm() {
+		return toAsm(false);
+	}
+
+	public String toAsm(boolean minus) {
 		if (value == null) return "pushi 0\n";
-		return "pushi " + value.asInt() + "\n";
+		return "pushi " + (minus ? "-" : "") + value.asInt() + "\n";
 	}
 
 }
