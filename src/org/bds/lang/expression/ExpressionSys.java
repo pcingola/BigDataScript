@@ -101,7 +101,7 @@ public class ExpressionSys extends Expression {
 
 		// Parse interpolated variables
 		interpolateVars = new InterpolateVars(this, null);
-		interpolateVars.setUseLiteral(true);
+		//		interpolateVars.setUseLiteral(true);
 		if (!interpolateVars.parse(cmd)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
 			commands = InterpolateVars.unEscapeDollar(cmd); // Just use literal, but escape dollar signs

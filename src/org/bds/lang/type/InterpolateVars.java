@@ -18,7 +18,7 @@ public class InterpolateVars extends Literal {
 
 	private static final long serialVersionUID = 5380913311800422951L;
 
-	boolean useLiteral;
+	// boolean useLiteral;
 	String literals[]; // This is used in case of interpolated string literal
 	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
 
@@ -193,7 +193,8 @@ public class InterpolateVars extends Literal {
 			// Parse string literal part
 			//---
 			Tuple<String, String> tupStr = findString(str);
-			String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : escapeMultiline(tupStr.first);
+			// String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : escapeMultiline(tupStr.first);
+			String strToAdd = escapeMultiline(unEscapeDollar(tupStr.first));
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed
 
@@ -340,9 +341,9 @@ public class InterpolateVars extends Literal {
 		return returnType;
 	}
 
-	public void setUseLiteral(boolean useLiteral) {
-		this.useLiteral = useLiteral;
-	}
+	//	public void setUseLiteral(boolean useLiteral) {
+	//		this.useLiteral = useLiteral;
+	//	}
 
 	@Override
 	public String toAsm() {

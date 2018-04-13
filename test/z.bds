@@ -1,6 +1,15 @@
 
+in := '/tmp/in.txt'
+out := '/tmp/out.txt'
+doit := false
 
+#task( out <- in, doit, hi := 'hello' ) {
+hi := 'hello'
 task {
-	sys echo hi; pwd -P ;\
-		echo bye
+	sys echo "$hi"; pwd -P ;\
+		echo running; \
+        sleep 2
 }
+
+#wait
+#task echo bye

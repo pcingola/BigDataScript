@@ -13,7 +13,9 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionTaskOptions extends ExpressionList {
 
-	boolean evalAll; // Force to evaluate all expressions
+	private static final long serialVersionUID = 5543813044437054581L;
+
+	// boolean evalAll; // Force to evaluate all expressions
 
 	public ExpressionTaskOptions(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -21,7 +23,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 
 	//	/**
 	//	 * Evaluate expressions and create a TaskDependency (only if clauses are satisfied
-	//	 * Note: We only care about the map of bool expressions
+	//	 * Note: We only care about the value of bool expressions
 	//	 * Note: If 'evalAll' is true, all expressions in the list are evaluated, even if the first one is false
 	//	 * @return A 'TaskDependencies' object if the task has to be run, null otherwise
 	//	 */
@@ -68,10 +70,6 @@ public class ExpressionTaskOptions extends ExpressionList {
 	//		TaskDependency taskDeps = evalTaskDependency(bdsThread);
 	//		bdsThread.push(taskDeps != null);
 	//	}
-
-	public void setEvalAll(boolean evalAll) {
-		this.evalAll = evalAll;
-	}
 
 	@Override
 	public String toString() {

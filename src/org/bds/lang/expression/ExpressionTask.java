@@ -132,7 +132,18 @@ public class ExpressionTask extends ExpressionWithScope {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsmNode()); // Task will use the node to get parameters
 		sb.append("scopepush\n");
-		sb.append(toAsmSys());
+
+		sb.append(toAsmSys()); // Sys commands
+
+		if (options != null) {
+			sb.append(options.toAsm());
+		} else {
+			// No options or dependencies.
+			// Add empty list as dependency
+			sb.append("new string[]\n");
+			sb.append("new string[]\n");
+		}
+
 		sb.append("task\n");
 		sb.append("scopepop\n");
 		return sb.toString();

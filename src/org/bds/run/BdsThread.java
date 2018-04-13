@@ -429,6 +429,14 @@ public class BdsThread extends Thread implements Serializable {
 	//		setRunState(oldRunState); // Restore old state
 	//	}
 
+	/**
+	 * Get node currently executed by the VM
+	 */
+	public BdsNode getBdsNodeCurrent() {
+		int nodeId = vm.getNodeId();
+		return BdsNodeFactory.get().getNode(nodeId);
+	}
+
 	public String getBdsThreadId() {
 		return bdsThreadId;
 	}
@@ -465,14 +473,6 @@ public class BdsThread extends Thread implements Serializable {
 
 	public String getCurrentDir() {
 		return currentDir;
-	}
-
-	/**
-	 * Get node currently executed by the VM
-	 */
-	public BdsNode getBdsNodeCurrent() {
-		int nodeId = vm.getNodeId();
-		return BdsNodeFactory.get().getNode(nodeId);
 	}
 
 	public DebugMode getDebugMode() {

@@ -9,6 +9,8 @@ import org.bds.data.DataRemote;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.lang.BdsNode;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
@@ -49,6 +51,21 @@ public class TaskFactory {
 
 	public TaskFactory(BdsThread bdsThread) {
 		this.bdsThread = bdsThread;
+	}
+
+	/**
+	 * Try to find the current bdsNode
+	 */
+	BdsNode bdsNode() {
+		BdsNode n = bdsThread.getBdsNodeCurrent();
+
+		// Try to find a 'task' node
+		for (BdsNode bn = n; bn != null; bn = bn.getParent()) {
+			if (bn instanceof ExpressionTask) return bn;
+		}
+
+		// Not found? Use this as default
+		return n;
 	}
 
 	/**
@@ -166,6 +183,25 @@ public class TaskFactory {
 		return task;
 	}
 
+	TaskDependency createTaskDependency() {
+		TaskDependency td = null;
+
+		// Retrieve inputs and outputs from stack
+		ValueList ins = (ValueList) bdsThread.pop();
+		ValueList outs = (ValueList) bdsThread.pop();
+
+		if (ins.isEmpty() && outs.isEmpty()) return null;
+		td = new TaskDependency(getBdsNode());
+
+		for (Value in : ins)
+			td.addInput(in.asString());
+
+		for (Value out : outs)
+			td.addOutput(out.asString());
+
+		return td;
+	}
+
 	/**
 	 * Dispatch task for execution
 	 */
@@ -178,18 +214,7 @@ public class TaskFactory {
 	 */
 	BdsNode getBdsNode() {
 		if (bdsNode != null) return bdsNode;
-		BdsNode n = bdsThread.getBdsNodeCurrent();
-
-		// Try to find a 'task' node
-		for (BdsNode bn = n; bn != null; bn = bn.getParent()) {
-			if (bn instanceof ExpressionTask) {
-				bdsNode = bn;
-				return bdsNode;
-			}
-		}
-
-		// Not found? Use this as default
-		bdsNode = n;
+		bdsNode = bdsNode();
 		return bdsNode;
 	}
 
@@ -274,6 +299,9 @@ public class TaskFactory {
 	 * Create and run task
 	 */
 	public void run() {
+		// Create task
+		taskDependency = createTaskDependency();
+
 		// Evaluate task options (get a list of dependencies)
 		//		if (options != null) {
 		//			taskDependency = options.evalTaskDependency(bdsThread);
@@ -300,7 +328,7 @@ public class TaskFactory {
 		//		}
 
 		// Create task
-		Task task = createTask();
+		task = createTask();
 
 		// Schedule task for execution
 		dispatchTask(task);

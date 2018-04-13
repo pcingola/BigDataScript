@@ -12,7 +12,7 @@ import org.bds.run.BdsThreads;
 import org.bds.util.Timer;
 
 /**
- * Output and Input files (and tasks) that are required for a task to succesfully execute
+ * Output and Input files (and tasks) that are required for a task to successfully execute
  *
  * @author pcingola
  */
