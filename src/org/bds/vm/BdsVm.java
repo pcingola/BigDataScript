@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bds.Config;
-import org.bds.lang.expression.ExpressionSys;
+import org.bds.lang.expression.SysFactory;
 import org.bds.lang.expression.TaskFactory;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
@@ -1076,11 +1076,12 @@ public class BdsVm {
 	 * Execute a 'sys' instruction
 	 */
 	void sys() {
-		ExpressionSys.run(bdsThread);
+		SysFactory sf = new SysFactory(bdsThread);
+		sf.run();
 	}
 
 	/**
-	 * Execute a 'taks'
+	 * Execute a 'task'
 	 */
 	void task() {
 		TaskFactory tf = new TaskFactory(bdsThread);

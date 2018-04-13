@@ -26,32 +26,43 @@ public class InterpolateVars extends Literal {
 	 * Escape string
 	 */
 	public static String escape(String s) {
-		return escapeMultiline(s);
+		return s.replace("\\", "\\\\") //
+				.replace("\b", "\\b") //
+				.replace("\f", "\\f") //
+				.replace("\n", "\\n") //
+				.replace("\r", "\\r") //
+				.replace("\t", "\\t") //
+				.replace("\0", "\\0") //
+				.replace("$", "\\$") //
+		;
 	}
 
-	static String escapeMultiline(String s) {
-		boolean endsWithNewLine = (!s.isEmpty()) && (s.charAt(s.length() - 1) == '\n');
-		String lines[] = s.split("\n");
-		if (lines.length <= 1 && !endsWithNewLine) return s; // Nothing to escape
-
-		// Correct lines ending in backslash (e.g. multi-line unix commands)
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < lines.length; i++) {
-			String l = lines[i];
-			sb.append(l); // Add line
-			if (l.endsWith("\\")) sb.append("\\"); // Make sure we have an (escaped) backslash
-			if (i < (lines.length - 1)) sb.append("\\n"); // Add escaped newline
-		}
-
-		// Does the string end with a newline? Then add escaped newline
-		if (endsWithNewLine) sb.append("\\n"); // Add escaped newline
-
-		return sb.toString();
-	}
-
-	static String escapeSingleQuote(String str) {
-		return str.replace("'", "\\'");
-	}
+	//	/**
+	//	 * Escape multiple lines
+	//	 */
+	//	static String escapeMultiline(String s) {
+	//		boolean endsWithNewLine = (!s.isEmpty()) && (s.charAt(s.length() - 1) == '\n');
+	//		String lines[] = s.split("\n");
+	//		if (lines.length <= 1 && !endsWithNewLine) return s; // Nothing to escape
+	//
+	//		// Correct lines ending in backslash (e.g. multi-line unix commands)
+	//		StringBuilder sb = new StringBuilder();
+	//		for (int i = 0; i < lines.length; i++) {
+	//			String l = lines[i];
+	//			sb.append(l); // Add line
+	//			if (l.endsWith("\\")) sb.append("\\"); // Make sure we have an (escaped) backslash
+	//			if (i < (lines.length - 1)) sb.append("\\n"); // Add escaped newline
+	//		}
+	//
+	//		// Does the string end with a newline? Then add escaped newline
+	//		if (endsWithNewLine) sb.append("\\n"); // Add escaped newline
+	//
+	//		return sb.toString();
+	//	}
+	//
+	//	static String escapeSingleQuote(String str) {
+	//		return str.replace("'", "\\'");
+	//	}
 
 	/**
 	 * Un-escape string
@@ -205,7 +216,6 @@ public class InterpolateVars extends Literal {
 			// Parse string literal part
 			//---
 			Tuple<String, String> tupStr = findString(str);
-			// String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : escapeMultiline(tupStr.first);
 			String strToAdd = escape(unEscapeDollar(tupStr.first));
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed

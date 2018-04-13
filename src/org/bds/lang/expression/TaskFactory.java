@@ -1,7 +1,5 @@
 package org.bds.lang.expression;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.bds.data.Data;
@@ -15,22 +13,16 @@ import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.task.TaskDependency;
-import org.bds.util.Gpr;
 
 /**
  * Execute a 'task' VM opcode
  *
  * @author pcingola
  */
-public class TaskFactory {
-
-	private static int sysId = 1;
+public class TaskFactory extends SysFactory {
 
 	Task task;
 	TaskDependency taskDependency;
-	BdsThread bdsThread;
-	BdsNode bdsNode;
-	String commands;
 
 	/**
 	 * Execute a task (schedule it into executioner)
@@ -42,21 +34,15 @@ public class TaskFactory {
 		task.execute(bdsThread, executioner); // Execute task
 	}
 
-	/**
-	 * Get a sys ID
-	 */
-	private static synchronized int nextId() {
-		return sysId++;
-	}
-
 	public TaskFactory(BdsThread bdsThread) {
-		this.bdsThread = bdsThread;
+		super(bdsThread);
 	}
 
 	/**
 	 * Try to find the current bdsNode
 	 */
-	BdsNode bdsNode() {
+	@Override
+	protected BdsNode bdsNode() {
 		BdsNode n = bdsThread.getBdsNodeCurrent();
 
 		// Try to find a 'task' node
@@ -199,36 +185,8 @@ public class TaskFactory {
 		execute(bdsThread, task);
 	}
 
-	/**
-	 * Try to find the current bdsNode
-	 */
-	BdsNode getBdsNode() {
-		if (bdsNode != null) return bdsNode;
-		bdsNode = bdsNode();
-		return bdsNode;
-	}
-
-	String getFileName() {
-		return (getBdsNode() != null) ? getBdsNode().getFileName() : null;
-	}
-
-	int getLineNum() {
-		return (getBdsNode() != null) ? getBdsNode().getLineNum() : -1;
-	}
-
-	String getSysFileName(String execId) {
-		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
-
-		String sysFileName = execId + ".sh";
-		File f = new File(sysFileName);
-		try {
-			return f.getCanonicalPath();
-		} catch (IOException e) {
-			throw new RuntimeException("cannot get cannonical path for file '" + sysFileName + "'");
-		}
-	}
-
-	String getTaskName() {
+	@Override
+	protected String getTaskName() {
 		return bdsThread.hasVariable(ExpressionTask.TASK_OPTION_TASKNAME) ? bdsThread.getString(ExpressionTask.TASK_OPTION_TASKNAME) : null;
 	}
 
@@ -288,6 +246,7 @@ public class TaskFactory {
 	/**
 	 * Create and run task
 	 */
+	@Override
 	public void run() {
 		// Create task
 		Value cmd = bdsThread.pop();
@@ -306,32 +265,8 @@ public class TaskFactory {
 		bdsThread.push(new ValueString(task.getId()));
 	}
 
-	/**
-	 * Create a task ID
-	 */
 	String taskId() {
-		int nextId = nextId();
-
-		// Use module name
-		String module = getFileName();
-		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
-
-		String taskName = getTaskName();
-		if (taskName != null) {
-			if (taskName.isEmpty()) taskName = null;
-			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
-		}
-
-		int ln = getLineNum();
-		String execId = bdsThread.getBdsThreadId() //
-				+ "/task" //
-				+ (module == null ? "" : "." + module) //
-				+ (taskName == null ? "" : "." + taskName) //
-				+ (ln > 0 ? ".line_" + ln : "") //
-				+ ".id_" + nextId //
-		;
-
-		return execId;
+		return sysId("task");
 	}
 
 }
