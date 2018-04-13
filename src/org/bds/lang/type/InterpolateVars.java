@@ -22,28 +22,14 @@ public class InterpolateVars extends Literal {
 	String literals[]; // This is used in case of interpolated string literal
 	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
 
-	public static String escapeSingleQuote(String str) {
-		if (str.indexOf('\'') < 0) return str; // Nothing to escape
-
-		StringBuilder sb = new StringBuilder();
-		char[] chars = str.toCharArray();
-		char cprev = ' ';
-		for (int i = 0; i < chars.length; i++) {
-			char c = chars[i];
-			if (cprev == '\\') {
-				switch (c) {
-				case '\\':
-				default:
-				}
-			}
-		}
-		return sb.toString();
+	/**
+	 * Escape string
+	 */
+	public static String escape(String s) {
+		return escapeMultiline(s);
 	}
 
-	/**
-	 * Replace '\n' by '\\n' (same for '\r')
-	 */
-	public static String escapeMultiline(String s) {
+	static String escapeMultiline(String s) {
 		boolean endsWithNewLine = (!s.isEmpty()) && (s.charAt(s.length() - 1) == '\n');
 		String lines[] = s.split("\n");
 		if (lines.length <= 1 && !endsWithNewLine) return s; // Nothing to escape
@@ -61,6 +47,10 @@ public class InterpolateVars extends Literal {
 		if (endsWithNewLine) sb.append("\\n"); // Add escaped newline
 
 		return sb.toString();
+	}
+
+	static String escapeSingleQuote(String str) {
+		return str.replace("'", "\\'");
 	}
 
 	/**
@@ -216,7 +206,7 @@ public class InterpolateVars extends Literal {
 			//---
 			Tuple<String, String> tupStr = findString(str);
 			// String strToAdd = useLiteral ? unEscapeDollar(tupStr.first) : escapeMultiline(tupStr.first);
-			String strToAdd = escapeMultiline(unEscapeDollar(tupStr.first));
+			String strToAdd = escape(unEscapeDollar(tupStr.first));
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed
 

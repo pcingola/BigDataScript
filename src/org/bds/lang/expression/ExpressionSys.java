@@ -120,7 +120,7 @@ public class ExpressionSys extends Expression {
 
 		if (interpolateVars == null) {
 			// No variable interpolation? => Literal
-			String cmd = InterpolateVars.escapeMultiline(commands);
+			String cmd = InterpolateVars.escape(commands);
 			sb.append("pushs '" + comment + cmd + "'\n");
 		} else {
 			sb.append("pushs '" + comment + "'\n");

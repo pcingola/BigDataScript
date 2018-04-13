@@ -1145,7 +1145,7 @@ public class BdsVm {
 		sb.append("[");
 		for (int i = 0; i < sp; i++) {
 			Value v = stack[i];
-			String s = v.getType().isString() ? "'" + InterpolateVars.escapeMultiline(v.asString()) + "'" : v.toString();
+			String s = v.getType().isString() ? "'" + InterpolateVars.escape(v.asString()) + "'" : v.toString();
 			sb.append((i > 0 ? ", " : "") + s);
 		}
 		sb.append(" ]");

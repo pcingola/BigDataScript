@@ -32,7 +32,7 @@ public class LiteralString extends Literal {
 	protected void parse(ParseTree tree) {
 		String valueStr = tree.getChild(0).getText();
 
-		valueStr = InterpolateVars.escapeMultiline(valueStr);
+		valueStr = InterpolateVars.escape(valueStr);
 
 		if (valueStr.charAt(0) == '\'' && valueStr.charAt(valueStr.length() - 1) == '\'') {
 			// Remove quotes: No un-escaping, no interpolation
