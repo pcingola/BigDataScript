@@ -1,4 +1,3 @@
 
-#sys echo "Hi2 there \" how is it going?" "i'm fine and you?"
-sys echo "My home is \$HOME"
-
+hi := 'hi'
+sys echo "hello $hi \$HOME"

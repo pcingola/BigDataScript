@@ -33,7 +33,6 @@ public class InterpolateVars extends Literal {
 				.replace("\r", "\\r") //
 				.replace("\t", "\\t") //
 				.replace("\0", "\\0") //
-				.replace("$", "\\$") //
 		;
 	}
 
