@@ -28,7 +28,7 @@ public class ExpressionLogicAnd extends ExpressionLogic {
 		//      expression because we already know that the result will
 		//      be 'false'
 
-		String lableBase = getClass().getSimpleName() + "_" + id + "_";
+		String lableBase = baseLabelName();
 		String labelFalse = lableBase + "false";
 		String labelEnd = lableBase + "end";
 

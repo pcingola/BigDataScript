@@ -54,6 +54,14 @@ public abstract class BdsNode implements Serializable {
 		doParse(tree);
 	}
 
+	public String baseLabelName() {
+		return "label_" + getClass().getSimpleName() + "_" + id + "_";
+	}
+
+	protected String baseVarName() {
+		return SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + id + "_";
+	}
+
 	public boolean canCastTo(BdsNode n) {
 		return returnType != null && returnType.canCastTo(n.getReturnType());
 	}

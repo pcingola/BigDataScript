@@ -133,8 +133,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		sb.append(super.toAsmNode()); // Task will use the node to get parameters
 		sb.append("scopepush\n");
 
-		String labelEnd = getClass().getSimpleName() + "_" + id + "_end";
-		String labelFalse = getClass().getSimpleName() + "_" + id + "_false";
+		String labelEnd = baseLabelName() + "end";
+		String labelFalse = baseLabelName() + "false";
 
 		if (options != null) {
 			sb.append(options.toAsm(labelFalse)); // Jump to 'labelFalse' if any of the bool expressions is false

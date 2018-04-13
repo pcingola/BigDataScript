@@ -62,7 +62,7 @@ public class ForLoopList extends StatementWithScope {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 
-		String labelBase = getClass().getSimpleName() + "_" + id + "_";
+		String labelBase = baseLabelName();
 		String loopInitLabel = labelBase + "init";
 		String loopStartLabel = labelBase + "start";
 		String loopContinueLabel = labelBase + "continue";
@@ -73,10 +73,9 @@ public class ForLoopList extends StatementWithScope {
 		String varName = vinit.getVarName();
 
 		// Internal state variables
-		String varBaseName = SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + getId();
-		String varList = varBaseName + "_list";
-		String varCounter = varBaseName + "_count";
-		String varMaxCounter = varBaseName + "_max_count";
+		String varList = baseVarName() + "list";
+		String varCounter = baseVarName() + "count";
+		String varMaxCounter = baseVarName() + "max_count";
 		ValueFunction methodSize = returnType.getSymbolTable().findFunction(MethodNativeListSize.class);
 
 		//

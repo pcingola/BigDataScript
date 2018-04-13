@@ -44,8 +44,6 @@ public class TypeList extends TypeComposite {
 
 	public static boolean debug = false;
 
-	public static TypeList LIST_ANY = new TypeList(Types.ANY);
-
 	Type elementType; // Type of elements in the list
 
 	public static TypeList factory(BdsNode parent, ParseTree tree) {

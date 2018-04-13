@@ -28,6 +28,7 @@ import org.bds.run.RunState;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
+import org.bds.task.TaskDependency;
 import org.bds.util.Gpr;
 
 /**
@@ -313,6 +314,24 @@ public class BdsVm {
 	Type constantType() {
 		int idx = code[pc++];
 		return types.get(idx);
+	}
+
+	/**
+	 * Execute a 'dep' operator
+	 */
+	void dep() {
+		ValueList ins = (ValueList) pop();
+		ValueList outs = (ValueList) pop();
+
+		TaskDependency td = new TaskDependency();
+
+		for (Value out : outs)
+			td.addOutput(out.asString());
+
+		for (Value in : ins)
+			td.addOutput(in.asString());
+
+		push(td.depOperator());
 	}
 
 	/**
@@ -609,6 +628,10 @@ public class BdsVm {
 			case DEC:
 				i1 = popInt();
 				push(--i1);
+				break;
+
+			case DEP:
+				dep();
 				break;
 
 			case DIVI:
@@ -1038,18 +1061,18 @@ public class BdsVm {
 	}
 
 	/**
+	 * Execute a 'sys' instruction
+	 */
+	void sys() {
+		ExpressionSys.run(bdsThread);
+	}
+
+	/**
 	 * Execute a 'taks'
 	 */
 	void task() {
 		TaskFactory tf = new TaskFactory(bdsThread);
 		tf.run();
-	}
-
-	/**
-	 * Execute a 'sys' instruction
-	 */
-	void sys() {
-		ExpressionSys.run(bdsThread);
 	}
 
 	/**

@@ -6,8 +6,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.nativeMethods.list.MethodNativeListAdd;
+import org.bds.lang.nativeMethods.list.MethodNativeListAddList;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.ValueFunction;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -42,26 +46,6 @@ public class ExpressionDepOperator extends Expression {
 	public Expression[] getRight() {
 		return right;
 	}
-
-	//	/**
-	//	 * Evaluate expressions and create a task dependency
-	//	 */
-	//	public TaskDependency evalTaskDependency(BdsThread bdsThread) {
-	//		// All expressions are evaluated
-	//		runStep(bdsThread, left);
-	//		runStep(bdsThread, right);
-	//		if (bdsThread.isCheckpointRecover()) return null;
-	//
-	//		ValueList rightEval = (ValueList) bdsThread.pop();
-	//		ValueList leftEval = (ValueList) bdsThread.pop();
-	//
-	//		// Create task dependency and add all results
-	//		TaskDependency taskDependency = new TaskDependency(this);
-	//		taskDependency.addOutput(leftEval);
-	//		taskDependency.addInput(rightEval);
-	//
-	//		return taskDependency;
-	//	}
 
 	@Override
 	public boolean isReturnTypesNotNull() {
@@ -101,45 +85,66 @@ public class ExpressionDepOperator extends Expression {
 		return returnType;
 	}
 
-	!!!!!!!!!!!!!
+	@Override
+	public String toAsm() {
+		return toAsm(null, null);
+	}
 
-	//	/**
-	//	 * Evaluate an expression
-	//	 */
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		TaskDependency taskDependency = evalTaskDependency(bdsThread);
-	//		if (bdsThread.isCheckpointRecover()) return;
-	//
-	//		taskDependency.setDebug(bdsThread.isDebug());
-	//		boolean dep = taskDependency.depOperator();
-	//		bdsThread.push(dep);
-	//	}
+	public String toAsm(String varInputs, String varOutputs) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(toAsmArray(left, varOutputs));
+		sb.append(toAsmArray(right, varInputs));
+		sb.append("dep\n");
 
-	//	/**
-	//	 * Evaluate all expressions in the array.
-	//	 * @return A list of Strings with the results of all evaluations
-	//	 */
-	//	@SuppressWarnings("rawtypes")
-	//	public void runStep(BdsThread bdsThread, Expression exprs[]) {
-	//		ValueList resList = new ValueList(TypeList.get(Types.STRING));
-	//
-	//		for (Expression e : exprs) {
-	//			bdsThread.run(e);
-	//			Value result = bdsThread.pop();
-	//
-	//			if (result.getType().isList()) {
-	//				// Add all elements as strings
-	//				for (Object o : (List) result.get()) {
-	//					resList.addNative(o.toString());
-	//				}
-	//			} else {
-	//				resList.addNative(result.get().toString());
-	//			}
-	//		}
-	//
-	//		bdsThread.push(resList);
-	//	}
+		return sb.toString();
+	}
+
+	/**
+	 * Evaluate all expressions in the array.
+	 * Append all results to 'varName' (if varName is not null)
+	 */
+	public String toAsmArray(Expression exprs[], String varName) {
+		StringBuilder sb = new StringBuilder();
+
+		// Create list
+		TypeList listString = TypeList.get(Types.STRING);
+		sb.append("new " + listString + "\n");
+
+		// Find 'list.add()' methods
+		SymbolTable symtab = listString.getSymbolTable();
+		ValueFunction methodAdd = symtab.findFunction(MethodNativeListAdd.class);
+		ValueFunction methodAddList = symtab.findFunction(MethodNativeListAddList.class);
+
+		// Evaluate all expression and add results to list
+		for (Expression e : exprs) {
+			sb.append(e.toAsm()); // Evaluate expression
+
+			// Add result(s) to list
+			if (e.getReturnType().isList()) sb.append("callmnative " + methodAddList + "\n");
+			else sb.append("callmnative " + methodAdd + "\n");
+		}
+
+		// Append all results to 'varName'?
+		if (varName != null) {
+			// Copy results to tmp variable
+			//     tmp := [results]
+			String tmp = baseVarName() + "tmp";
+			sb.append("var " + tmp + "\n");
+			sb.append("pop\n");
+
+			// Append 'tmp' to 'varName'
+			//     varName.add(tmp)
+			sb.append("var " + varName + "\n");
+			sb.append("var " + tmp + "\n");
+			sb.append("callmnative " + methodAddList + "\n");
+			sb.append("pop\n");
+
+			// Leave original results in the stack
+			sb.append("var " + tmp + "\n");
+		}
+
+		return sb.toString();
+	}
 
 	@Override
 	public String toString() {

@@ -39,9 +39,10 @@ public class While extends Statement {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 
-		String loopStartLabel = getClass().getSimpleName() + "_start_" + id;
-		String loopContinueLabel = getClass().getSimpleName() + "_continue_" + id;
-		String loopEndLabel = getClass().getSimpleName() + "_end_" + id;
+		String labelBase = baseLabelName();
+		String loopStartLabel = labelBase + "start";
+		String loopContinueLabel = labelBase + "continue";
+		String loopEndLabel = labelBase + "end";
 
 		if (isNeedsScope()) sb.append("scopepush\n");
 		sb.append(loopStartLabel + ":\n");

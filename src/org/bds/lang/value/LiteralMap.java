@@ -92,7 +92,7 @@ public class LiteralMap extends Literal {
 		sb.append(super.toAsm());
 
 		// Create a new map (temporary variable)
-		String varMap = SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + getId() + "_map";
+		String varMap = baseVarName() + "map";
 		sb.append("new " + returnType + "\n");
 		sb.append("var " + varMap + "\n");
 		sb.append("pop\n");

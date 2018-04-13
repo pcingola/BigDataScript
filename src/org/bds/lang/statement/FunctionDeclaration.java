@@ -99,7 +99,7 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	@Override
 	public String toAsm() {
-		String funcEndLabel = getClass().getSimpleName() + "_" + getId() + "_end";
+		String funcEndLabel = baseLabelName() + "end";
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());

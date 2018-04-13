@@ -200,7 +200,7 @@ public class ClassDeclaration extends Block {
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
 
-		String labelClassEnd = getClass().getSimpleName() + "_" + id + "_" + getClassName() + "_end";
+		String labelClassEnd = baseLabelName() + "end";
 
 		sb.append(toAsmNode());
 		sb.append("jmp " + labelClassEnd + "\n"); // Jump to end of class (in case of runaway code

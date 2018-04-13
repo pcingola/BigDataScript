@@ -28,7 +28,7 @@ public class ExpressionLogicOr extends ExpressionLogic {
 		//      expression because we already know that the result will
 		//      be 'true'
 
-		String lableBase = getClass().getSimpleName() + "_" + id + "_";
+		String lableBase = baseLabelName();
 		String labelTrue = lableBase + "true";
 		String labelEnd = lableBase + "end";
 

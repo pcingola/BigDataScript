@@ -89,7 +89,7 @@ public class LiteralList extends Literal {
 		sb.append(super.toAsm());
 
 		// Create a new list (temporary variable)
-		String varList = SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + getId() + "_list";
+		String varList = baseVarName() + "list";
 		sb.append("new " + returnType + "\n");
 		sb.append("var " + varList + "\n");
 		sb.append("pop\n");

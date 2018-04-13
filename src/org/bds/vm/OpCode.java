@@ -34,6 +34,8 @@ public enum OpCode {
 	, CALLM, CALLMNATIVE
 	// Decrement (i.e. valueInt--)
 	, DEC
+	// Dependency operator
+	, DEP
 	// Division
 	, DIVI, DIVR
 	// Equality test

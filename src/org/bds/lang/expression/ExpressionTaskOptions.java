@@ -1,8 +1,5 @@
 package org.bds.lang.expression;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
@@ -17,9 +14,6 @@ import org.bds.symbol.SymbolTable;
 public class ExpressionTaskOptions extends ExpressionList {
 
 	private static final long serialVersionUID = 5543813044437054581L;
-	private static final Expression EXPRESSION_ARRAY[] = new Expression[0];
-
-	// boolean evalAll; // Force to evaluate all expressions
 
 	public ExpressionTaskOptions(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -32,91 +26,50 @@ public class ExpressionTaskOptions extends ExpressionList {
 
 	/**
 	 * Evaluate expressions and create a TaskDependency
-	 * Note: We only care about the value of bool expressions
+	 * Note: We evaluate expression as boolean
 	 */
 	public String toAsm(String labelEnd) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(toAsmVars());
-		sb.append(toAsmBool(labelEnd));
-		sb.append(toAsmDep());
-		return sb.toString();
-	}
 
-	/**
-	 * Add all boolean expression (and)
-	 */
-	String toAsmBool(String labelEnd) {
-		StringBuilder sb = new StringBuilder();
+		String varInputs = baseVarName() + "inputs";
+		String varOutputs = baseVarName() + "outputs";
 
-		List<Expression> exprs = new LinkedList<>();
-		for (Expression expr : expressions)
-			if (expr instanceof ExpressionDepOperator //
-					|| expr instanceof ExpressionAssignment //
-					|| expr instanceof ExpressionVariableInitImplicit //
-			) {
-				// Skip these expressions
-			} else {
-				exprs.add(expr);
-			}
-
-		// No boolean expressions? Nothing to do
-		if (exprs.isEmpty()) return "";
-
-		// Perform a short-circuited and operation
-		// We evaluate each expression, if it is false we
-		// jump to the end of the command (labelEnd)
-		for (Expression e : exprs) {
-			sb.append(e.toAsm());
-			sb.append("jmpf " + labelEnd + "\n");
-		}
-
-		return sb.toString();
-	}
-
-	/**
-	 * Create dependency lists: outs <- ins
-	 */
-	String toAsmDep() {
-		List<ExpressionDepOperator> deps = new LinkedList<>();
-		for (Expression expr : expressions)
-			if (expr instanceof ExpressionDepOperator) deps.add((ExpressionDepOperator) expr);
-
-		// Most cases there zero or one dep operator
-		if (deps.size() == 0) return "new string[]\n\"new string[]\n"; // No deps? Add empty lists
-		if (deps.size() == 1) return deps.get(0).toAsm();
-
-		//---
-		// More than one dep operator? Collapse them into one
-		//---
-		List<Expression> left = new LinkedList<>();
-		List<Expression> right = new LinkedList<>();
-		for (ExpressionDepOperator d : deps) {
-			for (Expression e : d.getLeft())
-				left.add(e);
-
-			for (Expression e : d.getRight())
-				right.add(e);
-		}
-
-		// Create one big dependency using all left and right expressions
-		ExpressionDepOperator dep = new ExpressionDepOperator(this, left.toArray(EXPRESSION_ARRAY), right.toArray(EXPRESSION_ARRAY));
-		return dep.toAsm();
-	}
-
-	/**
-	 * Initialize and assign variables
-	 */
-	String toAsmVars() {
-		StringBuilder sb = new StringBuilder();
-		// Dependencies, variable initializations and boolean expression
 		for (Expression expr : expressions) {
 			if (expr instanceof ExpressionAssignment) {
+				// Variable assignment: Perform assignment and remove result from stack
 				sb.append(expr.toAsm());
 				sb.append("pop\n");
+			} else if (expr instanceof ExpressionDepOperator) {
+				// Implicit variable declaration
+				sb.append(toAsmDep(labelEnd, (ExpressionDepOperator) expr, varInputs, varOutputs));
 			} else if (expr instanceof ExpressionVariableInitImplicit) {
+			} else {
+				// Boolean expression:
+				//   Perform a short-circuited 'AND' expression of all
+				//   boolean expressions.
+				//   We evaluate each expression, if it is false we
+				//   jump to the end of the command (labelEnd)
 				sb.append(expr.toAsm());
+				sb.append("jmpf " + labelEnd + "\n");
 			}
 		}
+
+		// Leave lists with all inputs and outputs in the stack (all dependencies)
+		sb.append("load " + varOutputs + "\n");
+		sb.append("load " + varInputs + "\n");
+
+		return sb.toString();
+	}
+
+	String toAsmDep(String labelEnd, ExpressionDepOperator dep, String varInputs, String varOutputs) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(dep.toAsm(varInputs, varOutputs));
+		sb.append("jmpf " + labelEnd + "\n");
+		return sb.toString();
+	}
+
+	String toAsmList() {
+		StringBuilder sb = new StringBuilder();
 		return sb.toString();
 	}
 

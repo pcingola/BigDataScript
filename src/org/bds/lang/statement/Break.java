@@ -48,7 +48,7 @@ public class Break extends Statement {
 	 */
 	protected String findLabel() {
 		BdsNode bdsNode = findBreakNode();
-		return bdsNode.getClass().getSimpleName() + "_end_" + bdsNode.getId();
+		return bdsNode.baseLabelName() + "end";
 	}
 
 	/**

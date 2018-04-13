@@ -25,7 +25,7 @@ public class Continue extends Break {
 	@Override
 	protected String findLabel() {
 		BdsNode bdsNode = findBreakNode();
-		return bdsNode.getClass().getSimpleName() + "_continue_" + bdsNode.getId();
+		return bdsNode.baseLabelName() + "continue";
 	}
 
 	@Override
