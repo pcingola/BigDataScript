@@ -17,6 +17,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class VariableInitImplicit extends VariableInit {
 
+	private static final long serialVersionUID = 3570089204782596851L;
+
 	public static VariableInitImplicit get(String name) {
 		VariableInitImplicit vi = new VariableInitImplicit(null, null);
 		vi.varName = name;

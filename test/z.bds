@@ -1,11 +1,9 @@
 
 in := '/tmp/in.txt'
 out := '/tmp/out.txt'
-doit := false
+doit := true
 
-#task( out <- in, doit, hi := 'hello' ) {
-hi := 'hello'
-task {
+task( out <- in, doit, hi := 'hello' ) {
 	sys echo "$hi"; pwd -P ;\
 		echo running; \
         sleep 2

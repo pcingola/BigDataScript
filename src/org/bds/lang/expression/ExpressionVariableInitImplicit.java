@@ -42,6 +42,11 @@ public class ExpressionVariableInitImplicit extends Expression {
 	}
 
 	@Override
+	public String toAsm() {
+		return vInit != null ? vInit.toAsm() : "";
+	}
+
+	@Override
 	public String toString() {
 		return vInit != null ? vInit.toString() : "";
 	}

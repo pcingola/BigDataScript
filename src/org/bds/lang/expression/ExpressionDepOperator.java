@@ -17,18 +17,30 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionDepOperator extends Expression {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8557838570116658027L;
+
 	public static final String DEP_OPERATOR = "<-";
 	public static final String DEP_SEPARATOR = ",";
 
 	Expression left[];
 	Expression right[];
 
+	public ExpressionDepOperator(BdsNode parent, Expression left[], Expression right[]) {
+		super(parent, null);
+		this.left = left;
+		this.right = right;
+	}
+
 	public ExpressionDepOperator(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	public Expression[] getLeft() {
+		return left;
+	}
+
+	public Expression[] getRight() {
+		return right;
 	}
 
 	//	/**
@@ -88,6 +100,8 @@ public class ExpressionDepOperator extends Expression {
 		returnType = Types.BOOL;
 		return returnType;
 	}
+
+	!!!!!!!!!!!!!
 
 	//	/**
 	//	 * Evaluate an expression

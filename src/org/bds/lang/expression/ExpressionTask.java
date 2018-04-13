@@ -133,10 +133,11 @@ public class ExpressionTask extends ExpressionWithScope {
 		sb.append(super.toAsmNode()); // Task will use the node to get parameters
 		sb.append("scopepush\n");
 
-		sb.append(toAsmSys()); // Sys commands
+		String labelEnd = getClass().getSimpleName() + "_" + id + "_end";
+		String labelFalse = getClass().getSimpleName() + "_" + id + "_false";
 
 		if (options != null) {
-			sb.append(options.toAsm());
+			sb.append(options.toAsm(labelFalse)); // Jump to 'labelFalse' if any of the bool expressions is false
 		} else {
 			// No options or dependencies.
 			// Add empty list as dependency
@@ -144,7 +145,17 @@ public class ExpressionTask extends ExpressionWithScope {
 			sb.append("new string[]\n");
 		}
 
+		sb.append(toAsmSys()); // Sys commands
+
 		sb.append("task\n");
+		sb.append("jmp " + labelEnd + "\n"); // Go to the end
+
+		// Task expression not evaluated because one or more bool expressions was false
+		sb.append(labelFalse + ":\n");
+		sb.append("pushs ''\n"); // Task not executed, push an empty task id
+
+		// End of task expression
+		sb.append(labelEnd + ":\n");
 		sb.append("scopepop\n");
 		return sb.toString();
 	}

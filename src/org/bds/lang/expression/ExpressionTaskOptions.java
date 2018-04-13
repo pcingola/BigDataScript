@@ -1,5 +1,8 @@
 package org.bds.lang.expression;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
@@ -14,6 +17,7 @@ import org.bds.symbol.SymbolTable;
 public class ExpressionTaskOptions extends ExpressionList {
 
 	private static final long serialVersionUID = 5543813044437054581L;
+	private static final Expression EXPRESSION_ARRAY[] = new Expression[0];
 
 	// boolean evalAll; // Force to evaluate all expressions
 
@@ -21,55 +25,100 @@ public class ExpressionTaskOptions extends ExpressionList {
 		super(parent, tree);
 	}
 
-	//	/**
-	//	 * Evaluate expressions and create a TaskDependency (only if clauses are satisfied
-	//	 * Note: We only care about the value of bool expressions
-	//	 * Note: If 'evalAll' is true, all expressions in the list are evaluated, even if the first one is false
-	//	 * @return A 'TaskDependencies' object if the task has to be run, null otherwise
-	//	 */
-	//	public TaskDependency evalTaskDependency(BdsThread bdsThread) {
-	//		boolean sat = true;
-	//		TaskDependency taskDeps = new TaskDependency(this);
-	//
-	//		for (Expression expr : expressions) {
-	//			if (expr instanceof ExpressionDepOperator) {
-	//				// This evaluation returns a 'TaskDependence' object
-	//				ExpressionDepOperator exprDep = (ExpressionDepOperator) expr;
-	//				TaskDependency taskDepsExpr = exprDep.evalTaskDependency(bdsThread);
-	//
-	//				if (!bdsThread.isCheckpointRecover()) {
-	//					taskDeps.add(taskDepsExpr);
-	//					sat &= (taskDepsExpr != null); // Convert expression to boolean
-	//				}
-	//			} else {
-	//				// All boolean expressions must be "true"
-	//				bdsThread.run(expr);
-	//
-	//				if (!bdsThread.isCheckpointRecover()) {
-	//					boolean value = bdsThread.popBool(); // Convert expression to boolean
-	//					if (expr instanceof ExpressionAssignment) ; // Nothing to do
-	//					else if (expr instanceof ExpressionVariableInitImplicit) ; // Nothing to do
-	//					else sat &= value;
-	//				}
-	//			}
-	//
-	//			// Break expression evaluation if we already know it will not be executed
-	//			if (!sat && !evalAll) return null;
-	//		}
-	//
-	//		return sat ? taskDeps : null;
-	//	}
-	//
-	//	/**
-	//	 * Evaluate: Returns 'true' if all boolean expressions are 'true'.
-	//	 *
-	//	 * @return true if all clauses are satisfied and taskDependency was created.
-	//	 */
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		TaskDependency taskDeps = evalTaskDependency(bdsThread);
-	//		bdsThread.push(taskDeps != null);
-	//	}
+	@Override
+	public String toAsm() {
+		throw new RuntimeException("This method should not be called directly!");
+	}
+
+	/**
+	 * Evaluate expressions and create a TaskDependency
+	 * Note: We only care about the value of bool expressions
+	 */
+	public String toAsm(String labelEnd) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(toAsmVars());
+		sb.append(toAsmBool(labelEnd));
+		sb.append(toAsmDep());
+		return sb.toString();
+	}
+
+	/**
+	 * Add all boolean expression (and)
+	 */
+	String toAsmBool(String labelEnd) {
+		StringBuilder sb = new StringBuilder();
+
+		List<Expression> exprs = new LinkedList<>();
+		for (Expression expr : expressions)
+			if (expr instanceof ExpressionDepOperator //
+					|| expr instanceof ExpressionAssignment //
+					|| expr instanceof ExpressionVariableInitImplicit //
+			) {
+				// Skip these expressions
+			} else {
+				exprs.add(expr);
+			}
+
+		// No boolean expressions? Nothing to do
+		if (exprs.isEmpty()) return "";
+
+		// Perform a short-circuited and operation
+		// We evaluate each expression, if it is false we
+		// jump to the end of the command (labelEnd)
+		for (Expression e : exprs) {
+			sb.append(e.toAsm());
+			sb.append("jmpf " + labelEnd + "\n");
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * Create dependency lists: outs <- ins
+	 */
+	String toAsmDep() {
+		List<ExpressionDepOperator> deps = new LinkedList<>();
+		for (Expression expr : expressions)
+			if (expr instanceof ExpressionDepOperator) deps.add((ExpressionDepOperator) expr);
+
+		// Most cases there zero or one dep operator
+		if (deps.size() == 0) return "new string[]\n\"new string[]\n"; // No deps? Add empty lists
+		if (deps.size() == 1) return deps.get(0).toAsm();
+
+		//---
+		// More than one dep operator? Collapse them into one
+		//---
+		List<Expression> left = new LinkedList<>();
+		List<Expression> right = new LinkedList<>();
+		for (ExpressionDepOperator d : deps) {
+			for (Expression e : d.getLeft())
+				left.add(e);
+
+			for (Expression e : d.getRight())
+				right.add(e);
+		}
+
+		// Create one big dependency using all left and right expressions
+		ExpressionDepOperator dep = new ExpressionDepOperator(this, left.toArray(EXPRESSION_ARRAY), right.toArray(EXPRESSION_ARRAY));
+		return dep.toAsm();
+	}
+
+	/**
+	 * Initialize and assign variables
+	 */
+	String toAsmVars() {
+		StringBuilder sb = new StringBuilder();
+		// Dependencies, variable initializations and boolean expression
+		for (Expression expr : expressions) {
+			if (expr instanceof ExpressionAssignment) {
+				sb.append(expr.toAsm());
+				sb.append("pop\n");
+			} else if (expr instanceof ExpressionVariableInitImplicit) {
+				sb.append(expr.toAsm());
+			}
+		}
+		return sb.toString();
+	}
 
 	@Override
 	public String toString() {
