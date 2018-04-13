@@ -33,10 +33,14 @@ public class InterpolateVars extends Literal {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < lines.length; i++) {
 			String l = lines[i];
-			if (l.endsWith("\\")) {
-				sb.append(l + "\\" + "\\n"); // Make sure we have an (escaped) backslash, followed by newline (escaped)
-			} else sb.append(l + "\\n"); // Add escaped newline
+			sb.append(l); // Add line
+			if (l.endsWith("\\")) sb.append("\\"); // Make sure we have an (escaped) backslash
+			if (i < (lines.length - 1)) sb.append("\\n"); // Add escaped newline
 		}
+
+		// Does the string end with a newline? Then add escaped newline
+		boolean endsWithNewLine = s.charAt(s.length() - 1) == '\n';
+		if (endsWithNewLine) sb.append("\\n"); // Add escaped newline
 
 		return sb.toString();
 	}
@@ -340,10 +344,6 @@ public class InterpolateVars extends Literal {
 		returnType = Types.STRING;
 		return returnType;
 	}
-
-	//	public void setUseLiteral(boolean useLiteral) {
-	//		this.useLiteral = useLiteral;
-	//	}
 
 	@Override
 	public String toAsm() {

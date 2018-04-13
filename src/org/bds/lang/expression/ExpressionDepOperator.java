@@ -133,14 +133,13 @@ public class ExpressionDepOperator extends Expression {
 			sb.append("pop\n");
 
 			// Append 'tmp' to 'varName'
-			//     varName.add(tmp)
-			sb.append("var " + varName + "\n");
-			sb.append("var " + tmp + "\n");
+			sb.append("load " + varName + "\n");
+			sb.append("load " + tmp + "\n");
 			sb.append("callmnative " + methodAddList + "\n");
 			sb.append("pop\n");
 
 			// Leave original results in the stack
-			sb.append("var " + tmp + "\n");
+			sb.append("load " + tmp + "\n");
 		}
 
 		return sb.toString();

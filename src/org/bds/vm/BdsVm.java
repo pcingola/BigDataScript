@@ -540,7 +540,6 @@ public class BdsVm {
 
 			if (Config.get().isVerbose()) {
 				t.printStackTrace();
-				System.err.println("VM:\n" + this);
 			}
 		}
 

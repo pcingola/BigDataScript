@@ -71,7 +71,7 @@ public class TaskFactory {
 	/**
 	 * Create commands that will be executed in a shell
 	 */
-	String createCommands() {
+	String createCommands(String sysCmds) {
 		HashMap<String, String> replace = new HashMap<>();
 		StringBuilder sbDown = new StringBuilder();
 		StringBuilder sbUp = new StringBuilder();
@@ -119,12 +119,6 @@ public class TaskFactory {
 			}
 		}
 
-		//---
-		// Sys commands
-		// Command from string or interpolated vars
-		//---
-		String sysCmds = bdsThread.pop().asString();
-
 		// No Down/Up-load? Just return the SYS commands
 		if (sbDown.length() <= 0 && sbUp.length() <= 0) return sysCmds;
 
@@ -149,12 +143,12 @@ public class TaskFactory {
 	/**
 	 * Create a task
 	 */
-	Task createTask() {
+	Task createTask(String sysCmds) {
 		// Get an ID
 		String taskId = taskId();
 
 		// Get commands representing a shell program
-		String sysCmds = createCommands();
+		sysCmds = createCommands(sysCmds);
 
 		// Create Task
 		String sysFileName = getSysFileName(taskId);
@@ -183,12 +177,8 @@ public class TaskFactory {
 		return task;
 	}
 
-	TaskDependency createTaskDependency() {
+	TaskDependency createTaskDependency(ValueList outs, ValueList ins) {
 		TaskDependency td = null;
-
-		// Retrieve inputs and outputs from stack
-		ValueList ins = (ValueList) bdsThread.pop();
-		ValueList outs = (ValueList) bdsThread.pop();
 
 		if (ins.isEmpty() && outs.isEmpty()) return null;
 		td = new TaskDependency(getBdsNode());
@@ -300,35 +290,14 @@ public class TaskFactory {
 	 */
 	public void run() {
 		// Create task
-		taskDependency = createTaskDependency();
+		Value cmd = bdsThread.pop();
+		ValueList ins = (ValueList) bdsThread.pop();
+		ValueList outs = (ValueList) bdsThread.pop();
 
-		// Evaluate task options (get a list of dependencies)
-		//		if (options != null) {
-		//			taskDependency = options.evalTaskDependency(bdsThread);
-		//
-		//			if (bdsThread.isCheckpointRecover()) return;
-		//
-		//			if (taskDependency == null) {
-		//				// Task options clause not satisfied. Do not execute task => Return empty taskId
-		//				if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=false): null");
-		//				bdsThread.push("");
-		//				return;
-		//			}
-		//
-		//			// Needs update?
-		//			taskDependency.setDebug(bdsThread.isDebug());
-		//			boolean needsUpdate = taskDependency.depOperator();
-		//
-		//			if (bdsThread.isDebug()) log("Task dependency check (needsUpdate=" + needsUpdate + "): " + taskDependency);
-		//			if (!needsUpdate) {
-		//				// Task options clause not satisfied. Do not execute task => Return empty taskId
-		//				bdsThread.push("");
-		//				return;
-		//			}
-		//		}
+		taskDependency = createTaskDependency(outs, ins);
 
 		// Create task
-		task = createTask();
+		task = createTask(cmd.asString());
 
 		// Schedule task for execution
 		dispatchTask(task);

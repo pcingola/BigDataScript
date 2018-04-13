@@ -4,6 +4,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -31,9 +33,18 @@ public class ExpressionTaskOptions extends ExpressionList {
 	public String toAsm(String labelEnd) {
 		StringBuilder sb = new StringBuilder();
 
+		// Create variables for all input and output dependencies
 		String varInputs = baseVarName() + "inputs";
 		String varOutputs = baseVarName() + "outputs";
+		TypeList listString = TypeList.get(Types.STRING);
+		sb.append("new " + listString + "\n");
+		sb.append("var " + varInputs + "\n");
+		sb.append("pop\n");
+		sb.append("new " + listString + "\n");
+		sb.append("var " + varOutputs + "\n");
+		sb.append("pop\n");
 
+		// Evaluate all expressions
 		for (Expression expr : expressions) {
 			if (expr instanceof ExpressionAssignment) {
 				// Variable assignment: Perform assignment and remove result from stack
