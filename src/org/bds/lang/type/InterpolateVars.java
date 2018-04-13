@@ -22,6 +22,24 @@ public class InterpolateVars extends Literal {
 	String literals[]; // This is used in case of interpolated string literal
 	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
 
+	public static String escapeSingleQuote(String str) {
+		if (str.indexOf('\'') < 0) return str; // Nothing to escape
+
+		StringBuilder sb = new StringBuilder();
+		char[] chars = str.toCharArray();
+		char cprev = ' ';
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[i];
+			if (cprev == '\\') {
+				switch (c) {
+				case '\\':
+				default:
+				}
+			}
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * Replace '\n' by '\\n' (same for '\r')
 	 */
