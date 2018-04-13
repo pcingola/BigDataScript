@@ -34,14 +34,14 @@ public class ExpressionTaskOptions extends ExpressionList {
 		StringBuilder sb = new StringBuilder();
 
 		// Create variables for all input and output dependencies
-		String varInputs = baseVarName() + "inputs";
 		String varOutputs = baseVarName() + "outputs";
+		String varInputs = baseVarName() + "inputs";
 		TypeList listString = TypeList.get(Types.STRING);
 		sb.append("new " + listString + "\n");
-		sb.append("var " + varInputs + "\n");
+		sb.append("var " + varOutputs + "\n");
 		sb.append("pop\n");
 		sb.append("new " + listString + "\n");
-		sb.append("var " + varOutputs + "\n");
+		sb.append("var " + varInputs + "\n");
 		sb.append("pop\n");
 
 		// Evaluate all expressions
@@ -54,6 +54,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 				// Implicit variable declaration
 				sb.append(toAsmDep(labelEnd, (ExpressionDepOperator) expr, varInputs, varOutputs));
 			} else if (expr instanceof ExpressionVariableInitImplicit) {
+				sb.append(expr.toAsm());
 			} else {
 				// Boolean expression:
 				//   Perform a short-circuited 'AND' expression of all

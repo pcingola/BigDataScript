@@ -2,14 +2,14 @@
 in := '/tmp/in.txt'
 out := '/tmp/out.txt'
 doit := true
-hi := 'hello'
 
-#task( out <- in, doit, hi := 'hello') {
-task(out <- in) {
-	sys echo "$hi"; pwd -P ;\
+task(out <- in, doit, hi := 'hello') {
+	sys echo "$hi"; \
+		pwd -P ;\
 		echo running; \
-        sleep 2; \
+		sleep 2; \
 		echo done | tee $out
+	sys date >> $out
 }
 
 #wait
