@@ -669,6 +669,11 @@ public class BdsVm {
 				push(s1.equals(s2));
 				break;
 
+			case ERROR:
+				System.err.println(popString());
+				bdsThread.setRunState(RunState.FATAL_ERROR);
+				return;
+
 			case GEB:
 				b2 = popBool();
 				b1 = popBool();
@@ -1004,6 +1009,14 @@ public class BdsVm {
 				scope.add(name, peek()); // We leave the value in the stack
 				break;
 
+			case WAIT:
+				waitTask();
+				break;
+
+			case WAITALL:
+				waitTaskAll();
+				break;
+
 			case XORB:
 				b2 = popBool();
 				b1 = popBool();
@@ -1137,5 +1150,16 @@ public class BdsVm {
 		}
 		sb.append(" ]");
 		return sb.toString();
+	}
+
+	void waitTask() {
+		ValueList tids = (ValueList) pop();
+		boolean ok = bdsThread.wait(tids);
+		push(ok);
+	}
+
+	void waitTaskAll() {
+		boolean ok = bdsThread.waitAll();
+		push(ok);
 	}
 }

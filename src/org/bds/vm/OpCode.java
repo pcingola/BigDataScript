@@ -40,6 +40,8 @@ public enum OpCode {
 	, DIVI, DIVR
 	// Equality test
 	, EQB, EQI, EQR, EQS
+	// Error
+	, ERROR
 	// Greater or equal than
 	, GEB, GEI, GER, GES
 	// Greater than
@@ -104,6 +106,8 @@ public enum OpCode {
 	, TASK
 	// Create a variable in local scope
 	, VAR
+	// Wait for task to finish
+	, WAIT, WAITALL
 	// XOR
 	, XORB, XORI
 	//

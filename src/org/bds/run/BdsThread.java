@@ -1047,16 +1047,15 @@ public class BdsThread extends Thread implements Serializable {
 
 	/**
 	 * Wait for all tasks/threads in the list to finish
-	 * @return true if all tasks/threads finished OK or it were allowed to fail (i.e. canFail = true)
+	 * @return true if all tasks/threads finished OK (or failed but were allowed to fail, i.e. canFail = true)
 	 */
-	@SuppressWarnings("rawtypes")
-	public boolean wait(List ids) {
+	public boolean wait(ValueList ids) {
 		if (ids == null) return true;
 
 		boolean ok = true;
 
 		// We are done when ALL tasks/threads are done
-		for (Object id : ids)
+		for (Value id : ids)
 			ok &= wait(id.toString());
 
 		return ok;

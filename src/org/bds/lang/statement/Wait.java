@@ -3,6 +3,11 @@ package org.bds.lang.statement;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.nativeMethods.list.MethodNativeListAdd;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.ValueFunction;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A "wait" statement
@@ -25,44 +30,45 @@ public class Wait extends Statement {
 		if (tree.getChildCount() > 1) taskId = (Expression) factory(tree, 1);
 	}
 
-	//	/**
-	//	 * Run the program
-	//	 */
-	//	@Override
-	//	@SuppressWarnings("rawtypes")
-	//	public void runStep(BdsThread bdsThread) {
-	//
-	//		boolean ok = false;
-	//		String type = "Task";
-	//
-	//		// No arguments? Wait for all tasks
-	//		if (taskId == null) {
-	//			ok = bdsThread.waitAll();
-	//		} else {
-	//			// Wait for a specific task or list of tasks
-	//			bdsThread.run(taskId);
-	//			Value val = bdsThread.pop();
-	//
-	//			// Are we waiting for a single task/thread or a list?
-	//			if (val.getType().isList()) ok = bdsThread.wait((List) val.get());
-	//			else {
-	//				String valStr = val.get().toString();
-	//				if (bdsThread.getThread(valStr) != null) type = "Thread";
-	//				ok = bdsThread.wait(valStr);
-	//			}
-	//		}
-	//
-	//		// Any task/thread failed?
-	//		if (!ok) {
-	//			// Create a checkpoint
-	//			bdsThread.fatalError(this, type + "/s failed.");
-	//		}
-	//
-	//		// Were we recovering from a 'wait' within a checkpoint?
-	//		if (bdsThread.getRunState() == RunState.WAIT_RECOVER) {
-	//			bdsThread.setRunState(RunState.OK);
-	//		}
-	//	}
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+
+		String labelBase = baseLabelName();
+		String labelOk = labelBase + "ok";
+		String labelFail = labelBase + "fail";
+
+		// No arguments? Wait for all tasks
+		String errMsg = "Error in wait statement, file " + getFileName() + ", line " + getLineNum();
+		if (taskId == null) {
+			sb.append("waitall\n");
+		} else if (taskId.isList()) {
+			// Wait for a list of taskIds
+			sb.append("wait\n");
+		} else {
+			// Wait for a single taskId: We need to pass a list of one element
+
+			// Create an empty list, add single element to it
+			TypeList listString = TypeList.get(Types.STRING);
+			SymbolTable symtab = listString.getSymbolTable();
+			ValueFunction methodAdd = symtab.findFunction(MethodNativeListAdd.class);
+
+			sb.append("new " + listString + "\n");
+			sb.append("swap\n");
+			sb.append("callmnative " + methodAdd + "\n");
+
+			// Now we have a list of elements to wait
+			sb.append("wait\n");
+		}
+
+		sb.append("jmpt " + labelOk + "\n");
+		sb.append(labelFail + ":\n");
+		sb.append("pushs '" + errMsg + "'\n");
+		sb.append("error\n");
+		sb.append(labelOk + ":\n");
+
+		return sb.toString();
+	}
 
 	@Override
 	public String toString() {

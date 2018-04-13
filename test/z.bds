@@ -12,5 +12,5 @@ task(out <- in, doit, hi := 'hello') {
 	sys date >> $out
 }
 
-#wait
-#task echo bye
+wait
+task echo bye
