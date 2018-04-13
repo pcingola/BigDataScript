@@ -83,7 +83,7 @@ public class ExpressionSys extends Expression {
 	protected void parse(ParseTree tree) {
 		String cmd = tree.getChild(0).getText();
 
-		if (cmd.startsWith("sys")) cmd = cmd.substring("sys".length());
+		if (cmd.startsWith("sys ")) cmd = cmd.substring("sys ".length());
 		setCommands(cmd);
 	}
 
@@ -116,12 +116,16 @@ public class ExpressionSys extends Expression {
 	public String toAsm(boolean useSys) {
 		StringBuilder sb = new StringBuilder();
 
+		String comment = "\\n# SYS command. line " + getLineNum() + "\\n";
+
 		if (interpolateVars == null) {
 			// No variable interpolation? => Literal
 			String cmd = InterpolateVars.escapeMultiline(commands);
-			sb.append("pushs '" + cmd + "'\n");
+			sb.append("pushs '" + comment + cmd + "'\n");
 		} else {
+			sb.append("pushs '" + comment + "'\n");
 			sb.append(interpolateVars.toAsm());
+			sb.append("adds\n");
 		}
 
 		if (useSys) sb.append("sys\n");

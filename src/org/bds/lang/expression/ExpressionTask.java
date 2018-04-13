@@ -183,11 +183,11 @@ public class ExpressionTask extends ExpressionWithScope {
 			StringBuilder sb = new StringBuilder();
 
 			Block block = (Block) statement;
+			sb.append("new string\n");
 			for (Statement st : block.getStatements()) {
 				// Get 'sys' expression
 				if (st instanceof StatementExpr) st = ((StatementExpr) st).getExpression();
 				ExpressionSys sys = (ExpressionSys) st;
-				sb.append("pushs '\\n# SYS command. line " + sys.getLineNum() + "\\n\\n'\n");
 				sb.append(sys.toAsm(false));
 				sb.append("adds\n");
 			}
