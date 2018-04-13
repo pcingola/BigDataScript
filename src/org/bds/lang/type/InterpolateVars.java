@@ -26,8 +26,9 @@ public class InterpolateVars extends Literal {
 	 * Replace '\n' by '\\n' (same for '\r')
 	 */
 	public static String escapeMultiline(String s) {
+		boolean endsWithNewLine = (!s.isEmpty()) && (s.charAt(s.length() - 1) == '\n');
 		String lines[] = s.split("\n");
-		if (lines.length <= 1) return s;
+		if (lines.length <= 1 && !endsWithNewLine) return s; // Nothing to escape
 
 		// Correct lines ending in backslash (e.g. multi-line unix commands)
 		StringBuilder sb = new StringBuilder();
@@ -39,7 +40,6 @@ public class InterpolateVars extends Literal {
 		}
 
 		// Does the string end with a newline? Then add escaped newline
-		boolean endsWithNewLine = s.charAt(s.length() - 1) == '\n';
 		if (endsWithNewLine) sb.append("\\n"); // Add escaped newline
 
 		return sb.toString();
