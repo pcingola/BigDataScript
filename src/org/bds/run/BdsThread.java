@@ -698,21 +698,10 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	/**
-	 * Kill all tasks/threads in the list
-	 */
-	@SuppressWarnings("rawtypes")
-	public void kill(List taskIds) {
-		if (taskIds == null) return;
-
-		// We are done when ALL tasks are done
-		for (Object tid : taskIds)
-			kill(tid.toString());
-	}
-
-	/**
 	 * Kill one task/thread
 	 */
-	public void kill(String taskId) {
+	public void kill(Value vtaskId) {
+		String taskId = vtaskId.asString();
 		if (taskId == null) return;
 
 		if (bdsChildThreadsById.containsKey(taskId)) {
@@ -723,6 +712,17 @@ public class BdsThread extends Thread implements Serializable {
 			for (Executioner executioner : Executioners.getInstance().getAll())
 				executioner.kill(taskId);
 		}
+	}
+
+	/**
+	 * Kill all tasks/threads in the list
+	 */
+	public void kill(ValueList taskIds) {
+		if (taskIds == null) return;
+
+		// We are done when ALL tasks are done
+		for (Value tid : taskIds)
+			kill(tid);
 	}
 
 	public Value pop() {
@@ -1046,22 +1046,6 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	/**
-	 * Wait for all tasks/threads in the list to finish
-	 * @return true if all tasks/threads finished OK (or failed but were allowed to fail, i.e. canFail = true)
-	 */
-	public boolean wait(ValueList ids) {
-		if (ids == null) return true;
-
-		boolean ok = true;
-
-		// We are done when ALL tasks/threads are done
-		for (Value id : ids)
-			ok &= wait(id.toString());
-
-		return ok;
-	}
-
-	/**
 	 * Wait for one task/thread to finish
 	 */
 	public boolean wait(String id) {
@@ -1077,6 +1061,22 @@ public class BdsThread extends Thread implements Serializable {
 		BdsThread bdsTh = bdsThRoot.getThread(id);
 		if (bdsTh != null) return waitThread(bdsTh);
 		return true; // Nothing to do (already finished)
+	}
+
+	/**
+	 * Wait for all tasks/threads in the list to finish
+	 * @return true if all tasks/threads finished OK (or failed but were allowed to fail, i.e. canFail = true)
+	 */
+	public boolean wait(ValueList ids) {
+		if (ids == null) return true;
+
+		boolean ok = true;
+
+		// We are done when ALL tasks/threads are done
+		for (Value id : ids)
+			ok &= wait(id.toString());
+
+		return ok;
 	}
 
 	public boolean waitAll() {

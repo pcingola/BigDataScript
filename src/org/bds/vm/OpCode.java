@@ -48,6 +48,8 @@ public enum OpCode {
 	, GTB, GTI, GTR, GTS
 	// Halt (stop execution in current thread)
 	, HALT
+	// Kill a task
+	, KILL
 	// Increment (i.e. valueInt++)
 	, INC
 	// Jumps: unconditional, jump if true, jump if false:

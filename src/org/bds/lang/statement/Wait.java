@@ -33,6 +33,7 @@ public class Wait extends Statement {
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
 
 		String labelBase = baseLabelName();
 		String labelOk = labelBase + "ok";

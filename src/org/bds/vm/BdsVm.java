@@ -402,6 +402,15 @@ public class BdsVm {
 	}
 
 	/**
+	 * Kill opCode
+	 */
+	void kill() {
+		Value tid = pop();
+		if (tid.getType().isList()) bdsThread.kill((ValueList) tid);
+		else bdsThread.kill(tid);
+	}
+
+	/**
 	 * Multiply a string by an int (i.e. repeat string 'n' times)
 	 */
 	String muls(Value v1, Value v2) {
@@ -748,6 +757,10 @@ public class BdsVm {
 					name = constantString(); // Get label name
 					pc = getLabel(name); // Jump to label
 				} else pc++;
+				break;
+
+			case KILL:
+				kill();
 				break;
 
 			case LOAD:
@@ -1163,4 +1176,5 @@ public class BdsVm {
 		boolean ok = bdsThread.waitAll();
 		push(ok);
 	}
+
 }

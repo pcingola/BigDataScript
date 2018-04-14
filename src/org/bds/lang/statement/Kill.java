@@ -29,6 +29,15 @@ public class Kill extends Statement {
 	}
 
 	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		sb.append(taskId.toAsm());
+		sb.append("kill\n");
+		return sb.toString();
+	}
+
+	@Override
 	public String toString() {
 		return this.getClass().getSimpleName().toLowerCase() + (taskId != null ? " " + taskId : "") + "\n";
 	}
