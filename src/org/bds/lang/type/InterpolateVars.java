@@ -40,14 +40,13 @@ public class InterpolateVars extends Literal {
 	 * Escape string
 	 */
 	public static String unEscape(String s) {
-		!!!!!!!!!!!!!!!!!
-		return s.replace("\\", "\\\\") //
-				.replace("\b", "\\b") //
-				.replace("\f", "\\f") //
-				.replace("\n", "\\n") //
-				.replace("\r", "\\r") //
-				.replace("\t", "\\t") //
-				.replace("\0", "\\0") //
+		return s.replace("\\\\", "\\") //
+				.replace("\\b", "\b") //
+				.replace("\\f", "\f") //
+				.replace("\\n", "\n") //
+				.replace("\\r", "\r") //
+				.replace("\\t", "\t") //
+				.replace("\\0", "\0") //
 		;
 	}
 
@@ -143,34 +142,38 @@ public class InterpolateVars extends Literal {
 	//		return sb.toString();
 	//	}
 
-	/**
-	 * Almost literal string: Only un-escape dollar
-	 */
 	public static String unEscapeDollar(String str) {
-		StringBuilder sb = new StringBuilder();
-
-		char cprev = '\0';
-		for (char c : str.toCharArray()) {
-			if (cprev == '\\') {
-				if (c == '$') {
-					// Un-escape "\$" to "$"
-					sb.append(c);
-				} else {
-					// Add every other escaped sequence (do not modify it)
-					sb.append(cprev);
-					sb.append(c);
-				}
-			} else if (c != '\\') {
-				sb.append(c);
-			}
-
-			cprev = c;
-		}
-
-		if (cprev == '\\') sb.append(cprev); // Append last char
-
-		return sb.toString();
+		return str.replaceAll("\\$", "$");
 	}
+
+	//	/**
+	//	 * Almost literal string: Only un-escape dollar
+	//	 */
+	//	public static String unEscapeDollar(String str) {
+	//		StringBuilder sb = new StringBuilder();
+	//
+	//		char cprev = '\0';
+	//		for (char c : str.toCharArray()) {
+	//			if (cprev == '\\') {
+	//				if (c == '$') {
+	//					// Un-escape "\$" to "$"
+	//					sb.append(c);
+	//				} else {
+	//					// Add every other escaped sequence (do not modify it)
+	//					sb.append(cprev);
+	//					sb.append(c);
+	//				}
+	//			} else if (c != '\\') {
+	//				sb.append(c);
+	//			}
+	//
+	//			cprev = c;
+	//		}
+	//
+	//		if (cprev == '\\') sb.append(cprev); // Append last char
+	//
+	//		return sb.toString();
+	//	}
 
 	public InterpolateVars(BdsNode parent, ParseTree tree) {
 		super(parent, tree);

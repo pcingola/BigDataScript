@@ -44,6 +44,7 @@ public class Wait extends Statement {
 			sb.append("waitall\n");
 		} else if (taskId.isList()) {
 			// Wait for a list of taskIds
+			sb.append(taskId.toAsm());
 			sb.append("wait\n");
 		} else {
 			// Wait for a single taskId: We need to pass a list of one element
@@ -54,7 +55,7 @@ public class Wait extends Statement {
 			ValueFunction methodAdd = symtab.findFunction(MethodNativeListAdd.class);
 
 			sb.append("new " + listString + "\n");
-			sb.append("swap\n");
+			sb.append(taskId.toAsm());
 			sb.append("callmnative " + methodAdd + "\n");
 
 			// Now we have a list of elements to wait
