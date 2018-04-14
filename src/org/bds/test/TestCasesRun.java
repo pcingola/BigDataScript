@@ -293,7 +293,6 @@ public class TestCasesRun extends TestCasesBase {
 		runAndCheck("test/run_28.bds", "events", "[done]");
 	}
 
-	@Test
 	public void test29() {
 		Gpr.debug("Test");
 		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");

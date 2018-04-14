@@ -36,6 +36,21 @@ public class InterpolateVars extends Literal {
 		;
 	}
 
+	/**
+	 * Escape string
+	 */
+	public static String unEscape(String s) {
+		!!!!!!!!!!!!!!!!!
+		return s.replace("\\", "\\\\") //
+				.replace("\b", "\\b") //
+				.replace("\f", "\\f") //
+				.replace("\n", "\\n") //
+				.replace("\r", "\\r") //
+				.replace("\t", "\\t") //
+				.replace("\0", "\\0") //
+		;
+	}
+
 	//	/**
 	//	 * Escape multiple lines
 	//	 */
@@ -62,71 +77,71 @@ public class InterpolateVars extends Literal {
 	//	static String escapeSingleQuote(String str) {
 	//		return str.replace("'", "\\'");
 	//	}
-
-	/**
-	 * Un-escape string
-	 */
-	public static String unEscape(String str) {
-		StringBuilder sb = new StringBuilder();
-		char cprev = ' ';
-		for (char c : str.toCharArray()) {
-			if (cprev == '\\') {
-				// Convert characters
-				if (c == '\n') {
-					// End of line, continues in the next one
-				} else if (c == '\\') {
-					// Escaped backslash
-					sb.append(c);
-					c = '\0'; // Avoid escaping next char
-				} else {
-					switch (c) {
-					case 'b':
-						c = '\b';
-						break;
-
-					case 'f':
-						c = '\f';
-						break;
-
-					case 'n':
-						c = '\n';
-						break;
-
-					case 'r':
-						c = '\r';
-						break;
-
-					case 't':
-						c = '\t';
-						break;
-
-					case '0':
-						c = '\0';
-						break;
-
-					case '$':
-						c = '$';
-						break;
-
-					case '_':
-						c = '_';
-						break;
-
-					default:
-						break;
-					}
-
-					sb.append(c);
-				}
-			} else if (c != '\\') {
-				sb.append(c);
-			}
-
-			cprev = c;
-		}
-
-		return sb.toString();
-	}
+	//
+	//	/**
+	//	 * Un-escape string
+	//	 */
+	//	public static String unEscape(String str) {
+	//		StringBuilder sb = new StringBuilder();
+	//		char cprev = ' ';
+	//		for (char c : str.toCharArray()) {
+	//			if (cprev == '\\') {
+	//				// Convert characters
+	//				if (c == '\n') {
+	//					// End of line, continues in the next one
+	//				} else if (c == '\\') {
+	//					// Escaped backslash
+	//					sb.append(c);
+	//					c = '\0'; // Avoid escaping next char
+	//				} else {
+	//					switch (c) {
+	//					case 'b':
+	//						c = '\b';
+	//						break;
+	//
+	//					case 'f':
+	//						c = '\f';
+	//						break;
+	//
+	//					case 'n':
+	//						c = '\n';
+	//						break;
+	//
+	//					case 'r':
+	//						c = '\r';
+	//						break;
+	//
+	//					case 't':
+	//						c = '\t';
+	//						break;
+	//
+	//					case '0':
+	//						c = '\0';
+	//						break;
+	//
+	//					case '$':
+	//						c = '$';
+	//						break;
+	//
+	//					case '_':
+	//						c = '_';
+	//						break;
+	//
+	//					default:
+	//						break;
+	//					}
+	//
+	//					sb.append(c);
+	//				}
+	//			} else if (c != '\\') {
+	//				sb.append(c);
+	//			}
+	//
+	//			cprev = c;
+	//		}
+	//
+	//		return sb.toString();
+	//	}
 
 	/**
 	 * Almost literal string: Only un-escape dollar
