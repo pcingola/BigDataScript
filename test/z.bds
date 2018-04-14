@@ -1,17 +1,10 @@
 
-string[] events
 
-string tid = task sleep 60 ; echo hi
-print("Task ID: '$tid'\n")
 
-if( tid.isDone() ) events.add("done")
-else events.add("runnning")
+string[] lines = "test/dirTest".dir();
+string l2
 
-// Kill task
-events.add("kill")
-kill tid
+for( string l : lines ) {
+	l2 = l
+}
 
-if( tid.isDone() ) events.add("done")
-else events.add("runnning")
-
-print("Events: " + events) 

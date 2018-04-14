@@ -11,19 +11,11 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	//
-	//	@Test
-	//	public void test200() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_200.bds", "", "");
-	//	}
-
-	//	@Test
-	//	public void test02() {
-	//		Gpr.debug("Test");
-	//		verbose = true;
-	//		runAndCheckpoint("test/checkpoint_02.bds", null, "l", "15");
-	//	}
+	@Test
+	public void test22() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_22.bds", "l2", "file_3.txt");
+	}
 
 	@Test
 	public void test28() {

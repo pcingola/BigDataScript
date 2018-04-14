@@ -1,12 +1,13 @@
 package org.bds.lang.nativeMethods;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
 
@@ -36,24 +37,16 @@ public abstract class MethodNative extends MethodDeclaration {
 	/**
 	 * Convert an array to a list
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList array2list(Object objects[]) {
-		if (objects == null) return new ArrayList();
-		ArrayList list = new ArrayList(objects.length);
-		Collections.addAll(list, objects);
-		return list;
-	}
+	protected ValueList arrayString2valuelist(String strs[]) {
+		TypeList typeList = TypeList.get(Types.STRING);
+		ValueList vlist = new ValueList(typeList);
 
-	/**
-	 * Convert an array to a list and sort the list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList array2listSorted(Object objects[]) {
-		if (objects == null) return new ArrayList();
-		ArrayList list = new ArrayList(objects.length);
-		Collections.addAll(list, objects);
-		Collections.sort(list);
-		return list;
+		if (strs == null) return vlist;
+
+		for (String s : strs)
+			vlist.add(new ValueString(s));
+
+		return vlist;
 	}
 
 	/**

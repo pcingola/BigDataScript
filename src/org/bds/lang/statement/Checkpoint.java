@@ -14,6 +14,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class Checkpoint extends Statement {
 
+	private static final long serialVersionUID = 6044895488148887001L;
+
 	Expression expr;
 
 	public Checkpoint(BdsNode parent, ParseTree tree) {
@@ -27,24 +29,14 @@ public class Checkpoint extends Statement {
 		if (tree.getChildCount() > idx) expr = (Expression) factory(tree, idx);
 	}
 
-	//	/**
-	//	 * Run the program
-	//	 */
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		// Get filename
-	//		String file = null;
-	//		if (expr != null) {
-	//			bdsThread.run(expr);
-	//			file = bdsThread.popString();
-	//		}
-	//
-	//		// Do not create checkpoint file during recovery
-	//		if (bdsThread.isCheckpointRecover()) return;
-	//
-	//		if (file != null) bdsThread.checkpoint(file);
-	//		else bdsThread.checkpoint(this);
-	//	}
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		sb.append(expr.toAsm());
+		sb.append("checkpoint\n");
+		return sb.toString();
+	}
 
 	@Override
 	public String toString() {
