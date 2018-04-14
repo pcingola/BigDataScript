@@ -1,17 +1,17 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
-import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_dirPath extends MethodNativeString {
+
 	public MethodNative_string_dirPath() {
 		super();
 	}
@@ -29,19 +29,25 @@ public class MethodNative_string_dirPath extends MethodNativeString {
 	}
 
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList<String> list = new ArrayList<>();
+	public Value runMethod(BdsThread bdsThread, Value vthis) {
+		ValueList vlist = new ValueList(returnType);
 
-		String baseDir = objThis.toString();
+		String baseDir = vthis.asString();
 		if (!baseDir.endsWith("/")) baseDir += "/";
 
 		for (String file : bdsThread.data(baseDir).list()) {
 			file = baseDir + file;
 			Data d = bdsThread.data(file);
-			list.add(d.getAbsolutePath());
+			vlist.add(new ValueString(d.getAbsolutePath()));
 		}
 
-		Collections.sort(list);
-		return list;
+		vlist.sort();
+		return vlist;
 	}
+
+	@Override
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		throw new RuntimeException("This method should never be invoked!");
+	}
+
 }

@@ -8,13 +8,17 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_dirPath_regex extends MethodNativeString {
+
+	private static final long serialVersionUID = -2092737341202495762L;
 
 	public MethodNative_string_dirPath_regex() {
 		super();
@@ -41,7 +45,7 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 	}
 
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+	public Value runMethod(BdsThread bdsThread, Value vthis) {
 		String glob = bdsThread.getString("glob");
 
 		//---
@@ -49,7 +53,7 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 		//---
 		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
 
-		String baseDirName = objThis.toString();
+		String baseDirName = vthis.asString();
 		if (!baseDirName.endsWith("/")) baseDirName += "/";
 		String baseDir = baseDirName;
 
@@ -59,12 +63,22 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 				.filter(d -> matches(d, matcher)) // Filter using path matcher
 				.map(d -> toAbsolutePath(baseDir + d)) // Filter using path matcher
 				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
-				;
+		;
 
 		// Sort by name
 		Collections.sort(list);
 
-		return list;
+		// Convert to ValueList
+		ValueList vlist = new ValueList(returnType);
+		for (String s : list)
+			vlist.add(new ValueString(s));
+
+		return vlist;
+	}
+
+	@Override
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		throw new RuntimeException("This method should never be invoked!");
 	}
 
 	/**
@@ -73,4 +87,5 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 	String toAbsolutePath(String path) {
 		return new File(path).getAbsolutePath();
 	}
+
 }

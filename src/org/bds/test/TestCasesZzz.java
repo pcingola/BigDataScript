@@ -17,11 +17,11 @@ public class TestCasesZzz extends TestCasesBase {
 		runAndCheck("test/run_22.bds", "l2", "file_3.txt");
 	}
 
-	@Test
-	public void test28() {
-		Gpr.debug("Test");
-		verbose = true;
-		runAndCheckpoint("test/checkpoint_28.bds", "test/checkpoint_28.chp", "out", 47);
-	}
+	//	@Test
+	//	public void test28() {
+	//		Gpr.debug("Test");
+	//		verbose = true;
+	//		runAndCheckpoint("test/checkpoint_28.bds", "test/checkpoint_28.chp", "out", 47);
+	//	}
 
 }
