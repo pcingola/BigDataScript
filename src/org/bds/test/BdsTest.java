@@ -208,9 +208,9 @@ public class BdsTest {
 		Value val = getValue(varname);
 		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
 		Assert.assertEquals( //
-				errMsg("Variable '" + varname + "' has different map than expeced:\n" //
-						+ "\tExpected map : " + expectedValue //
-						+ "\tReal map     : " + val) //
+				errMsg("Variable '" + varname + "' has different value than expeced.\n" //
+						+ "\tExpected value : " + expectedValue //
+						+ "\tReal value     : " + val) //
 				, expectedValue.toString() //
 				, val.toString() //
 		);

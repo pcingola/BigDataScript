@@ -1,10 +1,6 @@
 
+int i = true;
 
-
-string[] lines = "test/dirTest".dir();
-string l2
-
-for( string l : lines ) {
-	l2 = l
-}
+real r1 = true;
+real r2 = 5;
 

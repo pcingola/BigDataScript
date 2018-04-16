@@ -1,7 +1,6 @@
 package org.bds.lang.value;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
@@ -18,10 +17,6 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 	public static final ValueUnique NULL = ValueUnique.get(Types.NULL);
 	public static final ValueUnique VOID = ValueUnique.get(Types.VOID);
 
-	static ValueList factoryList(List l) {
-		return null;
-	}
-
 	public static Value factory(Object v) {
 		if (v instanceof Boolean) return new ValueBool((Boolean) v);
 		if (v instanceof Long) return new ValueInt((Long) v);
@@ -29,7 +24,6 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 		if (v instanceof String) return new ValueString((String) v);
 		if (v instanceof Integer) return new ValueInt(((Integer) v).longValue());
 		if (v instanceof Float) return new ValueReal(((Float) v).doubleValue());
-		//		if (v instanceof List) return factoryList((List) v);
 		if (v == null) return Value.NULL;
 		throw new RuntimeException("Cannot create Value from object class " + v.getClass().getCanonicalName());
 	}

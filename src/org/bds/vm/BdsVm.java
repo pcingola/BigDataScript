@@ -633,6 +633,22 @@ public class BdsVm {
 				callMethodNative(name);
 				break;
 
+			case CAST_TOB:
+				push(pop().asBool());
+				break;
+
+			case CAST_TOI:
+				push(pop().asInt());
+				break;
+
+			case CAST_TOR:
+				push(pop().asReal());
+				break;
+
+			case CAST_TOS:
+				push(pop().asString());
+				break;
+
 			case DEC:
 				i1 = popInt();
 				push(--i1);

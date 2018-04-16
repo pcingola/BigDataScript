@@ -23,7 +23,7 @@ public enum OpCode {
 	// And: bool (logic), int (bitwise)
 	, ANDB, ANDI
 	// Cast values {b,i,r} => {b,i,r}
-	, CAST_BTOI, CAST_BTOR, CAST_ITOB, CAST_ITOR, CAST_RTOB, CAST_RTOI
+	, CAST_TOB, CAST_TOI, CAST_TOR, CAST_TOS
 	// Function call:
 	//    CALL function_signature
 	//    CALLNATIVE function_signature

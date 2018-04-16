@@ -21,9 +21,10 @@ public class VariableInit extends BdsNode {
 
 	private static final long serialVersionUID = 2385160471242254601L;
 	protected boolean fieldInit; // Is this a 'field' initialization in a class declaration?
-	protected String varName;
 	protected Expression expression;
 	protected String help;
+	protected VarDeclaration varDeclaration;
+	protected String varName;
 
 	public static VariableInit get(BdsNode parent, String name, Expression expression) {
 		VariableInit vi = new VariableInit(null, null);
@@ -97,9 +98,31 @@ public class VariableInit extends BdsNode {
 		returnType = type;
 	}
 
+	public void setVarDeclaration(VarDeclaration varDeclaration) {
+		this.varDeclaration = varDeclaration;
+	}
+
 	@Override
 	public String toAsm() {
 		return fieldInit ? toAsmFieldInit() : toAsmVarInit();
+	}
+
+	/**
+	 * Cast value
+	 */
+	String toAsmCast() {
+		if (varDeclaration == null) return "";
+
+		Type et = expression.getReturnType();
+		Type vdt = varDeclaration.getType();
+		if (vdt.equals(et)) return "";
+
+		// Different types, we need to cast
+		if (vdt.isBool()) return "cast_tob\n";
+		else if (vdt.isInt()) return "cast_toi\n";
+		else if (vdt.isReal()) return "cast_tor\n";
+		else if (vdt.isString()) return "cast_tos\n";
+		throw new RuntimeException("Cannot cast to '" + vdt + "'");
 	}
 
 	/**
@@ -129,6 +152,7 @@ public class VariableInit extends BdsNode {
 		return super.toAsm() //
 				+ (expression != null ? expression.toAsm() : toAsmDefaultValue()) //
 				+ (help != null ? "# help: " + help + "\n" : "") //
+				+ toAsmCast() //
 				+ "var " + varName + "\n" //
 				+ "pop\n" //
 		;

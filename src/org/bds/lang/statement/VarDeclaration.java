@@ -87,9 +87,9 @@ public class VarDeclaration extends Statement {
 			varInit = new VariableInit[num];
 
 			// Parse all VarInit nodes
-			for (int i = idx, j = 0; i < tree.getChildCount(); i++) {
-				varInit[j++] = (VariableInit) factory(tree, i);
-				i++; // ','
+			for (int i = idx, j = 0; i < tree.getChildCount(); i += 2, j++) { // Note: i steps over the comma delimiter, that's why "+= 2"
+				varInit[j] = (VariableInit) factory(tree, i);
+				varInit[j].setVarDeclaration(this);
 			}
 
 			for (VariableInit vi : varInit)

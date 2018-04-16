@@ -36,7 +36,7 @@ public class ValueBool extends ValuePrimitive {
 	 */
 	@Override
 	public double asReal() {
-		throw new RuntimeException("Cannot convert type '" + getType() + "' to real");
+		return value ? 1.0 : 0.0;
 	}
 
 	@Override
