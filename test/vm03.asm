@@ -1,16 +1,19 @@
 
 main:
-new string{string}  # string{} a
+# string{} a
+new string{string}
 var a             
 pop
 
-pushs bye           # stack: bye
-pushs hi            # stack: hi, bye
-load a              # stack: a, hi, bye
-setmap              # a{hi} = bye
+# a{'hi'} = 'bye'
+pushs bye
+pushs hi
+load a
+setmap
 pop
 
-pushs hi            # z := a{'hi'}
+# z := a{'hi'}
+pushs hi
 load a
 refmap
 var z
