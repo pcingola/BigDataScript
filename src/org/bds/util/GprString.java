@@ -13,6 +13,38 @@ public class GprString {
 		return StringEscapeUtils.escapeJava(str);
 	}
 
+	/**
+	 * Escape multi-line strings so they can be printed in one line
+	 */
+	public static String escapeMultiline(String str) {
+		// Escape:
+		//     '\n' => '\' + 'n'
+		//     '\r' => '\' + 'r'
+		//     '\' + '\n' => '\\' + '\' + 'n'
+		//     '\' + '\r\n' => '\\' + '\' + 'r'+ '\' + 'n'
+
+		boolean endNl = str.charAt(str.length() - 1) == '\n';
+
+		// Split lines
+		String[] lines = str.split("\n");
+		if (lines.length == 1 && !endNl) return str; // Nothing to escape
+
+		StringBuilder sb = new StringBuilder();
+		int lastLine = lines.length - 1;
+		for (int i = 0; i < lines.length; i++) {
+			String l = lines[i];
+			sb.append(l);
+
+			// End with backslash? Escape it
+			if (!l.isEmpty() && l.charAt(l.length() - 1) == '\\') sb.append('\\');
+
+			// Add escaped newline, except for last line (unless last line is actually finished in '\n')
+			if (i < lastLine || endNl) sb.append("\\n");
+		}
+
+		return sb.toString();
+	}
+
 	public static int indexOfUnescaped(String str, char symbol) {
 		// Empty? Nothing to do
 		if (str == null || str.isEmpty()) return -1;

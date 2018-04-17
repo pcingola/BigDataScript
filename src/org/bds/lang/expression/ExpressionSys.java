@@ -60,7 +60,7 @@ public class ExpressionSys extends Expression {
 		interpolateVars = new InterpolateVars(this, null);
 		if (!interpolateVars.parse(cmd)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
-			commands = GprString.escape(GprString.unescapeDollar(cmd)); // Just use literal, but un-escape dollar signs
+			commands = GprString.escapeMultiline(GprString.unescapeDollar(cmd)); // Just use literal, but un-escape dollar signs
 		}
 	}
 

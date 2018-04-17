@@ -84,7 +84,7 @@ public class InterpolateVars extends Literal {
 			// Parse string literal part
 			//---
 			Tuple<String, String> tupStr = findString(str);
-			String strToAdd = GprString.escape(GprString.unescapeDollar(tupStr.first));
+			String strToAdd = GprString.unescapeDollar(tupStr.first);
 			if (debug) Gpr.debug("Interpolate string: |" + str + "|\n\tstring: |" + tupStr.first + "|\n\trest: |" + tupStr.second + "|");
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed

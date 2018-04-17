@@ -39,15 +39,17 @@ public class LiteralString extends Literal {
 	protected void parse(ParseTree tree) {
 		String valueStr = tree.getChild(0).getText();
 
+		valueStr = GprString.escapeMultiline(valueStr);
+
 		if (valueStr.charAt(0) == '\'' && valueStr.charAt(valueStr.length() - 1) == '\'') {
 			// Remove quotes: No un-escaping, no interpolation
 			valueStr = valueStr.substring(1, valueStr.length() - 1);
-			valueStr = GprString.escape(valueStr);
+			// valueStr = GprString.escape(valueStr);
 			value = new ValueString(valueStr);
 		} else {
 			// Remove quotes and interpolate string
 			valueStr = valueStr.substring(1, valueStr.length() - 1);
-			valueStr = GprString.escape(valueStr);
+			// valueStr = GprString.escape(valueStr);
 			setValueInterpolate(valueStr);
 		}
 	}
@@ -67,7 +69,6 @@ public class LiteralString extends Literal {
 		interpolateVars = new InterpolateVars(this, null);
 		if (!interpolateVars.parse(valueStr)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
-			// value = new ValueString(InterpolateVars.unEscape(valueStr)); // Un-escape characters
 		}
 	}
 
@@ -80,7 +81,7 @@ public class LiteralString extends Literal {
 
 	@Override
 	public String toString() {
-		return "\"" + GprString.escape(value.toString()) + "\"";
+		return "\"" + value.toString() + "\"";
 	}
 
 	@Override

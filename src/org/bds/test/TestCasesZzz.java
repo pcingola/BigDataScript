@@ -12,25 +12,12 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test53() {
+	public void test58() {
 		Gpr.debug("Test");
 		verbose = true;
-		runAndCheck("test/run_53.bds", "vals", "[bye, chau]");
+		runAndCheck("test/run_58.bds", "z", 0L);
 	}
 
-	//	@Test
-	//	public void test56() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_56.bds", "out", "Adios;Au revoir;Bye;");
-	//		runAndCheck("test/run_56.bds", "str", "map = { Bonjour => Au revoir, Hello => Bye, Hola => Adios }");
-	//	}
-	//
-	//	@Test
-	//	public void test58() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_58.bds", "z", 0L);
-	//	}
-	//
 	//	@Test
 	//	public void test63() {
 	//		Gpr.debug("Test");

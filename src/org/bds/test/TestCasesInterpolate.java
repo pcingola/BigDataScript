@@ -111,7 +111,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 		String strings[] = { "l[1] : '", "'\\n" };
 		String vars[] = { "l[1]", "" };
 
-		checkInterpolate("l[1] : '$l[1]'\n", strings, vars);
+		checkInterpolate("l[1] : '$l[1]'\\n", strings, vars);
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 		String strings[] = { "List with variable index: '", "'\\n" };
 		String vars[] = { "l[s]", "" };
 
-		checkInterpolate("List with variable index: '$l[$s]'\n", strings, vars);
+		checkInterpolate("List with variable index: '$l[$s]'\\n", strings, vars);
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 		String strings[] = { "List with variable index: {", "}\\n" };
 		String vars[] = { "l[s]", "" };
 
-		checkInterpolate("List with variable index: {$l[$s]}\n", strings, vars);
+		checkInterpolate("List with variable index: {$l[$s]}\\n", strings, vars);
 	}
 
 	@Test
@@ -138,7 +138,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 		String strings[] = { "List with variable index: [", "]\\n" };
 		String vars[] = { "l[s]", "" };
 
-		checkInterpolate("List with variable index: [$l[$s]]\n", strings, vars);
+		checkInterpolate("List with variable index: [$l[$s]]\\n", strings, vars);
 	}
 
 	@Test
@@ -156,7 +156,7 @@ public class TestCasesInterpolate extends TestCasesBase {
 		String strings[] = { "Map with list and variable index: {", "}\\n" };
 		String vars[] = { "m{l[s]}", "" };
 
-		checkInterpolate("Map with list and variable index: {$m{$l[$s]}}\n", strings, vars);
+		checkInterpolate("Map with list and variable index: {$m{$l[$s]}}\\n", strings, vars);
 	}
 
 	@Test
@@ -238,16 +238,16 @@ public class TestCasesInterpolate extends TestCasesBase {
 	@Test
 	public void test21() {
 		Gpr.debug("Test");
-		String strings[] = { "this is string interpolation\\n\\tint i = ", " and str = \\\"", "\\\" and both " };
+		String strings[] = { "this is string interpolation\\n\\tint i = ", " and str = \"", "\" and both " };
 		String vars[] = { "i", "str", "str", "i" };
 
-		checkInterpolate("this is string interpolation\n\tint i = $i and str = \"$str\" and both $str$i", strings, vars);
+		checkInterpolate("this is string interpolation\\n\\tint i = $i and str = \"$str\" and both $str$i", strings, vars);
 	}
 
 	@Test
 	public void test22() {
 		Gpr.debug("Test");
-		String strings[] = { "this is string interpolation: int i = ", " and str = \\\\\\\"", "\\\\\\\" and both " };
+		String strings[] = { "this is string interpolation: int i = ", " and str = \\\"", "\\\" and both " };
 		String vars[] = { "i", "str", "str", "i" };
 
 		checkInterpolate("this is string interpolation: int i = $i and str = \\\"$str\\\" and both $str$i", strings, vars);

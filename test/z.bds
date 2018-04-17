@@ -1,18 +1,11 @@
-#!/usr/bin/env bds
 
-string{} hash
-hash{"hi"} = "bye" 
-hash{"hola"} = "chau" 
-print("Hash: $hash\n")
+int f1(int i) {
+	print("F1: $i\n")
+	if( i > 0 ) { return f1(i-1) } 
 
-# Test iteration on a hash (iterates on values)
-# Add all values from hash
-string[] vals
-for( string v : hash ) {
-	print("Value : $v\n")
-	vals.add(v)
+	# Since there is no return statement, we return the default value for int, which is 0
 }
 
-vals = vals.sort()
-print("List: $vals\n")
-
+int z = 10
+z = f1(z)
+print("z=$z\n")

@@ -102,7 +102,7 @@ public class ValueMap extends ValueComposite {
 		Collections.sort(keys);
 
 		for (Value key : keys) {
-			if (sb.length() > 0) sb.append(", ");
+			if (sb.length() > 0) sb.append(",");
 			sb.append(" " + key.toString() + " => " + getValue(key));
 		}
 		return "{" + sb.toString() + " }";

@@ -58,12 +58,14 @@ public class BdsTest {
 	/**
 	 * Create 'command'
 	 */
-	void bds() {
+	void bds(boolean compileOnly) {
 		ArrayList<String> l = new ArrayList<>();
 
 		// Add command line options
 		if (verbose) l.add("-v");
 		if (debug) l.add("-d");
+
+		if (compileOnly) l.add("-compile");
 
 		// Is this a 'test case' run?
 		if (testCases) l.add("-t");
@@ -258,7 +260,7 @@ public class BdsTest {
 	 * BdsCompiler code
 	 */
 	public boolean compile() {
-		if (bds == null) bds(); // Create command
+		if (bds == null) bds(true); // Create command
 
 		compileOk = false;
 		try {
@@ -299,7 +301,7 @@ public class BdsTest {
 	 * Run command
 	 */
 	public void run() {
-		if (bds == null) bds(); // Create command
+		if (bds == null) bds(false); // Create command
 
 		try {
 			captureStart(); // Capture STDOUT & STDERR
