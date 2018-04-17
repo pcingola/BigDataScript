@@ -38,9 +38,11 @@ public class MethodNativeMapValues extends MethodNativeMap {
 	@Override
 	protected Value runMethodNative(BdsThread bdsThread, ValueMap vthis) {
 		TypeMap tm = (TypeMap) vthis.getType();
-		ValueList vlist = new ValueList(tm.getValueType());
+		TypeList tl = TypeList.get(tm.getValueType());
+		ValueList vlist = new ValueList(tl);
 		vlist.addAll(vthis.values());
 		vlist.sort();
 		return vlist;
 	}
+
 }

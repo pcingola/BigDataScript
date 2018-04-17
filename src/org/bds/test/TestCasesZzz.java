@@ -12,18 +12,12 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test48() {
+	public void test53() {
 		Gpr.debug("Test");
 		verbose = true;
-		runAndCheck(1, "test/run_48.bds", "step", 2L);
+		runAndCheck("test/run_53.bds", "vals", "[bye, chau]");
 	}
 
-	//	@Test
-	//	public void test53() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_53.bds", "vals", "[bye, chau]");
-	//	}
-	//
 	//	@Test
 	//	public void test56() {
 	//		Gpr.debug("Test");

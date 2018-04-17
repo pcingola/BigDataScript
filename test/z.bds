@@ -1,12 +1,18 @@
+#!/usr/bin/env bds
 
-int step = 1
-print("Step : $step\n")
-warning "..something bad happened (not really, this is just a test)"
+string{} hash
+hash{"hi"} = "bye" 
+hash{"hola"} = "chau" 
+print("Hash: $hash\n")
 
-step = 2
-print("Step : $step\n")
-error "..something VERY bad happened (not really, this is just a test)"
+# Test iteration on a hash (iterates on values)
+# Add all values from hash
+string[] vals
+for( string v : hash ) {
+	print("Value : $v\n")
+	vals.add(v)
+}
 
-step = 3
-print("Step : $step\n")
+vals = vals.sort()
+print("List: $vals\n")
 

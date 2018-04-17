@@ -560,6 +560,7 @@ public class BdsVm {
 	 * Run the program in 'code'
 	 */
 	protected void runLoop() {
+		debug = true;
 		// First instruction
 		int instruction;
 		OpCode opcode = OpCode.NOOP;

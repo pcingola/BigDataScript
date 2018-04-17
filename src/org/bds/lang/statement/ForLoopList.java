@@ -6,6 +6,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.nativeMethods.list.MethodNativeListSize;
+import org.bds.lang.nativeMethods.map.MethodNativeMapValues;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
@@ -76,7 +77,21 @@ public class ForLoopList extends StatementWithScope {
 		String varList = baseVarName() + "list";
 		String varCounter = baseVarName() + "count";
 		String varMaxCounter = baseVarName() + "max_count";
-		ValueFunction methodSize = returnType.getSymbolTable().findFunction(MethodNativeListSize.class);
+
+		// Find native methods
+		SymbolTable symtab = returnType.getSymbolTable();
+		ValueFunction methodSize = null;
+		ValueFunction methodValues = null;
+
+		if (isList()) {
+			methodSize = symtab.findFunction(MethodNativeListSize.class);
+		} else if (isMap()) {
+			// We iterate on the list of map's values
+			TypeMap tmap = (TypeMap) returnType;
+			TypeList tlist = TypeList.get(tmap.getValueType());
+			methodValues = symtab.findFunction(MethodNativeMapValues.class);
+			methodSize = tlist.getSymbolTable().findFunction(MethodNativeListSize.class);
+		} else throw new RuntimeException("Cannot iterate on type " + returnType);
 
 		//
 		// Sample code;
@@ -95,10 +110,19 @@ public class ForLoopList extends StatementWithScope {
 
 		if (isNeedsScope()) sb.append("scopepush\n");
 
-		// Evaluate expression: '$list = expressionList'
+		// Evaluate expression and extract list to iterate
 		sb.append(expression.toAsm());
-		sb.append("var " + varList + "\n");
-		sb.append("pop\n");
+		if (expression.isList()) {
+			// Evaluate expression: '$list = expressionList'
+			sb.append("var " + varList + "\n");
+			sb.append("pop\n");
+		} else if (expression.isMap()) {
+			sb.append("callmnative " + methodValues + "\n");
+			sb.append("var " + varList + "\n");
+			sb.append("pop\n");
+		} else {
+			throw new RuntimeException("Cannot iterate on type " + expression.getReturnType());
+		}
 
 		// Get list size: '$maxCount = $list.size()'
 		sb.append("load " + varList + "\n");
