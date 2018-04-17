@@ -1,19 +1,10 @@
 
 
-print("Hi\n")
+int i=0
 
-string s = "hi"
-string[] l = ['hi', 'bye']
-string{} m = {}
-string sif, lif, mif
+# Empty clause
+for( ; i < 10 ; i = i+1 ) {
+	print("$i\n")
+}
 
-if( s )	sif = "String '$s' is NOT empty"
-else	sif = "String '$s' IS empty"
-
-if( l )	lif = "List '$l' is NOT empty"
-else	lif = "List '$l' IS empty"
-
-if( m )	mif = "Map '$m' is NOT empty"
-else	mif = "Map '$m' IS empty"
-
-print("End\n")
+print("End: i = $i\n")

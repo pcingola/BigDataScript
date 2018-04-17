@@ -1,5 +1,8 @@
 package org.bds.test;
 
+import org.bds.util.Gpr;
+import org.junit.Test;
+
 /**
  * Quick test cases when creating a new feature...
  *
@@ -8,39 +11,28 @@ package org.bds.test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
+	@Test
+	public void test68() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_68.bds", "out", "hi bye end\n");
+	}
+
 	//	@Test
-	//	public void test67() {
+	//	public void test74() {
 	//		Gpr.debug("Test");
-	//		HashMap<String, Object> expectedValues = new HashMap<>();
-	//		expectedValues.put("s", "varS");
-	//		expectedValues.put("s1", "Hi '$'");
-	//		expectedValues.put("s2", "Hi $");
-	//		expectedValues.put("s3", "Hi $ bye");
-	//		runAndCheck("test/run_67.bds", expectedValues);
+	//		runAndCheck("test/run_74.bds", "i", 10L);
 	//	}
 	//
 	//	@Test
-	//	public void test68() {
+	//	public void test75() {
 	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_68.bds", "out", "hi bye end\n");
+	//		runAndCheck("test/run_75.bds", "ls", "EXEC\ntest/run_75.bds\nDONE\n");
 	//	}
 	//
 	//	@Test
-	//	public void test70() {
+	//	public void test92() {
 	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_70.bds", "i", 10L);
-	//	}
-	//
-	//	@Test
-	//	public void test71() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_71.bds", "i", 10L);
-	//	}
-	//
-	//	@Test
-	//	public void test72() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_72.bds", "i", 10L);
+	//		runAndCheck("test/run_92.bds", "outs", "TASK 1\nTASK 2\n");
 	//	}
 
 }

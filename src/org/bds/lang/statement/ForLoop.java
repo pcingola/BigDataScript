@@ -59,14 +59,19 @@ public class ForLoop extends StatementWithScope {
 
 		if (isNeedsScope()) sb.append("scopepush\n");
 		sb.append(loopInitLabel + ":\n");
-		sb.append(begin.toAsm());
+		if (begin != null) sb.append(begin.toAsm());
 		sb.append(loopStartLabel + ":\n");
-		sb.append(condition.toAsm());
-		sb.append("jmpf " + loopEndLabel + "\n");
-		sb.append(statement.toAsm());
+		if (condition != null) {
+			sb.append(condition.toAsm());
+			sb.append("jmpf " + loopEndLabel + "\n");
+		}
+
+		if (statement != null) sb.append(statement.toAsm());
 		sb.append(loopContinueLabel + ":\n");
-		sb.append(end.toAsm());
+		if (end != null) sb.append(end.toAsm());
+
 		sb.append("jmp " + loopStartLabel + "\n");
+
 		sb.append(loopEndLabel + ":\n");
 		if (isNeedsScope()) sb.append("scopepop\n");
 
