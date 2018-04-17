@@ -45,6 +45,14 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 			list.add(v);
 	}
 
+	/**
+	 * Convert to 'bool': !isEmpty()
+	 */
+	@Override
+	public boolean asBool() {
+		return !isEmpty();
+	}
+
 	@Override
 	public Value clone() {
 		ValueList vl = new ValueList(type, list.size());

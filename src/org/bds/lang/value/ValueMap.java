@@ -33,6 +33,14 @@ public class ValueMap extends ValueComposite {
 		map = new HashMap<>(size);
 	}
 
+	/**
+	 * Convert to 'bool': !isEmpty()
+	 */
+	@Override
+	public boolean asBool() {
+		return !isEmpty();
+	}
+
 	@Override
 	public ValueMap clone() {
 		ValueMap vm = new ValueMap(type, map.size());
@@ -111,4 +119,5 @@ public class ValueMap extends ValueComposite {
 	public Collection<Value> values() {
 		return map.values();
 	}
+
 }

@@ -585,7 +585,7 @@ public class TestCasesRun extends TestCasesBase {
 		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("sif", "String 'hi' is NOT empty");
 		expectedValues.put("lif", "List '[hi, bye]' is NOT empty");
-		expectedValues.put("mif", "Map '{  }' IS empty");
+		expectedValues.put("mif", "Map '{}' IS empty");
 		runAndCheck("test/run_66.bds", expectedValues);
 	}
 

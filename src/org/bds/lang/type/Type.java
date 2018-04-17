@@ -71,7 +71,10 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	}
 
 	public boolean equals(Type type) {
-		return primitiveType.equals(type.primitiveType);
+		return primitiveType.equals(type.primitiveType) //
+				|| isAny() //
+				|| type.isAny() //
+		;
 	}
 
 	/**

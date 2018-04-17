@@ -17,6 +17,11 @@ public class TypeAny extends TypeUniqueValue {
 	}
 
 	@Override
+	public boolean isAny() {
+		return true;
+	}
+
+	@Override
 	public Value newDefaultValue() {
 		return Value.ANY;
 	}

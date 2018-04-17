@@ -3,6 +3,8 @@ package org.bds.lang.value;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.expression.ExpressionAssignment;
+import org.bds.lang.statement.VariableInit;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
@@ -30,11 +32,16 @@ public class LiteralMapEmpty extends LiteralMap {
 	@Override
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
-
-		// Create a list of 'elementType'
-		returnType = TypeMap.get(Types.VOID, Types.VOID);
-
+		returnType = TypeMap.get(Types.ANY, Types.ANY);
 		return returnType;
+	}
+
+	@Override
+	public String toAsm() {
+		Type mtype = returnType;
+		if (parent instanceof VariableInit) mtype = parent.getReturnType();
+		if (parent instanceof ExpressionAssignment) mtype = ((ExpressionAssignment) parent).getLeft().getReturnType();
+		return "new " + mtype + "\n";
 	}
 
 }
