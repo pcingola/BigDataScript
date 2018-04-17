@@ -527,6 +527,7 @@ public class BdsVm {
 	 * Push call frame
 	 */
 	void pushCallFrame() {
+		if (fp >= callFrame.length) throw new RuntimeException("Out of stack memory! Call frame pointer: " + fp);
 		CallFrame sf = callFrame[fp++];
 		sf.set(pc, nodeId, scope);
 	}
@@ -1170,7 +1171,9 @@ public class BdsVm {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("PC         : " + pc + "\n");
+		sb.append("pb         : " + pc + "\n");
+		sb.append("fp         : " + fp + "\n");
+		sb.append("sp         : " + sp + "\n");
 		sb.append("Stack      : " + toStringStack() + "\n");
 		sb.append("Call-Stack : [");
 		for (int i = 0; i < fp; i++)

@@ -14,6 +14,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class StatementWithScope extends Statement {
 
+	private static final long serialVersionUID = -8182877722963875996L;
+
 	protected SymbolTable symbolTable; // SymbolTable required for this statement
 	protected boolean needsScope; // Do we really need a scope? If a scope is requested, but we don't add new symbols, then we don't really need it (e.g. while loop without any new variables)
 

@@ -192,6 +192,18 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		throw new RuntimeException("This method should never be called!");
 	}
 
+	/**
+	 * Default value initialization
+	 */
+	public String toAsmDefaultValue() {
+		if (isBool()) return "pushb false\n";
+		else if (isInt()) return "pushi 0\n";
+		else if (isReal()) return "pushr 0.0\n";
+		else if (isString()) return "pushs ''\n";
+		else if (isList() || isMap() || isClass()) return "new " + toString() + "\n";
+		throw new RuntimeException("Unknown default value for type '" + this + "'");
+	}
+
 	@Override
 	public String toString() {
 		return primitiveType.toString();

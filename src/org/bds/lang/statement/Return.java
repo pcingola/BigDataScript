@@ -70,7 +70,7 @@ public class Return extends Statement {
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
-		sb.append((expr != null ? expr.toAsm() : "pushi 0"));
+		sb.append((expr != null ? expr.toAsm() : returnType.toAsmDefaultValue()));
 		sb.append("ret\n");
 		return sb.toString();
 	}

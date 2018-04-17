@@ -64,6 +64,21 @@ public class FunctionDeclaration extends StatementWithScope {
 		return funcType;
 	}
 
+	/**
+	 * Does the function have a return statement (at the end)?
+	 */
+	boolean hasReturn(Statement s) {
+		if (s instanceof Return) return true;
+		if (s instanceof Exit) return true;
+		if (s instanceof Error) return true;
+		if (s instanceof Block) {
+			Statement[] ss = ((Block) s).getStatements();
+			Statement slast = ss.length > 0 ? ss[ss.length - 1] : null;
+			if (slast != null) return hasReturn(slast);
+		}
+		return false;
+	}
+
 	public boolean isNative() {
 		return false;
 	}
@@ -105,8 +120,27 @@ public class FunctionDeclaration extends StatementWithScope {
 		sb.append(super.toAsm());
 		sb.append("jmp " + funcEndLabel + "\n"); // Make sure we skip function definition when running
 		sb.append(signature() + ":\n");
-		if (statement != null) sb.append(statement.toAsm());
+
+		if (statement != null) {
+			sb.append(toAsmStatement());
+		} else {
+			sb.append(toAsmDefaultReturn());
+		}
+
 		sb.append(funcEndLabel + ":\n");
+		return sb.toString();
+	}
+
+	String toAsmDefaultReturn() {
+		return returnType.toAsmDefaultValue() //
+				+ "ret\n" //
+		;
+	}
+
+	String toAsmStatement() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(statement.toAsm());
+		if (!hasReturn(statement)) sb.append(toAsmDefaultReturn());
 		return sb.toString();
 	}
 
