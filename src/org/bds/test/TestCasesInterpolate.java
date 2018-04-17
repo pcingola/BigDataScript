@@ -14,37 +14,9 @@ import junit.framework.Assert;
  */
 public class TestCasesInterpolate extends TestCasesBase {
 
-	void checkInterpolate(String str, String strings[], String vars[]) {
-		InterpolateVars iv = new InterpolateVars(null, null);
-		iv.parse(str);
-		if (verbose) {
-			System.out.println("String: " + str);
-			System.out.println("\tInterpolation result: |" + iv + "|");
-		}
-
-		// Special case: No variables to interpolate
-		if (strings.length == 1 && vars[0].isEmpty()) {
-			Assert.assertTrue(iv.isEmpty());
-			return;
-		}
-
-		// Check strings
-		for (int i = 0; i < strings.length; i++) {
-			if (verbose) {
-				System.out.print("\tIndex: " + i);
-				System.out.print("\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getLiterals()[i]);
-				System.out.println("\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getExpressions()[i]);
-			}
-
-			Assert.assertEquals(strings[i], iv.getLiterals()[i]);
-			if (vars[i] != null && !vars[i].isEmpty()) Assert.assertEquals(vars[i], iv.getExpressions()[i].toString());
-		}
-	}
-
 	@Test
 	public void test00() {
 		Gpr.debug("Test");
-
 		String strings[] = { "Hello $i" };
 		String vars[] = { "" };
 
@@ -250,8 +222,8 @@ public class TestCasesInterpolate extends TestCasesBase {
 		// We want to execute an inline perl script within a task
 		// E.g.:
 		//     task perl -e 'use English; print "PID: \$PID\n";'
-		// 
-		// Here $PID is a perl variable and should not be interpreted 
+		//
+		// Here $PID is a perl variable and should not be interpreted
 		// by bds. We need a way to escape such variables.
 
 		String cmd = "PID: \\$PID";
@@ -260,6 +232,24 @@ public class TestCasesInterpolate extends TestCasesBase {
 
 		if (verbose) Gpr.debug("cmd: '" + cmd + "'");
 		Assert.assertFalse("This string should not be parsed by interpolation", parsed);
+	}
+
+	@Test
+	public void test21() {
+		Gpr.debug("Test");
+		String strings[] = { "this is string interpolation: int i = ", " and str = \"", "\" and both " };
+		String vars[] = { "i", "str", "str", "i" };
+
+		checkInterpolate("this is string interpolation: int i = $i and str = \"$str\" and both $str$i", strings, vars);
+	}
+
+	@Test
+	public void test22() {
+		Gpr.debug("Test");
+		String strings[] = { "this is string interpolation: int i = ", " and str = \\\"", "\\\" and both " };
+		String vars[] = { "i", "str", "str", "i" };
+
+		checkInterpolate("this is string interpolation: int i = $i and str = \\\"$str\\\" and both $str$i", strings, vars);
 	}
 
 }

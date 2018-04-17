@@ -6,6 +6,7 @@ import java.util.Map;
 import org.bds.Bds;
 import org.bds.Config;
 import org.bds.executioner.Executioners;
+import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThreads;
@@ -31,6 +32,33 @@ public class TestCasesBase {
 		Config.reset();
 		Executioners.reset();
 		BdsThreads.reset();
+	}
+
+	void checkInterpolate(String str, String strings[], String vars[]) {
+		InterpolateVars iv = new InterpolateVars(null, null);
+		iv.parse(str);
+		if (verbose) {
+			System.out.println("String: " + str);
+			System.out.println("\tInterpolation result: |" + iv + "|");
+		}
+
+		// Special case: No variables to interpolate
+		if (strings.length == 1 && vars[0].isEmpty()) {
+			Assert.assertTrue(iv.isEmpty());
+			return;
+		}
+
+		// Check strings
+		for (int i = 0; i < strings.length; i++) {
+			if (verbose) {
+				System.out.print("\tIndex: " + i);
+				System.out.print("\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getLiterals()[i]);
+				System.out.println("\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getExpressions()[i]);
+			}
+
+			Assert.assertEquals(strings[i], iv.getLiterals()[i]);
+			if (vars[i] != null && !vars[i].isEmpty()) Assert.assertEquals(vars[i], iv.getExpressions()[i].toString());
+		}
 	}
 
 	/**
@@ -236,4 +264,5 @@ public class TestCasesBase {
 				, val.toString() //
 		);
 	}
+
 }

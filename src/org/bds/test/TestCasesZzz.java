@@ -12,30 +12,21 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test06() {
+	public void test08() {
 		Gpr.debug("Test");
-		verbose = debug = true;
-		runAndCheck("test/run_06.bds", "i", 1L);
-	}
+		String strings[] = { "this is string interpolation: int i = ", " and str = \\\"", "\\\" and both " };
+		String vars[] = { "i", "str", "str", "i" };
 
-	//	@Test
-	//	public void test06_2() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_06.bds", "r1", 1.0);
-	//	}
-	//
-	//	@Test
-	//	public void test06_3() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_06.bds", "r2", 5.0);
-	//	}
+		checkInterpolate("this is string interpolation: int i = $i and str = \\\"$str\\\" and both $str$i", strings, vars);
+	}
 	//
 	//	@Test
 	//	public void test14() {
 	//		Gpr.debug("Test");
+	//		verbose = true;
 	//		runAndCheck("test/run_14.bds", "s", "this is string interpolation: int i = 42 and str = \"hi\" and both hi42");
 	//	}
-	//
+
 	//	@Test
 	//	public void test31() {
 	//		Gpr.debug("Test");

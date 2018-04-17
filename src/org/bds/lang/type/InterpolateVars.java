@@ -12,11 +12,14 @@ import org.bds.lang.value.Literal;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueString;
 import org.bds.symbol.SymbolTable;
+import org.bds.util.Gpr;
 import org.bds.util.Tuple;
 
 public class InterpolateVars extends Literal {
 
 	private static final long serialVersionUID = 5380913311800422951L;
+
+	static boolean debug = false;
 
 	// boolean useLiteral;
 	String literals[]; // This is used in case of interpolated string literal
@@ -26,8 +29,7 @@ public class InterpolateVars extends Literal {
 	 * Escape string
 	 */
 	public static String escape(String s) {
-		return s.replace("\\", "\\\\") //
-				.replace("\b", "\\b") //
+		return s.replace("\b", "\\b") //
 				.replace("\f", "\\f") //
 				.replace("\n", "\\n") //
 				.replace("\r", "\\r") //
@@ -40,13 +42,14 @@ public class InterpolateVars extends Literal {
 	 * Escape string
 	 */
 	public static String unEscape(String s) {
-		return s.replace("\\\\", "\\") //
-				.replace("\\b", "\b") //
+		return s.replace("\\b", "\b") //
 				.replace("\\f", "\f") //
 				.replace("\\n", "\n") //
 				.replace("\\r", "\r") //
 				.replace("\\t", "\t") //
 				.replace("\\0", "\0") //
+				.replace("\\'", "'") //
+				.replace("\\\"", "\"") //
 		;
 	}
 
@@ -143,7 +146,7 @@ public class InterpolateVars extends Literal {
 	//	}
 
 	public static String unEscapeDollar(String str) {
-		return str.replaceAll("\\$", "$");
+		return str.replace("\\$", "$");
 	}
 
 	//	/**
@@ -234,6 +237,7 @@ public class InterpolateVars extends Literal {
 			//---
 			Tuple<String, String> tupStr = findString(str);
 			String strToAdd = escape(unEscapeDollar(tupStr.first));
+			if (debug) Gpr.debug("Interpolate string: |" + str + "|\n\tstring: |" + tupStr.first + "|\n\trest: |" + tupStr.second + "|");
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed
 
@@ -242,6 +246,7 @@ public class InterpolateVars extends Literal {
 			//---
 			Tuple<String, String> tupVar = findVariableRef(str);
 			listVars.add(tupVar.first); // Store variable reference
+			if (debug) Gpr.debug("Interpolate variables: |" + str + "|\n\tstring: |" + tupVar.first + "|\n\trest: |" + tupVar.second + "|");
 			str = tupVar.second; // Remaining to be analyzed
 		}
 

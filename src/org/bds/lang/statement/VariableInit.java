@@ -143,6 +143,7 @@ public class VariableInit extends BdsNode {
 		return super.toAsm() //
 				+ (expression != null ? expression.toAsm() : toAsmDefaultValue()) //
 				+ (help != null ? "# help: " + help + "\n" : "") //
+				+ toAsmCast() //
 				+ "load this\n" //
 				+ "setfield  " + varName + "\n"//
 		;
