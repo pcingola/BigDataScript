@@ -203,6 +203,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		else if (isInt()) return "pushi 0\n";
 		else if (isReal()) return "pushr 0.0\n";
 		else if (isString()) return "pushs ''\n";
+		else if (isVoid()) return "pushi 0\n"; // Void won't be used anyways (so just use an int)
 		else if (isList() || isMap() || isClass()) return "new " + toString() + "\n";
 		throw new RuntimeException("Unknown default value for type '" + this + "'");
 	}

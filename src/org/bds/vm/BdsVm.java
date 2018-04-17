@@ -673,7 +673,7 @@ public class BdsVm {
 				break;
 
 			case DUP:
-				push(peek());
+				push(peek().clone());
 				break;
 
 			case EQB:
