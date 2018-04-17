@@ -23,7 +23,7 @@ public class GprString {
 		//     '\' + '\n' => '\\' + '\' + 'n'
 		//     '\' + '\r\n' => '\\' + '\' + 'r'+ '\' + 'n'
 
-		boolean endNl = str.charAt(str.length() - 1) == '\n';
+		boolean endNl = !str.isEmpty() && str.charAt(str.length() - 1) == '\n';
 
 		// Split lines
 		String[] lines = str.split("\n");

@@ -38,6 +38,8 @@ public enum OpCode {
 	, DEP
 	// Division
 	, DIVI, DIVR
+	// Duplicate value on stack
+	, DUP
 	// Equality test
 	, EQB, EQI, EQR, EQS
 	// Error

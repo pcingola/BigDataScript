@@ -31,6 +31,7 @@ public class Post extends Pre {
 		StringBuilder sb = new StringBuilder();
 		Reference ref = (Reference) expr;
 		sb.append(ref.toAsm());
+		sb.append("dup\n");
 
 		switch (operation) {
 		case INCREMENT:
@@ -46,6 +47,7 @@ public class Post extends Pre {
 		}
 
 		sb.append(ref.toAsmSet());
+		sb.append("pop\n");
 
 		return sb.toString();
 	}

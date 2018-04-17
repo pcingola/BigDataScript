@@ -110,7 +110,7 @@ public class ReferenceMap extends Reference {
 	public String toAsm() {
 		return expressionKey.toAsm() //
 				+ exprMap.toAsm() //
-				+ "reflist\n";
+				+ "refmap\n";
 	}
 
 	@Override

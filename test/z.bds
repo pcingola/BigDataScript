@@ -1,10 +1,19 @@
+#!/usr/bin/env bds
 
+h := { 'hi' => 1 }
+print("h = $h\n")
 
-int i=0
+h1 := h{'hi'}++
+print("h1 = $h1\th = $h\n")
 
-# Empty clause
-for( ; i < 10 ; i = i+1 ) {
-	print("$i\n")
-}
-
-print("End: i = $i\n")
+# h2 := ++h{'hi'}
+# print("h2 = $h2\th = $h\n")
+# 
+# h3 := --h{'hi'}
+# print("h3 = $h3\th = $h\n")
+# 
+# h4 := h{'hi'}--
+# print("h4 = $h4\th = $h\n")
+# 
+# h5 := h{'hi'}
+# print("h5 = $h5\th = $h\n")

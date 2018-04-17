@@ -47,8 +47,10 @@ public class While extends Statement {
 		if (isNeedsScope()) sb.append("scopepush\n");
 		sb.append(loopStartLabel + ":\n");
 		sb.append(loopContinueLabel + ":\n");
-		sb.append(condition.toAsm());
-		sb.append("jmpf " + loopEndLabel + "\n");
+		if (condition != null) {
+			sb.append(condition.toAsm());
+			sb.append("jmpf " + loopEndLabel + "\n");
+		}
 		sb.append(statement.toAsm());
 		sb.append("jmp " + loopStartLabel + "\n");
 		sb.append(loopEndLabel + ":\n");

@@ -672,6 +672,10 @@ public class BdsVm {
 				push(r1 / r2);
 				break;
 
+			case DUP:
+				push(peek());
+				break;
+
 			case EQB:
 				b2 = popBool();
 				b1 = popBool();

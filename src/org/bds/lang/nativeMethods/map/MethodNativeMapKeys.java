@@ -16,9 +16,6 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeMapKeys extends MethodNativeMap {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -1528668670882984730L;
 
 	public MethodNativeMapKeys(TypeMap mapType) {
@@ -41,7 +38,8 @@ public class MethodNativeMapKeys extends MethodNativeMap {
 	@Override
 	protected Value runMethodNative(BdsThread bdsThread, ValueMap vthis) {
 		TypeMap tm = (TypeMap) vthis.getType();
-		ValueList vlist = new ValueList(tm.getKeyType());
+		TypeList tl = TypeList.get(tm.getKeyType());
+		ValueList vlist = new ValueList(tl);
 		vlist.addAll(vthis.keySet());
 		vlist.sort();
 		return vlist;
