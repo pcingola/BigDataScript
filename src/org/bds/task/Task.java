@@ -109,7 +109,7 @@ public class Task {
 	 */
 	public boolean canChangeState(TaskState newState) {
 		if (newState == null) return false;
-		if (newState == taskState) return true; // Nothing to do
+		if (newState == taskState) return true; // OK to change to same state
 
 		switch (newState) {
 		case SCHEDULED:
@@ -605,7 +605,7 @@ public class Task {
 	 */
 	public synchronized void state(TaskState newState) {
 		if (newState == null) throw new RuntimeException("Cannot change to 'null' state.\n" + this);
-		if (newState == taskState) return; // Nothing to do
+		if (newState == taskState) return; // Same state, nothing to do
 
 		switch (newState) {
 		case SCHEDULED:
@@ -635,12 +635,18 @@ public class Task {
 			break;
 
 		case ERROR:
-			failCount++; // Count failed, proceed to 'FINISHED' state
+			failCount++;
 			setState(newState);
+			runningEndTime = new Date();
+			if (exitValue == 0) exitValue = Task.EXITCODE_ERROR;
 			break;
 
 		case ERROR_TIMEOUT:
-			failCount++; // Count failed, proceed to 'FINISHED' state
+			failCount++;
+			setState(newState);
+			runningEndTime = new Date();
+			if (exitValue == 0) exitValue = Task.EXITCODE_ERROR;
+			break;
 
 		case FINISHED:
 			if (taskState == TaskState.RUNNING) {
@@ -655,6 +661,7 @@ public class Task {
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
 			) {
+				if (exitValue == 0) exitValue = Task.EXITCODE_KILLED;
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;
@@ -662,7 +669,6 @@ public class Task {
 			break;
 
 		default:
-			// Ignore other state changes
 			throw new RuntimeException("Unimplemented state: '" + newState + "'");
 		}
 

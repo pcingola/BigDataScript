@@ -265,7 +265,8 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// Mark task as finished
 		// Note: This will also be invoked by Cmd, so it will be redundant)
-		task.setExitValue(Task.EXITCODE_KILLED);
+		// TODO: !!!!    task.setExitValue(Task.EXITCODE_KILLED);
+		task.state(TaskState.KILLED);
 		taskFinished(task, TaskState.KILLED);
 	}
 
@@ -370,7 +371,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 				sleepLong();
 			}
-
 		} catch (Throwable t) {
 			running = valid = false;
 			t.printStackTrace();
@@ -380,7 +380,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			running = valid = false;
 			runExecutionerLoopAfter(); // Clean up
 		}
-
 	}
 
 	/**
@@ -654,6 +653,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		taskUpdateStates.add(new Tuple<>(task, TaskState.STARTED));
 	}
 
+	/**
+	 * Task finished (either finished OK or has some error condition)
+	 */
 	protected synchronized boolean taskUpdateFinished(Task task, TaskState taskState) {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
 		if (!task.canChangeState(taskState)) return false;

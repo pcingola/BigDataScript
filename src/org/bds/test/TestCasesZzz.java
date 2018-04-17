@@ -1,8 +1,6 @@
 package org.bds.test;
 
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -14,21 +12,11 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test31() {
+	public void test38() {
 		Gpr.debug("Test");
-		verbose = true;
-		Timer timer = new Timer();
-		timer.start();
-		runAndCheck(1, "test/run_31.bds", "events", "[runnning, kill, done]");
-		Assert.assertTrue(timer.elapsed() < 1 * 1000); // We should finish in much less than 1 secs (the program waits 60secs)
+		runAndCheck("test/run_38.bds", "su", "$s world \\n");
 	}
 
-	//	@Test
-	//	public void test38() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_38.bds", "su", "$s world \\n");
-	//	}
-	//
 	//	@Test
 	//	public void test40() {
 	//		Gpr.debug("Test");

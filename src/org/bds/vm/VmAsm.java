@@ -99,9 +99,9 @@ public class VmAsm {
 			OpCode opcode = opcode(line);
 			String param = null;
 			if (opcode.hasParam()) param = param(line);
-			if (verbose) {
+			if (debug) {
 				// Show instruction
-				System.out.println("\t" + opcode.toString().toLowerCase() //
+				Gpr.debug("\t" + opcode.toString().toLowerCase() //
 						+ (param != null ? " " + param : "") //
 				);
 			}
@@ -216,7 +216,7 @@ public class VmAsm {
 			bdsvm.addLabel(label, pc());
 		}
 
-		if (verbose) System.out.println(label + ":");
+		if (debug) Gpr.debug(label + ":");
 		return rest.trim();
 	}
 

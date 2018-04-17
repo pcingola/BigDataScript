@@ -29,7 +29,6 @@ import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.task.TaskDependecies;
-import org.bds.util.Gpr;
 import org.bds.util.Timer;
 import org.bds.vm.BdsVm;
 import org.bds.vm.VmAsm;
@@ -121,7 +120,6 @@ public class BdsRun {
 		try {
 			// Get assembly code
 			String asm = programUnit.toAsm();
-			Gpr.debug("Assembly:\n" + asm);
 
 			// Compile assembly
 			VmAsm vmasm = new VmAsm(programUnit);
