@@ -14,15 +14,16 @@ import org.bds.symbol.SymbolTable;
  */
 public abstract class Literal extends Expression {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 5099898775266921617L;
+
 	protected Value value;
 
 	public Literal(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 	}
+
+	@Override
+	abstract public Type getReturnType();
 
 	public Value getValue() {
 		return value;

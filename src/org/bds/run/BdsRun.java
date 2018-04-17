@@ -114,8 +114,17 @@ public class BdsRun {
 		executioner.kill(); // Kill executioner
 	}
 
+	/**
+	 * Compile program: bds -> ATS -> BdsNodes -> VM ASM -> VM OpCodes
+	 */
 	public boolean compile() {
 		if (!compileBds()) return false;
+
+		// Parse command line args & show automatic help
+		// Note: Command line arguments set variables by changing VarInit
+		//       nodes, that's why we do command line parsing before ASM
+		//       compilation.
+		if (parseCmdLineArgs()) return false;
 
 		try {
 			// Get assembly code
@@ -378,9 +387,6 @@ public class BdsRun {
 	int runCompile() {
 		// Compile, abort on errors
 		if (!compile()) return 1;
-
-		// Parse command line args & show automatic help
-		if (parseCmdLineArgs()) return 0;
 
 		// Run thread
 		return runBdsThread();

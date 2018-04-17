@@ -20,6 +20,11 @@ public class LiteralNull extends Literal {
 	}
 
 	@Override
+	public Type getReturnType() {
+		return Types.NULL;
+	}
+
+	@Override
 	protected void parse(ParseTree tree) {
 		// Nothing to do
 	}

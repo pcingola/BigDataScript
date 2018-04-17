@@ -20,7 +20,7 @@ public class InterpolateVars extends Literal {
 
 	private static final long serialVersionUID = 5380913311800422951L;
 
-	static boolean debug = true;
+	static boolean debug = false;
 
 	// boolean useLiteral;
 	String literals[]; // This is used in case of interpolated string literal
@@ -107,6 +107,11 @@ public class InterpolateVars extends Literal {
 
 	public String[] getLiterals() {
 		return literals;
+	}
+
+	@Override
+	public Type getReturnType() {
+		return Types.STRING;
 	}
 
 	int indexRefEnd(String str) {

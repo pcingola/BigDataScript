@@ -2,6 +2,8 @@ package org.bds.lang.value;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.util.Gpr;
 
 /**
@@ -15,6 +17,11 @@ public class LiteralReal extends Literal {
 
 	public LiteralReal(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	public Type getReturnType() {
+		return Types.REAL;
 	}
 
 	@Override

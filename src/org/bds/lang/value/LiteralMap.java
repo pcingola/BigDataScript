@@ -27,6 +27,11 @@ public class LiteralMap extends Literal {
 	}
 
 	@Override
+	public Type getReturnType() {
+		return returnType;
+	}
+
+	@Override
 	protected void parse(ParseTree tree) {
 		int size = (tree.getChildCount() - 1) / 4;
 		keys = new Expression[size];

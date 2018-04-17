@@ -30,6 +30,11 @@ public class LiteralList extends Literal {
 	}
 
 	@Override
+	public Type getReturnType() {
+		return returnType;
+	}
+
+	@Override
 	protected void parse(ParseTree tree) {
 		int listSize = (tree.getChildCount() - 1) / 2;
 		values = new Expression[listSize];
