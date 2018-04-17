@@ -16,4 +16,11 @@ public class Warning extends Error {
 		super(parent, tree);
 	}
 
+	@Override
+	public String toAsm() {
+		return toAsmNode() //
+				+ expr.toAsm() //
+				+ "printstderrln\n";
+	}
+
 }

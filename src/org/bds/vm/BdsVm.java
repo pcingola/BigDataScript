@@ -27,6 +27,7 @@ import org.bds.run.RunState;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
+import org.bds.task.Task;
 import org.bds.task.TaskDependency;
 import org.bds.util.Gpr;
 import org.bds.util.GprString;
@@ -695,6 +696,7 @@ public class BdsVm {
 
 			case ERROR:
 				System.err.println(popString());
+				exitCode = Task.EXITCODE_ERROR;
 				bdsThread.setRunState(RunState.FATAL_ERROR);
 				return;
 
@@ -924,6 +926,14 @@ public class BdsVm {
 
 			case PRINTLN:
 				System.out.println(pop());
+				break;
+
+			case PRINTSTDERR:
+				System.err.print(popString());
+				break;
+
+			case PRINTSTDERRLN:
+				System.err.println(popString());
 				break;
 
 			case PUSHB:

@@ -43,7 +43,9 @@ public class Print extends Statement {
 
 	@Override
 	public String toAsm() {
-		return expr.toAsm() + "print\n";
+		return super.toAsm() //
+				+ expr.toAsm() //
+				+ "print\n";
 	}
 
 	@Override

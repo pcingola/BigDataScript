@@ -1,8 +1,5 @@
 package org.bds.test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.bds.util.Gpr;
 import org.junit.Test;
 
@@ -15,34 +12,103 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test40() {
+	public void test48() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<>();
-		expectedValues.put("file", "zzz.txt");
-		expectedValues.put("opt", "true");
-		expectedValues.put("num", "42");
-		expectedValues.put("rnum", "3.1415");
-		expectedValues.put("args", "[-file, zzz.txt, -num, 42, -rnum, 3.1415, -opt, -notProcessed, more, arguments]");
-
-		// Arguments to add after program name
-		ArrayList<String> argsAfter = new ArrayList<>();
-
-		argsAfter.add("-file");
-		argsAfter.add("zzz.txt");
-
-		argsAfter.add("-num");
-		argsAfter.add("42");
-
-		argsAfter.add("-rnum");
-		argsAfter.add("3.1415");
-
-		argsAfter.add("-opt");
-
-		argsAfter.add("-notProcessed");
-		argsAfter.add("more");
-		argsAfter.add("arguments");
-
-		runAndCheck("test/run_40.bds", expectedValues, argsAfter);
+		verbose = true;
+		runAndCheck(1, "test/run_48.bds", "step", 2L);
 	}
+
+	//	@Test
+	//	public void test53() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_53.bds", "vals", "[bye, chau]");
+	//	}
+	//
+	//	@Test
+	//	public void test56() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_56.bds", "out", "Adios;Au revoir;Bye;");
+	//		runAndCheck("test/run_56.bds", "str", "map = { Bonjour => Au revoir, Hello => Bye, Hola => Adios }");
+	//	}
+	//
+	//	@Test
+	//	public void test58() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_58.bds", "z", 0L);
+	//	}
+	//
+	//	@Test
+	//	public void test63() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_63.bds", "l", "[]");
+	//	}
+	//
+	//	@Test
+	//	public void test64() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_64.bds", "m", "{}");
+	//	}
+	//
+	//	@Test
+	//	public void test65() {
+	//		Gpr.debug("Test");
+	//		HashMap<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("bsfalse", false);
+	//		expectedValues.put("bstrue", true);
+	//		expectedValues.put("bifalse", false);
+	//		expectedValues.put("bitrue", true);
+	//		expectedValues.put("brfalse", false);
+	//		expectedValues.put("brtrue", true);
+	//		expectedValues.put("blfalse", false);
+	//		expectedValues.put("bltrue", true);
+	//		expectedValues.put("bmfalse", false);
+	//		expectedValues.put("bmtrue", true);
+	//		runAndCheck("test/run_65.bds", expectedValues);
+	//	}
+	//
+	//	@Test
+	//	public void test66() {
+	//		Gpr.debug("Test");
+	//		HashMap<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("sif", "String 'hi' is NOT empty");
+	//		expectedValues.put("lif", "List '[hi, bye]' is NOT empty");
+	//		expectedValues.put("mif", "Map '{  }' IS empty");
+	//		runAndCheck("test/run_66.bds", expectedValues);
+	//	}
+	//
+	//	@Test
+	//	public void test67() {
+	//		Gpr.debug("Test");
+	//		HashMap<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("s", "varS");
+	//		expectedValues.put("s1", "Hi '$'");
+	//		expectedValues.put("s2", "Hi $");
+	//		expectedValues.put("s3", "Hi $ bye");
+	//		runAndCheck("test/run_67.bds", expectedValues);
+	//	}
+	//
+	//	@Test
+	//	public void test68() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_68.bds", "out", "hi bye end\n");
+	//	}
+	//
+	//	@Test
+	//	public void test70() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_70.bds", "i", 10L);
+	//	}
+	//
+	//	@Test
+	//	public void test71() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_71.bds", "i", 10L);
+	//	}
+	//
+	//	@Test
+	//	public void test72() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_72.bds", "i", 10L);
+	//	}
 
 }

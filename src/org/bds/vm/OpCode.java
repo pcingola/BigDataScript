@@ -81,8 +81,8 @@ public enum OpCode {
 	, ORB, ORI
 	// Pop: remove latest element from stack
 	, POP
-	// Print
-	, PRINT, PRINTLN
+	// Print stdout & stderr
+	, PRINT, PRINTLN, PRINTSTDERR, PRINTSTDERRLN
 	// Push literal
 	//    PUSHNULL                 # Pushes a 'null' literal
 	//    PUSH{B|I|R|S}  literal   # Pushes a literal constant into the stack

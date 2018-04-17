@@ -1,13 +1,12 @@
 
+int step = 1
+print("Step : $step\n")
+warning "..something bad happened (not really, this is just a test)"
 
-string file = "default_file.txt"
-bool opt = false
-int num = 1
-real rnum = 1.23
+step = 2
+print("Step : $step\n")
+error "..something VERY bad happened (not really, this is just a test)"
 
-print("file = '$file'\n")
-print("opt  = '$opt'\n")
-print("num  = '$num'\n")
-print("rnum = '$rnum'\n")
-print("args = " + args + "\n")
+step = 3
+print("Step : $step\n")
 

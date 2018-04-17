@@ -16,4 +16,10 @@ public class Error extends Print {
 		super(parent, tree);
 	}
 
+	@Override
+	public String toAsm() {
+		return toAsmNode() //
+				+ expr.toAsm() //
+				+ "error\n";
+	}
 }
