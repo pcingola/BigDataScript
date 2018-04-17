@@ -10,12 +10,12 @@ import org.bds.lang.ProgramUnit;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.StatementFunctionDeclaration;
-import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
 import org.bds.util.Gpr;
+import org.bds.util.GprString;
 
 /**
  * Assembly compiler and debugger for BdsVm
@@ -309,7 +309,7 @@ public class VmAsm {
 				|| (param.charAt(0) == '"' && param.charAt(lastCharIdx) == '"')) // Using double quotes
 		{
 			String escapedStr = param.substring(1, param.length() - 1); // Remove quotes
-			return InterpolateVars.unEscape(escapedStr);
+			return GprString.unescape(escapedStr);
 		}
 		return param; // Unquoted string
 	}

@@ -7,6 +7,7 @@ import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
+import org.bds.util.GprString;
 
 /**
  * An 'exec' expression (to execute a command line in a local computer, return STDOUT)
@@ -59,7 +60,7 @@ public class ExpressionSys extends Expression {
 		interpolateVars = new InterpolateVars(this, null);
 		if (!interpolateVars.parse(cmd)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
-			commands = InterpolateVars.escape(InterpolateVars.unEscapeDollar(cmd)); // Just use literal, but un-escape dollar signs
+			commands = GprString.escape(GprString.unescapeDollar(cmd)); // Just use literal, but un-escape dollar signs
 		}
 	}
 

@@ -2,6 +2,7 @@ package org.bds.test;
 
 import org.bds.lang.type.InterpolateVars;
 import org.bds.util.Gpr;
+import org.bds.util.GprString;
 import org.junit.Test;
 
 import junit.framework.Assert;
@@ -162,28 +163,28 @@ public class TestCasesInterpolate extends TestCasesBase {
 	public void test16() {
 		Gpr.debug("Test");
 		String str = "something ending in backslash \\";
-		String strAfter = InterpolateVars.unEscapeDollar(str);
+		String strAfter = GprString.unescapeDollar(str);
 
 		if (verbose) {
 			Gpr.debug("str (before): " + str);
 			Gpr.debug("str (after) : " + strAfter);
 		}
 
-		Assert.assertEquals("Expected string should end in backslash", str, strAfter);
+		Assert.assertEquals("Expected string does not match", str, strAfter);
 	}
 
 	@Test
 	public void test17() {
 		Gpr.debug("Test");
 		String str = "ending in dollar $";
-		String strAfter = InterpolateVars.unEscapeDollar(str);
+		String strAfter = GprString.unescapeDollar(str);
 
 		if (verbose) {
 			Gpr.debug("str (before): " + str);
 			Gpr.debug("str (after) : " + strAfter);
 		}
 
-		Assert.assertEquals("Expected string should end in backslash", str, strAfter);
+		Assert.assertEquals("Expected string does not match", str, strAfter);
 	}
 
 	@Test
@@ -192,27 +193,27 @@ public class TestCasesInterpolate extends TestCasesBase {
 		String str = "this dolalr sign '\\$VAR' should be escaped";
 		String strExpected = "this dolalr sign '$VAR' should be escaped";
 
-		String strAfter = InterpolateVars.unEscapeDollar(str);
+		String strAfter = GprString.unescapeDollar(str);
 		if (verbose) {
 			Gpr.debug("str (before): " + str);
 			Gpr.debug("str (after) : " + strAfter);
 		}
 
-		Assert.assertEquals("Expected string should end in backslash", strExpected, strAfter);
+		Assert.assertEquals("Expected string does not match", strExpected, strAfter);
 	}
 
 	@Test
 	public void test19() {
 		Gpr.debug("Test");
 		String str = "hello \\t world \\n";
-		String strAfter = InterpolateVars.unEscapeDollar(str);
+		String strAfter = GprString.unescapeDollar(str);
 
 		if (verbose) {
 			Gpr.debug("str (before): " + str);
 			Gpr.debug("str (after) : " + strAfter);
 		}
 
-		Assert.assertEquals("Expected string should end in backslash", str, strAfter);
+		Assert.assertEquals("Expected string does not match", str, strAfter);
 	}
 
 	@Test
@@ -237,16 +238,16 @@ public class TestCasesInterpolate extends TestCasesBase {
 	@Test
 	public void test21() {
 		Gpr.debug("Test");
-		String strings[] = { "this is string interpolation: int i = ", " and str = \"", "\" and both " };
+		String strings[] = { "this is string interpolation\\n\\tint i = ", " and str = \\\"", "\\\" and both " };
 		String vars[] = { "i", "str", "str", "i" };
 
-		checkInterpolate("this is string interpolation: int i = $i and str = \"$str\" and both $str$i", strings, vars);
+		checkInterpolate("this is string interpolation\n\tint i = $i and str = \"$str\" and both $str$i", strings, vars);
 	}
 
 	@Test
 	public void test22() {
 		Gpr.debug("Test");
-		String strings[] = { "this is string interpolation: int i = ", " and str = \\\"", "\\\" and both " };
+		String strings[] = { "this is string interpolation: int i = ", " and str = \\\\\\\"", "\\\\\\\" and both " };
 		String vars[] = { "i", "str", "str", "i" };
 
 		checkInterpolate("this is string interpolation: int i = $i and str = \\\"$str\\\" and both $str$i", strings, vars);

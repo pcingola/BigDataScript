@@ -1,8 +1,5 @@
 package org.bds.test;
 
-import org.bds.util.Gpr;
-import org.junit.Test;
-
 /**
  * Quick test cases when creating a new feature...
  *
@@ -11,11 +8,13 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	@Test
-	public void test38() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_38.bds", "su", "$s world \\n");
-	}
+	//	@Test
+	//	public void test38() {
+	//		Gpr.debug("Test");
+	//		debug = verbose = true;
+	//		runAndCheck("test/z.bds", "su", "$s world \\n");
+	//		// runAndCheck("test/run_38.bds", "su", "$s world \\n");
+	//	}
 
 	//	@Test
 	//	public void test40() {
@@ -37,7 +36,7 @@ public class TestCasesZzz extends TestCasesBase {
 	//		argsAfter.add("42");
 	//
 	//		argsAfter.add("-rnum");
-	//		argsAfter.add("3.1415");
+	//		argsAfter.add("3.1415");		
 	//
 	//		argsAfter.add("-opt");
 	//

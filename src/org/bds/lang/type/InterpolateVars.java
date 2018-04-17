@@ -13,172 +13,18 @@ import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueString;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
+import org.bds.util.GprString;
 import org.bds.util.Tuple;
 
 public class InterpolateVars extends Literal {
 
 	private static final long serialVersionUID = 5380913311800422951L;
 
-	static boolean debug = false;
+	static boolean debug = true;
 
 	// boolean useLiteral;
 	String literals[]; // This is used in case of interpolated string literal
 	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
-
-	/**
-	 * Escape string
-	 */
-	public static String escape(String s) {
-		return s.replace("\b", "\\b") //
-				.replace("\f", "\\f") //
-				.replace("\n", "\\n") //
-				.replace("\r", "\\r") //
-				.replace("\t", "\\t") //
-				.replace("\0", "\\0") //
-		;
-	}
-
-	/**
-	 * Escape string
-	 */
-	public static String unEscape(String s) {
-		return s.replace("\\b", "\b") //
-				.replace("\\f", "\f") //
-				.replace("\\n", "\n") //
-				.replace("\\r", "\r") //
-				.replace("\\t", "\t") //
-				.replace("\\0", "\0") //
-				.replace("\\'", "'") //
-				.replace("\\\"", "\"") //
-		;
-	}
-
-	// TODO: Remove dead code !!!
-
-	//	/**
-	//	 * Escape multiple lines
-	//	 */
-	//	static String escapeMultiline(String s) {
-	//		boolean endsWithNewLine = (!s.isEmpty()) && (s.charAt(s.length() - 1) == '\n');
-	//		String lines[] = s.split("\n");
-	//		if (lines.length <= 1 && !endsWithNewLine) return s; // Nothing to escape
-	//
-	//		// Correct lines ending in backslash (e.g. multi-line unix commands)
-	//		StringBuilder sb = new StringBuilder();
-	//		for (int i = 0; i < lines.length; i++) {
-	//			String l = lines[i];
-	//			sb.append(l); // Add line
-	//			if (l.endsWith("\\")) sb.append("\\"); // Make sure we have an (escaped) backslash
-	//			if (i < (lines.length - 1)) sb.append("\\n"); // Add escaped newline
-	//		}
-	//
-	//		// Does the string end with a newline? Then add escaped newline
-	//		if (endsWithNewLine) sb.append("\\n"); // Add escaped newline
-	//
-	//		return sb.toString();
-	//	}
-	//
-	//	static String escapeSingleQuote(String str) {
-	//		return str.replace("'", "\\'");
-	//	}
-	//
-	//	/**
-	//	 * Un-escape string
-	//	 */
-	//	public static String unEscape(String str) {
-	//		StringBuilder sb = new StringBuilder();
-	//		char cprev = ' ';
-	//		for (char c : str.toCharArray()) {
-	//			if (cprev == '\\') {
-	//				// Convert characters
-	//				if (c == '\n') {
-	//					// End of line, continues in the next one
-	//				} else if (c == '\\') {
-	//					// Escaped backslash
-	//					sb.append(c);
-	//					c = '\0'; // Avoid escaping next char
-	//				} else {
-	//					switch (c) {
-	//					case 'b':
-	//						c = '\b';
-	//						break;
-	//
-	//					case 'f':
-	//						c = '\f';
-	//						break;
-	//
-	//					case 'n':
-	//						c = '\n';
-	//						break;
-	//
-	//					case 'r':
-	//						c = '\r';
-	//						break;
-	//
-	//					case 't':
-	//						c = '\t';
-	//						break;
-	//
-	//					case '0':
-	//						c = '\0';
-	//						break;
-	//
-	//					case '$':
-	//						c = '$';
-	//						break;
-	//
-	//					case '_':
-	//						c = '_';
-	//						break;
-	//
-	//					default:
-	//						break;
-	//					}
-	//
-	//					sb.append(c);
-	//				}
-	//			} else if (c != '\\') {
-	//				sb.append(c);
-	//			}
-	//
-	//			cprev = c;
-	//		}
-	//
-	//		return sb.toString();
-	//	}
-
-	public static String unEscapeDollar(String str) {
-		return str.replace("\\$", "$");
-	}
-
-	//	/**
-	//	 * Almost literal string: Only un-escape dollar
-	//	 */
-	//	public static String unEscapeDollar(String str) {
-	//		StringBuilder sb = new StringBuilder();
-	//
-	//		char cprev = '\0';
-	//		for (char c : str.toCharArray()) {
-	//			if (cprev == '\\') {
-	//				if (c == '$') {
-	//					// Un-escape "\$" to "$"
-	//					sb.append(c);
-	//				} else {
-	//					// Add every other escaped sequence (do not modify it)
-	//					sb.append(cprev);
-	//					sb.append(c);
-	//				}
-	//			} else if (c != '\\') {
-	//				sb.append(c);
-	//			}
-	//
-	//			cprev = c;
-	//		}
-	//
-	//		if (cprev == '\\') sb.append(cprev); // Append last char
-	//
-	//		return sb.toString();
-	//	}
 
 	public InterpolateVars(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -238,7 +84,7 @@ public class InterpolateVars extends Literal {
 			// Parse string literal part
 			//---
 			Tuple<String, String> tupStr = findString(str);
-			String strToAdd = escape(unEscapeDollar(tupStr.first));
+			String strToAdd = GprString.escape(GprString.unescapeDollar(tupStr.first));
 			if (debug) Gpr.debug("Interpolate string: |" + str + "|\n\tstring: |" + tupStr.first + "|\n\trest: |" + tupStr.second + "|");
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed

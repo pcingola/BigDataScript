@@ -68,7 +68,7 @@ public class GprString {
 	}
 
 	public static String[] splitCsv(String str) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		while (!str.isEmpty()) {
 			int idx = indexOutsideQuotes(str, ',');
@@ -97,6 +97,13 @@ public class GprString {
 	 */
 	public static String unescape(String str) {
 		return StringEscapeUtils.unescapeJava(str);
+	}
+
+	/**
+	 * Unescape dollar sign
+	 */
+	public static String unescapeDollar(String str) {
+		return str.replace("\\$", "$");
 	}
 
 }

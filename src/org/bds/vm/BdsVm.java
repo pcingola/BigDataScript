@@ -12,7 +12,6 @@ import org.bds.lang.expression.TaskFactory;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.statement.FunctionDeclaration;
-import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
@@ -30,6 +29,7 @@ import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 import org.bds.task.TaskDependency;
 import org.bds.util.Gpr;
+import org.bds.util.GprString;
 
 /**
  * Bds Virtual Machine
@@ -1174,7 +1174,7 @@ public class BdsVm {
 		sb.append("[");
 		for (int i = 0; i < sp; i++) {
 			Value v = stack[i];
-			String s = v.getType().isString() ? "'" + InterpolateVars.escape(v.asString()) + "'" : v.toString();
+			String s = v.getType().isString() ? "'" + GprString.escape(v.asString()) + "'" : v.toString();
 			sb.append((i > 0 ? ", " : "") + s);
 		}
 		sb.append(" ]");
