@@ -1,6 +1,8 @@
 package org.bds.test;
 
 import org.bds.util.Gpr;
+import org.bds.util.Timer;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -12,30 +14,15 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test08() {
+	public void test31() {
 		Gpr.debug("Test");
-		String strings[] = { "this is string interpolation: int i = ", " and str = \\\"", "\\\" and both " };
-		String vars[] = { "i", "str", "str", "i" };
-
-		checkInterpolate("this is string interpolation: int i = $i and str = \\\"$str\\\" and both $str$i", strings, vars);
+		verbose = true;
+		Timer timer = new Timer();
+		timer.start();
+		runAndCheck(1, "test/run_31.bds", "events", "[runnning, kill, done]");
+		Assert.assertTrue(timer.elapsed() < 1 * 1000); // We should finish in much less than 1 secs (the program waits 60secs)
 	}
-	//
-	//	@Test
-	//	public void test14() {
-	//		Gpr.debug("Test");
-	//		verbose = true;
-	//		runAndCheck("test/run_14.bds", "s", "this is string interpolation: int i = 42 and str = \"hi\" and both hi42");
-	//	}
 
-	//	@Test
-	//	public void test31() {
-	//		Gpr.debug("Test");
-	//		Timer timer = new Timer();
-	//		timer.start();
-	//		runAndCheck(1, "test/run_31.bds", "events", "[runnning, kill, done]");
-	//		Assert.assertTrue(timer.elapsed() < 1 * 1000); // We should finish in much less than 1 secs (the program waits 60secs)
-	//	}
-	//
 	//	@Test
 	//	public void test38() {
 	//		Gpr.debug("Test");

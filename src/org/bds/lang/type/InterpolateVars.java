@@ -53,6 +53,8 @@ public class InterpolateVars extends Literal {
 		;
 	}
 
+	// TODO: Remove dead code !!!
+
 	//	/**
 	//	 * Escape multiple lines
 	//	 */

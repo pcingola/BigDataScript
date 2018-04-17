@@ -111,7 +111,7 @@ public class VariableInit extends BdsNode {
 	 * Cast value
 	 */
 	String toAsmCast() {
-		if (varDeclaration == null) return "";
+		if (varDeclaration == null || expression == null) return "";
 
 		Type et = expression.getReturnType();
 		Type vdt = varDeclaration.getType();

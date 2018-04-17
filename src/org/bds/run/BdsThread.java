@@ -704,6 +704,7 @@ public class BdsThread extends Thread implements Serializable {
 		String taskId = vtaskId.asString();
 		if (taskId == null) return;
 
+		// Is 'tid' a bdsThread ID?
 		if (bdsChildThreadsById.containsKey(taskId)) {
 			// Kill thread
 			bdsChildThreadsById.get(taskId).kill();
