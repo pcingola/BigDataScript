@@ -14,28 +14,17 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test101() {
+	public void test102() {
 		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("a", 1);
 		expectedValues.put("b", 3);
 		expectedValues.put("c", 5);
+		expectedValues.put("d", 1);
 
-		runAndCheck("test/run_101.bds", expectedValues);
+		runAndCheck("test/run_102.bds", expectedValues);
 	}
 
-	//	@Test
-	//	public void test102() {
-	//		Gpr.debug("Test");
-	//		HashMap<String, Object> expectedValues = new HashMap<>();
-	//		expectedValues.put("a", 1);
-	//		expectedValues.put("b", 3);
-	//		expectedValues.put("c", 5);
-	//		expectedValues.put("d", 0);
-	//
-	//		runAndCheck("test/run_102.bds", expectedValues);
-	//	}
-	//
 	//	@Test
 	//	public void test103() {
 	//		Gpr.debug("Test");

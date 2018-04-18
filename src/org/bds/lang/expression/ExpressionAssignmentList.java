@@ -4,9 +4,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.nativeMethods.list.MethodNativeListSize;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.value.LiteralListEmpty;
+import org.bds.lang.value.ValueFunction;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -80,23 +82,37 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 		StringBuilder sb = new StringBuilder();
 
 		String varList = baseVarName() + "list";
+		String varListSize = baseVarName() + "list_size";
 
 		// Evaluate list on the right hand side and assign to tmp variable
 		sb.append(right.toAsm());
 		sb.append("var " + varList + "\n");
+
+		// Get list size:
+		//     varListSize := list.size()
+		SymbolTable symtab = right.getReturnType().getSymbolTable();
+		ValueFunction methodSize = symtab.findFunction(MethodNativeListSize.class);
+		sb.append("callmnative " + methodSize + "\n");
+		sb.append("var " + varListSize + "\n");
 		sb.append("pop\n");
 
 		for (int i = 0; i < lefts.length; i++) {
-			// Get list[i]
+			// Get item: list[ i % varListSize ]
+			// Note that there can be less items in the list than left hand size terms
 			sb.append("pushi " + i + "\n");
+			sb.append("load " + varListSize + "\n");
+			sb.append("modi\n");
 			sb.append("load " + varList + "\n");
 			sb.append("reflist\n");
 
 			// Assign to item 'i' on the left hand side
 			Reference refLeft = ((Reference) lefts[i]);
 			sb.append(refLeft.toAsmSet());
+			sb.append("pop\n");
 		}
 
+		// Leave right hand side expression in the stack
+		sb.append("load " + varList + "\n");
 		return sb.toString();
 	}
 
