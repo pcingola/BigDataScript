@@ -1,5 +1,10 @@
 package org.bds.test;
 
+import java.util.HashMap;
+
+import org.bds.util.Gpr;
+import org.junit.Test;
+
 /**
  * Quick test cases when creating a new feature...
  *
@@ -8,20 +13,21 @@ package org.bds.test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	//	@Test
-	//	public void test107() {
-	//		Gpr.debug("Test");
-	//		HashMap<String, Object> expectedValues = new HashMap<>();
-	//		expectedValues.put("paramName", "parameter_value");
-	//		expectedValues.put("file1", "/path/to/file_1.txt");
-	//		expectedValues.put("file2", "/path/to/file_2.txt");
-	//		expectedValues.put("file3", "/path/to/file_3.txt");
-	//		expectedValues.put("file4", "/path/to/file_4.txt");
-	//		expectedValues.put("file5", "/path/to/file_5.txt");
-	//
-	//		runAndCheck("test/run_107.bds", expectedValues);
-	//	}
-	//
+	@Test
+	public void test107() {
+		Gpr.debug("Test");
+		verbose = debug = true;
+		HashMap<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("paramName", "parameter_value");
+		expectedValues.put("file1", "/path/to/file_1.txt");
+		expectedValues.put("file2", "/path/to/file_2.txt");
+		expectedValues.put("file3", "/path/to/file_3.txt");
+		expectedValues.put("file4", "/path/to/file_4.txt");
+		expectedValues.put("file5", "/path/to/file_5.txt");
+
+		runAndCheck("test/run_107.bds", expectedValues);
+	}
+
 	//	@Test
 	//	public void test108() {
 	//		Gpr.debug("Test");

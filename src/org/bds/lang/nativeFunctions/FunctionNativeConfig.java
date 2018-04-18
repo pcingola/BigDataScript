@@ -1,13 +1,12 @@
 package org.bds.lang.nativeFunctions;
 
-import java.util.HashMap;
-
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueMap;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
@@ -35,16 +34,16 @@ public class FunctionNativeConfig extends FunctionNative {
 		addNativeFunction();
 	}
 
-	protected Object parseFile(BdsThread bdsThread, String fileName, ValueMap configOri) {
+	protected ValueMap parseFile(BdsThread bdsThread, String fileName, ValueMap configOri) {
 		// Sanity check
 		if (!Gpr.canRead(fileName)) bdsThread.fatalError(this, "Cannot read config file '" + fileName + "'");
 
 		// Create config, add default values
-		HashMap<String, String> config = new HashMap<>();
+		ValueMap config = new ValueMap(TypeMap.get(Types.STRING, Types.STRING));
 		if (configOri != null) {
 			// Copy all values from 'configOri'
 			for (Value k : configOri.keySet()) {
-				config.put(k.asString(), configOri.getValue(k).asString());
+				config.put(k, configOri.getValue(k));
 			}
 		}
 
@@ -76,15 +75,21 @@ public class FunctionNativeConfig extends FunctionNative {
 			// Trim and add to map
 			name = name.trim();
 			value = value.trim();
-			if (!name.isEmpty()) config.put(name, value);
+			if (!name.isEmpty()) config.put(new ValueString(name), new ValueString(value));
 		}
 
 		return config;
 	}
 
 	@Override
-	protected Object runFunctionNative(BdsThread bdsThread) {
+	public Value runFunction(BdsThread bdsThread) {
 		String fileName = bdsThread.getString("file");
 		return parseFile(bdsThread, fileName, null);
 	}
+
+	@Override
+	protected Object runFunctionNative(BdsThread bdsThread) {
+		throw new RuntimeException("This method should never be invoked!");
+	}
+
 }

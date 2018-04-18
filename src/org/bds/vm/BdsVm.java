@@ -1230,24 +1230,36 @@ public class BdsVm {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("pb         : " + pc + "\n");
-		sb.append("fp         : " + fp + "\n");
-		sb.append("sp         : " + sp + "\n");
-		sb.append("Stack      : " + toStringStack() + "\n");
-		sb.append("Call-Stack : [");
+		sb.append("VM:\n");
+		sb.append("  pc         : " + pc + "\n");
+		sb.append("  fp         : " + fp + "\n");
+		sb.append("  sp         : " + sp + "\n");
+		sb.append("  Stack      : " + toStringStack() + "\n");
+		sb.append("  Call-Stack : [");
 		for (int i = 0; i < fp; i++)
 			sb.append(" " + callFrame[i]);
 		sb.append(" ]\n");
-		sb.append("Scope:\n" + scope);
+		sb.append("  Scope:\n" + scope);
 		return sb.toString();
 	}
 
 	String toStringStack() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
+		String s;
 		for (int i = 0; i < sp; i++) {
 			Value v = stack[i];
-			String s = v.getType().isString() ? "'" + GprString.escape(v.asString()) + "'" : v.toString();
+
+			if (v == null) {
+				s = "null";
+			} else if (v.getType() == null) {
+				s = "[ERROR: Type is null]";
+				Gpr.debug("ERROR: Value has null type");
+			} else {
+				if (v.getType().isString()) s = "'" + GprString.escape(v.asString()) + "'";
+				else s = v.toString();
+			}
+
 			sb.append((i > 0 ? ", " : "") + s);
 		}
 		sb.append(" ]");

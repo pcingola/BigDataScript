@@ -1,3 +1,4 @@
 
-rs := range(1.0, 10.0, 0.5)
-print( "rs : $rs\n" )
+conf := config("test/myfile.config")
+file1 := conf{'file1'}
+
