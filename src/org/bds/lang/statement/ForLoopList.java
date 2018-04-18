@@ -117,7 +117,7 @@ public class ForLoopList extends StatementWithScope {
 			sb.append("var " + varList + "\n");
 			sb.append("pop\n");
 		} else if (expression.isMap()) {
-			sb.append("callmnative " + methodValues + "\n");
+			sb.append("callnative " + methodValues + "\n");
 			sb.append("var " + varList + "\n");
 			sb.append("pop\n");
 		} else {
@@ -126,7 +126,7 @@ public class ForLoopList extends StatementWithScope {
 
 		// Get list size: '$maxCount = $list.size()'
 		sb.append("load " + varList + "\n");
-		sb.append("callmnative " + methodSize + "\n");
+		sb.append("callnative " + methodSize + "\n");
 		sb.append("var " + varMaxCounter + "\n");
 		sb.append("pop\n");
 

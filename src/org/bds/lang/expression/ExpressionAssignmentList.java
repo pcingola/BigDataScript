@@ -92,7 +92,7 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 		//     varListSize := list.size()
 		SymbolTable symtab = right.getReturnType().getSymbolTable();
 		ValueFunction methodSize = symtab.findFunction(MethodNativeListSize.class);
-		sb.append("callmnative " + methodSize + "\n");
+		sb.append("callnative " + methodSize + "\n");
 		sb.append("var " + varListSize + "\n");
 		sb.append("pop\n");
 

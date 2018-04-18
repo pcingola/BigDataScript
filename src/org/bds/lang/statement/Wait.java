@@ -57,7 +57,7 @@ public class Wait extends Statement {
 
 			sb.append("new " + listString + "\n");
 			sb.append(taskId.toAsm());
-			sb.append("callmnative " + methodAdd + "\n");
+			sb.append("callnative " + methodAdd + "\n");
 
 			// Now we have a list of elements to wait
 			sb.append("wait\n");

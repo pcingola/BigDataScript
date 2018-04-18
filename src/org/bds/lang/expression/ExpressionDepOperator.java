@@ -120,8 +120,8 @@ public class ExpressionDepOperator extends Expression {
 			sb.append(e.toAsm()); // Evaluate expression
 
 			// Add result(s) to list
-			if (e.getReturnType().isList()) sb.append("callmnative " + methodAddList + "\n");
-			else sb.append("callmnative " + methodAdd + "\n");
+			if (e.getReturnType().isList()) sb.append("callnative " + methodAddList + "\n");
+			else sb.append("callnative " + methodAdd + "\n");
 		}
 
 		// Append all results to 'varName'?
@@ -135,7 +135,7 @@ public class ExpressionDepOperator extends Expression {
 			// Append 'tmp' to 'varName'
 			sb.append("load " + varName + "\n");
 			sb.append("load " + tmp + "\n");
-			sb.append("callmnative " + methodAddList + "\n");
+			sb.append("callnative " + methodAddList + "\n");
 			sb.append("pop\n");
 
 			// Leave original results in the stack

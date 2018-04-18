@@ -1,14 +1,8 @@
-#!/usr/bin/env bds
 
-# A function defining two sequential tasks
-void someFunction(int x) {
-	print "Par: $x\n"
-  	#task echo Task1 iter $x; sleep 1
+
+string[] list = [ "one", "two", "three" ]
+string ss
+
+for( string s : list ) {
+	ss = ss + s
 }
-
-# A loop fires threads of sequential tasks
-for ( int i : range(0,10) ) {
-	print "Loop: $i\n";
-   	par someFunction(i.clone())
-}
-

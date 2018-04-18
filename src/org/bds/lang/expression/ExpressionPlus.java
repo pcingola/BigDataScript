@@ -110,23 +110,23 @@ public class ExpressionPlus extends ExpressionMath {
 			// List + List
 			sb.append("new " + returnType + "\n");
 			sb.append(left.toAsm());
-			sb.append("callmnative " + methodAddList + "\n");
+			sb.append("callnative " + methodAddList + "\n");
 			sb.append(right.toAsm());
-			sb.append("callmnative " + methodAddList + "\n");
+			sb.append("callnative " + methodAddList + "\n");
 		} else if (lt.isList() && !rt.isList()) {
 			// List + element
 			sb.append("new " + returnType + "\n");
 			sb.append(left.toAsm());
-			sb.append("callmnative " + methodAddList + "\n");
+			sb.append("callnative " + methodAddList + "\n");
 			sb.append(right.toAsm());
-			sb.append("callmnative " + methodAdd + "\n");
+			sb.append("callnative " + methodAdd + "\n");
 		} else if (!lt.isList() && rt.isList()) {
 			// element + List
 			sb.append("new " + returnType + "\n");
 			sb.append(left.toAsm());
-			sb.append("callmnative " + methodAdd + "\n");
+			sb.append("callnative " + methodAdd + "\n");
 			sb.append(right.toAsm());
-			sb.append("callmnative " + methodAddList + "\n");
+			sb.append("callnative " + methodAddList + "\n");
 		}
 
 		return sb.toString();
