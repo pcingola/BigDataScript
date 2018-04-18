@@ -1,21 +1,3 @@
-#!/usr/bin/env bds
-
-in := 'zx'
-out := 1
-
-switch( in ) {
-	case 'a': 
-		out *= 3
-		break
-
-	case 'z'+'x':
-		out *= 5
-
-	case 'b':
-		out *= 7
-		break
-
-	default:
-		out *= 100
-}
-
+int a,b,c
+(a, b, c) = [ 1, 3, 5 ]
+print("a:$a\nb:$b\nc:$c\n")

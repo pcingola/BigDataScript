@@ -76,6 +76,31 @@ public class ExpressionAssignmentList extends ExpressionAssignment {
 	}
 
 	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+
+		String varList = baseVarName() + "list";
+
+		// Evaluate list on the right hand side and assign to tmp variable
+		sb.append(right.toAsm());
+		sb.append("var " + varList + "\n");
+		sb.append("pop\n");
+
+		for (int i = 0; i < lefts.length; i++) {
+			// Get list[i]
+			sb.append("pushi " + i + "\n");
+			sb.append("load " + varList + "\n");
+			sb.append("reflist\n");
+
+			// Assign to item 'i' on the left hand side
+			Reference refLeft = ((Reference) lefts[i]);
+			sb.append(refLeft.toAsmSet());
+		}
+
+		return sb.toString();
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
