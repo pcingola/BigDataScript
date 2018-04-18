@@ -79,6 +79,10 @@ public class FunctionDeclaration extends StatementWithScope {
 		return false;
 	}
 
+	public boolean isMethod() {
+		return false;
+	}
+
 	public boolean isNative() {
 		return false;
 	}

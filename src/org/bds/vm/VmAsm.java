@@ -15,7 +15,6 @@ import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
 import org.bds.util.Gpr;
-import org.bds.util.GprString;
 
 /**
  * Assembly compiler and debugger for BdsVm
@@ -113,11 +112,6 @@ public class VmAsm {
 		bdsvm.setCode(code);
 		if (debug) System.err.println("# Assembly: Start\n" + bdsvm.toAsm() + "\n# Assembly: End\n");
 		return bdsvm;
-	}
-
-	Type getType(String typeName) {
-		if (!typeByName.containsKey(typeName)) throw new RuntimeException("Cannot find type '" + typeName + "'");
-		return typeByName.get(typeName);
 	}
 
 	/**
@@ -242,51 +236,11 @@ public class VmAsm {
 	}
 
 	/**
-	 * Convert parameter string to appropriate constant type
-	 */
-	Object parseConstant(OpCode opcode, String param) {
-		switch (opcode) {
-		case CALL:
-		case CALLNATIVE:
-		case CALLM:
-		case CALLMNATIVE:
-		case JMP:
-		case JMPT:
-		case JMPF:
-		case LOAD:
-		case PUSHS:
-		case REFFIELD:
-		case SETFIELD:
-		case STORE:
-		case VAR:
-			return parseParamString(param);
-
-		case NEW:
-			return getType(param);
-
-		case NODE:
-			return Gpr.parseIntSafe(param);
-
-		case PUSHB:
-			return Gpr.parseBoolSafe(param);
-
-		case PUSHI:
-			return Gpr.parseLongSafe(param);
-
-		case PUSHR:
-			return Gpr.parseDoubleSafe(param);
-
-		default:
-			throw new RuntimeException("Unknown parameter type for opcode '" + opcode + "'");
-		}
-	}
-
-	/**
 	 * Convert parameter string to appropriate constant type and add it to constant pool
 	 * @return Index in constant pool
 	 */
 	int parseParam(OpCode opcode, String param) {
-		Object oparam = parseConstant(opcode, param);
+		Object oparam = opcode.parseParam(param, typeByName);
 
 		switch (opcode) {
 		case NEW:
@@ -298,20 +252,6 @@ public class VmAsm {
 		default:
 			return bdsvm.addConstant(oparam);
 		}
-	}
-
-	/**
-	 * Parse literal string
-	 */
-	String parseParamString(String param) {
-		int lastCharIdx = param.length() - 1;
-		if ((param.charAt(0) == '\'' && param.charAt(lastCharIdx) == '\'') // Using single quotes
-				|| (param.charAt(0) == '"' && param.charAt(lastCharIdx) == '"')) // Using double quotes
-		{
-			String escapedStr = param.substring(1, param.length() - 1); // Remove quotes
-			return GprString.unescape(escapedStr);
-		}
-		return param; // Unquoted string
 	}
 
 	/**

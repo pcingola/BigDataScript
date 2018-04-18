@@ -1,4 +1,14 @@
+#!/usr/bin/env bds
 
-conf := config("test/myfile.config")
-file1 := conf{'file1'}
+# A function defining two sequential tasks
+void someFunction(int x) {
+	print "Par: $x\n"
+  	#task echo Task1 iter $x; sleep 1
+}
+
+# A loop fires threads of sequential tasks
+for ( int i : range(0,10) ) {
+	print "Loop: $i\n";
+   	par someFunction(i.clone())
+}
 

@@ -1,5 +1,11 @@
 package org.bds.vm;
 
+import java.util.Map;
+
+import org.bds.lang.type.Type;
+import org.bds.util.Gpr;
+import org.bds.util.GprString;
+
 /**
  * The opcodes are stored into an array of Integers
  *
@@ -28,10 +34,6 @@ public enum OpCode {
 	//    CALL function_signature
 	//    CALLNATIVE function_signature
 	, CALL, CALLNATIVE
-	// Method call:
-	//    CALL method_signature
-	//    CALLNATIVE method_signature
-	, CALLM, CALLMNATIVE
 	// Decrement (i.e. valueInt--)
 	, DEC
 	// Dependency operator
@@ -119,6 +121,11 @@ public enum OpCode {
 	//
 	;
 
+	Type getType(String typeName, Map<String, Type> typeByName) {
+		if (!typeByName.containsKey(typeName)) throw new RuntimeException("Cannot find type '" + typeName + "'");
+		return typeByName.get(typeName);
+	}
+
 	/**
 	 * Number of parameters associated with this operand
 	 */
@@ -126,8 +133,6 @@ public enum OpCode {
 		switch (this) {
 		case CALL:
 		case CALLNATIVE:
-		case CALLM:
-		case CALLMNATIVE:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -165,8 +170,6 @@ public enum OpCode {
 		switch (this) {
 		case CALL:
 		case CALLNATIVE:
-		case CALLM:
-		case CALLMNATIVE:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -190,8 +193,61 @@ public enum OpCode {
 		return this == NEW;
 	}
 
+	/**
+	 * Convert parameter string to appropriate constant type
+	 */
+	public Object parseParam(String param, Map<String, Type> typeByName) {
+		switch (this) {
+		case CALL:
+		case CALLNATIVE:
+		case JMP:
+		case JMPT:
+		case JMPF:
+		case LOAD:
+		case PUSHS:
+		case REFFIELD:
+		case SETFIELD:
+		case STORE:
+		case VAR:
+			return parseParamString(param);
+
+		case NEW:
+			return getType(param, typeByName);
+
+		case NODE:
+			return Gpr.parseIntSafe(param);
+
+		case PUSHB:
+			return Gpr.parseBoolSafe(param);
+
+		case PUSHI:
+			return Gpr.parseLongSafe(param);
+
+		case PUSHR:
+			return Gpr.parseDoubleSafe(param);
+
+		default:
+			throw new RuntimeException("Unknown parameter type for opcode '" + this + "'");
+		}
+	}
+
+	/**
+	 * Parse literal string
+	 */
+	String parseParamString(String param) {
+		int lastCharIdx = param.length() - 1;
+		if ((param.charAt(0) == '\'' && param.charAt(lastCharIdx) == '\'') // Using single quotes
+				|| (param.charAt(0) == '"' && param.charAt(lastCharIdx) == '"')) // Using double quotes
+		{
+			String escapedStr = param.substring(1, param.length() - 1); // Remove quotes
+			return GprString.unescape(escapedStr);
+		}
+		return param; // Unquoted string
+	}
+
 	@Override
 	public String toString() {
 		return super.toString().toLowerCase();
 	}
+
 }

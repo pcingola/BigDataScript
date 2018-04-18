@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bds.lang.type.Type;
+import org.bds.util.Gpr;
 
 /**
  * Define a value of type map
@@ -57,6 +58,10 @@ public class ValueMap extends ValueComposite {
 	 * Get element 'key' (which is a 'Value' object)
 	 */
 	public Value getValue(Value key) {
+		for (Value k : map.keySet()) {
+			Gpr.debug("'" + k + "' : " + map.get(k));
+			if (k.equals(key)) Gpr.debug("FOUND: " + key);
+		}
 		return map.get(key);
 	}
 

@@ -1,8 +1,5 @@
 package org.bds.lang.nativeFunctions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.value.Value;
@@ -31,27 +28,6 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	protected void addNativeFunction() {
 		GlobalScope.get().add(this);
 		GlobalSymbolTable.get().add(this);
-	}
-
-	/**
-	 * Convert an array to a list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList array2list(Object objects[]) {
-		ArrayList list = new ArrayList(objects.length);
-		Collections.addAll(list, objects);
-		return list;
-	}
-
-	/**
-	 * Convert an array to a list and sort the list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList array2listSorted(Object objects[]) {
-		ArrayList list = new ArrayList(objects.length);
-		Collections.addAll(list, objects);
-		Collections.sort(list);
-		return list;
 	}
 
 	/**

@@ -37,6 +37,11 @@ public class MethodDeclaration extends FunctionDeclaration {
 	}
 
 	@Override
+	public boolean isMethod() {
+		return true;
+	}
+
+	@Override
 	protected void parse(ParseTree tree) {
 		super.parse(tree.getChild(0));
 	}

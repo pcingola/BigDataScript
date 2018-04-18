@@ -45,7 +45,7 @@ public class ValueString extends ValuePrimitive {
 
 	@Override
 	public boolean equals(Object v) {
-		if (v instanceof ValueString) return value == ((ValueString) v).value;
+		if (v instanceof ValueString) return value.equals(((ValueString) v).value);
 		return false;
 	}
 

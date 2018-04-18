@@ -1,6 +1,7 @@
 package org.bds.test;
 
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bds.util.Gpr;
 import org.junit.Test;
@@ -14,48 +15,19 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test107() {
+	public void test113_parallel_function_calls() {
 		Gpr.debug("Test");
-		verbose = debug = true;
-		HashMap<String, Object> expectedValues = new HashMap<>();
-		expectedValues.put("paramName", "parameter_value");
-		expectedValues.put("file1", "/path/to/file_1.txt");
-		expectedValues.put("file2", "/path/to/file_2.txt");
-		expectedValues.put("file3", "/path/to/file_3.txt");
-		expectedValues.put("file4", "/path/to/file_4.txt");
-		expectedValues.put("file5", "/path/to/file_5.txt");
+		String stdout = runAndReturnStdout("test/run_113.bds");
 
-		runAndCheck("test/run_107.bds", expectedValues);
+		Set<String> linesPar = new HashSet<>();
+		for (String line : stdout.split("\n")) {
+			if (line.startsWith("Par:")) {
+				if (linesPar.contains(line)) throw new RuntimeException("Line repeated (this should never happen): '" + line + "'");
+				linesPar.add(line);
+			}
+		}
 	}
 
-	//	@Test
-	//	public void test108() {
-	//		Gpr.debug("Test");
-	//		HashMap<String, Object> expectedValues = new HashMap<>();
-	//		expectedValues.put("paramName", "parameter_value");
-	//		expectedValues.put("file1", "/path/to/file_1.txt");
-	//		expectedValues.put("file2", "/path/to/file_2.txt");
-	//		expectedValues.put("file3", "/path/to/file_3.NEW.txt");
-	//		expectedValues.put("file4", "/path/to/file_4.txt");
-	//		expectedValues.put("file5", "/path/to/file_5.NEW.txt");
-	//
-	//		runAndCheck("test/run_108.bds", expectedValues);
-	//	}
-	//
-	//	@Test
-	//	public void test113_parallel_function_calls() {
-	//		Gpr.debug("Test");
-	//		String stdout = runAndReturnStdout("test/run_113.bds");
-	//
-	//		Set<String> linesPar = new HashSet<>();
-	//		for (String line : stdout.split("\n")) {
-	//			if (line.startsWith("Par:")) {
-	//				if (linesPar.contains(line)) throw new RuntimeException("Line repeated (this should never happen): '" + line + "'");
-	//				linesPar.add(line);
-	//			}
-	//		}
-	//	}
-	//
 	//	@Test
 	//	public void test114_parallel_function_task_calls() {
 	//		Gpr.debug("Test");

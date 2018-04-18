@@ -216,53 +216,27 @@ public class BdsVm {
 		pc = func.getPc(); // Jump to function
 	}
 
+	//	/**
+	//	 * Call a method
+	//	 * @param name: Method's signature
+	//	 */
+	//	void callMethod(String fsig) {
+	//		pushCallFrame(); // Push stack frame
+	//
+	//		VmFunction func = getFunction(fsig); // Find method meta-data
+	//		newScope(); // Create a new scope
+	//
+	//		// Add all arguments to the scope. Remember that stack in reverse order
+	//		String[] args = func.getArgs();
+	//		for (int i = args.length - 1; i >= 0; i--)
+	//			scope.add(args[i], pop());
+	//
+	//		pc = func.getPc(); // Jump to function
+	//	}
+
 	/**
-	 * Call a method
+	 * Call a native method or function 
 	 * @param name: Method's signature
-	 */
-	void callMethod(String fsig) {
-		pushCallFrame(); // Push stack frame
-
-		VmFunction func = getFunction(fsig); // Find method meta-data
-		newScope(); // Create a new scope
-
-		// Add all arguments to the scope. Remember that stack in reverse order
-		String[] args = func.getArgs();
-		for (int i = args.length - 1; i >= 0; i--)
-			scope.add(args[i], pop());
-
-		pc = func.getPc(); // Jump to function
-	}
-
-	/**
-	 * Call a method
-	 * @param name: Method's signature
-	 */
-	void callMethodNative(String fsig) {
-		// Find function
-		FunctionDeclaration fdecl = functionsBySignature.get(fsig);
-
-		newScope(); // Create a new scope
-
-		// Add all arguments to the scope. Remember that stack in reverse order
-		Value vthis = null; // The last item to pop from the stack is 'this'
-		List<String> args = fdecl.getParameterNames();
-		for (int i = args.size() - 1; i >= 0; i--) {
-			vthis = pop();
-			scope.add(args.get(i), vthis);
-		}
-
-		// Run method
-		MethodNative mn = (MethodNative) fdecl;
-		Value retVal = mn.runMethod(bdsThread, vthis);
-
-		push(retVal); // Push result to stack
-		popScope(); // Restore old scope
-	}
-
-	/**
-	 * Call native function
-	 * @param fsig
 	 */
 	void callNative(String fsig) {
 		// Find function
@@ -270,17 +244,52 @@ public class BdsVm {
 
 		newScope(); // Create a new scope
 
-		// Add all arguments to the scope. Remember that stack in reverse order
+		// Args: Add all arguments to the scope
+		// Note: Stack in reverse order
+		Value vthis = null; // The last item to pop from the stack is 'this'
 		List<String> args = fdecl.getParameterNames();
-		for (int i = args.size() - 1; i >= 0; i--)
-			scope.add(args.get(i), pop());
+		for (int i = args.size() - 1; i >= 0; i--) {
+			vthis = pop();
+			scope.add(args.get(i), vthis);
+		}
 
-		// Run function
-		FunctionNative fn = (FunctionNative) fdecl;
-		Value retVal = fn.runFunction(bdsThread);
+		// Invoke
+		Value retVal;
+		if (fdecl.isMethod()) {
+			// Run method
+			MethodNative mn = (MethodNative) fdecl;
+			retVal = mn.runMethod(bdsThread, vthis);
+		} else {
+			// Run function
+			FunctionNative fn = (FunctionNative) fdecl;
+			retVal = fn.runFunction(bdsThread);
+		}
+
 		push(retVal); // Push result to stack
 		popScope(); // Restore old scope
 	}
+
+	//	/**
+	//	 * Call native function
+	//	 * @param fsig
+	//	 */
+	//	void callNative(String fsig) {
+	//		// Find function
+	//		FunctionDeclaration fdecl = functionsBySignature.get(fsig);
+	//
+	//		newScope(); // Create a new scope
+	//
+	//		// Add all arguments to the scope. Remember that stack in reverse order
+	//		List<String> args = fdecl.getParameterNames();
+	//		for (int i = args.size() - 1; i >= 0; i--)
+	//			scope.add(args.get(i), pop());
+	//
+	//		// Run function
+	//		FunctionNative fn = (FunctionNative) fdecl;
+	//		Value retVal = fn.runFunction(bdsThread);
+	//		push(retVal); // Push result to stack
+	//		popScope(); // Restore old scope
+	//	}
 
 	/**
 	 * Parameters is a reference to a 'bool' constant
@@ -664,20 +673,15 @@ public class BdsVm {
 				call(name);
 				break;
 
-			case CALLM:
-				name = constantString(); // Get method signature
-				callMethod(name);
-				break;
-
 			case CALLNATIVE:
-				name = constantString(); // Get function signature
+				name = constantString(); // Get signature
 				callNative(name);
 				break;
 
-			case CALLMNATIVE:
-				name = constantString(); // Get method signature
-				callMethodNative(name);
-				break;
+			//			case CALLMNATIVE:
+			//				name = constantString(); // Get method signature
+			//				callMethodNative(name);
+			//				break;
 
 			case CAST_TOB:
 				push(pop().asBool());
