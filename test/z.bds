@@ -1,15 +1,10 @@
 #!/usr/bin/env bds
 
-# A loop fires threads of funcions
-par {
-	for(int i : range(1, 10)) {
-		println("\tPAR i: $i")
-		sleep(0.5)
-	}
-}
+n := 10
+s := n > 0 ? 1 : -1
+print("n: $n\ts: $s\n")
 
-
-for(int i : range(1, 10)) {
-	println("MAIN i: $i")
-	sleep(1.0)
-}
+# for(int i : range(1, 10)) {
+# 	println("i: $i")
+# 	if(i == 4) checkpoint "/tmp/z.chp"
+# }

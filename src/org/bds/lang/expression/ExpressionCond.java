@@ -58,6 +58,29 @@ public class ExpressionCond extends Expression {
 	}
 
 	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+
+		String labelTrue = baseLabelName() + "true";
+		String labelFalse = baseLabelName() + "false";
+		String labelEnd = baseLabelName() + "end";
+
+		sb.append(expr.toAsm());
+		sb.append("jmpf " + labelFalse + "\n");
+
+		sb.append(labelTrue + ":\n");
+		sb.append(exprTrue.toAsm());
+		sb.append("jmp " + labelEnd + "\n");
+
+		sb.append(labelFalse + ":\n");
+		sb.append(exprFalse.toAsm());
+
+		sb.append(labelEnd + ":\n");
+
+		return sb.toString();
+	}
+
+	@Override
 	public String toString() {
 		return expr.toString() + " ? " + exprTrue + " : " + exprFalse;
 	}
