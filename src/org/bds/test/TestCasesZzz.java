@@ -1,10 +1,5 @@
 package org.bds.test;
 
-import java.util.HashMap;
-
-import org.bds.util.Gpr;
-import org.junit.Test;
-
 /**
  * Quick test cases when creating a new feature...
  *
@@ -13,29 +8,6 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	@Test
-	public void test102() {
-		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<>();
-		expectedValues.put("a", 1);
-		expectedValues.put("b", 3);
-		expectedValues.put("c", 5);
-		expectedValues.put("d", 1);
-
-		runAndCheck("test/run_102.bds", expectedValues);
-	}
-
-	//	@Test
-	//	public void test103() {
-	//		Gpr.debug("Test");
-	//		HashMap<String, Object> expectedValues = new HashMap<>();
-	//		expectedValues.put("is", "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
-	//		expectedValues.put("is2", "[1, 3, 5, 7, 9]");
-	//		expectedValues.put("rs", "[1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]");
-	//
-	//		runAndCheck("test/run_103.bds", expectedValues);
-	//	}
-	//
 	//	@Test
 	//	public void test107() {
 	//		Gpr.debug("Test");

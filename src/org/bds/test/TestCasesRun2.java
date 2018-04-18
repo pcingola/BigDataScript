@@ -51,7 +51,7 @@ public class TestCasesRun2 extends TestCasesBase {
 		expectedValues.put("a", 1);
 		expectedValues.put("b", 3);
 		expectedValues.put("c", 5);
-		expectedValues.put("d", 0);
+		expectedValues.put("d", 1);
 
 		runAndCheck("test/run_102.bds", expectedValues);
 	}

@@ -35,8 +35,8 @@ public class FunctionNativeRangeReal extends FunctionNative {
 
 	@Override
 	public Value runFunction(BdsThread bdsThread) {
-		long min = bdsThread.getInt("min");
-		long max = bdsThread.getInt("max");
+		double min = bdsThread.getReal("min");
+		double max = bdsThread.getReal("max");
 		double step = bdsThread.getReal("step");
 
 		ValueList list = new ValueList(returnType);

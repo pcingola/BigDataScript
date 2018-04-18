@@ -25,7 +25,7 @@ public class ValueReal extends ValuePrimitive {
 
 	@Override
 	public long asInt() {
-		throw new RuntimeException("Cannot convert type '" + getType() + "' to real");
+		throw new RuntimeException("Cannot convert type '" + getType() + "' to int");
 	}
 
 	@Override
