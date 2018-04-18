@@ -13,8 +13,15 @@ import org.bds.util.Gpr;
  */
 public class Default extends Case {
 
+	private static final long serialVersionUID = 147612756509370665L;
+
 	public Default(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	@Override
+	protected String label() {
+		return baseLabelName() + "default";
 	}
 
 	@Override
@@ -41,6 +48,11 @@ public class Default extends Case {
 		statements = stats.toArray(new Statement[0]);
 
 		return idx;
+	}
+
+	@Override
+	public String toAsmCondition() {
+		return "";
 	}
 
 	@Override

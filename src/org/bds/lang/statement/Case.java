@@ -19,6 +19,8 @@ import org.bds.util.Gpr;
  */
 public class Case extends StatementWithScope {
 
+	private static final long serialVersionUID = -1263350436763086010L;
+
 	Expression expression;
 	Statement[] statements;
 	ExpressionEq exprEq;
@@ -31,6 +33,10 @@ public class Case extends StatementWithScope {
 	protected boolean isEndOfStatements(ParseTree tree, int idx) {
 		if (idx >= tree.getChildCount()) return true;
 		return isTerminal(tree, idx, "case") || isTerminal(tree, idx, "default");
+	}
+
+	protected String label() {
+		return baseLabelName() + "case";
 	}
 
 	@Override
@@ -70,65 +76,41 @@ public class Case extends StatementWithScope {
 		return idx;
 	}
 
-	//	/**
-	//	 * Evaluate case expression
-	//	 */
-	//	boolean runCaseExpr(BdsThread bdsThread) {
-	//		if (expression == null) return true; // No expression? Always true (e.g. 'default')
-	//
-	//		bdsThread.run(expression);
-	//		if (bdsThread.isCheckpointRecover()) return true;
-	//
-	//		Value caseRes = bdsThread.pop(); // Value form 'case expression'
-	//		Value switchRes = bdsThread.peek(); // Switch expression map
-	//		return exprEq.compare(bdsThread, switchRes, caseRes); //Compare them
-	//	}
-	//
-	//	/**
-	//	 * Run case statements
-	//	 */
-	//	void runStatements(BdsThread bdsThread) {
-	//		for (Statement s : statements)
-	//			bdsThread.run(s);
-	//	}
-	//
-	//	/**
-	//	 * Run the program
-	//	 * Keep in mind that each 'case' is executed with two values
-	//	 * pushed into the stack by 'switch' execution:
-	//	 * 		1) Previous case condition result (boolean: was the expression equal to 'switch' expression?)
-	//	 * 		2) Switch expression result
-	//	 */
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		if (bdsThread.isCheckpointRecover()) {
-	//			boolean caseCond = runCaseExpr(bdsThread);
-	//			if (bdsThread.isCheckpointRecover() || caseCond) {
-	//				runStatements(bdsThread);
-	//				// Since this statements were executed, it means that the
-	//				// case condition (either the expression of the fall-through)
-	//				// are true. We need to push the map into the stack, because
-	//				// the next 'case' may have have a fall-through
-	//				bdsThread.push(true);
-	//				return;
-	//			}
-	//		}
-	//
-	//		// Pop the previous 'case' condition map (fall-through?)
-	//		boolean prevCaseCond = bdsThread.popBool();
-	//		boolean caseCond = prevCaseCond;
-	//		if (prevCaseCond) {
-	//			// Previous case condition was true => Fall-through, we execute statements
-	//			runStatements(bdsThread);
-	//		} else {
-	//			caseCond = runCaseExpr(bdsThread);
-	//			// Case condition true => execute statements
-	//			if (caseCond) runStatements(bdsThread);
-	//		}
-	//
-	//		// Push 'case condition' to stack
-	//		bdsThread.push(caseCond);
-	//	}
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+
+		// Statement
+		sb.append(label() + ":\n");
+		for (Statement s : statements)
+			sb.append(s.toAsm());
+
+		return sb.toString();
+	}
+
+	/**
+	 * Evaluate case expression and jump to case statements if it is equals to switch expression
+	 */
+	public String toAsmCondition() {
+		StringBuilder sb = new StringBuilder();
+
+		String labelCaseCond = baseLabelName() + "case_condition";
+		sb.append(labelCaseCond + ":\n");
+
+		// Switch expression return type
+		Switch switchSt = (Switch) parent;
+		Expression switchExpr = switchSt.getSwitchExpr();
+
+		// Evaluate case expression
+		sb.append("dup\n"); // A copy of 'switchExpr' result will be consumed in 'eq' test
+		sb.append(expression.toAsm());
+
+		// Is it equal to switch expression?
+		sb.append("eq" + switchExpr.toAsmRetType() + "\n");
+		sb.append("jmpt " + label() + "\n"); // Equal? Jump to label
+
+		return sb.toString();
+	}
 
 	@Override
 	public String toString() {
@@ -162,8 +144,7 @@ public class Case extends StatementWithScope {
 				// OK, convert to numeric
 			} else {
 				compilerMessages.add(this//
-						,
-						"Switch expression and case expression types do not match (" //
+						, "Switch expression and case expression types do not match (" //
 								+ switchExprType + " vs " + caseExprType //
 								+ "): case " + expression,
 						MessageType.ERROR);

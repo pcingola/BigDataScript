@@ -59,70 +59,69 @@ public class Switch extends Statement {
 		defaultStatement = defSt;
 	}
 
-	//	void restoreStack(BdsThread bdsThread) {
-	//		if (bdsThread.isCheckpointRecover()) return;
-	//		bdsThread.pop(); // Remove case 'fall-through' result from stack
-	//		bdsThread.pop(); // Remove switch expression result from stack
-	//	}
-	//
-	//	/**
-	//	 * Run the program
-	//	 */
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		// Run switch expression
-	//		runSwitchExpression(bdsThread);
-	//
-	//		if (!bdsThread.isCheckpointRecover()) {
-	//			// Put the fall-through map in the stack
-	//			bdsThread.push(false);
-	//		}
-	//
-	//		// Run each of the 'case' statements
-	//		for (Case caseSt : caseStatements) {
-	//			caseSt.runStep(bdsThread);
-	//
-	//			switch (bdsThread.getRunState()) {
-	//			case OK:
-	//			case CHECKPOINT_RECOVER:
-	//				break;
-	//
-	//			case BREAK: // Break from 'switch'
-	//				bdsThread.setRunState(RunState.OK);
-	//				restoreStack(bdsThread);
-	//				return;
-	//
-	//			case CONTINUE: // Continue: Breaking form a 'for' loop. Propagate 'continue' state
-	//			case RETURN: // Return
-	//			case EXIT: // Exit program
-	//			case FATAL_ERROR:
-	//				restoreStack(bdsThread);
-	//				return;
-	//
-	//			default:
-	//				throw new RuntimeException("Unhandled RunState: " + bdsThread.getRunState());
-	//			}
-	//		}
-	//
-	//		// Run default statement
-	//		if (defaultStatement != null) {
-	//			defaultStatement.runStep(bdsThread);
-	//			// When the 'default' is in the middle of a 'switch', there can be
-	//			// a 'break' statement. In this case we must clear the 'break' state
-	//			// so it doesn't get propagated
-	//			if (bdsThread.getRunState() == RunState.BREAK) bdsThread.setRunState(RunState.OK);
-	//		}
-	//
-	//		restoreStack(bdsThread);
-	//	}
-	//
-	//	/**
-	//	 * Evaluate switch expression
-	//	 */
-	//	void runSwitchExpression(BdsThread bdsThread) {
-	//		if (switchExpr == null) return;
-	//		bdsThread.run(switchExpr);
-	//	}
+	/**
+	 * Run the program
+	 */
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+
+		String labelSwitch = baseLabelName() + "switch";
+		String labelEnd = baseLabelName() + "end";
+		String labelDefault = baseLabelName() + "default";
+		String labelDefaultCondition = baseLabelName() + "default_condition";
+
+		// Run switch expression
+		sb.append(labelSwitch + ":\n");
+		sb.append("scopepush\n");
+		sb.append(toAsmSwitchExpression());
+
+		//---
+		// Case conditions
+		// Note this could be implemented using a jump table, but in bds a
+		// 'case' can have arbitrary expressions, such as function calls.
+		//---
+
+		// Compare to each case expression
+		for (Case caseSt : caseStatements)
+			sb.append(caseSt.toAsmCondition());
+
+		// Is there a default statement?
+		if (defaultStatement != null) {
+			sb.append(labelDefaultCondition + ":\n");
+			sb.append("jmp " + defaultStatement.label() + "\n");
+		} else {
+			sb.append("jmp " + labelEnd + "\n");
+		}
+
+		//---
+		// Case statements
+		//---
+		for (Case caseSt : caseStatements)
+			sb.append(caseSt.toAsm());
+
+		// Default statement
+		if (defaultStatement != null) {
+			sb.append(labelDefault + ":\n");
+			sb.append(defaultStatement.toAsm());
+		}
+
+		// We are done
+		sb.append(labelEnd + ":\n");
+		sb.append("pop\n"); // Remove switch expression
+		sb.append("scopepop\n"); // Restore scope
+
+		return sb.toString();
+	}
+
+	/**
+	 * Evaluate switch expression
+	 */
+	String toAsmSwitchExpression() {
+		if (switchExpr == null) return "";
+		return switchExpr.toAsm();
+	}
 
 	@Override
 	public String toString() {

@@ -1,7 +1,5 @@
 package org.bds.test;
 
-import java.util.HashMap;
-
 import org.bds.util.Gpr;
 import org.junit.Test;
 
@@ -14,15 +12,27 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test100() {
+	public void test145_switch() {
 		Gpr.debug("Test");
-		verbose = debug = true;
+		runAndCheck("test/run_145.bds", "out", 3);
+	}
 
-		HashMap<String, Object> expectedValues = new HashMap<>();
-		expectedValues.put("s", 1);
-		expectedValues.put("s2", -1);
+	@Test
+	public void test146_switch_fallthrough() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_146.bds", "out", 35);
+	}
 
-		runAndCheck("test/run_100.bds", expectedValues);
+	@Test
+	public void test147_switch_default() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_147.bds", "out", 100);
+	}
+
+	@Test
+	public void test148_switch_default_fallthrough() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_148.bds", "out", 700);
 	}
 
 }

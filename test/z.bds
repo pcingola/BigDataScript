@@ -1,10 +1,21 @@
 #!/usr/bin/env bds
 
-n := 10
-s := n > 0 ? 1 : -1
-print("n: $n\ts: $s\n")
+in := 'zx'
+out := 1
 
-# for(int i : range(1, 10)) {
-# 	println("i: $i")
-# 	if(i == 4) checkpoint "/tmp/z.chp"
-# }
+switch( in ) {
+	case 'a': 
+		out *= 3
+		break
+
+	case 'z'+'x':
+		out *= 5
+
+	case 'b':
+		out *= 7
+		break
+
+	default:
+		out *= 100
+}
+

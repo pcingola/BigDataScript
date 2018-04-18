@@ -3,6 +3,7 @@ package org.bds.vm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 import org.bds.task.Task;
 import org.bds.task.TaskDependency;
+import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
 import org.bds.util.GprString;
 
@@ -57,7 +59,7 @@ public class BdsVm {
 	CallFrame[] callFrame; // Call Frame stack
 	boolean verbose;
 	Map<String, Integer> labels;
-	Map<Integer, String> labelsByPc;
+	AutoHashMap<Integer, List<String>> labelsByPc;
 	Map<Object, Integer> constantsByObject;
 	Map<String, VmFunction> functions;
 	Map<String, FunctionDeclaration> functionsBySignature;
@@ -71,7 +73,7 @@ public class BdsVm {
 		constantsByObject = new HashMap<>();
 		functions = new HashMap<>();
 		labels = new HashMap<>();
-		labelsByPc = new HashMap<>();
+		labelsByPc = new AutoHashMap<>(new LinkedList<String>());
 		functionsBySignature = new HashMap<>();
 		scope = new Scope();
 		stack = new Value[STACK_SIZE];
@@ -175,7 +177,7 @@ public class BdsVm {
 	 */
 	public void addLabel(String label, int codeidx) {
 		labels.put(label, codeidx);
-		labelsByPc.put(codeidx, label);
+		labelsByPc.getOrCreate(codeidx).add(label);
 	}
 
 	/**
@@ -405,7 +407,7 @@ public class BdsVm {
 	/**
 	 * Get label at code idx
 	 */
-	public String getLabel(int codeidx) {
+	public List<String> getLabel(int codeidx) {
 		return labelsByPc.get(codeidx);
 	}
 
@@ -1195,27 +1197,34 @@ public class BdsVm {
 	 * Show opcode at 'pc'
 	 */
 	String toAsm(int pc) {
+		StringBuilder sb = new StringBuilder();
+
 		// Any label?
-		String label = getLabel(pc);
+		List<String> labels = getLabel(pc);
+		if (labels != null) {
+			for (String l : labels)
+				sb.append(l + ":\n");
+		}
 
 		// Show opcode
 		OpCode op = OPCODES[code[pc]];
 		String opstr = op.toString().toLowerCase();
+		sb.append("\t" + opstr);
 
 		// Parameter?
-		String param = null;
 		if (op.hasParam()) {
+			String param = null;
+
 			int idx = code[++pc];
 			if (op.isParamString()) param = "'" + getConstant(idx) + "'";
 			else if (op.isParamType()) param = "'" + getType(idx) + "'";
 			else if (op.isParamNodeId()) param = "" + idx;
 			else param = getConstant(idx).toString();
+
+			sb.append(" " + param);
 		}
 
-		return (label != null ? label + ":\n" : "") //
-				+ "\t" + opstr //
-				+ (param != null ? " " + param : "") //
-		;
+		return sb.toString();
 	}
 
 	@Override

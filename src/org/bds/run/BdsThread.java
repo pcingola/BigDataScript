@@ -976,7 +976,7 @@ public class BdsThread extends Thread implements Serializable {
 			vm.run();
 		} catch (Throwable t) {
 			setRunState(RunState.FATAL_ERROR);
-			if (isVerbose()) throw new RuntimeException(t);
+			if (isVerbose()) throw new RuntimeException("Fatal error", t);
 			else Timer.showStdErr("Fatal error: Program execution finished");
 		}
 	}
