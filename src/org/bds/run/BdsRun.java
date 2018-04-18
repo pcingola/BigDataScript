@@ -403,7 +403,7 @@ public class BdsRun {
 		if (parseCmdLineArgs()) return 0;
 
 		// Create thread
-		BdsThread bdsThread = new BdsThread(programUnit, config);
+		BdsThread bdsThread = new BdsThread(programUnit, config, null);
 		if (debug) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
 
 		// Run tests
@@ -417,7 +417,7 @@ public class BdsRun {
 	 * that executes the function's body
 	 */
 	int runTests(ProgramUnit progUnit) {
-		// We need to execute all variable declarations in order to be able to use global vairables in 'test*()' functions"
+		// We need to execute all variable declarations in order to be able to use global variables in 'test*()' functions"
 		List<VarDeclaration> varDecls = programUnit.varDeclarations(false);
 		List<FunctionDeclaration> testFuncs = progUnit.testsFunctions();
 
@@ -467,7 +467,7 @@ public class BdsRun {
 		ProgramUnit puTest = new ProgramUnit(progUnit, null);
 		puTest.setStatements(statements.toArray(new Statement[0]));
 
-		BdsThread bdsTestThread = new BdsThread(puTest, config);
+		BdsThread bdsTestThread = new BdsThread(puTest, config, null);
 		int exitValTest = runThread(bdsTestThread);
 		return exitValTest;
 	}

@@ -44,6 +44,8 @@ public enum OpCode {
 	, EQB, EQI, EQR, EQS
 	// Error
 	, ERROR
+	// Create another thread
+	, FORK
 	// Greater or equal than
 	, GEB, GEI, GER, GES
 	// Greater than

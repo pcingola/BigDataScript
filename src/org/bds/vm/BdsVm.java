@@ -78,6 +78,9 @@ public class BdsVm {
 		types = new ArrayList<>();
 		typeToIndex = new HashMap<>();
 
+		sp = fp = pc = 0;
+		nodeId = -1;
+
 		// Initialize call frames
 		callFrame = new CallFrame[CALL_STACK_SIZE];
 		for (int i = 0; i < callFrame.length; i++)
@@ -272,7 +275,7 @@ public class BdsVm {
 
 		// Run function
 		FunctionNative fn = (FunctionNative) fdecl;
-		Value retVal = fn.runFunctionNativeValue(bdsThread);
+		Value retVal = fn.runFunction(bdsThread);
 		push(retVal); // Push result to stack
 		popScope(); // Restore old scope
 	}
@@ -343,6 +346,44 @@ public class BdsVm {
 		if (exitCode != null) return exitCode;
 		exitCode = isEmptyStack() ? 0 : (int) popInt();
 		return exitCode;
+	}
+
+	/**
+	 * Create a 'fork' vm-thread
+	 */
+	private BdsVm fork() {
+		BdsVm vmclone = new BdsVm();
+
+		vmclone.code = code;
+		vmclone.debug = debug;
+		vmclone.nodeId = nodeId;
+		vmclone.run = run;
+		vmclone.verbose = verbose;
+		vmclone.labels = labels;
+		vmclone.labelsByPc = labelsByPc;
+		vmclone.constantsByObject = constantsByObject;
+		vmclone.functions = functions;
+		vmclone.functionsBySignature = functionsBySignature;
+		vmclone.typeToIndex = typeToIndex;
+		vmclone.constants = constants;
+		vmclone.types = types;
+
+		// Child process
+		// vmclone.callFrame : Initialized, because child process has a new frame
+		// vmclone.fp        : Initialized to zero because child process has a new frame
+		// vmclone.bdsThread : Will be set by 'forked' bdsThread
+		vmclone.pc = pc; // Already pointing to instruction after 'fork'		
+		vmclone.scope = scope; // Same scope
+
+		return vmclone;
+	}
+
+	/**
+	 * Execute a 'fork' opcode
+	 */
+	void forkOpCode() {
+		BdsVm vmfork = fork();
+		bdsThread.fork(vmfork);
 	}
 
 	public BdsThread getBdsThread() {
@@ -537,7 +578,9 @@ public class BdsVm {
 	 */
 	public int run() {
 		// Initialize program counter
-		pc = Math.max(0, getLabel(LABLE_MAIN));
+		// Note: If vm forked, then pc is already initialized in child
+		//       process, do not change.
+		if (pc == 0) pc = Math.max(0, getLabel(LABLE_MAIN));
 
 		// Add functions from global scope
 		addFunctions();
@@ -561,7 +604,6 @@ public class BdsVm {
 	 * Run the program in 'code'
 	 */
 	protected void runLoop() {
-		debug = true;
 		// First instruction
 		int instruction;
 		OpCode opcode = OpCode.NOOP;
@@ -705,6 +747,10 @@ public class BdsVm {
 				exitCode = Task.EXITCODE_ERROR;
 				bdsThread.setRunState(RunState.FATAL_ERROR);
 				return;
+
+			case FORK:
+				forkOpCode();
+				break;
 
 			case GEB:
 				b2 = popBool();

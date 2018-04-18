@@ -50,9 +50,11 @@ public class ExpressionTask extends ExpressionWithScope {
 	//			Yes, it's a horrible hack.
 	protected ExpressionTaskOptions options;
 	protected Statement statement;
+	protected boolean asmPushDeps;
 
 	public ExpressionTask(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+		asmPushDeps = true;
 	}
 
 	@Override
@@ -133,22 +135,15 @@ public class ExpressionTask extends ExpressionWithScope {
 		sb.append(super.toAsmNode()); // Task will use the node to get parameters
 		sb.append("scopepush\n");
 
+		// Define labels
 		String labelEnd = baseLabelName() + "end";
 		String labelFalse = baseLabelName() + "false";
 
-		if (options != null) {
-			sb.append(options.toAsm(labelFalse)); // Jump to 'labelFalse' if any of the bool expressions is false
-		} else {
-			// No options or dependencies.
-			// Add empty list as dependency
-			sb.append("new string[]\n");
-			sb.append("new string[]\n");
-		}
+		// Options
+		sb.append(toAsmOptions(labelFalse));
 
-		sb.append(toAsmSys()); // Sys commands
-
-		sb.append("task\n");
-		sb.append("jmp " + labelEnd + "\n"); // Go to the end
+		// Command (e.g. task and statements)
+		sb.append(toAsmCmd(labelEnd));
 
 		// Task expression not evaluated because one or more bool expressions was false
 		sb.append(labelFalse + ":\n");
@@ -161,9 +156,39 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	/**
+	 * Commands (i.e. task)
+	 */
+	protected String toAsmCmd(String labelEnd) {
+		StringBuilder sb = new StringBuilder();
+		// Statements (e.g.: sys commands)
+		sb.append(toAsmStatements());
+
+		sb.append("task\n");
+		sb.append("jmp " + labelEnd + "\n"); // Go to the end
+		return sb.toString();
+	}
+
+	/**
+	 * Options
+	 */
+	protected String toAsmOptions(String labelFalse) {
+		StringBuilder sb = new StringBuilder();
+
+		if (options != null) {
+			sb.append(options.toAsm(labelFalse, asmPushDeps)); // Jump to 'labelFalse' if any of the bool expressions is false
+		} else if (asmPushDeps) {
+			// No options or dependencies.
+			// Add empty list as dependency
+			sb.append("new string[]\n");
+			sb.append("new string[]\n");
+		}
+		return sb.toString();
+	}
+
+	/**
 	 * Evaluate 'sys' statements used to create task
 	 */
-	String toAsmSys() {
+	protected String toAsmStatements() {
 		// Only one 'sys' expression
 		if (statement instanceof StatementExpr) {
 			Expression exprSys = ((StatementExpr) statement).getExpression();

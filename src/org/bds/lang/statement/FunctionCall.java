@@ -73,6 +73,10 @@ public class FunctionCall extends Expression {
 		return null;
 	}
 
+	public Args getArgs() {
+		return args;
+	}
+
 	public FunctionDeclaration getFunctionDeclaration() {
 		return functionDeclaration;
 	}

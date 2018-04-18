@@ -3,12 +3,10 @@ package org.bds.lang.expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.statement.Args;
 import org.bds.lang.statement.FunctionCall;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementExpr;
-import org.bds.lang.value.ValueArgs;
-import org.bds.run.BdsThread;
-import org.bds.run.FunctionCallThread;
 
 /**
  * A 'par' expression
@@ -21,24 +19,7 @@ public class ExpressionParallel extends ExpressionTask {
 
 	public ExpressionParallel(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-	}
-
-	/**
-	 * Create a new BdsThread that runs in parallel
-	 */
-	BdsThread createParallel(BdsThread bdsThread) {
-		BdsThread bdsNewThread = new BdsThread(statement, bdsThread);
-		bdsNewThread.start();
-		return bdsNewThread;
-	}
-
-	/**
-	 * Create a new BdsThread that runs a function call in parallel
-	 */
-	FunctionCallThread createParallelFunctionCall(BdsThread bdsThread, ValueArgs args) {
-		FunctionCallThread bdsNewThread = new FunctionCallThread(this, getFunctionCall(), bdsThread, args);
-		bdsNewThread.start();
-		return bdsNewThread;
+		asmPushDeps = false;
 	}
 
 	/**
@@ -73,61 +54,65 @@ public class ExpressionParallel extends ExpressionTask {
 		statement = (Statement) factory(tree, idx++); // Parse statement
 	}
 
-	//	/**
-	//	 * Evaluate 'par' expression
-	//	 */
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		// Execute options assignments
-	//		if (options != null) {
-	//			bdsThread.run(options);
-	//
-	//			if (!bdsThread.isCheckpointRecover()) {
-	//				boolean ok = bdsThread.popBool();
-	//				if (bdsThread.isDebug()) log("task-options check " + ok);
-	//				if (!ok) {
-	//					// Options clause not satisfied. Do not execute 'parallel'
-	//					bdsThread.push("");
-	//					return;
-	//				}
-	//			}
-	//		}
-	//
-	//		// Create thread and execute statements
-	//		BdsThread bdsNewThread = null;
-	//		FunctionCall functionCall = getFunctionCall();
-	//		if (functionCall != null) {
-	//			// If the statement is a function call, we run it slightly differently:
-	//			// We first compute the function's arguments (in the current thread), to
-	//			// avoid race conditions. Then we create a thread and call the function
-	//
-	//			// Evaluate function arguments in current thread
-	//			ValueArgs arguments = functionCall.evalArgs(bdsThread);
-	//
-	//			if (!bdsThread.isCheckpointRecover()) {
-	//				// Create and run new thread that runs the function call in parallel
-	//				bdsNewThread = createParallelFunctionCall(bdsThread, arguments);
-	//			} else {
-	//				// When recovering from checkpoints, serialization mechanism takes care
-	//				// of creating new threads, so we don't need to do it again here.
-	//				bdsNewThread = bdsThread;
-	//				getFunctionCall().runStep(bdsThread);
-	//			}
-	//		} else {
-	//			if (!bdsThread.isCheckpointRecover()) {
-	//				// Create and run new bds thread
-	//				bdsNewThread = createParallel(bdsThread);
-	//			} else {
-	//				// When recovering from checkpoints, serialization mechanism takes care
-	//				// of creating new threads, so we don't need to do it again here.
-	//				bdsNewThread = bdsThread;
-	//				bdsThread.run(statement);
-	//			}
-	//		}
-	//
-	//		// Thread created. Return thread ID (so that we can 'wait' on it)
-	//		if (!bdsThread.isCheckpointRecover()) bdsThread.push(bdsNewThread.getBdsThreadId());
-	//	}
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsmNode()); // Task will use the node to get parameters
+		sb.append("scopepush\n");
+
+		// Define labels
+		String labelEnd = baseLabelName() + "end";
+		String labelFalse = baseLabelName() + "false";
+
+		// Options
+		sb.append(toAsmOptions(labelFalse));
+
+		// Command (e.g. task and statements)
+		sb.append(toAsmCmd(labelEnd));
+
+		// Task expression not evaluated because one or more bool expressions was false
+		sb.append(labelFalse + ":\n");
+		sb.append("pushs ''\n"); // Task not executed, push an empty task id
+
+		// End of task expression
+		sb.append(labelEnd + ":\n");
+		sb.append("scopepop\n");
+		return sb.toString();
+	}
+
+	/**
+	 * Fork and evaluate 'par' statements 
+	 */
+	@Override
+	protected String toAsmCmd(String labelEnd) {
+		StringBuilder sb = new StringBuilder();
+
+		String labelChild = baseLabelName() + "child";
+
+		// If the statement is a function call, we run it slightly differently.
+		// We first compute the function's arguments (in current thread), to
+		// avoid race conditions. Then we create a thread and call the function
+		FunctionCall functionCall = getFunctionCall();
+		if (functionCall != null) {
+			Args args = functionCall.getArgs();
+			if (args != null) sb.append(args.toAsm());
+		}
+
+		// Evaluate statements in new thread
+		// Fork returns non-empty string (i.e. bdsThreadId) for parent and 
+		// empty threadId for child. 
+		// Note that non-empty strings are 'true' when evaluated as bool, so
+		// parent is 'true' and child is 'false'
+		sb.append("fork\n");
+		sb.append("dup\n"); // Duplicate: One value used for branching, other as 'par' return value 
+		sb.append("jmpt " + labelEnd + "\n");
+		sb.append(labelChild + ":\n");
+		sb.append("pop\n"); // Child process: bdsThreadId discarded (empty string)
+		sb.append(statement.toAsm());
+		sb.append("halt\n"); // End thread when statements finish executing
+
+		return sb.toString();
+	}
 
 	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {

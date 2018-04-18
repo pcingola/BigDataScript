@@ -29,6 +29,7 @@ import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueString;
 import org.bds.osCmd.Exec;
 import org.bds.report.Report;
 import org.bds.scope.Scope;
@@ -51,7 +52,7 @@ public class BdsThread extends Thread implements Serializable {
 
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
-	private static int threadNumber = 1;
+	private static int bdsThreadNumber = 1;
 
 	Config config; // Config
 	Random random; // Random number generator
@@ -85,37 +86,39 @@ public class BdsThread extends Thread implements Serializable {
 	/**
 	 * Get an ID for a node
 	 */
-	protected synchronized static int bigDataScriptThreadId() {
-		return threadNumber++;
+	protected synchronized static int bdsThreadId() {
+		return bdsThreadNumber++;
 	}
 
-	public BdsThread(Statement statement, BdsThread parent) {
+	// TODO: Remove code!!!
+	//	public BdsThread(Statement statement, BdsThread parent) {
+	//		super();
+	//		this.parent = parent;
+	//		bdsThreadNum = bigDataScriptThreadId();
+	//		setRunState(RunState.OK);
+	//		config = parent.config;
+	//		random = parent.random;
+	//		removeOnExit = parent.removeOnExit;
+	//		currentDir = parent.currentDir;
+	//
+	//		bdsChildThreadsById = new HashMap<>();
+	//		taskDependecies = new TaskDependecies();
+	//
+	//		setStatement(statement);
+	//		parent.add(this);
+	//
+	//		taskDependecies.setVerbose(isVerbose());
+	//		taskDependecies.setDebug(isDebug());
+	//	}
+	//
+	//	public BdsThread(Statement statement, Config config) {
+	//		this(statement, config, null);
+	//	}
+
+	private BdsThread(BdsThread parent, Statement statement, Config config, BdsVm vm) {
 		super();
 		this.parent = parent;
-		bdsThreadNum = bigDataScriptThreadId();
-		setRunState(RunState.OK);
-		config = parent.config;
-		random = parent.random;
-		removeOnExit = parent.removeOnExit;
-		currentDir = parent.currentDir;
-
-		bdsChildThreadsById = new HashMap<>();
-		taskDependecies = new TaskDependecies();
-
-		setStatement(statement);
-		parent.add(this);
-
-		taskDependecies.setVerbose(isVerbose());
-		taskDependecies.setDebug(isDebug());
-	}
-
-	public BdsThread(Statement statement, Config config) {
-		this(statement, config, null);
-	}
-
-	public BdsThread(Statement statement, Config config, BdsVm vm) {
-		super();
-		bdsThreadNum = bigDataScriptThreadId();
+		bdsThreadNum = bdsThreadId();
 		setRunState(RunState.OK);
 		this.config = config;
 		random = new Random();
@@ -128,8 +131,15 @@ public class BdsThread extends Thread implements Serializable {
 
 		taskDependecies.setVerbose(isVerbose());
 		taskDependecies.setDebug(isDebug());
-		this.vm = vm;
-		vm.setBdsThread(this);
+
+		if (vm != null) {
+			this.vm = vm;
+			vm.setBdsThread(this);
+		}
+	}
+
+	public BdsThread(Statement statement, Config config, BdsVm vm) {
+		this(null, statement, config, vm);
 	}
 
 	/**
@@ -158,21 +168,6 @@ public class BdsThread extends Thread implements Serializable {
 		return false;
 	}
 
-	//	/**
-	//	 * Assertion failed (in bds test case)
-	//	 */
-	//	public void assertionFailed(BdsNode bdsnode, String message) {
-	//		runState = RunState.FATAL_ERROR;
-	//		String filePos = getFileLinePos(bdsnode);
-	//		System.err.println("Assertion failed: " //
-	//				+ filePos + (filePos.isEmpty() ? "" : ". ") //
-	//				+ message //
-	//		);
-	//
-	//		// Set exit map
-	//		setExitValue(1L);
-	//	}
-
 	/**
 	 * Create a checkpoint file
 	 */
@@ -190,6 +185,21 @@ public class BdsThread extends Thread implements Serializable {
 
 		return checkpoint(checkpointFileName);
 	}
+
+	//	/**
+	//	 * Assertion failed (in bds test case)
+	//	 */
+	//	public void assertionFailed(BdsNode bdsnode, String message) {
+	//		runState = RunState.FATAL_ERROR;
+	//		String filePos = getFileLinePos(bdsnode);
+	//		System.err.println("Assertion failed: " //
+	//				+ filePos + (filePos.isEmpty() ? "" : ". ") //
+	//				+ message //
+	//		);
+	//
+	//		// Set exit map
+	//		setExitValue(1L);
+	//	}
 
 	/**
 	 * Create a checkpoint
@@ -285,6 +295,19 @@ public class BdsThread extends Thread implements Serializable {
 
 	public void fatalError(String message) {
 		fatalError(getBdsNodeCurrent(), message);
+	}
+
+	/**
+	 * Fork: Create and start a new bds thread
+	 */
+	public BdsThread fork(BdsVm vmfork) {
+		BdsThread newBdsThread = new BdsThread(this, statement, config, vmfork);
+
+		push(new ValueString(newBdsThread.getBdsThreadId())); // Parent process: return child's thread ID
+		newBdsThread.push(new ValueString("")); // Fork returns empty string on child process
+
+		newBdsThread.start();
+		return newBdsThread;
 	}
 
 	//	/**
@@ -1026,7 +1049,6 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	public void setStatement(Statement statement) {
 		this.statement = statement;
-		// statementNodeId = statement.getNodeId();
 		createBdsThreadId(); // Create thread ID based on program's name
 	}
 

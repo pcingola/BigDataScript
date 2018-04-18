@@ -87,13 +87,13 @@ public class ExpressionDepOperator extends Expression {
 
 	@Override
 	public String toAsm() {
-		return toAsm(null, null);
+		return toAsm(null, null, true);
 	}
 
-	public String toAsm(String varInputs, String varOutputs) {
+	public String toAsm(String varInputs, String varOutputs, boolean pushDeps) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(toAsmArray(left, varOutputs));
-		sb.append(toAsmArray(right, varInputs));
+		sb.append(toAsmArray(left, varOutputs, pushDeps));
+		sb.append(toAsmArray(right, varInputs, pushDeps));
 		sb.append("dep\n");
 
 		return sb.toString();
@@ -103,7 +103,7 @@ public class ExpressionDepOperator extends Expression {
 	 * Evaluate all expressions in the array.
 	 * Append all results to 'varName' (if varName is not null)
 	 */
-	public String toAsmArray(Expression exprs[], String varName) {
+	public String toAsmArray(Expression exprs[], String varName, boolean pushDeps) {
 		StringBuilder sb = new StringBuilder();
 
 		// Create list
@@ -125,7 +125,7 @@ public class ExpressionDepOperator extends Expression {
 		}
 
 		// Append all results to 'varName'?
-		if (varName != null) {
+		if (varName != null && pushDeps) {
 			// Copy results to tmp variable
 			//     tmp := [results]
 			String tmp = baseVarName() + "tmp";

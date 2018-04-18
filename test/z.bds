@@ -1,12 +1,15 @@
 #!/usr/bin/env bds
 
-# A function defining a task
-void someFunction(int i) {
-	task echo TASK $i; sleep 1
-}
-
 # A loop fires threads of funcions
-for ( int i : range(1, 5) ) {
-   	par someFunction(i.clone())
+par {
+	for(int i : range(1, 10)) {
+		println("\tPAR i: $i")
+		sleep(0.5)
+	}
 }
 
+
+for(int i : range(1, 10)) {
+	println("MAIN i: $i")
+	sleep(1.0)
+}

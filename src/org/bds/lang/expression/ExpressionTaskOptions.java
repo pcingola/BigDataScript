@@ -29,20 +29,25 @@ public class ExpressionTaskOptions extends ExpressionList {
 	/**
 	 * Evaluate expressions and create a TaskDependency
 	 * Note: We evaluate expression as boolean
+	 * @param labelEnd: Label for short-circuit and on boolean expressions
+	 * @param pushDeps: If true, push list of input/output dependencies to the stack
 	 */
-	public String toAsm(String labelEnd) {
+	public String toAsm(String labelEnd, boolean pushDeps) {
 		StringBuilder sb = new StringBuilder();
 
 		// Create variables for all input and output dependencies
 		String varOutputs = baseVarName() + "outputs";
 		String varInputs = baseVarName() + "inputs";
 		TypeList listString = TypeList.get(Types.STRING);
-		sb.append("new " + listString + "\n");
-		sb.append("var " + varOutputs + "\n");
-		sb.append("pop\n");
-		sb.append("new " + listString + "\n");
-		sb.append("var " + varInputs + "\n");
-		sb.append("pop\n");
+
+		if (pushDeps) {
+			sb.append("new " + listString + "\n");
+			sb.append("var " + varOutputs + "\n");
+			sb.append("pop\n");
+			sb.append("new " + listString + "\n");
+			sb.append("var " + varInputs + "\n");
+			sb.append("pop\n");
+		}
 
 		// Evaluate all expressions
 		for (Expression expr : expressions) {
@@ -52,7 +57,7 @@ public class ExpressionTaskOptions extends ExpressionList {
 				sb.append("pop\n");
 			} else if (expr instanceof ExpressionDepOperator) {
 				// Implicit variable declaration
-				sb.append(toAsmDep(labelEnd, (ExpressionDepOperator) expr, varInputs, varOutputs));
+				sb.append(toAsmDep(labelEnd, (ExpressionDepOperator) expr, varInputs, varOutputs, pushDeps));
 			} else if (expr instanceof ExpressionVariableInitImplicit) {
 				sb.append(expr.toAsm());
 			} else {
@@ -67,15 +72,17 @@ public class ExpressionTaskOptions extends ExpressionList {
 		}
 
 		// Leave lists with all inputs and outputs in the stack (all dependencies)
-		sb.append("load " + varOutputs + "\n");
-		sb.append("load " + varInputs + "\n");
+		if (pushDeps) {
+			sb.append("load " + varOutputs + "\n");
+			sb.append("load " + varInputs + "\n");
+		}
 
 		return sb.toString();
 	}
 
-	String toAsmDep(String labelEnd, ExpressionDepOperator dep, String varInputs, String varOutputs) {
+	String toAsmDep(String labelEnd, ExpressionDepOperator dep, String varInputs, String varOutputs, boolean pushDeps) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(dep.toAsm(varInputs, varOutputs));
+		sb.append(dep.toAsm(varInputs, varOutputs, pushDeps));
 		sb.append("jmpf " + labelEnd + "\n");
 		return sb.toString();
 	}
