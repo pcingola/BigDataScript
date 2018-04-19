@@ -46,7 +46,7 @@ public enum OpCode {
 	, EQB, EQI, EQR, EQS
 	// Error
 	, ERROR
-	// Create another thread
+	// Create another thread ('forkpush' pushes 'n' values into the new stack)
 	, FORK, FORKPUSH
 	// Greater or equal than
 	, GEB, GEI, GER, GES

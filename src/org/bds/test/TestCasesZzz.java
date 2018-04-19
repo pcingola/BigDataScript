@@ -15,32 +15,18 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test113_parallel_function_calls() {
+	public void test114_parallel_function_task_calls() {
 		Gpr.debug("Test");
-		String stdout = runAndReturnStdout("test/run_113.bds");
+		String stdout = runAndReturnStdout("test/run_114.bds");
 
 		Set<String> linesPar = new HashSet<>();
-		for (String line : stdout.split("\n")) {
-			if (line.startsWith("Par:")) {
-				if (linesPar.contains(line)) throw new RuntimeException("Line repeated (this should never happen): '" + line + "'");
-				linesPar.add(line);
-			}
-		}
+		for (String line : stdout.split("\n"))
+			if (line.startsWith("TASK")) linesPar.add(line);
+
+		// Check
+		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
 	}
 
-	//	@Test
-	//	public void test114_parallel_function_task_calls() {
-	//		Gpr.debug("Test");
-	//		String stdout = runAndReturnStdout("test/run_114.bds");
-	//
-	//		Set<String> linesPar = new HashSet<>();
-	//		for (String line : stdout.split("\n"))
-	//			if (line.startsWith("TASK")) linesPar.add(line);
-	//
-	//		// Check
-	//		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
-	//	}
-	//
 	//	@Test
 	//	public void test115_task_dependency_using_taskId() {
 	//		Gpr.debug("Test");
