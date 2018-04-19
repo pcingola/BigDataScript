@@ -157,7 +157,7 @@ public class VmAsm {
 	void initTypes() {
 		typeByName = new HashMap<>();
 
-		Type types[] = { Types.BOOL, Types.INT, Types.REAL, Types.STRING };
+		Type types[] = { Types.ANY, Types.BOOL, Types.INT, Types.REAL, Types.STRING };
 
 		// Add primitive types
 		for (Type t : types)

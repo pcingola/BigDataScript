@@ -27,6 +27,8 @@ import org.bds.lang.ProgramUnit;
 import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementInclude;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueString;
@@ -645,8 +647,8 @@ public class BdsThread extends Thread implements Serializable {
 	/**
 	 * Execute dependency tasks to achieve goal 'out'
 	 */
-	public synchronized List<String> goal(String out) {
-		List<String> taskIds = new ArrayList<>();
+	public synchronized ValueList goal(String out) {
+		ValueList taskIds = new ValueList(TypeList.get(Types.STRING));
 
 		// Find dependencies
 		Set<Task> tasks = taskDependecies.goal(this, out);
@@ -659,7 +661,7 @@ public class BdsThread extends Thread implements Serializable {
 
 		// Convert to task IDs
 		for (Task t : tasks)
-			taskIds.add(t.getId());
+			taskIds.add(new ValueString(t.getId()));
 
 		return taskIds;
 	}

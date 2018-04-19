@@ -1,4 +1,4 @@
-package org.bds.lang.expression;
+package org.bds.task;
 
 import java.util.HashMap;
 
@@ -7,12 +7,11 @@ import org.bds.data.DataRemote;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.lang.BdsNode;
+import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
-import org.bds.task.Task;
-import org.bds.task.TaskDependency;
 
 /**
  * Execute a 'task' VM opcode

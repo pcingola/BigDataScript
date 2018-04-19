@@ -52,6 +52,8 @@ public enum OpCode {
 	, FORK, FORKPUSH
 	// Greater or equal than
 	, GEB, GEI, GER, GES
+	// Goal
+	, GOAL
 	// Greater than
 	, GTB, GTI, GTR, GTS
 	// Halt (stop execution in current thread)
@@ -113,7 +115,7 @@ public enum OpCode {
 	// Swap two values in stack
 	, SWAP
 	// Dispatch a task
-	, TASK
+	, TASK, TASKDEP
 	// Create a variable in local scope
 	, VAR
 	// Wait for task to finish

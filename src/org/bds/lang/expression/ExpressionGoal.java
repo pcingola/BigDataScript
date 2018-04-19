@@ -30,38 +30,24 @@ public class ExpressionGoal extends ExpressionUnary {
 		return returnType;
 	}
 
-	//	@SuppressWarnings("rawtypes")
-	//	@Override
-	//	public void runStep(BdsThread bdsThread) {
-	//		bdsThread.run(expr);
-	//		if (bdsThread.isCheckpointRecover()) return;
-	//
-	//		// Get expression map
-	//		Value value = bdsThread.pop();
-	//
-	//		// Goal returns a list of taskIds to be run
-	//		List<String> taskIds = null;
-	//		if (expr.isList()) {
-	//			// Is is a list? Run goal for each element
-	//			taskIds = new ArrayList<>();
-	//
-	//			// Process each goal
-	//			Collection goals = (Collection) value.get();
-	//			for (Object goal : goals)
-	//				taskIds.addAll(bdsThread.goal(goal.toString()));
-	//		} else {
-	//			// Single valued
-	//			taskIds = bdsThread.goal(value.get().toString());
-	//		}
-	//
-	//		// Add results to stack
-	//		bdsThread.push(taskIds);
-	//	}
+	/**
+	 * Commands (i.e. task)
+	 */
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(expr.toAsm());
+		sb.append("goal\n");
+		return sb.toString();
+	}
 
 	@Override
 	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		super.typeCheckNotNull(symtab, compilerMessages);
 
-		if (!expr.getReturnType().isString()) compilerMessages.add(this, "Expression does not return 'string' (" + expr.getReturnType() + ")", MessageType.ERROR);
+		Type et = expr.getReturnType();
+		if (!(et.isString() || et.isList(Types.STRING))) {
+			compilerMessages.add(this, "Goal expression should be either a string or string[], but it is " + expr.getReturnType(), MessageType.ERROR);
+		}
 	}
 }

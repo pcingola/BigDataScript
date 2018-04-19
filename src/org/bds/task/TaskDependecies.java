@@ -328,9 +328,7 @@ public class TaskDependecies implements Serializable {
 		for (Task t : tasks) {
 			if (!t.isScheduled()) {
 				t.setDependency(false); // We are executing this task, so it it no longer a 'dep'
-				// TODO: FIXME !!!!!!!!!!
-				// ExpressionTask.execute(bdsThread, t);
-				throw new RuntimeException("!!!!!!!!!!!!!!1");
+				TaskFactory.execute(bdsThread, t);
 			}
 		}
 

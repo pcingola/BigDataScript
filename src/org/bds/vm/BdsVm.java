@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.bds.Config;
-import org.bds.lang.expression.SysFactory;
-import org.bds.lang.expression.TaskFactory;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueBool;
 import org.bds.lang.value.ValueClass;
@@ -29,8 +29,11 @@ import org.bds.run.RunState;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
+import org.bds.task.DepFactory;
+import org.bds.task.SysFactory;
 import org.bds.task.Task;
 import org.bds.task.TaskDependency;
+import org.bds.task.TaskFactory;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
 import org.bds.util.GprString;
@@ -771,6 +774,10 @@ public class BdsVm implements Serializable {
 				push(s1.compareTo(s2) >= 0);
 				break;
 
+			case GOAL:
+				goal();
+				break;
+
 			case GTB:
 				b2 = popBool();
 				b1 = popBool();
@@ -1087,8 +1094,13 @@ public class BdsVm implements Serializable {
 				break;
 
 			case TASK:
-				TaskFactory tf = new TaskFactory(bdsThread);
-				tf.run();
+				TaskFactory taskFactory = new TaskFactory(bdsThread);
+				taskFactory.run();
+				break;
+
+			case TASKDEP:
+				TaskFactory depFactory = new DepFactory(bdsThread);
+				depFactory.run();
 				break;
 
 			case VAR:
@@ -1248,4 +1260,28 @@ public class BdsVm implements Serializable {
 		return sb.toString();
 	}
 
+	/**
+	 * Implements goal OpCode
+	 */
+	void goal() {
+		Value vgoal = pop();
+
+		// Return a list of all taskIds to execute
+		ValueList taskIds;
+
+		if (vgoal.getType().isList()) {
+			// List of values: Execute each goal
+			taskIds = new ValueList(TypeList.get(Types.STRING));
+			ValueList vlist = (ValueList) vgoal;
+			// Is it a list? Add goal for each item
+			for (Value v : vlist) {
+				taskIds.addAll(bdsThread.goal(v.asString()));
+			}
+		} else {
+			// Single value: execute one goal
+			taskIds = bdsThread.goal(vgoal.asString());
+		}
+
+		push(taskIds);
+	}
 }
