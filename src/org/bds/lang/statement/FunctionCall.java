@@ -154,7 +154,7 @@ public class FunctionCall extends Expression {
 		return sb.toString();
 	}
 
-	protected String toAsmCall() {
+	public String toAsmCall() {
 		return (functionDeclaration.isNative() ? "callnative " : "call ") //
 				+ functionDeclaration.signature() //
 				+ "\n";

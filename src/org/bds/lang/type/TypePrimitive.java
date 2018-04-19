@@ -13,4 +13,9 @@ public abstract class TypePrimitive extends Type {
 		super(primitiveType);
 	}
 
+	@Override
+	public boolean isPrimitive() {
+		return true;
+	}
+
 }

@@ -90,31 +90,6 @@ public class BdsThread extends Thread implements Serializable {
 		return bdsThreadNumber++;
 	}
 
-	// TODO: Remove code!!!
-	//	public BdsThread(Statement statement, BdsThread parent) {
-	//		super();
-	//		this.parent = parent;
-	//		bdsThreadNum = bigDataScriptThreadId();
-	//		setRunState(RunState.OK);
-	//		config = parent.config;
-	//		random = parent.random;
-	//		removeOnExit = parent.removeOnExit;
-	//		currentDir = parent.currentDir;
-	//
-	//		bdsChildThreadsById = new HashMap<>();
-	//		taskDependecies = new TaskDependecies();
-	//
-	//		setStatement(statement);
-	//		parent.add(this);
-	//
-	//		taskDependecies.setVerbose(isVerbose());
-	//		taskDependecies.setDebug(isDebug());
-	//	}
-	//
-	//	public BdsThread(Statement statement, Config config) {
-	//		this(statement, config, null);
-	//	}
-
 	private BdsThread(BdsThread parent, Statement statement, Config config, BdsVm vm) {
 		super();
 		this.parent = parent;
@@ -136,6 +111,8 @@ public class BdsThread extends Thread implements Serializable {
 			this.vm = vm;
 			vm.setBdsThread(this);
 		}
+
+		if (parent != null) parent.add(this);
 	}
 
 	public BdsThread(Statement statement, Config config, BdsVm vm) {
@@ -1133,7 +1110,13 @@ public class BdsThread extends Thread implements Serializable {
 		boolean ok = true;
 
 		if (isDebug() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
-		for (BdsThread bdsth : bdsChildThreadsById.values())
+
+		// Populate a list of threads to avoid concurrent modification
+		List<BdsThread> bdsThreads = new LinkedList<>();
+		bdsThreads.addAll(bdsChildThreadsById.values());
+
+		// Wait for all threads
+		for (BdsThread bdsth : bdsThreads)
 			ok &= waitThread(bdsth);
 
 		return ok;

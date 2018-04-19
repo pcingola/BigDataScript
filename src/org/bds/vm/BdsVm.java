@@ -216,26 +216,8 @@ public class BdsVm {
 		pc = func.getPc(); // Jump to function
 	}
 
-	//	/**
-	//	 * Call a method
-	//	 * @param name: Method's signature
-	//	 */
-	//	void callMethod(String fsig) {
-	//		pushCallFrame(); // Push stack frame
-	//
-	//		VmFunction func = getFunction(fsig); // Find method meta-data
-	//		newScope(); // Create a new scope
-	//
-	//		// Add all arguments to the scope. Remember that stack in reverse order
-	//		String[] args = func.getArgs();
-	//		for (int i = args.length - 1; i >= 0; i--)
-	//			scope.add(args[i], pop());
-	//
-	//		pc = func.getPc(); // Jump to function
-	//	}
-
 	/**
-	 * Call a native method or function 
+	 * Call a native method or function
 	 * @param name: Method's signature
 	 */
 	void callNative(String fsig) {
@@ -268,28 +250,6 @@ public class BdsVm {
 		push(retVal); // Push result to stack
 		popScope(); // Restore old scope
 	}
-
-	//	/**
-	//	 * Call native function
-	//	 * @param fsig
-	//	 */
-	//	void callNative(String fsig) {
-	//		// Find function
-	//		FunctionDeclaration fdecl = functionsBySignature.get(fsig);
-	//
-	//		newScope(); // Create a new scope
-	//
-	//		// Add all arguments to the scope. Remember that stack in reverse order
-	//		List<String> args = fdecl.getParameterNames();
-	//		for (int i = args.size() - 1; i >= 0; i--)
-	//			scope.add(args.get(i), pop());
-	//
-	//		// Run function
-	//		FunctionNative fn = (FunctionNative) fdecl;
-	//		Value retVal = fn.runFunction(bdsThread);
-	//		push(retVal); // Push result to stack
-	//		popScope(); // Restore old scope
-	//	}
 
 	/**
 	 * Parameters is a reference to a 'bool' constant
@@ -362,7 +322,7 @@ public class BdsVm {
 	/**
 	 * Create a 'fork' vm-thread
 	 */
-	private BdsVm fork() {
+	private BdsVm fork(int pushCount) {
 		BdsVm vmclone = new BdsVm();
 
 		vmclone.code = code;
@@ -383,8 +343,26 @@ public class BdsVm {
 		// vmclone.callFrame : Initialized, because child process has a new frame
 		// vmclone.fp        : Initialized to zero because child process has a new frame
 		// vmclone.bdsThread : Will be set by 'forked' bdsThread
-		vmclone.pc = pc; // Already pointing to instruction after 'fork'		
+		vmclone.pc = pc; // Already pointing to instruction after 'fork'
 		vmclone.scope = scope; // Same scope
+
+		// Push 'pushCount' values to new VM (from current VM)
+		if (pushCount > 0) {
+			Value[] vals = new Value[pushCount];
+
+			// Pop values
+			for (int i = 0; i < pushCount; i++)
+				vals[i] = pop();
+
+			// Push values: stack must be in same order
+			// Note: We clone all primitive values. This saves us
+			//       from some race conditions issues 
+			for (int i = pushCount - 1; i >= 0; i--) {
+				Value v = vals[i];
+				if (v.getType().isPrimitive()) v = v.clone();
+				vmclone.push(v);
+			}
+		}
 
 		return vmclone;
 	}
@@ -392,8 +370,8 @@ public class BdsVm {
 	/**
 	 * Execute a 'fork' opcode
 	 */
-	void forkOpCode() {
-		BdsVm vmfork = fork();
+	void forkOpCode(int pushCount) {
+		BdsVm vmfork = fork(pushCount);
 		bdsThread.fork(vmfork);
 	}
 
@@ -604,6 +582,7 @@ public class BdsVm {
 			exitCode = 1;
 
 			if (Config.get().isVerbose()) {
+				System.err.println("Fatal error running BdsThread " + bdsThread.getBdsThreadId() + "\n");
 				t.printStackTrace();
 			}
 		}
@@ -634,7 +613,9 @@ public class BdsVm {
 		while (pc < code.length && run) {
 			instruction = code[pc];
 			opcode = OPCODES[instruction];
-			if (debug) System.err.println(toAsm(pc) + "\t\t\tstack: " + toStringStack());
+			if (debug) {
+				System.err.print(Gpr.prependEachLine(bdsThread.getBdsThreadId() + "\t\t|", toAsm(pc) + "\t\t\tstack: " + toStringStack()));
+			}
 			pc++;
 
 			switch (opcode) {
@@ -677,11 +658,6 @@ public class BdsVm {
 				name = constantString(); // Get signature
 				callNative(name);
 				break;
-
-			//			case CALLMNATIVE:
-			//				name = constantString(); // Get method signature
-			//				callMethodNative(name);
-			//				break;
 
 			case CAST_TOB:
 				push(pop().asBool());
@@ -755,7 +731,12 @@ public class BdsVm {
 				return;
 
 			case FORK:
-				forkOpCode();
+				forkOpCode(0);
+				break;
+
+			case FORKPUSH:
+				i1 = popInt();
+				forkOpCode((int) i1);
 				break;
 
 			case GEB:
@@ -1220,7 +1201,7 @@ public class BdsVm {
 			String param = null;
 
 			int idx = code[++pc];
-			if (op.isParamString()) param = "'" + getConstant(idx) + "'";
+			if (op.isParamString()) param = "'" + GprString.escape(getConstant(idx).toString()) + "'";
 			else if (op.isParamType()) param = "'" + getType(idx) + "'";
 			else if (op.isParamNodeId()) param = "" + idx;
 			else param = getConstant(idx).toString();

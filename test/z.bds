@@ -1,8 +1,14 @@
+#!/usr/bin/env bds
 
-
-string[] list = [ "one", "two", "three" ]
-string ss
-
-for( string s : list ) {
-	ss = ss + s
+# A function defining two sequential tasks
+void someFunction(int x) {
+	print "\tPar: $x\n"
+  	#task echo Task1 iter $x; sleep 1
 }
+
+# A loop fires threads of sequential tasks
+for (int i=0 ; i < 100 ; i++ ) {
+	print "Loop: $i\n";
+   	par someFunction(i)
+}
+

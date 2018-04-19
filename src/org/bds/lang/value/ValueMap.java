@@ -45,8 +45,7 @@ public class ValueMap extends ValueComposite {
 	@Override
 	public ValueMap clone() {
 		ValueMap vm = new ValueMap(type, map.size());
-		for (Value vkey : map.keySet())
-			vm.put(vkey, getValue(vkey));
+		vm.map.putAll(map);
 		return vm;
 	}
 

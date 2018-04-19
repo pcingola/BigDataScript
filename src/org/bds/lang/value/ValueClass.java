@@ -20,7 +20,7 @@ public class ValueClass extends ValueComposite {
 
 	private static final long serialVersionUID = -1443386366370835828L;
 
-	Map<String, Value> fields; // TODO: Should I change to array for efficiency?
+	Map<String, Value> fields;
 
 	public ValueClass(Type type) {
 		super(type);
@@ -28,7 +28,9 @@ public class ValueClass extends ValueComposite {
 
 	@Override
 	public Value clone() {
-		throw new RuntimeException("!!! UNIMPLEMENTED");
+		ValueClass vclone = new ValueClass(type);
+		vclone.fields.putAll(fields);
+		return vclone;
 	}
 
 	public Value getValue(String name) {

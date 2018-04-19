@@ -127,10 +127,6 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 		return false;
 	}
 
-	public boolean isFunctionNative() {
-		return false;
-	}
-
 	@Override
 	public boolean isInt() {
 		return false;
@@ -158,6 +154,10 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 
 	@Override
 	public boolean isNull() {
+		return false;
+	}
+
+	public boolean isPrimitive() {
 		return false;
 	}
 
