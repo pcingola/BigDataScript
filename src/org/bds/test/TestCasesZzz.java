@@ -1,9 +1,7 @@
 package org.bds.test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bds.util.Gpr;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -15,25 +13,12 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test114_parallel_function_task_calls() {
+	public void test115_task_dependency_using_taskId() {
 		Gpr.debug("Test");
-		String stdout = runAndReturnStdout("test/run_114.bds");
-
-		Set<String> linesPar = new HashSet<>();
-		for (String line : stdout.split("\n"))
-			if (line.startsWith("TASK")) linesPar.add(line);
-
-		// Check
-		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
+		String stdout = runAndReturnStdout("test/run_115.bds");
+		Assert.assertEquals("Hi 1\nBye 1\nHi 2\nBye 2\n", stdout);
 	}
 
-	//	@Test
-	//	public void test115_task_dependency_using_taskId() {
-	//		Gpr.debug("Test");
-	//		String stdout = runAndReturnStdout("test/run_115.bds");
-	//		Assert.assertEquals("Hi 1\nBye 1\nHi 2\nBye 2\n", stdout);
-	//	}
-	//
 	//	@Test
 	//	public void test116_lineWrap_backslashId() {
 	//		Gpr.debug("Test");

@@ -1,5 +1,6 @@
 package org.bds.vm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,7 +40,9 @@ import org.bds.util.GprString;
  *
  * @author pcingola
  */
-public class BdsVm {
+public class BdsVm implements Serializable {
+
+	private static final long serialVersionUID = 6533146851765102340L;
 
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
 	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
@@ -356,7 +359,7 @@ public class BdsVm {
 
 			// Push values: stack must be in same order
 			// Note: We clone all primitive values. This saves us
-			//       from some race conditions issues 
+			//       from some race conditions issues
 			for (int i = pushCount - 1; i >= 0; i--) {
 				Value v = vals[i];
 				if (v.getType().isPrimitive()) v = v.clone();
@@ -673,6 +676,11 @@ public class BdsVm {
 
 			case CAST_TOS:
 				push(pop().asString());
+				break;
+
+			case CHECKPOINT:
+				s1 = popString(); // File name
+				bdsThread.checkpoint(s1);
 				break;
 
 			case DEC:
@@ -1067,7 +1075,8 @@ public class BdsVm {
 				break;
 
 			case SYS:
-				sys();
+				SysFactory sf = new SysFactory(bdsThread);
+				sf.run();
 				break;
 
 			case SWAP:
@@ -1078,7 +1087,8 @@ public class BdsVm {
 				break;
 
 			case TASK:
-				task();
+				TaskFactory tf = new TaskFactory(bdsThread);
+				tf.run();
 				break;
 
 			case VAR:
@@ -1087,11 +1097,14 @@ public class BdsVm {
 				break;
 
 			case WAIT:
-				waitTask();
+				ValueList tids = (ValueList) pop();
+				b1 = bdsThread.wait(tids);
+				push(b1);
 				break;
 
 			case WAITALL:
-				waitTaskAll();
+				b1 = bdsThread.waitAll();
+				push(b1);
 				break;
 
 			case XORB:
@@ -1147,22 +1160,6 @@ public class BdsVm {
 	public String stackTrace() {
 		// TODO: !!! IMPLEMENT
 		return "";
-	}
-
-	/**
-	 * Execute a 'sys' instruction
-	 */
-	void sys() {
-		SysFactory sf = new SysFactory(bdsThread);
-		sf.run();
-	}
-
-	/**
-	 * Execute a 'task'
-	 */
-	void task() {
-		TaskFactory tf = new TaskFactory(bdsThread);
-		tf.run();
 	}
 
 	/**
@@ -1249,17 +1246,6 @@ public class BdsVm {
 		}
 		sb.append(" ]");
 		return sb.toString();
-	}
-
-	void waitTask() {
-		ValueList tids = (ValueList) pop();
-		boolean ok = bdsThread.wait(tids);
-		push(ok);
-	}
-
-	void waitTaskAll() {
-		boolean ok = bdsThread.waitAll();
-		push(ok);
 	}
 
 }

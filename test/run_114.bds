@@ -7,6 +7,6 @@ void someFunction(int i) {
 
 # A loop fires threads of funcions
 for ( int i : range(1, 5) ) {
-   	par someFunction(i.clone())
+   	par someFunction(i)
 }
 

@@ -8,21 +8,21 @@ package org.bds.run;
 public enum RunState {
 
 	OK // Normal state
-	, CHECKPOINT_RECOVER // Recovering from a checkpoint
+	//	, CHECKPOINT_RECOVER // Recovering from a checkpoint
 	, FATAL_ERROR // Finished executing due to a fatal error
 	, FINISHED // Thread execution completely finished
 	, THREAD_KILLED // Thread was sent a 'kill' signal
 	, WAIT_RECOVER // Recovering from a checkpoint, in a "wait" instruction
 	;
 
-	/**
-	 * Are we in 'Checkpoint Recovery' mode?
-	 */
-	public boolean isCheckpointRecover() {
-		return this == RunState.WAIT_RECOVER //
-				|| this == RunState.CHECKPOINT_RECOVER //
-		;
-	}
+	//	/**
+	//	 * Are we in 'Checkpoint Recovery' mode?
+	//	 */
+	//	public boolean isCheckpointRecover() {
+	//		return this == RunState.WAIT_RECOVER //
+	//				|| this == RunState.CHECKPOINT_RECOVER //
+	//		;
+	//	}
 
 	public boolean isFatalError() {
 		return this == FATAL_ERROR;

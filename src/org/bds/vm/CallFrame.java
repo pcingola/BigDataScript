@@ -1,5 +1,7 @@
 package org.bds.vm;
 
+import java.io.Serializable;
+
 import org.bds.lang.value.Value;
 import org.bds.scope.Scope;
 
@@ -14,7 +16,9 @@ import org.bds.scope.Scope;
  * @author pcingola
  *
  */
-public class CallFrame {
+public class CallFrame implements Serializable {
+
+	private static final long serialVersionUID = 84261659748008514L;
 
 	public int pc;
 	public int nodeId;

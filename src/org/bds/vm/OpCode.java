@@ -30,6 +30,8 @@ public enum OpCode {
 	, ANDB, ANDI
 	// Cast values {b,i,r} => {b,i,r}
 	, CAST_TOB, CAST_TOI, CAST_TOR, CAST_TOS
+	// Create a checkpoint
+	, CHECKPOINT
 	// Function call:
 	//    CALL function_signature
 	//    CALLNATIVE function_signature

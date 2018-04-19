@@ -345,11 +345,6 @@ public class BdsRun {
 	 */
 	int runCheckpoint() {
 		// Load checkpoint file
-
-		// TODO: REMOVE BdsSerializer
-		//		BdsSerializer bdsSerializer = new BdsSerializer(chekcpointRestoreFile, config);
-		//		List<BdsThread> bdsThreads = bdsSerializer.load();
-
 		BdsThread bdsThreadRoot;
 		try {
 			ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(chekcpointRestoreFile)));
@@ -369,11 +364,9 @@ public class BdsRun {
 		List<BdsThread> bdsThreads = bdsThreadRoot.getBdsThreads();
 		bdsThreads.add(bdsThreadRoot);
 		for (BdsThread bdsThread : bdsThreads) {
-			if (bdsThread.getRunState().isFinished()) {
-				// Thread finished before serialization: Nothing to do
-			} else {
-				bdsThread.setRunState(RunState.CHECKPOINT_RECOVER); // Set run state to recovery
-				bdsThread.restoreUnserializedTasks(); // Re-execute or add tasks
+			// Re-execute or add tasks (if thread is not finished)
+			if (!bdsThread.getRunState().isFinished()) {
+				bdsThread.restoreUnserializedTasks();
 			}
 		}
 

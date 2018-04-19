@@ -824,7 +824,7 @@ public class BdsThread extends Thread implements Serializable {
 
 			if ((!task.isDone() // Not finished?
 					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
-					&& !task.isDependency() // Don't execute dependencies, unledd needed
+					&& !task.isDependency() // Don't execute dependencies, unless needed
 			) {
 				// Task not finished or failed? Re-execute
 				// TODO: FIXME!!!

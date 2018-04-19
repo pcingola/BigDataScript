@@ -1,14 +1,6 @@
 #!/usr/bin/env bds
 
-# A function defining two sequential tasks
-void someFunction(int x) {
-	print "\tPar: $x\n"
-  	#task echo Task1 iter $x; sleep 1
+for(int i=0 ; i < 10 ; i++) {
+	if(i == 5) checkpoint "/tmp/z.chp"
+	println i
 }
-
-# A loop fires threads of sequential tasks
-for (int i=0 ; i < 100 ; i++ ) {
-	print "Loop: $i\n";
-   	par someFunction(i)
-}
-
