@@ -56,6 +56,7 @@ public class BdsVm implements Serializable {
 
 	int code[]; // Compile assembly code (OopCodes)
 	boolean debug;
+	VmDebugger vmDebugger;
 	Integer exitCode = null; // Default exit code: program did not start
 	int fp; // Frame pointer
 	int nodeId; // Current node ID (BdsNode). Used for linking to original bds code
@@ -300,6 +301,16 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * debug OpCode
+	 */
+	void debug() {
+		System.err.println(popString());
+		if (vmDebugger == null) vmDebugger = new VmDebugger(this);
+		vmDebugger.setDebug(debug);
+		vmDebugger.debug();
+	}
+
+	/**
 	 * Execute a 'dep' operator
 	 */
 	void dep() {
@@ -415,6 +426,10 @@ public class BdsVm implements Serializable {
 
 	public int getNodeId() {
 		return nodeId;
+	}
+
+	public int getPc() {
+		return pc;
 	}
 
 	public Scope getScope() {
@@ -682,6 +697,11 @@ public class BdsVm implements Serializable {
 				push(i1 & i2);
 				break;
 
+			case BREAKPOINT:
+				s1 = popString();
+				if (vmDebugger != null) vmDebugger.breakpoint(s1);
+				break;
+
 			case CALL:
 				name = constantString(); // Get function signature
 				call(name);
@@ -711,6 +731,10 @@ public class BdsVm implements Serializable {
 			case CHECKPOINT:
 				s1 = popString(); // File name
 				bdsThread.checkpoint(s1);
+				break;
+
+			case DEBUG:
+				debug();
 				break;
 
 			case DEC:
@@ -970,6 +994,7 @@ public class BdsVm implements Serializable {
 
 			case NODE:
 				nodeId = paramInt();
+				if (vmDebugger != null) vmDebugger.node();
 				break;
 
 			case NOOP:
@@ -1322,4 +1347,5 @@ public class BdsVm implements Serializable {
 		sb.append(" ]");
 		return sb.toString();
 	}
+
 }

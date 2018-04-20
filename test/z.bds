@@ -3,6 +3,7 @@
 
 int f(int x) {
 	println "f($x)"
+	breakpoint
 	return g(x+1)
 }
 int g(int x) {
@@ -11,4 +12,5 @@ int g(int x) {
 	return x+2
 }
 
+debug "Start"
 println f(3) 

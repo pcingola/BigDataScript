@@ -28,6 +28,8 @@ public enum OpCode {
 	ADDI, ADDR, ADDS
 	// And: bool (logic), int (bitwise)
 	, ANDB, ANDI
+	// Breakpoint (debugging mode)
+	, BREAKPOINT
 	// Cast values {b,i,r} => {b,i,r}
 	, CAST_TOB, CAST_TOI, CAST_TOR, CAST_TOS
 	// Create a checkpoint
@@ -36,6 +38,8 @@ public enum OpCode {
 	//    CALL function_signature
 	//    CALLNATIVE function_signature
 	, CALL, CALLNATIVE
+	// Debug breakpoint
+	, DEBUG
 	// Decrement (i.e. valueInt--)
 	, DEC
 	// Dependency operator

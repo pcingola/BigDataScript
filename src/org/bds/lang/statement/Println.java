@@ -18,6 +18,8 @@ public class Println extends Print {
 
 	@Override
 	public String toAsm() {
-		return expr.toAsm() + "println\n";
+		return toAsmNode() //
+				+ (expr != null ? expr.toAsm() : "push ''\n") //
+				+ "println\n";
 	}
 }

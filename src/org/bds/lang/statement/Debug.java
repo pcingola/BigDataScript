@@ -16,4 +16,11 @@ public class Debug extends Print {
 		super(parent, tree);
 	}
 
+	@Override
+	public String toAsm() {
+		return toAsmNode() //
+				+ (expr != null ? expr.toAsm() : "pushs ''\n") //
+				+ "debug\n";
+	}
+
 }

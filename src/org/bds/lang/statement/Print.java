@@ -44,7 +44,7 @@ public class Print extends Statement {
 	@Override
 	public String toAsm() {
 		return super.toAsm() //
-				+ expr.toAsm() //
+				+ (expr != null ? expr.toAsm() : "pushs ''\n") // String to print
 				+ "print\n";
 	}
 
@@ -59,7 +59,7 @@ public class Print extends Statement {
 	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		returnType(symtab);
 
-		if (!expr.canCastToString()) {
+		if (expr != null && !expr.canCastToString()) {
 			compilerMessages.add(this, "Cannot cast " + expr.getReturnType() + " to " + returnType, MessageType.ERROR);
 		}
 	}

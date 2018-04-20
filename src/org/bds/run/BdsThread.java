@@ -1,9 +1,7 @@
 package org.bds.run;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -70,11 +68,6 @@ public class BdsThread extends Thread implements Serializable {
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
 
-	// Debug stuff
-	BufferedReader console; // Read debug commands from console
-	DebugMode debugMode = null; // By default we are NOT debugging the program
-
-	// BdsThread
 	String currentDir; // Program's 'current directory'
 	BdsThread parent; // Parent thread
 	String bdsThreadId; // BdsThread ID
@@ -413,24 +406,6 @@ public class BdsThread extends Thread implements Serializable {
 	//		}
 	//	}
 
-	//	/**
-	//	 * Freeze thread execution
-	//	 */
-	//	protected void freeze() {
-	//		RunState oldRunState = runState;
-	//		setRunState(RunState.FROZEN);
-	//
-	//		while (freeze) {
-	//			try {
-	//				Thread.sleep(FROZEN_SLEEP_TIME);
-	//				if (isDebug()) Gpr.debug("Frozen bdsThread: '" + getBdsThreadId() + "'");
-	//			} catch (InterruptedException e) {
-	//				// Nothing to do
-	//			}
-	//		}
-	//		setRunState(oldRunState); // Restore old state
-	//	}
-
 	/**
 	 * Get node currently executed by the VM
 	 */
@@ -475,10 +450,6 @@ public class BdsThread extends Thread implements Serializable {
 
 	public String getCurrentDir() {
 		return currentDir;
-	}
-
-	public DebugMode getDebugMode() {
-		return debugMode;
 	}
 
 	public int getExitValue() {
@@ -768,19 +739,6 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	/**
-	 * Read a line from STDIN
-	 */
-	public String readConsole() {
-		try {
-			if (console == null) console = new BufferedReader(new InputStreamReader(System.in));
-			String line = console.readLine();
-			return line;
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
-	/**
 	 * Remove a child thread
 	 */
 	public void remove(BdsThread bdsThread) {
@@ -960,10 +918,6 @@ public class BdsThread extends Thread implements Serializable {
 
 	public void setCurrentDir(String currentDir) {
 		this.currentDir = currentDir;
-	}
-
-	public void setDebugMode(DebugMode debugMode) {
-		this.debugMode = debugMode;
 	}
 
 	public void setExitValue(long exitValue) {
