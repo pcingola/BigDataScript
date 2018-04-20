@@ -323,7 +323,7 @@ public class BdsVm implements Serializable {
 			td.addOutput(out.asString());
 
 		for (Value in : ins)
-			td.addOutput(in.asString());
+			td.addInput(in.asString());
 
 		push(td.depOperator());
 	}

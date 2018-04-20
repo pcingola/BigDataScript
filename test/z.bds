@@ -1,33 +1,35 @@
 #!/usr/bin/env bds
 
-l := [1, 2, 3]
+void doStuff(string dir) {
+	dir.mkdir()
 
-println "l: $l"
+	in := "$dir/in.txt"
+	out := "$dir/out.txt"
 
-# Test list.add(idx, X)
-l.add(1, 99)
-println "l: $l"
+	# debug
 
-# Test list.reverse()
-l2 := l.reverse()
-println "l2: $l2"
+	# Create input
+	sys date > $in ; echo IN: $in
 
-# Test list.count(X)
-l3 := l2.clone()
-l3 += 99
-l3count := l3.count(99)
-println "l3: $l3\tl3.count(99): $l3count"
+	# Create first output
+	task( out <- in ) sys ( echo Root task ; cat $in ) > $out ; echo OUT: $out
 
-# Test list.indexOf(X)
-l3idx := l3.indexOf(99)
-println "l3: $l3\tl3.indexOf(99): $l3idx"
+	# Create dependent outputs
+	for( int i=0 ; i < 3 ; i++ ) {
+		outi := "$dir/out_$i.txt"
+		task( outi <- out ) sys ( echo task $i ; cat $out ) > $outi ; echo OUT_$i: $outi
+		for( int j=0 ; j < 3 ; j++ ) {
+			outj := "$dir/out_$i\_$j.txt"
+			task( outj <- outi ) sys ( echo task $i ; cat $outi ) > $outj ; echo "    OUT_$i""_$j: $outj"
+		}
+	}
+}
 
-# Test list.remove(X)
-l4 := l3.clone()
-l4.remove(99)
-println "l4: $l4"
+#---
+# Main
+#---
 
-# Test list.removeIdx(X)
-l5 := l3.clone()
-l5.removeIdx(2)
-println "l5: $l5"
+dir := "$HOME/zzz"
+doStuff(dir)
+wait
+print "Done\n"
