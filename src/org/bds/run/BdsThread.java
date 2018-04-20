@@ -141,6 +141,21 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	/**
+	 * Assertion failed (in bds test case)
+	 */
+	public void assertionFailed(BdsNode bdsnode, String message) {
+		runState = RunState.FATAL_ERROR;
+		String filePos = getFileLinePos(bdsnode);
+		System.err.println("Assertion failed: " //
+				+ filePos + (filePos.isEmpty() ? "" : ". ") //
+				+ message //
+		);
+
+		// Set exit map
+		setExitValue(1L);
+	}
+
+	/**
 	 * Create a checkpoint file
 	 */
 	public String checkpoint(BdsNode node) {
@@ -157,21 +172,6 @@ public class BdsThread extends Thread implements Serializable {
 
 		return checkpoint(checkpointFileName);
 	}
-
-	//	/**
-	//	 * Assertion failed (in bds test case)
-	//	 */
-	//	public void assertionFailed(BdsNode bdsnode, String message) {
-	//		runState = RunState.FATAL_ERROR;
-	//		String filePos = getFileLinePos(bdsnode);
-	//		System.err.println("Assertion failed: " //
-	//				+ filePos + (filePos.isEmpty() ? "" : ". ") //
-	//				+ message //
-	//		);
-	//
-	//		// Set exit map
-	//		setExitValue(1L);
-	//	}
 
 	/**
 	 * Create a checkpoint
