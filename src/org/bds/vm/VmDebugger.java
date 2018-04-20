@@ -92,15 +92,21 @@ public class VmDebugger implements Serializable {
 			} else {
 				// All other options are just one letter
 				switch (line.toLowerCase()) {
+				case "c":
+					// Show current 'frame'
+					System.err.println(vm.getScope().toStringLocal(false));
+					break;
+
 				case "k":
 					System.err.println(vm.toStringStack());
 					break;
 
+				case "?":
 				case "h":
 					// Show help
 					System.err.println("Help:");
 					System.err.println("\t[RETURN]  : " + (debugMode == DebugMode.STEP_OVER ? "step over" : "step"));
-					System.err.println("\tf         : show Frame: variables within current scope");
+					System.err.println("\tc         : show sCope: variables within current scope");
 					System.err.println("\th         : Help");
 					System.err.println("\tk         : show stacK");
 					System.err.println("\to         : step Over");
@@ -111,11 +117,6 @@ public class VmDebugger implements Serializable {
 					System.err.println("\tt         : show stack Trace");
 					System.err.println("\tv varname : show Variable 'varname'");
 					System.err.println("");
-					break;
-
-				case "f":
-					// Show current 'frame'
-					System.err.println(vm.getScope().toString(false));
 					break;
 
 				case "p":
@@ -149,7 +150,7 @@ public class VmDebugger implements Serializable {
 					break;
 
 				default:
-					System.err.println("Unknown command '" + line + "'");
+					System.err.println("Unknown command '" + line + "'. Use 'h' or '?' for help.");
 				}
 			}
 		}

@@ -20,6 +20,17 @@ public class Continue extends Break {
 	}
 
 	/**
+	 * Find enclosing loop
+	 */
+	protected BdsNode findContinueNode() {
+		for (BdsNode bn = this; bn != null; bn = bn.getParent()) {
+			if (isContinue(bn)) return bn;
+			else if (isFunction(bn)) return null; // Reached function or method definition?
+		}
+		return null;
+	}
+
+	/**
 	 * Find label to jump to (asm)
 	 */
 	@Override
@@ -28,14 +39,34 @@ public class Continue extends Break {
 		return bdsNode.baseLabelName() + "continue";
 	}
 
+	/**
+	 * Is it an enclosing loop you can 'continue'?
+	 */
+	boolean isContinue(BdsNode bdsNode) {
+		return bdsNode instanceof While //
+				|| bdsNode instanceof ForLoop //
+				|| bdsNode instanceof ForLoopList //
+		;
+	}
+
+	/**
+	 * How many enclosing scopes do we have to "break' through?
+	 */
 	@Override
-	protected void parse(ParseTree tree) {
-		// Nothing to do
+	protected int countScopes() {
+		int countScopes = 0;
+		for (BdsNode bn = this; bn != null; bn = bn.getParent()) {
+			if (bn.isNeedsScope()) countScopes++;
+
+			if (isContinue(bn)) return countScopes - 1; // Pop all scopes, except the one in current loop
+			else if (isFunction(bn)) return countScopes;
+		}
+		return countScopes;
 	}
 
 	@Override
-	protected String scopePop() {
-		return ""; // Continue does not need to pop scopes
+	protected void parse(ParseTree tree) {
+		// Nothing to do
 	}
 
 	@Override
@@ -44,6 +75,11 @@ public class Continue extends Break {
 				&& (findParent(ForLoopList.class, FunctionDeclaration.class) == null) //
 				&& (findParent(While.class, FunctionDeclaration.class) == null) //
 		) compilerMessages.add(this, "continue statement outside loop", MessageType.ERROR);
+	}
+
+	@Override
+	public String toString() {
+		return "continue";
 	}
 
 }

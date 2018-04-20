@@ -21,12 +21,12 @@ public class Break extends Statement {
 	/**
 	 * How many enclosing scopes do we have to "break' through?
 	 */
-	int countScopesBreakNode() {
+	protected int countScopes() {
 		int countScopes = 0;
 		for (BdsNode bn = this; bn != null; bn = bn.getParent()) {
 			if (bn.isNeedsScope()) countScopes++;
 
-			if (isBreak(bn)) return countScopes;
+			if (isBreak(bn)) return countScopes - 1; // Pop all scopes, except the one in current loop
 			else if (isFunction(bn)) return countScopes;
 		}
 		return countScopes;
@@ -84,25 +84,25 @@ public class Break extends Statement {
 		}
 	}
 
-	protected String scopePop() {
-		StringBuilder sb = new StringBuilder();
-		int countScopes = countScopesBreakNode();
-		for (int i = 0; i < countScopes; i++)
-			sb.append("scopepop\n");
-		return sb.toString();
-	}
-
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
 
 		// Restore scopes
-		sb.append(scopePop());
+		sb.append(toAsmScopePop());
 
 		// Jump for end of enclosing loop/switch
 		String jmpLabel = findLabel();
 		sb.append("jmp " + jmpLabel + "\n");
+		return sb.toString();
+	}
+
+	protected String toAsmScopePop() {
+		StringBuilder sb = new StringBuilder();
+		int countScopes = countScopes();
+		for (int i = 0; i < countScopes; i++)
+			sb.append("scopepop\n");
 		return sb.toString();
 	}
 

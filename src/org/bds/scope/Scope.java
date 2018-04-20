@@ -14,6 +14,7 @@ import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueFunction;
+import org.bds.util.GprString;
 
 /**
  * Scope: Variables, functions and classes
@@ -182,8 +183,17 @@ public class Scope implements Iterable<String>, Serializable {
 	public String toString(boolean showFunc) {
 		StringBuilder sb = new StringBuilder();
 
-		// Show header
 		sb.append("\n---------- Scope " + getScopeName() + " ----------\n");
+		sb.append(toStringLocal(showFunc));
+
+		// Show parents
+		if (parent != null) sb.append(parent.toString(showFunc));
+
+		return sb.toString();
+	}
+
+	public String toStringLocal(boolean showFunc) {
+		StringBuilder sb = new StringBuilder();
 
 		// Show scope values
 		List<String> names = new ArrayList<>();
@@ -193,12 +203,11 @@ public class Scope implements Iterable<String>, Serializable {
 			Value v = getValueLocal(n);
 			Type t = v.getType();
 
-			if (t.isFunction()) sb.append(t.getPrimitiveType() + " : " + n + "\n");
-			else sb.append(t + " : " + n + " = " + getValueLocal(n) + "\n");
-		}
+			if (t.isFunction()) sb.append(t.getPrimitiveType() + " : " + v + "\n");
+			else if (v.getType().isString()) sb.append(t + " : " + n + " = '" + GprString.escape(v.asString()) + "'\n");
+			else sb.append(t + " : " + n + " = " + v + "\n");
 
-		// Show parents
-		if (parent != null) sb.append(parent.toString(showFunc));
+		}
 
 		return sb.toString();
 	}
