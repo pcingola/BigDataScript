@@ -1,22 +1,14 @@
 #!/usr/bin/env bds
 
-t1 := "tmp_1.txt"
-t2 := "tmp_2.txt"
-t3 := "tmp_3.txt"
-
-# Create new files
-sys touch $t1 $t2 $t3; rm $t1 $t2 $t3; echo CREATE $t1; date > $t1
-wait
-
-dep( t2 <- t1 ) {
-  sys echo COPY $t1 TO $t2; cp $t1 $t2
+# A function defining a task
+void someFunction(int i) {
+	task echo TASK $i; sleep 1
 }
 
-dep( t3.path() <- t2.path() ) {
-  sys echo COPY $t2 TO $t3; cp $t2 $t3
+# A loop fires threads of funcions
+for ( int i : range(1, 5) ) {
+	println i
+   	par someFunction(i)
 }
-
-goal( t3.path() )
-wait
-print "Done!\n"
+println "done"
 
