@@ -1,35 +1,21 @@
 #!/usr/bin/env bds
 
-void doStuff(string dir) {
-	dir.mkdir()
+hi := "Hello"
+println   'print_quote        |\t|'
+println   'print_quote        |\t|    variable:$hi'
 
-	in := "$dir/in.txt"
-	out := "$dir/out.txt"
+println   "print_double       |\t|"
+println   "print_double       |\t|    variable:$hi"
 
-	# debug
+println   "print_double_esc   |\\t|"
+println   "print_double_esc   |\\t|   variable:$hi"
 
-	# Create input
-	sys date > $in ; echo IN: $in
+# These lines depend on the shell being used
+# Using the default '/bin/sh' I see a 'tab' charater, whereas 
+# using /bin/bash I see a '\t' (escaped tab)
+sys  echo "sys                |\t|"
+sys  echo "sys                |\t|    variable:$hi"
 
-	# Create first output
-	task( out <- in ) sys ( echo Root task ; cat $in ) > $out ; echo OUT: $out
-
-	# Create dependent outputs
-	for( int i=0 ; i < 3 ; i++ ) {
-		outi := "$dir/out_$i.txt"
-		task( outi <- out ) sys ( echo task $i ; cat $out ) > $outi ; echo OUT_$i: $outi
-		for( int j=0 ; j < 3 ; j++ ) {
-			outj := "$dir/out_$i\_$j.txt"
-			task( outj <- outi ) sys ( echo task $i ; cat $outi ) > $outj ; echo "    OUT_$i""_$j: $outj"
-		}
-	}
-}
-
-#---
-# Main
-#---
-
-dir := "$HOME/zzz"
-doStuff(dir)
+task echo "task               |\t|"
 wait
-print "Done\n"
+task echo "task               |\t|    variable:$hi"

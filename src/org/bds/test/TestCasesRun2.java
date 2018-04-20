@@ -253,7 +253,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	}
 
 	@Test
-	public void test123_literals_sys_task() {
+	public void test123_literals() {
 		Gpr.debug("Test");
 
 		String output = "print_quote        |\\t|\n" //
@@ -262,15 +262,38 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "print_double       |\t|    variable:Hello\n" //
 				+ "print_double_esc   |\\t|\n" //
 				+ "print_double_esc   |\\t|   variable:Hello\n" //
-				// Note: This result may change if we use a different sysShell in bds.config
-				+ "sys                |\\t|\n" //
-				+ "sys                |\\t|    variable:Hello\n" //
-				// Note: This result may change if we use a different taskShell in bds.config
-				+ "task               |\\t|\n" //
-				+ "task               |\\t|    variable:Hello\n" //
 		;
 
 		runAndCheckStdout("test/run_123.bds", output);
+	}
+
+	@Test
+	public void test123_literals_sys() {
+		Gpr.debug("Test");
+		verbose = true;
+
+		String output = "" //
+				// Note: This result may change if we use a different sysShell in bds.config
+				+ "sys                |\t|\n" //
+				+ "sys                |\t|    variable:Hello\n" //
+				+ "sys                |\\t|   variable:Hello\n" //
+		;
+
+		runAndCheckStdout("test/run_123_literals_sys.bds", output);
+	}
+
+	@Test
+	public void test123_literals_task() {
+		Gpr.debug("Test");
+
+		String output = "" //
+				// Note: This result may change if we use a different taskShell in bds.config
+				+ "task               |\t|\n" //
+				+ "task               |\t|    variable:Hello\n" //
+				+ "task               |\\t|   variable:Hello\n" //
+		;
+
+		runAndCheckStdout("test/run_123_literals_task.bds", output);
 	}
 
 	@Test

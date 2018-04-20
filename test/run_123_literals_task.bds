@@ -1,0 +1,12 @@
+#!/usr/bin/env bds
+
+hi := "Hello"
+
+# These lines depend on the shell being used
+# Using the default '/bin/sh' I see a 'tab' charater, whereas 
+# using /bin/bash I see a '\t' (escaped tab)
+task echo "task               |\t|"
+wait
+task echo "task               |\t|    variable:$hi"
+wait
+task echo "task               |\\t|   variable:$hi"
