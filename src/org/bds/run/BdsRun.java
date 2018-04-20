@@ -17,6 +17,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
+import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ProgramUnit;
 import org.bds.lang.nativeFunctions.NativeLibraryFunctions;
@@ -129,6 +130,7 @@ public class BdsRun {
 		try {
 			// Get assembly code
 			String asm = programUnit.toAsm();
+			if (debug) Timer.showStdErr("Assembly code:\n" + asm);
 
 			// Compile assembly
 			VmAsm vmasm = new VmAsm(programUnit);
@@ -191,11 +193,10 @@ public class BdsRun {
 	 */
 	int infoCheckpoint() {
 		// Load checkpoint file
+		BdsThread bdsThreadRoot = loadCheckpoint();
 
-		// TODO: LOAD FROM CHECKLPOINT  !!!!!!!!!!!!!
-
-		//		for (BdsThread bdsThread : bdsThreads)
-		//			bdsThread.print();
+		for (BdsThread bdsThread : bdsThreadRoot.getBdsThreadsAll())
+			bdsThread.print();
 
 		return 0;
 	}
@@ -229,11 +230,38 @@ public class BdsRun {
 
 		// Native functions
 		NativeLibraryFunctions nativeLibraryFunctions = new NativeLibraryFunctions();
-		if (debug) log("Native library:\n" + nativeLibraryFunctions);
+		if (debug) log("Native library: " + nativeLibraryFunctions.size());
 
 		// Native library: String
 		NativeLibraryString nativeLibraryString = new NativeLibraryString();
-		if (debug) log("Native library:\n" + nativeLibraryString);
+		if (debug) log("Native library: " + nativeLibraryString.size());
+	}
+
+	/**
+	 * Restore from checkpoint and run
+	 */
+	BdsThread loadCheckpoint() {
+		// Load checkpoint file
+		BdsThread bdsThreadRoot;
+		try {
+			ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(chekcpointRestoreFile)));
+			bdsThreadRoot = (BdsThread) in.readObject();
+			in.close();
+		} catch (Exception e) {
+			throw new RuntimeException("Error while reading checkpoint file '" + chekcpointRestoreFile + "'", e);
+		}
+
+		// Set main thread's programUnit running scope (mostly for debugging and test cases)
+		// ProgramUnit's scope it the one before 'global'
+		// BdsThread mainThread = bdsThreads.get(0);
+		programUnit = bdsThreadRoot.getProgramUnit();
+
+		// Add all nodes
+		for (BdsNode n : programUnit.findNodes(null, true, true)) {
+			BdsNodeFactory.get().addNode(n);
+		}
+
+		return bdsThreadRoot;
 	}
 
 	void log(String msg) {
@@ -345,20 +373,11 @@ public class BdsRun {
 	 */
 	int runCheckpoint() {
 		// Load checkpoint file
-		BdsThread bdsThreadRoot;
-		try {
-			ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(chekcpointRestoreFile)));
-			bdsThreadRoot = (BdsThread) in.readObject();
-			in.close();
-		} catch (Exception e) {
-			throw new RuntimeException("Error while serializing to file '" + chekcpointRestoreFile + "'", e);
-		}
+		BdsThread bdsThreadRoot = loadCheckpoint();
 
 		// Set main thread's programUnit running scope (mostly for debugging and test cases)
 		// ProgramUnit's scope it the one before 'global'
-		// BdsThread mainThread = bdsThreads.get(0);
-		BdsThread mainThread = bdsThreadRoot;
-		programUnit = mainThread.getProgramUnit();
+		programUnit = bdsThreadRoot.getProgramUnit();
 
 		// Set state and recover tasks
 		List<BdsThread> bdsThreads = bdsThreadRoot.getBdsThreads();
@@ -371,7 +390,7 @@ public class BdsRun {
 		}
 
 		// All set, run main thread
-		return runThread(mainThread);
+		return runThread(bdsThreadRoot);
 	}
 
 	/**

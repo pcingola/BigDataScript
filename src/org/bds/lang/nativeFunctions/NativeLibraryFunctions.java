@@ -91,13 +91,15 @@ public class NativeLibraryFunctions {
 	public NativeLibraryFunctions() {
 		try {
 			functions = new ArrayList<>();
-
 			for (Class c : classes)
 				functions.add((FunctionNative) c.newInstance());
-
 		} catch (Exception e) {
 			throw new RuntimeException("Error creating native library", e);
 		}
+	}
+
+	public int size() {
+		return functions.size();
 	}
 
 	@Override

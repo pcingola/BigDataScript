@@ -32,8 +32,7 @@ public class BdsNodeFactory {
 			, "org.bds.lang" //
 	};
 
-	boolean createFakeIds = false;
-	int nodeNumber = 1, fakeNodeNumber = Integer.MIN_VALUE;
+	int nodeNumber = 1;
 	String packageName;
 	Map<Integer, BdsNode> nodesById = new HashMap<>(); // Important note: Node 0 means 'null' (numbering is one-based)
 	@SuppressWarnings("rawtypes")
@@ -51,6 +50,12 @@ public class BdsNodeFactory {
 	 */
 	public static void reset() {
 		bdsNodeFactory = new BdsNodeFactory();
+	}
+
+	public synchronized BdsNode addNode(BdsNode bdsNode) {
+		int nodeId = bdsNode.getId();
+		if (nodeNumber <= nodeId) nodeNumber = nodeId + 1;
+		return nodesById.put(nodeId, bdsNode);
 	}
 
 	/**
@@ -223,7 +228,7 @@ public class BdsNodeFactory {
 	 * Get an ID for a node and set 'nodesById'
 	 */
 	protected synchronized int getNextNodeId(BdsNode node) {
-		int id = (!createFakeIds ? nodeNumber++ : fakeNodeNumber++);
+		int id = nodeNumber++;
 		nodesById.put(id, node); // Update nodesById
 		return id;
 	}
@@ -241,10 +246,6 @@ public class BdsNodeFactory {
 	 */
 	public synchronized Collection<BdsNode> getNodes() {
 		return nodesById.values();
-	}
-
-	public boolean isCreateFakeIds() {
-		return createFakeIds;
 	}
 
 	public boolean isIgnore(ParseTree tree) {
@@ -278,35 +279,6 @@ public class BdsNodeFactory {
 		return packageName; // Add package name
 	}
 
-	//	/**
-	//	 * Get the 'real node' corresponding to this 'fake node' (this is used during serialization)
-	//	 */
-	//	public BdsNode realNode(BdsNode fakeNode) {
-	//		if (fakeNode == null) return null; // Nothing to do
-	//		if (!fakeNode.isFake()) return fakeNode; // Real node? don't replace
-	//
-	//		// Type nodes are not replaced, just ID is updated
-	//		if (fakeNode instanceof Type) {
-	//			int newId = getNextNodeId(fakeNode);
-	//			fakeNode.updateId(newId);
-	//			return fakeNode;
-	//		}
-	//
-	//		// Is it a fake node? => Replace by real node
-	//		// Find real node based on fake ID
-	//		int nodeId = -fakeNode.getId(); // Fake IDs are the negative values of real IDs
-	//		BdsNode realNode = BdsNodeFactory.get().getNode(nodeId);
-	//
-	//		// Check that node was replaced
-	//		if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node '" + nodeId + "'");
-	//
-	//		return realNode;
-	//	}
-
-	//	public void setCreateFakeIds(boolean createFakeIds) {
-	//		this.createFakeIds = createFakeIds;
-	//	}
-
 	/**
 	 * Remove Java package name from class name
 	 */
@@ -315,11 +287,4 @@ public class BdsNodeFactory {
 		String cn[] = className.split("\\.");
 		return cn[cn.length - 1];
 	}
-
-	//	public void updateId(int oldId, int newId, BdsNode node) {
-	//		if (debug) Gpr.debug("Update node ID: " + oldId + " -> " + newId + "\t" + node.getClass().getSimpleName());
-	//		nodesById.remove(oldId);
-	//		if (newId != 0) nodesById.put(newId, node);
-	//		if (nodeNumber <= newId) nodeNumber = newId + 1;
-	//	}
 }

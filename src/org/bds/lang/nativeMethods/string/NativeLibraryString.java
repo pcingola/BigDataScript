@@ -77,7 +77,7 @@ public class NativeLibraryString {
 	@SuppressWarnings("rawtypes")
 	public NativeLibraryString() {
 		try {
-			methods = new ArrayList<MethodNative>();
+			methods = new ArrayList<>();
 
 			for (String className : classNames) {
 				Class c = Class.forName(className);
@@ -86,6 +86,10 @@ public class NativeLibraryString {
 		} catch (Exception e) {
 			throw new RuntimeException("Error creating native library", e);
 		}
+	}
+
+	public int size() {
+		return methods.size();
 	}
 
 	@Override

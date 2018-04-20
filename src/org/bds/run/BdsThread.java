@@ -732,6 +732,9 @@ public class BdsThread extends Thread implements Serializable {
 		return vm.pop();
 	}
 
+	/**
+	 * Print thread information
+	 */
 	public void print() {
 		// Create a list with program file and all included files
 		List<BdsNode> nodeWithFiles = statement.findNodes(StatementInclude.class, true, false);
@@ -748,20 +751,8 @@ public class BdsThread extends Thread implements Serializable {
 		System.out.println(stackTrace());
 
 		// Show scopes
-		for (Scope scope = getScope(); scope != null; scope = scope.getParent()) {
-			if (!scope.isEmpty()) {
-				BdsNode node = scope.getNode();
-
-				String scopeInfo = "";
-				if ((node != null) && (scope.getNode().getFileName() != null)) scopeInfo = scope.getNode().getFileName() + ":" + scope.getNode().getLineNum();
-				System.out.println("--- Scope: " + scopeInfo + " ---");
-
-				for (String varName : scope) {
-					System.out.println(scope.getValue(varName));
-				}
-				System.out.println("--- End of scope ---");
-			}
-		}
+		for (Scope scope = getScope(); scope != null; scope = scope.getParent())
+			if (!scope.isEmpty()) System.out.println(scope);
 	}
 
 	void printCode(String code) {

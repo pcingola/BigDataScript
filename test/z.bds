@@ -1,14 +1,14 @@
 #!/usr/bin/env bds
 
-# A function defining a task
-void someFunction(int i) {
-	task echo TASK $i; sleep 1
+
+int f(int x) {
+	println "f($x)"
+	return g(x+1)
+}
+int g(int x) {
+	println "g($x)"
+	checkpoint "/tmp/z.chp"
+	return x+2
 }
 
-# A loop fires threads of funcions
-for ( int i : range(1, 5) ) {
-	println i
-   	par someFunction(i)
-}
-println "done"
-
+println f(3) 

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.bds.Config;
+import org.bds.lang.BdsNode;
+import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.statement.FunctionDeclaration;
@@ -425,6 +427,31 @@ public class BdsVm implements Serializable {
 
 	public Value getValue(String name) {
 		return scope.getValue(name);
+	}
+
+	/**
+	 * Implements goal OpCode
+	 */
+	void goal() {
+		Value vgoal = pop();
+
+		// Return a list of all taskIds to execute
+		ValueList taskIds;
+
+		if (vgoal.getType().isList()) {
+			// List of values: Execute each goal
+			taskIds = new ValueList(TypeList.get(Types.STRING));
+			ValueList vlist = (ValueList) vgoal;
+			// Is it a list? Add goal for each item
+			for (Value v : vlist) {
+				taskIds.addAll(bdsThread.goal(v.asString()));
+			}
+		} else {
+			// Single value: execute one goal
+			taskIds = bdsThread.goal(vgoal.asString());
+		}
+
+		push(taskIds);
 	}
 
 	/**
@@ -1169,9 +1196,45 @@ public class BdsVm implements Serializable {
 		this.verbose = verbose;
 	}
 
+	/**
+	 * Show stack trace
+	 */
 	public String stackTrace() {
-		// TODO: !!! IMPLEMENT
-		return "";
+		StringBuilder sb = new StringBuilder();
+
+		String tabs = "";
+		sb.append(stackTrace(nodeId, tabs));
+
+		for (int i = 0; i < fp; i++) {
+			CallFrame cf = callFrame[i];
+			tabs += "    ";
+			sb.append(stackTrace(cf.getNodeId(), tabs));
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * Show stack trace information on node bdsNode
+	 */
+	String stackTrace(int nodeId, String tabs) {
+		int maxLineWidth = 50;
+
+		BdsNode bdsNode = BdsNodeFactory.get().getNode(nodeId);
+
+		if (bdsNode == null) return "";
+
+		String lines[] = bdsNode.toString().split("\n");
+		String line = tabs + lines[0];
+
+		boolean addElipsis = lines.length > 1 || line.length() > maxLineWidth;
+		if (line.length() > maxLineWidth) line = line.substring(0, maxLineWidth);
+		if (addElipsis) line += " ...";
+
+		if (bdsNode.getFileName() != null) //
+			return String.format("%-55s # %s:%d\n", line, bdsNode.getFileName(), bdsNode.getLineNum());
+
+		return tabs + line + "\n";
 	}
 
 	/**
@@ -1258,30 +1321,5 @@ public class BdsVm implements Serializable {
 		}
 		sb.append(" ]");
 		return sb.toString();
-	}
-
-	/**
-	 * Implements goal OpCode
-	 */
-	void goal() {
-		Value vgoal = pop();
-
-		// Return a list of all taskIds to execute
-		ValueList taskIds;
-
-		if (vgoal.getType().isList()) {
-			// List of values: Execute each goal
-			taskIds = new ValueList(TypeList.get(Types.STRING));
-			ValueList vlist = (ValueList) vgoal;
-			// Is it a list? Add goal for each item
-			for (Value v : vlist) {
-				taskIds.addAll(bdsThread.goal(v.asString()));
-			}
-		} else {
-			// Single value: execute one goal
-			taskIds = bdsThread.goal(vgoal.asString());
-		}
-
-		push(taskIds);
 	}
 }

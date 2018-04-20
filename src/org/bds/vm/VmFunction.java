@@ -1,5 +1,7 @@
 package org.bds.vm;
 
+import java.io.Serializable;
+
 import org.bds.lang.statement.FunctionDeclaration;
 
 /**
@@ -11,7 +13,9 @@ import org.bds.lang.statement.FunctionDeclaration;
  *
  * @author pcingola
  */
-public class VmFunction {
+public class VmFunction implements Serializable {
+
+	private static final long serialVersionUID = -7424371535388865361L;
 
 	String label;
 	String args[];

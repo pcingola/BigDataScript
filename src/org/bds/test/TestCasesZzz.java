@@ -1,12 +1,7 @@
 package org.bds.test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bds.util.Gpr;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -16,32 +11,26 @@ import junit.framework.Assert;
  */
 public class TestCasesZzz extends TestCasesBase {
 
+	//	@Test
+	//	public void test114_parallel_function_task_calls() {
+	//		Gpr.debug("Test");
+	//		verbose = true;
+	//		String stdout = runAndReturnStdout("test/run_114.bds");
+	//
+	//		Set<String> linesPar = new HashSet<>();
+	//		for (String line : stdout.split("\n"))
+	//			if (line.startsWith("TASK")) linesPar.add(line);
+	//
+	//		// Check
+	//		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
+	//	}
+
 	@Test
-	public void test114_parallel_function_task_calls() {
+	public void test122_nestest_break_continue() {
 		Gpr.debug("Test");
-		verbose = true;
-		String stdout = runAndReturnStdout("test/run_114.bds");
-
-		Set<String> linesPar = new HashSet<>();
-		for (String line : stdout.split("\n"))
-			if (line.startsWith("TASK")) linesPar.add(line);
-
-		// Check
-		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
+		runAndCheck("test/run_122.bds", "out", "5\t7");
 	}
 
-	//	@Test
-	//	public void test121_split_fail_regex() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_121.bds", "len", "1");
-	//	}
-	//
-	//	@Test
-	//	public void test122_nestest_break_continue() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_122.bds", "out", "5\t7");
-	//	}
-	//
 	//	@Test
 	//	public void test123_literals_sys_task() {
 	//		Gpr.debug("Test");

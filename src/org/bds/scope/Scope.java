@@ -189,8 +189,13 @@ public class Scope implements Iterable<String>, Serializable {
 		List<String> names = new ArrayList<>();
 		names.addAll(values.keySet());
 		Collections.sort(names);
-		for (String n : names)
-			sb.append(n + ": " + getValueLocal(n) + "\n");
+		for (String n : names) {
+			Value v = getValueLocal(n);
+			Type t = v.getType();
+
+			if (t.isFunction()) sb.append(t.getPrimitiveType() + " : " + n + "\n");
+			else sb.append(t + " : " + n + " = " + getValueLocal(n) + "\n");
+		}
 
 		// Show parents
 		if (parent != null) sb.append(parent.toString(showFunc));

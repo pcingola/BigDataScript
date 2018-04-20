@@ -39,7 +39,8 @@ public class MethodNative_string_split_regex extends MethodNativeString {
 			String regex = bdsThread.getString("regex");
 			return arrayString2valuelist(str.split(regex, -1));
 		} catch (Throwable t) {
-			// Error using regex? Return an empty list
+			// Error using regex? Return a list with only one element
+			vlist.add(vThis);
 			return vlist;
 		}
 	}
