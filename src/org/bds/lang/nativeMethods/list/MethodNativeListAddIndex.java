@@ -10,10 +10,12 @@ import org.bds.run.BdsThread;
 
 /**
  * Add: Add an element to the list (position 'idx')
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListAddIndex extends MethodNativeList {
+
+	private static final long serialVersionUID = 6579215395739141983L;
 
 	public MethodNativeListAddIndex(TypeList listType) {
 		super(listType);
@@ -35,7 +37,7 @@ public class MethodNativeListAddIndex extends MethodNativeList {
 	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
 		long idx = bdsThread.getInt("idx");
 		Value toPush = bdsThread.getValue("toPush");
-		vthis.setValue(idx, toPush);
+		vthis.add((int) idx, toPush);
 		return toPush;
 	}
 

@@ -1,8 +1,5 @@
 package org.bds.test;
 
-import org.bds.util.Gpr;
-import org.junit.Test;
-
 /**
  * Quick test cases when creating a new feature...
  *
@@ -23,14 +20,8 @@ public class TestCasesZzz extends TestCasesBase {
 	//
 	//		// Check
 	//		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
-	//	}
-
-	@Test
-	public void test122_nestest_break_continue() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_122.bds", "out", "5\t7");
-	}
-
+	//	//	}
+	//
 	//	@Test
 	//	public void test123_literals_sys_task() {
 	//		Gpr.debug("Test");
@@ -88,21 +79,6 @@ public class TestCasesZzz extends TestCasesBase {
 	//		for (String out : expectedOutput.split("\n")) {
 	//			Assert.assertTrue("Expected output line not found: '" + out + "'", stdout.contains(out));
 	//		}
-	//	}
-	//
-	//	@Test
-	//	public void test136() {
-	//		Gpr.debug("Test");
-	//		HashMap<String, Object> expectedValues = new HashMap<>();
-	//		expectedValues.put("l", "[1, 99, 2, 3]");
-	//		expectedValues.put("l2", "[3, 2, 99, 1]");
-	//		expectedValues.put("l3", "[3, 2, 99, 1, 99]");
-	//		expectedValues.put("l3count", "2");
-	//		expectedValues.put("l3idx", "2");
-	//		expectedValues.put("l4", "[3, 2, 1, 99]");
-	//		expectedValues.put("l5", "[3, 2, 1, 99]");
-	//
-	//		runAndCheck("test/run_136.bds", expectedValues);
 	//	}
 
 }

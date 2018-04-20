@@ -31,6 +31,10 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 		list = len > 0 ? new ArrayList<>(len) : new ArrayList<>();
 	}
 
+	public void add(int idx, Value v) {
+		list.add(idx, v);
+	}
+
 	public boolean add(Value v) {
 		return list.add(v);
 	}
