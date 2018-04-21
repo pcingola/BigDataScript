@@ -73,13 +73,14 @@ public class TestCasesRun3 extends TestCasesBase {
 	@Test
 	public void test208() {
 		Gpr.debug("Test");
-		runAndCheck("test/run_208.bds", "z", "{ i: 7, l: [one, dos, three], m: { one => uno,  three => tres,  two => deux } }");
+		runAndCheck("test/run_208.bds", "z", "{ i: 7, l: [one, dos, three], m: { one => uno, three => tres, two => deux } }");
 	}
 
 	@Test
 	public void test209() {
 		Gpr.debug("Test");
-		runAndCheckStderr("test/run_209.bds", "Null pointer: Cannot access field 'Zzz.i'");
+		verbose = true;
+		runAndCheckStderr("test/run_209.bds", "Null pointer: Cannot access field 'i' from null object.");
 	}
 
 	@Test

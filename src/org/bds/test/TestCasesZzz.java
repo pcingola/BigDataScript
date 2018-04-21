@@ -1,5 +1,8 @@
 package org.bds.test;
 
+import org.bds.util.Gpr;
+import org.junit.Test;
+
 /**
  * Quick test cases when creating a new feature...
  *
@@ -8,20 +11,35 @@ package org.bds.test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
+	@Test
+	public void test210() {
+		Gpr.debug("Test");
+		verbose = true;
+		runAndCheckStderr("test/run_210.bds", "Null pointer: Cannot call method 'Zzz.set' in null object");
+	}
+
 	//	@Test
-	//	public void test207() {
+	//	public void test211() {
 	//		Gpr.debug("Test");
-	//		Map<String, Object> expectedValues = new HashMap<>();
-	//		expectedValues.put("j", "42");
-	//		expectedValues.put("s", "bye");
-	//		expectedValues.put("s2", "chau");
-	//		runAndCheck("test/run_207.bds", expectedValues);
+	//		runAndCheck("test/run_211.bds", "z", "{ i: 7 }");
 	//	}
 	//
 	//	@Test
-	//	public void test208() {
+	//	public void test212() {
 	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_208.bds", "z", "{ i: 7, l: [one, dos, three], m: { one => uno,  three => tres,  two => deux } }");
+	//		runAndCheck("test/run_212.bds", "z", "{ i: 42 }");
+	//	}
+	//
+	//	@Test
+	//	public void test213() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_213.bds", "z", "{ i: 7 }");
+	//	}
+	//
+	//	@Test
+	//	public void test214() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_214.bds", "z", "{ i: 42 }");
 	//	}
 
 }

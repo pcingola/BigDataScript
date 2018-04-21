@@ -9,12 +9,12 @@ import org.bds.lang.value.ValueNull;
  * @author pcingola
  *
  */
-public class TypeNull extends TypeUniqueValue {
+public class TypeNull extends TypeClass {
 
 	private static final long serialVersionUID = 8321504654535669530L;
 
 	public TypeNull() {
-		super(PrimitiveType.NULL);
+		super(null);
 	}
 
 	@Override
@@ -26,4 +26,5 @@ public class TypeNull extends TypeUniqueValue {
 	public Value newDefaultValue() {
 		return ValueNull.NULL;
 	}
+
 }

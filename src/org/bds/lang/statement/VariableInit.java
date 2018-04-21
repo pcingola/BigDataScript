@@ -142,6 +142,7 @@ public class VariableInit extends BdsNode {
 				+ toAsmCast() //
 				+ "load this\n" //
 				+ "setfield  " + varName + "\n"//
+				+ "pop\n" //
 		;
 	}
 

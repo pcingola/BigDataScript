@@ -10,6 +10,8 @@ import java.util.HashMap;
  */
 public class Types {
 
+	protected static HashMap<String, Type> types = new HashMap<>();
+
 	public final static TypeAny ANY = new TypeAny(); // ANY type (wild-card type)
 	public final static TypeBool BOOL = new TypeBool();
 	public final static TypeInt INT = new TypeInt();
@@ -17,8 +19,6 @@ public class Types {
 	public final static TypeReal REAL = new TypeReal();
 	public final static TypeString STRING = new TypeString();
 	public final static TypeVoid VOID = new TypeVoid(); // Void for side-effect functions
-
-	protected static HashMap<String, Type> types = new HashMap<>();
 
 	static public Type get(String typeStr) {
 		return types.get(typeStr);

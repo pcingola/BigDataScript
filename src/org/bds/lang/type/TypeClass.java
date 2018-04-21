@@ -37,7 +37,7 @@ public class TypeClass extends TypeComposite {
 	public TypeClass(ClassDeclaration classDeclaration) {
 		super(PrimitiveType.CLASS);
 		classDecl = classDeclaration;
-		className = classDecl.getClassName();
+		className = classDecl != null ? classDecl.getClassName() : "null";
 		Types.put(this);
 	}
 

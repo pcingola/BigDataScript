@@ -63,7 +63,9 @@ public class ReferenceField extends ReferenceVar {
 
 	@Override
 	public String toAsm() {
-		return exprObj.toAsm() + "\nreffield " + name + "\n";
+		return exprObj.toAsm() //
+				+ "\nreffield " + name + "\n"//
+		;
 	}
 
 	@Override
