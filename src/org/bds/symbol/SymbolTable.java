@@ -196,6 +196,12 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		Type t = typeThis.getSymbolTable().getType(name);
 		classField = (t != null);
 
+		
+		!!!!!!!!!!!!!
+		// TODO: Lookup 'name' as method in class
+		
+		
+		// Nothing found
 		return null;
 	}
 
