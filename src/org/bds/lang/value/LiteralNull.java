@@ -31,12 +31,17 @@ public class LiteralNull extends Literal {
 
 	@Override
 	protected Value parseValue(ParseTree tree) {
-		return Value.NULL;
+		return ValueNull.NULL;
 	}
 
 	@Override
 	public Type returnType(SymbolTable symtab) {
 		return Types.NULL;
+	}
+
+	@Override
+	public String toAsm() {
+		return "pushnull\n";
 	}
 
 	@Override

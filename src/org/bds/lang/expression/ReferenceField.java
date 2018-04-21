@@ -67,6 +67,11 @@ public class ReferenceField extends ReferenceVar {
 	}
 
 	@Override
+	public String toAsmSet() {
+		return "load " + exprObj + "\nsetfield " + name + "\n";
+	}
+
+	@Override
 	public String toString() {
 		return exprObj + "." + name;
 	}

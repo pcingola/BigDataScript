@@ -11,13 +11,13 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 
 @RunWith(Suite.class)
-@SuiteClasses({ // TestCasesTail.class, //
+@SuiteClasses({ TestCasesTail.class, //
 		TestCasesVm.class, // Virtual machine
 		TestCasesInterpolate.class, // Variable interpolation
 		TestCasesLang.class, // Language (compiler)
 		TestCasesRun.class, // Running bds code
 		TestCasesRun2.class, // Running bds code
-		//		TestCasesRun3.class, // Running bds code (classes / object)
+		TestCasesRun3.class, // Running bds code (classes / object)
 		//		TestCasesGraph.class, // Running bds code: Task graphs and dependencies 
 		//		TestCasesCheckpoint.class, // Running bds code: Checkpoint and recovery
 		//		TestCasesTesting.class, //

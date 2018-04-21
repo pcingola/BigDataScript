@@ -91,12 +91,21 @@ public class ExpressionNew extends MethodCall {
 		// we need a scope and variable 'this' has to be set
 		sb.append("scopepush\n");
 		sb.append("new " + expresionThis.getReturnType().toString() + "\n");
-		sb.append("store this\n");
+		sb.append("var this\n");
+		sb.append("pop\n");
 		sb.append(toAsmInitFields());
-		sb.append("scopepush\n");
 
-		sb.append(args.toAsm());
-		sb.append(toAsmCall());
+		// Call constructor, unless it's the default constructor
+		// Don't waste time calling the default constructor, since
+		// it doesn't do anything.
+		if (!functionDeclaration.isNative()) {
+			sb.append(args.toAsm());
+			sb.append(toAsmCall());
+		} else {
+			sb.append("load this\n");
+		}
+
+		sb.append("scopepop\n");
 		return sb.toString();
 	}
 

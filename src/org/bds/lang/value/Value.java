@@ -14,7 +14,7 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 	private static final long serialVersionUID = 3481924830790274005L;
 
 	public static final ValueUnique ANY = ValueUnique.get(Types.ANY);
-	public static final ValueUnique NULL = ValueUnique.get(Types.NULL);
+	//public static final ValueNull NULL = ValueNull.NULL;
 	public static final ValueUnique VOID = ValueUnique.get(Types.VOID);
 
 	public static Value factory(Object v) {
@@ -24,7 +24,7 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 		if (v instanceof String) return new ValueString((String) v);
 		if (v instanceof Integer) return new ValueInt(((Integer) v).longValue());
 		if (v instanceof Float) return new ValueReal(((Float) v).doubleValue());
-		if (v == null) return Value.NULL;
+		if (v == null) return ValueNull.NULL;
 		throw new RuntimeException("Cannot create Value from object class " + v.getClass().getCanonicalName());
 	}
 

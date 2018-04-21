@@ -24,6 +24,7 @@ import org.bds.lang.value.ValueFunction;
 import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueMap;
+import org.bds.lang.value.ValueNull;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
@@ -1048,6 +1049,10 @@ public class BdsVm implements Serializable {
 
 			case PUSHI:
 				push(constantInt());
+				break;
+
+			case PUSHNULL:
+				push(ValueNull.NULL);
 				break;
 
 			case PUSHR:

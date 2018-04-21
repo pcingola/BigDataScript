@@ -9,17 +9,19 @@ package org.bds.test;
 public class TestCasesZzz extends TestCasesBase {
 
 	//	@Test
-	//	public void test114_parallel_function_task_calls() {
+	//	public void test207() {
 	//		Gpr.debug("Test");
-	//		verbose = true;
-	//		String stdout = runAndReturnStdout("test/run_114.bds");
+	//		Map<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("j", "42");
+	//		expectedValues.put("s", "bye");
+	//		expectedValues.put("s2", "chau");
+	//		runAndCheck("test/run_207.bds", expectedValues);
+	//	}
 	//
-	//		Set<String> linesPar = new HashSet<>();
-	//		for (String line : stdout.split("\n"))
-	//			if (line.startsWith("TASK")) linesPar.add(line);
-	//
-	//		// Check
-	//		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
-	//	//	}
+	//	@Test
+	//	public void test208() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_208.bds", "z", "{ i: 7, l: [one, dos, three], m: { one => uno,  three => tres,  two => deux } }");
+	//	}
 
 }

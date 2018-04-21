@@ -100,7 +100,7 @@ public enum OpCode {
 	// Push literal
 	//    PUSHNULL                 # Pushes a 'null' literal
 	//    PUSH{B|I|R|S}  literal   # Pushes a literal constant into the stack
-	, PUSHB, PUSHI, PUSHR, PUSHS
+	, PUSHB, PUSHI, PUSHNULL, PUSHR, PUSHS
 	// Reference: object's field, list index or hash key
 	, REFFIELD, REFLIST, REFMAP
 	// Return (from function)

@@ -1,21 +1,11 @@
 #!/usr/bin/env bds
 
-hi := "Hello"
-println   'print_quote        |\t|'
-println   'print_quote        |\t|    variable:$hi'
+class Zzz {
+	int i = 42
+}
 
-println   "print_double       |\t|"
-println   "print_double       |\t|    variable:$hi"
-
-println   "print_double_esc   |\\t|"
-println   "print_double_esc   |\\t|   variable:$hi"
-
-# These lines depend on the shell being used
-# Using the default '/bin/sh' I see a 'tab' charater, whereas 
-# using /bin/bash I see a '\t' (escaped tab)
-sys  echo "sys                |\t|"
-sys  echo "sys                |\t|    variable:$hi"
-
-task echo "task               |\t|"
-wait
-task echo "task               |\t|    variable:$hi"
+Zzz z
+z = null
+println("z: $z")
+z = new Zzz()
+println("z: $z")
