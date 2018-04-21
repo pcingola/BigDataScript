@@ -3,7 +3,7 @@ class A {
 	int i = 42
 	int f(int x) {
 		println "A.f($x)"
-		return 2 + x
+		return i + x
 	}
 }
 
@@ -11,7 +11,7 @@ class B extends A {
 	int j = 7
 	int f(int x) {
 		println "B.f($x)"
-		return i + x
+		return i + j + x
 	}
 }
 

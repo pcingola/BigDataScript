@@ -13,8 +13,10 @@ import java.util.Set;
 
 import org.bds.lang.BdsNode;
 import org.bds.lang.statement.Args;
+import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.util.AutoHashMap;
 
@@ -148,19 +150,52 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	public Type getType(String name) {
 		// Find symbol on this or any parent scope
 		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
-			// Try to find a symbol
-			Type ssym = symtab.getTypeLocal(name);
+			// Resolve 'name'
+			Type ssym = symtab.resolveLocal(name);
 			if (ssym != null) return ssym;
-
-			// Try a function
-			List<ValueFunction> fs = symtab.getValueFunctionsLocal(name);
-			// Since we are only matching by name, there has to be one
-			// and only one function with that name
-			// Note, this is limiting and very naive. A better approach is needed
-			if (fs != null && fs.size() == 1) return fs.get(0).getType();
 		}
 
 		// Nothing found
+		return null;
+	}
+
+	/**
+	 * Resolve symbol in local symbol table (no recursion)
+	 */
+	Type resolveLocal(String name) {
+		//---
+		// Local name
+		//---
+
+		// Try to find 'name' as a variable in local symbol table
+		Type ssym = getTypeLocal(name);
+		if (ssym != null) return ssym;
+
+		// Is it a function? 
+		// Try a function in local symbol table
+		List<ValueFunction> fs = getValueFunctionsLocal(name);
+		// Since we are only matching by name, there has to be one
+		// and only one function with that name
+		// Note, this is limiting and very naive. A better approach is needed
+		if (fs != null && fs.size() == 1) return fs.get(0).getType();
+
+		//---
+		// Is 'name' a field?
+		//---
+
+		if (name.equals(ClassDeclaration.THIS)) {
+			// We are already trying to resolve 'this', it makes no sense to try to find 'this.this'
+			return null;
+		}
+
+		// Is variable 'this' defined? If so, it means we are within a class
+		TypeClass typeThis = (TypeClass) getType(ClassDeclaration.THIS);
+		if (typeThis == null) return null; // We are not in a class
+
+		// Look up 'name' as a field in the class
+		Type t = typeThis.getSymbolTable().getType(name);
+		classField = (t != null);
+
 		return null;
 	}
 
