@@ -14,6 +14,9 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueFunction;
+import org.bds.scope.GlobalScope;
 import org.bds.util.Gpr;
 
 /**
@@ -119,6 +122,7 @@ public class VmAsm {
 	 */
 	void init() {
 		initTypes();
+		initGlobalFunctions();
 		initFunctions();
 		initClasses();
 	}
@@ -148,6 +152,20 @@ public class VmAsm {
 		for (BdsNode n : fdecls) {
 			FunctionDeclaration fd = (FunctionDeclaration) n;
 			bdsvm.addFunction(fd);
+		}
+	}
+
+	/**
+	 *  Add global functions
+	 */
+	void initGlobalFunctions() {
+		// Add all native functions from global scope
+		for (Value v : GlobalScope.get().getValues()) {
+			if (v.getType().isFunction()) {
+				ValueFunction vf = (ValueFunction) v;
+				FunctionDeclaration fd = vf.getFunctionDeclaration();
+				bdsvm.addFunction(fd);
+			}
 		}
 	}
 
@@ -205,7 +223,7 @@ public class VmAsm {
 
 		// Is 'label' a function signature?
 		if (label.indexOf('(') > 0 && label.indexOf(')') > 0) {
-			bdsvm.addFunctionPc(label, pc());
+			bdsvm.updateFunctionPc(label, pc());
 		} else {
 			bdsvm.addLabel(label, pc());
 		}

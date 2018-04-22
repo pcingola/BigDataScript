@@ -37,6 +37,7 @@ public enum OpCode {
 	// Function call:
 	//    CALL function_signature
 	//    CALLNATIVE function_signature
+	//    CALLMETHOD method_signature
 	, CALL, CALLMETHOD, CALLNATIVE
 	// Debug breakpoint
 	, DEBUG
@@ -140,6 +141,7 @@ public enum OpCode {
 	public boolean hasParam() {
 		switch (this) {
 		case CALL:
+		case CALLMETHOD:
 		case CALLNATIVE:
 		case JMP:
 		case JMPT:
@@ -177,6 +179,7 @@ public enum OpCode {
 	public boolean isParamString() {
 		switch (this) {
 		case CALL:
+		case CALLMETHOD:
 		case CALLNATIVE:
 		case JMP:
 		case JMPT:
@@ -207,6 +210,7 @@ public enum OpCode {
 	public Object parseParam(String param, Map<String, Type> typeByName) {
 		switch (this) {
 		case CALL:
+		case CALLMETHOD:
 		case CALLNATIVE:
 		case JMP:
 		case JMPT:

@@ -12,9 +12,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bds.lang.BdsNode;
+import org.bds.lang.Parameters;
 import org.bds.lang.statement.Args;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
@@ -117,6 +119,21 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		}
 
 		return bestVf;
+	}
+
+	public MethodDeclaration findMethod(FunctionDeclaration fdecl) {
+		if (functions == null) return null;
+
+		Parameters pars = fdecl.getParameters();
+
+		// Find all methods with same name
+		for (ValueFunction vf : functions.get(fdecl.getFunctionName())) {
+			FunctionDeclaration fd = vf.getFunctionDeclaration();
+			Parameters fdp = fd.getParameters();
+			if (pars.equalsMethod(fdp)) return (MethodDeclaration) fd;
+		}
+
+		return null; // Not found
 	}
 
 	/**

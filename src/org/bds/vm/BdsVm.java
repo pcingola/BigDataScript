@@ -29,7 +29,6 @@ import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.run.RunState;
-import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 import org.bds.task.DepFactory;
@@ -71,7 +70,6 @@ public class BdsVm implements Serializable {
 	Map<String, Integer> labels;
 	AutoHashMap<Integer, List<String>> labelsByPc;
 	Map<Object, Integer> constantsByObject;
-	Map<String, VmFunction> functions;
 	Map<String, FunctionDeclaration> functionsBySignature;
 	Map<Type, Integer> typeToIndex;
 	List<Object> constants;
@@ -81,7 +79,7 @@ public class BdsVm implements Serializable {
 	public BdsVm() {
 		constants = new ArrayList<>();
 		constantsByObject = new HashMap<>();
-		functions = new HashMap<>();
+		//		functions = new HashMap<>();
 		labels = new HashMap<>();
 		labelsByPc = new AutoHashMap<>(new LinkedList<String>());
 		functionsBySignature = new HashMap<>();
@@ -121,63 +119,6 @@ public class BdsVm implements Serializable {
 	public void addFunction(FunctionDeclaration fd) {
 		String sig = fd.signature();
 		functionsBySignature.put(sig, fd);
-
-		// Add VM function description only for non-native functions
-		if (fd.isNative()) return;
-
-		VmFunction vmf = functions.get(sig);
-		if (vmf != null) {
-			// Update parameters
-			vmf.set(fd);
-		} else {
-			// Add new entry
-			vmf = new VmFunction(sig, -1);
-			vmf.set(fd);
-			functions.put(sig, vmf);
-		}
-	}
-
-	/**
-	 * Create and add a new function's descriptor (PC, arg names, etc)
-	 */
-	public void addFunctionPc(String name, int pc) {
-		addLabel(name, pc);
-
-		VmFunction vmf = functions.get(name);
-		if (vmf != null) {
-			// Update parameters
-			vmf.setPc(pc);
-		} else {
-			// Add new entry
-			vmf = new VmFunction(name, pc);
-			functions.put(name, vmf);
-		}
-
-	}
-
-	/**
-	 *  Add global functions
-	 */
-	void addFunctions() {
-		// Add all native functions from global scope
-		for (Value v : GlobalScope.get().getValues()) {
-			if (v.getType().isFunction()) {
-				ValueFunction vf = (ValueFunction) v;
-				FunctionDeclaration fd = vf.getFunctionDeclaration();
-				addFunction(fd);
-			}
-		}
-
-		// Add all native functions from all defined types (e.g. classes, list, map, etc.)
-		for (Type t : types) {
-			SymbolTable st = t.getSymbolTable();
-			if (st.hasFunctions()) {
-				for (ValueFunction vf : st.getFunctions()) {
-					FunctionDeclaration fd = vf.getFunctionDeclaration();
-					addFunction(fd);
-				}
-			}
-		}
 	}
 
 	/**
@@ -188,6 +129,19 @@ public class BdsVm implements Serializable {
 	public void addLabel(String label, int codeidx) {
 		labels.put(label, codeidx);
 		labelsByPc.getOrCreate(codeidx).add(label);
+	}
+
+	/**
+	 * Add all methods for type 't'
+	 */
+	void addMethods(Type t) {
+		SymbolTable st = t.getSymbolTable();
+		if (st.hasFunctions()) {
+			for (ValueFunction vf : st.getFunctions()) {
+				FunctionDeclaration fd = vf.getFunctionDeclaration();
+				addFunction(fd);
+			}
+		}
 	}
 
 	/**
@@ -205,6 +159,10 @@ public class BdsVm implements Serializable {
 		int idx = types.size();
 		types.add(type);
 		typeToIndex.put(type, idx);
+
+		// Add all method for 'type'
+		addMethods(type);
+
 		return idx;
 	}
 
@@ -215,15 +173,15 @@ public class BdsVm implements Serializable {
 	void call(String fsig) {
 		pushCallFrame(); // Push stack frame
 
-		VmFunction func = getFunction(fsig); // Find function meta-data
+		FunctionDeclaration fdecl = functionsBySignature.get(fsig); // Find function meta-data
 		newScope(); // Create a new scope
 
 		// Add all arguments to the scope. Remember that stack in reverse order
-		String[] args = func.getArgs();
-		for (int i = args.length - 1; i >= 0; i--)
-			scope.add(args[i], pop());
+		List<String> args = fdecl.getParameterNames();
+		for (int i = args.size() - 1; i >= 0; i--)
+			scope.add(args.get(i), pop());
 
-		pc = func.getPc(); // Jump to function
+		pc = fdecl.getPc(); // Jump to function
 	}
 
 	/**
@@ -233,18 +191,24 @@ public class BdsVm implements Serializable {
 	void callMethod(String fsig) {
 		pushCallFrame(); // Push stack frame
 
-		VmFunction func = getFunction(fsig); // Find function meta-data
+		// Find method
+		FunctionDeclaration fdecl = functionsBySignature.get(fsig);
+
 		newScope(); // Create a new scope
 
-		// Add all arguments to the scope. Remember that stack in reverse order
+		// Args: Add all arguments to the scope
+		// Note: Stack in reverse order
 		Value vthis = null; // The last item to pop from the stack is 'this'
-		String[] args = func.getArgs();
-		for (int i = args.length - 1; i >= 0; i--) {
+		List<String> args = fdecl.getParameterNames();
+		for (int i = args.size() - 1; i >= 0; i--) {
 			vthis = pop();
-			scope.add(args[i], vthis);
+			scope.add(args.get(i), vthis);
 		}
 
-		pc = func.getPc(); // Jump to function
+		// Find 'virtual method' (class inheritance)
+		fdecl = vthis.getType().resolve(fdecl);
+
+		pc = fdecl.getPc(); // Jump to method
 	}
 
 	/**
@@ -374,7 +338,6 @@ public class BdsVm implements Serializable {
 		vmclone.labels = labels;
 		vmclone.labelsByPc = labelsByPc;
 		vmclone.constantsByObject = constantsByObject;
-		vmclone.functions = functions;
 		vmclone.functionsBySignature = functionsBySignature;
 		vmclone.typeToIndex = typeToIndex;
 		vmclone.constants = constants;
@@ -426,10 +389,6 @@ public class BdsVm implements Serializable {
 
 	public int getExitCode() {
 		return exitCode;
-	}
-
-	VmFunction getFunction(String name) {
-		return functions.get(name);
 	}
 
 	/**
@@ -633,6 +592,14 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Resolve method call
+	 * Note: For non-class types, there is nothing to resolve
+	 */
+	public FunctionDeclaration resolve(FunctionDeclaration fdecl) {
+		return fdecl;
+	}
+
+	/**
 	 * Run the program in 'code'
 	 */
 	public int run() {
@@ -640,9 +607,6 @@ public class BdsVm implements Serializable {
 		// Note: If vm forked, then pc is already initialized in child
 		//       process, do not change.
 		if (pc == 0) pc = Math.max(0, getLabel(LABLE_MAIN));
-
-		// Add functions from global scope
-		addFunctions();
 
 		run = true;
 		try {
@@ -1377,6 +1341,15 @@ public class BdsVm implements Serializable {
 		}
 		sb.append(" ]");
 		return sb.toString();
+	}
+
+	/**
+	 * Create and add a new function's descriptor (PC, arg names, etc)
+	 */
+	public void updateFunctionPc(String name, int pc) {
+		addLabel(name, pc);
+		FunctionDeclaration fdecl = functionsBySignature.get(name);
+		fdecl.setPc(pc);
 	}
 
 }

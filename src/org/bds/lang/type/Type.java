@@ -8,6 +8,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.value.Value;
 import org.bds.symbol.SymbolTable;
 
@@ -193,6 +194,14 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	@Override
 	protected void parse(ParseTree tree) {
 		throw new RuntimeException("This method should never be called!");
+	}
+
+	/**
+	 * Resolve method call
+	 * Note: For non-class types, there is nothing to resolve
+	 */
+	public FunctionDeclaration resolve(FunctionDeclaration fdecl) {
+		return fdecl;
 	}
 
 	/**

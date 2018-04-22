@@ -22,7 +22,7 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	private static final long serialVersionUID = 4332975458857670311L;
 
-	protected int pc;
+	protected int pc = -1;
 	protected String functionName;
 	protected TypeFunction funcType;
 	protected Parameters parameters;

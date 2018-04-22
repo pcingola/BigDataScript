@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FieldDeclaration;
+import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.value.Value;
@@ -103,6 +104,17 @@ public class TypeClass extends TypeComposite {
 	@Override
 	protected void parse(ParseTree tree) {
 		className = tree.getChild(0).getText();
+	}
+
+	/**
+	 * Resolve method call having the same name and arguments & types (except 'this' argument)
+	 */
+	@Override
+	public FunctionDeclaration resolve(FunctionDeclaration fdecl) {
+		if (!fdecl.isMethod()) return fdecl;
+		FunctionDeclaration fd = symbolTable.findMethod(fdecl);
+		if (fd != null) return fd;
+		return classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(fdecl) : fdecl;
 	}
 
 	/**

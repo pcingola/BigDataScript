@@ -74,6 +74,28 @@ public class Parameters extends BdsNode implements Comparable<Parameters> {
 	}
 
 	/**
+	 * Compare arguments for method call
+	 */
+	public boolean equalsMethod(Parameters p) {
+		int parsSize = size();
+
+		// Same number of parameters?
+		if (parsSize != p.size()) return false;
+
+		// Only 'this' parameter, it's a match
+		if (parsSize == 1) return true;
+
+		// Compare arguments, except for first argument ('this')
+		for (int i = 1; i < parsSize; i++) {
+			Type pi = getType(i);
+			Type ppi = p.getType(i);
+			if (!pi.equals(ppi)) return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Get parameter 'i' type
 	 */
 	public Type getType(int i) {
