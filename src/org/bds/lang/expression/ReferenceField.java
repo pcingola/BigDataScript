@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.symbol.SymbolTable;
@@ -31,15 +30,7 @@ public class ReferenceField extends ReferenceVar {
 	 */
 	@Override
 	protected Type findType(SymbolTable symtab) {
-		// Is 'this' defined (is it a class?)
-		TypeClass typeThis = (TypeClass) symtab.getType(ClassDeclaration.THIS);
-		if (typeThis == null) return null;
-
-		// Look up 'name' as a field in the class
-		Type t = typeThis.getSymbolTable().getType(name);
-		classField = (t != null);
-
-		return t;
+		return symtab.resolveThis(name); // Only resolve as field (i.e. "this.name")
 	}
 
 	@Override
@@ -55,7 +46,7 @@ public class ReferenceField extends ReferenceVar {
 		Type classType = exprObj.returnType(symtab);
 		if (classType == null) return null;
 		if (classType.isClass()) {
-			returnType = ((TypeClass) classType).getType(name);
+			returnType = ((TypeClass) classType).resolve(name);
 		}
 
 		return returnType;

@@ -118,7 +118,7 @@ public class FunctionCall extends Expression {
 			returnType = functionDeclaration.getReturnType();
 		} else if (symtab.hasType(ClassDeclaration.THIS)) { // Is this function call within a class?
 			// Try "this.functionName(...)", i.e. implicit 'this' object
-			TypeClass typeThis = (TypeClass) symtab.getType(ClassDeclaration.THIS);
+			TypeClass typeThis = (TypeClass) symtab.resolve(ClassDeclaration.THIS);
 			// Add first argument ('this')
 			Expression expresionThis = new ReferenceThis(this, typeThis);
 			Args argsThis = Args.getArgsThis(args, expresionThis);

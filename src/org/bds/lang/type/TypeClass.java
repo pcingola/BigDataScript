@@ -83,15 +83,6 @@ public class TypeClass extends TypeComposite {
 		return className;
 	}
 
-	/**
-	 * Get type for field 'name'
-	 */
-	public Type getType(String name) {
-		Type t = symbolTable.getType(name);
-		if (t != null) return t;
-		return classDecl.getClassParent() != null ? classDecl.getClassTypeParent().getType(name) : null;
-	}
-
 	@Override
 	public boolean isClass() {
 		return true;
@@ -112,6 +103,15 @@ public class TypeClass extends TypeComposite {
 	@Override
 	protected void parse(ParseTree tree) {
 		className = tree.getChild(0).getText();
+	}
+
+	/**
+	 * Get type for field 'name'
+	 */
+	public Type resolve(String name) {
+		Type t = symbolTable.resolveLocal(name);
+		if (t != null) return t;
+		return classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(name) : null;
 	}
 
 	@Override

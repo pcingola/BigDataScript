@@ -179,7 +179,7 @@ public class ClassDeclaration extends Block {
 		if (returnType != null) return returnType;
 
 		if (classNameParent != null) {
-			classTypeParent = (TypeClass) symtab.getType(classNameParent);
+			classTypeParent = (TypeClass) symtab.resolve(classNameParent);
 			classParent = classTypeParent.getClassDeclaration();
 		}
 

@@ -19,6 +19,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.util.AutoHashMap;
+import org.bds.util.Gpr;
 
 /**
  * SymboTable: A table of variables, functions and classes
@@ -145,21 +146,6 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	}
 
 	/**
-	 * Get type for symbol 'name'. If not found, search in any parent scope.
-	 */
-	public Type getType(String name) {
-		// Find symbol on this or any parent scope
-		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
-			// Resolve 'name'
-			Type t = symtab.resolveLocalOrThis(name);
-			if (t != null) return t;
-		}
-
-		// Nothing found
-		return null;
-	}
-
-	/**
 	 * Get symbol on this scope (only search this scope)
 	 */
 	public synchronized Type getTypeLocal(String name) {
@@ -209,7 +195,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	}
 
 	public boolean hasType(String name) {
-		return getType(name) != null;
+		return resolve(name) != null;
 	}
 
 	/**
@@ -250,9 +236,26 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	}
 
 	/**
+	 * Get type for symbol 'name'. If not found, search in any parent scope.
+	 */
+	public Type resolve(String name) {
+		// Find symbol on this or any parent scope
+		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
+			// Resolve 'name'
+			if (!symtab.isEmpty()) {
+				Type t = symtab.resolveLocalOrThis(name);
+				if (t != null) return t;
+			}
+		}
+
+		// Nothing found
+		return null;
+	}
+
+	/**
 	 * Resolve symbol in local symbol table (no recursion)
 	 */
-	Type resolveLocal(String name) {
+	public Type resolveLocal(String name) {
 		// Try to find 'name' as a variable in local symbol table
 		Type t = getTypeLocal(name);
 		if (t != null) return t;
@@ -263,7 +266,10 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		// Since we are only matching by name, there has to be one
 		// and only one function with that name
 		// Note, this is limiting and very naive. A better approach is needed
-		if (fs != null && fs.size() == 1) return fs.get(0).getType();
+		if (fs != null) {
+			if (fs.size() == 1) return fs.get(0).getType();
+			if (fs.size() > 1) throw new RuntimeException("Ambiguous symbol '" + name + "'.");
+		}
 
 		return null;
 	}
@@ -282,7 +288,8 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	/**
 	 * Resolve 'this' symbol in local symbol table and find 'name' within the class (no recursion)
 	 */
-	Type resolveThis(String name) {
+	public Type resolveThis(String name) {
+		Gpr.debug("name: " + name);
 		// If we are trying to resolve 'this', it makes no sense to try to find 'this.this'
 		if (name.equals(ClassDeclaration.THIS)) return null;
 
@@ -290,7 +297,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		TypeClass typeThis = (TypeClass) getTypeLocal(ClassDeclaration.THIS);
 		if (typeThis == null) return null;
 
-		return typeThis.getSymbolTable().resolveLocal(name);
+		return typeThis.resolve(name);
 	}
 
 	public void setConstant(String name) {
@@ -323,7 +330,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		}
 
 		// Show header
-		if (sbThis.length() > 0) sb.append("\n---------- SymbolTable " + getName() + "  ----------\n" + sbThis.toString());
+		sb.append("\n---------- SymbolTable " + getName() + "  ----------\n" + sbThis.toString());
 
 		// Show parent table
 		SymbolTable parent = getParent();

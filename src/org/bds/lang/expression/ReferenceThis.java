@@ -36,7 +36,7 @@ public class ReferenceThis extends ReferenceVar {
 	@Override
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
-		returnType = symtab.getType(ClassDeclaration.THIS);
+		returnType = symtab.resolve(ClassDeclaration.THIS);
 		return returnType;
 	}
 

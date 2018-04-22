@@ -52,7 +52,7 @@ public class ReferenceVar extends Reference {
 	 * Also mark this as a 'classField' if the it refers to 'this.name'
 	 */
 	protected Type findType(SymbolTable symtab) {
-		Type t = symtab.getType(name);
+		Type t = symtab.resolve(name);
 		if (t != null) {
 			classField = symtab.isField(name);
 			return t;
