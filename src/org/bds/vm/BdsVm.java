@@ -227,6 +227,27 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Call a function
+	 * @param name: Function's signature
+	 */
+	void callMethod(String fsig) {
+		pushCallFrame(); // Push stack frame
+
+		VmFunction func = getFunction(fsig); // Find function meta-data
+		newScope(); // Create a new scope
+
+		// Add all arguments to the scope. Remember that stack in reverse order
+		Value vthis = null; // The last item to pop from the stack is 'this'
+		String[] args = func.getArgs();
+		for (int i = args.length - 1; i >= 0; i--) {
+			vthis = pop();
+			scope.add(args[i], vthis);
+		}
+
+		pc = func.getPc(); // Jump to function
+	}
+
+	/**
 	 * Call a native method or function
 	 * @param name: Method's signature
 	 */
@@ -706,6 +727,11 @@ public class BdsVm implements Serializable {
 			case CALL:
 				name = constantString(); // Get function signature
 				call(name);
+				break;
+
+			case CALLMETHOD:
+				name = constantString(); // Get method signature
+				callMethod(name);
 				break;
 
 			case CALLNATIVE:

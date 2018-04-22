@@ -22,6 +22,7 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	private static final long serialVersionUID = 4332975458857670311L;
 
+	protected int pc;
 	protected String functionName;
 	protected TypeFunction funcType;
 	protected Parameters parameters;
@@ -50,6 +51,10 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	public Parameters getParameters() {
 		return parameters;
+	}
+
+	public int getPc() {
+		return pc;
 	}
 
 	public Statement getStatement() {
@@ -108,6 +113,10 @@ public class FunctionDeclaration extends StatementWithScope {
 			List<BdsNode> returnStatements = findNodes(Return.class, true, false);
 			if (returnStatements.isEmpty()) compilerMessages.add(this, "Function has no return statement", MessageType.ERROR);
 		}
+	}
+
+	public void setPc(int pc) {
+		this.pc = pc;
 	}
 
 	public String signature() {

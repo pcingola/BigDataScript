@@ -19,7 +19,6 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.util.AutoHashMap;
-import org.bds.util.Gpr;
 
 /**
  * SymboTable: A table of variables, functions and classes
@@ -289,7 +288,6 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	 * Resolve 'this' symbol in local symbol table and find 'name' within the class (no recursion)
 	 */
 	public Type resolveThis(String name) {
-		Gpr.debug("name: " + name);
 		// If we are trying to resolve 'this', it makes no sense to try to find 'this.this'
 		if (name.equals(ClassDeclaration.THIS)) return null;
 

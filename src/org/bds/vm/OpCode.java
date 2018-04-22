@@ -37,7 +37,7 @@ public enum OpCode {
 	// Function call:
 	//    CALL function_signature
 	//    CALLNATIVE function_signature
-	, CALL, CALLNATIVE
+	, CALL, CALLMETHOD, CALLNATIVE
 	// Debug breakpoint
 	, DEBUG
 	// Decrement (i.e. valueInt--)
