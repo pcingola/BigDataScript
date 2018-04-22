@@ -4,9 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.Value;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
@@ -55,15 +53,10 @@ public class ReferenceVar extends Reference {
 	 */
 	protected Type findType(SymbolTable symtab) {
 		Type t = symtab.getType(name);
-		if (t != null) return t;
-
-		// Is 'this' defined (is it a class?)
-		TypeClass typeThis = (TypeClass) symtab.getType(ClassDeclaration.THIS);
-		if (typeThis == null) return null;
-
-		// Look up 'name' as a field in the class
-		t = typeThis.getSymbolTable().getType(name);
-		classField = (t != null);
+		if (t != null) {
+			classField = symtab.isField(name);
+			return t;
+		}
 
 		return t;
 	}

@@ -151,56 +151,10 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		// Find symbol on this or any parent scope
 		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
 			// Resolve 'name'
-			Type ssym = symtab.resolveLocal(name);
-			if (ssym != null) return ssym;
+			Type t = symtab.resolveLocalOrThis(name);
+			if (t != null) return t;
 		}
 
-		// Nothing found
-		return null;
-	}
-
-	/**
-	 * Resolve symbol in local symbol table (no recursion)
-	 */
-	Type resolveLocal(String name) {
-		//---
-		// Local name
-		//---
-
-		// Try to find 'name' as a variable in local symbol table
-		Type ssym = getTypeLocal(name);
-		if (ssym != null) return ssym;
-
-		// Is it a function? 
-		// Try a function in local symbol table
-		List<ValueFunction> fs = getValueFunctionsLocal(name);
-		// Since we are only matching by name, there has to be one
-		// and only one function with that name
-		// Note, this is limiting and very naive. A better approach is needed
-		if (fs != null && fs.size() == 1) return fs.get(0).getType();
-
-		//---
-		// Is 'name' a field?
-		//---
-
-		if (name.equals(ClassDeclaration.THIS)) {
-			// We are already trying to resolve 'this', it makes no sense to try to find 'this.this'
-			return null;
-		}
-
-		// Is variable 'this' defined? If so, it means we are within a class
-		TypeClass typeThis = (TypeClass) getType(ClassDeclaration.THIS);
-		if (typeThis == null) return null; // We are not in a class
-
-		// Look up 'name' as a field in the class
-		Type t = typeThis.getSymbolTable().getType(name);
-		classField = (t != null);
-
-		
-		!!!!!!!!!!!!!
-		// TODO: Lookup 'name' as method in class
-		
-		
 		// Nothing found
 		return null;
 	}
@@ -210,6 +164,22 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	 */
 	public synchronized Type getTypeLocal(String name) {
 		return types.get(name);
+	}
+
+	/**
+	 * Get type for symbol 'this.name'. If not found, search in any parent scope.
+	 * Note: It does not try to solve in local scopes (i.e. only class fields, not local variables)
+	 */
+	public Type getTypeThis(String name) {
+		// Find symbol on this or any parent scope
+		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
+			// Resolve 'name'
+			Type t = symtab.resolveThis(name);
+			if (t != null) return t;
+		}
+
+		// Nothing found
+		return null;
 	}
 
 	/**
@@ -260,9 +230,67 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		return types.isEmpty();
 	}
 
+	/**
+	 * Does 'name' resolve as a variable or a class field?
+	 */
+	public boolean isField(String name) {
+		// Find symbol on this or any parent scope
+		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
+			if (symtab.resolveLocal(name) != null) return false; // Local variable => not a field
+			if (symtab.resolveThis(name) != null) return true; // Class field
+		}
+
+		// Nothing found
+		return false;
+	}
+
 	@Override
 	public Iterator<String> iterator() {
 		return types.keySet().iterator();
+	}
+
+	/**
+	 * Resolve symbol in local symbol table (no recursion)
+	 */
+	Type resolveLocal(String name) {
+		// Try to find 'name' as a variable in local symbol table
+		Type t = getTypeLocal(name);
+		if (t != null) return t;
+
+		// Is it a function?
+		// Try a function in local symbol table
+		List<ValueFunction> fs = getValueFunctionsLocal(name);
+		// Since we are only matching by name, there has to be one
+		// and only one function with that name
+		// Note, this is limiting and very naive. A better approach is needed
+		if (fs != null && fs.size() == 1) return fs.get(0).getType();
+
+		return null;
+	}
+
+	/**
+	 * Resolve symbol in local symbol table (no recursion)
+	 */
+	Type resolveLocalOrThis(String name) {
+		// Find 'name' in local table
+		Type t = resolveLocal(name);
+		if (t != null) return t;
+		// Not found? Try 'this.name'
+		return resolveThis(name);
+	}
+
+	/**
+	 * Resolve 'this' symbol in local symbol table and find 'name' within the class (no recursion)
+	 */
+	Type resolveThis(String name) {
+		// If we are trying to resolve 'this', it makes no sense to try to find 'this.this'
+		if (name.equals(ClassDeclaration.THIS)) return null;
+
+		// Is variable 'this' defined? If so, it means we are within a class
+		TypeClass typeThis = (TypeClass) getTypeLocal(ClassDeclaration.THIS);
+		if (typeThis == null) return null;
+
+		return typeThis.getSymbolTable().resolveLocal(name);
 	}
 
 	public void setConstant(String name) {
