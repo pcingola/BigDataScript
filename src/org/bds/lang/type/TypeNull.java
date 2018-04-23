@@ -1,7 +1,6 @@
 package org.bds.lang.type;
 
 import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueNull;
 
 /**
  * 'Any' map: Generic
@@ -24,7 +23,7 @@ public class TypeNull extends TypeClass {
 
 	@Override
 	public Value newDefaultValue() {
-		return ValueNull.NULL;
+		return null;
 	}
 
 }

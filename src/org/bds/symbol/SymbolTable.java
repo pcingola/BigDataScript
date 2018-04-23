@@ -127,7 +127,10 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		Parameters pars = fdecl.getParameters();
 
 		// Find all methods with same name
-		for (ValueFunction vf : functions.get(fdecl.getFunctionName())) {
+		List<ValueFunction> functs = functions.get(fdecl.getFunctionName());
+		if (functs == null) return null;
+
+		for (ValueFunction vf : functs) {
 			FunctionDeclaration fd = vf.getFunctionDeclaration();
 			Parameters fdp = fd.getParameters();
 			if (pars.equalsMethod(fdp)) return (MethodDeclaration) fd;
@@ -159,6 +162,24 @@ public class SymbolTable implements Serializable, Iterable<String> {
 			if (n.getSymbolTable() != null) return n.getSymbolTable();
 		}
 		return GlobalSymbolTable.get(); // No parent node? Then the SymbolTable parent is 'GlobalSymbolTable'
+	}
+
+	/**
+	 * Get type for variable 'name'.
+	 * If not found, search in any parent scope.
+	 */
+	public Type getType(String name) {
+		// Find symbol on this or any parent scope
+		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
+			// Resolve 'name'
+			if (!symtab.isEmpty()) {
+				Type t = symtab.getTypeLocal(name);
+				if (t != null) return t;
+			}
+		}
+
+		// Nothing found
+		return null;
 	}
 
 	/**
@@ -252,7 +273,8 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	}
 
 	/**
-	 * Get type for symbol 'name'. If not found, search in any parent scope.
+	 * Get type for symbol 'name': Could be a variable, function or method.
+	 * If not found, search in any parent scope.
 	 */
 	public Type resolve(String name) {
 		// Find symbol on this or any parent scope

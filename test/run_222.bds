@@ -5,6 +5,10 @@ class A {
 		println "A.f($x)"
 		return 2 + x
 	}
+	int f(int x, int y) {
+		println "A.f($x,$y)"
+		return 2 + x + y
+	}
 }
 
 class B extends A {
@@ -18,5 +22,5 @@ class B extends A {
 B b = new B()
 
 A a = b
-z := a.f(4)
+z := a.f(4,1)
 

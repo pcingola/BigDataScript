@@ -24,7 +24,7 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 		if (v instanceof String) return new ValueString((String) v);
 		if (v instanceof Integer) return new ValueInt(((Integer) v).longValue());
 		if (v instanceof Float) return new ValueReal(((Float) v).doubleValue());
-		if (v == null) return ValueNull.NULL;
+		if (v == null) return null;
 		throw new RuntimeException("Cannot create Value from object class " + v.getClass().getCanonicalName());
 	}
 

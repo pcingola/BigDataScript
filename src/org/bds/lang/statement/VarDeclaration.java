@@ -107,7 +107,7 @@ public class VarDeclaration extends Statement {
 		if (tc.getClassDeclaration() != null) return; // Class information avilable, this is not a 'stub' type
 
 		String cname = tc.getClassName();
-		TypeClass tcReal = (TypeClass) symtab.resolve(cname);
+		TypeClass tcReal = (TypeClass) symtab.getType(cname);
 		if (tcReal == null) {
 			compilerMessages.add(this, "Cannot find class '" + cname + "'", MessageType.ERROR);
 			return;

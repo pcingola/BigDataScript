@@ -1,29 +1,16 @@
 
-class A {
-	int i = 42
-	int f(int x) {
-		println "A.f($x)"
-		return 2 + x
-	}
-}
-
 class B extends A {
 	int j = 7
-	int f(int x) {
-		println "B.f($x)"
-		return i + x
-	}
 }
 
-A a = new A()
-a.f(1)
+class A {
+	int i = 42
+	A next
 
-B b = new B()
-b.f(2)
+	int f(int x)	return i + x
+}
 
-B c = new B()
-c.f(3)
-
-A z = c
-z.f(4)
-
+B z = new B()
+println("z : $z")
+x := z.f(1)
+println("x : $x")

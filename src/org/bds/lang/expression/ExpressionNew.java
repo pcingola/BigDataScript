@@ -101,10 +101,9 @@ public class ExpressionNew extends MethodCall {
 		if (!functionDeclaration.isNative()) {
 			sb.append(args.toAsm());
 			sb.append(toAsmCall());
-		} else {
-			sb.append("load this\n");
 		}
 
+		sb.append("load this\n"); // Leave new object in the stack
 		sb.append("scopepop\n");
 		return sb.toString();
 	}

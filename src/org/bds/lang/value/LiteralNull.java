@@ -31,7 +31,7 @@ public class LiteralNull extends Literal {
 
 	@Override
 	protected Value parseValue(ParseTree tree) {
-		return ValueNull.NULL;
+		return null;
 	}
 
 	@Override

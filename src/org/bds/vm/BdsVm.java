@@ -24,7 +24,6 @@ import org.bds.lang.value.ValueFunction;
 import org.bds.lang.value.ValueInt;
 import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueMap;
-import org.bds.lang.value.ValueNull;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
@@ -206,6 +205,7 @@ public class BdsVm implements Serializable {
 		}
 
 		// Find 'virtual method' (class inheritance)
+		if (vthis == null) throw new RuntimeException("Null pointer: Cannot call method '" + fsig + "' on null object.");
 		fdecl = vthis.getType().resolve(fdecl);
 
 		pc = fdecl.getPc(); // Jump to method
@@ -1042,7 +1042,7 @@ public class BdsVm implements Serializable {
 				break;
 
 			case PUSHNULL:
-				push(ValueNull.NULL);
+				push((Value) null);
 				break;
 
 			case PUSHR:

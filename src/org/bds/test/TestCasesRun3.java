@@ -86,7 +86,8 @@ public class TestCasesRun3 extends TestCasesBase {
 	@Test
 	public void test210() {
 		Gpr.debug("Test");
-		runAndCheckStderr("test/run_210.bds", "Null pointer: Cannot call method 'Zzz.set' in null object");
+		verbose = true;
+		runAndCheckStderr("test/run_210.bds", "Null pointer: Cannot call method 'Zzz.set(Zzz,int) -> void' on null object.");
 	}
 
 	@Test
@@ -147,6 +148,18 @@ public class TestCasesRun3 extends TestCasesBase {
 	public void test220() {
 		Gpr.debug("Test");
 		runAndCheck("test/run_220.bds", "x", "50");
+	}
+
+	@Test
+	public void test221() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_221.bds", "z", "46");
+	}
+
+	@Test
+	public void test222() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_222.bds", "z", "7");
 	}
 
 }
