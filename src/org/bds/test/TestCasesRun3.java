@@ -51,7 +51,7 @@ public class TestCasesRun3 extends TestCasesBase {
 	@Test
 	public void test205() {
 		Gpr.debug("Test");
-		runAndCheck("test/run_205.bds", "z", "null");
+		runAndCheck("test/run_205.bds", "z", null);
 	}
 
 	@Test
