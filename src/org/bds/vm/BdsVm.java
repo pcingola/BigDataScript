@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bds.Config;
 import org.bds.lang.BdsNode;
@@ -324,6 +326,10 @@ public class BdsVm implements Serializable {
 		return exitCode;
 	}
 
+	void fatalError(String msg) {
+		bdsThread.fatalError(getBdsNode(), msg);
+	}
+
 	/**
 	 * Create a 'fork' vm-thread
 	 */
@@ -377,6 +383,13 @@ public class BdsVm implements Serializable {
 	void forkOpCode(int pushCount) {
 		BdsVm vmfork = fork(pushCount);
 		bdsThread.fork(vmfork);
+	}
+
+	/**
+	 * Get node currently executed by the VM
+	 */
+	public BdsNode getBdsNode() {
+		return BdsNodeFactory.get().getNode(nodeId);
 	}
 
 	public BdsThread getBdsThread() {
@@ -555,7 +568,8 @@ public class BdsVm implements Serializable {
 	 * Pop a string from stack
 	 */
 	public String popString() {
-		return pop().asString();
+		Value v = pop();
+		return v != null ? v.asString() : "null";
 	}
 
 	public void push(boolean b) {
@@ -1056,22 +1070,34 @@ public class BdsVm implements Serializable {
 			case REFFIELD:
 				name = constantString();
 				vclass = (ValueClass) pop();
-				val = vclass.getValue(name);
-				push(val);
+				if (vclass != null) {
+					val = vclass.getValue(name);
+					push(val);
+				} else {
+					fatalError("Null pointer. Trying to access field '" + name + "' in null object.");
+				}
 				break;
 
 			case REFLIST:
 				vlist = (ValueList) pop();
 				idx = popInt();
-				val = vlist.getValue(idx);
-				push(val);
+				if (vlist != null) {
+					val = vlist.getValue(idx);
+					push(val);
+				} else {
+					fatalError("Null pointer. Trying to access item " + idx + " in null list.");
+				}
 				break;
 
 			case REFMAP:
 				vmap = (ValueMap) pop();
 				v1 = pop();
-				val = vmap.getValue(v1);
-				push(val);
+				if (vmap != null) {
+					val = vmap.getValue(v1);
+					push(val);
+				} else {
+					fatalError("Null pointer. Trying to access item '" + v1 + "' in null map.");
+				}
 				break;
 
 			case RET:
@@ -1349,7 +1375,23 @@ public class BdsVm implements Serializable {
 	public void updateFunctionPc(String name, int pc) {
 		addLabel(name, pc);
 		FunctionDeclaration fdecl = functionsBySignature.get(name);
+		if (fdecl == null) {
+			fdecl = createFunctionDeclaration(name);
+			addFunction(fdecl);
+		}
 		fdecl.setPc(pc);
+	}
+
+	FunctionDeclaration createFunctionDeclaration(String signature) {
+		FunctionDeclaration fdecl = new FunctionDeclaration(null, null);
+		Pattern p = Pattern.compile("(\\S)\\(\\S \\S)(,\\S \\S)*\\) -> (\\S)");
+		Matcher m = p.matcher(signature);
+		if (m.find()) {
+			int last = m.groupCount();
+			String fname = m.group(1);
+			String retType = m.group(last);
+		}
+		return fdecl;
 	}
 
 }

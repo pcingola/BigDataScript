@@ -80,7 +80,7 @@ public class TestCasesRun3 extends TestCasesBase {
 	public void test209() {
 		Gpr.debug("Test");
 		verbose = true;
-		runAndCheckStderr("test/run_209.bds", "Null pointer: Cannot access field 'i' from null object.");
+		runAndCheckStderr("test/run_209.bds", "Null pointer. Trying to access field 'i' in null object.");
 	}
 
 	@Test

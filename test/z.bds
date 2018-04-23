@@ -1,16 +1,11 @@
+#!/usr/bin/env bds
 
-class B extends A {
-	int j = 7
+class Zzz {
+	int i
 }
 
-class A {
-	int i = 42
-	A next
+Zzz z
+j := z.i
+println("z: $z\tj: $j")
 
-	int f(int x)	return i + x
-}
 
-B z = new B()
-println("z : $z")
-x := z.f(1)
-println("x : $x")
