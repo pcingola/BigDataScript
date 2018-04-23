@@ -3,6 +3,7 @@ package org.bds.lang;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.VarDeclaration;
+import org.bds.lang.statement.VariableInit;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 
@@ -96,7 +97,7 @@ public class Parameters extends BdsNode implements Comparable<Parameters> {
 	}
 
 	/**
-	 * Get parameter 'i' type
+	 * Get parameter's 'i' type
 	 */
 	public Type getType(int i) {
 		return varDecl[i].getType();
@@ -104,6 +105,15 @@ public class Parameters extends BdsNode implements Comparable<Parameters> {
 
 	public VarDeclaration[] getVarDecl() {
 		return varDecl;
+	}
+
+	/**
+	 * Get parameter's 'i' name
+	 */
+	public String getVarName(int i) {
+		if (varDecl == null) return null;
+		VariableInit[] vis = varDecl[i].getVarInit();
+		return vis[0].getVarName();
 	}
 
 	@Override

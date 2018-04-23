@@ -16,7 +16,7 @@ import junit.framework.Assert;
  * @author pcingola
  *
  */
-public class TestCasesZzz extends TestCasesBase {
+public class TestCasesFunctionDeclaration extends TestCasesBase {
 
 	@Test
 	public void test_function_declaration_01() {
@@ -100,12 +100,4 @@ public class TestCasesZzz extends TestCasesBase {
 		Assert.assertEquals("Parameter " + i + " name ", "smap", params.getVarName(i));
 		i++;
 	}
-
-	//	@Test
-	//	public void test01() {
-	//		Gpr.debug("Test");
-	//		verbose = true;
-	//		debug = true;
-	//		runVmAndCheck("test/vm01.asm", "z", "8");
-	//	}
 }

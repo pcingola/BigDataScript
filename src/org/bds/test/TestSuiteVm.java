@@ -14,6 +14,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ TestCasesTail.class, //
 		TestCasesVm.class, // Virtual machine
 		TestCasesInterpolate.class, // Variable interpolation
+		TestCasesFunctionDeclaration.class, // Function declaration 
 		TestCasesLang.class, // Language (compiler)
 		TestCasesRun.class, // Running bds code
 		TestCasesRun2.class, // Running bds code

@@ -16,6 +16,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesLang.class, // Language (compiler)
 		TestCasesInterpolate.class, // Variable interpolation
 		TestCasesExecutioners.class, // Task executioners
+		TestCasesFunctionDeclaration.class, // Function declaration 
 		TestCasesRun.class, // Running bds code
 		TestCasesRun2.class, // Running bds code
 		TestCasesRun3.class, // Running bds code (classes / object)

@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.bds.Config;
 import org.bds.lang.BdsNode;
@@ -1370,39 +1368,17 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
-	 * Create and add a new function's descriptor (PC, arg names, etc)
+	 * Update function descriptor's PC
 	 */
-	public void updateFunctionPc(String name, int pc) {
-		addLabel(name, pc);
-		FunctionDeclaration fdecl = functionsBySignature.get(name);
+	public void updateFunctionPc(String signature, int pc) {
+		addLabel(signature, pc);
+		FunctionDeclaration fdecl = functionsBySignature.get(signature);
 		if (fdecl == null) {
-			fdecl = createFunctionDeclaration(name);
+			// Function declaration not found? Try to create one form signature
+			fdecl = new FunctionDeclaration(signature);
 			addFunction(fdecl);
 		}
 		fdecl.setPc(pc);
-	}
-
-	FunctionDeclaration createFunctionDeclaration(String signature) {
-		FunctionDeclaration fdecl = new FunctionDeclaration(null, null);
-		// Pattern p = Pattern.compile("(\\S)\\((\\S \\S)(,\\S \\S)*\\) -> (\\S)");
-		Pattern p = Pattern.compile("(\\S+)\\((\\s*,?\\s*(\\S+)\\s+(\\S+)\\s*)*\\) -> (\\S+)");
-		Matcher m = p.matcher(signature);
-		if (m.find()) {
-			int last = m.groupCount();
-			String fname = m.group(1);
-
-			for (int i = 2; i <= last - 1;) {
-				String varDef = m.group(i++);
-				String type = m.group(i++);
-				String varName = m.group(i++);
-				Gpr.debug(i + "\ttype: " + type + ", varName: " + varName);
-
-				Type t = Types.get(type);
-
-			}
-			String retType = m.group(last);
-		}
-		return fdecl;
 	}
 
 }

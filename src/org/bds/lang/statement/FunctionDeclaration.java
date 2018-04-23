@@ -1,7 +1,10 @@
 package org.bds.lang.statement;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
@@ -10,6 +13,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
+import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -32,6 +36,42 @@ public class FunctionDeclaration extends StatementWithScope {
 
 	public FunctionDeclaration(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Create function declaration form signature
+	 * Note: This only works with simple signatures
+	 */
+	public FunctionDeclaration(String signature) {
+		super(null, null);
+
+		Pattern p = Pattern.compile("(\\S+)\\((.*)\\) -> (\\S+)");
+		Matcher m = p.matcher(signature);
+		if (m.find()) {
+			// Function name
+			functionName = m.group(1);
+
+			// Parameters
+			String paramsStr = m.group(2);
+
+			// Return type
+			String retType = m.group(3);
+			returnType = Types.get(retType);
+
+			// Parse parameters
+			p = Pattern.compile("\\s*([a-zA-Z_0-9\\_\\[\\]\\{\\}]+)\\s+([a-zA-Z_0-9\\_]+)\\s*,?");
+			m = p.matcher(paramsStr);
+			List<String> varNames = new LinkedList<>();
+			List<Type> varTypes = new LinkedList<>();
+			while (m.find()) {
+				String varTypeStr = m.group(1);
+				Type varType = Types.get(varTypeStr);
+				String varName = m.group(2);
+				varTypes.add(varType);
+				varNames.add(varName);
+			}
+			parameters = Parameters.get(varTypes.toArray(new Type[0]), varNames.toArray(new String[0]));
+		}
 	}
 
 	public String getFunctionName() {
@@ -163,6 +203,22 @@ public class FunctionDeclaration extends StatementWithScope {
 		sb.append(returnType + " " + functionName + "( " + parameters + " ) {\n");
 		if (statement != null) sb.append(Gpr.prependEachLine("\t", statement.toString()));
 		sb.append("}");
+		return sb.toString();
+	}
+
+	/**
+	 * A signature including parameter names (only used for test cases)
+	 */
+	public String signatureVarNames() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(functionName + "(");
+		for (int i = 0; i < parameters.size(); i++) {
+			sb.append((i > 0 ? ", " : "") //
+					+ parameters.getType(i) //
+					+ " " + parameters.getVarName(i) //
+			);
+		}
+		sb.append(") -> " + returnType);
 		return sb.toString();
 	}
 
