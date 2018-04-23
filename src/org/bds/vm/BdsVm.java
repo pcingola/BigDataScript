@@ -1384,11 +1384,18 @@ public class BdsVm implements Serializable {
 
 	FunctionDeclaration createFunctionDeclaration(String signature) {
 		FunctionDeclaration fdecl = new FunctionDeclaration(null, null);
-		Pattern p = Pattern.compile("(\\S)\\(\\S \\S)(,\\S \\S)*\\) -> (\\S)");
+		// Pattern p = Pattern.compile("(\\S)\\((\\S \\S)(,\\S \\S)*\\) -> (\\S)");
+		Pattern p = Pattern.compile("(\\S+)\\((\\s*,?\\s*(\\S+)\\s+(\\S+)\\s*)*\\) -> (\\S+)");
 		Matcher m = p.matcher(signature);
 		if (m.find()) {
 			int last = m.groupCount();
 			String fname = m.group(1);
+			for (int i = 2; i <= last - 1;) {
+				String varDef = m.group(i++);
+				String type = m.group(i++);
+				String varName = m.group(i++);
+				Gpr.debug(i + "\ttype: " + type + ", varName: " + varName);
+			}
 			String retType = m.group(last);
 		}
 		return fdecl;
