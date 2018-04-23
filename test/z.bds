@@ -1,11 +1,9 @@
 #!/usr/bin/env bds
 
 class Zzz {
-	int i
+	int i = 42
 }
 
 Zzz z
-j := z.i
-println("z: $z\tj: $j")
-
-
+z = null
+println("z: $z")

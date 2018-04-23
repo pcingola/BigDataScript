@@ -208,13 +208,13 @@ public class BdsTest {
 	 */
 	public void checkVariable(String varname, Object expectedValue) {
 		Value val = getValue(varname);
-		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
+		if (expectedValue != null) Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
 		Assert.assertEquals( //
 				errMsg("Variable '" + varname + "' has different value than expeced.\n" //
 						+ "\tExpected value : " + expectedValue //
 						+ "\tReal value     : " + val) //
-				, expectedValue.toString() //
-				, val.toString() //
+				, expectedValue != null ? expectedValue.toString() : "null" //
+				, val != null ? val.toString() : "null"//
 		);
 	}
 

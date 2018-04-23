@@ -1,6 +1,5 @@
 package org.bds.test;
 
-import org.bds.lang.type.Types;
 import org.bds.util.Gpr;
 import org.junit.Test;
 
@@ -13,11 +12,8 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test01() {
+	public void test205() {
 		Gpr.debug("Test");
-		verbose = true;
-		debug = true;
-		Types.reset();
-		runVmAndCheck("test/vm01.asm", "z", "8");
+		runAndCheck("test/run_205.bds", "z", null);
 	}
 }
