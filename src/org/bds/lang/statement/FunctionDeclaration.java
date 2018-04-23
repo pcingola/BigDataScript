@@ -212,11 +212,13 @@ public class FunctionDeclaration extends StatementWithScope {
 	public String signatureVarNames() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(functionName + "(");
-		for (int i = 0; i < parameters.size(); i++) {
-			sb.append((i > 0 ? ", " : "") //
-					+ parameters.getType(i) //
-					+ " " + parameters.getVarName(i) //
-			);
+		if (parameters != null) {
+			for (int i = 0; i < parameters.size(); i++) {
+				sb.append((i > 0 ? ", " : "") //
+						+ parameters.getType(i) //
+						+ " " + parameters.getVarName(i) //
+				);
+			}
 		}
 		sb.append(") -> " + returnType);
 		return sb.toString();

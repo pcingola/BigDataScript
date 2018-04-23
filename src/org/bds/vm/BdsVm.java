@@ -113,11 +113,23 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
-	 * Add native function
+	 * Add function
 	 */
 	public void addFunction(FunctionDeclaration fd) {
-		String sig = fd.signature();
-		functionsBySignature.put(sig, fd);
+		addFunction(fd, null);
+	}
+
+	/**
+	 * Add function using an optional 'label'
+	 *
+	 * 'Label' is the signature as written in the ASM code. If the
+	 * code is written manually, there can be additional spaces
+	 * or other minor changes.
+	 */
+	void addFunction(FunctionDeclaration fd, String label) {
+		if (label != null) functionsBySignature.put(label, fd);
+		functionsBySignature.put(fd.signature(), fd);
+		functionsBySignature.put(fd.signatureVarNames(), fd);
 	}
 
 	/**
@@ -138,7 +150,7 @@ public class BdsVm implements Serializable {
 		if (st.hasFunctions()) {
 			for (ValueFunction vf : st.getFunctions()) {
 				FunctionDeclaration fd = vf.getFunctionDeclaration();
-				addFunction(fd);
+				addFunction(fd, null);
 			}
 		}
 	}
@@ -624,13 +636,13 @@ public class BdsVm implements Serializable {
 		try {
 			runLoop();
 		} catch (Throwable t) {
-			bdsThread.setRunState(RunState.FATAL_ERROR);
-			exitCode = 1;
-
 			if (Config.get().isVerbose()) {
 				System.err.println("Fatal error running BdsThread " + bdsThread.getBdsThreadId() + "\n");
 				t.printStackTrace();
 			}
+			if (bdsThread != null) bdsThread.setRunState(RunState.FATAL_ERROR);
+			exitCode = 1;
+
 		}
 
 		return exitCode();
@@ -660,7 +672,10 @@ public class BdsVm implements Serializable {
 			instruction = code[pc];
 			opcode = OPCODES[instruction];
 			if (debug) {
-				System.err.print(Gpr.prependEachLine(bdsThread.getBdsThreadId() + "\t\t|", toAsm(pc) + "\t\t\tstack: " + toStringStack()));
+				String msg = toAsm(pc) + "\t\t\tstack: " + toStringStack();
+				if (bdsThread != null) msg = Gpr.prependEachLine(bdsThread.getBdsThreadId() + "\t\t|", msg);
+				else msg += '\n';
+				System.err.print(msg);
 			}
 			pc++;
 
@@ -1371,13 +1386,14 @@ public class BdsVm implements Serializable {
 	 * Update function descriptor's PC
 	 */
 	public void updateFunctionPc(String signature, int pc) {
-		addLabel(signature, pc);
 		FunctionDeclaration fdecl = functionsBySignature.get(signature);
 		if (fdecl == null) {
 			// Function declaration not found? Try to create one form signature
 			fdecl = new FunctionDeclaration(signature);
 			addFunction(fdecl);
 		}
+
+		addLabel(signature, pc);
 		fdecl.setPc(pc);
 	}
 

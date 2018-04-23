@@ -1,13 +1,18 @@
 
+# f(int x) return x + 1
 f(int x) -> int:
 load x
 pushi 1
-addi       # x+1 is the return value
+addi
 ret 
 
 main:
+# z := 0
 pushi 0
 var z
+pop
+
+# z = f(7)
 pushi 7
 call 'f(int x) -> int'
            # Function call:
