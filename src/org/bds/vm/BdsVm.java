@@ -1390,11 +1390,15 @@ public class BdsVm implements Serializable {
 		if (m.find()) {
 			int last = m.groupCount();
 			String fname = m.group(1);
+
 			for (int i = 2; i <= last - 1;) {
 				String varDef = m.group(i++);
 				String type = m.group(i++);
 				String varName = m.group(i++);
 				Gpr.debug(i + "\ttype: " + type + ", varName: " + varName);
+
+				Type t = Types.get(type);
+
 			}
 			String retType = m.group(last);
 		}
