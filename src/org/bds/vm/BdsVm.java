@@ -540,7 +540,8 @@ public class BdsVm implements Serializable {
 	 * Pop a bool from stack
 	 */
 	public boolean popBool() {
-		return pop().asBool();
+		Value v = pop();
+		return v != null ? v.asBool() : false;
 	}
 
 	/**
@@ -557,14 +558,16 @@ public class BdsVm implements Serializable {
 	 * Pop an int from stack
 	 */
 	public long popInt() {
-		return pop().asInt();
+		Value v = pop();
+		return v != null ? v.asInt() : 0;
 	}
 
 	/**
 	 * Pop a real from stack
 	 */
 	public double popReal() {
-		return pop().asReal();
+		Value v = pop();
+		return v != null ? v.asReal() : 0.0;
 	}
 
 	/**
