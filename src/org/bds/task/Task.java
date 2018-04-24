@@ -2,6 +2,7 @@ package org.bds.task;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -21,7 +22,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Task {
+public class Task implements Serializable {
+
+	private static final long serialVersionUID = 3377646684108052191L;
 
 	public static final String CHECKSUM_LINE_START = "# Checksum: ";
 

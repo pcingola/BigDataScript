@@ -19,8 +19,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesRun.class, // Running bds code
 		TestCasesRun2.class, // Running bds code
 		TestCasesRun3.class, // Running bds code (classes / object)
-		//		TestCasesGraph.class, // Running bds code: Task graphs and dependencies 
-		//		TestCasesCheckpoint.class, // Running bds code: Checkpoint and recovery
+		TestCasesGraph.class, // Running bds code: Task graphs and dependencies 
+		TestCasesCheckpoint.class, // Running bds code: Checkpoint and recovery
 		//		TestCasesTesting.class, //
 		//		TestCasesCommandLineOptions.class, // 
 		//		TestCasesClusterGeneric.class, // Running on a generic cluster

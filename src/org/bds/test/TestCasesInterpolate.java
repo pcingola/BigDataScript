@@ -1,6 +1,6 @@
 package org.bds.test;
 
-import org.bds.lang.type.InterpolateVars;
+import org.bds.lang.value.InterpolateVars;
 import org.bds.util.Gpr;
 import org.bds.util.GprString;
 import org.junit.Test;

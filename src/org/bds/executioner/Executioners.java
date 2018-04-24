@@ -1,9 +1,11 @@
 package org.bds.executioner;
 
+import java.io.ObjectStreamException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bds.Config;
+import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -165,6 +167,15 @@ public class Executioners {
 	 */
 	public synchronized Collection<Executioner> getAll() {
 		return executioners.values();
+	}
+
+	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		// TODO: FIX Singleton behavior!!!
+		Gpr.debug("READRESOLVE!");
+		return this;
 	}
 
 }

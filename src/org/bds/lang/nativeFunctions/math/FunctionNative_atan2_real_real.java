@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_atan2_real_real extends FunctionNative {
+
+	private static final long serialVersionUID = 2093004026429005112L;
+
 	public FunctionNative_atan2_real_real() {
 		super();
 	}
@@ -24,6 +27,6 @@ public class FunctionNative_atan2_real_real extends FunctionNative {
 
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
-		return (Double) Math.atan2(bdsThread.getReal("y"), bdsThread.getReal("x"));
+		return Math.atan2(bdsThread.getReal("y"), bdsThread.getReal("x"));
 	}
 }

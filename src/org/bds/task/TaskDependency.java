@@ -1,5 +1,6 @@
 package org.bds.task;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +17,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class TaskDependency {
+public class TaskDependency implements Serializable {
+
+	private static final long serialVersionUID = -2026628428708457981L;
 
 	boolean debug;
 	protected BdsNode bdsNode; // The node that created this 'TaskDependency' (only used for logging & debugging purposes)

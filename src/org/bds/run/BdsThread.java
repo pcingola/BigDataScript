@@ -76,7 +76,7 @@ public class BdsThread extends Thread implements Serializable {
 
 	// Task management
 	TaskDependecies taskDependecies;
-	List<Task> restoredTasks; // Unserialized tasks
+	//	List<Task> restoredTasks; // Unserialized tasks
 
 	/**
 	 * Get an ID for a node
@@ -645,22 +645,20 @@ public class BdsThread extends Thread implements Serializable {
 	 * Send task from un-serialization to execution list
 	 */
 	public void restoreUnserializedTasks() {
-		if (restoredTasks == null) return;
-		for (Task task : restoredTasks) {
-			add(task);
 
-			if ((!task.isDone() // Not finished?
-					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
-					&& !task.isDependency() // Don't execute dependencies, unless needed
-			) {
-				// Task not finished or failed? Re-execute
-				// TODO: FIXME!!!
-				// ExpressionTask.execute(this, task);
-				throw new RuntimeException("!!!! IMPLEMENT");
-			}
-		}
-
-		restoredTasks = null; // We don't need it any more (plus we want to make sure we don't schedule tasks more than once)
+		//		for (Task task : restoredTasks) {
+		//			add(task);
+		//
+		//			if ((!task.isDone() // Not finished?
+		//					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
+		//					&& !task.isDependency() // Don't execute dependencies, unless needed
+		//			) {
+		//				// Task not finished or failed? Re-execute
+		//				// TODO: FIXME!!!
+		//				// ExpressionTask.execute(this, task);
+		//				throw new RuntimeException("!!!! IMPLEMENT");
+		//			}
+		//		}
 	}
 
 	public synchronized void rmOnExit(Value vfile) {

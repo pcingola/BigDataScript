@@ -1,5 +1,7 @@
 package org.bds.cluster.host;
 
+import java.io.Serializable;
+
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -13,7 +15,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class HostResources implements Comparable<HostResources>, Cloneable {
+public class HostResources implements Comparable<HostResources>, Cloneable, Serializable {
+
+	private static final long serialVersionUID = 764782969174543552L;
 
 	private static int hostResourcesNum = 0;
 

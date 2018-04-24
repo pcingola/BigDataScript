@@ -1,5 +1,6 @@
 package org.bds.task;
 
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import org.bds.data.Data;
 import org.bds.report.Report;
 import org.bds.run.BdsThread;
 import org.bds.util.AutoHashMap;
+import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -399,6 +401,15 @@ public class TaskDependecies implements Serializable {
 	 */
 	boolean isGlobal() {
 		return this == taskDependecies;
+	}
+
+	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		// TODO: FIX Singleton behavior!!!
+		Gpr.debug("READRESOLVE!");
+		return this;
 	}
 
 	public void setDebug(boolean debug) {

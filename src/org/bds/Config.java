@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -516,6 +517,15 @@ public class Config implements Serializable {
 		}
 	}
 
+	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		// TODO: FIX Singleton behavior!!!
+		Gpr.debug("READRESOLVE!");
+		return this;
+	}
+
 	public void set(String propertyName, String value) {
 		properties.setProperty(propertyName, value);
 	}
@@ -605,4 +615,5 @@ public class Config implements Serializable {
 
 		return sb.toString();
 	}
+
 }

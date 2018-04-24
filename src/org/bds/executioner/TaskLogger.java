@@ -3,6 +3,7 @@ package org.bds.executioner;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.HashSet;
 
 import org.bds.task.Task;
@@ -18,7 +19,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class TaskLogger {
+public class TaskLogger implements Serializable {
+
+	private static final long serialVersionUID = -7712445468457053526L;
 
 	public static final String CMD_REMOVE_FILE = "rm";
 
@@ -29,7 +32,7 @@ public class TaskLogger {
 	public TaskLogger(String pidFile) {
 		if (pidFile == null) throw new RuntimeException("Cannot initialize using a null file!");
 		this.pidFile = pidFile;
-		pids = new HashSet<String>();
+		pids = new HashSet<>();
 		if (debug) Gpr.debug("Creating PID logger " + pidFile);
 	}
 

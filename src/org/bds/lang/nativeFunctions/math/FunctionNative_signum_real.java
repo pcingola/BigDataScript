@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_signum_real extends FunctionNative {
+
+	private static final long serialVersionUID = 7598253174197344883L;
+
 	public FunctionNative_signum_real() {
 		super();
 	}
@@ -24,6 +27,6 @@ public class FunctionNative_signum_real extends FunctionNative {
 
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
-		return (Double) Math.signum(bdsThread.getReal("d"));
+		return Math.signum(bdsThread.getReal("d"));
 	}
 }

@@ -3,9 +3,9 @@ package org.bds.lang.expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
-import org.bds.lang.type.InterpolateVars;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.InterpolateVars;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.GprString;
 

@@ -1,9 +1,14 @@
 #!/usr/bin/env bds
 
-class Zzz {
-	int i = 42
-}
+tid := task echo Task start; sleep 2; echo Task end
+print("Task id: $tid\n")
 
-Zzz z
-z = null
-println("z: $z")
+checkpoint "/tmp/z.chp"
+print("After checkpoint\n")
+
+print("Waiting\n")
+wait
+print("After wait\n")
+
+out := tid.stdout()
+print("Output: $out\n")

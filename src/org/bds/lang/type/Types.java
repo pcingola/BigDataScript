@@ -1,7 +1,10 @@
 package org.bds.lang.type;
 
+import java.io.ObjectStreamException;
 import java.util.Collection;
 import java.util.HashMap;
+
+import org.bds.util.Gpr;
 
 /**
  * A registry of all available types
@@ -49,6 +52,15 @@ public class Types {
 		put(REAL);
 		put(STRING);
 		put(VOID);
+	}
+
+	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		// TODO: FIX Singleton behavior!!!
+		Gpr.debug("READRESOLVE!");
+		return this;
 	}
 
 }

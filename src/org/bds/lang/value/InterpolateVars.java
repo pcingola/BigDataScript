@@ -1,4 +1,4 @@
-package org.bds.lang.type;
+package org.bds.lang.value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +8,8 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.expression.ReferenceVar;
-import org.bds.lang.value.Literal;
-import org.bds.lang.value.Value;
-import org.bds.lang.value.ValueString;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 import org.bds.util.GprString;
