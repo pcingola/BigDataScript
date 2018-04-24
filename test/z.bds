@@ -1,14 +1,15 @@
 #!/usr/bin/env bds
 
-tid := task echo Task start; sleep 2; echo Task end
-print("Task id: $tid\n")
+prefix := "test/graph_09"
+in   := "$prefix.in.txt"
+mid1 := "$prefix.mid1.txt"
+out  := "$prefix.out.txt"
 
-checkpoint "/tmp/z.chp"
-print("After checkpoint\n")
+sys touch $in $mid1 $out; rm $in $mid1 $out; date > $in
 
-print("Waiting\n")
-wait
-print("After wait\n")
+# Dependencies: There is no need declare them in order
+dep( mid1 <- in )	   sys echo $in   > $mid1 ; echo MID1  ; sleep 1
+dep( in <- mid1 )      sys echo $mid1 > $in   ; echo MID2  ; sleep 1
+dep( out <- mid1 )     sys echo $mid1 > $out  ; echo OUT   ; sleep 1
 
-out := tid.stdout()
-print("Output: $out\n")
+goal out

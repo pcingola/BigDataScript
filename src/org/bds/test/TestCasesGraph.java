@@ -123,7 +123,7 @@ public class TestCasesGraph extends TestCasesBase {
 	@Test
 	public void test12_circularDependency() {
 		Gpr.debug("Test");
-		runAndCheckStderr("test/graph_12.bds", "Fatal error: test/graph_12.bds, line 18, pos 1. Circular dependency on task 'graph_12.bds.");
+		runAndCheckStderr("test/graph_12.bds", "Circular dependency");
 	}
 
 	@Test

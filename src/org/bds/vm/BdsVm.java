@@ -642,6 +642,8 @@ public class BdsVm implements Serializable {
 			if (Config.get().isVerbose()) {
 				System.err.println("Fatal error running BdsThread " + bdsThread.getBdsThreadId() + "\n");
 				t.printStackTrace();
+			} else {
+				System.err.println("Fatal error: " + t.getMessage());
 			}
 			if (bdsThread != null) bdsThread.setRunState(RunState.FATAL_ERROR);
 			exitCode = 1;
