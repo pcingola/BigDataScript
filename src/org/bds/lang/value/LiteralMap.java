@@ -99,8 +99,7 @@ public class LiteralMap extends Literal {
 		// Create a new map (temporary variable)
 		String varMap = baseVarName() + "map";
 		sb.append("new " + returnType + "\n");
-		sb.append("var " + varMap + "\n");
-		sb.append("pop\n");
+		sb.append("varpop " + varMap + "\n");
 
 		// Add all elements to map
 		for (int i = 0; i < values.length; i++) {
@@ -110,8 +109,7 @@ public class LiteralMap extends Literal {
 			sb.append(exprVal.toAsm());
 			sb.append(exprKey.toAsm());
 			sb.append("load " + varMap + "\n");
-			sb.append("setmap\n");
-			sb.append("pop\n");
+			sb.append("setmappop\n");
 		}
 
 		// Leave map as last element in the stack

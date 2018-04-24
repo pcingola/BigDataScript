@@ -129,8 +129,7 @@ public class ExpressionDepOperator extends Expression {
 			// Copy results to tmp variable
 			//     tmp := [results]
 			String tmp = baseVarName() + "tmp";
-			sb.append("var " + tmp + "\n");
-			sb.append("pop\n");
+			sb.append("varpop " + tmp + "\n");
 
 			// Append 'tmp' to 'varName'
 			sb.append("load " + varName + "\n");

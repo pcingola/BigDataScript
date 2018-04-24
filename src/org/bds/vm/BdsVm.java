@@ -156,6 +156,19 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Add multiple strings
+	 */
+	void adds(int count) {
+		int spStart = sp - count;
+		StringBuilder sb = new StringBuilder();
+		for (int i = spStart; i < sp; i++)
+			sb.append(stack[i]);
+
+		sp = spStart;
+		push(sb.toString());
+	}
+
+	/**
 	 * Add new type
 	 * @param type
 	 * @return Type index
@@ -703,6 +716,10 @@ public class BdsVm implements Serializable {
 				push(s1 + s2);
 				break;
 
+			case ADDSM:
+				adds(paramInt());
+				break;
+
 			case ANDB:
 				b2 = popBool();
 				b1 = popBool();
@@ -1137,10 +1154,22 @@ public class BdsVm implements Serializable {
 				push(v1);
 				break;
 
+			case SETPOP:
+				v1 = pop();
+				v2 = pop();
+				v1.setValue(v2);
+				break;
+
 			case SETFIELD:
 				name = constantString();
 				vclass = (ValueClass) pop();
 				vclass.setValue(name, peek()); // We leave the value in the stack
+				break;
+
+			case SETFIELDPOP:
+				name = constantString();
+				vclass = (ValueClass) pop();
+				vclass.setValue(name, pop()); // We leave the value in the stack
 				break;
 
 			case SETLIST:
@@ -1149,15 +1178,32 @@ public class BdsVm implements Serializable {
 				vlist.setValue(idx, peek()); // We leave the value in the stack
 				break;
 
+			case SETLISTPOP:
+				vlist = (ValueList) pop();
+				idx = popInt();
+				vlist.setValue(idx, pop()); // We leave the value in the stack
+				break;
+
 			case SETMAP:
 				vmap = (ValueMap) pop();
 				v1 = pop(); // Key
 				vmap.put(v1, peek()); // We leave the value in the stack
 				break;
 
+			case SETMAPPOP:
+				vmap = (ValueMap) pop();
+				v1 = pop(); // Key
+				vmap.put(v1, pop());
+				break;
+
 			case STORE:
 				name = constantString();
 				scope.setValue(name, peek()); // We leave the value in the stack
+				break;
+
+			case STOREPOP:
+				name = constantString();
+				scope.setValue(name, pop());
 				break;
 
 			case SUBI:
@@ -1197,6 +1243,11 @@ public class BdsVm implements Serializable {
 			case VAR:
 				name = constantString();
 				scope.add(name, peek()); // We leave the value in the stack
+				break;
+
+			case VARPOP:
+				name = constantString();
+				scope.add(name, pop()); // We pop value form the stack
 				break;
 
 			case WAIT:
@@ -1339,7 +1390,7 @@ public class BdsVm implements Serializable {
 			int idx = code[++pc];
 			if (op.isParamString()) param = "'" + GprString.escape(getConstant(idx).toString()) + "'";
 			else if (op.isParamType()) param = "'" + getType(idx) + "'";
-			else if (op.isParamNodeId()) param = "" + idx;
+			else if (op.isParamDirect()) param = "" + idx;
 			else param = getConstant(idx).toString();
 
 			sb.append(" " + param);

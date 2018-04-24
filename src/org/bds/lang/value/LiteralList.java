@@ -96,8 +96,7 @@ public class LiteralList extends Literal {
 		// Create a new list (temporary variable)
 		String varList = baseVarName() + "list";
 		sb.append("new " + returnType + "\n");
-		sb.append("var " + varList + "\n");
-		sb.append("pop\n");
+		sb.append("varpop " + varList + "\n");
 
 		// Add all elements to list
 		for (int i = 0; i < values.length; i++) {
@@ -106,8 +105,7 @@ public class LiteralList extends Literal {
 			sb.append(expr.toAsm());
 			sb.append("pushi " + i + "\n");
 			sb.append("load " + varList + "\n");
-			sb.append("setlist\n");
-			sb.append("pop\n");
+			sb.append("setlistpop\n");
 		}
 
 		// Leave list as last element in the stack

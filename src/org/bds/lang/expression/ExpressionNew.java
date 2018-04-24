@@ -91,8 +91,7 @@ public class ExpressionNew extends MethodCall {
 		// we need a scope and variable 'this' has to be set
 		sb.append("scopepush\n");
 		sb.append("new " + expresionThis.getReturnType().toString() + "\n");
-		sb.append("var this\n");
-		sb.append("pop\n");
+		sb.append("varpop this\n");
 		sb.append(toAsmInitFields());
 
 		// Call constructor, unless it's the default constructor

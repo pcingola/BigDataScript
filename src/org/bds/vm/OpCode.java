@@ -24,8 +24,8 @@ import org.bds.util.GprString;
  * @author pcingola
  */
 public enum OpCode {
-	// Addition (int, real, string)
-	ADDI, ADDR, ADDS
+	// Addition (int, real, string, string multiple)
+	ADDI, ADDR, ADDS, ADDSM
 	// And: bool (logic), int (bitwise)
 	, ANDB, ANDI
 	// Breakpoint (debugging mode)
@@ -103,16 +103,17 @@ public enum OpCode {
 	//    PUSH{B|I|R|S}  literal   # Pushes a literal constant into the stack
 	, PUSHB, PUSHI, PUSHNULL, PUSHR, PUSHS
 	// Reference: object's field, list index or hash key
-	, REFFIELD, REFLIST, REFMAP
+	, REFFIELD, REFLIST, REFMAP//
 	// Return (from function)
 	, RET
 	// Scope: create new scope (and push it), restore old scope (pop current scope)
 	, SCOPEPUSH, SCOPEPOP
-	// Set value. Leave value in the stack
-	, SET, SETFIELD, SETLIST, SETMAP
+	// Set value
+	, SET, SETFIELD, SETLIST, SETMAP // Leave value in the stack
+	, SETPOP, SETFIELDPOP, SETLISTPOP, SETMAPPOP // Remove value from stack
 	// Store value to local variable (scope). Leaves the value in the stack (stack is not changed)
 	//    STORE varName
-	, STORE
+	, STORE, STOREPOP
 	// Subtraction
 	, SUBI, SUBR
 	// Sys command
@@ -121,8 +122,8 @@ public enum OpCode {
 	, SWAP
 	// Dispatch a task
 	, TASK, TASKDEP
-	// Create a variable in local scope
-	, VAR
+	// Create a variable in local scope (and pop)
+	, VAR, VARPOP
 	// Wait for task to finish
 	, WAIT, WAITALL
 	// XOR
@@ -140,6 +141,7 @@ public enum OpCode {
 	 */
 	public boolean hasParam() {
 		switch (this) {
+		case ADDSM:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
@@ -155,8 +157,11 @@ public enum OpCode {
 		case PUSHS:
 		case REFFIELD:
 		case SETFIELD:
+		case SETFIELDPOP:
 		case STORE:
+		case STOREPOP:
 		case VAR:
+		case VARPOP:
 			return true;
 
 		default:
@@ -169,8 +174,8 @@ public enum OpCode {
 	 * Note that node ID is a 32bit int encoded encoded directly in
 	 * the opcode parameter (as opposed to using poll of constants)
 	 */
-	public boolean isParamNodeId() {
-		return this == NODE;
+	public boolean isParamDirect() {
+		return this == NODE || this == OpCode.ADDSM;
 	}
 
 	/**
@@ -178,6 +183,7 @@ public enum OpCode {
 	 */
 	public boolean isParamString() {
 		switch (this) {
+		case ADDSM:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
@@ -188,8 +194,11 @@ public enum OpCode {
 		case PUSHS:
 		case REFFIELD:
 		case SETFIELD:
+		case SETFIELDPOP:
 		case STORE:
+		case STOREPOP:
 		case VAR:
+		case VARPOP:
 			return true;
 
 		default:
@@ -209,6 +218,7 @@ public enum OpCode {
 	 */
 	public Object parseParam(String param, Map<String, Type> typeByName) {
 		switch (this) {
+		case ADDSM:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
@@ -219,8 +229,11 @@ public enum OpCode {
 		case PUSHS:
 		case REFFIELD:
 		case SETFIELD:
+		case SETFIELDPOP:
 		case STORE:
+		case STOREPOP:
 		case VAR:
+		case VARPOP:
 			return parseParamString(param);
 
 		case NEW:

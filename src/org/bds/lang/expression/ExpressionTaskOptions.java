@@ -42,11 +42,9 @@ public class ExpressionTaskOptions extends ExpressionList {
 
 		if (pushDeps) {
 			sb.append("new " + listString + "\n");
-			sb.append("var " + varOutputs + "\n");
-			sb.append("pop\n");
+			sb.append("varpop " + varOutputs + "\n");
 			sb.append("new " + listString + "\n");
-			sb.append("var " + varInputs + "\n");
-			sb.append("pop\n");
+			sb.append("varpop " + varInputs + "\n");
 		}
 
 		// Evaluate all expressions

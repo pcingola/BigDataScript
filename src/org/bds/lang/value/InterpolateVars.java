@@ -257,8 +257,8 @@ public class InterpolateVars extends Literal {
 		}
 
 		// Join all strings
-		for (int i = 0; i < count - 1; i++)
-			sb.append("adds\n");
+		if (count == 2) sb.append("adds\n");
+		else sb.append("addsm " + count + "\n");
 
 		return sb.toString();
 	}

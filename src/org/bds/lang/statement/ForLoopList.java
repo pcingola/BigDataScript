@@ -114,12 +114,10 @@ public class ForLoopList extends StatementWithScope {
 		sb.append(expression.toAsm());
 		if (expression.isList()) {
 			// Evaluate expression: '$list = expressionList'
-			sb.append("var " + varList + "\n");
-			sb.append("pop\n");
+			sb.append("varpop " + varList + "\n");
 		} else if (expression.isMap()) {
 			sb.append("callnative " + methodValues + "\n");
-			sb.append("var " + varList + "\n");
-			sb.append("pop\n");
+			sb.append("varpop " + varList + "\n");
 		} else {
 			throw new RuntimeException("Cannot iterate on type " + expression.getReturnType());
 		}
@@ -127,8 +125,7 @@ public class ForLoopList extends StatementWithScope {
 		// Get list size: '$maxCount = $list.size()'
 		sb.append("load " + varList + "\n");
 		sb.append("callnative " + methodSize + "\n");
-		sb.append("var " + varMaxCounter + "\n");
-		sb.append("pop\n");
+		sb.append("varpop " + varMaxCounter + "\n");
 
 		// Loop start
 		sb.append(loopInitLabel + ":\n");
@@ -136,8 +133,7 @@ public class ForLoopList extends StatementWithScope {
 		// Initialize variables: 'for(int $count = 0 ;'
 		sb.append(vinit.toAsm());
 		sb.append("pushi 0\n");
-		sb.append("var " + varCounter + "\n");
-		sb.append("pop\n");
+		sb.append("varpop " + varCounter + "\n");
 
 		// Loop condition: 'for(... ; $count < $maxCount ; ...)'
 		sb.append(loopStartLabel + ":\n");
@@ -150,8 +146,7 @@ public class ForLoopList extends StatementWithScope {
 		sb.append("load " + varCounter + "\n");
 		sb.append("load " + varList + "\n");
 		sb.append("reflist\n");
-		sb.append("store " + varName + "\n");
-		sb.append("pop\n");
+		sb.append("storepop " + varName + "\n");
 
 		// Execute statements: 'statements'
 		sb.append(statement.toAsm());
@@ -160,8 +155,7 @@ public class ForLoopList extends StatementWithScope {
 		sb.append(loopContinueLabel + ":\n");
 		sb.append("load " + varCounter + "\n");
 		sb.append("inc\n");
-		sb.append("store " + varCounter + "\n");
-		sb.append("pop\n");
+		sb.append("storepop " + varCounter + "\n");
 
 		// Jump to beginning of loop
 		sb.append("jmp " + loopStartLabel + "\n");
