@@ -65,6 +65,7 @@ public class TypeFunction extends TypeComposite {
 	/**
 	 * Generic signature for a function
 	 */
+	@SuppressWarnings("unused")
 	public String signature() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
