@@ -183,7 +183,6 @@ public enum OpCode {
 	 */
 	public boolean isParamString() {
 		switch (this) {
-		case ADDSM:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
@@ -218,7 +217,6 @@ public enum OpCode {
 	 */
 	public Object parseParam(String param, Map<String, Type> typeByName) {
 		switch (this) {
-		case ADDSM:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
@@ -239,6 +237,7 @@ public enum OpCode {
 		case NEW:
 			return getType(param, typeByName);
 
+		case ADDSM:
 		case NODE:
 			return Gpr.parseIntSafe(param);
 

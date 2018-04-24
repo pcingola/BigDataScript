@@ -264,6 +264,7 @@ public class VmAsm {
 		case NEW:
 			return bdsvm.addType((Type) oparam);
 
+		case ADDSM:
 		case NODE:
 			return ((int) oparam);
 
