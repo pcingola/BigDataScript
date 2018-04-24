@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bds.data.Data;
-import org.bds.util.Gpr;
 
 /**
  * All BdsThreads are tracked here
@@ -16,7 +15,7 @@ import org.bds.util.Gpr;
  */
 public class BdsThreads {
 
-	private static BdsThreads bdsThreads = new BdsThreads();
+	private static BdsThreads bdsThreadsInstance = new BdsThreads();
 
 	Map<Long, BdsThread> bdsThreadByThreadId = new HashMap<>();
 	Set<BdsThread> bdsThreadDone = new HashSet<>();
@@ -38,14 +37,14 @@ public class BdsThreads {
 	 * Get singleton
 	 */
 	public static BdsThreads getInstance() {
-		return bdsThreads;
+		return bdsThreadsInstance;
 	}
 
 	/**
 	 * Reset singleton
 	 */
 	public static void reset() {
-		bdsThreads = new BdsThreads();
+		bdsThreadsInstance = new BdsThreads();
 	}
 
 	/**
@@ -68,8 +67,7 @@ public class BdsThreads {
 	 * Resolve un-serialization
 	 */
 	private Object readResolve() throws ObjectStreamException {
-		// TODO: FIX Singleton behavior!!!
-		Gpr.debug("READRESOLVE!");
+		bdsThreadsInstance = this; // Replace singleton instance
 		return this;
 	}
 

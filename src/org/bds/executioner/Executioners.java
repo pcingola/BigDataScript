@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bds.Config;
-import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -173,8 +172,7 @@ public class Executioners {
 	 * Resolve un-serialization
 	 */
 	private Object readResolve() throws ObjectStreamException {
-		// TODO: FIX Singleton behavior!!!
-		Gpr.debug("READRESOLVE!");
+		executionersInstance = this; // Replace singleton instance
 		return this;
 	}
 

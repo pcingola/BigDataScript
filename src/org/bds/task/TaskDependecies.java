@@ -17,7 +17,6 @@ import org.bds.data.Data;
 import org.bds.report.Report;
 import org.bds.run.BdsThread;
 import org.bds.util.AutoHashMap;
-import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -31,7 +30,7 @@ public class TaskDependecies implements Serializable {
 
 	public static final int SLEEP_TIME = 250;
 
-	private static TaskDependecies taskDependecies = new TaskDependecies(); // Global instance (keeps track of all tasks)
+	private static TaskDependecies taskDependeciesInstance = new TaskDependecies(); // Global instance (keeps track of all tasks)
 
 	boolean debug = false;
 	boolean verbose = false;
@@ -41,14 +40,14 @@ public class TaskDependecies implements Serializable {
 	Map<String, String> canonicalPath;
 
 	public static TaskDependecies get() {
-		return taskDependecies;
+		return taskDependeciesInstance;
 	}
 
 	/**
 	 * Create a new Singleton
 	 */
 	public static void reset() {
-		taskDependecies = new TaskDependecies();
+		taskDependeciesInstance = new TaskDependecies();
 	}
 
 	public TaskDependecies() {
@@ -400,15 +399,14 @@ public class TaskDependecies implements Serializable {
 	 * Is this the global instance?
 	 */
 	boolean isGlobal() {
-		return this == taskDependecies;
+		return this == taskDependeciesInstance;
 	}
 
 	/**
 	 * Resolve un-serialization
 	 */
 	private Object readResolve() throws ObjectStreamException {
-		// TODO: FIX Singleton behavior!!!
-		Gpr.debug("READRESOLVE!");
+		taskDependeciesInstance = this;
 		return this;
 	}
 

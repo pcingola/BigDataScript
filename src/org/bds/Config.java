@@ -521,8 +521,7 @@ public class Config implements Serializable {
 	 * Resolve un-serialization
 	 */
 	private Object readResolve() throws ObjectStreamException {
-		// TODO: FIX Singleton behavior!!!
-		Gpr.debug("READRESOLVE!");
+		configInstance = this;
 		return this;
 	}
 
