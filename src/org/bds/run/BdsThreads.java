@@ -1,23 +1,25 @@
 package org.bds.run;
 
+import java.io.ObjectStreamException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.bds.data.Data;
+import org.bds.util.Gpr;
 
 /**
  * All BdsThreads are tracked here
- * 
+ *
  * @author pcingola
  */
 public class BdsThreads {
 
 	private static BdsThreads bdsThreads = new BdsThreads();
 
-	Map<Long, BdsThread> bdsThreadByThreadId = new HashMap<Long, BdsThread>();
-	Set<BdsThread> bdsThreadDone = new HashSet<BdsThread>();
+	Map<Long, BdsThread> bdsThreadByThreadId = new HashMap<>();
+	Set<BdsThread> bdsThreadDone = new HashSet<>();
 
 	/**
 	 * Get canonical path to file using thread's 'current dir' to de-reference
@@ -63,6 +65,15 @@ public class BdsThreads {
 	}
 
 	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		// TODO: FIX Singleton behavior!!!
+		Gpr.debug("READRESOLVE!");
+		return this;
+	}
+
+	/**
 	 * Remove a bdsThread
 	 */
 	public synchronized void remove() {
@@ -81,4 +92,5 @@ public class BdsThreads {
 			sb.append(thid + "\t" + bdsThreadByThreadId.get(thid).getBdsThreadId() + "\n");
 		return sb.toString();
 	}
+
 }
