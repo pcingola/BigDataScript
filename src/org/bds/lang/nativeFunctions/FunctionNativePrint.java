@@ -13,6 +13,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativePrint extends FunctionNative {
 
+	private static final long serialVersionUID = 6415414552900435968L;
+
+
 	public FunctionNativePrint() {
 		super();
 	}

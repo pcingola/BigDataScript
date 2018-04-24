@@ -9,6 +9,9 @@ import org.bds.run.BdsThreads;
 
 public class MethodNative_string_chdir extends MethodNativeString {
 
+	private static final long serialVersionUID = 2008621469747150848L;
+
+
 	public MethodNative_string_chdir() {
 		super();
 	}

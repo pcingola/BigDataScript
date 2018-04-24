@@ -12,6 +12,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeToIntFromBool extends FunctionNative {
 
+	private static final long serialVersionUID = 5375641960251949056L;
+
+
 	public FunctionNativeToIntFromBool() {
 		super();
 	}

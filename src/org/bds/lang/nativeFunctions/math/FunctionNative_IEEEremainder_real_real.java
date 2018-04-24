@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_IEEEremainder_real_real extends FunctionNative {
+
+	private static final long serialVersionUID = 4155394957789659136L;
+
 	public FunctionNative_IEEEremainder_real_real() {
 		super();
 	}

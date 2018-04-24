@@ -8,6 +8,9 @@ import org.bds.run.BdsThread;
 
 public class FunctionNative_asin_real extends FunctionNative {
 
+	private static final long serialVersionUID = 2477070378741039104L;
+
+
 	public FunctionNative_asin_real() {
 		super();
 	}

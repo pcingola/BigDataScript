@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_download_localname extends MethodNativeString {
+
+	private static final long serialVersionUID = 7065502228752138240L;
+
 	public MethodNative_string_download_localname() {
 		super();
 	}

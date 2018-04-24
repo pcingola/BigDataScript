@@ -6,6 +6,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_lastIndexOf_str extends MethodNativeString {
+
+	private static final long serialVersionUID = 1407046042209255424L;
+
 	public MethodNative_string_lastIndexOf_str() {
 		super();
 	}

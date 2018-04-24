@@ -6,6 +6,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_clone_int extends FunctionNative {
+
+	private static final long serialVersionUID = 20818224706781184L;
+
 	public FunctionNative_clone_int() {
 		super();
 	}

@@ -9,6 +9,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class ParentNode extends BdsNode {
 
+	private static final long serialVersionUID = 6198450603450990592L;
+
+
 	public ParentNode() {
 		super(null, null);
 	}

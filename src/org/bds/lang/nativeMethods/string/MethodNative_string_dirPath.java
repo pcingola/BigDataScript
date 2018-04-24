@@ -12,6 +12,9 @@ import org.bds.run.BdsThread;
 
 public class MethodNative_string_dirPath extends MethodNativeString {
 
+	private static final long serialVersionUID = 7696947923325583360L;
+
+
 	public MethodNative_string_dirPath() {
 		super();
 	}

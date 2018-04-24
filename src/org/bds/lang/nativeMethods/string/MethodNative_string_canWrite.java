@@ -6,6 +6,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_canWrite extends MethodNativeString {
+
+	private static final long serialVersionUID = 20751364950884352L;
+
 	public MethodNative_string_canWrite() {
 		super();
 	}

@@ -6,6 +6,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_replace_regex_repl extends MethodNativeString {
+
+	private static final long serialVersionUID = 553760238063353856L;
+
 	public MethodNative_string_replace_regex_repl() {
 		super();
 	}

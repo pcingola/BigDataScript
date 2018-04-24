@@ -8,6 +8,9 @@ import org.bds.run.BdsThread;
 
 public class MethodNative_string_upload extends MethodNativeString {
 
+	private static final long serialVersionUID = 376835702471557120L;
+
+
 	public MethodNative_string_upload() {
 		super();
 	}

@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_getExponent_real extends FunctionNative {
+
+	private static final long serialVersionUID = 2541206880559071232L;
+
 	public FunctionNative_getExponent_real() {
 		super();
 	}

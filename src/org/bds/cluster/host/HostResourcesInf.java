@@ -12,6 +12,9 @@ package org.bds.cluster.host;
  */
 public class HostResourcesInf extends HostResources {
 
+	private static final long serialVersionUID = 477316324922523648L;
+
+
 	public HostResourcesInf() {
 		cpus = Integer.MAX_VALUE; // Max cpus
 		mem = Long.MAX_VALUE; // Max memory

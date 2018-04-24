@@ -14,6 +14,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeTime extends FunctionNative {
 
+	private static final long serialVersionUID = 7645169541361729536L;
+
+
 	public FunctionNativeTime() {
 		super();
 	}

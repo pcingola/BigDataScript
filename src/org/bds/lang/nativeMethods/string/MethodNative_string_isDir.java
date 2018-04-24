@@ -6,6 +6,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_isDir extends MethodNativeString {
+
+	private static final long serialVersionUID = 6408280938639294464L;
+
 	public MethodNative_string_isDir() {
 		super();
 	}

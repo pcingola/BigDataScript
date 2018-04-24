@@ -14,6 +14,9 @@ import org.bds.util.Timer;
  */
 public class FunctionNativeLog extends FunctionNative {
 
+	private static final long serialVersionUID = 4328132832275759104L;
+
+
 	public FunctionNativeLog() {
 		super();
 	}

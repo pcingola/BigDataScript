@@ -8,6 +8,9 @@ import org.bds.run.BdsThread;
 
 public class MethodNative_string_baseName_ext extends MethodNativeString {
 
+	private static final long serialVersionUID = 708502319838298112L;
+
+
 	public MethodNative_string_baseName_ext() {
 		super();
 	}

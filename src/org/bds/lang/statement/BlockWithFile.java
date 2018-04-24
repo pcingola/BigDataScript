@@ -19,6 +19,9 @@ import org.bds.util.Gpr;
  */
 public class BlockWithFile extends Block {
 
+	private static final long serialVersionUID = 3737857070704132096L;
+
+
 	protected String fileName;
 	protected String fileText;
 

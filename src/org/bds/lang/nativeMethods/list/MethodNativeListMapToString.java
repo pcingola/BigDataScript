@@ -9,6 +9,9 @@ import org.bds.lang.type.TypeList;
  */
 public class MethodNativeListMapToString extends MethodNativeListMap {
 
+	private static final long serialVersionUID = 5218774077971398656L;
+
+
 	public MethodNativeListMapToString(TypeList listType) {
 		super(listType);
 	}

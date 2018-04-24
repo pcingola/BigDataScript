@@ -14,6 +14,9 @@ import org.bds.run.HelpCreator;
  */
 public class FunctionNativePrintHelp extends FunctionNative {
 
+	private static final long serialVersionUID = 6623072869440061440L;
+
+
 	public FunctionNativePrintHelp() {
 		super();
 	}

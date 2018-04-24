@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_pathName extends MethodNativeString {
+
+	private static final long serialVersionUID = 8002526136242307072L;
+
 	public MethodNative_string_pathName() {
 		super();
 	}

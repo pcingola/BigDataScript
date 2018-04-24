@@ -8,6 +8,9 @@ import org.bds.run.BdsThread;
 
 public class FunctionNative_abs_int extends FunctionNative {
 
+	private static final long serialVersionUID = 8364859515887190016L;
+
+
 	public FunctionNative_abs_int() {
 		super();
 	}

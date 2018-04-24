@@ -8,6 +8,9 @@ import org.bds.task.Task;
 import org.bds.util.Gpr;
 
 public class MethodNative_string_stdout extends MethodNativeString {
+
+	private static final long serialVersionUID = 6231366326569435136L;
+
 	public MethodNative_string_stdout() {
 		super();
 	}

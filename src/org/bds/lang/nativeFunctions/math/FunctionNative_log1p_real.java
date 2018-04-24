@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_log1p_real extends FunctionNative {
+
+	private static final long serialVersionUID = 8688334612713209856L;
+
 	public FunctionNative_log1p_real() {
 		super();
 	}

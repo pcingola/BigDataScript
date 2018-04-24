@@ -15,6 +15,9 @@ import org.bds.symbol.SymbolTable;
  */
 public class StatementInclude extends BlockWithFile {
 
+	private static final long serialVersionUID = 7172299775285428224L;
+
+
 	protected String parentFileName;
 
 	/**

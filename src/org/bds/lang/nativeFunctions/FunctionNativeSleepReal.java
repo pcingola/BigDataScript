@@ -12,6 +12,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeSleepReal extends FunctionNative {
 
+	private static final long serialVersionUID = 8504357687134289920L;
+
+
 	public FunctionNativeSleepReal() {
 		super();
 	}

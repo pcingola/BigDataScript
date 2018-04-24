@@ -6,6 +6,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_swapExt_extNew extends MethodNativeString {
+
+	private static final long serialVersionUID = 7904780671372001280L;
+
 	public MethodNative_string_swapExt_extNew() {
 		super();
 	}

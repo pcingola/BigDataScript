@@ -10,6 +10,9 @@ import org.bds.lang.BdsNode;
  */
 public class ExpressionTaskLiteral extends ExpressionTask {
 
+	private static final long serialVersionUID = 1353838436863213568L;
+
+
 	public static final String TASK_STR = "task";
 
 	public ExpressionTaskLiteral(BdsNode parent, ParseTree tree) {

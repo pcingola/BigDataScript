@@ -27,6 +27,7 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 	boolean recurse; // If true, perform recursive search
 	boolean recurseInclude; // If true, perform recursive search within 'StatementInclide' nodes. Note: If 'recurse' is set, the value of 'recurseInclude' is irrelevant
 	BdsNode bdsNode;
+	@SuppressWarnings("rawtypes")
 	Class clazz; // Class to find (all nodes if null)
 	HashSet<Object> visited = new HashSet<>();
 

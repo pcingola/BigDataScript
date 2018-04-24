@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_copySign_real_real extends FunctionNative {
+
+	private static final long serialVersionUID = 7852734146009923584L;
+
 	public FunctionNative_copySign_real_real() {
 		super();
 	}

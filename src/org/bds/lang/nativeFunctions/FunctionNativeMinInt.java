@@ -12,6 +12,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeMinInt extends FunctionNative {
 
+	private static final long serialVersionUID = 5831982046473388032L;
+
+
 	public FunctionNativeMinInt() {
 		super();
 	}

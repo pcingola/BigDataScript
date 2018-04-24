@@ -9,6 +9,9 @@ import org.bds.lang.type.TypeList;
  */
 public class MethodNativeListMapToInt extends MethodNativeListMap {
 
+	private static final long serialVersionUID = 1256239877054300160L;
+
+
 	public MethodNativeListMapToInt(TypeList listType) {
 		super(listType);
 		//		super(listType, Types.INT, "mapToInt");

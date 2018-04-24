@@ -12,6 +12,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeToIntFromReal extends FunctionNative {
 
+	private static final long serialVersionUID = 1249719481043812352L;
+
+
 	public FunctionNativeToIntFromReal() {
 		super();
 	}

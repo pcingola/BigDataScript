@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_sqrt_real extends FunctionNative {
+
+	private static final long serialVersionUID = 2065342747035860992L;
+
 	public FunctionNative_sqrt_real() {
 		super();
 	}

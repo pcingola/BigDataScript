@@ -7,6 +7,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_scalb_real_int extends FunctionNative {
+
+	private static final long serialVersionUID = 528414974624694272L;
+
 	public FunctionNative_scalb_real_int() {
 		super();
 	}

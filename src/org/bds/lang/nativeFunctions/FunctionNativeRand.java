@@ -12,6 +12,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeRand extends FunctionNative {
 
+	private static final long serialVersionUID = 524576886622289920L;
+
+
 	public FunctionNativeRand() {
 		super();
 	}

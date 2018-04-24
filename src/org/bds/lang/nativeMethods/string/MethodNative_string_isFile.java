@@ -6,6 +6,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_isFile extends MethodNativeString {
+
+	private static final long serialVersionUID = 1619897854678040576L;
+
 	public MethodNative_string_isFile() {
 		super();
 	}

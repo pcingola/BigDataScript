@@ -7,6 +7,9 @@ import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
 public class MethodNative_string_parseReal extends MethodNativeString {
+
+	private static final long serialVersionUID = 4978246041708036096L;
+
 	public MethodNative_string_parseReal() {
 		super();
 	}

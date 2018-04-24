@@ -7,6 +7,9 @@ import org.bds.run.BdsThread;
 
 public class FunctionNativeAssertString extends FunctionNativeAssert {
 
+	private static final long serialVersionUID = 5159123581447208960L;
+
+
 	public FunctionNativeAssertString() {
 		super();
 	}

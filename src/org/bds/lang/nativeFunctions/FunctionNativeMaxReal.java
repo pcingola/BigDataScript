@@ -12,6 +12,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeMaxReal extends FunctionNative {
 
+	private static final long serialVersionUID = 6992062507795906560L;
+
+
 	public FunctionNativeMaxReal() {
 		super();
 	}

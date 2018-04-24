@@ -8,6 +8,9 @@ import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
 public class MethodNative_string_read extends MethodNativeString {
+
+	private static final long serialVersionUID = 8514397611275354112L;
+
 	public MethodNative_string_read() {
 		super();
 	}

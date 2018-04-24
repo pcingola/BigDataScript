@@ -6,6 +6,9 @@ import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class MethodNative_string_toUpper extends MethodNativeString {
+
+	private static final long serialVersionUID = 4418172619010899968L;
+
 	public MethodNative_string_toUpper() {
 		super();
 	}

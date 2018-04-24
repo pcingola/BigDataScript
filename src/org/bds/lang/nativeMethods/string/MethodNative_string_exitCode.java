@@ -7,6 +7,9 @@ import org.bds.run.BdsThread;
 import org.bds.task.Task;
 
 public class MethodNative_string_exitCode extends MethodNativeString {
+
+	private static final long serialVersionUID = 6537396913359060992L;
+
 	public MethodNative_string_exitCode() {
 		super();
 	}

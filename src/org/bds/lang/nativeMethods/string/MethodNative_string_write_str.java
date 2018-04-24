@@ -11,6 +11,9 @@ import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
 public class MethodNative_string_write_str extends MethodNativeString {
+
+	private static final long serialVersionUID = 937187776204406784L;
+
 	public MethodNative_string_write_str() {
 		super();
 	}
