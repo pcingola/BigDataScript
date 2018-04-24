@@ -491,6 +491,10 @@ public class BdsThread extends Thread implements Serializable {
 		return getScope().getValue(varName);
 	}
 
+	public BdsVm getVm() {
+		return vm;
+	}
+
 	/**
 	 * Execute dependency tasks to achieve goal 'out'
 	 */

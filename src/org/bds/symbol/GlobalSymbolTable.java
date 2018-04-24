@@ -1,5 +1,7 @@
 package org.bds.symbol;
 
+import java.io.ObjectStreamException;
+
 /**
  * Global SymboTable: A table of variables, functions and classes
  *
@@ -32,6 +34,14 @@ public class GlobalSymbolTable extends SymbolTable {
 	@Override
 	public SymbolTable getParent() {
 		return null; // GlobalSYmbolTable has no parent
+	}
+
+	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		globalSymbolTable = this;
+		return this;
 	}
 
 }

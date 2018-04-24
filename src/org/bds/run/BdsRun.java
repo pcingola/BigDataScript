@@ -373,15 +373,16 @@ public class BdsRun {
 	 */
 	int runCheckpoint() {
 		// Load checkpoint file
-		BdsThread bdsThreadRoot = loadCheckpoint();
+		bdsThread = loadCheckpoint();
+		vm = bdsThread.getVm();
 
 		// Set main thread's programUnit running scope (mostly for debugging and test cases)
 		// ProgramUnit's scope it the one before 'global'
-		programUnit = bdsThreadRoot.getProgramUnit();
+		programUnit = bdsThread.getProgramUnit();
 
 		// Set state and recover tasks
-		List<BdsThread> bdsThreads = bdsThreadRoot.getBdsThreads();
-		bdsThreads.add(bdsThreadRoot);
+		List<BdsThread> bdsThreads = bdsThread.getBdsThreads();
+		bdsThreads.add(bdsThread);
 		for (BdsThread bdsThread : bdsThreads) {
 			// Re-execute or add tasks (if thread is not finished)
 			if (!bdsThread.getRunState().isFinished()) {
@@ -390,7 +391,7 @@ public class BdsRun {
 		}
 
 		// All set, run main thread
-		return runThread(bdsThreadRoot);
+		return runThread(bdsThread);
 	}
 
 	/**

@@ -12,17 +12,11 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test03() {
+	public void test04() {
 		Gpr.debug("Test");
-		runAndCheckpoint("test/graph_03.bds", "test/graph_03.chp", "out", "Task start\nTask end\n");
+		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
 	}
 
-	//	@Test
-	//	public void test04() {
-	//		Gpr.debug("Test");
-	//		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
-	//	}
-	//
 	//	@Test
 	//	public void test09() {
 	//		Gpr.debug("Test");

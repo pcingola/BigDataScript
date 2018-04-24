@@ -2,6 +2,7 @@ package org.bds.scope;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectStreamException;
 import java.util.Map;
 
 import org.bds.Config;
@@ -189,6 +190,14 @@ public class GlobalScope extends Scope {
 		// not found" error at compiler time, if the program attempts
 		// to use 'args'.
 		globalScope.add(GlobalScope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Types.STRING));
+	}
+
+	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		globalScope = this;
+		return this;
 	}
 
 }
