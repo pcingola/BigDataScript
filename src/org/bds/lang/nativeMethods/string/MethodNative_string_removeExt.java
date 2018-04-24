@@ -1,17 +1,9 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.task.Task;
-import org.bds.util.Gpr;
 
 public class MethodNative_string_removeExt extends MethodNativeString {
 	public MethodNative_string_removeExt() {
@@ -32,6 +24,8 @@ public class MethodNative_string_removeExt extends MethodNativeString {
 
 	@Override
 	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		String base = objThis.toString(); int idx = base.lastIndexOf('.'); return idx >= 0 ? base.substring(0, idx) : "";
+		String base = objThis.toString();
+		int idx = base.lastIndexOf('.');
+		return idx >= 0 ? base.substring(0, idx) : "";
 	}
 }

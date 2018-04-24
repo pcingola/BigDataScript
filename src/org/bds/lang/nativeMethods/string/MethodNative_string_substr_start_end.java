@@ -1,17 +1,9 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.task.Task;
-import org.bds.util.Gpr;
 
 public class MethodNative_string_substr_start_end extends MethodNativeString {
 	public MethodNative_string_substr_start_end() {
@@ -32,6 +24,10 @@ public class MethodNative_string_substr_start_end extends MethodNativeString {
 
 	@Override
 	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		String s = objThis.toString(); int start = (int) csThread.getInt("start"), end = (int) csThread.getInt("end") ; start=Math.max(0,start); end=Math.min(end,s.length()); return (start>=end? "" : s.substring(start,end));
+		String s = objThis.toString();
+		int start = (int) csThread.getInt("start"), end = (int) csThread.getInt("end");
+		start = Math.max(0, start);
+		end = Math.min(end, s.length());
+		return (start >= end ? "" : s.substring(start, end));
 	}
 }

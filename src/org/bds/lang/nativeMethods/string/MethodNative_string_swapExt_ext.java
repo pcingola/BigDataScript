@@ -1,7 +1,6 @@
 package org.bds.lang.nativeMethods.string;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
@@ -25,6 +24,9 @@ public class MethodNative_string_swapExt_ext extends MethodNativeString {
 
 	@Override
 	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		String ext = csThread.getString("ext"); String b = objThis.toString(); if (b.endsWith(ext)) return b.substring(0, b.length() - ext.length()); return b;
+		String ext = csThread.getString("ext");
+		String b = objThis.toString();
+		if (b.endsWith(ext)) return b.substring(0, b.length() - ext.length());
+		return b;
 	}
 }
