@@ -35,6 +35,7 @@ import org.bds.report.Report;
 import org.bds.scope.Scope;
 import org.bds.task.Task;
 import org.bds.task.TaskDependecies;
+import org.bds.task.TaskFactory;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 import org.bds.vm.BdsVm;
@@ -76,7 +77,6 @@ public class BdsThread extends Thread implements Serializable {
 
 	// Task management
 	TaskDependecies taskDependecies;
-	//	List<Task> restoredTasks; // Unserialized tasks
 
 	/**
 	 * Get an ID for a node
@@ -645,20 +645,13 @@ public class BdsThread extends Thread implements Serializable {
 	 * Send task from un-serialization to execution list
 	 */
 	public void restoreUnserializedTasks() {
-		throw new RuntimeException("UNIMPLEMENTED !!!!!!!");
-		//		for (Task task : restoredTasks) {
-		//			add(task);
-		//
-		//			if ((!task.isDone() // Not finished?
-		//					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
-		//					&& !task.isDependency() // Don't execute dependencies, unless needed
-		//			) {
-		//				// Task not finished or failed? Re-execute
-		//				// TODO: FIXME!!!
-		//				// ExpressionTask.execute(this, task);
-		//				throw new RuntimeException("!!!! IMPLEMENT");
-		//			}
-		//		}
+		for (Task task : taskDependecies.getTasks()) {
+			if (!task.isStateFinished() // Not finished?
+					&& !task.isDependency() // Don't execute dependencies, unless needed
+			) {
+				TaskFactory.execute(this, task);
+			}
+		}
 	}
 
 	public synchronized void rmOnExit(Value vfile) {
