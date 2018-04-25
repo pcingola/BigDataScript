@@ -20,6 +20,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	public FunctionNative() {
 		super(null, null);
 		initFunction();
+		parameterNames = parameterNames();
 	}
 
 	/**

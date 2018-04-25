@@ -51,8 +51,16 @@ public class BdsThread extends Thread implements Serializable {
 
 	private static final long serialVersionUID = 1206304272840188781L;
 
-	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
+	// Exit codes (see bds.go)
+	public static final int EXITCODE_OK = 0;
+	public static final int EXITCODE_ERROR = 1;
+	public static final int EXITCODE_TIMEOUT = 2;
+	public static final int EXITCODE_KILLED = 3;
+	public static final int EXITCODE_FATAL_ERROR = 10;
+	public static final int EXITCODE_ASSERTION_FAILED = 5;
+
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
+	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	private static int bdsThreadNumber = 1;
 
 	Config config; // Config
@@ -152,7 +160,7 @@ public class BdsThread extends Thread implements Serializable {
 		);
 
 		// Set exit map
-		setExitValue(1L);
+		setExitValue(EXITCODE_ASSERTION_FAILED);
 	}
 
 	/**
@@ -251,7 +259,7 @@ public class BdsThread extends Thread implements Serializable {
 		}
 
 		// Set exit map
-		setExitValue(1L);
+		setExitValue(EXITCODE_FATAL_ERROR);
 	}
 
 	/**
@@ -708,12 +716,15 @@ public class BdsThread extends Thread implements Serializable {
 		// All tasks in wait finished OK?
 		if (!ok) {
 			// Errors? Then set exit status appropriately
-			exitValue = 1;
+			exitValue = EXITCODE_ERROR;
 		} else {
 			switch (getRunState()) {
 			case FATAL_ERROR:
+				exitValue = EXITCODE_FATAL_ERROR;
+				break;
+
 			case THREAD_KILLED:
-				exitValue = 1;
+				exitValue = EXITCODE_KILLED;
 				break;
 
 			default:

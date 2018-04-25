@@ -23,6 +23,7 @@ public abstract class MethodNativeList extends MethodNative {
 			elementType = listType.getElementType();
 			initMethod(elementType);
 		}
+		parameterNames = parameterNames();
 	}
 
 	@Override

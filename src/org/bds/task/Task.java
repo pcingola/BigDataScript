@@ -28,12 +28,6 @@ public class Task implements Serializable {
 
 	public static final String CHECKSUM_LINE_START = "# Checksum: ";
 
-	// Exit codes (see bds.go)
-	public static final int EXITCODE_OK = 0;
-	public static final int EXITCODE_ERROR = 1;
-	public static final int EXITCODE_TIMEOUT = 2;
-	public static final int EXITCODE_KILLED = 3;
-
 	public static final String EXIT_STR_TIMEOUT = "Time out";
 	public static final String EXIT_STR_KILLED = "Signal received";
 
@@ -641,14 +635,14 @@ public class Task implements Serializable {
 			failCount++;
 			setState(newState);
 			runningEndTime = new Date();
-			if (exitValue == 0) exitValue = Task.EXITCODE_ERROR;
+			if (exitValue == 0) exitValue = BdsThread.EXITCODE_ERROR;
 			break;
 
 		case ERROR_TIMEOUT:
 			failCount++;
 			setState(newState);
 			runningEndTime = new Date();
-			if (exitValue == 0) exitValue = Task.EXITCODE_ERROR;
+			if (exitValue == 0) exitValue = BdsThread.EXITCODE_ERROR;
 			break;
 
 		case FINISHED:
@@ -664,7 +658,7 @@ public class Task implements Serializable {
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
 			) {
-				if (exitValue == 0) exitValue = Task.EXITCODE_KILLED;
+				if (exitValue == 0) exitValue = BdsThread.EXITCODE_KILLED;
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;

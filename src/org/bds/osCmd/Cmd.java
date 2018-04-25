@@ -5,6 +5,7 @@ import org.bds.cluster.host.HostResources;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.NotifyTaskState;
 import org.bds.executioner.PidParser;
+import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
 import org.bds.util.Timer;
@@ -62,11 +63,11 @@ public abstract class Cmd extends Thread {
 			// Prepare to execute
 			if (execPrepare()) stateStarted(); // We are ready to launch. Update states
 			else {
-				execError(null, TaskState.START_FAILED, Task.EXITCODE_ERROR);
+				execError(null, TaskState.START_FAILED, BdsThread.EXITCODE_ERROR);
 				return exitValue;
 			}
 		} catch (Throwable t) {
-			execError(t, TaskState.START_FAILED, Task.EXITCODE_ERROR);
+			execError(t, TaskState.START_FAILED, BdsThread.EXITCODE_ERROR);
 			return exitValue;
 		}
 
@@ -77,7 +78,7 @@ public abstract class Cmd extends Thread {
 			execCmd();
 			stateRunningAfter(); // Change state after executing command (e.g. when sending a task to a cluster system)
 		} catch (Throwable t) {
-			execError(t, TaskState.ERROR, Task.EXITCODE_ERROR);
+			execError(t, TaskState.ERROR, BdsThread.EXITCODE_ERROR);
 			return exitValue;
 		}
 
@@ -171,7 +172,7 @@ public abstract class Cmd extends Thread {
 
 		// Notify end of execution
 		if (task != null) {
-			task.setExitValue(Task.EXITCODE_KILLED);
+			task.setExitValue(BdsThread.EXITCODE_KILLED);
 			if (notifyTaskState != null) notifyTaskState.taskFinished(task, TaskState.KILLED);
 		}
 

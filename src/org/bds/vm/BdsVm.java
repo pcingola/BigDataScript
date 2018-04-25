@@ -32,7 +32,6 @@ import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 import org.bds.task.DepFactory;
 import org.bds.task.SysFactory;
-import org.bds.task.Task;
 import org.bds.task.TaskDependency;
 import org.bds.task.TaskFactory;
 import org.bds.util.AutoHashMap;
@@ -655,12 +654,10 @@ public class BdsVm implements Serializable {
 			if (Config.get().isVerbose()) {
 				System.err.println("Fatal error running BdsThread " + bdsThread.getBdsThreadId() + "\n");
 				t.printStackTrace();
-			} else {
-				System.err.println("Fatal error: " + t.getMessage());
 			}
-			if (bdsThread != null) bdsThread.setRunState(RunState.FATAL_ERROR);
-			exitCode = 1;
 
+			exitCode = BdsThread.EXITCODE_FATAL_ERROR;
+			bdsThread.fatalError(getBdsNode(), t.getMessage());
 		}
 
 		return exitCode();
@@ -827,9 +824,8 @@ public class BdsVm implements Serializable {
 				break;
 
 			case ERROR:
-				System.err.println(popString());
-				exitCode = Task.EXITCODE_ERROR;
-				bdsThread.setRunState(RunState.FATAL_ERROR);
+				bdsThread.fatalError(popString());
+				exitCode = BdsThread.EXITCODE_ERROR;
 				return;
 
 			case FORK:
@@ -1406,7 +1402,7 @@ public class BdsVm implements Serializable {
 		sb.append("  pc         : " + pc + "\n");
 		sb.append("  fp         : " + fp + "\n");
 		sb.append("  sp         : " + sp + "\n");
-		sb.append("  Stack      : " + toStringStack() + "\n");
+		sb.append("  Stack      : " + toStringStack() + "\t\n");
 		sb.append("  Call-Stack : [");
 		for (int i = 0; i < fp; i++)
 			sb.append(" " + callFrame[i]);
@@ -1434,7 +1430,7 @@ public class BdsVm implements Serializable {
 
 			sb.append((i > 0 ? ", " : "") + s);
 		}
-		sb.append(" ]");
+		sb.append(" ] : " + stack);
 		return sb.toString();
 	}
 

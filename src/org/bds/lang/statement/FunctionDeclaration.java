@@ -71,6 +71,7 @@ public class FunctionDeclaration extends StatementWithScope {
 				varNames.add(varName);
 			}
 			parameters = Parameters.get(varTypes.toArray(new Type[0]), varNames.toArray(new String[0]));
+			parameterNames = parameterNames();
 		}
 	}
 
@@ -79,13 +80,6 @@ public class FunctionDeclaration extends StatementWithScope {
 	}
 
 	public List<String> getParameterNames() {
-		if (parameterNames != null) return parameterNames;
-		parameterNames = new ArrayList<>();
-
-		for (VarDeclaration vd : parameters.getVarDecl())
-			for (VariableInit vi : vd.getVarInit())
-				parameterNames.add(vi.getVarName());
-
 		return parameterNames;
 	}
 
@@ -132,6 +126,16 @@ public class FunctionDeclaration extends StatementWithScope {
 		return false;
 	}
 
+	protected List<String> parameterNames() {
+		if (parameters == null) return null;
+
+		List<String> names = new ArrayList<>();
+		for (VarDeclaration vd : parameters.getVarDecl())
+			for (VariableInit vi : vd.getVarInit())
+				names.add(vi.getVarName());
+		return names;
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		returnType = (Type) factory(tree, 0);
@@ -145,6 +149,8 @@ public class FunctionDeclaration extends StatementWithScope {
 		// child[maxParams] = ')'
 
 		statement = (Statement) factory(tree, maxParams + 1);
+
+		parameterNames = parameterNames();
 	}
 
 	@Override
@@ -163,6 +169,24 @@ public class FunctionDeclaration extends StatementWithScope {
 		if (signature != null) return signature;
 		signature = functionName + getType().signature();
 		return signature;
+	}
+
+	/**
+	 * A signature including parameter names (only used for test cases)
+	 */
+	public String signatureVarNames() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(functionName + "(");
+		if (parameters != null) {
+			for (int i = 0; i < parameters.size(); i++) {
+				sb.append((i > 0 ? ", " : "") //
+						+ parameters.getType(i) //
+						+ " " + parameters.getVarName(i) //
+				);
+			}
+		}
+		sb.append(") -> " + returnType);
+		return sb.toString();
 	}
 
 	@Override
@@ -203,24 +227,6 @@ public class FunctionDeclaration extends StatementWithScope {
 		sb.append(returnType + " " + functionName + "( " + parameters + " ) {\n");
 		if (statement != null) sb.append(Gpr.prependEachLine("\t", statement.toString()));
 		sb.append("}");
-		return sb.toString();
-	}
-
-	/**
-	 * A signature including parameter names (only used for test cases)
-	 */
-	public String signatureVarNames() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(functionName + "(");
-		if (parameters != null) {
-			for (int i = 0; i < parameters.size(); i++) {
-				sb.append((i > 0 ? ", " : "") //
-						+ parameters.getType(i) //
-						+ " " + parameters.getVarName(i) //
-				);
-			}
-		}
-		sb.append(") -> " + returnType);
 		return sb.toString();
 	}
 

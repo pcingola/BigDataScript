@@ -5,6 +5,7 @@ import org.bds.cluster.Cluster;
 import org.bds.cluster.host.HostInifinte;
 import org.bds.mesos.BdsMesosFramework;
 import org.bds.osCmd.Cmd;
+import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
 import org.bds.util.Timer;
@@ -74,7 +75,7 @@ public class ExecutionerMesos extends Executioner {
 
 		// Mark task as finished
 		// Note: This will also be invoked by Cmd, so it will be redundant)
-		task.setExitValue(Task.EXITCODE_KILLED);
+		task.setExitValue(BdsThread.EXITCODE_KILLED);
 		taskFinished(task, TaskState.KILLED);
 	}
 

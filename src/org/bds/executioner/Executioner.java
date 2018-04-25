@@ -12,6 +12,7 @@ import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostLocal;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.Exec;
+import org.bds.run.BdsThread;
 import org.bds.task.DependencyState;
 import org.bds.task.Tail;
 import org.bds.task.Task;
@@ -517,7 +518,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		// These tasks cannot be executed due to "lack of resources"
 		if (finishTask != null) {
 			for (Task task : finishTask) {
-				task.setExitValue(Task.EXITCODE_ERROR);
+				task.setExitValue(BdsThread.EXITCODE_ERROR);
 				taskFinished(task, TaskState.START_FAILED);
 			}
 			finishTask = null;

@@ -1,5 +1,7 @@
 package org.bds.task;
 
+import org.bds.run.BdsThread;
+
 public enum TaskState {
 	NONE // Task created, nothing happened so far
 	, SCHEDULED // Process is scheduled to start
@@ -15,16 +17,16 @@ public enum TaskState {
 	public static TaskState exitCode2taskState(int exitCode) {
 		//		Gpr.debug("exitCode: " + exitCode + "\t" + (exitCode & 0x007f));
 		switch (exitCode) {
-		case Task.EXITCODE_OK:
+		case BdsThread.EXITCODE_OK:
 			return FINISHED;
 
-		case Task.EXITCODE_ERROR:
+		case BdsThread.EXITCODE_ERROR:
 			return ERROR;
 
-		case Task.EXITCODE_TIMEOUT:
+		case BdsThread.EXITCODE_TIMEOUT:
 			return ERROR_TIMEOUT;
 
-		case Task.EXITCODE_KILLED:
+		case BdsThread.EXITCODE_KILLED:
 			return KILLED;
 
 		default:

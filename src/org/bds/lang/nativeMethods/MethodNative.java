@@ -24,6 +24,7 @@ public abstract class MethodNative extends MethodDeclaration {
 		super(null, null);
 		this.classType = classType;
 		initMethod();
+		parameterNames = parameterNames();
 	}
 
 	/**
