@@ -8,7 +8,6 @@ package org.bds.run;
 public enum RunState {
 
 	OK // Normal state
-	//	, CHECKPOINT_RECOVER // Recovering from a checkpoint
 	, FATAL_ERROR // Finished executing due to a fatal error
 	, FINISHED // Thread execution completely finished
 	, THREAD_KILLED // Thread was sent a 'kill' signal

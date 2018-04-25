@@ -28,7 +28,7 @@ public class TaskDependecies implements Serializable {
 
 	private static final long serialVersionUID = -7139051739077288915L;
 
-	public static final int SLEEP_TIME = 250;
+	public static final int SLEEP_TIME = 200;
 
 	private static TaskDependecies taskDependeciesInstance = new TaskDependecies(); // Global instance (keeps track of all tasks)
 
@@ -517,8 +517,9 @@ public class TaskDependecies implements Serializable {
 		tids.addAll(getTaskIds());
 
 		// Wait for each task
-		for (String tid : tids)
+		for (String tid : tids) {
 			ok &= waitTask(tid);
+		}
 
 		return ok;
 	}

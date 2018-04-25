@@ -8,7 +8,6 @@ import org.bds.Config;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.ExpressionSys;
 import org.bds.lang.expression.ExpressionTask;
-import org.bds.lang.value.ValueString;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
@@ -93,7 +92,7 @@ public class SysFactory {
 	/**
 	 * Create and run sys
 	 */
-	public void run() {
+	public String run() {
 		// 'sys' expressions are always executed locally and immediately
 		LinkedList<String> args = new LinkedList<>();
 		String shell = Config.get().getSysShell();
@@ -125,14 +124,14 @@ public class SysFactory {
 						+ "\n\tExit map : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
 				);
-				return;
+				return "";
 			}
 		}
 
 		// Collect output
 		String output = "";
 		if (execResult.stdOut != null) output = execResult.stdOut;
-		bdsThread.push(new ValueString(output));
+		return output;
 	}
 
 	/**

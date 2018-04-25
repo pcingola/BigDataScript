@@ -396,6 +396,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// Are there any more task to run?
 		while (running && hasTaskToRun()) {
+			// Are executioner frozen?
+			if (Executioners.getInstance().isFreeze()) {
+				sleepMid();
+				continue;
+			}
+
 			// Select a task to run
 			Tuple<Task, Host> taskHostPair = selectTask();
 

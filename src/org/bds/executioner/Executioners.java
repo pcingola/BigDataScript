@@ -45,6 +45,7 @@ public class Executioners {
 	private ConcurrentHashMap<ExecutionerType, Executioner> executioners = new ConcurrentHashMap<>();
 
 	Config config;
+	boolean freeze;
 
 	/**
 	 * Get instance
@@ -168,12 +169,20 @@ public class Executioners {
 		return executioners.values();
 	}
 
+	public boolean isFreeze() {
+		return freeze;
+	}
+
 	/**
 	 * Resolve un-serialization
 	 */
 	private Object readResolve() throws ObjectStreamException {
 		executionersInstance = this; // Replace singleton instance
 		return this;
+	}
+
+	public void setFreeze(boolean freeze) {
+		this.freeze = freeze;
 	}
 
 }

@@ -27,6 +27,7 @@ import org.bds.lang.value.ValueMap;
 import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
+import org.bds.run.Freeze;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
@@ -48,6 +49,7 @@ public class BdsVm implements Serializable {
 	private static final long serialVersionUID = 6533146851765102340L;
 
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
+	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
 	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
 	public static final String LABLE_MAIN = "main";
 	private static final OpCode OPCODES[] = OpCode.values();
@@ -448,6 +450,10 @@ public class BdsVm implements Serializable {
 		return pc;
 	}
 
+	RunState getRunState() {
+		return bdsThread != null ? bdsThread.getRunState() : RunState.OK;
+	}
+
 	public Scope getScope() {
 		return scope;
 	}
@@ -503,6 +509,21 @@ public class BdsVm implements Serializable {
 		Value tid = pop();
 		if (tid.getType().isList()) bdsThread.kill((ValueList) tid);
 		else bdsThread.kill(tid);
+	}
+
+	/**
+	 * Long running opcode finished running
+	 */
+	void longRunningOpcodeAfter(OpCode opcode) {
+
+	}
+
+	/**
+	 * Long running opcode starts running
+	 */
+	void longRunningOpcodeBefore(OpCode opcode) {
+		// Save sp, fp and pc
+
 	}
 
 	/**
@@ -649,7 +670,11 @@ public class BdsVm implements Serializable {
 
 		run = true;
 		try {
-			runLoop();
+			while (run || Freeze.isFreeze()) {
+				// If we are in 'freeze' mode, perform a busy wait
+				if (Freeze.isFreeze()) sleepFreeze();
+				else runLoop(); // Run main loop (instruction processing)
+			}
 		} catch (Throwable t) {
 			if (Config.get().isVerbose()) {
 				System.err.println("Fatal error running BdsThread " + bdsThread.getBdsThreadId() + "\n");
@@ -745,6 +770,7 @@ public class BdsVm implements Serializable {
 				break;
 
 			case CALLNATIVE:
+				// TODO: LONG RUNNING OPCODE
 				name = constantString(); // Get signature
 				callNative(name);
 				break;
@@ -891,6 +917,7 @@ public class BdsVm implements Serializable {
 
 			case HALT:
 				bdsThread.setRunState(RunState.FINISHED);
+				run = false;
 				return;
 
 			case INC:
@@ -1215,8 +1242,11 @@ public class BdsVm implements Serializable {
 				break;
 
 			case SYS:
+				longRunningOpcodeBefore(opcode);
 				SysFactory sf = new SysFactory(bdsThread);
-				sf.run();
+				s1 = sf.run();
+				longRunningOpcodeAfter(opcode);
+				push(s1);
 				break;
 
 			case SWAP:
@@ -1228,12 +1258,14 @@ public class BdsVm implements Serializable {
 
 			case TASK:
 				TaskFactory taskFactory = new TaskFactory(bdsThread);
-				taskFactory.run();
+				s1 = taskFactory.run();
+				push(s1);
 				break;
 
 			case TASKDEP:
 				TaskFactory depFactory = new DepFactory(bdsThread);
-				depFactory.run();
+				s1 = depFactory.run();
+				push(s1);
 				break;
 
 			case VAR:
@@ -1247,13 +1279,17 @@ public class BdsVm implements Serializable {
 				break;
 
 			case WAIT:
+				longRunningOpcodeBefore(opcode);
 				ValueList tids = (ValueList) pop();
 				b1 = bdsThread.wait(tids);
+				longRunningOpcodeBefore(opcode);
 				push(b1);
 				break;
 
 			case WAITALL:
+				longRunningOpcodeBefore(opcode);
 				b1 = bdsThread.waitAll();
+				longRunningOpcodeAfter(opcode);
 				push(b1);
 				break;
 
@@ -1273,6 +1309,9 @@ public class BdsVm implements Serializable {
 				throw new RuntimeException("Unimplemented opcode " + opcode);
 			}
 		}
+
+		// Finished running code? We are done
+		run = false;
 	}
 
 	public void sanityCheckStack() {
@@ -1305,6 +1344,14 @@ public class BdsVm implements Serializable {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+	}
+
+	void sleepFreeze() {
+		try {
+			Thread.sleep(SLEEP_TIME_FREEZE);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -1399,6 +1446,7 @@ public class BdsVm implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("VM:\n");
+		sb.append("  RunState   : " + getRunState() + "\n");
 		sb.append("  pc         : " + pc + "\n");
 		sb.append("  fp         : " + fp + "\n");
 		sb.append("  sp         : " + sp + "\n");
@@ -1448,5 +1496,4 @@ public class BdsVm implements Serializable {
 		addLabel(signature, pc);
 		fdecl.setPc(pc);
 	}
-
 }

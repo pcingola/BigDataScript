@@ -10,7 +10,6 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
-import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 
 /**
@@ -246,7 +245,7 @@ public class TaskFactory extends SysFactory {
 	 * Create and run task
 	 */
 	@Override
-	public void run() {
+	public String run() {
 		// Create task
 		Value cmd = bdsThread.pop();
 		ValueList ins = (ValueList) bdsThread.pop();
@@ -261,7 +260,7 @@ public class TaskFactory extends SysFactory {
 		dispatchTask(task);
 
 		// Push taskId to stack
-		bdsThread.push(new ValueString(task.getId()));
+		return task.getId();
 	}
 
 	String taskId() {

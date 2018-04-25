@@ -14,7 +14,7 @@ public class TestCasesZzz extends TestCasesBase {
 	@Test
 	public void test11() {
 		Gpr.debug("Test");
-		verbose = debug = true;
+		verbose = true;
 		// Run pipeline and test checkpoint
 		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
 	}
