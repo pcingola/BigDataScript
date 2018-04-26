@@ -1470,7 +1470,7 @@ public class BdsVm implements Serializable {
 
 			sb.append((i > 0 ? ", " : "") + s);
 		}
-		sb.append(" ] : " + stack);
+		sb.append(" ] : ");
 		return sb.toString();
 	}
 

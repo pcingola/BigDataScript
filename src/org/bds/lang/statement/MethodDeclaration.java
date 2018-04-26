@@ -29,7 +29,10 @@ public class MethodDeclaration extends FunctionDeclaration {
 		if (isNative()) return; // Native methods do not need to add 'this' (it's already declared explicitly in the constructor)
 		parameters.addThis(typeThis);
 		if (classType == null) classType = typeThis;
+
+		// Recalculate cached values
 		signature = null;
+		parameterNames = parameterNames();
 	}
 
 	public Type getClassType() {
