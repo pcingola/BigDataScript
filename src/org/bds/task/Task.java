@@ -692,7 +692,7 @@ public class Task implements Serializable {
 
 			default:
 				// No information in exit file? Use exit code
-				if (debug) Gpr.debug("Using exit file info failed ('" + exitStr + "'), using exit code ('" + getExitValue() + "')");
+				if (debug) Gpr.debug("Using exit file '" + exitCodeFile + "' failed, using exit code '" + getExitValue() + "'");
 				return TaskState.exitCode2taskState(exitValue);
 			}
 		}
