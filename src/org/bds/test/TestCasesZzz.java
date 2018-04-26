@@ -1,12 +1,7 @@
 package org.bds.test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bds.util.Gpr;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -24,36 +19,38 @@ public class TestCasesZzz extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_11.bds", "test/checkpoint_11.chp", "sumPar", "110");
 	}
 
-	@Test
-	public void test114_parallel_function_task_calls() {
-		Gpr.debug("Test");
-		String stdout = runAndReturnStdout("test/run_114.bds");
+	//	@Test
+	//	public void test114_parallel_function_task_calls() {
+	//		Gpr.debug("Test");
+	//		String stdout = runAndReturnStdout("test/run_114.bds");
+	//
+	//		Set<String> linesPar = new HashSet<>();
+	//		for (String line : stdout.split("\n"))
+	//			if (line.startsWith("TASK")) linesPar.add(line);
+	//
+	//		// Check
+	//		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
+	//	}
+	//
+	//	@Test
+	//	public void test203() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_203.bds", "j", "42");
+	//	}
+	//
+	//	@Test
+	//	public void test204() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_204.bds", "j", "42");
+	//	}
+	//
+	//	@Test
+	//	public void test206() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_206.bds", "j", "44");
+	//	}
 
-		Set<String> linesPar = new HashSet<>();
-		for (String line : stdout.split("\n"))
-			if (line.startsWith("TASK")) linesPar.add(line);
-
-		// Check
-		Assert.assertTrue("There should be 5 tasks", linesPar.size() == 5);
-	}
-
-	@Test
-	public void test203() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_203.bds", "j", "42");
-	}
-
-	@Test
-	public void test204() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_204.bds", "j", "42");
-	}
-
-	@Test
-	public void test206() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_206.bds", "j", "44");
-	}
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	//	@Test
 	//	public void test15_checkpoint_par_function_call() {
