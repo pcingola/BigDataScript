@@ -908,7 +908,6 @@ public class BdsVm implements Serializable {
 				break;
 
 			case HALT:
-				bdsThread.setRunState(RunState.FINISHED);
 				run = false;
 				return;
 

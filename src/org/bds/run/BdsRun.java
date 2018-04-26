@@ -30,6 +30,7 @@ import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.task.TaskDependecies;
+import org.bds.util.Gpr;
 import org.bds.util.Timer;
 import org.bds.vm.BdsVm;
 import org.bds.vm.VmAsm;
@@ -340,6 +341,7 @@ public class BdsRun {
 		//---
 		// Kill all executioners
 		//---
+		if (debug) Gpr.debug("Finished: Killinig executioners");
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
 

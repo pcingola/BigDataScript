@@ -720,12 +720,14 @@ public class BdsThread extends Thread implements Serializable {
 		if (getRunState().isFatalError()) {
 			// Error condition
 			ok = false;
+			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' fatal error");
 		} else {
 			// OK, we finished running
 			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
 
 			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
 			ok = waitAll();
+			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' waitAll: All threads and tasks finished");
 		}
 
 		// All tasks in wait finished OK?
