@@ -66,6 +66,7 @@ public class BdsVm implements Serializable {
 	int sp; // Stack pointer
 	Value[] stack; // Stack: main stack used for values
 	CallFrame[] callFrame; // Call Frame stack
+	VmState vmState = new VmState();
 	boolean verbose;
 	Map<String, Integer> labels;
 	AutoHashMap<Integer, List<String>> labelsByPc;
@@ -241,7 +242,7 @@ public class BdsVm implements Serializable {
 	 * Call a native method or function
 	 * @param name: Method's signature
 	 */
-	void callNative(String fsig) {
+	Value callNative(String fsig) {
 		// Find function
 		FunctionDeclaration fdecl = functionsBySignature.get(fsig);
 
@@ -268,8 +269,8 @@ public class BdsVm implements Serializable {
 			retVal = fn.runFunction(bdsThread);
 		}
 
-		push(retVal); // Push result to stack
 		popScope(); // Restore old scope
+		return retVal;
 	}
 
 	/**
@@ -512,21 +513,6 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
-	 * Long running opcode finished running
-	 */
-	void longRunningOpcodeAfter(OpCode opcode) {
-
-	}
-
-	/**
-	 * Long running opcode starts running
-	 */
-	void longRunningOpcodeBefore(OpCode opcode) {
-		// Save sp, fp and pc
-
-	}
-
-	/**
 	 * Multiply a string by an int (i.e. repeat string 'n' times)
 	 */
 	String muls(Value v1, Value v2) {
@@ -673,7 +659,10 @@ public class BdsVm implements Serializable {
 			while (run || Freeze.isFreeze()) {
 				// If we are in 'freeze' mode, perform a busy wait
 				if (Freeze.isFreeze()) sleepFreeze();
-				else runLoop(); // Run main loop (instruction processing)
+				else {
+					vmStateRecover(); // Is this recovering from an interrupted long running operation?
+					runLoop(); // Run main loop (instruction processing)
+				}
 			}
 		} catch (Throwable t) {
 			if (Config.get().isVerbose()) {
@@ -771,8 +760,11 @@ public class BdsVm implements Serializable {
 
 			case CALLNATIVE:
 				// TODO: LONG RUNNING OPCODE
+				vmStateSave();
 				name = constantString(); // Get signature
-				callNative(name);
+				v1 = callNative(name);
+				vmStateInvalidate();
+				push(v1);
 				break;
 
 			case CAST_TOB:
@@ -1242,10 +1234,10 @@ public class BdsVm implements Serializable {
 				break;
 
 			case SYS:
-				longRunningOpcodeBefore(opcode);
+				vmStateSave();
 				SysFactory sf = new SysFactory(bdsThread);
 				s1 = sf.run();
-				longRunningOpcodeAfter(opcode);
+				vmStateInvalidate();
 				push(s1);
 				break;
 
@@ -1279,17 +1271,17 @@ public class BdsVm implements Serializable {
 				break;
 
 			case WAIT:
-				longRunningOpcodeBefore(opcode);
+				vmStateSave();
 				ValueList tids = (ValueList) pop();
 				b1 = bdsThread.wait(tids);
-				longRunningOpcodeBefore(opcode);
+				vmStateInvalidate();
 				push(b1);
 				break;
 
 			case WAITALL:
-				longRunningOpcodeBefore(opcode);
+				vmStateSave();
 				b1 = bdsThread.waitAll();
-				longRunningOpcodeAfter(opcode);
+				vmStateInvalidate();
 				push(b1);
 				break;
 
@@ -1495,5 +1487,35 @@ public class BdsVm implements Serializable {
 
 		addLabel(signature, pc);
 		fdecl.setPc(pc);
+	}
+
+	/**
+	 * Invalidate saved vm state after long running opcode finished.
+	 */
+	void vmStateInvalidate() {
+		vmState.reset();
+	}
+
+	/**
+	 * Recover state from long running opcode (e.g. checkpoint during 'wait' statement)
+	 */
+	void vmStateRecover() {
+		if (vmState.isValid()) {
+			fp = vmState.fp;
+			nodeId = vmState.nodeId;
+			pc = vmState.pc;
+			sp = vmState.sp;
+			scope = vmState.scope;
+		}
+		vmState.reset(); // Make sure we don't recover state again
+	}
+
+	/**
+	 * Save vm state before long running opcode starts running
+	 */
+	void vmStateSave() {
+		// Save VM state variables
+		// Note: Unwind pc for the current opcode
+		vmState.set(fp, nodeId, pc - 1, sp, scope);
 	}
 }

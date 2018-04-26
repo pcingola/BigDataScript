@@ -193,15 +193,15 @@ public class BdsThread extends Thread implements Serializable {
 
 		try {
 			// Freeze all threads (cannot serialize while running and changing state)
-			freezeAll(true);
+			Freeze.freeze();
 
 			// Serialize root BdsThred to file
 			ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(checkpointFileName)));
 			out.writeObject(getRoot());
 			out.close();
 
-			// Un-freeze
-			freezeAll(false);
+			// Un-freeze all threads
+			Freeze.unfreeze();
 		} catch (Exception e) {
 			throw new RuntimeException("Error while serializing to file '" + checkpointFileName + "'", e);
 		}
@@ -303,14 +303,6 @@ public class BdsThread extends Thread implements Serializable {
 		for (BdsThread th : bdsThreads)
 			th.setFreeze(freeze);
 
-	}
-
-	/**
-	 * Freeze all threads, vms and executioners
-	 */
-	void freezeAll(boolean freeze) {
-		Executioners.getInstance().setFreeze(freeze);
-		getRoot().freeze(true);
 	}
 
 	/**
