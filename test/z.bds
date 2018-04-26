@@ -1,16 +1,12 @@
 #!/usr/bin/env bds
 
-class Zzz {
-	int i
-	real r
-	string s
-
-	int f(int x) { return x + i }
+# A function defining a task
+void someFunction(int i) {
+	task echo TASK $i; sleep 1
 }
 
-Zzz z = new Zzz()
-z.i = 2
-j := z.f(40)
-println("z: $z\tj: $j")
-
+# A loop fires threads of funcions
+for ( int i : range(1, 5) ) {
+   	par someFunction(i)
+}
 

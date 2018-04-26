@@ -1419,17 +1419,23 @@ public class BdsVm implements Serializable {
 		sb.append("\t" + opstr);
 
 		// Parameter?
+		String comment = null;
 		if (op.hasParam()) {
 			String param = null;
 
 			int idx = code[++pc];
 			if (op.isParamString()) param = "'" + GprString.escape(getConstant(idx).toString()) + "'";
 			else if (op.isParamType()) param = "'" + getType(idx) + "'";
-			else if (op.isParamDirect()) param = "" + idx;
+			else if (op == OpCode.NODE) {
+				// Show some code for this node
+				comment = toStringNode(idx);
+				param = "" + idx;
+			} else if (op.isParamDirect()) param = "" + idx;
 			else param = getConstant(idx).toString();
 
 			sb.append(" " + param);
 		}
+		if (comment != null) sb.append("\n# " + comment);
 
 		return sb.toString();
 	}
@@ -1449,6 +1455,15 @@ public class BdsVm implements Serializable {
 		sb.append(" ]\n");
 		sb.append("  Scope:\n" + scope);
 		return sb.toString();
+	}
+
+	String toStringNode(int nodeId) {
+		int maxLen = 40;
+		BdsNode bdsNode = BdsNodeFactory.get().getNode(nodeId);
+		String s = bdsNode.toString();
+		s = s.split("\n")[0];
+		if (s.length() > maxLen) s = s.substring(0, maxLen);
+		return bdsNode.getClass().getSimpleName() + " : " + s;
 	}
 
 	String toStringStack() {

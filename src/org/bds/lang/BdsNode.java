@@ -578,13 +578,17 @@ public abstract class BdsNode implements Serializable {
 	}
 
 	public String toAsmNode() {
+		String firstline = toString().split("\n")[0];
+
 		// Show file, line and position if available
-		if (getFileName() == null) return "node " + id;
+		if (getFileName() == null) return "# " + firstline + "\nnode " + id;
+
 		return "# " + getFileName() //
 				+ (lineNum >= 0 ? ", line " + lineNum : "") //
 				+ (charPosInLine >= 0 ? ", pos " + charPosInLine : "") //
 				+ ", node: " + getClass().getSimpleName() //
 				+ "\n" //
+				+ "# " + firstline + "\n" //
 				+ "node " + id //
 				+ "\n" //
 		;
@@ -722,11 +726,4 @@ public abstract class BdsNode implements Serializable {
 		// Nothing to do
 	}
 
-	//	/**
-	//	 * Update ID field
-	//	 */
-	//	protected void updateId(int newId) {
-	//		BdsNodeFactory.get().updateId(id, newId, this);
-	//		id = newId;
-	//	}
 }
