@@ -175,6 +175,7 @@ public class VmAsm {
 	void initTypes() {
 		typeByName = new HashMap<>();
 
+		// Add basic types (this is used mostly when writing assembly code)
 		Type types[] = { Types.ANY, Types.BOOL, Types.INT, Types.REAL, Types.STRING };
 
 		// Add primitive types
@@ -190,11 +191,8 @@ public class VmAsm {
 			for (Type tv : types)
 				addType(TypeMap.get(tk, tv));
 
-		// Add all classes
-		Types.getAll().stream() //
-				.filter(t -> t.isClass()) //
-				.forEach(t -> addType(t)) //
-		;
+		// Add all types, including classes
+		Types.getAll().stream().forEach(t -> addType(t));
 	}
 
 	/**

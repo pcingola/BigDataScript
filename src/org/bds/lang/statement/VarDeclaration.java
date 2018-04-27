@@ -123,7 +123,6 @@ public class VarDeclaration extends Statement {
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(super.toAsm());
 
 		if (varInit != null) {
 			for (VariableInit vi : varInit)

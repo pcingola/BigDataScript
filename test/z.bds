@@ -1,14 +1,12 @@
 #!/usr/bin/env bds
 
-class A {
-	int i = 40
-	int f(int x) return i + x
-}
+l1 := ['hi', 'bye']
+l2 := ['hola', 'adios']
 
-void test01() {
-	A a = new A()
-	z := a.f(2)
-	assert(42, z)
-}
+# List of lists
+string[][] l
+l.add(l1)
+l.add(l2)
 
-println "YOU SHOULD NOT SEE THIS MESSAGE WHEN RUNNING TESTS"
+println "l: $l"
+
