@@ -60,7 +60,7 @@ public class Bds {
 	/**
 	 * Load configuration file
 	 */
-	protected void config() {
+	protected Config config() {
 		config = new Config(configFile);
 		config.setDebug(debug);
 		config.setExtractSource(extractSource);
@@ -85,6 +85,7 @@ public class Bds {
 			else pidFile = chekcpointRestoreFile + ".pid";
 		}
 		config.setPidFile(pidFile);
+		return config;
 	}
 
 	/**
