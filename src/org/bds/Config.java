@@ -122,7 +122,8 @@ public class Config implements Serializable {
 	String configFileName;
 	String configDirName;
 	String pidFile = "pidFile" + (new Date()).getTime() + ".txt"; // Default PID file
-	String pidRegex;
+	String pidRegex; // Regex used to extract PID from cluster command (e.g. qsub).
+	String pidRegexCheckTaskRunning; // Regex to match PID when bds checks that tasks are running in the cluster
 	String queue; // Queue name
 	String reportFileName; // Preferred file name to use for progress and final report
 	String system; // System type
@@ -263,8 +264,8 @@ public class Config implements Serializable {
 	}
 
 	public String getPidRegexCheckTasksRunning(String defaultPidRegex) {
-		if (pidRegex == null || pidRegex.isEmpty()) return defaultPidRegex;
-		return pidRegex;
+		if (pidRegexCheckTaskRunning == null || pidRegexCheckTaskRunning.isEmpty()) return defaultPidRegex;
+		return pidRegexCheckTaskRunning;
 	}
 
 	public String getQueue() {
@@ -444,6 +445,7 @@ public class Config implements Serializable {
 		noCheckpoint = getBool(DISABLE_CHECKPOINT_CREATE, false);
 		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
 		pidRegex = getString(PID_REGEX, "").trim();
+		pidRegexCheckTaskRunning = getString(PID_CHECK_TASK_RUNNING_REGEX, "").trim();
 		queue = getString(QUEUE, "");
 		showTaskCode = getBool(SHOW_TASK_CODE, false);
 		sysShell = getString(Config.SYS_SHELL, Config.SYS_SHELL_DEFAULT);
