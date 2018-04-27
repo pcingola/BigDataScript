@@ -1,1 +1,0 @@
-/bin/bash -e -cecho Hi3 	 there
