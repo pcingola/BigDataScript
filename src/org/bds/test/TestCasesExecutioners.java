@@ -61,6 +61,7 @@ public class TestCasesExecutioners extends TestCasesBase {
 		Config config = new Config();
 		config.setDebug(debug);
 		config.setVerbose(verbose);
+		config.load();
 
 		Executioner ex = Executioners.getInstance(config).get(ExecutionerType.LOCAL);
 		CheckTasksRunning ctr = new CheckTasksRunning(config, ex);

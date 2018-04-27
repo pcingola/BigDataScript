@@ -520,8 +520,8 @@ public class Config {
 	/**
 	 * Read configuration file
 	 */
-	private void read(String configFileName) {
-		this.configFileName = findConfigFile(configFileName);
+	private void read(String confFile) {
+		configFileName = findConfigFile(confFile);
 		properties = new Properties();
 
 		//---
