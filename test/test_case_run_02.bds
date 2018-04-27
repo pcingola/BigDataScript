@@ -1,0 +1,13 @@
+#!/usr/bin/env bds
+
+var := "Hi"
+
+int f(int x) return x + 1
+
+
+void test01() {
+	z := f(2)
+	assert(3, z)
+}
+
+test01()

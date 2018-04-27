@@ -14,9 +14,15 @@ import org.junit.Test;
 public class TestCasesTesting extends TestCasesBase {
 
 	@Test
-	public void testTestCases1() {
+	public void testTestCases01() {
 		Gpr.debug("Test");
 		runTestCasesPass("test/test_case_run_01.bds");
+	}
+
+	@Test
+	public void testTestCases02() {
+		Gpr.debug("Test");
+		runTestCasesPass("test/test_case_run_02.bds");
 	}
 
 }
