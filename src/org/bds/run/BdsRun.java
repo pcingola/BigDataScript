@@ -484,7 +484,6 @@ public class BdsRun {
 		puTest.setStatements(statements.toArray(new Statement[0]));
 
 		// Compile and create vm
-		Gpr.debug("BDSTREE:" + puTest);
 		BdsVm vmtest = compileAsm(puTest);
 		BdsThread bdsThreadTest = new BdsThread(puTest, config, vmtest);
 
