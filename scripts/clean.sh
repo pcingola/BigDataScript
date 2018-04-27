@@ -29,5 +29,6 @@ rm -rvf \
 	test/z.bds.* \
 	test/*.html \
 	test/*.dag.js \
+	report_*.bds.20* \
 	`find . -iname "*.chp"` \
 
