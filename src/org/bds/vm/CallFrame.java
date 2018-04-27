@@ -51,9 +51,10 @@ public class CallFrame implements Serializable {
 
 	@Override
 	public String toString() {
-		return "stack frame:\t\tpc: " + pc //
-				+ ", nodeId: " + nodeId//
-				+ ", scope.name: " + scope.getScopeName() //
+		return "{pc: " + pc //
+				+ ", nodeId: " + nodeId //
+				+ ", scope " + scope.getScopeName() //
+				+ "}" //
 		;
 	}
 }

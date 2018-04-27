@@ -200,6 +200,10 @@ public class BdsThread extends Thread implements Serializable {
 			out.writeObject(getRoot());
 			out.close();
 
+			// TODO: REMOVE DEBUG CODE
+			Gpr.debug("!!! CHECKPOINT: " + getBdsThreadId());
+			Thread.sleep(1000);
+
 			// Un-freeze all threads
 			Freeze.unfreeze();
 		} catch (Exception e) {
@@ -267,17 +271,6 @@ public class BdsThread extends Thread implements Serializable {
 		setExitValue(EXITCODE_FATAL_ERROR);
 	}
 
-	/**
-	 * Show a fatal error
-	 */
-	public void fatalError(BdsNode bdsnode, Throwable t) {
-		if (getRunState().isFatalError()) return;
-		fatalError(bdsnode, t.getMessage());
-
-		// Show java stack trace
-		if ((config == null) || isVerbose()) t.printStackTrace();
-	}
-
 	public void fatalError(String message) {
 		fatalError(getBdsNodeCurrent(), message);
 	}
@@ -302,7 +295,6 @@ public class BdsThread extends Thread implements Serializable {
 		List<BdsThread> bdsThreads = getBdsThreadsAll();
 		for (BdsThread th : bdsThreads)
 			th.setFreeze(freeze);
-
 	}
 
 	/**

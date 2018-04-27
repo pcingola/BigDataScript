@@ -567,6 +567,10 @@ public class BdsVm implements Serializable {
 	 * Restore from call frame
 	 */
 	void popCallFrame() {
+		if (fp <= 0) {
+			// TODO: REMOVE DEBUGGING CODE
+			Gpr.debug("POP FROM EMPTY CALL STACK!!!: " + bdsThread.getBdsThreadId());
+		}
 		CallFrame sf = callFrame[--fp];
 		pc = sf.pc;
 		nodeId = sf.nodeId;
@@ -658,8 +662,10 @@ public class BdsVm implements Serializable {
 		try {
 			while (run || Freeze.isFreeze()) {
 				// If we are in 'freeze' mode, perform a busy wait
-				if (Freeze.isFreeze()) sleepFreeze();
-				else {
+				if (Freeze.isFreeze()) {
+					Gpr.debug("!!! FREEZE:" + bdsThread.getBdsThreadId() + "\tpc: " + pc + "\tfp: " + fp + "\tsp: " + sp);
+					sleepFreeze();
+				} else {
 					vmStateRecover(); // Is this recovering from an interrupted long running operation?
 					runLoop(); // Run main loop (instruction processing)
 				}
@@ -674,6 +680,8 @@ public class BdsVm implements Serializable {
 			bdsThread.fatalError(getBdsNode(), t.getMessage());
 		}
 
+		// TODO: REMOVE DEBUG CODE
+		Gpr.debug("!!! FINISHED VM: " + bdsThread.getBdsThreadId() + "\tpc: " + pc);
 		return exitCode();
 	}
 
@@ -701,7 +709,7 @@ public class BdsVm implements Serializable {
 			instruction = code[pc];
 			opcode = OPCODES[instruction];
 			if (debug) {
-				String msg = toAsm(pc) + "\t\t\tstack: " + toStringStack();
+				String msg = toAsm(pc) + "\t\t\tstack: " + toStringStack() + "\tcall stack: " + toStringCallStack();
 				if (bdsThread != null) msg = Gpr.prependEachLine(bdsThread.getBdsThreadId() + "\t\t|", msg);
 				else msg += '\n';
 				System.err.print(msg);
@@ -784,6 +792,7 @@ public class BdsVm implements Serializable {
 				break;
 
 			case CHECKPOINT:
+				Gpr.debug("!!! CHECKPOINT:" + bdsThread.getBdsThreadId());
 				s1 = popString(); // File name
 				bdsThread.checkpoint(s1);
 				break;
@@ -908,6 +917,7 @@ public class BdsVm implements Serializable {
 				break;
 
 			case HALT:
+				pc--; // Next instruction is this same 'halt'. Used when recovering from a checkpoint.
 				run = false;
 				return;
 
@@ -1456,6 +1466,15 @@ public class BdsVm implements Serializable {
 		return sb.toString();
 	}
 
+	String toStringCallStack() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < fp; i++) {
+			CallFrame cf = callFrame[i];
+			sb.append((i > 0 ? ", " : "") + cf);
+		}
+		return sb.toString();
+	}
+
 	String toStringNode(int nodeId) {
 		int maxLen = 40;
 		BdsNode bdsNode = BdsNodeFactory.get().getNode(nodeId);
@@ -1484,7 +1503,7 @@ public class BdsVm implements Serializable {
 
 			sb.append((i > 0 ? ", " : "") + s);
 		}
-		sb.append(" ] : ");
+		sb.append(" ]");
 		return sb.toString();
 	}
 
@@ -1515,6 +1534,11 @@ public class BdsVm implements Serializable {
 	 */
 	void vmStateRecover() {
 		if (vmState.isValid()) {
+			// TODO: REMOVE DEBUG
+			Gpr.debug("VM STATE RECOVERED!!!" //
+					+ "\n\tbdsThread : " + bdsThread.getBdsThreadId() //
+					+ "\n\tvmSTate   : " + vmState //
+			);
 			fp = vmState.fp;
 			nodeId = vmState.nodeId;
 			pc = vmState.pc;

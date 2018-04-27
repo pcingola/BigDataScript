@@ -37,11 +37,12 @@ public class VmState extends CallFrame {
 
 	@Override
 	public String toString() {
-		return "vm state:\t\tpc: " + pc //
+		return "{pc: " + pc //
 				+ ", fp: " + fp //
 				+ ", sp: " + sp //
 				+ ", nodeId: " + nodeId//
 				+ ", scope.name: " + scope.getScopeName() //
+				+ "}" //
 		;
 	}
 }
