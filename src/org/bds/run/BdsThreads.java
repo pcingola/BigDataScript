@@ -15,6 +15,8 @@ import org.bds.data.Data;
  */
 public class BdsThreads {
 
+	public static boolean doNotRemoveThreads = false; // This is used in only for some test cases
+
 	private static BdsThreads bdsThreadsInstance = new BdsThreads();
 
 	Map<Long, BdsThread> bdsThreadByThreadId = new HashMap<>();
@@ -75,6 +77,8 @@ public class BdsThreads {
 	 * Remove a bdsThread
 	 */
 	public synchronized void remove() {
+		if (doNotRemoveThreads) return;
+
 		long id = Thread.currentThread().getId();
 		BdsThread bdsThread = get();
 		if (bdsThreadByThreadId.get(id) == bdsThread) {

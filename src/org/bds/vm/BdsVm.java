@@ -663,7 +663,6 @@ public class BdsVm implements Serializable {
 			while (run || Freeze.isFreeze()) {
 				// If we are in 'freeze' mode, perform a busy wait
 				if (Freeze.isFreeze()) {
-					Gpr.debug("!!! FREEZE:" + bdsThread.getBdsThreadId() + "\tpc: " + pc + "\tfp: " + fp + "\tsp: " + sp);
 					sleepFreeze();
 				} else {
 					vmStateRecover(); // Is this recovering from an interrupted long running operation?
@@ -680,8 +679,6 @@ public class BdsVm implements Serializable {
 			bdsThread.fatalError(getBdsNode(), t.getMessage());
 		}
 
-		// TODO: REMOVE DEBUG CODE
-		Gpr.debug("!!! FINISHED VM: " + bdsThread.getBdsThreadId() + "\tpc: " + pc);
 		return exitCode();
 	}
 
@@ -792,7 +789,6 @@ public class BdsVm implements Serializable {
 				break;
 
 			case CHECKPOINT:
-				Gpr.debug("!!! CHECKPOINT:" + bdsThread.getBdsThreadId());
 				s1 = popString(); // File name
 				bdsThread.checkpoint(s1);
 				break;
@@ -1534,11 +1530,6 @@ public class BdsVm implements Serializable {
 	 */
 	void vmStateRecover() {
 		if (vmState.isValid()) {
-			// TODO: REMOVE DEBUG
-			Gpr.debug("VM STATE RECOVERED!!!" //
-					+ "\n\tbdsThread : " + bdsThread.getBdsThreadId() //
-					+ "\n\tvmSTate   : " + vmState //
-			);
 			fp = vmState.fp;
 			nodeId = vmState.nodeId;
 			pc = vmState.pc;
