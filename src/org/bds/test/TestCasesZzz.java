@@ -1,12 +1,8 @@
 package org.bds.test;
 
-import java.util.List;
+import java.util.HashMap;
 
-import org.bds.Bds;
-import org.bds.run.BdsThread;
-import org.bds.run.BdsThreads;
 import org.bds.util.Gpr;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -18,44 +14,76 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test23_thread_structure() {
+	public void test50() {
 		Gpr.debug("Test");
+		HashMap<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("i", "32");
+		expectedValues.put("j", "302");
+		expectedValues.put("jx", "44");
+		expectedValues.put("jy", "91");
 
-		try {
-			// Run pipeline and test checkpoint
-			BdsThreads.doNotRemoveThreads = true;
-			Bds bds = runAndCheckpoint("test/checkpoint_23.bds", "test/checkpoint_23.chp", "luae", "42");
-
-			// Get scope names
-			BdsThread bdsThread = bds.getBdsRun().getBdsThread();
-
-			// All threads (including root thread)
-			Assert.assertEquals(4, bdsThread.getBdsThreadsAll().size());
-
-			// First 'level'
-			List<BdsThread> bdsThreadsL1 = bdsThread.getBdsThreads();
-			if (verbose) Gpr.debug("Root thread '" + bdsThread.getBdsThreadId() + "', number of child threads: " + bdsThreadsL1.size());
-			Assert.assertEquals(1, bdsThreadsL1.size());
-
-			// Second 'level'
-			for (BdsThread bdsthl1 : bdsThreadsL1) {
-				List<BdsThread> bdsThreadsL2 = bdsthl1.getBdsThreads();
-				if (verbose) Gpr.debug("Level 1 thread '" + bdsthl1.getBdsThreadId() + "', number of child threads: " + bdsThreadsL2.size());
-				Assert.assertEquals(2, bdsThreadsL2.size());
-
-				// Third 'level'
-				for (BdsThread bdsthl2 : bdsThreadsL2) {
-					List<BdsThread> bdsThreadsL3 = bdsthl2.getBdsThreads();
-					if (verbose) Gpr.debug("Level 2 thread '" + bdsthl2.getBdsThreadId() + "', number of child threads: " + bdsThreadsL3.size());
-					Assert.assertEquals(0, bdsThreadsL3.size());
-				}
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw new RuntimeException(t);
-		} finally {
-			BdsThreads.doNotRemoveThreads = false;
-		}
+		runAndCheck("test/run_50.bds", expectedValues);
 	}
+
+	//	@Test
+	//	public void testTestCases1() {
+	//		Gpr.debug("Test");
+	//		runTestCasesPass("test/test_case_run_01.bds");
+	//	}
+	//
+	//	@Test
+	//	public void test01_log() {
+	//		Gpr.debug("Test");
+	//
+	//		// Create command line
+	//		String args[] = { "-log" };
+	//		BdsTest bdsTest = new BdsTest("test/cmdLineOptions_01.bds", args, verbose, debug);
+	//
+	//		// Run script
+	//		bdsTest.run();
+	//		bdsTest.checkRunOk();
+	//
+	//		// Get thread
+	//		Bds bds = bdsTest.bds;
+	//		BdsThread bdsThread = bds.getBdsRun().getBdsThread();
+	//
+	//		// Check that all 'log' files exists
+	//		String base = bdsThread.getBdsThreadId() + "/task.cmdLineOptions_01.line_3.id_1";
+	//
+	//		if (verbose) Gpr.debug("Thread ID:" + bdsThread.getBdsThreadId() + "\tBase: " + base);
+	//		String exts[] = { "sh", "exitCode", "stderr", "stdout" };
+	//		for (String ext : exts) {
+	//			String fileName = base + "." + ext;
+	//			Assert.assertTrue("Log file '" + fileName + "' not found", Gpr.exists(fileName));
+	//		}
+	//	}
+	//
+	//	@Test
+	//	public void test01_log_TestCasesClusterGeneric() {
+	//		Gpr.debug("Test");
+	//
+	//		// Create command line
+	//		BdsTest bdsTest = new BdsTest("test/clusterGeneric_01.bds", verbose, debug);
+	//		bdsTest.bds(false); // Create command now so we can change 'config' before running
+	//
+	//		// Config generic cluster's scripts
+	//		Bds bds = bdsTest.bds;
+	//		Config config = bds.getConfig();
+	//		config.set(Config.CLUSTER_GENERIC_RUN, "clusterGeneric_localhost/run.pl");
+	//		config.set(Config.CLUSTER_GENERIC_KILL, "clusterGeneric_localhost/kill.pl");
+	//		config.set(Config.CLUSTER_GENERIC_STAT, "clusterGeneric_localhost/stat.pl");
+	//		config.set(Config.CLUSTER_GENERIC_POSTMORTEMINFO, "clusterGeneric_localhost/postMortemInfo.pl");
+	//
+	//		// Run script
+	//		bdsTest.run();
+	//		bdsTest.checkRunOk(); // Finished OK?
+	//
+	//		// Get tasks and check that PID matches 'CLUSTERGENERIC_LOCALHOST_'
+	//		// (run.pl prepends that string to PID)
+	//		for (Task t : bds.getBdsRun().getBdsThread().getTasks()) {
+	//			if (debug) Gpr.debug("Task " + t.getId() + ", pid " + t.getPid());
+	//			Assert.assertTrue("Task " + t.getId() + " was NOT executed by ClusterGeneric_localhos (pid " + t.getPid() + ")", t.getPid().startsWith("CLUSTERGENERIC_LOCALHOST_"));
+	//		}
+	//	}
 
 }

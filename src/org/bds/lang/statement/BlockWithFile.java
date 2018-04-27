@@ -21,7 +21,6 @@ public class BlockWithFile extends Block {
 
 	private static final long serialVersionUID = 3737857070704132096L;
 
-
 	protected String fileName;
 	protected String fileText;
 
@@ -75,6 +74,11 @@ public class BlockWithFile extends Block {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 		if (fileName != null) fileText = Gpr.readFile(fileName);
+	}
+
+	@Override
+	public String toAsm() {
+		return toAsmNode();
 	}
 
 	/**

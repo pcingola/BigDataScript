@@ -52,7 +52,6 @@ public class Block extends StatementWithScope {
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(super.toAsm());
 
 		if (isNeedsScope()) sb.append("scopepush\n");
 
