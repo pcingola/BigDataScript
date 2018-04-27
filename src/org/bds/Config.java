@@ -25,8 +25,10 @@ import org.bds.util.Timer;
  */
 public class Config {
 
-	public static final String DEFAULT_CONFIG_DIR = Gpr.HOME + "/.bds";
-	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + "/bds.config";
+	// We want to put bds.config together with bds executable
+	// by default BDS_HOME == HOME
+	public static final String DEFAULT_CONFIG_DIR = Gpr.BDS_HOME;
+	public static final String DEFAULT_CONFIG_FILE = Gpr.getBdsConfig();
 	public static final String DEFAULT_INCLUDE_DIR = DEFAULT_CONFIG_DIR + "/include";
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
