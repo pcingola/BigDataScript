@@ -43,7 +43,7 @@ public class Report {
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	public static final int REPORT_TIME = 60; // Update report every 'REPORT_TIME' seconds
 
-	protected static Timer timerReport = new Timer(); // added by Jin Lee (for prog report timer)
+	protected static Timer timerReport = new Timer(); // Report timer (added by Jin Lee)
 
 	boolean yaml;
 	boolean verbose;
@@ -406,6 +406,16 @@ public class Report {
 		csv[1] = Integer.toString(Integer.parseInt(csv[1]) - 1);
 		String str = csv[0] + "," + csv[1] + "," + csv[2] + "," + csv[3] + "," + csv[4] + "," + csv[5];
 		return str;
+	}
+
+	/**
+	 * Force a report timer to execute a report
+	 * Note: Only used in test cases
+	 */
+	public void forceReportTimer() {
+		Date start = new Date();
+		start.setTime(start.getTime() - 2 * 1000 * REPORT_TIME);
+		timerReport.setStart(start);
 	}
 
 	/**

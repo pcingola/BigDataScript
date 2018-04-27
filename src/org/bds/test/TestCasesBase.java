@@ -196,6 +196,16 @@ public class TestCasesBase {
 	}
 
 	/**
+	 * Check that a file compiles without any errors, runs and a variable have its expected map
+	 */
+	void runAndGetReport(String fileName) {
+		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.run();
+		bdsTest.checkRunOk();
+		bdsTest.getReport();
+	}
+
+	/**
 	 * Run a bds program and capture stdout (while still showing it)
 	 */
 	String runAndReturnStdout(String fileName) {

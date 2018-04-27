@@ -209,6 +209,39 @@ public class BdsThread extends Thread implements Serializable {
 		return checkpointFileName;
 	}
 
+	void cleanupBeforeReport() {
+		// We are completely done
+		setRunState(RunState.FINISHED);
+
+		// Finish up
+		removeStaleData();
+		timer.end();
+	}
+
+	void clearupAfterReport() {
+		if (!isRoot()) parent.remove(this); // Remove this bdsThread from parent's threads
+
+		// OK, we are done
+		if (isDebug()) {
+			// Root thread? Report all tasks
+			TaskDependecies td = isRoot() ? TaskDependecies.get() : taskDependecies;
+
+			Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
+					+ "'" + getBdsThreadId() + "'" //
+					+ " finished" //
+					+ (isDebug() ? ", run state: '" + getRunState() + "'" : "") //
+					+ ", exit map: " + getExitValue() //
+					+ ", tasks executed: " + td.getTasks().size() //
+					+ ", tasks failed: " + td.countTaskFailed() //
+					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
+					+ "." //
+			);
+		}
+
+		// Remove thread from "running threads"
+		BdsThreads.getInstance().remove();
+	}
+
 	void createBdsThreadId() {
 		if (bdsThreadId != null) return; // Nothing to do
 
@@ -235,6 +268,44 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	public Data data(String fileName) {
 		return Data.factory(fileName, currentDir);
+	}
+
+	void exitCode() {
+		boolean ok = true;
+		// We are done running
+		if (isDebug()) Timer.showStdErr("BdsThread finished: " + getBdsThreadId());
+		if (getRunState().isFatalError()) {
+			// Error condition
+			ok = false;
+			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' fatal error");
+		} else {
+			// OK, we finished running
+			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
+
+			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
+			ok = waitAll();
+			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' waitAll: All threads and tasks finished");
+		}
+
+		// All tasks in wait finished OK?
+		if (!ok) {
+			// Errors? Then set exit status appropriately
+			exitValue = EXITCODE_ERROR;
+		} else {
+			switch (getRunState()) {
+			case FATAL_ERROR:
+				exitValue = EXITCODE_FATAL_ERROR;
+				break;
+
+			case THREAD_KILLED:
+				exitValue = EXITCODE_KILLED;
+				break;
+
+			default:
+				// Do nothing with exitValue;
+				break;
+			}
+		}
 	}
 
 	/**
@@ -535,6 +606,19 @@ public class BdsThread extends Thread implements Serializable {
 		return getScope().getValue(varName) != null;
 	}
 
+	/**
+	 * Initialize and start threads before running ProgramUnit
+	 */
+	void initThreads() {
+		// Start child threads (e.g. when recovering)
+		for (BdsThread bth : bdsChildThreadsById.values()) {
+			if (!bth.isAlive() && !bth.getRunState().isFinished()) bth.start();
+		}
+
+		// Add this thread to collections
+		BdsThreads.getInstance().add(this);
+	}
+
 	public boolean isDebug() {
 		return config != null && config.isDebug();
 	}
@@ -658,6 +742,23 @@ public class BdsThread extends Thread implements Serializable {
 		}
 	}
 
+	void report() {
+		// Create reports? Only root thread creates reports
+		if (config != null && isRoot()) {
+			// Create HTML report?
+			if (config.isReportHtml()) {
+				Report report = new Report(this, false);
+				report.createReport();
+			}
+
+			// Create YAML report?
+			if (config.isReportYaml()) {
+				Report report = new Report(this, true);
+				report.createReport();
+			}
+		}
+	}
+
 	/**
 	 * Send task from un-serialization to execution list
 	 */
@@ -690,99 +791,15 @@ public class BdsThread extends Thread implements Serializable {
 	@Override
 	public void run() {
 		timer = new Timer();
-
 		createLogDir(); // Create log dir
+		initThreads(); // Initialize and start threads
 
-		// Start child threads (e.g. when recovering)
-		for (BdsThread bth : bdsChildThreadsById.values()) {
-			if (!bth.isAlive() && !bth.getRunState().isFinished()) bth.start();
-		}
+		runStatement(); // Run statement (i.e. run program)
 
-		// Add this thread to collections
-		BdsThreads.getInstance().add(this);
-
-		// Run statement (i.e. run program)
-		boolean ok = true;
-		runStatement();
-
-		// We are done running
-		if (isDebug()) Timer.showStdErr("BdsThread finished: " + getBdsThreadId());
-		if (getRunState().isFatalError()) {
-			// Error condition
-			ok = false;
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' fatal error");
-		} else {
-			// OK, we finished running
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
-
-			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
-			ok = waitAll();
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' waitAll: All threads and tasks finished");
-		}
-
-		// All tasks in wait finished OK?
-		if (!ok) {
-			// Errors? Then set exit status appropriately
-			exitValue = EXITCODE_ERROR;
-		} else {
-			switch (getRunState()) {
-			case FATAL_ERROR:
-				exitValue = EXITCODE_FATAL_ERROR;
-				break;
-
-			case THREAD_KILLED:
-				exitValue = EXITCODE_KILLED;
-				break;
-
-			default:
-				// Do nothing with exitValue;
-				break;
-			}
-		}
-
-		// We are completely done
-		setRunState(RunState.FINISHED);
-
-		// Finish up
-		removeStaleData();
-		timer.end();
-
-		// Create reports? Only root thread creates reports
-		if (config != null && isRoot()) {
-			// Create HTML report?
-			if (config.isReportHtml()) {
-				Report report = new Report(this, false);
-				report.createReport();
-			}
-
-			// Create YAML report?
-			if (config.isReportYaml()) {
-				Report report = new Report(this, true);
-				report.createReport();
-			}
-		}
-
-		if (!isRoot()) parent.remove(this); // Remove this bdsThread from parent's threads
-
-		// OK, we are done
-		if (isDebug()) {
-			// Root thread? Report all tasks
-			TaskDependecies td = isRoot() ? TaskDependecies.get() : taskDependecies;
-
-			Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
-					+ "'" + getBdsThreadId() + "'" //
-					+ " finished" //
-					+ (isDebug() ? ", run state: '" + getRunState() + "'" : "") //
-					+ ", exit map: " + getExitValue() //
-					+ ", tasks executed: " + td.getTasks().size() //
-					+ ", tasks failed: " + td.countTaskFailed() //
-					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
-					+ "." //
-			);
-		}
-
-		// Remove thread from "running threads"
-		BdsThreads.getInstance().remove();
+		exitCode(); // Calculate exit code
+		cleanupBeforeReport(); // Clean up before final report
+		report(); // Create reports
+		clearupAfterReport(); // Clean up after final report
 	}
 
 	/**

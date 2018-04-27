@@ -12,17 +12,9 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test02_help() {
+	public void test01_report() {
 		Gpr.debug("Test");
-
-		verbose = true;
-
-		// Create command line
-		String args[] = { "-h" };
-		BdsTest bdsTest = new BdsTest("test/cmdLineOptions_02.bds", args, verbose, debug);
-
-		bdsTest.run();
-		bdsTest.checkStdout("Usage: Bds [options]");
+		runAndGetReport("test/report_01.bds");
 	}
 
 }

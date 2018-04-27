@@ -130,6 +130,10 @@ public class Timer implements Serializable {
 		return remaining > 0 ? remaining : 0;
 	}
 
+	public void setStart(Date start) {
+		this.start = start;
+	}
+
 	public Timer start() {
 		start = new Date();
 		end = null;
