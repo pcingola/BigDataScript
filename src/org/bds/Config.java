@@ -25,10 +25,14 @@ import org.bds.util.Timer;
  */
 public class Config {
 
+	// Bds home directory
+	public static String BDS_HOME = Gpr.HOME + "/.bds";
+
 	// We want to put bds.config together with bds executable
 	// by default BDS_HOME == HOME
-	public static final String DEFAULT_CONFIG_DIR = Gpr.BDS_HOME;
-	public static final String DEFAULT_CONFIG_FILE = Gpr.getBdsConfig();
+	public static final String DEFAULT_CONFIG_BASENAME = "bds.config";
+	public static final String DEFAULT_CONFIG_DIR = BDS_HOME;
+	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + "/" + DEFAULT_CONFIG_BASENAME;
 	public static final String DEFAULT_INCLUDE_DIR = DEFAULT_CONFIG_DIR + "/include";
 
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
@@ -141,16 +145,50 @@ public class Config {
 	}
 
 	public Config() {
-		this(DEFAULT_CONFIG_FILE);
+		this(null);
 	}
 
 	/**
 	 * Create a configuration from 'configFileName'
 	 */
 	public Config(String configFileName) {
-		read(configFileName); // Read config file
-		parse(); // Parse values form properties
+		bdsHome();
+		this.configFileName = configFileName;
 		configInstance = this;
+	}
+
+	/**
+	 * Set BDS_HOME
+	 */
+	void bdsHome() {
+		String envBdsHome = System.getenv("BDS_HOME");
+		if (envBdsHome != null) BDS_HOME = envBdsHome;
+	}
+
+	/**
+	 * Find a bds.config file
+	 */
+	String findConfigFile(String configFileName) {
+		// The user specified a configuration file (different than default)
+		if (configFileName != null && !configFileName.equals(DEFAULT_CONFIG_FILE)) {
+			if (Gpr.exists(configFileName)) return configFileName;
+
+			// The user specified config file doesn't exist: Error
+			throw new RuntimeException("Config file '" + configFileName + "' not found");
+		}
+
+		// Create a search path
+		String bdsDir = new File(Gpr.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
+		String[] searchPaths = { ".", bdsDir, Gpr.HOME, BDS_HOME };
+
+		for (String d : searchPaths) {
+			String cf = d + "/" + DEFAULT_CONFIG_BASENAME;
+			if (debug) Gpr.debug("Trying config file '" + cf + "'");
+			if (Gpr.exists(cf)) return cf;
+		}
+
+		// Nothing found, try default
+		return DEFAULT_CONFIG_FILE;
 	}
 
 	/**
@@ -455,6 +493,11 @@ public class Config {
 		}
 	}
 
+	public void load() {
+		read(configFileName); // Read config file
+		parse(); // Parse values form properties
+	}
+
 	/**
 	 * Parse some values
 	 */
@@ -478,17 +521,8 @@ public class Config {
 	 * Read configuration file
 	 */
 	private void read(String configFileName) {
-		this.configFileName = configFileName;
+		this.configFileName = findConfigFile(configFileName);
 		properties = new Properties();
-
-		if (!Gpr.exists(configFileName)) {
-			// The user specified a configuration file (different than default)
-			if (!configFileName.equals(DEFAULT_CONFIG_FILE)) // => This should be a fatal error.
-				throw new RuntimeException("Config file '" + configFileName + "' not found");
-
-			// User did not specify a config file? => OK
-			return;
-		}
 
 		//---
 		// Read properties file
@@ -592,4 +626,5 @@ public class Config {
 
 		return sb.toString();
 	}
+
 }

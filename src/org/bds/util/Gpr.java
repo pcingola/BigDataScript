@@ -107,35 +107,6 @@ public class Gpr {
 
 	// User's home directory
 	public static final String HOME = System.getProperty("user.home");
-	// bds installation directory
-	public static final String BDS_HOME = System.getenv("BDS_HOME");
-
-	public static final String getBdsConfig() {
-
-		String currentBdsConfig = System.getProperty("user.dir");
-		currentBdsConfig += "/bds.config";
-		File localConfig = new File(currentBdsConfig);
-
-		String homeBdsConfig = HOME;
-		homeBdsConfig += "/.bds/bds.config";
-		File userLocalConfig = new File(homeBdsConfig);
-
-		if(localConfig.exists()) {
-			return localConfig.toString();
-		} else if(userLocalConfig.exists()) {
-			return userLocalConfig.toString();
-		} else {
-			String bdsConfig = new File(Gpr.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
-			bdsConfig += "/bds.config";
-			File globalConfig = new File(bdsConfig);
-
-			if(!globalConfig.exists()) {
-				throw new java.lang.RuntimeException("This sohuldn't happen.");
-			}
-
-			return globalConfig.toString();
-		}
-	}
 
 	/**
 	 * Return file's name (without the path)

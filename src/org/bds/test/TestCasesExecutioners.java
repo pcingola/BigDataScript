@@ -2,8 +2,6 @@ package org.bds.test;
 
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.bds.Config;
 import org.bds.executioner.CheckTasksRunning;
 import org.bds.executioner.Executioner;
@@ -11,6 +9,8 @@ import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.util.Gpr;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -28,6 +28,7 @@ public class TestCasesExecutioners extends TestCasesBase {
 		Config config = new Config("test/test_parsePidQstatRegex_qstat.config"); // We set here the 'PID_REGEX_CHECK_TASK_RUNNING' parameter
 		config.setDebug(debug);
 		config.setVerbose(verbose);
+		config.load();
 
 		Executioner ex = Executioners.getInstance(config).get(ExecutionerType.LOCAL);
 		CheckTasksRunning ctr = new CheckTasksRunning(config, ex);

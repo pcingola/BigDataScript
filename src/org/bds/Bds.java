@@ -392,6 +392,8 @@ public class Bds {
 		config.setQuiet(quiet);
 		config.setVerbose(verbose);
 		config.setDebug(debug);
+		config.load();
+
 		config.setLog(log);
 		config.setDryRun(dryRun);
 		config.setTaskFailCount(taskFailCount);
