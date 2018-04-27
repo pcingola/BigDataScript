@@ -63,7 +63,7 @@ public class BdsThread extends Thread implements Serializable {
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	private static int bdsThreadNumber = 1;
 
-	Config config; // Config
+	Config config; // Configuration
 	Random random; // Random number generator
 
 	BdsVm vm; // Virtual machine
@@ -71,9 +71,9 @@ public class BdsThread extends Thread implements Serializable {
 	// Program and state
 	Statement statement; // Main statement executed by this thread
 	RunState runState; // Latest RunState
-	Value returnValue; // Latest return map (from a 'return' statement)
 	int exitValue; // Exit map
 	List<String> removeOnExit; // Files to be removed on exit
+	String reportFile; // Latest report file
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
 
@@ -493,8 +493,8 @@ public class BdsThread extends Thread implements Serializable {
 		return getScope().getValue(varName).asReal();
 	}
 
-	public Value getReturnValue() {
-		return returnValue;
+	public String getReportFile() {
+		return reportFile;
 	}
 
 	/**
@@ -742,7 +742,7 @@ public class BdsThread extends Thread implements Serializable {
 		}
 	}
 
-	void report() {
+	void reportAfterRun() {
 		// Create reports? Only root thread creates reports
 		if (config != null && isRoot()) {
 			// Create HTML report?
@@ -798,7 +798,7 @@ public class BdsThread extends Thread implements Serializable {
 
 		exitCode(); // Calculate exit code
 		cleanupBeforeReport(); // Clean up before final report
-		report(); // Create reports
+		reportAfterRun(); // Create reports
 		clearupAfterReport(); // Clean up after final report
 	}
 
@@ -841,8 +841,8 @@ public class BdsThread extends Thread implements Serializable {
 		random = new Random(seed);
 	}
 
-	public void setReturnValue(Value returnValue) {
-		this.returnValue = returnValue;
+	public void setReportFile(String reportFile) {
+		this.reportFile = reportFile;
 	}
 
 	public void setRunState(RunState runState) {
@@ -967,4 +967,5 @@ public class BdsThread extends Thread implements Serializable {
 
 		return ok;
 	}
+
 }

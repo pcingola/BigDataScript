@@ -10,6 +10,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.value.InterpolateVars;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThreads;
+import org.bds.util.Gpr;
 import org.bds.vm.BdsVm;
 import org.bds.vm.VmAsm;
 import org.junit.Before;
@@ -196,13 +197,27 @@ public class TestCasesBase {
 	}
 
 	/**
-	 * Check that a file compiles without any errors, runs and a variable have its expected map
+	 * Run and get latest report file
 	 */
-	void runAndGetReport(String fileName) {
-		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+	String runAndGetReport(String fileName, boolean yaml) {
+		String[] argsHtml = { "-reportHtml" };
+		String[] argsYaml = { "-reportYaml" };
+		String[] args = yaml ? argsYaml : argsHtml;
+
+		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
+
 		bdsTest.run();
 		bdsTest.checkRunOk();
-		bdsTest.getReport();
+		String reportFileName = bdsTest.bds.getBdsRun().getBdsThread().getReportFile();
+
+		// Sanity check
+		Assert.assertNotNull("No report generated", reportFileName);
+		Assert.assertTrue("Report file not found", Gpr.exists(reportFileName));
+
+		String report = Gpr.readFile(reportFileName);
+		if (debug) System.err.println("Report:\n" + report);
+
+		return report;
 	}
 
 	/**

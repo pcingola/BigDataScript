@@ -16,16 +16,17 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesLang.class, // Language (compiler)
 		TestCasesInterpolate.class, // Variable interpolation
 		TestCasesExecutioners.class, // Task executioners
-		TestCasesFunctionDeclaration.class, // Function declaration 
+		TestCasesFunctionDeclaration.class, // Function declaration
 		TestCasesRun.class, // Running bds code
 		TestCasesRun2.class, // Running bds code
 		TestCasesRun3.class, // Running bds code (classes / object)
-		TestCasesGraph.class, // Running bds code: Task graphs and dependencies 
+		TestCasesGraph.class, // Running bds code: Task graphs and dependencies
 		TestCasesCheckpoint.class, // Running bds code: Checkpoint and recovery
 		TestCasesTesting.class, //
-		TestCasesCommandLineOptions.class, // 
+		TestCasesCommandLineOptions.class, //
 		TestCasesClusterGeneric.class, // Running on a generic cluster
 		TestCasesRemote.class, // Accessing remote data (cloud storage)
+		TestCasesReport.class, // Report generation
 })
 public class TestSuiteAll {
 

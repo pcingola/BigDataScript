@@ -11,7 +11,7 @@ import junit.framework.Assert;
  * @author pcingola
  *
  */
-public class TestCasesZzz extends TestCasesBase {
+public class TestCasesReport extends TestCasesBase {
 
 	@Test
 	public void test01_report() {

@@ -100,6 +100,7 @@ public class Report {
 
 		// Create report file names
 		String outFile = reportBaseName + ".report." + (yaml ? "yaml" : "html");
+		bdsThread.setReportFile(outFile);
 		String dagJsFile = reportBaseName + ".dag.js";
 		if (verbose) Timer.showStdErr("Writing report file '" + outFile + "'");
 
