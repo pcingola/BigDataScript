@@ -128,8 +128,17 @@ public class BdsRun {
 		//       compilation.
 		if (parseCmdLineArgs()) return false;
 
+		// Compile assembly
+		vm = compileAsm(programUnit);
+		return vm != null;
+	}
+
+	/**
+	 * Compile: BdsNodes -> VM ASM -> VM OpCodes
+	 * @return A BdsVm with all compiled assembly code
+	 */
+	BdsVm compileAsm(ProgramUnit programUnit) {
 		try {
-			// Get assembly code
 			String asm = programUnit.toAsm();
 			if (debug) Timer.showStdErr("Assembly code:\n" + asm);
 
@@ -140,16 +149,15 @@ public class BdsRun {
 			vmasm.setCode(asm);
 
 			// Compile assembly
-			vm = vmasm.compile();
-			return true;
+			return vmasm.compile();
 		} catch (Throwable t) {
 			t.printStackTrace();
+			return null;
 		}
-		return false;
 	}
 
 	/**
-	 * Compile program to BdsNode tree
+	 * Compile program to BdsNode tree: bds -> BdsNodes
 	 * @return True if compiled OK
 	 */
 	boolean compileBds() {
@@ -414,27 +422,14 @@ public class BdsRun {
 		// Compile, abort on errors
 		if (!compile()) return 1;
 
-		// Parse command line args & show automatic help
-		if (parseCmdLineArgs()) return 0;
-
-		// Create thread
-		BdsThread bdsThread = new BdsThread(programUnit, config, null);
-		if (debug) Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
-
 		// Run tests
 		if (debug) Timer.showStdErr("Running tests");
-		ProgramUnit pu = bdsThread.getProgramUnit();
-		return runTests(pu);
-	}
 
-	/**
-	 * For each "test*()" function in ProgramUnit, create a thread
-	 * that executes the function's body
-	 */
-	int runTests(ProgramUnit progUnit) {
+		// For each "test*()" function in ProgramUnit, create a thread
+		// that executes the function's body
 		// We need to execute all variable declarations in order to be able to use global variables in 'test*()' functions"
 		List<VarDeclaration> varDecls = programUnit.varDeclarations(false);
-		List<FunctionDeclaration> testFuncs = progUnit.testsFunctions();
+		List<FunctionDeclaration> testFuncs = programUnit.findTestsFunctions();
 
 		int exitCode = 0;
 		int testOk = 0, testError = 0;
@@ -442,7 +437,7 @@ public class BdsRun {
 			System.out.println("");
 
 			// Run each function
-			int exitValTest = runTests(progUnit, testFunc, varDecls);
+			int exitValTest = runTests(testFunc, varDecls);
 
 			// Show test result
 			if (exitValTest == 0) {
@@ -468,7 +463,7 @@ public class BdsRun {
 	/**
 	 * Run a single test function, return exit code
 	 */
-	int runTests(ProgramUnit progUnit, FunctionDeclaration testFunc, List<VarDeclaration> varDecls) {
+	int runTests(FunctionDeclaration testFunc, List<VarDeclaration> varDecls) {
 		List<Statement> statements = new ArrayList<>();
 
 		// Add all variable declarations
@@ -479,11 +474,15 @@ public class BdsRun {
 		statements.add(testFunc.getStatement());
 
 		// Create a program unit having all variable declarations and the test function's statements
-		ProgramUnit puTest = new ProgramUnit(progUnit, null);
+		ProgramUnit puTest = new ProgramUnit(programUnit, null);
 		puTest.setStatements(statements.toArray(new Statement[0]));
 
-		BdsThread bdsTestThread = new BdsThread(puTest, config, null);
-		int exitValTest = runThread(bdsTestThread);
+		// Compile and create vm
+		BdsVm vmtest = compileAsm(puTest);
+		BdsThread bdsThreadTest = new BdsThread(puTest, config, vmtest);
+
+		// Run thread and check exit code
+		int exitValTest = runThread(bdsThreadTest);
 		return exitValTest;
 	}
 

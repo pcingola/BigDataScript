@@ -210,7 +210,11 @@ public abstract class BdsNode implements Serializable {
 			BdsNode bdsnode = ((BdsNode) fieldObj);
 
 			// Found the requested type?
-			if ((clazz == null) || (fieldObj.getClass() == clazz)) list.add((BdsNode) fieldObj);
+			if ((clazz == null) || (fieldObj.getClass() == clazz)) {
+				BdsNode bn = (BdsNode) fieldObj;
+				visited.add(bn);
+				list.add(bn);
+			}
 
 			// Recurse into this field?
 			if (recurse || (recurseInclude && bdsnode instanceof StatementInclude)) {

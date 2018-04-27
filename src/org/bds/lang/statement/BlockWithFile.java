@@ -76,11 +76,6 @@ public class BlockWithFile extends Block {
 		if (fileName != null) fileText = Gpr.readFile(fileName);
 	}
 
-	@Override
-	public String toAsm() {
-		return toAsmNode();
-	}
-
 	/**
 	 * Find all variable declarations
 	 */

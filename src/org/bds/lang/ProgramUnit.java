@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
+import org.bds.lang.statement.StatementFunctionDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
@@ -42,6 +43,27 @@ public class ProgramUnit extends BlockWithFile {
 		doParse(tree); // little hack end
 	}
 
+	/**
+	 * Return all functions whose name starts with 'test'
+	 */
+	public List<FunctionDeclaration> findTestsFunctions() {
+		List<FunctionDeclaration> testFuncs = new ArrayList<>();
+		List<BdsNode> allFuncs = findNodes(StatementFunctionDeclaration.class, true, false);
+		for (BdsNode func : allFuncs) {
+			// Create scope symbol
+			FunctionDeclaration fd = (FunctionDeclaration) func;
+
+			String fname = fd.getFunctionName();
+			if (fname.length() > 4 //
+					&& fname.substring(0, 4).equalsIgnoreCase("test") // Starts with 'test'
+					&& fd.getParameters().getVarDecl() != null //
+					&& fd.getParameters().getVarDecl().length == 0 // There are no arguments to this function (e.g. 'test01()')
+			) testFuncs.add(fd);
+		}
+
+		return testFuncs;
+	}
+
 	@Override
 	public BdsThread getBigDataScriptThread() {
 		return bdsThread;
@@ -61,27 +83,6 @@ public class ProgramUnit extends BlockWithFile {
 		this.bdsThread = bdsThread;
 	}
 
-	/**
-	 * Return all functions whose name starts with 'test'
-	 */
-	public List<FunctionDeclaration> testsFunctions() {
-		List<FunctionDeclaration> testFuncs = new ArrayList<>();
-		List<BdsNode> allFuncs = findNodes(FunctionDeclaration.class, true, false);
-		for (BdsNode func : allFuncs) {
-			// Create scope symbol
-			FunctionDeclaration fd = (FunctionDeclaration) func;
-
-			String fname = fd.getFunctionName();
-			if (fname.length() > 4 //
-					&& fname.substring(0, 4).equalsIgnoreCase("test") // Starts with 'test'
-					&& fd.getParameters().getVarDecl() != null //
-					&& fd.getParameters().getVarDecl().length == 0 // There are no arguments to this function (e.g. 'test01()')
-			) testFuncs.add(fd);
-		}
-
-		return testFuncs;
-	}
-
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
@@ -95,7 +96,7 @@ public class ProgramUnit extends BlockWithFile {
 			sb.append(s.toAsm());
 
 		// Note: We don't pop the scope.
-		//       We leave the last scope when because it is useful for 
+		//       We leave the last scope when because it is useful for
 		//       checking variable values in test cases. Since the program
 		//       finished, it makes no difference (we are cleaning up later).
 		sb.append("halt\n");
