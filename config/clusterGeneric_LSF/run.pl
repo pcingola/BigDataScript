@@ -27,6 +27,9 @@
 # LSF Implementation: Rick Farouni
 #-------------------------------------------------------------------------------
 
+use POSIX;
+use IPC::Open2;
+
 #---
 # Parse command line arguments
 #---
@@ -46,12 +49,12 @@ $cmd = join(' ', @ARGV);
 $qsub = "bsub ";
 
 if( $cpus > 0 ) {
-	$qsub .= "-n $cpus";
+	$qsub .= "-n $cpus ";
 }
 
 if( $mem > 0 ) {
 	$mem = ceil($mem/1000000); # MB
-	$qsub .= "-M $mem ";
+	$qsub .= "-R rusage[mem=$mem] ";
 }
 
 if( $timeout > 0 ) {
@@ -63,10 +66,11 @@ if ( $queue ne "" ) {
 	$qsub .= "-q $queue "
 }
 
-$pid = open QSUB, " | $qsub";
-die "Cannot run command '$qsub'\n" if ! kill(0, $pid); # Check that process exists
-print QSUB "$cmd\n";		# Send cluster's task via qsub's STDIN
-close QSUB;
+$pid = open2(QSUB_IN, QSUB_OUT, " $qsub $cmd ");
+@result_split = split('<|>', <QSUB_IN>); # creates an @answer array
+print @result_split[1] . "\n" ;
+close QSUB_OUT;
+close QSUB_IN;
 
 # OK
 exit(0);
