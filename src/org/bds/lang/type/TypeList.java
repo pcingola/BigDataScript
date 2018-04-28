@@ -187,6 +187,7 @@ public class TypeList extends TypeComposite {
 	@Override
 	protected void parse(ParseTree tree) {
 		// !!! TODO: We are only allowing to build lists of primitive types
+		Gpr.debug("!!!!! FIXME");
 		primitiveType = PrimitiveType.LIST;
 		elementType = (Type) factory(tree, 0);
 		// String listTypeName = tree.getChild(0).getChild(0).getText();

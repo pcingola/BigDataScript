@@ -1,12 +1,16 @@
 #!/usr/bin/env bds
 
-l1 := ['hi', 'bye']
-l2 := ['hola', 'adios']
+# l1 := ['hi', 'bye']
+# l2 := ['hola', 'adios']
+# 
+# # List of lists
+# string[][] l
+# l.add(l1)
+# l.add(l2)
+# 
+# println "l: $l"
 
-# List of lists
-string[][] l
-l.add(l1)
-l.add(l2)
-
-println "l: $l"
+# Map of lists
+string[]{string} m
+m{'en'} = ['hi', 'bye']
 

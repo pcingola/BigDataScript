@@ -170,6 +170,7 @@ public class TypeMap extends TypeComposite {
 	@Override
 	protected void parse(ParseTree tree) {
 		// !!! TODO: We are only allowing to build maps of primitive types!
+		Gpr.debug("!!!!! FIXME");
 
 		// Value type
 		String valueTypeName = tree.getChild(0).getChild(0).getText();
