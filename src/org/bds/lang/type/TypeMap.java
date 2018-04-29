@@ -169,20 +169,15 @@ public class TypeMap extends TypeComposite {
 
 	@Override
 	protected void parse(ParseTree tree) {
-		// !!! TODO: We are only allowing to build maps of primitive types!
-		Gpr.debug("!!!!! FIXME");
-
 		// Value type
-		String valueTypeName = tree.getChild(0).getChild(0).getText();
 		primitiveType = PrimitiveType.MAP;
-		valueType = Types.get(valueTypeName);
+		valueType = (Type) factory(tree, 0);
 
 		// Key type
 		if (tree.getChildCount() > 3) {
-			String keyTypeName = tree.getChild(2).getChild(0).getText();
-			keyType = Types.get(keyTypeName);
+			keyType = (Type) factory(tree, 2);
 		} else {
-			// Default key is type string
+			// Default key type: string
 			keyType = Types.STRING;
 		}
 	}

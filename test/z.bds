@@ -1,7 +1,7 @@
 #!/usr/bin/env bds
 
-# l1 := ['hi', 'bye']
-# l2 := ['hola', 'adios']
+l1 := ['hi', 'bye']
+l2 := ['hola', 'adios']
 # 
 # # List of lists
 # string[][] l
@@ -12,5 +12,8 @@
 
 # Map of lists
 string[]{string} m
-m{'en'} = ['hi', 'bye']
-
+m{'en'} = l1
+m{'sp'} = l2
+println "m : $m"
+m{'en'} += 'zz'
+println "m : $m"
