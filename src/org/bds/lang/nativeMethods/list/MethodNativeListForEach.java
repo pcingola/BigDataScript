@@ -25,7 +25,7 @@ public class MethodNativeListForEach extends MethodNativeList {
 		classType = TypeList.get(baseType);
 		returnType = TypeList.get(baseType);;
 
-		// TODO: Broken, need major fixing
+		//!!! TODO: Functional methods not implemented
 		//		TypeFunction typeFunc = TypeFunction.get(Parameters.get(baseType, ""), Types.BOOL);
 		//		String argNames[] = { "this", "f" };
 		//		Type argTypes[] = { classType, typeFunc };
@@ -36,7 +36,7 @@ public class MethodNativeListForEach extends MethodNativeList {
 
 	@Override
 	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
-		// TODO: Functional style not implemented!
+		//!!! TODO: Functional methods not implemented
 		throw new RuntimeException("Unimplemented!");
 	}
 

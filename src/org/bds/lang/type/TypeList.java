@@ -126,7 +126,7 @@ public class TypeList extends TypeComposite {
 			methods.add(new MethodNativeListJoin(this));
 			methods.add(new MethodNativeListJoinStr(this));
 			methods.add(new MethodNativeListMap(this));
-			//!!! TODO: UNCOMENT
+			//!!! TODO: Functional methods not implemented
 			//			methods.add(new MethodNativeListMapToInt(this));
 			//			methods.add(new MethodNativeListMapToReal(this));
 			//			methods.add(new MethodNativeListMapToString(this));

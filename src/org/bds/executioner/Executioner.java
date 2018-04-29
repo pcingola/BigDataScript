@@ -266,7 +266,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// Mark task as finished
 		// Note: This will also be invoked by Cmd, so it will be redundant)
-		// TODO: !!!!    task.setExitValue(Task.EXITCODE_KILLED);
 		task.state(TaskState.KILLED);
 		taskFinished(task, TaskState.KILLED);
 	}
@@ -450,8 +449,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			}
 		}
 
-		// TODO: If an exception is thrown here, we should be able to
-		// either recover or mark the task as START_FAILED
 		Cmd cmd = createRunCmd(task);
 		if (cmd != null) {
 			addCmd(task, cmd);

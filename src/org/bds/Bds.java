@@ -314,7 +314,7 @@ public class Bds {
 					break;
 
 				case "-wall":
-					// TODO: Not implementation yet
+					// Nothing to do yet
 					break;
 
 				case "-y":

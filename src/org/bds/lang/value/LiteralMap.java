@@ -130,19 +130,29 @@ public class LiteralMap extends Literal {
 
 	@Override
 	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
+		// Check value types
 		Type valueType = ((TypeMap) returnType).getValueType();
-
 		for (BdsNode node : values) {
 			Expression expr = (Expression) node;
 			Type typeExpr = expr.returnType(symtab);
 
 			// Can we cast ?
 			if ((typeExpr != null) && !typeExpr.canCastTo(valueType)) {
-				compilerMessages.add(this, "Map types are not consistent. Expecting " + valueType, MessageType.ERROR);
+				compilerMessages.add(this, "Map value types are not consistent. Expecting " + valueType, MessageType.ERROR);
 			}
 		}
 
-		// !!! TODO: Type check for keys
+		// Check key types
+		Type keyType = ((TypeMap) returnType).getValueType();
+		for (BdsNode node : keys) {
+			Expression expr = (Expression) node;
+			Type typeExpr = expr.returnType(symtab);
+
+			// Can we cast ?
+			if ((typeExpr != null) && !typeExpr.canCastTo(keyType)) {
+				compilerMessages.add(this, "Map key types are not consistent. Expecting " + keyType, MessageType.ERROR);
+			}
+		}
 	}
 
 }

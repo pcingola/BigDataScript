@@ -21,12 +21,12 @@ public class MethodNativeListMap extends MethodNativeList {
 
 	@Override
 	protected void initMethod(Type baseType) {
-		// TODO : Not working, needs re-implementation
+		//!!! TODO: Functional methods not implemented
 	}
 
 	@Override
 	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
-		// TODO: Functional style not implemented!
+		//!!! TODO: Functional methods not implemented
 		throw new RuntimeException("Unimplemented!");
 	}
 

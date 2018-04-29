@@ -567,10 +567,6 @@ public class BdsVm implements Serializable {
 	 * Restore from call frame
 	 */
 	void popCallFrame() {
-		if (fp <= 0) {
-			// TODO: REMOVE DEBUGGING CODE
-			Gpr.debug("POP FROM EMPTY CALL STACK!!!: " + bdsThread.getBdsThreadId());
-		}
 		CallFrame sf = callFrame[--fp];
 		pc = sf.pc;
 		nodeId = sf.nodeId;
@@ -764,7 +760,6 @@ public class BdsVm implements Serializable {
 				break;
 
 			case CALLNATIVE:
-				// TODO: LONG RUNNING OPCODE
 				vmStateSave();
 				name = constantString(); // Get signature
 				v1 = callNative(name);
