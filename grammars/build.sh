@@ -15,7 +15,8 @@ rm *.class *.java *.interp *.tokens
 
 # Compile
 echo Create Lexer and Parser
-$antlr4 -visitor -package org.bds.antlr $grammar
+#$antlr4 -visitor -package org.bds.antlr $grammar
+$antlr4 -package org.bds.antlr $grammar
 
 # Copy to source dir
 cp *.java ../src/org/bds/antlr/
