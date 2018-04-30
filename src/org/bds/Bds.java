@@ -63,6 +63,7 @@ public class Bds {
 	protected Config config() {
 		config = new Config(configFile);
 		config.setDebug(debug);
+		config.load();
 		config.setExtractSource(extractSource);
 		config.setLog(log);
 		config.setDryRun(dryRun);

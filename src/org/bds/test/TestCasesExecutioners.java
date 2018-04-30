@@ -28,6 +28,7 @@ public class TestCasesExecutioners extends TestCasesBase {
 		Config config = new Config("test/test_parsePidQstatRegex_qstat.config"); // We set here the 'PID_REGEX_CHECK_TASK_RUNNING' parameter
 		config.setDebug(debug);
 		config.setVerbose(verbose);
+		config.load();
 
 		Executioner ex = Executioners.getInstance(config).get(ExecutionerType.LOCAL);
 		CheckTasksRunning ctr = new CheckTasksRunning(config, ex);
@@ -60,6 +61,7 @@ public class TestCasesExecutioners extends TestCasesBase {
 		Config config = new Config();
 		config.setDebug(debug);
 		config.setVerbose(verbose);
+		config.load();
 
 		Executioner ex = Executioners.getInstance(config).get(ExecutionerType.LOCAL);
 		CheckTasksRunning ctr = new CheckTasksRunning(config, ex);
