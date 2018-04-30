@@ -1,10 +1,14 @@
 package org.bds.test;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import org.bds.Bds;
 import org.bds.Config;
+import org.bds.data.Data;
+import org.bds.data.DataRemote;
+import org.bds.data.DataS3;
 import org.bds.executioner.Executioners;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.InterpolateVars;
@@ -60,6 +64,50 @@ public class TestCasesBase {
 			Assert.assertEquals(strings[i], iv.getLiterals()[i]);
 			if (vars[i] != null && !vars[i].isEmpty()) Assert.assertEquals(vars[i], iv.getExpressions()[i].toString());
 		}
+	}
+
+	/**
+	 * Check a 'hello.txt' file in an S3 bucket
+	 */
+	void checkS3HelloTxt(String url, String canPath, String paren) {
+		int objectSize = 12;
+		long lastModified = 1437862027000L;
+
+		Data d = Data.factory(url);
+		d.setVerbose(verbose);
+		d.setDebug(debug);
+		long lastMod = d.getLastModified().getTime();
+		if (verbose) Gpr.debug("Path: " + d.getPath() + "\tlastModified: " + lastMod + "\tSize: " + d.size());
+
+		// Check some features
+		Assert.assertTrue("Is S3?", d instanceof DataS3);
+		Assert.assertEquals(url, d.getAbsolutePath());
+		Assert.assertEquals(objectSize, d.size());
+		Assert.assertEquals(lastModified, d.getLastModified().getTime());
+		Assert.assertTrue("Is file?", d.isFile());
+		Assert.assertFalse("Is directory?", d.isDirectory());
+
+		// Download file
+		boolean ok = d.download();
+		Assert.assertTrue("Download OK", ok);
+		Assert.assertTrue("Is downloaded?", d.isDownloaded());
+
+		// Is it at the correct local file?
+		Assert.assertEquals("/tmp/bds/s3/pcingola.bds/hello.txt", d.getLocalPath());
+		Assert.assertEquals(canPath, d.getAbsolutePath());
+		Assert.assertEquals(paren, d.getParent());
+		Assert.assertEquals("hello.txt", d.getName());
+
+		// Check last modified time
+		File file = new File(d.getLocalPath());
+		long lastModLoc = file.lastModified();
+		Assert.assertTrue("Last modified check:" //
+				+ "\n\tlastMod    : " + lastMod //
+				+ "\n\tlastModLoc : " + lastModLoc //
+				+ "\n\tDiff       : " + (lastMod - lastModLoc)//
+				, Math.abs(lastMod - lastModLoc) < 2 * DataRemote.CACHE_TIMEOUT);
+
+		Assert.assertEquals(objectSize, file.length());
 	}
 
 	/**

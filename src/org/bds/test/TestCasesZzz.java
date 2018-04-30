@@ -12,11 +12,18 @@ import org.junit.Test;
 public class TestCasesZzz extends TestCasesBase {
 
 	@Test
-	public void test51() {
+	public void test01_parse_URLs_s3() {
 		Gpr.debug("Test");
 		verbose = true;
-		String errs = "Cannot assign to non-variable";
-		compileErrors("test/test51.bds", errs);
+		String url = "https://s3.amazonaws.com/pcingola.bds/hello.txt";
+		checkS3HelloTxt(url, url, "https://s3.amazonaws.com/pcingola.bds");
 	}
+
+	//	@Test
+	//	public void test01_parse_URLs_s3_02() {
+	//		Gpr.debug("Test");
+	//		String url = "s3://pcingola.bds/hello.txt";
+	//		checkS3HelloTxt(url, url, "s3://pcingola.bds");
+	//	}
 
 }

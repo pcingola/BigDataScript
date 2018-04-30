@@ -24,5 +24,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/antlr-4.7.1-complete.jar"/>
+	<classpathentry kind="lib" path="lib/aws-java-sdk-1.11.319.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
