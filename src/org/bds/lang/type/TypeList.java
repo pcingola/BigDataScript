@@ -89,8 +89,9 @@ public class TypeList extends TypeComposite {
 	@Override
 	public boolean canCastTo(Type type) {
 		return equals(type) // Same type
+				|| (type.isList() && getElementType().isAny()) // Empty list can be converted in assignment. e.g.: " list = [] "
 				|| type.isBool() // Cast to boolean, same as: "! list.isEmpty()"
-				|| getElementType().isAny() // Empty list can be converted in assignment. e.g.: " list = [] "
+				|| type.isAny() // Cast to 'any'
 		;
 	}
 

@@ -47,7 +47,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	 * Can this type be casted to 'type'?
 	 */
 	public boolean canCastTo(Type type) {
-		return equals(type); // Same type
+		return equals(type) || type.isAny();
 	}
 
 	public void checkCanCast(Type type, CompilerMessages compilerMessages) {

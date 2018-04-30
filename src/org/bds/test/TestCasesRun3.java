@@ -79,14 +79,12 @@ public class TestCasesRun3 extends TestCasesBase {
 	@Test
 	public void test209() {
 		Gpr.debug("Test");
-		verbose = true;
 		runAndCheckStderr("test/run_209.bds", "Null pointer. Trying to access field 'i' in null object.");
 	}
 
 	@Test
 	public void test210() {
 		Gpr.debug("Test");
-		verbose = true;
 		runAndCheckStderr("test/run_210.bds", "Null pointer: Cannot call method 'Zzz.set(Zzz,int) -> void' on null object.");
 	}
 
@@ -160,6 +158,28 @@ public class TestCasesRun3 extends TestCasesBase {
 	public void test222() {
 		Gpr.debug("Test");
 		runAndCheck("test/run_222.bds", "z", "7");
+	}
+
+	@Test
+	public void test223_list_of_list() {
+		Gpr.debug("Test");
+		Map<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("l", "[[hi, bye], [hola, adios]]");
+		expectedValues.put("typel", "string[][]");
+		expectedValues.put("typel0", "string[]");
+
+		runAndCheck("test/run_223.bds", expectedValues);
+	}
+
+	@Test
+	public void test224_map_of_lists() {
+		Gpr.debug("Test");
+		Map<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("m", "{ en => [hi, bye, hello], sp => [hola, adios] }");
+		expectedValues.put("typem", "string[]{string}");
+		expectedValues.put("typemen", "string[]");
+
+		runAndCheck("test/run_224.bds", expectedValues);
 	}
 
 }

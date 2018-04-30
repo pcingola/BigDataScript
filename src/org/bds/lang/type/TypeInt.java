@@ -15,7 +15,7 @@ public class TypeInt extends TypePrimitive {
 
 	@Override
 	public boolean canCastTo(Type type) {
-		return type.isBool() || type.isInt() || type.isReal() || type.isString();
+		return type.isBool() || type.isInt() || type.isReal() || type.isString() || type.isAny();
 	}
 
 	@Override

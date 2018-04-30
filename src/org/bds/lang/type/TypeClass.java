@@ -60,6 +60,13 @@ public class TypeClass extends TypeComposite {
 			}
 	}
 
+	public boolean canCast(Type type) {
+		return equals(type) // Same type
+				|| (type.isClass() && isSubClassOf((TypeClass) type)) // Can cast if 'type' is a superclass
+				|| type.isAny() // Cast to 'any'
+		;
+	}
+
 	@Override
 	public int compareTo(Type type) {
 		int cmp = primitiveType.ordinal() - type.primitiveType.ordinal();
@@ -84,9 +91,22 @@ public class TypeClass extends TypeComposite {
 		return className;
 	}
 
+	public String getClassNameCanonical() {
+		return className; // TODO: Implement a 'true' canonical name
+	}
+
 	@Override
 	public boolean isClass() {
 		return true;
+	}
+
+	public boolean isSubClassOf(TypeClass type) {
+		type.getClassNameCanonical();
+		for (TypeClass tc = this; tc != null; tc = tc.getClassDeclaration().getClassTypeParent()) {
+			String tccan = tc.getClassNameCanonical();
+			if (tccan.equals(tc)) return true;
+		}
+		return false;
 	}
 
 	@Override

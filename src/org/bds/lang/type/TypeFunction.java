@@ -25,8 +25,10 @@ public class TypeFunction extends TypeComposite {
 		returnType = functionDeclaration.getReturnType();
 	}
 
-	public boolean canCast(TypeFunction type) {
-		throw new RuntimeException("Unimplemented!");
+	public boolean canCast(Type type) {
+		return equals(type) // Same type
+				|| type.isAny() // Cast to 'any'
+		;
 	}
 
 	@Override

@@ -15,7 +15,7 @@ public class TypeReal extends TypePrimitive {
 
 	@Override
 	public boolean canCastTo(Type type) {
-		return type.isReal() || type.isBool() || type.isString();
+		return type.isReal() || type.isBool() || type.isString() || type.isAny();
 	}
 
 	@Override

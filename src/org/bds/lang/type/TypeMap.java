@@ -78,6 +78,7 @@ public class TypeMap extends TypeComposite {
 		return equals(type) // Same type
 				|| (isEmptyMap() && type.isMap()) // Empty maps can be converted in assignment. e.g.: " map = {} "
 				|| type.isBool() // Convert to boolean value
+				|| type.isAny() // Cast to 'any'
 		;
 	}
 
