@@ -462,18 +462,6 @@ public class BdsThread extends Thread implements Serializable {
 		return bdsThreadId;
 	}
 
-	/**
-	 * Map nodes by ID
-	 */
-	Map<Integer, BdsNode> getNodesById() {
-		List<BdsNode> bdsNodes = statement.findNodes(null, true, false);
-		Map<Integer, BdsNode> nodesById = new HashMap<>();
-		for (BdsNode n : bdsNodes)
-			nodesById.put(n.getId(), n);
-
-		return nodesById;
-	}
-
 	public BdsThread getParent() {
 		return parent;
 	}
