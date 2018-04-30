@@ -1,12 +1,7 @@
-#!/usr/bin/env bds
 
-l1 := ['hi', 'bye']
-l2 := ['hola', 'adios']
+in := 'tmp_remote_12.txt'
+out := 's3://pcingola.bds/test_remote_12.txt'
 
-# List of lists
-string[][] l
-l.add(l1)
-l.add(l2)
+sys date > $in
+ok := out.upload(in)
 
-println "l: " + type(l)
-println "l: $l"
