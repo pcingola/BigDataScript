@@ -143,7 +143,7 @@ public class LiteralMap extends Literal {
 		}
 
 		// Check key types
-		Type keyType = ((TypeMap) returnType).getValueType();
+		Type keyType = ((TypeMap) returnType).getKeyType();
 		for (BdsNode node : keys) {
 			Expression expr = (Expression) node;
 			Type typeExpr = expr.returnType(symtab);
