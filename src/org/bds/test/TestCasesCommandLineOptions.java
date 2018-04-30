@@ -4,6 +4,7 @@ import org.bds.Bds;
 import org.bds.Config;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
+import org.junit.Before;
 import org.junit.Test;
 
 import junit.framework.Assert;
@@ -14,6 +15,12 @@ import junit.framework.Assert;
  * @author pcingola
  */
 public class TestCasesCommandLineOptions extends TestCasesBase {
+
+	@Before
+	public void beforeEachTest() {
+		Config.reset();
+		Config.get().load();
+	}
 
 	@Test
 	public void test01_log() {
