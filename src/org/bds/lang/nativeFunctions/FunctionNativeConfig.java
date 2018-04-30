@@ -1,10 +1,12 @@
 package org.bds.lang.nativeFunctions;
 
-import java.util.HashMap;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeMap;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueMap;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
@@ -15,6 +17,8 @@ import org.bds.util.Gpr;
  */
 public class FunctionNativeConfig extends FunctionNative {
 
+	private static final long serialVersionUID = 5436763379885480214L;
+
 	public FunctionNativeConfig() {
 		super();
 	}
@@ -22,21 +26,26 @@ public class FunctionNativeConfig extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "config";
-		returnType = TypeMap.get(Type.STRING);
+		returnType = TypeMap.get(Types.STRING, Types.STRING);
 
 		String argNames[] = { "file" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
-	protected Object parseFile(BdsThread bdsThread, String fileName, HashMap<String, String> configOri) {
+	protected ValueMap parseFile(BdsThread bdsThread, String fileName, ValueMap configOri) {
 		// Sanity check
 		if (!Gpr.canRead(fileName)) bdsThread.fatalError(this, "Cannot read config file '" + fileName + "'");
 
 		// Create config, add default values
-		HashMap<String, String> config = new HashMap<>();
-		if (configOri != null) config.putAll(configOri);
+		ValueMap config = new ValueMap(TypeMap.get(Types.STRING, Types.STRING));
+		if (configOri != null) {
+			// Copy all values from 'configOri'
+			for (Value k : configOri.keySet()) {
+				config.put(k, configOri.getValue(k));
+			}
+		}
 
 		// Read and parse file
 		String fileContents = Gpr.readFile(fileName);
@@ -66,15 +75,21 @@ public class FunctionNativeConfig extends FunctionNative {
 			// Trim and add to map
 			name = name.trim();
 			value = value.trim();
-			if (!name.isEmpty()) config.put(name, value);
+			if (!name.isEmpty()) config.put(new ValueString(name), new ValueString(value));
 		}
 
 		return config;
 	}
 
 	@Override
-	protected Object runFunctionNative(BdsThread csThread) {
-		String fileName = csThread.getString("file");
-		return parseFile(csThread, fileName, null);
+	public Value runFunction(BdsThread bdsThread) {
+		String fileName = bdsThread.getString("file");
+		return parseFile(bdsThread, fileName, null);
 	}
+
+	@Override
+	protected Object runFunctionNative(BdsThread bdsThread) {
+		throw new RuntimeException("This method should never be invoked!");
+	}
+
 }

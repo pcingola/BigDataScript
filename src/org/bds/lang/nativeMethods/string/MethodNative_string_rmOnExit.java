@@ -1,11 +1,15 @@
 package org.bds.lang.nativeMethods.string;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_rmOnExit extends MethodNative {
+public class MethodNative_string_rmOnExit extends MethodNativeString {
+
+	private static final long serialVersionUID = 2465790869796244402L;
+
 	public MethodNative_string_rmOnExit() {
 		super();
 	}
@@ -13,18 +17,23 @@ public class MethodNative_string_rmOnExit extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "rmOnExit";
-		classType = Type.STRING;
-		returnType = Type.VOID;
+		classType = Types.STRING;
+		returnType = Types.VOID;
 
 		String argNames[] = { "this" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}
 
 	@Override
+	public Value runMethod(BdsThread bdsThread, Value vthis) {
+		bdsThread.rmOnExit(vthis);
+		return vthis;
+	}
+
+	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		bdsThread.rmOnExit(objThis.toString());
-		return objThis;
+		throw new RuntimeException("This method should never be invoked!");
 	}
 }

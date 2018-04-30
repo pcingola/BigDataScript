@@ -1,8 +1,8 @@
 package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -12,6 +12,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeSleepReal extends FunctionNative {
 
+	private static final long serialVersionUID = 8504357687134289920L;
+
+
 	public FunctionNativeSleepReal() {
 		super();
 	}
@@ -19,17 +22,17 @@ public class FunctionNativeSleepReal extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "sleep";
-		returnType = TypeList.get(Type.BOOL);
+		returnType = Types.BOOL;
 
 		String argNames[] = { "seconds" };
-		Type argTypes[] = { Type.REAL };
+		Type argTypes[] = { Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override
-	protected Object runFunctionNative(BdsThread csThread) {
-		double secs = csThread.getReal("seconds");
+	protected Object runFunctionNative(BdsThread bdsThread) {
+		double secs = bdsThread.getReal("seconds");
 		if (secs <= 0) return false;
 		try {
 			Thread.sleep((long) (secs * 1000));

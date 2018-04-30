@@ -1,11 +1,15 @@
 package org.bds.lang.nativeFunctions.math;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
 import org.bds.lang.nativeFunctions.FunctionNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_log1p_real extends FunctionNative {
+
+	private static final long serialVersionUID = 8688334612713209856L;
+
 	public FunctionNative_log1p_real() {
 		super();
 	}
@@ -13,12 +17,12 @@ public class FunctionNative_log1p_real extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "log1p";
-		returnType = Type.REAL;
+		returnType = Types.REAL;
 
 		String argNames[] = { "x" };
-		Type argTypes[] = { Type.REAL };
+		Type argTypes[] = { Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

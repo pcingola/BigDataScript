@@ -1,0 +1,21 @@
+#!/usr/bin/env bds
+
+class A {
+	int i = 40
+	int f(int x) return i + x
+	int g(int x) return i + x + 7
+}
+
+void test01() {
+	A a = new A()
+	z := a.f(2)
+	assert(42, z)
+}
+
+void test02() {
+	A a = new A()
+	z := a.g(2)
+	assert(49, z)
+}
+
+println "YOU SHOULD NOT SEE THIS MESSAGE WHEN RUNNING TESTS"

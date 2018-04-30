@@ -12,14 +12,22 @@ public class NativeLibraryFunctions {
 
 	@SuppressWarnings("rawtypes")
 	public static Class classes[] = { //
-			FunctionNativePrint.class //
+			FunctionNativeAssertBool.class //
+			, FunctionNativeAssertBoolNoMsg.class //
+			, FunctionNativeAssertInt.class //
+			, FunctionNativeAssertIntNoMsg.class //
+			, FunctionNativeAssertString.class //
+			, FunctionNativeAssertStringNoMsg.class //
+			, FunctionNativeConfig.class //
+			, FunctionNativeConfigOri.class //
 			, FunctionNativeLog.class //
-			, FunctionNativeTime.class //
-			, FunctionNativePrintErr.class //
 			, FunctionNativeMinInt.class //
 			, FunctionNativeMaxInt.class //
 			, FunctionNativeMinReal.class //
 			, FunctionNativeMaxReal.class //
+			, FunctionNativePrint.class //
+			, FunctionNativePrintErr.class //
+			, FunctionNativePrintHelp.class //
 			, FunctionNativeRand.class //
 			, FunctionNativeRandInt.class //
 			, FunctionNativeRandIntRange.class //
@@ -27,19 +35,16 @@ public class NativeLibraryFunctions {
 			, FunctionNativeRangeInt.class //
 			, FunctionNativeRangeIntStep.class //
 			, FunctionNativeRangeReal.class //
-			, FunctionNativePrintHelp.class //
 			, FunctionNativeSleep.class //
 			, FunctionNativeSleepReal.class //
+			, FunctionNativeTime.class //
 			, FunctionNativeToIntFromBool.class //
 			, FunctionNativeToIntFromReal.class //
-			, FunctionNativeConfig.class //
-			, FunctionNativeConfigOri.class //
-			, FunctionNativeAssertBool.class //
-			, FunctionNativeAssertBoolNoMsg.class //
-			, FunctionNativeAssertInt.class //
-			, FunctionNativeAssertIntNoMsg.class //
-			, FunctionNativeAssertString.class //
-			, FunctionNativeAssertStringNoMsg.class //
+			, FunctionNativeType.class //
+			, FunctionNative_clone_bool.class //
+			, FunctionNative_clone_int.class //
+			, FunctionNative_clone_real.class //
+			, FunctionNative_clone_string.class //
 			//
 			// Math functions
 			, org.bds.lang.nativeFunctions.math.FunctionNative_abs_int.class //
@@ -86,14 +91,16 @@ public class NativeLibraryFunctions {
 	@SuppressWarnings("rawtypes")
 	public NativeLibraryFunctions() {
 		try {
-			functions = new ArrayList<FunctionNative>();
-
+			functions = new ArrayList<>();
 			for (Class c : classes)
 				functions.add((FunctionNative) c.newInstance());
-
 		} catch (Exception e) {
 			throw new RuntimeException("Error creating native library", e);
 		}
+	}
+
+	public int size() {
+		return functions.size();
 	}
 
 	@Override

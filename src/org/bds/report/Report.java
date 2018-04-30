@@ -10,12 +10,13 @@ import java.util.Map;
 import org.bds.Bds;
 import org.bds.Config;
 import org.bds.cluster.host.HostResources;
-import org.bds.lang.ExpressionTask;
-import org.bds.lang.Statement;
+import org.bds.lang.expression.ExpressionTask;
+import org.bds.lang.statement.Statement;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
+import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
 import org.bds.task.TailFile;
 import org.bds.task.Task;
 import org.bds.task.TaskDependecies;
@@ -42,7 +43,7 @@ public class Report {
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	public static final int REPORT_TIME = 60; // Update report every 'REPORT_TIME' seconds
 
-	protected static Timer timerReport = new Timer(); // added by Jin Lee (for prog report timer)
+	protected static Timer timerReport = new Timer(); // Report timer (added by Jin Lee)
 
 	boolean yaml;
 	boolean verbose;
@@ -99,6 +100,7 @@ public class Report {
 
 		// Create report file names
 		String outFile = reportBaseName + ".report." + (yaml ? "yaml" : "html");
+		bdsThread.setReportFile(outFile);
 		String dagJsFile = reportBaseName + ".dag.js";
 		if (verbose) Timer.showStdErr("Writing report file '" + outFile + "'");
 
@@ -152,22 +154,22 @@ public class Report {
 		// Show Scope
 		//---
 		Scope scope = bdsThread.getScope();
-		rTemplate.add("scope.VAR_ARGS_LIST", scope.getSymbol(Scope.GLOBAL_VAR_ARGS_LIST).getValue());
-		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getSymbol(ExpressionTask.TASK_OPTION_SYSTEM).getValue());
-		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getSymbol(ExpressionTask.TASK_OPTION_CPUS).getValue());
+		rTemplate.add("scope.VAR_ARGS_LIST", scope.getValue(GlobalScope.GLOBAL_VAR_ARGS_LIST));
+		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getValue(ExpressionTask.TASK_OPTION_SYSTEM));
+		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getValue(ExpressionTask.TASK_OPTION_CPUS));
 
 		// Scope symbols
-		ArrayList<ScopeSymbol> ssyms = new ArrayList<ScopeSymbol>();
-		ssyms.addAll(scope.getSymbols());
-		Collections.sort(ssyms);
+		ArrayList<String> names = new ArrayList<>();
+		names.addAll(scope.getNames());
+		Collections.sort(names);
 
-		if (!ssyms.isEmpty()) {
-			for (ScopeSymbol ss : ssyms)
-				if (!ss.getType().isFunction()) {
-					rTemplate.add("symType", ss.getType());
-					rTemplate.add("symName", ss.getName());
-					rTemplate.add("symValue", GprString.escape(ss.getValue().toString()));
-				}
+		if (!names.isEmpty()) {
+			for (String name : names) {
+				Value val = scope.getValue(name);
+				rTemplate.add("symType", val.getType());
+				rTemplate.add("symName", name);
+				rTemplate.add("symValue", GprString.escape(val.toString()));
+			}
 		} else {
 			rTemplate.add("symType", "");
 			rTemplate.add("symName", "");
@@ -405,6 +407,16 @@ public class Report {
 		csv[1] = Integer.toString(Integer.parseInt(csv[1]) - 1);
 		String str = csv[0] + "," + csv[1] + "," + csv[2] + "," + csv[3] + "," + csv[4] + "," + csv[5];
 		return str;
+	}
+
+	/**
+	 * Force a report timer to execute a report
+	 * Note: Only used in test cases
+	 */
+	public void forceReportTimer() {
+		Date start = new Date();
+		start.setTime(start.getTime() - 2 * 1000 * REPORT_TIME);
+		timerReport.setStart(start);
 	}
 
 	/**

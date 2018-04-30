@@ -1,29 +1,30 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * Add: Add an element to the end of the list
- * 
+ *
  * Note: Exactly the same as push
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListAddList extends MethodNativeList {
 
-	public MethodNativeListAddList(Type baseType) {
-		super(baseType);
+	private static final long serialVersionUID = 1709723665361397991L;
+
+	public MethodNativeListAddList(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "add";
-		classType = TypeList.get(baseType);
 		returnType = baseType;
 
 		String argNames[] = { "this", "toPush" };
@@ -33,12 +34,10 @@ public class MethodNativeListAddList extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		ArrayList toPush = (ArrayList) csThread.getObject("toPush");
-		list.addAll(toPush);
-		return toPush;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		ValueList toPush = (ValueList) bdsThread.getValue("toPush");
+		vthis.addAll(toPush);
+		return vthis;
 	}
 }

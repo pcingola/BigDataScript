@@ -2,6 +2,7 @@ package org.bds.task;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,12 +12,8 @@ import java.util.Set;
 import org.bds.Config;
 import org.bds.cluster.host.HostResources;
 import org.bds.executioner.Executioner;
-import org.bds.lang.Expression;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -25,25 +22,22 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Task implements BdsSerialize {
+public class Task implements Serializable {
+
+	private static final long serialVersionUID = 3377646684108052191L;
 
 	public static final String CHECKSUM_LINE_START = "# Checksum: ";
-
-	// Exit codes (see bds.go)
-	public static final int EXITCODE_OK = 0;
-	public static final int EXITCODE_ERROR = 1;
-	public static final int EXITCODE_TIMEOUT = 2;
-	public static final int EXITCODE_KILLED = 3;
 
 	public static final String EXIT_STR_TIMEOUT = "Time out";
 	public static final String EXIT_STR_KILLED = "Signal received";
 
 	public static final int MAX_HINT_LEN = 150;
 
-	protected boolean verbose, debug;
 	protected boolean allowEmpty; // Allow empty output file/s
 	protected boolean canFail; // Allow execution to fail
+	protected boolean debug;
 	protected boolean dependency; // This is a 'dependency' task. Run only if required
+	protected boolean verbose;
 	protected int bdsLineNum; // Program's line number that created this task (used for reporting errors)
 	protected int exitValue; // Exit (error) code
 	protected int failCount, maxFailCount; // Number of times that this task failed
@@ -73,13 +67,18 @@ public class Task implements BdsSerialize {
 		this(id, null, null, null, -1);
 	}
 
-	public Task(String id, Expression expr, String programFileName, String programTxt) {
+	public Task(String id, BdsNode bdsNode, String programFileName, String programTxt) {
 		this.id = id;
 		this.programFileName = programFileName;
 		this.programTxt = programTxt;
-		bdsFileName = expr.getFileName();
-		bdsLineNum = expr.getLineNum();
-		taskDependency = new TaskDependency(expr);
+		if (bdsNode != null) {
+			bdsFileName = bdsNode.getFileName();
+			bdsLineNum = bdsNode.getLineNum();
+		} else {
+			bdsFileName = "";
+			bdsLineNum = -1;
+		}
+		taskDependency = new TaskDependency(bdsNode);
 		resources = new HostResources();
 		reset();
 	}
@@ -107,7 +106,7 @@ public class Task implements BdsSerialize {
 	 */
 	public boolean canChangeState(TaskState newState) {
 		if (newState == null) return false;
-		if (newState == taskState) return true; // Nothing to do
+		if (newState == taskState) return true; // OK to change to same state
 
 		switch (newState) {
 		case SCHEDULED:
@@ -206,7 +205,7 @@ public class Task implements BdsSerialize {
 		String shell = Config.get().getTaskShell();
 		shell = "#!" + shell + "\n\n" // Shell to use
 				+ "cd '" + currentDir + "'\n" // Add 'cd' to current dir
-				;
+		;
 
 		// Save file and make it executable
 		String program = shell + programTxt;
@@ -308,18 +307,6 @@ public class Task implements BdsSerialize {
 		}
 	}
 
-	public String getBdsFileName() {
-		return bdsFileName;
-	}
-
-	public int getBdsLineNum() {
-		return bdsLineNum;
-	}
-
-	public String getCurrentDir() {
-		return currentDir;
-	}
-
 	public List<Task> getDependencies() {
 		return taskDependency.getTasks();
 	}
@@ -360,11 +347,6 @@ public class Task implements BdsSerialize {
 
 	public String getNode() {
 		return node;
-	}
-
-	@Override
-	public String getNodeId() {
-		return getId();
 	}
 
 	public List<String> getOutputs() {
@@ -551,69 +533,6 @@ public class Task implements BdsSerialize {
 		errorMsg = null;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		// Note that "Task classname" field has been consumed at this point
-		id = serializer.getNextField();
-		bdsFileName = serializer.getNextFieldString();
-		bdsLineNum = (int) serializer.getNextFieldInt();
-		dependency = serializer.getNextFieldBool();
-		canFail = serializer.getNextFieldBool();
-		allowEmpty = serializer.getNextFieldBool();
-		taskState = TaskState.valueOf(serializer.getNextFieldString());
-		exitValue = (int) serializer.getNextFieldInt();
-		node = serializer.getNextFieldString();
-		queue = serializer.getNextFieldString();
-		programFileName = serializer.getNextFieldString();
-		programTxt = serializer.getNextFieldString();
-		stdoutFile = serializer.getNextFieldString();
-		stderrFile = serializer.getNextFieldString();
-		exitCodeFile = serializer.getNextFieldString();
-		currentDir = serializer.getNextFieldString();
-
-		// Task dependency
-		List<String> inputFiles = serializer.getNextFieldList(TypeList.get(Type.STRING));
-		List<String> outputFiles = serializer.getNextFieldList(TypeList.get(Type.STRING));
-		// serializer.getNextFieldList(TypeList.get(Type.STRING)); // Task IDs
-
-		taskDependency = new TaskDependency();
-		taskDependency.addInput(inputFiles);
-		taskDependency.addOutput(outputFiles);
-		// TODO: Add tasks by ID. Make sure all tasks are stored before this one
-		//		taskDependency.addTaskIds(taskIds);
-
-		resources = new HostResources();
-		resources.serializeParse(serializer);
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		return getClass().getSimpleName() //
-				+ "\t" + id //
-				+ "\t" + serializer.serializeSaveValue(bdsFileName) //
-				+ "\t" + bdsLineNum //
-				+ "\t" + dependency //
-				+ "\t" + canFail //
-				+ "\t" + allowEmpty //
-				+ "\t" + serializer.serializeSaveValue(taskState.toString()) //
-				+ "\t" + exitValue //
-				+ "\t" + serializer.serializeSaveValue(node) //
-				+ "\t" + serializer.serializeSaveValue(queue) //
-				+ "\t" + serializer.serializeSaveValue(programFileName) //
-				+ "\t" + serializer.serializeSaveValue(programTxt) //
-				+ "\t" + serializer.serializeSaveValue(stdoutFile) //
-				+ "\t" + serializer.serializeSaveValue(stderrFile) //
-				+ "\t" + serializer.serializeSaveValue(exitCodeFile) //
-				+ "\t" + serializer.serializeSaveValue(currentDir) //
-				+ "\t" + serializer.serializeSaveValue(taskDependency.getInputs()) //
-				+ "\t" + serializer.serializeSaveValue(taskDependency.getOutputs()) //
-				+ "\t" + serializer.serializeSave(resources) //
-				+ "\n";
-		// TODO: Add tasks by ID. Make sure all tasks are stored before this one
-		//				+ "\t" + serializer.serializeSaveValue(taskDependency.getTasksIds()) //
-	}
-
 	public void setAllowEmpty(boolean allowEmpty) {
 		this.allowEmpty = allowEmpty;
 	}
@@ -683,7 +602,7 @@ public class Task implements BdsSerialize {
 	 */
 	public synchronized void state(TaskState newState) {
 		if (newState == null) throw new RuntimeException("Cannot change to 'null' state.\n" + this);
-		if (newState == taskState) return; // Nothing to do
+		if (newState == taskState) return; // Same state, nothing to do
 
 		switch (newState) {
 		case SCHEDULED:
@@ -713,12 +632,18 @@ public class Task implements BdsSerialize {
 			break;
 
 		case ERROR:
-			failCount++; // Count failed, proceed to 'FINISHED' state
+			failCount++;
 			setState(newState);
+			runningEndTime = new Date();
+			if (exitValue == 0) exitValue = BdsThread.EXITCODE_ERROR;
 			break;
 
 		case ERROR_TIMEOUT:
-			failCount++; // Count failed, proceed to 'FINISHED' state
+			failCount++;
+			setState(newState);
+			runningEndTime = new Date();
+			if (exitValue == 0) exitValue = BdsThread.EXITCODE_ERROR;
+			break;
 
 		case FINISHED:
 			if (taskState == TaskState.RUNNING) {
@@ -733,6 +658,7 @@ public class Task implements BdsSerialize {
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
 			) {
+				if (exitValue == 0) exitValue = BdsThread.EXITCODE_KILLED;
 				setState(newState);
 				runningEndTime = new Date();
 				failCount++;
@@ -740,7 +666,6 @@ public class Task implements BdsSerialize {
 			break;
 
 		default:
-			// Ignore other state changes
 			throw new RuntimeException("Unimplemented state: '" + newState + "'");
 		}
 
@@ -767,12 +692,12 @@ public class Task implements BdsSerialize {
 
 			default:
 				// No information in exit file? Use exit code
-				if (debug) Gpr.debug("Using exit file info failed ('" + exitStr + "'), using exit code ('" + getExitValue() + "')");
+				if (debug) Gpr.debug("Using exit file '" + exitCodeFile + "' failed, using exit code '" + getExitValue() + "'");
 				return TaskState.exitCode2taskState(exitValue);
 			}
 		}
 
-		// Use exit value
+		// Use exit map
 		return TaskState.exitCode2taskState(getExitValue());
 	}
 

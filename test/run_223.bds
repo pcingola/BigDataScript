@@ -1,0 +1,16 @@
+#!/usr/bin/env bds
+
+l1 := ['hi', 'bye']
+l2 := ['hola', 'adios']
+
+# List of lists
+string[][] l
+l.add(l1)
+l.add(l2)
+
+typel := l.type()
+typel0 := l[0].type()
+
+println "typel: $typel"
+println "typel0: $typel0"
+println "l: $l"

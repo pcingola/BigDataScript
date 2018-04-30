@@ -1,11 +1,14 @@
 package org.bds.lang.nativeMethods.string;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_replace_str1_str2 extends MethodNative {
+public class MethodNative_string_replace_str1_str2 extends MethodNativeString {
+
+	private static final long serialVersionUID = 3693790038379757568L;
+
 	public MethodNative_string_replace_str1_str2() {
 		super();
 	}
@@ -13,11 +16,11 @@ public class MethodNative_string_replace_str1_str2 extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "replace";
-		classType = Type.STRING;
-		returnType = Type.STRING;
+		classType = Types.STRING;
+		returnType = Types.STRING;
 
 		String argNames[] = { "this", "str1", "str2" };
-		Type argTypes[] = { Type.STRING, Type.STRING, Type.STRING };
+		Type argTypes[] = { Types.STRING, Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

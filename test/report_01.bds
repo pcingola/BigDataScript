@@ -1,0 +1,4 @@
+
+task echo hi; sleep 1; echo bye
+wait
+

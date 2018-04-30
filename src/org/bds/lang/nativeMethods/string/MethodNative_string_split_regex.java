@@ -1,14 +1,17 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_split_regex extends MethodNative {
+public class MethodNative_string_split_regex extends MethodNativeString {
+
+	private static final long serialVersionUID = 3074534436096288291L;
+
 	public MethodNative_string_split_regex() {
 		super();
 	}
@@ -16,26 +19,34 @@ public class MethodNative_string_split_regex extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "split";
-		classType = Type.STRING;
-		returnType = TypeList.get(Type.STRING);
+		classType = Types.STRING;
+		returnType = TypeList.get(Types.STRING);
 
 		String argNames[] = { "this", "regex" };
-		Type argTypes[] = { Type.STRING, Type.STRING };
+		Type argTypes[] = { Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}
 
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		String str = objThis.toString();
-		if (str.isEmpty()) return new ArrayList<String>();
+	public Value runMethod(BdsThread bdsThread, Value vThis) {
+		String str = vThis.asString();
+		ValueList vlist = new ValueList(returnType);
+
+		if (str.isEmpty()) return vlist;
+
 		try {
-			String regex = csThread.getString("regex");
-			return array2list(str.split(regex, -1));
+			String regex = bdsThread.getString("regex");
+			return arrayString2valuelist(str.split(regex, -1));
 		} catch (Throwable t) {
-			ArrayList<String> l = new ArrayList<>();
-			l.add(str);
-			return l;
+			// Error using regex? Return a list with only one element
+			vlist.add(vThis);
+			return vlist;
 		}
+	}
+
+	@Override
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		throw new RuntimeException("This method should never be invoked!");
 	}
 }

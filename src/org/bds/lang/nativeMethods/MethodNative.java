@@ -1,14 +1,15 @@
 package org.bds.lang.nativeMethods;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.compile.CompilerMessages;
-import org.bds.lang.MethodDeclaration;
+import org.bds.lang.statement.MethodDeclaration;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
-import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A native method declaration
@@ -17,41 +18,36 @@ import org.bds.serialize.BdsSerializer;
  */
 public abstract class MethodNative extends MethodDeclaration {
 
-	public MethodNative() {
+	private static final long serialVersionUID = 7663900761574026674L;
+
+	public MethodNative(Type classType) {
 		super(null, null);
+		this.classType = classType;
 		initMethod();
+		parameterNames = parameterNames();
 	}
 
 	/**
 	 * Add method to class scope
 	 */
 	protected void addNativeMethodToClassScope() {
-		Scope classScope = Scope.getClassScope(getClassType());
-		ScopeSymbol ssym = new ScopeSymbol(functionName, getType(), this);
-		classScope.add(ssym);
+		SymbolTable symTab = classType.getSymbolTable();
+		symTab.add(this);
 	}
 
 	/**
 	 * Convert an array to a list
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList array2list(Object objects[]) {
-		if (objects == null) return new ArrayList();
-		ArrayList list = new ArrayList(objects.length);
-		Collections.addAll(list, objects);
-		return list;
-	}
+	protected ValueList arrayString2valuelist(String strs[]) {
+		TypeList typeList = TypeList.get(Types.STRING);
+		ValueList vlist = new ValueList(typeList);
 
-	/**
-	 * Convert an array to a list and sort the list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList array2listSorted(Object objects[]) {
-		if (objects == null) return new ArrayList();
-		ArrayList list = new ArrayList(objects.length);
-		Collections.addAll(list, objects);
-		Collections.sort(list);
-		return list;
+		if (strs == null) return vlist;
+
+		for (String s : strs)
+			vlist.add(new ValueString(s));
+
+		return vlist;
 	}
 
 	/**
@@ -64,42 +60,13 @@ public abstract class MethodNative extends MethodDeclaration {
 		return true;
 	}
 
-	@Override
-	public void runFunction(BdsThread bdsThread) {
-		// Get object 'this'
-		ScopeSymbol symThis = bdsThread.getScope().getSymbol(THIS_KEYWORD);
-		Object objThis = symThis.getValue();
-
-		// Run method
-		try {
-			Object result = runMethodNative(bdsThread, objThis);
-			bdsThread.setReturnValue(result); // Set result in scope
-		} catch (Throwable t) {
-			if (bdsThread.isVerbose()) t.printStackTrace();
-			bdsThread.fatalError(this, t.getMessage());
-		}
-	}
-
 	/**
 	 * Run a method
 	 */
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		throw new RuntimeException("Unimplemented method for class " + this.getClass().getSimpleName());
-	}
+	public abstract Value runMethod(BdsThread bdsThread, Value vThis);
 
 	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		// Nothing to do: Native methods are not serialized
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		// Nothing to do: Native methods are not serialized
-		return "";
-	}
-
-	@Override
-	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
+	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Nothing to do
 	}
 

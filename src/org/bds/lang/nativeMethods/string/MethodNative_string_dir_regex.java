@@ -8,12 +8,18 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_dir_regex extends MethodNative {
+public class MethodNative_string_dir_regex extends MethodNativeString {
+
+	private static final long serialVersionUID = 6661798225404664743L;
+
 	public MethodNative_string_dir_regex() {
 		super();
 	}
@@ -21,11 +27,11 @@ public class MethodNative_string_dir_regex extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "dir";
-		classType = Type.STRING;
-		returnType = TypeList.get(Type.STRING);
+		classType = Types.STRING;
+		returnType = TypeList.get(Types.STRING);
 
 		String argNames[] = { "this", "glob" };
-		Type argTypes[] = { Type.STRING, Type.STRING };
+		Type argTypes[] = { Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}
@@ -39,7 +45,7 @@ public class MethodNative_string_dir_regex extends MethodNative {
 	}
 
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+	public Value runMethod(BdsThread bdsThread, Value vthis) {
 		String glob = bdsThread.getString("glob");
 
 		//---
@@ -47,17 +53,28 @@ public class MethodNative_string_dir_regex extends MethodNative {
 		//---
 		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
 
-		String baseDir = objThis.toString();
+		String baseDir = vthis.asString();
 		ArrayList<String> list = bdsThread.data(baseDir) // Create data object
 				.list() // List files in dir
 				.stream() // Convert to stream
 				.filter(d -> matches(d, matcher)) // Filter using path matcher
 				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
-				;
+		;
 
 		// Sort by name
 		Collections.sort(list);
 
-		return list;
+		// Convert to ValueList
+		ValueList vlist = new ValueList(returnType);
+		for (String s : list)
+			vlist.add(new ValueString(s));
+
+		return vlist;
 	}
+
+	@Override
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		throw new RuntimeException("This method should never be invoked!");
+	}
+
 }

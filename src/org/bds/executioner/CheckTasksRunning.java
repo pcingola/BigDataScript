@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.bds.Config;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
+import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
 import org.bds.util.Timer;
@@ -46,7 +47,7 @@ public class CheckTasksRunning {
 	public CheckTasksRunning(Config config, Executioner executioner) {
 		this.executioner = executioner;
 		defaultCmdArgs = new String[0];
-		missingCount = new HashMap<String, Integer>();
+		missingCount = new HashMap<>();
 
 		// Set debug
 		debug = config.isDebug();
@@ -90,7 +91,7 @@ public class CheckTasksRunning {
 	 * Find a running task given a PID
 	 */
 	protected Set<Task> findRunningTaskByPid(Set<String> pids) {
-		HashSet<Task> tasks = new HashSet<Task>();
+		HashSet<Task> tasks = new HashSet<>();
 
 		// Find task by PID
 		for (Task t : executioner.getTasksRunning().values()) {
@@ -144,7 +145,7 @@ public class CheckTasksRunning {
 	 * For each PID, find the corresponding task, add task 'taskFoundId' (HashSet<String>)
 	 */
 	public Set<String> parseCommandOutput(String lines[]) {
-		HashSet<String> pids = new HashSet<String>();
+		HashSet<String> pids = new HashSet<>();
 
 		// Parse lines
 		for (String line : lines) {
@@ -227,7 +228,7 @@ public class CheckTasksRunning {
 	 */
 	protected boolean runCommand() {
 		// Prepare command line arguments
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 		StringBuilder cmdsb = new StringBuilder();
 		for (String arg : defaultCmdArgs) {
 			args.add(arg);
@@ -238,7 +239,7 @@ public class CheckTasksRunning {
 		cmdExecResult = Exec.exec(args, true);
 		if (debug) Timer.showStdErr("Check task running:" //
 				+ "\n\tCommand    : '" + cmdsb.toString().trim() + "'" //
-				+ "\n\tExit value : " + cmdExecResult.exitValue //
+				+ "\n\tExit map : " + cmdExecResult.exitValue //
 				+ "\n\tStdout     : " + cmdExecResult.stdOut //
 				+ "\n\tStderr     : " + cmdExecResult.stdErr //
 		);
@@ -308,7 +309,7 @@ public class CheckTasksRunning {
 				// Task is missing.
 				// Update counter: Should we consider this task as 'missing'?
 				if (incMissingCount(task)) {
-					if (finished == null) finished = new LinkedList<Task>();
+					if (finished == null) finished = new LinkedList<>();
 					finished.add(task);
 				}
 			} else {
@@ -327,7 +328,7 @@ public class CheckTasksRunning {
 				if (!tpid.isEmpty() && !task.isDone()) { // Make sure the task is not finished (race conditions?)
 					if (debug) log("Task PID '" + task.getPid() + "' not found. Marking it as finished.");
 					task.setErrorMsg("Task disappeared from cluster's queue. Task or node failure?");
-					task.setExitValue(Task.EXITCODE_ERROR);
+					task.setExitValue(BdsThread.EXITCODE_ERROR);
 					executioner.taskFinished(task, TaskState.ERROR);
 				}
 			}

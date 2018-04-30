@@ -1,14 +1,12 @@
 package org.bds.lang.nativeFunctions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.compile.CompilerMessages;
-import org.bds.lang.FunctionDeclaration;
+import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
-import org.bds.serialize.BdsSerializer;
+import org.bds.scope.GlobalScope;
+import org.bds.symbol.GlobalSymbolTable;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A native function declaration
@@ -17,39 +15,20 @@ import org.bds.serialize.BdsSerializer;
  */
 public abstract class FunctionNative extends FunctionDeclaration {
 
+	private static final long serialVersionUID = 5510708631419216087L;
+
 	public FunctionNative() {
 		super(null, null);
 		initFunction();
+		parameterNames = parameterNames();
 	}
 
 	/**
-	 * Add method to global scope
+	 * Add method to global scope and global symbol table
 	 */
-	protected void addNativeFunctionToScope() {
-		Scope classScope = Scope.getGlobalScope();
-		ScopeSymbol ssym = new ScopeSymbol(functionName, getType(), this);
-		classScope.add(ssym);
-	}
-
-	/**
-	 * Convert an array to a list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList array2list(Object objects[]) {
-		ArrayList list = new ArrayList(objects.length);
-		Collections.addAll(list, objects);
-		return list;
-	}
-
-	/**
-	 * Convert an array to a list and sort the list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ArrayList array2listSorted(Object objects[]) {
-		ArrayList list = new ArrayList(objects.length);
-		Collections.addAll(list, objects);
-		Collections.sort(list);
-		return list;
+	protected void addNativeFunction() {
+		GlobalScope.get().add(this);
+		GlobalSymbolTable.get().add(this);
 	}
 
 	/**
@@ -62,33 +41,18 @@ public abstract class FunctionNative extends FunctionDeclaration {
 		return true;
 	}
 
-	@Override
-	public void runFunction(BdsThread bdsThread) {
-		try {
-			// Run function
-			Object result = runFunctionNative(bdsThread);
-			bdsThread.setReturnValue(result); // Set result in scope
-		} catch (Throwable t) {
-			if (bdsThread.isVerbose()) t.printStackTrace();
-			bdsThread.fatalError(this, t.getMessage());
-		}
+	/**
+	 * Run a native method, wrap result in a 'Value'
+	 */
+	public Value runFunction(BdsThread bdsThread) {
+		Object ret = runFunctionNative(bdsThread);
+		return returnType.newValue(ret);
 	}
 
 	/**
-	 * Run a method
+	 * Run a native method
 	 */
-	protected abstract Object runFunctionNative(BdsThread csThread);
-
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		// Nothing to do: Native methods are not serialized
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		// Nothing to do: Native methods are not serialized
-		return "";
-	}
+	protected abstract Object runFunctionNative(BdsThread bdsThread);
 
 	@Override
 	public String toString() {
@@ -98,7 +62,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	}
 
 	@Override
-	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
+	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Nothing to do
 	}
 

@@ -1,10 +1,12 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -14,15 +16,16 @@ import org.bds.run.BdsThread;
  */
 public class MethodNativeListIndexOf extends MethodNativeList {
 
-	public MethodNativeListIndexOf(Type baseType) {
-		super(baseType);
+	private static final long serialVersionUID = -3244209394215672718L;
+
+	public MethodNativeListIndexOf(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "indexOf";
-		classType = TypeList.get(baseType);
-		returnType = Type.INT;
+		returnType = Types.INT;
 
 		String argNames[] = { "this", "toFind" };
 		Type argTypes[] = { classType, baseType };
@@ -31,13 +34,10 @@ public class MethodNativeListIndexOf extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		Object toFind = csThread.getObject("toFind");
-
-		long idx = list.indexOf(toFind);
-		return idx;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		Value toFind = bdsThread.getValue("toFind");
+		long idx = vthis.indexOf(toFind);
+		return new ValueInt(idx);
 	}
 }

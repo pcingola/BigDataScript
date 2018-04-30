@@ -27,7 +27,7 @@ public class StreamGobbler extends Thread {
 	boolean sendToStdout = false;
 	boolean saveLinesInMemory = false;
 	boolean running = false;
-	StringBuffer allLines = new StringBuffer();
+	StringBuffer allLines;
 	String alert = null;
 	Object alertNotify = null;
 	StringBuffer head = null;

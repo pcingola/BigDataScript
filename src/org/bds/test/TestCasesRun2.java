@@ -3,9 +3,10 @@ package org.bds.test;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.util.Gpr;
 import org.junit.Test;
 
@@ -50,7 +51,7 @@ public class TestCasesRun2 extends TestCasesBase {
 		expectedValues.put("a", 1);
 		expectedValues.put("b", 3);
 		expectedValues.put("c", 5);
-		expectedValues.put("d", 0);
+		expectedValues.put("d", 1);
 
 		runAndCheck("test/run_102.bds", expectedValues);
 	}
@@ -252,7 +253,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	}
 
 	@Test
-	public void test123_literals_sys_task() {
+	public void test123_literals() {
 		Gpr.debug("Test");
 
 		String output = "print_quote        |\\t|\n" //
@@ -261,15 +262,38 @@ public class TestCasesRun2 extends TestCasesBase {
 				+ "print_double       |\t|    variable:Hello\n" //
 				+ "print_double_esc   |\\t|\n" //
 				+ "print_double_esc   |\\t|   variable:Hello\n" //
-				// Note: This result may change if we use a different sysShell in bds.config
-				+ "sys                |\\t|\n" //
-				+ "sys                |\\t|    variable:Hello\n" //
-				// Note: This result may change if we use a different taskShell in bds.config
-				+ "task               |\\t|\n" //
-				+ "task               |\\t|    variable:Hello\n" //
 		;
 
 		runAndCheckStdout("test/run_123.bds", output);
+	}
+
+	@Test
+	public void test123_literals_sys() {
+		Gpr.debug("Test");
+		verbose = true;
+
+		String output = "" //
+				// Note: This result may change if we use a different sysShell in bds.config
+				+ "sys                |\t|\n" //
+				+ "sys                |\t|    variable:Hello\n" //
+				+ "sys                |\\t|   variable:Hello\n" //
+		;
+
+		runAndCheckStdout("test/run_123_literals_sys.bds", output);
+	}
+
+	@Test
+	public void test123_literals_task() {
+		Gpr.debug("Test");
+
+		String output = "" //
+				// Note: This result may change if we use a different taskShell in bds.config
+				+ "task               |\t|\n" //
+				+ "task               |\t|    variable:Hello\n" //
+				+ "task               |\\t|   variable:Hello\n" //
+		;
+
+		runAndCheckStdout("test/run_123_literals_task.bds", output);
 	}
 
 	@Test
@@ -497,11 +521,23 @@ public class TestCasesRun2 extends TestCasesBase {
 		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("l", "[1, 2, 3, 99]");
+		expectedValues.put("lc1", "[1, 2, 3, 99]");
+		expectedValues.put("lc2", "[1, 2, 3, 99]");
+		expectedValues.put("lc3", "[1, 2, 3, 99]");
+
+		runAndCheck("test/run_135.bds", expectedValues);
+	}
+
+	@Test
+	public void test135_clone() {
+		Gpr.debug("Test");
+		HashMap<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("l", "[1, 2, 3, 99]");
 		expectedValues.put("lc1", "[1, 2, 3]");
 		expectedValues.put("lc2", "[1, 2, 3]");
 		expectedValues.put("lc3", "[1, 2, 3]");
 
-		runAndCheck("test/run_135.bds", expectedValues);
+		runAndCheck("test/run_135_clone.bds", expectedValues);
 	}
 
 	@Test
@@ -560,15 +596,15 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheck("test/run_141.bds", "i", "42");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void test142_dirPath() {
 		Gpr.debug("Test");
-		List<String> dir2 = (List<String>) runAndGet("test/run_142.bds", "dir2");
+		ValueList dir2 = (ValueList) runAndGet("test/run_142.bds", "dir2");
 
 		Assert.assertEquals(10, dir2.size());
 
-		for (String f : dir2) {
+		for (Value v : dir2) {
+			String f = v.toString();
 			if (debug) System.out.println(f);
 			Assert.assertTrue("Path must be canonical", f.startsWith("/"));
 			Assert.assertTrue("Path must be canonical", f.endsWith(".bds"));

@@ -1,0 +1,11 @@
+#!/usr/bin/env bds
+
+class Zzz {
+	int i = 42
+    int h(int i) return this.i + i
+}
+
+Zzz z = new Zzz()
+println("z: $z")
+j := z.h(2)
+println("j : $j")

@@ -1,8 +1,11 @@
 package org.bds.util;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Timer {
+public class Timer implements Serializable {
+
+	private static final long serialVersionUID = 1749543702279403162L;
 
 	private static Timer timer = new Timer(); // Keep track of time (since first class instantiation)
 
@@ -11,7 +14,7 @@ public class Timer {
 	long timeOut;
 
 	/**
-	 * Show absolute timer value and a message
+	 * Show absolute timer map and a message
 	 * @param msg
 	 */
 	public static void show(String msg) {
@@ -19,7 +22,7 @@ public class Timer {
 	}
 
 	/**
-	 * Show absolute timer value and a message on STDERR
+	 * Show absolute timer map and a message on STDERR
 	 * @param msg
 	 */
 	public static void showStdErr(String msg) {
@@ -125,6 +128,10 @@ public class Timer {
 	public long remaining() {
 		long remaining = timeOut - elapsed();
 		return remaining > 0 ? remaining : 0;
+	}
+
+	public void setStart(Date start) {
+		this.start = start;
 	}
 
 	public Timer start() {

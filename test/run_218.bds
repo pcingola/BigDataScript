@@ -1,0 +1,17 @@
+
+class B extends A {
+	int j = 7
+	int g(int x)	return j + this.f(x)
+}
+
+class A {
+	int i = 42
+	A next
+
+	int f(int x)	return i + x
+}
+
+B z = new B()
+println("z : $z")
+x := z.g(1)
+println("x : $x")

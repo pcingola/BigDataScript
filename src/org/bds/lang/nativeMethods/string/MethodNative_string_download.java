@@ -2,11 +2,14 @@ package org.bds.lang.nativeMethods.string;
 
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_download extends MethodNative {
+public class MethodNative_string_download extends MethodNativeString {
+
+	private static final long serialVersionUID = 8554619589160370176L;
+
 	public MethodNative_string_download() {
 		super();
 	}
@@ -14,11 +17,11 @@ public class MethodNative_string_download extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "download";
-		classType = Type.STRING;
-		returnType = Type.STRING;
+		classType = Types.STRING;
+		returnType = Types.STRING;
 
 		String argNames[] = { "this" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

@@ -1,29 +1,29 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * Sort: Create a new list and sort it
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListSort extends MethodNativeList {
 
-	public MethodNativeListSort(Type baseType) {
-		super(baseType);
+	private static final long serialVersionUID = 165172407424014600L;
+
+	public MethodNativeListSort(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "sort";
-		classType = TypeList.get(baseType);
-		returnType = TypeList.get(baseType);
+		returnType = classType;
 
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };
@@ -32,19 +32,15 @@ public class MethodNativeListSort extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
 		// Empty list? => Nothing to do
-		if (list.size() <= 0) return new ArrayList();
+		ValueList sl = new ValueList(vthis.getType());
+		if (vthis.isEmpty()) return sl;
 
 		// Create new list and sort it
-		ArrayList newList = new ArrayList(list.size());
-		newList.addAll(list);
-		Collections.sort(newList);
-
-		return newList;
+		sl.addAll(vthis);
+		sl.sort();
+		return sl;
 	}
 }

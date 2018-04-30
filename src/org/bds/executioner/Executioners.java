@@ -1,5 +1,6 @@
 package org.bds.executioner;
 
+import java.io.ObjectStreamException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,6 +45,7 @@ public class Executioners {
 	private ConcurrentHashMap<ExecutionerType, Executioner> executioners = new ConcurrentHashMap<>();
 
 	Config config;
+	boolean freeze;
 
 	/**
 	 * Get instance
@@ -165,6 +167,22 @@ public class Executioners {
 	 */
 	public synchronized Collection<Executioner> getAll() {
 		return executioners.values();
+	}
+
+	public boolean isFreeze() {
+		return freeze;
+	}
+
+	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		executionersInstance = this; // Replace singleton instance
+		return this;
+	}
+
+	public void setFreeze(boolean freeze) {
+		this.freeze = freeze;
 	}
 
 }

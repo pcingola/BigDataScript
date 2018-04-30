@@ -1,18 +1,14 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.task.Task;
-import org.bds.util.Gpr;
 
-public class MethodNative_string_endsWith_str extends MethodNative {
+public class MethodNative_string_endsWith_str extends MethodNativeString {
+
+	private static final long serialVersionUID = 2437106683009335296L;
+
 	public MethodNative_string_endsWith_str() {
 		super();
 	}
@@ -20,17 +16,17 @@ public class MethodNative_string_endsWith_str extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "endsWith";
-		classType = Type.STRING;
-		returnType = Type.BOOL;
+		classType = Types.STRING;
+		returnType = Types.BOOL;
 
 		String argNames[] = { "this", "str" };
-		Type argTypes[] = { Type.STRING, Type.STRING };
+		Type argTypes[] = { Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}
 
 	@Override
 	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		return objThis.toString().endsWith( csThread.getString("str") );
+		return objThis.toString().endsWith(csThread.getString("str"));
 	}
 }

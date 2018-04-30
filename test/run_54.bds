@@ -8,9 +8,9 @@ print("Hash: $hash\n")
 # Test iteration on a hash (iterates on values)
 # Add all values from hash
 string[] vals
-for( string v : hash.keys() ) {
-	print("Value : $v\n")
-	vals.add(v)
+for( string k : hash.keys() ) {
+	print("Key : $k\n")
+	vals.add(k)
 }
 
 vals = vals.sort()

@@ -1,0 +1,26 @@
+
+class A {
+	int i = 42
+	int f(int x) {
+		println "A.f($x)"
+		return 2 + x
+	}
+	int f(int x, int y) {
+		println "A.f($x,$y)"
+		return 2 + x + y
+	}
+}
+
+class B extends A {
+	int j = 7
+	int f(int x) {
+		println "B.f($x)"
+		return i + x
+	}
+}
+
+B b = new B()
+
+A a = b
+z := a.f(4,1)
+

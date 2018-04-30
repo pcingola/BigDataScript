@@ -12,6 +12,7 @@ import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostLocal;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.Exec;
+import org.bds.run.BdsThread;
 import org.bds.task.DependencyState;
 import org.bds.task.Tail;
 import org.bds.task.Task;
@@ -265,7 +266,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// Mark task as finished
 		// Note: This will also be invoked by Cmd, so it will be redundant)
-		task.setExitValue(Task.EXITCODE_KILLED);
+		task.state(TaskState.KILLED);
 		taskFinished(task, TaskState.KILLED);
 	}
 
@@ -370,7 +371,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 				sleepLong();
 			}
-
 		} catch (Throwable t) {
 			running = valid = false;
 			t.printStackTrace();
@@ -380,7 +380,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			running = valid = false;
 			runExecutionerLoopAfter(); // Clean up
 		}
-
 	}
 
 	/**
@@ -396,6 +395,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// Are there any more task to run?
 		while (running && hasTaskToRun()) {
+			// Are executioner frozen?
+			if (Executioners.getInstance().isFreeze()) {
+				sleepMid();
+				continue;
+			}
+
 			// Select a task to run
 			Tuple<Task, Host> taskHostPair = selectTask();
 
@@ -444,8 +449,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			}
 		}
 
-		// TODO: If an exception is thrown here, we should be able to
-		// either recover or mark the task as START_FAILED
 		Cmd cmd = createRunCmd(task);
 		if (cmd != null) {
 			addCmd(task, cmd);
@@ -518,7 +521,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		// These tasks cannot be executed due to "lack of resources"
 		if (finishTask != null) {
 			for (Task task : finishTask) {
-				task.setExitValue(Task.EXITCODE_ERROR);
+				task.setExitValue(BdsThread.EXITCODE_ERROR);
 				taskFinished(task, TaskState.START_FAILED);
 			}
 			finishTask = null;
@@ -654,6 +657,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		taskUpdateStates.add(new Tuple<>(task, TaskState.STARTED));
 	}
 
+	/**
+	 * Task finished (either finished OK or has some error condition)
+	 */
 	protected synchronized boolean taskUpdateFinished(Task task, TaskState taskState) {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
 		if (!task.canChangeState(taskState)) return false;

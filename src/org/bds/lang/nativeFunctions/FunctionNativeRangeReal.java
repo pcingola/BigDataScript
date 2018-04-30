@@ -1,10 +1,12 @@
 package org.bds.lang.nativeFunctions;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueReal;
 import org.bds.run.BdsThread;
 
 /**
@@ -14,6 +16,8 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeRangeReal extends FunctionNative {
 
+	private static final long serialVersionUID = 5104518981465556948L;
+
 	public FunctionNativeRangeReal() {
 		super();
 	}
@@ -21,24 +25,30 @@ public class FunctionNativeRangeReal extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "range";
-		returnType = TypeList.get(Type.REAL);
+		returnType = TypeList.get(Types.REAL);
 
 		String argNames[] = { "min", "max", "step" };
-		Type argTypes[] = { Type.REAL, Type.REAL, Type.REAL };
+		Type argTypes[] = { Types.REAL, Types.REAL, Types.REAL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override
-	protected Object runFunctionNative(BdsThread bdsThread) {
+	public Value runFunction(BdsThread bdsThread) {
 		double min = bdsThread.getReal("min");
 		double max = bdsThread.getReal("max");
 		double step = bdsThread.getReal("step");
 
-		ArrayList<Double> list = new ArrayList<>();
+		ValueList list = new ValueList(returnType);
 		for (double d = min; d <= max; d += step)
-			list.add(d);
+			list.add(new ValueReal(d));
 
 		return list;
 	}
+
+	@Override
+	protected Object runFunctionNative(BdsThread bdsThread) {
+		throw new RuntimeException("This method should not be used!");
+	}
+
 }

@@ -2,6 +2,7 @@ package org.bds.test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -166,7 +167,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test17() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		Map<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("s", " HEllo ");
 		expectedValues.put("s1", "HEllo");
 		expectedValues.put("s2", " hello ");
@@ -234,7 +235,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test23() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("ltsize", 2);
 		expectedValues.put("lh", "one");
 		expectedValues.put("lt0", "two");
@@ -245,7 +246,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test24() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("p", 3);
 		expectedValues.put("s", 3);
 		expectedValues.put("l0", 1);
@@ -257,7 +258,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test25() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("l0", 1);
 		expectedValues.put("l1", 2);
 		expectedValues.put("l2", 3);
@@ -267,7 +268,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test26() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("l0", 1);
 		expectedValues.put("l1", 2);
 		expectedValues.put("l2", 3);
@@ -292,7 +293,6 @@ public class TestCasesRun extends TestCasesBase {
 		runAndCheck("test/run_28.bds", "events", "[done]");
 	}
 
-	@Test
 	public void test29() {
 		Gpr.debug("Test");
 		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");
@@ -373,7 +373,7 @@ public class TestCasesRun extends TestCasesBase {
 		expectedValues.put("args", "[-file, zzz.txt, -num, 42, -rnum, 3.1415, -opt, -notProcessed, more, arguments]");
 
 		// Arguments to add after program name
-		ArrayList<String> argsAfter = new ArrayList<String>();
+		ArrayList<String> argsAfter = new ArrayList<>();
 
 		argsAfter.add("-file");
 		argsAfter.add("zzz.txt");
@@ -429,12 +429,12 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test47() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("in", "[in1.txt, in2.txt, in3.txt]");
 		expectedValues.put("out", "zzz.txt");
 		expectedValues.put("ok", "true");
 
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 
 		args.add("-ok");
 
@@ -458,7 +458,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test50() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("i", "32");
 		expectedValues.put("j", "302");
 		expectedValues.put("jx", "44");
@@ -470,13 +470,13 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test51() {
 		Gpr.debug("Test");
-		runAndCheck("test/run_51.bds", "hash", "{hi=bye}");
+		runAndCheck("test/run_51.bds", "hash", "{ hi => bye }");
 	}
 
 	@Test
 	public void test52() {
 		Gpr.debug("Test");
-		runAndCheck("test/run_52.bds", "hash", "{one=1}");
+		runAndCheck("test/run_52.bds", "hash", "{ one => 1 }");
 	}
 
 	@Test
@@ -565,7 +565,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test65() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("bsfalse", false);
 		expectedValues.put("bstrue", true);
 		expectedValues.put("bifalse", false);
@@ -582,17 +582,17 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test66() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("sif", "String 'hi' is NOT empty");
 		expectedValues.put("lif", "List '[hi, bye]' is NOT empty");
-		expectedValues.put("mif", "Map '{  }' IS empty");
+		expectedValues.put("mif", "Map '{}' IS empty");
 		runAndCheck("test/run_66.bds", expectedValues);
 	}
 
 	@Test
 	public void test67() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("s", "varS");
 		expectedValues.put("s1", "Hi '$'");
 		expectedValues.put("s2", "Hi $");
@@ -681,7 +681,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test83() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("i", 3L);
 		expectedValues.put("f", 5.85);
 		expectedValues.put("s", "hibye");
@@ -703,7 +703,7 @@ public class TestCasesRun extends TestCasesBase {
 
 	public void test86() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("m", 60L);
 		expectedValues.put("h", 3600L);
 		expectedValues.put("d", 86400L);
@@ -730,7 +730,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test89() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("f", "file.txt");
 		expectedValues.put("f2", "file.vcf");
 		expectedValues.put("f3", "file.vcf");
@@ -783,7 +783,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test97() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("h1", "1");
 		expectedValues.put("h2", "3");
 		expectedValues.put("h3", "2");
@@ -795,7 +795,7 @@ public class TestCasesRun extends TestCasesBase {
 	@Test
 	public void test98() {
 		Gpr.debug("Test");
-		HashMap<String, Object> expectedValues = new HashMap<String, Object>();
+		HashMap<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("h1", "1");
 		expectedValues.put("h2", "3");
 		expectedValues.put("h3", "2");

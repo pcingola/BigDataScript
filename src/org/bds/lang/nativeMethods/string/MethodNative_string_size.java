@@ -1,11 +1,14 @@
 package org.bds.lang.nativeMethods.string;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_size extends MethodNative {
+public class MethodNative_string_size extends MethodNativeString {
+
+	private static final long serialVersionUID = 5513080956673622016L;
+
 	public MethodNative_string_size() {
 		super();
 	}
@@ -13,11 +16,11 @@ public class MethodNative_string_size extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "size";
-		classType = Type.STRING;
-		returnType = Type.INT;
+		classType = Types.STRING;
+		returnType = Types.INT;
 
 		String argNames[] = { "this" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

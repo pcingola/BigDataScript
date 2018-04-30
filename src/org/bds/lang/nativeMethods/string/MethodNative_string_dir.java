@@ -4,12 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_dir extends MethodNative {
+public class MethodNative_string_dir extends MethodNativeString {
+
+	private static final long serialVersionUID = -8013491174060654835L;
+
 	public MethodNative_string_dir() {
 		super();
 	}
@@ -17,19 +23,29 @@ public class MethodNative_string_dir extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "dir";
-		classType = Type.STRING;
-		returnType = TypeList.get(Type.STRING);
+		classType = Types.STRING;
+		returnType = TypeList.get(Types.STRING);
 
 		String argNames[] = { "this" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}
 
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		ArrayList<String> list = bdsThread.data(objThis.toString()).list();
+	public Value runMethod(BdsThread bdsThread, Value vthis) {
+		ArrayList<String> list = bdsThread.data(vthis.asString()).list();
 		Collections.sort(list);
-		return list;
+
+		ValueList vlist = new ValueList(returnType);
+		for (String s : list)
+			vlist.add(new ValueString(s));
+		return vlist;
 	}
+
+	@Override
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		throw new RuntimeException("This method should never be invoked!");
+	}
+
 }

@@ -1,2 +1,3 @@
 
-hi := 'HI'
+int h(int i) { return i + 5 }
+

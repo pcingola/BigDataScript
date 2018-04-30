@@ -4,21 +4,25 @@
 	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jsch-0.1.49.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.10.jar" sourcepath="/home/pcingola/.m2/repository/junit/junit/4.10/junit-4.10-sources.jar"/>
-	<classpathentry kind="lib" path="lib/antlr-runtime-4.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/protobuf-java-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/httpclient-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.4.1.jar"/>
-	<classpathentry kind="lib" path="lib/aws-java-sdk-1.10.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-databind-2.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-2.8.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/mesos-0.26.0.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/pcingola/.bds/lib/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/antlr-4.7.1-complete.jar"/>
+	<classpathentry kind="lib" path="lib/aws-java-sdk-1.11.319.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

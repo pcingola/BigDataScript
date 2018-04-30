@@ -1,27 +1,28 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * Head: return the first element of a list
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListPop extends MethodNativeList {
 
-	public MethodNativeListPop(Type baseType) {
-		super(baseType);
+	private static final long serialVersionUID = 2069592663054842713L;
+
+	public MethodNativeListPop(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "pop";
-		classType = TypeList.get(baseType);
 		returnType = baseType;
 
 		String argNames[] = { "this" };
@@ -31,11 +32,9 @@ public class MethodNativeListPop extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		if (list.isEmpty()) throw new RuntimeException("Invoking 'pop' element on an empty list.");
-		return list.remove(list.size() - 1);
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		if (vthis.isEmpty()) throw new RuntimeException("Invoking 'pop' on an empty list.");
+		return vthis.remove(vthis.size() - 1);
 	}
 }

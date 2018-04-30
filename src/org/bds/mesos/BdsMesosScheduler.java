@@ -39,6 +39,8 @@ import org.apache.mesos.Protos.TaskID;
 import org.apache.mesos.Protos.TaskInfo;
 import org.apache.mesos.Protos.TaskStatus;
 import org.apache.mesos.Protos.Value;
+import org.apache.mesos.Scheduler;
+import org.apache.mesos.SchedulerDriver;
 import org.bds.cluster.Cluster;
 import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostInifinte;
@@ -48,8 +50,6 @@ import org.bds.executioner.ExecutionerMesos;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
 import org.bds.util.Gpr;
-import org.apache.mesos.Scheduler;
-import org.apache.mesos.SchedulerDriver;
 
 import com.google.protobuf.ByteString;
 
@@ -78,7 +78,7 @@ public class BdsMesosScheduler implements Scheduler {
 		this.executionerMesos = executionerMesos;
 		this.executor = executor;
 		cluster = executionerMesos.getCluster();
-		taskById = new HashMap<String, Task>();
+		taskById = new HashMap<>();
 		taskToLaunch = new HashSet<>();
 		offersByHost = new HashMap<>();
 		offersById = new HashMap<>();
@@ -108,7 +108,7 @@ public class BdsMesosScheduler implements Scheduler {
 		// Update offers by host
 		Set<Offer> offers = offersByHost.get(hostName);
 		if (offers == null) {
-			offers = new HashSet<Offer>();
+			offers = new HashSet<>();
 			offersByHost.put(hostName, offers);
 		}
 		offers.add(offer);
@@ -378,9 +378,9 @@ public class BdsMesosScheduler implements Scheduler {
 		// Match offers (and resources) to tasks
 		//---
 		Set<Task> assignedTasks = new HashSet<>();
-		Collection<TaskInfo> taskInfos = new HashSet<TaskInfo>();
-		Collection<OfferID> offerIds = new HashSet<OfferID>();
-		Set<OfferID> offerIdsUsed = new HashSet<OfferID>();
+		Collection<TaskInfo> taskInfos = new HashSet<>();
+		Collection<OfferID> offerIds = new HashSet<>();
+		Set<OfferID> offerIdsUsed = new HashSet<>();
 
 		for (Host host : cluster) {
 			if (host instanceof HostInifinte) {
@@ -404,7 +404,7 @@ public class BdsMesosScheduler implements Scheduler {
 
 				// Any task to launch?
 				if (!assignedTasks.isEmpty()) {
-					// TODO: Check driver status
+					// Do we need to check driver status?
 					if (verbose) Gpr.debug("Launching tasks: offer: " + offerIds.size() + "\ttasks:" + taskInfos.size());
 					driver.launchTasks(offerIds, taskInfos);
 
@@ -413,9 +413,9 @@ public class BdsMesosScheduler implements Scheduler {
 					offerIdsUsed.addAll(offerIds);
 
 					// Initialize for next round
-					taskInfos = new ArrayList<TaskInfo>();
-					offerIds = new ArrayList<OfferID>();
-					assignedTasks = new HashSet<Task>();
+					taskInfos = new ArrayList<>();
+					offerIds = new ArrayList<>();
+					assignedTasks = new HashSet<>();
 				}
 			}
 		}
@@ -437,7 +437,7 @@ public class BdsMesosScheduler implements Scheduler {
 	 */
 	@Override
 	public void slaveLost(SchedulerDriver driver, SlaveID slaveId) {
-		// TODO: Mark call tasks in that host fail
+		// Mark call tasks in that host fail?
 		if (verbose) Gpr.debug("Scheduler: Slave Lost " + slaveId.getValue());
 	}
 

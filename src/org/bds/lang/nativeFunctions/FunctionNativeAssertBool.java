@@ -1,10 +1,14 @@
 package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNativeAssertBool extends FunctionNativeAssert {
+
+	private static final long serialVersionUID = 1197608743773175808L;
+
 
 	public FunctionNativeAssertBool() {
 		super();
@@ -13,12 +17,12 @@ public class FunctionNativeAssertBool extends FunctionNativeAssert {
 	@Override
 	protected void initFunction() {
 		functionName = "assert";
-		returnType = Type.BOOL;
+		returnType = Types.BOOL;
 
 		String argNames[] = { "msg", "cond" };
-		Type argTypes[] = { Type.STRING, Type.BOOL };
+		Type argTypes[] = { Types.STRING, Types.BOOL };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

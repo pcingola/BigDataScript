@@ -66,9 +66,9 @@ public class TextTable {
 	}
 
 	/**
-	 * Convert a value to a string
+	 * Convert a map to a string
 	 * @param len
-	 * @param value
+	 * @param map
 	 * @return
 	 */
 	String toString(int len, String value) {

@@ -1,0 +1,14 @@
+#!/usr/bin/env bds
+
+class Zzz {
+    int i = 42
+	string[] l = ['one', 'two', 'three']
+	string{} m = { 'one' => 'uno', 'two' => 'dos', 'three' => 'tres' }
+}
+
+Zzz z = new Zzz()
+z.i = 7
+z.l[1] = 'dos'
+z.m{'two'}  = 'deux'
+println("z: $z")
+

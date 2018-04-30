@@ -1,6 +1,7 @@
 package org.bds.task;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -14,7 +15,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Tail extends Thread {
+public class Tail extends Thread implements Serializable {
+
+	private static final long serialVersionUID = 3971573486965684116L;
 
 	public static final int SLEEP_TIME_DEFAULT = 100;
 
@@ -24,8 +27,8 @@ public class Tail extends Thread {
 	HashSet<String> toRemove;
 
 	public Tail() {
-		files = new HashMap<String, TailFile>();
-		toRemove = new HashSet<String>();
+		files = new HashMap<>();
+		toRemove = new HashSet<>();
 		setDaemon(true);
 	}
 
@@ -71,7 +74,7 @@ public class Tail extends Thread {
 		// Close all files
 		for (TailFile tf : files.values())
 			tf.close();
-		files = new HashMap<String, TailFile>();
+		files = new HashMap<>();
 	}
 
 	/**
@@ -155,7 +158,7 @@ public class Tail extends Thread {
 		if (!toRemove.isEmpty()) {
 			for (String fileName : toRemove)
 				remove(fileName);
-			toRemove = new HashSet<String>();
+			toRemove = new HashSet<>();
 		}
 
 		return anyOutput;

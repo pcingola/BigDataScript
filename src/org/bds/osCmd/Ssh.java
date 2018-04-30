@@ -114,7 +114,7 @@ public class Ssh {
 	}
 
 	/**
-	 * Diconnect, clear objects and set exit value
+	 * Diconnect, clear objects and set exit map
 	 */
 	int disconnect(boolean force) {
 

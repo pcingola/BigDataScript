@@ -1,0 +1,21 @@
+#!/usr/bin/env bds
+
+class Zzz {
+    int i = 42
+	string[] l = ['hi', 'bye']
+    string{} m = {'hi' => 'hola', 'bye' => 'chau'}
+}
+
+Zzz z = new Zzz()
+println("z: $z")
+
+j := z.i
+println("j : $j")
+
+s := z.l[1]
+println("s : $s")
+
+s2 := z.m{ z.l[1] }
+println("s2 : $s2")
+
+

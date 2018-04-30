@@ -13,5 +13,5 @@ void sequentialTasks(int i) {
 
 // A loop fires threads of sequential tasks
 for ( int i : x ) {
-    par sequentialTasks(i)    // Fire a parallel thread that runs 'sequentialTasks'
+    par sequentialTasks(i.clone())    // Fire a parallel thread that runs 'sequentialTasks'
 }

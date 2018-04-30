@@ -1,0 +1,15 @@
+#!/usr/bin/env bds
+
+class Zzz {
+	int i
+	real r
+	string s
+}
+
+Zzz z = new Zzz()
+z.i = 42
+z.r = 1.234
+z.s = "Hi"
+println("z: $z")
+
+

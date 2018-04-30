@@ -1,0 +1,16 @@
+#!/usr/bin/env bds
+
+class Zzz {
+	int i
+	real r
+	string s
+
+	int f(int x) { return x + i }
+}
+
+Zzz z = new Zzz()
+z.i = 2
+j := z.f(40)
+println("z: $z\tj: $j")
+
+

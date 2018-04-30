@@ -3,7 +3,6 @@
 # A function defining two sequential tasks
 void someFunction(int x) {
 	print "Par: $x\n"
-  	#task echo Task1 iter $x; sleep 1
 }
 
 # A loop fires threads of sequential tasks

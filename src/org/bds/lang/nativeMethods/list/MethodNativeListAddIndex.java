@@ -1,43 +1,44 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * Add: Add an element to the list (position 'idx')
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListAddIndex extends MethodNativeList {
 
-	public MethodNativeListAddIndex(Type baseType) {
-		super(baseType);
+	private static final long serialVersionUID = 6579215395739141983L;
+
+	public MethodNativeListAddIndex(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "add";
-		classType = TypeList.get(baseType);
 		returnType = baseType;
 
 		String argNames[] = { "this", "idx", "toPush" };
-		Type argTypes[] = { classType, Type.INT, baseType };
+		Type argTypes[] = { classType, Types.INT, baseType };
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		long idx = csThread.getInt("idx");
-		Object toPush = csThread.getObject("toPush");
-		list.add((int) idx, toPush);
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		long idx = bdsThread.getInt("idx");
+		Value toPush = bdsThread.getValue("toPush");
+		vthis.add((int) idx, toPush);
 		return toPush;
 	}
+
 }

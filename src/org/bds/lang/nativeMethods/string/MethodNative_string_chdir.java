@@ -2,12 +2,15 @@ package org.bds.lang.nativeMethods.string;
 
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
 
-public class MethodNative_string_chdir extends MethodNative {
+public class MethodNative_string_chdir extends MethodNativeString {
+
+	private static final long serialVersionUID = 2008621469747150848L;
+
 
 	public MethodNative_string_chdir() {
 		super();
@@ -16,11 +19,11 @@ public class MethodNative_string_chdir extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "chdir";
-		classType = Type.STRING;
-		returnType = Type.VOID;
+		classType = Types.STRING;
+		returnType = Types.VOID;
 
 		String argNames[] = { "this" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

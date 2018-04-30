@@ -1,0 +1,13 @@
+#!/usr/bin/env bds
+
+class Zzz {
+	int i
+	void Zzz(int j) { i = j }
+	void set(int j) { i = j }
+}
+
+
+Zzz z
+z.set(2)
+
+

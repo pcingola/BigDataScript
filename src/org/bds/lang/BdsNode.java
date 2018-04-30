@@ -2,7 +2,7 @@ package org.bds.lang;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -18,10 +18,14 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.compile.TypeCheckedNodes;
+import org.bds.lang.statement.StatementInclude;
+import org.bds.lang.type.PrimitiveType;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
+import org.bds.symbol.SymbolTable;
 import org.bds.util.Timer;
 
 /**
@@ -29,8 +33,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public abstract class BdsNode implements BdsSerialize {
+public abstract class BdsNode implements Serializable {
 
+	private static final long serialVersionUID = -2443078474175192104L;
 	protected BdsNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
 	protected Type returnType;
@@ -49,52 +54,58 @@ public abstract class BdsNode implements BdsSerialize {
 		doParse(tree);
 	}
 
-	/**
-	 * Can returnType be casted to bool?
-	 */
-	protected boolean canCastBool() {
-		return ((returnType != null) && returnType.canCast(Type.BOOL));
+	public String baseLabelName() {
+		return "label_" + getClass().getSimpleName() + "_" + id + "_";
 	}
 
-	/**
-	 * Can returnType be casted to int?
-	 */
-	protected boolean canCastInt() {
-		return ((returnType != null) && returnType.canCast(Type.INT));
+	protected String baseVarName() {
+		return SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + id + "_";
 	}
 
-	/**
-	 * Can returnType be casted to real?
-	 */
-	protected boolean canCastReal() {
-		return ((returnType != null) && returnType.canCast(Type.REAL));
+	public boolean canCastTo(BdsNode n) {
+		return returnType != null && returnType.canCastTo(n.getReturnType());
 	}
 
-	/**
-	 * Check that this expression can be casted to bool
-	 * Add a compile error otherwise
-	 */
-	protected void checkCanCastBool(CompilerMessages compilerMessages) {
-		if ((returnType != null) && !returnType.canCast(Type.BOOL)) compilerMessages.add(this, "Cannot cast " + returnType + " to bool", MessageType.ERROR);
+	public boolean canCastToBool() {
+		return returnType != null && returnType.canCastTo(Types.BOOL);
 	}
 
-	/**
-	 * Check that this expression can be casted to int
-	 * Add a compile error otherwise
-	 */
-	protected void checkCanCastInt(CompilerMessages compilerMessages) {
-		if ((returnType != null) && !returnType.canCast(Type.INT)) compilerMessages.add(this, "Cannot cast " + returnType + " to int", MessageType.ERROR);
+	public boolean canCastToInt() {
+		return returnType != null && returnType.canCastTo(Types.INT);
 	}
 
-	/**
-	 * Check that this expression can be casted to either int or real
-	 * Add a compile error otherwise
-	 */
-	protected void checkCanCastIntOrReal(CompilerMessages compilerMessages) {
-		if ((returnType != null) //
-				&& (!returnType.canCast(Type.INT) //
-						&& !returnType.canCast(Type.REAL)) //
-		) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
+	public boolean canCastToReal() {
+		return returnType != null && returnType.canCastTo(Types.REAL);
+	}
+
+	public boolean canCastToString() {
+		return returnType != null && true; // Everything can be cast to a string
+	}
+
+	public void checkCanCastTo(Type t, CompilerMessages compilerMessages) {
+		if (!returnType.canCastTo(t)) {
+			compilerMessages.add(this, "Cannot cast " + returnType + " to " + t, MessageType.ERROR);
+		}
+	}
+
+	public void checkCanCastToBool(CompilerMessages compilerMessages) {
+		checkCanCastTo(Types.BOOL, compilerMessages);
+	}
+
+	public void checkCanCastToInt(CompilerMessages compilerMessages) {
+		checkCanCastTo(Types.INT, compilerMessages);
+	}
+
+	public void checkCanCastToNumeric(CompilerMessages compilerMessages) {
+		if (!canCastToInt() && !canCastToReal()) compilerMessages.add(this, "Cannot cast " + returnType + " to int or real", MessageType.ERROR);
+	}
+
+	public void checkCanCastToReal(CompilerMessages compilerMessages) {
+		checkCanCastTo(Types.REAL, compilerMessages);
+	}
+
+	public void checkCanCastToString(CompilerMessages compilerMessages) {
+		checkCanCastTo(Types.STRING, compilerMessages);
 	}
 
 	/**
@@ -121,7 +132,7 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Create a BigDataScriptNode
 	 */
-	final BdsNode factory(ParseTree tree, int childNum) {
+	final public BdsNode factory(ParseTree tree, int childNum) {
 		ParseTree child = childNum >= 0 ? tree.getChild(childNum) : tree;
 		return BdsNodeFactory.get().factory(this, child);
 	}
@@ -142,33 +153,38 @@ public abstract class BdsNode implements BdsSerialize {
 	 * IMPORTANT: Nodes are return ALPHABETICALLY sorted
 	 *
 	 * @param clazz : Class to find (all nodes if null)
+	 *
 	 * @param recurse : If true, perform recursive search
+	 *
+	 * @param recurseInclude : If true, perform recursive search within 'StatementInclide' nodes.
+	 *                         Note: If 'recurse' is set, the value of 'recurseInclude' is irrelevant
 	 */
 	@SuppressWarnings("rawtypes")
-	public List<BdsNode> findNodes(Class clazz, boolean recurse) {
+	public List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude) {
 		HashSet<Object> visited = new HashSet<>();
-		return findNodes(clazz, recurse, visited);
+		return findNodes(clazz, recurse, recurseInclude, visited);
 	}
 
 	@SuppressWarnings("rawtypes")
-	List<BdsNode> findNodes(Class clazz, boolean recurse, Set<Object> visited) {
+	protected List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude, Set<Object> visited) {
 		List<BdsNode> list = new ArrayList<>();
 
 		// Iterate over fields
 		for (Field field : getAllClassFields()) {
 			try {
+				field.setAccessible(true);
 				Object fieldObj = field.get(this);
 
-				// Does the field have a value?
+				// Does the field have a map?
 				if (fieldObj != null && !visited.contains(fieldObj)) {
 					visited.add(fieldObj);
 
 					// If it's an array, iterate on all objects
 					if (fieldObj.getClass().isArray()) {
 						for (Object fieldObjSingle : (Object[]) fieldObj)
-							list.addAll(findNodes(clazz, fieldObjSingle, recurse, visited));
+							list.addAll(findNodes(clazz, fieldObjSingle, recurse, recurseInclude, visited));
 					} else {
-						list.addAll(findNodes(clazz, fieldObj, recurse, visited));
+						list.addAll(findNodes(clazz, fieldObj, recurse, recurseInclude, visited));
 					}
 
 				}
@@ -186,18 +202,23 @@ public abstract class BdsNode implements BdsSerialize {
 	 * @param fieldObj
 	 */
 	@SuppressWarnings("rawtypes")
-	List<BdsNode> findNodes(Class clazz, Object fieldObj, boolean recurse, Set<Object> visited) {
+	List<BdsNode> findNodes(Class clazz, Object fieldObj, boolean recurse, boolean recurseInclude, Set<Object> visited) {
 		List<BdsNode> list = new ArrayList<>();
 
 		// If it is a BigDataScriptNode then we can recurse into it
 		if ((fieldObj != null) && (fieldObj instanceof BdsNode)) {
-			// Found the requested type?
-			if ((clazz == null) || (fieldObj.getClass() == clazz)) list.add((BdsNode) fieldObj);
+			BdsNode bdsnode = ((BdsNode) fieldObj);
 
-			// We can recurse into this field
-			if (recurse) {
-				BdsNode csnode = ((BdsNode) fieldObj);
-				list.addAll(csnode.findNodes(clazz, recurse, visited));
+			// Found the requested type?
+			if ((clazz == null) || (fieldObj.getClass() == clazz)) {
+				BdsNode bn = (BdsNode) fieldObj;
+				visited.add(bn);
+				list.add(bn);
+			}
+
+			// Recurse into this field?
+			if (recurse || (recurseInclude && bdsnode instanceof StatementInclude)) {
+				list.addAll(bdsnode.findNodes(clazz, recurse, recurseInclude, visited));
 			}
 		}
 
@@ -222,6 +243,13 @@ public abstract class BdsNode implements BdsSerialize {
 		if (this.getClass() == clazz) return this;
 		if (this.getClass() == stopAtClass) return null;
 		if (parent != null) return parent.findParent(clazz);
+		return null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected BdsNode findParent(Set<Class> classSet) {
+		if (classSet.contains(this.getClass())) return this;
+		if (parent != null) return parent.findParent(classSet);
 		return null;
 	}
 
@@ -318,11 +346,6 @@ public abstract class BdsNode implements BdsSerialize {
 		return lineNum;
 	}
 
-	@Override
-	public String getNodeId() {
-		return getClass().getSimpleName() + ":" + id;
-	}
-
 	public BdsNode getParent() {
 		return parent;
 	}
@@ -347,7 +370,7 @@ public abstract class BdsNode implements BdsSerialize {
 		return returnType;
 	}
 
-	public Scope getScope() {
+	public SymbolTable getSymbolTable() {
 		return null;
 	}
 
@@ -364,45 +387,58 @@ public abstract class BdsNode implements BdsSerialize {
 	/**
 	 * Initialize some defaults (before parsing)
 	 */
-	void initialize() {
+	protected void initialize() {
 	}
 
-	/**
-	 * Is return type bool?
-	 */
-	protected boolean isBool() {
-		return (returnType != null) && returnType.isBool();
+	public boolean isAny() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.ANY;
 	}
 
-	/**
-	 * Is this a fake node (created during serialization)
-	 */
-	public boolean isFake() {
-		return id <= 0;
+	public boolean isBool() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.BOOL;
 	}
 
-	/**
-	 * Is return type int?
-	 */
-	protected boolean isInt() {
-		return (returnType != null) && returnType.isInt();
+	public boolean isClass() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.CLASS;
 	}
 
-	protected boolean isList() {
-		return (returnType != null) && returnType.isList();
+	public boolean isFunction() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.FUNCTION;
 	}
 
-	protected boolean isList(Type baseType) {
-		if (returnType == null) return false;
-		return returnType.isList(baseType);
+	public boolean isInt() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.INT;
 	}
 
-	protected boolean isMap() {
-		return (returnType != null) && returnType.isMap();
+	public boolean isList() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.LIST;
 	}
 
-	protected boolean isMap(Type baseType) {
-		return (returnType != null) && returnType.isMap(baseType);
+	public boolean isList(Type elementType) {
+		if (isList()) {
+
+			Type re = ((TypeList) returnType).getElementType();
+
+			// If elementType is void, then the list must be empty
+			// An empty list complies with all types
+			if (re.isVoid() || re.isAny() || elementType.isAny()) return true;
+
+			// Same element types?
+			return re.equals(elementType);
+		}
+		return false;
+	}
+
+	public boolean isMap() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.MAP;
+	}
+
+	public boolean isMap(Type keyType, Type valueType) {
+		if (isMap()) {
+			TypeMap typeMap = (TypeMap) returnType;
+			return typeMap.getKeyType().is(keyType) && typeMap.getValueType().is(valueType);
+		}
+		return false;
 	}
 
 	/**
@@ -412,25 +448,20 @@ public abstract class BdsNode implements BdsSerialize {
 		return false;
 	}
 
-	/**
-	 * Is return type numeric?
-	 */
-	protected boolean isNumeric() {
-		return isBool() || isInt() || isReal();
+	public boolean isNull() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.NULL;
 	}
 
-	/**
-	 * Is return type real?
-	 */
-	protected boolean isReal() {
-		return (returnType != null) && returnType.isReal();
+	public boolean isNumeric() {
+		return isInt() || isReal();
 	}
 
-	/**
-	 * Do all subordinate expressions have a non-null return type?
-	 */
-	protected boolean isReturnTypesNotNull() {
-		return true;
+	public boolean isReal() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.REAL;
+	}
+
+	public boolean isReturnTypesNotNull() {
+		return returnType != null;
 	}
 
 	/**
@@ -440,19 +471,20 @@ public abstract class BdsNode implements BdsSerialize {
 		return true;
 	}
 
-	/**
-	 * Is return type string?
-	 */
-	protected boolean isString() {
-		return (returnType != null) && returnType.isString();
+	public boolean isString() {
+		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.STRING;
 	}
 
 	/**
-	 * Is child 'idx' a terminal node with value 'str'?
+	 * Is child 'idx' a terminal node with map 'str'?
 	 */
 	protected boolean isTerminal(ParseTree tree, int idx, String str) {
 		ParseTree node = tree.getChild(idx);
 		return ((node instanceof TerminalNode) && node.getText().equals(str));
+	}
+
+	public boolean isVoid() {
+		return returnType.is(Types.VOID);
 	}
 
 	/**
@@ -462,7 +494,7 @@ public abstract class BdsNode implements BdsSerialize {
 	 *
 	 * @param tree
 	 */
-	boolean lineAndPos(ParseTree tree) {
+	protected boolean lineAndPos(ParseTree tree) {
 		// Is this a token?
 		if (tree.getPayload() instanceof Token) {
 			lineAndPos((Token) tree.getPayload());
@@ -518,195 +550,61 @@ public abstract class BdsNode implements BdsSerialize {
 	}
 
 	/**
-	 * Replace fake nodes by real nodes (serialization)
-	 */
-	public void replaceFake() {
-
-		// Iterate over fields
-		for (Field field : getAllClassFields(true)) {
-			try {
-				Object fieldObj = field.get(this);
-
-				// Does the field have a value?
-				if (fieldObj != null) {
-					// If it's an array, iterate on all objects
-					if (fieldObj.getClass().isArray()) {
-						int idx = 0;
-						for (Object fieldObjSingle : (Object[]) fieldObj) {
-							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BdsNode)) {
-								BdsNode csnode = (BdsNode) fieldObjSingle;
-
-								// Is it a fake node? => Replace by real node
-								if (csnode.isFake()) {
-									// Find real node based on fake one
-									BdsNode node = BdsNodeFactory.get().realNode(csnode);
-
-									// Replace this array element
-									Array.set(fieldObj, idx, node);
-								}
-							}
-							idx++;
-						}
-					} else {
-						if (fieldObj instanceof BdsNode) {
-							BdsNode csnode = (BdsNode) fieldObj;
-
-							// Is it a fake node? => Replace by real node
-							if (csnode.isFake()) {
-								// Find real node based on fake one
-								BdsNode trueCsnode = BdsNodeFactory.get().realNode(csnode);
-
-								// Set field to real node
-								field.set(this, trueCsnode);
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				throw new RuntimeException("Error replacing fake field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
-			}
-		}
-
-	}
-
-	/**
 	 * Calculate return type and assign it to 'returnType' variable.
 	 */
-	public Type returnType(Scope scope) {
-		return Type.VOID;
-	}
-
-	public void runStep(BdsThread bdsThread) {
-		throw new RuntimeException("Unimplemented method for class " + getClass().getSimpleName() + ", id = " + id);
+	public Type returnType(SymbolTable symtab) {
+		if (returnType != null) return returnType;
+		returnType = Types.VOID;
+		return returnType;
 	}
 
 	/**
 	 * Perform several basic sanity checks right after parsing the tree
 	 */
-	protected void sanityCheck(CompilerMessages compilerMessages) {
+	public void sanityCheck(CompilerMessages compilerMessages) {
 		// Default : Do nothing
-	}
-
-	/**
-	 * Parse a line from a serialized file
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-
-		// Use ID from file
-		updateId((int) serializer.getNextFieldInt());
-		lineNum = (int) serializer.getNextFieldInt();
-		charPosInLine = (int) serializer.getNextFieldInt();
-
-		// Set parent node
-		int parentId = serializer.getNextFieldNodeId();
-		if (parentId != 0) {
-			// Parent node is not null
-			parent = new ParentNode();
-			parent.setFakeId(parentId);
-		}
-
-		returnType = serializer.getNextFieldType();
-
-		// Iterate over fields
-		for (Field field : getAllClassFields(false)) {
-			try {
-				Class fieldClass = field.getType();
-				Object value = serializer.parse(fieldClass, fieldClass.getComponentType());
-
-				field.set(this, value);
-			} catch (Exception e) {
-				throw new RuntimeException("Error loading field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
-			}
-		}
-	}
-
-	/**
-	 * Create a string to serialize to a file
-	 * @return
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-
-		// Not an array: Single field. Show
-		out.append(getClass().getSimpleName() //
-				+ "\t" + id //
-				+ "\t" + lineNum //
-				+ "\t" + charPosInLine //
-				+ "\t" + serializer.serializeSaveValue(parent) //
-				+ "\t" + serializer.serializeSaveValue(returnType) //
-				+ "\t" //
-		);
-		ArrayList<BdsNode> nodesToRecurse = new ArrayList<>();
-
-		// Iterate over fields
-		for (Field field : getAllClassFields(false)) {
-			try {
-				Object fieldObj = field.get(this);
-				Class fieldClass = field.getDeclaringClass();
-
-				// Does the field have a value?
-				if (fieldObj != null) {
-					// If it's an array, iterate on all objects
-					if (fieldObj.getClass().isArray()) {
-						for (Object fieldObjSingle : (Object[]) fieldObj) {
-							out.append(serializer.serializeSaveValue(fieldObjSingle) + ",");
-
-							// Can we recurse into this field?
-							if ((fieldObjSingle != null) && (fieldObjSingle instanceof BdsNode)) nodesToRecurse.add((BdsNode) fieldObjSingle);
-						}
-
-						out.deleteCharAt(out.length() - 1); // Remove last comma
-						out.append("\t");
-					} else {
-						// Serialize field value
-						if (fieldObj instanceof Scope) {
-							// Do not serialize scope here
-						} else out.append(serializer.serializeSaveValue(fieldObj) + "\t");
-
-						// Can we recurse into this field?
-						if (fieldObj instanceof BdsNode) nodesToRecurse.add((BdsNode) fieldObj);
-					}
-				} else {
-					// Value of this field is null
-					if (fieldClass.getCanonicalName().startsWith(BdsNodeFactory.get().packageName())) out.append("null\t");
-					else out.append(serializer.serializeSaveValue(fieldObj) + "\t");
-				}
-			} catch (Exception e) {
-				throw new RuntimeException("Error getting field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
-			}
-		}
-
-		out.deleteCharAt(out.length() - 1); // Remove last tab
-		out.append("\n");
-
-		serializer.add(this);
-
-		// Recurse
-		for (BdsNode node : nodesToRecurse)
-			if (!serializer.isSerialized(node)) out.append(serializer.serializeSave(node));
-
-		return out.toString();
-	}
-
-	/**
-	 * Set a fake ID number (this is a fake node created during serialization)
-	 * NOTE!: We set it to a negative number. This is a fake node
-	 */
-	public void setFakeId(int id) {
-		if (id < 0) return; // Is ID already 'fake' node? => Do nothing
-		updateId(-id); // Update using a negative ID (fake ID)
 	}
 
 	public void setNeedsScope(boolean needsScope) {
 		throw new RuntimeException("Cannot set 'needsScope' in this node:" + this.getClass().getSimpleName());
 	}
 
-	public void setScope(Scope scope) {
-		throw new RuntimeException("Cannot set scope to node " + this.getClass().getSimpleName());
+	public void setParent(BdsNode parent) {
+		this.parent = parent;
+	}
+
+	public void setSymbolTable(SymbolTable symtab) {
+		throw new RuntimeException("Cannot set symbol table to node " + this.getClass().getSimpleName());
+	}
+
+	public String toAsm() {
+		return toAsmNode();
+	}
+
+	public String toAsmNode() {
+		String firstline = toString().split("\n")[0];
+
+		// Show file, line and position if available
+		if (getFileName() == null) return "# " + firstline + "\nnode " + id;
+
+		return "# " + getFileName() //
+				+ (lineNum >= 0 ? ", line " + lineNum : "") //
+				+ (charPosInLine >= 0 ? ", pos " + charPosInLine : "") //
+				+ ", node: " + getClass().getSimpleName() //
+				+ "\n" //
+				+ "# " + firstline + "\n" //
+				+ "node " + id //
+				+ "\n" //
+		;
+	}
+
+	public String toAsmRetType() {
+		if (isInt()) return "i";
+		if (isReal()) return "r";
+		if (isString()) return "s";
+		if (isBool()) return "b";
+		if (isList()) return "l";
+		throw new RuntimeException();
 	}
 
 	@Override
@@ -726,9 +624,10 @@ public abstract class BdsNode implements BdsSerialize {
 		// Iterate over fields
 		for (Field field : getAllClassFields()) {
 			try {
+				field.setAccessible(true);
 				Object fieldObj = field.get(this);
 
-				// Does the field have a value?
+				// Does the field have a map?
 				if (fieldObj != null) {
 
 					// If it's an array, iterate on all objects
@@ -764,31 +663,39 @@ public abstract class BdsNode implements BdsSerialize {
 		return out.toString();
 	}
 
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
+	/**
+	 * Type checking (compilation step)
+	 * @param scope
+	 * @param compilerMessages
+	 */
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Calculate return type
-		returnType(scope);
+		returnType = returnType(symtab);
 
 		// Are return types non-null?
 		// Note: null returnTypes happen if variables are missing.
-		if (isReturnTypesNotNull()) typeCheckNotNull(scope, compilerMessages);
+		if (isReturnTypesNotNull()) typeCheckNotNull(symtab, compilerMessages);
 	}
 
 	/**
 	 * Perform several basic type checking tasks.
 	 * Invoke 'typeCheck()' method on all sub-nodes
 	 */
-	public void typeChecking(Scope scope, CompilerMessages compilerMessages) {
+	public void typeChecking(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Create a new scope?
+		boolean newSymTab = false;
 		if (isNeedsScope()) {
-			Scope newScope = new Scope(scope, this);
-			scope = newScope;
+			SymbolTable newSymtab = new SymbolTable(this);
+			symtab = newSymtab;
+			setSymbolTable(newSymtab);
+			newSymTab = true;;
 		}
 
 		// Once the scope is right, we can perform the real type-check
-		typeCheck(scope, compilerMessages);
+		typeCheck(symtab, compilerMessages);
 
 		// Get all sub-nodes (first level, do not recurse)
-		List<BdsNode> nodes = findNodes(null, false);
+		List<BdsNode> nodes = findNodes(null, false, false);
 
 		// Add this node as 'type-checked' to avoid infinite recursion
 		TypeCheckedNodes.get().add(this);
@@ -797,18 +704,21 @@ public abstract class BdsNode implements BdsSerialize {
 		for (BdsNode node : nodes) {
 			// Not already type-checked? Go ahead
 			if (!TypeCheckedNodes.get().isTypeChecked(node)) {
-				node.typeChecking(scope, compilerMessages);
+				node.typeChecking(symtab, compilerMessages);
 			}
 		}
 
-		// Scope processing
-		if (isNeedsScope()) {
-			// Do we really need a scope? If the scope is empty, we don't really need it
-			if (scope.isEmpty()) setNeedsScope(false);
-			else setScope(scope);
+		// Restore old SymbolTable?
+		if (newSymTab) {
+			// Do we really need a SymbolTable?
+			// If SymbolTable is empty, we don't really need it
+			if (symtab.isEmpty()) {
+				setNeedsScope(false);
+				setSymbolTable(null);
+			} else setSymbolTable(symtab);
 
-			// Get back to previous scope
-			scope = scope.getParent();
+			// Restore previous SymbolTable
+			symtab = symtab.getParent();
 		}
 	}
 
@@ -816,16 +726,8 @@ public abstract class BdsNode implements BdsSerialize {
 	 * Type checking.
 	 * This is invoked once we made sure all return types are non null (so we don't have to check for null every time)
 	 */
-	protected void typeCheckNotNull(Scope scope, CompilerMessages compilerMessages) {
+	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Nothing to do
-	}
-
-	/**
-	 * Update ID field
-	 */
-	protected void updateId(int newId) {
-		BdsNodeFactory.get().updateId(id, newId, this);
-		id = newId;
 	}
 
 }

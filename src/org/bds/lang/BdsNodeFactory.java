@@ -1,11 +1,17 @@
 package org.bds.lang;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.util.Gpr;
 
 /**
@@ -18,10 +24,19 @@ public class BdsNodeFactory {
 	public static boolean debug = false;
 	private static BdsNodeFactory bdsNodeFactory = new BdsNodeFactory();
 
-	boolean createFakeIds = false;
-	int nodeNumber = 1, fakeNodeNumber = Integer.MIN_VALUE;
+	public static final String packageNames[] = { //
+			"org.bds.lang.expression" //
+			, "org.bds.lang.statement" //
+			, "org.bds.lang.type" //
+			, "org.bds.lang.value" //
+			, "org.bds.lang" //
+	};
+
+	int nodeNumber = 1;
 	String packageName;
-	HashMap<Integer, BdsNode> nodesById = new HashMap<Integer, BdsNode>(); // Important note: Node 0 means 'null' (numbering is one-based)
+	Map<Integer, BdsNode> nodesById = new HashMap<>(); // Important note: Node 0 means 'null' (numbering is one-based)
+	@SuppressWarnings("rawtypes")
+	Map<String, Class> classByName = new HashMap<>(); // Class cache
 
 	/**
 	 * Get singleton
@@ -37,6 +52,12 @@ public class BdsNodeFactory {
 		bdsNodeFactory = new BdsNodeFactory();
 	}
 
+	public synchronized BdsNode addNode(BdsNode bdsNode) {
+		int nodeId = bdsNode.getId();
+		if (nodeNumber <= nodeId) nodeNumber = nodeId + 1;
+		return nodesById.put(nodeId, bdsNode);
+	}
+
 	/**
 	 * Transform to a class name
 	 */
@@ -49,16 +70,83 @@ public class BdsNodeFactory {
 	}
 
 	/**
+	 * Find constructor and invoke it to create node
+	 * @param clazz: Node class
+	 * @param parent: Parameter for constructor
+	 * @param tree: Parameter for constructor
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected BdsNode createBdsNode(Class clazz, BdsNode parent, ParseTree tree) {
+		try {
+			// Create class
+			Constructor<BdsNode>[] classConstructors = clazz.getConstructors();
+			if (classConstructors.length < 1) {
+				// No public constructors found, try factory method
+				return createBdsNodeFactory(clazz, parent, tree);
+			}
+
+			// Find appropriate constructor
+			for (Constructor<BdsNode> classConstructor : classConstructors) {
+				// Number of arguments in constructor?
+				if (classConstructor.getParameterTypes().length == 0) {
+					return (BdsNode) clazz.newInstance();
+				} else if (classConstructor.getParameterTypes().length == 2) {
+					// Two parameter constructor
+					Object[] params = { parent, tree };
+					return classConstructor.newInstance(params);
+				}
+			}
+			throw new RuntimeException("Unknown constructor method for class '" + clazz.getCanonicalName() + "'");
+		} catch (Exception e) {
+			throw new RuntimeException("Error creating object: Class '" + clazz.getCanonicalName() + "'", e);
+		}
+	}
+
+	/**
+	 * Find constructor and invoke it to create node
+	 * @param clazz: Node class
+	 * @param parent: Parameter for constructor
+	 * @param tree: Parameter for constructor
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected BdsNode createBdsNodeFactory(Class clazz, BdsNode parent, ParseTree tree) {
+		try {
+			// Find factory method
+			Class[] paramClasses = { BdsNode.class, ParseTree.class };
+			Method factoryMethod = clazz.getMethod("factory", paramClasses);
+			if (factoryMethod == null) throw new RuntimeException("Could not find any public constructors or factory method for class '" + clazz.getCanonicalName() + "'");
+
+			// Invoke factory method
+			Object[] params = { parent, tree };
+			return (BdsNode) factoryMethod.invoke(null, params);
+		} catch (NoSuchMethodException | SecurityException e) {
+			throw new RuntimeException("Could not find any public constructors or factory method for class '" + clazz.getCanonicalName() + "'", e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException("Could not accedd factory method for class '" + clazz.getCanonicalName() + "'", e);
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException("Invalid arguments when invoking factory method for class '" + clazz.getCanonicalName() + "'", e);
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException("Invalid invokation of factory method for class '" + clazz.getCanonicalName() + "'", e);
+		}
+	}
+
+	/**
 	 * Create BigDataScriptNodes
 	 */
 	public final BdsNode factory(BdsNode parent, ParseTree tree) {
 		if (tree == null) return null;
 		if (tree instanceof TerminalNode) {
-			if (debug) Gpr.debug("Terminal node: " + tree.getClass().getCanonicalName() + "\n\t\tText: '" + tree.getText() + "'" + "\n\t\tSymbol: " + ((TerminalNode) tree).getSymbol() + "\n\t\tPayload: " + ((TerminalNode) tree).getPayload());
+			if (debug) {
+				Gpr.debug("Terminal node: " + tree.getClass().getCanonicalName() //
+						+ "\n\t\tText    : '" + tree.getText() + "'" //
+						+ "\n\t\tSymbol  : " + ((TerminalNode) tree).getSymbol() //
+						+ "\n\t\tPayload : " + ((TerminalNode) tree).getPayload() //
+				);
+			}
 			return null;
 		}
 
-		// Skip container nodes (they don't add value)
+		// Skip container nodes (they don't add map)
 		int childNum = -1;
 		while ((childNum = isSkip(tree)) >= 0) {
 			if (debug) Gpr.debug("Skipping container node: " + tree.getClass().getSimpleName());
@@ -77,61 +165,60 @@ public class BdsNodeFactory {
 	/**
 	 * Create BigDataScriptNodes
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	public BdsNode factory(String className, BdsNode parent, ParseTree tree) {
-		if (className.startsWith(packageName())) className = className.substring(packageName().length());
+		className = stripPackageName(className);
 
 		// This node doesn't do anything, it should not be created (it is a sub-product of the grammar)
 		if ((tree != null) && isIgnore(tree)) return null;
 
 		// Types: Get instance nodes (singletons)
-		if (className.equals("TypePrimitiveBool")) return Type.BOOL;
-		if (className.equals("TypePrimitiveInt")) return Type.INT;
-		if (className.equals("TypePrimitiveReal")) return Type.REAL;
-		if (className.equals("TypePrimitiveString")) return Type.STRING;
-		if (className.equals("TypePrimitiveVoid")) return Type.VOID;
+		if (className.equals("TypeAny")) return Types.ANY;
+		if (className.equals("TypeBool")) return Types.BOOL;
+		if (className.equals("TypeInt")) return Types.INT;
+		if (className.equals("TypeNull")) return Types.NULL;
+		if (className.equals("TypeReal")) return Types.REAL;
+		if (className.equals("TypeString")) return Types.STRING;
+		if (className.equals("TypeVoid")) return Types.VOID;
 
 		// Create object
-		try {
-			className = packageName() + className;
-			Class clazz = Class.forName(className);
+		Class clazz = findClass(className);
 
-			// Is it a Type?
-			if (clazz == Type.class) {
-				if (tree == null) return new Type(); // No tree data? return a new FAKE node
-
-				// No need to create a new node
-				String typeName = tree.getChild(0).getText().toUpperCase();
-				return Type.get(typeName);
-			}
-
-			// Create class
-			Constructor<BdsNode>[] classConstructors = clazz.getConstructors();
-			Constructor<BdsNode> classConstructor = classConstructors[0];
-
-			BdsNode csnode;
-
-			// Number of arguments in constructor?
-			if (classConstructor.getParameterTypes().length == 0) {
-				csnode = (BdsNode) clazz.newInstance();
-			} else if (classConstructor.getParameterTypes().length == 2) {
-				// Two parameter constructor
-				Object[] params = new Object[2];
-				params[0] = parent;
-				params[1] = tree;
-				csnode = classConstructor.newInstance(params);
-			} else throw new RuntimeException("Unknown constructor method for class '" + className + "'");
-
-			// Done, return new object
-			return csnode;
-		} catch (Exception e) {
-			throw new RuntimeException("Error creating object: Class '" + className + "'", e);
+		// Is it a Type?
+		if (clazz == Type.class) {
+			if (tree == null) throw new RuntimeException("Tree data is null, cannot build node!"); // No tree data? return a new FAKE node
+			throw new RuntimeException("TODO: REMOVE THIS CODE !!!!!????");
+			//			// No need to create a new node
+			//			String typeName = tree.getChild(0).getText();
+			//			return Types.get(typeName);
 		}
+
+		// Create class
+		return createBdsNode(clazz, parent, tree);
+	}
+
+	@SuppressWarnings("rawtypes")
+	Class findClass(String className) {
+		// Is it cached?
+		if (classByName.containsKey(className)) return classByName.get(className);
+
+		// Find full package name
+		for (String packageName : packageNames) {
+			try {
+				String fqcn = packageName + "." + className;
+				Class clazz = Class.forName(fqcn);
+				classByName.put(className, clazz);
+				return clazz;
+			} catch (ClassNotFoundException e) {
+				// Not found, keep looking
+			}
+		}
+
+		throw new RuntimeException("Cannot find class '" + className + "'. This should never happen!");
 	}
 
 	/**
 	 * Get current node ID (used for testing)
-	 * @return
 	 */
 	public synchronized int getCurrentNodeId() {
 		return nodeNumber;
@@ -141,7 +228,7 @@ public class BdsNodeFactory {
 	 * Get an ID for a node and set 'nodesById'
 	 */
 	protected synchronized int getNextNodeId(BdsNode node) {
-		int id = (!createFakeIds ? nodeNumber++ : fakeNodeNumber++);
+		int id = nodeNumber++;
 		nodesById.put(id, node); // Update nodesById
 		return id;
 	}
@@ -159,10 +246,6 @@ public class BdsNodeFactory {
 	 */
 	public synchronized Collection<BdsNode> getNodes() {
 		return nodesById.values();
-	}
-
-	public boolean isCreateFakeIds() {
-		return createFakeIds;
 	}
 
 	public boolean isIgnore(ParseTree tree) {
@@ -197,38 +280,11 @@ public class BdsNodeFactory {
 	}
 
 	/**
-	 * Get the 'real node' corresponding to this 'fake node' (this is used during serialization)
+	 * Remove Java package name from class name
 	 */
-	public BdsNode realNode(BdsNode fakeNode) {
-		if (fakeNode == null) return null; // Nothing to do
-		if (!fakeNode.isFake()) return fakeNode; // Real node? don't replace
-
-		// Type nodes are not replaced, just ID is updated
-		if (fakeNode instanceof Type) {
-			int newId = getNextNodeId(fakeNode);
-			fakeNode.updateId(newId);
-			return fakeNode;
-		}
-
-		// Is it a fake node? => Replace by real node
-		// Find real node based on fake ID
-		int nodeId = -fakeNode.getId(); // Fake IDs are the negative values of real IDs
-		BdsNode realNode = BdsNodeFactory.get().getNode(nodeId);
-
-		// Check that node was replaced
-		if ((nodeId > 0) && (realNode == null)) throw new RuntimeException("Cannot replace fake node '" + nodeId + "'");
-
-		return realNode;
-	}
-
-	public void setCreateFakeIds(boolean createFakeIds) {
-		this.createFakeIds = createFakeIds;
-	}
-
-	public void updateId(int oldId, int newId, BdsNode node) {
-		if (debug) Gpr.debug("Update node ID: " + oldId + " -> " + newId + "\t" + node.getClass().getSimpleName());
-		nodesById.remove(oldId);
-		if (newId != 0) nodesById.put(newId, node);
-		if (nodeNumber <= newId) nodeNumber = newId + 1;
+	String stripPackageName(String className) {
+		if (className.indexOf('.') < 0) return className;
+		String cn[] = className.split("\\.");
+		return cn[cn.length - 1];
 	}
 }

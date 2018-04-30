@@ -1,13 +1,25 @@
 package org.bds.test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import org.bds.Bds;
 import org.bds.Config;
+import org.bds.data.Data;
+import org.bds.data.DataRemote;
+import org.bds.data.DataS3;
 import org.bds.executioner.Executioners;
+import org.bds.lang.type.Type;
+import org.bds.lang.value.InterpolateVars;
+import org.bds.lang.value.Value;
 import org.bds.run.BdsThreads;
+import org.bds.util.Gpr;
+import org.bds.vm.BdsVm;
+import org.bds.vm.VmAsm;
 import org.junit.Before;
+
+import junit.framework.Assert;
 
 /**
  * All methods shared amongst test cases
@@ -25,6 +37,77 @@ public class TestCasesBase {
 		Config.reset();
 		Executioners.reset();
 		BdsThreads.reset();
+	}
+
+	void checkInterpolate(String str, String strings[], String vars[]) {
+		InterpolateVars iv = new InterpolateVars(null, null);
+		iv.parse(str);
+		if (verbose) {
+			System.out.println("String: " + str);
+			System.out.println("\tInterpolation result: |" + iv + "|");
+		}
+
+		// Special case: No variables to interpolate
+		if (strings.length == 1 && vars[0].isEmpty()) {
+			Assert.assertTrue(iv.isEmpty());
+			return;
+		}
+
+		// Check strings
+		for (int i = 0; i < strings.length; i++) {
+			if (verbose) {
+				System.out.print("\tIndex: " + i);
+				System.out.print("\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getLiterals()[i]);
+				System.out.println("\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getExpressions()[i]);
+			}
+
+			Assert.assertEquals(strings[i], iv.getLiterals()[i]);
+			if (vars[i] != null && !vars[i].isEmpty()) Assert.assertEquals(vars[i], iv.getExpressions()[i].toString());
+		}
+	}
+
+	/**
+	 * Check a 'hello.txt' file in an S3 bucket
+	 */
+	void checkS3HelloTxt(String url, String canPath, String paren) {
+		int objectSize = 12;
+		long lastModified = 1437862027000L;
+
+		Data d = Data.factory(url);
+		d.setVerbose(verbose);
+		d.setDebug(debug);
+		long lastMod = d.getLastModified().getTime();
+		if (verbose) Gpr.debug("Path: " + d.getPath() + "\tlastModified: " + lastMod + "\tSize: " + d.size());
+
+		// Check some features
+		Assert.assertTrue("Is S3?", d instanceof DataS3);
+		Assert.assertEquals(url, d.getAbsolutePath());
+		Assert.assertEquals(objectSize, d.size());
+		Assert.assertEquals(lastModified, d.getLastModified().getTime());
+		Assert.assertTrue("Is file?", d.isFile());
+		Assert.assertFalse("Is directory?", d.isDirectory());
+
+		// Download file
+		boolean ok = d.download();
+		Assert.assertTrue("Download OK", ok);
+		Assert.assertTrue("Is downloaded?", d.isDownloaded());
+
+		// Is it at the correct local file?
+		Assert.assertEquals("/tmp/bds/s3/pcingola.bds/hello.txt", d.getLocalPath());
+		Assert.assertEquals(canPath, d.getAbsolutePath());
+		Assert.assertEquals(paren, d.getParent());
+		Assert.assertEquals("hello.txt", d.getName());
+
+		// Check last modified time
+		File file = new File(d.getLocalPath());
+		long lastModLoc = file.lastModified();
+		Assert.assertTrue("Last modified check:" //
+				+ "\n\tlastMod    : " + lastMod //
+				+ "\n\tlastModLoc : " + lastModLoc //
+				+ "\n\tDiff       : " + (lastMod - lastModLoc)//
+				, Math.abs(lastMod - lastModLoc) < 2 * DataRemote.CACHE_TIMEOUT);
+
+		Assert.assertEquals(objectSize, file.length());
 	}
 
 	/**
@@ -52,7 +135,7 @@ public class TestCasesBase {
 		bdsTest.checkVariable(varname, expectedValue);
 	}
 
-	void runAndCheck(String fileName, HashMap<String, Object> expectedValues) {
+	void runAndCheck(String fileName, Map<String, Object> expectedValues) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
@@ -62,7 +145,7 @@ public class TestCasesBase {
 	/**
 	 * Check that a file compiles without any errors, runs and all variables have their expected values
 	 */
-	void runAndCheck(String fileName, HashMap<String, Object> expectedValues, ArrayList<String> argsAfterList) {
+	void runAndCheck(String fileName, Map<String, Object> expectedValues, List<String> argsAfterList) {
 		String argsAfter[] = argsAfterList.toArray(new String[0]);
 		BdsTest bdsTest = new BdsTest(fileName, null, argsAfter, verbose, debug);
 		bdsTest.run();
@@ -71,7 +154,7 @@ public class TestCasesBase {
 	}
 
 	/**
-	 * Check that a file compiles without any errors, runs and a variable have its expected value
+	 * Check that a file compiles without any errors, runs and a variable have its expected map
 	 */
 	void runAndCheck(String fileName, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
@@ -81,7 +164,7 @@ public class TestCasesBase {
 	}
 
 	/**
-	 * Check that a file compiles without any errors, runs and a variable have its expected value
+	 * Check that a file compiles without any errors, runs and a variable have its expected map
 	 */
 	void runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
@@ -158,7 +241,31 @@ public class TestCasesBase {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
-		return bdsTest.getSymbol(varname).getValue();
+		return bdsTest.getValue(varname);
+	}
+
+	/**
+	 * Run and get latest report file
+	 */
+	String runAndGetReport(String fileName, boolean yaml) {
+		String[] argsHtml = { "-reportHtml" };
+		String[] argsYaml = { "-reportYaml" };
+		String[] args = yaml ? argsYaml : argsHtml;
+
+		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
+
+		bdsTest.run();
+		bdsTest.checkRunOk();
+		String reportFileName = bdsTest.bds.getBdsRun().getBdsThread().getReportFile();
+
+		// Sanity check
+		Assert.assertNotNull("No report generated", reportFileName);
+		Assert.assertTrue("Report file not found", Gpr.exists(reportFileName));
+
+		String report = Gpr.readFile(reportFileName);
+		if (debug) System.err.println("Report:\n" + report);
+
+		return report;
 	}
 
 	/**
@@ -196,6 +303,39 @@ public class TestCasesBase {
 		bdsTest.setTestCases(true);
 		bdsTest.run();
 		bdsTest.checkRunOk();
+	}
+
+	/**
+	 * Check that a file compiles without any errors, runs the VM
+	 * and checks that a variable has the expected value
+	 */
+	void runVmAndCheck(String fileName, String varname, Object expectedValue) {
+		runVmAndCheck(fileName, varname, expectedValue, null);
+	}
+
+	/**
+	 * Check that a file compiles without any errors, runs the VM
+	 * and checks that a variable has the expected value.
+	 * Add all 'types' during compilation
+	 */
+	void runVmAndCheck(String fileName, String varname, Object expectedValue, List<Type> types) {
+		VmAsm vmasm = new VmAsm(fileName);
+		vmasm.setDebug(debug);
+		vmasm.setVerbose(verbose);
+		if (types != null) types.forEach(t -> vmasm.addType(t));
+		BdsVm vm = vmasm.compile();
+		vm.run();
+
+		// Check value
+		Value val = vm.getValue(varname);
+		Assert.assertTrue("Variable '" + varname + "' not found ", val != null);
+		Assert.assertEquals( //
+				"Variable '" + varname + "' has different value than expeced:\n" //
+						+ "\tExpected value : " + expectedValue //
+						+ "\tReal value     : " + val //
+				, expectedValue.toString() //
+				, val.toString() //
+		);
 	}
 
 }

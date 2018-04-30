@@ -1,28 +1,30 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.List;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * Rm: Delete all files in list
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListRm extends MethodNativeList {
 
-	public MethodNativeListRm(Type baseType) {
-		super(baseType);
+	private static final long serialVersionUID = 2756073526987367599L;
+
+	public MethodNativeListRm(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "rm";
-		classType = TypeList.get(baseType);
-		returnType = Type.VOID;
+		returnType = Types.VOID;
 
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };
@@ -30,14 +32,10 @@ public class MethodNativeListRm extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		List list = (List) objThis;
-
-		for (Object o : list)
-			bdsThread.data(o.toString()).delete();
-
-		return objThis;
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		for (Value v : vthis)
+			bdsThread.data(v.asString()).delete();
+		return vthis;
 	}
 }

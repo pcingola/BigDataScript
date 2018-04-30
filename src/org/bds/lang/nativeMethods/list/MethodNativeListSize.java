@@ -1,28 +1,31 @@
 package org.bds.lang.nativeMethods.list;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
  * List's length (number of elements)
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeListSize extends MethodNativeList {
 
-	public MethodNativeListSize(Type baseType) {
-		super(baseType);
+	private static final long serialVersionUID = 1605853473198421113L;
+
+	public MethodNativeListSize(TypeList listType) {
+		super(listType);
 	}
 
 	@Override
 	protected void initMethod(Type baseType) {
 		functionName = "size";
-		classType = TypeList.get(baseType);
-		returnType = Type.INT;
+		returnType = Types.INT;
 
 		String argNames[] = { "this" };
 		Type argTypes[] = { classType };
@@ -31,10 +34,8 @@ public class MethodNativeListSize extends MethodNativeList {
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		ArrayList list = (ArrayList) objThis;
-		return (long) list.size();
+	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
+		return new ValueInt((long) vthis.size());
 	}
 }

@@ -1,41 +1,43 @@
 package org.bds.lang.nativeMethods.map;
 
-import java.util.HashMap;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeMap;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueMap;
 import org.bds.run.BdsThread;
 
 /**
  * Return a list of keys
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeMapRemove extends MethodNativeMap {
 
-	public MethodNativeMapRemove(Type baseType) {
-		super(baseType);
+	private static final long serialVersionUID = 4507204640511249438L;
+
+	public MethodNativeMapRemove(TypeMap mapType) {
+		super(mapType);
 	}
 
 	@Override
-	protected void initMethod(Type baseType) {
+	protected void initMethod() {
+		TypeMap mapType = (TypeMap) classType;
 		functionName = "remove";
-		classType = TypeMap.get(baseType);
-		returnType = Type.BOOL;
+		returnType = Types.BOOL;
 
 		String argNames[] = { "this", "key" };
-		Type argTypes[] = { classType, Type.STRING }; // null: don't check argument (anything can be converted to 'string')
+		Type argTypes[] = { mapType, mapType.getKeyType() };
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		HashMap map = (HashMap) objThis;
-		String key = csThread.getObject("key").toString();
-		return map.remove(key);
+	protected Value runMethodNative(BdsThread bdsThread, ValueMap vthis) {
+		Value key = bdsThread.getValue("key");
+		return new ValueBool(vthis.remove(key));
 	}
 }

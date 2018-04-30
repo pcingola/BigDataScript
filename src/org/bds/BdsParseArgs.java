@@ -1,20 +1,27 @@
 package org.bds;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.bds.lang.Literal;
-import org.bds.lang.LiteralBool;
-import org.bds.lang.LiteralInt;
-import org.bds.lang.LiteralListString;
-import org.bds.lang.LiteralReal;
-import org.bds.lang.LiteralString;
 import org.bds.lang.ProgramUnit;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
-import org.bds.lang.VarDeclaration;
-import org.bds.lang.VariableInit;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.lang.statement.VarDeclaration;
+import org.bds.lang.statement.VariableInit;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Literal;
+import org.bds.lang.value.LiteralBool;
+import org.bds.lang.value.LiteralInt;
+import org.bds.lang.value.LiteralListString;
+import org.bds.lang.value.LiteralReal;
+import org.bds.lang.value.LiteralString;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueReal;
+import org.bds.lang.value.ValueString;
+import org.bds.scope.GlobalScope;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -81,11 +88,11 @@ public class BdsParseArgs {
 	boolean showHelp;
 	int argNum = 0;
 	ProgramUnit programUnit;
-	ArrayList<String> programArgs; // Command line arguments for BigDataScript program
+	List<String> programArgs; // Command line arguments for BigDataScript program
 
-	public BdsParseArgs(Bds bds) {
-		programUnit = bds.programUnit;
-		programArgs = bds.getProgramArgs();
+	public BdsParseArgs(ProgramUnit programUnit, List<String> args) {
+		this.programUnit = programUnit;
+		programArgs = args;
 	}
 
 	/**
@@ -101,20 +108,25 @@ public class BdsParseArgs {
 				if (debug) Timer.showStdErr("Activating 'show help' mode");
 				showHelp = true;
 			} else if (arg.startsWith("-")) {
-				// Get variable name and value
+				// Get variable name and map
 				String varName = arg.substring(1);
 				initializeArgs(varName);
 			}
 		}
 
-		// Make all unprocessed arguments available for the program (in 'args' list)
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_ARGS_LIST, TypeList.get(Type.STRING), programArgs));
-
 		// Initialize program name
 		String programPath = programUnit.getFileName();
 		String progName = Gpr.baseName(programPath);
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_NAME, Type.STRING, progName));
-		Scope.getGlobalScope().add(new ScopeSymbol(Scope.GLOBAL_VAR_PROGRAM_PATH, Type.STRING, programPath));
+		GlobalScope gs = GlobalScope.get();
+
+		// Create and populate argument list
+		ValueList vargs = (ValueList) TypeList.get(Types.STRING).newValue();
+		for (String arg : programArgs)
+			vargs.add(new ValueString(arg));
+
+		gs.add(GlobalScope.GLOBAL_VAR_ARGS_LIST, vargs); // Make all unprocessed arguments available for the program (in 'args' list)
+		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_NAME, progName);
+		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_PATH, programPath);
 	}
 
 	/**
@@ -129,8 +141,13 @@ public class BdsParseArgs {
 		// Find all variable declarations that match this command line argument
 		for (VarDeclaration varDecl : programUnit.varDeclarations(true)) {
 			Type varType = varDecl.getType();
-			// Is is a primitive variable or a primitive list?
-			if (varType.isPrimitiveType() || varType.isList()) {
+			// We can only parse some basic types or lists of strings
+			if (varType.isBool() //
+					|| varType.isInt() //
+					|| varType.isReal() //
+					|| varType.isString() //
+					|| varType.isList(Types.STRING) //
+			) {
 
 				// Find an initialization that matches the command line argument
 				for (VariableInit varInit : varDecl.getVarInit())
@@ -145,10 +162,10 @@ public class BdsParseArgs {
 		// Initialize scope variables
 		// Note: Only does this if the variable was not found in the program
 		//---
-		ScopeSymbol ssym = Scope.getGlobalScope().getSymbol(varName);
-		if (ssym != null) {
-			Object value = parseArgs(ssym.getType());
-			ssym.setValue(value);
+		Value val = GlobalScope.get().getValue(varName);
+		if (val != null) {
+			Value value = parseArgs(val.getType());
+			val.setValue(value);
 		}
 
 	}
@@ -175,36 +192,38 @@ public class BdsParseArgs {
 	/**
 	 * Parse an argument and return an object with the
 	 */
-	Object parseArgs(Type varType) {
+	Value parseArgs(Type varType) {
 		if (varType.isList()) {
 			// Create a list of arguments and use them to initialize the variable (list)
-			ArrayList<String> vals = new ArrayList<String>();
+			List<String> vals = new ArrayList<>();
 			for (argNum++; argNum < programArgs.size(); argNum++) {
 				String val = programArgs.get(argNum);
 				if (isOpt(val)) { // Stop if another argument is found
-					argNum--; // This value is not used
+					argNum--; // This map is not used
 					break;
 				} else vals.add(val);
 			}
 
-			return vals;
+			return TypeList.get(Types.STRING).newValue(vals);
 		} else if (varType.isBool()) {
-			// Booleans may not have a value (just '-varName' sets them to 'true')
+			// Booleans may not have a map (just '-varName' sets them to 'true')
 			if (programArgs.size() > (argNum + 1)) {
 				// Is the next argument 'true' or 'false'? => Set argument
 				String valStr = programArgs.get(++argNum).toLowerCase();
-				if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) return true;
-				else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) return false;
+				if (valStr.equals("true") || valStr.equals("t") || valStr.equals("1")) return ValueBool.TRUE;
+				else if (valStr.equals("false") || valStr.equals("f") || valStr.equals("0")) return ValueBool.FALSE;
 
-				// Not any valid value? => This argument is not used
+				// Not any valid map? => This argument is not used
 				argNum--;
 			}
-			return true; // Default value
+			return Value.factory(true); // Default map
 		}
 
 		// Default parsing
-		String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
-		return varType.parse(val);
+		String valStr = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
+		Value val = varType.newDefaultValue();
+		val.parse(valStr);
+		return val;
 	}
 
 	public void setDebug(boolean debug) {
@@ -220,20 +239,20 @@ public class BdsParseArgs {
 
 		if (varType.isList()) {
 			// Create a list of arguments and use them to initialize the variable (list)
-			ArrayList<String> vals = new ArrayList<String>();
+			ValueList vals = new ValueList(Types.STRING);
 			for (argNum++; argNum < programArgs.size(); argNum++) {
-				String val = programArgs.get(argNum);
-				if (isOpt(val)) { // Stop if another argument is found
-					argNum--; // This value is not used
+				String s = programArgs.get(argNum);
+				if (isOpt(s)) { // Stop if another argument is found
+					argNum--; // This map is not used
 					break;
-				} else vals.add(val);
+				} else vals.add(new ValueString(s));
 			}
 
 			useVal = setVarInit(varType, varInit, vals); // Found variable, try to replace or add LITERAL to this VarInit
 		} else if (varType.isBool()) {
 			String valStr = "true";
 
-			// Booleans may not have a value (just '-varName' sets them to 'true')
+			// Booleans may not have a map (just '-varName' sets them to 'true')
 			if (programArgs.size() > (argNum + 1)) {
 				// Is the next argument 'true' or 'false'? => Set argument
 				String boolVal = programArgs.get(++argNum);
@@ -253,39 +272,10 @@ public class BdsParseArgs {
 	 * Add or replace initialization statement in this VarInit
 	 *
 	 * Note: We create a Literal node (of the appropriate type) and add it to
-	 * "varInit.expression"
-	 */
-	boolean setVarInit(Type varType, VariableInit varInit, ArrayList<String> vals) {
-		boolean usedVal = true;
-
-		try {
-			Literal literal = null;
-
-			if (varType.isList(Type.STRING)) {
-				// Create literal
-				LiteralListString lit = new LiteralListString(varInit, null);
-				literal = lit;
-				lit.setValue(vals); // Set literal value
-			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
-
-			// Set varInit to literal
-			varInit.setExpression(literal);
-		} catch (Exception e) {
-			// Error parsing 'val'?
-			throw new RuntimeException("Cannot convert argument '" + vals + "' to type " + varType);
-		}
-
-		return usedVal;
-	}
-
-	/**
-	 * Add or replace initialization statement in this VarInit
-	 *
-	 * Note: We create a Literal node (of the appropriate type) and add it to
-	 * "varInit.expression"
+	 * "fieldDecl.expression"
 	 *
 	 * @param varType: Variable type
-	 * @param varInit: Variable initialization
+	 * @param fieldDecl: Variable initialization
 	 * @param valStr: Value to assign
 	 */
 	boolean setVarInit(Type varType, VariableInit varInit, String valStr) {
@@ -300,8 +290,8 @@ public class BdsParseArgs {
 				LiteralBool lit = new LiteralBool(varInit, null);
 				literal = lit;
 
-				// Set literal value
-				boolean valBool = true; // Default value is 'true'
+				// Set literal map
+				boolean valBool = true; // Default map is 'true'
 				if (valStr != null) {
 					// Parse boolean
 					valStr = valStr.toLowerCase();
@@ -310,23 +300,23 @@ public class BdsParseArgs {
 					else usedVal = false; // Not any valid value? => This argument is not used
 				}
 
-				lit.setValue(valBool);
+				lit.setValue(new ValueBool(valBool));
 			} else if (varType.isInt()) {
 				// Create literal
 				LiteralInt lit = new LiteralInt(varInit, null);
 				literal = lit;
 
-				// Set literal value
+				// Set literal map
 				long valInt = Long.parseLong(valStr);
-				lit.setValue(valInt);
+				lit.setValue(new ValueInt(valInt));
 			} else if (varType.isReal()) {
 				// Create literal
 				LiteralReal lit = new LiteralReal(varInit, null);
 				literal = lit;
 
-				// Set literal value
+				// Set literal map
 				double valReal = Double.parseDouble(valStr);
-				lit.setValue(valReal);
+				lit.setValue(new ValueReal(valReal));
 			} else if (varType.isString()) {
 				// Create literal
 				LiteralString lit = new LiteralString(varInit, null);
@@ -334,14 +324,43 @@ public class BdsParseArgs {
 
 				// Set literal value
 				if (valStr == null) valStr = ""; // We should never have 'null' values
-				lit.setValue(valStr);
+				lit.setValue(new ValueString(valStr));
 			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
 
-			// Set varInit to literal
+			// Set fieldDecl to literal
 			varInit.setExpression(literal);
 		} catch (Exception e) {
 			// Error parsing 'val'?
 			throw new RuntimeException("Cannot convert argument '" + valStr + "' to type " + varType);
+		}
+
+		return usedVal;
+	}
+
+	/**
+	 * Add or replace initialization statement in this VarInit
+	 *
+	 * Note: We create a Literal node (of the appropriate type) and add it to
+	 * "fieldDecl.expression"
+	 */
+	boolean setVarInit(Type varType, VariableInit varInit, ValueList vals) {
+		boolean usedVal = true;
+
+		try {
+			Literal literal = null;
+
+			if (varType.isList(Types.STRING)) {
+				// Create literal
+				LiteralListString lit = new LiteralListString(varInit, null);
+				literal = lit;
+				lit.setValue(vals); // Set literal map
+			} else throw new RuntimeException("Cannot convert command line argument to variable type '" + varType + "'");
+
+			// Set fieldDecl to literal
+			varInit.setExpression(literal);
+		} catch (Exception e) {
+			// Error parsing 'val'?
+			throw new RuntimeException("Cannot convert argument '" + vals + "' to type " + varType);
 		}
 
 		return usedVal;

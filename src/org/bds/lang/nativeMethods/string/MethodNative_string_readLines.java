@@ -1,16 +1,19 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.util.ArrayList;
-
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
-public class MethodNative_string_readLines extends MethodNative {
+public class MethodNative_string_readLines extends MethodNativeString {
+
+	private static final long serialVersionUID = -1493054981595216278L;
+
 	public MethodNative_string_readLines() {
 		super();
 	}
@@ -18,31 +21,38 @@ public class MethodNative_string_readLines extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "readLines";
-		classType = Type.STRING;
-		returnType = TypeList.get(Type.STRING);
+		classType = Types.STRING;
+		returnType = TypeList.get(Types.STRING);
 
 		String argNames[] = { "this" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}
 
 	@Override
-	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+	public Value runMethod(BdsThread bdsThread, Value vThis) {
 		// Download data if necessary
-		Data data = bdsThread.data(objThis.toString());
+		String fileName = vThis.asString();
+		Data data = bdsThread.data(fileName);
 
 		// Download remote file
+		ValueList vlist = new ValueList(returnType);
 		if (data.isRemote() //
 				&& !data.isDownloaded() //
 				&& !data.download() //
-		) return new ArrayList<String>(); // Download error
+		) return vlist; // Download error
 
 		// Local file doesn't exist? Return an empty list
-		if (!Gpr.exists(data.getLocalPath())) return new ArrayList<String>();
+		if (!Gpr.exists(data.getLocalPath())) return vlist;
 
 		// Read file and split it
 		// Note: If the file is empty, it should return a list with a single empty string (not an empty list)
-		return array2list(Gpr.readFile(data.getLocalPath(), false).split("\n"));
+		return arrayString2valuelist(Gpr.readFile(data.getLocalPath(), false).split("\n"));
+	}
+
+	@Override
+	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
+		throw new RuntimeException("This method should never be invoked!");
 	}
 }

@@ -1,0 +1,18 @@
+#!/usr/bin/env bds
+
+l1 := ['hi', 'bye']
+l2 := ['hola', 'adios']
+
+# List of lists
+string[]{} m
+m{'en'} = l1
+m{'sp'} = l2
+
+m{'en'} += 'hello'
+
+typem := m.type()
+typemen := m{'en'}.type()
+
+println "typem: $typem"
+println "typemen: $typemen"
+println "m: $m"

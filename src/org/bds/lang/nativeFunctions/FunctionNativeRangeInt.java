@@ -1,10 +1,12 @@
 package org.bds.lang.nativeFunctions;
 
-import java.util.ArrayList;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueInt;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
@@ -14,6 +16,8 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeRangeInt extends FunctionNative {
 
+	private static final long serialVersionUID = 592085429755974826L;
+
 	public FunctionNativeRangeInt() {
 		super();
 	}
@@ -21,23 +25,28 @@ public class FunctionNativeRangeInt extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "range";
-		returnType = TypeList.get(Type.INT);
+		returnType = TypeList.get(Types.INT);
 
 		String argNames[] = { "min", "max" };
-		Type argTypes[] = { Type.INT, Type.INT };
+		Type argTypes[] = { Types.INT, Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
+	}
+
+	@Override
+	public Value runFunction(BdsThread bdsThread) {
+		long min = bdsThread.getInt("min");
+		long max = bdsThread.getInt("max");
+
+		ValueList list = new ValueList(returnType);
+		for (long i = min; i <= max; i++)
+			list.add(new ValueInt(i));
+
+		return list;
 	}
 
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
-		long min = bdsThread.getInt("min");
-		long max = bdsThread.getInt("max");
-
-		ArrayList<Long> list = new ArrayList<>();
-		for (long i = min; i <= max; i++)
-			list.add(i);
-
-		return list;
+		throw new RuntimeException("This method should not be used!");
 	}
 }

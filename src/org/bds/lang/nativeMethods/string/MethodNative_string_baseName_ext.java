@@ -2,11 +2,15 @@ package org.bds.lang.nativeMethods.string;
 
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_baseName_ext extends MethodNative {
+public class MethodNative_string_baseName_ext extends MethodNativeString {
+
+	private static final long serialVersionUID = 708502319838298112L;
+
+
 	public MethodNative_string_baseName_ext() {
 		super();
 	}
@@ -14,11 +18,11 @@ public class MethodNative_string_baseName_ext extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "baseName";
-		classType = Type.STRING;
-		returnType = Type.STRING;
+		classType = Types.STRING;
+		returnType = Types.STRING;
 
 		String argNames[] = { "this", "ext" };
-		Type argTypes[] = { Type.STRING, Type.STRING };
+		Type argTypes[] = { Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

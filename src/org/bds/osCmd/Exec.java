@@ -22,6 +22,8 @@ public class Exec {
 
 	public static boolean debug = false;
 
+	boolean quiet;
+	boolean saveLinesInMemory;
 	int exitValue;
 	String stdOutStr;
 	String stdErrStr;
@@ -37,10 +39,13 @@ public class Exec {
 	 * Execute a program
 	 */
 	public static ExecResult exec(List<String> args, boolean quiet) {
-		return new Exec().run(args, quiet);
+		Exec exec = new Exec();
+		exec.setQuiet(quiet);
+		exec.setSaveLinesInMemory(true);
+		return exec.run(args);
 	}
 
-	protected ExecResult run(List<String> args, boolean quiet) {
+	protected ExecResult run(List<String> args) {
 		if (Config.get().isDebug() || Config.get().isLog()) Timer.showStdErr("Executing command. Arguments: " + args);
 
 		// Create a command string
@@ -67,8 +72,10 @@ public class Exec {
 			// Make sure we read STDOUT and STDERR, so that process does not block
 			stdout = new StreamGobbler(process.getInputStream(), false);
 			stderr = new StreamGobbler(process.getErrorStream(), true);
-			stdout.setSaveLinesInMemory(true);
-			stderr.setSaveLinesInMemory(true);
+
+			stdout.setSaveLinesInMemory(saveLinesInMemory);
+			stderr.setSaveLinesInMemory(saveLinesInMemory);
+
 			if (quiet) {
 				stdout.setQuietMode();
 				stderr.setQuietMode();
@@ -83,7 +90,7 @@ public class Exec {
 			stdout.join();
 			stderr.join();
 
-			if (debug) Gpr.debug("Exit value: " + exitValue);
+			if (debug) Gpr.debug("Exit map: " + exitValue);
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot execute commnads: '" + commands + "'", e);
 		}
@@ -93,5 +100,13 @@ public class Exec {
 		if (stderr != null) stdErrStr = stderr.getAllLines();
 
 		return new ExecResult(stdOutStr, stdErrStr, exitValue);
+	}
+
+	public void setQuiet(boolean quiet) {
+		this.quiet = quiet;
+	}
+
+	public void setSaveLinesInMemory(boolean saveLinesInMemory) {
+		this.saveLinesInMemory = saveLinesInMemory;
 	}
 }

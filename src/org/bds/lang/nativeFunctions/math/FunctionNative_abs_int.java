@@ -1,11 +1,16 @@
 package org.bds.lang.nativeFunctions.math;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
 import org.bds.lang.nativeFunctions.FunctionNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 public class FunctionNative_abs_int extends FunctionNative {
+
+	private static final long serialVersionUID = 8364859515887190016L;
+
+
 	public FunctionNative_abs_int() {
 		super();
 	}
@@ -13,16 +18,16 @@ public class FunctionNative_abs_int extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "abs";
-		returnType = Type.INT;
+		returnType = Types.INT;
 
 		String argNames[] = { "x" };
-		Type argTypes[] = { Type.INT };
+		Type argTypes[] = { Types.INT };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
-		return (Long) Math.abs(bdsThread.getInt("x"));
+		return Math.abs(bdsThread.getInt("x"));
 	}
 }

@@ -1,45 +1,44 @@
 package org.bds.run;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 
 import org.bds.Config;
 import org.bds.data.Data;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.lang.BdsNode;
-import org.bds.lang.BlockWithFile;
-import org.bds.lang.Checkpoint;
-import org.bds.lang.ExpressionTask;
-import org.bds.lang.FunctionCall;
-import org.bds.lang.MethodCall;
+import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ProgramUnit;
-import org.bds.lang.Statement;
-import org.bds.lang.StatementInclude;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
-import org.bds.lang.Wait;
+import org.bds.lang.statement.BlockWithFile;
+import org.bds.lang.statement.Statement;
+import org.bds.lang.statement.StatementInclude;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
+import org.bds.lang.value.ValueString;
 import org.bds.osCmd.Exec;
 import org.bds.report.Report;
 import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
 import org.bds.task.Task;
 import org.bds.task.TaskDependecies;
+import org.bds.task.TaskFactory;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
+import org.bds.vm.BdsVm;
 
 /**
  * A threads used in a bigDataScript program
@@ -48,38 +47,37 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class BdsThread extends Thread implements BdsSerialize {
+public class BdsThread extends Thread implements Serializable {
 
-	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
+	private static final long serialVersionUID = 1206304272840188781L;
+
+	// Exit codes (see bds.go)
+	public static final int EXITCODE_OK = 0;
+	public static final int EXITCODE_ERROR = 1;
+	public static final int EXITCODE_TIMEOUT = 2;
+	public static final int EXITCODE_KILLED = 3;
+	public static final int EXITCODE_FATAL_ERROR = 10;
+	public static final int EXITCODE_ASSERTION_FAILED = 5;
+
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
-	private static int threadNumber = 1;
+	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
+	private static int bdsThreadNumber = 1;
 
-	Config config; // Config
+	Config config; // Configuration
 	Random random; // Random number generator
+
+	BdsVm vm; // Virtual machine
 
 	// Program and state
 	Statement statement; // Main statement executed by this thread
-	String statementNodeId; // Statement's ID, used only when un-serializing
-	ProgramCounter pc; // Program counter
 	RunState runState; // Latest RunState
-	Object returnValue; // Latest return value (from a 'return' statement)
-	int exitValue; // Exit value
+	int exitValue; // Exit map
 	List<String> removeOnExit; // Files to be removed on exit
+	String reportFile; // Latest report file
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
 
-	// Debug stuff
-	BufferedReader console; // Read debug commands from console
-	DebugMode debugMode = null; // By default we are NOT debugging the program
-	ProgramCounter debugStepOverPc;
-
-	// Scope
-	Scope scope; // Base scope
-	String scopeNodeId; // Scope's ID, used only when un-serializing
-	Deque<Object> stack; // Program stack
-
-	// BdsThread
-	String currentDir; // Program's 'current directoy'
+	String currentDir; // Program's 'current directory'
 	BdsThread parent; // Parent thread
 	String bdsThreadId; // BdsThread ID
 	int bdsThreadNum; // Thread number
@@ -87,45 +85,19 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 	// Task management
 	TaskDependecies taskDependecies;
-	List<Task> restoredTasks; // Unserialized tasks.
 
 	/**
 	 * Get an ID for a node
 	 */
-	protected synchronized static int bigDataScriptThreadId() {
-		return threadNumber++;
+	protected synchronized static int bdsThreadId() {
+		return bdsThreadNumber++;
 	}
 
-	public BdsThread(Statement statement, BdsThread parent) {
+	private BdsThread(BdsThread parent, Statement statement, Config config, BdsVm vm) {
 		super();
 		this.parent = parent;
-		bdsThreadNum = bigDataScriptThreadId();
-		pc = new ProgramCounter(parent.getPc());
-		scope = parent.scope;
-		stack = new LinkedList<>();
-		runState = RunState.OK;
-		config = parent.config;
-		random = parent.random;
-		removeOnExit = parent.removeOnExit;
-		currentDir = parent.currentDir;
-
-		bdsChildThreadsById = new HashMap<>();
-		taskDependecies = new TaskDependecies();
-
-		setStatement(statement);
-		parent.add(this);
-
-		taskDependecies.setVerbose(isVerbose());
-		taskDependecies.setDebug(isDebug());
-	}
-
-	public BdsThread(Statement statement, Config config) {
-		super();
-		bdsThreadNum = bigDataScriptThreadId();
-		pc = new ProgramCounter();
-		scope = Scope.getGlobalScope();
-		stack = new LinkedList<>();
-		runState = RunState.OK;
+		bdsThreadNum = bdsThreadId();
+		setRunState(RunState.OK);
 		this.config = config;
 		random = new Random();
 		removeOnExit = new LinkedList<>();
@@ -137,6 +109,17 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 		taskDependecies.setVerbose(isVerbose());
 		taskDependecies.setDebug(isDebug());
+
+		if (vm != null) {
+			this.vm = vm;
+			vm.setBdsThread(this);
+		}
+
+		if (parent != null) parent.add(this);
+	}
+
+	public BdsThread(Statement statement, Config config, BdsVm vm) {
+		this(null, statement, config, vm);
 	}
 
 	/**
@@ -151,14 +134,6 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 */
 	public synchronized void add(Task task) {
 		taskDependecies.add(task);
-	}
-
-	/**
-	 * Add tasks form un-serialization
-	 */
-	public void addUnserialized(Task task) {
-		if (restoredTasks == null) restoredTasks = new ArrayList<>();
-		restoredTasks.add(task);
 	}
 
 	/**
@@ -184,8 +159,8 @@ public class BdsThread extends Thread implements BdsSerialize {
 				+ message //
 		);
 
-		// Set exit value
-		setExitValue(1L);
+		// Set exit map
+		setExitValue(EXITCODE_ASSERTION_FAILED);
 	}
 
 	/**
@@ -215,23 +190,56 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 		// Save
 		if (isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
-		BdsSerializer bdsSer = new BdsSerializer(checkpointFileName, config);
-		bdsSer.save(getRoot()); // Save root thread
+
+		try {
+			// Freeze all threads (cannot serialize while running and changing state)
+			Freeze.freeze();
+
+			// Serialize root BdsThred to file
+			ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(checkpointFileName)));
+			out.writeObject(getRoot());
+			out.close();
+
+			// Un-freeze all threads
+			Freeze.unfreeze();
+		} catch (Exception e) {
+			throw new RuntimeException("Error while serializing to file '" + checkpointFileName + "'", e);
+		}
 
 		return checkpointFileName;
 	}
 
-	/**
-	 * Make sure that the statement node is the first in the checkpoint recovery
-	 */
-	public void checkpointRecoverReset() {
-		if (pc.checkpointRecoverReset(statement)) return;
+	void cleanupBeforeReport() {
+		// We are completely done
+		setRunState(RunState.FINISHED);
 
-		// Empty PC means that we finished executing
-		if (!pc.isEmpty()) {
-			// If PC is not empty, we should have found the nodes
-			throw new RuntimeException("Checkpoint statement not found in Program Counter:" + this);
+		// Finish up
+		removeStaleData();
+		timer.end();
+	}
+
+	void clearupAfterReport() {
+		if (!isRoot()) parent.remove(this); // Remove this bdsThread from parent's threads
+
+		// OK, we are done
+		if (isDebug()) {
+			// Root thread? Report all tasks
+			TaskDependecies td = isRoot() ? TaskDependecies.get() : taskDependecies;
+
+			Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
+					+ "'" + getBdsThreadId() + "'" //
+					+ " finished" //
+					+ (isDebug() ? ", run state: '" + getRunState() + "'" : "") //
+					+ ", exit map: " + getExitValue() //
+					+ ", tasks executed: " + td.getTasks().size() //
+					+ ", tasks failed: " + td.countTaskFailed() //
+					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
+					+ "." //
+			);
 		}
+
+		// Remove thread from "running threads"
+		BdsThreads.getInstance().remove();
 	}
 
 	void createBdsThreadId() {
@@ -262,127 +270,41 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return Data.factory(fileName, currentDir);
 	}
 
-	/**
-	 * Running in debug mode: This method is invoked right before running 'node'
-	 */
-	void debug(BdsNode node) {
-		if (node.isStopDebug()) {
-			switch (debugMode) {
-			case RUN:
-				// Keep running until we find a breakpoint
+	void exitCode() {
+		boolean ok = true;
+		// We are done running
+		if (isDebug()) Timer.showStdErr("BdsThread finished: " + getBdsThreadId());
+		if (getRunState().isFatalError()) {
+			// Error condition
+			ok = false;
+			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' fatal error");
+		} else {
+			// OK, we finished running
+			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
+
+			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
+			ok = waitAll();
+			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' waitAll: All threads and tasks finished");
+		}
+
+		// All tasks in wait finished OK?
+		if (!ok) {
+			// Errors? Then set exit status appropriately
+			exitValue = EXITCODE_ERROR;
+		} else {
+			switch (getRunState()) {
+			case FATAL_ERROR:
+				exitValue = EXITCODE_FATAL_ERROR;
 				break;
 
-			case STEP:
-				// Show options
-				debugStep(node);
-				break;
-
-			case STEP_OVER:
-				// Run until we are back from a function (method) call
-				if (debugStepOverPc == null) debugStep(node);
-				else if (pc.size() <= debugStepOverPc.size()) {
-					// Are we done stepping over?
-					debugStep(node);
-					debugStepOverPc = null;
-				}
+			case THREAD_KILLED:
+				exitValue = EXITCODE_KILLED;
 				break;
 
 			default:
-				throw new RuntimeException("Unimplemented debug mode: " + debugMode);
+				// Do nothing with exitValue;
+				break;
 			}
-		}
-	}
-
-	/**
-	 * Show debug 'step' options
-	 */
-	void debugStep(BdsNode node) {
-		// Show current line
-		String prg = node.toString();
-		if (prg.indexOf("\n") > 0) prg = "\n" + Gpr.prependEachLine("\t", prg);
-		else prg = prg + " ";
-
-		String prompt = "DEBUG [" + debugMode + "]: " //
-				+ node.getFileName() //
-				+ ", line " + node.getLineNum() //
-				+ (isDebug() ? " (" + node.getClass().getSimpleName() + ")" : "") //
-				+ ": " + prg //
-				+ "> " //
-		;
-
-		//---
-		// Wait for options
-		//---
-		while (true) {
-			System.err.print(prompt);
-			String line = readConsole();
-
-			if (line == null) return;
-			line = line.trim();
-
-			// Parse options
-			if (line.isEmpty()) {
-				// Empty line? => Continue using the same debug mode
-				if (debugMode == DebugMode.STEP_OVER) debugUpdatePc(node);
-				return;
-			} else if (line.equalsIgnoreCase("h")) {
-				// Show help
-				System.err.println("Help:");
-				System.err.println("\t[RETURN]  : " + (debugMode == DebugMode.STEP_OVER ? "step over" : "step"));
-				System.err.println("\tf         : show current Frame (variables within current scope)");
-				System.err.println("\th         : Help");
-				System.err.println("\to         : step Over");
-				System.err.println("\tp         : show Progeam counter");
-				System.err.println("\tr         : Run program (until next breakpoint)");
-				System.err.println("\ts         : Step");
-				System.err.println("\tt         : show stack Trace");
-				System.err.println("\tv varname : show Variable 'varname'");
-				System.err.println("");
-			} else if (line.equalsIgnoreCase("f")) {
-				// Show current 'frame'
-				System.err.println(getScope().toString(false));
-			} else if (line.equalsIgnoreCase("p")) {
-				// Show current 'frame'
-				System.err.println(getPc());
-			} else if (line.equalsIgnoreCase("o")) {
-				// Switch to 'STEP_OVER' mode
-				debugMode = DebugMode.STEP_OVER;
-				debugUpdatePc(node);
-				return;
-			} else if (line.equalsIgnoreCase("r")) {
-				// Switch to 'RUN' mode
-				debugMode = DebugMode.RUN;
-				return;
-			} else if (line.equalsIgnoreCase("s")) {
-				// Switch to 'STEP' mode
-				debugMode = DebugMode.STEP;
-				return;
-			} else if (line.equalsIgnoreCase("t")) {
-				// Show stack trace
-				System.err.println(this.stackTrace());
-			} else if (line.startsWith("v ")) {
-				// Get variable's name
-				String varName = line.substring(2).trim(); // Remove leading "s " string
-
-				// Get and show variable
-				ScopeSymbol ss = getScope().getSymbol(varName);
-				if (ss == null) System.err.println("Variable '" + varName + "' not found");
-				else System.err.println(ss.getType() + " : " + ss.getValue());
-			} else {
-				System.err.println("Unknown command '" + line + "'");
-			}
-		}
-	}
-
-	/**
-	 * Do we need to update 'step over' reference PC
-	 */
-	void debugUpdatePc(BdsNode node) {
-		if (debugStepOverPc == null //
-				&& debugMode == DebugMode.STEP_OVER // Is it in 'step over' mode?
-				&& (node instanceof FunctionCall || node instanceof MethodCall) // Is it a function or method call?
-		) {
-			debugStepOverPc = new ProgramCounter(pc);
 		}
 	}
 
@@ -390,7 +312,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Show a fatal error
 	 */
 	public void fatalError(BdsNode bdsnode, String message) {
-		runState = RunState.FATAL_ERROR;
+		setRunState(RunState.FATAL_ERROR);
 		String filePos = getFileLinePos(bdsnode);
 		System.err.println("Fatal error: " //
 				+ filePos + (filePos.isEmpty() ? "" : ". ") //
@@ -404,42 +326,50 @@ public class BdsThread extends Thread implements BdsSerialize {
 		}
 
 		// Create checkpoint
-		String checkpointFileName = checkpoint(bdsnode);
-		if (checkpointFileName.isEmpty()) System.err.println("Creating checkpoint file: Config or command line option disabled checkpoint file creation, nothing done.");
-		else System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
-
-		// Set exit value
-		setExitValue(1L);
-	}
-
-	/**
-	 * Show a fatal error
-	 */
-	public void fatalError(BdsNode bdsnode, Throwable t) {
-		if (runState == RunState.FATAL_ERROR) return;
-		fatalError(bdsnode, t.getMessage());
-
-		// Show java stack trace
-		if ((config == null) || isVerbose()) t.printStackTrace();
-	}
-
-	/**
-	 * Freeze thread execution
-	 */
-	protected void freeze() {
-		RunState oldRunState = runState;
-		runState = RunState.FROZEN;
-
-		while (freeze) {
-			try {
-				Thread.sleep(FROZEN_SLEEP_TIME);
-				if (isDebug()) Gpr.debug("Frozen bdsThread: '" + getBdsThreadId() + "'");
-			} catch (InterruptedException e) {
-				// Nothing to do
-			}
+		try {
+			String checkpointFileName = checkpoint(bdsnode);
+			if (checkpointFileName.isEmpty()) System.err.println("Creating checkpoint file: Config or command line option disabled checkpoint file creation, nothing done.");
+			else System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
+		} catch (Throwable t) {
+			// Ignore serialization error at this stage (we are within a fatal error)
 		}
 
-		runState = oldRunState; // Restore old state
+		// Set exit map
+		setExitValue(EXITCODE_FATAL_ERROR);
+	}
+
+	public void fatalError(String message) {
+		fatalError(getBdsNodeCurrent(), message);
+	}
+
+	/**
+	 * Fork: Create and start a new bds thread
+	 */
+	public BdsThread fork(BdsVm vmfork) {
+		BdsThread newBdsThread = new BdsThread(this, statement, config, vmfork);
+
+		push(new ValueString(newBdsThread.getBdsThreadId())); // Parent process: return child's thread ID
+		newBdsThread.push(new ValueString("")); // Fork returns empty string on child process
+
+		newBdsThread.start();
+		return newBdsThread;
+	}
+
+	/**
+	 * Freeze thread (e.g. to serialize states)
+	 */
+	protected void freeze(boolean freeze) {
+		List<BdsThread> bdsThreads = getBdsThreadsAll();
+		for (BdsThread th : bdsThreads)
+			th.setFreeze(freeze);
+	}
+
+	/**
+	 * Get node currently executed by the VM
+	 */
+	public BdsNode getBdsNodeCurrent() {
+		int nodeId = vm.getNodeId();
+		return BdsNodeFactory.get().getNode(nodeId);
 	}
 
 	public String getBdsThreadId() {
@@ -466,10 +396,10 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
-	 * Get variable's value as a bool
+	 * Get variable's map as a bool
 	 */
 	public boolean getBool(String varName) {
-		return (Boolean) getScope().getSymbol(varName).getValue();
+		return getScope().getValue(varName).asBool();
 	}
 
 	public Config getConfig() {
@@ -478,10 +408,6 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 	public String getCurrentDir() {
 		return currentDir;
-	}
-
-	public DebugMode getDebugMode() {
-		return debugMode;
 	}
 
 	public int getExitValue() {
@@ -493,6 +419,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Recurse to parent node if not found
 	 */
 	public String getFileLinePos(BdsNode bdsNode) {
+
 		// If the node has file/line info, we are done
 		if (bdsNode.getFileNameCanonical() != null) { //
 			return bdsNode.getFileName() //
@@ -501,61 +428,54 @@ public class BdsThread extends Thread implements BdsSerialize {
 			;
 		}
 
-		// No file/line info in 'bdsNode'. we walk the program-counter
-		// form end to start and return the information from the
-		// first node that has file/line data
+		// TODO: FIX THIS USING VM CALL STACK
 
-		// Find all nodes and add them to a map (by nodeId)
-		List<BdsNode> bdsNodes = statement.findNodes(null, true);
-		Map<Integer, BdsNode> nodesById = new HashMap<>();
-		for (BdsNode n : bdsNodes)
-			nodesById.put(n.getId(), n);
-
-		// Go backwards on PC and return the first information for
-		// the first node that has file/line/pos info.
-		for (int idx = pc.size() - 1; idx >= 0; idx--) {
-			int nodeId = pc.nodeId(idx);
-			BdsNode bn = nodesById.get(nodeId);
-
-			if (bn.getFileNameCanonical() != null) { //
-				return bn.getFileName() + ", line " + bn.getLineNum();
-			}
-		}
+		// 		Map<Integer, BdsNode> nodesById = getNodesById();
+		//
+		//		// No file/line info in 'bdsNode'. we walk the program-counter
+		//		// form end to start and return the information from the
+		//		// first node that has file/line data
+		//
+		//		// Go backwards on stack and return the first information for
+		//		// the first node that has file/line/pos info.
+		//		for (int idx = pc.size() - 1; idx >= 0; idx--) {
+		//			int nodeId = pc.nodeId(idx);
+		//			BdsNode bn = nodesById.get(nodeId);
+		//
+		//			if (bn.getFileNameCanonical() != null) { //
+		//				return bn.getFileName() + ", line " + bn.getLineNum();
+		//			}
+		//		}
 
 		// Nothing found? Return empty
 		return "";
 	}
 
 	/**
-	 * Get variable's value as an int
+	 * Get variable's map as an int
 	 */
 	public long getInt(String varName) {
-		ScopeSymbol ssym = getScope().getSymbol(varName);
-		return (Long) ssym.getValue();
+		return getScope().getValue(varName).asInt();
 	}
 
 	public String getLogBaseName() {
 		return bdsThreadId;
 	}
 
-	@Override
-	public String getNodeId() {
-		return bdsThreadId;
-	}
-
 	/**
-	 * Get variable's value as a java object
+	 * Map nodes by ID
 	 */
-	public Object getObject(String varName) {
-		return getScope().getSymbol(varName).getValue();
+	Map<Integer, BdsNode> getNodesById() {
+		List<BdsNode> bdsNodes = statement.findNodes(null, true, false);
+		Map<Integer, BdsNode> nodesById = new HashMap<>();
+		for (BdsNode n : bdsNodes)
+			nodesById.put(n.getId(), n);
+
+		return nodesById;
 	}
 
 	public BdsThread getParent() {
 		return parent;
-	}
-
-	public ProgramCounter getPc() {
-		return pc;
 	}
 
 	public ProgramUnit getProgramUnit() {
@@ -567,14 +487,14 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
-	 * Get variable's value as a real
+	 * Get variable's map as a real
 	 */
 	public double getReal(String varName) {
-		return (Double) getScope().getSymbol(varName).getValue();
+		return getScope().getValue(varName).asReal();
 	}
 
-	public Object getReturnValue() {
-		return returnValue;
+	public String getReportFile() {
+		return reportFile;
 	}
 
 	/**
@@ -590,30 +510,18 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	public Scope getScope() {
-		return scope;
-	}
-
-	public String getScopeNodeId() {
-		return scopeNodeId;
-	}
-
-	public Deque<Object> getStack() {
-		return stack;
+		return vm.getScope();
 	}
 
 	public Statement getStatement() {
 		return statement;
 	}
 
-	public String getStatementNodeId() {
-		return statementNodeId;
-	}
-
 	/**
-	 * Get variable's value as a string
+	 * Get variable's map as a string
 	 */
 	public String getString(String varName) {
-		return getScope().getSymbol(varName).getValue().toString();
+		return getScope().getValue(varName).toString();
 	}
 
 	/**
@@ -659,10 +567,21 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
+	 * Get variable's value (as a Value object)
+	 */
+	public Value getValue(String varName) {
+		return getScope().getValue(varName);
+	}
+
+	public BdsVm getVm() {
+		return vm;
+	}
+
+	/**
 	 * Execute dependency tasks to achieve goal 'out'
 	 */
-	public synchronized List<String> goal(String out) {
-		List<String> taskIds = new ArrayList<>();
+	public synchronized ValueList goal(String out) {
+		ValueList taskIds = new ValueList(TypeList.get(Types.STRING));
 
 		// Find dependencies
 		Set<Task> tasks = taskDependecies.goal(this, out);
@@ -675,7 +594,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 
 		// Convert to task IDs
 		for (Task t : tasks)
-			taskIds.add(t.getId());
+			taskIds.add(new ValueString(t.getId()));
 
 		return taskIds;
 	}
@@ -684,41 +603,24 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Does 'varName' exists?
 	 */
 	public boolean hasVariable(String varName) {
-		return getScope().getSymbol(varName) != null;
+		return getScope().getValue(varName) != null;
 	}
 
 	/**
-	 * Are we in CHECKPOINT_RECOVER mode?
+	 * Initialize and start threads before running ProgramUnit
 	 */
-	public boolean isCheckpointRecover() {
-		return runState.isCheckpointRecover();
+	void initThreads() {
+		// Start child threads (e.g. when recovering)
+		for (BdsThread bth : bdsChildThreadsById.values()) {
+			if (!bth.isAlive() && !bth.getRunState().isFinished()) bth.start();
+		}
+
+		// Add this thread to collections
+		BdsThreads.getInstance().add(this);
 	}
 
 	public boolean isDebug() {
 		return config != null && config.isDebug();
-	}
-
-	public boolean isExit() {
-		return runState.isExit();
-	}
-
-	public boolean isFatalError() {
-		return runState.isFatalError();
-	}
-
-	public boolean isFinished() {
-		return runState.isFinished();
-	}
-
-	/**
-	 * Is this thread frozen?
-	 */
-	public boolean isFrozen() {
-		return runState.isFrozen();
-	}
-
-	public boolean isReturn() {
-		return runState.isReturn();
 	}
 
 	/**
@@ -740,27 +642,17 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Kill: Stop execution of current thread
 	 */
 	public void kill() {
-		runState = RunState.THREAD_KILLED; // Set state to 'kill'
-	}
-
-	/**
-	 * Kill all tasks/threads in the list
-	 */
-	@SuppressWarnings("rawtypes")
-	public void kill(List taskIds) {
-		if (taskIds == null) return;
-
-		// We are done when ALL tasks are done
-		for (Object tid : taskIds)
-			kill(tid.toString());
+		setRunState(RunState.THREAD_KILLED); // Set state to 'kill'
 	}
 
 	/**
 	 * Kill one task/thread
 	 */
-	public void kill(String taskId) {
+	public void kill(Value vtaskId) {
+		String taskId = vtaskId.asString();
 		if (taskId == null) return;
 
+		// Is 'tid' a bdsThread ID?
 		if (bdsChildThreadsById.containsKey(taskId)) {
 			// Kill thread
 			bdsChildThreadsById.get(taskId).kill();
@@ -772,76 +664,26 @@ public class BdsThread extends Thread implements BdsSerialize {
 	}
 
 	/**
-	 * Create a new scope
+	 * Kill all tasks/threads in the list
 	 */
-	public void newScope(BdsNode node) {
-		scope = new Scope(scope, node);
+	public void kill(ValueList taskIds) {
+		if (taskIds == null) return;
+
+		// We are done when ALL tasks are done
+		for (Value tid : taskIds)
+			kill(tid);
+	}
+
+	public Value pop() {
+		return vm.pop();
 	}
 
 	/**
-	 * Back to old scope
+	 * Print thread information
 	 */
-	public void oldScope() {
-		scope = scope.getParent();
-	}
-
-	public Object peek() {
-		if (isCheckpointRecover()) return null;
-		return stack.peek();
-	}
-
-	public Object pop() {
-		if (isCheckpointRecover()) return null;
-		return stack.removeFirst();
-	}
-
-	//	public long popInt() {
-	//		if (isCheckpointRecover()) return 0;
-	//		Object num = stack.removeFirst();
-	//		if (num instanceof Long) return ((Long) num).longValue();
-	//		if (num instanceof Double) return ((Double) num).longValue();
-	//		throw new RuntimeException("Cannot convert type '" + num.getClass().getCanonicalName() + "' to 'int'");
-	//	}
-	//
-	//	public double popReal() {
-	//		if (isCheckpointRecover()) return 0;
-	//		Object num = stack.removeFirst();
-	//		if (num instanceof Double) return ((Double) num).doubleValue();
-	//		if (num instanceof Long) return ((Long) num).doubleValue();
-	//		throw new RuntimeException("Cannot convert type '" + num.getClass().getCanonicalName() + "' to 'int'");
-	//	}
-
-	/**
-	 * Pop a bool from stack
-	 */
-	public boolean popBool() {
-		return (Boolean) Type.BOOL.cast(pop());
-	}
-
-	/**
-	 * Pop an int from stack
-	 */
-	public long popInt() {
-		return (Long) Type.INT.cast(pop());
-	}
-
-	/**
-	 * Pop a real from stack
-	 */
-	public double popReal() {
-		return (Double) Type.REAL.cast(pop());
-	}
-
-	/**
-	 * Pop a string from stack
-	 */
-	public String popString() {
-		return (String) Type.STRING.cast(pop());
-	}
-
 	public void print() {
 		// Create a list with program file and all included files
-		List<BdsNode> nodeWithFiles = statement.findNodes(StatementInclude.class, true);
+		List<BdsNode> nodeWithFiles = statement.findNodes(StatementInclude.class, true, false);
 		nodeWithFiles.add(0, statement);
 
 		// Show code
@@ -855,20 +697,8 @@ public class BdsThread extends Thread implements BdsSerialize {
 		System.out.println(stackTrace());
 
 		// Show scopes
-		for (Scope scope = getScope(); scope != null; scope = scope.getParent()) {
-			if (!scope.isEmpty()) {
-				BdsNode node = scope.getNode();
-
-				String scopeInfo = "";
-				if ((node != null) && (scope.getNode().getFileName() != null)) scopeInfo = scope.getNode().getFileName() + ":" + scope.getNode().getLineNum();
-				System.out.println("--- Scope: " + scopeInfo + " ---");
-
-				for (String varName : scope) {
-					System.out.println(scope.getSymbol(varName));
-				}
-				System.out.println("--- End of scope ---");
-			}
-		}
+		for (Scope scope = getScope(); scope != null; scope = scope.getParent())
+			if (!scope.isEmpty()) System.out.println(scope);
 	}
 
 	void printCode(String code) {
@@ -879,29 +709,17 @@ public class BdsThread extends Thread implements BdsSerialize {
 		System.out.println("");
 	}
 
-	public void push(Object obj) {
-		if (!isCheckpointRecover()) stack.addFirst(obj);
-
-	}
-
-	/**
-	 * Read a line from STDIN
-	 */
-	public String readConsole() {
-		try {
-			if (console == null) console = new BufferedReader(new InputStreamReader(System.in));
-			String line = console.readLine();
-			return line;
-		} catch (Exception e) {
-			return null;
-		}
+	public void push(Value val) {
+		vm.push(val);
 	}
 
 	/**
 	 * Remove a child thread
 	 */
 	public void remove(BdsThread bdsThread) {
-		bdsChildThreadsById.remove(bdsThread);
+		if (BdsThreads.doNotRemoveThreads) return;
+
+		bdsChildThreadsById.remove(bdsThread.getBdsThreadId());
 	}
 
 	/**
@@ -924,110 +742,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		}
 	}
 
-	/**
-	 * Send task from un-serialization to execution list
-	 */
-	public void restoreUnserializedTasks() {
-		if (restoredTasks == null) return;
-		for (Task task : restoredTasks) {
-			add(task);
-
-			if ((!task.isDone() // Not finished?
-					|| (task.isFailed() && !task.isCanFail())) // or finished but 'can fail'?
-					&& !task.isDependency() // Don't execute dependencies, unledd needed
-			) {
-				// Task not finished or failed? Re-execute
-				ExpressionTask.execute(this, task);
-			}
-		}
-
-		restoredTasks = null; // We don't need it any more (plus we want to make sure we don't schedule tasks more than once)
-	}
-
-	@SuppressWarnings("rawtypes")
-	public synchronized void rmOnExit(List files) {
-		for (Object o : files)
-			rmOnExit(o.toString());
-	}
-
-	public synchronized void rmOnExit(String file) {
-		Data data = data(file);
-
-		// Add file for removal
-		removeOnExit.add(data.getPath());
-
-		// Remove local (cached) copy of the file
-		if (data.isRemote() && (data.getLocalPath() != null)) removeOnExit.add(data.getLocalPath());
-	}
-
-	@Override
-	public void run() {
-		timer = new Timer();
-
-		createLogDir(); // Create log dir
-
-		// Start child threads (e.g. when recovering)
-		for (BdsThread bth : bdsChildThreadsById.values()) {
-			if (!bth.isAlive() && !bth.isFinished()) bth.start();
-		}
-
-		// Add this thread to collections
-		BdsThreads.getInstance().add(this);
-
-		// Run statement (i.e. run program)
-		boolean ok = true;
-		runStatement();
-
-		// We are done running
-		if (isDebug()) Timer.showStdErr("BdsThread finished: " + getBdsThreadId());
-		if (isFatalError()) {
-			// Error condition
-			ok = false;
-		} else {
-			// OK, we finished running
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
-
-			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
-			if (!isFatalError() && !isExit()) ok = waitAll();
-			else ok = false;
-		}
-
-		// All tasks in wait finished OK?
-		if (!ok) {
-			// Errors? Then set exit status appropriately
-			exitValue = 1;
-		} else {
-			Object ev = null;
-
-			switch (runState) {
-			case EXIT:
-				ev = getExitValue();
-				break;
-
-			case RETURN:
-				ev = getReturnValue();
-				break;
-
-			case FATAL_ERROR:
-			case THREAD_KILLED:
-				ev = 1L;
-				break;
-
-			default:
-				ev = null;
-				break;
-			}
-
-			if (ev != null && ev instanceof Long) exitValue = (int) ((long) ((Long) ev)); // Yes, it's a very weird cast....
-		}
-
-		// We are completely done
-		runState = RunState.FINISHED;
-
-		// Finish up
-		removeStaleData();
-		timer.end();
-
+	void reportAfterRun() {
 		// Create reports? Only root thread creates reports
 		if (config != null && isRoot()) {
 			// Create HTML report?
@@ -1042,74 +757,49 @@ public class BdsThread extends Thread implements BdsSerialize {
 				report.createReport();
 			}
 		}
-
-		if (!isRoot()) parent.remove(this); // Remove this bdsThread from parent's threads
-
-		// OK, we are done
-		if (isDebug()) {
-			// Root thread? Report all tasks
-			TaskDependecies td = isRoot() ? TaskDependecies.get() : taskDependecies;
-
-			Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
-					+ "'" + getBdsThreadId() + "'" //
-					+ " finished" //
-					+ (isDebug() ? ", run state: '" + runState + "'" : "") //
-					+ ", exit value: " + getExitValue() //
-					+ ", tasks executed: " + td.getTasks().size() //
-					+ ", tasks failed: " + td.countTaskFailed() //
-					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
-					+ "." //
-			);
-		}
-
-		// Remove thread from "running threads"
-		BdsThreads.getInstance().remove();
 	}
 
 	/**
-	 * Run this node
+	 * Send task from un-serialization to execution list
 	 */
-	public void run(BdsNode node) {
-		// Before node execution
-		if (!isCheckpointRecover()) runBegin(node);
-
-		// Should we freeze execution?
-		if (freeze) freeze();
-
-		try {
-			// Run?
-			if (shouldRun(node)) {
-				// Debug mode?
-				if (debugMode != null) debug(node);
-
-				// Run node
-				node.runStep(this);
+	public void restoreUnserializedTasks() {
+		for (Task task : taskDependecies.getTasks()) {
+			if (!task.isStateFinished() // Not finished?
+					&& !task.isDependency() // Don't execute dependencies, unless needed
+			) {
+				TaskFactory.execute(this, task);
 			}
-		} catch (Throwable t) {
-			fatalError(node, t);
 		}
-
-		// After node execution
-		if (!isCheckpointRecover()) runEnd(node);
 	}
 
-	/**
-	 * Run before running the node
-	 */
-	protected void runBegin(BdsNode node) {
-		// Need a new scope?
-		if (node.isNeedsScope()) newScope(node);
-		getPc().push(node);
+	public synchronized void rmOnExit(Value vfile) {
+		String file = vfile.asString();
+		Data data = data(file);
+
+		// Add file for removal
+		removeOnExit.add(data.getPath());
+
+		// Remove local (cached) copy of the file
+		if (data.isRemote() && (data.getLocalPath() != null)) removeOnExit.add(data.getLocalPath());
 	}
 
-	/**
-	 * Run after running the node
-	 */
-	protected void runEnd(BdsNode node) {
-		getPc().pop(node);
+	public synchronized void rmOnExit(ValueList files) {
+		for (Value v : files)
+			rmOnExit(v);
+	}
 
-		// Restore old scope?
-		if (node.isNeedsScope()) oldScope();
+	@Override
+	public void run() {
+		timer = new Timer();
+		createLogDir(); // Create log dir
+		initThreads(); // Initialize and start threads
+
+		runStatement(); // Run statement (i.e. run program)
+
+		exitCode(); // Calculate exit code
+		cleanupBeforeReport(); // Clean up before final report
+		reportAfterRun(); // Create reports
+		clearupAfterReport(); // Clean up after final report
 	}
 
 	/**
@@ -1117,18 +807,10 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 */
 	protected void runStatement() {
 		try {
-			if (isCheckpointRecover() && pc.isEmpty()) {
-				// This is a special case: We are in recovery mode, but the
-				// thread has finished execution (PC is empty)
-				// = >There is nothing to execute
-				if (isDebug()) Gpr.debug("Thread finished execution before checkpoint, nothing to run. BdsThreadId: " + getBdsThreadId());
-			} else {
-				// Normal execution => Run statement
-				run(statement);
-			}
+			vm.run();
 		} catch (Throwable t) {
-			runState = RunState.FATAL_ERROR;
-			if (isVerbose()) throw new RuntimeException(t);
+			setRunState(RunState.FATAL_ERROR);
+			if (isVerbose()) throw new RuntimeException("Fatal error", t);
 			else Timer.showStdErr("Fatal error: Program execution finished");
 		}
 	}
@@ -1137,131 +819,11 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 * Check that stack has size zero (perform this check after execution finishes)
 	 */
 	public void sanityCheckStack() {
-		if (stack.size() > 0) {
-			Gpr.debug("Stack size: " + stack.size() + "\n" + toStringStack());
-			throw new RuntimeException("Inconsistent stack. Size: " + stack.size());
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		bdsThreadNum = (int) serializer.getNextFieldInt();
-		removeOnExit = serializer.getNextFieldList(TypeList.get(Type.STRING));
-		bdsThreadId = serializer.getNextFieldString();
-		statementNodeId = serializer.getNextFieldString();
-		scopeNodeId = serializer.getNextFieldString();
-
-		// Update global thread number?
-		if (threadNumber < bdsThreadNum) threadNumber = bdsThreadNum + 1;
-
-		// Set parent thread
-		String parentBdsThreadId = serializer.getNextFieldString();
-		if (!parentBdsThreadId.isEmpty()) {
-			parent = serializer.getBdsThread(parentBdsThreadId);
-			parent.add(this);
-		}
-
-		// State
-		runState = RunState.valueOf(serializer.getNextFieldString());
-
-		// Current dir
-		currentDir = serializer.getNextFieldString();
-
-		// Stack
-		String b64 = serializer.getNextField();
-		stack = (b64 != null && !b64.isEmpty() ? (Deque<Object>) serializer.base64Decode(b64) : null);
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		// This 'serializeSave' method can be called form another thread
-		// We have to make sure that the thread is not running while
-		// serializing (otherwise we'll recover an inconsistent state)
-
-		// Set this thread to freeze (it will be frozen in the next 'run' call)
-		setFreeze(true);
-		String pcOld = pc.toString(); // Save current program counter
-
-		// Serialize
-		String serStr = serializeSaveAll(serializer);
-
-		// Has program counter changed?
-		String pcNew = pc.toString();
-		if (!pcNew.equals(pcOld)) {
-			// PC changed => We have to serialize again
-			// This time we are 'safe' because thread should be frozen
-			serStr = serializeSaveAll(serializer);
-		}
-
-		// Un-freeze
-		setFreeze(false);
-
-		return serStr.toString();
-	}
-
-	/**
-	 * Serialize main and data
-	 */
-	public String serializeSaveAll(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-		out.append(serializeSaveThreadMain(serializer));
-		out.append("\n");
-		out.append(serializeSaveThreadData(serializer));
-		return out.toString();
-	}
-
-	/**
-	 * Save thread's data
-	 */
-	protected String serializeSaveThreadData(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-
-		// Save program counter
-		out.append(serializer.serializeSave(pc));
-
-		// Save scopes
-		out.append(serializer.serializeSave(scope));
-
-		// Save program nodes
-		out.append(serializer.serializeSave(statement));
-
-		// Save all tasks (in the same order that they were added)
-		for (Task task : taskDependecies.getTasks())
-			out.append(serializer.serializeSave(task));
-
-		// Save all threads
-		for (BdsThread bdsTh : bdsChildThreadsById.values())
-			out.append(serializer.serializeSave(bdsTh));
-
-		return out.toString();
-	}
-
-	/**
-	 * Save thread's main information
-	 */
-	protected String serializeSaveThreadMain(BdsSerializer serializer) {
-		StringBuilder out = new StringBuilder();
-
-		out.append(getClass().getSimpleName());
-		out.append("\t" + bdsThreadNum);
-		out.append("\t" + serializer.serializeSaveValue(removeOnExit));
-		out.append("\t" + serializer.serializeSaveValue(getBdsThreadId()));
-		out.append("\t" + serializer.serializeSaveValue(statement.getNodeId()));
-		out.append("\t" + serializer.serializeSaveValue(scope.getNodeId()));
-		out.append("\t" + serializer.serializeSaveValue(parent != null ? parent.getBdsThreadId() : ""));
-		out.append("\t" + serializer.serializeSaveValue(runState.toString()));
-		out.append("\t" + serializer.serializeSaveValue(currentDir));
-		out.append("\t" + serializer.base64encode(stack));
-		return out.toString();
+		vm.sanityCheckStack();
 	}
 
 	public void setCurrentDir(String currentDir) {
 		this.currentDir = currentDir;
-	}
-
-	public void setDebugMode(DebugMode debugMode) {
-		this.debugMode = debugMode;
 	}
 
 	public void setExitValue(long exitValue) {
@@ -1275,33 +837,34 @@ public class BdsThread extends Thread implements BdsSerialize {
 		this.freeze = freeze;
 	}
 
-	public void setPc(ProgramCounter pc) {
-		this.pc = pc;
-	}
-
 	public void setRandomSeed(long seed) {
 		random = new Random(seed);
 	}
 
-	public void setReturnValue(Object returnValue) {
-		this.returnValue = returnValue;
+	public void setReportFile(String reportFile) {
+		this.reportFile = reportFile;
 	}
 
 	public void setRunState(RunState runState) {
 		this.runState = runState;
-	}
 
-	public void setScope(Scope scope) {
-		this.scope = scope;
-	}
+		if (vm != null) {
+			switch (runState) {
 
-	/**
-	 * Find and set statement
-	 */
-	public void setStatement(Map<String, BdsSerialize> nodesById) {
-		Statement stat = (Statement) nodesById.get(statementNodeId);
-		if (stat == null) throw new RuntimeException("Cannot find statement node '" + statementNodeId + "'");
-		setStatement(stat);
+			case OK:
+				vm.setRun(false);
+				break;
+
+			case FATAL_ERROR:
+			case FINISHED:
+			case THREAD_KILLED:
+				vm.setRun(false);
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 
 	/**
@@ -1309,150 +872,23 @@ public class BdsThread extends Thread implements BdsSerialize {
 	 */
 	public void setStatement(Statement statement) {
 		this.statement = statement;
-		statementNodeId = statement.getNodeId();
 		createBdsThreadId(); // Create thread ID based on program's name
-	}
-
-	/**
-	 * Should we run this node?
-	 */
-	public boolean shouldRun(BdsNode node) {
-		// Should we run?
-		switch (runState) {
-		case OK:
-		case BREAK:
-		case CONTINUE:
-		case RETURN:
-			return true;
-
-		case EXIT:
-		case FATAL_ERROR:
-		case THREAD_KILLED:
-			return false;
-
-		case WAIT_RECOVER:
-		case CHECKPOINT_RECOVER:
-			break;
-
-		default:
-			throw new RuntimeException("Unhandled RunState: " + runState);
-		}
-
-		//---
-		// Recovering form a checkpoint
-		//---
-
-		// Which node are we looking for?
-		if (!pc.checkpointRecoverHasNextNode()) {
-			// No more nodes to recover? This might happen when recovering a thread that already finished execution
-			return false;
-		}
-
-		// Match?
-		int nodeNum = pc.checkpointRecoverNextNode();
-		if (node.getId() == nodeNum) {
-			// Node found!
-			pc.checkpointRecoverFound();
-
-			// More nodes to recurse? => continue
-			if (pc.checkpointRecoverHasNextNode()) return true;
-
-			// Last node found!
-			runState = RunState.OK; // Switch to 'normal' run state
-			if (node instanceof Wait) runState = RunState.WAIT_RECOVER; // We want to recover all tasks that failed in wait statement
-			if (node instanceof Checkpoint) return false; // We want to recover AFTER the checkpoint statement
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
 	 * Show BDS calling stack
 	 */
 	public String stackTrace() {
-
-		// Get all nodes and hash them by ID
-		List<BdsNode> nodes = statement.findNodes(null, true);
-		HashMap<Integer, BdsNode> nodesById = new HashMap<>();
-		for (BdsNode node : nodes) {
-			nodesById.put(node.getId(), node);
-		}
-		nodesById.put(statement.getId(), statement);
-
-		// Collect source code
-		HashMap<String, String[]> fileName2codeLines = new HashMap<>();
-		for (BdsNode node : nodesById.values()) {
-			if (node instanceof BlockWithFile) {
-				BlockWithFile bwf = (BlockWithFile) node;
-				String fileName = node.getFileNameCanonical();
-				String code = bwf.getFileText();
-				if (fileName != null && code != null) fileName2codeLines.put(fileName, code.split("\n"));
-			}
-		}
-
-		// Show stack
-		StringBuilder sb = new StringBuilder();
-		String linePrev = "";
-		for (int nodeId : pc) {
-			BdsNode node = nodesById.get(nodeId);
-			if (node == null) continue;
-
-			String fileName = node.getFileName();
-			if (fileName == null) continue;
-
-			String[] codeLines = fileName2codeLines.get(fileName);
-			if (codeLines == null) continue;
-
-			int lineNum = node.getLineNum() - 1;
-			if (lineNum <= 0 || lineNum >= codeLines.length) continue;
-
-			String line = Gpr.baseName(node.getFileName()) + ", line " + node.getLineNum() + " :\t" + codeLines[lineNum] + "\n";
-			if (!line.equals(linePrev)) sb.append(line);
-			linePrev = line;
-		}
-
-		return sb.toString();
+		return vm.stackTrace();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("BigDataScriptThread: " + bdsThreadNum + "\n");
-		sb.append("\tPC        : " + pc + "\n");
-		sb.append("\tRun state : " + runState + "\n");
-		sb.append("\tStack     : " + stack + "\n");
-		sb.append("\tScope     : " + scope + "\n");
+		sb.append("\tRun state : " + getRunState() + "\n");
 		sb.append("\tProgram   :\n" + statement.toStringTree("\t\t", "program") + "\n");
 		return sb.toString();
-	}
-
-	/**
-	 * Show stack
-	 */
-	public String toStringStack() {
-		StringBuilder sb = new StringBuilder();
-		int num = 0;
-		for (Object obj : stack)
-			sb.append("Stack[" + (num++) + "]:\tClass: " + obj.getClass().getSimpleName() + "\tValue: " + obj.toString() + "\n");
-		return sb.toString();
-	}
-
-	/**
-	 * Wait for all tasks/threads in the list to finish
-	 * @return true if all tasks/threads finished OK or it were allowed to fail (i.e. canFail = true)
-	 */
-	@SuppressWarnings("rawtypes")
-	public boolean wait(List ids) {
-		if (ids == null) return true;
-
-		boolean ok = true;
-
-		// We are done when ALL tasks/threads are done
-		for (Object id : ids)
-			ok &= wait(id.toString());
-
-		return ok;
 	}
 
 	/**
@@ -1473,6 +909,22 @@ public class BdsThread extends Thread implements BdsSerialize {
 		return true; // Nothing to do (already finished)
 	}
 
+	/**
+	 * Wait for all tasks/threads in the list to finish
+	 * @return true if all tasks/threads finished OK (or failed but were allowed to fail, i.e. canFail = true)
+	 */
+	public boolean wait(ValueList ids) {
+		if (ids == null) return true;
+
+		boolean ok = true;
+
+		// We are done when ALL tasks/threads are done
+		for (Value id : ids)
+			ok &= wait(id.toString());
+
+		return ok;
+	}
+
 	public boolean waitAll() {
 		boolean ok = taskDependecies.waitTasksAll();
 		ok &= waitThreadAll();
@@ -1487,7 +939,7 @@ public class BdsThread extends Thread implements BdsSerialize {
 		try {
 			if (bdsThread != null) {
 				if (isDebug()) Timer.showStdErr("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());
-				if (bdsThread.isFinished()) return true;
+				if (bdsThread.getRunState().isFinished()) return true;
 				bdsThread.join();
 				return bdsThread.getExitValue() == 0; // Finished OK?
 			}
@@ -1504,7 +956,13 @@ public class BdsThread extends Thread implements BdsSerialize {
 		boolean ok = true;
 
 		if (isDebug() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
-		for (BdsThread bdsth : bdsChildThreadsById.values())
+
+		// Populate a list of threads to avoid concurrent modification
+		List<BdsThread> bdsThreads = new LinkedList<>();
+		bdsThreads.addAll(bdsChildThreadsById.values());
+
+		// Wait for all threads
+		for (BdsThread bdsth : bdsThreads)
 			ok &= waitThread(bdsth);
 
 		return ok;

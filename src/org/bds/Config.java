@@ -4,14 +4,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
 
+import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.executioner.MonitorTask;
 import org.bds.executioner.TaskLogger;
+import org.bds.lang.expression.ExpressionTask;
 import org.bds.task.Tail;
 import org.bds.task.TailFile;
 import org.bds.task.Task;
@@ -23,7 +27,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Config {
+public class Config implements Serializable {
+
+	private static final long serialVersionUID = 6558109289073244716L;
 
 	// Bds home directory
 	public static String BDS_HOME = Gpr.HOME + "/.bds";
@@ -60,9 +66,10 @@ public class Config {
 	public static final String DISABLE_CHECKPOINT_CREATE = "disableCheckpoint"; // Disable checkpoint creation
 	public static final String DISABLE_RM_ON_EXIT = "disableRmOnExit";
 	public static final String FILTER_OUT_TASK_HINT = "filterOutTaskHint"; // Lines to filter out from task hint
-	public static final String SHOW_TASK_CODE = "showTaskCode"; // Always show task's code (sys commands)
+	public static final String QUEUE = "queue";
 	public static final String REPORT_HTML = "reportHtml"; // Create an HTML report
 	public static final String REPORT_YAML = "reportYaml"; // Create a YAML report
+	public static final String SHOW_TASK_CODE = "showTaskCode"; // Always show task's code (sys commands)
 	public static final String TAIL_LINES = "tailLines"; // Number of lie to use in 'tail'
 	public static final String TASK_MAX_HINT_LEN = "taskMaxHintLen";
 
@@ -121,7 +128,14 @@ public class Config {
 	String configFileName;
 	String configDirName;
 	String pidFile = "pidFile" + (new Date()).getTime() + ".txt"; // Default PID file
+	String pidRegex; // Regex used to extract PID from cluster command (e.g. qsub).
+	String pidRegexCheckTaskRunning; // Regex to match PID when bds checks that tasks are running in the cluster
+	String queue; // Queue name
 	String reportFileName; // Preferred file name to use for progress and final report
+	String system; // System type
+	String sysShell; // System shell
+	String taskShell; // Task shell
+	String tmpDir; // Tmp directory
 	Properties properties;
 	ArrayList<String> includePath;
 	ArrayList<String> filterOutTaskHint;
@@ -223,11 +237,6 @@ public class Config {
 
 	/**
 	 * A collection of strings showing where to search for include files
-	 *
-	 * TODO: Add path from config file
-	 * TODO: Add default system-wide include path ("/usr/local/bds/include")
-	 *
-	 * @return
 	 */
 	public Collection<String> getIncludePath() {
 		// Create array if needed
@@ -252,6 +261,15 @@ public class Config {
 	}
 
 	/**
+	 * Get a property as a int
+	 */
+	public int getInt(String propertyName, int defaultValue) {
+		String val = getString(propertyName);
+		if (val == null) return defaultValue;
+		return Gpr.parseIntSafe(val.trim());
+	}
+
+	/**
 	 * Get a property as a long
 	 */
 	public long getLong(String propertyName, long defaultValue) {
@@ -264,17 +282,6 @@ public class Config {
 	 * Max number of concurrent threads
 	 */
 	public int getMaxThreads() {
-		if (maxThreads <= 0) {
-			// Parse property
-			maxThreads = (int) getLong(MAX_NUMBER_OF_RUNNING_THREADS, DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS);
-			if (debug) Timer.showStdErr("Config: Setting 'maxThreads' to " + maxThreads);
-
-			if (maxThreads < MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE) {
-				Timer.showStdErr("Config: Attempt to set 'maxThreads' to " + maxThreads + ". Too small, using " + MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE + " inseatd.");
-				maxThreads = MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE;
-			}
-		}
-
 		return maxThreads;
 	}
 
@@ -292,25 +299,17 @@ public class Config {
 	}
 
 	public String getPidRegex(String defaultPidRegex) {
-		String pidRegex = getString(PID_REGEX, defaultPidRegex).trim();
-
-		// Remove leading and trailing quotes
-		if (pidRegex.startsWith("\"") && pidRegex.endsWith("\"") && pidRegex.length() > 2) {
-			pidRegex = pidRegex.substring(1, pidRegex.length() - 1);
-		}
-
+		if (pidRegex == null || pidRegex.isEmpty()) return defaultPidRegex;
 		return pidRegex;
 	}
 
 	public String getPidRegexCheckTasksRunning(String defaultPidRegex) {
-		String pidRegex = getString(PID_CHECK_TASK_RUNNING_REGEX, defaultPidRegex).trim();
+		if (pidRegexCheckTaskRunning == null || pidRegexCheckTaskRunning.isEmpty()) return defaultPidRegex;
+		return pidRegexCheckTaskRunning;
+	}
 
-		// Remove leading and trailing quotes
-		if (pidRegex.startsWith("\"") && pidRegex.endsWith("\"") && pidRegex.length() > 2) {
-			pidRegex = pidRegex.substring(1, pidRegex.length() - 1);
-		}
-
-		return pidRegex;
+	public String getQueue() {
+		return queue;
 	}
 
 	public String getReportFileName() {
@@ -337,7 +336,7 @@ public class Config {
 	}
 
 	/**
-	 * Get a configuration value and split is into an array (using regex '\\s+')
+	 * Get a configuration map and split is into an array (using regex '\\s+')
 	 */
 	public String[] getStringArray(String propertyName, boolean required) {
 		String val = getString(propertyName);
@@ -368,7 +367,11 @@ public class Config {
 	}
 
 	public String getSysShell() {
-		return getString(Config.SYS_SHELL, Config.SYS_SHELL_DEFAULT);
+		return sysShell;
+	}
+
+	public String getSystem() {
+		return system;
 	}
 
 	public Tail getTail() {
@@ -399,41 +402,22 @@ public class Config {
 	}
 
 	public int getTaskMaxHintLen() {
-		if (taskMaxHintLen == null) {
-			taskMaxHintLen = Gpr.parseIntSafe(properties.getProperty(TASK_MAX_HINT_LEN, Task.MAX_HINT_LEN + ""));
-
-			// Negative number means 'unlimited' (technically 2G)
-			if (taskMaxHintLen < 0) taskMaxHintLen = Integer.MAX_VALUE;
-		}
-
 		return taskMaxHintLen;
 	}
 
 	public String getTaskShell() {
-		return getString(Config.TASK_SHELL, Config.TASK_SHELL_DEFAULT);
+		return taskShell;
 	}
 
 	public String getTmpDir() {
-		return getString(TMP_DIR, DEFAULT_TMP_DIR);
+		return tmpDir;
 	}
 
 	public int getWaitAfterTaskRun() {
-		if (waitAfterTaskRun < 0) {
-			// Parse property
-			waitAfterTaskRun = (int) getLong(WAIT_AFTER_TASK_RUN, DEFAULT_WAIT_AFTER_TASK_RUN);
-			if (debug) Timer.showStdErr("Config: Setting 'waitAfterTaskRun' to " + waitAfterTaskRun);
-		}
-
 		return waitAfterTaskRun;
 	}
 
 	public int getWaitTextFileBusy() {
-		if (waitTextFileBusy < 0) {
-			// Parse property
-			waitTextFileBusy = (int) getLong(WAIT_TEXT_FILE_BUSY, DEFAULT_WAIT_TEXT_FILE_BUSY);
-			if (debug) Timer.showStdErr("Config: Setting 'waitTextFileBusy' to " + waitTextFileBusy);
-		}
-
 		return waitTextFileBusy;
 	}
 
@@ -502,12 +486,38 @@ public class Config {
 	 * Parse some values
 	 */
 	void parse() {
+		maxThreads = (int) getLong(MAX_NUMBER_OF_RUNNING_THREADS, DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS);
 		noCheckpoint = getBool(DISABLE_CHECKPOINT_CREATE, false);
 		noRmOnExit = getBool(DISABLE_RM_ON_EXIT, false);
+		pidRegex = getString(PID_REGEX, "").trim();
+		pidRegexCheckTaskRunning = getString(PID_CHECK_TASK_RUNNING_REGEX, "").trim();
+		queue = getString(QUEUE, "");
 		showTaskCode = getBool(SHOW_TASK_CODE, false);
+		sysShell = getString(Config.SYS_SHELL, Config.SYS_SHELL_DEFAULT);
 		tailLines = (int) getLong(TAIL_LINES, TailFile.DEFAULT_TAIL);
 		reportHtml = getBool(REPORT_HTML, false);
 		reportYaml = getBool(REPORT_YAML, false);
+		system = getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
+		taskFailCount = getInt(ExpressionTask.TASK_OPTION_RETRY, 0);
+		taskMaxHintLen = Gpr.parseIntSafe(properties.getProperty(TASK_MAX_HINT_LEN, Task.MAX_HINT_LEN + ""));
+		taskShell = getString(Config.TASK_SHELL, Config.TASK_SHELL_DEFAULT);
+		tmpDir = getString(TMP_DIR, DEFAULT_TMP_DIR);
+		waitAfterTaskRun = (int) getLong(WAIT_AFTER_TASK_RUN, DEFAULT_WAIT_AFTER_TASK_RUN);
+		waitTextFileBusy = (int) getLong(WAIT_TEXT_FILE_BUSY, DEFAULT_WAIT_TEXT_FILE_BUSY);
+
+		// Sanity checks
+		if (maxThreads < MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE) {
+			Timer.showStdErr("Config: Attempt to set 'maxThreads' to " + maxThreads + ". Too small, using " + MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE + " inseatd.");
+			maxThreads = MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE;
+		}
+
+		// Negative number means 'unlimited' (technically 2G)
+		if (taskMaxHintLen < 0) taskMaxHintLen = Integer.MAX_VALUE;
+
+		// Remove leading and trailing quotes from pidRegex
+		if (pidRegex.startsWith("\"") && pidRegex.endsWith("\"") && pidRegex.length() > 2) {
+			pidRegex = pidRegex.substring(1, pidRegex.length() - 1);
+		}
 
 		// Split and add all items
 		filterOutTaskHint = new ArrayList<>();
@@ -545,6 +555,14 @@ public class Config {
 		}
 	}
 
+	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		configInstance = this;
+		return this;
+	}
+
 	public void set(String propertyName, String value) {
 		properties.setProperty(propertyName, value);
 	}
@@ -577,6 +595,10 @@ public class Config {
 		this.pidFile = pidFile;
 	}
 
+	public void setQueue(String queue) {
+		this.queue = queue;
+	}
+
 	public void setQuiet(boolean quiet) {
 		this.quiet = quiet;
 	}
@@ -595,6 +617,10 @@ public class Config {
 
 	public void setShowTaskCode(boolean showTaskCode) {
 		this.showTaskCode = showTaskCode;
+	}
+
+	public void setSystem(String system) {
+		this.system = system;
 	}
 
 	public void setTailLines(int tailLines) {

@@ -1,41 +1,44 @@
 package org.bds.lang.nativeMethods.map;
 
-import java.util.HashMap;
-
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeMap;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeMap;
+import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueBool;
+import org.bds.lang.value.ValueMap;
 import org.bds.run.BdsThread;
 
 /**
  * Return a list of keys
- * 
+ *
  * @author pcingola
  */
 public class MethodNativeMapHasKey extends MethodNativeMap {
 
-	public MethodNativeMapHasKey(Type baseType) {
-		super(baseType);
+	private static final long serialVersionUID = -740760475391713786L;
+
+	public MethodNativeMapHasKey(TypeMap mapType) {
+		super(mapType);
 	}
 
 	@Override
-	protected void initMethod(Type baseType) {
+	protected void initMethod() {
+		TypeMap mapType = (TypeMap) classType;
 		functionName = "hasKey";
-		classType = TypeMap.get(baseType);
-		returnType = Type.BOOL;
+		returnType = Types.BOOL;
 
 		String argNames[] = { "this", "key" };
-		Type argTypes[] = { classType, Type.STRING }; // null: don't check argument (anything can be converted to 'string')
+		Type argTypes[] = { mapType, mapType.getKeyType() };
 		parameters = Parameters.get(argTypes, argNames);
 
 		addNativeMethodToClassScope();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
-	protected Object runMethodNative(BdsThread csThread, Object objThis) {
-		HashMap map = (HashMap) objThis;
-		String key = csThread.getObject("key").toString();
-		return map.containsKey(key);
+	protected Value runMethodNative(BdsThread bdsThread, ValueMap vthis) {
+		Value key = bdsThread.getValue("key");
+		boolean haskey = vthis.hasKey(key);
+		return new ValueBool(haskey);
 	}
 }

@@ -13,6 +13,23 @@ public class GprString {
 		return StringEscapeUtils.escapeJava(str);
 	}
 
+	/**
+	 * Escape multi-line strings so they can be printed in one line
+	 */
+	public static String escapeMultiline(String str) {
+		// Escape sequences:
+		//     '\n' => '\' + 'n'
+		//     '\r' => '\' + 'r'
+		// If line ends in backslash, then it is joined to the previous line
+		//     '\' + '\n' => ''
+		//     '\' + '\r\n' => ''
+		return str.replace("\\\r\n", "") //
+				.replace("\\\n", "") //
+				.replace("\n", "\\n") //
+				.replace("\r", "\\r") //
+		;
+	}
+
 	public static int indexOfUnescaped(String str, char symbol) {
 		// Empty? Nothing to do
 		if (str == null || str.isEmpty()) return -1;
@@ -68,7 +85,7 @@ public class GprString {
 	}
 
 	public static String[] splitCsv(String str) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		while (!str.isEmpty()) {
 			int idx = indexOutsideQuotes(str, ',');
@@ -97,6 +114,13 @@ public class GprString {
 	 */
 	public static String unescape(String str) {
 		return StringEscapeUtils.unescapeJava(str);
+	}
+
+	/**
+	 * Unescape dollar sign
+	 */
+	public static String unescapeDollar(String str) {
+		return str.replace("\\$", "$");
 	}
 
 }

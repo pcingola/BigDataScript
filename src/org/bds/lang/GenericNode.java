@@ -6,10 +6,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
  * A general purpose node
- * 
+ *
  * @author pcingola
  */
 public class GenericNode extends BdsNode {
+
+	private static final long serialVersionUID = 5426115409963411438L;
 
 	File file;
 	BdsNode nodes[];

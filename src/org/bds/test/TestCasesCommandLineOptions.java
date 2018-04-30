@@ -1,6 +1,7 @@
 package org.bds.test;
 
 import org.bds.Bds;
+import org.bds.Config;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 import org.junit.Test;
@@ -17,6 +18,7 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 	@Test
 	public void test01_log() {
 		Gpr.debug("Test");
+		Config.reset();
 
 		// Create command line
 		String args[] = { "-log" };
@@ -28,7 +30,7 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 
 		// Get thread
 		Bds bds = bdsTest.bds;
-		BdsThread bdsThread = bds.getBigDataScriptThread();
+		BdsThread bdsThread = bds.getBdsRun().getBdsThread();
 
 		// Check that all 'log' files exists
 		String base = bdsThread.getBdsThreadId() + "/task.cmdLineOptions_01.line_3.id_1";
@@ -40,5 +42,4 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 			Assert.assertTrue("Log file '" + fileName + "' not found", Gpr.exists(fileName));
 		}
 	}
-
 }

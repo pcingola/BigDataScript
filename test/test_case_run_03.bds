@@ -1,0 +1,19 @@
+#!/usr/bin/env bds
+
+var := "Hi"
+
+int f(int x) return x + 1
+
+int g(int x) return x + 2
+
+void test01() {
+	z := f(2)
+	assert(3, z)
+}
+
+void test02() {
+	z := g(2)
+	assert(4, z)
+}
+
+println "YOU SHOULD NOT SEE THIS MESSAGE WHEN RUNNING TESTS"

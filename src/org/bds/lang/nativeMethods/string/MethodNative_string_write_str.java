@@ -5,12 +5,15 @@ import java.io.File;
 import org.bds.data.Data;
 import org.bds.data.DataRemote;
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 
-public class MethodNative_string_write_str extends MethodNative {
+public class MethodNative_string_write_str extends MethodNativeString {
+
+	private static final long serialVersionUID = 937187776204406784L;
+
 	public MethodNative_string_write_str() {
 		super();
 	}
@@ -18,11 +21,11 @@ public class MethodNative_string_write_str extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "write";
-		classType = Type.STRING;
-		returnType = Type.STRING;
+		classType = Types.STRING;
+		returnType = Types.STRING;
 
 		String argNames[] = { "this", "str" };
-		Type argTypes[] = { Type.STRING, Type.STRING };
+		Type argTypes[] = { Types.STRING, Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

@@ -7,14 +7,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.bds.lang.Block;
-import org.bds.lang.Help;
 import org.bds.lang.ProgramUnit;
-import org.bds.lang.Statement;
-import org.bds.lang.StatementInclude;
-import org.bds.lang.Type;
-import org.bds.lang.VarDeclaration;
-import org.bds.lang.VariableInit;
+import org.bds.lang.statement.Block;
+import org.bds.lang.statement.Help;
+import org.bds.lang.statement.Statement;
+import org.bds.lang.statement.StatementInclude;
+import org.bds.lang.statement.VarDeclaration;
+import org.bds.lang.statement.VariableInit;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
 
@@ -40,7 +41,7 @@ public class HelpCreator {
 		this.programUnit = programUnit;
 		helpStrings = new LinkedList<>();
 		included = new HashSet<>();
-		varDeclBySection = new AutoHashMap<String, LinkedList<VarDeclaration>>(new LinkedList<VarDeclaration>());
+		varDeclBySection = new AutoHashMap<>(new LinkedList<VarDeclaration>());
 
 		addSection(null); // Initialize default section
 	}
@@ -67,10 +68,10 @@ public class HelpCreator {
 		StringBuilder sb = new StringBuilder();
 
 		// Find variable declarations and help sections
-		Set<String> included = new HashSet<String>();
+		Set<String> included = new HashSet<>();
 		findHelpEntries(programUnit, included);
 
-		// Use unsorted variables if 'helpUnsorted' exists (regardless of its value)
+		// Use unsorted variables if 'helpUnsorted' exists (regardless of its map)
 		sortVars = (programUnit.varInit(HELP_UNSORTED_VAR_NAME) == null);
 
 		// Find maximum name-type length
@@ -220,7 +221,7 @@ public class HelpCreator {
 		else if (type.isInt()) return "<int>";
 		else if (type.isReal()) return "<real>";
 		else if (type.isString()) return "<string>";
-		else if (type.isList(Type.STRING)) return "<string ... string>";
+		else if (type.isList(Types.STRING)) return "<string ... string>";
 
 		return null;
 	}

@@ -1,7 +1,8 @@
 package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -11,6 +12,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeMinReal extends FunctionNative {
 
+	private static final long serialVersionUID = 5496061820198223872L;
+
+
 	public FunctionNativeMinReal() {
 		super();
 	}
@@ -18,12 +22,12 @@ public class FunctionNativeMinReal extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "min";
-		returnType = Type.REAL;
+		returnType = Types.REAL;
 
 		String argNames[] = { "n1", "n2" };
 		Type argTypes[] = { returnType, returnType };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

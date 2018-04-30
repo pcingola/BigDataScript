@@ -4,19 +4,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.bds.Bds;
 import org.bds.compile.CompilerMessages;
+import org.bds.lang.value.Value;
 import org.bds.osCmd.TeeOutputStream;
 import org.bds.run.RunState;
-import org.bds.scope.ScopeSymbol;
 import org.bds.util.Gpr;
+import org.bds.vm.BdsVm;
 
 import junit.framework.Assert;
 
 /**
- * BDS test cases: Compile or run a bds program and store exitCode, STDOUT, STDERR, etc.
+ * BDS test cases: BdsCompiler or run a bds program and store exitCode, STDOUT, STDERR, etc.
  *
  * @author pcingola
  */
@@ -57,12 +58,14 @@ public class BdsTest {
 	/**
 	 * Create 'command'
 	 */
-	void bds() {
-		ArrayList<String> l = new ArrayList<String>();
+	void bds(boolean compileOnly) {
+		ArrayList<String> l = new ArrayList<>();
 
 		// Add command line options
 		if (verbose) l.add("-v");
 		if (debug) l.add("-d");
+
+		if (compileOnly) l.add("-compile");
 
 		// Is this a 'test case' run?
 		if (testCases) l.add("-t");
@@ -83,7 +86,7 @@ public class BdsTest {
 
 		// Create command
 		bds = new Bds(args);
-		bds.setStackCheck(true);
+		bds.getBdsRun().setStackCheck(true);
 	}
 
 	/**
@@ -136,6 +139,7 @@ public class BdsTest {
 	 */
 	public void checkCompileError(String expectedErrors) {
 		Assert.assertFalse(errMsg("Expecting compilation errors, none found (program compiled OK)"), compileOk);
+		if (compilerMessages.toString().startsWith(expectedErrors)) return;
 		Assert.assertEquals(errMsg("Expecting compilation errors not found"), expectedErrors.trim(), compilerMessages.toString().trim());
 	}
 
@@ -143,7 +147,7 @@ public class BdsTest {
 	 * Check that the file was compiled OK
 	 */
 	public void checkCompileOk() {
-		if (!compilerMessages.isEmpty()) Assert.fail("Compile errors in file '" + fileName + "':\n" + compilerMessages);
+		if (!compilerMessages.isEmpty()) Assert.fail("BdsCompiler errors in file '" + fileName + "':\n" + compilerMessages);
 		if (compileOk != null) Assert.assertTrue(errMsg("There was an error while compiling"), compileOk);
 	}
 
@@ -151,7 +155,7 @@ public class BdsTest {
 	 * Check exit code
 	 */
 	public void checkExitCode(int expectedExitCode) {
-		Assert.assertTrue(errMsg("No exit value (program was not run)"), exitCode != null);
+		Assert.assertTrue(errMsg("No exit map (program was not run)"), exitCode != null);
 		Assert.assertEquals(errMsg("Expecting exit code '" + expectedExitCode + "', but it was '" + exitCode + "'"), expectedExitCode, (int) exitCode);
 	}
 
@@ -178,7 +182,7 @@ public class BdsTest {
 	 */
 	void checkRunState(RunState expectedRunState) {
 		Assert.assertEquals(errMsg("Expecting rRunState '" + expectedRunState + "', but it was '" + runState + "'") //
-		, expectedRunState //
+				, expectedRunState //
 				, runState//
 		);
 	}
@@ -200,55 +204,69 @@ public class BdsTest {
 	}
 
 	/**
-	 * Check a variable's value
+	 * Check a variable's map
 	 */
 	public void checkVariable(String varname, Object expectedValue) {
-		ScopeSymbol ssym = getSymbol(varname);
-		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), ssym != null);
+		Value val = getValue(varname);
+		if (expectedValue != null) Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
 		Assert.assertEquals( //
-				errMsg("Variable '" + varname + "' has different value than expeced:\n" //
+				errMsg("Variable '" + varname + "' has different value than expeced.\n" //
 						+ "\tExpected value : " + expectedValue //
-						+ "\tReal value     : " + ssym.getValue()) //
-						,
-				expectedValue.toString() //
-				, ssym.getValue().toString() //
+						+ "\tReal value     : " + val) //
+				, expectedValue != null ? expectedValue.toString() : "null" //
+				, val != null ? val.toString() : "null"//
 		);
 	}
 
 	/**
 	 * Check all variables in the hash
 	 */
-	void checkVariables(HashMap<String, Object> expectedValues) {
+	void checkVariables(Map<String, Object> expectedValues) {
 		// Check all values
 		for (String varName : expectedValues.keySet()) {
 			Object expectedValue = expectedValues.get(varName);
 
-			ScopeSymbol ssym = getSymbol(varName);
-			Assert.assertTrue(errMsg("Missing variable '" + varName + "'"), ssym != null);
+			Value val = getValue(varName);
+			Assert.assertTrue(errMsg("Missing variable '" + varName + "'"), val != null);
 
-			if (!expectedValue.toString().equals(ssym.getValue().toString())) {
+			if (!expectedValue.toString().equals(val.toString())) {
 				Assert.assertEquals(errMsg("Variable '" + varName + "' does not match:\n"//
 						+ "\tExpected : '" + expectedValue.toString() + "'" //
-						+ "\tActual   : '" + ssym.getValue().toString() + "'" //
+						+ "\tActual   : '" + val.toString() + "'" //
 				) //
-				, expectedValue.toString() //
-				, ssym.getValue().toString() //
+						, expectedValue.toString() //
+						, val.toString() //
 				);
 			}
 		}
 	}
 
 	/**
-	 * Compile code
+	 * Check a variable's map
+	 */
+	public void checkVariableVm(BdsVm vm, String varname, Object expectedValue) {
+		Value val = vm.getValue(varname);
+		Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
+		Assert.assertEquals( //
+				errMsg("Variable '" + varname + "' has different map than expeced:\n" //
+						+ "\tExpected map : " + expectedValue //
+						+ "\tReal map     : " + val) //
+				, expectedValue.toString() //
+				, val.toString() //
+		);
+	}
+
+	/**
+	 * BdsCompiler code
 	 */
 	public boolean compile() {
-		if (bds == null) bds(); // Create command
+		if (bds == null) bds(true); // Create command
 
 		compileOk = false;
 		try {
 			captureStart(); // Capture STDOUT & STDERR
-			compileOk = bds.compile(); // Run
-			compilerMessages = bds.getCompilerMessages();
+			compileOk = bds.run() == 0; // Compiled OK?
+			compilerMessages = CompilerMessages.get();
 		} catch (Throwable t) {
 			captureShow(); // Make sure STDOUT & STDERR have been shown
 			captureStop();
@@ -275,21 +293,21 @@ public class BdsTest {
 	/**
 	 * Get a symbol
 	 */
-	public ScopeSymbol getSymbol(String name) {
-		return bds.getProgramUnit().getRunScope().getSymbol(name);
+	public Value getValue(String name) {
+		return bds.getBdsRun().getScope().getValue(name);
 	}
 
 	/**
 	 * Run command
 	 */
 	public void run() {
-		if (bds == null) bds(); // Create command
+		if (bds == null) bds(false); // Create command
 
 		try {
 			captureStart(); // Capture STDOUT & STDERR
 			exitCode = bds.run(); // Run
-			compilerMessages = bds.getCompilerMessages(); // Any compile errors?
-			if (bds.getBigDataScriptThread() != null) runState = bds.getBigDataScriptThread().getRunState(); // Get final RunState
+			compilerMessages = CompilerMessages.get(); // Any compile errors?
+			if (bds.getBdsRun().getBdsThread() != null) runState = bds.getBdsRun().getBdsThread().getRunState(); // Get final RunState
 		} catch (Throwable t) {
 			captureShow(); // Make sure STDOUT & STDERR have been shown
 			captureStop();
@@ -331,20 +349,19 @@ public class BdsTest {
 		String args2[] = { "-r", chpFileName };
 		String args2v[] = { "-v", "-r", chpFileName };
 		Bds bigDataScript2 = new Bds(verbose ? args2v : args2);
-		bigDataScript2.setStackCheck(true);
+		bigDataScript2.getBdsRun().setStackCheck(true);
 		bigDataScript2.run();
 
-		// Check variable's value on the recovered (checkpoint run) program
+		// Check variable's map on the recovered (checkpoint run) program
 		if (varName != null) {
-			ScopeSymbol ssym = bigDataScript2.getProgramUnit().getRunScope().getSymbol(varName);
-			Assert.assertTrue(errMsg("Variable '" + varName + "' not found "), ssym != null);
+			Value val = bigDataScript2.getBdsRun().getScope().getValue(varName);
+			Assert.assertTrue(errMsg("Variable '" + varName + "' not found "), val != null);
 			Assert.assertEquals( //
 					errMsg("Variable '" + varName + "' has different value than expeced:\n" //
 							+ "\tExpected value : " + expectedValue //
-							+ "\tReal value     : " + ssym.getValue()) //
-							,
-					expectedValue.toString() //
-					, ssym.getValue().toString() //
+							+ "\tReal value     : " + val) //
+					, expectedValue.toString() //
+					, val.toString() //
 			);
 		}
 

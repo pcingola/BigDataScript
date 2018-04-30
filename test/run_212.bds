@@ -1,0 +1,15 @@
+#!/usr/bin/env bds
+
+class Zzz {
+	int i
+	void Zzz(int j) { i = j }
+	void set(int j) { i = j }
+}
+
+
+Zzz z
+z = new Zzz(7)
+println("z: $z")
+z.set(42)
+println("z: $z")
+

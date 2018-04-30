@@ -10,8 +10,8 @@ import sun.net.www.protocol.ftp.FtpURLConnection;
 
 /**
  * A file / directory on an ftp server
- * 
- * TODO: Use Apache's FTPClient instead of FtpURLConnection
+ *
+ * Use Apache's FTPClient instead of FtpURLConnection?
  * References: http://commons.apache.org/proper/commons-net/apidocs/org/apache/commons/net/ftp/FTPClient.html
  *
  * @author pcingola

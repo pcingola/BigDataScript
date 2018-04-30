@@ -1,11 +1,14 @@
 package org.bds.lang.nativeMethods.string;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
-public class MethodNative_string_rm extends MethodNative {
+public class MethodNative_string_rm extends MethodNativeString {
+
+	private static final long serialVersionUID = 295325351419084800L;
+
 	public MethodNative_string_rm() {
 		super();
 	}
@@ -13,11 +16,11 @@ public class MethodNative_string_rm extends MethodNative {
 	@Override
 	protected void initMethod() {
 		functionName = "rm";
-		classType = Type.STRING;
-		returnType = Type.BOOL;
+		classType = Types.STRING;
+		returnType = Types.BOOL;
 
 		String argNames[] = { "this" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
 		addNativeMethodToClassScope();
 	}

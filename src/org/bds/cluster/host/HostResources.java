@@ -1,7 +1,7 @@
 package org.bds.cluster.host;
 
-import org.bds.serialize.BdsSerialize;
-import org.bds.serialize.BdsSerializer;
+import java.io.Serializable;
+
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -15,7 +15,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class HostResources implements Comparable<HostResources>, BdsSerialize, Cloneable {
+public class HostResources implements Comparable<HostResources>, Cloneable, Serializable {
+
+	private static final long serialVersionUID = 764782969174543552L;
 
 	private static int hostResourcesNum = 0;
 
@@ -105,11 +107,6 @@ public class HostResources implements Comparable<HostResources>, BdsSerialize, C
 		return mem;
 	}
 
-	@Override
-	public String getNodeId() {
-		return getClass().getSimpleName() + ":" + id;
-	}
-
 	public long getTimeout() {
 		return timeout;
 	}
@@ -136,19 +133,6 @@ public class HostResources implements Comparable<HostResources>, BdsSerialize, C
 		if (cpus == 0) return false;
 		if (mem == 0) return false;
 		return true;
-	}
-
-	@Override
-	public void serializeParse(BdsSerializer serializer) {
-		cpus = (int) serializer.getNextFieldInt();
-		mem = serializer.getNextFieldInt();
-		timeout = serializer.getNextFieldInt();
-		wallTimeout = serializer.getNextFieldInt();
-	}
-
-	@Override
-	public String serializeSave(BdsSerializer serializer) {
-		return cpus + "\t" + mem + "\t" + timeout + "\t" + wallTimeout;
 	}
 
 	public void set(HostResources hr) {

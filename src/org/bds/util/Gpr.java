@@ -96,7 +96,7 @@ public class Gpr {
 					start = nextStart + 1;
 				}
 			} catch (Exception e) {
-				throw new RuntimeException("Cannot create an instance of type [" + componentType + "] from the " + i + "th string value [" + currentValue + "].", e);
+				throw new RuntimeException("Cannot create an instance of type [" + componentType + "] from the " + i + "th string map [" + currentValue + "].", e);
 			}
 			return r;
 		}
@@ -791,9 +791,9 @@ public class Gpr {
 	 * The result is a custom String splitter algorithm which performs well for
 	 * large Strings.
 	 *
-	 * @param value
-	 *            the string value to split into tokens
-	 * @return an array of String Objects or null if the string value is null
+	 * @param map
+	 *            the string map to split into tokens
+	 * @return an array of String Objects or null if the string map is null
 	 */
 	static public String[] split(final String value, char delim) {
 		if (value == null) return null;
@@ -911,5 +911,4 @@ public class Gpr {
 		}
 		return String.format("%.1f %s", mem, unit);
 	}
-
 }

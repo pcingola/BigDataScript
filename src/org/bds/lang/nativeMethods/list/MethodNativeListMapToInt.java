@@ -1,6 +1,6 @@
 package org.bds.lang.nativeMethods.list;
 
-import org.bds.lang.Type;
+import org.bds.lang.type.TypeList;
 
 /**
  * Map: Apply a function to all elements in the list
@@ -9,8 +9,12 @@ import org.bds.lang.Type;
  */
 public class MethodNativeListMapToInt extends MethodNativeListMap {
 
-	public MethodNativeListMapToInt(Type baseType) {
-		super(baseType, Type.INT, "mapToInt");
+	private static final long serialVersionUID = 1256239877054300160L;
+
+
+	public MethodNativeListMapToInt(TypeList listType) {
+		super(listType);
+		//		super(listType, Types.INT, "mapToInt");
 	}
 
 }

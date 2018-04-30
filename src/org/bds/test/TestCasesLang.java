@@ -220,11 +220,7 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test32() {
 		Gpr.debug("Test");
-		// WARNING: Since now expressions are casted to BOOL, we should not get an error using this task(...)
 		compileOk("test/test32.bds");
-
-		//		String errs = "ERROR [ file 'test/test32.bds', line 7 ] :	Only assignment or boolean expressions are allowed in task options\n";
-		//		compileErrors("test/test32.bds", errs);
 	}
 
 	@Test
@@ -311,8 +307,7 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test45() {
 		Gpr.debug("Test");
-		String errs = "ERROR [ file 'test/test45.bds', line 2 ] :	Cannot append int to string[]";
-		compileErrors("test/test45.bds", errs);
+		compileOk("test/test45.bds");
 	}
 
 	@Test
@@ -331,7 +326,8 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test48() {
 		Gpr.debug("Test");
-		String errs = "ERROR [ file 'test/test48.bds', line 5 ] :	extraneous input ':=' expecting {<EOF>, 'while', '{', 'void', 'for', 'error', 'debug', 'int', 'include', 'task', '(', 'kill', '\n', 'println', 'exit', '++', '~', 'wait', 'dep', '+', 'goal', 'continue', 'return', ';', 'if', 'warning', 'break', 'print', 'switch', 'parallel', 'par', '[', '--', 'bool', '!', 'string', 'checkpoint', 'breakpoint', '-', 'real', BOOL_LITERAL, INT_LITERAL, REAL_LITERAL, STRING_LITERAL, STRING_LITERAL_SINGLE, HELP_LITERAL, SYS_LITERAL, TASK_LITERAL, ID}";
+		// String errs = "ERROR [ file 'test/test48.bds', line 5 ] :	extraneous input ':=' expecting {<EOF>, 'while', '{', 'void', 'for', 'error', 'debug', 'int', 'include', 'task', '(', 'kill', '\n', 'println', 'exit', '++', '~', 'wait', 'dep', '+', 'goal', 'continue', 'return', ';', 'if', 'warning', 'break', 'print', 'switch', 'parallel', 'par', '[', '--', 'bool', '!', 'string', 'checkpoint', 'breakpoint', '-', 'real', BOOL_LITERAL, INT_LITERAL, REAL_LITERAL, STRING_LITERAL, STRING_LITERAL_SINGLE, HELP_LITERAL, SYS_LITERAL, TASK_LITERAL, ID}";
+		String errs = "ERROR [ file 'test/test48.bds', line 5 ] :	extraneous input ':=' expecting ";
 		compileErrors("test/test48.bds", errs);
 	}
 

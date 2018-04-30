@@ -12,17 +12,21 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ TestCasesTail.class, //
-		TestCasesLang.class, //
-		TestCasesInterpolate.class, //
-		TestCasesExecutioners.class, //
-		TestCasesRun.class, //
-		TestCasesRun2.class, //
-		TestCasesGraph.class, //
-		TestCasesCheckpoint.class, //
+		TestCasesVm.class, // Virtual machine
+		TestCasesLang.class, // Language (compiler)
+		TestCasesInterpolate.class, // Variable interpolation
+		TestCasesExecutioners.class, // Task executioners
+		TestCasesFunctionDeclaration.class, // Function declaration
+		TestCasesRun.class, // Running bds code
+		TestCasesRun2.class, // Running bds code
+		TestCasesRun3.class, // Running bds code (classes / object)
+		TestCasesGraph.class, // Running bds code: Task graphs and dependencies
+		TestCasesCheckpoint.class, // Running bds code: Checkpoint and recovery
 		TestCasesTesting.class, //
 		TestCasesCommandLineOptions.class, //
-		TestCasesClusterGeneric.class, //
-		TestCasesRemote.class, //
+		TestCasesClusterGeneric.class, // Running on a generic cluster
+		TestCasesRemote.class, // Accessing remote data (cloud storage)
+		TestCasesReport.class, // Report generation
 })
 public class TestSuiteAll {
 

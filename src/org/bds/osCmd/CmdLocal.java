@@ -44,7 +44,7 @@ public class CmdLocal extends Cmd {
 
 	@Override
 	protected void execCmd() throws Exception {
-		// Wait for the process to finish and store exit value
+		// Wait for the process to finish and store exit map
 		exitValue = process.waitFor();
 	}
 
@@ -127,7 +127,7 @@ public class CmdLocal extends Cmd {
 		if (debug) Gpr.debug("Kill pid: " + pid);
 
 		// Create arguments
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 
 		// Add command and arguments
 		if (notifyTaskState != null && (notifyTaskState instanceof Executioner) && (task != null)) {
@@ -136,10 +136,12 @@ public class CmdLocal extends Cmd {
 				for (String arg : argsKill)
 					args.add(arg);
 			}
-		} else {
+		}
+
+		// No special command? Use LOCAL_KILL_COMMAND
+		if (args.isEmpty()) {
 			for (String arg : ExecutionerLocal.LOCAL_KILL_COMMAND)
 				args.add(arg);
-			args.add("" + pid);
 		}
 
 		// Add tasks's pid
@@ -149,8 +151,8 @@ public class CmdLocal extends Cmd {
 		// Execute kill command
 		try {
 			// Execute 'bds kill pid'
+			if (debug) log("Executing kill process for pid " + pid + " : " + args);
 			Process proc = Runtime.getRuntime().exec(args.toArray(ARGS_ARRAY_TYPE));
-			if (debug) log("Executing kill process for pid " + pid);
 			int exitVal = proc.waitFor();
 			if (exitVal != 0) log("Error killing process " + pid);
 		} catch (Exception e) {

@@ -8,10 +8,14 @@ import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.bds.compile.CompilerMessages;
+import org.bds.lang.statement.BlockWithFile;
+import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.statement.Statement;
+import org.bds.lang.statement.StatementFunctionDeclaration;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.scope.Scope;
-import org.bds.scope.ScopeSymbol;
+import org.bds.symbol.SymbolTable;
 
 /**
  * A program unit
@@ -20,8 +24,9 @@ import org.bds.scope.ScopeSymbol;
  */
 public class ProgramUnit extends BlockWithFile {
 
-	BdsThread bdsThread;
-	Scope runScope; // Scope used when running this program. Used in test cases
+	private static final long serialVersionUID = 3819936306695046515L;
+
+	protected BdsThread bdsThread;
 
 	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
 		try {
@@ -38,36 +43,12 @@ public class ProgramUnit extends BlockWithFile {
 		doParse(tree); // little hack end
 	}
 
-	@Override
-	public BdsThread getBigDataScriptThread() {
-		return bdsThread;
-	}
-
-	public Scope getRunScope() {
-		return runScope;
-	}
-
-	@Override
-	protected void parse(ParseTree tree) {
-		super.parse(tree);
-	}
-
-	@Override
-	public void runStep(BdsThread bdsThread) {
-		super.runStep(bdsThread);
-		runScope = bdsThread.getScope();
-	}
-
-	public void setBdsThread(BdsThread bdsThread) {
-		this.bdsThread = bdsThread;
-	}
-
 	/**
 	 * Return all functions whose name starts with 'test'
 	 */
-	public List<FunctionDeclaration> testsFunctions() {
-		List<FunctionDeclaration> testFuncs = new ArrayList<FunctionDeclaration>();
-		List<BdsNode> allFuncs = findNodes(FunctionDeclaration.class, true);
+	public List<FunctionDeclaration> findTestsFunctions() {
+		List<FunctionDeclaration> testFuncs = new ArrayList<>();
+		List<BdsNode> allFuncs = findNodes(StatementFunctionDeclaration.class, true, false);
 		for (BdsNode func : allFuncs) {
 			// Create scope symbol
 			FunctionDeclaration fd = (FunctionDeclaration) func;
@@ -84,17 +65,43 @@ public class ProgramUnit extends BlockWithFile {
 	}
 
 	@Override
-	protected void typeCheck(Scope scope, CompilerMessages compilerMessages) {
-		// Add all functions
-		List<BdsNode> funcs = findNodes(FunctionDeclaration.class, true);
-		for (BdsNode func : funcs) {
-			// Create scope symbol
-			FunctionDeclaration fd = (FunctionDeclaration) func;
-			TypeFunc typeFunc = new TypeFunc(fd);
-			ScopeSymbol ssym = new ScopeSymbol(fd.getFunctionName(), typeFunc, fd);
-
-			// Add it to scope
-			scope.add(ssym);
-		}
+	public BdsThread getBigDataScriptThread() {
+		return bdsThread;
 	}
+
+	@Override
+	protected void parse(ParseTree tree) {
+		super.parse(tree);
+	}
+
+	@Override
+	public Type returnType(SymbolTable symtab) {
+		return Types.INT;
+	}
+
+	public void setBdsThread(BdsThread bdsThread) {
+		this.bdsThread = bdsThread;
+	}
+
+	@Override
+	public String toAsm() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(toAsmNode());
+		sb.append("main:\n");
+
+		if (isNeedsScope()) sb.append("scopepush\n");
+
+		for (Statement s : statements)
+			sb.append(s.toAsm());
+
+		// Note: We don't pop the scope.
+		//       We leave the last scope when because it is useful for
+		//       checking variable values in test cases. Since the program
+		//       finished, it makes no difference (we are cleaning up later).
+		sb.append("halt\n");
+
+		return sb.toString();
+	}
+
 }

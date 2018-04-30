@@ -9,6 +9,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class ParentNode extends BdsNode {
 
+	private static final long serialVersionUID = 6198450603450990592L;
+
+
 	public ParentNode() {
 		super(null, null);
 	}
@@ -16,12 +19,6 @@ public class ParentNode extends BdsNode {
 	@Override
 	protected void parse(ParseTree tree) {
 		throw new RuntimeException("This method should never be invoked!");
-	}
-
-	@Override
-	public void setFakeId(int id) {
-		// Note: ParentNode does not invoke UpdateId
-		this.id = -id;
 	}
 
 }

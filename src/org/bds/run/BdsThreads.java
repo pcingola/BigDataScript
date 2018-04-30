@@ -1,5 +1,6 @@
 package org.bds.run;
 
+import java.io.ObjectStreamException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,15 +10,17 @@ import org.bds.data.Data;
 
 /**
  * All BdsThreads are tracked here
- * 
+ *
  * @author pcingola
  */
 public class BdsThreads {
 
-	private static BdsThreads bdsThreads = new BdsThreads();
+	public static boolean doNotRemoveThreads = false; // This is used in only for some test cases
 
-	Map<Long, BdsThread> bdsThreadByThreadId = new HashMap<Long, BdsThread>();
-	Set<BdsThread> bdsThreadDone = new HashSet<BdsThread>();
+	private static BdsThreads bdsThreadsInstance = new BdsThreads();
+
+	Map<Long, BdsThread> bdsThreadByThreadId = new HashMap<>();
+	Set<BdsThread> bdsThreadDone = new HashSet<>();
 
 	/**
 	 * Get canonical path to file using thread's 'current dir' to de-reference
@@ -36,14 +39,14 @@ public class BdsThreads {
 	 * Get singleton
 	 */
 	public static BdsThreads getInstance() {
-		return bdsThreads;
+		return bdsThreadsInstance;
 	}
 
 	/**
 	 * Reset singleton
 	 */
 	public static void reset() {
-		bdsThreads = new BdsThreads();
+		bdsThreadsInstance = new BdsThreads();
 	}
 
 	/**
@@ -63,9 +66,19 @@ public class BdsThreads {
 	}
 
 	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		bdsThreadsInstance = this; // Replace singleton instance
+		return this;
+	}
+
+	/**
 	 * Remove a bdsThread
 	 */
 	public synchronized void remove() {
+		if (doNotRemoveThreads) return;
+
 		long id = Thread.currentThread().getId();
 		BdsThread bdsThread = get();
 		if (bdsThreadByThreadId.get(id) == bdsThread) {
@@ -81,4 +94,5 @@ public class BdsThreads {
 			sb.append(thid + "\t" + bdsThreadByThreadId.get(thid).getBdsThreadId() + "\n");
 		return sb.toString();
 	}
+
 }

@@ -1,8 +1,9 @@
 package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
-import org.bds.lang.TypeList;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeList;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -12,6 +13,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativePrint extends FunctionNative {
 
+	private static final long serialVersionUID = 6415414552900435968L;
+
+
 	public FunctionNativePrint() {
 		super();
 	}
@@ -19,12 +23,12 @@ public class FunctionNativePrint extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "print";
-		returnType = TypeList.get(Type.STRING);
+		returnType = TypeList.get(Types.STRING);
 
 		String argNames[] = { "str" };
-		Type argTypes[] = { Type.STRING };
+		Type argTypes[] = { Types.STRING };
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

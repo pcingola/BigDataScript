@@ -1,5 +1,7 @@
 package org.bds.task;
 
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,39 +14,40 @@ import java.util.Set;
 
 import org.bds.Config;
 import org.bds.data.Data;
-import org.bds.lang.ExpressionTask;
 import org.bds.report.Report;
 import org.bds.run.BdsThread;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Timer;
 
 /**
- * Store task and dependency graph
+ * Store task and dependency graph (i.e. all task dependencies)
  *
  * @author pcingola
  */
-public class TaskDependecies {
+public class TaskDependecies implements Serializable {
 
-	public static final int SLEEP_TIME = 250;
+	private static final long serialVersionUID = -7139051739077288915L;
 
-	private static TaskDependecies taskDependecies = new TaskDependecies(); // Global instance (keeps track of all tasks)
+	public static final int SLEEP_TIME = 200;
+
+	private static TaskDependecies taskDependeciesInstance = new TaskDependecies(); // Global instance (keeps track of all tasks)
 
 	boolean debug = false;
 	boolean verbose = false;
 	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
 	Map<String, Task> tasksById;
 	AutoHashMap<String, List<Task>> tasksByOutput;
-	HashMap<String, String> canonicalPath;
+	Map<String, String> canonicalPath;
 
 	public static TaskDependecies get() {
-		return taskDependecies;
+		return taskDependeciesInstance;
 	}
 
 	/**
 	 * Create a new Singleton
 	 */
 	public static void reset() {
-		taskDependecies = new TaskDependecies();
+		taskDependeciesInstance = new TaskDependecies();
 	}
 
 	public TaskDependecies() {
@@ -326,7 +329,7 @@ public class TaskDependecies {
 		for (Task t : tasks) {
 			if (!t.isScheduled()) {
 				t.setDependency(false); // We are executing this task, so it it no longer a 'dep'
-				ExpressionTask.execute(bdsThread, t);
+				TaskFactory.execute(bdsThread, t);
 			}
 		}
 
@@ -396,7 +399,15 @@ public class TaskDependecies {
 	 * Is this the global instance?
 	 */
 	boolean isGlobal() {
-		return this == taskDependecies;
+		return this == taskDependeciesInstance;
+	}
+
+	/**
+	 * Resolve un-serialization
+	 */
+	private Object readResolve() throws ObjectStreamException {
+		taskDependeciesInstance = this;
+		return this;
 	}
 
 	public void setDebug(boolean debug) {
@@ -506,8 +517,9 @@ public class TaskDependecies {
 		tids.addAll(getTaskIds());
 
 		// Wait for each task
-		for (String tid : tids)
+		for (String tid : tids) {
 			ok &= waitTask(tid);
+		}
 
 		return ok;
 	}

@@ -1,0 +1,21 @@
+#!/usr/bin/env bds
+
+# Create a list
+l := [1, 2, 3]
+
+# Assign list to other lists in different ways
+int[] lc1 = l.clone()
+
+int[] lc2 
+lc2 = l.clone()
+
+lc3 := l.clone()
+
+# Modify original list
+l.add(99)
+
+# Check that assigned lists were not modified
+println "l   : $l"
+println "lc1 : $lc1"
+println "lc2 : $lc2"
+println "lc3 : $lc3"

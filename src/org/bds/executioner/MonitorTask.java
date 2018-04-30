@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
 import org.bds.util.Gpr;
@@ -26,7 +27,7 @@ public class MonitorTask {
 	Timer latestUpdate;
 
 	public MonitorTask() {
-		execByTask = new HashMap<Task, Executioner>();
+		execByTask = new HashMap<>();
 		latestUpdate = new Timer();
 	}
 
@@ -90,7 +91,7 @@ public class MonitorTask {
 
 			if (exitFileOk || task.isTimedOut()) {
 				// Create (or add) to tasks to delete
-				if (toUpdate == null) toUpdate = new ArrayList<Task>();
+				if (toUpdate == null) toUpdate = new ArrayList<>();
 				toUpdate.add(task);
 			}
 		}
@@ -115,7 +116,7 @@ public class MonitorTask {
 
 		if (task.isTimedOut()) {
 			// Timed out
-			exitCode = Task.EXITCODE_TIMEOUT;
+			exitCode = BdsThread.EXITCODE_TIMEOUT;
 			taskState = TaskState.ERROR_TIMEOUT;
 		} else {
 			// Exit file found: Parse exit file

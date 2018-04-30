@@ -3,7 +3,8 @@ package org.bds.lang.nativeFunctions;
 import java.util.Date;
 
 import org.bds.lang.Parameters;
-import org.bds.lang.Type;
+import org.bds.lang.type.Type;
+import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
 /**
@@ -13,6 +14,9 @@ import org.bds.run.BdsThread;
  */
 public class FunctionNativeTime extends FunctionNative {
 
+	private static final long serialVersionUID = 7645169541361729536L;
+
+
 	public FunctionNativeTime() {
 		super();
 	}
@@ -20,12 +24,12 @@ public class FunctionNativeTime extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "time";
-		returnType = Type.INT;
+		returnType = Types.INT;
 
 		String argNames[] = {};
 		Type argTypes[] = {};
 		parameters = Parameters.get(argTypes, argNames);
-		addNativeFunctionToScope();
+		addNativeFunction();
 	}
 
 	@Override

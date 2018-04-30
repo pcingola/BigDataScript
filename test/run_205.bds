@@ -1,0 +1,9 @@
+#!/usr/bin/env bds
+
+class Zzz {
+	int i = 42
+}
+
+Zzz z
+z = null
+println("z: $z")
