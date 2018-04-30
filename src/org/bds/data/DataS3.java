@@ -130,13 +130,13 @@ public class DataS3 extends DataRemote {
 		return objectListing.getObjectSummaries().size() > 0;
 	}
 
-	public String getBucket() {
-		return bucketName;
-	}
-
 	@Override
 	public String getAbsolutePath() {
 		return s3uri.toString();
+	}
+
+	public String getBucket() {
+		return bucketName;
 	}
 
 	public String getKey() {
@@ -272,9 +272,8 @@ public class DataS3 extends DataRemote {
 		// Parse and set region
 		String regionStr = s3uri.getRegion();
 		try {
-			//			if (regionStr == null) regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
-			//			region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
-			if (regionStr != null) region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
+			if (regionStr == null) regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
+			region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot parse AWS region '" + regionStr + "'", e);
 		}
@@ -294,6 +293,7 @@ public class DataS3 extends DataRemote {
 				else region = Region.getRegion(Regions.fromName(regionName));
 			}
 		} catch (AmazonClientException e) {
+			e.printStackTrace();
 			throw new RuntimeException("Error accessing S3 bucket '" + bucketName + "'", e);
 		}
 
