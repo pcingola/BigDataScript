@@ -1,6 +1,7 @@
 package org.bds.test;
 
 import org.bds.Bds;
+import org.bds.Config;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 import org.junit.Test;
@@ -17,6 +18,7 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 	@Test
 	public void test01_log() {
 		Gpr.debug("Test");
+		Config.reset();
 
 		// Create command line
 		String args[] = { "-log" };
