@@ -109,8 +109,7 @@ public class SysFactory {
 		}
 
 		// Run command line
-		boolean quiet = !(bdsThread.getConfig().isVerbose() || bdsThread.getConfig().isDebug() || bdsThread.getConfig().isLog());
-		ExecResult execResult = Exec.exec(args, quiet);
+		ExecResult execResult = Exec.exec(args, bdsThread.getConfig().isQuiet());
 
 		// Error running process?
 		int exitValue = execResult.exitValue;

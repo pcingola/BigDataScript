@@ -99,7 +99,7 @@ public class ExecutionerCluster extends Executioner {
 	 * Join arguments
 	 */
 	protected String[] additionalCommandLineArgs(String[] argsOri, String[] argsAdditional) {
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 
 		// Cluster kill commands
 		for (int i = 0; i < argsOri.length; i++) {
@@ -207,7 +207,7 @@ public class ExecutionerCluster extends Executioner {
 		//---
 		// Create command line to dispatch 'task' to the cluster management system
 		//---
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 
 		// Append command line arguments
 		for (String arg : getCommandRun())
@@ -341,7 +341,7 @@ public class ExecutionerCluster extends Executioner {
 		if (task.getPid() == null || task.getPid().isEmpty()) return;
 
 		// Prepare command line arguments
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 		StringBuilder cmdsb = new StringBuilder();
 		for (String arg : cmd) {
 			args.add(arg);
@@ -384,7 +384,7 @@ public class ExecutionerCluster extends Executioner {
 		host.add(task);
 
 		// Run command
-		// Note: We run in blocking mode to avoid choking the head node with 
+		// Note: We run in blocking mode to avoid choking the head node with
 		// too many threads, too many file descriptors, etc..
 		if (cmd != null) {
 			try {

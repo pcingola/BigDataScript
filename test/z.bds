@@ -1,7 +1,5 @@
+#!/usr/bin/env bds
 
-in := 'tmp_remote_12.txt'
-out := 's3://pcingola.bds/test_remote_12.txt'
-
-sys date > $in
-ok := out.upload(in)
+println "DATE:"
+sys date
 
