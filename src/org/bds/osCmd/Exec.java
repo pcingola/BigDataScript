@@ -46,7 +46,8 @@ public class Exec {
 	}
 
 	protected ExecResult run(List<String> args) {
-		if (Config.get().isDebug() || Config.get().isLog()) Timer.showStdErr("Executing command. Arguments: " + args);
+		Config conf = Config.get();
+		if (conf.isVerbose() || conf.isDebug() || conf.isLog()) Timer.showStdErr("Executing command. Arguments: " + args);
 
 		// Create a command string
 		StringBuilder cmdsb = new StringBuilder();

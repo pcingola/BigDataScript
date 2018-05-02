@@ -3,11 +3,13 @@ package org.bds.test;
 import java.io.File;
 import java.io.IOException;
 
+import org.bds.Config;
 import org.bds.data.Data;
 import org.bds.data.DataFile;
 import org.bds.data.DataHttp;
 import org.bds.data.DataRemote;
 import org.bds.util.Gpr;
+import org.junit.Before;
 import org.junit.Test;
 
 import junit.framework.Assert;
@@ -19,6 +21,12 @@ import junit.framework.Assert;
  *
  */
 public class TestCasesRemote extends TestCasesBase {
+
+	@Before
+	public void beforeEachTest() {
+		Config.reset();
+		Config.get().load();
+	}
 
 	@Test
 	public void test01_parse_URLs_file() {

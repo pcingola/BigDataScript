@@ -1,12 +1,7 @@
 #!/usr/bin/env bds
 
+
 l := ['aa', 'a', 'z', 'x', 'y', 'aaaaaa', 'a', 'a+a', 'aaaa', 'a_a', 'aaa']
 sl := l.sort()
 println "l  : $l"
 println "sl : $sl"
-
-
-li := [9, 99, 101, 1, 23, 2, 3, -1, -99]
-sli := li.sort()
-println "li  : $li"
-println "sli : $sli"
