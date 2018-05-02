@@ -1,13 +1,17 @@
 package org.bds.test;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.bds.Bds;
 import org.bds.Config;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * Check command line options
@@ -40,13 +44,19 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 		BdsThread bdsThread = bds.getBdsRun().getBdsThread();
 
 		// Check that all 'log' files exists
-		String base = bdsThread.getBdsThreadId() + "/task.cmdLineOptions_01.line_3.id_1";
+		String dir = bdsThread.getBdsThreadId();
+		String prefix = "task.cmdLineOptions_01.line_3.";
 
-		if (verbose) Gpr.debug("Thread ID:" + bdsThread.getBdsThreadId() + "\tBase: " + base);
+		// Get dir
+		Set<String> files = Arrays.stream((new File(dir)).list()) //
+				.filter(f -> f.startsWith(prefix)) //
+				.collect(Collectors.toSet()) //
+		;
+
 		String exts[] = { "sh", "exitCode", "stderr", "stdout" };
 		for (String ext : exts) {
-			String fileName = base + "." + ext;
-			Assert.assertTrue("Log file '" + fileName + "' not found", Gpr.exists(fileName));
+			boolean ok = files.stream().anyMatch(f -> f.endsWith("." + ext));
+			Assert.assertTrue("Log file starting with '" + prefix + "' and ending with '" + ext + "' not found in dir '" + dir + "'", ok);
 		}
 	}
 }
