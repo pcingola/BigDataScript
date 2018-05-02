@@ -86,9 +86,9 @@ public class ExpressionSys extends Expression {
 			String cmd = commands;
 			sb.append("pushs '" + comment + cmd + "'\n");
 		} else {
-			// sb.append("pushs '" + comment + "'\n");
+			sb.append("pushs '" + comment + "'\n");
 			sb.append(interpolateVars.toAsm());
-			// sb.append("adds\n");
+			sb.append("adds\n");
 		}
 
 		if (useSys) sb.append("sys\n");

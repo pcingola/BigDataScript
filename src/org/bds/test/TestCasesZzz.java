@@ -24,7 +24,6 @@ public class TestCasesZzz extends TestCasesBase {
 	@Test
 	public void test119_task_dependency() {
 		Gpr.debug("Test");
-		verbose = true;
 
 		// Delete input file
 		String inFile = "tmp_in.txt";
