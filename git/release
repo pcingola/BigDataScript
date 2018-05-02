@@ -3,8 +3,8 @@
 # Create a "Release"
 
 ver="$1"
-TAG="v$1"
-BRANCH="release-$1"
+TAG="v$ver"
+BRANCH="release-$ver"
 
 # Parse command line parameter
 if [ -z "$ver" ]
