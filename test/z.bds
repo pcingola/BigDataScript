@@ -1,12 +1,13 @@
 #!/usr/bin/env bds
 
-l := ['aa', 'a', 'z', 'x', 'y', 'aaaaaa', 'a', 'a+a', 'aaaa', 'a_a', 'aaa']
-sl := l.sort()
-println "l  : $l"
-println "sl : $sl"
+int f() {
+	a := 40
+	return 1 + g()
+}
 
+int g() {
+	return 1 + a
+}
 
-li := [9, 99, 101, 1, 23, 2, 3, -1, -99]
-sli := li.sort()
-println "li  : $li"
-println "sli : $sli"
+z := f()
+println "z: $z"
