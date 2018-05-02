@@ -728,4 +728,11 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheck("test/run_154.bds", "res", "OK");
 	}
 
+	@Test
+	public void test155_list_sort() {
+		Gpr.debug("Test");
+		verbose = true;
+		runAndCheck("test/run_155.bds", "sl", "[a, a, a+a, a_a, aa, aaa, aaaa, aaaaaa, x, y, z]");
+	}
+
 }

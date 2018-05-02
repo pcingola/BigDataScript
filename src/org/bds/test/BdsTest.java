@@ -209,12 +209,17 @@ public class BdsTest {
 	public void checkVariable(String varname, Object expectedValue) {
 		Value val = getValue(varname);
 		if (expectedValue != null) Assert.assertTrue(errMsg("Variable '" + varname + "' not found "), val != null);
+
+		// Convert values to string
+		String evstr = expectedValue != null ? expectedValue.toString() : "null";
+		String vstr = val != null ? val.toString() : "null";
+
 		Assert.assertEquals( //
 				errMsg("Variable '" + varname + "' has different value than expeced.\n" //
-						+ "\tExpected value : " + expectedValue //
-						+ "\tReal value     : " + val) //
-				, expectedValue != null ? expectedValue.toString() : "null" //
-				, val != null ? val.toString() : "null"//
+						+ "\tExpected value : '" + evstr + "'" //
+						+ "\tReal value     : '" + vstr) + "'" //
+				, evstr //
+				, vstr //
 		);
 	}
 
