@@ -1,9 +1,18 @@
 #!/usr/bin/env bds
 
-out := 'out.txt'
+inFile := "tmp_in.txt"
+outFile := "tmp_out.txt"
 
-o := sys echo hello world \
-	| tee $out
+# Let's say in.txt exists and has "Hello world" in it
+if( ! inFile.exists() ) {
+	sys echo Creating $inFile; echo 'Hello world' > $inFile
+}
 
-println "o: '$o'"
+print "Running task\n"
+task( outFile <- inFile ) {
+	sys echo Creating $outFile
+	sys cat $inFile > $outFile
+}
 
+wait
+print "Done\n"

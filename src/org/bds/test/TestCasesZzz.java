@@ -1,5 +1,7 @@
 package org.bds.test;
 
+import java.io.File;
+
 import org.bds.Config;
 import org.bds.util.Gpr;
 import org.junit.Before;
@@ -20,9 +22,29 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test157_multiline_sys() {
+	public void test119_task_dependency() {
 		Gpr.debug("Test");
-		runAndCheck("test/run_157.bds", "o", "hello world\n");
+		verbose = true;
+
+		// Delete input file
+		String inFile = "tmp_in.txt";
+		(new File(inFile)).delete();
+
+		String expectedStdout1 = "Creating tmp_in.txt\n" //
+				+ "Running task\n" //
+				+ "Creating tmp_out.txt\n" //
+				+ "Done\n" //"
+		;
+
+		String expectedStdout2 = "Running task\n" //
+				+ "Done\n" //"
+		;
+
+		if (verbose) System.out.println("First run:");
+		runAndCheckStdout("test/run_119.bds", expectedStdout1);
+
+		if (verbose) System.out.println("\n\nSecond run:");
+		runAndCheckStdout("test/run_119.bds", expectedStdout2);
 	}
 
 }
