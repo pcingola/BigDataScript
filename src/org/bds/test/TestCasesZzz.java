@@ -1,9 +1,6 @@
 package org.bds.test;
 
-import java.io.File;
-
 import org.bds.Config;
-import org.bds.util.Gpr;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,28 +19,9 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test119_task_dependency() {
-		Gpr.debug("Test");
-
-		// Delete input file
-		String inFile = "tmp_in.txt";
-		(new File(inFile)).delete();
-
-		String expectedStdout1 = "Creating tmp_in.txt\n" //
-				+ "Running task\n" //
-				+ "Creating tmp_out.txt\n" //
-				+ "Done\n" //"
-		;
-
-		String expectedStdout2 = "Running task\n" //
-				+ "Done\n" //"
-		;
-
-		if (verbose) System.out.println("First run:");
-		runAndCheckStdout("test/run_119.bds", expectedStdout1);
-
-		if (verbose) System.out.println("\n\nSecond run:");
-		runAndCheckStdout("test/run_119.bds", expectedStdout2);
+	public void test158_log() {
+		verbose = true;
+		runAndCheckStderr("test/run_158.bds", "hi there");
 	}
 
 }

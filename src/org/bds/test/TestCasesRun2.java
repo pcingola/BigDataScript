@@ -746,4 +746,10 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheck("test/run_157.bds", "o", "hello world\n");
 	}
 
+	@Test
+	public void test158_log() {
+		verbose = true;
+		runAndCheckStderr("test/run_158.bds", "hi there");
+	}
+
 }
