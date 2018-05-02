@@ -947,7 +947,9 @@ public class BdsThread extends Thread implements Serializable {
 
 		// Populate a list of threads to avoid concurrent modification
 		List<BdsThread> bdsThreads = new LinkedList<>();
-		bdsThreads.addAll(bdsChildThreadsById.values());
+		synchronized (this) {
+			bdsThreads.addAll(bdsChildThreadsById.values());
+		}
 
 		// Wait for all threads
 		for (BdsThread bdsth : bdsThreads)
