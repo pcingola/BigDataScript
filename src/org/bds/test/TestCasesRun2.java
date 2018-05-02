@@ -731,15 +731,19 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test155_list_sort() {
 		Gpr.debug("Test");
-		verbose = true;
 		runAndCheck("test/run_155.bds", "sl", "[a, a, a+a, a_a, aa, aaa, aaaa, aaaaaa, x, y, z]");
 	}
 
 	@Test
 	public void test156_list_int_sort() {
 		Gpr.debug("Test");
-		verbose = true;
 		runAndCheck("test/run_156.bds", "sl", "[-99, -1, 1, 2, 3, 9, 23, 99, 101]");
+	}
+
+	@Test
+	public void test157_multiline_sys() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_157.bds", "o", "hello world\n");
 	}
 
 }

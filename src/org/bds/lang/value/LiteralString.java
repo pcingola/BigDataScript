@@ -47,7 +47,6 @@ public class LiteralString extends Literal {
 			// Remove quotes and interpolate string
 			valueStr = valueStr.substring(1, valueStr.length() - 1);
 			valueStr = GprString.escapeMultiline(valueStr);
-			// valueStr = GprString.escape(valueStr);
 			setValueInterpolate(valueStr);
 		}
 	}

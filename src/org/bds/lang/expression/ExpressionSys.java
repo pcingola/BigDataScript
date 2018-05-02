@@ -54,13 +54,14 @@ public class ExpressionSys extends Expression {
 	}
 
 	void setCommands(String cmd) {
-		commands = cmd.trim();
+		cmd = GprString.escapeMultiline(cmd.trim());
+		commands = cmd;
 
 		// Parse interpolated variables
 		interpolateVars = new InterpolateVars(this, null);
 		if (!interpolateVars.parse(cmd)) {
 			interpolateVars = null; // Nothing found? don't bother to keep the object
-			commands = GprString.escapeMultiline(GprString.unescapeDollar(cmd)); // Just use literal, but un-escape dollar signs
+			commands = GprString.unescapeDollar(cmd); // Just use literal, but un-escape dollar signs
 		}
 	}
 
@@ -85,9 +86,9 @@ public class ExpressionSys extends Expression {
 			String cmd = commands;
 			sb.append("pushs '" + comment + cmd + "'\n");
 		} else {
-			sb.append("pushs '" + comment + "'\n");
+			// sb.append("pushs '" + comment + "'\n");
 			sb.append(interpolateVars.toAsm());
-			sb.append("adds\n");
+			// sb.append("adds\n");
 		}
 
 		if (useSys) sb.append("sys\n");

@@ -20,10 +20,9 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test156_list_int_sort() {
+	public void test157_multiline_sys() {
 		Gpr.debug("Test");
-		verbose = true;
-		runAndCheck("test/run_156.bds", "sl", "[-99, -1, 1, 2, 3, 9, 23, 99, 101]");
+		runAndCheck("test/run_157.bds", "o", "hello world\n");
 	}
 
 }
