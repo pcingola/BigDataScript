@@ -1,7 +1,31 @@
 
-in := 'tmp_remote_12.txt'
-out := 's3://pcingola.bds/test_remote_12.txt'
 
-sys date > $in
-ok := out.upload(in)
+#!/usr/bin/env bds
 
+
+l := ['aa', 'a', 'z', 'x', 'y', 'aaaaaa', 'a', 'a+a', 'aaaa', 'a_a', 'aaa']
+sl := l.sort()
+println "l  : $l"
+println "sl : $sl"
+
+
+li := [9, 99, 101, 1, 23, 2, 3, -1, -99]
+sli := li.sort()
+println "li  : $li"
+println "sli : $sli"
+
+
+
+#	@Test
+#	public void test155_list_sort() {
+#		Gpr.debug("Test");
+#		verbose = true;
+#		runAndCheck("test/run_155.bds", "sl", "[a, a, a+a, a_a, aa, aaa, aaaa, aaaaaa, x, y, z]");
+#	}
+#
+#	@Test
+#	public void test156_list_int_sort() {
+#		Gpr.debug("Test");
+#		verbose = true;
+#		runAndCheck("test/run_156.bds", "sl", "[-99, -1, 1, 2, 3, 9, 23, 99, 101]");
+#	}
