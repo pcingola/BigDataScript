@@ -309,7 +309,6 @@ public class ExecutionerCluster extends Executioner {
 			// Pattern pattern = Pattern.compile("Your job (\\S+)");
 			Matcher matcher = pidRegex.matcher(line);
 			if (matcher.find()) {
-
 				String pid = null;
 				if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
 				else pid = matcher.group(0); // Use whole pattern
