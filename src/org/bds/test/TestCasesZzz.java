@@ -1,6 +1,10 @@
 package org.bds.test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bds.Config;
+import org.bds.util.Gpr;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,9 +23,17 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test158_log() {
-		verbose = true;
-		runAndCheckStderr("test/run_158.bds", "hi there");
+	public void test113_parallel_function_calls() {
+		Gpr.debug("Test");
+		String stdout = runAndReturnStdout("test/run_113.bds");
+
+		Set<String> linesPar = new HashSet<>();
+		for (String line : stdout.split("\n")) {
+			if (line.startsWith("Par:")) {
+				if (linesPar.contains(line)) throw new RuntimeException("Line repeated (this should never happen): '" + line + "'");
+				linesPar.add(line);
+			}
+		}
 	}
 
 }
