@@ -93,6 +93,9 @@ public class Config implements Serializable {
 	public static final String CLUSTER_GENERIC_STAT = "clusterGenericStat";
 	public static final String CLUSTER_GENERIC_POSTMORTEMINFO = "clusterGenericPostMortemInfo";
 
+	// Cluster ssh
+	public static final String CLUSTER_SSH_NODES = "ssh.nodes";
+
 	// Thread running
 	public static final String MAX_NUMBER_OF_RUNNING_THREADS = "maxThreads";
 	public static final int MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE = 50; // If maxThreads in configuration file is too small, we'll consider it an error and use this number

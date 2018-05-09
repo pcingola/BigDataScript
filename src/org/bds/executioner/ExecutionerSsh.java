@@ -27,9 +27,6 @@ import org.bds.util.Timer;
  */
 public class ExecutionerSsh extends Executioner {
 
-	public static final String CONFIG_SSH_NODES = "ssh.nodes";
-	public static String SSH_EXEC_COMMAND[] = { "/bin/bash", "-e" };
-
 	protected ExecutionerSsh(Config config) {
 		super(config);
 		createCluster();
@@ -40,7 +37,7 @@ public class ExecutionerSsh extends Executioner {
 		cluster = new ClusterSsh();
 
 		// Add nodes from config file
-		String nodes = config.getString(CONFIG_SSH_NODES, "");
+		String nodes = config.getString(Config.CLUSTER_SSH_NODES, "");
 		if (config.isDebug()) System.err.println("Ssh nodes string (config): '" + nodes + "'");
 		String sshNodes[] = nodes.split(",");
 		for (String sshNode : sshNodes) {
@@ -54,7 +51,7 @@ public class ExecutionerSsh extends Executioner {
 		task.createProgramFile(); // We must create a program file
 
 		// Create command line
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 		for (String arg : ExecutionerLocal.LOCAL_EXEC_COMMAND)
 			args.add(arg);
 		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;

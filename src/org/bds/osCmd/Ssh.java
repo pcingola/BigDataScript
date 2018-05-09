@@ -33,7 +33,7 @@ import com.jcraft.jsch.UserInfo;
 public class Ssh {
 
 	public static String defaultKnownHosts = Gpr.HOME + "/.ssh/known_hosts";
-	public static String defaultKnownIdentity[] = { Gpr.HOME + "/.ssh/id_dsa", Gpr.HOME + "/.ssh/id_rsa" };
+	public static String defaultKnownIdentity[] = { Gpr.HOME + "/.ssh/id_rsa" };
 
 	public static int MAX_ITER_DISCONNECT = 600;
 	public static int WAIT_DISCONNECT = 100;
@@ -156,8 +156,10 @@ public class Ssh {
 			chexec.setPty(true); // Allocate pseudo-tty (same as "ssh -t")
 
 			// We don't need these
-			//chexec.setErrStream(System.err);
-			//chexec.setOutputStream(System.out);
+			if (debug) {
+				chexec.setErrStream(System.err);
+				chexec.setOutputStream(System.out);
+			}
 
 			// Connect channel
 			chexec.connect();
@@ -168,7 +170,7 @@ public class Ssh {
 			disconnect(false); // Disconnect and get exit code
 			return result;
 		} catch (Exception e) {
-			if (debug) e.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 	}

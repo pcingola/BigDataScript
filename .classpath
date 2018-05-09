@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/jsch-0.1.49.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.10.jar" sourcepath="/home/pcingola/.m2/repository/junit/junit/4.10/junit-4.10-sources.jar"/>
 	<classpathentry kind="lib" path="lib/protobuf-java-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/httpclient-4.5.jar"/>
@@ -24,5 +23,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/antlr-4.7.1-complete.jar"/>
 	<classpathentry kind="lib" path="lib/aws-java-sdk-1.11.319.jar"/>
+	<classpathentry kind="lib" path="lib/jsch-0.1.54.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -94,9 +94,11 @@ public class Host implements Comparable<Host> {
 		if (idx > 0) {
 			userName = this.hostName.substring(0, idx);
 			this.hostName = this.hostName.substring(idx + 1);
-		} else userName = "";
+		} else {
+			userName = System.getProperty("user.name");
+		}
 
-		tasksRunning = new HashSet<Task>();
+		tasksRunning = new HashSet<>();
 		cluster.add(this);
 	}
 

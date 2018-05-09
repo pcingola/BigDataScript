@@ -199,8 +199,8 @@ public class BdsTest {
 	public void checkStdout(String expectedStdout, boolean negate) {
 		int index = captureStdout.toString().indexOf(expectedStdout);
 
-		if (negate) Assert.assertFalse(errMsg("Error: NOT expeted string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
-		else Assert.assertTrue(errMsg("Error: Expeted string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
+		if (negate) Assert.assertFalse(errMsg("Error: NOT expected string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
+		else Assert.assertTrue(errMsg("Error: Expected string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
 	}
 
 	/**
