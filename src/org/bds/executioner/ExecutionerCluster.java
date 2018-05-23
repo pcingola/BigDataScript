@@ -48,7 +48,7 @@ public class ExecutionerCluster extends Executioner {
 
 	protected boolean postMortemDisabled; // Disable post-mortem taks info?
 
-	public int MIN_EXTRA_TIMEOUT = 15;
+	public int MIN_EXTRA_TIMEOUT = 60;
 	public int MAX_EXTRA_TIMEOUT = 120;
 
 	protected String pidRegexStr; // Regular expression matching a PID from 'qsub' command
@@ -174,7 +174,7 @@ public class ExecutionerCluster extends Executioner {
 	 */
 	protected int calcTimeOut(HostResources res) {
 		int realTimeout = (int) res.getTimeout();
-		if (realTimeout < 0) return 0;
+		if (realTimeout <= 0) return 0;
 
 		int extraTime = (int) (realTimeout * 0.1);
 		if (extraTime < MIN_EXTRA_TIMEOUT) extraTime = MIN_EXTRA_TIMEOUT;

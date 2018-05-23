@@ -101,10 +101,10 @@ public class TypeClass extends TypeComposite {
 	}
 
 	public boolean isSubClassOf(TypeClass type) {
-		type.getClassNameCanonical();
-		for (TypeClass tc = this; tc != null; tc = tc.getClassDeclaration().getClassTypeParent()) {
-			String tccan = tc.getClassNameCanonical();
-			if (tccan.equals(tc)) return true;
+		String typeCan = type.getClassNameCanonical();
+		for (TypeClass tchild = this; tchild != null; tchild = tchild.getClassDeclaration().getClassTypeParent()) {
+			String tchildCan = tchild.getClassNameCanonical();
+			if (tchildCan.equals(typeCan)) return true;
 		}
 		return false;
 	}

@@ -81,6 +81,8 @@ public class Config implements Serializable {
 	public static final String CLUSTER_SGE_TIMEOUT_SOFT = "sge.timeoutSoft";
 	public static final String CLUSTER_SGE_TIME_IN_SECS = "sge.timeInSecs";
 
+	// Cluster: SLURM parameters
+
 	// Cluster: Parameters
 	public static final String CLUSTER_RUN_ADDITIONAL_ARGUMENTS = "clusterRunAdditionalArgs"; // Cluster additional command line arguments (when running tasks)
 	public static final String CLUSTER_KILL_ADDITIONAL_ARGUMENTS = "clusterKillAdditionalArgs"; // Cluster additional command line arguments (when killing tasks)
