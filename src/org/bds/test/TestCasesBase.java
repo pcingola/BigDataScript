@@ -220,14 +220,18 @@ public class TestCasesBase {
 	 * Check that StdOut has a string
 	 */
 	String runAndCheckStdout(String fileName, String expectedStdout) {
-		return runAndCheckStdout(fileName, expectedStdout, false);
+		return runAndCheckStdout(fileName, expectedStdout, null, false);
+	}
+
+	String runAndCheckStdout(String fileName, String expectedStdout, boolean negate) {
+		return runAndCheckStdout(fileName, expectedStdout, null, negate);
 	}
 
 	/**
 	 * Check that StdOut has a string (or that the string is NOT present if 'negate' is true)
 	 */
-	String runAndCheckStdout(String fileName, String expectedStdout, boolean negate) {
-		BdsTest bdsTest = new BdsTest(fileName, true, debug);
+	String runAndCheckStdout(String fileName, String expectedStdout, String args[], boolean negate) {
+		BdsTest bdsTest = new BdsTest(fileName, args, true, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		bdsTest.checkStdout(expectedStdout, negate);

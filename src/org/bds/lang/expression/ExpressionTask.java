@@ -3,6 +3,7 @@ package org.bds.lang.expression;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.Config;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
@@ -16,6 +17,7 @@ import org.bds.lang.value.Literal;
 import org.bds.lang.value.LiteralString;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
+import org.bds.util.GprString;
 
 /**
  * A 'task' expression
@@ -51,10 +53,16 @@ public class ExpressionTask extends ExpressionWithScope {
 	protected ExpressionTaskOptions options;
 	protected Statement statement;
 	protected boolean asmPushDeps;
+	protected InterpolateVars preludeInterpolateVars;
+	protected String preludeStr;
 
 	public ExpressionTask(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		asmPushDeps = true;
+	}
+
+	protected boolean hasPrelude() {
+		return preludeInterpolateVars != null || (preludeStr != null && !preludeStr.isEmpty());
 	}
 
 	@Override
@@ -82,6 +90,25 @@ public class ExpressionTask extends ExpressionWithScope {
 		}
 
 		statement = (Statement) factory(tree, idx++); // Parse statement
+
+		parsePrelude();
+	}
+
+	/**
+	 * Parse prelude string from Config
+	 */
+	void parsePrelude() {
+		String prelude = Config.get().getTaskPrelude();
+		if (prelude == null || prelude.isEmpty()) {
+			preludeStr = "";
+			return;
+		}
+
+		preludeInterpolateVars = new InterpolateVars(this, null);
+		if (!preludeInterpolateVars.parse(prelude)) {
+			preludeInterpolateVars = null; // Nothing found? don't bother to keep the object
+			preludeStr = GprString.unescapeDollar(prelude); // Just use literal, but un-escape dollar signs
+		}
 	}
 
 	/**
@@ -160,8 +187,10 @@ public class ExpressionTask extends ExpressionWithScope {
 	 */
 	protected String toAsmCmd(String labelEnd) {
 		StringBuilder sb = new StringBuilder();
-		// Statements (e.g.: sys commands)
-		sb.append(toAsmStatements());
+
+		if (hasPrelude()) sb.append(toAsmPrelude());
+		sb.append(toAsmStatements()); // Statements (e.g.: sys commands)
+		if (hasPrelude()) sb.append("adds\n");
 
 		sb.append("task\n");
 		sb.append("jmp " + labelEnd + "\n"); // Go to the end
@@ -183,6 +212,12 @@ public class ExpressionTask extends ExpressionWithScope {
 			sb.append("new string[]\n");
 		}
 		return sb.toString();
+	}
+
+	protected String toAsmPrelude() {
+		if (preludeInterpolateVars != null) return preludeInterpolateVars.toAsm();
+		if (preludeStr != null && !preludeStr.isEmpty()) return "pushs " + preludeStr + "\n";
+		return "";
 	}
 
 	/**

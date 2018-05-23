@@ -1,8 +1,5 @@
 package org.bds.test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bds.Config;
 import org.bds.util.Gpr;
 import org.junit.Before;
@@ -23,17 +20,10 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test113_parallel_function_calls() {
+	public void test160_cluster_prelude() {
 		Gpr.debug("Test");
-		String stdout = runAndReturnStdout("test/run_113.bds");
-
-		Set<String> linesPar = new HashSet<>();
-		for (String line : stdout.split("\n")) {
-			if (line.startsWith("Par:")) {
-				if (linesPar.contains(line)) throw new RuntimeException("Line repeated (this should never happen): '" + line + "'");
-				linesPar.add(line);
-			}
-		}
+		String args[] = { "-c", "test/test159_prelude_task.config" };
+		runAndCheckStdout("test/run_159.bds", "=== TASK PRELUDE local ===", args, false);
 	}
 
 }

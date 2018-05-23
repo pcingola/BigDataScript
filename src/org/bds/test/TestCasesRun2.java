@@ -752,4 +752,11 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheckStderr("test/run_158.bds", "hi there");
 	}
 
+	@Test
+	public void test159_task_prelude() {
+		Gpr.debug("Test");
+		String args[] = { "-c", "test/test159_prelude_task.config" };
+		runAndCheckStdout("test/run_159.bds", "=== TASK PRELUDE local ===", args, false);
+	}
+
 }

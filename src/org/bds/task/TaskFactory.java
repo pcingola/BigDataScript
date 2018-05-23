@@ -111,11 +111,14 @@ public class TaskFactory extends SysFactory {
 
 		// Put everything together
 		StringBuilder sbSys = new StringBuilder();
+
 		if (sbDown.length() > 0) {
 			sbSys.append("# Download commands\n");
 			sbSys.append(sbDown);
 		}
+
 		sbSys.append(sysCmds);
+
 		if (sbUp.length() > 0) {
 			sbSys.append("\n# Upload commands\n");
 			sbSys.append(sbUp);

@@ -52,6 +52,7 @@ public class Config implements Serializable {
 	public static final String PID_CHECK_TASK_RUNNING_COLUMN = "pidColumnCheckTaskRunning"; // Regex used for checking PID
 
 	// Shells used to invoke 'sys' and 'task'
+	public static final String TASK_PRELUDE = "taskPrelude"; // Task prelude
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
 	public static final String TASK_SHELL_DEFAULT = "/bin/bash -e"; // Use '-e' so that shell script stops after first error
 
@@ -111,6 +112,21 @@ public class Config implements Serializable {
 
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
+	/**
+	 * Get singleton
+	 */
+	public static Config get() {
+		if (configInstance == null) configInstance = new Config();
+		return configInstance;
+	}
+
+	/**
+	 * Reset singleton
+	 */
+	public static void reset() {
+		configInstance = null;
+	}
+
 	boolean debug = false; // Debug mode?
 	boolean verbose = false; // Verbose mode?
 	boolean quiet = false; // Quiet mode?
@@ -137,29 +153,17 @@ public class Config implements Serializable {
 	String reportFileName; // Preferred file name to use for progress and final report
 	String system; // System type
 	String sysShell; // System shell
+	String taskPrelude; // Task prelude
 	String taskShell; // Task shell
 	String tmpDir; // Tmp directory
 	Properties properties;
 	ArrayList<String> includePath;
 	ArrayList<String> filterOutTaskHint;
 	TaskLogger taskLogger;
+
 	MonitorTask monitorTask;
+
 	Tail tail;
-
-	/**
-	 * Get singleton
-	 */
-	public static Config get() {
-		if (configInstance == null) configInstance = new Config();
-		return configInstance;
-	}
-
-	/**
-	 * Reset singleton
-	 */
-	public static void reset() {
-		configInstance = null;
-	}
 
 	public Config() {
 		this(null);
@@ -408,6 +412,10 @@ public class Config implements Serializable {
 		return taskMaxHintLen;
 	}
 
+	public String getTaskPrelude() {
+		return taskPrelude;
+	}
+
 	public String getTaskShell() {
 		return taskShell;
 	}
@@ -503,6 +511,7 @@ public class Config implements Serializable {
 		system = getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
 		taskFailCount = getInt(ExpressionTask.TASK_OPTION_RETRY, 0);
 		taskMaxHintLen = Gpr.parseIntSafe(properties.getProperty(TASK_MAX_HINT_LEN, Task.MAX_HINT_LEN + ""));
+		taskPrelude = getString(TASK_PRELUDE, "");
 		taskShell = getString(Config.TASK_SHELL, Config.TASK_SHELL_DEFAULT);
 		tmpDir = getString(TMP_DIR, DEFAULT_TMP_DIR);
 		waitAfterTaskRun = (int) getLong(WAIT_AFTER_TASK_RUN, DEFAULT_WAIT_AFTER_TASK_RUN);
@@ -632,6 +641,10 @@ public class Config implements Serializable {
 
 	public void setTaskFailCount(int taskFailCount) {
 		this.taskFailCount = taskFailCount;
+	}
+
+	public void setTaskPrelude(String taskPrelude) {
+		this.taskPrelude = taskPrelude;
 	}
 
 	public void setVerbose(boolean verbose) {

@@ -117,7 +117,6 @@ public class Ssh {
 	 * Diconnect, clear objects and set exit map
 	 */
 	int disconnect(boolean force) {
-
 		// Close channel
 		if (channel != null) {
 			if (!force) waitChannel();
@@ -150,13 +149,14 @@ public class Ssh {
 	public String exec(String command) {
 		// Open ssh session
 		try {
+			Gpr.debug("COMMAND: " + command);
 			channel = connect("exec", command);
 			ChannelExec chexec = (ChannelExec) channel;
 			chexec.setInputStream(null);
 			chexec.setPty(true); // Allocate pseudo-tty (same as "ssh -t")
 
-			// We don't need these
 			if (debug) {
+				// Show only in debug mode
 				chexec.setErrStream(System.err);
 				chexec.setOutputStream(System.out);
 			}

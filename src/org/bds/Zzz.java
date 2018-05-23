@@ -1,5 +1,8 @@
 package org.bds;
 
+import org.bds.cluster.host.Host;
+import org.bds.osCmd.Ssh;
+
 public class Zzz {
 
 	public static boolean debug = true;
@@ -10,17 +13,9 @@ public class Zzz {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
 
-		int i = 3;
-		switch (i) {
-		default:
-			System.out.println("DEFAULT");
-		case 1:
-			System.out.println("CASE 1");
-			break;
-		case 2:
-			System.out.println("CASE 2");
-			break;
-		}
+		Host lh = new Host("localhost");
+		Ssh ssh = new Ssh(lh);
+		System.out.println(ssh.exec("echo $PATH; pwd"));
 
 		System.out.println("End");
 	}
