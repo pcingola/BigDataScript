@@ -1,6 +1,7 @@
 package org.bds.executioner;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,6 +17,7 @@ import org.bds.osCmd.CmdCluster;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.task.Task;
+import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -27,13 +29,16 @@ import org.bds.util.Timer;
  */
 public class ExecutionerCluster extends Executioner {
 
+	protected final String CLUSTER_DEFAULT_RUN_COMMAND_STDOUT_OPTION = "-o";
+	protected final String CLUSTER_DEFAULT_RUN_COMMAND_STDERR_OPTION = "-e";
+
 	protected String clusterRunCommand[];
 	protected String clusterKillCommand[];
 	protected String clusterStatCommand[];
 	protected String clusterPostMortemInfoCommand[];
 
-	protected String clusterRunCommandStdOutOption = "-o";
-	protected String clusterRunCommandStdErrOption = "-e";
+	protected String clusterRunCommandStdOutOption;
+	protected String clusterRunCommandStdErrOption;
 
 	protected String clusterRunAdditionalArgs[];
 	protected String clusterKillAdditionalArgs[];
@@ -47,6 +52,7 @@ public class ExecutionerCluster extends Executioner {
 	protected String wallTimeParam;
 
 	protected boolean postMortemDisabled; // Disable post-mortem taks info?
+	protected boolean useShellScript; // Use shell script or STDIN for feeding the commands?
 
 	public int MIN_EXTRA_TIMEOUT = 60;
 	public int MAX_EXTRA_TIMEOUT = 120;
@@ -68,6 +74,9 @@ public class ExecutionerCluster extends Executioner {
 		clusterStatCommand = statCommand;
 		clusterPostMortemInfoCommand = postMortemInfoCommand;
 
+		clusterRunCommandStdOutOption = CLUSTER_DEFAULT_RUN_COMMAND_STDOUT_OPTION;
+		clusterRunCommandStdErrOption = CLUSTER_DEFAULT_RUN_COMMAND_STDERR_OPTION;
+
 		// Additional command line arguments
 		clusterRunAdditionalArgs = config.getStringArray(Config.CLUSTER_RUN_ADDITIONAL_ARGUMENTS);
 		clusterKillAdditionalArgs = config.getStringArray(Config.CLUSTER_KILL_ADDITIONAL_ARGUMENTS);
@@ -79,6 +88,8 @@ public class ExecutionerCluster extends Executioner {
 		memParam = "mem=";
 		cpuParam = "nodes=1:ppn=";
 		wallTimeParam = "walltime=";
+
+		useShellScript = false;
 
 		// PID regex matcher
 		pidRegexStr = config.getPidRegex("");
@@ -125,7 +136,7 @@ public class ExecutionerCluster extends Executioner {
 		HostResources res = task.getResources();
 
 		long clusterTimeout = calcTimeOut(res);
-		String clusterTimeoutStr = Timer.toHHMMSS(1000 * clusterTimeout);
+		String clusterTimeoutStr = timeStr(clusterTimeout);
 
 		// Cpu, memory and timeout
 		if (res.getCpus() > 0) resSb.append((resSb.length() > 0 ? "," : "") + cpuParam + res.getCpus());
@@ -144,6 +155,13 @@ public class ExecutionerCluster extends Executioner {
 			args.add("-q");
 			args.add(queue);
 		}
+	}
+
+	/**
+	 * Add shell script to command line parameters
+	 * Note: Some clusters require the command to be executed to be in a shell script, while others accept STDIN
+	 */
+	protected void addShellScript(Task task, List<String> args) {
 	}
 
 	/**
@@ -228,28 +246,60 @@ public class ExecutionerCluster extends Executioner {
 			args.add(clusterStdFile(task.getStderrFile()));
 		}
 
-		//---
-		// Cluster command is feed some parameters via STDIN. This is
-		// similar to running "echo ... | qsub" on a shell.
-		// This part creates those 'stdin' parameters
-		//---
-		String cmdStdin = bdsCommand(task);
-		if (debug) {
-			// Show command string
-			StringBuilder cmdStr = new StringBuilder();
-			for (String arg : args)
-				cmdStr.append(arg + " ");
+		// Add commands either by shell script or STDIN
+		String cmdStdin = null;
+		if (useShellScript) {
+			// Add shell script
+			addShellScript(task, args);
+		} else {
+			//---
+			// Cluster command is feed some parameters via STDIN. This is
+			// similar to running "echo ... | qsub" on a shell.
+			// This part creates those 'stdin' parameters
+			//---
+			cmdStdin = bdsCommand(task);
+			if (debug) {
+				// Show command string
+				StringBuilder cmdStr = new StringBuilder();
+				for (String arg : args)
+					cmdStr.append(arg + " ");
 
-			log("Running task " + task.getId() + ", command:\n\techo \"" + cmdStdin + "\" | " + cmdStr);
+				log("Running task " + task.getId() + ", command:\n\techo \"" + cmdStdin + "\" | " + cmdStr);
+			}
 		}
 
 		//---
 		// Create full command
 		//---
 		CmdCluster cmd = new CmdCluster(task.getId(), args.toArray(Cmd.ARGS_ARRAY_TYPE));
-		cmd.setStdin(cmdStdin);
-		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
+		if (!useShellScript) cmd.setStdin(cmdStdin);
+		cmd.setReadPid(true); // We execute using a cluster submit command that which prints PID
 		return cmd;
+	}
+
+	/**
+	 * You cannot pass a command to SLURM, only a shell script.
+	 * We create shell script containing the bds command to execute.
+	 * @param task
+	 * @return Shell script name
+	 */
+	protected String createShellScriptBdsCommand(Task task) {
+		// Get shell script
+		StringBuilder sb = new StringBuilder();
+		sb.append("#!" + Config.get().getSysShell() + "\n\n");
+		sb.append(bdsCommand(task));
+		sb.append("\n");
+
+		// Save to file
+		String fileName = shellFileName(task);
+		Gpr.toFile(fileName, sb.toString());
+
+		// Make sure file is executable
+		File f = new File(fileName);
+		f.setExecutable(true);
+		if (!log) f.deleteOnExit();
+
+		return fileName;
 	}
 
 	@Override
@@ -396,6 +446,27 @@ public class ExecutionerCluster extends Executioner {
 
 	}
 
+	/**
+	 * Create a shell file name for a slurm script (basically invoke bds command)
+	 * @param task
+	 * @return
+	 */
+	protected String shellFileName(Task task) {
+		String programFileName = task.getProgramFileName();
+		try {
+			File file = new File(programFileName);
+			File dir = file.getCanonicalFile().getParentFile();
+			String programFileDir = dir.getCanonicalPath();
+			String baseName = file.getName();
+			int idx = baseName.lastIndexOf('.');
+			if (idx > 0) baseName = baseName.substring(0, idx);
+			return programFileDir + "/" + baseName + ".slurm.sh";
+		} catch (IOException e) {
+			// Nothing to do
+		}
+		return programFileName + ".slurm.sh";
+	}
+
 	@Override
 	protected synchronized boolean taskUpdateRunning(Task task) {
 		boolean ret = super.taskUpdateRunning(task);
@@ -410,6 +481,14 @@ public class ExecutionerCluster extends Executioner {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Get timeout in a format that the cluster command expects
+	 * @param clusterTimeout : Time out in seconds
+	 */
+	protected String timeStr(long clusterTimeout) {
+		return Timer.toHHMMSS(1000 * clusterTimeout);
 	}
 
 }

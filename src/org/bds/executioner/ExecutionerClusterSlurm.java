@@ -1,14 +1,11 @@
 package org.bds.executioner;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.bds.Config;
 import org.bds.cluster.host.HostResources;
 import org.bds.task.Task;
-import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -35,6 +32,12 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 		clusterKillCommand = KILL_COMMAND;
 		clusterStatCommand = STAT_COMMAND;
 		clusterPostMortemInfoCommand = POST_MORTEM_COMMAND;
+		clusterRunCommandStdOutOption = "--output";
+		clusterRunCommandStdErrOption = "--error";
+
+		cpuParam = "--cpus-per-task";
+		memParam = "--mem";
+		wallTimeParam = "-t";
 
 		// When running sbatch you get a line lie this:
 		//
@@ -60,20 +63,20 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 
 		// Cpu
 		if (res.getCpus() > 0) {
-			args.add("--cpus-per-task");
+			args.add(cpuParam);
 			args.add("" + res.getCpus());
 		}
 
 		// Memory
 		if (res.getMem() > 0) {
 			long memInM = Math.max(res.getMem() / (1024 * 1024), 1);
-			args.add("--mem=" + memInM + "M");
+			args.add(memParam + "=" + memInM + "M");
 		}
 
 		// Timeout
 		int clusterTimeout = calcTimeOut(res);
 		if (clusterTimeout > 0) { // Hard timeout
-			args.add("-t");
+			args.add(wallTimeParam);
 			args.add(time(clusterTimeout));
 		}
 
@@ -84,61 +87,16 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 			args.add(queue);
 		}
 
-		args.add("--output");
-		args.add(clusterStdFile(task.getStdoutFile()));
+	}
 
-		args.add("--error");
-		args.add(clusterStdFile(task.getStderrFile()));
-
-		// Create shell script
+	/**
+	 * Add shell script to command line parameters
+	 * Note: Some clusters require the command to be executed to be in a shell script, while others accept STDIN
+	 */
+	@Override
+	protected void addShellScript(Task task, List<String> args) {
 		String shellScripFile = createShellScriptBdsCommand(task);
 		args.add(shellScripFile);
-	}
-
-	/**
-	 * You cannot pass a command to SLURM, only a shell script.
-	 * We create shell script containing the bds command to execute.
-	 * @param task
-	 * @return Shell script name
-	 */
-	protected String createShellScriptBdsCommand(Task task) {
-		// Get shell script
-		StringBuilder sb = new StringBuilder();
-		sb.append("#!" + Config.get().getSysShell() + "\n\n");
-		sb.append(bdsCommand(task));
-		sb.append("\n");
-
-		// Save to file
-		String fileName = shellFileName(task);
-		Gpr.toFile(fileName, sb.toString());
-
-		// Make sure file is executable
-		File f = new File(fileName);
-		f.setExecutable(true);
-		if (!log) f.deleteOnExit();
-
-		return fileName;
-	}
-
-	/**
-	 * Create a shell file name for a slurm script (basically invoke bds command)
-	 * @param task
-	 * @return
-	 */
-	protected String shellFileName(Task task) {
-		String programFileName = task.getProgramFileName();
-		try {
-			File file = new File(programFileName);
-			File dir = file.getCanonicalFile().getParentFile();
-			String programFileDir = dir.getCanonicalPath();
-			String baseName = file.getName();
-			int idx = baseName.lastIndexOf('.');
-			if (idx > 0) baseName = baseName.substring(0, idx);
-			return programFileDir + "/" + baseName + ".slurm.sh";
-		} catch (IOException e) {
-			// Nothing to do
-		}
-		return programFileName + ".slurm.sh";
 	}
 
 	/**
