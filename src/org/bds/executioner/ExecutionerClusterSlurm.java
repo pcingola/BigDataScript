@@ -39,6 +39,8 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 		memParam = "--mem";
 		wallTimeParam = "-t";
 
+		useShellScript = true;
+
 		// When running sbatch you get a line lie this:
 		//
 		//		$ sbatch x.sh
