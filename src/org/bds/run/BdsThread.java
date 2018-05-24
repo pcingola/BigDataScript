@@ -201,6 +201,7 @@ public class BdsThread extends Thread implements Serializable {
 			out.close();
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("Error while serializing to file '" + checkpointFileName + "'", e);
 		} finally {
 			// Un-freeze all threads
@@ -330,7 +331,7 @@ public class BdsThread extends Thread implements Serializable {
 		try {
 			String checkpointFileName = checkpoint(bdsnode);
 			if (checkpointFileName.isEmpty()) System.err.println("Creating checkpoint file: Config or command line option disabled checkpoint file creation, nothing done.");
-			else System.err.println("Creating checkpoint file '" + checkpointFileName + "'");
+			else System.err.println("Created checkpoint file: '" + checkpointFileName + "'");
 		} catch (Throwable t) {
 			// Ignore serialization error at this stage (we are within a fatal error)
 		}

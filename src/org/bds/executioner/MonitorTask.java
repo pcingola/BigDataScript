@@ -1,6 +1,7 @@
 package org.bds.executioner;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,7 +16,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class MonitorTask {
+public class MonitorTask implements Serializable {
+
+	private static final long serialVersionUID = -5364964372060576944L;
 
 	// Cluster scheduling is usually quite slow, so we don't need a short monitoring interval.
 	// Reducing this sleep time adds processing and probably has not many benefits.
