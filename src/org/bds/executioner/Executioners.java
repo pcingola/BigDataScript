@@ -20,7 +20,7 @@ public class Executioners {
 	 * Type of executioners
 	 */
 	public enum ExecutionerType {
-		CLUSTER, FAKE, GENERIC, LOCAL, MESOS, MOAB, PBS, SGE, SSH, SYS;
+		CLUSTER, FAKE, GENERIC, LOCAL, MESOS, MOAB, PBS, SGE, SLURM, SSH;
 
 		/**
 		 * Parse an executioner name
@@ -125,6 +125,10 @@ public class Executioners {
 
 		case SGE:
 			executioner = new ExecutionerClusterSge(config);
+			break;
+
+		case SLURM:
+			executioner = new ExecutionerClusterSlurm(config);
 			break;
 
 		default:
