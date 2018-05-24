@@ -200,10 +200,11 @@ public class BdsThread extends Thread implements Serializable {
 			out.writeObject(getRoot());
 			out.close();
 
-			// Un-freeze all threads
-			Freeze.unfreeze();
 		} catch (Exception e) {
 			throw new RuntimeException("Error while serializing to file '" + checkpointFileName + "'", e);
+		} finally {
+			// Un-freeze all threads
+			Freeze.unfreeze();
 		}
 
 		return checkpointFileName;

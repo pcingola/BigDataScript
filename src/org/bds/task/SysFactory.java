@@ -78,7 +78,7 @@ public class SysFactory {
 		try {
 			return f.getCanonicalPath();
 		} catch (IOException e) {
-			throw new RuntimeException("cannot get cannonical path for file '" + sysFileName + "'");
+			throw new RuntimeException("Cannot get cannonical path for file '" + sysFileName + "'");
 		}
 	}
 

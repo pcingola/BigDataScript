@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-#system = "ssh"
+system = "slurm"
 println "PATH:$PATH"
 
 println "Executing task: start"

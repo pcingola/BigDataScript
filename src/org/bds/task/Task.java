@@ -27,7 +27,6 @@ public class Task implements Serializable {
 	private static final long serialVersionUID = 3377646684108052191L;
 
 	public static final String CHECKSUM_LINE_START = "# Checksum: ";
-
 	public static final String EXIT_STR_TIMEOUT = "Time out";
 	public static final String EXIT_STR_KILLED = "Signal received";
 
