@@ -112,6 +112,11 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 		String fileName = shellFileName(task);
 		Gpr.toFile(fileName, sb.toString());
 
+		// Make sure file is executable
+		File f = new File(fileName);
+		f.setExecutable(true);
+		if (!log) f.deleteOnExit();
+
 		return fileName;
 	}
 
@@ -120,7 +125,7 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 	 * @param task
 	 * @return
 	 */
-	String shellFileName(Task task) {
+	protected String shellFileName(Task task) {
 		String programFileName = task.getProgramFileName();
 		try {
 			File file = new File(programFileName);

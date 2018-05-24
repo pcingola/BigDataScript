@@ -72,6 +72,11 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		verbose = config.isVerbose();
 		removeTaskCannotExecute = true;
 
+		// Set some parameters
+		verbose = config.isVerbose();
+		debug = config.isDebug();
+		log = config.isLog();
+
 		// Create a cluster having only one host (this computer)
 		cluster = new Cluster();
 		new HostLocal(cluster);

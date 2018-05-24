@@ -135,11 +135,6 @@ public class Executioners {
 			throw new RuntimeException("Unknown executioner type '" + exType + "'");
 		}
 
-		// Set some parameters
-		executioner.setVerbose(config.isVerbose());
-		executioner.setDebug(config.isDebug());
-		executioner.setLog(config.isLog());
-
 		return executioner;
 	}
 

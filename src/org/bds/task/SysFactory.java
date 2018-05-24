@@ -23,16 +23,17 @@ public class SysFactory {
 
 	private static int sysId = 1;
 
-	protected BdsThread bdsThread;
-	protected BdsNode bdsNode;
-	protected String commands;
-
 	/**
 	 * Get a sys ID
 	 */
 	protected static synchronized int nextId() {
 		return sysId++;
 	}
+
+	protected BdsThread bdsThread;
+	protected BdsNode bdsNode;
+
+	protected String commands;
 
 	public SysFactory(BdsThread bdsThread) {
 		this.bdsThread = bdsThread;

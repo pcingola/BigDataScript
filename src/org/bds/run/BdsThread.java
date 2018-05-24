@@ -762,6 +762,9 @@ public class BdsThread extends Thread implements Serializable {
 		}
 	}
 
+	/**
+	 * Remove the file on exit
+	 */
 	public synchronized void rmOnExit(Value vfile) {
 		String file = vfile.asString();
 		Data data = data(file);
