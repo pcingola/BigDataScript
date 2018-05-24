@@ -17,11 +17,11 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 
 	// Define commands
 	public static final String KILL_COMMAND[] = { "scancel" };
-	public static final String POST_MORTEM_COMMAND[] = { "squeue" };
-	public static final String STAT_COMMAND[] = { "squeue" };
-	public static final String RUN_COMMAND[] = { "sbatch" };
+	public static final String POST_MORTEM_COMMAND[] = { "sacct", "--format=User,JobID,account,Timelimit,elapsed,ReqMem,MaxRss,ExitCode", "-j" };
+	public static final String STAT_COMMAND[] = { "squeue", "-h", "-o", "%A" };
+	public static final String RUN_COMMAND[] = { "sbatch", "--parsable", "--no-requeue" };
 
-	public static final String PID_REGEX_DEFAULT = "YSubmitted batch job (\\S+)";
+	public static final String PID_REGEX_DEFAULT = "(\\d+)";
 
 	boolean timeInMins = true; // Typically SLURM timeouts are in minutes
 
@@ -37,6 +37,9 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 		//
 		//		$ sbatch x.sh
 		// 		Submitted batch job 171984
+		//
+		//		$ sbatch --parsable x.sh
+		// 		171984
 		//
 		// So, this is a pattern matcher to parse the PID
 		pidRegexStr = config.getPidRegex(PID_REGEX_DEFAULT);
@@ -54,7 +57,7 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 
 		// Cpu
 		if (res.getCpus() > 0) {
-			args.add("-n");
+			args.add("--cpus-per-task");
 			args.add("" + res.getCpus());
 		}
 
@@ -77,6 +80,13 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 			args.add("-p");
 			args.add(queue);
 		}
+
+		args.add("--output");
+		args.add(clusterStdFile(task.getStdoutFile()));
+
+		args.add("--error");
+		args.add(clusterStdFile(task.getStderrFile()));
+
 	}
 
 	/**
