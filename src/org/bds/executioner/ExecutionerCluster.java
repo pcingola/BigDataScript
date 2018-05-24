@@ -286,7 +286,7 @@ public class ExecutionerCluster extends Executioner {
 	protected String createShellScriptBdsCommand(Task task) {
 		// Get shell script
 		StringBuilder sb = new StringBuilder();
-		sb.append("#!" + Config.get().getSysShell() + "\n\n");
+		sb.append("#!" + Config.get().getTaskShell() + "\n\n");
 		sb.append(bdsCommand(task));
 		sb.append("\n");
 
