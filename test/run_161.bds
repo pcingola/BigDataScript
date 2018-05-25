@@ -1,0 +1,10 @@
+#!/usr/bin/env bds
+
+class A {
+	int x = 42
+}
+
+A a = new A()
+println "a: $a"
+out := "a.x = $a.x"
+println out

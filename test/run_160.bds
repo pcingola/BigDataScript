@@ -1,0 +1,6 @@
+#!/usr/bin/env bds
+
+# Class A: Intentionally undefined
+
+A a = new A()
+println "a.x: " + a.x

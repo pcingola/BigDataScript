@@ -26,8 +26,8 @@ public class StatementWithScope extends Statement {
 	/**
 	 * Add local symbols to SymbolTable
 	 * The idea is that you should be able to refer to functions
-	 * and classes defined within the same scope, but defined
-	 * after the current statement), e.g.:
+	 * and classes defined within the same scope, which may be defined
+	 * after the current statement, e.g.:
 	 *   i := f(42)    // Function 'f' is not defined yet
 	 *   int f(int x) { return 2*x }
 	 */
