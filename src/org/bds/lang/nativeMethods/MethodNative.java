@@ -32,7 +32,7 @@ public abstract class MethodNative extends MethodDeclaration {
 	 */
 	protected void addNativeMethodToClassScope() {
 		SymbolTable symTab = classType.getSymbolTable();
-		symTab.add(this);
+		symTab.addFunction(this);
 	}
 
 	/**

@@ -43,4 +43,12 @@ public class TestCasesZzz extends TestCasesBase {
 		runAndCheck("test/run_162.bds", "out", "B: A: Hi");
 	}
 
+	//	@Test
+	//	public void test163() {
+	//		Gpr.debug("Test");
+	//		verbose = true;
+	//		// Define and create inner classes
+	//		runAndCheck("test/run_162.bds", "out", "B: A: Hi");
+	//	}
+
 }

@@ -9,6 +9,7 @@ import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueClass;
+import org.bds.util.Gpr;
 
 /**
  * Class type
@@ -50,13 +51,13 @@ public class TypeClass extends TypeComposite {
 		for (FieldDeclaration fd : classDecl.getFieldDecl()) {
 			Type type = fd.getType();
 			for (VariableInit vi : fd.getVarInit())
-				symbolTable.add(vi.getVarName(), type);
+				symbolTable.addVariable(vi.getVarName(), type);
 		}
 
 		// Add methods
 		for (MethodDeclaration md : classDecl.getMethodDecl())
 			if (!md.isNative()) { // Add declared method (native methods are added to symbol table during initialization, do not add again)
-				symbolTable.add(md);
+				symbolTable.addFunction(md);
 			}
 	}
 
@@ -83,16 +84,21 @@ public class TypeClass extends TypeComposite {
 		return className.compareTo(tcn);
 	}
 
+	@Override
+	public String getCanonicalName() {
+		return className; // TODO: Implement a 'true' canonical name
+	}
+
 	public ClassDeclaration getClassDeclaration() {
+		if (classDecl == null) {
+			// GlobalSymbolTable.get(). !!!!
+			Gpr.debug("CLASSDECL IS NULL: " + getLineNum());
+		}
 		return classDecl;
 	}
 
 	public String getClassName() {
 		return className;
-	}
-
-	public String getClassNameCanonical() {
-		return className; // TODO: Implement a 'true' canonical name
 	}
 
 	@Override
@@ -101,9 +107,9 @@ public class TypeClass extends TypeComposite {
 	}
 
 	public boolean isSubClassOf(TypeClass type) {
-		String typeCan = type.getClassNameCanonical();
+		String typeCan = type.getCanonicalName();
 		for (TypeClass tchild = this; tchild != null; tchild = tchild.getClassDeclaration().getClassTypeParent()) {
-			String tchildCan = tchild.getClassNameCanonical();
+			String tchildCan = tchild.getCanonicalName();
 			if (tchildCan.equals(typeCan)) return true;
 		}
 		return false;

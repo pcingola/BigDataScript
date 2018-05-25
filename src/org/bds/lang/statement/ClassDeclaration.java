@@ -40,12 +40,12 @@ public class ClassDeclaration extends Block {
 	 */
 	protected void addSymTab(SymbolTable symtab) {
 		// Add type for 'this' object in current table
-		symtab.add(THIS, getType());
+		symtab.addVariable(THIS, getType());
 
 		// Add to parent symbol table, because the current
 		// symbol table is for the class' body
 		SymbolTable stparen = symtab.getParent();
-		stparen.add(className, getType());
+		stparen.addType(getType());
 	}
 
 	/**
@@ -245,7 +245,7 @@ public class ClassDeclaration extends Block {
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Class name collides with other names?
-		if (symtab.getTypeLocal(className) != null) {
+		if (symtab.getVariableTypeLocal(className) != null) {
 			compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
 		} else if ((className != null) && (getType() != null)) {
 			// Add to symbol table

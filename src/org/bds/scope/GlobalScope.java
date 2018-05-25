@@ -88,7 +88,7 @@ public class GlobalScope extends Scope {
 	public void addToGlobalSymbolTable(String name) {
 		// Add type to global SymbolTable
 		Value value = getValue(name);
-		GlobalSymbolTable.get().add(name, value.getType());
+		GlobalSymbolTable.get().addVariable(name, value.getType());
 	}
 
 	@Override

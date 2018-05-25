@@ -164,7 +164,7 @@ public class VariableInit extends BdsNode {
 	@Override
 	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Variable type
-		Type varType = symtab.getTypeLocal(varName);
+		Type varType = symtab.getVariableTypeLocal(varName);
 
 		// Calculate expression type
 		if (expression != null) {

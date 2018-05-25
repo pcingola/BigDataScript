@@ -47,7 +47,7 @@ public class VarDeclaration extends Statement {
 	 * Add variable to symbol table
 	 */
 	protected void addVar(SymbolTable symtab, CompilerMessages compilerMessages, String varName) {
-		if ((varName != null) && (type != null)) symtab.add(varName, type);
+		if ((varName != null) && (type != null)) symtab.addVariable(varName, type);
 	}
 
 	public Type getType() {

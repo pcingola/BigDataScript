@@ -21,30 +21,6 @@ public class StatementWithScope extends Statement {
 		super(parent, tree);
 	}
 
-	//	/**
-	//	 * Add local symbols to SymbolTable
-	//	 * The idea is that you should be able to refer to functions
-	//	 * and classes defined within the same scope, which may be defined
-	//	 * after the current statement, e.g.:
-	//	 *   i := f(42)    // Function 'f' is not defined yet
-	//	 *   int f(int x) { return 2*x }
-	//	 */
-	//	public void addLocalSymbols(SymbolTable symtab) {
-	//		// Add all functions
-	//		List<BdsNode> fdecls = findNodes(StatementFunctionDeclaration.class, false, true);
-	//		for (BdsNode n : fdecls) {
-	//			FunctionDeclaration fd = (FunctionDeclaration) n;
-	//			symtab.add(fd);
-	//		}
-	//
-	//		// Add all classes
-	//		List<BdsNode> cdecls = findNodes(ClassDeclaration.class, false, true);
-	//		for (BdsNode n : cdecls) {
-	//			ClassDeclaration cd = (ClassDeclaration) n;
-	//			symtab.add(cd.getClassName(), cd.getType());
-	//		}
-	//	}
-
 	@Override
 	public SymbolTable getSymbolTable() {
 		return symbolTable;
@@ -72,8 +48,6 @@ public class StatementWithScope extends Statement {
 
 	@Override
 	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
-		//		addLocalSymbols(symtab);
-
 		// Calculate return type
 		returnType = returnType(symtab);
 

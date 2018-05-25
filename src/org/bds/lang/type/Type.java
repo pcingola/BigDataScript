@@ -40,7 +40,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	protected void addNativeMethods() {
 		List<MethodNative> methods = declateNativeMethods();
 		for (MethodNative method : methods)
-			getSymbolTable().add(method);
+			getSymbolTable().addFunction(method);
 	}
 
 	/**
@@ -76,6 +76,13 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 				|| isAny() //
 				|| type.isAny() //
 		;
+	}
+
+	/**
+	 * Canonical name for this type
+	 */
+	public String getCanonicalName() {
+		return toString();
 	}
 
 	/**
