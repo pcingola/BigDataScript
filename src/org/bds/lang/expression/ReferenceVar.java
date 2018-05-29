@@ -21,29 +21,6 @@ public class ReferenceVar extends Reference {
 	protected boolean classField;
 	protected String name;
 
-	//	/**
-	//	 * Create a reference form a string
-	//	 */
-	//	public static Expression factory(BdsNode parent, String var) {
-	//		if (var == null || var.isEmpty()) return null;
-	//
-	//		int idxDot = var.indexOf('.');
-	//		int idxCurly = var.indexOf('{');
-	//		int idxBrace = var.indexOf('[');
-	//		int idxMin = Math.min(idxDot, Math.min(idxCurly, idxBrace));
-	//
-	//		Reference varRef = null;
-	//		if (idxMin < 0) varRef = new ReferenceVar(parent, null);
-	//		else if (idxMin == idxBrace) varRef = new ReferenceList(parent, null);
-	//		else if (idxMin == idxCurly) varRef = new ReferenceMap(parent, null);
-	//		else if (idxMin == idxDot) varRef = new ReferenceField(parent, null);
-	//		else throw new RuntimeException("Unimplemented reference parsing. This should never happen!");
-	//
-	//		// Parse string
-	//		varRef.parse(var);
-	//		return varRef;
-	//	}
-
 	public ReferenceVar(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		classField = false;

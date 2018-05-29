@@ -1,16 +1,4 @@
 #!/usr/bin/env bds
 
-class A {
-    string p() { return "A: Hi" }
-}
-
-class B {
-	A a = new A()
-	string pb() {
-		return "B: " + a.p()
-	}
-}
-
-B b = new B()
-out := b.pb()
+out := 10
 println "out: $out"

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -30,9 +29,10 @@ public class ProgramUnit extends BlockWithFile {
 
 	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
 		try {
-			CharStream x = ((ParserRuleContext) tree).getStart().getInputStream();
-			return new File(((ANTLRFileStream) x).getSourceName());
+			CharStream cs = ((ParserRuleContext) tree).getStart().getInputStream();
+			return new File(cs.getSourceName());
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new File("?");
 		}
 	}

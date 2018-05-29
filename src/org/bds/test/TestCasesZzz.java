@@ -20,21 +20,12 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test10() {
+	public void test161() {
 		Gpr.debug("Test");
-		String strings[] = { "l[1] : '", "'\\n" };
-		String vars[] = { "l[1]", "" };
-
-		checkInterpolate("l[1] : '$l[1]'\\n", strings, vars);
+		verbose = true;
+		// Error interpolating object fields
+		runAndCheck("test/run_161.bds", "out", "a.x = 42");
 	}
-
-	//	@Test
-	//	public void test161() {
-	//		Gpr.debug("Test");
-	//		verbose = true;
-	//		// Error interpolating object fields
-	//		runAndCheck("test/run_161.bds", "out", "a.x = 42");
-	//	}
 
 	//	@Test
 	//	public void test163() {
