@@ -68,7 +68,7 @@ public class ReferenceMap extends Reference {
 	public void parse(String str) {
 		int idx1 = str.indexOf('{');
 		int idx2 = str.lastIndexOf('}');
-		if ((idx1 <= 0) || (idx2 <= idx1)) throw new RuntimeException("Cannot parse list reference '" + str + "'");
+		if ((idx1 <= 0) || (idx2 <= idx1)) throw new RuntimeException("Cannot parse map reference '" + str + "'");
 
 		// Create VarReference
 		String varName = str.substring(0, idx1);
@@ -81,7 +81,7 @@ public class ReferenceMap extends Reference {
 
 		if (idxStr.startsWith("$")) {
 			// We have to interpolate this string
-			expressionKey = ReferenceVar.factory(this, idxStr.substring(1));
+			expressionKey = Expression.factory(this, idxStr.substring(1));
 		} else {
 			// String literal
 			LiteralString exprIdx = new LiteralString(this, null);

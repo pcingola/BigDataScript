@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
-import org.bds.lang.expression.ReferenceVar;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
@@ -185,7 +184,7 @@ public class InterpolateVars extends Literal {
 	 * Is this a valid character for a variable name?
 	 */
 	boolean isVariableNameChar(char c) {
-		return Character.isLetterOrDigit(c) || (c == '_');
+		return Character.isLetterOrDigit(c) || (c == '_') || (c == '.');
 	}
 
 	/**
@@ -214,7 +213,7 @@ public class InterpolateVars extends Literal {
 
 		// Create and add reference
 		for (String var : variables) {
-			Expression varRef = ReferenceVar.factory(parent, var);
+			Expression varRef = Expression.factory(parent, var);
 			exprs.add(varRef);
 		}
 

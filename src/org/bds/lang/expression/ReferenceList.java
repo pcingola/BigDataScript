@@ -81,7 +81,7 @@ public class ReferenceList extends Reference {
 
 		if (idxStr.startsWith("$")) {
 			// We have to interpolate this string
-			exprIdx = ReferenceVar.factory(this, idxStr.substring(1));
+			exprIdx = Expression.factory(this, idxStr.substring(1));
 		} else {
 			// String literal
 			LiteralInt litInt = new LiteralInt(this, null);
