@@ -1,9 +1,7 @@
 package org.bds.test;
 
 import org.bds.Config;
-import org.bds.util.Gpr;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -35,12 +33,11 @@ public class TestCasesZzz extends TestCasesBase {
 	//		runAndCheck("test/run_161.bds", "out", "a.x = 42");
 	//	}
 
-	@Test
-	public void test162() {
-		Gpr.debug("Test");
-		verbose = true;
-		// Cannot find method
-		runAndCheck("test/run_162.bds", "out", "B: A: Hi");
-	}
+	//	@Test
+	//	public void test162() {
+	//		Gpr.debug("Test");
+	//		verbose = true;
+	//		runAndCheck("test/run_162.bds", "out", "a.x = 42");
+	//	}
 
 }

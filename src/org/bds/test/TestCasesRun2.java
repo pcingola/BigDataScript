@@ -3,6 +3,7 @@ package org.bds.test;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.bds.lang.value.Value;
@@ -757,6 +758,16 @@ public class TestCasesRun2 extends TestCasesBase {
 		Gpr.debug("Test");
 		String args[] = { "-c", "test/test159_prelude_task.config" };
 		runAndCheckStdout("test/run_159.bds", "=== TASK PRELUDE local ===", args, false);
+	}
+
+	@Test
+	public void test165() {
+		Gpr.debug("Test");
+		verbose = true;
+		Map<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("n1", "500");
+		expectedValues.put("n2", "500");
+		runAndCheck("test/run_165.bds", expectedValues);
 	}
 
 }
