@@ -102,28 +102,16 @@ expression : NULL_LITERAL                                                       
            | ID                                                                            # referenceVar
            | expression '[' expression ']'                                                 # referenceList
            | expression '{' expression '}'                                                 # referenceMap
-           | ('++' | '--') expression                                                      # pre
-           | expression ('++' | '--')                                                      # post
+           | op=('++' | '--') expression                                                   # pre
+           | expression op=('++' | '--')                                                   # post
            | '~' expression                                                                # expressionBitNegation
            | '!' expression                                                                # expressionLogicNot
-           | expression '%' expression                                                     # expressionModulo
-           | expression '/' expression                                                     # expressionDivide
-           | expression '*' expression                                                     # expressionTimes
-           | expression '-' expression                                                     # expressionMinus
-           | expression '+' expression                                                     # expressionPlus
-           | expression '<' expression                                                     # expressionLt
-           | expression '>' expression                                                     # expressionGt
-           | expression '<=' expression                                                    # expressionLe
-           | expression '>=' expression                                                    # expressionGe
-           | expression '!=' expression                                                    # expressionNe
-           | expression '==' expression                                                    # expressionEq
-           | '-' expression                                                                # expressionUnaryMinus
-           | '+' expression                                                                # expressionUnaryPlus
-           | expression '&' expression                                                     # expressionBitAnd
-           | expression '^' expression                                                     # expressionBitXor
-           | expression '|' expression                                                     # expressionBitOr
-           | expression '&&' expression                                                    # expressionLogicAnd
-           | expression '||' expression                                                    # expressionLogicOr
+           | expression op=('*'|'/'|'%') expression                                        # expressionTimesDivMod
+           | expression op=('+'|'-') expression                                            # expressionPlusMinus
+           | expression op=('<'|'<='|'=='|'!='|'>='|'>') expression                        # expressionComp
+           | op=('+'|'-') expression                                                       # expressionUnaryPlusMinus
+           | expression op=('&'|'|'|'^') expression                                        # expressionBitOp
+           | expression op=('&&'|'||') expression                                          # expressionLogicOp
            | '(' expression ')'                                                            # expressionParen
            | expression '?' expression ':' expression                                      # expressionCond
            | expression '<-' expression                                                    # expressionDepOperator
