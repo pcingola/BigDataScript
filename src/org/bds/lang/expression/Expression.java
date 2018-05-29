@@ -18,8 +18,16 @@ public class Expression extends Statement {
 	 * Create an expression from a string (compile to BdsNode)
 	 */
 	public static Expression factory(BdsNode parent, String exprStr) {
+		if (exprStr == null || exprStr.trim().isEmpty()) return null;
+
+		// Sometimes expressions from interpolated variables have several '$' signs
+		// E.g. Convert '$list[$i].x{$key}' to 'list[i].x{key}' 
+		exprStr = exprStr.replace('$', ' ');
+
+		// Compile expression
 		BdsCompilerExpression be = new BdsCompilerExpression(exprStr);
 		Expression expr = be.compileExpr();
+		if (expr == null) return null;
 		expr.setParent(parent);
 		return expr;
 	}

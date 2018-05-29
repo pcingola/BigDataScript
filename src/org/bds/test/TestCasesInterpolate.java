@@ -274,4 +274,22 @@ public class TestCasesInterpolate extends TestCasesBase {
 		Assert.assertEquals(exprStr, expr.toString());
 	}
 
+	@Test
+	public void test25() {
+		Gpr.debug("Test");
+		String strings[] = { "Hello " };
+		String vars[] = { "a.x.z[56]" };
+
+		checkInterpolate("Hello $a.x.z[56]", strings, vars);
+	}
+
+	@Test
+	public void test26() {
+		Gpr.debug("Test");
+		String strings[] = { "Hello " };
+		String vars[] = { "a.x.z[56]{\"hi\"}" };
+
+		checkInterpolate("Hello $a.x.z[56]{'hi'}", strings, vars);
+	}
+
 }

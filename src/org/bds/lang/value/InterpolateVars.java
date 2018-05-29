@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
@@ -22,6 +23,7 @@ public class InterpolateVars extends Literal {
 
 	// boolean useLiteral;
 	String literals[]; // This is used in case of interpolated string literal
+	String exprStrs[];
 	Expression exprs[]; // This is used in case of interpolated string literal; Usually these are VarReferences, but they might change to generic expressions in the future
 
 	public InterpolateVars(BdsNode parent, ParseTree tree) {
@@ -210,16 +212,19 @@ public class InterpolateVars extends Literal {
 		) return false; // Nothing to do
 
 		List<Expression> exprs = new ArrayList<>();
+		List<String> exprStrs = new ArrayList<>();
 
 		// Create and add reference
-		for (String var : variables) {
-			Expression varRef = Expression.factory(parent, var);
-			exprs.add(varRef);
+		for (String exprStr : variables) {
+			Expression expr = Expression.factory(parent, exprStr);
+			exprStrs.add(exprStr);
+			exprs.add(expr);
 		}
 
 		// Convert to array
 		literals = strings.toArray(new String[0]);
 		this.exprs = exprs.toArray(new Expression[0]);
+		this.exprStrs = exprStrs.toArray(new String[0]);
 		return !isEmpty();
 	}
 
@@ -280,9 +285,13 @@ public class InterpolateVars extends Literal {
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Do we have any interpolated variables? Make sure they are in the scope
-		if (exprs != null) //
-			for (Expression expr : exprs)
-			if (expr != null) expr.typeCheck(symtab, compilerMessages);
+		if (exprs != null) {
+			for (int i = 0; i < exprs.length; i++) {
+				Expression expr = exprs[i];
+				if (expr != null) expr.typeCheck(symtab, compilerMessages);
+				else compilerMessages.add(this, "Could not compile expression '" + exprStrs[i] + "' in interpolated string", MessageType.ERROR);
+			}
+		}
 	}
 
 }
