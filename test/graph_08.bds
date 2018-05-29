@@ -1,10 +1,10 @@
 #!/usr/bin/env bds
 
 prefix := "test/graph_08"
-in   := "$prefix.in.txt"
-mid1 := "$prefix.mid1.txt"
-mid2 := "$prefix.mid2.txt"
-out  := "$prefix.out.txt"
+in   := "$prefix\.in.txt"
+mid1 := "$prefix\.mid1.txt"
+mid2 := "$prefix\.mid2.txt"
+out  := "$prefix\.out.txt"
 
 sys touch $in $mid1 $mid2 $out; rm $in $mid1 $mid2 $out; date > $in
 

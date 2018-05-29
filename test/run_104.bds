@@ -2,8 +2,8 @@
 prefix := "test/run_104"
 
 # Prepare data ('par' should always run)
-in  := "$prefix.in"
-out := "$prefix.out"
+in  := "$prefix\.in"
+out := "$prefix\.out"
 
 sys date > $in
 out.delete()

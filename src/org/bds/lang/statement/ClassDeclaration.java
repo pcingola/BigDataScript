@@ -10,6 +10,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodDefaultConstructor;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
+import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -179,7 +180,7 @@ public class ClassDeclaration extends Block {
 		if (returnType != null) return returnType;
 
 		if (classNameParent != null) {
-			classTypeParent = (TypeClass) symtab.resolve(classNameParent);
+			classTypeParent = (TypeClass) Types.get(classNameParent);
 			classParent = classTypeParent.getClassDeclaration();
 		}
 
