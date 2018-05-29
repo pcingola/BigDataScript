@@ -145,7 +145,7 @@ public class ClassDeclaration extends Block {
 	}
 
 	/**
-	 * Parse class declaration and sort statements (variables, methods and other statements) 
+	 * Parse class declaration and sort statements (variables, methods and other statements)
 	 */
 	protected void parseSortStatements() {
 		List<VarDeclaration> lvd = new ArrayList<>();

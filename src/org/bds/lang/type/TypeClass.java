@@ -9,7 +9,6 @@ import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueClass;
-import org.bds.util.Gpr;
 
 /**
  * Class type
@@ -30,7 +29,6 @@ public class TypeClass extends TypeComposite {
 	public TypeClass(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		primitiveType = PrimitiveType.CLASS;
-		Gpr.debug("NEW TYPECLASS: " + className);
 	}
 
 	/**
@@ -42,7 +40,6 @@ public class TypeClass extends TypeComposite {
 		classDecl = classDeclaration;
 		className = classDecl != null ? classDecl.getClassName() : "null";
 		Types.add(this);
-		Gpr.debug("NEW TYPECLASS WITH CLASSDECL: " + className);
 	}
 
 	/**
@@ -72,7 +69,7 @@ public class TypeClass extends TypeComposite {
 		if (t == null) {
 			// No TypeClass? Add it
 			Types.add(this);
-		} else if (classDecl != null && !t.hasClassDeclaration()) {
+		} else if (classDecl != null && t.isStub()) {
 			// Do we have a 'stub' class definition in Types? Set it properly
 			t.set(this);
 		}
@@ -107,16 +104,7 @@ public class TypeClass extends TypeComposite {
 	}
 
 	public ClassDeclaration getClassDeclaration() {
-		if (!hasClassDeclaration()) {
-			// TODO: REMOVE COMMENTS
-			Gpr.debug("CLASSDECL IS NULL: " + getLineNum());
-			// Try to find class declaration from 'Types'
-			TypeClass t = (TypeClass) Types.get(getCanonicalName());
-			if (t != null && t.hasClassDeclaration()) {
-				set(t);
-				Gpr.debug("\tFOUND CLASSDECL !!! ");
-			}
-		}
+		setStub();
 		return classDecl;
 	}
 
@@ -131,6 +119,10 @@ public class TypeClass extends TypeComposite {
 	@Override
 	public boolean isClass() {
 		return true;
+	}
+
+	public boolean isStub() {
+		return classDecl == null;
 	}
 
 	public boolean isSubClassOf(TypeClass type) {
@@ -164,19 +156,21 @@ public class TypeClass extends TypeComposite {
 	 */
 	@Override
 	public FunctionDeclaration resolve(FunctionDeclaration fdecl) {
+		setStub();
 		if (!fdecl.isMethod()) return fdecl;
 		FunctionDeclaration fd = symbolTable.findMethod(fdecl);
 		if (fd != null) return fd;
-		return classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(fdecl) : fdecl;
+		return classDecl != null && classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(fdecl) : fdecl;
 	}
 
 	/**
 	 * Get type for field 'name'
 	 */
 	public Type resolve(String name) {
+		setStub();
 		Type t = symbolTable.resolveLocal(name);
 		if (t != null) return t;
-		return classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(name) : null;
+		return classDecl != null && classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(name) : null;
 	}
 
 	/**
@@ -189,6 +183,16 @@ public class TypeClass extends TypeComposite {
 
 	public void setClassDeclaration(ClassDeclaration cd) {
 		classDecl = cd;
+	}
+
+	/**
+	 *  Try to find class declaration from 'Types' and set declaration
+	 */
+	void setStub() {
+		if (isStub()) {
+			TypeClass t = (TypeClass) Types.get(getCanonicalName());
+			if (t != null && !t.isStub()) set(t);
+		}
 	}
 
 	@Override

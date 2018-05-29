@@ -759,4 +759,11 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheckStdout("test/run_159.bds", "=== TASK PRELUDE local ===", args, false);
 	}
 
+	@Test
+	public void test162() {
+		Gpr.debug("Test");
+		verbose = true;
+		runAndCheck("test/run_162.bds", "out", "B: A: Hi");
+	}
+
 }

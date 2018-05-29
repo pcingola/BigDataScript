@@ -133,7 +133,10 @@ public class ExpressionNew extends MethodCall {
 	@Override
 	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Could not find the function?
-		if (functionDeclaration == null) compilerMessages.add(this, "Constructor " + signature() + " cannot be resolved", MessageType.ERROR);
+		if (functionDeclaration == null) {
+			if (expresionThis == null) compilerMessages.add(this, "Constructor cannot be resolved", MessageType.ERROR);
+			else compilerMessages.add(this, "Constructor '" + signature() + "' cannot be resolved", MessageType.ERROR);
+		}
 	}
 
 }

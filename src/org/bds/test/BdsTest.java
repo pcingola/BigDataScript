@@ -139,7 +139,7 @@ public class BdsTest {
 	 */
 	public void checkCompileError(String expectedErrors) {
 		Assert.assertFalse(errMsg("Expecting compilation errors, none found (program compiled OK)"), compileOk);
-		if (compilerMessages.toString().startsWith(expectedErrors)) return;
+		if (compilerMessages.toString().indexOf(expectedErrors) >= 0) return;
 		Assert.assertEquals(errMsg("Expecting compilation errors not found"), expectedErrors.trim(), compilerMessages.toString().trim());
 	}
 
