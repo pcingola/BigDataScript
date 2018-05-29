@@ -774,6 +774,7 @@ public class TestCasesRun2 extends TestCasesBase {
 	public void test164() {
 		Gpr.debug("Test");
 		runAndCheck("test/run_164.bds", "out", "hi");
+	}
 
 	@Test
 	public void test165() {
