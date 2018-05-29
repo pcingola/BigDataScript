@@ -58,14 +58,6 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	}
 
 	/**
-	 * Add a type definition
-	 * @param type
-	 */
-	public void addType(Type type) {
-		GlobalSymbolTable.get().addType(type);
-	}
-
-	/**
 	 * Add a variable - type association
 	 */
 	public void addVariable(String name, Type type) {
@@ -177,13 +169,6 @@ public class SymbolTable implements Serializable, Iterable<String> {
 			if (n.getSymbolTable() != null) return n.getSymbolTable();
 		}
 		return GlobalSymbolTable.get(); // No parent node? Then the SymbolTable parent is 'GlobalSymbolTable'
-	}
-
-	/**
-	 * Get type definition
-	 */
-	public Type getType(String typeCanonicalName) {
-		return GlobalSymbolTable.get().getType(typeCanonicalName);
 	}
 
 	/**

@@ -30,6 +30,7 @@ public class TypeClass extends TypeComposite {
 	public TypeClass(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		primitiveType = PrimitiveType.CLASS;
+		Gpr.debug("NEW TYPECLASS: " + className);
 	}
 
 	/**
@@ -40,7 +41,8 @@ public class TypeClass extends TypeComposite {
 		super(PrimitiveType.CLASS);
 		classDecl = classDeclaration;
 		className = classDecl != null ? classDecl.getClassName() : "null";
-		Types.put(this);
+		Types.add(this);
+		Gpr.debug("NEW TYPECLASS WITH CLASSDECL: " + className);
 	}
 
 	/**
@@ -59,6 +61,21 @@ public class TypeClass extends TypeComposite {
 			if (!md.isNative()) { // Add declared method (native methods are added to symbol table during initialization, do not add again)
 				symbolTable.addFunction(md);
 			}
+	}
+
+	/**
+	 * Add to Types or replace stub (if needed)
+	 */
+	public void addType() {
+		// Add to Types if needed
+		TypeClass t = (TypeClass) Types.get(getCanonicalName());
+		if (t == null) {
+			// No TypeClass? Add it
+			Types.add(this);
+		} else if (classDecl != null && !t.hasClassDeclaration()) {
+			// Do we have a 'stub' class definition in Types? Set it properly
+			t.set(this);
+		}
 	}
 
 	public boolean canCast(Type type) {
@@ -90,15 +107,25 @@ public class TypeClass extends TypeComposite {
 	}
 
 	public ClassDeclaration getClassDeclaration() {
-		if (classDecl == null) {
-			// GlobalSymbolTable.get(). !!!!
+		if (!hasClassDeclaration()) {
+			// TODO: REMOVE COMMENTS
 			Gpr.debug("CLASSDECL IS NULL: " + getLineNum());
+			// Try to find class declaration from 'Types'
+			TypeClass t = (TypeClass) Types.get(getCanonicalName());
+			if (t != null && t.hasClassDeclaration()) {
+				set(t);
+				Gpr.debug("\tFOUND CLASSDECL !!! ");
+			}
 		}
 		return classDecl;
 	}
 
 	public String getClassName() {
 		return className;
+	}
+
+	public boolean hasClassDeclaration() {
+		return classDecl != null;
 	}
 
 	@Override
@@ -150,6 +177,18 @@ public class TypeClass extends TypeComposite {
 		Type t = symbolTable.resolveLocal(name);
 		if (t != null) return t;
 		return classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(name) : null;
+	}
+
+	/**
+	 * Set parameters from another class definition
+	 */
+	void set(TypeClass t) {
+		classDecl = t.classDecl;
+		symbolTable = t.symbolTable;
+	}
+
+	public void setClassDeclaration(ClassDeclaration cd) {
+		classDecl = cd;
 	}
 
 	@Override

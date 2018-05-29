@@ -1,10 +1,6 @@
 package org.bds.symbol;
 
 import java.io.ObjectStreamException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.bds.lang.type.Type;
 
 /**
  * Global SymboTable: A table of variables, functions and classes
@@ -17,8 +13,6 @@ public class GlobalSymbolTable extends SymbolTable {
 
 	private static GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
 
-	Map<String, Type> types; // Type definitions are all GlobalSymbolTable (stored using canonical name)
-
 	public static GlobalSymbolTable get() {
 		if (globalSymbolTable == null) reset();
 		return globalSymbolTable;
@@ -30,16 +24,6 @@ public class GlobalSymbolTable extends SymbolTable {
 
 	private GlobalSymbolTable() {
 		super(null);
-		types = new HashMap<>();
-	}
-
-	/**
-	 * Add a type definition
-	 * @param type
-	 */
-	@Override
-	public void addType(Type type) {
-		types.put(type.getCanonicalName(), type);
 	}
 
 	@Override
@@ -50,14 +34,6 @@ public class GlobalSymbolTable extends SymbolTable {
 	@Override
 	public SymbolTable getParent() {
 		return null; // GlobalSYmbolTable has no parent
-	}
-
-	/**
-	 * Get type definition
-	 */
-	@Override
-	public Type getType(String typeCanonicalName) {
-		return types.get(typeCanonicalName);
 	}
 
 	/**

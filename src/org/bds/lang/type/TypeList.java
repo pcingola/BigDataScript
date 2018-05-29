@@ -62,7 +62,7 @@ public class TypeList extends TypeComposite {
 		// No type cached? Create & add
 		if (type == null) {
 			type = new TypeList(elementType);
-			Types.put(type);
+			Types.add(type);
 			type.addNativeMethods();
 		}
 

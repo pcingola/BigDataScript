@@ -48,7 +48,7 @@ public class TypeMap extends TypeComposite {
 		// No type cached? Create & add
 		if (type == null) {
 			type = new TypeMap(keyType, valueType);
-			Types.put(type);
+			Types.add(type);
 			type.addNativeMethods();
 		}
 

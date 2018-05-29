@@ -10,6 +10,7 @@ import org.bds.lang.statement.FieldDeclaration;
 import org.bds.lang.statement.MethodCall;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
+import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -46,7 +47,7 @@ public class ExpressionNew extends MethodCall {
 
 		// Calculate return types for expr and args
 		// Note that expresionObj is null in ExpressionNew (which is a MethodCall)
-		TypeClass thisType = (TypeClass) symtab.getType(functionName); // Constructors have same name as class
+		TypeClass thisType = (TypeClass) Types.get(functionName); // Constructors have same name as class
 		if (thisType == null) return null;
 		returnType = thisType;
 

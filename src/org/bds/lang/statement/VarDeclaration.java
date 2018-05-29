@@ -97,29 +97,6 @@ public class VarDeclaration extends Statement {
 		}
 	}
 
-	/**
-	 * Replace 'stub' typeClass with real typeClass (from symtab)
-	 */
-	protected void replaceStubTypeClass(SymbolTable symtab, CompilerMessages compilerMessages, String varName) {
-		if (type == null || !type.isClass()) return;
-
-		TypeClass tc = (TypeClass) type;
-		if (tc.getClassDeclaration() != null) return; // Class information avilable, this is not a 'stub' type
-
-		String cname = tc.getClassName();
-		TypeClass tcReal = (TypeClass) symtab.getType(cname);
-		if (tcReal == null) {
-			compilerMessages.add(this, "Cannot find class '" + cname + "'", MessageType.ERROR);
-			return;
-		}
-
-		// Sanity checks
-		if (!tcReal.isClass()) throw new RuntimeException("Type '" + tc.getClassName() + "' is not a class. This should never happen!");
-		if (tcReal.getClassDeclaration() == null) throw new RuntimeException("Type '" + tc.getClassName() + "' is does not have class declaration info. This should never happen!");
-
-		type = tcReal;
-	}
-
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
@@ -171,12 +148,24 @@ public class VarDeclaration extends Statement {
 					type = null;
 				}
 
-				// Replace TypeClass 'stub'
-				replaceStubTypeClass(symtab, compilerMessages, varName);
+				// Other checks for TypeClass
+				typeCheckClass(symtab, compilerMessages, varName);
 
 				// Add variable
 				addVar(symtab, compilerMessages, varName);
 			}
+		}
+	}
+
+	/**
+	 * Check that a class has a propper definition
+	 */
+	protected void typeCheckClass(SymbolTable symtab, CompilerMessages compilerMessages, String varName) {
+		if (type == null || !type.isClass()) return;
+
+		TypeClass tc = (TypeClass) type;
+		if (tc.getClassDeclaration() == null) {
+			compilerMessages.add(this, "Cannot find class '" + type.getCanonicalName() + "'", MessageType.ERROR);
 		}
 	}
 }

@@ -42,7 +42,7 @@ public class FunctionCall extends Expression {
 		// Find function in class or any super-class
 		if (type.isClass()) {
 			// A class' method
-			for (TypeClass tc = (TypeClass) type; tc != null && tc.getClassDeclaration() != null; tc = tc.getClassDeclaration().getClassTypeParent()) {
+			for (TypeClass tc = (TypeClass) type; tc != null && tc.hasClassDeclaration(); tc = tc.getClassDeclaration().getClassTypeParent()) {
 				// Get symbol table
 				SymbolTable classSymTab = tc.getSymbolTable();
 				if (classSymTab == null) return null;

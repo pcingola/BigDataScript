@@ -36,25 +36,22 @@ public class ClassDeclaration extends Block {
 	}
 
 	/**
-	 * Add symbols to symbol table
-	 */
-	protected void addSymTab(SymbolTable symtab) {
-		// Add type for 'this' object in current table
-		symtab.addVariable(THIS, getType());
-
-		// Add to parent symbol table, because the current
-		// symbol table is for the class' body
-		SymbolTable stparen = symtab.getParent();
-		stparen.addType(getType());
-	}
-
-	/**
 	 * Add 'this' argument to all method declarations
 	 */
 	protected void addThisArgToMethods() {
 		for (MethodDeclaration md : methodDecl) {
 			md.addThisArg(getType());
 		}
+	}
+
+	/**
+	 * Add type to 'Types' and 'this'
+	 */
+	protected void addType(SymbolTable symtab) {
+		// Add type for 'this' object in current table
+		TypeClass t = getType();
+		symtab.addVariable(THIS, t);
+		t.addType(); // Add to Types if needed
 	}
 
 	/**
@@ -147,6 +144,9 @@ public class ClassDeclaration extends Block {
 				vi.setFieldInit(true);
 	}
 
+	/**
+	 * Parse class declaration and sort statements (variables, methods and other statements) 
+	 */
 	protected void parseSortStatements() {
 		List<VarDeclaration> lvd = new ArrayList<>();
 		List<MethodDeclaration> lmd = new ArrayList<>();
@@ -249,7 +249,7 @@ public class ClassDeclaration extends Block {
 			compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
 		} else if ((className != null) && (getType() != null)) {
 			// Add to symbol table
-			addSymTab(symtab);
+			addType(symtab);
 		}
 
 		// Check parent class

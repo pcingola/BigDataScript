@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- * A registry of all available types
+ * A registry of all available types & classes
  *
  * @author pcingola
  */
@@ -21,8 +21,14 @@ public class Types {
 	public final static TypeString STRING = new TypeString();
 	public final static TypeVoid VOID = new TypeVoid(); // Void for side-effect functions
 
-	static public Type get(String typeStr) {
-		return types.get(typeStr);
+	public final static Type BASE_TYPES[] = { ANY, BOOL, INT, REAL, STRING };
+
+	public static void add(Type type) {
+		types.put(type.getCanonicalName(), type);
+	}
+
+	static public Type get(String canonicalName) {
+		return types.get(canonicalName);
 	}
 
 	/**
@@ -32,24 +38,19 @@ public class Types {
 		return types.values();
 	}
 
-	static void put(Type type) {
-		types.put(type.toString(), type);
-	}
-
 	/**
 	 * Reset all types
 	 */
 	public static void reset() {
 		types = new HashMap<>();
 
+		add(NULL);
+		add(VOID);
+
 		// Add base types
-		put(ANY);
-		put(BOOL);
-		put(INT);
-		put(NULL);
-		put(REAL);
-		put(STRING);
-		put(VOID);
+		for (Type t : BASE_TYPES)
+			add(t);
+
 	}
 
 	/**
