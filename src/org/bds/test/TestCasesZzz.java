@@ -20,12 +20,39 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test06() {
+	public void test104() {
 		Gpr.debug("Test");
-		String strings[] = { "m{'Helo'} : " };
-		String vars[] = { "m{l[i]}" };
-
-		checkInterpolate("m{'Helo'} : $m{$l[$i]}", strings, vars);
+		runAndCheck("test/run_104.bds", "isRun", "true");
 	}
+
+	//	@Test
+	//	public void test105() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_105.bds", "isRun", "false");
+	//	}
+	//
+	//	@Test
+	//	public void test215() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_215.bds", "z", "{ i: 42, j: 7 }");
+	//	}
+	//
+	//	@Test
+	//	public void test216() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_216.bds", "z", "{ i: 21, j: 17, next: { i: 42, next: null } }");
+	//	}
+	//
+	//	@Test
+	//	public void test217() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_217.bds", "x", "43");
+	//	}
+	//
+	//	@Test
+	//	public void test218() {
+	//		Gpr.debug("Test");
+	//		runAndCheck("test/run_218.bds", "x", "50");
+	//	}
 
 }
