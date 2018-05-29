@@ -28,8 +28,10 @@ public class Expression extends Statement {
 		BdsCompilerExpression be = new BdsCompilerExpression(exprStr);
 		Expression expr = be.compileExpr();
 		if (expr == null) return null;
-		expr.setParent(parent);
-		expr.setLineNum(parent.getLineNum());
+		if (parent != null) {
+			expr.setParent(parent);
+			expr.setLineNum(parent.getLineNum());
+		}
 		return expr;
 	}
 

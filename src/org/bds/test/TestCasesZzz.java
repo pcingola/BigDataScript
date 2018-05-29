@@ -20,10 +20,12 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test42() {
+	public void test06() {
 		Gpr.debug("Test");
-		verbose = true;
-		compileOk("test/test42.bds");
+		String strings[] = { "m{'Helo'} : " };
+		String vars[] = { "m{l[i]}" };
+
+		checkInterpolate("m{'Helo'} : $m{$l[$i]}", strings, vars);
 	}
 
 }
