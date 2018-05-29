@@ -12,9 +12,6 @@ import org.bds.symbol.SymbolTable;
  */
 public class ExpressionLogicNot extends ExpressionUnary {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 4334042905605735832L;
 
 	public ExpressionLogicNot(BdsNode parent, ParseTree tree) {
