@@ -21,27 +21,6 @@ public class ReferenceVar extends Reference {
 	protected boolean classField;
 	protected String name;
 
-	/**
-	 * Create a reference form a string
-	 */
-	public static Expression factory(BdsNode parent, String var) {
-		if (var == null || var.isEmpty()) return null;
-
-		int idxCurly = var.indexOf('{');
-		int idxBrace = var.indexOf('[');
-
-		Reference varRef = null;
-		if (idxCurly < 0 && idxBrace < 0) varRef = new ReferenceVar(parent, null);
-		else if (idxCurly < 0 && idxBrace > 0) varRef = new ReferenceList(parent, null);
-		else if (idxCurly > 0 && idxBrace < 0) varRef = new ReferenceMap(parent, null);
-		else if (idxBrace < idxCurly) varRef = new ReferenceList(parent, null);
-		else varRef = new ReferenceMap(parent, null);
-
-		// Parse string
-		varRef.parse(var);
-		return varRef;
-	}
-
 	public ReferenceVar(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		classField = false;

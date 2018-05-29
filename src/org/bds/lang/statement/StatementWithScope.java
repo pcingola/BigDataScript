@@ -34,17 +34,8 @@ public class StatementWithScope extends Statement {
 	public void addLocalSymbols(SymbolTable symtab) {
 		// Add all functions
 		List<BdsNode> fdecls = findNodes(StatementFunctionDeclaration.class, false, true);
-		for (BdsNode n : fdecls) {
-			FunctionDeclaration fd = (FunctionDeclaration) n;
-			symtab.add(fd);
-		}
-
-		// Add all classes
-		List<BdsNode> cdecls = findNodes(ClassDeclaration.class, false, true);
-		for (BdsNode n : cdecls) {
-			ClassDeclaration cd = (ClassDeclaration) n;
-			symtab.add(cd.getClassName(), cd.getType());
-		}
+		for (BdsNode n : fdecls)
+			symtab.addFunction((FunctionDeclaration) n);
 	}
 
 	@Override

@@ -2,8 +2,8 @@
 prefix := "test/run_105"
 
 # Prepare data ('par' should never run)
-in  := "$prefix.in"
-out := "$prefix.out"
+in  := "$prefix\.in"
+out := "$prefix\.out"
 
 sys date > $in
 sleep(1)

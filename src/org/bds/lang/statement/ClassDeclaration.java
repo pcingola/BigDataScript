@@ -10,6 +10,7 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodDefaultConstructor;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
+import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -36,25 +37,22 @@ public class ClassDeclaration extends Block {
 	}
 
 	/**
-	 * Add symbols to symbol table
-	 */
-	protected void addSymTab(SymbolTable symtab) {
-		// Add type for 'this' object in current table
-		symtab.add(THIS, getType());
-
-		// Add to parent symbol table, because the current
-		// symbol table is for the class' body
-		SymbolTable stparen = symtab.getParent();
-		stparen.add(className, getType());
-	}
-
-	/**
 	 * Add 'this' argument to all method declarations
 	 */
 	protected void addThisArgToMethods() {
 		for (MethodDeclaration md : methodDecl) {
 			md.addThisArg(getType());
 		}
+	}
+
+	/**
+	 * Add type to 'Types' and 'this'
+	 */
+	protected void addType(SymbolTable symtab) {
+		// Add type for 'this' object in current table
+		TypeClass t = getType();
+		symtab.addVariable(THIS, t);
+		t.addType(); // Add to Types if needed
 	}
 
 	/**
@@ -147,6 +145,9 @@ public class ClassDeclaration extends Block {
 				vi.setFieldInit(true);
 	}
 
+	/**
+	 * Parse class declaration and sort statements (variables, methods and other statements)
+	 */
 	protected void parseSortStatements() {
 		List<VarDeclaration> lvd = new ArrayList<>();
 		List<MethodDeclaration> lmd = new ArrayList<>();
@@ -179,7 +180,7 @@ public class ClassDeclaration extends Block {
 		if (returnType != null) return returnType;
 
 		if (classNameParent != null) {
-			classTypeParent = (TypeClass) symtab.resolve(classNameParent);
+			classTypeParent = (TypeClass) Types.get(classNameParent);
 			classParent = classTypeParent.getClassDeclaration();
 		}
 
@@ -245,11 +246,11 @@ public class ClassDeclaration extends Block {
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Class name collides with other names?
-		if (symtab.getTypeLocal(className) != null) {
+		if (symtab.getVariableTypeLocal(className) != null) {
 			compilerMessages.add(this, "Duplicate local name " + className, MessageType.ERROR);
 		} else if ((className != null) && (getType() != null)) {
 			// Add to symbol table
-			addSymTab(symtab);
+			addType(symtab);
 		}
 
 		// Check parent class

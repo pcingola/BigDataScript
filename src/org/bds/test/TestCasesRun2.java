@@ -271,7 +271,6 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test123_literals_sys() {
 		Gpr.debug("Test");
-		verbose = true;
 
 		String output = "" //
 				// Note: This result may change if we use a different sysShell in bds.config
@@ -749,7 +748,6 @@ public class TestCasesRun2 extends TestCasesBase {
 
 	@Test
 	public void test158_log() {
-		verbose = true;
 		runAndCheckStderr("test/run_158.bds", "hi there");
 	}
 
@@ -761,6 +759,23 @@ public class TestCasesRun2 extends TestCasesBase {
 	}
 
 	@Test
+	public void test161() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_161.bds", "out", "a.x = 42");
+	}
+
+	@Test
+	public void test162() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_162.bds", "out", "B: A: Hi");
+	}
+
+	@Test
+	public void test164() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_164.bds", "out", "hi");
+
+	@Test
 	public void test165() {
 		Gpr.debug("Test");
 		verbose = true;
@@ -769,5 +784,4 @@ public class TestCasesRun2 extends TestCasesBase {
 		expectedValues.put("n2", "500");
 		runAndCheck("test/run_165.bds", expectedValues);
 	}
-
 }

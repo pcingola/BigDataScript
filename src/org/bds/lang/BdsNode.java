@@ -565,6 +565,10 @@ public abstract class BdsNode implements Serializable {
 		// Default : Do nothing
 	}
 
+	public void setLineNum(int lineNum) {
+		this.lineNum = lineNum;
+	}
+
 	public void setNeedsScope(boolean needsScope) {
 		throw new RuntimeException("Cannot set 'needsScope' in this node:" + this.getClass().getSimpleName());
 	}

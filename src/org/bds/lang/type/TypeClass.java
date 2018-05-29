@@ -39,7 +39,7 @@ public class TypeClass extends TypeComposite {
 		super(PrimitiveType.CLASS);
 		classDecl = classDeclaration;
 		className = classDecl != null ? classDecl.getClassName() : "null";
-		Types.put(this);
+		Types.add(this);
 	}
 
 	/**
@@ -50,14 +50,29 @@ public class TypeClass extends TypeComposite {
 		for (FieldDeclaration fd : classDecl.getFieldDecl()) {
 			Type type = fd.getType();
 			for (VariableInit vi : fd.getVarInit())
-				symbolTable.add(vi.getVarName(), type);
+				symbolTable.addVariable(vi.getVarName(), type);
 		}
 
 		// Add methods
 		for (MethodDeclaration md : classDecl.getMethodDecl())
 			if (!md.isNative()) { // Add declared method (native methods are added to symbol table during initialization, do not add again)
-				symbolTable.add(md);
+				symbolTable.addFunction(md);
 			}
+	}
+
+	/**
+	 * Add to Types or replace stub (if needed)
+	 */
+	public void addType() {
+		// Add to Types if needed
+		TypeClass t = (TypeClass) Types.get(getCanonicalName());
+		if (t == null) {
+			// No TypeClass? Add it
+			Types.add(this);
+		} else if (classDecl != null && t.isStub()) {
+			// Do we have a 'stub' class definition in Types? Set it properly
+			t.set(this);
+		}
 	}
 
 	public boolean canCast(Type type) {
@@ -83,7 +98,13 @@ public class TypeClass extends TypeComposite {
 		return className.compareTo(tcn);
 	}
 
+	@Override
+	public String getCanonicalName() {
+		return className; // TODO: Implement a 'true' canonical name
+	}
+
 	public ClassDeclaration getClassDeclaration() {
+		setStub();
 		return classDecl;
 	}
 
@@ -91,8 +112,8 @@ public class TypeClass extends TypeComposite {
 		return className;
 	}
 
-	public String getClassNameCanonical() {
-		return className; // TODO: Implement a 'true' canonical name
+	public boolean hasClassDeclaration() {
+		return classDecl != null;
 	}
 
 	@Override
@@ -100,10 +121,14 @@ public class TypeClass extends TypeComposite {
 		return true;
 	}
 
+	public boolean isStub() {
+		return classDecl == null;
+	}
+
 	public boolean isSubClassOf(TypeClass type) {
-		String typeCan = type.getClassNameCanonical();
+		String typeCan = type.getCanonicalName();
 		for (TypeClass tchild = this; tchild != null; tchild = tchild.getClassDeclaration().getClassTypeParent()) {
-			String tchildCan = tchild.getClassNameCanonical();
+			String tchildCan = tchild.getCanonicalName();
 			if (tchildCan.equals(typeCan)) return true;
 		}
 		return false;
@@ -131,19 +156,43 @@ public class TypeClass extends TypeComposite {
 	 */
 	@Override
 	public FunctionDeclaration resolve(FunctionDeclaration fdecl) {
+		setStub();
 		if (!fdecl.isMethod()) return fdecl;
 		FunctionDeclaration fd = symbolTable.findMethod(fdecl);
 		if (fd != null) return fd;
-		return classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(fdecl) : fdecl;
+		return classDecl != null && classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(fdecl) : fdecl;
 	}
 
 	/**
 	 * Get type for field 'name'
 	 */
 	public Type resolve(String name) {
+		setStub();
 		Type t = symbolTable.resolveLocal(name);
 		if (t != null) return t;
-		return classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(name) : null;
+		return classDecl != null && classDecl.getClassParent() != null ? classDecl.getClassTypeParent().resolve(name) : null;
+	}
+
+	/**
+	 * Set parameters from another class definition
+	 */
+	void set(TypeClass t) {
+		classDecl = t.classDecl;
+		symbolTable = t.symbolTable;
+	}
+
+	public void setClassDeclaration(ClassDeclaration cd) {
+		classDecl = cd;
+	}
+
+	/**
+	 *  Try to find class declaration from 'Types' and set declaration
+	 */
+	void setStub() {
+		if (isStub()) {
+			TypeClass t = (TypeClass) Types.get(getCanonicalName());
+			if (t != null && !t.isStub()) set(t);
+		}
 	}
 
 	@Override

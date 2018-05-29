@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.RuleContext;
@@ -24,7 +25,7 @@ import org.bds.util.Timer;
 
 /**
  * BdsCompiler a Bds program.
- * 
+ *
  * Runs lexer & parser, create AST, perform type-checking and create BdsNode tree
  *
  * @author pcingola
@@ -78,26 +79,11 @@ public class BdsCompiler {
 	 * Returns null if error
 	 * Use 'alreadyIncluded' to keep track of from 'include' statements
 	 */
-	ParseTree createAst(File file, boolean debug, Set<String> alreadyIncluded) {
-		alreadyIncluded.add(Gpr.getCanonicalFileName(file));
-		String fileName = file.toString();
-		String filePath = fileName;
-
+	ParseTree createAst(CharStream input, boolean debug, Set<String> alreadyIncluded) {
 		BigDataScriptLexer lexer = null;
 		BigDataScriptParser parser = null;
 
 		try {
-			filePath = file.getCanonicalPath();
-
-			// Input stream
-			if (!Gpr.canRead(filePath)) {
-				CompilerMessages.get().addError("Can't read file '" + filePath + "'");
-				return null;
-			}
-
-			// Create a CharStream that reads from standard input
-			ANTLRFileStream input = new ANTLRFileStream(fileName);
-
 			//---
 			// Lexer: Create a lexer that feeds off of input CharStream
 			//---
@@ -119,11 +105,11 @@ public class BdsCompiler {
 			parser.addErrorListener(new CompilerErrorListener()); // Catch some other error messages that 'CompileErrorStrategy' fails to catch
 
 			// Begin parsing at main rule
-			ParseTree tree = parser.programUnit();
+			ParseTree tree = parserNode(parser);
 
 			// Error loading file?
 			if (tree == null) {
-				System.err.println("Can't parse file '" + filePath + "'");
+				System.err.println("Can't parse file '" + programFileName + "'");
 				return null;
 			}
 
@@ -144,6 +130,37 @@ public class BdsCompiler {
 			return tree;
 		} catch (Exception e) {
 			String msg = e.getMessage();
+			CompilerMessages.get().addError("Could not compile " + programFileName //
+					+ (msg != null ? " :" + e.getMessage() : "") //
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Create an AST from a program (using ANTLR lexer & parser)
+	 * Returns null if error
+	 * Use 'alreadyIncluded' to keep track of from 'include' statements
+	 */
+	ParseTree createAst(File file, boolean debug, Set<String> alreadyIncluded) {
+		alreadyIncluded.add(Gpr.getCanonicalFileName(file));
+		String fileName = file.toString();
+		String filePath = fileName;
+
+		try {
+			filePath = file.getCanonicalPath();
+
+			// Input stream
+			if (!Gpr.canRead(filePath)) {
+				CompilerMessages.get().addError("Can't read file '" + filePath + "'");
+				return null;
+			}
+
+			// Create a CharStream that reads from standard input
+			CharStream input = CharStreams.fromFileName(fileName);
+			return createAst(input, debug, alreadyIncluded);
+		} catch (Exception e) {
+			String msg = e.getMessage();
 			CompilerMessages.get().addError("Could not compile " + filePath //
 					+ (msg != null ? " :" + e.getMessage() : "") //
 			);
@@ -152,8 +169,27 @@ public class BdsCompiler {
 	}
 
 	/**
-	 *  Convert to BdsNodes, create Program Unit
+	 * Create an AST from a program (using ANTLR lexer & parser)
+	 * Returns null if error
+	 * Use 'alreadyIncluded' to keep track of from 'include' statements
 	 */
+	ParseTree createAst(String inputStr, boolean debug, Set<String> alreadyIncluded) {
+		try {
+			// Create a CharStream that reads from standard input
+			CharStream input = CharStreams.fromString(inputStr);
+			return createAst(input, debug, alreadyIncluded);
+		} catch (Exception e) {
+			String msg = e.getMessage();
+			CompilerMessages.get().addError("Could not compile string: '" + inputStr + "'" //
+					+ (msg != null ? " :" + e.getMessage() : "") //
+			);
+			return null;
+		}
+	}
+
+	/**
+		 *  Convert to BdsNodes, create Program Unit
+		 */
 	ProgramUnit createModel(ParseTree tree) {
 		if (debug) log("Creating BigDataScript tree.");
 		CompilerMessages.reset();
@@ -199,6 +235,10 @@ public class BdsCompiler {
 		// Any error? Do not continue
 		if (!CompilerMessages.get().isEmpty()) return null;
 		return tree;
+	}
+
+	protected ParseTree parserNode(BigDataScriptParser parser) {
+		return parser.programUnit();
 	}
 
 	/**

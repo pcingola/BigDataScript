@@ -17,27 +17,4 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	//	@Test
-	//	public void test160() {
-	//		Gpr.debug("Test");
-	//		verbose = true;
-	//		// Throwing runtime exception now!
-	//		runAndCheck("test/run_160.bds", "var", "x");
-	//	}
-
-	//	@Test
-	//	public void test161() {
-	//		Gpr.debug("Test");
-	//		verbose = true;
-	//		// Error interpolating object fields
-	//		runAndCheck("test/run_161.bds", "out", "a.x = 42");
-	//	}
-
-	//	@Test
-	//	public void test162() {
-	//		Gpr.debug("Test");
-	//		verbose = true;
-	//		runAndCheck("test/run_162.bds", "out", "a.x = 42");
-	//	}
-
 }

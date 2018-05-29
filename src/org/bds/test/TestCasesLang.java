@@ -378,4 +378,11 @@ public class TestCasesLang extends TestCasesBase {
 		compileErrors("test/test55.bds", errs);
 	}
 
+	@Test
+	public void test56() {
+		Gpr.debug("Test");
+		verbose = true;
+		compileErrors("test/test56.bds", "Cannot find class 'A'");
+	}
+
 }

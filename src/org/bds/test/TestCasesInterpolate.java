@@ -1,5 +1,7 @@
 package org.bds.test;
 
+import org.bds.compile.BdsCompilerExpression;
+import org.bds.lang.expression.Expression;
 import org.bds.lang.value.InterpolateVars;
 import org.bds.util.Gpr;
 import org.bds.util.GprString;
@@ -251,6 +253,43 @@ public class TestCasesInterpolate extends TestCasesBase {
 		String vars[] = { "i", "str", "str", "i" };
 
 		checkInterpolate("this is string interpolation: int i = $i and str = \\\"$str\\\" and both $str$i", strings, vars);
+	}
+
+	@Test
+	public void test23() {
+		Gpr.debug("Test");
+		String strings[] = { "Hello " };
+		String vars[] = { "a.x" };
+
+		checkInterpolate("Hello $a.x", strings, vars);
+	}
+
+	@Test
+	public void test24() {
+		Gpr.debug("Test");
+		String exprStr = "1 + 20 * 2";
+		BdsCompilerExpression be = new BdsCompilerExpression(exprStr);
+		Expression expr = be.compileExpr();
+		if (verbose) Gpr.debug("expr: " + expr);
+		Assert.assertEquals(exprStr, expr.toString());
+	}
+
+	@Test
+	public void test25() {
+		Gpr.debug("Test");
+		String strings[] = { "Hello " };
+		String vars[] = { "a.x.z[56]" };
+
+		checkInterpolate("Hello $a.x.z[56]", strings, vars);
+	}
+
+	@Test
+	public void test26() {
+		Gpr.debug("Test");
+		String strings[] = { "Hello " };
+		String vars[] = { "a.x.z[56]{\"hi\"}" };
+
+		checkInterpolate("Hello $a.x.z[56]{'hi'}", strings, vars);
 	}
 
 }

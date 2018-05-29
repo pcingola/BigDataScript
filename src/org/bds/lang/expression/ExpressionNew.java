@@ -10,6 +10,7 @@ import org.bds.lang.statement.FieldDeclaration;
 import org.bds.lang.statement.MethodCall;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
+import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -46,7 +47,7 @@ public class ExpressionNew extends MethodCall {
 
 		// Calculate return types for expr and args
 		// Note that expresionObj is null in ExpressionNew (which is a MethodCall)
-		TypeClass thisType = (TypeClass) symtab.resolve(functionName); // Constructors have same name as class
+		TypeClass thisType = (TypeClass) Types.get(functionName); // Constructors have same name as class
 		if (thisType == null) return null;
 		returnType = thisType;
 
@@ -132,7 +133,10 @@ public class ExpressionNew extends MethodCall {
 	@Override
 	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Could not find the function?
-		if (functionDeclaration == null) compilerMessages.add(this, "Constructor " + signature() + " cannot be resolved", MessageType.ERROR);
+		if (functionDeclaration == null) {
+			if (expresionThis == null) compilerMessages.add(this, "Constructor cannot be resolved", MessageType.ERROR);
+			else compilerMessages.add(this, "Constructor '" + signature() + "' cannot be resolved", MessageType.ERROR);
+		}
 	}
 
 }

@@ -1,0 +1,19 @@
+#!/usr/bin/env bds
+
+class A {
+	class B {
+		int x = 7
+	}
+    string p() { return "A: Hi" }
+}
+
+class B {
+	A a = new A()
+	string pb() {
+		return "B: " + a.p()
+	}
+}
+
+B b = new B()
+A.B ab = new A.B()
+out := b.pb()

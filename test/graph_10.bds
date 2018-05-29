@@ -1,12 +1,12 @@
 #!/usr/bin/env bds
 
 prefix := "test/graph_10"
-in1  := "$prefix.in1.txt"
-in2  := "$prefix.in2.txt"
-mid1 := "$prefix.mid1.txt"
-mid21:= "$prefix.mid21.txt"
-mid22:= "$prefix.mid22.txt"
-out  := "$prefix.out.txt"
+in1  := "$prefix\.in1.txt"
+in2  := "$prefix\.in2.txt"
+mid1 := "$prefix\.mid1.txt"
+mid21:= "$prefix\.mid21.txt"
+mid22:= "$prefix\.mid22.txt"
+out  := "$prefix\.out.txt"
 
 # Clean all files, create inputs
 sys touch $in1 $in2 $mid1 $mid21 $mid22 $out

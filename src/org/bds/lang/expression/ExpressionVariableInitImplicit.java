@@ -63,6 +63,6 @@ public class ExpressionVariableInitImplicit extends Expression {
 		Type type = vInit.getExpression().returnType(symtab);
 
 		// Add variable to scope
-		if ((varName != null) && (type != null)) symtab.add(varName, type);
+		if ((varName != null) && (type != null)) symtab.addVariable(varName, type);
 	}
 }

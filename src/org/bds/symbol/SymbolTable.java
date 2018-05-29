@@ -21,6 +21,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.util.AutoHashMap;
+import org.bds.util.Gpr;
 
 /**
  * SymboTable: A table of variables, functions and classes
@@ -35,15 +36,18 @@ public class SymbolTable implements Serializable, Iterable<String> {
 
 	BdsNode bdsNode;
 	AutoHashMap<String, List<ValueFunction>> functions; // Functions can have more than one item under the same name. E.g.: f(int x), f(string s), f(int x, int y), all are called 'f'
-	Map<String, Type> types; // Types defined within this symbol table
+	Map<String, Type> variableTypes; // Variables defined within this symbol table
 	Set<String> constants; // Symbols defined here are 'constant'
 
 	public SymbolTable(BdsNode bdsNode) {
 		this.bdsNode = bdsNode;
-		types = new HashMap<>();
+		variableTypes = new HashMap<>();
 	}
 
-	public void add(FunctionDeclaration fdecl) {
+	/**
+	 * Add a function definition
+	 */
+	public void addFunction(FunctionDeclaration fdecl) {
 		// Create hash?
 		if (functions == null) functions = new AutoHashMap<>(new LinkedList<ValueFunction>());
 
@@ -53,8 +57,11 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		functions.getOrCreate(name).add(vf);
 	}
 
-	public void add(String name, Type type) {
-		types.put(name, type);
+	/**
+	 * Add a variable - type association
+	 */
+	public void addVariable(String name, Type type) {
+		variableTypes.put(name, type);
 	}
 
 	/**
@@ -165,31 +172,6 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	}
 
 	/**
-	 * Get type for variable 'name'.
-	 * If not found, search in any parent scope.
-	 */
-	public Type getType(String name) {
-		// Find symbol on this or any parent scope
-		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
-			// Resolve 'name'
-			if (!symtab.isEmpty()) {
-				Type t = symtab.getTypeLocal(name);
-				if (t != null) return t;
-			}
-		}
-
-		// Nothing found
-		return null;
-	}
-
-	/**
-	 * Get symbol on this scope (only search this scope)
-	 */
-	public synchronized Type getTypeLocal(String name) {
-		return types.get(name);
-	}
-
-	/**
 	 * Get type for symbol 'this.name'. If not found, search in any parent scope.
 	 * Note: It does not try to solve in local scopes (i.e. only class fields, not local variables)
 	 */
@@ -227,6 +209,34 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		return functions.get(functionName);
 	}
 
+	/**
+	 * Get type for variable 'name'.
+	 * If not found, search in any parent scope.
+	 */
+	public Type getVariableType(String name) {
+		if (name.equals("A")) {
+			Gpr.debug("LOOKING FOR TYPE");
+		}
+		// Find symbol on this or any parent scope
+		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
+			// Resolve 'name'
+			if (!symtab.isEmpty()) {
+				Type t = symtab.getVariableTypeLocal(name);
+				if (t != null) return t;
+			}
+		}
+
+		// Nothing found
+		return null;
+	}
+
+	/**
+	 * Get symbol on this scope (only search this scope)
+	 */
+	public synchronized Type getVariableTypeLocal(String name) {
+		return variableTypes.get(name);
+	}
+
 	public boolean hasFunctions() {
 		return functions != null && !functions.isEmpty();
 	}
@@ -239,7 +249,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	 * Is symbol available on this scope or any parent scope?
 	 */
 	public boolean hasTypeLocal(String symbol) {
-		return getTypeLocal(symbol) != null || getValueFunctionsLocal(symbol) != null;
+		return getVariableTypeLocal(symbol) != null || getValueFunctionsLocal(symbol) != null;
 	}
 
 	public boolean isConstant(String name) {
@@ -250,7 +260,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	 * Is this scope empty?
 	 */
 	public boolean isEmpty() {
-		return types.isEmpty();
+		return variableTypes.isEmpty();
 	}
 
 	/**
@@ -269,7 +279,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 
 	@Override
 	public Iterator<String> iterator() {
-		return types.keySet().iterator();
+		return variableTypes.keySet().iterator();
 	}
 
 	/**
@@ -295,7 +305,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	 */
 	public Type resolveLocal(String name) {
 		// Try to find 'name' as a variable in local symbol table
-		Type t = getTypeLocal(name);
+		Type t = getVariableTypeLocal(name);
 		if (t != null) return t;
 
 		// Is it a function?
@@ -331,7 +341,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		if (name.equals(ClassDeclaration.THIS)) return null;
 
 		// Is variable 'this' defined? If so, it means we are within a class
-		TypeClass typeThis = (TypeClass) getTypeLocal(ClassDeclaration.THIS);
+		TypeClass typeThis = (TypeClass) getVariableTypeLocal(ClassDeclaration.THIS);
 		if (typeThis == null) return null;
 
 		return typeThis.resolve(name);
@@ -354,10 +364,10 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		// Show scope symbols
 		StringBuilder sbThis = new StringBuilder();
 		List<String> names = new ArrayList<>();
-		names.addAll(types.keySet());
+		names.addAll(variableTypes.keySet());
 		Collections.sort(names);
 		for (String name : names)
-			sbThis.append(types.get(name) + " " + name + "\n");
+			sbThis.append(variableTypes.get(name) + " " + name + "\n");
 
 		// Show scope functions
 		if (showFunc && functions != null) {

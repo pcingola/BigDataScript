@@ -233,12 +233,12 @@ public class FunctionDeclaration extends StatementWithScope {
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Function name collides with other names?
-		if (symtab.getTypeLocal(functionName) != null) {
+		if (symtab.getVariableTypeLocal(functionName) != null) {
 			compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
 		} else if ((functionName != null) && (getType() != null)) {
 			// Add to parent symbol table, because the current
 			// symbol table is for the function's body
-			symtab.getParent().add(this);
+			symtab.getParent().addFunction(this);
 		}
 	}
 }

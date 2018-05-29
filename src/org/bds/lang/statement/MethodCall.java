@@ -58,13 +58,6 @@ public class MethodCall extends FunctionCall {
 	}
 
 	@Override
-	public String toAsmCall() {
-		return (functionDeclaration.isNative() ? "callnative " : "callmethod ") //
-				+ functionDeclaration.signature() //
-				+ "\n";
-	}
-
-	@Override
 	protected String signature() {
 		StringBuilder sig = new StringBuilder();
 
@@ -79,6 +72,13 @@ public class MethodCall extends FunctionCall {
 		}
 		sig.append(")");
 		return sig.toString();
+	}
+
+	@Override
+	public String toAsmCall() {
+		return (functionDeclaration.isNative() ? "callnative " : "callmethod ") //
+				+ functionDeclaration.signature() //
+				+ "\n";
 	}
 
 	@Override

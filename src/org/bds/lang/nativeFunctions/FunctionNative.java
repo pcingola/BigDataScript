@@ -28,7 +28,7 @@ public abstract class FunctionNative extends FunctionDeclaration {
 	 */
 	protected void addNativeFunction() {
 		GlobalScope.get().add(this);
-		GlobalSymbolTable.get().add(this);
+		GlobalSymbolTable.get().addFunction(this);
 	}
 
 	/**
