@@ -1,7 +1,9 @@
 package org.bds.test;
 
 import org.bds.Config;
+import org.bds.util.Gpr;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -17,12 +19,11 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	//	@Test
-	//	public void test163() {
-	//		Gpr.debug("Test");
-	//		verbose = true;
-	//		// Define and create inner classes
-	//		runAndCheck("test/run_162.bds", "out", "B: A: Hi");
-	//	}
+	@Test
+	public void test42() {
+		Gpr.debug("Test");
+		verbose = true;
+		compileOk("test/test42.bds");
+	}
 
 }

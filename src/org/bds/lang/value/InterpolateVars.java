@@ -216,6 +216,7 @@ public class InterpolateVars extends Literal {
 
 		// Create and add reference
 		for (String exprStr : variables) {
+			exprStr = exprStr.trim();
 			Expression expr = Expression.factory(parent, exprStr);
 			exprStrs.add(exprStr);
 			exprs.add(expr);
@@ -288,8 +289,12 @@ public class InterpolateVars extends Literal {
 		if (exprs != null) {
 			for (int i = 0; i < exprs.length; i++) {
 				Expression expr = exprs[i];
+				String exprStr = exprStrs[i];
 				if (expr != null) expr.typeCheck(symtab, compilerMessages);
-				else compilerMessages.add(this, "Could not compile expression '" + exprStrs[i] + "' in interpolated string", MessageType.ERROR);
+				else if (!exprStr.isEmpty()) {
+					// Non-empty strings should compile
+					compilerMessages.add(this, "Could not compile expression '" + exprStrs[i] + "' in interpolated string", MessageType.ERROR);
+				}
 			}
 		}
 	}

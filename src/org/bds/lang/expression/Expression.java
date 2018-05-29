@@ -21,7 +21,7 @@ public class Expression extends Statement {
 		if (exprStr == null || exprStr.trim().isEmpty()) return null;
 
 		// Sometimes expressions from interpolated variables have several '$' signs
-		// E.g. Convert '$list[$i].x{$key}' to 'list[i].x{key}' 
+		// E.g. Convert '$list[$i].x{$key}' to 'list[i].x{key}'
 		exprStr = exprStr.replace('$', ' ');
 
 		// Compile expression
@@ -29,6 +29,7 @@ public class Expression extends Statement {
 		Expression expr = be.compileExpr();
 		if (expr == null) return null;
 		expr.setParent(parent);
+		expr.setLineNum(parent.getLineNum());
 		return expr;
 	}
 

@@ -1,4 +1,7 @@
-#!/usr/bin/env bds
+int i = f2(3);
 
-out := 10
-println "out: $out"
+int f2(int j) {
+	return j+2;
+}
+
+

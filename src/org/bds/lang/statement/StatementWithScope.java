@@ -1,5 +1,7 @@
 package org.bds.lang.statement;
 
+import java.util.List;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
@@ -19,6 +21,21 @@ public class StatementWithScope extends Statement {
 
 	public StatementWithScope(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
+	}
+
+	/**
+	 * Add local symbols to SymbolTable
+	 * The idea is that you should be able to refer to functions
+	 * and classes defined within the same scope, which may be defined
+	 * after the current statement, e.g.:
+	 *   i := f(42)    // Function 'f' is not defined yet
+	 *   int f(int x) { return 2*x }
+	 */
+	public void addLocalSymbols(SymbolTable symtab) {
+		// Add all functions
+		List<BdsNode> fdecls = findNodes(StatementFunctionDeclaration.class, false, true);
+		for (BdsNode n : fdecls)
+			symtab.addFunction((FunctionDeclaration) n);
 	}
 
 	@Override
@@ -48,6 +65,8 @@ public class StatementWithScope extends Statement {
 
 	@Override
 	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		addLocalSymbols(symtab);
+
 		// Calculate return type
 		returnType = returnType(symtab);
 
