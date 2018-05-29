@@ -2,7 +2,6 @@ package org.bds.lang.nativeFunctions;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
-import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 
@@ -15,7 +14,6 @@ public class FunctionNativePrintErr extends FunctionNative {
 
 	private static final long serialVersionUID = 8095483887251128320L;
 
-
 	public FunctionNativePrintErr() {
 		super();
 	}
@@ -23,7 +21,7 @@ public class FunctionNativePrintErr extends FunctionNative {
 	@Override
 	protected void initFunction() {
 		functionName = "printErr";
-		returnType = TypeList.get(Types.STRING);
+		returnType = Types.STRING;
 
 		String argNames[] = { "str" };
 		Type argTypes[] = { Types.STRING };
