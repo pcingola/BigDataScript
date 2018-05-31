@@ -114,6 +114,7 @@ public class ExpressionNew extends MethodCall {
 			sb.append("var " + thisName + "\n");
 			sb.append(args.toAsmNoThis());
 			sb.append(toAsmCall());
+			sb.append("pop\n"); // Ignore return value (it's void)
 			sb.append("load " + thisName + "\n"); // Leave new object in the stack
 		}
 
