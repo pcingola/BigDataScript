@@ -1,5 +1,8 @@
 package org.bds.lang.value;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bds.lang.type.Type;
 
 public abstract class ValueComposite extends Value {
@@ -48,6 +51,12 @@ public abstract class ValueComposite extends Value {
 	@Override
 	public Type getType() {
 		return type;
+	}
+
+	@Override
+	public String toString() {
+		Set<Value> done = new HashSet<>();
+		return toString(done);
 	}
 
 }

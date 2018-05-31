@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FieldDeclaration;
@@ -85,7 +86,7 @@ public class ValueClass extends ValueComposite {
 	}
 
 	@Override
-	public String toString() {
+	protected String toString(Set<Value> done) {
 		if (isNull()) return "null";
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
@@ -95,10 +96,15 @@ public class ValueClass extends ValueComposite {
 			Collections.sort(fnames);
 			for (int i = 0; i < fnames.size(); i++) {
 				String fn = fnames.get(i);
-				sb.append((i > 0 ? ", " : " ") + fn + ": " + fields.get(fn));
+				Value val = fields.get(fn);
+				if (!done.contains(val)) {
+					done.add(val);
+					sb.append((i > 0 ? ", " : " ") + fn + ": " + val);
+				} else sb.append((i > 0 ? ", " : " ") + "...");
 			}
 		}
 		sb.append(" }");
 		return sb.toString();
 	}
+
 }

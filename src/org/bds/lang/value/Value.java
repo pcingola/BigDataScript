@@ -1,6 +1,7 @@
 package org.bds.lang.value;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
@@ -98,5 +99,9 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 	}
 
 	public abstract void setValue(Value v);
+
+	protected String toString(Set<Value> done) {
+		return toString();
+	}
 
 }

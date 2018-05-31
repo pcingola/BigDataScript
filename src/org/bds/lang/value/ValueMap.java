@@ -100,7 +100,7 @@ public class ValueMap extends ValueComposite {
 	}
 
 	@Override
-	public String toString() {
+	protected String toString(Set<Value> done) {
 		if (isEmpty()) return "{}";
 
 		StringBuilder sb = new StringBuilder();
@@ -110,7 +110,12 @@ public class ValueMap extends ValueComposite {
 
 		for (Value key : keys) {
 			if (sb.length() > 0) sb.append(",");
-			sb.append(" " + key.toString() + " => " + getValue(key));
+			Value val = getValue(key);
+			if (!done.contains(val)) {
+				done.add(key);
+				done.add(val);
+				sb.append(" " + key.toString(done) + " => " + val.toString(done));
+			} else sb.append("...");
 		}
 		return "{" + sb.toString() + " }";
 	}

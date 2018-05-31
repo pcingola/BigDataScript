@@ -1,5 +1,7 @@
 package org.bds.lang.value;
 
+import java.util.Set;
+
 /**
  * Define values to be passed to a function as arguments
  * @author pcingola
@@ -59,11 +61,11 @@ public class ValueArgs extends ValueComposite {
 	}
 
 	@Override
-	public String toString() {
+	protected String toString(Set<Value> done) {
 		StringBuilder sb = new StringBuilder();
 		for (Value v : values) {
 			if (sb.length() > 0) sb.append(", ");
-			sb.append(v);
+			sb.append(v.toString(done));
 		}
 		return "(" + sb.toString() + ")";
 	}
