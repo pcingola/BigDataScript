@@ -30,8 +30,8 @@ public class FunctionNativePrintErr extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BdsThread csThread) {
-		String str = csThread.getString("str");
+	protected Object runFunctionNative(BdsThread bdsThread) {
+		String str = bdsThread.getString("str");
 		System.err.print(str);
 		return str;
 	}
