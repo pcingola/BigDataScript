@@ -1,7 +1,6 @@
 package org.bds.lang.value;
 
 import java.io.Serializable;
-import java.util.Set;
 
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
@@ -14,8 +13,9 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 
 	private static final long serialVersionUID = 3481924830790274005L;
 
+	public static final int MAX_TO_STRING_LEN = 10 * 1024;
+
 	public static final ValueUnique ANY = ValueUnique.get(Types.ANY);
-	//public static final ValueNull NULL = ValueNull.NULL;
 	public static final ValueUnique VOID = ValueUnique.get(Types.VOID);
 
 	public static Value factory(Object v) {
@@ -100,8 +100,8 @@ public abstract class Value implements Serializable, Cloneable, Comparable<Value
 
 	public abstract void setValue(Value v);
 
-	protected String toString(Set<Value> done) {
-		return toString();
+	protected void toString(StringBuilder sb) {
+		sb.append(toString());
 	}
 
 }

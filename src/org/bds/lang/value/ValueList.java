@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -179,17 +178,19 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 	}
 
 	@Override
-	protected String toString(Set<Value> done) {
-		StringBuilder sb = new StringBuilder();
+	protected void toString(StringBuilder sb) {
+		int i = 0;
 		for (Value v : this) {
-			if (sb.length() > 0) sb.append(", ");
-			if (!done.contains(v)) {
-				done.add(v);
-				sb.append(v.toString(done));
-			} else sb.append("...");
-
+			if (i > 0) sb.append(", ");
+			if (sb.length() < MAX_TO_STRING_LEN) {
+				v.toString(sb);
+			} else {
+				sb.append("...]");
+				return;
+			}
+			i++;
 		}
-		return "[" + sb.toString() + "]";
+		sb.append("]");
 	}
 
 }

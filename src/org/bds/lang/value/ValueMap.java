@@ -100,24 +100,32 @@ public class ValueMap extends ValueComposite {
 	}
 
 	@Override
-	protected String toString(Set<Value> done) {
-		if (isEmpty()) return "{}";
+	protected void toString(StringBuilder sb) {
+		if (isEmpty()) {
+			sb.append("{}");
+			return;
+		}
 
-		StringBuilder sb = new StringBuilder();
 		List<Value> keys = new ArrayList<>();
 		keys.addAll(map.keySet());
 		Collections.sort(keys);
-
+		int i = 0;
+		sb.append("{");
 		for (Value key : keys) {
-			if (sb.length() > 0) sb.append(",");
+			if (i > 0) sb.append(",");
 			Value val = getValue(key);
-			if (!done.contains(val)) {
-				done.add(key);
-				done.add(val);
-				sb.append(" " + key.toString(done) + " => " + val.toString(done));
-			} else sb.append("...");
+			if (sb.length() < MAX_TO_STRING_LEN) {
+				sb.append(" ");
+				key.toString(sb);
+				sb.append(" => ");
+				val.toString(sb);
+			} else {
+				sb.append("... }");
+				return;
+			}
+			i++;
 		}
-		return "{" + sb.toString() + " }";
+
 	}
 
 	public Collection<Value> values() {

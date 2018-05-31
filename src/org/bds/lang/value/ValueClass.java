@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FieldDeclaration;
@@ -41,7 +40,7 @@ public class ValueClass extends ValueComposite {
 
 	@Override
 	public int hashCode() {
-		return fields.hashCode();
+		return fields != null ? fields.hashCode() : 0;
 	}
 
 	/**
@@ -86,9 +85,12 @@ public class ValueClass extends ValueComposite {
 	}
 
 	@Override
-	protected String toString(Set<Value> done) {
-		if (isNull()) return "null";
-		StringBuilder sb = new StringBuilder();
+	protected void toString(StringBuilder sb) {
+		if (isNull()) {
+			sb.append("null");
+			return;
+		}
+
 		sb.append("{");
 		if (fields != null) {
 			List<String> fnames = new ArrayList<>(fields.size());
@@ -97,14 +99,16 @@ public class ValueClass extends ValueComposite {
 			for (int i = 0; i < fnames.size(); i++) {
 				String fn = fnames.get(i);
 				Value val = fields.get(fn);
-				if (!done.contains(val)) {
-					done.add(val);
-					sb.append((i > 0 ? ", " : " ") + fn + ": " + val);
-				} else sb.append((i > 0 ? ", " : " ") + "...");
+				if (sb.length() < MAX_TO_STRING_LEN) {
+					sb.append((i > 0 ? ", " : " ") + fn + ": ");
+					val.toString(sb);
+				} else {
+					sb.append("...");
+					return;
+				}
 			}
 		}
 		sb.append(" }");
-		return sb.toString();
 	}
 
 }
