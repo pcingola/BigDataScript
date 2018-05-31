@@ -53,11 +53,20 @@ public class Types {
 
 	}
 
+	public static String toStr() {
+		StringBuilder sb = new StringBuilder();
+		for (String n : types.keySet()) {
+			Type t = get(n);
+			sb.append(n + ":" + t + "\n");
+			if (t.isClass()) sb.append(((TypeClass) t).getClassDeclaration());
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * Resolve un-serialization
 	 */
 	private Object readResolve() throws ObjectStreamException {
 		return this;
 	}
-
 }

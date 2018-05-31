@@ -87,7 +87,6 @@ public class ValueClass extends ValueComposite {
 	@Override
 	public String toString() {
 		if (isNull()) return "null";
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		if (fields != null) {
@@ -102,5 +101,4 @@ public class ValueClass extends ValueComposite {
 		sb.append(" }");
 		return sb.toString();
 	}
-
 }

@@ -1,9 +1,23 @@
-
 #!/usr/bin/env bds
 
-d := 2500
+class A {
+	int a = 1
+	void g() {
+		B bb = new B(this)
+		bb.f()
+	}
+}
 
-n1 := d / 10 * 2
-n2 := d * 2 / 10
+class B {
+	A ba
+	void B(A aa) { ba = aa }
+	void f() {
+		println "this: $this"
+	}
+}
 
-println "n1: $n1\nn2: $n2"
+A oa = new A()
+println "oa: $oa"
+
+oa.g()
+

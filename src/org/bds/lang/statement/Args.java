@@ -16,10 +16,8 @@ import org.bds.symbol.SymbolTable;
  */
 public class Args extends BdsNode {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 2390753021158525223L;
+
 	protected Expression arguments[];
 
 	/**
