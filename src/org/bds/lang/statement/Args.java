@@ -105,6 +105,14 @@ public class Args extends BdsNode {
 		return sb.toString();
 	}
 
+	public String toAsmNoThis() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 1; i < arguments.length; i++) { // Skip first argument ('this')
+			sb.append(arguments[i].toAsm());
+		}
+		return sb.toString();
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

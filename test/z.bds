@@ -4,14 +4,14 @@ class A {
 	int a = 1
 	void g() {
 		B bb = new B(this)
-		bb.f()
+		bb.f(this)
 	}
 }
 
 class B {
 	A ba
 	void B(A aa) { ba = aa }
-	void f() {
+	void f(A aa) {
 		println "this: $this"
 	}
 }
