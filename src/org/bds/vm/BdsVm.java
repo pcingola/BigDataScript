@@ -1357,7 +1357,7 @@ public class BdsVm implements Serializable {
 
 		for (int i = 0; i < fp; i++) {
 			CallFrame cf = callFrame[i];
-			tabs += "    ";
+			tabs += "  ";
 			sb.append(stackTrace(cf.getNodeId(), tabs));
 		}
 

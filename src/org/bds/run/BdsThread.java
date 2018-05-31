@@ -322,7 +322,7 @@ public class BdsThread extends Thread implements Serializable {
 
 		// Show BDS stack trace
 		try {
-			System.err.println(stackTrace());
+			System.err.println("Stack trace:\n" + stackTrace());
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

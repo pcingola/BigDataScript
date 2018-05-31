@@ -88,22 +88,36 @@ public class ExpressionNew extends MethodCall {
 		StringBuilder sb = new StringBuilder();
 		sb.append(toAsmNode());
 
+		// Use internal symbol to avoid collision
+		// e.g.:
+		//        class A {
+		//            ...
+		//            void f() {
+		//                B b = new B(this)    <--- 'this' is an argument in the constructor
+		//
+		String thisName = SymbolTable.INTERNAL_SYMBOL_START + ClassDeclaration.THIS;
+
 		// This is like a function call that initializes fields, so
 		// we need a scope and variable 'this' has to be set
 		sb.append("scopepush\n");
-		sb.append("new " + expresionThis.getReturnType().toString() + "\n");
+		sb.append("new " + expresionThis.getReturnType() + "\n");
 		sb.append("varpop this\n");
 		sb.append(toAsmInitFields());
+		sb.append("load this\n"); // Leave new object in the stack
+		sb.append("scopepop\n");
 
 		// Call constructor, unless it's the default constructor
 		// Don't waste time calling the default constructor, since
 		// it doesn't do anything.
+		sb.append("scopepush\n");
 		if (!functionDeclaration.isNative()) {
-			sb.append(args.toAsm());
+			sb.append("var " + thisName + "\n");
+			sb.append(args.toAsmNoThis());
 			sb.append(toAsmCall());
+			sb.append("pop\n"); // Ignore return value (it's void)
+			sb.append("load " + thisName + "\n"); // Leave new object in the stack
 		}
 
-		sb.append("load this\n"); // Leave new object in the stack
 		sb.append("scopepop\n");
 		return sb.toString();
 	}

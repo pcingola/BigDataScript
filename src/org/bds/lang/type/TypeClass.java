@@ -49,8 +49,9 @@ public class TypeClass extends TypeComposite {
 		// Add all fields
 		for (FieldDeclaration fd : classDecl.getFieldDecl()) {
 			Type type = fd.getType();
-			for (VariableInit vi : fd.getVarInit())
+			for (VariableInit vi : fd.getVarInit()) {
 				symbolTable.addVariable(vi.getVarName(), type);
+			}
 		}
 
 		// Add methods
