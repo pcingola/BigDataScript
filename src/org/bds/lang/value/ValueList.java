@@ -180,6 +180,7 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 	@Override
 	protected void toString(StringBuilder sb) {
 		int i = 0;
+		sb.append('[');
 		for (Value v : this) {
 			if (i > 0) sb.append(", ");
 			if (sb.length() < MAX_TO_STRING_LEN) {
@@ -190,7 +191,7 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 			}
 			i++;
 		}
-		sb.append("]");
+		sb.append(']');
 	}
 
 }

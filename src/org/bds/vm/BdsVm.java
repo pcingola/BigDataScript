@@ -1471,7 +1471,7 @@ public class BdsVm implements Serializable {
 		BdsNode bdsNode = BdsNodeFactory.get().getNode(nodeId);
 		String s = bdsNode.toString();
 		s = s.split("\n")[0];
-		if (s.length() > maxLen) s = s.substring(0, maxLen);
+		if (s.length() > maxLen) s = s.substring(0, maxLen) + "...";
 		return bdsNode.getClass().getSimpleName() + " : " + s;
 	}
 

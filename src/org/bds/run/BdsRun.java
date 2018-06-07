@@ -13,6 +13,7 @@ import org.bds.Bds;
 import org.bds.BdsParseArgs;
 import org.bds.Config;
 import org.bds.compile.BdsCompiler;
+import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessages;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
@@ -275,7 +276,7 @@ public class BdsRun {
 		programUnit = bdsThreadRoot.getProgramUnit();
 
 		// Add all nodes
-		for (BdsNode n : programUnit.findNodes(null, true, true)) {
+		for (BdsNode n : BdsNodeWalker.findNodes(programUnit, null, true, true)) {
 			BdsNodeFactory.get().addNode(n);
 		}
 
@@ -476,7 +477,11 @@ public class BdsRun {
 			if (isStatementDeclaration(s)) statements.add(s);
 		}
 
+		for (Statement s : statements)
+			Gpr.debug("STATEMENT: " + s);
+
 		// Note: We execute the function's body (not the function declaration)
+		Gpr.debug("FUNC STAT: " + testFunc.getStatement());
 		statements.add(testFunc.getStatement());
 
 		// Create a program unit having all variable declarations and the test function's statements

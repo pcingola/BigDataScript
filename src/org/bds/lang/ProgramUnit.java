@@ -7,6 +7,7 @@ import java.util.List;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.compile.BdsNodeWalker;
 import org.bds.lang.statement.BlockWithFile;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
@@ -48,7 +49,7 @@ public class ProgramUnit extends BlockWithFile {
 	 */
 	public List<FunctionDeclaration> findTestsFunctions() {
 		List<FunctionDeclaration> testFuncs = new ArrayList<>();
-		List<BdsNode> allFuncs = findNodes(StatementFunctionDeclaration.class, true, false);
+		List<BdsNode> allFuncs = BdsNodeWalker.findNodes(this, StatementFunctionDeclaration.class, true, false);
 		for (BdsNode func : allFuncs) {
 			// Create scope symbol
 			FunctionDeclaration fd = (FunctionDeclaration) func;

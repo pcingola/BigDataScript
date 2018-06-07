@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.Config;
+import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
@@ -136,7 +137,7 @@ public class ExpressionTask extends ExpressionWithScope {
 			return;
 		}
 
-		List<BdsNode> statements = statement.findNodes(null, true, false);
+		List<BdsNode> statements = BdsNodeWalker.findNodes(statement, null, true, false);
 
 		// No child nodes? Add the only node we have
 		if (statements.isEmpty()) statements.add(statement);

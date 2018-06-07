@@ -3,6 +3,7 @@ package org.bds.lang.statement;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.symbol.SymbolTable;
@@ -33,7 +34,7 @@ public class StatementWithScope extends Statement {
 	 */
 	public void addLocalSymbols(SymbolTable symtab) {
 		// Add all functions
-		List<BdsNode> fdecls = findNodes(StatementFunctionDeclaration.class, false, true);
+		List<BdsNode> fdecls = BdsNodeWalker.findNodes(this, StatementFunctionDeclaration.class, false, true);
 		for (BdsNode n : fdecls)
 			symtab.addFunction((FunctionDeclaration) n);
 	}

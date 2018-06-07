@@ -31,6 +31,20 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 	Class clazz; // Class to find (all nodes if null)
 	HashSet<Object> visited = new HashSet<>();
 
+	@SuppressWarnings("rawtypes")
+	public static List<BdsNode> findNodes(BdsNode bdsNode, Class clazz, boolean recurse, boolean recurseInclude) {
+		BdsNodeWalker nwalker = new BdsNodeWalker(bdsNode, clazz, recurse, recurseInclude);
+		return nwalker.findNodes();
+	}
+
+	@SuppressWarnings("rawtypes")
+	public BdsNodeWalker(BdsNode bdsNode, Class clazz, boolean recurse, boolean recurseInclude) {
+		this.bdsNode = bdsNode;
+		this.clazz = clazz;
+		this.recurse = recurse;
+		this.recurseInclude = recurseInclude;
+	}
+
 	/**
 	 * Find all nodes of a given type
 	 * @param clazz : If null, all nodes are added

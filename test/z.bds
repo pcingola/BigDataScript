@@ -1,25 +1,19 @@
 #!/usr/bin/env bds
 
-class A {
-	int a = 1
-	void g() {
-		B bb = new B(this)
-		bb.f(this)
-	}
-}
+#include 'zz'
 
-class B {
-	A ba
-	void B(A aa) { ba = aa }
-	void f(A aa) {
-		println "this: $this"
-	}
-}
+# class B {
+# 	int b = 2
+# 	int f() {
+# 		return 42 + b
+# 	}
+# }
+# 
+# void test01() {
+# 	println "TEST01"
+# 	B b = new B()
+# 	assert("Wrong answer", 2, b.b)
+# }
 
-A oa = new A()
-println "oa: $oa"
-
-oa.g()
-
-printErr("ERR")
-println "n1: $n1\nn2: $n2"
+m := { 'a' => 1, 'b' => 2}
+println "m = $m"

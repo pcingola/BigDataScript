@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import org.bds.Config;
+import org.bds.compile.BdsNodeWalker;
 import org.bds.data.Data;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
@@ -673,7 +674,7 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	public void print() {
 		// Create a list with program file and all included files
-		List<BdsNode> nodeWithFiles = statement.findNodes(StatementInclude.class, true, false);
+		List<BdsNode> nodeWithFiles = BdsNodeWalker.findNodes(statement, StatementInclude.class, true, false);
 		nodeWithFiles.add(0, statement);
 
 		// Show code

@@ -125,7 +125,7 @@ public class ValueMap extends ValueComposite {
 			}
 			i++;
 		}
-
+		sb.append("}");
 	}
 
 	public Collection<Value> values() {

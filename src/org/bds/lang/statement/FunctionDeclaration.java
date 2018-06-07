@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
@@ -156,7 +157,7 @@ public class FunctionDeclaration extends StatementWithScope {
 	@Override
 	public void sanityCheck(CompilerMessages compilerMessages) {
 		if (!returnType.isVoid()) {
-			List<BdsNode> returnStatements = findNodes(Return.class, true, false);
+			List<BdsNode> returnStatements = BdsNodeWalker.findNodes(this, Return.class, true, false);
 			if (returnStatements.isEmpty()) compilerMessages.add(this, "Function has no return statement", MessageType.ERROR);
 		}
 	}

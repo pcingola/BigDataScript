@@ -8,17 +8,16 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.compile.TypeCheckedNodes;
-import org.bds.lang.statement.StatementInclude;
 import org.bds.lang.type.PrimitiveType;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -147,83 +146,83 @@ public abstract class BdsNode implements Serializable {
 		return -1;
 	}
 
-	/**
-	 * Find all nodes of a given type
-	 *
-	 * IMPORTANT: Nodes are return ALPHABETICALLY sorted
-	 *
-	 * @param clazz : Class to find (all nodes if null)
-	 *
-	 * @param recurse : If true, perform recursive search
-	 *
-	 * @param recurseInclude : If true, perform recursive search within 'StatementInclide' nodes.
-	 *                         Note: If 'recurse' is set, the value of 'recurseInclude' is irrelevant
-	 */
-	@SuppressWarnings("rawtypes")
-	public List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude) {
-		HashSet<Object> visited = new HashSet<>();
-		return findNodes(clazz, recurse, recurseInclude, visited);
-	}
-
-	@SuppressWarnings("rawtypes")
-	protected List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude, Set<Object> visited) {
-		List<BdsNode> list = new ArrayList<>();
-
-		// Iterate over fields
-		for (Field field : getAllClassFields()) {
-			try {
-				field.setAccessible(true);
-				Object fieldObj = field.get(this);
-
-				// Does the field have a map?
-				if (fieldObj != null && !visited.contains(fieldObj)) {
-					visited.add(fieldObj);
-
-					// If it's an array, iterate on all objects
-					if (fieldObj.getClass().isArray()) {
-						for (Object fieldObjSingle : (Object[]) fieldObj)
-							list.addAll(findNodes(clazz, fieldObjSingle, recurse, recurseInclude, visited));
-					} else {
-						list.addAll(findNodes(clazz, fieldObj, recurse, recurseInclude, visited));
-					}
-
-				}
-			} catch (Exception e) {
-				throw new RuntimeException("Error getting field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
-			}
-		}
-
-		return list;
-	}
-
-	/**
-	 * Find all nodes of a given type
-	 * @param clazz : If null, all nodes are added
-	 * @param fieldObj
-	 */
-	@SuppressWarnings("rawtypes")
-	List<BdsNode> findNodes(Class clazz, Object fieldObj, boolean recurse, boolean recurseInclude, Set<Object> visited) {
-		List<BdsNode> list = new ArrayList<>();
-
-		// If it is a BigDataScriptNode then we can recurse into it
-		if ((fieldObj != null) && (fieldObj instanceof BdsNode)) {
-			BdsNode bdsnode = ((BdsNode) fieldObj);
-
-			// Found the requested type?
-			if ((clazz == null) || (fieldObj.getClass() == clazz)) {
-				BdsNode bn = (BdsNode) fieldObj;
-				visited.add(bn);
-				list.add(bn);
-			}
-
-			// Recurse into this field?
-			if (recurse || (recurseInclude && bdsnode instanceof StatementInclude)) {
-				list.addAll(bdsnode.findNodes(clazz, recurse, recurseInclude, visited));
-			}
-		}
-
-		return list;
-	}
+	//	/**
+	//	 * Find all nodes of a given type
+	//	 *
+	//	 * IMPORTANT: Nodes are return ALPHABETICALLY sorted
+	//	 *
+	//	 * @param clazz : Class to find (all nodes if null)
+	//	 *
+	//	 * @param recurse : If true, perform recursive search
+	//	 *
+	//	 * @param recurseInclude : If true, perform recursive search within 'StatementInclide' nodes.
+	//	 *                         Note: If 'recurse' is set, the value of 'recurseInclude' is irrelevant
+	//	 */
+	//	@SuppressWarnings("rawtypes")
+	//	public List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude) {
+	//		HashSet<Object> visited = new HashSet<>();
+	//		return findNodes(clazz, recurse, recurseInclude, visited);
+	//	}
+	//
+	//	@SuppressWarnings("rawtypes")
+	//	protected List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude, Set<Object> visited) {
+	//		List<BdsNode> list = new ArrayList<>();
+	//
+	//		// Iterate over fields
+	//		for (Field field : getAllClassFields()) {
+	//			try {
+	//				field.setAccessible(true);
+	//				Object fieldObj = field.get(this);
+	//
+	//				// Does the field have a map?
+	//				if (fieldObj != null && !visited.contains(fieldObj)) {
+	//					visited.add(fieldObj);
+	//
+	//					// If it's an array, iterate on all objects
+	//					if (fieldObj.getClass().isArray()) {
+	//						for (Object fieldObjSingle : (Object[]) fieldObj)
+	//							list.addAll(findNodes(clazz, fieldObjSingle, recurse, recurseInclude, visited));
+	//					} else {
+	//						list.addAll(findNodes(clazz, fieldObj, recurse, recurseInclude, visited));
+	//					}
+	//
+	//				}
+	//			} catch (Exception e) {
+	//				throw new RuntimeException("Error getting field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
+	//			}
+	//		}
+	//
+	//		return list;
+	//	}
+	//
+	//	/**
+	//	 * Find all nodes of a given type
+	//	 * @param clazz : If null, all nodes are added
+	//	 * @param fieldObj
+	//	 */
+	//	@SuppressWarnings("rawtypes")
+	//	List<BdsNode> findNodes(Class clazz, Object fieldObj, boolean recurse, boolean recurseInclude, Set<Object> visited) {
+	//		List<BdsNode> list = new ArrayList<>();
+	//
+	//		// If it is a BigDataScriptNode then we can recurse into it
+	//		if ((fieldObj != null) && (fieldObj instanceof BdsNode)) {
+	//			BdsNode bdsnode = ((BdsNode) fieldObj);
+	//
+	//			// Found the requested type?
+	//			if ((clazz == null) || (fieldObj.getClass() == clazz)) {
+	//				BdsNode bn = (BdsNode) fieldObj;
+	//				visited.add(bn);
+	//				list.add(bn);
+	//			}
+	//
+	//			// Recurse into this field?
+	//			if (recurse || (recurseInclude && bdsnode instanceof StatementInclude)) {
+	//				list.addAll(bdsnode.findNodes(clazz, recurse, recurseInclude, visited));
+	//			}
+	//		}
+	//
+	//		return list;
+	//	}
 
 	/**
 	 * Find a parent of type 'clazz'
@@ -699,7 +698,7 @@ public abstract class BdsNode implements Serializable {
 		typeCheck(symtab, compilerMessages);
 
 		// Get all sub-nodes (first level, do not recurse)
-		List<BdsNode> nodes = findNodes(null, false, false);
+		List<BdsNode> nodes = BdsNodeWalker.findNodes(this, null, false, false);
 
 		// Add this node as 'type-checked' to avoid infinite recursion
 		TypeCheckedNodes.get().add(this);

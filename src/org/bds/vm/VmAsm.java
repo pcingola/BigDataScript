@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.compile.BdsNodeWalker;
 import org.bds.lang.BdsNode;
 import org.bds.lang.ProgramUnit;
 import org.bds.lang.statement.ClassDeclaration;
@@ -101,12 +102,6 @@ public class VmAsm {
 			OpCode opcode = opcode(line);
 			String param = null;
 			if (opcode.hasParam()) param = param(line);
-			if (debug) {
-				// Show instruction
-				Gpr.debug("\t" + opcode.toString().toLowerCase() //
-						+ (param != null ? " " + param : "") //
-				);
-			}
 			// Add instruction
 			addInstruction(opcode, param);
 			lineNum++;
@@ -134,7 +129,7 @@ public class VmAsm {
 		if (programUnit == null) return;
 
 		// Add all classes
-		List<BdsNode> cdecls = programUnit.findNodes(ClassDeclaration.class, true, true);
+		List<BdsNode> cdecls = BdsNodeWalker.findNodes(programUnit, ClassDeclaration.class, true, true);
 		for (BdsNode n : cdecls) {
 			ClassDeclaration cd = (ClassDeclaration) n;
 			bdsvm.addType(cd.getType());
@@ -148,7 +143,7 @@ public class VmAsm {
 		if (programUnit == null) return;
 
 		// Add all functions
-		List<BdsNode> fdecls = programUnit.findNodes(StatementFunctionDeclaration.class, true, true);
+		List<BdsNode> fdecls = BdsNodeWalker.findNodes(programUnit, StatementFunctionDeclaration.class, true, true);
 		for (BdsNode n : fdecls) {
 			FunctionDeclaration fd = (FunctionDeclaration) n;
 			bdsvm.addFunction(fd);
