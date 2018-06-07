@@ -58,21 +58,16 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 	List<BdsNode> addFields(Object fieldObj) {
 		List<BdsNode> list = new ArrayList<>();
 
-		// If it is a BigDataScriptNode then we can recurse into it
+		// If it is a BdsNode then we can recurse into it
 		if ((fieldObj != null) && (fieldObj instanceof BdsNode)) {
-			BdsNode bdsnode = ((BdsNode) fieldObj);
+			BdsNode bn = ((BdsNode) fieldObj);
+			visited.add(bn);
 
 			// Found the requested type?
-			if ((clazz == null) || (fieldObj.getClass() == clazz)) {
-				BdsNode bn = (BdsNode) fieldObj;
-				visited.add(bn);
-				list.add(bn);
-			}
+			if ((clazz == null) || (fieldObj.getClass() == clazz)) list.add(bn);
 
 			// Recurse into this field?
-			if (recurse || (recurseInclude && bdsnode instanceof StatementInclude)) {
-				list.addAll(addFields(bdsnode));
-			}
+			if (recurse || (recurseInclude && bn instanceof StatementInclude)) list.addAll(findNodes(bn));
 		}
 
 		return list;
@@ -92,7 +87,7 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 		for (Field field : getAllClassFields(bdsNode)) {
 			try {
 				field.setAccessible(true);
-				Object fieldObj = field.get(this);
+				Object fieldObj = field.get(bdsNode);
 
 				// Does the field have a map?
 				if (fieldObj != null && !visited.contains(fieldObj)) {
@@ -108,7 +103,7 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 
 				}
 			} catch (Exception e) {
-				throw new RuntimeException("Error getting field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
+				throw new RuntimeException("Error getting field '" + field.getName() + "' from class '" + bdsNode.getClass().getCanonicalName() + "'", e);
 			}
 		}
 
