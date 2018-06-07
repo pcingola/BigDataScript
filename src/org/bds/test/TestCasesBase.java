@@ -16,7 +16,7 @@ import org.bds.lang.value.Value;
 import org.bds.run.BdsThreads;
 import org.bds.util.Gpr;
 import org.bds.vm.BdsVm;
-import org.bds.vm.VmAsm;
+import org.bds.vm.BdsVmAsm;
 import org.junit.Before;
 
 import junit.framework.Assert;
@@ -323,7 +323,7 @@ public class TestCasesBase {
 	 * Add all 'types' during compilation
 	 */
 	void runVmAndCheck(String fileName, String varname, Object expectedValue, List<Type> types) {
-		VmAsm vmasm = new VmAsm(fileName);
+		BdsVmAsm vmasm = new BdsVmAsm(fileName);
 		vmasm.setDebug(debug);
 		vmasm.setVerbose(verbose);
 		if (types != null) types.forEach(t -> vmasm.addType(t));

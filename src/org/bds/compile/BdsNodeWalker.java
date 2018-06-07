@@ -8,12 +8,18 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
+import org.bds.lang.statement.Block;
+import org.bds.lang.statement.ClassDeclaration;
+import org.bds.lang.statement.Statement;
+import org.bds.lang.statement.StatementFunctionDeclaration;
 import org.bds.lang.statement.StatementInclude;
+import org.bds.lang.statement.VarDeclaration;
 
 /**
  * Walks through all the BdsNodes
@@ -28,7 +34,7 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 	boolean recurseInclude; // If true, perform recursive search within 'StatementInclide' nodes. Note: If 'recurse' is set, the value of 'recurseInclude' is irrelevant
 	BdsNode bdsNode;
 	@SuppressWarnings("rawtypes")
-	Class clazz; // Class to find (all nodes if null)
+	Set<Class> classes;
 	HashSet<Object> visited = new HashSet<>();
 
 	@SuppressWarnings("rawtypes")
@@ -45,9 +51,16 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 	@SuppressWarnings("rawtypes")
 	public BdsNodeWalker(BdsNode bdsNode, Class clazz, boolean recurse, boolean recurseInclude) {
 		this.bdsNode = bdsNode;
-		this.clazz = clazz;
+		addClass(clazz);
 		this.recurse = recurse;
 		this.recurseInclude = recurseInclude;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void addClass(Class clazz) {
+		if (clazz == null) return;
+		if (classes == null) classes = new HashSet<>();
+		classes.add(clazz);
 	}
 
 	/**
@@ -64,13 +77,28 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 			visited.add(bn);
 
 			// Found the requested type?
-			if ((clazz == null) || (fieldObj.getClass() == clazz)) list.add(bn);
+			if (isClass(fieldObj)) list.add(bn);
 
 			// Recurse into this field?
 			if (recurse || (recurseInclude && bn instanceof StatementInclude)) list.addAll(findNodes(bn));
 		}
 
 		return list;
+	}
+
+	public List<Statement> findDeclarations() {
+		return findDeclarations((Block) bdsNode);
+	}
+
+	/**
+	 * Find declarations
+	 */
+	List<Statement> findDeclarations(Block block) {
+		List<Statement> statements = new ArrayList<>();
+		for (Statement s : block.getStatements()) {
+			if (isStatementDeclaration(s)) statements.add(s);
+		}
+		return statements;
 	}
 
 	public List<BdsNode> findNodes() {
@@ -157,6 +185,17 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 		});
 
 		return fields;
+	}
+
+	boolean isClass(Object obj) {
+		return (classes == null) || classes.contains(obj.getClass());
+	}
+
+	boolean isStatementDeclaration(Statement s) {
+		return s instanceof VarDeclaration //
+				|| s instanceof StatementFunctionDeclaration //
+				|| s instanceof ClassDeclaration //
+		;
 	}
 
 	@Override

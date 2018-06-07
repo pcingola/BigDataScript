@@ -25,7 +25,7 @@ import org.bds.util.Gpr;
  *
  * @author pcingola
  */
-public class VmAsm {
+public class BdsVmAsm {
 
 	boolean verbose, debug;
 	int lineNum;
@@ -36,11 +36,11 @@ public class VmAsm {
 	List<Integer> code;
 	Map<String, Type> typeByName;
 
-	public VmAsm(ProgramUnit programUnit) {
+	public BdsVmAsm(ProgramUnit programUnit) {
 		this.programUnit = programUnit;
 	}
 
-	public VmAsm(String file) {
+	public BdsVmAsm(String file) {
 		this.file = file;
 	}
 
@@ -221,7 +221,6 @@ public class VmAsm {
 			bdsvm.addLabel(label, pc());
 		}
 
-		if (debug) Gpr.debug(label + ":");
 		return rest.trim();
 	}
 

@@ -23,11 +23,8 @@ import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ProgramUnit;
 import org.bds.lang.nativeFunctions.NativeLibraryFunctions;
 import org.bds.lang.nativeMethods.string.NativeLibraryString;
-import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
-import org.bds.lang.statement.StatementFunctionDeclaration;
-import org.bds.lang.statement.VarDeclaration;
 import org.bds.lang.type.Types;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
@@ -36,7 +33,7 @@ import org.bds.task.TaskDependecies;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 import org.bds.vm.BdsVm;
-import org.bds.vm.VmAsm;
+import org.bds.vm.BdsVmAsm;
 
 /**
  * Run a bds program
@@ -146,7 +143,7 @@ public class BdsRun {
 			if (debug) Timer.showStdErr("Assembly code:\n" + asm);
 
 			// Compile assembly
-			VmAsm vmasm = new VmAsm(programUnit);
+			BdsVmAsm vmasm = new BdsVmAsm(programUnit);
 			vmasm.setDebug(debug);
 			vmasm.setVerbose(verbose);
 			vmasm.setCode(asm);
@@ -247,13 +244,6 @@ public class BdsRun {
 		// Native library: String
 		NativeLibraryString nativeLibraryString = new NativeLibraryString();
 		if (debug) log("Native library: " + nativeLibraryString.size());
-	}
-
-	boolean isStatementDeclaration(Statement s) {
-		return s instanceof VarDeclaration //
-				|| s instanceof StatementFunctionDeclaration //
-				|| s instanceof ClassDeclaration //
-		;
 	}
 
 	/**
@@ -472,10 +462,8 @@ public class BdsRun {
 	 */
 	int runTests(FunctionDeclaration testFunc) {
 		// Add all 'declaration' statements
-		List<Statement> statements = new ArrayList<>();
-		for (Statement s : programUnit.getStatements()) {
-			if (isStatementDeclaration(s)) statements.add(s);
-		}
+		BdsNodeWalker bwalker = new BdsNodeWalker(programUnit, null, false, true);
+		List<Statement> statements = bwalker.findDeclarations();
 
 		for (Statement s : statements)
 			Gpr.debug("STATEMENT: " + s);

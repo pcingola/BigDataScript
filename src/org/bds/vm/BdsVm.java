@@ -1416,7 +1416,7 @@ public class BdsVm implements Serializable {
 		// Show opcode
 		OpCode op = OPCODES[code[pc]];
 		String opstr = op.toString().toLowerCase();
-		sb.append("\t" + opstr);
+		sb.append(String.format("%6d    %s", pc, opstr));
 
 		// Parameter?
 		String comment = null;
