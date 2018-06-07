@@ -37,6 +37,11 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 		return nwalker.findNodes();
 	}
 
+	public static List<Field> getAllClassFields(BdsNode bdsNode) {
+		BdsNodeWalker nwalker = new BdsNodeWalker(bdsNode, null, false, false);
+		return nwalker.getAllClassFields();
+	}
+
 	@SuppressWarnings("rawtypes")
 	public BdsNodeWalker(BdsNode bdsNode, Class clazz, boolean recurse, boolean recurseInclude) {
 		this.bdsNode = bdsNode;
@@ -110,8 +115,8 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 		return list;
 	}
 
-	List<Field> getAllClassFields(BdsNode bdsNode) {
-		return getAllClassFields(bdsNode, false, true, true, true, true, false, false);
+	List<Field> getAllClassFields() {
+		return getAllClassFields(false, true, true, true, true, false, false);
 	}
 
 	/**
@@ -120,7 +125,7 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 	 * IMPORTANT: Nodes are returned ALPHABETICALLY sorted
 	 */
 	@SuppressWarnings("rawtypes")
-	List<Field> getAllClassFields(BdsNode bdsNode, boolean addParent, boolean addNode, boolean addPrimitive, boolean addClass, boolean addArray, boolean addStatic, boolean addPrivate) {
+	List<Field> getAllClassFields(boolean addParent, boolean addNode, boolean addPrimitive, boolean addClass, boolean addArray, boolean addStatic, boolean addPrivate) {
 		// Top class (if we are looking for 'parent' field, we need to include BdsNode, otherwise we don't
 		Class topClass = (addParent ? Object.class : BdsNode.class);
 

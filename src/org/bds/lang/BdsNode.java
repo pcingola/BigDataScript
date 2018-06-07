@@ -4,10 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -146,84 +142,6 @@ public abstract class BdsNode implements Serializable {
 		return -1;
 	}
 
-	//	/**
-	//	 * Find all nodes of a given type
-	//	 *
-	//	 * IMPORTANT: Nodes are return ALPHABETICALLY sorted
-	//	 *
-	//	 * @param clazz : Class to find (all nodes if null)
-	//	 *
-	//	 * @param recurse : If true, perform recursive search
-	//	 *
-	//	 * @param recurseInclude : If true, perform recursive search within 'StatementInclide' nodes.
-	//	 *                         Note: If 'recurse' is set, the value of 'recurseInclude' is irrelevant
-	//	 */
-	//	@SuppressWarnings("rawtypes")
-	//	public List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude) {
-	//		HashSet<Object> visited = new HashSet<>();
-	//		return findNodes(clazz, recurse, recurseInclude, visited);
-	//	}
-	//
-	//	@SuppressWarnings("rawtypes")
-	//	protected List<BdsNode> findNodes(Class clazz, boolean recurse, boolean recurseInclude, Set<Object> visited) {
-	//		List<BdsNode> list = new ArrayList<>();
-	//
-	//		// Iterate over fields
-	//		for (Field field : getAllClassFields()) {
-	//			try {
-	//				field.setAccessible(true);
-	//				Object fieldObj = field.get(this);
-	//
-	//				// Does the field have a map?
-	//				if (fieldObj != null && !visited.contains(fieldObj)) {
-	//					visited.add(fieldObj);
-	//
-	//					// If it's an array, iterate on all objects
-	//					if (fieldObj.getClass().isArray()) {
-	//						for (Object fieldObjSingle : (Object[]) fieldObj)
-	//							list.addAll(findNodes(clazz, fieldObjSingle, recurse, recurseInclude, visited));
-	//					} else {
-	//						list.addAll(findNodes(clazz, fieldObj, recurse, recurseInclude, visited));
-	//					}
-	//
-	//				}
-	//			} catch (Exception e) {
-	//				throw new RuntimeException("Error getting field '" + field.getName() + "' from class '" + this.getClass().getCanonicalName() + "'", e);
-	//			}
-	//		}
-	//
-	//		return list;
-	//	}
-	//
-	//	/**
-	//	 * Find all nodes of a given type
-	//	 * @param clazz : If null, all nodes are added
-	//	 * @param fieldObj
-	//	 */
-	//	@SuppressWarnings("rawtypes")
-	//	List<BdsNode> findNodes(Class clazz, Object fieldObj, boolean recurse, boolean recurseInclude, Set<Object> visited) {
-	//		List<BdsNode> list = new ArrayList<>();
-	//
-	//		// If it is a BigDataScriptNode then we can recurse into it
-	//		if ((fieldObj != null) && (fieldObj instanceof BdsNode)) {
-	//			BdsNode bdsnode = ((BdsNode) fieldObj);
-	//
-	//			// Found the requested type?
-	//			if ((clazz == null) || (fieldObj.getClass() == clazz)) {
-	//				BdsNode bn = (BdsNode) fieldObj;
-	//				visited.add(bn);
-	//				list.add(bn);
-	//			}
-	//
-	//			// Recurse into this field?
-	//			if (recurse || (recurseInclude && bdsnode instanceof StatementInclude)) {
-	//				list.addAll(bdsnode.findNodes(clazz, recurse, recurseInclude, visited));
-	//			}
-	//		}
-	//
-	//		return list;
-	//	}
-
 	/**
 	 * Find a parent of type 'clazz'
 	 */
@@ -250,59 +168,6 @@ public abstract class BdsNode implements Serializable {
 		if (classSet.contains(this.getClass())) return this;
 		if (parent != null) return parent.findParent(classSet);
 		return null;
-	}
-
-	List<Field> getAllClassFields() {
-		return getAllClassFields(false, true, true, true, true, false, false);
-	}
-
-	List<Field> getAllClassFields(boolean addParent) {
-		return getAllClassFields(addParent, true, true, false, true, false, false);
-	}
-
-	/**
-	 * Get all fields from this class
-	 *
-	 * IMPORTANT: Nodes are returned ALPHABETICALLY sorted
-	 */
-	@SuppressWarnings("rawtypes")
-	List<Field> getAllClassFields(boolean addParent, boolean addNode, boolean addPrimitive, boolean addClass, boolean addArray, boolean addStatic, boolean addPrivate) {
-		// Top class (if we are looking for 'parent' field, we need to include BigDataScriptNode, otherwise we don't
-		Class topClass = (addParent ? Object.class : BdsNode.class);
-
-		// Get all fields for each parent class
-		ArrayList<Field> fields = new ArrayList<>();
-
-		for (Class clazz = this.getClass(); clazz != topClass; clazz = clazz.getSuperclass()) {
-			for (Field f : clazz.getDeclaredFields()) {
-				// Add field?
-				if (Modifier.isPrivate(f.getModifiers())) {
-					if (addPrivate) fields.add(f);
-				} else if (Modifier.isStatic(f.getModifiers())) {
-					if (addStatic) fields.add(f);
-				} else if (f.getName().equals("parent")) {
-					if (addParent) fields.add(f);
-				} else if (f.getType().getCanonicalName().startsWith(BdsNodeFactory.get().packageName())) {
-					if (addNode) fields.add(f);
-				} else if (f.getType().isPrimitive() || (f.getType() == String.class)) {
-					if (addPrimitive) fields.add(f);
-				} else if (f.getType().isArray()) {
-					if (addArray) fields.add(f);
-				} else if (!f.getType().isPrimitive()) {
-					if (addClass) fields.add(f);
-				}
-			}
-		}
-
-		// Sort by name
-		Collections.sort(fields, new Comparator<Field>() {
-			@Override
-			public int compare(Field o1, Field o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
-
-		return fields;
 	}
 
 	public BdsThread getBigDataScriptThread() {
@@ -625,7 +490,7 @@ public abstract class BdsNode implements Serializable {
 		out.append(tabs + this.getClass().getSimpleName() + " " + fieldName + "\t[" + id + " | " + (parent != null ? parent.getId() : "") + "]\n");
 
 		// Iterate over fields
-		for (Field field : getAllClassFields()) {
+		for (Field field : BdsNodeWalker.getAllClassFields(this)) {
 			try {
 				field.setAccessible(true);
 				Object fieldObj = field.get(this);
@@ -732,5 +597,4 @@ public abstract class BdsNode implements Serializable {
 	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Nothing to do
 	}
-
 }
