@@ -9,7 +9,6 @@ public class FunctionNativeAssertBool extends FunctionNativeAssert {
 
 	private static final long serialVersionUID = 1197608743773175808L;
 
-
 	public FunctionNativeAssertBool() {
 		super();
 	}
@@ -29,7 +28,7 @@ public class FunctionNativeAssertBool extends FunctionNativeAssert {
 	protected Object runFunctionNative(BdsThread bdsThread) {
 		String msg = bdsThread.getString("msg");
 		boolean cond = bdsThread.getBool("cond");
-		if (!cond) throw new RuntimeException("Assertion failed: " + msg);
+		if (!cond) throw new RuntimeException(msg);
 		return true;
 	}
 }
