@@ -157,7 +157,7 @@ public class BdsThread extends Thread implements Serializable {
 		String filePos = getFileLinePos(bdsnode);
 		System.err.println("Assertion failed: " //
 				+ filePos + (filePos.isEmpty() ? "" : ". ") //
-				+ message //
+				+ (message != null ? message : "") //
 		);
 
 		// Set exit map

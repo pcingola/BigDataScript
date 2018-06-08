@@ -26,7 +26,7 @@ public abstract class FunctionNativeAssert extends FunctionNative {
 			return new ValueBool(true);
 		} catch (Throwable t) {
 			// Exception caused by failed assertion
-			if (bdsThread.isDebug()) t.printStackTrace();
+			if (bdsThread.isDebug() | t.getMessage() == null) t.printStackTrace();
 			bdsThread.assertionFailed(this, t.getMessage());
 			return new ValueBool(false);
 		}
