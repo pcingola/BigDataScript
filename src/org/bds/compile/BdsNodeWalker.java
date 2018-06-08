@@ -14,7 +14,6 @@ import java.util.stream.StreamSupport;
 
 import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
-import org.bds.lang.statement.Block;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementFunctionDeclaration;
@@ -46,6 +45,10 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 	public static List<Field> getAllClassFields(BdsNode bdsNode) {
 		BdsNodeWalker nwalker = new BdsNodeWalker(bdsNode, null, false, false);
 		return nwalker.getAllClassFields();
+	}
+
+	public BdsNodeWalker(BdsNode bdsNode) {
+		this(bdsNode, null, false, true);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -86,18 +89,20 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 		return list;
 	}
 
-	public List<Statement> findDeclarations() {
-		return findDeclarations((Block) bdsNode);
-	}
-
 	/**
-	 * Find declarations
+	 * Find declaration statements
 	 */
-	List<Statement> findDeclarations(Block block) {
+	public List<Statement> findDeclarations() {
+		recurse = false;
+		recurseInclude = true;
+
+		addClass(VarDeclaration.class);
+		addClass(StatementFunctionDeclaration.class);
+		addClass(ClassDeclaration.class);
+
 		List<Statement> statements = new ArrayList<>();
-		for (Statement s : block.getStatements()) {
-			if (isStatementDeclaration(s)) statements.add(s);
-		}
+		for (BdsNode b : findNodes())
+			statements.add((Statement) b);
 		return statements;
 	}
 
@@ -189,13 +194,6 @@ public class BdsNodeWalker implements Iterable<BdsNode> {
 
 	boolean isClass(Object obj) {
 		return (classes == null) || classes.contains(obj.getClass());
-	}
-
-	boolean isStatementDeclaration(Statement s) {
-		return s instanceof VarDeclaration //
-				|| s instanceof StatementFunctionDeclaration //
-				|| s instanceof ClassDeclaration //
-		;
 	}
 
 	@Override

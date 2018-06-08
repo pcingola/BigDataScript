@@ -462,14 +462,10 @@ public class BdsRun {
 	 */
 	int runTests(FunctionDeclaration testFunc) {
 		// Add all 'declaration' statements
-		BdsNodeWalker bwalker = new BdsNodeWalker(programUnit, null, false, true);
+		BdsNodeWalker bwalker = new BdsNodeWalker(programUnit);
 		List<Statement> statements = bwalker.findDeclarations();
 
-		for (Statement s : statements)
-			Gpr.debug("STATEMENT: " + s);
-
 		// Note: We execute the function's body (not the function declaration)
-		Gpr.debug("FUNC STAT: " + testFunc.getStatement());
 		statements.add(testFunc.getStatement());
 
 		// Create a program unit having all variable declarations and the test function's statements
