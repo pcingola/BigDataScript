@@ -1,19 +1,8 @@
-#!/usr/bin/env bds
 
-#include 'zz'
+m := {'a' => 1, 'b' => 2}
 
-# class B {
-# 	int b = 2
-# 	int f() {
-# 		return 42 + b
-# 	}
-# }
-# 
-# void test01() {
-# 	println "TEST01"
-# 	B b = new B()
-# 	assert("Wrong answer", 2, b.b)
-# }
-
-m := { 'a' => 1, 'b' => 2}
-println "m = $m"
+va := m.get('a', 0)
+vc := m.get('c', 0)
+println "va: $va\nvc: $vc"
+vc = m{'c'}
+println "va: $va\nvc: $vc"

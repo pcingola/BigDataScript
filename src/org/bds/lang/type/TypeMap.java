@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.nativeMethods.map.MethodNativeMapClone;
+import org.bds.lang.nativeMethods.map.MethodNativeMapGet;
 import org.bds.lang.nativeMethods.map.MethodNativeMapHasKey;
 import org.bds.lang.nativeMethods.map.MethodNativeMapHasValue;
 import org.bds.lang.nativeMethods.map.MethodNativeMapKeys;
@@ -105,6 +106,7 @@ public class TypeMap extends TypeComposite {
 		List<MethodNative> methods = super.declateNativeMethods();
 		try {
 			methods.add(new MethodNativeMapClone(this));
+			methods.add(new MethodNativeMapGet(this));
 			methods.add(new MethodNativeMapKeys(this));
 			methods.add(new MethodNativeMapHasKey(this));
 			methods.add(new MethodNativeMapHasValue(this));
