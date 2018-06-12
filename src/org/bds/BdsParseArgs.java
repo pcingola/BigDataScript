@@ -261,7 +261,7 @@ public class BdsParseArgs {
 
 			useVal = setVarInit(varType, varInit, valStr);
 		} else {
-			String val = (argNum < programArgs.size() ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
+			String val = (programArgs.size() > (argNum + 1) ? programArgs.get(++argNum) : ""); // Get one argument and use it to initialize the variable
 			useVal = setVarInit(varType, varInit, val); // Found variable, try to replace or add LITERAL to this VarInit
 		}
 
