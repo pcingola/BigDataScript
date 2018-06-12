@@ -330,7 +330,9 @@ public class BdsVm implements Serializable {
 		ValueList ins = (ValueList) pop();
 		ValueList outs = (ValueList) pop();
 
-		TaskDependency td = new TaskDependency();
+		BdsNode bdsNode = bdsThread.getBdsNodeCurrent();
+		TaskDependency td = new TaskDependency(bdsNode);
+		td.setDebug(debug);
 
 		for (Value out : outs)
 			td.addOutput(out.asString());
