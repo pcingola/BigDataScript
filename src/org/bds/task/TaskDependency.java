@@ -136,6 +136,7 @@ public class TaskDependency implements Serializable {
 	public boolean depOperator() {
 		// Empty dependency is always true
 		if (outputs.isEmpty() && inputs.isEmpty()) return true;
+		if (debug) log("Evaluating dependencies: " + (bdsNode != null && bdsNode.getFileName() != null ? (bdsNode.getFileName() + ":" + bdsNode.getLineNum()) : "null"));
 
 		//---
 		// Left hand side
