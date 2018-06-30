@@ -20,9 +20,9 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test223_switch_case_return() {
+	public void test166_switch_case_return() {
 		Gpr.debug("Test");
-		runAndCheck("test/z.bds", "res", "1");
+		runAndCheck("test/run_166.bds", "res", "1");
 	}
 
 }
