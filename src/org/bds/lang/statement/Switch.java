@@ -71,11 +71,12 @@ public class Switch extends Statement {
 		String labelEnd = baseLabelName() + "end";
 		String labelDefault = baseLabelName() + "default";
 		String labelDefaultCondition = baseLabelName() + "default_condition";
+		String varSwitchExpr = baseVarName() + "expr";
 
 		// Run switch expression
 		sb.append(labelSwitch + ":\n");
 		sb.append("scopepush\n");
-		sb.append(toAsmSwitchExpression());
+		sb.append(toAsmSwitchExpression(varSwitchExpr));
 
 		//---
 		// Case conditions
@@ -85,7 +86,7 @@ public class Switch extends Statement {
 
 		// Compare to each case expression
 		for (Case caseSt : caseStatements)
-			sb.append(caseSt.toAsmCondition());
+			sb.append(caseSt.toAsmCondition(varSwitchExpr));
 
 		// Is there a default statement?
 		if (defaultStatement != null) {
@@ -109,7 +110,6 @@ public class Switch extends Statement {
 
 		// We are done
 		sb.append(labelEnd + ":\n");
-		sb.append("pop\n"); // Remove switch expression
 		sb.append("scopepop\n"); // Restore scope
 
 		return sb.toString();
@@ -118,9 +118,12 @@ public class Switch extends Statement {
 	/**
 	 * Evaluate switch expression
 	 */
-	String toAsmSwitchExpression() {
+	String toAsmSwitchExpression(String varSwitchExpr) {
 		if (switchExpr == null) return "";
-		return switchExpr.toAsm();
+		StringBuilder sb = new StringBuilder();
+		sb.append(switchExpr.toAsm());
+		sb.append("varpop " + varSwitchExpr + "\n");
+		return sb.toString();
 	}
 
 	@Override

@@ -784,4 +784,11 @@ public class TestCasesRun2 extends TestCasesBase {
 		expectedValues.put("n2", "500");
 		runAndCheck("test/run_165.bds", expectedValues);
 	}
+
+	@Test
+	public void test166_switch_case_return() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_166.bds", "res", "1");
+	}
+
 }

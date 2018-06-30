@@ -1,7 +1,9 @@
 package org.bds.test;
 
 import org.bds.Config;
+import org.bds.util.Gpr;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -15,6 +17,12 @@ public class TestCasesZzz extends TestCasesBase {
 	public void beforeEachTest() {
 		Config.reset();
 		Config.get().load();
+	}
+
+	@Test
+	public void test223_switch_case_return() {
+		Gpr.debug("Test");
+		runAndCheck("test/z.bds", "res", "1");
 	}
 
 }

@@ -51,7 +51,7 @@ public class Default extends Case {
 	}
 
 	@Override
-	public String toAsmCondition() {
+	public String toAsmCondition(String varSwitchExpr) {
 		return "";
 	}
 

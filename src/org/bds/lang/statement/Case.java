@@ -91,7 +91,7 @@ public class Case extends StatementWithScope {
 	/**
 	 * Evaluate case expression and jump to case statements if it is equals to switch expression
 	 */
-	public String toAsmCondition() {
+	public String toAsmCondition(String varSwitchExpr) {
 		StringBuilder sb = new StringBuilder();
 
 		String labelCaseCond = baseLabelName() + "case_condition";
@@ -102,7 +102,7 @@ public class Case extends StatementWithScope {
 		Expression switchExpr = switchSt.getSwitchExpr();
 
 		// Evaluate case expression
-		sb.append("dup\n"); // A copy of 'switchExpr' result will be consumed in 'eq' test
+		sb.append("load " + varSwitchExpr + "\n");
 		sb.append(expression.toAsm());
 
 		// Is it equal to switch expression?
@@ -144,7 +144,8 @@ public class Case extends StatementWithScope {
 				// OK, convert to numeric
 			} else {
 				compilerMessages.add(this//
-						, "Switch expression and case expression types do not match (" //
+						,
+						"Switch expression and case expression types do not match (" //
 								+ switchExprType + " vs " + caseExprType //
 								+ "): case " + expression,
 						MessageType.ERROR);

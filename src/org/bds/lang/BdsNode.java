@@ -54,7 +54,9 @@ public abstract class BdsNode implements Serializable {
 	}
 
 	protected String baseVarName() {
-		return SymbolTable.INTERNAL_SYMBOL_START + getClass().getSimpleName() + "_" + id + "_";
+		String cn = getClass().getSimpleName();
+		cn = cn.substring(0, 1).toLowerCase() + cn.substring(1); // First leeter to lowercase
+		return SymbolTable.INTERNAL_SYMBOL_START + cn + "_" + id + "_";
 	}
 
 	public boolean canCastTo(BdsNode n) {
