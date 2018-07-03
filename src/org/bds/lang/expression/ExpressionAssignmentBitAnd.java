@@ -18,6 +18,7 @@ public class ExpressionAssignmentBitAnd extends ExpressionAssignmentBinary {
 
 	@Override
 	protected ExpressionBinary createSubExpression() {
+		if( left.isBool() ) new ExpressionLogicAnd(this, null); !!!!!!!!!
 		return new ExpressionBitAnd(this, null);
 	}
 

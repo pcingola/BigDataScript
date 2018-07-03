@@ -80,7 +80,6 @@ public class BdsVm implements Serializable {
 	public BdsVm() {
 		constants = new ArrayList<>();
 		constantsByObject = new HashMap<>();
-		//		functions = new HashMap<>();
 		labels = new HashMap<>();
 		labelsByPc = new AutoHashMap<>(new LinkedList<String>());
 		functionsBySignature = new HashMap<>();

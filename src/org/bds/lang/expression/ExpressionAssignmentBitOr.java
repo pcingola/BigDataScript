@@ -21,6 +21,7 @@ public class ExpressionAssignmentBitOr extends ExpressionAssignmentBinary {
 
 	@Override
 	protected ExpressionBinary createSubExpression() {
+		if( left.isBool() ) new ExpressionLogicOr(this, null); !!!!!!!!!
 		return new ExpressionBitOr(this, null);
 	}
 
