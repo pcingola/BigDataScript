@@ -1,5 +1,8 @@
 package org.bds.test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bds.Config;
 import org.bds.util.Gpr;
 import org.junit.Before;
@@ -20,9 +23,15 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test166_switch_case_return() {
+	public void test167_binary_expression_assign_bool() {
 		Gpr.debug("Test");
-		runAndCheck("test/run_166.bds", "res", "1");
+		verbose = true;
+		Map<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("band1", "true");
+		expectedValues.put("band2", "false");
+		expectedValues.put("bor1", "true");
+		expectedValues.put("bor2", "false");
+		runAndCheck("test/run_167.bds", expectedValues);
 	}
 
 }

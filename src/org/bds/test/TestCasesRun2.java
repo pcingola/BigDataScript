@@ -791,4 +791,15 @@ public class TestCasesRun2 extends TestCasesBase {
 		runAndCheck("test/run_166.bds", "res", "1");
 	}
 
+	@Test
+	public void test167_binary_expression_assign_bool() {
+		Gpr.debug("Test");
+		verbose = true;
+		Map<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("band1", "true");
+		expectedValues.put("band2", "false");
+		expectedValues.put("bor1", "true");
+		expectedValues.put("bor2", "false");
+		runAndCheck("test/run_167.bds", expectedValues);
+	}
 }

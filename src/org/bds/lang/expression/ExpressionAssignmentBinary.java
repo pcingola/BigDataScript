@@ -40,14 +40,22 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 		this.right = subExpression;
 	}
 
+	/**
+	 * In some cases we need to replace the sub-expression after we know the left-hand side type
+	 * E.g.: '&=' uses BitAnd for int and LogicAnd for bool
+	 */
+	protected void replaceSubExpression(SymbolTable symtab) {
+		// Nothing to do
+	}
+
 	@Override
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
 		super.returnType(symtab);
 		returnType = left.getReturnType();
+		replaceSubExpression(symtab);
 
 		return returnType;
 	}
-
 }

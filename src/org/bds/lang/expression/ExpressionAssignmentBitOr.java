@@ -2,17 +2,15 @@ package org.bds.lang.expression;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.lang.BdsNode;
+import org.bds.lang.type.Type;
 
 /**
  * Expression
  *
  * @author pcingola
  */
-public class ExpressionAssignmentBitOr extends ExpressionAssignmentBinary {
+public class ExpressionAssignmentBitOr extends ExpressionAssignmentBinaryBool {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -2969794879422342835L;
 
 	public ExpressionAssignmentBitOr(BdsNode parent, ParseTree tree) {
@@ -21,8 +19,12 @@ public class ExpressionAssignmentBitOr extends ExpressionAssignmentBinary {
 
 	@Override
 	protected ExpressionBinary createSubExpression() {
-		if( left.isBool() ) new ExpressionLogicOr(this, null); !!!!!!!!!
 		return new ExpressionBitOr(this, null);
+	}
+
+	@Override
+	protected ExpressionBinary createSubExpressionBool(Type leftType) {
+		return new ExpressionLogicOr(this, null);
 	}
 
 	@Override
