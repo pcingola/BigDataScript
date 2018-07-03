@@ -794,7 +794,6 @@ public class TestCasesRun2 extends TestCasesBase {
 	@Test
 	public void test167_binary_expression_assign_bool() {
 		Gpr.debug("Test");
-		verbose = true;
 		Map<String, Object> expectedValues = new HashMap<>();
 		expectedValues.put("band1", "true");
 		expectedValues.put("band2", "false");

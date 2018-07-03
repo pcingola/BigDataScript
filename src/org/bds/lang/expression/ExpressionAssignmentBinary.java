@@ -28,6 +28,13 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 
 	protected abstract ExpressionBinary createSubExpression();
 
+	/**
+	 * Create sub-expression for a specific return type
+	 */
+	protected ExpressionBinary createSubExpressionBool(Type leftType) {
+		throw new RuntimeException("This method should not be invoked!");
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		left = (Expression) factory(tree, 0);
@@ -46,6 +53,25 @@ public abstract class ExpressionAssignmentBinary extends ExpressionAssignment {
 	 */
 	protected void replaceSubExpression(SymbolTable symtab) {
 		// Nothing to do
+	}
+
+	/**
+	 * Replace the sub-expression after we know the left-hand side type is 'bool'
+	 * E.g.: '&=' uses BitAnd for int and LogicAnd for bool
+	 */
+	protected void replaceSubExpressionBool(SymbolTable symtab) {
+		if (!left.isBool()) return;
+
+		// Get original left and right expressions
+		ExpressionBinary eb = (ExpressionBinary) right;
+		Expression l = eb.getLeft();
+		Expression r = eb.getRight();
+
+		ExpressionBinary reb = createSubExpressionBool(left.getReturnType());
+		reb.setLeft(l);
+		reb.setRight(r);
+		reb.returnType(symtab);
+		right = reb;
 	}
 
 	@Override
