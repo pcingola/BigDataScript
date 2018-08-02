@@ -55,7 +55,7 @@ public abstract class BdsNode implements Serializable {
 
 	protected String baseVarName() {
 		String cn = getClass().getSimpleName();
-		cn = cn.substring(0, 1).toLowerCase() + cn.substring(1); // First leeter to lowercase
+		cn = cn.substring(0, 1).toLowerCase() + cn.substring(1); // First letter to lower case
 		return SymbolTable.INTERNAL_SYMBOL_START + cn + "_" + id + "_";
 	}
 
@@ -80,7 +80,7 @@ public abstract class BdsNode implements Serializable {
 	}
 
 	public void checkCanCastTo(Type t, CompilerMessages compilerMessages) {
-		if (!returnType.canCastTo(t)) {
+		if (returnType == null || !returnType.canCastTo(t)) {
 			compilerMessages.add(this, "Cannot cast " + returnType + " to " + t, MessageType.ERROR);
 		}
 	}
