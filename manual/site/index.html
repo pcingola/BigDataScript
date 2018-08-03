@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="./img/favicon.ico">
+        <title>bds - Big Data Script programming language</title>
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="./css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script> 
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href=".">bds - Big Data Script programming language</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<pre><code>            &lt;h1 class="page-header" id="intro"&gt;Introduction&lt;/h1&gt;
+            &lt;p class="lead"&gt; BigDataScript is intended as a scripting language for big data pipeline.  &lt;/p&gt;
+            &lt;h3&gt;What?&lt;/h3&gt;
+            &lt;p&gt; BigDataScript is a cross-system scripting language for working with big data pipelines in computer systems of different sizes and capabilities.  &lt;/p&gt;
+            &lt;h3&gt;Why?&lt;/h3&gt;
+            Working with heavyweight computation and big data pipelines involves making use of several specialized programs. 
+            Those specialized routines need to be scheduled, called and coordinated; their progress need to be tracked and their results logged. 
+            That is the job of another script or program. This is when BigDataScript becomes extremely handy.
+            &lt;br&gt;
+            &lt;br&gt;
+            Developing traditional shell scripts or small programs to coordinate data pipelines presents a fundamental dilemma. 
+            It is not cross-platform, it simply does not work on all environments or it needs adaptations and re-work for the same thing to work on a laptop, server, server farm, cluster and cloud. 
+            Often it is simply not possible. 
+            Because of that, developing big data pipelines for a different environment is time consuming. 
+            The behaviour on the target environment cannot be assumed to be an exact extrapolation of the results obtained on the development environment. 
+            This not only is a waste of time, money and energy, it is also reliable source of frustration.
+            &lt;br&gt;
+            &lt;br&gt;
+            BigDataScript is the solution to the problem.
+            &lt;br&gt;
+            &lt;br&gt;
+            With BigDataScript, creating jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. 
+            If you normally use specialized programs to perform heavyweight computations, then BigDataScript is the glue to those commands you need to create a reliable pipeline.
+            &lt;h3&gt;How?&lt;/h3&gt;
+
+            &lt;p class="lead"&gt; &lt;b&gt; Benefits of BigDataScript &lt;/b&gt; &lt;/p&gt;
+            &lt;ul&gt;
+                &lt;li&gt; &lt;b&gt;Reduced development time&lt;/b&gt; 
+                &lt;p&gt;
+                Spend less time debugging your work on big systems with a huge data volumes. 
+                Now you can debug the same jobs using a smaller sample on your computer. 
+                Get immediate feedback, debug, fix and deploy when it's done. 
+                Shorter development cycles means better software.
+                &lt;/p&gt;
+
+                &lt;li&gt; &lt;b&gt;System independent&lt;/b&gt; 
+                &lt;p&gt;
+                Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud. 
+                No changes to the program required. 
+                Work once.
+                &lt;/p&gt;
+
+                &lt;li&gt; &lt;b&gt;Easy to learn&lt;/b&gt; 
+                &lt;p&gt;
+                The syntax is intuitive and it resembles the syntax of most commonly used programming languages. 
+                Reading the code is easy as pi.
+                &lt;/p&gt;
+
+                &lt;li&gt; &lt;b&gt;Automatic Checkpointing&lt;/b&gt; 
+                &lt;p&gt;
+                If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. 
+                Want to restart were it stopped? 
+                No problem, just resume the execution from the checkpoint.
+                &lt;/p&gt;
+
+                &lt;li&gt; &lt;b&gt;Automatic logging&lt;/b&gt; 
+                &lt;p&gt;
+                Everything is logged (&lt;code&gt;-log&lt;/code&gt; command line option), no explicit actions required. 
+                Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout &amp;amp; stderr and exit codes.
+                &lt;/p&gt;
+
+                &lt;li&gt; &lt;b&gt;Clean stop with no mess behind&lt;/b&gt; 
+                &lt;p&gt;
+                You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... 
+                Just hit Ctrl-C. 
+                All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. 
+                A clean stop allows you to focus on the problem at hand without having to worry about restoring a clean state.
+                &lt;/p&gt;
+
+                &lt;li&gt; &lt;b&gt;Task dependencies&lt;/b&gt; 
+                &lt;p&gt;
+                In complex pipelines, tasks usually depend on each other. 
+                BigDataScript provides ways to easily manage task dependencies.
+                &lt;/p&gt;
+
+                &lt;li&gt; &lt;b&gt;Avoid re-work&lt;/b&gt; 
+                &lt;p&gt;
+                Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming. 
+                Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.
+                &lt;/p&gt;
+
+                &lt;li&gt; &lt;b&gt;Built in debugger&lt;/b&gt; 
+                &lt;p&gt;
+                Debugging is an integral part of programming, so it is part of &lt;code&gt;bds&lt;/code&gt; language.
+                Statements &lt;code&gt;breakpoint&lt;/code&gt; and &lt;code&gt;debug&lt;/code&gt; make debugging part of the language, instead of requiring platform specific tools.
+                &lt;/p&gt;
+
+                &lt;li&gt; &lt;b&gt;Built in test cases facility&lt;/b&gt; 
+                &lt;p&gt;
+                Code testing is performed in everyday programming, so testing is built in &lt;code&gt;bds&lt;/code&gt;.
+                &lt;/p&gt;
+            &lt;/ul&gt;
+
+            &lt;h3&gt; Paper &amp; Citations &lt;/h3&gt;
+            &lt;p&gt;
+            If you are using BigDataScript in an academic environment, please cite our &lt;a href="https://doi.org/10.1093/bioinformatics/btu595"&gt;paper&lt;/a&gt;:
+</code></pre>
+<p><pre>
+BigDataScript: A scripting language for data pipelines 
+P. Cingolani; R. Sladek; M. Blanchette
+Bioinformatics 2014;
+doi: 10.1093/bioinformatics/btu595
+</pre>
+                </p></p>
+<pre><code>            &lt;h3&gt; A word about performance&lt;/h3&gt;
+            &lt;p&gt;
+            BigDataScript is meant to be used in the context or heavyweight computations.
+            Potential delays incurred by BigDataScript should not affect the overall time.
+            &lt;br&gt;
+            Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.
+            The fact that BigDataScript takes a few milliseconds more to invoke those programs, really doesn't make any difference.
+            &lt;/p&gt;
+
+            &lt;h3&gt; Why is it called "BigDataScript" &lt;/h3&gt;
+            Because that's the lamest name I could find.
+
+            &lt;h3&gt; Disclaimer &lt;/h3&gt;
+            BigDataScript is experimental and under heavy development. Use at your own risk.
+            Know side effect include: computer explosions, instant decapitation, spontaneous human combustion, and dead kittens.
+        &lt;/div&gt;
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '.';</script>
+        <script src="./js/base.js"></script>
+        <script src="./search/require.js"></script>
+        <script src="./search/search.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td><kbd>&larr;</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td><kbd>&rarr;</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 0.17.5
+Build Date UTC : 2018-08-03 14:27:40
+-->
