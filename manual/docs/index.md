@@ -25,97 +25,41 @@ If you normally use specialized programs to perform heavyweight computations, th
 
 **Benefits of BigDataScript**
 
-	<li> <b>Reduced development time</b> 
-	<p>
-	Spend less time debugging your work on big systems with a huge data volumes. 
-	Now you can debug the same jobs using a smaller sample on your computer. 
-	Get immediate feedback, debug, fix and deploy when it's done. 
-	Shorter development cycles means better software.
-	</p>
+* **Reduced development time** Spend less time debugging your work on big systems with a huge data volumes. Now you can debug the same jobs using a smaller sample on your computer. Get immediate feedback, debug, fix and deploy when it's done. Shorter development cycles means better software.
+* **System independent** Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud.  No changes to the program required. Work once.
+* **Easy to learn** The syntax is intuitive and it resembles the syntax of most commonly used programming languages. Reading the code is easy as pi.
+* **Automatic Checkpointing** If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. Want to restart were it stopped? No problem, just resume the execution from the checkpoint.  
+* **Automatic logging** Everything is logged (<code>-log</code> command line option), no explicit actions required. Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout &amp; stderr and exit codes.  
+* **Clean stop with no mess behind** You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... Just hit Ctrl-C. All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. A clean stop allows you to focus on the problem at hand without having to worry about restoring a clean state.  
+* **Task dependencies** In complex pipelines, tasks usually depend on each other.  BigDataScript provides ways to easily manage task dependencies.  
+* **Avoid re-work** Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming.  Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.
+* **Built in debugger** Debugging is an integral part of programming, so it is part of <code>bds</code> language.  Statements <code>breakpoint</code> and <code>debug</code> make debugging part of the language, instead of requiring platform specific tools.
+* **Built in test cases facility** Code testing is performed in everyday programming, so testing is built in <code>bds</code>.
+	
 
-	<li> <b>System independent</b> 
-	<p>
-	Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud. 
-	No changes to the program required. 
-	Work once.
-	</p>
+### Paper & Citations 
 
-	<li> <b>Easy to learn</b> 
-	<p>
-	The syntax is intuitive and it resembles the syntax of most commonly used programming languages. 
-	Reading the code is easy as pi.
-	</p>
-
-	<li> <b>Automatic Checkpointing</b> 
-	<p>
-	If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. 
-	Want to restart were it stopped? 
-	No problem, just resume the execution from the checkpoint.
-	</p>
-
-	<li> <b>Automatic logging</b> 
-	<p>
-	Everything is logged (<code>-log</code> command line option), no explicit actions required. 
-	Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout &amp; stderr and exit codes.
-	</p>
-
-	<li> <b>Clean stop with no mess behind</b> 
-	<p>
-	You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... 
-	Just hit Ctrl-C. 
-	All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. 
-	A clean stop allows you to focus on the problem at hand without having to worry about restoring a clean state.
-	</p>
-
-	<li> <b>Task dependencies</b> 
-	<p>
-	In complex pipelines, tasks usually depend on each other. 
-	BigDataScript provides ways to easily manage task dependencies.
-	</p>
-
-	<li> <b>Avoid re-work</b> 
-	<p>
-	Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming. 
-	Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.
-	</p>
-
-	<li> <b>Built in debugger</b> 
-	<p>
-	Debugging is an integral part of programming, so it is part of <code>bds</code> language.
-	Statements <code>breakpoint</code> and <code>debug</code> make debugging part of the language, instead of requiring platform specific tools.
-	</p>
-
-	<li> <b>Built in test cases facility</b> 
-	<p>
-	Code testing is performed in everyday programming, so testing is built in <code>bds</code>.
-	</p>
-</ul>
-
-<h3> Paper & Citations </h3>
-<p>
 If you are using BigDataScript in an academic environment, please cite our <a href="https://doi.org/10.1093/bioinformatics/btu595">paper</a>:
-<pre>
+```
 BigDataScript: A scripting language for data pipelines 
 P. Cingolani; R. Sladek; M. Blanchette
 Bioinformatics 2014;
 doi: 10.1093/bioinformatics/btu595
-</pre>
-</p>
+```
 
-<h3> A word about performance</h3>
-<p>
+### A word about performance
 BigDataScript is meant to be used in the context or heavyweight computations.
 Potential delays incurred by BigDataScript should not affect the overall time.
-<br>
+
 Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.
 The fact that BigDataScript takes a few milliseconds more to invoke those programs, really doesn't make any difference.
-</p>
 
-<h3> Why is it called "BigDataScript" </h3>
+
+### Why is it called "BigDataScript" 
 Because that's the lamest name I could find.
 
-<h3> Disclaimer </h3>
+### Disclaimer 
 BigDataScript is experimental and under heavy development. Use at your own risk.
 Know side effect include: computer explosions, instant decapitation, spontaneous human combustion, and dead kittens.
-</div>
+
 

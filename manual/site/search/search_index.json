@@ -2,8 +2,198 @@
     "docs": [
         {
             "location": "/", 
-            "text": "h1 class=\"page-header\" id=\"intro\"\nIntroduction\n/h1\n\n            \np class=\"lead\"\n BigDataScript is intended as a scripting language for big data pipeline.  \n/p\n\n            \nh3\nWhat?\n/h3\n\n            \np\n BigDataScript is a cross-system scripting language for working with big data pipelines in computer systems of different sizes and capabilities.  \n/p\n\n            \nh3\nWhy?\n/h3\n\n            Working with heavyweight computation and big data pipelines involves making use of several specialized programs. \n            Those specialized routines need to be scheduled, called and coordinated; their progress need to be tracked and their results logged. \n            That is the job of another script or program. This is when BigDataScript becomes extremely handy.\n            \nbr\n\n            \nbr\n\n            Developing traditional shell scripts or small programs to coordinate data pipelines presents a fundamental dilemma. \n            It is not cross-platform, it simply does not work on all environments or it needs adaptations and re-work for the same thing to work on a laptop, server, server farm, cluster and cloud. \n            Often it is simply not possible. \n            Because of that, developing big data pipelines for a different environment is time consuming. \n            The behaviour on the target environment cannot be assumed to be an exact extrapolation of the results obtained on the development environment. \n            This not only is a waste of time, money and energy, it is also reliable source of frustration.\n            \nbr\n\n            \nbr\n\n            BigDataScript is the solution to the problem.\n            \nbr\n\n            \nbr\n\n            With BigDataScript, creating jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. \n            If you normally use specialized programs to perform heavyweight computations, then BigDataScript is the glue to those commands you need to create a reliable pipeline.\n            \nh3\nHow?\n/h3\n\n\n            \np class=\"lead\"\n \nb\n Benefits of BigDataScript \n/b\n \n/p\n\n            \nul\n\n                \nli\n \nb\nReduced development time\n/b\n \n                \np\n\n                Spend less time debugging your work on big systems with a huge data volumes. \n                Now you can debug the same jobs using a smaller sample on your computer. \n                Get immediate feedback, debug, fix and deploy when it's done. \n                Shorter development cycles means better software.\n                \n/p\n\n\n                \nli\n \nb\nSystem independent\n/b\n \n                \np\n\n                Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud. \n                No changes to the program required. \n                Work once.\n                \n/p\n\n\n                \nli\n \nb\nEasy to learn\n/b\n \n                \np\n\n                The syntax is intuitive and it resembles the syntax of most commonly used programming languages. \n                Reading the code is easy as pi.\n                \n/p\n\n\n                \nli\n \nb\nAutomatic Checkpointing\n/b\n \n                \np\n\n                If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. \n                Want to restart were it stopped? \n                No problem, just resume the execution from the checkpoint.\n                \n/p\n\n\n                \nli\n \nb\nAutomatic logging\n/b\n \n                \np\n\n                Everything is logged (\ncode\n-log\n/code\n command line option), no explicit actions required. \n                Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout \namp; stderr and exit codes.\n                \n/p\n\n\n                \nli\n \nb\nClean stop with no mess behind\n/b\n \n                \np\n\n                You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... \n                Just hit Ctrl-C. \n                All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. \n                A clean stop allows you to focus on the problem at hand without having to worry about restoring a clean state.\n                \n/p\n\n\n                \nli\n \nb\nTask dependencies\n/b\n \n                \np\n\n                In complex pipelines, tasks usually depend on each other. \n                BigDataScript provides ways to easily manage task dependencies.\n                \n/p\n\n\n                \nli\n \nb\nAvoid re-work\n/b\n \n                \np\n\n                Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming. \n                Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.\n                \n/p\n\n\n                \nli\n \nb\nBuilt in debugger\n/b\n \n                \np\n\n                Debugging is an integral part of programming, so it is part of \ncode\nbds\n/code\n language.\n                Statements \ncode\nbreakpoint\n/code\n and \ncode\ndebug\n/code\n make debugging part of the language, instead of requiring platform specific tools.\n                \n/p\n\n\n                \nli\n \nb\nBuilt in test cases facility\n/b\n \n                \np\n\n                Code testing is performed in everyday programming, so testing is built in \ncode\nbds\n/code\n.\n                \n/p\n\n            \n/ul\n\n\n            \nh3\n Paper \n Citations \n/h3\n\n            \np\n\n            If you are using BigDataScript in an academic environment, please cite our \na href=\"https://doi.org/10.1093/bioinformatics/btu595\"\npaper\n/a\n:\n\n\n\n\nBigDataScript: A scripting language for data pipelines \nP. Cingolani; R. Sladek; M. Blanchette\nBioinformatics 2014;\ndoi: 10.1093/bioinformatics/btu595\n\n\n                \n\n\n            \nh3\n A word about performance\n/h3\n\n            \np\n\n            BigDataScript is meant to be used in the context or heavyweight computations.\n            Potential delays incurred by BigDataScript should not affect the overall time.\n            \nbr\n\n            Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.\n            The fact that BigDataScript takes a few milliseconds more to invoke those programs, really doesn't make any difference.\n            \n/p\n\n\n            \nh3\n Why is it called \"BigDataScript\" \n/h3\n\n            Because that's the lamest name I could find.\n\n            \nh3\n Disclaimer \n/h3\n\n            BigDataScript is experimental and under heavy development. Use at your own risk.\n            Know side effect include: computer explosions, instant decapitation, spontaneous human combustion, and dead kittens.\n        \n/div", 
+            "text": "Introduction\n\n\nBigDataScript is intended as a scripting language for big data pipeline. \n\n\nWhat?\n\n\nBigDataScript is a cross-system scripting language for working with big data pipelines in computer systems of different sizes and capabilities. \n\n\nWhy?\n\n\nWorking with heavyweight computation and big data pipelines involves making use of several specialized programs. \nThose specialized routines need to be scheduled, called and coordinated; their progress need to be tracked and their results logged. \nThat is the job of another script or program. This is when BigDataScript becomes extremely handy.\n\n\nDeveloping traditional shell scripts or small programs to coordinate data pipelines presents a fundamental dilemma. \nIt is not cross-platform, it simply does not work on all environments or it needs adaptations and re-work for the same thing to work on a laptop, server, server farm, cluster and cloud. \nOften it is simply not possible. \nBecause of that, developing big data pipelines for a different environment is time consuming. \nThe behaviour on the target environment cannot be assumed to be an exact extrapolation of the results obtained on the development environment. \nThis not only is a waste of time, money and energy, it is also reliable source of frustration.\n\n\nBigDataScript is the solution to the problem.\n\n\nWith BigDataScript, creating jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. \nIf you normally use specialized programs to perform heavyweight computations, then BigDataScript is the glue to those commands you need to create a reliable pipeline.\n\n\nHow?\n\n\nBenefits of BigDataScript\n\n\n\n\nReduced development time\n Spend less time debugging your work on big systems with a huge data volumes. Now you can debug the same jobs using a smaller sample on your computer. Get immediate feedback, debug, fix and deploy when it's done. Shorter development cycles means better software.\n\n\nSystem independent\n Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud.  No changes to the program required. Work once.\n\n\nEasy to learn\n The syntax is intuitive and it resembles the syntax of most commonly used programming languages. Reading the code is easy as pi.\n\n\nAutomatic Checkpointing\n If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. Want to restart were it stopped? No problem, just resume the execution from the checkpoint.  \n\n\nAutomatic logging\n Everything is logged (\n-log\n command line option), no explicit actions required. Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout \n stderr and exit codes.  \n\n\nClean stop with no mess behind\n You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... Just hit Ctrl-C. All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. A clean stop allows you to focus on the problem at hand without having to worry about restoring a clean state.  \n\n\nTask dependencies\n In complex pipelines, tasks usually depend on each other.  BigDataScript provides ways to easily manage task dependencies.  \n\n\nAvoid re-work\n Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming.  Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.\n\n\nBuilt in debugger\n Debugging is an integral part of programming, so it is part of \nbds\n language.  Statements \nbreakpoint\n and \ndebug\n make debugging part of the language, instead of requiring platform specific tools.\n\n\nBuilt in test cases facility\n Code testing is performed in everyday programming, so testing is built in \nbds\n.\n\n\n\n\nPaper \n Citations\n\n\nIf you are using BigDataScript in an academic environment, please cite our \npaper\n:\n\n\nBigDataScript: A scripting language for data pipelines \nP. Cingolani; R. Sladek; M. Blanchette\nBioinformatics 2014;\ndoi: 10.1093/bioinformatics/btu595\n\n\n\n\nA word about performance\n\n\nBigDataScript is meant to be used in the context or heavyweight computations.\nPotential delays incurred by BigDataScript should not affect the overall time.\n\n\nThink about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.\nThe fact that BigDataScript takes a few milliseconds more to invoke those programs, really doesn't make any difference.\n\n\nWhy is it called \"BigDataScript\"\n\n\nBecause that's the lamest name I could find.\n\n\nDisclaimer\n\n\nBigDataScript is experimental and under heavy development. Use at your own risk.\nKnow side effect include: computer explosions, instant decapitation, spontaneous human combustion, and dead kittens.", 
             "title": "Home"
+        }, 
+        {
+            "location": "/#introduction", 
+            "text": "BigDataScript is intended as a scripting language for big data pipeline.", 
+            "title": "Introduction"
+        }, 
+        {
+            "location": "/#what", 
+            "text": "BigDataScript is a cross-system scripting language for working with big data pipelines in computer systems of different sizes and capabilities.", 
+            "title": "What?"
+        }, 
+        {
+            "location": "/#why", 
+            "text": "Working with heavyweight computation and big data pipelines involves making use of several specialized programs. \nThose specialized routines need to be scheduled, called and coordinated; their progress need to be tracked and their results logged. \nThat is the job of another script or program. This is when BigDataScript becomes extremely handy.  Developing traditional shell scripts or small programs to coordinate data pipelines presents a fundamental dilemma. \nIt is not cross-platform, it simply does not work on all environments or it needs adaptations and re-work for the same thing to work on a laptop, server, server farm, cluster and cloud. \nOften it is simply not possible. \nBecause of that, developing big data pipelines for a different environment is time consuming. \nThe behaviour on the target environment cannot be assumed to be an exact extrapolation of the results obtained on the development environment. \nThis not only is a waste of time, money and energy, it is also reliable source of frustration.  BigDataScript is the solution to the problem.  With BigDataScript, creating jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. \nIf you normally use specialized programs to perform heavyweight computations, then BigDataScript is the glue to those commands you need to create a reliable pipeline.", 
+            "title": "Why?"
+        }, 
+        {
+            "location": "/#how", 
+            "text": "Benefits of BigDataScript   Reduced development time  Spend less time debugging your work on big systems with a huge data volumes. Now you can debug the same jobs using a smaller sample on your computer. Get immediate feedback, debug, fix and deploy when it's done. Shorter development cycles means better software.  System independent  Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud.  No changes to the program required. Work once.  Easy to learn  The syntax is intuitive and it resembles the syntax of most commonly used programming languages. Reading the code is easy as pi.  Automatic Checkpointing  If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. Want to restart were it stopped? No problem, just resume the execution from the checkpoint.    Automatic logging  Everything is logged ( -log  command line option), no explicit actions required. Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout   stderr and exit codes.    Clean stop with no mess behind  You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... Just hit Ctrl-C. All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. A clean stop allows you to focus on the problem at hand without having to worry about restoring a clean state.    Task dependencies  In complex pipelines, tasks usually depend on each other.  BigDataScript provides ways to easily manage task dependencies.    Avoid re-work  Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming.  Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.  Built in debugger  Debugging is an integral part of programming, so it is part of  bds  language.  Statements  breakpoint  and  debug  make debugging part of the language, instead of requiring platform specific tools.  Built in test cases facility  Code testing is performed in everyday programming, so testing is built in  bds .", 
+            "title": "How?"
+        }, 
+        {
+            "location": "/#paper-citations", 
+            "text": "If you are using BigDataScript in an academic environment, please cite our  paper :  BigDataScript: A scripting language for data pipelines \nP. Cingolani; R. Sladek; M. Blanchette\nBioinformatics 2014;\ndoi: 10.1093/bioinformatics/btu595", 
+            "title": "Paper &amp; Citations"
+        }, 
+        {
+            "location": "/#a-word-about-performance", 
+            "text": "BigDataScript is meant to be used in the context or heavyweight computations.\nPotential delays incurred by BigDataScript should not affect the overall time.  Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.\nThe fact that BigDataScript takes a few milliseconds more to invoke those programs, really doesn't make any difference.", 
+            "title": "A word about performance"
+        }, 
+        {
+            "location": "/#why-is-it-called-bigdatascript", 
+            "text": "Because that's the lamest name I could find.", 
+            "title": "Why is it called \"BigDataScript\""
+        }, 
+        {
+            "location": "/#disclaimer", 
+            "text": "BigDataScript is experimental and under heavy development. Use at your own risk.\nKnow side effect include: computer explosions, instant decapitation, spontaneous human combustion, and dead kittens.", 
+            "title": "Disclaimer"
+        }, 
+        {
+            "location": "/manual/hello/", 
+            "text": "Hello world\n\n\nAs we all know, showing that we can print \"Hello world\" is more important than showing that the language is Turing complete.  \n\n\nCreate a simple program and execute it. File \ntest_01.bds\n\n\n#!/usr/bin/env bds\n\nprint \nHello world\\n\n\n\n\n\n\n$ ./test_01.bds \nHello world\n\n\n\n\nRun a shell command\n\n\nThis time we do it by running a system command (\necho\n), using bds' \nsys\n expression. \nA \nsys\n executes the command immediately in the local computer and waits until the command finishes.\nEverything after \nsys\n until the end of the line is interpreted as an OS command.\nFile \ntest_02.bds\n\n\n#!/usr/bin/env bds\n\nsys echo Hello world\n\n\n\n\nRun it:\n\n\n$ ./test_02.bds \nhello world\n\n\n\n\nRun a shell command on a cluster\n\n\nnow let's run the same in as a 'task'. tasks schedule the system command for execution (either locally, on a cluster, etc.).\nFile \ntest_03.bds\n\n\n#!/usr/bin/env bds\n\ntask echo Hello world\n\n\n\n\nJust run the script to execute tasks locally\n\n\n$ ./test_03.bds\nHello world\n\n\n\n\nYou can also execute on a cluster, for instance, if you are on a cluster's head node, just run:\n\n\n$ bds -s cluster ./test_03.bds\nHello world\n\n\n\n\nNote that in order to execute on another architecture (cluster), we did not change the bds program, we just added a command line option.\n\n\nCluster, cloud, datacenter or local computer\n\n\nPrograms can be executed on different computer systems of different sizes without changing the code.", 
+            "title": "Hello world"
+        }, 
+        {
+            "location": "/manual/hello/#hello-world", 
+            "text": "As we all know, showing that we can print \"Hello world\" is more important than showing that the language is Turing complete.    Create a simple program and execute it. File  test_01.bds  #!/usr/bin/env bds\n\nprint  Hello world\\n   $ ./test_01.bds \nHello world", 
+            "title": "Hello world"
+        }, 
+        {
+            "location": "/manual/hello/#run-a-shell-command", 
+            "text": "This time we do it by running a system command ( echo ), using bds'  sys  expression. \nA  sys  executes the command immediately in the local computer and waits until the command finishes.\nEverything after  sys  until the end of the line is interpreted as an OS command.\nFile  test_02.bds  #!/usr/bin/env bds\n\nsys echo Hello world  Run it:  $ ./test_02.bds \nhello world", 
+            "title": "Run a shell command"
+        }, 
+        {
+            "location": "/manual/hello/#run-a-shell-command-on-a-cluster", 
+            "text": "now let's run the same in as a 'task'. tasks schedule the system command for execution (either locally, on a cluster, etc.).\nFile  test_03.bds  #!/usr/bin/env bds\n\ntask echo Hello world  Just run the script to execute tasks locally  $ ./test_03.bds\nHello world  You can also execute on a cluster, for instance, if you are on a cluster's head node, just run:  $ bds -s cluster ./test_03.bds\nHello world  Note that in order to execute on another architecture (cluster), we did not change the bds program, we just added a command line option.", 
+            "title": "Run a shell command on a cluster"
+        }, 
+        {
+            "location": "/manual/hello/#cluster-cloud-datacenter-or-local-computer", 
+            "text": "Programs can be executed on different computer systems of different sizes without changing the code.", 
+            "title": "Cluster, cloud, datacenter or local computer"
+        }, 
+        {
+            "location": "/manual/language/", 
+            "text": "Language\n\n\nLearning BigDataScript language (\nbds\n) is almost trivial, all the statements and expression and data types do what you expect. \n\n\nBigDataScript is really simple and you should be able to code within a few minutes.\nThis section is intended as a reference, so just glance through it.\n\n\nComments\n\n\nThe usual statements are available\n\n\n// Single line comment\n\n# Another single line comment\n\n/*\n   Multi-line comment\n*/\n\n\n\n\nStatements\n\n\nStatements can be terminated either by semicolon or by a new line.\n\n\n# Two statements\nprint \nHi\\n\n; print \nBye\\n\n;\n\n# Two statements, same as before but using lines instead of semicolon\nprint \nHi\\n\n \nprint \nBye\\n\n\n\n\n\n\nbreak\n\n\nBreaks from current loop\n\n\nfor( int i=0 ; i \n 10 ; i++ ) {\n    if( i == 5 ) break;    // Finish when we reach 5\n}\n\n\n\n\nbreakpoint\n\n\nInserts a debugging breakpoint. I.e. when the statement is executed, \nbds\n switches execution to debug mode (STEP) \n\n\nbreakpoint \nProgram execution will switch do debug mode here!\\n\n\n\n\n\n\ncontinue\n\n\nContinue at the end of the current loop\n\n\nfor( int i=0 ; i \n 10 ; i++ ) {\n    if( i == 5 ) continue;  // Skip value 5\n}\n\n\n\n\ndebug\n\n\nShow a debug message on STDERR only if \nbds\n is running in 'debug' mode (otherwise the statement is ignored).\n\n\ndebug \nShow this message only if we are in debug mode!\\n\n\n\n\n\n\nerror\n\n\nShow an error message and exit the program\n\n\nif( num \n= 0 )  warning \nNumber MUST be positive\\n\n\n\n\n\n\nexit\n\n\nExit program, optional expression calculates an exit value.\n\n\nexit 1\n\n\n\n\nfor\n\n\nSimilar to C or Java \nfor\n loops\n\n\nfor( int i=0 ; i \n 10 ; i++ ) print(\n$i\\n\n)\n\n\n\n\n                or\n\n\n\nfor( int i=0 ; i \n 10 ; i++ ) {\n    print(\n$i\\n\n)\n}\n\n\n\n\nfor (lists)\n\n\nJava-like for iterator on lists\n\n\nstring[] mylist\n\n// ... some code to populate the list\n\nfor( string s : mylist ) print(\n$s\\n\n)\n\n\n\n\nif / else\n\n\nIt does exactly what you expect\n\n\nif( i \n 10 )    print(\nLess than ten\\n\n)\n\n\n\n\n                or\n\n\n\nif( i \n 10 ) {\n    print(\nLess than ten\\n\n)\n} else if( i \n= 20 ) {\n    print(\nBetween ten and twenty\\n\n)\n} else {\n    print(\nMore than twenty\\n\n)\n}\n\n\n\n\ninclude\n\n\nInclude source code from another file\n\n\ninclude \nmymodule\n\n\n// ... use functions from 'mymodule.bds'\n\n\n\n\nkill\n\n\nKill a task\n\n\nkill taskId\n\n\n\n\nprint / println\n\n\nPrint to sdtout\n\n\nprint \nShow this mesage without a new line at the end.\n\nprintln \nThis one gets a new line at the end.\n\n\n\n\n\nreturn\n\n\nReturn from a function. Optional expression is a return value.\n\n\n// Define a function\nint twice(int n) {\n    return( 2 * n )\n}\n\n\n\n\nswitch\n\n\nSwitch statements are similar to multiple \nif / else if\n statements\n\n\nin := 'x'\nout := 1\n\nswitch( in ) {\n    case 'a': \n        out *= 3\n        break\n\n    case 'z'+'x':   # Note that the 'case' expressions are evaluated at run time (you can even call functions here)\n        out *= 5    # Note that this falls through to \ncase 'b'\n\n\n    case 'b':\n        out *= 7\n        break\n\n    default:        # You can define 'default' anywhere (no need to do it after 'case')\n        out *= 100\n}\n\n\n\n\nVariable assignment\n\n\nvar = expr\n evaluates expression 'expr' and assign result to 'var'\n\n\ni = j + 1\ns = \nHello \n + world\n\n\n\n\nVariable assignment (multiple)\n\n\n( var1, var2, ..., varN ) = expr\n evaluates expression 'expr' (which must return a list) and assign results to 'var1', 'var2', etc. If the list size is less than the number of variables, variables are assigned default values (e.g. '0' for int). If the list has more values, they are ignored.\n\n\n(name, value) = line.split('\\t')\n\n\n\n\nVariable declarations\n\n\nDeclare variable 'var' as type 'type'\n\n\nint i      # 'i' is an 64 bit int variable\nreal r     # 'r' is a double-precision floating-point number\nstring s   # 's' is a string\n\n\n\n\ntype varName = expr\n declares variable 'var' as type 'type', evaluate expression and assign result to initialize 'var'.\n\n\nint i = 42\nreal r = 3.1415927\nstring s = \nHello!\n\n\n\n\n\nvarName := expr\n declares variable 'var', use type inference, evaluate expression 'expr' and assign result to initialize 'var'\n\n\ni := 42\nr := 3.1415927\ns := \nHello!\n\n\n\n\n\nTernary operator\n\n\nexpr ? exprTrue : exprFalse\n Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'\n\n\nsign = ( i \n= 0 ? 1 : -1 )\n\n\n\n\nwarning\n\n\nShow a warning message\n\n\nif( num \n= 0 )  warning \nNumber should be positive\\n\n\n\n\n\n\nwhile\n\n\nTypical \nwhile\n iterator\n\n\nwhile( i \n 10 ) i++\n\n\n\n\nFunction definition\n\n\nA simple, and useless, example:\n\n\n// Define a function\nint sumPositive(int n) {\n    if( n \n= 0 )    return 0\n\n    int sum = 0\n    for( int i=0 ; i \n= n ; i++ ) sum = sum + i\n    return sum\n}\n\n// Function definition in one line\nint twice(int n)    return( 2 * n )\n\n// Main\nn := 5\nprint(\nThe sum is : \n + sumPositive( twice(n) ) + \n\\n\n )\n\n\n\n\nObviously, if you run it\n\n\n$ bds z.bds \nThe sum is : 55", 
+            "title": "Language"
+        }, 
+        {
+            "location": "/manual/language/#language", 
+            "text": "Learning BigDataScript language ( bds ) is almost trivial, all the statements and expression and data types do what you expect.   BigDataScript is really simple and you should be able to code within a few minutes.\nThis section is intended as a reference, so just glance through it.", 
+            "title": "Language"
+        }, 
+        {
+            "location": "/manual/language/#comments", 
+            "text": "The usual statements are available  // Single line comment\n\n# Another single line comment\n\n/*\n   Multi-line comment\n*/", 
+            "title": "Comments"
+        }, 
+        {
+            "location": "/manual/language/#statements", 
+            "text": "Statements can be terminated either by semicolon or by a new line.  # Two statements\nprint  Hi\\n ; print  Bye\\n ;\n\n# Two statements, same as before but using lines instead of semicolon\nprint  Hi\\n  \nprint  Bye\\n", 
+            "title": "Statements"
+        }, 
+        {
+            "location": "/manual/language/#break", 
+            "text": "Breaks from current loop  for( int i=0 ; i   10 ; i++ ) {\n    if( i == 5 ) break;    // Finish when we reach 5\n}", 
+            "title": "break"
+        }, 
+        {
+            "location": "/manual/language/#breakpoint", 
+            "text": "Inserts a debugging breakpoint. I.e. when the statement is executed,  bds  switches execution to debug mode (STEP)   breakpoint  Program execution will switch do debug mode here!\\n", 
+            "title": "breakpoint"
+        }, 
+        {
+            "location": "/manual/language/#continue", 
+            "text": "Continue at the end of the current loop  for( int i=0 ; i   10 ; i++ ) {\n    if( i == 5 ) continue;  // Skip value 5\n}", 
+            "title": "continue"
+        }, 
+        {
+            "location": "/manual/language/#debug", 
+            "text": "Show a debug message on STDERR only if  bds  is running in 'debug' mode (otherwise the statement is ignored).  debug  Show this message only if we are in debug mode!\\n", 
+            "title": "debug"
+        }, 
+        {
+            "location": "/manual/language/#error", 
+            "text": "Show an error message and exit the program  if( num  = 0 )  warning  Number MUST be positive\\n", 
+            "title": "error"
+        }, 
+        {
+            "location": "/manual/language/#exit", 
+            "text": "Exit program, optional expression calculates an exit value.  exit 1", 
+            "title": "exit"
+        }, 
+        {
+            "location": "/manual/language/#for", 
+            "text": "Similar to C or Java  for  loops  for( int i=0 ; i   10 ; i++ ) print( $i\\n )                  or  for( int i=0 ; i   10 ; i++ ) {\n    print( $i\\n )\n}", 
+            "title": "for"
+        }, 
+        {
+            "location": "/manual/language/#for-lists", 
+            "text": "Java-like for iterator on lists  string[] mylist\n\n// ... some code to populate the list\n\nfor( string s : mylist ) print( $s\\n )", 
+            "title": "for (lists)"
+        }, 
+        {
+            "location": "/manual/language/#if-else", 
+            "text": "It does exactly what you expect  if( i   10 )    print( Less than ten\\n )                  or  if( i   10 ) {\n    print( Less than ten\\n )\n} else if( i  = 20 ) {\n    print( Between ten and twenty\\n )\n} else {\n    print( More than twenty\\n )\n}", 
+            "title": "if / else"
+        }, 
+        {
+            "location": "/manual/language/#include", 
+            "text": "Include source code from another file  include  mymodule \n\n// ... use functions from 'mymodule.bds'", 
+            "title": "include"
+        }, 
+        {
+            "location": "/manual/language/#kill", 
+            "text": "Kill a task  kill taskId", 
+            "title": "kill"
+        }, 
+        {
+            "location": "/manual/language/#print-println", 
+            "text": "Print to sdtout  print  Show this mesage without a new line at the end. \nprintln  This one gets a new line at the end.", 
+            "title": "print / println"
+        }, 
+        {
+            "location": "/manual/language/#return", 
+            "text": "Return from a function. Optional expression is a return value.  // Define a function\nint twice(int n) {\n    return( 2 * n )\n}", 
+            "title": "return"
+        }, 
+        {
+            "location": "/manual/language/#switch", 
+            "text": "Switch statements are similar to multiple  if / else if  statements  in := 'x'\nout := 1\n\nswitch( in ) {\n    case 'a': \n        out *= 3\n        break\n\n    case 'z'+'x':   # Note that the 'case' expressions are evaluated at run time (you can even call functions here)\n        out *= 5    # Note that this falls through to  case 'b' \n\n    case 'b':\n        out *= 7\n        break\n\n    default:        # You can define 'default' anywhere (no need to do it after 'case')\n        out *= 100\n}", 
+            "title": "switch"
+        }, 
+        {
+            "location": "/manual/language/#variable-assignment", 
+            "text": "var = expr  evaluates expression 'expr' and assign result to 'var'  i = j + 1\ns =  Hello   + world", 
+            "title": "Variable assignment"
+        }, 
+        {
+            "location": "/manual/language/#variable-assignment-multiple", 
+            "text": "( var1, var2, ..., varN ) = expr  evaluates expression 'expr' (which must return a list) and assign results to 'var1', 'var2', etc. If the list size is less than the number of variables, variables are assigned default values (e.g. '0' for int). If the list has more values, they are ignored.  (name, value) = line.split('\\t')", 
+            "title": "Variable assignment (multiple)"
+        }, 
+        {
+            "location": "/manual/language/#variable-declarations", 
+            "text": "Declare variable 'var' as type 'type'  int i      # 'i' is an 64 bit int variable\nreal r     # 'r' is a double-precision floating-point number\nstring s   # 's' is a string  type varName = expr  declares variable 'var' as type 'type', evaluate expression and assign result to initialize 'var'.  int i = 42\nreal r = 3.1415927\nstring s =  Hello!   varName := expr  declares variable 'var', use type inference, evaluate expression 'expr' and assign result to initialize 'var'  i := 42\nr := 3.1415927\ns :=  Hello!", 
+            "title": "Variable declarations"
+        }, 
+        {
+            "location": "/manual/language/#ternary-operator", 
+            "text": "expr ? exprTrue : exprFalse  Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'  sign = ( i  = 0 ? 1 : -1 )", 
+            "title": "Ternary operator"
+        }, 
+        {
+            "location": "/manual/language/#warning", 
+            "text": "Show a warning message  if( num  = 0 )  warning  Number should be positive\\n", 
+            "title": "warning"
+        }, 
+        {
+            "location": "/manual/language/#while", 
+            "text": "Typical  while  iterator  while( i   10 ) i++", 
+            "title": "while"
+        }, 
+        {
+            "location": "/manual/language/#function-definition", 
+            "text": "A simple, and useless, example:  // Define a function\nint sumPositive(int n) {\n    if( n  = 0 )    return 0\n\n    int sum = 0\n    for( int i=0 ; i  = n ; i++ ) sum = sum + i\n    return sum\n}\n\n// Function definition in one line\nint twice(int n)    return( 2 * n )\n\n// Main\nn := 5\nprint( The sum is :   + sumPositive( twice(n) ) +  \\n  )  Obviously, if you run it  $ bds z.bds \nThe sum is : 55", 
+            "title": "Function definition"
         }
     ]
 }

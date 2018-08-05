@@ -31,11 +31,37 @@
 
         <!-- Collapsed navigation -->
         <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
             <a class="navbar-brand" href=".">bds - Big Data Script programming language</a>
         </div>
 
         <!-- Expanded navigation -->
         <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href=".">Home</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="manual/hello/">Hello world</a>
+</li>
+                            
+<li >
+    <a href="manual/language/">Language</a>
+</li>
+                        </ul>
+                    </li>
+                </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 <li>
@@ -43,6 +69,16 @@
                         <i class="fa fa-search"></i> Search
                     </a>
                 </li>
+                    <li class="disabled">
+                        <a rel="next" >
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="manual/hello/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
             </ul>
         </div>
     </div>
@@ -51,131 +87,67 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#introduction">Introduction</a></li>
+            <li><a href="#what">What?</a></li>
+            <li><a href="#why">Why?</a></li>
+            <li><a href="#how">How?</a></li>
+            <li><a href="#paper-citations">Paper &amp; Citations</a></li>
+            <li><a href="#a-word-about-performance">A word about performance</a></li>
+            <li><a href="#why-is-it-called-bigdatascript">Why is it called "BigDataScript"</a></li>
+            <li><a href="#disclaimer">Disclaimer</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<pre><code>            &lt;h1 class="page-header" id="intro"&gt;Introduction&lt;/h1&gt;
-            &lt;p class="lead"&gt; BigDataScript is intended as a scripting language for big data pipeline.  &lt;/p&gt;
-            &lt;h3&gt;What?&lt;/h3&gt;
-            &lt;p&gt; BigDataScript is a cross-system scripting language for working with big data pipelines in computer systems of different sizes and capabilities.  &lt;/p&gt;
-            &lt;h3&gt;Why?&lt;/h3&gt;
-            Working with heavyweight computation and big data pipelines involves making use of several specialized programs. 
-            Those specialized routines need to be scheduled, called and coordinated; their progress need to be tracked and their results logged. 
-            That is the job of another script or program. This is when BigDataScript becomes extremely handy.
-            &lt;br&gt;
-            &lt;br&gt;
-            Developing traditional shell scripts or small programs to coordinate data pipelines presents a fundamental dilemma. 
-            It is not cross-platform, it simply does not work on all environments or it needs adaptations and re-work for the same thing to work on a laptop, server, server farm, cluster and cloud. 
-            Often it is simply not possible. 
-            Because of that, developing big data pipelines for a different environment is time consuming. 
-            The behaviour on the target environment cannot be assumed to be an exact extrapolation of the results obtained on the development environment. 
-            This not only is a waste of time, money and energy, it is also reliable source of frustration.
-            &lt;br&gt;
-            &lt;br&gt;
-            BigDataScript is the solution to the problem.
-            &lt;br&gt;
-            &lt;br&gt;
-            With BigDataScript, creating jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. 
-            If you normally use specialized programs to perform heavyweight computations, then BigDataScript is the glue to those commands you need to create a reliable pipeline.
-            &lt;h3&gt;How?&lt;/h3&gt;
-
-            &lt;p class="lead"&gt; &lt;b&gt; Benefits of BigDataScript &lt;/b&gt; &lt;/p&gt;
-            &lt;ul&gt;
-                &lt;li&gt; &lt;b&gt;Reduced development time&lt;/b&gt; 
-                &lt;p&gt;
-                Spend less time debugging your work on big systems with a huge data volumes. 
-                Now you can debug the same jobs using a smaller sample on your computer. 
-                Get immediate feedback, debug, fix and deploy when it's done. 
-                Shorter development cycles means better software.
-                &lt;/p&gt;
-
-                &lt;li&gt; &lt;b&gt;System independent&lt;/b&gt; 
-                &lt;p&gt;
-                Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud. 
-                No changes to the program required. 
-                Work once.
-                &lt;/p&gt;
-
-                &lt;li&gt; &lt;b&gt;Easy to learn&lt;/b&gt; 
-                &lt;p&gt;
-                The syntax is intuitive and it resembles the syntax of most commonly used programming languages. 
-                Reading the code is easy as pi.
-                &lt;/p&gt;
-
-                &lt;li&gt; &lt;b&gt;Automatic Checkpointing&lt;/b&gt; 
-                &lt;p&gt;
-                If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. 
-                Want to restart were it stopped? 
-                No problem, just resume the execution from the checkpoint.
-                &lt;/p&gt;
-
-                &lt;li&gt; &lt;b&gt;Automatic logging&lt;/b&gt; 
-                &lt;p&gt;
-                Everything is logged (&lt;code&gt;-log&lt;/code&gt; command line option), no explicit actions required. 
-                Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout &amp;amp; stderr and exit codes.
-                &lt;/p&gt;
-
-                &lt;li&gt; &lt;b&gt;Clean stop with no mess behind&lt;/b&gt; 
-                &lt;p&gt;
-                You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... 
-                Just hit Ctrl-C. 
-                All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. 
-                A clean stop allows you to focus on the problem at hand without having to worry about restoring a clean state.
-                &lt;/p&gt;
-
-                &lt;li&gt; &lt;b&gt;Task dependencies&lt;/b&gt; 
-                &lt;p&gt;
-                In complex pipelines, tasks usually depend on each other. 
-                BigDataScript provides ways to easily manage task dependencies.
-                &lt;/p&gt;
-
-                &lt;li&gt; &lt;b&gt;Avoid re-work&lt;/b&gt; 
-                &lt;p&gt;
-                Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming. 
-                Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.
-                &lt;/p&gt;
-
-                &lt;li&gt; &lt;b&gt;Built in debugger&lt;/b&gt; 
-                &lt;p&gt;
-                Debugging is an integral part of programming, so it is part of &lt;code&gt;bds&lt;/code&gt; language.
-                Statements &lt;code&gt;breakpoint&lt;/code&gt; and &lt;code&gt;debug&lt;/code&gt; make debugging part of the language, instead of requiring platform specific tools.
-                &lt;/p&gt;
-
-                &lt;li&gt; &lt;b&gt;Built in test cases facility&lt;/b&gt; 
-                &lt;p&gt;
-                Code testing is performed in everyday programming, so testing is built in &lt;code&gt;bds&lt;/code&gt;.
-                &lt;/p&gt;
-            &lt;/ul&gt;
-
-            &lt;h3&gt; Paper &amp; Citations &lt;/h3&gt;
-            &lt;p&gt;
-            If you are using BigDataScript in an academic environment, please cite our &lt;a href="https://doi.org/10.1093/bioinformatics/btu595"&gt;paper&lt;/a&gt;:
-</code></pre>
-<p><pre>
-BigDataScript: A scripting language for data pipelines 
+<h1 id="introduction">Introduction</h1>
+<p>BigDataScript is intended as a scripting language for big data pipeline. </p>
+<h3 id="what">What?</h3>
+<p>BigDataScript is a cross-system scripting language for working with big data pipelines in computer systems of different sizes and capabilities. </p>
+<h3 id="why">Why?</h3>
+<p>Working with heavyweight computation and big data pipelines involves making use of several specialized programs. 
+Those specialized routines need to be scheduled, called and coordinated; their progress need to be tracked and their results logged. 
+That is the job of another script or program. This is when BigDataScript becomes extremely handy.</p>
+<p>Developing traditional shell scripts or small programs to coordinate data pipelines presents a fundamental dilemma. 
+It is not cross-platform, it simply does not work on all environments or it needs adaptations and re-work for the same thing to work on a laptop, server, server farm, cluster and cloud. 
+Often it is simply not possible. 
+Because of that, developing big data pipelines for a different environment is time consuming. 
+The behaviour on the target environment cannot be assumed to be an exact extrapolation of the results obtained on the development environment. 
+This not only is a waste of time, money and energy, it is also reliable source of frustration.</p>
+<p>BigDataScript is the solution to the problem.</p>
+<p>With BigDataScript, creating jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. 
+If you normally use specialized programs to perform heavyweight computations, then BigDataScript is the glue to those commands you need to create a reliable pipeline.</p>
+<h3 id="how">How?</h3>
+<p><strong>Benefits of BigDataScript</strong></p>
+<ul>
+<li><strong>Reduced development time</strong> Spend less time debugging your work on big systems with a huge data volumes. Now you can debug the same jobs using a smaller sample on your computer. Get immediate feedback, debug, fix and deploy when it's done. Shorter development cycles means better software.</li>
+<li><strong>System independent</strong> Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud.  No changes to the program required. Work once.</li>
+<li><strong>Easy to learn</strong> The syntax is intuitive and it resembles the syntax of most commonly used programming languages. Reading the code is easy as pi.</li>
+<li><strong>Automatic Checkpointing</strong> If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. Want to restart were it stopped? No problem, just resume the execution from the checkpoint.  </li>
+<li><strong>Automatic logging</strong> Everything is logged (<code>-log</code> command line option), no explicit actions required. Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout &amp; stderr and exit codes.  </li>
+<li><strong>Clean stop with no mess behind</strong> You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... Just hit Ctrl-C. All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. A clean stop allows you to focus on the problem at hand without having to worry about restoring a clean state.  </li>
+<li><strong>Task dependencies</strong> In complex pipelines, tasks usually depend on each other.  BigDataScript provides ways to easily manage task dependencies.  </li>
+<li><strong>Avoid re-work</strong> Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming.  Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.</li>
+<li><strong>Built in debugger</strong> Debugging is an integral part of programming, so it is part of <code>bds</code> language.  Statements <code>breakpoint</code> and <code>debug</code> make debugging part of the language, instead of requiring platform specific tools.</li>
+<li><strong>Built in test cases facility</strong> Code testing is performed in everyday programming, so testing is built in <code>bds</code>.</li>
+</ul>
+<h3 id="paper-citations">Paper &amp; Citations</h3>
+<p>If you are using BigDataScript in an academic environment, please cite our <a href="https://doi.org/10.1093/bioinformatics/btu595">paper</a>:</p>
+<pre><code>BigDataScript: A scripting language for data pipelines 
 P. Cingolani; R. Sladek; M. Blanchette
 Bioinformatics 2014;
 doi: 10.1093/bioinformatics/btu595
-</pre>
-                </p></p>
-<pre><code>            &lt;h3&gt; A word about performance&lt;/h3&gt;
-            &lt;p&gt;
-            BigDataScript is meant to be used in the context or heavyweight computations.
-            Potential delays incurred by BigDataScript should not affect the overall time.
-            &lt;br&gt;
-            Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.
-            The fact that BigDataScript takes a few milliseconds more to invoke those programs, really doesn't make any difference.
-            &lt;/p&gt;
+</code></pre>
 
-            &lt;h3&gt; Why is it called "BigDataScript" &lt;/h3&gt;
-            Because that's the lamest name I could find.
-
-            &lt;h3&gt; Disclaimer &lt;/h3&gt;
-            BigDataScript is experimental and under heavy development. Use at your own risk.
-            Know side effect include: computer explosions, instant decapitation, spontaneous human combustion, and dead kittens.
-        &lt;/div&gt;
-</code></pre></div>
+<h3 id="a-word-about-performance">A word about performance</h3>
+<p>BigDataScript is meant to be used in the context or heavyweight computations.
+Potential delays incurred by BigDataScript should not affect the overall time.</p>
+<p>Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.
+The fact that BigDataScript takes a few milliseconds more to invoke those programs, really doesn't make any difference.</p>
+<h3 id="why-is-it-called-bigdatascript">Why is it called "BigDataScript"</h3>
+<p>Because that's the lamest name I could find.</p>
+<h3 id="disclaimer">Disclaimer</h3>
+<p>BigDataScript is experimental and under heavy development. Use at your own risk.
+Know side effect include: computer explosions, instant decapitation, spontaneous human combustion, and dead kittens.</p></div>
         </div>
 
         <footer class="col-md-12">
@@ -256,6 +228,6 @@ doi: 10.1093/bioinformatics/btu595
 </html>
 
 <!--
-MkDocs version : 0.17.5
-Build Date UTC : 2018-08-03 14:27:40
+MkDocs version : 0.17.3
+Build Date UTC : 2018-08-04 21:10:53
 -->
