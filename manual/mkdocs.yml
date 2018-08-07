@@ -1,27 +1,27 @@
 site_name: bds - Big Data Script programming language
 pages:
   - Home: index.md
-  - Manual:
-    - 'Hello world': manual/hello.md
-    - 'Language': manual/language.md
-    - 'Special operators': manual/special.md
-    - 'Data types': manual/data_types.md
-    - 'Functions': manual/functions.md
-    - 'Gloval variables': manual/global_vars.md
-    - 'Pipelines': manual/pipelines.md
-    - 'Sys': manual/sys.md
-    - 'Task': manual/task.md
-    - 'Wait': manual/wait.md
-    - 'Dependency operator': manual/dep_op.md
-    - 'Goal': manual/goal.md
-    - 'Remote files': manual/remote_files.md
-    - 'Parallel execution': manual/par.md
-    - 'Checkpoints': manual/checkpoints.md
-    - 'Tst cases': manual/test_cases.md
-    - 'Debugger': manual/debugger.md
-    - 'Command line parsing': manual/cmdline.md
-    - 'Command line help': manual/help.md
-    - 'Logging': manual/logging.md
-    - 'Cleanup': manual/cleanup.md
-    - 'bds command line': manual/bdscmdline.md
-    - 'bds config': manual/bdsconfig.md
+  - Manual: 
+    - 'Hello world': hello.md
+    - 'Language': language.md
+    - 'Special operators': special.md
+    - 'Data types': data_types.md
+    - 'Functions': functions.md
+    - 'Gloval variables': global_vars.md
+    - 'Pipelines': pipelines.md
+    - 'Sys': sys.md
+    - 'Task': task.md
+    - 'Wait': wait.md
+    - 'Dependency operator': dep_op.md
+    - 'Goal': goal.md
+    - 'Remote files': remote_files.md
+    - 'Parallel execution': par.md
+    - 'Checkpoints': checkpoints.md
+    - 'Tst cases': test_cases.md
+    - 'Debugger': debugger.md
+    - 'Command line parsing': cmdline.md
+    - 'Command line help': help.md
+    - 'Logging': logging.md
+    - 'Cleanup': cleanup.md
+    - 'bds command line': bdscmdline.md
+    - 'bds config': bdsconfig.md
