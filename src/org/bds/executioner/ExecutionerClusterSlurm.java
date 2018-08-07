@@ -17,7 +17,7 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 
 	// Define commands
 	public static final String KILL_COMMAND[] = { "scancel" };
-	public static final String POST_MORTEM_COMMAND[] = { "sacct", "--format=User,JobID,account,Timelimit,elapsed,ReqMem,MaxRss,ExitCode", "-j" };
+	public static final String POST_MORTEM_COMMAND[] = { "sacct", "-l", "-j" };
 	public static final String STAT_COMMAND[] = { "squeue", "-h", "-o", "%A" };
 	public static final String RUN_COMMAND[] = { "sbatch", "--parsable", "--no-requeue" };
 

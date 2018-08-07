@@ -755,6 +755,10 @@ public class Task implements Serializable {
 			// Show StdOut
 			String tailOut = TailFile.tail(stdoutFile, Config.get().getTailLines());
 			if ((tailOut != null) && !tailOut.isEmpty()) sb.append("\tStdOut (" + Config.get().getTailLines() + " lines)  :\n" + Gpr.prependEachLine("\t\t", tailOut));
+
+			// Show post-mortem info
+			if (postMortemInfo != null) sb.append("\tPost-mortem info   : '" + postMortemInfo + "'\n");
+
 		} else sb.append("'" + bdsFileName + "', line " + bdsLineNum);
 
 		return sb.toString();
