@@ -18,9 +18,17 @@ public abstract class TailFile {
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 	public static final int DEFAULT_TAIL = 10;
 
-	String inputFileName; // Read (tail -f) from this file
-	boolean showStderr; // Do we show on STDERR? (default STDOUT)
-	boolean debug, verbose;
+	/**
+	 * Is there a newline in the buffer at position  'idx'?
+	 * Note: If we have a process that shows 'progress lines' (e.g. terminated by '\r') we
+	 *       don't want to show one long line, we just want to see the latest 'lines' produced.
+	 */
+	private static boolean isNewLine(byte[] buf, int idx, int idxMax) {
+		if (buf[idx] == '\n') return true; // Lines terminated by '\n'
+		if (idx < idxMax && buf[idx] == '\r' && buf[idx + 1] != '\n') return true; // Lines terminated by '\r' (e.g. progress lines in 'wget')
+		return false;
+
+	}
 
 	public static String tail(String fileName) {
 		return tail(fileName, DEFAULT_TAIL);
@@ -48,7 +56,7 @@ public abstract class TailFile {
 
 		// Read file
 		final int chunkSize = 1024 * 64;
-		List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<>();
 		StringBuilder latestLine = null;
 		try {
 			RandomAccessFile raf = new RandomAccessFile(file, "r");
@@ -73,9 +81,10 @@ public abstract class TailFile {
 
 				// Parse newlines and add them to an array
 				int unparsedSize = (int) readLen;
-				int index = unparsedSize - 1;
+				int indexMax = unparsedSize - 1;
+				int index = indexMax;
 				while (index >= 0) {
-					if (buf[index] == '\n') {
+					if (isNewLine(buf, index, indexMax)) {
 						int startOfLine = index + 1;
 						int len = (unparsedSize - startOfLine);
 						if (len >= 0) {
@@ -116,6 +125,12 @@ public abstract class TailFile {
 
 		return sb.toString();
 	}
+
+	String inputFileName; // Read (tail -f) from this file
+
+	boolean showStderr; // Do we show on STDERR? (default STDOUT)
+
+	boolean debug, verbose;
 
 	public TailFile(String inputFileName, boolean showStderr) {
 		this.inputFileName = inputFileName;

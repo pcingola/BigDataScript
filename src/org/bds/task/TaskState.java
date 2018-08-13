@@ -53,4 +53,8 @@ public enum TaskState {
 	public boolean isStarted() {
 		return this == TaskState.STARTED;
 	}
+
+	public boolean isStartFailed() {
+		return this == TaskState.START_FAILED;
+	}
 }

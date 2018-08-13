@@ -107,6 +107,9 @@ public class Config implements Serializable {
 	public static final String WAIT_AFTER_TASK_RUN = "waitAfterTaskRun";
 	public static int DEFAULT_WAIT_AFTER_TASK_RUN = 0;
 
+	public static final String WAIT_FILE_CHECK = "waitFileCheck";
+	public static int DEFAULT_WAIT_FILE_CHECK = -1;
+
 	public static final String WAIT_TEXT_FILE_BUSY = "waitTextFileBusy";
 	public static int DEFAULT_WAIT_TEXT_FILE_BUSY = 10;
 
@@ -144,6 +147,7 @@ public class Config implements Serializable {
 	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
 	int waitAfterTaskRun = -1; // Wait some milisec after task run
 	int waitTextFileBusy = -1; // Wait some milisecs after writing a shell file to disk (before execution)
+	int waitFileCheck = -1; // Wait some milisecs after task finished before checking if output files exists
 	int tailLines; // Number of lines to use in 'tail'
 	Integer taskMaxHintLen; // Max number of characters to use in tasks's "hint"
 	String configFileName;
@@ -430,6 +434,10 @@ public class Config implements Serializable {
 		return waitAfterTaskRun;
 	}
 
+	public int getWaitFileCheck() {
+		return waitFileCheck;
+	}
+
 	public int getWaitTextFileBusy() {
 		return waitTextFileBusy;
 	}
@@ -518,6 +526,7 @@ public class Config implements Serializable {
 		tmpDir = getString(TMP_DIR, DEFAULT_TMP_DIR);
 		waitAfterTaskRun = (int) getLong(WAIT_AFTER_TASK_RUN, DEFAULT_WAIT_AFTER_TASK_RUN);
 		waitTextFileBusy = (int) getLong(WAIT_TEXT_FILE_BUSY, DEFAULT_WAIT_TEXT_FILE_BUSY);
+		waitFileCheck = (int) getLong(WAIT_FILE_CHECK, DEFAULT_WAIT_FILE_CHECK);
 
 		// Sanity checks
 		if (maxThreads < MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE) {

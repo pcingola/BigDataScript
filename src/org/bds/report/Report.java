@@ -36,7 +36,8 @@ public class Report {
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
 	public static String REPORT_TEMPLATE_YAML = "SummaryTemplate.yaml";
 	public static String DAG_TEMPLATE = "DagTaskTemplate.js";
-	public static final String REPORT_RED_COLOR = "style=\"background-color: #ffc0c0\"";
+	public static final String REPORT_RED_COLOR = "style=\"background-color: #ff9696\"";
+	public static final String REPORT_YELLOW_COLOR = "style=\"background-color: #fdff96\"";
 	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
 	public static final String LINE = "--------------------";
 
@@ -44,12 +45,6 @@ public class Report {
 	public static final int REPORT_TIME = 60; // Update report every 'REPORT_TIME' seconds
 
 	protected static Timer timerReport = new Timer(); // Report timer (added by Jin Lee)
-
-	boolean yaml;
-	boolean verbose;
-	boolean debug;
-	BdsThread bdsThread;
-	Map<String, BdsThread> taskId2BdsThread;
 
 	/**
 	 * Check if this is a good time to create a report
@@ -71,6 +66,13 @@ public class Report {
 			report.createReport();
 		}
 	}
+
+	boolean yaml;
+	boolean verbose;
+	boolean debug;
+	BdsThread bdsThread;
+
+	Map<String, BdsThread> taskId2BdsThread;
 
 	public Report(BdsThread bdsThread, boolean yaml) {
 		if (!bdsThread.isRoot()) throw new RuntimeException("Cannot create report from non-root bdsThread");
@@ -433,6 +435,12 @@ public class Report {
 
 		// Nothing to do for regular HTML lines
 		return str;
+	}
+
+	String taskColor(Task task) {
+		if (task.isDoneOk()) return "";
+		if (task.getTaskState().isStartFailed()) return REPORT_YELLOW_COLOR;
+		return REPORT_RED_COLOR;
 	}
 
 	void taskId2BdsThread(BdsThread bdsThread) {

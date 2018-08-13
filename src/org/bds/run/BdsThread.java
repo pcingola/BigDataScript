@@ -737,13 +737,13 @@ public class BdsThread extends Thread implements Serializable {
 		// Create reports? Only root thread creates reports
 		if (config != null && isRoot()) {
 			// Create HTML report?
-			if (config.isReportHtml()) {
+			if (config.isReportHtml() || config.isLog()) {
 				Report report = new Report(this, false);
 				report.createReport();
 			}
 
 			// Create YAML report?
-			if (config.isReportYaml()) {
+			if (config.isReportYaml() || config.isLog()) {
 				Report report = new Report(this, true);
 				report.createReport();
 			}
