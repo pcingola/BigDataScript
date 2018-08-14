@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<style type="text/css">
 		pre {
 			width:1200px;
@@ -9,9 +9,6 @@
 			white-space: pre;
 		}
 	</style>    
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-	<script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
-	<script src="{{dagJsFile}}"></script>
 </head>
 <body>
 
@@ -64,11 +61,6 @@
 	}
 	</script>
 	<div id="bdsTimeline" style="width: 900px; height: {{timelineHeight}}px;"></div>
-</div>
-
-<div class="container" id="taskDag">
-	<h2 class="bs-featurette-title"> Task Graph </h2>
-	<div class="container" id="cy" style="height: 100%; width: 100%; border: solid 1px black""></div>
 </div>
 
 <div class="container" id="threadDetails">
