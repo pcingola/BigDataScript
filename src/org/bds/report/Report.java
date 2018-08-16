@@ -253,7 +253,7 @@ public class Report {
 
 		// Task status
 		if (!task.isDoneOk()) {
-			rTemplate.add("taskColor", REPORT_RED_COLOR);
+			rTemplate.add("taskColor", taskColor(task));
 
 			String ch = task.checkOutputFiles();
 			if ((ch != null) && !ch.isEmpty()) rTemplate.add("taskCheckOut", multilineString("Check output files", ch, yaml));
