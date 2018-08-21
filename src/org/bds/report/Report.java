@@ -36,6 +36,7 @@ public class Report {
 	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
 	public static String REPORT_TEMPLATE_YAML = "SummaryTemplate.yaml";
 	public static String DAG_TEMPLATE = "DagTaskTemplate.js";
+	public static final String REPORT_GREEN_COLOR = "style=\"background-color: #a2dc74\"";
 	public static final String REPORT_RED_COLOR = "style=\"background-color: #ff9696\"";
 	public static final String REPORT_YELLOW_COLOR = "style=\"background-color: #fdff96\"";
 	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
@@ -439,8 +440,10 @@ public class Report {
 
 	String taskColor(Task task) {
 		if (task.isDoneOk()) return "";
+		if (task.isStateRunning()) return REPORT_GREEN_COLOR;
 		if (task.getTaskState().isStartFailed()) return REPORT_YELLOW_COLOR;
-		return REPORT_RED_COLOR;
+		if (task.isStateError()) return REPORT_RED_COLOR;
+		return "";
 	}
 
 	void taskId2BdsThread(BdsThread bdsThread) {
