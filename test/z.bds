@@ -1,4 +1,7 @@
 #!/usr/bin/env bds
 
-# These panles can only use hg19
-panelsHg19 = ['FMI', 'FMI-T7', 'Resbio9', 'Resbio-Lung', 'GH-Omni']
+i := '/tmp/in.txt'
+o := '/tmp/out.txt'
+o2 := '/tmp/out2.txt'
+task(i <- o) sys echo hi; sleep 1; echo done; asdfa
+task(o2 <- o) sys echo hi
