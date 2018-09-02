@@ -66,7 +66,6 @@ public class BdsThread extends Thread implements Serializable {
 
 	Config config; // Configuration
 	Random random; // Random number generator
-
 	BdsVm vm; // Virtual machine
 
 	// Program and state
@@ -77,7 +76,6 @@ public class BdsThread extends Thread implements Serializable {
 	String reportFile; // Latest report file
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
-
 	String currentDir; // Program's 'current directory'
 	BdsThread parent; // Parent thread
 	String bdsThreadId; // BdsThread ID
@@ -293,15 +291,15 @@ public class BdsThread extends Thread implements Serializable {
 		// All tasks in wait finished OK?
 		if (!ok) {
 			// Errors? Then set exit status appropriately
-			exitValue = EXITCODE_ERROR;
+			setExitValue(EXITCODE_ERROR);
 		} else {
 			switch (getRunState()) {
 			case FATAL_ERROR:
-				exitValue = EXITCODE_FATAL_ERROR;
+				setExitValue(EXITCODE_FATAL_ERROR);
 				break;
 
 			case THREAD_KILLED:
-				exitValue = EXITCODE_KILLED;
+				setExitValue(EXITCODE_KILLED);
 				break;
 
 			default:
@@ -822,6 +820,7 @@ public class BdsThread extends Thread implements Serializable {
 
 	public void setExitValue(long exitValue) {
 		this.exitValue = (int) exitValue;
+		if (vm != null) vm.setExitCode((int) exitValue);
 	}
 
 	/**
@@ -846,7 +845,7 @@ public class BdsThread extends Thread implements Serializable {
 			switch (runState) {
 
 			case OK:
-				vm.setRun(false);
+				vm.setRun(true);
 				break;
 
 			case FATAL_ERROR:

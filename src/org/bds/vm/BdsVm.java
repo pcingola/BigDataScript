@@ -57,7 +57,7 @@ public class BdsVm implements Serializable {
 	int code[]; // Compile assembly code (OopCodes)
 	boolean debug;
 	VmDebugger vmDebugger;
-	Integer exitCode = null; // Default exit code: program did not start
+	Integer exitCode = null; // Default exit code (null means: parse last entry from stack)
 	int fp; // Frame pointer
 	int nodeId; // Current node ID (BdsNode). Used for linking to original bds code
 	int pc; // Program counter
@@ -1329,6 +1329,10 @@ public class BdsVm implements Serializable {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public void setExitCode(Integer exitCode) {
+		this.exitCode = exitCode;
 	}
 
 	public void setRun(boolean run) {
