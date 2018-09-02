@@ -17,7 +17,7 @@ public class CmdCluster extends CmdLocal {
 
 	@Override
 	protected void execCmd() throws Exception {
-		// Wait for the process to finish and store exit map
+		// Wait for the process to finish and store exit value
 		exitValue = process.waitFor();
 
 		// Error sending task to cluster?

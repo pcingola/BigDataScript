@@ -696,7 +696,7 @@ public class Task implements Serializable {
 			}
 		}
 
-		// Use exit map
+		// Use exit value
 		return TaskState.exitCode2taskState(getExitValue());
 	}
 

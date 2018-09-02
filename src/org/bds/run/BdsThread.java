@@ -72,7 +72,7 @@ public class BdsThread extends Thread implements Serializable {
 	// Program and state
 	Statement statement; // Main statement executed by this thread
 	RunState runState; // Latest RunState
-	int exitValue; // Exit map
+	int exitValue; // Exit value
 	List<String> removeOnExit; // Files to be removed on exit
 	String reportFile; // Latest report file
 	Timer timer; // Program timer
@@ -160,7 +160,7 @@ public class BdsThread extends Thread implements Serializable {
 				+ (message != null ? message : "") //
 		);
 
-		// Set exit map
+		// Set exit value
 		setExitValue(EXITCODE_ASSERTION_FAILED);
 	}
 
@@ -175,7 +175,7 @@ public class BdsThread extends Thread implements Serializable {
 		String programFile = statement.getFileNameCanonical();
 		String nodeFile = node.getFileNameCanonical();
 
-		String checkpointFileName = programFile;
+		String checkpointFileName = Gpr.baseName(programFile);
 		if (!programFile.equals(nodeFile)) checkpointFileName += "." + Gpr.baseName(node.getFileName(), ".bds");
 		checkpointFileName += ".line_" + node.getLineNum() + ".chp";
 
@@ -233,7 +233,7 @@ public class BdsThread extends Thread implements Serializable {
 					+ "'" + getBdsThreadId() + "'" //
 					+ " finished" //
 					+ (isDebug() ? ", run state: '" + getRunState() + "'" : "") //
-					+ ", exit map: " + getExitValue() //
+					+ ", exit value: " + getExitValue() //
 					+ ", tasks executed: " + td.getTasks().size() //
 					+ ", tasks failed: " + td.countTaskFailed() //
 					+ ", tasks failed names: " + td.taskFailedNames(MAX_TASK_FAILED_NAMES, " , ") //
@@ -337,7 +337,7 @@ public class BdsThread extends Thread implements Serializable {
 			// Ignore serialization error at this stage (we are within a fatal error)
 		}
 
-		// Set exit map
+		// Set exit value
 		setExitValue(EXITCODE_FATAL_ERROR);
 	}
 

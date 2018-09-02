@@ -1,7 +1,6 @@
 #!/usr/bin/env bds
 
-i := '/tmp/in.txt'
-o := '/tmp/out.txt'
-o2 := '/tmp/out2.txt'
-task(i <- o) sys echo hi; sleep 1; echo done; asdfa
-task(o2 <- o) sys echo hi
+println 'Before'
+sys rm ZXZXZXZXZXZXXZXZXZ
+println 'After'
+

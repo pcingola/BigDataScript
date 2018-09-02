@@ -23,17 +23,17 @@ public class SysFactory {
 
 	private static int sysId = 1;
 
+	protected BdsThread bdsThread;
+
+	protected BdsNode bdsNode;
+	protected String commands;
+
 	/**
 	 * Get a sys ID
 	 */
 	protected static synchronized int nextId() {
 		return sysId++;
 	}
-
-	protected BdsThread bdsThread;
-	protected BdsNode bdsNode;
-
-	protected String commands;
 
 	public SysFactory(BdsThread bdsThread) {
 		this.bdsThread = bdsThread;
@@ -121,7 +121,7 @@ public class SysFactory {
 			// Execution failed on a 'sys' command that cannot fail. Save checkpoint and exit
 			if (!canFail) {
 				bdsThread.fatalError("Exec failed." //
-						+ "\n\tExit map : " + exitValue //
+						+ "\n\tExit value : " + exitValue //
 						+ "\n\tCommand    : " + cmds //
 				);
 				return "";

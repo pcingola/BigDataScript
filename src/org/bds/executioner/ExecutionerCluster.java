@@ -403,7 +403,7 @@ public class ExecutionerCluster extends Executioner {
 		ExecResult cmdExecResult = Exec.exec(args, true);
 		if (verbose) log("Finding postMortemInfo for task " + task.getId() //
 				+ "\n\tCommand executed : '" + cmdsb + "'" //
-				+ "\n\tExit map         : " + cmdExecResult.exitValue //
+				+ "\n\tExit value       : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
 		);
@@ -412,7 +412,7 @@ public class ExecutionerCluster extends Executioner {
 		if (cmdExecResult.exitValue == 0) task.setPostMortemInfo(cmdExecResult.stdOut);
 		else log("Error trying to find out post-mortem info on task (PID '" + task.getPid() + "')." //
 				+ "\n\tCommand executed : '" + cmdsb + "'" //
-				+ "\n\tExit code        : " + cmdExecResult.exitValue //
+				+ "\n\tExit value       : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
 		);

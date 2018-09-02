@@ -47,6 +47,12 @@ public class Report {
 
 	protected static Timer timerReport = new Timer(); // Report timer (added by Jin Lee)
 
+	boolean yaml;
+	boolean verbose;
+	boolean debug;
+	BdsThread bdsThread;
+	Map<String, BdsThread> taskId2BdsThread;
+
 	/**
 	 * Check if this is a good time to create a report
 	 */
@@ -67,13 +73,6 @@ public class Report {
 			report.createReport();
 		}
 	}
-
-	boolean yaml;
-	boolean verbose;
-	boolean debug;
-	BdsThread bdsThread;
-
-	Map<String, BdsThread> taskId2BdsThread;
 
 	public Report(BdsThread bdsThread, boolean yaml) {
 		if (!bdsThread.isRoot()) throw new RuntimeException("Cannot create report from non-root bdsThread");

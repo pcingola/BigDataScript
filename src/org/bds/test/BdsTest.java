@@ -155,7 +155,7 @@ public class BdsTest {
 	 * Check exit code
 	 */
 	public void checkExitCode(int expectedExitCode) {
-		Assert.assertTrue(errMsg("No exit map (program was not run)"), exitCode != null);
+		Assert.assertTrue(errMsg("No exit value (program was not run)"), exitCode != null);
 		Assert.assertEquals(errMsg("Expecting exit code '" + expectedExitCode + "', but it was '" + exitCode + "'"), expectedExitCode, (int) exitCode);
 	}
 
