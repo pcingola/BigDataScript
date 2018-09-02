@@ -46,7 +46,7 @@ public class TestCasesZzz extends TestCasesBase {
 		(new File(fileToDelete)).delete();
 
 		// Run test
-		runAndCheckpoint("test/checkpoint_06.bds", "test/checkpoint_06.bds.line_8.chp", "b", "true", createFile);
+		runAndCheckpoint("test/checkpoint_06.bds", "checkpoint_06.bds.line_8.chp", "b", "true", createFile);
 	}
 
 }
