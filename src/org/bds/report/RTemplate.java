@@ -86,15 +86,6 @@ public class RTemplate {
 		Gpr.toFile(outFile, out.toString());
 	}
 
-	public String createOuptut(String lines) {
-		// Parse input, line by line
-		StringBuilder out = new StringBuilder();
-		for (String line : lines.split("\n"))
-			out.append(parseLine(line));
-
-		return out.toString();
-	}
-
 	/**
 	 * Show error
 	 * @param errStr
