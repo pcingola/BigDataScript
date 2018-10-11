@@ -2,6 +2,7 @@ package org.bds.task;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +14,11 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public abstract class TailFile {
+public abstract class TailFile implements Serializable {
 
-	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 	public static final int DEFAULT_TAIL = 10;
+	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
+	private static final long serialVersionUID = -3331375637614242861L;
 
 	/**
 	 * Is there a newline in the buffer at position  'idx'?
@@ -126,11 +128,9 @@ public abstract class TailFile {
 		return sb.toString();
 	}
 
-	String inputFileName; // Read (tail -f) from this file
-
-	boolean showStderr; // Do we show on STDERR? (default STDOUT)
-
 	boolean debug, verbose;
+	String inputFileName; // Read (tail -f) from this file
+	boolean showStderr; // Do we show on STDERR? (default STDOUT)
 
 	public TailFile(String inputFileName, boolean showStderr) {
 		this.inputFileName = inputFileName;

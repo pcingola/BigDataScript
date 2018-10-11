@@ -14,9 +14,10 @@ import org.bds.util.Gpr;
 public class TailStream extends TailFile {
 
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
+	private static final long serialVersionUID = 1034121345155552037L;
 
+	transient InputStream input;
 	String tailId;
-	InputStream input;
 
 	/**
 	 * Provide an inputStream (instead of an input file)
