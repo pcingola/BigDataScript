@@ -1,6 +1,8 @@
 package org.bds.test;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bds.Config;
 import org.bds.util.Gpr;
@@ -47,6 +49,20 @@ public class TestCasesZzz extends TestCasesBase {
 
 		// Run test
 		runAndCheckpoint("test/checkpoint_06.bds", "checkpoint_06.bds.line_8.chp", "b", "true", createFile);
+	}
+
+	@Test
+	public void test225_super() {
+		Gpr.debug("Test");
+		Map<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("af", "1");
+		expectedValues.put("ag", "2");
+		expectedValues.put("ax", "41");
+		expectedValues.put("bf", "11");
+		expectedValues.put("bf", "12");
+		expectedValues.put("bx", "42");
+
+		runAndCheck("test/run_225.bds", expectedValues);
 	}
 
 }
