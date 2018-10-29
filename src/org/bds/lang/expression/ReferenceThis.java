@@ -19,12 +19,12 @@ public class ReferenceThis extends ReferenceVar {
 
 	public ReferenceThis(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
-		name = ClassDeclaration.THIS;
+		name = ClassDeclaration.VAR_THIS;
 	}
 
 	public ReferenceThis(BdsNode parent, TypeClass typeClass) {
 		super(parent, null);
-		name = ClassDeclaration.THIS;
+		name = ClassDeclaration.VAR_THIS;
 		returnType = typeClass;
 	}
 
@@ -36,7 +36,7 @@ public class ReferenceThis extends ReferenceVar {
 	@Override
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
-		returnType = symtab.resolve(ClassDeclaration.THIS);
+		returnType = symtab.resolve(ClassDeclaration.VAR_THIS);
 		return returnType;
 	}
 

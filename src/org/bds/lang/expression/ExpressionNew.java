@@ -95,7 +95,7 @@ public class ExpressionNew extends MethodCall {
 		//            void f() {
 		//                B b = new B(this)    <--- 'this' is an argument in the constructor
 		//
-		String thisName = SymbolTable.INTERNAL_SYMBOL_START + ClassDeclaration.THIS;
+		String thisName = SymbolTable.INTERNAL_SYMBOL_START + ClassDeclaration.VAR_THIS;
 
 		// This is like a function call that initializes fields, so
 		// we need a scope and variable 'this' has to be set

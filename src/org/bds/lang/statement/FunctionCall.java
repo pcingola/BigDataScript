@@ -116,9 +116,9 @@ public class FunctionCall extends Expression {
 		if (tfunc != null) {
 			functionDeclaration = tfunc.getFunctionDeclaration();
 			returnType = functionDeclaration.getReturnType();
-		} else if (symtab.hasType(ClassDeclaration.THIS)) { // Is this function call within a class?
+		} else if (symtab.hasType(ClassDeclaration.VAR_THIS)) { // Is this function call within a class?
 			// Try "this.functionName(...)", i.e. implicit 'this' object
-			TypeClass typeThis = (TypeClass) symtab.resolve(ClassDeclaration.THIS);
+			TypeClass typeThis = (TypeClass) symtab.resolve(ClassDeclaration.VAR_THIS);
 			// Add first argument ('this')
 			Expression expresionThis = new ReferenceThis(this, typeThis);
 			Args argsThis = Args.getArgsThis(args, expresionThis);

@@ -63,7 +63,7 @@ public class Parameters extends BdsNode implements Comparable<Parameters> {
 			newVarDecl[i + 1] = varDecl[i];
 
 		// Add 'this'
-		VarDeclaration varThis = VarDeclaration.get(typeThis, ClassDeclaration.THIS);
+		VarDeclaration varThis = VarDeclaration.get(typeThis, ClassDeclaration.VAR_THIS);
 		newVarDecl[0] = varThis;
 
 		varDecl = newVarDecl;

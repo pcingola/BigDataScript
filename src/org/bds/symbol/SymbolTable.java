@@ -338,10 +338,10 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	 */
 	public Type resolveThis(String name) {
 		// If we are trying to resolve 'this', it makes no sense to try to find 'this.this'
-		if (name.equals(ClassDeclaration.THIS)) return null;
+		if (name.equals(ClassDeclaration.VAR_THIS)) return null;
 
 		// Is variable 'this' defined? If so, it means we are within a class
-		TypeClass typeThis = (TypeClass) getVariableTypeLocal(ClassDeclaration.THIS);
+		TypeClass typeThis = (TypeClass) getVariableTypeLocal(ClassDeclaration.VAR_THIS);
 		if (typeThis == null) return null;
 
 		return typeThis.resolve(name);
