@@ -1,21 +1,28 @@
 #!/usr/bin/env bds
 
 class A {
-	int x
-	void A() { x = 41 }
-	int f() { return 1 }
-	int g() { return 2 }
+    B b
+    void f() {
+        b.val = false
+    }
 }
 
-class B extends A {
-	void B() { super.A(); x++ }
-	int f() { return 11 }
-	int g() { return 10 + super.g() }
+class B {
+    A a
+    bool val
 }
 
-af := (new A()).f()
-ag := (new A()).g()
-bf := (new B()).f()
-bg := (new B()).g()
-ax := (new A()).x
-bx := (new B()).x
+# Initialize 
+A initialize() {
+	A a = new A()
+	B b = new B()
+
+	b.a = a
+	a.b = b
+
+	return a
+}
+
+# Main
+A a = initialize()
+a.f()

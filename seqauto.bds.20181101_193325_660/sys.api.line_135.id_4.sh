@@ -1,0 +1,3 @@
+# Execution shell: /bin/bash -e -c
+
+curl --silent --insecure --noproxy '*' "http://127.0.0.1:8000/api/1.0/log" --data-raw "unique_id=TASKID_002" --data-raw "log_type=INFO" --data-raw "message=Downloading SampleSheet file 'raw/us_hiseq2500_1/180406_D00443_0344_AHFHGCBCX2/SampleSheet.csv' from bucket to '/projects/ngs/datasets/us_hiseq2500_1/180406_D00443_0344_AHFHGCBCX2/SampleSheet.csv'"
