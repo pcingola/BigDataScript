@@ -1179,8 +1179,6 @@ public class BdsVm implements Serializable {
 			case SETFIELD:
 				name = constantString();
 				vclass = (ValueClass) pop();
-				if (vclass == null) //
-					Gpr.debug("!!!");
 				vclass.setValue(name, peek()); // We leave the value in the stack
 				break;
 

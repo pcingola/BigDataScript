@@ -195,4 +195,17 @@ public class TestCasesRun3 extends TestCasesBase {
 
 		runAndCheck("test/run_225.bds", expectedValues);
 	}
+
+	@Test
+	public void test226_refref() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_226.bds", "ret", "42");
+	}
+
+	@Test
+	public void test227_refref() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_227.bds", "ret", "42");
+	}
+
 }

@@ -8,10 +8,10 @@ class A {
     B b
     void f() { 
 		b = new B()
-		this.b.val = 42 
+		b.val = 42 
 	}
 }
 
 A a = new A()
 a.f()
-println "a=$a"
+ret := a.b.val
