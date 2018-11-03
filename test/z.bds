@@ -1,5 +1,12 @@
 #!/usr/bin/env bds
 
+class Exception {
+	string message
+	void Exception(string msg) {
+		message = msg
+	}
+}
+
 try {
 	println "TRY"
 	throw new Exception("This is an exception")

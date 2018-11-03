@@ -61,7 +61,7 @@ statement : '{' statement* '}'                                                  
           | 'try' statement eol*
                   ('catch' '(' type ID (',' type ID)* ')' statement eol*)+
                   ( 'finally' statement eol* )?                                            # tryCatchFinally
-          | 'throw' expression                                                             # throw
+          | 'throw' expression eol*                                                        # throw
           | 'for' '(' ( forInit )? 
                         ';' ( forCondition )? 
                         ';' ( end=forEnd )? 
