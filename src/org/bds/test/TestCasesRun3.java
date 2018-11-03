@@ -208,4 +208,14 @@ public class TestCasesRun3 extends TestCasesBase {
 		runAndCheck("test/run_227.bds", "ret", "42");
 	}
 
+	@Test
+	public void test228_method_call() {
+		Gpr.debug("Test");
+		Map<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("ret1", "1");
+		expectedValues.put("ret2", "2");
+
+		runAndCheck("test/run_228.bds", expectedValues);
+	}
+
 }

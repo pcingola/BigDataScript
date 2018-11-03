@@ -75,13 +75,6 @@ public class MethodCall extends FunctionCall {
 	}
 
 	@Override
-	public String toAsmCall() {
-		return (functionDeclaration.isNative() ? "callnative " : "callmethod ") //
-				+ functionDeclaration.signature() //
-				+ "\n";
-	}
-
-	@Override
 	protected void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Could not find the function?
 		if (functionDeclaration == null) {

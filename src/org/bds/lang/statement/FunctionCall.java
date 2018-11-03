@@ -155,9 +155,15 @@ public class FunctionCall extends Expression {
 	}
 
 	public String toAsmCall() {
-		return (functionDeclaration.isNative() ? "callnative " : "call ") //
+		return toAsmCallType() + ' ' //
 				+ functionDeclaration.signature() //
 				+ "\n";
+	}
+
+	public String toAsmCallType() {
+		if (functionDeclaration.isNative()) return "callnative";
+		if (functionDeclaration.isMethod()) return "callmethod";
+		return "call";
 	}
 
 	@Override
