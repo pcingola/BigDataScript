@@ -63,5 +63,19 @@ public class TestCasesZzz extends TestCasesBase {
 
 		runAndCheck("test/run_225.bds", expectedValues);
 	}
+	//
+	//	@Test
+	//	public void test113_parallel_function_calls() {
+	//		Gpr.debug("Test");
+	//		String stdout = runAndReturnStdout("test/run_113.bds");
+	//
+	//		Set<String> linesPar = new HashSet<>();
+	//		for (String line : stdout.split("\n")) {
+	//			if (line.startsWith("Par:")) {
+	//				if (linesPar.contains(line)) throw new RuntimeException("Line repeated (this should never happen): '" + line + "'");
+	//				linesPar.add(line);
+	//			}
+	//		}
+	//	}
 
 }
