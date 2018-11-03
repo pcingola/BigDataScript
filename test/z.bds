@@ -1,5 +1,12 @@
 #!/usr/bin/env bds
 
-class A { }
-class B { }
-B b = new A()
+try {
+	println "TRY"
+	throw new Exception("This is an exception")
+} catch (Exception ex) {
+	println "CATCH EXCEPTION"
+} catch (Error er) {
+	println "CATCH ERROR"
+} finally {
+	println "FINALLY"
+}

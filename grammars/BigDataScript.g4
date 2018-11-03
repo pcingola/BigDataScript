@@ -58,6 +58,10 @@ statement : '{' statement* '}'                                                  
           | 'println' expression? eol*                                                     # println
           | 'warning' expression? eol*                                                     # warning
           | 'error' expression? eol*                                                       # error
+          | 'try' statement eol*
+                  ('catch' '(' type ID (',' type ID)* ')' statement eol*)+
+                  ( 'finally' statement eol* )?                                            # tryCatchFinally
+          | 'throw' expression                                                             # throw
           | 'for' '(' ( forInit )? 
                         ';' ( forCondition )? 
                         ';' ( end=forEnd )? 

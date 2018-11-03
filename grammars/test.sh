@@ -7,18 +7,17 @@ testFile="../test/z.bds"
 # Programs
 jar="../lib/antlr-4.7.1-complete.jar"
 antlr4="java -Xmx1g -cp $jar org.antlr.v4.Tool"
-grun="java -Xmx1g -cp .:$jar org.antlr.v4.runtime.misc.TestRig"
+grun="java -Xmx1g -cp .:$jar org.antlr.v4.gui.TestRig"
 
 # Delete old files
-touch tmp.java tmp.class
-rm -vf *.class *.java *.interp *.tokens
+rm -vf *.class *.java *.interp *.tokens || true
 
 # Compile
 echo Create Lexer and Parser
 $antlr4 $grammar
 
 echo Compile
-javac -cp $jar *.java
+javac -source 1.8 -target 1.8 -cp $jar *.java
 
 #---
 # Run

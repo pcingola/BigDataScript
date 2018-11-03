@@ -349,6 +349,30 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitError(BigDataScriptParser.ErrorContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code tryCatchFinally}
+	 * labeled alternative in {@link BigDataScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterTryCatchFinally(BigDataScriptParser.TryCatchFinallyContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code tryCatchFinally}
+	 * labeled alternative in {@link BigDataScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitTryCatchFinally(BigDataScriptParser.TryCatchFinallyContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code throw}
+	 * labeled alternative in {@link BigDataScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterThrow(BigDataScriptParser.ThrowContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code throw}
+	 * labeled alternative in {@link BigDataScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitThrow(BigDataScriptParser.ThrowContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code forLoop}
 	 * labeled alternative in {@link BigDataScriptParser#statement}.
 	 * @param ctx the parse tree
