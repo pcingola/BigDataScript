@@ -76,9 +76,10 @@ public class TypeClass extends TypeComposite {
 		}
 	}
 
-	public boolean canCast(Type type) {
-		return equals(type) // Same type
-				|| (type.isClass() && isSubClassOf((TypeClass) type)) // Can cast if 'type' is a superclass
+	@Override
+	public boolean canCastTo(Type type) {
+		// return equals(type) || ... // Same type
+		return (type.isClass() && isSubClassOf((TypeClass) type)) // Can cast if 'type' is a superclass
 				|| type.isAny() // Cast to 'any'
 		;
 	}

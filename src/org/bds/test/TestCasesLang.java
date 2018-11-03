@@ -381,8 +381,13 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test56() {
 		Gpr.debug("Test");
-		verbose = true;
 		compileErrors("test/test56.bds", "Cannot find class 'A'");
+	}
+
+	@Test
+	public void test57() {
+		Gpr.debug("Test");
+		compileErrors("test/test57.bds", "Cannot cast A to B");
 	}
 
 }
