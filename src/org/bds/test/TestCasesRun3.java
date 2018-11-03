@@ -185,15 +185,7 @@ public class TestCasesRun3 extends TestCasesBase {
 	@Test
 	public void test225_super() {
 		Gpr.debug("Test");
-		Map<String, Object> expectedValues = new HashMap<>();
-		expectedValues.put("af", "1");
-		expectedValues.put("ag", "2");
-		expectedValues.put("ax", "41");
-		expectedValues.put("bf", "11");
-		expectedValues.put("bf", "12");
-		expectedValues.put("bx", "42");
-
-		runAndCheck("test/run_225.bds", expectedValues);
+		runAndCheck("test/run_225.bds", "ret", "2");
 	}
 
 	@Test
@@ -216,6 +208,20 @@ public class TestCasesRun3 extends TestCasesBase {
 		expectedValues.put("ret2", "2");
 
 		runAndCheck("test/run_228.bds", expectedValues);
+	}
+
+	@Test
+	public void test229_super() {
+		Gpr.debug("Test");
+		Map<String, Object> expectedValues = new HashMap<>();
+		expectedValues.put("af", "1");
+		expectedValues.put("ag", "2");
+		expectedValues.put("ax", "41");
+		expectedValues.put("bf", "11");
+		expectedValues.put("bg", "12");
+		expectedValues.put("bx", "42");
+
+		runAndCheck("test/run_229.bds", expectedValues);
 	}
 
 }

@@ -85,6 +85,10 @@ public class FunctionCall extends Expression {
 		return functionName;
 	}
 
+	protected boolean isMethodCall() {
+		return false;
+	}
+
 	@Override
 	public boolean isReturnTypesNotNull() {
 		return true;
@@ -116,7 +120,8 @@ public class FunctionCall extends Expression {
 		if (tfunc != null) {
 			functionDeclaration = tfunc.getFunctionDeclaration();
 			returnType = functionDeclaration.getReturnType();
-		} else if (symtab.hasType(ClassDeclaration.VAR_THIS)) { // Is this function call within a class?
+		} else if (symtab.hasType(ClassDeclaration.VAR_THIS)) {
+			// Is this function call within a class?
 			// Try "this.functionName(...)", i.e. implicit 'this' object
 			TypeClass typeThis = (TypeClass) symtab.resolve(ClassDeclaration.VAR_THIS);
 			// Add first argument ('this')
@@ -162,7 +167,10 @@ public class FunctionCall extends Expression {
 
 	public String toAsmCallType() {
 		if (functionDeclaration.isNative()) return "callnative";
-		if (functionDeclaration.isMethod()) return "callmethod";
+		if (functionDeclaration.isMethod()) { //
+			if (isMethodCall() && ((MethodCall) this).isSuper()) return "callsuper";
+			return "callmethod";
+		}
 		return "call";
 	}
 

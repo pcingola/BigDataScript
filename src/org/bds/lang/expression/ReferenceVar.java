@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
+import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.Value;
 import org.bds.scope.Scope;
@@ -63,6 +64,14 @@ public class ReferenceVar extends Reference {
 		return returnType != null;
 	}
 
+	public boolean isSuper() {
+		return name.equals(ClassDeclaration.VAR_SUPER);
+	}
+
+	public boolean isThis() {
+		return name.equals(ClassDeclaration.VAR_THIS);
+	}
+
 	@Override
 	public boolean isVariableReference(SymbolTable symtab) {
 		return true;
@@ -87,6 +96,7 @@ public class ReferenceVar extends Reference {
 
 	@Override
 	public String toAsm() {
+		String name = (isSuper() ? ClassDeclaration.VAR_THIS : this.name);
 		if (classField) return "load this\nreffield " + name + "\n";
 		return "load " + name + "\n";
 	}

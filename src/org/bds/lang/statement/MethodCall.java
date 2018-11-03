@@ -5,6 +5,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.expression.ReferenceVar;
 import org.bds.lang.type.Type;
 import org.bds.symbol.SymbolTable;
 
@@ -25,6 +26,18 @@ public class MethodCall extends FunctionCall {
 	public MethodCall(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		argsStart = 1; // First argument is 'this', which is evaluated separately
+	}
+
+	@Override
+	protected boolean isMethodCall() {
+		return true;
+	}
+
+	/**
+	 * Is this a 'super.f()' method call?
+	 */
+	boolean isSuper() {
+		return expresionThis instanceof ReferenceVar && ((ReferenceVar) expresionThis).isSuper();
 	}
 
 	@Override

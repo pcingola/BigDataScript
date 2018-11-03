@@ -38,7 +38,8 @@ public enum OpCode {
 	//    CALL function_signature
 	//    CALLNATIVE function_signature
 	//    CALLMETHOD method_signature
-	, CALL, CALLMETHOD, CALLNATIVE
+	//    CALLSUPER method_signature
+	, CALL, CALLMETHOD, CALLNATIVE, CALLSUPER
 	// Debug breakpoint
 	, DEBUG
 	// Decrement (i.e. valueInt--)
@@ -145,6 +146,7 @@ public enum OpCode {
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
+		case CALLSUPER:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -186,6 +188,7 @@ public enum OpCode {
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
+		case CALLSUPER:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -220,6 +223,7 @@ public enum OpCode {
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
+		case CALLSUPER:
 		case JMP:
 		case JMPT:
 		case JMPF:

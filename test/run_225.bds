@@ -1,21 +1,12 @@
 #!/usr/bin/env bds
 
 class A {
-	int x
-	void A() { x = 41 }
 	int f() { return 1 }
-	int g() { return 2 }
 }
 
 class B extends A {
-	void B() { super.A(); x++ }
-	int f() { return 11 }
-	int g() { return 10 + super.g() }
+	int f() { return super.f() + 1 }
 }
 
-af := (new A()).f()
-ag := (new A()).g()
-bf := (new B()).f()
-bg := (new B()).g()
-ax := (new A()).x
-bx := (new B()).x
+ret := (new B()).f()
+println "ret=$ret"

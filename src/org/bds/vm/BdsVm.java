@@ -13,8 +13,10 @@ import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
+import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.Type;
+import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
@@ -95,6 +97,22 @@ public class BdsVm implements Serializable {
 		callFrame = new CallFrame[CALL_STACK_SIZE];
 		for (int i = 0; i < callFrame.length; i++)
 			callFrame[i] = new CallFrame();
+	}
+
+	/**
+	 * Add arguments to the scope for a function / method call
+	 * Note: Remember that stack in reverse order
+	 *
+	 * @return Last argument added (it corresponds to 'this' in a method call)
+	 */
+	Value addArgsCallScope(FunctionDeclaration fdecl) {
+		Value vthis = null; // The last item to pop from the stack is 'this'
+		List<String> args = fdecl.getParameterNames();
+		for (int i = args.size() - 1; i >= 0; i--) {
+			vthis = pop();
+			scope.add(args.get(i), vthis);
+		}
+		return vthis;
 	}
 
 	/**
@@ -197,15 +215,9 @@ public class BdsVm implements Serializable {
 	 */
 	void call(String fsig) {
 		pushCallFrame(); // Push stack frame
-
 		FunctionDeclaration fdecl = functionsBySignature.get(fsig); // Find function meta-data
 		newScope(); // Create a new scope
-
-		// Add all arguments to the scope. Remember that stack in reverse order
-		List<String> args = fdecl.getParameterNames();
-		for (int i = args.size() - 1; i >= 0; i--)
-			scope.add(args.get(i), pop());
-
+		addArgsCallScope(fdecl); // Add function arguments to scope
 		pc = fdecl.getPc(); // Jump to function
 	}
 
@@ -213,27 +225,12 @@ public class BdsVm implements Serializable {
 	 * Call a function
 	 * @param name: Function's signature
 	 */
-	void callMethod(String fsig) {
+	void callMethod(String fsig, boolean isSuper) {
 		pushCallFrame(); // Push stack frame
-
-		// Find method
 		FunctionDeclaration fdecl = functionsBySignature.get(fsig);
-
 		newScope(); // Create a new scope
-
-		// Args: Add all arguments to the scope
-		// Note: Stack in reverse order
-		Value vthis = null; // The last item to pop from the stack is 'this'
-		List<String> args = fdecl.getParameterNames();
-		for (int i = args.size() - 1; i >= 0; i--) {
-			vthis = pop();
-			scope.add(args.get(i), vthis);
-		}
-
-		// Find 'virtual method' (class inheritance)
-		if (vthis == null) throw new RuntimeException("Null pointer: Cannot call method '" + fsig + "' on null object.");
-		fdecl = vthis.getType().resolve(fdecl);
-
+		Value vthis = addArgsCallScope(fdecl); // Add arguments to scope, get 'this' value
+		fdecl = resolveVirtualMethod(vthis, fdecl, isSuper, fsig); // Find 'virtual method' (class inheritance)
 		pc = fdecl.getPc(); // Jump to method
 	}
 
@@ -647,6 +644,27 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Resolve 'virtual' method call
+	 * @param vthis : 'this' Value
+	 * @param fdecl : Method declaration (to be resolved)
+	 * @param isSuper : Is this a 'super' method call?
+	 * @param fsig : Method's signature string
+	 * @return The resolved method declaration
+	 */
+	FunctionDeclaration resolveVirtualMethod(Value vthis, FunctionDeclaration fdecl, boolean isSuper, String fsig) {
+		if (vthis == null) throw new RuntimeException("Null pointer: Cannot call method '" + fsig + "' on null object.");
+		if (!isSuper) return vthis.getType().resolve(fdecl);
+
+		// This is a 'super.f()' method call
+		TypeClass tclass = (TypeClass) vthis.getType();
+		ClassDeclaration thisCdecl = tclass.getClassDeclaration();
+		ClassDeclaration superCdecl = thisCdecl.getClassParent();
+		FunctionDeclaration superFdecl = superCdecl.getType().resolve(fdecl);
+		if (superFdecl == null) throw new RuntimeException("Null pointer: Cannot resolve 'super' method '" + fsig + "'.");
+		return superFdecl;
+	}
+
+	/**
 	 * Run the program in 'code'
 	 */
 	public int run() {
@@ -757,7 +775,7 @@ public class BdsVm implements Serializable {
 
 			case CALLMETHOD:
 				name = constantString(); // Get method signature
-				callMethod(name);
+				callMethod(name, false);
 				break;
 
 			case CALLNATIVE:
@@ -766,6 +784,11 @@ public class BdsVm implements Serializable {
 				v1 = callNative(name);
 				vmStateInvalidate();
 				push(v1);
+				break;
+
+			case CALLSUPER:
+				name = constantString(); // Get method signature
+				callMethod(name, true);
 				break;
 
 			case CAST_TOB:

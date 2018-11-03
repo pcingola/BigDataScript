@@ -22,7 +22,7 @@ public class ClassDeclaration extends Block {
 
 	private static final long serialVersionUID = -8891327817053470787L;
 
-	public static final String VAR_SUPER = "super"; // TODO: Add reference to 'super' symbol
+	public static final String VAR_SUPER = "super";
 	public static final String VAR_THIS = "this";
 
 	protected String className;
@@ -53,6 +53,7 @@ public class ClassDeclaration extends Block {
 		// Add type for 'this' object in current table
 		TypeClass t = getType();
 		symtab.addVariable(VAR_THIS, t);
+		symtab.addVariable(VAR_SUPER, t);
 		t.addType(); // Add to Types if needed
 	}
 
