@@ -16,7 +16,8 @@
 # }
 # new A('hi')
 
-new Exception('hi')
+e := new Exception('hi')
+println e
 
 #try {
 #	println "TRY: 1"

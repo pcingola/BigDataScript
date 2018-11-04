@@ -6,6 +6,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueClass;
 import org.bds.run.BdsThread;
 
 /**
@@ -34,7 +35,10 @@ public class MethodConstructor extends MethodNative {
 
 	@Override
 	public Value runMethod(BdsThread bdsThread, Value vThis) {
-		return vThis; // Default constructor doesn't do anything, just return the newly created object
+		ValueClass vclass = (ValueClass) vThis;
+		Value message = bdsThread.getValue("message");
+		vclass.setValue("message", message);
+		return vThis; // Return initialized object (ValueClass)
 	}
 
 }

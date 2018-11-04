@@ -93,8 +93,12 @@ public class ExpressionNew extends MethodCall {
 		//        class A {
 		//            ...
 		//            void f() {
-		//                B b = new B(this)    <--- 'this' is an argument in the constructor
+		//                # Constructor for object 'B' uses 'this' is an argument.
+		//                # Note that 'this' means object 'A', so the constructor
+		//                # for method B cannot have also a variable called 'this'
+		//                B b = new B(this)
 		//
+		// To solve the name collision, we just call the variable '$this' instead of 'this'
 		String thisName = SymbolTable.INTERNAL_SYMBOL_START + ClassDeclaration.VAR_THIS;
 
 		// This is like a function call that initializes fields, so
