@@ -278,6 +278,10 @@ public class BdsVm implements Serializable {
 		return retVal;
 	}
 
+	boolean canPopFrame() {
+		return fp > 0;
+	}
+
 	/**
 	 * Parameters is a reference to a 'bool' constant
 	 */
@@ -1309,8 +1313,7 @@ public class BdsVm implements Serializable {
 				break;
 
 			case THROW:
-				pop(); // Get exception object to throw
-				// TODO: Implement opcode!!!
+				throwException(pop()); // Get exception object to throw
 				break;
 
 			case VAR:
@@ -1442,6 +1445,37 @@ public class BdsVm implements Serializable {
 			return String.format("%-55s # %s:%d\n", line, bdsNode.getFileName(), bdsNode.getLineNum());
 
 		return tabs + line + "\n";
+	}
+
+	/**
+	 * Implement 'throw' opcode
+	 */
+	void throwException(Value exceptionValue) {
+		ValueClass ex = ((ValueClass) exceptionValue);
+		Gpr.debug("BDS EXCEPTION: " + ex);
+
+		// Populate exception's stack trace message
+		ex.setValue("stackTrace", new ValueString(stackTrace()));
+
+		// Look for an exceptionHandler
+		for (int ifp = fp; ifp >= 0; ifp--) {
+			ExceptionHandler eh = callFrame[ifp].exceptionHandler;
+			if (eh != null) {
+				if (eh.canHandle(ex)) {
+					// Handle exception
+				}
+				// TODO: Execute finally block!!!
+				// TODO: Finally block must re-throw pending exceptions!!!!!!!!!!
+			}
+		}
+		popCallFrame();
+
+		if (exceptionHandler != null) {
+
+		} else {
+			// No exception handler was found
+			fatalError("Exception thrown: " + exceptionValue);
+		}
 	}
 
 	/**
