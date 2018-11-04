@@ -68,6 +68,7 @@ public class BdsVm implements Serializable {
 	int sp; // Stack pointer
 	Value[] stack; // Stack: main stack used for values
 	CallFrame[] callFrame; // Call Frame stack
+	ExceptionHandler exceptionHandler; // Current exception handler (null if we are not in a 'try/catch' statement)
 	VmState vmState = new VmState();
 	boolean verbose;
 	Map<String, Integer> labels;
@@ -129,6 +130,13 @@ public class BdsVm implements Serializable {
 		constants.add(constant);
 		constantsByObject.put(constant, idx);
 		return idx;
+	}
+
+	void addExceptionHandler(String handlerLabel, String typeExceptionClassName, String catchVarName) {
+		try {
+		} catch (Exception e) {
+
+		}
 	}
 
 	/**
@@ -569,6 +577,7 @@ public class BdsVm implements Serializable {
 		pc = sf.pc;
 		nodeId = sf.nodeId;
 		scope = sf.scope;
+		exceptionHandler = sf.exceptionHandler;
 	}
 
 	/**
@@ -632,7 +641,7 @@ public class BdsVm implements Serializable {
 	void pushCallFrame() {
 		if (fp >= callFrame.length) throw new RuntimeException("Out of stack memory! Call frame pointer: " + fp);
 		CallFrame sf = callFrame[fp++];
-		sf.set(pc, nodeId, scope);
+		sf.set(pc, nodeId, scope, exceptionHandler);
 	}
 
 	/**
@@ -749,6 +758,10 @@ public class BdsVm implements Serializable {
 
 			case ADDSM:
 				adds(paramInt());
+				break;
+
+			case AEH:
+				addExceptionHandler(constantString(), popString(), popString());
 				break;
 
 			case ANDB:
@@ -958,6 +971,12 @@ public class BdsVm implements Serializable {
 					name = constantString(); // Get label name
 					pc = getLabel(name); // Jump to label
 				} else pc++;
+				break;
+
+			case JSR:
+				name = constantString(); // Get label name
+				pushCallFrame();
+				pc = getLabel(name);
 				break;
 
 			case KILL:

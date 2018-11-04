@@ -22,9 +22,10 @@ public class CallFrame implements Serializable {
 	public int pc;
 	public int nodeId;
 	public Scope scope;
+	public ExceptionHandler exceptionHandler;
 
 	public CallFrame() {
-		set(-1, -1, null);
+		set(-1, -1, null, null);
 	}
 
 	public int getNodeId() {
@@ -35,7 +36,7 @@ public class CallFrame implements Serializable {
 		return pc;
 	}
 
-	public void set(int pc, int nodeId, Scope scope) {
+	public void set(int pc, int nodeId, Scope scope, ExceptionHandler exceptionHandler) {
 		this.pc = pc;
 		this.nodeId = nodeId;
 		this.scope = scope;

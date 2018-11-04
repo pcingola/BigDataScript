@@ -9,9 +9,10 @@ class Exception {
 
 try {
 	println "TRY"
-	throw new Exception("This is an exception")
+	#throw new Exception("This is an exception")
 } catch (Exception ex) {
 	println "CATCH EXCEPTION"
+	#throw new Exception("This is an exception in catch")
 } catch (Error er) {
 	println "CATCH ERROR"
 } finally {

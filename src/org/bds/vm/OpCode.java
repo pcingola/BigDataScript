@@ -26,6 +26,8 @@ import org.bds.util.GprString;
 public enum OpCode {
 	// Addition (int, real, string, string multiple)
 	ADDI, ADDR, ADDS, ADDSM
+	// Add Exception Handler (exception handler ID)
+	, AEH
 	// And: bool (logic), int (bitwise)
 	, ANDB, ANDI
 	// Breakpoint (debugging mode)
@@ -71,6 +73,8 @@ public enum OpCode {
 	// Jumps: unconditional, jump if true, jump if false:
 	//    JMP[T|F]    pc
 	, JMP, JMPT, JMPF
+	// Jump to Sub-Routine (unconditional)
+	, JSR
 	// Load variable from scope into stack
 	//    LOAD varName
 	, LOAD
@@ -105,6 +109,8 @@ public enum OpCode {
 	, PUSHB, PUSHI, PUSHNULL, PUSHR, PUSHS
 	// Reference: object's field, list index or hash key
 	, REFFIELD, REFLIST, REFMAP//
+	// Remove (all) exception handlers
+	, REH
 	// Return (from function)
 	, RET
 	// Scope: create new scope (and push it), restore old scope (pop current scope)
@@ -123,6 +129,8 @@ public enum OpCode {
 	, SWAP
 	// Dispatch a task
 	, TASK, TASKDEP
+	// Throw an exception
+	, THROW
 	// Create a variable in local scope (and pop)
 	, VAR, VARPOP
 	// Wait for task to finish
@@ -143,6 +151,7 @@ public enum OpCode {
 	public boolean hasParam() {
 		switch (this) {
 		case ADDSM:
+		case AEH:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
@@ -150,6 +159,7 @@ public enum OpCode {
 		case JMP:
 		case JMPT:
 		case JMPF:
+		case JSR:
 		case LOAD:
 		case NEW:
 		case NODE:
@@ -185,6 +195,7 @@ public enum OpCode {
 	 */
 	public boolean isParamString() {
 		switch (this) {
+		case AEH:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
@@ -192,6 +203,7 @@ public enum OpCode {
 		case JMP:
 		case JMPT:
 		case JMPF:
+		case JSR:
 		case LOAD:
 		case PUSHS:
 		case REFFIELD:
@@ -220,6 +232,7 @@ public enum OpCode {
 	 */
 	public Object parseParam(String param, Map<String, Type> typeByName) {
 		switch (this) {
+		case AEH:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
@@ -227,6 +240,7 @@ public enum OpCode {
 		case JMP:
 		case JMPT:
 		case JMPF:
+		case JSR:
 		case LOAD:
 		case PUSHS:
 		case REFFIELD:
