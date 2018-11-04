@@ -35,10 +35,10 @@ public class ExpressionWithScope extends Expression {
 		return needsScope;
 	}
 
-	@Override
-	public boolean isStopDebug() {
-		return false;
-	}
+	//	@Override
+	//	public boolean isStopDebug() {
+	//		return false;
+	//	}
 
 	@Override
 	public void setNeedsScope(boolean needsScope) {

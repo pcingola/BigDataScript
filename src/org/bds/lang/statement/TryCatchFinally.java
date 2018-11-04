@@ -58,31 +58,33 @@ public class TryCatchFinally extends StatementWithScope {
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
-		//		sb.append(super.toAsm());
-		//
-		//		String labelBase = baseLabelName();
-		//		String loopInitLabel = labelBase + "init";
-		//		String loopStartLabel = labelBase + "start";
-		//		String loopContinueLabel = labelBase + "continue";
-		//		String loopEndLabel = labelBase + "end";
-		//
-		//		if (isNeedsScope()) sb.append("scopepush\n");
-		//		sb.append(loopInitLabel + ":\n");
-		//		if (begin != null) sb.append(begin.toAsm());
-		//		sb.append(loopStartLabel + ":\n");
-		//		if (condition != null) {
-		//			sb.append(condition.toAsm());
-		//			sb.append("jmpf " + loopEndLabel + "\n");
-		//		}
-		//
-		//		if (statement != null) sb.append(statement.toAsm());
-		//		sb.append(loopContinueLabel + ":\n");
-		//		if (end != null) sb.append(end.toAsm());
-		//
-		//		sb.append("jmp " + loopStartLabel + "\n");
-		//
-		//		sb.append(loopEndLabel + ":\n");
-		//		if (isNeedsScope()) sb.append("scopepop\n");
+		sb.append(super.toAsm());
+
+		String finallyLabel = baseLabelName() + "finally";
+
+		if (isNeedsScope()) sb.append("scopepush\n");
+
+		// Register all catch blocks
+		for (Catch catchStatement : catchStatements)
+			sb.append(catchStatement.toAsmAeh());
+
+		// Add 'try' statement
+		sb.append(tryStatement.toAsm());
+
+		// Remove exception handler and execute 'finally' block
+		sb.append("reh\n");
+		sb.append("jmp '" + finallyLabel + "'\n");
+
+		// Add catch blocks
+		for (Catch catchStatement : catchStatements) {
+			sb.append(catchStatement.toAsm());
+		}
+
+		// Add finally block
+		sb.append(finallyLabel + ":\n");
+		if (finallyStatement != null) sb.append(finallyStatement.toAsm());
+
+		if (isNeedsScope()) sb.append("scopepop\n");
 
 		return sb.toString();
 	}

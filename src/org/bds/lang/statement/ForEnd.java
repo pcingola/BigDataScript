@@ -17,10 +17,10 @@ public class ForEnd extends ExpressionList {
 		super(parent, tree);
 	}
 
-	@Override
-	public boolean isStopDebug() {
-		return true;
-	}
+	//	@Override
+	//	public boolean isStopDebug() {
+	//		return true;
+	//	}
 
 	@Override
 	public String toAsm() {

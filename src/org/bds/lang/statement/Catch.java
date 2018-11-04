@@ -21,6 +21,10 @@ public class Catch extends StatementWithScope {
 		super(parent, tree);
 	}
 
+	String getLabel() {
+		return baseLabelName() + "catch";
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 	}
@@ -38,7 +42,17 @@ public class Catch extends StatementWithScope {
 	@Override
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
+		sb.append(getLabel() + ":\n");
+		sb.append(statement.toAsm());
+		sb.append("ret\n");
 		return sb.toString();
+	}
+
+	public String toAsmAeh() {
+		return "pushs '" + varName + "'\n" //
+				+ "pushs '" + typeClassException.getClassName() + "'\n" //
+				+ "aeh '" + getLabel() + "'\n" //
+		;
 	}
 
 	@Override

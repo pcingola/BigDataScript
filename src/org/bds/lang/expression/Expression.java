@@ -39,10 +39,10 @@ public class Expression extends Statement {
 		super(parent, tree);
 	}
 
-	@Override
-	public boolean isStopDebug() {
-		return false;
-	}
+	//	@Override
+	//	public boolean isStopDebug() {
+	//		return false;
+	//	}
 
 	@Override
 	public String toAsm() {

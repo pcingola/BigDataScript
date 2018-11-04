@@ -58,10 +58,10 @@ public class VarDeclaration extends Statement {
 		return varInit;
 	}
 
-	@Override
-	public boolean isStopDebug() {
-		return false;
-	}
+	//	@Override
+	//	public boolean isStopDebug() {
+	//		return false;
+	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {

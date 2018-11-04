@@ -24,12 +24,19 @@ public class Throw extends StatementWithScope {
 		super(parent, tree);
 	}
 
+	/**
+	 * Is the expression derived from 'Exception'?
+	 */
 	boolean isExceptionClass() {
 		Type t = expr.getReturnType();
 		if (t == null) return false;
 		if (!t.isClass()) return false;
-		TypeClass tc = (TypeClass) t;
-		return tc == null; // FIXME: How do we define internal (library?) classes? !!!!!!!!!!!!!!!!!
+
+		for (TypeClass tc = (TypeClass) t; tc != null; tc = tc.getClassDeclaration().getClassTypeParent()) {
+			if (tc.getCanonicalName().equals(ClassDeclarationException.CLASS_NAME_EXCEPTION)) return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -37,6 +44,13 @@ public class Throw extends StatementWithScope {
 		int idx = 0;
 		if (isTerminal(tree, idx, "throw")) idx++;
 		expr = (Expression) factory(tree, idx);
+	}
+
+	@Override
+	public Type returnType(SymbolTable symtab) {
+		if (returnType != null) return returnType;
+		returnType = expr.returnType(symtab);
+		return returnType;
 	}
 
 	@Override

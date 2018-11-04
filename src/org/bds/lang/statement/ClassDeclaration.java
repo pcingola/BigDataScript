@@ -115,10 +115,10 @@ public class ClassDeclaration extends Block {
 		return fd.getFunctionName().equals(className);
 	}
 
-	@Override
-	public boolean isStopDebug() {
-		return false;
-	}
+	//	@Override
+	//	public boolean isStopDebug() {
+	//		return false;
+	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {
@@ -183,7 +183,7 @@ public class ClassDeclaration extends Block {
 
 		if (classNameParent != null) {
 			classTypeParent = (TypeClass) Types.get(classNameParent);
-			classParent = classTypeParent.getClassDeclaration();
+			if (classTypeParent != null) classParent = classTypeParent.getClassDeclaration();
 		}
 
 		for (VarDeclaration vd : fieldDecl)
@@ -192,8 +192,10 @@ public class ClassDeclaration extends Block {
 		for (FunctionDeclaration fd : methodDecl)
 			fd.returnType(symtab);
 
-		for (Statement s : statements)
-			s.returnType(symtab);
+		if (statements != null) {
+			for (Statement s : statements)
+				s.returnType(symtab);
+		}
 
 		returnType = getType();
 		return returnType;

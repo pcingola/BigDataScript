@@ -32,8 +32,7 @@ public class Finally extends StatementWithScope {
 
 	@Override
 	public String toAsm() {
-		StringBuilder sb = new StringBuilder();
-		return sb.toString();
+		return (statement != null ? statement.toAsm() : "");
 	}
 
 	@Override

@@ -24,10 +24,10 @@ public class Block extends StatementWithScope {
 		return statements;
 	}
 
-	@Override
-	public boolean isStopDebug() {
-		return false;
-	}
+	//	@Override
+	//	public boolean isStopDebug() {
+	//		return false;
+	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {

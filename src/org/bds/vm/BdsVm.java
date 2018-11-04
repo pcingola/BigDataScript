@@ -117,6 +117,14 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Add catch block parameters to exception handler
+	 */
+	void addCatchBlock(String handlerLabel, String typeExceptionClassName, String catchVarName) {
+		if (exceptionHandler == null) exceptionHandler = new ExceptionHandler();
+		exceptionHandler.addHandler(handlerLabel, typeExceptionClassName, catchVarName);
+	}
+
+	/**
 	 * Add new constant
 	 * @param constant
 	 * @return Constant index
@@ -130,13 +138,6 @@ public class BdsVm implements Serializable {
 		constants.add(constant);
 		constantsByObject.put(constant, idx);
 		return idx;
-	}
-
-	void addExceptionHandler(String handlerLabel, String typeExceptionClassName, String catchVarName) {
-		try {
-		} catch (Exception e) {
-
-		}
 	}
 
 	/**
@@ -761,7 +762,7 @@ public class BdsVm implements Serializable {
 				break;
 
 			case AEH:
-				addExceptionHandler(constantString(), popString(), popString());
+				addCatchBlock(constantString(), popString(), popString());
 				break;
 
 			case ANDB:
@@ -1191,6 +1192,10 @@ public class BdsVm implements Serializable {
 				} else {
 					fatalError("Null pointer. Trying to access item '" + v1 + "' in null map.");
 				}
+				break;
+
+			case REH:
+				exceptionHandler = null;
 				break;
 
 			case RET:

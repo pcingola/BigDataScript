@@ -94,10 +94,10 @@ public class FunctionCall extends Expression {
 		return true;
 	}
 
-	@Override
-	public boolean isStopDebug() {
-		return true;
-	}
+	//	@Override
+	//	public boolean isStopDebug() {
+	//		return true;
+	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {

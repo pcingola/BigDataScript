@@ -26,7 +26,7 @@ import org.bds.util.GprString;
 public enum OpCode {
 	// Addition (int, real, string, string multiple)
 	ADDI, ADDR, ADDS, ADDSM
-	// Add Exception Handler (exception handler ID)
+	// Add to Exception Handler (parameter string 'exception handler label')
 	, AEH
 	// And: bool (logic), int (bitwise)
 	, ANDB, ANDI
