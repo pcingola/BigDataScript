@@ -24,7 +24,8 @@ public class Types {
 	public final static Type BASE_TYPES[] = { ANY, BOOL, INT, REAL, STRING };
 
 	public static void add(Type type) {
-		types.put(type.getCanonicalName(), type);
+		String key = type.getCanonicalName();
+		if (types.get(key) == null) types.put(key, type);
 	}
 
 	static public Type get(String canonicalName) {

@@ -1,6 +1,6 @@
 package org.bds.lang.type;
 
-import org.bds.lang.statement.ClassDeclarationException;
+import org.bds.lang.nativeClasses.exception.ClassDeclarationException;
 
 public class TypeClassException extends TypeClass {
 

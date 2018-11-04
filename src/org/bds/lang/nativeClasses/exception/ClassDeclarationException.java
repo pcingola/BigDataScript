@@ -1,9 +1,11 @@
-package org.bds.lang.statement;
+package org.bds.lang.nativeClasses.exception;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bds.util.Gpr;
+import org.bds.lang.nativeClasses.ClassDeclarationNative;
+import org.bds.lang.statement.FieldDeclaration;
+import org.bds.lang.statement.MethodDeclaration;
 
 public class ClassDeclarationException extends ClassDeclarationNative {
 
@@ -31,7 +33,6 @@ public class ClassDeclarationException extends ClassDeclarationNative {
 	protected void initNativeClass() {
 		className = CLASS_NAME_EXCEPTION;
 		super.initNativeClass();
-		Gpr.debug("CLASS EXCEPTION: " + this);
 	}
 
 }

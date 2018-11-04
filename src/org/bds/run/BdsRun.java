@@ -25,6 +25,7 @@ import org.bds.lang.nativeFunctions.NativeLibraryFunctions;
 import org.bds.lang.nativeMethods.string.NativeLibraryString;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
+import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeClassException;
 import org.bds.lang.type.Types;
 import org.bds.scope.GlobalScope;
@@ -236,13 +237,19 @@ public class BdsRun {
 	}
 
 	/**
-	 * Base classes provided by 'bds'
+	 * Initialize a base classes provided by 'bds'
+	 */
+	void initilaizeNativeClass(TypeClass typeClass) {
+		if (debug) log("Native class: " + typeClass.getCanonicalName());
+	}
+
+	/**
+	 * Initialize all base classes provided by 'bds'
 	 */
 	void initilaizeNativeClasses() {
 		if (debug) log("Initialize standard classes.");
 
-		TypeClassException t = new TypeClassException();
-		if (debug) log("Native class: " + t.getCanonicalName());
+		initilaizeNativeClass(new TypeClassException());
 	}
 
 	/**

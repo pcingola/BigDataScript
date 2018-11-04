@@ -21,7 +21,6 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.util.AutoHashMap;
-import org.bds.util.Gpr;
 
 /**
  * SymboTable: A table of variables, functions and classes
@@ -214,9 +213,6 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	 * If not found, search in any parent scope.
 	 */
 	public Type getVariableType(String name) {
-		if (name.equals("A")) {
-			Gpr.debug("LOOKING FOR TYPE");
-		}
 		// Find symbol on this or any parent scope
 		for (SymbolTable symtab = this; symtab != null; symtab = symtab.getParent()) {
 			// Resolve 'name'

@@ -7,17 +7,17 @@
 #	}
 #}
 
-class MyException extends Exception {
-	string mymsg
-}
+#class MyException extends Exception {
+#	string mymsg
+#}
 
 try {
 	println "TRY: 1"
-	throw new Exception() # "This is an exception")
+	throw new Exception("This is an exception")
 	println "TRY: 2"
 } catch (Exception ex) {
 	println "CATCH EXCEPTION: 1"
-	throw new Exception() # "This is an exception in catch")
+	throw new Exception("This is an exception in catch")
 	println "CATCH EXCEPTION: 2"
 } catch (Error er) {
 	println "CATCH ERROR"

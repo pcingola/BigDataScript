@@ -1308,6 +1308,11 @@ public class BdsVm implements Serializable {
 				push(s1);
 				break;
 
+			case THROW:
+				pop(); // Get exception object to throw
+				// TODO: Implement opcode!!!
+				break;
+
 			case VAR:
 				name = constantString();
 				scope.add(name, peek()); // We leave the value in the stack
