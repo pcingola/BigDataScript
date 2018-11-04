@@ -101,24 +101,20 @@ public class ExpressionNew extends MethodCall {
 		// we need a scope and variable 'this' has to be set
 		sb.append("scopepush\n");
 		sb.append("new " + expresionThis.getReturnType() + "\n");
-		sb.append("varpop this\n");
-		sb.append(toAsmInitFields());
+		sb.append("varpop this\n"); // Field initialization may use 'this' reference to new object, so we create a variable 'this'
+		sb.append(toAsmInitFields()); // Initialize all fields
 		sb.append("load this\n"); // Leave new object in the stack
+		sb.append("scopepop\n"); // Remove scope (wipes out variable 'this' as well)
+
+		// Call constructor method
+		sb.append("scopepush\n"); // Create new scope
+		sb.append("var " + thisName + "\n"); // Create new variable '$this' (to avoid name collisions)
+		sb.append(args.toAsmNoThis());
+		sb.append(toAsmCall());
+		sb.append("pop\n"); // Ignore return value (it's void)
+		sb.append("load " + thisName + "\n"); // Leave the new (initialized) object in the stack
 		sb.append("scopepop\n");
 
-		// Call constructor, unless it's the default constructor
-		// Don't waste time calling the default constructor, since
-		// it doesn't do anything.
-		sb.append("scopepush\n");
-		if (!functionDeclaration.isNative()) {
-			sb.append("var " + thisName + "\n");
-			sb.append(args.toAsmNoThis());
-			sb.append(toAsmCall());
-			sb.append("pop\n"); // Ignore return value (it's void)
-			sb.append("load " + thisName + "\n"); // Leave new object in the stack
-		}
-
-		sb.append("scopepop\n");
 		return sb.toString();
 	}
 

@@ -26,6 +26,7 @@ public class ClassDeclarationException extends ClassDeclarationNative {
 	protected MethodDeclaration[] createMethods() {
 		List<MethodDeclaration> methods = new LinkedList<>();
 		methods.add(defaultConstructor());
+		methods.add(new MethodConstructor(getType()));
 		return methods.toArray(new MethodDeclaration[0]);
 	}
 
