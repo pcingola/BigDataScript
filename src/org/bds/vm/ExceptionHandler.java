@@ -1,6 +1,10 @@
 package org.bds.vm;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bds.lang.value.ValueClass;
@@ -10,7 +14,9 @@ import org.bds.lang.value.ValueClass;
  *
  * @author pcingola
  */
-public class ExceptionHandler {
+public class ExceptionHandler implements Serializable {
+
+	private static final long serialVersionUID = 1193221593865738652L;
 
 	Map<String, CatchBlockInfo> catchBlocksByClass;
 	String finallyLabel;
@@ -53,6 +59,21 @@ public class ExceptionHandler {
 
 	public void setPendingException(ValueClass ex) {
 		pendingException = ex;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Finally block: " + finallyLabel + "\n");
+		sb.append("Pending exception: " + (pendingException != null ? pendingException.getType().getCanonicalName() : "null") + "\n");
+		if (catchBlocksByClass != null) {
+			List<String> keys = new ArrayList<>();
+			keys.addAll(catchBlocksByClass.keySet());
+			Collections.sort(keys);
+			for (String key : keys)
+				sb.append("\t" + catchBlocksByClass.get(key) + "\n");
+		}
+		return sb.toString();
 	}
 
 }

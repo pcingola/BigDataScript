@@ -7,9 +7,15 @@
 #	}
 #}
 
+void f() {
+	println("F: 1\n")
+	throw new Exception("This is an exception")
+	println("F: 2\n")
+}
+
 try {
 	println "TRY: 1"
-	#throw new Exception("This is an exception")
+	f()
 	println "TRY: 2"
 } catch (Exception ex) {
 	println "CATCH EXCEPTION: 1"

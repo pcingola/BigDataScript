@@ -40,6 +40,7 @@ public class CallFrame implements Serializable {
 		this.pc = pc;
 		this.nodeId = nodeId;
 		this.scope = scope;
+		this.exceptionHandler = exceptionHandler;
 	}
 
 	public void setNodeId(int nodeId) {

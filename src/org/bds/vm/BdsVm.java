@@ -1317,7 +1317,7 @@ public class BdsVm implements Serializable {
 				break;
 
 			case THROW:
-				throwException(pop()); // Get Exception object to throw
+				throwException((ValueClass) pop()); // Get Exception object to throw
 				break;
 
 			case VAR:
@@ -1461,44 +1461,58 @@ public class BdsVm implements Serializable {
 	/**
 	 * Implement 'throw' opcode
 	 */
-	void throwException(Value exceptionValue) {
-		ValueClass ex = ((ValueClass) exceptionValue);
-		Gpr.debug("BDS EXCEPTION: " + ex);
+	void throwException(ValueClass exceptionValue) {
+		Gpr.debug("BDS EXCEPTION: " + exceptionValue);
 
 		// Populate Exception's stack trace message, if empty
-		if (ex.getValue("stackTrace") == null) {
-			ex.setValue("stackTrace", new ValueString(stackTrace()));
+		if (exceptionValue.getValue("stackTrace") == null) {
+			exceptionValue.setValue("stackTrace", new ValueString(stackTrace()));
 		}
 
-		// Look for an exceptionHandler
+		// Use current exception handler if available
+		if (exceptionHandler != null) {
+			throwException(exceptionValue, exceptionHandler);
+			return;
+		}
+
+		// Look for an exceptionHandler in other call frames
 		for (int ifp = fp - 1; ifp >= 0; ifp--) {
 			CallFrame callFrame = callFrames[ifp];
 			ExceptionHandler eh = callFrame.exceptionHandler;
 			if (eh != null) {
-				CatchBlockInfo catchBlockInfo = eh.getCatchBlockInfo(ex);
 				// Get ready to jump to this call frame
 				setFromCallFrame(callFrame);
 				fp = ifp - 1;
-				if (catchBlockInfo != null) {
-					// This catch block can handle the Exception
-					eh.resetPendingException(); // Clear pending exceptions (we are handling it now)
-					scope.add(catchBlockInfo.variableName, ex); // Add exception object to scope
-					pc = getLabel(catchBlockInfo.handlerLabel); // Jump to catch block
-				} else {
-					// There is no catch block that can handle this Exception.
-					// Execute the 'finally' block, which will re-throw the
-					// pending Exception after successful execution.
-
-					// Set this as a 'pending Exception'. The 'finally' block
-					// will re-throw it after finishing executing statements
-					eh.setPendingException(ex);
-					pc = getLabel(eh.getFinallyLabel()); // Jump to finally block
-				}
+				throwException(exceptionValue, eh);
+				return;
 			}
 		}
 
 		// No Exception handler was found
 		fatalError("Exception thrown: " + exceptionValue);
+	}
+
+	/**
+	 * Throw an exception using an exceptionHandler
+	 */
+	void throwException(ValueClass exceptionValue, ExceptionHandler exceptionHandler) {
+		CatchBlockInfo catchBlockInfo = exceptionHandler.getCatchBlockInfo(exceptionValue);
+		// Get ready to jump to this call frame
+		if (catchBlockInfo != null) {
+			// This catch block can handle the Exception
+			exceptionHandler.resetPendingException(); // Clear pending exceptions (we are handling it now)
+			scope.add(catchBlockInfo.variableName, exceptionValue); // Add exception object to scope
+			pc = getLabel(catchBlockInfo.handlerLabel); // Jump to catch block
+		} else {
+			// There is no catch block that can handle this Exception.
+			// Execute the 'finally' block, which will re-throw the
+			// pending Exception after successful execution.
+
+			// Set this as a 'pending Exception'. The 'finally' block
+			// will re-throw it after finishing executing statements
+			exceptionHandler.setPendingException(exceptionValue);
+			pc = getLabel(exceptionHandler.getFinallyLabel()); // Jump to finally block
+		}
 	}
 
 	/**
@@ -1558,15 +1572,16 @@ public class BdsVm implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("VM:\n");
-		sb.append("  RunState   : " + getRunState() + "\n");
-		sb.append("  pc         : " + pc + "\n");
-		sb.append("  fp         : " + fp + "\n");
-		sb.append("  sp         : " + sp + "\n");
-		sb.append("  Stack      : " + toStringStack() + "\t\n");
-		sb.append("  Call-Stack : [");
+		sb.append("  RunState          : " + getRunState() + "\n");
+		sb.append("  pc                : " + pc + "\n");
+		sb.append("  fp                : " + fp + "\n");
+		sb.append("  sp                : " + sp + "\n");
+		sb.append("  Stack             : " + toStringStack() + "\t\n");
+		sb.append("  Call-Stack        : [");
 		for (int i = 0; i < fp; i++)
 			sb.append(" " + callFrames[i]);
 		sb.append(" ]\n");
+		if (exceptionHandler != null) sb.append("  Exception handler :\n" + Gpr.prependEachLine("      ", exceptionHandler.toString()));
 		sb.append("  Scope:\n" + scope);
 		return sb.toString();
 	}
