@@ -16,7 +16,7 @@ import org.bds.compile.CompilerMessage.MessageType;
  */
 public class CompileErrorStrategy extends DefaultErrorStrategy {
 
-	/** Instead of recovering from exception {@code e}, re-throw it wrapped
+	/** Instead of recovering from pendingException {@code e}, re-throw it wrapped
 	 *  in a {@link ParseCancellationException} so it is not caught by the
 	 *  rule function catches.  Use {@link Exception#getCause()} to get the
 	 *  original {@link RecognitionException}.
@@ -28,7 +28,7 @@ public class CompileErrorStrategy extends DefaultErrorStrategy {
 		CompilerMessage cm = new CompilerMessage(e.getOffendingToken().getInputStream().getSourceName(), e.getOffendingToken().getLine(), -1, message, MessageType.ERROR);
 		CompilerMessages.get().add(cm);
 
-		// Add exception to all contexts
+		// Add pendingException to all contexts
 		for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent())
 			context.exception = e;
 
@@ -36,7 +36,7 @@ public class CompileErrorStrategy extends DefaultErrorStrategy {
 	}
 
 	/** Make sure we don't attempt to recover inline; if the parser
-	 *  successfully recovers, it won't throw an exception.
+	 *  successfully recovers, it won't throw an pendingException.
 	 */
 	@Override
 	public Token recoverInline(Parser recognizer) throws RecognitionException {
@@ -46,7 +46,7 @@ public class CompileErrorStrategy extends DefaultErrorStrategy {
 		CompilerMessage cm = new CompilerMessage(e.getOffendingToken().getInputStream().getSourceName(), e.getOffendingToken().getLine(), -1, message, MessageType.ERROR);
 		CompilerMessages.get().add(cm);
 
-		// Add exception to all contexts
+		// Add pendingException to all contexts
 		for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent())
 			context.exception = e;
 

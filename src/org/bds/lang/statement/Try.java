@@ -26,9 +26,12 @@ public class Try extends StatementWithScope {
 		statement = (Statement) factory(tree, ++idx);
 	}
 
-	@Override
-	public String toAsm() {
-		return (statement != null ? statement.toAsm() : "");
+	public String toAsm(String finallyLabel) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		if (statement != null) sb.append(statement.toAsm());
+		sb.append("jmp '" + finallyLabel + "'\n");
+		return sb.toString();
 	}
 
 	@Override

@@ -226,7 +226,7 @@ public abstract class Cmd extends Thread {
 	}
 
 	/**
-	 * We are done. Either process finished or an exception was raised.
+	 * We are done. Either process finished or an pendingException was raised.
 	 */
 	protected void stateDone() {
 		started = true;

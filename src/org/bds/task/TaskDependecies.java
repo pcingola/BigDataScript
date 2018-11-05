@@ -170,7 +170,7 @@ public class TaskDependecies implements Serializable {
 		for (boolean changed = true; changed;) {
 			changed = false;
 
-			// We need a new set to avoid 'concurrent modification' exception
+			// We need a new set to avoid 'concurrent modification' pendingException
 			Set<String> newGoals = new HashSet<>();
 			newGoals.addAll(goals);
 

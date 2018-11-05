@@ -39,16 +39,24 @@ public class Catch extends StatementWithScope {
 		return idx;
 	}
 
-	@Override
-	public String toAsm() {
+	public String toAsm(String finallyLabel) {
 		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
 		sb.append(getLabel() + ":\n");
-		sb.append(statement.toAsm());
-		sb.append("ret\n");
+		// Reset Exception handler
+		// Note: If another exception is thrown within the 'catch' block, this
+		// exception handler should not handle it (it should be handled
+		// by a surrounding try/catch)
+		sb.append("reh\n");
+		if (statement != null) sb.append(statement.toAsm());
+		sb.append("jmp '" + finallyLabel + "'\n");
 		return sb.toString();
 	}
 
-	public String toAsmAeh() {
+	/**
+	 * Add to Exception handler
+	 */
+	public String toAsmAddToExceptionHandler() {
 		return "pushs '" + varName + "'\n" //
 				+ "pushs '" + typeClassException.getClassName() + "'\n" //
 				+ "aeh '" + getLabel() + "'\n" //

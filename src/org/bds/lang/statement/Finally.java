@@ -32,7 +32,15 @@ public class Finally extends StatementWithScope {
 
 	@Override
 	public String toAsm() {
-		return (statement != null ? statement.toAsm() : "");
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toAsm());
+		// Note: If another exception is thrown within the 'finally' block, this
+		// exception handler should not handle it (it should be handled
+		// by a surrounding try/catch)
+		sb.append("reh\n");
+		if (statement != null) sb.append(statement.toAsm());
+		sb.append("rethrow\n"); // Re-thrown pending exceptions
+		return sb.toString();
 	}
 
 	@Override

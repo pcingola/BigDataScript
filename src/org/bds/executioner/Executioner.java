@@ -446,7 +446,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// Don't run too many threads at once
 			// The reason for this is that we can reach the maximum
 			// number of threads available in the operating system.
-			// If that happens, well get an exception
+			// If that happens, well get an pendingException
 			while (Exec.countRunningThreads() >= config.getMaxThreads()) {
 				// Too many threads running? Sleep for a while (block until some threads finish)
 				if (debug) log("INFO: Too many threads running (limit set to " + config.getMaxThreads() + "). Waiting for some threads to finish.");

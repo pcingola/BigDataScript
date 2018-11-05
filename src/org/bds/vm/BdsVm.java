@@ -67,8 +67,8 @@ public class BdsVm implements Serializable {
 	Scope scope; // Current scope (variables)
 	int sp; // Stack pointer
 	Value[] stack; // Stack: main stack used for values
-	CallFrame[] callFrame; // Call Frame stack
-	ExceptionHandler exceptionHandler; // Current exception handler (null if we are not in a 'try/catch' statement)
+	CallFrame[] callFrames; // Call Frame stack
+	ExceptionHandler exceptionHandler; // Current Exception handler (null if we are not in a 'try/catch' statement)
 	VmState vmState = new VmState();
 	boolean verbose;
 	Map<String, Integer> labels;
@@ -95,9 +95,9 @@ public class BdsVm implements Serializable {
 		nodeId = -1;
 
 		// Initialize call frames
-		callFrame = new CallFrame[CALL_STACK_SIZE];
-		for (int i = 0; i < callFrame.length; i++)
-			callFrame[i] = new CallFrame();
+		callFrames = new CallFrame[CALL_STACK_SIZE];
+		for (int i = 0; i < callFrames.length; i++)
+			callFrames[i] = new CallFrame();
 	}
 
 	/**
@@ -117,10 +117,9 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
-	 * Add catch block parameters to exception handler
+	 * Add catch block parameters to Exception handler
 	 */
 	void addCatchBlock(String handlerLabel, String typeExceptionClassName, String catchVarName) {
-		if (exceptionHandler == null) exceptionHandler = new ExceptionHandler();
 		exceptionHandler.addHandler(handlerLabel, typeExceptionClassName, catchVarName);
 	}
 
@@ -578,11 +577,8 @@ public class BdsVm implements Serializable {
 	 * Restore from call frame
 	 */
 	void popCallFrame() {
-		CallFrame sf = callFrame[--fp];
-		pc = sf.pc;
-		nodeId = sf.nodeId;
-		scope = sf.scope;
-		exceptionHandler = sf.exceptionHandler;
+		setFromCallFrame(callFrames[--fp]);
+		// TODO: Free space in previous call frame
 	}
 
 	/**
@@ -644,8 +640,8 @@ public class BdsVm implements Serializable {
 	 * Push call frame
 	 */
 	void pushCallFrame() {
-		if (fp >= callFrame.length) throw new RuntimeException("Out of stack memory! Call frame pointer: " + fp);
-		CallFrame sf = callFrame[fp++];
+		if (fp >= callFrames.length) throw new RuntimeException("Out of stack memory! Call frame pointer: " + fp);
+		CallFrame sf = callFrames[fp++];
 		sf.set(pc, nodeId, scope, exceptionHandler);
 	}
 
@@ -828,6 +824,10 @@ public class BdsVm implements Serializable {
 			case CHECKPOINT:
 				s1 = popString(); // File name
 				bdsThread.checkpoint(s1);
+				break;
+
+			case CEH:
+				exceptionHandler = new ExceptionHandler(constantString());
 				break;
 
 			case DEBUG:
@@ -1199,11 +1199,15 @@ public class BdsVm implements Serializable {
 				break;
 
 			case REH:
-				exceptionHandler = null;
+				exceptionHandler.resetHandlers();
 				break;
 
 			case RET:
 				popCallFrame(); // Restore everything from stack frame
+				break;
+
+			case RETHROW:
+				if (exceptionHandler.getPendingException() != null) throwException(exceptionHandler.getPendingException());
 				break;
 
 			case SCOPEPUSH:
@@ -1313,7 +1317,7 @@ public class BdsVm implements Serializable {
 				break;
 
 			case THROW:
-				throwException(pop()); // Get exception object to throw
+				throwException(pop()); // Get Exception object to throw
 				break;
 
 			case VAR:
@@ -1390,6 +1394,13 @@ public class BdsVm implements Serializable {
 		this.exitCode = exitCode;
 	}
 
+	void setFromCallFrame(CallFrame callFrame) {
+		pc = callFrame.pc;
+		nodeId = callFrame.nodeId;
+		scope = callFrame.scope;
+		exceptionHandler = callFrame.exceptionHandler;
+	}
+
 	public void setRun(boolean run) {
 		this.run = run;
 	}
@@ -1416,7 +1427,7 @@ public class BdsVm implements Serializable {
 		sb.append(stackTrace(nodeId, tabs));
 
 		for (int i = 0; i < fp; i++) {
-			CallFrame cf = callFrame[i];
+			CallFrame cf = callFrames[i];
 			tabs += "  ";
 			sb.append(stackTrace(cf.getNodeId(), tabs));
 		}
@@ -1454,28 +1465,40 @@ public class BdsVm implements Serializable {
 		ValueClass ex = ((ValueClass) exceptionValue);
 		Gpr.debug("BDS EXCEPTION: " + ex);
 
-		// Populate exception's stack trace message
-		ex.setValue("stackTrace", new ValueString(stackTrace()));
+		// Populate Exception's stack trace message, if empty
+		if (ex.getValue("stackTrace") == null) {
+			ex.setValue("stackTrace", new ValueString(stackTrace()));
+		}
 
 		// Look for an exceptionHandler
-		for (int ifp = fp; ifp >= 0; ifp--) {
-			ExceptionHandler eh = callFrame[ifp].exceptionHandler;
+		for (int ifp = fp - 1; ifp >= 0; ifp--) {
+			CallFrame callFrame = callFrames[ifp];
+			ExceptionHandler eh = callFrame.exceptionHandler;
 			if (eh != null) {
-				if (eh.canHandle(ex)) {
-					// Handle exception
+				CatchBlockInfo catchBlockInfo = eh.getCatchBlockInfo(ex);
+				// Get ready to jump to this call frame
+				setFromCallFrame(callFrame);
+				fp = ifp - 1;
+				if (catchBlockInfo != null) {
+					// This catch block can handle the Exception
+					eh.resetPendingException(); // Clear pending exceptions (we are handling it now)
+					scope.add(catchBlockInfo.variableName, ex); // Add exception object to scope
+					pc = getLabel(catchBlockInfo.handlerLabel); // Jump to catch block
+				} else {
+					// There is no catch block that can handle this Exception.
+					// Execute the 'finally' block, which will re-throw the
+					// pending Exception after successful execution.
+
+					// Set this as a 'pending Exception'. The 'finally' block
+					// will re-throw it after finishing executing statements
+					eh.setPendingException(ex);
+					pc = getLabel(eh.getFinallyLabel()); // Jump to finally block
 				}
-				// TODO: Execute finally block!!!
-				// TODO: Finally block must re-throw pending exceptions!!!!!!!!!!
 			}
 		}
-		popCallFrame();
 
-		if (exceptionHandler != null) {
-
-		} else {
-			// No exception handler was found
-			fatalError("Exception thrown: " + exceptionValue);
-		}
+		// No Exception handler was found
+		fatalError("Exception thrown: " + exceptionValue);
 	}
 
 	/**
@@ -1542,7 +1565,7 @@ public class BdsVm implements Serializable {
 		sb.append("  Stack      : " + toStringStack() + "\t\n");
 		sb.append("  Call-Stack : [");
 		for (int i = 0; i < fp; i++)
-			sb.append(" " + callFrame[i]);
+			sb.append(" " + callFrames[i]);
 		sb.append(" ]\n");
 		sb.append("  Scope:\n" + scope);
 		return sb.toString();
@@ -1551,7 +1574,7 @@ public class BdsVm implements Serializable {
 	String toStringCallStack() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < fp; i++) {
-			CallFrame cf = callFrame[i];
+			CallFrame cf = callFrames[i];
 			sb.append((i > 0 ? ", " : "") + cf);
 		}
 		return sb.toString();

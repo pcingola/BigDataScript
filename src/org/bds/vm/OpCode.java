@@ -26,7 +26,7 @@ import org.bds.util.GprString;
 public enum OpCode {
 	// Addition (int, real, string, string multiple)
 	ADDI, ADDR, ADDS, ADDSM
-	// Add to Exception Handler (parameter string 'exception handler label')
+	// Add to Exception Handler (parameter string 'Exception handler label')
 	, AEH
 	// And: bool (logic), int (bitwise)
 	, ANDB, ANDI
@@ -34,6 +34,8 @@ public enum OpCode {
 	, BREAKPOINT
 	// Cast values {b,i,r} => {b,i,r}
 	, CAST_TOB, CAST_TOI, CAST_TOR, CAST_TOS
+	// Create exception handler (parameter is 'finally' block label
+	, CEH
 	// Create a checkpoint
 	, CHECKPOINT
 	// Function call:
@@ -109,10 +111,12 @@ public enum OpCode {
 	, PUSHB, PUSHI, PUSHNULL, PUSHR, PUSHS
 	// Reference: object's field, list index or hash key
 	, REFFIELD, REFLIST, REFMAP//
-	// Remove (all) exception handlers
+	// Remove (all) Exception handlers
 	, REH
 	// Return (from function)
 	, RET
+	// Re-Throw a pending Exception
+	, RETHROW
 	// Scope: create new scope (and push it), restore old scope (pop current scope)
 	, SCOPEPUSH, SCOPEPOP
 	// Set value
@@ -129,7 +133,7 @@ public enum OpCode {
 	, SWAP
 	// Dispatch a task
 	, TASK, TASKDEP
-	// Throw an exception
+	// Throw an Exception
 	, THROW
 	// Create a variable in local scope (and pop)
 	, VAR, VARPOP
@@ -156,6 +160,7 @@ public enum OpCode {
 		case CALLMETHOD:
 		case CALLNATIVE:
 		case CALLSUPER:
+		case CEH:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -200,6 +205,7 @@ public enum OpCode {
 		case CALLMETHOD:
 		case CALLNATIVE:
 		case CALLSUPER:
+		case CEH:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -237,6 +243,7 @@ public enum OpCode {
 		case CALLMETHOD:
 		case CALLNATIVE:
 		case CALLSUPER:
+		case CEH:
 		case JMP:
 		case JMPT:
 		case JMPF:

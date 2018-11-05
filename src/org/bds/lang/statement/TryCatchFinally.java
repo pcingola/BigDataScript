@@ -63,21 +63,18 @@ public class TryCatchFinally extends StatementWithScope {
 		String finallyLabel = baseLabelName() + "finally";
 
 		if (isNeedsScope()) sb.append("scopepush\n");
+		sb.append("ceh '" + finallyLabel + "'\n");
 
-		// Register all catch blocks
+		// Register all catch blocks in Exception handler
 		for (Catch catchStatement : catchStatements)
-			sb.append(catchStatement.toAsmAeh());
+			sb.append(catchStatement.toAsmAddToExceptionHandler());
 
 		// Add 'try' statement
-		sb.append(tryStatement.toAsm());
-
-		// Remove exception handler and execute 'finally' block
-		sb.append("reh\n");
-		sb.append("jmp '" + finallyLabel + "'\n");
+		sb.append(tryStatement.toAsm(finallyLabel));
 
 		// Add catch blocks
 		for (Catch catchStatement : catchStatements) {
-			sb.append(catchStatement.toAsm());
+			sb.append(catchStatement.toAsm(finallyLabel));
 		}
 
 		// Add finally block

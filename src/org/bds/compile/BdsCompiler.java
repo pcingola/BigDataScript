@@ -101,7 +101,7 @@ public class BdsCompiler {
 			parser = new BigDataScriptParser(tokens);
 
 			// Parser error handling
-			parser.setErrorHandler(new CompileErrorStrategy()); // Bail out with exception if errors in parser
+			parser.setErrorHandler(new CompileErrorStrategy()); // Bail out with pendingException if errors in parser
 			parser.addErrorListener(new CompilerErrorListener()); // Catch some other error messages that 'CompileErrorStrategy' fails to catch
 
 			// Begin parsing at main rule
