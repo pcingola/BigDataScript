@@ -115,7 +115,7 @@ public enum OpCode {
 	, REH
 	// Return (from function)
 	, RET
-	// Re-Throw a pending Exception
+	// Remove current exception handler and Re-Throw any pending Exception
 	, RETHROW
 	// Scope: create new scope (and push it), restore old scope (pop current scope)
 	, SCOPEPUSH, SCOPEPOP

@@ -22,60 +22,115 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	//	/**
-	//	 * How this test works:
-	//	 * 		1) Try to delete a file that doesn't exits. Task fails, checkpoint is created and program finishes
-	//	 * 		2) createFile is run: This creates the file to be deleted
-	//	 * 		3) Checkpoint recovery, the task is re-executed. This time the file exists, so it runs OK. Variable 'b' is set to true
-	//	 */
 	//	@Test
-	//	public void test06() {
+	//	public void test230_tryCatch() {
 	//		Gpr.debug("Test");
-	//		final String fileToDelete = "test/checkpoint_06.tmp";
+	//		Map<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("try1", "true");
+	//		expectedValues.put("catch1", "false");
+	//		expectedValues.put("finally1", "true");
 	//
-	//		Runnable createFile = new Runnable() {
-	//
-	//			@Override
-	//			public void run() {
-	//				// Create the file
-	//				Gpr.debug("Creating file: '" + fileToDelete + "'");
-	//				Gpr.toFile(fileToDelete, "Hello");
-	//			}
-	//		};
-	//
-	//		// Make sure that the file doesn't exits
-	//		(new File(fileToDelete)).delete();
-	//
-	//		// Run test
-	//		runAndCheckpoint("test/checkpoint_06.bds", "checkpoint_06.bds.line_8.chp", "b", "true", createFile);
+	//		runAndCheck("test/run_230.bds", expectedValues);
 	//	}
 	//
+	//	@Test
+	//	public void test231_tryCatch() {
+	//		Gpr.debug("Test");
+	//		Map<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("try1", "true");
+	//		expectedValues.put("catch1", "true");
+	//		expectedValues.put("finally1", "true");
+	//
+	//		runAndCheck("test/run_231.bds", expectedValues);
+	//	}
+	//
+	//	@Test
+	//	public void test232_tryCatch() {
+	//		Gpr.debug("Test");
+	//		Map<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("f1", "true");
+	//		expectedValues.put("f2", "false");
+	//		expectedValues.put("try1", "true");
+	//		expectedValues.put("try2", "false");
+	//		expectedValues.put("catch1", "true");
+	//		expectedValues.put("finally1", "true");
+	//
+	//		runAndCheck("test/run_232.bds", expectedValues);
+	//	}
+	//
+	//	@Test
+	//	public void test233_tryCatch() {
+	//		Gpr.debug("Test");
+	//		Map<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("f1", "true");
+	//		expectedValues.put("f2", "true");
+	//		expectedValues.put("try1", "true");
+	//		expectedValues.put("try2", "false");
+	//		expectedValues.put("catch1", "true");
+	//		expectedValues.put("finally1", "true");
+	//
+	//		runAndCheck("test/run_233.bds", expectedValues);
+	//	}
+	//
+	//	@Test
+	//	public void test234_tryCatch() {
+	//		Gpr.debug("Test");
+	//		Map<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("try11", "true");
+	//		expectedValues.put("try12", "false");
+	//		expectedValues.put("catch11", "true");
+	//		expectedValues.put("finally11", "true");
+	//
+	//		expectedValues.put("try21", "true");
+	//		expectedValues.put("try22", "true");
+	//		expectedValues.put("catch21", "false");
+	//		expectedValues.put("finally21", "true");
+	//
+	//		runAndCheck("test/run_234.bds", expectedValues);
+	//	}
+	//
+	//	@Test
+	//	public void test235_tryCatch() {
+	//		Gpr.debug("Test");
+	//		Map<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("f11", "true");
+	//		expectedValues.put("f12", "false");
+	//		expectedValues.put("f21", "true");
+	//		expectedValues.put("f22", "false");
+	//
+	//		expectedValues.put("try11", "true");
+	//		expectedValues.put("try12", "false");
+	//		expectedValues.put("catch11", "false");
+	//		expectedValues.put("finally11", "true");
+	//
+	//		expectedValues.put("try21", "true");
+	//		expectedValues.put("try22", "false");
+	//		expectedValues.put("catch21", "true");
+	//		expectedValues.put("finally21", "true");
+	//
+	//		runAndCheck("test/run_235.bds", expectedValues);
+	//	}
+
 	@Test
-	public void test225_super() {
+	public void test235_tryCatch() {
 		Gpr.debug("Test");
 		Map<String, Object> expectedValues = new HashMap<>();
-		expectedValues.put("af", "1");
-		expectedValues.put("ag", "2");
-		expectedValues.put("ax", "41");
-		expectedValues.put("bf", "11");
-		expectedValues.put("bf", "12");
-		expectedValues.put("bx", "42");
+		expectedValues.put("f11", "true");
+		expectedValues.put("f12", "false");
+		expectedValues.put("f21", "true");
+		expectedValues.put("f22", "false");
 
-		runAndCheck("test/run_225.bds", expectedValues);
+		expectedValues.put("try11", "true");
+		expectedValues.put("try12", "false");
+		expectedValues.put("catch11", "false");
+		expectedValues.put("finally11", "true");
+
+		expectedValues.put("try21", "true");
+		expectedValues.put("try22", "false");
+		expectedValues.put("catch21", "true");
+		expectedValues.put("finally21", "true");
+
+		runAndCheck("test/run_235.bds", expectedValues);
 	}
-	//
-	//	@Test
-	//	public void test113_parallel_function_calls() {
-	//		Gpr.debug("Test");
-	//		String stdout = runAndReturnStdout("test/run_113.bds");
-	//
-	//		Set<String> linesPar = new HashSet<>();
-	//		for (String line : stdout.split("\n")) {
-	//			if (line.startsWith("Par:")) {
-	//				if (linesPar.contains(line)) throw new RuntimeException("Line repeated (this should never happen): '" + line + "'");
-	//				linesPar.add(line);
-	//			}
-	//		}
-	//	}
 
 }

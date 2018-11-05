@@ -1,0 +1,17 @@
+#!/usr/bin/env bds
+
+bool try1
+bool catch1
+bool finally1
+
+try {
+	try1 = true
+	println "TRY"
+} catch (Exception ex) {
+	catch1 = true
+	println "CATCH"
+} finally {
+	finally1 = true
+	println "FINALLY"
+}
+

@@ -1,8 +1,11 @@
 package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.compile.CompilerMessage.MessageType;
+import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.TypeClass;
+import org.bds.symbol.SymbolTable;
 
 /**
  * try / catch / finally statements
@@ -13,9 +16,10 @@ public class Catch extends StatementWithScope {
 
 	private static final long serialVersionUID = -2978341443887136421L;
 
-	String varName;
-	TypeClass typeClassException;
+	VarDeclaration declareExceptionVar; // This node has to be type-checked before the others, so the name should be (alphabetically) before
 	Statement statement;
+	TypeClass typeClassException;
+	String varName;
 
 	public Catch(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -34,6 +38,7 @@ public class Catch extends StatementWithScope {
 		if (isTerminal(tree, idx, "(")) idx++;
 		typeClassException = (TypeClass) factory(tree, idx++);
 		varName = tree.getChild(idx++).getText();
+		declareExceptionVar = VarDeclaration.get(this, typeClassException, varName, null);
 		if (isTerminal(tree, idx, ")")) idx++;
 		statement = (Statement) factory(tree, idx++);
 		return idx;
@@ -72,6 +77,13 @@ public class Catch extends StatementWithScope {
 		if (statement != null) sb.append(statement);
 		sb.append("} ");
 		return sb.toString();
+	}
+
+	@Override
+	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
+		if (statement == null) {
+			compilerMessages.add(this, "Empty catch statement", MessageType.ERROR);
+		}
 	}
 
 }

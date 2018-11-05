@@ -1,12 +1,5 @@
 #!/usr/bin/env bds
 
-# TODO: try/catch, function, try/catch, function (catch exception two levels up)
-# TODO: try/catch, try/catch, first catch throws new exception
-# TODO: Empty catch / empty finally
-# TODO: missing catch
-# TODO: Missing finally
-
-
 bool try11, try12, try21, try22
 bool catch11, catch21
 bool finally11, finally21
@@ -15,6 +8,7 @@ bool f11, f12, f21, f22
 class MyException extends Exception { }
 
 void f1() {
+	f11 = true
     try {
         try11 = true
         println "TRY11"
@@ -28,6 +22,7 @@ void f1() {
         finally11 = true
         println "FINALLY11"
     }
+	f12 = true
 }
 
 void f2() {
@@ -40,10 +35,10 @@ void f2() {
 
 try {
     try21 = true
-	println "TRY21"
+    println "TRY21"
     f1()
     try22 = true
-	println "TRY21"
+    println "TRY21"
 } catch(MyException e2) {
     catch21 = true
     println "CATCH21: $e2"

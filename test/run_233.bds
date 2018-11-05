@@ -1,0 +1,27 @@
+#!/usr/bin/env bds
+
+bool try1, try2
+bool catch1
+bool finally1
+bool f1, f2
+
+void f() {
+    f1 = true
+
+	try {
+		try1 = true
+		println "TRY"
+		throw new Exception("This is an exception")
+		try2 = true
+	} catch (Exception ex) {
+		catch1 = true
+		println "CATCH"
+	} finally {
+		finally1 = true
+		println "FINALLY"
+	}
+
+    f2 = true
+}
+
+f()

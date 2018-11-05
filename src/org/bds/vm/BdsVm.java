@@ -643,6 +643,7 @@ public class BdsVm implements Serializable {
 		if (fp >= callFrames.length) throw new RuntimeException("Out of stack memory! Call frame pointer: " + fp);
 		CallFrame sf = callFrames[fp++];
 		sf.set(pc, nodeId, scope, exceptionHandler);
+		exceptionHandler = null;
 	}
 
 	/**
@@ -827,6 +828,7 @@ public class BdsVm implements Serializable {
 				break;
 
 			case CEH:
+				pushCallFrame();
 				exceptionHandler = new ExceptionHandler(constantString());
 				break;
 
@@ -1207,7 +1209,14 @@ public class BdsVm implements Serializable {
 				break;
 
 			case RETHROW:
-				if (exceptionHandler.getPendingException() != null) throwException(exceptionHandler.getPendingException());
+				ValueClass pendingException = (exceptionHandler != null ? exceptionHandler.getPendingException() : null);
+				if (pendingException != null) {
+					// Remove current exception handler before re-throwing
+					// exception. Otherwise it would be captured by the same
+					// 'finally' statement we are currently processing
+					exceptionHandler = null;
+					throwException(pendingException);
+				}
 				break;
 
 			case SCOPEPUSH:
@@ -1462,8 +1471,6 @@ public class BdsVm implements Serializable {
 	 * Implement 'throw' opcode
 	 */
 	void throwException(ValueClass exceptionValue) {
-		Gpr.debug("BDS EXCEPTION: " + exceptionValue);
-
 		// Populate Exception's stack trace message, if empty
 		if (exceptionValue.getValue("stackTrace") == null) {
 			exceptionValue.setValue("stackTrace", new ValueString(stackTrace()));

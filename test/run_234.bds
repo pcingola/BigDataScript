@@ -1,0 +1,30 @@
+#!/usr/bin/env bds
+
+bool try11, try12, try21, try22
+bool catch11, catch21
+bool finally11, finally21
+
+try {
+	try21 = true
+
+	try {
+		try11 = true
+		println "TRY11"
+		throw new Exception("This is an exception")
+		try12 = true
+	} catch (Exception e1) {
+		catch11 = true
+		println "CATCH11: $e1"
+	} finally {
+		finally11 = true
+		println "FINALLY11"
+	}
+
+	try22 = true
+} catch(Exception e2) {
+	catch21 = true
+	println "CATCH11: $e2"
+} finally {
+	finally21 = true
+	println "FINALLY21"
+}
