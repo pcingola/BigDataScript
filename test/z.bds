@@ -1,5 +1,8 @@
 #!/usr/bin/env bds
 
+# TODO: Simple try/catch
+# TODO: Simple try/catch
+
 #class Exception {
 #	string message
 #	void Exception(string msg) {
