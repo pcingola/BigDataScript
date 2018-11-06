@@ -78,8 +78,10 @@ public class TypeClass extends TypeComposite {
 
 	@Override
 	public boolean canCastTo(Type type) {
-		// return equals(type) || ... // Same type
-		return (type.isClass() && isSubClassOf((TypeClass) type)) // Can cast if 'type' is a superclass
+		if (!type.isClass()) return false;
+		TypeClass typeClass = (TypeClass) type;
+		return getCanonicalName().equals(typeClass.getCanonicalName()) // Same class?
+				|| isSubClassOf(typeClass) // Can cast if 'type' is a superclass
 				|| type.isAny() // Cast to 'any'
 		;
 	}
@@ -129,7 +131,7 @@ public class TypeClass extends TypeComposite {
 
 	public boolean isSubClassOf(TypeClass type) {
 		String typeCan = type.getCanonicalName();
-		for (TypeClass tchild = this; tchild != null; tchild = tchild.getClassDeclaration().getClassTypeParent()) {
+		for (TypeClass tchild = this; tchild != null; tchild = (tchild.getClassDeclaration() != null ? tchild.getClassDeclaration().getClassTypeParent() : null)) {
 			String tchildCan = tchild.getCanonicalName();
 			if (tchildCan.equals(typeCan)) return true;
 		}
