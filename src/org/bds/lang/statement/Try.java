@@ -29,7 +29,11 @@ public class Try extends StatementWithScope {
 	public String toAsm(String finallyLabel) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toAsm());
-		if (statement != null) sb.append(statement.toAsm());
+		if (statement != null) {
+			if (isNeedsScope()) sb.append("scopepush\n");
+			sb.append(statement.toAsm());
+			if (isNeedsScope()) sb.append("scopepop\n");
+		}
 		sb.append("jmp '" + finallyLabel + "'\n");
 		return sb.toString();
 	}

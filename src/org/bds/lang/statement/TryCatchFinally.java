@@ -33,26 +33,34 @@ public class TryCatchFinally extends StatementWithScope {
 
 	@Override
 	protected void parse(ParseTree tree) {
+		tryStatement = new Try(this, tree); // Parse 'try'
+		catchStatements = parseCatch(tree); // Parse 'catch' statements
+		finallyStatement = new Finally(this, tree); // Parse 'finally' statement
+	}
+
+	/**
+	 * Parse catch statements
+	 */
+	Catch[] parseCatch(ParseTree tree) {
 		int idx = 0;
-
-		// Parse 'try'
-		tryStatement = new Try(this, tree);
-
 		// Parse 'catch' statements
 		List<Catch> catchStatementsList = new ArrayList<>();
 
-		while (!isTerminal(tree, idx, "catch"))
+		// Find first 'catch' node
+		while (!isTerminal(tree, idx, "catch")) {
 			idx++;
+			if (idx >= tree.getChildCount()) return new Catch[0];
+		}
 
+		// Parse all catch nodes and add to the list
 		while (isTerminal(tree, idx, "catch")) {
 			Catch catchStatement = new Catch(this, tree);
 			idx = catchStatement.parse(tree, idx);
 			catchStatementsList.add(catchStatement);
+			if (idx >= tree.getChildCount()) break;
 		}
-		catchStatements = catchStatementsList.toArray(new Catch[0]);
 
-		// Parse 'finally' statement
-		finallyStatement = new Finally(this, tree);
+		return catchStatementsList.toArray(new Catch[0]);
 	}
 
 	@Override

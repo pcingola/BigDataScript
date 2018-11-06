@@ -38,7 +38,11 @@ public class Finally extends StatementWithScope {
 		// exception handler should not handle it (it should be handled
 		// by a surrounding try/catch)
 		sb.append("reh\n");
-		if (statement != null) sb.append(statement.toAsm());
+		if (statement != null) {
+			if (isNeedsScope()) sb.append("scopepush\n");
+			sb.append(statement.toAsm());
+			if (isNeedsScope()) sb.append("scopepop\n");
+		}
 		sb.append("rethrow\n"); // Re-thrown pending exceptions
 		return sb.toString();
 	}

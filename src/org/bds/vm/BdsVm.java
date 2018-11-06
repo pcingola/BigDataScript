@@ -282,6 +282,30 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Throw an exception using an exceptionHandler
+	 */
+	void catchException(ValueClass exceptionValue) {
+		CatchBlockInfo catchBlockInfo = exceptionHandler.getCatchBlockInfo(exceptionValue);
+		exceptionHandler.resetHandlers();
+		// Get ready to jump to this call frame
+		if (catchBlockInfo != null) {
+			// This catch block can handle the Exception
+			exceptionHandler.resetPendingException(); // Clear pending exceptions (we are handling it now)
+			scope.add(catchBlockInfo.variableName, exceptionValue); // Add exception object to scope
+			pc = getLabel(catchBlockInfo.handlerLabel); // Jump to catch block
+		} else {
+			// There is no catch block that can handle this Exception.
+			// Execute the 'finally' block, which will re-throw the
+			// pending Exception after successful execution.
+
+			// Set this as a 'pending Exception'. The 'finally' block
+			// will re-throw it after finishing executing statements
+			exceptionHandler.setPendingException(exceptionValue);
+			pc = getLabel(exceptionHandler.getFinallyLabel()); // Jump to finally block
+		}
+	}
+
+	/**
 	 * Parameters is a reference to a 'bool' constant
 	 */
 	boolean constantBool() {
@@ -578,7 +602,7 @@ public class BdsVm implements Serializable {
 	 */
 	void popCallFrame() {
 		setFromCallFrame(callFrames[--fp]);
-		// TODO: Free space in previous call frame
+		// TODO: Free space in previous call frame (scope, exceptionHandler)?
 	}
 
 	/**
@@ -601,6 +625,7 @@ public class BdsVm implements Serializable {
 	 * Restore old scope
 	 */
 	public void popScope() {
+		// FIXME: Old scope should be null to free memory
 		scope = scope.getParent();
 	}
 
@@ -673,6 +698,14 @@ public class BdsVm implements Serializable {
 		FunctionDeclaration superFdecl = superCdecl.getType().resolve(fdecl);
 		if (superFdecl == null) throw new RuntimeException("Null pointer: Cannot resolve 'super' method '" + fsig + "'.");
 		return superFdecl;
+	}
+
+	/**
+	 * Re-throw a pending exception
+	 */
+	void reThrowException() {
+		ValueClass pendingException = exceptionHandler.getPendingException();
+		if (pendingException != null) throwException(pendingException);
 	}
 
 	/**
@@ -828,8 +861,9 @@ public class BdsVm implements Serializable {
 				break;
 
 			case CEH:
+				name = constantString();
 				pushCallFrame();
-				exceptionHandler = new ExceptionHandler(constantString());
+				exceptionHandler = new ExceptionHandler(name);
 				break;
 
 			case DEBUG:
@@ -1202,21 +1236,15 @@ public class BdsVm implements Serializable {
 
 			case REH:
 				exceptionHandler.resetHandlers();
+				Gpr.debug("REMOVE 'REH' OpCode?");
 				break;
 
 			case RET:
-				popCallFrame(); // Restore everything from stack frame
+				popCallFrame();
 				break;
 
 			case RETHROW:
-				ValueClass pendingException = (exceptionHandler != null ? exceptionHandler.getPendingException() : null);
-				if (pendingException != null) {
-					// Remove current exception handler before re-throwing
-					// exception. Otherwise it would be captured by the same
-					// 'finally' statement we are currently processing
-					exceptionHandler = null;
-					throwException(pendingException);
-				}
+				reThrowException();
 				break;
 
 			case SCOPEPUSH:
@@ -1478,48 +1506,21 @@ public class BdsVm implements Serializable {
 
 		// Use current exception handler if available
 		if (exceptionHandler != null) {
-			throwException(exceptionValue, exceptionHandler);
+			catchException(exceptionValue);
 			return;
 		}
 
-		// Look for an exceptionHandler in other call frames
-		for (int ifp = fp - 1; ifp >= 0; ifp--) {
-			CallFrame callFrame = callFrames[ifp];
-			ExceptionHandler eh = callFrame.exceptionHandler;
-			if (eh != null) {
-				// Get ready to jump to this call frame
-				setFromCallFrame(callFrame);
-				fp = ifp - 1;
-				throwException(exceptionValue, eh);
+		// Look for an exceptionHandler
+		while (canPopFrame()) {
+			popCallFrame();
+			if (exceptionHandler != null) {
+				catchException(exceptionValue);
 				return;
 			}
 		}
 
 		// No Exception handler was found
 		fatalError("Exception thrown: " + exceptionValue);
-	}
-
-	/**
-	 * Throw an exception using an exceptionHandler
-	 */
-	void throwException(ValueClass exceptionValue, ExceptionHandler exceptionHandler) {
-		CatchBlockInfo catchBlockInfo = exceptionHandler.getCatchBlockInfo(exceptionValue);
-		// Get ready to jump to this call frame
-		if (catchBlockInfo != null) {
-			// This catch block can handle the Exception
-			exceptionHandler.resetPendingException(); // Clear pending exceptions (we are handling it now)
-			scope.add(catchBlockInfo.variableName, exceptionValue); // Add exception object to scope
-			pc = getLabel(catchBlockInfo.handlerLabel); // Jump to catch block
-		} else {
-			// There is no catch block that can handle this Exception.
-			// Execute the 'finally' block, which will re-throw the
-			// pending Exception after successful execution.
-
-			// Set this as a 'pending Exception'. The 'finally' block
-			// will re-throw it after finishing executing statements
-			exceptionHandler.setPendingException(exceptionValue);
-			pc = getLabel(exceptionHandler.getFinallyLabel()); // Jump to finally block
-		}
 	}
 
 	/**

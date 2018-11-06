@@ -1,25 +1,14 @@
 #!/usr/bin/env bds
 
-# TODO: missing catch
-
-bool try1, try2
-bool finally1
-bool main1, main2
-
-# Main
-
-main1 = true
-
-try {
-    try1 = true
-    println "TRY1"
-    throw new Exception("This is an exception")
-    try2 = true
-    println "TRY2"
-} finally {
-    finally1 = true
-    println "CATCH1: $e2"
+void f() {
+	try {
+		println "TRY"
+		throw new Exception("This is an exception")
+	} catch (Exception ex) {
+		println "CATCH"
+	} finally {
+		println "FINALLY"
+	}
 }
 
-main2 = true
-
+f()
