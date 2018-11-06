@@ -110,27 +110,55 @@ public class TestCasesZzz extends TestCasesBase {
 	//
 	//		runAndCheck("test/run_235.bds", expectedValues);
 	//	}
+	//
+	//	@Test
+	//	public void test236_tryCatch() {
+	//		Gpr.debug("Test");
+	//		Map<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("f11", "true");
+	//		expectedValues.put("f12", "false");
+	//		expectedValues.put("f21", "true");
+	//		expectedValues.put("f22", "false");
+	//
+	//		expectedValues.put("try11", "true");
+	//		expectedValues.put("try12", "false");
+	//		expectedValues.put("catch11", "true");
+	//		expectedValues.put("finally11", "true");
+	//
+	//		expectedValues.put("try21", "true");
+	//		expectedValues.put("try22", "false");
+	//		expectedValues.put("catch21", "true");
+	//		expectedValues.put("finally21", "true");
+	//
+	//		runAndCheck("test/run_236.bds", expectedValues);
+	//	}
+	//
+	//	@Test
+	//	public void test237_tryCatch() {
+	//		Gpr.debug("Test");
+	//		Map<String, Object> expectedValues = new HashMap<>();
+	//		expectedValues.put("main1", "true");
+	//		expectedValues.put("main2", "true");
+	//
+	//		expectedValues.put("try1", "true");
+	//		expectedValues.put("try2", "false");
+	//		expectedValues.put("catch1", "true");
+	//
+	//		runAndCheck("test/run_237.bds", expectedValues);
+	//	}
 
 	@Test
-	public void test235_tryCatch() {
+	public void test238_tryCatch() {
 		Gpr.debug("Test");
 		Map<String, Object> expectedValues = new HashMap<>();
-		expectedValues.put("f11", "true");
-		expectedValues.put("f12", "false");
-		expectedValues.put("f21", "true");
-		expectedValues.put("f22", "false");
+		expectedValues.put("main1", "true");
+		expectedValues.put("main2", "true");
 
-		expectedValues.put("try11", "true");
-		expectedValues.put("try12", "false");
-		expectedValues.put("catch11", "false");
-		expectedValues.put("finally11", "true");
+		expectedValues.put("try1", "true");
+		expectedValues.put("try2", "false");
+		expectedValues.put("finally1", "true");
 
-		expectedValues.put("try21", "true");
-		expectedValues.put("try22", "false");
-		expectedValues.put("catch21", "true");
-		expectedValues.put("finally21", "true");
-
-		runAndCheck("test/run_235.bds", expectedValues);
+		runAndCheck("test/run_238.bds", expectedValues);
 	}
 
 }

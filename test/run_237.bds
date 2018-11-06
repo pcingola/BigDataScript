@@ -1,9 +1,7 @@
 #!/usr/bin/env bds
 
-# TODO: missing catch
-
 bool try1, try2
-bool finally1
+bool catch1
 bool main1, main2
 
 # Main
@@ -13,11 +11,11 @@ main1 = true
 try {
     try1 = true
     println "TRY1"
-    throw new Exception("This is an exception")
+	throw new Exception("This is an exception")
     try2 = true
     println "TRY2"
-} finally {
-    finally1 = true
+} catch(Exception e2) {
+    catch1 = true
     println "CATCH1: $e2"
 }
 

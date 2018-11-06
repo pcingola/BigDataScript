@@ -1,0 +1,50 @@
+#!/usr/bin/env bds
+
+bool try11, try12, try21, try22
+bool catch11, catch21
+bool finally11, finally21
+bool f11, f12, f21, f22
+
+class MyException extends Exception { }
+
+void f1() {
+	f11 = true
+    try {
+        try11 = true
+        println "TRY11"
+        f2()
+        try12 = true
+        println "TRY12"
+    } catch (Exception e1) {
+        catch11 = true
+        println "CATCH11: $e1"
+    	throw new MyException()
+    } finally {
+        finally11 = true
+        println "FINALLY11"
+    }
+	f12 = true
+}
+
+void f2() {
+    f21 = true
+    throw new Exception("First exception")
+    f22 = true
+}
+
+# Main
+
+try {
+    try21 = true
+    println "TRY21"
+    f1()
+    try22 = true
+    println "TRY21"
+} catch(MyException e2) {
+    catch21 = true
+    println "CATCH21: $e2"
+} finally {
+    finally21 = true
+    println "FINALLY21"
+}
+
