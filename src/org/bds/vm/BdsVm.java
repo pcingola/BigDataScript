@@ -48,37 +48,37 @@ import org.bds.util.GprString;
  */
 public class BdsVm implements Serializable {
 
-	private static final long serialVersionUID = 6533146851765102340L;
-
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
-	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
-	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
+
 	public static final String LABLE_MAIN = "main";
 	private static final OpCode OPCODES[] = OpCode.values();
+	private static final long serialVersionUID = 6533146851765102340L;
+	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
+	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
 
+	BdsThread bdsThread;
+	CallFrame[] callFrames; // Call Frame stack
 	int code[]; // Compile assembly code (OopCodes)
+	List<Object> constants;
+	Map<Object, Integer> constantsByObject;
 	boolean debug;
-	VmDebugger vmDebugger;
+	ExceptionHandler exceptionHandler; // Current Exception handler (null if we are not in a 'try/catch' statement)
 	Integer exitCode = null; // Default exit code (null means: parse last entry from stack)
 	int fp; // Frame pointer
+	Map<String, FunctionDeclaration> functionsBySignature;
+	Map<String, Integer> labels;
+	AutoHashMap<Integer, List<String>> labelsByPc;
 	int nodeId; // Current node ID (BdsNode). Used for linking to original bds code
 	int pc; // Program counter
 	boolean run; // Keep program running while this variable is 'true'
 	Scope scope; // Current scope (variables)
 	int sp; // Stack pointer
 	Value[] stack; // Stack: main stack used for values
-	CallFrame[] callFrames; // Call Frame stack
-	ExceptionHandler exceptionHandler; // Current Exception handler (null if we are not in a 'try/catch' statement)
-	VmState vmState = new VmState();
-	boolean verbose;
-	Map<String, Integer> labels;
-	AutoHashMap<Integer, List<String>> labelsByPc;
-	Map<Object, Integer> constantsByObject;
-	Map<String, FunctionDeclaration> functionsBySignature;
-	Map<Type, Integer> typeToIndex;
-	List<Object> constants;
 	List<Type> types;
-	BdsThread bdsThread;
+	Map<Type, Integer> typeToIndex;
+	boolean verbose;
+	VmDebugger vmDebugger;
+	VmState vmState = new VmState();
 
 	public BdsVm() {
 		constants = new ArrayList<>();
@@ -114,13 +114,6 @@ public class BdsVm implements Serializable {
 			scope.add(args.get(i), vthis);
 		}
 		return vthis;
-	}
-
-	/**
-	 * Add catch block parameters to Exception handler
-	 */
-	void addCatchBlock(String handlerLabel, String typeExceptionClassName, String catchVarName) {
-		exceptionHandler.addHandler(handlerLabel, typeExceptionClassName, catchVarName);
 	}
 
 	/**
@@ -373,6 +366,41 @@ public class BdsVm implements Serializable {
 			td.addInput(in.asString());
 
 		push(td.depOperator());
+	}
+
+	void discardCallFrame() {
+		--fp;
+	}
+
+	/**
+	 * Exception handler: Add catch block parameters to Exception handler
+	 */
+	void ehAdd(String handlerLabel, String typeExceptionClassName, String catchVarName) {
+		exceptionHandler.addHandler(handlerLabel, typeExceptionClassName, catchVarName);
+	}
+
+	/**
+	 * Exception handler: Create a new Exception handler
+	 * @param finallyLabel : Label for 'finally' code
+	 */
+	void ehCreate(String finallyLabel) {
+		pushCallFrame();
+		exceptionHandler = new ExceptionHandler(finallyLabel);
+	}
+
+	/**
+	 * Exception handler: End exception handling and Re-throw pending exception
+	 */
+	void ehEnd() {
+		ValueClass pendingException = exceptionHandler.getPendingException();
+		discardCallFrame(); // Discard CallFrame created in 'ehcreate'
+		exceptionHandler = callFrames[fp].exceptionHandler; // Restore exception handler from previous CallFrame
+		if (pendingException != null) throwException(pendingException); // Rethrow pending exception
+	}
+
+	void ehStart() {
+		exceptionHandler.resetHandlers();
+		Gpr.debug("REMOVE 'REH' OpCode?");
 	}
 
 	/**
@@ -701,14 +729,6 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
-	 * Re-throw a pending exception
-	 */
-	void reThrowException() {
-		ValueClass pendingException = exceptionHandler.getPendingException();
-		if (pendingException != null) throwException(pendingException);
-	}
-
-	/**
 	 * Run the program in 'code'
 	 */
 	public int run() {
@@ -765,9 +785,14 @@ public class BdsVm implements Serializable {
 			instruction = code[pc];
 			opcode = OPCODES[instruction];
 			if (debug) {
-				String msg = toAsm(pc) + "\t\t\tstack: " + toStringStack() + "\tcall stack: " + toStringCallStack();
-				if (bdsThread != null) msg = Gpr.prependEachLine(bdsThread.getBdsThreadId() + "\t\t|", msg);
-				else msg += '\n';
+				String msg = "" //
+						+ (sp > 0 ? "\n\t\t\t\t\t\t\t\t# stack: " + toStringStack() : "") //
+						+ (exceptionHandler != null ? "\n\t\t\t\t\t\t\t\t# exceptionHandler: " + exceptionHandler.getFinallyLabel() : "") //
+						+ (fp > 0 ? "\n\t\t\t\t\t\t\t\t# call stack: " + toStringCallStack() : "") //
+						+ "\n" //
+						+ (bdsThread != null ? bdsThread.getBdsThreadId() + "\t\t|" : "") //
+						+ toAsm(pc) //
+				;
 				System.err.print(msg);
 			}
 			pc++;
@@ -793,10 +818,6 @@ public class BdsVm implements Serializable {
 
 			case ADDSM:
 				adds(paramInt());
-				break;
-
-			case AEH:
-				addCatchBlock(constantString(), popString(), popString());
 				break;
 
 			case ANDB:
@@ -860,12 +881,6 @@ public class BdsVm implements Serializable {
 				bdsThread.checkpoint(s1);
 				break;
 
-			case CEH:
-				name = constantString();
-				pushCallFrame();
-				exceptionHandler = new ExceptionHandler(name);
-				break;
-
 			case DEBUG:
 				debug();
 				break;
@@ -893,6 +908,22 @@ public class BdsVm implements Serializable {
 
 			case DUP:
 				push(peek().clone());
+				break;
+
+			case EHADD:
+				ehAdd(constantString(), popString(), popString());
+				break;
+
+			case EHCREATE:
+				ehCreate(constantString());
+				break;
+
+			case EHEND:
+				ehEnd();
+				break;
+
+			case EHSTART:
+				ehStart();
 				break;
 
 			case EQB:
@@ -1234,17 +1265,8 @@ public class BdsVm implements Serializable {
 				}
 				break;
 
-			case REH:
-				exceptionHandler.resetHandlers();
-				Gpr.debug("REMOVE 'REH' OpCode?");
-				break;
-
 			case RET:
 				popCallFrame();
-				break;
-
-			case RETHROW:
-				reThrowException();
 				break;
 
 			case SCOPEPUSH:
@@ -1679,4 +1701,5 @@ public class BdsVm implements Serializable {
 		// Note: Unwind pc for the current opcode
 		vmState.set(fp, nodeId, pc - 1, sp, scope);
 	}
+
 }

@@ -19,10 +19,10 @@ public class CallFrame implements Serializable {
 
 	private static final long serialVersionUID = 84261659748008514L;
 
-	public int pc;
-	public int nodeId;
-	public Scope scope;
 	public ExceptionHandler exceptionHandler;
+	public int nodeId;
+	public int pc;
+	public Scope scope;
 
 	public CallFrame() {
 		set(-1, -1, null, null);
@@ -56,6 +56,7 @@ public class CallFrame implements Serializable {
 		return "{pc: " + pc //
 				+ ", nodeId: " + nodeId //
 				+ ", scope " + scope.getScopeName() //
+				+ (exceptionHandler != null ? ", exceptionHandler " + exceptionHandler.getFinallyLabel() : "") //
 				+ "}" //
 		;
 	}

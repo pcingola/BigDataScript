@@ -26,24 +26,20 @@ import org.bds.util.GprString;
 public enum OpCode {
 	// Addition (int, real, string, string multiple)
 	ADDI, ADDR, ADDS, ADDSM
-	// Add to Exception Handler (parameter string 'Exception handler label')
-	, AEH
 	// And: bool (logic), int (bitwise)
 	, ANDB, ANDI
 	// Breakpoint (debugging mode)
 	, BREAKPOINT
 	// Cast values {b,i,r} => {b,i,r}
-	, CAST_TOB, CAST_TOI, CAST_TOR, CAST_TOS
-	// Create exception handler (parameter is 'finally' block label
-	, CEH
-	// Create a checkpoint
-	, CHECKPOINT
+	, CALL, CALLMETHOD, CALLNATIVE, CALLSUPER
+	// Checkpoint
+	, CAST_TOB
 	// Function call:
 	//    CALL function_signature
 	//    CALLNATIVE function_signature
 	//    CALLMETHOD method_signature
 	//    CALLSUPER method_signature
-	, CALL, CALLMETHOD, CALLNATIVE, CALLSUPER
+	, CAST_TOI, CAST_TOR, CAST_TOS, CHECKPOINT
 	// Debug breakpoint
 	, DEBUG
 	// Decrement (i.e. valueInt--)
@@ -54,6 +50,14 @@ public enum OpCode {
 	, DIVI, DIVR
 	// Duplicate value on stack
 	, DUP
+	// Add to Exception Handler (parameter string 'Exception handler label (catch entry)')
+	, EHADD
+	// Create new exception handler
+	, EHCREATE
+	// Finish exception handling
+	, EHEND
+	// Start exception handler
+	, EHSTART
 	// Equality test
 	, EQB, EQI, EQR, EQS
 	// Error
@@ -69,34 +73,34 @@ public enum OpCode {
 	// Halt (stop execution in current thread)
 	, HALT
 	// Kill a task
-	, KILL
-	// Increment (i.e. valueInt++)
 	, INC
+	// Increment (i.e. valueInt++)
+	, JMP
 	// Jumps: unconditional, jump if true, jump if false:
 	//    JMP[T|F]    pc
-	, JMP, JMPT, JMPF
+	, JMPF, JMPT, JSR
 	// Jump to Sub-Routine (unconditional)
-	, JSR
+	, KILL
 	// Load variable from scope into stack
 	//    LOAD varName
-	, LOAD
+	, LEB
 	// Less than
-	, LTB, LTI, LTR, LTS
+	, LEI, LER, LES, LOAD
 	// Less or equal than
-	, LEB, LEI, LER, LES
+	, LTB, LTI, LTR, LTS
 	// Modulo (int)
 	, MODI
 	// Multiplication (int)
 	, MULI, MULR, MULS
 	// Set current BdsNode number. Used for references to bds code (debugging, stack trace, etc.)
-	, NODE
+	, NEB
 	// No operation
-	, NOOP
+	, NEI
 	// Equality test (not equals)
-	, NEB, NEI, NER, NES
+	, NER, NES, NEW, NODE
 	// Create new object (of type 'Type') and push it to the stack
 	//    NEW Type
-	, NEW
+	, NOOP
 	// Negation
 	, NOTB, NOTI
 	// OR: bool (logical), int (bitwise)
@@ -111,26 +115,25 @@ public enum OpCode {
 	, PUSHB, PUSHI, PUSHNULL, PUSHR, PUSHS
 	// Reference: object's field, list index or hash key
 	, REFFIELD, REFLIST, REFMAP//
-	// Remove (all) Exception handlers
-	, REH
 	// Return (from function)
 	, RET
-	// Remove current exception handler and Re-Throw any pending Exception
-	, RETHROW
 	// Scope: create new scope (and push it), restore old scope (pop current scope)
-	, SCOPEPUSH, SCOPEPOP
+	, SCOPEPOP, SCOPEPUSH
 	// Set value
-	, SET, SETFIELD, SETLIST, SETMAP // Leave value in the stack
-	, SETPOP, SETFIELDPOP, SETLISTPOP, SETMAPPOP // Remove value from stack
+	, SET, SETFIELD, SETFIELDPOP, SETLIST, SETLISTPOP, SETMAP
+	// Leave value in the stack
+	, SETMAPPOP
+	// Remove value from stack
+	, SETPOP
 	// Store value to local variable (scope). Leaves the value in the stack (stack is not changed)
 	//    STORE varName
 	, STORE, STOREPOP
 	// Subtraction
 	, SUBI, SUBR
 	// Sys command
-	, SYS
-	// Swap two values in stack
 	, SWAP
+	// Swap two values in stack
+	, SYS
 	// Dispatch a task
 	, TASK, TASKDEP
 	// Throw an Exception
@@ -155,12 +158,12 @@ public enum OpCode {
 	public boolean hasParam() {
 		switch (this) {
 		case ADDSM:
-		case AEH:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
 		case CALLSUPER:
-		case CEH:
+		case EHADD:
+		case EHCREATE:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -200,12 +203,12 @@ public enum OpCode {
 	 */
 	public boolean isParamString() {
 		switch (this) {
-		case AEH:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
 		case CALLSUPER:
-		case CEH:
+		case EHADD:
+		case EHCREATE:
 		case JMP:
 		case JMPT:
 		case JMPF:
@@ -238,12 +241,12 @@ public enum OpCode {
 	 */
 	public Object parseParam(String param, Map<String, Type> typeByName) {
 		switch (this) {
-		case AEH:
 		case CALL:
 		case CALLMETHOD:
 		case CALLNATIVE:
 		case CALLSUPER:
-		case CEH:
+		case EHADD:
+		case EHCREATE:
 		case JMP:
 		case JMPT:
 		case JMPF:

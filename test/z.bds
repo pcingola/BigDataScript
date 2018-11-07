@@ -1,14 +1,24 @@
 #!/usr/bin/env bds
 
-void f() {
-	try {
-		println "TRY"
-		throw new Exception("This is an exception")
-	} catch (Exception ex) {
-		println "CATCH"
-	} finally {
-		println "FINALLY"
-	}
+bool try1, try2
+bool main1, main2, finally1, finally2
+
+# Main
+
+main1 = true
+
+try {
+    try1 = true
+    println "TRY1"
+    throw new Exception("This is an exception")
+    try2 = true
+    println "TRY2"
+} finally {
+    finally1 = true
+    println "FINALLY"
+    throw new Exception("This is an exception in 'finally'")
+    finally2 = true
 }
 
-f()
+main2 = true
+

@@ -16,9 +16,9 @@ public class TryCatchFinally extends StatementWithScope {
 
 	private static final long serialVersionUID = 1874966304662651073L;
 
-	Try tryStatement;
 	Catch[] catchStatements;
 	Finally finallyStatement;
+	Try tryStatement;
 
 	public TryCatchFinally(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -71,7 +71,7 @@ public class TryCatchFinally extends StatementWithScope {
 		String finallyLabel = baseLabelName() + "finally";
 
 		if (isNeedsScope()) sb.append("scopepush\n");
-		sb.append("ceh '" + finallyLabel + "'\n");
+		sb.append("ehcreate '" + finallyLabel + "'\n");
 
 		// Register all catch blocks in Exception handler
 		for (Catch catchStatement : catchStatements)

@@ -52,7 +52,7 @@ public class Catch extends StatementWithScope {
 		// Note: If another exception is thrown within the 'catch' block, this
 		// exception handler should not handle it (it should be handled
 		// by a surrounding try/catch)
-		sb.append("reh\n");
+		sb.append("ehstart\n");
 		if (statement != null) {
 			if (isNeedsScope()) sb.append("scopepush\n");
 			sb.append(statement.toAsm());
@@ -68,7 +68,7 @@ public class Catch extends StatementWithScope {
 	public String toAsmAddToExceptionHandler() {
 		return "pushs '" + varName + "'\n" //
 				+ "pushs '" + typeClassException.getClassName() + "'\n" //
-				+ "aeh '" + getLabel() + "'\n" //
+				+ "ehadd '" + getLabel() + "'\n" //
 		;
 	}
 

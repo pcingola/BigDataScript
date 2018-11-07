@@ -37,13 +37,13 @@ public class Finally extends StatementWithScope {
 		// Note: If another exception is thrown within the 'finally' block, this
 		// exception handler should not handle it (it should be handled
 		// by a surrounding try/catch)
-		sb.append("reh\n");
+		sb.append("ehstart\n");
 		if (statement != null) {
 			if (isNeedsScope()) sb.append("scopepush\n");
 			sb.append(statement.toAsm());
 			if (isNeedsScope()) sb.append("scopepop\n");
 		}
-		sb.append("rethrow\n"); // Re-thrown pending exceptions
+		sb.append("ehend\n"); // Cleanup and Re-throw pending exceptions
 		return sb.toString();
 	}
 
