@@ -37,6 +37,7 @@ public class Return extends Statement {
 		classSet.add(FunctionDeclaration.class);
 		classSet.add(MethodDeclaration.class);
 		classSet.add(StatementFunctionDeclaration.class);
+		// FIXME: Cannot be inside a 'try/catch/finally' statement
 		return (FunctionDeclaration) findParent(classSet);
 	}
 

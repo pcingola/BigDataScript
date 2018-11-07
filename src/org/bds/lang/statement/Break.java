@@ -39,6 +39,7 @@ public class Break extends Statement {
 		for (BdsNode bn = this; bn != null; bn = bn.getParent()) {
 			if (isBreak(bn)) return bn;
 			else if (isFunction(bn)) return null; // Reached function or method definition?
+			// FIXME: Cannot be inside a 'try/catch/finally' statement
 		}
 		return null;
 	}
