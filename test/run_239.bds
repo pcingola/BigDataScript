@@ -1,7 +1,7 @@
 #!/usr/bin/env bds
 
 bool try1, try2
-bool finally1
+bool finally1, finally2
 bool main1, main2
 
 # Main

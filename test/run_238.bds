@@ -1,7 +1,7 @@
 #!/usr/bin/env bds
 
 bool try1, try2
-bool finally1
+bool finally1, finally2
 bool main1, main2
 
 # Main
@@ -17,10 +17,7 @@ try {
 } finally {
     finally1 = true
     println "FINALLY"
-
-	# If we don't do this the program will finish with a fatal error (unhandled exception)
-	# So, we force exit with code 0 (just for testing execution to finish ok)
-	exit 0
+    finally2 = true
 }
 
 main2 = true

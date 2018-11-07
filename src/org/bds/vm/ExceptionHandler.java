@@ -18,9 +18,10 @@ public class ExceptionHandler implements Serializable {
 
 	private static final long serialVersionUID = 1193221593865738652L;
 
-	Map<String, CatchBlockInfo> catchBlocksByClass;
-	String finallyLabel;
-	ValueClass pendingException; // Exception being handled
+	boolean catchStart, finallyStart; // Exception handling started
+	Map<String, CatchBlockInfo> catchBlocksByClass; // Catch blocks indexed by exception className
+	String finallyLabel; // Finally label for this try/catch/block
+	ValueClass pendingException; // Pending exception (to be re-thrown)
 
 	public ExceptionHandler(String finallyLabel) {
 		this.finallyLabel = finallyLabel;
@@ -31,6 +32,16 @@ public class ExceptionHandler implements Serializable {
 		if (catchBlocksByClass == null) catchBlocksByClass = new HashMap<>();
 		CatchBlockInfo cb = new CatchBlockInfo(handlerLabel, exceptionClassName, variableName);
 		catchBlocksByClass.put(exceptionClassName, cb);
+	}
+
+	public void catchStart() {
+		catchStart = true;
+		finallyStart = false;
+	}
+
+	public void finallyStart() {
+		catchStart = false;
+		finallyStart = true;
 	}
 
 	/**
@@ -49,12 +60,12 @@ public class ExceptionHandler implements Serializable {
 		return pendingException;
 	}
 
-	public void resetHandlers() {
-		catchBlocksByClass = null;
+	public boolean isCatchStart() {
+		return catchStart;
 	}
 
-	public void resetPendingException() {
-		pendingException = null;
+	public boolean isFinallyStart() {
+		return finallyStart;
 	}
 
 	public void setPendingException(ValueClass ex) {
@@ -64,7 +75,10 @@ public class ExceptionHandler implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Finally block: " + finallyLabel + "\n");
+		sb.append("Finally block: " + finallyLabel);
+		if (isCatchStart()) sb.append(", catchStart: true");
+		if (isFinallyStart()) sb.append(", finalStart: true");
+		sb.append("\n");
 		sb.append("Pending exception: " + (pendingException != null ? pendingException.getType().getCanonicalName() : "null") + "\n");
 		if (catchBlocksByClass != null) {
 			List<String> keys = new ArrayList<>();

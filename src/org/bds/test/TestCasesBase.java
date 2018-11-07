@@ -128,6 +128,13 @@ public class TestCasesBase {
 		bdsTest.checkCompileOk();
 	}
 
+	void runAndCheck(int expectedExitCode, String fileName, Map<String, Object> expectedValues) {
+		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.run();
+		bdsTest.checkExitCode(expectedExitCode);
+		bdsTest.checkVariables(expectedValues);
+	}
+
 	void runAndCheck(int expectedExitCode, String fileName, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();

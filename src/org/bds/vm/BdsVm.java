@@ -278,12 +278,31 @@ public class BdsVm implements Serializable {
 	 * Throw an exception using an exceptionHandler
 	 */
 	void catchException(ValueClass exceptionValue) {
-		CatchBlockInfo catchBlockInfo = exceptionHandler.getCatchBlockInfo(exceptionValue);
-		exceptionHandler.resetHandlers();
+		CatchBlockInfo catchBlockInfo = null;
+
+		// Are we already handling an exception?
+		if (exceptionHandler.isCatchStart()) {
+			// We are already in a 'catch' block handling another exception
+			// Handle this jumping to a finally block, this exception (exceptionValue)
+			// will be re-thrown after finally block is executed
+			catchBlockInfo = null;
+		} else if (exceptionHandler.isFinallyStart()) {
+			// An exception thrown while we are in a 'finally' block
+			// Add exception as 'pending' and finish handling exception
+			// forcing the new exception to be re-thrown immediately
+			exceptionHandler.setPendingException(exceptionValue);
+			ehEnd();
+			return;
+		} else {
+			// We are not handling an exception, find a handler and
+			// jump to corresponding catch block. If no catch block is
+			// found, jump to finally block and re-throw exception after.
+			catchBlockInfo = exceptionHandler.getCatchBlockInfo(exceptionValue);
+		}
+
 		// Get ready to jump to this call frame
 		if (catchBlockInfo != null) {
 			// This catch block can handle the Exception
-			exceptionHandler.resetPendingException(); // Clear pending exceptions (we are handling it now)
 			scope.add(catchBlockInfo.variableName, exceptionValue); // Add exception object to scope
 			pc = getLabel(catchBlockInfo.handlerLabel); // Jump to catch block
 		} else {
@@ -388,6 +407,10 @@ public class BdsVm implements Serializable {
 		exceptionHandler = new ExceptionHandler(finallyLabel);
 	}
 
+	void ehcStart() {
+		exceptionHandler.catchStart();
+	}
+
 	/**
 	 * Exception handler: End exception handling and Re-throw pending exception
 	 */
@@ -398,9 +421,8 @@ public class BdsVm implements Serializable {
 		if (pendingException != null) throwException(pendingException); // Rethrow pending exception
 	}
 
-	void ehStart() {
-		exceptionHandler.resetHandlers();
-		Gpr.debug("REMOVE 'REH' OpCode?");
+	void ehfStart() {
+		exceptionHandler.finallyStart();
 	}
 
 	/**
@@ -922,8 +944,12 @@ public class BdsVm implements Serializable {
 				ehEnd();
 				break;
 
-			case EHSTART:
-				ehStart();
+			case EHCSTART:
+				ehcStart();
+				break;
+
+			case EHFSTART:
+				ehfStart();
 				break;
 
 			case EQB:

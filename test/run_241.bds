@@ -1,0 +1,34 @@
+#!/usr/bin/env bds
+
+bool try1, try2
+bool finally1, finally2
+bool main1, main2
+bool g1, g2
+
+int f(int i) {
+	throw new Exception("This is exception $i")
+	return 1
+}
+
+void g() {
+	g1 = true
+	try {
+		try1 = true
+		println "TRY1"
+		f(1)
+		try2 = true
+		println "TRY2"
+	} finally {
+		finally1 = true
+		println "FINALLY"
+		f(2)
+		finally2 = true
+	}
+	g2 = true
+}
+
+# Main
+
+main1 = true
+g()
+main2 = true

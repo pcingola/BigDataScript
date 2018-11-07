@@ -56,8 +56,8 @@ public enum OpCode {
 	, EHCREATE
 	// Finish exception handling
 	, EHEND
-	// Start exception handler
-	, EHSTART
+	// Start exception handler (catch or finally block)
+	, EHCSTART, EHFSTART
 	// Equality test
 	, EQB, EQI, EQR, EQS
 	// Error
