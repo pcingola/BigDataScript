@@ -12,34 +12,12 @@ import org.bds.util.Gpr;
  */
 public class Bds {
 
-	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "rc22";
+	public static final String REVISION = "rc23";
+	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String VERSION_MAJOR = "2.0";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
-
-	boolean debug; // debug mode
-	boolean dryRun; // Dry run (do not run tasks)
-	boolean extractSource; // Extract source code form checkpoint (only valid on recovery mode)
-	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
-	Boolean noCheckpoint; // Do not create checkpoint files
-	Boolean noRmOnExit; // Do not remove temp files on exit
-	boolean quiet; // Quiet mode
-	boolean verbose; // Verbose mode
-	Boolean reportHtml; // Use HTML report style
-	Boolean reportYaml; // Use YAML report style
-	int taskFailCount = -1;
-	String args[];
-	String chekcpointRestoreFile; // Restore file
-	String configFile = Config.DEFAULT_CONFIG_FILE; // Configuration file
-	String pidFile; // File to store PIDs
-	String programFileName; // Program file name
-	String reportFileName;
-	String system; // System type
-	String queue; // Queue name
-	Config config;
-	BdsRun bdsRun;
 
 	/**
 	 * Main
@@ -50,6 +28,29 @@ public class Bds {
 		int exitValue = bigDataScript.run();
 		System.exit(exitValue);
 	}
+
+	String args[];
+	BdsRun bdsRun;
+	String chekcpointRestoreFile; // Restore file
+	Config config;
+	String configFile = Config.DEFAULT_CONFIG_FILE; // Configuration file
+	boolean debug; // debug mode
+	boolean dryRun; // Dry run (do not run tasks)
+	boolean extractSource; // Extract source code form checkpoint (only valid on recovery mode)
+	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
+	Boolean noCheckpoint; // Do not create checkpoint files
+	Boolean noRmOnExit; // Do not remove temp files on exit
+	String pidFile; // File to store PIDs
+	String programFileName; // Program file name
+	String queue; // Queue name
+	boolean quiet; // Quiet mode
+	String reportFileName;
+	Boolean reportHtml; // Use HTML report style
+	Boolean reportYaml; // Use YAML report style
+	String system; // System type
+	int taskFailCount = -1;
+
+	boolean verbose; // Verbose mode
 
 	public Bds(String args[]) {
 		this.args = args;
