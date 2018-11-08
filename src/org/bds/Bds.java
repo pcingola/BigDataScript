@@ -14,10 +14,9 @@ public class Bds {
 
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "rc21";
+	public static final String REVISION = "rc22";
 	public static final String VERSION_MAJOR = "2.0";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
-
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
 	boolean debug; // debug mode

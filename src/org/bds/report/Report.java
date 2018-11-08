@@ -31,27 +31,21 @@ import org.bds.util.Timer;
  */
 public class Report {
 
+	public static String DAG_TEMPLATE = "DagTaskTemplate.js";
 	public static final String DATE_FORMAT_CSV = "yyyy,MM,dd,HH,mm,ss";
 	public static final String DATE_FORMAT_HTML = "yyyy-MM-dd HH:mm:ss";
-	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
-	public static String REPORT_TEMPLATE_YAML = "SummaryTemplate.yaml";
-	public static String DAG_TEMPLATE = "DagTaskTemplate.js";
+	public static final String LINE = "--------------------";
+	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	public static final String REPORT_GREEN_COLOR = "style=\"background-color: #a2dc74\"";
 	public static final String REPORT_RED_COLOR = "style=\"background-color: #ff9696\"";
-	public static final String REPORT_YELLOW_COLOR = "style=\"background-color: #fdff96\"";
-	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
-	public static final String LINE = "--------------------";
-
-	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
+	public static String REPORT_TEMPLATE = "SummaryTemplate.html";
+	public static String REPORT_TEMPLATE_YAML = "SummaryTemplate.yaml";
 	public static final int REPORT_TIME = 60; // Update report every 'REPORT_TIME' seconds
 
-	protected static Timer timerReport = new Timer(); // Report timer (added by Jin Lee)
+	public static final int REPORT_TIMELINE_HEIGHT = 42; // Size of time-line element (life, universe and everything)
+	public static final String REPORT_YELLOW_COLOR = "style=\"background-color: #fdff96\"";
 
-	boolean yaml;
-	boolean verbose;
-	boolean debug;
-	BdsThread bdsThread;
-	Map<String, BdsThread> taskId2BdsThread;
+	protected static Timer timerReport = new Timer(); // Report timer (added by Jin Lee)
 
 	/**
 	 * Check if this is a good time to create a report
@@ -73,6 +67,13 @@ public class Report {
 			report.createReport();
 		}
 	}
+
+	BdsThread bdsThread;
+	boolean debug;
+	Map<String, BdsThread> taskId2BdsThread;
+	boolean verbose;
+
+	boolean yaml;
 
 	public Report(BdsThread bdsThread, boolean yaml) {
 		if (!bdsThread.isRoot()) throw new RuntimeException("Cannot create report from non-root bdsThread");
@@ -168,9 +169,11 @@ public class Report {
 		if (!names.isEmpty()) {
 			for (String name : names) {
 				Value val = scope.getValue(name);
-				rTemplate.add("symType", val.getType());
-				rTemplate.add("symName", name);
-				rTemplate.add("symValue", GprString.escape(val.toString()));
+				if (val != null) {
+					rTemplate.add("symType", val.getType());
+					rTemplate.add("symName", name);
+					rTemplate.add("symValue", GprString.escape(val.toString()));
+				}
 			}
 		} else {
 			rTemplate.add("symType", "");
