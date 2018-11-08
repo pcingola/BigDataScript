@@ -29,93 +29,59 @@ import org.bds.util.Timer;
  */
 public class Config implements Serializable {
 
-	private static final long serialVersionUID = 6558109289073244716L;
-
-	// Bds home directory
-	public static String BDS_HOME = Gpr.HOME + "/.bds";
-
-	// We want to put bds.config together with bds executable
-	// by default BDS_HOME == HOME
-	public static final String DEFAULT_CONFIG_BASENAME = "bds.config";
-	public static final String DEFAULT_CONFIG_DIR = BDS_HOME;
+	public static final String AWS_REGION = "awsRegion"; // Cloud: Amazon AWS parameters
+	public static String BDS_HOME = Gpr.HOME + "/.bds"; // Bds home directory
+	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
+	public static final String CLUSTER_GENERIC_KILL = "clusterGenericKill"; // Cluster: Generic cluster
+	public static final String CLUSTER_GENERIC_POSTMORTEMINFO = "clusterGenericPostMortemInfo";
+	public static final String CLUSTER_GENERIC_RUN = "clusterGenericRun";
+	public static final String CLUSTER_GENERIC_STAT = "clusterGenericStat";
+	public static final String CLUSTER_KILL_ADDITIONAL_ARGUMENTS = "clusterKillAdditionalArgs"; // Cluster additional command line arguments (when killing tasks)
+	public static final String CLUSTER_POSTMORTEMINFO_ADDITIONAL_ARGUMENTS = "clusterPostMortemInfoAdditionalArgs"; // Cluster additional command line arguments (when requesting information about a failed task)
+	public static final String CLUSTER_POSTMORTEMINFO_DISABLED = "clusterPostMortemDisabled"; // Some clusters do not provide information after the process dies
+	public static final String CLUSTER_RUN_ADDITIONAL_ARGUMENTS = "clusterRunAdditionalArgs"; // Cluster additional command line arguments (when running tasks)
+	public static final String CLUSTER_SGE_MEM = "sge.mem";
+	public static final String CLUSTER_SGE_PE = "sge.pe";
+	public static final String CLUSTER_SGE_TIME_IN_SECS = "sge.timeInSecs";
+	public static final String CLUSTER_SGE_TIMEOUT_HARD = "sge.timeout";
+	public static final String CLUSTER_SGE_TIMEOUT_SOFT = "sge.timeoutSoft";
+	public static final String CLUSTER_SSH_NODES = "ssh.nodes"; // Cluster ssh
+	public static final String CLUSTER_STAT_ADDITIONAL_ARGUMENTS = "clusterStatAdditionalArgs"; // Cluster additional command line arguments (when requesting information about all tasks)
+	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
+	public static final String DEFAULT_CONFIG_BASENAME = "bds.config"; // We want to put bds.config together with bds executable
+	public static final String DEFAULT_CONFIG_DIR = BDS_HOME; // by default BDS_HOME == HOME
 	public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + "/" + DEFAULT_CONFIG_BASENAME;
 	public static final String DEFAULT_INCLUDE_DIR = DEFAULT_CONFIG_DIR + "/include";
-
-	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
-
-	// Cloud: Amazon AWS parameters
-	public static final String AWS_REGION = "awsRegion";
-
-	// PID regular expressions
-	public static final String PID_REGEX = "pidRegex"; // Regex used for PID
-	public static final String PID_CHECK_TASK_RUNNING_REGEX = "pidRegexCheckTaskRunning"; // Regex used for checking PID
-	public static final String PID_CHECK_TASK_RUNNING_COLUMN = "pidColumnCheckTaskRunning"; // Regex used for checking PID
-
-	// Shells used to invoke 'sys' and 'task'
-	public static final String TASK_PRELUDE = "taskPrelude"; // Task prelude
-	public static final String TASK_SHELL = "taskShell"; // Task's shell
-	public static final String TASK_SHELL_DEFAULT = "/bin/bash -e"; // Use '-e' so that shell script stops after first error
-
-	public static final String SYS_SHELL = "sysShell"; // Sys's shell
-	public static String SYS_SHELL_DEFAULT = "/bin/bash -e -c"; // Note: This executes a script, so it requires the "-c" right before script name
-
-	// Temporary directory
-	public static final String TMP_DIR = "tmpDir";
+	public static final int DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS = 512;
 	public static final String DEFAULT_TMP_DIR = "/tmp";
-
-	// Running & reporting
+	public static int DEFAULT_WAIT_AFTER_TASK_RUN = 0;
+	public static int DEFAULT_WAIT_FILE_CHECK = -1;
+	public static int DEFAULT_WAIT_TEXT_FILE_BUSY = 10;
 	public static final String DISABLE_CHECKPOINT_CREATE = "disableCheckpoint"; // Disable checkpoint creation
 	public static final String DISABLE_RM_ON_EXIT = "disableRmOnExit";
+	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	public static final String FILTER_OUT_TASK_HINT = "filterOutTaskHint"; // Lines to filter out from task hint
+	public static final String MAX_NUMBER_OF_RUNNING_THREADS = "maxThreads";
+	public static final int MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE = 50; // If maxThreads in configuration file is too small, we'll consider it an error and use this number
+	public static final String PID_CHECK_TASK_RUNNING_COLUMN = "pidColumnCheckTaskRunning"; // Regex used for checking PID
+	public static final String PID_CHECK_TASK_RUNNING_REGEX = "pidRegexCheckTaskRunning"; // Regex used for checking PID
+	public static final String PID_REGEX = "pidRegex"; // Regex used for PID
 	public static final String QUEUE = "queue";
 	public static final String REPORT_HTML = "reportHtml"; // Create an HTML report
 	public static final String REPORT_YAML = "reportYaml"; // Create a YAML report
+	private static final long serialVersionUID = 6558109289073244716L;
 	public static final String SHOW_TASK_CODE = "showTaskCode"; // Always show task's code (sys commands)
+	public static final String SYS_SHELL = "sysShell"; // Sys's shell
+	public static String SYS_SHELL_DEFAULT = "/bin/bash -euo pipefail -c"; // Note: This executes a script, so it requires the "-c" right before script name
 	public static final String TAIL_LINES = "tailLines"; // Number of lie to use in 'tail'
 	public static final String TASK_MAX_HINT_LEN = "taskMaxHintLen";
-
-	// Cluster: SGE parameters
-	public static final String CLUSTER_SGE_PE = "sge.pe";
-	public static final String CLUSTER_SGE_MEM = "sge.mem";
-	public static final String CLUSTER_SGE_TIMEOUT_HARD = "sge.timeout";
-	public static final String CLUSTER_SGE_TIMEOUT_SOFT = "sge.timeoutSoft";
-	public static final String CLUSTER_SGE_TIME_IN_SECS = "sge.timeInSecs";
-
-	// Cluster: SLURM parameters
-
-	// Cluster: Parameters
-	public static final String CLUSTER_RUN_ADDITIONAL_ARGUMENTS = "clusterRunAdditionalArgs"; // Cluster additional command line arguments (when running tasks)
-	public static final String CLUSTER_KILL_ADDITIONAL_ARGUMENTS = "clusterKillAdditionalArgs"; // Cluster additional command line arguments (when killing tasks)
-	public static final String CLUSTER_STAT_ADDITIONAL_ARGUMENTS = "clusterStatAdditionalArgs"; // Cluster additional command line arguments (when requesting information about all tasks)
-	public static final String CLUSTER_POSTMORTEMINFO_ADDITIONAL_ARGUMENTS = "clusterPostMortemInfoAdditionalArgs"; // Cluster additional command line arguments (when requesting information about a failed task)
-	public static final String CLUSTER_POSTMORTEMINFO_DISABLED = "clusterPostMortemDisabled"; // Some clusters do not provide information after the process dies
-
-	// Cluster: Generic cluster
-	public static final String CLUSTER_GENERIC_RUN = "clusterGenericRun";
-	public static final String CLUSTER_GENERIC_KILL = "clusterGenericKill";
-	public static final String CLUSTER_GENERIC_STAT = "clusterGenericStat";
-	public static final String CLUSTER_GENERIC_POSTMORTEMINFO = "clusterGenericPostMortemInfo";
-
-	// Cluster ssh
-	public static final String CLUSTER_SSH_NODES = "ssh.nodes";
-
-	// Thread running
-	public static final String MAX_NUMBER_OF_RUNNING_THREADS = "maxThreads";
-	public static final int MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE = 50; // If maxThreads in configuration file is too small, we'll consider it an error and use this number
-	public static final int DEFAULT_MAX_NUMBER_OF_RUNNING_THREADS = 512;
-
+	public static final String TASK_PRELUDE = "taskPrelude"; // Task prelude
+	public static final String TASK_SHELL = "taskShell"; // Task's shell
+	public static final String TASK_SHELL_DEFAULT = "/bin/bash -euo pipefail"; // Use '-euo pipefail' so that shell script stops after first error
+	public static final String TMP_DIR = "tmpDir";
 	public static final String WAIT_AFTER_TASK_RUN = "waitAfterTaskRun";
-	public static int DEFAULT_WAIT_AFTER_TASK_RUN = 0;
-
 	public static final String WAIT_FILE_CHECK = "waitFileCheck";
-	public static int DEFAULT_WAIT_FILE_CHECK = -1;
-
 	public static final String WAIT_TEXT_FILE_BUSY = "waitTextFileBusy";
-	public static int DEFAULT_WAIT_TEXT_FILE_BUSY = 10;
-
-	private static Config configInstance = null; // Config is some kind of singleton because we want to make it accessible from everywhere
-
-	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	/**
 	 * Get singleton
@@ -132,44 +98,44 @@ public class Config implements Serializable {
 		configInstance = null;
 	}
 
+	String configDirName;
+	String configFileName;
 	boolean debug = false; // Debug mode?
-	boolean verbose = false; // Verbose mode?
-	boolean quiet = false; // Quiet mode?
-	boolean log = false; // Log all commands?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
+	boolean extractSource = false; // Extract source code from checkpoint file
+	ArrayList<String> filterOutTaskHint;
+	ArrayList<String> includePath;
+	boolean log = false; // Log all commands?
+	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
+	MonitorTask monitorTask;
 	boolean noCheckpoint; // Do not create checkpoint files
 	boolean noRmOnExit; // Avoid removing files on exit
-	boolean extractSource = false; // Extract source code from checkpoint file
-	boolean reportYaml = false; // Use YAML report format
-	boolean reportHtml = false; // Use HTML report format
-	boolean showTaskCode; // Always show task's code (sys statements)
-	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
-	int maxThreads = -1; // Maximum number of simultaneous threads (e.g. when running 'qsub' commands)
-	int waitAfterTaskRun = -1; // Wait some milisec after task run
-	int waitTextFileBusy = -1; // Wait some milisecs after writing a shell file to disk (before execution)
-	int waitFileCheck = -1; // Wait some milisecs after task finished before checking if output files exists
-	int tailLines; // Number of lines to use in 'tail'
-	Integer taskMaxHintLen; // Max number of characters to use in tasks's "hint"
-	String configFileName;
-	String configDirName;
 	String pidFile = "pidFile" + (new Date()).getTime() + ".txt"; // Default PID file
 	String pidRegex; // Regex used to extract PID from cluster command (e.g. qsub).
 	String pidRegexCheckTaskRunning; // Regex to match PID when bds checks that tasks are running in the cluster
+	Properties properties;
 	String queue; // Queue name
+	boolean quiet = false; // Quiet mode?
 	String reportFileName; // Preferred file name to use for progress and final report
-	String system; // System type
+	boolean reportHtml = false; // Use HTML report format
+	boolean reportYaml = false; // Use YAML report format
+	boolean showTaskCode; // Always show task's code (sys statements)
 	String sysShell; // System shell
+	String system; // System type
+	Tail tail;
+	int tailLines; // Number of lines to use in 'tail'
+	int taskFailCount = 0; // Number of times a task is allowed to fail (i.e. number of re-tries)
+	TaskLogger taskLogger;
+	Integer taskMaxHintLen; // Max number of characters to use in tasks's "hint"
 	String taskPrelude; // Task prelude
 	String taskShell; // Task shell
 	String tmpDir; // Tmp directory
-	Properties properties;
-	ArrayList<String> includePath;
-	ArrayList<String> filterOutTaskHint;
-	TaskLogger taskLogger;
+	boolean verbose = false; // Verbose mode?
+	int waitAfterTaskRun = -1; // Wait some milisec after task run
 
-	MonitorTask monitorTask;
+	int waitFileCheck = -1; // Wait some milisecs after task finished before checking if output files exists
 
-	Tail tail;
+	int waitTextFileBusy = -1; // Wait some milisecs after writing a shell file to disk (before execution)
 
 	public Config() {
 		this(null);
