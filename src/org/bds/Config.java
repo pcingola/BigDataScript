@@ -77,7 +77,7 @@ public class Config implements Serializable {
 	public static final String TASK_MAX_HINT_LEN = "taskMaxHintLen";
 	public static final String TASK_PRELUDE = "taskPrelude"; // Task prelude
 	public static final String TASK_SHELL = "taskShell"; // Task's shell
-	public static final String TASK_SHELL_DEFAULT = "/bin/bash -euo pipefail"; // Use '-euo pipefail' so that shell script stops after first error
+	public static final String TASK_SHELL_DEFAULT = "/bin/bash -eu\nset -o pipefail"; // Use '-euo pipefail' so that shell script stops after first error
 	public static final String TMP_DIR = "tmpDir";
 	public static final String WAIT_AFTER_TASK_RUN = "waitAfterTaskRun";
 	public static final String WAIT_FILE_CHECK = "waitFileCheck";
