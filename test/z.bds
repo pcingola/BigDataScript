@@ -1,5 +1,18 @@
 #!/usr/bin/env bds
 
+class A {
+	void f() {
+		in := 'in.txt'
+		task(out <- in) {
+			sys echo hi
+		}
+	}
 
-sys echo $PATH
+	string out() {
+		return 'out.txt'
+	}
 
+	string out(string s) {
+		return "out.$s"
+	}
+}
