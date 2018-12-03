@@ -311,8 +311,10 @@ public class SymbolTable implements Serializable, Iterable<String> {
 		// and only one function with that name
 		// Note, this is limiting and very naive. A better approach is needed
 		if (fs != null) {
+			// If there is only one symbol, we can resolve it
+			// Otherwise, we don't know which one of the symbols we are trying to get
+			// E.g. multiple functions with the same name and different parameters
 			if (fs.size() == 1) return fs.get(0).getType();
-			if (fs.size() > 1) throw new RuntimeException("Ambiguous symbol '" + name + "'.");
 		}
 
 		return null;

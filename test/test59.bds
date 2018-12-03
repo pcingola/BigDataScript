@@ -1,0 +1,14 @@
+#!/usr/bin/env bds
+
+class A {
+	void f() {
+		in := 'in.txt'
+		task(out <- in) {
+			sys echo hi
+		}
+	}
+
+	string out() {
+		return 'out.txt'
+	}
+}

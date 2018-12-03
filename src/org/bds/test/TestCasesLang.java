@@ -390,4 +390,16 @@ public class TestCasesLang extends TestCasesBase {
 		compileErrors("test/test57.bds", "Cannot cast A to B");
 	}
 
+	@Test
+	public void test58() {
+		Gpr.debug("Test");
+		compileErrors("test/test58.bds", "Symbol 'out' cannot be resolved");
+	}
+
+	@Test
+	public void test59() {
+		Gpr.debug("Test");
+		compileErrors("test/test59.bds", "Expression should be string or string[], got '(A) -> string'");
+	}
+
 }

@@ -181,7 +181,7 @@ public class ExpressionDepOperator extends Expression {
 		for (Expression e : left)
 			if (e.isString()) ; // OK
 			else if (e.isList(Types.STRING)) ; //
-			else compilerMessages.add(e, "Expression should be string or string[]", MessageType.ERROR);
+			else compilerMessages.add(e, "Expression should be string or string[], got '" + e.getReturnType() + "'", MessageType.ERROR);
 
 		for (Expression e : right)
 			if (e.isString()) ; // OK

@@ -1,7 +1,9 @@
 package org.bds.test;
 
 import org.bds.Config;
+import org.bds.util.Gpr;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -15,6 +17,13 @@ public class TestCasesZzz extends TestCasesBase {
 	public void beforeEachTest() {
 		Config.reset();
 		Config.get().load();
+	}
+
+	@Test
+	public void test59() {
+		Gpr.debug("Test");
+		verbose = true;
+		compileErrors("test/test59.bds", "Expression should be string or string[], got '(A) -> string'");
 	}
 
 }
