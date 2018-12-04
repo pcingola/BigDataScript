@@ -124,12 +124,13 @@ public class BdsParseArgs {
 		for (String arg : programArgs)
 			vargs.add(new ValueString(arg));
 
-		long pid = ProcessHandle.current().pid();
-
 		gs.add(GlobalScope.GLOBAL_VAR_ARGS_LIST, vargs); // Make all unprocessed arguments available for the program (in 'args' list)
 		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_NAME, progName);
 		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_PATH, programPath);
-		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_PID, pid);
+
+		// FIXME: Add PID here (this solution works on Java 9 and above)
+		// long pid = ProcessHandle.current().pid();
+		gs.add(GlobalScope.GLOBAL_VAR_PROGRAM_PID, -1);
 	}
 
 	/**
