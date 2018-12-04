@@ -13,23 +13,14 @@ import org.bds.util.Gpr;
 public class Bds {
 
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "rc25";
+	public static final String REVISION = "rc26";
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String VERSION_MAJOR = "2.0";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
-	/**
-	 * Main
-	 */
-	public static void main(String[] args) {
-		// Create BigDataScript object and run it
-		Bds bigDataScript = new Bds(args);
-		int exitValue = bigDataScript.run();
-		System.exit(exitValue);
-	}
-
 	String args[];
+
 	BdsRun bdsRun;
 	String chekcpointRestoreFile; // Restore file
 	Config config;
@@ -49,8 +40,17 @@ public class Bds {
 	Boolean reportYaml; // Use YAML report style
 	String system; // System type
 	int taskFailCount = -1;
-
 	boolean verbose; // Verbose mode
+
+	/**
+	 * Main
+	 */
+	public static void main(String[] args) {
+		// Create BigDataScript object and run it
+		Bds bigDataScript = new Bds(args);
+		int exitValue = bigDataScript.run();
+		System.exit(exitValue);
+	}
 
 	public Bds(String args[]) {
 		this.args = args;
