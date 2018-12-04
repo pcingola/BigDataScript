@@ -37,6 +37,7 @@ public class GlobalScope extends Scope {
 	// Program name
 	public static final String GLOBAL_VAR_PROGRAM_NAME = "programName";
 	public static final String GLOBAL_VAR_PROGRAM_PATH = "programPath";
+	public static final String GLOBAL_VAR_PROGRAM_PID = "programPid";
 
 	// Global scope
 	private static GlobalScope globalScope = new GlobalScope();
@@ -105,6 +106,7 @@ public class GlobalScope extends Scope {
 		// Add global symbols
 		add(GLOBAL_VAR_PROGRAM_NAME, ""); // Now is empty, but they are assigned later
 		add(GLOBAL_VAR_PROGRAM_PATH, "");
+		add(GLOBAL_VAR_PROGRAM_PID, -1);
 
 		ValueList vargs = new ValueList(TypeList.get(Types.STRING));
 		add(GLOBAL_VAR_ARGS_LIST, vargs);
