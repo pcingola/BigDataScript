@@ -116,6 +116,26 @@ public class TypeClass extends TypeComposite {
 		return className;
 	}
 
+	/**
+	 * Get parent class type
+	 */
+	TypeClass getParentType() {
+		ClassDeclaration cdecl = getClassDeclaration();
+		if (cdecl == null) return null; // No class declaration
+		if (!cdecl.isSubClass()) return null; // Not a sub-class
+
+		// Try to find parent TypeClass
+		TypeClass tc = cdecl.getClassTypeParent();
+		if (tc != null) return tc; // Found parent TypeClass
+
+		// TypeClass not found. Probably we have not performed type checking for the sub class yet.
+		// Try to find a stub using a canonical name
+		String tcName = cdecl.getExtendsName();
+		tc = (TypeClass) Types.get(tcName);
+
+		return tc;
+	}
+
 	public boolean hasClassDeclaration() {
 		return classDecl != null;
 	}
@@ -129,9 +149,13 @@ public class TypeClass extends TypeComposite {
 		return classDecl == null;
 	}
 
+	/**
+	 * Is 'this' a sub-class of 'type'?
+	 */
 	public boolean isSubClassOf(TypeClass type) {
+		// Go up until we find the parent
 		String typeCan = type.getCanonicalName();
-		for (TypeClass tchild = this; tchild != null; tchild = (tchild.getClassDeclaration() != null ? tchild.getClassDeclaration().getClassTypeParent() : null)) {
+		for (TypeClass tchild = this; tchild != null; tchild = tchild.getParentType()) {
 			String tchildCan = tchild.getCanonicalName();
 			if (tchildCan.equals(typeCan)) return true;
 		}

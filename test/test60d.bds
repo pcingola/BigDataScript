@@ -4,6 +4,3 @@ class D {
 		a = new B()
 	}
 }
-class A { }
-class B extends A { }
-println "Hi"

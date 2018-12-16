@@ -115,10 +115,9 @@ public class ClassDeclaration extends Block {
 		return fd.getFunctionName().equals(className);
 	}
 
-	//	@Override
-	//	public boolean isStopDebug() {
-	//		return false;
-	//	}
+	public boolean isSubClass() {
+		return classNameParent != null;
+	}
 
 	@Override
 	protected void parse(ParseTree tree) {

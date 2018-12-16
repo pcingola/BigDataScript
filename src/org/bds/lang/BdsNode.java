@@ -558,7 +558,7 @@ public abstract class BdsNode implements Serializable {
 			SymbolTable newSymtab = new SymbolTable(this);
 			symtab = newSymtab;
 			setSymbolTable(newSymtab);
-			newSymTab = true;;
+			newSymTab = true;
 		}
 
 		// Once the scope is right, we can perform the real type-check
