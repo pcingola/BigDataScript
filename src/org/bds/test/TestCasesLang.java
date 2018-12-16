@@ -402,4 +402,18 @@ public class TestCasesLang extends TestCasesBase {
 		compileErrors("test/test59.bds", "Expression should be string or string[], got '(A) -> string'");
 	}
 
+	@Test
+	public void test60() {
+		Gpr.debug("Test");
+		verbose = true;
+		compileOk("test/test60.bds");
+	}
+
+	@Test
+	public void test61() {
+		Gpr.debug("Test");
+		verbose = true;
+		compileOk("test/test61.bds");
+	}
+
 }
