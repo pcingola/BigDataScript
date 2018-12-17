@@ -414,4 +414,10 @@ public class TestCasesLang extends TestCasesBase {
 		compileOk("test/test61.bds");
 	}
 
+	@Test
+	public void test62() {
+		Gpr.debug("Test");
+		compileOk("test/test62.bds");
+	}
+
 }
