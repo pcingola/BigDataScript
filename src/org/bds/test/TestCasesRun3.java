@@ -410,4 +410,11 @@ public class TestCasesRun3 extends TestCasesBase {
 
 		runAndCheck(1, "test/run_241.bds", expectedValues);
 	}
+
+	@Test
+	public void test242_derivedMethodParamNames() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_242.bds", "ret", "n:hi");
+	}
+
 }

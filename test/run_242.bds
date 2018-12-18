@@ -1,0 +1,13 @@
+#!/usr/bin/env bds
+
+class A {
+	string f(string s) { return "s:$s" }
+}
+
+class B extends A {
+	string f(string n) { return "n:$n" }
+}
+
+A a = new B()
+ret := a.f("hi")
+println "ret: '$ret'"
