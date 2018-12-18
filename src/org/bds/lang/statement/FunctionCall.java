@@ -10,6 +10,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.symbol.SymbolTable;
+import org.bds.util.Gpr;
 
 /**
  * Function call
@@ -39,10 +40,11 @@ public class FunctionCall extends Expression {
 	protected FunctionDeclaration findMethod(SymbolTable symtab, Type type, Args args) {
 		if (type == null) return null;
 
+		Gpr.debug("FIND MEHTOD: " + this);
 		// Find function in class or any super-class
 		if (type.isClass()) {
 			// A class' method
-			for (TypeClass tc = (TypeClass) type; tc != null && tc.hasClassDeclaration(); tc = tc.getClassDeclaration().getClassTypeParent()) {
+			for (TypeClass tc = (TypeClass) type; tc != null && tc.hasClassDeclaration(); tc = tc.getParentTypeClass()) {
 				// Get symbol table
 				SymbolTable classSymTab = tc.getSymbolTable();
 				if (classSymTab == null) return null;
@@ -93,11 +95,6 @@ public class FunctionCall extends Expression {
 	public boolean isReturnTypesNotNull() {
 		return true;
 	}
-
-	//	@Override
-	//	public boolean isStopDebug() {
-	//		return true;
-	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {

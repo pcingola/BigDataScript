@@ -7,6 +7,7 @@ import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.symbol.SymbolTable;
+import org.bds.util.Gpr;
 
 /**
  * A Statement that requires a new Scope
@@ -35,8 +36,18 @@ public class StatementWithScope extends Statement {
 	public void addLocalSymbols(SymbolTable symtab) {
 		// Add all functions
 		List<BdsNode> fdecls = BdsNodeWalker.findNodes(this, StatementFunctionDeclaration.class, false, true);
-		for (BdsNode n : fdecls)
+		for (BdsNode n : fdecls) {
+			Gpr.debug("ADD FUNCTION DECLARATION: " + n);
 			symtab.addFunction((FunctionDeclaration) n);
+		}
+
+		// Add classes
+		List<BdsNode> cdecls = BdsNodeWalker.findNodes(this, ClassDeclaration.class, false, true);
+		for (BdsNode n : cdecls) {
+			ClassDeclaration cdecl = (ClassDeclaration) n;
+			cdecl.getType(); // This creates the type and adds it to Types
+			Gpr.debug("ADD CLASS DECLARATION: " + cdecl.getClassName());
+		}
 	}
 
 	@Override

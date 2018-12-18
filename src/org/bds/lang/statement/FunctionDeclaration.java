@@ -240,6 +240,7 @@ public class FunctionDeclaration extends StatementWithScope {
 			// Add to parent symbol table, because the current
 			// symbol table is for the function's body
 			symtab.getParent().addFunction(this);
+			Gpr.debug("ADDING FUNCTION: " + this);
 		}
 	}
 }

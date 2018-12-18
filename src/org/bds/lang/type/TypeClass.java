@@ -9,6 +9,7 @@ import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.statement.VariableInit;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueClass;
+import org.bds.util.Gpr;
 
 /**
  * Class type
@@ -55,10 +56,12 @@ public class TypeClass extends TypeComposite {
 		}
 
 		// Add methods
-		for (MethodDeclaration md : classDecl.getMethodDecl())
+		for (MethodDeclaration md : classDecl.getMethodDecl()) {
+			Gpr.debug("ADDED METHOD '" + md.signature() + "' TO CLASS '" + this.getCanonicalName() + "' SYMBOL TABLE");
 			if (!md.isNative()) { // Add declared method (native methods are added to symbol table during initialization, do not add again)
 				symbolTable.addFunction(md);
 			}
+		}
 	}
 
 	/**
@@ -119,7 +122,7 @@ public class TypeClass extends TypeComposite {
 	/**
 	 * Get parent class type
 	 */
-	TypeClass getParentType() {
+	public TypeClass getParentTypeClass() {
 		ClassDeclaration cdecl = getClassDeclaration();
 		if (cdecl == null) return null; // No class declaration
 		if (!cdecl.isSubClass()) return null; // Not a sub-class
@@ -155,7 +158,7 @@ public class TypeClass extends TypeComposite {
 	public boolean isSubClassOf(TypeClass type) {
 		// Go up until we find the parent
 		String typeCan = type.getCanonicalName();
-		for (TypeClass tchild = this; tchild != null; tchild = tchild.getParentType()) {
+		for (TypeClass tchild = this; tchild != null; tchild = tchild.getParentTypeClass()) {
 			String tchildCan = tchild.getCanonicalName();
 			if (tchildCan.equals(typeCan)) return true;
 		}

@@ -21,6 +21,7 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.util.AutoHashMap;
+import org.bds.util.Gpr;
 
 /**
  * SymboTable: A table of variables, functions and classes
@@ -82,6 +83,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	 * Find a function that matches a function call
 	 */
 	public ValueFunction findFunction(String functionName, Args args) {
+		Gpr.debug("FIND FUNCTION: " + functionName);
 		// Retrieve all functions with the same name
 		List<ValueFunction> vfuncs = getValueFunctions(functionName);
 
@@ -124,6 +126,7 @@ public class SymbolTable implements Serializable, Iterable<String> {
 			}
 		}
 
+		Gpr.debug("FIND FUNCTION: " + functionName + "\tFOUND: " + bestVf);
 		return bestVf;
 	}
 

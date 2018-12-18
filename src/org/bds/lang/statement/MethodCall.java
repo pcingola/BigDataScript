@@ -59,7 +59,7 @@ public class MethodCall extends FunctionCall {
 		if (returnType != null) return returnType;
 
 		// Calculate return types for expr and args
-		// Note that expresionObj is null in ExpressionNew (which is a MethodCall)
+		// Note that expresionThis is null in ExpressionNew (which is a MethodCall)
 		Type exprType = (expresionThis != null ? expresionThis.returnType(symtab) : null);
 		args.returnType(symtab);
 
