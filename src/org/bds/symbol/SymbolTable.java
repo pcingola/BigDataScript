@@ -21,7 +21,6 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.util.AutoHashMap;
-import org.bds.util.Gpr;
 
 /**
  * SymboTable: A table of variables, functions and classes
@@ -83,7 +82,6 @@ public class SymbolTable implements Serializable, Iterable<String> {
 	 * Find a function that matches a function call
 	 */
 	public ValueFunction findFunction(String functionName, Args args) {
-		Gpr.debug("FIND FUNCTION: " + functionName);
 		// Retrieve all functions with the same name
 		List<ValueFunction> vfuncs = getValueFunctions(functionName);
 
@@ -126,10 +124,12 @@ public class SymbolTable implements Serializable, Iterable<String> {
 			}
 		}
 
-		Gpr.debug("FIND FUNCTION: " + functionName + "\tFOUND: " + bestVf);
 		return bestVf;
 	}
 
+	/**
+	 * Find a method from function declaration
+	 */
 	public MethodDeclaration findMethod(FunctionDeclaration fdecl) {
 		if (functions == null) return null;
 
@@ -238,6 +238,22 @@ public class SymbolTable implements Serializable, Iterable<String> {
 
 	public boolean hasFunctions() {
 		return functions != null && !functions.isEmpty();
+	}
+
+	/**
+	 * Does the symbol table have another function with the same signature?
+	 */
+	public boolean hasOtherFunction(FunctionDeclaration fdecl) {
+		if (!hasFunctions()) return false;
+		String signature = fdecl.signature();
+		for (List<ValueFunction> vfuncs : functions.values()) {
+			for (ValueFunction vf : vfuncs) {
+				FunctionDeclaration fd = vf.getFunctionDeclaration();
+				// Same signature and different declaration? We've found two function with the same signature
+				if (fd.signature().equals(signature) && fd != fdecl) return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean hasType(String name) {

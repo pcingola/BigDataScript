@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.compile.BdsNodeWalker;
 import org.bds.lang.statement.BlockWithFile;
+import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.statement.StatementFunctionDeclaration;
@@ -26,8 +27,6 @@ public class ProgramUnit extends BlockWithFile {
 
 	private static final long serialVersionUID = 3819936306695046515L;
 
-	protected BdsThread bdsThread;
-
 	private static File discoverFileFromTree(ParseTree tree) { // should probably go somewhere else?
 		try {
 			CharStream cs = ((ParserRuleContext) tree).getStart().getInputStream();
@@ -38,10 +37,34 @@ public class ProgramUnit extends BlockWithFile {
 		}
 	}
 
+	protected BdsThread bdsThread;
+
 	public ProgramUnit(BdsNode parent, ParseTree tree) {
 		super(parent, null); // little hack begin: parse is done later
 		if (tree != null) setFile(discoverFileFromTree(tree));
 		doParse(tree); // little hack end
+	}
+
+	/**
+	 * Add local symbols to SymbolTable
+	 * The idea is that you should be able to refer to functions
+	 * and classes defined within the same scope, which may be defined
+	 * after the current statement, e.g.:
+	 *   i := f(42)    // Function 'f' is not defined yet
+	 *   int f(int x) { return 2*x }
+	 */
+	public void addSymbols(SymbolTable symtab) {
+		// Add all functions
+		List<BdsNode> fdecls = BdsNodeWalker.findNodes(this, StatementFunctionDeclaration.class, false, true);
+		for (BdsNode n : fdecls)
+			symtab.addFunction((FunctionDeclaration) n);
+
+		// Add classes
+		List<BdsNode> cdecls = BdsNodeWalker.findNodes(this, ClassDeclaration.class, false, true);
+		for (BdsNode n : cdecls) {
+			ClassDeclaration cdecl = (ClassDeclaration) n;
+			Types.add(cdecl.getType()); // This creates the type and adds it to Types
+		}
 	}
 
 	/**

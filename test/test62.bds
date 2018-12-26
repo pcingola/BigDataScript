@@ -14,3 +14,6 @@ class B {
 class C {
 	int fc() { return 0 }
 }
+
+void f() { g() }
+void g() { }

@@ -15,6 +15,7 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeFunction;
 import org.bds.lang.type.Types;
+import org.bds.symbol.GlobalSymbolTable;
 import org.bds.symbol.SymbolTable;
 import org.bds.util.Gpr;
 
@@ -117,6 +118,14 @@ public class FunctionDeclaration extends StatementWithScope {
 			if (slast != null) return hasReturn(slast);
 		}
 		return false;
+	}
+
+	/**
+	 * Has this function already been declared?
+	 * @return True if a function with the same signature already exists
+	 */
+	boolean isDuplicateFunction(SymbolTable symtab) {
+		return symtab.hasOtherFunction(this) || GlobalSymbolTable.get().hasOtherFunction(this);
 	}
 
 	public boolean isMethod() {
@@ -234,13 +243,15 @@ public class FunctionDeclaration extends StatementWithScope {
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// Function name collides with other names?
-		if (symtab.getVariableTypeLocal(functionName) != null) {
-			compilerMessages.add(this, "Duplicate local name " + functionName, MessageType.ERROR);
+		SymbolTable symtabParent = symtab.getParent();
+		if (symtabParent.getVariableTypeLocal(functionName) != null) {
+			compilerMessages.add(this, "Duplicate local name '" + functionName + "'", MessageType.ERROR);
+		} else if (isDuplicateFunction(symtabParent)) {
+			compilerMessages.add(this, "Duplicate function '" + signature() + "'", MessageType.ERROR);
 		} else if ((functionName != null) && (getType() != null)) {
 			// Add to parent symbol table, because the current
 			// symbol table is for the function's body
-			symtab.getParent().addFunction(this);
-			Gpr.debug("ADDING FUNCTION: " + this);
+			symtabParent.addFunction(this);
 		}
 	}
 }

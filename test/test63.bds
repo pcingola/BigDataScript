@@ -1,0 +1,8 @@
+#!/usr/bin/env bds
+
+zzz := "This is zzz VARIABLE"
+
+void zzz() { println "This is zzz FUNCTION" }
+
+println "This should not compile! When refering to 'zzz' we don't know whether it's a function or a variable (think functional)"
+

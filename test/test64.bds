@@ -1,0 +1,9 @@
+#!/usr/bin/env bds
+
+# Declare repeated function
+void zzz() { println "ZZZ: 1" }
+
+void zzz() { println "ZZZ: 2" }
+
+println "This should not compile!"
+
