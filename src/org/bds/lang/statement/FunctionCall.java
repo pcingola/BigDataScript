@@ -10,7 +10,6 @@ import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.value.ValueFunction;
 import org.bds.symbol.SymbolTable;
-import org.bds.util.Gpr;
 
 /**
  * Function call
@@ -40,7 +39,6 @@ public class FunctionCall extends Expression {
 	protected FunctionDeclaration findMethod(SymbolTable symtab, Type type, Args args) {
 		if (type == null) return null;
 
-		Gpr.debug("FIND MEHTOD: " + this);
 		// Find function in class or any super-class
 		if (type.isClass()) {
 			// A class' method

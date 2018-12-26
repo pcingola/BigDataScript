@@ -1,10 +1,12 @@
 package org.bds.lang.statement;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
+import org.bds.symbol.GlobalSymbolTable;
 import org.bds.symbol.SymbolTable;
 
 /**
@@ -39,6 +41,16 @@ public class MethodDeclaration extends FunctionDeclaration {
 		return classType;
 	}
 
+	/**
+	 * Has this function already been declared?
+	 * @return True if a function with the same signature already exists
+	 */
+	@Override
+	boolean isDuplicateFunction(SymbolTable symtab) {
+		SymbolTable symtabClass = classType.getSymbolTable();
+		return symtabClass.hasOtherFunction(this) || symtab.hasOtherFunction(this) || GlobalSymbolTable.get().hasOtherFunction(this);
+	}
+
 	@Override
 	public boolean isMethod() {
 		return true;
@@ -62,7 +74,8 @@ public class MethodDeclaration extends FunctionDeclaration {
 
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
-		// This is checked during ClassDeclaration. Nothing to do here
+		// This is checked during ClassDeclaration....not much to do here
+		if (isDuplicateFunction(symtab.getParent())) compilerMessages.add(this, "Duplicate method '" + signature() + "'", MessageType.ERROR);
 	}
 
 }

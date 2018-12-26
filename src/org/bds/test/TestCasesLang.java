@@ -319,7 +319,7 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test47() {
 		Gpr.debug("Test");
-		String errs = "ERROR [ file 'test/test47.bds', line 3 ] :	Duplicate local name 'gsea' (function 'gsea' declared in test/test47.bds, line 5)";
+		String errs = "ERROR [ file 'test/test47.bds', line 5 ] :	Duplicate local name 'gsea'";
 		compileErrors("test/test47.bds", errs);
 	}
 
@@ -418,6 +418,24 @@ public class TestCasesLang extends TestCasesBase {
 	public void test62() {
 		Gpr.debug("Test");
 		compileOk("test/test62.bds");
+	}
+
+	@Test
+	public void test63() {
+		Gpr.debug("Test");
+		compileErrors("test/test63.bds", "ERROR [ file 'test/test63.bds', line 5 ] :	Duplicate local name 'zzz'");
+	}
+
+	@Test
+	public void test64() {
+		Gpr.debug("Test");
+		compileErrors("test/test64.bds", "Duplicate function 'zzz() -> void'");
+	}
+
+	@Test
+	public void test65() {
+		Gpr.debug("Test");
+		compileErrors("test/test65.bds", "Duplicate method 'A.zzz(A) -> void'");
 	}
 
 }

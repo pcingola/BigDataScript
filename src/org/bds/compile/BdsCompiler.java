@@ -42,6 +42,23 @@ public class BdsCompiler {
 	}
 
 	/**
+	 * Add symbols: Classes, functons, methods, etc.
+	 * This step is necesary for forward resolution (i.e. when the
+	 * definition of the class is after the first time it's used)
+	 * @return true on error, false on success
+	 */
+	boolean addSymbols() {
+		if (debug) log("Add symbols.");
+		GlobalSymbolTable globalSymbolTable = GlobalSymbolTable.get();
+		if (debug) log("Global SymbolTable before 'addSymbols':\n" + globalSymbolTable);
+		programUnit.addSymbols(globalSymbolTable);
+		if (debug) log("Global SymbolTable after 'addSymbols':\n" + globalSymbolTable);
+
+		// FIXME: Any errors?
+		return false;
+	}
+
+	/**
 	 * BdsCompiler program
 	 */
 	public ProgramUnit compile() {
@@ -54,6 +71,11 @@ public class BdsCompiler {
 		// Convert to BdsNodes
 		programUnit = createModel(tree);
 		if (programUnit == null) return null;
+
+		CompilerMessages.reset();
+
+		// Add local symbols
+		if (addSymbols()) return null;
 
 		// Type-checking
 		if (typeChecking()) return null;
@@ -301,7 +323,6 @@ public class BdsCompiler {
 	 */
 	boolean typeChecking() {
 		if (debug) log("Type checking.");
-		CompilerMessages.reset();
 		GlobalSymbolTable globalSymbolTable = GlobalSymbolTable.get();
 		if (debug) log("Global SymbolTable:\n" + globalSymbolTable);
 		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
