@@ -117,6 +117,15 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Add arguments to the scope for a function / method call
+	 */
+	void addArgsCallScope(FunctionDeclaration fdecl, Value[] values) {
+		List<String> args = fdecl.getParameterNames();
+		for (int i = 0; i < args.size(); i++)
+			scope.add(args.get(i), values[i]);
+	}
+
+	/**
 	 * Add new constant
 	 * @param constant
 	 * @return Constant index
@@ -230,8 +239,10 @@ public class BdsVm implements Serializable {
 		pushCallFrame(); // Push stack frame
 		FunctionDeclaration fdecl = functionsBySignature.get(fsig);
 		newScope(); // Create a new scope
-		Value vthis = addArgsCallScope(fdecl); // Add arguments to scope, get 'this' value
+		Value[] values = getArgsFromStack(fdecl); // Get arguments from scope
+		Value vthis = values[0]; // First argument is 'this'
 		fdecl = resolveVirtualMethod(vthis, fdecl, isSuper, fsig); // Find 'virtual method' (class inheritance)
+		addArgsCallScope(fdecl, values); // Add arguments to scope
 		pc = fdecl.getPc(); // Jump to method
 	}
 
@@ -492,6 +503,22 @@ public class BdsVm implements Serializable {
 	void forkOpCode(int pushCount) {
 		BdsVm vmfork = fork(pushCount);
 		bdsThread.fork(vmfork);
+	}
+
+	/**
+	 * Get arguments from scope for a function / method call
+	 * Note: Remember that stack in reverse order
+	 *
+	 * @return List of arguments. First argument corresponds to 'this' in a method call
+	 */
+	Value[] getArgsFromStack(FunctionDeclaration fdecl) {
+		List<String> args = fdecl.getParameterNames();
+		Value[] values = new Value[args.size()];
+		for (int i = args.size() - 1; i >= 0; i--) {
+			Value val = pop();
+			values[i] = val;
+		}
+		return values;
 	}
 
 	/**
