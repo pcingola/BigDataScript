@@ -29,7 +29,6 @@ public class NativeLibraryString {
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_parseReal" //
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_parseBool" //
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_replace_regex_repl" //
-			, "org.bds.lang.nativeMethods.string.MethodNative_string_path" //
 			// String as files
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_baseName" //
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_baseName_ext" //
@@ -50,6 +49,8 @@ public class NativeLibraryString {
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_isDir" //
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_isFile" //
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_mkdir" //
+			, "org.bds.lang.nativeMethods.string.MethodNative_string_path" //
+			, "org.bds.lang.nativeMethods.string.MethodNative_string_pathCanonical" //
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_pathName" //
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_read" //
 			, "org.bds.lang.nativeMethods.string.MethodNative_string_readLines" //

@@ -1,13 +1,8 @@
 #!/usr/bin/env bds
 
-class A {
-	string f(string s) { return "s:$s" }
-}
+dir := "/Users/kqrw311/seqauto_dev/cloud"
 
-class B extends A {
-	string f(string n) { return "n:$n" }
-}
+println "dir: '$dir'"
+println "dir: '" + dir.path() + "'"
+println "dir: '" + dir.pathCanonical() + "'"
 
-A a = new B()
-ret := a.f("hi")
-println "ret: '$ret'"
