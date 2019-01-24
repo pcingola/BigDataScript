@@ -1,8 +1,13 @@
 #!/usr/bin/env bds
 
-dir := "/Users/kqrw311/seqauto_dev/cloud"
+for(int i=0 ; i < 10; i++ ) {
+	task echo hi $i ; sleep 10; echo bye $i
+}
 
-println "dir: '$dir'"
-println "dir: '" + dir.path() + "'"
-println "dir: '" + dir.pathCanonical() + "'"
-
+while( true ) {
+	println "Tasks to run: " + tasksToRun()
+	println "Tasks running: " + tasksRunning()
+	println "Tasks done: " + tasksDone()
+	println "\n\n"
+	sleep(1)
+}

@@ -178,8 +178,16 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return exName;
 	}
 
+	public Map<String, Task> getTasksDone() {
+		return tasksDone;
+	}
+
 	public Map<String, Task> getTasksRunning() {
 		return tasksRunning;
+	}
+
+	public List<Task> getTasksToRun() {
+		return tasksToRun;
 	}
 
 	/**

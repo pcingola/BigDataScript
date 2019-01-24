@@ -10,24 +10,26 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
+import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
- * Native function "countTasks": Count number of tasks (running or pending)
+ * Native function "tasksRunning": Count number of tasks (running or pending)
  *
  * @author pcingola
  */
-public class FunctionNativeGetTasksRunning extends FunctionNative {
+public class FunctionNativeTasksRunning extends FunctionNative {
 
 	private static final long serialVersionUID = 1005687259103280710L;
 
-	public FunctionNativeGetTasksRunning() {
+	public FunctionNativeTasksRunning() {
 		super();
 	}
 
 	@Override
 	protected void initFunction() {
-		functionName = "countTasks";
+		functionName = "tasksRunning";
 		returnType = TypeList.get(Types.STRING);
 
 		String argNames[] = {};
@@ -37,12 +39,23 @@ public class FunctionNativeGetTasksRunning extends FunctionNative {
 	}
 
 	@Override
-	protected Object runFunctionNative(BdsThread bdsThread) {
+	public Value runFunction(BdsThread bdsThread) {
+		// Get all taskIds sorted
 		List<String> taskIds = new ArrayList<>();
-		for (Executioner ex : Executioners.getInstance().getAll()) {
+		for (Executioner ex : Executioners.getInstance().getAll())
 			taskIds.addAll(ex.getTasksRunning().keySet());
-		}
 		Collections.sort(taskIds);
-		return taskIds;
+
+		// Convert into a list of strings
+		ValueList valueTaskIds = (ValueList) returnType.newValue();
+		for (String tid : taskIds)
+			valueTaskIds.add(Value.factory(tid));
+
+		return valueTaskIds;
+	}
+
+	@Override
+	protected Object runFunctionNative(BdsThread bdsThread) {
+		throw new RuntimeException("Unimplemented. This method should never be invoked!");
 	}
 }

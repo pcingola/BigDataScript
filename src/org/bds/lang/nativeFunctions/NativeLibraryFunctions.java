@@ -20,7 +20,9 @@ public class NativeLibraryFunctions {
 			, FunctionNativeAssertStringNoMsg.class //
 			, FunctionNativeConfig.class //
 			, FunctionNativeConfigOri.class //
-			, FunctionNativeGetTasksRunning.class //
+			, FunctionNativeTasksDone.class //
+			, FunctionNativeTasksRunning.class //
+			, FunctionNativeTasksToRun.class //
 			, FunctionNativeLog.class //
 			, FunctionNativeMinInt.class //
 			, FunctionNativeMaxInt.class //
