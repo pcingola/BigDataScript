@@ -1,10 +1,9 @@
 site_name: bds - Big Data Script programming language
 nav:
   - Home: index.md
+  - About: about.md
   - Manual: 
-# Features
-# Source code
-# Install from source
+    - 'Introduction': index.md
     - 'Download': download.md
     - 'Hello world': hello.md
     - 'Language': language.md
