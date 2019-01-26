@@ -29,4 +29,4 @@ nav:
     - 'Cleanup': cleanup.md
     - 'bds command line': bdscmdline.md
     - 'Config file': bdsconfig.md
-#theme: readthedocs
+theme: readthedocs
