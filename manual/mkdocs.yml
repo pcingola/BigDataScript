@@ -28,5 +28,5 @@ nav:
     - 'Logging': logging.md
     - 'Cleanup': cleanup.md
     - 'bds command line': bdscmdline.md
-    - 'bds config': bdsconfig.md
+    - 'Config file': bdsconfig.md
 #theme: readthedocs
