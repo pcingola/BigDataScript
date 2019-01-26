@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>bds command line - bds - Big Data Script programming language</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">bds - Big Data Script programming language</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../download/">Download</a>
+</li>
+                                    
+<li >
+    <a href="../hello/">Hello world</a>
+</li>
+                                    
+<li >
+    <a href="../language/">Language</a>
+</li>
+                                    
+<li >
+    <a href="../special/">Special operators</a>
+</li>
+                                    
+<li >
+    <a href="../data_types/">Data types</a>
+</li>
+                                    
+<li >
+    <a href="../functions/">Functions</a>
+</li>
+                                    
+<li >
+    <a href="../global_vars/">Global variables</a>
+</li>
+                                    
+<li >
+    <a href="../pipelines/">Pipelines</a>
+</li>
+                                    
+<li >
+    <a href="../sys/">Sys</a>
+</li>
+                                    
+<li >
+    <a href="../task/">Task</a>
+</li>
+                                    
+<li >
+    <a href="../wait/">Wait</a>
+</li>
+                                    
+<li >
+    <a href="../dep_op/">Dependency operator</a>
+</li>
+                                    
+<li >
+    <a href="../goal/">Goal</a>
+</li>
+                                    
+<li >
+    <a href="../remote_files/">Remote files</a>
+</li>
+                                    
+<li >
+    <a href="../par/">Parallel execution</a>
+</li>
+                                    
+<li >
+    <a href="../checkpoints/">Checkpoints</a>
+</li>
+                                    
+<li >
+    <a href="../test_cases/">Test cases</a>
+</li>
+                                    
+<li >
+    <a href="../debugger/">Debugger</a>
+</li>
+                                    
+<li >
+    <a href="../cmdline/">Command line parsing</a>
+</li>
+                                    
+<li >
+    <a href="../help/">Command line help</a>
+</li>
+                                    
+<li >
+    <a href="../logging/">Logging</a>
+</li>
+                                    
+<li >
+    <a href="../cleanup/">Cleanup</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">bds command line</a>
+</li>
+                                    
+<li >
+    <a href="../bdsconfig/">Config file</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../cleanup/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../bdsconfig/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#bds-command-line-options">bds Command line options</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="bds-command-line-options"><code>bds</code> Command line options</h1>
+<p>Running the bds command without any arguments shows a help message</p>
+<pre><code>$ bds
+...
+Usage: BigDataScript [options] file.bds
+
+Available options: 
+  [-c | -config ] bds.config     : Config file. Default : /Users/pcingola/.bds/bds.config
+  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.
+  [-d | -debug  ]                : Debug mode.
+  -dryRun                        : Do not run any task, just show what would be run. Default: false
+  [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').
+  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.
+  [-l | -log    ]                : Log all tasks (do not delete tmp files). Default: false
+  -noReport                      : Do not create any report.
+  -noReportHtml                  : Do not create HTML report.
+  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit). Default: false
+  [-q | -queue  ] queueName      : Set default queue name.
+  -quiet                         : Do not show any messages or tasks outputs on STDOUT. Default: false
+  -reportHtml                    : Create HTML report. Default: true
+  -reportYaml                    : Create YAML report. Default: false
+  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.
+  [-s | -system ] type           : Set system type.
+  [-t | -test   ]                : Run user test cases (runs all test functions).
+  [-v | -verbose]                : Be verbose.
+  -version                       : Show version and exit.
+  [-y | -retry  ] num            : Number of times to retry a failing tasks.
+  -pid &lt;file&gt;                    : Write local processes PIDs to 'file'
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Option short</th>
+<th>Option long</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-c</td>
+<td>-config</td>
+<td>Path to bds.config file (most of the times no config file is needed)</td>
+</tr>
+<tr>
+<td></td>
+<td>-checkPidRegex</td>
+<td>Check configuration's 'pidRegex' by matching stdin.</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>-debug</td>
+<td>Debug mode, shows detailed information for debugging scripts or debugging bds itself.</td>
+</tr>
+<tr>
+<td></td>
+<td>-dryRun</td>
+<td>Do not run any task, just show what would be run. This mode is used when you just want to test your script's logic without executing any tasks.</td>
+</tr>
+<tr>
+<td></td>
+<td>-extractSource</td>
+<td>Extract source code files from checkpoint (only valid combined with '-info').</td>
+</tr>
+<tr>
+<td>-i</td>
+<td>-info</td>
+<td>Show state information in checkpoint file. Prints variables, scopes, etc.</td>
+</tr>
+<tr>
+<td>-l</td>
+<td>-log</td>
+<td>Log all tasks (do not delete tmp files).</td>
+</tr>
+<tr>
+<td></td>
+<td>-noReport</td>
+<td>Do not create any report.</td>
+</tr>
+<tr>
+<td></td>
+<td>-noReportHtml</td>
+<td>Do not create HTML report.</td>
+</tr>
+<tr>
+<td></td>
+<td>-noRmOnExit</td>
+<td>Do not remove files marked for deletion on exit (rmOnExit).</td>
+</tr>
+<tr>
+<td>-q</td>
+<td>-queue</td>
+<td>Set default cluster's queue name.</td>
+</tr>
+<tr>
+<td></td>
+<td>-quiet</td>
+<td>Do not show any messages or tasks outputs on STDOUT. This means that only the output from <code>print</code> (and other print-like bds statements), statements will be shown on the console</td>
+</tr>
+<tr>
+<td></td>
+<td>-reportHtml</td>
+<td>Create HTML report. Create an HTML report (only if at least one task is executed). By default this option is activated.</td>
+</tr>
+<tr>
+<td></td>
+<td>-reportYaml</td>
+<td>Create YAML report. Create a YAML report (only if at least one task is executed).</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>-restore</td>
+<td>Restore from a a checkpoint and continue execution.</td>
+</tr>
+<tr>
+<td>-s</td>
+<td>-system</td>
+<td>Define the 'system' type the script is running on (e.g. cluster type)</td>
+</tr>
+<tr>
+<td>-t</td>
+<td>-test</td>
+<td>Perform all tests in a script (i.e. run all functions that are called "test")</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>-verbose</td>
+<td>Be verbose (show more information)</td>
+</tr>
+<tr>
+<td></td>
+<td>-version</td>
+<td>Show version number and exit.</td>
+</tr>
+<tr>
+<td>-y</td>
+<td>-retry</td>
+<td>Number of times to retry a failing tasks.</td>
+</tr>
+<tr>
+<td></td>
+<td>-pid</td>
+<td>Write local processes PIDs to 'file'. Under normal circumstances, you should never use this command line option (unless you are debugging bds itself).</td>
+</tr>
+</tbody>
+</table></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"search": 83, "next": 78, "help": 191, "previous": 80};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

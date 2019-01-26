@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Config file - bds - Big Data Script programming language</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">bds - Big Data Script programming language</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../download/">Download</a>
+</li>
+                                    
+<li >
+    <a href="../hello/">Hello world</a>
+</li>
+                                    
+<li >
+    <a href="../language/">Language</a>
+</li>
+                                    
+<li >
+    <a href="../special/">Special operators</a>
+</li>
+                                    
+<li >
+    <a href="../data_types/">Data types</a>
+</li>
+                                    
+<li >
+    <a href="../functions/">Functions</a>
+</li>
+                                    
+<li >
+    <a href="../global_vars/">Global variables</a>
+</li>
+                                    
+<li >
+    <a href="../pipelines/">Pipelines</a>
+</li>
+                                    
+<li >
+    <a href="../sys/">Sys</a>
+</li>
+                                    
+<li >
+    <a href="../task/">Task</a>
+</li>
+                                    
+<li >
+    <a href="../wait/">Wait</a>
+</li>
+                                    
+<li >
+    <a href="../dep_op/">Dependency operator</a>
+</li>
+                                    
+<li >
+    <a href="../goal/">Goal</a>
+</li>
+                                    
+<li >
+    <a href="../remote_files/">Remote files</a>
+</li>
+                                    
+<li >
+    <a href="../par/">Parallel execution</a>
+</li>
+                                    
+<li >
+    <a href="../checkpoints/">Checkpoints</a>
+</li>
+                                    
+<li >
+    <a href="../test_cases/">Test cases</a>
+</li>
+                                    
+<li >
+    <a href="../debugger/">Debugger</a>
+</li>
+                                    
+<li >
+    <a href="../cmdline/">Command line parsing</a>
+</li>
+                                    
+<li >
+    <a href="../help/">Command line help</a>
+</li>
+                                    
+<li >
+    <a href="../logging/">Logging</a>
+</li>
+                                    
+<li >
+    <a href="../cleanup/">Cleanup</a>
+</li>
+                                    
+<li >
+    <a href="../bdscmdline/">bds command line</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Config file</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../bdscmdline/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="disabled">
+                                <a rel="prev" >
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#bds-config-file">BDS Config file</a></li>
+            <li><a href="#default-parameters">Default parameters</a></li>
+            <li><a href="#cluster-options">Cluster options</a></li>
+            <li><a href="#sge-cluster-options">SGE Cluster options</a></li>
+            <li><a href="#generic-cluster-options">Generic Cluster options</a></li>
+            <li><a href="#ssh-cluster-options">SSH Cluster options</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="bds-config-file">BDS Config file</h1>
+<p>The <code>config.bds</code> file allows customizing <code>bds</code>'s behavior.</p>
+<p>The config file is usually located in <code>$HOME/.bds/bds.config</code>.
+Running <code>bds</code> without any arguments shows the config's file default location.
+You can provide an alternative path using command line option <code>-c</code>.</p>
+<p>The config file is roughly divided into sections.
+It is not required that parameters are in specific sections, we just do it to have some order.
+We explain the parameters for each section below.</p>
+<h3 id="default-parameters">Default parameters</h3>
+<p>This section defines default parameters used in running tasks (such as system type, number of CPUs, memory, etc.).
+Most of the time you'd rather keep options unspecified but it can be convenient to set <code>system = local</code> in 
+your laptop and <code>system = cluster</code> in your production cluster.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Comments / examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mem</td>
+<td>Default memory in bytes (negative number means unspecified)</td>
+</tr>
+<tr>
+<td>node</td>
+<td>Default execution node (empty means unspecified)</td>
+</tr>
+<tr>
+<td>queue</td>
+<td>Add default queue name (empty means unspecified)</td>
+</tr>
+<tr>
+<td>retry</td>
+<td>Default number of retries when a task fails (0 means no retry). Upon failire, a task is re-executed up to 'retry' times. I.e. a task is considered failed only after failing 'retry + 1' times.</td>
+</tr>
+<tr>
+<td>system</td>
+<td>Default system type. If unspecified, the default system is 'local' (run tasks on local computer)</td>
+</tr>
+<tr>
+<td>timeout</td>
+<td>Task timeout in seconds (default is one day)</td>
+</tr>
+<tr>
+<td>walltimeout</td>
+<td>Task's wall-timeout in seconds (default is one day). Wall timeout includes all the time that the task is waiting to be executed. I.e. the total amount of time we are willing to wait for a task to finish. For example if walltimeout is one day and a task is queued by the cluster system for one day (and never executed), it will timeout, even if the task was never run.</td>
+</tr>
+<tr>
+<td>taskShell</td>
+<td>Shell to be used when running a <code>task</code> (default <code>/bin/bash -eu\nset -o pipefail\n</code>). <strong>WARNING</strong>: Make sure you use "-e" or some command line option that stops execution when an error if found.</td>
+</tr>
+<tr>
+<td>sysShell</td>
+<td>Shell to be used when running a <code>sys</code> (default <code>/bin/bash -euo pipefail -c</code>). <strong>WARNING</strong>: Make sure you use "-e" or some command line option that stops execution when an error if found. <strong>WARNING</strong>: Make sure you use "-c" or some command line option that allows providing a script</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cluster-options">Cluster options</h3>
+<p>This section defines parameters to customize <code>bds</code> to run tasks on your cluster.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Comments / examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pidRegex</td>
+<td>Regex used to extract PID from cluster command (e.g. qsub). When <code>bds</code> dispatches a task to the cluster management system (e.g. running 'qsub' command), it expects the cluster system to inform the jobID. Typically cluster systems show jobIDs in the first output line. This regex is used to match that jobID. Default, use the whole line. <strong>Note:</strong> Some clusters add the domain name to the ID and then never use it again, some other clusters add a message (e.g. 'You job ...'). Examples: <code>pidRegex = "(.+).domain.com"</code> and  <code>pidRegex = "Your job (\\S+)"</code></td>
+</tr>
+<tr>
+<td>clusterRunAdditionalArgs</td>
+<td>These command line arguments are added to every cluster 'run' command (e.g. 'qsub'). The string is split into spaces (regex: '\s+') and added to the cluster's run command. E.g.: <code>clusterRunAdditionalArgs = -A accountID -M user@gmail.com</code> will cause four additional arguments <code>{ '-A', 'accountID', '-M', 'user@gmail.com' }</code> to be added immediately after 'qsub' (or similar) command used to run tasks on a cluster.</td>
+</tr>
+<tr>
+<td>clusterKillAdditionalArgs</td>
+<td>These command line arguments are added to every cluster 'kill' command (e.g. 'qdel'). Same rules as 'clusterRunAdditionalArgs' apply.</td>
+</tr>
+<tr>
+<td>clusterStatAdditionalArgs</td>
+<td>These command line arguments are added to every cluster 'stat' command (e.g. 'qstat'). Same rules as 'clusterRunAdditionalArgs' apply.</td>
+</tr>
+<tr>
+<td>clusterPostMortemInfoAdditionalArgs</td>
+<td>These command line arguments are added to every cluster 'post mortem info' command (e.g. 'qstat -f'). Same rules as 'clusterRunAdditionalArgs' apply.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sge-cluster-options">SGE Cluster options</h3>
+<p>This section defines parameters to customize <code>bds</code> to run tasks on a Sun Grid Engine cluster.</p>
+<p><strong>IMPORTANT:</strong>  In SGE clusters it is important to enable <code>ENABLE_ADDGRP_KILL=true</code> to the <code>execd_params</code> parameter of <code>qconf -sconf</code>.
+Otherwise SGE might not be able to kill <code>bds</code> subprocesses running on slave nodes if this option is not enabled.
+So, if you don't activate <code>ENABLE_ADDGRP_KILL=true</code> killing processes may not work in SGE clusters, nodes will continue to run tasks even after they've been killed either Ctrl-C to bds or by a direct <code>qdel</code> command (the cluster reports them as finished, but they might still be running in the slave node).</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Comments / examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sge.pe</td>
+<td>Parallel environment in SGE (e.g. 'qsub -pe mpi 4').</td>
+</tr>
+<tr>
+<td>sge.mem</td>
+<td>Parameter for requesting amount of memory in qsub (e.g. <code>qsub -l mem 4G</code>)</td>
+</tr>
+<tr>
+<td>sge.timeout</td>
+<td>Parameter for timeout in qsub (e.g. <code>qsub -l h_rt 24:00:00</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note on SGE's parallel environment ('-pe'):</strong></p>
+<p>The defaults were set to be compatible with <strong>StarCluster</strong>.
+Parallel environment defines how 'slots' (number of cpus requested) 
+are allocated. <strong>StarCluster</strong> by default sets up a parallel environment, called “orte”, 
+that has been configured for OpenMPI integration within SGE and has a number of slots 
+equal to the total number of processors in the cluster.
+See details <code>qconf -sp orte</code>:</p>
+<pre><code>pe_name            orte
+slots              16
+user_lists         NONE
+xuser_lists        NONE
+start_proc_args    /bin/true
+stop_proc_args     /bin/true
+allocation_rule    $round_robin
+control_slaves     TRUE
+job_is_first_task  FALSE
+urgency_slots      min
+accounting_summary FALSE
+</code></pre>
+
+<p>Notice the <code>allocation_rule = $round_robin</code>.  This defines how to assign slots to a job. By 
+default StarCluster configures round_robin allocation. This means that if a job requests 8 
+slots for example, it will go to the first machine, grab a single slot if available, move to 
+the next machine and grab a single slot if available, and so on wrapping around the cluster 
+again if necessary to allocate 8 slots to the job.</p>
+<p>You can also configure the parallel environment to try and localize slots as much as 
+possible using the "fill_up" allocation rule and job_is_first_task of TRUE.</p>
+<p>To configure: qconf -mp orte</p>
+<h3 id="generic-cluster-options">Generic Cluster options</h3>
+<p>Cluster <strong>generic</strong> invokes user defined scripts for manupulating tasks.
+This allows the user to customize scripts for particular cluster environments (e.g. environments not currently supported by <code>bds</code>)</p>
+<p><strong>Note</strong>: You should either provide the script's full path or the scripts should be in your PATH</p>
+<p><strong>Note</strong>: These scripts "communicate" with bds by printing information on STDOUT.
+The information has to be printed in a very specific format. Failing to adhere to the format will cause bds to fail in unexpected ways.</p>
+<p><strong>Note</strong>: You can use command path starting with '~' to indicate <code>$HOME</code> dir or '.' to indicate path relative to config file's dir</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Comments / examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>clusterGenericRun</td>
+<td>The specified script is executed when a task is submitted to the cluster</td>
+</tr>
+<tr>
+<td>clusterGenericKill</td>
+<td>The specified script is executed in order to kill a task</td>
+</tr>
+<tr>
+<td>clusterGenericStat</td>
+<td>The specified script is executed in order to show the jobID of all jobs currently scheduled in the cluster</td>
+</tr>
+<tr>
+<td>clusterGenericPostMortemInfo</td>
+<td>The specified script is executed in order to get information of a recently finished jobId. This information is typically used for debuging and is added to bds's output.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="generic-cluster-clustergenericrun">Generic cluster: <code>clusterGenericRun</code></h4>
+<p><strong>Script's expected output</strong>:
+The script MUST print the cluster's jobID AS THE FIRST LINE. 
+Make sure to flush STDOUT to avoid other lines to be printed out of order.</p>
+<p><strong>Command line arguments</strong>:</p>
+<ul>
+<li>Task's timeout in seconds. Negative number means 'unlimited' (i.e. let the cluster system decide)</li>
+<li>Task's required CPUs: number of cores within the same node.</li>
+<li>Task's required memory in bytes. Negative means 'unspecified' (i.e. let the cluster system decide)</li>
+<li>Cluster's queue name. Empty means "use cluster's default"</li>
+<li>Cluster's STDOUT redirect file. This is where the cluster should redirect STDOUT.</li>
+<li>Cluster's STDERR redirect file. This is where the cluster should redirect STDERR</li>
+<li>Cluster command and arguments to be executed (typically is a "bds -exec ...").</li>
+</ul>
+<p><strong>Example:</strong> For examples on how to build this script, take a look at <code>config/clusterGeneric*</code> directory in the source code.</p>
+<h4 id="generic-cluster-clustergenerickill">Generic cluster: <code>clusterGenericKill</code></h4>
+<p><strong>Script's expected output</strong>:
+None</p>
+<p><strong>Command line arguments</strong>:
+jobId: This is the jobId returned as the first line in 'clusterGenericRun' 
+script (i.e. the jobID provided by the cluster management system)</p>
+<p><strong>Example:</strong> For examples on how to build this script, take a look at <code>config/clusterGeneric*</code> directory in the source code.</p>
+<h4 id="generic-cluster-clustergenericstat">Generic cluster: <code>clusterGenericStat</code></h4>
+<p>The specified script is executed in order to show the jobID of all jobs currently scheduled in the cluster</p>
+<p><strong>Script's expected output</strong>:
+This script is expected to print all jobs currently scheduled or 
+running in the cluster (e.g. qstat), one per line. The FIRST column 
+should be the jobID (columns are space or tab separated). Other 
+columns may exist (but are currently ignored).</p>
+<p><strong>Command line arguments</strong>:
+None</p>
+<p><strong>Example:</strong> For examples on how to build this script, take a look at <code>config/clusterGeneric*</code> directory in the source code.</p>
+<h4 id="generic-cluster-clustergenericpostmorteminfo">Generic cluster: <code>clusterGenericPostMortemInfo</code></h4>
+<p><strong>Script's expected output</strong>:
+The output is not parsed, it is stored and later shown 
+in bds's report. Is should contain information relevant 
+to the job's execution (e.g. <code>qstat -f $jobId</code> or <code>checkjob -v $jobId</code>)</p>
+<p><strong>Command line arguments</strong>:
+jobId: This is the jobId returned as the first line in 'clusterGenericRun' 
+script (i.e. the jobID provided by the cluster management system)</p>
+<p><strong>Example:</strong> For examples on how to build this script, take a look at <code>config/clusterGeneric*</code> directory in the source code.</p>
+<h3 id="ssh-cluster-options">SSH Cluster options</h3>
+<p>Cluster <strong>shh</strong> creates a virtual cluster using several nodes access via shh.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Comments / examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ssh.nodes</td>
+<td>This defines the userName and nodes to be accessed via ssh.</td>
+</tr>
+</tbody>
+</table>
+<p>Examples:</p>
+<p>A trivial 'ssh' cluster composed only of the localhost accesed via ssh (useful for debugging)</p>
+<pre><code>ssh.nodes = user@localhost
+</code></pre>
+
+<p>Some company's servers used as an ssh cluster</p>
+<pre><code>ssh.nodes = user@lab1-1company.com, user@lab1-2company.com, user@lab1-3company.com, user@lab1-4company.com, user@lab1-5company.com
+</code></pre>
+
+<p>A StarCluster run on Amazon AWS</p>
+<pre><code>ssh.nodes = sgeadmin@node001, sgeadmin@node002, sgeadmin@node003, sgeadmin@node004, sgeadmin@node005, sgeadmin@node006
+</code></pre>
+
+</table></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"search": 83, "next": 78, "help": 191, "previous": 80};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

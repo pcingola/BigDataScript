@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Functions - bds - Big Data Script programming language</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">bds - Big Data Script programming language</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../download/">Download</a>
+</li>
+                                    
+<li >
+    <a href="../hello/">Hello world</a>
+</li>
+                                    
+<li >
+    <a href="../language/">Language</a>
+</li>
+                                    
+<li >
+    <a href="../special/">Special operators</a>
+</li>
+                                    
+<li >
+    <a href="../data_types/">Data types</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Functions</a>
+</li>
+                                    
+<li >
+    <a href="../global_vars/">Global variables</a>
+</li>
+                                    
+<li >
+    <a href="../pipelines/">Pipelines</a>
+</li>
+                                    
+<li >
+    <a href="../sys/">Sys</a>
+</li>
+                                    
+<li >
+    <a href="../task/">Task</a>
+</li>
+                                    
+<li >
+    <a href="../wait/">Wait</a>
+</li>
+                                    
+<li >
+    <a href="../dep_op/">Dependency operator</a>
+</li>
+                                    
+<li >
+    <a href="../goal/">Goal</a>
+</li>
+                                    
+<li >
+    <a href="../remote_files/">Remote files</a>
+</li>
+                                    
+<li >
+    <a href="../par/">Parallel execution</a>
+</li>
+                                    
+<li >
+    <a href="../checkpoints/">Checkpoints</a>
+</li>
+                                    
+<li >
+    <a href="../test_cases/">Test cases</a>
+</li>
+                                    
+<li >
+    <a href="../debugger/">Debugger</a>
+</li>
+                                    
+<li >
+    <a href="../cmdline/">Command line parsing</a>
+</li>
+                                    
+<li >
+    <a href="../help/">Command line help</a>
+</li>
+                                    
+<li >
+    <a href="../logging/">Logging</a>
+</li>
+                                    
+<li >
+    <a href="../cleanup/">Cleanup</a>
+</li>
+                                    
+<li >
+    <a href="../bdscmdline/">bds command line</a>
+</li>
+                                    
+<li >
+    <a href="../bdsconfig/">Config file</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../data_types/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../global_vars/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#predefined-functions">Predefined functions</a></li>
+            <li><a href="#config-function">Config function</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="predefined-functions">Predefined functions</h1>
+<p>BigDataScript provides some predefined functions.</p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>int abs(int x)</td>
+<td>Absolute value of a number</td>
+</tr>
+<tr>
+<td>real abs(real x)</td>
+<td>Absolute value of a number</td>
+</tr>
+<tr>
+<td>real acos(real x)</td>
+<td>The trigonometric arc-cosine of a number</td>
+</tr>
+<tr>
+<td>real asin(real x)</td>
+<td>The trigonometric arc-sine of a number</td>
+</tr>
+<tr>
+<td>real atan(real x)</td>
+<td>The trigonometric arc-tangent of a number</td>
+</tr>
+<tr>
+<td>real atan2(real x)</td>
+<td>Returns the angle theta from the conversion of rectangular coordinates (x, y) to polar coordinates (r, theta).</td>
+</tr>
+<tr>
+<td>assert(bool expr)</td>
+<td>Used for testing: Throw an error if <code>expr</code> is <code>false</code></td>
+</tr>
+<tr>
+<td>assert(string msg, bool expr)</td>
+<td>Used for testing: Throw error message <code>msg</code> if <code>expr</code> is <code>false</code></td>
+</tr>
+<tr>
+<td>assert(string msg, bool expected, bool result)</td>
+<td>Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>bool</code>)</td>
+</tr>
+<tr>
+<td>assert(int expected, int result)</td>
+<td>Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>int</code>)</td>
+</tr>
+<tr>
+<td>assert(string msg, int expected, int result)</td>
+<td>Used for testing: Throw error message if <code>result</code> value is not equal to <code>expected</code> (compare <code>int</code>)</td>
+</tr>
+<tr>
+<td>assert(string expected, string result)</td>
+<td>Used for testing: Throw error message if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td>
+</tr>
+<tr>
+<td>assert(string msg, string expected, string result)</td>
+<td>Used for testing: Throw error message <code>msg</code> if <code>result</code> value is not equal to <code>expected</code> (compare <code>string</code>)</td>
+</tr>
+<tr>
+<td>real cbrt(real x)</td>
+<td>The cube root of a number</td>
+</tr>
+<tr>
+<td>real ceil(real x)</td>
+<td>The ceiling of a number</td>
+</tr>
+<tr>
+<td>string{} config(string fileName)</td>
+<td>Read and parse 'fileName', return &lt;name,value&gt; pairs in a map.</td>
+</tr>
+<tr>
+<td>string{} config(string fileName, string{} defaults)</td>
+<td>Same as <code>string{} config(string fileName)</code>, but using <code>defaults</code> as default values (if not found in fileName)</td>
+</tr>
+<tr>
+<td>real copySign(real x, real y)</td>
+<td>Returns the first floating-point argument with the sign of the second floating-point argument</td>
+</tr>
+<tr>
+<td>real cos(real x)</td>
+<td>The trigonometric cosine of an angle</td>
+</tr>
+<tr>
+<td>real cosh(real x)</td>
+<td>The hyperbolic cosine of an angle</td>
+</tr>
+<tr>
+<td>real exp(real x)</td>
+<td>Return e^x</td>
+</tr>
+<tr>
+<td>real exppm1(real x)</td>
+<td>Return e^x-1</td>
+</tr>
+<tr>
+<td>real floor(real x)</td>
+<td>The floor of a number</td>
+</tr>
+<tr>
+<td>int getExponent(real x)</td>
+<td>exponent used in the representation of a real</td>
+</tr>
+<tr>
+<td>real hypot(real x, real y)</td>
+<td>Returns sqrt(x2 +y2) without intermediate overflow or underflow.</td>
+</tr>
+<tr>
+<td>real IEEEremainder(real x, real y)</td>
+<td>Computes the remainder operation on two arguments as prescribed by the IEEE 754 standard..</td>
+</tr>
+<tr>
+<td>log(string msg)</td>
+<td>Log 'msg' (i.e. show to stderr)</td>
+</tr>
+<tr>
+<td>real log(real x)</td>
+<td>Natural logarithm of a number</td>
+</tr>
+<tr>
+<td>real log10(real x)</td>
+<td>Logarithm (base 10) of a number</td>
+</tr>
+<tr>
+<td>real log1p(real x)</td>
+<td>Natural logarithm of '1+x'</td>
+</tr>
+<tr>
+<td>int max(int n1, int n2)</td>
+<td>Maximum of two numbers</td>
+</tr>
+<tr>
+<td>real max(real n1, real n2)</td>
+<td>Maximum of two numbers</td>
+</tr>
+<tr>
+<td>int min(int n1, int n2)</td>
+<td>Minimum of two numbers</td>
+</tr>
+<tr>
+<td>real min(real n1, real n2)</td>
+<td>Minimum of two numbers</td>
+</tr>
+<tr>
+<td>real nextAfter(real x, real y)</td>
+<td>Returns the number adjacent to the first argument in the direction of the second argument</td>
+</tr>
+<tr>
+<td>real nextUp(real x)</td>
+<td>Returns the floating-point value adjacent to d in the direction of positive infinity.</td>
+</tr>
+<tr>
+<td>real pow(real x, real y)</td>
+<td>Return x^y</td>
+</tr>
+<tr>
+<td>print( expr )</td>
+<td>Show to stdout (same as 'print' statement)</td>
+</tr>
+<tr>
+<td>printErr( expr )</td>
+<td>Show to stderr</td>
+</tr>
+<tr>
+<td>printHelp()</td>
+<td>Print automatically generated help message (see 'help' statement)</td>
+</tr>
+<tr>
+<td>real rand()</td>
+<td>Random number [0, 1] interval</td>
+</tr>
+<tr>
+<td>int randInt()</td>
+<td>Random number (64 bits)</td>
+</tr>
+<tr>
+<td>int randInt(int range)</td>
+<td>Random number [0, range] interval</td>
+</tr>
+<tr>
+<td>void randSeed(int seed)</td>
+<td>Set random seed (for current thread)</td>
+</tr>
+<tr>
+<td>int[] range(min, max)</td>
+<td>A list of numbers between [min, max] inclusive</td>
+</tr>
+<tr>
+<td>int[] range(min, max, step)</td>
+<td>A list of numbers between [min, min+step, min+2<em>step, ... ]. Includes max if min+N</em>step = max</td>
+</tr>
+<tr>
+<td>real[] range(min, max, step)</td>
+<td>A list of numbers between [min, min+step, min+2<em>step, ... ]. Includes max if min+N</em>step = max</td>
+</tr>
+<tr>
+<td>real rint(real x)</td>
+<td>Returns the real value that is closest in value to the argument and is equal to a mathematical integer</td>
+</tr>
+<tr>
+<td>int round(real x)</td>
+<td>Rounded number</td>
+</tr>
+<tr>
+<td>real scalb(real x, int sf)</td>
+<td>Return x * 2^sf rounded</td>
+</tr>
+<tr>
+<td>real signum(real x)</td>
+<td>The sign function of a number</td>
+</tr>
+<tr>
+<td>real sin(real x)</td>
+<td>The trigonometric sine of an angle</td>
+</tr>
+<tr>
+<td>real sinh(real x)</td>
+<td>The hyperbolic-sine of an angle</td>
+</tr>
+<tr>
+<td>sleep( int seconds )</td>
+<td>Sleep for 'seconds'</td>
+</tr>
+<tr>
+<td>sleep( real seconds )</td>
+<td>Sleep for '1000 * seconds' milliseconds. E.g. sleep(0.5) sleeps for half a second</td>
+</tr>
+<tr>
+<td>real sqrt(real x)</td>
+<td>The square root of a number</td>
+</tr>
+<tr>
+<td>real tan(real x)</td>
+<td>The trigonometric tangent of an angle</td>
+</tr>
+<tr>
+<td>real tanh(real x)</td>
+<td>The hyperbolic tangent of an angle</td>
+</tr>
+<tr>
+<td>int time()</td>
+<td>Return the milliseconds elapsed since epoch</td>
+</tr>
+<tr>
+<td>real toDegrees(real x)</td>
+<td>Convert x radians to degrees</td>
+</tr>
+<tr>
+<td>real toRadians(real x)</td>
+<td>Convert x degrees to radians</td>
+</tr>
+<tr>
+<td>int toInt(bool b)</td>
+<td>Convert boolean to int</td>
+</tr>
+<tr>
+<td>int toInt(real r)</td>
+<td>Convert real to int</td>
+</tr>
+<tr>
+<td>real ulp(real r)</td>
+<td>Returns the size of an ulp of the argument</td>
+</tr>
+</tbody>
+</table>
+<h3 id="config-function">Config function</h3>
+<p>Reading a config file can be done using <code>config</code> function which parses a file and returns `<name, value>' pairs in a map.
+Parsing: Lines starting with '#' are ignored, so are blank lines.
+Name/Value delimiters can be any of ':', '=' or '\t' (the first one found in each line will be used).
+The following are valid and equivalent:</p>
+<pre><code>name : value
+name = value
+name \t value
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"search": 83, "next": 78, "help": 191, "previous": 80};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

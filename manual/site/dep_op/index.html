@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Dependency operator - bds - Big Data Script programming language</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">bds - Big Data Script programming language</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../download/">Download</a>
+</li>
+                                    
+<li >
+    <a href="../hello/">Hello world</a>
+</li>
+                                    
+<li >
+    <a href="../language/">Language</a>
+</li>
+                                    
+<li >
+    <a href="../special/">Special operators</a>
+</li>
+                                    
+<li >
+    <a href="../data_types/">Data types</a>
+</li>
+                                    
+<li >
+    <a href="../functions/">Functions</a>
+</li>
+                                    
+<li >
+    <a href="../global_vars/">Global variables</a>
+</li>
+                                    
+<li >
+    <a href="../pipelines/">Pipelines</a>
+</li>
+                                    
+<li >
+    <a href="../sys/">Sys</a>
+</li>
+                                    
+<li >
+    <a href="../task/">Task</a>
+</li>
+                                    
+<li >
+    <a href="../wait/">Wait</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Dependency operator</a>
+</li>
+                                    
+<li >
+    <a href="../goal/">Goal</a>
+</li>
+                                    
+<li >
+    <a href="../remote_files/">Remote files</a>
+</li>
+                                    
+<li >
+    <a href="../par/">Parallel execution</a>
+</li>
+                                    
+<li >
+    <a href="../checkpoints/">Checkpoints</a>
+</li>
+                                    
+<li >
+    <a href="../test_cases/">Test cases</a>
+</li>
+                                    
+<li >
+    <a href="../debugger/">Debugger</a>
+</li>
+                                    
+<li >
+    <a href="../cmdline/">Command line parsing</a>
+</li>
+                                    
+<li >
+    <a href="../help/">Command line help</a>
+</li>
+                                    
+<li >
+    <a href="../logging/">Logging</a>
+</li>
+                                    
+<li >
+    <a href="../cleanup/">Cleanup</a>
+</li>
+                                    
+<li >
+    <a href="../bdscmdline/">bds command line</a>
+</li>
+                                    
+<li >
+    <a href="../bdsconfig/">Config file</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../wait/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../goal/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#dependency-operator-lt-">Dependency operator &lt;-</a></li>
+            <li><a href="#multiple-dependencies">Multiple dependencies</a></li>
+            <li><a href="#using-lt-in-tasks">Using &lt;- in tasks</a></li>
+            <li><a href="#automatic-task-dependency-detection">Automatic task dependency detection</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="dependency-operator-lt-">Dependency operator <code>&lt;-</code></h1>
+<p>The dependency operator provides a simple way to see if a file needs to be updated (i.e. recalculated) with respect to some inputs.
+For instance, when we already processed some files and have the corresponding results, we may save some work if the inputs have not changed (like "make" command).</p>
+<p>We introduce the dependency operator <code>&lt;-</code> (pronounced 'dep') which is a "make" style operator.</p>
+<p>The expression <code>out &lt;- in</code> is true if 'out' file needs to be updated.
+More formally, the expression is true if the file name represented by the variable 'out' does not exist, is empty (zero length) or has a creation date before 'in'.
+E.g.:</p>
+<p>File <a href="bds/test_06.bds">test_06.bds</a></p>
+<pre><code>#!/usr/bin/env bds
+
+string inFile  = &quot;in.txt&quot;
+string outFile = &quot;out.txt&quot;
+
+# Create 'in.txt' if it doesn't exist
+if( !inFile.exists() ) {
+    task echo Creating $inFile; echo Hello &gt; $inFile
+}
+
+wait
+
+# Create 'out.txt' only if needs to be updated resepct to 'in.txt'
+if( outFile &lt;- inFile ) {
+    task echo Creating $outFile; cat $inFile &gt; $outFile
+}
+</code></pre>
+
+<p>When executing for the first time, both tasks are executed and both files ('in.txt' and 'out.txt') are created.</p>
+<pre><code>$ ./test_06.bds
+Creating in.txt
+Creating out.txt
+</code></pre>
+
+<p>If we execute for a second time, since files have not changed, no <code>task</code> is executed.</p>
+<pre><code>$ ./test_06.bds
+$
+</code></pre>
+
+<p>If we now change the contents of 'in.txt', and run the script again, the second <code>task</code> will be executed (because 'out.txt' needs to be updated with respect to 'in.txt')</p>
+<pre><code># Update 'in.txt'
+$ date &gt; in.txt
+
+# Since we updated the input file, the output must be recalculated
+$ ./test_06.bds 
+Creating out.txt
+</code></pre>
+
+<p><strong>Summary:</strong> If the file 'out.txt' is up to date with respect to 'in.txt', the following condition will be false and the <code>task</code> will not execute</p>
+<pre><code>if( outFile &lt;- inFile ) {
+    task echo Creating $outFile; cat $inFile &gt; $outFile
+}
+</code></pre>
+
+<h3 id="multiple-dependencies">Multiple dependencies</h3>
+<p>You can have a dependency operator expression <code>out &lt;- in</code>, where either <code>in</code> and <code>out</code> or both can be lists of files. 
+The same rules apply: The operator is true if any out file is missing, zero length or the minimum of modification times in <code>out</code> is less than the maximum modificaton times in <code>in</code></p>
+<p>This can be also used on lists:</p>
+<pre><code>in1 := &quot;in1.txt&quot;
+in2 := &quot;in2.txt&quot;
+out := &quot;out.txt&quot;
+
+if( out &lt;- [in1, in2] ) print(&quot;We should update $out\n&quot;)
+</code></pre>
+
+<p>or even:</p>
+<pre><code>in1 := &quot;in1.txt&quot;
+in2 := &quot;in2.txt&quot;
+out1 := &quot;out1.txt&quot;
+out2 := &quot;out2.txt&quot;
+
+if( [out1, out2] &lt;- [in1, in2] ) print(&quot;We should update $out1 and $out2\n&quot;)
+</code></pre>
+
+<h3 id="using-lt-in-tasks">Using <code>&lt;-</code> in <code>tasks</code></h3>
+<p>This construction is so common that we allow for some syntactic sugar. </p>
+<pre><code>task( outFile &lt;- inFile ) { 
+    sys echo Creating $outFile; cat $inFile &gt; $outFile
+}
+</code></pre>
+
+<p>The above syntax means that <code>task</code> will only be executed if the dependency is satisfied, i.e. <code>outFile</code> needs to be updated respect to <code>inFile</code>.</p>
+<iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
+
+<h3 id="automatic-task-dependency-detection">Automatic task dependency detection</h3>
+<p>Programming task dependencies can be difficult.
+BDS can help by automatically inferring task dependencies and executing tasks in the correct order.</p>
+<p>In this example, we have two tasks:</p>
+<ul>
+<li>The first task uses an input file 'in.txt', to create an intermediate file 'inter.txt' </li>
+<li>The second task uses the intermediate file 'inter.txt' to create the ouptut file 'out.txt'.</li>
+</ul>
+<p>The script below does not have a <code>wait</code> statement. 
+Instead <code>bds</code> automatically infers that the second task depends on the first one, and does not start execution until the first task begins.
+Notice that we don't tell bds to wait for the first task to finish (there is no explicit <code>wait</code> statement). </p>
+<p>File <a href="bds/test_07.bds">test_07.bds</a></p>
+<pre><code>#!/usr/bin/env bds
+
+# We use ':=' for declaration with type inference
+inFile       := &quot;in.txt&quot;        
+intermediate := &quot;inter.txt&quot;
+outFile      := &quot;out.txt&quot;
+
+task( intermediate &lt;- inFile) {
+    sys echo Creating $intermediate; cat $inFile &gt; $intermediate; sleep 1 ; echo Done $intermediate
+}
+
+task( outFile &lt;- intermediate ) {
+    sys echo Creating $outFile; cat $intermediate &gt; $outFile; echo Done $outFile
+}
+</code></pre>
+
+<p>As a side note: We used the <code>:=</code> operator to declare variables using type inference. 
+So we can write <code>inFile := "in.txt"</code> instead of <code>string inFile = "in.txt"</code>, which not only is shorter to type, but also makes the code look cleaner.</p>
+<p>Now let's run the script</p>
+<pre><code># Delete old file (if anY)
+$ rm *.txt
+
+# Create input file
+$ date &gt; in.txt
+
+# Run
+$ ./test_07.bds 
+Creating inter.txt
+Done inter.txt
+Creating out.txt
+Done out.txt
+</code></pre>
+
+<p>Note how the second task is executed only after the first one finished.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"search": 83, "next": 78, "help": 191, "previous": 80};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

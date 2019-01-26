@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Global variables - bds - Big Data Script programming language</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">bds - Big Data Script programming language</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../download/">Download</a>
+</li>
+                                    
+<li >
+    <a href="../hello/">Hello world</a>
+</li>
+                                    
+<li >
+    <a href="../language/">Language</a>
+</li>
+                                    
+<li >
+    <a href="../special/">Special operators</a>
+</li>
+                                    
+<li >
+    <a href="../data_types/">Data types</a>
+</li>
+                                    
+<li >
+    <a href="../functions/">Functions</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Global variables</a>
+</li>
+                                    
+<li >
+    <a href="../pipelines/">Pipelines</a>
+</li>
+                                    
+<li >
+    <a href="../sys/">Sys</a>
+</li>
+                                    
+<li >
+    <a href="../task/">Task</a>
+</li>
+                                    
+<li >
+    <a href="../wait/">Wait</a>
+</li>
+                                    
+<li >
+    <a href="../dep_op/">Dependency operator</a>
+</li>
+                                    
+<li >
+    <a href="../goal/">Goal</a>
+</li>
+                                    
+<li >
+    <a href="../remote_files/">Remote files</a>
+</li>
+                                    
+<li >
+    <a href="../par/">Parallel execution</a>
+</li>
+                                    
+<li >
+    <a href="../checkpoints/">Checkpoints</a>
+</li>
+                                    
+<li >
+    <a href="../test_cases/">Test cases</a>
+</li>
+                                    
+<li >
+    <a href="../debugger/">Debugger</a>
+</li>
+                                    
+<li >
+    <a href="../cmdline/">Command line parsing</a>
+</li>
+                                    
+<li >
+    <a href="../help/">Command line help</a>
+</li>
+                                    
+<li >
+    <a href="../logging/">Logging</a>
+</li>
+                                    
+<li >
+    <a href="../cleanup/">Cleanup</a>
+</li>
+                                    
+<li >
+    <a href="../bdscmdline/">bds command line</a>
+</li>
+                                    
+<li >
+    <a href="../bdsconfig/">Config file</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../functions/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../pipelines/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#predefined-global-variables">Predefined global variables</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="predefined-global-variables">Predefined global variables</h1>
+<p>BigDataScript provides some predefined variables.</p>
+<p>Whenever you run a BigDataScript program you have several predefined variables:</p>
+<table>
+<thead>
+<tr>
+<th>Variable name</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bool allowEmpty=false</code></td>
+<td>Default values for <code>task</code>. If true, empty files are allowed in task's outputs. This means that a task producing empty files does not result in program termination and checkpointing.</td>
+</tr>
+<tr>
+<td>'string[] args<code>| Arguments used to invoke the program, i.e. all command line options after program name (</code>bds [options] prog.bds args ...`).</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bool canFail=false</code></td>
+<td>Default values for <code>task</code>. If true, a task is allowed to fail. This means that a failed task execution does not result in program termination and checkpointing.</td>
+</tr>
+<tr>
+<td><code>int cpus=1</code></td>
+<td>Default values for <code>task</code>. Number of CPU (cores) used by the process.</td>
+</tr>
+<tr>
+<td><code>int cpusLocal</code></td>
+<td>Number of cores in the computer running the script</td>
+</tr>
+<tr>
+<td><code>int mem=0</code></td>
+<td>Default values for <code>task</code>. Maximum amount of memory in bytes used by the process (0 means no restrictions or use cluster default)</td>
+</tr>
+<tr>
+<td><code>string node</code></td>
+<td>Default values for <code>task</code>. If possible this task should be executed on a particular cluster node. This option is only used for cluster systems and ignored on any other systems.</td>
+</tr>
+<tr>
+<td><code>string ppwd</code></td>
+<td>Canonical (physical) path to directory where the program is being executed.</td>
+</tr>
+<tr>
+<td><code>string programName</code></td>
+<td>The program's name</td>
+</tr>
+<tr>
+<td><code>string programPath</code></td>
+<td>The program's path</td>
+</tr>
+<tr>
+<td><code>int programPid</code></td>
+<td>The program's process ID (Unix <code>PID</code>)</td>
+</tr>
+<tr>
+<td><code>string queue</code></td>
+<td>Default values for <code>task</code>. Queue name of preferred execution queue (only for cluster systems).</td>
+</tr>
+<tr>
+<td><code>int retry=0</code></td>
+<td>Default values for <code>task</code>. Number of times a task can be re-executed until it's considered failed.</td>
+</tr>
+<tr>
+<td><code>string system</code></td>
+<td>Default values for <code>task</code>. System type to execute tasks (e.g. <code>local</code>, <code>sge</code>, <code>slurm</code>, <code>mesos</code>, etc.)</td>
+</tr>
+<tr>
+<td><code>string taskName</code></td>
+<td>Default values for <code>task</code>. Assign a task name. This adds a label to the task as well as the taskId returned by <code>task</code> expression. Task ID is used to create log files related to the task (shell script, STDOUT, STDERR and exitCode files) so those file names are also changed. This makes it easier to find tasks in the final report and log files (it has no effect other than that). Note: If taskName contains non-allowed characters, they are sanitized (replaced by <code>_</code>).</td>
+</tr>
+<tr>
+<td><code>int timeout=0</code></td>
+<td>Default values for <code>task</code>. Time in seconds that a task is allowed to execute (e.g. when running on a cluster). Ignored if zero or less. If process runs more than <code>timeout</code> seconds, it is killed. Zero means no limit.</td>
+</tr>
+<tr>
+<td><code>int walltimeout=0</code></td>
+<td>Default values for <code>task</code>. Time in seconds since the task is dispatched to the processing environment. E.g. in busy clusters a task can spend a long time being scheduled (cluster's PENDING state) until the task is run (cluster's RUNNING state), <code>walltimeout</code> limits the sum of those times (as oposed to <code>timeout</code> that only limits the RUNNIG state time). Zero means no limit.</td>
+</tr>
+<tr>
+<td>Environment variables</td>
+<td>All shell environment variables at the moment of invocation (e.g. <code>HOME</code>, <code>PWD</code>, etc.)</td>
+</tr>
+<tr>
+<td><code>int K, M, G, T, P</code></td>
+<td>Kilo, Mega, Giga, Tera, Peta (2^10, 2^20, 2^30, 2^40 and 2^50 respectively)</td>
+</tr>
+<tr>
+<td><code>real E, PI</code></td>
+<td>Euler's constant (2.718281...) and Pi (3.1415927...)</td>
+</tr>
+<tr>
+<td><code>int minute, hour, day, week</code></td>
+<td>Number of seconds in a minute, hour, day and week respectively</td>
+</tr>
+</tbody>
+</table></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"search": 83, "next": 78, "help": 191, "previous": 80};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

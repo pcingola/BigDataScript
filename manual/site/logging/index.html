@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Logging - bds - Big Data Script programming language</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">bds - Big Data Script programming language</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../download/">Download</a>
+</li>
+                                    
+<li >
+    <a href="../hello/">Hello world</a>
+</li>
+                                    
+<li >
+    <a href="../language/">Language</a>
+</li>
+                                    
+<li >
+    <a href="../special/">Special operators</a>
+</li>
+                                    
+<li >
+    <a href="../data_types/">Data types</a>
+</li>
+                                    
+<li >
+    <a href="../functions/">Functions</a>
+</li>
+                                    
+<li >
+    <a href="../global_vars/">Global variables</a>
+</li>
+                                    
+<li >
+    <a href="../pipelines/">Pipelines</a>
+</li>
+                                    
+<li >
+    <a href="../sys/">Sys</a>
+</li>
+                                    
+<li >
+    <a href="../task/">Task</a>
+</li>
+                                    
+<li >
+    <a href="../wait/">Wait</a>
+</li>
+                                    
+<li >
+    <a href="../dep_op/">Dependency operator</a>
+</li>
+                                    
+<li >
+    <a href="../goal/">Goal</a>
+</li>
+                                    
+<li >
+    <a href="../remote_files/">Remote files</a>
+</li>
+                                    
+<li >
+    <a href="../par/">Parallel execution</a>
+</li>
+                                    
+<li >
+    <a href="../checkpoints/">Checkpoints</a>
+</li>
+                                    
+<li >
+    <a href="../test_cases/">Test cases</a>
+</li>
+                                    
+<li >
+    <a href="../debugger/">Debugger</a>
+</li>
+                                    
+<li >
+    <a href="../cmdline/">Command line parsing</a>
+</li>
+                                    
+<li >
+    <a href="../help/">Command line help</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Logging</a>
+</li>
+                                    
+<li >
+    <a href="../cleanup/">Cleanup</a>
+</li>
+                                    
+<li >
+    <a href="../bdscmdline/">bds command line</a>
+</li>
+                                    
+<li >
+    <a href="../bdsconfig/">Config file</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../help/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../cleanup/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#logging">Logging</a></li>
+        <li class="main "><a href="#shell-file">Shell file</a></li>
+            <li><a href="#stdout-stderr">STDOUT / STDERR</a></li>
+            <li><a href="#exit-code">Exit code</a></li>
+        <li class="main "><a href="#sys-commands">sys commands</a></li>
+            <li><a href="#disappearing-tasks">Disappearing tasks</a></li>
+            <li><a href="#postmortem-information">Postmortem information</a></li>
+            <li><a href="#html-report">Html report</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="logging">Logging</h1>
+<p>Logging is mundane and boring, but many times necessary. Not many people enjoy adding hundreds of line of code just to perform logging. That's why <code>bds</code> can log everything for you.</p>
+<p>Both <code>sys</code> and <code>task</code> commands create a shell file, execute it and save STDOUT and STDERR to files.
+This gives you an automatic log of everything that was executed, as well as the details of the outputs and exit status from each execution.</p>
+<p>For example, let's create a simple program and run it</p>
+<pre><code>task echo Hello
+</code></pre>
+
+<p>When <code>bds</code> executed a <code>task</code> statement, it produces the following files (for each task statement):</p>
+<ol>
+<li><code>taskId.sh</code>: A shell file with the commands to execute (e.g. <code>z.bds.20140328_224825_685/sys.line_4.id_1.sh</code>). This shell file is executed when the task runs.</li>
+<li><code>taskId.stdout</code>: Redirected <code>stdout</code> when executing the script file</li>
+<li><code>taskId.stderr</code>: Redirected <code>stderr</code> when executing the script file</li>
+<li><code>taskId.exitCode</code>: Exit code from the script</li>
+</ol>
+<p><strong>Note:</strong> By default all these files are deleted, unless you use the <code>-log</code> command line option when invoking <code>bds</code></p>
+<p>Now let's run this script, we use <code>-log</code> command line option to make the output verbose:</p>
+<pre><code>$ bds -log z.bds
+Hello
+</code></pre>
+
+<p>This run will create a directory (format: <code>programName.YYYYMMDD_hhmmss.PID</code>) containing all the files mentioned:</p>
+<pre><code>$ ls z.bds.20190125_210218_852
+task.z.line_1.id_1.exitCode       # Exit code
+task.z.line_1.id_1.sh             # Shell script from task
+task.z.line_1.id_1.stderr         # STDOUT from running shell script
+task.z.line_1.id_1.stdout         # STDERR from running shell script
+</code></pre>
+
+<h1 id="shell-file">Shell file</h1>
+<p>In the previous example the shell script would look like this:</p>
+<pre><code>$ cat task.z.line_1.id_1.sh
+#!/bin/bash -eu
+set -o pipefail
+
+cd '/home/pcingola'
+
+# SYS command. line 1
+echo Hello
+# Checksum: eda733b2
+</code></pre>
+
+<p>By default <code>bds</code> executes all tasks as <code>/bin/bash -eu; set -o pipefail</code>.
+This means that any error in the execution (including undefined shell variables) will make the shell script fail, thus the task will also fail.
+The type of shell and parameters used can be changed using the <code>taskShell</code> parameter from <code>bds</code> config file (<code>$HOME/.bds/bds.config</code>).</p>
+<p><strong>WARNING:</strong> Since <code>bds</code> creates a shell file and then executes it, in some systems this might lead to a <code>text file busy</code> error. Particularly this might happens if the file systems is slow (e.g. too much I/O load on some systems).
+If this happens, you can tune the <code>waitTextFileBusy</code> parameter in <code>bds</code> config file (<code>$HOME/.bds/bds.config</code>).</p>
+<h3 id="stdout-stderr">STDOUT / STDERR</h3>
+<p>As we mentioned in the previous section, all tasks save <code>STDOUT</code> and <code>STDERR</code> to files, in the previous example the <code>STDOUT</code> file looks like this:</p>
+<pre><code>$ cat task.z.line_1.id_1.stdout
+Hello
+</code></pre>
+
+<p>and the STDERR file is empty</p>
+<h3 id="exit-code">Exit code</h3>
+<p><code>bds</code> saves the exit code of each task in <code>taskId.exitCode</code> file.
+In the previous example, which executed succesfully, the exit file is:</p>
+<pre><code># Note that the '$' prompt is right after the '0' exit code (no newline)
+$ cat task.z.line_1.id_1.exitCode
+0$
+</code></pre>
+
+<h1 id="sys-commands"><code>sys</code> commands</h1>
+<p>As opposed to <code>task</code> commands, a <code>sys</code> does not execute a shell script, but executes the commands as inline.
+For instance the next program:</p>
+<pre><code>sys echo hi
+</code></pre>
+
+<p>Will actually create a process <code>/bin/bash -eu -o pipefail -c "echo hi"</code></p>
+<p>Nevertheless <code>bds</code> will still create a shell file for each <code>sys</code> command for tracebility and logging pourposes.
+This is also quite usefull for debugging.
+If you execute the previous program using '-log' command line opton you get:</p>
+<pre><code>$ bds -log z.bds
+00:00:00.491    Executing command. Arguments: [/bin/bash, -euo, pipefail, -c, echo hi]
+hi
+</code></pre>
+
+<p>And also the shell file is created:</p>
+<pre><code>$ ls z.bds.20190125_212208_750/
+sys.z.line_1.id_1.sh
+</code></pre>
+
+<p>The shell file looks like this:</p>
+<pre><code># Execution shell: /bin/bash -euo pipefail -c
+
+echo hi
+</code></pre>
+
+<h3 id="disappearing-tasks">Disappearing tasks</h3>
+<p>Sometimes tasks just disappear from clusters.
+This is far more common than most people think, particularly if there is some issues with the cluster (nodes malfuntioning, nodes being purged, cluster management software issues, etc.)</p>
+<p>Sometimes clusters fail in ways that the cluster management system is unable to detect, let alone report the error.
+It can happen that tasks disappear without any trace from the cluster (this is not as rare as you may think, particularly when executing thousands of tasks per pipeline).
+For this reason, <code>bds</code> performs active monitoring, to ensure that tasks are still alive.
+If any task "mysteriously disappears", <code>bds</code> reports the problem and considers the task as failed.</p>
+<p><code>bds</code> will monitor the cluster's queue every one minute to check if all the tasks that were submitted to the cluster are still in the queue.
+If a task is not found in the clueter's queue for 3 times in a row, it will be marked as 'dissapeared' (i.e. failed).</p>
+<p><code>bds</code> logs information about any dissapearing tasks.</p>
+<h3 id="postmortem-information">Postmortem information</h3>
+<p>When a task fails in a cluster, <code>bds</code> will collect post mortem information.
+This is detailed information about the task that failed.
+This information is usually necesary to debug cluster issues and clusters administrators often require it when solving problems.
+Many cluster systems only allow for collecting this information only after some period of time after the task dies, that's why <code>bds</code> collects this data and saves it immediately after the task fails.</p>
+<h3 id="html-report">Html report</h3>
+<p><code>bds</code>, when run using the <code>-log</code> command line option, produces an HTML report every one minute (if there are tasks executing) or at the end of the script (if any task was executed).
+The report is roughly divided in these sections: Program, Timeline, Parallel, Tasks</p>
+<h4 id="html-report-program">Html report: Program</h4>
+<p>Program name, command line arguments, system type, execution start time and elapsed time, etc.</p>
+<p><img alt="bds report main section" src="bds_report_main.png" /></p>
+<h4 id="html-report-timeline">Html report: Timeline</h4>
+<p>Shows the timeline for all tasks (keep in mind that the colors have no meaning).</p>
+<p><img alt="bds report timeline section" src="bds_report_timeline.png" /></p>
+<h4 id="html-report-tasks">Html report: Tasks</h4>
+<p>Several details about each executed task: </p>
+<ul>
+<li>First column: task number (sequential), task name, task ID, PID, etc.</li>
+<li>Second column: exit code, task state, state of dependencies, number of retries, required CPUs and memory.</li>
+<li>Third column: Start / end time, elapsed time and timouts.</li>
+<li>Fourth column: Dependencies input files, output files and task IDs of dependecies.</li>
+<li>Fifth column: Program shell file, STDOUT (tail 10 lines), STDERR (tail 10 lines), output file checking, post-mortem information.</li>
+</ul>
+<p><img alt="bds report tasks section" src="bds_report_task_details.png" /></p>
+<p><em>Note:</em> The second column is colored in red when the task had execution 'ERROR' state.</p>
+<h4 id="html-report-parallel">Html report: Parallel</h4>
+<p>Detail about execution threads. Only usefull if your program has <code>par</code> statements, in this example there are no <code>par</code> statements, so the section only contains one item (main thread) whihc executed all the tasks.</p>
+<p><img alt="bds report parallel section" src="bds_report_par.png" /></p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"search": 83, "next": 78, "help": 191, "previous": 80};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

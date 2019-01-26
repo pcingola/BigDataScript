@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Debugger - bds - Big Data Script programming language</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">bds - Big Data Script programming language</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../download/">Download</a>
+</li>
+                                    
+<li >
+    <a href="../hello/">Hello world</a>
+</li>
+                                    
+<li >
+    <a href="../language/">Language</a>
+</li>
+                                    
+<li >
+    <a href="../special/">Special operators</a>
+</li>
+                                    
+<li >
+    <a href="../data_types/">Data types</a>
+</li>
+                                    
+<li >
+    <a href="../functions/">Functions</a>
+</li>
+                                    
+<li >
+    <a href="../global_vars/">Global variables</a>
+</li>
+                                    
+<li >
+    <a href="../pipelines/">Pipelines</a>
+</li>
+                                    
+<li >
+    <a href="../sys/">Sys</a>
+</li>
+                                    
+<li >
+    <a href="../task/">Task</a>
+</li>
+                                    
+<li >
+    <a href="../wait/">Wait</a>
+</li>
+                                    
+<li >
+    <a href="../dep_op/">Dependency operator</a>
+</li>
+                                    
+<li >
+    <a href="../goal/">Goal</a>
+</li>
+                                    
+<li >
+    <a href="../remote_files/">Remote files</a>
+</li>
+                                    
+<li >
+    <a href="../par/">Parallel execution</a>
+</li>
+                                    
+<li >
+    <a href="../checkpoints/">Checkpoints</a>
+</li>
+                                    
+<li >
+    <a href="../test_cases/">Test cases</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Debugger</a>
+</li>
+                                    
+<li >
+    <a href="../cmdline/">Command line parsing</a>
+</li>
+                                    
+<li >
+    <a href="../help/">Command line help</a>
+</li>
+                                    
+<li >
+    <a href="../logging/">Logging</a>
+</li>
+                                    
+<li >
+    <a href="../cleanup/">Cleanup</a>
+</li>
+                                    
+<li >
+    <a href="../bdscmdline/">bds command line</a>
+</li>
+                                    
+<li >
+    <a href="../bdsconfig/">Config file</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../test_cases/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../cmdline/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#debugger-built-in">Debugger (built in)</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="debugger-built-in">Debugger (built in)</h1>
+<p>Bds provides a simple yet powerful built in debugger using <code>breakpoint</code> and <code>debug</code> statements.</p>
+<p><code>bds</code> provides a simple built in debugger that can be activated using <code>breakpoint</code> statement.
+When a <code>breakpoint</code> statement is found, <code>bds</code> switches to debug mode and prompts the user on the console.</p>
+<p>File <a href="bds/test_24.bds">test_25.bds</a></p>
+<pre><code>#!/usr/bin/env bds
+
+int inc(int x) {
+    return x + 1;
+}
+
+debug &quot;This won't be printed because we are not (yet) in debug mode\n&quot; 
+breakpoint &quot;Activate debug mode and insert a breakpoint here!\n&quot;
+
+for( int i=0 ; i &lt; 3 ; i = inc(i) ) {
+    print &quot;hi $i\n&quot;
+    debug &quot;Variable: $i\n&quot;  # This will be printed
+}
+</code></pre>
+
+<p>When we run this example, the program runs until the first <code>breakpoint</code> and then <code>bds</code> prompts for debug commands on the console:</p>
+<pre><code>$ bds test_25.bds 
+Breakpoint test_25.bds, line 8: Activate debug mode and insert a breakpoint here!
+DEBUG [STEP]: test_25.bds, line 10: 
+    for( int i = 0 ; i &lt; 3 ; i = inc( i ) ) {
+        print &quot;hi $i\\n&quot;
+        debug &quot;Variable: $i\\n&quot;
+    }
+&gt;
+</code></pre>
+
+<p>You can type 'h' for help in debug commands:</p>
+<pre><code>&gt; h
+Help:
+    [RETURN]  : step
+    f         : show current Frame (variables within current scope)
+    h         : Help
+    o         : step Over
+    p         : show Program counter
+    r         : Run program (until next breakpoint)
+    s         : Step
+    t         : show stack Trace
+    v varname : show Variable 'varname'
+</code></pre>
+
+<p>Here is an example of a debug session (comments after '#' added for clarity):</p>
+<pre><code>$ bds test_25.bds 
+Breakpoint test_25.bds, line 8: Activate debug mode and insert a breakpoint here!
+DEBUG [STEP]: test_25.bds, line 10: 
+    for( int i = 0 ; i &lt; 3 ; i = inc( i ) ) {
+        print &quot;hi $i\\n&quot;
+        debug &quot;Variable: $i\\n&quot;
+    }
+&gt; 
+DEBUG [STEP]: test_25.bds, line 10: int i = 0 &gt;                      # Pressing Return runs the next step ('int i=0')
+DEBUG [STEP]: test_25.bds, line 10: i = 0 &gt; v i                      # Show variable 'i'
+int : 0
+DEBUG [STEP]: test_25.bds, line 10: i &lt; 3 &gt; 
+DEBUG [STEP]: test_25.bds, line 11: print &quot;hi $i\\n&quot; &gt; 
+hi 0                                                                 # Output to STDOUT from print statement
+DEBUG [STEP]: test_25.bds, line 12: debug &quot;Variable: $i\\n&quot; &gt; 
+Debug test_25.bds, line 12: Variable: 0                              # Since we are in debug mode, 'debug' prints to SDTERR
+DEBUG [STEP]: test_25.bds, line 10: i = inc( i ) &gt; 
+DEBUG [STEP]: test_25.bds, line 10: inc( i ) &gt;                       # Step into function 'inc(i)'
+DEBUG [STEP]: test_25.bds, line 4: return x + 1 &gt; t                  # Show stack trace
+test_25.bds, line 10 :    for( int i=0 ; i &lt; 3 ; i = inc(i) ) {
+test_25.bds, line 3 :    int inc(int x) {
+test_25.bds, line 4 :        return x + 1;
+
+DEBUG [STEP]: test_25.bds, line 4: return x + 1 &gt; f                  # Show frames (variables)
+
+---------- Scope Global ----------
+string _ = &quot;/Users/pcingola/.bds/bds&quot;
+...                                                                  # Edited for brevity
+int walltimeout = 86400
+int week = 604800
+
+---------- Scope test_25.bds:10:ForLoop ----------                   
+int i = 0
+
+---------- Scope test_25.bds:3:FunctionDeclaration ----------
+int x = 0
+
+DEBUG [STEP]: test_25.bds, line 4: return x + 1 &gt;                    # Step, exeute 'return' statement
+DEBUG [STEP]: test_25.bds, line 10: i &lt; 3 &gt; 
+DEBUG [STEP]: test_25.bds, line 11: print &quot;hi $i\\n&quot; &gt; 
+hi 1
+DEBUG [STEP]: test_25.bds, line 12: debug &quot;Variable: $i\\n&quot; &gt; 
+Debug test_25.bds, line 12: Variable: 1
+DEBUG [STEP]: test_25.bds, line 10: i = inc( i ) &gt; o
+DEBUG [STEP_OVER]: test_25.bds, line 10: inc( i ) &gt;                  # Step Over: execute 'inc(i)' and stop after function returns
+DEBUG [STEP_OVER]: test_25.bds, line 10: i &lt; 3 &gt; 
+DEBUG [STEP_OVER]: test_25.bds, line 11: print &quot;hi $i\\n&quot; &gt; r        # Run (until another breakpoint). Since there are no more breakpoints, runs until the end of the program
+hi 2
+Debug test_25.bds, line 12: Variable: 2
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"search": 83, "next": 78, "help": 191, "previous": 80};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
