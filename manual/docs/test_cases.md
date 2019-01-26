@@ -1,10 +1,10 @@
 # Test cases
-				 Because nobody writes perfect code. 
+Because nobody writes perfect code. 
 
-				`bds` provides a simple unit testing functionality. 
-				Simply use the `-t` command line option and `bds` will run all functions `test*()` (that is functions whose names start with 'test' and have no arguments).
-	
-				 File <a href="bds/test_24.bds">test_24.bds</a>
+`bds` provides a simple unit testing functionality. 
+Simply use the `-t` command line option and `bds` will run all functions `test*()` (that is functions whose names start with 'test' and have no arguments).
+
+File <a href="bds/test_24.bds">test_24.bds</a>
 ```
 #!/usr/bin/env bds
 
@@ -26,7 +26,7 @@ void test03() {
 }
 ```
 
-				When we execute the tests, we get
+When we execute the tests, we get
 ```
 $ bds -t ./test_24.bds 
 

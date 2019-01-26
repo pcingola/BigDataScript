@@ -124,6 +124,6 @@ DONE 8
 DONE 9
 ```
 
-**Warning:** There is an implicit `wait` statement at the end of the program. 
+**Note:** There is an implicit `wait` statement at the end of the program. 
 So a program does not exit until all tasks have finished running.
 

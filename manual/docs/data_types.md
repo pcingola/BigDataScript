@@ -14,6 +14,7 @@ real                   | A 64 bit IEEE 754 number (same as Java's double)
 bool                   | A boolean value, can be 'true' or 'false' (same as Java's boolean) 
 Arrays, List, Stacks   | These are all the same, just a different way to call a list of elements 
 Maps                   | Maps are hashes (a.k.a. dictionaries that have `string` keys. 
+Class                  | An object definition
 
 ### Strings 
 
@@ -79,8 +80,9 @@ Here `f` is a string, but it has a method `canRead()` which returns true if f is
  bool          | string.isDir()                              | True if it's a directory      
  bool          | string.isFile()                             | True if it's a file      
  bool          | string.mkdir()                              | Create dir ('mkdir -p')     
- string        | string.path()                               | Canonical path to file      
- string        | string.pathName()                           | Canonical dir to file      
+ string        | string.path()                               | Absolute path to file      
+ string        | string.pathCanonical()                      | Canonical path to file      
+ string        | string.pathName()                           | Absolute dir
  string        | string.read()                               | Read the whole file into a string      
  string[]      | string.readLines()                          | Read the whole file and split the lines      
  string        | string.removeExt()                          | Remove file extension   
@@ -115,6 +117,9 @@ bool        | string.isDoneOk()   | True if the task finished without errors
 string      | string.stdout()     | A string with all the STDOUT generated from this task   
 string      | string.stderr()     | A string with all the STDERR generated from this task   
 int         | string.exitCode()   | Exit code  
+string[]    | getTasksDone()      | Return a list of all task IDs that have finished (either succesfully or with errors)
+string[]    | getTasksRunning()   | Return a list of all task IDs that are running
+string[]    | getTasksToRun()     | Return a list of all task IDs that have not yet started to run (e.g. waiting to be executed)
 
 ### Arrays, List, Stacks 
 
@@ -170,7 +175,6 @@ Value: one
 Value: two
 Value: three
 ```
-                
 
 ### Maps 
 Maps are hashes that have `string` as keys.
@@ -192,15 +196,17 @@ mre{"e"}     = 2.7182818
 mre{"three"} = 3.0
 mre{"pi"}    = 3.1415927
 ```
-                
+ 
 ** Methods **
-Returns  Method                 Meaning 
-bool     hasKey(string key)     True if the key is in the map   
-bool     hasValue(value)        True if 'value' is in the map   
-list     keys()                 A sorted list of all keys in the map  
-bool     remove(key)            Remove `key` from this map  
-int      size()                 Number of elements in this map  
-list     values()               A sorted list of all values in the map  
+
+Returns | Method             | Meaning 
+--------|--------------------|---------------------------------------
+bool    | hasKey(string key) | True if the key is in the map
+bool    | hasValue(value)    | True if 'value' is in the map
+list    | keys()             | A sorted list of all keys in the map
+bool    | remove(key)        | Remove `key` from this map
+int     | size()             | Number of elements in this map
+list    | values()           | A sorted list of all values in the map
 
 **Iterating on a map**
 You can iterate over all values in a map, simply by doing
@@ -209,7 +215,7 @@ $ cat z.bds
 string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
 
 for(string v : mstr ) { 
-        print("Values : $v\n") 
+   print("Values : $v\n") 
 }
 
 $ bds z.bds
@@ -225,11 +231,69 @@ $ cat z.bds
 string{} mstr = { "Hello" => "Bye", "Bonjour" => "Au revoir", "Hola" => "Adios" }
 
 for(string k : mstr.keys() ) { 
-        print("Key : $k\tValue : " + mstr{k} + "\n") 
+    print("Key : $k\tValue : " + mstr{k} + "\n") 
 }
 
 $ bds z.bds
 Key : Bonjour    Value : Au revoir
 Key : Hello    Value : Bye
 Key : Hola    Value : Adios
+```
+
+### Classes
+Bds has some basic object oriented model that help to modularize complex data analysis pipelenes.
+Has you may expect, classes can contiain fields (class variables) and methods (class functions).
+```
+class A {
+	string name
+	int value
+}
+```
+
+**`new` operator**
+To create a new object you use the operator `new` followed by the class name and parameters for the constructor method.
+A constructor method has the same name as the class and returns `void`.
+If no constructor is provided in the class definition, a default (empty) method is created.
+E.g.:
+```
+a := new A()    # Create object 'A' and invoke empty (default) constructor
+```
+
+Example of a constructor with parameters:
+```
+class A {
+	int x
+
+	# Constructor
+	void A(int x) {
+		this.x = x
+	}
+}
+
+a := new A(42)
+println "a: $a"
+```
+The output of this program would be (by default printing an object shows the fields):
+```
+a: { x: 42 }
+```
+
+**Inheritance**: A class can inherit from another class using `extends` keywors in the class definition. 
+
+```
+class A {
+	int x
+	void A(int x) { this.x = x }
+}
+
+class B extends A {
+	int y=17
+}
+
+b := new B()
+println "b: $b"
+```
+The output of this program is:
+```
+b: { x: 0, y: 17 }
 ```

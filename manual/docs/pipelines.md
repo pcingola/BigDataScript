@@ -9,7 +9,7 @@ The most basic operation is to execute a task, which is done using a `task` expr
 In this toy example, we schedule 10 tasks for execution. 
 I'm running this on a computer that only has 8 CPUs, so not all tasks can execute in parallel.
 
-File <a href="bds/test_04.bds">test_04.bds</a>
+File <a href="../bds/test_04.bds">test_04.bds</a>
 ```
 #!/usr/bin/env bds
 
@@ -51,6 +51,7 @@ The rest is executed when the first tasks finish.
 We'll see how to coordinate tasks later.
 
 <iframe width="640" height="390" src="http://www.youtube.com/embed/ehFfU8vLwi8" frameborder="0" allowfullscreen></iframe>
+
 
 ### Running on a cluster 
 Here we show how exactly the same script is run on a cluster, keep in mind that not a single line of code changed. 

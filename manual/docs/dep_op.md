@@ -4,6 +4,7 @@ The dependency operator provides a simple way to see if a file needs to be updat
 For instance, when we already processed some files and have the corresponding results, we may save some work if the inputs have not changed (like "make" command).
 
 We introduce the dependency operator `<-` (pronounced 'dep') which is a "make" style operator.
+
 The expression `out <- in` is true if 'out' file needs to be updated.
 More formally, the expression is true if the file name represented by the variable 'out' does not exist, is empty (zero length) or has a creation date before 'in'.
 E.g.:
@@ -58,12 +59,37 @@ if( outFile <- inFile ) {
 }
 ```
 
-					* This construction is so common that we allow for some syntactic sugar. 
+###Multiple dependencies
+You can have a dependency operator expression `out <- in`, where either `in` and `out` or both can be lists of files. 
+The same rules apply: The operator is true if any out file is missing, zero length or the minimum of modification times in <code>out</code> is less than the maximum modificaton times in <code>in</code>
+
+This can be also used on lists:
+```
+in1 := "in1.txt"
+in2 := "in2.txt"
+out := "out.txt"
+
+if( out <- [in1, in2] ) print("We should update $out\n")
+```
+
+or even:
+```
+in1 := "in1.txt"
+in2 := "in2.txt"
+out1 := "out1.txt"
+out2 := "out2.txt"
+
+if( [out1, out2] <- [in1, in2] ) print("We should update $out1 and $out2\n")
+```
+
+###Using `<-` in `tasks`
+This construction is so common that we allow for some syntactic sugar. 
 ```
 task( outFile <- inFile ) { 
 	sys echo Creating $outFile; cat $inFile > $outFile
 }
 ```
+The above syntax means that `task` will only be executed if the dependency is satisfied, i.e. `outFile` needs to be updated respect to `inFile`.
 
 <iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
 
@@ -121,121 +147,3 @@ Done out.txt
 ```
 Note how the second task is executed only after the first one finished.
 
-### Complex dependencies: `dep` and `goal` 
-				
-The `goal` statement helps to program complex task scheduling interdependencies.
-
-In the previous example, we had an input file 'in.txt', an intermediate file 'inter.txt' and an output file 'out.txt'.
-One problem is that if we delete the intermediate file 'inter.txt' (e.g. because we may want to delete big files with intermediate results), then both tasks will be executed
-
-For convenience, here is the code again. File <a href="bds/test_07.bds">test_07.bds</a>
-```
-#!/usr/bin/env bds
-
-inFile       := "in.txt"		
-intermediate := "inter.txt"
-outFile      := "out.txt"
-
-task( intermediate <- inFile) {
-    sys echo Creating $intermediate; cat $inFile > $intermediate; sleep 1 ; echo Done $intermediate
-}
-
-task( outFile <- intermediate ) {
-    sys echo Creating $outFile; cat $intermediate > $outFile; echo Done $outFile
-}
-```
-```
-# Remove intermediate file
-$ rm inter.txt 
-
-# Re-execute script 
-$ ./test_07.bds
-Creating inter.txt
-Done inter.txt
-Creating out.txt
-Done out.txt
-```
-
-Why is this happening? The reason is that `task` statements are evaluated in order. 
-So when `bds` evaluates the first `task` expression, the dependency `intermediate <- inFile` is true (because 'inter.txt' doesn't exist, so it must be updated with respect to 'in.txt').
-After that, when the second `task` expression is evaluated,  `out <- intermediate` is also true, since 'inter.txt' is newer than 'out.txt'.
-As a result, both tasks are re-executed, even though 'out.txt' is up to date with respect to 'in.txt'.
-This can be a problem, particularly if each task requires several hours of execution.
-
-
-There are two ways to solve this, the obvious one is to add a simple 'if' statement surrounding the tasks:
-```
-#!/usr/bin/env bds
-
-inFile       := "in.txt"		
-intermediate := "inter.txt"
-outFile      := "out.txt"
-
-if( outFile <- inFile) {
-  task( intermediate <- inFile) {
-    sys echo Creating $intermediate; cat $inFile > $intermediate; sleep 1 ; echo Done $intermediate
-  }
-
-  task( outFile <- intermediate ) {
-    sys echo Creating $outFile; cat $intermediate > $outFile; echo Done $outFile
-  }
-}
-```
-
-Although it solves the issue, the code is not elegant.
-
-
-The alternative is to use `dep` and `goal`
-
-* `dep` defines a task exactly the same way as `task` expression, but it doesn't evaluate if the tasks should be executed or not (it's just declarative). 
-* `goal` executes all dependencies nescesary to create an output 
-
-Example:
-
- File <a href="bds/test_08.bds">test_08.bds</a>
-```
-#!/usr/bin/env bds
-
-inFile       := "in.txt"		
-intermediate := "inter.txt"
-outFile      := "out.txt"
-
-dep( intermediate <- inFile) {
-    sys echo Creating $intermediate; cat $inFile > $intermediate; sleep 1 ; echo Done $intermediate
-}
-
-dep( outFile <- intermediate ) {
-    sys echo Creating $outFile; cat $intermediate > $outFile; echo Done $outFile
-}
-
-goal outFile
-```
-
-			If we execute this script
-```
-# Delete old files (if any)
-$ rm *.txt
-
-# Create input file
-$ date > in.txt
-
-# Run script (both tasks should be executed)
-$ ./test_08.bds
-Creating out.txt
-Done out.txt
-Creating inter.txt
-Done inter.txt
-```
-Now we delete 'inter.txt' and re-execute
-
-```
-# Delete intermediate file
-$ rm inter.txt 
-
-# Run again (out.txt is still up to date with respect to in.txt, so no task should be executed)
-$ ./test_08.bds
-$ 
-```
-
-As you can see, no task is executed the second time, since 'out.txt' is up to date, with respect to 'in.txt'. 
-The fact that intermediate file 'inter.txt' was deleted, is ignored, which is what we wanted.

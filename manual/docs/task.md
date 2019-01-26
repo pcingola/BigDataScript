@@ -25,7 +25,7 @@ There are different ways to execute tasks
 System       | Typical usage                                                                                                                 | How it is done  
 -------------|-------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------
 `cluster`    | Running on a cluster (GridEngine, Torque)                                                                                     | Tasks are scheduled for execution (using 'qsub' or equivalent command). Resource management is delegated to cluster workload management.  
-`generic`    | Enable user defined scripts to run, kill and find information on tasks                                                        | This 'generic' cluster allows the user to write/customize scripts that send jobs to the cluster system. 
+`generic`    | Enable user defined scripts to run, kill and find information on tasks                                                        | This 'generic' cluster allows the user to write/customize scripts that send jobs to the cluster system.  It can be useful to either add cluster systems not currently supported by bds, or to customize parameters and scheduling options beyond what bds allows to customize in the config file. For details, see bds.config file and examples in the project's source code (directories `config/clusterGeneric`).
 `local`      | Running on a single computer. E.g. programming and debugging on your laptop or running stuff on a server                      | A local queue is created, the total number of CPUs used by all tasks running is less or equal than the number of CPU cores available   
 `mesos`      | Running on a Mesos framework                                                                                                  | Tasks are scheduled for execution in Mesos framework and resource management is delegated to Mesos.  
 `moab`       | Running on a MOAB/PBS cluster                                                                                                 | Tasks are scheduled for execution (using 'msub'). Resource management is delegated to cluster workload management.  
@@ -124,14 +124,17 @@ List of resources or task options
 
 Variable       | Default value  | Resource / Task options  
 ---------------|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------
-`cpus`         | 1              | Number of CPU (cores) used by the process.   
 `allowEmpty`   | false          | If true, empty files are allowed in task's outputs. This means that a task producing empty files does not result in program termination and checkpointing.   
 `canFail`      | false          | If true, a task is allowed to fail. This means that a failed task execution does not result in program termination and checkpointing.   
-`timeout`      | 0              | Number of seconds that a process is allowed to execute. Ignored if zero or less. If process runs more than `timeout` seconds, it is killed.   
+`cpus`         | 1              | Number of CPU (cores) used by the process.   
+'mem'          | 0              | Maximum amount of memory in bytes used by the process (0 means no restrictions or use cluster default)
 `node`         |                | If possible this task should be executed on a particular cluster node. This option is only used for cluster systems and ignored on any other systems.   
 `queue`        |                | Queue name of preferred execution queue (only for cluster systems).   
 `retry`        | 0              | Number of times a task can be re-executed until it's considered failed.   
-`taskName`     |                | Assign a task name. This adds a label to the task as well as the taskId returned by `task` expression. Task ID is used to create log files related to the task (shell script, STDOUT, STDERR and exitCode files) so those file names are also changed. This makes it easier to find tasks in the final report and log files (it has no effect other than that). Note: If taskName contains non-allowed characters, they are sanitized (replaced by '_').  
+`taskName`     |                | Assign a task name. This adds a label to the task as well as the taskId returned by `task` expression. Task ID is used to create log files related to the task (shell script, STDOUT, STDERR and exitCode files) so those file names are also changed. This makes it easier to find tasks in the final report and log files (it has no effect other than that). Note: If taskName contains non-allowed characters, they are sanitized (replaced by `_`).  
+`timeout`      | 0              | Time in seconds that a task is allowed to execute (e.g. when running on a cluster). Ignored if zero or less. If process runs more than `timeout` seconds, it is killed. Zero means no limit.
+`walltimeout`  | 0              | Time in seconds since the task is dispatched to the processing environment. E.g. in busy clusters a task can spend a long time being scheduled (cluster's PENDING state) until the task is run (cluster's RUNNING state), `walltimeout` limits the sum of those times (as oposed to `timeout` that only limits the RUNNIG state time). Zero means no limit. 
+
 
 ### Conditional execution 
 
@@ -159,7 +162,7 @@ task( shouldExec, cpus := 4 ) {
 }
 ```
 
-**Warning:** This feature is particularly useful when combined with the dependency operator `&lt;-`. 
+**Note:** This feature is particularly useful when combined with the dependency operator `<-`
 For instance, the following `task` will be executed only if 'out.txt' needs to be updated with respect to 'in.txt'
 ```
 in  := 'in.txt'

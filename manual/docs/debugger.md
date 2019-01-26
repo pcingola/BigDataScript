@@ -1,10 +1,10 @@
 #  Debugger (built in) 
-				 Bds provides a simple yet powerful built in debugger using `breakpoint` and `debug` statements.
+Bds provides a simple yet powerful built in debugger using `breakpoint` and `debug` statements.
 
-				`bds` provides a simple built in debugger that can be activated using `breakpoint` statement.
-				When a `breakpoint` statement is found, `bds` switches to debug mode and prompts the user on the console.
-	
-				 File <a href="bds/test_24.bds">test_25.bds</a>
+`bds` provides a simple built in debugger that can be activated using `breakpoint` statement.
+When a `breakpoint` statement is found, `bds` switches to debug mode and prompts the user on the console.
+
+File <a href="bds/test_24.bds">test_25.bds</a>
 ```
 #!/usr/bin/env bds
 
@@ -21,7 +21,7 @@ for( int i=0 ; i < 3 ; i = inc(i) ) {
 }
 ```
 
-				When we run this example, the program runs until the first `breakpoint` and then `bds` prompts for debug commands on the console:
+When we run this example, the program runs until the first `breakpoint` and then `bds` prompts for debug commands on the console:
 ```
 $ bds test_25.bds 
 Breakpoint test_25.bds, line 8: Activate debug mode and insert a breakpoint here!
@@ -33,7 +33,7 @@ DEBUG [STEP]: test_25.bds, line 10:
 >
 ```
 
-			You can type 'h' for help in debug commands:
+You can type 'h' for help in debug commands:
 ```
 > h
 Help:
@@ -48,7 +48,7 @@ Help:
 	v varname : show Variable 'varname'
 ```
 
-			Here is an example of a debug session (comments after '#' added for clarity):
+Here is an example of a debug session (comments after '#' added for clarity):
 ```
 $ bds test_25.bds 
 Breakpoint test_25.bds, line 8: Activate debug mode and insert a breakpoint here!
@@ -100,5 +100,3 @@ DEBUG [STEP_OVER]: test_25.bds, line 11: print "hi $i\\n" > r        # Run (unti
 hi 2
 Debug test_25.bds, line 12: Variable: 2
 ```
-			
-		

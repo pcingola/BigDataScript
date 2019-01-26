@@ -98,3 +98,122 @@ for(int i=0; i < 3 ; i++ ) {
 
 goal outs	# We use a list of goals, it is interpreted as multiple goal statements (one for each item in the list)
 ```
+
+### Use-case example for `dep` and `goal`
+				
+The `goal` statement helps to program complex task scheduling interdependencies.
+
+In a previous example (<a href="bds/test_07.bds">test_07.bds</a>), we had an input file `in.txt`, an intermediate file `inter.txt` and an output file `out.txt`.
+```
+#!/usr/bin/env bds
+
+inFile       := "in.txt"		
+intermediate := "inter.txt"
+outFile      := "out.txt"
+
+task( intermediate <- inFile) {
+    sys echo Creating $intermediate; cat $inFile > $intermediate; sleep 1 ; echo Done $intermediate
+}
+
+task( outFile <- intermediate ) {
+    sys echo Creating $outFile; cat $intermediate > $outFile; echo Done $outFile
+}
+```
+
+One problem is that if we delete the intermediate file `inter.txt` (e.g. because we may want to delete big files with intermediate results), then both tasks will be executed
+
+```
+# Remove intermediate file
+$ rm inter.txt 
+
+# Re-execute script 
+$ ./test_07.bds
+Creating inter.txt
+Done inter.txt
+Creating out.txt
+Done out.txt
+```
+
+Why is this happening? The reason is that `task` statements are evaluated in order. 
+So when `bds` evaluates the first `task` expression, the dependency `intermediate <- inFile` is true (because `inter.txt` doesn't exist, so it must be updated with respect to `in.txt`).
+After that, when the second `task` expression is evaluated,  `out <- intermediate` is also true, since `inter.txt` is newer than `out.txt`.
+As a result, both tasks are re-executed, even though `out.txt` is up to date with respect to `in.txt`.
+This can be a problem, particularly if each task requires several hours of execution.
+
+
+There are two ways to solve this, the obvious one is to add a simple `if` statement surrounding the tasks:
+```
+#!/usr/bin/env bds
+
+inFile       := "in.txt"		
+intermediate := "inter.txt"
+outFile      := "out.txt"
+
+if( outFile <- inFile) {
+  task( intermediate <- inFile) {
+    sys echo Creating $intermediate; cat $inFile > $intermediate; sleep 1 ; echo Done $intermediate
+  }
+
+  task( outFile <- intermediate ) {
+    sys echo Creating $outFile; cat $intermediate > $outFile; echo Done $outFile
+  }
+}
+```
+
+Although it solves the issue, the code is not elegant.
+
+
+The alternative is to use `dep` and `goal`
+
+* `dep` defines a task exactly the same way as `task` expression, but it doesn't evaluate if the tasks should be executed or not (it's just declarative). 
+* `goal` executes all dependencies nescesary to create an output 
+
+Example:
+
+ File <a href="bds/test_08.bds">test_08.bds</a>
+```
+#!/usr/bin/env bds
+
+inFile       := "in.txt"		
+intermediate := "inter.txt"
+outFile      := "out.txt"
+
+dep( intermediate <- inFile) {
+    sys echo Creating $intermediate; cat $inFile > $intermediate; sleep 1 ; echo Done $intermediate
+}
+
+dep( outFile <- intermediate ) {
+    sys echo Creating $outFile; cat $intermediate > $outFile; echo Done $outFile
+}
+
+goal outFile
+```
+
+If we execute this script
+```
+# Delete old files (if any)
+$ rm *.txt
+
+# Create input file
+$ date > in.txt
+
+# Run script (both tasks should be executed)
+$ ./test_08.bds
+Creating out.txt
+Done out.txt
+Creating inter.txt
+Done inter.txt
+```
+Now we delete 'inter.txt' and re-execute
+
+```
+# Delete intermediate file
+$ rm inter.txt 
+
+# Run again (out.txt is still up to date with respect to in.txt, so no task should be executed)
+$ ./test_08.bds
+$ 
+```
+
+As you can see, no task is executed the second time, since `out.txt` is up to date, with respect to `in.txt`. 
+The fact that intermediate file `inter.txt` was deleted, is ignored, which is what we wanted.

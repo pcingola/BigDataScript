@@ -1,13 +1,13 @@
 # Checkpoints 
-				 BigDataScript can save the full state of a running script to a file and restart execution from that point 
+`bds` can save the full state of a running script to a file and restart execution from that point 
 
-				A `checkpoint` is the full serialization of the state of a program. 
-				This is a powerful tool to create robust pipelines and to recover from several failure conditions.
-				
-				
-				A checkpoint is created either when a task fails or when an explicit `checkpoint` command is executed.
-				E.g.: The following program counts from 0 to 9, creating a checkpoint when the counter gets to 5
-				 File <a href="bds/test_19.bds">test_19.bds</a>
+A `checkpoint` is the full serialization of the state of a program. 
+This is a powerful tool to create robust pipelines and to recover from several failure conditions.
+
+
+A checkpoint is created either when a task fails or when an explicit `checkpoint` command is executed.
+E.g.: The following program counts from 0 to 9, creating a checkpoint when the counter gets to 5
+File <a href="bds/test_19.bds">test_19.bds</a>
 ```
 for( int i=0 ; i < 10 ; i++ ) {
 	if( i == 5 ) {
@@ -18,7 +18,7 @@ for( int i=0 ; i < 10 ; i++ ) {
 }
 ```
 
-				If we execute it, we get
+If we execute it, we get
 ```
 $ bds z.bds
 Counting 0
@@ -33,8 +33,9 @@ Counting 7
 Counting 8
 Counting 9
 ```
-				A checkpoint file `my.chp` created.
-				We can restart execution from this checkpoint file, by using the `bds -r` command line option
+
+A checkpoint file `my.chp` created.
+We can restart execution from this checkpoint file, by using the `bds -r` command line option
 ```
 $ bds -r my.chp		# Restart execution from checkpoint file
 Counting 5
@@ -44,7 +45,7 @@ Counting 8
 Counting 9
 ```
 
-				You can also see information on what was happening when the checkpoint was created:
+You can also see information on what was happening when the checkpoint was created:
 ```
 $ bds -i my.chp
 Program file: './test_19.bds'
@@ -68,9 +69,6 @@ int i = 5
 ...
 ```
 				
-				You can even copy the file(s) to another computer and restart execution there, as shown in this video
-				
-				<iframe width="640" height="390" src="https://www.youtube.com/embed/ah1XxWTYSLM" frameborder="0" allowfullscreen></iframe>
-				
-			
+You can even copy the file(s) to another computer and restart execution there, as shown in this video
+<iframe width="640" height="390" src="https://www.youtube.com/embed/ah1XxWTYSLM" frameborder="0" allowfullscreen></iframe>
 

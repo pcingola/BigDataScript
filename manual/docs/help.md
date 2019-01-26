@@ -1,11 +1,11 @@
 # Automatic command line help 
-				 A command line 'help' for your scripts can be created automatically by `bds`. 
+A command line 'help' for your scripts can be created automatically by `bds`. 
 
-				When you create variables that are used in command line arguments, you can provide an optional `help` string that `bds` will show when the script is run using either: `-h`, `-help` or `--help` command line options.
-				
-				
-				For example, if we have the following script:
-				File <a href="bds/test_26.bds">test_26.bds</a>
+When you create variables that are used in command line arguments, you can provide an optional `help` string that `bds` will show when the script is run using either: `-h`, `-help` or `--help` command line options.
+
+
+For example, if we have the following script:
+File <a href="bds/test_26.bds">test_26.bds</a>
 ```
 #!/usr/bin/env bds
 
@@ -19,8 +19,8 @@ for( int i=0 ; i < num ; i++ ) {
 }
 ```
 
-		When running the script using `-h` command line option a help screen is created and printed out automatically (no action is programmed in the script to process the '-h' command line option).
-		Note that script command line options are given AFTER script name:
+When running the script using `-h` command line option a help screen is created and printed out automatically (no action is programmed in the script to process the '-h' command line option).
+Note that script command line options are given AFTER script name:
 ```
 $ bds test_26.bds -h
 Command line options 'test_26.bds' :
@@ -31,7 +31,7 @@ Command line options 'test_26.bds' :
 ```
 
 		
-		The same happens if you run the script directly:
+The same happens if you run the script directly:
 ```
 $ ./test_26.bds -h
 Command line options 'test_26.bds' :
@@ -41,11 +41,11 @@ Command line options 'test_26.bds' :
 	someVeryLongCommandLineArgumentName : This command line argument has a really long name
 ```
 				
-				### Help sort order 
-				By default, variables are sorted alphabetically when help is shown. 
-				This can be overridden by creating a global variable `helpUnsorted` (regardless of its type and value, since the program may not even be running when the help is shown).
-				
-				File <a href="bds/test_26b.bds">test_26b.bds</a>
+### Help sort order 
+By default, variables are sorted alphabetically when help is shown. 
+This can be overridden by creating a global variable `helpUnsorted` (regardless of its type and value, since the program may not even be running when the help is shown).
+
+File <a href="bds/test_26b.bds">test_26b.bds</a>
 ```
 #!/usr/bin/env bds
 
@@ -59,7 +59,7 @@ aaa := 1        help Help for argument 'aaa' should be printed here
 print "Done\n"
 ```
 
-				Now when we run `bds -h` help lines are shown unsorted:
+Now when we run `bds -h` help lines are shown unsorted:
 ```
 $ ./test_26b.bds -h
 Command line options 'test_26b.bds' :
@@ -67,11 +67,11 @@ Command line options 'test_26b.bds' :
 	-aaa <int>  : Help for argument 'aaa' should be printed here
 ```
 				
-				### Showing help on empty command line arguments 
-				The function `printHelp()` can be called to show the help message. 
-				This can be used, for instance, to show a help message when there are no command line arguments by doing something like this:
-				
-				File <a href="bds/test_26c.bds">test_26c.bds</a>
+### Showing help on empty command line arguments 
+The function `printHelp()` can be called to show the help message. 
+This can be used, for instance, to show a help message when there are no command line arguments by doing something like this:
+
+File <a href="bds/test_26c.bds">test_26c.bds</a>
 ```
 #!/usr/bin/env bds
 
@@ -87,7 +87,7 @@ if( args.isEmpty() ) {
 print "Done\n"
 ```
 
-				Now when we run `test_26c.bds` without any command line arguments, the help message is shown:
+Now when we run `test_26c.bds` without any command line arguments, the help message is shown:
 ```
 $ ./test_26c.bds 
 Command line options 'test_26c.bds' :
@@ -96,12 +96,12 @@ Command line options 'test_26c.bds' :
 	-zzz <int>  : Help for argument 'zzz' should be printed here
 ```
 				
-				### Help sections 
+### Help sections 
 
-				Sometimes it is useful to divide the help message into sections.
-				Sections are marked by `help` statements as in this example:
-				
-				File <a href="bds/test_26d.bds">test_26d.bds</a>
+Sometimes it is useful to divide the help message into sections.
+Sections are marked by `help` statements as in this example:
+
+File <a href="bds/test_26d.bds">test_26d.bds</a>
 ```
 #!/usr/bin/env bds
 
@@ -120,7 +120,7 @@ dbName := "testDb"  help Database name
 print "OK\n"
 ```
 				
-				When run, variables are grouped in two "help sections" (note that variables are sorted within each section):
+When run, variables are grouped in two "help sections" (note that variables are sorted within each section):
 ```
 $ ./test_26d.bds -h
 This program does blah
@@ -133,5 +133,3 @@ Options related to database
 	-dbName <string>  : Database name
 	-dbPort <int>     : Database port
 ```
-			
-
