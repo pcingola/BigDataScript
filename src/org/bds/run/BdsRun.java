@@ -48,6 +48,12 @@ public class BdsRun {
 		RUN, RUN_CHECKPOINT, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
 	}
 
+	public enum CompileCode {
+		OK, // The code compiled OK
+		OK_HELP, // The code compiled OK, '-h' option used so help was shown
+		ERROR // There were compilation errors
+	};
+
 	boolean debug; // debug mode
 	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
@@ -120,19 +126,20 @@ public class BdsRun {
 
 	/**
 	 * Compile program: bds -> ATS -> BdsNodes -> VM ASM -> VM OpCodes
+	 * @returns: -1 on compile errors; 0 if run OK, 1 if run with errors
 	 */
-	public boolean compile() {
-		if (!compileBds()) return false;
+	public CompileCode compile() {
+		if (!compileBds()) return CompileCode.ERROR;
 
 		// Parse command line args & show automatic help
 		// Note: Command line arguments set variables by changing VarInit
 		//       nodes, that's why we do command line parsing before ASM
 		//       compilation.
-		if (parseCmdLineArgs()) return false;
+		if (parseCmdLineArgs()) return CompileCode.OK_HELP;
 
 		// Compile assembly
 		vm = compileAsm(programUnit);
-		return vm != null;
+		return vm != null ? CompileCode.ERROR : CompileCode.OK;
 	}
 
 	/**
@@ -430,7 +437,20 @@ public class BdsRun {
 	 */
 	int runCompile() {
 		// Compile, abort on errors
-		if (!compile()) return 1;
+		CompileCode ccode = compile();
+		switch (ccode) {
+		case ERROR:
+			return 1;
+
+		case OK_HELP:
+			return 0;
+
+		case OK:
+			break;
+
+		default:
+			throw new RuntimeException("Unknown compile result code: '" + ccode + "'");
+		}
 
 		// Run thread
 		return runBdsThread();
@@ -441,7 +461,20 @@ public class BdsRun {
 	 */
 	int runTests() {
 		// Compile, abort on errors
-		if (!compile()) return 1;
+		CompileCode ccode = compile();
+		switch (ccode) {
+		case ERROR:
+			return 1;
+
+		case OK_HELP:
+			return 0;
+
+		case OK:
+			break;
+
+		default:
+			throw new RuntimeException("Unknown compile result code: '" + ccode + "'");
+		}
 
 		// Run tests
 		if (debug) Timer.showStdErr("Running tests");
