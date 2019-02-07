@@ -139,7 +139,7 @@ public class BdsRun {
 
 		// Compile assembly
 		vm = compileAsm(programUnit);
-		return vm != null ? CompileCode.ERROR : CompileCode.OK;
+		return vm != null ? CompileCode.OK : CompileCode.ERROR;
 	}
 
 	/**
@@ -439,14 +439,14 @@ public class BdsRun {
 		// Compile, abort on errors
 		CompileCode ccode = compile();
 		switch (ccode) {
-		case ERROR:
-			return 1;
+		case OK:
+			break;
 
 		case OK_HELP:
 			return 0;
 
-		case OK:
-			break;
+		case ERROR:
+			return 1;
 
 		default:
 			throw new RuntimeException("Unknown compile result code: '" + ccode + "'");
@@ -463,14 +463,14 @@ public class BdsRun {
 		// Compile, abort on errors
 		CompileCode ccode = compile();
 		switch (ccode) {
-		case ERROR:
-			return 1;
+		case OK:
+			break;
 
 		case OK_HELP:
 			return 0;
 
-		case OK:
-			break;
+		case ERROR:
+			return 1;
 
 		default:
 			throw new RuntimeException("Unknown compile result code: '" + ccode + "'");

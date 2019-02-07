@@ -20,9 +20,10 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test242_derivedMethodParamNames() {
+	public void test01() {
 		Gpr.debug("Test");
-		runAndCheck("test/run_242.bds", "ret", "n:hi");
+		verbose = true;
+		runAndCheck("test/run_01.bds", "i", 2L);
 	}
 
 }
