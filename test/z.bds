@@ -4,7 +4,7 @@ inFile := "s3://az-ngs-seqauto/cov2lr.pl"
 outFile := "s3://az-ngs-seqauto/zzz"
 
 task(outFile <- inFile) {
-	sys cat $inFile > $outFile
+	sys cat $inFile | tee $outFile
 }
 
 wait

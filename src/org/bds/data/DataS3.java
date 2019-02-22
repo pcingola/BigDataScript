@@ -36,10 +36,12 @@ public class DataS3 extends DataRemote {
 
 	private static int BUFFER_SIZE = 100 * 1024;
 
-	public static final String DEFAULT_AWS_REGION = Regions.US_EAST_1.toString();
+	public static final String AWS_CONFIG_FILE = Gpr.HOME + "/.aws/config";
+	public static final String AWS_CONFIG_REGION = "region";
 	public static final String AWS_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PREFIX = "s3";
 	public static final String AWS_S3_PROTOCOL = "s3://";
+	public static final String DEFAULT_AWS_REGION = Regions.US_EAST_1.toString();
 
 	private static Map<Region, AmazonS3> s3ByRegion = new HashMap<>();
 
@@ -52,6 +54,24 @@ public class DataS3 extends DataRemote {
 		super();
 		parse(urlStr);
 		canWrite = false;
+	}
+
+	/**
+	 * Find the default region to use
+	 */
+	Region defaultRegion() {
+		// Is there a "$HOME/.aws/config" file? Try to get 'region' from there
+		Map<String, String> awsConfig = parseAwsConfig();
+		String regionStr = awsConfig.get(AWS_CONFIG_REGION);
+
+		// Not found? Use the one form the config
+		if (regionStr != null) {
+			regionStr = regionStr.toUpperCase().replace("-", "_");
+		} else {
+			regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
+		}
+
+		return Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
 	}
 
 	@Override
@@ -272,11 +292,30 @@ public class DataS3 extends DataRemote {
 		// Parse and set region
 		String regionStr = s3uri.getRegion();
 		try {
-			if (regionStr == null) regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
-			region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
+			if (regionStr != null) region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
+			else region = defaultRegion();
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot parse AWS region '" + regionStr + "'", e);
 		}
+	}
+
+	/**
+	 * Parse "$HOME/.aws/config"
+	 * @return A map of key values from AWS config file. An empty map if the file does not exists.
+	 */
+	Map<String, String> parseAwsConfig() {
+		Map<String, String> kv = new HashMap<>();
+		if (!Gpr.exists(AWS_CONFIG_FILE)) return kv;
+
+		for (String line : Gpr.readFile(AWS_CONFIG_FILE).split("\n")) {
+			String[] fields = line.trim().split("=", 2);
+			if (fields.length == 2) {
+				String key = fields[0].trim();
+				String value = fields[1].trim();
+				kv.put(key, value);
+			}
+		}
+		return kv;
 	}
 
 	/**
