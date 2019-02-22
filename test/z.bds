@@ -1,13 +1,12 @@
 #!/usr/bin/env bds
 
-for(int i=0 ; i < 10; i++ ) {
-	task echo hi $i ; sleep 10; echo bye $i
+inFile := "s3://az-ngs-seqauto/cov2lr.pl"
+outFile := "s3://az-ngs-seqauto/zzz"
+
+task(outFile <- inFile) {
+	sys cat $inFile > $outFile
 }
 
-while( true ) {
-	println "Tasks to run: " + tasksToRun()
-	println "Tasks running: " + tasksRunning()
-	println "Tasks done: " + tasksDone()
-	println "\n\n"
-	sleep(1)
-}
+wait
+println "Done"
+
