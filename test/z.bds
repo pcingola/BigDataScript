@@ -1,7 +1,7 @@
 #!/usr/bin/env bds
 
-inFile := "s3://az-ngs-seqauto/cov2lr.pl"
-outFile := "s3://az-ngs-seqauto/zzz"
+inFile := "s3://test/x.pl"
+outFile := "s3://test/zzz"
 
 task(outFile <- inFile) {
 	sys cat $inFile | tee $outFile
