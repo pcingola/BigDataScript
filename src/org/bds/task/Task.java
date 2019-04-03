@@ -517,6 +517,11 @@ public class Task implements Serializable {
 		//       how long the task is being executed (the cluster scheduler can have
 		//       the task in a queue for a long time).
 		int timeout = (int) getResources().getWallTimeout();
+
+		// Timeout equal or less than zero means 'no limit'
+		if (timeout <= 0) return false;
+
+		if (debug && (elapsedSecs > timeout)) Timer.showStdErr("Task.isTimedOut(): Task timed out '" + getId() + "', elapsed: " + elapsedSecs + ", wall-timeout: " + timeout);
 		return elapsedSecs > timeout;
 	}
 
