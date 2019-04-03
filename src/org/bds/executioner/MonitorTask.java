@@ -92,7 +92,16 @@ public class MonitorTask implements Serializable {
 			File exitFile = new File(exitFileName);
 			boolean exitFileOk = exitFile.exists() && exitFile.length() > 0;
 
-			if (exitFileOk || task.isTimedOut()) {
+			boolean updateTask = false;
+			if (exitFileOk) {
+				if (debug) Timer.showStdErr("MonitorTask.updateFinished(): Found exit file '" + exitFileName + "'");
+				updateTask = true;
+			} else if (task.isTimedOut()) {
+				if (debug) Timer.showStdErr("MonitorTask.updateFinished(): Task timed out '" + task.getId() + "'");
+				updateTask = true;
+			}
+
+			if (updateTask) {
 				// Create (or add) to tasks to delete
 				if (toUpdate == null) toUpdate = new ArrayList<>();
 				toUpdate.add(task);
@@ -112,7 +121,7 @@ public class MonitorTask implements Serializable {
 	 * Update finished task.
 	 */
 	synchronized void updateFinished(Task task) {
-		if (debug) Timer.showStdErr("MonitorTask: Found exit file " + task.getExitCodeFile());
+		if (debug) Timer.showStdErr("MonitorTask.updateFinished(task): Finished task " + task.getId());
 
 		int exitCode = 0;
 		TaskState taskState = null;
