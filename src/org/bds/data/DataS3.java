@@ -93,13 +93,14 @@ public class DataS3 extends DataRemote {
 	public boolean download(String localFile) {
 		try {
 			if (!isFile()) return false;
+			if (localFile != null) this.localPath = localFile;
 
 			S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
 			if (verbose) System.out.println("Downloading '" + this + "'");
 			updateInfo(s3object);
 
-			// Create local file
-			mkdirsLocal(localFile);
+			// Create local file and directories
+			mkdirsLocal(getLocalPath());
 			FileOutputStream os = new FileOutputStream(getLocalPath());
 
 			// Copy S3 object to file
