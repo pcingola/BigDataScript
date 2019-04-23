@@ -1,12 +1,10 @@
 #!/usr/bin/env bds
 
-bams := "$HOME/sakshi_cloud/bams.txt"
+d := "ftp://usernameZzz:password123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
+d := "ftp://ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
+gtf := "$d/Homo_sapiens.GRCh38.96.gtf.gz"
 
-println "Reading file list '$bams'"
-for(string bam : bams.readLines() ) {
-	s3Path := "s3://az-ngs-seqauto/analysis/$bam"
-	localPath := "$HOME/seqauto/data/analysis/$bam"
-	println "bam: $bam\n\ts3Path: '$s3Path'\n\tlocalPath: '$localPath'"
-	if( localPath <- s3Path ) s3Path.download(localPath)
-}
-println "Done!"
+d.dir()
+l := gtf.download()
+println "DONE '$l'"
+

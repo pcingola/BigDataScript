@@ -1,8 +1,14 @@
 package org.bds.data;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Date;
 
+import org.apache.http.client.utils.URIBuilder;
+import org.bds.Config;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -21,6 +27,7 @@ public abstract class DataRemote extends Data {
 	protected Date lastModified;
 	protected long size;
 	protected Timer latestUpdate;
+	protected URL url;
 
 	public DataRemote() {
 		super();
@@ -46,6 +53,11 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
+	public void deleteOnExit() {
+		throw new RuntimeException("Unimplemented!");
+	}
+
+	@Override
 	public boolean download() {
 		if (isDownloaded()) return true;
 		String localFile = localPath();
@@ -56,6 +68,11 @@ public abstract class DataRemote extends Data {
 	public boolean exists() {
 		if (needsUpdateInfo()) updateInfo();
 		return exists;
+	}
+
+	@Override
+	public String getAbsolutePath() {
+		return url.toString();
 	}
 
 	@Override
@@ -73,6 +90,33 @@ public abstract class DataRemote extends Data {
 	public String getLocalPath() {
 		if (localPath == null) localPath = localPath();
 		return localPath;
+	}
+
+	@Override
+	public String getName() {
+		File path = new File(url.getPath());
+		return path.getName();
+	}
+
+	@Override
+	public String getParent() {
+		try {
+			String path = url.getPath();
+			String paren = (new File(path)).getParent();
+			URI uri = new URI(url.getProtocol(), url.getAuthority(), paren, null, null);
+			return uri.toString();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Error parsing URL: " + url, e);
+		}
+	}
+
+	@Override
+	public String getPath() {
+		return url.getPath();
+	}
+
+	public URL getUrl() {
+		return url;
 	}
 
 	@Override
@@ -131,7 +175,34 @@ public abstract class DataRemote extends Data {
 		return true;
 	}
 
-	protected abstract String localPath();
+	protected String localPath() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Config.get().getTmpDir() + "/" + TMP_BDS_DATA);
+		sb.append("/" + url.getProtocol());
+
+		// Authority: Host and port
+		if (url.getAuthority() != null) {
+			for (String part : url.getAuthority().split("[:\\.]")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		// Path
+		if (url.getPath() != null) {
+			for (String part : url.getPath().split("/")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		// Query
+		if (url.getQuery() != null) {
+			for (String part : url.getQuery().split("&")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		return sb.toString();
+	}
 
 	public boolean mkdirsLocal() {
 		return mkdirsLocal(getLocalPath());
@@ -157,6 +228,19 @@ public abstract class DataRemote extends Data {
 
 	protected boolean needsUpdateInfo() {
 		return latestUpdate == null || latestUpdate.isExpired();
+	}
+
+	protected URL parseUrl(String urlStr) {
+		try {
+			// No protocol: file
+			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URL("file" + PROTOCOL_SEP + urlStr);
+
+			// Encode the url
+			URIBuilder ub = new URIBuilder(urlStr);
+			return ub.build().toURL();
+		} catch (URISyntaxException | MalformedURLException e) {
+			throw new RuntimeException("Cannot parse URL " + urlStr, e);
+		}
 	}
 
 	@Override
