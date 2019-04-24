@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -114,20 +114,25 @@ public class DataFtp extends DataRemote {
 			mkdirsLocal(localFileName);
 			output = new FileOutputStream(localFileName);
 		} catch (FileNotFoundException e1) {
-			throw new RuntimeException("Error opening local file '" + localFileName + "'");
+			String msg = "Error opening local file '" + localFileName + "'";
+			Timer.showStdErr(msg);
+			throw new RuntimeException(msg, e1);
 		}
 
 		String remotePath = getPath();
 		try {
-			Gpr.debug("Remote path '" + remotePath + "'");
 			ftp.retrieveFile(remotePath, output);
 		} catch (IOException e) {
-			throw new RuntimeException("Error downloading file '" + remotePath + "' from host '" + hostname + "'", e);
+			String msg = "Error downloading file '" + remotePath + "' from host '" + hostname + "'";
+			Timer.showStdErr(msg);
+			throw new RuntimeException(msg, e);
 		} finally {
 			try {
 				output.close();
 			} catch (IOException e) {
-				throw new RuntimeException("Error closing file '" + localFileName + "'", e);
+				String msg = "Error closing file '" + localFileName + "'";
+				Timer.showStdErr(msg);
+				throw new RuntimeException(msg, e);
 			}
 		}
 		return true;
@@ -145,7 +150,18 @@ public class DataFtp extends DataRemote {
 
 	@Override
 	public ArrayList<String> list() {
-		throw new RuntimeException("Unimplemented!");
+		connect();
+		ArrayList<String> filesStr = new ArrayList<>();
+		try {
+			FTPFile[] files = ftp.listFiles(getPath());
+			for (FTPFile file : files)
+				filesStr.add(file.getName());
+		} catch (IOException e) {
+			String msg = "Error reading remote directory '" + getPath() + "', from FTP server '" + hostname + "'";
+			Timer.showStdErr(msg);
+			throw new RuntimeException(msg, e);
+		}
+		return filesStr;
 	}
 
 	/**

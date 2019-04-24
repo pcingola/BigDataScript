@@ -1,10 +1,15 @@
 #!/usr/bin/env bds
 
-d := "ftp://usernameZzz:password123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
-d := "ftp://ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
-gtf := "$d/Homo_sapiens.GRCh38.96.gtf.gz"
+#d := "ftp://usernameZzz:password123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
+#d := "sftp://usernameZzz:password123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
+d := "$HOME"
+println "dir : $d\n" + d.dir()
+println "dir : $d\n" + d.dirPath()
+d = "ftp://ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
+println "dir : $d\n" + d.dir()
+println "dir : $d\n" + d.dirPath()
 
-d.dir()
-l := gtf.download()
-println "DONE '$l'"
+#gtf := "$d/Homo_sapiens.GRCh38.96.gtf.gz"
+#l := gtf.download()
+#println "DONE '$l'"
 
