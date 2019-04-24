@@ -23,12 +23,11 @@ public class DataHttp extends DataRemote {
 	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
 	public final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 
-	protected URL url;
 	URLConnection connection;
 
 	public DataHttp(String urlStr) {
 		super();
-		url = parseUrl(urlStr);
+		uri = parseUrl(urlStr);
 		canWrite = false;
 	}
 
@@ -44,7 +43,8 @@ public class DataHttp extends DataRemote {
 	 */
 	protected URLConnection connect() {
 		try {
-			if (verbose) Timer.showStdErr("Connecting to " + url);
+			if (verbose) Timer.showStdErr("Connecting to " + uri);
+			URL url = uri.toURL();
 			connection = url.openConnection();
 
 			// Follow redirect? (only for http connections)
@@ -66,12 +66,12 @@ public class DataHttp extends DataRemote {
 
 					case HTTP_NOTFOUND:
 						canRead = false;
-						if (verbose) Timer.showStdErr("File '" + url + "' not found on server.");
+						if (verbose) Timer.showStdErr("File '" + uri + "' not found on server.");
 						return null;
 
 					default:
 						canRead = false;
-						if (verbose) Timer.showStdErr("Server error " + code + " for URL '" + url + "'");
+						if (verbose) Timer.showStdErr("Server error " + code + " for URL '" + uri + "'");
 						return null;
 					}
 				}
@@ -86,7 +86,7 @@ public class DataHttp extends DataRemote {
 
 	@Override
 	public boolean delete() {
-		if (verbose) Timer.showStdErr("Cannot delete file '" + getUrl() + "'");
+		if (verbose) Timer.showStdErr("Cannot delete file '" + getUri() + "'");
 		return false;
 	}
 
@@ -103,7 +103,7 @@ public class DataHttp extends DataRemote {
 			updateInfo(connection);
 
 			// Copy resource to local file, use remote file if no local file name specified
-			InputStream is = url.openStream();
+			InputStream is = uri.toURL().openStream();
 
 			// Open local file
 			if (verbose) Timer.showStdErr("Local file name: '" + localFile + "'");
@@ -139,7 +139,7 @@ public class DataHttp extends DataRemote {
 
 			return true;
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while connecting to " + getUrl());
+			Timer.showStdErr("ERROR while connecting to " + getUri());
 			throw new RuntimeException(e);
 		} finally {
 			close();

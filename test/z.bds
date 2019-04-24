@@ -5,9 +5,12 @@
 d := "$HOME"
 println "dir : $d\n" + d.dir()
 println "dir : $d\n" + d.dirPath()
-d = "ftp://ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
+d = "sftp://localhost/Users/pcingola"
 println "dir : $d\n" + d.dir()
 println "dir : $d\n" + d.dirPath()
+#d = "ftp://ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
+#println "dir : $d\n" + d.dir()
+#println "dir : $d\n" + d.dirPath()
 
 #gtf := "$d/Homo_sapiens.GRCh38.96.gtf.gz"
 #l := gtf.download()

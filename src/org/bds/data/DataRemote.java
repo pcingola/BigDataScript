@@ -1,10 +1,8 @@
 package org.bds.data;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Date;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -27,7 +25,7 @@ public abstract class DataRemote extends Data {
 	protected Date lastModified;
 	protected long size;
 	protected Timer latestUpdate;
-	protected URL url;
+	protected URI uri;
 
 	public DataRemote() {
 		super();
@@ -72,7 +70,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public String getAbsolutePath() {
-		return url.toString();
+		return uri.toString();
 	}
 
 	@Override
@@ -94,29 +92,29 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public String getName() {
-		File path = new File(url.getPath());
+		File path = new File(uri.getPath());
 		return path.getName();
 	}
 
 	@Override
 	public String getParent() {
 		try {
-			String path = url.getPath();
+			String path = uri.getPath();
 			String paren = (new File(path)).getParent();
-			URI uri = new URI(url.getProtocol(), url.getAuthority(), paren, null, null);
-			return uri.toString();
+			URI uriPaern = new URI(uri.getScheme(), uri.getAuthority(), paren, null, null);
+			return uriPaern.toString();
 		} catch (URISyntaxException e) {
-			throw new RuntimeException("Error parsing URL: " + url, e);
+			throw new RuntimeException("Error parsing URL: " + uri, e);
 		}
 	}
 
 	@Override
 	public String getPath() {
-		return url.getPath();
+		return uri.getPath();
 	}
 
-	public URL getUrl() {
-		return url;
+	public URI getUri() {
+		return uri;
 	}
 
 	@Override
@@ -178,25 +176,25 @@ public abstract class DataRemote extends Data {
 	protected String localPath() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Config.get().getTmpDir() + "/" + TMP_BDS_DATA);
-		sb.append("/" + url.getProtocol());
+		sb.append("/" + uri.getScheme());
 
 		// Authority: Host and port
-		if (url.getAuthority() != null) {
-			for (String part : url.getAuthority().split("[:\\.]")) {
+		if (uri.getAuthority() != null) {
+			for (String part : uri.getAuthority().split("[:\\.]")) {
 				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
 			}
 		}
 
 		// Path
-		if (url.getPath() != null) {
-			for (String part : url.getPath().split("/")) {
+		if (uri.getPath() != null) {
+			for (String part : uri.getPath().split("/")) {
 				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
 			}
 		}
 
 		// Query
-		if (url.getQuery() != null) {
-			for (String part : url.getQuery().split("&")) {
+		if (uri.getQuery() != null) {
+			for (String part : uri.getQuery().split("&")) {
 				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
 			}
 		}
@@ -230,15 +228,15 @@ public abstract class DataRemote extends Data {
 		return latestUpdate == null || latestUpdate.isExpired();
 	}
 
-	protected URL parseUrl(String urlStr) {
+	protected URI parseUrl(String urlStr) {
 		try {
 			// No protocol: file
-			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URL("file" + PROTOCOL_SEP + urlStr);
+			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URI("file" + PROTOCOL_SEP + urlStr);
 
 			// Encode the url
 			URIBuilder ub = new URIBuilder(urlStr);
-			return ub.build().toURL();
-		} catch (URISyntaxException | MalformedURLException e) {
+			return ub.build();
+		} catch (URISyntaxException e) {
 			throw new RuntimeException("Cannot parse URL " + urlStr, e);
 		}
 	}

@@ -28,8 +28,8 @@ public class DataFtp extends DataRemote {
 
 	public DataFtp(String urlStr) {
 		super();
-		url = parseUrl(urlStr);
-		hostname = url.getHost();
+		uri = parseUrl(urlStr);
+		hostname = uri.getHost();
 		canWrite = false;
 	}
 
@@ -65,7 +65,7 @@ public class DataFtp extends DataRemote {
 
 			if (!FTPReply.isPositiveCompletion(reply)) {
 				ftp.disconnect();
-				String msg = "FTP Connection error, host '" + hostname + "', URL: '" + url + "', reply code '" + reply + "'";
+				String msg = "FTP Connection error, host '" + hostname + "', URL: '" + uri + "', reply code '" + reply + "'";
 				Timer.showStdErr(msg);
 				throw new RuntimeException(msg);
 			}
@@ -90,7 +90,7 @@ public class DataFtp extends DataRemote {
 		try {
 			ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 		} catch (IOException e) {
-			String msg = "Unable to set FTP transfer to binary mode for host '" + hostname + "', URL: '" + url + "'";
+			String msg = "Unable to set FTP transfer to binary mode for host '" + hostname + "', URL: '" + uri + "'";
 			Timer.showStdErr(msg);
 			throw new RuntimeException(msg, e);
 		}
@@ -180,7 +180,7 @@ public class DataFtp extends DataRemote {
 	 * Parse user info from URL
 	 */
 	void setUserInfo() {
-		String userInfo = url.getUserInfo();
+		String userInfo = uri.getUserInfo();
 		if (userInfo == null) {
 			username = "anonymous";
 			password = "anonymous@dev.null";

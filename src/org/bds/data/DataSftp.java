@@ -2,6 +2,7 @@ package org.bds.data;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPSClient;
+import org.bds.util.Gpr;
 
 /**
  * A file / directory on an ftp server
@@ -19,6 +20,7 @@ public class DataSftp extends DataFtp {
 
 	@Override
 	protected FTPClient newClient() {
+		Gpr.debug("SFTP NEW CLIENT");
 		return new FTPSClient();
 	}
 
