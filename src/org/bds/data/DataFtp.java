@@ -5,12 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 
-import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
+import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -23,8 +22,7 @@ import org.bds.util.Timer;
  */
 public class DataFtp extends DataRemote {
 
-	protected FTPClient ftp;
-	protected String hostname, username, password;
+	protected String hostname;
 
 	public DataFtp(String urlStr) {
 		super();
@@ -37,63 +35,7 @@ public class DataFtp extends DataRemote {
 	 * Close connection
 	 */
 	protected void close() {
-		try {
-			ftp.disconnect();
-		} catch (IOException e) {
-			Timer.showStdErr("ERROR while disconnecting from '" + hostname + "'");
-		}
-	}
-
-	/**
-	 * Connect to remote server
-	 */
-	protected void connect() {
-		if (ftp != null && ftp.isConnected()) return;
-		ftp = newClient();
-
-		// Configure
-		FTPClientConfig config = new FTPClientConfig();
-		config.setLenientFutureDates(true);
-		ftp.configure(config);
-
-		// Connect
-		try {
-			if (verbose) Timer.showStdErr("Connecting to '" + hostname + "'");
-			ftp.connect(hostname);
-			// After connection attempt, you should check the reply code to verify success.
-			int reply = ftp.getReplyCode();
-
-			if (!FTPReply.isPositiveCompletion(reply)) {
-				ftp.disconnect();
-				String msg = "FTP Connection error, host '" + hostname + "', URL: '" + uri + "', reply code '" + reply + "'";
-				Timer.showStdErr(msg);
-				throw new RuntimeException(msg);
-			}
-		} catch (Exception e) {
-			String msg = "ERROR while connecting to '" + hostname + "'";
-			Timer.showStdErr(msg);
-			throw new RuntimeException(msg, e);
-		}
-
-		// Log into server
-		setUserInfo();
-		try {
-			ftp.login(username, password);
-		} catch (IOException e) {
-			String msg = "ERROR while logging into server '" + hostname + "'";
-			Timer.showStdErr(msg);
-			throw new RuntimeException(msg, e);
-		}
-
-		// Use binary mode
-		ftp.setControlKeepAliveTimeout(60);
-		try {
-			ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);
-		} catch (IOException e) {
-			String msg = "Unable to set FTP transfer to binary mode for host '" + hostname + "', URL: '" + uri + "'";
-			Timer.showStdErr(msg);
-			throw new RuntimeException(msg, e);
-		}
+		FtpConnectionFactory.get().close(uri);
 	}
 
 	@Override
@@ -108,7 +50,7 @@ public class DataFtp extends DataRemote {
 
 	@Override
 	public boolean download(String localFileName) {
-		connect();
+		FTPClient ftp = open();
 		OutputStream output = null;
 		try {
 			mkdirsLocal(localFileName);
@@ -135,6 +77,7 @@ public class DataFtp extends DataRemote {
 				throw new RuntimeException(msg, e);
 			}
 		}
+		close();
 		return true;
 	}
 
@@ -150,7 +93,7 @@ public class DataFtp extends DataRemote {
 
 	@Override
 	public ArrayList<String> list() {
-		connect();
+		FTPClient ftp = open();
 		ArrayList<String> filesStr = new ArrayList<>();
 		try {
 			FTPFile[] files = ftp.listFiles(getPath());
@@ -161,6 +104,7 @@ public class DataFtp extends DataRemote {
 			Timer.showStdErr(msg);
 			throw new RuntimeException(msg, e);
 		}
+		close();
 		return filesStr;
 	}
 
@@ -172,29 +116,90 @@ public class DataFtp extends DataRemote {
 		throw new RuntimeException("Unimplemented!");
 	}
 
-	protected FTPClient newClient() {
-		return new FTPClient();
-	}
-
-	/**
-	 * Parse user info from URL
-	 */
-	void setUserInfo() {
-		String userInfo = uri.getUserInfo();
-		if (userInfo == null) {
-			username = "anonymous";
-			password = "anonymous@dev.null";
-		} else {
-			String[] fields = userInfo.split(":", 2);
-			username = fields[0];
-			password = (fields.length > 1 ? fields[1] : "");
-		}
+	protected FTPClient open() {
+		return FtpConnectionFactory.get().open(uri);
 	}
 
 	@Override
 	protected boolean updateInfo() {
-		// TODO Auto-generated method stub
-		return false;
+		latestUpdate = new Timer(CACHE_TIMEOUT);
+		boolean ok = true;
+		FTPClient ftp = open();
+		String path = getPath();
+		Gpr.debug("path: " + path);
+		try {
+			FTPFile[] files = ftp.listFiles(path);
+			if (files == null || files.length < 1) {
+				// Path does not exists
+				size = -1;
+				canRead = false;
+				exists = false;
+				lastModified = new Date(0);
+			} else if (files.length == 1) {
+				// Single file
+				FTPFile file = files[0];
+
+				size = file.getSize();
+				canRead = true;
+				exists = true;
+
+				// Last modified
+				long epoch = file.getTimestamp().getTimeInMillis() / 1000;
+				lastModified = new Date(epoch);
+			} else {
+				// Directory
+				Gpr.debug("MULTIPLE FILES!");
+				long maxTimeStampMillis = 0;
+				for (FTPFile f : files) {
+					maxTimeStampMillis = Math.max(maxTimeStampMillis, f.getTimestamp().getTimeInMillis());
+				}
+
+				size = -1;
+				canRead = true;
+				exists = true;
+
+				// Last modified
+				long epoch = maxTimeStampMillis / 1000;
+				lastModified = new Date(epoch);
+			}
+		} catch (IOException e) {
+			String msg = "Error reading remote path '" + getPath() + "', from FTP server '" + hostname + "'";
+			Timer.showStdErr(msg);
+			throw new RuntimeException(msg, e);
+		}
+
+		//		if (connection == null) {
+		//			// Cannot connect
+		//			canRead = false;
+		//			exists = false;
+		//			lastModified = new Date(0);
+		//			size = 0;
+		//			ok = false;
+		//		} else {
+		//			// Update data
+		//			size = ftp..getContentLengthLong(); // Could be negative (unspecified)
+		//			canRead = true;
+		//			exists = true;
+		//
+		//			// Last modified
+		//			long lastMod = connection.getLastModified();
+		//			if (lastMod == 0) lastMod = connection.getDate(); // If last_modified is not found, use 'date' (e.g. dynamic content)
+		//			lastModified = new Date(lastMod);
+		//
+		//			ok = true;
+		//
+		//		}
+		close();
+
+		// Show information
+		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
+				+ "\n\tcanRead      : " + canRead //
+				+ "\n\texists       : " + exists //
+				+ "\n\tlast modified: " + lastModified //
+				+ "\n\tsize         : " + size //
+		);
+
+		return ok;
 	}
 
 	/**
