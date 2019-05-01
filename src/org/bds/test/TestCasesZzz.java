@@ -17,15 +17,4 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	//	@Test
-	//	public void test23_ftp_download_with_user() {
-	//		Gpr.debug("Test");
-	//		String localFilePath = runAndGet("test/remote_23.bds", "fLocal").toString();
-	//
-	//		// Check that the file exists (remove tmp file after)
-	//		File f = new File(localFilePath);
-	//		Assert.assertTrue("Local file '" + localFilePath + "' does not exists", f.exists());
-	//		f.delete();
-	//	}
-
 }

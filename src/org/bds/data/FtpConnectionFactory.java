@@ -32,9 +32,11 @@ public class FtpConnectionFactory extends TimerTask {
 	public static boolean verbose = true;
 	public static boolean debug = false;
 
-	public static int TIMER_DELAY = 1 * 1000;
-	public static int TIMER_PERIOD = 1 * 1000;
-	public static int MAX_CONNECTION_TIME = 10 * 1000;
+	public static long FTP_CLIENT_IN_USE = -1L;
+
+	public static int TIMER_DELAY = 60 * 1000;
+	public static int TIMER_PERIOD = 60 * 1000;
+	public static int MAX_CONNECTION_TIME = 5 * 60 * 1000;
 
 	private static FtpConnectionFactory instance = null;
 	private static java.util.Timer timer = null;
@@ -171,15 +173,23 @@ public class FtpConnectionFactory extends TimerTask {
 	 */
 	public boolean download(URI uri, String localFileName) {
 		FTPClient ftp = open(uri);
-		return retrieveFile(ftp, uri, localFileName);
+		String key = key(uri);
+		inUse(key);
+		boolean ok = retrieveFile(ftp, uri, localFileName);
+		update(key); // Remove 'in use' mark
+		return ok;
 	}
 
 	/**
 	 * Time elapsed since latest usage
 	 */
 	private synchronized long elapsed(String key) {
-		long now = (new Date()).getTime();
 		long latest = latestUsage.getOrDefault(key, 0L);
+
+		// If it's "in use" (e.g. downloading a large file), it should not expire
+		if (latest == FTP_CLIENT_IN_USE) return 0L;
+
+		long now = (new Date()).getTime();
 		return now - latest;
 	}
 
@@ -194,6 +204,13 @@ public class FtpConnectionFactory extends TimerTask {
 			ftpClientByKey.put(key, ftp);
 		}
 		return ftp;
+	}
+
+	/**
+	 * Mark FTP client as being in use for a long time (e.g. downloading a large file)
+	 */
+	private synchronized void inUse(String key) {
+		latestUsage.put(key, FTP_CLIENT_IN_USE);
 	}
 
 	/**

@@ -1,0 +1,10 @@
+#!/usr/bin/env bds
+
+d := "ftp://anonymous:passwd123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens/"
+dList := d.dirPath()
+println "dList: '$dList'"
+
+dHasReadme := dList.has('ftp://anonymous:passwd123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens/README')
+println "dHasReadme: '$dHasReadme'"
+
+
