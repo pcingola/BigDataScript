@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-f := "s3://az-ngs-seqauto/z.txt"
+f := "s3://pcingola.bds/z.txt"
 fe := f.exists()
 println "fe = $fe"
 fl := f.download()

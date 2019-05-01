@@ -2,21 +2,18 @@ package org.bds.data;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.bds.Config;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
-import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -37,15 +34,13 @@ public class DataS3 extends DataRemote {
 
 	private static int BUFFER_SIZE = 100 * 1024;
 
-	public static final String AWS_CONFIG_FILE = Gpr.HOME + "/.aws/config";
-	public static final String AWS_CONFIG_REGION = "region";
 	public static final String AWS_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PREFIX = "s3";
 	public static final String AWS_S3_PROTOCOL = "s3://";
 
-	public static final String ENV_PROXY_HTTTP="http_proxy";
-	public static final String ENV_PROXY_HTTTPS="https_proxy";
-			
+	public static final String ENV_PROXY_HTTTP = "http_proxy";
+	public static final String ENV_PROXY_HTTTPS = "https_proxy";
+
 	protected AmazonS3 s3;
 	protected AmazonS3URI s3uri;
 	protected String bucketName;
@@ -67,23 +62,6 @@ public class DataS3 extends DataRemote {
 	@Override
 	public void deleteOnExit() {
 		if (verbose) Timer.showStdErr("Cannot delete file '" + this + "'");
-	}
-
-	/**
-	 * Set proxy from environment variables
-	 */
-	protected void setProxyEnv() {
-		String proxy = System.getenv(ENV_PROXY_HTTTPS);
-		if(proxy !=null) {
-			setProxy(proxy);
-			return;
-		}
-		proxy = System.getenv(ENV_PROXY_HTTTP);
-		if(proxy !=null)setProxy(proxy);
-	}
-
-	protected void setProxy(String proxy) {
-		getS3().
 	}
 
 	/**
@@ -191,12 +169,43 @@ public class DataS3 extends DataRemote {
 	}
 
 	/**
+	 * Get proxy from environment variables
+	 */
+	protected URL getProxyFromEnv() {
+		String proxy = System.getenv(ENV_PROXY_HTTTPS);
+		if (proxy == null) proxy = System.getenv(ENV_PROXY_HTTTP);
+
+		URL proxyUrl = null;
+		try {
+			if (proxy != null) proxyUrl = new URL(proxy);
+		} catch (MalformedURLException e) {
+			Gpr.debug("Error parsing proxy from environment '" + proxy + "', ignoring");
+		}
+
+		return proxyUrl;
+	}
+
+	/**
 	 * Create an S3 client.
 	 * S3 clients are thread safe, thus it is encouraged to have
 	 * only one client instead of instantiating one each time.
 	 */
 	protected AmazonS3 getS3() {
-		if (s3 == null) s3 = AmazonS3ClientBuilder.defaultClient();
+		if (s3 == null) {
+			URL proxyUrl = getProxyFromEnv();
+
+			// Do we have proxy information?
+			if (proxyUrl == null) {
+				// No proxy? Use default client
+				s3 = AmazonS3ClientBuilder.defaultClient();
+			} else {
+				// Set proxy in config
+				ClientConfiguration config = new ClientConfiguration();
+				config.setProxyHost(proxyUrl.getHost());
+				config.setProxyPort(proxyUrl.getPort());
+				s3 = AmazonS3ClientBuilder.standard().withClientConfiguration(config).build();
+			}
+		}
 		return s3;
 	}
 
@@ -263,25 +272,6 @@ public class DataS3 extends DataRemote {
 	@Override
 	public boolean mkdirs() {
 		return true;
-	}
-
-	/**
-	 * Parse "$HOME/.aws/config"
-	 * @return A map of key values from AWS config file. An empty map if the file does not exists.
-	 */
-	Map<String, String> parseAwsConfig() {
-		Map<String, String> kv = new HashMap<>();
-		if (!Gpr.exists(AWS_CONFIG_FILE)) return kv;
-
-		for (String line : Gpr.readFile(AWS_CONFIG_FILE).split("\n")) {
-			String[] fields = line.trim().split("=", 2);
-			if (fields.length == 2) {
-				String key = fields[0].trim();
-				String value = fields[1].trim();
-				kv.put(key, value);
-			}
-		}
-		return kv;
 	}
 
 	/**
