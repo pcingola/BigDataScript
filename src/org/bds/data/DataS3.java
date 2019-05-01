@@ -17,6 +17,7 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
@@ -41,37 +42,19 @@ public class DataS3 extends DataRemote {
 	public static final String AWS_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PREFIX = "s3";
 	public static final String AWS_S3_PROTOCOL = "s3://";
-	public static final String DEFAULT_AWS_REGION = Regions.US_EAST_1.toString();
 
-	private static Map<Region, AmazonS3> s3ByRegion = new HashMap<>();
-
-	AmazonS3URI s3uri;
-	Region region;
-	String bucketName;
-	String key;
+	public static final String ENV_PROXY_HTTTP="http_proxy";
+	public static final String ENV_PROXY_HTTTPS="https_proxy";
+			
+	protected AmazonS3 s3;
+	protected AmazonS3URI s3uri;
+	protected String bucketName;
+	protected String key;
 
 	public DataS3(String urlStr) {
 		super();
 		parseUrlS3(urlStr);
 		canWrite = false;
-	}
-
-	/**
-	 * Find the default region to use
-	 */
-	Region defaultRegion() {
-		// Is there a "$HOME/.aws/config" file? Try to get 'region' from there
-		Map<String, String> awsConfig = parseAwsConfig();
-		String regionStr = awsConfig.get(AWS_CONFIG_REGION);
-
-		// Not found? Use the one form the config
-		if (regionStr != null) {
-			regionStr = regionStr.toUpperCase().replace("-", "_");
-		} else {
-			regionStr = Config.get().getString(Config.AWS_REGION, DEFAULT_AWS_REGION);
-		}
-
-		return Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
 	}
 
 	@Override
@@ -84,6 +67,23 @@ public class DataS3 extends DataRemote {
 	@Override
 	public void deleteOnExit() {
 		if (verbose) Timer.showStdErr("Cannot delete file '" + this + "'");
+	}
+
+	/**
+	 * Set proxy from environment variables
+	 */
+	protected void setProxyEnv() {
+		String proxy = System.getenv(ENV_PROXY_HTTTPS);
+		if(proxy !=null) {
+			setProxy(proxy);
+			return;
+		}
+		proxy = System.getenv(ENV_PROXY_HTTTP);
+		if(proxy !=null)setProxy(proxy);
+	}
+
+	protected void setProxy(String proxy) {
+		getS3().
 	}
 
 	/**
@@ -190,30 +190,13 @@ public class DataS3 extends DataRemote {
 		return bucketName + "/" + key;
 	}
 
-	public Region getRegion() {
-		return region;
-	}
-
 	/**
 	 * Create an S3 client.
 	 * S3 clients are thread safe, thus it is encouraged to have
 	 * only one client instead of instantiating one each time.
 	 */
 	protected AmazonS3 getS3() {
-		AmazonS3 s3 = s3ByRegion.get(region);
-
-		if (s3 == null) {
-			// Create singleton in a thread safe way
-			synchronized (s3ByRegion) {
-				if (s3ByRegion.get(region) == null) {
-					// Create client
-					s3 = new AmazonS3Client();
-					if (region != null) s3.setRegion(region);
-					s3ByRegion.put(region, s3);
-				}
-			}
-		}
-
+		if (s3 == null) s3 = AmazonS3ClientBuilder.defaultClient();
 		return s3;
 	}
 
@@ -308,15 +291,6 @@ public class DataS3 extends DataRemote {
 		s3uri = new AmazonS3URI(s3UriStr);
 		bucketName = s3uri.getBucket();
 		key = s3uri.getKey();
-
-		// Parse and set region
-		String regionStr = s3uri.getRegion();
-		try {
-			if (regionStr != null) region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
-			else region = defaultRegion();
-		} catch (Exception e) {
-			throw new RuntimeException("Cannot parse AWS region '" + regionStr + "'", e);
-		}
 	}
 
 	/**
@@ -324,19 +298,6 @@ public class DataS3 extends DataRemote {
 	 */
 	@Override
 	protected boolean updateInfo() {
-		try {
-			if (region == null) {
-				String regionName = getS3().getBucketLocation(bucketName);
-
-				// Update region
-				if (regionName.equals("US")) region = Region.getRegion(Regions.valueOf(DEFAULT_AWS_REGION));
-				else region = Region.getRegion(Regions.fromName(regionName));
-			}
-		} catch (AmazonClientException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Error accessing S3 bucket '" + bucketName + "'", e);
-		}
-
 		try {
 			if (isFile()) {
 				S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
