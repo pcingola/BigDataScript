@@ -189,17 +189,15 @@ public class DataHttp extends DataRemote {
 		return url;
 	}
 
-	/**
-	 * HTTP has no concept of directory
-	 */
 	@Override
 	public boolean isDirectory() {
-		return false;
+		String path = getPath();
+		return (path == null || path.endsWith("/"));
 	}
 
 	@Override
 	public boolean isFile() {
-		return true;
+		return !isDirectory();
 	}
 
 	@Override
