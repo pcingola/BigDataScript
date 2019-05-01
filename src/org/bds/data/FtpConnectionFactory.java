@@ -34,7 +34,7 @@ public class FtpConnectionFactory extends TimerTask {
 
 	public static int TIMER_DELAY = 1 * 1000;
 	public static int TIMER_PERIOD = 1 * 1000;
-	public static int MAX_CONNECTION_TIME = 5 * 1000;
+	public static int MAX_CONNECTION_TIME = 10 * 1000;
 
 	private static FtpConnectionFactory instance = null;
 	private static java.util.Timer timer = null;
@@ -82,18 +82,16 @@ public class FtpConnectionFactory extends TimerTask {
 	public void close(String key) {
 		if (debug) Gpr.debug("FtpConnectionFactory: Closing connection '" + key + "'");
 		FTPClient ftp = delete(key);
-		if (ftp != null) disconnect(ftp);
+		if (ftp != null) disconnect(ftp, key);
 	}
 
 	/**
 	 * Connect to remote server
 	 */
-	private void connect(FTPClient ftp, URI uri) {
-		if (debug) Gpr.debug("FtpConnectionFactory: Connecting to '" + uri + "'");
+	private void connect(FTPClient ftp, URI uri, String key) {
 		synchronized (ftp) {
 			if (ftp.isConnected()) return;
-
-			String hostname = uri.getHost();
+			if (debug) Gpr.debug("FtpConnectionFactory: Connecting to '" + key + "'");
 
 			// Configure
 			FTPClientConfig config = new FTPClientConfig();
@@ -102,19 +100,19 @@ public class FtpConnectionFactory extends TimerTask {
 
 			// Connect
 			try {
-				if (verbose) Timer.showStdErr("Connecting to '" + hostname + "'");
-				ftp.connect(hostname);
+				if (verbose) Timer.showStdErr("Connecting to '" + key + "'");
+				ftp.connect(uri.getHost());
 				// After connection attempt, you should check the reply code to verify success.
 				int reply = ftp.getReplyCode();
 
 				if (!FTPReply.isPositiveCompletion(reply)) {
 					ftp.disconnect();
-					String msg = "FTP Connection error, host '" + hostname + "', URL: '" + uri + "', reply code '" + reply + "'";
+					String msg = "FTP Connection error, host '" + key + "', reply code '" + reply + "'";
 					Timer.showStdErr(msg);
 					throw new RuntimeException(msg);
 				}
 			} catch (Exception e) {
-				String msg = "ERROR while connecting to '" + hostname + "'";
+				String msg = "ERROR while connecting to '" + key + "'";
 				Timer.showStdErr(msg);
 				throw new RuntimeException(msg, e);
 			}
@@ -124,7 +122,7 @@ public class FtpConnectionFactory extends TimerTask {
 			try {
 				ftp.login(userPass.first, userPass.second);
 			} catch (IOException e) {
-				String msg = "ERROR while logging into server '" + hostname + "'";
+				String msg = "ERROR while logging into server '" + key + "'";
 				Timer.showStdErr(msg);
 				throw new RuntimeException(msg, e);
 			}
@@ -134,12 +132,12 @@ public class FtpConnectionFactory extends TimerTask {
 			try {
 				ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 			} catch (IOException e) {
-				String msg = "Unable to set FTP transfer to binary mode for host '" + hostname + "', URL: '" + uri + "'";
+				String msg = "Unable to set FTP transfer to binary mode for host '" + key + "'";
 				Timer.showStdErr(msg);
 				throw new RuntimeException(msg, e);
 			}
 		}
-		if (debug) Gpr.debug("FtpConnectionFactory: Connected to '" + uri + "'");
+		if (debug) Gpr.debug("FtpConnectionFactory: Connected to '" + key + "'");
 	}
 
 	/**
@@ -156,14 +154,14 @@ public class FtpConnectionFactory extends TimerTask {
 	/**
 	 * Disconnect and FTP client
 	 */
-	private void disconnect(FTPClient ftp) {
+	private void disconnect(FTPClient ftp, String key) {
 		if (ftp == null) return;
 		synchronized (ftp) {
 			if (!ftp.isConnected()) return;
 			try {
 				ftp.disconnect();
 			} catch (IOException e) {
-				Gpr.debug("ERROR while disconnecting from ftp '" + ftp + "'");
+				Gpr.debug("ERROR while disconnecting from '" + key + "'");
 			}
 		}
 	}
@@ -200,10 +198,13 @@ public class FtpConnectionFactory extends TimerTask {
 
 	/**
 	 * Convert a URI to a key.
-	 * Note, we only need host information in the key. The path to the path is ignored
+	 * Note, we only need host information in the key.
+	 * The path to the path is ignored
 	 */
 	private String key(URI uri) {
-		return uri.getHost() + '\t' + uri.getPort() + '\t' + uri.getUserInfo();
+		int port = uri.getPort();
+		String userInfo = uri.getUserInfo();
+		return "ftp://" + (userInfo != null ? userInfo + '@' : "") + uri.getHost() + (port > 0 ? ':' + port : "");
 	}
 
 	/**
@@ -234,10 +235,10 @@ public class FtpConnectionFactory extends TimerTask {
 	 * @return
 	 */
 	private FTPClient open(URI uri) {
-		if (debug) Gpr.debug("FtpConnectionFactory: Openning FTP to '" + uri + "'");
 		String key = key(uri);
+		if (debug) Gpr.debug("FtpConnectionFactory: Open FTP client '" + key + "'");
 		FTPClient ftp = getOrCreateFtpClient(key);
-		connect(ftp, uri);
+		connect(ftp, uri, key);
 		update(key);
 		return ftp;
 	}
@@ -260,7 +261,7 @@ public class FtpConnectionFactory extends TimerTask {
 			try {
 				ftp.retrieveFile(remotePath, output);
 			} catch (IOException e) {
-				String msg = "Error downloading file '" + remotePath + "' from host '" + uri.getHost() + "'";
+				String msg = "Error downloading file  from '" + uri + "'";
 				Timer.showStdErr(msg);
 				return false;
 			} finally {

@@ -306,4 +306,37 @@ public class TestCasesRemote extends TestCasesBase {
 		runAndCheck("test/remote_18.bds", "ok", "true");
 	}
 
+	@Test
+	public void test19_ftp_download() {
+		Gpr.debug("Test");
+		verbose = true;
+		String localFilePath = runAndGet("test/remote_19.bds", "fLocal").toString();
+
+		// Check that the file exists (remove tmp file after)
+		File f = new File(localFilePath);
+		Assert.assertTrue("Local file '" + localFilePath + "' does not exists", f.exists());
+		f.delete();
+	}
+
+	@Test
+	public void test20_ftp_exists() {
+		Gpr.debug("Test");
+		verbose = true;
+		runAndCheck("test/remote_20.bds", "fExists", "true");
+	}
+
+	@Test
+	public void test21_ftp_dir() {
+		Gpr.debug("Test");
+		verbose = true;
+		runAndCheck("test/remote_21.bds", "dHasReadme", "true");
+	}
+
+	@Test
+	public void test22_ftp_dir() {
+		Gpr.debug("Test");
+		verbose = true;
+		runAndCheck("test/remote_22.bds", "dHasReadme", "true");
+	}
+
 }
