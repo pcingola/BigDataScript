@@ -146,19 +146,6 @@ public class DataHttp extends DataRemote {
 		}
 	}
 
-	/**
-	 * HTTP has no concept of directory
-	 */
-	@Override
-	public boolean isDirectory() {
-		return false;
-	}
-
-	@Override
-	public boolean isFile() {
-		return true;
-	}
-
 	@Override
 	public ArrayList<String> list() {
 		return new ArrayList<>();

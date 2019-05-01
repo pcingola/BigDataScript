@@ -18,6 +18,8 @@ import org.bds.util.Timer;
  */
 public class DataFtp extends DataRemote {
 
+	public static final long CACHE_TIMEOUT_FTP = 30 * 1000; // Timeout in milliseconds
+
 	protected String hostname;
 
 	public DataFtp(String urlStr) {
@@ -29,12 +31,12 @@ public class DataFtp extends DataRemote {
 
 	@Override
 	public boolean delete() {
-		throw new RuntimeException("Unimplemented!");
+		throw new RuntimeException("Unimplemented 'delete' operation for FTP data");
 	}
 
 	@Override
 	public void deleteOnExit() {
-		throw new RuntimeException("Unimplemented deleteOnExit for FTP data!");
+		throw new RuntimeException("Unimplemented 'deleteOnExit' operation for FTP data");
 	}
 
 	@Override
@@ -46,12 +48,14 @@ public class DataFtp extends DataRemote {
 
 	@Override
 	public boolean isDirectory() {
-		throw new RuntimeException("Unimplemented!");
+		if (isDir == null) updateInfoIfNeeded();
+		return (isDir != null) && isDir;
 	}
 
 	@Override
 	public boolean isFile() {
-		return true;
+		if (isDir == null) updateInfoIfNeeded();
+		return (isDir != null) && !isDir;
 	}
 
 	@Override
@@ -68,12 +72,12 @@ public class DataFtp extends DataRemote {
 	 */
 	@Override
 	public boolean mkdirs() {
-		throw new RuntimeException("Unimplemented!");
+		throw new RuntimeException("Unimplemented 'mkdirs' operation for FTP data");
 	}
 
 	@Override
 	protected boolean updateInfo() {
-		latestUpdate = new Timer(CACHE_TIMEOUT);
+		latestUpdate = new Timer(CACHE_TIMEOUT_FTP);
 		boolean ok = true;
 		FTPFile[] files = FtpConnectionFactory.get().list(uri);
 		if (files == null || files.length < 1) {
@@ -82,6 +86,7 @@ public class DataFtp extends DataRemote {
 			canRead = false;
 			exists = false;
 			lastModified = new Date(0);
+			isDir = null;
 		} else if (files.length == 1) {
 			// Single file
 			FTPFile file = files[0];
@@ -89,6 +94,7 @@ public class DataFtp extends DataRemote {
 			size = file.getSize();
 			canRead = true;
 			exists = true;
+			isDir = false;
 
 			// Last modified
 			long epoch = file.getTimestamp().getTimeInMillis() / 1000;
@@ -104,6 +110,7 @@ public class DataFtp extends DataRemote {
 			size = -1;
 			canRead = true;
 			exists = true;
+			isDir = true;
 
 			// Last modified
 			long epoch = maxTimeStampMillis / 1000;
@@ -126,7 +133,7 @@ public class DataFtp extends DataRemote {
 	 */
 	@Override
 	public boolean upload(String localFileName) {
-		throw new RuntimeException("Unimplemented!");
+		throw new RuntimeException("Unimplemented 'upload' operation for FTP data");
 	}
 
 }

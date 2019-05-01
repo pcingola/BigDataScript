@@ -1,8 +1,10 @@
 package org.bds.data;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Date;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -20,8 +22,10 @@ public abstract class DataRemote extends Data {
 	public static final String TMP_BDS_DATA = "bds";
 	public static final long CACHE_TIMEOUT = 1000; // Timeout in milliseconds
 
-	protected boolean canRead, canWrite;
+	protected boolean canRead;
+	protected boolean canWrite;
 	protected boolean exists;
+	protected Boolean isDir;
 	protected Date lastModified;
 	protected long size;
 	protected Timer latestUpdate;
@@ -40,13 +44,13 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean canRead() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return canRead;
 	}
 
 	@Override
 	public boolean canWrite() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return canWrite;
 	}
 
@@ -64,7 +68,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean exists() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return exists;
 	}
 
@@ -80,7 +84,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public Date getLastModified() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return lastModified;
 	}
 
@@ -117,6 +121,23 @@ public abstract class DataRemote extends Data {
 		return uri;
 	}
 
+	public URL getUrl() {
+		try {
+			return uri.toURL();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Error parsing URI: '" + uri + "'", e);
+		}
+	}
+
+	@Override
+	public boolean isDirectory() {
+		if (isDir == null) {
+			String path = getPath();
+			isDir = (path == null || path.endsWith("/"));
+		}
+		return isDir;
+	}
+
 	@Override
 	public boolean isDownloaded(String localPath) {
 		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getAbsolutePath() + "'");
@@ -141,6 +162,11 @@ public abstract class DataRemote extends Data {
 
 		// OK, we have a local file that looks updated respect to the remote file
 		return true;
+	}
+
+	@Override
+	public boolean isFile() {
+		return !isDirectory();
 	}
 
 	@Override
@@ -243,7 +269,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public long size() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return size;
 	}
 
@@ -256,6 +282,10 @@ public abstract class DataRemote extends Data {
 	 * Connect to remote and update info
 	 */
 	protected abstract boolean updateInfo();
+
+	public void updateInfoIfNeeded() {
+		if (needsUpdateInfo()) updateInfo();
+	}
 
 	/**
 	 * Update last modified in local copy
