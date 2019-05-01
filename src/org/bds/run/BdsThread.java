@@ -429,25 +429,6 @@ public class BdsThread extends Thread implements Serializable {
 			;
 		}
 
-		// TODO: FIX THIS USING VM CALL STACK
-
-		// 		Map<Integer, BdsNode> nodesById = getNodesById();
-		//
-		//		// No file/line info in 'bdsNode'. we walk the program-counter
-		//		// form end to start and return the information from the
-		//		// first node that has file/line data
-		//
-		//		// Go backwards on stack and return the first information for
-		//		// the first node that has file/line/pos info.
-		//		for (int idx = pc.size() - 1; idx >= 0; idx--) {
-		//			int nodeId = pc.nodeId(idx);
-		//			BdsNode bn = nodesById.get(nodeId);
-		//
-		//			if (bn.getFileNameCanonical() != null) { //
-		//				return bn.getFileName() + ", line " + bn.getLineNum();
-		//			}
-		//		}
-
 		// Nothing found? Return empty
 		return "";
 	}

@@ -52,7 +52,7 @@ public abstract class Data {
 			proto = urlStr.substring(0, idx);
 			String host = urlStr.substring(idx + PROTOCOL_SEP.length());
 
-			// Check is this ia an S3 URL
+			// Check is this is an S3 URL
 			// Get host
 			int idxHost = host.indexOf('/');
 			if (idxHost > 0) host = host.substring(0, idxHost);
@@ -86,6 +86,10 @@ public abstract class Data {
 
 		case "ftp":
 			data = new DataFtp(urlStr);
+			break;
+
+		case "sftp":
+			data = new DataSftp(urlStr);
 			break;
 
 		default:
@@ -149,7 +153,7 @@ public abstract class Data {
 	public abstract String getCanonicalPath();
 
 	/**
-	 * Get latest medification time
+	 * Get latest modification time
 	 */
 	public abstract Date getLastModified();
 

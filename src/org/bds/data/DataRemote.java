@@ -1,8 +1,14 @@
 package org.bds.data;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Date;
 
+import org.apache.http.client.utils.URIBuilder;
+import org.bds.Config;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -16,11 +22,14 @@ public abstract class DataRemote extends Data {
 	public static final String TMP_BDS_DATA = "bds";
 	public static final long CACHE_TIMEOUT = 1000; // Timeout in milliseconds
 
-	protected boolean canRead, canWrite;
+	protected boolean canRead;
+	protected boolean canWrite;
 	protected boolean exists;
+	protected Boolean isDir;
 	protected Date lastModified;
 	protected long size;
 	protected Timer latestUpdate;
+	protected URI uri;
 
 	public DataRemote() {
 		super();
@@ -35,14 +44,19 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean canRead() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return canRead;
 	}
 
 	@Override
 	public boolean canWrite() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return canWrite;
+	}
+
+	@Override
+	public void deleteOnExit() {
+		throw new RuntimeException("Unimplemented!");
 	}
 
 	@Override
@@ -54,8 +68,13 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean exists() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return exists;
+	}
+
+	@Override
+	public String getAbsolutePath() {
+		return uri.toString();
 	}
 
 	@Override
@@ -65,7 +84,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public Date getLastModified() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return lastModified;
 	}
 
@@ -73,6 +92,50 @@ public abstract class DataRemote extends Data {
 	public String getLocalPath() {
 		if (localPath == null) localPath = localPath();
 		return localPath;
+	}
+
+	@Override
+	public String getName() {
+		File path = new File(uri.getPath());
+		return path.getName();
+	}
+
+	@Override
+	public String getParent() {
+		try {
+			String path = uri.getPath();
+			String paren = (new File(path)).getParent();
+			URI uriPaern = new URI(uri.getScheme(), uri.getAuthority(), paren, null, null);
+			return uriPaern.toString();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Error parsing URL: " + uri, e);
+		}
+	}
+
+	@Override
+	public String getPath() {
+		return uri.getPath();
+	}
+
+	public URI getUri() {
+		return uri;
+	}
+
+	public URL getUrl() {
+		try {
+			return uri.toURL();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Error parsing URI: '" + uri + "'", e);
+		}
+	}
+
+	@Override
+	public boolean isDirectory() {
+		if (isDir == null) {
+			String path = getPath();
+			isDir = (path == null || path.endsWith("/"));
+		}
+		return isDir;
 	}
 
 	@Override
@@ -99,6 +162,11 @@ public abstract class DataRemote extends Data {
 
 		// OK, we have a local file that looks updated respect to the remote file
 		return true;
+	}
+
+	@Override
+	public boolean isFile() {
+		return !isDirectory();
 	}
 
 	@Override
@@ -131,7 +199,34 @@ public abstract class DataRemote extends Data {
 		return true;
 	}
 
-	protected abstract String localPath();
+	protected String localPath() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Config.get().getTmpDir() + "/" + TMP_BDS_DATA);
+		sb.append("/" + uri.getScheme());
+
+		// Authority: Host and port
+		if (uri.getAuthority() != null) {
+			for (String part : uri.getAuthority().split("[:\\.]")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		// Path
+		if (uri.getPath() != null) {
+			for (String part : uri.getPath().split("/")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		// Query
+		if (uri.getQuery() != null) {
+			for (String part : uri.getQuery().split("&")) {
+				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
+			}
+		}
+
+		return sb.toString();
+	}
 
 	public boolean mkdirsLocal() {
 		return mkdirsLocal(getLocalPath());
@@ -159,9 +254,22 @@ public abstract class DataRemote extends Data {
 		return latestUpdate == null || latestUpdate.isExpired();
 	}
 
+	protected URI parseUrl(String urlStr) {
+		try {
+			// No protocol: file
+			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URI("file" + PROTOCOL_SEP + urlStr);
+
+			// Encode the url
+			URIBuilder ub = new URIBuilder(urlStr);
+			return ub.build();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Cannot parse URL " + urlStr, e);
+		}
+	}
+
 	@Override
 	public long size() {
-		if (needsUpdateInfo()) updateInfo();
+		updateInfoIfNeeded();
 		return size;
 	}
 
@@ -174,6 +282,10 @@ public abstract class DataRemote extends Data {
 	 * Connect to remote and update info
 	 */
 	protected abstract boolean updateInfo();
+
+	public void updateInfoIfNeeded() {
+		if (needsUpdateInfo()) updateInfo();
+	}
 
 	/**
 	 * Update last modified in local copy

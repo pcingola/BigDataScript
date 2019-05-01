@@ -1,0 +1,7 @@
+#!/usr/bin/env bds
+
+f := "ftp://anonymous:passwd123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens/README"
+fLocal := f.download()
+println "fLocal: '$fLocal'"
+
+

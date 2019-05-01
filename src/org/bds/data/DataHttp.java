@@ -1,20 +1,13 @@
 package org.bds.data;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.http.client.utils.URIBuilder;
-import org.bds.Config;
-import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -30,18 +23,18 @@ public class DataHttp extends DataRemote {
 	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
 	public final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 
-	protected URL url;
+	URLConnection connection;
 
 	public DataHttp(String urlStr) {
 		super();
-		url = parseUrl(urlStr);
+		uri = parseUrl(urlStr);
 		canWrite = false;
 	}
 
 	/**
 	 * Close connection
 	 */
-	protected void close(URLConnection connection) {
+	protected void close() {
 		// Nothing to do
 	}
 
@@ -50,8 +43,9 @@ public class DataHttp extends DataRemote {
 	 */
 	protected URLConnection connect() {
 		try {
-			if (verbose) Timer.showStdErr("Connecting to " + url);
-			URLConnection connection = url.openConnection();
+			if (verbose) Timer.showStdErr("Connecting to " + uri);
+			URL url = uri.toURL();
+			connection = url.openConnection();
 
 			// Follow redirect? (only for http connections)
 			if (connection instanceof HttpURLConnection) {
@@ -72,12 +66,12 @@ public class DataHttp extends DataRemote {
 
 					case HTTP_NOTFOUND:
 						canRead = false;
-						if (verbose) Timer.showStdErr("File '" + url + "' not found on server.");
+						if (verbose) Timer.showStdErr("File '" + uri + "' not found on server.");
 						return null;
 
 					default:
 						canRead = false;
-						if (verbose) Timer.showStdErr("Server error " + code + " for URL '" + url + "'");
+						if (verbose) Timer.showStdErr("Server error " + code + " for URL '" + uri + "'");
 						return null;
 					}
 				}
@@ -92,13 +86,8 @@ public class DataHttp extends DataRemote {
 
 	@Override
 	public boolean delete() {
-		if (verbose) Timer.showStdErr("Cannot delete file '" + getUrl() + "'");
+		if (verbose) Timer.showStdErr("Cannot delete file '" + getUri() + "'");
 		return false;
-	}
-
-	@Override
-	public void deleteOnExit() {
-		throw new RuntimeException("Unimplemented!");
 	}
 
 	/**
@@ -114,7 +103,7 @@ public class DataHttp extends DataRemote {
 			updateInfo(connection);
 
 			// Copy resource to local file, use remote file if no local file name specified
-			InputStream is = url.openStream();
+			InputStream is = uri.toURL().openStream();
 
 			// Open local file
 			if (verbose) Timer.showStdErr("Local file name: '" + localFile + "'");
@@ -150,89 +139,16 @@ public class DataHttp extends DataRemote {
 
 			return true;
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while connecting to " + getUrl());
+			Timer.showStdErr("ERROR while connecting to " + getUri());
 			throw new RuntimeException(e);
 		} finally {
-			close(connection);
+			close();
 		}
-	}
-
-	@Override
-	public String getAbsolutePath() {
-		return url.toString();
-	}
-
-	@Override
-	public String getName() {
-		File path = new File(url.getPath());
-		return path.getName();
-	}
-
-	@Override
-	public String getParent() {
-		try {
-			String path = url.getPath();
-			String paren = (new File(path)).getParent();
-			URI uri = new URI(url.getProtocol(), url.getAuthority(), paren, null, null);
-			return uri.toString();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("Error parsing URL: " + url, e);
-		}
-	}
-
-	@Override
-	public String getPath() {
-		return url.getPath();
-	}
-
-	public URL getUrl() {
-		return url;
-	}
-
-	@Override
-	public boolean isDirectory() {
-		String path = getPath();
-		return (path == null || path.endsWith("/"));
-	}
-
-	@Override
-	public boolean isFile() {
-		return !isDirectory();
 	}
 
 	@Override
 	public ArrayList<String> list() {
 		return new ArrayList<>();
-	}
-
-	@Override
-	protected String localPath() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(Config.get().getTmpDir() + "/" + TMP_BDS_DATA);
-		sb.append("/" + url.getProtocol());
-
-		// Authority: Host and port
-		if (url.getAuthority() != null) {
-			for (String part : url.getAuthority().split("[:\\.]")) {
-				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
-			}
-		}
-
-		// Path
-		if (url.getPath() != null) {
-			for (String part : url.getPath().split("/")) {
-				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
-			}
-		}
-
-		// Query
-		if (url.getQuery() != null) {
-			for (String part : url.getQuery().split("&")) {
-				if (!part.isEmpty()) sb.append("/" + Gpr.sanityzeName(part));
-			}
-		}
-
-		return sb.toString();
 	}
 
 	/**
@@ -243,19 +159,6 @@ public class DataHttp extends DataRemote {
 		return false;
 	}
 
-	protected URL parseUrl(String urlStr) {
-		try {
-			// No protocol: file
-			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URL("file" + PROTOCOL_SEP + urlStr);
-
-			// Encode the url
-			URIBuilder ub = new URIBuilder(urlStr);
-			return ub.build().toURL();
-		} catch (URISyntaxException | MalformedURLException e) {
-			throw new RuntimeException("Cannot parse URL " + urlStr, e);
-		}
-	}
-
 	/**
 	 * Connect and update info
 	 */
@@ -263,7 +166,7 @@ public class DataHttp extends DataRemote {
 	protected boolean updateInfo() {
 		URLConnection connection = connect();
 		boolean ok = updateInfo(connection);
-		close(connection);
+		close();
 		return ok;
 	}
 

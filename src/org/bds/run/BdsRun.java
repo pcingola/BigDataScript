@@ -15,6 +15,7 @@ import org.bds.Config;
 import org.bds.compile.BdsCompiler;
 import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessages;
+import org.bds.data.FtpConnectionFactory;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
@@ -380,6 +381,9 @@ public class BdsRun {
 		if (debug) Gpr.debug("Finished: Killinig executioners");
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
+
+		// Kill other timer tasks
+		FtpConnectionFactory.kill();
 
 		config.kill(); // Kill 'tail' and 'monitor' threads
 

@@ -52,7 +52,7 @@ public class DataS3 extends DataRemote {
 
 	public DataS3(String urlStr) {
 		super();
-		parse(urlStr);
+		parseUrlS3(urlStr);
 		canWrite = false;
 	}
 
@@ -283,24 +283,6 @@ public class DataS3 extends DataRemote {
 	}
 
 	/**
-	 * Parse string representing an AWS S3 URI
-	 */
-	protected void parse(String s3UriStr) {
-		s3uri = new AmazonS3URI(s3UriStr);
-		bucketName = s3uri.getBucket();
-		key = s3uri.getKey();
-
-		// Parse and set region
-		String regionStr = s3uri.getRegion();
-		try {
-			if (regionStr != null) region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
-			else region = defaultRegion();
-		} catch (Exception e) {
-			throw new RuntimeException("Cannot parse AWS region '" + regionStr + "'", e);
-		}
-	}
-
-	/**
 	 * Parse "$HOME/.aws/config"
 	 * @return A map of key values from AWS config file. An empty map if the file does not exists.
 	 */
@@ -317,6 +299,24 @@ public class DataS3 extends DataRemote {
 			}
 		}
 		return kv;
+	}
+
+	/**
+	 * Parse string representing an AWS S3 URI
+	 */
+	protected void parseUrlS3(String s3UriStr) {
+		s3uri = new AmazonS3URI(s3UriStr);
+		bucketName = s3uri.getBucket();
+		key = s3uri.getKey();
+
+		// Parse and set region
+		String regionStr = s3uri.getRegion();
+		try {
+			if (regionStr != null) region = Region.getRegion(Regions.valueOf(regionStr.toUpperCase()));
+			else region = defaultRegion();
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot parse AWS region '" + regionStr + "'", e);
+		}
 	}
 
 	/**
