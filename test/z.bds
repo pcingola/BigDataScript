@@ -1,39 +1,7 @@
 #!/usr/bin/env bds
 
-# Test Ftp 1: Download file
-sleepTime := 5
-
-f := "ftp://ftp.ensembl.org/pub/release-96/gtf/homo_sapiens/README"
-f_exists := f.exists()
-println "f_exists: $f_exists"
-
-println('SLEEP')
-sleep(sleepTime)
-
-f_local := f.download()
-println "f_local: '$f_local'"
-
-#d := "ftp://ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
-
-
-#d := "ftp://usernameZzz:password123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
-#d := "ftp://usernameZzz:password123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
-
-#d := "ftp://usernameZzz:password123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
-#d := "sftp://usernameZzz:password123@ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
-
-#d := "$HOME"
-#println "dir : $d\n" + d.dir()
-#println "dir : $d\n" + d.dirPath()
-#d = "sftp://localhost/Users/pcingola"
-#println "dir : $d\n" + d.dir()
-#println "dir : $d\n" + d.dirPath()
-
-#d = "ftp://ftp.ensembl.org/pub/release-96/gtf/homo_sapiens"
-#println "dir : $d\n" + d.dir()
-#println "dir : $d\n" + d.dirPath()
-
-#gtf := "$d/Homo_sapiens.GRCh38.96.gtf.gz"
-#l := gtf.download()
-#println "DONE '$l'"
-
+f := "s3://pcingola.bds/z.txt"
+fe := f.exists()
+println "fe = $fe"
+fl := f.download()
+println "fl = $fl"
