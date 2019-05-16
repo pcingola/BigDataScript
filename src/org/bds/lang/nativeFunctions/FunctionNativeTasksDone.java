@@ -43,7 +43,7 @@ public class FunctionNativeTasksDone extends FunctionNative {
 		// Get all taskIds sorted
 		List<String> taskIds = new ArrayList<>();
 		for (Executioner ex : Executioners.getInstance().getAll())
-			taskIds.addAll(ex.getTasksDone().keySet());
+			taskIds.addAll(ex.getTaskIdsDone());
 		Collections.sort(taskIds);
 
 		// Convert into a list of strings

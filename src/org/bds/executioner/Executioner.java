@@ -30,31 +30,31 @@ import org.bds.util.Tuple;
  */
 public abstract class Executioner extends Thread implements NotifyTaskState, PidParser {
 
+	public static final int REPORT_INTERVAL = 60; // Interval in seconds
 	public static final int SLEEP_TIME_LONG = 500; // Milliseconds
 	public static final int SLEEP_TIME_MID = 200; // Milliseconds
 	public static final int SLEEP_TIME_SHORT = 10; // Milliseconds
-	public static final int REPORT_INTERVAL = 60; // Interval in seconds
 
-	protected boolean debug;
-	protected boolean verbose;
-	protected boolean log;
-	protected boolean running, valid;
-	protected boolean removeTaskCannotExecute; // Should a task be finished if there are no resources to execute it? In most cases yes, but some clusters host are dynamic (they appear and disappear), so even if there are no resources now there might be resources in the future.
-	protected int hostIdx = 0;
-	protected List<Task> tasksToRun; // Tasks queued for execution
-	protected Map<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host
-	protected Map<String, Task> tasksRunning; // Tasks running
-	protected Map<String, Task> tasksDone; // Tasks that fin
-	protected List<Tuple<Task, TaskState>> taskUpdateStates; // Tasks to be updated
-	private Map<String, Cmd> cmdById;
-	protected Tail tail;
-	protected Config config;
-	protected TaskLogger taskLogger;
-	protected MonitorTask monitorTask;
-	protected Cluster cluster; // Local computer is the 'server' (localhost)
-	protected Timer timer; // Task timer (when was the task started)
 	protected CheckTasksRunning checkTasksRunning;
+	protected Cluster cluster; // Local computer is the 'server' (localhost)
+	private Map<String, Cmd> cmdById;
+	protected Config config;
+	protected boolean debug;
 	protected LinkedList<Task> finishTask;
+	protected int hostIdx = 0;
+	protected boolean log;
+	protected MonitorTask monitorTask;
+	protected boolean removeTaskCannotExecute; // Should a task be finished if there are no resources to execute it? In most cases yes, but some clusters host are dynamic (they appear and disappear), so even if there are no resources now there might be resources in the future.
+	protected boolean running, valid;
+	protected Tail tail;
+	protected TaskLogger taskLogger;
+	protected Map<String, Task> tasksDone; // Tasks that fin
+	protected Map<String, Task> tasksRunning; // Tasks running
+	protected Map<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host
+	protected List<Task> tasksToRun; // Tasks queued for execution
+	protected List<Tuple<Task, TaskState>> taskUpdateStates; // Tasks to be updated
+	protected Timer timer; // Task timer (when was the task started)
+	protected boolean verbose;
 
 	public Executioner(Config config) {
 		super();
@@ -178,16 +178,29 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return exName;
 	}
 
-	public Map<String, Task> getTasksDone() {
-		return tasksDone;
+	public synchronized List<String> getTaskIdsDone() {
+		List<String> tids = new ArrayList<>();
+		tids.addAll(tasksDone.keySet());
+		return tids;
 	}
 
-	public Map<String, Task> getTasksRunning() {
-		return tasksRunning;
+	public synchronized List<String> getTaskIdsRunning() {
+		List<String> tids = new ArrayList<>();
+		tids.addAll(tasksRunning.keySet());
+		return tids;
 	}
 
-	public List<Task> getTasksToRun() {
-		return tasksToRun;
+	public synchronized List<String> getTaskIdsToRun() {
+		List<String> tids = new ArrayList<>();
+		for (Task t : tasksToRun)
+			tids.add(t.getId());
+		return tids;
+	}
+
+	public synchronized List<Task> getTasksRunning() {
+		List<Task> tasks = new ArrayList<>();
+		tasks.addAll(tasksRunning.values());
+		return tasks;
 	}
 
 	/**

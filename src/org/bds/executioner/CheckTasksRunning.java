@@ -94,7 +94,7 @@ public class CheckTasksRunning {
 		HashSet<Task> tasks = new HashSet<>();
 
 		// Find task by PID
-		for (Task t : executioner.getTasksRunning().values()) {
+		for (Task t : executioner.getTasksRunning()) {
 			String pid = t.getPid();
 
 			if (pid != null) {
@@ -300,7 +300,7 @@ public class CheckTasksRunning {
 		LinkedList<Task> finished = null;
 
 		// Any 'running' task that was not found should be marked as finished/ERROR
-		for (Task task : executioner.getTasksRunning().values()) {
+		for (Task task : executioner.getTasksRunning()) {
 
 			if (!taskFoundId.contains(task) // Task not found by command?
 					&& (task.elapsedSecs() > TASK_STATE_MIN_START_TIME) // Make sure that it's been running for a while (otherwise it might that the task has just started and the cluster is not reporting it yet)

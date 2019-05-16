@@ -13,7 +13,6 @@ import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
-import org.bds.task.Task;
 
 /**
  * Native function "tasksToRun": Return a list of all taskIds that have finished
@@ -44,8 +43,7 @@ public class FunctionNativeTasksToRun extends FunctionNative {
 		// Get all taskIds sorted
 		List<String> taskIds = new ArrayList<>();
 		for (Executioner ex : Executioners.getInstance().getAll())
-			for (Task t : ex.getTasksToRun())
-				taskIds.add(t.getId());
+			taskIds.addAll(ex.getTaskIdsToRun());
 		Collections.sort(taskIds);
 
 		// Convert into a list of strings
