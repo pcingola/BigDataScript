@@ -1,4 +1,5 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
+set -o pipefail
 
 if [ -z ${BDS_HOME} ]; then
     BDS_HOME="$HOME/.bds"
