@@ -46,21 +46,21 @@ const CHECKSUM_SLEEP_TIME = 10 // Sleep time while waiting for correct checksum 
 
 
 type BdsExec struct {
-	args []string 			// Command line arguments invoking 'bds'
-	execName string 		// This binary's absolute path
+	args []string			// Command line arguments invoking 'bds'
+	execName string			// This binary's absolute path
 
-	taskLoggerFile string 	// Task logger file to be used by 'Bds (java)'
+	taskLoggerFile string	// Task logger file to be used by 'Bds (java)'
 
-	cmd *exec.Cmd 			// BdsExec: Command
-	cmdargs []string 		// BdsExec: Command arguments
-	command string 			// BdsExec: Command to execute (path to a shell script)
-	outFile string 			// BdsExec: Copy (tee) stdout to this file
-	errFile string 			// BdsExec: Copy (tee) stderr to this file
-	exitFile string 		// BdsExec: Write exit code to this file
-	timeSecs int 			// BdsExec: Maximum execution time
-	exitCode int 			// Command's Exit code
+	cmd *exec.Cmd			// BdsExec: Command
+	cmdargs []string		// BdsExec: Command arguments
+	command string			// BdsExec: Command to execute (path to a shell script)
+	outFile string			// BdsExec: Copy (tee) stdout to this file
+	errFile string			// BdsExec: Copy (tee) stderr to this file
+	exitFile string			// BdsExec: Write exit code to this file
+	timeSecs int			// BdsExec: Maximum execution time
+	exitCode int			// Command's Exit code
 
-	randTempFile uint32 	// Random seed
+	randTempFile uint32		// Random seed
 }
 
 /*
@@ -84,16 +84,29 @@ func (be *BdsExec) Bds() int {
 		log.Fatal(err)
 	}
 	be.taskLoggerFile = pidTmpFile
-	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is new
+	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is deleted
 	if DEBUG {
 		log.Printf("Debug: taskLoggerFile '%s'\n", be.taskLoggerFile)
 	}
+
+	// Parse command line options for the JVM
+	javaMem := JAVA_MEM
+	var argsNew []string
+	for _, arg := range be.args {
+		if strings.HasPrefix(arg, "-javaXmx") {
+			javaMem = "-" + strings.TrimPrefix(arg, "-java")
+			log.Printf("Debug: Setting javaMem to '%s'\n", javaMem)
+		} else {
+			argsNew = append(argsNew, arg)
+		}
+	}
+	be.args = argsNew
 
 	bdsLibDir := path.Dir(be.execName) + "/" + BDS_NATIVE_LIB_DIR
 
 	// Append all arguments from command line
 	be.cmdargs = []string{ JAVA_CMD,
-		JAVA_MEM,
+		javaMem,
 		JAVA_NATIVE_LIB + bdsLibDir,
 		"-cp", be.execName,
 		JAVA_BDS_CLASS }
@@ -304,7 +317,7 @@ func (be *BdsExec) ExecuteCommandArgs() int {
 */
 func (be *BdsExec) executeCommand() int {
 	if DEBUG {
-		log.Printf("Debug, executeCommand %s\n", be.command)
+		log.Printf("Debug, executeCommand: %v (len: %d)\n", be.cmdargs, len(be.cmdargs))
 	}
 
 	// Redirect all signals to channel (e.g. Ctrl-C)
@@ -706,7 +719,8 @@ func (be *BdsExec) Usage(msg string) {
 	fmt.Fprintf(os.Stderr, "Commands:\n\n")
 	fmt.Fprintf(os.Stderr, "  default :  Execute bds Java program (compiler and interpreter)\n")
 	fmt.Fprintf(os.Stderr, "             Syntax:\n")
-	fmt.Fprintf(os.Stderr, "                 bds [options] program.bds\n\n")
+	fmt.Fprintf(os.Stderr, "                 bds [bds_options] program.bds [program_options]\n\n")
+	fmt.Fprintf(os.Stderr, "                 -javaXmx : Java '-Xmx' parameter (passed to the JVM)\n\n")
 	fmt.Fprintf(os.Stderr, "  exec    :  Execute shell scripts and:\n")
 	fmt.Fprintf(os.Stderr, "                 i) Show pid.\n")
 	fmt.Fprintf(os.Stderr, "                 ii) Enforce maimum execution time.\n")
