@@ -95,7 +95,9 @@ func (be *BdsExec) Bds() int {
 	for _, arg := range be.args {
 		if strings.HasPrefix(arg, "-javaXmx") {
 			javaMem = "-" + strings.TrimPrefix(arg, "-java")
-			log.Printf("Debug: Setting javaMem to '%s'\n", javaMem)
+			if DEBUG {
+				log.Printf("Debug: Setting javaMem to '%s'\n", javaMem)
+			}
 		} else {
 			argsNew = append(argsNew, arg)
 		}
