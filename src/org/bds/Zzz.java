@@ -9,23 +9,32 @@ public class Zzz {
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
-		Zzz zzz = new Zzz();
-		System.out.println("f(): " + zzz.f());
+
+		//		// Create client
+		//		SqsClient sqsClient = SqsClient.builder().region(Region.US_WEST_2).build();
+		//        
+		//		// Get 
+		//		GetQueueUrlResponse getQueueUrlResponse =
+		//                sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
+		//        String queueUrl = getQueueUrlResponse.queueUrl();
+		//        System.out.println(queueUrl);
+		//        
+		//		// Create queue
+		//		CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
+		//		sqsClient.createQueue(createQueueRequest);
+		//
+		//		// Purge & delete queue
+		//		sqsClient.sendMessage(SendMessageRequest.builder().queueUrl(queueUrl).messageBody("Hello world!").delaySeconds(10).build());
+		//
+		//		// Receive messages
+		//		ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder().queueUrl(queueUrl).maxNumberOfMessages(5).build();
+		//		List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
+		//
+		//		// Delete queue
+		//		DeleteQueueRequest deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queueUrl).build();
+		//		sqsClient.deleteQueue(deleteQueueRequest);
+
 		System.out.println("End");
 	}
 
-	int f() {
-		try {
-			System.out.println("try");
-			if (Math.random() < 2.0) throw new Exception("except");
-			return 1;
-		} catch (Exception e) {
-			System.out.println("catch");
-			return 2;
-		} finally {
-			System.out.println("finally");
-			return 3;
-		}
-
-	}
 }
