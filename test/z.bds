@@ -1,7 +1,12 @@
 #!/usr/bin/env bds
 
-f := "s3://pcingola.bds/z.txt"
-fe := f.exists()
-println "fe = $fe"
-fl := f.download()
-println "fl = $fl"
+d := "http://ftp.ensembl.org/pub/release-97/fasta/homo_sapiens/dna"
+dd := d.dir()
+print "d=$d\tdd = $dd"
+
+#fl := f.download()
+#println "fl = $fl"
+
+d = "ftp://ftp.ensembl.org/pub/release-97/fasta/homo_sapiens/dna"
+dd = d.dir()
+print "d=$d\tdd = $dd"

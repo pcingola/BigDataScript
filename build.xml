@@ -27,6 +27,7 @@
             <zipfileset excludes="META-INF/*.SF" src="lib/junit-4.10.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/mesos-0.26.0.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/protobuf-java-2.5.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/jsoup-1.12.1.jar"/>
         </jar>
     </target>
 

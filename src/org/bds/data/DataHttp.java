@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.bds.util.Timer;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * A file / directory on a web server
@@ -148,7 +152,23 @@ public class DataHttp extends DataRemote {
 
 	@Override
 	public ArrayList<String> list() {
-		return new ArrayList<>();
+		// Download a page and extract all 'hrefs'
+		ArrayList<String> dirs = new ArrayList<>();
+		try {
+			// Read HTML page
+			Document doc = Jsoup.connect(uri.toURL().toString()).get();
+
+			// Parse html, add all 'href' links
+			Elements links = doc.select("a[href]");
+			for (Element link : links)
+				dirs.add(link.attr("abs:href"));
+		} catch (Exception e) {
+			Timer.showStdErr("ERROR while connecting to " + getUri());
+			throw new RuntimeException(e);
+		} finally {
+			close();
+		}
+		return dirs;
 	}
 
 	/**
