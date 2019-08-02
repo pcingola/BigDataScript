@@ -29,7 +29,7 @@ import org.bds.util.Tuple;
  */
 public class FtpConnectionFactory extends TimerTask {
 
-	public static boolean verbose = true;
+	public static boolean verbose = false;
 	public static boolean debug = false;
 
 	public static long FTP_CLIENT_IN_USE = -1L;
@@ -51,7 +51,6 @@ public class FtpConnectionFactory extends TimerTask {
 	public static FtpConnectionFactory get() {
 		if (instance == null) {
 			debug = Config.get().isDebug();
-			debug = true;
 			if (debug) Gpr.debug("Creating new FtpConnectionFactory instance");
 			instance = new FtpConnectionFactory();
 			// Initialize a timer thread to periodically review connections
