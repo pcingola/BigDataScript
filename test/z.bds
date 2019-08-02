@@ -1,12 +1,17 @@
 #!/usr/bin/env bds
 
-d := "http://ftp.ensembl.org/pub/release-97/fasta/homo_sapiens/dna"
-dd := d.dir()
-print "d=$d\tdd = $dd"
+# HTTP
+d := "http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna"
+dd := d.dirPath('*.dna.toplevel.fa.gz')
+println "\ndir=$d\ndir = $dd"
 
-#fl := f.download()
-#println "fl = $fl"
+dd = d.dir('*.dna.toplevel.fa.gz')
+println "\ndir=$d\ndirPath = $dd"
 
-d = "ftp://ftp.ensembl.org/pub/release-97/fasta/homo_sapiens/dna"
-dd = d.dir()
-print "d=$d\tdd = $dd"
+# FTP
+d = "ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna"
+dd = d.dir('*.dna.toplevel.fa.gz')
+println "\ndir=$d\ndir= $dd"
+
+dd = d.dirPath('*.dna.toplevel.fa.gz')
+println "\ndir=$d\ndirPath = $dd"
