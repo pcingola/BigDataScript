@@ -2,6 +2,8 @@ package org.bds.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -15,8 +17,6 @@ public class DataFile extends Data {
 
 	public static final String PROTOCOL_FILE = "file://";
 
-	File file;
-
 	public static File resolveLocalPath(String fileName, String currentDir) {
 		if (fileName.toLowerCase().startsWith(PROTOCOL_FILE)) fileName = fileName.substring(PROTOCOL_FILE.length());
 		File f = new File(fileName);
@@ -27,6 +27,8 @@ public class DataFile extends Data {
 		// Resolve against 'currentDir'
 		return new File(currentDir, fileName).getAbsoluteFile();
 	}
+
+	File file;
 
 	public DataFile(String fileName, String currentDir) {
 		super();
@@ -101,6 +103,15 @@ public class DataFile extends Data {
 	@Override
 	public String getPath() {
 		return file.getPath();
+	}
+
+	@Override
+	public URI getUri() {
+		try {
+			return new URI("file", null, getCanonicalPath(), null);
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Cannot build URI for data file " + this, e);
+		}
 	}
 
 	@Override

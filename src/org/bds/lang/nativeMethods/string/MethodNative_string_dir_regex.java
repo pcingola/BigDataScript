@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import org.bds.data.Data;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -39,8 +40,9 @@ public class MethodNative_string_dir_regex extends MethodNativeString {
 	/**
 	 * Does the path match?
 	 */
-	boolean matches(String path, PathMatcher matcher) {
-		File file = new File(path);
+	boolean matches(BdsThread bdsThread, String path, PathMatcher matcher) {
+		Data d = bdsThread.data(path);
+		File file = new File(d.getAbsolutePath());
 		return matcher.matches(file.toPath());
 	}
 
@@ -48,16 +50,14 @@ public class MethodNative_string_dir_regex extends MethodNativeString {
 	public Value runMethod(BdsThread bdsThread, Value vthis) {
 		String glob = bdsThread.getString("glob");
 
-		//---
 		// List all files, filtered by 'glob'
-		//---
 		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
 
 		String baseDir = vthis.asString();
 		ArrayList<String> list = bdsThread.data(baseDir) // Create data object
 				.list() // List files in dir
 				.stream() // Convert to stream
-				.filter(d -> matches(d, matcher)) // Filter using path matcher
+				.filter(d -> matches(bdsThread, d, matcher)) // Filter using path matcher
 				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
 		;
 

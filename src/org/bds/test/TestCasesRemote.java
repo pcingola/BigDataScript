@@ -77,9 +77,11 @@ public class TestCasesRemote extends TestCasesBase {
 
 		// Check some features
 		Assert.assertTrue(d instanceof DataHttp);
-		Assert.assertEquals("http://www.google.com/index.html", d.getAbsolutePath());
+		Assert.assertEquals("http://www.google.com/index.html", d.getUri().toString());
 		Assert.assertEquals("http://www.google.com/", d.getParent());
 		Assert.assertEquals("/index.html", d.getPath());
+		Assert.assertEquals("/index.html", d.getAbsolutePath());
+		Assert.assertEquals("/index.html", d.getCanonicalPath());
 		Assert.assertEquals("index.html", d.getName());
 		Assert.assertTrue("Is file?", d.isFile());
 		Assert.assertFalse("Is directory?", d.isDirectory());
@@ -362,6 +364,30 @@ public class TestCasesRemote extends TestCasesBase {
 	public void test26_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_26.bds", "dHasReadme", "true");
+	}
+
+	@Test
+	public void test27_ftp_dir() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_27.bds", "dd", "[ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+	}
+
+	@Test
+	public void test28_ftp_dirPath() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_28.bds", "dd", "[ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+	}
+
+	@Test
+	public void test29_http_dir() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_29.bds", "dd", "[http://ftp.ensemblorg.ebi.ac.uk/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+	}
+
+	@Test
+	public void test30_http_dir() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_30.bds", "dd", "[http://ftp.ensemblorg.ebi.ac.uk/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
 }

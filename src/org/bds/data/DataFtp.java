@@ -58,12 +58,17 @@ public class DataFtp extends DataRemote {
 		return (isDir != null) && !isDir;
 	}
 
+	/**
+	 * List of files in FTP server
+	 * Note that we always return an absolute path
+	 */
 	@Override
 	public ArrayList<String> list() {
 		ArrayList<String> filesStr = new ArrayList<>();
 		FTPFile[] files = FtpConnectionFactory.get().list(uri);
+		String pathJoinStr = uri.getPath().endsWith("/") ? "" : "/";
 		for (FTPFile file : files)
-			filesStr.add(file.getName());
+			filesStr.add(uri + pathJoinStr + file.getName());
 		return filesStr;
 	}
 

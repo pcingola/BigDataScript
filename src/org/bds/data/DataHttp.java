@@ -160,8 +160,9 @@ public class DataHttp extends DataRemote {
 
 			// Parse html, add all 'href' links
 			Elements links = doc.select("a[href]");
-			for (Element link : links)
+			for (Element link : links) {
 				dirs.add(link.attr("abs:href"));
+			}
 		} catch (Exception e) {
 			Timer.showStdErr("ERROR while connecting to " + getUri());
 			throw new RuntimeException(e);

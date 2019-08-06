@@ -74,12 +74,15 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public String getAbsolutePath() {
-		return uri.toString();
+		return getPath();
 	}
 
+	/**
+	 * There is no way to know the canonical path on a remote file system (http, ftp, etc.)
+	 */
 	@Override
 	public String getCanonicalPath() {
-		return getAbsolutePath();
+		return getPath();
 	}
 
 	@Override
@@ -117,6 +120,7 @@ public abstract class DataRemote extends Data {
 		return uri.getPath();
 	}
 
+	@Override
 	public URI getUri() {
 		return uri;
 	}
@@ -140,7 +144,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isDownloaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getAbsolutePath() + "'");
+		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getUri() + "'");
 
 		// Is there a local file
 		File localFile = new File(localPath);
@@ -176,7 +180,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isUploaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getAbsolutePath() + "'");
+		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getUri() + "'");
 
 		// Is there a local file
 		File localFile = new File(localPath);
@@ -275,7 +279,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public String toString() {
-		return getAbsolutePath() + " <=> " + getLocalPath();
+		return getUri() + " <=> " + getLocalPath();
 	}
 
 	/**

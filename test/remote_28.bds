@@ -1,0 +1,6 @@
+#!/usr/bin/env bds
+
+# FTP
+d := "ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna"
+dd := d.dirPath('**.dna.toplevel.fa.gz')
+println "\ndir=$d\ndirPath = $dd"

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import org.bds.data.Data;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -39,8 +40,8 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 	/**
 	 * Does the path match?
 	 */
-	boolean matches(String path, PathMatcher matcher) {
-		File file = new File(path);
+	boolean matches(Data d, PathMatcher matcher) {
+		File file = new File(d.getAbsolutePath());
 		return matcher.matches(file.toPath());
 	}
 
@@ -55,13 +56,14 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 
 		String baseDirName = vthis.asString();
 		if (!baseDirName.endsWith("/")) baseDirName += "/";
-		String baseDir = baseDirName;
+		final String baseDir = baseDirName;
 
 		ArrayList<String> list = bdsThread.data(baseDir) // Create data object
 				.list() // List files in dir
 				.stream() // Convert to stream
+				.map(p -> bdsThread.data(p)) // Convert path to data object
 				.filter(d -> matches(d, matcher)) // Filter using path matcher
-				.map(d -> toAbsolutePath(baseDir + d)) // Filter using path matcher
+				.map(d -> (d.isRemote() ? d.getUri().toString() : d.getAbsolutePath())) // Convert to absolute path string or URI
 				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
 		;
 
@@ -79,13 +81,6 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		throw new RuntimeException("This method should never be invoked!");
-	}
-
-	/**
-	 * Convert to absolute path
-	 */
-	String toAbsolutePath(String path) {
-		return new File(path).getAbsolutePath();
 	}
 
 }
