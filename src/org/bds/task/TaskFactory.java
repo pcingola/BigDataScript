@@ -70,7 +70,7 @@ public class TaskFactory extends SysFactory {
 					Data dataIn = Data.factory(in);
 					if (dataIn.isRemote()) {
 						sbDown.append(ExpressionTask.CMD_DOWNLOAD //
-								+ " \"" + dataIn.getAbsolutePath() + "\"" //
+								+ " \"" + dataIn.getUri() + "\"" //
 								+ " \"" + dataIn.getLocalPath() + "\"" //
 								+ "\n");
 
@@ -195,7 +195,6 @@ public class TaskFactory extends SysFactory {
 	 * Replace all occurrences in 'replace' map
 	 */
 	String replace(HashMap<String, String> replace, String sysCmds) {
-
 		for (String key : replace.keySet()) {
 			String sysCmdsPrev;
 			do {
@@ -229,9 +228,9 @@ public class TaskFactory extends SysFactory {
 			change = true;
 		} else if ((prevChar == ' ' || prevChar == '\t' || prevChar == '\n' || prevChar == '\0') && //
 				(nextChar == ' ' || nextChar == '\t' || nextChar == '\n' || nextChar == '\0')) {
-			// Surrounded by space, tab, newline or end_of_string
-			change = true;
-		}
+					// Surrounded by space, tab, newline or end_of_string
+					change = true;
+				}
 
 		// Change oldStr by newStr?
 		if (change) { //

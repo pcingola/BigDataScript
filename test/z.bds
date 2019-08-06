@@ -1,17 +1,8 @@
-#!/usr/bin/env bds
 
-# HTTP
-d := "http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna"
-dd := d.dirPath('*.dna.toplevel.fa.gz')
-println "\ndir=$d\ndir = $dd"
-# 
-# dd = d.dir('*.dna.toplevel.fa.gz')
-# println "\ndir=$d\ndirPath = $dd"
+in := 'http://pcingola.github.io/BigDataScript/index.html'
+out := 'tmp_remote_03.txt'
 
-# FTP
-# d := "ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna"
-# dd := d.dir('*.dna.toplevel.fa.gz')
-# println "\ndir=$d\ndir= $dd"
-# 
-# dd = d.dirPath('*.dna.toplevel.fa.gz')
-# println "\ndir=$d\ndirPath = $dd"
+task( out <- in ) sys cat $in > $out
+
+wait
+first := out.readLines().head()
