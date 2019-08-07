@@ -11,7 +11,6 @@ import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
-import org.bds.util.Gpr;
 
 public class MethodNative_string_dirPath extends MethodNativeString {
 
@@ -40,13 +39,11 @@ public class MethodNative_string_dirPath extends MethodNativeString {
 		String baseDir = vthis.asString();
 		if (!baseDir.endsWith("/")) baseDir += "/";
 
-		Gpr.debug("OK 1");
 		List<String> l = bdsThread.data(baseDir).list();
-		Gpr.debug("l:" + l);
 		for (String file : l) {
-			file = baseDir + file;
-			Data d = bdsThread.data(file);
-			vlist.add(new ValueString(d.getAbsolutePath()));
+			Data d = Data.factory(file, baseDir);
+			String path = d.isRemote() ? d.getUri().toString() : d.getAbsolutePath();
+			vlist.add(new ValueString(path));
 		}
 
 		vlist.sort();

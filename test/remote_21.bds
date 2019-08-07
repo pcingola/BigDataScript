@@ -4,7 +4,11 @@ d := "ftp://ftp.ensembl.org/pub/release-96/gtf/homo_sapiens/"
 dList := d.dir()
 println "dList: '$dList'"
 
-dHasReadme := dList.has('README')
+string[] bList
+for(string f: dList) bList += f.baseName()
+println "bList: '$bList'"
+
+dHasReadme := bList.has('README')
 println "dHasReadme: '$dHasReadme'"
 
 

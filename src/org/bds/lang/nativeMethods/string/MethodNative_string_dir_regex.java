@@ -42,7 +42,11 @@ public class MethodNative_string_dir_regex extends MethodNativeString {
 	 */
 	boolean matches(BdsThread bdsThread, String path, PathMatcher matcher) {
 		Data d = bdsThread.data(path);
-		File file = new File(d.getAbsolutePath());
+//		File file = new File(d.getAbsolutePath());
+		!!!!!!!!!!!!!!!!!!!
+		// TODO: dir should give local path, dirPath should give absolute path (same for regex) otherwise is too confusing....
+
+		File file = new File(d.getPath());
 		return matcher.matches(file.toPath());
 	}
 
