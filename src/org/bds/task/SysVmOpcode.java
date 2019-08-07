@@ -19,7 +19,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class SysFactory {
+public class SysVmOpcode {
 
 	private static int sysId = 1;
 
@@ -35,7 +35,7 @@ public class SysFactory {
 		return sysId++;
 	}
 
-	public SysFactory(BdsThread bdsThread) {
+	public SysVmOpcode(BdsThread bdsThread) {
 		this.bdsThread = bdsThread;
 	}
 

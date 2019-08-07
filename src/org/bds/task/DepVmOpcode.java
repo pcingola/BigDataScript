@@ -7,9 +7,9 @@ import org.bds.run.BdsThread;
  *
  * @author pcingola
  */
-public class DepFactory extends TaskFactory {
+public class DepVmOpcode extends TaskVmOpcode {
 
-	public DepFactory(BdsThread bdsThread) {
+	public DepVmOpcode(BdsThread bdsThread) {
 		super(bdsThread);
 	}
 

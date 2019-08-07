@@ -36,7 +36,7 @@ import org.bds.report.Report;
 import org.bds.scope.Scope;
 import org.bds.task.Task;
 import org.bds.task.TaskDependecies;
-import org.bds.task.TaskFactory;
+import org.bds.task.TaskVmOpcode;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 import org.bds.vm.BdsVm;
@@ -737,7 +737,7 @@ public class BdsThread extends Thread implements Serializable {
 			if (!task.isStateFinished() // Not finished?
 					&& !task.isDependency() // Don't execute dependencies, unless needed
 			) {
-				TaskFactory.execute(this, task);
+				TaskVmOpcode.execute(this, task);
 			}
 		}
 	}

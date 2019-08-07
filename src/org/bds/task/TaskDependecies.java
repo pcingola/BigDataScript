@@ -329,7 +329,7 @@ public class TaskDependecies implements Serializable {
 		for (Task t : tasks) {
 			if (!t.isScheduled()) {
 				t.setDependency(false); // We are executing this task, so it it no longer a 'dep'
-				TaskFactory.execute(bdsThread, t);
+				TaskVmOpcode.execute(bdsThread, t);
 			}
 		}
 

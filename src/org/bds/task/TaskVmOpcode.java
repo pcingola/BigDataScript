@@ -17,7 +17,7 @@ import org.bds.run.BdsThread;
  *
  * @author pcingola
  */
-public class TaskFactory extends SysFactory {
+public class TaskVmOpcode extends SysVmOpcode {
 
 	Task task;
 	TaskDependency taskDependency;
@@ -32,7 +32,7 @@ public class TaskFactory extends SysFactory {
 		task.execute(bdsThread, executioner); // Execute task
 	}
 
-	public TaskFactory(BdsThread bdsThread) {
+	public TaskVmOpcode(BdsThread bdsThread) {
 		super(bdsThread);
 	}
 
@@ -69,12 +69,13 @@ public class TaskFactory extends SysFactory {
 				for (String in : taskDependency.getInputs()) {
 					Data dataIn = Data.factory(in);
 					if (dataIn.isRemote()) {
+						String uriStr = dataIn.getUri().toString();
 						sbDown.append(ExpressionTask.CMD_DOWNLOAD //
-								+ " \"" + dataIn.getUri() + "\"" //
+								+ " \"" + uriStr + "\"" //
 								+ " \"" + dataIn.getLocalPath() + "\"" //
 								+ "\n");
 
-						replace.put(dataIn.getAbsolutePath(), dataIn.getLocalPath());
+						replace.put(uriStr, dataIn.getLocalPath());
 					}
 				}
 			}
@@ -87,12 +88,13 @@ public class TaskFactory extends SysFactory {
 				for (String out : taskDependency.getOutputs()) {
 					Data dataOut = Data.factory(out);
 					if (dataOut.isRemote()) {
+						String uriStr = dataOut.getUri().toString();
 						sbUp.append(ExpressionTask.CMD_UPLOAD //
 								+ " \"" + dataOut.getLocalPath() + "\"" //
-								+ " \"" + dataOut.getAbsolutePath() + "\"" //
+								+ " \"" + uriStr + "\"" //
 								+ "\n");
 
-						replace.put(dataOut.getAbsolutePath(), dataOut.getLocalPath());
+						replace.put(uriStr, dataOut.getLocalPath());
 
 						// Note, commands executed locally will output to the local file, so
 						// we must make sure that the path exists (otherwise the command

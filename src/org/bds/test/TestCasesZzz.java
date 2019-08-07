@@ -20,10 +20,9 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test03_task_URL() {
+	public void test21_ftp_dir() {
 		Gpr.debug("Test");
-		verbose = true;
-		runAndCheck("test/remote_03.bds", "first", "<!DOCTYPE html>");
+		runAndCheck("test/remote_21.bds", "dHasReadme", "true");
 	}
 
 }

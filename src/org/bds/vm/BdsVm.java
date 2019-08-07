@@ -33,10 +33,10 @@ import org.bds.run.Freeze;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
-import org.bds.task.DepFactory;
-import org.bds.task.SysFactory;
+import org.bds.task.DepVmOpcode;
+import org.bds.task.SysVmOpcode;
 import org.bds.task.TaskDependency;
-import org.bds.task.TaskFactory;
+import org.bds.task.TaskVmOpcode;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
 import org.bds.util.GprString;
@@ -1403,7 +1403,7 @@ public class BdsVm implements Serializable {
 
 			case SYS:
 				vmStateSave();
-				SysFactory sf = new SysFactory(bdsThread);
+				SysVmOpcode sf = new SysVmOpcode(bdsThread);
 				s1 = sf.run();
 				vmStateInvalidate();
 				push(s1);
@@ -1417,13 +1417,13 @@ public class BdsVm implements Serializable {
 				break;
 
 			case TASK:
-				TaskFactory taskFactory = new TaskFactory(bdsThread);
+				TaskVmOpcode taskFactory = new TaskVmOpcode(bdsThread);
 				s1 = taskFactory.run();
 				push(s1);
 				break;
 
 			case TASKDEP:
-				TaskFactory depFactory = new DepFactory(bdsThread);
+				TaskVmOpcode depFactory = new DepVmOpcode(bdsThread);
 				s1 = depFactory.run();
 				push(s1);
 				break;
