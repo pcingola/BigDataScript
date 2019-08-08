@@ -55,13 +55,16 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
 
 		String baseDirName = vthis.asString();
+		final Data dBaseDir = bdsThread.data(baseDirName);
 		if (!baseDirName.endsWith("/")) baseDirName += "/";
 		final String baseDir = baseDirName;
 
 		ArrayList<String> list = bdsThread.data(baseDir) // Create data object
 				.list() // List files in dir
 				.stream() // Convert to stream
-				.map(p -> bdsThread.data(p)) // Convert path to data object
+				.peek(d -> System.out.println("BEFORE JOIN: " + d)) // TODO: REMOVE
+				.map(p -> dBaseDir.join(p)) // Convert path to data object
+				.peek(d -> System.out.println("AFTER JOIN: " + d)) // TODO: REMOVE
 				.filter(d -> matches(d, matcher)) // Filter using path matcher
 				.map(d -> (d.isRemote() ? d.getUri().toString() : d.getAbsolutePath())) // Convert to absolute path string or URI
 				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList

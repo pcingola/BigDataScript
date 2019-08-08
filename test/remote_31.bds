@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-# HTTP
+# S3
 d := "s3://pcingola.bds/test_remote_31/"
 println "d: '$d'"
 dd := d.dir()

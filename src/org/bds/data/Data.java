@@ -32,6 +32,12 @@ public abstract class Data {
 
 	public static final String PROTOCOL_SEP = "://";
 
+	protected boolean verbose;
+
+	protected boolean debug;
+
+	protected String localPath; // File name used for local processing
+
 	public static Data factory(String url) {
 		return factory(url, null);
 	}
@@ -99,12 +105,6 @@ public abstract class Data {
 
 		return data;
 	}
-
-	protected boolean verbose;
-
-	protected boolean debug;
-
-	protected String localPath; // File name used for local processing
 
 	public Data() {
 	}
@@ -214,6 +214,11 @@ public abstract class Data {
 	 * Do we have a (valid) remote copy of this data?
 	 */
 	public abstract boolean isUploaded(String localPath);
+
+	/**
+	 * Join a segment to this path
+	 */
+	public abstract Data join(String segment);
 
 	/**
 	 * List of file names under this 'directory'

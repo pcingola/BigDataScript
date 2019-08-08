@@ -17,6 +17,8 @@ public class DataFile extends Data {
 
 	public static final String PROTOCOL_FILE = "file://";
 
+	File file;
+
 	public static File resolveLocalPath(String fileName, String currentDir) {
 		if (fileName.toLowerCase().startsWith(PROTOCOL_FILE)) fileName = fileName.substring(PROTOCOL_FILE.length());
 		File f = new File(fileName);
@@ -27,8 +29,6 @@ public class DataFile extends Data {
 		// Resolve against 'currentDir'
 		return new File(currentDir, fileName).getAbsoluteFile();
 	}
-
-	File file;
 
 	public DataFile(String fileName, String currentDir) {
 		super();
@@ -145,9 +145,15 @@ public class DataFile extends Data {
 	}
 
 	@Override
+	public Data join(String segment) {
+		File f = new File(file, segment);
+		return new DataFile(f.getAbsolutePath(), null);
+	}
+
+	@Override
 	public ArrayList<String> list() {
 		String files[] = file.list();
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		if (files == null) return list;
 
 		for (String f : files)

@@ -369,7 +369,7 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test27_ftp_dir() {
 		Gpr.debug("Test");
-		runAndCheck("test/remote_27.bds", "dd", "[ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+		runAndCheck("test/remote_27.bds", "dd", "[Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
 	@Test
@@ -388,6 +388,18 @@ public class TestCasesRemote extends TestCasesBase {
 	public void test30_http_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_30.bds", "dd", "[http://ftp.ensemblorg.ebi.ac.uk/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+	}
+
+	@Test
+	public void test31_s3_dir() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_31.bds", "dd", "[s3://...]");
+	}
+
+	@Test
+	public void test32_s3_dirPath() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_32.bds", "dd", "[s3://...]");
 	}
 
 }

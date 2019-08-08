@@ -271,6 +271,23 @@ public abstract class DataRemote extends Data {
 		}
 	}
 
+	/**
+	 * Build an URI from 'baseUri' + 'path'
+	 */
+	protected URI replacePath(URI baseUri, File path) {
+		URIBuilder ub = new URIBuilder();
+		ub.setScheme(baseUri.getScheme());
+		ub.setUserInfo(baseUri.getUserInfo());
+		ub.setHost(baseUri.getHost());
+		ub.setPort(baseUri.getPort());
+		ub.setPath(path.getAbsolutePath());
+		try {
+			return ub.build();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Error building URI from: '" + baseUri + "' and '" + path.getAbsolutePath() + "'");
+		}
+	}
+
 	@Override
 	public long size() {
 		updateInfoIfNeeded();

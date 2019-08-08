@@ -1,5 +1,7 @@
 package org.bds.data;
 
+import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -25,6 +27,13 @@ public class DataFtp extends DataRemote {
 	public DataFtp(String urlStr) {
 		super();
 		uri = parseUrl(urlStr);
+		hostname = uri.getHost();
+		canWrite = false;
+	}
+
+	public DataFtp(URI baseUri, File path) {
+		super();
+		uri = replacePath(baseUri, path);
 		hostname = uri.getHost();
 		canWrite = false;
 	}
@@ -56,6 +65,12 @@ public class DataFtp extends DataRemote {
 	public boolean isFile() {
 		if (isDir == null) updateInfoIfNeeded();
 		return (isDir != null) && !isDir;
+	}
+
+	@Override
+	public DataFtp join(String segment) {
+		File f = new File(getAbsolutePath(), segment);
+		return new DataFtp(uri, f);
 	}
 
 	/**

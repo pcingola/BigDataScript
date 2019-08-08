@@ -37,12 +37,14 @@ public class MethodNative_string_dirPath extends MethodNativeString {
 		ValueList vlist = new ValueList(returnType);
 
 		String baseDir = vthis.asString();
+		Data dBaseDir = bdsThread.data(baseDir);
 		if (!baseDir.endsWith("/")) baseDir += "/";
 
 		List<String> l = bdsThread.data(baseDir).list();
 		for (String file : l) {
-			Data d = Data.factory(file, baseDir);
+			Data d = dBaseDir.join(file);
 			String path = d.isRemote() ? d.getUri().toString() : d.getAbsolutePath();
+			//			Gpr.debug("FILE: " + file + "\td:" + path);
 			vlist.add(new ValueString(path));
 		}
 

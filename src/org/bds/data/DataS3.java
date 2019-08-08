@@ -3,6 +3,7 @@ package org.bds.data;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -49,6 +50,12 @@ public class DataS3 extends DataRemote {
 	public DataS3(String urlStr) {
 		super();
 		parseUrlS3(urlStr);
+		canWrite = false;
+	}
+
+	public DataS3(URI baseUri, File path) {
+		super();
+		uri = replacePath(baseUri, path);
 		canWrite = false;
 	}
 
@@ -223,6 +230,12 @@ public class DataS3 extends DataRemote {
 	}
 
 	@Override
+	public DataS3 join(String segment) {
+		File f = new File(getAbsolutePath(), segment);
+		return new DataS3(uri, f);
+	}
+
+	@Override
 	public ArrayList<String> list() {
 		ArrayList<String> list = new ArrayList<>();
 
@@ -360,4 +373,5 @@ public class DataS3 extends DataRemote {
 		getS3().putObject(new PutObjectRequest(bucketName, key, file));
 		return true;
 	}
+
 }

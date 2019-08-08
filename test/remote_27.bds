@@ -2,4 +2,4 @@
 
 # FTP
 d := "ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna"
-dd := d.dir('**.dna.toplevel.fa.gz')
+dd := d.dir('*.dna.toplevel.fa.gz')
