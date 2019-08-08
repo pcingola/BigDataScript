@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import org.bds.data.Data;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -41,13 +40,8 @@ public class MethodNative_string_dir_regex extends MethodNativeString {
 	 * Does the path match?
 	 */
 	boolean matches(BdsThread bdsThread, String path, PathMatcher matcher) {
-		Data d = bdsThread.data(path);
-//		File file = new File(d.getAbsolutePath());
-		!!!!!!!!!!!!!!!!!!!
-		// TODO: dir should give local path, dirPath should give absolute path (same for regex) otherwise is too confusing....
-
-		File file = new File(d.getPath());
-		return matcher.matches(file.toPath());
+		File file = new File(path);
+		return matcher.matches(file.toPath().getFileName());
 	}
 
 	@Override

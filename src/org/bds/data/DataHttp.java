@@ -156,12 +156,14 @@ public class DataHttp extends DataRemote {
 		ArrayList<String> dirs = new ArrayList<>();
 		try {
 			// Read HTML page
-			Document doc = Jsoup.connect(uri.toURL().toString()).get();
+			String baseUrl = uri.toURL().toString();
+			Document doc = Jsoup.connect(baseUrl).get();
 
 			// Parse html, add all 'href' links
 			Elements links = doc.select("a[href]");
 			for (Element link : links) {
-				dirs.add(link.attr("abs:href"));
+				String href = link.attr("abs:href");
+				dirs.add(href);
 			}
 		} catch (Exception e) {
 			Timer.showStdErr("ERROR while connecting to " + getUri());

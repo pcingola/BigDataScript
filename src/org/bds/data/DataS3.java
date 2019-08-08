@@ -238,7 +238,8 @@ public class DataS3 extends DataRemote {
 		int keyLen = key.length();
 		for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
 			String fileName = objectSummary.getKey();
-			if (fileName.length() > keyLen) fileName = fileName.substring(keyLen); // First part is not expected in list (only the file name, no prefix)
+			// First part is not expected in list (only the file name, no prefix)
+			if (fileName.length() > keyLen) fileName = fileName.substring(keyLen);
 			list.add(fileName);
 		}
 
