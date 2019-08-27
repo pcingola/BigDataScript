@@ -30,13 +30,12 @@ import org.bds.Config;
  */
 public abstract class Data {
 
-	public static final String PROTOCOL_SEP = "://";
-
 	protected boolean verbose;
-
 	protected boolean debug;
-
+	protected boolean relative; // Is this a relative path? (otherwise is absolute)
 	protected String localPath; // File name used for local processing
+
+	public static final String PROTOCOL_SEP = "://";
 
 	public static Data factory(String url) {
 		return factory(url, null);
@@ -97,6 +96,43 @@ public abstract class Data {
 
 		default:
 			throw new RuntimeException("Unimplemented protocol '" + proto + "' for URL " + urlStr);
+		}
+
+		// Set values form config
+		data.setVerbose(Config.get().isVerbose());
+		data.setDebug(Config.get().isDebug());
+
+		return data;
+	}
+
+	public static Data factory(URI uri) {
+		// Create each data type
+		Data data = null;
+		String proto = uri.getScheme();
+		switch (proto) {
+		case "file":
+			data = new DataFile(uri);
+			break;
+
+		case "http":
+		case "https":
+			data = new DataHttp(uri);
+			break;
+
+		case "s3":
+			data = new DataS3(uri);
+			break;
+
+		case "ftp":
+			data = new DataFtp(uri);
+			break;
+
+		case "sftp":
+			data = new DataSftp(uri);
+			break;
+
+		default:
+			throw new RuntimeException("Unimplemented protocol '" + proto + "' for URL " + uri);
 		}
 
 		// Set values form config
@@ -199,6 +235,13 @@ public abstract class Data {
 	public abstract boolean isFile();
 
 	/**
+	 * Is this a relative path
+	 */
+	public boolean isRelative() {
+		return relative;
+	}
+
+	/**
 	 * Is this a remote data object (i.e. not accessible to the file system)
 	 */
 	public abstract boolean isRemote();
@@ -218,7 +261,7 @@ public abstract class Data {
 	/**
 	 * Join a segment to this path
 	 */
-	public abstract Data join(String segment);
+	public abstract Data join(Data segment);
 
 	/**
 	 * List of file names under this 'directory'

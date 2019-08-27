@@ -28,6 +28,14 @@ public class TestCasesRemote extends TestCasesBase {
 		Config.get().load();
 	}
 
+	String getCurrPath() {
+		try {
+			return (new File(".")).getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	@Test
 	public void test01_parse_URLs_file() {
 		Gpr.debug("Test");

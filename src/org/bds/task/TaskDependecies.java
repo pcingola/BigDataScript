@@ -26,18 +26,18 @@ import org.bds.util.Timer;
  */
 public class TaskDependecies implements Serializable {
 
-	private static final long serialVersionUID = -7139051739077288915L;
-
-	public static final int SLEEP_TIME = 200;
-
-	private static TaskDependecies taskDependeciesInstance = new TaskDependecies(); // Global instance (keeps track of all tasks)
-
 	boolean debug = false;
+
 	boolean verbose = false;
+
 	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
+
 	Map<String, Task> tasksById;
 	AutoHashMap<String, List<Task>> tasksByOutput;
 	Map<String, String> canonicalPath;
+	private static final long serialVersionUID = -7139051739077288915L;
+	public static final int SLEEP_TIME = 200;
+	private static TaskDependecies taskDependeciesInstance = new TaskDependecies(); // Global instance (keeps track of all tasks)
 
 	public static TaskDependecies get() {
 		return taskDependeciesInstance;
@@ -181,18 +181,18 @@ public class TaskDependecies implements Serializable {
 
 				if (tasks != null) // Add all task's input files
 					for (Task t : tasks) {
-					// Add all input files
-					if (t.getInputs() != null) {
-					for (String in : t.getInputs())
-					changed |= newGoals.add(in); // Add each node
-					}
+						// Add all input files
+						if (t.getInputs() != null) {
+							for (String in : t.getInputs())
+								changed |= newGoals.add(in); // Add each node
+						}
 
-					// Add all task Ids
-					List<Task> depTasks = t.getDependencies();
-					if (depTasks != null) {
-					for (Task dt : depTasks)
-					changed |= newGoals.add(dt.getId()); // Add each task ID
-					}
+						// Add all task Ids
+						List<Task> depTasks = t.getDependencies();
+						if (depTasks != null) {
+							for (Task dt : depTasks)
+								changed |= newGoals.add(dt.getId()); // Add each task ID
+						}
 					}
 			}
 
@@ -211,7 +211,7 @@ public class TaskDependecies implements Serializable {
 		// Not found? => Populate map
 		if (filePath == null) {
 			Data f = Data.factory(fileName);
-			filePath = f.getPath();
+			filePath = f.getCanonicalPath();
 
 			// Add to map
 			canonicalPath.put(fileName, filePath);

@@ -1,5 +1,7 @@
 package org.bds.data;
 
+import java.net.URI;
+
 /**
  * A file / directory on an ftp server
  *
@@ -12,6 +14,10 @@ public class DataSftp extends DataFtp {
 
 	public DataSftp(String urlStr) {
 		super(urlStr);
+	}
+
+	public DataSftp(URI uri) {
+		super(uri);
 	}
 
 }

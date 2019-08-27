@@ -23,17 +23,23 @@ import org.jsoup.select.Elements;
  */
 public class DataHttp extends DataRemote {
 
-	private static int BUFFER_SIZE = 100 * 1024;
-
 	public final int HTTP_OK = 200; // Connection OK
+
 	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
 	public final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
-
 	URLConnection connection;
+
+	private static int BUFFER_SIZE = 100 * 1024;
 
 	public DataHttp(String urlStr) {
 		super();
 		uri = parseUrl(urlStr);
+		canWrite = false;
+	}
+
+	public DataHttp(URI uri) {
+		super();
+		this.uri = uri;
 		canWrite = false;
 	}
 
@@ -156,14 +162,6 @@ public class DataHttp extends DataRemote {
 		} finally {
 			close();
 		}
-	}
-
-	@Override
-	public DataHttp join(String segment) {
-		Data d= Data.factory(segment);
-		File f = new File(d.getAbsolutePath(), segment);
-		!!!!!!!!!!!!
-		return new DataHttp(uri, f);
 	}
 
 	@Override

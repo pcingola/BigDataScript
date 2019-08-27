@@ -19,22 +19,23 @@ import org.bds.util.Timer;
  */
 public abstract class DataRemote extends Data {
 
-	public static final String TMP_BDS_DATA = "bds";
-	public static final long CACHE_TIMEOUT = 1000; // Timeout in milliseconds
-
 	protected boolean canRead;
 	protected boolean canWrite;
+
 	protected boolean exists;
 	protected Boolean isDir;
 	protected Date lastModified;
 	protected long size;
 	protected Timer latestUpdate;
 	protected URI uri;
+	public static final String TMP_BDS_DATA = "bds";
+	public static final long CACHE_TIMEOUT = 1000; // Timeout in milliseconds
 
 	public DataRemote() {
 		super();
 		size = -1;
 		lastModified = new Date(0);
+		relative = false;
 	}
 
 	@Override
@@ -201,6 +202,17 @@ public abstract class DataRemote extends Data {
 
 		// OK, we have a local file that looks updated respect to the remote file
 		return true;
+	}
+
+	/**
+	 * Join a segment to this path
+	 */
+	@Override
+	public Data join(Data segment) {
+		File fpath = new File(getPath());
+		File fjoin = new File(fpath, segment.getPath());
+		URI uri = replacePath(getUri(), fjoin);
+		return factory(uri);
 	}
 
 	protected String localPath() {

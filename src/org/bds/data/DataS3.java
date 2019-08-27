@@ -33,30 +33,32 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  */
 public class DataS3 extends DataRemote {
 
-	private static int BUFFER_SIZE = 100 * 1024;
-
-	public static final String AWS_DOMAIN = "amazonaws.com";
-	public static final String AWS_S3_PREFIX = "s3";
-	public static final String AWS_S3_PROTOCOL = "s3://";
-
-	public static final String ENV_PROXY_HTTTP = "http_proxy";
-	public static final String ENV_PROXY_HTTTPS = "https_proxy";
-
 	protected AmazonS3 s3;
+
 	protected AmazonS3URI s3uri;
 	protected String bucketName;
 	protected String key;
 
+	private static int BUFFER_SIZE = 100 * 1024;
+	public static final String AWS_DOMAIN = "amazonaws.com";
+
+	public static final String AWS_S3_PREFIX = "s3";
+	public static final String AWS_S3_PROTOCOL = "s3://";
+	public static final String ENV_PROXY_HTTTP = "http_proxy";
+	public static final String ENV_PROXY_HTTTPS = "https_proxy";
+
 	public DataS3(String urlStr) {
 		super();
-		parseUrlS3(urlStr);
+		uri = parseUrl(urlStr);
 		canWrite = false;
+		initialize();
 	}
 
-	public DataS3(URI baseUri, File path) {
+	public DataS3(URI uri) {
 		super();
-		uri = replacePath(baseUri, path);
+		this.uri = uri;
 		canWrite = false;
+		initialize();
 	}
 
 	@Override
@@ -217,6 +219,15 @@ public class DataS3 extends DataRemote {
 	}
 
 	/**
+	 * Parse string representing an AWS S3 URI
+	 */
+	protected void initialize() {
+		s3uri = new AmazonS3URI(uri.toString());
+		bucketName = s3uri.getBucket();
+		key = s3uri.getKey();
+	}
+
+	/**
 	 * Is this a bucket?
 	 */
 	@Override
@@ -227,12 +238,6 @@ public class DataS3 extends DataRemote {
 	@Override
 	public boolean isFile() {
 		return !isDirectory();
-	}
-
-	@Override
-	public DataS3 join(String segment) {
-		File f = new File(getAbsolutePath(), segment);
-		return new DataS3(uri, f);
 	}
 
 	@Override
@@ -286,15 +291,6 @@ public class DataS3 extends DataRemote {
 	@Override
 	public boolean mkdirs() {
 		return true;
-	}
-
-	/**
-	 * Parse string representing an AWS S3 URI
-	 */
-	protected void parseUrlS3(String s3UriStr) {
-		s3uri = new AmazonS3URI(s3UriStr);
-		bucketName = s3uri.getBucket();
-		key = s3uri.getKey();
 	}
 
 	/**

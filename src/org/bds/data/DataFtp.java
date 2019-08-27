@@ -1,6 +1,5 @@
 package org.bds.data;
 
-import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,9 +19,9 @@ import org.bds.util.Timer;
  */
 public class DataFtp extends DataRemote {
 
-	public static final long CACHE_TIMEOUT_FTP = 30 * 1000; // Timeout in milliseconds
-
 	protected String hostname;
+
+	public static final long CACHE_TIMEOUT_FTP = 30 * 1000; // Timeout in milliseconds
 
 	public DataFtp(String urlStr) {
 		super();
@@ -31,9 +30,9 @@ public class DataFtp extends DataRemote {
 		canWrite = false;
 	}
 
-	public DataFtp(URI baseUri, File path) {
+	public DataFtp(URI uri) {
 		super();
-		uri = replacePath(baseUri, path);
+		this.uri = uri;
 		hostname = uri.getHost();
 		canWrite = false;
 	}
@@ -65,12 +64,6 @@ public class DataFtp extends DataRemote {
 	public boolean isFile() {
 		if (isDir == null) updateInfoIfNeeded();
 		return (isDir != null) && !isDir;
-	}
-
-	@Override
-	public DataFtp join(String segment) {
-		File f = new File(getAbsolutePath(), segment);
-		return new DataFtp(uri, f);
 	}
 
 	/**

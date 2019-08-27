@@ -15,25 +15,47 @@ import java.util.Date;
  */
 public class DataFile extends Data {
 
-	public static final String PROTOCOL_FILE = "file://";
-
 	File file;
 
+	public static final String PROTOCOL_FILE = "file://";
+
+	/**
+	 * Resolve a path and always return an absolute path (e.g. relative to 'currentDir')
+	 */
 	public static File resolveLocalPath(String fileName, String currentDir) {
 		if (fileName.toLowerCase().startsWith(PROTOCOL_FILE)) fileName = fileName.substring(PROTOCOL_FILE.length());
 		File f = new File(fileName);
 
 		// If fileName is an absolute path, we just return the appropriate file
-		if (f.toPath().isAbsolute() || currentDir == null) return f.getAbsoluteFile();
+		if (currentDir == null) return f;
+		if (f.toPath().isAbsolute()) return f.getAbsoluteFile();
 
 		// Resolve against 'currentDir'
 		return new File(currentDir, fileName).getAbsoluteFile();
 	}
 
+	public DataFile(String fileName) {
+		super();
+		file = new File(fileName);
+		localPath = file.getAbsolutePath();
+		relative = !file.isAbsolute();
+	}
+
+	/**
+	 * Constructor creates an absolute path, unless 'currentDir' is null
+	 */
 	public DataFile(String fileName, String currentDir) {
 		super();
 		file = resolveLocalPath(fileName, currentDir);
 		localPath = file.getAbsolutePath();
+		relative = !file.isAbsolute();
+	}
+
+	public DataFile(URI uri) {
+		super();
+		file = new File(uri.getPath());
+		localPath = file.getPath();
+		relative = !file.isAbsolute();
 	}
 
 	@Override
@@ -145,9 +167,11 @@ public class DataFile extends Data {
 	}
 
 	@Override
-	public Data join(String segment) {
-		File f = new File(file, segment);
-		return new DataFile(f.getAbsolutePath(), null);
+	public Data join(Data segment) {
+		// Cannot join an absolute segment
+		if (!segment.isRelative()) return this;
+		File f = new File(file, segment.getPath());
+		return new DataFile(f.getAbsolutePath());
 	}
 
 	@Override
