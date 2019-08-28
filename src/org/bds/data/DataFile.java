@@ -15,9 +15,9 @@ import java.util.Date;
  */
 public class DataFile extends Data {
 
-	File file;
-
 	public static final String PROTOCOL_FILE = "file://";
+
+	File file;
 
 	/**
 	 * Resolve a path and always return an absolute path (e.g. relative to 'currentDir')
@@ -194,6 +194,11 @@ public class DataFile extends Data {
 	@Override
 	public long size() {
 		return file.length();
+	}
+
+	@Override
+	public String toString() {
+		return file.toString();
 	}
 
 	@Override

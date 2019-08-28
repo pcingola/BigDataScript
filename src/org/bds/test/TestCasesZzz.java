@@ -1,16 +1,7 @@
 package org.bds.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-
 import org.bds.Config;
-import org.bds.data.Data;
-import org.bds.data.DataFile;
-import org.bds.data.DataHttp;
 import org.bds.util.Gpr;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,111 +19,111 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	public void test00_parse_relative_01() {
-		Data dfile = Data.factory("/dir/sub/file.txt");
-		Data durl = Data.factory("http://www.ensembl.org");
-		Data djoin = durl.join(dfile);
-
-		assertTrue(!dfile.isRelative());
-		assertTrue(durl.isRelative());
-		assertTrue(dfile instanceof DataFile);
-		assertTrue(durl instanceof DataHttp);
-		assertTrue(djoin instanceof DataHttp);
-		assertEquals(djoin.getPath(), "/dir/sub/file.txt");
-		assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
-		assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
-	}
-
-	public void test00_parse_relative_02() {
-		Data dfile = Data.factory("dir/sub/file.txt");
-		Data durl = Data.factory("http://www.ensembl.org");
-		Data djoin = durl.join(dfile);
-
-		assertTrue(!dfile.isRelative());
-		assertTrue(durl.isRelative());
-		assertTrue(dfile instanceof DataFile);
-		assertTrue(durl instanceof DataHttp);
-		assertTrue(djoin instanceof DataHttp);
-		assertEquals(djoin.getUri().toString(), "http://www.ensembl.org/dir/sub/file.txt");
-		assertEquals(djoin.getPath(), "/dir/sub/file.txt");
-		assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
-		assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
-	}
-
-	public void test00_parse_relative_03() {
-		Data dfile = Data.factory("/dir/sub/file.txt");
-		Data durl = Data.factory("s3://my_bucket");
-		Data djoin = durl.join(dfile);
-
-		assertTrue(!dfile.isRelative());
-		assertTrue(durl.isRelative());
-		assertTrue(dfile instanceof DataFile);
-		assertTrue(durl instanceof DataHttp);
-		assertTrue(djoin instanceof DataHttp);
-		assertEquals(djoin.getUri().toString(), "s3://my_bucket/dir/sub/file.txt");
-		assertEquals(djoin.getPath(), "/dir/sub/file.txt");
-		assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
-		assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
-	}
-
-	@Test
-	public void test00_parseFile() {
-		Data dfile = Data.factory("/dir/sub/file.txt");
-		assertTrue(!dfile.isRelative());
-		assertEquals("/dir/sub/file.txt", dfile.getPath());
-		assertEquals("/dir/sub/file.txt", dfile.getAbsolutePath());
-		assertEquals("/dir/sub/file.txt", dfile.getCanonicalPath());
-	}
-
-	@Test
-	public void test00_parseFile_relative() {
-		Data dfile = Data.factory("./dir/sub/file.txt");
-		Gpr.debug("dfile: " + dfile);
-		assertTrue(dfile.isRelative());
-		assertEquals("./dir/sub/file.txt", dfile.getPath());
-	}
-
-	@Test
-	public void test00_parseFile_relative_02() throws Exception {
-		String path = "tmp.txt";
-		Data dpath = Data.factory(path);
-		if (verbose) Gpr.debug("Path: " + dpath.getPath());
-		Assert.assertTrue(dpath instanceof DataFile);
-		assertTrue(dpath.isRelative());
-
-		// Absolute path
-		File fpathAbs = new File(new File("").getAbsoluteFile(), path);
-		Assert.assertEquals(fpathAbs.getAbsolutePath(), dpath.getAbsolutePath());
-
-		// Canonical path
-		File fpathCan = new File(new File(".").getCanonicalFile(), path);
-		Assert.assertEquals(fpathCan.getCanonicalPath(), dpath.getCanonicalPath());
-
-		Gpr.toFile(dpath.getAbsolutePath(), "test");
-		Assert.assertTrue(dpath.isFile());
-		Assert.assertFalse(dpath.isDirectory());
-	}
-
-	@Test
-	public void test00_parseFile_relative_03() throws Exception {
-		String path = "./tmp.txt";
-		Data dpath = Data.factory(path);
-		if (verbose) Gpr.debug("Path: " + dpath.getPath());
-		Assert.assertTrue(dpath instanceof DataFile);
-		assertTrue(dpath.isRelative());
-
-		// Absolute path
-		File fpathAbs = new File(new File("").getAbsoluteFile(), path);
-		Assert.assertEquals(fpathAbs.getAbsolutePath(), dpath.getAbsolutePath());
-
-		// Canonical path
-		File fpathCan = new File(new File(".").getCanonicalFile(), path);
-		Assert.assertEquals(fpathCan.getCanonicalPath(), dpath.getCanonicalPath());
-
-		Gpr.toFile(dpath.getAbsolutePath(), "test");
-		Assert.assertTrue(dpath.isFile());
-		Assert.assertFalse(dpath.isDirectory());
-	}
+	//	public void test00_parse_relative_01() {
+	//		Data dfile = Data.factory("/dir/sub/file.txt");
+	//		Data durl = Data.factory("http://www.ensembl.org");
+	//		Data djoin = durl.join(dfile);
+	//
+	//		assertTrue(!dfile.isRelative());
+	//		assertTrue(durl.isRelative());
+	//		assertTrue(dfile instanceof DataFile);
+	//		assertTrue(durl instanceof DataHttp);
+	//		assertTrue(djoin instanceof DataHttp);
+	//		assertEquals(djoin.getPath(), "/dir/sub/file.txt");
+	//		assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
+	//		assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
+	//	}
+	//
+	//	public void test00_parse_relative_02() {
+	//		Data dfile = Data.factory("dir/sub/file.txt");
+	//		Data durl = Data.factory("http://www.ensembl.org");
+	//		Data djoin = durl.join(dfile);
+	//
+	//		assertTrue(!dfile.isRelative());
+	//		assertTrue(durl.isRelative());
+	//		assertTrue(dfile instanceof DataFile);
+	//		assertTrue(durl instanceof DataHttp);
+	//		assertTrue(djoin instanceof DataHttp);
+	//		assertEquals(djoin.getUri().toString(), "http://www.ensembl.org/dir/sub/file.txt");
+	//		assertEquals(djoin.getPath(), "/dir/sub/file.txt");
+	//		assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
+	//		assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
+	//	}
+	//
+	//	public void test00_parse_relative_03() {
+	//		Data dfile = Data.factory("/dir/sub/file.txt");
+	//		Data durl = Data.factory("s3://my_bucket");
+	//		Data djoin = durl.join(dfile);
+	//
+	//		assertTrue(!dfile.isRelative());
+	//		assertTrue(durl.isRelative());
+	//		assertTrue(dfile instanceof DataFile);
+	//		assertTrue(durl instanceof DataHttp);
+	//		assertTrue(djoin instanceof DataHttp);
+	//		assertEquals(djoin.getUri().toString(), "s3://my_bucket/dir/sub/file.txt");
+	//		assertEquals(djoin.getPath(), "/dir/sub/file.txt");
+	//		assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
+	//		assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
+	//	}
+	//
+	//	@Test
+	//	public void test00_parseFile() {
+	//		Data dfile = Data.factory("/dir/sub/file.txt");
+	//		assertTrue(!dfile.isRelative());
+	//		assertEquals("/dir/sub/file.txt", dfile.getPath());
+	//		assertEquals("/dir/sub/file.txt", dfile.getAbsolutePath());
+	//		assertEquals("/dir/sub/file.txt", dfile.getCanonicalPath());
+	//	}
+	//
+	//	@Test
+	//	public void test00_parseFile_relative() {
+	//		Data dfile = Data.factory("./dir/sub/file.txt");
+	//		Gpr.debug("dfile: " + dfile);
+	//		assertTrue(dfile.isRelative());
+	//		assertEquals("./dir/sub/file.txt", dfile.getPath());
+	//	}
+	//
+	//	@Test
+	//	public void test00_parseFile_relative_02() throws Exception {
+	//		String path = "tmp.txt";
+	//		Data dpath = Data.factory(path);
+	//		if (verbose) Gpr.debug("Path: " + dpath.getPath());
+	//		Assert.assertTrue(dpath instanceof DataFile);
+	//		assertTrue(dpath.isRelative());
+	//
+	//		// Absolute path
+	//		File fpathAbs = new File(new File("").getAbsoluteFile(), path);
+	//		Assert.assertEquals(fpathAbs.getAbsolutePath(), dpath.getAbsolutePath());
+	//
+	//		// Canonical path
+	//		File fpathCan = new File(new File(".").getCanonicalFile(), path);
+	//		Assert.assertEquals(fpathCan.getCanonicalPath(), dpath.getCanonicalPath());
+	//
+	//		Gpr.toFile(dpath.getAbsolutePath(), "test");
+	//		Assert.assertTrue(dpath.isFile());
+	//		Assert.assertFalse(dpath.isDirectory());
+	//	}
+	//
+	//	@Test
+	//	public void test00_parseFile_relative_03() throws Exception {
+	//		String path = "./tmp.txt";
+	//		Data dpath = Data.factory(path);
+	//		if (verbose) Gpr.debug("Path: " + dpath.getPath());
+	//		Assert.assertTrue(dpath instanceof DataFile);
+	//		assertTrue(dpath.isRelative());
+	//
+	//		// Absolute path
+	//		File fpathAbs = new File(new File("").getAbsoluteFile(), path);
+	//		Assert.assertEquals(fpathAbs.getAbsolutePath(), dpath.getAbsolutePath());
+	//
+	//		// Canonical path
+	//		File fpathCan = new File(new File(".").getCanonicalFile(), path);
+	//		Assert.assertEquals(fpathCan.getCanonicalPath(), dpath.getCanonicalPath());
+	//
+	//		Gpr.toFile(dpath.getAbsolutePath(), "test");
+	//		Assert.assertTrue(dpath.isFile());
+	//		Assert.assertFalse(dpath.isDirectory());
+	//	}
 
 	@Test
 	public void test15_S3() {
