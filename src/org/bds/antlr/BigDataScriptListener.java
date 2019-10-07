@@ -716,6 +716,18 @@ public interface BigDataScriptListener extends ParseTreeListener {
 	 */
 	void exitExpressionTask(BigDataScriptParser.ExpressionTaskContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code expressionCast}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionCast(BigDataScriptParser.ExpressionCastContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code expressionCast}
+	 * labeled alternative in {@link BigDataScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionCast(BigDataScriptParser.ExpressionCastContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code referenceVar}
 	 * labeled alternative in {@link BigDataScriptParser#expression}.
 	 * @param ctx the parse tree

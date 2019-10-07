@@ -1,8 +1,18 @@
+class A {
+	void A() {
+		println("Hello world")
+	}
+}
 
-in := 'http://pcingola.github.io/BigDataScript/index.html'
-out := 'tmp_remote_03.txt'
+class B extends A {
+	string fieldb = "Test worked!"
 
-task( out <- in ) sys cat $in > $out
+	void B() {
+		super.A()
+		println("Hello again")
+	}
+}
 
-wait
-first := out.readLines().head()
+A a = new B()
+B b = (B) a
+println(b.fieldb)
