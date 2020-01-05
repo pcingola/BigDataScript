@@ -2,8 +2,9 @@ class A { ; }
 class B extends A { ; }
 class C extends B { ; }
 
-
-C c = new C()
-B b = new B()
 A a = new A()
-c = a
+B b = new B()
+C c = new C()
+
+# Explicit casting
+c = (C) a

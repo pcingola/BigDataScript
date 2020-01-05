@@ -6,6 +6,6 @@ A a
 B b = new B()
 C c = new C()
 
-# Implicit casting
+# Explicit casting
 a = (A) b
 a = (A) c

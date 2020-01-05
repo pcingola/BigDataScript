@@ -1,9 +1,7 @@
 package org.bds.test;
 
 import org.bds.Config;
-import org.bds.util.Gpr;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -124,31 +122,31 @@ public class TestCasesZzz extends TestCasesBase {
 	//		Assert.assertTrue(dpath.isFile());
 	//		Assert.assertFalse(dpath.isDirectory());
 	//	}
-
-	@Test
-	public void test15_S3() {
-		Gpr.debug("Test");
-		verbose = true;
-		String expectedOutput = "" //
-				+ "baseName       : \n" //
-				+ "baseName('txt'): \n" //
-				+ "canRead        : true\n" //
-				+ "canWrite       : true\n" //
-				+ "dirName        : s3://pcingola.bds/test_dir\n" //
-				+ "extName        : bds/test_dir/\n" //
-				+ "exists         : true\n" //
-				+ "isDir          : true\n" //
-				+ "isFile         : false\n" //
-				+ "path           : s3://pcingola.bds/test_dir/\n" //
-				+ "pathName       : s3://pcingola.bds/test_dir\n" //
-				+ "removeExt      : s3://pcingola\n" //
-				+ "dirPath        : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
-				+ "dir            : [z1.txt, z2.txt]\n" //
-		;
-
-		runAndCheckStdout("test/remote_15.bds", expectedOutput);
-	}
-
+	//
+	//	@Test
+	//	public void test15_S3() {
+	//		Gpr.debug("Test");
+	//		verbose = true;
+	//		String expectedOutput = "" //
+	//				+ "baseName       : \n" //
+	//				+ "baseName('txt'): \n" //
+	//				+ "canRead        : true\n" //
+	//				+ "canWrite       : true\n" //
+	//				+ "dirName        : s3://pcingola.bds/test_dir\n" //
+	//				+ "extName        : bds/test_dir/\n" //
+	//				+ "exists         : true\n" //
+	//				+ "isDir          : true\n" //
+	//				+ "isFile         : false\n" //
+	//				+ "path           : s3://pcingola.bds/test_dir/\n" //
+	//				+ "pathName       : s3://pcingola.bds/test_dir\n" //
+	//				+ "removeExt      : s3://pcingola\n" //
+	//				+ "dirPath        : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
+	//				+ "dir            : [z1.txt, z2.txt]\n" //
+	//		;
+	//
+	//		runAndCheckStdout("test/remote_15.bds", expectedOutput);
+	//	}
+	//
 	//	@Test
 	//	public void test26_ftp_dir() {
 	//		Gpr.debug("Test");
