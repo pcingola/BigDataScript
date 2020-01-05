@@ -330,13 +330,6 @@ public abstract class BdsNode implements Serializable {
 		return returnType != null;
 	}
 
-	//	/**
-	//	 * Should we stop in this node when debugging?
-	//	 */
-	//	public boolean isStopDebug() {
-	//		return true;
-	//	}
-
 	public boolean isString() {
 		return returnType != null && returnType.getPrimitiveType() == PrimitiveType.STRING;
 	}

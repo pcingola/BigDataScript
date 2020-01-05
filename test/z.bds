@@ -13,6 +13,9 @@ class B extends A {
 	}
 }
 
-A a = new B()
+class Z extends B { ; }
+
+
+A a = new A()
 B b = (B) a
 println(b.fieldb)

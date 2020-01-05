@@ -417,4 +417,8 @@ public class TestCasesRun3 extends TestCasesBase {
 		runAndCheck("test/run_242.bds", "ret", "n:hi");
 	}
 
+	public void test243_downCasting() {
+		runAndCheck("test/run_243.bds", "ret", "42");
+	}
+
 }

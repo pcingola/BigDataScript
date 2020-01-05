@@ -20,6 +20,7 @@ public class ExpressionCast extends ExpressionUnary {
 
 	private static final long serialVersionUID = 1043280143559100089L;
 	protected String castTo;
+	protected boolean dynamicChecking = false;
 
 	public ExpressionCast(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -36,39 +37,51 @@ public class ExpressionCast extends ExpressionUnary {
 	public Type returnType(SymbolTable symtab) {
 		if (returnType != null) return returnType;
 
-		!!!!!!!!!!!
-		//		// Calculate return types for expr and args
-		//		// Note that expresionObj is null in ExpressionNew (which is a MethodCall)
-		//		TypeClass thisType = (TypeClass) Types.get(functionName); // Constructors have same name as class
-		//		if (thisType == null) return null;
-		//		returnType = thisType;
-		//
-		//		// Prepend 'this' argument to method signature
-		//		expresionThis = new ReferenceThis(this, thisType);
-		//		args = Args.getArgsThis(args, expresionThis);
-		//
-		//		// Calculate return type for args
-		//		args.returnType(symtab);
-		//
-		//		// Find method
-		//		functionDeclaration = findMethod(symtab, thisType, args);
-
+		returnType = Types.get(castTo);
+		expr.returnType(symtab);
 		return returnType;
 	}
 
 	@Override
 	public String toAsm() {
-		return "!!!"; // This does not perform any low level operation?
+		return expr.toAsm() + "CAST_TOC " + returnType + "\n";
+	}
+
+	@Override
+	public String toString() {
+		return "(" + castTo + ") " + expr.toString();
+	}
+
+	@Override
+	public void typeCheck(SymbolTable symtab, CompilerMessages compilerMessages) {
+		// Calculate return type
+		returnType = returnType(symtab);
+
+		// Are return types non-null?
+		// Note: null returnTypes happen if variables are missing.
+		if (isReturnTypesNotNull()) typeCheckNotNull(symtab, compilerMessages);
+		else compilerMessages.add(this, "Unknown type '" + castTo + "'", MessageType.ERROR);
 	}
 
 	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
-		// Can we transform to 'castTo'?
-		Type type = Types.get(castTo);
-		System.out.println("TYPE: " + type);
-		if (type == null) compilerMessages.add(this, "Unknown type '" + castTo + "'", MessageType.ERROR);
+		// Can cast to? (e.g. sub-class)
+		if (expr.canCastTo(returnType)) return;
 
-		expr.checkCanCastTo(type, compilerMessages);
+		// Both classes? Check for down-casting
+		if (expr.getReturnType().isClass() && returnType.isClass() //
+				&& returnType.canCastTo(expr.getReturnType())) {
+			// Could be a 'down-casting'.
+			// E.g.:
+			//    class A {;}
+			//    class B extends A {;}
+			//    A a = new B()
+			//    B b = (B) a       <- Variable 'a' is type A, but contains an object type 'B', so this is valid
+			// In this case, we need to dynamically check if the object can be casted
+			dynamicChecking = true;
+			return;
+		}
+		compilerMessages.add(this, "Cannot cast from type '" + returnType + "' to type '" + castTo + "'", MessageType.ERROR);
 	}
 
 }

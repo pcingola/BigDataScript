@@ -286,6 +286,29 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Can the latest value in the stack be casted to 'className'?
+	 * If it can, do nothing, if it cannot, fatal error
+	 * @param className
+	 */
+	void castToClass(String className) {
+		// Peek value and get type
+		Value val = peek();
+		Type typeSrc = val.getType();
+		// Get destination type
+		Type typeDst = Types.get(className);
+		// Any null type? (i.e. not found)
+		Gpr.debug("CAST_TOC:  src:" + typeSrc + ", dst: " + typeDst);
+		if (typeSrc != null && typeDst != null) {
+			// Same type? OK, can cast
+			if (typeSrc.getCanonicalName().equals(typeDst.getCanonicalName())) return;
+			// Subclass? OK, can cast
+			if (typeSrc.isClass() && typeDst.isClass() && typeSrc.canCastTo(typeDst)) return;
+		}
+		// Cannot cast
+		fatalError("Cannot cast '" + typeSrc + "' to '" + className + "'");
+	}
+
+	/**
 	 * Throw an exception using an exceptionHandler
 	 */
 	void catchException(ValueClass exceptionValue) {
@@ -911,6 +934,11 @@ public class BdsVm implements Serializable {
 
 			case CAST_TOB:
 				push(pop().asBool());
+				break;
+
+			case CAST_TOC: // Cast object to class (only if up-casting)
+				name = constantString();
+				castToClass(name);
 				break;
 
 			case CAST_TOI:
