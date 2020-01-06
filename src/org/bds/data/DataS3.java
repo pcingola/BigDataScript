@@ -4,13 +4,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import org.apache.http.client.utils.URIBuilder;
 import org.bds.Config;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
+import org.bds.util.Tuple;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
@@ -33,19 +36,19 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  */
 public class DataS3 extends DataRemote {
 
-	protected AmazonS3 s3;
+	private static int BUFFER_SIZE = 100 * 1024;
 
+	public static final String AWS_DOMAIN = "amazonaws.com";
+	public static final String AWS_S3_PREFIX = "s3";
+	public static final String AWS_S3_PROTOCOL = "s3://";
+
+	public static final String ENV_PROXY_HTTTP = "http_proxy";
+	public static final String ENV_PROXY_HTTTPS = "https_proxy";
+
+	protected AmazonS3 s3;
 	protected AmazonS3URI s3uri;
 	protected String bucketName;
 	protected String key;
-
-	private static int BUFFER_SIZE = 100 * 1024;
-	public static final String AWS_DOMAIN = "amazonaws.com";
-
-	public static final String AWS_S3_PREFIX = "s3";
-	public static final String AWS_S3_PROTOCOL = "s3://";
-	public static final String ENV_PROXY_HTTTP = "http_proxy";
-	public static final String ENV_PROXY_HTTTPS = "https_proxy";
 
 	public DataS3(String urlStr) {
 		super();
@@ -174,7 +177,7 @@ public class DataS3 extends DataRemote {
 
 	@Override
 	public String getPath() {
-		return bucketName + "/" + key;
+		return (key != null ? key : "");
 	}
 
 	/**
@@ -291,6 +294,19 @@ public class DataS3 extends DataRemote {
 	@Override
 	public boolean mkdirs() {
 		return true;
+	}
+
+	@Override
+	protected URI parseUrl(String urlStr) {
+		try {
+			// Encode the url
+			URIBuilder ub = new URIBuilder(urlStr);
+			Tuple<String, String> protoHost = parseProtoHost(urlStr);
+			ub.setHost(protoHost.second);
+			return ub.build();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Cannot parse URL " + urlStr, e);
+		}
 	}
 
 	/**
