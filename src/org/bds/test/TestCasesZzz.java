@@ -1,12 +1,7 @@
 package org.bds.test;
 
 import org.bds.Config;
-import org.bds.data.Data;
-import org.bds.data.DataFile;
-import org.bds.data.DataS3;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -221,26 +216,26 @@ public class TestCasesZzz extends TestCasesBase {
 	//		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
 	//		Assert.assertEquals(dhttp.toString(), "http://www.ensembl.org/dir/sub/file.txt");
 	//	}
-
-	@Test
-	public void test08_s3_join() {
-		Data dfile = Data.factory("/dir/sub/file.txt");
-		Data ds3 = Data.factory("s3://my_bucket");
-
-		Assert.assertFalse(dfile.isRelative());
-		Assert.assertFalse(ds3.isRelative());
-		Assert.assertTrue(dfile instanceof DataFile);
-		Assert.assertTrue(ds3 instanceof DataS3);
-		Data djoin = ds3.join(dfile);
-
-		Assert.assertTrue(djoin instanceof DataS3);
-		DataS3 ds3join = (DataS3) djoin;
-		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(ds3join.toString(), "s3://my_bucket/dir/sub/file.txt");
-	}
-
+	//
+	//	@Test
+	//	public void test08_s3_join() {
+	//		Data dfile = Data.factory("/dir/sub/file.txt");
+	//		Data ds3 = Data.factory("s3://my_bucket");
+	//
+	//		Assert.assertFalse(dfile.isRelative());
+	//		Assert.assertFalse(ds3.isRelative());
+	//		Assert.assertTrue(dfile instanceof DataFile);
+	//		Assert.assertTrue(ds3 instanceof DataS3);
+	//		Data djoin = ds3.join(dfile);
+	//
+	//		Assert.assertTrue(djoin instanceof DataS3);
+	//		DataS3 ds3join = (DataS3) djoin;
+	//		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
+	//		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
+	//		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
+	//		Assert.assertEquals(ds3join.toString(), "s3://my_bucket/dir/sub/file.txt");
+	//	}
+	//
 	//	@Test
 	//	public void test08b_s3_join() {
 	//		Data dfile = Data.factory("dir/sub/file.txt");
@@ -252,11 +247,10 @@ public class TestCasesZzz extends TestCasesBase {
 	//		Assert.assertTrue(dfile instanceof DataFile);
 	//		Assert.assertTrue(ds3 instanceof DataS3);
 	//		Assert.assertTrue(djoin instanceof DataS3);
-	//		DataHttp dhttp = (DataHttp) djoin;
 	//		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
 	//		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
 	//		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
-	//		Assert.assertEquals(dhttp.getUrl().toString(), "s3://my_bucket/dir/sub/file.txt");
+	//		Assert.assertEquals(djoin.toString(), "s3://my_bucket/dir/sub/file.txt");
 	//	}
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
