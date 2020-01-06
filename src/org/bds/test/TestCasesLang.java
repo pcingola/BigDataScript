@@ -438,4 +438,21 @@ public class TestCasesLang extends TestCasesBase {
 		compileErrors("test/test65.bds", "Duplicate method 'A.zzz(A) -> void'");
 	}
 
+	@Test
+	public void test66() {
+		Gpr.debug("Test");
+		compileOk("test/test66.bds");
+		compileOk("test/test66b.bds");
+	}
+
+	@Test
+	public void test67() {
+		Gpr.debug("Test");
+		compileOk("test/test67.bds");
+	}
+
+	public void test67b() {
+		Gpr.debug("Test");
+		compileErrors("test/test67b.bds", "Cannot cast A to C");
+	}
 }

@@ -8,6 +8,7 @@ import org.bds.data.Data;
 import org.bds.data.DataFile;
 import org.bds.data.DataHttp;
 import org.bds.data.DataRemote;
+import org.bds.data.DataS3;
 import org.bds.util.Gpr;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,8 +86,8 @@ public class TestCasesRemote extends TestCasesBase {
 
 		// Check some features
 		Assert.assertTrue(d instanceof DataHttp);
-		Assert.assertEquals("http://www.google.com/index.html", d.getUri().toString());
-		Assert.assertEquals("http://www.google.com/", d.getParent());
+		Assert.assertEquals("http://www.google.com/index.html", d.toString());
+		Assert.assertEquals("http://www.google.com/", d.getParent().toString());
 		Assert.assertEquals("/index.html", d.getPath());
 		Assert.assertEquals("/index.html", d.getAbsolutePath());
 		Assert.assertEquals("/index.html", d.getCanonicalPath());
@@ -115,15 +116,8 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test01_parse_URLs_s3() {
 		Gpr.debug("Test");
-		String url = "http://pcingola.bds.s3.amazonaws.com/hello.txt";
-		checkS3HelloTxt(url, url, "http://pcingola.bds.s3.amazonaws.com");
-	}
-
-	@Test
-	public void test01_parse_URLs_s3_02() {
-		Gpr.debug("Test");
 		String url = "s3://pcingola.bds/hello.txt";
-		checkS3HelloTxt(url, url, "s3://pcingola.bds");
+		checkS3HelloTxt(url, "/hello.txt", "s3://pcingola.bds/");
 	}
 
 	@Test
@@ -175,9 +169,287 @@ public class TestCasesRemote extends TestCasesBase {
 	}
 
 	@Test
+	public void test101_data_file_absolute() {
+		String path = "/dir/sub/file.txt";
+		Data dfile = Data.factory(path);
+		Assert.assertFalse("Relative: " + dfile.isRelative(), dfile.isRelative());
+		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
+		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
+
+		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
+		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), path, dfile.getAbsolutePath());
+	}
+
+	@Test
+	public void test101b_data_file_absolute() {
+		String path = "/dir/sub/file.txt";
+		Data dfile = Data.factory("file://" + path);
+		Assert.assertFalse("Relative: " + dfile.isRelative(), dfile.isRelative());
+		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
+		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
+
+		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
+		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), path, dfile.getAbsolutePath());
+	}
+
+	@Test
+	public void test102_data_file_relative() {
+		String path = "dir/sub/file.txt";
+		Data dfile = Data.factory(path);
+
+		Assert.assertTrue("Relative: " + dfile.isRelative(), dfile.isRelative());
+		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
+		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
+
+		Data pwd = Data.factory("");
+		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
+		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
+	}
+
+	@Test
+	public void test102b_data_file_relative() {
+		String path = "dir/sub/file.txt";
+		Data dfile = Data.factory("file://" + path);
+
+		Assert.assertTrue("Relative: " + dfile.isRelative(), dfile.isRelative());
+		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
+		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
+
+		Data pwd = Data.factory("");
+		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
+		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
+	}
+
+	@Test
+	public void test103_data_file_relative() {
+		String path = "./dir/sub/file.txt";
+		Data dfile = Data.factory(path);
+		Assert.assertTrue("Relative: " + dfile.isRelative(), dfile.isRelative());
+		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
+		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
+
+		Data pwd = Data.factory("");
+		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
+		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
+	}
+
+	@Test
+	public void test103b_data_file_relative() {
+		String path = "./dir/sub/file.txt";
+		Data dfile = Data.factory("file://" + path);
+		Assert.assertTrue("Relative: " + dfile.isRelative(), dfile.isRelative());
+		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
+		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
+
+		Data pwd = Data.factory("");
+		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
+		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
+	}
+
+	@Test
+	public void test104_file_join_segments() {
+		Data dfile = Data.factory("dir/sub/file.txt");
+		Data ddir = Data.factory("/home");
+		Data djoin = ddir.join(dfile);
+
+		Assert.assertTrue(dfile.isRelative());
+		Assert.assertFalse(ddir.isRelative());
+		Assert.assertFalse(djoin.isRelative());
+
+		Assert.assertTrue(dfile instanceof DataFile);
+		Assert.assertTrue(ddir instanceof DataFile);
+		Assert.assertTrue(djoin instanceof DataFile);
+
+		Assert.assertEquals("Path: " + djoin.getPath(), "/home/dir/sub/file.txt", djoin.getPath());
+		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/dir/sub/file.txt", djoin.getAbsolutePath());
+	}
+
+	@Test
+	public void test104b_file_join_segments() {
+		Data dfile = Data.factory("file://dir/sub/file.txt");
+		Data ddir = Data.factory("file:///home");
+		Data djoin = ddir.join(dfile);
+
+		Assert.assertTrue(dfile.isRelative());
+		Assert.assertFalse(ddir.isRelative());
+		Assert.assertFalse(djoin.isRelative());
+
+		Assert.assertTrue(dfile instanceof DataFile);
+		Assert.assertTrue(ddir instanceof DataFile);
+		Assert.assertTrue(djoin instanceof DataFile);
+
+		Assert.assertEquals("Path: " + djoin.getPath(), "/home/dir/sub/file.txt", djoin.getPath());
+		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/dir/sub/file.txt", djoin.getAbsolutePath());
+	}
+
+	@Test
+	public void test105_file_join_segments() {
+		Data dfile = Data.factory("./dir/sub/file.txt");
+		Data ddir = Data.factory("/home");
+		Data djoin = ddir.join(dfile);
+
+		Assert.assertTrue(dfile.isRelative());
+		Assert.assertFalse(ddir.isRelative());
+		Assert.assertFalse(djoin.isRelative());
+
+		Assert.assertTrue(dfile instanceof DataFile);
+		Assert.assertTrue(ddir instanceof DataFile);
+		Assert.assertTrue(djoin instanceof DataFile);
+
+		Assert.assertEquals("Path: " + djoin.getPath(), "/home/./dir/sub/file.txt", djoin.getPath());
+		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/./dir/sub/file.txt", djoin.getAbsolutePath());
+	}
+
+	@Test
+	public void test105b_file_join_segments() {
+		Data dfile = Data.factory("file://./dir/sub/file.txt");
+		Data ddir = Data.factory("file:///home");
+		Data djoin = ddir.join(dfile);
+
+		Assert.assertTrue(dfile.isRelative());
+		Assert.assertFalse(ddir.isRelative());
+		Assert.assertFalse(djoin.isRelative());
+
+		Assert.assertTrue(dfile instanceof DataFile);
+		Assert.assertTrue(ddir instanceof DataFile);
+		Assert.assertTrue(djoin instanceof DataFile);
+
+		Assert.assertEquals("Path: " + djoin.getPath(), "/home/./dir/sub/file.txt", djoin.getPath());
+		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/./dir/sub/file.txt", djoin.getAbsolutePath());
+	}
+
+	@Test
+	public void test106_url() {
+		String url = "http://www.ensembl.org";
+		Data durl = Data.factory(url);
+		Assert.assertFalse("Relative: " + durl.isRelative(), durl.isRelative());
+		Assert.assertTrue("Exists: " + durl.exists(), durl.exists());
+		Assert.assertFalse("Is dir: " + durl.isDirectory(), durl.isDirectory());
+		Assert.assertTrue("Wrong data type: " + durl.getClass().getCanonicalName(), durl instanceof DataHttp);
+
+		Assert.assertEquals("Path: " + durl.getPath(), "", durl.getPath());
+		Assert.assertEquals("Canonical: " + durl.getAbsolutePath(), "", durl.getAbsolutePath());
+		Assert.assertEquals("URL: " + durl.toString(), url, durl.toString());
+	}
+
+	@Test
+	public void test107_url_join() {
+		Data dfile = Data.factory("/dir/sub/file.txt");
+		Data durl = Data.factory("http://www.ensembl.org");
+		Data djoin = durl.join(dfile);
+
+		Assert.assertFalse(dfile.isRelative());
+		Assert.assertFalse(durl.isRelative());
+		Assert.assertTrue(dfile instanceof DataFile);
+		Assert.assertTrue(durl instanceof DataHttp);
+		Assert.assertTrue(djoin instanceof DataHttp);
+		DataHttp dhttp = (DataHttp) djoin;
+		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
+		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
+		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
+		Assert.assertEquals(dhttp.toString(), "http://www.ensembl.org/dir/sub/file.txt");
+	}
+
+	@Test
+	public void test107b_url_join() {
+		Data dfile = Data.factory("dir/sub/file.txt");
+		Data durl = Data.factory("http://www.ensembl.org");
+		Data djoin = durl.join(dfile);
+
+		Assert.assertTrue(dfile.isRelative());
+		Assert.assertFalse(durl.isRelative());
+		Assert.assertTrue(dfile instanceof DataFile);
+		Assert.assertTrue(durl instanceof DataHttp);
+		Assert.assertTrue(djoin instanceof DataHttp);
+		DataHttp dhttp = (DataHttp) djoin;
+		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
+		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
+		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
+		Assert.assertEquals(dhttp.toString(), "http://www.ensembl.org/dir/sub/file.txt");
+	}
+
+	@Test
+	public void test108_s3_join() {
+		Data dfile = Data.factory("/dir/sub/file.txt");
+		Data ds3 = Data.factory("s3://my_bucket");
+
+		Assert.assertFalse(dfile.isRelative());
+		Assert.assertFalse(ds3.isRelative());
+		Assert.assertTrue(dfile instanceof DataFile);
+		Assert.assertTrue(ds3 instanceof DataS3);
+		Data djoin = ds3.join(dfile);
+
+		Assert.assertTrue(djoin instanceof DataS3);
+		DataS3 ds3join = (DataS3) djoin;
+		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
+		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
+		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
+		Assert.assertEquals(ds3join.toString(), "s3://my_bucket/dir/sub/file.txt");
+	}
+
+	@Test
+	public void test108b_s3_join() {
+		Data dfile = Data.factory("dir/sub/file.txt");
+		Data ds3 = Data.factory("s3://my_bucket");
+		Data djoin = ds3.join(dfile);
+
+		Assert.assertTrue(dfile.isRelative());
+		Assert.assertFalse(ds3.isRelative());
+		Assert.assertTrue(dfile instanceof DataFile);
+		Assert.assertTrue(ds3 instanceof DataS3);
+		Assert.assertTrue(djoin instanceof DataS3);
+		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
+		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
+		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
+		Assert.assertEquals(djoin.toString(), "s3://my_bucket/dir/sub/file.txt");
+	}
+
+	@Test
+	public void test109_parseFile_relative() throws Exception {
+		String path = "tmp.txt";
+		Data dpath = Data.factory(path);
+		if (verbose) Gpr.debug("Path: " + dpath.getPath());
+		Assert.assertTrue(dpath instanceof DataFile);
+		Assert.assertTrue(dpath.isRelative());
+
+		// Absolute path
+		File fpathAbs = new File(new File("").getAbsoluteFile(), path);
+		Assert.assertEquals(fpathAbs.getAbsolutePath(), dpath.getAbsolutePath());
+
+		// Canonical path
+		File fpathCan = new File(new File(".").getCanonicalFile(), path);
+		Assert.assertEquals(fpathCan.getCanonicalPath(), dpath.getCanonicalPath());
+
+		Gpr.toFile(dpath.getAbsolutePath(), "test");
+		Assert.assertTrue(dpath.isFile());
+		Assert.assertFalse(dpath.isDirectory());
+	}
+
+	@Test
 	public void test11_download() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_11.bds", "ok", "true");
+	}
+
+	@Test
+	public void test110_parseFile_relative_03() throws Exception {
+		String path = "./tmp.txt";
+		Data dpath = Data.factory(path);
+		if (verbose) Gpr.debug("Path: " + dpath.getPath());
+		Assert.assertTrue(dpath instanceof DataFile);
+		Assert.assertTrue(dpath.isRelative());
+
+		// Absolute path
+		File fpathAbs = new File(new File("").getAbsoluteFile(), path);
+		Assert.assertEquals(fpathAbs.getAbsolutePath(), dpath.getAbsolutePath());
+
+		// Canonical path
+		File fpathCan = new File(new File(".").getCanonicalFile(), path);
+		Assert.assertEquals(fpathCan.getCanonicalPath(), dpath.getCanonicalPath());
+
+		Gpr.toFile(dpath.getAbsolutePath(), "test");
+		Assert.assertTrue(dpath.isFile());
+		Assert.assertFalse(dpath.isDirectory());
 	}
 
 	@Test
@@ -194,12 +466,12 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "baseName       : test_remote_13_file_does_not_exits_in_S3.txt\n" //
 				+ "baseName('txt'): test_remote_13_file_does_not_exits_in_S3\n" //
 				+ "canRead        : false\n" + "canWrite       : false\n" //
-				+ "dirName        : s3://pcingola.bds\n" //
+				+ "dirName        : \n" //
 				+ "extName        : txt\n" //
 				+ "exists         : false\n" + "isDir          : false\n" //
 				+ "isFile         : true\n" //
-				+ "path           : s3://pcingola.bds/test_remote_13_file_does_not_exits_in_S3.txt\n" //
-				+ "pathName       : s3://pcingola.bds\n" //
+				+ "path           : /test_remote_13_file_does_not_exits_in_S3.txt\n" //
+				+ "pathName       : \n" //
 				+ "removeExt      : s3://pcingola.bds/test_remote_13_file_does_not_exits_in_S3\n" //
 				+ "dirPath        : []\n" //
 				+ "dir            : []\n" //
@@ -216,13 +488,13 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "baseName('txt'): hello\n" //
 				+ "canRead        : true\n" //
 				+ "canWrite       : true\n" //
-				+ "dirName        : s3://pcingola.bds\n" //
+				+ "dirName        : \n" //
 				+ "extName        : txt\n" //
 				+ "exists         : true\n" //
 				+ "isDir          : false\n" //
 				+ "isFile         : true\n" //
-				+ "path           : s3://pcingola.bds/hello.txt\n" //
-				+ "pathName       : s3://pcingola.bds\n" //
+				+ "path           : /hello.txt\n" //
+				+ "pathName       : \n" //
 				+ "removeExt      : s3://pcingola.bds/hello\n" //
 				+ "dirPath        : []\n" //
 				+ "dir            : []\n" //
@@ -239,13 +511,13 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "baseName('txt'): \n" //
 				+ "canRead        : true\n" //
 				+ "canWrite       : true\n" //
-				+ "dirName        : s3://pcingola.bds/test_dir\n" //
+				+ "dirName        : /test_dir\n" //
 				+ "extName        : bds/test_dir/\n" //
 				+ "exists         : true\n" //
 				+ "isDir          : true\n" //
 				+ "isFile         : false\n" //
-				+ "path           : s3://pcingola.bds/test_dir/\n" //
-				+ "pathName       : s3://pcingola.bds/test_dir\n" //
+				+ "path           : /test_dir/\n" //
+				+ "pathName       : /test_dir\n" //
 				+ "removeExt      : s3://pcingola\n" //
 				+ "dirPath        : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
 				+ "dir            : [z1.txt, z2.txt]\n" //
@@ -262,13 +534,13 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "baseName('txt'): test_remote_16\n" //
 				+ "canRead        : true\n" //
 				+ "canWrite       : true\n" //
-				+ "dirName        : s3://pcingola.bds\n" //
+				+ "dirName        : \n" //
 				+ "extName        : txt\n" //
 				+ "exists         : true\n" //
 				+ "isDir          : false\n" //
 				+ "isFile         : true\n" //
-				+ "path           : s3://pcingola.bds/test_remote_16.txt\n" //
-				+ "pathName       : s3://pcingola.bds\n" //
+				+ "path           : /test_remote_16.txt\n" //
+				+ "pathName       : \n" //
 				+ "removeExt      : s3://pcingola.bds/test_remote_16\n" //
 				+ "size           : 6\n" //
 				+ "dirPath        : []\n" //
@@ -286,13 +558,13 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "baseName('txt'): test_remote_17\n" //
 				+ "canRead        : true\n" //
 				+ "canWrite       : true\n" //
-				+ "dirName        : s3://pcingola.bds\n" //
+				+ "dirName        : \n" //
 				+ "extName        : txt\n" //
 				+ "exists         : true\n" //
 				+ "isDir          : false\n" //
 				+ "isFile         : true\n" //
-				+ "path           : s3://pcingola.bds/test_remote_17.txt\n" //
-				+ "pathName       : s3://pcingola.bds\n" //
+				+ "path           : /test_remote_17.txt\n" //
+				+ "pathName       : \n" //
 				+ "removeExt      : s3://pcingola.bds/test_remote_17\n" //
 				+ "size           : 6\n" //
 				+ "dirPath        : []\n" //
@@ -393,21 +665,21 @@ public class TestCasesRemote extends TestCasesBase {
 	}
 
 	@Test
-	public void test30_http_dir() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_30.bds", "dd", "[http://ftp.ensemblorg.ebi.ac.uk/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
-	}
-
-	@Test
 	public void test31_s3_dir() {
 		Gpr.debug("Test");
-		runAndCheck("test/remote_31.bds", "dd", "[s3://...]");
+		runAndCheck("test/remote_31.bds", "dd", "[bye.txt, bye_2.txt, hi.txt, hi_2.txt]");
 	}
 
 	@Test
 	public void test32_s3_dirPath() {
 		Gpr.debug("Test");
-		runAndCheck("test/remote_32.bds", "dd", "[s3://...]");
+		runAndCheck("test/remote_32.bds", "dd", "[bye.txt, bye_2.txt]");
+	}
+
+	@Test
+	public void test33_s3_dirPath() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_33.bds", "dd", "[s3://pcingola.bds/test_remote_31/bye.txt, s3://pcingola.bds/test_remote_31/bye_2.txt]");
 	}
 
 }

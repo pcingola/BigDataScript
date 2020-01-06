@@ -69,7 +69,7 @@ public class TestCasesBase {
 	/**
 	 * Check a 'hello.txt' file in an S3 bucket
 	 */
-	void checkS3HelloTxt(String url, String canPath, String paren) {
+	void checkS3HelloTxt(String url, String path, String paren) {
 		int objectSize = 12;
 		long lastModified = 1437862027000L;
 
@@ -81,7 +81,7 @@ public class TestCasesBase {
 
 		// Check some features
 		Assert.assertTrue("Is S3?", d instanceof DataS3);
-		Assert.assertEquals(url, d.getAbsolutePath());
+		Assert.assertEquals(path, d.getAbsolutePath());
 		Assert.assertEquals(objectSize, d.size());
 		Assert.assertEquals(lastModified, d.getLastModified().getTime());
 		Assert.assertTrue("Is file?", d.isFile());
@@ -94,8 +94,8 @@ public class TestCasesBase {
 
 		// Is it at the correct local file?
 		Assert.assertEquals("/tmp/bds/s3/pcingola.bds/hello.txt", d.getLocalPath());
-		Assert.assertEquals(canPath, d.getAbsolutePath());
-		Assert.assertEquals(paren, d.getParent());
+		Assert.assertEquals(path, d.getAbsolutePath());
+		Assert.assertEquals(paren, d.getParent().toString());
 		Assert.assertEquals("hello.txt", d.getName());
 
 		// Check last modified time

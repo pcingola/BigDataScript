@@ -34,7 +34,7 @@ public class ExpressionUnary extends Expression {
 
 	@Override
 	public boolean isReturnTypesNotNull() {
-		return expr.getReturnType() != null;
+		return returnType != null && expr.getReturnType() != null;
 	}
 
 	@Override

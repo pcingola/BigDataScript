@@ -3,7 +3,6 @@ package org.bds.data;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -118,22 +117,13 @@ public class DataFile extends Data {
 	}
 
 	@Override
-	public String getParent() {
-		return file.getParent();
+	public Data getParent() {
+		return new DataFile(file.getParent());
 	}
 
 	@Override
 	public String getPath() {
 		return file.getPath();
-	}
-
-	@Override
-	public URI getUri() {
-		try {
-			return new URI("file", null, getCanonicalPath(), null);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("Cannot build URI for data file " + this, e);
-		}
 	}
 
 	@Override

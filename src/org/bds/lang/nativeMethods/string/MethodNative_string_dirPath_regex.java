@@ -3,9 +3,6 @@ package org.bds.lang.nativeMethods.string;
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
@@ -47,11 +44,8 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 
 	@Override
 	public Value runMethod(BdsThread bdsThread, Value vthis) {
+		// Create pattern matcher from 'glob'
 		String glob = bdsThread.getString("glob");
-
-		//---
-		// List all files, filtered by 'glob'
-		//---
 		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
 
 		String baseDirName = vthis.asString();
@@ -59,25 +53,19 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 		if (!baseDirName.endsWith("/")) baseDirName += "/";
 		final String baseDir = baseDirName;
 
-		ArrayList<String> list = bdsThread.data(baseDir) // Create data object
-				.list() // List files in dir
-				.stream() // Convert to stream
-				.peek(d -> System.out.println("BEFORE JOIN: " + d)) // TODO: REMOVE
-				.map(p -> dBaseDir.join(Data.factory(p))) // Convert path to data object
-				.peek(d -> System.out.println("AFTER JOIN: " + d)) // TODO: REMOVE
-				.filter(d -> matches(d, matcher)) // Filter using path matcher
-				.map(d -> (d.isRemote() ? d.getUri().toString() : d.getAbsolutePath())) // Convert to absolute path string or URI
-				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
-		;
-
-		// Sort by name
-		Collections.sort(list);
-
-		// Convert to ValueList
+		// List files and match against regex
 		ValueList vlist = new ValueList(returnType);
-		for (String s : list)
-			vlist.add(new ValueString(s));
+		for (String sub : bdsThread.data(baseDir).list()) {
+			Data dsub = Data.factory(sub);
+			if (matches(dsub, matcher)) {
+				Data dname = Data.factory(dsub.getName());
+				Data dpath = dBaseDir.join(dname);
+				String path = dpath.isRemote() ? dpath.toString() : dpath.getAbsolutePath();
+				vlist.add(new ValueString(path));
+			}
+		}
 
+		vlist.sort();
 		return vlist;
 	}
 

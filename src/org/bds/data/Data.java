@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.bds.Config;
+import org.bds.util.Tuple;
 
 /**
  * A data object: Typically a file, but
@@ -30,12 +31,12 @@ import org.bds.Config;
  */
 public abstract class Data {
 
+	public static final String PROTOCOL_SEP = "://";
 	protected boolean verbose;
 	protected boolean debug;
 	protected boolean relative; // Is this a relative path? (otherwise is absolute)
-	protected String localPath; // File name used for local processing
 
-	public static final String PROTOCOL_SEP = "://";
+	protected String localPath; // File name used for local processing
 
 	public static Data factory(String url) {
 		return factory(url, null);
@@ -45,33 +46,13 @@ public abstract class Data {
 	 * Create a data object, resolve local files using 'currentDir'
 	 */
 	public static Data factory(String urlStr, String currentDir) {
-		String proto = "file";
-
 		// Get protocol
-		int idx = urlStr.indexOf(PROTOCOL_SEP);
-		if (idx < 0) proto = "file";
-		else {
-			proto = urlStr.substring(0, idx);
-			String host = urlStr.substring(idx + PROTOCOL_SEP.length());
-
-			// Check is this is an S3 URL
-			// Get host
-			int idxHost = host.indexOf('/');
-			if (idxHost > 0) host = host.substring(0, idxHost);
-
-			int idxPort = host.indexOf(':');
-			if (idxPort > 0) host = host.substring(0, idxPort);
-
-			if (host.endsWith(DataS3.AWS_DOMAIN)) {
-				String s3domain = host.substring(0, host.length() - DataS3.AWS_DOMAIN.length() - 1);
-				int idxDot = s3domain.lastIndexOf('.');
-				if (idxDot > 0) s3domain = s3domain.substring(idxDot + 1);
-				if (s3domain.startsWith(DataS3.AWS_S3_PREFIX)) proto = "s3";
-			}
-		}
+		Tuple<String, String> protoHost = parseProtoHost(urlStr);
+		String proto = protoHost.first;
 
 		// Create each data type
 		Data data = null;
+
 		switch (proto) {
 		case "file":
 			data = new DataFile(urlStr, currentDir);
@@ -142,6 +123,39 @@ public abstract class Data {
 		return data;
 	}
 
+	/**
+	 * Parse 'protocol' and 'host' from URL string
+	 * @return A tuple with <proto, host> strings
+	 */
+	public static Tuple<String, String> parseProtoHost(String urlStr) {
+		String proto = "file";
+		String host = null;
+		int idx = urlStr.indexOf(PROTOCOL_SEP);
+		if (idx >= 0) {
+			proto = urlStr.substring(0, idx).toLowerCase();
+
+			// Check is this is an S3 URL
+			// Get host
+			host = urlStr.substring(idx + PROTOCOL_SEP.length());
+			int idxHost = host.indexOf('/');
+			if (idxHost > 0) host = host.substring(0, idxHost);
+
+			int idxPort = host.indexOf(':');
+			if (idxPort > 0) host = host.substring(0, idxPort);
+
+			// TODO: Removed, if you need S3 access, you must specify the 's3://' prefix
+			//
+			//			if ((proto.equals("http") || proto.equals("https")) && host.endsWith(DataS3.AWS_DOMAIN)) {
+			//				String s3domain = host.substring(0, host.length() - DataS3.AWS_DOMAIN.length() - 1);
+			//				int idxDot = s3domain.lastIndexOf('.');
+			//				if (idxDot > 0) s3domain = s3domain.substring(idxDot + 1);
+			//				if (s3domain.startsWith(DataS3.AWS_S3_PREFIX)) proto = "s3";
+			//			}
+		}
+
+		return new Tuple<>(proto, host);
+	}
+
 	public Data() {
 	}
 
@@ -205,11 +219,11 @@ public abstract class Data {
 
 	public abstract String getName();
 
-	public abstract String getParent();
+	public abstract Data getParent();
 
 	public abstract String getPath();
 
-	public abstract URI getUri();
+	//	public abstract URI getUri();
 
 	/**
 	 * Is this a directory (or an equivalent abstraction, such

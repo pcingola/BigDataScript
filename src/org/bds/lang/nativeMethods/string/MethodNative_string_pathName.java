@@ -29,9 +29,8 @@ public class MethodNative_string_pathName extends MethodNativeString {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		try {
-			String parenPath = bdsThread.data(objThis.toString()).getParent();
-			Data d = bdsThread.data(parenPath);
-			return d.getAbsolutePath();
+			Data parenPath = bdsThread.data(objThis.toString()).getParent();
+			return parenPath.getAbsolutePath();
 		} catch (Exception e) {
 			return "";
 		}

@@ -11,6 +11,7 @@ import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.value.Value;
 import org.bds.symbol.SymbolTable;
+import org.bds.util.Gpr;
 
 /**
  * Variable type
@@ -47,6 +48,7 @@ public abstract class Type extends BdsNode implements Comparable<Type> {
 	 * Can this type be casted to 'type'?
 	 */
 	public boolean canCastTo(Type type) {
+		Gpr.debug("CAN CAST: " + returnType + " => " + type);
 		return equals(type) || type.isAny();
 	}
 

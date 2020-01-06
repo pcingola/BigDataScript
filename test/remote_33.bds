@@ -3,6 +3,6 @@
 # HTTP
 d := "s3://pcingola.bds/test_remote_31/"
 println "d: '$d'"
-dd := d.dir("bye*.txt")
+dd := d.dirPath("**/bye*.txt")
 println "dd: $dd"
 

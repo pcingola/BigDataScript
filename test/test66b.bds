@@ -1,0 +1,11 @@
+class A { ; }
+class B extends A { ; }
+class C extends B { ; }
+
+A a
+B b = new B()
+C c = new C()
+
+# Explicit casting
+a = (A) b
+a = (A) c

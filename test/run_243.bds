@@ -1,0 +1,17 @@
+class A { ; }
+class B extends A { ; }
+class C extends B { ; }
+
+
+C c = new C()
+B b = new B()
+A a = new C()	# Variable type 'A' assigned to object type C (upcasting, no explicit cast required)
+
+# Downcasting (explicit cast required)
+c = (C) a
+b = (B) a
+b = (C) a
+
+# The code should OK until the end of the program (downcasting works)
+ret := 42
+

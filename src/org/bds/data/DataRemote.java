@@ -1,10 +1,8 @@
 package org.bds.data;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Date;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -19,17 +17,16 @@ import org.bds.util.Timer;
  */
 public abstract class DataRemote extends Data {
 
+	public static final String TMP_BDS_DATA = "bds";
+	public static final long CACHE_TIMEOUT = 1000; // Timeout in milliseconds
 	protected boolean canRead;
 	protected boolean canWrite;
-
 	protected boolean exists;
 	protected Boolean isDir;
 	protected Date lastModified;
 	protected long size;
 	protected Timer latestUpdate;
 	protected URI uri;
-	public static final String TMP_BDS_DATA = "bds";
-	public static final long CACHE_TIMEOUT = 1000; // Timeout in milliseconds
 
 	public DataRemote() {
 		super();
@@ -105,33 +102,16 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
-	public String getParent() {
-		try {
-			String path = uri.getPath();
-			String paren = (new File(path)).getParent();
-			URI uriPaern = new URI(uri.getScheme(), uri.getAuthority(), paren, null, null);
-			return uriPaern.toString();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("Error parsing URL: " + uri, e);
-		}
+	public Data getParent() {
+		String path = uri.getPath();
+		String paren = (new File(path)).getParent();
+		URI uriPaern = replacePath(paren);
+		return factory(uriPaern);
 	}
 
 	@Override
 	public String getPath() {
 		return uri.getPath();
-	}
-
-	@Override
-	public URI getUri() {
-		return uri;
-	}
-
-	public URL getUrl() {
-		try {
-			return uri.toURL();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("Error parsing URI: '" + uri + "'", e);
-		}
 	}
 
 	@Override
@@ -145,7 +125,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isDownloaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getUri() + "'");
+		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + this + "'");
 
 		// Is there a local file
 		File localFile = new File(localPath);
@@ -181,7 +161,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isUploaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getUri() + "'");
+		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + this + "'");
 
 		// Is there a local file
 		File localFile = new File(localPath);
@@ -211,7 +191,7 @@ public abstract class DataRemote extends Data {
 	public Data join(Data segment) {
 		File fpath = new File(getPath());
 		File fjoin = new File(fpath, segment.getPath());
-		URI uri = replacePath(getUri(), fjoin);
+		URI uri = replacePath(fjoin.getAbsolutePath());
 		return factory(uri);
 	}
 
@@ -283,20 +263,17 @@ public abstract class DataRemote extends Data {
 		}
 	}
 
-	/**
-	 * Build an URI from 'baseUri' + 'path'
-	 */
-	protected URI replacePath(URI baseUri, File path) {
+	protected URI replacePath(String absPath) {
 		URIBuilder ub = new URIBuilder();
-		ub.setScheme(baseUri.getScheme());
-		ub.setUserInfo(baseUri.getUserInfo());
-		ub.setHost(baseUri.getHost());
-		ub.setPort(baseUri.getPort());
-		ub.setPath(path.getAbsolutePath());
+		ub.setScheme(uri.getScheme());
+		ub.setUserInfo(uri.getUserInfo());
+		ub.setHost(uri.getHost());
+		ub.setPort(uri.getPort());
+		ub.setPath(absPath);
 		try {
 			return ub.build();
 		} catch (URISyntaxException e) {
-			throw new RuntimeException("Error building URI from: '" + baseUri + "' and '" + path.getAbsolutePath() + "'");
+			throw new RuntimeException("Error building URI from: '" + uri + "' and '" + absPath + "'");
 		}
 	}
 
@@ -308,7 +285,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public String toString() {
-		return getUri() + " <=> " + getLocalPath();
+		return uri.toString();
 	}
 
 	/**

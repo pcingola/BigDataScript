@@ -23,13 +23,12 @@ import org.jsoup.select.Elements;
  */
 public class DataHttp extends DataRemote {
 
-	public final int HTTP_OK = 200; // Connection OK
+	private static final int BUFFER_SIZE = 100 * 1024;
+	public static final int HTTP_OK = 200; // Connection OK
+	public static final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
+	public static final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 
-	public final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
-	public final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 	URLConnection connection;
-
-	private static int BUFFER_SIZE = 100 * 1024;
 
 	public DataHttp(String urlStr) {
 		super();
@@ -45,7 +44,8 @@ public class DataHttp extends DataRemote {
 
 	public DataHttp(URI baseUri, File path) {
 		super();
-		uri = replacePath(baseUri, path);
+		uri = baseUri;
+		//		uri = replacePath(path.getAbsolutePath());
 		canWrite = false;
 	}
 
@@ -104,7 +104,7 @@ public class DataHttp extends DataRemote {
 
 	@Override
 	public boolean delete() {
-		if (verbose) Timer.showStdErr("Cannot delete file '" + getUri() + "'");
+		if (verbose) Timer.showStdErr("Cannot delete file '" + this + "'");
 		return false;
 	}
 
@@ -157,7 +157,7 @@ public class DataHttp extends DataRemote {
 
 			return true;
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while connecting to " + getUri());
+			Timer.showStdErr("ERROR while connecting to " + this);
 			throw new RuntimeException(e);
 		} finally {
 			close();
@@ -180,7 +180,7 @@ public class DataHttp extends DataRemote {
 				dirs.add(href);
 			}
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while connecting to " + getUri());
+			Timer.showStdErr("ERROR while connecting to " + this);
 			throw new RuntimeException(e);
 		} finally {
 			close();

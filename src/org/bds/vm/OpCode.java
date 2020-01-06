@@ -30,23 +30,25 @@ public enum OpCode {
 	, ANDB, ANDI
 	// Breakpoint (debugging mode)
 	, BREAKPOINT
-	// Cast values {b,i,r} => {b,i,r}
-	, CALL, CALLMETHOD, CALLNATIVE, CALLSUPER
-	// Checkpoint
-	, CAST_TOB
 	// Function call:
 	//    CALL function_signature
 	//    CALLNATIVE function_signature
 	//    CALLMETHOD method_signature
 	//    CALLSUPER method_signature
-	, CAST_TOI, CAST_TOR, CAST_TOS, CHECKPOINT
+	, CALL, CALLMETHOD, CALLNATIVE, CALLSUPER
+	// Cast values: bool, real, int, string
+	, CAST_TOB, CAST_TOI, CAST_TOR, CAST_TOS
+	// Cast to class
+	, CAST_TOC
+	// Checkpoint
+	, CHECKPOINT
 	// Debug breakpoint
 	, DEBUG
 	// Decrement (i.e. valueInt--)
 	, DEC
 	// Dependency operator
 	, DEP
-	// Division
+	// Division: integer, real
 	, DIVI, DIVR
 	// Duplicate value on stack
 	, DUP
@@ -162,6 +164,7 @@ public enum OpCode {
 		case CALLMETHOD:
 		case CALLNATIVE:
 		case CALLSUPER:
+		case CAST_TOC:
 		case EHADD:
 		case EHCREATE:
 		case JMP:
@@ -207,6 +210,7 @@ public enum OpCode {
 		case CALLMETHOD:
 		case CALLNATIVE:
 		case CALLSUPER:
+		case CAST_TOC:
 		case EHADD:
 		case EHCREATE:
 		case JMP:
@@ -245,6 +249,7 @@ public enum OpCode {
 		case CALLMETHOD:
 		case CALLNATIVE:
 		case CALLSUPER:
+		case CAST_TOC:
 		case EHADD:
 		case EHCREATE:
 		case JMP:
