@@ -1,7 +1,5 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.util.List;
-
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -40,10 +38,11 @@ public class MethodNative_string_dirPath extends MethodNativeString {
 		Data dBaseDir = bdsThread.data(baseDir);
 		if (!baseDir.endsWith("/")) baseDir += "/";
 
-		List<String> dirList = bdsThread.data(baseDir).list();
-		for (String sub : dirList) {
+		// List files and match against regex
+		for (String sub : bdsThread.data(baseDir).list()) {
 			Data dsub = Data.factory(sub);
-			Data dpath = dBaseDir.join(dsub);
+			Data dname = Data.factory(dsub.getName());
+			Data dpath = dBaseDir.join(dname);
 			String path = dpath.isRemote() ? dpath.toString() : dpath.getAbsolutePath();
 			vlist.add(new ValueString(path));
 		}

@@ -200,7 +200,13 @@ public class BdsTest {
 		int index = captureStdout.toString().indexOf(expectedStdout);
 
 		if (negate) Assert.assertFalse(errMsg("Error: NOT expected string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
-		else Assert.assertTrue(errMsg("Error: Expected string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
+		else {
+			if (index < 0) {
+				String out = captureStdout.toString();
+				printDiffLines(expectedStdout, out);
+			}
+			Assert.assertTrue(errMsg("Error: Expected string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
+		}
 	}
 
 	/**
@@ -300,6 +306,19 @@ public class BdsTest {
 	 */
 	public Value getValue(String name) {
 		return bds.getBdsRun().getScope().getValue(name);
+	}
+
+	/**
+	 * Show differences
+	 */
+	void printDiffLines(String expout, String out) {
+		String[] expoutLines = expout.split("\n");
+		String[] outLines = out.split("\n");
+		for (int i = 0; i < expoutLines.length; i++) {
+			if (!expoutLines[i].equals(outLines[i])) {
+				System.err.println("Line " + i + "\n\t" + outLines[i] + "\n\t" + expoutLines[i]);
+			}
+		}
 	}
 
 	/**

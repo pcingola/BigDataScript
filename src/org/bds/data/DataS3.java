@@ -33,17 +33,17 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  */
 public class DataS3 extends DataRemote {
 
-	protected AmazonS3 s3;
-	protected AmazonS3URI s3uri;
-	protected String bucketName;
-	protected String key;
-
 	private static int BUFFER_SIZE = 100 * 1024;
 	public static final String AWS_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PREFIX = "s3";
 	public static final String AWS_S3_PROTOCOL = "s3://";
+
 	public static final String ENV_PROXY_HTTTP = "http_proxy";
 	public static final String ENV_PROXY_HTTTPS = "https_proxy";
+	protected AmazonS3 s3;
+	protected AmazonS3URI s3uri;
+	protected String bucketName;
+	protected String key;
 
 	public DataS3(String urlStr) {
 		super();
@@ -149,22 +149,17 @@ public class DataS3 extends DataRemote {
 	@Override
 	public String getName() {
 		if (key == null) return "";
-
 		int idx = key.lastIndexOf('/');
 		if (idx >= 0) return key.substring(idx + 1);
-
 		return key;
 	}
 
 	@Override
-	public String getParent() {
-		if (key == null) return AWS_S3_PROTOCOL + bucketName;
-
-		String cp = getAbsolutePath();
-		int idx = cp.lastIndexOf('/');
-		if (idx >= 0) return cp.substring(0, idx);
-
-		return AWS_S3_PROTOCOL + bucketName;
+	public Data getParent() {
+		String keyParen = "";
+		int idx = key.lastIndexOf('/');
+		if (idx >= 0) keyParen = key.substring(0, idx);
+		return new DataS3("s3://" + bucketName + '/' + keyParen);
 	}
 
 	@Override

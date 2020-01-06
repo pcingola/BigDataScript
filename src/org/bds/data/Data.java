@@ -31,12 +31,12 @@ import org.bds.util.Tuple;
  */
 public abstract class Data {
 
+	public static final String PROTOCOL_SEP = "://";
 	protected boolean verbose;
 	protected boolean debug;
 	protected boolean relative; // Is this a relative path? (otherwise is absolute)
-	protected String localPath; // File name used for local processing
 
-	public static final String PROTOCOL_SEP = "://";
+	protected String localPath; // File name used for local processing
 
 	public static Data factory(String url) {
 		return factory(url, null);
@@ -143,12 +143,14 @@ public abstract class Data {
 			int idxPort = host.indexOf(':');
 			if (idxPort > 0) host = host.substring(0, idxPort);
 
-			if ((proto.equals("http") || proto.equals("https")) && host.endsWith(DataS3.AWS_DOMAIN)) {
-				String s3domain = host.substring(0, host.length() - DataS3.AWS_DOMAIN.length() - 1);
-				int idxDot = s3domain.lastIndexOf('.');
-				if (idxDot > 0) s3domain = s3domain.substring(idxDot + 1);
-				if (s3domain.startsWith(DataS3.AWS_S3_PREFIX)) proto = "s3";
-			}
+			// TODO: Removed, if you need S3 access, you must specify the 's3://' prefix
+			//
+			//			if ((proto.equals("http") || proto.equals("https")) && host.endsWith(DataS3.AWS_DOMAIN)) {
+			//				String s3domain = host.substring(0, host.length() - DataS3.AWS_DOMAIN.length() - 1);
+			//				int idxDot = s3domain.lastIndexOf('.');
+			//				if (idxDot > 0) s3domain = s3domain.substring(idxDot + 1);
+			//				if (s3domain.startsWith(DataS3.AWS_S3_PREFIX)) proto = "s3";
+			//			}
 		}
 
 		return new Tuple<>(proto, host);
@@ -217,7 +219,7 @@ public abstract class Data {
 
 	public abstract String getName();
 
-	public abstract String getParent();
+	public abstract Data getParent();
 
 	public abstract String getPath();
 

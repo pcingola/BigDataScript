@@ -1,5 +1,6 @@
 package org.bds.lang.nativeMethods.string;
 
+import org.bds.data.Data;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
@@ -28,8 +29,8 @@ public class MethodNative_string_dirName extends MethodNativeString {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		try {
-			String d = (bdsThread.data(objThis.toString())).getParent();
-			return d != null ? d : ".";
+			Data parenPath = (bdsThread.data(objThis.toString())).getParent();
+			return parenPath.getPath();
 		} catch (Exception e) {
 			return "";
 		}

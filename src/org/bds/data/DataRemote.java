@@ -17,6 +17,8 @@ import org.bds.util.Timer;
  */
 public abstract class DataRemote extends Data {
 
+	public static final String TMP_BDS_DATA = "bds";
+	public static final long CACHE_TIMEOUT = 1000; // Timeout in milliseconds
 	protected boolean canRead;
 	protected boolean canWrite;
 	protected boolean exists;
@@ -25,8 +27,6 @@ public abstract class DataRemote extends Data {
 	protected long size;
 	protected Timer latestUpdate;
 	protected URI uri;
-	public static final String TMP_BDS_DATA = "bds";
-	public static final long CACHE_TIMEOUT = 1000; // Timeout in milliseconds
 
 	public DataRemote() {
 		super();
@@ -102,15 +102,11 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
-	public String getParent() {
-		try {
-			String path = uri.getPath();
-			String paren = (new File(path)).getParent();
-			URI uriPaern = new URI(uri.getScheme(), uri.getAuthority(), paren, null, null);
-			return uriPaern.toString();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("Error parsing URL: " + uri, e);
-		}
+	public Data getParent() {
+		String path = uri.getPath();
+		String paren = (new File(path)).getParent();
+		URI uriPaern = replacePath(paren);
+		return factory(uriPaern);
 	}
 
 	@Override
@@ -195,7 +191,7 @@ public abstract class DataRemote extends Data {
 	public Data join(Data segment) {
 		File fpath = new File(getPath());
 		File fjoin = new File(fpath, segment.getPath());
-		URI uri = replacePath(fjoin);
+		URI uri = replacePath(fjoin.getAbsolutePath());
 		return factory(uri);
 	}
 
@@ -267,20 +263,17 @@ public abstract class DataRemote extends Data {
 		}
 	}
 
-	/**
-	 * Build an URI from 'baseUri' + 'path'
-	 */
-	protected URI replacePath(File path) {
+	protected URI replacePath(String absPath) {
 		URIBuilder ub = new URIBuilder();
 		ub.setScheme(uri.getScheme());
 		ub.setUserInfo(uri.getUserInfo());
 		ub.setHost(uri.getHost());
 		ub.setPort(uri.getPort());
-		ub.setPath(path.getAbsolutePath());
+		ub.setPath(absPath);
 		try {
 			return ub.build();
 		} catch (URISyntaxException e) {
-			throw new RuntimeException("Error building URI from: '" + uri + "' and '" + path.getAbsolutePath() + "'");
+			throw new RuntimeException("Error building URI from: '" + uri + "' and '" + absPath + "'");
 		}
 	}
 
