@@ -31,12 +31,12 @@ import org.bds.util.Tuple;
  */
 public abstract class Data {
 
-	public static final String PROTOCOL_SEP = "://";
 	protected boolean verbose;
 	protected boolean debug;
 	protected boolean relative; // Is this a relative path? (otherwise is absolute)
-
 	protected String localPath; // File name used for local processing
+
+	public static final String PROTOCOL_SEP = "://";
 
 	public static Data factory(String url) {
 		return factory(url, null);
@@ -221,7 +221,7 @@ public abstract class Data {
 
 	public abstract String getPath();
 
-	public abstract URI getUri();
+	//	public abstract URI getUri();
 
 	/**
 	 * Is this a directory (or an equivalent abstraction, such

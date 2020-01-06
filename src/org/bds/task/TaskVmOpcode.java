@@ -69,7 +69,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 				for (String in : taskDependency.getInputs()) {
 					Data dataIn = Data.factory(in);
 					if (dataIn.isRemote()) {
-						String uriStr = dataIn.getUri().toString();
+						String uriStr = dataIn.toString();
 						sbDown.append(ExpressionTask.CMD_DOWNLOAD //
 								+ " \"" + uriStr + "\"" //
 								+ " \"" + dataIn.getLocalPath() + "\"" //
@@ -88,7 +88,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 				for (String out : taskDependency.getOutputs()) {
 					Data dataOut = Data.factory(out);
 					if (dataOut.isRemote()) {
-						String uriStr = dataOut.getUri().toString();
+						String uriStr = dataOut.toString();
 						sbUp.append(ExpressionTask.CMD_UPLOAD //
 								+ " \"" + dataOut.getLocalPath() + "\"" //
 								+ " \"" + uriStr + "\"" //

@@ -85,7 +85,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 		// Check some features
 		Assert.assertTrue(d instanceof DataHttp);
-		Assert.assertEquals("http://www.google.com/index.html", d.getUri().toString());
+		Assert.assertEquals("http://www.google.com/index.html", d.toString());
 		Assert.assertEquals("http://www.google.com/", d.getParent());
 		Assert.assertEquals("/index.html", d.getPath());
 		Assert.assertEquals("/index.html", d.getAbsolutePath());

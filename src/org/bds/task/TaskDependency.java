@@ -73,7 +73,7 @@ public class TaskDependency implements Serializable {
 		} else {
 			// Not a taksID, must be an input 'data' (a file)
 			Data d = BdsThreads.data(input);
-			String filePath = d.isRemote() ? d.getUri().toString() : d.getAbsolutePath();
+			String filePath = d.isRemote() ? d.toString() : d.getAbsolutePath();
 			inputs.add(filePath);
 		}
 	}

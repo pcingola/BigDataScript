@@ -1,10 +1,8 @@
 package org.bds.data;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Date;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -21,7 +19,6 @@ public abstract class DataRemote extends Data {
 
 	protected boolean canRead;
 	protected boolean canWrite;
-
 	protected boolean exists;
 	protected Boolean isDir;
 	protected Date lastModified;
@@ -122,19 +119,6 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
-	public URI getUri() {
-		return uri;
-	}
-
-	public URL getUrl() {
-		try {
-			return uri.toURL();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("Error parsing URI: '" + uri + "'", e);
-		}
-	}
-
-	@Override
 	public boolean isDirectory() {
 		if (isDir == null) {
 			String path = getPath();
@@ -145,7 +129,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isDownloaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getUri() + "'");
+		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + this + "'");
 
 		// Is there a local file
 		File localFile = new File(localPath);
@@ -181,7 +165,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isUploaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + getUri() + "'");
+		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + this + "'");
 
 		// Is there a local file
 		File localFile = new File(localPath);
@@ -211,7 +195,7 @@ public abstract class DataRemote extends Data {
 	public Data join(Data segment) {
 		File fpath = new File(getPath());
 		File fjoin = new File(fpath, segment.getPath());
-		URI uri = replacePath(getUri(), fjoin);
+		URI uri = replacePath(fjoin);
 		return factory(uri);
 	}
 
@@ -286,17 +270,17 @@ public abstract class DataRemote extends Data {
 	/**
 	 * Build an URI from 'baseUri' + 'path'
 	 */
-	protected URI replacePath(URI baseUri, File path) {
+	protected URI replacePath(File path) {
 		URIBuilder ub = new URIBuilder();
-		ub.setScheme(baseUri.getScheme());
-		ub.setUserInfo(baseUri.getUserInfo());
-		ub.setHost(baseUri.getHost());
-		ub.setPort(baseUri.getPort());
+		ub.setScheme(uri.getScheme());
+		ub.setUserInfo(uri.getUserInfo());
+		ub.setHost(uri.getHost());
+		ub.setPort(uri.getPort());
 		ub.setPath(path.getAbsolutePath());
 		try {
 			return ub.build();
 		} catch (URISyntaxException e) {
-			throw new RuntimeException("Error building URI from: '" + baseUri + "' and '" + path.getAbsolutePath() + "'");
+			throw new RuntimeException("Error building URI from: '" + uri + "' and '" + path.getAbsolutePath() + "'");
 		}
 	}
 
@@ -308,7 +292,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public String toString() {
-		return getUri() + " <=> " + getLocalPath();
+		return uri.toString();
 	}
 
 	/**

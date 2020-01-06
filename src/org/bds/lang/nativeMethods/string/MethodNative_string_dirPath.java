@@ -44,7 +44,7 @@ public class MethodNative_string_dirPath extends MethodNativeString {
 		for (String sub : dirList) {
 			Data dsub = Data.factory(sub);
 			Data dpath = dBaseDir.join(dsub);
-			String path = dpath.isRemote() ? dpath.getUri().toString() : dpath.getAbsolutePath();
+			String path = dpath.isRemote() ? dpath.toString() : dpath.getAbsolutePath();
 			vlist.add(new ValueString(path));
 		}
 

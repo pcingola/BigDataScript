@@ -64,7 +64,7 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 				.stream() // Convert to stream
 				.map(p -> dBaseDir.join(Data.factory(p))) // Convert path to data object
 				.filter(d -> matches(d, matcher)) // Filter using path matcher
-				.map(d -> (d.isRemote() ? d.getUri().toString() : d.getAbsolutePath())) // Convert to absolute path string or URI
+				.map(d -> (d.isRemote() ? d.toString() : d.getAbsolutePath())) // Convert to absolute path string or URI
 				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
 		;
 
