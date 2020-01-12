@@ -20,10 +20,14 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test01_parse_URLs_s3() {
+	public void testTestCasesCoverage06() {
+		// Check that coverage is correctly computed
 		Gpr.debug("Test");
-		String url = "s3://pcingola.bds/hello.txt";
-		checkS3HelloTxt(url, "/hello.txt", "s3://pcingola.bds/");
+		verbose = true;
+		runTestCasesPass("test/test_case_run_06.bds");
+		// TODO: Create '--coverage' command line option
+		// TODO: Add bdsVm opcode
+		// TODO: Add bdsVm opcode
 	}
 
 }
