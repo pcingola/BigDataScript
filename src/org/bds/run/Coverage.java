@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bds.lang.BdsNode;
-import org.bds.util.Gpr;
 import org.bds.vm.BdsVm;
 
 /**
@@ -20,9 +19,20 @@ import org.bds.vm.BdsVm;
  */
 public class Coverage {
 
+	static String TABLE_SEPARATOR_LINE = "+----------------------------------------------------+-------------------+--------+------------------------";
+
 	Set<BdsNode> bdsNodes;
 	Map<Integer, Integer> coverageCounter;
 	Map<String, Boolean[]> coverageByFile;
+	int countLines = -1, countCovered = -1;
+	double coverageRatio = -1;
+
+	/**
+	 * Center a string
+	 */
+	public static String centerString(int width, String s) {
+		return String.format("%-" + width + "s", String.format("%" + (s.length() + (width - s.length()) / 2) + "s", s));
+	}
 
 	public Coverage() {
 		bdsNodes = new HashSet<>();
@@ -33,7 +43,6 @@ public class Coverage {
 	 * Add coverage statistics from a VM (that already finished running)
 	 */
 	public void add(BdsVm vm) {
-		Gpr.debug(vm.toAsm());
 		// Make sure all nodes are added
 		bdsNodes.addAll(vm.findNodes());
 
@@ -88,7 +97,7 @@ public class Coverage {
 			Boolean l = lines[i];
 			if (l != null) {
 				if (l) {
-					if (end >= 0) sb.append(showInterval(start, end));
+					if (end >= 0) sb.append(intervalToString(start, end));
 					start = end = -1;
 				} else {
 					if (start < 0) start = i;
@@ -96,7 +105,7 @@ public class Coverage {
 				}
 			}
 		}
-		if (end >= 0) sb.append(showInterval(start, end));
+		if (end >= 0) sb.append(intervalToString(start, end));
 
 		// Coverage percentage
 		double perc = (100.0 * countCovered) / countLines;
@@ -106,6 +115,27 @@ public class Coverage {
 
 		// One line statistics
 		return String.format("| %50.50s | %7d / %7d | %5.2f%% | %s", file, countCovered, countLines, perc, sb);
+	}
+
+	/**
+	 * Calculate total coverage ratio
+	 */
+	public double coverageRatio() {
+		countLines = 0;
+		countCovered = 0;
+
+		for (Boolean[] lines : coverageByFile.values()) {
+			for (int i = 0; i < lines.length; i++) {
+				Boolean l = lines[i];
+				if (l != null) {
+					countLines++;
+					if (l) countCovered++;
+				}
+			}
+		}
+
+		coverageRatio = (1.0 * countCovered) / countLines;
+		return coverageRatio;
 	}
 
 	/**
@@ -134,33 +164,33 @@ public class Coverage {
 	}
 
 	/**
-	 * Total percent coverage
+	 * Convert an interval to a string representation
 	 */
-	public double percent() {
-		int countLines = 0, countCovered = 0;
-
-		for (Boolean[] lines : coverageByFile.values()) {
-			for (int i = 0; i < lines.length; i++) {
-				Boolean l = lines[i];
-				if (l != null) {
-					countLines++;
-					if (l) countCovered++;
-				}
-			}
-		}
-
-		double perc = (100.0 * countCovered) / countLines;
-		return perc;
-	}
-
-	String showInterval(int start, int end) {
+	String intervalToString(int start, int end) {
 		if (start < 0 || end < 0) return "";
 		if (start == end) return start + " ";
 		return start + "-" + end + " ";
 	}
 
+	/**
+	* Show coverage table summary line
+	*/
+	public String summary() {
+		coverageRatio();
+		return String.format("| %50.50s | %7d / %7d | %5.2f%% | %s", centerString(50, "Total"), countCovered, countLines, 100.0 * coverageRatio, "");
+	}
+
+	/**
+	 * Coverage table's title
+	 */
 	String title() {
-		return String.format("| %50.50s | %7s / %7s |  %5s | %s", "File name", "Covered", "Total", "%", "Not covered intervals");
+		return String.format("| %50.50s | %7s / %7s |  %5s | %s" //
+				, centerString(50, "File name") //
+				, "Covered" //
+				, centerString(7, "Total") //
+				, centerString(5, "%") //
+				, "Not covered intervals" //
+		);
 	}
 
 	@Override
@@ -172,12 +202,15 @@ public class Coverage {
 		files.addAll(coverageByFile.keySet());
 		Collections.sort(files);
 
-		// Show coverage
+		// Show coverage table
 		StringBuilder sb = new StringBuilder();
 		sb.append(title() + "\n");
+		sb.append(TABLE_SEPARATOR_LINE + "\n");
 		for (String file : files) {
 			sb.append(coverageLine(file) + "\n");
 		}
+		sb.append(TABLE_SEPARATOR_LINE + "\n");
+		sb.append(summary());
 
 		return sb.toString();
 	}

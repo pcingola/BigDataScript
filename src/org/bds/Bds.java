@@ -25,6 +25,7 @@ public class Bds {
 	Config config;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Configuration file
 	boolean coverage;
+	double coverageMin = -1; // Min coverage ratio
 	boolean debug; // debug mode
 	boolean dryRun; // Dry run (do not run tasks)
 	boolean extractSource; // Extract source code form checkpoint (only valid on recovery mode)
@@ -183,6 +184,10 @@ public class Bds {
 
 				case "-coverage":
 					coverage = true;
+					break;
+
+				case "-coveragemin":
+					coverageMin = Gpr.parseDoubleSafe(args[++i]);;
 					break;
 
 				case "-d":
@@ -359,6 +364,7 @@ public class Bds {
 		bdsRun.setProgramFileName(programFileName);
 		bdsRun.setConfig(config);
 		bdsRun.setCoverage(coverage);
+		bdsRun.setCoverageMin(coverageMin);
 
 		// Run and return program's exit code
 		return bdsRun.run();
@@ -411,6 +417,7 @@ public class Bds {
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile + ".");
 		System.err.println("  [-compile]                     : Compile only, do not run.");
 		System.err.println("  [-coverage]                    : Calculate cofe coverate. Only valid when '-test' is active.");
+		System.err.println("  [-coverageMin] ratio           : Fail if coverage is lower than 'ratio' (this is a ratio, so it should be 0.8 instead of 80%).");
 		System.err.println("  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.");
 		System.err.println("  [-d | -debug  ]                : Show debug info.");
 		System.err.println("  -download url file             : Download 'url' to local 'file'. Note: Used by 'taks'.");

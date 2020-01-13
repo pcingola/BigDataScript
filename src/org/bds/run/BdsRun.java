@@ -196,6 +196,14 @@ public class BdsRun {
 		return bdsThread;
 	}
 
+	public Coverage getCoverageCounter() {
+		return coverageCounter;
+	}
+
+	public double getCoverageMin() {
+		return coverageMin;
+	}
+
 	public List<String> getProgramArgs() {
 		return programArgs;
 	}
@@ -523,7 +531,12 @@ public class BdsRun {
 		);
 
 		// Show coverage statistics
-		if (coverage) System.out.println(coverageCounter);
+		if (coverage) {
+			System.out.println(coverageCounter);
+			if (coverageMin > 0 && coverageCounter.coverageRatio() < coverageMin) {
+				exitCode = 1;
+			}
+		}
 
 		return exitCode;
 	}
@@ -594,6 +607,10 @@ public class BdsRun {
 
 	public void setCoverage(boolean coverage) {
 		this.coverage = coverage;
+	}
+
+	public void setCoverageMin(double coverageMin) {
+		this.coverageMin = coverageMin;
 	}
 
 	public void setDebug(boolean debug) {

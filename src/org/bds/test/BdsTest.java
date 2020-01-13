@@ -24,6 +24,7 @@ import junit.framework.Assert;
 public class BdsTest {
 
 	public boolean coverage;
+	public double coverageMin;
 	public boolean debug;
 	public boolean verbose;
 	public boolean testCases; // Is this a bds-test? i.e. should it run as 'bds --test'?
@@ -70,8 +71,14 @@ public class BdsTest {
 		// Is this a 'test case' run?
 		if (testCases) l.add("-t");
 
-		// Is this a 'test case' run?
+		// Set coverage
 		if (coverage) l.add("-coverage");
+
+		// Coverage ratio
+		if (coverageMin > 0) {
+			l.add("-coverageMin");
+			l.add(coverageMin + "");
+		}
 
 		if (args != null) {
 			for (String arg : args)
@@ -399,6 +406,10 @@ public class BdsTest {
 		this.coverage = coverage;
 	}
 
+	public void setCoverageMin(double coverageMin) {
+		this.coverageMin = coverageMin;
+	}
+
 	public void setTestCases(boolean testCases) {
 		this.testCases = testCases;
 	}
@@ -428,4 +439,5 @@ public class BdsTest {
 		return sb.toString();
 
 	}
+
 }
