@@ -1,11 +1,16 @@
 #!/usr/bin/env bds
 
 int f(int x) {
+	println "OK"
 	return 2 + x
 }
 
 class A {
 	int f(int x) {
+		if( x < 0 ) {
+			println "NEGATIVE"
+			return -1
+		}
 		return 1 + x
 	}
 }
@@ -13,8 +18,7 @@ class A {
 void test01() {
 	a := new A()
 	z := a.f(2)
-	z = f(2)
 	assert(3, z)
 }
 
-println "YOU SHOULD NOT SEE THIS MESSAGE WHEN RUNNING TESTS"
+void p()	println "YOU SHOULD NOT SEE THIS MESSAGE WHEN RUNNING TESTS"

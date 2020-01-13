@@ -51,8 +51,17 @@ public class Coverage {
 	private Map<String, Boolean[]> coverageByFile() {
 		if (coverageByFile != null) return coverageByFile;
 		coverageByFile = createCoverageByFile();
-		updateCoverage(false);
-		updateCoverage(true);
+
+		for (BdsNode bdsNode : bdsNodes) {
+			int covcount = coverageCounter.getOrDefault(bdsNode.getId(), 0);
+			String fileName = bdsNode.getFileNameCanonical();
+			int lineNum = bdsNode.getLineNum();
+
+			// No coverage? Add to array
+			Boolean[] lineCoverage = coverageByFile.get(fileName);
+			lineCoverage[lineNum] = (covcount > 0);
+		}
+
 		return coverageByFile;
 	}
 
@@ -61,13 +70,42 @@ public class Coverage {
 	 */
 	String coverageLine(String file) {
 		Boolean[] lines = coverageByFile.get(file);
+
+		// Count line covered
+		int countLines = 0, countCovered = 0;
 		for (int i = 0; i < lines.length; i++) {
 			Boolean l = lines[i];
-			if (l != null && !l) {
-				System.out.println("\t" + i);
+			if (l != null) {
+				countLines++;
+				if (l) countCovered++;
 			}
 		}
-		return "";
+
+		// Lines not covered (intevals)
+		int start = -1, end = -1;
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < lines.length; i++) {
+			Boolean l = lines[i];
+			if (l != null) {
+				if (l) {
+					if (end >= 0) sb.append(showInterval(start, end));
+					start = end = -1;
+				} else {
+					if (start < 0) start = i;
+					end = i;
+				}
+			}
+		}
+		if (end >= 0) sb.append(showInterval(start, end));
+
+		// Coverage percentage
+		double perc = (100.0 * countCovered) / countLines;
+
+		// Limit file name length
+		if (file.length() > 50) file = "..." + file.substring(file.length() - 50 + 3);
+
+		// One line statistics
+		return String.format("| %50.50s | %7d / %7d | %5.2f%% | %s", file, countCovered, countLines, perc, sb);
 	}
 
 	/**
@@ -95,14 +133,38 @@ public class Coverage {
 		return coverageByFile;
 	}
 
+	/**
+	 * Total percent coverage
+	 */
 	public double percent() {
-		//	int countCovered=
-		return 0.0;
+		int countLines = 0, countCovered = 0;
+
+		for (Boolean[] lines : coverageByFile.values()) {
+			for (int i = 0; i < lines.length; i++) {
+				Boolean l = lines[i];
+				if (l != null) {
+					countLines++;
+					if (l) countCovered++;
+				}
+			}
+		}
+
+		double perc = (100.0 * countCovered) / countLines;
+		return perc;
+	}
+
+	String showInterval(int start, int end) {
+		if (start < 0 || end < 0) return "";
+		if (start == end) return start + " ";
+		return start + "-" + end + " ";
+	}
+
+	String title() {
+		return String.format("| %50.50s | %7s / %7s |  %5s | %s", "File name", "Covered", "Total", "%", "Not covered intervals");
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
 		coverageByFile();
 
 		// Sort by file name
@@ -111,41 +173,12 @@ public class Coverage {
 		Collections.sort(files);
 
 		// Show coverage
+		StringBuilder sb = new StringBuilder();
+		sb.append(title() + "\n");
 		for (String file : files) {
-			Gpr.debug("COV: " + file + "\t" + coverageLine(file));
+			sb.append(coverageLine(file) + "\n");
 		}
+
 		return sb.toString();
 	}
-
-	/**
-	 * Update coverage by by statistics
-	 * @param coverageByFile
-	 * @param updateNoCoverage : Update whether there was coverage or there was no coverage
-	 */
-	private void updateCoverage(boolean updateNoCoverage) {
-		for (BdsNode bdsNode : bdsNodes) {
-			int covcount = coverageCounter.getOrDefault(bdsNode.getId(), 0);
-			String fileName = bdsNode.getFileNameCanonical();
-			int lineNum = bdsNode.getLineNum();
-
-			Gpr.debug("COVERAGE COUNT:\tnodeId:" + bdsNode.getId() + "\tcount: " + covcount + "\t" + bdsNode.getFileNameCanonical() + ":" + bdsNode.getLineNum());
-
-			// No coverage? Add to array
-			Boolean[] lineCoverage = coverageByFile.get(fileName);
-			//			if (updateNoCoverage) {
-			//				// We want to overwrite the entries with 'false' if some other
-			//				// bdsNode (in the same line) did not have any coverage. E.g.:
-			//				//
-			//				//     if( ok ) { println 'OK' } else { println 'BAD' }
-			//				//
-			//				// The if/else statements are in one line, so when only one
-			//				// of the branches are covered, we might have the false impression
-			//				// that both of them are covered, just because we didn't mark
-			//				// the lines with no coverage
-			//				if (covcount == 0) lineCoverage[lineNum] = false;
-			//			} else lineCoverage[lineNum] = (covcount > 0);
-			lineCoverage[lineNum] = (covcount > 0);
-		}
-	}
-
 }
