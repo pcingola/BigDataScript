@@ -1,0 +1,17 @@
+#!/usr/bin/env bds
+
+int f07(int x) {
+	if( x > 0 ) {
+		println "POSITIVE"
+		return x
+	} else {
+		println "NEGATIVE"
+		return -x
+	}
+}
+
+void test07() {
+	z := f07(2)
+	assert(2, z)
+}
+

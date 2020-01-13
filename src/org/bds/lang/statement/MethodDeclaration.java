@@ -73,6 +73,19 @@ public class MethodDeclaration extends FunctionDeclaration {
 	}
 
 	@Override
+	public String toAsmNode() {
+		// Methods to not write node OpCode, because they don't get counted
+		// in coverage. At the beginning of the class, there is a
+		//     jump label_ClassDeclaration_NNN_end
+		// this means that method definition code is never reached (because
+		// it's not necesary for the VM to go in there). But this will
+		// result of every method definition being shown as 'not covered'
+		// when doing coverage analysis. To avoid this, we just don't write
+		// the NODE opcode on methods
+		return "";
+	}
+
+	@Override
 	public void typeCheckNotNull(SymbolTable symtab, CompilerMessages compilerMessages) {
 		// This is checked during ClassDeclaration....not much to do here
 		if (isDuplicateFunction(symtab.getParent())) compilerMessages.add(this, "Duplicate method '" + signature() + "'", MessageType.ERROR);

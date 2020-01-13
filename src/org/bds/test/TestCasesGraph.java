@@ -54,17 +54,17 @@ public class TestCasesGraph extends TestCasesBase {
 		Gpr.toFile("test/graph_05.txt", "TEST");
 
 		// Run pipeline first
-		System.out.println("Run first time:");
+		if (verbose) System.out.println("Run first time:");
 		String out = runAndCheckStdout("test/graph_05.bds", "copying to csv\ncopying to xml");
-		System.out.println(out);
+		if (verbose) System.out.println(out);
 
 		// Remove CSV file
 		csv.delete();
 
 		// Run pipeline again
-		System.out.println("Run second time:");
+		if (verbose) System.out.println("Run second time:");
 		out = runAndCheckStdout("test/graph_05.bds", "copying to csv\ncopying to xml");
-		System.out.println(out);
+		if (verbose) System.out.println(out);
 	}
 
 	@Test
@@ -83,17 +83,17 @@ public class TestCasesGraph extends TestCasesBase {
 		Gpr.toFile(prefix + ".txt", "TEST");
 
 		// Run pipeline first
-		System.out.println("Run first time:");
+		if (verbose) System.out.println("Run first time:");
 		String out = runAndCheckStdout(prefix + ".bds", "copying to csv\ncopying to xml");
-		System.out.println(out);
+		if (verbose) System.out.println(out);
 
 		// Remove CSV file
 		csv.delete();
 
 		// Run pipeline again (nothing should happen, since XML is 'up to date' with respect to TXT)
-		System.out.println("Run second time:");
+		if (verbose) System.out.println("Run second time:");
 		out = runAndCheckStdout(prefix + ".bds", "copying", true);
-		System.out.println(out);
+		if (verbose) System.out.println(out);
 	}
 
 	@Test

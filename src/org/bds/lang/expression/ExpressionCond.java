@@ -69,10 +69,12 @@ public class ExpressionCond extends Expression {
 		sb.append("jmpf " + labelFalse + "\n");
 
 		sb.append(labelTrue + ":\n");
+		sb.append(exprTrue.toAsmNode());
 		sb.append(exprTrue.toAsm());
 		sb.append("jmp " + labelEnd + "\n");
 
 		sb.append(labelFalse + ":\n");
+		sb.append(exprFalse.toAsmNode());
 		sb.append(exprFalse.toAsm());
 
 		sb.append(labelEnd + ":\n");

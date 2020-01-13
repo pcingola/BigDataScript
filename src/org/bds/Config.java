@@ -83,23 +83,9 @@ public class Config implements Serializable {
 	public static final String WAIT_FILE_CHECK = "waitFileCheck";
 	public static final String WAIT_TEXT_FILE_BUSY = "waitTextFileBusy";
 
-	/**
-	 * Get singleton
-	 */
-	public static Config get() {
-		if (configInstance == null) configInstance = new Config();
-		return configInstance;
-	}
-
-	/**
-	 * Reset singleton
-	 */
-	public static void reset() {
-		configInstance = null;
-	}
-
 	String configDirName;
 	String configFileName;
+	boolean coverage; // Perform coverage analysis (only when test cases are run)
 	boolean debug = false; // Debug mode?
 	boolean dryRun = false; // Is this a dry run? (i.e. don't run commands, just show what they do).
 	boolean extractSource = false; // Extract source code from checkpoint file
@@ -132,10 +118,23 @@ public class Config implements Serializable {
 	String tmpDir; // Tmp directory
 	boolean verbose = false; // Verbose mode?
 	int waitAfterTaskRun = -1; // Wait some milisec after task run
-
 	int waitFileCheck = -1; // Wait some milisecs after task finished before checking if output files exists
-
 	int waitTextFileBusy = -1; // Wait some milisecs after writing a shell file to disk (before execution)
+
+	/**
+	 * Get singleton
+	 */
+	public static Config get() {
+		if (configInstance == null) configInstance = new Config();
+		return configInstance;
+	}
+
+	/**
+	 * Reset singleton
+	 */
+	public static void reset() {
+		configInstance = null;
+	}
 
 	public Config() {
 		this(null);
@@ -408,6 +407,10 @@ public class Config implements Serializable {
 		return waitTextFileBusy;
 	}
 
+	public boolean isCoverage() {
+		return coverage;
+	}
+
 	public boolean isDebug() {
 		return debug;
 	}
@@ -554,6 +557,10 @@ public class Config implements Serializable {
 
 	public void set(String propertyName, String value) {
 		properties.setProperty(propertyName, value);
+	}
+
+	public void setCoverage(boolean coverage) {
+		this.coverage = coverage;
 	}
 
 	public void setDebug(boolean debug) {

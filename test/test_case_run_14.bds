@@ -1,0 +1,29 @@
+#!/usr/bin/env bds
+
+int f14(int x) {
+	sum := 0
+	switch(x) {
+		case 0:
+			sum = -1
+			break
+
+		case 1:
+			sum = 1
+			break
+
+		case 2:
+			sum++
+		case 3:
+			sum += 2
+			break
+
+		default:
+			sum = 42
+	}
+	return sum 
+}
+
+void test14() {
+	z := f14(2)
+}
+

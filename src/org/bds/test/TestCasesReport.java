@@ -6,7 +6,7 @@ import org.junit.Test;
 import junit.framework.Assert;
 
 /**
- * Quick test cases when creating a new feature...
+ * Test cases for reporting
  *
  * @author pcingola
  *

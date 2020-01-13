@@ -1,0 +1,12 @@
+#!/usr/bin/env bds
+
+int f06(int x) {
+	println "OK"
+	return 2 + x
+}
+
+void test06() {
+	z := f06(2)
+	assert(4, z)
+}
+

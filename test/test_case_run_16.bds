@@ -1,0 +1,10 @@
+#!/usr/bin/env bds
+
+int f16(int x) {
+	return x >= 0 ? 10 * x : -10 * x
+}
+
+void test16() {
+	z := f16(2) + f16(-1)
+}
+

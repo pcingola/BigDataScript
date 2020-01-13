@@ -1,0 +1,11 @@
+#!/usr/bin/env bds
+
+int f08(int x) {
+	return 2 + x
+}
+
+void test08() {
+	z := f08(2)
+}
+
+void p()	println "YOU SHOULD NOT SEE THIS MESSAGE WHEN RUNNING TESTS"

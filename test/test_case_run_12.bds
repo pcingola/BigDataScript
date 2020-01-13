@@ -1,0 +1,18 @@
+#!/usr/bin/env bds
+
+int f12(int x) {
+	int g(int y) {
+		return y+1
+	}
+
+	sum := 0
+	for(int i=0 ; i <=x  ; i++) { 
+		sum += g(i)
+	}
+	return sum 
+}
+
+void test12() {
+	z := f12(10)
+}
+

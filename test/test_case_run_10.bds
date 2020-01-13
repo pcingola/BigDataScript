@@ -1,0 +1,19 @@
+#!/usr/bin/env bds
+
+int f10(int x) {
+	sum := 0
+	while(x >= 0) { 
+		sum += x
+		x--
+	}
+	while(x >= 0) { 
+		sum += x
+		x--
+	}
+	return sum 
+}
+
+void test10() {
+	z := f10(10)
+}
+

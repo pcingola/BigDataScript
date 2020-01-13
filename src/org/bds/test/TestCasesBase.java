@@ -238,7 +238,7 @@ public class TestCasesBase {
 	 * Check that StdOut has a string (or that the string is NOT present if 'negate' is true)
 	 */
 	String runAndCheckStdout(String fileName, String expectedStdout, String args[], boolean negate) {
-		BdsTest bdsTest = new BdsTest(fileName, args, true, debug);
+		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		bdsTest.checkStdout(expectedStdout, negate);
@@ -290,7 +290,7 @@ public class TestCasesBase {
 	 * Run a bds program and capture stdout (while still showing it)
 	 */
 	String runAndReturnStdout(String fileName, String args[]) {
-		BdsTest bdsTest = new BdsTest(fileName, args, true, debug);
+		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		return bdsTest.captureStdout.toString();
@@ -306,6 +306,16 @@ public class TestCasesBase {
 		bdsTest.checkRunExitCodeFail();
 	}
 
+	Bds runTestCasesFailCoverage(String fileName, double coverageMin) {
+		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.setCoverage(true);
+		bdsTest.setCoverageMin(coverageMin);
+		bdsTest.setTestCases(true);
+		bdsTest.run();
+		bdsTest.checkRunExitCodeFail();
+		return bdsTest.bds;
+	}
+
 	/**
 	 * Run test cases: Check that all test cases PASS
 	 */
@@ -314,6 +324,16 @@ public class TestCasesBase {
 		bdsTest.setTestCases(true);
 		bdsTest.run();
 		bdsTest.checkRunOk();
+	}
+
+	Bds runTestCasesPassCoverage(String fileName, double coverageMin) {
+		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.setCoverage(true);
+		bdsTest.setCoverageMin(coverageMin);
+		bdsTest.setTestCases(true);
+		bdsTest.run();
+		bdsTest.checkRunOk();
+		return bdsTest.bds;
 	}
 
 	/**
