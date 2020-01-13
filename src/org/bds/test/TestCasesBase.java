@@ -290,7 +290,7 @@ public class TestCasesBase {
 	 * Run a bds program and capture stdout (while still showing it)
 	 */
 	String runAndReturnStdout(String fileName, String args[]) {
-		BdsTest bdsTest = new BdsTest(fileName, args, true, debug);
+		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		return bdsTest.captureStdout.toString();

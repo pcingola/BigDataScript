@@ -48,7 +48,6 @@ public class MethodNative_string_write_str extends MethodNativeString {
 			(new File(tmpFileName)).getParentFile().mkdirs();
 
 			// Create local file
-			Gpr.debug("local file: " + tmpFileName);
 			Gpr.toFile(tmpFileName, str);
 
 			// Upload file
