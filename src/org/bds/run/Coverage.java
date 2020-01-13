@@ -19,7 +19,7 @@ import org.bds.vm.BdsVm;
  */
 public class Coverage {
 
-	static String TABLE_SEPARATOR_LINE = "+----------------------------------------------------+-------------------+--------+------------------------";
+	static String TABLE_SEPARATOR_LINE = "+----------------------------------------------------+-------------------+---------+------------------------";
 
 	Set<BdsNode> bdsNodes;
 	Map<Integer, Integer> coverageCounter;
@@ -129,7 +129,7 @@ public class Coverage {
 		if (file.length() > 50) file = "..." + file.substring(file.length() - 50 + 3);
 
 		// One line statistics
-		return String.format("| %50.50s | %7d / %7d | %5.2f%% | %s", file, countCovered, countLines, perc, sb);
+		return String.format("| %50.50s | %7d / %7d | %6.2f%% | %s", file, countCovered, countLines, perc, sb);
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class Coverage {
 	 * Coverage table's title
 	 */
 	String title() {
-		return String.format("| %50.50s | %7s / %7s |  %5s | %s" //
+		return String.format("| %50.50s | %7s / %7s |  %6s | %s" //
 				, centerString(50, "File name") //
 				, "Covered" //
 				, centerString(7, "Total") //

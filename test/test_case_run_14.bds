@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-int f(int x) {
+int f14(int x) {
 	sum := 0
 	switch(x) {
 		case 0:
@@ -23,7 +23,7 @@ int f(int x) {
 	return sum 
 }
 
-void test01() {
-	z := f(2)
+void test14() {
+	z := f14(2)
 }
 

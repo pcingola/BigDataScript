@@ -1,0 +1,16 @@
+#!/usr/bin/env bds
+
+include 'test_case_run_06'
+
+include 'test_case_run_07'
+include 'test_case_run_08'
+include 'test_case_run_09'
+
+include 'test_case_run_10'
+include 'test_case_run_11'
+include 'test_case_run_12'
+include 'test_case_run_13'
+include 'test_case_run_14'
+include 'test_case_run_15'
+include 'test_case_run_16'
+include 'test_case_run_17'

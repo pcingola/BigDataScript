@@ -1,6 +1,6 @@
 #!/usr/bin/env bds
 
-int f(int x) {
+int f10(int x) {
 	sum := 0
 	while(x >= 0) { 
 		sum += x
@@ -13,7 +13,7 @@ int f(int x) {
 	return sum 
 }
 
-void test01() {
-	z := f(10)
+void test10() {
+	z := f10(10)
 }
 
