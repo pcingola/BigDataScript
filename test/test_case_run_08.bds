@@ -4,7 +4,7 @@ int f(int x) {
 	return 2 + x
 }
 
-void test01() {
+void test08() {
 	z := f(2)
 }
 

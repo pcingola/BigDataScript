@@ -10,7 +10,7 @@ int f(int x) {
 	}
 }
 
-void test01() {
+void test07() {
 	z := f(2)
 	assert(2, z)
 }
