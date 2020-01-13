@@ -24,6 +24,7 @@ public class Bds {
 	String chekcpointRestoreFile; // Restore file
 	Config config;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Configuration file
+	boolean coverage;
 	boolean debug; // debug mode
 	boolean dryRun; // Dry run (do not run tasks)
 	boolean extractSource; // Extract source code form checkpoint (only valid on recovery mode)
@@ -63,6 +64,7 @@ public class Bds {
 		config = new Config(configFile);
 		config.setDebug(debug);
 		config.load();
+		config.setCoverage(coverage);
 		config.setExtractSource(extractSource);
 		config.setLog(log);
 		config.setDryRun(dryRun);
@@ -177,6 +179,10 @@ public class Bds {
 					// Checkpoint restore
 					if ((i + 1) < args.length) configFile = args[++i];
 					else usage("Option '-c' without restore file argument");
+					break;
+
+				case "-coverage":
+					coverage = true;
 					break;
 
 				case "-d":
@@ -352,6 +358,7 @@ public class Bds {
 		bdsRun.setChekcpointRestoreFile(chekcpointRestoreFile);
 		bdsRun.setProgramFileName(programFileName);
 		bdsRun.setConfig(config);
+		bdsRun.setCoverage(coverage);
 
 		// Run and return program's exit code
 		return bdsRun.run();
@@ -403,6 +410,7 @@ public class Bds {
 		System.err.println("\nAvailable options: ");
 		System.err.println("  [-c | -config ] bds.config     : Config file. Default : " + configFile + ".");
 		System.err.println("  [-compile]                     : Compile only, do not run.");
+		System.err.println("  [-coverage]                    : Calculate cofe coverate. Only valid when '-test' is active.");
 		System.err.println("  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.");
 		System.err.println("  [-d | -debug  ]                : Show debug info.");
 		System.err.println("  -download url file             : Download 'url' to local 'file'. Note: Used by 'taks'.");

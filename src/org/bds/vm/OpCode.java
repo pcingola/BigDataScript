@@ -94,14 +94,14 @@ public enum OpCode {
 	, MODI
 	// Multiplication (int)
 	, MULI, MULR, MULS
-	// Set current BdsNode number. Used for references to bds code (debugging, stack trace, etc.)
-	, NEB
-	// No operation
-	, NEI
 	// Equality test (not equals)
-	, NER, NES, NEW, NODE
+	, NEB, NEI, NER, NES
 	// Create new object (of type 'Type') and push it to the stack
 	//    NEW Type
+	, NEW
+	// Set current BdsNode number. Used for references to bds code (debugging, stack trace, etc.)
+	, NODE, NODE_COVERAGE
+	// No operation (do nothing)
 	, NOOP
 	// Negation
 	, NOTB, NOTI
@@ -174,6 +174,7 @@ public enum OpCode {
 		case LOAD:
 		case NEW:
 		case NODE:
+		case NODE_COVERAGE:
 		case PUSHB:
 		case PUSHI:
 		case PUSHR:
@@ -198,7 +199,7 @@ public enum OpCode {
 	 * the opcode parameter (as opposed to using poll of constants)
 	 */
 	public boolean isParamDirect() {
-		return this == NODE || this == OpCode.ADDSM;
+		return this == NODE || this == NODE_COVERAGE || this == ADDSM;
 	}
 
 	/**
@@ -272,6 +273,7 @@ public enum OpCode {
 
 		case ADDSM:
 		case NODE:
+		case NODE_COVERAGE:
 			return Gpr.parseIntSafe(param);
 
 		case PUSHB:

@@ -310,7 +310,15 @@ public class TestCasesBase {
 	 * Run test cases: Check that all test cases PASS
 	 */
 	void runTestCasesPass(String fileName) {
+		runTestCasesPass(fileName, false);
+	}
+
+	/**
+	 * Run test cases: Check that all test cases PASS, with coverage
+	 */
+	void runTestCasesPass(String fileName, boolean coverage) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.setCoverage(coverage);
 		bdsTest.setTestCases(true);
 		bdsTest.run();
 		bdsTest.checkRunOk();

@@ -23,10 +23,10 @@ import junit.framework.Assert;
  */
 public class BdsTest {
 
+	public boolean coverage;
 	public boolean debug;
 	public boolean verbose;
 	public boolean testCases; // Is this a bds-test? i.e. should it run as 'bds --test'?
-
 	public Boolean compileOk;
 	public String args[]; // Command line arguments (before program name)
 	public String argsAfter[]; // Command line arguments (after program name)
@@ -69,6 +69,9 @@ public class BdsTest {
 
 		// Is this a 'test case' run?
 		if (testCases) l.add("-t");
+
+		// Is this a 'test case' run?
+		if (coverage) l.add("-coverage");
 
 		if (args != null) {
 			for (String arg : args)
@@ -390,6 +393,10 @@ public class BdsTest {
 		}
 
 		return bigDataScript2;
+	}
+
+	public void setCoverage(boolean coverage) {
+		this.coverage = coverage;
 	}
 
 	public void setTestCases(boolean testCases) {

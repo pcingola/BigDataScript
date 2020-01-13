@@ -27,7 +27,9 @@ import org.bds.util.Gpr;
  */
 public class BdsVmAsm {
 
-	boolean verbose, debug;
+	boolean debug;
+	boolean coverage;
+	boolean verbose;
 	int lineNum;
 	String codeStr;
 	String file;
@@ -48,6 +50,9 @@ public class BdsVmAsm {
 	 * Add instruction & param to code
 	 */
 	void addInstruction(OpCode opcode, String param) {
+		// If in coverage mode, we switch all opcodes from 'NODE' to 'NODE_COVERAGE'?
+		if (coverage && opcode == OpCode.NODE) opcode = OpCode.NODE_COVERAGE;
+		// Add opcode and parameter
 		code.add(opcode.ordinal());
 		if (param != null) addParam(opcode, param);
 	}
@@ -203,6 +208,10 @@ public class BdsVmAsm {
 		return true; // Only whitespaces
 	}
 
+	public boolean isCoverage() {
+		return coverage;
+	}
+
 	/**
 	 * Get a label from an input line, null if there are no labels
 	 */
@@ -258,6 +267,7 @@ public class BdsVmAsm {
 
 		case ADDSM:
 		case NODE:
+		case NODE_COVERAGE:
 			return ((int) oparam);
 
 		default:
@@ -274,6 +284,10 @@ public class BdsVmAsm {
 
 	public void setCode(String codeStr) {
 		this.codeStr = codeStr;
+	}
+
+	public void setCoverage(boolean coverage) {
+		this.coverage = coverage;
 	}
 
 	public void setDebug(boolean debug) {

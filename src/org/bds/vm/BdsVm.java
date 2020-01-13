@@ -49,7 +49,6 @@ import org.bds.util.GprString;
 public class BdsVm implements Serializable {
 
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
-
 	public static final String LABLE_MAIN = "main";
 	private static final OpCode OPCODES[] = OpCode.values();
 	private static final long serialVersionUID = 6533146851765102340L;
@@ -60,6 +59,7 @@ public class BdsVm implements Serializable {
 	CallFrame[] callFrames; // Call Frame stack
 	int code[]; // Compile assembly code (OopCodes)
 	List<Object> constants;
+	Map<Integer, Integer> coverageCounter; // Count how many times a nodeId was traversed
 	Map<Object, Integer> constantsByObject;
 	boolean debug;
 	ExceptionHandler exceptionHandler; // Current Exception handler (null if we are not in a 'try/catch' statement)
@@ -83,6 +83,7 @@ public class BdsVm implements Serializable {
 	public BdsVm() {
 		constants = new ArrayList<>();
 		constantsByObject = new HashMap<>();
+		coverageCounter = new HashMap<>();
 		labels = new HashMap<>();
 		labelsByPc = new AutoHashMap<>(new LinkedList<String>());
 		functionsBySignature = new HashMap<>();
@@ -474,6 +475,23 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Get a list of all bds nodes in this VM program
+	 */
+	public List<BdsNode> findNodes() {
+		List<BdsNode> bdsNodes = new ArrayList<>();
+		for (int pc = 0; pc < code.length; pc++) {
+			OpCode op = OPCODES[code[pc]];
+			if (op == OpCode.NODE || op == OpCode.NODE_COVERAGE) {
+				int idx = code[pc + 1];
+				BdsNode bdsNode = BdsNodeFactory.get().getNode(idx);
+				bdsNodes.add(bdsNode);
+			}
+			if (hasParam(pc)) pc++;
+		}
+		return bdsNodes;
+	}
+
+	/**
 	 * Create a 'fork' vm-thread
 	 */
 	private BdsVm fork(int pushCount) {
@@ -557,6 +575,10 @@ public class BdsVm implements Serializable {
 
 	Object getConstant(int idx) {
 		return constants.get(idx);
+	}
+
+	public Map<Integer, Integer> getCoverageCounter() {
+		return coverageCounter;
 	}
 
 	public int getExitCode() {
@@ -1248,6 +1270,12 @@ public class BdsVm implements Serializable {
 				if (vmDebugger != null) vmDebugger.node();
 				break;
 
+			case NODE_COVERAGE:
+				nodeId = paramInt();
+				coverageCounter.put(nodeId, coverageCounter.getOrDefault(nodeId, 0) + 1); // Increment node counter
+				if (vmDebugger != null) vmDebugger.node();
+				break;
+
 			case NOOP:
 				break;
 
@@ -1665,7 +1693,7 @@ public class BdsVm implements Serializable {
 			int idx = code[++pc];
 			if (op.isParamString()) param = "'" + GprString.escape(getConstant(idx).toString()) + "'";
 			else if (op.isParamType()) param = "'" + getType(idx) + "'";
-			else if (op == OpCode.NODE) {
+			else if (op == OpCode.NODE || op == OpCode.NODE_COVERAGE) {
 				// Show some code for this node
 				comment = toStringNode(idx);
 				param = "" + idx;

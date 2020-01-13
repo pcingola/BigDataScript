@@ -55,6 +55,9 @@ public class BdsRun {
 		ERROR // There were compilation errors
 	};
 
+	boolean coverage; // Run coverage tests
+	double coverageMin; // Minimum coverage required to pass a coverage test
+	Coverage coverageCounter; // Keep track of coverage between test runs
 	boolean debug; // debug mode
 	boolean log; // Log everything (keep STDOUT, SDTERR and ExitCode files)
 	boolean stackCheck; // Check stack size when thread finishes runnig (should be zero)
@@ -130,6 +133,7 @@ public class BdsRun {
 	 * @returns: -1 on compile errors; 0 if run OK, 1 if run with errors
 	 */
 	public CompileCode compile() {
+		// COmpile bds to VM ASM
 		if (!compileBds()) return CompileCode.ERROR;
 
 		// Parse command line args & show automatic help
@@ -156,6 +160,7 @@ public class BdsRun {
 			BdsVmAsm vmasm = new BdsVmAsm(programUnit);
 			vmasm.setDebug(debug);
 			vmasm.setVerbose(verbose);
+			vmasm.setCoverage(coverage);
 			vmasm.setCode(asm);
 
 			// Compile assembly
@@ -273,6 +278,10 @@ public class BdsRun {
 		// Native library: String
 		NativeLibraryString nativeLibraryString = new NativeLibraryString();
 		if (debug) log("Native library: " + nativeLibraryString.size());
+	}
+
+	public boolean isCoverage() {
+		return coverage;
 	}
 
 	/**
@@ -485,6 +494,7 @@ public class BdsRun {
 
 		// For each "test*()" function in ProgramUnit, create a thread that executes the function's body
 		List<FunctionDeclaration> testFuncs = programUnit.findTestsFunctions();
+		if (coverage) coverageCounter = new Coverage();
 
 		int exitCode = 0;
 		int testOk = 0, testError = 0;
@@ -512,6 +522,9 @@ public class BdsRun {
 				+ "\n                  ERROR : " + testError //
 		);
 
+		// Show coverage statistics
+		if (coverage) System.out.println(coverageCounter);
+
 		return exitCode;
 	}
 
@@ -536,6 +549,10 @@ public class BdsRun {
 
 		// Run thread and check exit code
 		int exitValTest = runThread(bdsThreadTest);
+
+		// Show coverage results
+		if (coverage) coverageCounter.add(vmtest);
+
 		return exitValTest;
 	}
 
@@ -573,6 +590,10 @@ public class BdsRun {
 
 	public void setConfig(Config config) {
 		this.config = config;
+	}
+
+	public void setCoverage(boolean coverage) {
+		this.coverage = coverage;
 	}
 
 	public void setDebug(boolean debug) {
