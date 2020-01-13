@@ -33,6 +33,7 @@ public class Coverage {
 	 * Add coverage statistics from a VM (that already finished running)
 	 */
 	public void add(BdsVm vm) {
+		Gpr.debug(vm.toAsm());
 		// Make sure all nodes are added
 		bdsNodes.addAll(vm.findNodes());
 
@@ -127,28 +128,23 @@ public class Coverage {
 			String fileName = bdsNode.getFileNameCanonical();
 			int lineNum = bdsNode.getLineNum();
 
-			Gpr.debug("COVERAGE COUNT: " //
-					+ "\n\tnodeId :" + bdsNode.getId() //
-					+ "\n\tcount  : " + covcount //
-					+ "\n\tfile   : " + bdsNode.getFileNameCanonical() //
-					+ "\n\tline   : " + bdsNode.getLineNum() //
-					+ "\n\tchar   : " + bdsNode.getCharPosInLine() //
-					+ "\n");
+			Gpr.debug("COVERAGE COUNT:\tnodeId:" + bdsNode.getId() + "\tcount: " + covcount + "\t" + bdsNode.getFileNameCanonical() + ":" + bdsNode.getLineNum());
 
 			// No coverage? Add to array
 			Boolean[] lineCoverage = coverageByFile.get(fileName);
-			if (updateNoCoverage) {
-				// We want to overwrite the entries with 'false' if some other
-				// bdsNode (in the same line) did not have any coverage. E.g.:
-				//
-				//     if( ok ) { println 'OK' } else { println 'BAD' }
-				//
-				// The if/else statements are in one line, so when only one
-				// of the branches are covered, we might have the false impression
-				// that both of them are covered, just because we didn't mark
-				// the lines with no coverage
-				if (covcount == 0) lineCoverage[lineNum] = false;
-			} else lineCoverage[lineNum] = (covcount > 0);
+			//			if (updateNoCoverage) {
+			//				// We want to overwrite the entries with 'false' if some other
+			//				// bdsNode (in the same line) did not have any coverage. E.g.:
+			//				//
+			//				//     if( ok ) { println 'OK' } else { println 'BAD' }
+			//				//
+			//				// The if/else statements are in one line, so when only one
+			//				// of the branches are covered, we might have the false impression
+			//				// that both of them are covered, just because we didn't mark
+			//				// the lines with no coverage
+			//				if (covcount == 0) lineCoverage[lineNum] = false;
+			//			} else lineCoverage[lineNum] = (covcount > 0);
+			lineCoverage[lineNum] = (covcount > 0);
 		}
 	}
 
