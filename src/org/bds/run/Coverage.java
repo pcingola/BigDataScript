@@ -61,14 +61,29 @@ public class Coverage {
 		if (coverageByFile != null) return coverageByFile;
 		coverageByFile = createCoverageByFile();
 
+		// Set all the ones that have coverage count
 		for (BdsNode bdsNode : bdsNodes) {
 			int covcount = coverageCounter.getOrDefault(bdsNode.getId(), 0);
 			String fileName = bdsNode.getFileNameCanonical();
 			int lineNum = bdsNode.getLineNum();
+			setCoverageByFile(fileName, lineNum, (covcount > 0));
+		}
 
-			// No coverage? Add to array
-			Boolean[] lineCoverage = coverageByFile.get(fileName);
-			lineCoverage[lineNum] = (covcount > 0);
+		// Reset the ones that have not coverage count
+		// Why this? Because a line can contain more than one statement and one
+		// of the statements could be not covered by any test. E.g.:
+		//
+		//    # Two statements in one line
+		//    if( ok ) { println 'OK' } else { println 'BAD' }
+		//
+		// If the test case only covers the case 'ok=true' then the line is
+		// still not covered. But the 'if' NODE, has already set this line as
+		// covered, so we now undo that
+		for (BdsNode bdsNode : bdsNodes) {
+			int covcount = coverageCounter.getOrDefault(bdsNode.getId(), 0);
+			String fileName = bdsNode.getFileNameCanonical();
+			int lineNum = bdsNode.getLineNum();
+			if (covcount == 0) setCoverageByFile(fileName, lineNum, false);
 		}
 
 		return coverageByFile;
@@ -170,6 +185,11 @@ public class Coverage {
 		if (start < 0 || end < 0) return "";
 		if (start == end) return start + " ";
 		return start + "-" + end + " ";
+	}
+
+	void setCoverageByFile(String fileName, int lineNum, boolean value) {
+		Boolean[] lineCoverage = coverageByFile.get(fileName);
+		lineCoverage[lineNum] = value;
 	}
 
 	/**

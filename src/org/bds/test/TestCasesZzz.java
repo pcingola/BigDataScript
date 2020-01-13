@@ -46,12 +46,23 @@ public class TestCasesZzz extends TestCasesBase {
 		checkCoverageRatio(bds, 7.0 / 9.0);
 	}
 
-	//	public void testTestCasesCoverage07() {
-	//		// Check that coverage is correctly computed: 'if' statement
-	//		Gpr.debug("Test");
-	//		runTestCasesPass("test/test_case_run_06.bds", true);
-	//	}
-	//
+	@Test
+	public void testTestCasesCoverage08() {
+		// Check that coverage is correctly computed: Last line of the file not covered
+		Gpr.debug("Test");
+		verbose = true;
+		Bds bds = runTestCasesPassCoverage("test/test_case_run_08.bds", 0.8);
+		checkCoverageRatio(bds, 0.8);
+	}
+
+	@Test
+	public void testTestCasesCoverage09() {
+		// Check that coverage is correctly computed: 'if' statement in one line
+		Gpr.debug("Test");
+		Bds bds = runTestCasesPassCoverage("test/test_case_run_09.bds", 0.7);
+		checkCoverageRatio(bds, 0.75);
+	}
+
 	//	public void testTestCasesCoverage08() {
 	//		// Check that coverage is correctly computed: 'while' statements
 	//		Gpr.debug("Test");
