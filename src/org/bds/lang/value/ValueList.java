@@ -18,9 +18,9 @@ import org.bds.lang.type.TypeList;
  */
 public class ValueList extends ValueComposite implements Iterable<Value> {
 
-	private static final long serialVersionUID = -9220660671873943097L;
-
 	List<Value> list;
+
+	private static final long serialVersionUID = -9220660671873943097L;
 
 	public ValueList(Type type) {
 		this(type, -1);
@@ -104,7 +104,10 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 	 * Get element number 'idx' from the list
 	 */
 	public Value getValue(long idx) {
-		return list.get((int) idx);
+		int max_idx = list.size();
+		int idx_reminder = (int) (idx % max_idx);
+		int idx_int = (idx_reminder >= 0 ? idx_reminder : max_idx + idx_reminder);
+		return list.get(idx_int);
 	}
 
 	@Override
@@ -118,13 +121,6 @@ public class ValueList extends ValueComposite implements Iterable<Value> {
 
 	public boolean isEmpty() {
 		return list.isEmpty();
-	}
-
-	/**
-	 * Is this index out of range?
-	 */
-	public boolean isIndexOutOfRange(long idx) {
-		return idx < 0L || idx > size();
 	}
 
 	@Override

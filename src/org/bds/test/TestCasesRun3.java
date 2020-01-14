@@ -14,12 +14,6 @@ import org.junit.Test;
  */
 public class TestCasesRun3 extends TestCasesBase {
 
-	//	@Test
-	//	public void test200() {
-	//		Gpr.debug("Test");
-	//		runAndCheck("test/run_200.bds", "", "");
-	//	}
-
 	@Test
 	public void test201() {
 		Gpr.debug("Test");
@@ -420,6 +414,36 @@ public class TestCasesRun3 extends TestCasesBase {
 	@Test
 	public void test243_downCasting() {
 		runAndCheck("test/run_243.bds", "ret", "42");
+	}
+
+	@Test
+	public void test244_concurrent_modification() {
+		verbose = true;
+		runOk("test/run_244.bds");
+	}
+
+	@Test
+	public void test245_out_of_bounds() {
+		verbose = true;
+		runAndCheck("test/run_245.bds", "ret", "5");
+	}
+
+	@Test
+	public void test246_out_of_bounds() {
+		verbose = true;
+		runAndCheck("test/run_246.bds", "ret", "1");
+	}
+
+	@Test
+	public void test247_out_of_bounds() {
+		verbose = true;
+		runAndCheck("test/run_247.bds", "ret", "5");
+	}
+
+	@Test
+	public void test248_out_of_bounds() {
+		verbose = true;
+		runAndCheck("test/run_248.bds", "ret", "1");
 	}
 
 }

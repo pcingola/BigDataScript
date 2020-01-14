@@ -297,6 +297,13 @@ public class TestCasesBase {
 	}
 
 	/**
+	 * Make sure the program runs OK
+	 */
+	void runOk(String fileName) {
+		runAndCheckExit(fileName, 0);
+	}
+
+	/**
 	 * Run test cases: Check that at least one test case FAILS
 	 */
 	void runTestCasesFail(String fileName) {
