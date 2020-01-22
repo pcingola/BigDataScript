@@ -19,11 +19,15 @@ public class Zzz {
 
 	public static boolean verbose = true;
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		System.out.println("Start");
-		//		A a = new A();
-		//		Z z = new Z();
-		//		B b = (B) z;
+		try {
+			System.out.println("try: before");
+			System.exit(0);
+			System.out.println("try: after");
+		} finally {
+			System.out.println("finally");
+		}
 		System.out.println("End");
 	}
 
