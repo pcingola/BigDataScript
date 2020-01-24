@@ -48,19 +48,13 @@ import org.bds.util.GprString;
  */
 public class BdsVm implements Serializable {
 
-	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
-	public static final String LABLE_MAIN = "main";
-	private static final OpCode OPCODES[] = OpCode.values();
-	private static final long serialVersionUID = 6533146851765102340L;
-	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
-	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
-
 	BdsThread bdsThread;
 	CallFrame[] callFrames; // Call Frame stack
 	int code[]; // Compile assembly code (OopCodes)
 	List<Object> constants;
 	Map<Integer, Integer> coverageCounter; // Count how many times a nodeId was traversed
 	Map<Object, Integer> constantsByObject;
+
 	boolean debug;
 	ExceptionHandler exceptionHandler; // Current Exception handler (null if we are not in a 'try/catch' statement)
 	Integer exitCode = null; // Default exit code (null means: parse last entry from stack)
@@ -79,6 +73,12 @@ public class BdsVm implements Serializable {
 	boolean verbose;
 	VmDebugger vmDebugger;
 	VmState vmState = new VmState();
+	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
+	public static final String LABLE_MAIN = "main";
+	private static final OpCode OPCODES[] = OpCode.values();
+	private static final long serialVersionUID = 6533146851765102340L;
+	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
+	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
 
 	public BdsVm() {
 		constants = new ArrayList<>();
@@ -298,7 +298,6 @@ public class BdsVm implements Serializable {
 		// Get destination type
 		Type typeDst = Types.get(className);
 		// Any null type? (i.e. not found)
-		Gpr.debug("CAST_TOC:  src:" + typeSrc + ", dst: " + typeDst);
 		if (typeSrc != null && typeDst != null) {
 			// Same type? OK, can cast
 			if (typeSrc.getCanonicalName().equals(typeDst.getCanonicalName())) return;
