@@ -13,11 +13,12 @@ import org.bds.util.Gpr;
 public class Bds {
 
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "a";
+	public static final String REVISION = "b";
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
 	public static final String VERSION_MAJOR = "2.1";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
+
 	String args[];
 	BdsRun bdsRun;
 	String chekcpointRestoreFile; // Restore file
@@ -35,7 +36,6 @@ public class Bds {
 	String programFileName; // Program file name
 	String queue; // Queue name
 	boolean quiet; // Quiet mode
-
 	String reportFileName;
 	Boolean reportHtml; // Use HTML report style
 	Boolean reportYaml; // Use YAML report style
