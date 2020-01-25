@@ -35,8 +35,7 @@ public class DataS3 extends DataRemote {
 
 	private static int BUFFER_SIZE = 100 * 1024;
 	public static final String AWS_DOMAIN = "amazonaws.com";
-	public static final String AWS_S3_PREFIX = "s3";
-	public static final String AWS_S3_PROTOCOL = "s3://";
+	public static final String AWS_S3_PROTOCOL = "s3";
 
 	public static final String ENV_PROXY_HTTTP = "http_proxy";
 	public static final String ENV_PROXY_HTTTPS = "https_proxy";
@@ -77,17 +76,17 @@ public class DataS3 extends DataRemote {
 	 * Download a file
 	 */
 	@Override
-	public boolean download(String localFile) {
+	public boolean download(Data local) {
 		try {
 			if (!isFile()) return false;
-			if (localFile != null) this.localPath = localFile;
+			if (local != null) localPath = local.getAbsolutePath();
 
 			S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
 			if (verbose) System.out.println("Downloading '" + this + "'");
 			updateInfo(s3object);
 
 			// Create local file and directories
-			mkdirsLocal(getLocalPath());
+			mkdirsLocal();
 			FileOutputStream os = new FileOutputStream(getLocalPath());
 
 			// Copy S3 object to file
@@ -233,24 +232,27 @@ public class DataS3 extends DataRemote {
 	}
 
 	@Override
-	public ArrayList<String> list() {
-		ArrayList<String> list = new ArrayList<>();
+	public ArrayList<Data> list() {
+		ArrayList<Data> list = new ArrayList<>();
 
-		// Files are not supposed to have a 'directory' result
-		if (isFile()) return list;
+		try {
+			// Files are not supposed to have a 'directory' result
+			if (isFile()) return list;
 
-		ObjectListing objectListing = getS3().listObjects( //
-				new ListObjectsRequest()//
-						.withBucketName(bucketName)//
-						.withPrefix(key) //
-		);
+			// Query objects from S3
+			ObjectListing objectListing = getS3().listObjects( //
+					new ListObjectsRequest()//
+							.withBucketName(bucketName)//
+							.withPrefix(key) //
+			);
 
-		int keyLen = key.length();
-		for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-			String fileName = objectSummary.getKey();
-			// First part is not expected in list (only the file name, no prefix)
-			if (fileName.length() > keyLen) fileName = fileName.substring(keyLen);
-			list.add(fileName);
+			// Append all objects to list
+			for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+				String s3path = AWS_S3_PROTOCOL + "://" + objectSummary.getBucketName() + '/' + objectSummary.getKey();
+				list.add(new DataS3(s3path));
+			}
+		} catch (Exception e) {
+			if (verbose) Timer.showStdErr("ERROR while listing files from '" + this + "'");
 		}
 
 		return list;
@@ -358,16 +360,16 @@ public class DataS3 extends DataRemote {
 	 * Cannot upload to a web server
 	 */
 	@Override
-	public boolean upload(String localFileName) {
+	public boolean upload(Data local) {
 		// Create and check file
-		File file = new File(localFileName);
-		if (!file.exists() || !file.isFile() || !file.canRead()) {
+		if (!local.exists() || !local.isFile() || !local.canRead()) {
 			if (debug) Gpr.debug("Error accessing local file '" + getLocalPath() + "'");
 			return false;
 		}
 
 		// Upload
-		getS3().putObject(new PutObjectRequest(bucketName, key, file));
+		File localFile = new File(local.getAbsolutePath());
+		getS3().putObject(new PutObjectRequest(bucketName, key, localFile));
 		return true;
 	}
 

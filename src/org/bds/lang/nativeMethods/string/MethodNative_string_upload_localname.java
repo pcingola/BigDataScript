@@ -10,7 +10,6 @@ public class MethodNative_string_upload_localname extends MethodNativeString {
 
 	private static final long serialVersionUID = 8938849860984012800L;
 
-
 	public MethodNative_string_upload_localname() {
 		super();
 	}
@@ -30,10 +29,8 @@ public class MethodNative_string_upload_localname extends MethodNativeString {
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
 		String localName = bdsThread.getString("localName");
-
 		Data data = bdsThread.data(objThis.toString());
 		Data localData = bdsThread.data(localName);
-
-		return data.upload(localData.getAbsolutePath());
+		return data.upload(localData);
 	}
 }

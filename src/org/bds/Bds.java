@@ -12,6 +12,13 @@ import org.bds.util.Gpr;
  */
 public class Bds {
 
+	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
+	public static final String REVISION = "b";
+	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
+	public static final String VERSION_MAJOR = "2.1";
+	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
+	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
+
 	String args[];
 	BdsRun bdsRun;
 	String chekcpointRestoreFile; // Restore file
@@ -35,13 +42,6 @@ public class Bds {
 	String system; // System type
 	int taskFailCount = -1;
 	boolean verbose; // Verbose mode
-
-	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "a";
-	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
-	public static final String VERSION_MAJOR = "2.1";
-	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
-	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
 	/**
 	 * Main
@@ -97,6 +97,7 @@ public class Bds {
 	 */
 	public boolean download(String url, String fileName) {
 		Data remote = Data.factory(url);
+		Data local = Data.factory(fileName);
 
 		// Sanity checks
 		if (!remote.isRemote()) {
@@ -110,12 +111,12 @@ public class Bds {
 		}
 
 		// Already downloaded? Nothing to do
-		if (remote.isDownloaded(fileName)) {
+		if (remote.isDownloaded(local)) {
 			if (debug) System.err.println("Local file is up to date, no download required: " + fileName);
 			return true;
 		}
 
-		return remote.download(fileName);
+		return remote.download(local);
 	}
 
 	/**
@@ -400,12 +401,12 @@ public class Bds {
 		}
 
 		// Already uploaded? Nothing to do
-		if (remote.isUploaded(fileName)) {
+		if (remote.isUploaded(local)) {
 			if (debug) System.err.println("Remote file is up to date, no upload required: " + url);
 			return true;
 		}
 
-		return remote.upload(fileName);
+		return remote.upload(local);
 	}
 
 	void usage(String err) {

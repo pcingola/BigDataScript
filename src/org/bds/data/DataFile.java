@@ -83,8 +83,13 @@ public class DataFile extends Data {
 	}
 
 	@Override
-	public boolean download(String localName) {
+	public boolean download() {
 		return true;
+	}
+
+	@Override
+	public boolean download(Data localFile) {
+		throw new RuntimeException("Cannot download local file '" + this + "'");
 	}
 
 	@Override
@@ -137,8 +142,8 @@ public class DataFile extends Data {
 	}
 
 	@Override
-	public boolean isDownloaded(String localPath) {
-		return this.localPath.equals(localPath);
+	public boolean isDownloaded(Data localFile) {
+		return getAbsolutePath().equals(localFile.getAbsolutePath());
 	}
 
 	@Override
@@ -152,8 +157,8 @@ public class DataFile extends Data {
 	}
 
 	@Override
-	public boolean isUploaded(String localPath) {
-		return this.localPath.equals(localPath);
+	public boolean isUploaded(Data localFile) {
+		return getAbsolutePath().equals(localFile.getAbsolutePath());
 	}
 
 	@Override
@@ -165,13 +170,13 @@ public class DataFile extends Data {
 	}
 
 	@Override
-	public ArrayList<String> list() {
+	public ArrayList<Data> list() {
 		String files[] = file.list();
-		ArrayList<String> list = new ArrayList<>();
+		ArrayList<Data> list = new ArrayList<>();
 		if (files == null) return list;
 
 		for (String f : files)
-			list.add(f);
+			list.add(new DataFile(f, getAbsolutePath()));
 
 		return list;
 	}
@@ -192,8 +197,8 @@ public class DataFile extends Data {
 	}
 
 	@Override
-	public boolean upload(String filename) {
-		throw new RuntimeException("Error: Cannot upload local file '" + this + "'");
+	public boolean upload(Data localFile) {
+		throw new RuntimeException("Cannot upload local file '" + this + "'");
 	}
 
 }

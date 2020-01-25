@@ -12,7 +12,7 @@ import org.bds.util.Tuple;
  * could be other things as well (an object stored
  * in S3, data file in an HTTP or FTP server, etc.)
  *
- * There are only a few minimal primitives we need
+ * There are only a few primitives we need
  * to be able to satisfy:
  *
  *   i) Read: We should be able to read Data
@@ -29,13 +29,12 @@ import org.bds.util.Tuple;
  *
  * @author pcingola
  */
-public abstract class Data {
+public abstract class Data implements Comparable<Data> {
 
 	public static final String PROTOCOL_SEP = "://";
 	protected boolean verbose;
 	protected boolean debug;
 	protected boolean relative; // Is this a relative path? (otherwise is absolute)
-
 	protected String localPath; // File name used for local processing
 
 	public static Data factory(String url) {
@@ -50,77 +49,54 @@ public abstract class Data {
 		Tuple<String, String> protoHost = parseProtoHost(urlStr);
 		String proto = protoHost.first;
 
-		// Create each data type
-		Data data = null;
-
 		switch (proto) {
 		case "file":
-			data = new DataFile(urlStr, currentDir);
-			break;
+			return new DataFile(urlStr, currentDir);
 
 		case "http":
 		case "https":
-			data = new DataHttp(urlStr);
-			break;
+			return new DataHttp(urlStr);
 
 		case "s3":
-			data = new DataS3(urlStr);
-			break;
+			return new DataS3(urlStr);
 
 		case "ftp":
-			data = new DataFtp(urlStr);
-			break;
+			return new DataFtp(urlStr);
 
 		case "sftp":
-			data = new DataSftp(urlStr);
-			break;
+			return new DataSftp(urlStr);
 
 		default:
 			throw new RuntimeException("Unimplemented protocol '" + proto + "' for URL " + urlStr);
 		}
-
-		// Set values form config
-		data.setVerbose(Config.get().isVerbose());
-		data.setDebug(Config.get().isDebug());
-
-		return data;
 	}
 
+	/**
+	 * Create a data object from URI
+	 */
 	public static Data factory(URI uri) {
 		// Create each data type
-		Data data = null;
 		String proto = uri.getScheme();
 		switch (proto) {
 		case "file":
-			data = new DataFile(uri);
-			break;
+			return new DataFile(uri);
 
 		case "http":
 		case "https":
-			data = new DataHttp(uri);
-			break;
+			return new DataHttp(uri);
 
 		case "s3":
-			data = new DataS3(uri);
-			break;
+			return new DataS3(uri);
 
 		case "ftp":
-			data = new DataFtp(uri);
-			break;
+			return new DataFtp(uri);
 
 		case "sftp":
-			data = new DataSftp(uri);
-			break;
+			return new DataSftp(uri);
 
 		default:
 			throw new RuntimeException("Unimplemented protocol '" + proto + "' for URL " + uri);
 		}
-
-		// Set values form config
-		data.setVerbose(Config.get().isVerbose());
-		data.setDebug(Config.get().isDebug());
-
-		return data;
 	}
 
 	/**
@@ -142,21 +118,14 @@ public abstract class Data {
 
 			int idxPort = host.indexOf(':');
 			if (idxPort > 0) host = host.substring(0, idxPort);
-
-			// TODO: Removed, if you need S3 access, you must specify the 's3://' prefix
-			//
-			//			if ((proto.equals("http") || proto.equals("https")) && host.endsWith(DataS3.AWS_DOMAIN)) {
-			//				String s3domain = host.substring(0, host.length() - DataS3.AWS_DOMAIN.length() - 1);
-			//				int idxDot = s3domain.lastIndexOf('.');
-			//				if (idxDot > 0) s3domain = s3domain.substring(idxDot + 1);
-			//				if (s3domain.startsWith(DataS3.AWS_S3_PREFIX)) proto = "s3";
-			//			}
 		}
 
 		return new Tuple<>(proto, host);
 	}
 
 	public Data() {
+		verbose = Config.get().isVerbose();
+		debug = Config.get().isDebug();
 	}
 
 	/**
@@ -173,6 +142,11 @@ public abstract class Data {
 	 * Is data writable?
 	 */
 	public abstract boolean canWrite();
+
+	@Override
+	public int compareTo(Data d) {
+		return toString().compareTo(d.toString());
+	}
 
 	/**
 	 * Delete data
@@ -194,7 +168,7 @@ public abstract class Data {
 	/**
 	 * Download file to local file system
 	 */
-	public abstract boolean download(String localFileName);
+	public abstract boolean download(Data localFile);
 
 	/**
 	 * Does data exists?
@@ -223,11 +197,9 @@ public abstract class Data {
 
 	public abstract String getPath();
 
-	//	public abstract URI getUri();
-
 	/**
 	 * Is this a directory (or an equivalent abstraction, such
-	 * as an S3 bucket / path) instead of a data file?
+	 * as an S3 prefix) instead of a data file?
 	 */
 	public abstract boolean isDirectory();
 
@@ -235,13 +207,13 @@ public abstract class Data {
 	 * Do we have a (valid) local copy of this data?
 	 */
 	public boolean isDownloaded() {
-		return isDownloaded(getLocalPath());
+		return isDownloaded(Data.factory(getLocalPath()));
 	}
 
 	/**
 	 * Do we have a (valid) local copy of this data?
 	 */
-	public abstract boolean isDownloaded(String localPath);
+	public abstract boolean isDownloaded(Data localFile);
 
 	/**
 	 * Does this represent a 'file' (not a directory)
@@ -264,13 +236,13 @@ public abstract class Data {
 	 * Do we have a (valid) remote copy of this local data?
 	 */
 	public boolean isUploaded() {
-		return isUploaded(getLocalPath());
+		return isUploaded(Data.factory(getAbsolutePath()));
 	}
 
 	/**
 	 * Do we have a (valid) remote copy of this data?
 	 */
-	public abstract boolean isUploaded(String localPath);
+	public abstract boolean isUploaded(Data localFile);
 
 	/**
 	 * Join a segment to this path
@@ -279,9 +251,14 @@ public abstract class Data {
 
 	/**
 	 * List of file names under this 'directory'
-	 * File names should be returned as canonical paths
+	 * Data objects are resolved respect to the base
+	 * data object requesting the list().
+	 * For instance, remote objects must contain the
+	 * full information to find /retrienve the object
+	 * (such as protocol, server, path, etc.) and not
+	 * just the 'file name'
 	 */
-	public abstract ArrayList<String> list();
+	public abstract ArrayList<Data> list();
 
 	/**
 	 * Create all directories in path
@@ -302,16 +279,29 @@ public abstract class Data {
 	public abstract long size();
 
 	/**
+	 * By default 'toString' shows the "god representation" of
+	 * the Data path:
+	 * - If the data is a local file, the absolute path is shown
+	 * - If the data is remote, the full URL/URL should be shown
+	 * No attempt to resolve the name should be made (e.g. do
+	 * not try to resolve 'canonical' paths)
+	 */
+	@Override
+	public String toString() {
+		throw new RuntimeException("Unimplemented method: You must implement Data.toString() for custom data types. This should never happen!");
+	}
+
+	/**
 	 * Upload local version of the file to remote file system
 	 */
 	public boolean upload() {
-		return upload(getLocalPath());
+		return upload(Data.factory(getAbsolutePath()));
 	}
 
 	/**
 	 * Upload a file to location
 	 * @return true if successful
 	 */
-	public abstract boolean upload(String locaLFileName);
+	public abstract boolean upload(Data locaLFile);
 
 }

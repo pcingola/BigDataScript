@@ -112,7 +112,7 @@ public class DataHttp extends DataRemote {
 	 * Download a file
 	 */
 	@Override
-	public boolean download(String localFile) {
+	public boolean download(Data local) {
 		URLConnection connection = null;
 		try {
 			// Connect and update info
@@ -124,11 +124,11 @@ public class DataHttp extends DataRemote {
 			InputStream is = uri.toURL().openStream();
 
 			// Open local file
-			if (verbose) Timer.showStdErr("Local file name: '" + localFile + "'");
+			if (verbose) Timer.showStdErr("Local file name: '" + local + "'");
 
 			// Create local directory if it doesn't exists
-			mkdirsLocal(localFile);
-			FileOutputStream os = new FileOutputStream(localFile);
+			mkdirsLocal(local);
+			FileOutputStream os = new FileOutputStream(local.getAbsolutePath());
 
 			// Copy to file
 			int count = 0, total = 0, lastShown = 0;
@@ -165,9 +165,9 @@ public class DataHttp extends DataRemote {
 	}
 
 	@Override
-	public ArrayList<String> list() {
+	public ArrayList<Data> list() {
 		// Download a page and extract all 'hrefs'
-		ArrayList<String> dirs = new ArrayList<>();
+		ArrayList<Data> fileList = new ArrayList<>();
 		try {
 			// Read HTML page
 			String baseUrl = uri.toURL().toString();
@@ -177,15 +177,14 @@ public class DataHttp extends DataRemote {
 			Elements links = doc.select("a[href]");
 			for (Element link : links) {
 				String href = link.attr("abs:href");
-				dirs.add(href);
+				fileList.add(new DataHttp(href));
 			}
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while connecting to " + this);
-			throw new RuntimeException(e);
+			if (verbose) Timer.showStdErr("ERROR while listing file from '" + this + "'");
 		} finally {
 			close();
 		}
-		return dirs;
+		return fileList;
 	}
 
 	/**
@@ -247,7 +246,7 @@ public class DataHttp extends DataRemote {
 	 * Cannot upload to a web server
 	 */
 	@Override
-	public boolean upload(String localFileName) {
+	public boolean upload(Data local) {
 		return false;
 	}
 

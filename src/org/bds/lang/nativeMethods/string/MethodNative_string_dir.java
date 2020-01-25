@@ -1,8 +1,5 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.bds.data.Data;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -35,13 +32,13 @@ public class MethodNative_string_dir extends MethodNativeString {
 
 	@Override
 	public Value runMethod(BdsThread bdsThread, Value vthis) {
-		Data d = bdsThread.data(vthis.asString());
-		ArrayList<String> list = d.list();
-		Collections.sort(list);
+		Data dir = bdsThread.data(vthis.asString());
 
 		ValueList vlist = new ValueList(returnType);
-		for (String s : list)
-			vlist.add(new ValueString(s));
+		for (Data d : dir.list())
+			vlist.add(new ValueString(d.getName()));
+
+		vlist.sort();
 		return vlist;
 	}
 
