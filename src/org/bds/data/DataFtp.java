@@ -19,9 +19,9 @@ import org.bds.util.Timer;
  */
 public class DataFtp extends DataRemote {
 
-	protected String hostname;
-
 	public static final long CACHE_TIMEOUT_FTP = 30 * 1000; // Timeout in milliseconds
+
+	protected String hostname;
 
 	public DataFtp(String urlStr) {
 		super();
@@ -48,9 +48,9 @@ public class DataFtp extends DataRemote {
 	}
 
 	@Override
-	public boolean download(String localFileName) {
-		mkdirsLocal(localFileName);
-		FtpConnectionFactory.get().download(uri, localFileName);
+	public boolean download(Data local) {
+		mkdirsLocal(local);
+		FtpConnectionFactory.get().download(uri, local.getAbsolutePath());
 		return true;
 	}
 
@@ -71,13 +71,17 @@ public class DataFtp extends DataRemote {
 	 * Note that we always return an absolute path
 	 */
 	@Override
-	public ArrayList<String> list() {
-		ArrayList<String> filesStr = new ArrayList<>();
+	public ArrayList<Data> list() {
+		ArrayList<Data> fileList = new ArrayList<>();
 		FTPFile[] files = FtpConnectionFactory.get().list(uri);
+
+		String baseUrl = this.toString();
+		if (!baseUrl.endsWith("/")) baseUrl += '/';
+
 		for (FTPFile file : files) {
-			filesStr.add(file.getName());
+			fileList.add(new DataFtp(baseUrl + file.getName()));
 		}
-		return filesStr;
+		return fileList;
 	}
 
 	/**
@@ -145,7 +149,7 @@ public class DataFtp extends DataRemote {
 	 * Cannot upload to a web server
 	 */
 	@Override
-	public boolean upload(String localFileName) {
+	public boolean upload(Data local) {
 		throw new RuntimeException("Unimplemented 'upload' operation for FTP data");
 	}
 

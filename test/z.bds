@@ -1,21 +1,6 @@
-class A {
-	void A() {
-		println("Hello world")
-	}
+
+url := 'http://ftp.ensembl.org/pub/release-75/fasta'
+println("url: $url")
+for(string f: url.dir()) {
+	println("File: '$f'")
 }
-
-class B extends A {
-	string fieldb = "Test worked!"
-
-	void B() {
-		super.A()
-		println("Hello again")
-	}
-}
-
-class Z extends B { ; }
-
-
-A a = new A()
-B b = (B) a
-println(b.fieldb)

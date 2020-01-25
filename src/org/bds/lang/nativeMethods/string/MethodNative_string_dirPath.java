@@ -32,19 +32,13 @@ public class MethodNative_string_dirPath extends MethodNativeString {
 
 	@Override
 	public Value runMethod(BdsThread bdsThread, Value vthis) {
-		ValueList vlist = new ValueList(returnType);
-
 		String baseDir = vthis.asString();
-		Data dBaseDir = bdsThread.data(baseDir);
 		if (!baseDir.endsWith("/")) baseDir += "/";
 
-		// List files and match against regex
-		for (String sub : bdsThread.data(baseDir).list()) {
-			Data dsub = Data.factory(sub);
-			Data dname = Data.factory(dsub.getName());
-			Data dpath = dBaseDir.join(dname);
-			String path = dpath.isRemote() ? dpath.toString() : dpath.getAbsolutePath();
-			vlist.add(new ValueString(path));
+		// List files
+		ValueList vlist = new ValueList(returnType);
+		for (Data sub : bdsThread.data(baseDir).list()) {
+			vlist.add(new ValueString(sub.toString()));
 		}
 
 		vlist.sort();

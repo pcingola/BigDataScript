@@ -1,8 +1,7 @@
 package org.bds.lang.nativeMethods.string;
 
-import java.io.File;
-
 import org.bds.data.Data;
+import org.bds.data.DataFile;
 import org.bds.data.DataRemote;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
@@ -32,7 +31,7 @@ public class MethodNative_string_write_str extends MethodNativeString {
 
 	@Override
 	protected Object runMethodNative(BdsThread bdsThread, Object objThis) {
-		// Download data if nescesary
+		// Download data if necessary
 		Data data = bdsThread.data(objThis.toString());
 
 		// Save to file
@@ -41,17 +40,17 @@ public class MethodNative_string_write_str extends MethodNativeString {
 			DataRemote dr = (DataRemote) data;
 			if (!dr.isFile()) bdsThread.fatalError(this, "Cannot write to non-file: '" + dr + "'");
 
-			// Save to temp file and upload
-			String tmpFileName = dr.getLocalPath();
+			// Save to temporary file and upload
+			Data tmp = new DataFile(dr.getLocalPath());
 
 			// Make sure temp dir exists
-			(new File(tmpFileName)).getParentFile().mkdirs();
+			tmp.getParent().mkdirs();
 
 			// Create local file
-			Gpr.toFile(tmpFileName, str);
+			Gpr.toFile(tmp.getAbsolutePath(), str);
 
 			// Upload file
-			if (!data.upload(tmpFileName)) return ""; // Failed upload?
+			if (!data.upload(tmp)) return ""; // Failed upload?
 		} else {
 			// Save to local file
 			Gpr.toFile(data.getLocalPath(), str);

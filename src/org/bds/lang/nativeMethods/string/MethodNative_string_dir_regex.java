@@ -3,10 +3,8 @@ package org.bds.lang.nativeMethods.string;
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
+import org.bds.data.Data;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -39,34 +37,24 @@ public class MethodNative_string_dir_regex extends MethodNativeString {
 	/**
 	 * Does the path match?
 	 */
-	boolean matches(BdsThread bdsThread, String path, PathMatcher matcher) {
-		File file = new File(path);
+	boolean matches(BdsThread bdsThread, Data path, PathMatcher matcher) {
+		File file = new File(path.getName());
 		return matcher.matches(file.toPath().getFileName());
 	}
 
 	@Override
 	public Value runMethod(BdsThread bdsThread, Value vthis) {
-		String glob = bdsThread.getString("glob");
+		Data dir = bdsThread.data(vthis.asString());
 
-		// List all files, filtered by 'glob'
-		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
-
-		String baseDir = vthis.asString();
-		ArrayList<String> list = bdsThread.data(baseDir) // Create data object
-				.list() // List files in dir
-				.stream() // Convert to stream
-				.filter(d -> matches(bdsThread, d, matcher)) // Filter using path matcher
-				.collect(Collectors.toCollection(ArrayList::new)) // Convert stream to arrayList
-		;
-
-		// Sort by name
-		Collections.sort(list);
-
-		// Convert to ValueList
+		// Filter list by Glob
 		ValueList vlist = new ValueList(returnType);
-		for (String s : list)
-			vlist.add(new ValueString(s));
+		String glob = bdsThread.getString("glob");
+		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + glob);
+		for (Data d : dir.list()) {
+			if (matches(bdsThread, d, matcher)) vlist.add(new ValueString(d.getName()));
+		}
 
+		vlist.sort();
 		return vlist;
 	}
 

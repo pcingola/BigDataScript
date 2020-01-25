@@ -18,7 +18,7 @@ import org.bds.util.Timer;
 public abstract class DataRemote extends Data {
 
 	public static final String TMP_BDS_DATA = "bds";
-	public static final long CACHE_TIMEOUT = 1000; // Timeout in milliseconds
+	public static final long CACHE_TIMEOUT = 10 * 1000; // Timeout in milliseconds
 	protected boolean canRead;
 	protected boolean canWrite;
 	protected boolean exists;
@@ -61,7 +61,7 @@ public abstract class DataRemote extends Data {
 	public boolean download() {
 		if (isDownloaded()) return true;
 		String localFile = localPath();
-		return download(localFile);
+		return download(factory(localFile));
 	}
 
 	@Override
@@ -124,12 +124,11 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
-	public boolean isDownloaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + this + "'");
+	public boolean isDownloaded(Data local) {
+		if (debug) Gpr.debug("Comparing local file '" + local + "' to remote file '" + this + "'");
 
 		// Is there a local file
-		File localFile = new File(localPath);
-		if (!localFile.exists()) return false;
+		if (!local.exists()) return false;
 
 		// Get remote data
 		if (needsUpdateInfo()) {
@@ -138,15 +137,11 @@ public abstract class DataRemote extends Data {
 
 		// Has local file a different size than remote file?
 		if (size <= 0) return false; // Note: Negative size indicates dynamic content
-		if (localFile.length() != size) return false;
+		if (local.size() != size) return false;
 
-		// Is local file older than remote file?
-		long lflm = localFile.lastModified();
-		long rflm = getLastModified().getTime();
-		if (lflm < rflm) return false;
-
-		// OK, we have a local file that looks updated respect to the remote file
-		return true;
+		// Is local file older than remote file? Then we have a local
+		// file that looks updated respect to the remote file
+		return getLastModified().getTime() <= local.getLastModified().getTime();
 	}
 
 	@Override
@@ -160,12 +155,11 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
-	public boolean isUploaded(String localPath) {
-		if (debug) Gpr.debug("Comparing local file '" + localPath + "' to remote file '" + this + "'");
+	public boolean isUploaded(Data local) {
+		if (debug) Gpr.debug("Comparing local file '" + local + "' to remote file '" + this + "'");
 
 		// Is there a local file
-		File localFile = new File(localPath);
-		if (!localFile.exists()) return false;
+		if (!local.exists()) return false;
 
 		// Get remote data
 		if (needsUpdateInfo()) {
@@ -173,15 +167,11 @@ public abstract class DataRemote extends Data {
 		}
 
 		// Has local file a different size than remote file?
-		if (localFile.length() != size) return false;
+		if (local.size() != size) return false;
 
-		// Is local file older than remote file?
-		long lflm = localFile.lastModified();
-		long rflm = getLastModified().getTime();
-		if (lflm > rflm) return false;
-
-		// OK, we have a local file that looks updated respect to the remote file
-		return true;
+		// Is local file newer than remote file? Then we have a
+		// remote file that looks updated respect to the local file
+		return local.getLastModified().getTime() <= getLastModified().getTime();
 	}
 
 	/**
@@ -225,25 +215,22 @@ public abstract class DataRemote extends Data {
 	}
 
 	public boolean mkdirsLocal() {
-		return mkdirsLocal(getLocalPath());
+		return mkdirsLocal(factory(getLocalPath()));
 	}
 
 	/**
 	 * Create local path
 	 */
-	protected boolean mkdirsLocal(String localFile) {
-		File file = new File(localFile);
+	protected boolean mkdirsLocal(Data local) {
+		if (local == null) return false;
 
-		// Create local directory if it doesn't exists
-		if (file != null && file.getParent() != null) {
-			File path = new File(file.getParent());
-			if (path.exists()) return true;
+		Data paren = local.getParent();
+		if (paren == null) return false;
 
-			if (verbose) Timer.showStdErr("Local path '" + path + "' doesn't exist, creating.");
-			return path.mkdirs();
-		}
+		if (paren.exists()) return true;
 
-		return false;
+		if (verbose) Timer.showStdErr("Local path '" + paren + "' doesn't exist, creating.");
+		return paren.mkdirs();
 	}
 
 	protected boolean needsUpdateInfo() {
