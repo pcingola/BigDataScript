@@ -5,6 +5,7 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.nativeMethods.list.MethodNativeListHashCode;
 import org.bds.lang.nativeMethods.list.MethodNativeListSize;
 import org.bds.lang.nativeMethods.map.MethodNativeMapValues;
 import org.bds.lang.type.Type;
@@ -21,18 +22,18 @@ import org.bds.util.Gpr;
  */
 public class ForLoopList extends StatementWithScope {
 
-	private static final long serialVersionUID = 1093702814601505502L;
-
 	// Note:	It is important that 'begin' node is type-checked before the others in order to
 	//			add variables to the scope before ForCondition, ForEnd or Statement uses them.
 	//			So the field name should be alphabetically sorted before the other (that's why
 	//			I call it 'begin' and not 'init').
 	//			Yes, it's a horrible hack.
 	VarDeclaration beginVarDecl;
+
 	Expression expression;
 	Statement statement;
 	String iterableListName;
 	String iterableCountName;
+	private static final long serialVersionUID = 1093702814601505502L;
 
 	public ForLoopList(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -80,17 +81,20 @@ public class ForLoopList extends StatementWithScope {
 
 		// Find native methods
 		SymbolTable symtab = returnType.getSymbolTable();
+		ValueFunction methodHashCode = null;
 		ValueFunction methodSize = null;
 		ValueFunction methodValues = null;
 
 		if (isList()) {
 			methodSize = symtab.findFunction(MethodNativeListSize.class);
+			methodHashCode = symtab.findFunction(MethodNativeListHashCode.class);
 		} else if (isMap()) {
 			// We iterate on the list of map's values
 			TypeMap tmap = (TypeMap) returnType;
 			TypeList tlist = TypeList.get(tmap.getValueType());
 			methodValues = symtab.findFunction(MethodNativeMapValues.class);
 			methodSize = tlist.getSymbolTable().findFunction(MethodNativeListSize.class);
+			methodHashCode = tlist.getSymbolTable().findFunction(MethodNativeListHashCode.class);
 		} else throw new RuntimeException("Cannot iterate on type " + returnType);
 
 		//
@@ -102,9 +106,13 @@ public class ForLoopList extends StatementWithScope {
 		// How the loop is executed:
 		//   $list = expressionList
 		//   $maxCount = $list.size()
+		//   $listHash = $list.hash()
 		//   for(int $count=0 ; $count < $maxCount ; $count++ ) {
 		//     var = list[$count]
+		//     ...
 		//     statements
+		//     ...
+		//     if( $list.hash() != $listHash) throw ConcurrentModification()
 		//   }
 		//
 

@@ -13,6 +13,7 @@ import org.bds.lang.nativeMethods.list.MethodNativeListCount;
 import org.bds.lang.nativeMethods.list.MethodNativeListFilter;
 import org.bds.lang.nativeMethods.list.MethodNativeListForEach;
 import org.bds.lang.nativeMethods.list.MethodNativeListHas;
+import org.bds.lang.nativeMethods.list.MethodNativeListHashCode;
 import org.bds.lang.nativeMethods.list.MethodNativeListHead;
 import org.bds.lang.nativeMethods.list.MethodNativeListIndexOf;
 import org.bds.lang.nativeMethods.list.MethodNativeListIsEmpty;
@@ -40,11 +41,11 @@ import org.bds.util.Gpr;
  */
 public class TypeList extends TypeComposite {
 
+	Type elementType; // Type of elements in the list
+
 	private static final long serialVersionUID = -6328403968286013768L;
 
 	public static boolean debug = false;
-
-	Type elementType; // Type of elements in the list
 
 	public static TypeList factory(BdsNode parent, ParseTree tree) {
 		TypeList typeList = new TypeList(parent, tree);
@@ -121,6 +122,7 @@ public class TypeList extends TypeComposite {
 			methods.add(new MethodNativeListFilter(this));
 			methods.add(new MethodNativeListForEach(this));
 			methods.add(new MethodNativeListHas(this));
+			methods.add(new MethodNativeListHashCode(this));
 			methods.add(new MethodNativeListHead(this));
 			methods.add(new MethodNativeListIndexOf(this));
 			methods.add(new MethodNativeListIsEmpty(this));
