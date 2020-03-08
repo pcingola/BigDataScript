@@ -192,7 +192,8 @@ public class BdsVmAsm {
 				addType(TypeMap.get(tk, tv));
 
 		// Add all types, including classes
-		Types.getAll().stream().forEach(t -> addType(t));
+		for (Type t : Types.getAll())
+			addType(t);
 	}
 
 	/**

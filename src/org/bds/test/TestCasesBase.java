@@ -180,6 +180,13 @@ public class TestCasesBase {
 		bdsTest.checkVariable(varname, expectedValue);
 	}
 
+	void runAndCheckException(String fileName, String exceptionType) {
+		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.run();
+		bdsTest.checkRunExitCodeFail();
+		bdsTest.checkException(exceptionType);
+	}
+
 	/**
 	 * Check exit code
 	 */

@@ -28,6 +28,7 @@ import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeClassException;
+import org.bds.lang.type.TypeClassExceptionConcurrentModification;
 import org.bds.lang.type.Types;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
@@ -271,6 +272,7 @@ public class BdsRun {
 		if (debug) log("Initialize standard classes.");
 
 		initilaizeNativeClass(new TypeClassException());
+		initilaizeNativeClass(new TypeClassExceptionConcurrentModification());
 	}
 
 	/**

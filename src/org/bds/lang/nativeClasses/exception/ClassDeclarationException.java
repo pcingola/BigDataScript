@@ -19,20 +19,22 @@ public class ClassDeclarationException extends ClassDeclarationNative {
 
 	@Override
 	protected FieldDeclaration[] createFields() {
-		return new FieldDeclaration[0];
+		List<FieldDeclaration> fields = new LinkedList<>();
+		// fields.add();
+		return fields.toArray(new FieldDeclaration[0]);
 	}
 
 	@Override
 	protected MethodDeclaration[] createMethods() {
 		List<MethodDeclaration> methods = new LinkedList<>();
 		methods.add(defaultConstructor());
-		methods.add(new MethodConstructor(getType()));
+		methods.add(new MethodExceptionConstructor(getType()));
 		return methods.toArray(new MethodDeclaration[0]);
 	}
 
 	@Override
 	protected void initNativeClass() {
-		className = CLASS_NAME_EXCEPTION;
+		if (className == null) className = CLASS_NAME_EXCEPTION;
 		super.initNativeClass();
 	}
 

@@ -1,6 +1,7 @@
 package org.bds.lang.type;
 
 import org.bds.lang.nativeClasses.exception.ClassDeclarationException;
+import org.bds.lang.statement.ClassDeclaration;
 
 public class TypeClassException extends TypeClass {
 
@@ -8,6 +9,10 @@ public class TypeClassException extends TypeClass {
 
 	public TypeClassException() {
 		super(new ClassDeclarationException());
+	}
+
+	public TypeClassException(ClassDeclaration classDeclaration) {
+		super(classDeclaration);
 	}
 
 }

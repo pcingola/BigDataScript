@@ -9,6 +9,10 @@ import org.bds.lang.statement.VariableInit;
 import org.bds.lang.type.Type;
 import org.bds.symbol.SymbolTable;
 
+/**
+ * A native class declaration.
+ * A class is declared natively using this object, which is fed to a 'TypeClass'
+ */
 public abstract class ClassDeclarationNative extends ClassDeclaration {
 
 	private static final long serialVersionUID = -831104482356629903L;

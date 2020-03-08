@@ -13,11 +13,11 @@ import org.bds.run.BdsThread;
  * Constructor for native class Exception
  * @author pcingola
  */
-public class MethodConstructor extends MethodNative {
+public class MethodExceptionConstructor extends MethodNative {
 
 	private static final long serialVersionUID = -8937479079704278314L;
 
-	public MethodConstructor(Type classType) {
+	public MethodExceptionConstructor(Type classType) {
 		super(classType);
 	}
 

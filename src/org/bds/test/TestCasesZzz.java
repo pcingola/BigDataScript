@@ -18,11 +18,21 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
+	//	@Test
+	//	public void test_z() {
+	//		verbose = true;
+	//		//		debug = true;
+	//		runAndCheckException("test/z.bds", "ConcurrentModificationException");
+	//	}
+
 	@Test
 	public void test244_concurrent_modification() {
-		verbose = true;
-		debug = true;
-		runOk("test/run_244.bds");
+		runAndCheckException("test/run_244.bds", "ConcurrentModificationException");
+	}
+
+	@Test
+	public void test249_concurrent_modification_hash() {
+		runAndCheckException("test/run_249.bds", "ConcurrentModificationException");
 	}
 
 }

@@ -12,15 +12,16 @@ import org.bds.lang.value.ValueClass;
 
 /**
  * Class type
+ * Can create native classes by creating a TypeClass with a ClassDeclaration
  *
  * @author pcingola
  */
 public class TypeClass extends TypeComposite {
 
-	private static final long serialVersionUID = -6173442643563941413L;
-
 	protected String className;
+
 	protected ClassDeclaration classDecl;
+	private static final long serialVersionUID = -6173442643563941413L;
 
 	/**
 	 * This constructor creates a "stub" TypeClass

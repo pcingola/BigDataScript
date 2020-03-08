@@ -54,9 +54,9 @@ public class BdsVm implements Serializable {
 	List<Object> constants;
 	Map<Integer, Integer> coverageCounter; // Count how many times a nodeId was traversed
 	Map<Object, Integer> constantsByObject;
-
 	boolean debug;
 	ExceptionHandler exceptionHandler; // Current Exception handler (null if we are not in a 'try/catch' statement)
+	ValueClass exceptionValue; // Latest exception thrown (this is mostly used for test cases)
 	Integer exitCode = null; // Default exit code (null means: parse last entry from stack)
 	int fp; // Frame pointer
 	Map<String, FunctionDeclaration> functionsBySignature;
@@ -578,6 +578,10 @@ public class BdsVm implements Serializable {
 
 	public Map<Integer, Integer> getCoverageCounter() {
 		return coverageCounter;
+	}
+
+	public ValueClass getExceptionValue() {
+		return exceptionValue;
 	}
 
 	public int getExitCode() {
@@ -1407,7 +1411,7 @@ public class BdsVm implements Serializable {
 			case SETFIELDPOP:
 				name = constantString();
 				vclass = (ValueClass) pop();
-				vclass.setValue(name, pop()); // We leave the value in the stack
+				vclass.setValue(name, pop());
 				break;
 
 			case SETLIST:
@@ -1419,7 +1423,7 @@ public class BdsVm implements Serializable {
 			case SETLISTPOP:
 				vlist = (ValueList) pop();
 				idx = popInt();
-				vlist.setValue(idx, pop()); // We leave the value in the stack
+				vlist.setValue(idx, pop());
 				break;
 
 			case SETMAP:
@@ -1494,7 +1498,7 @@ public class BdsVm implements Serializable {
 
 			case VARPOP:
 				name = constantString();
-				scope.add(name, pop()); // We pop value form the stack
+				scope.add(name, pop());
 				break;
 
 			case WAIT:
@@ -1629,6 +1633,8 @@ public class BdsVm implements Serializable {
 	 * Implement 'throw' opcode
 	 */
 	void throwException(ValueClass exceptionValue) {
+		this.exceptionValue = exceptionValue;
+
 		// Populate Exception's stack trace message, if empty
 		if (exceptionValue.getValue("stackTrace") == null) {
 			exceptionValue.setValue("stackTrace", new ValueString(stackTrace()));
@@ -1650,7 +1656,7 @@ public class BdsVm implements Serializable {
 		}
 
 		// No Exception handler was found
-		fatalError("Exception thrown: " + exceptionValue);
+		fatalError(exceptionValue.getType() + " thrown: " + exceptionValue);
 	}
 
 	/**
