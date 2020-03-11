@@ -491,61 +491,6 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
-	 * Create a 'fork' vm-thread
-	 */
-	private BdsVm fork(int pushCount) {
-		BdsVm vmclone = new BdsVm();
-
-		vmclone.code = code;
-		vmclone.debug = debug;
-		vmclone.nodeId = nodeId;
-		vmclone.run = run;
-		vmclone.verbose = verbose;
-		vmclone.labels = labels;
-		vmclone.labelsByPc = labelsByPc;
-		vmclone.constantsByObject = constantsByObject;
-		vmclone.functionsBySignature = functionsBySignature;
-		vmclone.typeToIndex = typeToIndex;
-		vmclone.constants = constants;
-		vmclone.types = types;
-
-		// Child process
-		// vmclone.callFrame : Initialized, because child process has a new frame
-		// vmclone.fp        : Initialized to zero because child process has a new frame
-		// vmclone.bdsThread : Will be set by 'forked' bdsThread
-		vmclone.pc = pc; // Already pointing to instruction after 'fork'
-		vmclone.scope = scope; // Same scope
-
-		// Push 'pushCount' values to new VM (from current VM)
-		if (pushCount > 0) {
-			Value[] vals = new Value[pushCount];
-
-			// Pop values
-			for (int i = 0; i < pushCount; i++)
-				vals[i] = pop();
-
-			// Push values: stack must be in same order
-			// Note: We clone all primitive values. This saves us
-			//       from some race conditions issues
-			for (int i = pushCount - 1; i >= 0; i--) {
-				Value v = vals[i];
-				if (v.getType().isPrimitive()) v = v.clone();
-				vmclone.push(v);
-			}
-		}
-
-		return vmclone;
-	}
-
-	/**
-	 * Execute a 'fork' opcode
-	 */
-	void forkOpCode(int pushCount) {
-		BdsVm vmfork = fork(pushCount);
-		bdsThread.fork(vmfork);
-	}
-
-	/**
 	 * Get arguments from scope for a function / method call
 	 * Note: Remember that stack in reverse order
 	 *
@@ -699,6 +644,61 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
+	 * Create a 'parallel' vm-thread
+	 */
+	private BdsVm parallel(int pushCount) {
+		BdsVm vmclone = new BdsVm();
+
+		vmclone.code = code;
+		vmclone.debug = debug;
+		vmclone.nodeId = nodeId;
+		vmclone.run = run;
+		vmclone.verbose = verbose;
+		vmclone.labels = labels;
+		vmclone.labelsByPc = labelsByPc;
+		vmclone.constantsByObject = constantsByObject;
+		vmclone.functionsBySignature = functionsBySignature;
+		vmclone.typeToIndex = typeToIndex;
+		vmclone.constants = constants;
+		vmclone.types = types;
+
+		// Child process
+		// vmclone.callFrame : Initialized, because child process has a new frame
+		// vmclone.fp        : Initialized to zero because child process has a new frame
+		// vmclone.bdsThread : Will be set by 'parallel' bdsThread
+		vmclone.pc = pc; // Already pointing to instruction after 'parallel'
+		vmclone.scope = scope; // Same scope
+
+		// Push 'pushCount' values to new VM (from current VM)
+		if (pushCount > 0) {
+			Value[] vals = new Value[pushCount];
+
+			// Pop values
+			for (int i = 0; i < pushCount; i++)
+				vals[i] = pop();
+
+			// Push values: stack must be in same order
+			// Note: We clone all primitive values. This saves us
+			//       from some race conditions issues
+			for (int i = pushCount - 1; i >= 0; i--) {
+				Value v = vals[i];
+				if (v.getType().isPrimitive()) v = v.clone();
+				vmclone.push(v);
+			}
+		}
+
+		return vmclone;
+	}
+
+	/**
+	 * Execute a 'parallel' opcode
+	 */
+	void parallelOpCode(int pushCount) {
+		BdsVm vmpar = parallel(pushCount);
+		bdsThread.parallel(vmpar);
+	}
+
+	/**
 	 * Parameter is an int
 	 */
 	int paramInt() {
@@ -830,7 +830,7 @@ public class BdsVm implements Serializable {
 	 */
 	public int run() {
 		// Initialize program counter
-		// Note: If vm forked, then pc is already initialized in child
+		// Note: If vm parallel, then pc is already initialized in child
 		//       process, do not change.
 		if (pc == 0) pc = Math.max(0, getLabel(LABLE_MAIN));
 
@@ -1061,13 +1061,13 @@ public class BdsVm implements Serializable {
 				exitCode = BdsThread.EXITCODE_ERROR;
 				return;
 
-			case FORK:
-				forkOpCode(0);
+			case PARALLEL:
+				parallelOpCode(0);
 				break;
 
-			case FORKPUSH:
+			case PARALLELPUSH:
 				i1 = popInt();
-				forkOpCode((int) i1);
+				parallelOpCode((int) i1);
 				break;
 
 			case GEB:

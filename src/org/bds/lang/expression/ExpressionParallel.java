@@ -121,7 +121,7 @@ public class ExpressionParallel extends ExpressionTask {
 		// Note that non-empty strings are 'true' when evaluated as bool, so
 		// parent is 'true' and child is 'false'
 		sb.append("pushi " + functionCall.getArgs().size() + "\n");
-		sb.append("forkpush\n"); // Fork and push 'n' parameters to the new thread's stack
+		sb.append("parallelpush\n"); // Fork and push 'n' parameters to the new thread's stack
 		sb.append("var " + varThreadIdChild + "\n"); // Save thread ID
 		sb.append("jmpt " + labelParent + "\n");
 		sb.append(labelChild + ":\n");
@@ -150,7 +150,7 @@ public class ExpressionParallel extends ExpressionTask {
 		// empty threadId for child.
 		// Note that non-empty strings are 'true' when evaluated as bool, so
 		// parent is 'true' and child is 'false'
-		sb.append("fork\n");
+		sb.append("parallel\n");
 		sb.append("dup\n"); // Save thread ID
 		sb.append("jmpt " + labelParent + "\n");
 		sb.append(labelChild + ":\n");

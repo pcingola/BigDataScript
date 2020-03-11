@@ -64,8 +64,6 @@ public enum OpCode {
 	, EQB, EQI, EQR, EQS
 	// Error
 	, ERROR
-	// Create another thread ('forkpush' pushes 'n' values into the new stack)
-	, FORK, FORKPUSH
 	// Greater or equal than
 	, GEB, GEI, GER, GES
 	// Goal
@@ -107,6 +105,8 @@ public enum OpCode {
 	, NOTB, NOTI
 	// OR: bool (logical), int (bitwise)
 	, ORB, ORI
+	// Create another thread ('parallelpush' pushes 'n' values into the new stack)
+	, PARALLEL, PARALLELPUSH
 	// Pop: remove latest element from stack
 	, POP
 	// Print stdout & stderr

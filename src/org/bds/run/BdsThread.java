@@ -50,8 +50,29 @@ import org.bds.vm.BdsVm;
  */
 public class BdsThread extends Thread implements Serializable {
 
-	private static final long serialVersionUID = 1206304272840188781L;
+	Config config; // Configuration
 
+	Random random; // Random number generator
+	BdsVm vm; // Virtual machine
+	// Program and state
+	Statement statement; // Main statement executed by this thread
+	RunState runState; // Latest RunState
+	int exitValue; // Exit value
+	List<String> removeOnExit; // Files to be removed on exit
+
+	String reportFile; // Latest report file
+	Timer timer; // Program timer
+	boolean freeze; // Freeze execution in next execution step
+
+	String currentDir; // Program's 'current directory'
+	BdsThread parent; // Parent thread
+	String bdsThreadId; // BdsThread ID
+
+	int bdsThreadNum; // Thread number
+	Map<String, BdsThread> bdsChildThreadsById; // Child threads
+	// Task management
+	TaskDependecies taskDependecies;
+	private static final long serialVersionUID = 1206304272840188781L;
 	// Exit codes (see bds.go)
 	public static final int EXITCODE_OK = 0;
 	public static final int EXITCODE_ERROR = 1;
@@ -59,31 +80,10 @@ public class BdsThread extends Thread implements Serializable {
 	public static final int EXITCODE_KILLED = 3;
 	public static final int EXITCODE_FATAL_ERROR = 10;
 	public static final int EXITCODE_ASSERTION_FAILED = 5;
-
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
+
 	private static int bdsThreadNumber = 1;
-
-	Config config; // Configuration
-	Random random; // Random number generator
-	BdsVm vm; // Virtual machine
-
-	// Program and state
-	Statement statement; // Main statement executed by this thread
-	RunState runState; // Latest RunState
-	int exitValue; // Exit value
-	List<String> removeOnExit; // Files to be removed on exit
-	String reportFile; // Latest report file
-	Timer timer; // Program timer
-	boolean freeze; // Freeze execution in next execution step
-	String currentDir; // Program's 'current directory'
-	BdsThread parent; // Parent thread
-	String bdsThreadId; // BdsThread ID
-	int bdsThreadNum; // Thread number
-	Map<String, BdsThread> bdsChildThreadsById; // Child threads
-
-	// Task management
-	TaskDependecies taskDependecies;
 
 	/**
 	 * Get an ID for a node
@@ -341,19 +341,6 @@ public class BdsThread extends Thread implements Serializable {
 
 	public void fatalError(String message) {
 		fatalError(getBdsNodeCurrent(), message);
-	}
-
-	/**
-	 * Fork: Create and start a new bds thread
-	 */
-	public BdsThread fork(BdsVm vmfork) {
-		BdsThread newBdsThread = new BdsThread(this, statement, config, vmfork);
-
-		push(new ValueString(newBdsThread.getBdsThreadId())); // Parent process: return child's thread ID
-		newBdsThread.push(new ValueString("")); // Fork returns empty string on child process
-
-		newBdsThread.start();
-		return newBdsThread;
 	}
 
 	/**
@@ -642,6 +629,19 @@ public class BdsThread extends Thread implements Serializable {
 		// We are done when ALL tasks are done
 		for (Value tid : taskIds)
 			kill(tid);
+	}
+
+	/**
+	 * Parallel: Create and start a new bds thread
+	 */
+	public BdsThread parallel(BdsVm vmpar) {
+		BdsThread newBdsThread = new BdsThread(this, statement, config, vmpar);
+
+		push(new ValueString(newBdsThread.getBdsThreadId())); // Parent process: return child's thread ID
+		newBdsThread.push(new ValueString("")); // Fork returns empty string on child process
+
+		newBdsThread.start();
+		return newBdsThread;
 	}
 
 	public Value pop() {
