@@ -12,19 +12,13 @@ import org.bds.util.Gpr;
  */
 public class Bds {
 
-	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "b";
-	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
-	public static final String VERSION_MAJOR = "2.1";
-	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
-	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
-
 	String args[];
 	BdsRun bdsRun;
 	String chekcpointRestoreFile; // Restore file
 	Config config;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Configuration file
 	boolean coverage;
+
 	double coverageMin = -1; // Min coverage ratio
 	boolean debug; // debug mode
 	boolean dryRun; // Dry run (do not run tasks)
@@ -42,6 +36,12 @@ public class Bds {
 	String system; // System type
 	int taskFailCount = -1;
 	boolean verbose; // Verbose mode
+	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
+	public static final String REVISION = "b";
+	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
+	public static final String VERSION_MAJOR = "2.1";
+	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
+	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
 	/**
 	 * Main
@@ -427,6 +427,9 @@ public class Bds {
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files). Default: " + log + ".");
 		System.err.println("  -noChp                         : Do not create any checkpoint files.");
+		System.err.println("  -noReport                      : Do not create reports. Default: " + !(reportHtml || reportYaml) + ".");
+		System.err.println("  -noReportHtml                  : Do not create HTML reports. Default: " + (!reportHtml) + ".");
+		System.err.println("  -noReportYaml                  : Do not create YAML reports. Default: " + (!reportYaml) + ".");
 		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit). Default: " + noRmOnExit + ".");
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
 		System.err.println("  -quiet                         : Do not show any messages or tasks outputs on STDOUT. Default: " + quiet + ".");

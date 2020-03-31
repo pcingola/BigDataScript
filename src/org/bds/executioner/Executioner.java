@@ -48,7 +48,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	protected boolean running, valid;
 	protected Tail tail;
 	protected TaskLogger taskLogger;
-	protected Map<String, Task> tasksDone; // Tasks that fin
+	protected Map<String, Task> tasksDone; // Tasks that finished
 	protected Map<String, Task> tasksRunning; // Tasks running
 	protected Map<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host
 	protected List<Task> tasksToRun; // Tasks queued for execution
