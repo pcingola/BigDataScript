@@ -564,7 +564,10 @@ public class BdsRun {
 		int exitValTest = runThread(bdsThreadTest);
 
 		// Show coverage results
-		if (coverage) coverageCounter.add(vmtest);
+		if (coverage) {
+			// TODO @PA: Save to report file
+			coverageCounter.add(vmtest);
+		}
 
 		return exitValTest;
 	}

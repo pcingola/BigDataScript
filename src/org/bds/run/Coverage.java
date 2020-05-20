@@ -126,6 +126,7 @@ public class Coverage {
 		double perc = (100.0 * countCovered) / countLines;
 
 		// Limit file name length
+		// TODO @PA: Change hardcoded line length to constant!!!!
 		if (file.length() > 50) file = "..." + file.substring(file.length() - 50 + 3);
 
 		// One line statistics
