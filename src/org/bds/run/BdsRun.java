@@ -370,6 +370,10 @@ public class BdsRun {
 			exitValue = compileBds() ? 0 : 1;
 			break;
 
+		case COVEARAGE_REPORT:
+			// TODO @PA: Add code to grab coverage from all "reports" and calculate the overall coverage
+			break;
+
 		case INFO_CHECKPOINT:
 			exitValue = infoCheckpoint();
 			break;

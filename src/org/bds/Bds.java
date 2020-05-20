@@ -187,6 +187,11 @@ public class Bds {
 					coverage = true;
 					break;
 
+				case "-coverage-report":
+					// TODO @PA: Add option that propagates to BdsRun object
+					coverageReport = true;
+					break;
+
 				case "-coveragemin":
 					coverageMin = Gpr.parseDoubleSafe(args[++i]);;
 					break;
