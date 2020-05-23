@@ -15,16 +15,14 @@ import org.bds.util.Timer;
  */
 public class ExecutionerClusterSlurm extends ExecutionerCluster {
 
+	boolean timeInMins = true; // Typically SLURM timeouts are in minutes
 	// Define commands
 	public static final String KILL_COMMAND[] = { "scancel" };
-	//	public static final String POST_MORTEM_COMMAND[] = { "sacct", "-l", "-j" };
 	public static final String POST_MORTEM_COMMAND[] = { "scontrol", "-d", "show", "job" };
-	public static final String STAT_COMMAND[] = { "squeue", "-h", "-o", "%A" };
+	public static final String STAT_COMMAND[] = { "squeue", "-h", "-a", "-o", "%A" };
 	public static final String RUN_COMMAND[] = { "sbatch", "--parsable", "--no-requeue" };
 
 	public static final String PID_REGEX_DEFAULT = "(\\d+)";
-
-	boolean timeInMins = true; // Typically SLURM timeouts are in minutes
 
 	public ExecutionerClusterSlurm(Config config) {
 		super(config);
