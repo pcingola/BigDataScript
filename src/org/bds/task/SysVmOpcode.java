@@ -24,7 +24,6 @@ public class SysVmOpcode {
 	private static int sysId = 1;
 
 	protected BdsThread bdsThread;
-
 	protected BdsNode bdsNode;
 	protected String commands;
 

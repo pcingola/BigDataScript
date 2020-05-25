@@ -50,29 +50,8 @@ import org.bds.vm.BdsVm;
  */
 public class BdsThread extends Thread implements Serializable {
 
-	Config config; // Configuration
-
-	Random random; // Random number generator
-	BdsVm vm; // Virtual machine
-	// Program and state
-	Statement statement; // Main statement executed by this thread
-	RunState runState; // Latest RunState
-	int exitValue; // Exit value
-	List<String> removeOnExit; // Files to be removed on exit
-
-	String reportFile; // Latest report file
-	Timer timer; // Program timer
-	boolean freeze; // Freeze execution in next execution step
-
-	String currentDir; // Program's 'current directory'
-	BdsThread parent; // Parent thread
-	String bdsThreadId; // BdsThread ID
-
-	int bdsThreadNum; // Thread number
-	Map<String, BdsThread> bdsChildThreadsById; // Child threads
-	// Task management
-	TaskDependecies taskDependecies;
 	private static final long serialVersionUID = 1206304272840188781L;
+
 	// Exit codes (see bds.go)
 	public static final int EXITCODE_OK = 0;
 	public static final int EXITCODE_ERROR = 1;
@@ -82,8 +61,24 @@ public class BdsThread extends Thread implements Serializable {
 	public static final int EXITCODE_ASSERTION_FAILED = 5;
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
-
 	private static int bdsThreadNumber = 1;
+
+	Config config; // Configuration
+	Random random; // Random number generator
+	BdsVm vm; // Virtual machine
+	Statement statement; // Main statement executed by this thread
+	RunState runState; // Latest RunState
+	int exitValue; // Exit value
+	List<String> removeOnExit; // Files to be removed on exit
+	String reportFile; // Latest report file
+	Timer timer; // Program timer
+	boolean freeze; // Freeze execution in next execution step
+	String currentDir; // Program's 'current directory'
+	BdsThread parent; // Parent thread
+	String bdsThreadId; // BdsThread ID
+	int bdsThreadNum; // Thread number
+	Map<String, BdsThread> bdsChildThreadsById; // Child threads
+	TaskDependecies taskDependecies;
 
 	/**
 	 * Get an ID for a node

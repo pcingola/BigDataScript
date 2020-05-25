@@ -48,6 +48,12 @@ import org.bds.util.GprString;
  */
 public class BdsVm implements Serializable {
 
+	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
+	public static final String LABLE_MAIN = "main";
+	private static final OpCode OPCODES[] = OpCode.values();
+	private static final long serialVersionUID = 6533146851765102340L;
+	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
+	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
 	BdsThread bdsThread;
 	CallFrame[] callFrames; // Call Frame stack
 	int code[]; // Compile assembly code (OopCodes)
@@ -73,12 +79,6 @@ public class BdsVm implements Serializable {
 	boolean verbose;
 	VmDebugger vmDebugger;
 	VmState vmState = new VmState();
-	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
-	public static final String LABLE_MAIN = "main";
-	private static final OpCode OPCODES[] = OpCode.values();
-	private static final long serialVersionUID = 6533146851765102340L;
-	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
-	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
 
 	public BdsVm() {
 		constants = new ArrayList<>();
@@ -1476,14 +1476,14 @@ public class BdsVm implements Serializable {
 				break;
 
 			case TASK:
-				TaskVmOpcode taskFactory = new TaskVmOpcode(bdsThread);
-				s1 = taskFactory.run();
+				TaskVmOpcode taskVmOp = new TaskVmOpcode(bdsThread);
+				s1 = taskVmOp.run();
 				push(s1);
 				break;
 
 			case TASKDEP:
-				TaskVmOpcode depFactory = new DepVmOpcode(bdsThread);
-				s1 = depFactory.run();
+				TaskVmOpcode depVmOp = new DepVmOpcode(bdsThread);
+				s1 = depVmOp.run();
 				push(s1);
 				break;
 

@@ -42,7 +42,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_TASKNAME = "taskName";
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
-
 	public static final String CMD_DOWNLOAD = "bds -download";
 	public static final String CMD_UPLOAD = "bds -upload";
 
@@ -53,9 +52,10 @@ public class ExpressionTask extends ExpressionWithScope {
 	//			Yes, it's a horrible hack.
 	protected ExpressionTaskOptions options;
 	protected Statement statement;
-	protected boolean asmPushDeps;
-	protected InterpolateVars preludeInterpolateVars;
-	protected String preludeStr;
+	protected boolean asmPushDeps; // True if we must push dependencies to stack (e.g. ExpressionParallel doesn't do it)
+	protected boolean improper; // A task is improper if it has non-sys statements
+	protected InterpolateVars preludeInterpolateVars; // Task prelude: interpolating strings (null if there is nothing to interpolate)
+	protected String preludeStr; // Task prelude (raw) string from config
 
 	public ExpressionTask(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
@@ -70,11 +70,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	public boolean isReturnTypesNotNull() {
 		return true;
 	}
-
-	//	@Override
-	//	public boolean isStopDebug() {
-	//		return true;
-	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {
@@ -96,7 +91,8 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	/**
-	 * Parse prelude string from Config
+	 * Parse prelude string from bds.config
+	 * The "prelude" is a string that is added to all 'sys' within a task
 	 */
 	void parsePrelude() {
 		String prelude = Config.get().getTaskPrelude();
@@ -142,6 +138,15 @@ public class ExpressionTask extends ExpressionWithScope {
 		// No child nodes? Add the only node we have
 		if (statements.isEmpty()) statements.add(statement);
 
+		setImproper(statements);
+	}
+
+	/**
+	 * An "improper" task is a task that anything other than 'sys' statement/s
+	 * Improper tasks are executed by creating a checkpoint and restoring from the checkpoint
+	*/
+	protected void setImproper(List<BdsNode> statements) {
+		improper = false;
 		for (BdsNode node : statements) {
 			if (node instanceof Statement) {
 				boolean ok = node instanceof ExpressionSys //
@@ -152,7 +157,8 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof StatementExpr //
 				;
 
-				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
+				// if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
+				if (!ok) improper = true;
 			}
 		}
 	}
@@ -221,10 +227,25 @@ public class ExpressionTask extends ExpressionWithScope {
 		return "";
 	}
 
+	protected String toAsmStatements() {
+		return improper ? toAsmStatementsImproper() : toAsmStatementsProper();
+
+	}
+
+	/**
+	 * Create a checkpoint and
+	 */
+	protected String toAsmStatementsImproper() {
+		// TODO: Create a checkpoint
+		// TODO: Create a fake script that executes from the checkpoint
+		// TODO: Make sure the exit code, stderr, stdout is also stored
+		return "pushs \"echo IMPROPER\"\n";
+	}
+
 	/**
 	 * Evaluate 'sys' statements used to create task
 	 */
-	protected String toAsmStatements() {
+	protected String toAsmStatementsProper() {
 		// Only one 'sys' expression
 		if (statement instanceof StatementExpr) {
 			Expression exprSys = ((StatementExpr) statement).getExpression();
@@ -282,7 +303,7 @@ public class ExpressionTask extends ExpressionWithScope {
 			return statement.toString();
 		}
 
-		// Multiline
+		// Multi-line
 		return "{\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //
