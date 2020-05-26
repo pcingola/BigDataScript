@@ -129,8 +129,6 @@ public enum OpCode {
 	, SETMAPPOP
 	// Remove value from stack
 	, SETPOP
-	// Shell: Similar to 'sys', but creates a batch file and converts remote files (used mainly within improper tasks)
-	, SHELL
 	// Store value to local variable (scope). Leaves the value in the stack (stack is not changed)
 	//    STORE varName
 	, STORE, STOREPOP

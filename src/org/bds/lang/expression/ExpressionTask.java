@@ -283,39 +283,14 @@ public class ExpressionTask extends ExpressionWithScope {
 	 *   - A checkpoint is created
 	 *   - A job is submitted to the cluster to run bds recovering from that checkpoint
 	 *   - When the node executes bds, it recovers the checkpoint and executes the statement within the task
-	 *
-	 * 'sys' opcodes in the task statement are transformed into 'shell' opcodes (see ShellVmOpcode for details).
 	 */
 	protected String toAsmStatementsImproperTaskBody(String varOutputs, String varInputs) {
 		StringBuilder sb = new StringBuilder();
 
-		// Replace 'sys' commands by 'shell' (which is a 'sys' that translates inputs/outputs dependencies)
-		boolean inSys = false;
 		Block block = (Block) statement;
 		for (Statement st : block.getStatements()) {
-			// Get 'sys' expression, (sometimes it's an expression statement (a statement consisting of an expression)
-			ExpressionSys exprsys = null;
-			if (st instanceof StatementExpr) {
-				Expression expr = ((StatementExpr) st).getExpression();
-				exprsys = (expr instanceof ExpressionSys ? (ExpressionSys) expr : null);
-			}
-
-			if (exprsys != null) {
-				if (!inSys) {
-					sb.append("load " + varOutputs + "\n");
-					sb.append("load " + varInputs + "\n");
-					sb.append("new string\n");
-				}
-				inSys = true;
-				sb.append(exprsys.toAsm(false));
-				sb.append("adds\n");
-			} else {
-				if (inSys) sb.append("shell\n"); // Finalize any pending 'sys' as a 'shell' opcode
-				inSys = false;
-				sb.append(st.toAsm());
-			}
+			sb.append(st.toAsm());
 		}
-		if (inSys) sb.append("shell\n"); // Finalize any pending 'sys' as a 'shell' opcode
 
 		// There is an implicit 'exit' in the block.
 		// Remember that these statement are executed in another process or another host, so
