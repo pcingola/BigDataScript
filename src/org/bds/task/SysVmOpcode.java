@@ -26,6 +26,7 @@ public class SysVmOpcode {
 	protected BdsThread bdsThread;
 	protected BdsNode bdsNode;
 	protected String commands;
+	protected boolean usePid;
 
 	/**
 	 * Get a sys ID
@@ -34,8 +35,9 @@ public class SysVmOpcode {
 		return sysId++;
 	}
 
-	public SysVmOpcode(BdsThread bdsThread) {
+	public SysVmOpcode(BdsThread bdsThread, boolean usePid) {
 		this.bdsThread = bdsThread;
+		this.usePid = usePid;
 	}
 
 	/**
@@ -72,8 +74,9 @@ public class SysVmOpcode {
 
 	protected String getSysFileName(String execId) {
 		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
-
-		String sysFileName = execId + ".sh";
+		// When several improper tasks are executed on local host, they can have the same task ID.
+		// To avoid file name collision, we use the PID
+		String sysFileName = execId + (usePid ? "." + ProcessHandle.current().pid() : "") + ".sh";
 		File f = new File(sysFileName);
 		try {
 			return f.getCanonicalPath();

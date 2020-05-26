@@ -37,8 +37,8 @@ public class TaskVmOpcode extends SysVmOpcode {
 		task.execute(bdsThread, executioner); // Execute task
 	}
 
-	public TaskVmOpcode(BdsThread bdsThread) {
-		super(bdsThread);
+	public TaskVmOpcode(BdsThread bdsThread, boolean usePid) {
+		super(bdsThread, usePid);
 	}
 
 	/**

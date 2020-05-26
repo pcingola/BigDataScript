@@ -70,7 +70,7 @@ public class BdsVm implements Serializable {
 	AutoHashMap<Integer, List<String>> labelsByPc;
 	int nodeId; // Current node ID (BdsNode). Used for linking to original bds code
 	int pc; // Program counter
-	boolean recoveredCheckpoint;
+	boolean recoveredCheckpoint, recoveredCheckpointOp;
 	boolean run; // Keep program running while this variable is 'true'
 	Scope scope; // Current scope (variables)
 	int sp; // Stack pointer
@@ -92,7 +92,9 @@ public class BdsVm implements Serializable {
 		stack = new Value[STACK_SIZE];
 		types = new ArrayList<>();
 		typeToIndex = new HashMap<>();
-		recoveredCheckpoint = false;
+
+		recoveredCheckpoint = false; // Is this a recovered checkpoint? This is NOT altered by the VM
+		recoveredCheckpointOp = false; // Is this a recovered checkpoint? This IS reset by the VM after the first read
 
 		sp = fp = pc = 0;
 		nodeId = -1;
@@ -883,6 +885,10 @@ public class BdsVm implements Serializable {
 		ValueMap vmap;
 		ValueClass vclass;
 
+		// In case of recovered checkpoints, the task ID could be repeated (e.g. recovering checkpoints several times)
+		// We append PID to avoid file name collision
+		boolean usePidInFileNames = recoveredCheckpoint;
+
 		// Execute while not the end of the program
 		while (pc < code.length && run) {
 			instruction = code[pc];
@@ -994,8 +1000,8 @@ public class BdsVm implements Serializable {
 				//   a) this VM was recovered from a checkpoint
 				//   b) this is the first time we check
 				// Important: Only true the first time we check
-				push(isRecoveredCheckpoint());
-				setRecoveredCheckpoint(false);
+				push(recoveredCheckpointOp);
+				recoveredCheckpointOp = false;
 				break;
 
 			case DEBUG:
@@ -1477,7 +1483,7 @@ public class BdsVm implements Serializable {
 
 			case SYS:
 				vmStateSave();
-				SysVmOpcode sf = new SysVmOpcode(bdsThread);
+				SysVmOpcode sf = new SysVmOpcode(bdsThread, usePidInFileNames);
 				s1 = sf.run();
 				vmStateInvalidate();
 				push(s1);
@@ -1491,13 +1497,13 @@ public class BdsVm implements Serializable {
 				break;
 
 			case TASK:
-				TaskVmOpcode taskVmOp = new TaskVmOpcode(bdsThread);
+				TaskVmOpcode taskVmOp = new TaskVmOpcode(bdsThread, usePidInFileNames);
 				s1 = taskVmOp.run();
 				push(s1);
 				break;
 
 			case TASKDEP:
-				TaskVmOpcode depVmOp = new DepVmOpcode(bdsThread);
+				TaskVmOpcode depVmOp = new DepVmOpcode(bdsThread, usePidInFileNames);
 				s1 = depVmOp.run();
 				push(s1);
 				break;
@@ -1589,6 +1595,7 @@ public class BdsVm implements Serializable {
 
 	public void setRecoveredCheckpoint(boolean recoveredCheckpoint) {
 		this.recoveredCheckpoint = recoveredCheckpoint;
+		this.recoveredCheckpointOp = recoveredCheckpoint;
 	}
 
 	public void setRun(boolean run) {

@@ -9,8 +9,8 @@ import org.bds.run.BdsThread;
  */
 public class DepVmOpcode extends TaskVmOpcode {
 
-	public DepVmOpcode(BdsThread bdsThread) {
-		super(bdsThread);
+	public DepVmOpcode(BdsThread bdsThread, boolean usePid) {
+		super(bdsThread, usePid);
 	}
 
 	/**
