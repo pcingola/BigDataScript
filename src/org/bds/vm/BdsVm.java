@@ -50,7 +50,7 @@ import org.bds.util.GprString;
 public class BdsVm implements Serializable {
 
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
-	public static final String LABLE_MAIN = "main";
+	public static final String LABEL_MAIN = "main";
 	private static final OpCode OPCODES[] = OpCode.values();
 	private static final long serialVersionUID = 6533146851765102340L;
 	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
@@ -71,6 +71,7 @@ public class BdsVm implements Serializable {
 	AutoHashMap<Integer, List<String>> labelsByPc;
 	int nodeId; // Current node ID (BdsNode). Used for linking to original bds code
 	int pc; // Program counter
+	boolean recoveredCheckpoint;
 	boolean run; // Keep program running while this variable is 'true'
 	Scope scope; // Current scope (variables)
 	int sp; // Stack pointer
@@ -92,6 +93,7 @@ public class BdsVm implements Serializable {
 		stack = new Value[STACK_SIZE];
 		types = new ArrayList<>();
 		typeToIndex = new HashMap<>();
+		recoveredCheckpoint = false;
 
 		sp = fp = pc = 0;
 		nodeId = -1;
@@ -608,6 +610,10 @@ public class BdsVm implements Serializable {
 		return sp <= 0;
 	}
 
+	public boolean isRecoveredCheckpoint() {
+		return recoveredCheckpoint;
+	}
+
 	/**
 	 * Kill opCode
 	 */
@@ -833,7 +839,7 @@ public class BdsVm implements Serializable {
 		// Initialize program counter
 		// Note: If vm parallel, then pc is already initialized in child
 		//       process, do not change.
-		if (pc == 0) pc = Math.max(0, getLabel(LABLE_MAIN));
+		if (pc == 0) pc = Math.max(0, getLabel(LABEL_MAIN));
 
 		run = true;
 		try {
@@ -982,6 +988,15 @@ public class BdsVm implements Serializable {
 			case CHECKPOINT:
 				s1 = popString(); // File name
 				bdsThread.checkpoint(s1);
+				break;
+
+			case CHECKPOINT_RECOVERED:
+				// Checkpoint recovered: Push true to the stack ONLY if both conditions are satisfied:
+				//   a) this VM was recovered from a checkpoint
+				//   b) this is the first time we check
+				// Important: Only true the first time we check
+				push(isRecoveredCheckpoint());
+				setRecoveredCheckpoint(false);
 				break;
 
 			case DEBUG:
@@ -1578,6 +1593,10 @@ public class BdsVm implements Serializable {
 		nodeId = callFrame.nodeId;
 		scope = callFrame.scope;
 		exceptionHandler = callFrame.exceptionHandler;
+	}
+
+	public void setRecoveredCheckpoint(boolean recoveredCheckpoint) {
+		this.recoveredCheckpoint = recoveredCheckpoint;
 	}
 
 	public void setRun(boolean run) {

@@ -436,6 +436,7 @@ public class BdsRun {
 		// Load checkpoint file
 		bdsThread = loadCheckpoint();
 		vm = bdsThread.getVm();
+		vm.setRecoveredCheckpoint(true);
 
 		// Set main thread's programUnit running scope (mostly for debugging and test cases)
 		// ProgramUnit's scope it the one before 'global'

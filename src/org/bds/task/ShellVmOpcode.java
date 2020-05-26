@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import org.bds.data.Data;
 import org.bds.data.DataRemote;
-import org.bds.executioner.ExecutionerLocal;
+import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.value.Value;
@@ -16,12 +16,11 @@ import org.bds.run.BdsThread;
 /**
  * Execute a 'shell' VM opcode
  *
- * A 'shell' is an intermediate between a 'task' and a 'sys':
+ * A 'shell' is an intermediate between a 'task' and a 'sys': It's a task that is ALWAYS executed in the local host
  * 	- It executes creating a shell script (like 'task')
  *  - It logs stdout/stderr (like 'task')
  *  - It logs exit code (like 'task')
  *  - Executes immediately (like 'sys')
- *  - Executed without an executioner (like 'sys')
  *  - Executes on the local computer (like 'sys')
  *  - No resource accounting (like 'sys')
  *
@@ -39,6 +38,15 @@ public class ShellVmOpcode extends SysVmOpcode {
 	protected Task task;
 	protected TaskDependency taskDependency;
 
+	/**
+	 * Execute a task (schedule it into executioner)
+	 */
+	public static void executeLocal(BdsThread bdsThread, Task task) {
+		// Select executioner 'local'
+		Executioner executioner = Executioners.getInstance().get(Executioners.ExecutionerType.LOCAL);
+		task.execute(bdsThread, executioner); // Execute task
+	}
+
 	public ShellVmOpcode(BdsThread bdsThread) {
 		super(bdsThread);
 	}
@@ -48,7 +56,7 @@ public class ShellVmOpcode extends SysVmOpcode {
 	 */
 	protected String[] createBdsExecCmdArgs(Task task) {
 		// Create command line
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 		for (String arg : SHELL_EXEC_COMMAND)
 			args.add(arg);
 		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
@@ -193,17 +201,10 @@ public class ShellVmOpcode extends SysVmOpcode {
 	}
 
 	/**
-	 * Dispatch 'shell' for execution
+	 * Dispatch task for execution
 	 */
 	protected void dispatchTask(Task task) {
-		ExecutionerLocal executioner = (ExecutionerLocal) Executioners.getInstance().get(Executioners.ExecutionerType.LOCAL);
-		Cmd cmd = executioner.createRunCmd(task);
-		cmd.start();
-		try {
-			cmd.join();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		executeLocal(bdsThread, task);
 	}
 
 	@Override

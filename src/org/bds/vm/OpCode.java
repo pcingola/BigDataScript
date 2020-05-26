@@ -42,6 +42,8 @@ public enum OpCode {
 	, CAST_TOC
 	// Checkpoint
 	, CHECKPOINT
+	// Checkpoint recovered: Push bool to the stack if this is the first instruction after a checkpoint was recovered.
+	, CHECKPOINT_RECOVERED
 	// Debug breakpoint
 	, DEBUG
 	// Decrement (i.e. valueInt--)

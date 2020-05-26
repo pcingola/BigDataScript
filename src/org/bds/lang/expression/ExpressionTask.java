@@ -262,8 +262,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		String labelTaskBodyEnd = baseLabelName() + "body_end";
 		sb.append("pushs '" + checkpointFile() + "'\n");
 		sb.append("checkpoint\n");
-		sb.append("pushb true\n");
-		sb.append("jmpt " + labelTaskBodyEnd + "\n");
+		sb.append("checkpoint_recovered\n");
+		sb.append("jmpf " + labelTaskBodyEnd + "\n");
 
 		// Task body (i.e. the statements in the task) are executed by the process that recovers from the checkpoint
 		sb.append(toAsmStatementsImproperTaskBody(varOutputs, varInputs));
@@ -316,6 +316,13 @@ public class ExpressionTask extends ExpressionWithScope {
 			}
 		}
 		if (inSys) sb.append("shell\n"); // Finalize any pending 'sys' as a 'shell' opcode
+
+		// There is an implicit 'exit' in the block.
+		// Remember that these statement are executed in another process or another host, so
+		// there is no point to continue beyond the task statements (that part is executed
+		// on the main bds process)
+		sb.append("pushi 0\n");
+		sb.append("halt\n");
 
 		return sb.toString();
 	}
