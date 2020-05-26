@@ -273,7 +273,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		sb.append(labelTaskBodyEnd + ":\n");
 		sb.append("load " + varOutputs + "\n");
 		sb.append("load " + varInputs + "\n");
-		sb.append("pushs 'bds -r " + checkpointFile + "'\n");
+		sb.append("pushs \"bds -r '" + checkpointFile + "'\"\n");
 		return sb.toString();
 	}
 
