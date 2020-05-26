@@ -24,33 +24,6 @@ public class ExecutionerLocal extends Executioner {
 	public static String LOCAL_STAT_COMMAND[] = { "ps" };
 
 	/**
-	 * Create command line arguments for "bds -exec"
-	 */
-	public static String[] createBdsExecCmdArgs(Task task) {
-		// Create command line
-		ArrayList<String> args = new ArrayList<String>();
-		for (String arg : LOCAL_EXEC_COMMAND)
-			args.add(arg);
-		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
-
-		// Add command line parameters for "bds exec"
-		args.add(timeout + ""); // Enforce timeout
-		args.add(task.getStdoutFile() != null ? task.getStdoutFile() : "-"); // Redirect STDOUT to this file
-		args.add(task.getStderrFile() != null ? task.getStderrFile() : "-"); // Redirect STDERR to this file
-		args.add(task.getExitCodeFile() != null ? task.getExitCodeFile() : "-"); // Redirect exit code
-		args.add(task.getProgramFileName()); // Program to execute
-
-		return args.toArray(Cmd.ARGS_ARRAY_TYPE);
-	}
-
-	protected ExecutionerLocal(Config config) {
-		super(config);
-		checkTasksRunning = new CheckTasksRunningLocal(config, this);
-		checkTasksRunning.setDebug(config.isDebug());
-		checkTasksRunning.setVerbose(config.isVerbose());
-	}
-
-	/**
 	 * Sometimes a "text file busy" error may appear when we execute a task.
 	 * E.g.: The following script will produce "text file busy" error on
 	 *       some Linux systems (local execution):
@@ -79,7 +52,7 @@ public class ExecutionerLocal extends Executioner {
 	 * 		ii) There is no warrantees that this will always work.
 	 *
 	 */
-	void avoidTextFileBusyError() {
+	public static void avoidTextFileBusyError() {
 		// Hack to avoid "Text file busy" errors: Sleep N milliseconds.
 		// This is a horrible hack used to make sure the 'programFileName' has
 		// been fully written to disk and we no have the file open for writing.
@@ -94,10 +67,37 @@ public class ExecutionerLocal extends Executioner {
 	}
 
 	/**
+	 * Create command line arguments for "bds -exec"
+	 */
+	public static String[] createBdsExecCmdArgs(Task task) {
+		// Create command line
+		ArrayList<String> args = new ArrayList<String>();
+		for (String arg : LOCAL_EXEC_COMMAND)
+			args.add(arg);
+		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
+
+		// Add command line parameters for "bds exec"
+		args.add(timeout + ""); // Enforce timeout
+		args.add(task.getStdoutFile() != null ? task.getStdoutFile() : "-"); // Redirect STDOUT to this file
+		args.add(task.getStderrFile() != null ? task.getStderrFile() : "-"); // Redirect STDERR to this file
+		args.add(task.getExitCodeFile() != null ? task.getExitCodeFile() : "-"); // Redirect exit code
+		args.add(task.getProgramFileName()); // Program to execute
+
+		return args.toArray(Cmd.ARGS_ARRAY_TYPE);
+	}
+
+	protected ExecutionerLocal(Config config) {
+		super(config);
+		checkTasksRunning = new CheckTasksRunningLocal(config, this);
+		checkTasksRunning.setDebug(config.isDebug());
+		checkTasksRunning.setVerbose(config.isVerbose());
+	}
+
+	/**
 	 * Create a CmdRunner to execute the script
 	 */
 	@Override
-	protected synchronized Cmd createRunCmd(Task task) {
+	public synchronized Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
 		// Create command line
@@ -105,13 +105,15 @@ public class ExecutionerLocal extends Executioner {
 
 		avoidTextFileBusyError();
 
-		// Join args
-		String cmdStr = "";
-		for (String arg : args)
-			cmdStr += arg + " ";
-
 		// Run command
-		if (debug) Timer.showStdErr("Running command: " + cmdStr);
+		if (debug) {
+			// Join args
+			String cmdStr = "";
+			for (String arg : args)
+				cmdStr += arg + " ";
+			Timer.showStdErr("Running command: " + cmdStr);
+		}
+
 		CmdLocal cmd = new CmdLocal(task.getId(), args);
 		cmd.setDebug(debug);
 		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process

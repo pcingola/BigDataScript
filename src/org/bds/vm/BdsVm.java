@@ -34,6 +34,7 @@ import org.bds.run.RunState;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
 import org.bds.task.DepVmOpcode;
+import org.bds.task.ShellVmOpcode;
 import org.bds.task.SysVmOpcode;
 import org.bds.task.TaskDependency;
 import org.bds.task.TaskVmOpcode;
@@ -1061,15 +1062,6 @@ public class BdsVm implements Serializable {
 				exitCode = BdsThread.EXITCODE_ERROR;
 				return;
 
-			case PARALLEL:
-				parallelOpCode(0);
-				break;
-
-			case PARALLELPUSH:
-				i1 = popInt();
-				parallelOpCode((int) i1);
-				break;
-
 			case GEB:
 				b2 = popBool();
 				b1 = popBool();
@@ -1304,6 +1296,15 @@ public class BdsVm implements Serializable {
 				push(i1 | i2);
 				break;
 
+			case PARALLEL:
+				parallelOpCode(0);
+				break;
+
+			case PARALLELPUSH:
+				i1 = popInt();
+				parallelOpCode((int) i1);
+				break;
+
 			case POP:
 				sp--; // Drop last value from stack
 				break;
@@ -1436,6 +1437,13 @@ public class BdsVm implements Serializable {
 				vmap = (ValueMap) pop();
 				v1 = pop(); // Key
 				vmap.put(v1, pop());
+				break;
+
+			case SHELL:
+				vmStateSave();
+				ShellVmOpcode shellVmOp = new ShellVmOpcode(bdsThread);
+				s1 = shellVmOp.run();
+				push(s1);
 				break;
 
 			case STORE:

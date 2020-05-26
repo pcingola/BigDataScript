@@ -17,7 +17,7 @@ public class DepVmOpcode extends TaskVmOpcode {
 	 * Dispatch task for execution
 	 */
 	@Override
-	void dispatchTask(Task task) {
+	protected void dispatchTask(Task task) {
 		task.setDependency(true); // Mark this as a 'dependency'
 		bdsThread.add(task);
 	}

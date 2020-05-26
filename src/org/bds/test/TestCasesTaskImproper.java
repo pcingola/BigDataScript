@@ -53,4 +53,30 @@ public class TestCasesTaskImproper extends TestCasesBase {
 		runAndCheck("test/run_task_improper_04.bds", "a", "42");
 	}
 
+	/**
+	 * Execute a task having an assignment sys instead of a bare sys
+	 * 	task(...) {
+	 * 		out = sys cat z.txt
+	 * 	}
+	 */
+	@Test
+	public void test05() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_task_improper_05.bds", "a", "42");
+	}
+
+	/**
+	 * Execute a task having an assignment sys instead of a bare sys
+	 * 	task(...) {
+	 * 		# These two sys should not be merged
+	 * 		out = sys cat z.txt		# This is compiled to a 'sys' opcode
+	 * 		sys cat z.txt			# This is compiled to a 'shell' opcode
+	 * 	}
+	 */
+	@Test
+	public void test06() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_task_improper_06.bds", "a", "42");
+	}
+
 }

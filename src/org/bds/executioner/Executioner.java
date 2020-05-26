@@ -111,7 +111,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	/**
 	 * Create a command form a task
 	 */
-	protected synchronized Cmd createRunCmd(Task task) {
+	public synchronized Cmd createRunCmd(Task task) {
 		throw new RuntimeException("Unimplemented method for class: " + getClass().getCanonicalName());
 	}
 

@@ -44,9 +44,9 @@ public class SysVmOpcode {
 	protected BdsNode bdsNode() {
 		BdsNode n = bdsThread.getBdsNodeCurrent();
 
-		// Try to find a 'task' node
+		// Try to find a 'sys' node
 		for (BdsNode bn = n; bn != null; bn = bn.getParent()) {
-			if (bn instanceof ExpressionSys) return bn;
+			if (isNode(bn)) return bn;
 		}
 
 		// Not found? Use this as default
@@ -89,6 +89,10 @@ public class SysVmOpcode {
 		return null;
 	}
 
+	protected boolean isNode(BdsNode n) {
+		return n instanceof ExpressionSys;
+	}
+
 	/**
 	 * Create and run sys
 	 */
@@ -104,9 +108,7 @@ public class SysVmOpcode {
 		args.add(cmds);
 
 		// Save commands to file for debugging and traceability
-		if (Config.get().isLog()) {
-			saveProgramFile(cmds);
-		}
+		if (Config.get().isLog()) saveProgramFile(cmds);
 
 		// Run command line
 		ExecResult execResult = Exec.exec(args, bdsThread.getConfig().isQuiet());
@@ -139,7 +141,6 @@ public class SysVmOpcode {
 	protected String saveProgramFile(String programTxt) {
 		// Select file name
 		String sysId = sysId();
-		getSysFileName(sysId);
 		String programFileName = getSysFileName(sysId);
 		if (Config.get().isDebug()) Timer.showStdErr("Task: Saving file '" + programFileName + "'");
 
@@ -152,10 +153,11 @@ public class SysVmOpcode {
 			// Nothing to do
 		}
 
+		// Show 'sys' shell execution
+		programTxt = "# Execution shell: " + Config.get().getSysShell() + "\n\n" + programTxt;
+
 		// Save file and make it executable
-		String shell = Config.get().getSysShell();
-		String program = "# Execution shell: " + shell + "\n\n" + programTxt;
-		Gpr.toFile(programFileName, program);
+		Gpr.toFile(programFileName, programTxt);
 
 		return programFileName;
 	}

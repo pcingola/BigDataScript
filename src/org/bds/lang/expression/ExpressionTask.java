@@ -1,6 +1,7 @@
 package org.bds.lang.expression;
 
 import java.util.List;
+import java.util.Random;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.Config;
@@ -60,6 +61,17 @@ public class ExpressionTask extends ExpressionWithScope {
 	public ExpressionTask(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		asmPushDeps = true;
+	}
+
+	/**
+	 * Return a full path to a checkponit file name
+	 * The file might be on an Object Store (e.g. S3)
+	 * @return
+	 */
+	protected String checkpointFile() {
+		Random r = new Random();
+		String checkpointFile = getProgramUnit().getFileNameCanonical() + ".task." + id + "." + Math.abs(r.nextInt()) + ".chp";
+		return checkpointFile;
 	}
 
 	protected boolean hasPrelude() {
@@ -233,13 +245,79 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	/**
-	 * Create a checkpoint and
+	 * Create a checkpoint and create a task to execute from that checkpoint
+	 * 'sys' opcodes are transformed into 'shell'
 	 */
 	protected String toAsmStatementsImproper() {
-		// TODO: Create a checkpoint
-		// TODO: Create a fake script that executes from the checkpoint
-		// TODO: Make sure the exit code, stderr, stdout is also stored
-		return "pushs \"echo IMPROPER\"\n";
+		StringBuilder sb = new StringBuilder();
+
+		// Store the input / output dependencies to a hidden variable name
+		// These were pushed into the stack in the previous step
+		String varInputs = baseVarName() + "inputs";
+		String varOutputs = baseVarName() + "outputs";
+		sb.append("varpop " + varInputs + "\n");
+		sb.append("varpop " + varOutputs + "\n");
+
+		// Create a checkpoint
+		String labelTaskBodyEnd = baseLabelName() + "body_end";
+		sb.append("pushs '" + checkpointFile() + "'\n");
+		sb.append("checkpoint\n");
+		sb.append("pushb true\n");
+		sb.append("jmpt " + labelTaskBodyEnd + "\n");
+
+		// Task body (i.e. the statements in the task) are executed by the process that recovers from the checkpoint
+		sb.append(toAsmStatementsImproperTaskBody(varOutputs, varInputs));
+
+		// This is the task
+		sb.append(labelTaskBodyEnd + ":\n");
+		sb.append("load " + varOutputs + "\n");
+		sb.append("load " + varInputs + "\n");
+		sb.append("pushs \"echo IMPROPER\"\n");
+		return sb.toString();
+	}
+
+	/**
+	 * This method creates the code from the statements of an improper task
+	 *
+	 * E.g. An improper task is executed in a cluster:
+	 *   - A checkpoint is created
+	 *   - A job is submitted to the cluster to run bds recovering from that checkpoint
+	 *   - When the node executes bds, it recovers the checkpoint and executes the statement within the task
+	 *
+	 * 'sys' opcodes in the task statement are transformed into 'shell' opcodes (see ShellVmOpcode for details).
+	 */
+	protected String toAsmStatementsImproperTaskBody(String varOutputs, String varInputs) {
+		StringBuilder sb = new StringBuilder();
+
+		// Replace 'sys' commands by 'shell' (which is a 'sys' that translates inputs/outputs dependencies)
+		boolean inSys = false;
+		Block block = (Block) statement;
+		for (Statement st : block.getStatements()) {
+			// Get 'sys' expression, (sometimes it's an expression statement (a statement consisting of an expression)
+			ExpressionSys exprsys = null;
+			if (st instanceof StatementExpr) {
+				Expression expr = ((StatementExpr) st).getExpression();
+				exprsys = (expr instanceof ExpressionSys ? (ExpressionSys) expr : null);
+			}
+
+			if (exprsys != null) {
+				if (!inSys) {
+					sb.append("load " + varOutputs + "\n");
+					sb.append("load " + varInputs + "\n");
+					sb.append("new string\n");
+				}
+				inSys = true;
+				sb.append(exprsys.toAsm(false));
+				sb.append("adds\n");
+			} else {
+				if (inSys) sb.append("shell\n"); // Finalize any pending 'sys' as a 'shell' opcode
+				inSys = false;
+				sb.append(st.toAsm());
+			}
+		}
+		if (inSys) sb.append("shell\n"); // Finalize any pending 'sys' as a 'shell' opcode
+
+		return sb.toString();
 	}
 
 	/**

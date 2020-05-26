@@ -81,11 +81,11 @@ public enum OpCode {
 	, JMPF, JMPT, JSR
 	// Jump to Sub-Routine (unconditional)
 	, KILL
+	// Less than (bool, int, real, string)
+	, LEB, LEI, LER, LES
 	// Load variable from scope into stack
 	//    LOAD varName
-	, LEB
-	// Less than
-	, LEI, LER, LES, LOAD
+	, LOAD
 	// Less or equal than
 	, LTB, LTI, LTR, LTS
 	// Modulo (int)
@@ -127,14 +127,16 @@ public enum OpCode {
 	, SETMAPPOP
 	// Remove value from stack
 	, SETPOP
+	// Shell: Similar to 'sys', but creates a batch file and converts remote files (used mainly within improper tasks)
+	, SHELL
 	// Store value to local variable (scope). Leaves the value in the stack (stack is not changed)
 	//    STORE varName
 	, STORE, STOREPOP
 	// Subtraction
 	, SUBI, SUBR
-	// Sys command
-	, SWAP
 	// Swap two values in stack
+	, SWAP
+	// Sys command
 	, SYS
 	// Dispatch a task
 	, TASK, TASKDEP

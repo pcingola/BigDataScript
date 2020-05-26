@@ -42,7 +42,6 @@ public class Checkpoint extends Statement {
 			// Create checkpoint
 			String programFile = getProgramUnit().getFileNameCanonical();
 			String nodeFile = getFileNameCanonical();
-
 			String checkpointFileName = programFile;
 			if (!programFile.equals(nodeFile)) checkpointFileName += "." + Gpr.baseName(nodeFile, ".bds");
 			checkpointFileName += ".line_" + getLineNum() + ".chp";

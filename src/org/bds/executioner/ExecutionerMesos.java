@@ -35,7 +35,7 @@ public class ExecutionerMesos extends Executioner {
 	 * Create a command form a task
 	 */
 	@Override
-	protected synchronized Cmd createRunCmd(Task task) {
+	public synchronized Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 		mesosFramework.add(task);
 		return null;
