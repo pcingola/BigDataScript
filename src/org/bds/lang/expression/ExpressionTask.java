@@ -260,7 +260,8 @@ public class ExpressionTask extends ExpressionWithScope {
 
 		// Create a checkpoint
 		String labelTaskBodyEnd = baseLabelName() + "body_end";
-		sb.append("pushs '" + checkpointFile() + "'\n");
+		String checkpointFile = checkpointFile();
+		sb.append("pushs '" + checkpointFile + "'\n");
 		sb.append("checkpoint\n");
 		sb.append("checkpoint_recovered\n");
 		sb.append("jmpf " + labelTaskBodyEnd + "\n");
@@ -272,7 +273,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		sb.append(labelTaskBodyEnd + ":\n");
 		sb.append("load " + varOutputs + "\n");
 		sb.append("load " + varInputs + "\n");
-		sb.append("pushs \"echo IMPROPER\"\n");
+		sb.append("pushs 'bds -r " + checkpointFile + "'\n");
 		return sb.toString();
 	}
 
