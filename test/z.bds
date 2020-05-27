@@ -2,15 +2,19 @@
 a := 42
 
 void impr(int i) {
-	task {
-		println "Task improper: Start, a=$a, i=$i"
-		a += i
-		println "Task improper: End, a=$a, i=$i"
-	}
+	println "Function impr($i): Start"
+	tid := task {
+				println "Task improper: Start, a=$a, i=$i"
+				a += i
+				println "Task improper: End, a=$a, i=$i"
+			}
+	println "Function impr($i): task ID=$tid"
+	wait tid
+	println "Function impr($i): End"
 }
 
-println "Task improper: Before, a=$a"
+println "Main: Before, a=$a"
 par impr(0)
-println "Task improper: After, a=$a"
+println "Main: After, a=$a"
 wait
 println "Done"

@@ -992,14 +992,20 @@ public class BdsVm implements Serializable {
 
 			case CHECKPOINT:
 				s1 = popString(); // File name (may be empty)
-				bdsThread.checkpointOp(s1, getBdsNode());
+				bdsThread.checkpoint(s1, getBdsNode());
 				break;
 
-			case CHECKPOINT_PUSH:
+			case CHECKPOINT_VM:
 				s1 = popString(); // File name (may be empty)
-				s1 = bdsThread.checkpointOp(s1, getBdsNode()); // Return checkpoint file name
+				s1 = bdsThread.checkpointVm(s1, getBdsNode()); // Return checkpoint file name
 				push(s1); // Push checkpoint file name to stack
 				break;
+
+			//			case CHECKPOINT_PUSH:
+			//				s1 = popString(); // File name (may be empty)
+			//				s1 = bdsThread.checkpoint(s1, getBdsNode()); // Return checkpoint file name
+			//				push(s1); // Push checkpoint file name to stack
+			//				break;
 
 			case CHECKPOINT_RECOVERED:
 				// Checkpoint recovered: Push true to the stack ONLY if both conditions are satisfied:
