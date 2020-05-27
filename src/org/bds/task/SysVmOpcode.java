@@ -21,19 +21,10 @@ import org.bds.util.Timer;
  */
 public class SysVmOpcode {
 
-	private static int sysId = 1;
-
 	protected BdsThread bdsThread;
 	protected BdsNode bdsNode;
 	protected String commands;
 	protected boolean usePid;
-
-	/**
-	 * Get a sys ID
-	 */
-	protected static synchronized int nextId() {
-		return sysId++;
-	}
 
 	public SysVmOpcode(BdsThread bdsThread, boolean usePid) {
 		this.bdsThread = bdsThread;
@@ -173,28 +164,12 @@ public class SysVmOpcode {
 	 * Create a task ID
 	 */
 	protected String sysId(String tag) {
-		int nextId = nextId();
-
-		// Use module name
-		String module = getFileName();
-		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
-
 		String taskName = getTaskName();
 		if (taskName != null) {
 			if (taskName.isEmpty()) taskName = null;
 			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
 		}
-
-		int ln = getLineNum();
-		String execId = bdsThread.getBdsThreadId() //
-				+ "/" + tag //
-				+ (module == null ? "" : "." + module) //
-				+ (taskName == null ? "" : "." + taskName) //
-				+ (ln > 0 ? ".line_" + ln : "") //
-				+ ".id_" + nextId //
-		;
-
-		return execId;
+		return bdsThread.generateId(getBdsNode(), tag, taskName, false, null);
 	}
 
 }

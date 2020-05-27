@@ -62,6 +62,7 @@ public class BdsThread extends Thread implements Serializable {
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	private static int bdsThreadNumber = 1;
+	private static int currentId = 1;
 
 	Config config; // Configuration
 	Random random; // Random number generator
@@ -85,6 +86,10 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	protected synchronized static int bdsThreadId() {
 		return bdsThreadNumber++;
+	}
+
+	public static synchronized int nextId() {
+		return currentId++;
 	}
 
 	private BdsThread(BdsThread parent, Statement statement, Config config, BdsVm vm) {
@@ -167,7 +172,6 @@ public class BdsThread extends Thread implements Serializable {
 		// Create checkpoint
 		String programFile = statement.getFileNameCanonical();
 		String nodeFile = node.getFileNameCanonical();
-
 		String checkpointFileName = Gpr.baseName(programFile);
 		if (!programFile.equals(nodeFile)) checkpointFileName += "." + Gpr.baseName(node.getFileName(), ".bds");
 		checkpointFileName += ".line_" + node.getLineNum() + ".chp";
@@ -180,7 +184,9 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	public String checkpoint(String checkpointFileName) {
 		// Default file name
-		if (checkpointFileName == null) checkpointFileName = statement.getFileNameCanonical() + ".chp";
+		if (checkpointFileName == null) {
+			checkpointFileName = statement.getFileNameCanonical() + ".chp";
+		}
 
 		// Save
 		if (isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
@@ -345,6 +351,36 @@ public class BdsThread extends Thread implements Serializable {
 		List<BdsThread> bdsThreads = getBdsThreadsAll();
 		for (BdsThread th : bdsThreads)
 			th.setFreeze(freeze);
+	}
+
+	public String generateId(BdsNode node, String tag, String name) {
+		return generateId(node, tag, name, false, null);
+	}
+
+	/**
+	 * Create a generic ID (task ID, sys ID, etc)
+	 */
+	public String generateId(BdsNode node, String tag, String name, boolean usePid, String ext) {
+		long pid = usePid ? ProcessHandle.current().pid() : -1;
+
+		// Use module name
+		int ln = -1;
+		String module = null;
+		if (node != null) {
+			module = node.getFileName();
+			ln = node.getLineNum();
+		}
+		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
+
+		return getBdsThreadId() //
+				+ "/" + tag //
+				+ (module == null ? "" : "." + module) //
+				+ (name == null ? "" : "." + name) //
+				+ (ln > 0 ? ".line_" + ln : "") //
+				+ ".id_" + nextId() //
+				+ (pid < 0 ? "" : ".pid_" + pid) //
+				+ (ext == null ? "" : "." + ext) //
+		;
 	}
 
 	/**

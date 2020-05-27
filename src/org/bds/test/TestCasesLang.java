@@ -226,8 +226,12 @@ public class TestCasesLang extends TestCasesBase {
 	@Test
 	public void test33() {
 		Gpr.debug("Test");
-		String errs = "ERROR [ file 'test/test33.bds', line 7 ] :	Only sys statements are allowed in a task (line 11)\n";
-		compileErrors("test/test33.bds", errs);
+		// As of bds version 3.0, this is no longer a compile error, it is just an "improper task"
+		//
+		//		String errs = "ERROR [ file 'test/test33.bds', line 7 ] :	Only sys statements are allowed in a task (line 11)\n";
+		//		compileErrors("test/test33.bds", errs);
+		//
+		compileOk("test/test33.bds");
 	}
 
 	@Test

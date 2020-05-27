@@ -45,6 +45,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
 	public static final String CMD_DOWNLOAD = "bds -download";
 	public static final String CMD_UPLOAD = "bds -upload";
+	public static final String CMD_RESTORE_FROM_CHECKPOINT = "bds -restore";
 
 	// Note:	It is important that 'options' node is type-checked before the others in order to
 	//			add variables to the scope before statements uses them.
@@ -261,19 +262,33 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Create a checkpoint
 		String labelTaskBodyEnd = baseLabelName() + "body_end";
 		String checkpointFile = checkpointFile();
+		// Reset the 'checkpoint_recovered' flag: Why? Because we want to make
+		// sure that the flag is only true if the checkpoint we are creating
+		// is recovered (e.g. it might be true because we recovered from a
+		// previous checkpoint and we never checked it).
+		// Note: Checking the flag 'checkpoint_recovered' also resets it.
+		sb.append("checkpoint_recovered\n");
+		sb.append("pop\n");
+		// Create a checkpoint
 		sb.append("pushs '" + checkpointFile + "'\n");
 		sb.append("checkpoint\n");
+		// If this code is being executed right after a checkpoint recover, we
+		// should continue into the task statements. Otherwise, we skip to the
+		// end, because we are executing the 'main' bds process (not the improper
+		// task)
 		sb.append("checkpoint_recovered\n");
 		sb.append("jmpf " + labelTaskBodyEnd + "\n");
 
-		// Task body (i.e. the statements in the task) are executed by the process that recovers from the checkpoint
+		// Task body (i.e. the statements in the task) are executed by the
+		// process that recovers from the checkpoint
 		sb.append(toAsmStatementsImproperTaskBody(varOutputs, varInputs));
 
-		// This is the task
+		// This code schedules the task execution. The task is recovering
+		// from a the checkpoint we've just created.
 		sb.append(labelTaskBodyEnd + ":\n");
 		sb.append("load " + varOutputs + "\n");
 		sb.append("load " + varInputs + "\n");
-		sb.append("pushs \"bds -r '" + checkpointFile + "'\"\n");
+		sb.append("pushs \"" + CMD_RESTORE_FROM_CHECKPOINT + " '" + checkpointFile + "'\"\n");
 		return sb.toString();
 	}
 

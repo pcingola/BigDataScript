@@ -1,0 +1,9 @@
+
+println "Task improper: Before"
+a := 42
+task {
+	println "Task improper: Start, a=$a"
+	a = 1
+	println "Task improper: End, a=$a"
+}
+println "Task improper: After"
