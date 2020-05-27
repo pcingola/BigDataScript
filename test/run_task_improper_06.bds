@@ -10,7 +10,9 @@ void impr(int i) {
 }
 
 println "Task improper: Before, a=$a"
-par impr(0)
+for(int i=0 ; i < 3; i++ ) {
+	par impr(i)
+}
 println "Task improper: After, a=$a"
 wait
 println "Done"
