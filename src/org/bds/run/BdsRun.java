@@ -505,6 +505,8 @@ public class BdsRun {
 			if (!bdsThread.getRunState().isFinished()) {
 				bdsThread.unserializedTasksFrozen();
 			}
+			// Previous 'rmOnExit' files are not removed by this process, they are removed by the "main" process
+			bdsThread.resetRmOnExit();
 		}
 
 		// All set, run main thread

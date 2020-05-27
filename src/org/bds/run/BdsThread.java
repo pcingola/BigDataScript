@@ -774,6 +774,10 @@ public class BdsThread extends Thread implements Serializable {
 		}
 	}
 
+	public void resetRmOnExit() {
+		removeOnExit = new LinkedList<>();
+	}
+
 	/**
 	 * Remove the file on exit
 	 */
