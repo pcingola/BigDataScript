@@ -991,8 +991,14 @@ public class BdsVm implements Serializable {
 				break;
 
 			case CHECKPOINT:
-				s1 = popString(); // File name
-				bdsThread.checkpoint(s1);
+				s1 = popString(); // File name (may be empty)
+				bdsThread.checkpointOp(s1, getBdsNode());
+				break;
+
+			case CHECKPOINT_PUSH:
+				s1 = popString(); // File name (may be empty)
+				s1 = bdsThread.checkpointOp(s1, getBdsNode()); // Return checkpoint file name
+				push(s1); // Push checkpoint file name to stack
 				break;
 
 			case CHECKPOINT_RECOVERED:
@@ -1173,11 +1179,6 @@ public class BdsVm implements Serializable {
 				kill();
 				break;
 
-			case LOAD:
-				name = constantString();
-				push(scope.getValue(name));
-				break;
-
 			case LEB:
 				b2 = popBool();
 				b1 = popBool();
@@ -1200,6 +1201,11 @@ public class BdsVm implements Serializable {
 				s2 = popString();
 				s1 = popString();
 				push(s1.compareTo(s2) <= 0);
+				break;
+
+			case LOAD:
+				name = constantString();
+				push(scope.getValue(name));
 				break;
 
 			case LTB:

@@ -211,6 +211,22 @@ public class BdsThread extends Thread implements Serializable {
 		return checkpointFileName;
 	}
 
+	/**
+	 * Create checkpoint file. This method is called from VM opcode
+	 * @param checkpointFileName
+	 * @param node
+	 * @return
+	 */
+	public String checkpointOp(String checkpointFileName, BdsNode node) {
+		// Default file name
+		if (checkpointFileName.isEmpty()) {
+			checkpointFileName = generateId(node, "checkpoint", null, false, true) + ".chp";
+		}
+		checkpointFileName = checkpoint(checkpointFileName);
+		File chpFile = new File(checkpointFileName);
+		return chpFile.getAbsolutePath();
+	}
+
 	void cleanupBeforeReport() {
 		// We are completely done
 		setRunState(RunState.FINISHED);
@@ -353,15 +369,12 @@ public class BdsThread extends Thread implements Serializable {
 			th.setFreeze(freeze);
 	}
 
-	public String generateId(BdsNode node, String tag, String name) {
-		return generateId(node, tag, name, false, null);
-	}
-
 	/**
 	 * Create a generic ID (task ID, sys ID, etc)
 	 */
-	public String generateId(BdsNode node, String tag, String name, boolean usePid, String ext) {
+	public String generateId(BdsNode node, String tag, String name, boolean usePid, boolean useRand) {
 		long pid = usePid ? ProcessHandle.current().pid() : -1;
+		int rand = useRand ? Math.abs((new Random()).nextInt()) : -1;
 
 		// Use module name
 		int ln = -1;
@@ -379,7 +392,7 @@ public class BdsThread extends Thread implements Serializable {
 				+ (ln > 0 ? ".line_" + ln : "") //
 				+ ".id_" + nextId() //
 				+ (pid < 0 ? "" : ".pid_" + pid) //
-				+ (ext == null ? "" : "." + ext) //
+				+ (rand < 0 ? "" : "." + rand) //
 		;
 	}
 

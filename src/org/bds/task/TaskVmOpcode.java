@@ -262,7 +262,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 	}
 
 	protected String taskId() {
-		return sysId("task");
+		return id("task");
 	}
 
 }

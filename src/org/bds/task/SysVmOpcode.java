@@ -67,7 +67,7 @@ public class SysVmOpcode {
 		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
 		// When several improper tasks are executed on local host, they can have the same task ID.
 		// To avoid file name collision, we use the PID
-		String sysFileName = execId + (usePid ? "." + ProcessHandle.current().pid() : "") + ".sh";
+		String sysFileName = execId + (usePid ? ".pid_" + ProcessHandle.current().pid() : "") + ".sh";
 		File f = new File(sysFileName);
 		try {
 			return f.getCanonicalPath();
@@ -81,6 +81,18 @@ public class SysVmOpcode {
 	 */
 	protected String getTaskName() {
 		return null;
+	}
+
+	/**
+	 * Create a task ID
+	 */
+	protected String id(String tag) {
+		String taskName = getTaskName();
+		if (taskName != null) {
+			if (taskName.isEmpty()) taskName = null;
+			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
+		}
+		return bdsThread.generateId(getBdsNode(), tag, taskName, false, false);
 	}
 
 	protected boolean isNode(BdsNode n) {
@@ -157,19 +169,7 @@ public class SysVmOpcode {
 	}
 
 	protected String sysId() {
-		return sysId("sys");
-	}
-
-	/**
-	 * Create a task ID
-	 */
-	protected String sysId(String tag) {
-		String taskName = getTaskName();
-		if (taskName != null) {
-			if (taskName.isEmpty()) taskName = null;
-			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
-		}
-		return bdsThread.generateId(getBdsNode(), tag, taskName, false, null);
+		return id("sys");
 	}
 
 }
