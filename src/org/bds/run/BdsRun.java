@@ -299,6 +299,7 @@ public class BdsRun {
 	 */
 	BdsThread loadCheckpoint() {
 		// Load checkpoint file
+		if (verbose) Timer.showStdErr("Loading checkpoint: " + chekcpointRestoreFile);
 		BdsThread bdsThreadRoot;
 		try {
 			ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(chekcpointRestoreFile)));
@@ -457,6 +458,7 @@ public class BdsRun {
 		}
 
 		// All set, run main thread
+		if (debug) Timer.showStdErr("Running from checkpoint");
 		return runThread(bdsThread);
 	}
 
@@ -465,6 +467,7 @@ public class BdsRun {
 	 */
 	int runCompile() {
 		// Compile, abort on errors
+		if (debug) Timer.showStdErr("Compiling");
 		CompileCode ccode = compile();
 		switch (ccode) {
 		case OK:
@@ -510,6 +513,7 @@ public class BdsRun {
 		}
 
 		// All set, run main thread
+		if (debug) Timer.showStdErr("Running task improper");
 		return runThread(bdsThread);
 	}
 
