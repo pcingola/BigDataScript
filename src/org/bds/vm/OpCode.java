@@ -121,6 +121,8 @@ public enum OpCode {
 	, REFFIELD, REFLIST, REFMAP//
 	// Return (from function)
 	, RET
+	// Remove file on exit
+	, RMONEXIT
 	// Scope: create new scope (and push it), restore old scope (pop current scope)
 	, SCOPEPOP, SCOPEPUSH
 	// Set value

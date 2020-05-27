@@ -13,9 +13,9 @@ import org.bds.util.Gpr;
 public class Bds {
 
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "c";
+	public static final String REVISION = "";
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
-	public static final String VERSION_MAJOR = "2.1";
+	public static final String VERSION_MAJOR = "2.2";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
@@ -428,15 +428,15 @@ public class Bds {
 		System.err.println("  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.");
 		System.err.println("  [-l | -log    ]                : Log all tasks (do not delete tmp files). Default: " + log + ".");
 		System.err.println("  -noChp                         : Do not create any checkpoint files.");
-		System.err.println("  -noReport                      : Do not create reports. Default: " + !(reportHtml || reportYaml) + ".");
-		System.err.println("  -noReportHtml                  : Do not create HTML reports. Default: " + (!reportHtml) + ".");
-		System.err.println("  -noReportYaml                  : Do not create YAML reports. Default: " + (!reportYaml) + ".");
-		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit). Default: " + noRmOnExit + ".");
+		System.err.println("  -noReport                      : Do not create reports.");
+		System.err.println("  -noReportHtml                  : Do not create HTML reports.");
+		System.err.println("  -noReportYaml                  : Do not create YAML reports.");
+		System.err.println("  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit).");
 		System.err.println("  [-q | -queue  ] queueName      : Set default queue name.");
 		System.err.println("  -quiet                         : Do not show any messages or tasks outputs on STDOUT. Default: " + quiet + ".");
-		System.err.println("  -reportHtml                    : Create HTML report. Default: " + reportHtml + ".");
+		System.err.println("  -reportHtml                    : Create HTML report.");
 		System.err.println("  -reportName <name>             : Set base-name for report files.");
-		System.err.println("  -reportYaml                    : Create YAML report. Default: " + reportYaml + ".");
+		System.err.println("  -reportYaml                    : Create YAML report.");
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-s | -system ] type           : Set system type.");
 		System.err.println("  [-t | -test   ]                : Run user test cases (runs all test* functions).");

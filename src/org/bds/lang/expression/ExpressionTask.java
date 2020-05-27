@@ -45,7 +45,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
 	public static final String CMD_DOWNLOAD = "bds -download";
 	public static final String CMD_UPLOAD = "bds -upload";
-	public static final String CMD_RESTORE_FROM_CHECKPOINT = "bds -restore";
+	public static final String CMD_RESTORE_FROM_CHECKPOINT = "bds -noReport -restore";
 
 	// Note:	It is important that 'options' node is type-checked before the others in order to
 	//			add variables to the scope before statements uses them.
@@ -287,7 +287,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		// This code schedules the task execution. The task is recovering
 		// from a the checkpoint we've just created.
 		sb.append(labelTaskBodyEnd + ":\n");
-		sb.append("varpop " + checkpointFileVar + "\n");
+		sb.append("var " + checkpointFileVar + "\n");
+		sb.append("rmonexit\n"); // Make sure we delete the checkpoint file at the end of the run
 		sb.append("load " + varOutputs + "\n");
 		sb.append("load " + varInputs + "\n");
 		// Command to execute: "bds -restore $checkpointFileVar"

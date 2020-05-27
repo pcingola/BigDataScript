@@ -1,9 +1,11 @@
 
 a := 42
-println("Hi")
-task {
-	sys echo "SYS HI"
-	sys echo "SYS BYE"
-	println("Done: $a")
+println "Task improper: Before, a=$a"
+for(int i=0 ; i < 2; i++ ) {
+	task {
+		println "\tTask improper: a=$a, i=$i"
+	}
 }
-print("Bye")
+println "Task improper: After, a=$a"
+wait
+println "After wait"

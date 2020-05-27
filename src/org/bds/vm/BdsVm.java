@@ -1408,6 +1408,11 @@ public class BdsVm implements Serializable {
 				popCallFrame();
 				break;
 
+			case RMONEXIT:
+				v1 = pop();
+				bdsThread.rmOnExit(v1);
+				break;
+
 			case SCOPEPUSH:
 				newScope();
 				break;
