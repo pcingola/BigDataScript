@@ -25,7 +25,6 @@ public class Bds {
 	Config config;
 	String configFile = Config.DEFAULT_CONFIG_FILE; // Configuration file
 	boolean coverage;
-
 	double coverageMin = -1; // Min coverage ratio
 	boolean debug; // debug mode
 	boolean dryRun; // Dry run (do not run tasks)
@@ -303,6 +302,14 @@ public class Bds {
 					else usage("Option '-system' without file argument");
 					break;
 
+				case "-task":
+					// Checkpoint restore
+					if ((i + 1) < args.length) chekcpointRestoreFile = args[++i];
+					else usage("Option '-task' without checkpoint file argument");
+					bdsRun.setBdsAction(BdsAction.RUN_TASK_IMPROPER);
+					reportHtml = reportYaml = false;
+					break;
+
 				case "-t":
 				case "-test":
 					bdsRun.setBdsAction(BdsAction.TEST);
@@ -440,6 +447,7 @@ public class Bds {
 		System.err.println("  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.");
 		System.err.println("  [-s | -system ] type           : Set system type.");
 		System.err.println("  [-t | -test   ]                : Run user test cases (runs all test* functions).");
+		System.err.println("  -task checkpoint.chp           : Execute an 'improper taks' from checkpoint file.");
 		System.err.println("  -upload file url               : Upload local file to 'url'. Note: Used by 'taks'.");
 		System.err.println("  [-v | -verbose]                : Be verbose.");
 		System.err.println("  -version                       : Show version and exit.");

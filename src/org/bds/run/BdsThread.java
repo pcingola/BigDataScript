@@ -36,6 +36,7 @@ import org.bds.report.Report;
 import org.bds.scope.Scope;
 import org.bds.task.Task;
 import org.bds.task.TaskDependecies;
+import org.bds.task.TaskState;
 import org.bds.task.TaskVmOpcode;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -774,19 +775,6 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	/**
-	 * Send task from un-serialization to execution list
-	 */
-	public void restoreUnserializedTasks() {
-		for (Task task : taskDependecies.getTasks()) {
-			if (!task.isStateFinished() // Not finished?
-					&& !task.isDependency() // Don't execute dependencies, unless needed
-			) {
-				TaskVmOpcode.execute(this, task);
-			}
-		}
-	}
-
-	/**
 	 * Remove the file on exit
 	 */
 	public synchronized void rmOnExit(Value vfile) {
@@ -907,6 +895,32 @@ public class BdsThread extends Thread implements Serializable {
 		sb.append("\tRun state : " + getRunState() + "\n");
 		sb.append("\tProgram   :\n" + statement.toStringTree("\t\t", "program") + "\n");
 		return sb.toString();
+	}
+
+	/**
+	 * Mark all un-serialized tasks as finished
+	 */
+	public void unserializedTasksFrozen() {
+		for (Task task : taskDependecies.getTasks()) {
+			if (!task.isStateFinished() // Not finished?
+					&& !task.isDependency() // Don't execute dependencies, unless needed
+			) {
+				task.state(TaskState.FROZEN);
+			}
+		}
+	}
+
+	/**
+	 * Send task from un-serialization to execution list
+	 */
+	public void unserializedTasksRestore() {
+		for (Task task : taskDependecies.getTasks()) {
+			if (!task.isStateFinished() // Not finished?
+					&& !task.isDependency() // Don't execute dependencies, unless needed
+			) {
+				TaskVmOpcode.execute(this, task);
+			}
+		}
 	}
 
 	/**

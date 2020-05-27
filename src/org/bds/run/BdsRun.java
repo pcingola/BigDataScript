@@ -47,7 +47,7 @@ import org.bds.vm.BdsVmAsm;
 public class BdsRun {
 
 	public enum BdsAction {
-		RUN, RUN_CHECKPOINT, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
+		RUN, RUN_CHECKPOINT, RUN_TASK_IMPROPER, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
 	}
 
 	public enum CompileCode {
@@ -388,6 +388,10 @@ public class BdsRun {
 			exitValue = runCheckpoint();
 			break;
 
+		case RUN_TASK_IMPROPER:
+			exitValue = runTaskImproper();
+			break;
+
 		default:
 			throw new RuntimeException("Unimplemented action '" + bdsAction + "'");
 		}
@@ -448,7 +452,7 @@ public class BdsRun {
 		for (BdsThread bdsThread : bdsThreads) {
 			// Re-execute or add tasks (if thread is not finished)
 			if (!bdsThread.getRunState().isFinished()) {
-				bdsThread.restoreUnserializedTasks();
+				bdsThread.unserializedTasksRestore();
 			}
 		}
 
@@ -478,6 +482,33 @@ public class BdsRun {
 
 		// Run thread
 		return runBdsThread();
+	}
+
+	/**
+	 * Restore from checkpoint and run
+	 */
+	int runTaskImproper() {
+		// Load checkpoint file
+		bdsThread = loadCheckpoint();
+		vm = bdsThread.getVm();
+		vm.setRecoveredCheckpoint(true);
+
+		// Set main thread's programUnit running scope (mostly for debugging and test cases)
+		// ProgramUnit's scope it the one before 'global'
+		programUnit = bdsThread.getProgramUnit();
+
+		// Set state and recovered tasks
+		List<BdsThread> bdsThreads = bdsThread.getBdsThreads();
+		bdsThreads.add(bdsThread);
+		for (BdsThread bdsThread : bdsThreads) {
+			// Freeze all pending tasks (we don't want to re-execute other improper tasks)
+			if (!bdsThread.getRunState().isFinished()) {
+				bdsThread.unserializedTasksFrozen();
+			}
+		}
+
+		// All set, run main thread
+		return runThread(bdsThread);
 	}
 
 	/**

@@ -45,7 +45,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
 	public static final String CMD_DOWNLOAD = "bds -download";
 	public static final String CMD_UPLOAD = "bds -upload";
-	public static final String CMD_RESTORE_FROM_CHECKPOINT = "bds -noReport -restore";
+	public static final String CMD_TASK_IMPROPER = "bds -task";
 
 	// Note:	It is important that 'options' node is type-checked before the others in order to
 	//			add variables to the scope before statements uses them.
@@ -292,7 +292,7 @@ public class ExpressionTask extends ExpressionWithScope {
 		sb.append("load " + varOutputs + "\n");
 		sb.append("load " + varInputs + "\n");
 		// Command to execute: "bds -restore $checkpointFileVar"
-		sb.append("pushs \"" + CMD_RESTORE_FROM_CHECKPOINT + " \"\n");
+		sb.append("pushs \"" + CMD_TASK_IMPROPER + " \"\n");
 		sb.append("load " + checkpointFileVar + "\n");
 		sb.append("adds\n");
 
