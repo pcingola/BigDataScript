@@ -23,25 +23,11 @@ public class TestCasesTaskImproper extends TestCasesBase {
 	//		runAndCheck("test/run_task_improper_01.bds", "a", "42");
 	//	}
 	//
-	//	/**
-	//	 * Execute a task: Capture exit command, stdout, stderr
-	//	 */
-	//	@Test
-	//	public void test02() {
-	//		Gpr.debug("Test");
-	//		List<String> expected = new ArrayList<>();
-	//		expected.add("Task improper: Before, a=42");
-	//		expected.add("Task improper: Start, a=42");
-	//		expected.add("Task improper: End, a=1");
-	//		expected.add("Task improper: After, a=42");
-	//		runAndCheckStdout("test/run_task_improper_02.bds", expected, null, false);
-	//	}
-
 	/**
-	 * Execute two tasks: Make sure execution ends at task end and environment is inherited
+	 * Execute a task: Capture exit command, stdout, stderr
 	 */
 	@Test
-	public void test03() {
+	public void test02() {
 		Gpr.debug("Test");
 		verbose = true;
 		List<String> expected = new ArrayList<>();
@@ -49,9 +35,28 @@ public class TestCasesTaskImproper extends TestCasesBase {
 		expected.add("Task improper: Start, a=42");
 		expected.add("Task improper: End, a=1");
 		expected.add("Task improper: After, a=42");
-		runAndCheckStdout("test/run_task_improper_03.bds", expected, null, false);
+		runAndCheckStdout("test/run_task_improper_02.bds", expected, null, false);
 	}
 
+	//	/**
+	//	 * Execute two tasks: Make sure execution ends at task end and environment is inherited
+	//	 */
+	//	@Test
+	//	public void test03() {
+	//		Gpr.debug("Test");
+	//		verbose = true;
+	//		debug = true;
+	//		List<String> expected = new ArrayList<>();
+	//		expected.add("Task improper: Before, a=42");
+	//		for (int i = 0; i < 3; i++) {
+	//			expected.add("Task improper: Start, a=42, i=" + i);
+	//			expected.add("Task improper: End, a=" + (42 + i) + ", i=" + i);
+	//		}
+	//		expected.add("Task improper: After, a=42");
+	//
+	//		runAndCheckStdout("test/run_task_improper_03.bds", expected, null, false);
+	//	}
+	//
 	//	/**
 	//	 * Execute a task with remote files
 	//	 */

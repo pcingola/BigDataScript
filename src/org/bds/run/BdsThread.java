@@ -200,7 +200,6 @@ public class BdsThread extends Thread implements Serializable {
 			ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(checkpointFileName)));
 			out.writeObject(getRoot());
 			out.close();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error while serializing to file '" + checkpointFileName + "'", e);
@@ -744,13 +743,14 @@ public class BdsThread extends Thread implements Serializable {
 		if (!isRoot()) return;
 
 		// Remove all pending files
+		boolean show = isVerbose() || isDebug();
 		if (!removeOnExit.isEmpty()) {
 			if (config != null && config.isNoRmOnExit()) {
-				if (isDebug()) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
+				if (show) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
 			} else {
-				if (isDebug()) Timer.showStdErr("Deleting stale files:");
+				if (show) Timer.showStdErr("Deleting stale files:");
 				for (String fileName : removeOnExit) {
-					if (isVerbose()) System.err.println("\t" + fileName);
+					if (show) System.err.println("\t" + fileName);
 					Data.factory(fileName).delete();
 				}
 			}

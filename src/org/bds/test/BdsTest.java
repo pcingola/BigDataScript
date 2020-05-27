@@ -217,15 +217,17 @@ public class BdsTest {
 	}
 
 	public void checkStdout(String expectedStdout, boolean negate) {
-		int index = captureStdout.toString().indexOf(expectedStdout);
+		int count = countMatchesStdout(expectedStdout);
 
-		if (negate) Assert.assertFalse(errMsg("Error: NOT expected string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
+		if (negate) Assert.assertFalse(errMsg("Error: NOT expected string '" + expectedStdout + "' in STDOUT not found"), count > 0);
 		else {
-			if (index < 0) {
+			if (count <= 0) {
+				// Not found? Print differences
 				String out = captureStdout.toString();
 				printDiffLines(expectedStdout, out);
 			}
-			Assert.assertTrue(errMsg("Error: Expected string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
+			Assert.assertTrue(errMsg("Error: Expected string '" + expectedStdout + "' in STDOUT not found"), count > 0);
+			Assert.assertTrue(errMsg("Error: Expected string '" + expectedStdout + "' in STDOUT only one time, but was found " + count + " times."), count == 1);
 		}
 	}
 
@@ -307,6 +309,25 @@ public class BdsTest {
 		}
 
 		return compileOk;
+	}
+
+	/**
+	 * Count how many time the 'match' is found in 'str'
+	 */
+	int countMatches(String str, String toMatch) {
+		int count = -1, index = -1;
+		do {
+			count++;
+			index = str.indexOf(toMatch, index + 1);
+		} while (index >= 0);
+		return count;
+	}
+
+	/**
+	 * Count how many time the 'expectedStdout' is found in 'stdout'
+	 */
+	int countMatchesStdout(String expectedStdout) {
+		return countMatches(captureStdout.toString(), expectedStdout);
 	}
 
 	/**
