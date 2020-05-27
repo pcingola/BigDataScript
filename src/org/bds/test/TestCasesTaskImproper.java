@@ -16,7 +16,7 @@ import org.junit.Test;
 public class TestCasesTaskImproper extends TestCasesBase {
 
 	//	/**
-	//	 * Execute a task: Local computer
+	//	 * Execute an improper task: Local computer
 	//	 */
 	//	@Test
 	//	public void test01() {
@@ -108,5 +108,15 @@ public class TestCasesTaskImproper extends TestCasesBase {
 		String stdout = runAndCheckStdout("test/run_task_improper_06.bds", expected, null, false);
 		Assert.assertTrue("Should finish with a 'Done' message", stdout.endsWith("Done\n"));
 	}
+
+	//	/**
+	//	 * Execute an improper task that fails
+	//	 */
+	//	@Test
+	//	public void test07() {
+	//		Gpr.debug("Test");
+	//		verbose = true;
+	//		runAndCheckExit("test/run_task_improper_07.bds", 1);
+	//	}
 
 }
