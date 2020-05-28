@@ -28,6 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesClusterSsh.class, // Run on an 'ssh cluster'
 		TestCasesRemote.class, // Accessing remote data (cloud storage)
 		TestCasesReport.class, // Report generation
+		TestCasesTaskImproper.class, // Improper tasks
 })
 public class TestSuiteAll {
 

@@ -5,8 +5,10 @@ import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
+import org.bds.lang.nativeClasses.exception.ClassDeclarationExceptionConcurrentModification;
 import org.bds.lang.nativeMethods.list.MethodNativeListHashCode;
 import org.bds.lang.nativeMethods.list.MethodNativeListSize;
+import org.bds.lang.nativeMethods.map.MethodNativeMapHashCode;
 import org.bds.lang.nativeMethods.map.MethodNativeMapValues;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
@@ -75,9 +77,11 @@ public class ForLoopList extends StatementWithScope {
 		String varName = vinit.getVarName();
 
 		// Internal state variables
+		String varExpr = baseVarName() + "expr";
 		String varList = baseVarName() + "list";
 		String varCounter = baseVarName() + "count";
 		String varMaxCounter = baseVarName() + "max_count";
+		String varHashCode = baseVarName() + "hash_code";
 
 		// Find native methods
 		SymbolTable symtab = returnType.getSymbolTable();
@@ -91,10 +95,10 @@ public class ForLoopList extends StatementWithScope {
 		} else if (isMap()) {
 			// We iterate on the list of map's values
 			TypeMap tmap = (TypeMap) returnType;
-			TypeList tlist = TypeList.get(tmap.getValueType());
 			methodValues = symtab.findFunction(MethodNativeMapValues.class);
+			methodHashCode = symtab.findFunction(MethodNativeMapHashCode.class);
+			TypeList tlist = TypeList.get(tmap.getValueType());
 			methodSize = tlist.getSymbolTable().findFunction(MethodNativeListSize.class);
-			methodHashCode = tlist.getSymbolTable().findFunction(MethodNativeListHashCode.class);
 		} else throw new RuntimeException("Cannot iterate on type " + returnType);
 
 		//
@@ -104,75 +108,152 @@ public class ForLoopList extends StatementWithScope {
 		//   }
 		//
 		// How the loop is executed:
-		//   $list = expressionList
+		//   $expr = expression
+		//   $list = expression.values()
 		//   $maxCount = $list.size()
-		//   $listHash = $list.hash()
+		//   $hash_code = $expr.hash()
 		//   for(int $count=0 ; $count < $maxCount ; $count++ ) {
 		//     var = list[$count]
 		//     ...
 		//     statements
 		//     ...
-		//     if( $list.hash() != $listHash) throw ConcurrentModification()
+		//     if( $expr.hash() != $hash_code) throw ConcurrentModification()
 		//   }
 		//
 
 		if (isNeedsScope()) sb.append("scopepush\n");
 
-		// Evaluate expression and extract list to iterate
-		sb.append(expression.toAsm());
-		if (expression.isList()) {
-			// Evaluate expression: '$list = expressionList'
-			sb.append("varpop " + varList + "\n");
-		} else if (expression.isMap()) {
-			sb.append("callnative " + methodValues + "\n");
-			sb.append("varpop " + varList + "\n");
-		} else {
-			throw new RuntimeException("Cannot iterate on type " + expression.getReturnType());
-		}
-
-		// Get list size: '$maxCount = $list.size()'
-		sb.append("load " + varList + "\n");
-		sb.append("callnative " + methodSize + "\n");
-		sb.append("varpop " + varMaxCounter + "\n");
-
-		// Loop start
-		sb.append(loopInitLabel + ":\n");
-
-		// Initialize variables: 'for(int $count = 0 ;'
-		sb.append(vinit.toAsm());
-		sb.append("pushi 0\n");
-		sb.append("varpop " + varCounter + "\n");
-
-		// Loop condition: 'for(... ; $count < $maxCount ; ...)'
-		sb.append(loopStartLabel + ":\n");
-		sb.append("load " + varCounter + "\n");
-		sb.append("load " + varMaxCounter + "\n");
-		sb.append("lti\n");
-		sb.append("jmpf " + loopEndLabel + "\n");
-
-		// Assign loop variable: 'var = list[$count]'
-		sb.append("load " + varCounter + "\n");
-		sb.append("load " + varList + "\n");
-		sb.append("reflist\n");
-		sb.append("storepop " + varName + "\n");
-
-		// Execute statements: 'statements'
-		sb.append(statement.toAsm());
-
-		// Loop end part: $i++
-		sb.append(loopContinueLabel + ":\n");
-		sb.append("load " + varCounter + "\n");
-		sb.append("inc\n");
-		sb.append("storepop " + varCounter + "\n");
-
-		// Jump to beginning of loop
-		sb.append("jmp " + loopStartLabel + "\n");
+		sb.append(toAsmForInitGetList(varExpr, varList, methodValues)); // Evaluate expression and extract list to iterate
+		sb.append(toAsmForInitGetMax(varList, methodSize, varMaxCounter)); // Get max loop counter
+		sb.append(toAsmForInitGetHashCode(varExpr, methodHashCode, varHashCode)); // Get hashcode
+		sb.append(toAsmForStart(loopInitLabel, vinit, varCounter)); // For loop start
+		sb.append(toAsmForCond(loopStartLabel, varCounter, varMaxCounter, loopEndLabel)); // For loop conditional
+		sb.append(toAsmForVarAssign(varCounter, varList, varName)); // For loop variable assignment
+		sb.append(statement.toAsm()); // Execute statements: 'statements' inside the loop
+		sb.append(toAsmForEnd(loopContinueLabel, varExpr, varHashCode, methodHashCode, varCounter, loopStartLabel)); // For loop end		// Loop end part
 
 		// Loop finished
 		sb.append(loopEndLabel + ":\n");
 		if (isNeedsScope()) sb.append("scopepop\n");
 
 		return sb.toString();
+	}
+
+	protected String toAsmConcurrentModificationCheck(String varExpr, ValueFunction methodHashCode, String varHashCode) {
+		String labelBase = baseLabelName();
+		String loopConcModOk = labelBase + "concurent_modification_ok";
+
+		return "load " + varExpr + "\n" //
+				+ "callnative " + methodHashCode + "\n" //
+				+ "load " + varHashCode + "\n" //
+				+ "eqi\n" // If equal, the hashcode did not change => OK
+				+ "jmpt " + loopConcModOk + "\n" //
+				// Concurrent modification check Fail, we need to throw an exception
+				+ "new " + ClassDeclarationExceptionConcurrentModification.CLASS_NAME_EXCEPTION_CONCURRENT_MODIFICATION + "\n" // Create a new exception object
+				+ "throw \n" // Thow the exception
+				+ "" + loopConcModOk + ":\n" // Concurrent modification check OK
+		;
+
+	}
+
+	/**
+	 * For loop condition:
+	 *     for(... ; $count < $maxCount ; ...)
+	 */
+	protected String toAsmForCond(String loopStartLabel, String varCounter, String varMaxCounter, String loopEndLabel) {
+		return loopStartLabel + ":\n" //
+				+ "load " + varCounter + "\n" //
+				+ "load " + varMaxCounter + "\n" //
+				+ "lti\n" //
+				+ "jmpf " + loopEndLabel + "\n" //
+		;
+	}
+
+	/**
+	 * For loop end:
+	 *     for( .... ; $count++) {
+	 */
+	protected String toAsmForEnd(String loopContinueLabel, String varExpr, String varHashCode, ValueFunction methodHashCode, String varCounter, String loopStartLabel) {
+		return loopContinueLabel + ":\n" //
+				+ "node " + id + "\n" //
+				+ toAsmConcurrentModificationCheck(varExpr, methodHashCode, varHashCode) // Check concurrent modification
+				+ "load " + varCounter + "\n" // Loop end part: $i++
+				+ "inc\n" //
+				+ "storepop " + varCounter + "\n" //
+				+ "jmp " + loopStartLabel + "\n" // Jump to beginning of loop
+		;
+	}
+
+	/**
+	 * For loop initialization: Get list size:
+	 *     $maxCount = $list.size()
+	 */
+	protected String toAsmForInitGetHashCode(String varExpr, ValueFunction methodHashCode, String varHashCode) {
+		return "load " + varExpr + "\n" //
+				+ "callnative " + methodHashCode + "\n" //
+				+ "varpop " + varHashCode + "\n" //
+		;
+	}
+
+	/**
+	 * Evaluate expression and extract list to iterate:
+	 *     $list = expressionList
+	 */
+	protected String toAsmForInitGetList(String varExpr, String varList, ValueFunction methodValues) {
+		if (isList()) {
+			// Evaluate expression: '$list = expressionList'
+			return expression.toAsm() //
+					+ "var " + varExpr + "\n" //
+					+ "varpop " + varList + "\n" //
+			;
+		} else if (isMap()) {
+			return expression.toAsm() //
+					+ "var " + varExpr + "\n" //
+					+ "callnative " + methodValues + "\n" //
+					+ "varpop " + varList + "\n" //
+			;
+		} else {
+			throw new RuntimeException("Cannot iterate on type " + expression.getReturnType());
+		}
+	}
+
+	/**
+	 * For loop initialization: Get list size:
+	 *     $maxCount = $list.size()
+	 */
+	protected String toAsmForInitGetMax(String varList, ValueFunction methodSize, String varMaxCounter) {
+		return "load " + varList + "\n" //
+				+ "callnative " + methodSize + "\n" //
+				+ "varpop " + varMaxCounter + "\n" //
+		;
+	}
+
+	/**
+	 * For loop start:
+	 *     for(int $count=0 ; ...
+	 */
+	protected String toAsmForStart(String loopInitLabel, VariableInit vinit, String varCounter) {
+		return loopInitLabel + ":\n" //
+				+ vinit.toAsm() // Initialize variables: 'for(int $count = 0 ;'
+				+ "pushi 0\n" //
+				+ "varpop " + varCounter + "\n" //
+		;
+	}
+
+	/**
+	 * For loop variable assign (beginning of each iteration)
+	 *     for( ... ) {
+	 *         var = list[$count]
+	 *     }
+	 */
+	protected String toAsmForVarAssign(String varCounter, String varList, String varName) {
+		// Assign loop variable: 'var = list[$count]'
+		return "load " + varCounter + "\n" //
+				+ "load " + varList + "\n" //
+				+ "reflist\n" //
+				+ "storepop " + varName + "\n" //
+		;
+
 	}
 
 	@Override

@@ -1,0 +1,18 @@
+
+a := 42
+
+void impr(int i) {
+	task {
+		println "Task improper: Start, a=$a, i=$i"
+		a += i
+		println "Task improper: End, a=$a, i=$i"
+	}
+}
+
+println "Task improper: Before, a=$a"
+for(int i=0 ; i < 5; i++ ) {
+	par impr(i)
+}
+println "Task improper: After, a=$a"
+wait
+println "Done"

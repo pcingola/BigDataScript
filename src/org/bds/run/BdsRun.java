@@ -28,6 +28,7 @@ import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeClassException;
+import org.bds.lang.type.TypeClassExceptionConcurrentModification;
 import org.bds.lang.type.Types;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
@@ -46,7 +47,7 @@ import org.bds.vm.BdsVmAsm;
 public class BdsRun {
 
 	public enum BdsAction {
-		RUN, RUN_CHECKPOINT, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
+		RUN, RUN_CHECKPOINT, RUN_TASK_IMPROPER, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
 	}
 
 	public enum CompileCode {
@@ -271,6 +272,7 @@ public class BdsRun {
 		if (debug) log("Initialize standard classes.");
 
 		initilaizeNativeClass(new TypeClassException());
+		initilaizeNativeClass(new TypeClassExceptionConcurrentModification());
 	}
 
 	/**
@@ -297,6 +299,7 @@ public class BdsRun {
 	 */
 	BdsThread loadCheckpoint() {
 		// Load checkpoint file
+		if (verbose) Timer.showStdErr("Loading checkpoint: " + chekcpointRestoreFile);
 		BdsThread bdsThreadRoot;
 		try {
 			ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(chekcpointRestoreFile)));
@@ -386,6 +389,10 @@ public class BdsRun {
 			exitValue = runCheckpoint();
 			break;
 
+		case RUN_TASK_IMPROPER:
+			exitValue = runTaskImproper();
+			break;
+
 		default:
 			throw new RuntimeException("Unimplemented action '" + bdsAction + "'");
 		}
@@ -434,22 +441,24 @@ public class BdsRun {
 		// Load checkpoint file
 		bdsThread = loadCheckpoint();
 		vm = bdsThread.getVm();
+		vm.setRecoveredCheckpoint(true);
 
 		// Set main thread's programUnit running scope (mostly for debugging and test cases)
 		// ProgramUnit's scope it the one before 'global'
 		programUnit = bdsThread.getProgramUnit();
 
 		// Set state and recover tasks
-		List<BdsThread> bdsThreads = bdsThread.getBdsThreads();
+		List<BdsThread> bdsThreads = bdsThread.getBdsThreadsAll();
 		bdsThreads.add(bdsThread);
 		for (BdsThread bdsThread : bdsThreads) {
 			// Re-execute or add tasks (if thread is not finished)
 			if (!bdsThread.getRunState().isFinished()) {
-				bdsThread.restoreUnserializedTasks();
+				bdsThread.unserializedTasksRestore();
 			}
 		}
 
 		// All set, run main thread
+		if (debug) Timer.showStdErr("Running from checkpoint");
 		return runThread(bdsThread);
 	}
 
@@ -458,6 +467,7 @@ public class BdsRun {
 	 */
 	int runCompile() {
 		// Compile, abort on errors
+		if (debug) Timer.showStdErr("Compiling");
 		CompileCode ccode = compile();
 		switch (ccode) {
 		case OK:
@@ -475,6 +485,24 @@ public class BdsRun {
 
 		// Run thread
 		return runBdsThread();
+	}
+
+	/**
+	 * Restore from checkpoint and run
+	 */
+	int runTaskImproper() {
+		// Load checkpoint file
+		bdsThread = loadCheckpoint();
+		vm = bdsThread.getVm();
+		vm.setRecoveredCheckpoint(true);
+
+		// Set main thread's programUnit running scope (mostly for debugging and test cases)
+		// ProgramUnit's scope it the one before 'global'
+		programUnit = bdsThread.getProgramUnit();
+
+		// All set, run main thread
+		if (debug) Timer.showStdErr("Running task improper");
+		return runThread(bdsThread);
 	}
 
 	/**

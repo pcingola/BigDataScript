@@ -21,22 +21,14 @@ import org.bds.util.Timer;
  */
 public class SysVmOpcode {
 
-	private static int sysId = 1;
-
 	protected BdsThread bdsThread;
-
 	protected BdsNode bdsNode;
 	protected String commands;
+	protected boolean usePid;
 
-	/**
-	 * Get a sys ID
-	 */
-	protected static synchronized int nextId() {
-		return sysId++;
-	}
-
-	public SysVmOpcode(BdsThread bdsThread) {
+	public SysVmOpcode(BdsThread bdsThread, boolean usePid) {
 		this.bdsThread = bdsThread;
+		this.usePid = usePid;
 	}
 
 	/**
@@ -45,9 +37,9 @@ public class SysVmOpcode {
 	protected BdsNode bdsNode() {
 		BdsNode n = bdsThread.getBdsNodeCurrent();
 
-		// Try to find a 'task' node
+		// Try to find a 'sys' node
 		for (BdsNode bn = n; bn != null; bn = bn.getParent()) {
-			if (bn instanceof ExpressionSys) return bn;
+			if (isNode(bn)) return bn;
 		}
 
 		// Not found? Use this as default
@@ -73,8 +65,9 @@ public class SysVmOpcode {
 
 	protected String getSysFileName(String execId) {
 		if (execId == null) throw new RuntimeException("Exec ID is null. This should never happen!");
-
-		String sysFileName = execId + ".sh";
+		// When several improper tasks are executed on local host, they can have the same task ID.
+		// To avoid file name collision, we use the PID
+		String sysFileName = execId + (usePid ? ".pid_" + ProcessHandle.current().pid() : "") + ".sh";
 		File f = new File(sysFileName);
 		try {
 			return f.getCanonicalPath();
@@ -88,6 +81,22 @@ public class SysVmOpcode {
 	 */
 	protected String getTaskName() {
 		return null;
+	}
+
+	/**
+	 * Create a task ID
+	 */
+	protected String id(String tag) {
+		String taskName = getTaskName();
+		if (taskName != null) {
+			if (taskName.isEmpty()) taskName = null;
+			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
+		}
+		return bdsThread.generateId(getBdsNode(), tag, taskName, false, false);
+	}
+
+	protected boolean isNode(BdsNode n) {
+		return n instanceof ExpressionSys;
 	}
 
 	/**
@@ -105,9 +114,7 @@ public class SysVmOpcode {
 		args.add(cmds);
 
 		// Save commands to file for debugging and traceability
-		if (Config.get().isLog()) {
-			saveProgramFile(cmds);
-		}
+		if (Config.get().isLog()) saveProgramFile(cmds);
 
 		// Run command line
 		ExecResult execResult = Exec.exec(args, bdsThread.getConfig().isQuiet());
@@ -140,7 +147,6 @@ public class SysVmOpcode {
 	protected String saveProgramFile(String programTxt) {
 		// Select file name
 		String sysId = sysId();
-		getSysFileName(sysId);
 		String programFileName = getSysFileName(sysId);
 		if (Config.get().isDebug()) Timer.showStdErr("Task: Saving file '" + programFileName + "'");
 
@@ -153,44 +159,17 @@ public class SysVmOpcode {
 			// Nothing to do
 		}
 
+		// Show 'sys' shell execution
+		programTxt = "# Execution shell: " + Config.get().getSysShell() + "\n\n" + programTxt;
+
 		// Save file and make it executable
-		String shell = Config.get().getSysShell();
-		String program = "# Execution shell: " + shell + "\n\n" + programTxt;
-		Gpr.toFile(programFileName, program);
+		Gpr.toFile(programFileName, programTxt);
 
 		return programFileName;
 	}
 
 	protected String sysId() {
-		return sysId("sys");
-	}
-
-	/**
-	 * Create a task ID
-	 */
-	protected String sysId(String tag) {
-		int nextId = nextId();
-
-		// Use module name
-		String module = getFileName();
-		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
-
-		String taskName = getTaskName();
-		if (taskName != null) {
-			if (taskName.isEmpty()) taskName = null;
-			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
-		}
-
-		int ln = getLineNum();
-		String execId = bdsThread.getBdsThreadId() //
-				+ "/" + tag //
-				+ (module == null ? "" : "." + module) //
-				+ (taskName == null ? "" : "." + taskName) //
-				+ (ln > 0 ? ".line_" + ln : "") //
-				+ ".id_" + nextId //
-		;
-
-		return execId;
+		return id("sys");
 	}
 
 }

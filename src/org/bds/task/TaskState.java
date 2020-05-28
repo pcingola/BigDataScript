@@ -6,12 +6,13 @@ public enum TaskState {
 	NONE // Task created, nothing happened so far
 	, SCHEDULED // Process is scheduled to start
 	, STARTED // Process started (or queued for execution)
-	, START_FAILED // Process failed to start (or failed to queue)
+	, START_FAILED // Process failed to start or failed to queue (this is a final state)
 	, RUNNING // Running OK
-	, ERROR // Filed while running
-	, ERROR_TIMEOUT // Filed due to timeout
-	, KILLED // Task was killed
-	, FINISHED // Finished OK
+	, ERROR // Filed while running (this is a final state)
+	, ERROR_TIMEOUT // Filed due to timeout (this is a final state)
+	, KILLED // Task was killed (this is a final state)
+	, FINISHED // Finished OK (this is a final state)
+	, FROZEN // This task is permanently frozen (this is a final state)
 	;
 
 	public static TaskState exitCode2taskState(int exitCode) {
@@ -44,6 +45,10 @@ public enum TaskState {
 
 	public boolean isFinished() {
 		return this == TaskState.FINISHED;
+	}
+
+	public boolean isFrozen() {
+		return this == TaskState.FROZEN;
 	}
 
 	public boolean isRunning() {

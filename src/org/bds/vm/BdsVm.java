@@ -48,15 +48,21 @@ import org.bds.util.GprString;
  */
 public class BdsVm implements Serializable {
 
+	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
+	public static final String LABEL_MAIN = "main";
+	private static final OpCode OPCODES[] = OpCode.values();
+	private static final long serialVersionUID = 6533146851765102340L;
+	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
+	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
 	BdsThread bdsThread;
 	CallFrame[] callFrames; // Call Frame stack
 	int code[]; // Compile assembly code (OopCodes)
 	List<Object> constants;
 	Map<Integer, Integer> coverageCounter; // Count how many times a nodeId was traversed
 	Map<Object, Integer> constantsByObject;
-
 	boolean debug;
 	ExceptionHandler exceptionHandler; // Current Exception handler (null if we are not in a 'try/catch' statement)
+	ValueClass exceptionValue; // Latest exception thrown (this is mostly used for test cases)
 	Integer exitCode = null; // Default exit code (null means: parse last entry from stack)
 	int fp; // Frame pointer
 	Map<String, FunctionDeclaration> functionsBySignature;
@@ -64,6 +70,7 @@ public class BdsVm implements Serializable {
 	AutoHashMap<Integer, List<String>> labelsByPc;
 	int nodeId; // Current node ID (BdsNode). Used for linking to original bds code
 	int pc; // Program counter
+	boolean recoveredCheckpoint, recoveredCheckpointOp;
 	boolean run; // Keep program running while this variable is 'true'
 	Scope scope; // Current scope (variables)
 	int sp; // Stack pointer
@@ -73,12 +80,6 @@ public class BdsVm implements Serializable {
 	boolean verbose;
 	VmDebugger vmDebugger;
 	VmState vmState = new VmState();
-	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
-	public static final String LABLE_MAIN = "main";
-	private static final OpCode OPCODES[] = OpCode.values();
-	private static final long serialVersionUID = 6533146851765102340L;
-	public static final int SLEEP_TIME_FREEZE = 200; // Milliseconds
-	public static final int STACK_SIZE = 100 * 1024; // Initial stack size
 
 	public BdsVm() {
 		constants = new ArrayList<>();
@@ -91,6 +92,9 @@ public class BdsVm implements Serializable {
 		stack = new Value[STACK_SIZE];
 		types = new ArrayList<>();
 		typeToIndex = new HashMap<>();
+
+		recoveredCheckpoint = false; // Is this a recovered checkpoint? This is NOT altered by the VM
+		recoveredCheckpointOp = false; // Is this a recovered checkpoint? This IS reset by the VM after the first read
 
 		sp = fp = pc = 0;
 		nodeId = -1;
@@ -491,61 +495,6 @@ public class BdsVm implements Serializable {
 	}
 
 	/**
-	 * Create a 'fork' vm-thread
-	 */
-	private BdsVm fork(int pushCount) {
-		BdsVm vmclone = new BdsVm();
-
-		vmclone.code = code;
-		vmclone.debug = debug;
-		vmclone.nodeId = nodeId;
-		vmclone.run = run;
-		vmclone.verbose = verbose;
-		vmclone.labels = labels;
-		vmclone.labelsByPc = labelsByPc;
-		vmclone.constantsByObject = constantsByObject;
-		vmclone.functionsBySignature = functionsBySignature;
-		vmclone.typeToIndex = typeToIndex;
-		vmclone.constants = constants;
-		vmclone.types = types;
-
-		// Child process
-		// vmclone.callFrame : Initialized, because child process has a new frame
-		// vmclone.fp        : Initialized to zero because child process has a new frame
-		// vmclone.bdsThread : Will be set by 'forked' bdsThread
-		vmclone.pc = pc; // Already pointing to instruction after 'fork'
-		vmclone.scope = scope; // Same scope
-
-		// Push 'pushCount' values to new VM (from current VM)
-		if (pushCount > 0) {
-			Value[] vals = new Value[pushCount];
-
-			// Pop values
-			for (int i = 0; i < pushCount; i++)
-				vals[i] = pop();
-
-			// Push values: stack must be in same order
-			// Note: We clone all primitive values. This saves us
-			//       from some race conditions issues
-			for (int i = pushCount - 1; i >= 0; i--) {
-				Value v = vals[i];
-				if (v.getType().isPrimitive()) v = v.clone();
-				vmclone.push(v);
-			}
-		}
-
-		return vmclone;
-	}
-
-	/**
-	 * Execute a 'fork' opcode
-	 */
-	void forkOpCode(int pushCount) {
-		BdsVm vmfork = fork(pushCount);
-		bdsThread.fork(vmfork);
-	}
-
-	/**
 	 * Get arguments from scope for a function / method call
 	 * Note: Remember that stack in reverse order
 	 *
@@ -578,6 +527,10 @@ public class BdsVm implements Serializable {
 
 	public Map<Integer, Integer> getCoverageCounter() {
 		return coverageCounter;
+	}
+
+	public ValueClass getExceptionValue() {
+		return exceptionValue;
 	}
 
 	public int getExitCode() {
@@ -658,6 +611,10 @@ public class BdsVm implements Serializable {
 		return sp <= 0;
 	}
 
+	public boolean isRecoveredCheckpoint() {
+		return recoveredCheckpoint;
+	}
+
 	/**
 	 * Kill opCode
 	 */
@@ -692,6 +649,61 @@ public class BdsVm implements Serializable {
 	 */
 	public void newScope() {
 		scope = new Scope(scope);
+	}
+
+	/**
+	 * Create a 'parallel' vm-thread
+	 */
+	private BdsVm parallel(int pushCount) {
+		BdsVm vmclone = new BdsVm();
+
+		vmclone.code = code;
+		vmclone.debug = debug;
+		vmclone.nodeId = nodeId;
+		vmclone.run = run;
+		vmclone.verbose = verbose;
+		vmclone.labels = labels;
+		vmclone.labelsByPc = labelsByPc;
+		vmclone.constantsByObject = constantsByObject;
+		vmclone.functionsBySignature = functionsBySignature;
+		vmclone.typeToIndex = typeToIndex;
+		vmclone.constants = constants;
+		vmclone.types = types;
+
+		// Child process
+		// vmclone.callFrame : Initialized, because child process has a new frame
+		// vmclone.fp        : Initialized to zero because child process has a new frame
+		// vmclone.bdsThread : Will be set by 'parallel' bdsThread
+		vmclone.pc = pc; // Already pointing to instruction after 'parallel'
+		vmclone.scope = scope; // Same scope
+
+		// Push 'pushCount' values to new VM (from current VM)
+		if (pushCount > 0) {
+			Value[] vals = new Value[pushCount];
+
+			// Pop values
+			for (int i = 0; i < pushCount; i++)
+				vals[i] = pop();
+
+			// Push values: stack must be in same order
+			// Note: We clone all primitive values. This saves us
+			//       from some race conditions issues
+			for (int i = pushCount - 1; i >= 0; i--) {
+				Value v = vals[i];
+				if (v.getType().isPrimitive()) v = v.clone();
+				vmclone.push(v);
+			}
+		}
+
+		return vmclone;
+	}
+
+	/**
+	 * Execute a 'parallel' opcode
+	 */
+	void parallelOpCode(int pushCount) {
+		BdsVm vmpar = parallel(pushCount);
+		bdsThread.parallel(vmpar);
 	}
 
 	/**
@@ -826,9 +838,9 @@ public class BdsVm implements Serializable {
 	 */
 	public int run() {
 		// Initialize program counter
-		// Note: If vm forked, then pc is already initialized in child
+		// Note: If vm parallel, then pc is already initialized in child
 		//       process, do not change.
-		if (pc == 0) pc = Math.max(0, getLabel(LABLE_MAIN));
+		if (pc == 0) pc = Math.max(0, getLabel(LABEL_MAIN));
 
 		run = true;
 		try {
@@ -872,6 +884,10 @@ public class BdsVm implements Serializable {
 		ValueList vlist;
 		ValueMap vmap;
 		ValueClass vclass;
+
+		// In case of recovered checkpoints, the task ID could be repeated (e.g. recovering checkpoints several times)
+		// We append PID to avoid file name collision
+		boolean usePidInFileNames = recoveredCheckpoint;
 
 		// Execute while not the end of the program
 		while (pc < code.length && run) {
@@ -975,8 +991,23 @@ public class BdsVm implements Serializable {
 				break;
 
 			case CHECKPOINT:
-				s1 = popString(); // File name
-				bdsThread.checkpoint(s1);
+				s1 = popString(); // File name (may be empty)
+				bdsThread.checkpoint(s1, getBdsNode());
+				break;
+
+			case CHECKPOINTVM:
+				s1 = popString(); // File name (may be empty)
+				s1 = bdsThread.checkpointVm(s1, getBdsNode()); // Return checkpoint file name
+				push(s1); // Push checkpoint file name to stack
+				break;
+
+			case CHECKPOINT_RECOVERED:
+				// Checkpoint recovered: Push true to the stack ONLY if both conditions are satisfied:
+				//   a) this VM was recovered from a checkpoint
+				//   b) this is the first time we check
+				// Important: Only true the first time we check
+				push(recoveredCheckpointOp);
+				recoveredCheckpointOp = false;
 				break;
 
 			case DEBUG:
@@ -1056,15 +1087,6 @@ public class BdsVm implements Serializable {
 				bdsThread.fatalError(popString());
 				exitCode = BdsThread.EXITCODE_ERROR;
 				return;
-
-			case FORK:
-				forkOpCode(0);
-				break;
-
-			case FORKPUSH:
-				i1 = popInt();
-				forkOpCode((int) i1);
-				break;
 
 			case GEB:
 				b2 = popBool();
@@ -1157,11 +1179,6 @@ public class BdsVm implements Serializable {
 				kill();
 				break;
 
-			case LOAD:
-				name = constantString();
-				push(scope.getValue(name));
-				break;
-
 			case LEB:
 				b2 = popBool();
 				b1 = popBool();
@@ -1184,6 +1201,11 @@ public class BdsVm implements Serializable {
 				s2 = popString();
 				s1 = popString();
 				push(s1.compareTo(s2) <= 0);
+				break;
+
+			case LOAD:
+				name = constantString();
+				push(scope.getValue(name));
 				break;
 
 			case LTB:
@@ -1300,6 +1322,15 @@ public class BdsVm implements Serializable {
 				push(i1 | i2);
 				break;
 
+			case PARALLEL:
+				parallelOpCode(0);
+				break;
+
+			case PARALLELPUSH:
+				i1 = popInt();
+				parallelOpCode((int) i1);
+				break;
+
 			case POP:
 				sp--; // Drop last value from stack
 				break;
@@ -1377,6 +1408,11 @@ public class BdsVm implements Serializable {
 				popCallFrame();
 				break;
 
+			case RMONEXIT:
+				v1 = pop();
+				bdsThread.rmOnExit(v1);
+				break;
+
 			case SCOPEPUSH:
 				newScope();
 				break;
@@ -1407,7 +1443,7 @@ public class BdsVm implements Serializable {
 			case SETFIELDPOP:
 				name = constantString();
 				vclass = (ValueClass) pop();
-				vclass.setValue(name, pop()); // We leave the value in the stack
+				vclass.setValue(name, pop());
 				break;
 
 			case SETLIST:
@@ -1419,7 +1455,7 @@ public class BdsVm implements Serializable {
 			case SETLISTPOP:
 				vlist = (ValueList) pop();
 				idx = popInt();
-				vlist.setValue(idx, pop()); // We leave the value in the stack
+				vlist.setValue(idx, pop());
 				break;
 
 			case SETMAP:
@@ -1458,7 +1494,7 @@ public class BdsVm implements Serializable {
 
 			case SYS:
 				vmStateSave();
-				SysVmOpcode sf = new SysVmOpcode(bdsThread);
+				SysVmOpcode sf = new SysVmOpcode(bdsThread, usePidInFileNames);
 				s1 = sf.run();
 				vmStateInvalidate();
 				push(s1);
@@ -1472,14 +1508,14 @@ public class BdsVm implements Serializable {
 				break;
 
 			case TASK:
-				TaskVmOpcode taskFactory = new TaskVmOpcode(bdsThread);
-				s1 = taskFactory.run();
+				TaskVmOpcode taskVmOp = new TaskVmOpcode(bdsThread, usePidInFileNames);
+				s1 = taskVmOp.run();
 				push(s1);
 				break;
 
 			case TASKDEP:
-				TaskVmOpcode depFactory = new DepVmOpcode(bdsThread);
-				s1 = depFactory.run();
+				TaskVmOpcode depVmOp = new DepVmOpcode(bdsThread, usePidInFileNames);
+				s1 = depVmOp.run();
 				push(s1);
 				break;
 
@@ -1494,7 +1530,7 @@ public class BdsVm implements Serializable {
 
 			case VARPOP:
 				name = constantString();
-				scope.add(name, pop()); // We pop value form the stack
+				scope.add(name, pop());
 				break;
 
 			case WAIT:
@@ -1568,6 +1604,11 @@ public class BdsVm implements Serializable {
 		exceptionHandler = callFrame.exceptionHandler;
 	}
 
+	public void setRecoveredCheckpoint(boolean recoveredCheckpoint) {
+		this.recoveredCheckpoint = recoveredCheckpoint;
+		recoveredCheckpointOp = recoveredCheckpoint;
+	}
+
 	public void setRun(boolean run) {
 		this.run = run;
 	}
@@ -1629,6 +1670,8 @@ public class BdsVm implements Serializable {
 	 * Implement 'throw' opcode
 	 */
 	void throwException(ValueClass exceptionValue) {
+		this.exceptionValue = exceptionValue;
+
 		// Populate Exception's stack trace message, if empty
 		if (exceptionValue.getValue("stackTrace") == null) {
 			exceptionValue.setValue("stackTrace", new ValueString(stackTrace()));
@@ -1650,7 +1693,7 @@ public class BdsVm implements Serializable {
 		}
 
 		// No Exception handler was found
-		fatalError("Exception thrown: " + exceptionValue);
+		fatalError(exceptionValue.getType() + " thrown: " + exceptionValue);
 	}
 
 	/**

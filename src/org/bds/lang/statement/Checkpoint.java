@@ -6,7 +6,6 @@ import org.bds.compile.CompilerMessages;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.Expression;
 import org.bds.symbol.SymbolTable;
-import org.bds.util.Gpr;
 
 /**
  * A "checkpoint" statement
@@ -39,15 +38,8 @@ public class Checkpoint extends Statement {
 			// Use expression as filename
 			sb.append(expr.toAsm());
 		} else {
-			// Create checkpoint
-			String programFile = getProgramUnit().getFileNameCanonical();
-			String nodeFile = getFileNameCanonical();
-
-			String checkpointFileName = programFile;
-			if (!programFile.equals(nodeFile)) checkpointFileName += "." + Gpr.baseName(nodeFile, ".bds");
-			checkpointFileName += ".line_" + getLineNum() + ".chp";
-
-			sb.append("pushs " + checkpointFileName + "\n");
+			// Empty file name. Checkpoint will pick a name
+			sb.append("pushs ''\n");
 		}
 		sb.append("checkpoint\n");
 		return sb.toString();

@@ -9,15 +9,15 @@ import org.bds.run.BdsThread;
  */
 public class DepVmOpcode extends TaskVmOpcode {
 
-	public DepVmOpcode(BdsThread bdsThread) {
-		super(bdsThread);
+	public DepVmOpcode(BdsThread bdsThread, boolean usePid) {
+		super(bdsThread, usePid);
 	}
 
 	/**
 	 * Dispatch task for execution
 	 */
 	@Override
-	void dispatchTask(Task task) {
+	protected void dispatchTask(Task task) {
 		task.setDependency(true); // Mark this as a 'dependency'
 		bdsThread.add(task);
 	}

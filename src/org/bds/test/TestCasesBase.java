@@ -180,6 +180,13 @@ public class TestCasesBase {
 		bdsTest.checkVariable(varname, expectedValue);
 	}
 
+	void runAndCheckException(String fileName, String exceptionType) {
+		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.run();
+		bdsTest.checkRunExitCodeFail();
+		bdsTest.checkException(exceptionType);
+	}
+
 	/**
 	 * Check exit code
 	 */
@@ -221,6 +228,18 @@ public class TestCasesBase {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkStderr(expectedStderr);
+	}
+
+	/**
+	 * Check that StdOut has a string (or that the string is NOT present if 'negate' is true)
+	 */
+	String runAndCheckStdout(String fileName, List<String> expectedStdout, String args[], boolean negate) {
+		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
+		bdsTest.run();
+		bdsTest.checkRunOk();
+		for (String exp : expectedStdout)
+			bdsTest.checkStdout(exp, negate);
+		return bdsTest.captureStdout.toString();
 	}
 
 	/**

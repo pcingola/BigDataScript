@@ -1,6 +1,7 @@
 package org.bds.lang.expression;
 
 import java.util.List;
+import java.util.Random;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.bds.Config;
@@ -42,9 +43,9 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_TASKNAME = "taskName";
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
-
 	public static final String CMD_DOWNLOAD = "bds -download";
 	public static final String CMD_UPLOAD = "bds -upload";
+	public static final String CMD_TASK_IMPROPER = "bds -task";
 
 	// Note:	It is important that 'options' node is type-checked before the others in order to
 	//			add variables to the scope before statements uses them.
@@ -53,13 +54,25 @@ public class ExpressionTask extends ExpressionWithScope {
 	//			Yes, it's a horrible hack.
 	protected ExpressionTaskOptions options;
 	protected Statement statement;
-	protected boolean asmPushDeps;
-	protected InterpolateVars preludeInterpolateVars;
-	protected String preludeStr;
+	protected boolean asmPushDeps; // True if we must push dependencies to stack (e.g. ExpressionParallel doesn't do it)
+	protected boolean improper; // A task is improper if it has non-sys statements
+	protected InterpolateVars preludeInterpolateVars; // Task prelude: interpolating strings (null if there is nothing to interpolate)
+	protected String preludeStr; // Task prelude (raw) string from config
 
 	public ExpressionTask(BdsNode parent, ParseTree tree) {
 		super(parent, tree);
 		asmPushDeps = true;
+	}
+
+	/**
+	 * Return a full path to a checkponit file name
+	 * The file might be on an Object Store (e.g. S3)
+	 * @return
+	 */
+	protected String checkpointFile() {
+		Random r = new Random();
+		String checkpointFile = getProgramUnit().getFileNameCanonical() + ".task." + id + "." + Math.abs(r.nextInt()) + ".chp";
+		return checkpointFile;
 	}
 
 	protected boolean hasPrelude() {
@@ -70,11 +83,6 @@ public class ExpressionTask extends ExpressionWithScope {
 	public boolean isReturnTypesNotNull() {
 		return true;
 	}
-
-	//	@Override
-	//	public boolean isStopDebug() {
-	//		return true;
-	//	}
 
 	@Override
 	protected void parse(ParseTree tree) {
@@ -96,7 +104,8 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	/**
-	 * Parse prelude string from Config
+	 * Parse prelude string from bds.config
+	 * The "prelude" is a string that is added to all 'sys' within a task
 	 */
 	void parsePrelude() {
 		String prelude = Config.get().getTaskPrelude();
@@ -142,6 +151,15 @@ public class ExpressionTask extends ExpressionWithScope {
 		// No child nodes? Add the only node we have
 		if (statements.isEmpty()) statements.add(statement);
 
+		setImproper(statements);
+	}
+
+	/**
+	 * An "improper" task is a task that anything other than 'sys' statement/s
+	 * Improper tasks are executed by creating a checkpoint and restoring from the checkpoint
+	*/
+	protected void setImproper(List<BdsNode> statements) {
+		improper = false;
 		for (BdsNode node : statements) {
 			if (node instanceof Statement) {
 				boolean ok = node instanceof ExpressionSys //
@@ -152,7 +170,8 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof StatementExpr //
 				;
 
-				if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
+				// if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
+				if (!ok) improper = true;
 			}
 		}
 	}
@@ -221,10 +240,97 @@ public class ExpressionTask extends ExpressionWithScope {
 		return "";
 	}
 
+	protected String toAsmStatements() {
+		return improper ? toAsmStatementsImproper() : toAsmStatementsProper();
+
+	}
+
+	/**
+	 * Create a checkpoint and create a task to execute from that checkpoint
+	 * 'sys' opcodes are transformed into 'shell'
+	 */
+	protected String toAsmStatementsImproper() {
+		StringBuilder sb = new StringBuilder();
+
+		// Store the input / output dependencies to a hidden variable name
+		// These were pushed into the stack in the previous step
+		String varInputs = baseVarName() + "inputs";
+		String varOutputs = baseVarName() + "outputs";
+		sb.append("varpop " + varInputs + "\n");
+		sb.append("varpop " + varOutputs + "\n");
+
+		// Create a checkpoint
+		String labelTaskBodyEnd = baseLabelName() + "body_end";
+		String checkpointFileVar = baseVarName() + "checkpoint_file";
+
+		// Reset the 'checkpoint_recovered' flag: Why? Because we want to make
+		// sure that the flag is only true if the checkpoint we are creating
+		// is recovered (e.g. it might be true because we recovered from a
+		// previous checkpoint and we never checked it).
+		// Note: Checking the flag 'checkpoint_recovered' also resets it.
+		sb.append("checkpoint_recovered\n");
+		sb.append("pop\n");
+
+		// Create checkpoint (only VM, no threads, tasks, etc.) and push file name to stack
+		sb.append("pushs ''\n"); // Empty checkpoint file name (it will be generated)
+		sb.append("checkpointvm\n");
+
+		// If this code is being executed right after a checkpoint recover, we
+		// should continue into the task statements. Otherwise, we skip to the
+		// end, because we are executing the 'main' bds process (not the improper
+		// task)
+		sb.append("checkpoint_recovered\n");
+		sb.append("jmpf " + labelTaskBodyEnd + "\n");
+
+		// Task body (i.e. the statements in the task) are executed by the
+		// process that recovers from the checkpoint
+		sb.append(toAsmStatementsImproperTaskBody(varOutputs, varInputs));
+
+		// This code schedules the task execution. The task is recovering
+		// from a the checkpoint we've just created.
+		sb.append(labelTaskBodyEnd + ":\n");
+		sb.append("var " + checkpointFileVar + "\n");
+		sb.append("rmonexit\n"); // Make sure we delete the checkpoint file at the end of the run
+		sb.append("load " + varOutputs + "\n");
+		sb.append("load " + varInputs + "\n");
+		// Command to execute: "bds -restore $checkpointFileVar"
+		sb.append("pushs \"" + CMD_TASK_IMPROPER + " \"\n");
+		sb.append("load " + checkpointFileVar + "\n");
+		sb.append("adds\n");
+
+		return sb.toString();
+	}
+
+	/**
+	 * This method creates the code from the statements of an improper task
+	 *
+	 * E.g. An improper task is executed in a cluster:
+	 *   - A checkpoint is created
+	 *   - A job is submitted to the cluster to run bds recovering from that checkpoint
+	 *   - When the node executes bds, it recovers the checkpoint and executes the statement within the task
+	 */
+	protected String toAsmStatementsImproperTaskBody(String varOutputs, String varInputs) {
+		StringBuilder sb = new StringBuilder();
+
+		Block block = (Block) statement;
+		for (Statement st : block.getStatements()) {
+			sb.append(st.toAsm());
+		}
+
+		// There is an implicit 'exit' in the block.
+		// Remember that these statement are executed in another process or another host, so
+		// there is no point to continue beyond the task statements (that part is executed
+		// on the main bds process)
+		sb.append("pushi 0\n");
+		sb.append("halt\n");
+
+		return sb.toString();
+	}
+
 	/**
 	 * Evaluate 'sys' statements used to create task
 	 */
-	protected String toAsmStatements() {
+	protected String toAsmStatementsProper() {
 		// Only one 'sys' expression
 		if (statement instanceof StatementExpr) {
 			Expression exprSys = ((StatementExpr) statement).getExpression();
@@ -282,7 +388,7 @@ public class ExpressionTask extends ExpressionWithScope {
 			return statement.toString();
 		}
 
-		// Multiline
+		// Multi-line
 		return "{\n" //
 				+ Gpr.prependEachLine("\t", statement.toString()) //
 				+ "}" //

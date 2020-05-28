@@ -30,10 +30,10 @@ import org.bds.util.Timer;
  */
 public abstract class BdsNode implements Serializable {
 
-	private static final long serialVersionUID = -2443078474175192104L;
 	protected BdsNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
 	protected Type returnType;
+	private static final long serialVersionUID = -2443078474175192104L;
 
 	/**
 	 * Constructor
@@ -46,7 +46,7 @@ public abstract class BdsNode implements Serializable {
 
 		// Initialize some defaults
 		initialize();
-		doParse(tree);
+		if (tree != null) doParse(tree);
 	}
 
 	public String baseLabelName() {

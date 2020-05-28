@@ -26,18 +26,16 @@ import org.bds.util.Timer;
  */
 public class TaskDependecies implements Serializable {
 
-	boolean debug = false;
-
-	boolean verbose = false;
-
-	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
-
-	Map<String, Task> tasksById;
-	AutoHashMap<String, List<Task>> tasksByOutput;
-	Map<String, String> canonicalPath;
 	private static final long serialVersionUID = -7139051739077288915L;
 	public static final int SLEEP_TIME = 200;
 	private static TaskDependecies taskDependeciesInstance = new TaskDependecies(); // Global instance (keeps track of all tasks)
+
+	boolean debug = false;
+	boolean verbose = false;
+	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
+	Map<String, Task> tasksById;
+	AutoHashMap<String, List<Task>> tasksByOutput;
+	Map<String, String> canonicalPath;
 
 	public static TaskDependecies get() {
 		return taskDependeciesInstance;

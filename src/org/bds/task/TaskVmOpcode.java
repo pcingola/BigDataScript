@@ -15,12 +15,17 @@ import org.bds.run.BdsThread;
 /**
  * Execute a 'task' VM opcode
  *
+ * The opcode requires having the following items in the stack
+ *   1) Command to execute
+ *   2) Input dependencies
+ *   3) Output dependencies
+ *
  * @author pcingola
  */
 public class TaskVmOpcode extends SysVmOpcode {
 
-	Task task;
-	TaskDependency taskDependency;
+	protected Task task;
+	protected TaskDependency taskDependency;
 
 	/**
 	 * Execute a task (schedule it into executioner)
@@ -32,30 +37,14 @@ public class TaskVmOpcode extends SysVmOpcode {
 		task.execute(bdsThread, executioner); // Execute task
 	}
 
-	public TaskVmOpcode(BdsThread bdsThread) {
-		super(bdsThread);
-	}
-
-	/**
-	 * Try to find the current bdsNode
-	 */
-	@Override
-	protected BdsNode bdsNode() {
-		BdsNode n = bdsThread.getBdsNodeCurrent();
-
-		// Try to find a 'task' node
-		for (BdsNode bn = n; bn != null; bn = bn.getParent()) {
-			if (bn instanceof ExpressionTask) return bn;
-		}
-
-		// Not found? Use this as default
-		return n;
+	public TaskVmOpcode(BdsThread bdsThread, boolean usePid) {
+		super(bdsThread, usePid);
 	}
 
 	/**
 	 * Create commands that will be executed in a shell
 	 */
-	String createCommands(String sysCmds) {
+	protected String createCommands(String sysCmds) {
 		HashMap<String, String> replace = new HashMap<>();
 		StringBuilder sbDown = new StringBuilder();
 		StringBuilder sbUp = new StringBuilder();
@@ -132,7 +121,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 	/**
 	 * Create a task
 	 */
-	Task createTask(String sysCmds) {
+	protected Task createTask(String sysCmds) {
 		// Get an ID
 		String taskId = taskId();
 
@@ -166,7 +155,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 		return task;
 	}
 
-	TaskDependency createTaskDependency(ValueList outs, ValueList ins) {
+	protected TaskDependency createTaskDependency(ValueList outs, ValueList ins) {
 		TaskDependency td = null;
 
 		if (ins.isEmpty() && outs.isEmpty()) return null;
@@ -184,7 +173,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 	/**
 	 * Dispatch task for execution
 	 */
-	void dispatchTask(Task task) {
+	protected void dispatchTask(Task task) {
 		execute(bdsThread, task);
 	}
 
@@ -193,10 +182,15 @@ public class TaskVmOpcode extends SysVmOpcode {
 		return bdsThread.hasVariable(ExpressionTask.TASK_OPTION_TASKNAME) ? bdsThread.getString(ExpressionTask.TASK_OPTION_TASKNAME) : null;
 	}
 
+	@Override
+	protected boolean isNode(BdsNode n) {
+		return n instanceof ExpressionTask;
+	}
+
 	/**
 	 * Replace all occurrences in 'replace' map
 	 */
-	String replace(HashMap<String, String> replace, String sysCmds) {
+	protected String replace(HashMap<String, String> replace, String sysCmds) {
 		for (String key : replace.keySet()) {
 			String sysCmdsPrev;
 			do {
@@ -211,7 +205,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 	/**
 	 * Replace a single instance of 'oldStr' by 'newStr'
 	 */
-	String replace(String oldStr, String newStr, String str) {
+	protected String replace(String oldStr, String newStr, String str) {
 		int start = str.indexOf(oldStr);
 		if (start < 0) return str; // Nothing found
 
@@ -250,7 +244,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 	 */
 	@Override
 	public String run() {
-		// Create task
+		// Create task: Get values from stack
 		Value cmd = bdsThread.pop();
 		ValueList ins = (ValueList) bdsThread.pop();
 		ValueList outs = (ValueList) bdsThread.pop();
@@ -267,8 +261,8 @@ public class TaskVmOpcode extends SysVmOpcode {
 		return task.getId();
 	}
 
-	String taskId() {
-		return sysId("task");
+	protected String taskId() {
+		return id("task");
 	}
 
 }

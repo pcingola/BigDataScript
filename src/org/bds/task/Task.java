@@ -449,7 +449,7 @@ public class Task implements Serializable {
 	 * Has this task finished? Either finished OK or finished because of errors.
 	 */
 	public synchronized boolean isDone() {
-		return isStateError() || isStateFinished();
+		return isStateError() || isStateFinished() || isStateFrozen();
 	}
 
 	/**
@@ -457,7 +457,9 @@ public class Task implements Serializable {
 	 * The task has finished, exit code is zero and all output files have been created
 	 */
 	public synchronized boolean isDoneOk() {
-		return isStateFinished() && (exitValue == 0) && checkOutputFiles().isEmpty();
+		return (isStateFinished() && (exitValue == 0) && checkOutputFiles().isEmpty()) // Task finished with zero exit value and all output files OK
+				|| isStateFrozen() // Task in permanent frozen state (e.g. when running an improper task, other tasks are marked as FROZEN)
+		;
 	}
 
 	/**
@@ -495,6 +497,10 @@ public class Task implements Serializable {
 
 	public boolean isStateFinished() {
 		return taskState.isFinished();
+	}
+
+	public boolean isStateFrozen() {
+		return taskState.isFrozen();
 	}
 
 	public boolean isStateRunning() {
@@ -624,7 +630,7 @@ public class Task implements Serializable {
 				setState(newState);
 				runningStartTime = runningEndTime = new Date();
 				failCount++;
-			} else if (taskState == TaskState.KILLED) ; // OK, don't change state
+			} else if (taskState == TaskState.KILLED); // OK, don't change state
 			else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
@@ -667,6 +673,10 @@ public class Task implements Serializable {
 				runningEndTime = new Date();
 				failCount++;
 			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
+			break;
+
+		case FROZEN:
+			setState(newState);
 			break;
 
 		default:

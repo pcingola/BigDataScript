@@ -36,6 +36,7 @@ import org.bds.report.Report;
 import org.bds.scope.Scope;
 import org.bds.task.Task;
 import org.bds.task.TaskDependecies;
+import org.bds.task.TaskState;
 import org.bds.task.TaskVmOpcode;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -59,16 +60,14 @@ public class BdsThread extends Thread implements Serializable {
 	public static final int EXITCODE_KILLED = 3;
 	public static final int EXITCODE_FATAL_ERROR = 10;
 	public static final int EXITCODE_ASSERTION_FAILED = 5;
-
 	public static final int FROZEN_SLEEP_TIME = 25; // Sleep time when frozen (milliseconds)
 	public static final int MAX_TASK_FAILED_NAMES = 10; // Maximum number of failed tasks to show in summary
 	private static int bdsThreadNumber = 1;
+	private static int currentId = 1;
 
 	Config config; // Configuration
 	Random random; // Random number generator
 	BdsVm vm; // Virtual machine
-
-	// Program and state
 	Statement statement; // Main statement executed by this thread
 	RunState runState; // Latest RunState
 	int exitValue; // Exit value
@@ -81,8 +80,6 @@ public class BdsThread extends Thread implements Serializable {
 	String bdsThreadId; // BdsThread ID
 	int bdsThreadNum; // Thread number
 	Map<String, BdsThread> bdsChildThreadsById; // Child threads
-
-	// Task management
 	TaskDependecies taskDependecies;
 
 	/**
@@ -90,6 +87,10 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	protected synchronized static int bdsThreadId() {
 		return bdsThreadNumber++;
+	}
+
+	public static synchronized int nextId() {
+		return currentId++;
 	}
 
 	private BdsThread(BdsThread parent, Statement statement, Config config, BdsVm vm) {
@@ -172,7 +173,6 @@ public class BdsThread extends Thread implements Serializable {
 		// Create checkpoint
 		String programFile = statement.getFileNameCanonical();
 		String nodeFile = node.getFileNameCanonical();
-
 		String checkpointFileName = Gpr.baseName(programFile);
 		if (!programFile.equals(nodeFile)) checkpointFileName += "." + Gpr.baseName(node.getFileName(), ".bds");
 		checkpointFileName += ".line_" + node.getLineNum() + ".chp";
@@ -185,7 +185,9 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	public String checkpoint(String checkpointFileName) {
 		// Default file name
-		if (checkpointFileName == null) checkpointFileName = statement.getFileNameCanonical() + ".chp";
+		if (checkpointFileName == null) {
+			checkpointFileName = statement.getFileNameCanonical() + ".chp";
+		}
 
 		// Save
 		if (isVerbose()) System.err.println("Creating checkpoint file: '" + checkpointFileName + "'");
@@ -198,7 +200,6 @@ public class BdsThread extends Thread implements Serializable {
 			ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(checkpointFileName)));
 			out.writeObject(getRoot());
 			out.close();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error while serializing to file '" + checkpointFileName + "'", e);
@@ -208,6 +209,62 @@ public class BdsThread extends Thread implements Serializable {
 		}
 
 		return checkpointFileName;
+	}
+
+	/**
+	 * Create checkpoint file. This method is called from VM opcode
+	 * @param checkpointFileName
+	 * @param node
+	 * @return
+	 */
+	public String checkpoint(String checkpointFileName, BdsNode node) {
+		// Default file name
+		if (checkpointFileName.isEmpty()) {
+			checkpointFileName = generateId(node, "checkpoint", null, false, true) + ".chp";
+		}
+		checkpointFileName = checkpoint(checkpointFileName);
+		File chpFile = new File(checkpointFileName);
+		return chpFile.getAbsolutePath();
+	}
+
+	/**
+	 * Create checkpoint file only fir the current VM.
+	 * In this checkpoint, nothing other than the current VM is serialized: no other
+	 * parallel running VMs, tasks, 'rmOnExit', etc.
+	 * @param checkpointFileName
+	 * @param node
+	 * @return
+	 */
+	public synchronized String checkpointVm(String checkpointFileName, BdsNode node) {
+		// Default file name
+		if (checkpointFileName.isEmpty()) {
+			checkpointFileName = generateId(node, "checkpoint", null, false, true) + ".chp";
+		}
+
+		// Store states
+		List<String> removeOnExitOri = removeOnExit;
+		BdsThread parentOri = parent;
+		Map<String, BdsThread> bdsChildThreadsByIdOri = bdsChildThreadsById;
+		TaskDependecies taskDependeciesOri = taskDependecies;
+
+		// Detach everything
+		removeOnExit = new LinkedList<>();
+		parent = null;
+		taskDependecies = new TaskDependecies();
+		bdsChildThreadsById = new HashMap<>();
+
+		// Create checkpoint
+		checkpointFileName = checkpoint(checkpointFileName);
+
+		// Restore original state
+		removeOnExit = removeOnExitOri;
+		parent = parentOri;
+		taskDependecies = taskDependeciesOri;
+		bdsChildThreadsById = bdsChildThreadsByIdOri;
+
+		// Return absolute path to checkpoint file
+		File chpFile = new File(checkpointFileName);
+		return chpFile.getAbsolutePath();
 	}
 
 	void cleanupBeforeReport() {
@@ -249,7 +306,7 @@ public class BdsThread extends Thread implements Serializable {
 		// Create ID
 		String name = Gpr.baseName(statement.getFileName());
 		if (isRoot()) bdsThreadId = String.format("%s.%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS_%2$tL", name, Calendar.getInstance());
-		else bdsThreadId = parent.bdsThreadId + "_parallel_" + getId();
+		else bdsThreadId = parent.bdsThreadId + "/parallel_" + getId();
 	}
 
 	/**
@@ -344,25 +401,39 @@ public class BdsThread extends Thread implements Serializable {
 	}
 
 	/**
-	 * Fork: Create and start a new bds thread
-	 */
-	public BdsThread fork(BdsVm vmfork) {
-		BdsThread newBdsThread = new BdsThread(this, statement, config, vmfork);
-
-		push(new ValueString(newBdsThread.getBdsThreadId())); // Parent process: return child's thread ID
-		newBdsThread.push(new ValueString("")); // Fork returns empty string on child process
-
-		newBdsThread.start();
-		return newBdsThread;
-	}
-
-	/**
 	 * Freeze thread (e.g. to serialize states)
 	 */
 	protected void freeze(boolean freeze) {
 		List<BdsThread> bdsThreads = getBdsThreadsAll();
 		for (BdsThread th : bdsThreads)
 			th.setFreeze(freeze);
+	}
+
+	/**
+	 * Create a generic ID (task ID, sys ID, etc)
+	 */
+	public String generateId(BdsNode node, String tag, String name, boolean usePid, boolean useRand) {
+		long pid = usePid ? ProcessHandle.current().pid() : -1;
+		int rand = useRand ? Math.abs((new Random()).nextInt()) : -1;
+
+		// Use module name
+		int ln = -1;
+		String module = null;
+		if (node != null) {
+			module = node.getFileName();
+			ln = node.getLineNum();
+		}
+		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
+
+		return getBdsThreadId() //
+				+ "/" + tag //
+				+ (module == null ? "" : "." + module) //
+				+ (name == null ? "" : "." + name) //
+				+ (ln > 0 ? ".line_" + ln : "") //
+				+ ".id_" + nextId() //
+				+ (pid < 0 ? "" : ".pid_" + pid) //
+				+ (rand < 0 ? "" : "." + rand) //
+		;
 	}
 
 	/**
@@ -644,6 +715,19 @@ public class BdsThread extends Thread implements Serializable {
 			kill(tid);
 	}
 
+	/**
+	 * Parallel: Create and start a new bds thread
+	 */
+	public BdsThread parallel(BdsVm vmpar) {
+		BdsThread newBdsThread = new BdsThread(this, statement, config, vmpar);
+
+		push(new ValueString(newBdsThread.getBdsThreadId())); // Parent process: return child's thread ID
+		newBdsThread.push(new ValueString("")); // Fork returns empty string on child process
+
+		newBdsThread.start();
+		return newBdsThread;
+	}
+
 	public Value pop() {
 		return vm.pop();
 	}
@@ -686,9 +770,13 @@ public class BdsThread extends Thread implements Serializable {
 	/**
 	 * Remove a child thread
 	 */
-	public void remove(BdsThread bdsThread) {
+	public synchronized void remove(BdsThread bdsThread) {
 		if (BdsThreads.doNotRemoveThreads) return;
 
+		// Add all files to be removed to the parent
+		removeOnExit.addAll(bdsThread.removeOnExit);
+
+		// Remove child thread
 		bdsChildThreadsById.remove(bdsThread.getBdsThreadId());
 	}
 
@@ -699,13 +787,16 @@ public class BdsThread extends Thread implements Serializable {
 		if (!isRoot()) return;
 
 		// Remove all pending files
+		boolean show = isVerbose() || isDebug();
+
+		// Any files to delete?
 		if (!removeOnExit.isEmpty()) {
 			if (config != null && config.isNoRmOnExit()) {
-				if (isDebug()) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
+				if (show) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
 			} else {
-				if (isDebug()) Timer.showStdErr("Deleting stale files:");
+				if (show) Timer.showStdErr("Deleting stale files:");
 				for (String fileName : removeOnExit) {
-					if (isVerbose()) System.err.println("\t" + fileName);
+					if (show) System.err.println("\t" + fileName);
 					Data.factory(fileName).delete();
 				}
 			}
@@ -725,19 +816,6 @@ public class BdsThread extends Thread implements Serializable {
 			if (config.isReportYaml() || config.isLog()) {
 				Report report = new Report(this, true);
 				report.createReport();
-			}
-		}
-	}
-
-	/**
-	 * Send task from un-serialization to execution list
-	 */
-	public void restoreUnserializedTasks() {
-		for (Task task : taskDependecies.getTasks()) {
-			if (!task.isStateFinished() // Not finished?
-					&& !task.isDependency() // Don't execute dependencies, unless needed
-			) {
-				TaskVmOpcode.execute(this, task);
 			}
 		}
 	}
@@ -863,6 +941,32 @@ public class BdsThread extends Thread implements Serializable {
 		sb.append("\tRun state : " + getRunState() + "\n");
 		sb.append("\tProgram   :\n" + statement.toStringTree("\t\t", "program") + "\n");
 		return sb.toString();
+	}
+
+	/**
+	 * Mark all un-serialized tasks as finished
+	 */
+	public void unserializedTasksFrozen() {
+		for (Task task : taskDependecies.getTasks()) {
+			if (!task.isStateFinished() // Not finished?
+					&& !task.isDependency() // Don't execute dependencies, unless needed
+			) {
+				task.state(TaskState.FROZEN);
+			}
+		}
+	}
+
+	/**
+	 * Send task from un-serialization to execution list
+	 */
+	public void unserializedTasksRestore() {
+		for (Task task : taskDependecies.getTasks()) {
+			if (!task.isStateFinished() // Not finished?
+					&& !task.isDependency() // Don't execute dependencies, unless needed
+			) {
+				TaskVmOpcode.execute(this, task);
+			}
+		}
 	}
 
 	/**

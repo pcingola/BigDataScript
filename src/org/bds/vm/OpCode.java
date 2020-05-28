@@ -41,7 +41,9 @@ public enum OpCode {
 	// Cast to class
 	, CAST_TOC
 	// Checkpoint
-	, CHECKPOINT
+	, CHECKPOINT, CHECKPOINTVM
+	// Checkpoint recovered: Push bool to the stack if this is the first instruction after a checkpoint was recovered.
+	, CHECKPOINT_RECOVERED
 	// Debug breakpoint
 	, DEBUG
 	// Decrement (i.e. valueInt--)
@@ -64,8 +66,6 @@ public enum OpCode {
 	, EQB, EQI, EQR, EQS
 	// Error
 	, ERROR
-	// Create another thread ('forkpush' pushes 'n' values into the new stack)
-	, FORK, FORKPUSH
 	// Greater or equal than
 	, GEB, GEI, GER, GES
 	// Goal
@@ -83,11 +83,11 @@ public enum OpCode {
 	, JMPF, JMPT, JSR
 	// Jump to Sub-Routine (unconditional)
 	, KILL
+	// Less than (bool, int, real, string)
+	, LEB, LEI, LER, LES
 	// Load variable from scope into stack
 	//    LOAD varName
-	, LEB
-	// Less than
-	, LEI, LER, LES, LOAD
+	, LOAD
 	// Less or equal than
 	, LTB, LTI, LTR, LTS
 	// Modulo (int)
@@ -107,6 +107,8 @@ public enum OpCode {
 	, NOTB, NOTI
 	// OR: bool (logical), int (bitwise)
 	, ORB, ORI
+	// Create another thread ('parallelpush' pushes 'n' values into the new stack)
+	, PARALLEL, PARALLELPUSH
 	// Pop: remove latest element from stack
 	, POP
 	// Print stdout & stderr
@@ -119,6 +121,8 @@ public enum OpCode {
 	, REFFIELD, REFLIST, REFMAP//
 	// Return (from function)
 	, RET
+	// Remove file on exit
+	, RMONEXIT
 	// Scope: create new scope (and push it), restore old scope (pop current scope)
 	, SCOPEPOP, SCOPEPUSH
 	// Set value
@@ -132,9 +136,9 @@ public enum OpCode {
 	, STORE, STOREPOP
 	// Subtraction
 	, SUBI, SUBR
-	// Sys command
-	, SWAP
 	// Swap two values in stack
+	, SWAP
+	// Sys command
 	, SYS
 	// Dispatch a task
 	, TASK, TASKDEP

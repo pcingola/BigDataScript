@@ -9,6 +9,7 @@ import java.util.Map;
 import org.bds.Bds;
 import org.bds.compile.CompilerMessages;
 import org.bds.lang.value.Value;
+import org.bds.lang.value.ValueClass;
 import org.bds.osCmd.TeeOutputStream;
 import org.bds.run.RunState;
 import org.bds.util.Gpr;
@@ -161,6 +162,15 @@ public class BdsTest {
 		if (compileOk != null) Assert.assertTrue(errMsg("There was an error while compiling"), compileOk);
 	}
 
+	public void checkException(String exceptionType) {
+		BdsVm vm = bds.getBdsRun().getVm();
+		ValueClass evc = vm.getExceptionValue();
+		Assert.assertTrue(errMsg("No exception found"), evc != null);
+
+		String exType = evc.getType().getCanonicalName();
+		Assert.assertEquals(errMsg("Exception type does not match, expecting '" + exceptionType + "', got '" + exType + "'"), exType, exceptionType);
+	}
+
 	/**
 	 * Check exit code
 	 */
@@ -207,15 +217,17 @@ public class BdsTest {
 	}
 
 	public void checkStdout(String expectedStdout, boolean negate) {
-		int index = captureStdout.toString().indexOf(expectedStdout);
+		int count = countMatchesStdout(expectedStdout);
 
-		if (negate) Assert.assertFalse(errMsg("Error: NOT expected string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
+		if (negate) Assert.assertFalse(errMsg("Error: NOT expected string '" + expectedStdout + "' in STDOUT not found"), count > 0);
 		else {
-			if (index < 0) {
+			if (count <= 0) {
+				// Not found? Print differences
 				String out = captureStdout.toString();
 				printDiffLines(expectedStdout, out);
 			}
-			Assert.assertTrue(errMsg("Error: Expected string '" + expectedStdout + "' in STDOUT not found"), index >= 0);
+			Assert.assertTrue(errMsg("Error: Expected string '" + expectedStdout + "' in STDOUT not found"), count > 0);
+			Assert.assertTrue(errMsg("Error: Expected string '" + expectedStdout + "' in STDOUT only one time, but was found " + count + " times."), count == 1);
 		}
 	}
 
@@ -297,6 +309,25 @@ public class BdsTest {
 		}
 
 		return compileOk;
+	}
+
+	/**
+	 * Count how many time the 'match' is found in 'str'
+	 */
+	int countMatches(String str, String toMatch) {
+		int count = -1, index = -1;
+		do {
+			count++;
+			index = str.indexOf(toMatch, index + 1);
+		} while (index >= 0);
+		return count;
+	}
+
+	/**
+	 * Count how many time the 'expectedStdout' is found in 'stdout'
+	 */
+	int countMatchesStdout(String expectedStdout) {
+		return countMatches(captureStdout.toString(), expectedStdout);
 	}
 
 	/**

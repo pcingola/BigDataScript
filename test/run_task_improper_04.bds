@@ -1,0 +1,11 @@
+
+a := 42
+println "Task improper: Before, a=$a"
+task {
+	str := sys echo "A=$a"
+	str = str.trim()
+	println "Task improper: End, a=$a, str='$str'"
+}
+println "Task improper: After, a=$a"
+wait
+println "Done"

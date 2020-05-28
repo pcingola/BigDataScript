@@ -35,7 +35,7 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 	}
 
 	@Override
-	protected Cmd createRunCmd(Task task) {
+	public Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
 		if (debug) log("Running task " + task.getId());

@@ -9,6 +9,7 @@ import org.bds.lang.nativeMethods.map.MethodNativeMapClone;
 import org.bds.lang.nativeMethods.map.MethodNativeMapGet;
 import org.bds.lang.nativeMethods.map.MethodNativeMapHasKey;
 import org.bds.lang.nativeMethods.map.MethodNativeMapHasValue;
+import org.bds.lang.nativeMethods.map.MethodNativeMapHashCode;
 import org.bds.lang.nativeMethods.map.MethodNativeMapKeys;
 import org.bds.lang.nativeMethods.map.MethodNativeMapRemove;
 import org.bds.lang.nativeMethods.map.MethodNativeMapSize;
@@ -24,14 +25,14 @@ import org.bds.util.Gpr;
  */
 public class TypeMap extends TypeComposite {
 
+	protected Type keyType; // Type for 'key' elements
+
+	protected Type valueType; // Type for 'value' elements
+
 	private static final long serialVersionUID = 3321302248243052342L;
 
 	public static boolean debug = false;
-
 	public static final TypeMap MAP_ANY_ANY = new TypeMap(Types.ANY, Types.ANY);
-
-	protected Type keyType; // Type for 'key' elements
-	protected Type valueType; // Type for 'value' elements
 
 	public static TypeMap factory(BdsNode parent, ParseTree tree) {
 		TypeMap typeMap = new TypeMap(parent, tree);
@@ -110,6 +111,7 @@ public class TypeMap extends TypeComposite {
 			methods.add(new MethodNativeMapKeys(this));
 			methods.add(new MethodNativeMapHasKey(this));
 			methods.add(new MethodNativeMapHasValue(this));
+			methods.add(new MethodNativeMapHashCode(this));
 			methods.add(new MethodNativeMapRemove(this));
 			methods.add(new MethodNativeMapSize(this));
 			methods.add(new MethodNativeMapValues(this));

@@ -5,7 +5,7 @@ import org.bds.scope.Scope;
 /**
  * Save VM state during long running OpCode execution such as 'sys', 'wait', etc.
  *
- * IMPORTANT: This objects are meant to be re-used!
+ * IMPORTANT: This objects are meant to be reused!
  *
  * @author pcingola
  */

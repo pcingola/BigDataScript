@@ -1,0 +1,13 @@
+
+a := 42
+println "Task improper: Before, a=$a"
+for(int i=0 ; i < 3; i++ ) {
+	task {
+		println "Task improper: Start, a=$a, i=$i"
+		a += i
+		println "Task improper: End, a=$a, i=$i"
+	}
+}
+println "Task improper: After, a=$a"
+wait
+println "Done"
