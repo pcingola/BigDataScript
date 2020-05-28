@@ -261,8 +261,8 @@ public class ExpressionTask extends ExpressionWithScope {
 
 		// Create a checkpoint
 		String labelTaskBodyEnd = baseLabelName() + "body_end";
-		//		String checkpointFile = checkpointFile();
 		String checkpointFileVar = baseVarName() + "checkpoint_file";
+
 		// Reset the 'checkpoint_recovered' flag: Why? Because we want to make
 		// sure that the flag is only true if the checkpoint we are creating
 		// is recovered (e.g. it might be true because we recovered from a
@@ -270,9 +270,11 @@ public class ExpressionTask extends ExpressionWithScope {
 		// Note: Checking the flag 'checkpoint_recovered' also resets it.
 		sb.append("checkpoint_recovered\n");
 		sb.append("pop\n");
-		// Create a checkpoint
+
+		// Create checkpoint (only VM, no threads, tasks, etc.) and push file name to stack
 		sb.append("pushs ''\n"); // Empty checkpoint file name (it will be generated)
-		sb.append("checkpoint_push\n"); // Create checkpoint and push file name to stack
+		sb.append("checkpointvm\n");
+
 		// If this code is being executed right after a checkpoint recover, we
 		// should continue into the task statements. Otherwise, we skip to the
 		// end, because we are executing the 'main' bds process (not the improper

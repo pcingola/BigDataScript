@@ -995,17 +995,11 @@ public class BdsVm implements Serializable {
 				bdsThread.checkpoint(s1, getBdsNode());
 				break;
 
-			case CHECKPOINT_VM:
+			case CHECKPOINTVM:
 				s1 = popString(); // File name (may be empty)
 				s1 = bdsThread.checkpointVm(s1, getBdsNode()); // Return checkpoint file name
 				push(s1); // Push checkpoint file name to stack
 				break;
-
-			//			case CHECKPOINT_PUSH:
-			//				s1 = popString(); // File name (may be empty)
-			//				s1 = bdsThread.checkpoint(s1, getBdsNode()); // Return checkpoint file name
-			//				push(s1); // Push checkpoint file name to stack
-			//				break;
 
 			case CHECKPOINT_RECOVERED:
 				// Checkpoint recovered: Push true to the stack ONLY if both conditions are satisfied:
@@ -1612,7 +1606,7 @@ public class BdsVm implements Serializable {
 
 	public void setRecoveredCheckpoint(boolean recoveredCheckpoint) {
 		this.recoveredCheckpoint = recoveredCheckpoint;
-		this.recoveredCheckpointOp = recoveredCheckpoint;
+		recoveredCheckpointOp = recoveredCheckpoint;
 	}
 
 	public void setRun(boolean run) {

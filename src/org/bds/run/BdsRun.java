@@ -500,23 +500,9 @@ public class BdsRun {
 		// ProgramUnit's scope it the one before 'global'
 		programUnit = bdsThread.getProgramUnit();
 
-		throw new RuntimeException("!!!!! ONLY ONE  IS SERIALIZED !!!!!");
-		//		// Set state and recovered tasks
-		//		List<BdsThread> bdsThreads = bdsThread.getBdsThreads();
-		//		bdsThreads.add(bdsThread);
-		//		for (BdsThread bdsThread : bdsThreads) {
-		//			Gpr.debug("BDS THEAD ID: " + bdsThread.getBdsThreadId());
-		//			// Freeze all pending tasks (we don't want to re-execute other improper tasks)
-		//			if (!bdsThread.getRunState().isFinished()) {
-		//				bdsThread.unserializedTasksFrozen();
-		//			}
-		//			// Previous 'rmOnExit' files are not removed by this process, they are removed by the "main" process
-		//			bdsThread.resetRmOnExit();
-		//		}
-
-		//		// All set, run main thread
-		//		if (debug) Timer.showStdErr("Running task improper");
-		//		return runThread(bdsThread);
+		// All set, run main thread
+		if (debug) Timer.showStdErr("Running task improper");
+		return runThread(bdsThread);
 	}
 
 	/**

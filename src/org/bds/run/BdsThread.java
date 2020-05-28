@@ -241,11 +241,28 @@ public class BdsThread extends Thread implements Serializable {
 			checkpointFileName = generateId(node, "checkpoint", null, false, true) + ".chp";
 		}
 
-		// TODO: Detach everything
-		// TODO: Make 'root' thread
-		checkpointFileName = checkpoint(checkpointFileName);
-		// TODO: Re-attach from everything
+		// Store states
+		List<String> removeOnExitOri = removeOnExit;
+		BdsThread parentOri = parent;
+		Map<String, BdsThread> bdsChildThreadsByIdOri = bdsChildThreadsById;
+		TaskDependecies taskDependeciesOri = taskDependecies;
 
+		// Detach everything
+		removeOnExit = new LinkedList<>();
+		parent = null;
+		taskDependecies = new TaskDependecies();
+		bdsChildThreadsById = new HashMap<>();
+
+		// Create checkpoint
+		checkpointFileName = checkpoint(checkpointFileName);
+
+		// Restore original state
+		removeOnExit = removeOnExitOri;
+		parent = parentOri;
+		taskDependecies = taskDependeciesOri;
+		bdsChildThreadsById = bdsChildThreadsByIdOri;
+
+		// Return absolute path to checkpoint file
 		File chpFile = new File(checkpointFileName);
 		return chpFile.getAbsolutePath();
 	}
@@ -396,29 +413,28 @@ public class BdsThread extends Thread implements Serializable {
 	 * Create a generic ID (task ID, sys ID, etc)
 	 */
 	public String generateId(BdsNode node, String tag, String name, boolean usePid, boolean useRand) {
-		//		long pid = usePid ? ProcessHandle.current().pid() : -1;
-		//		int rand = useRand ? Math.abs((new Random()).nextInt()) : -1;
-		//
-		//		// Use module name
-		//		int ln = -1;
-		//		String module = null;
-		//		if (node != null) {
-		//			module = node.getFileName();
-		//			ln = node.getLineNum();
-		//		}
-		//		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
+		long pid = usePid ? ProcessHandle.current().pid() : -1;
+		int rand = useRand ? Math.abs((new Random()).nextInt()) : -1;
 
-		throw new RuntimeException("!!!!! ADD BDSTHREAD IS !!!!!");
+		// Use module name
+		int ln = -1;
+		String module = null;
+		if (node != null) {
+			module = node.getFileName();
+			ln = node.getLineNum();
+		}
+		if (module != null) module = Gpr.removeExt(Gpr.baseName(module));
 
-		//		return getBdsThreadId() //
-		//				+ "/" + tag //
-		//				+ (module == null ? "" : "." + module) //
-		//				+ (name == null ? "" : "." + name) //
-		//				+ (ln > 0 ? ".line_" + ln : "") //
-		//				+ ".id_" + nextId() //
-		//				+ (pid < 0 ? "" : ".pid_" + pid) //
-		//				+ (rand < 0 ? "" : "." + rand) //
-		//		;
+		return getBdsThreadId() //
+				+ "/" + tag //
+				+ (module == null ? "" : "." + module) //
+				+ (name == null ? "" : "." + name) //
+				+ (ln > 0 ? ".line_" + ln : "") //
+				+ ".id_" + nextId() //
+				+ (isRoot() ? "" : ".parallel_" + getId()) //
+				+ (pid < 0 ? "" : ".pid_" + pid) //
+				+ (rand < 0 ? "" : "." + rand) //
+		;
 	}
 
 	/**
