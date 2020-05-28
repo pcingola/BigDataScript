@@ -99,7 +99,7 @@ public class TestCasesTaskImproper extends TestCasesBase {
 		verbose = true;
 		List<String> expected = new ArrayList<>();
 		expected.add("Task improper: Before, a=42");
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 5; i++) {
 			expected.add("Task improper: Start, a=42, i=" + i);
 			expected.add("Task improper: End, a=" + (42 + i) + ", i=" + i);
 		}

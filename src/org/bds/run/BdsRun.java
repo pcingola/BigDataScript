@@ -448,7 +448,7 @@ public class BdsRun {
 		programUnit = bdsThread.getProgramUnit();
 
 		// Set state and recover tasks
-		List<BdsThread> bdsThreads = bdsThread.getBdsThreads();
+		List<BdsThread> bdsThreads = bdsThread.getBdsThreadsAll();
 		bdsThreads.add(bdsThread);
 		for (BdsThread bdsThread : bdsThreads) {
 			// Re-execute or add tasks (if thread is not finished)

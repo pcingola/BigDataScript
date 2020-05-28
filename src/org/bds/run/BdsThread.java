@@ -306,7 +306,7 @@ public class BdsThread extends Thread implements Serializable {
 		// Create ID
 		String name = Gpr.baseName(statement.getFileName());
 		if (isRoot()) bdsThreadId = String.format("%s.%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS_%2$tL", name, Calendar.getInstance());
-		else bdsThreadId = parent.bdsThreadId + "_parallel_" + getId();
+		else bdsThreadId = parent.bdsThreadId + "/parallel_" + getId();
 	}
 
 	/**
@@ -431,7 +431,6 @@ public class BdsThread extends Thread implements Serializable {
 				+ (name == null ? "" : "." + name) //
 				+ (ln > 0 ? ".line_" + ln : "") //
 				+ ".id_" + nextId() //
-				+ (isRoot() ? "" : ".parallel_" + getId()) //
 				+ (pid < 0 ? "" : ".pid_" + pid) //
 				+ (rand < 0 ? "" : "." + rand) //
 		;
@@ -771,9 +770,13 @@ public class BdsThread extends Thread implements Serializable {
 	/**
 	 * Remove a child thread
 	 */
-	public void remove(BdsThread bdsThread) {
+	public synchronized void remove(BdsThread bdsThread) {
 		if (BdsThreads.doNotRemoveThreads) return;
 
+		// Add all files to be removed to the parent
+		removeOnExit.addAll(bdsThread.removeOnExit);
+
+		// Remove child thread
 		bdsChildThreadsById.remove(bdsThread.getBdsThreadId());
 	}
 
@@ -785,6 +788,8 @@ public class BdsThread extends Thread implements Serializable {
 
 		// Remove all pending files
 		boolean show = isVerbose() || isDebug();
+
+		// Any files to delete?
 		if (!removeOnExit.isEmpty()) {
 			if (config != null && config.isNoRmOnExit()) {
 				if (show) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
@@ -813,10 +818,6 @@ public class BdsThread extends Thread implements Serializable {
 				report.createReport();
 			}
 		}
-	}
-
-	public void resetRmOnExit() {
-		removeOnExit = new LinkedList<>();
 	}
 
 	/**
