@@ -141,10 +141,12 @@ public class TaskVmOpcode extends SysVmOpcode {
 		task.setAllowEmpty(bdsThread.getBool(ExpressionTask.TASK_OPTION_ALLOW_EMPTY));
 		task.setCanFail(bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL));
 		task.setCurrentDir(bdsThread.getCurrentDir());
-		task.setDetached(bdsThread.getBool(ExpressionTask.TASK_OPTION_DETACHED));
 		task.setNode(bdsThread.getString(ExpressionTask.TASK_OPTION_NODE));
 		task.setQueue(bdsThread.getString(ExpressionTask.TASK_OPTION_QUEUE));
 		task.setMaxFailCount((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
+
+		boolean detached = bdsThread.getBool(ExpressionTask.TASK_OPTION_DETACHED);
+		task.setDetached(detached);
 
 		// Set task options: Resources
 		task.getResources().setCpus((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_CPUS));

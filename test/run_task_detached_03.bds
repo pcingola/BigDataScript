@@ -1,0 +1,24 @@
+
+println "Before"
+out := "tmp.run_task_detached_03.txt"
+out.delete()
+
+tid1 := task( detached := true, taskName := "task_1" ) {
+	sys echo "Task 1: Start" >> $out
+	sys sleep 1
+	sys echo "Task 1: End" >> $out
+}
+
+tid2 := task([] <- tid1, detached := true, taskName := "task_2" ) {
+	sys echo "Task 2: Start" >> $out
+	sys sleep 2
+	sys echo "Task 2: End" >> $out
+}
+
+tid3 := task([] <- [tid1, tid2], taskName := "task_3" ) {
+	sys echo "Task 3" >> $out
+}
+println "After"
+wait
+catout := sys cat $out
+println "Done: catout=$catout"

@@ -341,7 +341,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Perform reports, checks and state updates
 	 */
 	protected void reportsChecksUpdates() {
-		Gpr.debug("!!!");
 		taskUpdateStates();
 
 		// Check if tasks finished running

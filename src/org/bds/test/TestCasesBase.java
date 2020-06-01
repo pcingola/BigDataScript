@@ -128,82 +128,91 @@ public class TestCasesBase {
 		bdsTest.checkCompileOk();
 	}
 
-	void runAndCheck(int expectedExitCode, String fileName, Map<String, Object> expectedValues) {
+	BdsTest runAndCheck(int expectedExitCode, String fileName, Map<String, Object> expectedValues) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkExitCode(expectedExitCode);
 		bdsTest.checkVariables(expectedValues);
+		return bdsTest;
 	}
 
-	void runAndCheck(int expectedExitCode, String fileName, String varname, Object expectedValue) {
+	BdsTest runAndCheck(int expectedExitCode, String fileName, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkExitCode(expectedExitCode);
 		bdsTest.checkVariable(varname, expectedValue);
+		return bdsTest;
 	}
 
-	void runAndCheck(String fileName, Map<String, Object> expectedValues) {
+	BdsTest runAndCheck(String fileName, Map<String, Object> expectedValues) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		bdsTest.checkVariables(expectedValues);
+		return bdsTest;
 	}
 
 	/**
 	 * Check that a file compiles without any errors, runs and all variables have their expected values
 	 */
-	void runAndCheck(String fileName, Map<String, Object> expectedValues, List<String> argsAfterList) {
+	BdsTest runAndCheck(String fileName, Map<String, Object> expectedValues, List<String> argsAfterList) {
 		String argsAfter[] = argsAfterList.toArray(new String[0]);
 		BdsTest bdsTest = new BdsTest(fileName, null, argsAfter, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		bdsTest.checkVariables(expectedValues);
+		return bdsTest;
 	}
 
 	/**
 	 * Check that a file compiles without any errors, runs and a variable have its expected map
 	 */
-	void runAndCheck(String fileName, String varname, Object expectedValue) {
+	BdsTest runAndCheck(String fileName, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		bdsTest.checkVariable(varname, expectedValue);
+		return bdsTest;
 	}
 
 	/**
 	 * Check that a file compiles without any errors, runs and a variable have its expected map
 	 */
-	void runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
+	BdsTest runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		bdsTest.checkVariable(varname, expectedValue);
+		return bdsTest;
 	}
 
-	void runAndCheckException(String fileName, String exceptionType) {
+	BdsTest runAndCheckException(String fileName, String exceptionType) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunExitCodeFail();
 		bdsTest.checkException(exceptionType);
+		return bdsTest;
 	}
 
 	/**
 	 * Check exit code
 	 */
-	void runAndCheckExit(String fileName, int expectedExitValue) {
+	BdsTest runAndCheckExit(String fileName, int expectedExitValue) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkExitCode(expectedExitValue);
+		return bdsTest;
 	}
 
 	/**
 	 * Check that StdOut has a string
 	 */
-	void runAndCheckHelp(String fileName, String expectedStdout) {
+	BdsTest runAndCheckHelp(String fileName, String expectedStdout) {
 		String argsAfter[] = { "-h" };
 		BdsTest bdsTest = new BdsTest(fileName, null, argsAfter, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkStdout(expectedStdout);
+		return bdsTest;
 	}
 
 	/**
@@ -224,10 +233,11 @@ public class TestCasesBase {
 	/**
 	 * Check that StdErr has a string
 	 */
-	void runAndCheckStderr(String fileName, String expectedStderr) {
+	BdsTest runAndCheckStderr(String fileName, String expectedStderr) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkStderr(expectedStderr);
+		return bdsTest;
 	}
 
 	/**

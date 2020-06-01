@@ -1,0 +1,10 @@
+
+println "Before"
+task( detached := true ) {
+	sys echo HI
+	sys sleep 1
+	sys echo BYE
+}
+println "After"
+wait
+println "Done"

@@ -122,19 +122,28 @@ public class TaskDependecies implements Serializable {
 	}
 
 	/**
-	 * Find all tasks that must be completed before we proceed
+	 * Find all tasks that must be completed before 'task' is executed
 	 */
 	void findDirectDependencies(Task task) {
 		if (!task.isDone()) {
 			// Add input dependencies based on input files
 			if (task.getInputs() != null) {
-				for (String inFile : task.getInputs()) {
-					List<Task> taskDeps = getTasksByOutput(inFile);
+				for (String in : task.getInputs()) {
+					List<Task> taskDeps = getTasksByOutput(in);
+
 					if (taskDeps != null) {
 						for (Task taskDep : taskDeps)
-							if (!taskDep.isDone() // Don't add finished tasks
-									&& !taskDep.isDependency() // If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
-							) task.addDependency(taskDep); // Add it to dependency list
+							if (taskDep.isDetached() && !isTask(in)) {
+								// If a task is detached, we cannot add their output files.
+								// Why? Because by definition, we don't know when a detached task
+								// is finished, so we don't know when the output is created.
+								throw new RuntimeException("Detached task output files cannot be used as dependencies. Task ID '" + task.getId() + "', output file '" + in + "'");
+							} else if (!taskDep.isDone() && !taskDep.isDependency()) {
+								// Don't add finished tasks (they are no longer a dependency)
+								// If task is a dependency, it may not be executed (because the goal is not triggered). So don't add them
+								// Add it to dependency list
+								task.addDependency(taskDep);
+							}
 					}
 				}
 			}
@@ -398,6 +407,10 @@ public class TaskDependecies implements Serializable {
 	 */
 	boolean isGlobal() {
 		return this == taskDependeciesInstance;
+	}
+
+	public synchronized boolean isTask(String id) {
+		return tasksById.containsKey(id);
 	}
 
 	/**

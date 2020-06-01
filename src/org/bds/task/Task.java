@@ -751,6 +751,7 @@ public class Task implements Serializable {
 			sb.append("\tTask resources     : '" + getResources() + "'\n");
 			sb.append("\tState              : '" + taskState + "'\n");
 			sb.append("\tDependency state   : '" + dependencyState() + "'\n");
+			sb.append("\tRetries available  : '" + failCount + " / " + maxFailCount + "'\n");
 			sb.append("\tRetries available  : '" + failCount + "'\n");
 			sb.append("\tInput files        : '" + taskDependency.getInputs() + "'\n");
 			sb.append("\tOutput files       : '" + taskDependency.getOutputs() + "'\n");
