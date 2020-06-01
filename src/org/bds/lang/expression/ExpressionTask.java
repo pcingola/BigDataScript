@@ -31,10 +31,11 @@ public class ExpressionTask extends ExpressionWithScope {
 	private static final long serialVersionUID = 5026042355679287158L;
 
 	// Variable names
-	public static final String TASK_OPTION_CPUS = "cpus";
-	public static final String TASK_OPTION_MEM = "mem";
-	public static final String TASK_OPTION_CAN_FAIL = "canFail";
 	public static final String TASK_OPTION_ALLOW_EMPTY = "allowEmpty";
+	public static final String TASK_OPTION_CAN_FAIL = "canFail";
+	public static final String TASK_OPTION_CPUS = "cpus";
+	public static final String TASK_OPTION_DETACHED = "detached";
+	public static final String TASK_OPTION_MEM = "mem";
 	public static final String TASK_OPTION_NODE = "node";
 	public static final String TASK_OPTION_PHYSICAL_PATH = "ppwd";
 	public static final String TASK_OPTION_QUEUE = "queue";

@@ -12,7 +12,7 @@ public enum TaskState {
 	, ERROR_TIMEOUT // Filed due to timeout (this is a final state)
 	, KILLED // Task was killed (this is a final state)
 	, FINISHED // Finished OK (this is a final state)
-	, FROZEN // This task is permanently frozen (this is a final state)
+	, DETACHED // This task is "detached", which means that we don't control / monitor it any more (this is a final state)
 	;
 
 	public static TaskState exitCode2taskState(int exitCode) {
@@ -35,6 +35,10 @@ public enum TaskState {
 		}
 	}
 
+	public boolean isDetached() {
+		return this == TaskState.DETACHED;
+	}
+
 	public boolean isError() {
 		return (this == TaskState.START_FAILED) //
 				|| (this == TaskState.ERROR) //
@@ -45,10 +49,6 @@ public enum TaskState {
 
 	public boolean isFinished() {
 		return this == TaskState.FINISHED;
-	}
-
-	public boolean isFrozen() {
-		return this == TaskState.FROZEN;
 	}
 
 	public boolean isRunning() {

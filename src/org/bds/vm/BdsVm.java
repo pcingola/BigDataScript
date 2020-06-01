@@ -80,6 +80,7 @@ public class BdsVm implements Serializable {
 	boolean verbose;
 	VmDebugger vmDebugger;
 	VmState vmState = new VmState();
+	Throwable javaException; // Any Java exception captured by the VM (used for test cases)
 
 	public BdsVm() {
 		constants = new ArrayList<>();
@@ -537,6 +538,10 @@ public class BdsVm implements Serializable {
 		return exitCode;
 	}
 
+	public Throwable getJavaException() {
+		return javaException;
+	}
+
 	/**
 	 * Get label at code idx
 	 */
@@ -860,6 +865,7 @@ public class BdsVm implements Serializable {
 			}
 
 			exitCode = BdsThread.EXITCODE_FATAL_ERROR;
+			javaException = t;
 			bdsThread.fatalError(getBdsNode(), t.getMessage());
 		}
 

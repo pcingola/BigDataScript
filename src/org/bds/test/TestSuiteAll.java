@@ -29,6 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesRemote.class, // Accessing remote data (cloud storage)
 		TestCasesReport.class, // Report generation
 		TestCasesTaskImproper.class, // Improper tasks
+		TestCasesTaskDetached.class, // Detached tasks
 })
 public class TestSuiteAll {
 

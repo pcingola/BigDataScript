@@ -743,13 +743,14 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (debug) log("Task running '" + task.getId() + "'");
 
 		if (task.isDone()) return true; // Already finished, nothing to do
-		if (!task.canChangeState(TaskState.RUNNING)) return false;
 
-		// Change state
-		task.state(TaskState.RUNNING);
+		TaskState nextState = task.isDetached() ? TaskState.DETACHED : TaskState.RUNNING;
+		if (!task.canChangeState(nextState)) return false;
+		task.state(nextState);
 
-		// Follow STDOUT and STDERR
-		follow(task);
+		// A "detached" task is considered to be successful right after starting, we don't follow it
+		if (!task.isDetached()) follow(task); // Follow STDOUT and STDERR
+
 		return true;
 	}
 
