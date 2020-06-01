@@ -111,27 +111,31 @@ public class GlobalScope extends Scope {
 		ValueList vargs = new ValueList(TypeList.get(Types.STRING));
 		add(GLOBAL_VAR_ARGS_LIST, vargs);
 
-		// CPUS
+		// Number of CPUs in local computer
 		long cpusLocal = Gpr.parseLongSafe(config.getString(GLOBAL_VAR_LOCAL_CPUS, "" + Gpr.NUM_CORES));
 		add(GLOBAL_VAR_LOCAL_CPUS, cpusLocal);
 
+		// Task CPUs
 		String cpusStr = config.getString(ExpressionTask.TASK_OPTION_CPUS, "1"); // Default number of cpus: 1
 		long cpus = Gpr.parseIntSafe(cpusStr);
 		if (cpus <= 0) throw new RuntimeException("Number of cpus must be a positive number ('" + cpusStr + "')");
 
+		// Task memory
 		long mem = Gpr.parseMemSafe(config.getString(ExpressionTask.TASK_OPTION_MEM, "-1")); // Default amount of memory: -1 (unrestricted)
 		String node = config.getString(ExpressionTask.TASK_OPTION_NODE, "");
 
+		// Task wall time and timeout
 		long oneDay = 1L * 24 * 60 * 60;
 		long timeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_TIMEOUT, "" + oneDay));
 		long wallTimeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
 
 		// Task related variables: Default values
+		add(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, false); // Tasks are allowed to have empty output file/s
+		add(ExpressionTask.TASK_OPTION_CAN_FAIL, false); // Task fail triggers checkpoint & exit (a task cannot fail)
 		add(ExpressionTask.TASK_OPTION_CPUS, cpus); // Default number of cpus
+		add(ExpressionTask.TASK_OPTION_DETACHED, false); // Tasks are running detached
 		add(ExpressionTask.TASK_OPTION_MEM, mem); // Default amount of memory (unrestricted)
 		add(ExpressionTask.TASK_OPTION_NODE, node); // Default node: none
-		add(ExpressionTask.TASK_OPTION_CAN_FAIL, false); // Task fail triggers checkpoint & exit (a task cannot fail)
-		add(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, false); // Tasks are allowed to have empty output file/s
 		add(ExpressionTask.TASK_OPTION_TIMEOUT, timeout); // Task default timeout
 		add(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, wallTimeout); // Task default wall-timeout
 	}

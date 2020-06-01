@@ -29,13 +29,13 @@ public class Task implements Serializable {
 	public static final String CHECKSUM_LINE_START = "# Checksum: ";
 	public static final String EXIT_STR_TIMEOUT = "Time out";
 	public static final String EXIT_STR_KILLED = "Signal received";
-
 	public static final int MAX_HINT_LEN = 150;
 
 	protected boolean allowEmpty; // Allow empty output file/s
 	protected boolean canFail; // Allow execution to fail
 	protected boolean debug;
 	protected boolean dependency; // This is a 'dependency' task. Run only if required
+	protected boolean detached; // Detached tasks are not monitored (they are considered successfully finished right after launching them)
 	protected boolean verbose;
 	protected int bdsLineNum; // Program's line number that created this task (used for reporting errors)
 	protected int exitValue; // Exit (error) code
@@ -138,6 +138,10 @@ public class Task implements Serializable {
 					|| (taskState == TaskState.SCHEDULED) // or even if it was not started
 					|| (taskState == TaskState.NONE) // or even if it was not scheduled
 			) return true;
+			return false;
+
+		case DETACHED:
+			if (taskState == TaskState.STARTED) return true;
 			return false;
 
 		default:
@@ -445,11 +449,15 @@ public class Task implements Serializable {
 		return dependency;
 	}
 
+	public boolean isDetached() {
+		return detached;
+	}
+
 	/**
 	 * Has this task finished? Either finished OK or finished because of errors.
 	 */
 	public synchronized boolean isDone() {
-		return isStateError() || isStateFinished() || isStateFrozen();
+		return isStateError() || isStateFinished() || isStateDetached();
 	}
 
 	/**
@@ -458,7 +466,7 @@ public class Task implements Serializable {
 	 */
 	public synchronized boolean isDoneOk() {
 		return (isStateFinished() && (exitValue == 0) && checkOutputFiles().isEmpty()) // Task finished with zero exit value and all output files OK
-				|| isStateFrozen() // Task in permanent frozen state (e.g. when running an improper task, other tasks are marked as FROZEN)
+				|| isStateDetached() // Task detached, we treat them as "successful" right after they've been launched
 		;
 	}
 
@@ -488,6 +496,10 @@ public class Task implements Serializable {
 		return taskState != TaskState.NONE && taskState != TaskState.SCHEDULED;
 	}
 
+	public boolean isStateDetached() {
+		return taskState.isDetached();
+	}
+
 	/**
 	 * Is this task in any error or killed state?
 	 */
@@ -497,10 +509,6 @@ public class Task implements Serializable {
 
 	public boolean isStateFinished() {
 		return taskState.isFinished();
-	}
-
-	public boolean isStateFrozen() {
-		return taskState.isFrozen();
 	}
 
 	public boolean isStateRunning() {
@@ -561,6 +569,10 @@ public class Task implements Serializable {
 
 	public void setDependency(boolean dependency) {
 		this.dependency = dependency;
+	}
+
+	public void setDetached(boolean detached) {
+		this.detached = detached;
 	}
 
 	public void setErrorMsg(String errorMsg) {
@@ -675,8 +687,11 @@ public class Task implements Serializable {
 			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
-		case FROZEN:
-			setState(newState);
+		case DETACHED:
+			if (taskState == TaskState.STARTED) {
+				setState(newState);
+				runningStartTime = new Date();
+			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
 		default:

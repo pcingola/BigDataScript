@@ -36,7 +36,6 @@ import org.bds.report.Report;
 import org.bds.scope.Scope;
 import org.bds.task.Task;
 import org.bds.task.TaskDependecies;
-import org.bds.task.TaskState;
 import org.bds.task.TaskVmOpcode;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -941,19 +940,6 @@ public class BdsThread extends Thread implements Serializable {
 		sb.append("\tRun state : " + getRunState() + "\n");
 		sb.append("\tProgram   :\n" + statement.toStringTree("\t\t", "program") + "\n");
 		return sb.toString();
-	}
-
-	/**
-	 * Mark all un-serialized tasks as finished
-	 */
-	public void unserializedTasksFrozen() {
-		for (Task task : taskDependecies.getTasks()) {
-			if (!task.isStateFinished() // Not finished?
-					&& !task.isDependency() // Don't execute dependencies, unless needed
-			) {
-				task.state(TaskState.FROZEN);
-			}
-		}
 	}
 
 	/**
