@@ -19,20 +19,23 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	//	@Test
-	//	public void test_z() {
+	//	public void test250_super_super_method_call() {
 	//		verbose = true;
-	//		//		debug = true;
-	//		runAndCheckException("test/z.bds", "ConcurrentModificationException");
+	//		runAndCheckStdout("test/run_250.bds", "GrandParent\nParent\nChild\n");
 	//	}
 
 	@Test
-	public void test244_concurrent_modification() {
-		runAndCheckException("test/run_244.bds", "ConcurrentModificationException");
+	public void test251_super_super_constructor_call() {
+		verbose = true;
+		debug = true;
+		runAndCheckStdout("test/run_251.bds", "GrandParent\nParent\nChild\n");
 	}
 
-	@Test
-	public void test249_concurrent_modification_hash() {
-		runAndCheckException("test/run_249.bds", "ConcurrentModificationException");
-	}
+	//	@Test
+	//	public void test252_super_notsuper() {
+	//		verbose = true;
+	//		debug = true;
+	//		runAndCheckStdout("test/run_252.bds", "GrandParent\nParent\nChild\n");
+	//	}
 
 }

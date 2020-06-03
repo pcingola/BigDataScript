@@ -1,14 +1,34 @@
-#!/usr/bin/env bds
+class GrandParentClass {
+      void GrandParentClass() { println "GrandParentClass.constructor" }
 
-class A {
-	int a = 1
-	int g() {
-		return 42
-	}
+      void oneMethod() { println('GrandParent class') }
 }
-
-void test01() {
-	println "TEST01"
-	A a = new A()
-	assert("Wrong answer", 1, a.a)
+ 
+class ParentClass extends GrandParentClass{
+      void ParentClass() {
+            super.GrandParentClass()
+			println "ParentClass.constructor"
+      }
+ 
+      void oneMethod() {
+            super.oneMethod()
+            println('Parent class')
+      }
 }
+ 
+class ChildClass extends ParentClass {
+ 
+      void ChildClass() {
+            super.ParentClass()
+			println "ChildClass.constructor"
+      }
+ 
+      void oneMethod() {
+            super.oneMethod()
+            println('Child class')
+      }
+}
+ 
+ 
+child := new ChildClass()
+child.oneMethod()

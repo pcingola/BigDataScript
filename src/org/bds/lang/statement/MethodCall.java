@@ -36,7 +36,8 @@ public class MethodCall extends FunctionCall {
 	/**
 	 * Is this a 'super.f()' method call?
 	 */
-	boolean isSuper() {
+	@Override
+	protected boolean isSuper() {
 		return expresionThis instanceof ReferenceVar && ((ReferenceVar) expresionThis).isSuper();
 	}
 

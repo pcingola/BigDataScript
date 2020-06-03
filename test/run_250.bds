@@ -1,0 +1,23 @@
+
+class GrandParentClass {
+	void oneMethod() { 
+		println('GrandParent') 
+	}
+}
+ 
+class ParentClass extends GrandParentClass{
+	void oneMethod() {
+			super.oneMethod()
+			println('Parent')
+	}
+}
+ 
+class ChildClass extends ParentClass {
+	void oneMethod() {
+			super.oneMethod()
+			println('Child')
+	}
+}
+ 
+child := new ChildClass()
+child.oneMethod()

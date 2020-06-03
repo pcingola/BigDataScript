@@ -1,0 +1,22 @@
+
+class GrandParentClass {
+	void GrandParentClass() { 
+		println('GrandParent') 
+	}
+}
+ 
+class ParentClass extends GrandParentClass{
+	void ParentClass() {
+			super.GrandParentClass()
+			println('Parent')
+	}
+}
+ 
+class ChildClass extends ParentClass {
+	void ChildClass() {
+			super.ParentClass()
+			println('Child')
+	}
+}
+ 
+child := new ChildClass()

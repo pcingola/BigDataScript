@@ -94,6 +94,13 @@ public class FunctionCall extends Expression {
 		return true;
 	}
 
+	/**
+	 * Is this a 'super.f()' method call?
+	 */
+	protected boolean isSuper() {
+		return false;
+	}
+
 	@Override
 	protected void parse(ParseTree tree) {
 		functionName = tree.getChild(0).getText();
@@ -163,7 +170,7 @@ public class FunctionCall extends Expression {
 	public String toAsmCallType() {
 		if (functionDeclaration.isNative()) return "callnative";
 		if (functionDeclaration.isMethod()) { //
-			if (isMethodCall() && ((MethodCall) this).isSuper()) return "callsuper";
+			if (isMethodCall() && isSuper()) return "callsuper";
 			return "callmethod";
 		}
 		return "call";

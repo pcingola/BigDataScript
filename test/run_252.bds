@@ -1,0 +1,14 @@
+
+class ParentClass extends GrandParentClass{
+	void ParentClass() {
+	}
+}
+ 
+class ChildClass extends ParentClass {
+	void ChildClass() {
+			super.ChildClass()	# This should not compile / run
+			println('Child')
+	}
+}
+ 
+child := new ChildClass()

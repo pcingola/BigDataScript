@@ -15,6 +15,7 @@ import org.bds.lang.nativeFunctions.FunctionNative;
 import org.bds.lang.nativeMethods.MethodNative;
 import org.bds.lang.statement.ClassDeclaration;
 import org.bds.lang.statement.FunctionDeclaration;
+import org.bds.lang.statement.MethodDeclaration;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeList;
@@ -829,13 +830,26 @@ public class BdsVm implements Serializable {
 		if (vthis == null) throw new RuntimeException("Null pointer: Cannot call method '" + fsig + "' on null object.");
 		if (!isSuper) return vthis.getType().resolve(fdecl);
 
+		//---
 		// This is a 'super.f()' method call
-		TypeClass tclass = (TypeClass) vthis.getType();
-		ClassDeclaration thisCdecl = tclass.getClassDeclaration();
-		ClassDeclaration superCdecl = thisCdecl.getClassParent();
-		FunctionDeclaration superFdecl = superCdecl.getType().resolve(fdecl);
-		if (superFdecl == null) throw new RuntimeException("Null pointer: Cannot resolve 'super' method '" + fsig + "'.");
-		return superFdecl;
+		//---
+
+		// Get method's declaration class
+		// TypeClass typeClass = (TypeClass) vthis.getType();
+		MethodDeclaration methodDecl = (MethodDeclaration) fdecl;
+		Gpr.debug("methodDecl: " + methodDecl);
+		TypeClass typeClass = (TypeClass) methodDecl.getClassType();
+		Gpr.debug("typeClass: " + typeClass.getClassName());
+		ClassDeclaration classDecl = typeClass.getClassDeclaration();
+		Gpr.debug("classDecl: " + classDecl);
+
+		// Get 'super' class
+		ClassDeclaration superClassDecl = classDecl.getClassParent();
+		Gpr.debug("superClassDecl: " + superClassDecl);
+		FunctionDeclaration superMethodDecl = superClassDecl.getType().resolve(fdecl);
+
+		if (superMethodDecl == null) throw new RuntimeException("Null pointer: Cannot resolve 'super' method '" + fsig + "'.");
+		return superMethodDecl;
 	}
 
 	/**
