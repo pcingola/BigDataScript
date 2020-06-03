@@ -23,6 +23,7 @@ public class TestCasesZzz extends TestCasesBase {
 	//		verbose = true;
 	//		runAndCheckStdout("test/run_250.bds", "GrandParent\nParent\nChild\n");
 	//	}
+	//
 
 	@Test
 	public void test251_super_super_constructor_call() {
