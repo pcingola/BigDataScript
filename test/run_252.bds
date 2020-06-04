@@ -1,5 +1,5 @@
 
-class ParentClass extends GrandParentClass{
+class ParentClass {
 	void ParentClass() {
 	}
 }
