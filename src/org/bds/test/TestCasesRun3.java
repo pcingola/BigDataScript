@@ -446,4 +446,14 @@ public class TestCasesRun3 extends TestCasesBase {
 		runAndCheckException("test/run_249.bds", "ConcurrentModificationException");
 	}
 
+	@Test
+	public void test250_super_super_method_call() {
+		runAndCheckStdout("test/run_250.bds", "GrandParent\nParent\nChild\n");
+	}
+
+	@Test
+	public void test251_super_super_constructor_call() {
+		runAndCheckStdout("test/run_251.bds", "GrandParent\nParent\nChild\n");
+	}
+
 }

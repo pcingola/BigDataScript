@@ -835,17 +835,13 @@ public class BdsVm implements Serializable {
 		//---
 
 		// Get method's declaration class
-		// TypeClass typeClass = (TypeClass) vthis.getType();
 		MethodDeclaration methodDecl = (MethodDeclaration) fdecl;
-		Gpr.debug("methodDecl: " + methodDecl);
 		TypeClass typeClass = (TypeClass) methodDecl.getClassType();
-		Gpr.debug("typeClass: " + typeClass.getClassName());
 		ClassDeclaration classDecl = typeClass.getClassDeclaration();
-		Gpr.debug("classDecl: " + classDecl);
 
 		// Get 'super' class
 		ClassDeclaration superClassDecl = classDecl.getClassParent();
-		Gpr.debug("superClassDecl: " + superClassDecl);
+		if (superClassDecl == null) return fdecl; // No super class? Nothing to resolve. This can happen on "super.Constructor()" calls
 		FunctionDeclaration superMethodDecl = superClassDecl.getType().resolve(fdecl);
 
 		if (superMethodDecl == null) throw new RuntimeException("Null pointer: Cannot resolve 'super' method '" + fsig + "'.");
