@@ -459,4 +459,10 @@ public class TestCasesLang extends TestCasesBase {
 		Gpr.debug("Test");
 		compileErrors("test/test67b.bds", "Cannot cast A to C");
 	}
+
+	public void test68() {
+		Gpr.debug("Test");
+		// FIXME: Switch with empty statement crashes compile
+		compileErrors("test/test68.bds", "Empty switch statment");
+	}
 }
