@@ -43,10 +43,6 @@ public class Scope implements Iterable<String>, Serializable {
 		values = new HashMap<>();
 	}
 
-	public Scope(Scope parent) {
-		this(parent, null);
-	}
-
 	/**
 	 * Constructor
 	 * @param parent : If null => use global Scope
@@ -100,6 +96,13 @@ public class Scope implements Iterable<String>, Serializable {
 	public String getScopeName() {
 		if (node == null) return "" + id;
 		return (node.getFileName() != null ? node.getFileName() + ":" + node.getLineNum() + ":" : "") + node.getClass().getSimpleName();
+	}
+
+	public String getScopeNameCode() {
+		if (node == null) return "" + id;
+		String lines[] = node.toString().split("\n");
+		String line = lines[0];
+		return (node.getFileName() != null ? node.getFileName() + ":" + node.getLineNum() + "\t" : "") + line;
 	}
 
 	/**
@@ -177,17 +180,17 @@ public class Scope implements Iterable<String>, Serializable {
 
 	@Override
 	public String toString() {
-		return toString(true);
+		return toString(true, true);
 	}
 
-	public String toString(boolean showFunc) {
+	public String toString(boolean showFunc, boolean recurse) {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("\n---------- Scope " + getScopeName() + " ----------\n");
+		sb.append("\n# Scope " + getScopeNameCode() + "\n");
 		sb.append(toStringLocal(showFunc));
 
 		// Show parents
-		if (parent != null) sb.append(parent.toString(showFunc));
+		if (recurse && parent != null) sb.append(parent.toString(showFunc, recurse));
 
 		return sb.toString();
 	}
@@ -203,8 +206,9 @@ public class Scope implements Iterable<String>, Serializable {
 			Value v = getValueLocal(n);
 			Type t = v.getType();
 
-			if (t.isFunction()) sb.append(t.getPrimitiveType() + " : " + v + "\n");
-			else if (v.getType().isString()) sb.append(t + " : " + n + " = '" + GprString.escape(v.asString()) + "'\n");
+			if (t.isFunction()) {
+				if (showFunc) sb.append(t.getPrimitiveType() + " : " + v + "\n");
+			} else if (v.getType().isString()) sb.append(t + " : " + n + " = '" + GprString.escape(v.asString()) + "'\n");
 			else sb.append(t + " : " + n + " = " + v + "\n");
 
 		}

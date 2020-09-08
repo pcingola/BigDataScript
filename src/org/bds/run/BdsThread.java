@@ -751,7 +751,9 @@ public class BdsThread extends Thread implements Serializable {
 
 		// Show scopes
 		for (Scope scope = getScope(); scope != null; scope = scope.getParent())
-			if (!scope.isEmpty()) System.out.println(scope);
+			if (!scope.isEmpty()) {
+				System.out.println(scope.toString(false, false));
+			}
 	}
 
 	void printCode(String code) {

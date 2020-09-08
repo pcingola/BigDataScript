@@ -24,11 +24,6 @@ public class Block extends StatementWithScope {
 		return statements;
 	}
 
-	//	@Override
-	//	public boolean isStopDebug() {
-	//		return false;
-	//	}
-
 	@Override
 	protected void parse(ParseTree tree) {
 		parse(tree, 0);
@@ -53,7 +48,10 @@ public class Block extends StatementWithScope {
 	public String toAsm() {
 		StringBuilder sb = new StringBuilder();
 
-		if (isNeedsScope()) sb.append("scopepush\n");
+		if (isNeedsScope()) {
+			sb.append("node " + id + "\n");
+			sb.append("scopepush\n");
+		}
 
 		for (Statement s : statements)
 			sb.append(s.toAsm());

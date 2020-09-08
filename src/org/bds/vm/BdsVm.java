@@ -654,7 +654,8 @@ public class BdsVm implements Serializable {
 	 * Create a new scope
 	 */
 	public void newScope() {
-		scope = new Scope(scope);
+		BdsNode bdsNode = BdsNodeFactory.get().getNode(nodeId);
+		scope = new Scope(scope, bdsNode);
 	}
 
 	/**
@@ -1647,13 +1648,28 @@ public class BdsVm implements Serializable {
 	public String stackTrace() {
 		StringBuilder sb = new StringBuilder();
 
-		String tabs = "";
-		sb.append(stackTrace(nodeId, tabs));
-
+		// List of nodes
+		List<Integer> nodes = new ArrayList<>();
 		for (int i = 0; i < fp; i++) {
 			CallFrame cf = callFrames[i];
-			tabs += "  ";
-			sb.append(stackTrace(cf.getNodeId(), tabs));
+			nodes.add(cf.getNodeId());
+		}
+		nodes.add(nodeId);
+
+		// File names and line numbers
+		int maxLen = 0;
+		List<String> fileLines = new ArrayList<>();
+		for (int nid : nodes) {
+			String fl = stackTraceFileLine(nid);
+			fileLines.add(fl);
+			int len = fl.length();
+			maxLen = Math.max(maxLen, len);
+		}
+
+		// Show stack trace
+		for (int i = 0; i < fp; i++) {
+			CallFrame cf = callFrames[i];
+			sb.append(stackTrace(cf.getNodeId(), fileLines.get(i), maxLen) + "\n");
 		}
 
 		return sb.toString();
@@ -1662,24 +1678,26 @@ public class BdsVm implements Serializable {
 	/**
 	 * Show stack trace information on node bdsNode
 	 */
-	String stackTrace(int nodeId, String tabs) {
-		int maxLineWidth = 50;
-
+	String stackTrace(int nodeId, String fileLine, int maxFileLineLen) {
 		BdsNode bdsNode = BdsNodeFactory.get().getNode(nodeId);
 
 		if (bdsNode == null) return "";
 
 		String lines[] = bdsNode.toString().split("\n");
-		String line = tabs + lines[0];
+		String line = lines[0];
+		String format = "%-" + maxFileLineLen + "s: \t%s";
+		return String.format(format, fileLine, line);
+	}
 
-		boolean addElipsis = lines.length > 1 || line.length() > maxLineWidth;
-		if (line.length() > maxLineWidth) line = line.substring(0, maxLineWidth);
-		if (addElipsis) line += " ...";
-
-		if (bdsNode.getFileName() != null) //
-			return String.format("%-55s # %s:%d\n", line, bdsNode.getFileName(), bdsNode.getLineNum());
-
-		return tabs + line + "\n";
+	/**
+	 * Stack trace file name and line number
+	 * @param nodeId
+	 * @return
+	 */
+	String stackTraceFileLine(int nodeId) {
+		BdsNode bdsNode = BdsNodeFactory.get().getNode(nodeId);
+		if (bdsNode == null) return "";
+		return bdsNode.getFileName() + ":" + bdsNode.getLineNum();
 	}
 
 	/**

@@ -1,16 +1,26 @@
+#!/usr/bin/env bds
+
+void f(int i) {
+	j := i + 1
+	g(j)
+}
+
+void g(int i) {
+	k := i + 1
+	h(k)
+}
+
+void h(int i) {
+	l := i + 1
+	if(l == 4) {
+		println "CHECKPOINT"
+		checkpoint "z5.chp"
+	}
+}
 
 print "Hi"
-switch() {
-	case 1:
-		print "one"
-		break
-
-	case 2:
-		print "two"
-		break
-
-	default:
-		print "something else"
-		break
+for(int i=0 ; i < 3 ; i++) {
+	println "$i"
+	f(i)
 }
 print "Bye"
