@@ -458,7 +458,6 @@ public class TestCasesRun3 extends TestCasesBase {
 
 	@Test
 	public void test253_getvar() {
-		verbose = true;
 		HashMap<String, Object> expectedValues = new HashMap<>();
 
 		expectedValues.put("shome", System.getenv().get("HOME"));
