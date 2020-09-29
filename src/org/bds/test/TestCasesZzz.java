@@ -19,10 +19,9 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test252_super_notsuper() {
+	public void test252_super_child() {
 		verbose = true;
-		debug = true;
-		runAndCheckStdout("test/run_252.bds", "GrandParent\nParent\nChild\n");
+		runAndCheckExit("test/run_252.bds", -1);
 	}
 
 }

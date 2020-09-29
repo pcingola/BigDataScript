@@ -1,5 +1,6 @@
 package org.bds.lang.nativeFunctions;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 /**
@@ -18,11 +19,14 @@ public class NativeLibraryFunctions {
 			, FunctionNativeAssertIntNoMsg.class //
 			, FunctionNativeAssertString.class //
 			, FunctionNativeAssertStringNoMsg.class //
+			, FunctionNative_clone_bool.class //
+			, FunctionNative_clone_int.class //
+			, FunctionNative_clone_real.class //
+			, FunctionNative_clone_string.class //
 			, FunctionNativeConfig.class //
 			, FunctionNativeConfigOri.class //
-			, FunctionNativeTasksDone.class //
-			, FunctionNativeTasksRunning.class //
-			, FunctionNativeTasksToRun.class //
+			, FunctionNativeGetVar.class //
+			, FunctionNativeHasVar.class //
 			, FunctionNativeLog.class //
 			, FunctionNativeMinInt.class //
 			, FunctionNativeMaxInt.class //
@@ -40,14 +44,13 @@ public class NativeLibraryFunctions {
 			, FunctionNativeRangeReal.class //
 			, FunctionNativeSleep.class //
 			, FunctionNativeSleepReal.class //
+			, FunctionNativeTasksDone.class //
+			, FunctionNativeTasksRunning.class //
+			, FunctionNativeTasksToRun.class //
 			, FunctionNativeTime.class //
 			, FunctionNativeToIntFromBool.class //
 			, FunctionNativeToIntFromReal.class //
 			, FunctionNativeType.class //
-			, FunctionNative_clone_bool.class //
-			, FunctionNative_clone_int.class //
-			, FunctionNative_clone_real.class //
-			, FunctionNative_clone_string.class //
 			//
 			// Math functions
 			, org.bds.lang.nativeFunctions.math.FunctionNative_abs_int.class //
@@ -95,8 +98,10 @@ public class NativeLibraryFunctions {
 	public NativeLibraryFunctions() {
 		try {
 			functions = new ArrayList<>();
-			for (Class c : classes)
-				functions.add((FunctionNative) c.newInstance());
+			for (Class<FunctionNative> c : classes) {
+				Constructor<FunctionNative> constructor = c.getDeclaredConstructor();
+				functions.add(constructor.newInstance());
+			}
 		} catch (Exception e) {
 			throw new RuntimeException("Error creating native library", e);
 		}
