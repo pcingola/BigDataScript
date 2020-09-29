@@ -27,6 +27,8 @@ real exp(real x)                                        | Return e^x
 real exppm1(real x)                                     | Return e^x-1    
 real floor(real x)                                      | The floor of a number    
 int getExponent(real x)                                 | exponent used in the representation of a real   
+string getVar(string name)                              | Get variable's value represented as a string (e.g. `int i=42; getVar('i') # Output "42"`)
+bool hasVar(string name)                                | Is the variable 'name' defined? This can be used to check the existence of environment variables, which are inherited into the global scope
 real hypot(real x, real y)                              | Returns sqrt(x2 +y2) without intermediate overflow or underflow.    
 real IEEEremainder(real x, real y)                      | Computes the remainder operation on two arguments as prescribed by the IEEE 754 standard..    
 log(string msg)                                         | Log 'msg' (i.e. show to stderr)    
@@ -61,11 +63,15 @@ sleep( real seconds )                                   | Sleep for '1000 * seco
 real sqrt(real x)                                       | The square root of a number   
 real tan(real x)                                        | The trigonometric tangent of an angle    
 real tanh(real x)                                       | The hyperbolic tangent of an angle    
+string[] tasksDone()                                    | Return a list of all task IDs that finished executing
+string[] tasksRunning()                                 | Return a list of all task IDs that are currentl executing
+string[] tasksToRun()                                   | Return a list of all task IDs that scheduled for execution
 int time()                                              | Return the milliseconds elapsed since epoch   
 real toDegrees(real x)                                  | Convert x radians to degrees   
 real toRadians(real x)                                  | Convert x degrees to radians   
 int toInt(bool b)                                       | Convert boolean to int    
 int toInt(real r)                                       | Convert real to int    
+string type(expr)                                       | Get the expression's resulting type name, e.g. 'int' or 'string'
 real ulp(real r)                                        | Returns the size of an ulp of the argument   
 
 ### Config function
