@@ -6,7 +6,7 @@ shome := getVar(varName)
 bhome := hasVar(varName)
 println "getVar($varName) = '$shome'\thasVar($varName): $bhome"
 
-varName := "ZZZ"
-szzz := getVar(varZzz)
-bzzz := hasVar(varZzz)
+varName = "ZZZ"
+szzz := getVar(varName)
+bzzz := hasVar(varName)
 println "getVar($varName) = '$szzz'\thasVar($varName): $bzzz"

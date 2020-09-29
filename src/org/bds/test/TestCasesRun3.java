@@ -456,4 +456,18 @@ public class TestCasesRun3 extends TestCasesBase {
 		runAndCheckStdout("test/run_251.bds", "GrandParent\nParent\nChild\n");
 	}
 
+	@Test
+	public void test253_getvar() {
+		verbose = true;
+		HashMap<String, Object> expectedValues = new HashMap<>();
+
+		expectedValues.put("shome", System.getenv().get("HOME"));
+		expectedValues.put("bhome", true);
+
+		expectedValues.put("szzz", "");
+		expectedValues.put("bzzz", false);
+
+		runAndCheck("test/run_253.bds", expectedValues);
+	}
+
 }
