@@ -1,0 +1,31 @@
+site_name: bds - Big Data Script programming language
+nav:
+  - Home: index.md
+  - About: about.md
+  - Manual: 
+    - 'Introduction': index.md
+    - 'Download': download.md
+    - 'Hello world': hello.md
+    - 'Language': language.md
+    - 'Special operators': special.md
+    - 'Data types': data_types.md
+    - 'Functions': functions.md
+    - 'Global variables': global_vars.md
+    - 'Pipelines': pipelines.md
+    - 'Sys': sys.md
+    - 'Task': task.md
+    - 'Wait': wait.md
+    - 'Dependency operator': dep_op.md
+    - 'Goal': goal.md
+    - 'Remote files': remote_files.md
+    - 'Parallel execution': par.md
+    - 'Checkpoints': checkpoints.md
+    - 'Test cases': test_cases.md
+    - 'Debugger': debugger.md
+    - 'Command line parsing': cmdline.md
+    - 'Command line help': help.md
+    - 'Logging': logging.md
+    - 'Cleanup': cleanup.md
+    - 'bds command line': bdscmdline.md
+    - 'Config file': bdsconfig.md
+theme: readthedocs

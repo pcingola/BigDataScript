@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Goal - bds - Big Data Script programming language</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Goal";
+    var mkdocs_page_input_path = "goal.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> bds - Big Data Script programming language</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../about/">About</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Manual</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="..">Introduction</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../download/">Download</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../hello/">Hello world</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../language/">Language</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../special/">Special operators</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../data_types/">Data types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../functions/">Functions</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../global_vars/">Global variables</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../pipelines/">Pipelines</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../sys/">Sys</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../task/">Task</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wait/">Wait</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../dep_op/">Dependency operator</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Goal</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#goals">Goals</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#intermediate-files-within-a-goal-can-be-deleted">Intermediate files within a 'goal' can be deleted</a></li>
+        
+            <li><a class="toctree-l4" href="#dependencies-that-do-not-create-files">Dependencies that do not create files</a></li>
+        
+            <li><a class="toctree-l4" href="#multiple-goals">Multiple goals</a></li>
+        
+            <li><a class="toctree-l4" href="#use-case-example-for-dep-and-goal">Use-case example for dep and goal</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../remote_files/">Remote files</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../par/">Parallel execution</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../checkpoints/">Checkpoints</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../test_cases/">Test cases</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../debugger/">Debugger</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../cmdline/">Command line parsing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../help/">Command line help</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../logging/">Logging</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../cleanup/">Cleanup</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../bdscmdline/">bds command line</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../bdsconfig/">Config file</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">bds - Big Data Script programming language</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Manual &raquo;</li>
+        
+      
+    
+    <li>Goal</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="goals">Goals</h1>
+<p>Complex dependencies can be defined using <code>goal</code> and <code>dep</code> </p>
+<p><code>goal</code> and <code>dep</code> are used to express dependencies in a declarative manner.
+As opposed to <code>task</code> expression, which are evaluated immediately, <code>dep</code> can be used to define a dependency (using the same syntax as <code>task</code>). 
+A <code>dep</code> is not evaluated until a <code>goal</code> requires that dependency to be triggered.</p>
+<p>E.g.: File <a href="bds/test_18.bds">test_18.bds</a></p>
+<pre><code>#!/usr/bin/env bds
+
+in   := 'in.txt'
+mid1 := 'mid1.txt'
+mid2 := 'mid2.txt'
+out  := 'out.txt'
+
+stime := 3
+
+# Dependencies: There is no need declare them in order
+dep( out &lt;- mid2 )     sys echo $mid2 &gt; $out  ; echo OUT   ; sleep 1
+dep( mid2 &lt;- mid1 )    sys echo $mid1 &gt; $mid2 ; echo MID2  ; sleep 1
+dep( mid1 &lt;- in )      sys echo $in   &gt; $mid1 ; echo MID1  ; sleep 1
+
+goal out
+
+</code></pre>
+
+<p>Running the code, we get</p>
+<pre><code># Remove old files (if any)
+$ rm *.txt
+
+# Create input
+$ date &gt; in.txt
+
+$ ./test_18.bds
+MID1
+MID2
+OUT
+</code></pre>
+
+<p>In this case, <code>bds</code> created a directed acyclic graph of the dependencies needed to satisfy the goal 'out.txt' and then executed the required 'dep' declarations.</p>
+<p><strong>Note:</strong> A <code>goal</code> expression returns a list of task Ids to be executed, which can be quite useful for debugging purposes. So in the previous example you could write:</p>
+<pre><code>tids := goal out
+print &quot;Executing tasks: $tids\n&quot;
+</code></pre>
+
+<h3 id="intermediate-files-within-a-goal-can-be-deleted">Intermediate files within a 'goal' can be deleted</h3>
+<p>In the previous example, if we delete the intermediate files 'mid1.txt' and or 'mid2.txt', and we re-execute the script, <code>bds</code> will notice that the output 'out.txt' is still valid with respect to the input 'in.txt' and will not execute any task.</p>
+<pre><code># Remove intermediate files
+$ rm mid?.txt
+
+# Re-execute (out.txt is still valid because in.txt was not changed)
+$ ./test_18.bds
+$
+</code></pre>
+
+<p>How this works: <code>bds</code> calculates the dependency graph and checks whether the <code>goal</code> is up to date with respect to the inputs (which are the leaves in the dependency graph).
+If the goal up to date, then nothing is done.
+This feature is particularly useful when intermediate files are large and we need to clean them up (since we are working with big data problems, this is often the case).</p>
+<h3 id="dependencies-that-do-not-create-files">Dependencies that do not create files</h3>
+<p>What if the final step in your pipeline does not create any files?
+in this case, you can use <code>taskId</code> as a goal, for example:</p>
+<pre><code>#!/usr/bin/env bds
+
+tid := dep( taskName := 'hi' ) {
+    sys echo Hello
+}
+
+goal tid    # We use task Id instead of a file name
+</code></pre>
+
+<h3 id="multiple-goals">Multiple goals</h3>
+<p>Sometimes it is convenient to fire multiple goals at once. You can do this by passing a list, instead of a string, to <code>goal</code>.</p>
+<pre><code>#!/usr/bin/env bds
+
+string[] outs
+for(int i=0; i &lt; 3 ; i++ ) {
+    in := &quot;in.$i.txt&quot;
+    out := &quot;out.$i.txt&quot;
+    outs += out
+
+    sys date &gt; $in
+    dep( out &lt;- in ) sys cat $in &gt; $out ; echo Hi $i
+}
+
+goal outs   # We use a list of goals, it is interpreted as multiple goal statements (one for each item in the list)
+</code></pre>
+
+<h3 id="use-case-example-for-dep-and-goal">Use-case example for <code>dep</code> and <code>goal</code></h3>
+<p>The <code>goal</code> statement helps to program complex task scheduling interdependencies.</p>
+<p>In a previous example (<a href="bds/test_07.bds">test_07.bds</a>), we had an input file <code>in.txt</code>, an intermediate file <code>inter.txt</code> and an output file <code>out.txt</code>.</p>
+<pre><code>#!/usr/bin/env bds
+
+inFile       := &quot;in.txt&quot;        
+intermediate := &quot;inter.txt&quot;
+outFile      := &quot;out.txt&quot;
+
+task( intermediate &lt;- inFile) {
+    sys echo Creating $intermediate; cat $inFile &gt; $intermediate; sleep 1 ; echo Done $intermediate
+}
+
+task( outFile &lt;- intermediate ) {
+    sys echo Creating $outFile; cat $intermediate &gt; $outFile; echo Done $outFile
+}
+</code></pre>
+
+<p>One problem is that if we delete the intermediate file <code>inter.txt</code> (e.g. because we may want to delete big files with intermediate results), then both tasks will be executed</p>
+<pre><code># Remove intermediate file
+$ rm inter.txt 
+
+# Re-execute script 
+$ ./test_07.bds
+Creating inter.txt
+Done inter.txt
+Creating out.txt
+Done out.txt
+</code></pre>
+
+<p>Why is this happening? The reason is that <code>task</code> statements are evaluated in order. 
+So when <code>bds</code> evaluates the first <code>task</code> expression, the dependency <code>intermediate &lt;- inFile</code> is true (because <code>inter.txt</code> doesn't exist, so it must be updated with respect to <code>in.txt</code>).
+After that, when the second <code>task</code> expression is evaluated,  <code>out &lt;- intermediate</code> is also true, since <code>inter.txt</code> is newer than <code>out.txt</code>.
+As a result, both tasks are re-executed, even though <code>out.txt</code> is up to date with respect to <code>in.txt</code>.
+This can be a problem, particularly if each task requires several hours of execution.</p>
+<p>There are two ways to solve this, the obvious one is to add a simple <code>if</code> statement surrounding the tasks:</p>
+<pre><code>#!/usr/bin/env bds
+
+inFile       := &quot;in.txt&quot;        
+intermediate := &quot;inter.txt&quot;
+outFile      := &quot;out.txt&quot;
+
+if( outFile &lt;- inFile) {
+  task( intermediate &lt;- inFile) {
+    sys echo Creating $intermediate; cat $inFile &gt; $intermediate; sleep 1 ; echo Done $intermediate
+  }
+
+  task( outFile &lt;- intermediate ) {
+    sys echo Creating $outFile; cat $intermediate &gt; $outFile; echo Done $outFile
+  }
+}
+</code></pre>
+
+<p>Although it solves the issue, the code is not elegant.</p>
+<p>The alternative is to use <code>dep</code> and <code>goal</code></p>
+<ul>
+<li><code>dep</code> defines a task exactly the same way as <code>task</code> expression, but it doesn't evaluate if the tasks should be executed or not (it's just declarative). </li>
+<li><code>goal</code> executes all dependencies nescesary to create an output </li>
+</ul>
+<p>Example:</p>
+<p>File <a href="bds/test_08.bds">test_08.bds</a></p>
+<pre><code>#!/usr/bin/env bds
+
+inFile       := &quot;in.txt&quot;        
+intermediate := &quot;inter.txt&quot;
+outFile      := &quot;out.txt&quot;
+
+dep( intermediate &lt;- inFile) {
+    sys echo Creating $intermediate; cat $inFile &gt; $intermediate; sleep 1 ; echo Done $intermediate
+}
+
+dep( outFile &lt;- intermediate ) {
+    sys echo Creating $outFile; cat $intermediate &gt; $outFile; echo Done $outFile
+}
+
+goal outFile
+</code></pre>
+
+<p>If we execute this script</p>
+<pre><code># Delete old files (if any)
+$ rm *.txt
+
+# Create input file
+$ date &gt; in.txt
+
+# Run script (both tasks should be executed)
+$ ./test_08.bds
+Creating out.txt
+Done out.txt
+Creating inter.txt
+Done inter.txt
+</code></pre>
+
+<p>Now we delete 'inter.txt' and re-execute</p>
+<pre><code># Delete intermediate file
+$ rm inter.txt 
+
+# Run again (out.txt is still up to date with respect to in.txt, so no task should be executed)
+$ ./test_08.bds
+$ 
+</code></pre>
+
+<p>As you can see, no task is executed the second time, since <code>out.txt</code> is up to date, with respect to <code>in.txt</code>. 
+The fact that intermediate file <code>inter.txt</code> was deleted, is ignored, which is what we wanted.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../remote_files/" class="btn btn-neutral float-right" title="Remote files">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../dep_op/" class="btn btn-neutral" title="Dependency operator"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../dep_op/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../remote_files/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

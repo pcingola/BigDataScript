@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Parallel execution - bds - Big Data Script programming language</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Parallel execution";
+    var mkdocs_page_input_path = "par.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> bds - Big Data Script programming language</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../about/">About</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Manual</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="..">Introduction</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../download/">Download</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../hello/">Hello world</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../language/">Language</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../special/">Special operators</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../data_types/">Data types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../functions/">Functions</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../global_vars/">Global variables</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../pipelines/">Pipelines</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../sys/">Sys</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../task/">Task</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wait/">Wait</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../dep_op/">Dependency operator</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../goal/">Goal</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../remote_files/">Remote files</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Parallel execution</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#parallel-execution-par">Parallel execution par</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#wait-in-par-context">Wait in 'par' context</a></li>
+        
+            <li><a class="toctree-l4" href="#calling-functions-with-par">Calling functions  with 'par'</a></li>
+        
+            <li><a class="toctree-l4" href="#race-conditions-in-par-and-how-to-avoid-them">Race conditions in 'par' and how to avoid them</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../checkpoints/">Checkpoints</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../test_cases/">Test cases</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../debugger/">Debugger</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../cmdline/">Command line parsing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../help/">Command line help</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../logging/">Logging</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../cleanup/">Cleanup</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../bdscmdline/">bds command line</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../bdsconfig/">Config file</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">bds - Big Data Script programming language</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Manual &raquo;</li>
+        
+      
+    
+    <li>Parallel execution</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="parallel-execution-par">Parallel execution <code>par</code></h1>
+<p><code>bds</code> can run parallel code as threads in the same program.</p>
+<p>Sometimes multiple branches of an analysis pipeline must be run in parallel. 
+<code>bds</code> provides a simple <code>par</code> expression to run code in parallel.
+Originally this was called <code>parallel</code>, but then I realized I was too lazy to type all those letters, so I reduced it to <code>par</code> (both of them work if you choose to be more verbose).</p>
+<p>E.g.: File <a href="bds/test_16.bds">test_16.bds</a></p>
+<pre><code>#!/usr/bin/env bds
+
+par {
+    # This block runs in parallel
+    for( int i : range(1, 5) ) {
+        print(&quot;Parallel $i\n&quot;)
+        sleep( 0.2 )
+    }
+}
+
+for( int i : range(1, 5) ) {
+    print(&quot;Main $i\n&quot;)
+    sleep( 0.2 )
+}
+</code></pre>
+
+<p>If we run this code:</p>
+<pre><code>$ ./test_16.bds
+Parallel 1
+Main 1
+Parallel 2
+Main 2
+Main 3
+Parallel 3
+Main 4
+Parallel 4
+Parallel 5
+Main 5
+</code></pre>
+
+<p>Perhaps a more elegant way to write the same code would be:</p>
+<pre><code>#!/usr/bin/env bds
+
+void count(string msg) {
+    for( int i : range(1, 5) ) {
+        print(&quot;$msg $i\n&quot;)
+        sleep( 0.2 )
+    }
+}
+
+par count('Parallel')   # Call function in parallel thread
+count('Main')           # Call function in 'main' thread
+</code></pre>
+
+<p><code>par</code> also works with optional expressions that must be all 'true' to evaluate the block.</p>
+<pre><code>par( out &lt;- in )  {
+    # This block runs in parallel if 'out' needs to be updated
+    for( int i : range(1, 5) ) {
+        tmp := &quot;$in.$i.tmp&quot;
+        task head -n $i $in | tail -n 1 &gt; $tmp
+    }
+    wait
+    task cat $in.*.tmp &gt; $out
+}
+</code></pre>
+
+<h3 id="wait-in-par-context">Wait in 'par' context</h3>
+<p><code>par</code> expressions return a 'parallel ID' string that we can use in <code>wait</code> </p>
+<pre><code>pid := par longRunningFunction()    // This function is executed in parallel 
+
+wait pid                            // Wait for parallel to finish
+</code></pre>
+
+<p>Here <code>wait</code> statement waits until the function "longRunningFunction()" finishes.</p>
+<p>We mentioned before that, by default, a <code>wait</code> statement with no arguments would wait for 'all' tasks to finish.
+Specifically, <code>wait</code> statement waits for all tasks scheduled by the same thread and for all 'parallels'.
+So, <code>wait</code> statement with no arguments, will not restore execution until all threads and tasks triggered by the current thread have finished.</p>
+<h3 id="calling-functions-with-par">Calling functions  with 'par'</h3>
+<p>A function can be called in a parallel thread using <code>par</code> statements.</p>
+<p>E.g.:</p>
+<pre><code>par someFunction(x, y)
+</code></pre>
+
+<p>It is important to notice that the return value from a <code>par</code> it is a 'parallel ID' (i.e. a thread ID) and not the function's return value.
+This is because the parallel thread could take a long time to process and we don't want to stop execution in the current thread until the function finishes.</p>
+<p>So, this sample code will show the 'parallel ID' independently of the function's return value:</p>
+<pre><code>pid := par someFunction(x, y)  # 'par' returns a thread ID
+print &quot;Parallel ID: $pid\n&quot;
+</code></pre>
+
+<p><strong>Important:</strong> When calling a function, arguments are evaluated <strong>before</strong> the new thread is created. 
+The reason for this is to simplify race conditions.</p>
+<h3 id="race-conditions-in-par-and-how-to-avoid-them">Race conditions in 'par' and how to avoid them</h3>
+<p>As is the case when creating threads in any programming language, using <code>par</code> can lead to race conditions.</p>
+<p>As an example, consider this code:</p>
+<pre><code>#!/usr/bin/env bds
+
+for( int i : range(0, 10) ) {
+    par {
+        print &quot;Number: $i\n&quot;
+    }
+}   
+</code></pre>
+
+<p>The output is (comments added for clarification):</p>
+<pre><code>$ ./z.bds
+Number: 0
+Number: 2       # We missed number 1?
+Number: 3
+Number: 4
+Number: 6       # We missed number 5?
+Number: 6       # Two '6'?
+Number: 8
+Number: 8
+Number: 10      # Three number 10?
+Number: 10
+Number: 10
+</code></pre>
+
+<p>This is clearly not the result we wanted.</p>
+<p>What happened? Well, obviously this had a race condition. 
+From the time thread is created (<code>par</code>), until the variable <code>i</code> is evaluated in <code>print</code> statement (parallel thread), the main thread has already changed <code>i</code>'s value.</p>
+<p>To avoid this type of race condition, when using <code>par</code> to call a function, arguments are evaluated in the current thread.
+Then a new thread is created and the function is invoked.
+See what happens when we refactor the code:</p>
+<pre><code>#!/usr/bin/env bds
+
+void show(int num) {
+    print &quot;Number: $num\n&quot;
+}
+
+for( int i : range(0, 10) ) {
+    par show(i)
+}   
+</code></pre>
+
+<p>Now the output is what we expect:</p>
+<pre><code>$ ./z.bds
+Number: 0
+Number: 1
+Number: 2
+Number: 3
+Number: 4
+Number: 5
+Number: 6
+Number: 7
+Number: 8
+Number: 9
+Number: 10
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../checkpoints/" class="btn btn-neutral float-right" title="Checkpoints">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../remote_files/" class="btn btn-neutral" title="Remote files"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../remote_files/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../checkpoints/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

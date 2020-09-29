@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>BigDataScript</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<!-- Styles -->
+	<link href="css/bootstrap.css" rel="stylesheet">
+	<link href="css/docs.css" rel="stylesheet">
+	<link href="js/google-code-prettify/prettify.css" rel="stylesheet">
+
+	<!-- Custom styles for this template -->
+	<link href="css/jumbotron.css" rel="stylesheet">
+	<link href="css/my.css" rel="stylesheet">
+
+	<!-- hTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="js/html5shiv.js"></script>
+	<![endif]-->
+
+	<!-- Fav and touch icons -->
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
+	<link rel="shortcut icon" href="ico/favicon.png">
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66353152-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head>
+
+<body>
+	<a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+<!-- NAVBAR
+================================================== -->
+<header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="http://pcingola.github.com/BigDataScript/">BigDataScript</a>
+		</div>
+		<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+			<ul class="nav navbar-nav">
+				<li><a href="index.html">Home</a></li>
+				<li class="active"><a href="download.html">Download</a></li>
+				<li><a href="https://github.com/pcingola/BigDataScript">Source</a></li>
+				<li><a href="bigDataScript_manual.html">Documentation</a></li>
+				<li><a href="about.html">About</a></li>				
+			</ul>
+		</nav>
+	</div>
+</header>
+
+<!-- Subhead
+================================================== -->
+<div class="bs-docs-header" id="content">
+	<div class="container">
+		<h1>BigDataScript</h1>
+		<p>Download and install.</p>
+	</div>
+</div>
+
+<!-- Sections
+================================================== -->
+<div class="container bs-docs-container">
+	<div class="row">
+		<div class="col-md-9" role="main">
+
+        	<!-- Binaries
+        	================================================== -->
+        	<div class="bs-docs-section">
+				<h1 class="page-header" id="binary"> 1. Download &amp; Install</h1>
+				<p class="lead"> Binary distributions are available for Linux and OS.X.<p> </p>
+				<p>
+          		<a class="btn btn-large btn-primary" href="https://github.com/pcingola/BigDataScript/blob/master/distro/bds_Linux.tgz?raw=true">Download Linux</a>
+          		<a class="btn btn-large btn-primary" href="https://github.com/pcingola/BigDataScript/blob/master/distro/bds_Darwin.tgz?raw=true">Download OS.X</a>
+				</p>
+	
+				<p><h3>Install</h3>
+				Uncompress the binary at your <code>HOME</code> directory
+				<br>
+				<br>
+<pre class="prettyprint">
+cd 
+tar -xvzf path/to/bds_*.tgz 
+</pre>
+				<br>
+				<i class="icon-warning-sign"></i> BDS's directoy <code>.bds</code> is 'hidden', since the name starts with a dot.
+				<br>
+				<br>
+				Add BDS's directory to your <code>PATH</code>, by adding the following line to your <code>.bashrc</code> or <code>.bash_profile</code>
+				<br>
+				<br>
+<pre class="prettyprint">
+export PATH=$PATH:$HOME/.bds
+</pre>
+				<p><h3>Mesos (Optional)</h3>
+				If you intend to use <code>bds</code> with mesos, you must install Mesos' native library in <code>$HOME/.bds/lib</code>.
+				For example on a Mac that would be something like
+				<br>
+				<br>
+<pre class="prettyprint">
+cp /usr/local/Cellar/mesos/*/lib/libmesos.dylib $HOME/.bds/lib
+</pre>
+				</p>
+				<p><h3>Requirements</h3>
+				In order to run BigDataScript, you need <code>Java 1.8</code>.
+				</p>
+        	</div>
+
+        	<!-- Source code
+        	================================================== -->
+        	<div class="bs-docs-section">
+				<h1 class="page-header" id="lic">2. License code</h1>
+				<p class="lead"> BigDataScript is open source.</p>
+        	</div>
+
+        	<!-- Source code
+        	================================================== -->
+        	<div class="bs-docs-section">
+				<h1 class="page-header" id="source">3. Source code</h1>
+				<p class="lead"> The source code is available at GitHub, here we show how to compile and install.</p>
+				
+				<p>
+				The source code is available on <a href="https://github.com/pcingola/BigDataScript">GitHub </a>.
+				Download the project as follows (you need to install <a href="http://git-scm.com/">Git</a> first):
+				<br>
+				<br>
+<pre class="prettyprint">
+# Clone repository
+$ git clone https://github.com/pcingola/BigDataScript.git
+</pre>
+				<br>
+				In order to complile BigDataScript, you need
+				<ul>
+					<li> <a href="http://java.com">Java</a> (at least 1.8)
+					<li> <a href="http://golang.org/">Go</a> compiler (at least 1.0)
+					<li> <a href="http://ant.apache.org/">Ant</a> (at least 1.7)
+				</ul>
+
+				Once you downloaded the project, you can install:
+				<br>
+				<br>
+<pre class="prettyprint">
+# Run 'install script
+cd BigDataScript
+./scripts/install.sh
+</pre>
+				<br>
+				Then you should add <code>bds</code> to your PATH. Edit your <code>.bashrc</code> (or <code>.bash_profile</code>) and add the following lines
+				<br>
+				<br>
+<pre class="prettyprint">
+# BigDataScript
+export PATH=$PATH:$HOME/.bds/
+</pre>
+				<br>
+				<b>Optional:</b> If you have root access, you can do the following (to get <code>bds</code> available everywhere in your system)
+				<br>
+				<br>
+<pre class="prettyprint">
+su -
+cd /usr/bin/
+ln -s /home/your_user/.bds/bds
+</pre>
+
+				</p>
+        	</div>
+		</div>
+
+		<!-- Docs nav
+		================================================== -->
+		<div class="col-md-3">
+			<div class="bs-docs-sidebar hidden-print hidden-xs hidden-sm" role="complementary" data-spy="affix">
+				<ul class="nav bs-docs-sidenav" data-spy="affix">
+					<li><a href="#binary"><i class="icon-chevron-right"></i> Download &amp; Install</a></li>
+					<li><a href="#lic"><i class="icon-chevron-right"></i> License </a></li>
+					<li><a href="#source"><i class="icon-chevron-right"></i> Source code </a></li>
+				</ul>
+			</div>
+		</div>
+	
+	</div>
+</div>
+
+<footer> <p class="text-center"><a class="body" href="http://www.linkedin.com/in/pablocingolani">Created by Pablo Cingolani</a></p> </footer>
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</body>
+</html>

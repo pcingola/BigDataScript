@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Cleanup - bds - Big Data Script programming language</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Cleanup";
+    var mkdocs_page_input_path = "cleanup.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> bds - Big Data Script programming language</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../about/">About</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Manual</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="..">Introduction</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../download/">Download</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../hello/">Hello world</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../language/">Language</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../special/">Special operators</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../data_types/">Data types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../functions/">Functions</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../global_vars/">Global variables</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../pipelines/">Pipelines</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../sys/">Sys</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../task/">Task</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wait/">Wait</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../dep_op/">Dependency operator</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../goal/">Goal</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../remote_files/">Remote files</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../par/">Parallel execution</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../checkpoints/">Checkpoints</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../test_cases/">Test cases</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../debugger/">Debugger</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../cmdline/">Command line parsing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../help/">Command line help</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../logging/">Logging</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Cleanup</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#cleanup">Cleanup</a></li>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../bdscmdline/">bds command line</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../bdsconfig/">Config file</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">bds - Big Data Script programming language</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Manual &raquo;</li>
+        
+      
+    
+    <li>Cleanup</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="cleanup">Cleanup</h1>
+<p>If a script fails, <code>bds</code> automatically cleans up stale files and kills pending tasks. </p>
+<p>In order to make sure that data pipelines are correctly re-executed after a failure, <code>bds</code> automatically cleans all dependent files from failed tasks.
+This saves time because the user doesn't need to check for consistency on putative stale files.</p>
+<p>Also, <code>bds</code> ensures that resources are not wasted, by killing all pending tasks.
+In large pipelines, thousands of tasks can be scheduled for execution in a cluster and it is quite difficult for the user to keep track of them and clean them if the pipeline fails.
+Fortunately, <code>bds</code> takes care of all these details and issues appropriate commands to kill all pending tasks.</p>
+<p>File <a href="bds/test_22.bds">test_22.bds</a></p>
+<pre><code>#!/usr/bin/env bds
+
+for(int i : range(1,10) ) {
+    in  := &quot;in_$i.txt&quot;
+    sys date &gt; $in
+
+    out := &quot;out_$i.txt&quot;
+    task( out &lt;- in ) {
+        sys echo Task $i | tee $out; sleep $i; echo Done $i
+    }
+}
+</code></pre>
+
+<p>If I run this example and interrupt it (by pressing Ctrl-C) before it ends:</p>
+<pre><code>$ ./test_23.bds
+Task 4
+Task 5
+Task 2
+Task 3
+Task 8
+Task 1
+Task 7
+Task 6
+Done 1
+Task 9
+Done 2
+Task 10
+Done 3
+^C              # Here I pressed Ctr-C
+2014/07/31 00:43:46 bds: Received OS signal 'interrupt'
+2014/07/31 00:43:46 bds: Killing PID '32523'
+2014/07/31 00:43:46 bds: Killing PID '32534'
+2014/07/31 00:43:46 bds: Deleting file 'out_6.txt'
+2014/07/31 00:43:46 bds: Deleting file 'out_9.txt'
+2014/07/31 00:43:46 bds: Deleting file 'out_5.txt'
+2014/07/31 00:43:46 bds: Killing PID '32546'
+2014/07/31 00:43:46 bds: Deleting file 'out_4.txt'
+2014/07/31 00:43:46 bds: Deleting file 'out_8.txt'
+2014/07/31 00:43:46 bds: Killing PID '32597'
+2014/07/31 00:43:46 bds: Killing PID '32557'
+2014/07/31 00:43:46 bds: Deleting file 'out_7.txt'
+2014/07/31 00:43:46 bds: Killing PID '32575'
+2014/07/31 00:43:46 bds: Killing PID '32610'
+2014/07/31 00:43:46 bds: Deleting file 'out_10.txt'
+</code></pre>
+
+<p>You can see how <code>bds</code> cleans up all stale files and kills all processes.
+When this is executed in a cluster, the appropriate <code>qdel</code>, <code>canceljob</code> or similar command is issued (depending on the type of cluster used).</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../bdscmdline/" class="btn btn-neutral float-right" title="bds command line">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../logging/" class="btn btn-neutral" title="Logging"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../logging/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../bdscmdline/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

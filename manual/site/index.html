@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="img/favicon.ico">
+  <title>Introduction - bds - Big Data Script programming language</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Introduction";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="js/jquery-2.1.1.min.js" defer></script>
+  <script src="js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> bds - Big Data Script programming language</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href=".">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="about/">About</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Manual</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href=".">Introduction</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#introduction">Introduction</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#what">What?</a></li>
+        
+            <li><a class="toctree-l4" href="#why">Why?</a></li>
+        
+            <li><a class="toctree-l4" href="#how">How?</a></li>
+        
+            <li><a class="toctree-l4" href="#paper-citations">Paper &amp; Citations</a></li>
+        
+            <li><a class="toctree-l4" href="#a-word-about-performance">A word about performance</a></li>
+        
+            <li><a class="toctree-l4" href="#why-is-it-called-bigdatascript">Why is it called "BigDataScript"</a></li>
+        
+            <li><a class="toctree-l4" href="#disclaimer">Disclaimer</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="download/">Download</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="hello/">Hello world</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="language/">Language</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="special/">Special operators</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="data_types/">Data types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="functions/">Functions</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="global_vars/">Global variables</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="pipelines/">Pipelines</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="sys/">Sys</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="task/">Task</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="wait/">Wait</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="dep_op/">Dependency operator</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="goal/">Goal</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="remote_files/">Remote files</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="par/">Parallel execution</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="checkpoints/">Checkpoints</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="test_cases/">Test cases</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="debugger/">Debugger</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="cmdline/">Command line parsing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="help/">Command line help</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="logging/">Logging</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="cleanup/">Cleanup</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="bdscmdline/">bds command line</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="bdsconfig/">Config file</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">bds - Big Data Script programming language</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Manual &raquo;</li>
+        
+      
+    
+    <li>Introduction</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="introduction">Introduction</h1>
+<p>BigDataScript is intended as a scripting language for big data pipeline. </p>
+<h3 id="what">What?</h3>
+<p>BigDataScript is a cross-system scripting language for working with big data pipelines in computer systems of different sizes and capabilities. </p>
+<h3 id="why">Why?</h3>
+<p>Working with heavyweight computation and big data pipelines involves making use of several specialized programs. 
+Those specialized routines need to be scheduled, called and coordinated; their progress need to be tracked and their results logged. 
+That is the job of another script or program. This is when BigDataScript becomes extremely handy.</p>
+<p>Developing traditional shell scripts or small programs to coordinate data pipelines presents a fundamental dilemma. 
+It is not cross-platform, it simply does not work on all environments or it needs adaptations and re-work for the same thing to work on a laptop, server, server farm, cluster and cloud. 
+Often it is simply not possible. 
+Because of that, developing big data pipelines for a different environment is time consuming. 
+The behaviour on the target environment cannot be assumed to be an exact extrapolation of the results obtained on the development environment. 
+This not only is a waste of time, money and energy, it is also reliable source of frustration.</p>
+<p>BigDataScript is the solution to the problem.</p>
+<p>With BigDataScript, creating jobs for big data is as easy as creating a shell script and it runs seamlessly on any computer system, no matter how small or big it is. 
+If you normally use specialized programs to perform heavyweight computations, then BigDataScript is the glue to those commands you need to create a reliable pipeline.</p>
+<h3 id="how">How?</h3>
+<p><strong>Benefits of BigDataScript</strong></p>
+<ul>
+<li><strong>Reduced development time</strong> Spend less time debugging your work on big systems with a huge data volumes. Now you can debug the same jobs using a smaller sample on your computer. Get immediate feedback, debug, fix and deploy when it's done. Shorter development cycles means better software.</li>
+<li><strong>System independent</strong> Cross-system, seamless execution, the same program runs on a laptop, server, server farm, cluster or cloud.  No changes to the program required. Work once.</li>
+<li><strong>Easy to learn</strong> The syntax is intuitive and it resembles the syntax of most commonly used programming languages. Reading the code is easy as pi.</li>
+<li><strong>Automatic Checkpointing</strong> If any task fails to execute, BigDataScript creates a checkpoint file, serializing all the information from the program. Want to restart were it stopped? No problem, just resume the execution from the checkpoint.  </li>
+<li><strong>Automatic logging</strong> Everything is logged (<code>-log</code> command line option), no explicit actions required. Every time you execute a system command or a task, BigDataScript logs the executed commands, stdout &amp; stderr and exit codes.  </li>
+<li><strong>Clean stop with no mess behind</strong> You have a BigDataScript running on a terminal and suddenly you realized there is something wrong... Just hit Ctrl-C. All scheduled tasks and running jobs will be terminated, removed from the queue, deallocated from the cluster. A clean stop allows you to focus on the problem at hand without having to worry about restoring a clean state.  </li>
+<li><strong>Task dependencies</strong> In complex pipelines, tasks usually depend on each other.  BigDataScript provides ways to easily manage task dependencies.  </li>
+<li><strong>Avoid re-work</strong> Executing the pipeline over and over should not re-do jobs that were completed successfully and moreover are time consuming.  Task dependency based on timestamps is a built-in functionality, thus making it easy to avoid starting from scratch every time.</li>
+<li><strong>Built in debugger</strong> Debugging is an integral part of programming, so it is part of <code>bds</code> language.  Statements <code>breakpoint</code> and <code>debug</code> make debugging part of the language, instead of requiring platform specific tools.</li>
+<li><strong>Built in test cases facility</strong> Code testing is performed in everyday programming, so testing is built in <code>bds</code>.</li>
+</ul>
+<h3 id="paper-citations">Paper &amp; Citations</h3>
+<p>If you are using BigDataScript in an academic environment, please cite our <a href="https://doi.org/10.1093/bioinformatics/btu595">paper</a>:</p>
+<pre><code>BigDataScript: A scripting language for data pipelines 
+P. Cingolani; R. Sladek; M. Blanchette
+Bioinformatics 2014;
+doi: 10.1093/bioinformatics/btu595
+</code></pre>
+
+<h3 id="a-word-about-performance">A word about performance</h3>
+<p>BigDataScript is meant to be used in the context or heavyweight computations.
+Potential delays incurred by BigDataScript should not affect the overall time.</p>
+<p>Think about it this way: If you are invoking a set of programs to perform big data computations, these programs usually take hours or days to run.
+The fact that BigDataScript takes a few milliseconds more to invoke those programs, really doesn't make any difference.</p>
+<h3 id="why-is-it-called-bigdatascript">Why is it called "BigDataScript"</h3>
+<p>Because that's the lamest name I could find.</p>
+<h3 id="disclaimer">Disclaimer</h3>
+<p>BigDataScript is experimental and under heavy development. Use at your own risk.
+Know side effect include: computer explosions, instant decapitation, spontaneous human combustion, and dead kittens.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="download/" class="btn btn-neutral float-right" title="Download">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="about/" class="btn btn-neutral" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="about/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="download/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
+
+</body>
+</html>
