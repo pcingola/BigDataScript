@@ -27,7 +27,8 @@ real exp(real x)                                        | Return e^x
 real exppm1(real x)                                     | Return e^x-1    
 real floor(real x)                                      | The floor of a number    
 int getExponent(real x)                                 | exponent used in the representation of a real   
-string getVar(string name)                              | Get variable's value represented as a string (e.g. `int i=42; getVar('i') # Output "42"`)
+string getVar(string name)                              | Get variable's value represented as a string, e.g.: `int i=42; getVar('i') # Output "42"`
+string getVar(string name, string default)              | Get variable's value represented as a string or a default value if not set. E.g. `getVar('i', 'zzz') # Output "zzz" if variable 'i' is not defined`
 bool hasVar(string name)                                | Is the variable 'name' defined? This can be used to check the existence of environment variables, which are inherited into the global scope
 real hypot(real x, real y)                              | Returns sqrt(x2 +y2) without intermediate overflow or underflow.    
 real IEEEremainder(real x, real y)                      | Computes the remainder operation on two arguments as prescribed by the IEEE 754 standard..    

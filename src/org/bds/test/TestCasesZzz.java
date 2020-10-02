@@ -1,5 +1,7 @@
 package org.bds.test;
 
+import java.util.HashMap;
+
 import org.bds.Config;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,9 +21,14 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test252_super_child() {
-		verbose = true;
-		runAndCheckExit("test/run_252.bds", -1);
+	public void test254_getvar() {
+		HashMap<String, Object> expectedValues = new HashMap<>();
+
+		expectedValues.put("shome", System.getenv().get("HOME"));
+		expectedValues.put("szzz", "VALUE_DEFAULT_2");
+		expectedValues.put("szzzxxxzzz", "VALUE_DEFAULT_3");
+
+		runAndCheck("test/run_254.bds", expectedValues);
 	}
 
 }

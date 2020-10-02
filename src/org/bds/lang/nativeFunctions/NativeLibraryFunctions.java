@@ -26,6 +26,7 @@ public class NativeLibraryFunctions {
 			, FunctionNativeConfig.class //
 			, FunctionNativeConfigOri.class //
 			, FunctionNativeGetVar.class //
+			, FunctionNativeGetVarDefault.class //
 			, FunctionNativeHasVar.class //
 			, FunctionNativeLog.class //
 			, FunctionNativeMinInt.class //

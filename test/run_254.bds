@@ -1,0 +1,14 @@
+#!/usr/bin/env bds
+
+varName := "HOME"
+shome := getVar(varName, 'VALUE_DEFAULT_1')
+println "getVar($varName) = '$shome'"
+
+varName = "ZZZ"
+szzz := getVar(varName, 'VALUE_DEFAULT_2')
+println "getVar($varName) = '$szzz'"
+
+varName = "ZZZXXXZZZ"
+default3 := 'VALUE_DEFAULT'
+szzzxxxzzz := getVar(varName, default3 + '_3')
+println "getVar($varName) = '$szzzxxxzzz'"
