@@ -1,6 +1,7 @@
 package org.bds.executioner;
 
 import org.bds.Config;
+import org.bds.task.Task;
 
 /**
  * Execute tasks in a cloud
@@ -13,18 +14,26 @@ import org.bds.Config;
  * 	- The instance sends STDOUT / STDERR / EXIT messages via a queue (maybe a heartbeat message)
  *
  * Executioner
- * 	- The Executioner reads the queue and shows messages / updates task status
+ * 	- The Executioner reads the queue and shows messages, and saves them to the local task.stdout / task.stderr / task.exitCode files
+ * 	- Updates task status when EXIT message is received
  * 	- Instances are monitored for timeout
  * 	- Instances are monitored for failure
- * 	- Instace are terminated
- *
+ * 	- All instances are terminated
+ *	- Queue is deleted
  *
  * @author pcingola
  */
-public abstract class ExecutionerCloudAws extends ExecutionerCloud {
+public class ExecutionerCloudAws extends ExecutionerCloud {
 
 	protected ExecutionerCloudAws(Config config) {
 		super(config);
+	}
+
+	@Override
+	public String[] osKillCommand(Task task) {
+		// TODO: Add command to kill instance
+		throw new RuntimeException("UNIMPLEMENTED!!!!");
+		//		return null;
 	}
 
 }

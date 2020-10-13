@@ -2,18 +2,17 @@
 
 include 'aws_util'
 
-chp := "$s3base\.chp"
+system = 'aws'
 
-chp.delete()
+# chp := "$s3base\.chp"
+# chp.delete()
 
-for(int i=0; i < 10; i++) {
-	println "i: $i"
-	if(i == 4) {
-		println "Creating checkpoint $chp"
-		checkpoint chp
-	}
+task {
+	sys echo Hi
+	sys sleep 2
+	sys echo Bye
 }
 
+wait
+println "Done: $programName"
 
-ok := chp.exists()
-println "chpFile: '$chp', exists: $ok"

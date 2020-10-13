@@ -20,7 +20,7 @@ public class Executioners {
 	 * Type of executioners
 	 */
 	public enum ExecutionerType {
-		CLUSTER, FAKE, GENERIC, LOCAL, MESOS, MOAB, PBS, SGE, SLURM, SSH;
+		AWS, CLUSTER, FAKE, GENERIC, LOCAL, MESOS, MOAB, PBS, SGE, SLURM, SSH;
 
 		/**
 		 * Parse an executioner name
@@ -91,6 +91,10 @@ public class Executioners {
 		if (config.isDebug()) Timer.showStdErr("Executioner factory: Creating new executioner type '" + exType + "'");
 
 		switch (exType) {
+		case AWS:
+			executioner = new ExecutionerCloudAws(config);
+			break;
+
 		case CLUSTER:
 			executioner = new ExecutionerCluster(config);
 			break;
