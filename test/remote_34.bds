@@ -4,19 +4,19 @@ include 'aws_util'
 
 # Main
 in := "$s3base/in"
-out := "$s3base/out"
-println "in : '$in'"
+out := "$tmpDir/$test\.out"
 println "out: '$out'"
 
-# Create input, delete output
-in.write("IN: '$test'")
+in.createS3()
 out.rm()
 
 task(out <- in) {
 	sys echo "RUNNING TASK"
  	sys cat $in > $out
+	sys echo "OUTPUT:"
+	sys cat $out
+	sys echo
 }
 
 wait
 outStr := out.read()
-println "Done: $programName"

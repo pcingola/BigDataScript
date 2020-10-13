@@ -25,6 +25,7 @@ public class DataHttp extends DataRemote {
 
 	private static final int BUFFER_SIZE = 100 * 1024;
 	public static final int HTTP_OK = 200; // Connection OK
+	public static final int HTTP_MOVED_PERMANENTLY = 301; // The requested resource moved permanently to a different URI
 	public static final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
 	public static final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 
@@ -75,6 +76,8 @@ public class DataHttp extends DataRemote {
 					case HTTP_OK:
 						// Status OK
 						return connection;
+
+					case HTTP_MOVED_PERMANENTLY:
 					case HTTP_REDIR:
 						String newUrl = connection.getHeaderField("Location");
 						if (verbose) Timer.showStdErr("Following redirect: " + newUrl);

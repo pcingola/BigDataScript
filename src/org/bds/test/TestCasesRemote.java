@@ -320,7 +320,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 	@Test
 	public void test106_url() {
-		String url = "http://www.ensembl.org";
+		String url = "http://www.google.com";
 		Data durl = Data.factory(url);
 		Assert.assertFalse("Relative: " + durl.isRelative(), durl.isRelative());
 		Assert.assertTrue("Exists: " + durl.exists(), durl.exists());
@@ -680,6 +680,24 @@ public class TestCasesRemote extends TestCasesBase {
 	public void test33_s3_dirPath() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_33.bds", "dd", "[s3://pcingola.bds/test_remote_31/bye.txt, s3://pcingola.bds/test_remote_31/bye_2.txt]");
+	}
+
+	// Task input in s3, output local file
+	@Test
+	public void test34() {
+		runAndCheck("test/remote_34.bds", "outStr", "OK");
+	}
+
+	// Task input local, output s3 file
+	@Test
+	public void test35() {
+		runAndCheck("test/remote_35.bds", "outStr", "IN: 'remote_35'");
+	}
+
+	// Check task input in s3, output to s3
+	@Test
+	public void test36() {
+		runAndCheck("test/remote_36.bds", "outStr", "IN: 'remote_36'");
 	}
 
 }

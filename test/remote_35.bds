@@ -3,7 +3,7 @@
 include 'aws_util'
 
 # Main
-in := "$s3base/in"
+in := "$tmpDir/$test\.in"
 out := "$s3base/out"
 println "in : '$in'"
 println "out: '$out'"
