@@ -15,6 +15,7 @@ import org.bds.Config;
 import org.bds.compile.BdsCompiler;
 import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessages;
+import org.bds.data.Data;
 import org.bds.data.FtpConnectionFactory;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
@@ -302,7 +303,12 @@ public class BdsRun {
 		if (verbose) Timer.showStdErr("Loading checkpoint: " + chekcpointRestoreFile);
 		BdsThread bdsThreadRoot;
 		try {
-			ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(chekcpointRestoreFile)));
+			// If the checkpoint is remote, download it
+			Data d = Data.factory(chekcpointRestoreFile);
+			String localFile = d.isRemote() ? d.getLocalPath() : d.getAbsolutePath();
+			if (d.isRemote()) d.download();
+			// Load data from local file
+			ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(localFile)));
 			bdsThreadRoot = (BdsThread) in.readObject();
 			in.close();
 		} catch (Exception e) {

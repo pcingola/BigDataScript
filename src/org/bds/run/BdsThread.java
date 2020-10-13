@@ -201,16 +201,12 @@ public class BdsThread extends Thread implements Serializable {
 
 			// Serialize root BdsThred to file
 			String localPath = d.isRemote() ? d.getLocalPath() : checkpointFileName;
-			Gpr.debug("LOCAL: " + localPath);
 			ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(localPath)));
 			out.writeObject(getRoot());
 			out.close();
 
 			// Upload remote file
-			if (d.isRemote()) {
-				Gpr.debug("UPLOAD:" + d);
-				d.upload();
-			}
+			if (d.isRemote()) d.upload();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error while serializing to file '" + checkpointFileName + "'", e);

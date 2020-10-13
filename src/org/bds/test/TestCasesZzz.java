@@ -19,12 +19,13 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	// TODO: Check task multiple inputs and multiple outputs in s3
+	// Save and load remote checkpoint (S3)
 	@Test
-	public void test38() {
+	public void test29() {
 		Gpr.debug("Test");
-		verbose = true;
-		runAndCheck("test/z.bds", "a", "23");
+		String bucket = awsBucketName();
+		String checkpointFile = "s3://" + bucket + "/tmp/bds/checkpoint_30.chp";
+		runAndCheckpoint("test/checkpoint_30.bds", checkpointFile, "sum", 285);
 	}
 
 }
