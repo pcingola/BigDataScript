@@ -11,12 +11,6 @@ import org.junit.Before;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	@Before
-	public void beforeEachTest() {
-		Config.reset();
-		Config.get().load();
-	}
-
 	//	// TODO: Check task multiple outputs to s3
 	//	@Test
 	//	public void test37() {
@@ -27,5 +21,11 @@ public class TestCasesZzz extends TestCasesBase {
 	//	public void test38() {
 	//	}
 	//
+
+	@Before
+	public void beforeEachTest() {
+		Config.reset();
+		Config.get().load();
+	}
 
 }

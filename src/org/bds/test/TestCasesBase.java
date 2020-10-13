@@ -31,6 +31,15 @@ public class TestCasesBase {
 	public boolean debug = false;
 	public boolean verbose = false;
 
+	// Read bucket name from $HOME/.bds/aws_test_bucket.txt
+	protected String awsBucketName() {
+		String awsBucketNameFile = Gpr.HOME + "/.bds/aws_test_bucket.txt";
+		String bucket = Gpr.readFile(awsBucketNameFile);
+		bucket = bucket.split("\n")[0].trim();
+		if (verbose) System.out.println("Bucket name: " + bucket);
+		return bucket;
+	}
+
 	@Before
 	public void before() {
 		// Reset singletons
@@ -126,6 +135,16 @@ public class TestCasesBase {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.compile();
 		bdsTest.checkCompileOk();
+	}
+
+	// Create a file in S3
+	void createS3File(String s3file, String text) {
+		String localFile = "createS3.tmp";
+		Gpr.toFile(localFile, text);
+		DataS3 ds3 = (DataS3) Data.factory(s3file);
+		Data dlocal = Data.factory(localFile);
+		ds3.upload(dlocal);
+		dlocal.delete();
 	}
 
 	BdsTest runAndCheck(int expectedExitCode, String fileName, Map<String, Object> expectedValues) {

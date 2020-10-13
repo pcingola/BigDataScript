@@ -1,7 +1,9 @@
 #!/usr/bin/env bds
 
+include 'aws_util'
+
 # S3
-d := "s3://pcingola.bds/test_remote_31/"
+d := "$s3base/test_remote_31/"
 println "d: '$d'"
 dd := d.dir()
 println "dd: $dd"

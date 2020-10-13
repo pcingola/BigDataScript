@@ -1,7 +1,8 @@
 #!/usr/bin/env bds
 
-# HTTP
-d := "s3://pcingola.bds/test_remote_31/"
+include 'aws_util'
+
+d := "$s3base/test_remote_33/"
 println "d: '$d'"
 dd := d.dirPath("**/bye*.txt")
 println "dd: $dd"

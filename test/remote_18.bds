@@ -1,5 +1,7 @@
 
-out := 's3://pcingola.bds/zzz/test_remote_18.txt'
+include 'aws_util'
+
+out := "$s3base/zzz/test_remote_18.txt"
 
 # Unique name
 tid := task echo Hi
