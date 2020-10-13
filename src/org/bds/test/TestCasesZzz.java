@@ -1,7 +1,9 @@
 package org.bds.test;
 
 import org.bds.Config;
+import org.bds.util.Gpr;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -11,21 +13,18 @@ import org.junit.Before;
  */
 public class TestCasesZzz extends TestCasesBase {
 
-	//	// TODO: Check task multiple outputs to s3
-	//	@Test
-	//	public void test37() {
-	//	}
-	//
-	//	// TODO: Check task multiple inputs and multiple outputs in s3
-	//	@Test
-	//	public void test38() {
-	//	}
-	//
-
 	@Before
 	public void beforeEachTest() {
 		Config.reset();
 		Config.get().load();
+	}
+
+	// TODO: Check task multiple inputs and multiple outputs in s3
+	@Test
+	public void test38() {
+		Gpr.debug("Test");
+		verbose = true;
+		runAndCheck("test/z.bds", "a", "23");
 	}
 
 }

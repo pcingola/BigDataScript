@@ -295,7 +295,7 @@ public abstract class Data implements Comparable<Data> {
 	 * Upload local version of the file to remote file system
 	 */
 	public boolean upload() {
-		return upload(Data.factory(getAbsolutePath()));
+		return upload(Data.factory(getLocalPath()));
 	}
 
 	/**

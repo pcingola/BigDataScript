@@ -2,21 +2,11 @@
 
 include 'aws_util'
 
-# Main
-in := "$s3base/in"
-out := "$s3base/out"
-println "in : '$in'"
-println "out: '$out'"
-
-# Create input, delete output
-in.write("IN: '$test'")
-out.rm()
-
-task(out <- in) {
-	sys echo "RUNNING TASK"
- 	sys cat $in > $out
+for(int i=0; i < 10; i++) {
+	println "i: $i"
+	if(i == 4) {
+		chp := "$s3base\.chp"
+		println "Creating checkpoint $chp"
+		checkpoint chp
+	}
 }
-
-wait
-outStr := out.read()
-println "Done: $programName"

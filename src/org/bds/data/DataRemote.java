@@ -294,11 +294,4 @@ public abstract class DataRemote extends Data {
 		}
 	}
 
-	/**
-	 * Cannot upload to a web server
-	 */
-	@Override
-	public boolean upload() {
-		return false;
-	}
 }
