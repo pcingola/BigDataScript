@@ -1,8 +1,10 @@
 package org.bds.test;
 
 import java.io.File;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.bds.Bds;
 import org.bds.Config;
@@ -78,9 +80,10 @@ public class TestCasesBase {
 	/**
 	 * Check a 'hello.txt' file in an S3 bucket
 	 */
-	void checkS3HelloTxt(String url, String path, String paren) {
-		int objectSize = 12;
-		long lastModified = 1437862027000L;
+	void checkS3HelloTxt(String url, String bucket, String path, String paren, String txt) {
+		int objectSize = txt.length();
+		long now = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis();
+		//1437862027000L;
 
 		Data d = Data.factory(url);
 		d.setVerbose(verbose);
@@ -92,7 +95,7 @@ public class TestCasesBase {
 		Assert.assertTrue("Is S3?", d instanceof DataS3);
 		Assert.assertEquals(path, d.getAbsolutePath());
 		Assert.assertEquals(objectSize, d.size());
-		Assert.assertEquals(lastModified, d.getLastModified().getTime());
+		Assert.assertTrue((now - lastMod) < 2 * DataRemote.CACHE_TIMEOUT);
 		Assert.assertTrue("Is file?", d.isFile());
 		Assert.assertFalse("Is directory?", d.isDirectory());
 
@@ -102,7 +105,7 @@ public class TestCasesBase {
 		Assert.assertTrue("Is downloaded?", d.isDownloaded());
 
 		// Is it at the correct local file?
-		Assert.assertEquals("/tmp/bds/s3/pcingola.bds/hello.txt", d.getLocalPath());
+		Assert.assertEquals("/tmp/bds/s3/" + bucket.replace('-', '_') + path, d.getLocalPath());
 		Assert.assertEquals(path, d.getAbsolutePath());
 		Assert.assertEquals(paren, d.getParent().toString());
 		Assert.assertEquals("hello.txt", d.getName());

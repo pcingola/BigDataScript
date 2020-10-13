@@ -2,6 +2,7 @@ package org.bds.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import org.bds.Config;
 import org.bds.data.Data;
@@ -116,8 +117,16 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test01_parse_URLs_s3() {
 		Gpr.debug("Test");
-		String url = "s3://pcingola.bds/hello.txt";
-		checkS3HelloTxt(url, "/hello.txt", "s3://pcingola.bds/");
+
+		String bucket = awsBucketName();
+		String url = "s3://" + bucket + "/tmp/bds/remote_01/hello.txt";
+
+		// Create S3 file
+		Random rand = new Random();
+		String txt = "OK: " + rand.nextLong();
+		createS3File(url, txt);
+
+		checkS3HelloTxt(url, bucket, "/tmp/bds/remote_01/hello.txt", "s3://" + bucket + "/tmp/bds/remote_01", txt);
 	}
 
 	@Test
@@ -678,7 +687,7 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test29_http_dir() {
 		Gpr.debug("Test");
-		runAndCheck("test/remote_29.bds", "dd", "[http://ftp.ensemblorg.ebi.ac.uk/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+		runAndCheck("test/remote_29.bds", "dd", "[http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
 	@Test
