@@ -308,4 +308,21 @@ public class TestCasesCheckpoint extends TestCasesBase {
 		runAndCheckpoint("test/checkpoint_28.bds", "test/checkpoint_28.chp", "out", 47);
 	}
 
+	// Create a remote checkpoint
+	@Test
+	public void test29() {
+		Gpr.debug("Test");
+		verbose = true;
+		runAndCheck("test/checkpoint_29.bds", "ok", true);
+	}
+
+	// Save and load remote checkpoint (S3)
+	@Test
+	public void test30() {
+		Gpr.debug("Test");
+		String bucket = awsBucketName();
+		String checkpointFile = "s3://" + bucket + "/tmp/bds/checkpoint_30.chp";
+		runAndCheckpoint("test/checkpoint_30.bds", checkpointFile, "sum", 285);
+	}
+
 }
