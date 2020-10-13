@@ -1,5 +1,7 @@
 package org.bds.test;
 
+import java.io.File;
+
 import org.bds.Config;
 import org.bds.util.Gpr;
 import org.junit.Before;
@@ -19,13 +21,36 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	// Save and load remote checkpoint (S3)
 	@Test
-	public void test29() {
+	public void test09() {
 		Gpr.debug("Test");
-		String bucket = awsBucketName();
-		String checkpointFile = "s3://" + bucket + "/tmp/bds/checkpoint_30.chp";
-		runAndCheckpoint("test/checkpoint_30.bds", checkpointFile, "sum", 285);
+		verbose = true;
+
+		// Remove old entries
+		String prefix = "test/checkpoint_09";
+		File txt = new File(prefix + ".txt");
+		final File csv = new File(prefix + ".csv");
+		final File xml = new File(prefix + ".xml");
+		txt.delete();
+		csv.delete();
+		xml.delete();
+
+		// Create file
+		Gpr.toFile(prefix + ".txt", "TEST");
+
+		// Run this code before checkpoint recovery
+		Runnable runBeforeRecovery = new Runnable() {
+
+			@Override
+			public void run() {
+				// Create the file
+				Gpr.debug("Deleting file: " + csv);
+				csv.delete();
+			}
+		};
+
+		// Run pipeline and test checkpoint
+		runAndCheckpoint(prefix + ".bds", prefix + ".chp", "num", "0", runBeforeRecovery);
 	}
 
 }
