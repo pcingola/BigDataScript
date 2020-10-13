@@ -1,6 +1,7 @@
 
+include 'aws_util'
 
-out := 's3://pcingola.bds/hello.txt'
+out := "$s3base/hello.txt"
 
 println "baseName       : " + out.baseName()
 println "baseName('txt'): " + out.baseName('.txt')

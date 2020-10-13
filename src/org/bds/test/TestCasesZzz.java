@@ -1,10 +1,7 @@
 package org.bds.test;
 
-import java.util.HashMap;
-
 import org.bds.Config;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -14,21 +11,21 @@ import org.junit.Test;
  */
 public class TestCasesZzz extends TestCasesBase {
 
+	//	// TODO: Check task multiple outputs to s3
+	//	@Test
+	//	public void test37() {
+	//	}
+	//
+	//	// TODO: Check task multiple inputs and multiple outputs in s3
+	//	@Test
+	//	public void test38() {
+	//	}
+	//
+
 	@Before
 	public void beforeEachTest() {
 		Config.reset();
 		Config.get().load();
-	}
-
-	@Test
-	public void test254_getvar() {
-		HashMap<String, Object> expectedValues = new HashMap<>();
-
-		expectedValues.put("shome", System.getenv().get("HOME"));
-		expectedValues.put("szzz", "VALUE_DEFAULT_2");
-		expectedValues.put("szzzxxxzzz", "VALUE_DEFAULT_3");
-
-		runAndCheck("test/run_254.bds", expectedValues);
 	}
 
 }

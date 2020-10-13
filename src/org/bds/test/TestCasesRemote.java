@@ -2,6 +2,7 @@ package org.bds.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import org.bds.Config;
 import org.bds.data.Data;
@@ -116,8 +117,16 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test01_parse_URLs_s3() {
 		Gpr.debug("Test");
-		String url = "s3://pcingola.bds/hello.txt";
-		checkS3HelloTxt(url, "/hello.txt", "s3://pcingola.bds/");
+
+		String bucket = awsBucketName();
+		String url = "s3://" + bucket + "/tmp/bds/remote_01/hello.txt";
+
+		// Create S3 file
+		Random rand = new Random();
+		String txt = "OK: " + rand.nextLong();
+		createS3File(url, txt);
+
+		checkS3HelloTxt(url, bucket, "/tmp/bds/remote_01/hello.txt", "s3://" + bucket + "/tmp/bds/remote_01", txt);
 	}
 
 	@Test
@@ -320,7 +329,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 	@Test
 	public void test106_url() {
-		String url = "http://www.ensembl.org";
+		String url = "http://www.google.com";
 		Data durl = Data.factory(url);
 		Assert.assertFalse("Relative: " + durl.isRelative(), durl.isRelative());
 		Assert.assertTrue("Exists: " + durl.exists(), durl.exists());
@@ -461,18 +470,19 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test13_S3() {
 		Gpr.debug("Test");
+		String bucket = awsBucketName();
 		String expectedOutput = "" //
 				+ "canonical      : test_remote_13_file_does_not_exits_in_S3.txt\n" //
 				+ "baseName       : test_remote_13_file_does_not_exits_in_S3.txt\n" //
 				+ "baseName('txt'): test_remote_13_file_does_not_exits_in_S3\n" //
 				+ "canRead        : false\n" + "canWrite       : false\n" //
-				+ "dirName        : \n" //
+				+ "dirName        : /tmp/bds/remote_13\n" //
 				+ "extName        : txt\n" //
 				+ "exists         : false\n" + "isDir          : false\n" //
 				+ "isFile         : true\n" //
-				+ "path           : /test_remote_13_file_does_not_exits_in_S3.txt\n" //
-				+ "pathName       : \n" //
-				+ "removeExt      : s3://pcingola.bds/test_remote_13_file_does_not_exits_in_S3\n" //
+				+ "path           : /tmp/bds/remote_13/test_remote_13_file_does_not_exits_in_S3.txt\n" //
+				+ "pathName       : /tmp/bds/remote_13\n" //
+				+ "removeExt      : s3://" + bucket + "/tmp/bds/remote_13/test_remote_13_file_does_not_exits_in_S3\n" //
 				+ "dirPath        : []\n" //
 				+ "dir            : []\n" //
 		;
@@ -483,19 +493,26 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test14_S3() {
 		Gpr.debug("Test");
+		String bucket = awsBucketName();
+
+		// Create S3 file (create local file and upload)
+		String s3file = "s3://" + bucket + "/tmp/bds/remote_14/hello.txt";
+		createS3File(s3file, "OK");
+
+		// Expected output
 		String expectedOutput = "" //
 				+ "baseName       : hello.txt\n" //
 				+ "baseName('txt'): hello\n" //
 				+ "canRead        : true\n" //
 				+ "canWrite       : true\n" //
-				+ "dirName        : \n" //
+				+ "dirName        : /tmp/bds/remote_14\n" //
 				+ "extName        : txt\n" //
 				+ "exists         : true\n" //
 				+ "isDir          : false\n" //
 				+ "isFile         : true\n" //
-				+ "path           : /hello.txt\n" //
-				+ "pathName       : \n" //
-				+ "removeExt      : s3://pcingola.bds/hello\n" //
+				+ "path           : /tmp/bds/remote_14/hello.txt\n" //
+				+ "pathName       : /tmp/bds/remote_14\n" //
+				+ "removeExt      : s3://" + bucket + "/tmp/bds/remote_14/hello\n" //
 				+ "dirPath        : []\n" //
 				+ "dir            : []\n" //
 		;
@@ -506,20 +523,26 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test15_S3() {
 		Gpr.debug("Test");
+		String bucket = awsBucketName();
+
+		// Create S3 files
+		createS3File("s3://" + bucket + "/tmp/bds/remote_15/test_dir/z1.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_15/test_dir/z2.txt", "OK");
+
 		String expectedOutput = "" //
 				+ "baseName       : \n" //
 				+ "baseName('txt'): \n" //
 				+ "canRead        : true\n" //
 				+ "canWrite       : true\n" //
-				+ "dirName        : /test_dir\n" //
-				+ "extName        : bds/test_dir/\n" //
+				+ "dirName        : /tmp/bds/remote_15/test_dir\n" //
+				+ "extName        : \n" //
 				+ "exists         : true\n" //
 				+ "isDir          : true\n" //
 				+ "isFile         : false\n" //
-				+ "path           : /test_dir/\n" //
-				+ "pathName       : /test_dir\n" //
-				+ "removeExt      : s3://pcingola\n" //
-				+ "dirPath        : [s3://pcingola.bds/test_dir/z1.txt, s3://pcingola.bds/test_dir/z2.txt]\n" //
+				+ "path           : /tmp/bds/remote_15/test_dir/\n" //
+				+ "pathName       : /tmp/bds/remote_15/test_dir\n" //
+				+ "removeExt      : \n" //
+				+ "dirPath        : [s3://" + bucket + "/tmp/bds/remote_15/test_dir/z1.txt, s3://" + bucket + "/tmp/bds/remote_15/test_dir/z2.txt]\n" //
 				+ "dir            : [z1.txt, z2.txt]\n" //
 		;
 
@@ -529,19 +552,21 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test16_S3() {
 		Gpr.debug("Test");
+		String bucket = awsBucketName();
+
 		String expectedOutput = "" //
 				+ "baseName       : test_remote_16.txt\n" //
 				+ "baseName('txt'): test_remote_16\n" //
 				+ "canRead        : true\n" //
 				+ "canWrite       : true\n" //
-				+ "dirName        : \n" //
+				+ "dirName        : /tmp/bds/remote_16\n" //
 				+ "extName        : txt\n" //
 				+ "exists         : true\n" //
 				+ "isDir          : false\n" //
 				+ "isFile         : true\n" //
-				+ "path           : /test_remote_16.txt\n" //
-				+ "pathName       : \n" //
-				+ "removeExt      : s3://pcingola.bds/test_remote_16\n" //
+				+ "path           : /tmp/bds/remote_16/test_remote_16.txt\n" //
+				+ "pathName       : /tmp/bds/remote_16\n" //
+				+ "removeExt      : s3://" + bucket + "/tmp/bds/remote_16/test_remote_16\n" //
 				+ "size           : 6\n" //
 				+ "dirPath        : []\n" //
 				+ "dir            : []\n" //
@@ -553,24 +578,25 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test17_S3() {
 		Gpr.debug("Test");
+		String bucket = awsBucketName();
 		String expectedOutput = "" //
 				+ "baseName       : test_remote_17.txt\n" //
 				+ "baseName('txt'): test_remote_17\n" //
 				+ "canRead        : true\n" //
 				+ "canWrite       : true\n" //
-				+ "dirName        : \n" //
+				+ "dirName        : /tmp/bds/remote_17\n" //
 				+ "extName        : txt\n" //
 				+ "exists         : true\n" //
 				+ "isDir          : false\n" //
 				+ "isFile         : true\n" //
-				+ "path           : /test_remote_17.txt\n" //
-				+ "pathName       : \n" //
-				+ "removeExt      : s3://pcingola.bds/test_remote_17\n" //
+				+ "path           : /tmp/bds/remote_17/test_remote_17.txt\n" //
+				+ "pathName       : /tmp/bds/remote_17\n" //
+				+ "removeExt      : s3://" + bucket + "/tmp/bds/remote_17/test_remote_17\n" //
 				+ "size           : 6\n" //
 				+ "dirPath        : []\n" //
 				+ "dir            : []\n" //
 				+ "\n" //
-				+ "Delete file s3://pcingola.bds/test_remote_17.txt\n" //
+				+ "Delete file s3://" + bucket + "/tmp/bds/remote_17/test_remote_17.txt\n" //
 				+ "canRead        : false\n" //
 				+ "canWrite       : false\n" //
 				+ "exists         : false\n" //
@@ -661,25 +687,67 @@ public class TestCasesRemote extends TestCasesBase {
 	@Test
 	public void test29_http_dir() {
 		Gpr.debug("Test");
-		runAndCheck("test/remote_29.bds", "dd", "[http://ftp.ensemblorg.ebi.ac.uk/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+		runAndCheck("test/remote_29.bds", "dd", "[http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
 	@Test
 	public void test31_s3_dir() {
 		Gpr.debug("Test");
+
+		String bucket = awsBucketName();
+
+		// Create S3 files
+		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/bye.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/bye_2.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/hi.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/hi_2.txt", "OK");
+
 		runAndCheck("test/remote_31.bds", "dd", "[bye.txt, bye_2.txt, hi.txt, hi_2.txt]");
 	}
 
 	@Test
 	public void test32_s3_dirPath() {
 		Gpr.debug("Test");
+		String bucket = awsBucketName();
+
+		// Create S3 files
+		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/bye.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/bye_2.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/hi.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/hi_2.txt", "OK");
+
 		runAndCheck("test/remote_32.bds", "dd", "[bye.txt, bye_2.txt]");
 	}
 
 	@Test
 	public void test33_s3_dirPath() {
 		Gpr.debug("Test");
-		runAndCheck("test/remote_33.bds", "dd", "[s3://pcingola.bds/test_remote_31/bye.txt, s3://pcingola.bds/test_remote_31/bye_2.txt]");
+		String bucket = awsBucketName();
+
+		// Create S3 files
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye_2.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi_2.txt", "OK");
+		runAndCheck("test/remote_33.bds", "dd", "[s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye.txt, s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye_2.txt]");
+	}
+
+	// Task input in s3, output local file
+	@Test
+	public void test34() {
+		runAndCheck("test/remote_34.bds", "outStr", "OK");
+	}
+
+	// Task input local, output s3 file
+	@Test
+	public void test35() {
+		runAndCheck("test/remote_35.bds", "outStr", "IN: 'remote_35'");
+	}
+
+	// Check task input in s3, output to s3
+	@Test
+	public void test36() {
+		runAndCheck("test/remote_36.bds", "outStr", "IN: 'remote_36'");
 	}
 
 }

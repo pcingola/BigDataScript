@@ -1,6 +1,7 @@
 
+include 'aws_util'
 
-out := 's3://pcingola.bds/test_remote_16.txt'
+out := "$s3base/test_remote_16.txt"
 
 str := "Hello!"
 out.write(str)

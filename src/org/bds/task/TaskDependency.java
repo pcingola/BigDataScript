@@ -95,7 +95,10 @@ public class TaskDependency implements Serializable {
 	 * Add output
 	 */
 	public void addOutput(String output) {
-		outputs.add(BdsThreads.data(output).getAbsolutePath());
+		Data d = BdsThreads.data(output);
+		String filePath = d.isRemote() ? d.toString() : d.getAbsolutePath();
+		outputs.add(filePath);
+		//		outputs.add(BdsThreads.data(output).getAbsolutePath());
 	}
 
 	public void addOutput(ValueList outputs) {
