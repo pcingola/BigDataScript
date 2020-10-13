@@ -1,12 +1,14 @@
 #!/usr/bin/env bds
 
-varName := "HOME"
+bucket := 'BUCKET_NAME'
 
-shome := getVar(varName)
-bhome := hasVar(varName)
-println "getVar($varName) = '$shome'\thasVar($varName): $bhome"
+in := "s3://$bucket/tmp/in"
+out := "s3://$bucket/tmp/in"
 
-varName = "ZZZ"
-szzz := getVar(varName)
-bzzz := hasVar(varName)
-println "getVar($varName) = '$szzz'\thasVar($varName): $bzzz"
+task(out <- in) {
+	sys echo $in > $out
+}
+
+task(out <- in) {
+	sys echo $in > $out
+}
