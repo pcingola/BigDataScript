@@ -1,7 +1,9 @@
 package org.bds.executioner;
 
 import org.bds.Config;
+import org.bds.osCmd.Cmd;
 import org.bds.task.Task;
+import org.bds.util.Gpr;
 
 /**
  * Execute tasks in a cloud
@@ -30,10 +32,16 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	}
 
 	@Override
+	public synchronized Cmd createRunCmd(Task task) {
+		// TODO: Add command to run
+		Gpr.debug("ExecutionerCloudAws.createRunCmd : UNIMPLEMENTED!!!!");
+		return null;
+	}
+
+	@Override
 	public String[] osKillCommand(Task task) {
 		// TODO: Add command to kill instance
 		throw new RuntimeException("UNIMPLEMENTED!!!!");
-		//		return null;
 	}
 
 }

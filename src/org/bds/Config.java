@@ -263,14 +263,14 @@ public class Config implements Serializable {
 		return maxThreads;
 	}
 
-	public MonitorTask getMonitorTask() {
-		if (monitorTask == null) {
-			monitorTask = new MonitorTask();
-			monitorTask.setDebug(isDebug());
-			monitorTask.setVerbose(isVerbose());
-		}
-		return monitorTask;
-	}
+	//	public MonitorTask getMonitorTask() {
+	//		if (monitorTask == null) {
+	//			monitorTask = new MonitorTask();
+	//			monitorTask.setDebug(isDebug());
+	//			monitorTask.setVerbose(isVerbose());
+	//		}
+	//		return monitorTask;
+	//	}
 
 	public String getPidFile() {
 		return pidFile;

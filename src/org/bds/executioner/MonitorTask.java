@@ -16,18 +16,14 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class MonitorTask implements Serializable {
+public abstract class MonitorTask implements Serializable {
 
-	private static final long serialVersionUID = -5364964372060576944L;
+	private static final long serialVersionUID = -6872022158839941923L;
 
-	// Cluster scheduling is usually quite slow, so we don't need a short monitoring interval.
-	// Reducing this sleep time adds processing and probably has not many benefits.
-	public static final int SLEEP_TIME = 500;
-
-	boolean debug = false;
-	boolean verbose;
-	HashMap<Task, Executioner> execByTask;
-	Timer latestUpdate;
+	protected boolean debug = false;
+	protected boolean verbose;
+	protected HashMap<Task, Executioner> execByTask;
+	protected Timer latestUpdate;
 
 	public MonitorTask() {
 		execByTask = new HashMap<>();
@@ -35,27 +31,21 @@ public class MonitorTask implements Serializable {
 	}
 
 	/**
-	 * Add a task to this 'timer'
+	 * Add a task to this 'monitor'
 	 *
 	 * @param executioner : Executioner executing this task (we must be able to kill the task)
 	 * @param task : Task (timeout is inferred from task.resources)
 	 */
 	public synchronized void add(Executioner executioner, Task task) {
-		if (debug) Timer.showStdErr("MonitorTask: Adding task " + task.getId());
 		if (task == null) return;
+		if (debug) Timer.showStdErr(this.getClass().getName() + ": Adding task " + task.getId());
 		execByTask.put(task, executioner);
 	}
 
 	/**
-	 * Run once every SLEEP_TIME
+	 * Check if tasks have finished
 	 */
-	public synchronized void check() {
-		// Is it time to update?
-		if (latestUpdate.elapsed() < SLEEP_TIME) return;
-
-		updateFinished();
-		latestUpdate.start();
-	}
+	public abstract void check();
 
 	/**
 	 * Remove task (do not monitor)
@@ -77,7 +67,7 @@ public class MonitorTask implements Serializable {
 	 * Update finished tasks.
 	 * Check if 'exitFile' exist and update states accordingly
 	 */
-	synchronized void updateFinished() {
+	protected synchronized void updateFinished() {
 		ArrayList<Task> toUpdate = null;
 
 		for (Task task : execByTask.keySet()) {
@@ -113,7 +103,7 @@ public class MonitorTask implements Serializable {
 	/**
 	 * Update finished task.
 	 */
-	synchronized void updateFinished(Task task) {
+	protected synchronized void updateFinished(Task task) {
 		if (debug) Timer.showStdErr("MonitorTask.updateFinished(task): Finished task " + task.getId());
 
 		int exitCode = 0;

@@ -99,7 +99,7 @@ public class ExecutionerCluster extends Executioner {
 		}
 
 		// Cluster task need monitoring
-		monitorTask = config.getMonitorTask();
+		monitorTask = MonitorTasks.get().getMonitorTaskExitFile();
 
 		// Create a cluster having only one host with 'infinite' capacity
 		cluster = new Cluster();
