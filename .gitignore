@@ -10,3 +10,4 @@ t.bds*
 tmp
 go/bds/bds
 target/**
+build/**
