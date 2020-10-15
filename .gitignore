@@ -10,4 +10,5 @@ t.bds*
 tmp
 go/bds/bds
 target/*
+mvn/target/*
 build/*

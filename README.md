@@ -6,8 +6,7 @@ A simple script-language for "Big Data" piplines.
 
 [Web](http://pcingola.github.com/BigDataScript/) and [documentation](http://pcingola.github.io/BigDataScript/manual/site/index.html)
 
-**Author:** Pablo Cingolani
-
+# Author: [Pablo Cingolani](https://www.linkedin.com/in/pablocingolani/)
 
 # Install
 
@@ -30,6 +29,7 @@ These are used to build the JAR file
 
 Jar with dependencias in directory 'target', e.g. `target/bds-2.3-jar-with-dependencies.jar`
 ```
+cd mvn
 mvn clean assembly:assembly
 ```
 
@@ -38,6 +38,7 @@ mvn clean assembly:assembly
 
 Libraries are copied to: `target/dependency`
 ```
+cd mvn
 mvn dependency:copy-dependencies
 ```
 
