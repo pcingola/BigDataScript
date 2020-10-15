@@ -4,12 +4,9 @@
 
 A simple script-language for "Big Data" piplines.
 
-[Description](http://pcingola.github.com/BigDataScript/)
-and handbooks
+[Web](http://pcingola.github.com/BigDataScript/) and [documentation](http://pcingola.github.io/BigDataScript/manual/site/index.html)
 
-
-
-								Pablo Cingolani
+**Author:** Pablo Cingolani
 
 
 # Install
