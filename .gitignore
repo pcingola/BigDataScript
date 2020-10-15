@@ -9,5 +9,5 @@ bin
 t.bds*
 tmp
 go/bds/bds
-target/**
-build/**
+target/*
+build/*
