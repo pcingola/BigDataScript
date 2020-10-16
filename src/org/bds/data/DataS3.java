@@ -1,30 +1,31 @@
 package org.bds.data;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.Config;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.AmazonS3URI;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.sync.ResponseTransformer;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
+import software.amazon.awssdk.http.apache.ProxyConfiguration;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 /**
  * A bucket / object in AWS S3
@@ -33,37 +34,32 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  */
 public class DataS3 extends DataRemote {
 
-	private static int BUFFER_SIZE = 100 * 1024;
 	public static final String AWS_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PROTOCOL = "s3";
 
 	public static final String ENV_PROXY_HTTTP = "http_proxy";
 	public static final String ENV_PROXY_HTTTPS = "https_proxy";
-	protected AmazonS3 s3;
-	protected AmazonS3URI s3uri;
+	protected S3Client s3;
 	protected String bucketName;
 	protected String key;
 
 	public DataS3(String urlStr) {
 		super();
-		s3uri = parseS3Uri(urlStr);
+		parseS3Uri(urlStr);
 		canWrite = false;
-		bucketName = s3uri.getBucket();
-		key = s3uri.getKey();
 	}
 
 	public DataS3(URI uri) {
 		super();
-		s3uri = parseS3Uri(uri.toString());
 		canWrite = false;
-		bucketName = s3uri.getBucket();
-		key = s3uri.getKey();
+		parseS3Uri(uri);
 	}
 
 	@Override
 	public boolean delete() {
 		if (!isFile()) return false; // Do not delete bucket
-		getS3().deleteObject(bucketName, key);
+		DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(key).build();
+		getS3().deleteObject(deleteObjectRequest);
 		return true;
 	}
 
@@ -81,36 +77,9 @@ public class DataS3 extends DataRemote {
 			if (!isFile()) return false;
 			if (local != null) localPath = local.getAbsolutePath();
 
-			S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
-			if (verbose) System.out.println("Downloading '" + this + "'");
-			updateInfo(s3object);
-
-			// Create local file and directories
-			mkdirsLocal();
-			FileOutputStream os = new FileOutputStream(getLocalPath());
-
-			// Copy S3 object to file
-			S3ObjectInputStream is = s3object.getObjectContent();
-			int count = 0, total = 0, lastShown = 0;
-			byte data[] = new byte[BUFFER_SIZE];
-			while ((count = is.read(data, 0, BUFFER_SIZE)) != -1) {
-				os.write(data, 0, count);
-				total += count;
-
-				if (verbose) {
-					// Show every MB
-					if ((total - lastShown) > (1024 * 1024)) {
-						System.err.print(".");
-						lastShown = total;
-					}
-				}
-			}
-			if (verbose) System.err.println("");
-
-			// Close streams
-			is.close();
-			os.close();
-			if (verbose) Timer.showStdErr("Donwload finished. Total " + total + " bytes.");
+			GetObjectRequest req = GetObjectRequest.builder().bucket(bucketName).key(key).build();
+			s3.getObject(req, ResponseTransformer.toFile(Paths.get(localPath)));
+			if (verbose) Timer.showStdErr("Donwload from '" + toString() + "' to '" + localPath + "' finished.");
 
 			// Update last modified info
 			updateLocalFileLastModified();
@@ -126,15 +95,7 @@ public class DataS3 extends DataRemote {
 	 * Does the directory exist?
 	 */
 	protected boolean existsDir() {
-		ObjectListing objectListing = getS3().listObjects( //
-				new ListObjectsRequest() //
-						.withBucketName(bucketName) //
-						.withPrefix(key) //
-						.withMaxKeys(1) // We only need one to check for existence
-		);
-
-		// Are there more than zero objects?
-		return objectListing.getObjectSummaries().size() > 0;
+		return listOneObject() != null;
 	}
 
 	public String getBucket() {
@@ -188,20 +149,23 @@ public class DataS3 extends DataRemote {
 	 * S3 clients are thread safe, thus it is encouraged to have
 	 * only one client instead of instantiating one each time.
 	 */
-	protected AmazonS3 getS3() {
+	protected S3Client getS3() {
 		if (s3 == null) {
 			URL proxyUrl = getProxyFromEnv();
 
 			// Do we have proxy information?
 			if (proxyUrl == null) {
 				// No proxy? Use default client
-				s3 = AmazonS3ClientBuilder.defaultClient();
+				s3 = S3Client.create();
 			} else {
 				// Set proxy in config
-				ClientConfiguration config = new ClientConfiguration();
-				config.setProxyHost(proxyUrl.getHost());
-				config.setProxyPort(proxyUrl.getPort());
-				s3 = AmazonS3ClientBuilder.standard().withClientConfiguration(config).build();
+				//				ClientConfiguration config = new ClientConfiguration();
+				//				config.setProxyHost(proxyUrl.getHost());
+				//				config.setProxyPort(proxyUrl.getPort());
+				//				s3 = S3Client.builder().standard().withClientConfiguration(config).build();
+				ProxyConfiguration proxyConf = ProxyConfiguration.builder().useSystemPropertyValues(true).build();
+				final SdkHttpClient httpClient = ApacheHttpClient.builder().proxyConfiguration(proxyConf).build();
+				s3 = S3Client.builder().httpClient(httpClient).build();
 			}
 		}
 		return s3;
@@ -239,16 +203,8 @@ public class DataS3 extends DataRemote {
 			// Files are not supposed to have a 'directory' result
 			if (isFile()) return list;
 
-			// Query objects from S3
-			ObjectListing objectListing = getS3().listObjects( //
-					new ListObjectsRequest()//
-							.withBucketName(bucketName)//
-							.withPrefix(key) //
-			);
-
-			// Append all objects to list
-			for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-				String s3path = AWS_S3_PROTOCOL + "://" + objectSummary.getBucketName() + '/' + objectSummary.getKey();
+			for (S3Object s3obj : listObjects()) {
+				String s3path = AWS_S3_PROTOCOL + "://" + bucketName + '/' + s3obj.key();
 				list.add(new DataS3(s3path));
 			}
 		} catch (Exception e) {
@@ -256,6 +212,26 @@ public class DataS3 extends DataRemote {
 		}
 
 		return list;
+	}
+
+	/**
+	 * List objects in bucket/key
+	 * @return A list of S3Objects
+	 */
+	List<S3Object> listObjects() {
+		ListObjectsRequest req = ListObjectsRequest.builder().bucket(bucketName).prefix(key).build();
+		ListObjectsResponse objectListing = getS3().listObjects(req);
+		return objectListing.contents();
+	}
+
+	/**
+	 * List only one object in bucket/key
+	 * @return An S3Object or null
+	 */
+	S3Object listOneObject() {
+		ListObjectsRequest req = ListObjectsRequest.builder().bucket(bucketName).prefix(key).maxKeys(1).build();
+		ListObjectsResponse objectListing = getS3().listObjects(req);
+		return objectListing.hasContents() ? objectListing.contents().get(0) : null;
 	}
 
 	@Override
@@ -287,13 +263,25 @@ public class DataS3 extends DataRemote {
 		return true;
 	}
 
-	protected AmazonS3URI parseS3Uri(String urlStr) {
-		return new AmazonS3URI(urlStr);
+	protected void parseS3Uri(String urlStr) {
+		try {
+			parseS3Uri(new URI(urlStr));
+		} catch (URISyntaxException e) {
+			// Could not parse URI
+			bucketName = "";
+			key = urlStr;
+		}
+	}
+
+	protected void parseS3Uri(URI uri) {
+		bucketName = uri.getAuthority();
+		key = uri.getPath();
+		if (key.startsWith("/")) key = key.substring(1);
 	}
 
 	@Override
 	public String toString() {
-		return s3uri.toString();
+		return AWS_S3_PROTOCOL + "://" + bucketName + "/" + key;
 	}
 
 	/**
@@ -301,47 +289,31 @@ public class DataS3 extends DataRemote {
 	 */
 	@Override
 	protected boolean updateInfo() {
-		try {
-			if (isFile()) {
-				S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
-				return updateInfo(s3object);
-			} else if (existsDir()) {
-				// Special case when keys are 'directories'
-				exists = true;
-				canRead = true;
-				canWrite = true;
-				lastModified = new Date(0L);
-				size = 0;
-				latestUpdate = new Timer(CACHE_TIMEOUT);
-				return true;
-			} else return false;
-		} catch (AmazonServiceException e) {
-			String errorCode = e.getErrorCode();
-			if (!errorCode.equals("NoSuchKey")) throw new RuntimeException("Error accessing S3 bucket '" + bucketName + "', key '" + key + "'" + this, e);
-
-			// The object does not exists
-			exists = false;
-			canRead = false;
-			canWrite = false;
+		if (isFile()) {
+			S3Object s3object = listOneObject();
+			return updateInfo(s3object);
+		} else if (existsDir()) {
+			// Special case when keys are 'directories'
+			exists = true;
+			canRead = true;
+			canWrite = true;
 			lastModified = new Date(0L);
 			size = 0;
 			latestUpdate = new Timer(CACHE_TIMEOUT);
 			return true;
-		}
+		} else return false;
 	}
 
 	/**
 	 * Update object's information
 	 */
 	protected boolean updateInfo(S3Object s3object) {
-		// Read metadata
-		ObjectMetadata om = s3object.getObjectMetadata();
-
 		// Update data
-		size = om.getContentLength();
+		if (s3object == null) return false;
+		size = s3object.size();
 		canRead = true;
 		canWrite = true;
-		lastModified = om.getLastModified();
+		lastModified = Date.from(s3object.lastModified());
 		exists = true;
 		latestUpdate = new Timer(CACHE_TIMEOUT);
 
@@ -369,7 +341,8 @@ public class DataS3 extends DataRemote {
 
 		// Upload
 		File localFile = new File(local.getAbsolutePath());
-		getS3().putObject(new PutObjectRequest(bucketName, key, localFile));
+		PutObjectRequest req = PutObjectRequest.builder().bucket(bucketName).key(key).build();
+		getS3().putObject(req, RequestBody.fromFile(localFile));
 		return true;
 	}
 

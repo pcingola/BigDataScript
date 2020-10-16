@@ -1,6 +1,6 @@
 package org.bds.test;
 
-import java.io.File;
+import java.util.Random;
 
 import org.bds.Config;
 import org.bds.util.Gpr;
@@ -22,35 +22,69 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test09() {
+	public void test01_parse_URLs_s3() {
 		Gpr.debug("Test");
-		verbose = true;
 
-		// Remove old entries
-		String prefix = "test/checkpoint_09";
-		File txt = new File(prefix + ".txt");
-		final File csv = new File(prefix + ".csv");
-		final File xml = new File(prefix + ".xml");
-		txt.delete();
-		csv.delete();
-		xml.delete();
+		String bucket = awsBucketName();
+		String url = "s3://" + bucket + "/tmp/bds/remote_01/hello.txt";
 
-		// Create file
-		Gpr.toFile(prefix + ".txt", "TEST");
+		// Create S3 file
+		Random rand = new Random();
+		String txt = "OK: " + rand.nextLong();
+		createS3File(url, txt);
 
-		// Run this code before checkpoint recovery
-		Runnable runBeforeRecovery = new Runnable() {
+		checkS3HelloTxt(url, bucket, "/tmp/bds/remote_01/hello.txt", "s3://" + bucket + "/tmp/bds/remote_01", txt);
+	}
 
-			@Override
-			public void run() {
-				// Create the file
-				Gpr.debug("Deleting file: " + csv);
-				csv.delete();
-			}
-		};
+	@Test
+	public void test17_S3() {
+		Gpr.debug("Test");
+		String bucket = awsBucketName();
+		String expectedOutput = "" //
+				+ "baseName       : test_remote_17.txt\n" //
+				+ "baseName('txt'): test_remote_17\n" //
+				+ "canRead        : true\n" //
+				+ "canWrite       : true\n" //
+				+ "dirName        : /tmp/bds/remote_17\n" //
+				+ "extName        : txt\n" //
+				+ "exists         : true\n" //
+				+ "isDir          : false\n" //
+				+ "isFile         : true\n" //
+				+ "path           : /tmp/bds/remote_17/test_remote_17.txt\n" //
+				+ "pathName       : /tmp/bds/remote_17\n" //
+				+ "removeExt      : s3://" + bucket + "/tmp/bds/remote_17/test_remote_17\n" //
+				+ "size           : 6\n" //
+				+ "dirPath        : []\n" //
+				+ "dir            : []\n" //
+				+ "\n" //
+				+ "Delete file s3://" + bucket + "/tmp/bds/remote_17/test_remote_17.txt\n" //
+				+ "canRead        : false\n" //
+				+ "canWrite       : false\n" //
+				+ "exists         : false\n" //
+				+ "size           : 0\n" //
+				+ "dirPath        : []\n" //
+				+ "dir            : []\n" //
+		;
 
-		// Run pipeline and test checkpoint
-		runAndCheckpoint(prefix + ".bds", prefix + ".chp", "num", "0", runBeforeRecovery);
+		runAndCheckStdout("test/remote_17.bds", expectedOutput);
+	}
+
+	@Test
+	public void test18_S3() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_18.bds", "ok", "true");
+	}
+
+	// Task input local, output s3 file
+	@Test
+	public void test35() {
+		runAndCheck("test/remote_35.bds", "outStr", "IN: 'remote_35'");
+	}
+
+	// Check task input in s3, output to s3
+	@Test
+	public void test36() {
+		runAndCheck("test/remote_36.bds", "outStr", "IN: 'remote_36'");
 	}
 
 }

@@ -16,16 +16,13 @@
 	<classpathentry kind="lib" path="lib/aws-core-2.15.7.jar"/>
 	<classpathentry kind="lib" path="lib/aws-query-protocol-2.15.7.jar"/>
 	<classpathentry kind="lib" path="lib/aws-xml-protocol-2.15.7.jar"/>
-	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-net-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/ec2-2.15.7.jar"/>
 	<classpathentry kind="lib" path="lib/eventstream-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/hamcrest-core-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/http-client-spi-2.15.7.jar"/>
-	<classpathentry kind="lib" path="lib/httpcore-4.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j-58.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.10.4.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.10.4.jar"/>
@@ -60,5 +57,8 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.28.jar"/>
 	<classpathentry kind="lib" path="lib/ST4-4.0.8.jar"/>
 	<classpathentry kind="lib" path="lib/utils-2.15.7.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.5.13.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.11.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.4.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

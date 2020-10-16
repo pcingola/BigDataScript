@@ -243,8 +243,7 @@ public abstract class DataRemote extends Data {
 			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URI("file" + PROTOCOL_SEP + urlStr);
 
 			// Encode the url
-			URIBuilder ub = new URIBuilder(urlStr);
-			return ub.build();
+			return new URI(urlStr);
 		} catch (URISyntaxException e) {
 			throw new RuntimeException("Cannot parse URL " + urlStr, e);
 		}
