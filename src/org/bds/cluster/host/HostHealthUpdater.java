@@ -60,7 +60,7 @@ public class HostHealthUpdater extends Thread {
 
 				// I'd rather sleep this way in order to allow for notifications (i.e. 'wake up call')
 				synchronized (this) {
-					ClusterSsh cluster = (ClusterSsh) host.getCluster();
+					ClusterSsh cluster = (ClusterSsh) host.getSystem();
 					wait(cluster.getRefreshTime() * 1000);
 				}
 			}

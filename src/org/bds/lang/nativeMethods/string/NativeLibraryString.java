@@ -75,14 +75,14 @@ public class NativeLibraryString {
 
 	ArrayList<MethodNative> methods;
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public NativeLibraryString() {
 		try {
 			methods = new ArrayList<>();
 
 			for (String className : classNames) {
 				Class c = Class.forName(className);
-				methods.add((MethodNative) c.newInstance());
+				methods.add((MethodNative) c.getDeclaredConstructor().newInstance());
 			}
 		} catch (Exception e) {
 			throw new RuntimeException("Error creating native library", e);

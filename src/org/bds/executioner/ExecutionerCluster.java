@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bds.Config;
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostInifinte;
 import org.bds.cluster.host.HostResources;
@@ -27,7 +27,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class ExecutionerCluster extends Executioner {
+public class ExecutionerCluster extends ExecutionerFileSystem {
 
 	protected final String CLUSTER_DEFAULT_RUN_COMMAND_STDOUT_OPTION = "-o";
 	protected final String CLUSTER_DEFAULT_RUN_COMMAND_STDERR_OPTION = "-e";
@@ -102,8 +102,8 @@ public class ExecutionerCluster extends Executioner {
 		monitorTask = MonitorTasks.get().getMonitorTaskExitFile();
 
 		// Create a cluster having only one host with 'infinite' capacity
-		cluster = new Cluster();
-		new HostInifinte(cluster);
+		system = new ComputerSystem();
+		new HostInifinte(system);
 	}
 
 	/**

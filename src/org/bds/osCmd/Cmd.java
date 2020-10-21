@@ -2,7 +2,7 @@ package org.bds.osCmd;
 
 import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostResources;
-import org.bds.executioner.Executioner;
+import org.bds.executioner.ExecutionerFileSystem;
 import org.bds.executioner.NotifyTaskState;
 import org.bds.executioner.PidParser;
 import org.bds.run.BdsThread;
@@ -200,7 +200,7 @@ public abstract class Cmd extends Thread {
 		this.debug = debug;
 	}
 
-	public void setExecutioner(Executioner executioner) {
+	public void setExecutioner(ExecutionerFileSystem executioner) {
 		notifyTaskState = executioner;
 		pidParser = executioner;
 	}

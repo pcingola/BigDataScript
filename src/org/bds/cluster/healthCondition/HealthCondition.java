@@ -22,7 +22,7 @@ public abstract class HealthCondition {
 	public HealthCondition(HostSsh host) {
 		this.host = host;
 		if (host != null) {
-			ClusterSsh cluster = (ClusterSsh) host.getCluster();
+			ClusterSsh cluster = (ClusterSsh) host.getSystem();
 			healthYellow = cluster.getHealthYellow();
 			healthRed = cluster.getHealthRed();
 		}

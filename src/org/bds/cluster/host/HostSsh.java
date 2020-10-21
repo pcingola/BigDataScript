@@ -1,6 +1,6 @@
 package org.bds.cluster.host;
 
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 
 /**
  * Local host information
@@ -11,7 +11,7 @@ public class HostSsh extends Host {
 
 	HostHealth health;
 
-	public HostSsh(Cluster cluster, String hostName) {
+	public HostSsh(ComputerSystem cluster, String hostName) {
 		super(cluster, hostName);
 
 		// Set basic parameters

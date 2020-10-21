@@ -41,6 +41,7 @@ public class TestCasesTaskDetached extends TestCasesBase {
 
 		runAndCheck("test/run_task_detached_02.bds", "catout", catout);
 
+		// Wait
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {

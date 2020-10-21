@@ -13,18 +13,16 @@ import org.bds.cluster.host.HostResources;
 import org.bds.util.Gpr;
 
 /**
- * Cluster: A bunch of hosts
+ * A computer system that can process Tasks
  *
  * @author pcingola
  */
-public class Cluster implements Iterable<Host> {
-
-	public static final Cluster FAKE_CLUSTER = new Cluster();
+public class ComputerSystem implements Iterable<Host> {
 
 	protected boolean doNotRunOnRed = true; // If a host has a 'red' condition => do not run any tasks on them
 	protected Map<String, Host> hosts; // All hosts indexed by name
 
-	public Cluster() {
+	public ComputerSystem() {
 		hosts = new HashMap<String, Host>();
 	}
 

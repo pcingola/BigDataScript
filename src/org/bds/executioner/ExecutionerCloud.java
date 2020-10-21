@@ -1,8 +1,12 @@
 package org.bds.executioner;
 
+import java.util.List;
+
 import org.bds.Config;
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.HostInifinte;
+import org.bds.task.Task;
+import org.bds.util.Gpr;
 
 /**
  * Execute tasks in a cloud
@@ -25,12 +29,63 @@ import org.bds.cluster.host.HostInifinte;
  */
 public abstract class ExecutionerCloud extends Executioner {
 
+	protected QueueThread queueThread;
+
 	protected ExecutionerCloud(Config config) {
 		super(config);
 
-		// Create a cluster having only one host with 'infinite' capacity
-		cluster = new Cluster();
-		new HostInifinte(cluster);
+		// Create a system having only one host with 'infinite' capacity (cloud)
+		system = new ComputerSystem();
+		new HostInifinte(system);
+	}
+
+	@Override
+	protected void follow(Task task) {
+		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
+		if (monitorTask != null) monitorTask.add(this, task); // Start monitoring exit file
+	}
+
+	@Override
+	protected void followStop(Task task) {
+		// Remove from loggers
+		if (taskLogger != null) taskLogger.remove(task);
+		if (monitorTask != null) monitorTask.remove(task);
+	}
+
+	/**
+	 * Stop executioner and kill all tasks
+	 */
+	@Override
+	public synchronized void kill() {
+		super.kill();
+		if (queueThread != null) {
+			queueThread.kill();
+			queueThread = null;
+		}
+	}
+
+	/**
+	 * Kill all tasks in a list
+	 */
+	@Override
+	protected synchronized void killAll(List<Task> tokill) {
+		// TODO: Terminate all instance in one API call
+		Gpr.debug("UNIMPLEMENTED !!!");
+	}
+
+	@Override
+	protected synchronized void killTask(Task task) {
+		// TODO: Terminate instance
+		Gpr.debug("UNIMPLEMENTED !!!");
+	}
+
+	@Override
+	protected void runExecutionerLoopBefore() {
+		// Start a new thread if needed, don't start a thread if it's already running
+		if (queueThread == null) {
+			queueThread = new QueueThread(config, (MonitorTaskQueue) monitorTask, taskLogger);
+			queueThread.start();
+		}
 	}
 
 }

@@ -89,7 +89,7 @@ public class BdsNodeFactory {
 			for (Constructor<BdsNode> classConstructor : classConstructors) {
 				// Number of arguments in constructor?
 				if (classConstructor.getParameterTypes().length == 0) {
-					return (BdsNode) clazz.newInstance();
+					return (BdsNode) clazz.getDeclaredConstructor().newInstance();
 				} else if (classConstructor.getParameterTypes().length == 2) {
 					// Two parameter constructor
 					Object[] params = { parent, tree };

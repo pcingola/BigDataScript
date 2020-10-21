@@ -25,7 +25,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class ExecutionerSsh extends Executioner {
+public class ExecutionerSsh extends ExecutionerFileSystem {
 
 	protected ExecutionerSsh(Config config) {
 		super(config);
@@ -34,7 +34,7 @@ public class ExecutionerSsh extends Executioner {
 
 	protected void createCluster() {
 		// Create a cluster
-		cluster = new ClusterSsh();
+		system = new ClusterSsh();
 
 		// Add nodes from config file
 		String nodes = config.getString(Config.CLUSTER_SSH_NODES, "");
@@ -42,7 +42,7 @@ public class ExecutionerSsh extends Executioner {
 		String sshNodes[] = nodes.split(",");
 		for (String sshNode : sshNodes) {
 			if (config.isDebug()) System.err.println("\tAdding ssh node : '" + sshNode + "'");
-			cluster.add(new HostSsh(cluster, sshNode.trim()));
+			system.add(new HostSsh(system, sshNode.trim()));
 		}
 	}
 
@@ -81,7 +81,7 @@ public class ExecutionerSsh extends Executioner {
 
 	@Override
 	public synchronized void kill() {
-		((ClusterSsh) cluster).stopHostInfoUpdaters();
+		((ClusterSsh) system).stopHostInfoUpdaters();
 		super.kill();
 	}
 
@@ -92,9 +92,9 @@ public class ExecutionerSsh extends Executioner {
 
 	@Override
 	public void run() {
-		((ClusterSsh) cluster).startHostInfoUpdaters();
+		((ClusterSsh) system).startHostInfoUpdaters();
 		super.run();
-		((ClusterSsh) cluster).stopHostInfoUpdaters();
+		((ClusterSsh) system).stopHostInfoUpdaters();
 	}
 
 }

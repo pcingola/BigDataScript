@@ -19,9 +19,11 @@ import org.bds.util.Timer;
 
 /**
  * Check that tasks are still running.
+ *
  * This method should query the operating system, cluster system or
  * whatever 'low level' system to make sure the tasks are still
  * running.
+ *
  * The idea is that if a task is killed, removed or somehow is no
  * longer running, we should catch it here (this is the last resort).
  *

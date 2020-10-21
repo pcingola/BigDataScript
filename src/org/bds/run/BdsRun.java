@@ -18,6 +18,7 @@ import org.bds.compile.CompilerMessages;
 import org.bds.data.Data;
 import org.bds.data.FtpConnectionFactory;
 import org.bds.executioner.Executioner;
+import org.bds.executioner.ExecutionerFileSystem;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.lang.BdsNode;
@@ -110,7 +111,7 @@ public class BdsRun {
 			System.exit(1);
 		}
 
-		Executioner executioner = Executioners.getInstance().get(ExecutionerType.CLUSTER);
+		ExecutionerFileSystem executioner = (ExecutionerFileSystem) Executioners.getInstance().get(ExecutionerType.CLUSTER);
 
 		// Show pattern
 		System.out.println("Matching pidRegex '" + pidPatternStr + "'");

@@ -3,7 +3,7 @@ package org.bds.cluster.host;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 
@@ -16,7 +16,7 @@ public class Host implements Comparable<Host> {
 
 	public static final int DEFAULT_PORT = 22;
 
-	Cluster cluster; // Is this host part of a 'cluster'
+	ComputerSystem system; // Is this host part of a 'cluster'
 	String userName; // Username
 	String hostName; // Host name (or IP address)
 	int port = DEFAULT_PORT; // Ssh port
@@ -24,14 +24,14 @@ public class Host implements Comparable<Host> {
 	HostResources resourcesAvaialble; // Available resources
 	Set<Task> tasksRunning; // A list of tasks running in this host
 
-	public Host(Cluster cluster, String hostName) {
-		this.cluster = cluster;
-		init(cluster, hostName);
+	public Host(ComputerSystem system, String hostName) {
+		this.system = system;
+		init(system, hostName);
 	}
 
 	public Host(String hostName) {
-		cluster = new Cluster();
-		init(cluster, hostName);
+		system = new ComputerSystem();
+		init(system, hostName);
 	}
 
 	/**
@@ -46,8 +46,8 @@ public class Host implements Comparable<Host> {
 		return hostName.compareTo(host.hostName);
 	}
 
-	public Cluster getCluster() {
-		return cluster;
+	public ComputerSystem getSystem() {
+		return system;
 	}
 
 	public String getHostName() {
@@ -79,7 +79,7 @@ public class Host implements Comparable<Host> {
 		return getResourcesAvaialble().compareTo(hr) >= 0;
 	}
 
-	void init(Cluster cluster, String hostName) {
+	void init(ComputerSystem cluster, String hostName) {
 		resources = new HostResources();
 
 		// Parse "user@hostname:port"

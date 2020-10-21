@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import org.bds.executioner.Executioner;
+import org.bds.executioner.ExecutionerFileSystem;
 import org.bds.executioner.ExecutionerLocal;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -130,8 +130,8 @@ public class CmdLocal extends Cmd {
 		ArrayList<String> args = new ArrayList<>();
 
 		// Add command and arguments
-		if (notifyTaskState != null && (notifyTaskState instanceof Executioner) && (task != null)) {
-			String argsKill[] = ((Executioner) notifyTaskState).osKillCommand(task);
+		if (notifyTaskState != null && (notifyTaskState instanceof ExecutionerFileSystem) && (task != null)) {
+			String argsKill[] = ((ExecutionerFileSystem) notifyTaskState).osKillCommand(task);
 			if (argsKill != null) {
 				for (String arg : argsKill)
 					args.add(arg);

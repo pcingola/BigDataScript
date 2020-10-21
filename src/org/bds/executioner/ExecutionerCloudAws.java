@@ -1,7 +1,7 @@
 package org.bds.executioner;
 
 import org.bds.Config;
-import org.bds.osCmd.Cmd;
+import org.bds.cluster.host.Host;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 
@@ -27,21 +27,59 @@ import org.bds.util.Gpr;
  */
 public class ExecutionerCloudAws extends ExecutionerCloud {
 
+	public static final String KILL_COMMAND[] = { "aws", "ec2", "terminate" };
+
 	protected ExecutionerCloudAws(Config config) {
 		super(config);
+		monitorTask = MonitorTasks.get().getMonitorTaskAws();
 	}
 
 	@Override
-	public synchronized Cmd createRunCmd(Task task) {
-		// TODO: Add command to run
-		Gpr.debug("ExecutionerCloudAws.createRunCmd : UNIMPLEMENTED!!!!");
-		return null;
+	protected void checkFinishedTasks() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected CheckTasksRunning getCheckTasksRunning() {
+		if (checkTasksRunning == null) {
+			checkTasksRunning = new CheckTasksRunningAws(config, this);
+			checkTasksRunning.setDebug(config.isDebug());
+			checkTasksRunning.setVerbose(config.isVerbose());
+		}
+		return checkTasksRunning;
 	}
 
 	@Override
 	public String[] osKillCommand(Task task) {
-		// TODO: Add command to kill instance
-		throw new RuntimeException("UNIMPLEMENTED!!!!");
+		Gpr.debug("UNIMPLEMENTED !!!");
+		return KILL_COMMAND;
+	}
+
+	@Override
+	protected void postMortemInfo(Task task) {
+		// TODO: Is there a way to collect some statistics on an instance that died recently?
+		// TODO: We could try to check CloudWatch messages and metrics
+	}
+
+	@Override
+	protected void runTask(Task task, Host host) {
+		// TODO: Is there a queue? Create queue
+		//
+		// TODO: Create startup script (task's sys commands or checkpoint)
+		// TODO: Find instance's parameters (type, image, disk, etc.)
+		// TODO: Run instance
+		// TODO: Store instance ID
+		//
+		// TODO: follow task (add task to queue monitor)
+		// TODO: Add to 'taskLogger' so that Go bds process can kill if Java dies
+
+		Gpr.debug("UNIMPLEMENTED !!!");
+	}
+
+	@Override
+	protected void taskUpdateFinishedCleanUp(Task task) {
+		Gpr.debug("UNIMPLEMENTED !!!");
 	}
 
 }

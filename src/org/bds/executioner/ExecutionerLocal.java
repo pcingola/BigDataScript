@@ -17,7 +17,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class ExecutionerLocal extends Executioner {
+public class ExecutionerLocal extends ExecutionerFileSystem {
 
 	public static String LOCAL_EXEC_COMMAND[] = { "bds", "exec" };
 	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };

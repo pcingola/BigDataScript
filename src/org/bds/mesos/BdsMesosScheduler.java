@@ -41,7 +41,7 @@ import org.apache.mesos.Protos.TaskStatus;
 import org.apache.mesos.Protos.Value;
 import org.apache.mesos.Scheduler;
 import org.apache.mesos.SchedulerDriver;
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostInifinte;
 import org.bds.cluster.host.HostResources;
@@ -67,7 +67,7 @@ public class BdsMesosScheduler implements Scheduler {
 
 	private final ExecutorInfo executor;
 	protected boolean verbose = false;
-	protected Cluster cluster;
+	protected ComputerSystem cluster;
 	protected HashMap<String, Task> taskById;
 	protected ExecutionerMesos executionerMesos;
 	protected Map<String, Set<Offer>> offersByHost;
@@ -77,7 +77,7 @@ public class BdsMesosScheduler implements Scheduler {
 	public BdsMesosScheduler(ExecutionerMesos executionerMesos, ExecutorInfo executor) {
 		this.executionerMesos = executionerMesos;
 		this.executor = executor;
-		cluster = executionerMesos.getCluster();
+		cluster = executionerMesos.getSystem();
 		taskById = new HashMap<>();
 		taskToLaunch = new HashSet<>();
 		offersByHost = new HashMap<>();

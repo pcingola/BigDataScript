@@ -12,6 +12,7 @@ import org.bds.util.Timer;
 
 /**
  * TaskLogger log stale task processes (PID) and files into a file.
+ *
  * A parent bds-exec process (i.e. the GO program that invokes BigDataScript
  * Java class) will parse the file and:
  * 		i) Kill remaining processes invoking appropriate commands (kill, qdel, etc.)
@@ -36,6 +37,10 @@ public class TaskLogger implements Serializable {
 		if (debug) Gpr.debug("Creating PID logger " + pidFile);
 	}
 
+	public synchronized void add(String id, String command) {
+		append(createEntry(id, true, command));
+	}
+
 	/**
 	 * Add a task and the corresponding executioner
 	 */
@@ -46,11 +51,8 @@ public class TaskLogger implements Serializable {
 		String pid = task.getPid();
 		pids.add(pid);
 
-		//---
 		// Append process PID
-		//---
-
-		// Prepare kill command
+		// Prepare command
 		StringBuilder cmdsb = new StringBuilder();
 		String[] osKillCommand = executioner.osKillCommand(task);
 		if (osKillCommand != null) {
@@ -59,22 +61,18 @@ public class TaskLogger implements Serializable {
 		}
 		String cmd = cmdsb.toString().trim();
 
-		// Append process entry
-		lines.append(task.getPid() + "\t+\t" + cmd + "\n");
+		// Append  entry
+		lines.append(createEntry(task.getPid(), true, cmd));
 
-		//---
 		// Append task output files.
 		// Note: If this task does not finish (e.g. Ctrl-C), we have to remove these files.
 		//       If the task finished OK, we mark them not to be removed
-		//---
 		if (task.getOutputs() != null) {
 			for (String file : task.getOutputs())
-				lines.append(file + "\t+\t" + CMD_REMOVE_FILE + "\n");
+				lines.append(createEntry(file, true, CMD_REMOVE_FILE));
 		}
 
-		//---
 		// Append all lines to file
-		//---
 		append(lines.toString());
 	}
 
@@ -92,8 +90,23 @@ public class TaskLogger implements Serializable {
 		}
 	}
 
+	/**
+	 * Create a log entry (a line in the log file)
+	 * @param id : Item ID (e.g. file path, process ID, instance ID, etc)
+	 * @param add : Add or remove
+	 * @param command : Command line to remove item
+	 */
+	protected String createEntry(String id, boolean add, String command) {
+		char sign = add ? '+' : '-';
+		return id + "\t" + sign + "\t" + command + '\n';
+	}
+
 	public HashSet<String> getPids() {
 		return pids;
+	}
+
+	public synchronized void remove(String id) {
+		append(createEntry(id, false, ""));
 	}
 
 	/**
@@ -107,12 +120,12 @@ public class TaskLogger implements Serializable {
 		StringBuilder lines = new StringBuilder();
 
 		// Append process PID
-		lines.append(task.getPid() + "\t-\n");
+		lines.append(createEntry(task.getPid(), false, ""));
 
 		// Append task output files.
 		if (task.getOutputs() != null) {
 			for (String file : task.getOutputs())
-				lines.append(file + "\t-\n");
+				lines.append(createEntry(file, false, ""));
 		}
 
 		// Append all lines to file
