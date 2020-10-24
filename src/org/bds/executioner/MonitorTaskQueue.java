@@ -15,7 +15,7 @@ public abstract class MonitorTaskQueue extends MonitorTask implements Serializab
 
 	private static final long serialVersionUID = 2294558678839375573L;
 
-	protected String queueName;
+	protected String queueId; // A unique queue ID from the queuing system
 
 	public MonitorTaskQueue() {
 		super();
@@ -34,12 +34,12 @@ public abstract class MonitorTaskQueue extends MonitorTask implements Serializab
 	/**
 	 * Create a unique name according to queue name restrictions
 	 */
-	protected String getQueueName() {
-		if (queueName == null) {
+	public String getQueueId() {
+		if (queueId == null) {
 			String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
-			queueName = String.format("bds_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS_%2$tL_%s", Calendar.getInstance(), r);
+			queueId = String.format("bds_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS_%2$tL_%s", Calendar.getInstance(), r);
 		}
-		return queueName;
+		return queueId;
 	}
 
 	/**
@@ -49,6 +49,8 @@ public abstract class MonitorTaskQueue extends MonitorTask implements Serializab
 
 	/**
 	 * OS command to to delete task queue
+	 * This is used by the 'Go' bds command to delete queues when
+	 * java process is killed (see TaskLogger class)
 	 */
 	public abstract String osDeleteQueueCommand();
 

@@ -43,11 +43,11 @@ public class MonitorTaskAws extends MonitorTaskQueue implements Serializable {
 	@Override
 	public void createQueue() {
 		if (hasQueue()) return; // Queue already exists
-		queueName = getQueueName();
+		queueId = getQueueId();
 
-		CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
+		CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueId).build();
 		sqsClient.createQueue(createQueueRequest);
-		GetQueueUrlResponse getQueueUrlResponse = getSqsClient().getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
+		GetQueueUrlResponse getQueueUrlResponse = getSqsClient().getQueueUrl(GetQueueUrlRequest.builder().queueName(queueId).build());
 		queueUrl = getQueueUrlResponse.queueUrl();
 
 		// TODO: Add to 'taskLogger' so that Go bds process can delete the queue if Java dies

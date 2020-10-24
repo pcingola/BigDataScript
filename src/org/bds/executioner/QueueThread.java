@@ -69,12 +69,13 @@ public class QueueThread extends Thread {
 
 	protected void runLoopAfter() {
 		monitorTasks.deleteQueue();
-		taskLogger.remove(monitorTasks.getQueueName());
+		taskLogger.remove(monitorTasks.getQueueId());
 	}
 
 	protected void runLoopBefore() {
+		String cmdDeleteQueue = monitorTasks.osDeleteQueueCommand();
 		monitorTasks.createQueue();
-		taskLogger.add(monitorTasks.getQueueName());
+		taskLogger.add(monitorTasks.getQueueId(), cmdDeleteQueue);
 	}
 
 	/**

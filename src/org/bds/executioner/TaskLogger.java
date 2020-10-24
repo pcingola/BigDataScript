@@ -11,12 +11,44 @@ import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
- * TaskLogger log stale task processes (PID) and files into a file.
+ * TaskLogger: This class adds entries to the `bds.pid.$PID` log file.
  *
- * A parent bds-exec process (i.e. the GO program that invokes BigDataScript
- * Java class) will parse the file and:
- * 		i) Kill remaining processes invoking appropriate commands (kill, qdel, etc.)
- * 		ii) Remove stale file from unfinished tasks
+ * Background: bds commmnad consists of two parts:
+ * 	- `bds-exec`: A binary executable programmed in Go
+ * 	- `bds-java`: A java program (this code)
+ *
+ * The `bds-exec` controls execution of `bds-java` and catches any errors
+ * or exceptions.
+ *
+ * When Java process dies (e.g. die to `Ctrl-C`, fatal error, uncaught
+ * exception, etc.), 'bds go' takes control and cleans up. This 'clean up'
+ * includes managing several different types of entities, for example:
+ * 	- deleting stale files: For example if a task fails, the tasks' output file are in undefined state, so we must clean them up
+ * 	- kill processes: If the user performs a `Ctrl-C`, bds tries to clean up all running process, e.g. `task` or `sys` commands that are currently running locally
+ *  - kill cluster jobs: Same as before, but for clusters (i.e. kill all `task` running in a cluster when a `Ctrl-C` is received)
+ *  - terminate cloud instances: Same as before, but for cloud (i.e. kill all `task` running in a cloud when a `Ctrl-C` is received)
+ *  - delete cloud queues: Communication queues for cloud processes must be cleaned up
+ *
+ * The ways this is done is simply by registering all these entities in a
+ * file. This file is usually named `bds.pid.$PID` (where PID is the local
+ * process ID). bds-exec created the file name and passes the name of the
+ * file to bds-java using the (hidden) `-pid` command line option.
+ *
+ * This class takes care of registering all the entities that need to be logged
+ * in that file. The format is one line per entry:
+ * ```
+ * entityId \t {'+','-'} \t command_to_delete
+ * ```
+ * where:
+ * 	- entityId: Something that uniquely denotes the entity to remove (process ID, cluster job ID, file absolute path, instance ID, etc.)
+ *  - `{+,-}`: This can be either
+ *		- '+' indicates where we are adding the entity to be cleaned up
+ *		- 'i' indicates where we removing the entity (it has already been cleaned up by `bds-java`, so `bds-exec` doesn't need to take care of this entry (e.g. a finished task)
+ *	- command: A command the has to be executed in order to clean up (e.g. `rm` to delete a file, `scancel` in s slurm cluster, etc.)
+ *
+ * When `bds-exec` takes control (i.e. when `bds-java` dies), it will add to a dictionary (key
+ * is `entityId`, value is `command`) all entries having a '+' and delete from the dictionary all
+ * `enityId` having a '-'. Then it will execute all `command` to delete the remaining entries.
  *
  * @author pcingola
  */
