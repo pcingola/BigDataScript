@@ -82,8 +82,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 	private String getQueueName() {
 		if (queueName == null) {
 			String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
-			queueName = String.format("bds_%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%1$tL_%2s", Calendar.getInstance(), r);
-			Gpr.debug("QUEUE NAME: " + queueName);
+			queueName = String.format("bds_%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%2$s", Calendar.getInstance(), r);
 		}
 		return queueName;
 	}
