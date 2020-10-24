@@ -16,7 +16,7 @@ public class MonitorTasks implements Serializable {
 	private static MonitorTasks monitorTasks;
 
 	private MonitorTaskExitFile monitorTaskExitFile;
-	private MonitorTaskAws monitorTaskAws;
+	private MonitorTaskQueue monitorTaskQueue;
 
 	public static MonitorTasks get() {
 		if (monitorTasks == null) monitorTasks = new MonitorTasks();
@@ -26,14 +26,14 @@ public class MonitorTasks implements Serializable {
 	private MonitorTasks() {
 	}
 
-	public MonitorTaskAws getMonitorTaskAws() {
-		if (monitorTaskAws == null) monitorTaskAws = new MonitorTaskAws();
-		return monitorTaskAws;
-	}
-
 	public MonitorTaskExitFile getMonitorTaskExitFile() {
 		if (monitorTaskExitFile == null) monitorTaskExitFile = new MonitorTaskExitFile();
 		return monitorTaskExitFile;
+	}
+
+	public MonitorTaskQueue getMonitorTaskQueue() {
+		if (monitorTaskQueue == null) monitorTaskQueue = new MonitorTaskQueue();
+		return monitorTaskQueue;
 	}
 
 }

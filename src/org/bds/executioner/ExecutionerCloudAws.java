@@ -31,7 +31,7 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 
 	protected ExecutionerCloudAws(Config config) {
 		super(config);
-		monitorTask = MonitorTasks.get().getMonitorTaskAws();
+		monitorTask = MonitorTasks.get().getMonitorTaskQueue();
 	}
 
 	@Override

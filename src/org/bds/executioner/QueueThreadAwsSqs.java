@@ -27,7 +27,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 	private static final String OS_DELETE_QUEUE_COMMAND = "aws sqs delete-queue --queue-url"; // Command line to delete a queue
 	public static final int AWS_SQS_WAIT_TIME_SECONDS = 10; // Long polling parameter
 
-	protected SqsClient sqsClient;
+	private SqsClient sqsClient;
 	protected String queueUrl;
 	protected String queueName;
 
@@ -44,10 +44,11 @@ public class QueueThreadAwsSqs extends QueueThread {
 
 		queueName = getQueueName();
 		CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
-		sqsClient.createQueue(createQueueRequest);
+		getSqsClient().createQueue(createQueueRequest);
 
 		GetQueueUrlResponse getQueueUrlResponse = getSqsClient().getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
 		queueUrl = getQueueUrlResponse.queueUrl();
+		log("Created queue '" + queueName + "', url: '" + queueUrl + "'");
 
 		return hasQueue(); // Success if the queue was created
 	}
@@ -57,7 +58,10 @@ public class QueueThreadAwsSqs extends QueueThread {
 	 */
 	@Override
 	public boolean deleteQueue() {
+		if (!hasQueue()) return false; // Nothing to delete
+
 		try {
+			log("Deleting queue '" + queueName + "', url: '" + queueUrl + "'");
 			DeleteQueueRequest deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queueUrl).build();
 			getSqsClient().deleteQueue(deleteQueueRequest);
 			queueUrl = null;
@@ -78,7 +82,8 @@ public class QueueThreadAwsSqs extends QueueThread {
 	private String getQueueName() {
 		if (queueName == null) {
 			String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
-			queueName = String.format("bds_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS_%2$tL_%s", Calendar.getInstance(), r);
+			queueName = String.format("bds_%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%1$tL_%2s", Calendar.getInstance(), r);
+			Gpr.debug("QUEUE NAME: " + queueName);
 		}
 		return queueName;
 	}

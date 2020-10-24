@@ -22,6 +22,8 @@ public class Zzz {
 		System.out.println("Start");
 
 		Config config = new Config();
+		config.setVerbose(true);
+
 		QueueThread qt = new QueueThreadAwsSqs(config, null, null);
 		qt.start();
 		try {

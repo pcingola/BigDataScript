@@ -57,7 +57,7 @@ public abstract class QueueThread extends Thread {
 	}
 
 	public void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
+		if (verbose || debug) Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}
 
 	/**
