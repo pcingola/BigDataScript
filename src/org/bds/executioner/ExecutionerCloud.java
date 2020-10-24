@@ -83,7 +83,7 @@ public abstract class ExecutionerCloud extends Executioner {
 	protected void runExecutionerLoopBefore() {
 		// Start a new thread if needed, don't start a thread if it's already running
 		if (queueThread == null) {
-			queueThread = new QueueThread(config, (MonitorTaskQueue) monitorTask, taskLogger);
+			queueThread = new QueueThreadAwsSqs(config, (MonitorTaskQueue) monitorTask, taskLogger);
 			queueThread.start();
 		}
 	}

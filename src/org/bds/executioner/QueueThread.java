@@ -1,6 +1,7 @@
 package org.bds.executioner;
 
 import org.bds.Config;
+import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -8,20 +9,36 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class QueueThread extends Thread {
+public abstract class QueueThread extends Thread {
 
 	protected Config config;
 	protected boolean debug;
 	protected boolean verbose;
 	protected MonitorTaskQueue monitorTasks; // Monitor tasks: This object checks if a task finished. In this case, the messages from the queue inform this monitor about finished tasks
-	protected boolean running;
-	protected TaskLogger taskLogger;
+	protected boolean running; // Is this thread runing?
+	protected TaskLogger taskLogger; // Add and remove queue ID from TaskLogger, so `bds-exec` can properly clean up if needed
 
 	public QueueThread(Config config, MonitorTaskQueue monitorTasks, TaskLogger taskLogger) {
 		verbose = config.isVerbose();
 		debug = config.isDebug();
 		this.monitorTasks = monitorTasks;
+		this.taskLogger = taskLogger;
 	}
+
+	/**
+	 * Create queue: Return true if the queue was created, false otherwise
+	 */
+	public abstract boolean createQueue();
+
+	/**
+	 * Delete queue: Return true if the queue was deleted, false otherwise
+	 */
+	public abstract boolean deleteQueue();
+
+	/**
+	 * Create a unique ID used to uniquely identify the queue
+	 */
+	public abstract String getQueueId();
 
 	/**
 	 * Is this executioner running?
@@ -35,12 +52,20 @@ public class QueueThread extends Thread {
 	 */
 	public synchronized void kill() {
 		// TODO: Interrupt thread to make sure it wakes up from waiting messages
+		Gpr.debug("!!! TODO: Interrupt thread to make sure it wakes up from waiting messages");
 		running = false;
 	}
 
 	public void log(String msg) {
 		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}
+
+	/**
+	 * OS command to to delete task queue
+	 * This is used by the 'Go' bds command to delete queues when
+	 * java process is killed (see TaskLogger class)
+	 */
+	public abstract String osDeleteQueueCommand();
 
 	protected void processMessage(String message) {
 		// TODO: Write STDOUT / STDERR to local files and show on console
@@ -61,21 +86,26 @@ public class QueueThread extends Thread {
 	/**
 	 * Main queue loop: Read messages from the queue and process them
 	 */
-	protected void runLoop() {
-		// TODO: Receive messages
+	protected abstract void runLoop();
 
-		// TODO: Process messages
-	}
-
+	/**
+	 * Run after the thread is stopped
+	 */
 	protected void runLoopAfter() {
-		monitorTasks.deleteQueue();
-		taskLogger.remove(monitorTasks.getQueueId());
+		// Delete the queue and add a "removed" entry in TaskLogger
+		if (deleteQueue()) {
+			if (taskLogger != null) taskLogger.remove(getQueueId());
+		}
 	}
 
+	/**
+	 * Run before starting the main loop
+	 */
 	protected void runLoopBefore() {
-		String cmdDeleteQueue = monitorTasks.osDeleteQueueCommand();
-		monitorTasks.createQueue();
-		taskLogger.add(monitorTasks.getQueueId(), cmdDeleteQueue);
+		// Create the queue and add an entry in TaskLogger
+		if (createQueue()) {
+			if (taskLogger != null) taskLogger.add(getQueueId(), osDeleteQueueCommand());
+		}
 	}
 
 	/**

@@ -1,12 +1,8 @@
 package org.bds;
 
-import java.io.File;
-
+import org.bds.executioner.QueueThread;
+import org.bds.executioner.QueueThreadAwsSqs;
 import org.bds.util.Gpr;
-
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 public class Zzz {
 
@@ -25,12 +21,14 @@ public class Zzz {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		String bucket = awsBucketName();
-		String key = "/tmp/zzz.txt";
-		String localFileName = "z.txt";
-
-		S3Client s3 = S3Client.create();
-		s3.putObject(PutObjectRequest.builder().bucket(bucket).key(key).build(), RequestBody.fromFile(new File(localFileName)));
+		Config config = new Config();
+		QueueThread qt = new QueueThreadAwsSqs(config, null, null);
+		qt.start();
+		try {
+			qt.wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		System.out.println("End");
 	}
