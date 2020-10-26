@@ -80,9 +80,13 @@ public class ExecutionerLocal extends ExecutionerFileSystem {
 
 		// Add command line parameters for "bds exec"
 		args.add(timeout + ""); // Enforce timeout
+		args.add("-stdout");
 		args.add(task.getStdoutFile() != null ? task.getStdoutFile() : "-"); // Redirect STDOUT to this file
+		args.add("-stderr");
 		args.add(task.getStderrFile() != null ? task.getStderrFile() : "-"); // Redirect STDERR to this file
+		args.add("-exit");
 		args.add(task.getExitCodeFile() != null ? task.getExitCodeFile() : "-"); // Redirect exit code
+		// Command to execute
 		args.add(task.getProgramFileName()); // Program to execute
 
 		return args.toArray(Cmd.ARGS_ARRAY_TYPE);

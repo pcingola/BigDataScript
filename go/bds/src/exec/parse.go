@@ -1,6 +1,7 @@
 package exec
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -107,36 +108,34 @@ func (be *BdsExec) parseCmdLineArgsExec() {
 		log.Printf("Debug parseCmdLineArgsExec: Parsing command line arguments (len=%d): %v\n", len(be.args), be.args)
 	}
 
-	minArgs := 6
-	if len(be.args) < minArgs {
-		be.Usage("Invalid number of parameters for 'exec' command")
-	}
-
 	// Parse command line args
-	cmdIdx := 2
-	timeStr := be.args[cmdIdx]
-	cmdIdx = cmdIdx + 1
-	be.outFile = be.args[cmdIdx]
-	cmdIdx = cmdIdx + 1
-	be.errFile = be.args[cmdIdx]
-	cmdIdx = cmdIdx + 1
-	be.exitFile = be.args[cmdIdx]
-	cmdIdx = cmdIdx + 1
-	be.command = be.args[cmdIdx]
-	cmdIdx = cmdIdx + 1
+	flagset := flag.NewFlagSet("bds-exec", flag.ContinueOnError)
+	timePtr := flagset.Int("timeout", 0, "Time out in seconds")
+	stdoutPtr := flagset.String("stdout", "-", "File to redirect STDOUT")
+	stderrPtr := flagset.String("stderr", "-", "File to redirect STDERR")
+	exitFilePtr := flagset.String("exit", "-", "File to write exit code")
+	awsSqsNamePtr := flagset.String("awsSqsName", "", "AWS SQS queue name")
+	noCheckSumPtr := flagset.Bool("noCheckSum", false, "Disable checksum in command")
+	flagset.Bool("d", false, "Debug")
+	flagset.Bool("v", false, "Verbose")
+	flagset.Parse(os.Args[2:])
+	be.outFile, be.errFile, be.exitFile, be.timeSecs = *stdoutPtr, *stderrPtr, *exitFilePtr, *timePtr
+	be.noCheckSum = *noCheckSumPtr
+	be.awsSqsName = *awsSqsNamePtr
 
-	// Append other arguments
-	be.cmdargs = []string{be.command}
-	for _, arg := range be.args[minArgs:] {
-		be.cmdargs = append(be.cmdargs, arg)
+	// Remaining command line arguments
+	args := flagset.Args()
+	if len(args) <= 0 {
+		panic("parseCmdLineArgsExec: Empty command to execute")
 	}
 
-	// Parse time argument
-	timeSecs, err := strconv.Atoi(timeStr)
-	if err != nil {
-		log.Fatalf("Invalid time: '%s'\n", timeStr)
+	be.command = args[0]
+	be.cmdargs = args[1:]
+	if DEBUG {
+		log.Printf("Debug parseCmdLineArgsExec: Arguments parsed, be.outFile='%s', be.errFile='%s', be.exitFile='%s', be.timeSecs=%d, be.noCheckSum=%b, be.awsSqsName='%s'\n", be.outFile, be.errFile, be.exitFile, be.timeSecs, be.noCheckSum, be.awsSqsName)
+		log.Printf("Debug parseCmdLineArgsExec: Command arguments to execute (len=%d): %s %v\n", len(be.cmdargs), be.command, be.cmdargs)
 	}
-	be.timeSecs = timeSecs
+
 }
 
 

@@ -49,7 +49,7 @@ func (be *BdsExec) checksum() bool {
 		sum = sum * 33 + uint32(buff[i])
 	}
 
-  // Is checksum correct?
+	// Is checksum correct?
 	return sum == chsum32
 }
 
@@ -66,6 +66,9 @@ func (be *BdsExec) checksum() bool {
 	independent way.
 */
 func (be *BdsExec) checksumWait() bool {
+	if be.noCheckSum {
+		return true
+	}
 	for i := 0 ; i < MAX_CHECKSUM_ITERS ; i++ {
 			if DEBUG {
 				log.Printf("Debug checksumWait (iteration %d): '%s'\n", i, be.command)

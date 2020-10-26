@@ -39,6 +39,8 @@ type BdsExec struct {
 	exitFile string			// Exec: Write exit code to this file
 	timeSecs int			// Exec: Maximum execution time
 	exitCode int			// Exec: Command's Exit code
+	noCheckSum bool			// Exec: Disable performing checksum on (shell) file to execute
+	awsSqsName string		// Exec: Send command outputs to an AWS SQS queue
 
 	pidToKill int			// Kill: PID to kill
 
@@ -66,6 +68,7 @@ func NewBdsExec() *BdsExec {
 	be.errFile = ""
 	be.exitFile = ""
 	be.timeSecs = 0
+	be.noCheckSum = false
 
 	// Bds
 	be.javaMem = JAVA_MEM
