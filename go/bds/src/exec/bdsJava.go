@@ -6,6 +6,11 @@ import (
 	"path"
 )
 
+const JAVA_CMD = "java"
+const JAVA_MEM = "-Xmx4G"
+const JAVA_NATIVE_LIB = "-Djava.library.path="
+const JAVA_BDS_CLASS = "org.bds.Bds"
+
 /*
 	Invoke bds java program
 

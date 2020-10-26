@@ -5,11 +5,8 @@ import (
 	"os"
 )
 
-// Verbose & Debug
-const DEBUG = false
-
 //-----------------------------------------------------------------------------
-// Tee: Copty written data to output file and Stdout / Stderr
+// Tee: Copy written data to output file and Stdout / Stderr
 //-----------------------------------------------------------------------------
 
 type Tee struct {
@@ -32,10 +29,6 @@ func NewTee(outFile string, useStdErr bool) *Tee {
 
 	// t := &Tee{outFile: outFile, useStdErr: useStdErr}
 	t := &Tee{outFile, useStdErr, nil}
-
-	if DEBUG {
-		log.Printf("Debug: Tee(%s, %s)\n", outFile, useStdErr)
-	}
 
 	// Copy to STDOUT to file (or to stdout)
 	if (outFile == "") || (outFile == "-") {

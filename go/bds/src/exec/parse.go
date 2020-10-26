@@ -169,7 +169,7 @@ func (be *BdsExec) parseCmdLineArgsVerboseDebug() {
 		case "-d":
 			DEBUG = true
 		case "-v":
-			VERBOSE = true
+			VERBOSE, DEBUG = true, true
 		}
 	}
 }

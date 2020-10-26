@@ -12,6 +12,11 @@ import (
 	"tmpFile"
 )
 
+// Command indicating to remove file (taskLogger file)
+const CMD_REMOVE_FILE = "@rm"
+const CMD_KILL = "@kill"
+
+
 func (be *BdsExec) createTaskLoggerFile() {
 	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid())
 	pidTmpFile, err := tmpfile.TempFile(prefix)
@@ -39,98 +44,117 @@ func (be *BdsExec) createTaskLoggerFile() {
 */
 func (be *BdsExec) taskLoggerCleanUpAll() {
 	if DEBUG {
-		log.Printf("Debug taskLoggerCleanUpAll: Start\n")
+		log.Printf("Debug taskLoggerCleanUpAll: Start '%s'\n", be.taskLoggerFile)
 	}
 
-	var (
-		err  error
-		line string
-		file *os.File
-	)
-
+	// Parse task logger file
 	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is removed
+	cmds := be.taskLoggerParseFile()
 
-	//---
-	// Open file and parse it
-	//---
-	pids := make(map[string]bool)
+	// Kill all pending processes
+	be.taskLoggerProcess(cmds)
+}
+
+/*
+ Parse taskLogger file
+ Format is one line per entry:
+ 	id \t {"+", "-"} \t command
+
+  Returns a hash of commands to run, to remove the resources
+*/
+func (be *BdsExec) taskLoggerParseFile() map[string]string {
 	cmds := make(map[string]string)
 
-	if file, err = os.Open(be.taskLoggerFile); err != nil {
-		log.Printf("Error taskLoggerCleanUpAll: Cannot open TaskLogger file '%s' (PID: %d)\n", be.taskLoggerFile, syscall.Getpid())
-		return
+	// Open file and parse it
+	file, err := os.Open(be.taskLoggerFile)
+	if err != nil {
+		log.Printf("Error taskLoggerParseFile: Cannot open TaskLogger file '%s' (PID: %d)\n", be.taskLoggerFile, syscall.Getpid())
+		return cmds
 	}
 	defer file.Close() // Make sure the file is deleted
 
 	// Read line by line
 	if DEBUG {
-		log.Printf("Debug taskLoggerCleanUpAll: Parsing process pid file '%s'\n", be.taskLoggerFile)
+		log.Printf("Debug taskLoggerParseFile: Parsing taskLogger file '%s'\n", be.taskLoggerFile)
 	}
 	reader := bufio.NewReader(file)
 	for {
-		if line, err = fileutil.ReadLine(reader); err != nil {
+		line, err := fileutil.ReadLine(reader)
+		if err != nil {
 			break
 		}
 		recs := strings.Split(line, "\t")
 
 		pid := recs[0]
 		addDel := recs[1]
-		if DEBUG {
-			log.Printf("Debug taskLoggerCleanUpAll: \t\tpid: '%s'\tadd/del: '%s'\n", pid, addDel)
-		}
 
 		// Add or remove from map
-		if addDel == "-" {
-			delete(pids, pid)
-		} else {
-			pids[pid] = true
-			if len(recs) > 2 && len(recs[2]) > 0 {
-				cmds[pid] = recs[2]
-			}
+		switch addDel {
+			case "-":
+				delete(cmds, pid)
+				if DEBUG {
+					log.Printf("Debug taskLoggerParseFile: Removing id '%s', add/del: '%s'\n", pid, addDel)
+				}
+			case "+":
+				if len(recs) > 2 && len(recs[2]) > 0 {
+					cmd := recs[2]
+					cmds[pid] = cmd
+					log.Printf("Debug taskLoggerParseFile: Adding id '%s', add/del '%s', cmd '%s'\n", pid, addDel, cmd)
+				} else {
+					log.Printf("Error taskLoggerParseFile: Invalid line, cmd field not found, line: '%s'\n", cmds, line)
+				}
+			default:
+				log.Printf("Error taskLoggerParseFile: Invalid addDel field '%s', line: '%s'\n", addDel, line)
 		}
 	}
 
-	// Kill all pending processes
-	runCmds := make(map[string]string)
-	for pid, running := range pids {
+	return cmds
+}
 
-		// Is it marked as running? Kill it
-		if running {
-			if cmd, ok := cmds[pid]; !ok {
+/*
+  Process commands in hash to remove resources
+  Some "internal" commands are executed directly (e.g. remove files, kill local processes, etc.)
+  All "internal" command names start with an '@' character
+*/
+func (be *BdsExec) taskLoggerProcess(cmds map[string]string) {
+	runCmds := make(map[string]string)
+	for pid, cmd := range cmds {
+		switch cmd {
+			case CMD_KILL:
 				if VERBOSE {
 					log.Printf("Info: Killing PID '%s'\n", pid)
 				}
 				pidInt, _ := strconv.Atoi(pid)
 				be.KillProcessGroup(pidInt) // No need to run a command, just kill local porcess group
-			} else if cmd == CMD_REMOVE_FILE {
+			case CMD_REMOVE_FILE:
 				// This is a file to be removed, not a command
 				if VERBOSE {
 					log.Printf("Info: Deleting file '%s'\n", pid)
 				}
 				os.Remove(pid)
-			} else {
+			default:
+				// Remove using a command
 				if DEBUG {
-					log.Printf("Info: Killing PID '%s' using command '%s'\n", pid, runCmds[cmd])
+					log.Printf("Info: Cleanning up '%s' using command '%s'\n", pid, runCmds[cmd])
 				}
-
-				// Create command to be executed
-				if _, ok = runCmds[cmd]; ok {
+				// Create command to be executed (or append)
+				_, ok := runCmds[cmd]
+				if ok {
 					runCmds[cmd] = runCmds[cmd] + "\t" + pid
 				} else {
 					runCmds[cmd] = cmd + "\t" + pid
 				}
-			}
-		} else {
-			if DEBUG {
-				log.Printf("Debug taskLoggerCleanUpAll: Not killing PID '%s' (finished running)\n", pid)
-			}
 		}
 	}
+	be.taskLoggerRunCmd(runCmds) // Run all commands (usually it's only one command)
+}
 
-	// Run all commands (usually it's only one command)
+/*
+ Run all commands in the dictionary
+*/
+func (be *BdsExec) taskLoggerRunCmd(runCmds map[string]string) {
 	for cmd, args := range runCmds {
 		if len(cmd) > 0 {
-			// fmt.Fprintf(os.Stderr, "\t\trunning command '%s'\n", cmd)
 			if VERBOSE {
 				log.Printf("Info: Running command '%s'\n", cmd)
 			}

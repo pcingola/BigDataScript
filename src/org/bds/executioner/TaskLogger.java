@@ -44,7 +44,7 @@ import org.bds.util.Timer;
  *  - `{+,-}`: This can be either
  *		- '+' indicates where we are adding the entity to be cleaned up
  *		- 'i' indicates where we removing the entity (it has already been cleaned up by `bds-java`, so `bds-exec` doesn't need to take care of this entry (e.g. a finished task)
- *	- command: A command the has to be executed in order to clean up (e.g. `rm` to delete a file, `scancel` in s slurm cluster, etc.)
+ *	- command: A command the has to be executed in order to clean up (e.g. `rm` to delete a file, `scancel` in s slurm cluster, etc.). Internal commands (e.g. deleting a local file, killing a local process) start with '@'
  *
  * When `bds-exec` takes control (i.e. when `bds-java` dies), it will add to a dictionary (key
  * is `entityId`, value is `command`) all entries having a '+' and delete from the dictionary all
@@ -56,7 +56,8 @@ public class TaskLogger implements Serializable {
 
 	private static final long serialVersionUID = -7712445468457053526L;
 
-	public static final String CMD_REMOVE_FILE = "rm";
+	public static final String CMD_REMOVE_FILE = "@rm";
+	public static final String CMD_KILL = "@kill";
 
 	boolean debug = false;
 	String pidFile;

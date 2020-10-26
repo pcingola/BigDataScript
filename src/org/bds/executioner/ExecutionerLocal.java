@@ -23,6 +23,8 @@ public class ExecutionerLocal extends ExecutionerFileSystem {
 	public static String LOCAL_KILL_COMMAND[] = { "bds", "kill" };
 	public static String LOCAL_STAT_COMMAND[] = { "ps" };
 
+	private static final String[] TASK_LOGGER_INTERNAL_KILL = { TaskLogger.CMD_KILL };
+
 	/**
 	 * Sometimes a "text file busy" error may appear when we execute a task.
 	 * E.g.: The following script will produce "text file busy" error on
@@ -71,7 +73,7 @@ public class ExecutionerLocal extends ExecutionerFileSystem {
 	 */
 	public static String[] createBdsExecCmdArgs(Task task) {
 		// Create command line
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 		for (String arg : LOCAL_EXEC_COMMAND)
 			args.add(arg);
 		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
@@ -149,8 +151,7 @@ public class ExecutionerLocal extends ExecutionerFileSystem {
 
 	@Override
 	public String[] osKillCommand(Task task) {
-		// This is killed internally by 'bds' (see GO program)
-		// So, there is no need for special commands
-		return null;
+		// This is killed internally by 'bds' (see GO program) so the kill command is '@kill' (internal commands start with '@')
+		return TASK_LOGGER_INTERNAL_KILL;
 	}
 }

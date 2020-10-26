@@ -17,15 +17,7 @@ const EXITCODE_OK = 0
 const EXITCODE_ERROR = 1
 const EXITCODE_TIMEOUT = 2
 
-const JAVA_CMD = "java"
-const JAVA_MEM = "-Xmx4G"
-const JAVA_NATIVE_LIB = "-Djava.library.path="
-const JAVA_BDS_CLASS = "org.bds.Bds"
-
 const BDS_NATIVE_LIB_DIR = "lib"
-
-// Command indicating to remove file (taskLogger file)
-const CMD_REMOVE_FILE = "rm"
 
 const MAX_CHECKSUM_ITERS = 100
 const CHECKSUM_LINE_START = "# Checksum: " // This has to match the one defined in 'Task.java'
