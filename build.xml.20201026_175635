@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project bds">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar" depends="compile">
+		<copy file="src/org/bds/SummaryTemplate.html" tofile="bin/org/bds/SummaryTemplate.html"/>
+		<copy file="src/org/bds/SummaryTemplate.yaml" tofile="bin/org/bds/SummaryTemplate.yaml"/>
+		<copy file="./src/org/bds/DagTaskTemplate.js" tofile="bin/org/bds/DagTaskTemplate.js"/>
+        <jar destfile="build/bds.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="org.bigDataScript.Bds"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="./bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/antlr-runtime-4.7.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/aws-java-sdk-1.11.319.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/commons-lang3-3.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/commons-logging-1.1.3.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/commons-net-3.6.jar"/>        	
+            <zipfileset excludes="META-INF/*.SF" src="lib/httpclient-4.5.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/httpcore-4.4.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/jackson-annotations-2.5.3.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/jackson-core-2.5.3.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/jackson-databind-2.5.3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/jsch-0.1.54.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/joda-time-2.8.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/junit-4.10.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/mesos-0.26.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/protobuf-java-2.5.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/jsoup-1.12.1.jar"/>
+        </jar>
+    </target>
+
+	<target name="clean">
+		<delete dir="bin"/>
+		<mkdir dir="bin"/>
+	</target>
+
+	<target name="compile" depends="clean">
+		<javac 
+			srcdir="src" 
+			destdir="bin" 
+			debug="true" 
+			source="12"
+			target="12"
+			includeantruntime="false" 
+			classpath="lib/antlr-runtime-4.7.1.jar:lib/commons-lang3-3.1.jar:lib/commons-net-3.6.jar:lib/jsch-0.1.54.jar:lib/junit-4.10.jar:lib/mesos-0.26.0.jar:lib/protobuf-java-2.5.0.jar:lib/httpclient-4.5.jar:lib/httpcore-4.4.1.jar:lib/joda-time-2.8.1.jar:lib/jackson-annotations-2.5.3.jar:lib/jackson-core-2.5.3.jar:lib/jackson-databind-2.5.3.jar:lib/commons-logging-1.1.3.jar:lib/aws-java-sdk-1.11.319.jar;lib/jsoup-1.12.1.jar"
+		/>
+	</target>
+
+</project>

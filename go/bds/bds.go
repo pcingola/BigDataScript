@@ -35,7 +35,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 )
 
 /*
@@ -44,53 +43,37 @@ import (
 func main() {
 
 	if exec.DEBUG {
-		log.Printf("Info: bds 'main()' invoked with command line argumnts: %v", os.Args)
+		log.Printf("Info main: bds (go) invoked with command line argumnts: %v", os.Args)
 	}
 
-	bdsexec := exec.NewBdsExec(os.Args)
+	bdsexec := exec.NewBdsExec()
 
 	// Parse command line arguments
 	if len(os.Args) > 1 {
-		if os.Args[1] == "exec" {
+		switch os.Args[1] {
+		case "exec":
 			// Execute 'exec' command and exit
 			exitCode := bdsexec.ExecuteCommandArgs()
 			os.Exit(exitCode)
-		} else if os.Args[1] == "kill" {
-			// Kill a process group
-			if len(os.Args) != 3 {
-				bdsexec.Usage("Invalid number of parameters for 'kill' command")
-			}
-
-			// Parse pid
-			pidStr := os.Args[2]
-			pid, err := strconv.Atoi(pidStr)
-			if err != nil {
-				log.Fatalf("Invalid PID: '%s'\n", pidStr)
-			}
-
-			// Kill and exit
-			bdsexec.KillProcessGroup(pid)
+		case "kill":
+			bdsexec.KillArgs()
 			os.Exit(0)
-		} else if os.Args[1] == "test" {
+		case "test":
 			// Placeholder for tests
 			zzz()
-		} else if os.Args[1] == "help" {
+			os.Exit(0)
+		case "help":
 			// Show usage and exit
 			bdsexec.Usage("")
 		}
 	}
 
 	// Execute Bds.jar
-	exitCode := bdsexec.Bds()
-	if exec.DEBUG {
-		log.Printf("Debug: Exit code '%d'\n", exitCode)
-	}
-
+	exitCode := bdsexec.BdsJava()
 	os.Exit(exitCode)
 }
 
 // A function used for testing
 func zzz() {
-	fmt.Printf("Test function: Zzz\n")
-	os.Exit(1)
+	fmt.Printf("Info: Test function zzz()\n")
 }
