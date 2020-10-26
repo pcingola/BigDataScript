@@ -26,8 +26,6 @@ func (t *Tee) Close() error {
 
 // Initialize a Tee
 func NewTee(outFile string, useStdErr bool) *Tee {
-
-	// t := &Tee{outFile: outFile, useStdErr: useStdErr}
 	t := &Tee{outFile, useStdErr, nil}
 
 	// Copy to STDOUT to file (or to stdout)
