@@ -10,6 +10,7 @@ t.bds*
 tmp
 go/bds/bds
 go/bds/pkg
+go/bds/src/github.com
 target/*
 mvn/target/*
 build/*
