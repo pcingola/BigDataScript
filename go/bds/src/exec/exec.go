@@ -9,8 +9,8 @@ import (
 )
 
 // Verbose & Debug
-var DEBUG bool= false
-var VERBOSE bool= false
+var DEBUG bool = false
+var VERBOSE bool = false
 
 // Exit codes
 const EXITCODE_OK = 0

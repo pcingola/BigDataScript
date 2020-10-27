@@ -12,6 +12,7 @@ import (
 type Tee struct {
 	outFile string
 	useStdErr bool
+	channel chan []byte
 	out *os.File
 }
 
@@ -25,8 +26,8 @@ func (t *Tee) Close() error {
 }
 
 // Initialize a Tee
-func NewTee(outFile string, useStdErr bool) *Tee {
-	t := &Tee{outFile, useStdErr, nil}
+func NewTee(outFile string, channel chan []byte, useStdErr bool) *Tee {
+	t := &Tee{outFile, useStdErr, channel, nil}
 
 	// Copy to STDOUT to file (or to stdout)
 	if (outFile == "") || (outFile == "-") {
@@ -45,6 +46,7 @@ func NewTee(outFile string, useStdErr bool) *Tee {
 // Write to Tee
 func (t *Tee) Write(buf []byte) (n int, err error) {
 
+	// Write to file
 	if t.out != nil {
 		n, err = t.out.Write(buf)
 	} else {
@@ -52,11 +54,16 @@ func (t *Tee) Write(buf []byte) (n int, err error) {
 		err = nil
 	}
 
-	// Also write to stdout / stderr
+	// Write to stdout / stderr
 	if t.useStdErr {
 		os.Stderr.Write(buf)
 	} else {
 		os.Stdout.Write(buf)
+	}
+
+	// Write to channel
+	if t.channel != nil {
+			t.channel <- buf
 	}
 
 	return n, err

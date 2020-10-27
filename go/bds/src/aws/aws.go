@@ -8,7 +8,13 @@ import (
     "github.com/aws/aws-sdk-go/service/sqs"
 )
 
+type AwsSqs struct {
+    sqsSession session.Must
+}
 
-sess := session.Must(session.NewSessionWithOptions(session.Options{
-    SharedConfigState: session.SharedConfigEnable,
-}))
+// Create a new AwsSqs
+func NewAwsSqs() *AwsSqs {
+    awssqs := &AwsSqs{}
+    awssqs.sqsSession = session.Must(session.NewSessionWithOptions(session.Options{SharedConfigState: session.SharedConfigEnable,}))
+    return awssqs
+}

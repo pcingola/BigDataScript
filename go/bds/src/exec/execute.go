@@ -7,12 +7,15 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"queue"
 	"strconv"
 	"strings"
 	"syscall"
 	"tee"
 	"time"
 )
+
+const QUEUE_SIZE = 1024
 
 /*
   Calculate the 'checksum' of a file and compare it to
@@ -125,7 +128,10 @@ func (be *BdsExec) executeCommand() int {
 		// Main bds program
 		signal.Notify(osSignal) // Capture all signals
 	} else {
-		be.checksumWait()
+		if !be.checksumWait() {
+			log.Printf("Error: Error trying to checksum file '%s'", be.command)
+			os.Exit(1)
+		}
 
 		// Set a new process group.
 		// We want to be able to kill all child processes, without killing the
@@ -142,7 +148,7 @@ func (be *BdsExec) executeCommand() int {
 			// In this case, we assume that the SSH daemon will catch the sinals
 			// and kill al child processes.
 			if DEBUG {
-				log.Printf("Error executeCommand: Error setting process group: %s", err)
+				log.Printf("Error: Error setting process group: %s", err)
 			}
 		}
 
@@ -156,8 +162,13 @@ func (be *BdsExec) executeCommand() int {
 	be.cmd = exec.Command(be.command)
 	be.cmd.Args = be.cmdargs
 
-	// Create queue channels
-	var stdoutCh, stderrCh chan string
+	// Create queue channels (e.g. AWS SQS)
+	var q *queue.Queue
+	var stdoutCh, stderrCh chan []byte
+	if be.awsSqsName != "" {
+		q = queue.NewQueue(QUEUE_SIZE)
+		stdoutCh, stderrCh = q.StdoutChan, q.StderrChan
+	}
 
 	// Copy stdout
 	stdout := tee.NewTee(be.outFile, stdoutCh, false)
@@ -178,17 +189,18 @@ func (be *BdsExec) executeCommand() int {
 		log.Fatal(err)
 	}
 
-	be.exitCode = be.executeCommandTimeout(osSignal)
+	be.exitCode = be.executeCommandTimeout(osSignal, q)
 	if DEBUG {
 		log.Printf("Debug executeCommand: Exit code %d\n", be.exitCode)
 	}
+
 	return be.exitCode
 }
 
 /*
 	Execute a command enforcing a timeout and writing exit status to 'exitFile'
 */
-func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal, exitQueueCh chan string) int {
+func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal, q *queue.Queue) int {
 	if DEBUG {
 		log.Printf("Debug executeCommandTimeout: Start\n")
 	}
@@ -202,23 +214,23 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal, exitQueueCh ch
 	// Create a timeout process
 	// References: http://blog.golang.org/2010/09/go-concurrency-patterns-timing-out-and.html
 	exitCode := make(chan string, 1)
-	go execute(be.cmd, exitCode)
+	go execute(be.cmd, exitCode)	// Run command
+	if q != nil {
+		go q.Transmit()	// Transmit stdout/stderr to Queue
+	}
 
 	// Wait until executions ends, timeout or OS signal
-	kill := false
-	run := true
+	run, kill := true, false
 	for run {
 		select {
 			case exitStr = <-exitCode:
-				kill = false
-				run = false
+				run, kill = false, false
 				if DEBUG {
 					log.Printf("Debug executeCommandTimeout: Execution finished (%s)\n", exitStr)
 				}
 
 			case <-time.After(time.Duration(be.timeSecs) * time.Second):
-				run = false
-				kill = true
+				run, kill = false, true
 				exitStr = "Time out"
 				if DEBUG {
 					log.Printf("Debug executeCommandTimeout: Timeout!\n")
@@ -233,17 +245,19 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal, exitQueueCh ch
 						log.Printf("bds: Received OS signal '%s'\n", sigStr)
 					}
 
-					kill = true
+					run, kill = false, true
 					exitStr = "Signal received"
-					run = false
 				}
 		}
 	}
 
 	// Write exitCode to file and to queue exit channel
 	be.updateExitFile(exitStr)
-	if exitQueueCh != nil {
-		exitQueueCh <- exitStr
+
+	// Wait until all data has been sent to the queue
+	if q != nil {
+		q.Exit(exitStr)
+		q.WaitFinish()
 	}
 
 	// Should we kill child process?
