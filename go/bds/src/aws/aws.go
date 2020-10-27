@@ -38,6 +38,7 @@ func (awssqs *AwsSqs) AppendStdOut(mgs []byte) {
 
 // Append to STDERR buffer
 func (awssqs *AwsSqs) AppendStdErr(mgs []byte) {
+    log.Printf("CURRENT STDOUT: %s\tAPPEND: %s\n", awssqs.buffErr, mgs)
     if awssqs.buffErr == nil {
         awssqs.buffErr = mgs
     } else {

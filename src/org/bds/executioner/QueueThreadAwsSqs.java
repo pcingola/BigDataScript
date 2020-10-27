@@ -1,5 +1,6 @@
 package org.bds.executioner;
 
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
@@ -31,8 +32,17 @@ public class QueueThreadAwsSqs extends QueueThread {
 	protected String queueUrl;
 	protected String queueName;
 
+	public static String decode64(String s) {
+		return new String(Base64.getDecoder().decode(s));
+	}
+
 	public QueueThreadAwsSqs(Config config, MonitorTaskQueue monitorTasks, TaskLogger taskLogger) {
 		super(config, monitorTasks, taskLogger);
+	}
+
+	public QueueThreadAwsSqs(Config config, MonitorTaskQueue monitorTasks, TaskLogger taskLogger, String queueName) {
+		this(config, monitorTasks, taskLogger);
+		this.queueName = queueName;
 	}
 
 	/**
@@ -106,6 +116,27 @@ public class QueueThreadAwsSqs extends QueueThread {
 	 */
 	private void processMessage(Message message) {
 		Gpr.debug("RPOCESS MESSAGE: " + message);
+		String body = message.body();
+		String[] parts = body.split("\t");
+		String stdout = parts[0];
+		String stderr = parts.length > 1 ? parts[1] : "";
+		String sexit = parts.length > 2 ? parts[2] : "";
+
+		// Show message to console
+		if (stdout != "") {
+			stdout = decode64(stdout);
+			System.out.println("STDOUT: " + stdout);
+		}
+
+		if (stderr != "") {
+			stderr = decode64(stderr);
+			System.out.println("STDERR: " + stderr);
+		}
+
+		if (sexit != "") {
+			sexit = decode64(sexit);
+			System.out.println("SEXIT: " + sexit);
+		}
 	}
 
 	/**

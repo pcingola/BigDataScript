@@ -9,6 +9,8 @@ public class Zzz {
 	public static boolean debug = true;
 	public static boolean verbose = true;
 
+	public static final String QUEUE_NAME = "bds_test_123456789";
+
 	// Read bucket name from $HOME/.bds/aws_test_bucket.txt
 	public static String awsBucketName() {
 		String awsBucketNameFile = Gpr.HOME + "/.bds/aws_test_bucket.txt";
@@ -24,7 +26,7 @@ public class Zzz {
 		Config config = new Config();
 		config.setVerbose(true);
 
-		QueueThread qt = new QueueThreadAwsSqs(config, null, null);
+		QueueThread qt = new QueueThreadAwsSqs(config, null, null, QUEUE_NAME);
 		qt.start();
 		try {
 			qt.wait();
