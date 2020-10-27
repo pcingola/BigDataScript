@@ -82,82 +82,7 @@ func (be *BdsExec) checksumWait() bool {
 }
 
 /*
-	Execute a command enforcing a timeout and writing exit status to 'exitFile'
-*/
-func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal) int {
-	if DEBUG {
-		log.Printf("Debug executeCommandTimeout: Start\n")
-	}
-
-	// Wait for execution to finish or timeout
-	exitStr := ""
-	if be.timeSecs <= 0 {
-		be.timeSecs = 31536000 // Default: One year
-	}
-
-	// Create a timeout process
-	// References: http://blog.golang.org/2010/09/go-concurrency-patterns-timing-out-and.html
-	exitCode := make(chan string, 1)
-	go execute(be.cmd, exitCode)
-
-	// Wait until executions ends, timeout or OS signal
-	kill := false
-	run := true
-	for run {
-		select {
-		case exitStr = <-exitCode:
-			kill = false
-			run = false
-			if DEBUG {
-				log.Printf("Debug executeCommandTimeout: Execution finished (%s)\n", exitStr)
-			}
-
-		case <-time.After(time.Duration(be.timeSecs) * time.Second):
-			run = false
-			kill = true
-			exitStr = "Time out"
-			if DEBUG {
-				log.Printf("Debug executeCommandTimeout: Timeout!\n")
-			}
-
-		case sig := <-osSignal:
-			// Ignore some signals (e.g. "window changed")
-			sigStr := sig.String()
-			if sigStr != "window changed" && sigStr != "child exited" && sigStr != "window size changes" {
-				if VERBOSE || DEBUG {
-					log.Printf("bds: Received OS signal '%s'\n", sigStr)
-				}
-
-				kill = true
-				exitStr = "Signal received"
-				run = false
-			}
-		}
-	}
-
-	// Write exitCode to file
-	be.updateExitFile(exitStr)
-
-	// Should we kill child process?
-	if kill {
-		// WARNING: The kill(0) signal will also kill this process, so nothing
-		// may be execited after this call (platform dependent)
-		be.kill()
-	}
-
-	// Analyze exit code
-	switch exitStr  {
-		case "0":
-			return EXITCODE_OK	// OK, exit value should be zero
-		case "Time out":
-			return EXITCODE_TIMEOUT	// Timeout exit code
-		default:
-			return EXITCODE_ERROR	// Other error conditions
-	}
-}
-
-/*
-	Execute a command and writing exit status to 'exitCode'
+	Execute a command and writing exit status to 'exitCode' channel
 */
 func execute(cmd *exec.Cmd, exitCode chan string) {
 	if DEBUG {
@@ -231,13 +156,16 @@ func (be *BdsExec) executeCommand() int {
 	be.cmd = exec.Command(be.command)
 	be.cmd.Args = be.cmdargs
 
+	// Create queue channels
+	var stdoutCh, stderrCh chan string
+
 	// Copy stdout
-	stdout := tee.NewTee(be.outFile, false)
+	stdout := tee.NewTee(be.outFile, stdoutCh, false)
 	defer stdout.Close()
 	be.cmd.Stdout = stdout
 
 	// Copy stderr
-	stderr := tee.NewTee(be.errFile, true)
+	stderr := tee.NewTee(be.errFile, stderrCh, true)
 	defer stderr.Close()
 	be.cmd.Stderr = stderr
 
@@ -255,6 +183,87 @@ func (be *BdsExec) executeCommand() int {
 		log.Printf("Debug executeCommand: Exit code %d\n", be.exitCode)
 	}
 	return be.exitCode
+}
+
+/*
+	Execute a command enforcing a timeout and writing exit status to 'exitFile'
+*/
+func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal, exitQueueCh chan string) int {
+	if DEBUG {
+		log.Printf("Debug executeCommandTimeout: Start\n")
+	}
+
+	// Wait for execution to finish or timeout
+	exitStr := ""
+	if be.timeSecs <= 0 {
+		be.timeSecs = 31536000 // Default: One year
+	}
+
+	// Create a timeout process
+	// References: http://blog.golang.org/2010/09/go-concurrency-patterns-timing-out-and.html
+	exitCode := make(chan string, 1)
+	go execute(be.cmd, exitCode)
+
+	// Wait until executions ends, timeout or OS signal
+	kill := false
+	run := true
+	for run {
+		select {
+			case exitStr = <-exitCode:
+				kill = false
+				run = false
+				if DEBUG {
+					log.Printf("Debug executeCommandTimeout: Execution finished (%s)\n", exitStr)
+				}
+
+			case <-time.After(time.Duration(be.timeSecs) * time.Second):
+				run = false
+				kill = true
+				exitStr = "Time out"
+				if DEBUG {
+					log.Printf("Debug executeCommandTimeout: Timeout!\n")
+				}
+
+			case sig := <-osSignal:
+				// Operating system signas (e.g. Ctrl-C)
+				// Ignore some signals (e.g. "window changed")
+				sigStr := sig.String()
+				if sigStr != "window changed" && sigStr != "child exited" && sigStr != "window size changes" {
+					if VERBOSE || DEBUG {
+						log.Printf("bds: Received OS signal '%s'\n", sigStr)
+					}
+
+					kill = true
+					exitStr = "Signal received"
+					run = false
+				}
+		}
+	}
+
+	// Write exitCode to file and to queue exit channel
+	be.updateExitFile(exitStr)
+	if exitQueueCh != nil {
+		exitQueueCh <- exitStr
+	}
+
+	// Should we kill child process?
+	if kill {
+		// WARNING: The kill(0) signal will also kill this process, so nothing
+		// may be execited after this call (platform dependent)
+		be.kill()
+	}
+
+	// TODO: Wait for channels to close
+
+	// Analyze exit code
+	switch exitStr  {
+		case "0":
+			return EXITCODE_OK	// OK, exit value should be zero
+		case "Time out":
+			return EXITCODE_TIMEOUT	// Timeout exit code
+		default:
+			return EXITCODE_ERROR	// Other error conditions
+	}
 }
 
 /*
