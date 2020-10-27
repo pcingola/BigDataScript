@@ -15,8 +15,6 @@ import (
 	"time"
 )
 
-const QUEUE_SIZE = 1024
-
 /*
   Calculate the 'checksum' of a file and compare it to
 	the '# Checksum' line.
@@ -117,6 +115,7 @@ func execute(cmd *exec.Cmd, exitCode chan string) {
 	Timeout after timeout seconds (unless time is zero)
 */
 func (be *BdsExec) executeCommand() int {
+	var err error
 	if DEBUG {
 		log.Printf("Debug executeCommand: %v (len: %d)\n", be.cmdargs, len(be.cmdargs))
 	}
@@ -130,7 +129,6 @@ func (be *BdsExec) executeCommand() int {
 	} else {
 		if !be.checksumWait() {
 			log.Printf("Error: Error trying to checksum file '%s'", be.command)
-			os.Exit(1)
 		}
 
 		// Set a new process group.
@@ -166,7 +164,13 @@ func (be *BdsExec) executeCommand() int {
 	var q *queue.Queue
 	var stdoutCh, stderrCh chan []byte
 	if be.awsSqsName != "" {
-		q = queue.NewQueue(QUEUE_SIZE)
+		q, err = queue.NewQueue(be.awsSqsName)
+		if err != nil {
+			log.Printf("Error: Creating queue '%v'\n", err)
+			os.Exit(1)
+		} else if DEBUG {
+			log.Printf("Debug executeCommand: Created queue '%s'\n", be.awsSqsName)
+		}
 		stdoutCh, stderrCh = q.StdoutChan, q.StderrChan
 	}
 
@@ -184,7 +188,7 @@ func (be *BdsExec) executeCommand() int {
 	be.cmd.Stdin = os.Stdin
 
 	// Start process
-	err := be.cmd.Start()
+	err = be.cmd.Start()
 	if err != nil {
 		log.Fatal(err)
 	}

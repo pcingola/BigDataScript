@@ -63,7 +63,7 @@ func (t *Tee) Write(buf []byte) (n int, err error) {
 
 	// Write to channel
 	if t.channel != nil {
-			t.channel <- buf
+		t.channel <- buf
 	}
 
 	return n, err
