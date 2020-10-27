@@ -24,12 +24,16 @@ type AwsSqs struct {
 }
 
 // Append to STDOUT buffer
-func (awssqs *AwsSqs) AppendStdOut(mgs []byte) {
-    if awssqs.buffOut == nil {
-        awssqs.buffOut = mgs
+func (awssqs *AwsSqs) AppendStdOut(msg []byte) {
+    log.Printf("BEFORE: '%s'\n\tAPPEND: %s\n", awssqs.buffOut, msg)
+    if len(awssqs.buffOut) > 0 {
+        log.Printf("APPEND: %s\n", msg)
+        awssqs.buffOut = append(awssqs.buffOut, msg...)
     } else {
-        awssqs.buffOut = append(awssqs.buffOut, mgs...)
+        log.Printf("NEW: %s\n", msg)
+        awssqs.buffOut = msg
     }
+    log.Printf("AFTER: '%s'\n", awssqs.buffOut)
 
     if awssqs.shouldSend() {
         awssqs.Send()
@@ -37,12 +41,11 @@ func (awssqs *AwsSqs) AppendStdOut(mgs []byte) {
 }
 
 // Append to STDERR buffer
-func (awssqs *AwsSqs) AppendStdErr(mgs []byte) {
-    log.Printf("CURRENT STDOUT: %s\tAPPEND: %s\n", awssqs.buffErr, mgs)
+func (awssqs *AwsSqs) AppendStdErr(msg []byte) {
     if awssqs.buffErr == nil {
-        awssqs.buffErr = mgs
+        awssqs.buffErr = msg
     } else {
-        awssqs.buffErr = append(awssqs.buffErr, mgs...)
+        awssqs.buffErr = append(awssqs.buffErr, msg...)
     }
 
     if awssqs.shouldSend() {
@@ -84,14 +87,14 @@ func NewAwsSqs(qname string) (*AwsSqs, error) {
 }
 
 // Send bytes
-func (awssqs *AwsSqs) SendBytes(mgsBytes []byte) {
-    awssqs.SendString(string(mgsBytes))
+func (awssqs *AwsSqs) SendBytes(msgBytes []byte) {
+    awssqs.SendString(string(msgBytes))
 }
 
 // Send string
-func (awssqs *AwsSqs) SendString(mgsStr string) {
+func (awssqs *AwsSqs) SendString(msgStr string) {
     msg := sqs.SendMessageInput {
-        MessageBody: aws.String(mgsStr),
+        MessageBody: aws.String(msgStr),
         QueueUrl: &awssqs.queueUrl,
     }
     _, err := awssqs.sqsClient.SendMessage(&msg)
