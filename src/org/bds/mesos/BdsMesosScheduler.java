@@ -45,7 +45,7 @@ import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostInifinte;
 import org.bds.cluster.host.HostResources;
-import org.bds.executioner.ExecutionerLocal;
+import org.bds.executioner.Executioner;
 import org.bds.executioner.ExecutionerMesos;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
@@ -506,7 +506,7 @@ public class BdsMesosScheduler implements Scheduler {
 		ExecutorInfo execInfo = ExecutorInfo.newBuilder(executor).build();
 
 		// Task's data: Command to execute
-		String cmdArgs[] = ExecutionerLocal.createBdsExecCmdArgs(task);
+		String cmdArgs[] = Executioner.createBdsExecCmdArgs(task);
 		ByteString data = ByteString.copyFromUtf8(BdsMesosFramework.packArray(cmdArgs));
 
 		// Create task

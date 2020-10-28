@@ -77,7 +77,7 @@ public class Task implements Serializable {
 			bdsLineNum = -1;
 		}
 		taskDependency = new TaskDependency(bdsNode);
-		resources = new TaskResources();
+		resources = null;
 		reset();
 	}
 
@@ -88,7 +88,7 @@ public class Task implements Serializable {
 		this.bdsFileName = bdsFileName;
 		this.bdsLineNum = bdsLineNum;
 		taskDependency = new TaskDependency();
-		resources = new TaskResources();
+		resources = null;
 		reset();
 	}
 
@@ -593,6 +593,10 @@ public class Task implements Serializable {
 
 	public void setPostMortemInfo(String postMortemInfo) {
 		this.postMortemInfo = postMortemInfo;
+	}
+
+	public void setResources(TaskResources res) {
+		resources = res;
 	}
 
 	private void setState(TaskState taskState) {

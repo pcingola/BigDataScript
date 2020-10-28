@@ -2,10 +2,12 @@ package org.bds.task;
 
 import java.util.HashMap;
 
+import org.bds.cluster.host.TaskResources;
 import org.bds.data.Data;
 import org.bds.data.DataRemote;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
+import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.value.Value;
@@ -148,7 +150,12 @@ public class TaskVmOpcode extends SysVmOpcode {
 		task.setDetached(detached);
 
 		// Set task options: Resources
-		task.getResources().setFromBdsThread(bdsThread); !!!!!!!!!!! RESOURCES DEPEND ON THE EXECUTIONER!!!!
+		String runSystem = bdsThread.getString(ExpressionTask.TASK_OPTION_SYSTEM);
+		ExecutionerType exType = ExecutionerType.parseSafe(runSystem);
+		TaskResources res = TaskResources.factory(exType);
+		res.setFromBdsThread(bdsThread);
+		task.setResources(res);
+
 		if (taskDependency != null) task.setTaskDependency(taskDependency);
 
 		return task;

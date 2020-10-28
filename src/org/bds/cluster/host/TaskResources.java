@@ -1,5 +1,6 @@
 package org.bds.cluster.host;
 
+import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.run.BdsThread;
 
@@ -11,6 +12,33 @@ import org.bds.run.BdsThread;
 public class TaskResources extends Resources {
 
 	private static final long serialVersionUID = 761051924090735902L;
+
+	/**
+	 * Create an apropriate resource type, given an executioner
+	 */
+	public static TaskResources factory(ExecutionerType exType) {
+		switch (exType) {
+		case AWS:
+			return new TaskResourcesAws();
+
+		case CLUSTER:
+		case FAKE:
+		case GENERIC:
+		case MESOS:
+		case MOAB:
+		case PBS:
+		case SGE:
+		case SLURM:
+			return new TaskResourcesCluster();
+
+		case LOCAL:
+		case SSH:
+			return new TaskResources();
+
+		default:
+			throw new RuntimeException("Unknown resource type for executioner '" + exType + "'. This should never happen!");
+		}
+	}
 
 	public TaskResources() {
 		super();

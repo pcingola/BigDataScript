@@ -3,7 +3,7 @@ package org.bds.executioner;
 import java.util.ArrayList;
 
 import org.bds.Config;
-import org.bds.cluster.host.HostResources;
+import org.bds.cluster.host.TaskResourcesCluster;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.CmdCluster;
 import org.bds.task.Task;
@@ -41,23 +41,23 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 		if (debug) log("Running task " + task.getId());
 
 		// Create command line
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 
 		// Append command line arguments
 		for (String arg : getCommandRun())
 			args.add(arg);
 
 		// Add resources request
-		HostResources res = task.getResources();
+		TaskResourcesCluster res = (TaskResourcesCluster) task.getResources();
 		args.add("" + res.getTimeout());
 		args.add("" + res.getCpus());
 		args.add("" + res.getMem());
-		args.add(task.getQueue() != null ? task.getQueue() : "");
+		args.add(res.getQueue() != null ? res.getQueue() : "");
 		args.add(clusterStdFile(task.getStdoutFile()));
 		args.add(clusterStdFile(task.getStderrFile()));
 
 		// Create command to run (it feeds parameters to qsub via stdin)
-		String bdsExecCmd = bdsCommand(task);
+		String bdsExecCmd = createBdsExecCmdStr(task);
 		for (String arg : bdsExecCmd.split("\\s+"))
 			args.add(arg);
 

@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.bds.Bds;
 import org.bds.Config;
-import org.bds.cluster.host.HostResources;
+import org.bds.cluster.host.Resources;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.value.Value;
@@ -47,6 +47,13 @@ public class Report {
 
 	protected static Timer timerReport = new Timer(); // Report timer (added by Jin Lee)
 
+	BdsThread bdsThread;
+
+	boolean debug;
+	Map<String, BdsThread> taskId2BdsThread;
+	boolean verbose;
+	boolean yaml;
+
 	/**
 	 * Check if this is a good time to create a report
 	 */
@@ -67,13 +74,6 @@ public class Report {
 			report.createReport();
 		}
 	}
-
-	BdsThread bdsThread;
-	boolean debug;
-	Map<String, BdsThread> taskId2BdsThread;
-	boolean verbose;
-
-	boolean yaml;
 
 	public Report(BdsThread bdsThread, boolean yaml) {
 		if (!bdsThread.isRoot()) throw new RuntimeException("Cannot create report from non-root bdsThread");
@@ -337,7 +337,7 @@ public class Report {
 
 		// Task resources
 		if (task.getResources() != null) {
-			HostResources hr = task.getResources();
+			Resources hr = task.getResources();
 			rTemplate.add("taskResources", multilineString(null, hr.toStringMultiline(), yaml));
 			rTemplate.add("taskTimeout", Timer.toDDHHMMSS(hr.getTimeout() * 1000));
 			rTemplate.add("taskWallTimeout", Timer.toDDHHMMSS(hr.getWallTimeout() * 1000));

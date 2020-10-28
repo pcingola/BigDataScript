@@ -75,7 +75,7 @@ public class Host implements Comparable<Host> {
 		return getResourcesAvaialble().isConsumed();
 	}
 
-	public boolean hasResourcesAvailable(HostResources hr) {
+	public boolean hasResourcesAvailable(Resources hr) {
 		return getResourcesAvaialble().compareTo(hr) >= 0;
 	}
 

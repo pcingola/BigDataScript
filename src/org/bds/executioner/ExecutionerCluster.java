@@ -11,7 +11,8 @@ import org.bds.Config;
 import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostInifinte;
-import org.bds.cluster.host.HostResources;
+import org.bds.cluster.host.Resources;
+import org.bds.cluster.host.TaskResourcesCluster;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.CmdCluster;
 import org.bds.osCmd.Exec;
@@ -135,7 +136,7 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 		StringBuilder resSb = new StringBuilder();
 
 		// Add resources request
-		HostResources res = task.getResources();
+		TaskResourcesCluster res = (TaskResourcesCluster) task.getResources();
 
 		long clusterTimeout = calcTimeOut(res);
 		String clusterTimeoutStr = timeStr(clusterTimeout);
@@ -152,7 +153,7 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 		}
 
 		// A particular queue was requested?
-		String queue = task.getQueue();
+		String queue = res.getQueue();
 		if (queue != null && !queue.isEmpty()) {
 			args.add("-q");
 			args.add(queue);
@@ -167,32 +168,11 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 	}
 
 	/**
-	 * Create bds-exec commnad
-	 */
-	protected String bdsCommand(Task task) {
-		StringBuilder bdsCmd = new StringBuilder();
-
-		// Calculate timeout
-		HostResources res = task.getResources();
-		int realTimeout = (int) res.getTimeout();
-
-		// Create command
-		bdsCmd.append(bdsCommand);
-		bdsCmd.append(realTimeout + " ");
-		bdsCmd.append("'" + task.getStdoutFile() + "' ");
-		bdsCmd.append("'" + task.getStderrFile() + "' ");
-		bdsCmd.append("'" + task.getExitCodeFile() + "' ");
-		bdsCmd.append("'" + task.getProgramFileName() + "' ");
-
-		return bdsCmd.toString();
-	}
-
-	/**
 	 * Calculate timeout parameter. We want to assign slightly larger timeout
 	 * to the cluster (qsub/msub), because we prefer bds to kill the process (it's
 	 * cleaner and we get exitCode file)
 	 */
-	protected int calcTimeOut(HostResources res) {
+	protected int calcTimeOut(Resources res) {
 		int realTimeout = (int) res.getTimeout();
 		if (realTimeout <= 0) return 0;
 
@@ -259,7 +239,7 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 			// similar to running "echo ... | qsub" on a shell.
 			// This part creates those 'stdin' parameters
 			//---
-			cmdStdin = bdsCommand(task);
+			cmdStdin = createBdsExecCmdStr(task);
 			if (debug) {
 				// Show command string
 				StringBuilder cmdStr = new StringBuilder();
@@ -289,7 +269,7 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 		// Get shell script
 		StringBuilder sb = new StringBuilder();
 		sb.append("#!" + Config.get().getTaskShell() + "\n\n");
-		sb.append(bdsCommand(task));
+		sb.append(createBdsExecCmdStr(task));
 		sb.append("\n");
 
 		// Save to file

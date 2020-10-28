@@ -9,6 +9,7 @@ import java.util.Map;
 import org.bds.Config;
 import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.Host;
+import org.bds.cluster.host.TaskResources;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.Exec;
 import org.bds.run.BdsThread;
@@ -98,30 +99,56 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		}
 	}
 
+	public static String[] createBdsExecCmdArgs(Task task) {
+		return createBdsExecCmdArgsList(task).toArray(Cmd.ARGS_ARRAY_TYPE);
+	}
+
 	/**
 	 * Create command line arguments for "bds exec ..."
 	 */
-	public static String[] createBdsExecCmdArgs(Task task) {
+	public static List<String> createBdsExecCmdArgsList(Task task) {
 		// Create command line
-		ArrayList<String> args = new ArrayList<>();
+		List<String> args = new ArrayList<>();
 		for (String arg : BDS_EXEC_COMMAND)
 			args.add(arg);
-		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
 
 		// Add command line parameters for "bds exec"
-		args.add(timeout + ""); // Enforce timeout
 		args.add("-stdout");
 		args.add(task.getStdoutFile() != null ? task.getStdoutFile() : "-"); // Redirect STDOUT to this file
+
 		args.add("-stderr");
 		args.add(task.getStderrFile() != null ? task.getStderrFile() : "-"); // Redirect STDERR to this file
+
 		args.add("-exit");
 		args.add(task.getExitCodeFile() != null ? task.getExitCodeFile() : "-"); // Redirect exit code
+
 		args.add("-taskId");
 		args.add(task.getId()); // Task ID
+
+		// Resources options
+		TaskResources res = task.getResources();
+		long timeout = Math.max(0L, res.getTimeout());
+		args.add("-timeout");
+		args.add(timeout + "");
+
 		// Command to execute
 		args.add(task.getProgramFileName()); // Program to execute
+		return args;
+	}
 
-		return args.toArray(Cmd.ARGS_ARRAY_TYPE);
+	/**
+	 * Create "bds exec" command as a string
+	 * @param task
+	 * @return A bds exec command as a single string
+	 */
+	public static String createBdsExecCmdStr(Task task) {
+		String[] cmd = createBdsExecCmdArgs(task);
+		StringBuilder sb = new StringBuilder();
+		for (int i = BDS_EXEC_COMMAND.length; i < cmd.length; i++) {
+			if (cmd[i].startsWith("-")) sb.append(" " + cmd[i]);
+			else sb.append(" '" + cmd[i] + "'");
+		}
+		return sb.toString();
 	}
 
 	public Executioner(Config config) {

@@ -13,7 +13,7 @@ public class HostResources extends Resources {
 		super();
 	}
 
-	public HostResources(HostResources hr) {
+	public HostResources(Resources hr) {
 		super(hr);
 	}
 

@@ -1,7 +1,10 @@
 package org.bds.executioner;
 
+import java.util.List;
+
 import org.bds.Config;
 import org.bds.cluster.host.Host;
+import org.bds.osCmd.Cmd;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 
@@ -40,6 +43,16 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 
 	}
 
+	/**
+	 * Create "bds exec" command line options
+	 */
+	protected String[] createBdsExecCmd(Task task) {
+		List<String> bdsExecArgs = createBdsExecCmdArgsList(task);
+		bdsExecArgs.add("awsSqsName");
+		bdsExecArgs.add(queueThread.getName());
+		return bdsExecArgs.toArray(Cmd.ARGS_ARRAY_TYPE);
+	}
+
 	@Override
 	protected CheckTasksRunning getCheckTasksRunning() {
 		if (checkTasksRunning == null) {
@@ -62,16 +75,24 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	}
 
 	@Override
+	protected void runExecutionerLoopBefore() {
+		// Start a new thread if needed, don't start a thread if it's already running
+		if (queueThread == null) {
+			queueThread = new QueueThreadAwsSqs(config, (MonitorTaskQueue) monitorTask, taskLogger);
+			queueThread.start();
+		}
+	}
+
+	@Override
 	protected void runTask(Task task, Host host) {
-		task.createProgramFile(); // We must create a program file
-
 		if (debug) log("Running task " + task.getId());
-
+		task.createProgramFile(); // We must create a program file
+		String[] bdsExecCmd = createBdsExecCmd(task);
 		// TODO: Create startup script (task's sys commands or checkpoint)
 		// TODO: Find instance's parameters (type, image, disk, etc.)
 		// TODO: Run instance
 		// TODO: Store instance ID
-		Gpr.debug("UNIMPLEMENTED !!!");
+		Gpr.debug("UNIMPLEMENTED !!! CMD: " + bdsExecCmd);
 	}
 
 	@Override

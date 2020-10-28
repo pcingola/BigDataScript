@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.bds.Config;
-import org.bds.cluster.host.HostResources;
+import org.bds.cluster.host.TaskResourcesCluster;
 import org.bds.task.Task;
 import org.bds.util.Timer;
 
@@ -61,7 +61,7 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 	@Override
 	protected void addResources(Task task, List<String> args) {
 		// Add resources request
-		HostResources res = task.getResources();
+		TaskResourcesCluster res = (TaskResourcesCluster) task.getResources();
 
 		// Cpu
 		if (res.getCpus() > 0) {
@@ -90,7 +90,7 @@ public class ExecutionerClusterSge extends ExecutionerCluster {
 		}
 
 		// A particular queue was requested?
-		String queue = task.getQueue();
+		String queue = res.getQueue();
 		if (queue != null && !queue.isEmpty()) {
 			args.add("-q");
 			args.add(queue);

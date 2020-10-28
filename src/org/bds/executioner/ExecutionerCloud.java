@@ -81,13 +81,4 @@ public abstract class ExecutionerCloud extends Executioner {
 		Gpr.debug("UNIMPLEMENTED !!!");
 	}
 
-	@Override
-	protected void runExecutionerLoopBefore() {
-		// Start a new thread if needed, don't start a thread if it's already running
-		if (queueThread == null) {
-			queueThread = new QueueThreadAwsSqs(config, (MonitorTaskQueue) monitorTask, taskLogger);
-			queueThread.start();
-		}
-	}
-
 }

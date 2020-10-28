@@ -44,6 +44,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	public static final String TASK_OPTION_TASKNAME = "taskName";
 	public static final String TASK_OPTION_TIMEOUT = "timeout";
 	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
+	public static final String TASK_OPTION_RESOURCES = "taskResources";
 	public static final String CMD_DOWNLOAD = "bds -download";
 	public static final String CMD_UPLOAD = "bds -upload";
 	public static final String CMD_TASK_IMPROPER = "bds -task";
