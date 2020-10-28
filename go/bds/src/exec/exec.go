@@ -39,6 +39,7 @@ type BdsExec struct {
 	exitFile string			// Exec: Write exit code to this file
 	timeSecs int			// Exec: Maximum execution time
 	exitCode int			// Exec: Command's Exit code
+	taskId string			// Exec: Task ID
 	noCheckSum bool			// Exec: Disable performing checksum on (shell) file to execute
 	awsSqsName string		// Exec: Send command outputs to an AWS SQS queue
 

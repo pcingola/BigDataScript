@@ -31,14 +31,14 @@ func (q *Queue) Exit(exitStr string) {
 }
 
 // Create a new queue
-func NewQueue(qname string) (*Queue, error) {
+func NewQueue(qname string, taskId string) (*Queue, error) {
     q := &Queue{}
     q.StdoutChan = make(chan []byte, QUEUE_SIZE)
     q.StderrChan = make(chan []byte, QUEUE_SIZE)
     q.exitChan = make(chan string)
     q.finishChan = make(chan bool)
 
-    s, err := aws.NewAwsSqs(qname)
+    s, err := aws.NewAwsSqs(qname, taskId)
     q.awsSqs = s
 
     return q, err

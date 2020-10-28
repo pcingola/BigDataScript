@@ -192,8 +192,8 @@ public class Task implements Serializable {
 	public void createProgramFile() {
 		if (debug) Timer.showStdErr("Task: Saving file '" + programFileName + "'");
 
-		// Create dir
 		try {
+			// Create dir
 			File dir = new File(programFileName);
 			dir = dir.getCanonicalFile().getParentFile();
 			if (dir != null) {
@@ -227,7 +227,8 @@ public class Task implements Serializable {
 	 * Remove tmp files on exit
 	 */
 	public void deleteOnExit() {
-		if (programFileDir != null) (new File(programFileDir)).deleteOnExit(); // Files are deleted in reverse order. So dir has to be first to make sure it is empty when deleted (otherwise it will not be deleted)
+		// Files are deleted in reverse order. So dir has to be first to make sure it is empty when deleted (otherwise it will not be deleted)
+		if (programFileDir != null) (new File(programFileDir)).deleteOnExit();
 		if (stdoutFile != null) (new File(stdoutFile)).deleteOnExit();
 		if (stderrFile != null) (new File(stderrFile)).deleteOnExit();
 		if (exitCodeFile != null) (new File(exitCodeFile)).deleteOnExit();

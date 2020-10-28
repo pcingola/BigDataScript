@@ -164,7 +164,7 @@ func (be *BdsExec) executeCommand() int {
 	var q *queue.Queue
 	var stdoutCh, stderrCh chan []byte
 	if be.awsSqsName != "" {
-		q, err = queue.NewQueue(be.awsSqsName)
+		q, err = queue.NewQueue(be.awsSqsName, be.taskId)
 		if err != nil {
 			log.Printf("Error: Creating queue '%v'\n", err)
 			os.Exit(1)

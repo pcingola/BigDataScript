@@ -114,6 +114,7 @@ func (be *BdsExec) parseCmdLineArgsExec() {
 	stdoutPtr := flagset.String("stdout", "-", "File to redirect STDOUT")
 	stderrPtr := flagset.String("stderr", "-", "File to redirect STDERR")
 	exitFilePtr := flagset.String("exit", "-", "File to write exit code")
+	taskIdPtr := flagset.String("taskId", "", "Task ID")
 	awsSqsNamePtr := flagset.String("awsSqsName", "", "AWS SQS queue name")
 	noCheckSumPtr := flagset.Bool("noCheckSum", false, "Disable checksum in command")
 	flagset.Bool("d", false, "Debug")
@@ -122,6 +123,7 @@ func (be *BdsExec) parseCmdLineArgsExec() {
 	be.outFile, be.errFile, be.exitFile, be.timeSecs = *stdoutPtr, *stderrPtr, *exitFilePtr, *timePtr
 	be.noCheckSum = *noCheckSumPtr
 	be.awsSqsName = *awsSqsNamePtr
+	be.taskId = *taskIdPtr
 
 	// Remaining command line arguments
 	args := flagset.Args()

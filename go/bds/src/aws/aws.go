@@ -18,6 +18,7 @@ type AwsSqs struct {
     sqsSession *session.Session
     sqsClient *sqs.SQS
 
+    taskId string
     buffOut []byte
     buffErr []byte
     exit string
@@ -25,16 +26,7 @@ type AwsSqs struct {
 
 // Append to STDOUT buffer
 func (awssqs *AwsSqs) AppendStdOut(msg []byte) {
-    log.Printf("BEFORE: '%s'\n\tAPPEND: %s\n", awssqs.buffOut, msg)
-    if len(awssqs.buffOut) > 0 {
-        log.Printf("APPEND: %s\n", msg)
-        awssqs.buffOut = append(awssqs.buffOut, msg...)
-    } else {
-        log.Printf("NEW: %s\n", msg)
-        awssqs.buffOut = msg
-    }
-    log.Printf("AFTER: '%s'\n", awssqs.buffOut)
-
+    awssqs.buffOut = append(awssqs.buffOut, msg...)
     if awssqs.shouldSend() {
         awssqs.Send()
     }
@@ -42,12 +34,7 @@ func (awssqs *AwsSqs) AppendStdOut(msg []byte) {
 
 // Append to STDERR buffer
 func (awssqs *AwsSqs) AppendStdErr(msg []byte) {
-    if awssqs.buffErr == nil {
-        awssqs.buffErr = msg
-    } else {
-        awssqs.buffErr = append(awssqs.buffErr, msg...)
-    }
-
+    awssqs.buffErr = append(awssqs.buffErr, msg...)
     if awssqs.shouldSend() {
         awssqs.Send()
     }
@@ -70,10 +57,11 @@ func encodeString(b string) string {
 }
 
 // Create a new AwsSqs
-func NewAwsSqs(qname string) (*AwsSqs, error) {
+func NewAwsSqs(qname string, taskId string) (*AwsSqs, error) {
     awssqs := &AwsSqs{}
-    awssqs.sqsSession = session.Must(session.NewSessionWithOptions(session.Options{SharedConfigState: session.SharedConfigEnable}))
     awssqs.queueName = qname
+    awssqs.taskId = taskId
+    awssqs.sqsSession = session.Must(session.NewSessionWithOptions(session.Options{SharedConfigState: session.SharedConfigEnable}))
     awssqs.sqsClient = sqs.New(awssqs.sqsSession)
 
     res, err := awssqs.sqsClient.GetQueueUrl(&sqs.GetQueueUrlInput{QueueName: &qname,})
@@ -108,7 +96,7 @@ func (awssqs *AwsSqs) Send() {
     sout := encodeBytes(awssqs.buffOut)
     serr := encodeBytes(awssqs.buffErr)
     sexit := encodeString(awssqs.exit)
-    all := []string{sout, serr, sexit}
+    all := []string{awssqs.taskId, sout, serr, sexit}
     msg := strings.Join(all, "\t")
 
     // Reset buffers

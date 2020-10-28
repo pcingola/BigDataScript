@@ -86,6 +86,8 @@ public class ExecutionerLocal extends ExecutionerFileSystem {
 		args.add(task.getStderrFile() != null ? task.getStderrFile() : "-"); // Redirect STDERR to this file
 		args.add("-exit");
 		args.add(task.getExitCodeFile() != null ? task.getExitCodeFile() : "-"); // Redirect exit code
+		args.add("-taskId");
+		args.add(task.getId()); // Task ID
 		// Command to execute
 		args.add(task.getProgramFileName()); // Program to execute
 

@@ -1,12 +1,10 @@
 package org.bds.executioner;
 
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
 import org.bds.Config;
-import org.bds.util.Gpr;
 
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -32,10 +30,6 @@ public class QueueThreadAwsSqs extends QueueThread {
 	protected String queueUrl;
 	protected String queueName;
 
-	public static String decode64(String s) {
-		return new String(Base64.getDecoder().decode(s));
-	}
-
 	public QueueThreadAwsSqs(Config config, MonitorTaskQueue monitorTasks, TaskLogger taskLogger) {
 		super(config, monitorTasks, taskLogger);
 	}
@@ -58,7 +52,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 
 		GetQueueUrlResponse getQueueUrlResponse = getSqsClient().getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
 		queueUrl = getQueueUrlResponse.queueUrl();
-		log("Created queue '" + queueName + "', url: '" + queueUrl + "'");
+		if (verbose) log("Created queue '" + queueName + "', url: '" + queueUrl + "'");
 
 		return hasQueue(); // Success if the queue was created
 	}
@@ -74,6 +68,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 			log("Deleting queue '" + queueName + "', url: '" + queueUrl + "'");
 			DeleteQueueRequest deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queueUrl).build();
 			getSqsClient().deleteQueue(deleteQueueRequest);
+			if (verbose) log("Deleting queue '" + queueName + "', url: '" + queueUrl + "'");
 			queueUrl = null;
 		} catch (QueueNameExistsException e) {
 			if (verbose || debug) e.printStackTrace();
@@ -114,29 +109,9 @@ public class QueueThreadAwsSqs extends QueueThread {
 	/**
 	 * Process a single message
 	 */
-	private void processMessage(Message message) {
-		Gpr.debug("RPOCESS MESSAGE: " + message);
-		String body = message.body();
-		String[] parts = body.split("\t");
-		String stdout = parts[0];
-		String stderr = parts.length > 1 ? parts[1] : "";
-		String sexit = parts.length > 2 ? parts[2] : "";
-
-		// Show message to console
-		if (stdout != "") {
-			stdout = decode64(stdout);
-			System.out.println("STDOUT: " + stdout);
-		}
-
-		if (stderr != "") {
-			stderr = decode64(stderr);
-			System.out.println("STDERR: " + stderr);
-		}
-
-		if (sexit != "") {
-			sexit = decode64(sexit);
-			System.out.println("SEXIT: " + sexit);
-		}
+	private void process(Message message) {
+		if (debug) log("Process SQS message: " + message);
+		process(message.body());
 	}
 
 	/**
@@ -145,7 +120,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 	 */
 	private void processMessages(List<Message> messages) {
 		for (Message message : messages) {
-			processMessage(message);
+			process(message);
 			DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl).receiptHandle(message.receiptHandle()).build();
 			sqsClient.deleteMessage(deleteMessageRequest);
 		}

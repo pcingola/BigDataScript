@@ -43,6 +43,7 @@ public abstract class ExecutionerCloud extends Executioner {
 	protected void follow(Task task) {
 		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
 		if (monitorTask != null) monitorTask.add(this, task); // Start monitoring exit file
+		if (log && queueThread != null) queueThread.add(task); // Queue thread saves STDOUT/STDERR to files (only makes sense to do this if 'log' is enabled)
 	}
 
 	@Override
@@ -50,6 +51,7 @@ public abstract class ExecutionerCloud extends Executioner {
 		// Remove from loggers
 		if (taskLogger != null) taskLogger.remove(task);
 		if (monitorTask != null) monitorTask.remove(task);
+		if (queueThread != null) queueThread.remove(task); // Start monitoring exit file
 	}
 
 	/**
