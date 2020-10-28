@@ -9,6 +9,8 @@ import java.util.Map;
 import org.bds.Config;
 import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.Host;
+import org.bds.osCmd.Cmd;
+import org.bds.osCmd.Exec;
 import org.bds.run.BdsThread;
 import org.bds.task.DependencyState;
 import org.bds.task.Task;
@@ -23,7 +25,7 @@ import org.bds.util.Tuple;
  *
  * @author pcingola
  */
-public abstract class Executioner extends Thread implements NotifyTaskState {
+public abstract class Executioner extends Thread implements NotifyTaskState, PidParser {
 
 	public static final int REPORT_INTERVAL = 60; // Interval in seconds
 
@@ -31,8 +33,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState {
 	public static final int SLEEP_TIME_MID = 200; // Milliseconds
 	public static final int SLEEP_TIME_SHORT = 10; // Milliseconds
 
+	public static String BDS_EXEC_COMMAND[] = { "bds", "exec" };
+
 	protected CheckTasksRunning checkTasksRunning;
+	protected Map<String, Cmd> cmdById; // Command indexed by taskID
 	protected Config config;
+	protected boolean blockRunTasks; // Should runTask block when running a command. If the command is just dispatching to the cluster ('qsub') we might want to block to avoid overloading the scheduler
 	protected boolean debug;
 	protected LinkedList<Task> finishTask; // These tasks should be marked as finished in the next update iteration
 	protected boolean log;
@@ -49,9 +55,80 @@ public abstract class Executioner extends Thread implements NotifyTaskState {
 	protected TaskLogger taskLogger; // Log tasks into parent (Go) bds program for cleanup (kill task, delete files, etc)
 	protected Timer timer; // Task timer (when was the task started)
 
+	/**
+	 * Sometimes a "text file busy" error may appear when we execute a task.
+	 * E.g.: The following script will produce "text file busy" error on
+	 *       some Linux systems (local execution):
+	 *
+	 * 		$ cat z.bds
+	 * 		#!/usr/bin/env bds
+	 * 		for( int i=0 ; i < 10000 ; i++ ) task echo hi $i
+	 *
+	 * 		$ ./z.bds > /dev/null
+	 * 		2014/01/25 16:52:36 fork/exec z.bds.20140125_165235_563/task.line_7.id_198.sh: text file busy
+	 *
+	 * To avoid this, we must make sure that JVM actually has
+	 * closed the file. Surprisingly, invoking flush() and
+	 * close() is not enough to make sure the file is actually
+	 * fully closed.
+	 *
+	 * We need something like 'lsof' command in Java, which doesn't
+	 * seem to exist.
+	 *
+	 * So far the only solution that seems to work is to wait a small
+	 * amount of time between file creation and execution. I use
+	 * 1 millisecond, since it is the minimum for sleep() method.
+	 *
+	 * There are two obvious problems:
+	 * 		i) This obviously penalizes execution performance.
+	 * 		ii) There is no warrantees that this will always work.
+	 *
+	 */
+	public static void avoidTextFileBusyError() {
+		// Hack to avoid "Text file busy" errors: Sleep N milliseconds.
+		// This is a horrible hack used to make sure the 'programFileName' has
+		// been fully written to disk and we no have the file open for writing.
+		// Even if we closed the file, sometimes a "text file busy" error
+		// pops up.
+		try {
+			int sleepTime = Config.get().getWaitTextFileBusy();
+			if (sleepTime > 0) sleep(sleepTime);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Create command line arguments for "bds exec ..."
+	 */
+	public static String[] createBdsExecCmdArgs(Task task) {
+		// Create command line
+		ArrayList<String> args = new ArrayList<>();
+		for (String arg : BDS_EXEC_COMMAND)
+			args.add(arg);
+		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
+
+		// Add command line parameters for "bds exec"
+		args.add(timeout + ""); // Enforce timeout
+		args.add("-stdout");
+		args.add(task.getStdoutFile() != null ? task.getStdoutFile() : "-"); // Redirect STDOUT to this file
+		args.add("-stderr");
+		args.add(task.getStderrFile() != null ? task.getStderrFile() : "-"); // Redirect STDERR to this file
+		args.add("-exit");
+		args.add(task.getExitCodeFile() != null ? task.getExitCodeFile() : "-"); // Redirect exit code
+		args.add("-taskId");
+		args.add(task.getId()); // Task ID
+		// Command to execute
+		args.add(task.getProgramFileName()); // Program to execute
+
+		return args.toArray(Cmd.ARGS_ARRAY_TYPE);
+	}
+
 	public Executioner(Config config) {
 		super();
 		valid = true;
+		blockRunTasks = false;
+		cmdById = new HashMap<>();
 		this.config = config;
 		tasksToRun = new ArrayList<>();
 		taskUpdateStates = new ArrayList<>();
@@ -72,6 +149,26 @@ public abstract class Executioner extends Thread implements NotifyTaskState {
 		if (debug) log("Queuing task: " + task.getId());
 		task.state(TaskState.SCHEDULED);
 		tasksToRun.add(task);
+	}
+
+	protected synchronized void addCmd(Task task, Cmd cmd) {
+		cmdById.put(task.getId(), cmd);
+	}
+
+	/**
+	 * Don't run too many threads at once
+	 * The reason for this is that we can reach the maximum
+	 * number of threads available in the operating system.
+	 * If that happens, well get an pendingException
+	 */
+	protected void avoidTooManyThreads() {
+		if (config.getMaxThreads() > 0) {
+			while (Exec.countRunningThreads() >= config.getMaxThreads()) {
+				// Too many threads running? Sleep for a while (block until some threads finish)
+				if (debug) log("INFO: Too many threads running (limit set to " + config.getMaxThreads() + "). Waiting for some threads to finish.");
+				sleepLong();
+			}
+		}
 	}
 
 	/**
@@ -100,6 +197,13 @@ public abstract class Executioner extends Thread implements NotifyTaskState {
 	}
 
 	/**
+	 * Create a command form a task
+	 */
+	public synchronized Cmd createRunCmd(Task task) {
+		throw new RuntimeException("Unimplemented method for class: " + getClass().getCanonicalName());
+	}
+
+	/**
 	 * Find a task by ID
 	 */
 	public synchronized Task findTask(String id) {
@@ -125,6 +229,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState {
 	 */
 	protected CheckTasksRunning getCheckTasksRunning() {
 		return null;
+	}
+
+	protected synchronized Cmd getCmd(Task task) {
+		return cmdById.get(task.getId());
 	}
 
 	public String getExecutionerId() {
@@ -267,9 +375,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState {
 
 	/**
 	 * Kill a task
-	 * @param task
 	 */
-	protected abstract void killTask(Task task);
+	protected synchronized void killTask(Task task) {
+		// Kill command
+		Cmd cmd = getCmd(task);
+		if (cmd != null) cmd.kill();
+	}
 
 	public void log(String msg) {
 		Timer.showStdErr(getClass().getSimpleName() + " '" + getExecutionerId() + "': " + msg);
@@ -280,6 +391,14 @@ public abstract class Executioner extends Thread implements NotifyTaskState {
 	 * E.g.: For a local task it would be 'kill' whereas for a cluster task it would be 'qdel'
 	 */
 	public abstract String[] osKillCommand(Task task);
+
+	/**
+	 * Parse PID line from 'bds exec' (Cmd)
+	 */
+	@Override
+	public String parsePidLine(String line) {
+		return line.trim();
+	}
 
 	/**
 	 * Try to find some 'post-mortem' info about this
@@ -293,6 +412,13 @@ public abstract class Executioner extends Thread implements NotifyTaskState {
 	protected synchronized void remove(Task task, Host host) {
 		tasksSelected.remove(task);
 		host.remove(task);
+	}
+
+	/**
+	 * Remove a command (task)
+	 */
+	protected synchronized void removeCmd(Task task) {
+		cmdById.remove(task.getId());
 	}
 
 	/**
@@ -414,7 +540,57 @@ public abstract class Executioner extends Thread implements NotifyTaskState {
 	 * @param task : Task to run
 	 * @param host : Host to run task (can be null)
 	 */
-	protected abstract void runTask(Task task, Host host);
+	protected void runTask(Task task, Host host) {
+		if (!blockRunTasks) avoidTooManyThreads();
+
+		// Create the command
+		Cmd cmd = createRunCmd(task);
+		if (cmd != null) {
+			addCmd(task, cmd);
+			cmd.setHost(host);
+			cmd.setExecutioner(this);
+			cmd.setTask(task);
+			cmd.setDebug(debug);
+		}
+
+		host.add(task);
+
+		// Run command for this task
+		runTaskCmd(cmd);
+	}
+
+	/**
+	 * Run command to execute a task. E.g. execute local computer, run a command
+	 * to submit to a cluster scheduler
+	 */
+	protected void runTaskCmd(Cmd cmd) {
+		if (cmd == null) return;
+
+		cmd.start(); // Start the command thread
+
+		if (blockRunTasks) {
+			// Block: Run command and wait for completion (e.g. when invoking 'qsub' in a cluster)
+			// Note: We run in blocking mode to avoid choking the head node with
+			// too many threads, too many file descriptors, etc..
+			try {
+				cmd.join(); // Wait for this thread to finish
+			} catch (InterruptedException e) {
+				throw new RuntimeException("Error while waiting for command execution:\n\tCommand: " + cmd, e);
+			}
+
+		} else {
+			// Do not block: Run command and continue (e.g. when running on a local computer)
+			// Wait some milliseconds?
+			int waitTime = config.getWaitAfterTaskRun();
+			if (waitTime > 0) {
+				try {
+					sleep(waitTime);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	/**
 	 * Select next task to run and assign host.

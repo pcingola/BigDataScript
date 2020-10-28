@@ -142,17 +142,13 @@ public class TaskVmOpcode extends SysVmOpcode {
 		task.setCanFail(bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL));
 		task.setCurrentDir(bdsThread.getCurrentDir());
 		task.setNode(bdsThread.getString(ExpressionTask.TASK_OPTION_NODE));
-		task.setQueue(bdsThread.getString(ExpressionTask.TASK_OPTION_QUEUE));
 		task.setMaxFailCount((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
 
 		boolean detached = bdsThread.getBool(ExpressionTask.TASK_OPTION_DETACHED);
 		task.setDetached(detached);
 
 		// Set task options: Resources
-		task.getResources().setCpus((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_CPUS));
-		task.getResources().setMem(bdsThread.getInt(ExpressionTask.TASK_OPTION_MEM));
-		task.getResources().setWallTimeout(bdsThread.getInt(ExpressionTask.TASK_OPTION_WALL_TIMEOUT));
-		task.getResources().setTimeout(bdsThread.getInt(ExpressionTask.TASK_OPTION_TIMEOUT));
+		task.getResources().setFromBdsThread(bdsThread); !!!!!!!!!!! RESOURCES DEPEND ON THE EXECUTIONER!!!!
 		if (taskDependency != null) task.setTaskDependency(taskDependency);
 
 		return task;

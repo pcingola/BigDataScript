@@ -46,10 +46,6 @@ public class Host implements Comparable<Host> {
 		return hostName.compareTo(host.hostName);
 	}
 
-	public ComputerSystem getSystem() {
-		return system;
-	}
-
 	public String getHostName() {
 		return hostName;
 	}
@@ -65,6 +61,10 @@ public class Host implements Comparable<Host> {
 	public synchronized HostResources getResourcesAvaialble() {
 		if (resourcesAvaialble == null) updateResourcesAvailable();
 		return resourcesAvaialble;
+	}
+
+	public ComputerSystem getSystem() {
+		return system;
 	}
 
 	public String getUserName() {
@@ -122,7 +122,7 @@ public class Host implements Comparable<Host> {
 	 * Update 'resources available'
 	 */
 	public synchronized void updateResourcesAvailable() {
-		resourcesAvaialble = resources.clone();
+		resourcesAvaialble = (HostResources) resources.clone();
 		for (Task t : tasksRunning)
 			resourcesAvaialble.consume(t.getResources());
 	}

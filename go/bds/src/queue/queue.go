@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var DEBUG bool = true
+const DEBUG = false
 const QUEUE_SIZE = 1024
 const TIME_OUT = 1
 

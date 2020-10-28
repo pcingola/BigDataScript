@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bds.Config;
-import org.bds.cluster.host.HostResources;
+import org.bds.cluster.host.TaskResources;
 import org.bds.executioner.Executioner;
 import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
@@ -48,14 +48,13 @@ public class Task implements Serializable {
 	protected String programFileName; // Program file name
 	protected String programTxt; // Program's text (program's code)
 	protected String node; // Preferred execution node (or hostname)
-	protected String queue; // Preferred execution queue
 	protected String stdoutFile, stderrFile, exitCodeFile; // STDOUT, STDERR & exit code Files
 	protected String errorMsg; // Error messages
 	protected String postMortemInfo; // Error information about task that failed
 	protected String taskName = ""; // Task name (can be set by programmer)
 	protected Date runningStartTime, runningEndTime;
 	protected TaskState taskState;
-	protected HostResources resources; // Resources to be consumes when executing this task
+	protected TaskResources resources; // Resources to be consumes when executing this task
 	TaskDependency taskDependency;
 
 	public Task() {
@@ -78,7 +77,7 @@ public class Task implements Serializable {
 			bdsLineNum = -1;
 		}
 		taskDependency = new TaskDependency(bdsNode);
-		resources = new HostResources();
+		resources = new TaskResources();
 		reset();
 	}
 
@@ -89,7 +88,7 @@ public class Task implements Serializable {
 		this.bdsFileName = bdsFileName;
 		this.bdsLineNum = bdsLineNum;
 		taskDependency = new TaskDependency();
-		resources = new HostResources();
+		resources = new TaskResources();
 		reset();
 	}
 
@@ -406,11 +405,7 @@ public class Task implements Serializable {
 		return programTxt;
 	}
 
-	public String getQueue() {
-		return queue;
-	}
-
-	public HostResources getResources() {
+	public TaskResources getResources() {
 		return resources;
 	}
 
@@ -598,10 +593,6 @@ public class Task implements Serializable {
 
 	public void setPostMortemInfo(String postMortemInfo) {
 		this.postMortemInfo = postMortemInfo;
-	}
-
-	public void setQueue(String queue) {
-		this.queue = queue;
 	}
 
 	private void setState(TaskState taskState) {

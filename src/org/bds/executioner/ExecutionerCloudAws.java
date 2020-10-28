@@ -27,7 +27,7 @@ import org.bds.util.Gpr;
  */
 public class ExecutionerCloudAws extends ExecutionerCloud {
 
-	public static final String KILL_COMMAND[] = { "aws", "ec2", "terminate" };
+	public static final String KILL_COMMAND[] = { "@aws_ec2_terminate" };
 
 	protected ExecutionerCloudAws(Config config) {
 		super(config);
@@ -52,7 +52,6 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 
 	@Override
 	public String[] osKillCommand(Task task) {
-		Gpr.debug("UNIMPLEMENTED !!!");
 		return KILL_COMMAND;
 	}
 
@@ -64,16 +63,14 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 
 	@Override
 	protected void runTask(Task task, Host host) {
-		// TODO: Is there a queue? Create queue
-		//
+		task.createProgramFile(); // We must create a program file
+
+		if (debug) log("Running task " + task.getId());
+
 		// TODO: Create startup script (task's sys commands or checkpoint)
 		// TODO: Find instance's parameters (type, image, disk, etc.)
 		// TODO: Run instance
 		// TODO: Store instance ID
-		//
-		// TODO: follow task (add task to queue monitor)
-		// TODO: Add to 'taskLogger' so that Go bds process can kill if Java dies
-
 		Gpr.debug("UNIMPLEMENTED !!!");
 	}
 

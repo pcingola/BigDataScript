@@ -69,6 +69,8 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 		String statCommand[] = { "qstat" };
 		String postMortemInfoCommand[] = { "qstat", "-f" };
 
+		blockRunTasks = true;
+
 		clusterRunCommand = runCommand;
 		clusterKillCommand = killCommand;
 		clusterStatCommand = statCommand;
@@ -416,34 +418,6 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
 		);
-	}
-
-	@Override
-	protected void runTask(Task task, Host host) {
-		// Create a (shell) command to run task in cluster
-		Cmd cmd = createRunCmd(task);
-		if (cmd != null) {
-			addCmd(task, cmd);
-			cmd.setHost(host);
-			cmd.setExecutioner(this);
-			cmd.setTask(task);
-			cmd.setDebug(debug);
-		}
-
-		host.add(task);
-
-		// Run command
-		// Note: We run in blocking mode to avoid choking the head node with
-		// too many threads, too many file descriptors, etc..
-		if (cmd != null) {
-			try {
-				cmd.start();
-				cmd.join(); // Wait for this thread to finish
-			} catch (InterruptedException e) {
-				throw new RuntimeException("Error while waiting for command execution:\n\tCommand: " + cmd, e);
-			}
-		}
-
 	}
 
 	/**

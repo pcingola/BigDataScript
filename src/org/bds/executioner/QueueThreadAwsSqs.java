@@ -23,7 +23,10 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
  */
 public class QueueThreadAwsSqs extends QueueThread {
 
-	private static final String OS_DELETE_QUEUE_COMMAND = "aws sqs delete-queue --queue-url"; // Command line to delete a queue
+	public static final String QUEUE_NAME_DEBUG = "bds_test_123456789";
+	public static boolean USE_QUEUE_NAME_DEBUG = true; // Fix queue name when running tests or debugging
+
+	private static final String OS_DELETE_QUEUE_COMMAND = "@aws_sqs_delete-queue"; // Command line to delete a queue
 	public static final int AWS_SQS_WAIT_TIME_SECONDS = 10; // Long polling parameter
 
 	private SqsClient sqsClient;
@@ -86,8 +89,12 @@ public class QueueThreadAwsSqs extends QueueThread {
 	 */
 	private String getQueueName() {
 		if (queueName == null) {
-			String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
-			queueName = String.format("bds_%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%2$s", Calendar.getInstance(), r);
+			if (USE_QUEUE_NAME_DEBUG) {
+				this.queueName = QUEUE_NAME_DEBUG;
+			} else {
+				String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
+				queueName = String.format("bds_%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%2$s", Calendar.getInstance(), r);
+			}
 		}
 		return queueName;
 	}
