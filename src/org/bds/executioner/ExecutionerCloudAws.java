@@ -3,8 +3,8 @@ package org.bds.executioner;
 import java.util.List;
 
 import org.bds.Config;
-import org.bds.cluster.host.Host;
 import org.bds.osCmd.Cmd;
+import org.bds.osCmd.CmdLocal;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 
@@ -47,10 +47,24 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	 * Create "bds exec" command line options
 	 */
 	protected String[] createBdsExecCmd(Task task) {
-		List<String> bdsExecArgs = createBdsExecCmdArgsList(task);
-		bdsExecArgs.add("awsSqsName");
-		bdsExecArgs.add(queueThread.getName());
+		String[] argsAdd = { "-awsSqsName", queueThread.getName() };
+		List<String> bdsExecArgs = createBdsExecCmdArgsList(task, argsAdd);
 		return bdsExecArgs.toArray(Cmd.ARGS_ARRAY_TYPE);
+	}
+
+	@Override
+	public synchronized Cmd createRunCmd(Task task) {
+		task.createProgramFile(); // We must create a program file
+		String[] bdsExecCmd = createBdsExecCmd(task);
+		if (debug) log("Running task " + task.getId());
+		// TODO: Create startup script (task's sys commands or checkpoint)
+		// TODO: Find instance's parameters (type, image, disk, etc.)
+		// TODO: Run instance
+		// TODO: Store instance ID
+		CmdLocal cmd = new CmdLocal(task.getId(), bdsExecCmd);
+		cmd.setDebug(debug);
+		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
+		return cmd;
 	}
 
 	@Override
@@ -83,17 +97,10 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 		}
 	}
 
-	@Override
-	protected void runTask(Task task, Host host) {
-		if (debug) log("Running task " + task.getId());
-		task.createProgramFile(); // We must create a program file
-		String[] bdsExecCmd = createBdsExecCmd(task);
-		// TODO: Create startup script (task's sys commands or checkpoint)
-		// TODO: Find instance's parameters (type, image, disk, etc.)
-		// TODO: Run instance
-		// TODO: Store instance ID
-		Gpr.debug("UNIMPLEMENTED !!! CMD: " + bdsExecCmd);
-	}
+	//	@Override
+	//	protected void runTask(Task task, Host host) {
+	//		Gpr.debug("UNIMPLEMENTED !!! CMD: " + bdsExecCmd);
+	//	}
 
 	@Override
 	protected void taskUpdateFinishedCleanUp(Task task) {

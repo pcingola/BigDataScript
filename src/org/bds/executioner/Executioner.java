@@ -103,10 +103,14 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return createBdsExecCmdArgsList(task).toArray(Cmd.ARGS_ARRAY_TYPE);
 	}
 
+	public static List<String> createBdsExecCmdArgsList(Task task) {
+		return createBdsExecCmdArgsList(task, null);
+	}
+
 	/**
 	 * Create command line arguments for "bds exec ..."
 	 */
-	public static List<String> createBdsExecCmdArgsList(Task task) {
+	public static List<String> createBdsExecCmdArgsList(Task task, String[] argsAdd) {
 		// Create command line
 		List<String> args = new ArrayList<>();
 		for (String arg : BDS_EXEC_COMMAND)
@@ -124,6 +128,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		args.add("-taskId");
 		args.add(task.getId()); // Task ID
+
+		// Any additional command line options?
+		if (argsAdd != null) {
+			for (String a : argsAdd)
+				args.add(a);
+		}
 
 		// Resources options
 		TaskResources res = task.getResources();
