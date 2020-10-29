@@ -49,9 +49,15 @@ public class QueueThreadAwsSqs extends QueueThread {
 	public boolean createQueue() {
 		if (hasQueue()) return false; // Queue already exists
 
-		queueName = getQueueName();
-		CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
-		getSqsClient().createQueue(createQueueRequest);
+		try {
+			queueName = getQueueName();
+			CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
+			if (debug) log("Creating queue '" + queueName + "'");
+			getSqsClient().createQueue(createQueueRequest);
+		} catch (Exception e) {
+			error = e;
+			return false;
+		}
 
 		GetQueueUrlResponse getQueueUrlResponse = getSqsClient().getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
 		queueUrl = getQueueUrlResponse.queueUrl();
@@ -68,11 +74,10 @@ public class QueueThreadAwsSqs extends QueueThread {
 		if (!hasQueue()) return false; // Nothing to delete
 
 		try {
-			log("Deleting queue '" + queueName + "', url: '" + queueUrl + "'");
-			DeleteQueueRequest deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queueUrl).build();
-			getSqsClient().deleteQueue(deleteQueueRequest);
 			if (verbose) log("Deleting queue '" + queueName + "', url: '" + queueUrl + "'");
+			DeleteQueueRequest deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queueUrl).build();
 			queueUrl = null;
+			getSqsClient().deleteQueue(deleteQueueRequest);
 		} catch (QueueNameExistsException e) {
 			if (verbose || debug) e.printStackTrace();
 		}
@@ -87,10 +92,10 @@ public class QueueThreadAwsSqs extends QueueThread {
 	/**
 	 * Create a unique name according to queue name restrictions
 	 */
-	private String getQueueName() {
+	public String getQueueName() {
 		if (queueName == null) {
 			if (USE_QUEUE_NAME_DEBUG) {
-				this.queueName = QUEUE_NAME_DEBUG;
+				queueName = QUEUE_NAME_DEBUG;
 			} else {
 				String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
 				queueName = String.format("bds_%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%2$s", Calendar.getInstance(), r);
@@ -99,11 +104,16 @@ public class QueueThreadAwsSqs extends QueueThread {
 		return queueName;
 	}
 
+	public String getQueueUrl() {
+		return queueUrl;
+	}
+
 	private SqsClient getSqsClient() {
 		if (sqsClient == null) sqsClient = SqsClient.builder().build();
 		return sqsClient;
 	}
 
+	@Override
 	protected boolean hasQueue() {
 		return queueUrl != null;
 	}
@@ -118,7 +128,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 	 */
 	private void process(Message message) {
 		if (debug) log("Process SQS message: " + message);
-		process(message.body());
+		processMessage(message.body());
 	}
 
 	/**

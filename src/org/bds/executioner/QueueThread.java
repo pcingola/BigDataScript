@@ -25,6 +25,7 @@ public abstract class QueueThread extends Thread {
 
 	protected Config config;
 	protected boolean debug;
+	protected Exception error;
 	protected boolean verbose;
 	protected MonitorTaskQueue monitorTasks; // Monitor tasks: This object checks if a task finished. In this case, the messages from the queue inform this monitor about finished tasks
 	protected boolean running; // Is this thread runing?
@@ -51,8 +52,24 @@ public abstract class QueueThread extends Thread {
 		taskById.put(task.getId(), task);
 	}
 
-	void append(String fileName, String msg) {
+	/**
+	 * Close all file descriptors, delete queue
+	 */
+	protected void close() {
+		// Remove all tasks (close all open streams)
+		List<Task> tasks = new ArrayList<>();
+		tasks.addAll(taskById.values());
+		if (debug) log("runLoopAfter. Removing " + tasks.size() + " pending tasks");
+		for (Task t : tasks)
+			remove(t);
 
+		// Delete the queue and add a "removed" entry in TaskLogger
+		if (deleteQueue()) {
+			if (taskLogger != null) {
+				taskLogger.remove(getQueueId());
+				taskLogger = null;
+			}
+		}
 	}
 
 	/**
@@ -79,10 +96,20 @@ public abstract class QueueThread extends Thread {
 		if (monitorTasks != null) monitorTasks.addFinished(task);
 	}
 
+	public Exception getError() {
+		return error;
+	}
+
 	/**
 	 * Create a unique ID used to uniquely identify the queue
 	 */
 	public abstract String getQueueId();
+
+	public boolean hasError() {
+		return error != null;
+	}
+
+	protected abstract boolean hasQueue();
 
 	/**
 	 * Is this executioner running?
@@ -95,9 +122,8 @@ public abstract class QueueThread extends Thread {
 	 * Stop queue thread
 	 */
 	public synchronized void kill() {
-		// TODO: Interrupt thread to make sure it wakes up from waiting messages
-		Gpr.debug("!!! TODO: Interrupt thread to make sure it wakes up from waiting messages");
 		running = false;
+		close();
 	}
 
 	public void log(String msg) {
@@ -114,7 +140,7 @@ public abstract class QueueThread extends Thread {
 	/**
 	 * Process a single message
 	 */
-	protected void process(String message) {
+	protected void processMessage(String message) {
 		String[] parts = message.split("\t");
 		String taskId = parts[0];
 		String stdout = parts.length > 1 ? parts[1] : "";
@@ -141,13 +167,7 @@ public abstract class QueueThread extends Thread {
 		}
 	}
 
-	protected void processMessage(String message) {
-		// TODO: Write STDOUT / STDERR to local files and show on console
-
-		// TODO: Write exitCode to local file AND invoke monitorTasks.addFinished(task)
-	}
-
-	public void remove(Task task) {
+	public synchronized void remove(Task task) {
 		taskById.remove(task.getId());
 
 		// Close stderr output stream
@@ -193,25 +213,22 @@ public abstract class QueueThread extends Thread {
 	 * Run after the thread is stopped
 	 */
 	protected void runLoopAfter() {
-		// Delete the queue and add a "removed" entry in TaskLogger
-		if (deleteQueue()) {
-			if (taskLogger != null) taskLogger.remove(getQueueId());
-		}
-
-		// Remove all tasks (close all open streams)
-		List<Task> tasks = new ArrayList<>();
-		tasks.addAll(taskById.values());
-		for (Task t : tasks)
-			remove(t);
+		if (debug) log("runLoopAfter");
+		close();
 	}
 
 	/**
 	 * Run before starting the main loop
 	 */
 	protected void runLoopBefore() {
+		if (debug) log("runLoopBefore: Creating queue");
+
 		// Create the queue and add an entry in TaskLogger
 		if (createQueue()) {
 			if (taskLogger != null) taskLogger.add(getQueueId(), osDeleteQueueCommand());
+		} else {
+			// Error creating queue, cannot run
+			running = false;
 		}
 	}
 
@@ -233,6 +250,7 @@ public abstract class QueueThread extends Thread {
 			t.printStackTrace();
 			throw new RuntimeException(t);
 		} finally {
+			if (debug) log("runLoop finished: running=" + running);
 			running = false;
 			runLoopAfter(); // Clean up
 		}

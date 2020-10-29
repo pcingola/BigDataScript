@@ -39,15 +39,16 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 
 	@Override
 	protected void checkFinishedTasks() {
-		// TODO Auto-generated method stub
-
+		// TODO: ???
+		Gpr.debug("UNIMPLEMENTED!!!");
 	}
 
 	/**
 	 * Create "bds exec" command line options
 	 */
 	protected String[] createBdsExecCmd(Task task) {
-		String[] argsAdd = { "-awsSqsName", queueThread.getName() };
+		String qname = ((QueueThreadAwsSqs) queueThread).getQueueName();
+		String[] argsAdd = { "-awsSqsName", qname };
 		List<String> bdsExecArgs = createBdsExecCmdArgsList(task, argsAdd);
 		return bdsExecArgs.toArray(Cmd.ARGS_ARRAY_TYPE);
 	}
@@ -77,6 +78,24 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 		return checkTasksRunning;
 	}
 
+	/**
+	 * Kill all tasks in a list
+	 */
+	@Override
+	protected synchronized void killAll(List<Task> tokill) {
+		if (debug) log("killAll. Killing " + tokill.size() + " tasks");
+		// TODO: Terminate all instance in one API call
+		Gpr.debug("UNIMPLEMENTED !!!");
+	}
+
+	@Override
+	protected synchronized void killTask(Task task) {
+		if (debug) log("killTask. Killing task " + task.getId());
+
+		// TODO: Terminate instance
+		Gpr.debug("UNIMPLEMENTED !!!");
+	}
+
 	@Override
 	public String[] osKillCommand(Task task) {
 		return KILL_COMMAND;
@@ -92,19 +111,21 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	protected void runExecutionerLoopBefore() {
 		// Start a new thread if needed, don't start a thread if it's already running
 		if (queueThread == null) {
+			if (debug) log("runExecutionerLoopBefore. Starting queue thread");
 			queueThread = new QueueThreadAwsSqs(config, (MonitorTaskQueue) monitorTask, taskLogger);
 			queueThread.start();
+
+			// Wait until the queue is created to continue.
+			// Otherwise we could dispatch a task before the queue exists or
+			// before we receive an error from the queue syste,)
+			while (!queueThread.hasQueue() && !queueThread.hasError())
+				sleepShort();
+
+			if (debug) log("runExecutionerLoopBefore. Queue created, error=" + queueThread.hasError());
+
+			// Any errors while creating the queue? If so, abort immediately
+			if (queueThread.hasError()) throw new RuntimeException("Error creating queue!", queueThread.getError());
 		}
-	}
-
-	//	@Override
-	//	protected void runTask(Task task, Host host) {
-	//		Gpr.debug("UNIMPLEMENTED !!! CMD: " + bdsExecCmd);
-	//	}
-
-	@Override
-	protected void taskUpdateFinishedCleanUp(Task task) {
-		Gpr.debug("UNIMPLEMENTED !!!");
 	}
 
 }

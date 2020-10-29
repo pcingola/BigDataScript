@@ -1,12 +1,9 @@
 package org.bds.executioner;
 
-import java.util.List;
-
 import org.bds.Config;
 import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.HostInifinte;
 import org.bds.task.Task;
-import org.bds.util.Gpr;
 
 /**
  * Execute tasks in a cloud
@@ -61,24 +58,10 @@ public abstract class ExecutionerCloud extends Executioner {
 	public synchronized void kill() {
 		super.kill();
 		if (queueThread != null) {
+			if (debug) log("Killing queue");
 			queueThread.kill();
 			queueThread = null;
 		}
-	}
-
-	/**
-	 * Kill all tasks in a list
-	 */
-	@Override
-	protected synchronized void killAll(List<Task> tokill) {
-		// TODO: Terminate all instance in one API call
-		Gpr.debug("UNIMPLEMENTED !!!");
-	}
-
-	@Override
-	protected synchronized void killTask(Task task) {
-		// TODO: Terminate instance
-		Gpr.debug("UNIMPLEMENTED !!!");
 	}
 
 }

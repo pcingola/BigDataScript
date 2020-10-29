@@ -2,9 +2,7 @@ package org.bds.executioner;
 
 import org.bds.Config;
 import org.bds.cluster.ComputerSystem;
-import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostLocal;
-import org.bds.osCmd.Cmd;
 import org.bds.task.Tail;
 import org.bds.task.Task;
 
@@ -80,19 +78,5 @@ public abstract class ExecutionerFileSystem extends Executioner {
 	@Override
 	protected void postMortemInfo(Task task) {
 		// Nothing to do
-	}
-
-	/**
-	 * Task finished (either finished OK or has some error condition)
-	 */
-	@Override
-	protected synchronized void taskUpdateFinishedCleanUp(Task task) {
-		// Find command
-		Cmd cmd = getCmd(task);
-		if (cmd != null) {
-			Host host = cmd.getHost();
-			remove(task, host); // Remove task form host
-		}
-		removeCmd(task); // Remove command (if any)
 	}
 }

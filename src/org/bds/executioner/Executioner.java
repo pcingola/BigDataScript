@@ -37,7 +37,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	public static String BDS_EXEC_COMMAND[] = { "bds", "exec" };
 
 	protected CheckTasksRunning checkTasksRunning;
-	protected Map<String, Cmd> cmdById; // Command indexed by taskID
+	protected Map<String, Cmd> cmdByTaskId; // Command indexed by taskID
 	protected Config config;
 	protected boolean blockRunTasks; // Should runTask block when running a command. If the command is just dispatching to the cluster ('qsub') we might want to block to avoid overloading the scheduler
 	protected boolean debug;
@@ -165,7 +165,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		super();
 		valid = true;
 		blockRunTasks = false;
-		cmdById = new HashMap<>();
+		cmdByTaskId = new HashMap<>();
 		this.config = config;
 		tasksToRun = new ArrayList<>();
 		taskUpdateStates = new ArrayList<>();
@@ -189,7 +189,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	protected synchronized void addCmd(Task task, Cmd cmd) {
-		cmdById.put(task.getId(), cmd);
+		cmdByTaskId.put(task.getId(), cmd);
 	}
 
 	/**
@@ -269,7 +269,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	protected synchronized Cmd getCmd(Task task) {
-		return cmdById.get(task.getId());
+		return cmdByTaskId.get(task.getId());
 	}
 
 	public String getExecutionerId() {
@@ -366,7 +366,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Stop executioner and kill all tasks
 	 */
 	public synchronized void kill() {
-		if (debug) log("Killed");
+		if (debug) log("Killed executioner");
 
 		// Kill all 'tasksToRun'.
 		// Note: We need to create a new list to avoid concurrent modification exceptions
@@ -455,7 +455,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Remove a command (task)
 	 */
 	protected synchronized void removeCmd(Task task) {
-		cmdById.remove(task.getId());
+		cmdByTaskId.remove(task.getId());
 	}
 
 	/**
@@ -825,8 +825,13 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		String id = task.getId();
 		if (debug) log("Task finished '" + id + "'");
 
-		// Cleanup task
-		taskUpdateFinishedCleanUp(task);
+		// Cleanup command & host
+		Cmd cmd = getCmd(task);
+		if (cmd != null) {
+			Host host = cmd.getHost();
+			remove(task, host); // Remove task form host
+		}
+		removeCmd(task); // Remove command (if any)
 
 		followStop(task); // Remove from 'tail' thread
 
@@ -862,13 +867,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		return true;
 	}
-
-	/**
-	 * Clean up when a task is changing to finished state.
-	 * Perform executioner-specifi cleanup
-	 * @param task
-	 */
-	protected abstract void taskUpdateFinishedCleanUp(Task task);
 
 	/**
 	 * Update task state to 'RUNNING'
