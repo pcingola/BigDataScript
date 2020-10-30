@@ -56,9 +56,8 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 		args.add(clusterStdFile(task.getStdoutFile()));
 		args.add(clusterStdFile(task.getStderrFile()));
 
-		// Create command to run (it feeds parameters to qsub via stdin)
-		String bdsExecCmd = createBdsExecCmdStr(task);
-		for (String arg : bdsExecCmd.split("\\s+"))
+		// Create command to run
+		for (String arg : createBdsExecCmdArgsList(task))
 			args.add(arg);
 
 		// Convert to string[]
