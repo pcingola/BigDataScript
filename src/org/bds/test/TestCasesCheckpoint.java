@@ -312,7 +312,6 @@ public class TestCasesCheckpoint extends TestCasesBase {
 	@Test
 	public void test29() {
 		Gpr.debug("Test");
-		verbose = true;
 		runAndCheck("test/checkpoint_29.bds", "ok", true);
 	}
 

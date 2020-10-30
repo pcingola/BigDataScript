@@ -77,6 +77,11 @@ public class DataS3 extends DataRemote {
 			if (!isFile()) return false;
 			if (local != null) localPath = local.getAbsolutePath();
 
+			// Remove local file (if it exists)
+			File localFile = (new File(localPath));
+			localFile.delete();
+
+			// Download from S3
 			GetObjectRequest req = GetObjectRequest.builder().bucket(bucketName).key(key).build();
 			s3.getObject(req, ResponseTransformer.toFile(Paths.get(localPath)));
 			if (verbose) Timer.showStdErr("Donwload from '" + toString() + "' to '" + localPath + "' finished.");
