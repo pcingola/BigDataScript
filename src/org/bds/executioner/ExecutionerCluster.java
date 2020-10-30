@@ -46,8 +46,6 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 	protected String clusterStatAdditionalArgs[];
 	protected String clusterPostMortemAdditionalArgs[];
 
-	protected String bdsCommand = "bds exec ";
-
 	protected String memParam;
 	protected String cpuParam;
 	protected String wallTimeParam;
