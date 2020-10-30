@@ -76,14 +76,20 @@ public class DataS3 extends DataRemote {
 		try {
 			if (!isFile()) return false;
 			if (local != null) localPath = local.getAbsolutePath();
+			else if (localPath == null) localPath = getLocalPath();
 
-			// Remove local file (if it exists)
-			File localFile = (new File(localPath));
+			File localFile = new File(localPath);
+
+			// Make sure the parent directory exists
+			File parent = localFile.getParentFile();
+			if (parent != null) parent.mkdirs();
+
+			// Remove local file (if it already exists)
 			localFile.delete();
 
 			// Download from S3
 			GetObjectRequest req = GetObjectRequest.builder().bucket(bucketName).key(key).build();
-			s3.getObject(req, ResponseTransformer.toFile(Paths.get(localPath)));
+			getS3().getObject(req, ResponseTransformer.toFile(Paths.get(localPath)));
 			if (verbose) Timer.showStdErr("Donwload from '" + toString() + "' to '" + localPath + "' finished.");
 
 			// Update last modified info
@@ -92,6 +98,7 @@ public class DataS3 extends DataRemote {
 			return true;
 		} catch (Exception e) {
 			Timer.showStdErr("ERROR while downloading " + this);
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
