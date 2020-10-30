@@ -201,6 +201,12 @@ public class BdsThread extends Thread implements Serializable {
 
 			// Serialize root BdsThred to file
 			String localPath = d.isRemote() ? d.getLocalPath() : checkpointFileName;
+
+			// Make directory
+			File parent = (new File(localPath)).getParentFile();
+			if (parent != null) parent.mkdirs();
+
+			// Save file
 			ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(localPath)));
 			out.writeObject(getRoot());
 			out.close();
