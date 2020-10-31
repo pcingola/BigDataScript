@@ -15,6 +15,7 @@ import (
 	"time"
 )
 
+
 /*
   Calculate the 'checksum' of a file and compare it to
 	the '# Checksum' line.
@@ -245,16 +246,20 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal, q *queue.Queue
 				}
 
 			case sig := <-osSignal:
-				// Operating system signas (e.g. Ctrl-C)
+				// Operating system signals (e.g. Ctrl-C)
 				// Ignore some signals (e.g. "window changed")
-				sigStr := sig.String()
-				if sigStr != "window changed" && sigStr != "child exited" && sigStr != "window size changes" {
+				// sigStr := sig.String()
+				// if sigStr != "window changed" && sigStr != "child exited" && sigStr != "window size changes" {
+				if (sig == os.Interrupt) || (sig == os.Kill) {
 					if VERBOSE {
-						log.Printf("bds: Received OS signal '%s'\n", sigStr)
+						log.Printf("bds: Received OS signal '%s'\n", sig.String())
 					}
-
 					run, kill = false, true
 					exitStr = "Signal received"
+				} else {
+					if DEBUG {
+						log.Printf("bds: Ignoring OS signal '%s'\n", sig.String())
+					}
 				}
 		}
 	}

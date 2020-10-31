@@ -2,7 +2,9 @@
 a := 42
 
 task {
-	println "Task improper: a=$a"
+	sys echo hi
+	sys sleep 60
+	sys echo bye
 }
 
 wait
