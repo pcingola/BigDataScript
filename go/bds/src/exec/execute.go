@@ -51,8 +51,8 @@ func (be *BdsExec) checksum() bool {
 	}
 
 	// Is checksum correct?
-	if VERBOSE {
-		log.Printf("Debug checksum: Checksums differ. Expected checksum %d, got %d\n", sum, chsum32)
+	if VERBOSE && (sum != chsum32) {
+		log.Printf("WARNING: Checksum for file '%s' differs. Expected checksum %d, got %d\n", be.command, sum, chsum32)
 	}
 
 	return sum == chsum32
@@ -249,7 +249,7 @@ func (be *BdsExec) executeCommandTimeout(osSignal chan os.Signal, q *queue.Queue
 				// Ignore some signals (e.g. "window changed")
 				sigStr := sig.String()
 				if sigStr != "window changed" && sigStr != "child exited" && sigStr != "window size changes" {
-					if VERBOSE || DEBUG {
+					if VERBOSE {
 						log.Printf("bds: Received OS signal '%s'\n", sigStr)
 					}
 

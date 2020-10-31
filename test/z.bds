@@ -1,12 +1,9 @@
 
 a := 42
 
-void impr(int i) {
-	task {
-		println "Task improper: Start, a=$a, i=$i"
-		a += i
-		println "Task improper: End, a=$a, i=$i"
-	}
+task {
+	println "Task improper: a=$a"
 }
 
-impr(1)
+wait
+println "Done"
