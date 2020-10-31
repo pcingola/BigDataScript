@@ -99,7 +99,9 @@ func (be *BdsExec) taskLoggerParseFile() map[string]string {
 				if len(recs) > 2 && len(recs[2]) > 0 {
 					cmd := recs[2]
 					cmds[pid] = cmd
-					log.Printf("Debug taskLoggerParseFile: Adding id '%s', add/del '%s', cmd '%s'\n", pid, addDel, cmd)
+					if DEBUG {
+						log.Printf("Debug taskLoggerParseFile: Adding id '%s', add/del '%s', cmd '%s'\n", pid, addDel, cmd)
+					}
 				} else {
 					log.Printf("Error taskLoggerParseFile: Invalid line, cmd field not found, line: '%s'\n", cmds, line)
 				}
