@@ -86,7 +86,6 @@ public abstract class QueueThread extends Thread {
 	 * Write to STDOUT and to 'stdout' file
 	 */
 	protected void exit(String msg, Task task) {
-		System.out.print(msg);
 		if (task == null) return;
 
 		// Write exit file
@@ -127,7 +126,8 @@ public abstract class QueueThread extends Thread {
 	}
 
 	public void log(String msg) {
-		if (verbose || debug) Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
+		if (debug) Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
+		else if (verbose) Timer.showStdErr(msg);
 	}
 
 	/**
@@ -150,7 +150,6 @@ public abstract class QueueThread extends Thread {
 		Task task = taskById.get(taskId);
 
 		// Show message to console
-		System.out.println("TASK ID: " + taskId);
 		if (!stdout.isEmpty()) {
 			stdout = decode64(stdout);
 			stdout(stdout, task);

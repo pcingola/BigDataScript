@@ -1,9 +1,10 @@
 
-a := 42
+
+system := 'aws'
 
 task {
 	sys echo hi
-	sys sleep 60
+	sys sleep 1
 	sys echo bye
 }
 

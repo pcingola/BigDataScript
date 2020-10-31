@@ -9,6 +9,7 @@ import org.bds.lang.value.ValueMap;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
+import org.bds.util.Timer;
 
 /**
  * Represents resources consumed by a task running on AWS
@@ -91,7 +92,6 @@ public class TaskResourcesAws extends TaskResources {
 	 */
 	@Override
 	public void setFromBdsThread(BdsThread bdsThread) {
-		Gpr.debug("SET RESOURCES FROM BDSTHREAD");
 		super.setFromBdsThread(bdsThread);
 
 		// Try to find a 'resources' value
@@ -99,14 +99,15 @@ public class TaskResourcesAws extends TaskResources {
 		if (taskResources == null) return; // Not found? Nothing else to set
 
 		// If the value a hash?
-		if (taskResources.getType().isMap()) setFromBdsThreadMap((ValueMap) taskResources);
-		else if (taskResources.getType().isClass()) setFromBdsThreadClassResources(taskResources);
+		if (taskResources.getType().isMap()) setFromBdsThreadMap((ValueMap) taskResources, bdsThread.isDebug());
+		else if (taskResources.getType().isClass()) setFromBdsThreadClassResources(taskResources, bdsThread.isDebug());
 	}
 
 	/**
 	 * Set parameters from an 'AwsResources' class
 	 */
-	protected void setFromBdsThreadClassResources(Value taskResources) {
+	protected void setFromBdsThreadClassResources(Value taskResources, boolean debug) {
+		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from object '" + ExpressionTask.TASK_OPTION_RESOURCES + "': " + taskResources);
 		// TODO: Check that this class is 'AwsResources'
 		// TODO: Parse bds data structure
 		throw new RuntimeException("Cannot parse 'taskResources' type " + taskResources.getType());
@@ -115,7 +116,8 @@ public class TaskResourcesAws extends TaskResources {
 	/**
 	 * Set parameters from a 'string{string}' dictionary
 	 */
-	protected void setFromBdsThreadMap(ValueMap taskResources) {
+	protected void setFromBdsThreadMap(ValueMap taskResources, boolean debug) {
+		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from map '" + ExpressionTask.TASK_OPTION_RESOURCES + "': " + taskResources);
 		awsRole = mapGet(taskResources, PROFILE);
 		instanceType = mapGet(taskResources, INSTANCE_TYPE);
 		imageId = mapGet(taskResources, IMAGE_ID);

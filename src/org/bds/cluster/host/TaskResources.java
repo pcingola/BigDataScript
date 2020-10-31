@@ -3,6 +3,7 @@ package org.bds.cluster.host;
 import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.run.BdsThread;
+import org.bds.util.Timer;
 
 /**
  * Represents resources consumed by a task
@@ -53,6 +54,8 @@ public class TaskResources extends Resources {
 	 * @param bdsThread
 	 */
 	public void setFromBdsThread(BdsThread bdsThread) {
+		if (bdsThread.isDebug()) Timer.showStdErr(this.getClass().getName() + " : Setting resources from bds variables");
+
 		setCpus((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_CPUS));
 		setMem(bdsThread.getInt(ExpressionTask.TASK_OPTION_MEM));
 		setWallTimeout(bdsThread.getInt(ExpressionTask.TASK_OPTION_WALL_TIMEOUT));

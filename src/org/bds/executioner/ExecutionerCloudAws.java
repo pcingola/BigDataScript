@@ -37,12 +37,6 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 		monitorTask = MonitorTasks.get().getMonitorTaskQueue();
 	}
 
-	@Override
-	protected void checkFinishedTasks() {
-		// TODO: ???
-		Gpr.debug("UNIMPLEMENTED!!!");
-	}
-
 	/**
 	 * Create "bds exec" command line options
 	 */

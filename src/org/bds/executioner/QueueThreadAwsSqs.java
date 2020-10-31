@@ -52,7 +52,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 		try {
 			queueName = getQueueName();
 			CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
-			if (debug) log("Creating queue '" + queueName + "'");
+			if (verbose) log("Creating AWS SQS queue '" + queueName + "'");
 			getSqsClient().createQueue(createQueueRequest);
 		} catch (Exception e) {
 			error = e;
@@ -61,7 +61,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 
 		GetQueueUrlResponse getQueueUrlResponse = getSqsClient().getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
 		queueUrl = getQueueUrlResponse.queueUrl();
-		if (verbose) log("Created queue '" + queueName + "', url: '" + queueUrl + "'");
+		if (debug) log("Created AWS SQS queue '" + queueName + "', url: '" + queueUrl + "'");
 
 		return hasQueue(); // Success if the queue was created
 	}
@@ -74,7 +74,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 		if (!hasQueue()) return false; // Nothing to delete
 
 		try {
-			if (verbose) log("Deleting queue '" + queueName + "', url: '" + queueUrl + "'");
+			if (verbose) log("Deleting AWS SQS queue '" + queueName + "', url: '" + queueUrl + "'");
 			DeleteQueueRequest deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queueUrl).build();
 			queueUrl = null;
 			getSqsClient().deleteQueue(deleteQueueRequest);
