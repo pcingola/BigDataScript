@@ -117,13 +117,19 @@ func (be *BdsExec) parseCmdLineArgsExec() {
 	taskIdPtr := flagset.String("taskId", "", "Task ID")
 	awsSqsNamePtr := flagset.String("awsSqsName", "", "AWS SQS queue name")
 	noCheckSumPtr := flagset.Bool("noCheckSum", false, "Disable checksum in command")
-	flagset.Bool("d", false, "Debug")
-	flagset.Bool("v", false, "Verbose")
+	flagDebugPtr += flagset.Bool("d", false, "Debug")
+	flagVerbosePtr :=flagset.Bool("v", false, "Verbose")
 	flagset.Parse(os.Args[2:])
+
+	// Parse command line options
 	be.outFile, be.errFile, be.exitFile, be.timeSecs = *stdoutPtr, *stderrPtr, *exitFilePtr, *timePtr
 	be.noCheckSum = *noCheckSumPtr
 	be.awsSqsName = *awsSqsNamePtr
 	be.taskId = *taskIdPtr
+
+	// Verbose or debug
+	DEBUG = *flagDebugPtr
+	VERBOSE = *flagVerbosePtr || DEBUG
 
 	// Remaining command line arguments
 	args := flagset.Args()
@@ -137,7 +143,6 @@ func (be *BdsExec) parseCmdLineArgsExec() {
 		log.Printf("Debug parseCmdLineArgsExec: Arguments parsed, be.outFile='%s', be.errFile='%s', be.exitFile='%s', be.timeSecs=%d, be.noCheckSum=%b, be.awsSqsName='%s'\n", be.outFile, be.errFile, be.exitFile, be.timeSecs, be.noCheckSum, be.awsSqsName)
 		log.Printf("Debug parseCmdLineArgsExec: Command arguments to execute (len=%d): %s %v\n", len(be.cmdargs), be.command, be.cmdargs)
 	}
-
 }
 
 

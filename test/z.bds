@@ -1,12 +1,12 @@
-#!/usr/bin/env bds
 
-system = "aws"
-task {
-	sys echo Hi
-	sys sleep 2
-	sys echo Bye
+a := 42
+
+void impr(int i) {
+	task {
+		println "Task improper: Start, a=$a, i=$i"
+		a += i
+		println "Task improper: End, a=$a, i=$i"
+	}
 }
 
-wait
-println "Done: $programName"
-
+impr(1)

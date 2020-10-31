@@ -291,8 +291,14 @@ public class ExpressionTask extends ExpressionWithScope {
 		// This code schedules the task execution. The task is recovering
 		// from a the checkpoint we've just created.
 		sb.append(labelTaskBodyEnd + ":\n");
-		sb.append("var " + checkpointFileVar + "\n");
-		sb.append("rmonexit\n"); // Make sure we delete the checkpoint file at the end of the run
+		if (!Config.get().isLog()) {
+			// Make sure we delete the checkpoint file at the end of the run
+			sb.append("var " + checkpointFileVar + "\n");
+			sb.append("rmonexit\n");
+		} else {
+			// If command line '-log' was provided, then we should not delete the checkpoint file
+			sb.append("varpop " + checkpointFileVar + "\n");
+		}
 		sb.append("load " + varOutputs + "\n");
 		sb.append("load " + varInputs + "\n");
 		// Command to execute: "bds -restore $checkpointFileVar"

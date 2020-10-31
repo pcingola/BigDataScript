@@ -116,6 +116,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		for (String arg : BDS_EXEC_COMMAND)
 			args.add(arg);
 
+		// Verbose / debug?
+		if (Config.get().isVerbose()) args.add("-v");
+		if (Config.get().isVerbose()) args.add("-d");
+
 		// Add command line parameters for "bds exec"
 		args.add("-stdout");
 		args.add(task.getStdoutFile() != null ? task.getStdoutFile() : "-"); // Redirect STDOUT to this file

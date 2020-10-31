@@ -51,6 +51,10 @@ func (be *BdsExec) checksum() bool {
 	}
 
 	// Is checksum correct?
+	if VERBOSE {
+		log.Printf("Debug checksum: Checksums differ. Expected checksum %d, got %d\n", sum, chsum32)
+	}
+
 	return sum == chsum32
 }
 

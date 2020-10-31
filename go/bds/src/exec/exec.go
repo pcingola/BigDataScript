@@ -85,13 +85,13 @@ func NewBdsExec() *BdsExec {
 	Redirect stdout and stderr to files
 */
 func (be *BdsExec) ExecuteCommandArgs() int {
-	if DEBUG {
-		log.Print("Debug ExecuteCommandArgs: Start\n")
-	}
-
 	// Show PID info (parent process is expecting this line first)
 	fmt.Printf("%d\n", syscall.Getpid())
 	os.Stdout.Sync()
+
+	if DEBUG {
+		log.Print("Debug ExecuteCommandArgs: Start\n")
+	}
 
 	// Execute command
 	be.executeCommand()
