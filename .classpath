@@ -61,5 +61,6 @@
 	<classpathentry kind="lib" path="lib/commons-codec-1.11.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.4.13.jar"/>
 	<classpathentry kind="lib" path="lib/sqs-2.15.11.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.25.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

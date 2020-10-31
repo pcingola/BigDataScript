@@ -1,7 +1,11 @@
 package org.bds.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bds.Config;
 import org.bds.util.Gpr;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,10 +23,23 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
+	/**
+	 * Execute several tasks within a 'par' function
+	 */
 	@Test
-	public void test04_task_URL() {
+	public void test06() {
 		Gpr.debug("Test");
-		runAndCheck("test/remote_04.bds", "first", "<!DOCTYPE html>");
+		verbose = true;
+		List<String> expected = new ArrayList<>();
+		expected.add("Task improper: Before, a=42");
+		for (int i = 0; i < 5; i++) {
+			expected.add("Task improper: Start, a=42, i=" + i);
+			expected.add("Task improper: End, a=" + (42 + i) + ", i=" + i);
+		}
+		expected.add("Task improper: After, a=42");
+
+		String stdout = runAndCheckStdout("test/run_task_improper_06.bds", expected, null, false);
+		Assert.assertTrue("Should finish with a 'Done' message", stdout.endsWith("Done\n"));
 	}
 
 }

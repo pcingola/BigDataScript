@@ -39,7 +39,7 @@ public class DataS3 extends DataRemote {
 
 	public static final String ENV_PROXY_HTTTP = "http_proxy";
 	public static final String ENV_PROXY_HTTTPS = "https_proxy";
-	protected S3Client s3;
+	protected transient S3Client s3;
 	protected String bucketName;
 	protected String key;
 

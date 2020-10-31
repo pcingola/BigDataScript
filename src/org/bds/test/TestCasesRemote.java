@@ -600,7 +600,7 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "canRead        : false\n" //
 				+ "canWrite       : false\n" //
 				+ "exists         : false\n" //
-				+ "size           : 0\n" //
+				+ "size           : -1\n" //
 				+ "dirPath        : []\n" //
 				+ "dir            : []\n" //
 		;
