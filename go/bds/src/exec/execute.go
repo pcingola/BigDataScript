@@ -131,8 +131,8 @@ func (be *BdsExec) executeCommand() int {
 		// Main bds program
 		signal.Notify(osSignal) // Capture all signals
 	} else {
-		if !be.checksumWait() {
-			log.Printf("Error: Error trying to checksum file '%s'", be.command)
+		if !be.checksumWait() && DEBUG {
+			log.Printf("WARNING: Error trying to checksum file '%s'", be.command)
 		}
 
 		// Set a new process group.
