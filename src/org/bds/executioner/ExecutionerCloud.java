@@ -19,7 +19,7 @@ import org.bds.task.Task;
  * 	- The Executioner reads the queue and shows messages / updates task status
  * 	- Instances are monitored for timeout
  * 	- Instances are monitored for failure
- * 	- Instace are terminated
+ * 	- Instance are terminated
  *
  *
  * @author pcingola
@@ -55,7 +55,7 @@ public abstract class ExecutionerCloud extends Executioner {
 		// Remove from loggers
 		if (taskLogger != null) taskLogger.remove(task);
 		if (monitorTask != null) monitorTask.remove(task);
-		if (queueThread != null) queueThread.remove(task); // Start monitoring exit file
+		if (queueThread != null) queueThread.remove(task);
 	}
 
 	/**

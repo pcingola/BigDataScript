@@ -3,6 +3,7 @@ package org.bds.cluster.host;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bds.Config;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueMap;
@@ -10,6 +11,10 @@ import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
+
+import software.amazon.awssdk.services.ec2.model.IamInstanceProfileSpecification;
+import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
+import software.amazon.awssdk.services.ec2.model.ShutdownBehavior;
 
 /**
  * Represents resources consumed by a task running on AWS
@@ -25,7 +30,7 @@ public class TaskResourcesAws extends TaskResources {
 	protected final String[] INSTANCE_TYPE = { "instance-type", "instanceType" };
 	protected final String[] IP_ADDR = { "associate-public-ip-address", "public-ip-address", "public-ip", "associatePublicIpAddress", "publicIpAddress", "publicIp" };
 	protected final String[] PROFILE = { "iam-instance-profile", "instance-profile", "instanceProfile", "profile" };
-	protected final String[] SECURITY_GROUP_ID = { "security-group-ids", "securityGroupIds", "security-group-id", "securityGroupId" };
+	protected final String[] SECURITY_GROUP_IDS = { "security-group-ids", "securityGroupIds", "security-group-id", "securityGroupId" };
 	protected final String[] SUBNET_ID = { "subnet-id", "subnetId" };
 	protected final String[] TAGS = { "tag-specifications", "tagSpecifications", "tags" };
 
@@ -34,7 +39,7 @@ public class TaskResourcesAws extends TaskResources {
 	String imageId;
 	String keyName;
 	String shutdownBehavior;
-	String securityGroupId;
+	String securityGroupIds;
 	String subnetId;
 	String blockDevMap;
 	Map<String, String> tags;
@@ -47,6 +52,54 @@ public class TaskResourcesAws extends TaskResources {
 
 	public TaskResourcesAws(TaskResourcesAws hr) {
 		super(hr);
+	}
+
+	/**
+	 * Create an instance request
+	 */
+	public RunInstancesRequest ec2InstanceRequest() {
+		RunInstancesRequest.Builder requestBuilder = RunInstancesRequest.builder();
+
+		requestBuilder.maxCount(1).minCount(1);
+
+		if (awsRole != null && !awsRole.isEmpty()) {
+			IamInstanceProfileSpecification role = IamInstanceProfileSpecification.builder().name(awsRole).build();
+			requestBuilder.iamInstanceProfile(role);
+		}
+
+		if (imageId != null && !imageId.isEmpty()) requestBuilder.instanceType(instanceType);
+		else if (Config.get().isVerbose()) Timer.showStdErr("WARNINING: Instance type undefined when attempting to run AWS task.");
+
+		if (imageId != null && !imageId.isEmpty()) requestBuilder.imageId(imageId);
+		else if (Config.get().isVerbose()) Timer.showStdErr("WARNINING: ImageId undefined when attempting to run AWS task.");
+
+		if (keyName != null && !keyName.isEmpty()) requestBuilder.kernelId(keyName);
+
+		if (shutdownBehavior != null && !shutdownBehavior.isEmpty()) requestBuilder.instanceInitiatedShutdownBehavior(ShutdownBehavior.valueOf(shutdownBehavior));
+		else requestBuilder.instanceInitiatedShutdownBehavior(ShutdownBehavior.TERMINATE);
+
+		if (securityGroupIds != null && !securityGroupIds.isEmpty()) {
+			String[] groupIds;
+			if (securityGroupIds.indexOf('\t') > 0) {
+				// Tab-separated list
+				groupIds = securityGroupIds.split("\t");
+			} else if (securityGroupIds.indexOf(',') > 0) {
+				// Comma-separated list
+				groupIds = securityGroupIds.split(",");
+			} else {
+				// Only one item in the list
+				groupIds = new String[1];
+				groupIds[0] = securityGroupIds;
+			}
+			requestBuilder.securityGroups(groupIds);
+		}
+
+		if (blockDevMap != null && !blockDevMap.isEmpty()) {
+			// TODO: Block device mappings
+			Gpr.debug("UNIMPLEMENTED!!!");
+		}
+
+		return requestBuilder.build();
 	}
 
 	/**
@@ -122,7 +175,7 @@ public class TaskResourcesAws extends TaskResources {
 		instanceType = mapGet(taskResources, INSTANCE_TYPE);
 		imageId = mapGet(taskResources, IMAGE_ID);
 		keyName = mapGet(taskResources, KEY_NAME);
-		securityGroupId = mapGet(taskResources, SECURITY_GROUP_ID);
+		securityGroupIds = mapGet(taskResources, SECURITY_GROUP_IDS);
 		subnetId = mapGet(taskResources, SUBNET_ID);
 		tags = parseTags(mapGet(taskResources, TAGS));
 		usePublicIpAddr = Gpr.parseBoolSafe(mapGet(taskResources, IP_ADDR));

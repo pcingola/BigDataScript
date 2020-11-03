@@ -26,7 +26,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 	public static final String QUEUE_NAME_DEBUG = "bds_test_123456789";
 	public static boolean USE_QUEUE_NAME_DEBUG = true; // Fix queue name when running tests or debugging
 
-	private static final String OS_DELETE_QUEUE_COMMAND = "@aws_sqs_delete-queue"; // Command line to delete a queue
+	private static final String OS_DELETE_QUEUE_COMMAND = "@aws_sqs_delete_queue"; // Command line to delete a queue
 	public static final int AWS_SQS_WAIT_TIME_SECONDS = 10; // Long polling parameter
 
 	private SqsClient sqsClient;

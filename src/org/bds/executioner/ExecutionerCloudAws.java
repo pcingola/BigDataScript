@@ -1,12 +1,15 @@
 package org.bds.executioner;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bds.Config;
 import org.bds.osCmd.Cmd;
-import org.bds.osCmd.CmdLocal;
+import org.bds.osCmd.CmdAws;
 import org.bds.task.Task;
-import org.bds.util.Gpr;
+
+import software.amazon.awssdk.services.ec2.Ec2Client;
+import software.amazon.awssdk.services.ec2.model.StopInstancesRequest;
 
 /**
  * Execute tasks in a cloud
@@ -37,28 +40,22 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 		monitorTask = MonitorTasks.get().getMonitorTaskQueue();
 	}
 
-	/**
-	 * Create "bds exec" command line options
-	 */
-	protected String[] createBdsExecCmd(Task task) {
-		String qname = ((QueueThreadAwsSqs) queueThread).getQueueName();
-		String[] argsAdd = { "-awsSqsName", qname };
-		List<String> bdsExecArgs = createBdsExecCmdArgsList(task, argsAdd);
-		return bdsExecArgs.toArray(Cmd.ARGS_ARRAY_TYPE);
-	}
+	//	/**
+	//	 * Create "bds exec" command line options
+	//	 */
+	//	protected String[] createBdsExecCmd(Task task) {
+	//		String qname = ((QueueThreadAwsSqs) queueThread).getQueueName();
+	//		String[] argsAdd = { "-awsSqsName", qname };
+	//		List<String> bdsExecArgs = createBdsExecCmdArgsList(task, argsAdd);
+	//		return bdsExecArgs.toArray(Cmd.ARGS_ARRAY_TYPE);
+	//	}
 
 	@Override
 	public synchronized Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
-		String[] bdsExecCmd = createBdsExecCmd(task);
 		if (debug) log("Running task " + task.getId());
-		// TODO: Create startup script (task's sys commands or checkpoint)
-		// TODO: Find instance's parameters (type, image, disk, etc.)
-		// TODO: Run instance
-		// TODO: Store instance ID
-		CmdLocal cmd = new CmdLocal(task.getId(), bdsExecCmd);
-		cmd.setDebug(debug);
-		cmd.setReadPid(true); // We execute using "bds exec" which prints PID number before executing the sub-process
+		String qname = ((QueueThreadAwsSqs) queueThread).getQueueName();
+		CmdAws cmd = new CmdAws(task, qname);
 		return cmd;
 	}
 
@@ -78,16 +75,24 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	@Override
 	protected synchronized void killAll(List<Task> tokill) {
 		if (debug) log("killAll. Killing " + tokill.size() + " tasks");
-		// TODO: Terminate all instance in one API call
-		Gpr.debug("UNIMPLEMENTED !!!");
+
+		List<String> instanceIds = tokill.stream() //
+				.map(t -> t.getPid()) //
+				.collect(Collectors.toList());
+
+		if (instanceIds.isEmpty()) return;
+
+		if (verbose) log("Terminating instances " + instanceIds);
+		StopInstancesRequest request = StopInstancesRequest.builder().instanceIds(instanceIds).build();
+		Ec2Client ec2 = Ec2Client.create();
+		ec2.stopInstances(request);
 	}
 
 	@Override
 	protected synchronized void killTask(Task task) {
 		if (debug) log("killTask. Killing task " + task.getId());
-
-		// TODO: Terminate instance
-		Gpr.debug("UNIMPLEMENTED !!!");
+		Cmd cmd = getCmd(task);
+		if (cmd != null) cmd.kill();
 	}
 
 	@Override
@@ -121,5 +126,4 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 			if (queueThread.hasError()) throw new RuntimeException("Error creating queue!", queueThread.getError());
 		}
 	}
-
 }
