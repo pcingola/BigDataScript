@@ -102,6 +102,10 @@ public class TaskResourcesAws extends TaskResources {
 		return requestBuilder.build();
 	}
 
+	public Map<String, String> getTags() {
+		return tags;
+	}
+
 	/**
 	 * Get a value (as a string) from a ValueMap
 	 */
