@@ -2,6 +2,7 @@ package org.bds.osCmd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -10,6 +11,7 @@ import org.bds.cluster.host.TaskResourcesAws;
 import org.bds.task.Task;
 import org.bds.util.Timer;
 
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.CreateTagsRequest;
 import software.amazon.awssdk.services.ec2.model.Ec2Exception;
@@ -53,8 +55,11 @@ public class CmdAws extends Cmd {
 			tags.add(tag);
 
 			// Add user tags
-			for (Entry<String, String> e : resources.getTags().entrySet()) {
-				Tag.builder().key(e.getKey()).value(e.getValue()).build();
+			Map<String, String> tagsMap = resources.getTags();
+			if (tagsMap != null) {
+				for (Entry<String, String> e : tagsMap.entrySet()) {
+					Tag.builder().key(e.getKey()).value(e.getValue()).build();
+				}
 			}
 
 			// Attach tags to instance
@@ -71,11 +76,18 @@ public class CmdAws extends Cmd {
 	 * Create an AWS EC2 instance
 	 */
 	protected String createEC2Instance() {
-		Ec2Client ec2 = Ec2Client.create();
 		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
-		RunInstancesRequest runRequest = resources.ec2InstanceRequest(); // Create instance request
-		runInstance(ec2, runRequest); // Run the instance
+		Ec2Client ec2 = resources.ec2Client(); // Create client
+		RunInstancesRequest.Builder runRequestBuilder = resources.ec2InstanceRequest(); // Create instance request
+
+		// Add startup script
+		runRequestBuilder.userData("#!/bin/bash\n\necho Hello world'\n");
+
+		// Run the instance
+		RunInstancesRequest runRequest = runRequestBuilder.build();
+		runInstance(ec2, runRequest);
 		addTags(ec2, resources); // Add tags
+
 		return instanceId;
 	}
 
@@ -116,31 +128,29 @@ public class CmdAws extends Cmd {
 	 * type at the moment, so we need to wait for instances to become available.
 	 *
 	 * TODO: Add support for selecting multiple zones / regions (sequentially or randomly?)
-	 *
-	 * @param ec2
-	 * @param runRequest
-	 * @return
 	 */
 	protected RunInstancesResponse runInstance(Ec2Client ec2, RunInstancesRequest runRequest) {
 		// Run the instance
-		RunInstancesResponse response = ec2.runInstances(runRequest);
+		RunInstancesResponse response;
+		try {
+			response = ec2.runInstances(runRequest);
+		} catch (SdkClientException e) {
+			throw new RuntimeException("EC2 client expcetion (this might be caused by incorrectly setting the region). " + e.getMessage(), e);
+		}
 
 		Random rand = new Random();
 		for (int i = 0; i < START_FAIL_MAX_ATTEMPTS; i++) {
 			// Success?
 			if (response.hasInstances()) {
-				//				// Start instance: Not needed?
-				//				StartInstancesRequest request = StartInstancesRequest.builder().instanceIds(instanceId).build();
-				//				StartInstancesResponse res = ec2.startInstances(request);
 				instanceId = response.instances().get(0).instanceId();
 				return response;
 			}
 
 			// Create instance failed. Sleep for a random time and re-try
-			System.err.println("Create instance failed. Response: " + response);
-			int millis = 1000 * rand.nextInt(START_FAIL_SLEEP_RAND_TIME);
+			int secs = rand.nextInt(START_FAIL_SLEEP_RAND_TIME);
+			System.err.println("WARNING: Create instance failed, sleeping " + secs + " seconds before re-trying. Response: " + response);
 			try {
-				Thread.sleep(millis);
+				Thread.sleep(1000 * secs);
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);
 			}
