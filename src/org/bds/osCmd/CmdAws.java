@@ -1,6 +1,7 @@
 package org.bds.osCmd;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,6 +10,7 @@ import java.util.Random;
 import org.bds.Config;
 import org.bds.cluster.host.TaskResourcesAws;
 import org.bds.task.Task;
+import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -49,10 +51,22 @@ public class CmdAws extends Cmd {
 	 */
 	void addTags(Ec2Client ec2, TaskResourcesAws resources) {
 		try {
-			// Add bds 'taskId' tag
+			// Add bds tags
 			List<Tag> tags = new ArrayList<>();
-			Tag tag = Tag.builder().key("bds_taskId").value(task.getId()).build();
+
+			String tid = task.getId();
+			if (tid.indexOf('/') > 0) tid = tid.substring(0, tid.indexOf('/'));
+			Gpr.debug("NAME: " + tid);
+			Tag tag = Tag.builder().key("Name").value("bds " + tid).build();
 			tags.add(tag);
+
+			tag = Tag.builder().key("taskId").value(task.getId()).build();
+			tags.add(tag);
+
+			if (task.getTaskName() != null) {
+				tag = Tag.builder().key("taskName").value(task.getTaskName()).build();
+				tags.add(tag);
+			}
 
 			// Add user tags
 			Map<String, String> tagsMap = resources.getTags();
@@ -80,8 +94,10 @@ public class CmdAws extends Cmd {
 		Ec2Client ec2 = resources.ec2Client(); // Create client
 		RunInstancesRequest.Builder runRequestBuilder = resources.ec2InstanceRequest(); // Create instance request
 
-		// Add startup script
-		runRequestBuilder.userData("#!/bin/bash\n\necho Hello world'\n");
+		// Add startup script (encoded as bas64)
+		String script = instanceStartupScript(resources);
+		String script64 = new String(Base64.getEncoder().encode(script.getBytes()));
+		runRequestBuilder.userData(script64);
 
 		// Run the instance
 		RunInstancesRequest runRequest = runRequestBuilder.build();
@@ -110,6 +126,30 @@ public class CmdAws extends Cmd {
 		// res
 
 		return true;
+	}
+
+	/**
+	 * Creates the instance's startup script
+	 */
+	protected String instanceStartupScript(TaskResourcesAws resources) {
+		// TODO: Add shell from config file or map
+		// TODO: Add bds code to run from checkpoint / run script
+		StringBuilder sb = new StringBuilder();
+		sb.append("#!/bin/bash -eu\n");
+		sb.append("set -o pipefail\n");
+
+		// Script finished function: Shutdown the instance, unless 'keepInstanceAliveAfterFinish' is set
+		sb.append("function exit_script {\n");
+		if (!resources.isKeepInstanceAliveAfterFinish()) sb.append("    shutdown -h now\n");
+		else sb.append("    echo 'INFO: Keeping instance alive (keepInstanceAliveAfterFinish was set)'\n");
+		sb.append("}\n");
+
+		// Script main
+		sb.append("trap exit_script EXIT\n");
+		sb.append("echo \"INFO: Starting script '$0'\"\n");
+		sb.append("bds -h\n");
+		sb.append("echo \"INFO: Finished script '$0'\"\n");
+		return sb.toString();
 	}
 
 	@Override

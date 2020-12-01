@@ -36,6 +36,8 @@ public class TaskResourcesAws extends TaskResources {
 	protected final String[] IP_ADDR = { "associate-public-ip-address", "public-ip-address", "public-ip", "associatePublicIpAddress", "publicIpAddress", "publicIp" };
 	protected final String[] PROFILE = { "iam-instance-profile", "instance-profile", "instanceProfile", "profile" };
 	protected final String[] SECURITY_GROUP_IDS = { "security-group-ids", "securityGroupIds", "security-group-id", "securityGroupId" };
+	protected final String[] SHUTDOWN_BEHAVIOUR = { "shutdown-behavior", "shutdownBehavior" };
+	protected final String[] KEEP_INSTANCE_ALIVE_AFTER_FINISH = { "keep-instance-alive-after-finish", "keepInstanceAliveAfterFinish" };
 	protected final String[] SUBNET_ID = { "subnet-id", "subnetId" };
 	protected final String[] TAGS = { "tag-specifications", "tagSpecifications", "tags" };
 	protected final String[] REGION = { "region" };
@@ -52,10 +54,12 @@ public class TaskResourcesAws extends TaskResources {
 	String s3tmp;
 	String subnetId;
 	Map<String, String> tags;
+	boolean keepInstanceAliveAfterFinish; // Do NOT shutdown the instance after bds finishes execution (this can be set to 'true' for debugging the instances)
 	boolean usePublicIpAddr;
 
 	public TaskResourcesAws() {
 		super();
+		keepInstanceAliveAfterFinish = false;
 		shutdownBehavior = ShutdownBehavior.TERMINATE.toString();
 	}
 
@@ -100,24 +104,23 @@ public class TaskResourcesAws extends TaskResources {
 		// Shutdown behavior
 		requestBuilder.instanceInitiatedShutdownBehavior(parseShutdownBehavior(shutdownBehavior));
 
-		// Security group IDs: Can be tab to comma separated
-		String[] groupIds = parseList(securityGroupIds);
-		if (groupIds != null) requestBuilder.securityGroups(groupIds);
-
 		if (blockDevMap != null && !blockDevMap.isEmpty()) {
 			// FIXME: Block device mappings
 			throw new RuntimeException("UNIMPLEMENTED!!!");
 		}
 
-		// Use public IP address?
-		InstanceNetworkInterfaceSpecification nif = InstanceNetworkInterfaceSpecification.builder().associatePublicIpAddress(usePublicIpAddr).build();
-		requestBuilder.networkInterfaces(nif);
+		// Add network interface
+		requestBuilder.networkInterfaces(networkInterface());
 
 		return requestBuilder;
 	}
 
 	public Map<String, String> getTags() {
 		return tags;
+	}
+
+	public boolean isKeepInstanceAliveAfterFinish() {
+		return keepInstanceAliveAfterFinish;
 	}
 
 	/**
@@ -152,6 +155,29 @@ public class TaskResourcesAws extends TaskResources {
 	}
 
 	/**
+	 * Create a network interface
+	 */
+	InstanceNetworkInterfaceSpecification networkInterface() {
+		InstanceNetworkInterfaceSpecification.Builder nifb = InstanceNetworkInterfaceSpecification.builder();
+
+		// Network interface number 0 is the only one that can specify "associatePublicIpAddress"
+		nifb.deviceIndex(0);
+		nifb.deleteOnTermination(true);
+
+		// Public IP?
+		nifb.associatePublicIpAddress(usePublicIpAddr);
+
+		// Security group IDs
+		String[] groupIds = parseList(securityGroupIds);
+		if (groupIds != null) nifb.groups(groupIds);
+
+		// Subnet
+		if (subnetId != null && !subnetId.isEmpty()) nifb.subnetId(subnetId);;
+
+		return nifb.build();
+	}
+
+	/**
 	 * Parse instance type
 	 */
 	String parseInstanceType(String instanceType) {
@@ -183,7 +209,7 @@ public class TaskResourcesAws extends TaskResources {
 	 * Use ShutdownBehavior.TERMINATE on any error or invalid
 	 */
 	ShutdownBehavior parseShutdownBehavior(String shutdownBehavior) {
-		if (shutdownBehavior != null && !shutdownBehavior.isEmpty()) return ShutdownBehavior.TERMINATE;
+		if (shutdownBehavior == null || shutdownBehavior.isEmpty()) return ShutdownBehavior.TERMINATE;
 		try {
 			return ShutdownBehavior.valueOf(shutdownBehavior.toUpperCase());
 		} catch (Exception e) {
@@ -251,6 +277,8 @@ public class TaskResourcesAws extends TaskResources {
 		tags = parseTags(mapGet(taskResources, TAGS));
 		usePublicIpAddr = Gpr.parseBoolSafe(mapGet(taskResources, IP_ADDR));
 		region = mapGet(taskResources, REGION);
+		shutdownBehavior = mapGet(taskResources, SHUTDOWN_BEHAVIOUR);
+		keepInstanceAliveAfterFinish = Gpr.parseBoolSafe(mapGet(taskResources, KEEP_INSTANCE_ALIVE_AFTER_FINISH));
 	}
 
 }
