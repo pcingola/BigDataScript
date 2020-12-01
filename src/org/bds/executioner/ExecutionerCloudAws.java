@@ -102,8 +102,8 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 
 	@Override
 	protected void postMortemInfo(Task task) {
-		// TODO: Is there a way to collect some statistics on an instance that died recently?
-		// TODO: We could try to check CloudWatch messages and metrics
+		// Is there a way to collect some statistics on an instance that died recently?
+		// We could try to check CloudWatch messages and metrics
 	}
 
 	@Override

@@ -742,7 +742,7 @@ public class BdsVm implements Serializable {
 	 */
 	void popCallFrame() {
 		setFromCallFrame(callFrames[--fp]);
-		// TODO: Free space in previous call frame (scope, exceptionHandler)?
+		// Note: Should we free space in previous call frame (scope, exceptionHandler)?
 	}
 
 	/**
@@ -765,7 +765,7 @@ public class BdsVm implements Serializable {
 	 * Restore old scope
 	 */
 	public void popScope() {
-		// FIXME: Old scope should be null to free memory
+		// Old scope should be set to null to free memory?
 		scope = scope.getParent();
 	}
 

@@ -462,7 +462,7 @@ public class TestCasesLang extends TestCasesBase {
 
 	public void test68() {
 		Gpr.debug("Test");
-		// FIXME: Switch with empty statement crashes compile
+		// Switch with empty statement crashes compile
 		compileErrors("test/test68.bds", "Empty switch statment");
 	}
 }

@@ -41,11 +41,11 @@ import org.bds.util.Gpr;
  */
 public class TypeList extends TypeComposite {
 
-	Type elementType; // Type of elements in the list
-
 	private static final long serialVersionUID = -6328403968286013768L;
 
 	public static boolean debug = false;
+
+	Type elementType; // Type of elements in the list
 
 	public static TypeList factory(BdsNode parent, ParseTree tree) {
 		TypeList typeList = new TypeList(parent, tree);
@@ -129,7 +129,7 @@ public class TypeList extends TypeComposite {
 			methods.add(new MethodNativeListJoin(this));
 			methods.add(new MethodNativeListJoinStr(this));
 			methods.add(new MethodNativeListMap(this));
-			//!!! TODO: Functional methods not implemented
+			// Functional methods not implemented
 			//			methods.add(new MethodNativeListMapToInt(this));
 			//			methods.add(new MethodNativeListMapToReal(this));
 			//			methods.add(new MethodNativeListMapToString(this));

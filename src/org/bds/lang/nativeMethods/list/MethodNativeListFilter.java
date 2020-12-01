@@ -25,7 +25,7 @@ public class MethodNativeListFilter extends MethodNativeList {
 		classType = TypeList.get(baseType);
 		returnType = TypeList.get(baseType);;
 
-		//!!! TODO: Functional methods not implemented
+		// Functional methods not implemented
 		//		TypeFunction typeFunc = TypeFunction.get(Parameters.get(baseType, ""), Types.BOOL);
 		//		String argNames[] = { "this", "f" };
 		//		Type argTypes[] = { classType, typeFunc };
@@ -36,7 +36,7 @@ public class MethodNativeListFilter extends MethodNativeList {
 
 	@Override
 	public Value runMethod(BdsThread bdsThread, ValueList vthis) {
-		//!!! TODO: Functional methods not implemented
+		// Functional methods not implemented
 		throw new RuntimeException("Unimplemented!");
 	}
 }

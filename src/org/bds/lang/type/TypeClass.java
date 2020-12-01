@@ -18,10 +18,10 @@ import org.bds.lang.value.ValueClass;
  */
 public class TypeClass extends TypeComposite {
 
-	protected String className;
-
-	protected ClassDeclaration classDecl;
 	private static final long serialVersionUID = -6173442643563941413L;
+
+	protected String className;
+	protected ClassDeclaration classDecl;
 
 	/**
 	 * This constructor creates a "stub" TypeClass
@@ -106,7 +106,7 @@ public class TypeClass extends TypeComposite {
 
 	@Override
 	public String getCanonicalName() {
-		return className; // TODO: Implement a 'true' canonical name
+		return className; // We should implement a 'real' canonical name
 	}
 
 	public ClassDeclaration getClassDeclaration() {

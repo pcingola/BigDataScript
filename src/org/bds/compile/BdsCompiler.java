@@ -53,8 +53,6 @@ public class BdsCompiler {
 		if (debug) log("Global SymbolTable before 'addSymbols':\n" + globalSymbolTable);
 		programUnit.addSymbols(globalSymbolTable);
 		if (debug) log("Global SymbolTable after 'addSymbols':\n" + globalSymbolTable);
-
-		// FIXME: Any errors?
 		return false;
 	}
 

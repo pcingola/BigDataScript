@@ -115,15 +115,11 @@ public class CmdAws extends Cmd {
 
 	@Override
 	protected boolean execPrepare() throws Exception {
-		// TODO: Create the script
-		// TODO: Create startup script (task's sys commands or checkpoint)
-		// TODO: Find instance's parameters (type, image, disk, etc.)
+		// TODO: Create the tasks's script
+		// TODO: Create the tasks's script
 
 		// Create and run instance
 		createEC2Instance();
-
-		// TODO: If START_FAILED, sleep random time, iterate N times
-		// res
 
 		return true;
 	}
@@ -188,7 +184,7 @@ public class CmdAws extends Cmd {
 
 			// Create instance failed. Sleep for a random time and re-try
 			int secs = rand.nextInt(START_FAIL_SLEEP_RAND_TIME);
-			System.err.println("WARNING: Create instance failed, sleeping " + secs + " seconds before re-trying. Response: " + response);
+			System.err.println("WARNING: Create instance failed, sleeping " + secs + " seconds before re-trying. tasId: '" + task.getId() + "',  Response: " + response);
 			try {
 				Thread.sleep(1000 * secs);
 			} catch (InterruptedException e) {
@@ -197,7 +193,7 @@ public class CmdAws extends Cmd {
 		}
 
 		// Too many attempts
-		throw new RuntimeException("Unable to create instance ");
+		throw new RuntimeException("Unable to create instance for taskId: '" + task.getId() + "' after " + START_FAIL_MAX_ATTEMPTS + "  attempts.");
 	}
 
 }
