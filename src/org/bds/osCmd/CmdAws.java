@@ -34,6 +34,9 @@ import software.amazon.awssdk.services.ec2.model.Tag;
  */
 public class CmdAws extends Cmd {
 
+	public static boolean DO_NOT_RUN_INSTANCE = true; // This is used for developing or debugging
+
+	// TODO: These parameters should be configurable (maybe in taskResources?)
 	public static int START_FAIL_MAX_ATTEMPTS = 50;
 	public static int START_FAIL_SLEEP_RAND_TIME = 60;
 
@@ -95,12 +98,18 @@ public class CmdAws extends Cmd {
 		RunInstancesRequest.Builder runRequestBuilder = resources.ec2InstanceRequest(); // Create instance request
 
 		// Add startup script (encoded as bas64)
-		String script = instanceStartupScript(resources);
+		String script = startupScript();
+		Gpr.debug("STARTUP SCRIT:\n" + script);
 		String script64 = new String(Base64.getEncoder().encode(script.getBytes()));
 		runRequestBuilder.userData(script64);
 
 		// Run the instance
 		RunInstancesRequest runRequest = runRequestBuilder.build();
+		if (DO_NOT_RUN_INSTANCE) {
+			Gpr.debug("WARNING: DO_NOT_RUN_INSTANCE is activated");
+			return "instance_id_123";
+		}
+
 		runInstance(ec2, runRequest);
 		addTags(ec2, resources); // Add tags
 
@@ -110,7 +119,6 @@ public class CmdAws extends Cmd {
 	@Override
 	protected void execCmd() throws Exception {
 		// TODO: Wait for the instance to finish and store exit value
-
 	}
 
 	@Override
@@ -124,36 +132,22 @@ public class CmdAws extends Cmd {
 		return true;
 	}
 
-	/**
-	 * Creates the instance's startup script
-	 */
-	protected String instanceStartupScript(TaskResourcesAws resources) {
-		// TODO: Add shell from config file or map
-		// TODO: Add bds code to run from checkpoint / run script
-		StringBuilder sb = new StringBuilder();
-		sb.append("#!/bin/bash -eu\n");
-		sb.append("set -o pipefail\n");
-
-		// Script finished function: Shutdown the instance, unless 'keepInstanceAliveAfterFinish' is set
-		sb.append("function exit_script {\n");
-		if (!resources.isKeepInstanceAliveAfterFinish()) sb.append("    shutdown -h now\n");
-		else sb.append("    echo 'INFO: Keeping instance alive (keepInstanceAliveAfterFinish was set)'\n");
-		sb.append("}\n");
-
-		// Script main
-		sb.append("trap exit_script EXIT\n");
-		sb.append("echo \"INFO: Starting script '$0'\"\n");
-		sb.append("bds -h\n");
-		sb.append("echo \"INFO: Finished script '$0'\"\n");
-		return sb.toString();
-	}
-
 	@Override
 	protected void killCmd() {
 		if (debug) log("Terminating instance '" + instanceId + "'");
 		StopInstancesRequest request = StopInstancesRequest.builder().instanceIds(instanceId).build();
 		Ec2Client ec2 = Ec2Client.create();
 		ec2.stopInstances(request);
+	}
+
+	/**
+	 * Prepend a "#\t" to each line of the script
+	 */
+	String prepentHashTab(String systxt) {
+		StringBuilder sb = new StringBuilder();
+		for (String l : systxt.split("\n"))
+			sb.append("#\t" + l + "\n");
+		return sb.toString();
 	}
 
 	/**
@@ -194,6 +188,92 @@ public class CmdAws extends Cmd {
 
 		// Too many attempts
 		throw new RuntimeException("Unable to create instance for taskId: '" + task.getId() + "' after " + START_FAIL_MAX_ATTEMPTS + "  attempts.");
+	}
+
+	/**
+	 * Creates the instance's startup script
+	 */
+	protected String startupScript() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("#!" + Config.get().getTaskShell() + "\n\n");
+
+		sb.append(startupScriptExit());
+
+		// Script main
+		sb.append("trap exit_script EXIT\n");
+		sb.append("echo \"INFO: Starting script '$0'\"\n\n");
+		sb.append(startupScriptMain());
+		sb.append("\necho \"INFO: Finished script '$0'\"\n");
+		return sb.toString();
+	}
+
+	/**
+	 * Script exit function: Shutdown the instance, unless 'keepInstanceAliveAfterFinish' is set
+	 */
+	protected String startupScriptExit() {
+		StringBuilder sb = new StringBuilder();
+		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
+
+		sb.append("function exit_script {\n");
+
+		if (!resources.isKeepInstanceAliveAfterFinish()) sb.append("  shutdown -h now\n");
+		else sb.append("  echo 'INFO: Keeping instance alive (keepInstanceAliveAfterFinish was set)'\n");
+
+		sb.append("}\n\n");
+
+		return sb.toString();
+	}
+
+	/**
+	 * Main part of the startup script
+	 */
+	protected String startupScriptMain() {
+		if (task.isImproper()) return startupScriptMainImproper();
+		StringBuilder sb = new StringBuilder();
+
+		// In order to "encode" the sys commands in this startup script, we
+		// add all the 'sys' commands as a comment (i.e. prepend '#\t' to
+		// each line). Then we can extract them by using 'grep'.
+		// WARNINGI: We must be careful not to include any '#\t' in the rest
+		// of the startup script, otherwise this "encoding" will break.
+		sb.append(prepentHashTab(task.getProgramTxtShell()) + "\n");
+
+		// Write commands to extract the 'sys' commands from this script
+		// file into 'dstScriptFile'. We need to 'grep' for '#\t' and
+		// then extract the first two characters (i.e. '#\t') from each line
+		String base = Gpr.baseName(task.getId());
+		String dir = Gpr.dirName(task.getId());
+		String taskDir = task.getCurrentDir() + "/" + dir;
+		String dstScriptFile = taskDir + "/" + base + ".sh";
+		sb.append("mkdir -p '" + taskDir + "'\n");
+		sb.append("grep '^#\t' \"$0\" | cut -c 2- > '" + dstScriptFile + "'\n");
+
+		// Make sure we can execute the script file
+		sb.append("chmod ux+ '" + dstScriptFile + "'\n");
+
+		// Add bds command to execute the file
+		String stdout = taskDir + "/" + base + ".stdout";
+		String stderr = taskDir + "/" + base + ".stderr";
+		String exitFile = taskDir + "/" + base + ".exit";
+		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
+		sb.append("bds exec " //
+				+ "-stdout '" + stdout + "' " //
+				+ "-stderr '" + stderr + "' " //
+				+ "-exit '" + exitFile + "' " //
+				+ "-taskId '" + task.getId() + "' " //
+				+ "-awsSqsName '" + queueName + "' " //
+				+ "-timeout '" + resources.getTimeout() + "' " //
+				+ "'" + dstScriptFile + "'\n" //
+		);
+
+		return sb.toString();
+	}
+
+	protected String startupScriptMainImproper() {
+		// TODO: Add bds code to run from checkpoint / run script
+		// StringBuilder sb = new StringBuilder();
+		throw new RuntimeException("UNIMPLEMENTED!!!");
+		// return sb.toString();
 	}
 
 }

@@ -30,6 +30,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesReport.class, // Report generation
 		TestCasesTaskImproper.class, // Improper tasks
 		TestCasesTaskDetached.class, // Detached tasks
+		TestCasesAws.class, // Executioned AWS
 })
 public class TestSuiteAll {
 

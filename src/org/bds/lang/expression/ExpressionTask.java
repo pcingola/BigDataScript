@@ -67,7 +67,7 @@ public class ExpressionTask extends ExpressionWithScope {
 	}
 
 	/**
-	 * Return a full path to a checkponit file name
+	 * Return a full path to a checkpoint file name
 	 * The file might be on an Object Store (e.g. S3)
 	 * @return
 	 */
@@ -172,7 +172,6 @@ public class ExpressionTask extends ExpressionWithScope {
 						|| node instanceof StatementExpr //
 				;
 
-				// if (!ok) compilerMessages.add(this, "Only sys statements are allowed in a task (line " + node.getLineNum() + ")", MessageType.ERROR);
 				if (!ok) improper = true;
 			}
 		}
@@ -208,13 +207,25 @@ public class ExpressionTask extends ExpressionWithScope {
 	 * Commands (i.e. task)
 	 */
 	protected String toAsmCmd(String labelEnd) {
+		if (improper) return toAsmCmdOpCode(labelEnd, "taskimp");
+		return toAsmCmdOpCode(labelEnd, "task");
+	}
+
+	/**
+	 * Commands
+	 */
+	protected String toAsmCmdOpCode(String labelEnd, String opCode) {
 		StringBuilder sb = new StringBuilder();
 
-		if (hasPrelude()) sb.append(toAsmPrelude());
-		sb.append(toAsmStatements()); // Statements (e.g.: sys commands)
-		if (hasPrelude()) sb.append("adds\n");
+		// Should we add a 'prelude' to the script?
+		boolean addPrelude = hasPrelude();
 
-		sb.append("task\n");
+		if (addPrelude) sb.append(toAsmPrelude());
+		sb.append(toAsmStatements()); // Statements (e.g.: sys commands)
+		if (addPrelude) sb.append("adds\n");
+
+		sb.append(opCode + "\n");
+
 		sb.append("jmp " + labelEnd + "\n"); // Go to the end
 		return sb.toString();
 	}
@@ -226,7 +237,8 @@ public class ExpressionTask extends ExpressionWithScope {
 		StringBuilder sb = new StringBuilder();
 
 		if (options != null) {
-			sb.append(options.toAsm(labelFalse, asmPushDeps)); // Jump to 'labelFalse' if any of the bool expressions is false
+			// Jump to 'labelFalse' if any of the bool expressions is false
+			sb.append(options.toAsm(labelFalse, asmPushDeps));
 		} else if (asmPushDeps) {
 			// No options or dependencies.
 			// Add empty list as dependency
@@ -299,6 +311,9 @@ public class ExpressionTask extends ExpressionWithScope {
 			// If command line '-log' was provided, then we should not delete the checkpoint file
 			sb.append("varpop " + checkpointFileVar + "\n");
 		}
+
+		// Add all task parameters: checkpointFile, outputs, inputs, script_command
+		sb.append("load " + checkpointFileVar + "\n");
 		sb.append("load " + varOutputs + "\n");
 		sb.append("load " + varInputs + "\n");
 		// Command to execute: "bds -restore $checkpointFileVar"
@@ -375,7 +390,7 @@ public class ExpressionTask extends ExpressionWithScope {
 
 	@Override
 	public String toString() {
-		return "task" //
+		return (improper ? "taskimp" : "task") //
 				+ (options != null ? options : "") //
 				+ " " //
 				+ toStringStatement() //

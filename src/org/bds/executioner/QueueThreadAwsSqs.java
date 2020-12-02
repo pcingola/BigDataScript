@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bds.Config;
+import org.bds.util.Gpr;
 
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -71,6 +72,12 @@ public class QueueThreadAwsSqs extends QueueThread {
 	 */
 	@Override
 	public boolean deleteQueue() {
+		if (USE_QUEUE_NAME_DEBUG) {
+			// This is used for developing / debugging
+			Gpr.debug("WARNING: USE_QUEUE_NAME_DEBUG is set, queue will not be deleted");
+			return false;
+		}
+
 		if (!hasQueue()) return false; // Nothing to delete
 
 		try {
@@ -96,6 +103,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 		if (queueName == null) {
 			if (USE_QUEUE_NAME_DEBUG) {
 				queueName = QUEUE_NAME_DEBUG;
+				Gpr.debug("WARNING: USE_QUEUE_NAME_DEBUG is set, using queue name '" + QUEUE_NAME_DEBUG + "'");
 			} else {
 				String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
 				queueName = String.format("bds_%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%2$s", Calendar.getInstance(), r);

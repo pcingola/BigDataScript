@@ -37,6 +37,7 @@ import org.bds.symbol.SymbolTable;
 import org.bds.task.DepVmOpcode;
 import org.bds.task.SysVmOpcode;
 import org.bds.task.TaskDependency;
+import org.bds.task.TaskImpVmOpcode;
 import org.bds.task.TaskVmOpcode;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
@@ -1527,6 +1528,12 @@ public class BdsVm implements Serializable {
 			case TASK:
 				TaskVmOpcode taskVmOp = new TaskVmOpcode(bdsThread, usePidInFileNames);
 				s1 = taskVmOp.run();
+				push(s1);
+				break;
+
+			case TASKIMP:
+				TaskImpVmOpcode taskImpVmOp = new TaskImpVmOpcode(bdsThread, usePidInFileNames);
+				s1 = taskImpVmOp.run();
 				push(s1);
 				break;
 

@@ -36,17 +36,20 @@ public class Task implements Serializable {
 	protected boolean debug;
 	protected boolean dependency; // This is a 'dependency' task. Run only if required
 	protected boolean detached; // Detached tasks are not monitored (they are considered successfully finished right after launching them)
+	protected boolean improper;
 	protected boolean verbose;
 	protected int bdsLineNum; // Program's line number that created this task (used for reporting errors)
 	protected int exitValue; // Exit (error) code
 	protected int failCount, maxFailCount; // Number of times that this task failed
 	protected String id; // Task ID
 	protected String bdsFileName; // Program file that created this task (used for reporting errors)
+	protected String checkpointLocalFile; // Local file for checkpoint (only valid in improper tasks)
 	protected String currentDir; // Program's 'current directoy' (cd)
 	protected String pid; // PID (if any)
 	protected String programFileDir; // Program file's dir
 	protected String programFileName; // Program file name
 	protected String programTxt; // Program's text (program's code)
+	protected String programTxtShell; // Program's text (program's code) including shell shebang
 	protected String node; // Preferred execution node (or hostname)
 	protected String stdoutFile, stderrFile, exitCodeFile; // STDOUT, STDERR & exit code Files
 	protected String errorMsg; // Error messages
@@ -210,9 +213,9 @@ public class Task implements Serializable {
 		;
 
 		// Save file and make it executable
-		String program = shell + programTxt;
-		program += "\n" + checkSumLine(program);
-		Gpr.toFile(programFileName, program);
+		programTxtShell = shell + programTxt;
+		programTxtShell += "\n" + checkSumLine(programTxtShell);
+		Gpr.toFile(programFileName, programTxtShell);
 		(new File(programFileName)).setExecutable(true);
 
 		// Set default file names
@@ -310,6 +313,14 @@ public class Task implements Serializable {
 		}
 	}
 
+	public String getCheckpointLocalFile() {
+		return checkpointLocalFile;
+	}
+
+	public String getCurrentDir() {
+		return currentDir;
+	}
+
 	public List<Task> getDependencies() {
 		return taskDependency.getTasks();
 	}
@@ -405,6 +416,10 @@ public class Task implements Serializable {
 		return programTxt;
 	}
 
+	public String getProgramTxtShell() {
+		return programTxtShell;
+	}
+
 	public TaskResources getResources() {
 		return resources;
 	}
@@ -476,6 +491,10 @@ public class Task implements Serializable {
 	 */
 	public synchronized boolean isFailed() {
 		return isStateError() || (exitValue != 0) || !checkOutputFiles().isEmpty();
+	}
+
+	public boolean isImproper() {
+		return improper;
 	}
 
 	/**
@@ -555,6 +574,10 @@ public class Task implements Serializable {
 		this.canFail = canFail;
 	}
 
+	public void setCheckpointLocalFile(String checkpointLocalFile) {
+		this.checkpointLocalFile = checkpointLocalFile;
+	}
+
 	public void setCurrentDir(String currentDir) {
 		this.currentDir = currentDir;
 	}
@@ -577,6 +600,10 @@ public class Task implements Serializable {
 
 	public synchronized void setExitValue(int exitValue) {
 		this.exitValue = exitValue;
+	}
+
+	public void setImproper(boolean improper) {
+		this.improper = improper;
 	}
 
 	public void setMaxFailCount(int maxFailCount) {

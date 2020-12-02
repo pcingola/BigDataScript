@@ -115,4 +115,13 @@ public class TestCasesTaskImproper extends TestCasesBase {
 		runAndCheckExit("test/run_task_improper_07.bds", 1);
 	}
 
+	/**
+	 * 'dep' and 'goal' using improper tasks
+	 */
+	@Test
+	public void test08() {
+		Gpr.debug("Test");
+		throw new RuntimeException("UNIMPLEMENTED!");
+	}
+
 }
