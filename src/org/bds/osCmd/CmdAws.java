@@ -1,5 +1,6 @@
 package org.bds.osCmd;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -47,6 +48,7 @@ public class CmdAws extends Cmd {
 	public CmdAws(Task task, String queueName) {
 		super(task.getId(), null);
 		this.task = task;
+		this.queueName = queueName;
 	}
 
 	/**
@@ -100,8 +102,14 @@ public class CmdAws extends Cmd {
 		// Add startup script (encoded as bas64)
 		String script = startupScript();
 		String startupScriptFileName = Gpr.removeExt(task.getProgramFileName()) + ".startup_script.sh";
+
+		// Write script to local file (logging)
 		Gpr.debug("Writing startup script to '" + startupScriptFileName + "'");
 		Gpr.toFile(startupScriptFileName, script);
+		File f = new File(startupScriptFileName);
+		f.setExecutable(true);
+
+		// Encode to send in AWS request
 		String script64 = new String(Base64.getEncoder().encode(script.getBytes()));
 		runRequestBuilder.userData(script64);
 
@@ -120,8 +128,7 @@ public class CmdAws extends Cmd {
 
 	@Override
 	protected void execCmd() throws Exception {
-		// TODO: Wait for the instance to finish and store exit value
-		Gpr.debug("EXEC CMD: WAIT FOR INSTANCE TO FINISH");
+		// Nothing to do, we wait for the instance to finish using QueueThreadAwsSqs
 	}
 
 	/**
@@ -257,10 +264,10 @@ public class CmdAws extends Cmd {
 		String taskDir = task.getCurrentDir() + "/" + dir;
 		String dstScriptFile = taskDir + "/" + base + ".startup_script_instance.sh";
 		sb.append("mkdir -p '" + taskDir + "'\n");
-		sb.append("grep '^#\t' \"$0\" | cut -c 2- > '" + dstScriptFile + "'\n");
+		sb.append("grep '^#\t' \"$0\" | cut -c 3- > '" + dstScriptFile + "'\n");
 
 		// Make sure we can execute the script file
-		sb.append("chmod ux+ '" + dstScriptFile + "'\n");
+		sb.append("chmod u+x '" + dstScriptFile + "'\n");
 
 		// Add bds command to execute the file
 		String stdout = taskDir + "/" + base + ".stdout";

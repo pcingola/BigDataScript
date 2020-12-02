@@ -31,11 +31,13 @@ public class MonitorTaskQueue extends MonitorTask implements Serializable {
 	}
 
 	/**
-	 * Run once every SLEEP_TIME
+	 * Executioner cloud received 'exit' messages from the queue, so it
+	 * doesn't need to actively check if a task finished (as opposed to
+	 * executionerCluster which actively checks the existence of an 'exitFile')
 	 */
 	@Override
 	public synchronized void check() {
-		// Finished tasks are added to 'finished' list by the QueueThread
+		// Finished tasks are added to 'finished' list by the QueueThread, here we just update those states.
 		updateFinished();
 	}
 

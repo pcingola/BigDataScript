@@ -146,8 +146,12 @@ public abstract class QueueThread extends Thread {
 		String stdout = parts.length > 1 ? parts[1] : "";
 		String stderr = parts.length > 2 ? parts[2] : "";
 		String sexit = parts.length > 3 ? parts[3] : "";
+		Gpr.debug("MESSAGE:\n\tSTDOUT: " + stdout + "\n\tSTDERR: " + stderr + "\n\tEXIT: " + sexit);
 
 		Task task = taskById.get(taskId);
+		if (task == null) {
+			System.err.println("WARNING: Recieved message for unknown task ID '" + taskId + "'");
+		}
 
 		// Show message to console
 		if (!stdout.isEmpty()) {

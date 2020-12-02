@@ -259,7 +259,6 @@ public class TaskResourcesAws extends TaskResources {
 	protected void setFromBdsThreadClassResources(Value taskResources, boolean debug) {
 		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from object '" + ExpressionTask.TASK_OPTION_RESOURCES + "': " + taskResources);
 		// TODO: Check that this class is 'AwsResources'
-		// TODO: Parse bds data structure
 		throw new RuntimeException("Cannot parse 'taskResources' type " + taskResources.getType());
 	}
 
