@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"tmpFile"
+	"tmpfile"
 )
 
 // Command indicating to remove file (taskLogger file)

@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.ec2.model.Tag;
  */
 public class CmdAws extends Cmd {
 
-	public static boolean DO_NOT_RUN_INSTANCE = true; // This is used for developing or debugging
+	public static boolean DO_NOT_RUN_INSTANCE = false; // This is used for developing or debugging
 
 	// TODO: These parameters should be configurable (maybe in taskResources?)
 	public static int START_FAIL_MAX_ATTEMPTS = 50;
@@ -105,6 +105,7 @@ public class CmdAws extends Cmd {
 		// Add startup script (encoded as bas64)
 		String script = startupScript();
 		String startupScriptFileName = Gpr.removeExt(task.getProgramFileName()) + ".startup_script.sh";
+		if (!Config.get().isLog()) (new File(startupScriptFileName)).deleteOnExit();
 
 		// Write script to local file (logging)
 		Gpr.debug("Writing startup script to '" + startupScriptFileName + "'");
@@ -250,38 +251,33 @@ public class CmdAws extends Cmd {
 
 	/**
 	 * Main part of the startup script
+	 * Create a startup script to execute the task
+	 * We need to
+	 * 	- Create a script file (with either the sys commands or a 'bds -task' for improper task
+	 * 	- Execute the previous script using 'bds exec -awsSqsName ...', so all messages get redirected to the SQS queue
 	 */
 	protected String startupScriptMain() {
-		if (task.isImproper()) return startupScriptMainImproper();
-		return startupScriptMainSys();
-	}
-
-	/**
-	 * Create a startup script to execute an improper task
-	 * We need to execute
-	 * 		bds exec ... -awsSqsName ... task_improper.sh
-	 *
-	 * where that 'task_improper.sh' process simple calls:
-	 * 		bds -task s3://path/to/checkpoint.chp
-	 *
-	 */
-	protected String startupScriptMainImproper() {
 		StringBuilder sb = new StringBuilder();
-
 		String base = Gpr.baseName(task.getId());
 		String dir = Gpr.dirName(task.getId());
 		String taskDir = task.getCurrentDir() + "/" + dir;
 		String dstScriptFile = taskDir + "/" + base + ".startup_script_instance.sh";
 		sb.append("mkdir -p '" + taskDir + "'\n");
 
-		// Create a script to execute 'bds -task ...'
-		sb.append("echo '#!/bin/bash' > '" + dstScriptFile + "'\n");
-		sb.append("echo 'bds -task \"" + checkpointS3 + "\"' >> '" + dstScriptFile + "'\n");
+		// Create a script file 'dstScriptFile'
+		if (task.isImproper()) {
+			// If the task is improper, the script just runs "bds -task"
+			sb.append(startupScriptMainImproper(dstScriptFile));
+		} else {
+			// If the task is "proper", we execute pack the 'sys' commands
+			// within this startup script and unpack them to 'dstScriptFile'
+			sb.append(startupScriptMainSys(dstScriptFile));
+		}
 
-		// Make sure we can execute the script file
+		// Make sure we the script file is executable
 		sb.append("chmod u+x '" + dstScriptFile + "'\n");
 
-		// Add bds command to execute the dstScriptFile
+		// Add bds command to execute the 'dstScriptFile' sending stdout, stderr, and exitCode to SQS
 		String stdout = taskDir + "/" + base + ".stdout";
 		String stderr = taskDir + "/" + base + ".stderr";
 		String exitFile = taskDir + "/" + base + ".exit";
@@ -300,9 +296,28 @@ public class CmdAws extends Cmd {
 	}
 
 	/**
+	 * Create a startup script to execute an improper task
+	 * We need to execute
+	 * 		bds exec ... -awsSqsName ... task_improper.sh
+	 *
+	 * where that 'task_improper.sh' process simple calls:
+	 * 		bds -task s3://path/to/checkpoint.chp
+	 *
+	 */
+	protected String startupScriptMainImproper(String dstScriptFile) {
+		StringBuilder sb = new StringBuilder();
+
+		// Create a script to execute 'bds -task ...'
+		sb.append("echo '#!/bin/bash' > '" + dstScriptFile + "'\n");
+		sb.append("echo 'bds -task \"" + checkpointS3 + "\"' >> '" + dstScriptFile + "'\n");
+
+		return sb.toString();
+	}
+
+	/**
 	 * Create a startup script to execute 'sys' commands in task (i.e. a "propper" task)
 	 */
-	protected String startupScriptMainSys() {
+	protected String startupScriptMainSys(String dstScriptFile) {
 		StringBuilder sb = new StringBuilder();
 
 		// In order to "encode" the sys commands in this startup script, we
@@ -315,30 +330,10 @@ public class CmdAws extends Cmd {
 		// Write commands to extract the 'sys' commands from this script
 		// file into 'dstScriptFile'. We need to 'grep' for '#\t' and
 		// then extract the first two characters (i.e. '#\t') from each line
-		String base = Gpr.baseName(task.getId());
-		String dir = Gpr.dirName(task.getId());
-		String taskDir = task.getCurrentDir() + "/" + dir;
-		String dstScriptFile = taskDir + "/" + base + ".startup_script_instance.sh";
-		sb.append("mkdir -p '" + taskDir + "'\n");
 		sb.append("grep '^#\t' \"$0\" | cut -c 3- > '" + dstScriptFile + "'\n");
 
 		// Make sure we can execute the script file
 		sb.append("chmod u+x '" + dstScriptFile + "'\n");
-
-		// Add bds command to execute the file
-		String stdout = taskDir + "/" + base + ".stdout";
-		String stderr = taskDir + "/" + base + ".stderr";
-		String exitFile = taskDir + "/" + base + ".exit";
-		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
-		sb.append("bds exec " //
-				+ "-stdout '" + stdout + "' " //
-				+ "-stderr '" + stderr + "' " //
-				+ "-exit '" + exitFile + "' " //
-				+ "-taskId '" + task.getId() + "' " //
-				+ "-awsSqsName '" + queueName + "' " //
-				+ "-timeout '" + resources.getTimeout() + "' " //
-				+ "'" + dstScriptFile + "'\n" //
-		);
 
 		return sb.toString();
 	}
