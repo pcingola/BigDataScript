@@ -10,6 +10,8 @@ import java.util.Random;
 
 import org.bds.Config;
 import org.bds.cluster.host.TaskResourcesAws;
+import org.bds.data.DataFile;
+import org.bds.data.DataS3;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -44,6 +46,7 @@ public class CmdAws extends Cmd {
 	protected Task task;
 	protected String instanceId;
 	protected String queueName;
+	protected String checkpointS3;
 
 	public CmdAws(Task task, String queueName) {
 		super(task.getId(), null);
@@ -145,6 +148,9 @@ public class CmdAws extends Cmd {
 
 	@Override
 	protected boolean execPrepare() throws Exception {
+		// If this is an improper task, we need to upload the checkpoint to S3
+		if (task.isImproper()) uploadCheckpointToS3();
+
 		// Create and run instance
 		createEC2Instance();
 		return true;
@@ -247,6 +253,56 @@ public class CmdAws extends Cmd {
 	 */
 	protected String startupScriptMain() {
 		if (task.isImproper()) return startupScriptMainImproper();
+		return startupScriptMainSys();
+	}
+
+	/**
+	 * Create a startup script to execute an improper task
+	 * We need to execute
+	 * 		bds exec ... -awsSqsName ... task_improper.sh
+	 *
+	 * where that 'task_improper.sh' process simple calls:
+	 * 		bds -task s3://path/to/checkpoint.chp
+	 *
+	 */
+	protected String startupScriptMainImproper() {
+		StringBuilder sb = new StringBuilder();
+
+		String base = Gpr.baseName(task.getId());
+		String dir = Gpr.dirName(task.getId());
+		String taskDir = task.getCurrentDir() + "/" + dir;
+		String dstScriptFile = taskDir + "/" + base + ".startup_script_instance.sh";
+		sb.append("mkdir -p '" + taskDir + "'\n");
+
+		// Create a script to execute 'bds -task ...'
+		sb.append("echo '#!/bin/bash' > '" + dstScriptFile + "'\n");
+		sb.append("echo 'bds -task \"" + checkpointS3 + "\"' >> '" + dstScriptFile + "'\n");
+
+		// Make sure we can execute the script file
+		sb.append("chmod u+x '" + dstScriptFile + "'\n");
+
+		// Add bds command to execute the dstScriptFile
+		String stdout = taskDir + "/" + base + ".stdout";
+		String stderr = taskDir + "/" + base + ".stderr";
+		String exitFile = taskDir + "/" + base + ".exit";
+		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
+		sb.append("bds exec " //
+				+ "-stdout '" + stdout + "' " //
+				+ "-stderr '" + stderr + "' " //
+				+ "-exit '" + exitFile + "' " //
+				+ "-taskId '" + task.getId() + "' " //
+				+ "-awsSqsName '" + queueName + "' " //
+				+ "-timeout '" + resources.getTimeout() + "' " //
+				+ "'" + dstScriptFile + "'\n" //
+		);
+
+		return sb.toString();
+	}
+
+	/**
+	 * Create a startup script to execute 'sys' commands in task (i.e. a "propper" task)
+	 */
+	protected String startupScriptMainSys() {
 		StringBuilder sb = new StringBuilder();
 
 		// In order to "encode" the sys commands in this startup script, we
@@ -287,17 +343,34 @@ public class CmdAws extends Cmd {
 		return sb.toString();
 	}
 
-	protected String startupScriptMainImproper() {
-		// TODO: Add bds code to run from checkpoint / run script
-		// StringBuilder sb = new StringBuilder();
-		throw new RuntimeException("UNIMPLEMENTED!!!");
-		// return sb.toString();
-	}
-
 	@Override
 	protected void stateDone() {
 		started = true;
 		executing = false;
+	}
+
+	/**
+	 * Upload local checkpoint file to S3
+	 */
+	void uploadCheckpointToS3() {
+		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
+		String s3tmp = resources.getS3tmp();
+		if (s3tmp == null || s3tmp.isEmpty()) resources.missingValue("s3tmp", TaskResourcesAws.S3_TMP);
+
+		checkpointS3 = s3tmp + "/" + task.getId() + ".chp";
+
+		// Local and remote data files
+		DataS3 chps3 = new DataS3(checkpointS3);
+		DataFile chp = new DataFile(task.getCheckpointLocalFile());
+
+		if (task.getCheckpointLocalFile() == null) throw new RuntimeException("AWS improper task '" + task.getId() + "' has null checkpoint file. This should never happen!");
+		if (!Gpr.exists(task.getCheckpointLocalFile())) throw new RuntimeException("Checkpoint file '" + task.getCheckpointLocalFile() + "' for AWS improper task '" + task.getId() + "' not found. This should never happen!");
+
+		// Upload checkpoint
+		if (debug) Timer.showStdErr("Uploading local checkpoint '" + task.getCheckpointLocalFile() + "' to S3 '" + checkpointS3 + "'");
+		chps3.upload(chp);
+
+		// TODO: Delete checkpoint once the session finishes. Use BdsThear.rmOnexit() and bds-exec (go)
 	}
 
 }

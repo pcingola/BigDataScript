@@ -28,34 +28,34 @@ public class TaskResourcesAws extends TaskResources {
 
 	private static final long serialVersionUID = 20199650690952235L;
 
+	public static final String[] KEY_NAME = { "key-name", "keyName" };
+
+	public static final String[] IMAGE_ID = { "image-id", "imageId" };
+	public static final String[] INSTANCE_TYPE = { "instance-type", "instanceType" };
+	public static final String[] IP_ADDR = { "associate-public-ip-address", "public-ip-address", "public-ip", "associatePublicIpAddress", "publicIpAddress", "publicIp" };
+	public static final String[] PROFILE = { "iam-instance-profile", "instance-profile", "instanceProfile", "profile" };
+	public static final String[] SECURITY_GROUP_IDS = { "security-group-ids", "securityGroupIds", "security-group-id", "securityGroupId" };
+	public static final String[] SHUTDOWN_BEHAVIOUR = { "shutdown-behavior", "shutdownBehavior" };
+	public static final String[] KEEP_INSTANCE_ALIVE_AFTER_FINISH = { "keep-instance-alive-after-finish", "keepInstanceAliveAfterFinish" };
+	public static final String[] SUBNET_ID = { "subnet-id", "subnetId" };
+	public static final String[] TAGS = { "tag-specifications", "tagSpecifications", "tags" };
+	public static final String[] REGION = { "region" };
+	public static final String[] S3_TMP = { "s3tmp", "s3_tmp", "s3-tmp" };
 	protected final String[] LIST_SEPARATORS = { "\t", ",", ";" };
 
-	protected final String[] KEY_NAME = { "key-name", "keyName" };
-	protected final String[] IMAGE_ID = { "image-id", "imageId" };
-	protected final String[] INSTANCE_TYPE = { "instance-type", "instanceType" };
-	protected final String[] IP_ADDR = { "associate-public-ip-address", "public-ip-address", "public-ip", "associatePublicIpAddress", "publicIpAddress", "publicIp" };
-	protected final String[] PROFILE = { "iam-instance-profile", "instance-profile", "instanceProfile", "profile" };
-	protected final String[] SECURITY_GROUP_IDS = { "security-group-ids", "securityGroupIds", "security-group-id", "securityGroupId" };
-	protected final String[] SHUTDOWN_BEHAVIOUR = { "shutdown-behavior", "shutdownBehavior" };
-	protected final String[] KEEP_INSTANCE_ALIVE_AFTER_FINISH = { "keep-instance-alive-after-finish", "keepInstanceAliveAfterFinish" };
-	protected final String[] SUBNET_ID = { "subnet-id", "subnetId" };
-	protected final String[] TAGS = { "tag-specifications", "tagSpecifications", "tags" };
-	protected final String[] REGION = { "region" };
-	protected final String[] S3TMP = { "s3tmp" };
-
-	String awsRole;
-	String blockDevMap;
-	String keyName;
-	String imageId;
-	String instanceType;
-	String region;
-	String securityGroupIds;
-	String shutdownBehavior;
-	String s3tmp;
-	String subnetId;
-	Map<String, String> tags;
-	boolean keepInstanceAliveAfterFinish; // Do NOT shutdown the instance after bds finishes execution (this can be set to 'true' for debugging the instances)
-	boolean usePublicIpAddr;
+	protected String awsRole;
+	protected String blockDevMap;
+	protected String keyName;
+	protected String imageId;
+	protected String instanceType;
+	protected String region;
+	protected String securityGroupIds;
+	protected String shutdownBehavior;
+	protected String s3tmp;
+	protected String subnetId;
+	protected Map<String, String> tags;
+	protected boolean keepInstanceAliveAfterFinish; // Do NOT shutdown the instance after bds finishes execution (this can be set to 'true' for debugging the instances)
+	protected boolean usePublicIpAddr;
 
 	public TaskResourcesAws() {
 		super();
@@ -115,6 +115,10 @@ public class TaskResourcesAws extends TaskResources {
 		return requestBuilder;
 	}
 
+	public String getS3tmp() {
+		return s3tmp;
+	}
+
 	public Map<String, String> getTags() {
 		return tags;
 	}
@@ -147,7 +151,7 @@ public class TaskResourcesAws extends TaskResources {
 	/**
 	 * Missing value error message
 	 */
-	void missingValue(String name, String[] keys) {
+	public void missingValue(String name, String[] keys) {
 		StringBuilder entries = new StringBuilder();
 		for (String k : keys)
 			entries.append("'" + k + "' ");
@@ -278,6 +282,7 @@ public class TaskResourcesAws extends TaskResources {
 		region = mapGet(taskResources, REGION);
 		shutdownBehavior = mapGet(taskResources, SHUTDOWN_BEHAVIOUR);
 		keepInstanceAliveAfterFinish = Gpr.parseBoolSafe(mapGet(taskResources, KEEP_INSTANCE_ALIVE_AFTER_FINISH));
+		s3tmp = mapGet(taskResources, S3_TMP);
 	}
 
 }
