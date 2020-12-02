@@ -15,10 +15,10 @@ import software.amazon.awssdk.services.ec2.model.StopInstancesRequest;
  * Execute tasks in a cloud
  *
  * How tasks are run:
- * 	- A checkpointVm is created and saved to a bucket
- * 	- A startup script is created to run bds from the checkpoint
+ * 	- A checkpointVm is created and saved to a bucket (if the task is improper)
+ * 	- A startup script is created to run bds (either from the checkpoint or run a shell script with 'sys' commands)
  * 	- An instance is created, the startup script is sent as parameter (terminate on shutdown should be enforced if possible)
- * 	- The instance executes the checkpoint
+ * 	- The instance executes the startup script (i.e. bds executed the checkpoint or script with 'sys' commands)
  * 	- The instance sends STDOUT / STDERR / EXIT messages via a queue (maybe a heartbeat message)
  *
  * Executioner
@@ -39,16 +39,6 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 		super(config);
 		monitorTask = MonitorTasks.get().getMonitorTaskQueue();
 	}
-
-	//	/**
-	//	 * Create "bds exec" command line options
-	//	 */
-	//	protected String[] createBdsExecCmd(Task task) {
-	//		String qname = ((QueueThreadAwsSqs) queueThread).getQueueName();
-	//		String[] argsAdd = { "-awsSqsName", qname };
-	//		List<String> bdsExecArgs = createBdsExecCmdArgsList(task, argsAdd);
-	//		return bdsExecArgs.toArray(Cmd.ARGS_ARRAY_TYPE);
-	//	}
 
 	@Override
 	public synchronized Cmd createRunCmd(Task task) {
@@ -109,21 +99,24 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	@Override
 	protected void runExecutionerLoopBefore() {
 		// Start a new thread if needed, don't start a thread if it's already running
-		if (queueThread == null) {
-			if (debug) log("runExecutionerLoopBefore. Starting queue thread");
-			queueThread = new QueueThreadAwsSqs(config, (MonitorTaskQueue) monitorTask, taskLogger);
-			queueThread.start();
+		if (queueThread != null) return;
 
-			// Wait until the queue is created to continue.
-			// Otherwise we could dispatch a task before the queue exists or
-			// before we receive an error from the queue syste,)
-			while (!queueThread.hasQueue() && !queueThread.hasError())
-				sleepShort();
+		if (debug) log("runExecutionerLoopBefore. Starting queue thread");
+		queueThread = new QueueThreadAwsSqs(config, (MonitorTaskQueue) monitorTask, taskLogger);
+		queueThread.setVerbose(verbose);
+		queueThread.setDebug(debug);
+		queueThread.start();
 
-			if (debug) log("runExecutionerLoopBefore. Queue created, error=" + queueThread.hasError());
+		// Wait until the queue is created to continue.
+		// Otherwise we could dispatch a task before the queue exists or
+		// before we receive an error from the queue syste,)
+		while (!queueThread.hasQueue() && !queueThread.hasError())
+			sleepShort();
 
-			// Any errors while creating the queue? If so, abort immediately
-			if (queueThread.hasError()) throw new RuntimeException("Error creating queue!", queueThread.getError());
-		}
+		if (debug) log("runExecutionerLoopBefore. Queue created, error=" + queueThread.hasError());
+
+		// Any errors while creating the queue? If so, abort immediately
+		if (queueThread.hasError()) throw new RuntimeException("Error creating queue!", queueThread.getError());
+
 	}
 }

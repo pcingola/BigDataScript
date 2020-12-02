@@ -255,6 +255,14 @@ public abstract class QueueThread extends Thread {
 		}
 	}
 
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+
 	/**
 	 * Write to STDERR and to 'stderr' file
 	 */

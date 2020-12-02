@@ -797,7 +797,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// Note: This is the last thing we do in order for wait() methods to
 			//       be sure that task has finished and all data has finished
 			//       updating.
-
 			taskState = task.taskState();
 		}
 

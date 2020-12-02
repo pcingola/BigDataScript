@@ -99,7 +99,9 @@ public class CmdAws extends Cmd {
 
 		// Add startup script (encoded as bas64)
 		String script = startupScript();
-		Gpr.debug("STARTUP SCRIT:\n" + script);
+		String startupScriptFileName = Gpr.removeExt(task.getProgramFileName()) + ".startup_script.sh";
+		Gpr.debug("Writing startup script to '" + startupScriptFileName + "'");
+		Gpr.toFile(startupScriptFileName, script);
 		String script64 = new String(Base64.getEncoder().encode(script.getBytes()));
 		runRequestBuilder.userData(script64);
 
@@ -119,16 +121,25 @@ public class CmdAws extends Cmd {
 	@Override
 	protected void execCmd() throws Exception {
 		// TODO: Wait for the instance to finish and store exit value
+		Gpr.debug("EXEC CMD: WAIT FOR INSTANCE TO FINISH");
+	}
+
+	/**
+	 * This command only created the instance
+	 * So, in this case, when the command finishes execution, it
+	 * only means that the task is going to be executed in an instance
+	 * that has just been started.
+	 */
+	@Override
+	protected void execDone() {
+		stateDone();
+		if (notifyTaskState != null) notifyTaskState.taskRunning(task);
 	}
 
 	@Override
 	protected boolean execPrepare() throws Exception {
-		// TODO: Create the tasks's script
-		// TODO: Create the tasks's script
-
 		// Create and run instance
 		createEC2Instance();
-
 		return true;
 	}
 
@@ -244,7 +255,7 @@ public class CmdAws extends Cmd {
 		String base = Gpr.baseName(task.getId());
 		String dir = Gpr.dirName(task.getId());
 		String taskDir = task.getCurrentDir() + "/" + dir;
-		String dstScriptFile = taskDir + "/" + base + ".sh";
+		String dstScriptFile = taskDir + "/" + base + ".startup_script_instance.sh";
 		sb.append("mkdir -p '" + taskDir + "'\n");
 		sb.append("grep '^#\t' \"$0\" | cut -c 2- > '" + dstScriptFile + "'\n");
 
@@ -274,6 +285,12 @@ public class CmdAws extends Cmd {
 		// StringBuilder sb = new StringBuilder();
 		throw new RuntimeException("UNIMPLEMENTED!!!");
 		// return sb.toString();
+	}
+
+	@Override
+	protected void stateDone() {
+		started = true;
+		executing = false;
 	}
 
 }
