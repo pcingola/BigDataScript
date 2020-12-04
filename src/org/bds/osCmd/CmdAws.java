@@ -288,7 +288,7 @@ public class CmdAws extends Cmd {
 				+ "-stderr '" + stderr + "' " //
 				+ "-exit '" + exitFile + "' " //
 				+ "-taskId '" + task.getId() + "' " //
-				+ "-awsSqsName '" + queueName + "' " //
+				+ "-awsSqsName '" + queueName + "' " // Note that this accepts both queue name and queue URL
 				+ "-timeout '" + resources.getTimeout() + "' " //
 				+ "'" + dstScriptFile + "'\n" //
 		);

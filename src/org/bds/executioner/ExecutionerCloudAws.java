@@ -44,7 +44,6 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	public synchronized Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 		if (debug) log("Running task " + task.getId());
-		String qname = ((QueueThreadAwsSqs) queueThread).getQueueName();
 		String qurl = ((QueueThreadAwsSqs) queueThread).getQueueId();
 		CmdAws cmd = new CmdAws(task, qurl);
 		return cmd;
