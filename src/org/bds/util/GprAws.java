@@ -12,7 +12,7 @@ public class GprAws {
 	 * Create an ec2 client
 	 */
 	public static Ec2Client ec2Client(String region) {
-		if (region == null || region.isEmpty()) Ec2Client.builder().build();
+		if (region == null || region.isEmpty()) return Ec2Client.builder().build();
 		Region r = Region.of(region);
 		return Ec2Client.builder().region(r).build();
 	}
