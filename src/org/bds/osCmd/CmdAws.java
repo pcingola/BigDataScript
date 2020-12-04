@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.ec2.model.Tag;
  */
 public class CmdAws extends Cmd {
 
-	public static boolean DO_NOT_RUN_INSTANCE = true; // This is used for developing or debugging
+	public static boolean DO_NOT_RUN_INSTANCE = false; // This is used for developing or debugging
 
 	// TODO: These parameters should be configurable (maybe in taskResources?)
 	public static int START_FAIL_MAX_ATTEMPTS = 50;
@@ -225,9 +225,10 @@ public class CmdAws extends Cmd {
 		sb.append(startupScriptExit());
 
 		// Script main
-		sb.append("trap exit_script EXIT\n");
+		sb.append("export HOME='/root'\n"); // This script is executed on startup, there is no HOME directory defined at this stage
+		sb.append("trap exit_script EXIT\n"); // Capture exit errors and make sure the instance is terminated
 		sb.append("echo \"INFO: Starting script '$0'\"\n\n");
-		sb.append(startupScriptMain());
+		sb.append(startupScriptMain()); // Startup script "main" part is different for 'sys' or "improper task"
 		sb.append("\necho \"INFO: Finished script '$0'\"\n");
 		return sb.toString();
 	}
