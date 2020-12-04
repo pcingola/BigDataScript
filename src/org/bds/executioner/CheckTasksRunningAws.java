@@ -6,7 +6,6 @@ import java.util.Set;
 import org.bds.Config;
 import org.bds.cluster.host.TaskResourcesAws;
 import org.bds.task.Task;
-import org.bds.util.Gpr;
 import org.bds.util.GprAws;
 import org.bds.util.Timer;
 
@@ -15,6 +14,7 @@ import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.Ec2Exception;
 import software.amazon.awssdk.services.ec2.model.Instance;
+import software.amazon.awssdk.services.ec2.model.InstanceStateName;
 import software.amazon.awssdk.services.ec2.model.Reservation;
 
 /**
@@ -66,8 +66,16 @@ public class CheckTasksRunningAws extends CheckTasksRunning {
 
 				for (Reservation reservation : response.reservations()) {
 					for (Instance instance : reservation.instances()) {
-						foundInstanceIds.add(instance.instanceId());
-						Gpr.debug("FOUND INSTANCE: " + instance.instanceId());
+						InstanceStateName s = instance.state().name();
+						// If the instance is not in some of these states, it means it is "gone"
+						// Note that we don't include SHUTTING_DOWN or TERMINATED as valid "found" states, because
+						// in normal condition the instance should have finished executing the task (so those tasks
+						// are no longer in our list "to check".
+						// We want to detect the cases when an instance is terminated or stopped when executing a
+						// task (e.g. a user accidentally terminates an instance that is running a task)
+						if (s == InstanceStateName.PENDING || s == InstanceStateName.RUNNING) {
+							foundInstanceIds.add(instance.instanceId());
+						}
 					}
 				}
 				nextToken = response.nextToken();
