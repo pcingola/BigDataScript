@@ -26,10 +26,15 @@ import org.bds.task.Task;
  */
 public abstract class ExecutionerCloud extends Executioner {
 
+	public static final String EXECUTIONER_QUEUE_NAME_PREFIX = "cloudQueueNamePrefix";
+	public static final String EXECUTIONER_QUEUE_NAME_PREFIX_DEFAULT = "bds_";
+
 	protected QueueThread queueThread;
+	protected String queueNamePrefix;
 
 	protected ExecutionerCloud(Config config) {
 		super(config);
+		queueNamePrefix = EXECUTIONER_QUEUE_NAME_PREFIX_DEFAULT;
 
 		// Create a system having only one host with 'infinite' capacity (cloud)
 		system = new ComputerSystem();
@@ -56,6 +61,10 @@ public abstract class ExecutionerCloud extends Executioner {
 		if (queueThread != null) queueThread.remove(task);
 	}
 
+	public String getQueueNamePrefix() {
+		return queueNamePrefix;
+	}
+
 	/**
 	 * Stop executioner and kill all tasks
 	 */
@@ -67,6 +76,10 @@ public abstract class ExecutionerCloud extends Executioner {
 			queueThread.kill();
 			queueThread = null;
 		}
+	}
+
+	public void setQueueNamePrefix(String queueNamePrefix) {
+		this.queueNamePrefix = queueNamePrefix;
 	}
 
 }

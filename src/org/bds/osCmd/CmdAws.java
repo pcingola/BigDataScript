@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.ec2.model.Tag;
  */
 public class CmdAws extends Cmd {
 
-	public static boolean DO_NOT_RUN_INSTANCE = false; // This is used for developing or debugging
+	public static boolean DO_NOT_RUN_INSTANCE = true; // This is used for developing or debugging
 
 	// TODO: These parameters should be configurable (maybe in taskResources?)
 	public static int START_FAIL_MAX_ATTEMPTS = 50;
@@ -331,9 +331,6 @@ public class CmdAws extends Cmd {
 		// file into 'dstScriptFile'. We need to 'grep' for '#\t' and
 		// then extract the first two characters (i.e. '#\t') from each line
 		sb.append("grep '^#\t' \"$0\" | cut -c 3- > '" + dstScriptFile + "'\n");
-
-		// Make sure we can execute the script file
-		sb.append("chmod u+x '" + dstScriptFile + "'\n");
 
 		return sb.toString();
 	}

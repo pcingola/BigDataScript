@@ -45,7 +45,8 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 		task.createProgramFile(); // We must create a program file
 		if (debug) log("Running task " + task.getId());
 		String qname = ((QueueThreadAwsSqs) queueThread).getQueueName();
-		CmdAws cmd = new CmdAws(task, qname);
+		String qurl = ((QueueThreadAwsSqs) queueThread).getQueueId();
+		CmdAws cmd = new CmdAws(task, qurl);
 		return cmd;
 	}
 
@@ -102,7 +103,7 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 		if (queueThread != null) return;
 
 		if (debug) log("runExecutionerLoopBefore. Starting queue thread");
-		queueThread = new QueueThreadAwsSqs(config, (MonitorTaskQueue) monitorTask, taskLogger);
+		queueThread = new QueueThreadAwsSqs(config, (MonitorTaskQueue) monitorTask, taskLogger, queueNamePrefix);
 		queueThread.setVerbose(verbose);
 		queueThread.setDebug(debug);
 		queueThread.start();

@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bds.Config;
+import org.bds.lang.value.Value;
+import org.bds.run.BdsThread;
 import org.bds.util.Timer;
 
 /**
@@ -85,7 +87,7 @@ public class Executioners {
 	/**
 	 * Create (and start) an executioner
 	 */
-	private synchronized Executioner factory(ExecutionerType exType) {
+	private synchronized Executioner factory(ExecutionerType exType, BdsThread bdsThread) {
 		Executioner executioner;
 
 		if (config.isDebug()) Timer.showStdErr("Executioner factory: Creating new executioner type '" + exType + "'");
@@ -93,6 +95,10 @@ public class Executioners {
 		switch (exType) {
 		case AWS:
 			executioner = new ExecutionerCloudAws(config);
+			if (bdsThread != null) {
+				Value sqsPrefix = bdsThread.getValue(ExecutionerCloud.EXECUTIONER_QUEUE_NAME_PREFIX);
+				((ExecutionerCloudAws) executioner).setQueueNamePrefix(sqsPrefix.asString());
+			}
 			break;
 
 		case CLUSTER:
@@ -142,15 +148,19 @@ public class Executioners {
 		return executioner;
 	}
 
+	public synchronized Executioner get(ExecutionerType exType) {
+		return get(exType, null);
+	}
+
 	/**
 	 * Get an executioner by type
 	 */
-	public synchronized Executioner get(ExecutionerType exType) {
+	public synchronized Executioner get(ExecutionerType exType, BdsThread bdsThread) {
 		Executioner ex = executioners.get(exType);
 
 		// Invalid or null? Create a new one
 		if ((ex == null) || !ex.isValid()) {
-			ex = factory(exType);
+			ex = factory(exType, bdsThread);
 			executioners.put(exType, ex); // Cache instance
 			ex.start(); // Start thread
 		}
@@ -161,8 +171,8 @@ public class Executioners {
 	/**
 	 * Get an executioner by name
 	 */
-	public synchronized Executioner get(String exName) {
-		return get(ExecutionerType.parseSafe(exName));
+	public synchronized Executioner get(String exName, BdsThread bdsThread) {
+		return get(ExecutionerType.parseSafe(exName), bdsThread);
 	}
 
 	/**

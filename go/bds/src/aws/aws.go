@@ -59,18 +59,24 @@ func encodeString(b string) string {
 // Create a new AwsSqs
 func NewAwsSqs(qname string, taskId string) (*AwsSqs, error) {
     awssqs := &AwsSqs{}
-    awssqs.queueName = qname
     awssqs.taskId = taskId
     awssqs.sqsSession = session.Must(session.NewSessionWithOptions(session.Options{SharedConfigState: session.SharedConfigEnable}))
     awssqs.sqsClient = sqs.New(awssqs.sqsSession)
 
-    res, err := awssqs.sqsClient.GetQueueUrl(&sqs.GetQueueUrlInput{QueueName: &qname,})
-    if err != nil {
-        log.Printf("Error getting URL for AWS SQS queue '%s': %v\n", qname, err)
+    awssqs.queueName = qname
+    var err error
+    if strings.HasPrefix(qname, "https://") {
+        // This is not a queue name, it's a queue URL
+        awssqs.queueUrl = qname
     } else {
-        awssqs.queueUrl = *res.QueueUrl
+        // Look for the URL based on the name
+        res, err := awssqs.sqsClient.GetQueueUrl(&sqs.GetQueueUrlInput{QueueName: &qname,})
+        if err != nil {
+            log.Printf("Error getting URL for AWS SQS queue '%s': %v\n", qname, err)
+        } else {
+            awssqs.queueUrl = *res.QueueUrl
+        }
     }
-
     return awssqs, err
 }
 

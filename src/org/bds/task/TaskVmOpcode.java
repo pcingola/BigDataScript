@@ -35,7 +35,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 	public static void execute(BdsThread bdsThread, Task task) {
 		// Select executioner and queue for execution
 		String runSystem = bdsThread.getString(ExpressionTask.TASK_OPTION_SYSTEM);
-		Executioner executioner = Executioners.getInstance().get(runSystem);
+		Executioner executioner = Executioners.getInstance().get(runSystem, bdsThread);
 		task.execute(bdsThread, executioner); // Execute task
 	}
 

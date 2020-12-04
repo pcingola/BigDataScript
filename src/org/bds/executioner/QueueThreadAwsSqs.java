@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
  */
 public class QueueThreadAwsSqs extends QueueThread {
 
-	public static final String QUEUE_NAME_DEBUG = "bds_test_123456789";
+	public static String QUEUE_NAME_SUFFIX_DEBUG = "test_123456789";
 	public static boolean USE_QUEUE_NAME_DEBUG = true; // Fix queue name when running tests or debugging
 
 	private static final String OS_DELETE_QUEUE_COMMAND = "@aws_sqs_delete_queue"; // Command line to delete a queue
@@ -33,14 +33,16 @@ public class QueueThreadAwsSqs extends QueueThread {
 	private SqsClient sqsClient;
 	protected String queueUrl;
 	protected String queueName;
+	protected String queueNamePrefix;
 
 	public QueueThreadAwsSqs(Config config, MonitorTaskQueue monitorTasks, TaskLogger taskLogger) {
 		super(config, monitorTasks, taskLogger);
+		this.queueNamePrefix = ExecutionerCloud.EXECUTIONER_QUEUE_NAME_PREFIX_DEFAULT;
 	}
 
-	public QueueThreadAwsSqs(Config config, MonitorTaskQueue monitorTasks, TaskLogger taskLogger, String queueName) {
+	public QueueThreadAwsSqs(Config config, MonitorTaskQueue monitorTasks, TaskLogger taskLogger, String queueNamePrefix) {
 		this(config, monitorTasks, taskLogger);
-		this.queueName = queueName;
+		this.queueNamePrefix = queueNamePrefix;
 	}
 
 	/**
@@ -102,11 +104,11 @@ public class QueueThreadAwsSqs extends QueueThread {
 	public String getQueueName() {
 		if (queueName == null) {
 			if (USE_QUEUE_NAME_DEBUG) {
-				queueName = QUEUE_NAME_DEBUG;
-				Gpr.debug("WARNING: USE_QUEUE_NAME_DEBUG is set, using queue name '" + QUEUE_NAME_DEBUG + "'");
+				queueName = queueNamePrefix + QUEUE_NAME_SUFFIX_DEBUG;
+				Gpr.debug("WARNING: QUEUE_NAME_SUFFIX_DEBUG is set, using queue name '" + queueName + "'");
 			} else {
 				String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
-				queueName = String.format("bds_%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%2$s", Calendar.getInstance(), r);
+				queueName = String.format("%s%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%2$s", queueNamePrefix, Calendar.getInstance(), r);
 			}
 		}
 		return queueName;

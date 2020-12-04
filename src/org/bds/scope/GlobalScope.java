@@ -6,6 +6,7 @@ import java.io.ObjectStreamException;
 import java.util.Map;
 
 import org.bds.Config;
+import org.bds.executioner.ExecutionerCloud;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
@@ -138,6 +139,7 @@ public class GlobalScope extends Scope {
 		add(ExpressionTask.TASK_OPTION_NODE, node); // Default node: none
 		add(ExpressionTask.TASK_OPTION_TIMEOUT, timeout); // Task default timeout
 		add(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, wallTimeout); // Task default wall-timeout
+		add(ExecutionerCloud.EXECUTIONER_QUEUE_NAME_PREFIX, ExecutionerCloud.EXECUTIONER_QUEUE_NAME_PREFIX_DEFAULT); // Default prefix for cloud queue names
 	}
 
 	/**
