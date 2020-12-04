@@ -14,6 +14,7 @@ import org.bds.data.DataFile;
 import org.bds.data.DataS3;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
+import org.bds.util.GprAws;
 import org.bds.util.Timer;
 
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -99,7 +100,7 @@ public class CmdAws extends Cmd {
 	 */
 	protected String createEC2Instance() {
 		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
-		Ec2Client ec2 = resources.ec2Client(); // Create client
+		Ec2Client ec2 = GprAws.ec2Client(resources.getRegion()); // Create client
 		RunInstancesRequest.Builder runRequestBuilder = resources.ec2InstanceRequest(); // Create instance request
 
 		// Add startup script (encoded as bas64)

@@ -1,14 +1,21 @@
 package org.bds.executioner;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.bds.Config;
+import org.bds.cluster.host.TaskResourcesAws;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
+import org.bds.util.GprAws;
+import org.bds.util.Timer;
+
+import software.amazon.awssdk.services.ec2.Ec2Client;
+import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeInstancesResponse;
+import software.amazon.awssdk.services.ec2.model.Ec2Exception;
+import software.amazon.awssdk.services.ec2.model.Instance;
+import software.amazon.awssdk.services.ec2.model.Reservation;
 
 /**
  * Check that tasks are still running.
@@ -18,58 +25,57 @@ import org.bds.util.Gpr;
  */
 public class CheckTasksRunningAws extends CheckTasksRunning {
 
-	protected Map<String, Integer> countByRegion;
-
 	public CheckTasksRunningAws(Config config, Executioner executioner) {
 		super(config, executioner);
 	}
 
-	@Override
-	public void add(Task task) {
-		super.add(task);
-		// TODO: Is this task running in a new region?
+	/**
+	 * Find all instances running in all regions
+	 * @return A set of instance IDs
+	 */
+	protected Set<String> awsInstancesRunning() {
+		// Find currently used regions and instancesIds from tasks
+		Set<String> regions = new HashSet<>();
+		Set<String> instanceIds = new HashSet<>();
+		for (Task t : taskById.values()) {
+			TaskResourcesAws res = (TaskResourcesAws) t.getResources();
+			String region = res.getRegion();
+			if (region != null) regions.add(region);
+			instanceIds.add(t.getPid());
+		}
+
+		// Query AWS to check if the instances for all the tasks are running
+		for (String r : regions) {
+			instanceIds.addAll(awsInstancesRunning(r, instanceIds));
+		}
+		return instanceIds;
 	}
 
 	/**
-	 * Find all instances running
-	 * @return A list of instances
+	 * Find all instances running in "region"
+	 * @return A set of instance IDs
 	 */
-	protected Set<String> awsInstancesRunning() {
-		List<String> instanceIds = new ArrayList<>();
+	protected Set<String> awsInstancesRunning(String region, Set<String> instanceIds) {
+		Set<String> foundInstanceIds = new HashSet<>();
+		Ec2Client ec2 = GprAws.ec2Client(region);
+		try {
+			String nextToken = null;
+			do {
+				DescribeInstancesRequest request = DescribeInstancesRequest.builder().instanceIds(instanceIds).nextToken(nextToken).build();
+				DescribeInstancesResponse response = ec2.describeInstances(request);
 
-		// TODO: Query all regions (we can have multiple instances in different regions)
-		// TODO: Create a set of instances
-
-		//		DescribeInstancesRequest request = DescribeInstancesRequest.builder().instanceIds(instanceIds).build();
-
-		//		boolean done = false;
-		//        String nextToken = null;
-		//
-		//        try {
-		//            do {
-		//                DescribeInstancesRequest request = DescribeInstancesRequest.builder().maxResults(6).nextToken(nextToken).build();
-		//                DescribeInstancesResponse response = ec2.describeInstances(request);
-		//
-		//                for (Reservation reservation : response.reservations()) {
-		//                    for (Instance instance : reservation.instances()) {
-		//                    System.out.printf(
-		//                            "Found Reservation with id %s, " +
-		//                                    "AMI %s, " +
-		//                                    "type %s, " +
-		//                                    "state %s " +
-		//                                    "and monitoring state %s",
-		//                            instance.instanceId(),
-		//                            instance.imageId(),
-		//                            instance.instanceType(),
-		//                            instance.state().name(),
-		//                            instance.monitoring().state());
-		//                    System.out.println("");
-		//                }
-		//            }
-		//                nextToken = response.nextToken();
-		//            } while (nextToken != null);
-		Gpr.debug("UNIMPLEMENTED!");
-		return new HashSet<>();
+				for (Reservation reservation : response.reservations()) {
+					for (Instance instance : reservation.instances()) {
+						foundInstanceIds.add(instance.instanceId());
+						Gpr.debug("FOUND INSTANCE: " + instance.instanceId());
+					}
+				}
+				nextToken = response.nextToken();
+			} while (nextToken != null);
+		} catch (Ec2Exception e) {
+			Timer.showStdErr("ERROR getting list of AWS instances for region '" + region + "': " + e.awsErrorDetails().errorMessage());
+		}
+		return foundInstanceIds;
 	}
 
 	/**
@@ -80,12 +86,6 @@ public class CheckTasksRunningAws extends CheckTasksRunning {
 		// Query to AWS to retrieve all instances, find tasks running
 		Set<String> awsInstanceIds = awsInstancesRunning();
 		return findRunningTaskByPid(awsInstanceIds);
-	}
-
-	@Override
-	public synchronized void remove(Task task) {
-		super.remove(task);
-		// TODO: Are there regions that don't have more instances? We can stop checking those regions
 	}
 
 }

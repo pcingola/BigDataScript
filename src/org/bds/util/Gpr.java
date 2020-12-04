@@ -1,6 +1,3 @@
-/*
- * Created on Nov 24, 2003
- */
 package org.bds.util;
 
 import java.io.BufferedReader;
@@ -19,8 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.zip.GZIPInputStream;
 
 /**
- * General pupose rutines
- * @author root
+ * General purpose routines
  */
 public class Gpr {
 

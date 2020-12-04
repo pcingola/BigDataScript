@@ -12,8 +12,6 @@ import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.IamInstanceProfileSpecification;
 import software.amazon.awssdk.services.ec2.model.InstanceNetworkInterfaceSpecification;
 import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
@@ -29,7 +27,6 @@ public class TaskResourcesAws extends TaskResources {
 	private static final long serialVersionUID = 20199650690952235L;
 
 	public static final String[] KEY_NAME = { "key-name", "keyName" };
-
 	public static final String[] IMAGE_ID = { "image-id", "imageId" };
 	public static final String[] INSTANCE_TYPE = { "instance-type", "instanceType" };
 	public static final String[] IP_ADDR = { "associate-public-ip-address", "public-ip-address", "public-ip", "associatePublicIpAddress", "publicIpAddress", "publicIp" };
@@ -41,7 +38,7 @@ public class TaskResourcesAws extends TaskResources {
 	public static final String[] TAGS = { "tag-specifications", "tagSpecifications", "tags" };
 	public static final String[] REGION = { "region" };
 	public static final String[] S3_TMP = { "s3tmp", "s3_tmp", "s3-tmp" };
-	protected final String[] LIST_SEPARATORS = { "\t", ",", ";" };
+	protected static final String[] LIST_SEPARATORS = { "\t", ",", ";" };
 
 	protected String awsRole;
 	protected String blockDevMap;
@@ -65,15 +62,6 @@ public class TaskResourcesAws extends TaskResources {
 
 	public TaskResourcesAws(TaskResourcesAws hr) {
 		super(hr);
-	}
-
-	/**
-	 * Create an ec2 client
-	 */
-	public Ec2Client ec2Client() {
-		if (region == null || region.isEmpty()) Ec2Client.builder().build();
-		Region r = Region.of(region);
-		return Ec2Client.builder().region(r).build();
 	}
 
 	/**
@@ -115,8 +103,44 @@ public class TaskResourcesAws extends TaskResources {
 		return requestBuilder;
 	}
 
+	public String getAwsRole() {
+		return awsRole;
+	}
+
+	public String getBlockDevMap() {
+		return blockDevMap;
+	}
+
+	public String getImageId() {
+		return imageId;
+	}
+
+	public String getInstanceType() {
+		return instanceType;
+	}
+
+	public String getKeyName() {
+		return keyName;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
 	public String getS3tmp() {
 		return s3tmp;
+	}
+
+	public String getSecurityGroupIds() {
+		return securityGroupIds;
+	}
+
+	public String getShutdownBehavior() {
+		return shutdownBehavior;
+	}
+
+	public String getSubnetId() {
+		return subnetId;
 	}
 
 	public Map<String, String> getTags() {
@@ -125,6 +149,10 @@ public class TaskResourcesAws extends TaskResources {
 
 	public boolean isKeepInstanceAliveAfterFinish() {
 		return keepInstanceAliveAfterFinish;
+	}
+
+	public boolean isUsePublicIpAddr() {
+		return usePublicIpAddr;
 	}
 
 	/**

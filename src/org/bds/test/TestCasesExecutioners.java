@@ -3,7 +3,7 @@ package org.bds.test;
 import java.util.Set;
 
 import org.bds.Config;
-import org.bds.executioner.CheckTasksRunning;
+import org.bds.executioner.CheckTasksRunningCmd;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
@@ -31,7 +31,7 @@ public class TestCasesExecutioners extends TestCasesBase {
 		config.load();
 
 		Executioner ex = Executioners.getInstance(config).get(ExecutionerType.LOCAL);
-		CheckTasksRunning ctr = new CheckTasksRunning(config, ex);
+		CheckTasksRunningCmd ctr = new CheckTasksRunningCmd(config, ex);
 
 		// Parse 'qstat' lines
 		String fileName = "test/test_parsePidQstatRegex_qstat.txt";
@@ -64,7 +64,7 @@ public class TestCasesExecutioners extends TestCasesBase {
 		config.load();
 
 		Executioner ex = Executioners.getInstance(config).get(ExecutionerType.LOCAL);
-		CheckTasksRunning ctr = new CheckTasksRunning(config, ex);
+		CheckTasksRunningCmd ctr = new CheckTasksRunningCmd(config, ex);
 
 		// Parse 'qstat' lines
 		String fileName = "test/test_parsePidQstatColumn_qstat.txt";
