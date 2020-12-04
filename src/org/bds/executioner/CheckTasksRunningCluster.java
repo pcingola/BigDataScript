@@ -8,7 +8,7 @@ import org.bds.Config;
  *
  * @author pcingola
  */
-public class CheckTasksRunningCluster extends CheckTasksRunning {
+public class CheckTasksRunningCluster extends CheckTasksRunningCmd {
 
 	public CheckTasksRunningCluster(Config config, Executioner executioner, String cmdArgs[]) {
 		super(config, executioner);

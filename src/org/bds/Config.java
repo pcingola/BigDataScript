@@ -29,7 +29,6 @@ import org.bds.util.Timer;
  */
 public class Config implements Serializable {
 
-	public static final String AWS_REGION = "awsRegion"; // Cloud: Amazon AWS parameters
 	public static String BDS_HOME = Gpr.HOME + "/.bds"; // Bds home directory
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
 	public static final String CLUSTER_GENERIC_KILL = "clusterGenericKill"; // Cluster: Generic cluster

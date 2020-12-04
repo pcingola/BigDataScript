@@ -64,7 +64,6 @@ public class CmdAws extends Cmd {
 
 			String tid = task.getId();
 			if (tid.indexOf('/') > 0) tid = tid.substring(0, tid.indexOf('/'));
-			Gpr.debug("NAME: " + tid);
 			Tag tag = Tag.builder().key("Name").value("bds " + tid).build();
 			tags.add(tag);
 
@@ -88,6 +87,7 @@ public class CmdAws extends Cmd {
 			CreateTagsRequest tagRequest = CreateTagsRequest.builder().resources(instanceId).tags(tags).build();
 			ec2.createTags(tagRequest);
 			if (Config.get().isVerbose()) Timer.showStdErr("Started AWS EC2 instance '" + instanceId + "'");
+			task.setPid(instanceId);
 		} catch (Ec2Exception e) {
 			System.err.println(e.awsErrorDetails().errorMessage());
 			System.exit(1);
@@ -108,7 +108,7 @@ public class CmdAws extends Cmd {
 		if (!Config.get().isLog()) (new File(startupScriptFileName)).deleteOnExit();
 
 		// Write script to local file (logging)
-		Gpr.debug("Writing startup script to '" + startupScriptFileName + "'");
+		if (Config.get().isDebug()) Timer.showStdErr("Writing startup script to '" + startupScriptFileName + "'");
 		Gpr.toFile(startupScriptFileName, script);
 		File f = new File(startupScriptFileName);
 		f.setExecutable(true);

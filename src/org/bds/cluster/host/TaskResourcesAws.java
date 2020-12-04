@@ -71,7 +71,7 @@ public class TaskResourcesAws extends TaskResources {
 	 * Create an ec2 client
 	 */
 	public Ec2Client ec2Client() {
-		if (region == null || region.isEmpty()) missingValue("region", REGION);
+		if (region == null || region.isEmpty()) Ec2Client.builder().build();
 		Region r = Region.of(region);
 		return Ec2Client.builder().region(r).build();
 	}
@@ -272,17 +272,17 @@ public class TaskResourcesAws extends TaskResources {
 	protected void setFromBdsThreadMap(ValueMap taskResources, boolean debug) {
 		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from map '" + ExpressionTask.TASK_OPTION_RESOURCES + "': " + taskResources);
 		awsRole = mapGet(taskResources, PROFILE);
-		instanceType = mapGet(taskResources, INSTANCE_TYPE);
 		imageId = mapGet(taskResources, IMAGE_ID);
+		instanceType = mapGet(taskResources, INSTANCE_TYPE);
+		keepInstanceAliveAfterFinish = Gpr.parseBoolSafe(mapGet(taskResources, KEEP_INSTANCE_ALIVE_AFTER_FINISH));
 		keyName = mapGet(taskResources, KEY_NAME);
+		region = mapGet(taskResources, REGION);
+		s3tmp = mapGet(taskResources, S3_TMP);
 		securityGroupIds = mapGet(taskResources, SECURITY_GROUP_IDS);
+		shutdownBehavior = mapGet(taskResources, SHUTDOWN_BEHAVIOUR);
 		subnetId = mapGet(taskResources, SUBNET_ID);
 		tags = parseTags(mapGet(taskResources, TAGS));
 		usePublicIpAddr = Gpr.parseBoolSafe(mapGet(taskResources, IP_ADDR));
-		region = mapGet(taskResources, REGION);
-		shutdownBehavior = mapGet(taskResources, SHUTDOWN_BEHAVIOUR);
-		keepInstanceAliveAfterFinish = Gpr.parseBoolSafe(mapGet(taskResources, KEEP_INSTANCE_ALIVE_AFTER_FINISH));
-		s3tmp = mapGet(taskResources, S3_TMP);
 	}
 
 }

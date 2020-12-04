@@ -50,6 +50,18 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	}
 
 	@Override
+	protected void follow(Task task) {
+		super.follow(task);
+		getCheckTasksRunning().add(task);
+	}
+
+	@Override
+	protected void followStop(Task task) {
+		super.followStop(task);
+		getCheckTasksRunning().remove(task);
+	}
+
+	@Override
 	protected CheckTasksRunning getCheckTasksRunning() {
 		if (checkTasksRunning == null) {
 			checkTasksRunning = new CheckTasksRunningAws(config, this);
