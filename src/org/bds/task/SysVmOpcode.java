@@ -7,10 +7,10 @@ import java.util.LinkedList;
 import org.bds.Config;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.ExpressionSys;
-import org.bds.lang.expression.ExpressionTask;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -123,7 +123,7 @@ public class SysVmOpcode {
 		int exitValue = execResult.exitValue;
 		if (exitValue != 0) {
 			// Can this execution fail?
-			boolean canFail = bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL);
+			boolean canFail = bdsThread.getBool(GlobalScope.GLOBAL_VAR_TASK_OPTION_CAN_FAIL);
 
 			// Execution failed on a 'sys' command that cannot fail. Save checkpoint and exit
 			if (!canFail) {

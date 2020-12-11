@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bds.Config;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 import org.bds.util.Timer;
 
 /**
@@ -96,7 +97,7 @@ public class Executioners {
 		case AWS:
 			executioner = new ExecutionerCloudAws(config);
 			if (bdsThread != null) {
-				Value sqsPrefix = bdsThread.getValue(ExecutionerCloud.EXECUTIONER_QUEUE_NAME_PREFIX);
+				Value sqsPrefix = bdsThread.getValue(GlobalScope.GLOBAL_VAR_EXECUTIONER_QUEUE_NAME_PREFIX);
 				((ExecutionerCloudAws) executioner).setQueueNamePrefix(sqsPrefix.asString());
 			}
 			break;

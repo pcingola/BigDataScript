@@ -26,7 +26,6 @@ import org.bds.task.Task;
  */
 public abstract class ExecutionerCloud extends Executioner {
 
-	public static final String EXECUTIONER_QUEUE_NAME_PREFIX = "cloudQueueNamePrefix";
 	public static final String EXECUTIONER_QUEUE_NAME_PREFIX_DEFAULT = "bds_";
 
 	protected QueueThread queueThread;

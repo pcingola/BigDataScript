@@ -106,7 +106,7 @@ public abstract class DataRemote extends Data {
 		String path = uri.getPath();
 		String paren = (new File(path)).getParent();
 		URI uriPaern = replacePath(paren);
-		return factory(uriPaern);
+		return factory(uriPaern, null);
 	}
 
 	@Override
@@ -182,7 +182,7 @@ public abstract class DataRemote extends Data {
 		File fpath = new File(getPath());
 		File fjoin = new File(fpath, segment.getPath());
 		URI uri = replacePath(fjoin.getAbsolutePath());
-		return factory(uri);
+		return factory(uri, null);
 	}
 
 	protected String localPath() {

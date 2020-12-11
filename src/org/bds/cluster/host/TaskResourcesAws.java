@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bds.Config;
-import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueMap;
 import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -183,7 +183,7 @@ public class TaskResourcesAws extends TaskResources {
 		StringBuilder entries = new StringBuilder();
 		for (String k : keys)
 			entries.append("'" + k + "' ");
-		throw new RuntimeException("ERROR: Missing parameter '" + name + "'  when attempting to run AWS task. Use map '" + ExpressionTask.TASK_OPTION_RESOURCES + "' entries" + (keys.length > 1 ? " (any of) " : "") + ": " + entries);
+		throw new RuntimeException("ERROR: Missing parameter '" + name + "'  when attempting to run AWS task. Use map '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "' entries" + (keys.length > 1 ? " (any of) " : "") + ": " + entries);
 	}
 
 	/**
@@ -274,10 +274,10 @@ public class TaskResourcesAws extends TaskResources {
 		super.setFromBdsThread(bdsThread);
 
 		// Try to find a 'resources' value
-		Value taskResources = bdsThread.getValue(ExpressionTask.TASK_OPTION_RESOURCES);
+		Value taskResources = bdsThread.getValue(GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES);
 		if (taskResources == null) {
 			// Not found? Nothing else to set
-			throw new RuntimeException("Cannot find '" + ExpressionTask.TASK_OPTION_RESOURCES + "' map (or object) for AWS resources");
+			throw new RuntimeException("Cannot find '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "' map (or object) for AWS resources");
 		}
 
 		// If the value a hash?
@@ -289,7 +289,7 @@ public class TaskResourcesAws extends TaskResources {
 	 * Set parameters from an 'AwsResources' class
 	 */
 	protected void setFromBdsThreadClassResources(Value taskResources, boolean debug) {
-		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from object '" + ExpressionTask.TASK_OPTION_RESOURCES + "': " + taskResources);
+		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from object '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "': " + taskResources);
 		// TODO: Check that this class is 'AwsResources'
 		throw new RuntimeException("Cannot parse 'taskResources' type " + taskResources.getType());
 	}
@@ -298,7 +298,7 @@ public class TaskResourcesAws extends TaskResources {
 	 * Set parameters from a 'string{string}' dictionary
 	 */
 	protected void setFromBdsThreadMap(ValueMap taskResources, boolean debug) {
-		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from map '" + ExpressionTask.TASK_OPTION_RESOURCES + "': " + taskResources);
+		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from map '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "': " + taskResources);
 		awsRole = mapGet(taskResources, PROFILE);
 		imageId = mapGet(taskResources, IMAGE_ID);
 		instanceType = mapGet(taskResources, INSTANCE_TYPE);

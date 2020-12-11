@@ -13,6 +13,7 @@ import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 
 /**
  * Execute a 'task' VM opcode
@@ -34,7 +35,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 	 */
 	public static void execute(BdsThread bdsThread, Task task) {
 		// Select executioner and queue for execution
-		String runSystem = bdsThread.getString(ExpressionTask.TASK_OPTION_SYSTEM);
+		String runSystem = bdsThread.getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_SYSTEM);
 		Executioner executioner = Executioners.getInstance().get(runSystem, bdsThread);
 		task.execute(bdsThread, executioner); // Execute task
 	}
@@ -140,15 +141,15 @@ public class TaskVmOpcode extends SysVmOpcode {
 
 		// Set task options
 		task.setTaskName(getTaskName());
-		task.setAllowEmpty(bdsThread.getBool(ExpressionTask.TASK_OPTION_ALLOW_EMPTY));
-		task.setCanFail(bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL));
+		task.setAllowEmpty(bdsThread.getBool(GlobalScope.GLOBAL_VAR_TASK_OPTION_ALLOW_EMPTY));
+		task.setCanFail(bdsThread.getBool(GlobalScope.GLOBAL_VAR_TASK_OPTION_CAN_FAIL));
 		task.setCurrentDir(bdsThread.getCurrentDir());
-		task.setNode(bdsThread.getString(ExpressionTask.TASK_OPTION_NODE));
-		task.setMaxFailCount((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
-		task.setDetached(bdsThread.getBool(ExpressionTask.TASK_OPTION_DETACHED));
+		task.setNode(bdsThread.getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_NODE));
+		task.setMaxFailCount((int) bdsThread.getInt(GlobalScope.GLOBAL_VAR_TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
+		task.setDetached(bdsThread.getBool(GlobalScope.GLOBAL_VAR_TASK_OPTION_DETACHED));
 
 		// Set task options: Resources
-		String runSystem = bdsThread.getString(ExpressionTask.TASK_OPTION_SYSTEM);
+		String runSystem = bdsThread.getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_SYSTEM);
 		ExecutionerType exType = ExecutionerType.parseSafe(runSystem);
 		TaskResources res = TaskResources.factory(exType);
 		res.setFromBdsThread(bdsThread);
@@ -183,7 +184,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 
 	@Override
 	protected String getTaskName() {
-		return bdsThread.hasVariable(ExpressionTask.TASK_OPTION_TASKNAME) ? bdsThread.getString(ExpressionTask.TASK_OPTION_TASKNAME) : null;
+		return bdsThread.hasVariable(GlobalScope.GLOBAL_VAR_TASK_OPTION_TASKNAME) ? bdsThread.getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_TASKNAME) : null;
 	}
 
 	@Override

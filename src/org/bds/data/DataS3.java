@@ -1,10 +1,8 @@
 package org.bds.data;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -12,13 +10,11 @@ import java.util.List;
 
 import org.bds.Config;
 import org.bds.util.Gpr;
+import org.bds.util.GprAws;
 import org.bds.util.Timer;
 
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
-import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -34,24 +30,25 @@ import software.amazon.awssdk.services.s3.model.S3Object;
  */
 public class DataS3 extends DataRemote {
 
-	public static final String AWS_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PROTOCOL = "s3";
+	public static final String AWS_S3_REGION = "awsS3Region";
 
-	public static final String ENV_PROXY_HTTTP = "http_proxy";
-	public static final String ENV_PROXY_HTTTPS = "https_proxy";
 	protected transient S3Client s3;
+	protected String region;
 	protected String bucketName;
 	protected String key;
 
-	public DataS3(String urlStr) {
+	public DataS3(String urlStr, String region) {
 		super();
 		parseS3Uri(urlStr);
+		this.region = region;
 		canWrite = false;
 	}
 
-	public DataS3(URI uri) {
+	public DataS3(URI uri, String region) {
 		super();
 		canWrite = false;
+		this.region = region;
 		parseS3Uri(uri);
 	}
 
@@ -131,7 +128,7 @@ public class DataS3 extends DataRemote {
 		String keyParen = "";
 		int idx = key.lastIndexOf('/');
 		if (idx >= 0) keyParen = key.substring(0, idx);
-		return new DataS3("s3://" + bucketName + '/' + keyParen);
+		return new DataS3("s3://" + bucketName + '/' + keyParen, region);
 	}
 
 	@Override
@@ -140,46 +137,12 @@ public class DataS3 extends DataRemote {
 	}
 
 	/**
-	 * Get proxy from environment variables
-	 */
-	protected URL getProxyFromEnv() {
-		String proxy = System.getenv(ENV_PROXY_HTTTPS);
-		if (proxy == null) proxy = System.getenv(ENV_PROXY_HTTTP);
-
-		URL proxyUrl = null;
-		try {
-			if (proxy != null) proxyUrl = new URL(proxy);
-		} catch (MalformedURLException e) {
-			Gpr.debug("Error parsing proxy from environment '" + proxy + "', ignoring");
-		}
-
-		return proxyUrl;
-	}
-
-	/**
 	 * Create an S3 client.
 	 * S3 clients are thread safe, thus it is encouraged to have
 	 * only one client instead of instantiating one each time.
 	 */
 	protected S3Client getS3() {
-		if (s3 == null) {
-			URL proxyUrl = getProxyFromEnv();
-
-			// Do we have proxy information?
-			if (proxyUrl == null) {
-				// No proxy? Use default client
-				s3 = S3Client.create();
-			} else {
-				// Set proxy in config
-				//				ClientConfiguration config = new ClientConfiguration();
-				//				config.setProxyHost(proxyUrl.getHost());
-				//				config.setProxyPort(proxyUrl.getPort());
-				//				s3 = S3Client.builder().standard().withClientConfiguration(config).build();
-				ProxyConfiguration proxyConf = ProxyConfiguration.builder().useSystemPropertyValues(true).build();
-				final SdkHttpClient httpClient = ApacheHttpClient.builder().proxyConfiguration(proxyConf).build();
-				s3 = S3Client.builder().httpClient(httpClient).build();
-			}
-		}
+		if (s3 == null) s3 = GprAws.s3Client(region);
 		return s3;
 	}
 
@@ -204,7 +167,7 @@ public class DataS3 extends DataRemote {
 		File fpath = new File(getPath());
 		File fjoin = new File(fpath, segment.getPath());
 		String s3uriStr = "s3://" + bucketName + fjoin.getAbsolutePath();
-		return factory(s3uriStr);
+		return new DataS3(s3uriStr, region);
 	}
 
 	@Override
@@ -217,7 +180,7 @@ public class DataS3 extends DataRemote {
 
 			for (S3Object s3obj : listObjects()) {
 				String s3path = AWS_S3_PROTOCOL + "://" + bucketName + '/' + s3obj.key();
-				list.add(new DataS3(s3path));
+				list.add(new DataS3(s3path, region));
 			}
 		} catch (Exception e) {
 			if (verbose) Timer.showStdErr("ERROR while listing files from '" + this + "'");
@@ -325,7 +288,7 @@ public class DataS3 extends DataRemote {
 		size = s3object.size();
 		canRead = true;
 		canWrite = true;
-		lastModified = Date.from(s3object.lastModified());
+		lastModified = java.util.Date.from(s3object.lastModified());
 		exists = true;
 		latestUpdate = new Timer(CACHE_TIMEOUT);
 

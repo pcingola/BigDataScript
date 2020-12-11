@@ -30,21 +30,6 @@ public class ExpressionTask extends ExpressionWithScope {
 
 	private static final long serialVersionUID = 5026042355679287158L;
 
-	// Variable names
-	public static final String TASK_OPTION_ALLOW_EMPTY = "allowEmpty";
-	public static final String TASK_OPTION_CAN_FAIL = "canFail";
-	public static final String TASK_OPTION_CPUS = "cpus";
-	public static final String TASK_OPTION_DETACHED = "detached";
-	public static final String TASK_OPTION_MEM = "mem";
-	public static final String TASK_OPTION_NODE = "node";
-	public static final String TASK_OPTION_PHYSICAL_PATH = "ppwd";
-	public static final String TASK_OPTION_QUEUE = "queue";
-	public static final String TASK_OPTION_RETRY = "retry";
-	public static final String TASK_OPTION_SYSTEM = "system";
-	public static final String TASK_OPTION_TASKNAME = "taskName";
-	public static final String TASK_OPTION_TIMEOUT = "timeout";
-	public static final String TASK_OPTION_WALL_TIMEOUT = "walltimeout";
-	public static final String TASK_OPTION_RESOURCES = "taskResources";
 	public static final String CMD_DOWNLOAD = "bds -download";
 	public static final String CMD_UPLOAD = "bds -upload";
 	public static final String CMD_TASK_IMPROPER = "bds -task";

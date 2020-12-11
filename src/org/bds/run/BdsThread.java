@@ -337,7 +337,7 @@ public class BdsThread extends Thread implements Serializable {
 	 * Create a new (and canonical) file relative to 'currentDir'
 	 */
 	public Data data(String fileName) {
-		return Data.factory(fileName, currentDir);
+		return Data.factory(fileName, this);
 	}
 
 	void exitCode() {

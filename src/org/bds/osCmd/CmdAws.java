@@ -354,7 +354,7 @@ public class CmdAws extends Cmd {
 		checkpointS3 = s3tmp + "/" + task.getId() + ".chp";
 
 		// Local and remote data files
-		DataS3 chps3 = new DataS3(checkpointS3);
+		DataS3 chps3 = new DataS3(checkpointS3, resources.getRegion());
 		DataFile chp = new DataFile(task.getCheckpointLocalFile());
 
 		if (task.getCheckpointLocalFile() == null) throw new RuntimeException("AWS improper task '" + task.getId() + "' has null checkpoint file. This should never happen!");

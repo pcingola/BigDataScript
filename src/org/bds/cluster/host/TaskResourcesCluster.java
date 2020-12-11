@@ -1,7 +1,7 @@
 package org.bds.cluster.host;
 
-import org.bds.lang.expression.ExpressionTask;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 
 /**
  * Represents resources consumed by a task
@@ -29,7 +29,7 @@ public class TaskResourcesCluster extends TaskResources {
 	@Override
 	public void setFromBdsThread(BdsThread bdsThread) {
 		super.setFromBdsThread(bdsThread);
-		setQueue(bdsThread.getString(ExpressionTask.TASK_OPTION_QUEUE));
+		setQueue(bdsThread.getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_QUEUE));
 	}
 
 	public void setQueue(String queue) {

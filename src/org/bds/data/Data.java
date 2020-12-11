@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.bds.Config;
+import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 import org.bds.util.Tuple;
 
 /**
@@ -44,21 +46,23 @@ public abstract class Data implements Comparable<Data> {
 	/**
 	 * Create a data object, resolve local files using 'currentDir'
 	 */
-	public static Data factory(String urlStr, String currentDir) {
+	public static Data factory(String urlStr, BdsThread bdsThread) {
 		// Get protocol
 		Tuple<String, String> protoHost = parseProtoHost(urlStr);
 		String proto = protoHost.first;
 
 		switch (proto) {
 		case "file":
-			return new DataFile(urlStr, currentDir);
+			String currDir = (bdsThread != null ? bdsThread.getCurrentDir() : null);
+			return new DataFile(urlStr, currDir);
 
 		case "http":
 		case "https":
 			return new DataHttp(urlStr);
 
 		case "s3":
-			return new DataS3(urlStr);
+			String awsRegion = (bdsThread != null ? bdsThread.getValue(GlobalScope.GLOBAL_VAR_AWS_REGION).asString() : "");
+			return new DataS3(urlStr, awsRegion);
 
 		case "ftp":
 			return new DataFtp(urlStr);
@@ -74,7 +78,7 @@ public abstract class Data implements Comparable<Data> {
 	/**
 	 * Create a data object from URI
 	 */
-	public static Data factory(URI uri) {
+	public static Data factory(URI uri, BdsThread bdsThread) {
 		// Create each data type
 		String proto = uri.getScheme();
 		switch (proto) {
@@ -86,7 +90,8 @@ public abstract class Data implements Comparable<Data> {
 			return new DataHttp(uri);
 
 		case "s3":
-			return new DataS3(uri);
+			String awsRegion = (bdsThread != null ? bdsThread.getValue(GlobalScope.GLOBAL_VAR_AWS_REGION).asString() : "");
+			return new DataS3(uri, awsRegion);
 
 		case "ftp":
 			return new DataFtp(uri);

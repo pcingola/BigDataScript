@@ -10,7 +10,6 @@ import java.util.Map;
 import org.bds.Bds;
 import org.bds.Config;
 import org.bds.cluster.host.Resources;
-import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
@@ -158,8 +157,8 @@ public class Report {
 		//---
 		Scope scope = bdsThread.getScope();
 		rTemplate.add("scope.VAR_ARGS_LIST", scope.getValue(GlobalScope.GLOBAL_VAR_ARGS_LIST));
-		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getValue(ExpressionTask.TASK_OPTION_SYSTEM));
-		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getValue(ExpressionTask.TASK_OPTION_CPUS));
+		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getValue(GlobalScope.GLOBAL_VAR_TASK_OPTION_SYSTEM));
+		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getValue(GlobalScope.GLOBAL_VAR_TASK_OPTION_CPUS));
 
 		// Scope symbols
 		ArrayList<String> names = new ArrayList<>();
