@@ -35,11 +35,18 @@ public class TestCasesBase {
 
 	// Read bucket name from $HOME/.bds/aws_test_bucket.txt
 	protected String awsBucketName() {
+		return awsTestConfig()[1].trim();
+	}
+
+	// Read bucket name from $HOME/.bds/aws_test_bucket.txt
+	protected String awsRegion() {
+		return awsTestConfig()[0].trim();
+	}
+
+	// Read bucket name from $HOME/.bds/aws_test_bucket.txt
+	protected String[] awsTestConfig() {
 		String awsBucketNameFile = Gpr.HOME + "/.bds/aws_test_bucket.txt";
-		String bucket = Gpr.readFile(awsBucketNameFile);
-		bucket = bucket.split("\n")[0].trim();
-		if (verbose) System.out.println("Bucket name: " + bucket);
-		return bucket;
+		return Gpr.readFile(awsBucketNameFile).split("\n");
 	}
 
 	@Before
