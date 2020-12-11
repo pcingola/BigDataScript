@@ -38,12 +38,11 @@ public class TestCasesZzz extends TestCasesBase {
 	//		Assert.assertTrue("Should finish with a 'Done' message", stdout.endsWith("Done\n"));
 	//	}
 
-	// Create a remote checkpoint
 	@Test
-	public void test29() {
+	public void test04() {
 		Gpr.debug("Test");
-		verbose = debug = true;
-		runAndCheck("test/checkpoint_29.bds", "ok", true);
+		verbose = true;
+		runAndCheckpoint("test/graph_04.bds", "test/graph_04.chp", "out", "IN\nTASK 1\nTASK 2\n");
 	}
 
 }
