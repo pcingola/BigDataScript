@@ -147,4 +147,22 @@ public class TestCasesGraph extends TestCasesBase {
 		Assert.assertTrue(out.contains("Hi 2\n"));
 	}
 
+	@Test
+	public void test16_dep_no_input() {
+		Gpr.debug("Test");
+		runAndCheckStdout("test/graph_16.bds", "DEP_1\nDEP_2\nDEP_3");
+	}
+
+	@Test
+	public void test17_circular_taskid() {
+		Gpr.debug("Test");
+		runAndCheckStderr("test/graph_17.bds", "Circular dependency on task");
+	}
+
+	@Test
+	public void test18_out_tasksId() {
+		Gpr.debug("Test");
+		runAndCheckStderr("test/graph_18.bds", "Cannot have task as a dependency output");
+	}
+
 }

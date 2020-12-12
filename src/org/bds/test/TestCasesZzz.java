@@ -19,27 +19,12 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	//	@Test
-	//	public void test16_dep_no_input() {
-	//		Gpr.debug("Test");
-	//		verbose = debug = true;
-	//		runAndCheckStdout("test/graph_16.bds", "Hello\nBye");
-	//	}
-	//
 	@Test
-	public void test17_circular() {
+	public void test18_out_tasksId() {
 		Gpr.debug("Test");
-		verbose = debug = true;
-		runAndCheckStdout("test/graph_17.bds", "Hello\nBye");
+		runAndCheckStderr("test/graph_18.bds", "Cannot have task as a dependency output");
 	}
-	//
-	//	@Test
-	//	public void test18_out_tasksId() {
-	//		Gpr.debug("Test");
-	//		verbose = debug = true;
-	//		runAndCheckStdout("test/graph_18.bds", "Hello\nBye");
-	//	}
-	//
+
 	//	@Test
 	//	public void test19_dep_task_already_executed() {
 	//		Gpr.debug("Test");

@@ -18,7 +18,6 @@ import org.bds.data.DataTask;
 import org.bds.report.Report;
 import org.bds.run.BdsThread;
 import org.bds.util.AutoHashMap;
-import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -152,7 +151,6 @@ public class TaskDependecies implements Serializable {
 	 * Find 'leaf' nodes (i.e. nodes that do not have dependent tasks)
 	 */
 	Set<Data> findLeafNodes(Data out) {
-		Gpr.debug("FIND LEAF NODES:" + out);
 		Set<Data> nodes = findNodes(out); // Find all nodes, including 'out'
 
 		// Only add nodes that do not have dependent tasks (i.e. are leaves)
@@ -170,7 +168,6 @@ public class TaskDependecies implements Serializable {
 	Set<Data> findNodes(Data out) {
 		// A set of 'goal' nodes
 		Set<Data> goals = new HashSet<>();
-		Gpr.debug("FIND NODES: " + out);
 		goals.add(out); // We need 'out' in goals, otherwise the evaluation in empty, we'll remove it at the end
 
 		// Loop until there is no change in this set
@@ -272,7 +269,6 @@ public class TaskDependecies implements Serializable {
 	public synchronized Set<Task> goal(BdsThread bdsThread, String out) {
 		Set<Task> tasks = new HashSet<>();
 		Data outd = bdsThread.data(out);
-		Gpr.debug("GOAL RUN: " + outd);
 		goalRun(bdsThread, outd, tasks);
 		return tasks;
 	}

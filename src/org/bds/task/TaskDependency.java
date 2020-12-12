@@ -92,7 +92,7 @@ public class TaskDependency implements Serializable {
 	}
 
 	public void addOutput(Data output) {
-		if (isDataTask(output)) throw new RuntimeException("Cannot have taskID '" + output + "' as a task dependency output");
+		if (isDataTask(output)) throw new RuntimeException("Cannot have task as a dependency output, taskId: '" + output + "'");
 		outputs.add(output);
 	}
 
@@ -100,7 +100,12 @@ public class TaskDependency implements Serializable {
 	 * Add output
 	 */
 	public void addOutput(String output) {
-		addOutput(Data.factory(output));
+		Task task = getTask(output);
+		if (task != null) {
+			throw new RuntimeException("Cannot have task as a dependency output, taskId: '" + task.getId() + "'");
+		} else {
+			addOutput(Data.factory(output));
+		}
 	}
 
 	public void addOutput(ValueList outputs) {

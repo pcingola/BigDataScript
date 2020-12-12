@@ -7,18 +7,18 @@ in1 := "graph_17.in1.txt"
 [in1, out].rm()
 
 # Dependency, no inputs
-dep(in1 <- [], cpus := 4 ) {
-    sys echo Hello | tee '$in1'
+dep(in1 <- []) {
+    sys echo DEP_1 | tee $in1
 }
 
 # This task has no output file
-t1 := dep([] <- in1, cpus := 4 ) {
-    sys echo Hello
+t1 := dep([] <- in1) {
+    sys echo DEP_2 
 }
 
 # This task depends on the previous one being executed
-dep ( [out, in1] <- t1 ) {
-    sys date > $out ; echo Bye
+dep ([out, in1] <- t1) {
+    sys echo DEP_3 | tee $out
 }
 
 goal out
