@@ -30,18 +30,20 @@ import software.amazon.awssdk.services.s3.model.S3Object;
  */
 public class DataS3 extends DataRemote {
 
+	public static final String AWS_S3_VIRTUAL_HOSTED_SCHEME = "https"; // In AWS lingo referring to an object "virtual hosted style" is something like 'https://bucket-name.s3.Region.amazonaws.com/key_name"
+	public static final String AWS_S3_VIRTUAL_HOSTED_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PROTOCOL = "s3";
 	public static final String AWS_S3_REGION = "awsS3Region";
 
-	protected transient S3Client s3;
+	protected transient S3Client s3; // TODO: One client per file!!! We need one S3Client per region: S3ClientProvider
 	protected String region;
 	protected String bucketName;
 	protected String key;
 
 	public DataS3(String urlStr, String region) {
 		super();
-		parseS3Uri(urlStr);
 		this.region = region;
+		parseS3Uri(urlStr); // Note: If the region is in the URL, it will be overridden
 		canWrite = false;
 	}
 
@@ -49,7 +51,7 @@ public class DataS3 extends DataRemote {
 		super();
 		canWrite = false;
 		this.region = region;
-		parseS3Uri(uri);
+		parseS3Uri(uri); // Note: If the region is in the URL, it will be overridden
 	}
 
 	@Override
@@ -249,14 +251,34 @@ public class DataS3 extends DataRemote {
 	}
 
 	protected void parseS3Uri(URI uri) {
-		bucketName = uri.getAuthority();
-		key = uri.getPath();
-		if (key.startsWith("/")) key = key.substring(1);
+		String host = uri.getHost();
+		if (uri.getScheme().equals(AWS_S3_VIRTUAL_HOSTED_SCHEME) && host.endsWith(AWS_S3_VIRTUAL_HOSTED_DOMAIN)) {
+			// Virtual hosted style, the URI is:
+			//     https://bucket-name.s3.Region.amazonaws.com/key_name
+			String[] parts = host.split("\\.");
+			if (parts.length != 5 //
+					|| !parts[1].equals("s3") //
+					|| !parts[3].equals("amazonaws") //
+					|| !parts[4].equals("com") //
+			) throw new RuntimeException("Could not parse S3 URI '" + uri + "', the format should 'https://bucket-name.s3.Region.amazonaws.com/key_name'");
+			bucketName = parts[0];
+			region = parts[2];
+
+			key = uri.getPath();
+			if (key.startsWith("/")) key = key.substring(1);
+		} else if (uri.getScheme().equals(AWS_S3_PROTOCOL)) {
+			bucketName = host; // Old code: uri.getAuthority();
+			key = uri.getPath();
+			if (key.startsWith("/")) key = key.substring(1);
+		} else {
+			throw new RuntimeException("Could not parse S3 URI '" + uri + "', the format should be either 's3://bucket/key_name' or 'https://bucket-name.s3.Region.amazonaws.com/key_name'");
+		}
 	}
 
 	@Override
 	public String toString() {
-		return AWS_S3_PROTOCOL + "://" + bucketName + "/" + key;
+		if (region == null || region.isEmpty()) return AWS_S3_PROTOCOL + "://" + bucketName + "/" + key;
+		return AWS_S3_VIRTUAL_HOSTED_SCHEME + "://" + bucketName + ".s3." + region + "." + AWS_S3_VIRTUAL_HOSTED_DOMAIN + "/" + key;
 	}
 
 	/**

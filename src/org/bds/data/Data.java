@@ -81,6 +81,14 @@ public abstract class Data implements Comparable<Data> {
 	public static Data factory(URI uri, BdsThread bdsThread) {
 		// Create each data type
 		String proto = uri.getScheme();
+
+		// Is this an S3 object in 'virtual hosted' style?
+		if (uri.getScheme() != null //
+				&& uri.getHost() != null //
+				&& uri.getScheme().equals(DataS3.AWS_S3_VIRTUAL_HOSTED_SCHEME) //
+				&& uri.getHost().endsWith(DataS3.AWS_S3_VIRTUAL_HOSTED_DOMAIN) //
+		) proto = DataS3.AWS_S3_PROTOCOL;
+
 		switch (proto) {
 		case "file":
 			return new DataFile(uri);
@@ -123,6 +131,11 @@ public abstract class Data implements Comparable<Data> {
 
 			int idxPort = host.indexOf(':');
 			if (idxPort > 0) host = host.substring(0, idxPort);
+
+			// S3 can be addressed by host ending with "amazonaws.com":
+			//     https://bucket-name.s3.Region.amazonaws.com/key name
+			// Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro
+			if (proto.equals(DataS3.AWS_S3_VIRTUAL_HOSTED_SCHEME) && host.endsWith(DataS3.AWS_S3_VIRTUAL_HOSTED_DOMAIN)) proto = DataS3.AWS_S3_PROTOCOL;
 		}
 
 		return new Tuple<>(proto, host);

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.bds.Bds;
+import org.bds.data.DataS3;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
 import org.bds.util.Gpr;
@@ -319,9 +320,11 @@ public class TestCasesCheckpoint extends TestCasesBase {
 	@Test
 	public void test30() {
 		Gpr.debug("Test");
+		verbose = debug = true;
 		String bucket = awsBucketName();
-		String checkpointFile = "s3://" + bucket + "/tmp/bds/checkpoint_30.chp";
-		runAndCheckpoint("test/checkpoint_30.bds", checkpointFile, "sum", 285);
+		String region = awsRegion();
+		String checkpointFile = "https://" + bucket + ".s3." + region + "." + DataS3.AWS_S3_VIRTUAL_HOSTED_DOMAIN + "/tmp/bds/checkpoint_30.chp";
+		runAndCheckpoint("test/checkpoint_30.bds", checkpointFile, "sum", 285, null);
 	}
 
 }
