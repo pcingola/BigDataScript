@@ -22,13 +22,15 @@ import org.jsoup.select.Elements;
  */
 public class DataHttp extends DataRemote {
 
+	private static final long serialVersionUID = 3179955116290689726L;
+
 	private static final int BUFFER_SIZE = 100 * 1024;
 	public static final int HTTP_OK = 200; // Connection OK
 	public static final int HTTP_MOVED_PERMANENTLY = 301; // The requested resource moved permanently to a different URI
 	public static final int HTTP_REDIR = 302; // The requested resource resides temporarily under a different URI
 	public static final int HTTP_NOTFOUND = 404; // The requested resource resides temporarily under a different URI
 
-	URLConnection connection;
+	protected transient URLConnection connection;
 
 	public DataHttp(String urlStr) {
 		super(urlStr);

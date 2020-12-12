@@ -44,7 +44,7 @@ import org.bds.util.Timer;
  * 	- entityId: Something that uniquely denotes the entity to remove (process ID, cluster job ID, file absolute path, instance ID, etc.)
  *  - `{+,-}`: This can be either
  *		- '+' indicates where we are adding the entity to be cleaned up
- *		- 'i' indicates where we removing the entity (it has already been cleaned up by `bds-java`, so `bds-exec` doesn't need to take care of this entry (e.g. a finished task)
+ *		- '-' indicates where we removing the entity (it has already been cleaned up by `bds-java`, so `bds-exec` doesn't need to take care of this entry (e.g. a finished task)
  *	- command: A command the has to be executed in order to clean up (e.g. `rm` to delete a file, `scancel` in s slurm cluster, etc.). Internal commands (e.g. deleting a local file, killing a local process) start with '@'
  *
  * When `bds-exec` takes control (i.e. when `bds-java` dies), it will add to a dictionary (key
@@ -103,7 +103,7 @@ public class TaskLogger implements Serializable {
 		//       If the task finished OK, we mark them not to be removed
 		if (task.getOutputs() != null) {
 			for (Data file : task.getOutputs())
-				lines.append(createEntry(file.url(), true, CMD_REMOVE_FILE));
+				lines.append(createEntry(file.url(), true, CMD_REMOVE_FILE)); // TODO: WARNIGNG, bds-exec needs to parse the URL (e.g. 'file://...path_to_file')
 		}
 
 		// Append all lines to file

@@ -14,6 +14,8 @@ import java.util.Date;
  */
 public class DataFile extends Data {
 
+	private static final long serialVersionUID = -1399927916073574111L;
+
 	public static final String PROTOCOL_FILE = "file://";
 
 	File file;

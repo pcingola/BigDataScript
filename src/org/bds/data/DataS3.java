@@ -30,12 +30,14 @@ import software.amazon.awssdk.services.s3.model.S3Object;
  */
 public class DataS3 extends DataRemote {
 
+	private static final long serialVersionUID = -815001806425931041L;
+
 	public static final String AWS_S3_VIRTUAL_HOSTED_SCHEME = "https"; // In AWS lingo referring to an object "virtual hosted style" is something like 'https://bucket-name.s3.Region.amazonaws.com/key_name"
 	public static final String AWS_S3_VIRTUAL_HOSTED_DOMAIN = "amazonaws.com";
 	public static final String AWS_S3_PROTOCOL = "s3";
 	public static final String AWS_S3_REGION = "awsS3Region";
 
-	protected transient S3Client s3; // TODO: One client per file!!! We need one S3Client per region: S3ClientProvider
+	protected transient S3Client s3; // FIXME: One client per file!!! We need one S3Client per region: S3ClientProvider
 	protected String region;
 	protected String bucketName;
 	protected String key;
@@ -64,6 +66,12 @@ public class DataS3 extends DataRemote {
 	protected boolean canBeS3Format() {
 		return (uri == null || uri.getScheme().equals(AWS_S3_PROTOCOL)) //
 				&& (region == null || region.isEmpty());
+	}
+
+	@Override
+	public String createUrl() {
+		if (canBeS3Format()) return AWS_S3_PROTOCOL + "://" + bucketName + '/' + key;
+		return AWS_S3_VIRTUAL_HOSTED_SCHEME + "://" + bucketName + ".s3." + region + "." + AWS_S3_VIRTUAL_HOSTED_DOMAIN + '/' + key;
 	}
 
 	@Override
@@ -158,6 +166,7 @@ public class DataS3 extends DataRemote {
 	 * only one client instead of instantiating one each time.
 	 */
 	protected S3Client getS3Client() {
+		// FIXME: Use an S3ClientProvider
 		if (s3 == null) s3 = GprAws.s3Client(region);
 		return s3;
 	}
@@ -381,11 +390,6 @@ public class DataS3 extends DataRemote {
 		PutObjectRequest req = PutObjectRequest.builder().bucket(bucketName).key(key).build();
 		getS3Client().putObject(req, RequestBody.fromFile(localFile));
 		return true;
-	}
-
-	@Override
-	public String url() {
-		return urlRoot() + key;
 	}
 
 	/**

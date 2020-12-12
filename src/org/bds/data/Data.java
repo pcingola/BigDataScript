@@ -1,5 +1,6 @@
 package org.bds.data;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +35,9 @@ import org.bds.util.Tuple;
  *
  * @author pcingola
  */
-public abstract class Data implements Comparable<Data> {
+public abstract class Data implements Comparable<Data>, Serializable {
+
+	private static final long serialVersionUID = 6436509779796130272L;
 
 	public static final String PROTOCOL_SEP = "://";
 	protected boolean verbose;
@@ -444,9 +447,7 @@ public abstract class Data implements Comparable<Data> {
 	 * @return A string representing a canonical URL to this data
 	 */
 	public String url() {
-		if (urlStr != null) {
-			urlStr = createUrl();
-		}
+		if (urlStr == null) urlStr = createUrl();
 		return urlStr;
 	};
 

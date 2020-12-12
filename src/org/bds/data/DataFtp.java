@@ -19,6 +19,8 @@ import org.bds.util.Timer;
  */
 public class DataFtp extends DataRemote {
 
+	private static final long serialVersionUID = 7106541163198536282L;
+
 	public static final long CACHE_TIMEOUT_FTP = 30 * 1000; // Timeout in milliseconds
 
 	protected String hostname;

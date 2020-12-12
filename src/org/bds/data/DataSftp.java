@@ -12,6 +12,8 @@ import java.net.URI;
  */
 public class DataSftp extends DataFtp {
 
+	private static final long serialVersionUID = 7619404834941205243L;
+
 	public DataSftp(String urlStr) {
 		super(urlStr);
 	}

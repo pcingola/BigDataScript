@@ -14,6 +14,8 @@ import org.bds.task.TaskDependecies;
  */
 public class DataTask extends Data {
 
+	private static final long serialVersionUID = -5361247001063629052L;
+
 	public static final String PROTOCOL_TASK = "task://";
 
 	public DataTask(String taskId) {

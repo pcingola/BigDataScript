@@ -17,8 +17,11 @@ import org.bds.util.Timer;
  */
 public abstract class DataRemote extends Data {
 
+	private static final long serialVersionUID = 2140929556406130349L;
+
 	public static final String TMP_BDS_DATA = "bds";
 	public static final long CACHE_TIMEOUT = 10 * 1000; // Timeout in milliseconds
+
 	protected boolean canRead;
 	protected boolean canWrite;
 	protected boolean exists;
@@ -54,7 +57,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	protected String createUrl() {
-		if (relative) return null;
+		if (relative) return urlOri;
 		return uri.toString();
 	}
 
