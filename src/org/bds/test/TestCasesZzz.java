@@ -1,7 +1,9 @@
 package org.bds.test;
 
 import org.bds.Config;
+import org.bds.util.Gpr;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -17,27 +19,22 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	//	@Test
-	//	public void test01() {
-	//		Gpr.debug("Test");
-	//
-	//		// Create command line
-	//		String[] args = { "-c", "test/clusterSsh_localhost_01.config" };
-	//		BdsTest bdsTest = new BdsTest("test/clusterSsh_01.bds", args, verbose, debug);
-	//		bdsTest.bds(false);
-	//
-	//		// Run script
-	//		bdsTest.run();
-	//		bdsTest.checkRunOk(); // Finished OK?
-	//
-	//		// Get tasks and check that PID matches 'CLUSTERGENERIC_LOCALHOST_'
-	//		// (run.pl prepends that string to PID)
-	//		for (Task t : bdsTest.bds.getBdsRun().getBdsThread().getTasks()) {
-	//			if (debug) Gpr.debug("Task " + t.getId() + ", pid " + t.getPid());
-	//			Assert.assertTrue("Task " + t.getId() + " was NOT executed by 'Cluster Ssh', task id " + t.getId() //
-	//					, t.getId().toUpperCase().startsWith("CLUSTERSSH") //
-	//			);
-	//		}
-	//	}
+	@Test
+	public void test33_s3_dirPath() {
+		Gpr.debug("Test");
+		verbose = true;
+		String bucket = awsBucketName();
+		String region = awsRegion();
+
+		String urlParen = "s3://" + bucket + "/tmp/bds/remote_33/test_remote_33";
+		if (region != null && !region.isEmpty()) urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/remote_33/test_remote_33";
+
+		// Create S3 files
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye.txt", region, "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye_2.txt", region, "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi.txt", region, "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi_2.txt", region, "OK");
+		runAndCheck("test/remote_33.bds", "dd", "[" + urlParen + "/bye.txt, " + urlParen + "/bye_2.txt]");
+	}
 
 }

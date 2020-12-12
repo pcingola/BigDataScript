@@ -552,7 +552,7 @@ public class TestCasesRemote extends TestCasesBase {
 		createS3File("s3://" + bucket + "/tmp/bds/remote_15/test_dir/z2.txt", region, "OK");
 
 		String urlParen = "s3://" + bucket + "/tmp/bds/remote_15/test_dir";
-		if (region == null || region.isEmpty()) urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/remote_15/test_dir";
+		if (region != null && !region.isEmpty()) urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/remote_15/test_dir";
 
 		String expectedOutput = "" //
 				+ "baseName       : \n" //
@@ -749,7 +749,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Gpr.debug("Test");
 		String bucket = awsBucketName();
 		String region = awsRegion();
+
 		String urlParen = "s3://" + bucket + "/tmp/bds/remote_33/test_remote_33";
+		if (region != null && !region.isEmpty()) urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/remote_33/test_remote_33";
 
 		// Create S3 files
 		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye.txt", region, "OK");

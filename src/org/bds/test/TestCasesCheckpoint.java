@@ -320,7 +320,6 @@ public class TestCasesCheckpoint extends TestCasesBase {
 	@Test
 	public void test30() {
 		Gpr.debug("Test");
-		verbose = debug = true;
 		String bucket = awsBucketName();
 		String region = awsRegion();
 		String checkpointFile = "https://" + bucket + ".s3." + region + "." + DataS3.AWS_S3_VIRTUAL_HOSTED_DOMAIN + "/tmp/bds/checkpoint_30.chp";
