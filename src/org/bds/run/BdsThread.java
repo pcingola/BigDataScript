@@ -189,7 +189,7 @@ public class BdsThread extends Thread implements Serializable {
 		}
 
 		// Get absolute path
-		Data d = BdsThreads.data(checkpointFileName);
+		Data d = Data.factory(checkpointFileName);
 		String filePath = d.isRemote() ? d.toString() : d.getAbsolutePath();
 
 		// Save
@@ -811,7 +811,7 @@ public class BdsThread extends Thread implements Serializable {
 				if (show) Timer.showStdErr("Deleting stale files:");
 				for (String fileName : removeOnExit) {
 					if (show) System.err.println("\t" + fileName);
-					Data.factory(fileName).delete();
+					data(fileName).delete();
 				}
 			}
 		}

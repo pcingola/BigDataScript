@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.bds.Config;
 import org.bds.run.BdsThread;
+import org.bds.run.BdsThreads;
 import org.bds.scope.GlobalScope;
 import org.bds.util.Tuple;
 
@@ -47,8 +48,16 @@ public abstract class Data implements Comparable<Data>, Serializable {
 	protected String urlOri; // URL in the original representation
 	protected String urlStr; // URL (full representation)
 
+	/**
+	 * Get canonical path to file using thread's 'current dir' to de-reference
+	 * relative paths
+	 *
+	 * Warning: When un-serializing a task form a checkpoint, threads are not
+	 *          initialized, thus they are null
+	 */
 	public static Data factory(String url) {
-		return factory(url, null);
+		BdsThread bdsThread = BdsThreads.getInstance().get(); // Can be null
+		return factory(url, bdsThread);
 	}
 
 	/**
@@ -336,7 +345,7 @@ public abstract class Data implements Comparable<Data>, Serializable {
 	 * Do we have a (valid) local copy of this data?
 	 */
 	public boolean isDownloaded() {
-		return isDownloaded(Data.factory(getLocalPath()));
+		return isDownloaded(factory(getLocalPath()));
 	}
 
 	/**
@@ -372,7 +381,7 @@ public abstract class Data implements Comparable<Data>, Serializable {
 	 *      to upload the results if they haven't been already uploaded.
 	 */
 	public boolean isUploaded() {
-		return isUploaded(Data.factory(getAbsolutePath()));
+		return isUploaded(factory(getAbsolutePath()));
 	}
 
 	/**
@@ -434,7 +443,7 @@ public abstract class Data implements Comparable<Data>, Serializable {
 	 * Upload local version of the file to remote file system
 	 */
 	public boolean upload() {
-		return upload(Data.factory(getLocalPath()));
+		return upload(factory(getLocalPath()));
 	}
 
 	/**

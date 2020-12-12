@@ -1,0 +1,18 @@
+#!/usr/bin/env bds
+
+out := "out.graph_20.txt"
+
+# Clean up
+sys rm -f $out
+
+# This task has no output file
+t1 := dep( cpus := 4 ) {
+    sys echo Hello
+}
+
+# This task depends on the previous one being executed
+t2 := dep ( out <- t1 ) {
+    sys date > $out ; echo Bye
+}
+
+goal t2

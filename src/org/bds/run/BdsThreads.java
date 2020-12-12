@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.bds.data.Data;
-
 /**
  * All BdsThreads are tracked here
  *
@@ -21,19 +19,6 @@ public class BdsThreads {
 
 	Map<Long, BdsThread> bdsThreadByThreadId = new HashMap<>();
 	Set<BdsThread> bdsThreadDone = new HashSet<>();
-
-	/**
-	 * Get canonical path to file using thread's 'current dir' to de-reference
-	 * relative paths
-	 *
-	 * Warning: When un-serializing a task form a checkpoint, threads are not
-	 *          initialized, thus they are null
-	 */
-	public static Data data(String url) {
-		BdsThread bdsThread = BdsThreads.getInstance().get();
-		if (bdsThread == null) return Data.factory(url);
-		return bdsThread.data(url);
-	}
 
 	/**
 	 * Get singleton

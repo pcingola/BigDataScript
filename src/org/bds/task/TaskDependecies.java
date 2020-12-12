@@ -18,6 +18,7 @@ import org.bds.data.DataTask;
 import org.bds.report.Report;
 import org.bds.run.BdsThread;
 import org.bds.util.AutoHashMap;
+import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
 /**
@@ -151,7 +152,8 @@ public class TaskDependecies implements Serializable {
 	 * Find 'leaf' nodes (i.e. nodes that do not have dependent tasks)
 	 */
 	Set<Data> findLeafNodes(Data out) {
-		Set<Data> nodes = findNodes(out); // Find all nodes
+		Gpr.debug("FIND LEAF NODES:" + out);
+		Set<Data> nodes = findNodes(out); // Find all nodes, including 'out'
 
 		// Only add nodes that do not have dependent tasks (i.e. are leaves)
 		Set<Data> leaves = new HashSet<>();
@@ -168,68 +170,63 @@ public class TaskDependecies implements Serializable {
 	Set<Data> findNodes(Data out) {
 		// A set of 'goal' nodes
 		Set<Data> goals = new HashSet<>();
-		goals.add(out);
+		Gpr.debug("FIND NODES: " + out);
+		goals.add(out); // We need 'out' in goals, otherwise the evaluation in empty, we'll remove it at the end
 
 		// Loop until there is no change in this set
-		for (boolean changed = true; changed;) {
-			changed = false;
-
-			// We need a new set to avoid 'concurrent modification'
-			Set<Data> newGoals = new HashSet<>();
-			newGoals.addAll(goals);
-
-			// For each goal
-			for (Data goal : goals) {
-				// Find all tasks required for this goal
-				List<Task> tasks = getTasksByOutput(goal);
-
-				if (tasks != null) {
-					// Add all task's inputs
-					for (Task t : tasks) {
-						// Add all inputs
-						if (t.getInputs() != null) {
-							for (Data in : t.getInputs()) {
-								// Add each input, marke as changed if not already added
-								changed |= newGoals.add(in); // Add each node
-							}
-						}
-
-						// Add all task Ids
-						List<Task> depTasks = t.getDependencies();
-						if (depTasks != null) {
-							for (Task depTask : depTasks) {
-								// Add each task ID, marke as changed if not already added
-								DataTask dtask = new DataTask(depTask.getId());
-								changed |= newGoals.add(dtask);
-							}
-						}
-					}
-				}
-			}
-
+		int oldSize, newSize;
+		do {
+			Set<Data> newGoals = findNodes(goals);
+			oldSize = goals.size();
+			newSize = newGoals.size();
 			goals = newGoals;
-		}
+		} while (oldSize < newSize);
 
+		// Original 'out' node is not a leaf dependency
+		goals.remove(out);
 		return goals;
 	}
 
-	//	/**
-	//	 * Find canonical path (cache return values)
-	//	 */
-	//	String getCanonicalPath(String fileName) {
-	//		String filePath = canonicalPath.get(fileName);
-	//
-	//		// Not found? => Populate map
-	//		if (filePath == null) {
-	//			Data f = Data.factory(fileName);
-	//			filePath = f.getCanonicalPath();
-	//
-	//			// Add to map
-	//			canonicalPath.put(fileName, filePath);
-	//		}
-	//
-	//		return filePath;
-	//	}
+	/**
+	 * Create a new set including all dependencies from each goal
+	 */
+	Set<Data> findNodes(Set<Data> goals) {
+		// We need a new set to avoid 'concurrent modification'
+		Set<Data> newGoals = new HashSet<>();
+		newGoals.addAll(goals);
+
+		// For each goal
+		for (Data goal : goals) {
+			// Find all tasks required for this goal
+			List<Task> tasks = getTasksByOutput(goal);
+			if (tasks == null) continue;
+
+			// Add all task's inputs
+			for (Task t : tasks) {
+				// Add all inputs
+				if (t.getInputs() != null) {
+					for (Data in : t.getInputs())
+						newGoals.add(in); // Add each node
+				}
+
+				// Add all taskIds
+				List<Task> depTasks = t.getDependencies();
+				if (depTasks != null) {
+					for (Task depTask : depTasks) {
+						// Add each task ID, mark as changed if not already added
+						DataTask dtask = new DataTask(depTask.getId());
+						newGoals.add(dtask);
+					}
+				}
+			}
+		}
+
+		return newGoals;
+	}
+
+	protected Task getTask(Data dataTask) {
+		return getTask(dataTask.getUrlOri());
+	}
 
 	public synchronized Task getTask(String taskId) {
 		return tasksById.get(taskId);
@@ -254,7 +251,7 @@ public class TaskDependecies implements Serializable {
 	 */
 	protected List<Task> getTasksByOutput(Data output) {
 		// Check if 'output' is a task Id
-		Task taskGoal = getTask(output.getUrlOri());
+		Task taskGoal = getTask(output);
 		if (taskGoal != null) {
 			// Task ID found. Has the task been executed and finished? No need to add it.
 			if (taskGoal.isDone()) return null;
@@ -274,7 +271,8 @@ public class TaskDependecies implements Serializable {
 	 */
 	public synchronized Set<Task> goal(BdsThread bdsThread, String out) {
 		Set<Task> tasks = new HashSet<>();
-		Data outd = Data.factory(out, bdsThread);
+		Data outd = bdsThread.data(out);
+		Gpr.debug("GOAL RUN: " + outd);
 		goalRun(bdsThread, outd, tasks);
 		return tasks;
 	}
@@ -283,6 +281,13 @@ public class TaskDependecies implements Serializable {
 	 * Does this goal need to be updated respect to the leaves
 	 */
 	boolean goalNeedsUpdate(Data out) {
+		// Is 'out' a taskId?
+		if (isTask(out)) {
+			// Needs update if the task has not been scheduled
+			Task t = getTask(out);
+			return t != null && !t.isScheduled();
+		}
+
 		// Find all 'leaf nodes' (files) required for this goal
 		Set<Data> leaves = findLeafNodes(out);
 		TaskDependency tasDep = new TaskDependency(null);
@@ -299,43 +304,52 @@ public class TaskDependecies implements Serializable {
 	}
 
 	/**
-	 * Find all leaf nodes required for goal 'out'
+	 * Find all tasks required for satisfying goal 'out' and run them
 	 */
 	boolean goalRun(BdsThread bdsThread, Data goal, Set<Task> addedTasks) {
-		// Check if we really need to update this goal (with respect to the leaf nodes)
-		if (!goalNeedsUpdate(goal)) return false;
+		// Check if we really need to update this goal with respect to the leaf nodes
+		// Important: If the middle nodes are not present (e.g. temp files have
+		// been deleted), but the output nodes are ok respect to first input
+		// nodes (i.e. the input nodes), then we don't need to execute this goal
+		if (!goalNeedsUpdate(goal)) {
+			if (debug) Timer.showStdErr("Goal '" + goal + "' does not need update, skipping");
+			return false;
+		}
 
+		// Find all tasks that must be executed
 		List<Task> tasks = getTasksByOutput(goal);
 		if (tasks == null) return false;
 
 		// Satisfy all goals before running
 		for (Task t : tasks) {
-			if (addedTasks.contains(t)) continue; // Don't add twice
+			if (addedTasks.contains(t)) continue; // Don't analyze twice
 			addedTasks.add(t);
 
-			// Add data file dependencies
+			// Recursively analyze all input file dependencies
 			if (t.getInputs() != null) {
-				for (Data in : t.getInputs())
+				for (Data in : t.getInputs()) {
 					goalRun(bdsThread, in, addedTasks);
+				}
 			}
 
-			// Add all task dependencies
+			// Recursively analyze all task dependencies
 			if (t.getDependencies() != null) {
-				for (Task taskDep : t.getDependencies())
-					if (!addedTasks.contains(taskDep)) {
-						DataTask dtask = new DataTask(taskDep.getId());
-						goalRun(bdsThread, dtask, addedTasks);
-					}
+				for (Task taskDep : t.getDependencies()) {
+					if (addedTasks.contains(taskDep)) continue;
+					DataTask dtask = new DataTask(taskDep.getId());
+					goalRun(bdsThread, dtask, addedTasks);
+				}
 			}
-
 		}
 
-		// Run all tasks
+		// Run all tasks required to satisfy the goal
 		for (Task t : tasks) {
 			if (!t.isScheduled()) {
+				if (debug) Timer.showStdErr("Goal run: Running task '" + t.getId() + "'");
 				t.setDependency(false); // We are executing this task, so it it no longer a 'dep'
 				TaskVmOpcode.execute(bdsThread, t);
-			}
+			} else if (debug) Timer.showStdErr("Goal run: Task '" + t.getId() + "' is already scheduled, not running");
+
 		}
 
 		return true;
@@ -372,8 +386,7 @@ public class TaskDependecies implements Serializable {
 	 * Is there a circular dependency for this task?
 	 */
 	boolean isCircular(Task task) {
-		boolean circ = isCircular(task, new HashSet<Task>());
-		return circ;
+		return isCircular(task, new HashSet<Task>());
 	}
 
 	/**
@@ -383,19 +396,28 @@ public class TaskDependecies implements Serializable {
 	boolean isCircular(Task task, HashSet<Task> tasks) {
 		if (!tasks.add(task)) return true;
 
-		// Get all input files, find corresponding tasks and recurse
+		// Get all input files, find corresponding tasks produce them as outputs and recurse
 		if (task.getInputs() != null) {
 			for (Data in : task.getInputs()) {
+				// Add all tasks that have 'in' as an output
 				List<Task> depTasks = getTasksByOutput(in);
-
-				if (depTasks != null) {
-					for (Task t : depTasks) {
-						HashSet<Task> newTasks = (HashSet<Task>) tasks.clone();
-						if (isCircular(t, newTasks)) return true;
-					}
+				if (depTasks == null) continue;
+				for (Task t : depTasks) {
+					// Note: We clone the set because another branch might have the same dependency (in that case it is not circular)
+					HashSet<Task> newTasks = (HashSet<Task>) tasks.clone();
+					if (isCircular(t, newTasks)) return true;
 				}
 			}
 		}
+
+		// Get all dependent tasks, find circular dependencies
+		if (task.getDependencies() != null) {
+			for (Task t : task.getDependencies()) {
+				HashSet<Task> newTasks = (HashSet<Task>) tasks.clone();
+				if (isCircular(t, newTasks)) return true;
+			}
+		}
+
 		return false;
 	}
 

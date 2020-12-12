@@ -10,7 +10,6 @@ import org.bds.data.DataTask;
 import org.bds.lang.BdsNode;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
-import org.bds.run.BdsThreads;
 import org.bds.util.Timer;
 
 /**
@@ -49,15 +48,14 @@ public class TaskDependency implements Serializable {
 	 */
 	public void add(TaskDependency taskDependency) {
 		addInputs(taskDependency.getInputs());
-		addOutput(taskDependency.getOutputs());
+		addOutputs(taskDependency.getOutputs());
 		tasks.addAll(taskDependency.getTasks());
 	}
 
 	public void addInput(Data input) {
-		if (input instanceof DataTask) {
+		if (isDataTask(input)) {
 			// Is 'input' a task ID?
-			Task task = TaskDependecies.get().getTask(input.getUrlOri());
-			tasks.add(task);
+			tasks.add(getTask(input));
 		} else {
 			// Not a taksID, must be an input 'data file'
 			inputs.add(input);
@@ -69,14 +67,14 @@ public class TaskDependency implements Serializable {
 	 */
 	public void addInput(String input) {
 		// Is 'input' a task ID?
-		Task task = TaskDependecies.get().getTask(input);
+		Task task = getTask(input);
 
 		if (task != null) {
 			// It is a taskId, add task as dependency
 			tasks.add(task);
 		} else {
 			// Not a taksID, must be an input 'data file'
-			addInput(BdsThreads.data(input));
+			addInput(Data.factory(input));
 		}
 	}
 
@@ -93,15 +91,8 @@ public class TaskDependency implements Serializable {
 			addInput(in.asString());
 	}
 
-	/**
-	 * Add a list of outputs
-	 */
-	public void addOutput(Collection<Data> outputs) {
-		for (Data out : outputs)
-			addOutput(out);
-	}
-
 	public void addOutput(Data output) {
+		if (isDataTask(output)) throw new RuntimeException("Cannot have taskID '" + output + "' as a task dependency output");
 		outputs.add(output);
 	}
 
@@ -109,12 +100,20 @@ public class TaskDependency implements Serializable {
 	 * Add output
 	 */
 	public void addOutput(String output) {
-		addOutput(BdsThreads.data(output));
+		addOutput(Data.factory(output));
 	}
 
 	public void addOutput(ValueList outputs) {
 		for (Value out : outputs)
 			addOutput(out.asString());
+	}
+
+	/**
+	 * Add a list of outputs
+	 */
+	public void addOutputs(Collection<Data> outputs) {
+		for (Data out : outputs)
+			addOutput(out);
 	}
 
 	/**
@@ -152,69 +151,13 @@ public class TaskDependency implements Serializable {
 		if (outputs.isEmpty() && inputs.isEmpty()) return true;
 		if (debug) log("Evaluating dependencies: " + (bdsNode != null && bdsNode.getFileName() != null ? (bdsNode.getFileName() + ":" + bdsNode.getLineNum()) : "null"));
 
-		//---
-		// Left hand side
-		// Calculate minimum modification time
-		//---
+		// Calculate minimum modification time of left hand side
+		long minModifiedLeft = minModifiedLeft();
+		if (minModifiedLeft < 0) return true;
 
-		long minModifiedLeft = Long.MAX_VALUE;
-		for (Data dataOut : outputs) {
-			// Any 'left' file does not exists? => We need to build this dependency
-			if (!dataOut.exists()) {
-				if (debug) log("Left hand side: file '" + dataOut + "' doesn't exist");
-				return true;
-			}
-
-			if (dataOut.isFile() && dataOut.size() <= 0) {
-				if (debug) log("Left hand side: file '" + dataOut + "' is empty");
-				return true; // File is empty? => We need to build this dependency.
-			} else if (dataOut.isDirectory()) {
-				// Notice: If it is a directory, we must rebuild if it is empty
-				List<Data> dirList = dataOut.list();
-				if (dirList.isEmpty()) {
-					if (debug) log("Left hand side: file '" + dataOut + "' is an empty dir");
-					return true;
-				}
-			}
-
-			// Analyze modification time
-			long modTime = dataOut.getLastModified().getTime();
-			minModifiedLeft = Math.min(minModifiedLeft, modTime);
-			if (debug) log("Left hand side: file '" + dataOut + "' modified on " + modTime + ". Min modification time: " + minModifiedLeft);
-		}
-
-		//---
-		// Right hand side
-		// Calculate maximum modification time
-		//---
-
-		long maxModifiedRight = Long.MIN_VALUE;
-		for (Data dataIn : inputs) {
-			// Is this file scheduled to be modified by a pending task? => Time will change => We'll need to update
-			List<Task> taskOutList = TaskDependecies.get().getTasksByOutput(dataIn);
-			if (taskOutList != null && !taskOutList.isEmpty()) {
-				for (Task t : taskOutList) {
-					// If the task modifying 'file' is not finished => We'll need to update
-					if (!t.isDone()) {
-						if (debug) log("Right hand side: file '" + dataIn + "' will be modified by task '" + t.getId() + "' (task state: '" + t.getTaskState() + "')");
-						return true;
-					}
-				}
-			}
-
-			if (dataIn.exists()) {
-				// Update max time
-				long modTime = dataIn.getLastModified().getTime();
-				maxModifiedRight = Math.max(maxModifiedRight, modTime);
-				if (debug) log("Right hand side: file '" + dataIn + "' modified on " + modTime + ". Max modification time: " + maxModifiedRight);
-			} else {
-				// Make sure that we schedule the task if the input file doesn't exits
-				// The reason to do this, is that probably the input file was defined
-				// by some other task that is pending execution.
-				if (debug) log("Right hand side: file '" + dataIn + "' doesn't exist");
-				return true;
-			}
-		}
+		// Calculate maximum modification time of right hand side
+		long maxModifiedRight = maxModifiedRight();
+		if (maxModifiedRight < 0) return true;
 
 		// Have all 'left' files been modified before 'right' files?
 		// I.e. Have all goals been created after the input files?
@@ -231,12 +174,24 @@ public class TaskDependency implements Serializable {
 		return outputs;
 	}
 
+	protected Task getTask(Data dataTask) {
+		return getTask(dataTask.getUrlOri());
+	}
+
+	protected Task getTask(String taskId) {
+		return TaskDependecies.get().getTask(taskId);
+	}
+
 	public List<Task> getTasks() {
 		return tasks;
 	}
 
 	public boolean hasTasks() {
 		return !tasks.isEmpty();
+	}
+
+	protected boolean isDataTask(Data d) {
+		return d instanceof DataTask;
 	}
 
 	boolean isTask(String tid) {
@@ -246,6 +201,81 @@ public class TaskDependency implements Serializable {
 	void log(String msg) {
 		if (bdsNode != null) bdsNode.log(msg);
 		else Timer.showStdErr(getClass().getSimpleName() + " : " + msg);
+	}
+
+	/**
+	 * Calculate maximum modification time of right hand side
+	 * @return The max modified time for the files, or negative if the dependency must be true
+	 */
+	protected long maxModifiedRight() {
+		long maxModifiedRight = Long.MIN_VALUE;
+		for (Data dataIn : inputs) {
+			// Is this file scheduled to be modified by a pending task?
+			// If so, file time will change, thus we'll need to update
+			List<Task> taskOutList = TaskDependecies.get().getTasksByOutput(dataIn);
+			if (taskOutList != null && !taskOutList.isEmpty()) {
+				for (Task t : taskOutList) {
+					// If the task modifying 'file' is not finished, we'll need to update
+					if (!t.isDone()) {
+						if (debug) log("Right hand side: file '" + dataIn + "' will be modified by task '" + t.getId() + "' (task state: '" + t.getTaskState() + "')");
+						return -1;
+					}
+				}
+			}
+
+			if (dataIn.exists()) {
+				// Update max time
+				long modTime = dataIn.getLastModified().getTime();
+				maxModifiedRight = Math.max(maxModifiedRight, modTime);
+				if (debug) log("Right hand side: file '" + dataIn + "' modified on " + modTime + ". Max modification time: " + maxModifiedRight);
+			} else if (isDataTask(dataIn)) {
+				// A task must be always executed to satisfy the dependency
+				return -1;
+			} else {
+				// Make sure that we schedule the task if the input file doesn't exits
+				// The reason to do this, is that probably the input file was defined
+				// by some other task that is pending execution.
+				if (debug) log("Right hand side: file '" + dataIn + "' doesn't exist");
+				return -1;
+			}
+		}
+		return maxModifiedRight;
+	}
+
+	/**
+	 * Calculate the 'min modified time' for the left-hand side of the dependency operator.
+	 * @return The min modified time for the file, or negative if the dependency must be true
+	 */
+	protected long minModifiedLeft() {
+		long minModifiedLeft = Long.MAX_VALUE;
+		for (Data dataOut : outputs) {
+			// Any 'left' file does not exists? => We need to build this dependency
+			if (!dataOut.exists()) {
+				if (debug) log("Left hand side: file '" + dataOut + "' doesn't exist");
+				return -1;
+			}
+
+			if (dataOut.isFile() && dataOut.size() <= 0) {
+				if (debug) log("Left hand side: file '" + dataOut + "' is empty");
+				return -1; // File is empty? => We need to build this dependency.
+			} else if (dataOut.isDirectory()) {
+				// Notice: If it is a directory, we must rebuild if it is empty
+				List<Data> dirList = dataOut.list();
+				if (dirList.isEmpty()) {
+					if (debug) log("Left hand side: file '" + dataOut + "' is an empty dir");
+					return -1;
+				}
+			} else if (isDataTask(dataOut)) {
+				// Error: TaskID on the left hand side of dependecy operator?
+				throw new RuntimeException("Cannot have a taskId on the left hand side of a dependency operator");
+			}
+
+			// Analyze modification time
+			long modTime = dataOut.getLastModified().getTime();
+			minModifiedLeft = Math.min(minModifiedLeft, modTime);
+			if (debug) log("Left hand side: file '" + dataOut + "' modified on " + modTime + ". Min modification time: " + minModifiedLeft);
+		}
+		return minModifiedLeft;
 	}
 
 	public void setDebug(boolean debug) {

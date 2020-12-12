@@ -1,7 +1,9 @@
 package org.bds.test;
 
 import org.bds.Config;
+import org.bds.util.Gpr;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -18,9 +20,37 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	//	@Test
-	//	public void test14_dep_using_taskId() {
+	//	public void test16_dep_no_input() {
 	//		Gpr.debug("Test");
-	//		runAndCheckStdout("test/graph_14.bds", "Hello\nBye");
+	//		verbose = debug = true;
+	//		runAndCheckStdout("test/graph_16.bds", "Hello\nBye");
+	//	}
+	//
+	@Test
+	public void test17_circular() {
+		Gpr.debug("Test");
+		verbose = debug = true;
+		runAndCheckStdout("test/graph_17.bds", "Hello\nBye");
+	}
+	//
+	//	@Test
+	//	public void test18_out_tasksId() {
+	//		Gpr.debug("Test");
+	//		verbose = debug = true;
+	//		runAndCheckStdout("test/graph_18.bds", "Hello\nBye");
+	//	}
+	//
+	//	@Test
+	//	public void test19_dep_task_already_executed() {
+	//		Gpr.debug("Test");
+	//		verbose = debug = true;
+	//		runAndCheckStdout("test/graph_19.bds", "Hello\nBye");
+	//	}
+	//	@Test
+	//	public void test20_dep_goal_taskid() {
+	//		Gpr.debug("Test");
+	//		verbose = debug = true;
+	//		runAndCheckStdout("test/graph_20.bds", "Hello\nBye");
 	//	}
 	//
 	//	@Test
