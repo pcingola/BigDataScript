@@ -301,6 +301,17 @@ public abstract class Data implements Comparable<Data>, Serializable {
 	public abstract String getPath();
 
 	/**
+	 * Shows the "god representation" of the Data:
+	 * - If the data is a local file, the absolute path is shown
+	 * - If the data is remote, the full URL/URL should be shown
+	 * No attempt to resolve the name should be made (e.g. do
+	 * not try to resolve 'canonical' paths)
+	 */
+	public String getPathOrUrl() {
+		return isRemote() ? url() : getAbsolutePath();
+	}
+
+	/**
 	 * Get the original string that was used to define the data
 	 * file, without any alterations or parsing
 	 *
@@ -408,14 +419,6 @@ public abstract class Data implements Comparable<Data>, Serializable {
 	 */
 	public abstract long size();
 
-	//	/**
-	//	 * By default 'toString' shows the "god representation" of
-	//	 * the Data path:
-	//	 * - If the data is a local file, the absolute path is shown
-	//	 * - If the data is remote, the full URL/URL should be shown
-	//	 * No attempt to resolve the name should be made (e.g. do
-	//	 * not try to resolve 'canonical' paths)
-	//	 */
 	/**
 	 * Returns the original representation of the data file
 	 * without any changes.

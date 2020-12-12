@@ -38,7 +38,7 @@ public class MethodNative_string_dirPath extends MethodNativeString {
 		// List files
 		ValueList vlist = new ValueList(returnType);
 		for (Data sub : bdsThread.data(baseDir).list()) {
-			vlist.add(new ValueString(sub.toString()));
+			vlist.add(new ValueString(sub.getPathOrUrl()));
 		}
 
 		vlist.sort();
