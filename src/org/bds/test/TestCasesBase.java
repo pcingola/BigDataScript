@@ -87,12 +87,13 @@ public class TestCasesBase {
 	/**
 	 * Check a 'hello.txt' file in an S3 bucket
 	 */
-	void checkS3HelloTxt(String url, String bucket, String path, String paren, String txt) {
+	void checkS3HelloTxt(String url, String region, String bucket, String path, String paren, String txt) {
 		int objectSize = txt.length();
 		long now = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis();
-		//1437862027000L;
 
-		Data d = Data.factory(url);
+		//		Data d = Data.factory(url);
+		DataS3 d = new DataS3(url, region);
+
 		d.setVerbose(verbose);
 		d.setDebug(debug);
 		long lastMod = d.getLastModified().getTime();
@@ -148,10 +149,11 @@ public class TestCasesBase {
 	}
 
 	// Create a file in S3
-	void createS3File(String s3file, String text) {
+	void createS3File(String s3file, String region, String text) {
 		String localFile = "createS3.tmp";
 		Gpr.toFile(localFile, text);
-		DataS3 ds3 = (DataS3) Data.factory(s3file);
+		// DataS3 ds3 = (DataS3) Data.factory(s3file);
+		DataS3 ds3 = new DataS3(s3file, region);
 		Data dlocal = Data.factory(localFile);
 		ds3.upload(dlocal);
 		dlocal.delete();

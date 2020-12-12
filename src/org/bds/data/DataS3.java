@@ -267,7 +267,7 @@ public class DataS3 extends DataRemote {
 			key = uri.getPath();
 			if (key.startsWith("/")) key = key.substring(1);
 		} else if (uri.getScheme().equals(AWS_S3_PROTOCOL)) {
-			bucketName = host; // Old code: uri.getAuthority();
+			bucketName = uri.getAuthority();
 			key = uri.getPath();
 			if (key.startsWith("/")) key = key.substring(1);
 		} else {

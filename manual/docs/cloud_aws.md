@@ -5,6 +5,7 @@
 ### AWS Region lookup
 
 Search strategy
+- S3 URL in virtual host format
 - Resources ...
 - Variable `awsRegion`
 - AWS `$HOME/.aws/config`  `..../credentials`

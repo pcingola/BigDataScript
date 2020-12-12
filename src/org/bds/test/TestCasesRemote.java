@@ -11,10 +11,9 @@ import org.bds.data.DataHttp;
 import org.bds.data.DataRemote;
 import org.bds.data.DataS3;
 import org.bds.util.Gpr;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * Quick test cases when creating a new feature...
@@ -119,14 +118,33 @@ public class TestCasesRemote extends TestCasesBase {
 		Gpr.debug("Test");
 
 		String bucket = awsBucketName();
+		String region = awsRegion();
+		String urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/remote_01";
 		String url = "s3://" + bucket + "/tmp/bds/remote_01/hello.txt";
 
 		// Create S3 file
 		Random rand = new Random();
 		String txt = "OK: " + rand.nextLong();
-		createS3File(url, txt);
+		createS3File(url, region, txt);
 
-		checkS3HelloTxt(url, bucket, "/tmp/bds/remote_01/hello.txt", "s3://" + bucket + "/tmp/bds/remote_01", txt);
+		checkS3HelloTxt(url, region, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
+	}
+
+	@Test
+	public void test01_parse_URLs_s3_virtual_host() {
+		Gpr.debug("Test");
+
+		String bucket = awsBucketName();
+		String region = awsRegion();
+		String urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/remote_01";
+		String url = urlParen + "/hello.txt";
+
+		// Create S3 file
+		Random rand = new Random();
+		String txt = "OK: " + rand.nextLong();
+		createS3File(url, region, txt);
+
+		checkS3HelloTxt(url, null, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
 	}
 
 	@Test
@@ -497,7 +515,7 @@ public class TestCasesRemote extends TestCasesBase {
 
 		// Create S3 file (create local file and upload)
 		String s3file = "s3://" + bucket + "/tmp/bds/remote_14/hello.txt";
-		createS3File(s3file, "OK");
+		createS3File(s3file, awsRegion(), "OK");
 
 		// Expected output
 		String expectedOutput = "" //
@@ -526,8 +544,10 @@ public class TestCasesRemote extends TestCasesBase {
 		String bucket = awsBucketName();
 
 		// Create S3 files
-		createS3File("s3://" + bucket + "/tmp/bds/remote_15/test_dir/z1.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_15/test_dir/z2.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_15/test_dir/z1.txt", awsRegion(), "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_15/test_dir/z2.txt", awsRegion(), "OK");
+
+		String urlParen = "https://" + bucket + ".s3." + awsRegion() + ".amazonaws.com/tmp/bds/remote_15/test_dir";
 
 		String expectedOutput = "" //
 				+ "baseName       : \n" //
@@ -542,7 +562,7 @@ public class TestCasesRemote extends TestCasesBase {
 				+ "path           : /tmp/bds/remote_15/test_dir/\n" //
 				+ "pathName       : /tmp/bds/remote_15/test_dir\n" //
 				+ "removeExt      : \n" //
-				+ "dirPath        : [s3://" + bucket + "/tmp/bds/remote_15/test_dir/z1.txt, s3://" + bucket + "/tmp/bds/remote_15/test_dir/z2.txt]\n" //
+				+ "dirPath        : [" + urlParen + "/z1.txt, " + urlParen + "/z2.txt]\n" //
 				+ "dir            : [z1.txt, z2.txt]\n" //
 		;
 
@@ -697,10 +717,10 @@ public class TestCasesRemote extends TestCasesBase {
 		String bucket = awsBucketName();
 
 		// Create S3 files
-		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/bye.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/bye_2.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/hi.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/hi_2.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/bye.txt", awsRegion(), "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/bye_2.txt", awsRegion(), "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/hi.txt", awsRegion(), "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_31/test_remote_31/hi_2.txt", awsRegion(), "OK");
 
 		runAndCheck("test/remote_31.bds", "dd", "[bye.txt, bye_2.txt, hi.txt, hi_2.txt]");
 	}
@@ -711,10 +731,10 @@ public class TestCasesRemote extends TestCasesBase {
 		String bucket = awsBucketName();
 
 		// Create S3 files
-		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/bye.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/bye_2.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/hi.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/hi_2.txt", "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/bye.txt", awsRegion(), "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/bye_2.txt", awsRegion(), "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/hi.txt", awsRegion(), "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_32/test_remote_32/hi_2.txt", awsRegion(), "OK");
 
 		runAndCheck("test/remote_32.bds", "dd", "[bye.txt, bye_2.txt]");
 	}
@@ -723,13 +743,16 @@ public class TestCasesRemote extends TestCasesBase {
 	public void test33_s3_dirPath() {
 		Gpr.debug("Test");
 		String bucket = awsBucketName();
+		String region = awsRegion();
+
+		String urlParen = "https://" + bucket + ".s3." + awsRegion() + ".amazonaws.com/tmp/bds/remote_33/test_remote_33";
 
 		// Create S3 files
-		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye_2.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi.txt", "OK");
-		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi_2.txt", "OK");
-		runAndCheck("test/remote_33.bds", "dd", "[s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye.txt, s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye_2.txt]");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye.txt", region, "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye_2.txt", region, "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi.txt", region, "OK");
+		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi_2.txt", region, "OK");
+		runAndCheck("test/remote_33.bds", "dd", "[" + urlParen + "/bye.txt, " + urlParen + "/bye_2.txt]");
 	}
 
 	// Task input in s3, output local file
