@@ -58,12 +58,11 @@ public class TaskVmOpcode extends SysVmOpcode {
 			// We need to create the appropriate 'download' commands
 			//---
 			if (taskDependency.getInputs() != null) {
-				for (String in : taskDependency.getInputs()) {
-					Data dataIn = Data.factory(in);
+				for (Data dataIn : taskDependency.getInputs()) {
 					if (dataIn.isRemote()) {
 						String uriStr = dataIn.getUrlOri();
 						sbDown.append(ExpressionTask.CMD_DOWNLOAD //
-								+ " \"" + uriStr + "\"" //
+								+ " \"" + dataIn.url() + "\"" //
 								+ " \"" + dataIn.getLocalPath() + "\"" //
 								+ "\n");
 
@@ -77,13 +76,12 @@ public class TaskVmOpcode extends SysVmOpcode {
 			// We need to create the appropriate 'upload' commands
 			//---
 			if (taskDependency.getOutputs() != null) {
-				for (String out : taskDependency.getOutputs()) {
-					Data dataOut = Data.factory(out);
+				for (Data dataOut : taskDependency.getOutputs()) {
 					if (dataOut.isRemote()) {
 						String uriStr = dataOut.getUrlOri();
 						sbUp.append(ExpressionTask.CMD_UPLOAD //
 								+ " \"" + dataOut.getLocalPath() + "\"" //
-								+ " \"" + uriStr + "\"" //
+								+ " \"" + dataOut.url() + "\"" //
 								+ "\n");
 
 						replace.put(uriStr, dataOut.getLocalPath());

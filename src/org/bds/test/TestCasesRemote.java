@@ -117,17 +117,21 @@ public class TestCasesRemote extends TestCasesBase {
 	public void test01_parse_URLs_s3() {
 		Gpr.debug("Test");
 
+		verbose = true;
 		String bucket = awsBucketName();
 		String region = awsRegion();
-		String urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/remote_01";
-		String url = "s3://" + bucket + "/tmp/bds/remote_01/hello.txt";
+
+		String urlParen = "s3://" + bucket + "/tmp/bds/remote_01";
+		if (!region.isEmpty()) urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/remote_01";
+
+		String url = urlParen + "/hello.txt";
 
 		// Create S3 file
 		Random rand = new Random();
 		String txt = "OK: " + rand.nextLong();
 		createS3File(url, region, txt);
 
-		checkS3HelloTxt(url, region, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
+		checkS3File(url, region, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
 	}
 
 	@Test
@@ -144,7 +148,7 @@ public class TestCasesRemote extends TestCasesBase {
 		String txt = "OK: " + rand.nextLong();
 		createS3File(url, region, txt);
 
-		checkS3HelloTxt(url, null, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
+		checkS3File(url, null, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
 	}
 
 	@Test
@@ -744,8 +748,7 @@ public class TestCasesRemote extends TestCasesBase {
 		Gpr.debug("Test");
 		String bucket = awsBucketName();
 		String region = awsRegion();
-
-		String urlParen = "https://" + bucket + ".s3." + awsRegion() + ".amazonaws.com/tmp/bds/remote_33/test_remote_33";
+		String urlParen = "s3://" + bucket + "/tmp/bds/remote_33/test_remote_33";
 
 		// Create S3 files
 		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/bye.txt", region, "OK");

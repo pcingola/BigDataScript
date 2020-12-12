@@ -73,6 +73,11 @@ public class DataFile extends Data {
 	}
 
 	@Override
+	protected String createUrl() {
+		return "file://" + getCanonicalPath();
+	}
+
+	@Override
 	public boolean delete() {
 		return file.delete();
 	}
@@ -189,11 +194,6 @@ public class DataFile extends Data {
 	@Override
 	public long size() {
 		return file.length();
-	}
-
-	@Override
-	public String toString() {
-		return file.toString();
 	}
 
 	@Override

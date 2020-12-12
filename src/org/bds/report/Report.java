@@ -10,6 +10,7 @@ import java.util.Map;
 import org.bds.Bds;
 import org.bds.Config;
 import org.bds.cluster.host.Resources;
+import org.bds.data.Data;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
@@ -321,7 +322,7 @@ public class Report {
 		// Input files
 		StringBuilder sbinf = new StringBuilder();
 		if (task.getInputs() != null) {
-			for (String inFile : task.getInputs())
+			for (Data inFile : task.getInputs())
 				sbinf.append(inFile + "\n");
 		}
 		rTemplate.add("taskInFiles", multilineString(null, sbinf.toString(), yaml));
@@ -329,7 +330,7 @@ public class Report {
 		// Output files
 		StringBuilder sboutf = new StringBuilder();
 		if (task.getOutputs() != null) {
-			for (String outf : task.getOutputs())
+			for (Data outf : task.getOutputs())
 				sboutf.append(outf + "\n");
 		}
 		rTemplate.add("taskOutFiles", multilineString(null, sboutf.toString(), yaml));

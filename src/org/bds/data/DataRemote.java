@@ -53,6 +53,12 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
+	protected String createUrl() {
+		if (relative) return null;
+		return uri.toString();
+	}
+
+	@Override
 	public void deleteOnExit() {
 		throw new RuntimeException("Unimplemented!");
 	}
@@ -267,11 +273,6 @@ public abstract class DataRemote extends Data {
 	public long size() {
 		updateInfoIfNeeded();
 		return size;
-	}
-
-	@Override
-	public String toString() {
-		return uri.toString();
 	}
 
 	/**

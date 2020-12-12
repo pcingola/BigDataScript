@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.bds.Config;
 import org.bds.cluster.host.TaskResources;
+import org.bds.data.Data;
 import org.bds.executioner.Executioner;
 import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
@@ -346,7 +347,7 @@ public class Task implements Serializable {
 		return id;
 	}
 
-	public List<String> getInputs() {
+	public List<Data> getInputs() {
 		return taskDependency.getInputs();
 	}
 
@@ -363,7 +364,7 @@ public class Task implements Serializable {
 		return node;
 	}
 
-	public List<String> getOutputs() {
+	public List<Data> getOutputs() {
 		return taskDependency.getOutputs();
 	}
 

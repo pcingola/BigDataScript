@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.HashSet;
 
+import org.bds.data.Data;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -101,8 +102,8 @@ public class TaskLogger implements Serializable {
 		// Note: If this task does not finish (e.g. Ctrl-C), we have to remove these files.
 		//       If the task finished OK, we mark them not to be removed
 		if (task.getOutputs() != null) {
-			for (String file : task.getOutputs())
-				lines.append(createEntry(file, true, CMD_REMOVE_FILE));
+			for (Data file : task.getOutputs())
+				lines.append(createEntry(file.url(), true, CMD_REMOVE_FILE));
 		}
 
 		// Append all lines to file
@@ -157,8 +158,8 @@ public class TaskLogger implements Serializable {
 
 		// Append task output files.
 		if (task.getOutputs() != null) {
-			for (String file : task.getOutputs())
-				lines.append(createEntry(file, false, ""));
+			for (Data file : task.getOutputs())
+				lines.append(createEntry(file.url(), false, ""));
 		}
 
 		// Append all lines to file

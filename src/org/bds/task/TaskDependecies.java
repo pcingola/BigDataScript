@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.bds.Config;
 import org.bds.data.Data;
+import org.bds.data.DataTask;
 import org.bds.report.Report;
 import org.bds.run.BdsThread;
 import org.bds.util.AutoHashMap;
@@ -34,7 +35,7 @@ public class TaskDependecies implements Serializable {
 	boolean verbose = false;
 	List<Task> tasks; // Sorted list of tasks (need it for serialization purposes)
 	Map<String, Task> tasksById;
-	AutoHashMap<String, List<Task>> tasksByOutput;
+	AutoHashMap<Data, List<Task>> tasksByOutput;
 	Map<String, String> canonicalPath;
 
 	public static TaskDependecies get() {
@@ -89,7 +90,7 @@ public class TaskDependecies implements Serializable {
 
 		// Add task by output files
 		if (task.getOutputs() != null) {
-			for (String outFile : task.getOutputs())
+			for (Data outFile : task.getOutputs())
 				addTaskByOutput(outFile, task);
 		}
 	}
@@ -97,12 +98,8 @@ public class TaskDependecies implements Serializable {
 	/**
 	 * Add to 'taskByOutput' map
 	 */
-	protected synchronized void addTaskByOutput(String outFile, Task task) {
-		// Use canonical paths
-		String outPath = getCanonicalPath(outFile);
-
-		// Add to map
-		tasksByOutput.getOrCreate(outPath).add(task);
+	protected synchronized void addTaskByOutput(Data outFile, Task task) {
+		tasksByOutput.getOrCreate(outFile).add(task);
 	}
 
 	/**
@@ -128,7 +125,7 @@ public class TaskDependecies implements Serializable {
 		if (!task.isDone()) {
 			// Add input dependencies based on input files
 			if (task.getInputs() != null) {
-				for (String in : task.getInputs()) {
+				for (Data in : task.getInputs()) {
 					List<Task> taskDeps = getTasksByOutput(in);
 
 					if (taskDeps != null) {
@@ -153,12 +150,12 @@ public class TaskDependecies implements Serializable {
 	/**
 	 * Find 'leaf' nodes (i.e. nodes that do not have dependent tasks)
 	 */
-	Set<String> findLeafNodes(String out) {
-		Set<String> nodes = findNodes(out); // Find all nodes
+	Set<Data> findLeafNodes(Data out) {
+		Set<Data> nodes = findNodes(out); // Find all nodes
 
 		// Only add nodes that do not have dependent tasks (i.e. are leaves)
-		Set<String> leaves = new HashSet<>();
-		for (String n : nodes) {
+		Set<Data> leaves = new HashSet<>();
+		for (Data n : nodes) {
 			if (!hasTasksByOutput(n)) leaves.add(n);
 		}
 
@@ -168,39 +165,46 @@ public class TaskDependecies implements Serializable {
 	/**
 	 * Find all leaf nodes required for goal 'out'
 	 */
-	Set<String> findNodes(String out) {
+	Set<Data> findNodes(Data out) {
 		// A set of 'goal' nodes
-		Set<String> goals = new HashSet<>();
+		Set<Data> goals = new HashSet<>();
 		goals.add(out);
 
-		// For each goal
+		// Loop until there is no change in this set
 		for (boolean changed = true; changed;) {
 			changed = false;
 
-			// We need a new set to avoid 'concurrent modification' pendingException
-			Set<String> newGoals = new HashSet<>();
+			// We need a new set to avoid 'concurrent modification'
+			Set<Data> newGoals = new HashSet<>();
 			newGoals.addAll(goals);
 
 			// For each goal
-			for (String goal : goals) {
+			for (Data goal : goals) {
 				// Find all tasks required for this goal
 				List<Task> tasks = getTasksByOutput(goal);
 
-				if (tasks != null) // Add all task's input files
+				if (tasks != null) {
+					// Add all task's inputs
 					for (Task t : tasks) {
-						// Add all input files
+						// Add all inputs
 						if (t.getInputs() != null) {
-							for (String in : t.getInputs())
+							for (Data in : t.getInputs()) {
+								// Add each input, marke as changed if not already added
 								changed |= newGoals.add(in); // Add each node
+							}
 						}
 
 						// Add all task Ids
 						List<Task> depTasks = t.getDependencies();
 						if (depTasks != null) {
-							for (Task dt : depTasks)
-								changed |= newGoals.add(dt.getId()); // Add each task ID
+							for (Task depTask : depTasks) {
+								// Add each task ID, marke as changed if not already added
+								DataTask dtask = new DataTask(depTask.getId());
+								changed |= newGoals.add(dtask);
+							}
 						}
 					}
+				}
 			}
 
 			goals = newGoals;
@@ -209,23 +213,23 @@ public class TaskDependecies implements Serializable {
 		return goals;
 	}
 
-	/**
-	 * Find canonical path (cache return values)
-	 */
-	String getCanonicalPath(String fileName) {
-		String filePath = canonicalPath.get(fileName);
-
-		// Not found? => Populate map
-		if (filePath == null) {
-			Data f = Data.factory(fileName);
-			filePath = f.getCanonicalPath();
-
-			// Add to map
-			canonicalPath.put(fileName, filePath);
-		}
-
-		return filePath;
-	}
+	//	/**
+	//	 * Find canonical path (cache return values)
+	//	 */
+	//	String getCanonicalPath(String fileName) {
+	//		String filePath = canonicalPath.get(fileName);
+	//
+	//		// Not found? => Populate map
+	//		if (filePath == null) {
+	//			Data f = Data.factory(fileName);
+	//			filePath = f.getCanonicalPath();
+	//
+	//			// Add to map
+	//			canonicalPath.put(fileName, filePath);
+	//		}
+	//
+	//		return filePath;
+	//	}
 
 	public synchronized Task getTask(String taskId) {
 		return tasksById.get(taskId);
@@ -246,13 +250,11 @@ public class TaskDependecies implements Serializable {
 	}
 
 	/**
-	 * Get all tasks that output this outFile
+	 * Get all tasks that output this 'output' as either a data file or a task ID
 	 */
-	protected List<Task> getTasksByOutput(String output) {
-		//---
+	protected List<Task> getTasksByOutput(Data output) {
 		// Check if 'output' is a task Id
-		//---
-		Task taskGoal = getTask(output);
+		Task taskGoal = getTask(output.getUrlOri());
 		if (taskGoal != null) {
 			// Task ID found. Has the task been executed and finished? No need to add it.
 			if (taskGoal.isDone()) return null;
@@ -263,14 +265,8 @@ public class TaskDependecies implements Serializable {
 			return taskList;
 		}
 
-		//---
 		// Check 'output' as a file
-		//---
-		// Use canonical paths
-		String outPath = getCanonicalPath(output);
-
-		// Get list
-		return tasksByOutput.get(outPath);
+		return tasksByOutput.get(output);
 	}
 
 	/**
@@ -278,23 +274,24 @@ public class TaskDependecies implements Serializable {
 	 */
 	public synchronized Set<Task> goal(BdsThread bdsThread, String out) {
 		Set<Task> tasks = new HashSet<>();
-		goalRun(bdsThread, out, tasks);
+		Data outd = Data.factory(out, bdsThread);
+		goalRun(bdsThread, outd, tasks);
 		return tasks;
 	}
 
 	/**
 	 * Does this goal need to be updated respect to the leaves
 	 */
-	boolean goalNeedsUpdate(String out) {
+	boolean goalNeedsUpdate(Data out) {
 		// Find all 'leaf nodes' (files) required for this goal
-		Set<String> leaves = findLeafNodes(out);
+		Set<Data> leaves = findLeafNodes(out);
 		TaskDependency tasDep = new TaskDependency(null);
 		tasDep.addOutput(out);
-		tasDep.addInput(leaves);
+		tasDep.addInputs(leaves);
 
 		if (debug) {
 			Timer.showStdErr("Goal: " + out + "\n\tLeaf nodes:");
-			for (String n : leaves)
+			for (Data n : leaves)
 				System.err.println("\t\t'" + n + "'");
 		}
 
@@ -304,8 +301,7 @@ public class TaskDependecies implements Serializable {
 	/**
 	 * Find all leaf nodes required for goal 'out'
 	 */
-	boolean goalRun(BdsThread bdsThread, String goal, Set<Task> addedTasks) {
-
+	boolean goalRun(BdsThread bdsThread, Data goal, Set<Task> addedTasks) {
 		// Check if we really need to update this goal (with respect to the leaf nodes)
 		if (!goalNeedsUpdate(goal)) return false;
 
@@ -317,17 +313,19 @@ public class TaskDependecies implements Serializable {
 			if (addedTasks.contains(t)) continue; // Don't add twice
 			addedTasks.add(t);
 
-			// Add file dependencies
+			// Add data file dependencies
 			if (t.getInputs() != null) {
-				for (String in : t.getInputs())
+				for (Data in : t.getInputs())
 					goalRun(bdsThread, in, addedTasks);
 			}
 
-			// Add task dependencies
+			// Add all task dependencies
 			if (t.getDependencies() != null) {
-				for (Task tt : t.getDependencies())
-					if (!addedTasks.contains(tt)) // Not added yet?
-						goalRun(bdsThread, tt.getId(), addedTasks);
+				for (Task taskDep : t.getDependencies())
+					if (!addedTasks.contains(taskDep)) {
+						DataTask dtask = new DataTask(taskDep.getId());
+						goalRun(bdsThread, dtask, addedTasks);
+					}
 			}
 
 		}
@@ -350,9 +348,8 @@ public class TaskDependecies implements Serializable {
 	/**
 	 * Do we have any entries on this outFile?
 	 */
-	boolean hasTasksByOutput(String outFile) {
-		String outPath = getCanonicalPath(outFile);
-		return tasksByOutput.containsKey(outPath);
+	boolean hasTasksByOutput(Data outFile) {
+		return tasksByOutput.containsKey(outFile);
 	}
 
 	/**
@@ -388,7 +385,7 @@ public class TaskDependecies implements Serializable {
 
 		// Get all input files, find corresponding tasks and recurse
 		if (task.getInputs() != null) {
-			for (String in : task.getInputs()) {
+			for (Data in : task.getInputs()) {
 				List<Task> depTasks = getTasksByOutput(in);
 
 				if (depTasks != null) {
@@ -409,8 +406,8 @@ public class TaskDependecies implements Serializable {
 		return this == taskDependeciesInstance;
 	}
 
-	public synchronized boolean isTask(String id) {
-		return tasksById.containsKey(id);
+	public synchronized boolean isTask(Data taskId) {
+		return tasksById.containsKey(taskId.getUrlOri());
 	}
 
 	/**
@@ -460,11 +457,11 @@ public class TaskDependecies implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		ArrayList<String> outs = new ArrayList<>();
+		ArrayList<Data> outs = new ArrayList<>();
 		outs.addAll(tasksByOutput.keySet());
 		Collections.sort(outs);
 
-		for (String out : outs) {
+		for (Data out : outs) {
 			sb.append(out + ":\n");
 			for (Task t : tasksByOutput.get(out))
 				sb.append("\t" + t.getId() + "\n");
