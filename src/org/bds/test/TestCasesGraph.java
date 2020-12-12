@@ -165,4 +165,22 @@ public class TestCasesGraph extends TestCasesBase {
 		runAndCheckStderr("test/graph_18.bds", "Cannot have task as a dependency output");
 	}
 
+	@Test
+	public void test19_dep_task_already_executed() {
+		Gpr.debug("Test");
+		runAndCheckStdout("test/graph_19.bds", "TASK_1\nDEP_2");
+	}
+
+	@Test
+	public void test20_dep_goal_taskid() {
+		Gpr.debug("Test");
+		runAndCheckStdout("test/graph_20.bds", "DEP_1\nDEP_2\nDEP_3");
+	}
+
+	@Test
+	public void test21_dep_goal_taskid_early() {
+		Gpr.debug("Test");
+		runAndCheckStdout("test/graph_21.bds", "DEP_1\nDEP_2");
+	}
+
 }

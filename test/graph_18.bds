@@ -1,7 +1,7 @@
 #!/usr/bin/env bds
 
-out := "graph_18.out.txt"
-in1 := "graph_18.in1.txt"
+out := "out.graph_18.txt"
+in1 := "in.graph_18.txt"
 
 # Clean up
 [in1, out].rm()

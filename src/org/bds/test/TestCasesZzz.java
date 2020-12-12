@@ -1,9 +1,7 @@
 package org.bds.test;
 
 import org.bds.Config;
-import org.bds.util.Gpr;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -19,25 +17,6 @@ public class TestCasesZzz extends TestCasesBase {
 		Config.get().load();
 	}
 
-	@Test
-	public void test18_out_tasksId() {
-		Gpr.debug("Test");
-		runAndCheckStderr("test/graph_18.bds", "Cannot have task as a dependency output");
-	}
-
-	//	@Test
-	//	public void test19_dep_task_already_executed() {
-	//		Gpr.debug("Test");
-	//		verbose = debug = true;
-	//		runAndCheckStdout("test/graph_19.bds", "Hello\nBye");
-	//	}
-	//	@Test
-	//	public void test20_dep_goal_taskid() {
-	//		Gpr.debug("Test");
-	//		verbose = debug = true;
-	//		runAndCheckStdout("test/graph_20.bds", "Hello\nBye");
-	//	}
-	//
 	//	@Test
 	//	public void test01() {
 	//		Gpr.debug("Test");
