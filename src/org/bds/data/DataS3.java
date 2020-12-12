@@ -41,14 +41,14 @@ public class DataS3 extends DataRemote {
 	protected String key;
 
 	public DataS3(String urlStr, String region) {
-		super();
+		super(urlStr);
 		this.region = region;
 		parseS3Uri(urlStr); // Note: If the region is in the URL, it will be overridden
 		canWrite = false;
 	}
 
 	public DataS3(URI uri, String region) {
-		super();
+		super(uri.toString());
 		canWrite = false;
 		this.region = region;
 		parseS3Uri(uri); // Note: If the region is in the URL, it will be overridden

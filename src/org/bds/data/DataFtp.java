@@ -24,14 +24,14 @@ public class DataFtp extends DataRemote {
 	protected String hostname;
 
 	public DataFtp(String urlStr) {
-		super();
+		super(urlStr);
 		uri = parseUrl(urlStr);
 		hostname = uri.getHost();
 		canWrite = false;
 	}
 
 	public DataFtp(URI uri) {
-		super();
+		super(uri.toString());
 		this.uri = uri;
 		hostname = uri.getHost();
 		canWrite = false;

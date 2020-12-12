@@ -1,6 +1,5 @@
 package org.bds.data;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -32,21 +31,14 @@ public class DataHttp extends DataRemote {
 	URLConnection connection;
 
 	public DataHttp(String urlStr) {
-		super();
+		super(urlStr);
 		uri = parseUrl(urlStr);
 		canWrite = false;
 	}
 
 	public DataHttp(URI uri) {
-		super();
+		super(uri.toString());
 		this.uri = uri;
-		canWrite = false;
-	}
-
-	public DataHttp(URI baseUri, File path) {
-		super();
-		uri = baseUri;
-		//		uri = replacePath(path.getAbsolutePath());
 		canWrite = false;
 	}
 

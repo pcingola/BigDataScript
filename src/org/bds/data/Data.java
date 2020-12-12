@@ -38,6 +38,7 @@ public abstract class Data implements Comparable<Data> {
 	protected boolean debug;
 	protected boolean relative; // Is this a relative path? (otherwise is absolute)
 	protected String localPath; // File name used for local processing
+	//	protected String urlOri; // URL in the original representation
 
 	public static Data factory(String url) {
 		return factory(url, null);
@@ -141,7 +142,8 @@ public abstract class Data implements Comparable<Data> {
 		return new Tuple<>(proto, host);
 	}
 
-	public Data() {
+	public Data(String urlOri) {
+		this.urlOri = urlOri;
 		verbose = Config.get().isVerbose();
 		debug = Config.get().isDebug();
 	}
@@ -214,6 +216,10 @@ public abstract class Data implements Comparable<Data> {
 	public abstract Data getParent();
 
 	public abstract String getPath();
+
+	public String getUrlOri() {
+		return urlOri;
+	}
 
 	/**
 	 * Is this a directory (or an equivalent abstraction, such
