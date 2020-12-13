@@ -190,7 +190,18 @@ public class CmdAws extends Cmd {
 		}
 
 		// Success?
-		if (response.hasInstances()) return response.instances().get(0).instanceId();
+		if (response.hasInstances()) {
+			String instanceId = response.instances().get(0).instanceId();
+			if (Config.get().isDebug()) Timer.showStdErr("Created EC2 instance '" + instanceId + "', response: " + response);
+
+			// Save response to file
+			String responseFileName = Gpr.removeExt(task.getProgramFileName()) + ".ec2_request_response." + instanceId + ".txt";
+			if (Config.get().isDebug()) Timer.showStdErr("Saving EC2 response to file '" + responseFileName + "'");
+			Gpr.toFile(responseFileName, response);
+			if (!Config.get().isLog()) (new File(responseFileName)).deleteOnExit();
+
+			return instanceId;
+		}
 
 		Timer.showStdErr("WARNING: Create instance failed, tasId: '" + task.getId() + "',  Response: " + response);
 		return null;
@@ -204,6 +215,7 @@ public class CmdAws extends Cmd {
 		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();// Create and run instance
 		if (userData == null) userData = createStartupScript();// Create startup script & userData
 		RunInstancesRequest ec2req = createEc2InstanceRequest(resources);// Create instance request
+		if (Config.get().isDebug()) Timer.showStdErr("Creating EC2 instance, request: " + ec2req);
 		Ec2Client ec2 = GprAws.ec2Client(resources.getRegion()); // Create EC2 client
 		instanceId = requestInstance(ec2, ec2req); // Request the instance
 		if (instanceId == null) return false; // Failed request?
@@ -389,7 +401,7 @@ public class CmdAws extends Cmd {
 		if (debug) Timer.showStdErr("Uploading local checkpoint '" + task.getCheckpointLocalFile() + "' to S3 '" + checkpointS3 + "'");
 		chps3.upload(chp);
 
-		// Delete checkpoint once the session finishes. Use BdsThear.rmOnexit() and bds-exec (go)
+		// Delete checkpoint once the session finishes
 		if (!Config.get().isLog()) {
 			BdsThread bdsThread = BdsThreads.getInstance().getOrRoot();
 			if (bdsThread != null) {
