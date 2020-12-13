@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.bds.Config;
 import org.bds.util.Gpr;
-import org.bds.util.GprAws;
 import org.bds.util.Timer;
 
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -37,7 +36,6 @@ public class DataS3 extends DataRemote {
 	public static final String AWS_S3_PROTOCOL = "s3";
 	public static final String AWS_S3_REGION = "awsS3Region";
 
-	protected transient S3Client s3; // FIXME: One client per file!!! We need one S3Client per region: S3ClientProvider
 	protected String region;
 	protected String bucketName;
 	protected String key;
@@ -166,9 +164,7 @@ public class DataS3 extends DataRemote {
 	 * only one client instead of instantiating one each time.
 	 */
 	protected S3Client getS3Client() {
-		// FIXME: Use an S3ClientProvider
-		if (s3 == null) s3 = GprAws.s3Client(region);
-		return s3;
+		return AwsS3ClientProvider.get(region);
 	}
 
 	/**
