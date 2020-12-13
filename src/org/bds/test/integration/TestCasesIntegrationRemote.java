@@ -6,10 +6,8 @@ import java.util.Random;
 
 import org.bds.Config;
 import org.bds.data.Data;
-import org.bds.data.DataFile;
 import org.bds.data.DataHttp;
 import org.bds.data.DataRemote;
-import org.bds.data.DataS3;
 import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Assert;
@@ -38,43 +36,9 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		}
 	}
 
-	@Test
-	public void test01_parse_URLs_file() {
-		Gpr.debug("Test");
-
-		String currPath;
-		try {
-			currPath = (new File(".")).getCanonicalPath();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		if (verbose) Gpr.debug("CurrPath: " + currPath);
-
-		Data d = Data.factory("tmp.txt");
-		if (verbose) Gpr.debug("Path: " + d.getPath());
-		Assert.assertTrue(d instanceof DataFile);
-		Assert.assertEquals(currPath + "/tmp.txt", d.getAbsolutePath());
-		Gpr.toFile(d.getAbsolutePath(), "test");
-		Assert.assertTrue(d.isFile());
-		Assert.assertFalse(d.isDirectory());
-
-		d = Data.factory("./tmp.txt");
-		if (verbose) Gpr.debug("Path: " + d.getPath() + "\tabsolutePath: " + d.getAbsolutePath());
-		Assert.assertTrue(d instanceof DataFile);
-		Assert.assertEquals(currPath + "/./tmp.txt", d.getAbsolutePath());
-		Assert.assertEquals(currPath + "/tmp.txt", d.getCanonicalPath());
-
-		d = Data.factory("/tmp.txt");
-		if (verbose) Gpr.debug("Path: " + d.getPath());
-		Assert.assertTrue(d instanceof DataFile);
-		Assert.assertEquals("/tmp.txt", d.getAbsolutePath());
-
-		d = Data.factory("file:///tmp.txt");
-		if (verbose) Gpr.debug("Path: " + d.getPath());
-		Assert.assertTrue(d instanceof DataFile);
-		Assert.assertEquals("/tmp.txt", d.getAbsolutePath());
-	}
-
+	/**
+	 * Test parsing a remote HTTP file (DataHttp)
+	 */
 	@Test
 	public void test01_parse_URLs_http() {
 		Gpr.debug("Test");
@@ -114,6 +78,9 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 				, Math.abs(lastMod - lastModLoc) < 2 * DataRemote.CACHE_TIMEOUT);
 	}
 
+	/**
+	 * Test parsing a remote AWS S3 file (DataS3)
+	 */
 	@Test
 	public void test01_parse_URLs_s3() {
 		Gpr.debug("Test");
@@ -134,6 +101,9 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		checkS3File(url, region, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
 	}
 
+	/**
+	 * Test parsing a remote AWS S3 file (DataS3) using "virtual hosting" style URL
+	 */
 	@Test
 	public void test01_parse_URLs_s3_virtual_host() {
 		Gpr.debug("Test");
@@ -151,204 +121,85 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		checkS3File(url, null, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
 	}
 
+	/**
+	 * Test executing a task with a remote dependency
+	 */
 	@Test
 	public void test03_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_03.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with a remote dependency
+	 * Replacement of task's `sys` command within double quotes
+	 */
 	@Test
 	public void test04_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_04.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with a remote dependency
+	 * Replacement of task's `sys` command within single quotes
+	 */
 	@Test
 	public void test05_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_05.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with multiple remote dependencies
+	 */
 	@Test
 	public void test06_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_06.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with multiple remote dependencies in a list
+	 */
 	@Test
 	public void test07_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_07.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with multiple remote dependencies in a list
+	 * Replacement of task's `sys` command with list variables
+	 */
 	@Test
 	public void test08_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_08.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with a remote dependency
+	 * Replacement of task's `sys` command with literal references
+	 */
 	@Test
 	public void test09_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_09.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Download a remote file
+	 */
 	@Test
 	public void test10_download() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_10.bds", "locFile", "/tmp/bds/http/pcingola/github/io/BigDataScript/index.html");
 	}
 
-	@Test
-	public void test101_data_file_absolute() {
-		String path = "/dir/sub/file.txt";
-		Data dfile = Data.factory(path);
-		Assert.assertFalse("Relative: " + dfile.isRelative(), dfile.isRelative());
-		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
-		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
-
-		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
-		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), path, dfile.getAbsolutePath());
-	}
-
-	@Test
-	public void test101b_data_file_absolute() {
-		String path = "/dir/sub/file.txt";
-		Data dfile = Data.factory("file://" + path);
-		Assert.assertFalse("Relative: " + dfile.isRelative(), dfile.isRelative());
-		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
-		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
-
-		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
-		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), path, dfile.getAbsolutePath());
-	}
-
-	@Test
-	public void test102_data_file_relative() {
-		String path = "dir/sub/file.txt";
-		Data dfile = Data.factory(path);
-
-		Assert.assertTrue("Relative: " + dfile.isRelative(), dfile.isRelative());
-		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
-		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
-
-		Data pwd = Data.factory("");
-		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
-		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
-	}
-
-	@Test
-	public void test102b_data_file_relative() {
-		String path = "dir/sub/file.txt";
-		Data dfile = Data.factory("file://" + path);
-
-		Assert.assertTrue("Relative: " + dfile.isRelative(), dfile.isRelative());
-		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
-		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
-
-		Data pwd = Data.factory("");
-		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
-		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
-	}
-
-	@Test
-	public void test103_data_file_relative() {
-		String path = "./dir/sub/file.txt";
-		Data dfile = Data.factory(path);
-		Assert.assertTrue("Relative: " + dfile.isRelative(), dfile.isRelative());
-		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
-		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
-
-		Data pwd = Data.factory("");
-		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
-		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
-	}
-
-	@Test
-	public void test103b_data_file_relative() {
-		String path = "./dir/sub/file.txt";
-		Data dfile = Data.factory("file://" + path);
-		Assert.assertTrue("Relative: " + dfile.isRelative(), dfile.isRelative());
-		Assert.assertFalse("Exists: " + dfile.exists(), dfile.exists());
-		Assert.assertTrue("Wrong data type: " + dfile.getClass().getCanonicalName(), dfile instanceof DataFile);
-
-		Data pwd = Data.factory("");
-		Assert.assertEquals("Path: " + dfile.getPath(), path, dfile.getPath());
-		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
-	}
-
-	@Test
-	public void test104_file_join_segments() {
-		Data dfile = Data.factory("dir/sub/file.txt");
-		Data ddir = Data.factory("/home");
-		Data djoin = ddir.join(dfile);
-
-		Assert.assertTrue(dfile.isRelative());
-		Assert.assertFalse(ddir.isRelative());
-		Assert.assertFalse(djoin.isRelative());
-
-		Assert.assertTrue(dfile instanceof DataFile);
-		Assert.assertTrue(ddir instanceof DataFile);
-		Assert.assertTrue(djoin instanceof DataFile);
-
-		Assert.assertEquals("Path: " + djoin.getPath(), "/home/dir/sub/file.txt", djoin.getPath());
-		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/dir/sub/file.txt", djoin.getAbsolutePath());
-	}
-
-	@Test
-	public void test104b_file_join_segments() {
-		Data dfile = Data.factory("file://dir/sub/file.txt");
-		Data ddir = Data.factory("file:///home");
-		Data djoin = ddir.join(dfile);
-
-		Assert.assertTrue(dfile.isRelative());
-		Assert.assertFalse(ddir.isRelative());
-		Assert.assertFalse(djoin.isRelative());
-
-		Assert.assertTrue(dfile instanceof DataFile);
-		Assert.assertTrue(ddir instanceof DataFile);
-		Assert.assertTrue(djoin instanceof DataFile);
-
-		Assert.assertEquals("Path: " + djoin.getPath(), "/home/dir/sub/file.txt", djoin.getPath());
-		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/dir/sub/file.txt", djoin.getAbsolutePath());
-	}
-
-	@Test
-	public void test105_file_join_segments() {
-		Data dfile = Data.factory("./dir/sub/file.txt");
-		Data ddir = Data.factory("/home");
-		Data djoin = ddir.join(dfile);
-
-		Assert.assertTrue(dfile.isRelative());
-		Assert.assertFalse(ddir.isRelative());
-		Assert.assertFalse(djoin.isRelative());
-
-		Assert.assertTrue(dfile instanceof DataFile);
-		Assert.assertTrue(ddir instanceof DataFile);
-		Assert.assertTrue(djoin instanceof DataFile);
-
-		Assert.assertEquals("Path: " + djoin.getPath(), "/home/./dir/sub/file.txt", djoin.getPath());
-		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/./dir/sub/file.txt", djoin.getAbsolutePath());
-	}
-
-	@Test
-	public void test105b_file_join_segments() {
-		Data dfile = Data.factory("file://./dir/sub/file.txt");
-		Data ddir = Data.factory("file:///home");
-		Data djoin = ddir.join(dfile);
-
-		Assert.assertTrue(dfile.isRelative());
-		Assert.assertFalse(ddir.isRelative());
-		Assert.assertFalse(djoin.isRelative());
-
-		Assert.assertTrue(dfile instanceof DataFile);
-		Assert.assertTrue(ddir instanceof DataFile);
-		Assert.assertTrue(djoin instanceof DataFile);
-
-		Assert.assertEquals("Path: " + djoin.getPath(), "/home/./dir/sub/file.txt", djoin.getPath());
-		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/./dir/sub/file.txt", djoin.getAbsolutePath());
-	}
-
+	/**
+	 * Test Data.factory for remote HTTP file
+	 */
 	@Test
 	public void test106_url() {
 		String url = "http://www.google.com";
@@ -363,132 +214,27 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		Assert.assertEquals("URL: " + durl.toString(), url, durl.toString());
 	}
 
-	@Test
-	public void test107_url_join() {
-		Data dfile = Data.factory("/dir/sub/file.txt");
-		Data durl = Data.factory("http://www.ensembl.org");
-		Data djoin = durl.join(dfile);
-
-		Assert.assertFalse(dfile.isRelative());
-		Assert.assertFalse(durl.isRelative());
-		Assert.assertTrue(dfile instanceof DataFile);
-		Assert.assertTrue(durl instanceof DataHttp);
-		Assert.assertTrue(djoin instanceof DataHttp);
-		DataHttp dhttp = (DataHttp) djoin;
-		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(dhttp.toString(), "http://www.ensembl.org/dir/sub/file.txt");
-	}
-
-	@Test
-	public void test107b_url_join() {
-		Data dfile = Data.factory("dir/sub/file.txt");
-		Data durl = Data.factory("http://www.ensembl.org");
-		Data djoin = durl.join(dfile);
-
-		Assert.assertTrue(dfile.isRelative());
-		Assert.assertFalse(durl.isRelative());
-		Assert.assertTrue(dfile instanceof DataFile);
-		Assert.assertTrue(durl instanceof DataHttp);
-		Assert.assertTrue(djoin instanceof DataHttp);
-		DataHttp dhttp = (DataHttp) djoin;
-		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(dhttp.toString(), "http://www.ensembl.org/dir/sub/file.txt");
-	}
-
-	@Test
-	public void test108_s3_join() {
-		Data dfile = Data.factory("/dir/sub/file.txt");
-		Data ds3 = Data.factory("s3://my_bucket");
-
-		Assert.assertFalse(dfile.isRelative());
-		Assert.assertFalse(ds3.isRelative());
-		Assert.assertTrue(dfile instanceof DataFile);
-		Assert.assertTrue(ds3 instanceof DataS3);
-		Data djoin = ds3.join(dfile);
-
-		Assert.assertTrue(djoin instanceof DataS3);
-		DataS3 ds3join = (DataS3) djoin;
-		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(ds3join.toString(), "s3://my_bucket/dir/sub/file.txt");
-	}
-
-	@Test
-	public void test108b_s3_join() {
-		Data dfile = Data.factory("dir/sub/file.txt");
-		Data ds3 = Data.factory("s3://my_bucket");
-		Data djoin = ds3.join(dfile);
-
-		Assert.assertTrue(dfile.isRelative());
-		Assert.assertFalse(ds3.isRelative());
-		Assert.assertTrue(dfile instanceof DataFile);
-		Assert.assertTrue(ds3 instanceof DataS3);
-		Assert.assertTrue(djoin instanceof DataS3);
-		Assert.assertEquals(djoin.getPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getAbsolutePath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.getCanonicalPath(), "/dir/sub/file.txt");
-		Assert.assertEquals(djoin.toString(), "s3://my_bucket/dir/sub/file.txt");
-	}
-
-	@Test
-	public void test109_parseFile_relative() throws Exception {
-		String path = "tmp.txt";
-		Data dpath = Data.factory(path);
-		if (verbose) Gpr.debug("Path: " + dpath.getPath());
-		Assert.assertTrue(dpath instanceof DataFile);
-		Assert.assertTrue(dpath.isRelative());
-
-		// Absolute path
-		File fpathAbs = new File(new File("").getAbsoluteFile(), path);
-		Assert.assertEquals(fpathAbs.getAbsolutePath(), dpath.getAbsolutePath());
-
-		// Canonical path
-		File fpathCan = new File(new File(".").getCanonicalFile(), path);
-		Assert.assertEquals(fpathCan.getCanonicalPath(), dpath.getCanonicalPath());
-
-		Gpr.toFile(dpath.getAbsolutePath(), "test");
-		Assert.assertTrue(dpath.isFile());
-		Assert.assertFalse(dpath.isDirectory());
-	}
-
+	/**
+	 * Download a remote file to a specific location
+	 */
 	@Test
 	public void test11_download() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_11.bds", "ok", "true");
 	}
 
-	@Test
-	public void test110_parseFile_relative_03() throws Exception {
-		String path = "./tmp.txt";
-		Data dpath = Data.factory(path);
-		if (verbose) Gpr.debug("Path: " + dpath.getPath());
-		Assert.assertTrue(dpath instanceof DataFile);
-		Assert.assertTrue(dpath.isRelative());
-
-		// Absolute path
-		File fpathAbs = new File(new File("").getAbsoluteFile(), path);
-		Assert.assertEquals(fpathAbs.getAbsolutePath(), dpath.getAbsolutePath());
-
-		// Canonical path
-		File fpathCan = new File(new File(".").getCanonicalFile(), path);
-		Assert.assertEquals(fpathCan.getCanonicalPath(), dpath.getCanonicalPath());
-
-		Gpr.toFile(dpath.getAbsolutePath(), "test");
-		Assert.assertTrue(dpath.isFile());
-		Assert.assertFalse(dpath.isDirectory());
-	}
-
+	/**
+	 * Upload a local file to AWS S3
+	 */
 	@Test
 	public void test12_upload() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_12.bds", "ok", "true");
 	}
 
+	/**
+	 * Parsing an AWS S3 file that does not exists with multiple bds functions
+	 */
 	@Test
 	public void test13_S3() {
 		Gpr.debug("Test");
@@ -512,6 +258,9 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_13.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating an S3 file and parsing with multiple bds functions
+	 */
 	@Test
 	public void test14_S3() {
 		Gpr.debug("Test");
@@ -542,6 +291,10 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_14.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating two S3 files and parsing with multiple bds functions
+	 * Listing the "directory"
+	 */
 	@Test
 	public void test15_S3() {
 		Gpr.debug("Test");
@@ -575,6 +328,9 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_15.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating an S3 file using `write` function and parsing with multiple bds functions
+	 */
 	@Test
 	public void test16_S3() {
 		Gpr.debug("Test");
@@ -601,6 +357,10 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_16.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating an S3 file using `file.write()` function and parsing with multiple bds functions
+	 * Then deleting the file with `file.rm()` and re-parsing the same file to show it doesn't exists
+	 */
 	@Test
 	public void test17_S3() {
 		Gpr.debug("Test");
@@ -634,12 +394,18 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_17.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating and readin an AWS S3 file
+	 */
 	@Test
 	public void test18_S3() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_18.bds", "ok", "true");
 	}
 
+	/**
+	 * Downloading with FTP
+	 */
 	@Test
 	public void test19_ftp_download() {
 		Gpr.debug("Test");
@@ -651,24 +417,36 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		f.delete();
 	}
 
+	/**
+	 * Checking a remote FTP file exists
+	 */
 	@Test
 	public void test20_ftp_exists() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_20.bds", "fExists", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory
+	 */
 	@Test
 	public void test21_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_21.bds", "dHasReadme", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory
+	 */
 	@Test
 	public void test22_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_22.bds", "dHasReadme", "true");
 	}
 
+	/**
+	 * Downloading an FTP remote file using user credentials
+	 */
 	@Test
 	public void test23_ftp_download_with_user() {
 		Gpr.debug("Test");
@@ -680,42 +458,72 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		f.delete();
 	}
 
+	/**
+	 * Checking a remote FTP file exists, using user credentials
+	 */
 	@Test
 	public void test24_ftp_exists() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_24.bds", "fExists", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory, using user credentials (`dir()`)
+	 */
 	@Test
 	public void test25_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_25.bds", "dHasReadme", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory, using user credentials (`dirPath()`)
+	 */
 	@Test
 	public void test26_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_26.bds", "dHasReadme", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory using regex (`dir(regex)`)
+	 */
 	@Test
 	public void test27_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_27.bds", "dd", "[Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
+	/**
+	 * Listing a remote FTP directory using regex (`dirPath(regex)`)
+	 */
 	@Test
 	public void test28_ftp_dirPath() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_28.bds", "dd", "[ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
+	/**
+	 * Listing a remote HTTP directory using regex (`dirPath(regex)`)
+	 */
 	@Test
 	public void test29_http_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_29.bds", "dd", "[http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
+	/**
+	 * Listing a remote HTTP directory using regex (`dir(regex)`)
+	 */
+	@Test
+	public void test30_http_dir() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_29.bds", "dd", "[Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+	}
+
+	/**
+	 * Creating and listing a remote AWS S3 directory using `path.dir()`
+	 */
 	@Test
 	public void test31_s3_dir() {
 		Gpr.debug("Test");
@@ -731,6 +539,9 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		runAndCheck("test/remote_31.bds", "dd", "[bye.txt, bye_2.txt, hi.txt, hi_2.txt]");
 	}
 
+	/**
+	 * Creating and listing a remote AWS S3 directory using `path.dir(regex)`
+	 */
 	@Test
 	public void test32_s3_dirPath() {
 		Gpr.debug("Test");
@@ -745,6 +556,9 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		runAndCheck("test/remote_32.bds", "dd", "[bye.txt, bye_2.txt]");
 	}
 
+	/**
+	 * Creating and listing a remote AWS S3 directory using `path.dirPath(regex)`
+	 */
 	@Test
 	public void test33_s3_dirPath() {
 		Gpr.debug("Test");
@@ -762,19 +576,25 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		runAndCheck("test/remote_33.bds", "dd", "[" + urlParen + "/bye.txt, " + urlParen + "/bye_2.txt]");
 	}
 
-	// Task input in s3, output local file
+	/**
+	 * Task input in s3, output local file
+	 */
 	@Test
 	public void test34() {
 		runAndCheck("test/remote_34.bds", "outStr", "OK");
 	}
 
-	// Task input local, output s3 file
+	/**
+	 *  Task input local, output s3 file
+	 */
 	@Test
 	public void test35() {
 		runAndCheck("test/remote_35.bds", "outStr", "IN: 'remote_35'");
 	}
 
-	// Check task input in s3, output to s3
+	/**
+	 * Task input from S3, output to S3
+	 */
 	@Test
 	public void test36() {
 		runAndCheck("test/remote_36.bds", "outStr", "IN: 'remote_36'");

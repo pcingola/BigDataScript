@@ -4,6 +4,7 @@ import org.bds.test.integration.TestCasesIntegrationAws;
 import org.bds.test.integration.TestCasesIntegrationCheckpoint;
 import org.bds.test.integration.TestCasesIntegrationClusterGeneric;
 import org.bds.test.integration.TestCasesIntegrationClusterSsh;
+import org.bds.test.integration.TestCasesIntegrationRemote;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -16,10 +17,11 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ //
-		TestCasesIntegrationCheckpoint.class, // Running bds code: Checkpoint and recovery
-		TestCasesIntegrationAws.class, // Executioner AWS
 		TestCasesIntegrationClusterGeneric.class, // Executoner Cluster Generic
 		TestCasesIntegrationClusterSsh.class, // Executioner Ssh
+		TestCasesIntegrationRemote.class, // Remote files: S3, HTTP, FTP
+		TestCasesIntegrationAws.class, // Executioner AWS
+		TestCasesIntegrationCheckpoint.class, // Running bds code: Checkpoint and recovery from S3
 })
 public class TestSuiteIntegration {
 
