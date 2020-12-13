@@ -121,7 +121,16 @@ public class TestCasesTaskImproper extends TestCasesBase {
 	@Test
 	public void test08() {
 		Gpr.debug("Test");
-		throw new RuntimeException("UNIMPLEMENTED!");
+
+		String stdout = //
+				"Task improper: Start\n" //
+						+ "DEP_1: Start\n" //
+						+ "DEP_1: End\n" //
+						+ "DEP_2: Start\n" //
+						+ "DEP_2: End\n" //
+						+ "Task improper: End\n";
+
+		runAndCheckStdout("test/run_task_improper_08.bds", stdout);
 	}
 
 }

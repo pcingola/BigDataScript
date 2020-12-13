@@ -34,6 +34,7 @@ import org.bds.run.Freeze;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
+import org.bds.task.DepImpVmOpcode;
 import org.bds.task.DepVmOpcode;
 import org.bds.task.SysVmOpcode;
 import org.bds.task.TaskDependency;
@@ -1531,15 +1532,21 @@ public class BdsVm implements Serializable {
 				push(s1);
 				break;
 
-			case TASKIMP:
-				TaskImpVmOpcode taskImpVmOp = new TaskImpVmOpcode(bdsThread, usePidInFileNames);
-				s1 = taskImpVmOp.run();
-				push(s1);
-				break;
-
 			case TASKDEP:
 				TaskVmOpcode depVmOp = new DepVmOpcode(bdsThread, usePidInFileNames);
 				s1 = depVmOp.run();
+				push(s1);
+				break;
+
+			case TASKDEPIMP:
+				DepImpVmOpcode depImpVmOp = new DepImpVmOpcode(bdsThread, usePidInFileNames);
+				s1 = depImpVmOp.run();
+				push(s1);
+				break;
+
+			case TASKIMP:
+				TaskImpVmOpcode taskImpVmOp = new TaskImpVmOpcode(bdsThread, usePidInFileNames);
+				s1 = taskImpVmOp.run();
 				push(s1);
 				break;
 

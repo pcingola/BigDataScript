@@ -5,7 +5,7 @@ import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
 
 /**
- * Execute a 'taskimp' VM opcode
+ * Execute a 'taskimp' VM opcode for an improper task
  *
  * The opcode requires having the following items in the stack
  *   1) Command to execute
