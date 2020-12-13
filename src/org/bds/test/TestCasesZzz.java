@@ -20,10 +20,10 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	/**
-	 * 'dep' and 'goal' using improper tasks
+	 * 'dep' and 'goal' using improper tasks with taskId dependencies
 	 */
 	@Test
-	public void test08() {
+	public void test09() {
 		Gpr.debug("Test");
 
 		String stdout = //
@@ -32,9 +32,11 @@ public class TestCasesZzz extends TestCasesBase {
 						+ "DEP_1: End\n" //
 						+ "DEP_2: Start\n" //
 						+ "DEP_2: End\n" //
+						+ "DEP_3: Start\n" //
+						+ "DEP_3: End\n" //
 						+ "Task improper: End\n";
 
-		runAndCheckStdout("test/run_task_improper_08.bds", stdout);
+		runAndCheckStdout("test/run_task_improper_09.bds", stdout);
 	}
 
 }

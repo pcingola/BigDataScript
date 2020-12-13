@@ -133,4 +133,24 @@ public class TestCasesTaskImproper extends TestCasesBase {
 		runAndCheckStdout("test/run_task_improper_08.bds", stdout);
 	}
 
+	/**
+	 * 'dep' and 'goal' using improper tasks with taskId dependencies
+	 */
+	@Test
+	public void test09() {
+		Gpr.debug("Test");
+
+		String stdout = //
+				"Task improper: Start\n" //
+						+ "DEP_1: Start\n" //
+						+ "DEP_1: End\n" //
+						+ "DEP_2: Start\n" //
+						+ "DEP_2: End\n" //
+						+ "DEP_3: Start\n" //
+						+ "DEP_3: End\n" //
+						+ "Task improper: End\n";
+
+		runAndCheckStdout("test/run_task_improper_09.bds", stdout);
+	}
+
 }
