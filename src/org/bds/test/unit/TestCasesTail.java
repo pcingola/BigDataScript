@@ -1,8 +1,9 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import junit.framework.Assert;
 
 import org.bds.task.TailFile;
+import org.bds.test.TestCasesBase;
 import org.junit.Test;
 
 /**

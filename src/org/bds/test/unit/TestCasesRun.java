@@ -1,9 +1,10 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 import org.junit.Test;

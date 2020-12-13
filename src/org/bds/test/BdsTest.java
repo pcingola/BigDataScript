@@ -60,7 +60,7 @@ public class BdsTest {
 	/**
 	 * Create 'command'
 	 */
-	void bds(boolean compileOnly) {
+	public void bds(boolean compileOnly) {
 		ArrayList<String> l = new ArrayList<>();
 
 		// Add command line options
@@ -103,14 +103,14 @@ public class BdsTest {
 	/**
 	 * Show captured STDOUT & STDERR
 	 */
-	void captureShow() {
+	protected void captureShow() {
 		if (!(verbose || debug)) {
 			stdout.print("STDOUT ('" + fileName + "'):\n" + Gpr.prependEachLine("\t", captureStdout.toString()));
 			stderr.print("STDERR ('" + fileName + "'):\n" + Gpr.prependEachLine("\t", captureStderr.toString()));
 		}
 	}
 
-	void captureStart() {
+	protected void captureStart() {
 		// Capture STDOUT
 		stdout = System.out; // Store original stdout
 		captureStdout = new ByteArrayOutputStream();
@@ -131,7 +131,7 @@ public class BdsTest {
 	/**
 	 * Stop capturing STDOUT & STDERR (restore original)
 	 */
-	void captureStop() {
+	protected void captureStop() {
 		// Restore STDOUT & STDERR
 		System.setOut(stdout);
 		System.setErr(stderr);
@@ -182,7 +182,7 @@ public class BdsTest {
 	/**
 	 * Check that the program run and finished with a failed exit code
 	 */
-	void checkRunExitCodeFail() {
+	public void checkRunExitCodeFail() {
 		checkCompileOk();
 		checkRunState(RunState.FINISHED);
 		checkExitCode(1);
@@ -191,7 +191,7 @@ public class BdsTest {
 	/**
 	 * Check that the program run and finished OK
 	 */
-	void checkRunOk() {
+	public void checkRunOk() {
 		checkCompileOk();
 		checkRunState(RunState.FINISHED);
 		checkExitCode(0);
@@ -200,7 +200,7 @@ public class BdsTest {
 	/**
 	 * Check that RunState matches ou expectations
 	 */
-	void checkRunState(RunState expectedRunState) {
+	public void checkRunState(RunState expectedRunState) {
 		Assert.assertEquals(errMsg("Expecting rRunState '" + expectedRunState + "', but it was '" + runState + "'") //
 				, expectedRunState //
 				, runState//
@@ -254,7 +254,7 @@ public class BdsTest {
 	/**
 	 * Check all variables in the hash
 	 */
-	void checkVariables(Map<String, Object> expectedValues) {
+	public void checkVariables(Map<String, Object> expectedValues) {
 		// Check all values
 		for (String varName : expectedValues.keySet()) {
 			Object expectedValue = expectedValues.get(varName);

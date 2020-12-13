@@ -1,4 +1,4 @@
-package org.bds.test;
+package org.bds.test.integration;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +10,7 @@ import org.bds.data.DataFile;
 import org.bds.data.DataHttp;
 import org.bds.data.DataRemote;
 import org.bds.data.DataS3;
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Assert;
 import org.junit.Before;

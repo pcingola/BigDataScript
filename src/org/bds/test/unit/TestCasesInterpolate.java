@@ -1,8 +1,9 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import org.bds.compile.BdsCompilerExpression;
 import org.bds.lang.expression.Expression;
 import org.bds.lang.value.InterpolateVars;
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.bds.util.GprString;
 import org.junit.Test;

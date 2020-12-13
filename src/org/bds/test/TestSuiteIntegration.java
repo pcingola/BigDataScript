@@ -1,5 +1,25 @@
 package org.bds.test;
 
+import org.bds.test.integration.TestCasesAws;
+import org.bds.test.integration.TestCasesCheckpoint;
+import org.bds.test.integration.TestCasesClusterSsh;
+import org.bds.test.unit.TestCasesClusterGeneric;
+import org.bds.test.unit.TestCasesCommandLineOptions;
+import org.bds.test.unit.TestCasesExecutioners;
+import org.bds.test.unit.TestCasesFunctionDeclaration;
+import org.bds.test.unit.TestCasesGraph;
+import org.bds.test.unit.TestCasesInterpolate;
+import org.bds.test.unit.TestCasesLang;
+import org.bds.test.unit.TestCasesRemote;
+import org.bds.test.unit.TestCasesReport;
+import org.bds.test.unit.TestCasesRun;
+import org.bds.test.unit.TestCasesRun2;
+import org.bds.test.unit.TestCasesRun3;
+import org.bds.test.unit.TestCasesTail;
+import org.bds.test.unit.TestCasesTaskDetached;
+import org.bds.test.unit.TestCasesTaskImproper;
+import org.bds.test.unit.TestCasesTesting;
+import org.bds.test.unit.TestCasesVm;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -32,6 +52,6 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesTaskDetached.class, // Detached tasks
 		TestCasesAws.class, // Executioned AWS
 })
-public class TestSuiteAll {
+public class TestSuiteIntegration {
 
 }

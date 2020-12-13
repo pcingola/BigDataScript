@@ -1,7 +1,8 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import org.bds.Bds;
 import org.bds.run.Coverage;
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Test;
 

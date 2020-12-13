@@ -1,5 +1,7 @@
-package org.bds.test;
+package org.bds.test.integration;
 
+import org.bds.test.BdsTest;
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Test;
 

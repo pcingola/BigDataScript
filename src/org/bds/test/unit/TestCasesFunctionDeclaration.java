@@ -1,10 +1,11 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import org.bds.lang.Parameters;
 import org.bds.lang.statement.FunctionDeclaration;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Test;
 

@@ -1,8 +1,9 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Test;
 

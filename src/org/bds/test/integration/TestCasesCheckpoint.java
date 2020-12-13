@@ -1,4 +1,4 @@
-package org.bds.test;
+package org.bds.test.integration;
 
 import java.io.File;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.bds.Bds;
 import org.bds.data.DataS3;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Assert;
 import org.junit.Test;

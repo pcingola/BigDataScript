@@ -57,7 +57,7 @@ public class TestCasesBase {
 		BdsThreads.reset();
 	}
 
-	void checkInterpolate(String str, String strings[], String vars[]) {
+	protected void checkInterpolate(String str, String strings[], String vars[]) {
 		InterpolateVars iv = new InterpolateVars(null, null);
 		iv.parse(str);
 		if (verbose) {
@@ -87,7 +87,7 @@ public class TestCasesBase {
 	/**
 	 * Check a file in an S3 bucket
 	 */
-	void checkS3File(String url, String region, String bucket, String path, String paren, String txt) {
+	protected void checkS3File(String url, String region, String bucket, String path, String paren, String txt) {
 		int objectSize = txt.length();
 		long now = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis();
 
@@ -133,7 +133,7 @@ public class TestCasesBase {
 	/**
 	 * Check that a file compiles with expected errors
 	 */
-	void compileErrors(String fileName, String expectedErrors) {
+	protected void compileErrors(String fileName, String expectedErrors) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.compile();
 		bdsTest.checkCompileError(expectedErrors);
@@ -142,14 +142,14 @@ public class TestCasesBase {
 	/**
 	 * Check that a file compiles without any errors
 	 */
-	void compileOk(String fileName) {
+	protected void compileOk(String fileName) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.compile();
 		bdsTest.checkCompileOk();
 	}
 
 	// Create a file in S3
-	void createS3File(String s3file, String region, String text) {
+	protected void createS3File(String s3file, String region, String text) {
 		String localFile = "createS3.tmp";
 		Gpr.toFile(localFile, text);
 		DataS3 ds3 = new DataS3(s3file, region);
@@ -158,7 +158,7 @@ public class TestCasesBase {
 		dlocal.delete();
 	}
 
-	BdsTest runAndCheck(int expectedExitCode, String fileName, Map<String, Object> expectedValues) {
+	protected BdsTest runAndCheck(int expectedExitCode, String fileName, Map<String, Object> expectedValues) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkExitCode(expectedExitCode);
@@ -166,7 +166,7 @@ public class TestCasesBase {
 		return bdsTest;
 	}
 
-	BdsTest runAndCheck(int expectedExitCode, String fileName, String varname, Object expectedValue) {
+	protected BdsTest runAndCheck(int expectedExitCode, String fileName, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkExitCode(expectedExitCode);
@@ -174,7 +174,7 @@ public class TestCasesBase {
 		return bdsTest;
 	}
 
-	BdsTest runAndCheck(String fileName, Map<String, Object> expectedValues) {
+	protected BdsTest runAndCheck(String fileName, Map<String, Object> expectedValues) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
@@ -185,7 +185,7 @@ public class TestCasesBase {
 	/**
 	 * Check that a file compiles without any errors, runs and all variables have their expected values
 	 */
-	BdsTest runAndCheck(String fileName, Map<String, Object> expectedValues, List<String> argsAfterList) {
+	protected BdsTest runAndCheck(String fileName, Map<String, Object> expectedValues, List<String> argsAfterList) {
 		String argsAfter[] = argsAfterList.toArray(new String[0]);
 		BdsTest bdsTest = new BdsTest(fileName, null, argsAfter, verbose, debug);
 		bdsTest.run();
@@ -197,7 +197,7 @@ public class TestCasesBase {
 	/**
 	 * Check that a file compiles without any errors, runs and a variable have its expected map
 	 */
-	BdsTest runAndCheck(String fileName, String varname, Object expectedValue) {
+	protected BdsTest runAndCheck(String fileName, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
@@ -208,7 +208,7 @@ public class TestCasesBase {
 	/**
 	 * Check that a file compiles without any errors, runs and a variable have its expected map
 	 */
-	BdsTest runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
+	protected BdsTest runAndCheck(String fileName, String[] args, String varname, Object expectedValue) {
 		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
@@ -216,7 +216,7 @@ public class TestCasesBase {
 		return bdsTest;
 	}
 
-	BdsTest runAndCheckException(String fileName, String exceptionType) {
+	protected BdsTest runAndCheckException(String fileName, String exceptionType) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunExitCodeFail();
@@ -227,7 +227,7 @@ public class TestCasesBase {
 	/**
 	 * Check exit code
 	 */
-	BdsTest runAndCheckExit(String fileName, int expectedExitValue) {
+	protected BdsTest runAndCheckExit(String fileName, int expectedExitValue) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkExitCode(expectedExitValue);
@@ -237,7 +237,7 @@ public class TestCasesBase {
 	/**
 	 * Check that StdOut has a string
 	 */
-	BdsTest runAndCheckHelp(String fileName, String expectedStdout) {
+	protected BdsTest runAndCheckHelp(String fileName, String expectedStdout) {
 		String argsAfter[] = { "-h" };
 		BdsTest bdsTest = new BdsTest(fileName, null, argsAfter, verbose, debug);
 		bdsTest.run();
@@ -248,14 +248,14 @@ public class TestCasesBase {
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	Bds runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue) {
+	protected Bds runAndCheckpoint(String fileName, String checkpointFileName, String varname, Object expectedValue) {
 		return runAndCheckpoint(fileName, checkpointFileName, varname, expectedValue, null);
 	}
 
 	/**
 	 * Check that a file recovers from a checkpoint and runs without errors
 	 */
-	Bds runAndCheckpoint(String fileName, String checkpointFileName, String varName, Object expectedValue, Runnable runBeforeRecover) {
+	protected Bds runAndCheckpoint(String fileName, String checkpointFileName, String varName, Object expectedValue, Runnable runBeforeRecover) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		return bdsTest.runAndCheckpoint(checkpointFileName, varName, expectedValue, runBeforeRecover);
 	}
@@ -263,7 +263,7 @@ public class TestCasesBase {
 	/**
 	 * Check that StdErr has a string
 	 */
-	BdsTest runAndCheckStderr(String fileName, String expectedStderr) {
+	protected BdsTest runAndCheckStderr(String fileName, String expectedStderr) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkStderr(expectedStderr);
@@ -273,7 +273,7 @@ public class TestCasesBase {
 	/**
 	 * Check that StdOut has a string (or that the string is NOT present if 'negate' is true)
 	 */
-	String runAndCheckStdout(String fileName, List<String> expectedStdout, String args[], boolean negate) {
+	protected String runAndCheckStdout(String fileName, List<String> expectedStdout, String args[], boolean negate) {
 		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
@@ -285,18 +285,18 @@ public class TestCasesBase {
 	/**
 	 * Check that StdOut has a string
 	 */
-	String runAndCheckStdout(String fileName, String expectedStdout) {
+	protected String runAndCheckStdout(String fileName, String expectedStdout) {
 		return runAndCheckStdout(fileName, expectedStdout, null, false);
 	}
 
-	String runAndCheckStdout(String fileName, String expectedStdout, boolean negate) {
+	protected String runAndCheckStdout(String fileName, String expectedStdout, boolean negate) {
 		return runAndCheckStdout(fileName, expectedStdout, null, negate);
 	}
 
 	/**
 	 * Check that StdOut has a string (or that the string is NOT present if 'negate' is true)
 	 */
-	String runAndCheckStdout(String fileName, String expectedStdout, String args[], boolean negate) {
+	protected String runAndCheckStdout(String fileName, String expectedStdout, String args[], boolean negate) {
 		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
@@ -307,7 +307,7 @@ public class TestCasesBase {
 	/**
 	 * Check that a file compiles without any errors, runs and obtains a variable
 	 */
-	Object runAndGet(String fileName, String varname) {
+	protected Object runAndGet(String fileName, String varname) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
@@ -317,7 +317,7 @@ public class TestCasesBase {
 	/**
 	 * Run and get latest report file
 	 */
-	String runAndGetReport(String fileName, boolean yaml) {
+	protected String runAndGetReport(String fileName, boolean yaml) {
 		String[] argsHtml = { "-reportHtml" };
 		String[] argsYaml = { "-reportYaml" };
 		String[] args = yaml ? argsYaml : argsHtml;
@@ -341,14 +341,14 @@ public class TestCasesBase {
 	/**
 	 * Run a bds program and capture stdout (while still showing it)
 	 */
-	String runAndReturnStdout(String fileName) {
+	protected String runAndReturnStdout(String fileName) {
 		return runAndReturnStdout(fileName, null);
 	}
 
 	/**
 	 * Run a bds program and capture stdout (while still showing it)
 	 */
-	String runAndReturnStdout(String fileName, String args[]) {
+	protected String runAndReturnStdout(String fileName, String args[]) {
 		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
@@ -358,21 +358,21 @@ public class TestCasesBase {
 	/**
 	 * Make sure the program runs OK
 	 */
-	void runOk(String fileName) {
+	protected void runOk(String fileName) {
 		runAndCheckExit(fileName, 0);
 	}
 
 	/**
 	 * Run test cases: Check that at least one test case FAILS
 	 */
-	void runTestCasesFail(String fileName) {
+	protected void runTestCasesFail(String fileName) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.setTestCases(true);
 		bdsTest.run();
 		bdsTest.checkRunExitCodeFail();
 	}
 
-	Bds runTestCasesFailCoverage(String fileName, double coverageMin) {
+	protected Bds runTestCasesFailCoverage(String fileName, double coverageMin) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.setCoverage(true);
 		bdsTest.setCoverageMin(coverageMin);
@@ -385,14 +385,14 @@ public class TestCasesBase {
 	/**
 	 * Run test cases: Check that all test cases PASS
 	 */
-	void runTestCasesPass(String fileName) {
+	protected void runTestCasesPass(String fileName) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.setTestCases(true);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 	}
 
-	Bds runTestCasesPassCoverage(String fileName, double coverageMin) {
+	protected Bds runTestCasesPassCoverage(String fileName, double coverageMin) {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.setCoverage(true);
 		bdsTest.setCoverageMin(coverageMin);
@@ -406,7 +406,7 @@ public class TestCasesBase {
 	 * Check that a file compiles without any errors, runs the VM
 	 * and checks that a variable has the expected value
 	 */
-	void runVmAndCheck(String fileName, String varname, Object expectedValue) {
+	protected void runVmAndCheck(String fileName, String varname, Object expectedValue) {
 		runVmAndCheck(fileName, varname, expectedValue, null);
 	}
 
@@ -415,7 +415,7 @@ public class TestCasesBase {
 	 * and checks that a variable has the expected value.
 	 * Add all 'types' during compilation
 	 */
-	void runVmAndCheck(String fileName, String varname, Object expectedValue, List<Type> types) {
+	protected void runVmAndCheck(String fileName, String varname, Object expectedValue, List<Type> types) {
 		BdsVmAsm vmasm = new BdsVmAsm(fileName);
 		vmasm.setDebug(debug);
 		vmasm.setVerbose(verbose);

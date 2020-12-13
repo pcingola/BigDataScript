@@ -1,8 +1,9 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import java.util.Set;
 
@@ -7,6 +7,7 @@ import org.bds.executioner.CheckTasksRunningCmd;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Test;
 

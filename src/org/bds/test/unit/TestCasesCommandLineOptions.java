@@ -1,4 +1,4 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import java.io.File;
 import java.util.Arrays;
@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import org.bds.Bds;
 import org.bds.Config;
 import org.bds.run.BdsThread;
+import org.bds.test.BdsTest;
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Assert;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package org.bds.test;
+package org.bds.test.unit;
 
 import java.io.File;
 import java.util.HashMap;
@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
+import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Test;
 
