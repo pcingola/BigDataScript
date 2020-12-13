@@ -1,9 +1,6 @@
 package org.bds.test;
 
-import org.bds.test.integration.TestCasesAws;
-import org.bds.test.integration.TestCasesCheckpoint;
-import org.bds.test.integration.TestCasesClusterSsh;
-import org.bds.test.unit.TestCasesClusterGeneric;
+import org.bds.test.unit.TestCasesCheckpoint;
 import org.bds.test.unit.TestCasesCommandLineOptions;
 import org.bds.test.unit.TestCasesExecutioners;
 import org.bds.test.unit.TestCasesFunctionDeclaration;
@@ -44,13 +41,10 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesCheckpoint.class, // Running bds code: Checkpoint and recovery
 		TestCasesTesting.class, // Check bds unit testing system
 		TestCasesCommandLineOptions.class, // Check command line options
-		TestCasesClusterGeneric.class, // Running on a generic cluster
-		TestCasesClusterSsh.class, // Run on an 'ssh cluster'
 		TestCasesRemote.class, // Accessing remote data (cloud storage)
 		TestCasesReport.class, // Report generation
 		TestCasesTaskImproper.class, // Improper tasks
 		TestCasesTaskDetached.class, // Detached tasks
-		TestCasesAws.class, // Executioned AWS
 })
 public class TestSuiteUnit {
 

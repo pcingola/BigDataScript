@@ -10,7 +10,7 @@ import org.junit.Test;
  * @author pcingola
  *
  */
-public class TestCasesAws extends TestCasesBase {
+public class TestCasesIntegrationAws extends TestCasesBase {
 
 	/**
 	 * TODO: Simple task command

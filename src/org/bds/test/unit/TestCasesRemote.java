@@ -17,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Quick test cases when creating a new feature...
+ * Test cases for "remote" Data files
  *
  * @author pcingola
  *
@@ -38,6 +38,9 @@ public class TestCasesRemote extends TestCasesBase {
 		}
 	}
 
+	/**
+	 * Test parsing a local file (DataFile)
+	 */
 	@Test
 	public void test01_parse_URLs_file() {
 		Gpr.debug("Test");
@@ -75,6 +78,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("/tmp.txt", d.getAbsolutePath());
 	}
 
+	/**
+	 * Test parsing a remote HTTP file (DataHttp)
+	 */
 	@Test
 	public void test01_parse_URLs_http() {
 		Gpr.debug("Test");
@@ -114,6 +120,9 @@ public class TestCasesRemote extends TestCasesBase {
 				, Math.abs(lastMod - lastModLoc) < 2 * DataRemote.CACHE_TIMEOUT);
 	}
 
+	/**
+	 * Test parsing a remote AWS S3 file (DataS3)
+	 */
 	@Test
 	public void test01_parse_URLs_s3() {
 		Gpr.debug("Test");
@@ -134,6 +143,9 @@ public class TestCasesRemote extends TestCasesBase {
 		checkS3File(url, region, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
 	}
 
+	/**
+	 * Test parsing a remote AWS S3 file (DataS3) using "virtual hosting" style URL
+	 */
 	@Test
 	public void test01_parse_URLs_s3_virtual_host() {
 		Gpr.debug("Test");
@@ -151,54 +163,85 @@ public class TestCasesRemote extends TestCasesBase {
 		checkS3File(url, null, bucket, "/tmp/bds/remote_01/hello.txt", urlParen, txt);
 	}
 
+	/**
+	 * Test executing a task with a remote dependency
+	 */
 	@Test
 	public void test03_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_03.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with a remote dependency
+	 * Replacement of task's `sys` command within double quotes
+	 */
 	@Test
 	public void test04_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_04.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with a remote dependency
+	 * Replacement of task's `sys` command within single quotes
+	 */
 	@Test
 	public void test05_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_05.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with multiple remote dependencies
+	 */
 	@Test
 	public void test06_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_06.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with multiple remote dependencies in a list
+	 */
 	@Test
 	public void test07_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_07.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with multiple remote dependencies in a list
+	 * Replacement of task's `sys` command with list variables
+	 */
 	@Test
 	public void test08_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_08.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Test executing a task with a remote dependency
+	 * Replacement of task's `sys` command with literal references
+	 */
 	@Test
 	public void test09_task_URL() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_09.bds", "first", "<!DOCTYPE html>");
 	}
 
+	/**
+	 * Download a remote file
+	 */
 	@Test
 	public void test10_download() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_10.bds", "locFile", "/tmp/bds/http/pcingola/github/io/BigDataScript/index.html");
 	}
 
+	/**
+	 * Test local file: DataFile using absolute path
+	 */
 	@Test
 	public void test101_data_file_absolute() {
 		String path = "/dir/sub/file.txt";
@@ -211,6 +254,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), path, dfile.getAbsolutePath());
 	}
 
+	/**
+	 * Test local file: DataFile using "file://" format
+	 */
 	@Test
 	public void test101b_data_file_absolute() {
 		String path = "/dir/sub/file.txt";
@@ -223,6 +269,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), path, dfile.getAbsolutePath());
 	}
 
+	/**
+	 * Test local file: DataFile using relative file
+	 */
 	@Test
 	public void test102_data_file_relative() {
 		String path = "dir/sub/file.txt";
@@ -237,6 +286,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
 	}
 
+	/**
+	 * Test local file: DataFile using relative file with "file://" format
+	 */
 	@Test
 	public void test102b_data_file_relative() {
 		String path = "dir/sub/file.txt";
@@ -251,6 +303,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
 	}
 
+	/**
+	 * Test local file: DataFile using relative file with "./" format
+	 */
 	@Test
 	public void test103_data_file_relative() {
 		String path = "./dir/sub/file.txt";
@@ -264,6 +319,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
 	}
 
+	/**
+	 * Test local file: DataFile using relative file with "file://./" format
+	 */
 	@Test
 	public void test103b_data_file_relative() {
 		String path = "./dir/sub/file.txt";
@@ -277,6 +335,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + dfile.getAbsolutePath(), pwd.getAbsolutePath() + "/" + path, dfile.getAbsolutePath());
 	}
 
+	/**
+	 * Test `join` for local file segments
+	 */
 	@Test
 	public void test104_file_join_segments() {
 		Data dfile = Data.factory("dir/sub/file.txt");
@@ -295,6 +356,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/dir/sub/file.txt", djoin.getAbsolutePath());
 	}
 
+	/**
+	 * Test `join` for local file segments, using "file://" formats
+	 */
 	@Test
 	public void test104b_file_join_segments() {
 		Data dfile = Data.factory("file://dir/sub/file.txt");
@@ -313,6 +377,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/dir/sub/file.txt", djoin.getAbsolutePath());
 	}
 
+	/**
+	 * Test `join` for local file segments using "./" formats
+	 */
 	@Test
 	public void test105_file_join_segments() {
 		Data dfile = Data.factory("./dir/sub/file.txt");
@@ -331,6 +398,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/./dir/sub/file.txt", djoin.getAbsolutePath());
 	}
 
+	/**
+	 * Test `join` for local file segments using "file://./" formats
+	 */
 	@Test
 	public void test105b_file_join_segments() {
 		Data dfile = Data.factory("file://./dir/sub/file.txt");
@@ -349,6 +419,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("Canonical: " + djoin.getAbsolutePath(), "/home/./dir/sub/file.txt", djoin.getAbsolutePath());
 	}
 
+	/**
+	 * Test Data.factory for remote HTTP file
+	 */
 	@Test
 	public void test106_url() {
 		String url = "http://www.google.com";
@@ -363,6 +436,10 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals("URL: " + durl.toString(), url, durl.toString());
 	}
 
+	/**
+	 * Test Data.factory and joining for remote HTTP file
+	 * using absolute path
+	 */
 	@Test
 	public void test107_url_join() {
 		Data dfile = Data.factory("/dir/sub/file.txt");
@@ -381,6 +458,10 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals(dhttp.toString(), "http://www.ensembl.org/dir/sub/file.txt");
 	}
 
+	/**
+	 * Test Data.factory and joining for remote HTTP file
+	 * using relative path
+	 */
 	@Test
 	public void test107b_url_join() {
 		Data dfile = Data.factory("dir/sub/file.txt");
@@ -399,6 +480,10 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals(dhttp.toString(), "http://www.ensembl.org/dir/sub/file.txt");
 	}
 
+	/**
+	 * Test Data.factory and joining for remote S3 file
+	 * using absolute path
+	 */
 	@Test
 	public void test108_s3_join() {
 		Data dfile = Data.factory("/dir/sub/file.txt");
@@ -418,6 +503,10 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals(ds3join.toString(), "s3://my_bucket/dir/sub/file.txt");
 	}
 
+	/**
+	 * Test Data.factory and joining for remote S3 file
+	 * using relative path
+	 */
 	@Test
 	public void test108b_s3_join() {
 		Data dfile = Data.factory("dir/sub/file.txt");
@@ -435,6 +524,9 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertEquals(djoin.toString(), "s3://my_bucket/dir/sub/file.txt");
 	}
 
+	/**
+	 * Test Data.factory using file without any path
+	 */
 	@Test
 	public void test109_parseFile_relative() throws Exception {
 		String path = "tmp.txt";
@@ -456,14 +548,11 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertFalse(dpath.isDirectory());
 	}
 
+	/**
+	 * Test Data.factory using file with "./" path
+	 */
 	@Test
-	public void test11_download() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_11.bds", "ok", "true");
-	}
-
-	@Test
-	public void test110_parseFile_relative_03() throws Exception {
+	public void test109b_parseFile_relative_03() throws Exception {
 		String path = "./tmp.txt";
 		Data dpath = Data.factory(path);
 		if (verbose) Gpr.debug("Path: " + dpath.getPath());
@@ -483,12 +572,27 @@ public class TestCasesRemote extends TestCasesBase {
 		Assert.assertFalse(dpath.isDirectory());
 	}
 
+	/**
+	 * Download a remote file to a specific location
+	 */
+	@Test
+	public void test11_download() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_11.bds", "ok", "true");
+	}
+
+	/**
+	 * Upload a local file to AWS S3
+	 */
 	@Test
 	public void test12_upload() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_12.bds", "ok", "true");
 	}
 
+	/**
+	 * Parsing an AWS S3 file that does not exists with multiple bds functions
+	 */
 	@Test
 	public void test13_S3() {
 		Gpr.debug("Test");
@@ -512,6 +616,9 @@ public class TestCasesRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_13.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating an S3 file and parsing with multiple bds functions
+	 */
 	@Test
 	public void test14_S3() {
 		Gpr.debug("Test");
@@ -542,6 +649,10 @@ public class TestCasesRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_14.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating two S3 files and parsing with multiple bds functions
+	 * Listing the "directory"
+	 */
 	@Test
 	public void test15_S3() {
 		Gpr.debug("Test");
@@ -575,6 +686,9 @@ public class TestCasesRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_15.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating an S3 file using `write` function and parsing with multiple bds functions
+	 */
 	@Test
 	public void test16_S3() {
 		Gpr.debug("Test");
@@ -601,6 +715,10 @@ public class TestCasesRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_16.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating an S3 file using `file.write()` function and parsing with multiple bds functions
+	 * Then deleting the file with `file.rm()` and re-parsing the same file to show it doesn't exists
+	 */
 	@Test
 	public void test17_S3() {
 		Gpr.debug("Test");
@@ -634,12 +752,18 @@ public class TestCasesRemote extends TestCasesBase {
 		runAndCheckStdout("test/remote_17.bds", expectedOutput);
 	}
 
+	/**
+	 * Creating and readin an AWS S3 file
+	 */
 	@Test
 	public void test18_S3() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_18.bds", "ok", "true");
 	}
 
+	/**
+	 * Downloading with FTP
+	 */
 	@Test
 	public void test19_ftp_download() {
 		Gpr.debug("Test");
@@ -651,24 +775,36 @@ public class TestCasesRemote extends TestCasesBase {
 		f.delete();
 	}
 
+	/**
+	 * Checking a remote FTP file exists
+	 */
 	@Test
 	public void test20_ftp_exists() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_20.bds", "fExists", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory
+	 */
 	@Test
 	public void test21_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_21.bds", "dHasReadme", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory
+	 */
 	@Test
 	public void test22_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_22.bds", "dHasReadme", "true");
 	}
 
+	/**
+	 * Downloading an FTP remote file using user credentials
+	 */
 	@Test
 	public void test23_ftp_download_with_user() {
 		Gpr.debug("Test");
@@ -680,42 +816,72 @@ public class TestCasesRemote extends TestCasesBase {
 		f.delete();
 	}
 
+	/**
+	 * Checking a remote FTP file exists, using user credentials
+	 */
 	@Test
 	public void test24_ftp_exists() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_24.bds", "fExists", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory, using user credentials (`dir()`)
+	 */
 	@Test
 	public void test25_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_25.bds", "dHasReadme", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory, using user credentials (`dirPath()`)
+	 */
 	@Test
 	public void test26_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_26.bds", "dHasReadme", "true");
 	}
 
+	/**
+	 * Listing a remote FTP directory using regex (`dir(regex)`)
+	 */
 	@Test
 	public void test27_ftp_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_27.bds", "dd", "[Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
+	/**
+	 * Listing a remote FTP directory using regex (`dirPath(regex)`)
+	 */
 	@Test
 	public void test28_ftp_dirPath() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_28.bds", "dd", "[ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
+	/**
+	 * Listing a remote HTTP directory using regex (`dirPath(regex)`)
+	 */
 	@Test
 	public void test29_http_dir() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_29.bds", "dd", "[http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
+	/**
+	 * Listing a remote HTTP directory using regex (`dir(regex)`)
+	 */
+	@Test
+	public void test30_http_dir() {
+		Gpr.debug("Test");
+		runAndCheck("test/remote_29.bds", "dd", "[Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+	}
+
+	/**
+	 * Creating and listing a remote AWS S3 directory using `path.dir()`
+	 */
 	@Test
 	public void test31_s3_dir() {
 		Gpr.debug("Test");
@@ -731,6 +897,9 @@ public class TestCasesRemote extends TestCasesBase {
 		runAndCheck("test/remote_31.bds", "dd", "[bye.txt, bye_2.txt, hi.txt, hi_2.txt]");
 	}
 
+	/**
+	 * Creating and listing a remote AWS S3 directory using `path.dir(regex)`
+	 */
 	@Test
 	public void test32_s3_dirPath() {
 		Gpr.debug("Test");
@@ -745,6 +914,9 @@ public class TestCasesRemote extends TestCasesBase {
 		runAndCheck("test/remote_32.bds", "dd", "[bye.txt, bye_2.txt]");
 	}
 
+	/**
+	 * Creating and listing a remote AWS S3 directory using `path.dirPath(regex)`
+	 */
 	@Test
 	public void test33_s3_dirPath() {
 		Gpr.debug("Test");
@@ -762,19 +934,25 @@ public class TestCasesRemote extends TestCasesBase {
 		runAndCheck("test/remote_33.bds", "dd", "[" + urlParen + "/bye.txt, " + urlParen + "/bye_2.txt]");
 	}
 
-	// Task input in s3, output local file
+	/**
+	 * Task input in s3, output local file
+	 */
 	@Test
 	public void test34() {
 		runAndCheck("test/remote_34.bds", "outStr", "OK");
 	}
 
-	// Task input local, output s3 file
+	/**
+	 *  Task input local, output s3 file
+	 */
 	@Test
 	public void test35() {
 		runAndCheck("test/remote_35.bds", "outStr", "IN: 'remote_35'");
 	}
 
-	// Check task input in s3, output to s3
+	/**
+	 * Task input from S3, output to S3
+	 */
 	@Test
 	public void test36() {
 		runAndCheck("test/remote_36.bds", "outStr", "IN: 'remote_36'");

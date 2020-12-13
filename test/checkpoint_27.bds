@@ -2,7 +2,7 @@
 
 string zzzCheck(int num) {
 	num += 1
-	checkpoint("test/checkpoint_25.chp")
+	checkpoint("test/checkpoint_27.chp")
 	return "z" + num
 }
 

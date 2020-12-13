@@ -17,12 +17,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Quick test cases when creating a new feature...
+ * Test cases for "remote" Data files
  *
  * @author pcingola
  *
  */
-public class TestCasesRemote extends TestCasesBase {
+public class TestCasesIntegrationRemote extends TestCasesBase {
 
 	@Before
 	public void beforeEachTest() {
