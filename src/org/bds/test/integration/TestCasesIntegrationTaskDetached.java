@@ -13,7 +13,7 @@ import junit.framework.Assert;
  * @author pcingola
  *
  */
-public class TestCasesTaskDetached extends TestCasesBase {
+public class TestCasesIntegrationTaskDetached extends TestCasesBase {
 
 	/**
 	 * Execute a detached task: Local computer
@@ -96,5 +96,14 @@ public class TestCasesTaskDetached extends TestCasesBase {
 		// Check that the exception causing the 'exit=1' code is the one we expected
 		Throwable javaException = bdsTest.bds.getBdsRun().getBdsThread().getVm().getJavaException();
 		Assert.assertTrue(javaException.getMessage().startsWith(expectedExceptionMessage));
+	}
+
+	/**
+	 * Execute a detached task on AWS
+	 */
+	@Test
+	public void test05() {
+		Gpr.debug("Test");
+		throw new RuntimeException("UNIMPLEMENTED!!!");
 	}
 }

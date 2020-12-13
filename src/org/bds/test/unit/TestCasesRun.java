@@ -280,15 +280,6 @@ public class TestCasesRun extends TestCasesBase {
 	}
 
 	@Test
-	public void test27() {
-		Gpr.debug("Test");
-		Timer timer = new Timer();
-		timer.start();
-		runAndCheck(1, "test/run_27.bds", "timeout", "1"); // 2 seconds timeout
-		Assert.assertTrue(timer.elapsed() < 3 * 1000); // We should finish in less than 3 secs (the program waits 60secs)
-	}
-
-	@Test
 	public void test28() {
 		Gpr.debug("Test");
 		runAndCheck("test/run_28.bds", "events", "[done]");
@@ -297,12 +288,6 @@ public class TestCasesRun extends TestCasesBase {
 	public void test29() {
 		Gpr.debug("Test");
 		runAndCheck("test/run_29.bds", "events", "[runnning, wait, done]");
-	}
-
-	@Test
-	public void test30() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_30.bds", "events", "[runnning, wait, done]");
 	}
 
 	@Test
@@ -336,12 +321,6 @@ public class TestCasesRun extends TestCasesBase {
 	public void test35() {
 		Gpr.debug("Test");
 		runAndCheck("test/run_35.bds", "exitStat", "1");
-	}
-
-	@Test
-	public void test36() {
-		Gpr.debug("Test");
-		runAndCheck(1, "test/run_36.bds", "s", "before");
 	}
 
 	@Test
@@ -690,18 +669,6 @@ public class TestCasesRun extends TestCasesBase {
 		runAndCheck("test/run_83.bds", expectedValues);
 	}
 
-	@Test
-	public void test84() {
-		Gpr.debug("Test");
-		runAndCheck(1, "test/run_84.bds", "taskOk", "false");
-	}
-
-	@Test
-	public void test85() {
-		Gpr.debug("Test");
-		runAndCheckStderr("test/run_84.bds", "ERROR_TIMEOUT");
-	}
-
 	public void test86() {
 		Gpr.debug("Test");
 		HashMap<String, Object> expectedValues = new HashMap<>();
@@ -714,12 +681,6 @@ public class TestCasesRun extends TestCasesBase {
 		expectedValues.put("oneT", 1099511627776L);
 		expectedValues.put("oneP", 1125899906842624L);
 		runAndCheck("test/run_85.bds", expectedValues);
-	}
-
-	@Test
-	public void test87() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_87.bds", "cpus", "1");
 	}
 
 	@Test
@@ -737,30 +698,6 @@ public class TestCasesRun extends TestCasesBase {
 		expectedValues.put("f3", "file.vcf");
 		expectedValues.put("f4", "file.txt.vcf");
 		runAndCheck("test/run_89.bds", expectedValues);
-	}
-
-	@Test
-	public void test90() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_90.bds", "ok", "true");
-	}
-
-	@Test
-	public void test91() {
-		Gpr.debug("Test");
-		runAndCheck(1, "test/run_91.bds", "ok", "false");
-	}
-
-	@Test
-	public void test92() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_92.bds", "outs", "TASK 1\nTASK 2\n");
-	}
-
-	@Test
-	public void test93() {
-		Gpr.debug("Test");
-		runAndCheck("test/run_93.bds", "outs", "TASK 1\nTASK 2\n");
 	}
 
 	@Test

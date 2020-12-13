@@ -2,9 +2,14 @@ package org.bds.test;
 
 import org.bds.test.integration.TestCasesIntegrationAws;
 import org.bds.test.integration.TestCasesIntegrationCheckpoint;
+import org.bds.test.integration.TestCasesIntegrationCheckpointAws;
 import org.bds.test.integration.TestCasesIntegrationClusterGeneric;
 import org.bds.test.integration.TestCasesIntegrationClusterSsh;
+import org.bds.test.integration.TestCasesIntegrationGraph;
 import org.bds.test.integration.TestCasesIntegrationRemote;
+import org.bds.test.integration.TestCasesIntegrationRun;
+import org.bds.test.integration.TestCasesIntegrationTaskDetached;
+import org.bds.test.integration.TestCasesIntegrationTaskImproper;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -17,11 +22,16 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ //
+		TestCasesIntegrationRun.class, // Running bds code (local, long running tests)
+		TestCasesIntegrationCheckpoint.class, // Running bds code: Checkpoint and recovery (local, long running tests)
+		TestCasesIntegrationGraph.class, // Running bds code: Task graphs and dependencies (local, long running tests)
 		TestCasesIntegrationClusterGeneric.class, // Executoner Cluster Generic
 		TestCasesIntegrationClusterSsh.class, // Executioner Ssh
 		TestCasesIntegrationRemote.class, // Remote files: S3, HTTP, FTP
-		TestCasesIntegrationAws.class, // Executioner AWS
-		TestCasesIntegrationCheckpoint.class, // Running bds code: Checkpoint and recovery from S3
+		TestCasesIntegrationTaskImproper.class, // Improper tasks (local, long running tests)
+		TestCasesIntegrationCheckpointAws.class, // Running bds code: Checkpoint and recovery from S3
+		TestCasesIntegrationTaskDetached.class, // Detached tasks on cloud
+		TestCasesIntegrationAws.class, // Executioner AWS, task dependecies
 })
 public class TestSuiteIntegration {
 

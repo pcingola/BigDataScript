@@ -1,4 +1,4 @@
-package org.bds.test.unit;
+package org.bds.test.integration;
 
 import java.io.File;
 
@@ -14,7 +14,7 @@ import junit.framework.Assert;
  * @author pcingola
  *
  */
-public class TestCasesGraph extends TestCasesBase {
+public class TestCasesIntegrationGraph extends TestCasesBase {
 
 	/**
 	 * Test simple task dependency: task_1 -> task_2

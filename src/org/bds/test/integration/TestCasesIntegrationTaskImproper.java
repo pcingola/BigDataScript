@@ -1,4 +1,4 @@
-package org.bds.test.unit;
+package org.bds.test.integration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.junit.Test;
  * @author pcingola
  *
  */
-public class TestCasesTaskImproper extends TestCasesBase {
+public class TestCasesIntegrationTaskImproper extends TestCasesBase {
 
 	/**
 	 * Execute an improper task: Local computer
