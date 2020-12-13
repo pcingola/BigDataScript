@@ -40,13 +40,13 @@ public class DataFtp extends DataRemote {
 	}
 
 	@Override
-	public boolean delete() {
-		throw new RuntimeException("Unimplemented 'delete' operation for FTP data");
+	public void deleteOnExit() {
+		throw new RuntimeException("Unimplemented 'deleteOnExit' operation for FTP data");
 	}
 
 	@Override
-	public void deleteOnExit() {
-		throw new RuntimeException("Unimplemented 'deleteOnExit' operation for FTP data");
+	public boolean deleteRemote() {
+		throw new RuntimeException("Unimplemented 'delete' operation for FTP data");
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.bds.Config;
+import org.bds.run.BdsThread;
+import org.bds.run.BdsThreads;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -61,10 +63,38 @@ public abstract class DataRemote extends Data {
 		return uri.toString();
 	}
 
+	/**
+	 * Delete both remote and local files
+	 */
+	@Override
+	public boolean delete() {
+		if (!isFile()) return false;
+		boolean ok = deleteLocal();
+		ok = ok || deleteRemote();
+		return ok;
+	}
+
+	/**
+	 * Delete local file, return true on success
+	 */
+	public boolean deleteLocal() {
+		String localFile = getLocalPath();
+		if (Config.get().isDebug()) Timer.showStdErr("Deleting local file '" + localFile + "', cached from remote file '" + this + "'");
+		File f = new File(localFile);
+		return f.delete();
+	}
+
 	@Override
 	public void deleteOnExit() {
-		throw new RuntimeException("Unimplemented!");
+		BdsThread bdsThread = BdsThreads.getInstance().getOrRoot();
+		if (bdsThread != null) {
+			if (Config.get().isDebug()) Timer.showStdErr("Deleting on exit '" + this + "'");
+			bdsThread.rmOnExit(this);
+		}
+		throw new RuntimeException("Could not get Bds thread!");
 	}
+
+	public abstract boolean deleteRemote();
 
 	@Override
 	public boolean download() {

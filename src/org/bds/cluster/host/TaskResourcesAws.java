@@ -2,6 +2,7 @@ package org.bds.cluster.host;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.bds.Config;
 import org.bds.lang.value.Value;
@@ -34,7 +35,7 @@ public class TaskResourcesAws extends TaskResources {
 	public static final String[] SECURITY_GROUP_IDS = { "security-group-ids", "securityGroupIds", "security-group-id", "securityGroupId" };
 	public static final String[] SHUTDOWN_BEHAVIOUR = { "shutdown-behavior", "shutdownBehavior" };
 	public static final String[] KEEP_INSTANCE_ALIVE_AFTER_FINISH = { "keep-instance-alive-after-finish", "keepInstanceAliveAfterFinish" };
-	public static final String[] SUBNET_ID = { "subnet-id", "subnetId" };
+	public static final String[] SUBNET_ID = { "subnet-id", "subnetId", "subnet-ids", "subnetIds" };
 	public static final String[] TAGS = { "tag-specifications", "tagSpecifications", "tags" };
 	public static final String[] REGION = { "region" };
 	public static final String[] S3_TMP = { "s3tmp", "s3_tmp", "s3-tmp" };
@@ -49,7 +50,8 @@ public class TaskResourcesAws extends TaskResources {
 	protected String securityGroupIds;
 	protected String shutdownBehavior;
 	protected String s3tmp;
-	protected String subnetId;
+	protected String subnetIds; // All possible sub-net IDs
+	protected String subnetId; // The specific sub-net ID used for the EC2 request (one of subnetIds)
 	protected Map<String, String> tags;
 	protected boolean keepInstanceAliveAfterFinish; // Do NOT shutdown the instance after bds finishes execution (this can be set to 'true' for debugging the instances)
 	protected boolean usePublicIpAddr;
@@ -204,7 +206,10 @@ public class TaskResourcesAws extends TaskResources {
 		if (groupIds != null) nifb.groups(groupIds);
 
 		// Subnet
-		if (subnetId != null && !subnetId.isEmpty()) nifb.subnetId(subnetId);;
+		if (subnetIds != null && !subnetIds.isEmpty()) {
+			subnetId = randFromList(subnetIds);
+			nifb.subnetId(subnetId);
+		}
 
 		return nifb.build();
 	}
@@ -266,6 +271,22 @@ public class TaskResourcesAws extends TaskResources {
 	}
 
 	/**
+	 * Parse a string as a list, pick a random element from the list
+	 * @return A random element from the list
+	 */
+	String randFromList(String listStr) {
+		String[] items = parseList(listStr);
+
+		// Only one item?
+		if (items.length == 1) return items[0];
+
+		// Pick randomly from the items in the list
+		Random rand = new Random();
+		int randInt = rand.nextInt(items.length);
+		return items[randInt];
+	}
+
+	/**
 	 * Set resources from bdsThread
 	 * @param bdsThread
 	 */
@@ -308,7 +329,7 @@ public class TaskResourcesAws extends TaskResources {
 		s3tmp = mapGet(taskResources, S3_TMP);
 		securityGroupIds = mapGet(taskResources, SECURITY_GROUP_IDS);
 		shutdownBehavior = mapGet(taskResources, SHUTDOWN_BEHAVIOUR);
-		subnetId = mapGet(taskResources, SUBNET_ID);
+		subnetIds = mapGet(taskResources, SUBNET_ID);
 		tags = parseTags(mapGet(taskResources, TAGS));
 		usePublicIpAddr = Gpr.parseBoolSafe(mapGet(taskResources, IP_ADDR));
 	}

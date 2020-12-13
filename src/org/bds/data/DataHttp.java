@@ -100,7 +100,7 @@ public class DataHttp extends DataRemote {
 	}
 
 	@Override
-	public boolean delete() {
+	public boolean deleteRemote() {
 		if (verbose) Timer.showStdErr("Cannot delete file '" + this + "'");
 		return false;
 	}

@@ -56,7 +56,7 @@ public abstract class Data implements Comparable<Data>, Serializable {
 	 *          initialized, thus they are null
 	 */
 	public static Data factory(String url) {
-		BdsThread bdsThread = BdsThreads.getInstance().get(); // Can be null
+		BdsThread bdsThread = BdsThreads.getInstance().getOrRoot(); // Can be null
 		return factory(url, bdsThread);
 	}
 

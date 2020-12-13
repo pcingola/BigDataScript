@@ -10,8 +10,11 @@ import java.util.Random;
 
 import org.bds.Config;
 import org.bds.cluster.host.TaskResourcesAws;
+import org.bds.data.Data;
 import org.bds.data.DataFile;
 import org.bds.data.DataS3;
+import org.bds.run.BdsThread;
+import org.bds.run.BdsThreads;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 import org.bds.util.GprAws;
@@ -44,10 +47,12 @@ public class CmdAws extends Cmd {
 	public static int START_FAIL_MAX_ATTEMPTS = 50;
 	public static int START_FAIL_SLEEP_RAND_TIME = 60;
 
-	protected Task task;
+	protected String checkpointS3;
 	protected String instanceId;
 	protected String queueName;
-	protected String checkpointS3;
+	protected String startupScriptFileName;
+	protected Task task;
+	protected String userData;
 
 	public CmdAws(Task task, String queueName) {
 		super(task.getId(), null);
@@ -96,16 +101,21 @@ public class CmdAws extends Cmd {
 	}
 
 	/**
-	 * Create an AWS EC2 instance
+	 * Create an AWS EC2 instance request
 	 */
-	protected String createEC2Instance() {
-		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
-		Ec2Client ec2 = GprAws.ec2Client(resources.getRegion()); // Create client
+	protected RunInstancesRequest createEc2InstanceRequest(TaskResourcesAws resources) {
 		RunInstancesRequest.Builder runRequestBuilder = resources.ec2InstanceRequest(); // Create instance request
+		runRequestBuilder.userData(userData);
+		return runRequestBuilder.build();
+	}
 
+	/**
+	 * Create a startup script and encode it as base64
+	 */
+	String createStartupScript() {
 		// Add startup script (encoded as bas64)
 		String script = startupScript();
-		String startupScriptFileName = Gpr.removeExt(task.getProgramFileName()) + ".startup_script.sh";
+		startupScriptFileName = Gpr.removeExt(task.getProgramFileName()) + ".startup_script.sh";
 		if (!Config.get().isLog()) (new File(startupScriptFileName)).deleteOnExit();
 
 		// Write script to local file (logging)
@@ -116,19 +126,7 @@ public class CmdAws extends Cmd {
 
 		// Encode to send in AWS request
 		String script64 = new String(Base64.getEncoder().encode(script.getBytes()));
-		runRequestBuilder.userData(script64);
-
-		// Run the instance
-		RunInstancesRequest runRequest = runRequestBuilder.build();
-		if (DO_NOT_RUN_INSTANCE) {
-			Gpr.debug("WARNING: DO_NOT_RUN_INSTANCE is activated");
-			return "instance_id_123";
-		}
-
-		runInstance(ec2, runRequest);
-		addTags(ec2, resources); // Add tags
-
-		return instanceId;
+		return script64;
 	}
 
 	@Override
@@ -149,13 +147,12 @@ public class CmdAws extends Cmd {
 	}
 
 	@Override
-	protected boolean execPrepare() throws Exception {
+	protected boolean execPrepare() {
 		// If this is an improper task, we need to upload the checkpoint to S3
 		if (task.isImproper()) uploadCheckpointToS3();
 
-		// Create and run instance
-		createEC2Instance();
-		return true;
+		// Run an instance (attempts many times before failing)
+		return runInstanceLoop();
 	}
 
 	@Override
@@ -182,29 +179,57 @@ public class CmdAws extends Cmd {
 	 * If fails, make START_FAIL_MAX_ATTEMPTS, sleeping a random time between attempts
 	 * The reason is that sometimes AWS does not have availability of a specific instance
 	 * type at the moment, so we need to wait for instances to become available.
-	 *
-	 * TODO: Add support for selecting multiple zones / regions (sequentially or randomly?)
 	 */
-	protected RunInstancesResponse runInstance(Ec2Client ec2, RunInstancesRequest runRequest) {
+	protected String requestInstance(Ec2Client ec2, RunInstancesRequest runRequest) {
 		// Run the instance
 		RunInstancesResponse response;
 		try {
 			response = ec2.runInstances(runRequest);
 		} catch (SdkClientException e) {
-			throw new RuntimeException("EC2 client expcetion (this might be caused by incorrectly setting the region). " + e.getMessage(), e);
+			throw new RuntimeException("EC2 client exception (this might be caused by incorrectly setting the region). " + e.getMessage(), e);
 		}
 
+		// Success?
+		if (response.hasInstances()) return response.instances().get(0).instanceId();
+
+		Timer.showStdErr("WARNING: Create instance failed, tasId: '" + task.getId() + "',  Response: " + response);
+		return null;
+	}
+
+	/**
+	 * Run an EC2 instance
+	 * @return true on success
+	 */
+	boolean runInstance() {
+		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();// Create and run instance
+		if (userData == null) userData = createStartupScript();// Create startup script & userData
+		RunInstancesRequest ec2req = createEc2InstanceRequest(resources);// Create instance request
+		Ec2Client ec2 = GprAws.ec2Client(resources.getRegion()); // Create EC2 client
+		instanceId = requestInstance(ec2, ec2req); // Request the instance
+		if (instanceId == null) return false; // Failed request?
+		addTags(ec2, resources); // Add tags
+		return true;
+	}
+
+	/**
+	 * Attempt to run an EC2 instance START_FAIL_MAX_ATTEMPTS sleeping
+	 * a random START_FAIL_SLEEP_RAND_TIME number of seconds between
+	 * each attempt
+	 *
+	 * @return true on success
+	 */
+	protected boolean runInstanceLoop() {
 		Random rand = new Random();
 		for (int i = 0; i < START_FAIL_MAX_ATTEMPTS; i++) {
+			boolean ok = runInstance();
+
 			// Success?
-			if (response.hasInstances()) {
-				instanceId = response.instances().get(0).instanceId();
-				return response;
-			}
+			if (ok) return true;
 
 			// Create instance failed. Sleep for a random time and re-try
 			int secs = rand.nextInt(START_FAIL_SLEEP_RAND_TIME);
-			System.err.println("WARNING: Create instance failed, sleeping " + secs + " seconds before re-trying. tasId: '" + task.getId() + "',  Response: " + response);
+			Timer.showStdErr("WARNING: Create instance failed, tasId: '" + task.getId() + "',  waiting " + secs + " seconds before next attempt");
+
 			try {
 				Thread.sleep(1000 * secs);
 			} catch (InterruptedException e) {
@@ -364,7 +389,14 @@ public class CmdAws extends Cmd {
 		if (debug) Timer.showStdErr("Uploading local checkpoint '" + task.getCheckpointLocalFile() + "' to S3 '" + checkpointS3 + "'");
 		chps3.upload(chp);
 
-		// TODO: Delete checkpoint once the session finishes. Use BdsThear.rmOnexit() and bds-exec (go)
+		// Delete checkpoint once the session finishes. Use BdsThear.rmOnexit() and bds-exec (go)
+		if (!Config.get().isLog()) {
+			BdsThread bdsThread = BdsThreads.getInstance().getOrRoot();
+			if (bdsThread != null) {
+				Data localCheckpointFile = Data.factory(task.getCheckpointLocalFile(), bdsThread);
+				bdsThread.rmOnExit(localCheckpointFile);
+			}
+		}
 	}
 
 }

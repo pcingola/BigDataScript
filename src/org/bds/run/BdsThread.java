@@ -70,7 +70,7 @@ public class BdsThread extends Thread implements Serializable {
 	Statement statement; // Main statement executed by this thread
 	RunState runState; // Latest RunState
 	int exitValue; // Exit value
-	List<String> removeOnExit; // Files to be removed on exit
+	List<Data> removeOnExit; // Files to be removed on exit
 	String reportFile; // Latest report file
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
@@ -254,7 +254,7 @@ public class BdsThread extends Thread implements Serializable {
 		}
 
 		// Store states
-		List<String> removeOnExitOri = removeOnExit;
+		List<Data> removeOnExitOri = removeOnExit;
 		BdsThread parentOri = parent;
 		Map<String, BdsThread> bdsChildThreadsByIdOri = bdsChildThreadsById;
 		TaskDependecies taskDependeciesOri = taskDependecies;
@@ -809,9 +809,9 @@ public class BdsThread extends Thread implements Serializable {
 				if (show) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
 			} else {
 				if (show) Timer.showStdErr("Deleting stale files:");
-				for (String fileName : removeOnExit) {
-					if (show) System.err.println("\t" + fileName);
-					data(fileName).delete();
+				for (Data dfile : removeOnExit) {
+					if (show) System.err.println("\t" + dfile);
+					dfile.delete();
 				}
 			}
 		}
@@ -837,17 +837,22 @@ public class BdsThread extends Thread implements Serializable {
 	/**
 	 * Remove the file on exit
 	 */
-	public synchronized void rmOnExit(Value vfile) {
-		String file = vfile.asString();
-		Data data = data(file);
-
+	public synchronized void rmOnExit(Data data) {
 		// Add file for removal
-		removeOnExit.add(data.getPath());
-
-		// Remove local (cached) copy of the file
-		if (data.isRemote() && (data.getLocalPath() != null)) removeOnExit.add(data.getLocalPath());
+		removeOnExit.add(data);
 	}
 
+	/**
+	 * Remove the file on exit
+	 */
+	public void rmOnExit(Value vfile) {
+		String file = vfile.asString();
+		rmOnExit(data(file));
+	}
+
+	/**
+	 * Remove the files on exit
+	 */
 	public synchronized void rmOnExit(ValueList files) {
 		for (Value v : files)
 			rmOnExit(v);

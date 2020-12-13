@@ -73,16 +73,11 @@ public class DataS3 extends DataRemote {
 	}
 
 	@Override
-	public boolean delete() {
-		if (!isFile()) return false; // Do not delete bucket
+	public boolean deleteRemote() {
+		if (!isFile()) return false; // Do not delete bucket or prefix
 		DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(key).build();
 		getS3Client().deleteObject(deleteObjectRequest);
 		return true;
-	}
-
-	@Override
-	public void deleteOnExit() {
-		if (verbose) Timer.showStdErr("Cannot delete file '" + this + "'");
 	}
 
 	/**
