@@ -44,11 +44,7 @@ public class TestCasesIntegrationTaskDetached extends TestCasesBase {
 		runAndCheck("test/run_task_detached_02.bds", "catout", catout);
 
 		// Wait
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		sleep(3);
 
 		String outAfterWait = Gpr.readFile(outFile);
 		Assert.assertEquals(outAfterWaitExpected, outAfterWait);
@@ -74,11 +70,7 @@ public class TestCasesIntegrationTaskDetached extends TestCasesBase {
 
 		runAndCheck("test/run_task_detached_03.bds", "catout", catout);
 
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		sleep(3);
 
 		String outAfterWait = Gpr.readFile(outFile);
 		Assert.assertEquals(outAfterWaitExpected, outAfterWait);

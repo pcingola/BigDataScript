@@ -1,26 +1,25 @@
 #!/usr/bin/env bds
 
 # 
-# Get AWS S3 parameters from $HOME/.bds/aws_test_bucket.txt
-# File format is 2 lines:
-#	line 1: Region
-#   line 2: Bucket name
-#
+# Get AWS S3 parameters from $HOME/.bds/aws_test_bucket.config
+# 
 
-string[] getAwsInfo() {
-	awsBucketFile := 'aws_test_bucket.txt'
+string{} getAwsInfo() {
+	awsBucketFile := 'aws_test_bucket.config'
 	bdsHomeDir := getVar('BDS_HOME', "$HOME/.bds")
 	file := "$bdsHomeDir/$awsBucketFile"
 	if( ! file.exists() ) error "Cannot file AWS bucket test information file '$file'"
-	return file.readLines()
+	return file.config()
 }
 
 string getAwsBucketName() return getAwsInfo()[1].trim()
 
 string getAwsRegion() return getAwsInfo()[0].trim()
 
-awsRegion := getAwsRegion()
-bucket := getAwsBucketName()
+taskResources := getAwsInfo()
+awsRegion := taskResources{'region'}
+bucket := taskResources{'bucket'}
+
 test := programName.removeExt()
 s3base := "s3://$bucket/tmp/bds/$test"
 tmpDir := getVar('TMPDIR', '/tmp')

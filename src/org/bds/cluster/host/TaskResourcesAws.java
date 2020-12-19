@@ -27,22 +27,26 @@ public class TaskResourcesAws extends TaskResources {
 
 	private static final long serialVersionUID = 20199650690952235L;
 
+	public static final String[] BUCKET = { "bucket" };
+	public static final String[] BLOCK_DEV_MAP = { "block-device-mappings", "blockDeviceMappings" };
+	public static final String[] KEEP_INSTANCE_ALIVE_AFTER_FINISH = { "keep-instance-alive-after-finish", "keepInstanceAliveAfterFinish" };
 	public static final String[] KEY_NAME = { "key-name", "keyName" };
 	public static final String[] IMAGE_ID = { "image-id", "imageId" };
 	public static final String[] INSTANCE_TYPE = { "instance-type", "instanceType" };
 	public static final String[] IP_ADDR = { "associate-public-ip-address", "public-ip-address", "public-ip", "associatePublicIpAddress", "publicIpAddress", "publicIp" };
 	public static final String[] PROFILE = { "iam-instance-profile", "instance-profile", "instanceProfile", "profile" };
-	public static final String[] SECURITY_GROUP_IDS = { "security-group-ids", "securityGroupIds", "security-group-id", "securityGroupId" };
-	public static final String[] SHUTDOWN_BEHAVIOUR = { "shutdown-behavior", "shutdownBehavior" };
-	public static final String[] KEEP_INSTANCE_ALIVE_AFTER_FINISH = { "keep-instance-alive-after-finish", "keepInstanceAliveAfterFinish" };
-	public static final String[] SUBNET_ID = { "subnet-id", "subnetId", "subnet-ids", "subnetIds" };
-	public static final String[] TAGS = { "tag-specifications", "tagSpecifications", "tags" };
 	public static final String[] REGION = { "region" };
 	public static final String[] S3_TMP = { "s3tmp", "s3_tmp", "s3-tmp" };
+	public static final String[] SECURITY_GROUP_IDS = { "security-group-ids", "securityGroupIds", "security-group-id", "securityGroupId" };
+	public static final String[] SHUTDOWN_BEHAVIOUR = { "shutdown-behavior", "shutdownBehavior" };
+	public static final String[] SUBNET_ID = { "subnet-id", "subnetId", "subnet-ids", "subnetIds" };
+	public static final String[] TAGS = { "tag-specifications", "tagSpecifications", "tags" };
+
 	protected static final String[] LIST_SEPARATORS = { "\t", ",", ";" };
 
 	protected String awsRole;
 	protected String blockDevMap;
+	protected String bucket;
 	protected String keyName;
 	protected String imageId;
 	protected String instanceType;
@@ -321,6 +325,8 @@ public class TaskResourcesAws extends TaskResources {
 	protected void setFromBdsThreadMap(ValueMap taskResources, boolean debug) {
 		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from map '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "': " + taskResources);
 		awsRole = mapGet(taskResources, PROFILE);
+		blockDevMap = mapGet(taskResources, BLOCK_DEV_MAP);
+		bucket = mapGet(taskResources, BUCKET);
 		imageId = mapGet(taskResources, IMAGE_ID);
 		instanceType = mapGet(taskResources, INSTANCE_TYPE);
 		keepInstanceAliveAfterFinish = Gpr.parseBoolSafe(mapGet(taskResources, KEEP_INSTANCE_ALIVE_AFTER_FINISH));

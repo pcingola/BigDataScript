@@ -245,7 +245,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
-	 * Find a task by ID
+	 * Find a task by ID, return null if not found
 	 */
 	public synchronized Task findTask(String id) {
 		Task t = tasksRunning.get(id);
@@ -289,6 +289,14 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	public ComputerSystem getSystem() {
 		return system;
+	}
+
+	public synchronized List<String> getTaskIds() {
+		List<String> tids = new ArrayList<>();
+		tids.addAll(getTaskIdsToRun()); // Add tasks "to run"
+		tids.addAll(tasksRunning.keySet()); // Add tasks running
+		tids.addAll(tasksDone.keySet()); // Add tasks done
+		return tids;
 	}
 
 	public synchronized List<String> getTaskIdsDone() {
