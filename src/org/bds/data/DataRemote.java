@@ -70,7 +70,8 @@ public abstract class DataRemote extends Data {
 	public boolean delete() {
 		if (!isFile()) return false;
 		boolean ok = deleteLocal();
-		ok = ok || deleteRemote();
+		ok = deleteRemote() || ok;
+		resetInfo();
 		return ok;
 	}
 
@@ -80,6 +81,7 @@ public abstract class DataRemote extends Data {
 	public boolean deleteLocal() {
 		String localFile = getLocalPath();
 		if (Config.get().isDebug()) Timer.showStdErr("Deleting local file '" + localFile + "', cached from remote file '" + this + "'");
+		resetInfo();
 		File f = new File(localFile);
 		return f.delete();
 	}
@@ -300,6 +302,10 @@ public abstract class DataRemote extends Data {
 		} catch (URISyntaxException e) {
 			throw new RuntimeException("Error building URI from: '" + uri + "' and '" + absPath + "'");
 		}
+	}
+
+	protected void resetInfo() {
+		latestUpdate = null;
 	}
 
 	@Override
