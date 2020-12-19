@@ -1,7 +1,8 @@
 package org.bds.test;
 
 import java.io.File;
-import java.util.GregorianCalendar;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -33,20 +34,25 @@ public class TestCasesBase {
 	public boolean debug = false;
 	public boolean verbose = false;
 
-	// Read bucket name from $HOME/.bds/aws_test_bucket.txt
+	// Read bucket name from $HOME/.bds/aws_test_bucket.config
 	protected String awsBucketName() {
-		return awsTestConfig()[1].trim();
+		return awsTestConfig().get("bucket").trim();
 	}
 
-	// Read bucket name from $HOME/.bds/aws_test_bucket.txt
+	// Read region from $HOME/.bds/aws_test_bucket.config
 	protected String awsRegion() {
-		return awsTestConfig()[0].trim();
+		return awsTestConfig().get("region").trim();
 	}
 
-	// Read bucket name from $HOME/.bds/aws_test_bucket.txt
-	protected String[] awsTestConfig() {
-		String awsBucketNameFile = Gpr.HOME + "/.bds/aws_test_bucket.txt";
-		return Gpr.readFile(awsBucketNameFile).split("\n");
+	// Read bucket name from $HOME/.bds/aws_test_bucket.config
+	protected Map<String, String> awsTestConfig() {
+		Map<String, String> keyValues = new HashMap<>();
+		String awsBucketNameFile = Gpr.HOME + "/.bds/aws_test_bucket.config";
+		for (String line : Gpr.readFile(awsBucketNameFile).split("\n")) {
+			String[] kv = line.split("\\t");
+			keyValues.put(kv[0], kv[1]);
+		}
+		return keyValues;
 	}
 
 	@Before
@@ -89,7 +95,7 @@ public class TestCasesBase {
 	 */
 	protected void checkS3File(String url, String region, String bucket, String path, String paren, String txt) {
 		int objectSize = txt.length();
-		long now = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis();
+		long now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis();
 
 		//		Data d = Data.factory(url);
 		DataS3 d = new DataS3(url, region);

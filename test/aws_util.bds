@@ -12,9 +12,9 @@ string{} getAwsInfo() {
 	return file.config()
 }
 
-string getAwsBucketName() return getAwsInfo()[1].trim()
+string getAwsBucketName() return getAwsInfo(){'bucket'}.trim()
 
-string getAwsRegion() return getAwsInfo()[0].trim()
+string getAwsRegion() return getAwsInfo(){'region'}.trim()
 
 taskResources := getAwsInfo()
 awsRegion := taskResources{'region'}
