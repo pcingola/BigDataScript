@@ -2,6 +2,11 @@ package org.bds.test.integration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.Random;
 
 import org.bds.Config;
@@ -26,6 +31,20 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	public void beforeEachTest() {
 		Config.reset();
 		Config.get().load();
+
+		// Delete 'tmp' download dir
+		String tmpDownloadDir = Config.get().getTmpDir() + "/" + DataRemote.TMP_BDS_DATA;
+		Gpr.debug("Deleting tmp download dir '" + tmpDownloadDir + "'");
+		try {
+			Files.walk(Paths.get(tmpDownloadDir)) //
+					.map(Path::toFile) //
+					.sorted(Comparator.reverseOrder()) //
+					.forEach(File::delete);
+		} catch (NoSuchFileException e) {
+			// OK
+		} catch (IOException e) {
+			throw new RuntimeException("Error deleting tmp directory '" + tmpDownloadDir + "'", e);
+		}
 	}
 
 	String getCurrPath() {
