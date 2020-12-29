@@ -1,4 +1,6 @@
 
+include aws_util
+
 println "Before"
 
 out := "$s3base/out.txt"

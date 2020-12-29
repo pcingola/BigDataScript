@@ -66,4 +66,13 @@ public class TestCasesIntegrationAws extends TestCasesBase {
 		throw new RuntimeException("UNIMPLEMENTED!");
 	}
 
+	/**
+	 * Execute a detached task on AWS
+	 */
+	@Test
+	public void test07_DetachedAwsTask() {
+		Gpr.debug("Test");
+		throw new RuntimeException("UNIMPLEMENTED!!!");
+	}
+
 }
