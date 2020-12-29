@@ -47,7 +47,7 @@ public class TestCasesBase {
 	// Read bucket name from $HOME/.bds/aws_test_bucket.config
 	protected Map<String, String> awsTestConfig() {
 		Map<String, String> keyValues = new HashMap<>();
-		String awsBucketNameFile = Gpr.HOME + "/.bds/aws_test_bucket.config";
+		String awsBucketNameFile = Gpr.HOME + "/.bds/aws_test.config";
 		for (String line : Gpr.readFile(awsBucketNameFile).split("\n")) {
 			String[] kv = line.split("\\t");
 			keyValues.put(kv[0], kv[1]);

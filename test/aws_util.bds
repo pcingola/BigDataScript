@@ -4,8 +4,9 @@
 # Get AWS S3 parameters from $HOME/.bds/aws_test_bucket.config
 # 
 
+# Load an AWS config 'name' file
 string{} getAwsInfo() {
-	awsBucketFile := 'aws_test_bucket.config'
+	awsBucketFile := 'aws_test.config'
 	bdsHomeDir := getVar('BDS_HOME', "$HOME/.bds")
 	file := "$bdsHomeDir/$awsBucketFile"
 	if( ! file.exists() ) error "Cannot file AWS bucket test information file '$file'"

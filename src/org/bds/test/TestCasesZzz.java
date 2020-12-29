@@ -109,6 +109,7 @@ public class TestCasesZzz extends TestCasesBase {
 		Gpr.debug("Test");
 
 		verbose = true;
+		debug = true;
 
 		// Set the output file
 		String bucket = awsBucketName();
