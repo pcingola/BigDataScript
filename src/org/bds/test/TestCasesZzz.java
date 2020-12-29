@@ -15,6 +15,7 @@ import org.bds.task.Task;
 import org.bds.util.Gpr;
 import org.bds.util.GprAws;
 import org.junit.Before;
+import org.junit.Test;
 
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
@@ -95,6 +96,14 @@ public class TestCasesZzz extends TestCasesBase {
 			}
 		}
 		throw new RuntimeException("Could not find any instance ID '" + instanceId + "' in state in response: " + response);
+	}
+
+	/**
+	 * Task input in s3, output local file
+	 */
+	@Test
+	public void test34_TaskInS3OutLocal() {
+		runAndCheck("test/remote_34.bds", "outStr", "OK");
 	}
 
 	//	/**
