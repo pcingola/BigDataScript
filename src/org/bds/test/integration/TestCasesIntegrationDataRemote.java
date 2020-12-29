@@ -20,12 +20,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test cases for "remote" Data files
+ * Test cases for DataRemote files
  *
  * @author pcingola
  *
  */
-public class TestCasesIntegrationRemote extends TestCasesBase {
+public class TestCasesIntegrationDataRemote extends TestCasesBase {
 
 	@Before
 	public void beforeEachTest() {
@@ -34,7 +34,6 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 
 		// Delete 'tmp' download dir
 		String tmpDownloadDir = Config.get().getTmpDir() + "/" + DataRemote.TMP_BDS_DATA;
-		Gpr.debug("Deleting tmp download dir '" + tmpDownloadDir + "'");
 		try {
 			Files.walk(Paths.get(tmpDownloadDir)) //
 					.map(Path::toFile) //
@@ -59,7 +58,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Test parsing a remote HTTP file (DataHttp)
 	 */
 	@Test
-	public void test01_parse_URLs_http() {
+	public void test01_parseUrlHttp() {
 		Gpr.debug("Test");
 
 		Data d = Data.factory("http://www.google.com/index.html");
@@ -101,7 +100,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Test parsing a remote AWS S3 file (DataS3)
 	 */
 	@Test
-	public void test01_parse_URLs_s3() {
+	public void test01_parseUrlS3() {
 		Gpr.debug("Test");
 
 		String bucket = awsBucketName();
@@ -124,7 +123,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Test parsing a remote AWS S3 file (DataS3) using "virtual hosting" style URL
 	 */
 	@Test
-	public void test01_parse_URLs_s3_virtual_host() {
+	public void test01_parseUrlS3VirtualHost() {
 		Gpr.debug("Test");
 
 		String bucket = awsBucketName();
@@ -141,77 +140,10 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	}
 
 	/**
-	 * Test executing a task with a remote dependency
+	 * Download a remote file using `file.download()`
 	 */
 	@Test
-	public void test03_task_URL() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_03.bds", "first", "<!DOCTYPE html>");
-	}
-
-	/**
-	 * Test executing a task with a remote dependency
-	 * Replacement of task's `sys` command within double quotes
-	 */
-	@Test
-	public void test04_task_URL() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_04.bds", "first", "<!DOCTYPE html>");
-	}
-
-	/**
-	 * Test executing a task with a remote dependency
-	 * Replacement of task's `sys` command within single quotes
-	 */
-	@Test
-	public void test05_task_URL() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_05.bds", "first", "<!DOCTYPE html>");
-	}
-
-	/**
-	 * Test executing a task with multiple remote dependencies
-	 */
-	@Test
-	public void test06_task_URL() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_06.bds", "first", "<!DOCTYPE html>");
-	}
-
-	/**
-	 * Test executing a task with multiple remote dependencies in a list
-	 */
-	@Test
-	public void test07_task_URL() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_07.bds", "first", "<!DOCTYPE html>");
-	}
-
-	/**
-	 * Test executing a task with multiple remote dependencies in a list
-	 * Replacement of task's `sys` command with list variables
-	 */
-	@Test
-	public void test08_task_URL() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_08.bds", "first", "<!DOCTYPE html>");
-	}
-
-	/**
-	 * Test executing a task with a remote dependency
-	 * Replacement of task's `sys` command with literal references
-	 */
-	@Test
-	public void test09_task_URL() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_09.bds", "first", "<!DOCTYPE html>");
-	}
-
-	/**
-	 * Download a remote file
-	 */
-	@Test
-	public void test10_download() {
+	public void test10_DownloadHttpFunction() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_10.bds", "locFile", "/tmp/bds/http/pcingola/github/io/BigDataScript/index.html");
 	}
@@ -234,10 +166,10 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	}
 
 	/**
-	 * Download a remote file to a specific location
+	 * Download a remote file to a specific local file
 	 */
 	@Test
-	public void test11_download() {
+	public void test11_DownloadHttpToLocalFile() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_11.bds", "ok", "true");
 	}
@@ -246,7 +178,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Upload a local file to AWS S3
 	 */
 	@Test
-	public void test12_upload() {
+	public void test12_UploadS3() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_12.bds", "ok", "true");
 	}
@@ -414,10 +346,10 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	}
 
 	/**
-	 * Creating and readin an AWS S3 file
+	 * Creating and reading an AWS S3 file
 	 */
 	@Test
-	public void test18_S3() {
+	public void test18_S3WriteS3Read() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_18.bds", "ok", "true");
 	}
@@ -426,7 +358,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Downloading with FTP
 	 */
 	@Test
-	public void test19_ftp_download() {
+	public void test19_FtpDownload() {
 		Gpr.debug("Test");
 		String localFilePath = runAndGet("test/remote_19.bds", "fLocal").toString();
 
@@ -440,25 +372,25 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Checking a remote FTP file exists
 	 */
 	@Test
-	public void test20_ftp_exists() {
+	public void test20_FtpExists() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_20.bds", "fExists", "true");
 	}
 
 	/**
-	 * Listing a remote FTP directory
+	 * Listing a remote FTP directory and getting the file base names
 	 */
 	@Test
-	public void test21_ftp_dir() {
+	public void test21_FtpDirBasename() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_21.bds", "dHasReadme", "true");
 	}
 
 	/**
-	 * Listing a remote FTP directory
+	 * Listing a remote FTP directory `d.dirPath()`
 	 */
 	@Test
-	public void test22_ftp_dir() {
+	public void test22_FtpDirPath() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_22.bds", "dHasReadme", "true");
 	}
@@ -467,7 +399,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Downloading an FTP remote file using user credentials
 	 */
 	@Test
-	public void test23_ftp_download_with_user() {
+	public void test23_FtpDownloadWithUserAndPasswd() {
 		Gpr.debug("Test");
 		String localFilePath = runAndGet("test/remote_23.bds", "fLocal").toString();
 
@@ -481,34 +413,34 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Checking a remote FTP file exists, using user credentials
 	 */
 	@Test
-	public void test24_ftp_exists() {
+	public void test24_FtpExistsWithUserAndPasswd() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_24.bds", "fExists", "true");
 	}
 
 	/**
-	 * Listing a remote FTP directory, using user credentials (`dir()`)
+	 * Listing a remote FTP directory, using user credentials: `d.dir()`
 	 */
 	@Test
-	public void test25_ftp_dir() {
+	public void test25_FtpDirWithUserAndPasswd() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_25.bds", "dHasReadme", "true");
 	}
 
 	/**
-	 * Listing a remote FTP directory, using user credentials (`dirPath()`)
+	 * Listing a remote FTP directory, using user credentials: `d.dirPath()`)
 	 */
 	@Test
-	public void test26_ftp_dir() {
+	public void test26_FtpDirPathWithUserAndPasswd() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_26.bds", "dHasReadme", "true");
 	}
 
 	/**
-	 * Listing a remote FTP directory using regex (`dir(regex)`)
+	 * Listing a remote FTP directory using regex: `d.dir(regex)`
 	 */
 	@Test
-	public void test27_ftp_dir() {
+	public void test27_FtpDirRegex() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_27.bds", "dd", "[Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
@@ -517,7 +449,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Listing a remote FTP directory using regex (`dirPath(regex)`)
 	 */
 	@Test
-	public void test28_ftp_dirPath() {
+	public void test28_FtpDirPathRegex() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_28.bds", "dd", "[ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
@@ -526,7 +458,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Listing a remote HTTP directory using regex (`dirPath(regex)`)
 	 */
 	@Test
-	public void test29_http_dir() {
+	public void test29_HttpDirPathRegex() {
 		Gpr.debug("Test");
 		runAndCheck("test/remote_29.bds", "dd", "[http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
@@ -535,16 +467,16 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Listing a remote HTTP directory using regex (`dir(regex)`)
 	 */
 	@Test
-	public void test30_http_dir() {
+	public void test30_HttpDirRegex() {
 		Gpr.debug("Test");
-		runAndCheck("test/remote_29.bds", "dd", "[Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
+		runAndCheck("test/remote_30.bds", "dd", "[Homo_sapiens.GRCh37.75.dna.toplevel.fa.gz]");
 	}
 
 	/**
 	 * Creating and listing a remote AWS S3 directory using `path.dir()`
 	 */
 	@Test
-	public void test31_s3_dir() {
+	public void test31_S3Dir() {
 		Gpr.debug("Test");
 
 		String bucket = awsBucketName();
@@ -562,7 +494,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Creating and listing a remote AWS S3 directory using `path.dir(regex)`
 	 */
 	@Test
-	public void test32_s3_dirPath() {
+	public void test32_S3DirRegex() {
 		Gpr.debug("Test");
 		String bucket = awsBucketName();
 
@@ -579,7 +511,7 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 	 * Creating and listing a remote AWS S3 directory using `path.dirPath(regex)`
 	 */
 	@Test
-	public void test33_s3_dirPath() {
+	public void test33_S3DirPathRegex() {
 		Gpr.debug("Test");
 		String bucket = awsBucketName();
 		String region = awsRegion();
@@ -593,30 +525,6 @@ public class TestCasesIntegrationRemote extends TestCasesBase {
 		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi.txt", region, "OK");
 		createS3File("s3://" + bucket + "/tmp/bds/remote_33/test_remote_33/hi_2.txt", region, "OK");
 		runAndCheck("test/remote_33.bds", "dd", "[" + urlParen + "/bye.txt, " + urlParen + "/bye_2.txt]");
-	}
-
-	/**
-	 * Task input in s3, output local file
-	 */
-	@Test
-	public void test34() {
-		runAndCheck("test/remote_34.bds", "outStr", "OK");
-	}
-
-	/**
-	 *  Task input local, output s3 file
-	 */
-	@Test
-	public void test35() {
-		runAndCheck("test/remote_35.bds", "outStr", "IN: 'remote_35'");
-	}
-
-	/**
-	 * Task input from S3, output to S3
-	 */
-	@Test
-	public void test36() {
-		runAndCheck("test/remote_36.bds", "outStr", "IN: 'remote_36'");
 	}
 
 }

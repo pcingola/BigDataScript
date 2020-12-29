@@ -15,7 +15,6 @@ import org.bds.task.Task;
 import org.bds.util.Gpr;
 import org.bds.util.GprAws;
 import org.junit.Before;
-import org.junit.Test;
 
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
@@ -96,16 +95,6 @@ public class TestCasesZzz extends TestCasesBase {
 			}
 		}
 		throw new RuntimeException("Could not find any instance ID '" + instanceId + "' in state in response: " + response);
-	}
-
-	/**
-	 * Test executing a task with a remote dependency
-	 * Replacement of task's `sys` command within double quotes
-	 */
-	@Test
-	public void test04_task_URL() {
-		Gpr.debug("Test");
-		runAndCheck("test/remote_04.bds", "first", "<!DOCTYPE html>");
 	}
 
 	//	/**
