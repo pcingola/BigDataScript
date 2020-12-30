@@ -23,7 +23,21 @@ public interface BdsLog {
 	 */
 	default String debugMessagePrepend() {
 		StackTraceElement ste = new Exception().getStackTrace()[2];
-		return logMessagePrepend() + ", " + getClass().getSimpleName() + "." + ste.getMethodName() + ":" + ste.getLineNumber();
+		String logmsg = logMessagePrepend();
+
+		// Class where source code is executing (e.g. inherited method)
+		String srcClass = ste.getClassName();
+		int ind = srcClass.lastIndexOf('.');
+		srcClass = srcClass.substring(ind + 1);
+
+		// This class
+		String thisClass = getClass().getSimpleName();
+
+		return logmsg //
+				+ (logmsg.isEmpty() ? "" : ", ") //
+				+ (thisClass.equals(srcClass) ? "" : thisClass + " ") // Show class only if different than source code class
+				+ srcClass + "." + ste.getMethodName() + ":" + ste.getLineNumber() //
+		;
 	}
 
 	/**

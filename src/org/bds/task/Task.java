@@ -82,6 +82,8 @@ public class Task implements Serializable, BdsLog {
 		}
 		taskDependency = new TaskDependency(bdsNode);
 		resources = null;
+		debug = Config.get().isDebug();
+		verbose = Config.get().isVerbose();
 		reset();
 	}
 
@@ -137,6 +139,7 @@ public class Task implements Serializable, BdsLog {
 			return false;
 
 		default:
+			debug("Cannot change from state '" + taskState + "' to '" + newState + "'");
 			return false;
 		}
 	}
@@ -638,7 +641,7 @@ public class Task implements Serializable, BdsLog {
 	public synchronized void state(TaskState newState) {
 		if (newState == null) throw new RuntimeException("Cannot change to 'null' state.\n" + this);
 		if (newState == taskState) return; // Same state, nothing to do
-
+		TaskState oldState = taskState;
 		switch (newState) {
 		case SCHEDULED:
 			if (taskState == TaskState.NONE) setState(newState);
@@ -702,14 +705,16 @@ public class Task implements Serializable, BdsLog {
 
 		case DETACHED:
 			if (taskState == TaskState.STARTED) {
-				setState(newState);
 				runningStartTime = new Date();
+				setState(newState);
 			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
 		default:
 			throw new RuntimeException("Unimplemented state: '" + newState + "'");
 		}
+
+		debug("State change from '" + oldState + "' to '" + taskState + "', task Id '" + getId() + "'");
 
 		// Finished OK? Check that output files are OK as well
 		if (isStateFinished()) {

@@ -17,6 +17,7 @@ import org.bds.run.BdsThread;
 import org.bds.task.DependencyState;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
+import org.bds.util.Gpr;
 import org.bds.util.TextTable;
 import org.bds.util.Timer;
 import org.bds.util.Tuple;
@@ -904,7 +905,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// A "detached" task is considered to be successful right after starting, we don't follow it
 		if (!task.isDetached()) follow(task); // Follow STDOUT and STDERR
-		else debug("Task detached '" + task.getId() + "', not following");
+		else debug("Task detached, not following '" + task.getId() + "'");
 
 		return true;
 	}
@@ -938,15 +939,22 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		ArrayList<Tuple<Task, TaskState>> taskUpdateStatesNew = new ArrayList<>();
 
 		// Update each task sequentially, to avoid race conditions
+		Gpr.debug("DEBUG!!! taskUpdateStates.size() = " + taskUpdateStates.size());
+		for (Tuple<Task, TaskState> taskAndState : taskUpdateStates) {
+			Gpr.debug("\t\ttask.id = " + taskAndState.first.getId() + "\tstate: " + taskAndState.second);
+		}
 		for (Tuple<Task, TaskState> taskAndState : taskUpdateStates) {
 			Task task = taskAndState.first;
 			TaskState state = taskAndState.second;
 
 			// Try to change state
 			boolean ok = false;
+
 			if (state.isStarted()) ok = taskUpdateStarted(task);
 			else if (state.isRunning()) ok = taskUpdateRunning(task);
 			else ok = taskUpdateFinished(task, state);
+
+			debug("Task state updated to '" + task.getTaskState() + "', task ID '" + task.getId() + "'");
 
 			// Could not change state? Keep task update
 			if (!ok) taskUpdateStatesNew.add(taskAndState);

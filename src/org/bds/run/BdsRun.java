@@ -420,7 +420,7 @@ public class BdsRun implements BdsLog {
 		//---
 		// Kill all executioners
 		//---
-		debug("Finished: Killinig executioners");
+		debug("Finished: Killing executioners");
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
 

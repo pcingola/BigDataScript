@@ -1,10 +1,8 @@
+println "Start"
 
-
-system := 'aws'
-
-task {
+task(detached := true) {
 	sys echo hi
-	sys sleep 1
+	sys sleep 3
 	sys echo bye
 }
 
