@@ -24,8 +24,8 @@ public abstract class Cmd extends Thread implements BdsLog {
 	protected String id;
 	protected String commandArgs[]; // Command and arguments
 	protected String error = ""; // Errors
-	protected boolean executing = false;
-	protected boolean started = false; // Command states
+	private boolean executing = false; // Command state: Executing
+	private boolean started = false; // Command state: Started
 	protected int exitValue = 0; // Command exit value
 	protected Task task = null; // Task corresponding to this cmd
 	protected Host host; // Host to execute command (in case it's ssh)
@@ -51,18 +51,49 @@ public abstract class Cmd extends Thread implements BdsLog {
 	}
 
 	/**
+	 * Update internal command state: Done
+	 */
+	protected void cmdStateDone() {
+		started = true;
+		executing = false;
+	}
+
+	/**
+	 * Update internal command state: Executing
+	 */
+	protected void cmdStateExecuting() {
+		executing = true;
+	}
+
+	/**
+	 * Update internal command state: Running
+	 */
+	protected void cmdStateRunning() {
+		started = true;
+	}
+
+	/**
+	 * Update internal command state: Started
+	 */
+	protected void cmdStateStarted() {
+		started = true;
+	}
+
+	/**
 	 * Execute command
 	 * @return exitCode
 	 */
 	public int exec() {
 		// Prepare to execute task
 		try {
-			debug("Start");
-			executing = true;
+			debug("Start command '" + id + "'");
+			cmdStateExecuting();
 
 			// Prepare to execute
-			if (execPrepare()) stateStarted(); // We are ready to launch. Update states
-			else {
+			if (execPrepare()) {
+				cmdStateStarted();
+				stateStarted(); // We are ready to launch. Update states
+			} else {
 				execError(null, TaskState.START_FAILED, BdsThread.EXITCODE_ERROR);
 				return exitValue;
 			}
@@ -73,8 +104,9 @@ public abstract class Cmd extends Thread implements BdsLog {
 
 		// Execute command or wait for execution to finish
 		try {
+			cmdStateRunning(); // Command is executing
 			stateRunningBefore(); // Change state before executing command
-			debug("Running");
+			debug("Running command '" + id + "'");
 			execCmd();
 			stateRunningAfter(); // Change state after executing command (e.g. when sending a task to a cluster system)
 		} catch (Throwable t) {
@@ -83,8 +115,10 @@ public abstract class Cmd extends Thread implements BdsLog {
 		}
 
 		// OK, we are done. Clean up and notify.
-		debug("Done");
+		debug("Done command '" + id + "'");
 		execDone();
+		cmdStateDone(); // Command is done
+		stateDone(); // Change state after finished
 		return exitValue;
 	}
 
@@ -94,30 +128,23 @@ public abstract class Cmd extends Thread implements BdsLog {
 	protected abstract void execCmd() throws Exception;
 
 	/**
-	 * Finished executing a command, update states, notify
+	 * Clean up after finished executing a command
 	 */
 	protected void execDone() {
-		stateDone();
-		if (task != null) {
-			task.setExitValue(exitValue);
-			if (notifyTaskState != null) notifyTaskState.taskFinished(task, null); // Notify end of execution
-		}
+		// Nothing to do
 	}
 
 	/**
 	 * Error while trying to 'exec' of a command, update states
 	 */
 	protected void execError(Throwable t, TaskState taskState, int exitCode) {
-		stateDone();
+		cmdStateDone();
 		exitValue = exitCode;
-
+		stateDone(taskState);
 		addError(t != null ? t.getMessage() : null);
-
-		if (debug && t != null) t.printStackTrace();
-
-		if (task != null) {
-			task.setExitValue(exitCode);
-			if (notifyTaskState != null) notifyTaskState.taskFinished(task, taskState);
+		if (debug && t != null) {
+			error("Error executing command '" + id + "':");
+			t.printStackTrace();
 		}
 	}
 
@@ -193,6 +220,35 @@ public abstract class Cmd extends Thread implements BdsLog {
 		return "'" + getCmdId() + "'";
 	}
 
+	/**
+	 * Update states: We are done. Either process finished or an error happened
+	 */
+	protected void notifyDone(TaskState taskState) {
+		if (task != null) {
+			task.setExitValue(exitValue);
+			// Notify end of execution
+			if (notifyTaskState != null) notifyTaskState.taskFinished(task, taskState);
+		}
+
+	}
+
+	/**
+	 * Update states: Running
+	 */
+	protected void notifyRunning() {
+		if (notifyTaskState != null) {
+			notifyTaskState.taskRunning(task);
+			if (task.isDetached()) notifyTaskState.taskFinished(task, TaskState.DETACHED);
+		}
+	}
+
+	/**
+	 * Change state: Started
+	 */
+	protected void notifyStarted() {
+		if (notifyTaskState != null) notifyTaskState.taskStarted(task);
+	}
+
 	@Override
 	public void run() {
 		exec();
@@ -231,17 +287,12 @@ public abstract class Cmd extends Thread implements BdsLog {
 		this.task = task;
 	}
 
-	/**
-	 * We are done. Either process finished or an pendingException was raised.
-	 */
 	protected void stateDone() {
-		started = true;
-		executing = false;
+		stateDone(null);
 	}
 
-	protected void stateRunning() {
-		started = true;
-		if (notifyTaskState != null) notifyTaskState.taskRunning(task);
+	protected void stateDone(TaskState taskState) {
+		notifyDone(taskState);
 	}
 
 	/**
@@ -255,12 +306,11 @@ public abstract class Cmd extends Thread implements BdsLog {
 	 * Change state before executing command
 	 */
 	protected void stateRunningBefore() {
-		stateRunning();
+		notifyRunning();
 	}
 
 	protected void stateStarted() {
-		started = true;
-		if (notifyTaskState != null) notifyTaskState.taskStarted(task);
+		notifyStarted();
 	}
 
 	@Override

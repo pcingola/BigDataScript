@@ -30,21 +30,8 @@ public class CmdCluster extends CmdLocal {
 	 * only means that the task is queued.
 	 */
 	@Override
-	protected void execDone() {
-		stateDone();
-		if (notifyTaskState != null) notifyTaskState.taskRunning(task);
-	}
-
-	@Override
 	protected void stateDone() {
-		started = true;
-		executing = false;
-	}
-
-	@Override
-	protected void stateRunning() {
-		started = true;
-		if (notifyTaskState != null) notifyTaskState.taskStarted(task);
+		notifyRunning();
 	}
 
 	/**
@@ -52,7 +39,7 @@ public class CmdCluster extends CmdLocal {
 	 */
 	@Override
 	protected void stateRunningAfter() {
-		stateRunning();
+		notifyStarted();
 	}
 
 	/**
@@ -65,7 +52,7 @@ public class CmdCluster extends CmdLocal {
 
 	@Override
 	protected void stateStarted() {
-		started = true;
+		// Nothing to do
 	}
 
 }

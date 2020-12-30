@@ -134,18 +134,6 @@ public class CmdAws extends Cmd {
 		// Nothing to do, we wait for the instance to finish using QueueThreadAwsSqs
 	}
 
-	/**
-	 * This command only created the instance
-	 * So, in this case, when the command finishes execution, it
-	 * only means that the task is going to be executed in an instance
-	 * that has just been started.
-	 */
-	@Override
-	protected void execDone() {
-		stateDone();
-		if (notifyTaskState != null) notifyTaskState.taskRunning(task);
-	}
-
 	@Override
 	protected boolean execPrepare() {
 		// If this is an improper task, we need to upload the checkpoint to S3
@@ -374,10 +362,36 @@ public class CmdAws extends Cmd {
 		return sb.toString();
 	}
 
+	/**
+	 * This command only created the instance
+	 * So, in this case, when the command finishes execution, it
+	 * only means that the task is going to be executed in an instance
+	 * that has just been started.
+	 */
 	@Override
 	protected void stateDone() {
-		started = true;
-		executing = false;
+		notifyRunning();
+	}
+
+	/**
+	 * Change state after executing command
+	 */
+	@Override
+	protected void stateRunningAfter() {
+		notifyStarted();
+	}
+
+	/**
+	 * Change state before executing command
+	 */
+	@Override
+	protected void stateRunningBefore() {
+		// Nothing to do
+	}
+
+	@Override
+	protected void stateStarted() {
+		// Nothing to do
 	}
 
 	/**

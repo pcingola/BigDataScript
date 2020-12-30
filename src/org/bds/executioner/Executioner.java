@@ -843,10 +843,12 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 */
 	protected synchronized boolean taskUpdateFinished(Task task, TaskState taskState) {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
+
+		if (task.isDetached() && taskState.isFinished()) taskState = TaskState.DETACHED;
 		if (!task.canChangeState(taskState)) return false;
 
 		String id = task.getId();
-		debug("Task finished '" + id + "'");
+		debug("Task update finished, state '" + taskState + "', task Id '" + id + "'");
 
 		// Cleanup command & host
 		Cmd cmd = getCmd(task);
@@ -895,7 +897,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Update task state to 'RUNNING'
 	 */
 	protected synchronized boolean taskUpdateRunning(Task task) {
-		debug("Task running '" + task.getId() + "'");
+		debug("Task update running '" + task.getId() + "'");
 
 		if (task.isDone()) return true; // Already finished, nothing to do
 
@@ -914,7 +916,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Task has been started: Update to 'STARTED' state
 	 */
 	protected synchronized boolean taskUpdateStarted(Task task) {
-		debug("Task started '" + task.getId() + "'");
+		debug("Task update started '" + task.getId() + "'");
 
 		if (task.isStarted()) return true; // Already started, nothing to do
 		if (!task.canChangeState(TaskState.STARTED)) return false;

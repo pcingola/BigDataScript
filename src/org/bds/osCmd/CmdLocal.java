@@ -44,7 +44,12 @@ public class CmdLocal extends Cmd {
 	@Override
 	protected void execCmd() throws Exception {
 		// Wait for the process to finish and store exit value
-		exitValue = process.waitFor();
+		if (task != null && task.isDetached()) {
+			debug("Task is detached, not waiting for command '" + id + "'");
+		} else {
+			debug("Waiting for command to finish command '" + id + "'");
+			exitValue = process.waitFor();
+		}
 	}
 
 	@Override

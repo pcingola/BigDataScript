@@ -2,7 +2,7 @@ println "Start"
 
 task(detached := true) {
 	sys echo hi
-	sys sleep 3
+	sys sleep 5
 	sys echo bye
 }
 
