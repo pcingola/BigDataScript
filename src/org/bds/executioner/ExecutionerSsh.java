@@ -6,7 +6,6 @@ import org.bds.cluster.host.HostSsh;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.CmdSsh;
 import org.bds.task.Task;
-import org.bds.util.Timer;
 
 /**
  * Execute tasks in a remote computer, using ssh
@@ -56,7 +55,7 @@ public class ExecutionerSsh extends ExecutionerFileSystem {
 			cmdStr += arg + " ";
 
 		// Run command
-		if (debug) Timer.showStdErr("Running command: " + cmdStr);
+		debug("Running command: " + cmdStr);
 		CmdSsh cmd = new CmdSsh(task.getId(), args);
 		return cmd;
 	}

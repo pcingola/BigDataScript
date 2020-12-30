@@ -10,7 +10,6 @@ import org.bds.Config;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.task.Task;
-import org.bds.util.Timer;
 
 /**
  * Check that tasks are still running, by running an OS command
@@ -171,7 +170,7 @@ public class CheckTasksRunningCmd extends CheckTasksRunning {
 
 		// Execute command
 		cmdExecResult = Exec.exec(args, true);
-		if (debug) Timer.showStdErr("Check task running:" //
+		debug("Check task running:" //
 				+ "\n\tCommand    : '" + cmdsb.toString().trim() + "'" //
 				+ "\n\tExit value : " + cmdExecResult.exitValue //
 				+ "\n\tStdout     : " + cmdExecResult.stdOut //
@@ -184,13 +183,13 @@ public class CheckTasksRunningCmd extends CheckTasksRunning {
 
 		// Failed command?
 		if (cmdExecResult.exitValue > 0) {
-			Timer.showStdErr("WARNING: There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'.\nExit code: " + cmdExecResult.exitValue);
+			warning("There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'.\nExit code: " + cmdExecResult.exitValue);
 			return false;
 		}
 
 		// Any problems reported on STDERR?
 		if (!cmdExecResult.stdErr.isEmpty()) {
-			Timer.showStdErr("WARNING: There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'\nSTDERR:\n" + cmdExecResult.stdErr);
+			warning("There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'\nSTDERR:\n" + cmdExecResult.stdErr);
 			return false;
 		}
 
@@ -199,7 +198,7 @@ public class CheckTasksRunningCmd extends CheckTasksRunning {
 		// zero processes is really weird. Furthermore, this commands usually show some
 		// kind of header, so STDOUT is never empty
 		if (verbose && cmdExecResult.stdOut.isEmpty()) {
-			Timer.showStdErr("WARNING: Empty STDOUT when executing cluster stat command: '" + cmdsb.toString().trim());
+			warning("Empty STDOUT when executing cluster stat command: '" + cmdsb.toString().trim());
 			return false;
 		}
 

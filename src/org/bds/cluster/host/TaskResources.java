@@ -3,7 +3,6 @@ package org.bds.cluster.host;
 import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.run.BdsThread;
 import org.bds.scope.GlobalScope;
-import org.bds.util.Timer;
 
 /**
  * Represents resources consumed by a task
@@ -54,8 +53,7 @@ public class TaskResources extends Resources {
 	 * @param bdsThread
 	 */
 	public void setFromBdsThread(BdsThread bdsThread) {
-		if (bdsThread.isDebug()) Timer.showStdErr(this.getClass().getName() + " : Setting resources from bds variables");
-
+		debug("Setting resources from bds variables");
 		setCpus((int) bdsThread.getInt(GlobalScope.GLOBAL_VAR_TASK_OPTION_CPUS));
 		setMem(bdsThread.getInt(GlobalScope.GLOBAL_VAR_TASK_OPTION_MEM));
 		setWallTimeout(bdsThread.getInt(GlobalScope.GLOBAL_VAR_TASK_OPTION_WALL_TIMEOUT));

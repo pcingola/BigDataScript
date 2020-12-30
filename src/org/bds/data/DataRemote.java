@@ -80,7 +80,7 @@ public abstract class DataRemote extends Data {
 	 */
 	public boolean deleteLocal() {
 		String localFile = getLocalPath();
-		if (Config.get().isDebug()) Timer.showStdErr("Deleting local file '" + localFile + "', cached from remote file '" + this + "'");
+		debug("Deleting local file '" + localFile + "', cached from remote file '" + this + "'");
 		resetInfo();
 		File f = new File(localFile);
 		return f.delete();
@@ -90,7 +90,7 @@ public abstract class DataRemote extends Data {
 	public void deleteOnExit() {
 		BdsThread bdsThread = BdsThreads.getInstance().getOrRoot();
 		if (bdsThread != null) {
-			if (Config.get().isDebug()) Timer.showStdErr("Deleting on exit '" + this + "'");
+			debug("Deleting on exit '" + this + "'");
 			bdsThread.rmOnExit(this);
 		}
 		throw new RuntimeException("Could not get Bds thread!");
@@ -166,7 +166,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isDownloaded(Data local) {
-		if (debug) Gpr.debug("Comparing local file '" + local + "' to remote file '" + this + "'");
+		debug("Comparing local file '" + local + "' to remote file '" + this + "'");
 
 		// Is there a local file
 		if (!local.exists()) return false;
@@ -197,7 +197,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isUploaded(Data local) {
-		if (debug) Gpr.debug("Comparing local file '" + local + "' to remote file '" + this + "'");
+		debug("Comparing local file '" + local + "' to remote file '" + this + "'");
 
 		// Is there a local file
 		if (!local.exists()) return false;

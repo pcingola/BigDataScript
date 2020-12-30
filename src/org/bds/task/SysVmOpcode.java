@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import org.bds.BdsLogger;
 import org.bds.Config;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.ExpressionSys;
@@ -12,7 +13,6 @@ import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
 import org.bds.scope.GlobalScope;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * Execute a 'sys' VM opcode
@@ -148,7 +148,7 @@ public class SysVmOpcode {
 		// Select file name
 		String sysId = sysId();
 		String programFileName = getSysFileName(sysId);
-		if (Config.get().isDebug()) Timer.showStdErr("Task: Saving file '" + programFileName + "'");
+		BdsLogger.debug("Task: Saving file '" + programFileName + "'");
 
 		// Create dir
 		try {

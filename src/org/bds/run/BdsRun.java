@@ -37,7 +37,6 @@ import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.task.TaskDependecies;
-import org.bds.util.Gpr;
 import org.bds.util.Timer;
 import org.bds.vm.BdsVm;
 import org.bds.vm.BdsVmAsm;
@@ -158,7 +157,7 @@ public class BdsRun implements BdsLog {
 	BdsVm compileAsm(ProgramUnit programUnit) {
 		try {
 			String asm = programUnit.toAsm();
-			if (debug) Timer.showStdErr("Assembly code:\n" + asm);
+			debug("Assembly code:\n" + asm);
 
 			// Compile assembly
 			BdsVmAsm vmasm = new BdsVmAsm(programUnit);
@@ -180,7 +179,7 @@ public class BdsRun implements BdsLog {
 	 * @return True if compiled OK
 	 */
 	boolean compileBds() {
-		if (debug) Timer.showStdErr("Parsing");
+		debug("Parsing");
 		BdsCompiler compiler = new BdsCompiler(programFileName);
 		programUnit = compiler.compile();
 
@@ -350,14 +349,14 @@ public class BdsRun implements BdsLog {
 	 * @return true if automatic help is shown and program should finish
 	 */
 	boolean parseCmdLineArgs() {
-		if (debug) Timer.showStdErr("Initializing");
+		debug("Initializing");
 		BdsParseArgs bdsParseArgs = new BdsParseArgs(programUnit, programArgs);
 		bdsParseArgs.setDebug(debug);
 		bdsParseArgs.parse();
 
 		// Show script's automatic help message
 		if (bdsParseArgs.isShowHelp()) {
-			if (debug) Timer.showStdErr("Showing automaic 'help'");
+			debug("Showing automaic 'help'");
 			HelpCreator hc = new HelpCreator(programUnit);
 			System.out.println(hc);
 			return true;
@@ -416,12 +415,12 @@ public class BdsRun implements BdsLog {
 			throw new RuntimeException("Unimplemented action '" + bdsAction + "'");
 		}
 
-		if (debug) Timer.showStdErr("Finished. Exit code: " + exitValue);
+		debug("Finished. Exit code: " + exitValue);
 
 		//---
 		// Kill all executioners
 		//---
-		if (debug) Gpr.debug("Finished: Killinig executioners");
+		debug("Finished: Killinig executioners");
 		for (Executioner executioner : executioners.getAll())
 			executioner.kill();
 
@@ -439,10 +438,7 @@ public class BdsRun implements BdsLog {
 	int runBdsThread() {
 		// Create & run thread
 		BdsThread bdsThread = new BdsThread(programUnit, config, vm);
-		if (debug) {
-			Timer.showStdErr("Process ID: " + bdsThread.getBdsThreadId());
-			Timer.showStdErr("Running");
-		}
+		debug("Process ID '" + bdsThread.getBdsThreadId() + "': Running");
 
 		// Run and get exit code
 		int exitCode = runThread(bdsThread);
@@ -477,7 +473,7 @@ public class BdsRun implements BdsLog {
 		}
 
 		// All set, run main thread
-		if (debug) Timer.showStdErr("Running from checkpoint");
+		debug("Running from checkpoint");
 		return runThread(bdsThread);
 	}
 
@@ -486,7 +482,7 @@ public class BdsRun implements BdsLog {
 	 */
 	int runCompile() {
 		// Compile, abort on errors
-		if (debug) Timer.showStdErr("Compiling");
+		debug("Compiling");
 		CompileCode ccode = compile();
 		switch (ccode) {
 		case OK:
@@ -520,7 +516,7 @@ public class BdsRun implements BdsLog {
 		programUnit = bdsThread.getProgramUnit();
 
 		// All set, run main thread
-		if (debug) Timer.showStdErr("Running task improper");
+		debug("Running task improper");
 		return runThread(bdsThread);
 	}
 
@@ -545,7 +541,7 @@ public class BdsRun implements BdsLog {
 		}
 
 		// Run tests
-		if (debug) Timer.showStdErr("Running tests");
+		debug("Running tests");
 
 		// For each "test*()" function in ProgramUnit, create a thread that executes the function's body
 		List<FunctionDeclaration> testFuncs = programUnit.findTestsFunctions();

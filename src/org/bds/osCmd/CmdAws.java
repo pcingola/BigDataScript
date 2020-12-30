@@ -18,7 +18,6 @@ import org.bds.run.BdsThreads;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 import org.bds.util.GprAws;
-import org.bds.util.Timer;
 
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.ec2.Ec2Client;
@@ -92,11 +91,12 @@ public class CmdAws extends Cmd {
 			// Attach tags to instance
 			CreateTagsRequest tagRequest = CreateTagsRequest.builder().resources(instanceId).tags(tags).build();
 			ec2.createTags(tagRequest);
-			if (Config.get().isVerbose()) Timer.showStdErr("Started AWS EC2 instance '" + instanceId + "'");
+			log("Started AWS EC2 instance '" + instanceId + "'");
 			task.setPid(instanceId);
 		} catch (Ec2Exception e) {
-			System.err.println(e.awsErrorDetails().errorMessage());
-			System.exit(1);
+			String msg = e.awsErrorDetails().errorMessage();
+			error(msg);
+			throw new RuntimeException(msg);
 		}
 	}
 
@@ -119,7 +119,7 @@ public class CmdAws extends Cmd {
 		if (!Config.get().isLog()) (new File(startupScriptFileName)).deleteOnExit();
 
 		// Write script to local file (logging)
-		if (Config.get().isDebug()) Timer.showStdErr("Writing startup script to '" + startupScriptFileName + "'");
+		debug("Writing startup script to '" + startupScriptFileName + "'");
 		Gpr.toFile(startupScriptFileName, script);
 		File f = new File(startupScriptFileName);
 		f.setExecutable(true);
@@ -192,18 +192,18 @@ public class CmdAws extends Cmd {
 		// Success?
 		if (response.hasInstances()) {
 			String instanceId = response.instances().get(0).instanceId();
-			if (Config.get().isDebug()) Timer.showStdErr("Created EC2 instance '" + instanceId + "', response: " + response);
+			debug("Created EC2 instance '" + instanceId + "', response: " + response);
 
 			// Save response to file
 			String responseFileName = Gpr.removeExt(task.getProgramFileName()) + ".ec2_request_response." + instanceId + ".txt";
-			if (Config.get().isDebug()) Timer.showStdErr("Saving EC2 response to file '" + responseFileName + "'");
+			debug("Saving EC2 response to file '" + responseFileName + "'");
 			Gpr.toFile(responseFileName, response);
 			if (!Config.get().isLog()) (new File(responseFileName)).deleteOnExit();
 
 			return instanceId;
 		}
 
-		Timer.showStdErr("WARNING: Create instance failed, tasId: '" + task.getId() + "',  Response: " + response);
+		error("Create instance failed, tasId: '" + task.getId() + "',  Response: " + response);
 		return null;
 	}
 
@@ -215,7 +215,7 @@ public class CmdAws extends Cmd {
 		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();// Create and run instance
 		if (userData == null) userData = createStartupScript();// Create startup script & userData
 		RunInstancesRequest ec2req = createEc2InstanceRequest(resources);// Create instance request
-		if (Config.get().isDebug()) Timer.showStdErr("Creating EC2 instance, request: " + ec2req);
+		debug("Creating EC2 instance, request: " + ec2req);
 		Ec2Client ec2 = GprAws.ec2Client(resources.getRegion()); // Create EC2 client
 		instanceId = requestInstance(ec2, ec2req); // Request the instance
 		if (instanceId == null) return false; // Failed request?

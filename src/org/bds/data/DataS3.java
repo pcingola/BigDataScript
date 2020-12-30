@@ -355,7 +355,7 @@ public class DataS3 extends DataRemote {
 		latestUpdate = new Timer(CACHE_TIMEOUT);
 
 		// Show information
-		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
+		debug("Updated infromation for '" + this + "'"//
 				+ "\n\tcanRead      : " + canRead //
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
@@ -372,7 +372,7 @@ public class DataS3 extends DataRemote {
 	public boolean upload(Data local) {
 		// Create and check file
 		if (!local.exists() || !local.isFile() || !local.canRead()) {
-			if (debug) Gpr.debug("Error accessing local file '" + getLocalPath() + "'");
+			debug("Error accessing local file '" + getLocalPath() + "'");
 			return false;
 		}
 

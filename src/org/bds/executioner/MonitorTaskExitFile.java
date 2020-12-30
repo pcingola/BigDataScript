@@ -58,10 +58,10 @@ public class MonitorTaskExitFile extends MonitorTask implements Serializable {
 			//     the file and the problem is gone.
 			File exitFile = new File(exitFileName);
 			boolean exitFileOk = exitFile.exists() && exitFile.length() > 0;
-			if (exitFileOk && debug) Timer.showStdErr("MonitorTask.updateFinished(): Found exit file '" + exitFileName + "'");
+			if (exitFileOk) debug("MonitorTask.updateFinished(): Found exit file '" + exitFileName + "'");
 
 			if (exitFileOk || task.isTimedOut()) {
-				if (debug) Timer.showStdErr("MonitorTask.updateFinished(): Adding task to list of finished tasks '" + task.getId() + "'");
+				debug("Adding task to list of finished tasks '" + task.getId() + "'");
 				// Create (or add) to tasks to delete
 				if (toUpdate == null) toUpdate = new ArrayList<>();
 				toUpdate.add(task);

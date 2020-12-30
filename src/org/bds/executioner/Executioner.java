@@ -17,7 +17,6 @@ import org.bds.run.BdsThread;
 import org.bds.task.DependencyState;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
-import org.bds.util.Gpr;
 import org.bds.util.TextTable;
 import org.bds.util.Timer;
 import org.bds.util.Tuple;
@@ -751,7 +750,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		// There is no host that can execute this task?
 		//---
 		if (removeTaskCannotExecute && !canBeExecuted) {
-			if (debug) Gpr.debug("Cluster info: " + system.info() + "\n\tCluster: " + system);
+			debug("Cluster info: " + system.info() + "\n\tCluster: " + system);
 			task.setErrorMsg("Not enough resources to execute task: " + task.getResources());
 
 			// Mark the task to be finished (cannot be done here due to concurrent modification)

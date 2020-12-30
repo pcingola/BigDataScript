@@ -5,7 +5,6 @@ import org.bds.osCmd.Cmd;
 import org.bds.osCmd.CmdLocal;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * Execute tasks in local computer.
@@ -47,7 +46,7 @@ public class ExecutionerLocal extends ExecutionerFileSystem {
 			String cmdStr = "";
 			for (String arg : args)
 				cmdStr += arg + " ";
-			Timer.showStdErr("Running command: " + cmdStr);
+			debug("Running command: " + cmdStr);
 		}
 
 		CmdLocal cmd = new CmdLocal(task.getId(), args);

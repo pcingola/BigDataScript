@@ -3,6 +3,7 @@ package org.bds.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.util.GprAws;
 import org.bds.util.Timer;
@@ -15,7 +16,7 @@ import software.amazon.awssdk.services.s3.S3Client;
  * Each region must have a different S3client
  *
  */
-public class AwsS3ClientProvider {
+public class AwsS3ClientProvider implements BdsLog {
 
 	public static final int MAX_S3_CLIENT_TIME = 60 * 60 * 1000; // We expire s3 clients after using them for a while
 
@@ -63,10 +64,10 @@ public class AwsS3ClientProvider {
 		// Do we need to create a client? If so, show debug messages
 		boolean create = false;
 		if (s3c == null) {
-			if (debug) Timer.showStdErr("Creating new S3Client for region '" + region + "'");
+			debug("Creating new S3Client for region '" + region + "'");
 			create = true;
 		} else if (isExpired(region)) {
-			if (debug) Timer.showStdErr("Creating new S3Client for region '" + region + "', expired after " + timerByRegion.get(region).elapsedSecs() + " secs.");
+			debug("Creating new S3Client for region '" + region + "', expired after " + timerByRegion.get(region).elapsedSecs() + " secs.");
 			create = true;
 		}
 

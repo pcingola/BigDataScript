@@ -8,7 +8,6 @@ import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
-import org.bds.util.Timer;
 
 /**
  * Execute a command, collect stdout, stderr and exitValue
@@ -45,7 +44,7 @@ public class Exec implements BdsLog {
 
 	protected ExecResult run(List<String> args) {
 		Config conf = Config.get();
-		if (conf.isVerbose() || conf.isDebug() || conf.isLog()) Timer.showStdErr("Executing command. Arguments: " + args);
+		log("Executing command. Arguments: " + args);
 
 		// Create a command string
 		StringBuilder cmdsb = new StringBuilder();

@@ -89,7 +89,7 @@ public class Report implements BdsLog {
 	 * Create an HTML report (after execution finished)
 	 */
 	public void createReport() {
-		if (debug) Gpr.debug("CreateReport: Start");
+		debug("CreateReport: Start");
 
 		String bdsThreadId = bdsThread.getBdsThreadId();
 
@@ -188,14 +188,14 @@ public class Report implements BdsLog {
 		// Create DAG script
 		if (!yaml) createTaskDag(dagJsFile);
 
-		if (debug) Gpr.debug("CreateReport: End");
+		debug("CreateReport: End");
 	}
 
 	/**
 	 * Add thread information to report
 	 */
 	void createReport(RTemplate rTemplate, BdsThread bdsThread) {
-		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': Start");
+		debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': Start");
 
 		// ID and parent
 		String thisId = bdsThread.getBdsThreadId();
@@ -229,14 +229,14 @@ public class Report implements BdsLog {
 		for (BdsThread bdsThreadChild : bdsThread.getBdsThreads())
 			createReport(rTemplate, bdsThreadChild);
 
-		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': End");
+		debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': End");
 	}
 
 	/**
 	 * Create map with task details
 	 */
 	void createReport(RTemplate rTemplate, Task task, int taskNum, boolean yaml) {
-		if (debug) Gpr.debug("CreateReport Task '" + task.getId() + "': Start");
+		debug("CreateReport Task '" + task.getId() + "': Start");
 
 		BdsThread bdsTh = taskId2BdsThread.get(task.getId());
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
@@ -367,14 +367,14 @@ public class Report implements BdsLog {
 			}
 		}
 
-		if (debug) Gpr.debug("CreateReport Task '" + task.getId() + "': End");
+		debug("CreateReport Task '" + task.getId() + "': End");
 	}
 
 	/**
 	 * Create a DAG showing all tasks
 	 */
 	void createTaskDag(String dagJsFile) {
-		if (debug) Timer.showStdErr("Creating DAG summary script '" + dagJsFile + "'");
+		debug("Creating DAG summary script '" + dagJsFile + "'");
 
 		// Create a template
 		RTemplate rTemplate = new RTemplate(Bds.class, DAG_TEMPLATE, dagJsFile);

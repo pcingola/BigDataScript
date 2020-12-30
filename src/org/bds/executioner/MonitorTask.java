@@ -3,6 +3,7 @@ package org.bds.executioner;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import org.bds.BdsLog;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
@@ -14,11 +15,11 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public abstract class MonitorTask implements Serializable {
+public abstract class MonitorTask implements Serializable, BdsLog {
 
 	private static final long serialVersionUID = -6872022158839941923L;
 
-	protected boolean debug = false;
+	protected boolean debug;
 	protected boolean verbose;
 	protected HashMap<Task, Executioner> execByTask;
 	protected Timer latestUpdate;
@@ -36,7 +37,7 @@ public abstract class MonitorTask implements Serializable {
 	 */
 	public synchronized void add(Executioner executioner, Task task) {
 		if (task == null) return;
-		if (debug) Timer.showStdErr(this.getClass().getName() + ": Adding task " + task.getId());
+		debug("Adding task " + task.getId());
 		execByTask.put(task, executioner);
 	}
 
@@ -45,11 +46,21 @@ public abstract class MonitorTask implements Serializable {
 	 */
 	public abstract void check();
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
+	}
+
 	/**
 	 * Remove task (do not monitor)
 	 */
 	public synchronized void remove(Task task) {
-		if (debug) Timer.showStdErr("MonitorTask: Removing task " + task.getId());
+		debug("Removing task " + task.getId());
 		execByTask.remove(task);
 	}
 
@@ -67,7 +78,7 @@ public abstract class MonitorTask implements Serializable {
 	 * Update finished task.
 	 */
 	protected synchronized void updateFinished(Task task) {
-		if (debug) Timer.showStdErr("MonitorTask.updateFinished(task): Finished task " + task.getId());
+		debug("Finished task " + task.getId());
 
 		int exitCode = 0;
 		TaskState taskState = null;
@@ -81,7 +92,7 @@ public abstract class MonitorTask implements Serializable {
 			String exitFileStr = Gpr.readFile(task.getExitCodeFile()).trim();
 			exitCode = (exitFileStr.equals("0") ? 0 : 1); // Anything else than OK is error condition
 			taskState = null; // Automatic: let taskFinished decide, based on 'exitCode'
-			if (debug) Timer.showStdErr("MonitorTask: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitCode);
+			debug("Update task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitCode);
 		}
 
 		// Inform executioner that task has finished

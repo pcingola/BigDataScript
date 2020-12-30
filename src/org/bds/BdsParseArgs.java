@@ -23,7 +23,6 @@ import org.bds.lang.value.ValueReal;
 import org.bds.lang.value.ValueString;
 import org.bds.scope.GlobalScope;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * Parse command line arguments for a BDS program
@@ -82,7 +81,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class BdsParseArgs {
+public class BdsParseArgs implements BdsLog {
 
 	boolean debug;
 	boolean showHelp;
@@ -105,7 +104,7 @@ public class BdsParseArgs {
 
 			// Parse '-OPT' option
 			if (arg.equalsIgnoreCase("-h") || arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("--help")) {
-				if (debug) Timer.showStdErr("Activating 'show help' mode");
+				debug("Activating 'show help' mode");
 				showHelp = true;
 			} else if (arg.startsWith("-")) {
 				// Get variable name and map
@@ -171,6 +170,11 @@ public class BdsParseArgs {
 
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
 	/**
 	 * Is this a command line option (e.g. "-tfam" is a command line option, but "-" means STDIN)
 	 */
@@ -180,10 +184,6 @@ public class BdsParseArgs {
 
 	public boolean isShowHelp() {
 		return showHelp;
-	}
-
-	void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}
 
 	public void parse() {

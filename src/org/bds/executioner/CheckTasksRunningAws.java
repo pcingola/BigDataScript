@@ -9,7 +9,6 @@ import org.bds.Config;
 import org.bds.cluster.host.TaskResourcesAws;
 import org.bds.task.Task;
 import org.bds.util.GprAws;
-import org.bds.util.Timer;
 
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
@@ -61,7 +60,7 @@ public class CheckTasksRunningAws extends CheckTasksRunning {
 				nextToken = response.nextToken();
 			} while (nextToken != null);
 		} catch (Ec2Exception e) {
-			Timer.showStdErr("ERROR getting list of AWS instances for region '" + region + "': " + e.awsErrorDetails().errorMessage());
+			error("Error getting list of AWS instances for region '" + region + "': " + e.awsErrorDetails().errorMessage());
 		}
 		return foundInstanceIds;
 	}

@@ -92,7 +92,7 @@ public class DataHttp extends DataRemote {
 				}
 			}
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while connecting to " + this);
+			error("Error while connecting to " + this);
 			throw new RuntimeException(e);
 		}
 
@@ -229,7 +229,7 @@ public class DataHttp extends DataRemote {
 		}
 
 		// Show information
-		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
+		debug("Updated infromation for '" + this + "'"//
 				+ "\n\tcanRead      : " + canRead //
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //

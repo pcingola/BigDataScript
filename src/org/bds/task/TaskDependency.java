@@ -11,7 +11,6 @@ import org.bds.data.DataTask;
 import org.bds.lang.BdsNode;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
-import org.bds.util.Timer;
 
 /**
  * Output and Input files (and tasks) that are required for a task to successfully execute
@@ -136,7 +135,7 @@ public class TaskDependency implements Serializable, BdsLog {
 			else if ((!task.isAllowEmpty()) && (dfile.size() <= 0)) checkOutputs += "Error: Output file '" + dfile + "' has zero length.";
 		}
 
-		if (task.verbose && !checkOutputs.isEmpty()) Timer.showStdErr(checkOutputs);
+		if (!checkOutputs.isEmpty()) log(checkOutputs);
 		return checkOutputs;
 	}
 

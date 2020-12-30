@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.cluster.host.TaskResources;
 import org.bds.data.Data;
@@ -16,14 +17,13 @@ import org.bds.executioner.Executioner;
 import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * A task to be executed by an Executioner
  *
  * @author pcingola
  */
-public class Task implements Serializable {
+public class Task implements Serializable, BdsLog {
 
 	private static final long serialVersionUID = 3377646684108052191L;
 
@@ -182,7 +182,7 @@ public class Task implements Serializable {
 	 * Create a program file
 	 */
 	public void createProgramFile() {
-		if (debug) Timer.showStdErr("Task: Saving file '" + programFileName + "'");
+		debug("Task: Saving file '" + programFileName + "'");
 
 		try {
 			// Create dir
@@ -290,7 +290,7 @@ public class Task implements Serializable {
 		// Queue exec
 		if (bdsThread.getConfig().isDryRun()) {
 			// Dry run: Don't run the task, just show what would be run
-			Timer.showStdErr("Dry run task:\n" + toString(true, true));
+			log("Dry run task:\n" + toString(true, true));
 			state(TaskState.SCHEDULED);
 			state(TaskState.STARTED);
 			state(TaskState.RUNNING);
@@ -540,7 +540,7 @@ public class Task implements Serializable {
 		// Timeout equal or less than zero means 'no limit'
 		if (timeout <= 0) return false;
 
-		if (debug && (elapsedSecs > timeout)) Timer.showStdErr("Task.isTimedOut(): Task timed out '" + getId() + "', elapsed: " + elapsedSecs + ", wall-timeout: " + timeout);
+		if (elapsedSecs > timeout) debug("Task timed out '" + getId() + "', elapsed: " + elapsedSecs + ", wall-timeout: " + timeout);
 		return elapsedSecs > timeout;
 	}
 
@@ -734,7 +734,7 @@ public class Task implements Serializable {
 
 			default:
 				// No information in exit file? Use exit code
-				if (debug) Gpr.debug("Using exit file '" + exitCodeFile + "', found exit code '" + getExitValue() + "'");
+				debug("Using exit file '" + exitCodeFile + "', found exit code '" + getExitValue() + "'");
 				return TaskState.exitCode2taskState(exitValue);
 			}
 		}

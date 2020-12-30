@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.compile.BdsNodeWalker;
 import org.bds.data.Data;
@@ -48,7 +49,7 @@ import org.bds.vm.BdsVm;
  *
  * @author pcingola
  */
-public class BdsThread extends Thread implements Serializable {
+public class BdsThread extends Thread implements Serializable, BdsLog {
 
 	private static final long serialVersionUID = 1206304272840188781L;
 
@@ -296,7 +297,7 @@ public class BdsThread extends Thread implements Serializable {
 			// Root thread? Report all tasks
 			TaskDependecies td = isRoot() ? TaskDependecies.get() : taskDependecies;
 
-			Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
+			debug((isRoot() ? "Program" : "Parallel") + " " //
 					+ "'" + getBdsThreadId() + "'" //
 					+ " finished" //
 					+ (isDebug() ? ", run state: '" + getRunState() + "'" : "") //
@@ -343,18 +344,18 @@ public class BdsThread extends Thread implements Serializable {
 	void exitCode() {
 		boolean ok = true;
 		// We are done running
-		if (isDebug()) Timer.showStdErr("BdsThread finished: " + getBdsThreadId());
+		debug("BdsThread finished: " + getBdsThreadId());
 		if (getRunState().isFatalError()) {
 			// Error condition
 			ok = false;
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' fatal error");
+			debug((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' fatal error");
 		} else {
 			// OK, we finished running
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
+			debug((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
 
 			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
 			ok = waitAll();
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' waitAll: All threads and tasks finished");
+			debug((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' waitAll: All threads and tasks finished");
 		}
 
 		// All tasks in wait finished OK?
@@ -672,6 +673,7 @@ public class BdsThread extends Thread implements Serializable {
 		BdsThreads.getInstance().add(this);
 	}
 
+	@Override
 	public boolean isDebug() {
 		return config != null && config.isDebug();
 	}
@@ -687,6 +689,7 @@ public class BdsThread extends Thread implements Serializable {
 		return bdsChildThreadsById.isEmpty();
 	}
 
+	@Override
 	public boolean isVerbose() {
 		return config != null && config.isVerbose();
 	}
@@ -800,17 +803,14 @@ public class BdsThread extends Thread implements Serializable {
 	void removeStaleData() {
 		if (!isRoot()) return;
 
-		// Remove all pending files
-		boolean show = isVerbose() || isDebug();
-
 		// Any files to delete?
 		if (!removeOnExit.isEmpty()) {
 			if (config != null && config.isNoRmOnExit()) {
-				if (show) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
+				log("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
 			} else {
-				if (show) Timer.showStdErr("Deleting stale files:");
+				log("Deleting stale files");
 				for (Data dfile : removeOnExit) {
-					if (show) System.err.println("\t" + dfile);
+					log("Deleting file '" + dfile + "'");
 					dfile.delete();
 				}
 			}
@@ -881,7 +881,7 @@ public class BdsThread extends Thread implements Serializable {
 		} catch (Throwable t) {
 			setRunState(RunState.FATAL_ERROR);
 			if (isVerbose()) throw new RuntimeException("Fatal error", t);
-			else Timer.showStdErr("Fatal error: Program execution finished");
+			else error("Fatal error: Program execution finished");
 		}
 	}
 
@@ -1022,7 +1022,7 @@ public class BdsThread extends Thread implements Serializable {
 	public boolean waitThread(BdsThread bdsThread) {
 		try {
 			if (bdsThread != null) {
-				if (isDebug()) Timer.showStdErr("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());
+				debug("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());
 				if (bdsThread.getRunState().isFinished()) return true;
 				bdsThread.join();
 				return bdsThread.getExitValue() == 0; // Finished OK?
@@ -1039,7 +1039,7 @@ public class BdsThread extends Thread implements Serializable {
 		// Wait for all tasks to finish
 		boolean ok = true;
 
-		if (isDebug() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
+		if (!isThreadsDone()) debug("Waiting for all 'parrallel' to finish.");
 
 		// Populate a list of threads to avoid concurrent modification
 		List<BdsThread> bdsThreads = new LinkedList<>();

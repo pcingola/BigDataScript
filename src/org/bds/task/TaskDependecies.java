@@ -12,20 +12,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.data.Data;
 import org.bds.data.DataTask;
 import org.bds.report.Report;
 import org.bds.run.BdsThread;
 import org.bds.util.AutoHashMap;
-import org.bds.util.Timer;
 
 /**
  * Store task and dependency graph (i.e. all task dependencies)
  *
  * @author pcingola
  */
-public class TaskDependecies implements Serializable {
+public class TaskDependecies implements Serializable, BdsLog {
 
 	private static final long serialVersionUID = -7139051739077288915L;
 	public static final int SLEEP_TIME = 200;
@@ -291,7 +291,7 @@ public class TaskDependecies implements Serializable {
 		tasDep.addInputs(leaves);
 
 		if (debug) {
-			Timer.showStdErr("Goal: " + out + "\n\tLeaf nodes:");
+			debug("Goal: " + out + "\n\tLeaf nodes:");
 			for (Data n : leaves)
 				System.err.println("\t\t'" + n + "'");
 		}
@@ -308,7 +308,7 @@ public class TaskDependecies implements Serializable {
 		// been deleted), but the output nodes are ok respect to first input
 		// nodes (i.e. the input nodes), then we don't need to execute this goal
 		if (!goalNeedsUpdate(goal)) {
-			if (debug) Timer.showStdErr("Goal '" + goal + "' does not need update, skipping");
+			debug("Goal '" + goal + "' does not need update, skipping");
 			return false;
 		}
 
@@ -341,10 +341,10 @@ public class TaskDependecies implements Serializable {
 		// Run all tasks required to satisfy the goal
 		for (Task t : tasks) {
 			if (!t.isScheduled()) {
-				if (debug) Timer.showStdErr("Goal run: Running task '" + t.getId() + "'");
+				debug("Goal run: Running task '" + t.getId() + "'");
 				t.setDependency(false); // We are executing this task, so it it no longer a 'dep'
 				TaskVmOpcode.execute(bdsThread, t);
-			} else if (debug) Timer.showStdErr("Goal run: Task '" + t.getId() + "' is already scheduled, not running");
+			} else debug("Goal run: Task '" + t.getId() + "' is already scheduled, not running");
 
 		}
 
@@ -417,6 +417,11 @@ public class TaskDependecies implements Serializable {
 		return false;
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
 	/**
 	 * Is this the global instance?
 	 */
@@ -426,6 +431,11 @@ public class TaskDependecies implements Serializable {
 
 	public synchronized boolean isTask(Data taskId) {
 		return tasksById.containsKey(taskId.getUrlOri());
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 
 	/**
@@ -499,11 +509,11 @@ public class TaskDependecies implements Serializable {
 
 		// Is task a dependency?
 		if (task.isDependency() && !task.isScheduled()) {
-			if (debug) Timer.showStdErr("Wait: Task '" + task.getId() + "' is dependency and has not been scheduled for execution. Not wating.");
+			debug("Wait: Task '" + task.getId() + "' is dependency and has not been scheduled for execution. Not wating.");
 			return true;
 		}
 
-		if (debug) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId() + ", state: " + task.getTaskState());
+		debug("Wait: Waiting for task to finish: " + task.getId() + ", state: " + task.getTaskState());
 
 		// Wait for task to finish
 		while (!task.isDone()) {
@@ -519,11 +529,11 @@ public class TaskDependecies implements Serializable {
 		// If task failed, show task information and failure reason.
 		if (!ok) {
 			// Show error and mark all files to be deleted on exit
-			System.err.println("Task failed:\n" + task.toString(true));
+			error("Task failed:\n" + task.toString(true));
 			task.deleteOutputFilesOnExit();
 		}
 
-		if (debug) Timer.showStdErr("Wait: Task '" + task.getId() + "' finished.");
+		debug("Wait: Task '" + task.getId() + "' finished.");
 
 		return ok;
 	}
@@ -536,7 +546,7 @@ public class TaskDependecies implements Serializable {
 		// Wait for all tasks to finish
 		boolean ok = true;
 
-		if (debug && !isAllTasksDone()) Timer.showStdErr("Waiting for all tasks to finish.");
+		if (!isAllTasksDone()) debug("Waiting for all tasks to finish.");
 
 		// Get all taskIds in a new collection (to avoid concurrent modification
 		LinkedList<String> tids = new LinkedList<>();

@@ -4,11 +4,11 @@ import java.io.ObjectStreamException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bds.BdsLogger;
 import org.bds.Config;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
 import org.bds.scope.GlobalScope;
-import org.bds.util.Timer;
 
 /**
  * Systems that can execute tasks
@@ -91,7 +91,7 @@ public class Executioners {
 	private synchronized Executioner factory(ExecutionerType exType, BdsThread bdsThread) {
 		Executioner executioner;
 
-		if (config.isDebug()) Timer.showStdErr("Executioner factory: Creating new executioner type '" + exType + "'");
+		BdsLogger.debug("Executioner factory: Creating new executioner type '" + exType + "'");
 
 		switch (exType) {
 		case AWS:

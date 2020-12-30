@@ -27,7 +27,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Config implements Serializable {
+public class Config implements Serializable, BdsLog {
 
 	public static String BDS_HOME = Gpr.HOME + "/.bds"; // Bds home directory
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
@@ -174,7 +174,7 @@ public class Config implements Serializable {
 
 		for (String d : searchPaths) {
 			String cf = d + "/" + DEFAULT_CONFIG_BASENAME;
-			if (debug) Gpr.debug("Trying config file '" + cf + "'");
+			debug("Trying config file '" + cf + "'");
 			if (Gpr.exists(cf)) return cf;
 		}
 
@@ -409,6 +409,7 @@ public class Config implements Serializable {
 		return coverage;
 	}
 
+	@Override
 	public boolean isDebug() {
 		return debug;
 	}
@@ -421,6 +422,7 @@ public class Config implements Serializable {
 		return extractSource;
 	}
 
+	@Override
 	public boolean isLog() {
 		return log;
 	}
@@ -449,6 +451,7 @@ public class Config implements Serializable {
 		return showTaskCode;
 	}
 
+	@Override
 	public boolean isVerbose() {
 		return verbose;
 	}
@@ -497,7 +500,7 @@ public class Config implements Serializable {
 
 		// Sanity checks
 		if (maxThreads < MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE) {
-			Timer.showStdErr("Config: Attempt to set 'maxThreads' to " + maxThreads + ". Too small, using " + MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE + " inseatd.");
+			warning("Config: Attempt to set 'maxThreads' to " + maxThreads + ". Too small, using " + MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE + " inseatd.");
 			maxThreads = MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE;
 		}
 

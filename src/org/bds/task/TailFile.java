@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.bds.BdsLog;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * A file to use with 'Tail -f' (i.e. follow file's grow)
@@ -155,11 +154,6 @@ public abstract class TailFile implements Serializable, BdsLog {
 	@Override
 	public boolean isVerbose() {
 		return verbose;
-	}
-
-	@Override
-	public void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}
 
 	/**
