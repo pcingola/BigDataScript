@@ -127,7 +127,7 @@ public class Gpr {
 	}
 
 	/**
-	 * Prits a debug message (prints class name, method and line number)
+	 * Prints a debug message (prints class name, method and line number)
 	 * @param obj					Object to print
 	 * @param offset				Offset N lines from stacktrace
 	 */

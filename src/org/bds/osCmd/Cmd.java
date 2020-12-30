@@ -1,5 +1,6 @@
 package org.bds.osCmd;
 
+import org.bds.BdsLog;
 import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostResources;
 import org.bds.executioner.Executioner;
@@ -8,14 +9,13 @@ import org.bds.executioner.PidParser;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
-import org.bds.util.Timer;
 
 /**
  * Execute a command (typically a shell command)
  *
  * @author pcingola
  */
-public abstract class Cmd extends Thread {
+public abstract class Cmd extends Thread implements BdsLog {
 
 	public static final String[] ARGS_ARRAY_TYPE = new String[0];
 	public static final int ERROR_EXECUTING = -1;
@@ -57,7 +57,7 @@ public abstract class Cmd extends Thread {
 	public int exec() {
 		// Prepare to execute task
 		try {
-			if (debug) log("Start");
+			debug("Start");
 			executing = true;
 
 			// Prepare to execute
@@ -74,7 +74,7 @@ public abstract class Cmd extends Thread {
 		// Execute command or wait for execution to finish
 		try {
 			stateRunningBefore(); // Change state before executing command
-			if (debug) log("Running");
+			debug("Running");
 			execCmd();
 			stateRunningAfter(); // Change state after executing command (e.g. when sending a task to a cluster system)
 		} catch (Throwable t) {
@@ -83,7 +83,7 @@ public abstract class Cmd extends Thread {
 		}
 
 		// OK, we are done. Clean up and notify.
-		if (debug) log("Done");
+		debug("Done");
 		execDone();
 		return exitValue;
 	}
@@ -150,6 +150,11 @@ public abstract class Cmd extends Thread {
 		return resources;
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
 	public boolean isDone() {
 		return started && !executing;
 	}
@@ -166,7 +171,7 @@ public abstract class Cmd extends Thread {
 	 * Kill a process
 	 */
 	public void kill() {
-		if (debug) log("Process killed");
+		debug("Process killed");
 
 		killCmd();
 
@@ -183,8 +188,9 @@ public abstract class Cmd extends Thread {
 	 */
 	protected abstract void killCmd();
 
-	public void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + " '" + getCmdId() + "': " + msg);
+	@Override
+	public String logMessagePrepend() {
+		return "'" + getCmdId() + "'";
 	}
 
 	@Override

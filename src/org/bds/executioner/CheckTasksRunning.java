@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
@@ -24,7 +25,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public abstract class CheckTasksRunning {
+public abstract class CheckTasksRunning implements BdsLog {
 
 	public static final int CHECK_TASK_RUNNING_INTERVAL = 60;
 	public static final int TASK_STATE_MIN_START_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
@@ -44,6 +45,7 @@ public abstract class CheckTasksRunning {
 
 		// Set debug
 		debug = config.isDebug();
+		verbose = config.isVerbose();
 	}
 
 	public void add(Task task) {
@@ -81,7 +83,7 @@ public abstract class CheckTasksRunning {
 			if (pid != null) {
 				// Matches pid?
 				if (matchesPids(pids, pid)) {
-					if (debug) log("Found task PID '" + pid + "'");
+					debug("Found task PID '" + pid + "'");
 					tasks.add(t);
 				}
 			}
@@ -104,12 +106,18 @@ public abstract class CheckTasksRunning {
 		int count = (missingCount.containsKey(id) ? missingCount.get(id) + 1 : 1);
 		missingCount.put(id, count);
 
-		if (debug) Timer.showStdErr("WARNING: Task PID '" + task.getPid() + "' not found for task '" + id + "'. Incrementing 'missing counter': " + count + " (max. allowed " + TASK_NOT_FOUND_DISAPPEARED + ")");
+		warning("Task PID '" + task.getPid() + "' not found for task '" + id + "'. Incrementing 'missing counter': " + count + " (max. allowed " + TASK_NOT_FOUND_DISAPPEARED + ")");
 		return count > TASK_NOT_FOUND_DISAPPEARED;
 	}
 
-	void log(String msg) {
-		executioner.log(this.getClass().getSimpleName() + ":" + msg);
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 
 	protected boolean matchesPids(Set<String> pids, String pid) {
@@ -180,8 +188,8 @@ public abstract class CheckTasksRunning {
 				String tpid = task.getPid() != null ? task.getPid() : "";
 
 				if (!tpid.isEmpty() && !task.isDone()) { // Make sure the task is not finished (race conditions?)
-					if (debug) log("Task PID '" + task.getPid() + "' not found. Marking it as finished.");
-					task.setErrorMsg("Task disappeared from cluster's queue. Task or node failure?");
+					debug("Task PID '" + task.getPid() + "' not found. Marking it as 'disappeared'.");
+					task.setErrorMsg("Task disappeared");
 					task.setExitValue(BdsThread.EXITCODE_ERROR);
 					executioner.taskFinished(task, TaskState.ERROR);
 				}

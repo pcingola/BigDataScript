@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.bds.Bds;
+import org.bds.BdsLog;
 import org.bds.BdsParseArgs;
 import org.bds.Config;
 import org.bds.compile.BdsCompiler;
@@ -46,7 +47,7 @@ import org.bds.vm.BdsVmAsm;
  *
  * @author pcingola
  */
-public class BdsRun {
+public class BdsRun implements BdsLog {
 
 	public enum BdsAction {
 		RUN, RUN_CHECKPOINT, RUN_TASK_IMPROPER, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
@@ -264,14 +265,14 @@ public class BdsRun {
 	 * Initialize a base classes provided by 'bds'
 	 */
 	void initilaizeNativeClass(TypeClass typeClass) {
-		if (debug) log("Native class: " + typeClass.getCanonicalName());
+		debug("Native class: " + typeClass.getCanonicalName());
 	}
 
 	/**
 	 * Initialize all base classes provided by 'bds'
 	 */
 	void initilaizeNativeClasses() {
-		if (debug) log("Initialize standard classes.");
+		debug("Initialize standard classes.");
 
 		initilaizeNativeClass(new TypeClassException());
 		initilaizeNativeClass(new TypeClassExceptionConcurrentModification());
@@ -281,19 +282,34 @@ public class BdsRun {
 	 * Initialize standard libraries
 	 */
 	void initilaizeNativeLibraries() {
-		if (debug) log("Initialize standard libraries.");
+		debug("Initialize standard libraries.");
 
 		// Native functions
 		NativeLibraryFunctions nativeLibraryFunctions = new NativeLibraryFunctions();
-		if (debug) log("Native library: " + nativeLibraryFunctions.size());
+		debug("Native library: " + nativeLibraryFunctions.size());
 
 		// Native library: String
 		NativeLibraryString nativeLibraryString = new NativeLibraryString();
-		if (debug) log("Native library: " + nativeLibraryString.size());
+		debug("Native library: " + nativeLibraryString.size());
 	}
 
 	public boolean isCoverage() {
 		return coverage;
+	}
+
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isLog() {
+		return log;
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 
 	/**
@@ -301,7 +317,7 @@ public class BdsRun {
 	 */
 	BdsThread loadCheckpoint() {
 		// Load checkpoint file
-		if (verbose) Timer.showStdErr("Loading checkpoint: " + chekcpointRestoreFile);
+		log("Loading checkpoint: " + chekcpointRestoreFile);
 		BdsThread bdsThreadRoot;
 		try {
 			// If the checkpoint is remote, download it
@@ -327,10 +343,6 @@ public class BdsRun {
 		}
 
 		return bdsThreadRoot;
-	}
-
-	void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}
 
 	/**

@@ -43,7 +43,7 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	@Override
 	public synchronized Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
-		if (debug) log("Running task " + task.getId());
+		debug("Running task " + task.getId());
 		String qurl = ((QueueThreadAwsSqs) queueThread).getQueueId();
 		CmdAws cmd = new CmdAws(task, qurl);
 		return cmd;
@@ -76,7 +76,7 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 	 */
 	@Override
 	protected synchronized void killAll(List<Task> tokill) {
-		if (debug) log("killAll. Killing " + tokill.size() + " tasks");
+		debug("Killing " + tokill.size() + " tasks");
 
 		List<String> instanceIds = tokill.stream() //
 				.map(t -> t.getPid()) //
@@ -84,7 +84,7 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 
 		if (instanceIds.isEmpty()) return;
 
-		if (verbose) log("Terminating instances " + instanceIds);
+		log("Terminating instances " + instanceIds);
 		StopInstancesRequest request = StopInstancesRequest.builder().instanceIds(instanceIds).build();
 		Ec2Client ec2 = Ec2Client.create();
 		ec2.stopInstances(request);
@@ -92,7 +92,7 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 
 	@Override
 	protected synchronized void killTask(Task task) {
-		if (debug) log("killTask. Killing task " + task.getId());
+		debug("Killing task " + task.getId());
 		Cmd cmd = getCmd(task);
 		if (cmd != null) cmd.kill();
 	}
@@ -113,7 +113,7 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 		// Start a new thread if needed, don't start a thread if it's already running
 		if (queueThread != null) return;
 
-		if (debug) log("runExecutionerLoopBefore. Starting queue thread");
+		debug("Starting queue thread");
 		queueThread = new QueueThreadAwsSqs(config, (MonitorTaskQueue) monitorTask, taskLogger, queueNamePrefix);
 		queueThread.setVerbose(verbose);
 		queueThread.setDebug(debug);
@@ -125,7 +125,7 @@ public class ExecutionerCloudAws extends ExecutionerCloud {
 		while (!queueThread.hasQueue() && !queueThread.hasError())
 			sleepShort();
 
-		if (debug) log("runExecutionerLoopBefore. Queue created, error=" + queueThread.hasError());
+		debug("Queue created, has error: " + queueThread.hasError());
 
 		// Any errors while creating the queue? If so, abort immediately
 		if (queueThread.hasError()) throw new RuntimeException("Error creating queue!", queueThread.getError());

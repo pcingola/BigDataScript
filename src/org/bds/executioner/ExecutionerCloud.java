@@ -71,7 +71,7 @@ public abstract class ExecutionerCloud extends Executioner {
 	public synchronized void kill() {
 		super.kill();
 		if (queueThread != null) {
-			if (debug) log("Killing queue");
+			debug("Killing queue");
 			queueThread.kill();
 			queueThread = null;
 		}

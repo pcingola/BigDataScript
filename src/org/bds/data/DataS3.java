@@ -102,14 +102,14 @@ public class DataS3 extends DataRemote {
 			// Download from S3
 			GetObjectRequest req = GetObjectRequest.builder().bucket(bucketName).key(key).build();
 			getS3Client().getObject(req, ResponseTransformer.toFile(Paths.get(localPath)));
-			if (verbose) Timer.showStdErr("Donwload from '" + toString() + "' to '" + localPath + "' finished.");
+			log("Donwload from '" + toString() + "' to '" + localPath + "' finished.");
 
 			// Update last modified info
 			updateLocalFileLastModified();
 
 			return true;
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while downloading " + this);
+			error("Error while downloading " + this);
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
@@ -230,7 +230,7 @@ public class DataS3 extends DataRemote {
 				list.add(new DataS3(s3path, region));
 			}
 		} catch (Exception e) {
-			if (verbose) Timer.showStdErr("ERROR while listing files from '" + this + "'");
+			error("Error while listing files from '" + this + "'");
 		}
 
 		return list;

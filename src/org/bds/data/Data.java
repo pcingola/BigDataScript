@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
@@ -36,7 +37,7 @@ import org.bds.util.Tuple;
  *
  * @author pcingola
  */
-public abstract class Data implements Comparable<Data>, Serializable {
+public abstract class Data implements Comparable<Data>, Serializable, BdsLog {
 
 	private static final long serialVersionUID = 6436509779796130272L;
 
@@ -335,6 +336,11 @@ public abstract class Data implements Comparable<Data>, Serializable {
 		return url().hashCode();
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
 	/**
 	 * Is this a directory (or an equivalent abstraction, such
 	 * as an S3 prefix) instead of a data file?
@@ -390,6 +396,11 @@ public abstract class Data implements Comparable<Data>, Serializable {
 	 *      to upload the results if they haven't been already uploaded.
 	 */
 	public abstract boolean isUploaded(Data localFile);
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
+	}
 
 	/**
 	 * Join a 'segment' to this path

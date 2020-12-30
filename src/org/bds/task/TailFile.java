@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bds.BdsLog;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -14,11 +15,15 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public abstract class TailFile implements Serializable {
+public abstract class TailFile implements Serializable, BdsLog {
 
 	public static final int DEFAULT_TAIL = 10;
 	public static final int MAX_BUFFER_SIZE = 1024 * 1024;
 	private static final long serialVersionUID = -3331375637614242861L;
+
+	boolean debug, verbose;
+	String inputFileName; // Read (tail -f) from this file
+	boolean showStderr; // Do we show on STDERR? (default STDOUT)
 
 	/**
 	 * Is there a newline in the buffer at position  'idx'?
@@ -128,10 +133,6 @@ public abstract class TailFile implements Serializable {
 		return sb.toString();
 	}
 
-	boolean debug, verbose;
-	String inputFileName; // Read (tail -f) from this file
-	boolean showStderr; // Do we show on STDERR? (default STDOUT)
-
 	public TailFile(String inputFileName, boolean showStderr) {
 		this.inputFileName = inputFileName;
 		this.showStderr = showStderr;
@@ -146,6 +147,17 @@ public abstract class TailFile implements Serializable {
 	 */
 	protected abstract void close(boolean attemptTail);
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
+	}
+
+	@Override
 	public void log(String msg) {
 		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}

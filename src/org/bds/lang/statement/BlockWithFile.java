@@ -55,10 +55,10 @@ public class BlockWithFile extends Block {
 		String reBasedName = "./" + getFileName();
 
 		// Write file
-		if (verbose) System.err.println("Extracting file (program unit): '" + reBasedName);
+		log("Extracting file (program unit): '" + reBasedName);
 		if (Gpr.exists(reBasedName)) {
 			// Do not overwrite!
-			if (verbose) System.err.println("File '" + reBasedName + "' already exists: Nothing done!");
+			log("File '" + reBasedName + "' already exists: Nothing done!");
 		} else {
 			String dirName = Gpr.dirName(reBasedName);
 			(new File(dirName)).mkdirs(); // Create directories

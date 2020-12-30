@@ -39,14 +39,14 @@ public class CheckTasksRunningCmd extends CheckTasksRunning {
 		// PID regex matcher
 		pidPatternStr = config.getPidRegexCheckTasksRunning("");
 		if (!pidPatternStr.isEmpty()) {
-			if (debug) log("Using pidRegex (check tasks running) '" + pidPatternStr + "'");
+			debug("Using pidRegex (check tasks running) '" + pidPatternStr + "'");
 			pidPattern = Pattern.compile(pidPatternStr);
-		} else if (debug) log("Config parameter '" + Config.PID_CHECK_TASK_RUNNING_REGEX + "' not set.");
+		} else debug("Config parameter '" + Config.PID_CHECK_TASK_RUNNING_REGEX + "' not set.");
 
 		// Select column where to look for PID
 		cmdPidColumn = (int) config.getLong(Config.PID_CHECK_TASK_RUNNING_COLUMN, 1) - 1;
 		if (cmdPidColumn < 0) cmdPidColumn = 0;
-		if (debug) log("Using 'cmdPidColumn' " + cmdPidColumn);
+		debug("Using 'cmdPidColumn' " + cmdPidColumn);
 	}
 
 	/**
@@ -92,14 +92,14 @@ public class CheckTasksRunningCmd extends CheckTasksRunning {
 		for (String line : lines) {
 			line = line.trim();
 
-			if (debug) log("Parsing line:\t" + line);
+			debug("Parsing line:\t" + line);
 			String pid = parsePidLine(line);
 
 			// Any results?
 			if (pid != null && !pid.isEmpty()) {
 				// PID parsed OK
 				if (pids.add(pid)) {
-					if (debug) log("\tAdding ID: '" + pid + "'");
+					debug("\tAdding ID: '" + pid + "'");
 				}
 			} else {
 				// PID not matched by 'pidRegexCheckTaskRunning' regex (or regex not set)?
@@ -114,13 +114,13 @@ public class CheckTasksRunningCmd extends CheckTasksRunning {
 
 					// Add first column (whole pid)
 					if (pids.add(pid)) {
-						if (debug) log("\tAdding ID (column number " + cmdPidColumn + "): '" + pid + "'");
+						debug("\tAdding ID (column number " + cmdPidColumn + "): '" + pid + "'");
 					}
 
 					// Use only first part (split using dot)
 					String pidPart = parsePidPart(pid);
 					if (pids.add(pidPart)) {
-						if (debug) log("\tAdding ID (using string before fisrt dot): '" + pidPart + "'");
+						debug("\tAdding ID (using string before fisrt dot): '" + pidPart + "'");
 					}
 				}
 			}
@@ -142,9 +142,9 @@ public class CheckTasksRunningCmd extends CheckTasksRunning {
 			if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
 			else pid = matcher.group(0); // Use whole pattern
 
-			if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_CHECK_TASK_RUNNING_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
+			debug("Regex '" + pidPatternStr + "' (" + Config.PID_CHECK_TASK_RUNNING_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
 			return pid;
-		} else if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_CHECK_TASK_RUNNING_REGEX + ") did NOT match line: '" + line + "'");
+		} else debug("Regex '" + pidPatternStr + "' (" + Config.PID_CHECK_TASK_RUNNING_REGEX + ") did NOT match line: '" + line + "'");
 
 		return line;
 	}

@@ -38,7 +38,7 @@ public class TailStream extends TailFile {
 
 			// Is it still open?
 			if (input != null) {
-				if (debug) log("Closing '" + tailId + "'");
+				debug("Closing '" + tailId + "'");
 				input.close();
 			}
 
@@ -91,7 +91,7 @@ public class TailStream extends TailFile {
 				if (showStderr) System.err.write(bytes, 0, count);
 				else System.out.write(bytes, 0, count);
 
-				if (debug) log("Reading '" + (new String(bytes, 0, count)) + "'");
+				debug("Reading '" + (new String(bytes, 0, count)) + "'");
 			}
 
 			return count;

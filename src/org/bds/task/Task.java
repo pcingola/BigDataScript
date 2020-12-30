@@ -48,10 +48,10 @@ public class Task implements Serializable {
 	protected String currentDir; // Program's 'current directoy' (cd)
 	protected String pid; // PID (if any)
 	protected String programFileDir; // Program file's dir
-	protected String programFileName; // Program file name
-	protected String programTxt; // Program's text (program's code)
-	protected String programTxtShell; // Program's text (program's code) including shell shebang
-	protected String node; // Preferred execution node (or hostname)
+	protected String programFileName; // Program file name (where 'programTxtShell' is saved for execution)
+	protected String programTxt; // Program's text. A shell script to execute the task's code
+	protected String programTxtShell; // Program's text (program's code) including shell's shebang (i.e. '#!')
+	protected String node; // Preferred execution node or host name
 	protected String stdoutFile, stderrFile, exitCodeFile; // STDOUT, STDERR & exit code Files
 	protected String errorMsg; // Error messages
 	protected String postMortemInfo; // Error information about task that failed
@@ -62,11 +62,11 @@ public class Task implements Serializable {
 	TaskDependency taskDependency;
 
 	public Task() {
-		this(null, null, null, null, -1);
+		this(null, null, null, null);
 	}
 
 	public Task(String id) {
-		this(id, null, null, null, -1);
+		this(id, null, null, null);
 	}
 
 	public Task(String id, BdsNode bdsNode, String programFileName, String programTxt) {
@@ -81,17 +81,6 @@ public class Task implements Serializable {
 			bdsLineNum = -1;
 		}
 		taskDependency = new TaskDependency(bdsNode);
-		resources = null;
-		reset();
-	}
-
-	public Task(String id, String programFileName, String programTxt, String bdsFileName, int bdsLineNum) {
-		this.id = id;
-		this.programFileName = programFileName;
-		this.programTxt = programTxt;
-		this.bdsFileName = bdsFileName;
-		this.bdsLineNum = bdsLineNum;
-		taskDependency = new TaskDependency();
 		resources = null;
 		reset();
 	}

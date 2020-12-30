@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.Host;
@@ -26,7 +27,7 @@ import org.bds.util.Tuple;
  *
  * @author pcingola
  */
-public abstract class Executioner extends Thread implements NotifyTaskState, PidParser {
+public abstract class Executioner extends Thread implements NotifyTaskState, PidParser, BdsLog {
 
 	public static final int REPORT_INTERVAL = 60; // Interval in seconds
 
@@ -187,7 +188,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Queue an Exec and return a the id
 	 */
 	public synchronized void add(Task task) {
-		if (debug) log("Queuing task: " + task.getId());
+		debug("Queuing task: " + task.getId());
 		task.state(TaskState.SCHEDULED);
 		tasksToRun.add(task);
 	}
@@ -206,7 +207,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (config.getMaxThreads() > 0) {
 			while (Exec.countRunningThreads() >= config.getMaxThreads()) {
 				// Too many threads running? Sleep for a while (block until some threads finish)
-				if (debug) log("INFO: Too many threads running (limit set to " + config.getMaxThreads() + "). Waiting for some threads to finish.");
+				debug("INFO: Too many threads running (limit set to " + config.getMaxThreads() + "). Waiting for some threads to finish.");
 				sleepLong();
 			}
 		}
@@ -338,6 +339,11 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return tasksToRun.size() - tasksSelected.size() > 0;
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
 	/**
 	 * Has any task failed?
 	 */
@@ -374,11 +380,16 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return valid;
 	}
 
+	@Override
+	public boolean isVerbose() {
+		return verbose;
+	}
+
 	/**
 	 * Stop executioner and kill all tasks
 	 */
 	public synchronized void kill() {
-		if (debug) log("Killed executioner");
+		debug("Killed executioner");
 
 		// Kill all 'tasksToRun'.
 		// Note: We need to create a new list to avoid concurrent modification exceptions
@@ -403,7 +414,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	public synchronized void kill(Task task) {
 		if (task.isDone()) return; // Nothing to do
 
-		if (debug) log("Killing task '" + task.getId() + "'");
+		debug("Killing task '" + task.getId() + "'");
 
 		killTask(task);
 
@@ -431,9 +442,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (cmd != null) cmd.kill();
 	}
 
-	public void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + " '" + getExecutionerId() + "': " + msg);
-	}
+	//	// FIXME: Implement a generic logger class (maybe an interface with default methods?)
+	//	public void log(String msg) {
+	//		Timer.showStdErr(getClass().getSimpleName() + " '" + getExecutionerId() + "': " + msg);
+	//	}
 
 	/**
 	 * Return the appropriate 'kill' command to be used by the OS
@@ -501,9 +513,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 */
 	@Override
 	public void run() {
-		if (debug) log("Started running");
+		debug("Started running");
 		runExecutioner();
-		if (debug) log("Finished running");
+		debug("Finished running");
 	}
 
 	/**
@@ -519,7 +531,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			while (running) {
 				// Run loop
 				if (runExecutionerLoop()) {
-					if (debug) log("Queue: No more tasks to run.");
+					debug("Queue: No more tasks to run.");
 				}
 
 				sleepLong();
@@ -719,7 +731,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// Do we have enough resources to run this task in this host?
 			if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 				// OK, execute this task in this host
-				if (debug) log("Selected task:" //
+				debug("Selected task:" //
 						+ "\n\ttask ID        : " + task.getId() //
 						+ "\n\ttask hint      : " + task.getProgramHint()//
 						+ "\n\ttask resources : " + task.getResources() //
@@ -754,7 +766,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Select task to be executed on a host
 	 */
 	protected synchronized void selectTask(Task task, Host host) {
-		if (debug) log("Task selected '" + task.getId() + "' on host '" + host + "'");
+		debug("Task selected '" + task.getId() + "' on host '" + host + "'");
 		tasksSelected.put(task, host);
 		host.add(task);
 	}
@@ -834,7 +846,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (!task.canChangeState(taskState)) return false;
 
 		String id = task.getId();
-		if (debug) log("Task finished '" + id + "'");
+		debug("Task finished '" + id + "'");
 
 		// Cleanup command & host
 		Cmd cmd = getCmd(task);
@@ -883,7 +895,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Update task state to 'RUNNING'
 	 */
 	protected synchronized boolean taskUpdateRunning(Task task) {
-		if (debug) log("Task running '" + task.getId() + "'");
+		debug("Task running '" + task.getId() + "'");
 
 		if (task.isDone()) return true; // Already finished, nothing to do
 
@@ -893,6 +905,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// A "detached" task is considered to be successful right after starting, we don't follow it
 		if (!task.isDetached()) follow(task); // Follow STDOUT and STDERR
+		else debug("Task detached '" + task.getId() + "', not following");
 
 		return true;
 	}
@@ -901,7 +914,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Task has been started: Update to 'STARTED' state
 	 */
 	protected synchronized boolean taskUpdateStarted(Task task) {
-		if (debug) log("Task started '" + task.getId() + "'");
+		debug("Task started '" + task.getId() + "'");
 
 		if (task.isStarted()) return true; // Already started, nothing to do
 		if (!task.canChangeState(TaskState.STARTED)) return false;

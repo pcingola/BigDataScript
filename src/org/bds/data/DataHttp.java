@@ -56,7 +56,7 @@ public class DataHttp extends DataRemote {
 	 */
 	protected URLConnection connect() {
 		try {
-			if (verbose) Timer.showStdErr("Connecting to " + uri);
+			log("Connecting to " + uri);
 			URL url = uri.toURL();
 			connection = url.openConnection();
 
@@ -74,19 +74,19 @@ public class DataHttp extends DataRemote {
 					case HTTP_MOVED_PERMANENTLY:
 					case HTTP_REDIR:
 						String newUrl = connection.getHeaderField("Location");
-						if (verbose) Timer.showStdErr("Following redirect: " + newUrl);
+						log("Following redirect: " + newUrl);
 						url = new URL(newUrl);
 						connection = url.openConnection();
 						break;
 
 					case HTTP_NOTFOUND:
 						canRead = false;
-						if (verbose) Timer.showStdErr("File '" + uri + "' not found on server.");
+						error("File '" + uri + "' not found on server.");
 						return null;
 
 					default:
 						canRead = false;
-						if (verbose) Timer.showStdErr("Server error " + code + " for URL '" + uri + "'");
+						error("Server error " + code + " for URL '" + uri + "'");
 						return null;
 					}
 				}
@@ -101,7 +101,7 @@ public class DataHttp extends DataRemote {
 
 	@Override
 	public boolean deleteRemote() {
-		if (verbose) Timer.showStdErr("Cannot delete file '" + this + "'");
+		error("Cannot delete file '" + this + "'");
 		return false;
 	}
 
@@ -121,7 +121,7 @@ public class DataHttp extends DataRemote {
 			InputStream is = uri.toURL().openStream();
 
 			// Open local file
-			if (verbose) Timer.showStdErr("Local file name: '" + local + "'");
+			log("Local file name: '" + local + "'");
 
 			// Create local directory if it doesn't exists
 			mkdirsLocal(local);
@@ -147,14 +147,14 @@ public class DataHttp extends DataRemote {
 			// Close streams
 			is.close();
 			os.close();
-			if (verbose) Timer.showStdErr("Donwload finished. Total " + total + " bytes.");
+			log("Donwload finished. Total " + total + " bytes.");
 
 			// Update file's last modified
 			updateLocalFileLastModified();
 
 			return true;
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while connecting to " + this);
+			error("Error while connecting to " + this);
 			throw new RuntimeException(e);
 		} finally {
 			close();
@@ -177,7 +177,7 @@ public class DataHttp extends DataRemote {
 				fileList.add(new DataHttp(href));
 			}
 		} catch (Exception e) {
-			if (verbose) Timer.showStdErr("ERROR while listing file from '" + this + "'");
+			error("Error while listing file from '" + this + "'");
 		} finally {
 			close();
 		}

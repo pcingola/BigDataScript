@@ -426,7 +426,7 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	public String generateId(BdsNode node, String tag, String name, boolean usePid, boolean useRand) {
 		long pid = usePid ? ProcessHandle.current().pid() : -1;
-		int rand = useRand ? Math.abs((new Random()).nextInt()) : -1;
+		long rand = useRand ? Math.abs((new Random()).nextLong()) : -1;
 
 		// Use module name
 		int ln = -1;
@@ -444,7 +444,7 @@ public class BdsThread extends Thread implements Serializable {
 				+ (ln > 0 ? ".line_" + ln : "") //
 				+ ".id_" + nextId() //
 				+ (pid < 0 ? "" : ".pid_" + pid) //
-				+ (rand < 0 ? "" : "." + rand) //
+				+ (rand < 0 ? "" : String.format(".%08x", rand)) //
 		;
 	}
 

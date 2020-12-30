@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import org.bds.executioner.ExecutionerFileSystem;
 import org.bds.executioner.ExecutionerLocal;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * Execute a command in a local computer.
@@ -57,7 +56,7 @@ public class CmdLocal extends Cmd {
 			StringBuilder cmdsb = new StringBuilder();
 			for (String arg : commandArgs)
 				cmdsb.append(" " + arg);
-			Timer.showStdErr("CmdLocal: Executing " + cmdsb);
+			debug("Executing " + cmdsb);
 		}
 		process = pb.start();
 
@@ -124,7 +123,7 @@ public class CmdLocal extends Cmd {
 	 * Send a kill signal using 'bds kill'
 	 */
 	protected void killBds(int pid) {
-		if (debug) Gpr.debug("Kill pid: " + pid);
+		debug("Kill pid: " + pid);
 
 		// Create arguments
 		ArrayList<String> args = new ArrayList<>();
@@ -151,7 +150,7 @@ public class CmdLocal extends Cmd {
 		// Execute kill command
 		try {
 			// Execute 'bds kill pid'
-			if (debug) log("Executing kill process for pid " + pid + " : " + args);
+			debug("Executing kill process for pid " + pid + " : " + args);
 			Process proc = Runtime.getRuntime().exec(args.toArray(ARGS_ARRAY_TYPE));
 			int exitVal = proc.waitFor();
 			if (exitVal != 0) log("Error killing process " + pid);
@@ -167,7 +166,7 @@ public class CmdLocal extends Cmd {
 			// Do we have a PID number? Kill using that number
 			int pidNum = Gpr.parseIntSafe(pid);
 			if (pidNum > 0) killBds(pidNum);
-			if (debug) log("Killing process '" + pid + "'");
+			debug("Killing process '" + pid + "'");
 
 			addError("Killed!\n");
 			process.destroy();
@@ -204,7 +203,7 @@ public class CmdLocal extends Cmd {
 			}
 
 			// Parse line. Format "PID \t pidNum \t childPidNum"
-			if (debug) log("Reading PID line '" + sb + "'");
+			debug("Reading PID line '" + sb + "'");
 
 			// Parse pid?
 			if (pidParser != null) pid = pidParser.parsePidLine(sb.toString());

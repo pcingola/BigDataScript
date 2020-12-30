@@ -95,7 +95,7 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 		// PID regex matcher
 		pidRegexStr = config.getPidRegex("");
 		if (!pidRegexStr.isEmpty()) {
-			if (debug) log("Using pidRegex '" + pidRegexStr + "'");
+			debug("Using pidRegex '" + pidRegexStr + "'");
 			pidRegex = Pattern.compile(pidRegexStr);
 		}
 
@@ -200,7 +200,7 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 	public Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
-		if (debug) log("Running task " + task.getId());
+		debug("Running task " + task.getId());
 
 		//---
 		// Create command line to dispatch 'task' to the cluster management system
@@ -343,12 +343,10 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 				if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
 				else pid = matcher.group(0); // Use whole pattern
 
-				if (debug) log("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
+				debug("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
 				return pid;
-			} else if (verbose || debug) log("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") did NOT match line: '" + line + "'");
-		} else if (debug) {
-			log("No PID regex configured in (missing " + Config.PID_REGEX + " entry in config file?). Using whole line");
-		}
+			} else log("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") did NOT match line: '" + line + "'");
+		} else debug("No PID regex configured in (missing " + Config.PID_REGEX + " entry in config file?). Using whole line");
 
 		return line;
 	}
@@ -381,7 +379,7 @@ public class ExecutionerCluster extends ExecutionerFileSystem {
 
 		// Run command
 		ExecResult cmdExecResult = Exec.exec(args, true);
-		if (verbose) log("Finding postMortemInfo for task " + task.getId() //
+		log("Finding postMortemInfo for task " + task.getId() //
 				+ "\n\tCommand executed : '" + cmdsb + "'" //
 				+ "\n\tExit value       : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //

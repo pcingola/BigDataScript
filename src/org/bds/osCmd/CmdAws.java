@@ -157,7 +157,7 @@ public class CmdAws extends Cmd {
 
 	@Override
 	protected void killCmd() {
-		if (debug) log("Terminating instance '" + instanceId + "'");
+		debug("Terminating instance '" + instanceId + "'");
 		StopInstancesRequest request = StopInstancesRequest.builder().instanceIds(instanceId).build();
 		Ec2Client ec2 = Ec2Client.create();
 		ec2.stopInstances(request);
@@ -240,7 +240,7 @@ public class CmdAws extends Cmd {
 
 			// Create instance failed. Sleep for a random time and re-try
 			int secs = rand.nextInt(START_FAIL_SLEEP_RAND_TIME);
-			Timer.showStdErr("WARNING: Create instance failed, tasId: '" + task.getId() + "',  waiting " + secs + " seconds before next attempt");
+			warning("Create instance failed, tasId: '" + task.getId() + "',  waiting " + secs + " seconds before next attempt");
 
 			try {
 				Thread.sleep(1000 * secs);

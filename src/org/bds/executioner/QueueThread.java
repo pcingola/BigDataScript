@@ -11,17 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * A thread that handles queue messages
  *
  * @author pcingola
  */
-public abstract class QueueThread extends Thread {
+public abstract class QueueThread extends Thread implements BdsLog {
 
 	protected Config config;
 	protected boolean debug;
@@ -59,7 +59,7 @@ public abstract class QueueThread extends Thread {
 		// Remove all tasks (close all open streams)
 		List<Task> tasks = new ArrayList<>();
 		tasks.addAll(taskById.values());
-		if (debug) log("runLoopAfter. Removing " + tasks.size() + " pending tasks");
+		debug("Removing " + tasks.size() + " pending tasks");
 		for (Task t : tasks)
 			remove(t);
 
@@ -123,11 +123,6 @@ public abstract class QueueThread extends Thread {
 	public synchronized void kill() {
 		running = false;
 		close();
-	}
-
-	public void log(String msg) {
-		if (debug) Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
-		else if (verbose) Timer.showStdErr(msg);
 	}
 
 	/**
@@ -201,9 +196,9 @@ public abstract class QueueThread extends Thread {
 	 */
 	@Override
 	public void run() {
-		if (debug) log("Started running");
+		debug("Started running queue thread");
 		runQueue();
-		if (debug) log("Finished running");
+		debug("Finished running queue thread");
 	}
 
 	/**
@@ -215,7 +210,7 @@ public abstract class QueueThread extends Thread {
 	 * Run after the thread is stopped
 	 */
 	protected void runLoopAfter() {
-		if (debug) log("runLoopAfter");
+		debug("After queue thread");
 		close();
 	}
 
@@ -223,7 +218,7 @@ public abstract class QueueThread extends Thread {
 	 * Run before starting the main loop
 	 */
 	protected void runLoopBefore() {
-		if (debug) log("runLoopBefore: Creating queue");
+		debug("Creating queue");
 
 		// Create the queue and add an entry in TaskLogger
 		if (createQueue()) {
@@ -252,7 +247,7 @@ public abstract class QueueThread extends Thread {
 			t.printStackTrace();
 			throw new RuntimeException(t);
 		} finally {
-			if (debug) log("runLoop finished: running=" + running);
+			debug("runQueue finished: running=" + running);
 			running = false;
 			runLoopAfter(); // Clean up
 		}
@@ -278,7 +273,7 @@ public abstract class QueueThread extends Thread {
 		OutputStream os = stdErrByTaskId.get(tid);
 		if (os == null) {
 			try {
-				if (debug) log("Creating file '" + task.getStderrFile() + "'");
+				debug("Creating file '" + task.getStderrFile() + "'");
 				os = new BufferedOutputStream(new FileOutputStream(task.getStderrFile()));
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException("Error opening file '" + task.getStderrFile() + "'", e);
@@ -306,7 +301,7 @@ public abstract class QueueThread extends Thread {
 		OutputStream os = stdOutByTaskId.get(tid);
 		if (os == null) {
 			try {
-				if (debug) log("Creating file '" + task.getStdoutFile() + "'");
+				debug("Creating file '" + task.getStdoutFile() + "'");
 				os = new BufferedOutputStream(new FileOutputStream(task.getStdoutFile()));
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException("Error opening file '" + task.getStdoutFile() + "'", e);

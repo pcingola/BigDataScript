@@ -84,7 +84,7 @@ public class SysVmOpcode {
 	}
 
 	/**
-	 * Create a task ID
+	 * Create an ID for 'task', 'dep' or 'sys'
 	 */
 	protected String id(String tag) {
 		String taskName = getTaskName();
@@ -92,7 +92,7 @@ public class SysVmOpcode {
 			if (taskName.isEmpty()) taskName = null;
 			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
 		}
-		return bdsThread.generateId(getBdsNode(), tag, taskName, false, false);
+		return bdsThread.generateId(getBdsNode(), tag, taskName, false, true);
 	}
 
 	protected boolean isNode(BdsNode n) {

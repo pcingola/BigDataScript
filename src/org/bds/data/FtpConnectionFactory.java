@@ -15,6 +15,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
@@ -27,7 +28,7 @@ import org.bds.util.Tuple;
  * @author pcingola
  *
  */
-public class FtpConnectionFactory extends TimerTask {
+public class FtpConnectionFactory extends TimerTask implements BdsLog {
 
 	public static boolean verbose = false;
 	public static boolean debug = false;
@@ -101,7 +102,7 @@ public class FtpConnectionFactory extends TimerTask {
 
 			// Connect
 			try {
-				if (verbose) Timer.showStdErr("Connecting to '" + key + "'");
+				log("Connecting to '" + key + "'");
 				ftp.connect(uri.getHost());
 				// After connection attempt, you should check the reply code to verify success.
 				int reply = ftp.getReplyCode();

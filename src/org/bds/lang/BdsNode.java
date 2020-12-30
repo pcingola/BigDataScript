@@ -10,6 +10,7 @@ import java.util.Set;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.bds.BdsLog;
 import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessage.MessageType;
 import org.bds.compile.CompilerMessages;
@@ -21,19 +22,18 @@ import org.bds.lang.type.TypeMap;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
 import org.bds.symbol.SymbolTable;
-import org.bds.util.Timer;
 
 /**
  * Base AST node for bds language elements
  *
  * @author pcingola
  */
-public abstract class BdsNode implements Serializable {
+public abstract class BdsNode implements Serializable, BdsLog {
 
+	private static final long serialVersionUID = -2443078474175192104L;
 	protected BdsNode parent;
 	protected int id, lineNum, charPosInLine; // Source code info
 	protected Type returnType;
-	private static final long serialVersionUID = -2443078474175192104L;
 
 	/**
 	 * Constructor
@@ -382,14 +382,11 @@ public abstract class BdsNode implements Serializable {
 		charPosInLine = token.getCharPositionInLine();
 	}
 
-	/**
-	 * Log a message to console
-	 */
-	public void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() //
+	@Override
+	public String logMessagePrepend() {
+		return getClass().getSimpleName() //
 				+ (getFileName() != null ? " (" + getFileName() + ":" + getLineNum() + ")" : "") //
-				+ " : " + msg //
-		);
+		;
 	}
 
 	/**

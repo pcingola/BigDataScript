@@ -38,7 +38,7 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 	public Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
-		if (debug) log("Running task " + task.getId());
+		debug("Running task " + task.getId());
 
 		// Create command line
 		ArrayList<String> args = new ArrayList<>();
@@ -72,7 +72,7 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 		// Create command
 		CmdCluster cmd = new CmdCluster(task.getId(), argv);
 		cmd.setReadPid(true); // We execute using a custom made script that is required to output jobID in the first line
-		if (debug) log("Running task " + task.getId() + ", command:\n\t" + cmd);
+		debug("Running task " + task.getId() + ", command:\n\t" + cmd);
 		return cmd;
 	}
 

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.bds.util.Timer;
+import org.bds.BdsLog;
 
 /**
  * A "tail -f" for java
@@ -15,7 +15,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Tail extends Thread implements Serializable {
+public class Tail extends Thread implements Serializable, BdsLog {
 
 	private static final long serialVersionUID = 3971573486965684116L;
 
@@ -42,7 +42,7 @@ public class Tail extends Thread implements Serializable {
 		if (quiet) return; // Quiet mode? Nothing to do
 
 		TailFile tf = new TailStream(input, showStderr, tailId);
-		if (debug) log("Adding (" + tf.getClass().getSimpleName() + ") '" + tailId + "'");
+		debug("Adding (" + tf.getClass().getSimpleName() + ") '" + tailId + "'");
 		tf.setDebug(debug);
 		tf.setVerbose(verbose);
 		files.put(tailId, tf);
@@ -59,7 +59,7 @@ public class Tail extends Thread implements Serializable {
 		if (quiet) return; // Quiet mode? Nothing to do
 
 		TailFile tf = new TailFileMulti(inputFileName, showStderr);
-		if (debug) log("Adding (" + tf.getClass().getSimpleName() + ") '" + inputFileName + "'");
+		debug("Adding (" + tf.getClass().getSimpleName() + ") '" + inputFileName + "'");
 		tf.setDebug(debug);
 		tf.setVerbose(verbose);
 		files.put(inputFileName, tf);
@@ -69,7 +69,7 @@ public class Tail extends Thread implements Serializable {
 	 * Close all files
 	 */
 	void close() {
-		if (debug) log("Closing.");
+		debug("Closing all files");
 
 		// Close all files
 		for (TailFile tf : files.values())
@@ -77,17 +77,23 @@ public class Tail extends Thread implements Serializable {
 		files = new HashMap<>();
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
+	}
+
 	/**
 	 * Kill this thread, stop 'following files'
 	 */
 	public void kill() {
-		if (debug) log("Killed");
+		debug("Killed");
 		close();
 		running = false;
-	}
-
-	public void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
 	}
 
 	/**
@@ -97,7 +103,7 @@ public class Tail extends Thread implements Serializable {
 		try {
 			TailFile tf = files.get(fileName);
 			if (tf != null) {
-				if (debug) log("Removing (" + tf.getClass().getSimpleName() + ") '" + fileName + "'");
+				debug("Removing (" + tf.getClass().getSimpleName() + ") '" + fileName + "'");
 				tf.close();
 			}
 			files.remove(fileName);

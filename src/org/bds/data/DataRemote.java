@@ -270,7 +270,7 @@ public abstract class DataRemote extends Data {
 
 		if (paren.exists()) return true;
 
-		if (verbose) Timer.showStdErr("Local path '" + paren + "' doesn't exist, creating.");
+		log("Local path '" + paren + "' doesn't exist, creating.");
 		return paren.mkdirs();
 	}
 

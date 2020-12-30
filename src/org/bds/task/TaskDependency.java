@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.bds.BdsLog;
 import org.bds.data.Data;
 import org.bds.data.DataTask;
 import org.bds.lang.BdsNode;
@@ -17,7 +18,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class TaskDependency implements Serializable {
+public class TaskDependency implements Serializable, BdsLog {
 
 	private static final long serialVersionUID = -2026628428708457981L;
 
@@ -154,7 +155,7 @@ public class TaskDependency implements Serializable {
 	public boolean depOperator() {
 		// Empty dependency is always true
 		if (outputs.isEmpty() && inputs.isEmpty()) return true;
-		if (debug) log("Evaluating dependencies: " + (bdsNode != null && bdsNode.getFileName() != null ? (bdsNode.getFileName() + ":" + bdsNode.getLineNum()) : "null"));
+		debug("Evaluating dependencies: " + (bdsNode != null && bdsNode.getFileName() != null ? (bdsNode.getFileName() + ":" + bdsNode.getLineNum()) : "null"));
 
 		// Calculate minimum modification time of left hand side
 		long minModifiedLeft = minModifiedLeft();
@@ -167,7 +168,7 @@ public class TaskDependency implements Serializable {
 		// Have all 'left' files been modified before 'right' files?
 		// I.e. Have all goals been created after the input files?
 		boolean ret = (minModifiedLeft < maxModifiedRight);
-		if (debug) log("Modification times, minModifiedLeft (" + minModifiedLeft + ") < maxModifiedRight (" + maxModifiedRight + "): " + ret);
+		debug("Modification times, minModifiedLeft (" + minModifiedLeft + ") < maxModifiedRight (" + maxModifiedRight + "): " + ret);
 		return ret;
 	}
 
@@ -199,13 +200,19 @@ public class TaskDependency implements Serializable {
 		return d instanceof DataTask;
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
 	boolean isTask(String tid) {
 		return TaskDependecies.get().hasTask(tid);
 	}
 
-	void log(String msg) {
-		if (bdsNode != null) bdsNode.log(msg);
-		else Timer.showStdErr(getClass().getSimpleName() + " : " + msg);
+	@Override
+	public String logMessagePrepend() {
+		if (bdsNode != null) return bdsNode.logMessagePrepend();
+		return getClass().getSimpleName();
 	}
 
 	/**
@@ -222,7 +229,7 @@ public class TaskDependency implements Serializable {
 				for (Task t : taskOutList) {
 					// If the task modifying 'file' is not finished, we'll need to update
 					if (!t.isDone()) {
-						if (debug) log("Right hand side: file '" + dataIn + "' will be modified by task '" + t.getId() + "' (task state: '" + t.getTaskState() + "')");
+						debug("Right hand side: file '" + dataIn + "' will be modified by task '" + t.getId() + "' (task state: '" + t.getTaskState() + "')");
 						return -1;
 					}
 				}
@@ -232,7 +239,7 @@ public class TaskDependency implements Serializable {
 				// Update max time
 				long modTime = dataIn.getLastModified().getTime();
 				maxModifiedRight = Math.max(maxModifiedRight, modTime);
-				if (debug) log("Right hand side: file '" + dataIn + "' modified on " + modTime + ". Max modification time: " + maxModifiedRight);
+				debug("Right hand side: file '" + dataIn + "' modified on " + modTime + ". Max modification time: " + maxModifiedRight);
 			} else if (isDataTask(dataIn)) {
 				// A task must be always executed to satisfy the dependency
 				return -1;
@@ -240,7 +247,7 @@ public class TaskDependency implements Serializable {
 				// Make sure that we schedule the task if the input file doesn't exits
 				// The reason to do this, is that probably the input file was defined
 				// by some other task that is pending execution.
-				if (debug) log("Right hand side: file '" + dataIn + "' doesn't exist");
+				debug("Right hand side: file '" + dataIn + "' doesn't exist");
 				return -1;
 			}
 		}
@@ -256,18 +263,18 @@ public class TaskDependency implements Serializable {
 		for (Data dataOut : outputs) {
 			// Any 'left' file does not exists? => We need to build this dependency
 			if (!dataOut.exists()) {
-				if (debug) log("Left hand side: file '" + dataOut + "' doesn't exist");
+				debug("Left hand side: file '" + dataOut + "' doesn't exist");
 				return -1;
 			}
 
 			if (dataOut.isFile() && dataOut.size() <= 0) {
-				if (debug) log("Left hand side: file '" + dataOut + "' is empty");
+				debug("Left hand side: file '" + dataOut + "' is empty");
 				return -1; // File is empty? => We need to build this dependency.
 			} else if (dataOut.isDirectory()) {
 				// Notice: If it is a directory, we must rebuild if it is empty
 				List<Data> dirList = dataOut.list();
 				if (dirList.isEmpty()) {
-					if (debug) log("Left hand side: file '" + dataOut + "' is an empty dir");
+					debug("Left hand side: file '" + dataOut + "' is an empty dir");
 					return -1;
 				}
 			} else if (isDataTask(dataOut)) {
@@ -278,7 +285,7 @@ public class TaskDependency implements Serializable {
 			// Analyze modification time
 			long modTime = dataOut.getLastModified().getTime();
 			minModifiedLeft = Math.min(minModifiedLeft, modTime);
-			if (debug) log("Left hand side: file '" + dataOut + "' modified on " + modTime + ". Min modification time: " + minModifiedLeft);
+			debug("Left hand side: file '" + dataOut + "' modified on " + modTime + ". Min modification time: " + minModifiedLeft);
 		}
 		return minModifiedLeft;
 	}

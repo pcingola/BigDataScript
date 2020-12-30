@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bds.Bds;
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.cluster.host.Resources;
 import org.bds.data.Data;
@@ -29,7 +30,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Report {
+public class Report implements BdsLog {
 
 	public static String DAG_TEMPLATE = "DagTaskTemplate.js";
 	public static final String DATE_FORMAT_CSV = "yyyy,MM,dd,HH,mm,ss";
@@ -93,7 +94,7 @@ public class Report {
 		String bdsThreadId = bdsThread.getBdsThreadId();
 
 		if (!bdsThread.anyTask()) {
-			if (verbose) Timer.showStdErr("No tasks run: Report file not created for '" + bdsThreadId + "'.");
+			log("No tasks run: Report file not created for '" + bdsThreadId + "'.");
 			return;
 		}
 
@@ -105,7 +106,7 @@ public class Report {
 		String outFile = reportBaseName + ".report." + (yaml ? "yaml" : "html");
 		bdsThread.setReportFile(outFile);
 		String dagJsFile = reportBaseName + ".dag.js";
-		if (verbose) Timer.showStdErr("Writing report file '" + outFile + "'");
+		log("Writing report file '" + outFile + "'");
 
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
@@ -422,6 +423,16 @@ public class Report {
 		Date start = new Date();
 		start.setTime(start.getTime() - 2 * 1000 * REPORT_TIME);
 		timerReport.setStart(start);
+	}
+
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 
 	/**

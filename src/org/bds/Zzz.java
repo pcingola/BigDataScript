@@ -1,8 +1,5 @@
 package org.bds;
 
-import org.bds.executioner.QueueThread;
-import org.bds.executioner.QueueThreadAwsSqs;
-import org.bds.task.Task;
 import org.bds.util.Gpr;
 
 public class Zzz {
@@ -28,17 +25,17 @@ public class Zzz {
 		config.setVerbose(true);
 
 		String programFileName = "../../task_id_1234.programFileName";
-		Task task = new Task("task_id_1234", programFileName, "echo hi\n", "z.bds", 10);
-		task.createProgramFile();
-
-		QueueThread qt = new QueueThreadAwsSqs(config, null, null, QUEUE_NAME);
-		qt.start();
-		try {
-			qt.add(task);
-			qt.wait();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		//		Task task = new Task("task_id_1234", programFileName, "echo hi\n", "z.bds", 10);
+		//		task.createProgramFile();
+		//
+		//		QueueThread qt = new QueueThreadAwsSqs(config, null, null, QUEUE_NAME);
+		//		qt.start();
+		//		try {
+		//			qt.add(task);
+		//			qt.wait();
+		//		} catch (InterruptedException e) {
+		//			e.printStackTrace();
+		//		}
 
 		System.out.println("End");
 	}
