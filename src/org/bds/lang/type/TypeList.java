@@ -32,7 +32,6 @@ import org.bds.lang.nativeMethods.list.MethodNativeListSort;
 import org.bds.lang.nativeMethods.list.MethodNativeListTail;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
-import org.bds.util.Gpr;
 
 /**
  * A list/array/stack type
@@ -145,7 +144,7 @@ public class TypeList extends TypeComposite {
 			methods.add(new MethodNativeListTail(this));
 
 			// Show
-			if (debug) Gpr.debug("Type " + this + ", library methods added: ");
+			debug("Type " + this + ", library methods added: ");
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new RuntimeException("Error while adding native mehods for class '" + this + "'", t);

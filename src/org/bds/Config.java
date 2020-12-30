@@ -373,7 +373,6 @@ public class Config implements Serializable {
 	public TaskLogger getTaskLogger() {
 		if (taskLogger == null) {
 			taskLogger = new TaskLogger(getPidFile());
-			taskLogger.setDebug(isDebug());
 		}
 		return taskLogger;
 	}

@@ -1,0 +1,97 @@
+src/org/bds/cluster/commandParser/CommandParser.java:29:		if (debug) Gpr.debug("cmd=" + this.cmd);
+src/org/bds/cluster/commandParser/CommandParser.java:59:			if (debug) Gpr.debug("\n---------- RESULT:Start ----------\n" + result + "---------- RESULT:End ----------");
+src/org/bds/cluster/commandParser/CommandParser.java:91:				if (debug) Gpr.debug("Error trying to connect: Empty result string");
+src/org/bds/cluster/commandParser/CommandParser.java:100:			if (debug) Gpr.debug("Error trying to connect:\n" + e);
+src/org/bds/cluster/commandParser/CommandParser.java:131:		if (debug) Gpr.debug("Parsing: " + command);
+src/org/bds/cluster/commandParser/CommandParserSystemProfiler.java:33:				if (debug) {
+src/org/bds/cluster/commandParser/CommandParserCpuInfo.java:33:			if (debug) {
+src/org/bds/cluster/commandParser/CommandParserUptime.java:23:		if (debug) {
+src/org/bds/cluster/commandParser/CommandParserTop.java:40:						if (debug) Gpr.debug("memFields[" + fieldNum + "] : " + memFields[fieldNum]);
+src/org/bds/cluster/commandParser/CommandParserTop.java:47:				if (debug) {
+src/org/bds/cluster/commandParser/CommandParserUname.java:23:		if (debug) {
+src/org/bds/cluster/commandParser/CommandParserMemInfo.java:34:			if (debug) {
+src/org/bds/cluster/commandParser/CommandParserMemInfo.java:42:		if (debug) Gpr.debug("swap" + swap + " swapFree:" + swapFree);
+src/org/bds/cluster/commandParser/CommandParserMemInfo.java:49:		if (debug) Gpr.debug("mem:" + mem + " memFree:" + memFree);
+src/org/bds/Bds.java:115:			if (debug) System.err.println("Local file is up to date, no download required: " + fileName);
+src/org/bds/Bds.java:413:			if (debug) System.err.println("Remote file is up to date, no upload required: " + url);
+src/org/bds/lang/value/InterpolateVars.java:88:			if (debug) Gpr.debug("Interpolate string: |" + str + "|\n\tstring: |" + tupStr.first + "|\n\trest: |" + tupStr.second + "|");
+src/org/bds/lang/value/InterpolateVars.java:97:			if (debug) Gpr.debug("Interpolate variables: |" + str + "|\n\tstring: |" + tupVar.first + "|\n\trest: |" + tupVar.second + "|");
+src/org/bds/lang/type/TypeMap.java:120:			if (debug) Gpr.debug("Type " + this + ", library methods added: ");
+src/org/bds/lang/type/TypeList.java:148:			if (debug) Gpr.debug("Type " + this + ", library methods added: ");
+src/org/bds/lang/BdsNodeFactory.java:139:			if (debug) {
+src/org/bds/lang/BdsNodeFactory.java:152:			if (debug) Gpr.debug("Skipping container node: " + tree.getClass().getSimpleName());
+src/org/bds/lang/BdsNodeFactory.java:155:		if (debug) Gpr.debug("Factory : " + tree.getClass().getSimpleName());
+src/org/bds/vm/BdsVm.java:915:			if (debug) {
+src/org/bds/vm/BdsVmAsm.java:116:		if (debug) System.err.println("# Assembly: Start\n" + bdsvm.toAsm() + "\n# Assembly: End\n");
+src/org/bds/compile/BdsCompiler.java:140:			if (debug) {
+src/org/bds/compile/BdsCompiler.java:295:				if (debug) Gpr.debug("File already included: '" + includedFilename + "'\tCanonical path: '" + canonicalFileName + "'");
+src/org/bds/executioner/TaskLogger.java:71:		if (debug) Gpr.debug("Creating PID logger " + pidFile);
+src/org/bds/executioner/TaskLogger.java:118:			if (debug) Timer.showStdErr("TaskLogger: Appending to PidFile '" + pidFile + "', lines:\n" + Gpr.prependEachLine("\t\t|", str));
+src/org/bds/executioner/CheckTasksRunningCmd.java:174:		if (debug) Timer.showStdErr("Check task running:" //
+src/org/bds/executioner/ExecutionerLocal.java:45:		if (debug) {
+src/org/bds/executioner/ExecutionerClusterGeneric.java:65:		if (debug) {
+src/org/bds/executioner/MonitorTask.java:39:		if (debug) Timer.showStdErr(this.getClass().getName() + ": Adding task " + task.getId());
+src/org/bds/executioner/MonitorTask.java:52:		if (debug) Timer.showStdErr("MonitorTask: Removing task " + task.getId());
+src/org/bds/executioner/MonitorTask.java:70:		if (debug) Timer.showStdErr("MonitorTask.updateFinished(task): Finished task " + task.getId());
+src/org/bds/executioner/MonitorTask.java:84:			if (debug) Timer.showStdErr("MonitorTask: Task finished '" + task.getId() + "', exit status : '" + exitFileStr + "', exit code " + exitCode);
+src/org/bds/executioner/MonitorTaskExitFile.java:64:				if (debug) Timer.showStdErr("MonitorTask.updateFinished(): Adding task to list of finished tasks '" + task.getId() + "'");
+src/org/bds/executioner/ExecutionerCluster.java:241:			if (debug) {
+src/org/bds/executioner/Executioner.java:754:			if (debug) Gpr.debug("Cluster info: " + system.info() + "\n\tCluster: " + system);
+src/org/bds/executioner/ExecutionerSsh.java:59:		if (debug) Timer.showStdErr("Running command: " + cmdStr);
+src/org/bds/BdsParseArgs.java:108:				if (debug) Timer.showStdErr("Activating 'show help' mode");
+src/org/bds/task/TaskDependecies.java:293:		if (debug) {
+src/org/bds/task/TaskDependecies.java:311:			if (debug) Timer.showStdErr("Goal '" + goal + "' does not need update, skipping");
+src/org/bds/task/TaskDependecies.java:344:				if (debug) Timer.showStdErr("Goal run: Running task '" + t.getId() + "'");
+src/org/bds/task/TaskDependecies.java:347:			} else if (debug) Timer.showStdErr("Goal run: Task '" + t.getId() + "' is already scheduled, not running");
+src/org/bds/task/TaskDependecies.java:502:			if (debug) Timer.showStdErr("Wait: Task '" + task.getId() + "' is dependency and has not been scheduled for execution. Not wating.");
+src/org/bds/task/TaskDependecies.java:506:		if (debug) Timer.showStdErr("Wait: Waiting for task to finish: " + task.getId() + ", state: " + task.getTaskState());
+src/org/bds/task/TaskDependecies.java:526:		if (debug) Timer.showStdErr("Wait: Task '" + task.getId() + "' finished.");
+src/org/bds/task/Task.java:185:		if (debug) Timer.showStdErr("Task: Saving file '" + programFileName + "'");
+src/org/bds/task/Task.java:737:				if (debug) Gpr.debug("Using exit file '" + exitCodeFile + "', found exit code '" + getExitValue() + "'");
+src/org/bds/Config.java:177:			if (debug) Gpr.debug("Trying config file '" + cf + "'");
+src/org/bds/report/RTemplate.java:63:		if (debug) Gpr.debug("Input:\n" + input);
+src/org/bds/report/RTemplate.java:122:			if (debug) Gpr.debug("Line: |" + line);
+src/org/bds/report/RTemplate.java:130:				if (debug) Gpr.debug("\t\tpart: '" + linePart + "'\tkey: '" + m.group(i) + "'\t");
+src/org/bds/report/RTemplate.java:139:			if (debug) Gpr.debug("\t\tpart: '" + linePart + "'");
+src/org/bds/report/RTemplate.java:160:			if (debug) Gpr.debug("\t\tKey '': " + key + "\tNum. values: " + maxLen + "\tMax len: " + maxLen);
+src/org/bds/report/RTemplate.java:162:		if (debug) Gpr.debug("\t\tMax len: " + maxLen);
+src/org/bds/report/RTemplate.java:190:		if (debug) Gpr.debug("ReplaceValues, idx " + idx + " : '" + sb + "'");
+src/org/bds/report/RTemplate.java:214:				if (debug) Gpr.debug("Adding regular block:" //
+src/org/bds/report/RTemplate.java:227:				if (debug) Gpr.debug("Adding multiline block:" //
+src/org/bds/report/Report.java:92:		if (debug) Gpr.debug("CreateReport: Start");
+src/org/bds/report/Report.java:191:		if (debug) Gpr.debug("CreateReport: End");
+src/org/bds/report/Report.java:198:		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': Start");
+src/org/bds/report/Report.java:232:		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': End");
+src/org/bds/report/Report.java:239:		if (debug) Gpr.debug("CreateReport Task '" + task.getId() + "': Start");
+src/org/bds/report/Report.java:370:		if (debug) Gpr.debug("CreateReport Task '" + task.getId() + "': End");
+src/org/bds/report/Report.java:377:		if (debug) Timer.showStdErr("Creating DAG summary script '" + dagJsFile + "'");
+src/org/bds/run/BdsRun.java:161:			if (debug) Timer.showStdErr("Assembly code:\n" + asm);
+src/org/bds/run/BdsRun.java:183:		if (debug) Timer.showStdErr("Parsing");
+src/org/bds/run/BdsRun.java:353:		if (debug) Timer.showStdErr("Initializing");
+src/org/bds/run/BdsRun.java:360:			if (debug) Timer.showStdErr("Showing automaic 'help'");
+src/org/bds/run/BdsRun.java:419:		if (debug) Timer.showStdErr("Finished. Exit code: " + exitValue);
+src/org/bds/run/BdsRun.java:424:		if (debug) Gpr.debug("Finished: Killinig executioners");
+src/org/bds/run/BdsRun.java:442:		if (debug) {
+src/org/bds/run/BdsRun.java:480:		if (debug) Timer.showStdErr("Running from checkpoint");
+src/org/bds/run/BdsRun.java:489:		if (debug) Timer.showStdErr("Compiling");
+src/org/bds/run/BdsRun.java:523:		if (debug) Timer.showStdErr("Running task improper");
+src/org/bds/run/BdsRun.java:548:		if (debug) Timer.showStdErr("Running tests");
+src/org/bds/data/FtpConnectionFactory.java:55:			if (debug) Gpr.debug("Creating new FtpConnectionFactory instance");
+src/org/bds/data/FtpConnectionFactory.java:68:		if (debug) Gpr.debug("Killing FtpConnectionFactory timer");
+src/org/bds/data/FtpConnectionFactory.java:85:		if (debug) Gpr.debug("FtpConnectionFactory: Closing connection '" + key + "'");
+src/org/bds/data/FtpConnectionFactory.java:96:			if (debug) Gpr.debug("FtpConnectionFactory: Connecting to '" + key + "'");
+src/org/bds/data/FtpConnectionFactory.java:142:		if (debug) Gpr.debug("FtpConnectionFactory: Connected to '" + key + "'");
+src/org/bds/data/FtpConnectionFactory.java:150:		if (debug) Gpr.debug("FtpConnectionFactory: deleting key '" + key + "'");
+src/org/bds/data/FtpConnectionFactory.java:202:			if (debug) Gpr.debug("FtpConnectionFactory: Creating FTP client for key '" + key + "'");
+src/org/bds/data/FtpConnectionFactory.java:256:		if (debug) Gpr.debug("FtpConnectionFactory: Open FTP client '" + key + "'");
+src/org/bds/data/FtpConnectionFactory.java:302:		if (debug) Gpr.debug("FtpConnectionFactory cleanup");
+src/org/bds/data/FtpConnectionFactory.java:306:				if (debug) Gpr.debug("FtpConnectionFactory killed: Abort cleanup loop (run)");
+src/org/bds/data/FtpConnectionFactory.java:316:			if (debug) Gpr.debug("FtpConnectionFactory: No more ftp clients, killing timer task");
+src/org/bds/data/AwsS3ClientProvider.java:66:			if (debug) Timer.showStdErr("Creating new S3Client for region '" + region + "'");
+src/org/bds/data/AwsS3ClientProvider.java:69:			if (debug) Timer.showStdErr("Creating new S3Client for region '" + region + "', expired after " + timerByRegion.get(region).elapsedSecs() + " secs.");
+src/org/bds/data/DataRemote.java:169:		if (debug) Gpr.debug("Comparing local file '" + local + "' to remote file '" + this + "'");
+src/org/bds/data/DataRemote.java:200:		if (debug) Gpr.debug("Comparing local file '" + local + "' to remote file '" + this + "'");
+src/org/bds/data/DataFtp.java:140:		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
+src/org/bds/data/DataS3.java:358:		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
+src/org/bds/data/DataS3.java:375:			if (debug) Gpr.debug("Error accessing local file '" + getLocalPath() + "'");
+src/org/bds/data/DataHttp.java:232:		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//

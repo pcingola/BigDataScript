@@ -11,7 +11,6 @@ import org.bds.lang.expression.Expression;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.symbol.SymbolTable;
-import org.bds.util.Gpr;
 import org.bds.util.GprString;
 import org.bds.util.Tuple;
 
@@ -85,7 +84,7 @@ public class InterpolateVars extends Literal {
 			//---
 			Tuple<String, String> tupStr = findString(str);
 			String strToAdd = GprString.unescapeDollar(tupStr.first);
-			if (debug) Gpr.debug("Interpolate string: |" + str + "|\n\tstring: |" + tupStr.first + "|\n\trest: |" + tupStr.second + "|");
+			debug("Interpolate string: |" + str + "|\n\tstring: |" + tupStr.first + "|\n\trest: |" + tupStr.second + "|");
 			listStr.add(strToAdd); // Store string
 			str = tupStr.second; // Remaining to be analyzed
 
@@ -94,7 +93,7 @@ public class InterpolateVars extends Literal {
 			//---
 			Tuple<String, String> tupVar = findVariableRef(str);
 			listVars.add(tupVar.first); // Store variable reference
-			if (debug) Gpr.debug("Interpolate variables: |" + str + "|\n\tstring: |" + tupVar.first + "|\n\trest: |" + tupVar.second + "|");
+			debug("Interpolate variables: |" + str + "|\n\tstring: |" + tupVar.first + "|\n\trest: |" + tupVar.second + "|");
 			str = tupVar.second; // Remaining to be analyzed
 		}
 

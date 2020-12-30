@@ -9,19 +9,18 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.bds.BdsLog;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
-import org.bds.util.Gpr;
 
 /**
  * A factory of nodes
  *
  * @author pcingola
  */
-public class BdsNodeFactory {
+public class BdsNodeFactory implements BdsLog {
 
-	public static boolean debug = false;
 	private static BdsNodeFactory bdsNodeFactory = new BdsNodeFactory();
 
 	public static final String packageNames[] = { //
@@ -136,23 +135,21 @@ public class BdsNodeFactory {
 	public final BdsNode factory(BdsNode parent, ParseTree tree) {
 		if (tree == null) return null;
 		if (tree instanceof TerminalNode) {
-			if (debug) {
-				Gpr.debug("Terminal node: " + tree.getClass().getCanonicalName() //
-						+ "\n\t\tText    : '" + tree.getText() + "'" //
-						+ "\n\t\tSymbol  : " + ((TerminalNode) tree).getSymbol() //
-						+ "\n\t\tPayload : " + ((TerminalNode) tree).getPayload() //
-				);
-			}
+			debug("Terminal node: " + tree.getClass().getCanonicalName() //
+					+ "\n\t\tText    : '" + tree.getText() + "'" //
+					+ "\n\t\tSymbol  : " + ((TerminalNode) tree).getSymbol() //
+					+ "\n\t\tPayload : " + ((TerminalNode) tree).getPayload() //
+			);
 			return null;
 		}
 
 		// Skip container nodes (they don't add map)
 		int childNum = -1;
 		while ((childNum = isSkip(tree)) >= 0) {
-			if (debug) Gpr.debug("Skipping container node: " + tree.getClass().getSimpleName());
+			debug("Skipping container node: " + tree.getClass().getSimpleName());
 			tree = tree.getChild(childNum);
 		}
-		if (debug) Gpr.debug("Factory : " + tree.getClass().getSimpleName());
+		debug("Factory : " + tree.getClass().getSimpleName());
 
 		// Get class name
 		String className = className(tree);

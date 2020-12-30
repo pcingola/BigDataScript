@@ -6,10 +6,10 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.HashSet;
 
+import org.bds.BdsLog;
 import org.bds.data.Data;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * TaskLogger: This class adds entries to the `bds.pid.$PID` log file.
@@ -53,25 +53,25 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class TaskLogger implements Serializable {
+public class TaskLogger implements Serializable, BdsLog {
 
 	private static final long serialVersionUID = -7712445468457053526L;
 
 	public static final String CMD_REMOVE_FILE = "@rm";
 	public static final String CMD_KILL = "@kill";
 
-	boolean debug = false;
-	String pidFile;
-	HashSet<String> pids;
+	protected String fileName;
+	protected HashSet<String> ids;
 
-	public TaskLogger(String pidFile) {
-		if (pidFile == null) throw new RuntimeException("Cannot initialize using a null file!");
-		this.pidFile = pidFile;
-		pids = new HashSet<>();
-		if (debug) Gpr.debug("Creating PID logger " + pidFile);
+	public TaskLogger(String fileName) {
+		if (fileName == null) throw new RuntimeException("Cannot initialize using a null file!");
+		this.fileName = fileName;
+		ids = new HashSet<>();
+		debug("Creating Task logger, file: '" + fileName + "'");
 	}
 
 	public synchronized void add(String id, String command) {
+		debug("Adding id: '" + id + "', command: '" + command + "'");
 		append(createEntry(id, true, command));
 	}
 
@@ -79,11 +79,12 @@ public class TaskLogger implements Serializable {
 	 * Add a task and the corresponding executioner
 	 */
 	public synchronized void add(Task task, Executioner executioner) {
+		debug("Adding task: '" + task.getId() + "'");
 		StringBuilder lines = new StringBuilder();
 
 		// Add pid
 		String pid = task.getPid();
-		pids.add(pid);
+		ids.add(pid);
 
 		// Append process PID
 		// Prepare command
@@ -115,12 +116,12 @@ public class TaskLogger implements Serializable {
 	 */
 	protected void append(String str) {
 		try {
-			if (debug) Timer.showStdErr("TaskLogger: Appending to PidFile '" + pidFile + "', lines:\n" + Gpr.prependEachLine("\t\t|", str));
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(pidFile, true)));
+			debug("Appending to Task logger file '" + fileName + "', lines:\n" + Gpr.prependEachLine("\t\t|", str));
+			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)));
 			out.print(str);
 			out.close(); // We need to flush this as fast as possible to avoid missing PID values in the file
 		} catch (Exception e) {
-			throw new RuntimeException("Error appending information to file '" + pidFile + "'\n", e);
+			throw new RuntimeException("Error appending information to file '" + fileName + "'\n", e);
 		}
 	}
 
@@ -132,14 +133,17 @@ public class TaskLogger implements Serializable {
 	 */
 	protected String createEntry(String id, boolean add, String command) {
 		char sign = add ? '+' : '-';
-		return id + "\t" + sign + "\t" + command + '\n';
+		String line = id + "\t" + sign + "\t" + command + '\n';
+		debug("Creating entry: '" + line + "'");
+		return line;
 	}
 
 	public HashSet<String> getPids() {
-		return pids;
+		return ids;
 	}
 
 	public synchronized void remove(String id) {
+		debug("Removing id: '" + id + "'");
 		append(createEntry(id, false, ""));
 	}
 
@@ -147,9 +151,10 @@ public class TaskLogger implements Serializable {
 	 * Remove a task
 	 */
 	public synchronized void remove(Task task) {
+		debug("Removing task: '" + task.getId() + "'");
 		// Remove PID
 		String pid = task.getPid();
-		pids.remove(pid);
+		ids.remove(pid);
 
 		StringBuilder lines = new StringBuilder();
 
@@ -165,9 +170,4 @@ public class TaskLogger implements Serializable {
 		// Append all lines to file
 		append(lines.toString());
 	}
-
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
-
 }

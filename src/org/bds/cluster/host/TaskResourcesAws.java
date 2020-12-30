@@ -11,7 +11,6 @@ import org.bds.lang.value.ValueString;
 import org.bds.run.BdsThread;
 import org.bds.scope.GlobalScope;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 import software.amazon.awssdk.services.ec2.model.IamInstanceProfileSpecification;
 import software.amazon.awssdk.services.ec2.model.InstanceNetworkInterfaceSpecification;
@@ -314,7 +313,7 @@ public class TaskResourcesAws extends TaskResources {
 	 * Set parameters from an 'AwsResources' class
 	 */
 	protected void setFromBdsThreadClassResources(Value taskResources, boolean debug) {
-		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from object '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "': " + taskResources);
+		debug("Setting resources from object '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "': " + taskResources);
 		// TODO: Check that this class is 'AwsResources'
 		throw new RuntimeException("Cannot parse 'taskResources' type " + taskResources.getType());
 	}
@@ -323,7 +322,7 @@ public class TaskResourcesAws extends TaskResources {
 	 * Set parameters from a 'string{string}' dictionary
 	 */
 	protected void setFromBdsThreadMap(ValueMap taskResources, boolean debug) {
-		if (debug) Timer.showStdErr(this.getClass().getName() + " : Setting resources from map '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "': " + taskResources);
+		debug("Setting resources from map '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "': " + taskResources);
 		awsRole = mapGet(taskResources, PROFILE);
 		blockDevMap = mapGet(taskResources, BLOCK_DEV_MAP);
 		bucket = mapGet(taskResources, BUCKET);

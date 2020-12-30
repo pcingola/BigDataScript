@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
@@ -49,7 +50,7 @@ import org.bds.util.GprString;
  *
  * @author pcingola
  */
-public class BdsVm implements Serializable {
+public class BdsVm implements Serializable, BdsLog {
 
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
 	public static final String LABEL_MAIN = "main";

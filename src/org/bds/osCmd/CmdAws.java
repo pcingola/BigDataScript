@@ -398,7 +398,7 @@ public class CmdAws extends Cmd {
 		if (!Gpr.exists(task.getCheckpointLocalFile())) throw new RuntimeException("Checkpoint file '" + task.getCheckpointLocalFile() + "' for AWS improper task '" + task.getId() + "' not found. This should never happen!");
 
 		// Upload checkpoint
-		if (debug) Timer.showStdErr("Uploading local checkpoint '" + task.getCheckpointLocalFile() + "' to S3 '" + checkpointS3 + "'");
+		debug("Uploading local checkpoint '" + task.getCheckpointLocalFile() + "' to S3 '" + checkpointS3 + "'");
 		chps3.upload(chp);
 
 		// Delete checkpoint once the session finishes

@@ -10,7 +10,7 @@ import org.bds.util.Gpr;
  *
  * @author pcingola
  */
-public class Bds {
+public class Bds implements BdsLog {
 
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
 	public static final String REVISION = "beta";
@@ -101,18 +101,18 @@ public class Bds {
 
 		// Sanity checks
 		if (!remote.isRemote()) {
-			System.err.println("Cannot download non-remote URL: " + url);
+			error("Cannot download non-remote URL: " + url);
 			return false;
 		}
 
 		if (!remote.isFile()) {
-			System.err.println("Cannot download non-file: " + url);
+			error("Cannot download non-file: " + url);
 			return false;
 		}
 
 		// Already downloaded? Nothing to do
 		if (remote.isDownloaded(local)) {
-			if (debug) System.err.println("Local file is up to date, no download required: " + fileName);
+			debug("Local file is up to date, no download required: " + fileName);
 			return true;
 		}
 
@@ -140,11 +140,26 @@ public class Bds {
 		bdsRun = new BdsRun();
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isLog() {
+		return log;
+	}
+
 	/**
 	 * Is this a command line option (e.g. "-tfam" is a command line option, but "-" means STDIN)
 	 */
 	protected boolean isOpt(String arg) {
 		return arg.startsWith("-") && (arg.length() > 1);
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 
 	/**
@@ -389,28 +404,28 @@ public class Bds {
 
 		// Sanity checks
 		if (!remote.isRemote()) {
-			System.err.println("Cannot upload to non-remote URL: " + url);
+			error("Cannot upload to non-remote URL: " + url);
 			return false;
 		}
 
 		if (!local.isFile()) {
-			System.err.println("Cannot upload non-file: " + fileName);
+			error("Cannot upload non-file: " + fileName);
 			return false;
 		}
 
 		if (!local.exists()) {
-			System.err.println("Local file does not exists: " + fileName);
+			error("Local file does not exists: " + fileName);
 			return false;
 		}
 
 		if (!local.canRead()) {
-			System.err.println("Cannot read local file : " + fileName);
+			error("Cannot read local file : " + fileName);
 			return false;
 		}
 
 		// Already uploaded? Nothing to do
 		if (remote.isUploaded(local)) {
-			if (debug) System.err.println("Remote file is up to date, no upload required: " + url);
+			debug("Remote file is up to date, no upload required: " + url);
 			return true;
 		}
 

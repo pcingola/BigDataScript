@@ -22,7 +22,6 @@ import org.bds.lang.ProgramUnit;
 import org.bds.lang.statement.StatementInclude;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * BdsCompiler a Bds program.
@@ -138,7 +137,7 @@ public class BdsCompiler implements BdsLog {
 
 			// Show main nodes
 			if (debug) {
-				Timer.showStdErr("AST:");
+				debug("AST:");
 				for (int childNum = 0; childNum < tree.getChildCount(); childNum++) {
 					Tree child = tree.getChild(childNum);
 					System.err.println("\t\tChild " + childNum + ":\t" + child + "\tTree:'" + child.toStringTree() + "'");
@@ -292,7 +291,7 @@ public class BdsCompiler implements BdsLog {
 			// Already included? don't bother
 			String canonicalFileName = Gpr.getCanonicalFileName(includedFile);
 			if (alreadyIncluded.contains(canonicalFileName)) {
-				if (debug) Gpr.debug("File already included: '" + includedFilename + "'\tCanonical path: '" + canonicalFileName + "'");
+				debug("File already included: '" + includedFilename + "'\tCanonical path: '" + canonicalFileName + "'");
 				return false;
 			}
 

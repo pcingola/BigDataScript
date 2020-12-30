@@ -2,6 +2,7 @@ package org.bds.cluster.host;
 
 import java.io.Serializable;
 
+import org.bds.BdsLog;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -15,7 +16,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Resources implements Comparable<Resources>, Cloneable, Serializable {
+public class Resources implements Comparable<Resources>, Cloneable, Serializable, BdsLog {
 
 	private static final long serialVersionUID = 764782969174543552L;
 

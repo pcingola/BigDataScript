@@ -193,7 +193,7 @@ public class CmdLocal extends Cmd {
 			for (int i = 0; true; i++) {
 				int r = getStdout().read();
 				if (r < 0) {
-					if (debug) System.err.println("WARNING: Process closed stdout prematurely. Could not read PID\n" + this);
+					debug("WARNING: Process closed stdout prematurely. Could not read PID\n" + this);
 					return false;
 				}
 				char ch = (char) r;
