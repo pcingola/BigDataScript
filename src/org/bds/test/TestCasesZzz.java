@@ -127,6 +127,7 @@ public class TestCasesZzz extends TestCasesBase {
 		runOk("test/run_task_detached_05.bds");
 
 		// Check: A detached task should finish immediately
+		//        The original program's task loops for 60 seconds, so a detached task should take less than a minute
 		assertTrue("Detached task taking too long: Probably not detached", t.elapsedSecs() < 15);
 
 		// Wait: Make sure the task is executed on AWS, check instance and instance states

@@ -6,8 +6,7 @@ println "Before"
 out := "$s3base/out.txt"
 println "Output file: '$out'"
 
-# task(system := 'aws', detached := true) {
-task {
+task(system := 'aws', detached := true) {
 	sys echo HI
 	sys date > tmp.txt
 	sys aws s3 cp tmp.txt "$out"
