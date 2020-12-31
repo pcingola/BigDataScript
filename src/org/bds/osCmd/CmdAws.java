@@ -10,7 +10,6 @@ import java.util.Random;
 
 import org.bds.Config;
 import org.bds.cluster.host.TaskResourcesAws;
-import org.bds.data.Data;
 import org.bds.data.DataFile;
 import org.bds.data.DataS3;
 import org.bds.run.BdsThread;
@@ -91,7 +90,7 @@ public class CmdAws extends Cmd {
 			// Attach tags to instance
 			CreateTagsRequest tagRequest = CreateTagsRequest.builder().resources(instanceId).tags(tags).build();
 			ec2.createTags(tagRequest);
-			log("Created tags for AWS EC2 instance '" + instanceId + "', tags: " + tags);
+			debug("Created tags for AWS EC2 instance '" + instanceId + "', tags: " + tags);
 		} catch (Ec2Exception e) {
 			String msg = e.awsErrorDetails().errorMessage();
 			error(msg);
@@ -415,21 +414,21 @@ public class CmdAws extends Cmd {
 
 		// Local and remote data files
 		DataS3 chps3 = new DataS3(checkpointS3, resources.getRegion());
-		DataFile chp = new DataFile(task.getCheckpointLocalFile());
+		DataFile localCheckpointFile = new DataFile(task.getCheckpointLocalFile());
 
 		if (task.getCheckpointLocalFile() == null) throw new RuntimeException("AWS improper task '" + task.getId() + "' has null checkpoint file. This should never happen!");
 		if (!Gpr.exists(task.getCheckpointLocalFile())) throw new RuntimeException("Checkpoint file '" + task.getCheckpointLocalFile() + "' for AWS improper task '" + task.getId() + "' not found. This should never happen!");
 
 		// Upload checkpoint
 		debug("Uploading local checkpoint '" + task.getCheckpointLocalFile() + "' to S3 '" + checkpointS3 + "'");
-		chps3.upload(chp);
+		chps3.upload(localCheckpointFile);
 
 		// Delete checkpoint once the session finishes
 		if (!Config.get().isLog()) {
 			BdsThread bdsThread = BdsThreads.getInstance().getOrRoot();
 			if (bdsThread != null) {
-				Data localCheckpointFile = Data.factory(task.getCheckpointLocalFile(), bdsThread);
 				bdsThread.rmOnExit(localCheckpointFile);
+				bdsThread.rmOnExit(chps3);
 			}
 		}
 	}

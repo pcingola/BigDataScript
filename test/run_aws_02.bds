@@ -20,7 +20,10 @@ task(system := 'aws') {
 	# Print something
 	for(int i=0 ; i < 10; i++) {
 		println "Counting: $i"
+		sys echo "This is an echo"
+		sleep(1)
 	}
+
 	println "Bye!"
 }
 println "After"

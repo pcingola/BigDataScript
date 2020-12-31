@@ -217,7 +217,7 @@ public abstract class Cmd extends Thread implements BdsLog {
 
 	@Override
 	public String logMessagePrepend() {
-		return "'" + getCmdId() + "'";
+		return "Cmd '" + getCmdId() + "'";
 	}
 
 	/**
