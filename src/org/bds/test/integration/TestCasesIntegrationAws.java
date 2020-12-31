@@ -42,6 +42,16 @@ public class TestCasesIntegrationAws extends TestCasesBase {
 		Config.get().load();
 	}
 
+	protected String bucketUrl(String dirName, String fileName) {
+		// Set the output file
+		String bucket = awsBucketName();
+		String region = awsRegion();
+		String urlParen = "s3://" + bucket + "/tmp/bds/" + dirName;
+		if (!region.isEmpty()) urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/" + dirName;
+		String url = urlParen + "/" + fileName;
+		return url;
+	}
+
 	/**
 	 * Find AWS EC2 instance parameters for a given task
 	 * @return DescribeInstancesResponse or null if not found
@@ -108,7 +118,7 @@ public class TestCasesIntegrationAws extends TestCasesBase {
 	 * TODO: Simple task command
 	 */
 	@Test
-	public void test01() {
+	public void test01_SimpleScript() {
 		Gpr.debug("Test");
 		throw new RuntimeException("UNIMPLEMENTED!");
 	}
@@ -167,11 +177,8 @@ public class TestCasesIntegrationAws extends TestCasesBase {
 		Gpr.debug("Test");
 
 		// Set the output file
-		String bucket = awsBucketName();
 		String region = awsRegion();
-		String urlParen = "s3://" + bucket + "/tmp/bds/run_task_detached_05";
-		if (!region.isEmpty()) urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/run_task_detached_05";
-		String url = urlParen + "/out.txt";
+		String url = bucketUrl("run_aws_07", "out.txt");
 
 		// Cleanup: Make sure output file is deleted before starting
 		DataS3 dout = new DataS3(url, region);
@@ -179,7 +186,7 @@ public class TestCasesIntegrationAws extends TestCasesBase {
 
 		// Run: Execute bds code and check how long before it completes
 		Timer t = new Timer();
-		runOk("test/run_task_detached_05.bds");
+		runOk("test/run_aws_07.bds");
 
 		// Check: A detached task should finish immediately
 		//        The original program's task loops for 60 seconds, so a detached task should take less than a minute
