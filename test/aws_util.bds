@@ -20,6 +20,7 @@ string getAwsRegion() return getAwsInfo(){'region'}.trim()
 taskResources := getAwsInfo()
 awsRegion := taskResources{'region'}
 bucket := taskResources{'bucket'}
+cloudQueueNamePrefix := taskResources{'cloudQueueNamePrefix'}
 
 test := programName.removeExt()
 s3base := "s3://$bucket/tmp/bds/$test"

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.bds.Bds;
 import org.bds.Config;
+import org.bds.run.BdsRun;
 import org.bds.run.BdsThread;
 import org.bds.test.BdsTest;
 import org.bds.test.TestCasesBase;
@@ -24,7 +25,8 @@ public class TestCasesCommandLineOptions extends TestCasesBase {
 
 	@Before
 	public void beforeEachTest() {
-		Config.reset();
+		BdsRun.reset();
+		//		Config.reset();
 		Config.get().load();
 	}
 

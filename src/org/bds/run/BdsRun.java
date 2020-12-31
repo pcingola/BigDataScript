@@ -11,6 +11,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.bds.Bds;
 import org.bds.BdsLog;
+import org.bds.BdsLogger;
 import org.bds.BdsParseArgs;
 import org.bds.Config;
 import org.bds.compile.BdsCompiler;
@@ -18,7 +19,6 @@ import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessages;
 import org.bds.data.Data;
 import org.bds.data.FtpConnectionFactory;
-import org.bds.executioner.Executioner;
 import org.bds.executioner.ExecutionerFileSystem;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
@@ -74,6 +74,22 @@ public class BdsRun implements BdsLog {
 	BdsThread bdsThread;
 	ProgramUnit programUnit; // Program (parsed nodes)
 	List<String> programArgs; // Command line arguments for BigDataScript program
+
+	/**
+	 * Reset all singleton objects
+	 */
+	public static void reset() {
+		BdsLogger.debug("Full reset");
+		Config.reset();
+		Executioners.reset();
+		BdsThreads.reset();
+		Types.reset();
+		BdsNodeFactory.reset();
+		GlobalSymbolTable.reset();
+		GlobalScope.reset();
+		TaskDependecies.reset();
+		FtpConnectionFactory.kill();
+	}
 
 	public BdsRun() {
 		bdsAction = BdsAction.RUN;
@@ -417,12 +433,8 @@ public class BdsRun implements BdsLog {
 
 		debug("Finished. Exit code: " + exitValue);
 
-		//---
 		// Kill all executioners
-		//---
-		debug("Finished: Killing executioners");
-		for (Executioner executioner : executioners.getAll())
-			executioner.kill();
+		executioners.kill();
 
 		// Kill other timer tasks
 		FtpConnectionFactory.kill();

@@ -4,6 +4,7 @@ import java.io.ObjectStreamException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bds.BdsLog;
 import org.bds.BdsLogger;
 import org.bds.Config;
 import org.bds.lang.value.Value;
@@ -17,7 +18,7 @@ import org.bds.scope.GlobalScope;
  *
  * @author pcingola
  */
-public class Executioners {
+public class Executioners implements BdsLog {
 
 	/**
 	 * Type of executioners
@@ -34,7 +35,7 @@ public class Executioners {
 			try {
 				return ExecutionerType.valueOf(exName.toUpperCase());
 			} catch (Exception e) {
-				System.out.println("Unknown system type '" + exName + "', using 'local'");
+				BdsLogger.warning("Unknown system type '" + exName + "', using 'local'");
 				return LOCAL;
 			}
 		}
@@ -69,13 +70,18 @@ public class Executioners {
 	 * Reset this singleton
 	 */
 	public static void reset() {
+		BdsLogger.debug("Reset");
 		if (executionersInstance != null) {
 			// Kill all executioners
-			for (Executioner ex : executionersInstance.getAll())
+			BdsLogger.debug("Reset: Kill all executioners");
+			for (Executioner ex : executionersInstance.getAll()) {
+				BdsLogger.debug("Reset: Killing executioner " + ex.getExecutionerId());
 				ex.kill();
+			}
 		}
 
 		// Reset instance
+		BdsLogger.debug("Reset: Clear all executioners");
 		executionersInstance = null;
 	}
 
@@ -83,6 +89,7 @@ public class Executioners {
 		if (executionersInstance != null) throw new RuntimeException("Only one instance is allowed! This is a singleton.");
 		this.config = config;
 		executionersInstance = this;
+		debug("Executioners: New instance");
 	}
 
 	/**
@@ -91,7 +98,7 @@ public class Executioners {
 	private synchronized Executioner factory(ExecutionerType exType, BdsThread bdsThread) {
 		Executioner executioner;
 
-		BdsLogger.debug("Executioner factory: Creating new executioner type '" + exType + "'");
+		debug("Executioner factory: Creating new executioner type '" + exType + "'");
 
 		switch (exType) {
 		case AWS:
@@ -183,8 +190,21 @@ public class Executioners {
 		return executioners.values();
 	}
 
+	/**
+	 * Get an executioner, even if it's null or invalid
+	 */
+	public synchronized Executioner getRaw(ExecutionerType exType) {
+		return executioners.get(exType);
+	}
+
 	public boolean isFreeze() {
 		return freeze;
+	}
+
+	public void kill() {
+		debug("Killing executioners");
+		for (Executioner executioner : executioners.values())
+			executioner.kill();
 	}
 
 	/**
@@ -196,7 +216,18 @@ public class Executioners {
 	}
 
 	public void setFreeze(boolean freeze) {
+		debug("Freeze set to " + freeze);
 		this.freeze = freeze;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Executioners: " + executioners.size());
+		for (Executioner ex : executioners.values()) {
+			sb.append(ex.toString() + "\n");
+		}
+		return sb.toString();
 	}
 
 }

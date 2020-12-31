@@ -13,6 +13,7 @@ import org.bds.Config;
 import org.bds.data.Data;
 import org.bds.data.DataHttp;
 import org.bds.data.DataRemote;
+import org.bds.run.BdsRun;
 import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Assert;
@@ -29,7 +30,8 @@ public class TestCasesIntegrationDataRemote extends TestCasesBase {
 
 	@Before
 	public void beforeEachTest() {
-		Config.reset();
+		BdsRun.reset();
+		//		Config.reset();
 		Config.get().load();
 
 		// Delete 'tmp' download dir

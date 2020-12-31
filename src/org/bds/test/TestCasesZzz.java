@@ -12,6 +12,7 @@ import org.bds.cluster.host.TaskResourcesAws;
 import org.bds.data.DataS3;
 import org.bds.executioner.ExecutionerCloudAws;
 import org.bds.executioner.Executioners;
+import org.bds.run.BdsRun;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 import org.bds.util.GprAws;
@@ -36,7 +37,8 @@ public class TestCasesZzz extends TestCasesBase {
 
 	@Before
 	public void beforeEachTest() {
-		Config.reset();
+		BdsRun.reset();
+		//		Config.reset();
 		Config.get().load();
 	}
 
@@ -53,13 +55,13 @@ public class TestCasesZzz extends TestCasesBase {
 		if (instanceId == null || instanceId.isEmpty()) return null;
 
 		// Query AWS
-		log("Creating 'DescribeInstancesRequest' request for task '" + task.getId() + "', hainvg instance Id '" + instanceId + "'");
+		debug("Creating 'DescribeInstancesRequest' request for instance Id '" + instanceId + "', task '" + task.getId() + "'");
 		Set<String> instanceIds = new HashSet<>();
 		instanceIds.add(instanceId);
 		Ec2Client ec2 = GprAws.ec2Client(resources.getRegion());
 		DescribeInstancesRequest request = DescribeInstancesRequest.builder().instanceIds(instanceIds).build();
 		DescribeInstancesResponse response = ec2.describeInstances(request);
-		log("AWS Instances: " + response);
+		debug("AWS Instances: " + response);
 
 		return response;
 	}
@@ -69,9 +71,11 @@ public class TestCasesZzz extends TestCasesBase {
 	 * Return the task or throw an error if not found
 	 */
 	protected Task findOneTaskAws() {
-		ExecutionerCloudAws excloud = (ExecutionerCloudAws) Executioners.getInstance().get(Executioners.ExecutionerType.AWS);
+		// Note that we need to call `getRaw()` because the executioner is invalid at
+		// this point, so the `get()` method would create a new executioner
+		ExecutionerCloudAws excloud = (ExecutionerCloudAws) Executioners.getInstance().getRaw(Executioners.ExecutionerType.AWS);
 
-		List<String> tids = excloud.getTaskIds();
+		List<String> tids = excloud.getTaskIdsDone();
 		assertTrue("There should be one task, found " + tids.size() + ", task Ids: " + tids, tids.size() == 1);
 
 		// Find task ID
@@ -89,7 +93,7 @@ public class TestCasesZzz extends TestCasesBase {
 	protected InstanceStateName instanceStateName(DescribeInstancesResponse response, String instanceId) {
 		for (Reservation reservation : response.reservations()) {
 			for (Instance instance : reservation.instances()) {
-				log("Found instance Id '" + instance.instanceId() + "'");
+				debug("Found instance Id '" + instance.instanceId() + "'");
 				if (instance.instanceId().equals(instanceId)) {
 					InstanceStateName s = instance.state().name();
 					log("Instance '" + instanceId + "' has state '" + s + "'");
@@ -102,14 +106,13 @@ public class TestCasesZzz extends TestCasesBase {
 
 	/**
 	 * Execute a detached task on AWS
-	 * WARNIGN: This test might take several minutes to fail!
+	 * WARNIGN: This test might take several minutes to execute and creates an AWS EC2 instance!
 	 */
 	@Test
 	public void test05() {
 		Gpr.debug("Test");
 
 		verbose = true;
-		debug = true;
 
 		// Set the output file
 		String bucket = awsBucketName();
@@ -152,7 +155,7 @@ public class TestCasesZzz extends TestCasesBase {
 		String tid = task.getId();
 		waitInstanceCreate(task);
 		String instanceId = task.getPid();
-		log("Task Id '" + tid + "', has AWS EC2 instance ID '" + instanceId + "'");
+		debug("Task Id '" + tid + "', has AWS EC2 instance ID '" + instanceId + "'");
 
 		// Wait until the instance terminates
 		for (int i = 0; i < maxIterations; i++) {
@@ -160,16 +163,20 @@ public class TestCasesZzz extends TestCasesBase {
 			DescribeInstancesResponse response = findAwsInstance(task);
 			InstanceStateName state = instanceStateName(response, instanceId);
 
-			log("Task Id '" + tid + "', has AWS EC2 instance ID '" + instanceId + "', state '" + state + "'");
+			debug("Task Id '" + tid + "', has AWS EC2 instance ID '" + instanceId + "', state '" + state + "'");
 			if (state == InstanceStateName.TERMINATED) {
+				log("Task Id '" + tid + "', has AWS EC2 instance ID '" + instanceId + "', state '" + state + "'");
 				return; // OK, we finished successfully
-			} else if (state == InstanceStateName.PENDING || state == InstanceStateName.RUNNING || state == InstanceStateName.SHUTTING_DOWN) {
+			} else if (state == InstanceStateName.PENDING //
+					|| state == InstanceStateName.RUNNING //
+					|| state == InstanceStateName.SHUTTING_DOWN //
+			) {
 				// OK, wait until the instance terminates
 			} else {
 				throw new RuntimeException("Illegal state: Instance is in an illegal state. Task ID '', instance ID '" + instanceId + "', state '" + state + "'");
 			}
 
-			sleep(1);
+			sleep(10); // Sleep for a few seconds
 		}
 
 		throw new RuntimeException("Timeout: Too many iterations waiting for instance to finish. Task ID '', instance ID '" + instanceId + "'");
@@ -189,7 +196,7 @@ public class TestCasesZzz extends TestCasesBase {
 				log("Found an instance '" + instanceId + "', for task Id '" + task.getId() + "'");
 				return;
 			}
-			log("Waiting for an instance, for task Id '" + task.getId() + "'");
+			debug("Waiting for an instance, for task Id '" + task.getId() + "'");
 			sleep(1);
 		}
 

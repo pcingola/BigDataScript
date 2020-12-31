@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bds.Config;
-import org.bds.util.Gpr;
+import org.bds.scope.GlobalScope;
 
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -58,6 +58,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 			log("Creating AWS SQS queue '" + queueName + "'");
 			getSqsClient().createQueue(createQueueRequest);
 		} catch (Exception e) {
+			error("Error creating SQS queue '" + queueName + "', exception message: " + e.getMessage());
 			error = e;
 			return false;
 		}
@@ -76,7 +77,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 	public boolean deleteQueue() {
 		if (USE_QUEUE_NAME_DEBUG) {
 			// This is used for developing / debugging
-			Gpr.debug("WARNING: USE_QUEUE_NAME_DEBUG is set, queue will not be deleted");
+			warning("USE_QUEUE_NAME_DEBUG is set, queue will not be deleted");
 			return false;
 		}
 
@@ -105,10 +106,11 @@ public class QueueThreadAwsSqs extends QueueThread {
 		if (queueName == null) {
 			if (USE_QUEUE_NAME_DEBUG) {
 				queueName = queueNamePrefix + QUEUE_NAME_SUFFIX_DEBUG;
-				Gpr.debug("WARNING: QUEUE_NAME_SUFFIX_DEBUG is set, using queue name '" + queueName + "'");
+				warning("QUEUE_NAME_SUFFIX_DEBUG is set, using queue name '" + queueName + "', prefix variable " + GlobalScope.GLOBAL_VAR_EXECUTIONER_QUEUE_NAME_PREFIX + " set to '" + queueNamePrefix + "'");
 			} else {
 				String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
 				queueName = String.format("%s%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%2$s", queueNamePrefix, Calendar.getInstance(), r);
+				debug("Queue name '" + queueName + "', prefix variable " + GlobalScope.GLOBAL_VAR_EXECUTIONER_QUEUE_NAME_PREFIX + " set to '" + queueNamePrefix + "'");
 			}
 		}
 		return queueName;

@@ -43,6 +43,8 @@ public class TaskResourcesAws extends TaskResources {
 
 	protected static final String[] LIST_SEPARATORS = { "\t", ",", ";" };
 
+	public static final ShutdownBehavior DEFAULT_SHUTDOWN_BEHAVIOUR = ShutdownBehavior.TERMINATE;
+
 	protected String awsRole;
 	protected String blockDevMap;
 	protected String bucket;
@@ -62,7 +64,7 @@ public class TaskResourcesAws extends TaskResources {
 	public TaskResourcesAws() {
 		super();
 		keepInstanceAliveAfterFinish = false;
-		shutdownBehavior = ShutdownBehavior.TERMINATE.toString();
+		shutdownBehavior = DEFAULT_SHUTDOWN_BEHAVIOUR.toString();
 	}
 
 	public TaskResourcesAws(TaskResourcesAws hr) {
@@ -95,7 +97,8 @@ public class TaskResourcesAws extends TaskResources {
 		requestBuilder.instanceType(parseInstanceType(instanceType));
 
 		// Shutdown behavior
-		requestBuilder.instanceInitiatedShutdownBehavior(parseShutdownBehavior(shutdownBehavior));
+		ShutdownBehavior sdb = parseShutdownBehavior(shutdownBehavior);
+		if (sdb != null) requestBuilder.instanceInitiatedShutdownBehavior(sdb);
 
 		if (blockDevMap != null && !blockDevMap.isEmpty()) {
 			// FIXME: Block device mappings
@@ -169,16 +172,20 @@ public class TaskResourcesAws extends TaskResources {
 		return map.getValue(k).asString();
 	}
 
+	protected String mapGet(ValueMap map, String[] keys) {
+		return mapGet(map, keys, null);
+	}
+
 	/**
 	 * Get any value (as a string) from a ValueMap.
 	 * Several keys are provided in an array, the first found will be returned
 	 */
-	protected String mapGet(ValueMap map, String[] keys) {
+	protected String mapGet(ValueMap map, String[] keys, String defaultValue) {
 		for (String k : keys) {
 			String ret = mapGet(map, k);
 			if (ret != null) return ret;
 		}
-		return null; // Not found
+		return defaultValue; // Not found
 	}
 
 	/**
@@ -245,11 +252,13 @@ public class TaskResourcesAws extends TaskResources {
 	}
 
 	/**
-	 * Parse a 'shutdownBehavior'.
-	 * Use ShutdownBehavior.TERMINATE on any error or invalid
+	 * Parse a 'shutdownBehavior'
+	 * Use ShutdownBehavior.TERMINATE on any error
+	 * Empty or null argument returns null
 	 */
 	ShutdownBehavior parseShutdownBehavior(String shutdownBehavior) {
-		if (shutdownBehavior == null || shutdownBehavior.isEmpty()) return ShutdownBehavior.TERMINATE;
+		if (shutdownBehavior == null) return DEFAULT_SHUTDOWN_BEHAVIOUR;
+		if (shutdownBehavior.isEmpty()) return null; // Empty means that we want to use the default method (i.e. don't set shutdown behavior in request)
 		try {
 			return ShutdownBehavior.valueOf(shutdownBehavior.toUpperCase());
 		} catch (Exception e) {
@@ -333,7 +342,7 @@ public class TaskResourcesAws extends TaskResources {
 		region = mapGet(taskResources, REGION);
 		s3tmp = mapGet(taskResources, S3_TMP);
 		securityGroupIds = mapGet(taskResources, SECURITY_GROUP_IDS);
-		shutdownBehavior = mapGet(taskResources, SHUTDOWN_BEHAVIOUR);
+		shutdownBehavior = mapGet(taskResources, SHUTDOWN_BEHAVIOUR, shutdownBehavior);
 		subnetIds = mapGet(taskResources, SUBNET_ID);
 		tags = parseTags(mapGet(taskResources, TAGS));
 		usePublicIpAddr = Gpr.parseBoolSafe(mapGet(taskResources, IP_ADDR));

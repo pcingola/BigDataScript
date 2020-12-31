@@ -91,8 +91,7 @@ public class CmdAws extends Cmd {
 			// Attach tags to instance
 			CreateTagsRequest tagRequest = CreateTagsRequest.builder().resources(instanceId).tags(tags).build();
 			ec2.createTags(tagRequest);
-			log("Started AWS EC2 instance '" + instanceId + "'");
-			task.setPid(instanceId);
+			log("Created tags for AWS EC2 instance '" + instanceId + "', tags: " + tags);
 		} catch (Ec2Exception e) {
 			String msg = e.awsErrorDetails().errorMessage();
 			error(msg);
@@ -173,6 +172,7 @@ public class CmdAws extends Cmd {
 		RunInstancesResponse response;
 		try {
 			response = ec2.runInstances(runRequest);
+			debug("Requesting EC2 instange, got response: " + response);
 		} catch (SdkClientException e) {
 			throw new RuntimeException("EC2 client exception (this might be caused by incorrectly setting the region). " + e.getMessage(), e);
 		}
@@ -203,11 +203,20 @@ public class CmdAws extends Cmd {
 		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();// Create and run instance
 		if (userData == null) userData = createStartupScript();// Create startup script & userData
 		RunInstancesRequest ec2req = createEc2InstanceRequest(resources);// Create instance request
-		debug("Creating EC2 instance, request: " + ec2req);
+
+		debug("Creating EC2 instance, request '" + ec2req + "', for task '" + task.getId() + "'");
 		Ec2Client ec2 = GprAws.ec2Client(resources.getRegion()); // Create EC2 client
-		instanceId = requestInstance(ec2, ec2req); // Request the instance
-		if (instanceId == null) return false; // Failed request?
-		addTags(ec2, resources); // Add tags
+
+		if (DO_NOT_RUN_INSTANCE) {
+			instanceId = "DO_NOT_RUN_INSTANCE";
+			task.setPid(instanceId);
+		} else {
+			instanceId = requestInstance(ec2, ec2req); // Request the instance
+			if (instanceId == null) return false; // Failed request?
+			task.setPid(instanceId);
+			addTags(ec2, resources); // Add tags
+		}
+		debug("Created EC2 instance: '" + instanceId + "', for task '" + task.getId() + "'");
 		return true;
 	}
 

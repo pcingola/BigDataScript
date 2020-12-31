@@ -9,15 +9,13 @@ import java.util.TimeZone;
 
 import org.bds.Bds;
 import org.bds.BdsLog;
-import org.bds.Config;
 import org.bds.data.Data;
 import org.bds.data.DataRemote;
 import org.bds.data.DataS3;
-import org.bds.executioner.Executioners;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.InterpolateVars;
 import org.bds.lang.value.Value;
-import org.bds.run.BdsThreads;
+import org.bds.run.BdsRun;
 import org.bds.util.Gpr;
 import org.bds.vm.BdsVm;
 import org.bds.vm.BdsVmAsm;
@@ -59,9 +57,10 @@ public class TestCasesBase implements BdsLog {
 	@Before
 	public void before() {
 		// Reset singletons
-		Config.reset();
-		Executioners.reset();
-		BdsThreads.reset();
+		BdsRun.reset();
+		//		Config.reset();
+		//		Executioners.reset();
+		//		BdsThreads.reset();
 	}
 
 	protected void checkInterpolate(String str, String strings[], String vars[]) {

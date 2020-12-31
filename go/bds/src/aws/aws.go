@@ -93,7 +93,7 @@ func (awssqs *AwsSqs) SendString(msgStr string) {
     }
     _, err := awssqs.sqsClient.SendMessage(&msg)
     if err != nil {
-        log.Println("Error sending message to queue '%s': %v\n", awssqs.queueName, err)
+        log.Printf("Error sending message to queue '%s': %v\n", awssqs.queueName, err)
     }
 }
 
@@ -109,7 +109,7 @@ func (awssqs *AwsSqs) Send() {
     awssqs.buffOut, awssqs.buffErr, awssqs.exit = nil, nil, ""
 
     if len(msg) > MAX_MSG_SIZE {
-        log.Println("Error sending message: Message too long, dropping message. Message length %d, max length %d\n", len(msg), MAX_MSG_SIZE)
+        log.Printf("Error sending message: Message too long, dropping message. Message length %d, max length %d\n", len(msg), MAX_MSG_SIZE)
     } else {
         awssqs.SendString(msg)
     }

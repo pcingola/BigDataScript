@@ -8,6 +8,7 @@ import org.bds.data.Data;
 import org.bds.data.DataFile;
 import org.bds.data.DataHttp;
 import org.bds.data.DataS3;
+import org.bds.run.BdsRun;
 import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Assert;
@@ -24,7 +25,8 @@ public class TestCasesRemote extends TestCasesBase {
 
 	@Before
 	public void beforeEachTest() {
-		Config.reset();
+		BdsRun.reset();
+		//		Config.reset();
 		Config.get().load();
 	}
 

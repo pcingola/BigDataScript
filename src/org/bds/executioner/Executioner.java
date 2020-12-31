@@ -388,7 +388,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Stop executioner and kill all tasks
 	 */
 	public synchronized void kill() {
-		debug("Killed executioner");
+		debug("Killed executioner '" + getExecutionerId() + "'");
 
 		// Kill all 'tasksToRun'.
 		// Note: We need to create a new list to avoid concurrent modification exceptions
@@ -512,9 +512,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 */
 	@Override
 	public void run() {
-		debug("Started running");
+		debug("Started running " + getExecutionerId());
 		runExecutioner();
-		debug("Finished running");
+		debug("Finished running " + getExecutionerId());
 	}
 
 	/**
@@ -862,8 +862,9 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
-	 * Task finished (either finished OK or has some error condition).
-	 * Update task's state.
+	 * Update task's state to some final state, typically `FINISHED` if everything run correctly
+	 * Task finished: either finished OK or has some error condition, or is
+	 * detached (thus considered finished).
 	 */
 	protected synchronized boolean taskUpdateFinished(Task task, TaskState taskState) {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
@@ -957,6 +958,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Update all task states from `taskUpdateStates`
+	 *
 	 * This method is invoked by the executioner's loop to update all
 	 * state changes that have been registered (asynchronously) by
 	 * `Cmd` and `MonitorTask` objects via the `NotifyTaskState` interface.

@@ -10,6 +10,7 @@ import java.util.Comparator;
 
 import org.bds.Config;
 import org.bds.data.DataRemote;
+import org.bds.run.BdsRun;
 import org.bds.test.TestCasesBase;
 import org.bds.util.Gpr;
 import org.junit.Before;
@@ -25,7 +26,8 @@ public class TestCasesIntegrationTaskDataRemote extends TestCasesBase {
 
 	@Before
 	public void beforeEachTest() {
-		Config.reset();
+		BdsRun.reset();
+		//		Config.reset();
 		Config.get().load();
 
 		// Delete 'tmp' download dir

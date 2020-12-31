@@ -133,9 +133,9 @@ public class TaskLogger implements Serializable, BdsLog {
 	 */
 	protected String createEntry(String id, boolean add, String command) {
 		char sign = add ? '+' : '-';
-		String line = id + "\t" + sign + "\t" + command + '\n';
+		String line = id + "\t" + sign + "\t" + command;
 		debug("Creating entry: '" + line + "'");
-		return line;
+		return line + '\n';
 	}
 
 	public HashSet<String> getPids() {

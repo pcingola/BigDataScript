@@ -22,7 +22,7 @@ public interface BdsLog {
 	 * This string is always prepended to debug messages
 	 */
 	default String debugMessagePrepend() {
-		StackTraceElement ste = new Exception().getStackTrace()[2];
+		StackTraceElement ste = new Exception().getStackTrace()[debugMessagePrependOffset()];
 		String logmsg = logMessagePrepend();
 
 		// Class where source code is executing (e.g. inherited method)
@@ -38,6 +38,10 @@ public interface BdsLog {
 				+ (thisClass.equals(srcClass) ? "" : thisClass + " ") // Show class only if different than source code class
 				+ srcClass + "." + ste.getMethodName() + ":" + ste.getLineNumber() //
 		;
+	}
+
+	default int debugMessagePrependOffset() {
+		return 2;
 	}
 
 	/**
