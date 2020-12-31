@@ -39,6 +39,7 @@ public class TestCasesZzz extends TestCasesBase {
 
 		String name = "run_aws_02";
 		verbose = true;
+		debug = true;
 
 		// Set the output file
 		String region = awsRegion();
