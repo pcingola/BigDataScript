@@ -808,6 +808,15 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Task finished executing
+	 * We register the task's state change in 'taskUpdateStates'.
+	 * All task state changes are processed later, when taskUpdateStates() is
+	 * invoked by the executioner's loop.
+	 *
+	 * Note: This method is part of NotifyTaskState interface.
+	 *       As such, it is invoked by 'Cmd' when the execution finishes
+	 *       or by a 'MonitorTask' when the task is detected to
+	 *       finish (e.g. when executing in a cluster or cloud)
+	 *
 	 */
 	@Override
 	public synchronized void taskFinished(Task task, TaskState taskState) {
@@ -823,7 +832,13 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
-	 * Move a task from 'tasksToRun' to 'tasksRunning'
+	 * Task started running (or dispatched for running)
+	 * We register the task's state change in 'taskUpdateStates'.
+	 * All task state changes are processed later, when taskUpdateStates() is
+	 * invoked by the executioner's loop.
+	 *
+	 * Note: This method is part of NotifyTaskState interface.
+	 *       As such, it is invoked by 'Cmd' when the execution starts
 	 */
 	@Override
 	public synchronized void taskRunning(Task task) {
@@ -831,6 +846,16 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	}
 
+	/**
+	 * Task started: The task is prepared to start running
+	 * We register the task's state change in 'taskUpdateStates'.
+	 * All task state changes are processed later, when taskUpdateStates() is
+	 * invoked by the executioner's loop.
+	 *
+	 * Note: This method is part of NotifyTaskState interface.
+	 *       As such, it is invoked by 'Cmd' when the task is prepared
+	 *       to be executed
+	 */
 	@Override
 	public synchronized void taskStarted(Task task) {
 		taskUpdateStates.add(new Tuple<>(task, TaskState.STARTED));
@@ -838,7 +863,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Task finished (either finished OK or has some error condition).
-	 * Update the state
+	 * Update task's state.
 	 */
 	protected synchronized boolean taskUpdateFinished(Task task, TaskState taskState) {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
@@ -931,7 +956,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
-	 * Update task states
+	 * Update all task states from `taskUpdateStates`
+	 * This method is invoked by the executioner's loop to update all
+	 * state changes that have been registered (asynchronously) by
+	 * `Cmd` and `MonitorTask` objects via the `NotifyTaskState` interface.
 	 */
 	protected synchronized void taskUpdateStates() {
 		if (taskUpdateStates.isEmpty()) return;
