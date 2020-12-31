@@ -12,9 +12,9 @@ public interface BdsLog {
 	/**
 	 * Show a 'debug' message to STDERR
 	 */
-	default void debug(String message) {
+	default void debug(Object message) {
 		if (isDebug()) {
-			Timer.showStdErr("DEBUG " + debugMessagePrepend() + ": " + message);
+			Timer.showStdErr("DEBUG " + debugMessagePrepend() + ": " + (message != null ? message.toString() : "null"));
 		}
 	}
 
@@ -44,8 +44,8 @@ public interface BdsLog {
 	 * Show an 'error' message to STDERR
 	 * @param message
 	 */
-	default void error(String message) {
-		Timer.showStdErr("ERROR: " + message);
+	default void error(Object message) {
+		Timer.showStdErr("ERROR: " + (message != null ? message.toString() : "null"));
 	}
 
 	/**
@@ -76,9 +76,9 @@ public interface BdsLog {
 	 * Show a 'log' message to STDERR
 	 * @param message
 	 */
-	default void log(String message) {
+	default void log(Object message) {
 		if (isVerbose()) {
-			Timer.showStdErr("INFO " + logMessagePrepend() + ": " + message);
+			Timer.showStdErr("INFO " + logMessagePrepend() + ": " + (message != null ? message.toString() : "null"));
 		}
 	}
 
@@ -93,8 +93,8 @@ public interface BdsLog {
 	 * Show a 'warning' message to STDERR
 	 * @param message
 	 */
-	default void warning(String message) {
-		Timer.showStdErr("WARNING: " + message);
+	default void warning(Object message) {
+		Timer.showStdErr("WARNING: " + (message != null ? message.toString() : "null"));
 	}
 
 }

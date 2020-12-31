@@ -17,7 +17,6 @@ import org.bds.run.BdsThread;
 import org.bds.task.DependencyState;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
-import org.bds.util.Gpr;
 import org.bds.util.TextTable;
 import org.bds.util.Timer;
 import org.bds.util.Tuple;
@@ -941,10 +940,15 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		ArrayList<Tuple<Task, TaskState>> taskUpdateStatesNew = new ArrayList<>();
 
 		// Update each task sequentially, to avoid race conditions
-		Gpr.debug("DEBUG!!! taskUpdateStates.size() = " + taskUpdateStates.size());
-		for (Tuple<Task, TaskState> taskAndState : taskUpdateStates) {
-			Gpr.debug("\t\ttask.id = " + taskAndState.first.getId() + "\tstate: " + taskAndState.second);
+		if (debug) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Task states to update: " + taskUpdateStates.size() + "\n");
+			for (Tuple<Task, TaskState> taskAndState : taskUpdateStates)
+				sb.append("\tstate: '" + taskAndState.second + "'\ttask Id: '" + taskAndState.first.getId() + "'\n");
+			debug(sb);
 		}
+
+		// Update each task sequentially, to avoid race conditions
 		for (Tuple<Task, TaskState> taskAndState : taskUpdateStates) {
 			Task task = taskAndState.first;
 			TaskState state = taskAndState.second;
