@@ -54,7 +54,7 @@ public class Post extends Pre {
 
 	@Override
 	public String toString() {
-		return expr.toString() + operation.toStringCode();
+		return "" + expr + operation;
 	}
 
 }

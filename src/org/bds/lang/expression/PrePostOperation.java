@@ -2,8 +2,11 @@ package org.bds.lang.expression;
 
 /**
  * Pre/Post pperation type.
- * E.g. i++ , --j
- *
+ * E.g.:
+ * 	```
+ * 		i++
+ * 		--j
+ *	```
  */
 public enum PrePostOperation {
 	INCREMENT, DECREMENT;
@@ -17,7 +20,8 @@ public enum PrePostOperation {
 		throw new RuntimeException("Cannot parse string'" + opStr + "'");
 	}
 
-	public String toStringCode() {
+	@Override
+	public String toString() {
 		switch (this) {
 		case INCREMENT:
 			return "++";

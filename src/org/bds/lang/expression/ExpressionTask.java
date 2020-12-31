@@ -398,7 +398,7 @@ public class ExpressionTask extends ExpressionWithScope {
 
 		// Multi-line
 		return "{\n" //
-				+ Gpr.prependEachLine("\t", statement.toString()) //
+				+ (statement != null ? Gpr.prependEachLine("\t", statement.toString()) : "NULL") //
 				+ "}" //
 		;
 	}

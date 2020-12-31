@@ -62,7 +62,7 @@ public class Pre extends ExpressionUnary {
 
 	@Override
 	public String toString() {
-		return expr.toString() + operation.toStringCode();
+		return "" + expr + operation;
 	}
 
 	@Override

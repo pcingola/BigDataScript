@@ -62,7 +62,7 @@ public class ComputerSystem implements Iterable<Host> {
 			}
 		}
 
-		return String.format("Hosts: %d / %d    Cpus: %d\tMemory: %s", totHosts, totCpus, Gpr.toStringMem(totMem * 1024 * 1024));
+		return String.format("Hosts: %d\tCpus: %d\tMemory: %s", totHosts, totCpus, Gpr.toStringMem(totMem * 1024 * 1024));
 	}
 
 	public boolean isDoNotRunOnRed() {
