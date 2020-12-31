@@ -33,7 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesIntegrationTaskImproper.class, // Improper tasks (local, long running tests)
 		TestCasesIntegrationCheckpointAws.class, // Running bds code: Checkpoint and recovery from S3
 		TestCasesIntegrationTaskDetached.class, // Detached tasks on cloud
-		TestCasesIntegrationAws.class, // Executioner AWS, task dependecies
+		TestCasesIntegrationAws.class, // Executioner AWS, task dependecies and detached AWS tasks
 })
 public class TestSuiteIntegration {
 
