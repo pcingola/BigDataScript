@@ -9,12 +9,15 @@ import java.util.Set;
 
 import org.bds.Config;
 import org.bds.cluster.host.TaskResourcesAws;
+import org.bds.data.DataS3;
 import org.bds.executioner.ExecutionerCloudAws;
 import org.bds.executioner.Executioners;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 import org.bds.util.GprAws;
+import org.bds.util.Timer;
 import org.junit.Before;
+import org.junit.Test;
 
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
@@ -97,44 +100,44 @@ public class TestCasesZzz extends TestCasesBase {
 		throw new RuntimeException("Could not find any instance ID '" + instanceId + "' in state in response: " + response);
 	}
 
-	//	/**
-	//	 * Execute a detached task on AWS
-	//	 * WARNIGN: This test might take several minutes to fail!
-	//	 */
-	//	@Test
-	//	public void test05() {
-	//		Gpr.debug("Test");
-	//
-	//		verbose = true;
-	//		debug = true;
-	//
-	//		// Set the output file
-	//		String bucket = awsBucketName();
-	//		String region = awsRegion();
-	//		String urlParen = "s3://" + bucket + "/tmp/bds/run_task_detached_05";
-	//		if (!region.isEmpty()) urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/run_task_detached_05";
-	//		String url = urlParen + "/out.txt";
-	//
-	//		// Cleanup: Make sure output file is deleted before starting
-	//		DataS3 dout = new DataS3(url, region);
-	//		dout.delete();
-	//
-	//		// Run: Execute bds code and check how long before it completes
-	//		Timer t = new Timer();
-	//		runOk("test/run_task_detached_05.bds");
-	//
-	//		// Check: A detached task should finish immediately
-	//		assertTrue("Detached task taking too long: Probably not detached", t.elapsedSecs() < 3);
-	//
-	//		// Wait: Make sure the task is executed on AWS, check instance and instance states
-	//		waitAwsTask();
-	//
-	//		// Check: Check that the output file exists
-	//		assertTrue("Output file '" + dout + "' does not exists", dout.exists());
-	//
-	//		// Cleanup
-	//		dout.delete();
-	//	}
+	/**
+	 * Execute a detached task on AWS
+	 * WARNIGN: This test might take several minutes to fail!
+	 */
+	@Test
+	public void test05() {
+		Gpr.debug("Test");
+
+		verbose = true;
+		debug = true;
+
+		// Set the output file
+		String bucket = awsBucketName();
+		String region = awsRegion();
+		String urlParen = "s3://" + bucket + "/tmp/bds/run_task_detached_05";
+		if (!region.isEmpty()) urlParen = "https://" + bucket + ".s3." + region + ".amazonaws.com/tmp/bds/run_task_detached_05";
+		String url = urlParen + "/out.txt";
+
+		// Cleanup: Make sure output file is deleted before starting
+		DataS3 dout = new DataS3(url, region);
+		dout.delete();
+
+		// Run: Execute bds code and check how long before it completes
+		Timer t = new Timer();
+		runOk("test/run_task_detached_05.bds");
+
+		// Check: A detached task should finish immediately
+		assertTrue("Detached task taking too long: Probably not detached", t.elapsedSecs() < 15);
+
+		// Wait: Make sure the task is executed on AWS, check instance and instance states
+		waitAwsTask();
+
+		// Check: Check that the output file exists
+		assertTrue("Output file '" + dout + "' does not exists", dout.exists());
+
+		// Cleanup
+		dout.delete();
+	}
 
 	/**
 	 * Wait for a single AWS task to finish

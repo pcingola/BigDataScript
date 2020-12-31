@@ -6,11 +6,12 @@ println "Before"
 out := "$s3base/out.txt"
 println "Output file: '$out'"
 
-task(system := 'aws', detached := true) {
+# task(system := 'aws', detached := true) {
+task {
 	sys echo HI
 	sys date > tmp.txt
 	sys aws s3 cp tmp.txt "$out"
-	sys sleep 1
+	sys for i in `seq 60`; do echo "count: \$i"; sleep 1; done
 	sys echo BYE
 }
 println "After"
