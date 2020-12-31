@@ -35,7 +35,7 @@ public class TestCasesIntegrationClusterSsh extends TestCasesBase {
 		// Get tasks and check that PID matches 'CLUSTERGENERIC_LOCALHOST_'
 		// (run.pl prepends that string to PID)
 		for (Task t : bdsTest.bds.getBdsRun().getBdsThread().getTasks()) {
-			if (debug) Gpr.debug("Task " + t.getId() + ", pid " + t.getPid());
+			debug("Task " + t.getId() + ", pid " + t.getPid());
 			Assert.assertTrue("Task " + t.getId() + " was NOT executed by 'Cluster Ssh', task id " + t.getId() //
 					, t.getId().toUpperCase().startsWith("CLUSTERSSH") //
 			);

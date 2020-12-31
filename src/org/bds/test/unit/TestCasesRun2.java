@@ -509,7 +509,7 @@ public class TestCasesRun2 extends TestCasesBase {
 
 		for (Value v : dir2) {
 			String f = v.toString();
-			if (debug) System.out.println(f);
+			debug(f);
 			Assert.assertTrue("Path must be canonical", f.startsWith("/"));
 			Assert.assertTrue("Path must be canonical", f.endsWith(".bds"));
 		}

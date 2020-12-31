@@ -53,13 +53,13 @@ public class TestCasesZzz extends TestCasesBase {
 		if (instanceId == null || instanceId.isEmpty()) return null;
 
 		// Query AWS
-		if (verbose) Gpr.debug("Creating 'DescribeInstancesRequest' request for task '" + task.getId() + "', hainvg instance Id '" + instanceId + "'");
+		log("Creating 'DescribeInstancesRequest' request for task '" + task.getId() + "', hainvg instance Id '" + instanceId + "'");
 		Set<String> instanceIds = new HashSet<>();
 		instanceIds.add(instanceId);
 		Ec2Client ec2 = GprAws.ec2Client(resources.getRegion());
 		DescribeInstancesRequest request = DescribeInstancesRequest.builder().instanceIds(instanceIds).build();
 		DescribeInstancesResponse response = ec2.describeInstances(request);
-		if (verbose) Gpr.debug("AWS Instances: " + response);
+		log("AWS Instances: " + response);
 
 		return response;
 	}
@@ -89,10 +89,10 @@ public class TestCasesZzz extends TestCasesBase {
 	protected InstanceStateName instanceStateName(DescribeInstancesResponse response, String instanceId) {
 		for (Reservation reservation : response.reservations()) {
 			for (Instance instance : reservation.instances()) {
-				if (verbose) Gpr.debug("Found instance Id '" + instance.instanceId() + "'");
+				log("Found instance Id '" + instance.instanceId() + "'");
 				if (instance.instanceId().equals(instanceId)) {
 					InstanceStateName s = instance.state().name();
-					if (verbose) Gpr.debug("Instance '" + instanceId + "' has state '" + s + "'");
+					log("Instance '" + instanceId + "' has state '" + s + "'");
 					return s;
 				}
 			}
@@ -151,7 +151,7 @@ public class TestCasesZzz extends TestCasesBase {
 		String tid = task.getId();
 		waitInstanceCreate(task);
 		String instanceId = task.getPid();
-		if (verbose) Gpr.debug("Task Id '" + tid + "', has AWS EC2 instance ID '" + instanceId + "'");
+		log("Task Id '" + tid + "', has AWS EC2 instance ID '" + instanceId + "'");
 
 		// Wait until the instance terminates
 		for (int i = 0; i < maxIterations; i++) {
@@ -159,7 +159,7 @@ public class TestCasesZzz extends TestCasesBase {
 			DescribeInstancesResponse response = findAwsInstance(task);
 			InstanceStateName state = instanceStateName(response, instanceId);
 
-			if (verbose) Gpr.debug("Task Id '" + tid + "', has AWS EC2 instance ID '" + instanceId + "', state '" + state + "'");
+			log("Task Id '" + tid + "', has AWS EC2 instance ID '" + instanceId + "', state '" + state + "'");
 			if (state == InstanceStateName.TERMINATED) {
 				return; // OK, we finished successfully
 			} else if (state == InstanceStateName.PENDING || state == InstanceStateName.RUNNING || state == InstanceStateName.SHUTTING_DOWN) {
@@ -185,10 +185,10 @@ public class TestCasesZzz extends TestCasesBase {
 		for (int i = 0; i < maxIterations; i++) {
 			String instanceId = task.getPid();
 			if (instanceId != null && !instanceId.isEmpty()) {
-				if (verbose) Gpr.debug("Found an instance '" + instanceId + "', for task Id '" + task.getId() + "'");
+				log("Found an instance '" + instanceId + "', for task Id '" + task.getId() + "'");
 				return;
 			}
-			if (verbose) Gpr.debug("Waiting for an instance, for task Id '" + task.getId() + "'");
+			log("Waiting for an instance, for task Id '" + task.getId() + "'");
 			sleep(1);
 		}
 

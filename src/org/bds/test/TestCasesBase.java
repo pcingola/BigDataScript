@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.bds.Bds;
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.data.Data;
 import org.bds.data.DataRemote;
@@ -29,7 +30,7 @@ import junit.framework.Assert;
  *
  * @author pcingola
  */
-public class TestCasesBase {
+public class TestCasesBase implements BdsLog {
 
 	public boolean debug = false;
 	public boolean verbose = false;
@@ -66,10 +67,7 @@ public class TestCasesBase {
 	protected void checkInterpolate(String str, String strings[], String vars[]) {
 		InterpolateVars iv = new InterpolateVars(null, null);
 		iv.parse(str);
-		if (verbose) {
-			System.out.println("String: " + str);
-			System.out.println("\tInterpolation result: |" + iv + "|");
-		}
+		log("String: " + str + "\tInterpolation result: |" + iv + "|");
 
 		// Special case: No variables to interpolate
 		if (strings.length == 1 && vars[0].isEmpty()) {
@@ -79,12 +77,7 @@ public class TestCasesBase {
 
 		// Check strings
 		for (int i = 0; i < strings.length; i++) {
-			if (verbose) {
-				System.out.print("\tIndex: " + i);
-				System.out.print("\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getLiterals()[i]);
-				System.out.println("\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getExpressions()[i]);
-			}
-
+			log("\tIndex: " + i + "\tstring.expected: " + strings[i] + "\tstring.actual: " + iv.getLiterals()[i] + "\tvar.expected: " + vars[i] + "\tvar.actual: " + iv.getExpressions()[i]);
 			Assert.assertEquals(strings[i], iv.getLiterals()[i]);
 			if (vars[i] != null && !vars[i].isEmpty()) Assert.assertEquals(vars[i], iv.getExpressions()[i].toString());
 		}
@@ -103,7 +96,7 @@ public class TestCasesBase {
 		d.setVerbose(verbose);
 		d.setDebug(debug);
 		long lastMod = d.getLastModified().getTime();
-		if (verbose) Gpr.debug("Path: " + d.getPath() + "\tlastModified: " + lastMod + "\tSize: " + d.size());
+		log("Path: " + d.getPath() + "\tlastModified: " + lastMod + "\tSize: " + d.size());
 
 		// Check some features
 		Assert.assertTrue("Is S3?", d instanceof DataS3);
@@ -162,6 +155,21 @@ public class TestCasesBase {
 		Data dlocal = Data.factory(localFile);
 		ds3.upload(dlocal);
 		dlocal.delete();
+	}
+
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
+	}
+
+	@Override
+	public String logMessagePrepend() {
+		return "Test case " + this.getClass().getSimpleName();
 	}
 
 	protected BdsTest runAndCheck(int expectedExitCode, String fileName, Map<String, Object> expectedValues) {
