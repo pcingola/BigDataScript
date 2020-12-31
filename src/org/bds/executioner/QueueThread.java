@@ -270,6 +270,7 @@ public abstract class QueueThread extends Thread implements BdsLog {
 	 */
 	protected void stderr(String msg, Task task) {
 		System.err.print(msg);
+		System.err.flush();
 		if (task == null) return;
 
 		// Get output stream, or create a new one
@@ -298,6 +299,7 @@ public abstract class QueueThread extends Thread implements BdsLog {
 	 */
 	protected void stdout(String msg, Task task) {
 		System.out.print(msg);
+		System.out.flush();
 		if (task == null) return;
 
 		// Get output stream, or create a new one
