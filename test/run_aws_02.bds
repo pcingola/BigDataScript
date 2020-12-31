@@ -7,11 +7,21 @@ out := "$s3base/out.txt"
 println "Output file: '$out'"
 
 task(system := 'aws') {
-	sys echo HI
-	sys date > tmp.txt
-	sys aws s3 cp tmp.txt "$out"
-	sys for i in `seq 10`; do echo "count: \$i"; sleep 1; done
-	sys echo BYE
+	println('Hi: This is an improper task on AWS')
+
+	# Create a tmp file
+	fileName := 'tmp.txt'
+	fileName.write("OK")
+
+	# Uplad to S3
+	println("Uploading local file '$fileName' to '$out'")
+	out.upload(fileName)
+
+	# Print something
+	for(int i=0 ; i < 10; i++) {
+		println "Counting: $i"
+	}
+	println "Bye!"
 }
 println "After"
 wait
