@@ -7,6 +7,7 @@ rm -rvf \
 	hs_err_pid*.log \
 	checkpoint_*.bds.* \
 	run*.bds.* \
+	remote*.bds.* \
 	tmp*.txt \
 	cmdLineOptions_*.bds.* \
 	*.pid \
