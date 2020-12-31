@@ -216,7 +216,7 @@ public class CmdAws extends Cmd {
 			task.setPid(instanceId);
 			addTags(ec2, resources); // Add tags
 		}
-		debug("Created EC2 instance: '" + instanceId + "', for task '" + task.getId() + "'");
+		log("Created EC2 instance: '" + instanceId + "', for task '" + task.getId() + "'");
 		return true;
 	}
 

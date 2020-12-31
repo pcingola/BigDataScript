@@ -34,10 +34,10 @@ public class TestCasesZzz extends TestCasesBase {
 	}
 
 	@Test
-	public void test01_SimpleScript() {
+	public void test02_ImproperTask() {
 		Gpr.debug("Test");
 
-		String name = "run_aws_01";
+		String name = "run_aws_02";
 		verbose = true;
 
 		// Set the output file
@@ -56,7 +56,6 @@ public class TestCasesZzz extends TestCasesBase {
 
 		// Cleanup
 		dout.delete();
-
 	}
 
 }

@@ -115,12 +115,31 @@ public class TestCasesIntegrationAws extends TestCasesBase {
 	}
 
 	/**
-	 * TODO: Simple task command
+	 * Simple task command
 	 */
 	@Test
 	public void test01_SimpleScript() {
 		Gpr.debug("Test");
-		throw new RuntimeException("UNIMPLEMENTED!");
+
+		String name = "run_aws_01";
+		verbose = true;
+
+		// Set the output file
+		String region = awsRegion();
+		String url = bucketUrl(name, "out.txt");
+
+		// Cleanup: Make sure output file is deleted before starting
+		DataS3 dout = new DataS3(url, region);
+		dout.delete();
+
+		// Run script
+		runOk("test/" + name + ".bds");
+
+		// Check: Check that the output file exists
+		assertTrue("Output file '" + dout + "' does not exists", dout.exists());
+
+		// Cleanup
+		dout.delete();
 	}
 
 	/**

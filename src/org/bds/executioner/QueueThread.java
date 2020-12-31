@@ -49,6 +49,8 @@ public abstract class QueueThread extends Thread implements BdsLog {
 	}
 
 	public void add(Task task) {
+		if (task == null) return;
+		debug("Adding task id '" + task.getId() + "'");
 		taskById.put(task.getId(), task);
 	}
 
@@ -56,6 +58,7 @@ public abstract class QueueThread extends Thread implements BdsLog {
 	 * Close all file descriptors, delete queue
 	 */
 	protected void close() {
+		debug("Close");
 		// Remove all tasks (close all open streams)
 		List<Task> tasks = new ArrayList<>();
 		tasks.addAll(taskById.values());
@@ -165,6 +168,7 @@ public abstract class QueueThread extends Thread implements BdsLog {
 	}
 
 	public synchronized void remove(Task task) {
+		debug("Removing task id '" + task.getId() + "'");
 		taskById.remove(task.getId());
 
 		// Close stderr output stream
