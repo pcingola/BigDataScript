@@ -28,13 +28,13 @@ public class TestCasesZzz extends TestCasesBaseAws {
 	}
 
 	@Test
-	public void test03_DependentTasks() {
+	public void test04_DependentTasksDepGoal() {
 		Gpr.debug("Test");
 
 		verbose = true;
 
 		// Set the output file
-		String name = "run_aws_03";
+		String name = "run_aws_04";
 		String script = "test/" + name + ".bds";
 		String inFile = "in.txt";
 		String out1File = "out1.txt";
@@ -65,15 +65,16 @@ public class TestCasesZzz extends TestCasesBaseAws {
 		sb.append("After task1\n");
 		sb.append("Before task2\n");
 		sb.append("After task2\n");
+		sb.append("Goal: '" + urlOut2S3 + "'\n");
 		// Task1 (aws, instance 1)
-		sb.append("Start: Task1 improper\n");
+		sb.append("Start: Dep1 improper\n");
 		sb.append("Input text: '" + inTxt + "'\n");
-		sb.append("End: Task1 Improper\n");
+		sb.append("End: Dep1 Improper\n");
 		// Task2 (aws, instance 2)
-		sb.append("Start: Task2\n");
+		sb.append("Start: Dep2\n");
 		sb.append("Input:\n");
 		sb.append("OUT1: '" + inTxt + "'\n");
-		sb.append("End: Task2\n");
+		sb.append("End: Dep2\n");
 		// Main script (local)
 		sb.append("Done\n");
 		String expectedStdout = sb.toString();
