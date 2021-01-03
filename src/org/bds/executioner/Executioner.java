@@ -441,11 +441,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		if (cmd != null) cmd.kill();
 	}
 
-	//	// FIXME: Implement a generic logger class (maybe an interface with default methods?)
-	//	public void log(String msg) {
-	//		Timer.showStdErr(getClass().getSimpleName() + " '" + getExecutionerId() + "': " + msg);
-	//	}
-
 	/**
 	 * Return the appropriate 'kill' command to be used by the OS
 	 * E.g.: For a local task it would be 'kill' whereas for a cluster task it would be 'qdel'

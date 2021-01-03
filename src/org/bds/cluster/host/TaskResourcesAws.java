@@ -323,7 +323,7 @@ public class TaskResourcesAws extends TaskResources {
 	 */
 	protected void setFromBdsThreadClassResources(Value taskResources, boolean debug) {
 		debug("Setting resources from object '" + GlobalScope.GLOBAL_VAR_TASK_OPTION_RESOURCES + "': " + taskResources);
-		// TODO: Check that this class is 'AwsResources'
+		// TODO: Parse bds class `AwsResources`
 		throw new RuntimeException("Cannot parse 'taskResources' type " + taskResources.getType());
 	}
 

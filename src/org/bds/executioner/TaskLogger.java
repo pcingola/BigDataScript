@@ -104,7 +104,7 @@ public class TaskLogger implements Serializable, BdsLog {
 		//       If the task finished OK, we mark them not to be removed
 		if (task.getOutputs() != null) {
 			for (Data file : task.getOutputs())
-				lines.append(createEntry(file.url(), true, CMD_REMOVE_FILE)); // TODO: WARNIGNG, bds-exec needs to parse the URL (e.g. 'file://...path_to_file')
+				lines.append(createEntry(file.url(), true, CMD_REMOVE_FILE)); // FIXME: WARNING, bds-exec needs to parse the URL (e.g. 'file://...path_to_file')
 		}
 
 		// Append all lines to file

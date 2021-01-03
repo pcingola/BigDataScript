@@ -33,6 +33,7 @@ import software.amazon.awssdk.services.ec2.model.StopInstancesRequest;
  */
 public class ExecutionerCloudAws extends ExecutionerCloud {
 
+	// FIXME: IMPLEMENT COMMAND IN BDS_EXEC
 	public static final String KILL_COMMAND[] = { "@aws_ec2_terminate" };
 
 	protected ExecutionerCloudAws(Config config) {

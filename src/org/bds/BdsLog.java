@@ -54,7 +54,6 @@ public interface BdsLog {
 
 	/**
 	 * Debug mode?
-	 * FIXME: Make sure we override this method in all classes that have a local 'debug' field
 	 */
 	default boolean isDebug() {
 		return Config.get().isDebug();
@@ -62,7 +61,6 @@ public interface BdsLog {
 
 	/**
 	 * Logging mode?
-	 * FIXME: Make sure we override this method in all classes that have a local 'log' field
 	 */
 	default boolean isLog() {
 		return Config.get().isLog();
@@ -70,7 +68,6 @@ public interface BdsLog {
 
 	/**
 	 * Verbose mode?
-	 * FIXME: Make sure we override this method in all classes that have a local 'verbose' field
 	 */
 	default boolean isVerbose() {
 		return Config.get().isVerbose();
