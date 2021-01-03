@@ -1,13 +1,14 @@
 
 include 'aws_util'
 
-println "Before"
+system := 'aws'
 
+println "Before task"
 out := "$s3base/out.txt"
 println "Output file: '$out'"
 
-task(system := 'aws') {
-	println('Hi: This is an improper task on AWS')
+task {
+	println "Start: Improper task on AWS"
 
 	# Create a tmp file
 	fileName := 'tmp.txt'
@@ -20,12 +21,12 @@ task(system := 'aws') {
 	# Print something
 	for(int i=0 ; i < 10; i++) {
 		println "Counting: $i"
-		sys echo "This is an echo"
+		sys echo "This is an echo $i"
 		sleep(1)
 	}
 
-	println "Bye!"
+	println "End: Improper task on AWS"
 }
-println "After"
+println "After task"
 wait
 println "Done"

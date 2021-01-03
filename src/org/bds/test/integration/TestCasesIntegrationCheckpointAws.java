@@ -1,11 +1,11 @@
 package org.bds.test.integration;
 
 import org.bds.data.DataS3;
-import org.bds.test.TestCasesBase;
+import org.bds.test.TestCasesBaseAws;
 import org.bds.util.Gpr;
 import org.junit.Test;
 
-public class TestCasesIntegrationCheckpointAws extends TestCasesBase {
+public class TestCasesIntegrationCheckpointAws extends TestCasesBaseAws {
 
 	public static boolean debug = false;
 

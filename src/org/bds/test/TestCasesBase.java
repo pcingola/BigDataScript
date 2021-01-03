@@ -1,17 +1,10 @@
 package org.bds.test;
 
-import java.io.File;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.bds.Bds;
 import org.bds.BdsLog;
-import org.bds.data.Data;
-import org.bds.data.DataRemote;
-import org.bds.data.DataS3;
 import org.bds.lang.type.Type;
 import org.bds.lang.value.InterpolateVars;
 import org.bds.lang.value.Value;
@@ -33,34 +26,10 @@ public class TestCasesBase implements BdsLog {
 	public boolean debug = false;
 	public boolean verbose = false;
 
-	// Read bucket name from $HOME/.bds/aws_test_bucket.config
-	protected String awsBucketName() {
-		return awsTestConfig().get("bucket").trim();
-	}
-
-	// Read region from $HOME/.bds/aws_test_bucket.config
-	protected String awsRegion() {
-		return awsTestConfig().get("region").trim();
-	}
-
-	// Read bucket name from $HOME/.bds/aws_test_bucket.config
-	protected Map<String, String> awsTestConfig() {
-		Map<String, String> keyValues = new HashMap<>();
-		String awsBucketNameFile = Gpr.HOME + "/.bds/aws_test.config";
-		for (String line : Gpr.readFile(awsBucketNameFile).split("\n")) {
-			String[] kv = line.split("\\t");
-			keyValues.put(kv[0], kv[1]);
-		}
-		return keyValues;
-	}
-
 	@Before
 	public void before() {
 		// Reset singletons
 		BdsRun.reset();
-		//		Config.reset();
-		//		Executioners.reset();
-		//		BdsThreads.reset();
 	}
 
 	protected void checkInterpolate(String str, String strings[], String vars[]) {
@@ -83,52 +52,6 @@ public class TestCasesBase implements BdsLog {
 	}
 
 	/**
-	 * Check a file in an S3 bucket
-	 */
-	protected void checkS3File(String url, String region, String bucket, String path, String paren, String txt) {
-		int objectSize = txt.length();
-		long now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis();
-
-		//		Data d = Data.factory(url);
-		DataS3 d = new DataS3(url, region);
-
-		d.setVerbose(verbose);
-		d.setDebug(debug);
-		long lastMod = d.getLastModified().getTime();
-		log("Path: " + d.getPath() + "\tlastModified: " + lastMod + "\tSize: " + d.size());
-
-		// Check some features
-		Assert.assertTrue("Is S3?", d instanceof DataS3);
-		Assert.assertEquals(path, d.getAbsolutePath());
-		Assert.assertEquals(objectSize, d.size());
-		Assert.assertTrue((now - lastMod) < 2 * DataRemote.CACHE_TIMEOUT);
-		Assert.assertTrue("Is file?", d.isFile());
-		Assert.assertFalse("Is directory?", d.isDirectory());
-
-		// Download file
-		boolean ok = d.download();
-		Assert.assertTrue("Download OK", ok);
-		Assert.assertTrue("Is downloaded?", d.isDownloaded());
-
-		// Is it at the correct local file?
-		Assert.assertEquals("/tmp/bds/s3/" + bucket.replace('-', '_') + path, d.getLocalPath());
-		Assert.assertEquals(path, d.getAbsolutePath());
-		Assert.assertEquals(paren, d.getParent().toString());
-		Assert.assertEquals("hello.txt", d.getName());
-
-		// Check last modified time
-		File file = new File(d.getLocalPath());
-		long lastModLoc = file.lastModified();
-		Assert.assertTrue("Last modified check:" //
-				+ "\n\tlastMod    : " + lastMod //
-				+ "\n\tlastModLoc : " + lastModLoc //
-				+ "\n\tDiff       : " + (lastMod - lastModLoc)//
-				, Math.abs(lastMod - lastModLoc) < 2 * DataRemote.CACHE_TIMEOUT);
-
-		Assert.assertEquals(objectSize, file.length());
-	}
-
-	/**
 	 * Check that a file compiles with expected errors
 	 */
 	protected void compileErrors(String fileName, String expectedErrors) {
@@ -144,16 +67,6 @@ public class TestCasesBase implements BdsLog {
 		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
 		bdsTest.compile();
 		bdsTest.checkCompileOk();
-	}
-
-	// Create a file in S3
-	protected void createS3File(String s3file, String region, String text) {
-		String localFile = "createS3.tmp";
-		Gpr.toFile(localFile, text);
-		DataS3 ds3 = new DataS3(s3file, region);
-		Data dlocal = Data.factory(localFile);
-		ds3.upload(dlocal);
-		dlocal.delete();
 	}
 
 	@Override
@@ -284,7 +197,7 @@ public class TestCasesBase implements BdsLog {
 	}
 
 	/**
-	 * Check that StdOut has a string (or that the string is NOT present if 'negate' is true)
+	 * Check that StdOut has all strings in 'expectedStdout' (or that the strings are NOT present if 'negate' is true)
 	 */
 	protected String runAndCheckStdout(String fileName, List<String> expectedStdout, String args[], boolean negate) {
 		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
@@ -296,21 +209,30 @@ public class TestCasesBase implements BdsLog {
 	}
 
 	/**
-	 * Check that StdOut has a string
+	 * Check that 'expectedStdout' is included in the script's STDOUT
 	 */
 	protected String runAndCheckStdout(String fileName, String expectedStdout) {
 		return runAndCheckStdout(fileName, expectedStdout, null, false);
 	}
 
+	/**
+	 * Check that 'expectedStdout' is included in the script's STDOUT
+	 * (or that it is NOT included, if 'negate' is set)
+	 */
 	protected String runAndCheckStdout(String fileName, String expectedStdout, boolean negate) {
 		return runAndCheckStdout(fileName, expectedStdout, null, negate);
 	}
 
-	/**
-	 * Check that StdOut has a string (or that the string is NOT present if 'negate' is true)
-	 */
 	protected String runAndCheckStdout(String fileName, String expectedStdout, String args[], boolean negate) {
-		BdsTest bdsTest = new BdsTest(fileName, args, verbose, debug);
+		return runAndCheckStdout(fileName, expectedStdout, args, null, negate);
+	}
+
+	/**
+	 * Check that 'expectedStdout' is included in the script's STDOUT
+	 * (or that it is NOT included, if 'negate' is set)
+	 */
+	protected String runAndCheckStdout(String fileName, String expectedStdout, String args[], String scriptAgrs[], boolean negate) {
+		BdsTest bdsTest = new BdsTest(fileName, args, scriptAgrs, verbose, debug);
 		bdsTest.run();
 		bdsTest.checkRunOk();
 		bdsTest.checkStdout(expectedStdout, negate);

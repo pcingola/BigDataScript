@@ -6,6 +6,7 @@ import org.bds.test.integration.TestCasesIntegrationCheckpointAws;
 import org.bds.test.integration.TestCasesIntegrationClusterGeneric;
 import org.bds.test.integration.TestCasesIntegrationClusterSsh;
 import org.bds.test.integration.TestCasesIntegrationDataRemote;
+import org.bds.test.integration.TestCasesIntegrationDataRemoteS3;
 import org.bds.test.integration.TestCasesIntegrationGraph;
 import org.bds.test.integration.TestCasesIntegrationRun;
 import org.bds.test.integration.TestCasesIntegrationTaskDataRemote;
@@ -28,7 +29,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesIntegrationGraph.class, // Running bds code: Task graphs and dependencies (local, long running tests)
 		TestCasesIntegrationClusterGeneric.class, // Executoner Cluster Generic
 		TestCasesIntegrationClusterSsh.class, // Executioner Ssh
-		TestCasesIntegrationDataRemote.class, // Remote files: S3, HTTP, FTP
+		TestCasesIntegrationDataRemote.class, // Remote files: HTTP, FTP
+		TestCasesIntegrationDataRemoteS3.class, //  Remote files: S3
 		TestCasesIntegrationTaskDataRemote.class, // Tasks with remote dependencies
 		TestCasesIntegrationTaskImproper.class, // Improper tasks (local, long running tests)
 		TestCasesIntegrationCheckpointAws.class, // Running bds code: Checkpoint and recovery from S3
