@@ -148,8 +148,6 @@ func (be *BdsExec) taskLoggerProcess(cmds map[string]string) {
 					err := awssqs.Delete() // Delete queue
 					if err != nil {
 						log.Printf("Error: Deleting AWS SQS queue '%s', error: %s\n", pid, err)
-					} else if VERBOSE {
-						log.Printf("Info: Deleting AWS SQS queue '%s'\n", pid)
 					}
 				}
 			case CMD_AWS_TERMINATE_INSTANCE:
@@ -180,6 +178,8 @@ func (be *BdsExec) taskLoggerProcess(cmds map[string]string) {
 		err := ec2.Terminate()
 		if err != nil {
 			log.Printf("Error: Terminating instances '%v', error: %s\n", ec2.InstanceIds, err)
+		} else if VERBOSE {
+			log.Printf("Info: Terminated AWS EC2 instances '%v'\n", ec2.InstanceIds)
 		}
 	}
 
