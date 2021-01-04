@@ -195,7 +195,7 @@ func (be *BdsExec) setExecName() {
 }
 
 /*
-	Show usage message and exit
+	Show usage message
 */
 func (be *BdsExec) Usage(msg string) {
 	if msg != "" {

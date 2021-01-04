@@ -15,8 +15,8 @@ var TAB_AS_BYTES = []byte("\t")
 
 type AwsSqs struct {
     queueName, queueUrl string
-    sqsSession *session.Session
-    sqsClient *sqs.SQS
+    session *session.Session
+    client *sqs.SQS
 
     taskId string
     buffOut []byte
@@ -40,6 +40,15 @@ func (awssqs *AwsSqs) AppendStdErr(msg []byte) {
     }
 }
 
+// Delete an SQS queue
+func (awssqs *AwsSqs) Delete() error {
+    delQueIn := sqs.DeleteQueueInput{
+        QueueUrl: &awssqs.queueUrl,
+    }
+    _, err := awssqs.client.DeleteQueue(&delQueIn)
+    return err
+}
+
 // Encode bytes
 func encodeBytes(b []byte) string {
     if b == nil {
@@ -57,11 +66,11 @@ func encodeString(b string) string {
 }
 
 // Create a new AwsSqs
-func NewAwsSqs(qname string, taskId string) (*AwsSqs, error) {
+func NewSqs(qname string, taskId string) (*AwsSqs, error) {
     awssqs := &AwsSqs{}
     awssqs.taskId = taskId
-    awssqs.sqsSession = session.Must(session.NewSessionWithOptions(session.Options{SharedConfigState: session.SharedConfigEnable}))
-    awssqs.sqsClient = sqs.New(awssqs.sqsSession)
+    awssqs.session = session.Must(session.NewSessionWithOptions(session.Options{SharedConfigState: session.SharedConfigEnable}))
+    awssqs.client = sqs.New(awssqs.session)
 
     awssqs.queueName = qname
     var err error
@@ -70,7 +79,7 @@ func NewAwsSqs(qname string, taskId string) (*AwsSqs, error) {
         awssqs.queueUrl = qname
     } else {
         // Look for the URL based on the name
-        res, err := awssqs.sqsClient.GetQueueUrl(&sqs.GetQueueUrlInput{QueueName: &qname,})
+        res, err := awssqs.client.GetQueueUrl(&sqs.GetQueueUrlInput{QueueName: &qname,})
         if err != nil {
             log.Printf("Error getting URL for AWS SQS queue '%s': %v\n", qname, err)
         } else {
@@ -78,23 +87,6 @@ func NewAwsSqs(qname string, taskId string) (*AwsSqs, error) {
         }
     }
     return awssqs, err
-}
-
-// Send bytes
-func (awssqs *AwsSqs) SendBytes(msgBytes []byte) {
-    awssqs.SendString(string(msgBytes))
-}
-
-// Send string
-func (awssqs *AwsSqs) SendString(msgStr string) {
-    msg := sqs.SendMessageInput {
-        MessageBody: aws.String(msgStr),
-        QueueUrl: &awssqs.queueUrl,
-    }
-    _, err := awssqs.sqsClient.SendMessage(&msg)
-    if err != nil {
-        log.Printf("Error sending message to queue '%s': %v\n", awssqs.queueName, err)
-    }
 }
 
 // Send current buffers
@@ -115,10 +107,27 @@ func (awssqs *AwsSqs) Send() {
     }
 }
 
+// Send bytes
+func (awssqs *AwsSqs) SendBytes(msgBytes []byte) {
+    awssqs.SendString(string(msgBytes))
+}
+
 // Send exit
 func (awssqs *AwsSqs) SendExit(msg string) {
     awssqs.exit = msg
     awssqs.Send()
+}
+
+// Send string
+func (awssqs *AwsSqs) SendString(msgStr string) {
+    msg := sqs.SendMessageInput {
+        MessageBody: aws.String(msgStr),
+        QueueUrl: &awssqs.queueUrl,
+    }
+    _, err := awssqs.client.SendMessage(&msg)
+    if err != nil {
+        log.Printf("Error sending message to queue '%s': %v\n", awssqs.queueName, err)
+    }
 }
 
 // Should we send a message?

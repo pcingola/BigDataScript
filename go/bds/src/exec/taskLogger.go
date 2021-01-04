@@ -1,6 +1,7 @@
 package exec
 
 import (
+	"aws"
 	"bufio"
 	"fileutil"
 	"log"
@@ -13,9 +14,10 @@ import (
 )
 
 // Command indicating to remove file (taskLogger file)
-const CMD_REMOVE_FILE = "@rm"
-const CMD_KILL = "@kill"
-
+const CMD_REMOVE_FILE = "@rm"	// Command to delete a local file
+const CMD_KILL = "@kill"	// Command to kill a local process
+const CMD_AWS_DELETE_QUEUE_COMMAND = "@aws_sqs_delete_queue"	// Command to delete a queue
+const CMD_AWS_TERMINATE_INSTANCE = "@aws_ec2_terminate"	// Command to terminate an EC@ instance on AWS
 
 func (be *BdsExec) createTaskLoggerFile() {
 	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid())
@@ -120,6 +122,7 @@ func (be *BdsExec) taskLoggerParseFile() map[string]string {
 */
 func (be *BdsExec) taskLoggerProcess(cmds map[string]string) {
 	runCmds := make(map[string]string)
+	var ec2 *aws.AwsEc2
 	for pid, cmd := range cmds {
 		switch cmd {
 			case CMD_KILL:
@@ -134,6 +137,29 @@ func (be *BdsExec) taskLoggerProcess(cmds map[string]string) {
 					log.Printf("Info: Deleting file '%s'\n", pid)
 				}
 				os.Remove(pid)
+			case CMD_AWS_DELETE_QUEUE_COMMAND:
+				if VERBOSE {
+					log.Printf("Info: Deleting AWS SQS queue '%s'\n", pid)
+				}
+				awssqs, err := aws.NewSqs(pid, "")
+				if err != nil {
+					log.Printf("Error: Creating AWS SQS client for queue '%s', error: %s\n", pid, err)
+				} else {
+					err := awssqs.Delete() // Delete queue
+					if err != nil {
+						log.Printf("Error: Deleting AWS SQS queue '%s', error: %s\n", pid, err)
+					} else if VERBOSE {
+						log.Printf("Info: Deleting AWS SQS queue '%s'\n", pid)
+					}
+				}
+			case CMD_AWS_TERMINATE_INSTANCE:
+				if VERBOSE {
+					log.Printf("Info: Terminating AWS EC2 instance '%s'\n", pid)
+				}
+				if ec2 == nil {
+					ec2 = aws.NewEc2()
+				}
+				ec2.Add(pid) // Add instance ID to request
 			default:
 				// Remove using a command
 				if DEBUG {
@@ -148,6 +174,15 @@ func (be *BdsExec) taskLoggerProcess(cmds map[string]string) {
 				}
 		}
 	}
+
+	// Delete all EC2 instances
+	if ec2 != nil {
+		err := ec2.Terminate()
+		if err != nil {
+			log.Printf("Error: Terminating instances '%v', error: %s\n", ec2.InstanceIds, err)
+		}
+	}
+
 	be.taskLoggerRunCmd(runCmds) // Run all commands (usually it's only one command)
 }
 

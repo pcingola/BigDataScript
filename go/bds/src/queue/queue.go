@@ -38,7 +38,7 @@ func NewQueue(qname string, taskId string) (*Queue, error) {
     q.exitChan = make(chan string)
     q.finishChan = make(chan bool)
 
-    s, err := aws.NewAwsSqs(qname, taskId)
+    s, err := aws.NewSqs(qname, taskId)
     q.awsSqs = s
 
     return q, err
