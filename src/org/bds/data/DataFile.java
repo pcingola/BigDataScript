@@ -36,7 +36,7 @@ public class DataFile extends Data {
 	}
 
 	public DataFile(String fileName) {
-		super(fileName);
+		super(fileName, DataType.LOCAL);
 		file = new File(fileName);
 		localPath = file.getAbsolutePath();
 		relative = !file.isAbsolute();
@@ -46,14 +46,14 @@ public class DataFile extends Data {
 	 * Constructor creates an absolute path, unless 'currentDir' is null
 	 */
 	public DataFile(String fileName, String currentDir) {
-		super(fileName);
+		super(fileName, DataType.LOCAL);
 		file = resolveLocalPath(fileName, currentDir);
 		localPath = file.getAbsolutePath();
 		relative = !file.isAbsolute();
 	}
 
 	public DataFile(URI uri) {
-		super(uri.toString());
+		super(uri.toString(), DataType.LOCAL);
 		file = new File(uri.getPath());
 		localPath = file.getPath();
 		relative = !file.isAbsolute();

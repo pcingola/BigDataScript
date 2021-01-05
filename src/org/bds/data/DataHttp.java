@@ -33,13 +33,13 @@ public class DataHttp extends DataRemote {
 	protected transient URLConnection connection;
 
 	public DataHttp(String urlStr) {
-		super(urlStr);
+		super(urlStr, DataType.HTTP);
 		uri = parseUrl(urlStr);
 		canWrite = false;
 	}
 
 	public DataHttp(URI uri) {
-		super(uri.toString());
+		super(uri.toString(), DataType.HTTP);
 		this.uri = uri;
 		canWrite = false;
 	}

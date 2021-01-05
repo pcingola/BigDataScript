@@ -58,6 +58,7 @@ public class TaskLogger implements Serializable, BdsLog {
 	private static final long serialVersionUID = -7712445468457053526L;
 
 	public static final String CMD_REMOVE_FILE = "@rm";
+	public static final String CMD_REMOVE_FILE_AWS_S3 = "@aws_s3_rm";
 	public static final String CMD_KILL = "@kill";
 
 	protected String fileName;
@@ -104,7 +105,35 @@ public class TaskLogger implements Serializable, BdsLog {
 		//       If the task finished OK, we mark them not to be removed
 		if (task.getOutputs() != null) {
 			for (Data file : task.getOutputs())
-				lines.append(createEntry(file.url(), true, CMD_REMOVE_FILE)); // FIXME: WARNING, bds-exec needs to parse the URL (e.g. 'file://...path_to_file')
+				if (file.isRemote()) {
+					// Remote file: Delete local copy (it's probably corrupted by the unfinished task
+					lines.append(createEntry(file.getLocalPath(), true, CMD_REMOVE_FILE));
+
+					// Can we delete the remote copy of the file?
+					switch (file.getDataType()) {
+					case S3:
+						// FIXME: bds-exec must handle S3 delete operations
+						lines.append(createEntry(file.getPathOrUrl(), true, CMD_REMOVE_FILE_AWS_S3));
+						break;
+
+					case HTTP:
+						// Cannot delete HTTP files
+						break;
+
+					case SFTP:
+					case FTP:
+						// TODO: bds-exec doesn't handle these data types
+						break;
+
+					case TASK: // This is not a real "file" data type
+						break;
+					default:
+						throw new RuntimeException("Unhandled data type: '" + file.getDataType() + "', this should never happen!");
+					}
+				} else {
+					// Local file, use remove command
+					lines.append(createEntry(file.getAbsolutePath(), true, CMD_REMOVE_FILE));
+				}
 		}
 
 		// Append all lines to file

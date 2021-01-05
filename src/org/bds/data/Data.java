@@ -40,14 +40,15 @@ import org.bds.util.Tuple;
 public abstract class Data implements Comparable<Data>, Serializable, BdsLog {
 
 	private static final long serialVersionUID = 6436509779796130272L;
-
 	public static final String PROTOCOL_SEP = "://";
+
 	protected boolean verbose;
 	protected boolean debug;
 	protected boolean relative; // Is this a relative path? (otherwise is absolute)
 	protected String localPath; // File name used for local processing
 	protected String urlOri; // URL in the original representation
 	protected String urlStr; // URL (full representation)
+	protected final DataType dataType; // File type
 
 	/**
 	 * Get canonical path to file using thread's 'current dir' to de-reference
@@ -159,10 +160,11 @@ public abstract class Data implements Comparable<Data>, Serializable, BdsLog {
 		return new Tuple<>(proto, host);
 	}
 
-	public Data(String urlOri) {
+	public Data(String urlOri, DataType dataType) {
 		this.urlOri = urlOri;
 		verbose = Config.get().isVerbose();
 		debug = Config.get().isDebug();
+		this.dataType = dataType;
 	}
 
 	/**
@@ -269,6 +271,10 @@ public abstract class Data implements Comparable<Data>, Serializable, BdsLog {
 	 * @return Canonical path
 	 */
 	public abstract String getCanonicalPath();
+
+	public DataType getDataType() {
+		return dataType;
+	}
 
 	/**
 	 * Get last time this file was modified

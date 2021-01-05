@@ -33,8 +33,8 @@ public abstract class DataRemote extends Data {
 	protected Timer latestUpdate;
 	protected URI uri;
 
-	public DataRemote(String uri) {
-		super(uri);
+	public DataRemote(String uri, DataType fileType) {
+		super(uri, fileType);
 		size = -1;
 		lastModified = new Date(0);
 		relative = false;

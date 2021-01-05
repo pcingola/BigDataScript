@@ -19,7 +19,7 @@ public class DataTask extends Data {
 	public static final String PROTOCOL_TASK = "task://";
 
 	public DataTask(String taskId) {
-		super(taskId);
+		super(taskId, DataType.TASK);
 		localPath = taskId;
 		relative = false;
 	}

@@ -26,14 +26,14 @@ public class DataFtp extends DataRemote {
 	protected String hostname;
 
 	public DataFtp(String urlStr) {
-		super(urlStr);
+		super(urlStr, DataType.FTP);
 		uri = parseUrl(urlStr);
 		hostname = uri.getHost();
 		canWrite = false;
 	}
 
 	public DataFtp(URI uri) {
-		super(uri.toString());
+		super(uri.toString(), DataType.FTP);
 		this.uri = uri;
 		hostname = uri.getHost();
 		canWrite = false;
