@@ -73,7 +73,6 @@ func NewSqs(qname string, taskId string) (*AwsSqs, error) {
     awssqs.client = sqs.New(awssqs.session)
 
     awssqs.queueName = qname
-    var err error
     if strings.HasPrefix(qname, "https://") {
         // This is not a queue name, it's a queue URL
         awssqs.queueUrl = qname
@@ -82,11 +81,11 @@ func NewSqs(qname string, taskId string) (*AwsSqs, error) {
         res, err := awssqs.client.GetQueueUrl(&sqs.GetQueueUrlInput{QueueName: &qname,})
         if err != nil {
             log.Printf("Error getting URL for AWS SQS queue '%s': %v\n", qname, err)
-        } else {
-            awssqs.queueUrl = *res.QueueUrl
+            return nil, err
         }
+        awssqs.queueUrl = *res.QueueUrl
     }
-    return awssqs, err
+    return awssqs, nil
 }
 
 // Send current buffers

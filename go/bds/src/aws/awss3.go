@@ -26,7 +26,7 @@ func (awss3 *AwsS3) Delete(csv string) error {
     doi := s3.DeleteObjectInput{Bucket: aws.String(bucket), Key: aws.String(key)}
     _, err := client.DeleteObject(&doi)
     if err != nil {
-        log.Printf("Unable to delete object: region '%s', bucket '%s', key '%s'. Error: %v", region, bucket, key, err)
+        log.Printf("Error: Deleting AWS S3 file: region '%s', bucket '%s', key '%s'. Error: %v", region, bucket, key, err)
     }
     return err
 }

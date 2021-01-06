@@ -159,10 +159,7 @@ func (be *BdsExec) taskLoggerProcess(cmds map[string]string) {
 				if s3 == nil {
 					s3 = aws.NewS3()
 				}
-				err := s3.Delete(pid)
-				if err != nil {
-					log.Printf("Error: Deleting file '%s', error: %s\n", pid, err)
-				}
+				s3.Delete(pid)
 			case CMD_AWS_TERMINATE_INSTANCE:
 				if VERBOSE {
 					log.Printf("Info: Terminating AWS EC2 instance '%s'\n", pid)
