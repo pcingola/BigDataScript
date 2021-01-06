@@ -18,6 +18,7 @@ const CMD_REMOVE_FILE = "@rm"	// Command to delete a local file
 const CMD_KILL = "@kill"	// Command to kill a local process
 const CMD_AWS_DELETE_QUEUE_COMMAND = "@aws_sqs_delete_queue"	// Command to delete a queue
 const CMD_AWS_TERMINATE_INSTANCE = "@aws_ec2_terminate"	// Command to terminate an EC@ instance on AWS
+const CMD_AWS_S3_DELETE_FILE = "@aws_s3_rm"
 
 func (be *BdsExec) createTaskLoggerFile() {
 	prefix := "bds.pid." + strconv.Itoa(syscall.Getpid())
@@ -123,6 +124,7 @@ func (be *BdsExec) taskLoggerParseFile() map[string]string {
 func (be *BdsExec) taskLoggerProcess(cmds map[string]string) {
 	runCmds := make(map[string]string)
 	var ec2 *aws.AwsEc2
+	var s3 *aws.AwsS3
 	for pid, cmd := range cmds {
 		switch cmd {
 			case CMD_KILL:
@@ -149,6 +151,17 @@ func (be *BdsExec) taskLoggerProcess(cmds map[string]string) {
 					if err != nil {
 						log.Printf("Error: Deleting AWS SQS queue '%s', error: %s\n", pid, err)
 					}
+				}
+			case CMD_AWS_S3_DELETE_FILE:
+				if VERBOSE {
+					log.Printf("Info: Deleting AWS S3 file '%s'\n", pid)
+				}
+				if s3 == nil {
+					s3 = aws.NewS3()
+				}
+				err := s3.Delete(pid)
+				if err != nil {
+					log.Printf("Error: Deleting file '%s', error: %s\n", pid, err)
 				}
 			case CMD_AWS_TERMINATE_INSTANCE:
 				if VERBOSE {

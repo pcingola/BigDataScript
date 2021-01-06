@@ -68,8 +68,7 @@ public class DataS3 extends DataRemote {
 
 	@Override
 	public String createUrl() {
-		if (canBeS3Format()) return AWS_S3_PROTOCOL + "://" + bucketName + '/' + key;
-		return AWS_S3_VIRTUAL_HOSTED_SCHEME + "://" + bucketName + ".s3." + region + "." + AWS_S3_VIRTUAL_HOSTED_DOMAIN + '/' + key;
+		return canBeS3Format() ? urlS3() : urlHttps();
 	}
 
 	@Override
@@ -151,6 +150,10 @@ public class DataS3 extends DataRemote {
 	@Override
 	public String getPath() {
 		return (key != null ? '/' + key : "");
+	}
+
+	public String getRegion() {
+		return region;
 	}
 
 	/**
@@ -384,12 +387,26 @@ public class DataS3 extends DataRemote {
 	}
 
 	/**
+	 * URL in "https://" format (virtual host format)
+	 */
+	public String urlHttps() {
+		return AWS_S3_VIRTUAL_HOSTED_SCHEME + "://" + bucketName + ".s3." + region + "." + AWS_S3_VIRTUAL_HOSTED_DOMAIN + '/' + key;
+	}
+
+	/**
 	 * Construct the 'root' URL for this object
 	 * Note: Since this is a 'root' directory, it always ends with a trailing '/'
 	 */
 	protected String urlRoot() {
 		if (isS3Format()) return AWS_S3_PROTOCOL + "://" + bucketName + '/';
 		return AWS_S3_VIRTUAL_HOSTED_SCHEME + "://" + bucketName + ".s3." + region + "." + AWS_S3_VIRTUAL_HOSTED_DOMAIN + '/';
+	}
+
+	/**
+	 * URL in "s3://" format
+	 */
+	public String urlS3() {
+		return AWS_S3_PROTOCOL + "://" + bucketName + '/' + key;
 	}
 
 }

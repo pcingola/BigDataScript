@@ -8,6 +8,7 @@ import java.util.HashSet;
 
 import org.bds.BdsLog;
 import org.bds.data.Data;
+import org.bds.data.DataS3;
 import org.bds.task.Task;
 import org.bds.util.Gpr;
 
@@ -112,8 +113,10 @@ public class TaskLogger implements Serializable, BdsLog {
 					// Can we delete the remote copy of the file?
 					switch (file.getDataType()) {
 					case S3:
-						// FIXME: bds-exec must handle S3 delete operations
-						lines.append(createEntry(file.getPathOrUrl(), true, CMD_REMOVE_FILE_AWS_S3));
+						// FIXME: We use a custom format "region,bucket,key" to make it easier to parso in bds-exec
+						DataS3 d = (DataS3) file;
+						String csv = d.getRegion() + ',' + d.getBucket() + ',' + d.getKey();
+						lines.append(createEntry(csv, true, CMD_REMOVE_FILE_AWS_S3));
 						break;
 
 					case HTTP:
