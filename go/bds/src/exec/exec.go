@@ -29,7 +29,7 @@ type BdsExec struct {
 	commandName string		// Command to execute: 'exec', 'kill', 'help', etc.
 	execName string			// This binary's absolute path
 
-	taskLoggerFile string	// Task logger file to be used by 'Bds (java)'
+	TaskLoggerFile string	// Task logger file to be used by 'Bds (java)'
 
 	cmd *exec.Cmd			// Exec: Command
 	cmdargs []string		// Exec: Command arguments

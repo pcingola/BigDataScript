@@ -128,7 +128,7 @@ func (be *BdsExec) executeCommand() int {
 	// Redirect all signals to channel (e.g. Ctrl-C)
 	osSignal := make(chan os.Signal)
 
-	if be.taskLoggerFile != "" {
+	if be.TaskLoggerFile != "" {
 		// Main bds program
 		signal.Notify(osSignal) // Capture all signals
 	} else {

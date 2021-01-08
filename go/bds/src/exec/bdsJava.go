@@ -25,9 +25,9 @@ const JAVA_BDS_CLASS = "org.bds.Bds"
 		Idea and implementation of this hack: Hernan Gonzalez
 */
 func (be *BdsExec) BdsJava() int {
-	// Create a taskLoggerFile (temp file based on pid number)
+	// Create a TaskLoggerFile (temp file based on pid number)
 	be.createTaskLoggerFile()
-	defer os.Remove(be.taskLoggerFile) // Make sure 'taskLogger' file is deleted
+	defer os.Remove(be.TaskLoggerFile) // Make sure 'taskLogger' file is deleted
 
 	be.cmdLineJava() // Create Java command line
 
@@ -55,7 +55,7 @@ func (be *BdsExec) cmdLineJava() {
 		JAVA_BDS_CLASS }
 	be.cmdargs = append(be.cmdargs, be.javaArgs...)	// Append JVM command line options
 	be.cmdargs = append(be.cmdargs, "-pid")
-	be.cmdargs = append(be.cmdargs, be.taskLoggerFile)
+	be.cmdargs = append(be.cmdargs, be.TaskLoggerFile)
 	be.cmdargs = append(be.cmdargs, be.args[1:]...)	// Append 'bds' command line options
 	if DEBUG {
 		log.Printf("Debug cmdLineJava: Java command args %v\n", be.cmdargs)

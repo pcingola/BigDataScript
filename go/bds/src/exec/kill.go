@@ -16,8 +16,8 @@ func (be *BdsExec) kill() {
 	be.cmd.Process.Wait() // Reap their souls
 
 	// Should we kill all process groups from taskLoggerFile?
-	if be.taskLoggerFile != "" {
-		be.taskLoggerCleanUpAll()
+	if be.TaskLoggerFile != "" {
+		be.TaskLoggerCleanUpAll()
 	}
 
 	// Send a SIGKILL to the process group (just in case any child process is still executing)

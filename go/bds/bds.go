@@ -60,7 +60,7 @@ func main() {
 			os.Exit(0)
 		case "test":
 			// Placeholder for tests
-			zzz()
+			zzz(bdsexec)
 			os.Exit(0)
 		case "help":
 			// Show usage and exit
@@ -74,6 +74,10 @@ func main() {
 }
 
 // A function used for testing
-func zzz() {
+func zzz(bdsexec *exec.BdsExec) {
 	fmt.Printf("Info: Test function zzz()\n")
+	bdsexec.TaskLoggerFile = "z.pid"
+	exec.DEBUG = true
+	exec.VERBOSE = true
+	bdsexec.TaskLoggerCleanUpAll()
 }

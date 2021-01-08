@@ -26,9 +26,9 @@ func (be *BdsExec) createTaskLoggerFile() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	be.taskLoggerFile = pidTmpFile
+	be.TaskLoggerFile = pidTmpFile
 	if DEBUG {
-		log.Printf("Debug createTaskLoggerFile: Creating file '%s'\n", be.taskLoggerFile)
+		log.Printf("Debug createTaskLoggerFile: Creating file '%s'\n", be.TaskLoggerFile)
 	}
 }
 
@@ -45,13 +45,13 @@ func (be *BdsExec) createTaskLoggerFile() {
 	the process finished. So all pid that do not have a '-' entry
 	must be killed.
 */
-func (be *BdsExec) taskLoggerCleanUpAll() {
+func (be *BdsExec) TaskLoggerCleanUpAll() {
 	if DEBUG {
-		log.Printf("Debug taskLoggerCleanUpAll: Start '%s'\n", be.taskLoggerFile)
+		log.Printf("Debug taskLoggerCleanUpAll: Start '%s'\n", be.TaskLoggerFile)
 	}
 
 	// Parse task logger file
-	defer os.Remove(be.taskLoggerFile) // Make sure the PID file is removed
+	defer os.Remove(be.TaskLoggerFile) // Make sure the PID file is removed
 	cmds := be.taskLoggerParseFile()
 
 	// Kill all pending processes
@@ -69,16 +69,16 @@ func (be *BdsExec) taskLoggerParseFile() map[string]string {
 	cmds := make(map[string]string)
 
 	// Open file and parse it
-	file, err := os.Open(be.taskLoggerFile)
+	file, err := os.Open(be.TaskLoggerFile)
 	if err != nil {
-		log.Printf("Error taskLoggerParseFile: Cannot open TaskLogger file '%s' (PID: %d)\n", be.taskLoggerFile, syscall.Getpid())
+		log.Printf("Error taskLoggerParseFile: Cannot open TaskLogger file '%s' (PID: %d)\n", be.TaskLoggerFile, syscall.Getpid())
 		return cmds
 	}
 	defer file.Close() // Make sure the file is deleted
 
 	// Read line by line
 	if DEBUG {
-		log.Printf("Debug taskLoggerParseFile: Parsing taskLogger file '%s'\n", be.taskLoggerFile)
+		log.Printf("Debug taskLoggerParseFile: Parsing taskLogger file '%s'\n", be.TaskLoggerFile)
 	}
 	reader := bufio.NewReader(file)
 	for {
