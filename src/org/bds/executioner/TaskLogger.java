@@ -116,7 +116,6 @@ public class TaskLogger implements Serializable, BdsLog {
 						// We use a custom format "region,bucket,key" to make it easier to parso in bds-exec
 						DataS3 d = (DataS3) file;
 						String csv = d.getRegion() + ',' + d.getBucket() + ',' + d.getKey();
-						Gpr.debug("ADDING LINE TO TASKLOGGER: " + csv);
 						lines.append(createEntry(csv, true, CMD_REMOVE_FILE_AWS_S3));
 						break;
 

@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
  */
 public class QueueThreadAwsSqs extends QueueThread {
 
-	public static String QUEUE_NAME_SUFFIX_DEBUG = "test_123456789";
+	public static String QUEUE_NAME_SUFFIX_DEBUG = "bds_test_123456789";
 	public static boolean USE_QUEUE_NAME_DEBUG = true; // Fix queue name when running tests or debugging
 
 	private static final String OS_DELETE_QUEUE_COMMAND = "@aws_sqs_delete_queue"; // Command line to delete a queue
