@@ -125,7 +125,7 @@ public class TaskLogger implements Serializable, BdsLog {
 
 					case SFTP:
 					case FTP:
-						// TODO: bds-exec doesn't handle these data types
+						// Note: bds-exec doesn't handle FTP files
 						break;
 
 					case TASK:
