@@ -113,14 +113,15 @@ public class TaskLogger implements Serializable, BdsLog {
 					// Can we delete the remote copy of the file?
 					switch (file.getDataType()) {
 					case S3:
-						// FIXME: We use a custom format "region,bucket,key" to make it easier to parso in bds-exec
+						// We use a custom format "region,bucket,key" to make it easier to parso in bds-exec
 						DataS3 d = (DataS3) file;
 						String csv = d.getRegion() + ',' + d.getBucket() + ',' + d.getKey();
+						Gpr.debug("ADDING LINE TO TASKLOGGER: " + csv);
 						lines.append(createEntry(csv, true, CMD_REMOVE_FILE_AWS_S3));
 						break;
 
 					case HTTP:
-						// Cannot delete HTTP files
+						// Cannot delete HTTP files, these should not be "output"
 						break;
 
 					case SFTP:
@@ -128,8 +129,10 @@ public class TaskLogger implements Serializable, BdsLog {
 						// TODO: bds-exec doesn't handle these data types
 						break;
 
-					case TASK: // This is not a real "file" data type
+					case TASK:
+						// This is not a real "file" data type
 						break;
+
 					default:
 						throw new RuntimeException("Unhandled data type: '" + file.getDataType() + "', this should never happen!");
 					}

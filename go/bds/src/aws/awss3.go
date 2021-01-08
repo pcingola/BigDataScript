@@ -19,6 +19,7 @@ type AwsS3 struct {
 func (awss3 *AwsS3) Delete(csv string) error {
     // Parse "CSV" string
     f := strings.SplitN(csv, ",", 2)
+    log.Printf("Split:\n\tcsv: '%s'\n\tf: '%q'", csv, f)
     region, bucket, key := f[0], f[1], f[2]
     // Get S3 client
     client := awss3.Client(region)
