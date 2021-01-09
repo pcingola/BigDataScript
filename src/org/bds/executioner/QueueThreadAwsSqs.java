@@ -104,7 +104,7 @@ public class QueueThreadAwsSqs extends QueueThread {
 				warning("QUEUE_NAME_SUFFIX_DEBUG is set, using queue name '" + queueName + "', prefix variable " + GlobalScope.GLOBAL_VAR_EXECUTIONER_QUEUE_NAME_PREFIX + " set to '" + queueNamePrefix + "'");
 			} else {
 				String r = Long.toHexString(Math.abs((new Random()).nextLong())); // Long random number in hex
-				queueName = String.format("%s%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_%2$s", queueNamePrefix, Calendar.getInstance(), r);
+				queueName = String.format("%s%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS_%3$s", queueNamePrefix, Calendar.getInstance(), r);
 				debug("Queue name '" + queueName + "', prefix variable " + GlobalScope.GLOBAL_VAR_EXECUTIONER_QUEUE_NAME_PREFIX + " set to '" + queueNamePrefix + "'");
 			}
 		}
