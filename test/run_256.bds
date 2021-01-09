@@ -1,0 +1,7 @@
+#!/usr/bin/env bds
+
+mn := getModulePath()
+db := mn.dirName().baseName()
+println "getModulePath() = '$mn'"
+println "getModulePath().dirName().baseName() = '$db'"
+

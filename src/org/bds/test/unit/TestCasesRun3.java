@@ -481,4 +481,16 @@ public class TestCasesRun3 extends TestCasesBase {
 		runAndCheck("test/run_254.bds", expectedValues);
 	}
 
+	@Test
+	public void test255_getModuleName() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_255.bds", "b", "run_255.bds");
+	}
+
+	@Test
+	public void test256_getModuleName() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_256.bds", "db", "test");
+	}
+
 }
