@@ -171,10 +171,10 @@ func (be *BdsExec) executeCommand() int {
 	if be.awsSqsName != "" {
 		q, err = queue.NewQueue(be.awsSqsName, be.taskId)
 		if err != nil {
-			log.Printf("Error: Creating queue '%v'\n", err)
+			log.Printf("Error: Connecting to queue '%v'\n", err)
 			os.Exit(1)
 		} else if DEBUG {
-			log.Printf("Debug executeCommand: Created queue '%s'\n", be.awsSqsName)
+			log.Printf("Debug executeCommand: Connected to queue '%s'\n", be.awsSqsName)
 		}
 		stdoutCh, stderrCh = q.StdoutChan, q.StderrChan
 	}

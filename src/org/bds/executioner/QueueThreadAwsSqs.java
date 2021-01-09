@@ -24,8 +24,8 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
  */
 public class QueueThreadAwsSqs extends QueueThread {
 
-	public static String QUEUE_NAME_SUFFIX_DEBUG = "bds_test_123456789";
-	public static boolean USE_QUEUE_NAME_DEBUG = true; // Fix queue name when running tests or debugging
+	public static String QUEUE_NAME_SUFFIX_DEBUG = "test_123456789";
+	public static boolean USE_QUEUE_NAME_DEBUG = false; // Fix queue name when running tests or debugging
 
 	private static final String OS_DELETE_QUEUE_COMMAND = "@aws_sqs_delete_queue"; // Command line to delete a queue
 	public static final int AWS_SQS_WAIT_TIME_SECONDS = 10; // Long polling parameter
@@ -35,13 +35,8 @@ public class QueueThreadAwsSqs extends QueueThread {
 	protected String queueName;
 	protected String queueNamePrefix;
 
-	public QueueThreadAwsSqs(Config config, MonitorTaskQueue monitorTasks, TaskLogger taskLogger) {
-		super(config, monitorTasks, taskLogger);
-		this.queueNamePrefix = ExecutionerCloud.EXECUTIONER_QUEUE_NAME_PREFIX_DEFAULT;
-	}
-
 	public QueueThreadAwsSqs(Config config, MonitorTaskQueue monitorTasks, TaskLogger taskLogger, String queueNamePrefix) {
-		this(config, monitorTasks, taskLogger);
+		super(config, monitorTasks, taskLogger);
 		this.queueNamePrefix = queueNamePrefix;
 	}
 

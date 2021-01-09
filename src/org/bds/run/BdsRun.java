@@ -19,9 +19,14 @@ import org.bds.compile.BdsNodeWalker;
 import org.bds.compile.CompilerMessages;
 import org.bds.data.Data;
 import org.bds.data.FtpConnectionFactory;
+import org.bds.executioner.ExecutionerCloud;
 import org.bds.executioner.ExecutionerFileSystem;
 import org.bds.executioner.Executioners;
 import org.bds.executioner.Executioners.ExecutionerType;
+import org.bds.executioner.MonitorTaskQueue;
+import org.bds.executioner.MonitorTasks;
+import org.bds.executioner.QueueThreadAwsSqs;
+import org.bds.executioner.TaskLogger;
 import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
 import org.bds.lang.ProgramUnit;
@@ -33,6 +38,7 @@ import org.bds.lang.type.TypeClass;
 import org.bds.lang.type.TypeClassException;
 import org.bds.lang.type.TypeClassExceptionConcurrentModification;
 import org.bds.lang.type.Types;
+import org.bds.osCmd.CmdAws;
 import org.bds.scope.GlobalScope;
 import org.bds.scope.Scope;
 import org.bds.symbol.GlobalSymbolTable;
@@ -49,7 +55,15 @@ import org.bds.vm.BdsVmAsm;
 public class BdsRun implements BdsLog {
 
 	public enum BdsAction {
-		RUN, RUN_CHECKPOINT, RUN_TASK_IMPROPER, ASSEMBLY, COMPILE, INFO_CHECKPOINT, TEST, CHECK_PID_REGEX
+		ASSEMBLY // Only create assembly code and show it to STDOUT
+		, CHECK_PID_REGEX // Check that PID regex works
+		, COMPILE // Compile only. This is used to check if a program compiles (it does not run the program)
+		, INFO_CHECKPOINT // Show information in a checkpoint file
+		, RUN // Run a program
+		, RUN_CHECKPOINT // Run from a checkpoint
+		, RUN_TASK_IMPROPER // Run an improper task from a checkpoint
+		, TEST // Run test cases in bds (i.e. compile and run all functions named `test*()`
+		, ZZZ // Run the 'zzz()' method. This is only used for developing experimental code (undocumented option
 	}
 
 	public enum CompileCode {
@@ -411,10 +425,6 @@ public class BdsRun implements BdsLog {
 			exitValue = infoCheckpoint();
 			break;
 
-		case TEST:
-			exitValue = runTests();
-			break;
-
 		case RUN:
 			exitValue = runCompile(); // Compile + Run
 			break;
@@ -425,6 +435,14 @@ public class BdsRun implements BdsLog {
 
 		case RUN_TASK_IMPROPER:
 			exitValue = runTaskImproper();
+			break;
+
+		case TEST:
+			exitValue = runTests();
+			break;
+
+		case ZZZ:
+			exitValue = zzz();
 			break;
 
 		default:
@@ -696,4 +714,43 @@ public class BdsRun implements BdsLog {
 		this.verbose = verbose;
 	}
 
+	/**
+	 * Run some experimental code
+	 * This is only used for developments (undocumented)
+	 */
+	private int zzz() {
+		debug = false;
+		verbose = true;
+		CmdAws.DO_NOT_RUN_INSTANCE = true;
+		QueueThreadAwsSqs.USE_QUEUE_NAME_DEBUG = true;
+		String queueNamePrefix = ExecutionerCloud.EXECUTIONER_QUEUE_NAME_PREFIX_DEFAULT;
+		String pidFile = "z.pid";
+
+		// Config
+		Config config = Config.get();
+		config.setVerbose(verbose);
+		config.setDebug(debug);
+
+		// TaskLogger
+		TaskLogger taskLogger = new TaskLogger(pidFile);
+
+		// Monitor tasks for queues
+		MonitorTaskQueue monitorTask = MonitorTasks.get().getMonitorTaskQueue();
+
+		// Queue thread for AWS SQS
+		QueueThreadAwsSqs queueThread = new QueueThreadAwsSqs(config, monitorTask, taskLogger, queueNamePrefix);
+		queueThread.setVerbose(verbose);
+		queueThread.setDebug(debug);
+
+		// Start process and wait
+		debug("Starting queue thread");
+		queueThread.start();
+		try {
+			queueThread.join();
+		} catch (InterruptedException e) {
+			throw new RuntimeException();
+		}
+
+		return 0;
+	}
 }

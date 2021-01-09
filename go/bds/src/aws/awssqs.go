@@ -10,7 +10,7 @@ import (
 )
 
 const MAX_MSG_SIZE = 250 * 1024
-const SHOULD_SEND_MSG_SIZE = 1 * 1024
+const SHOULD_SEND_MSG_SIZE = 100 * 1024
 var TAB_AS_BYTES = []byte("\t")
 
 type AwsSqs struct {

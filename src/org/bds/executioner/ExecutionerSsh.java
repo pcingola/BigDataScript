@@ -33,6 +33,8 @@ public class ExecutionerSsh extends ExecutionerFileSystem {
 		// Create a cluster
 		system = new ClusterSsh();
 
+		// TODO: Add global variable, nodes (list tab/colon separated list)
+
 		// Add nodes from config file
 		String nodes = config.getString(Config.CLUSTER_SSH_NODES, "");
 		if (config.isDebug()) System.err.println("Ssh nodes string (config): '" + nodes + "'");

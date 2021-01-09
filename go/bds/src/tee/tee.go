@@ -63,7 +63,13 @@ func (t *Tee) Write(buf []byte) (n int, err error) {
 
 	// Write to channel
 	if t.channel != nil {
-		t.channel <- buf
+		// Copy buffer to avoid race conditions
+		// Note: The buffer is sent to the channel, but the original process
+		// might reuse the buffer to write new data before the receiving go-rutine
+		// reads the buffer form the channel. This creates a race condition.
+		cbuf := make([]byte, len(buf))
+		copy(cbuf, buf)
+		t.channel <- cbuf
 	}
 
 	return n, err

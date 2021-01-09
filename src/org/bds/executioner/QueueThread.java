@@ -278,7 +278,7 @@ public abstract class QueueThread extends Thread implements BdsLog {
 		OutputStream os = stdErrByTaskId.get(tid);
 		if (os == null) {
 			try {
-				debug("Creating file '" + task.getStderrFile() + "'");
+				debug("Creating SDTERR file '" + task.getStderrFile() + "'");
 				os = new BufferedOutputStream(new FileOutputStream(task.getStderrFile()));
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException("Error opening file '" + task.getStderrFile() + "'", e);
@@ -307,7 +307,7 @@ public abstract class QueueThread extends Thread implements BdsLog {
 		OutputStream os = stdOutByTaskId.get(tid);
 		if (os == null) {
 			try {
-				debug("Creating file '" + task.getStdoutFile() + "'");
+				debug("Creating STDOUT file '" + task.getStdoutFile() + "'");
 				os = new BufferedOutputStream(new FileOutputStream(task.getStdoutFile()));
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException("Error opening file '" + task.getStdoutFile() + "'", e);

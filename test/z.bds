@@ -4,21 +4,13 @@ include 'aws_util'
 system := 'aws'
 println "Before"
 
-in := "$s3base/in.txt"
-out := "$s3base/out.txt"
-
-in.write("OK")
-
-println "Files:"
-println "\tin : '$in'"
-println "\tout: '$out'"
-
-task(out <- in) {
-	sys echo HI
-	sys date > tmp.txt
-	sys cat '$in' > '$out'
-	sys for i in `seq 60`; do echo "count: \$i" | tee -a '$out'; sleep 1; done
-	sys echo BYE
+task {
+	println "Task: Start"
+	for(int i=0; i < 30; i++ ) {
+		println "count: $i"
+		sleep(1)
+	}
+	println "Task: End"
 }
 
 println "After"

@@ -360,6 +360,10 @@ public class Bds implements BdsLog {
 					else usage("Option '-t' without number argument");
 					break;
 
+				case "-zzz":
+					bdsRun.setBdsAction(BdsAction.ZZZ);
+					break;
+
 				default:
 					usage("Unknown command line option " + arg);
 				}
@@ -369,6 +373,8 @@ public class Bds implements BdsLog {
 
 		// Sanity checks
 		if (bdsRun.getBdsAction() == BdsAction.CHECK_PID_REGEX) {
+			// OK: Nothing to check
+		} else if (bdsRun.getBdsAction() == BdsAction.ZZZ) {
 			// OK: Nothing to check
 		} else if ((programFileName == null) && (chekcpointRestoreFile == null)) {
 			// No file name => Error

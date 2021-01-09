@@ -9,7 +9,7 @@ import (
 
 const DEBUG = false
 const QUEUE_SIZE = 1024
-const TIME_OUT = 1
+const TIME_OUT = 950 * time.Millisecond
 
 /*
 This is used to connect to send a process results (stdout, stderr, exit status)
@@ -70,9 +70,9 @@ func (q *Queue) Transmit() {
 				}
                 q.awsSqs.AppendStdErr(serr)
 
-            case <-time.After(TIME_OUT * time.Second):
+            case <-time.After(TIME_OUT):
                 if DEBUG {
-					log.Printf("Debug Transmit: Flusshing queue buffers\n")
+					log.Printf("Debug Transmit: Timer send\n")
 				}
                 q.awsSqs.Send()
 		}

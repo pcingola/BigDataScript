@@ -27,6 +27,7 @@ public class BdsTest {
 	public boolean coverage;
 	public double coverageMin;
 	public boolean debug;
+	public boolean log;
 	public boolean verbose;
 	public boolean testCases; // Is this a bds-test? i.e. should it run as 'bds --test'?
 	public Boolean compileOk;
@@ -66,6 +67,7 @@ public class BdsTest {
 		// Add command line options
 		if (verbose) l.add("-v");
 		if (debug) l.add("-d");
+		if (log) l.add("-log");
 
 		if (compileOnly) l.add("-compile");
 
@@ -356,6 +358,10 @@ public class BdsTest {
 		return bds.getBdsRun().getScope().getValue(name);
 	}
 
+	public boolean isLog() {
+		return log;
+	}
+
 	/**
 	 * Show differences
 	 */
@@ -448,6 +454,10 @@ public class BdsTest {
 
 	public void setCoverageMin(double coverageMin) {
 		this.coverageMin = coverageMin;
+	}
+
+	public void setLog(boolean log) {
+		this.log = log;
 	}
 
 	public void setTestCases(boolean testCases) {

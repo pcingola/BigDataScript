@@ -1,10 +1,14 @@
 package org.bds;
 
+import org.bds.executioner.QueueThreadAwsSqs;
+import org.bds.osCmd.CmdAws;
+import org.bds.test.BdsTest;
 import org.bds.util.Gpr;
 
 public class Zzz {
 
 	public static boolean debug = true;
+	public static boolean log = true;
 	public static boolean verbose = true;
 
 	public static final String QUEUE_NAME = "bds_test_123456789";
@@ -21,21 +25,15 @@ public class Zzz {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		Config config = new Config();
-		config.setVerbose(true);
+		// Do not run instance
+		CmdAws.DO_NOT_RUN_INSTANCE = true;
+		QueueThreadAwsSqs.USE_QUEUE_NAME_DEBUG = true;
 
-		String programFileName = "../../task_id_1234.programFileName";
-		//		Task task = new Task("task_id_1234", programFileName, "echo hi\n", "z.bds", 10);
-		//		task.createProgramFile();
-		//
-		//		QueueThread qt = new QueueThreadAwsSqs(config, null, null, QUEUE_NAME);
-		//		qt.start();
-		//		try {
-		//			qt.add(task);
-		//			qt.wait();
-		//		} catch (InterruptedException e) {
-		//			e.printStackTrace();
-		//		}
+		String fileName = "test/z.bds";
+
+		BdsTest bdsTest = new BdsTest(fileName, verbose, debug);
+		bdsTest.setLog(log);
+		bdsTest.run();
 
 		System.out.println("End");
 	}
