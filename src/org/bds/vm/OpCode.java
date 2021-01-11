@@ -141,7 +141,7 @@ public enum OpCode {
 	// Sys command
 	, SYS
 	// Dispatch a task
-	, TASK, TASKDEP
+	, TASK, TASKDEP, TASKDEPIMP, TASKIMP
 	// Throw an Exception
 	, THROW
 	// Create a variable in local scope (and pop)

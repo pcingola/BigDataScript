@@ -7,10 +7,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import org.bds.executioner.Executioner;
+import org.bds.executioner.ExecutionerFileSystem;
 import org.bds.executioner.ExecutionerLocal;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * Execute a command in a local computer.
@@ -45,7 +44,12 @@ public class CmdLocal extends Cmd {
 	@Override
 	protected void execCmd() throws Exception {
 		// Wait for the process to finish and store exit value
-		exitValue = process.waitFor();
+		if (task != null && task.isDetached()) {
+			debug("Task is detached, not waiting for command '" + id + "'");
+		} else {
+			debug("Waiting for command to finish command '" + id + "'");
+			exitValue = process.waitFor();
+		}
 	}
 
 	@Override
@@ -57,7 +61,7 @@ public class CmdLocal extends Cmd {
 			StringBuilder cmdsb = new StringBuilder();
 			for (String arg : commandArgs)
 				cmdsb.append(" " + arg);
-			Timer.showStdErr("CmdLocal: Executing " + cmdsb);
+			debug("Executing " + cmdsb);
 		}
 		process = pb.start();
 
@@ -124,14 +128,14 @@ public class CmdLocal extends Cmd {
 	 * Send a kill signal using 'bds kill'
 	 */
 	protected void killBds(int pid) {
-		if (debug) Gpr.debug("Kill pid: " + pid);
+		debug("Kill pid: " + pid);
 
 		// Create arguments
 		ArrayList<String> args = new ArrayList<>();
 
 		// Add command and arguments
-		if (notifyTaskState != null && (notifyTaskState instanceof Executioner) && (task != null)) {
-			String argsKill[] = ((Executioner) notifyTaskState).osKillCommand(task);
+		if (notifyTaskState != null && (notifyTaskState instanceof ExecutionerFileSystem) && (task != null)) {
+			String argsKill[] = ((ExecutionerFileSystem) notifyTaskState).osKillCommand(task);
 			if (argsKill != null) {
 				for (String arg : argsKill)
 					args.add(arg);
@@ -151,7 +155,7 @@ public class CmdLocal extends Cmd {
 		// Execute kill command
 		try {
 			// Execute 'bds kill pid'
-			if (debug) log("Executing kill process for pid " + pid + " : " + args);
+			debug("Executing kill process for pid " + pid + " : " + args);
 			Process proc = Runtime.getRuntime().exec(args.toArray(ARGS_ARRAY_TYPE));
 			int exitVal = proc.waitFor();
 			if (exitVal != 0) log("Error killing process " + pid);
@@ -167,7 +171,7 @@ public class CmdLocal extends Cmd {
 			// Do we have a PID number? Kill using that number
 			int pidNum = Gpr.parseIntSafe(pid);
 			if (pidNum > 0) killBds(pidNum);
-			if (debug) log("Killing process '" + pid + "'");
+			debug("Killing process '" + pid + "'");
 
 			addError("Killed!\n");
 			process.destroy();
@@ -194,7 +198,7 @@ public class CmdLocal extends Cmd {
 			for (int i = 0; true; i++) {
 				int r = getStdout().read();
 				if (r < 0) {
-					if (debug) System.err.println("WARNING: Process closed stdout prematurely. Could not read PID\n" + this);
+					debug("WARNING: Process closed stdout prematurely. Could not read PID\n" + this);
 					return false;
 				}
 				char ch = (char) r;
@@ -204,7 +208,7 @@ public class CmdLocal extends Cmd {
 			}
 
 			// Parse line. Format "PID \t pidNum \t childPidNum"
-			if (debug) log("Reading PID line '" + sb + "'");
+			debug("Reading PID line '" + sb + "'");
 
 			// Parse pid?
 			if (pidParser != null) pid = pidParser.parsePidLine(sb.toString());

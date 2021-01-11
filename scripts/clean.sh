@@ -2,24 +2,23 @@
 
 # Delete temp files
 rm -rvf \
-	grammars/output/classes \
-	grammars/*class \
-	hs_err_pid*.log \
-	checkpoint_*.bds.* \
-	run*.bds.* \
-	tmp*.txt \
-	cmdLineOptions_*.bds.* \
 	*.pid \
-	z.bds.* \
-	graph_*.bds.* \
 	*.html \
 	*.dag.js \
-	cluster101_20* \
-	bds.pid.* \
 	*.report.html \
-	in*.txt \
-	out*.txt \
+	bds.pid.* \
+	checkpoint_*.bds.* \
+	cmdLineOptions_*.bds.* \
 	failOnce.* \
+	grammars/output/classes \
+	grammars/*class \
+	graph_*.bds.* \
+	hs_err_pid*.log \
+	in*.txt \
+	remote*.bds.* \
+	run*.bds.* \
+	tmp*.txt \
+	out*.txt \
 	test/tmp*.txt \
 	test/checkpoint_*.bds.* \
 	test/run*.bds.* \
@@ -30,5 +29,5 @@ rm -rvf \
 	test/*.html \
 	test/*.dag.js \
 	report_*.bds.20* \
+	z.bds.* \
 	`find . -iname "*.chp"` \
-

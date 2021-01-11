@@ -1,0 +1,22 @@
+
+println "Task improper: Start"
+
+t1 := dep(true) {
+	println "DEP_1: Start"
+	println "DEP_1: End"
+}
+
+t2 := dep([] <- t1) {
+	println "DEP_2: Start"
+	println "DEP_2: End"
+}
+
+t3 := dep([] <- t2) {
+	println "DEP_3: Start"
+	println "DEP_3: End"
+}
+
+goal t3
+
+wait
+println "Task improper: End"

@@ -3,7 +3,7 @@ package org.bds.executioner;
 import java.util.ArrayList;
 
 import org.bds.Config;
-import org.bds.cluster.host.HostResources;
+import org.bds.cluster.host.TaskResourcesCluster;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.CmdCluster;
 import org.bds.task.Task;
@@ -38,27 +38,26 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 	public Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
-		if (debug) log("Running task " + task.getId());
+		debug("Running task " + task.getId());
 
 		// Create command line
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 
 		// Append command line arguments
 		for (String arg : getCommandRun())
 			args.add(arg);
 
 		// Add resources request
-		HostResources res = task.getResources();
+		TaskResourcesCluster res = (TaskResourcesCluster) task.getResources();
 		args.add("" + res.getTimeout());
 		args.add("" + res.getCpus());
 		args.add("" + res.getMem());
-		args.add(task.getQueue() != null ? task.getQueue() : "");
+		args.add(res.getQueue() != null ? res.getQueue() : "");
 		args.add(clusterStdFile(task.getStdoutFile()));
 		args.add(clusterStdFile(task.getStderrFile()));
 
-		// Create command to run (it feeds parameters to qsub via stdin)
-		String bdsExecCmd = bdsCommand(task);
-		for (String arg : bdsExecCmd.split("\\s+"))
+		// Create command to run
+		for (String arg : createBdsExecCmdArgsList(task))
 			args.add(arg);
 
 		// Convert to string[]
@@ -73,7 +72,7 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 		// Create command
 		CmdCluster cmd = new CmdCluster(task.getId(), argv);
 		cmd.setReadPid(true); // We execute using a custom made script that is required to output jobID in the first line
-		if (debug) log("Running task " + task.getId() + ", command:\n\t" + cmd);
+		debug("Running task " + task.getId() + ", command:\n\t" + cmd);
 		return cmd;
 	}
 

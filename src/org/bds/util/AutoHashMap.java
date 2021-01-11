@@ -22,7 +22,7 @@ public class AutoHashMap<K, V> extends HashMap<K, V> {
 		V v = get(key);
 		if (v == null) {
 			try {
-				v = (V) instance.getClass().newInstance();
+				v = (V) instance.getClass().getDeclaredConstructor().newInstance();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

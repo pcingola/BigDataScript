@@ -25,6 +25,7 @@ public class NativeLibraryFunctions {
 			, FunctionNative_clone_string.class //
 			, FunctionNativeConfig.class //
 			, FunctionNativeConfigOri.class //
+			, FunctionNativeGetModulePath.class //
 			, FunctionNativeGetVar.class //
 			, FunctionNativeGetVarDefault.class //
 			, FunctionNativeHasVar.class //

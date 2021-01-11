@@ -4,8 +4,8 @@ import org.bds.cluster.host.HostSsh;
 import org.bds.util.Gpr;
 
 /**
- * A command parser for 'cat /rpoc/meminfo' command 
- * 
+ * A command parser for 'cat /rpoc/meminfo' command
+ *
  * @author pcingola@mcgill.ca
  */
 public class CommandParserMemInfo extends CommandParser {
@@ -39,14 +39,14 @@ public class CommandParserMemInfo extends CommandParser {
 		}
 
 		// Calculate swap usage
-		if (debug) Gpr.debug("swap" + swap + " swapFree:" + swapFree);
+		debug("swap" + swap + " swapFree:" + swapFree);
 		if ((swap > 0) && (swapFree >= 0)) {
 			float swapUsage = ((float) (swap - swapFree)) / ((float) swap);
 			host.getHealth().setSwapUsage(swapUsage);
 		}
 
 		// Calculate memory usage
-		if (debug) Gpr.debug("mem:" + mem + " memFree:" + memFree);
+		debug("mem:" + mem + " memFree:" + memFree);
 		if ((mem > 0) && (memFree >= 0)) {
 			float memUsage = ((float) (mem - memFree)) / ((float) mem);
 			host.getHealth().setMemUsage(memUsage);

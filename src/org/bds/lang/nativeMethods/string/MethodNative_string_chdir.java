@@ -5,12 +5,10 @@ import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
-import org.bds.run.BdsThreads;
 
 public class MethodNative_string_chdir extends MethodNativeString {
 
 	private static final long serialVersionUID = 2008621469747150848L;
-
 
 	public MethodNative_string_chdir() {
 		super();
@@ -42,7 +40,7 @@ public class MethodNative_string_chdir extends MethodNativeString {
 		if (!dir.isDirectory()) throw new RuntimeException("Cannot chdir to '" + path + "', not a directory.");
 
 		// OK change dir
-		BdsThreads.getInstance().get().setCurrentDir(path);
+		bdsThread.setCurrentDir(path);
 		return null;
 	}
 }

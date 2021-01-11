@@ -1,0 +1,24 @@
+#!/usr/bin/env bds
+
+out := "out.graph_16.txt"
+in1 := "in.graph_16.txt"
+
+# Clean up
+[in1, out].rm()
+
+# Dependency, no inputs
+dep(in1 <- []) {
+    sys echo DEP_1 | tee '$in1'
+}
+
+# This task has no output file
+t1 := dep([] <- in1) {
+    sys echo DEP_2
+}
+
+# This task depends on the previous one being executed
+dep (out <- t1) {
+    sys echo DEP_3 | tee $out
+}
+
+goal out

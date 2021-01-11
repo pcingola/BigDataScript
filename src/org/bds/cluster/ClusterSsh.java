@@ -13,7 +13,7 @@ import org.bds.cluster.host.HostSsh;
  *
  * @author pcingola
  */
-public class ClusterSsh extends Cluster {
+public class ClusterSsh extends ComputerSystem {
 
 	// Reference values for alarms
 	HostHealth healthRed = new HostHealth(null);

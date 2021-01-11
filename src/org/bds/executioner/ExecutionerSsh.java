@@ -1,14 +1,11 @@
 package org.bds.executioner;
 
-import java.util.ArrayList;
-
 import org.bds.Config;
 import org.bds.cluster.ClusterSsh;
 import org.bds.cluster.host.HostSsh;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.CmdSsh;
 import org.bds.task.Task;
-import org.bds.util.Timer;
 
 /**
  * Execute tasks in a remote computer, using ssh
@@ -25,7 +22,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class ExecutionerSsh extends Executioner {
+public class ExecutionerSsh extends ExecutionerFileSystem {
 
 	protected ExecutionerSsh(Config config) {
 		super(config);
@@ -34,7 +31,9 @@ public class ExecutionerSsh extends Executioner {
 
 	protected void createCluster() {
 		// Create a cluster
-		cluster = new ClusterSsh();
+		system = new ClusterSsh();
+
+		// TODO: Add global variable, nodes (list tab/colon separated list)
 
 		// Add nodes from config file
 		String nodes = config.getString(Config.CLUSTER_SSH_NODES, "");
@@ -42,7 +41,7 @@ public class ExecutionerSsh extends Executioner {
 		String sshNodes[] = nodes.split(",");
 		for (String sshNode : sshNodes) {
 			if (config.isDebug()) System.err.println("\tAdding ssh node : '" + sshNode + "'");
-			cluster.add(new HostSsh(cluster, sshNode.trim()));
+			system.add(new HostSsh(system, sshNode.trim()));
 		}
 	}
 
@@ -51,25 +50,15 @@ public class ExecutionerSsh extends Executioner {
 		task.createProgramFile(); // We must create a program file
 
 		// Create command line
-		ArrayList<String> args = new ArrayList<>();
-		for (String arg : ExecutionerLocal.LOCAL_EXEC_COMMAND)
-			args.add(arg);
-		long timeout = task.getResources().getTimeout() > 0 ? task.getResources().getTimeout() : 0;
-
-		// Add command line parameters for "bds exec"
-		args.add(timeout + ""); // Enforce timeout
-		args.add(task.getStdoutFile()); // Redirect STDOUT to this file
-		args.add(task.getStderrFile()); // Redirect STDERR to this file
-		args.add("-"); // No need to create exitCode file in local execution
-		args.add(task.getProgramFileName()); // Program to execute
+		String[] args = createBdsExecCmdArgs(task);
 
 		String cmdStr = "";
 		for (String arg : args)
 			cmdStr += arg + " ";
 
 		// Run command
-		if (debug) Timer.showStdErr("Running command: " + cmdStr);
-		CmdSsh cmd = new CmdSsh(task.getId(), args.toArray(Cmd.ARGS_ARRAY_TYPE));
+		debug("Running command: " + cmdStr);
+		CmdSsh cmd = new CmdSsh(task.getId(), args);
 		return cmd;
 	}
 
@@ -81,7 +70,7 @@ public class ExecutionerSsh extends Executioner {
 
 	@Override
 	public synchronized void kill() {
-		((ClusterSsh) cluster).stopHostInfoUpdaters();
+		((ClusterSsh) system).stopHostInfoUpdaters();
 		super.kill();
 	}
 
@@ -92,9 +81,9 @@ public class ExecutionerSsh extends Executioner {
 
 	@Override
 	public void run() {
-		((ClusterSsh) cluster).startHostInfoUpdaters();
+		((ClusterSsh) system).startHostInfoUpdaters();
 		super.run();
-		((ClusterSsh) cluster).stopHostInfoUpdaters();
+		((ClusterSsh) system).stopHostInfoUpdaters();
 	}
 
 }

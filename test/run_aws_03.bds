@@ -1,0 +1,41 @@
+
+include 'aws_util'
+
+inTxt := "INPUT_TEXT"	help The test case should change this value to a random string
+system = 'aws'
+
+# Input and output files on S3
+in := "$s3base/in.txt"
+out1 := "$s3base/out1.txt"
+out2 := "$s3base/out2.txt"
+println "Files:\n\tin: '$in'\n\tout1: '$out1'\n\tout2: '$out2'"
+
+# Create input file
+in.write(inTxt)
+
+# Task 1
+println "Before task1"
+task(out1 <- in) {
+	println "Start: Task1 improper"
+	inFileTxt := in.read().trim()
+	println "Input text: '$inFileTxt'"
+	out1.write("OUT1: '$inFileTxt'")
+	println "End: Task1 Improper"
+}
+println "After task1"
+
+# Task 2
+println "Before task2"
+task(out2 <- out1) {
+	sys echo "Start: Task2"
+	sys echo 'OUT2' > '$out2'
+	sys cat '$out1' >> '$out2'
+	sys echo 'Input:'
+	sys cat '$out1'
+	sys echo
+	sys echo "End: Task2"
+}
+println "After task2"
+
+wait
+println "Done"

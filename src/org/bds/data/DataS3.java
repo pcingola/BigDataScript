@@ -1,30 +1,26 @@
 package org.bds.data;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bds.Config;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.AmazonS3URI;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.sync.ResponseTransformer;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 /**
  * A bucket / object in AWS S3
@@ -33,43 +29,54 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  */
 public class DataS3 extends DataRemote {
 
-	private static int BUFFER_SIZE = 100 * 1024;
-	public static final String AWS_DOMAIN = "amazonaws.com";
-	public static final String AWS_S3_PROTOCOL = "s3";
+	private static final long serialVersionUID = -815001806425931041L;
 
-	public static final String ENV_PROXY_HTTTP = "http_proxy";
-	public static final String ENV_PROXY_HTTTPS = "https_proxy";
-	protected AmazonS3 s3;
-	protected AmazonS3URI s3uri;
+	public static final String AWS_S3_VIRTUAL_HOSTED_SCHEME = "https"; // In AWS lingo referring to an object "virtual hosted style" is something like 'https://bucket-name.s3.Region.amazonaws.com/key_name"
+	public static final String AWS_S3_VIRTUAL_HOSTED_DOMAIN = "amazonaws.com";
+	public static final String AWS_S3_PROTOCOL = "s3";
+	public static final String AWS_S3_REGION = "awsS3Region";
+
+	protected String region;
 	protected String bucketName;
 	protected String key;
 
-	public DataS3(String urlStr) {
-		super();
-		s3uri = parseS3Uri(urlStr);
+	public DataS3(String urlStr, String region) {
+		super(urlStr, DataType.S3);
+		this.region = region;
+		parseS3Uri(urlStr); // Note: If the region is in the URL, it will be overridden
 		canWrite = false;
-		bucketName = s3uri.getBucket();
-		key = s3uri.getKey();
 	}
 
-	public DataS3(URI uri) {
-		super();
-		s3uri = parseS3Uri(uri.toString());
+	public DataS3(URI uri, String region) {
+		super(uri.toString(), DataType.S3);
 		canWrite = false;
-		bucketName = s3uri.getBucket();
-		key = s3uri.getKey();
+		this.region = region;
+		parseS3Uri(uri); // Note: If the region is in the URL, it will be overridden
+	}
+
+	/**
+	 * Can this data be specified in 's3://' URL format:
+	 *
+	 * 		s3://bucket/key
+	 *
+	 * Note that the `s3://` format does not specify the region
+	 */
+	protected boolean canBeS3Format() {
+		return (uri == null || uri.getScheme().equals(AWS_S3_PROTOCOL)) //
+				&& (region == null || region.isEmpty());
 	}
 
 	@Override
-	public boolean delete() {
-		if (!isFile()) return false; // Do not delete bucket
-		getS3().deleteObject(bucketName, key);
+	public String createUrl() {
+		return canBeS3Format() ? urlS3() : urlHttps();
+	}
+
+	@Override
+	public boolean deleteRemote() {
+		if (!isFile()) return false; // Do not delete bucket or prefix
+		DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(key).build();
+		getS3Client().deleteObject(deleteObjectRequest);
 		return true;
-	}
-
-	@Override
-	public void deleteOnExit() {
-		if (verbose) Timer.showStdErr("Cannot delete file '" + this + "'");
 	}
 
 	/**
@@ -80,44 +87,29 @@ public class DataS3 extends DataRemote {
 		try {
 			if (!isFile()) return false;
 			if (local != null) localPath = local.getAbsolutePath();
+			else if (localPath == null) localPath = getLocalPath();
 
-			S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
-			if (verbose) System.out.println("Downloading '" + this + "'");
-			updateInfo(s3object);
+			File localFile = new File(localPath);
 
-			// Create local file and directories
-			mkdirsLocal();
-			FileOutputStream os = new FileOutputStream(getLocalPath());
+			// Make sure the parent directory exists
+			File parent = localFile.getParentFile();
+			if (parent != null) parent.mkdirs();
 
-			// Copy S3 object to file
-			S3ObjectInputStream is = s3object.getObjectContent();
-			int count = 0, total = 0, lastShown = 0;
-			byte data[] = new byte[BUFFER_SIZE];
-			while ((count = is.read(data, 0, BUFFER_SIZE)) != -1) {
-				os.write(data, 0, count);
-				total += count;
+			// Remove local file (if it already exists)
+			localFile.delete();
 
-				if (verbose) {
-					// Show every MB
-					if ((total - lastShown) > (1024 * 1024)) {
-						System.err.print(".");
-						lastShown = total;
-					}
-				}
-			}
-			if (verbose) System.err.println("");
-
-			// Close streams
-			is.close();
-			os.close();
-			if (verbose) Timer.showStdErr("Donwload finished. Total " + total + " bytes.");
+			// Download from S3
+			GetObjectRequest req = GetObjectRequest.builder().bucket(bucketName).key(key).build();
+			getS3Client().getObject(req, ResponseTransformer.toFile(Paths.get(localPath)));
+			log("Donwload from '" + toString() + "' to '" + localPath + "' finished.");
 
 			// Update last modified info
 			updateLocalFileLastModified();
 
 			return true;
 		} catch (Exception e) {
-			Timer.showStdErr("ERROR while downloading " + this);
+			error("Error while downloading " + this);
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
@@ -126,15 +118,7 @@ public class DataS3 extends DataRemote {
 	 * Does the directory exist?
 	 */
 	protected boolean existsDir() {
-		ObjectListing objectListing = getS3().listObjects( //
-				new ListObjectsRequest() //
-						.withBucketName(bucketName) //
-						.withPrefix(key) //
-						.withMaxKeys(1) // We only need one to check for existence
-		);
-
-		// Are there more than zero objects?
-		return objectListing.getObjectSummaries().size() > 0;
+		return listOneObject() != null;
 	}
 
 	public String getBucket() {
@@ -158,7 +142,9 @@ public class DataS3 extends DataRemote {
 		String keyParen = "";
 		int idx = key.lastIndexOf('/');
 		if (idx >= 0) keyParen = key.substring(0, idx);
-		return new DataS3("s3://" + bucketName + '/' + keyParen);
+
+		if (canBeS3Format()) return new DataS3("s3://" + bucketName + '/' + keyParen, region);
+		return new DataS3(AWS_S3_VIRTUAL_HOSTED_SCHEME + "://" + bucketName + ".s3." + region + "." + AWS_S3_VIRTUAL_HOSTED_DOMAIN + "/" + keyParen, region);
 	}
 
 	@Override
@@ -166,21 +152,8 @@ public class DataS3 extends DataRemote {
 		return (key != null ? '/' + key : "");
 	}
 
-	/**
-	 * Get proxy from environment variables
-	 */
-	protected URL getProxyFromEnv() {
-		String proxy = System.getenv(ENV_PROXY_HTTTPS);
-		if (proxy == null) proxy = System.getenv(ENV_PROXY_HTTTP);
-
-		URL proxyUrl = null;
-		try {
-			if (proxy != null) proxyUrl = new URL(proxy);
-		} catch (MalformedURLException e) {
-			Gpr.debug("Error parsing proxy from environment '" + proxy + "', ignoring");
-		}
-
-		return proxyUrl;
+	public String getRegion() {
+		return region;
 	}
 
 	/**
@@ -188,23 +161,8 @@ public class DataS3 extends DataRemote {
 	 * S3 clients are thread safe, thus it is encouraged to have
 	 * only one client instead of instantiating one each time.
 	 */
-	protected AmazonS3 getS3() {
-		if (s3 == null) {
-			URL proxyUrl = getProxyFromEnv();
-
-			// Do we have proxy information?
-			if (proxyUrl == null) {
-				// No proxy? Use default client
-				s3 = AmazonS3ClientBuilder.defaultClient();
-			} else {
-				// Set proxy in config
-				ClientConfiguration config = new ClientConfiguration();
-				config.setProxyHost(proxyUrl.getHost());
-				config.setProxyPort(proxyUrl.getPort());
-				s3 = AmazonS3ClientBuilder.standard().withClientConfiguration(config).build();
-			}
-		}
-		return s3;
+	protected S3Client getS3Client() {
+		return AwsS3ClientProvider.get(region);
 	}
 
 	/**
@@ -221,6 +179,37 @@ public class DataS3 extends DataRemote {
 	}
 
 	/**
+	 * Is this data specified in 's3://' URL format:
+	 *
+	 * 		s3://bucket/key
+	 *
+	 * Note that the `s3://` format does not specify the region
+	 *
+	 * Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro
+	 */
+	protected boolean isS3Format() {
+		return uri != null && uri.getScheme().equals(AWS_S3_PROTOCOL);
+	}
+
+	/**
+	 * Is this data specified in 'virtual host' URL format?
+	 *
+	 * In AWS lingo referring to an object "virtual hosted style" is something like:
+	 *
+	 * 		https://bucket-name.s3.Region.amazonaws.com/key_name
+	 *
+	 * instead of the "typical" format:
+	 * 		s3://bucket/key
+	 *
+	 * Note that the `s3://` format does not specify the region
+	 *
+	 * Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro
+	 */
+	protected boolean isVirtualHostFormat() {
+		return uri != null && uri.getScheme().equals(AWS_S3_VIRTUAL_HOSTED_SCHEME);
+	}
+
+	/**
 	 * Join a segment to this path
 	 */
 	@Override
@@ -228,7 +217,7 @@ public class DataS3 extends DataRemote {
 		File fpath = new File(getPath());
 		File fjoin = new File(fpath, segment.getPath());
 		String s3uriStr = "s3://" + bucketName + fjoin.getAbsolutePath();
-		return factory(s3uriStr);
+		return new DataS3(s3uriStr, region);
 	}
 
 	@Override
@@ -239,23 +228,35 @@ public class DataS3 extends DataRemote {
 			// Files are not supposed to have a 'directory' result
 			if (isFile()) return list;
 
-			// Query objects from S3
-			ObjectListing objectListing = getS3().listObjects( //
-					new ListObjectsRequest()//
-							.withBucketName(bucketName)//
-							.withPrefix(key) //
-			);
-
-			// Append all objects to list
-			for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-				String s3path = AWS_S3_PROTOCOL + "://" + objectSummary.getBucketName() + '/' + objectSummary.getKey();
-				list.add(new DataS3(s3path));
+			for (S3Object s3obj : listObjects()) {
+				String s3path = urlRoot() + s3obj.key();
+				list.add(new DataS3(s3path, region));
 			}
 		} catch (Exception e) {
-			if (verbose) Timer.showStdErr("ERROR while listing files from '" + this + "'");
+			error("Error while listing files from '" + this + "'");
 		}
 
 		return list;
+	}
+
+	/**
+	 * List objects in bucket/key
+	 * @return A list of S3Objects
+	 */
+	List<S3Object> listObjects() {
+		ListObjectsRequest req = ListObjectsRequest.builder().bucket(bucketName).prefix(key).build();
+		ListObjectsResponse objectListing = getS3Client().listObjects(req);
+		return objectListing.contents();
+	}
+
+	/**
+	 * List only one object in bucket/key
+	 * @return An S3Object or null
+	 */
+	S3Object listOneObject() {
+		ListObjectsRequest req = ListObjectsRequest.builder().bucket(bucketName).prefix(key).maxKeys(1).build();
+		ListObjectsResponse objectListing = getS3Client().listObjects(req);
+		return objectListing.hasContents() ? objectListing.contents().get(0) : null;
 	}
 
 	@Override
@@ -287,13 +288,40 @@ public class DataS3 extends DataRemote {
 		return true;
 	}
 
-	protected AmazonS3URI parseS3Uri(String urlStr) {
-		return new AmazonS3URI(urlStr);
+	protected void parseS3Uri(String uriStr) {
+		try {
+			uri = new URI(uriStr);
+			parseS3Uri(uri);
+		} catch (URISyntaxException e) {
+			// Could not parse URI
+			bucketName = "";
+			key = uriStr;
+		}
 	}
 
-	@Override
-	public String toString() {
-		return s3uri.toString();
+	protected void parseS3Uri(URI uri) {
+		String host = uri.getHost();
+		if (uri.getScheme().equals(AWS_S3_VIRTUAL_HOSTED_SCHEME) && host.endsWith(AWS_S3_VIRTUAL_HOSTED_DOMAIN)) {
+			// Virtual hosted style, the URI is:
+			//     https://bucket-name.s3.Region.amazonaws.com/key_name
+			String[] parts = host.split("\\.");
+			if (parts.length != 5 //
+					|| !parts[1].equals("s3") //
+					|| !parts[3].equals("amazonaws") //
+					|| !parts[4].equals("com") //
+			) throw new RuntimeException("Could not parse S3 URI '" + uri + "', the format should 'https://bucket-name.s3.Region.amazonaws.com/key_name'");
+			bucketName = parts[0];
+			region = parts[2];
+
+			key = uri.getPath();
+			if (key.startsWith("/")) key = key.substring(1);
+		} else if (uri.getScheme().equals(AWS_S3_PROTOCOL)) {
+			bucketName = uri.getAuthority();
+			key = uri.getPath();
+			if (key.startsWith("/")) key = key.substring(1);
+		} else {
+			throw new RuntimeException("Could not parse S3 URI '" + uri + "', the format should be either 's3://bucket/key_name' or 'https://bucket-name.s3.Region.amazonaws.com/key_name'");
+		}
 	}
 
 	/**
@@ -301,52 +329,36 @@ public class DataS3 extends DataRemote {
 	 */
 	@Override
 	protected boolean updateInfo() {
-		try {
-			if (isFile()) {
-				S3Object s3object = getS3().getObject(new GetObjectRequest(bucketName, key));
-				return updateInfo(s3object);
-			} else if (existsDir()) {
-				// Special case when keys are 'directories'
-				exists = true;
-				canRead = true;
-				canWrite = true;
-				lastModified = new Date(0L);
-				size = 0;
-				latestUpdate = new Timer(CACHE_TIMEOUT);
-				return true;
-			} else return false;
-		} catch (AmazonServiceException e) {
-			String errorCode = e.getErrorCode();
-			if (!errorCode.equals("NoSuchKey")) throw new RuntimeException("Error accessing S3 bucket '" + bucketName + "', key '" + key + "'" + this, e);
-
-			// The object does not exists
-			exists = false;
-			canRead = false;
-			canWrite = false;
+		if (isFile()) {
+			S3Object s3object = listOneObject();
+			return updateInfo(s3object);
+		} else if (existsDir()) {
+			// Special case when keys are 'directories'
+			exists = true;
+			canRead = true;
+			canWrite = true;
 			lastModified = new Date(0L);
 			size = 0;
 			latestUpdate = new Timer(CACHE_TIMEOUT);
 			return true;
-		}
+		} else return false;
 	}
 
 	/**
 	 * Update object's information
 	 */
 	protected boolean updateInfo(S3Object s3object) {
-		// Read metadata
-		ObjectMetadata om = s3object.getObjectMetadata();
-
 		// Update data
-		size = om.getContentLength();
+		if (s3object == null) return false;
+		size = s3object.size();
 		canRead = true;
 		canWrite = true;
-		lastModified = om.getLastModified();
+		lastModified = java.util.Date.from(s3object.lastModified());
 		exists = true;
 		latestUpdate = new Timer(CACHE_TIMEOUT);
 
 		// Show information
-		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
+		debug("Updated infromation for '" + this + "'"//
 				+ "\n\tcanRead      : " + canRead //
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //
@@ -363,14 +375,38 @@ public class DataS3 extends DataRemote {
 	public boolean upload(Data local) {
 		// Create and check file
 		if (!local.exists() || !local.isFile() || !local.canRead()) {
-			if (debug) Gpr.debug("Error accessing local file '" + getLocalPath() + "'");
+			debug("Error accessing local file '" + getLocalPath() + "'");
 			return false;
 		}
 
 		// Upload
 		File localFile = new File(local.getAbsolutePath());
-		getS3().putObject(new PutObjectRequest(bucketName, key, localFile));
+		PutObjectRequest req = PutObjectRequest.builder().bucket(bucketName).key(key).build();
+		getS3Client().putObject(req, RequestBody.fromFile(localFile));
 		return true;
+	}
+
+	/**
+	 * URL in "https://" format (virtual host format)
+	 */
+	public String urlHttps() {
+		return AWS_S3_VIRTUAL_HOSTED_SCHEME + "://" + bucketName + ".s3." + region + "." + AWS_S3_VIRTUAL_HOSTED_DOMAIN + '/' + key;
+	}
+
+	/**
+	 * Construct the 'root' URL for this object
+	 * Note: Since this is a 'root' directory, it always ends with a trailing '/'
+	 */
+	protected String urlRoot() {
+		if (isS3Format()) return AWS_S3_PROTOCOL + "://" + bucketName + '/';
+		return AWS_S3_VIRTUAL_HOSTED_SCHEME + "://" + bucketName + ".s3." + region + "." + AWS_S3_VIRTUAL_HOSTED_DOMAIN + '/';
+	}
+
+	/**
+	 * URL in "s3://" format
+	 */
+	public String urlS3() {
+		return AWS_S3_PROTOCOL + "://" + bucketName + '/' + key;
 	}
 
 }

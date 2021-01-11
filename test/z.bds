@@ -1,19 +1,18 @@
-#!/usr/bin/env bds
 
 include 'aws_util'
 
-chp := "$s3base\.chp"
+system := 'aws'
+println "Before"
 
-chp.delete()
-
-for(int i=0; i < 10; i++) {
-	println "i: $i"
-	if(i == 4) {
-		println "Creating checkpoint $chp"
-		checkpoint chp
+task {
+	println "Task: Start"
+	for(int i=0; i < 30; i++ ) {
+		println "count: $i"
+		sleep(1)
 	}
+	println "Task: End"
 }
 
-
-ok := chp.exists()
-println "chpFile: '$chp', exists: $ok"
+println "After"
+wait
+println "Done"

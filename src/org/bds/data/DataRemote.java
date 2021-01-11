@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.bds.Config;
+import org.bds.run.BdsThread;
+import org.bds.run.BdsThreads;
 import org.bds.util.Gpr;
 import org.bds.util.Timer;
 
@@ -17,8 +19,11 @@ import org.bds.util.Timer;
  */
 public abstract class DataRemote extends Data {
 
+	private static final long serialVersionUID = 2140929556406130349L;
+
 	public static final String TMP_BDS_DATA = "bds";
 	public static final long CACHE_TIMEOUT = 10 * 1000; // Timeout in milliseconds
+
 	protected boolean canRead;
 	protected boolean canWrite;
 	protected boolean exists;
@@ -28,8 +33,8 @@ public abstract class DataRemote extends Data {
 	protected Timer latestUpdate;
 	protected URI uri;
 
-	public DataRemote() {
-		super();
+	public DataRemote(String uri, DataType fileType) {
+		super(uri, fileType);
 		size = -1;
 		lastModified = new Date(0);
 		relative = false;
@@ -53,9 +58,45 @@ public abstract class DataRemote extends Data {
 	}
 
 	@Override
-	public void deleteOnExit() {
-		throw new RuntimeException("Unimplemented!");
+	protected String createUrl() {
+		if (relative) return urlOri;
+		return uri.toString();
 	}
+
+	/**
+	 * Delete both remote and local files
+	 */
+	@Override
+	public boolean delete() {
+		if (!isFile()) return false;
+		boolean ok = deleteLocal();
+		ok = deleteRemote() || ok;
+		resetInfo();
+		return ok;
+	}
+
+	/**
+	 * Delete local file, return true on success
+	 */
+	public boolean deleteLocal() {
+		String localFile = getLocalPath();
+		debug("Deleting local file '" + localFile + "', cached from remote file '" + this + "'");
+		resetInfo();
+		File f = new File(localFile);
+		return f.delete();
+	}
+
+	@Override
+	public void deleteOnExit() {
+		BdsThread bdsThread = BdsThreads.getInstance().getOrRoot();
+		if (bdsThread != null) {
+			debug("Deleting on exit '" + this + "'");
+			bdsThread.rmOnExit(this);
+		}
+		throw new RuntimeException("Could not get Bds thread!");
+	}
+
+	public abstract boolean deleteRemote();
 
 	@Override
 	public boolean download() {
@@ -106,7 +147,7 @@ public abstract class DataRemote extends Data {
 		String path = uri.getPath();
 		String paren = (new File(path)).getParent();
 		URI uriPaern = replacePath(paren);
-		return factory(uriPaern);
+		return factory(uriPaern, null);
 	}
 
 	@Override
@@ -125,7 +166,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isDownloaded(Data local) {
-		if (debug) Gpr.debug("Comparing local file '" + local + "' to remote file '" + this + "'");
+		debug("Comparing local file '" + local + "' to remote file '" + this + "'");
 
 		// Is there a local file
 		if (!local.exists()) return false;
@@ -156,7 +197,7 @@ public abstract class DataRemote extends Data {
 
 	@Override
 	public boolean isUploaded(Data local) {
-		if (debug) Gpr.debug("Comparing local file '" + local + "' to remote file '" + this + "'");
+		debug("Comparing local file '" + local + "' to remote file '" + this + "'");
 
 		// Is there a local file
 		if (!local.exists()) return false;
@@ -182,7 +223,7 @@ public abstract class DataRemote extends Data {
 		File fpath = new File(getPath());
 		File fjoin = new File(fpath, segment.getPath());
 		URI uri = replacePath(fjoin.getAbsolutePath());
-		return factory(uri);
+		return factory(uri, null);
 	}
 
 	protected String localPath() {
@@ -229,7 +270,7 @@ public abstract class DataRemote extends Data {
 
 		if (paren.exists()) return true;
 
-		if (verbose) Timer.showStdErr("Local path '" + paren + "' doesn't exist, creating.");
+		log("Local path '" + paren + "' doesn't exist, creating.");
 		return paren.mkdirs();
 	}
 
@@ -243,8 +284,7 @@ public abstract class DataRemote extends Data {
 			if (urlStr.indexOf(PROTOCOL_SEP) < 0) return new URI("file" + PROTOCOL_SEP + urlStr);
 
 			// Encode the url
-			URIBuilder ub = new URIBuilder(urlStr);
-			return ub.build();
+			return new URI(urlStr);
 		} catch (URISyntaxException e) {
 			throw new RuntimeException("Cannot parse URL " + urlStr, e);
 		}
@@ -264,15 +304,14 @@ public abstract class DataRemote extends Data {
 		}
 	}
 
+	protected void resetInfo() {
+		latestUpdate = null;
+	}
+
 	@Override
 	public long size() {
 		updateInfoIfNeeded();
 		return size;
-	}
-
-	@Override
-	public String toString() {
-		return uri.toString();
 	}
 
 	/**

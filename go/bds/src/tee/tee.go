@@ -5,16 +5,14 @@ import (
 	"os"
 )
 
-// Verbose & Debug
-const DEBUG = false
-
 //-----------------------------------------------------------------------------
-// Tee: Copty written data to output file and Stdout / Stderr
+// Tee: Copy written data to output file and Stdout / Stderr
 //-----------------------------------------------------------------------------
 
 type Tee struct {
 	outFile string
 	useStdErr bool
+	channel chan []byte
 	out *os.File
 }
 
@@ -28,14 +26,8 @@ func (t *Tee) Close() error {
 }
 
 // Initialize a Tee
-func NewTee(outFile string, useStdErr bool) *Tee {
-
-	// t := &Tee{outFile: outFile, useStdErr: useStdErr}
-	t := &Tee{outFile, useStdErr, nil}
-
-	if DEBUG {
-		log.Printf("Debug: Tee(%s, %s)\n", outFile, useStdErr)
-	}
+func NewTee(outFile string, channel chan []byte, useStdErr bool) *Tee {
+	t := &Tee{outFile, useStdErr, channel, nil}
 
 	// Copy to STDOUT to file (or to stdout)
 	if (outFile == "") || (outFile == "-") {
@@ -54,6 +46,7 @@ func NewTee(outFile string, useStdErr bool) *Tee {
 // Write to Tee
 func (t *Tee) Write(buf []byte) (n int, err error) {
 
+	// Write to file
 	if t.out != nil {
 		n, err = t.out.Write(buf)
 	} else {
@@ -61,11 +54,22 @@ func (t *Tee) Write(buf []byte) (n int, err error) {
 		err = nil
 	}
 
-	// Also write to stdout / stderr
+	// Write to stdout / stderr
 	if t.useStdErr {
 		os.Stderr.Write(buf)
 	} else {
 		os.Stdout.Write(buf)
+	}
+
+	// Write to channel
+	if t.channel != nil {
+		// Copy buffer to avoid race conditions
+		// Note: The buffer is sent to the channel, but the original process
+		// might reuse the buffer to write new data before the receiving go-rutine
+		// reads the buffer form the channel. This creates a race condition.
+		cbuf := make([]byte, len(buf))
+		copy(cbuf, buf)
+		t.channel <- cbuf
 	}
 
 	return n, err

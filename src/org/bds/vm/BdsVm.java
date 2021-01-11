@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.lang.BdsNode;
 import org.bds.lang.BdsNodeFactory;
@@ -34,9 +35,11 @@ import org.bds.run.Freeze;
 import org.bds.run.RunState;
 import org.bds.scope.Scope;
 import org.bds.symbol.SymbolTable;
+import org.bds.task.DepImpVmOpcode;
 import org.bds.task.DepVmOpcode;
 import org.bds.task.SysVmOpcode;
 import org.bds.task.TaskDependency;
+import org.bds.task.TaskImpVmOpcode;
 import org.bds.task.TaskVmOpcode;
 import org.bds.util.AutoHashMap;
 import org.bds.util.Gpr;
@@ -47,7 +50,7 @@ import org.bds.util.GprString;
  *
  * @author pcingola
  */
-public class BdsVm implements Serializable {
+public class BdsVm implements Serializable, BdsLog {
 
 	public static final int CALL_STACK_SIZE = 1024; // Only this many nested stacks
 	public static final String LABEL_MAIN = "main";
@@ -742,7 +745,7 @@ public class BdsVm implements Serializable {
 	 */
 	void popCallFrame() {
 		setFromCallFrame(callFrames[--fp]);
-		// TODO: Free space in previous call frame (scope, exceptionHandler)?
+		// Note: Should we free space in previous call frame (scope, exceptionHandler)?
 	}
 
 	/**
@@ -765,7 +768,7 @@ public class BdsVm implements Serializable {
 	 * Restore old scope
 	 */
 	public void popScope() {
-		// FIXME: Old scope should be null to free memory
+		// Old scope should be set to null to free memory?
 		scope = scope.getParent();
 	}
 
@@ -1533,6 +1536,18 @@ public class BdsVm implements Serializable {
 			case TASKDEP:
 				TaskVmOpcode depVmOp = new DepVmOpcode(bdsThread, usePidInFileNames);
 				s1 = depVmOp.run();
+				push(s1);
+				break;
+
+			case TASKDEPIMP:
+				DepImpVmOpcode depImpVmOp = new DepImpVmOpcode(bdsThread, usePidInFileNames);
+				s1 = depImpVmOp.run();
+				push(s1);
+				break;
+
+			case TASKIMP:
+				TaskImpVmOpcode taskImpVmOp = new TaskImpVmOpcode(bdsThread, usePidInFileNames);
+				s1 = taskImpVmOp.run();
 				push(s1);
 				break;
 

@@ -14,6 +14,8 @@ import java.util.Date;
  */
 public class DataFile extends Data {
 
+	private static final long serialVersionUID = -1399927916073574111L;
+
 	public static final String PROTOCOL_FILE = "file://";
 
 	File file;
@@ -34,7 +36,7 @@ public class DataFile extends Data {
 	}
 
 	public DataFile(String fileName) {
-		super();
+		super(fileName, DataType.LOCAL);
 		file = new File(fileName);
 		localPath = file.getAbsolutePath();
 		relative = !file.isAbsolute();
@@ -44,14 +46,14 @@ public class DataFile extends Data {
 	 * Constructor creates an absolute path, unless 'currentDir' is null
 	 */
 	public DataFile(String fileName, String currentDir) {
-		super();
+		super(fileName, DataType.LOCAL);
 		file = resolveLocalPath(fileName, currentDir);
 		localPath = file.getAbsolutePath();
 		relative = !file.isAbsolute();
 	}
 
 	public DataFile(URI uri) {
-		super();
+		super(uri.toString(), DataType.LOCAL);
 		file = new File(uri.getPath());
 		localPath = file.getPath();
 		relative = !file.isAbsolute();
@@ -70,6 +72,11 @@ public class DataFile extends Data {
 	@Override
 	public boolean canWrite() {
 		return file.canWrite();
+	}
+
+	@Override
+	protected String createUrl() {
+		return "file://" + getCanonicalPath();
 	}
 
 	@Override
@@ -189,11 +196,6 @@ public class DataFile extends Data {
 	@Override
 	public long size() {
 		return file.length();
-	}
-
-	@Override
-	public String toString() {
-		return file.toString();
 	}
 
 	@Override

@@ -2,7 +2,7 @@
 set -o pipefail
 
 # Make sure 'bin' dir exists
-mkdir bin || true
+mkdir -p bin
 
 # Build go program
 echo

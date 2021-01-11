@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.bds.BdsLog;
 import org.bds.cluster.host.Host;
 import org.bds.util.Gpr;
 
@@ -30,7 +31,7 @@ import com.jcraft.jsch.UserInfo;
  *
  * @author pcingola
  */
-public class Ssh {
+public class Ssh implements BdsLog {
 
 	public static String defaultKnownHosts = Gpr.HOME + "/.ssh/known_hosts";
 	public static String defaultKnownIdentity[] = { Gpr.HOME + "/.ssh/id_rsa" };
@@ -58,13 +59,13 @@ public class Ssh {
 	 * Send a command and check for an acknowledge
 	 */
 	int checkAck(String scpCommand, OutputStream out, InputStream in) throws Exception {
-		if (debug) Gpr.debug("SCP: Sending: '" + scpCommand + "'");
+		debug("SCP: Sending: '" + scpCommand + "'");
 		if (scpCommand != null) {
 			out.write(scpCommand.getBytes());
 			out.flush();
 		}
 
-		if (debug) Gpr.debug("SCP: Waiting for acknowledge.");
+		debug("SCP: Waiting for acknowledge.");
 		int b = in.read();
 		// Values are
 		//          0 for success,
@@ -101,7 +102,7 @@ public class Ssh {
 			if (Gpr.exists(identity)) jsch.addIdentity(identity);
 
 		// Create session and connect
-		if (debug) Gpr.debug("Create conection:\n\tuser: '" + host.getUserName() + "'\n\thost : '" + host.getHostName() + "'\n\tport : " + host.getPort());
+		debug("Create conection:\n\tuser: '" + host.getUserName() + "'\n\thost : '" + host.getHostName() + "'\n\tport : " + host.getPort());
 		session = jsch.getSession(host.getUserName(), host.getHostName(), host.getPort());
 		session.setUserInfo(new SshUserInfo());
 		session.connect();
@@ -235,7 +236,7 @@ public class Ssh {
 	 * @param remoteFileName : Remote file name
 	 */
 	public void scpTo(String localFileName, String remoteFileName) throws Exception {
-		if (debug) Gpr.debug("SCP " + localFileName + " " + remoteFileName);
+		debug("SCP " + localFileName + " " + remoteFileName);
 		String scpcommand = "scp -t " + remoteFileName;
 		channel = connect("exec", scpcommand);
 		File lfile = new File(localFileName);
@@ -288,7 +289,7 @@ public class Ssh {
 	void waitChannel() {
 		// Wait until channel is finished (otherwise redirections will not work)
 		for (int i = 0; (i < MAX_ITER_DISCONNECT) && !channel.isClosed(); i++) {
-			if (debug) Gpr.debug(i + "\t\tDisconnect:\tclosed: " + channel.isClosed() + "\teof: " + channel.isEOF() + "\tconnected: " + channel.isConnected());
+			debug(i + "Disconnect: closed: " + channel.isClosed() + ", eof: " + channel.isEOF() + ", connected: " + channel.isConnected());
 			try {
 				Thread.sleep(WAIT_DISCONNECT);
 			} catch (InterruptedException e) {
@@ -296,11 +297,11 @@ public class Ssh {
 			}
 		}
 
-		if (debug) Gpr.debug("\t\tSSH disconnect:\tclosed: " + channel.isClosed() + "\teof: " + channel.isEOF() + "\tconnected: " + channel.isConnected());
+		debug("Disconnect: closed: " + channel.isClosed() + ", eof: " + channel.isEOF() + ", connected: " + channel.isConnected());
 	}
 }
 
-class SshUserInfo implements UserInfo {
+class SshUserInfo implements UserInfo, BdsLog {
 
 	boolean debug = false;
 
@@ -316,19 +317,19 @@ class SshUserInfo implements UserInfo {
 
 	@Override
 	public boolean promptPassphrase(String arg0) {
-		if (debug) Gpr.debug("SSH Message: " + arg0);
+		debug("SSH Message: " + arg0);
 		return false;
 	}
 
 	@Override
 	public boolean promptPassword(String arg0) {
-		if (debug) Gpr.debug("SSH Message: " + arg0);
+		debug("SSH Message: " + arg0);
 		return true;
 	}
 
 	@Override
 	public boolean promptYesNo(String arg0) {
-		if (debug) Gpr.debug("SSH Message: " + arg0);
+		debug("SSH Message: " + arg0);
 		return true;
 	}
 

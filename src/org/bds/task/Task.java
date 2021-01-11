@@ -9,20 +9,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bds.BdsLog;
 import org.bds.Config;
-import org.bds.cluster.host.HostResources;
+import org.bds.cluster.host.TaskResources;
+import org.bds.data.Data;
 import org.bds.executioner.Executioner;
 import org.bds.lang.BdsNode;
 import org.bds.run.BdsThread;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * A task to be executed by an Executioner
  *
  * @author pcingola
  */
-public class Task implements Serializable {
+public class Task implements Serializable, BdsLog {
 
 	private static final long serialVersionUID = 3377646684108052191L;
 
@@ -36,34 +37,36 @@ public class Task implements Serializable {
 	protected boolean debug;
 	protected boolean dependency; // This is a 'dependency' task. Run only if required
 	protected boolean detached; // Detached tasks are not monitored (they are considered successfully finished right after launching them)
+	protected boolean improper;
 	protected boolean verbose;
 	protected int bdsLineNum; // Program's line number that created this task (used for reporting errors)
 	protected int exitValue; // Exit (error) code
 	protected int failCount, maxFailCount; // Number of times that this task failed
 	protected String id; // Task ID
 	protected String bdsFileName; // Program file that created this task (used for reporting errors)
+	protected String checkpointLocalFile; // Local file for checkpoint (only valid in improper tasks)
 	protected String currentDir; // Program's 'current directoy' (cd)
 	protected String pid; // PID (if any)
 	protected String programFileDir; // Program file's dir
-	protected String programFileName; // Program file name
-	protected String programTxt; // Program's text (program's code)
-	protected String node; // Preferred execution node (or hostname)
-	protected String queue; // Preferred execution queue
+	protected String programFileName; // Program file name (where 'programTxtShell' is saved for execution)
+	protected String programTxt; // Program's text. A shell script to execute the task's code
+	protected String programTxtShell; // Program's text (program's code) including shell's shebang (i.e. '#!')
+	protected String node; // Preferred execution node or host name
 	protected String stdoutFile, stderrFile, exitCodeFile; // STDOUT, STDERR & exit code Files
 	protected String errorMsg; // Error messages
 	protected String postMortemInfo; // Error information about task that failed
 	protected String taskName = ""; // Task name (can be set by programmer)
 	protected Date runningStartTime, runningEndTime;
 	protected TaskState taskState;
-	protected HostResources resources; // Resources to be consumes when executing this task
+	protected TaskResources resources; // Resources to be consumes when executing this task
 	TaskDependency taskDependency;
 
 	public Task() {
-		this(null, null, null, null, -1);
+		this(null, null, null, null);
 	}
 
 	public Task(String id) {
-		this(id, null, null, null, -1);
+		this(id, null, null, null);
 	}
 
 	public Task(String id, BdsNode bdsNode, String programFileName, String programTxt) {
@@ -78,18 +81,9 @@ public class Task implements Serializable {
 			bdsLineNum = -1;
 		}
 		taskDependency = new TaskDependency(bdsNode);
-		resources = new HostResources();
-		reset();
-	}
-
-	public Task(String id, String programFileName, String programTxt, String bdsFileName, int bdsLineNum) {
-		this.id = id;
-		this.programFileName = programFileName;
-		this.programTxt = programTxt;
-		this.bdsFileName = bdsFileName;
-		this.bdsLineNum = bdsLineNum;
-		taskDependency = new TaskDependency();
-		resources = new HostResources();
+		resources = null;
+		debug = Config.get().isDebug();
+		verbose = Config.get().isVerbose();
 		reset();
 	}
 
@@ -145,6 +139,7 @@ public class Task implements Serializable {
 			return false;
 
 		default:
+			debug("Cannot change from state '" + taskState + "' to '" + newState + "'");
 			return false;
 		}
 	}
@@ -190,10 +185,10 @@ public class Task implements Serializable {
 	 * Create a program file
 	 */
 	public void createProgramFile() {
-		if (debug) Timer.showStdErr("Task: Saving file '" + programFileName + "'");
+		debug("Task: Saving file '" + programFileName + "'");
 
-		// Create dir
 		try {
+			// Create dir
 			File dir = new File(programFileName);
 			dir = dir.getCanonicalFile().getParentFile();
 			if (dir != null) {
@@ -211,9 +206,9 @@ public class Task implements Serializable {
 		;
 
 		// Save file and make it executable
-		String program = shell + programTxt;
-		program += "\n" + checkSumLine(program);
-		Gpr.toFile(programFileName, program);
+		programTxtShell = shell + programTxt;
+		programTxtShell += "\n" + checkSumLine(programTxtShell);
+		Gpr.toFile(programFileName, programTxtShell);
 		(new File(programFileName)).setExecutable(true);
 
 		// Set default file names
@@ -227,7 +222,8 @@ public class Task implements Serializable {
 	 * Remove tmp files on exit
 	 */
 	public void deleteOnExit() {
-		if (programFileDir != null) (new File(programFileDir)).deleteOnExit(); // Files are deleted in reverse order. So dir has to be first to make sure it is empty when deleted (otherwise it will not be deleted)
+		// Files are deleted in reverse order. So dir has to be first to make sure it is empty when deleted (otherwise it will not be deleted)
+		if (programFileDir != null) (new File(programFileDir)).deleteOnExit();
 		if (stdoutFile != null) (new File(stdoutFile)).deleteOnExit();
 		if (stderrFile != null) (new File(stderrFile)).deleteOnExit();
 		if (exitCodeFile != null) (new File(exitCodeFile)).deleteOnExit();
@@ -297,7 +293,7 @@ public class Task implements Serializable {
 		// Queue exec
 		if (bdsThread.getConfig().isDryRun()) {
 			// Dry run: Don't run the task, just show what would be run
-			Timer.showStdErr("Dry run task:\n" + toString(true, true));
+			log("Dry run task:\n" + toString(true, true));
 			state(TaskState.SCHEDULED);
 			state(TaskState.STARTED);
 			state(TaskState.RUNNING);
@@ -308,6 +304,14 @@ public class Task implements Serializable {
 			bdsThread.add(this);
 			executioner.add(this);
 		}
+	}
+
+	public String getCheckpointLocalFile() {
+		return checkpointLocalFile;
+	}
+
+	public String getCurrentDir() {
+		return currentDir;
 	}
 
 	public List<Task> getDependencies() {
@@ -335,7 +339,7 @@ public class Task implements Serializable {
 		return id;
 	}
 
-	public List<String> getInputs() {
+	public List<Data> getInputs() {
 		return taskDependency.getInputs();
 	}
 
@@ -352,7 +356,7 @@ public class Task implements Serializable {
 		return node;
 	}
 
-	public List<String> getOutputs() {
+	public List<Data> getOutputs() {
 		return taskDependency.getOutputs();
 	}
 
@@ -405,11 +409,11 @@ public class Task implements Serializable {
 		return programTxt;
 	}
 
-	public String getQueue() {
-		return queue;
+	public String getProgramTxtShell() {
+		return programTxtShell;
 	}
 
-	public HostResources getResources() {
+	public TaskResources getResources() {
 		return resources;
 	}
 
@@ -482,6 +486,10 @@ public class Task implements Serializable {
 		return isStateError() || (exitValue != 0) || !checkOutputFiles().isEmpty();
 	}
 
+	public boolean isImproper() {
+		return improper;
+	}
+
 	/**
 	 * Has this task been scheduled to be started?
 	 */
@@ -535,7 +543,7 @@ public class Task implements Serializable {
 		// Timeout equal or less than zero means 'no limit'
 		if (timeout <= 0) return false;
 
-		if (debug && (elapsedSecs > timeout)) Timer.showStdErr("Task.isTimedOut(): Task timed out '" + getId() + "', elapsed: " + elapsedSecs + ", wall-timeout: " + timeout);
+		if (elapsedSecs > timeout) debug("Task timed out '" + getId() + "', elapsed: " + elapsedSecs + ", wall-timeout: " + timeout);
 		return elapsedSecs > timeout;
 	}
 
@@ -557,6 +565,10 @@ public class Task implements Serializable {
 
 	public void setCanFail(boolean canFail) {
 		this.canFail = canFail;
+	}
+
+	public void setCheckpointLocalFile(String checkpointLocalFile) {
+		this.checkpointLocalFile = checkpointLocalFile;
 	}
 
 	public void setCurrentDir(String currentDir) {
@@ -583,6 +595,10 @@ public class Task implements Serializable {
 		this.exitValue = exitValue;
 	}
 
+	public void setImproper(boolean improper) {
+		this.improper = improper;
+	}
+
 	public void setMaxFailCount(int maxFailCount) {
 		this.maxFailCount = maxFailCount;
 	}
@@ -599,8 +615,8 @@ public class Task implements Serializable {
 		this.postMortemInfo = postMortemInfo;
 	}
 
-	public void setQueue(String queue) {
-		this.queue = queue;
+	public void setResources(TaskResources res) {
+		resources = res;
 	}
 
 	private void setState(TaskState taskState) {
@@ -625,7 +641,7 @@ public class Task implements Serializable {
 	public synchronized void state(TaskState newState) {
 		if (newState == null) throw new RuntimeException("Cannot change to 'null' state.\n" + this);
 		if (newState == taskState) return; // Same state, nothing to do
-
+		TaskState oldState = taskState;
 		switch (newState) {
 		case SCHEDULED:
 			if (taskState == TaskState.NONE) setState(newState);
@@ -689,14 +705,16 @@ public class Task implements Serializable {
 
 		case DETACHED:
 			if (taskState == TaskState.STARTED) {
-				setState(newState);
 				runningStartTime = new Date();
+				setState(newState);
 			} else throw new RuntimeException("Task: Cannot jump from state '" + taskState + "' to state '" + newState + "'\n" + this);
 			break;
 
 		default:
 			throw new RuntimeException("Unimplemented state: '" + newState + "'");
 		}
+
+		debug("State change from '" + oldState + "' to '" + taskState + "', task Id '" + getId() + "'");
 
 		// Finished OK? Check that output files are OK as well
 		if (isStateFinished()) {
@@ -721,7 +739,7 @@ public class Task implements Serializable {
 
 			default:
 				// No information in exit file? Use exit code
-				if (debug) Gpr.debug("Using exit file '" + exitCodeFile + "' failed, using exit code '" + getExitValue() + "'");
+				debug("Using exit file '" + exitCodeFile + "', found exit code '" + getExitValue() + "'");
 				return TaskState.exitCode2taskState(exitValue);
 			}
 		}

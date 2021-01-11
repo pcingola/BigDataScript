@@ -6,93 +6,222 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bds.BdsLog;
 import org.bds.Config;
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.Host;
-import org.bds.cluster.host.HostLocal;
+import org.bds.cluster.host.TaskResources;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.Exec;
 import org.bds.run.BdsThread;
 import org.bds.task.DependencyState;
-import org.bds.task.Tail;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
-import org.bds.util.Gpr;
 import org.bds.util.TextTable;
 import org.bds.util.Timer;
 import org.bds.util.Tuple;
 
 /**
- * An Executioner is an abstract system that executes several Tasks.
- * It can represent a computer, cluster, cloud, etc.
+ * An Executioner is an abstract system that executes Tasks.
  *
  * @author pcingola
  */
-public abstract class Executioner extends Thread implements NotifyTaskState, PidParser {
+public abstract class Executioner extends Thread implements NotifyTaskState, PidParser, BdsLog {
 
 	public static final int REPORT_INTERVAL = 60; // Interval in seconds
+
 	public static final int SLEEP_TIME_LONG = 500; // Milliseconds
 	public static final int SLEEP_TIME_MID = 200; // Milliseconds
 	public static final int SLEEP_TIME_SHORT = 10; // Milliseconds
 
+	public static String BDS_EXEC_COMMAND[] = { "bds", "exec" };
+
 	protected CheckTasksRunning checkTasksRunning;
-	protected Cluster cluster; // Local computer is the 'server' (localhost)
-	private Map<String, Cmd> cmdById;
+	protected Map<String, Cmd> cmdByTaskId; // Command indexed by taskID
 	protected Config config;
+	protected boolean blockRunTasks; // Should runTask block when running a command. If the command is just dispatching to the cluster ('qsub') we might want to block to avoid overloading the scheduler
 	protected boolean debug;
-	protected LinkedList<Task> finishTask;
-	protected int hostIdx = 0;
+	protected LinkedList<Task> finishTask; // These tasks should be marked as finished in the next update iteration
 	protected boolean log;
-	protected MonitorTask monitorTask;
+	protected MonitorTask monitorTask; // Monitor tasks: This object checks if a task finished (e.g. by checking if 'exitFile' exists)
 	protected boolean removeTaskCannotExecute; // Should a task be finished if there are no resources to execute it? In most cases yes, but some clusters host are dynamic (they appear and disappear), so even if there are no resources now there might be resources in the future.
 	protected boolean running, valid;
-	protected Tail tail;
-	protected TaskLogger taskLogger;
 	protected Map<String, Task> tasksDone; // Tasks that finished
 	protected Map<String, Task> tasksRunning; // Tasks running
 	protected Map<Task, Host> tasksSelected; // Tasks that has been selected and it will be immediately start execution in host
 	protected List<Task> tasksToRun; // Tasks queued for execution
 	protected List<Tuple<Task, TaskState>> taskUpdateStates; // Tasks to be updated
-	protected Timer timer; // Task timer (when was the task started)
+	protected ComputerSystem system; // A representation of the "system" processing the data (a server, cluster, etc.)
 	protected boolean verbose;
+	protected TaskLogger taskLogger; // Log tasks into parent (Go) bds program for cleanup (kill task, delete files, etc)
+	protected Timer timer; // Task timer (when was the task started)
+
+	/**
+	 * Sometimes a "text file busy" error may appear when we execute a task.
+	 * E.g.: The following script will produce "text file busy" error on
+	 *       some Linux systems (local execution):
+	 *
+	 * 		$ cat z.bds
+	 * 		#!/usr/bin/env bds
+	 * 		for( int i=0 ; i < 10000 ; i++ ) task echo hi $i
+	 *
+	 * 		$ ./z.bds > /dev/null
+	 * 		2014/01/25 16:52:36 fork/exec z.bds.20140125_165235_563/task.line_7.id_198.sh: text file busy
+	 *
+	 * To avoid this, we must make sure that JVM actually has
+	 * closed the file. Surprisingly, invoking flush() and
+	 * close() is not enough to make sure the file is actually
+	 * fully closed.
+	 *
+	 * We need something like 'lsof' command in Java, which doesn't
+	 * seem to exist.
+	 *
+	 * So far the only solution that seems to work is to wait a small
+	 * amount of time between file creation and execution. I use
+	 * 1 millisecond, since it is the minimum for sleep() method.
+	 *
+	 * There are two obvious problems:
+	 * 		i) This obviously penalizes execution performance.
+	 * 		ii) There is no warrantees that this will always work.
+	 *
+	 */
+	public static void avoidTextFileBusyError() {
+		// Hack to avoid "Text file busy" errors: Sleep N milliseconds.
+		// This is a horrible hack used to make sure the 'programFileName' has
+		// been fully written to disk and we no have the file open for writing.
+		// Even if we closed the file, sometimes a "text file busy" error
+		// pops up.
+		try {
+			int sleepTime = Config.get().getWaitTextFileBusy();
+			if (sleepTime > 0) sleep(sleepTime);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static String[] createBdsExecCmdArgs(Task task) {
+		return createBdsExecCmdArgsList(task).toArray(Cmd.ARGS_ARRAY_TYPE);
+	}
+
+	public static List<String> createBdsExecCmdArgsList(Task task) {
+		return createBdsExecCmdArgsList(task, null);
+	}
+
+	/**
+	 * Create command line arguments for "bds exec ..."
+	 */
+	public static List<String> createBdsExecCmdArgsList(Task task, String[] argsAdd) {
+		// Create command line
+		List<String> args = new ArrayList<>();
+		for (String arg : BDS_EXEC_COMMAND)
+			args.add(arg);
+
+		// Verbose / debug?
+		if (Config.get().isVerbose()) args.add("-v");
+		if (Config.get().isDebug()) args.add("-d");
+
+		// Add command line parameters for "bds exec"
+		args.add("-stdout");
+		args.add(task.getStdoutFile() != null ? task.getStdoutFile() : "-"); // Redirect STDOUT to this file
+
+		args.add("-stderr");
+		args.add(task.getStderrFile() != null ? task.getStderrFile() : "-"); // Redirect STDERR to this file
+
+		args.add("-exit");
+		args.add(task.getExitCodeFile() != null ? task.getExitCodeFile() : "-"); // Redirect exit code
+
+		args.add("-taskId");
+		args.add(task.getId()); // Task ID
+
+		// Any additional command line options?
+		if (argsAdd != null) {
+			for (String a : argsAdd)
+				args.add(a);
+		}
+
+		// Resources options
+		TaskResources res = task.getResources();
+		long timeout = Math.max(0L, res.getTimeout());
+		args.add("-timeout");
+		args.add(timeout + "");
+
+		// Command to execute
+		args.add(task.getProgramFileName()); // Program to execute
+		return args;
+	}
+
+	/**
+	 * Create "bds exec" command as a string
+	 * @param task
+	 * @return A bds exec command as a single string
+	 */
+	public static String createBdsExecCmdStr(Task task) {
+		String[] cmd = createBdsExecCmdArgs(task);
+		StringBuilder sb = new StringBuilder();
+		for (int i = BDS_EXEC_COMMAND.length; i < cmd.length; i++) {
+			if (cmd[i].startsWith("-")) sb.append(" " + cmd[i]);
+			else sb.append(" '" + cmd[i] + "'");
+		}
+		return sb.toString();
+	}
 
 	public Executioner(Config config) {
 		super();
 		valid = true;
+		blockRunTasks = false;
+		cmdByTaskId = new HashMap<>();
 		this.config = config;
 		tasksToRun = new ArrayList<>();
 		taskUpdateStates = new ArrayList<>();
-		tail = config.getTail();
-		taskLogger = config.getTaskLogger();
 		tasksSelected = new HashMap<>();
 		tasksRunning = new HashMap<>();
 		tasksDone = new HashMap<>();
-		cmdById = new HashMap<>();
-		debug = config.isDebug();
-		verbose = config.isVerbose();
 		removeTaskCannotExecute = true;
-
-		// Set some parameters
+		taskLogger = config.getTaskLogger();
 		verbose = config.isVerbose();
 		debug = config.isDebug();
 		log = config.isLog();
-
-		// Create a cluster having only one host (this computer)
-		cluster = new Cluster();
-		new HostLocal(cluster);
 	}
 
 	/**
 	 * Queue an Exec and return a the id
 	 */
 	public synchronized void add(Task task) {
-		if (debug) log("Queuing task: " + task.getId());
+		debug("Queuing task: " + task.getId());
 		task.state(TaskState.SCHEDULED);
 		tasksToRun.add(task);
 	}
 
 	protected synchronized void addCmd(Task task, Cmd cmd) {
-		cmdById.put(task.getId(), cmd);
+		cmdByTaskId.put(task.getId(), cmd);
+	}
+
+	/**
+	 * Don't run too many threads at once
+	 * The reason for this is that we can reach the maximum
+	 * number of threads available in the operating system.
+	 * If that happens, well get an pendingException
+	 */
+	protected void avoidTooManyThreads() {
+		if (config.getMaxThreads() > 0) {
+			while (Exec.countRunningThreads() >= config.getMaxThreads()) {
+				// Too many threads running? Sleep for a while (block until some threads finish)
+				debug("INFO: Too many threads running (limit set to " + config.getMaxThreads() + "). Waiting for some threads to finish.");
+				sleepLong();
+			}
+		}
+	}
+
+	/**
+	 * Check if any tasks have finished
+	 */
+	protected abstract void checkFinishedTasks();
+
+	/**
+	 * Check is tasks are running
+	 */
+	protected void checkTasksRunning() {
+		if (getCheckTasksRunning() != null) getCheckTasksRunning().check();
 	}
 
 	/**
@@ -116,7 +245,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
-	 * Find a task by ID
+	 * Find a task by ID, return null if not found
 	 */
 	public synchronized Task findTask(String id) {
 		Task t = tasksRunning.get(id);
@@ -131,40 +260,20 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return null;
 	}
 
-	/**
-	 * Start following a running task (e.g. tail STDOUT & STDERR)
-	 */
-	protected synchronized void follow(Task task) {
-		if (taskLogger != null) taskLogger.add(task, this); // Log PID (if any)
+	protected abstract void follow(Task task);
 
-		tail.add(task.getStdoutFile(), false);
-		tail.add(task.getStderrFile(), true);
-
-		if (monitorTask != null) monitorTask.add(this, task); // Start monitoring exit file
-	}
+	protected abstract void followStop(Task task);
 
 	/**
-	 * Stop following a running task (e.g. tail STDOUT & STDERR)
+	 * Return a CheckTasksRunning object that can check tasks or null if
+	 * there is independent way to check
 	 */
-	protected synchronized void followStop(Task task) {
-		tail.remove(task.getStdoutFile());
-		tail.remove(task.getStderrFile());
-
-		// Remove from loggers
-		if (taskLogger != null) taskLogger.remove(task);
-		if (monitorTask != null) monitorTask.remove(task);
-	}
-
 	protected CheckTasksRunning getCheckTasksRunning() {
 		return null;
 	}
 
-	public Cluster getCluster() {
-		return cluster;
-	}
-
 	protected synchronized Cmd getCmd(Task task) {
-		return cmdById.get(task.getId());
+		return cmdByTaskId.get(task.getId());
 	}
 
 	public String getExecutionerId() {
@@ -176,6 +285,18 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		String exName = getClass().getSimpleName();
 		if (exName.startsWith(execStr)) exName = exName.substring(execStr.length());
 		return exName;
+	}
+
+	public ComputerSystem getSystem() {
+		return system;
+	}
+
+	public synchronized List<String> getTaskIds() {
+		List<String> tids = new ArrayList<>();
+		tids.addAll(getTaskIdsToRun()); // Add tasks "to run"
+		tids.addAll(tasksRunning.keySet()); // Add tasks running
+		tids.addAll(tasksDone.keySet()); // Add tasks done
+		return tids;
 	}
 
 	public synchronized List<String> getTaskIdsDone() {
@@ -217,6 +338,11 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return tasksToRun.size() - tasksSelected.size() > 0;
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
 	/**
 	 * Has any task failed?
 	 */
@@ -253,20 +379,23 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		return valid;
 	}
 
+	@Override
+	public boolean isVerbose() {
+		return verbose;
+	}
+
 	/**
 	 * Stop executioner and kill all tasks
 	 */
 	public synchronized void kill() {
-		if (debug) log("Killed");
+		debug("Killed executioner '" + getExecutionerId() + "'");
 
 		// Kill all 'tasksToRun'.
 		// Note: We need to create a new list to avoid concurrent modification exceptions
-		ArrayList<Task> tokill = new ArrayList<>();
+		List<Task> tokill = new ArrayList<>();
 		tokill.addAll(tasksToRun);
 		tokill.addAll(tasksRunning.values());
-		for (Task t : tokill)
-			kill(t);
-
+		killAll(tokill);
 		running = valid = false;
 	}
 
@@ -284,20 +413,32 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	public synchronized void kill(Task task) {
 		if (task.isDone()) return; // Nothing to do
 
-		if (debug) log("Killing task '" + task.getId() + "'");
+		debug("Killing task '" + task.getId() + "'");
 
-		// Kill command
-		Cmd cmd = getCmd(task);
-		if (cmd != null) cmd.kill();
+		killTask(task);
 
 		// Mark task as finished
 		// Note: This will also be invoked by Cmd, so it will be redundant)
 		task.state(TaskState.KILLED);
+		task.setExitValue(BdsThread.EXITCODE_KILLED);
 		taskFinished(task, TaskState.KILLED);
 	}
 
-	public void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + " '" + getExecutionerId() + "': " + msg);
+	/**
+	 * Kill all tasks in a list
+	 */
+	protected synchronized void killAll(List<Task> tokill) {
+		for (Task t : tokill)
+			kill(t);
+	}
+
+	/**
+	 * Kill a task
+	 */
+	protected synchronized void killTask(Task task) {
+		// Kill command
+		Cmd cmd = getCmd(task);
+		if (cmd != null) cmd.kill();
 	}
 
 	/**
@@ -318,9 +459,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Try to find some 'post-mortem' info about this
 	 * task, in order to asses systematic errors.
 	 */
-	protected void postMortemInfo(Task task) {
-		// Nothing to do
-	}
+	protected abstract void postMortemInfo(Task task);
 
 	/**
 	 * Remove a task form a host
@@ -334,28 +473,22 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Remove a command (task)
 	 */
 	protected synchronized void removeCmd(Task task) {
-		cmdById.remove(task.getId());
+		cmdByTaskId.remove(task.getId());
 	}
 
 	/**
 	 * Perform reports, checks and state updates
 	 */
 	protected void reportsChecksUpdates() {
-		taskUpdateStates();
-
-		// Check if tasks finished running
-		if (monitorTask != null) monitorTask.check();
-
-		// Report tasks
-		reportTasks();
-
-		// Check that task are still running
-		if (getCheckTasksRunning() != null) getCheckTasksRunning().check();
-
+		taskUpdateStates(); // Update task states
+		checkFinishedTasks(); // Check if tasks finished running
+		reportTasks(); // Report tasks (show to console)
+		checkTasksRunning(); // Perform an independent check that task are still running (e.g. query the cluster system)
 	}
 
 	/**
 	 * Report tasks to running, to run and done
+	 * This line is shown on the console every one minute, when in verbose mode
 	 */
 	protected void reportTasks() {
 		if ((hasTaskRunning() || hasTaskToRun()) && isReportTime()) {
@@ -374,13 +507,13 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 */
 	@Override
 	public void run() {
-		if (debug) log("Started running");
+		debug("Started running " + getExecutionerId());
 		runExecutioner();
-		if (debug) log("Finished running");
+		debug("Finished running " + getExecutionerId());
 	}
 
 	/**
-	 * Run task queues
+	 * Run executioner's main loop
 	 */
 	public void runExecutioner() {
 		running = true;
@@ -392,7 +525,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			while (running) {
 				// Run loop
 				if (runExecutionerLoop()) {
-					if (debug) log("Queue: No more tasks to run.");
+					debug("Queue: No more tasks to run.");
 				}
 
 				sleepLong();
@@ -458,23 +591,14 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
-	 * Run a task on a given host. I.e. execute command
+	 * Run a task on a given host
 	 * @param task : Task to run
 	 * @param host : Host to run task (can be null)
 	 */
 	protected void runTask(Task task, Host host) {
-		if (config.getMaxThreads() > 0) {
-			// Don't run too many threads at once
-			// The reason for this is that we can reach the maximum
-			// number of threads available in the operating system.
-			// If that happens, well get an pendingException
-			while (Exec.countRunningThreads() >= config.getMaxThreads()) {
-				// Too many threads running? Sleep for a while (block until some threads finish)
-				if (debug) log("INFO: Too many threads running (limit set to " + config.getMaxThreads() + "). Waiting for some threads to finish.");
-				sleepLong();
-			}
-		}
+		if (!blockRunTasks) avoidTooManyThreads();
 
+		// Create the command
 		Cmd cmd = createRunCmd(task);
 		if (cmd != null) {
 			addCmd(task, cmd);
@@ -485,15 +609,40 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		}
 
 		host.add(task);
-		if (cmd != null) cmd.start();
 
-		// Wait some milliseconds?
-		int waitTime = config.getWaitAfterTaskRun();
-		if (waitTime > 0) {
+		// Run command for this task
+		runTaskCmd(cmd);
+	}
+
+	/**
+	 * Run command to execute a task. E.g. execute local computer, run a command
+	 * to submit to a cluster scheduler
+	 */
+	protected void runTaskCmd(Cmd cmd) {
+		if (cmd == null) return;
+
+		cmd.start(); // Start the command thread
+
+		if (blockRunTasks) {
+			// Block: Run command and wait for completion (e.g. when invoking 'qsub' in a cluster)
+			// Note: We run in blocking mode to avoid choking the head node with
+			// too many threads, too many file descriptors, etc..
 			try {
-				sleep(waitTime);
+				cmd.join(); // Wait for this thread to finish
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				throw new RuntimeException("Error while waiting for command execution:\n\tCommand: " + cmd, e);
+			}
+
+		} else {
+			// Do not block: Run command and continue (e.g. when running on a local computer)
+			// Wait some milliseconds?
+			int waitTime = config.getWaitAfterTaskRun();
+			if (waitTime > 0) {
+				try {
+					sleep(waitTime);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -566,7 +715,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		//---
 		// Select the first host in the cluster that satisfies requirements
 		//---
-		for (Host host : cluster) {
+		for (Host host : system) {
 			// Host is not alive?
 			if (!host.isAlive()) {
 				canBeExecuted = true; // May be this host can actually execute this task, we don't know.
@@ -576,7 +725,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// Do we have enough resources to run this task in this host?
 			if (host.getResourcesAvaialble().hasResources(task.getResources())) {
 				// OK, execute this task in this host
-				if (debug) log("Selected task:" //
+				debug("Selected task:" //
 						+ "\n\ttask ID        : " + task.getId() //
 						+ "\n\ttask hint      : " + task.getProgramHint()//
 						+ "\n\ttask resources : " + task.getResources() //
@@ -596,7 +745,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		// There is no host that can execute this task?
 		//---
 		if (removeTaskCannotExecute && !canBeExecuted) {
-			if (debug) Gpr.debug("Cluster info: " + cluster.info() + "\n\tCluster: " + cluster);
+			debug("Cluster info: " + system.info() + "\n\tCluster: " + system);
 			task.setErrorMsg("Not enough resources to execute task: " + task.getResources());
 
 			// Mark the task to be finished (cannot be done here due to concurrent modification)
@@ -611,7 +760,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	 * Select task to be executed on a host
 	 */
 	protected synchronized void selectTask(Task task, Host host) {
-		if (debug) log("Task selected '" + task.getId() + "' on host '" + host + "'");
+		debug("Task selected '" + task.getId() + "' on host '" + host + "'");
 		tasksSelected.put(task, host);
 		host.add(task);
 	}
@@ -654,6 +803,15 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	/**
 	 * Task finished executing
+	 * We register the task's state change in 'taskUpdateStates'.
+	 * All task state changes are processed later, when taskUpdateStates() is
+	 * invoked by the executioner's loop.
+	 *
+	 * Note: This method is part of NotifyTaskState interface.
+	 *       As such, it is invoked by 'Cmd' when the execution finishes
+	 *       or by a 'MonitorTask' when the task is detected to
+	 *       finish (e.g. when executing in a cluster or cloud)
+	 *
 	 */
 	@Override
 	public synchronized void taskFinished(Task task, TaskState taskState) {
@@ -662,7 +820,6 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 			// Note: This is the last thing we do in order for wait() methods to
 			//       be sure that task has finished and all data has finished
 			//       updating.
-
 			taskState = task.taskState();
 		}
 
@@ -670,7 +827,13 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
-	 * Move a task from 'tasksToRun' to 'tasksRunning'
+	 * Task started running (or dispatched for running)
+	 * We register the task's state change in 'taskUpdateStates'.
+	 * All task state changes are processed later, when taskUpdateStates() is
+	 * invoked by the executioner's loop.
+	 *
+	 * Note: This method is part of NotifyTaskState interface.
+	 *       As such, it is invoked by 'Cmd' when the execution starts
 	 */
 	@Override
 	public synchronized void taskRunning(Task task) {
@@ -678,22 +841,36 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 	}
 
+	/**
+	 * Task started: The task is prepared to start running
+	 * We register the task's state change in 'taskUpdateStates'.
+	 * All task state changes are processed later, when taskUpdateStates() is
+	 * invoked by the executioner's loop.
+	 *
+	 * Note: This method is part of NotifyTaskState interface.
+	 *       As such, it is invoked by 'Cmd' when the task is prepared
+	 *       to be executed
+	 */
 	@Override
 	public synchronized void taskStarted(Task task) {
 		taskUpdateStates.add(new Tuple<>(task, TaskState.STARTED));
 	}
 
 	/**
-	 * Task finished (either finished OK or has some error condition)
+	 * Update task's state to some final state, typically `FINISHED` if everything run correctly
+	 * Task finished: either finished OK or has some error condition, or is
+	 * detached (thus considered finished).
 	 */
 	protected synchronized boolean taskUpdateFinished(Task task, TaskState taskState) {
 		if (task == null) throw new RuntimeException("Task finished invoked with null task. This should never happen.");
+
+		if (task.isDetached() && taskState.isFinished()) taskState = TaskState.DETACHED;
 		if (!task.canChangeState(taskState)) return false;
 
 		String id = task.getId();
-		if (debug) log("Task finished '" + id + "'");
+		debug("Task update finished, state '" + taskState + "', task Id '" + id + "'");
 
-		// Find command
+		// Cleanup command & host
 		Cmd cmd = getCmd(task);
 		if (cmd != null) {
 			Host host = cmd.getHost();
@@ -703,7 +880,7 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		followStop(task); // Remove from 'tail' thread
 
-		// Move from 'running' (or 'toRun') to 'done'
+		// Move from 'running' (or 'toRun'), add it to 'done'
 		tasksToRun.remove(task);
 		tasksSelected.remove(task);
 		tasksRunning.remove(task.getId());
@@ -737,10 +914,10 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
-	 * Update task state to 'Running'
+	 * Update task state to 'RUNNING'
 	 */
 	protected synchronized boolean taskUpdateRunning(Task task) {
-		if (debug) log("Task running '" + task.getId() + "'");
+		debug("Task update running '" + task.getId() + "'");
 
 		if (task.isDone()) return true; // Already finished, nothing to do
 
@@ -750,15 +927,16 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 
 		// A "detached" task is considered to be successful right after starting, we don't follow it
 		if (!task.isDetached()) follow(task); // Follow STDOUT and STDERR
+		else debug("Task detached, not following '" + task.getId() + "'");
 
 		return true;
 	}
 
 	/**
-	 * Task has been started
+	 * Task has been started: Update to 'STARTED' state
 	 */
 	protected synchronized boolean taskUpdateStarted(Task task) {
-		if (debug) log("Task started '" + task.getId() + "'");
+		debug("Task update started '" + task.getId() + "'");
 
 		if (task.isStarted()) return true; // Already started, nothing to do
 		if (!task.canChangeState(TaskState.STARTED)) return false;
@@ -774,7 +952,11 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 	}
 
 	/**
-	 * Update task states
+	 * Update all task states from `taskUpdateStates`
+	 *
+	 * This method is invoked by the executioner's loop to update all
+	 * state changes that have been registered (asynchronously) by
+	 * `Cmd` and `MonitorTask` objects via the `NotifyTaskState` interface.
 	 */
 	protected synchronized void taskUpdateStates() {
 		if (taskUpdateStates.isEmpty()) return;
@@ -783,15 +965,27 @@ public abstract class Executioner extends Thread implements NotifyTaskState, Pid
 		ArrayList<Tuple<Task, TaskState>> taskUpdateStatesNew = new ArrayList<>();
 
 		// Update each task sequentially, to avoid race conditions
+		if (debug) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Task states to update: " + taskUpdateStates.size() + "\n");
+			for (Tuple<Task, TaskState> taskAndState : taskUpdateStates)
+				sb.append("\tstate: '" + taskAndState.second + "'\ttask Id: '" + taskAndState.first.getId() + "'\n");
+			debug(sb);
+		}
+
+		// Update each task sequentially, to avoid race conditions
 		for (Tuple<Task, TaskState> taskAndState : taskUpdateStates) {
 			Task task = taskAndState.first;
 			TaskState state = taskAndState.second;
 
 			// Try to change state
 			boolean ok = false;
+
 			if (state.isStarted()) ok = taskUpdateStarted(task);
 			else if (state.isRunning()) ok = taskUpdateRunning(task);
 			else ok = taskUpdateFinished(task, state);
+
+			debug("Task state updated to '" + task.getTaskState() + "', task ID '" + task.getId() + "'");
 
 			// Could not change state? Keep task update
 			if (!ok) taskUpdateStatesNew.add(taskAndState);

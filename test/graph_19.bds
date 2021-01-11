@@ -1,0 +1,20 @@
+#!/usr/bin/env bds
+
+out := "out.graph_19.txt"
+in1 := "in.graph_19.txt"
+
+# Clean up
+[in1, out].rm()
+
+t0 := task(in1 <- []) {
+    sys echo TASK_1 | tee '$in1'
+}
+
+wait	# Task executed after this wait
+
+# Input dependency has already been executed, should not execute again
+dep(out <- in1) {
+    sys echo DEP_2 | tee '$out'
+}
+
+goal out

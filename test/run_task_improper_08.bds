@@ -1,0 +1,28 @@
+
+println "Task improper: Start"
+
+in := 'in.run_task_improper_08.txt'
+out1 := 'out1.run_task_improper_08.txt'
+out2 := 'out2.run_task_improper_08.txt'
+
+# Clean up
+[in, out1, out2].rm()
+
+in.write("IN")
+
+dep(out1 <- in) {
+	println "DEP_1: Start"
+	out1.write("OUT1")
+	println "DEP_1: End"
+}
+
+dep(out2 <- out1) {
+	println "DEP_2: Start"
+	out2.write("OUT2")
+	println "DEP_2: End"
+}
+
+goal out2
+
+wait
+println "Task improper: End"

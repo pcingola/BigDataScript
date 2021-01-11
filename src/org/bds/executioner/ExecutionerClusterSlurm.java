@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.bds.Config;
-import org.bds.cluster.host.HostResources;
+import org.bds.cluster.host.TaskResourcesCluster;
 import org.bds.task.Task;
 import org.bds.util.Timer;
 
@@ -15,14 +15,14 @@ import org.bds.util.Timer;
  */
 public class ExecutionerClusterSlurm extends ExecutionerCluster {
 
-	boolean timeInMins = true; // Typically SLURM timeouts are in minutes
 	// Define commands
 	public static final String KILL_COMMAND[] = { "scancel" };
 	public static final String POST_MORTEM_COMMAND[] = { "scontrol", "-d", "show", "job" };
 	public static final String STAT_COMMAND[] = { "squeue", "-h", "-a", "-o", "%A" };
 	public static final String RUN_COMMAND[] = { "sbatch", "--parsable", "--no-requeue" };
-
 	public static final String PID_REGEX_DEFAULT = "(\\d+)";
+
+	boolean timeInMins = true; // Typically SLURM timeouts are in minutes
 
 	public ExecutionerClusterSlurm(Config config) {
 		super(config);
@@ -51,7 +51,7 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 		// So, this is a pattern matcher to parse the PID
 		pidRegexStr = config.getPidRegex(PID_REGEX_DEFAULT);
 		pidRegex = Pattern.compile(pidRegexStr);
-		if (debug) log("Using pidRegex '" + pidRegexStr + "'");
+		debug("Using pidRegex '" + pidRegexStr + "'");
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 	@Override
 	protected void addResources(Task task, List<String> args) {
 		// Add resources request
-		HostResources res = task.getResources();
+		TaskResourcesCluster res = (TaskResourcesCluster) task.getResources();
 
 		// Cpu
 		if (res.getCpus() > 0) {
@@ -82,7 +82,7 @@ public class ExecutionerClusterSlurm extends ExecutionerCluster {
 		}
 
 		// A particular queue was requested?
-		String queue = task.getQueue();
+		String queue = res.getQueue();
 		if (queue != null && !queue.isEmpty()) {
 			args.add("-p");
 			args.add(queue);

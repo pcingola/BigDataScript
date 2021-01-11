@@ -54,7 +54,7 @@ public class MethodNative_string_dirPath_regex extends MethodNativeString {
 		// List files
 		ValueList vlist = new ValueList(returnType);
 		for (Data sub : bdsThread.data(baseDir).list()) {
-			if (matches(sub, matcher)) vlist.add(new ValueString(sub.toString()));
+			if (matches(sub, matcher)) vlist.add(new ValueString(sub.getPathOrUrl()));
 		}
 
 		vlist.sort();

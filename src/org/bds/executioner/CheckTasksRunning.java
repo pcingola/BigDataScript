@@ -1,17 +1,13 @@
 package org.bds.executioner;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.bds.BdsLog;
 import org.bds.Config;
-import org.bds.osCmd.Exec;
-import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
 import org.bds.task.Task;
 import org.bds.task.TaskState;
@@ -19,15 +15,17 @@ import org.bds.util.Timer;
 
 /**
  * Check that tasks are still running.
+ *
  * This method should query the operating system, cluster system or
  * whatever 'low level' system to make sure the tasks are still
  * running.
+ *
  * The idea is that if a task is killed, removed or somehow is no
  * longer running, we should catch it here (this is the last resort).
  *
  * @author pcingola
  */
-public class CheckTasksRunning {
+public abstract class CheckTasksRunning implements BdsLog {
 
 	public static final int CHECK_TASK_RUNNING_INTERVAL = 60;
 	public static final int TASK_STATE_MIN_START_TIME = 30; // We assume that in less then this number of seconds we might not have a task reported by the cluster system
@@ -36,33 +34,22 @@ public class CheckTasksRunning {
 	protected boolean debug;
 	protected boolean verbose;
 	protected Timer time; // Timer for checking that tasks are still running
-	protected String[] defaultCmdArgs;
 	protected Executioner executioner;
-	protected ExecResult cmdExecResult;
-	protected int cmdPidColumn; // Column in which command outputs PID
 	protected Map<String, Integer> missingCount; // How many times was a task missing?
-	protected String pidPatternStr;
-	protected Pattern pidPattern;
+	protected Map<String, Task> taskById;
 
 	public CheckTasksRunning(Config config, Executioner executioner) {
 		this.executioner = executioner;
-		defaultCmdArgs = new String[0];
 		missingCount = new HashMap<>();
+		taskById = new HashMap<>();
 
 		// Set debug
 		debug = config.isDebug();
+		verbose = config.isVerbose();
+	}
 
-		// PID regex matcher
-		pidPatternStr = config.getPidRegexCheckTasksRunning("");
-		if (!pidPatternStr.isEmpty()) {
-			if (debug) log("Using pidRegex (check tasks running) '" + pidPatternStr + "'");
-			pidPattern = Pattern.compile(pidPatternStr);
-		} else if (debug) log("Config parameter '" + Config.PID_CHECK_TASK_RUNNING_REGEX + "' not set.");
-
-		// Select column where to look for PID
-		cmdPidColumn = (int) config.getLong(Config.PID_CHECK_TASK_RUNNING_COLUMN, 1) - 1;
-		if (cmdPidColumn < 0) cmdPidColumn = 0;
-		if (debug) log("Using 'cmdPidColumn' " + cmdPidColumn);
+	public void add(Task task) {
+		taskById.put(task.getId(), task);
 	}
 
 	/**
@@ -77,14 +64,10 @@ public class CheckTasksRunning {
 	public void check() {
 		if (!shouldCheck()) return; // Check every now and then
 
-		// Run a command to query running PIDs
-		if (!runCommand()) return;
-
-		// Parse command output, extract all PIDs
-		Set<Task> taskFoundId = parseCommandOutput();
+		Set<Task> taskFound = findRunningTasks();
 
 		// If any 'running' tasks was not not found, mark is as finished ('ERROR')
-		tasksRunning(taskFoundId);
+		tasksRunning(taskFound);
 	}
 
 	/**
@@ -99,8 +82,8 @@ public class CheckTasksRunning {
 
 			if (pid != null) {
 				// Matches pid?
-				if (pids.contains(pid) || pids.contains(parsePidPart(pid))) {
-					if (debug) log("Found task PID '" + pid + "'");
+				if (matchesPids(pids, pid)) {
+					debug("Found task PID '" + pid + "'");
 					tasks.add(t);
 				}
 			}
@@ -108,6 +91,11 @@ public class CheckTasksRunning {
 
 		return tasks;
 	}
+
+	/**
+	 * Run tasks that are currently running
+	 */
+	protected abstract Set<Task> findRunningTasks();
 
 	/**
 	 * Increment counter that keeps track on how many times in a row a task was missing
@@ -118,101 +106,26 @@ public class CheckTasksRunning {
 		int count = (missingCount.containsKey(id) ? missingCount.get(id) + 1 : 1);
 		missingCount.put(id, count);
 
-		if (debug) Timer.showStdErr("WARNING: Task PID '" + task.getPid() + "' not found for task '" + id + "'. Incrementing 'missing counter': " + count + " (max. allowed " + TASK_NOT_FOUND_DISAPPEARED + ")");
+		warning("Task PID '" + task.getPid() + "' not found for task '" + id + "'. Incrementing 'missing counter': " + count + " (max. allowed " + TASK_NOT_FOUND_DISAPPEARED + ")");
 		return count > TASK_NOT_FOUND_DISAPPEARED;
 	}
 
-	void log(String msg) {
-		executioner.log(this.getClass().getSimpleName() + ":" + msg);
+	@Override
+	public boolean isDebug() {
+		return debug;
 	}
 
-	/**
-	 * Parse command output, extract all PIDs
-	 */
-	protected Set<Task> parseCommandOutput() {
-		// For each line in stdout...
-		String lines[] = cmdExecResult.stdOut.split("\n");
-
-		// Parse PIDs
-		Set<String> pids = parseCommandOutput(lines);
-
-		// Find a tasks matching these PIDs
-		return findRunningTaskByPid(pids);
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 
-	/**
-	 * Parse command output, extract all PIDs
-	 * For each PID, find the corresponding task, add task 'taskFoundId' (HashSet<String>)
-	 */
-	public Set<String> parseCommandOutput(String lines[]) {
-		HashSet<String> pids = new HashSet<>();
-
-		// Parse lines
-		for (String line : lines) {
-			line = line.trim();
-
-			if (debug) log("Parsing line:\t" + line);
-			String pid = parsePidLine(line);
-
-			// Any results?
-			if (pid != null && !pid.isEmpty()) {
-				// PID parsed OK
-				if (pids.add(pid)) {
-					if (debug) log("\tAdding ID: '" + pid + "'");
-				}
-			} else {
-				// PID not matched by 'pidRegexCheckTaskRunning' regex (or regex not set)?
-				// => Try other methods
-
-				// Split fields
-				String fields[] = line.split("\\s+");
-
-				// Obtain PID (found in column number 'cmdPidColumn')
-				if ((0 <= cmdPidColumn) && (cmdPidColumn < fields.length)) {
-					pid = fields[cmdPidColumn];
-
-					// Add first column (whole pid)
-					if (pids.add(pid)) {
-						if (debug) log("\tAdding ID (column number " + cmdPidColumn + "): '" + pid + "'");
-					}
-
-					// Use only first part (split using dot)
-					String pidPart = parsePidPart(pid);
-					if (pids.add(pidPart)) {
-						if (debug) log("\tAdding ID (using string before fisrt dot): '" + pidPart + "'");
-					}
-				}
-			}
-		}
-
-		return pids;
+	protected boolean matchesPids(Set<String> pids, String pid) {
+		return pids.contains(pid);
 	}
 
-	/**
-	 * Parse PID line from 'qstat' (Cmd)
-	 */
-	public String parsePidLine(String line) {
-		if (pidPattern == null || line.isEmpty()) return "";
-
-		// Pattern pattern = Pattern.compile("Your job (\\S+)");
-		Matcher matcher = pidPattern.matcher(line);
-		if (matcher.find()) {
-			String pid = null;
-			if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
-			else pid = matcher.group(0); // Use whole pattern
-
-			if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_CHECK_TASK_RUNNING_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
-			return pid;
-		} else if (debug) log("Regex '" + pidPatternStr + "' (" + Config.PID_CHECK_TASK_RUNNING_REGEX + ") did NOT match line: '" + line + "'");
-
-		return line;
-	}
-
-	/**
-	 *  Use only the first part before '.' as PID
-	 */
-	String parsePidPart(String pid) {
-		return pid.split("\\.")[0];
+	public synchronized void remove(Task task) {
+		taskById.remove(task.getId());
 	}
 
 	/**
@@ -220,57 +133,6 @@ public class CheckTasksRunning {
 	 */
 	protected void resetMissingCount(Task task) {
 		missingCount.remove(task.getId());
-	}
-
-	/**
-	 * Run a command to find running processes PIDs
-	 * @return true if OK, false on failure
-	 */
-	protected boolean runCommand() {
-		// Prepare command line arguments
-		ArrayList<String> args = new ArrayList<>();
-		StringBuilder cmdsb = new StringBuilder();
-		for (String arg : defaultCmdArgs) {
-			args.add(arg);
-			cmdsb.append(" " + arg);
-		}
-
-		// Execute command
-		cmdExecResult = Exec.exec(args, true);
-		if (debug) Timer.showStdErr("Check task running:" //
-				+ "\n\tCommand    : '" + cmdsb.toString().trim() + "'" //
-				+ "\n\tExit value : " + cmdExecResult.exitValue //
-				+ "\n\tStdout     : " + cmdExecResult.stdOut //
-				+ "\n\tStderr     : " + cmdExecResult.stdErr //
-		);
-
-		//---
-		// Sanity checks!
-		//---
-
-		// Failed command?
-		if (cmdExecResult.exitValue > 0) {
-			Timer.showStdErr("WARNING: There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'.\nExit code: " + cmdExecResult.exitValue);
-			return false;
-		}
-
-		// Any problems reported on STDERR?
-		if (!cmdExecResult.stdErr.isEmpty()) {
-			Timer.showStdErr("WARNING: There was an error executing cluster stat command: '" + cmdsb.toString().trim() + "'\nSTDERR:\n" + cmdExecResult.stdErr);
-			return false;
-		}
-
-		// Empty STDOUT?
-		// Note: This might not be a problem, but a cluster (or any computer) running
-		// zero processes is really weird. Furthermore, this commands usually show some
-		// kind of header, so STDOUT is never empty
-		if (verbose && cmdExecResult.stdOut.isEmpty()) {
-			Timer.showStdErr("WARNING: Empty STDOUT when executing cluster stat command: '" + cmdsb.toString().trim());
-			return false;
-		}
-
-		// OK
-		return true;
 	}
 
 	public void setDebug(boolean debug) {
@@ -326,8 +188,8 @@ public class CheckTasksRunning {
 				String tpid = task.getPid() != null ? task.getPid() : "";
 
 				if (!tpid.isEmpty() && !task.isDone()) { // Make sure the task is not finished (race conditions?)
-					if (debug) log("Task PID '" + task.getPid() + "' not found. Marking it as finished.");
-					task.setErrorMsg("Task disappeared from cluster's queue. Task or node failure?");
+					debug("Task PID '" + task.getPid() + "' not found. Marking it as 'disappeared'.");
+					task.setErrorMsg("Task disappeared");
 					task.setExitValue(BdsThread.EXITCODE_ERROR);
 					executioner.taskFinished(task, TaskState.ERROR);
 				}

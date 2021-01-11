@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.antlr.BigDataScriptLexer;
 import org.bds.antlr.BigDataScriptParser;
@@ -21,7 +22,6 @@ import org.bds.lang.ProgramUnit;
 import org.bds.lang.statement.StatementInclude;
 import org.bds.symbol.GlobalSymbolTable;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * BdsCompiler a Bds program.
@@ -30,7 +30,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class BdsCompiler {
+public class BdsCompiler implements BdsLog {
 
 	boolean debug; // debug mode
 	boolean verbose; // Verbose mode
@@ -39,6 +39,8 @@ public class BdsCompiler {
 
 	public BdsCompiler(String fileName) {
 		programFileName = fileName;
+		debug = Config.get().isDebug();
+		verbose = Config.get().isVerbose();
 	}
 
 	/**
@@ -48,13 +50,11 @@ public class BdsCompiler {
 	 * @return true on error, false on success
 	 */
 	boolean addSymbols() {
-		if (debug) log("Add symbols.");
+		debug("Add symbols.");
 		GlobalSymbolTable globalSymbolTable = GlobalSymbolTable.get();
-		if (debug) log("Global SymbolTable before 'addSymbols':\n" + globalSymbolTable);
+		debug("Global SymbolTable before 'addSymbols':\n" + globalSymbolTable);
 		programUnit.addSymbols(globalSymbolTable);
-		if (debug) log("Global SymbolTable after 'addSymbols':\n" + globalSymbolTable);
-
-		// FIXME: Any errors?
+		debug("Global SymbolTable after 'addSymbols':\n" + globalSymbolTable);
 		return false;
 	}
 
@@ -62,7 +62,7 @@ public class BdsCompiler {
 	 * BdsCompiler program
 	 */
 	public ProgramUnit compile() {
-		if (debug) log("Loading file: '" + programFileName + "'");
+		debug("Loading file: '" + programFileName + "'");
 
 		// Convert to AST
 		ParseTree tree = parseProgram();
@@ -137,7 +137,7 @@ public class BdsCompiler {
 
 			// Show main nodes
 			if (debug) {
-				Timer.showStdErr("AST:");
+				debug("AST:");
 				for (int childNum = 0; childNum < tree.getChildCount(); childNum++) {
 					Tree child = tree.getChild(childNum);
 					System.err.println("\t\tChild " + childNum + ":\t" + child + "\tTree:'" + child.toStringTree() + "'");
@@ -213,10 +213,10 @@ public class BdsCompiler {
 		 *  Convert to BdsNodes, create Program Unit
 		 */
 	ProgramUnit createModel(ParseTree tree) {
-		if (debug) log("Creating BigDataScript tree.");
+		debug("Creating BigDataScript tree.");
 		CompilerMessages.reset();
 		ProgramUnit pu = (ProgramUnit) BdsNodeFactory.get().factory(null, tree); // Transform AST to BdsNode tree
-		if (debug) log("AST:\n" + pu.toString());
+		debug("AST:\n" + pu.toString());
 		// Any error messages?
 		if (!CompilerMessages.get().isEmpty()) System.err.println("Compiler messages:\n" + CompilerMessages.get());
 		if (CompilerMessages.get().hasErrors()) return null;
@@ -227,15 +227,21 @@ public class BdsCompiler {
 		return programUnit;
 	}
 
-	void log(String msg) {
-		Timer.showStdErr(getClass().getSimpleName() + ": " + msg);
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 
 	/**
 	 * Lex, parse and create Abstract syntax tree (AST)
 	 */
 	ParseTree parseProgram() {
-		if (debug) log("Creating AST.");
+		debug("Creating AST.");
 		CompilerMessages.reset();
 		ParseTree tree = null;
 
@@ -285,7 +291,7 @@ public class BdsCompiler {
 			// Already included? don't bother
 			String canonicalFileName = Gpr.getCanonicalFileName(includedFile);
 			if (alreadyIncluded.contains(canonicalFileName)) {
-				if (debug) Gpr.debug("File already included: '" + includedFilename + "'\tCanonical path: '" + canonicalFileName + "'");
+				debug("File already included: '" + includedFilename + "'\tCanonical path: '" + canonicalFileName + "'");
 				return false;
 			}
 
@@ -322,9 +328,9 @@ public class BdsCompiler {
 	 * Type checking
 	 */
 	boolean typeChecking() {
-		if (debug) log("Type checking.");
+		debug("Type checking.");
 		GlobalSymbolTable globalSymbolTable = GlobalSymbolTable.get();
-		if (debug) log("Global SymbolTable:\n" + globalSymbolTable);
+		debug("Global SymbolTable:\n" + globalSymbolTable);
 		programUnit.typeChecking(globalSymbolTable, CompilerMessages.get());
 
 		// Any error messages?
@@ -332,5 +338,4 @@ public class BdsCompiler {
 		if (CompilerMessages.get().hasErrors()) return true;
 		return false;
 	}
-
 }

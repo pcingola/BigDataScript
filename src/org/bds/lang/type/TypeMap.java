@@ -16,7 +16,6 @@ import org.bds.lang.nativeMethods.map.MethodNativeMapSize;
 import org.bds.lang.nativeMethods.map.MethodNativeMapValues;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueMap;
-import org.bds.util.Gpr;
 
 /**
  * A hash /  map/ dictionary
@@ -25,14 +24,14 @@ import org.bds.util.Gpr;
  */
 public class TypeMap extends TypeComposite {
 
-	protected Type keyType; // Type for 'key' elements
-
-	protected Type valueType; // Type for 'value' elements
-
 	private static final long serialVersionUID = 3321302248243052342L;
 
 	public static boolean debug = false;
+
 	public static final TypeMap MAP_ANY_ANY = new TypeMap(Types.ANY, Types.ANY);
+
+	protected Type keyType; // Type for 'key' elements
+	protected Type valueType; // Type for 'value' elements
 
 	public static TypeMap factory(BdsNode parent, ParseTree tree) {
 		TypeMap typeMap = new TypeMap(parent, tree);
@@ -117,7 +116,7 @@ public class TypeMap extends TypeComposite {
 			methods.add(new MethodNativeMapValues(this));
 
 			// Show
-			if (debug) Gpr.debug("Type " + this + ", library methods added: ");
+			debug("Type " + this + ", library methods added: ");
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new RuntimeException("Error while adding native mehods for class '" + this + "'", t);

@@ -12,22 +12,63 @@
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="./bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/antlr-runtime-4.7.1.jar"/>
-			<zipfileset excludes="META-INF/*.SF" src="lib/aws-java-sdk-1.11.319.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/commons-lang3-3.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/ST4-4.0.8.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/annotations-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/antlr-runtime-3.5.2.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/antlr4-4.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/antlr4-runtime-4.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/apache-client-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/arns-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/auth-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/aws-core-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/aws-query-protocol-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/aws-xml-protocol-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/commons-codec-1.11.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/commons-lang3-3.1.jar"/>
 			<zipfileset excludes="META-INF/*.SF" src="lib/commons-logging-1.1.3.jar"/>
-			<zipfileset excludes="META-INF/*.SF" src="lib/commons-net-3.6.jar"/>        	
-            <zipfileset excludes="META-INF/*.SF" src="lib/httpclient-4.5.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/httpcore-4.4.1.jar"/>
-			<zipfileset excludes="META-INF/*.SF" src="lib/jackson-annotations-2.5.3.jar"/>
-			<zipfileset excludes="META-INF/*.SF" src="lib/jackson-core-2.5.3.jar"/>
-			<zipfileset excludes="META-INF/*.SF" src="lib/jackson-databind-2.5.3.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/jsch-0.1.54.jar"/>
-			<zipfileset excludes="META-INF/*.SF" src="lib/joda-time-2.8.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/junit-4.10.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/mesos-0.26.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/protobuf-java-2.5.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/jsoup-1.12.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/commons-net-3.6.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/ec2-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/eventstream-1.0.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/hamcrest-core-1.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/http-client-spi-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/httpclient-4.5.13.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/httpcore-4.4.13.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/icu4j-58.2.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/jackson-annotations-2.10.4.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/jackson-core-2.10.4.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/jackson-databind-2.10.4.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/javax.json-1.0.4.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/jsch-0.1.54.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/jsoup-1.12.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/junit-4.10.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/mesos-0.26.0.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/metrics-spi-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-buffer-4.1.46.Final.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-codec-4.1.46.Final.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-codec-http-4.1.46.Final.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-codec-http2-4.1.46.Final.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-common-4.1.46.Final.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-handler-4.1.46.Final.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-nio-client-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-reactive-streams-2.0.4.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-reactive-streams-http-2.0.4.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-resolver-4.1.46.Final.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-transport-4.1.46.Final.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-transport-native-epoll-4.1.46.Final-linux-x86_64.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/netty-transport-native-unix-common-4.1.46.Final.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/org.abego.treelayout.core-1.0.3.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/profiles-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/protobuf-java-2.5.0.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/protocol-core-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/reactive-streams-1.0.2.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/regions-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/s3-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/sdk-core-2.15.7.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/slf4j-api-1.7.28.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/slf4j-simple-1.7.25.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/sqs-2.15.11.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/utils-2.15.7.jar"/>
+
         </jar>
     </target>
 
@@ -44,8 +85,14 @@
 			source="12"
 			target="12"
 			includeantruntime="false" 
-			classpath="lib/antlr-runtime-4.7.1.jar:lib/commons-lang3-3.1.jar:lib/commons-net-3.6.jar:lib/jsch-0.1.54.jar:lib/junit-4.10.jar:lib/mesos-0.26.0.jar:lib/protobuf-java-2.5.0.jar:lib/httpclient-4.5.jar:lib/httpcore-4.4.1.jar:lib/joda-time-2.8.1.jar:lib/jackson-annotations-2.5.3.jar:lib/jackson-core-2.5.3.jar:lib/jackson-databind-2.5.3.jar:lib/commons-logging-1.1.3.jar:lib/aws-java-sdk-1.11.319.jar;lib/jsoup-1.12.1.jar"
+			classpath="lib/ST4-4.0.8.jar:lib/annotations-2.15.7.jar:lib/antlr-runtime-3.5.2.jar:lib/antlr4-4.7.jar:lib/antlr4-runtime-4.7.jar:lib/apache-client-2.15.7.jar:lib/arns-2.15.7.jar:lib/auth-2.15.7.jar:lib/aws-core-2.15.7.jar:lib/aws-query-protocol-2.15.7.jar:lib/aws-xml-protocol-2.15.7.jar:lib/commons-codec-1.11.jar:lib/commons-lang3-3.1.jar:lib/commons-logging-1.1.3.jar:lib/commons-net-3.6.jar:lib/ec2-2.15.7.jar:lib/eventstream-1.0.1.jar:lib/hamcrest-core-1.1.jar:lib/http-client-spi-2.15.7.jar:lib/httpclient-4.5.13.jar:lib/httpcore-4.4.13.jar:lib/icu4j-58.2.jar:lib/jackson-annotations-2.10.4.jar:lib/jackson-core-2.10.4.jar:lib/jackson-databind-2.10.4.jar:lib/javax.json-1.0.4.jar:lib/jsch-0.1.54.jar:lib/jsoup-1.12.1.jar:lib/junit-4.10.jar:lib/mesos-0.26.0.jar:lib/metrics-spi-2.15.7.jar:lib/netty-buffer-4.1.46.Final.jar:lib/netty-codec-4.1.46.Final.jar:lib/netty-codec-http-4.1.46.Final.jar:lib/netty-codec-http2-4.1.46.Final.jar:lib/netty-common-4.1.46.Final.jar:lib/netty-handler-4.1.46.Final.jar:lib/netty-nio-client-2.15.7.jar:lib/netty-reactive-streams-2.0.4.jar:lib/netty-reactive-streams-http-2.0.4.jar:lib/netty-resolver-4.1.46.Final.jar:lib/netty-transport-4.1.46.Final.jar:lib/netty-transport-native-epoll-4.1.46.Final-linux-x86_64.jar:lib/netty-transport-native-unix-common-4.1.46.Final.jar:lib/org.abego.treelayout.core-1.0.3.jar:lib/profiles-2.15.7.jar:lib/protobuf-java-2.5.0.jar:lib/protocol-core-2.15.7.jar:lib/reactive-streams-1.0.2.jar:lib/regions-2.15.7.jar:lib/s3-2.15.7.jar:lib/sdk-core-2.15.7.jar:lib/slf4j-api-1.7.28.jar:lib/slf4j-simple-1.7.25.jar:lib/sqs-2.15.11.jar:lib/utils-2.15.7.jar"
 		/>
 	</target>
 
 </project>
+
+
+
+
+
+

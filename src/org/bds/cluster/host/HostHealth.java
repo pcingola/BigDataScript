@@ -125,7 +125,7 @@ public class HostHealth {
 	public boolean isUpdated() {
 		if (latestUpdate <= 0) return false; // Never updated
 		long elapsed = ((new Date()).getTime() - latestUpdate) / 1000; // Elapsed time in seconds
-		ClusterSsh cluster = (ClusterSsh) host.getCluster();
+		ClusterSsh cluster = (ClusterSsh) host.getSystem();
 		return elapsed > (REFRESH_MULTIPLIER * cluster.getRefreshTime()); // Too much time since latest update? => not updated
 	}
 

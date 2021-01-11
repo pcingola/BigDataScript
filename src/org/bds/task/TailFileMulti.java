@@ -7,13 +7,15 @@ import java.io.FileInputStream;
 
 /**
  * A file to use with 'Tail'
- * 
+ *
  * Allows to 'follow' thousands of files by not opening the files unless is needed
  * This is to avoid operating systems limits on number of opened file descriptors (see 'ulimit' unix command)
- * 
+ *
  * @author pcingola
  */
 public class TailFileMulti extends TailFile {
+
+	private static final long serialVersionUID = -6234980266728470190L;
 
 	long inputPos = 0; // Latest position read
 	File inputFile;

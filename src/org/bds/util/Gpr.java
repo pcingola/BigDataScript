@@ -1,6 +1,3 @@
-/*
- * Created on Nov 24, 2003
- */
 package org.bds.util;
 
 import java.io.BufferedReader;
@@ -19,8 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.zip.GZIPInputStream;
 
 /**
- * General pupose rutines
- * @author root
+ * General purpose routines
  */
 public class Gpr {
 
@@ -131,7 +127,7 @@ public class Gpr {
 	}
 
 	/**
-	 * Prits a debug message (prints class name, method and line number)
+	 * Prints a debug message (prints class name, method and line number)
 	 * @param obj					Object to print
 	 * @param offset				Offset N lines from stacktrace
 	 */
@@ -216,7 +212,7 @@ public class Gpr {
 	 */
 	public static boolean parseBoolSafe(String s) {
 		try {
-			if (s == null) return false;
+			if (s == null || s.isEmpty()) return false;
 			if (s.equalsIgnoreCase("true")) return true; // 'true'
 			if (s.equalsIgnoreCase("t")) return true; // Abreviation of 'true'
 			if (Gpr.parseIntSafe(s) != 0) return true; // A non-zero number

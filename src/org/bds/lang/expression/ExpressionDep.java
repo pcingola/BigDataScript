@@ -16,22 +16,15 @@ public class ExpressionDep extends ExpressionTask {
 		super(parent, tree);
 	}
 
-	/**
-	 * Commands (i.e. task)
-	 */
 	@Override
 	protected String toAsmCmd(String labelEnd) {
-		StringBuilder sb = new StringBuilder();
-		// Statements (e.g.: sys commands)
-		sb.append(toAsmStatements());
-		sb.append("taskdep\n");
-		sb.append("jmp " + labelEnd + "\n"); // Go to the end
-		return sb.toString();
+		if (improper) return toAsmCmdOpCode(labelEnd, "taskdepimp");
+		return toAsmCmdOpCode(labelEnd, "taskdep");
 	}
 
 	@Override
 	public String toString() {
-		return "dep" //
+		return "taskdep" //
 				+ (options != null ? options : "") //
 				+ " " //
 				+ toStringStatement() //

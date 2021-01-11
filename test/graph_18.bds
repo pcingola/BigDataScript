@@ -1,0 +1,20 @@
+#!/usr/bin/env bds
+
+out := "out.graph_18.txt"
+in1 := "in.graph_18.txt"
+
+# Clean up
+[in1, out].rm()
+
+t0 := task(in1 <- []) {
+    sys echo TASK_1 | tee '$in1'
+}
+
+wait	# Task executed after this wait
+
+# ERROR: Output dependency is a taskId
+dep([t0, out] <- in1) {
+    sys echo DEP_1 | tee $out
+}
+
+goal out

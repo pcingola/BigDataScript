@@ -8,10 +8,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bds.Config;
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.Host;
 import org.bds.cluster.host.HostInifinte;
-import org.bds.cluster.host.HostResources;
+import org.bds.cluster.host.Resources;
+import org.bds.cluster.host.TaskResourcesCluster;
 import org.bds.osCmd.Cmd;
 import org.bds.osCmd.CmdCluster;
 import org.bds.osCmd.Exec;
@@ -27,7 +28,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class ExecutionerCluster extends Executioner {
+public class ExecutionerCluster extends ExecutionerFileSystem {
 
 	protected final String CLUSTER_DEFAULT_RUN_COMMAND_STDOUT_OPTION = "-o";
 	protected final String CLUSTER_DEFAULT_RUN_COMMAND_STDERR_OPTION = "-e";
@@ -44,8 +45,6 @@ public class ExecutionerCluster extends Executioner {
 	protected String clusterKillAdditionalArgs[];
 	protected String clusterStatAdditionalArgs[];
 	protected String clusterPostMortemAdditionalArgs[];
-
-	protected String bdsCommand = "bds exec ";
 
 	protected String memParam;
 	protected String cpuParam;
@@ -68,6 +67,8 @@ public class ExecutionerCluster extends Executioner {
 		String killCommand[] = { "qdel" };
 		String statCommand[] = { "qstat" };
 		String postMortemInfoCommand[] = { "qstat", "-f" };
+
+		blockRunTasks = true;
 
 		clusterRunCommand = runCommand;
 		clusterKillCommand = killCommand;
@@ -94,16 +95,16 @@ public class ExecutionerCluster extends Executioner {
 		// PID regex matcher
 		pidRegexStr = config.getPidRegex("");
 		if (!pidRegexStr.isEmpty()) {
-			if (debug) log("Using pidRegex '" + pidRegexStr + "'");
+			debug("Using pidRegex '" + pidRegexStr + "'");
 			pidRegex = Pattern.compile(pidRegexStr);
 		}
 
 		// Cluster task need monitoring
-		monitorTask = config.getMonitorTask();
+		monitorTask = MonitorTasks.get().getMonitorTaskExitFile();
 
-		// Create a cluster having only one host with 'inifinite' capacity
-		cluster = new Cluster();
-		new HostInifinte(cluster);
+		// Create a cluster having only one host with 'infinite' capacity
+		system = new ComputerSystem();
+		new HostInifinte(system);
 	}
 
 	/**
@@ -133,7 +134,7 @@ public class ExecutionerCluster extends Executioner {
 		StringBuilder resSb = new StringBuilder();
 
 		// Add resources request
-		HostResources res = task.getResources();
+		TaskResourcesCluster res = (TaskResourcesCluster) task.getResources();
 
 		long clusterTimeout = calcTimeOut(res);
 		String clusterTimeoutStr = timeStr(clusterTimeout);
@@ -150,7 +151,7 @@ public class ExecutionerCluster extends Executioner {
 		}
 
 		// A particular queue was requested?
-		String queue = task.getQueue();
+		String queue = res.getQueue();
 		if (queue != null && !queue.isEmpty()) {
 			args.add("-q");
 			args.add(queue);
@@ -165,32 +166,11 @@ public class ExecutionerCluster extends Executioner {
 	}
 
 	/**
-	 * Create bds-exec commnad
-	 */
-	protected String bdsCommand(Task task) {
-		StringBuilder bdsCmd = new StringBuilder();
-
-		// Calculate timeout
-		HostResources res = task.getResources();
-		int realTimeout = (int) res.getTimeout();
-
-		// Create command
-		bdsCmd.append(bdsCommand);
-		bdsCmd.append(realTimeout + " ");
-		bdsCmd.append("'" + task.getStdoutFile() + "' ");
-		bdsCmd.append("'" + task.getStderrFile() + "' ");
-		bdsCmd.append("'" + task.getExitCodeFile() + "' ");
-		bdsCmd.append("'" + task.getProgramFileName() + "' ");
-
-		return bdsCmd.toString();
-	}
-
-	/**
 	 * Calculate timeout parameter. We want to assign slightly larger timeout
 	 * to the cluster (qsub/msub), because we prefer bds to kill the process (it's
 	 * cleaner and we get exitCode file)
 	 */
-	protected int calcTimeOut(HostResources res) {
+	protected int calcTimeOut(Resources res) {
 		int realTimeout = (int) res.getTimeout();
 		if (realTimeout <= 0) return 0;
 
@@ -220,7 +200,7 @@ public class ExecutionerCluster extends Executioner {
 	public Cmd createRunCmd(Task task) {
 		task.createProgramFile(); // We must create a program file
 
-		if (debug) log("Running task " + task.getId());
+		debug("Running task " + task.getId());
 
 		//---
 		// Create command line to dispatch 'task' to the cluster management system
@@ -257,7 +237,7 @@ public class ExecutionerCluster extends Executioner {
 			// similar to running "echo ... | qsub" on a shell.
 			// This part creates those 'stdin' parameters
 			//---
-			cmdStdin = bdsCommand(task);
+			cmdStdin = createBdsExecCmdStr(task);
 			if (debug) {
 				// Show command string
 				StringBuilder cmdStr = new StringBuilder();
@@ -287,7 +267,7 @@ public class ExecutionerCluster extends Executioner {
 		// Get shell script
 		StringBuilder sb = new StringBuilder();
 		sb.append("#!" + Config.get().getTaskShell() + "\n\n");
-		sb.append(bdsCommand(task));
+		sb.append(createBdsExecCmdStr(task));
 		sb.append("\n");
 
 		// Save to file
@@ -363,12 +343,10 @@ public class ExecutionerCluster extends Executioner {
 				if (matcher.groupCount() > 0) pid = matcher.group(1); // Use first group
 				else pid = matcher.group(0); // Use whole pattern
 
-				if (debug) log("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
+				debug("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") matched '" + pid + "' in line: '" + line + "'");
 				return pid;
-			} else if (verbose || debug) log("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") did NOT match line: '" + line + "'");
-		} else if (debug) {
-			log("No PID regex configured in (missing " + Config.PID_REGEX + " entry in config file?). Using whole line");
-		}
+			} else log("Regex '" + pidRegexStr + "' (" + Config.PID_REGEX + ") did NOT match line: '" + line + "'");
+		} else debug("No PID regex configured in (missing " + Config.PID_REGEX + " entry in config file?). Using whole line");
 
 		return line;
 	}
@@ -401,7 +379,7 @@ public class ExecutionerCluster extends Executioner {
 
 		// Run command
 		ExecResult cmdExecResult = Exec.exec(args, true);
-		if (verbose) log("Finding postMortemInfo for task " + task.getId() //
+		log("Finding postMortemInfo for task " + task.getId() //
 				+ "\n\tCommand executed : '" + cmdsb + "'" //
 				+ "\n\tExit value       : " + cmdExecResult.exitValue //
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
@@ -416,34 +394,6 @@ public class ExecutionerCluster extends Executioner {
 				+ "\n\tStdout           : " + cmdExecResult.stdOut //
 				+ "\n\tStderr           : " + cmdExecResult.stdErr //
 		);
-	}
-
-	@Override
-	protected void runTask(Task task, Host host) {
-		// Create a (shell) command to run task in cluster
-		Cmd cmd = createRunCmd(task);
-		if (cmd != null) {
-			addCmd(task, cmd);
-			cmd.setHost(host);
-			cmd.setExecutioner(this);
-			cmd.setTask(task);
-			cmd.setDebug(debug);
-		}
-
-		host.add(task);
-
-		// Run command
-		// Note: We run in blocking mode to avoid choking the head node with
-		// too many threads, too many file descriptors, etc..
-		if (cmd != null) {
-			try {
-				cmd.start();
-				cmd.join(); // Wait for this thread to finish
-			} catch (InterruptedException e) {
-				throw new RuntimeException("Error while waiting for command execution:\n\tCommand: " + cmd, e);
-			}
-		}
-
 	}
 
 	/**

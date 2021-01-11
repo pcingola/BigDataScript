@@ -1,21 +1,18 @@
 package org.bds.executioner;
 
 import org.bds.Config;
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 import org.bds.cluster.host.HostInifinte;
 import org.bds.mesos.BdsMesosFramework;
 import org.bds.osCmd.Cmd;
-import org.bds.run.BdsThread;
 import org.bds.task.Task;
-import org.bds.task.TaskState;
-import org.bds.util.Timer;
 
 /**
  * Execute tasks on Mesos
  *
  * @author pcingola
  */
-public class ExecutionerMesos extends Executioner {
+public class ExecutionerMesos extends ExecutionerFileSystem {
 
 	public static final String MESOS_MASTER_PROPERTY_NAME = "mesos.master";
 	public static final String DEFAULT_MESOS_MASTER = "127.0.1.1:5050";
@@ -27,8 +24,8 @@ public class ExecutionerMesos extends Executioner {
 		removeTaskCannotExecute = false; // In Mesos, host might appear and disappear all the time (according to offer).
 
 		// Create a cluster and add an infinite capacity host (master)
-		cluster = new Cluster();
-		new HostInifinte(cluster);
+		system = new ComputerSystem();
+		new HostInifinte(system);
 	}
 
 	/**
@@ -62,21 +59,12 @@ public class ExecutionerMesos extends Executioner {
 	}
 
 	/**
-	 * Kill a task and move it from 'taskRunning' to 'tasksDone'
+	 * Kill a task
 	 */
 	@Override
-	public synchronized void kill(Task task) {
-		if (task.isDone()) return; // Nothing to do
-
-		if (debug) Timer.showStdErr("Killing task '" + task.getId() + "'");
-
+	public synchronized void killTask(Task task) {
 		// Tell Mesos to kill the task
 		mesosFramework.kill(task);
-
-		// Mark task as finished
-		// Note: This will also be invoked by Cmd, so it will be redundant)
-		task.setExitValue(BdsThread.EXITCODE_KILLED);
-		taskFinished(task, TaskState.KILLED);
 	}
 
 	@Override

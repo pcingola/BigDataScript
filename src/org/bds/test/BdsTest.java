@@ -27,11 +27,12 @@ public class BdsTest {
 	public boolean coverage;
 	public double coverageMin;
 	public boolean debug;
+	public boolean log;
 	public boolean verbose;
 	public boolean testCases; // Is this a bds-test? i.e. should it run as 'bds --test'?
 	public Boolean compileOk;
-	public String args[]; // Command line arguments (before program name)
-	public String argsAfter[]; // Command line arguments (after program name)
+	public String args[]; // Command line arguments (for 'bds', not for the script)
+	public String scriptArgs[]; // Command line arguments for the bds script
 	public String fileName;
 	public CompilerMessages compilerMessages;
 	public Bds bds;
@@ -49,10 +50,10 @@ public class BdsTest {
 		this(fileName, args, null, verbose, debug);
 	}
 
-	public BdsTest(String fileName, String args[], String argsAfter[], boolean verbose, boolean debug) {
+	public BdsTest(String fileName, String args[], String scriptArgs[], boolean verbose, boolean debug) {
 		this.fileName = fileName;
 		this.args = args;
-		this.argsAfter = argsAfter;
+		this.scriptArgs = scriptArgs;
 		this.verbose = verbose;
 		this.debug = debug;
 	}
@@ -60,12 +61,13 @@ public class BdsTest {
 	/**
 	 * Create 'command'
 	 */
-	void bds(boolean compileOnly) {
+	public void bds(boolean compileOnly) {
 		ArrayList<String> l = new ArrayList<>();
 
 		// Add command line options
 		if (verbose) l.add("-v");
 		if (debug) l.add("-d");
+		if (log) l.add("-log");
 
 		if (compileOnly) l.add("-compile");
 
@@ -88,8 +90,9 @@ public class BdsTest {
 
 		l.add(fileName); // Add file
 
-		if (argsAfter != null) {
-			for (String arg : argsAfter)
+		// Script arguments
+		if (scriptArgs != null) {
+			for (String arg : scriptArgs)
 				l.add(arg);
 		}
 
@@ -103,14 +106,14 @@ public class BdsTest {
 	/**
 	 * Show captured STDOUT & STDERR
 	 */
-	void captureShow() {
+	protected void captureShow() {
 		if (!(verbose || debug)) {
 			stdout.print("STDOUT ('" + fileName + "'):\n" + Gpr.prependEachLine("\t", captureStdout.toString()));
 			stderr.print("STDERR ('" + fileName + "'):\n" + Gpr.prependEachLine("\t", captureStderr.toString()));
 		}
 	}
 
-	void captureStart() {
+	protected void captureStart() {
 		// Capture STDOUT
 		stdout = System.out; // Store original stdout
 		captureStdout = new ByteArrayOutputStream();
@@ -131,7 +134,7 @@ public class BdsTest {
 	/**
 	 * Stop capturing STDOUT & STDERR (restore original)
 	 */
-	void captureStop() {
+	protected void captureStop() {
 		// Restore STDOUT & STDERR
 		System.setOut(stdout);
 		System.setErr(stderr);
@@ -182,7 +185,7 @@ public class BdsTest {
 	/**
 	 * Check that the program run and finished with a failed exit code
 	 */
-	void checkRunExitCodeFail() {
+	public void checkRunExitCodeFail() {
 		checkCompileOk();
 		checkRunState(RunState.FINISHED);
 		checkExitCode(1);
@@ -191,7 +194,7 @@ public class BdsTest {
 	/**
 	 * Check that the program run and finished OK
 	 */
-	void checkRunOk() {
+	public void checkRunOk() {
 		checkCompileOk();
 		checkRunState(RunState.FINISHED);
 		checkExitCode(0);
@@ -200,7 +203,7 @@ public class BdsTest {
 	/**
 	 * Check that RunState matches ou expectations
 	 */
-	void checkRunState(RunState expectedRunState) {
+	public void checkRunState(RunState expectedRunState) {
 		Assert.assertEquals(errMsg("Expecting rRunState '" + expectedRunState + "', but it was '" + runState + "'") //
 				, expectedRunState //
 				, runState//
@@ -216,10 +219,16 @@ public class BdsTest {
 		checkStdout(expectedStdout, false);
 	}
 
+	/**
+	 * Check that the script's STDOUT includes 'expectedStdout' exactly one time
+	 * (or that it does NOT include it, if 'negate' is set)
+	 * @param expectedStdout
+	 * @param negate
+	 */
 	public void checkStdout(String expectedStdout, boolean negate) {
 		int count = countMatchesStdout(expectedStdout);
 
-		if (negate) Assert.assertFalse(errMsg("Error: NOT expected string '" + expectedStdout + "' in STDOUT not found"), count > 0);
+		if (negate) Assert.assertFalse(errMsg("Error: NOT expected string '" + expectedStdout + "' in STDOUT, but it was found"), count > 0);
 		else {
 			if (count <= 0) {
 				// Not found? Print differences
@@ -254,7 +263,7 @@ public class BdsTest {
 	/**
 	 * Check all variables in the hash
 	 */
-	void checkVariables(Map<String, Object> expectedValues) {
+	public void checkVariables(Map<String, Object> expectedValues) {
 		// Check all values
 		for (String varName : expectedValues.keySet()) {
 			Object expectedValue = expectedValues.get(varName);
@@ -349,6 +358,10 @@ public class BdsTest {
 		return bds.getBdsRun().getScope().getValue(name);
 	}
 
+	public boolean isLog() {
+		return log;
+	}
+
 	/**
 	 * Show differences
 	 */
@@ -356,7 +369,9 @@ public class BdsTest {
 		String[] expoutLines = expout.split("\n");
 		String[] outLines = out.split("\n");
 		for (int i = 0; i < expoutLines.length; i++) {
-			if (!expoutLines[i].equals(outLines[i])) {
+			if (outLines.length <= i) {
+				System.err.println("Line " + i + "\n\tWARNING: Output does not have line number " + i + "\n\t" + expoutLines[i]);
+			} else if (!expoutLines[i].equals(outLines[i])) {
 				System.err.println("Line " + i + "\n\t" + outLines[i] + "\n\t" + expoutLines[i]);
 			}
 		}
@@ -439,6 +454,10 @@ public class BdsTest {
 
 	public void setCoverageMin(double coverageMin) {
 		this.coverageMin = coverageMin;
+	}
+
+	public void setLog(boolean log) {
+		this.log = log;
 	}
 
 	public void setTestCases(boolean testCases) {

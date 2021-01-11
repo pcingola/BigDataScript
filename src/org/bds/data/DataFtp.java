@@ -19,32 +19,34 @@ import org.bds.util.Timer;
  */
 public class DataFtp extends DataRemote {
 
+	private static final long serialVersionUID = 7106541163198536282L;
+
 	public static final long CACHE_TIMEOUT_FTP = 30 * 1000; // Timeout in milliseconds
 
 	protected String hostname;
 
 	public DataFtp(String urlStr) {
-		super();
+		super(urlStr, DataType.FTP);
 		uri = parseUrl(urlStr);
 		hostname = uri.getHost();
 		canWrite = false;
 	}
 
 	public DataFtp(URI uri) {
-		super();
+		super(uri.toString(), DataType.FTP);
 		this.uri = uri;
 		hostname = uri.getHost();
 		canWrite = false;
 	}
 
 	@Override
-	public boolean delete() {
-		throw new RuntimeException("Unimplemented 'delete' operation for FTP data");
+	public void deleteOnExit() {
+		throw new RuntimeException("Unimplemented 'deleteOnExit' operation for FTP data");
 	}
 
 	@Override
-	public void deleteOnExit() {
-		throw new RuntimeException("Unimplemented 'deleteOnExit' operation for FTP data");
+	public boolean deleteRemote() {
+		throw new RuntimeException("Unimplemented 'delete' operation for FTP data");
 	}
 
 	@Override
@@ -135,7 +137,7 @@ public class DataFtp extends DataRemote {
 		}
 
 		// Show information
-		if (debug) Timer.showStdErr("Updated infromation for '" + this + "'"//
+		debug("Updated infromation for '" + this + "'"//
 				+ "\n\tcanRead      : " + canRead //
 				+ "\n\texists       : " + exists //
 				+ "\n\tlast modified: " + lastModified //

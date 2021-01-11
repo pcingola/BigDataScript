@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.bds.data.Data;
-
 /**
  * All BdsThreads are tracked here
  *
@@ -19,21 +17,9 @@ public class BdsThreads {
 
 	private static BdsThreads bdsThreadsInstance = new BdsThreads();
 
+	BdsThread bdsThreadRoot = null;
 	Map<Long, BdsThread> bdsThreadByThreadId = new HashMap<>();
 	Set<BdsThread> bdsThreadDone = new HashSet<>();
-
-	/**
-	 * Get canonical path to file using thread's 'current dir' to de-reference
-	 * relative paths
-	 *
-	 * Warning: When un-serializing a task form a checkpoint, threads are not
-	 *          initialized, thus they are null
-	 */
-	public static Data data(String url) {
-		BdsThread bdsThread = BdsThreads.getInstance().get();
-		if (bdsThread == null) return Data.factory(url);
-		return bdsThread.data(url);
-	}
 
 	/**
 	 * Get singleton
@@ -54,6 +40,7 @@ public class BdsThreads {
 	 */
 	public synchronized void add(BdsThread bdsThread) {
 		long id = Thread.currentThread().getId();
+		if (bdsThreadRoot == null && bdsThread.isRoot()) bdsThreadRoot = bdsThread;
 		bdsThreadByThreadId.put(id, bdsThread);
 	}
 
@@ -63,6 +50,20 @@ public class BdsThreads {
 	public synchronized BdsThread get() {
 		long id = Thread.currentThread().getId();
 		return bdsThreadByThreadId.get(id);
+	}
+
+	/**
+	 * Get current bds thread if found, otherwise return root thread
+	 */
+	public synchronized BdsThread getOrRoot() {
+		long id = Thread.currentThread().getId();
+		BdsThread bdsThread = bdsThreadByThreadId.get(id);
+		if (bdsThread != null) return bdsThread;
+		return bdsThreadRoot;
+	}
+
+	public BdsThread getRoot() {
+		return bdsThreadRoot;
 	}
 
 	/**

@@ -4,11 +4,10 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.run.BdsThread;
 import org.bds.run.BdsThreads;
-import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * Execute a command, collect stdout, stderr and exitValue
@@ -16,11 +15,9 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Exec {
+public class Exec implements BdsLog {
 
 	public static final String USER_DIR = "user.dir";
-
-	public static boolean debug = false;
 
 	boolean quiet;
 	boolean saveLinesInMemory;
@@ -47,7 +44,7 @@ public class Exec {
 
 	protected ExecResult run(List<String> args) {
 		Config conf = Config.get();
-		if (conf.isVerbose() || conf.isDebug() || conf.isLog()) Timer.showStdErr("Executing command. Arguments: " + args);
+		log("Executing command. Arguments: " + args);
 
 		// Create a command string
 		StringBuilder cmdsb = new StringBuilder();
@@ -91,7 +88,7 @@ public class Exec {
 			stdout.join();
 			stderr.join();
 
-			if (debug) Gpr.debug("Exit value: " + exitValue);
+			debug("Exit value: " + exitValue);
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot execute commnads: '" + commands + "'", e);
 		}

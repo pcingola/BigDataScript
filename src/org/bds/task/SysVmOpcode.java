@@ -4,15 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import org.bds.BdsLogger;
 import org.bds.Config;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.ExpressionSys;
-import org.bds.lang.expression.ExpressionTask;
 import org.bds.osCmd.Exec;
 import org.bds.osCmd.ExecResult;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 
 /**
  * Execute a 'sys' VM opcode
@@ -84,7 +84,7 @@ public class SysVmOpcode {
 	}
 
 	/**
-	 * Create a task ID
+	 * Create an ID for 'task', 'dep' or 'sys'
 	 */
 	protected String id(String tag) {
 		String taskName = getTaskName();
@@ -92,7 +92,7 @@ public class SysVmOpcode {
 			if (taskName.isEmpty()) taskName = null;
 			else taskName = Gpr.sanityzeName(taskName); // Make sure that 'taskName' can be used in a filename
 		}
-		return bdsThread.generateId(getBdsNode(), tag, taskName, false, false);
+		return bdsThread.generateId(getBdsNode(), tag, taskName, false, true);
 	}
 
 	protected boolean isNode(BdsNode n) {
@@ -123,7 +123,7 @@ public class SysVmOpcode {
 		int exitValue = execResult.exitValue;
 		if (exitValue != 0) {
 			// Can this execution fail?
-			boolean canFail = bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL);
+			boolean canFail = bdsThread.getBool(GlobalScope.GLOBAL_VAR_TASK_OPTION_CAN_FAIL);
 
 			// Execution failed on a 'sys' command that cannot fail. Save checkpoint and exit
 			if (!canFail) {
@@ -148,7 +148,7 @@ public class SysVmOpcode {
 		// Select file name
 		String sysId = sysId();
 		String programFileName = getSysFileName(sysId);
-		if (Config.get().isDebug()) Timer.showStdErr("Task: Saving file '" + programFileName + "'");
+		BdsLogger.debug("Task: Saving file '" + programFileName + "'");
 
 		// Create dir
 		try {

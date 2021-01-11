@@ -1,20 +1,18 @@
 package org.bds.cluster.host;
 
+import org.bds.BdsLog;
 import org.bds.cluster.ClusterSsh;
 import org.bds.cluster.commandParser.CommandParser;
 import org.bds.cluster.commandParser.CommandParserCpuInfo;
 import org.bds.cluster.commandParser.CommandParserSystemProfiler;
 import org.bds.cluster.commandParser.CommandParserUname;
-import org.bds.util.Gpr;
 
 /**
  * Update host's info every now and then (in a separate thread)
  *
  * @author pcingola
  */
-public class HostHealthUpdater extends Thread {
-
-	public static boolean debug = false;
+public class HostHealthUpdater extends Thread implements BdsLog {
 
 	HostSsh host;
 	boolean run = true;
@@ -29,7 +27,7 @@ public class HostHealthUpdater extends Thread {
 	 * Connect to host (via ssh) and execute several commands in order to obtain host's information
 	 */
 	void info() {
-		if (debug) Gpr.debug("Info\tHost: " + host);
+		debug("Info\tHost: " + host);
 
 		// Information that is obtained only once
 		new CommandParserUname(host).parse(false); // System type
@@ -60,7 +58,7 @@ public class HostHealthUpdater extends Thread {
 
 				// I'd rather sleep this way in order to allow for notifications (i.e. 'wake up call')
 				synchronized (this) {
-					ClusterSsh cluster = (ClusterSsh) host.getCluster();
+					ClusterSsh cluster = (ClusterSsh) host.getSystem();
 					wait(cluster.getRefreshTime() * 1000);
 				}
 			}
@@ -83,7 +81,7 @@ public class HostHealthUpdater extends Thread {
 		// We don't have system info yet?
 		if (systemType == null) return;
 
-		if (debug) Gpr.debug("Update: Start\tHost: " + host + "\talive: " + host.getHealth().isAlive());
+		debug("Update Start: host: " + host + ", alive: " + host.getHealth().isAlive());
 
 		// Select which command parsers to run depending on system type
 		CommandParser commandParser = null;
@@ -94,12 +92,12 @@ public class HostHealthUpdater extends Thread {
 		// Run command parser (updates host health)
 		commandParser.parse();
 
-		if (debug) Gpr.debug("Host info updated: " + host //
+		debug("Host info updated: " + host //
 				+ "\nResources: " + host.getResources() //
 				+ "\nHeath:\n" + host.getHealth() //
 				+ "\nCondition: " + host.getHealth().condition() //
-				);
+		);
 
-		if (debug) Gpr.debug("Update: End\tHost: " + host + "\talive: " + host.getHealth().isAlive());
+		debug("Update End: host: " + host + ", alive: " + host.getHealth().isAlive());
 	}
 }

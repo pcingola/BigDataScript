@@ -2,22 +2,21 @@ package org.bds.cluster.commandParser;
 
 import java.util.ArrayList;
 
+import org.bds.BdsLog;
 import org.bds.cluster.host.HostSsh;
 import org.bds.osCmd.Ssh;
-import org.bds.util.Gpr;
 
 /**
- * A generic command parser 
+ * A generic command parser
  * This is a class that is used to send commands and parse responses from hosts
- * 
+ *
  * @author pcingola@mcgill.ca
  */
-public class CommandParser {
+public class CommandParser implements BdsLog {
 
 	public static int MAX_DETAILS_LINES = 20;
 	public static int MAX_LINE_LEN = 80;
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
-	public static boolean debug = false;
 
 	HostSsh host;
 	Ssh ssh;
@@ -26,7 +25,7 @@ public class CommandParser {
 	public CommandParser(HostSsh host, String cmd) {
 		this.host = host;
 		this.cmd = createCmd(cmd);
-		if (debug) Gpr.debug("cmd=" + this.cmd);
+		debug("Commnd to parse: " + this.cmd);
 	}
 
 	/**
@@ -56,7 +55,7 @@ public class CommandParser {
 			//---
 			Ssh ssh = new Ssh(host);
 			String result = ssh.exec(cmd);
-			if (debug) Gpr.debug("\n---------- RESULT:Start ----------\n" + result + "---------- RESULT:End ----------");
+			debug("\n---------- RESULT:Start ----------\n" + result + "---------- RESULT:End ----------");
 
 			// Parse results (if any)
 			if ((result != null) && (result.length() > 0)) {
@@ -88,7 +87,7 @@ public class CommandParser {
 				// We were able to connect and got some results, so probably the host is alive.
 				if (updateAlive) host.getHealth().setAlive(true);
 			} else {
-				if (debug) Gpr.debug("Error trying to connect: Empty result string");
+				debug("Error trying to connect: Empty result string");
 				// Could not connect
 				host.getHealth().setAlive(false);
 			}
@@ -97,7 +96,7 @@ public class CommandParser {
 			String key = this.getClass().getSimpleName().substring("CommandParser".length()); // Command parser name (minus the 'CommandParser' prefix)
 			host.getHealth().setNote(key, result);
 		} catch (Exception e) {
-			if (debug) Gpr.debug("Error trying to connect:\n" + e);
+			error("Error trying to connect:\n" + e);
 			// Could not connect
 			host.getHealth().setAlive(false);
 		}
@@ -128,7 +127,7 @@ public class CommandParser {
 		else throw new RuntimeException("Unknown parser for command '" + command + "'");
 
 		// Parse
-		if (debug) Gpr.debug("Parsing: " + command);
+		debug("Parsing: " + command);
 		cp.parse(cmdResult);
 	}
 }

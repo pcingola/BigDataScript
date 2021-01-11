@@ -1,0 +1,18 @@
+
+include 'aws_util'
+
+println "Before"
+
+out := "$s3base/out.txt"
+println "Output file: '$out'"
+
+task(system := 'aws', detached := true) {
+	sys echo HI
+	sys date > tmp.txt
+	sys aws s3 cp tmp.txt "$out"
+	sys for i in `seq 60`; do echo "count: \$i"; sleep 1; done
+	sys echo BYE
+}
+println "After"
+wait
+println "Done"

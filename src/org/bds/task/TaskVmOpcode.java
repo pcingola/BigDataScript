@@ -2,15 +2,18 @@ package org.bds.task;
 
 import java.util.HashMap;
 
+import org.bds.cluster.host.TaskResources;
 import org.bds.data.Data;
 import org.bds.data.DataRemote;
 import org.bds.executioner.Executioner;
 import org.bds.executioner.Executioners;
+import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.lang.BdsNode;
 import org.bds.lang.expression.ExpressionTask;
 import org.bds.lang.value.Value;
 import org.bds.lang.value.ValueList;
 import org.bds.run.BdsThread;
+import org.bds.scope.GlobalScope;
 
 /**
  * Execute a 'task' VM opcode
@@ -32,8 +35,8 @@ public class TaskVmOpcode extends SysVmOpcode {
 	 */
 	public static void execute(BdsThread bdsThread, Task task) {
 		// Select executioner and queue for execution
-		String runSystem = bdsThread.getString(ExpressionTask.TASK_OPTION_SYSTEM);
-		Executioner executioner = Executioners.getInstance().get(runSystem);
+		String runSystem = bdsThread.getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_SYSTEM);
+		Executioner executioner = Executioners.getInstance().get(runSystem, bdsThread);
 		task.execute(bdsThread, executioner); // Execute task
 	}
 
@@ -55,12 +58,11 @@ public class TaskVmOpcode extends SysVmOpcode {
 			// We need to create the appropriate 'download' commands
 			//---
 			if (taskDependency.getInputs() != null) {
-				for (String in : taskDependency.getInputs()) {
-					Data dataIn = Data.factory(in);
+				for (Data dataIn : taskDependency.getInputs()) {
 					if (dataIn.isRemote()) {
-						String uriStr = dataIn.toString();
+						String uriStr = dataIn.getUrlOri();
 						sbDown.append(ExpressionTask.CMD_DOWNLOAD //
-								+ " \"" + uriStr + "\"" //
+								+ " \"" + dataIn.url() + "\"" //
 								+ " \"" + dataIn.getLocalPath() + "\"" //
 								+ "\n");
 
@@ -74,13 +76,12 @@ public class TaskVmOpcode extends SysVmOpcode {
 			// We need to create the appropriate 'upload' commands
 			//---
 			if (taskDependency.getOutputs() != null) {
-				for (String out : taskDependency.getOutputs()) {
-					Data dataOut = Data.factory(out);
+				for (Data dataOut : taskDependency.getOutputs()) {
 					if (dataOut.isRemote()) {
-						String uriStr = dataOut.toString();
+						String uriStr = dataOut.getUrlOri();
 						sbUp.append(ExpressionTask.CMD_UPLOAD //
 								+ " \"" + dataOut.getLocalPath() + "\"" //
-								+ " \"" + uriStr + "\"" //
+								+ " \"" + dataOut.url() + "\"" //
 								+ "\n");
 
 						replace.put(uriStr, dataOut.getLocalPath());
@@ -138,21 +139,20 @@ public class TaskVmOpcode extends SysVmOpcode {
 
 		// Set task options
 		task.setTaskName(getTaskName());
-		task.setAllowEmpty(bdsThread.getBool(ExpressionTask.TASK_OPTION_ALLOW_EMPTY));
-		task.setCanFail(bdsThread.getBool(ExpressionTask.TASK_OPTION_CAN_FAIL));
+		task.setAllowEmpty(bdsThread.getBool(GlobalScope.GLOBAL_VAR_TASK_OPTION_ALLOW_EMPTY));
+		task.setCanFail(bdsThread.getBool(GlobalScope.GLOBAL_VAR_TASK_OPTION_CAN_FAIL));
 		task.setCurrentDir(bdsThread.getCurrentDir());
-		task.setNode(bdsThread.getString(ExpressionTask.TASK_OPTION_NODE));
-		task.setQueue(bdsThread.getString(ExpressionTask.TASK_OPTION_QUEUE));
-		task.setMaxFailCount((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
-
-		boolean detached = bdsThread.getBool(ExpressionTask.TASK_OPTION_DETACHED);
-		task.setDetached(detached);
+		task.setNode(bdsThread.getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_NODE));
+		task.setMaxFailCount((int) bdsThread.getInt(GlobalScope.GLOBAL_VAR_TASK_OPTION_RETRY) + 1); // Note: Max fail count is the number of retries plus one (we always run at least once)
+		task.setDetached(bdsThread.getBool(GlobalScope.GLOBAL_VAR_TASK_OPTION_DETACHED));
 
 		// Set task options: Resources
-		task.getResources().setCpus((int) bdsThread.getInt(ExpressionTask.TASK_OPTION_CPUS));
-		task.getResources().setMem(bdsThread.getInt(ExpressionTask.TASK_OPTION_MEM));
-		task.getResources().setWallTimeout(bdsThread.getInt(ExpressionTask.TASK_OPTION_WALL_TIMEOUT));
-		task.getResources().setTimeout(bdsThread.getInt(ExpressionTask.TASK_OPTION_TIMEOUT));
+		String runSystem = bdsThread.getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_SYSTEM);
+		ExecutionerType exType = ExecutionerType.parseSafe(runSystem);
+		TaskResources res = TaskResources.factory(exType);
+		res.setFromBdsThread(bdsThread);
+		task.setResources(res);
+
 		if (taskDependency != null) task.setTaskDependency(taskDependency);
 
 		return task;
@@ -182,7 +182,7 @@ public class TaskVmOpcode extends SysVmOpcode {
 
 	@Override
 	protected String getTaskName() {
-		return bdsThread.hasVariable(ExpressionTask.TASK_OPTION_TASKNAME) ? bdsThread.getString(ExpressionTask.TASK_OPTION_TASKNAME) : null;
+		return bdsThread.hasVariable(GlobalScope.GLOBAL_VAR_TASK_OPTION_TASKNAME) ? bdsThread.getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_TASKNAME) : null;
 	}
 
 	@Override

@@ -15,9 +15,9 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-import org.bds.Config;
+import org.bds.BdsLog;
+import org.bds.BdsLogger;
 import org.bds.util.Gpr;
-import org.bds.util.Timer;
 import org.bds.util.Tuple;
 
 /**
@@ -27,7 +27,7 @@ import org.bds.util.Tuple;
  * @author pcingola
  *
  */
-public class FtpConnectionFactory extends TimerTask {
+public class FtpConnectionFactory extends TimerTask implements BdsLog {
 
 	public static boolean verbose = false;
 	public static boolean debug = false;
@@ -50,8 +50,7 @@ public class FtpConnectionFactory extends TimerTask {
 	 */
 	public static FtpConnectionFactory get() {
 		if (instance == null) {
-			debug = Config.get().isDebug();
-			if (debug) Gpr.debug("Creating new FtpConnectionFactory instance");
+			BdsLogger.debug("Creating new FtpConnectionFactory instance");
 			instance = new FtpConnectionFactory();
 			// Initialize a timer thread to periodically review connections
 			timer = new java.util.Timer(instance.getClass().getName());
@@ -64,7 +63,7 @@ public class FtpConnectionFactory extends TimerTask {
 	 * Kill instance
 	 */
 	public static void kill() {
-		if (debug) Gpr.debug("Killing FtpConnectionFactory timer");
+		BdsLogger.debug("Killing FtpConnectionFactory timer");
 		if (instance != null) instance.running = false;
 		if (timer != null) timer.cancel();
 		timer = null;
@@ -81,7 +80,7 @@ public class FtpConnectionFactory extends TimerTask {
 	 * Close a connection
 	 */
 	public void close(String key) {
-		if (debug) Gpr.debug("FtpConnectionFactory: Closing connection '" + key + "'");
+		debug("FtpConnectionFactory: Closing connection '" + key + "'");
 		FTPClient ftp = delete(key);
 		if (ftp != null) disconnect(ftp, key);
 	}
@@ -92,7 +91,7 @@ public class FtpConnectionFactory extends TimerTask {
 	private void connect(FTPClient ftp, URI uri, String key) {
 		synchronized (ftp) {
 			if (ftp.isConnected()) return;
-			if (debug) Gpr.debug("FtpConnectionFactory: Connecting to '" + key + "'");
+			debug("FtpConnectionFactory: Connecting to '" + key + "'");
 
 			// Configure
 			FTPClientConfig config = new FTPClientConfig();
@@ -101,7 +100,7 @@ public class FtpConnectionFactory extends TimerTask {
 
 			// Connect
 			try {
-				if (verbose) Timer.showStdErr("Connecting to '" + key + "'");
+				log("Connecting to '" + key + "'");
 				ftp.connect(uri.getHost());
 				// After connection attempt, you should check the reply code to verify success.
 				int reply = ftp.getReplyCode();
@@ -109,12 +108,12 @@ public class FtpConnectionFactory extends TimerTask {
 				if (!FTPReply.isPositiveCompletion(reply)) {
 					ftp.disconnect();
 					String msg = "FTP Connection error, host '" + key + "', reply code '" + reply + "'";
-					Timer.showStdErr(msg);
+					error(msg);
 					throw new RuntimeException(msg);
 				}
 			} catch (Exception e) {
 				String msg = "ERROR while connecting to '" + key + "'";
-				Timer.showStdErr(msg);
+				error(msg);
 				throw new RuntimeException(msg, e);
 			}
 
@@ -124,7 +123,7 @@ public class FtpConnectionFactory extends TimerTask {
 				ftp.login(userPass.first, userPass.second);
 			} catch (IOException e) {
 				String msg = "ERROR while logging into server '" + key + "'";
-				Timer.showStdErr(msg);
+				error(msg);
 				throw new RuntimeException(msg, e);
 			}
 
@@ -134,11 +133,11 @@ public class FtpConnectionFactory extends TimerTask {
 				ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 			} catch (IOException e) {
 				String msg = "Unable to set FTP transfer to binary mode for host '" + key + "'";
-				Timer.showStdErr(msg);
+				error(msg);
 				throw new RuntimeException(msg, e);
 			}
 		}
-		if (debug) Gpr.debug("FtpConnectionFactory: Connected to '" + key + "'");
+		debug("FtpConnectionFactory: Connected to '" + key + "'");
 	}
 
 	/**
@@ -146,7 +145,7 @@ public class FtpConnectionFactory extends TimerTask {
 	 * @return Deleted FTPClient
 	 */
 	private synchronized FTPClient delete(String key) {
-		if (debug) Gpr.debug("FtpConnectionFactory: deleting key '" + key + "'");
+		debug("FtpConnectionFactory: deleting key '" + key + "'");
 		FTPClient ftp = ftpClientByKey.remove(key);
 		latestUsage.remove(key);
 		return ftp;
@@ -198,7 +197,7 @@ public class FtpConnectionFactory extends TimerTask {
 	private synchronized FTPClient getOrCreateFtpClient(String key) {
 		FTPClient ftp = ftpClientByKey.get(key);
 		if (ftp == null) {
-			if (debug) Gpr.debug("FtpConnectionFactory: Creating FTP client for key '" + key + "'");
+			debug("FtpConnectionFactory: Creating FTP client for key '" + key + "'");
 			ftp = new FTPClient();
 			ftpClientByKey.put(key, ftp);
 		}
@@ -240,7 +239,7 @@ public class FtpConnectionFactory extends TimerTask {
 				return ftp.listFiles(uri.getPath());
 			} catch (IOException e) {
 				String msg = "Error reading remote directory '" + uri + "'";
-				Timer.showStdErr(msg);
+				error(msg);
 				throw new RuntimeException(msg, e);
 			}
 		}
@@ -252,7 +251,7 @@ public class FtpConnectionFactory extends TimerTask {
 	 */
 	private FTPClient open(URI uri) {
 		String key = key(uri);
-		if (debug) Gpr.debug("FtpConnectionFactory: Open FTP client '" + key + "'");
+		debug("FtpConnectionFactory: Open FTP client '" + key + "'");
 		FTPClient ftp = getOrCreateFtpClient(key);
 		connect(ftp, uri, key);
 		update(key);
@@ -269,7 +268,7 @@ public class FtpConnectionFactory extends TimerTask {
 				output = new FileOutputStream(localFileName);
 			} catch (FileNotFoundException e1) {
 				String msg = "Error opening local file '" + localFileName + "'";
-				Timer.showStdErr(msg);
+				error(msg);
 				return false;
 			}
 
@@ -278,14 +277,14 @@ public class FtpConnectionFactory extends TimerTask {
 				ftp.retrieveFile(remotePath, output);
 			} catch (IOException e) {
 				String msg = "Error downloading file  from '" + uri + "'";
-				Timer.showStdErr(msg);
+				error(msg);
 				return false;
 			} finally {
 				try {
 					output.close();
 				} catch (IOException e) {
 					String msg = "Error closing file '" + localFileName + "'";
-					Timer.showStdErr(msg);
+					error(msg);
 					return false;
 				}
 			}
@@ -298,11 +297,11 @@ public class FtpConnectionFactory extends TimerTask {
 	 */
 	@Override
 	public void run() {
-		if (debug) Gpr.debug("FtpConnectionFactory cleanup");
+		debug("FtpConnectionFactory cleanup");
 
 		for (String key : ftpClientByKey.keySet()) {
 			if (!running) {
-				if (debug) Gpr.debug("FtpConnectionFactory killed: Abort cleanup loop (run)");
+				debug("FtpConnectionFactory killed: Abort cleanup loop (run)");
 				return;
 			}
 
@@ -312,7 +311,7 @@ public class FtpConnectionFactory extends TimerTask {
 
 		// If there are no further connections, this thread can be killed
 		if (ftpClientByKey.isEmpty()) {
-			if (debug) Gpr.debug("FtpConnectionFactory: No more ftp clients, killing timer task");
+			debug("FtpConnectionFactory: No more ftp clients, killing timer task");
 			kill();
 		}
 	}

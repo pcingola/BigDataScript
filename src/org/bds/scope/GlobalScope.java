@@ -6,7 +6,7 @@ import java.io.ObjectStreamException;
 import java.util.Map;
 
 import org.bds.Config;
-import org.bds.lang.expression.ExpressionTask;
+import org.bds.executioner.ExecutionerCloud;
 import org.bds.lang.type.TypeList;
 import org.bds.lang.type.Types;
 import org.bds.lang.value.Value;
@@ -18,6 +18,7 @@ public class GlobalScope extends Scope {
 
 	private static final long serialVersionUID = 2390988552900770372L;
 
+	// Global variable names: Units and constants
 	public static final String GLOBAL_VAR_K = "K"; // Kilo = 2^10
 	public static final String GLOBAL_VAR_M = "M"; // Mega = 2^20
 	public static final String GLOBAL_VAR_G = "G"; // Giga = 2^30
@@ -31,13 +32,33 @@ public class GlobalScope extends Scope {
 	public static final String GLOBAL_VAR_WEEK = "week";
 	public static final String GLOBAL_VAR_LOCAL_CPUS = "cpusLocal";
 
-	// Command line arguments are available in this list
+	// Global variable names: Command line arguments are available in this list
 	public static final String GLOBAL_VAR_ARGS_LIST = "args";
 
-	// Program name
+	// Global variable names: Program name, path, pid
 	public static final String GLOBAL_VAR_PROGRAM_NAME = "programName";
 	public static final String GLOBAL_VAR_PROGRAM_PATH = "programPath";
 	public static final String GLOBAL_VAR_PROGRAM_PID = "programPid";
+
+	// Global variable names: Task options
+	public static final String GLOBAL_VAR_TASK_OPTION_ALLOW_EMPTY = "allowEmpty";
+	public static final String GLOBAL_VAR_TASK_OPTION_CAN_FAIL = "canFail";
+	public static final String GLOBAL_VAR_TASK_OPTION_CPUS = "cpus";
+	public static final String GLOBAL_VAR_TASK_OPTION_DETACHED = "detached";
+	public static final String GLOBAL_VAR_TASK_OPTION_MEM = "mem";
+	public static final String GLOBAL_VAR_TASK_OPTION_NODE = "node";
+	public static final String GLOBAL_VAR_TASK_OPTION_PHYSICAL_PATH = "ppwd";
+	public static final String GLOBAL_VAR_TASK_OPTION_QUEUE = "queue";
+	public static final String GLOBAL_VAR_TASK_OPTION_RETRY = "retry";
+	public static final String GLOBAL_VAR_TASK_OPTION_SYSTEM = "system";
+	public static final String GLOBAL_VAR_TASK_OPTION_TASKNAME = "taskName";
+	public static final String GLOBAL_VAR_TASK_OPTION_TIMEOUT = "timeout";
+	public static final String GLOBAL_VAR_TASK_OPTION_WALL_TIMEOUT = "walltimeout";
+	public static final String GLOBAL_VAR_TASK_OPTION_RESOURCES = "taskResources";
+
+	// Global variable names: Cloud AWS
+	public static final String GLOBAL_VAR_AWS_REGION = "awsRegion";
+	public static final String GLOBAL_VAR_EXECUTIONER_QUEUE_NAME_PREFIX = "cloudQueueNamePrefix";
 
 	// Global scope
 	private static GlobalScope globalScope = new GlobalScope();
@@ -116,28 +137,32 @@ public class GlobalScope extends Scope {
 		add(GLOBAL_VAR_LOCAL_CPUS, cpusLocal);
 
 		// Task CPUs
-		String cpusStr = config.getString(ExpressionTask.TASK_OPTION_CPUS, "1"); // Default number of cpus: 1
+		String cpusStr = config.getString(GLOBAL_VAR_TASK_OPTION_CPUS, "1"); // Default number of cpus: 1
 		long cpus = Gpr.parseIntSafe(cpusStr);
 		if (cpus <= 0) throw new RuntimeException("Number of cpus must be a positive number ('" + cpusStr + "')");
 
 		// Task memory
-		long mem = Gpr.parseMemSafe(config.getString(ExpressionTask.TASK_OPTION_MEM, "-1")); // Default amount of memory: -1 (unrestricted)
-		String node = config.getString(ExpressionTask.TASK_OPTION_NODE, "");
+		long mem = Gpr.parseMemSafe(config.getString(GLOBAL_VAR_TASK_OPTION_MEM, "-1")); // Default amount of memory: -1 (unrestricted)
+		String node = config.getString(GLOBAL_VAR_TASK_OPTION_NODE, "");
 
 		// Task wall time and timeout
 		long oneDay = 1L * 24 * 60 * 60;
-		long timeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_TIMEOUT, "" + oneDay));
-		long wallTimeout = Gpr.parseLongSafe(config.getString(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
+		long timeout = Gpr.parseLongSafe(config.getString(GLOBAL_VAR_TASK_OPTION_TIMEOUT, "" + oneDay));
+		long wallTimeout = Gpr.parseLongSafe(config.getString(GLOBAL_VAR_TASK_OPTION_WALL_TIMEOUT, "" + oneDay));
 
 		// Task related variables: Default values
-		add(ExpressionTask.TASK_OPTION_ALLOW_EMPTY, false); // Tasks are allowed to have empty output file/s
-		add(ExpressionTask.TASK_OPTION_CAN_FAIL, false); // Task fail triggers checkpoint & exit (a task cannot fail)
-		add(ExpressionTask.TASK_OPTION_CPUS, cpus); // Default number of cpus
-		add(ExpressionTask.TASK_OPTION_DETACHED, false); // Tasks are running detached
-		add(ExpressionTask.TASK_OPTION_MEM, mem); // Default amount of memory (unrestricted)
-		add(ExpressionTask.TASK_OPTION_NODE, node); // Default node: none
-		add(ExpressionTask.TASK_OPTION_TIMEOUT, timeout); // Task default timeout
-		add(ExpressionTask.TASK_OPTION_WALL_TIMEOUT, wallTimeout); // Task default wall-timeout
+		add(GLOBAL_VAR_TASK_OPTION_ALLOW_EMPTY, false); // Tasks are allowed to have empty output file/s
+		add(GLOBAL_VAR_TASK_OPTION_CAN_FAIL, false); // Task fail triggers checkpoint & exit (a task cannot fail)
+		add(GLOBAL_VAR_TASK_OPTION_CPUS, cpus); // Default number of cpus
+		add(GLOBAL_VAR_TASK_OPTION_DETACHED, false); // Tasks are running detached
+		add(GLOBAL_VAR_TASK_OPTION_MEM, mem); // Default amount of memory (unrestricted)
+		add(GLOBAL_VAR_TASK_OPTION_NODE, node); // Default node: none
+		add(GLOBAL_VAR_TASK_OPTION_TIMEOUT, timeout); // Task default timeout
+		add(GLOBAL_VAR_TASK_OPTION_WALL_TIMEOUT, wallTimeout); // Task default wall-timeout
+
+		// Cloud AWS
+		add(GLOBAL_VAR_EXECUTIONER_QUEUE_NAME_PREFIX, ExecutionerCloud.EXECUTIONER_QUEUE_NAME_PREFIX_DEFAULT); // Default prefix for cloud queue names
+		add(GLOBAL_VAR_AWS_REGION, ""); // Default AWS region. Empty means that it would use default from AWS SDK (typically "$HOME/.aws/config" and "$HOME/.aws/credentials"
 	}
 
 	/**
@@ -170,9 +195,9 @@ public class GlobalScope extends Scope {
 
 		// Add global symbols
 		// Get default values from command line or config file
-		add(ExpressionTask.TASK_OPTION_SYSTEM, config.getSystem()); // System type: "local", "ssh", "cluster", "aws", etc.
-		add(ExpressionTask.TASK_OPTION_QUEUE, config.getQueue()); // Default queue: none
-		add(ExpressionTask.TASK_OPTION_RETRY, (long) config.getTaskFailCount()); // Task fail can be re-tried (re-run) N times before considering failed.
+		add(GLOBAL_VAR_TASK_OPTION_SYSTEM, config.getSystem()); // System type: "local", "ssh", "cluster", "aws", etc.
+		add(GLOBAL_VAR_TASK_OPTION_QUEUE, config.getQueue()); // Default queue: none
+		add(GLOBAL_VAR_TASK_OPTION_RETRY, (long) config.getTaskFailCount()); // Task fail can be re-tried (re-run) N times before considering failed.
 
 		// Set "physical" path
 		String path;
@@ -181,7 +206,7 @@ public class GlobalScope extends Scope {
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot get cannonical path for current dir");
 		}
-		globalScope.add(ExpressionTask.TASK_OPTION_PHYSICAL_PATH, path);
+		globalScope.add(GLOBAL_VAR_TASK_OPTION_PHYSICAL_PATH, path);
 
 		// Set all environment variables
 		Map<String, String> envMap = System.getenv();

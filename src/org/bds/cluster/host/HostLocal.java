@@ -2,7 +2,7 @@ package org.bds.cluster.host;
 
 import java.lang.management.ManagementFactory;
 
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 import org.bds.util.Gpr;
 
 import com.sun.management.OperatingSystemMXBean;
@@ -14,8 +14,8 @@ import com.sun.management.OperatingSystemMXBean;
  */
 public class HostLocal extends Host {
 
-	public HostLocal(Cluster cluster) {
-		super(cluster, "localhost");
+	public HostLocal(ComputerSystem system) {
+		super(system, "localhost");
 
 		resources.setCpus(Gpr.NUM_CORES);
 		resources.setMem(mem());

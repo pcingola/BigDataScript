@@ -1,0 +1,19 @@
+#!/usr/bin/env bds
+
+# This task has no output file
+t1 := dep(cpu := 1) {
+	sys echo DEP_1
+}
+
+# Also no output
+t2 := dep([] <- t1) {
+    sys echo DEP_2 
+}
+
+# Also no output
+t3 := dep([] <- t2) {
+    sys echo DEP_3 
+}
+
+# Goal on
+goal t3

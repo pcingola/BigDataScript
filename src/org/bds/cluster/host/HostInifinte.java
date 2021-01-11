@@ -1,6 +1,6 @@
 package org.bds.cluster.host;
 
-import org.bds.cluster.Cluster;
+import org.bds.cluster.ComputerSystem;
 
 /**
  * A host with infinite capacity
@@ -9,8 +9,8 @@ import org.bds.cluster.Cluster;
  */
 public class HostInifinte extends Host {
 
-	public HostInifinte(Cluster cluster) {
-		super(cluster, "localhost");
+	public HostInifinte(ComputerSystem system) {
+		super(system, "localhost");
 		resources = new HostResourcesInf();
 	}
 

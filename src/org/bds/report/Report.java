@@ -8,9 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bds.Bds;
+import org.bds.BdsLog;
 import org.bds.Config;
-import org.bds.cluster.host.HostResources;
-import org.bds.lang.expression.ExpressionTask;
+import org.bds.cluster.host.Resources;
+import org.bds.data.Data;
 import org.bds.lang.statement.Statement;
 import org.bds.lang.value.Value;
 import org.bds.run.BdsThread;
@@ -29,7 +30,7 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Report {
+public class Report implements BdsLog {
 
 	public static String DAG_TEMPLATE = "DagTaskTemplate.js";
 	public static final String DATE_FORMAT_CSV = "yyyy,MM,dd,HH,mm,ss";
@@ -46,6 +47,13 @@ public class Report {
 	public static final String REPORT_YELLOW_COLOR = "style=\"background-color: #fdff96\"";
 
 	protected static Timer timerReport = new Timer(); // Report timer (added by Jin Lee)
+
+	BdsThread bdsThread;
+
+	boolean debug;
+	Map<String, BdsThread> taskId2BdsThread;
+	boolean verbose;
+	boolean yaml;
 
 	/**
 	 * Check if this is a good time to create a report
@@ -68,13 +76,6 @@ public class Report {
 		}
 	}
 
-	BdsThread bdsThread;
-	boolean debug;
-	Map<String, BdsThread> taskId2BdsThread;
-	boolean verbose;
-
-	boolean yaml;
-
 	public Report(BdsThread bdsThread, boolean yaml) {
 		if (!bdsThread.isRoot()) throw new RuntimeException("Cannot create report from non-root bdsThread");
 
@@ -88,12 +89,12 @@ public class Report {
 	 * Create an HTML report (after execution finished)
 	 */
 	public void createReport() {
-		if (debug) Gpr.debug("CreateReport: Start");
+		debug("CreateReport: Start");
 
 		String bdsThreadId = bdsThread.getBdsThreadId();
 
 		if (!bdsThread.anyTask()) {
-			if (verbose) Timer.showStdErr("No tasks run: Report file not created for '" + bdsThreadId + "'.");
+			log("No tasks run: Report file not created for '" + bdsThreadId + "'.");
 			return;
 		}
 
@@ -105,7 +106,7 @@ public class Report {
 		String outFile = reportBaseName + ".report." + (yaml ? "yaml" : "html");
 		bdsThread.setReportFile(outFile);
 		String dagJsFile = reportBaseName + ".dag.js";
-		if (verbose) Timer.showStdErr("Writing report file '" + outFile + "'");
+		log("Writing report file '" + outFile + "'");
 
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
 
@@ -158,8 +159,8 @@ public class Report {
 		//---
 		Scope scope = bdsThread.getScope();
 		rTemplate.add("scope.VAR_ARGS_LIST", scope.getValue(GlobalScope.GLOBAL_VAR_ARGS_LIST));
-		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getValue(ExpressionTask.TASK_OPTION_SYSTEM));
-		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getValue(ExpressionTask.TASK_OPTION_CPUS));
+		rTemplate.add("scope.TASK_OPTION_SYSTEM", scope.getValue(GlobalScope.GLOBAL_VAR_TASK_OPTION_SYSTEM));
+		rTemplate.add("scope.TASK_OPTION_CPUS", scope.getValue(GlobalScope.GLOBAL_VAR_TASK_OPTION_CPUS));
 
 		// Scope symbols
 		ArrayList<String> names = new ArrayList<>();
@@ -187,14 +188,14 @@ public class Report {
 		// Create DAG script
 		if (!yaml) createTaskDag(dagJsFile);
 
-		if (debug) Gpr.debug("CreateReport: End");
+		debug("CreateReport: End");
 	}
 
 	/**
 	 * Add thread information to report
 	 */
 	void createReport(RTemplate rTemplate, BdsThread bdsThread) {
-		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': Start");
+		debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': Start");
 
 		// ID and parent
 		String thisId = bdsThread.getBdsThreadId();
@@ -228,14 +229,14 @@ public class Report {
 		for (BdsThread bdsThreadChild : bdsThread.getBdsThreads())
 			createReport(rTemplate, bdsThreadChild);
 
-		if (debug) Gpr.debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': End");
+		debug("CreateReport BdsThreadId '" + bdsThread.getBdsThreadId() + "': End");
 	}
 
 	/**
 	 * Create map with task details
 	 */
 	void createReport(RTemplate rTemplate, Task task, int taskNum, boolean yaml) {
-		if (debug) Gpr.debug("CreateReport Task '" + task.getId() + "': Start");
+		debug("CreateReport Task '" + task.getId() + "': Start");
 
 		BdsThread bdsTh = taskId2BdsThread.get(task.getId());
 		SimpleDateFormat outFormat = new SimpleDateFormat(DATE_FORMAT_HTML);
@@ -322,7 +323,7 @@ public class Report {
 		// Input files
 		StringBuilder sbinf = new StringBuilder();
 		if (task.getInputs() != null) {
-			for (String inFile : task.getInputs())
+			for (Data inFile : task.getInputs())
 				sbinf.append(inFile + "\n");
 		}
 		rTemplate.add("taskInFiles", multilineString(null, sbinf.toString(), yaml));
@@ -330,14 +331,14 @@ public class Report {
 		// Output files
 		StringBuilder sboutf = new StringBuilder();
 		if (task.getOutputs() != null) {
-			for (String outf : task.getOutputs())
+			for (Data outf : task.getOutputs())
 				sboutf.append(outf + "\n");
 		}
 		rTemplate.add("taskOutFiles", multilineString(null, sboutf.toString(), yaml));
 
 		// Task resources
 		if (task.getResources() != null) {
-			HostResources hr = task.getResources();
+			Resources hr = task.getResources();
 			rTemplate.add("taskResources", multilineString(null, hr.toStringMultiline(), yaml));
 			rTemplate.add("taskTimeout", Timer.toDDHHMMSS(hr.getTimeout() * 1000));
 			rTemplate.add("taskWallTimeout", Timer.toDDHHMMSS(hr.getWallTimeout() * 1000));
@@ -366,14 +367,14 @@ public class Report {
 			}
 		}
 
-		if (debug) Gpr.debug("CreateReport Task '" + task.getId() + "': End");
+		debug("CreateReport Task '" + task.getId() + "': End");
 	}
 
 	/**
 	 * Create a DAG showing all tasks
 	 */
 	void createTaskDag(String dagJsFile) {
-		if (debug) Timer.showStdErr("Creating DAG summary script '" + dagJsFile + "'");
+		debug("Creating DAG summary script '" + dagJsFile + "'");
 
 		// Create a template
 		RTemplate rTemplate = new RTemplate(Bds.class, DAG_TEMPLATE, dagJsFile);
@@ -422,6 +423,16 @@ public class Report {
 		Date start = new Date();
 		start.setTime(start.getTime() - 2 * 1000 * REPORT_TIME);
 		timerReport.setStart(start);
+	}
+
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 
 	/**

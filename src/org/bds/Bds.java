@@ -10,12 +10,12 @@ import org.bds.util.Gpr;
  *
  * @author pcingola
  */
-public class Bds {
+public class Bds implements BdsLog {
 
 	public static final String BUILD = Gpr.compileTimeStamp(Bds.class);
-	public static final String REVISION = "g";
+	public static final String REVISION = "";
 	public static final String SOFTWARE_NAME = Bds.class.getSimpleName();
-	public static final String VERSION_MAJOR = "2.2";
+	public static final String VERSION_MAJOR = "3.0";
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 
@@ -101,18 +101,18 @@ public class Bds {
 
 		// Sanity checks
 		if (!remote.isRemote()) {
-			System.err.println("Cannot download non-remote URL: " + url);
+			error("Cannot download non-remote URL: " + url);
 			return false;
 		}
 
 		if (!remote.isFile()) {
-			System.err.println("Cannot download non-file: " + url);
+			error("Cannot download non-file: " + url);
 			return false;
 		}
 
 		// Already downloaded? Nothing to do
 		if (remote.isDownloaded(local)) {
-			if (debug) System.err.println("Local file is up to date, no download required: " + fileName);
+			debug("Local file is up to date, no download required: " + fileName);
 			return true;
 		}
 
@@ -140,11 +140,26 @@ public class Bds {
 		bdsRun = new BdsRun();
 	}
 
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
+
+	@Override
+	public boolean isLog() {
+		return log;
+	}
+
 	/**
 	 * Is this a command line option (e.g. "-tfam" is a command line option, but "-" means STDIN)
 	 */
 	protected boolean isOpt(String arg) {
 		return arg.startsWith("-") && (arg.length() > 1);
+	}
+
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 
 	/**
@@ -345,6 +360,10 @@ public class Bds {
 					else usage("Option '-t' without number argument");
 					break;
 
+				case "-zzz":
+					bdsRun.setBdsAction(BdsAction.ZZZ);
+					break;
+
 				default:
 					usage("Unknown command line option " + arg);
 				}
@@ -354,6 +373,8 @@ public class Bds {
 
 		// Sanity checks
 		if (bdsRun.getBdsAction() == BdsAction.CHECK_PID_REGEX) {
+			// OK: Nothing to check
+		} else if (bdsRun.getBdsAction() == BdsAction.ZZZ) {
 			// OK: Nothing to check
 		} else if ((programFileName == null) && (chekcpointRestoreFile == null)) {
 			// No file name => Error
@@ -389,28 +410,28 @@ public class Bds {
 
 		// Sanity checks
 		if (!remote.isRemote()) {
-			System.err.println("Cannot upload to non-remote URL: " + url);
+			error("Cannot upload to non-remote URL: " + url);
 			return false;
 		}
 
 		if (!local.isFile()) {
-			System.err.println("Cannot upload non-file: " + fileName);
+			error("Cannot upload non-file: " + fileName);
 			return false;
 		}
 
 		if (!local.exists()) {
-			System.err.println("Local file does not exists: " + fileName);
+			error("Local file does not exists: " + fileName);
 			return false;
 		}
 
 		if (!local.canRead()) {
-			System.err.println("Cannot read local file : " + fileName);
+			error("Cannot read local file : " + fileName);
 			return false;
 		}
 
 		// Already uploaded? Nothing to do
 		if (remote.isUploaded(local)) {
-			if (debug) System.err.println("Remote file is up to date, no upload required: " + url);
+			debug("Remote file is up to date, no upload required: " + url);
 			return true;
 		}
 

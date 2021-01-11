@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
+import org.bds.BdsLog;
 import org.bds.Config;
 import org.bds.compile.BdsNodeWalker;
 import org.bds.data.Data;
@@ -48,7 +49,7 @@ import org.bds.vm.BdsVm;
  *
  * @author pcingola
  */
-public class BdsThread extends Thread implements Serializable {
+public class BdsThread extends Thread implements Serializable, BdsLog {
 
 	private static final long serialVersionUID = 1206304272840188781L;
 
@@ -70,7 +71,7 @@ public class BdsThread extends Thread implements Serializable {
 	Statement statement; // Main statement executed by this thread
 	RunState runState; // Latest RunState
 	int exitValue; // Exit value
-	List<String> removeOnExit; // Files to be removed on exit
+	List<Data> removeOnExit; // Files to be removed on exit
 	String reportFile; // Latest report file
 	Timer timer; // Program timer
 	boolean freeze; // Freeze execution in next execution step
@@ -189,7 +190,7 @@ public class BdsThread extends Thread implements Serializable {
 		}
 
 		// Get absolute path
-		Data d = BdsThreads.data(checkpointFileName);
+		Data d = Data.factory(checkpointFileName);
 		String filePath = d.isRemote() ? d.toString() : d.getAbsolutePath();
 
 		// Save
@@ -201,6 +202,12 @@ public class BdsThread extends Thread implements Serializable {
 
 			// Serialize root BdsThred to file
 			String localPath = d.isRemote() ? d.getLocalPath() : checkpointFileName;
+
+			// Make directory
+			File parent = (new File(localPath)).getParentFile();
+			if (parent != null) parent.mkdirs();
+
+			// Save file
 			ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(localPath)));
 			out.writeObject(getRoot());
 			out.close();
@@ -248,7 +255,7 @@ public class BdsThread extends Thread implements Serializable {
 		}
 
 		// Store states
-		List<String> removeOnExitOri = removeOnExit;
+		List<Data> removeOnExitOri = removeOnExit;
 		BdsThread parentOri = parent;
 		Map<String, BdsThread> bdsChildThreadsByIdOri = bdsChildThreadsById;
 		TaskDependecies taskDependeciesOri = taskDependecies;
@@ -290,7 +297,7 @@ public class BdsThread extends Thread implements Serializable {
 			// Root thread? Report all tasks
 			TaskDependecies td = isRoot() ? TaskDependecies.get() : taskDependecies;
 
-			Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " " //
+			debug((isRoot() ? "Program" : "Parallel") + " " //
 					+ "'" + getBdsThreadId() + "'" //
 					+ " finished" //
 					+ (isDebug() ? ", run state: '" + getRunState() + "'" : "") //
@@ -331,24 +338,24 @@ public class BdsThread extends Thread implements Serializable {
 	 * Create a new (and canonical) file relative to 'currentDir'
 	 */
 	public Data data(String fileName) {
-		return Data.factory(fileName, currentDir);
+		return Data.factory(fileName, this);
 	}
 
 	void exitCode() {
 		boolean ok = true;
 		// We are done running
-		if (isDebug()) Timer.showStdErr("BdsThread finished: " + getBdsThreadId());
+		debug("BdsThread finished: " + getBdsThreadId());
 		if (getRunState().isFatalError()) {
 			// Error condition
 			ok = false;
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' fatal error");
+			debug((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' fatal error");
 		} else {
 			// OK, we finished running
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
+			debug((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' execution finished");
 
 			// Implicit 'wait' statement at the end of the program (only if the program finished 'naturally')
 			ok = waitAll();
-			if (isDebug()) Timer.showStdErr((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' waitAll: All threads and tasks finished");
+			debug((isRoot() ? "Program" : "Parallel") + " '" + getBdsThreadId() + "' waitAll: All threads and tasks finished");
 		}
 
 		// All tasks in wait finished OK?
@@ -420,7 +427,7 @@ public class BdsThread extends Thread implements Serializable {
 	 */
 	public String generateId(BdsNode node, String tag, String name, boolean usePid, boolean useRand) {
 		long pid = usePid ? ProcessHandle.current().pid() : -1;
-		int rand = useRand ? Math.abs((new Random()).nextInt()) : -1;
+		long rand = useRand ? Math.abs((new Random()).nextLong()) : -1;
 
 		// Use module name
 		int ln = -1;
@@ -438,7 +445,7 @@ public class BdsThread extends Thread implements Serializable {
 				+ (ln > 0 ? ".line_" + ln : "") //
 				+ ".id_" + nextId() //
 				+ (pid < 0 ? "" : ".pid_" + pid) //
-				+ (rand < 0 ? "" : "." + rand) //
+				+ (rand < 0 ? "" : String.format(".%08x", rand)) //
 		;
 	}
 
@@ -666,6 +673,7 @@ public class BdsThread extends Thread implements Serializable {
 		BdsThreads.getInstance().add(this);
 	}
 
+	@Override
 	public boolean isDebug() {
 		return config != null && config.isDebug();
 	}
@@ -681,6 +689,7 @@ public class BdsThread extends Thread implements Serializable {
 		return bdsChildThreadsById.isEmpty();
 	}
 
+	@Override
 	public boolean isVerbose() {
 		return config != null && config.isVerbose();
 	}
@@ -794,18 +803,15 @@ public class BdsThread extends Thread implements Serializable {
 	void removeStaleData() {
 		if (!isRoot()) return;
 
-		// Remove all pending files
-		boolean show = isVerbose() || isDebug();
-
 		// Any files to delete?
 		if (!removeOnExit.isEmpty()) {
 			if (config != null && config.isNoRmOnExit()) {
-				if (show) Timer.showStdErr("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
+				log("\tDeleting stale files: Cancelled ('noRmOnExit' is active).");
 			} else {
-				if (show) Timer.showStdErr("Deleting stale files:");
-				for (String fileName : removeOnExit) {
-					if (show) System.err.println("\t" + fileName);
-					Data.factory(fileName).delete();
+				log("Deleting stale files");
+				for (Data dfile : removeOnExit) {
+					log("Deleting file '" + dfile + "'");
+					dfile.delete();
 				}
 			}
 		}
@@ -831,17 +837,22 @@ public class BdsThread extends Thread implements Serializable {
 	/**
 	 * Remove the file on exit
 	 */
-	public synchronized void rmOnExit(Value vfile) {
-		String file = vfile.asString();
-		Data data = data(file);
-
+	public synchronized void rmOnExit(Data data) {
 		// Add file for removal
-		removeOnExit.add(data.getPath());
-
-		// Remove local (cached) copy of the file
-		if (data.isRemote() && (data.getLocalPath() != null)) removeOnExit.add(data.getLocalPath());
+		removeOnExit.add(data);
 	}
 
+	/**
+	 * Remove the file on exit
+	 */
+	public void rmOnExit(Value vfile) {
+		String file = vfile.asString();
+		rmOnExit(data(file));
+	}
+
+	/**
+	 * Remove the files on exit
+	 */
 	public synchronized void rmOnExit(ValueList files) {
 		for (Value v : files)
 			rmOnExit(v);
@@ -870,7 +881,7 @@ public class BdsThread extends Thread implements Serializable {
 		} catch (Throwable t) {
 			setRunState(RunState.FATAL_ERROR);
 			if (isVerbose()) throw new RuntimeException("Fatal error", t);
-			else Timer.showStdErr("Fatal error: Program execution finished");
+			else error("Fatal error: Program execution finished");
 		}
 	}
 
@@ -1011,7 +1022,7 @@ public class BdsThread extends Thread implements Serializable {
 	public boolean waitThread(BdsThread bdsThread) {
 		try {
 			if (bdsThread != null) {
-				if (isDebug()) Timer.showStdErr("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());
+				debug("Waiting for parallel '" + bdsThread.getBdsThreadId() + "' to finish. RunState: " + bdsThread.getRunState());
 				if (bdsThread.getRunState().isFinished()) return true;
 				bdsThread.join();
 				return bdsThread.getExitValue() == 0; // Finished OK?
@@ -1028,7 +1039,7 @@ public class BdsThread extends Thread implements Serializable {
 		// Wait for all tasks to finish
 		boolean ok = true;
 
-		if (isDebug() && !isThreadsDone()) Timer.showStdErr("Waiting for all 'parrallel' to finish.");
+		if (!isThreadsDone()) debug("Waiting for all 'parrallel' to finish.");
 
 		// Populate a list of threads to avoid concurrent modification
 		List<BdsThread> bdsThreads = new LinkedList<>();

@@ -15,7 +15,7 @@ import java.util.Properties;
 import org.bds.executioner.Executioners.ExecutionerType;
 import org.bds.executioner.MonitorTask;
 import org.bds.executioner.TaskLogger;
-import org.bds.lang.expression.ExpressionTask;
+import org.bds.scope.GlobalScope;
 import org.bds.task.Tail;
 import org.bds.task.TailFile;
 import org.bds.task.Task;
@@ -27,9 +27,8 @@ import org.bds.util.Timer;
  *
  * @author pcingola
  */
-public class Config implements Serializable {
+public class Config implements Serializable, BdsLog {
 
-	public static final String AWS_REGION = "awsRegion"; // Cloud: Amazon AWS parameters
 	public static String BDS_HOME = Gpr.HOME + "/.bds"; // Bds home directory
 	public static final String BDS_INCLUDE_PATH = "BDS_PATH"; // BDS include path (colon separated list of directories to look for include files)
 	public static final String CLUSTER_GENERIC_KILL = "clusterGenericKill"; // Cluster: Generic cluster
@@ -175,7 +174,7 @@ public class Config implements Serializable {
 
 		for (String d : searchPaths) {
 			String cf = d + "/" + DEFAULT_CONFIG_BASENAME;
-			if (debug) Gpr.debug("Trying config file '" + cf + "'");
+			debug("Trying config file '" + cf + "'");
 			if (Gpr.exists(cf)) return cf;
 		}
 
@@ -263,14 +262,14 @@ public class Config implements Serializable {
 		return maxThreads;
 	}
 
-	public MonitorTask getMonitorTask() {
-		if (monitorTask == null) {
-			monitorTask = new MonitorTask();
-			monitorTask.setDebug(isDebug());
-			monitorTask.setVerbose(isVerbose());
-		}
-		return monitorTask;
-	}
+	//	public MonitorTask getMonitorTask() {
+	//		if (monitorTask == null) {
+	//			monitorTask = new MonitorTask();
+	//			monitorTask.setDebug(isDebug());
+	//			monitorTask.setVerbose(isVerbose());
+	//		}
+	//		return monitorTask;
+	//	}
 
 	public String getPidFile() {
 		return pidFile;
@@ -374,7 +373,6 @@ public class Config implements Serializable {
 	public TaskLogger getTaskLogger() {
 		if (taskLogger == null) {
 			taskLogger = new TaskLogger(getPidFile());
-			taskLogger.setDebug(isDebug());
 		}
 		return taskLogger;
 	}
@@ -411,6 +409,7 @@ public class Config implements Serializable {
 		return coverage;
 	}
 
+	@Override
 	public boolean isDebug() {
 		return debug;
 	}
@@ -423,6 +422,7 @@ public class Config implements Serializable {
 		return extractSource;
 	}
 
+	@Override
 	public boolean isLog() {
 		return log;
 	}
@@ -451,6 +451,7 @@ public class Config implements Serializable {
 		return showTaskCode;
 	}
 
+	@Override
 	public boolean isVerbose() {
 		return verbose;
 	}
@@ -487,8 +488,8 @@ public class Config implements Serializable {
 		tailLines = (int) getLong(TAIL_LINES, TailFile.DEFAULT_TAIL);
 		reportHtml = getBool(REPORT_HTML, false);
 		reportYaml = getBool(REPORT_YAML, false);
-		system = getString(ExpressionTask.TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
-		taskFailCount = getInt(ExpressionTask.TASK_OPTION_RETRY, 0);
+		system = getString(GlobalScope.GLOBAL_VAR_TASK_OPTION_SYSTEM, ExecutionerType.LOCAL.toString().toLowerCase());
+		taskFailCount = getInt(GlobalScope.GLOBAL_VAR_TASK_OPTION_RETRY, 0);
 		taskMaxHintLen = Gpr.parseIntSafe(properties.getProperty(TASK_MAX_HINT_LEN, Task.MAX_HINT_LEN + ""));
 		taskPrelude = getString(TASK_PRELUDE, "");
 		taskShell = getString(Config.TASK_SHELL, Config.TASK_SHELL_DEFAULT);
@@ -499,7 +500,7 @@ public class Config implements Serializable {
 
 		// Sanity checks
 		if (maxThreads < MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE) {
-			Timer.showStdErr("Config: Attempt to set 'maxThreads' to " + maxThreads + ". Too small, using " + MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE + " inseatd.");
+			warning("Config: Attempt to set 'maxThreads' to " + maxThreads + ". Too small, using " + MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE + " inseatd.");
 			maxThreads = MAX_NUMBER_OF_RUNNING_THREADS_MIN_VALUE;
 		}
 

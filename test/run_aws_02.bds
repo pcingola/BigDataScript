@@ -1,0 +1,32 @@
+
+include 'aws_util'
+
+system := 'aws'
+
+println "Before task"
+out := "$s3base/out.txt"
+println "Output file: '$out'"
+
+task {
+	println "Start: Improper task on AWS"
+
+	# Create a tmp file
+	fileName := 'tmp.txt'
+	fileName.write("OK")
+
+	# Uplad to S3
+	println("Uploading local file '$fileName' to '$out'")
+	out.upload(fileName)
+
+	# Print something
+	for(int i=0 ; i < 10; i++) {
+		println "Counting: $i"
+		sys echo "This is an echo $i"
+		sleep(1)
+	}
+
+	println "End: Improper task on AWS"
+}
+println "After task"
+wait
+println "Done"
