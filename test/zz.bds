@@ -1,34 +1,3 @@
-class GrandParentClass {
-      void GrandParentClass() { println "GrandParentClass.constructor" }
 
-      void oneMethod() { println('GrandParent class') }
-}
- 
-class ParentClass extends GrandParentClass{
-      void ParentClass() {
-            super.GrandParentClass()
-			println "ParentClass.constructor"
-      }
- 
-      void oneMethod() {
-            super.oneMethod()
-            println('Parent class')
-      }
-}
- 
-class ChildClass extends ParentClass {
- 
-      void ChildClass() {
-            super.ParentClass()
-			println "ChildClass.constructor"
-      }
- 
-      void oneMethod() {
-            super.oneMethod()
-            println('Child class')
-      }
-}
- 
- 
-child := new ChildClass()
-child.oneMethod()
+log("Hi there")
+

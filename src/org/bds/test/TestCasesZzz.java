@@ -2,7 +2,9 @@ package org.bds.test;
 
 import org.bds.Config;
 import org.bds.run.BdsRun;
+import org.bds.util.Gpr;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Quick test cases when creating a new feature...
@@ -16,6 +18,13 @@ public class TestCasesZzz extends TestCasesBaseAws {
 	public void beforeEachTest() {
 		BdsRun.reset();
 		Config.get().load();
+	}
+
+	@Test
+	public void test() {
+		Gpr.debug("Test");
+		verbose = true;
+		runAndCheck("test/zz.bds", "r", "0");
 	}
 
 	//	/**
