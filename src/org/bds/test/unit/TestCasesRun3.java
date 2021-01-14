@@ -493,4 +493,10 @@ public class TestCasesRun3 extends TestCasesBase {
 		runAndCheck("test/run_256.bds", "db", "test");
 	}
 
+	@Test
+	public void test257_randIntDivisionByZero() {
+		Gpr.debug("Test");
+		runAndCheck("test/run_257.bds", "r", "0");
+	}
+
 }
