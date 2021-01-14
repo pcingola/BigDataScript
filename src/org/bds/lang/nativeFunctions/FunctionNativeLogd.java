@@ -4,29 +4,31 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.bds.lang.BdsNode;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
 import org.bds.run.BdsThread;
+import org.bds.util.Gpr;
 
 /**
- * Log a message to STDERR
+ * Log a message to STDERR, give some "debug" information (file name and line number)
  *
  * @author pcingola
  */
-public class FunctionNativeLog extends FunctionNative {
+public class FunctionNativeLogd extends FunctionNative {
 
 	private static final long serialVersionUID = 4328132832275759104L;
 
 	SimpleDateFormat format;
 
-	public FunctionNativeLog() {
+	public FunctionNativeLogd() {
 		super();
 	}
 
 	@Override
 	protected void initFunction() {
-		functionName = "log";
+		functionName = "logd";
 		returnType = Types.STRING;
 
 		// Show time in GMT timezone
@@ -44,9 +46,23 @@ public class FunctionNativeLog extends FunctionNative {
 		// Get `log(msg)` argument
 		String str = bdsThread.getString("str");
 
+		// Get file name and line number
+		String fnln = "";
+		BdsNode bdsNode = bdsThread.getBdsNodeCurrent();
+		if (bdsNode != null) {
+			String filename = bdsNode.getFileName();
+			if (filename != null) {
+				filename = Gpr.baseName(filename);
+				int lineNum = bdsNode.getLineNum();
+				if (lineNum >= 0) {
+					fnln = filename + ':' + lineNum;
+				}
+			}
+		}
+
 		// Show current time (GMT)
 		String ymdhms = format.format(new Date());
-		String out = ymdhms + '\t' + str;
+		String out = ymdhms + '\t' + fnln + '\t' + str;
 
 		// Show log message to stderr
 		System.err.println(out);

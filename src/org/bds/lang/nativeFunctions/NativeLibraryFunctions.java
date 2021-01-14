@@ -30,6 +30,7 @@ public class NativeLibraryFunctions {
 			, FunctionNativeGetVarDefault.class //
 			, FunctionNativeHasVar.class //
 			, FunctionNativeLog.class //
+			, FunctionNativeLogd.class //
 			, FunctionNativeMinInt.class //
 			, FunctionNativeMaxInt.class //
 			, FunctionNativeMinReal.class //
