@@ -1,5 +1,6 @@
 package org.bds.lang.nativeFunctions;
 
+import org.bds.lang.BdsNode;
 import org.bds.lang.Parameters;
 import org.bds.lang.type.Type;
 import org.bds.lang.type.Types;
@@ -7,7 +8,7 @@ import org.bds.run.BdsThread;
 import org.bds.util.Timer;
 
 /**
- * Native function "print" to STDERR
+ * Log a message to STDERR
  *
  * @author pcingola
  */
@@ -33,6 +34,7 @@ public class FunctionNativeLog extends FunctionNative {
 	@Override
 	protected Object runFunctionNative(BdsThread bdsThread) {
 		String str = bdsThread.getString("str");
+		BdsNode bdsNode = bdsThread.getBdsNodeCurrent();
 		Timer.showStdErr(str);
 		return str;
 	}
