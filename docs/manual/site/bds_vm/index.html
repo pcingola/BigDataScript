@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Bds VM - bds - Big Data Script programming language</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Bds VM";
+    var mkdocs_page_input_path = "bds_vm.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> bds - Big Data Script programming language</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Manual</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="..">Introduction</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../download/">Download</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../hello/">Hello world</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../language/">Language</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../special/">Special operators</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../data_types/">Data types</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../functions/">Functions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../global_vars/">Global variables</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../pipelines/">Pipelines</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../sys/">Sys</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../task/">Task</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../wait/">Wait</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dep_op/">Dependency operator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../goal/">Goal</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../remote_files/">Remote files</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../par/">Parallel execution</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../checkpoints/">Checkpoints</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../test_cases/">Test cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../debugger/">Debugger</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../cmdline/">Command line parsing</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../help/">Command line help</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../logging/">Logging</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../cleanup/">Cleanup</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bdscmdline/">bds command line</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Bds VM</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#why-bdsvm">Why bdsVm?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#bdsvm-model">bdsVm model</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#bdsvm-information">bdsVm information</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#bdsvm-state">bdsVm state</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#bdsvm-examples">bdsVm examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#bds-code-a-4">bds code: a = 4</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bds-code-a-2-3">bds code: a = 2 + 3</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bds-code-ai-bj-7">bds code: a[i] = b[j] + 7</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bds-code-ahi-1-bye">bds code: a{'hi' + 1} = 'bye'</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bds-code-za7hi-42">bds code: z.a[7]{'hi'} = 42</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bds-code-function-call">bds code: Function call</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">bds - Big Data Script programming language</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Manual &raquo;</li>
+        
+      
+    
+    <li>Bds VM</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="bds-virtual-machine">bds Virtual Machine</h1>
+<p>Under the hood, <code>bds</code> runs a simple virtual machine called <code>bdsVm</code>.
+This virtual machine has a set of instructions (i.e. assembly) and the respective OpCodes (analogous to a real CPU).
+So, any <code>bds</code> program is compiled to <code>bdsVm</code> assembly and then executed by the <code>bdsVm</code>.</p>
+<h3 id="why-bdsvm">Why bdsVm?</h3>
+<p>The main reason for using a custom virtual machine is to be able to perform <strong>absolute serializetion</strong> (i.e. checkpoints).
+Other virtual machines (or CPUs) do not have this feature, so we needed to create out own VM mainly due to the need to generate and recover from checkpoints.</p>
+<p>Checkpoints quite important in <code>bds</code> and are used in many operations, most notably when performing "improper tasks".
+For instance when trying to continue execution on another server in the Cloud.</p>
+<h3 id="bdsvm-model">bdsVm model</h3>
+<p>The <code>bdsVm</code> is a <a href="https://en.wikipedia.org/wiki/Stack_machine">stack machine</a>.
+That means that operations are performed on a "stack" instead of using "registers".
+The main reason for using a stack model is simplicity, it is quite easy to implement a virtual machine using a stack model.
+As opposed to other models, stack machines can be slower.</p>
+<h3 id="bdsvm-information">bdsVm information</h3>
+<p>Runing <code>bds</code> using the "debug" flag (<code>-d</code>), will show the corresponsing assembly language compilation.</p>
+<p>For example, here is a simple <code>bds</code> program:</p>
+<pre><code>a := 2
+b := 40
+c := a + b
+println &quot;c=$c&quot;
+</code></pre>
+<p>If we execute it using <code>-d</code> we'll see:</p>
+<pre><code>$ bds -d z.bds
+...
+# Assembly: Start
+     0    node 1258
+# ProgramUnit : int a := 2
+main:
+     2    scopepush
+     3    node 1260
+# VariableInitImplicit : a := 2
+     5    pushi 2
+     7    varpop 'a'
+     9    node 1263
+# VariableInitImplicit : b := 40
+    11    pushi 40
+    13    varpop 'b'
+    15    node 1266
+# VariableInitImplicit : c := a + b
+    17    load 'a'
+    19    load 'b'
+    21    addi
+    22    varpop 'c'
+    24    node 1271
+# Println : println &quot;c=$c&quot;
+    26    pushs 'c='
+    28    load 'c'
+    30    adds
+    31    println
+    32    halt
+</code></pre>
+<p>The comment lines (starting with <code>#</code>) show exactly the <code>bds</code> code that created the corresponding assembly instructions.</p>
+<p>For example the line <code>VariableInitImplicit : a := 2</code> means that there was a variable declared implicitly (i.e. the variable type is inferred from the initialization value)
+The corresponding assembly code is:</p>
+<pre><code># VariableInitImplicit : a := 2
+     5    pushi 2       # Push the value '2' to the stack
+     7    varpop 'a'    # Create a variable called 'a' and set the value from the latest element in the stack (i.e. '2')
+</code></pre>
+<p>The <code>node</code> instructions refer to the node number in the Abstract Syntax Tree (AST) that was created from the Lexer+Parser.
+Essentially, they are only references to the exact program file and line number and they are just used to know which file/line number we are corrently executing.
+This is used for printing error messages if something fails during execution.</p>
+<h3 id="bdsvm-state">bdsVm state</h3>
+<p>If you run a program with <code>-d</code> command line option, <code>bds</code> will also show the execution details:
+For each assembly instruction, <code>bds -d</code> will show:
+- Current <code>bds</code> code being executed
+- Current <code>bdsVm</code> instruction being executed
+- Current stack</p>
+<p>Example, using the same example program as before:</p>
+<pre><code>a := 2
+b := 40
+c := a + b
+println &quot;c=$c&quot;
+</code></pre>
+<p>If we execute using <code>-d</code>, we can see the stack whenever it changes
+Note that the output has been edited for clarity and some comments added to clarify the <code>bdsVm</code> assembly:</p>
+<pre><code>1  main:
+2    scopepush                # Create a new variable's scope
+3    node 1260
+4                             # VariableInitImplicit : a := 2
+5    pushi 2                  # stack: [2 ]
+7    varpop 'a'               # Create a new variable 'a' and set using latest stack entry ('2')
+9    node 1263
+10                            # VariableInitImplicit : b := 40
+11    pushi 40                # stack: [40 ]
+13    varpop 'b'              # Create a new variable 'b' and set using latest stack entry ('40')
+15    node 1266
+16                            # VariableInitImplicit : c := a + b
+17    load 'a'                # Load variable's &quot;a&quot; value to the stack. stack: [2 ]
+19    load 'b'                # Load variable's &quot;b&quot; value to the stack. stack: [2, 40 ]
+21    addi                    # Add two integers values from stack, push result to stack. stack: [42 ]
+22    varpop 'c'              # Create a new variable 'c' and set using latest stack entry ('42')
+24    node 1271
+25                            # Println : println &quot;c=$c&quot;
+26    pushs 'c='              # Push string &quot;c=&quot; to the stack. stack: ['c=' ]
+28    load 'c'                # Load variable's &quot;c&quot; value to the stack. stack: ['c=', 42 ]
+30    adds                    # Add two strings (concatenate) and push to the stack. stack: ['c=42' ]
+31    println                 # Print latest value from the stack
+32    halt                    # Halt bdsVm execution
+</code></pre>
+<h2 id="bdsvm-examples"><code>bdsVm</code> examples</h2>
+<p>Here are some "easy" examples of how <code>bds</code> code is compiled into <code>bdsVm</code> assembly</p>
+<h3 id="bds-code-a-4">bds code: <code>a = 4</code></h3>
+<pre><code>pushi 4
+load a
+set
+</code></pre>
+<h3 id="bds-code-a-2-3">bds code: <code>a = 2 + 3</code></h3>
+<pre><code>pushi 2
+pushi 3
+addi
+load a
+set
+</code></pre>
+<h3 id="bds-code-ai-bj-7">bds code: <code>a[i] = b[j] + 7</code></h3>
+<pre><code>            # Stack
+push 7
+load j
+load b      # b, j, 7
+reflist     # b[j], 7
+addi
+load i      # i, b[j]+7
+load a      # a, i, b[j]+7
+reflist     # a[i], b[j]+7
+set         # -
+</code></pre>
+<h3 id="bds-code-ahi-1-bye">bds code: <code>a{'hi' + 1} = 'bye'</code></h3>
+<pre><code>            # Stack
+pushs 'bye'
+pushs 'hi'
+pushi 1
+adds        # 'hi1', 'bye'
+load a      # a, 'hi1', 'bye'
+refdict     # a{'hi1'}, 'bye'
+set         # -
+</code></pre>
+<h3 id="bds-code-za7hi-42">bds code: <code>z.a[7]{'hi'} = 42</code></h3>
+<p>In this case <code>z</code> is an object</p>
+<pre><code>            # Stack
+pushi 42    # 42
+pushs 'hi'  # 'hi', 42
+pushi 7     # 7, 'hi', 42
+pushs 'a'   # 'a', 7, 'hi', 42
+load z      # z, 'a', 7, 'hi', 42
+reffield    # z.a, 7, 'hi', 42
+reflist     # z.a[7], 'hi', 42
+refdict     # z.a[7]{'hi}, 42
+set
+</code></pre>
+<h3 id="bds-code-function-call">bds code: Function call</h3>
+<p>bds code:</p>
+<pre><code>int f(int x) {
+    return x+1
+}
+
+z = f(7)
+</code></pre>
+<p>bdsVm code:</p>
+<pre><code>f:
+load x
+push 1
+addi       # x+1 is the return value
+ret        # Return from function:
+           #    - Remove scope (restore old scope)
+           #    - pop PC from call-stack (jump to that position)
+
+main:
+pushi 7
+call f     # Function call:
+           #    - create new scope
+           #    - add arguments as scope variables
+           #    - push PC to call-stack
+load z
+set
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../building_bds/" class="btn btn-neutral" title="Building bds from source"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../building_bds/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

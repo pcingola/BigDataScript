@@ -111,6 +111,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -256,7 +262,11 @@
 </tr>
 <tr>
 <td>string getVar(string name)</td>
-<td>Get variable's value represented as a string (e.g. <code>int i=42; getVar('i') # Output "42"</code>)</td>
+<td>Get variable's value represented as a string, e.g.: <code>int i=42; getVar('i') # Output "42"</code></td>
+</tr>
+<tr>
+<td>string getVar(string name, string default)</td>
+<td>Get variable's value represented as a string or a default value if not set. E.g. <code>getVar('i', 'zzz') # Output "zzz" if variable 'i' is not defined</code></td>
 </tr>
 <tr>
 <td>bool hasVar(string name)</td>

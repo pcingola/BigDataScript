@@ -115,6 +115,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -173,7 +179,6 @@ for( int i : range(1, 5) ) {
     sleep( 0.2 )
 }
 </code></pre>
-
 <p>If we run this code:</p>
 <pre><code>$ ./test_16.bds
 Parallel 1
@@ -187,7 +192,6 @@ Parallel 4
 Parallel 5
 Main 5
 </code></pre>
-
 <p>Perhaps a more elegant way to write the same code would be:</p>
 <pre><code>#!/usr/bin/env bds
 
@@ -201,7 +205,6 @@ void count(string msg) {
 par count('Parallel')   # Call function in parallel thread
 count('Main')           # Call function in 'main' thread
 </code></pre>
-
 <p><code>par</code> also works with optional expressions that must be all 'true' to evaluate the block.</p>
 <pre><code>par( out &lt;- in )  {
     # This block runs in parallel if 'out' needs to be updated
@@ -213,14 +216,12 @@ count('Main')           # Call function in 'main' thread
     task cat $in.*.tmp &gt; $out
 }
 </code></pre>
-
 <h3 id="wait-in-par-context">Wait in 'par' context</h3>
 <p><code>par</code> expressions return a 'parallel ID' string that we can use in <code>wait</code> </p>
 <pre><code>pid := par longRunningFunction()    // This function is executed in parallel 
 
 wait pid                            // Wait for parallel to finish
 </code></pre>
-
 <p>Here <code>wait</code> statement waits until the function "longRunningFunction()" finishes.</p>
 <p>We mentioned before that, by default, a <code>wait</code> statement with no arguments would wait for 'all' tasks to finish.
 Specifically, <code>wait</code> statement waits for all tasks scheduled by the same thread and for all 'parallels'.
@@ -230,14 +231,12 @@ So, <code>wait</code> statement with no arguments, will not restore execution un
 <p>E.g.:</p>
 <pre><code>par someFunction(x, y)
 </code></pre>
-
 <p>It is important to notice that the return value from a <code>par</code> it is a 'parallel ID' (i.e. a thread ID) and not the function's return value.
 This is because the parallel thread could take a long time to process and we don't want to stop execution in the current thread until the function finishes.</p>
 <p>So, this sample code will show the 'parallel ID' independently of the function's return value:</p>
 <pre><code>pid := par someFunction(x, y)  # 'par' returns a thread ID
 print &quot;Parallel ID: $pid\n&quot;
 </code></pre>
-
 <p><strong>Important:</strong> When calling a function, arguments are evaluated <strong>before</strong> the new thread is created. 
 The reason for this is to simplify race conditions.</p>
 <h3 id="race-conditions-in-par-and-how-to-avoid-them">Race conditions in 'par' and how to avoid them</h3>
@@ -251,7 +250,6 @@ for( int i : range(0, 10) ) {
     }
 }   
 </code></pre>
-
 <p>The output is (comments added for clarification):</p>
 <pre><code>$ ./z.bds
 Number: 0
@@ -266,7 +264,6 @@ Number: 10      # Three number 10?
 Number: 10
 Number: 10
 </code></pre>
-
 <p>This is clearly not the result we wanted.</p>
 <p>What happened? Well, obviously this had a race condition. 
 From the time thread is created (<code>par</code>), until the variable <code>i</code> is evaluated in <code>print</code> statement (parallel thread), the main thread has already changed <code>i</code>'s value.</p>
@@ -283,7 +280,6 @@ for( int i : range(0, 10) ) {
     par show(i)
 }   
 </code></pre>
-
 <p>Now the output is what we expect:</p>
 <pre><code>$ ./z.bds
 Number: 0

@@ -109,6 +109,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -158,14 +164,14 @@ out := 'tmp.html'
 
 task( out &lt;- in ) sys cat $in &gt; $out
 </code></pre>
-
-<p>Notice that: 
+<p>Notice that: </p>
 <ol>
-<li> there is no code for downloading the remote file (<code>index.html</code>) in the script;
+<li> there is no code for downloading the remote file (`index.html`) in the script;
 <li> the file is downloaded on the processing node performing the task, which may differ from the node running the script (e.g. if it is running on a cluster);
 <li> task dependencies are verified without downloading data, so the task, as well as the corresponding download / upload operations, are only performed if required;
-<li> if the file is required in the future, <code>bds</code> checks if the local (cached) copy is still valid, and uses the cached file if possible (saving bandwith and time).
-</ol></p>
+<li> if the file is required in the future, `bds` checks if the local (cached) copy is still valid, and uses the cached file if possible (saving bandwith and time).
+</ol>
+
 <p><strong>Example 2:</strong> The following example is slightly more complicated, the input ('index.html') is processed (<code>cat</code> and <code>echo</code> commands) and the results are stored in an <code>Amazon S3</code> object.
 Once more, notice that <code>bds</code> transparently takes care of downloading the file and then uploading the output to Amazon's S3.</p>
 <pre><code>in  := 'http://pcingola.github.io/BigDataScript/index.html'

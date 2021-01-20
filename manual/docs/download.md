@@ -79,6 +79,11 @@ mvn clean assembly:assembly
 
 ### Creating manual pages
 
+Maual pages are written in Markdown (`*.md`) and HTML is created using `mkdocs` package.
+The source Markdown documents are located in `manual/docs/`.
+
+The GitHub pages are published from `master` branch, direcotory `/docs`, so manual pages are created in a sub-directory (`docs/manual/site`)
+
 Create a virtual environment for `mkdocs`
 ```
 mkdir $HOME/bds_docs
@@ -92,14 +97,23 @@ pip install mkdocs
 # Create links to bds project.
 # Here we assume the source code is at `$HOME/workspace/BigDataScript`
 BDS_SRC="$HOME/workspace/BigDataScript"
-ln -s $BDS_SRC/manual/mkdocs.yml
-ln -s $BDS_SRC/manual/docs
-ln -s $BDS_SRC/manual/site
+ln -s $BDS_SRC/manual/mkdocs.yml  # Main configuration file for mkdocs
+ln -s $BDS_SRC/manual/docs        # Source markdown for manual pages
+ln -s $BDS_SRC/docs/manual/site   # GitHub pages are in 'docs' directory
 ```
 
 Once the virtual environment for `mkdocs` is set you can run:
 ```
-mkdocs build    # The documents will be generated to 'site' dir
+mkdocs serve    # Change pages and see result in your local bowser
+```
+
+or
+
+```
+mkdocs build    # Create manual pages
+
+cd $BDS_SRC
+./git/commit    # Publish manual pages (if in master)
 ```
 
 ###License

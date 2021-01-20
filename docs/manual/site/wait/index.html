@@ -109,6 +109,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -155,7 +161,6 @@ File <a href="bds/test_13.bds">test_13.bds</a></p>
 for( int i=0 ; i &lt; 10 ; i++ ) task echo BEFORE $i
 for( int i=0 ; i &lt; 10 ; i++ ) task echo AFTER $i
 </code></pre>
-
 <pre><code>$ ./test_13.bds
 BEFORE 0
 BEFORE 4
@@ -178,7 +183,6 @@ AFTER 7
 AFTER 8
 AFTER 9
 </code></pre>
-
 <p>If a task must be executed after another task finishes, we can introduce a <code>wait</code> statement.
 File <a href="bds/test_13.bds">test_13.bds</a></p>
 <pre><code>#!/usr/bin/env bds
@@ -191,7 +195,6 @@ print(&quot;We are done waiting, continue...\n&quot;)
 for( int i=0 ; i &lt; 10 ; i++ ) task echo AFTER $i
 
 </code></pre>
-
 <p>Now, we are sure that all tasks 'AFTER' really run after 'BEFORE'</p>
 <pre><code>$ ./test_14.bds 
 BEFORE 0
@@ -216,12 +219,10 @@ AFTER 7
 AFTER 8
 AFTER 9
 </code></pre>
-
 <p>We can also wait for a specific task to finish by providing a task ID <code>wait taskId</code>, e.g.:</p>
 <pre><code>string tid = task echo Hi
 wait tid    # Wait only for one task
 </code></pre>
-
 <p>Or you can wait for a list of tasks. 
 For instance, in this program, we create a list of two task IDs and <code>wait</code> on the list:</p>
 <pre><code>string[] tids
@@ -239,7 +240,6 @@ for( int i=0 ; i &lt; 10 ; i++ ) {
 wait tids
 print(&quot;End of wait\n&quot;)
 </code></pre>
-
 <p>When we run it, we get:</p>
 <pre><code>$ bds z.bds
 BEFORE 2
@@ -264,7 +264,6 @@ DONE 2
 DONE 8
 DONE 9
 </code></pre>
-
 <p><strong>Note:</strong> There is an implicit <code>wait</code> statement at the end of the program. 
 So a program does not exit until all tasks have finished running.</p>
               

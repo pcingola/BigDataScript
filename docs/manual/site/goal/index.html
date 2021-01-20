@@ -117,6 +117,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -177,7 +183,6 @@ dep( mid1 &lt;- in )      sys echo $in   &gt; $mid1 ; echo MID1  ; sleep 1
 goal out
 
 </code></pre>
-
 <p>Running the code, we get</p>
 <pre><code># Remove old files (if any)
 $ rm *.txt
@@ -190,13 +195,11 @@ MID1
 MID2
 OUT
 </code></pre>
-
 <p>In this case, <code>bds</code> created a directed acyclic graph of the dependencies needed to satisfy the goal 'out.txt' and then executed the required 'dep' declarations.</p>
 <p><strong>Note:</strong> A <code>goal</code> expression returns a list of task Ids to be executed, which can be quite useful for debugging purposes. So in the previous example you could write:</p>
 <pre><code>tids := goal out
 print &quot;Executing tasks: $tids\n&quot;
 </code></pre>
-
 <h3 id="intermediate-files-within-a-goal-can-be-deleted">Intermediate files within a 'goal' can be deleted</h3>
 <p>In the previous example, if we delete the intermediate files 'mid1.txt' and or 'mid2.txt', and we re-execute the script, <code>bds</code> will notice that the output 'out.txt' is still valid with respect to the input 'in.txt' and will not execute any task.</p>
 <pre><code># Remove intermediate files
@@ -206,7 +209,6 @@ $ rm mid?.txt
 $ ./test_18.bds
 $
 </code></pre>
-
 <p>How this works: <code>bds</code> calculates the dependency graph and checks whether the <code>goal</code> is up to date with respect to the inputs (which are the leaves in the dependency graph).
 If the goal up to date, then nothing is done.
 This feature is particularly useful when intermediate files are large and we need to clean them up (since we are working with big data problems, this is often the case).</p>
@@ -221,7 +223,6 @@ tid := dep( taskName := 'hi' ) {
 
 goal tid    # We use task Id instead of a file name
 </code></pre>
-
 <h3 id="multiple-goals">Multiple goals</h3>
 <p>Sometimes it is convenient to fire multiple goals at once. You can do this by passing a list, instead of a string, to <code>goal</code>.</p>
 <pre><code>#!/usr/bin/env bds
@@ -238,7 +239,6 @@ for(int i=0; i &lt; 3 ; i++ ) {
 
 goal outs   # We use a list of goals, it is interpreted as multiple goal statements (one for each item in the list)
 </code></pre>
-
 <h3 id="use-case-example-for-dep-and-goal">Use-case example for <code>dep</code> and <code>goal</code></h3>
 <p>The <code>goal</code> statement helps to program complex task scheduling interdependencies.</p>
 <p>In a previous example (<a href="bds/test_07.bds">test_07.bds</a>), we had an input file <code>in.txt</code>, an intermediate file <code>inter.txt</code> and an output file <code>out.txt</code>.</p>
@@ -256,7 +256,6 @@ task( outFile &lt;- intermediate ) {
     sys echo Creating $outFile; cat $intermediate &gt; $outFile; echo Done $outFile
 }
 </code></pre>
-
 <p>One problem is that if we delete the intermediate file <code>inter.txt</code> (e.g. because we may want to delete big files with intermediate results), then both tasks will be executed</p>
 <pre><code># Remove intermediate file
 $ rm inter.txt 
@@ -268,7 +267,6 @@ Done inter.txt
 Creating out.txt
 Done out.txt
 </code></pre>
-
 <p>Why is this happening? The reason is that <code>task</code> statements are evaluated in order. 
 So when <code>bds</code> evaluates the first <code>task</code> expression, the dependency <code>intermediate &lt;- inFile</code> is true (because <code>inter.txt</code> doesn't exist, so it must be updated with respect to <code>in.txt</code>).
 After that, when the second <code>task</code> expression is evaluated,  <code>out &lt;- intermediate</code> is also true, since <code>inter.txt</code> is newer than <code>out.txt</code>.
@@ -291,7 +289,6 @@ if( outFile &lt;- inFile) {
   }
 }
 </code></pre>
-
 <p>Although it solves the issue, the code is not elegant.</p>
 <p>The alternative is to use <code>dep</code> and <code>goal</code></p>
 <ul>
@@ -316,7 +313,6 @@ dep( outFile &lt;- intermediate ) {
 
 goal outFile
 </code></pre>
-
 <p>If we execute this script</p>
 <pre><code># Delete old files (if any)
 $ rm *.txt
@@ -331,7 +327,6 @@ Done out.txt
 Creating inter.txt
 Done inter.txt
 </code></pre>
-
 <p>Now we delete 'inter.txt' and re-execute</p>
 <pre><code># Delete intermediate file
 $ rm inter.txt 
@@ -340,7 +335,6 @@ $ rm inter.txt
 $ ./test_08.bds
 $ 
 </code></pre>
-
 <p>As you can see, no task is executed the second time, since <code>out.txt</code> is up to date, with respect to <code>in.txt</code>. 
 The fact that intermediate file <code>inter.txt</code> was deleted, is ignored, which is what we wanted.</p>
               

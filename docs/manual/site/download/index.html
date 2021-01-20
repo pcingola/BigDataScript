@@ -65,6 +65,10 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#installing-from-source">Installing from source</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#build-jar-solving-missing-java-libraries">Build Jar: Solving missing Java libraries</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#creating-manual-pages">Creating manual pages</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
     </li>
     </ul>
@@ -115,6 +119,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -161,19 +171,16 @@
 <pre><code>cd 
 tar -xvzf path/to/bds_*.tgz 
 </code></pre>
-
 <p><strong>Requirements:</strong> In order to run BigDataScript, you need <code>Java 1.11</code>.</p>
 <p><strong>Note:</strong> <code>bds</code>'s directoy <code>.bds</code> is 'hidden', since the name starts with a dot.
 Add <code>bds</code>'s directory to your <code>PATH</code>, by adding the following line to your <code>.bashrc</code> or <code>.bash_profile</code></p>
 <pre><code>export PATH=$PATH:$HOME/.bds
 </code></pre>
-
 <p><strong>Mesos support (Optional):</strong>
 If you intend to use <code>bds</code> with mesos, you must install Mesos' native library in <code>$HOME/.bds/lib</code>.
 For example on a Mac that would be something like</p>
 <pre><code>cp /usr/local/Cellar/mesos/*/lib/libmesos.dylib $HOME/.bds/lib
 </code></pre>
-
 <h3 id="installing-from-source">Installing from source</h3>
 <p>The source code is available at GitHub, here we show how to compile and install.</p>
 <p><strong>Requirements:</strong> In order to complile BigDataScript, you need</p>
@@ -187,24 +194,56 @@ Download the project as follows:</p>
 <pre><code># Clone repository
 $ git clone https://github.com/pcingola/BigDataScript.git
 </code></pre>
-
 <p>Once you downloaded the project, you can install using the <code>install.sh</code> script:</p>
 <pre><code># Run 'install script
 cd BigDataScript
 ./scripts/install.sh
 </code></pre>
-
 <p>Then you should add <code>bds</code> to your PATH. Edit your <code>.bashrc</code> (or <code>.bash_profile</code>) and add the following lines</p>
 <pre><code># BigDataScript
 export PATH=$PATH:$HOME/.bds/
 </code></pre>
-
 <p><strong>Optional:</strong> If you have root access, you can do the following (to get <code>bds</code> available everywhere in your system)</p>
 <pre><code>su -
 cd /usr/bin/
 ln -s /home/your_user/.bds/bds
 </code></pre>
+<h3 id="build-jar-solving-missing-java-libraries">Build Jar: Solving missing Java libraries</h3>
+<p>These are used to build the JAR file</p>
+<p><strong>Build executable jar with dependencies</strong></p>
+<p>Jar with dependencias in directory 'target', e.g. <code>target/bds-2.3-jar-with-dependencies.jar</code></p>
+<pre><code>cd mvn
+mvn clean assembly:assembly
+</code></pre>
+<h3 id="creating-manual-pages">Creating manual pages</h3>
+<p>Maual pages are written in Markdown (<code>*.md</code>) and HTML is created using <code>mkdocs</code> package.
+The source Markdown documents are located in <code>manual/docs/</code>.</p>
+<p>The GitHub pages are published from <code>master</code> branch, direcotory <code>/docs</code>, so manual pages are created in a sub-directory (<code>docs/manual/site</code>)</p>
+<p>Create a virtual environment for <code>mkdocs</code></p>
+<pre><code>mkdir $HOME/bds_docs
+cd $HOME/bds_docs
+virtualenv -p python3 .
 
+# Activate virtualenv and install mkdocs
+. bin/activate
+pip install mkdocs
+
+# Create links to bds project.
+# Here we assume the source code is at `$HOME/workspace/BigDataScript`
+BDS_SRC=&quot;$HOME/workspace/BigDataScript&quot;
+ln -s $BDS_SRC/manual/mkdocs.yml  # Main configuration file for mkdocs
+ln -s $BDS_SRC/manual/docs        # Source markdown for manual pages
+ln -s $BDS_SRC/docs/manual/site   # GitHub pages are in 'docs' directory
+</code></pre>
+<p>Once the virtual environment for <code>mkdocs</code> is set you can run:</p>
+<pre><code>mkdocs serve    # Change pages and see result in your local bowser
+</code></pre>
+<p>or</p>
+<pre><code>mkdocs build    # Create manual pages
+
+cd $BDS_SRC
+./git/commit    # Publish manual pages (if in master)
+</code></pre>
 <h3 id="license">License</h3>
 <p>BigDataScript is open source.</p>
               

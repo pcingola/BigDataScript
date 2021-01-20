@@ -129,6 +129,12 @@
     </li>
     </ul>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -302,7 +308,6 @@ job_is_first_task  FALSE
 urgency_slots      min
 accounting_summary FALSE
 </code></pre>
-
 <p>Notice the <code>allocation_rule = $round_robin</code>.  This defines how to assign slots to a job. By 
 default StarCluster configures round_robin allocation. This means that if a job requests 8 
 slots for example, it will go to the first machine, grab a single slot if available, move to 
@@ -405,15 +410,12 @@ script (i.e. the jobID provided by the cluster management system)</p>
 <p>A trivial 'ssh' cluster composed only of the localhost accesed via ssh (useful for debugging)</p>
 <pre><code>ssh.nodes = user@localhost
 </code></pre>
-
 <p>Some company's servers used as an ssh cluster</p>
 <pre><code>ssh.nodes = user@lab1-1company.com, user@lab1-2company.com, user@lab1-3company.com, user@lab1-4company.com, user@lab1-5company.com
 </code></pre>
-
 <p>A StarCluster run on Amazon AWS</p>
 <pre><code>ssh.nodes = sgeadmin@node001, sgeadmin@node002, sgeadmin@node003, sgeadmin@node004, sgeadmin@node005, sgeadmin@node006
 </code></pre>
-
 </table>
               
             </div>
@@ -421,6 +423,8 @@ script (i.e. the jobID provided by the cluster management system)</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../building_bds/" class="btn btn-neutral float-right" title="Building bds from source">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../bdscmdline/" class="btn btn-neutral" title="bds command line"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -451,6 +455,8 @@ script (i.e. the jobID provided by the cluster management system)</p>
       
         <span><a href="../bdscmdline/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
+      
+        <span style="margin-left: 15px"><a href="../building_bds/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

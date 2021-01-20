@@ -123,6 +123,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -169,19 +175,16 @@ This list is intended as a reference for people that are already familiar with t
 <pre><code># Evaluate dependency 
 if( 'out.txt' &lt;- 'in.txt' )    print(&quot;File out.txt needs to be updated\n&quot;)
 </code></pre>
-
 <h3 id="checkpoint">checkpoint</h3>
 <p>Create a checkpoint. Optional expression is a file name</p>
 <pre><code># Wait for all tasks to finish
 checkpoint &quot;program.chp&quot;
 </code></pre>
-
 <h3 id="dep">dep</h3>
 <p>Define dependency tasks. Tasks are not scheduled for execution until <code>goal</code> decides which dependencies must be executed to satisfy an output.</p>
 <pre><code># Execute bwa command (create an index of the human genome)
 task bwa index hg19.fasta
 </code></pre>
-
 <h3 id="par">par</h3>
 <p>Execute code in parallel</p>
 <pre><code>par {
@@ -190,24 +193,20 @@ task bwa index hg19.fasta
     }
 }
 </code></pre>
-
 <pre><code>                or just call a function in parallel
 </code></pre>
 <pre><code>par doSomething(arg1, arg2)
 </code></pre>
-
 <h3 id="sys">sys</h3>
 <p>Execute an OS command. Execution is immediate and local (i.e. in the same computer as <code>bds</code> is running). It's intended for executing fast OS commands (not heavyweight processing).</p>
 <pre><code># Execute an &quot;ls&quot; command
 sys ls -al
 </code></pre>
-
 <h3 id="task">task</h3>
 <p>Schedule an OS command for execution. Depending on the value of <code>system</code>, the execution can be local, in a cluster, remote server, etc.</p>
 <pre><code># Execute bwa command (create an index of the human genome)
 task bwa index hg19.fasta
 </code></pre>
-
 <h3 id="wait">wait</h3>
 <p>Wait for task(s) to finish. It can be one task, a list of tasks or all tasks (if no expression)</p>
 <pre><code># Wait for all tasks to finish

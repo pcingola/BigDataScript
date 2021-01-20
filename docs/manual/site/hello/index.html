@@ -115,6 +115,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -159,11 +165,9 @@
 
 print &quot;Hello world\n&quot;
 </code></pre>
-
 <pre><code>$ ./test_01.bds 
 Hello world
 </code></pre>
-
 <h3 id="run-a-shell-command">Run a shell command</h3>
 <p>This time we do it by running a system command (<code>echo</code>), using bds' <code>sys</code> expression. 
 A <code>sys</code> executes the command immediately in the local computer and waits until the command finishes.
@@ -173,12 +177,10 @@ File <a href="bds/test_02.bds">test_02.bds</a></p>
 
 sys echo Hello world
 </code></pre>
-
 <p>Run it:</p>
 <pre><code>$ ./test_02.bds 
 hello world
 </code></pre>
-
 <h3 id="run-a-shell-command-on-a-cluster">Run a shell command on a cluster</h3>
 <p>now let's run the same in as a 'task'. tasks schedule the system command for execution (either locally, on a cluster, etc.).
 File <a href="bds/test_03.bds">test_03.bds</a></p>
@@ -186,17 +188,14 @@ File <a href="bds/test_03.bds">test_03.bds</a></p>
 
 task echo Hello world
 </code></pre>
-
 <p>Just run the script to execute tasks locally</p>
 <pre><code>$ ./test_03.bds
 Hello world
 </code></pre>
-
 <p>You can also execute on a cluster, for instance, if you are on a cluster's head node, just run:</p>
 <pre><code>$ bds -s cluster ./test_03.bds
 Hello world
 </code></pre>
-
 <p>Note that in order to execute on another architecture (cluster), we did not change the bds program, we just added a command line option.</p>
 <h3 id="cluster-cloud-datacenter-or-local-computer">Cluster, cloud, datacenter or local computer</h3>
 <p>Programs can be executed on different computer systems of different sizes without changing the code.</p>

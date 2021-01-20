@@ -9,7 +9,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Command line help - bds - Big Data Script programming language</title>
+  <title>Building bds from source - bds - Big Data Script programming language</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,8 +18,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Command line help";
-    var mkdocs_page_input_path = "help.md";
+    var mkdocs_page_name = "Building bds from source";
+    var mkdocs_page_input_path = "building_bds.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -97,15 +97,7 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../cmdline/">Command line parsing</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Command line help</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#help-sort-order">Help sort order</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#showing-help-on-empty-command-line-arguments">Showing help on empty command line arguments</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#help-sections">Help sections</a>
-    </li>
-    </ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../help/">Command line help</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../logging/">Logging</a>
                     </li>
@@ -114,6 +106,14 @@
                     <li class="toctree-l1"><a class="reference internal" href="../bdscmdline/">bds command line</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Building bds from source</a>
+    <ul class="current">
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
                     </li>
                 </ul>
       </div>
@@ -141,7 +141,7 @@
         
       
     
-    <li>Command line help</li>
+    <li>Building bds from source</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -152,123 +152,144 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="automatic-command-line-help">Automatic command line help</h1>
-<p>A command line 'help' for your scripts can be created automatically by <code>bds</code>. </p>
-<p>When you create variables that are used in command line arguments, you can provide an optional <code>help</code> string that <code>bds</code> will show when the script is run using either: <code>-h</code>, <code>-help</code> or <code>--help</code> command line options.</p>
-<p>For example, if we have the following script:
-File <a href="bds/test_26.bds">test_26.bds</a></p>
-<pre><code>#!/usr/bin/env bds
-
-int num = 3     help Number of times 'hi' should be printed
-int min         help Help for argument 'min' should be printed here
-mean := 5       help Help for argument 'mean' should be printed here
-someVeryLongCommandLineArgumentName := true    help This command line argument has a really long name
-
-for( int i=0 ; i &lt; num ; i++ ) {
-    print &quot;hi $i\n&quot;
-}
+                <h1 id="install">Install</h1>
+<p>Run the <code>scripts/install.sh</code> script</p>
+<h1 id="build-jar">Build Jar</h1>
+<h3 id="option-1-ant">Option 1: Ant</h3>
+<p>Just run the ant command:</p>
+<pre><code>ant
 </code></pre>
-
-<p>When running the script using <code>-h</code> command line option a help screen is created and printed out automatically (no action is programmed in the script to process the '-h' command line option).
-Note that script command line options are given AFTER script name:</p>
-<pre><code>$ bds test_26.bds -h
-Command line options 'test_26.bds' :
-    -num &lt;int&gt;                                : Number of times 'hi' should be printed
-    -min &lt;int&gt;                                : Help for argument 'min' should be printed here
-    -mean &lt;int&gt;                               : Help for argument 'mean' should be printed here
-    -someVeryLongCommandLineArgumentName      : This command line argument has a really long name
+<h3 id="option-2-maven">Option 2: Maven</h3>
+<p>These are used to build the JAR file</p>
+<p><strong>Build executable jar with dependencies</strong></p>
+<p>Jar with dependencias in directory 'target', e.g. <code>target/bds-2.3-jar-with-dependencies.jar</code></p>
+<pre><code>cd mvn
+mvn clean assembly:assembly
 </code></pre>
-
-<p>The same happens if you run the script directly:</p>
-<pre><code>$ ./test_26.bds -h
-Command line options 'test_26.bds' :
-    num                                 : Number of times 'hi' should be printed
-    min                                 : Help for argument 'min' should be printed here
-    mean                                : Help for argument 'mean' should be printed here
-    someVeryLongCommandLineArgumentName : This command line argument has a really long name
+<p><strong>Copy depdencies</strong></p>
+<p>Libraries are copied to: <code>target/dependency</code></p>
+<pre><code>cd mvn
+mvn dependency:copy-dependencies
 </code></pre>
-
-<h3 id="help-sort-order">Help sort order</h3>
-<p>By default, variables are sorted alphabetically when help is shown. 
-This can be overridden by creating a global variable <code>helpUnsorted</code> (regardless of its type and value, since the program may not even be running when the help is shown).</p>
-<p>File <a href="bds/test_26b.bds">test_26b.bds</a></p>
-<pre><code>#!/usr/bin/env bds
-
-# This variable is use to indicate that help should be shown unsorted 
-# (i.e. in the same order that variables are declared)
-helpUnsorted := true
-
-zzz := 1        help Help for argument 'zzz' should be printed here
-aaa := 1        help Help for argument 'aaa' should be printed here
-
-print &quot;Done\n&quot;
+<h1 id="mesos">Mesos</h1>
+<h3 id="install_1">Install</h3>
+<pre><code>brew update
+brew install mesos
 </code></pre>
+<p>Dir      : /usr/local/Cellar/mesos/0.22.1/
+LibMesos : /usr/local/Cellar/mesos/0.22.1/lib/libmesos.dylib</p>
+<h3 id="install-libraries">Install libraries</h3>
+<pre><code># Build mesos form source
+wget http://www.apache.org/dist/mesos/0.22.1/mesos-0.22.1.tar.gz
+tar -zxf mesos-0.22.1.tar.gz
+./configure
+make
 
-<p>Now when we run <code>bds -h</code> help lines are shown unsorted:</p>
-<pre><code>$ ./test_26b.bds -h
-Command line options 'test_26b.bds' :
-    -zzz &lt;int&gt;  : Help for argument 'zzz' should be printed here
-    -aaa &lt;int&gt;  : Help for argument 'aaa' should be printed here
+# Copy libraries to BigDataScript/lib dir
+cp src/java/target/mesos-0.22.1.jar ~/workspace/BigDataScript/lib/
+cp src/java/target/protobuf-java-2.5.0.jar ~/workspace/BigDataScript/lib/
+
+# Eclipse, 
+#   Open Package explorer, go to 'lib' dir, right-click on the JAR files -&gt; Build Path -&gt; Add to build path
+#   Open Package explorer, go to &quot;Referenced Libraries&quot;, right-click on &quot;mesos-0.22.1.jar&quot; -&gt; Properties -&gt; Native Libraries -&gt; Add &quot;/usr/local/Cellar/mesos/0.22.1/lib&quot;
 </code></pre>
-
-<h3 id="showing-help-on-empty-command-line-arguments">Showing help on empty command line arguments</h3>
-<p>The function <code>printHelp()</code> can be called to show the help message. 
-This can be used, for instance, to show a help message when there are no command line arguments by doing something like this:</p>
-<p>File <a href="bds/test_26c.bds">test_26c.bds</a></p>
-<pre><code>#!/usr/bin/env bds
-
-zzz := 1        help Help for argument 'zzz' should be printed here
-aaa := 1        help Help for argument 'aaa' should be printed here
-bbb := 1        help Help for argument 'bbb' should be printed here
-
-if( args.isEmpty() ) {
-    printHelp()
-    exit(1)
-}
-
-print &quot;Done\n&quot;
+<h3 id="run-mesos-master">Run Mesos master</h3>
+<pre><code>/usr/local/sbin/mesos-master --registry=in_memory --ip=127.0.0.1
 </code></pre>
-
-<p>Now when we run <code>test_26c.bds</code> without any command line arguments, the help message is shown:</p>
-<pre><code>$ ./test_26c.bds 
-Command line options 'test_26c.bds' :
-    -aaa &lt;int&gt;  : Help for argument 'aaa' should be printed here
-    -bbb &lt;int&gt;  : Help for argument 'bbb' should be printed here
-    -zzz &lt;int&gt;  : Help for argument 'zzz' should be printed here
+<h3 id="run-mesos-slave">Run Mesos slave</h3>
+<pre><code>sudo /usr/local/sbin/mesos-slave --master=127.0.0.1:5050
 </code></pre>
-
-<h3 id="help-sections">Help sections</h3>
-<p>Sometimes it is useful to divide the help message into sections.
-Sections are marked by <code>help</code> statements as in this example:</p>
-<p>File <a href="bds/test_26d.bds">test_26d.bds</a></p>
-<pre><code>#!/usr/bin/env bds
-
-help This program does blah
-help Actually, a lot of blah blah
-help     and even more blah
-help     or blah
-
-verbose := false    help Be verbose
-quiet   := false    help Be very quiet
-
-help Options related to database
-dbPort := 5432      help Database port
-dbName := &quot;testDb&quot;  help Database name
-
-print &quot;OK\n&quot;
+<p>Master's http server: <code>http://localhost:5050</code></p>
+<h3 id="run-java-framework">Run Java framework</h3>
+<p><strong><em>Exits after successfully running some tasks.</em></strong></p>
+<pre><code>./src/examples/java/test-framework 127.0.0.1:5050
 </code></pre>
+<h1 id="bds-vm-assembly">bds VM assembly</h1>
+<p>Some examples of 'bds vm' assembly</p>
+<pre><code>#--------------------------------------
+# bds code:
+#     a = 4
+#--------------------------------------
 
-<p>When run, variables are grouped in two "help sections" (note that variables are sorted within each section):</p>
-<pre><code>$ ./test_26d.bds -h
-This program does blah
-Actually, a lot of blah blah
-    and even more blah
-    or blah
-    -quiet &lt;bool&gt;     : Be very quiet
-    -verbose &lt;bool&gt;   : Be verbose
-Options related to database
-    -dbName &lt;string&gt;  : Database name
-    -dbPort &lt;int&gt;     : Database port
+pushi 4
+load a
+set
+</code></pre>
+<pre><code>#--------------------------------------
+# bds code:
+#     a = 2 + 3
+#--------------------------------------
+
+pushi 2
+pushi 3
+addi
+load a
+set
+</code></pre>
+<pre><code>#--------------------------------------
+# bds code:
+#     a[i] = b[j] + 7
+#--------------------------------------
+            # Stack
+push 7
+load j
+load b      # b, j, 7
+reflist     # b[j], 7
+addi
+load i      # i, b[j]+7
+load a      # a, i, b[j]+7
+reflist     # a[i], b[j]+7
+set         # -
+</code></pre>
+<pre><code>#--------------------------------------
+# bds code:
+#     a{'hi' + 1} = 'bye'
+#--------------------------------------
+            # Stack
+pushs 'bye'
+pushs 'hi'
+pushi 1
+adds        # 'hi1', 'bye'
+load a      # a, 'hi1', 'bye'
+refdict     # a{'hi1'}, 'bye'
+set         # -
+</code></pre>
+<pre><code>#--------------------------------------
+# bds code:
+#     z.a[7]{'hi'} = 42    
+# where: z is an object
+#--------------------------------------
+pushi 42    # 42
+pushs 'hi'  # 'hi', 42
+pushi 7     # 7, 'hi', 42
+pushs 'a'   # 'a', 7, 'hi', 42
+load z      # z, 'a', 7, 'hi', 42
+reffield    # z.a, 7, 'hi', 42
+reflist     # z.a[7], 'hi', 42
+refdict     # z.a[7]{'hi}, 42
+set
+</code></pre>
+<pre><code>#--------------------------------------
+# bds code:
+#     int f(int x) return x+1
+#     z = f(7)
+#--------------------------------------
+f:
+load x
+push 1
+addi       # x+1 is the return value
+ret        # Return from function:
+           #    - Remove scope (restore old scope)
+           #    - pop PC from call-stack (jump to that position)
+
+main:
+pushi 7
+call f     # Function call:
+           #    - create new scope
+           #    - add arguments as scope variables
+           #    - push PC to call-stack
+load z
+set
 </code></pre>
               
             </div>
@@ -277,10 +298,10 @@ Options related to database
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../logging/" class="btn btn-neutral float-right" title="Logging">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../bds_vm/" class="btn btn-neutral float-right" title="Bds VM">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../cmdline/" class="btn btn-neutral" title="Command line parsing"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../bdsconfig/" class="btn btn-neutral" title="Config file"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -306,10 +327,10 @@ Options related to database
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../cmdline/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../bdsconfig/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../logging/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../bds_vm/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

@@ -109,6 +109,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -166,7 +172,6 @@ for(int i : range(1,10) ) {
     }
 }
 </code></pre>
-
 <p>If I run this example and interrupt it (by pressing Ctrl-C) before it ends:</p>
 <pre><code>$ ./test_23.bds
 Task 4
@@ -199,7 +204,6 @@ Done 3
 2014/07/31 00:43:46 bds: Killing PID '32610'
 2014/07/31 00:43:46 bds: Deleting file 'out_10.txt'
 </code></pre>
-
 <p>You can see how <code>bds</code> cleans up all stale files and kills all processes.
 When this is executed in a cluster, the appropriate <code>qdel</code>, <code>canceljob</code> or similar command is issued (depending on the type of cluster used).</p>
               

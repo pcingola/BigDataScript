@@ -85,7 +85,7 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#multiple-dependencies">Multiple dependencies</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#using-lt-in-tasks">Using &amp;lt;- in tasks</a>
+    <li class="toctree-l2"><a class="reference internal" href="#using-in-tasks">Using &lt;- in tasks</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#automatic-task-dependency-detection">Automatic task dependency detection</a>
     </li>
@@ -114,6 +114,12 @@
                     <li class="toctree-l1"><a class="reference internal" href="../bdscmdline/">bds command line</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
                     </li>
                 </ul>
       </div>
@@ -152,7 +158,7 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="dependency-operator-lt-">Dependency operator <code>&lt;-</code></h1>
+                <h1 id="dependency-operator-">Dependency operator <code>&lt;-</code></h1>
 <p>The dependency operator provides a simple way to see if a file needs to be updated (i.e. recalculated) with respect to some inputs.
 For instance, when we already processed some files and have the corresponding results, we may save some work if the inputs have not changed (like "make" command).</p>
 <p>We introduce the dependency operator <code>&lt;-</code> (pronounced 'dep') which is a "make" style operator.</p>
@@ -177,18 +183,15 @@ if( outFile &lt;- inFile ) {
     task echo Creating $outFile; cat $inFile &gt; $outFile
 }
 </code></pre>
-
 <p>When executing for the first time, both tasks are executed and both files ('in.txt' and 'out.txt') are created.</p>
 <pre><code>$ ./test_06.bds
 Creating in.txt
 Creating out.txt
 </code></pre>
-
 <p>If we execute for a second time, since files have not changed, no <code>task</code> is executed.</p>
 <pre><code>$ ./test_06.bds
 $
 </code></pre>
-
 <p>If we now change the contents of 'in.txt', and run the script again, the second <code>task</code> will be executed (because 'out.txt' needs to be updated with respect to 'in.txt')</p>
 <pre><code># Update 'in.txt'
 $ date &gt; in.txt
@@ -197,13 +200,11 @@ $ date &gt; in.txt
 $ ./test_06.bds 
 Creating out.txt
 </code></pre>
-
 <p><strong>Summary:</strong> If the file 'out.txt' is up to date with respect to 'in.txt', the following condition will be false and the <code>task</code> will not execute</p>
 <pre><code>if( outFile &lt;- inFile ) {
     task echo Creating $outFile; cat $inFile &gt; $outFile
 }
 </code></pre>
-
 <h3 id="multiple-dependencies">Multiple dependencies</h3>
 <p>You can have a dependency operator expression <code>out &lt;- in</code>, where either <code>in</code> and <code>out</code> or both can be lists of files. 
 The same rules apply: The operator is true if any out file is missing, zero length or the minimum of modification times in <code>out</code> is less than the maximum modificaton times in <code>in</code></p>
@@ -214,7 +215,6 @@ out := &quot;out.txt&quot;
 
 if( out &lt;- [in1, in2] ) print(&quot;We should update $out\n&quot;)
 </code></pre>
-
 <p>or even:</p>
 <pre><code>in1 := &quot;in1.txt&quot;
 in2 := &quot;in2.txt&quot;
@@ -223,14 +223,12 @@ out2 := &quot;out2.txt&quot;
 
 if( [out1, out2] &lt;- [in1, in2] ) print(&quot;We should update $out1 and $out2\n&quot;)
 </code></pre>
-
-<h3 id="using-lt-in-tasks">Using <code>&lt;-</code> in <code>tasks</code></h3>
+<h3 id="using-in-tasks">Using <code>&lt;-</code> in <code>tasks</code></h3>
 <p>This construction is so common that we allow for some syntactic sugar. </p>
 <pre><code>task( outFile &lt;- inFile ) { 
     sys echo Creating $outFile; cat $inFile &gt; $outFile
 }
 </code></pre>
-
 <p>The above syntax means that <code>task</code> will only be executed if the dependency is satisfied, i.e. <code>outFile</code> needs to be updated respect to <code>inFile</code>.</p>
 <iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
 
@@ -261,7 +259,6 @@ task( outFile &lt;- intermediate ) {
     sys echo Creating $outFile; cat $intermediate &gt; $outFile; echo Done $outFile
 }
 </code></pre>
-
 <p>As a side note: We used the <code>:=</code> operator to declare variables using type inference. 
 So we can write <code>inFile := "in.txt"</code> instead of <code>string inFile = "in.txt"</code>, which not only is shorter to type, but also makes the code look cleaner.</p>
 <p>Now let's run the script</p>
@@ -278,7 +275,6 @@ Done inter.txt
 Creating out.txt
 Done out.txt
 </code></pre>
-
 <p>Note how the second task is executed only after the first one finished.</p>
               
             </div>

@@ -109,6 +109,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -165,7 +171,6 @@ for( int i=0 ; i &lt; 3 ; i = inc(i) ) {
     debug &quot;Variable: $i\n&quot;  # This will be printed
 }
 </code></pre>
-
 <p>When we run this example, the program runs until the first <code>breakpoint</code> and then <code>bds</code> prompts for debug commands on the console:</p>
 <pre><code>$ bds test_25.bds 
 Breakpoint test_25.bds, line 8: Activate debug mode and insert a breakpoint here!
@@ -176,7 +181,6 @@ DEBUG [STEP]: test_25.bds, line 10:
     }
 &gt;
 </code></pre>
-
 <p>You can type 'h' for help in debug commands:</p>
 <pre><code>&gt; h
 Help:
@@ -190,7 +194,6 @@ Help:
     t         : show stack Trace
     v varname : show Variable 'varname'
 </code></pre>
-
 <p>Here is an example of a debug session (comments after '#' added for clarity):</p>
 <pre><code>$ bds test_25.bds 
 Breakpoint test_25.bds, line 8: Activate debug mode and insert a breakpoint here!

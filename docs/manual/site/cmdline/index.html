@@ -113,6 +113,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -159,17 +165,14 @@
 in := &quot;in.txt&quot;
 print(&quot;In file is '$in'\n&quot;)
 </code></pre>
-
 <p>If we run this, we get</p>
 <pre><code>$ ./test_20.bds 
 In file is 'in.txt'
 </code></pre>
-
 <p>Now we pass a command line argument <code>-in another_file.txt</code>, and <code>bds</code> automatically parses that command line option replacing the value of variable <code>in</code></p>
 <pre><code>$ ./test_20.bds -in another_file.txt
 In file is 'another_file.txt'
 </code></pre>
-
 <p>This feature also works for other data types (<code>int</code>, <code>real</code>, <code>bool</code> or lists). </p>
 <h3 id="flags">Flags</h3>
 <p>In case of <code>bool</code> if the option is present, the variable is set to <code>true</code>.
@@ -179,15 +182,12 @@ File <a href="bds/test_21.bds">test_21.bds</a></p>
 bool flag
 print(&quot;Variable flag is $flag\n&quot;)
 </code></pre>
-
 <pre><code>$ ./test_21.bds
 Variable flag is false
 </code></pre>
-
 <pre><code>$ ./test_21.bds -flag
 Variable flag is true
 </code></pre>
-
 <p>Or you can specify the value (<code>true</code> or <code>false</code> which is useful to set to <code>false</code> a bool that is by default <code>true</code>:
 File <a href="bds/test_21b.bds">test_21b.bds</a></p>
 <pre><code>#!/usr/bin/env bds
@@ -196,13 +196,11 @@ flagOn  := true
 flagOff := false
 print(&quot;flagOn = $flagOn\nflagOff = $flagOff\n&quot;)
 </code></pre>
-
 <p>So in this example we can reverse the defaults by running this (note that we can use <code>-flagOff</code> instead of <code>-flagOff true</code>):</p>
 <pre><code>$ ./test_21b.bds -flagOn false -flagOff true 
 flagOn = false
 flagOff = true
 </code></pre>
-
 <p>Note that we can use <code>-flagOff</code> instead of <code>-flagOff true</code>.</p>
 <h3 id="lists">Lists</h3>
 <p>You can also apply this to a list of strings.
@@ -219,7 +217,6 @@ print(&quot;In : $in\n&quot;)
 print(&quot;Out: $out\n&quot;)
 print(&quot;OK : $ok\n&quot;)
 </code></pre>
-
 <pre><code>$ ./test_22.bds  -ok -in in1.txt in2.txt in3.txt -out zzz.txt
 In : [in1.txt, in2.txt, in3.txt]
 Out: zzz.txt

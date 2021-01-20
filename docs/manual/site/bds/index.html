@@ -107,6 +107,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -166,7 +172,6 @@ dep( mid1 &lt;- in )      sys echo $in   &gt; $mid1 ; echo MID1  ; sleep 1
 goal out
 
 </code></pre>
-
 <pre><code>            Running the code, we get
 </code></pre>
 <pre><code># Remove old files (if any)
@@ -180,7 +185,6 @@ MID1
 MID2
 OUT
 </code></pre>
-
 <pre><code>            In this case, `bds` created a directed acyclic graph of the dependencies needed to satisfy the goal 'out.txt' and then executed the required 'dep' declarations.
 
 
@@ -189,7 +193,6 @@ OUT
 <pre><code>tids := goal out
 print &quot;Executing tasks: $tids\n&quot;
 </code></pre>
-
 <pre><code>            ### Intermediate files within a 'goal' can be deleted
 
             In the previous example, if we delete the intermediate files 'mid1.txt' and or 'mid2.txt', and we re-execute the script, `bds` will notice that the output 'out.txt' is still valid with respect to the input 'in.txt' and will not execute any task.
@@ -201,7 +204,6 @@ $ rm mid?.txt
 $ ./test_18.bds
 $
 </code></pre>
-
 <pre><code>            How this works: `bds` calculates the dependency graph and checks whether the `goal` is up to date with respect to the inputs (which are the leaves in the dependency graph).
             If the goal up to date, then nothing is done.
             This feature is particularly useful when intermediate files are large and we need to clean them up (since we are working with big data problems, this is often the case).
@@ -220,7 +222,6 @@ tid := dep( taskName := 'hi' ) {
 
 goal tid    # We use task Id instead of a file name
 </code></pre>
-
 <pre><code>            ### Multiple goals
 
             Sometimes it is convenient to fire multiple goals at once. You can do this by passing a list, instead of a string, to `goal`.
@@ -239,7 +240,6 @@ for(int i=0; i &lt; 3 ; i++ ) {
 
 goal outs   # We use a list of goals, it is interpreted as multiple goal statements (one for each item in the list)
 </code></pre>
-
 <pre><code>        &lt;!-- ================================================== --&gt;
 </code></pre>
 <h1 id="remote-files-amazon-s3-http-etc">Remote files (Amazon S3, Http, etc.)</h1>
@@ -258,7 +258,6 @@ out := 'tmp.html'
 
 task( out &lt;- in ) sys cat $in &gt; $out
 </code></pre>
-
 <pre><code>            Notice that: 
             &lt;ol&gt;
                 &lt;li&gt; there is no code for downloading the remote file (`index.html`) in the script;
@@ -278,7 +277,6 @@ task( out &lt;- in ) {
     sys echo &quot;This line is appended to the file&quot; &gt;&gt; $out
 }
 </code></pre>
-
 <pre><code>        &lt;!-- ================================================== --&gt;
 </code></pre>
 <h1 id="parallel-execution-par">Parallel execution <code>par</code></h1>
@@ -305,7 +303,6 @@ for( int i : range(1, 5) ) {
     sleep( 0.2 )
 }
 </code></pre>
-
 <pre><code>            If we run this code:
 </code></pre>
 <pre><code>$ ./test_16.bds
@@ -320,7 +317,6 @@ Parallel 4
 Parallel 5
 Main 5
 </code></pre>
-
 <pre><code>        Perhaps a more elegant way to write the same code would be:
 </code></pre>
 <pre><code>#!/usr/bin/env bds
@@ -335,7 +331,6 @@ void count(string msg) {
 par count('Parallel')   # Call function in parallel thread
 count('Main')           # Call function in 'main' thread
 </code></pre>
-
 <pre><code>            `par` also works with optional expressions that must be all 'true' to evaluate the block.
 </code></pre>
 <pre><code>par( out &lt;- in )  {
@@ -348,7 +343,6 @@ count('Main')           # Call function in 'main' thread
     task cat $in.*.tmp &gt; $out
 }
 </code></pre>
-
 <pre><code>            ### Wait in 'par' context 
             `par` expressions return a 'parallel ID' string that we can use in `wait`
 </code></pre>
@@ -356,7 +350,6 @@ count('Main')           # Call function in 'main' thread
 
 wait pid                            // Wait for parallel to finish
 </code></pre>
-
 <pre><code>            Here `wait` statement waits until the function "longRunningFunction()" finishes.
 
 
@@ -373,7 +366,6 @@ wait pid                            // Wait for parallel to finish
 </code></pre>
 <pre><code>par someFunction(x, y)
 </code></pre>
-
 <pre><code>            It is important to notice that the return value from a `par` it is a 'parallel ID' (i.e. a thread ID) and not the function's return value.
             This is because the parallel thread could take a long time to process and we don't want to stop execution in the current thread until the function finishes.
 
@@ -383,7 +375,6 @@ wait pid                            // Wait for parallel to finish
 <pre><code>pid := par someFunction(x, y)  # 'par' returns a thread ID
 print &quot;Parallel ID: $pid\n&quot;
 </code></pre>
-
 <pre><code>            **Important:** When calling a function, arguments are evaluated **before** the new thread is created. 
             The reason for this is to simplify race conditions.
 
@@ -400,7 +391,6 @@ for( int i : range(0, 10) ) {
     }
 }   
 </code></pre>
-
 <pre><code>        The output is (comments added for clarification):
 </code></pre>
 <pre><code>$ ./z.bds
@@ -416,7 +406,6 @@ Number: 10      # Three number 10?
 Number: 10
 Number: 10
 </code></pre>
-
 <pre><code>        This is clearly not the result we wanted.
 
         What happened? Well, obviously this had a race condition. 
@@ -437,7 +426,6 @@ for( int i : range(0, 10) ) {
     par show(i)
 }   
 </code></pre>
-
 <pre><code>        Now the output is what we expect:
 </code></pre>
 <pre><code>$ ./z.bds
@@ -453,7 +441,6 @@ Number: 8
 Number: 9
 Number: 10
 </code></pre>
-
 <pre><code>        &lt;!-- ================================================== --&gt;
 </code></pre>
 <h1 id="checkpoints">Checkpoints</h1>
@@ -475,7 +462,6 @@ Number: 10
     print(&quot;Counting $i\n&quot;)
 }
 </code></pre>
-
 <pre><code>            If we execute it, we get
 </code></pre>
 <pre><code>$ bds z.bds
@@ -491,7 +477,6 @@ Counting 7
 Counting 8
 Counting 9
 </code></pre>
-
 <pre><code>            A checkpoint file `my.chp` created.
             We can restart execution from this checkpoint file, by using the `bds -r` command line option
 </code></pre>
@@ -502,7 +487,6 @@ Counting 7
 Counting 8
 Counting 9
 </code></pre>
-
 <pre><code>            You can also see information on what was happening when the checkpoint was created:
 </code></pre>
 <pre><code>$ bds -i my.chp
@@ -526,7 +510,6 @@ test_19.bds, line 6 :           checkpoint
 int i = 5
 ...
 </code></pre>
-
 <pre><code>            You can even copy the file(s) to another computer and restart execution there, as shown in this video
 
             &lt;iframe width="640" height="390" src="https://www.youtube.com/embed/ah1XxWTYSLM" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
@@ -562,7 +545,6 @@ void test03() {
     if( i != 2 )    error(&quot;This is weird&quot;)
 }
 </code></pre>
-
 <pre><code>            When we execute the tests, we get
 </code></pre>
 <pre><code>$ bds -t ./test_24.bds 
@@ -580,7 +562,6 @@ Nice test code 01
                   ERROR : 1
 
 </code></pre>
-
 <pre><code>        &lt;!-- ================================================== --&gt;
 </code></pre>
 <h1 id="debugger-built-in">Debugger (built in)</h1>
@@ -605,7 +586,6 @@ for( int i=0 ; i &lt; 3 ; i = inc(i) ) {
     debug &quot;Variable: $i\n&quot;  # This will be printed
 }
 </code></pre>
-
 <pre><code>            When we run this example, the program runs until the first `breakpoint` and then `bds` prompts for debug commands on the console:
 </code></pre>
 <pre><code>$ bds test_25.bds 
@@ -617,7 +597,6 @@ DEBUG [STEP]: test_25.bds, line 10:
     }
 &gt;
 </code></pre>
-
 <pre><code>        You can type 'h' for help in debug commands:
 </code></pre>
 <pre><code>&gt; h
@@ -632,7 +611,6 @@ Help:
     t         : show stack Trace
     v varname : show Variable 'varname'
 </code></pre>
-
 <pre><code>        Here is an example of a debug session (comments after '#' added for clarity):
 </code></pre>
 <pre><code>$ bds test_25.bds 
@@ -685,7 +663,6 @@ DEBUG [STEP_OVER]: test_25.bds, line 11: print &quot;hi $i\\n&quot; &gt; r      
 hi 2
 Debug test_25.bds, line 12: Variable: 2
 </code></pre>
-
 <pre><code>        &lt;!-- ================================================== --&gt;
 </code></pre>
 <h1 id="automatic-command-line-parsing">Automatic command line parsing</h1>
@@ -699,19 +676,16 @@ Debug test_25.bds, line 12: Variable: 2
 in := &quot;in.txt&quot;
 print(&quot;In file is '$in'\n&quot;)
 </code></pre>
-
 <pre><code>            If we run this, we get
 </code></pre>
 <pre><code>$ ./test_20.bds 
 In file is 'in.txt'
 </code></pre>
-
 <pre><code>            Now we pass a command line argument `-in another_file.txt`, and `bds` automatically parses that command line option replacing the value of variable 'in'
 </code></pre>
 <pre><code>$ ./test_20.bds -in another_file.txt
 In file is 'another_file.txt'
 </code></pre>
-
 <pre><code>            This feature also works for other data types (int, real, bool). 
             In case of bool if the option is present, the variable is set to 'true'.
              File &lt;a href="bds/test_21.bds"&gt;test_21.bds&lt;/a&gt;
@@ -721,15 +695,12 @@ In file is 'another_file.txt'
 bool flag
 print(&quot;Variable flag is $flag\n&quot;)
 </code></pre>
-
 <pre><code>$ ./test_21.bds
 Variable flag is false
 </code></pre>
-
 <pre><code>$ ./test_21.bds -flag
 Variable flag is true
 </code></pre>
-
 <pre><code>            Or you can specify the value (`true` or `false` which is useful to set to `false` a bool that is by default `true`:
              File &lt;a href="bds/test_21b.bds"&gt;test_21b.bds&lt;/a&gt;
 </code></pre>
@@ -739,14 +710,12 @@ flagOn  := true
 flagOff := false
 print(&quot;flagOn = $flagOn\nflagOff = $flagOff\n&quot;)
 </code></pre>
-
 <pre><code>            So in this example we can reverse the defaults by running this (note that we can use `-flagOff` instead of `-flagOff true `):
 </code></pre>
 <pre><code>$ ./test_21b.bds -flagOn false -flagOff true 
 flagOn = false
 flagOff = true
 </code></pre>
-
 <pre><code>            Note that we can use `-flagOff` instead of `-flagOff true` (the outcome is the same).
 
 
@@ -767,13 +736,11 @@ print(&quot;In : $in\n&quot;)
 print(&quot;Out: $out\n&quot;)
 print(&quot;OK : $ok\n&quot;)
 </code></pre>
-
 <pre><code>$ ./test_22.bds  -ok -in in1.txt in2.txt in3.txt -out zzz.txt
 In : [in1.txt, in2.txt, in3.txt]
 Out: zzz.txt
 OK : true
 </code></pre>
-
 <pre><code>            &lt;iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
 
 
@@ -799,7 +766,6 @@ for( int i=0 ; i &lt; num ; i++ ) {
     print &quot;hi $i\n&quot;
 }
 </code></pre>
-
 <pre><code>    When running the script using `-h` command line option a help screen is created and printed out automatically (no action is programmed in the script to process the '-h' command line option).
     Note that script command line options are given AFTER script name:
 </code></pre>
@@ -810,7 +776,6 @@ Command line options 'test_26.bds' :
     -mean &lt;int&gt;                               : Help for argument 'mean' should be printed here
     -someVeryLongCommandLineArgumentName      : This command line argument has a really long name
 </code></pre>
-
 <pre><code>    The same happens if you run the script directly:
 </code></pre>
 <pre><code>$ ./test_26.bds -h
@@ -820,7 +785,6 @@ Command line options 'test_26.bds' :
     mean                                : Help for argument 'mean' should be printed here
     someVeryLongCommandLineArgumentName : This command line argument has a really long name
 </code></pre>
-
 <pre><code>            ### Help sort order 
             By default, variables are sorted alphabetically when help is shown. 
             This can be overridden by creating a global variable `helpUnsorted` (regardless of its type and value, since the program may not even be running when the help is shown).
@@ -838,7 +802,6 @@ aaa := 1        help Help for argument 'aaa' should be printed here
 
 print &quot;Done\n&quot;
 </code></pre>
-
 <pre><code>            Now when we run `bds -h` help lines are shown unsorted:
 </code></pre>
 <pre><code>$ ./test_26b.bds -h
@@ -846,7 +809,6 @@ Command line options 'test_26b.bds' :
     -zzz &lt;int&gt;  : Help for argument 'zzz' should be printed here
     -aaa &lt;int&gt;  : Help for argument 'aaa' should be printed here
 </code></pre>
-
 <pre><code>            ### Showing help on empty command line arguments 
             The function `printHelp()` can be called to show the help message. 
             This can be used, for instance, to show a help message when there are no command line arguments by doing something like this:
@@ -866,7 +828,6 @@ if( args.isEmpty() ) {
 
 print &quot;Done\n&quot;
 </code></pre>
-
 <pre><code>            Now when we run `test_26c.bds` without any command line arguments, the help message is shown:
 </code></pre>
 <pre><code>$ ./test_26c.bds 
@@ -875,7 +836,6 @@ Command line options 'test_26c.bds' :
     -bbb &lt;int&gt;  : Help for argument 'bbb' should be printed here
     -zzz &lt;int&gt;  : Help for argument 'zzz' should be printed here
 </code></pre>
-
 <pre><code>            ### Help sections
 
             Sometimes it is useful to divide the help message into sections.
@@ -899,7 +859,6 @@ dbName := &quot;testDb&quot;  help Database name
 
 print &quot;OK\n&quot;
 </code></pre>
-
 <pre><code>            When run, variables are grouped in two "help sections" (note that variables are sorted within each section):
 </code></pre>
 <pre><code>$ ./test_26d.bds -h
@@ -913,7 +872,6 @@ Options related to database
     -dbName &lt;string&gt;  : Database name
     -dbPort &lt;int&gt;     : Database port
 </code></pre>
-
 <pre><code>        &lt;!-- ================================================== --&gt;
 </code></pre>
 <h1 id="logging">Logging</h1>
@@ -928,7 +886,6 @@ Options related to database
 
 sys echo Hello $name
 </code></pre>
-
 <pre><code>                Now let's run this script, we use `-v` command line option to make the output verbose:
 </code></pre>
 <pre><code>$ bds -v -log z.bds
@@ -939,7 +896,6 @@ sys echo Hello $name
 Hello Pablo
 00:00:00.692    Finished running. Exit value : 0
 </code></pre>
-
 <pre><code>            What happened?
             &lt;ol&gt;
                 &lt;li&gt; bds parses the `sys` statement and interpolates "echo Hello $name" to "echo Hello Pablo"
@@ -953,14 +909,12 @@ Hello Pablo
 
 echo Hello Pablo
 </code></pre>
-
 <pre><code>                    &lt;li&gt; Then executes this shell script and saves stdout and stderr to z.bds.20140328_224825_685/sys.line_4.id_1.stdout and z.bds.20140328_224825_685/sys.line_4.id_1.stderr respectively
 </code></pre>
 <pre><code>$ cat z.bds.20140328_224825_685/sys.line_4.id_1.stdout
 Hello Pablo
 $ cat z.bds.20140328_224825_685/sys.line_4.id_1.stderr
 </code></pre>
-
 <pre><code>                Notice that there was no output on stderr (it's empty)
 
                 &lt;li&gt; Command finished without problems, so it continues with the rest of the program
@@ -1001,7 +955,6 @@ for(int i : range(1,10) ) {
     }
 }
 </code></pre>
-
 <pre><code>            If I run this example and interrupt it (by pressing Ctrl-C) before it ends:
 </code></pre>
 <pre><code>$ ./test_23.bds
@@ -1035,7 +988,6 @@ Done 3
 2014/07/31 00:43:46 bds: Killing PID '32610'
 2014/07/31 00:43:46 bds: Deleting file 'out_10.txt'
 </code></pre>
-
 <pre><code>            You can see how `bds` cleans up all stale files and kills all processes.
             When this is executed in a cluster, the appropriate `qdel`, `canceljob` or similar command is issued (depending on the type of cluster used).
 </code></pre>
@@ -1083,7 +1035,6 @@ Available options:
   [-y | -retry  ] num            : Number of times to retry a failing tasks.
   -pid &lt;file&gt;                    : Write local processes PIDs to 'file'
 </code></pre>
-
 <pre><code>            &lt;table class="table table-striped"&gt;
                     Option short    Option long     Meaning    
                     -c     -config     Path to bds.config file (most of the times no config file is needed)    
@@ -1219,7 +1170,6 @@ Available options:
 <pre><code>pidRegex = &quot;(.+).domain.com&quot;
 pidRegex = &quot;Your job (\\S+)&quot;
 </code></pre>
-
 <pre><code>                      clusterRunAdditionalArgs
 
                         These command line arguments are added to every cluster 'run' command (e.g. 'qsub')
@@ -1298,7 +1248,6 @@ job_is_first_task  FALSE
 urgency_slots      min
 accounting_summary FALSE
 </code></pre>
-
 <pre><code>                      Notice the `allocation_rule = $round_robin`.  This defines how to assign slots to a job. By 
                       default StarCluster configures round_robin allocation. This means that if a job requests 8 
                       slots for example, it will go to the first machine, grab a single slot if available, move to 
@@ -1455,17 +1404,14 @@ accounting_summary FALSE
 </code></pre>
 <pre><code>ssh.nodes = user@localhost
 </code></pre>
-
 <pre><code>                            &lt;li&gt; Some company's servers used as an ssh cluster
 </code></pre>
 <pre><code>ssh.nodes = user@lab1-1company.com, user@lab1-2company.com, user@lab1-3company.com, user@lab1-4company.com, user@lab1-5company.com
 </code></pre>
-
 <pre><code>                            &lt;li&gt; A StarCluster run on Amazon AWS
 </code></pre>
 <pre><code>ssh.nodes = sgeadmin@node001, sgeadmin@node002, sgeadmin@node003, sgeadmin@node004, sgeadmin@node005, sgeadmin@node006
 </code></pre>
-
 <pre><code>            &lt;/table&gt;
 
 

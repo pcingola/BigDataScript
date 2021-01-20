@@ -155,6 +155,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -206,7 +212,6 @@ This section is intended as a reference, so just glance through it.</p>
    Multi-line comment
 */
 </code></pre>
-
 <h3 id="statements">Statements</h3>
 <p>Statements can be terminated either by semicolon or by a new line.</p>
 <pre><code># Two statements
@@ -216,53 +221,44 @@ print &quot;Hi\n&quot;; print &quot;Bye\n&quot;;
 print &quot;Hi\n&quot; 
 print &quot;Bye\n&quot;
 </code></pre>
-
 <h3 id="break">break</h3>
 <p>Breaks from current loop</p>
 <pre><code>for( int i=0 ; i &lt; 10 ; i++ ) {
     if( i == 5 ) break;    // Finish when we reach 5
 }
 </code></pre>
-
 <h3 id="breakpoint">breakpoint</h3>
 <p>Inserts a debugging breakpoint. I.e. when the statement is executed, <code>bds</code> switches execution to debug mode (STEP) </p>
 <pre><code>breakpoint &quot;Program execution will switch do debug mode here!\n&quot;
 </code></pre>
-
 <h3 id="continue">continue</h3>
 <p>Continue at the end of the current loop</p>
 <pre><code>for( int i=0 ; i &lt; 10 ; i++ ) {
     if( i == 5 ) continue;  // Skip value 5
 }
 </code></pre>
-
 <h3 id="debug">debug</h3>
 <p>Show a debug message on STDERR only if <code>bds</code> is running in 'debug' mode (otherwise the statement is ignored).</p>
 <pre><code>debug &quot;Show this message only if we are in debug mode!\n&quot;
 </code></pre>
-
 <h3 id="error">error</h3>
 <p>Show an error message and exit the program</p>
 <pre><code>if( num &lt;= 0 )  warning &quot;Number MUST be positive\n&quot;
 </code></pre>
-
 <h3 id="exit">exit</h3>
 <p>Exit program, optional expression calculates an exit value.</p>
 <pre><code>exit 1
 </code></pre>
-
 <h3 id="for">for</h3>
 <p>Similar to C or Java <code>for</code> loops</p>
 <pre><code>for( int i=0 ; i &lt; 10 ; i++ ) print(&quot;$i\n&quot;)
 </code></pre>
-
 <pre><code>                or
 </code></pre>
 <pre><code>for( int i=0 ; i &lt; 10 ; i++ ) {
     print(&quot;$i\n&quot;)
 }
 </code></pre>
-
 <h3 id="for-lists">for (lists)</h3>
 <p>Java-like for iterator on lists</p>
 <pre><code>string[] mylist
@@ -271,12 +267,10 @@ print &quot;Bye\n&quot;
 
 for( string s : mylist ) print(&quot;$s\n&quot;)
 </code></pre>
-
 <h3 id="if-else">if / else</h3>
 <p>It does exactly what you expect</p>
 <pre><code>if( i &lt; 10 )    print(&quot;Less than ten\n&quot;)
 </code></pre>
-
 <pre><code>                or
 </code></pre>
 <pre><code>if( i &lt; 10 ) {
@@ -287,25 +281,21 @@ for( string s : mylist ) print(&quot;$s\n&quot;)
     print(&quot;More than twenty\n&quot;)
 }
 </code></pre>
-
 <h3 id="include">include</h3>
 <p>Include source code from another file</p>
 <pre><code>include &quot;mymodule&quot;
 
 // ... use functions from 'mymodule.bds'
 </code></pre>
-
 <h3 id="kill">kill</h3>
 <p>Kill a task</p>
 <pre><code>kill taskId
 </code></pre>
-
 <h3 id="print-println">print / println</h3>
 <p>Print to sdtout</p>
 <pre><code>print &quot;Show this mesage without a new line at the end.&quot;
 println &quot;This one gets a new line at the end.&quot;
 </code></pre>
-
 <h3 id="return">return</h3>
 <p>Return from a function. Optional expression is a return value.</p>
 <pre><code>// Define a function
@@ -313,7 +303,6 @@ int twice(int n) {
     return( 2 * n )
 }
 </code></pre>
-
 <h3 id="switch">switch</h3>
 <p>Switch statements are similar to multiple <code>if / else if</code> statements</p>
 <pre><code>in := 'x'
@@ -335,52 +324,43 @@ switch( in ) {
         out *= 100
 }
 </code></pre>
-
 <h3 id="variable-assignment">Variable assignment</h3>
 <p><code>var = expr</code> evaluates expression 'expr' and assign result to 'var'</p>
 <pre><code>i = j + 1
 s = &quot;Hello &quot; + world
 </code></pre>
-
 <h3 id="variable-assignment-multiple">Variable assignment (multiple)</h3>
 <p><code>( var1, var2, ..., varN ) = expr</code> evaluates expression 'expr' (which must return a list) and assign results to 'var1', 'var2', etc. If the list size is less than the number of variables, variables are assigned default values (e.g. '0' for int). If the list has more values, they are ignored.</p>
 <pre><code>(name, value) = line.split('\t')
 </code></pre>
-
 <h3 id="variable-declarations">Variable declarations</h3>
 <p>Declare variable 'var' as type 'type'</p>
 <pre><code>int i      # 'i' is an 64 bit int variable
 real r     # 'r' is a double-precision floating-point number
 string s   # 's' is a string
 </code></pre>
-
 <p><code>type varName = expr</code> declares variable 'var' as type 'type', evaluate expression and assign result to initialize 'var'.</p>
 <pre><code>int i = 42
 real r = 3.1415927
 string s = &quot;Hello!&quot;
 </code></pre>
-
 <p><code>varName := expr</code> declares variable 'var', use type inference, evaluate expression 'expr' and assign result to initialize 'var'</p>
 <pre><code>i := 42
 r := 3.1415927
 s := &quot;Hello!&quot;
 </code></pre>
-
 <h3 id="ternary-operator">Ternary operator</h3>
 <p><code>expr ? exprTrue : exprFalse</code> Evaluate 'expr', if true evaluate and return 'exprTrue', otherwise evalaute and return 'exprFalse'</p>
 <pre><code>sign = ( i &gt;= 0 ? 1 : -1 )
 </code></pre>
-
 <h3 id="warning">warning</h3>
 <p>Show a warning message</p>
 <pre><code>if( num &lt;= 0 )  warning &quot;Number should be positive\n&quot;
 </code></pre>
-
 <h3 id="while">while</h3>
 <p>Typical <code>while</code> iterator</p>
 <pre><code>while( i &lt; 10 ) i++
 </code></pre>
-
 <h3 id="function-definition">Function definition</h3>
 <p>A simple, and useless, example:</p>
 <pre><code>// Define a function
@@ -399,7 +379,6 @@ int twice(int n)    return( 2 * n )
 n := 5
 print(&quot;The sum is : &quot; + sumPositive( twice(n) ) + &quot;\n&quot; )
 </code></pre>
-
 <p>Obviously, if you run it</p>
 <pre><code>$ bds z.bds 
 The sum is : 55

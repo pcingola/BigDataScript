@@ -83,7 +83,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#waiting-for-a-task-to-finish-wait">Waiting for a task to finish 'wait'</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#dependency-operator-lt-">Dependency operator '&amp;lt;-'</a>
+    <li class="toctree-l2"><a class="reference internal" href="#dependency-operator-">Dependency operator '&lt;-'</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#automatic-task-dependency-detection">Automatic task dependency detection</a>
     </li>
@@ -122,6 +122,12 @@
                     <li class="toctree-l1"><a class="reference internal" href="../bdscmdline/">bds command line</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
                     </li>
                 </ul>
       </div>
@@ -174,7 +180,6 @@ for( int i=0 ; i &lt; 10 ; i++ ) {
     task echo Hi $i ; sleep 1 ; echo Done $i ; sleep 1
 }
 </code></pre>
-
 <p>Note that bds interpolates variable <code>$i</code> (string interpolation simply means replacing by the value of a variable within the string)</p>
 <pre><code>$ ./test_04.bds
 Hi 1
@@ -198,7 +203,6 @@ Hi 8
 Done 9
 Done 8
 </code></pre>
-
 <p>In this case, we are running on an 8 core computer, so the first 8 tasks get executed in parallel. 
 The rest is executed when the first tasks finish.</p>
 <p><strong>Warning:</strong> Task execution order is not guaranteed (e.g. a cluster scheduler can decide to run tasks out of order).
@@ -211,7 +215,6 @@ We copy tha same script (used in the previous section) to a cluster.
 We execute it, but now the tasks are scheduled using MOAB, Torque, PBS or Grid Engine.</p>
 <pre><code>$ bds -s cluster test_04.bds
 </code></pre>
-
 <iframe width="640" height="390" src="http://www.youtube.com/embed/o47wxUdYzvk" frameborder="0" allowfullscreen></iframe>
 
 <h3 id="task-dependencies">Task dependencies</h3>
@@ -235,7 +238,6 @@ for( int i=0 ; i &lt; 10 ; i++ ) {
     task echo Bye $i ; sleep 1
 }
 </code></pre>
-
 <p>Running the script, we get</p>
 <pre><code>$ ./test_05.bds
 Hi 7
@@ -260,7 +262,6 @@ Bye 5
 Bye 9
 Bye 8
 </code></pre>
-
 <ul>
 <li>The <code>wait</code> statement is like a barrier. Until all tasks are finished, the program does not continue. If any task fails, a checkpoint file is created, where all program data is serialized. We can correct the problem and restart the pipeline where it left.</li>
 <li>The <code>wait</code> statement can wait for all tasks, for single tasks or for a list of tasks.</li>
@@ -269,7 +270,7 @@ Bye 8
 </ul>
 <iframe width="640" height="390" src="http://www.youtube.com/embed/vTekXn3sKzs" frameborder="0" allowfullscreen></iframe>
 
-<h3 id="dependency-operator-lt-">Dependency operator '<code>&lt;-</code>'</h3>
+<h3 id="dependency-operator-">Dependency operator '<code>&lt;-</code>'</h3>
 <p>The dependency operator provides a simple way to see if a file needs to be updated (i.e. recalculated) with respect to some inputs.
 For instance, when we already processed some files and have the corresponding results, we may save some work if the inputs have not changed (like "make" command).</p>
 <p>We introduce the dependency operator <code>&lt;-</code> (pronounced 'dep') which is a "make" style operator.
@@ -294,18 +295,15 @@ if( outFile &lt;- inFile ) {
     task echo Creating $outFile; cat $inFile &gt; $outFile
 }
 </code></pre>
-
 <p>When executing for the first time, both tasks are executed and both files ('in.txt' and 'out.txt') are created.</p>
 <pre><code>$ ./test_06.bds
 Creating in.txt
 Creating out.txt
 </code></pre>
-
 <p>If we execute for a second time, since files have not changed, no <code>task</code> is executed.</p>
 <pre><code>$ ./test_06.bds
 $
 </code></pre>
-
 <p>If we now change the contents of 'in.txt', and run the script again, the second <code>task</code> will be executed (because 'out.txt' needs to be updated with respect to 'in.txt')</p>
 <pre><code># Update 'in.txt'
 $ date &gt; in.txt
@@ -314,19 +312,16 @@ $ date &gt; in.txt
 $ ./test_06.bds 
 Creating out.txt
 </code></pre>
-
 <p><strong>Summary:</strong> If the file 'out.txt' is up to date with respect to 'in.txt', the following condition will be false and the <code>task</code> will not execute</p>
 <pre><code>if( outFile &lt;- inFile ) {
     task echo Creating $outFile; cat $inFile &gt; $outFile
 }
 </code></pre>
-
 <p>This construction is so common that we allow for some syntactic sugar. </p>
 <pre><code>task( outFile &lt;- inFile ) { 
   sys echo Creating $outFile; cat $inFile &gt; $outFile
 }
 </code></pre>
-
 <iframe width="640" height="390" src="http://www.youtube.com/embed/oSjhkRuc0I8" frameborder="0" allowfullscreen></iframe>
 
 <h3 id="automatic-task-dependency-detection">Automatic task dependency detection</h3>
@@ -356,7 +351,6 @@ task( outFile &lt;- intermediate ) {
     sys echo Creating $outFile; cat $intermediate &gt; $outFile; echo Done $outFile
 }
 </code></pre>
-
 <p>As a side note: We used the <code>:=</code> operator to declare variables using type inference. 
 So we can write <code>inFile := "in.txt"</code> instead of <code>string inFile = "in.txt"</code>, which not only is shorter to type, but also makes the code look cleaner.</p>
 <p>Now let's run the script</p>
@@ -373,7 +367,6 @@ Done inter.txt
 Creating out.txt
 Done out.txt
 </code></pre>
-
 <p>Note how the second task is executed only after the first one finished.</p>
 <h3 id="complex-dependencies-dep-and-goal">Complex dependencies: <code>dep</code> and <code>goal</code></h3>
 <p>The <code>goal</code> statement helps to program complex task scheduling interdependencies.</p>
@@ -394,7 +387,6 @@ task( outFile &lt;- intermediate ) {
     sys echo Creating $outFile; cat $intermediate &gt; $outFile; echo Done $outFile
 }
 </code></pre>
-
 <pre><code># Remove intermediate file
 $ rm inter.txt 
 
@@ -405,7 +397,6 @@ Done inter.txt
 Creating out.txt
 Done out.txt
 </code></pre>
-
 <p>Why is this happening? The reason is that <code>task</code> statements are evaluated in order. 
 So when <code>bds</code> evaluates the first <code>task</code> expression, the dependency <code>intermediate &lt;- inFile</code> is true (because 'inter.txt' doesn't exist, so it must be updated with respect to 'in.txt').
 After that, when the second <code>task</code> expression is evaluated,  <code>out &lt;- intermediate</code> is also true, since 'inter.txt' is newer than 'out.txt'.
@@ -428,7 +419,6 @@ if( outFile &lt;- inFile) {
     }
 }
 </code></pre>
-
 <p>Although it solves the issue, the code is not elegant.</p>
 <p>The alternative is to use <code>dep</code> and <code>goal</code>
 * <code>dep</code> defines a task exactly the same way as <code>task</code> expression, but it doesn't evaluate if the tasks should be executed or not (it's just declarative). 
@@ -451,7 +441,6 @@ dep( outFile &lt;- intermediate ) {
 
 goal outFile
 </code></pre>
-
 <p>If we execute this script</p>
 <pre><code># Delete old files (if any)
 $ rm *.txt
@@ -466,7 +455,6 @@ Done out.txt
 Creating inter.txt
 Done inter.txt
 </code></pre>
-
 <p>Now we delete 'inter.txt' and re-execute</p>
 <pre><code># Delete intermediate file
 $ rm inter.txt 
@@ -475,7 +463,6 @@ $ rm inter.txt
 $ ./test_08.bds
 $ 
 </code></pre>
-
 <p>As you can see, no task is executed the second time, since 'out.txt' is up to date, with respect to 'in.txt'. 
 The fact that intermediate file 'inter.txt' was deleted, is ignored, which is what we wanted.</p>
               

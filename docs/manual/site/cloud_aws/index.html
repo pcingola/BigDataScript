@@ -9,7 +9,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Command line parsing - bds - Big Data Script programming language</title>
+  <title>Cloud: AWS - bds - Big Data Script programming language</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,8 +18,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Command line parsing";
-    var mkdocs_page_input_path = "cmdline.md";
+    var mkdocs_page_name = "Cloud: AWS";
+    var mkdocs_page_input_path = "cloud_aws.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -56,7 +56,7 @@
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Manual</span></p>
-                <ul class="current">
+                <ul>
                     <li class="toctree-l1"><a class="reference internal" href="..">Introduction</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../download/">Download</a>
@@ -95,13 +95,7 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../debugger/">Debugger</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Command line parsing</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#flags">Flags</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#lists">Lists</a>
-    </li>
-    </ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../cmdline/">Command line parsing</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../help/">Command line help</a>
                     </li>
@@ -112,6 +106,12 @@
                     <li class="toctree-l1"><a class="reference internal" href="../bdscmdline/">bds command line</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
                     </li>
                 </ul>
       </div>
@@ -134,12 +134,8 @@
     <li><a href="..">Docs</a> &raquo;</li>
     
       
-        
-          <li>Manual &raquo;</li>
-        
-      
     
-    <li>Command line parsing</li>
+    <li>Cloud: AWS</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -150,94 +146,19 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="automatic-command-line-parsing">Automatic command line parsing</h1>
-<p>No need to manually parse command line options for your scripts, <code>bds</code> does it for you.</p>
-<p><code>bds</code> automatically parse any command line line argument that starts with "-" and assigns the value to the corresponding variable global variable (if the variable exists).</p>
-<p>Example (<a href="bds/test_20.bds">test_20.bds</a>):</p>
-<pre><code>#!/usr/bin/env bds
-
-in := &quot;in.txt&quot;
-print(&quot;In file is '$in'\n&quot;)
-</code></pre>
-
-<p>If we run this, we get</p>
-<pre><code>$ ./test_20.bds 
-In file is 'in.txt'
-</code></pre>
-
-<p>Now we pass a command line argument <code>-in another_file.txt</code>, and <code>bds</code> automatically parses that command line option replacing the value of variable <code>in</code></p>
-<pre><code>$ ./test_20.bds -in another_file.txt
-In file is 'another_file.txt'
-</code></pre>
-
-<p>This feature also works for other data types (<code>int</code>, <code>real</code>, <code>bool</code> or lists). </p>
-<h3 id="flags">Flags</h3>
-<p>In case of <code>bool</code> if the option is present, the variable is set to <code>true</code>.
-File <a href="bds/test_21.bds">test_21.bds</a></p>
-<pre><code>#!/usr/bin/env bds
-
-bool flag
-print(&quot;Variable flag is $flag\n&quot;)
-</code></pre>
-
-<pre><code>$ ./test_21.bds
-Variable flag is false
-</code></pre>
-
-<pre><code>$ ./test_21.bds -flag
-Variable flag is true
-</code></pre>
-
-<p>Or you can specify the value (<code>true</code> or <code>false</code> which is useful to set to <code>false</code> a bool that is by default <code>true</code>:
-File <a href="bds/test_21b.bds">test_21b.bds</a></p>
-<pre><code>#!/usr/bin/env bds
-
-flagOn  := true
-flagOff := false
-print(&quot;flagOn = $flagOn\nflagOff = $flagOff\n&quot;)
-</code></pre>
-
-<p>So in this example we can reverse the defaults by running this (note that we can use <code>-flagOff</code> instead of <code>-flagOff true</code>):</p>
-<pre><code>$ ./test_21b.bds -flagOn false -flagOff true 
-flagOn = false
-flagOff = true
-</code></pre>
-
-<p>Note that we can use <code>-flagOff</code> instead of <code>-flagOff true</code>.</p>
-<h3 id="lists">Lists</h3>
-<p>You can also apply this to a list of strings.
-In this case, all command line arguments following the <code>-listName</code> will be included in the list (up to the next argument starting with '-').</p>
-<p>E.g.: Note that list <code>in</code> is populated using <code>in1.txt in2.txt in3.txt</code> and <code>out</code> is set to <code>zzz.txt</code>
-File <a href="bds/test_22.bds">test_22.bds</a></p>
-<pre><code>#!/usr/bin/env bds
-
-in  := [&quot;in.txt&quot;]
-out := &quot;out.txt&quot;
-ok  := false
-
-print(&quot;In : $in\n&quot;)
-print(&quot;Out: $out\n&quot;)
-print(&quot;OK : $ok\n&quot;)
-</code></pre>
-
-<pre><code>$ ./test_22.bds  -ok -in in1.txt in2.txt in3.txt -out zzz.txt
-In : [in1.txt, in2.txt, in3.txt]
-Out: zzz.txt
-OK : true
-</code></pre>
+                <h1 id="cloud-aws">Cloud: AWS</h1>
+<h3 id="aws-region-lookup">AWS Region lookup</h3>
+<p>Search strategy
+- S3 URL in virtual host format
+- Resources ...
+- Variable <code>awsRegion</code>
+- AWS <code>$HOME/.aws/config</code>  <code>..../credentials</code></p>
+<p>WARNING: $HOME/.aws/config and credentials need to match, some AWS SDK and CLI programs might pick different (python vs java)</p>
+<h1 id="_1"></h1>
               
             </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../help/" class="btn btn-neutral float-right" title="Command line help">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../debugger/" class="btn btn-neutral" title="Debugger"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -261,10 +182,6 @@ OK : true
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../debugger/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../help/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

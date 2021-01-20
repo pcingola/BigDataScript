@@ -109,6 +109,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -153,7 +159,6 @@ This gives you an automatic log of everything that was executed, as well as the 
 <p>For example, let's create a simple program and run it</p>
 <pre><code>task echo Hello
 </code></pre>
-
 <p>When <code>bds</code> executed a <code>task</code> statement, it produces the following files (for each task statement):</p>
 <ol>
 <li><code>taskId.sh</code>: A shell file with the commands to execute (e.g. <code>z.bds.20140328_224825_685/sys.line_4.id_1.sh</code>). This shell file is executed when the task runs.</li>
@@ -166,7 +171,6 @@ This gives you an automatic log of everything that was executed, as well as the 
 <pre><code>$ bds -log z.bds
 Hello
 </code></pre>
-
 <p>This run will create a directory (format: <code>programName.YYYYMMDD_hhmmss.PID</code>) containing all the files mentioned:</p>
 <pre><code>$ ls z.bds.20190125_210218_852
 task.z.line_1.id_1.exitCode       # Exit code
@@ -174,7 +178,6 @@ task.z.line_1.id_1.sh             # Shell script from task
 task.z.line_1.id_1.stderr         # STDOUT from running shell script
 task.z.line_1.id_1.stdout         # STDERR from running shell script
 </code></pre>
-
 <h1 id="shell-file">Shell file</h1>
 <p>In the previous example the shell script would look like this:</p>
 <pre><code>$ cat task.z.line_1.id_1.sh
@@ -187,7 +190,6 @@ cd '/home/pcingola'
 echo Hello
 # Checksum: eda733b2
 </code></pre>
-
 <p>By default <code>bds</code> executes all tasks as <code>/bin/bash -eu; set -o pipefail</code>.
 This means that any error in the execution (including undefined shell variables) will make the shell script fail, thus the task will also fail.
 The type of shell and parameters used can be changed using the <code>taskShell</code> parameter from <code>bds</code> config file (<code>$HOME/.bds/bds.config</code>).</p>
@@ -198,7 +200,6 @@ If this happens, you can tune the <code>waitTextFileBusy</code> parameter in <co
 <pre><code>$ cat task.z.line_1.id_1.stdout
 Hello
 </code></pre>
-
 <p>and the STDERR file is empty</p>
 <h3 id="exit-code">Exit code</h3>
 <p><code>bds</code> saves the exit code of each task in <code>taskId.exitCode</code> file.
@@ -207,13 +208,11 @@ In the previous example, which executed succesfully, the exit file is:</p>
 $ cat task.z.line_1.id_1.exitCode
 0$
 </code></pre>
-
 <h1 id="sys-commands"><code>sys</code> commands</h1>
 <p>As opposed to <code>task</code> commands, a <code>sys</code> does not execute a shell script, but executes the commands as inline.
 For instance the next program:</p>
 <pre><code>sys echo hi
 </code></pre>
-
 <p>Will actually create a process <code>/bin/bash -eu -o pipefail -c "echo hi"</code></p>
 <p>Nevertheless <code>bds</code> will still create a shell file for each <code>sys</code> command for tracebility and logging pourposes.
 This is also quite usefull for debugging.
@@ -222,18 +221,15 @@ If you execute the previous program using '-log' command line opton you get:</p>
 00:00:00.491    Executing command. Arguments: [/bin/bash, -euo, pipefail, -c, echo hi]
 hi
 </code></pre>
-
 <p>And also the shell file is created:</p>
 <pre><code>$ ls z.bds.20190125_212208_750/
 sys.z.line_1.id_1.sh
 </code></pre>
-
 <p>The shell file looks like this:</p>
 <pre><code># Execution shell: /bin/bash -euo pipefail -c
 
 echo hi
 </code></pre>
-
 <h3 id="disappearing-tasks">Disappearing tasks</h3>
 <p>Sometimes tasks just disappear from clusters.
 This is far more common than most people think, particularly if there is some issues with the cluster (nodes malfuntioning, nodes being purged, cluster management software issues, etc.)</p>

@@ -109,6 +109,12 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -168,13 +174,11 @@ Before
 Hello
 After
 </code></pre>
-
 <ul>
 <li>Everything after a <code>sys</code> keyword until the end of the line is considered part of the command to be executed. So multiple shell commands can be separated by semicolon</li>
 </ul>
 <pre><code>sys echo Hello ; echo Bye
 </code></pre>
-
 <ul>
 <li>Multi-line statements are allowed, by using a backslash at the end of the line (same as a shell script)</li>
 </ul>
@@ -182,7 +186,6 @@ After
     | tr [A-Z] [a-z] \
     | grep hell
 </code></pre>
-
 <ul>
 <li><code>sys</code> returns the STDOUT of the command: File <a href="bds/test_12.bds">test_12.bds</a></li>
 </ul>
@@ -191,7 +194,6 @@ After
 dir := sys ls *.bds | head -n 3
 print(&quot;\nVariable dir is:\n$dir\n&quot;)
 </code></pre>
-
 <p>Executing, we get:</p>
 <pre><code>$ ./test_12.bds 
 test_01.bds
@@ -203,7 +205,6 @@ test_01.bds
 test_02.bds
 test_03.bds
 </code></pre>
-
 <p>Note that (roughly) the first half of the output is printed by the command execution, while the second half is printed by the <code>print</code> statement (i.e. printing the variable <code>dir</code>).</p>
 <ul>
 <li>Characters are passed literally to the interpreting shell. 
