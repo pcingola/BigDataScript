@@ -9,7 +9,7 @@ nav:
     - 'Language': language.md
     - 'Special operators': special.md
     - 'Data types': data_types.md
-    - 'Functions': functions.md  # TODO: Add new functions getVar, getModulkePath
+    - 'Functions': functions.md 
     - 'Global variables': global_vars.md
     - 'Pipelines': pipelines.md
     - 'Sys': sys.md
