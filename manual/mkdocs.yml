@@ -9,7 +9,7 @@ nav:
     - 'Language': language.md
     - 'Special operators': special.md
     - 'Data types': data_types.md
-    - 'Functions': functions.md
+    - 'Functions': functions.md  # TODO: Add new functions getVar, getModulkePath
     - 'Global variables': global_vars.md
     - 'Pipelines': pipelines.md
     - 'Sys': sys.md
@@ -28,4 +28,8 @@ nav:
     - 'Cleanup': cleanup.md
     - 'bds command line': bdscmdline.md
     - 'Config file': bdsconfig.md
+
+    - 'Building bds from source': building_bds.md # TODO: Move from main README.md
+    - 'Bds VM': bds_vm.md # TODO: Move from main README.md
+    - 'Cloud AWS': coud_aws.md # TODO: Add configuration and examples. ADD WARNING: SQS, S3, EC@ running ($$$)
 theme: readthedocs
