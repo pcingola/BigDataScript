@@ -28,8 +28,7 @@ nav:
     - 'Cleanup': cleanup.md
     - 'bds command line': bdscmdline.md
     - 'Config file': bdsconfig.md
-
     - 'Building bds from source': building_bds.md # TODO: Move from main README.md
-    - 'Bds VM': bds_vm.md # TODO: Move from main README.md
+    - 'Bds VM': bds_vm.md
     - 'Cloud AWS': coud_aws.md # TODO: Add configuration and examples. ADD WARNING: SQS, S3, EC@ running ($$$)
 theme: readthedocs

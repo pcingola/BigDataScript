@@ -65,6 +65,43 @@ cd /usr/bin/
 ln -s /home/your_user/.bds/bds
 ```
 
+### Build Jar: Solving missing Java libraries
+
+These are used to build the JAR file
+
+**Build executable jar with dependencies**
+
+Jar with dependencias in directory 'target', e.g. `target/bds-2.3-jar-with-dependencies.jar`
+```
+cd mvn
+mvn clean assembly:assembly
+```
+
+### Creating manual pages
+
+Create a virtual environment for `mkdocs`
+```
+mkdir $HOME/bds_docs
+cd $HOME/bds_docs
+virtualenv -p python3 .
+
+# Activate virtualenv and install mkdocs
+. bin/activate
+pip install mkdocs
+
+# Create links to bds project.
+# Here we assume the source code is at `$HOME/workspace/BigDataScript`
+BDS_SRC="$HOME/workspace/BigDataScript"
+ln -s $BDS_SRC/manual/mkdocs.yml
+ln -s $BDS_SRC/manual/docs
+ln -s $BDS_SRC/manual/site
+```
+
+Once the virtual environment for `mkdocs` is set you can run:
+```
+mkdocs build    # The documents will be generated to 'site' dir
+```
+
 ###License
 BigDataScript is open source.
 
