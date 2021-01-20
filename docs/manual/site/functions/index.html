@@ -261,6 +261,10 @@
 <td>exponent used in the representation of a real</td>
 </tr>
 <tr>
+<td>string getModulePath()</td>
+<td>Return the absolute path to the file currently executing</td>
+</tr>
+<tr>
 <td>string getVar(string name)</td>
 <td>Get variable's value represented as a string, e.g.: <code>int i=42; getVar('i') # Output "42"</code></td>
 </tr>
@@ -283,6 +287,10 @@
 <tr>
 <td>log(string msg)</td>
 <td>Log 'msg' (i.e. show to stderr)</td>
+</tr>
+<tr>
+<td>logd(string msg)</td>
+<td>Log 'msg' (i.e. show to stderr), also show current file name and line number</td>
 </tr>
 <tr>
 <td>real log(real x)</td>
