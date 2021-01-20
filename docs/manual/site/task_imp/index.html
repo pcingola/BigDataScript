@@ -9,7 +9,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>bds command line - bds - Big Data Script programming language</title>
+  <title>Task improper - bds - Big Data Script programming language</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,8 +18,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "bds command line";
-    var mkdocs_page_input_path = "bdscmdline.md";
+    var mkdocs_page_name = "Task improper";
+    var mkdocs_page_input_path = "task_imp.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -79,7 +79,13 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../task/">Task</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../task_imp/">Task improper</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Task improper</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#how-it-works">How it works</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#features">Features</a>
+    </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
                     </li>
@@ -107,9 +113,7 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../cleanup/">Cleanup</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">bds command line</a>
-    <ul class="current">
-    </ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../bdscmdline/">bds command line</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
@@ -141,7 +145,7 @@
         
       
     
-    <li>bds command line</li>
+    <li>Task improper</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -152,151 +156,41 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="bds-command-line-options"><code>bds</code> Command line options</h1>
-<p>Running the bds command without any arguments shows a help message</p>
-<pre><code>$ bds
-...
-Usage: BigDataScript [options] file.bds
-
-Available options: 
-  [-c | -config ] bds.config     : Config file. Default : /Users/pcingola/.bds/bds.config
-  [-checkPidRegex]               : Check configuration's 'pidRegex' by matching stdin.
-  [-d | -debug  ]                : Debug mode.
-  -dryRun                        : Do not run any task, just show what would be run. Default: false
-  [-extractSource]               : Extract source code files from checkpoint (only valid combined with '-info').
-  [-i | -info   ] checkpoint.chp : Show state information in checkpoint file.
-  [-l | -log    ]                : Log all tasks (do not delete tmp files). Default: false
-  -noReport                      : Do not create any report.
-  -noReportHtml                  : Do not create HTML report.
-  -noRmOnExit                    : Do not remove files marked for deletion on exit (rmOnExit). Default: false
-  [-q | -queue  ] queueName      : Set default queue name.
-  -quiet                         : Do not show any messages or tasks outputs on STDOUT. Default: false
-  -reportHtml                    : Create HTML report. Default: true
-  -reportYaml                    : Create YAML report. Default: false
-  [-r | -restore] checkpoint.chp : Restore state from checkpoint file.
-  [-s | -system ] type           : Set system type.
-  [-t | -test   ]                : Run user test cases (runs all test functions).
-  [-v | -verbose]                : Be verbose.
-  -version                       : Show version and exit.
-  [-y | -retry  ] num            : Number of times to retry a failing tasks.
-  -pid &lt;file&gt;                    : Write local processes PIDs to 'file'
+                <h1 id="task-improper">Task Improper</h1>
+<p>In the previous chapter, we talked about <code>task</code> ("proper tasks") which consist of <code>sys</code> commands (i.e. shell commands).
+As we mentioned, these tasks can be executed on different systems: local, cluster, cloud, etc.</p>
+<p>It is also possible to execute arbitraty <code>bds</code> code within a task, we call these "improper tasks".
+For example:</p>
+<pre><code>a := 42
+task(cpus := 1) {
+    # This can be any bds code
+    println &quot;Hello, a=$a&quot;
+}
 </code></pre>
-<table>
-<thead>
-<tr>
-<th>Option short</th>
-<th>Option long</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>-c</td>
-<td>-config</td>
-<td>Path to bds.config file (most of the times no config file is needed)</td>
-</tr>
-<tr>
-<td></td>
-<td>-checkPidRegex</td>
-<td>Check configuration's 'pidRegex' by matching stdin.</td>
-</tr>
-<tr>
-<td>-d</td>
-<td>-debug</td>
-<td>Debug mode, shows detailed information for debugging scripts or debugging bds itself.</td>
-</tr>
-<tr>
-<td></td>
-<td>-dryRun</td>
-<td>Do not run any task, just show what would be run. This mode is used when you just want to test your script's logic without executing any tasks.</td>
-</tr>
-<tr>
-<td></td>
-<td>-extractSource</td>
-<td>Extract source code files from checkpoint (only valid combined with '-info').</td>
-</tr>
-<tr>
-<td>-i</td>
-<td>-info</td>
-<td>Show state information in checkpoint file. Prints variables, scopes, etc.</td>
-</tr>
-<tr>
-<td>-l</td>
-<td>-log</td>
-<td>Log all tasks (do not delete tmp files).</td>
-</tr>
-<tr>
-<td></td>
-<td>-noReport</td>
-<td>Do not create any report.</td>
-</tr>
-<tr>
-<td></td>
-<td>-noReportHtml</td>
-<td>Do not create HTML report.</td>
-</tr>
-<tr>
-<td></td>
-<td>-noRmOnExit</td>
-<td>Do not remove files marked for deletion on exit (rmOnExit).</td>
-</tr>
-<tr>
-<td>-q</td>
-<td>-queue</td>
-<td>Set default cluster's queue name.</td>
-</tr>
-<tr>
-<td></td>
-<td>-quiet</td>
-<td>Do not show any messages or tasks outputs on STDOUT. This means that only the output from <code>print</code> (and other print-like bds statements), statements will be shown on the console</td>
-</tr>
-<tr>
-<td></td>
-<td>-reportHtml</td>
-<td>Create HTML report. Create an HTML report (only if at least one task is executed). By default this option is activated.</td>
-</tr>
-<tr>
-<td></td>
-<td>-reportYaml</td>
-<td>Create YAML report. Create a YAML report (only if at least one task is executed).</td>
-</tr>
-<tr>
-<td>-r</td>
-<td>-restore</td>
-<td>Restore from a a checkpoint and continue execution.</td>
-</tr>
-<tr>
-<td>-s</td>
-<td>-system</td>
-<td>Define the 'system' type the script is running on (e.g. cluster type)</td>
-</tr>
-<tr>
-<td>-t</td>
-<td>-test</td>
-<td>Perform all tests in a script (i.e. run all functions that are called "test")</td>
-</tr>
-<tr>
-<td>-v</td>
-<td>-verbose</td>
-<td>Be verbose (show more information)</td>
-</tr>
-<tr>
-<td></td>
-<td>-version</td>
-<td>Show version number and exit.</td>
-</tr>
-<tr>
-<td>-y</td>
-<td>-retry</td>
-<td>Number of times to retry a failing tasks.</td>
-</tr>
-<tr>
-<td></td>
-<td>-pid</td>
-<td>Write local processes PIDs to 'file'. Under normal circumstances, you should never use this command line option (unless you are debugging bds itself).</td>
-</tr>
-</tbody>
-</table>
+<h3 id="how-it-works">How it works</h3>
+<p>In case of an "improper task", <code>bds</code> will create a checkpoint containing an absolute serialization of the whole program execution state.
+This works similar to a <code>checkpoint</code> statement.
+Then a task will be scheduled to execute <code>bds</code> restoring from this checkpoint.
+As a result, the program executing the task will "continue" in the next instruction, i.e. executing the code within the <code>task</code> statments.</p>
+<p>Note: An <code>exit</code> statement is implicitly added in the checkpoint to avoid the task to execute beyond the statements within <code>task</code>.
+This means that the code saved to the checkpoint file created by the improper task would be:</p>
+<pre><code>a := 42
+task(cpus := 1) {
+    # This can be any bds code
+    println &quot;Hello, a=$a&quot;   # Note: Variable's &quot;a&quot; value is visible because we inherit the full program state from the checkpoint
+    exit                    # Note: This 'exit' statment is added only for the checkpoint to be executed by the task
+}
+</code></pre>
+<h3 id="features">Features</h3>
+<p>Improper <code>task</code> can have all the same feature as "regular" tasks:</p>
+<ul>
+<li>Task dependencies using files</li>
+<li>Task dependencies using task IDs</li>
+<li>Task parameters, such as <code>cpus</code>, <code>mem</code>, <code>system</code>, etc.</li>
+<li>Task names</li>
+<li>Multiple task dependencies, even on different <code>systems</code></li>
+<li><code>dep</code> &amp; <code>goal</code>: You can also create improper <code>dep</code> and <code>goal</code></li>
+</ul>
               
             </div>
           </div>
@@ -304,10 +198,10 @@ Available options:
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../bdsconfig/" class="btn btn-neutral float-right" title="Config file">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../wait/" class="btn btn-neutral float-right" title="Wait">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../cleanup/" class="btn btn-neutral" title="Cleanup"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../task/" class="btn btn-neutral" title="Task"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -333,10 +227,10 @@ Available options:
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../cleanup/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../task/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../bdsconfig/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../wait/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

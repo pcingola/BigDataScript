@@ -14,6 +14,8 @@ nav:
     - 'Pipelines': pipelines.md
     - 'Sys': sys.md
     - 'Task': task.md
+    - 'Task improper': task_imp.md
+    - 'Cloud AWS': coud_aws.md # TODO: Add configuration and examples. ADD WARNING: SQS, S3, EC@ running ($$$)
     - 'Wait': wait.md
     - 'Dependency operator': dep_op.md
     - 'Goal': goal.md
@@ -29,5 +31,4 @@ nav:
     - 'bds command line': bdscmdline.md
     - 'Config file': bdsconfig.md
     - 'Bds VM': bds_vm.md
-    - 'Cloud AWS': coud_aws.md # TODO: Add configuration and examples. ADD WARNING: SQS, S3, EC@ running ($$$)
 theme: readthedocs

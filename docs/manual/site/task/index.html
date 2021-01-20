@@ -89,6 +89,10 @@
     </li>
     </ul>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../task_imp/">Task improper</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="../wait/">Wait</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../dep_op/">Dependency operator</a>
@@ -117,11 +121,7 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../building_bds/">Building bds from source</a>
-                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
-                    </li>
-                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
                     </li>
                 </ul>
       </div>
@@ -184,6 +184,11 @@ So the next task in the queue can effectively start before the previous one.</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>aws</code></td>
+<td>Running on an AWS EC2 instance</td>
+<td>Tasks are scheduled for execution (using 'qsub' or equivalent command). Resource management is delegated to cluster workload management.</td>
+</tr>
 <tr>
 <td><code>cluster</code></td>
 <td>Running on a cluster (GridEngine, Torque)</td>
@@ -467,7 +472,7 @@ task( out &lt;- in , cpus := 4 ) {
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../wait/" class="btn btn-neutral float-right" title="Wait">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../task_imp/" class="btn btn-neutral float-right" title="Task improper">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../sys/" class="btn btn-neutral" title="Sys"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -499,7 +504,7 @@ task( out &lt;- in , cpus := 4 ) {
         <span><a href="../sys/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../wait/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../task_imp/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
