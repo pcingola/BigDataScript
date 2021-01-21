@@ -24,7 +24,7 @@ There are different ways to execute tasks
 
 System       | Typical usage                                                                                                                 | How it is done  
 -------------|-------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------
-`aws`        | Running on an AWS EC2 instance                                                                                                | Tasks are scheduled for execution (using 'qsub' or equivalent command). Resource management is delegated to cluster workload management.  
+`aws`        | Running on an AWS EC2 instance                                                                                                | An AWS EC2 instance is created and the task runs in the instance.   
 `cluster`    | Running on a cluster (GridEngine, Torque)                                                                                     | Tasks are scheduled for execution (using 'qsub' or equivalent command). Resource management is delegated to cluster workload management.  
 `generic`    | Enable user defined scripts to run, kill and find information on tasks                                                        | This 'generic' cluster allows the user to write/customize scripts that send jobs to the cluster system.  It can be useful to either add cluster systems not currently supported by bds, or to customize parameters and scheduling options beyond what bds allows to customize in the config file. For details, see bds.config file and examples in the project's source code (directories `config/clusterGeneric`).
 `local`      | Running on a single computer. E.g. programming and debugging on your laptop or running stuff on a server                      | A local queue is created, the total number of CPUs used by all tasks running is less or equal than the number of CPU cores available   
@@ -128,6 +128,7 @@ Variable       | Default value  | Resource / Task options
 `allowEmpty`   | false          | If true, empty files are allowed in task's outputs. This means that a task producing empty files does not result in program termination and checkpointing.   
 `canFail`      | false          | If true, a task is allowed to fail. This means that a failed task execution does not result in program termination and checkpointing.   
 `cpus`         | 1              | Number of CPU (cores) used by the process.   
+`detached`     | false          | If true, the task will be detached, i.e. independent from the bds script originating it   
 'mem'          | 0              | Maximum amount of memory in bytes used by the process (0 means no restrictions or use cluster default)
 `node`         |                | If possible this task should be executed on a particular cluster node. This option is only used for cluster systems and ignored on any other systems.   
 `queue`        |                | Queue name of preferred execution queue (only for cluster systems).   
@@ -234,3 +235,47 @@ task ( out <- in, cpus := 4 , taskName := "Filter results" ) {
     sys cat $in | grep "^results" > $out
 }
 ```
+
+### Detached tasks
+
+A "detached" task is a task that is run independently from the `bds` script.
+The original `bds` program can finish and the detached task can continue running.
+
+Detached tasks are created by setting `detached:= true`.
+
+Detached tasks have several properties:
+- They are considered successful immediately after they start "running" (or scheduled for running in a cluster system)
+- The STDOUT & STDERR of detached tasks are not shown on the terminal running the `bds` script
+- The exit status does not affect execution of the script. Even if a detached task fails, the script will finish successfully. 
+- No other tasks can depend on a detached task, because `bds` does not track detached tasks.
+
+Example: Here is a program executing a task with `detached:= true`
+```
+println "Before"
+
+task(detached := true) {
+	sys echo "Detached task: Start"
+	sys sleep 60
+	sys echo "Detached task: End"
+}
+println "After"
+wait
+println "Done"
+```
+
+If we execute, you'll see that the task executes in a second, but the task has a `sleep 60` so the task itself should take one minute to run:
+```
+$ time bds z.bds
+Before
+After
+Done
+bds z.bds  1.65s user 0.13s system 114% cpu 1.550 total
+```
+
+We immediately check if the "sleep" command is still running after the `bds` script finished:
+``` 
+$ ps auxw | grep sleep
+bdsuser          87834   0.0  0.0  4268176    548 s002  S     1:56PM   0:00.00 sleep 60
+``` 
+So the detached task is still running after the `bds` script has finished.
+ 

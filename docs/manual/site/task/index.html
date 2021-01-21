@@ -87,11 +87,13 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#syntax-sugar">Syntax sugar</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#detached-tasks">Detached tasks</a>
+    </li>
     </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../task_imp/">Task improper</a>
                     </li>
-                    <li class="toctree-l1"><a class="" href="../coud_aws.md">Cloud AWS</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../task_aws/">Task Cloud AWS</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../wait/">Wait</a>
                     </li>
@@ -187,7 +189,7 @@ So the next task in the queue can effectively start before the previous one.</p>
 <tr>
 <td><code>aws</code></td>
 <td>Running on an AWS EC2 instance</td>
-<td>Tasks are scheduled for execution (using 'qsub' or equivalent command). Resource management is delegated to cluster workload management.</td>
+<td>An AWS EC2 instance is created and the task runs in the instance.</td>
 </tr>
 <tr>
 <td><code>cluster</code></td>
@@ -333,6 +335,11 @@ Done 9
 <td>Number of CPU (cores) used by the process.</td>
 </tr>
 <tr>
+<td><code>detached</code></td>
+<td>false</td>
+<td>If true, the task will be detached, i.e. independent from the bds script originating it</td>
+</tr>
+<tr>
 <td>'mem'</td>
 <td>0</td>
 <td>Maximum amount of memory in bytes used by the process (0 means no restrictions or use cluster default)</td>
@@ -465,6 +472,39 @@ task( out &lt;- in , cpus := 4 ) {
     sys cat $in | grep &quot;^results&quot; &gt; $out
 }
 </code></pre>
+<h3 id="detached-tasks">Detached tasks</h3>
+<p>A "detached" task is a task that is run independently from the <code>bds</code> script.
+The original <code>bds</code> program can finish and the detached task can continue running.</p>
+<p>Detached tasks are created by setting <code>detached:= true</code>.</p>
+<p>Detached tasks have several properties:
+- They are considered successful immediately after they start "running" (or scheduled for running in a cluster system)
+- The STDOUT &amp; STDERR of detached tasks are not shown on the terminal running the <code>bds</code> script
+- The exit status does not affect execution of the script. Even if a detached task fails, the script will finish successfully. 
+- No other tasks can depend on a detached task, because <code>bds</code> does not track detached tasks.</p>
+<p>Example: Here is a program executing a task with <code>detached:= true</code></p>
+<pre><code>println &quot;Before&quot;
+
+task(detached := true) {
+    sys echo &quot;Detached task: Start&quot;
+    sys sleep 60
+    sys echo &quot;Detached task: End&quot;
+}
+println &quot;After&quot;
+wait
+println &quot;Done&quot;
+</code></pre>
+<p>If we execute, you'll see that the task executes in a second, but the task has a <code>sleep 60</code> so the task itself should take one minute to run:</p>
+<pre><code>$ time bds z.bds
+Before
+After
+Done
+bds z.bds  1.65s user 0.13s system 114% cpu 1.550 total
+</code></pre>
+<p>We immediately check if the "sleep" command is still running after the <code>bds</code> script finished:</p>
+<pre><code>$ ps auxw | grep sleep
+bdsuser          87834   0.0  0.0  4268176    548 s002  S     1:56PM   0:00.00 sleep 60
+</code></pre>
+<p>So the detached task is still running after the <code>bds</code> script has finished.</p>
               
             </div>
           </div>

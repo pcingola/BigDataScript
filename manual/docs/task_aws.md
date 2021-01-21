@@ -327,11 +327,6 @@ You can easily imagine a situations where the `bds` script is unable to clean up
 
 **WARNING:** In order to avoid unnecessary AWS costs, you should always monitor AWS resources used by `bds`. 
 
-## AWS task parameters
-
-Any task running on AWS requires many parameters to be set.
-All these paramters can be set
-
 ### StdOut / StdErr
 
 As we've already mentioned, the instance executing a Task will send bith STDOUT and STDERR to an SQS queue so that the original program can show them on the main terminal.
@@ -364,14 +359,207 @@ task( system := 'aws' ) {
 ### Dependencies
 
 Tasks executed on AWS can have dependencies, as any other tasks.
-Usually dependencies are files on S3, for example:
+Usually dependencies are files on S3.
+
+In this example you see two tasks dependent on each other:
+1. The main bds script creates an "input" file on S3 (`in := "s3://my_bds_test_bucket/exmaple/in.txt"`)
+1. The first task (`task(out1 <- in) ...`) reads the input file, adds some data and writes the result to `out1` output file (`out1 := "s3://my_bds_test_bucket/exmaple/out1.txt"`)
+1. The second task (`task(out2 <- out1) ...`) reads the `out1` file, adds some more data and writes the result to `out2` output file (`out2 := "s3://my_bds_test_bucket/exmaple/out2.txt"`)
 
 ```
+system = 'aws'
 
+# These hash called 'taskResources' contains the parameters we need to run a task on AWS
+# WARNING: You need to replace ALL this parameters to use your account's settings
+taskResources := { \
+    'region' => 'us-east-1' \
+    , 'instanceType' => 't3a.medium' \
+    , 'imageId' => 'ami-123456abcdef' \
+    , 'securityGroupIds' => 'sg-987654321abc' \
+    , 'subnetId' => 'subnet-192837465fed' \
+    , 'instanceProfile' => 'AWS_BDS_INSTANCE_ROLE' \
+}
+
+# Input and output files on S3
+in := "s3://my_bds_test_bucket/exmaple/in.txt"
+out1 := "s3://my_bds_test_bucket/exmaple/out1.txt"
+out2 := "s3://my_bds_test_bucket/exmaple/out2.txt"
+
+# Create input file
+in.write(inTxt)
+
+# Task 1
+println "Before task1"
+task(out1 <- in) {
+    println "Start: Task1 improper"
+    inFileTxt := in.read().trim()
+    println "Input text: '$inFileTxt'"
+    out1.write("OUT1: '$inFileTxt'")
+    println "End: Task1 Improper"
+}
+println "After task1"
+
+# Task 2
+println "Before task2"
+task(out2 <- out1) {
+    sys echo "Start: Task2"
+    sys echo 'OUT2' > '$out2'
+    sys cat '$out1' >> '$out2'
+    sys echo 'Input:'
+    sys cat '$out1'
+    sys echo
+    sys echo "End: Task2"
+}
+println "After task2"
+
+wait
+println "Done"
 ```
 
+Each of these two tasks are executed in different EC2 instances.
+There is a dependency: the second needs `out1` which is created by the first task.
+So the second task will not be executed until the first task finishes successfully, i.e. the second instance will only be created when the first instance finishes executing the first tasks and the output file `out1` is created.
+
+### Detached tasks
+
+A "detached" task is a task that is run independently from `bds`.
+The original `bds` program can finish and the detached task continue running.
+In this case it will continue in an AWS EC2 instance.
+
+Here is an example with a "detached" task (i.e. `detached := true`) 
+```
+system = 'aws'
+
+# These hash called 'taskResources' contains the parameters we need to run a task on AWS
+# WARNING: You need to replace ALL this parameters to use your account's settings
+taskResources := { \
+    'region' => 'us-east-1' \
+    , 'instanceType' => 't3a.medium' \
+    , 'imageId' => 'ami-123456abcdef' \
+    , 'securityGroupIds' => 'sg-987654321abc' \
+    , 'subnetId' => 'subnet-192837465fed' \
+    , 'instanceProfile' => 'AWS_BDS_INSTANCE_ROLE' \
+}
+
+# This detached AWS taks will continue executing after the bds script finishes
+task(system := 'aws', detached := true) {
+    sys echo HI
+    sys for i in `seq 60`; do echo "count: \$i"; sleep 1; done
+    sys echo BYE
+}
+println "After"
+wait
+println "Done"
+```
+
+The task continues running in the EC2 instance, even though the `bds` script finishes immediately after the instance has been requested.
+
+### `dep` and `goal`
+
+As any other tasks, AWS tasks can also be defined using `dep` and `goal` statements, e.g.:
+
+Here is an example that we saw before (two dependent tasks) using `dep` and `goal`: 
+```
+system = 'aws'
+
+# These hash called 'taskResources' contains the parameters we need to run a task on AWS
+# WARNING: You need to replace ALL this parameters to use your account's settings
+taskResources := { \
+    'region' => 'us-east-1' \
+    , 'instanceType' => 't3a.medium' \
+    , 'imageId' => 'ami-123456abcdef' \
+    , 'securityGroupIds' => 'sg-987654321abc' \
+    , 'subnetId' => 'subnet-192837465fed' \
+    , 'instanceProfile' => 'AWS_BDS_INSTANCE_ROLE' \
+}
+
+# Input and output files on S3
+in := "s3://my_bds_test_bucket/exmaple/in.txt"
+out1 := "s3://my_bds_test_bucket/exmaple/out1.txt"
+out2 := "s3://my_bds_test_bucket/exmaple/out2.txt"
+
+# Create input file
+in.write(inTxt)
+
+# Dep 1
+println "Before task1"
+dep(out1 <- in) {
+    println "Start: Dep1 improper"
+    inFileTxt := in.read().trim()
+    println "Input text: '$inFileTxt'"
+    out1.write("OUT1: '$inFileTxt'")
+    println "End: Dep1 Improper"
+}
+println "After task1"
+
+# Dep 2
+println "Before task2"
+dep(out2 <- out1) {
+    sys echo "Start: Dep2"
+    sys echo 'OUT2' > '$out2'
+    sys cat '$out1' >> '$out2'
+    sys echo 'Input:'
+    sys cat '$out1'
+    sys echo
+    sys echo "End: Dep2"
+}
+println "After task2"
+
+# Goal
+println "Goal: '$out2'"
+goal out2
+
+wait
+println "Done"
+```
+
+## AWS task parameters
+
+Any task running on AWS requires many parameters to be set.
+Most parameters can be set in the `tataskResources` hash we've seen in the examples.
+
+Here is a list of all the parameters for AWS tasks:
+
+`tataskResources` entry       | Meaning  
+------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+region                        | AWS region where the EC2 instance should run          
+bucket                        | Bucket name, the bucket can sometimes used to store data by `bds`
+instanceType                  | AWS EC2 instance type (e.g. t3a.medium)
+imageId                       | Image used to create the instance (AMI ID). The image must have `bds` installed 
+securityGroupIds              | A comma separated list of security groups IDs 
+subnetId                      | A comma separated list of subnet IDs
+instanceProfile               | Profile (role name) to use for the instance
+s3tmp                         | S3 temporary path, this is used to store temporary data (e.g. checkpoints for improper tasks)
+keepInstanceAliveAfterFinish  | If this is set to `true`, the instance will NOT be terminated after the task is finished. This is used for loggging into the instance and debugging AWS tasks
+
+Other task parameters can also be used (`timeout`, `taskName`, `allowEmpty`, etc.).
+Here are some parameters specific to AWS tasks:
+
+Variable              | Meaning  
+----------------------|--------------------------------------------------------------------
+cloudQueueNamePrefix  | Is non-empty, the name will be used as a prefix for the SQS quque
+system                | Must be set to `'aws'` for a task to be executed in an AWS EC2 instance
+
+### Instance request retry
+
+Assuming that all parameters are set correctly, an EC2 instance request can still fail for many different reasons, e.g.:
+- AWS doesn't have availability of a specific instance type in the requested region
+- There are no more IPs in the network
+- You've reached some limit in any EC2 related parameter (total number of instances, total disk, etc)
  
+In any case when `bds` cannot launch an EC2 instance it will retry several times, waiting some random time between each try
+The retry algorithm is:
+```
+START_FAIL_MAX_ATTEMPTS = 50
+START_FAIL_SLEEP_RAND_TIME = 60
 
+for i in 1 .. START_FAIL_MAX_ATTEMPTS:
+    - parse_ec2_instance_parametres     # Parse hash tataskResources
+    - randomly_select_subnetId          # If more than one is specified as a comma separated list of values
+    - request_ec2_instance              # Request instance to AWS
+    - if succeess: return OK            # Success, instance created
+    - wait_random_time                  # Reuqest failed, wait up to START_FAIL_SLEEP_RAND_TIME seconds
+```
 
-
-
+**Note:** Randomly selecting a subnet from a comma separated list in `tataskResources{'subnetId'}`, allows you to randomly create instances on different zones within a region.
+  

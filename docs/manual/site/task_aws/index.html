@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Task Cloud AWS - bds - Big Data Script programming language</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Task Cloud AWS";
+    var mkdocs_page_input_path = "task_aws.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> bds - Big Data Script programming language</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Manual</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="..">Introduction</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../download/">Download</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../hello/">Hello world</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../language/">Language</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../special/">Special operators</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../data_types/">Data types</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../functions/">Functions</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../global_vars/">Global variables</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../pipelines/">Pipelines</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../sys/">Sys</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../task/">Task</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../task_imp/">Task improper</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Task Cloud AWS</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#warning">WARNING</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pre-requisites">Pre-requisites</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#example-walk-through">Example walk-through</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-walk-through-program-and-aws-parameters">Example walk-through: Program and AWS parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-walk-through-running-the-program">Example walk-through: Running the program</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-walk-through-looking-to-the-log-files">Example walk-through: Looking to the log files</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-walk-through-the-instance-startup-script">Example walk-through: The instance startup script</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#aws-resource-cleanup">AWS resource cleanup</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stdout-stderr">StdOut / StdErr</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#improper-tasks">Improper tasks</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#detached-tasks">Detached tasks</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dep-and-goal">dep and goal</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#aws-task-parameters">AWS task parameters</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#instance-request-retry">Instance request retry</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../wait/">Wait</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../dep_op/">Dependency operator</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../goal/">Goal</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../remote_files/">Remote files</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../par/">Parallel execution</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../checkpoints/">Checkpoints</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../test_cases/">Test cases</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../debugger/">Debugger</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../cmdline/">Command line parsing</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../help/">Command line help</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../logging/">Logging</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../cleanup/">Cleanup</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bdscmdline/">bds command line</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bdsconfig/">Config file</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../bds_vm/">Bds VM</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">bds - Big Data Script programming language</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Manual &raquo;</li>
+        
+      
+    
+    <li>Task Cloud AWS</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="task-aws">Task <code>aws</code></h1>
+<p>You can set <code>bds</code> tasks to run on the Amazon cloud (i.e. an EC2 instance).
+This is achieved by using <code>system='aws'</code>.</p>
+<h3 id="warning">WARNING</h3>
+<p><strong>WARNING: Using <code>bds</code> with cloud can incur in costs, unexpected expenses
+You need to thoroughly review cloud resources used by your <code>bds</code> programs to make sure you are not incurring into unwanted or unexpected expenses.</strong></p>
+<p><strong><code>bds</code> does not make any warranties, use at your own risk.</strong></p>
+<h3 id="pre-requisites">Pre-requisites</h3>
+<p>You need all the following to run tasks on AWS:</p>
+<ul>
+<li>Amazon AWS access: Obviously you need an AWS account</li>
+<li>Privileges: The AWS security role should have access to the following services<ul>
+<li>EC2: Create, run and terminate EC2 instances</li>
+<li>S3: Read, write and delete objects from an S3 bucket </li>
+<li>SQS: Create, send messages and delete SQS queues</li>
+</ul>
+</li>
+<li>EC2 image (AMI): An image with <code>bds</code> installed (i.e. in order to run <code>bds</code> tasks on an instance, you need an image that is capable of running <code>bds</code>)</li>
+</ul>
+<h2 id="example-walk-through">Example walk-through</h2>
+<h3 id="example-walk-through-program-and-aws-parameters">Example walk-through: Program and AWS parameters</h3>
+<p>The next "toy example" shows how to run a simple tasks on AWS.</p>
+<p>Parameters for the EC2 instance are set in <code>taskResources</code> hash.
+In this example, the task will run on an instance in <code>us-east-1</code> region.
+It is also assumed that the EC2 image has been setup and <code>bds</code> is properly installed in that image.
+Obviously, you should replace the AMI number <code>ami-123456abcdef</code> with your own image ID.
+Similarly, all the other parameters in <code>taskResources</code> should be set properly according to your account.</p>
+<pre><code>#!/usr/bin/env bds
+
+# These hash called 'taskResources' contains the parameters we need to run a task on AWS
+# WARNING: You need to replace ALL this parameters to use your account's settings
+taskResources := { \
+    'region' =&gt; 'us-east-1' \
+    , 'instanceType' =&gt; 't3a.medium' \
+    , 'imageId' =&gt; 'ami-123456abcdef' \
+    , 'securityGroupIds' =&gt; 'sg-987654321abc' \
+    , 'subnetId' =&gt; 'subnet-192837465fed' \
+    , 'instanceProfile' =&gt; 'AWS_BDS_INSTANCE_ROLE' \
+}
+
+# This task is run on an AWS instance!
+task(system := 'aws') {
+    sys echo HI
+    sys for i in `seq 10`; do echo &quot;count: \$i&quot;; sleep 1; done
+    sys echo BYE
+}
+
+println &quot;After&quot;     # This message is show after the task is scheduled (the instance being requested in the background)
+wait                # Wait until the task finishes (i.e. the instance finishes running)
+println &quot;Done&quot;      # This message is shown after the task finished running
+</code></pre>
+<h3 id="example-walk-through-running-the-program">Example walk-through: Running the program</h3>
+<p>OK, let's run this example program and analyze each step of the <code>bds</code> output.</p>
+<p>We run using the <code>-v</code> command line options, so we'll see more verbose output and <code>-log</code> to get the outputs logged to files.</p>
+<pre><code>$ bds -log -v z.bds
+
+00:00:00.004    Bds 3.0b (build 2021-01-14 14:34), by Pablo Cingolani
+Before
+After
+</code></pre>
+<p>These are just the <code>println</code> statements from our example program.
+The message <code>After</code> is shown after the task statement, so at this point the task was scheduled for execution (but it's not running yet). </p>
+<pre><code>00:00:00.484    INFO : Creating AWS SQS queue 'bds_20210121_090423_234750293cafe'
+</code></pre>
+<p>This indicates that an SQS queue was created.
+This SQS queue is used to communicate task StdOut, StdErr, and task exit status to the computer running the <code>bds</code> program (e.g. your laptop)
+Since the instance can be inaccessible from our network and vice-versa (e.g. we could be running the script on our laptop behind a corporate firewall), SQS is used to communicate both ends.</p>
+<pre><code>00:00:04.229    INFO Cmd 'z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785': Created EC2 instance: 'i-0d5931b8e30fba349', for task 'z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785'
+</code></pre>
+<p>The instance was created and the task will be executed in that instance.
+Note that the instance will be automatically terminated when the task finishes executing.</p>
+<pre><code>
+00:01:01.835    INFO : Writing report file 'z.bds.20210121_090423_293.report.html'
+00:01:05.810    INFO : Tasks [CloudAws[13]]     Pending: 0  Running: 1  Done: 0 Failed: 0
+        | PID                 | Task state        | Task name                            | Dependencies | Task definition                                                          |
+        | ------------------- | ----------------- | ------------------------------------ | ------------ | ------------------------------------------------------------------------ |
+        | i-0d5931b8e30fba349 | running (RUNNING) | task.z.line_16.id_1.337e55c1b5c62785 |              | echo HI; for i in `seq 10`; do echo &quot;count: $i&quot;; sleep 1; done; echo BYE |
+</code></pre>
+<p>The instance usually takes over a minute to startup.
+We run using <code>bds -v ...</code>, in verbose mode <code>bds</code> will show a report of all tasks running (roughly) every one minute.
+In this case, there is only one task.</p>
+<pre><code>HI
+count: 1
+count: 2
+count: 3
+count: 4
+count: 5
+count: 6
+count: 7
+count: 8
+count: 9
+count: 10
+BYE
+</code></pre>
+<p>These are the output lines from the task, which is running on the EC2 instance.
+Note that even though we are not connected to the instance, we can the task's Stdout because it's sent via an SQS queue. 
+After the task finished, the instance is terminated.
+You can check on the AWS management console that the instance changes state first to "Shutting down" and later to "Terminated".</p>
+<pre><code>Done
+</code></pre>
+<p>This was the <code>println "Done"</code> statement from our program, since the statement was after a <code>wait</code> statement, this is shown after the task finished running. </p>
+<pre><code>00:01:36.518    INFO : Writing report file 'z.bds.20210121_090423_293.report.html'
+00:01:36.524    INFO : Writing report file 'z.bds.20210121_090423_293.report.yaml'
+00:01:36.529    INFO : Deleting AWS SQS queue 'az-ngs-seqauto_20210121_090423_74c7f1be2f3ccca5', url: 'https://sqs.us-east-1.amazonaws.com/671016219382/az-ngs-seqauto_20210121_090423_74c7f1be2f3ccca5'
+</code></pre>
+<p>The last messages show that a report was created and the SQS queue was deleted.</p>
+<h3 id="example-walk-through-looking-to-the-log-files">Example walk-through: Looking to the log files</h3>
+<p>When the <code>bds</code> script is run using <code>-log</code> command line option, files will be created to log every task.
+In the previous example there was only one task, here are the files and details:</p>
+<pre><code># Go to the log direcotory (created by 'bds -log ...')
+$ cd z.bds.20210121_090423_293
+
+# List files (added comments for each file)
+$ ls
+task.z.line_16.id_1.337e55c1b5c62785.ec2_request_response.i-0d5931b8e30fba349.txt
+task.z.line_16.id_1.337e55c1b5c62785.startup_script.sh
+task.z.line_16.id_1.337e55c1b5c62785.exitCode
+task.z.line_16.id_1.337e55c1b5c62785.stdout
+task.z.line_16.id_1.337e55c1b5c62785.stderr
+task.z.line_16.id_1.337e55c1b5c62785.sh
+</code></pre>
+<p>Let's review each file:
+- Task STDOUT (<code>task.z.line_16.id_1.337e55c1b5c62785.stdout</code>): The standard output from the task is logged in this file. Note that these are messages sent by the EC2 instance via SQS.</p>
+<pre><code>$ cat task.z.line_16.id_1.337e55c1b5c62785.stdout
+HI
+count: 1
+count: 2
+count: 3
+count: 4
+count: 5
+count: 6
+count: 7
+count: 8
+count: 9
+count: 10
+BYE
+</code></pre>
+<ul>
+<li>Task STDERR (<code>task.z.line_16.id_1.337e55c1b5c62785.stderr</code>): The standard error from the task is logged in this file. Note that these are messages sent by the EC2 instance via SQS. IMPORTANT: If there is no STDERR, this file is not created.</li>
+</ul>
+<pre><code># This file was not created because the task did not have any output to STDERR
+$ cat task.z.line_16.id_1.337e55c1b5c62785.stderr
+cat: task.z.line_16.id_1.337e55c1b5c62785.stderr: No such file or directory
+</code></pre>
+<ul>
+<li>Task exit code (<code>task.z.line_16.id_1.337e55c1b5c62785.exitCode</code>): This is the exit code from the task</li>
+</ul>
+<pre><code># Exit code '0' means that the task run succesfully
+$ cat task.z.line_16.id_1.337e55c1b5c62785.exitCode
+0
+</code></pre>
+<ul>
+<li>EC2 request file (<code>task.z.line_16.id_1.337e55c1b5c62785.ec2_request_response.i-0d5931b8e30fba349.txt</code>): This file logs the detailed request parameters when requesting the EC2 instance.</li>
+</ul>
+<pre><code>$ cat task.z.line_16.id_1.337e55c1b5c62785.ec2_request_response.i-0d5931b8e30fba349.txt
+RunInstancesResponse(Groups=[], Instances=[Instance(AmiLaunchIndex=0, ImageId=ami-123456abcdef, InstanceId=i-0d5931b8e30fba349, InstanceType=t3a.medium, LaunchTime=...
+</code></pre>
+<ul>
+<li>Task script (<code>task.z.line_16.id_1.337e55c1b5c62785.sh</code>): This is "raw" script defined in the task.</li>
+</ul>
+<pre><code>$ cat task.z.line_16.id_1.337e55c1b5c62785.sh
+#!/bin/bash -eu
+set -o pipefail
+
+cd '/home/myuser/bds/example'
+
+# SYS command. line 17
+echo HI
+# SYS command. line 18
+for i in `seq 10`; do echo &quot;count: $i&quot;; sleep 1; done
+# SYS command. line 19
+echo BYE
+# Checksum: 3a69f4dc
+</code></pre>
+<ul>
+<li>Startup script (<code>task.z.line_16.id_1.337e55c1b5c62785.startup_script.sh</code>): This is the startup script provided to the instance (EC2 "user data" parameter). This is how the instance knows how to execute the task. we'll discuss this in the next sub-section</li>
+</ul>
+<h3 id="example-walk-through-the-instance-startup-script">Example walk-through: The instance startup script</h3>
+<p>Whenever <code>bds</code> creates an instance, it must also instruct the instance on what to do (i.e. how to execute the task).
+This is achieved using a start-up script (a.k.a. "used data" if you are familiar with the <code>aws ec2 run-instances</code> command).</p>
+<p>In the example, we saw that there was a "startup script" file created (<code>task.z.line_16.id_1.337e55c1b5c62785.startup_script.sh</code>).</p>
+<p>Here is the startup script, we'll analyze each part:</p>
+<pre><code>#!/bin/bash -eu
+set -o pipefail
+
+function exit_script {
+  shutdown -h now
+}
+
+export HOME='/root'
+trap exit_script EXIT
+echo &quot;INFO: Starting script '$0'&quot;
+
+mkdir -p '/home/myuser/bds/example/z.bds.20210121_090423_293'
+#   #!/bin/bash -eu
+#   set -o pipefail
+#
+#   cd '/home/myuser/bds/example'
+#
+#   # SYS command. line 17
+#   echo HI
+#   # SYS command. line 18
+#   for i in `seq 10`; do echo &quot;count: $i&quot;; sleep 1; done
+#   # SYS command. line 19
+#   echo BYE
+#   # Checksum: 3a69f4dc
+
+grep '^#    ' &quot;$0&quot; | cut -c 3- &gt; '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.startup_script_instance.sh'
+chmod u+x '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.startup_script_instance.sh'
+bds exec -stdout '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.stdout' -stderr '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.stderr' -exit '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.exit' -taskId 'z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785' -awsSqsName 'https://sqs.us-east-1.amazonaws.com/671016219382/az-ngs-seqauto_20210121_090423_74c7f1be2f3ccca5' -timeout '86400' '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.startup_script_instance.sh'
+
+echo &quot;INFO: Finished script '$0'&quot;
+</code></pre>
+<p>The script has three main sections:</p>
+<ol>
+<li>Capture any error (trap) and make sure the instance is shut down if any error occurs or when the script finishes successfully. Since the instances are run with "terminate on shutdown" option enabled, this forces the instance to be terminated (so you don't get charged by an instance that has finished or failed to run the task)</li>
+<li>Copy the task lines defined in the <code>bds</code> program, into a new file and change mode to allow execution</li>
+<li>Execute the file that runs the task using <code>bds ... -awsSqsName ...</code> which redirect STDOUT, STDERR (and exit code) to the SQS queue</li>
+<li>Script finishes</li>
+</ol>
+<p>Let's see some details of each part of the startup script:</p>
+<ul>
+<li>Capture any error (trap) and make sure the instance is shut down if any error occurs or when the script finishes successfully. Since the instances are run with "terminate on shutdown" option enabled, this forces the instance to be terminated (so you don't get charged by an instance that has finished or failed to run the task)</li>
+</ul>
+<pre><code>#!/bin/bash -eu           # This makes sure that bash exits if there are any errors
+set -o pipefail           # Tell bash to exit even if the errors are in piped command
+
+function exit_script {    # This function is used to shutdown the instance 
+  shutdown -h now
+}
+
+export HOME='/root'       # The startup script is executed by the instance at startup time as 'root' user, HOME variable is not defined yet so we define it
+trap exit_script EXIT     # Trap any EXIT signal and execute 'exit_script' funtion (which shut downs the instance)
+</code></pre>
+<ul>
+<li>Copy the task lines defined in the <code>bds</code> program, into a new file and change mode to allow execution</li>
+</ul>
+<pre><code>mkdir -p '/home/myuser/bds/example/z.bds.20210121_090423_293'   # Create a directory (same location as in the original bds program)
+</code></pre>
+<p>The lines below are the script lines defined by the bds program (see "task line").
+Note that they are the exact same lines as defined in the task script (<code>task.z.line_16.id_1.337e55c1b5c62785.sh</code>), but they have a <code>#\t</code> prepended to each line</p>
+<pre><code>#   #!/bin/bash -eu
+#   set -o pipefail
+#
+#   cd '/home/myuser/bds/example'
+#
+#   # SYS command. line 17
+#   echo HI
+#   # SYS command. line 18
+#   for i in `seq 10`; do echo &quot;count: $i&quot;; sleep 1; done
+#   # SYS command. line 19
+#   echo BYE
+#   # Checksum: 3a69f4dc
+</code></pre>
+<p>Next, there is a <code>grep</code> command to extract all the lines starting with <code>#\t</code> to a new file.
+So this writes all the line defined in the original task to a new script file and makes it executable</p>
+<pre><code>grep '^#    ' &quot;$0&quot; | cut -c 3- &gt; '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.startup_script_instance.sh'   
+chmod u+x '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.startup_script_instance.sh'
+</code></pre>
+<ul>
+<li>Execute the file that runs the task using <code>bds ... -awsSqsName ...</code> which redirect STDOUT, STDERR (and exit code) to the SQS queue</li>
+</ul>
+<pre><code>bds exec -stdout '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.stdout' -stderr '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.stderr' -exit '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.exit' -taskId 'z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785' -awsSqsName 'https://sqs.us-east-1.amazonaws.com/671016219382/az-ngs-seqauto_20210121_090423_74c7f1be2f3ccca5' -timeout '86400' '/home/myuser/bds/example/z.bds.20210121_090423_293/task.z.line_16.id_1.337e55c1b5c62785.startup_script_instance.sh'
+
+echo &quot;INFO: Finished script '$0'&quot;
+</code></pre>
+<ul>
+<li>Script finishes: Several things happen whenever the startup script finishes executing:<ul>
+<li>After the last line is successfully executed, the script will exit, i.e. issue an <code>EXIT</code> signal.</li>
+<li>This signal is trapped (see previous <code>trap exit_script EXIT</code> line) and the <code>exit_script</code> function will be invoked.</li>
+<li>The <code>exit_script</code> function performs a <code>shutdown -h now</code> which shuts down the instance.</li>
+<li>Since the instance was run using "terminate on shutdown" behaviour (i.e. <code>instance-initiated-shutdown-behavior='shutdown'</code>), the instance will be terminated.   </li>
+</ul>
+</li>
+</ul>
+<h2 id="aws-resource-cleanup">AWS resource cleanup</h2>
+<p><code>bds</code> will try to clean up AWS resources when the program ends successfully or when it is interrupted (e.g. you press <code>Ctr-C</code> on the terminal running the script).
+This means that, under normal circumstances, EC2 instances will be terminated, SQS queues deleted, etc.</p>
+<p>Unfortunately, there is no way to guarantee that the cleanup will be performed or that it will succeed.
+You can easily imagine a situations where the <code>bds</code> script is unable to clean up AWS resources, for instance:
+- It is running on a laptop and you accidentally close the laptop
+- The server where the <code>bds</code> script is running loses internet connection
+- The <code>bds</code> script is killed with <code>kill -9 ...</code>, thus it has no chance to send API messages to AWS to clean up. </p>
+<p><strong>IMPORTANT:</strong> There is no warranty on cleaning resources. <code>bds</code> attempt to cleanup resources on AWS, but this is a "best effort" approach. </p>
+<p><strong>WARNING:</strong> In order to avoid unnecessary AWS costs, you should always monitor AWS resources used by <code>bds</code>. </p>
+<h3 id="stdout-stderr">StdOut / StdErr</h3>
+<p>As we've already mentioned, the instance executing a Task will send bith STDOUT and STDERR to an SQS queue so that the original program can show them on the main terminal.</p>
+<p>It is important to understand that if a task generates many output lines, this could potentially generate millions of SQS messages.
+Not only this could generates costs due to SQS messages, but also can create high network traffic and delay the task significantly (since the process must wait for all those messages to be sent).</p>
+<p>A simple option would be to redirect STDOUT/STDERR to a file (or to <code>/dev/null</code>) when not needed, e.g.:</p>
+<pre><code>task( system := 'aws' ) {
+    sys command_with_lots_of_output &gt; /dev/null 2&gt;&amp;1
+}
+</code></pre>
+<h3 id="improper-tasks">Improper tasks</h3>
+<p>AWS tasks can also be "improper", this means that they can execute arbitrary <code>bds</code> code.
+In this case, as always happens in improper tasks, the whole program state will be accessible to the task runningin the instance:</p>
+<pre><code>task( system := 'aws' ) {
+    println &quot;Executing standard bds code in this task&quot;
+    for(int i=0 ; i &lt; 10 ; i++ ) {
+        println &quot;Count: $i&quot;
+    }
+    println &quot;End of task, the EC2 instance will terminate after this&quot;
+}
+</code></pre>
+<h3 id="dependencies">Dependencies</h3>
+<p>Tasks executed on AWS can have dependencies, as any other tasks.
+Usually dependencies are files on S3.</p>
+<p>In this example you see two tasks dependent on each other:
+1. The main bds script creates an "input" file on S3 (<code>in := "s3://my_bds_test_bucket/exmaple/in.txt"</code>)
+1. The first task (<code>task(out1 &lt;- in) ...</code>) reads the input file, adds some data and writes the result to <code>out1</code> output file (<code>out1 := "s3://my_bds_test_bucket/exmaple/out1.txt"</code>)
+1. The second task (<code>task(out2 &lt;- out1) ...</code>) reads the <code>out1</code> file, adds some more data and writes the result to <code>out2</code> output file (<code>out2 := "s3://my_bds_test_bucket/exmaple/out2.txt"</code>)</p>
+<pre><code>system = 'aws'
+
+# These hash called 'taskResources' contains the parameters we need to run a task on AWS
+# WARNING: You need to replace ALL this parameters to use your account's settings
+taskResources := { \
+    'region' =&gt; 'us-east-1' \
+    , 'instanceType' =&gt; 't3a.medium' \
+    , 'imageId' =&gt; 'ami-123456abcdef' \
+    , 'securityGroupIds' =&gt; 'sg-987654321abc' \
+    , 'subnetId' =&gt; 'subnet-192837465fed' \
+    , 'instanceProfile' =&gt; 'AWS_BDS_INSTANCE_ROLE' \
+}
+
+# Input and output files on S3
+in := &quot;s3://my_bds_test_bucket/exmaple/in.txt&quot;
+out1 := &quot;s3://my_bds_test_bucket/exmaple/out1.txt&quot;
+out2 := &quot;s3://my_bds_test_bucket/exmaple/out2.txt&quot;
+
+# Create input file
+in.write(inTxt)
+
+# Task 1
+println &quot;Before task1&quot;
+task(out1 &lt;- in) {
+    println &quot;Start: Task1 improper&quot;
+    inFileTxt := in.read().trim()
+    println &quot;Input text: '$inFileTxt'&quot;
+    out1.write(&quot;OUT1: '$inFileTxt'&quot;)
+    println &quot;End: Task1 Improper&quot;
+}
+println &quot;After task1&quot;
+
+# Task 2
+println &quot;Before task2&quot;
+task(out2 &lt;- out1) {
+    sys echo &quot;Start: Task2&quot;
+    sys echo 'OUT2' &gt; '$out2'
+    sys cat '$out1' &gt;&gt; '$out2'
+    sys echo 'Input:'
+    sys cat '$out1'
+    sys echo
+    sys echo &quot;End: Task2&quot;
+}
+println &quot;After task2&quot;
+
+wait
+println &quot;Done&quot;
+</code></pre>
+<p>Each of these two tasks are executed in different EC2 instances.
+There is a dependency: the second needs <code>out1</code> which is created by the first task.
+So the second task will not be executed until the first task finishes successfully, i.e. the second instance will only be created when the first instance finishes executing the first tasks and the output file <code>out1</code> is created.</p>
+<h3 id="detached-tasks">Detached tasks</h3>
+<p>A "detached" task is a task that is run independently from <code>bds</code>.
+The original <code>bds</code> program can finish and the detached task continue running.
+In this case it will continue in an AWS EC2 instance.</p>
+<p>Here is an example with a "detached" task (i.e. <code>detached := true</code>) </p>
+<pre><code>system = 'aws'
+
+# These hash called 'taskResources' contains the parameters we need to run a task on AWS
+# WARNING: You need to replace ALL this parameters to use your account's settings
+taskResources := { \
+    'region' =&gt; 'us-east-1' \
+    , 'instanceType' =&gt; 't3a.medium' \
+    , 'imageId' =&gt; 'ami-123456abcdef' \
+    , 'securityGroupIds' =&gt; 'sg-987654321abc' \
+    , 'subnetId' =&gt; 'subnet-192837465fed' \
+    , 'instanceProfile' =&gt; 'AWS_BDS_INSTANCE_ROLE' \
+}
+
+# This detached AWS taks will continue executing after the bds script finishes
+task(system := 'aws', detached := true) {
+    sys echo HI
+    sys for i in `seq 60`; do echo &quot;count: \$i&quot;; sleep 1; done
+    sys echo BYE
+}
+println &quot;After&quot;
+wait
+println &quot;Done&quot;
+</code></pre>
+<p>The task continues running in the EC2 instance, even though the <code>bds</code> script finishes immediately after the instance has been requested.</p>
+<h3 id="dep-and-goal"><code>dep</code> and <code>goal</code></h3>
+<p>As any other tasks, AWS tasks can also be defined using <code>dep</code> and <code>goal</code> statements, e.g.:</p>
+<p>Here is an example that we saw before (two dependent tasks) using <code>dep</code> and <code>goal</code>: </p>
+<pre><code>system = 'aws'
+
+# These hash called 'taskResources' contains the parameters we need to run a task on AWS
+# WARNING: You need to replace ALL this parameters to use your account's settings
+taskResources := { \
+    'region' =&gt; 'us-east-1' \
+    , 'instanceType' =&gt; 't3a.medium' \
+    , 'imageId' =&gt; 'ami-123456abcdef' \
+    , 'securityGroupIds' =&gt; 'sg-987654321abc' \
+    , 'subnetId' =&gt; 'subnet-192837465fed' \
+    , 'instanceProfile' =&gt; 'AWS_BDS_INSTANCE_ROLE' \
+}
+
+# Input and output files on S3
+in := &quot;s3://my_bds_test_bucket/exmaple/in.txt&quot;
+out1 := &quot;s3://my_bds_test_bucket/exmaple/out1.txt&quot;
+out2 := &quot;s3://my_bds_test_bucket/exmaple/out2.txt&quot;
+
+# Create input file
+in.write(inTxt)
+
+# Dep 1
+println &quot;Before task1&quot;
+dep(out1 &lt;- in) {
+    println &quot;Start: Dep1 improper&quot;
+    inFileTxt := in.read().trim()
+    println &quot;Input text: '$inFileTxt'&quot;
+    out1.write(&quot;OUT1: '$inFileTxt'&quot;)
+    println &quot;End: Dep1 Improper&quot;
+}
+println &quot;After task1&quot;
+
+# Dep 2
+println &quot;Before task2&quot;
+dep(out2 &lt;- out1) {
+    sys echo &quot;Start: Dep2&quot;
+    sys echo 'OUT2' &gt; '$out2'
+    sys cat '$out1' &gt;&gt; '$out2'
+    sys echo 'Input:'
+    sys cat '$out1'
+    sys echo
+    sys echo &quot;End: Dep2&quot;
+}
+println &quot;After task2&quot;
+
+# Goal
+println &quot;Goal: '$out2'&quot;
+goal out2
+
+wait
+println &quot;Done&quot;
+</code></pre>
+<h2 id="aws-task-parameters">AWS task parameters</h2>
+<p>Any task running on AWS requires many parameters to be set.
+Most parameters can be set in the <code>tataskResources</code> hash we've seen in the examples.</p>
+<p>Here is a list of all the parameters for AWS tasks:</p>
+<table>
+<thead>
+<tr>
+<th><code>tataskResources</code> entry</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>region</td>
+<td>AWS region where the EC2 instance should run</td>
+</tr>
+<tr>
+<td>bucket</td>
+<td>Bucket name, the bucket can sometimes used to store data by <code>bds</code></td>
+</tr>
+<tr>
+<td>instanceType</td>
+<td>AWS EC2 instance type (e.g. t3a.medium)</td>
+</tr>
+<tr>
+<td>imageId</td>
+<td>Image used to create the instance (AMI ID). The image must have <code>bds</code> installed</td>
+</tr>
+<tr>
+<td>securityGroupIds</td>
+<td>A comma separated list of security groups IDs</td>
+</tr>
+<tr>
+<td>subnetId</td>
+<td>A comma separated list of subnet IDs</td>
+</tr>
+<tr>
+<td>instanceProfile</td>
+<td>Profile (role name) to use for the instance</td>
+</tr>
+<tr>
+<td>s3tmp</td>
+<td>S3 temporary path, this is used to store temporary data (e.g. checkpoints for improper tasks)</td>
+</tr>
+<tr>
+<td>keepInstanceAliveAfterFinish</td>
+<td>If this is set to <code>true</code>, the instance will NOT be terminated after the task is finished. This is used for loggging into the instance and debugging AWS tasks</td>
+</tr>
+</tbody>
+</table>
+<p>Other task parameters can also be used (<code>timeout</code>, <code>taskName</code>, <code>allowEmpty</code>, etc.).
+Here are some parameters specific to AWS tasks:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cloudQueueNamePrefix</td>
+<td>Is non-empty, the name will be used as a prefix for the SQS quque</td>
+</tr>
+<tr>
+<td>system</td>
+<td>Must be set to <code>'aws'</code> for a task to be executed in an AWS EC2 instance</td>
+</tr>
+</tbody>
+</table>
+<h3 id="instance-request-retry">Instance request retry</h3>
+<p>Assuming that all parameters are set correctly, an EC2 instance request can still fail for many different reasons, e.g.:
+- AWS doesn't have availability of a specific instance type in the requested region
+- There are no more IPs in the network
+- You've reached some limit in any EC2 related parameter (total number of instances, total disk, etc)</p>
+<p>In any case when <code>bds</code> cannot launch an EC2 instance it will retry several times, waiting some random time between each try
+The retry algorithm is:</p>
+<pre><code>START_FAIL_MAX_ATTEMPTS = 50
+START_FAIL_SLEEP_RAND_TIME = 60
+
+for i in 1 .. START_FAIL_MAX_ATTEMPTS:
+    - parse_ec2_instance_parametres     # Parse hash tataskResources
+    - randomly_select_subnetId          # If more than one is specified as a comma separated list of values
+    - request_ec2_instance              # Request instance to AWS
+    - if succeess: return OK            # Success, instance created
+    - wait_random_time                  # Reuqest failed, wait up to START_FAIL_SLEEP_RAND_TIME seconds
+</code></pre>
+<p><strong>Note:</strong> Randomly selecting a subnet from a comma separated list in <code>tataskResources{'subnetId'}</code>, allows you to randomly create instances on different zones within a region.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../wait/" class="btn btn-neutral float-right" title="Wait">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../task_imp/" class="btn btn-neutral" title="Task improper"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../task_imp/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../wait/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
