@@ -15,7 +15,7 @@ nav:
     - 'Sys': sys.md
     - 'Task': task.md
     - 'Task improper': task_imp.md
-    - 'Cloud AWS': coud_aws.md # TODO: Add configuration and examples. ADD WARNING: SQS, S3, EC@ running ($$$)
+    - 'Task Cloud AWS': task_aws.md
     - 'Wait': wait.md
     - 'Dependency operator': dep_op.md
     - 'Goal': goal.md
