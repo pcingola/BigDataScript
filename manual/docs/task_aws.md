@@ -312,7 +312,11 @@ echo "INFO: Finished script '$0'"
     - The `exit_script` function performs a `shutdown -h now` which shuts down the instance.
     - Since the instance was run using "terminate on shutdown" behaviour (i.e. `instance-initiated-shutdown-behavior='shutdown'`), the instance will be terminated.   
 
-## AWS resource cleanup
+## AWS tasks
+
+In the next sub-sections we cover some details on AWS tasks resources, EC2 parameters, task dependencies, etc.
+  
+### AWS resource cleanup
 
 `bds` will try to clean up AWS resources when the program ends successfully or when it is interrupted (e.g. you press `Ctr-C` on the terminal running the script).
 This means that, under normal circumstances, EC2 instances will be terminated, SQS queues deleted, etc.
@@ -513,7 +517,7 @@ wait
 println "Done"
 ```
 
-## AWS task parameters
+### AWS task parameters
 
 Any task running on AWS requires many parameters to be set.
 Most parameters can be set in the `tataskResources` hash we've seen in the examples.

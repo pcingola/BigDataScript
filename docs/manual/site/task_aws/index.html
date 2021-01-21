@@ -101,8 +101,10 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#aws-resource-cleanup">AWS resource cleanup</a>
+    <li class="toctree-l2"><a class="reference internal" href="#aws-tasks">AWS tasks</a>
         <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#aws-resource-cleanup">AWS resource cleanup</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#stdout-stderr">StdOut / StdErr</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#improper-tasks">Improper tasks</a>
@@ -113,10 +115,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dep-and-goal">dep and goal</a>
     </li>
-        </ul>
+    <li class="toctree-l3"><a class="reference internal" href="#aws-task-parameters">AWS task parameters</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#aws-task-parameters">AWS task parameters</a>
-        <ul>
     <li class="toctree-l3"><a class="reference internal" href="#instance-request-retry">Instance request retry</a>
     </li>
         </ul>
@@ -465,7 +465,9 @@ echo &quot;INFO: Finished script '$0'&quot;
 </ul>
 </li>
 </ul>
-<h2 id="aws-resource-cleanup">AWS resource cleanup</h2>
+<h2 id="aws-tasks">AWS tasks</h2>
+<p>In the next sub-sections we cover some details on AWS tasks resources, EC2 parameters, task dependencies, etc.</p>
+<h3 id="aws-resource-cleanup">AWS resource cleanup</h3>
 <p><code>bds</code> will try to clean up AWS resources when the program ends successfully or when it is interrupted (e.g. you press <code>Ctr-C</code> on the terminal running the script).
 This means that, under normal circumstances, EC2 instances will be terminated, SQS queues deleted, etc.</p>
 <p>Unfortunately, there is no way to guarantee that the cleanup will be performed or that it will succeed.
@@ -637,7 +639,7 @@ goal out2
 wait
 println &quot;Done&quot;
 </code></pre>
-<h2 id="aws-task-parameters">AWS task parameters</h2>
+<h3 id="aws-task-parameters">AWS task parameters</h3>
 <p>Any task running on AWS requires many parameters to be set.
 Most parameters can be set in the <code>tataskResources</code> hash we've seen in the examples.</p>
 <p>Here is a list of all the parameters for AWS tasks:</p>
