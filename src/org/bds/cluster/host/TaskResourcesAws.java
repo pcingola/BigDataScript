@@ -119,6 +119,10 @@ public class TaskResourcesAws extends TaskResources {
 		return blockDevMap;
 	}
 
+	public String getBucket() {
+		return bucket;
+	}
+
 	public String getImageId() {
 		return imageId;
 	}

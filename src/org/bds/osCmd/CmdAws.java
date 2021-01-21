@@ -408,7 +408,13 @@ public class CmdAws extends Cmd {
 	void uploadCheckpointToS3() {
 		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
 		String s3tmp = resources.getS3tmp();
-		if (s3tmp == null || s3tmp.isEmpty()) resources.missingValue("s3tmp", TaskResourcesAws.S3_TMP);
+		String bucket = resources.getBucket();
+		if (s3tmp == null || s3tmp.isEmpty()) {
+			// Try setting a default using S3BUCKET
+			if (bucket == null || bucket.isEmpty()) resources.missingValue("s3tmp", TaskResourcesAws.S3_TMP);
+			s3tmp = "s3://" + bucket + "/tmp/bds/" + id;
+			log("Task resource parameter 's3tmp' not found, creating from parameter 'bucket' ('" + bucket + "'), s3tmp='" + s3tmp + "'");
+		}
 
 		checkpointS3 = s3tmp + "/" + task.getId() + ".chp";
 
