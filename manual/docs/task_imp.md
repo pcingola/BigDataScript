@@ -1,4 +1,4 @@
-# Task Improper
+# Improper tasks
 
 In the previous chapter, we talked about `task` ("proper tasks") which consist of `sys` commands (i.e. shell commands).
 As we mentioned, these tasks can be executed on different systems: local, cluster, cloud, etc.

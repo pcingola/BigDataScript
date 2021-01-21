@@ -13,9 +13,10 @@ nav:
     - 'Global variables': global_vars.md
     - 'Pipelines': pipelines.md
     - 'Sys': sys.md
-    - 'Task': task.md
-    - 'Task improper': task_imp.md
-    - 'Task Cloud AWS': task_aws.md
+    - 'Tasks': task.md
+    - 'Tasks: Detached': task_detached.md
+    - 'Tasks: Improper': task_imp.md
+    - 'Tasks: Cloud AWS': task_aws.md
     - 'Wait': wait.md
     - 'Dependency operator': dep_op.md
     - 'Goal': goal.md

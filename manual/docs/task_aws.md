@@ -1,4 +1,4 @@
-# Task `aws`
+# Tasks on AWS
 
 You can set `bds` tasks to run on the Amazon cloud (i.e. an EC2 instance).
 This is achieved by using `system='aws'`.
