@@ -312,18 +312,21 @@ public class CmdAws extends Cmd {
 		// Make sure we the script file is executable
 		sb.append("chmod u+x '" + dstScriptFile + "'\n");
 
+		// Timeout
+		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
+		long timeout = Math.max(0L, resources.getTimeout());
+
 		// Add bds command to execute the 'dstScriptFile' sending stdout, stderr, and exitCode to SQS
 		String stdout = taskDir + "/" + base + ".stdout";
 		String stderr = taskDir + "/" + base + ".stderr";
 		String exitFile = taskDir + "/" + base + ".exit";
-		TaskResourcesAws resources = (TaskResourcesAws) task.getResources();
 		sb.append("bds exec " //
 				+ "-stdout '" + stdout + "' " //
 				+ "-stderr '" + stderr + "' " //
 				+ "-exit '" + exitFile + "' " //
 				+ "-taskId '" + task.getId() + "' " //
 				+ "-awsSqsName '" + queueName + "' " // Note that this accepts both queue name and queue URL
-				+ "-timeout '" + resources.getTimeout() + "' " //
+				+ "-timeout '" + timeout + "' " //
 				+ "'" + dstScriptFile + "'\n" //
 		);
 

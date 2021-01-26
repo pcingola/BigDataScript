@@ -49,7 +49,7 @@ public class ExecutionerClusterGeneric extends ExecutionerCluster {
 
 		// Add resources request
 		TaskResourcesCluster res = (TaskResourcesCluster) task.getResources();
-		args.add("" + res.getTimeout());
+		args.add("" + calcTimeOut(res));
 		args.add("" + res.getCpus());
 		args.add("" + res.getMem());
 		args.add(res.getQueue() != null ? res.getQueue() : "");
