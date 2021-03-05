@@ -1,9 +1,0 @@
-#!/usr/bin/env bds
-
-out := 'out.txt'
-
-o := sys echo hello world \
-	| tee $out
-
-println "o: '$o'"
-

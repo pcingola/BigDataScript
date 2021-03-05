@@ -1,6 +1,0 @@
-
-// Environment variables are available at global scope
-string home = HOME
-
-print("home = '$home' = '$HOME'\n");
-

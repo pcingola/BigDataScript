@@ -1,6 +1,0 @@
-#!/usr/bin/env bds
-
-task perl -e 'print "PID:$$\n";'
-task perl -e 'use English; print "PID:\$PID\n";'
-task perl -e 'use English; print "REAL_USER_ID:\$REAL_USER_ID\n";'
-

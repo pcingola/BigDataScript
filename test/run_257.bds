@@ -1,3 +1,0 @@
-
-r := randInt(0)
-println "r=$r"

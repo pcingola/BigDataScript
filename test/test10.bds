@@ -1,3 +1,0 @@
-
-int i = j;	// Error 'j' cannot be resolved
-

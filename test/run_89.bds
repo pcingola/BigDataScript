@@ -1,9 +1,0 @@
-#!/usr/bin/env bds
-
-f := "file.txt"
-f2 := f.swapExt("vcf")
-print("f2: '$f2'\n")
-f3 := f.swapExt("txt","vcf")
-print("f3: '$f3'\n")
-f4 := f.swapExt(".bam",".vcf")
-print("f4: '$f4'\n")

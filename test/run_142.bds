@@ -1,9 +1,0 @@
-
-dir := 'test'
-
-dir1 := dir.dir("test0*.bds")
-println "dir1 = $dir1"
-
-dir2 := dir.dirPath("**/test0*.bds")
-println "dir2 = $dir2"
-

@@ -1,6 +1,0 @@
-#!/usr/bin/env bds
-
-for( int i=0 ; i < 10 ; i++ ) {
-	task ("test.$i.xml" <- "test.csv") sys cp test.csv test.$i.xml; echo $i
-}
-

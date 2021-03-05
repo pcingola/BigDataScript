@@ -1,9 +1,0 @@
-
-int i;
-
-int f( int i ) {			// OK to declare 'i' here
-	return i;
-}
-
-i = 1
-f(i)

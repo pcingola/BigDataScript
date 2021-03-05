@@ -1,8 +1,0 @@
-
-bool a = true;
-
-bool b = false;
-
-bool c = a && a || b;
-
-bool d = ! c;

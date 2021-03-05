@@ -1,3 +1,0 @@
-#!/usr/bin/env bds
-
-s := log("hi there")

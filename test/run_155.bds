@@ -1,7 +1,0 @@
-#!/usr/bin/env bds
-
-
-l := ['aa', 'a', 'z', 'x', 'y', 'aaaaaa', 'a', 'a+a', 'aaaa', 'a_a', 'aaa']
-sl := l.sort()
-println "l  : $l"
-println "sl : $sl"

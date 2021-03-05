@@ -1,9 +1,0 @@
-#!/usr/bin/env bds
-
-n := 10
-s := n > 0 ? 1 : -1 
-print("n: $n\ts: $s\n")
-
-n2 := -17
-s2 := ( n2 > 0 ? 1 : -1 )
-print("n2: $n2\ts2: $s2\n")

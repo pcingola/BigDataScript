@@ -1,7 +1,0 @@
-#!/usr/bin/env bds
-
-l := ['one']
-l += ['two', 'three']
-l += 'four'
-print("l=$l\n")
-

@@ -1,8 +1,0 @@
-#!/usr/bin/env bds
-
-finished := false
-
-canFail=true
-sys cat asdasdfa
-
-finished = true

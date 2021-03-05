@@ -1,7 +1,0 @@
-
-
-int f( int i = 3 ) {
-  return i;
-}
-
-f(7)

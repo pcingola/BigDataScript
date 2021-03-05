@@ -1,2 +1,0 @@
-
-int i = 5, h = j;	// Error 'j' not found

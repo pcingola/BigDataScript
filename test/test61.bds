@@ -1,8 +1,0 @@
-class D {
-	void f() {
-		A a
-		a = new B()
-	}
-}
-class A { }
-class B extends A { }

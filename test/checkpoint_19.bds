@@ -1,6 +1,0 @@
-#!/usr/bin/env bds
-
-print "hi\n"
-checkpoint "test/checkpoint_19.chp"
-print "bye\n"
-ok := true

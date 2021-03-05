@@ -1,6 +1,0 @@
-#!/usr/bin/env bds
-
-# Include order should not affect compilation
-include 'test60d'
-include 'test60a'
-

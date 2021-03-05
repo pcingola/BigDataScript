@@ -1,5 +1,0 @@
-#!/usr/bin/env bds
-
-class A { }
-class B { }
-B b = new A()

@@ -1,8 +1,0 @@
-
-
-string[] list = [ "one", "two", "three" ]
-string ss
-
-for( string s : list ) {
-	ss = ss + s
-}

@@ -1,9 +1,0 @@
-#!/usr/bin/env bds
-
-l := [1, 2, 3]
-
-has2 := l.has(2)
-println "has2 : $has2"
-
-has7 := l.has(7)
-println "has7 : $has7"

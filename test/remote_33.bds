@@ -1,9 +1,0 @@
-#!/usr/bin/env bds
-
-include 'aws_util'
-
-d := "$s3base/test_remote_33/"
-println "d: '$d'"
-dd := d.dirPath("**/bye*.txt")
-println "dd: $dd"
-

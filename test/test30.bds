@@ -1,6 +1,0 @@
-
-
-int f( real x ) {
-	return 1.5 * x;
-}
-
