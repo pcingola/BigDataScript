@@ -1,7 +1,7 @@
 
 # [We moved!!!](https://github.com/pcingola/bds)
 
-**IMPORTANT**: bds repository moved [here](http://pcingola.github.com/bds/)
+**IMPORTANT**: bds repository moved [here](https://github.com/pcingola/bds)
 
 # bds
 
