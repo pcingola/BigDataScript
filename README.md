@@ -1,5 +1,5 @@
 
-# [We moved!!!](http://pcingola.github.com/bds/)
+# [We moved!!!](https://github.com/pcingola/bds)
 
 **IMPORTANT**: bds repository moved [here](http://pcingola.github.com/bds/)
 
